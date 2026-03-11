@@ -48,7 +48,7 @@ The model behavior can be tuned via `GenesisConfig` in `genesis_v66.py`. Paramet
 
 ## 🧠 Technical Introduction
 
-I am [Your Name/Handle], a researcher/developer focused on compact reasoning models. Genesis V66 represents the culmination of several iterations (V59-V65) where I've stripped away "length rewards" and "formatting bribes" to see if a model can learn to "self-correct" its internal thinking purely through outcome success.
+I am Changwei Zhou, a researcher/developer focused on compact reasoning models. Genesis V66 represents the culmination of several iterations (V59-V65) where I've stripped away "length rewards" and "formatting bribes" to see if a model can learn to "self-correct" its internal thinking purely through outcome success.
 
 The `LiquidBrain` architecture is designed to be highly efficient, with specialized memory and plasticity layers that allow it to adapt to complex state-tracking tasks without the massive parameter counts of standard Transformers.
 

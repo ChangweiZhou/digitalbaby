@@ -16,8 +16,8 @@ I believe that the future of AI lies in **efficiency, interpretability, and emer
 - **Tools:** Python, WandB, Hugging Face.
 
 ### 📫 Connect with me
-- [Your GitHub Profile](https://github.com/yourusername)
-- [Your LinkedIn/Twitter](https://twitter.com/yourhandle)
+- [Your GitHub Profile](https://github.com/ChangweiZhou)
+- [Your LinkedIn/Twitter](https://www.linkedin.com/in/changwei-z-a0865416/)
 
 ---
 *Building the next generation of liquid intelligence.*
