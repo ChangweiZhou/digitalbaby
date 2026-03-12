@@ -66,7 +66,7 @@ python genesis_v66.py --batch_size 4 --group_size 4
 ```
 
 ## 📈 Technical Introduction
-I am [Your Name], focusing on **Liquid Intelligence**. This repository is an exploration of how we can shrink the "reasoning" capabilities of models like DeepSeek-R1 into compact, efficient architectures that can run on edge devices while maintaining a high logical fidelity.
+I am Changwei Zhou, focusing on **Liquid Intelligence**. This repository is an exploration of how we can shrink the "reasoning" capabilities of models like DeepSeek-R1 into compact, efficient architectures that can run on edge devices while maintaining a high logical fidelity.
 
 ---
 *Note: This is an active research repo. Level 4 training (Multi-object persistence) is currently in progress.*
