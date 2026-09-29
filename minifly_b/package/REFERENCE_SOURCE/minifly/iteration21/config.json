@@ -1,0 +1,27 @@
+{
+  "version": "V76", "iteration": 21,
+  "bridge_seeds": [7601001,7601002,7601003,7601004,7601005,7601006,7601007,7601008,7601009,7601010,7601011,7601012,7601013,7601014,7601015,7601016],
+  "transfer_seeds": [7603001,7603002,7603003,7603004,7603005,7603006,7603007,7603008,7603009,7603010,7603011,7603012,7603013,7603014,7603015,7603016],
+  "calibration_seed":7600001, "calibration_pairs":128, "calibration_trials":1024,
+  "trials":1024, "warmup":256, "tasks":["ANOMALY","REVERSAL"],
+  "arms": {
+    "REF": {"kind":"native"},
+    "V75_BRIDGE": {"kind":"legacy"},
+    "LABEL_FIXED": {"kind":"hybrid","signal":"label","normalization":"fixed","target_Hz":2.0,"allocation":"native"},
+    "ERROR_FIXED": {"kind":"hybrid","signal":"error","normalization":"fixed","target_Hz":2.0,"allocation":"native"},
+    "LABEL_NORM": {"kind":"hybrid","signal":"label","normalization":"adaptive","target_Hz":2.0,"allocation":"native"},
+    "ERROR_NORM": {"kind":"hybrid","signal":"error","normalization":"adaptive","target_Hz":2.0,"allocation":"native"},
+    "ERROR_NORM_R1": {"kind":"hybrid","signal":"error","normalization":"adaptive","target_Hz":1.0,"allocation":"native"},
+    "ERROR_NORM_R4": {"kind":"hybrid","signal":"error","normalization":"adaptive","target_Hz":4.0,"allocation":"native"},
+    "ERROR_NORM_SLOW": {"kind":"hybrid","signal":"error","normalization":"adaptive","target_Hz":2.0,"allocation":"slow"}
+  },
+  "transfer_arms":["REF","LABEL_FIXED","ERROR_FIXED","LABEL_NORM","ERROR_NORM","ERROR_NORM_R1","ERROR_NORM_R4","ERROR_NORM_SLOW"],
+  "eta":0.5, "normalizer_range":[0.1,10.0], "epsilon":1e-12,
+  "loads":[48,96], "cases":["REV","STABLE","ANOMALY1"], "horizons":[0,86400],
+  "challenge_bouts":12, "native_dose_anchor":18, "mixed_pairs":12, "acquisition_bouts":6,
+  "bootstrap_seed":7609001, "bootstrap_draws":5000,
+  "primary_material_gain":0.05, "revision_gain":0.10, "safety_accuracy":0.02, "safety_worst_Hz":0.05,
+  "workers":2,
+  "proposal":"minifly/v75_literature_review_20260914/REPORT.md",
+  "prior_banks":["iteration10/data/input_banks.npz","iteration11/data/input_banks.npz","iteration12/data/input_banks.npz","iteration13/data/validation_inputs.npz","iteration14/data/reserved_inputs.npz","iteration18/data/input_banks.npz","iteration19/data/fresh_inputs.npz","iteration20/data/inputs.npz"]
+}
