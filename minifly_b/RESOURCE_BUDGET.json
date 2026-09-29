@@ -1,0 +1,33 @@
+{
+ "schema": "MINIFLY-B-RESOURCE-BUDGET-v1",
+ "host": {"cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz, x86_64, AVX-512", "logical_cpus": 4,
+          "memory_bytes": 16877879296, "python": "3.11.15", "numpy": "2.2.6", "scipy": "1.14.1",
+          "numba": "0.61.2",
+          "note": "VM runs only while a tool call is executing; the driver is kept alive by blocking waits"},
+ "measured_technical_world_190000": {
+  "T_arms_learner_life_s": [247.0, 247.5, 250.9, 248.2],
+  "S_candidates_learner_life_s": [281.0, 285.0, 288.2, 283.5],
+  "S0_learner_life_s": 278.1,
+  "Srand_learner_life_s": [297.3, 295.6, 294.6, 304.9],
+  "graph_generation_s_max_over_65_worlds": {"T1": 4.55, "T3": 9.66, "S_support": 1.0},
+  "peak_rss_bytes_max": 338239488,
+  "technical_receipt_bytes_max": 914943,
+  "concurrency_during_measurement": 4
+ },
+ "estimate_64_world_roster": {
+  "world_arms": 832,
+  "core_seconds_per_world": 3655,
+  "core_hours_total": 65.0,
+  "wall_hours_at_4_workers": 16.3,
+  "science_receipt_bytes_total_estimate": 250000000
+ },
+ "hard_budget": {
+  "wall_hours_active_compute": 26,
+  "core_hours": 110,
+  "peak_rss_bytes_per_worker": 800000000,
+  "workers": 4,
+  "results_disk_bytes": 1500000000,
+  "per_world_arm_learner_s_max": 900
+ },
+ "decision": "FITS: estimate uses 63% of the wall budget and 59% of core hours; not RESOURCE_NOT_FEASIBLE"
+}

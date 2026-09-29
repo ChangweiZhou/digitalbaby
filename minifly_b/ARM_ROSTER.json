@@ -1,0 +1,27 @@
+{
+ "schema": "MINIFLY-B-ARM-ROSTER-v1",
+ "package": "CLAUDE_B_6",
+ "assigned_variants": ["T1", "T3", "S1", "S2", "S3", "S4"],
+ "status_before_science": {"T1": "INSTANTIATED", "T3": "INSTANTIATED", "S1": "INSTANTIATED",
+                           "S2": "INSTANTIATED", "S3": "INSTANTIATED", "S4": "INSTANTIATED"},
+ "arms": ["T1", "T0_1", "T3", "T0_3", "S0", "S1", "S2", "S3", "S4",
+          "Srand_1", "Srand_2", "Srand_3", "Srand_4"],
+ "roles": {
+  "T1": "candidate", "T0_1": "primary matched control of T1",
+  "T3": "candidate", "T0_3": "primary matched control of T3",
+  "S1": "candidate", "S2": "candidate", "S3": "candidate", "S4": "candidate",
+  "S0": "primary matched static control shared by S1-S4 (identical write-only S state)",
+  "Srand_1": "yoked event/count-matched random rewiring diagnostic (non-autonomous) for S1",
+  "Srand_2": "yoked event/count-matched random rewiring diagnostic (non-autonomous) for S2",
+  "Srand_3": "yoked event/count-matched random rewiring diagnostic (non-autonomous) for S3",
+  "Srand_4": "yoked event/count-matched random rewiring diagnostic (non-autonomous) for S4"
+ },
+ "primary_contrasts": [["T1", "T0_1"], ["T3", "T0_3"], ["S1", "S0"], ["S2", "S0"], ["S3", "S0"], ["S4", "S0"]],
+ "endpoints": ["dE1", "dE3"],
+ "package_primary_tests": 12,
+ "shared_family_size_m": 26,
+ "science_worlds": "190001-190064 (64)",
+ "technical_world": 190000,
+ "calibration_worlds_used": [],
+ "world_arms": 832
+}
