@@ -1,0 +1,149 @@
+{
+ "causal_branch_audit": {
+  "counts_over_receipts": {
+   "N_new_fact_ledger_matches_intended": 832,
+   "N_new_fact_new_fact_writes_zero": 832,
+   "N_new_rel_ledger_matches_intended": 0,
+   "N_new_rel_new_relation_writes_zero": 0,
+   "N_old_fact_ledger_matches_intended": 832,
+   "N_old_fact_old_fact_writes_zero": 832,
+   "N_old_rel_ledger_matches_intended": 0,
+   "N_old_rel_old_relation_writes_zero": 0,
+   "W_ledger_matches_intended": 832,
+   "end_state_W_eq_N_new_rel": 832,
+   "end_state_W_eq_N_old_fact": 0,
+   "end_state_W_eq_N_old_rel": 832
+  },
+  "defect": "common_platform.branch_allows returns branch != f'N_{stage}_{domain}'; for the relation domain this is 'N_old_relation'/'N_new_relation', which never equals the branch names 'N_old_rel'/'N_new_rel'. Relation writes are therefore never disabled: N_old_rel and N_new_rel are write-identical to W, E3 = 0 by construction in every receipt, and the receipt auditor (which derives its expected ledger from the same function) cannot detect it. Fact branches are correct.",
+  "example_ledger_actual": {
+   "N_new_fact": {
+    "new_fact": 0,
+    "new_relation": 144,
+    "old_fact": 768,
+    "old_relation": 288
+   },
+   "N_new_rel": {
+    "new_fact": 768,
+    "new_relation": 144,
+    "old_fact": 768,
+    "old_relation": 288
+   },
+   "N_old_fact": {
+    "new_fact": 768,
+    "new_relation": 144,
+    "old_fact": 0,
+    "old_relation": 288
+   },
+   "N_old_rel": {
+    "new_fact": 768,
+    "new_relation": 144,
+    "old_fact": 768,
+    "old_relation": 288
+   },
+   "W": {
+    "new_fact": 768,
+    "new_relation": 144,
+    "old_fact": 768,
+    "old_relation": 288
+   }
+  },
+  "fact_branches_valid": true,
+  "n_receipts": 832,
+  "platform_branch_allows_as_shipped": {
+   "N_new_fact": {
+    "new_fact": false,
+    "new_relation": true,
+    "old_fact": true,
+    "old_relation": true
+   },
+   "N_new_rel": {
+    "new_fact": true,
+    "new_relation": true,
+    "old_fact": true,
+    "old_relation": true
+   },
+   "N_old_fact": {
+    "new_fact": true,
+    "new_relation": true,
+    "old_fact": false,
+    "old_relation": true
+   },
+   "N_old_rel": {
+    "new_fact": true,
+    "new_relation": true,
+    "old_fact": true,
+    "old_relation": true
+   },
+   "W": {
+    "new_fact": true,
+    "new_relation": true,
+    "old_fact": true,
+    "old_relation": true
+   }
+  },
+  "relation_branches_valid": false,
+  "relation_probe_identity_W_vs_N_old_rel": {
+   "W_bitwise_eq_N_old_rel": 8320,
+   "relation_probe_blocks": 8320
+  }
+ },
+ "exposure_countermodels": {
+  "countermodel_exact_key_heldout": [
+   0.5
+  ],
+  "countermodel_frequency_heldout": [
+   0.5
+  ],
+  "countermodel_position_heldout": [
+   0.5
+  ],
+  "heldout_never_in_teaching_bytes_all_worlds": true,
+  "heldout_option_balance_all_worlds": true,
+  "old_fact_exact_key_table": 1.0,
+  "old_fact_exposures_per_key": [
+   12
+  ],
+  "old_fact_modal_label_accuracy_mean": 0.25,
+  "old_fact_modal_label_accuracy_range": [
+   0.25,
+   0.25
+  ],
+  "records_per_world": [
+   600
+  ],
+  "worlds": 64
+ },
+ "independent_rederivation": {
+  "per_world_E1_E3_mismatches": [],
+  "receipt_sha256_mismatches": []
+ },
+ "lock_digest": "7ba1b8e65a17012d54249a58988e5fd4f0e3117192e171c87c99d4dc518cfd9e",
+ "receipt_audit_by_analyze_b": "all 832 receipts passed audit_topo.audit_receipt (incl. S W-branch chain rebuild, Srand yoke) before FINAL_METRICS was written",
+ "roster": {
+  "committed": 832,
+  "expected": 832
+ },
+ "run_status": {
+  "committed": 832,
+  "elapsed_driver_s": 28884.829071044922,
+  "failure": null,
+  "lock_digest": "7ba1b8e65a17012d54249a58988e5fd4f0e3117192e171c87c99d4dc518cfd9e",
+  "roster": 832,
+  "state": "complete"
+ },
+ "schema": "MINIFLY-B-FINAL-AUDIT-v1",
+ "tamper_rejection": {
+  "answer_flip": "rejected: correctness flag",
+  "branch_label": "rejected: probe roster/target field branch",
+  "dropped_probe": "rejected: probe roster count",
+  "world_id": "rejected: world/arm identity",
+  "write_ledger": "rejected: branch write ledger",
+  "wrong_graph": "rejected: four-store canonical birth",
+  "wrong_source_hash": "rejected: source hash src/analyze_b.py"
+ },
+ "verdict": {
+  "E1_contrasts": "VALID (N_old_fact withholds all 768 old-fact writes in every receipt)",
+  "E3_contrasts": "INVALID_INSTRUMENT: N_old_rel performs all 288 old-relation writes in every receipt; E3 is identically 0 and carries no information about any mechanism",
+  "integrity_pass_receipts": true
+ }
+}
