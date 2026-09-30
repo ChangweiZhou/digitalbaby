@@ -18,7 +18,7 @@ import paths  # noqa: E402
 
 ROOT = paths.ROOT
 LOCK = ROOT / "SOURCE_LOCK.json"
-LOCKED_TOP = ("SPEC_LOCK.md", "ARM_ROSTER.json", "RESOURCE_BUDGET.json", "results/calibration/R_CALIBRATION.json",
+LOCKED_TOP = ("SPEC_LOCK.md", "LAUNCH_CONTRACT.md", "ARM_ROSTER.json", "RESOURCE_BUDGET.json", "results/calibration/R_CALIBRATION.json",
               "input/MINIFLY_MUSE_A_V3_CAUSAL_GATE_20260929.zip", "input/CLAUDE_PACKAGE_A_MUSE_INTAKE_20260929.zip")
 TECH_FINAL = "results/technical_final"
 
@@ -50,7 +50,7 @@ def _files() -> dict:
     out = {**package_files(), **code_files()}
     for name in LOCKED_TOP:
         out[name] = _sha(ROOT / name)
-    for p in sorted((ROOT / TECH_FINAL).rglob("*.json.gz")):
+    for p in sorted((ROOT / TECH_FINAL).rglob("*.json")) + sorted((ROOT / TECH_FINAL).rglob("*.json.gz")):
         out[p.relative_to(ROOT).as_posix()] = _sha(p)
     return out
 
@@ -68,14 +68,37 @@ def _digest(body: dict) -> str:
     return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def preconditions() -> dict:
+    """Refuse to lock unless the budget is explicitly approved and final qualification + launch qualification pass."""
+    budget = json.loads((ROOT / "RESOURCE_BUDGET.json").read_text())
+    ap = budget.get("approval", {})
+    if ap.get("approved") is not True or not ap.get("approved_by") or not ap.get("date"):
+        raise AssertionError("RESOURCE_BUDGET.json lacks an explicit approval (approved/approved_by/date)")
+    audit = json.loads((ROOT / TECH_FINAL / "TECHNICAL_AUDIT.json").read_text())
+    if audit.get("pass") is not True:
+        raise AssertionError("final technical audit did not pass")
+    for arm, h in audit["receipt_sha256"].items():
+        if _sha(ROOT / TECH_FINAL / arm / "190000.json.gz") != h:
+            raise AssertionError(f"final technical receipt changed: {arm}")
+    launch = json.loads((ROOT / TECH_FINAL / "LAUNCH_QUALIFICATION.json").read_text())
+    if launch.get("pass") is not True:
+        raise AssertionError("launch qualification did not pass")
+    now = code_files()
+    changed = sorted(f for f, h in launch["code_sha256"].items() if now.get(f) != h)
+    if changed or set(now) != set(launch["code_sha256"]):
+        raise AssertionError(f"code changed after launch qualification: {changed}")
+    return {"budget_approval": ap, "technical_audit_pass": True, "launch_qualification_pass": True}
+
+
 def create() -> dict:
     if LOCK.exists():
         raise FileExistsError("SOURCE_LOCK.json already exists; it is write-once")
+    pre = preconditions()
     roster = json.loads((ROOT / "ARM_ROSTER.json").read_text())
     body = {"schema": "MINIFLY-A3-CLAUDE-SOURCE-LOCK-v1",
             "package": "MINIFLY_A_V3_CLAUDE (new implementation; not Muse V2)",
             "arms": roster["science_arms"], "worlds": roster["science_worlds"],
-            "family_size_m": 26, "files": _files(), "environment": _env()}
+            "family_size_m": 26, "files": _files(), "environment": _env(), "preconditions": pre}
     body["lock_digest"] = _digest({k: v for k, v in body.items()})
     LOCK.write_text(json.dumps(body, indent=1, sort_keys=True) + "\n")
     return body

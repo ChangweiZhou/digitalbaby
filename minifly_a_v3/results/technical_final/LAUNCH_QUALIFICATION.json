@@ -1,0 +1,86 @@
+{
+ "basis": "launch review CLAUDE_A_V3_LAUNCH_REVIEW_20260930 (commit reviewed d164568)",
+ "changed_files_role": "launch/lock/audit tooling and tests; none is executed inside a learner life",
+ "code_sha256": {
+  "src/analyze_a.py": "809d9f3ddf6efdd0df691fdf37501c8a1f5ffcc581f1e2448ac1bcbebcc833e2",
+  "src/audit_a.py": "80bb505c42acb210b903c183e05bf9a06ff444e569ac9466d1f38a2e1c2a11ae",
+  "src/audit_replay.py": "5e63352cc4935b1c8ab929af3f424ca2f0d4aca69eaee85067fa1e6f76d5d3f9",
+  "src/calibrate_r.py": "fade525bcca56515b278f8ac15c03991cc753a74edac942260021592069ec5eb",
+  "src/drive_science.py": "0b06b32ca2c5868776bb81899b2cb24d8dc4b2dc76ac3c1f45356e74c9e61abb",
+  "src/drive_technical.py": "77591fd6406378a005bf807beeea8df23e90eeda014a3d3f527ce167187765c5",
+  "src/launch_qualification.py": "359c2ee65d2b5f4f36b7d1b547bf98aa014a9ecb3c985e195fd8c40cf93211f2",
+  "src/lock.py": "d0e28d011a11beb41471f88774f4df93a5199f9b1695bf9374dd754cec2f64ff",
+  "src/paths.py": "6ac8673a0436a25de3373f076d207bf15cdabcf8de30dc574811be4f80557f25",
+  "src/runner.py": "3a30221eb031c6d218717e7eadbee2e7a38dd302d91d6ff40a59bcd4a107e323",
+  "src/stores.py": "c7947354db408ac22bbd6ccc8aa646b9513814ac84fc4342e5dd959515b0eca4",
+  "src/systems.py": "47d2f891ebd3e9766a7cd2c467c6ed926696b4af8b088fb641cc8868de3f662e",
+  "src/technical_audit.py": "5c332d7cd32cbfd71116452867b29c2a088f0d280186b791c380403816668726",
+  "tests/test_launcher.py": "b2129f13220687834a6b1dcd922dc861627d0e1e33ad56427b9dce44040f309f",
+  "tests/test_tamper.py": "64bd1cdda6668cbfbf972cafafb3dadb732fd0e627b7f2eca977186f503cacf3",
+  "tests/test_units.py": "99563321dfaf864d613e1b99aacc23267e957db763475566a87aec7a5c3ee9a4"
+ },
+ "files_changed_since_final_technical_lives": [
+  "src/drive_science.py",
+  "src/launch_qualification.py",
+  "src/lock.py",
+  "src/technical_audit.py",
+  "tests/test_launcher.py"
+ ],
+ "final_technical_audit_pass": true,
+ "launch_contract_note": "SPEC_LOCK.md is part of the learner closure and is unchanged; its 'batches of 16' and restart wording are superseded by LAUNCH_CONTRACT.md and src/drive_science.py (persist every 4 validated receipts; durable ledger; authorization rules).",
+ "launcher_acceptance_tests": {
+  "cmd": "/tmp/venv_a/bin/python tests/test_launcher.py",
+  "returncode": 0,
+  "tail": [
+   "PASS test_wrong_lock_and_corrupt_receipts_rejected",
+   "PASS test_yoked_arm_without_valid_dependency_rejected",
+   "11 launcher tests passed"
+  ]
+ },
+ "learner_executed_closure_unchanged": {
+  "ARM_ROSTER.json": true,
+  "SPEC_LOCK.md": true,
+  "package/MANIFEST.json": true,
+  "results/calibration/R_CALIBRATION.json": true,
+  "src/calibrate_r.py": true,
+  "src/paths.py": true,
+  "src/runner.py": true,
+  "src/stores.py": true,
+  "src/systems.py": true
+ },
+ "package_files_match_manifest": true,
+ "pass": true,
+ "real_validator_checks": {
+  "accept_P2": true,
+  "accept_R1": true,
+  "accept_R1_rand": true,
+  "accept_Z2_rand": true,
+  "reject_P2_wrong_kind": true,
+  "reject_P2_wrong_lock": true,
+  "reject_P2_wrong_source": true,
+  "reject_P2_wrong_world": true,
+  "reject_R1_rand_wrong_kind": true,
+  "reject_R1_rand_wrong_lock": true,
+  "reject_R1_rand_wrong_source": true,
+  "reject_R1_rand_wrong_world": true,
+  "reject_R1_wrong_kind": true,
+  "reject_R1_wrong_lock": true,
+  "reject_R1_wrong_source": true,
+  "reject_R1_wrong_world": true,
+  "reject_Z2_rand_dose_vs_paired_Z2": true,
+  "reject_Z2_rand_wrong_kind": true,
+  "reject_Z2_rand_wrong_lock": true,
+  "reject_Z2_rand_wrong_source": true,
+  "reject_Z2_rand_wrong_world": true
+ },
+ "schema": "MINIFLY-A3-CLAUDE-LAUNCH-QUALIFICATION-v1",
+ "unit_tests": {
+  "cmd": "/tmp/venv_a/bin/python tests/test_units.py",
+  "returncode": 0,
+  "tail": [
+   "PASS test_z0_resource_equals_native_and_z2_gate_formula",
+   "PASS test_z2_rand_yoked_dose_and_unrepresentable_failure",
+   "8 tests passed"
+  ]
+ }
+}
