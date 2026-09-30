@@ -1,0 +1,33 @@
+{
+ "schema": "MINIFLY-A3-CLAUDE-RESOURCE-BUDGET-v1",
+ "status": "PROPOSED — requires explicit approval before SOURCE_LOCK.json is written and before any science",
+ "approval": {"approved": false, "approved_by": null, "date": null},
+ "measured_final_technical_world_190000": {
+  "life_s": {"R arms": [901.7, 957.6], "Z arms": [498.9, 521.9], "P arms": [561.4, 574.0]},
+  "peak_rss_bytes_max": 267874304,
+  "receipt_bytes_range": [337443, 849410],
+  "concurrency": 4,
+  "host": "4 logical CPUs, x86_64, Python 3.11.15, NumPy 2.2.6, SciPy 1.14.1, Numba 0.61.2, pandas 2.2.3"
+ },
+ "estimate_832_world_arms": {
+  "core_hours": 166.6,
+  "wall_hours_at_4_workers": 41.7,
+  "planning_allowance_wall_hours": 75,
+  "planning_allowance_basis": "extrapolated from Package B (science lives ~1.8x its technical measurement); not a Package A measurement or guarantee",
+  "science_receipt_bytes": 410000000
+ },
+ "hard_budget": {
+  "workers": 4,
+  "active_wall_hours": 90,
+  "core_hours": 360,
+  "per_world_arm_life_s_max": 2400,
+  "peak_rss_bytes_per_worker": 800000000,
+  "results_disk_bytes": 1000000000
+ },
+ "stop_resume_policy": [
+  "Any hard-budget breach or failed world-arm stops scheduling; running jobs finish; RUN_STATUS.json records the actual error and committed count.",
+  "Resume only uncommitted world-arms, under the same verified SOURCE_LOCK; never rerun, overwrite or replace a committed receipt; no replacement worlds or reduced roster.",
+  "A scientific integrity failure (audit, lock, birth, dose-yoke ZDoseNotRepresentable) is reported, not retried automatically.",
+  "Host constraint: the cloud VM computes only while a tool call is executing and the container is reclaimed when idle, so execution needs continuous blocking waits across sessions; receipts are pushed every 16."
+ ]
+}

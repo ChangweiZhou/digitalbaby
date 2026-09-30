@@ -157,34 +157,49 @@ class Z2Learner(z1_model.Z1Learner):
         return record, (effective, info)
 
 
-def _z2rand_gate(g, slow, u, side, key: str):
-    """Permute g within kc_side x sign(u) buckets, then match the bucket's gated slow L1 exactly."""
-    out = g.copy()
-    buckets = {}
+class ZDoseNotRepresentable(AssertionError):
+    pass
+
+
+def z_buckets(slow, u, side):
+    """kc_side x sign(u) buckets over coordinates with a nonzero native slow share."""
+    out = {}
     for s in (0, 1):
         for sign in (-1, 1):
-            ids = np.flatnonzero((side == s) & (np.sign(u) == sign) & (slow != 0))
-            name = f"{s}:{sign:+d}"
-            if len(ids) == 0:
-                buckets[name] = [0, 0.0, 0.0]
-                continue
-            a = np.abs(slow[ids])
-            target = float(a @ g[ids])
-            seed = int.from_bytes(hashlib.sha256(f"{key}|{name}".encode()).digest()[:8], "big")
-            pg = g[ids][np.random.default_rng(seed).permutation(len(ids))]
-            got = float(a @ pg)
-            if got > target:
-                pg = pg * (target / got)
-            elif got < target:
-                room = float(a @ (1.0 - pg))
-                pg = pg + (target - got) / room * (1.0 - pg)
-            pg = np.clip(pg, 0.0, 1.0)
-            actual = float(a @ pg)
-            if abs(actual - target) > 1e-10 * max(1.0, target):
-                raise AssertionError("Z2_rand missed bucket L1")
-            out[ids] = pg
-            buckets[name] = [int(len(ids)), target, actual]
-    return out, buckets
+            out[f"{s}:{sign:+d}"] = np.flatnonzero((side == s) & (np.sign(u) == sign) & (slow != 0))
+    return out
+
+
+def _z2rand_gate(g, slow, u, side, key: str, ref: dict | None):
+    """Yoked dose diagnostic: permute this store's own Z2 gate within each bucket (SHA256 seed), then match the
+    PAIRED Z2 arm's realised gated slow L1 for the same world/branch/record/store/bucket exactly. A reference
+    target outside this store's capacity is a qualification failure, never clipped."""
+    if ref is None:
+        raise ZDoseNotRepresentable("Z2_rand has no paired Z2 reference for this event")
+    out = g.copy()
+    for name, ids in z_buckets(slow, u, side).items():
+        target = float(ref.get(name, 0.0))
+        if len(ids) == 0:
+            if target > 0.0:
+                raise ZDoseNotRepresentable(f"Z2 reference dose {target} in empty bucket {name}")
+            continue
+        a = np.abs(slow[ids])
+        capacity = float(a.sum())
+        if target > capacity * (1 + 1e-12):
+            raise ZDoseNotRepresentable(f"Z2 reference dose {target} exceeds capacity {capacity} in {name}")
+        seed = int.from_bytes(hashlib.sha256(f"{key}|{name}".encode()).digest()[:8], "big")
+        pg = g[ids][np.random.default_rng(seed).permutation(len(ids))]
+        got = float(a @ pg)
+        if got > target:
+            pg = pg * (target / got)
+        elif got < target:
+            room = float(a @ (1.0 - pg))
+            pg = pg + (target - got) / room * (1.0 - pg)
+        pg = np.clip(pg, 0.0, 1.0)
+        if abs(float(a @ pg) - target) > 1e-10 * max(1.0, target):
+            raise ZDoseNotRepresentable(f"Z2_rand missed the paired dose in {name}")
+        out[ids] = pg
+    return out
 
 
 class ZBrain(_Teach, F151):
@@ -231,20 +246,28 @@ class ZBrain(_Teach, F151):
         self.z_load *= math.exp(-max(0.0, now - self.z_t) / Z_TAU_L)
         self.z_t = now
         load = self.z_load
-        arm, key = self.z_arm, f"A3-Z2RAND-v1|{self.z_world}|{self.z_store}|{self.z_events}"
+        arm = self.z_arm
+
+        ref = getattr(self, "z_ref", None)
+        key = f"A3-Z2RAND-v2|{self.z_world}|{getattr(self, 'z_ctx', None)}|{self.z_store}"
+        side = np.asarray(self.fly.m.kc_side)
 
         def gate_fn(u, native_slow, pre_slow):
             conflict = (u * pre_slow < 0) & self.z_mask
             g = np.where(self.z_mask, (1.0 - load) * (1.0 - conflict), 1.0)
-            info = {"conflicts": int(conflict.sum()), "z_arm": arm}
             if arm == "Z0_resource":
                 eff = np.ones_like(g)
             elif arm == "Z2":
                 eff = g
             else:
-                eff, info["buckets"] = _z2rand_gate(g, native_slow, u, np.asarray(self.fly.m.kc_side), key)
-            info["gate_target_l1"] = float(np.abs(native_slow) @ g)
-            return eff, info
+                eff = _z2rand_gate(g, native_slow, u, side, key, ref)
+            a = np.abs(native_slow)
+            buckets = {name: [int(len(ids)), float(a[ids].sum()), float(a[ids] @ eff[ids])]
+                       for name, ids in z_buckets(native_slow, u, side).items()}
+            target = (float(a.sum()) if arm == "Z0_resource" else float(a @ g) if arm == "Z2"
+                      else float(sum(ref.values())))
+            return eff, {"conflicts": int(conflict.sum()), "z_arm": arm, "gate_target_l1": target,
+                         "buckets": buckets}
 
         record, applied = self.fly.event_gated(dt, self.pending_x, float(r), bool(write), gate_fn)
         if applied is not None:
@@ -304,6 +327,9 @@ class PBrain(_Teach, F151):
         self.pending_p = None
         self._feat_p = None
         self.p_log = []
+        self.p_act = np.zeros(n_kc, dtype=np.int64)
+        self.p_updates = 0
+        self.p_diag = []
 
     def clone(self):
         out = copy.copy(self)
@@ -315,6 +341,8 @@ class PBrain(_Teach, F151):
         out.pending_p = None if self.pending_p is None else self.pending_p.copy()
         out.p_pre, out.p_post = self.p_pre.copy(), self.p_post.copy()
         out.p_log = []
+        out.p_act = self.p_act.copy()
+        out.p_diag = []
         if out.state_digest() != self.state_digest():
             raise AssertionError("P clone mismatch")
         return out
@@ -322,7 +350,7 @@ class PBrain(_Teach, F151):
     def state_digest(self) -> str:
         B = self.fly.m.B
         return hashlib.sha256((F151.state_digest(self) + _sha(B.data) + _sha(self.p_pre) +
-                               _sha(self.p_post) + repr((self.p_t, self.p_arm))).encode()).hexdigest()
+                               _sha(self.p_post) + _sha(self.p_act) + repr((self.p_t, self.p_arm, self.p_updates))).encode()).hexdigest()
 
     def _features(self, t, *, fe=None, fly_m=None):
         out = super()._features(t, fe=fe, fly_m=fly_m)
@@ -366,9 +394,12 @@ class PBrain(_Teach, F151):
         self.p_pre += a
         self.p_post += x
         self.p_t = when
+        self.p_act += (x > 0)
+        self.p_updates += 1
         delta_l1 = float(np.abs(dv).sum())
         if self.p_arm == "P0":
             self.p_log.append((round(delta_l1, 9), 0.0, float(B.data.max()), float(B.data.min())))
+            self._p_diagnostics(B.data)
             return
         w = np.maximum(v + dv, P_FLOOR) * mk
         sums = np.bincount(cols, weights=w, minlength=B.shape[1])
@@ -383,6 +414,33 @@ class PBrain(_Teach, F151):
                 np.shares_memory(self.fly.m.B.indptr, B.indptr)):
             raise AssertionError("P support arrays were copied")
         self.p_log.append((round(delta_l1, 9), round(change, 9), float(w.max()), float(w.min())))
+        self._p_diagnostics(w)
+
+    def _p_diagnostics(self, w: np.ndarray) -> None:
+        """Concentration diagnostics after update 336 (end of old stage) and 600 (end of life)."""
+        if self.p_updates not in (336, 600):
+            return
+        cols = self.p_cols
+        n_kc = len(self.p_budget)
+        deg = np.bincount(cols, minlength=n_kc)
+        v = w / self.p_mean[cols]
+        s1 = np.bincount(cols, weights=w, minlength=n_kc)
+        s2 = np.bincount(cols, weights=w * w, minlength=n_kc)
+        wmax = np.zeros(n_kc)
+        np.maximum.at(wmax, cols, w)
+        multi = deg >= 2
+        pr = s1[multi] ** 2 / s2[multi]
+        eff = pr / deg[multi]
+        act = self.p_act
+        self.p_diag.append({
+            "update": self.p_updates,
+            "edges_rel_below_1e-3": int((v < 1e-3).sum()), "edges_rel_below_1e-6": int((v < 1e-6).sum()),
+            "edges": int(len(w)),
+            "kc_fanin_participation_q05_q50_q95": [float(q) for q in np.quantile(pr, [0.05, 0.5, 0.95])],
+            "kc_effective_fraction_mean": float(eff.mean()),
+            "kc_max_share_above_0.9": int((wmax[multi] / s1[multi] > 0.9).sum()), "kcs_multi_input": int(multi.sum()),
+            "kc_activations_q50_q95_q99_max": [float(q) for q in np.quantile(act, [0.5, 0.95, 0.99])] + [int(act.max())],
+            "kc_active_every_update": int((act == self.p_updates).sum())})
 
 
 def birth_p(arm: str):

@@ -25,18 +25,19 @@ ARMS = ("R0", "R1", "R1_rand", "R0_signed", "R3", "R3_randtarget",
         "Z0_resource", "Z2", "Z2_rand", "P0", "P1", "P2", "P4")
 TECH_WORLD = 190000
 RESULTS = paths.ROOT / "results"
-SOURCE_FILES = ("src/paths.py", "src/stores.py", "src/systems.py", "src/runner.py", "src/calibrate_r.py",
-                "src/audit_a.py", "SPEC_DRAFT.md",
-                "package/portable_birth.py", "package/causal_branch_gate.py",
-                "package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/common_platform.py",
-                "package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/fixture.py",
-                "package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/z1_model.py",
-                "package/REFERENCE_SOURCE/FULL151_VISIBLE_CONTEXT_BRIDGE_20260927/content_model.py",
-                "package/REFERENCE_SOURCE/BYTE_CORE_V9/brain_byte.py")
+SCIENCE_WORLDS = tuple(range(190001, 190065))
+TOP_FILES = ("SPEC_LOCK.md", "ARM_ROSTER.json", "results/calibration/R_CALIBRATION.json")
 
 
 def source_hashes() -> dict:
-    return {f: hashlib.sha256((paths.ROOT / f).read_bytes()).hexdigest() for f in SOURCE_FILES}
+    """Executed closure: all src/ and tests/ modules, the spec, roster, calibration and the scaffold MANIFEST
+    (every package file is checked against that MANIFEST before each life)."""
+    import lock
+    out = lock.code_files()
+    out["package/MANIFEST.json"] = hashlib.sha256((paths.PKG / "MANIFEST.json").read_bytes()).hexdigest()
+    for f in TOP_FILES:
+        out[f] = hashlib.sha256((paths.ROOT / f).read_bytes()).hexdigest()
+    return out
 
 
 def receipt_path(kind: str, arm: str, world: int) -> Path:
@@ -76,13 +77,16 @@ def construct(arm: str, world: int, *, kind: str = "technical"):
                 births.append({"bank": bank, "store": j, **rc})
         gates = None
         if arm == "R1_rand":
-            r1 = load_receipt(receipt_path(kind, "R1", world))
+            r1path = receipt_path(kind, "R1", world)
+            r1 = load_receipt(r1path)
             doc = make_world(world)
             gates = {b: systems.r1_random_schedule(doc, b, rows) for b, rows in r1["mechanism_events"].items()}
         system = systems.RSystem(banks["shared"], banks["private"], arm,
                                  scales=(cal["scales"]["shared"], cal["scales"]["private"]),
                                  theta=cal["theta"], rand_gates=gates)
         params = {"scales": cal["scales"], "theta": cal["theta"], "window": systems.R_WINDOW,
+                  "paired_R1_receipt_sha256": (hashlib.sha256(r1path.read_bytes()).hexdigest()
+                                               if arm == "R1_rand" else None),
                   "calibration_sha256": hashlib.sha256(
                       (RESULTS / "calibration" / "R_CALIBRATION.json").read_bytes()).hexdigest()}
     elif arm in stores.Z_ARMS:
@@ -91,8 +95,16 @@ def construct(arm: str, world: int, *, kind: str = "technical"):
             model, rc = stores.birth_z(arm, world, j)
             models.append(model)
             births.append({"bank": "native", "store": j, **rc})
-        system = systems.LedgerFourStore(models)
-        params = {"tau_L": stores.Z_TAU_L, "kappa": stores.Z_KAPPA, "writable_coordinates": int(len(models[0].z_indices))}
+        table, zsha = None, None
+        if arm == "Z2_rand":
+            zpath = receipt_path(kind, "Z2", world)
+            z2 = load_receipt(zpath)
+            zsha = hashlib.sha256(zpath.read_bytes()).hexdigest()
+            table = {(b, row[1], row[2]): {name: v[2] for name, v in row[7].items()}
+                     for b, rows in z2["mechanism_events"].items() for row in rows if row[0] == "Z"}
+        system = systems.LedgerFourStore(models, z_ref_table=table)
+        params = {"tau_L": stores.Z_TAU_L, "kappa": stores.Z_KAPPA, "writable_coordinates": int(len(models[0].z_indices)),
+                  "paired_Z2_receipt_sha256": zsha}
     elif arm in stores.P_ARMS:
         models = []
         for j in range(4):
@@ -113,13 +125,25 @@ def construct(arm: str, world: int, *, kind: str = "technical"):
 
 def run(arm: str, world: int = TECH_WORLD, *, kind: str = "technical") -> dict:
     import portable_birth as pb
+    import lock
+    if kind == "science":
+        if world not in SCIENCE_WORLDS:
+            raise ValueError("science receipts only for worlds 190001-190064")
+        lk = lock.verify_lock()
+    elif kind.startswith("technical"):
+        if world != TECH_WORLD:
+            raise ValueError("technical receipts only for world 190000")
+        lk = None
+        lock.package_files()            # every scaffold file must match its MANIFEST
+    else:
+        raise ValueError(kind)
     dest = receipt_path(kind, arm, world)
     if dest.exists():
         raise FileExistsError(f"receipt exists: {dest}")
     t0 = time.monotonic()
     system, births, params = construct(arm, world, kind=kind)
     t1 = time.monotonic()
-    doc = run_fourstore_life(world, system, technical=(kind == "technical"))
+    doc = run_fourstore_life(world, system, technical=kind.startswith("technical"))
     t2 = time.monotonic()
     doc["schema"] = "MINIFLY-A3-CLAUDE-RECEIPT-v1"
     doc["package"] = "MINIFLY_A_V3_CLAUDE (new implementation; not Muse V2)"
@@ -128,6 +152,8 @@ def run(arm: str, world: int = TECH_WORLD, *, kind: str = "technical") -> dict:
     doc["params"] = params
     doc["canonical_B_sha256"] = pb.EXPECTED_B
     doc["source_sha256"] = source_hashes()
+    doc["lock_digest"] = None if lk is None else lk["lock_digest"]
+    doc["kind"] = kind
     doc["resources"] = {"construct_s": t1 - t0, "life_s": t2 - t1,
                         "peak_rss_bytes": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024}
     size = write_once(dest, doc)
@@ -136,4 +162,4 @@ def run(arm: str, world: int = TECH_WORLD, *, kind: str = "technical") -> dict:
 
 
 if __name__ == "__main__":
-    print(json.dumps(run(sys.argv[1])), flush=True)
+    print(json.dumps(run(sys.argv[1], kind=sys.argv[2] if len(sys.argv) > 2 else "technical_final")), flush=True)

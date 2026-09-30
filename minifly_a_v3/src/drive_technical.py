@@ -1,4 +1,5 @@
-"""Run every Package A V3-CLAUDE technical arm on world 190000 (4 workers; R1_rand after R1). No science."""
+"""Run every Package A V3-CLAUDE technical arm on world 190000 (4 workers; R1_rand after R1, Z2_rand after Z2).
+No science."""
 from __future__ import annotations
 
 import json
@@ -12,34 +13,39 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import runner  # noqa: E402
 
 
+KIND = "technical_final"
+
+
 def job(arm):
     try:
-        return {"ok": True, **runner.run(arm)}
+        return {"ok": True, **runner.run(arm, kind=KIND)}
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "arm": arm, "error": repr(exc), "traceback": traceback.format_exc()[-3000:]}
 
 
 def main():
-    todo = [a for a in runner.ARMS if a != "R1_rand" and not runner.receipt_path("technical", a, 190000).exists()]
-    order = ["R1"] + [a for a in todo if a != "R1"] if "R1" in todo else todo
-    pending_rand = not runner.receipt_path("technical", "R1_rand", 190000).exists()
+    deps = {"R1_rand": "R1", "Z2_rand": "Z2"}
+    have = lambda a: runner.receipt_path(KIND, a, 190000).exists()  # noqa: E731
+    queue = [a for a in ("R1", "Z2") + tuple(x for x in runner.ARMS if x not in ("R1", "Z2")) if not have(a)]
+    failed = False
     with ProcessPoolExecutor(4) as ex:
-        running = {ex.submit(job, a): a for a in order[:4]}
-        queue = order[4:]
-        while running:
+        running = {}
+        while queue or running:
+            for a in list(queue):
+                if len(running) >= 4 or failed:
+                    break
+                if a in deps and not have(deps[a]):
+                    continue
+                queue.remove(a)
+                running[ex.submit(job, a)] = a
+            if not running:
+                break
             done, _ = wait(running, return_when=FIRST_COMPLETED)
             for f in done:
-                arm = running.pop(f)
+                running.pop(f)
                 res = f.result()
+                failed = failed or not res["ok"]
                 print(json.dumps(res), flush=True)
-                if pending_rand and runner.receipt_path("technical", "R1", 190000).exists():
-                    queue.insert(0, "R1_rand")
-                    pending_rand = False
-                if queue:
-                    a = queue.pop(0)
-                    running[ex.submit(job, a)] = a
-    if pending_rand and runner.receipt_path("technical", "R1", 190000).exists():
-        print(json.dumps(job("R1_rand")), flush=True)
 
 
 if __name__ == "__main__":

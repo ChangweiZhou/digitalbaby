@@ -33,12 +33,13 @@ def _check_teacher(answer: int, domain: str) -> None:
 class LedgerFourStore(FourStore):
     """Platform FourStore semantics; every store teach is logged with the flag the native event received."""
 
-    def __init__(self, stores, bank: int = BANK_NATIVE):
+    def __init__(self, stores, bank: int = BANK_NATIVE, z_ref_table: dict | None = None):
         super().__init__(stores)
         self.bank = bank
+        self.z_ref_table = z_ref_table     # Z2_rand only: paired Z2 per-bucket dose, read-only
 
     def clone(self):
-        out = type(self)([clone_model(m) for m in self.stores], self.bank)
+        out = type(self)([clone_model(m) for m in self.stores], self.bank, self.z_ref_table)
         out.mechanism_events = list(self.mechanism_events)
         out.context = self.context
         return out
@@ -47,11 +48,14 @@ class LedgerFourStore(FourStore):
         _check_teacher(answer, domain)
         if self.context is None or self.context[4] != domain:
             raise AssertionError("record context missing or domain changed")
-        index = self.context[2]
+        branch, index = self.context[1], self.context[2]
         for m in self.stores:
             m.byte(answer, t, learn=False)
         for j, m in enumerate(self.stores):
             did = bool(write and j < _active(domain))
+            if getattr(m, "z_arm", None) is not None:
+                m.z_ctx = f"{branch}|{index}"
+                m.z_ref = None if self.z_ref_table is None else self.z_ref_table.get((branch, index, j))
             applied = m.teach_logged(int(CHANNELS[j] != answer), t, write=did)
             self.mechanism_events.append(["w", index, self.bank, j, int(did), round(applied, 12)])
             self._after_store(index, j, m)
@@ -67,6 +71,11 @@ class LedgerFourStore(FourStore):
         if log:
             dl1, wl1, wmax, wmin = log.pop()
             self.mechanism_events.append(["P", index, j, dl1, wl1, wmax, wmin])
+        diag = getattr(m, "p_diag", None)
+        if diag:
+            d = diag.pop()
+            if j == 0:
+                self.mechanism_events.append(["PD", index, j, d])
 
 
 def _jaccard_novelty(x: np.ndarray, buffer: list) -> float:

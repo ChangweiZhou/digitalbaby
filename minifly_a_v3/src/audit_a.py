@@ -77,7 +77,7 @@ def r1_rand_gates(fixture, branch, r1_rows):
 
 
 def audit_receipt(r: dict, *, r1_receipt: dict | None = None, theta: float | None = None,
-                  scales: tuple | None = None) -> dict:
+                  scales: tuple | None = None, z2_receipt: dict | None = None) -> dict:
     arm, world = r.get("arm"), r.get("world")
     need(r.get("schema") == "MINIFLY-A3-CLAUDE-RECEIPT-v1", "schema")
     need(arm in R_ARMS + Z_ARMS + P_ARMS and type(world) is int, "arm/world identity")
@@ -181,18 +181,32 @@ def audit_receipt(r: dict, *, r1_receipt: dict | None = None, theta: float | Non
             zrows = [row for row in rows if row[0] == "Z"]
             permitted = sum(1 for (i, _, j), row in ledger.items() if row[4] == 1)
             need(0 < len(zrows) <= permitted, f"Z event rows {b}")
+            zkeys = {(z[1], z[2]) for z in zrows}
+            need(len(zkeys) == len(zrows), f"duplicate Z rows {b}")
+            ref = None
+            if arm == "Z2_rand":
+                # EXTERNAL reference: the paired Z2 receipt's realised per-bucket dose, same world/branch/record/store
+                need(z2_receipt is not None and z2_receipt.get("arm") == "Z2" and z2_receipt["world"] == world,
+                     "Z2_rand needs its paired Z2 receipt")
+                ref = {(z[1], z[2]): z for z in z2_receipt["mechanism_events"][b] if z[0] == "Z"}
+                need(set(ref) == zkeys, f"Z2_rand event set differs from paired Z2 in {b}")
             for z in zrows:
                 _, i, j, conflicts, native, gated, target, buckets = z
-                need(0 <= gated <= native * (1 + 1e-12) + 1e-15 and ledger[(i, 0, j)][4] == 1, f"Z gate bounds {b}/{i}/{j}")
+                tol = 1e-9 * max(1.0, native)
+                need(ledger[(i, 0, j)][4] == 1 and 0 <= gated <= native * (1 + 1e-12) + 1e-15, f"Z gate bounds {b}/{i}/{j}")
+                need(isinstance(buckets, dict) and set(buckets) == {"0:-1", "0:+1", "1:-1", "1:+1"} and
+                     all(0 <= v[2] <= v[1] * (1 + 1e-12) + 1e-15 for v in buckets.values()) and
+                     abs(sum(v[1] for v in buckets.values()) - native) <= tol and
+                     abs(sum(v[2] for v in buckets.values()) - gated) <= tol, f"Z bucket accounting {b}/{i}/{j}")
                 if arm == "Z0_resource":
                     need(abs(gated - native) <= 1e-12 * max(1.0, native), f"Z0 changed the split {b}/{i}/{j}")
                 elif arm == "Z2":
-                    need(abs(gated - target) <= 1e-9 * max(1.0, native), f"Z2 gate L1 {b}/{i}/{j}")
+                    need(abs(gated - target) <= tol, f"Z2 gate L1 {b}/{i}/{j}")
                 else:
-                    need(buckets is not None and all(abs(v[1] - v[2]) <= 1e-9 * max(1.0, v[1])
-                                                     for v in buckets.values()) and
-                         abs(sum(v[2] for v in buckets.values()) - target) <= 1e-9 * max(1.0, native) and
-                         abs(gated - target) <= 1e-9 * max(1.0, native), f"Z2_rand dose match {b}/{i}/{j}")
+                    zb = ref[(i, j)][7]
+                    need(all(abs(buckets[k][2] - zb[k][2]) <= 1e-9 * max(1.0, zb[k][2]) for k in zb) and
+                         abs(target - sum(v[2] for v in zb.values())) <= tol,
+                         f"Z2_rand dose differs from paired Z2 {b}/{i}/{j}")
         if arm in P_ARMS:
             prow = [row[1:] for row in rows if row[0] == "P"]
             need(len(prow) == 600 * 4, f"P rows {b}")

@@ -19,7 +19,13 @@ Its seven-candidate `CONTRACT.json` is historical input, not authorization to ru
 3. All Muse V2 receipts (technical and any science), logs and current status / stop record.
 4. The P3 technical-failure receipt and the frozen roster-amendment record.
 
-## Provisional Package A roster (not locked)
+## Package A roster
+
+Adopted for the new version per the pre-lock review (`input/CLAUDE_A_V3_PRELOCK_FEEDBACK_20260929.zip`, sha256 `f0379781…`):
+Muse's files are **not** a prerequisite for this new implementation; their absence stays recorded above, and no
+Muse audit or resume is claimed. See `ARM_ROSTER.json`.
+
+### Earlier provisional wording (superseded)
 Candidates R1, R3, Z2, P1, P2, P4 with their declared controls (R0, R0_signed, Z0_resource, P0) and diagnostics
 (R1_rand, R3_randtarget, Z2_rand), pending the amendment/technical records above. P3 stays visible as
 technically unqualified, with no science comparison and no replacement; `P3_shuffle` unrun. The shared family

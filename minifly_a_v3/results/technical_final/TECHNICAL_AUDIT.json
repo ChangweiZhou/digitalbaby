@@ -1,0 +1,941 @@
+{
+ "all_tamper_rejected": true,
+ "estimate_64_worlds": {
+  "caveat": "technical lives ran one arm per worker; Package B's science lives ran ~1.8x slower than its technical measurement at the same concurrency",
+  "core_hours_total": 166.6,
+  "per_arm_hours": {
+   "P0": 10.0,
+   "P1": 10.22,
+   "P2": 10.22,
+   "P4": 10.22,
+   "R0": 16.44,
+   "R0_signed": 16.67,
+   "R1": 17.07,
+   "R1_rand": 16.07,
+   "R3": 16.24,
+   "R3_randtarget": 16.35,
+   "Z0_resource": 8.89,
+   "Z2": 9.3,
+   "Z2_rand": 8.92
+  },
+  "wall_hours_at_4_workers": 41.7
+ },
+ "executed_closure": [
+  "src/paths.py",
+  "src/stores.py",
+  "src/systems.py",
+  "src/runner.py",
+  "src/lock.py",
+  "src/calibrate_r.py",
+  "src/drive_technical.py",
+  "src/drive_science.py",
+  "SPEC_LOCK.md",
+  "ARM_ROSTER.json",
+  "results/calibration/R_CALIBRATION.json",
+  "package/MANIFEST.json"
+ ],
+ "executed_closure_matches_current_tree": true,
+ "family": "m=26 retained program-wide; P3's two comparisons unavailable",
+ "host": {
+  "logical_cpus": 4,
+  "machine": "x86_64",
+  "processor": "x86_64",
+  "python": "3.11.15"
+ },
+ "independent_audit": {
+  "P0": {
+   "arm": "P0",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  },
+  "P1": {
+   "arm": "P1",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  },
+  "P2": {
+   "arm": "P2",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  },
+  "P4": {
+   "arm": "P4",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  },
+  "R0": {
+   "arm": "R0",
+   "ledger_rows": 24000,
+   "pass": true,
+   "world": 190000
+  },
+  "R0_signed": {
+   "arm": "R0_signed",
+   "ledger_rows": 24000,
+   "pass": true,
+   "world": 190000
+  },
+  "R1": {
+   "arm": "R1",
+   "ledger_rows": 24000,
+   "pass": true,
+   "world": 190000
+  },
+  "R1_rand": {
+   "arm": "R1_rand",
+   "ledger_rows": 24000,
+   "pass": true,
+   "world": 190000
+  },
+  "R3": {
+   "arm": "R3",
+   "ledger_rows": 24000,
+   "pass": true,
+   "world": 190000
+  },
+  "R3_randtarget": {
+   "arm": "R3_randtarget",
+   "ledger_rows": 24000,
+   "pass": true,
+   "world": 190000
+  },
+  "Z0_resource": {
+   "arm": "Z0_resource",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  },
+  "Z2": {
+   "arm": "Z2",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  },
+  "Z2_rand": {
+   "arm": "Z2_rand",
+   "ledger_rows": 12000,
+   "pass": true,
+   "world": 190000
+  }
+ },
+ "independent_replay": {
+  "P0": {
+   "arm": "P0",
+   "branch": "W",
+   "p_updates_checked": 600,
+   "pass": true,
+   "pd_checkpoints_checked": 2,
+   "store": 0
+  },
+  "P1": {
+   "arm": "P1",
+   "branch": "W",
+   "p_updates_checked": 600,
+   "pass": true,
+   "pd_checkpoints_checked": 2,
+   "store": 0
+  },
+  "P2": {
+   "arm": "P2",
+   "branch": "W",
+   "p_updates_checked": 600,
+   "pass": true,
+   "pd_checkpoints_checked": 2,
+   "store": 0
+  },
+  "P4": {
+   "arm": "P4",
+   "branch": "W",
+   "p_updates_checked": 600,
+   "pass": true,
+   "pd_checkpoints_checked": 2,
+   "store": 0
+  },
+  "R0": {
+   "arm": "R0",
+   "novelty_checked": 600,
+   "pass": true
+  },
+  "R0_signed": {
+   "arm": "R0_signed",
+   "novelty_checked": 600,
+   "pass": true,
+   "records_checked": 600
+  },
+  "R1": {
+   "arm": "R1",
+   "novelty_checked": 600,
+   "pass": true
+  },
+  "R1_rand": {
+   "arm": "R1_rand",
+   "novelty_checked": 600,
+   "pass": true
+  },
+  "R3": {
+   "arm": "R3",
+   "novelty_checked": 600,
+   "pass": true,
+   "records_checked": 600
+  },
+  "R3_randtarget": {
+   "arm": "R3_randtarget",
+   "novelty_checked": 600,
+   "pass": true,
+   "records_checked": 600
+  },
+  "Z0_resource": {
+   "arm": "Z0_resource",
+   "branch": "W",
+   "pass": true,
+   "store": 0,
+   "z_events_checked": 600
+  },
+  "Z2": {
+   "arm": "Z2",
+   "branch": "W",
+   "pass": true,
+   "store": 0,
+   "z_events_checked": 600
+  },
+  "Z2_rand": {
+   "arm": "Z2_rand",
+   "branch": "W",
+   "pass": true,
+   "store": 0,
+   "z_events_checked": 600
+  }
+ },
+ "mechanism_diagnostics_W_branch": {
+  "P0": {
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "installed_weight_change_L1_total": 0.0,
+   "pre_norm_delta_L1_total": 28361.223546,
+   "updates_per_store": 600,
+   "weight_max_end": 1.2877356408169267,
+   "weight_min_end": 0.005370290980208936
+  },
+  "P1": {
+   "bank0_alpha_L1_W": 96412.576554,
+   "bank0_writes_W": 1968,
+   "installed_weight_change_L1_total": 1661.207192,
+   "pre_norm_delta_L1_total": 29284.681283,
+   "updates_per_store": 600,
+   "weight_max_end": 1.2877356408169267,
+   "weight_min_end": 1.6289761881677596e-08
+  },
+  "P2": {
+   "bank0_alpha_L1_W": 95790.653985,
+   "bank0_writes_W": 1968,
+   "installed_weight_change_L1_total": 1715.84611,
+   "pre_norm_delta_L1_total": 72953.381004,
+   "updates_per_store": 600,
+   "weight_max_end": 1.2877356408169267,
+   "weight_min_end": 6.82316386630768e-09
+  },
+  "P4": {
+   "bank0_alpha_L1_W": 103562.146729,
+   "bank0_writes_W": 1968,
+   "installed_weight_change_L1_total": 5439.18479,
+   "pre_norm_delta_L1_total": 24225.331647,
+   "updates_per_store": 600,
+   "weight_max_end": 1.2877356408169267,
+   "weight_min_end": 1.4265081315209806e-10
+  },
+  "R0": {
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "bank1_alpha_L1_W": 69018.74966,
+   "bank1_writes_W": 1968,
+   "novelty_median": 0.793442622951,
+   "private_gate_rate_permitted_W": 1.0
+  },
+  "R0_signed": {
+   "abs_s_mean": 0.6951219512195121,
+   "abs_s_zero_count": 600,
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "bank1_alpha_L1_W": 69018.74966,
+   "bank1_writes_W": 1968,
+   "novelty_median": 0.793442622951,
+   "private_gate_rate_permitted_W": 1.0,
+   "signed_b": [
+    1.0
+   ]
+  },
+  "R1": {
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "bank1_alpha_L1_W": 29386.358863,
+   "bank1_writes_W": 820,
+   "novelty_median": 0.793442622951,
+   "private_gate_rate_permitted_W": 0.41833333333333333
+  },
+  "R1_rand": {
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "bank1_alpha_L1_W": 29393.664732,
+   "bank1_writes_W": 820,
+   "novelty_median": 0.793442622951,
+   "private_gate_rate_permitted_W": 0.41833333333333333
+  },
+  "R3": {
+   "abs_s_mean": 0.41051669531666524,
+   "abs_s_zero_count": 0,
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "bank1_alpha_L1_W": 50865.847126,
+   "bank1_writes_W": 1968,
+   "novelty_median": 0.793442622951,
+   "private_gate_rate_permitted_W": 1.0,
+   "signed_b": [
+    0.0
+   ]
+  },
+  "R3_randtarget": {
+   "abs_s_mean": 0.41051669531666524,
+   "abs_s_zero_count": 0,
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "bank1_alpha_L1_W": 50865.847126,
+   "bank1_writes_W": 1968,
+   "novelty_median": 0.793442622951,
+   "private_gate_rate_permitted_W": 1.0,
+   "signed_b": [
+    0.0
+   ]
+  },
+  "Z0_resource": {
+   "bank0_alpha_L1_W": 104229.320408,
+   "bank0_writes_W": 1968,
+   "conflict_coordinates_W": 54963,
+   "gated_fraction_W": 1.0,
+   "gated_slow_L1_W": 29936.550213,
+   "native_slow_L1_W": 29936.550213,
+   "z_events_W": 1968
+  },
+  "Z2": {
+   "bank0_alpha_L1_W": 104229.320576,
+   "bank0_writes_W": 1968,
+   "conflict_coordinates_W": 68276,
+   "gated_fraction_W": 0.12079874466807917,
+   "gated_slow_L1_W": 3809.465769,
+   "native_slow_L1_W": 31535.64037,
+   "z_events_W": 1968
+  },
+  "Z2_rand": {
+   "bank0_alpha_L1_W": 104229.320568,
+   "bank0_writes_W": 1968,
+   "conflict_coordinates_W": 68542,
+   "gated_fraction_W": 0.1204365316441543,
+   "gated_slow_L1_W": 3809.465769,
+   "native_slow_L1_W": 31630.483849,
+   "z_events_W": 1968
+  }
+ },
+ "not_implemented": {
+  "P3": "technically unqualified/unresolved (Muse's reported failure unverified, no receipt); no comparison or replacement",
+  "P3_shuffle": "unrun"
+ },
+ "p_concentration_store0_W": {
+  "P0": [
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 0,
+    "edges_rel_below_1e-6": 0,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     72.0,
+     324.0,
+     336
+    ],
+    "kc_active_every_update": 47,
+    "kc_effective_fraction_mean": 0.7693080723767856,
+    "kc_fanin_participation_q05_q50_q95": [
+     2.074240218552645,
+     4.397249166162686,
+     6.4968152746032946
+    ],
+    "kc_max_share_above_0.9": 8,
+    "kcs_multi_input": 4765,
+    "update": 336
+   },
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 0,
+    "edges_rel_below_1e-6": 0,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     108.0,
+     588.0,
+     600
+    ],
+    "kc_active_every_update": 47,
+    "kc_effective_fraction_mean": 0.7693080723767856,
+    "kc_fanin_participation_q05_q50_q95": [
+     2.074240218552645,
+     4.397249166162686,
+     6.4968152746032946
+    ],
+    "kc_max_share_above_0.9": 8,
+    "kcs_multi_input": 4765,
+    "update": 600
+   }
+  ],
+  "P1": [
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 15,
+    "edges_rel_below_1e-6": 0,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     17.0,
+     336.0,
+     336
+    ],
+    "kc_active_every_update": 66,
+    "kc_effective_fraction_mean": 0.7556687766587475,
+    "kc_fanin_participation_q05_q50_q95": [
+     1.949683615142584,
+     4.35040397358359,
+     6.463521803573602
+    ],
+    "kc_max_share_above_0.9": 37,
+    "kcs_multi_input": 4765,
+    "update": 336
+   },
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 48,
+    "edges_rel_below_1e-6": 2,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     17.0,
+     600.0,
+     600
+    ],
+    "kc_active_every_update": 66,
+    "kc_effective_fraction_mean": 0.7553119737395316,
+    "kc_fanin_participation_q05_q50_q95": [
+     1.9458938927747442,
+     4.352307067282482,
+     6.463521803573602
+    ],
+    "kc_max_share_above_0.9": 46,
+    "kcs_multi_input": 4765,
+    "update": 600
+   }
+  ],
+  "P2": [
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 18,
+    "edges_rel_below_1e-6": 0,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     16.199999999999818,
+     336.0,
+     336
+    ],
+    "kc_active_every_update": 66,
+    "kc_effective_fraction_mean": 0.7555576264961271,
+    "kc_fanin_participation_q05_q50_q95": [
+     1.946683979746557,
+     4.35040397358359,
+     6.463521803573602
+    ],
+    "kc_max_share_above_0.9": 39,
+    "kcs_multi_input": 4765,
+    "update": 336
+   },
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 55,
+    "edges_rel_below_1e-6": 2,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     16.199999999999818,
+     600.0,
+     600
+    ],
+    "kc_active_every_update": 66,
+    "kc_effective_fraction_mean": 0.75524586695484,
+    "kc_fanin_participation_q05_q50_q95": [
+     1.9458938927747442,
+     4.351606214544953,
+     6.463521803573602
+    ],
+    "kc_max_share_above_0.9": 48,
+    "kcs_multi_input": 4765,
+    "update": 600
+   }
+  ],
+  "P4": [
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 1,
+    "edges_rel_below_1e-6": 1,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     78.0,
+     324.0,
+     336
+    ],
+    "kc_active_every_update": 47,
+    "kc_effective_fraction_mean": 0.7690419088007332,
+    "kc_fanin_participation_q05_q50_q95": [
+     2.072192759764656,
+     4.396915156130504,
+     6.495804278897537
+    ],
+    "kc_max_share_above_0.9": 8,
+    "kcs_multi_input": 4765,
+    "update": 336
+   },
+   {
+    "edges": 27572,
+    "edges_rel_below_1e-3": 2,
+    "edges_rel_below_1e-6": 2,
+    "kc_activations_q50_q95_q99_max": [
+     0.0,
+     116.39999999999964,
+     588.0,
+     600
+    ],
+    "kc_active_every_update": 47,
+    "kc_effective_fraction_mean": 0.7688479753551145,
+    "kc_fanin_participation_q05_q50_q95": [
+     2.0676980093641832,
+     4.39722209652618,
+     6.482426444701792
+    ],
+    "kc_max_share_above_0.9": 7,
+    "kcs_multi_input": 4765,
+    "update": 600
+   }
+  ]
+ },
+ "package": "MINIFLY_A_V3_CLAUDE \u2014 new implementation from the V3 scaffold; not Muse V2, not a resume or audit of it",
+ "pass": true,
+ "probe_accuracy_computed": false,
+ "r_calibration": {
+  "calibration_source_matches_current": false,
+  "reproduced_exactly_under_final_code": {
+   "per_world_values_equal": true,
+   "scales_equal": true,
+   "theta_equal": true
+  },
+  "scales": {
+   "private": 1.3452365735750882,
+   "shared": 1.4911274663291492
+  },
+  "sha256": "0899542f595c457d54c1ff2c55460b03b36fbd90c70e55009d001334f83a5427",
+  "theta": 0.835443037975,
+  "worlds": [
+   190101,
+   190102,
+   190103,
+   190104,
+   190105,
+   190106,
+   190107,
+   190108
+  ]
+ },
+ "receipt_sha256": {
+  "P0": "4ab9b2ec829c98a6ffac076d04e1691abdbfb1214ab37a8a624eb202a504f59d",
+  "P1": "a0f2ebc1ffe0fff3f63f7be99ecc931987da9b8666da145849d952cac1d0ac59",
+  "P2": "5188bf8b2ea12f6084e515542ae3e78acc7d7853002373793917c82283f80146",
+  "P4": "d78df93b142c652294e4873c01c88e8936bbe62edab357c3f30770a581db922c",
+  "R0": "cc464fd1a0976eb3e6bba27438b223ca32d7e1237fe940ff8894dba38f95d188",
+  "R0_signed": "5a57040a3c2ff1d836b7c9b11ffa3cd4f1c62f332d37caefd512eea01af32740",
+  "R1": "6d0c8565ef343e51878e77fab45e27aa13583167ef35d84a6392fb47f37e9775",
+  "R1_rand": "251266e06d356bdfbc683aca88332022985e6f2ae33b091a06efe76cf2fda979",
+  "R3": "ab14f74ca926159a230b04ed3982ec1a35c28a8eac1ce16470baefc3f35e5b2c",
+  "R3_randtarget": "580edeb0921234709d1adc99b1cac57fa108ec1d5b826556f083bbe33a9d3c36",
+  "Z0_resource": "a621b6ab51168270d704faa74669f34f6a46c832feaedee096702203424378f9",
+  "Z2": "6b84ad4169da642e6b0401e2117de42253c2b1d2253e6eb4abccf75a3cfa21b5",
+  "Z2_rand": "e7a6f5857f465ba0d8543e7785cc2c89015a7189e39eab3242d597c57cff8157"
+ },
+ "receipts_share_one_source_hash_set": true,
+ "resources": {
+  "P0": {
+   "construct_s": 1.0807106330000806,
+   "life_s": 561.4455876449999,
+   "peak_rss_bytes": 264548352,
+   "receipt_bytes": 337443
+  },
+  "P1": {
+   "construct_s": 0.989000969999779,
+   "life_s": 574.0146927320002,
+   "peak_rss_bytes": 256372736,
+   "receipt_bytes": 366717
+  },
+  "P2": {
+   "construct_s": 0.8924773290000303,
+   "life_s": 574.0048206609999,
+   "peak_rss_bytes": 256200704,
+   "receipt_bytes": 369901
+  },
+  "P4": {
+   "construct_s": 0.9859640579998086,
+   "life_s": 573.9730359200003,
+   "peak_rss_bytes": 267874304,
+   "receipt_bytes": 390885
+  },
+  "R0": {
+   "construct_s": 2.363059684999996,
+   "life_s": 922.293231483,
+   "peak_rss_bytes": 252784640,
+   "receipt_bytes": 508287
+  },
+  "R0_signed": {
+   "construct_s": 2.4856248759999744,
+   "life_s": 935.3021801989998,
+   "peak_rss_bytes": 254242816,
+   "receipt_bytes": 526714
+  },
+  "R1": {
+   "construct_s": 2.7176811240000234,
+   "life_s": 957.6489141490001,
+   "peak_rss_bytes": 253087744,
+   "receipt_bytes": 472197
+  },
+  "R1_rand": {
+   "construct_s": 2.1844654230001197,
+   "life_s": 901.7425689469999,
+   "peak_rss_bytes": 256200704,
+   "receipt_bytes": 514961
+  },
+  "R3": {
+   "construct_s": 1.923697016999995,
+   "life_s": 911.3505031080001,
+   "peak_rss_bytes": 255647744,
+   "receipt_bytes": 647282
+  },
+  "R3_randtarget": {
+   "construct_s": 2.020669006000162,
+   "life_s": 917.763167183,
+   "peak_rss_bytes": 255537152,
+   "receipt_bytes": 674513
+  },
+  "Z0_resource": {
+   "construct_s": 0.9948661789999278,
+   "life_s": 498.89369444399995,
+   "peak_rss_bytes": 261664768,
+   "receipt_bytes": 635925
+  },
+  "Z2": {
+   "construct_s": 1.0613256309999883,
+   "life_s": 521.886997286,
+   "peak_rss_bytes": 224501760,
+   "receipt_bytes": 807301
+  },
+  "Z2_rand": {
+   "construct_s": 1.1154868070000248,
+   "life_s": 500.569987159,
+   "peak_rss_bytes": 265121792,
+   "receipt_bytes": 849410
+  }
+ },
+ "roster_technical": [
+  "R0",
+  "R1",
+  "R1_rand",
+  "R0_signed",
+  "R3",
+  "R3_randtarget",
+  "Z0_resource",
+  "Z2",
+  "Z2_rand",
+  "P0",
+  "P1",
+  "P2",
+  "P4"
+ ],
+ "schema": "MINIFLY-A3-CLAUDE-TECHNICAL-AUDIT-v1",
+ "science_source_lock": "not written (technical stage only)",
+ "science_trajectories_run": 0,
+ "source_sha256": {
+  "ARM_ROSTER.json": "75e89b58cd5da747b3946af36aea38610cb85eeacfa17dda0005d795dd75dd2c",
+  "SPEC_LOCK.md": "c65706dcf4a20d66657ec4ce1da4b148d367b9673f763ac293b9b400841bc5f1",
+  "package/MANIFEST.json": "8401799d2febe0f0d518f5f30303d385977c65aa10c9a36aef6d5a39a515d4ef",
+  "results/calibration/R_CALIBRATION.json": "0899542f595c457d54c1ff2c55460b03b36fbd90c70e55009d001334f83a5427",
+  "src/analyze_a.py": "809d9f3ddf6efdd0df691fdf37501c8a1f5ffcc581f1e2448ac1bcbebcc833e2",
+  "src/audit_a.py": "80bb505c42acb210b903c183e05bf9a06ff444e569ac9466d1f38a2e1c2a11ae",
+  "src/audit_replay.py": "5e63352cc4935b1c8ab929af3f424ca2f0d4aca69eaee85067fa1e6f76d5d3f9",
+  "src/calibrate_r.py": "fade525bcca56515b278f8ac15c03991cc753a74edac942260021592069ec5eb",
+  "src/drive_science.py": "04ce2b6947fa4627d3bb111d8182036c3891569ca82638cd5ad8ee0c67e44882",
+  "src/drive_technical.py": "77591fd6406378a005bf807beeea8df23e90eeda014a3d3f527ce167187765c5",
+  "src/lock.py": "508b5a157d966c433e5e61187ff5835ce8f68b41e50ead8d0128b72ab4fdd603",
+  "src/paths.py": "6ac8673a0436a25de3373f076d207bf15cdabcf8de30dc574811be4f80557f25",
+  "src/runner.py": "3a30221eb031c6d218717e7eadbee2e7a38dd302d91d6ff40a59bcd4a107e323",
+  "src/stores.py": "c7947354db408ac22bbd6ccc8aa646b9513814ac84fc4342e5dd959515b0eca4",
+  "src/systems.py": "47d2f891ebd3e9766a7cd2c467c6ed926696b4af8b088fb641cc8868de3f662e",
+  "src/technical_audit.py": "252d3874cd77a5c98402a13f28d824eebb4587a3dec60a7613a75352c9d2cb38",
+  "tests/test_tamper.py": "64bd1cdda6668cbfbf972cafafb3dadb732fd0e627b7f2eca977186f503cacf3",
+  "tests/test_units.py": "99563321dfaf864d613e1b99aacc23267e957db763475566a87aec7a5c3ee9a4"
+ },
+ "tamper_note": "regression battery, not exhaustive mechanism validation; see independent_replay",
+ "tamper_rejection": {
+  "P0": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "p_update_branch_or_install": "rejected: P0 installed a weight change N_new_rel",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "P1": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "p_update_branch_or_install": "rejected: P updates differ across branches",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "P2": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "p_update_branch_or_install": "rejected: P updates differ across branches",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "P4": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "p_update_branch_or_install": "rejected: P updates differ across branches",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "R0": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "novelty_branch_mismatch": "rejected: novelty differs across branches",
+   "private_gate_flip": "rejected: ungated R arm gate W/1",
+   "private_write_flip": "rejected: private write W/0/0",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "R0_signed": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "novelty_branch_mismatch": "rejected: novelty differs across branches",
+   "private_gate_flip": "rejected: ungated R arm gate W/1",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "signed_coefficient": "rejected: private coefficients W/0/0",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "R1": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "novelty_branch_mismatch": "rejected: R1 gate N_new_fact/7",
+   "private_gate_flip": "rejected: R1 gate W/1",
+   "private_write_flip": "rejected: private write W/0/0",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "R1_rand": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "novelty_branch_mismatch": "rejected: novelty differs across branches",
+   "private_gate_flip": "rejected: R1_rand gate W/1",
+   "private_write_flip": "rejected: private write W/0/0",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "R3": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "novelty_branch_mismatch": "rejected: novelty differs across branches",
+   "private_gate_flip": "rejected: ungated R arm gate W/1",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "signed_coefficient": "rejected: private coefficients W/0/0",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "R3_randtarget": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "novelty_branch_mismatch": "rejected: novelty differs across branches",
+   "private_gate_flip": "rejected: ungated R arm gate W/1",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "signed_coefficient": "rejected: private coefficients W/0/0",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births"
+  },
+  "Z0_resource": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births",
+   "z_gate_exceeds_native": "rejected: Z gate bounds W/1/2"
+  },
+  "Z2": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births",
+   "z_gate_exceeds_native": "rejected: Z gate bounds W/1/2"
+  },
+  "Z2_joint_gated_and_target_via_replay": {
+   "log_audit": "accepted (self-consistent by construction)",
+   "replay": "rejected"
+  },
+  "Z2_rand": {
+   "aggregate_count": "rejected: write ledger wrong: W/new_fact=767, expected 768",
+   "branch_label": "rejected: shared/native write N_old_rel/0/0",
+   "compensating_write_pair": "rejected: shared/native write W/0/0",
+   "cross_domain_pair": "rejected: shared/native write N_old_fact/1/1",
+   "drop_ledger_row": "rejected: ledger incomplete in W",
+   "duplicate_ledger_row": "rejected: duplicate ledger row W/(0, 0, 3)",
+   "probe_correct_flag": "rejected: probe correctness flag",
+   "restore_288_ledger_only": "rejected: shared/native write N_old_rel/0/0",
+   "restore_288_old_relation_writes": "rejected: write ledger wrong: N_old_rel/old_relation=288, expected 0",
+   "shared_birth": "rejected: separate canonical births",
+   "teacher_time": "rejected: branch exposure or teacher time differs at record 1",
+   "world_id": "rejected: fixture digest",
+   "wrong_birth": "rejected: separate canonical births",
+   "z2rand_joint_dose_and_target": "rejected: Z2_rand dose differs from paired Z2 W/1/1",
+   "z_gate_exceeds_native": "rejected: Z gate bounds W/1/2"
+  }
+ },
+ "technical_score_used_for_tuning": false,
+ "tooling_changed_after_technical_lives": [
+  "src/technical_audit.py"
+ ],
+ "unit_tests": {
+  "cmd": "/tmp/venv_a/bin/python tests/test_units.py",
+  "returncode": 0,
+  "stderr_tail": [],
+  "stdout_tail": [
+   "8 tests passed"
+  ]
+ },
+ "v3_gate_receipts_dir": {
+  "cmd": "/tmp/venv_a/bin/python causal_branch_gate.py --receipts-dir /home/user/digitalbaby/minifly_a_v3/results/technical_final",
+  "returncode": 0,
+  "stderr_tail": [],
+  "stdout_tail": [
+   "{\"receipt_gate\": \"passed\", \"receipts_checked\": 13, \"science_trajectories_run\": 0, \"source_decisions\": 20, \"synthetic_receipt\": \"passed\", \"tamper_cases_rejected\": 22, \"v2_defect\": \"rejected\"}"
+  ]
+ },
+ "verify_bundle_full": {
+  "cmd": "/tmp/venv_a/bin/python verify_bundle.py",
+  "returncode": 0,
+  "stderr_tail": [],
+  "stdout_tail": [
+   "{\"causal_branch_gate\": {\"science_trajectories_run\": 0, \"source_decisions\": 20, \"synthetic_receipt\": \"passed\", \"tamper_cases_rejected\": 22, \"v2_defect\": \"rejected\"}, \"fixture_world\": 190000, \"muse_runtime_source\": \"not_in_bundle\", \"native_B_Q\": \"verified\", \"package\": \"MUSE_A_7\", \"raw_B_match\": false, \"raw_B_sha256\": \"872094396ed40c4d4be79423c9d5658eed66ae3d8f83661d2b4fa8f37efb8498\", \"records\": 600, \"science_ready\": false, \"science_trajectories_run\": 0, \"variants\": [\"R1\", \"R3\", \"Z2\", \"P1\", \"P2\", \"P3\", \"P4\"], \"verified_files\": 107}"
+  ]
+ },
+ "world": 190000
+}

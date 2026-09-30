@@ -86,14 +86,22 @@ def test_z0_resource_equals_native_and_z2_gate_formula():
     assert abs(info["gated_slow_l1"] - info["gate_target_l1"]) <= 1e-9 * max(1.0, info["native_slow_l1"])
 
 
-def test_z2_rand_matches_bucket_l1():
+def test_z2_rand_yoked_dose_and_unrepresentable_failure():
     rng = np.random.default_rng(1)
     g = rng.uniform(0, 1, 400); g[::7] = 0.0
     slow = rng.normal(size=400); u = slow.copy(); side = rng.integers(0, 2, 400)
-    out, buckets = stores._z2rand_gate(g, slow, u, side, "k")
-    assert ((out >= 0) & (out <= 1)).all() and not np.array_equal(out, g)
-    for _, (n, target, actual) in buckets.items():
-        assert abs(target - actual) <= 1e-9 * max(1.0, target)
+    buckets = stores.z_buckets(slow, u, side)
+    ref = {name: 0.3 * float(np.abs(slow[ids]).sum()) for name, ids in buckets.items()}
+    out = stores._z2rand_gate(g, slow, u, side, "k", ref)
+    assert ((out >= 0) & (out <= 1)).all()
+    for name, ids in buckets.items():
+        assert abs(float(np.abs(slow[ids]) @ out[ids]) - ref[name]) <= 1e-9 * max(1.0, ref[name])
+    for bad in (None, {name: 2.0 * float(np.abs(slow[ids]).sum()) for name, ids in buckets.items()}):
+        try:
+            stores._z2rand_gate(g, slow, u, side, "k", bad)
+        except stores.ZDoseNotRepresentable:
+            continue
+        raise AssertionError("unrepresentable/missing paired dose was not rejected")
 
 
 def test_p_support_budget_and_mechanisms():

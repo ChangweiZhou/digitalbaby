@@ -13,7 +13,8 @@ import audit_a  # noqa: E402
 from fixture import make_world  # noqa: E402
 import gzip  # noqa: E402
 
-RES = paths.ROOT / "results" / "technical"
+import os  # noqa: E402
+RES = paths.ROOT / "results" / os.environ.get("A3_TECH_DIR", "technical_final")
 
 
 def load(arm):
@@ -30,6 +31,8 @@ def kwargs_for(arm):
     kw = {"theta": theta, "scales": scales}
     if arm == "R1_rand":
         kw["r1_receipt"] = load("R1")
+    if arm == "Z2_rand":
+        kw["z2_receipt"] = load("Z2")
     return kw
 
 
@@ -100,6 +103,16 @@ def mutations(arm, base):
             x = rows(r, "W", "Z")[4]
             x[5] = x[4] * 1.5 + 1.0
         out["z_gate_exceeds_native"] = m_z
+
+        def m_z_joint(r):   # gated amount, claimed target and bucket actuals changed together (self-consistent)
+            x = next(z for z in rows(r, "W", "Z") if z[5] > 0 and z[5] < z[4] * 0.9)
+            k = max(x[7], key=lambda name: x[7][name][2])
+            bump = min(x[7][k][1] - x[7][k][2], x[5]) * 0.5
+            x[7][k][2] += bump
+            x[5] += bump
+            x[6] += bump
+        if arm == "Z2_rand":
+            out["z2rand_joint_dose_and_target"] = m_z_joint
     if arm in audit_a.P_ARMS:
         def m_p(r):
             x = rows(r, "N_new_rel", "P")[9]
@@ -110,6 +123,7 @@ def mutations(arm, base):
 
 def run(arms=None):
     results = {}
+    arms = [a for a in (arms or []) if a.startswith(("R", "Z", "P"))]
     for arm in arms or sorted(p.name for p in RES.iterdir() if p.is_dir()):
         base = load(arm)
         kw = kwargs_for(arm)

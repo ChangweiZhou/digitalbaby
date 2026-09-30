@@ -1,62 +1,74 @@
-# Package A V3-CLAUDE — technical qualification report (world 190000; no science)
+# Package A V3-CLAUDE — technical qualification report (final implementation; world 190000; no science)
 
-**What this is.** A new, separately named Package A implementation by Claude, built from the verified V3
-causal-gate scaffold. **It is not Muse's V2 run, not a resume of it and not an audit of it.** Muse's source, locks,
-receipts, stop record, P3 failure receipt and roster amendment were not available (see `INTAKE.md`). The Codex
-prototype in the intake archive was read but not adopted; none of its receipts are used. No science world was run
-and no science `SOURCE_LOCK.json` exists. Probe accuracies in the technical receipts were not computed or used.
+**What this is.** A new, separately named Package A implementation by Claude from the verified V3 causal-gate
+scaffold. **Not** Muse's V2 run, not a resume of it and not an audit of it; Muse's files are unavailable and, per the
+pre-lock review, are no longer a prerequisite for this version (`INTAKE.md`). No science world was run. Probe
+accuracies in technical receipts were neither computed nor used.
 
-Machine record: `results/technical/TECHNICAL_AUDIT.json` (`pass: true`). Spec: `SPEC_DRAFT.md` (fixed before any
-technical life). Calibration: `results/calibration/R_CALIBRATION.json`.
+* Final spec: `SPEC_LOCK.md` (supersedes `SPEC_DRAFT.md`). Roster: `ARM_ROSTER.json`.
+* Final qualification: `results/technical_final/` (13 receipts + `TECHNICAL_AUDIT.json`, `pass: true`).
+* First qualification (SPEC_DRAFT implementation, commit `555ba9c`): `results/technical/`, kept unchanged as
+  technical history; it does not qualify the final implementation.
+* Proposed budget: `RESOURCE_BUDGET.json` (**unapproved**). `SOURCE_LOCK.json` is **not yet written** — it is
+  write-once and includes the budget, so it follows approval.
 
-## Result
+## Response to the pre-lock review (`CLAUDE_A_V3_PRELOCK_FEEDBACK_20260929`, reviewed commit `555ba9c`)
+
+1. **Roster adopted** without Muse's files: candidates R1, R3, Z2, P1, P2, P4; controls/diagnostics R0, R1_rand,
+   R0_signed, R3_randtarget, Z0_resource, Z2_rand, P0. P3/P3_shuffle NOT_INSTANTIATED, no replacement; m=26 kept with
+   P3's two slots unavailable. Package B V2 E3 stays invalid.
+2. **P not retuned.** `ε = 0.05` kept. My earlier "floor" wording was wrong: `1e-9` floors the *relative* weight
+   before per-KC projection, not physical B. New concentration diagnostics (store 0, W branch, end of life; P0 =
+   unchanged canonical B): edges with relative weight < 1e-3: P0 0, P1 48, P2 55, P4 2 (of 27,572); < 1e-6: 0 / 2 /
+   2 / 2. KCs with one input carrying > 90% of the budget: 8 / 46 / 48 / 7 (of 4,765 multi-input KCs). Median fan-in
+   participation ratio 4.40 / 4.35 / 4.35 / 4.40. So concentration is confined to a small set of KCs (47–66 KCs are
+   active on every record); no fan-in collapse. Descriptive only.
+3. **Z2 low throughput kept as a mechanism property** (`κ = 0.2`, `τ_L = 86,400 s` unchanged). Defined precisely:
+   ratio = Σ gated slow L1 / Σ native slow L1 over all W-branch permitted Z events of all four stores. Z2: old stage
+   (records 0–335) 2,244.6 / 17,062.6 = 0.1315; new stage (336–599) 1,564.9 / 14,473.0 = 0.1081; whole life
+   3,809.5 / 31,535.6 = 0.1208. The withheld share goes to fast storage (total alpha preserved).
+   **Z2_rand is now a genuinely yoked dose diagnostic**: it matches the paired Z2 receipt's realised gated slow L1 for
+   the same world/branch/record/store/bucket, failing explicitly (`ZDoseNotRepresentable`) if a paired dose exceeds its
+   capacity or a paired event is missing. Result: Z2_rand W total 3,809.5 = Z2's (was 4,002.7, +5.07%); no
+   unrepresentable event occurred. The auditor checks this against the paired Z2 receipt (external reference).
+4. **Audit claims bounded; independent reconstruction added.** `src/audit_replay.py` re-implements the spec's equations
+   and drives the frozen native model without importing the implementation. On all 13 final receipts (W branch,
+   store 0) it reproduces every Z event (600 per Z arm: conflicts, native/gated slow L1, target, incl. the Z2_rand
+   yoke), every P update (600 per P arm: pre-norm Δ, installed change, max/min weight; both concentration
+   checkpoints), R novelty for all 600 records of every R arm, and R0_signed/R3/R3_randtarget shared pre-answer values
+   and R3 residuals for all 600 records. It also reproduced the first qualification's Z2, P and R receipts. New tamper
+   cases: a self-consistent joint change of Z2's gated amount, target and bucket is **accepted by the log audit and
+   rejected by the replay**; the same joint change in Z2_rand is rejected against the paired Z2 receipt. The 197
+   rejected tamper cases are a regression battery, not exhaustive validation.
+5. **Freeze prepared.** Complete closure written before the final lives: `analyze_a.py` (12 available contrasts, m=26,
+   P3 unavailable), `drive_science.py` (refuses to start without a verified lock and an approved budget; yoked
+   dependencies; write-once; stop on first failure), `lock.py` (package files by MANIFEST, all `src/`/`tests/`,
+   spec, roster, budget, calibration, both input archives, final technical receipts, environment).
+
+## Final qualification result
 
 | Check | Result |
 |---|---|
-| Scaffold `verify_bundle.py` (full, pinned Python 3.11 / NumPy 2.2.6 / SciPy 1.14.1 / Numba 0.61.2 / pandas 2.2.3) | pass (107 files; raw host B `872094396ed4…`, canonical B installed) |
-| Separate `canonical_fresh_native()` call per store | 13 arms: 8 births per R arm, 4 per Z/P arm, all canonical `32a3726c…`, no shared fly objects |
-| Full 600-record, five-branch life | 13/13 arms |
-| V3 aggregate gate (`causal_branch_gate.py --receipts-dir`) | 13/13 receipts pass |
-| Independent per-(record, branch, bank, store) write audit (`src/audit_a.py`; literal matrix, no runner/`branch_allows` import) | 13/13 pass (24,000 ledger rows per R receipt, 12,000 per Z/P receipt) |
-| Tamper rejection (`tests/test_tamper.py`) | 194/194 rejected, incl. restored 288 `N_old_rel` old-relation writes (with and without the aggregate), a compensating pair of per-record flips with unchanged aggregates, a cross-domain pair, teacher time, dropped/duplicate row, wrong/shared birth, world ID, probe flag, branch relabel, and arm-specific gate/coefficient/Z/P corruptions |
-| Unit tests (`tests/test_units.py`) | 8/8: signed interface = native at targets 0/1 (≤1e-12), zero coefficients write nothing, residual sign reversal, Z0 = native, Z2 gate L1, Z2_rand bucket L1, P support/budget/P0 unchanged/P2 stabilising term, P4 first update zero and order reversal |
-| All receipts built from one source-hash set equal to the current tree | yes |
+| Scaffold `verify_bundle.py` (full) | pass |
+| Separate canonical births | 8 per R arm, 4 per Z/P arm, all `32a3726c…` |
+| Full 600-record five-branch lives | 13/13 |
+| V3 aggregate gate over all receipts | 13/13 |
+| Independent per-record write audit (`audit_a.py`) | 13/13 |
+| Independent replay reconstruction (`audit_replay.py`) | 13/13 |
+| Tamper cases | 197/197 rejected (incl. the replay-only case) |
+| Unit tests | 8/8 |
+| One source-hash set across receipts; executed closure = current tree | yes; only `src/technical_audit.py` (this report's compiler, never executed by a life) changed afterwards |
+| R calibration under final code | reproduced exactly (scales, θ, every per-world value); file unchanged |
 
-## Arms (technical roster, 13)
+## Resources (measured, final lives; see `RESOURCE_BUDGET.json`)
 
-R1, R1_rand, R0, R0_signed, R3, R3_randtarget, Z0_resource, Z2, Z2_rand, P0, P1, P2, P4.
-**P3 / P3_shuffle: not implemented** — technically unqualified/unresolved, no comparison and no replacement; the
-program-wide family stays m=26 with P3's two comparisons unavailable.
+R arms 902–958 s, Z 499–522 s, P 561–574 s per technical life; peak RSS ≤ 268 MB per worker; receipts 0.34–0.85 MB.
+64-world estimate 166.6 core-hours ≈ 41.7 h wall at 4 workers; 75 h is a planning allowance extrapolated from
+Package B, not a measurement. Proposed hard budget: 90 active wall-hours, 360 core-hours, ≤ 2,400 s per world-arm,
+≤ 800 MB per worker, ≤ 1 GB results. Receipts ≈ 410 MB.
 
-R readout calibration (worlds 190101–190108, label-blind): `s_S = 1.49113`, `s_P = 1.34524`; R1 novelty
-threshold `θ = 0.83544` (median novelty; 30% of records have novelty 0 because a cue recurs within 24 records).
+## What is needed before science
 
-## Label-free mechanism diagnostics (W branch, world 190000)
-
-* R1 private writes on 41.8% of permitted records (820 store writes vs R0's 1,968); R1_rand exactly matches R1's
-  per-stratum counts (820). R3 / R3_randtarget: mean |residual| 0.41, never exactly zero; identical residual
-  multiset (derangement). R0_signed uses b=1 everywhere and reproduces R0's private alpha L1 exactly (69,018.75).
-* Z2 passes 12.1% of the native slow share (Z2_rand 12.7%, dose-matched per bucket and event); Z0_resource 100%.
-* P1/P2/P4 installed weight-change L1 1,661 / 1,716 / 5,439 over the life; P0 0. Novelty, P updates and every
-  unsupervised state are identical across the five branches (audited).
-
-## Open items before any source lock (need a decision; nothing was retuned)
-
-1. **P weights collapse in frequently active KCs.** With `ε = 0.05` chosen from the *mean* activation rate, KCs
-   active on most records drive some incoming weights to ~1e-8 (P1, P2 by records ~440–460) or to the 1e-9 floor
-   (P4 by record 13), while the per-KC budget holds and the maximum weight is unchanged. Bounded and finite, but
-   close to winner-take-all for those KCs. Options: keep as declared, or rescale ε by each KC's activation
-   frequency. Changing it is a pre-lock design decision on technical-world numerics, not on behaviour.
-2. **Z2 throughput declines over life** (13% → 6% of native slow share by life thirds) because the load saturates
-   under repeated writes (`κ = 0.2`, `τ_L` = 1 day). Z2 is therefore close to "mostly fast-only" late in life.
-3. **Resource estimate for 64 worlds:** 167.8 core-hours (R arms ≈ 16.5 h each, Z ≈ 9.1 h, P ≈ 10.2 h) ≈ 42 h
-   wall at 4 workers, measured one arm per worker. Package B's science lives ran ~1.8× slower than its technical
-   measurement, so budget ~75 h wall. Peak RSS ≤ 263 MB per worker; receipts 0.33–0.67 MB each.
-4. **Roster and multiplicity are provisional** until Muse's amendment/P3 record is obtained or the absence is
-   formally accepted; any science would need a new lock, receipt namespace and predeclared execution plan.
-
-## Reproduce
-
-Extract `input/MINIFLY_MUSE_A_V3_CAUSAL_GATE_20260929.zip` into `package/` (not committed; its hash is recorded),
-create a Python 3.11 venv from `package/requirements.txt`, then: `python tests/test_units.py`,
-`python src/calibrate_r.py`, `python src/drive_technical.py`, `python src/technical_audit.py`.
+1. Approve (or amend) `RESOURCE_BUDGET.json`; then `python src/lock.py create` writes the write-once lock.
+2. A launch decision. On this host the VM computes only during tool calls, so ~42–75 h of continuous blocking waits
+   across sessions are needed; receipts push every 16 and resume never reruns a committed world-arm.
