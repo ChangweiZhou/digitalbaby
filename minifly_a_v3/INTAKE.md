@@ -1,11 +1,14 @@
-# Package A evidence intake (read-only; no build, no trajectories)
+# Package A evidence intake
 
-Status: **intake only**. Not a resume or audit of Muse's V2 run. No Package A code was written, locked or executed.
+Status: intake complete; Muse's V2 outputs **unavailable**. A new, separately named implementation was then built
+and technically qualified (see `TECHNICAL_REPORT.md`). Nothing here resumes or audits Muse's V2 run.
 
 ## Received
 | File | SHA256 | Checks run here |
 |---|---|---|
 | `input/MINIFLY_MUSE_A_V3_CAUSAL_GATE_20260929.zip` (corrected scaffold, `science_ready: false`) | `c667ab51886e226a9e7f014af634f9e9fdb1e00ad384d0eabcfd64710972ab43` | `verify_bundle.py --integrity-only` and full `verify_bundle.py` pass (107 files; gate: 20 branch decisions correct, 22 tamper cases rejected, V2 defect rejected; raw host B `872094396ed4…`, canonical B installed). `causal_branch_gate.py --receipt` rejects Package B V2 technical receipt `minifly_b/results/technical/S0/190000.json.gz`: `N_old_rel/old_relation=288, expected 0`. |
+
+| `input/CLAUDE_PACKAGE_A_MUSE_INTAKE_20260929.zip` | `22ef1605757d4245d4a4edc28b1bf2fbb2921ac9768cdeac1152d566897f16ca` | Manifest 30/30 files match. Contains the original V2 *input handoff* zip (`d76e54e9…`), the same V3 zip (byte-identical), protocol copies, Muse status as conversation testimony only, and a partial Codex prototype. **No Muse runner, source hashes, SPEC_LOCK/SOURCE_LOCK, receipts, stop record, P3 failure receipt or roster amendment** (`README_FOR_CLAUDE.md`). The read-only V2 audit therefore cannot be performed; V2 E1 is not asserted valid and Muse's P3 failure is not independently confirmed. |
 
 The scaffold's `common_platform.branch_allows` differs from V2 only by the explicit five-branch map.
 Its seven-candidate `CONTRACT.json` is historical input, not authorization to run P3.
