@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+import connector_persistence as transport
 from connector_persistence import ConnectorEnv, atomic_json, git
 
 
@@ -167,3 +168,97 @@ def test_watchdog_enforces_original_failure_categories(setup, limit, category):
         if proc.is_alive():
             proc.kill()
         proc.join()
+
+
+def test_driver_clock_returns_original_values_unchanged(setup):
+    env, _ = setup
+    values = iter((123.25, 124.75))
+    env._driver_clock = lambda: next(values)
+    assert env.last_driver_clock is None
+    assert env.clock() == env.last_driver_clock == 123.25
+    assert env.clock() == env.last_driver_clock == 124.75
+
+
+def test_every_persistence_git_command_is_guarded_and_snapshot_preserved(setup, monkeypatch):
+    env, _ = setup
+    events = []
+    children = [object(), object()]
+    monkeypatch.setattr(transport.mp, "active_children", lambda: children)
+    env._driver_clock = lambda: 123.25
+    assert env.clock() == 123.25
+    def watch(snapshot, started, baseline, hard):
+        assert snapshot is children and len(snapshot) == 2
+        assert started == 123.25
+        events.append("watch")
+    def tracked_git(repo, *args):
+        events.append(("git", args))
+        return git(repo, *args)
+    monkeypatch.setattr(env, "watchdog", watch)
+    monkeypatch.setattr(transport, "git", tracked_git)
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        future = pool.submit(service, env)
+        env.persist("guarded roundtrip")
+        future.result()
+    git_events = [event for event in events if isinstance(event, tuple)]
+    assert len(git_events) >= 15
+    assert sum(event[1][0] == "ls-remote" for event in git_events) == 2
+    for i, event in enumerate(events):
+        if isinstance(event, tuple):
+            assert events[i - 1] == events[i + 1] == "watch"
+
+
+def test_watchdog_runs_after_a_failed_git_command(setup, monkeypatch):
+    env, _ = setup
+    events = []
+    monkeypatch.setattr(env, "watchdog", lambda *args: events.append("watch"))
+    def broken_git(*args):
+        events.append("git")
+        raise RuntimeError("synthetic Git failure")
+    monkeypatch.setattr(transport, "git", broken_git)
+    with pytest.raises(RuntimeError, match="synthetic Git failure"):
+        env.persist("must stop")
+    assert events == ["watch", "git", "watch"]
+
+
+def test_pre_persistence_validation_gap_is_included_in_budget(setup, monkeypatch):
+    env, _ = setup
+    failures = []
+    class Driver:
+        ledger = {"active_wall_s": 0.0, "worker_s": 0.0}
+        def fail(self, kind, detail):
+            failures.append((kind, detail))
+    env.driver = Driver()
+    env._driver_clock = lambda: 100.0
+    assert env.clock() == 100.0
+    monkeypatch.setattr(transport.time, "monotonic", lambda: 110.0)
+    monkeypatch.setattr(transport.mp, "active_children", lambda: [])
+    monkeypatch.setattr(env, "disk", lambda: 0)
+    monkeypatch.setattr(env, "budget", lambda: {"hard_budget": {
+        "active_wall_hours": 5 / 3600, "core_hours": 360, "results_disk_bytes": 10 ** 9}})
+    git_called = []
+    monkeypatch.setattr(transport, "git", lambda *args: git_called.append(args))
+    with pytest.raises(RuntimeError, match="cumulative budget exhausted"):
+        env.persist("must fail before Git")
+    assert not git_called
+    assert failures[0][0] == "budget_exhausted"
+    assert failures[0][1]["elapsed_persistence_s"] == 10.0
+    assert env.driver.ledger == {"active_wall_s": 0.0, "worker_s": 0.0}
+
+
+@pytest.mark.parametrize("boot_now,expected_age", [(120.0, 40.0), (90.0, 20.0)])
+def test_boottime_guard_is_conservative_without_retiming_driver(monkeypatch, boot_now, expected_age):
+    monkeypatch.setattr(transport.time, "monotonic", lambda: 100.0)
+    monkeypatch.setattr(transport.time, "CLOCK_BOOTTIME", 7, raising=False)
+    monkeypatch.setattr(transport.time, "clock_gettime", lambda clock: boot_now)
+    env = ConnectorEnv()
+    assert transport.process_age_s(80.0) == expected_age
+    assert env.clock() == env.last_driver_clock == 100.0
+
+
+def test_boottime_unavailable_falls_back_to_original_clock(monkeypatch):
+    monkeypatch.setattr(transport.time, "monotonic", lambda: 100.0)
+    monkeypatch.setattr(transport.time, "CLOCK_BOOTTIME", 7, raising=False)
+    def unavailable(clock):
+        raise OSError("unsupported")
+    monkeypatch.setattr(transport.time, "clock_gettime", unavailable)
+    assert transport.process_age_s(80.0) == 20.0

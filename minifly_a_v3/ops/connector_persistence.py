@@ -36,10 +36,26 @@ def atomic_json(path: Path, value: dict) -> None:
     os.replace(temporary, path)
 
 
+def process_age_s(birth: float) -> float:
+    """Conservative /proc starttime comparison, without retiming the Driver.
+
+    Linux /proc process birth uses time since boot. BOOTTIME includes suspension;
+    using it here can stop a worker earlier than the frozen monotonic deadline,
+    never grant extra time. The Driver's clock and ledger remain monotonic.
+    """
+    now = time.monotonic()
+    if hasattr(time, "CLOCK_BOOTTIME"):
+        try:
+            now = max(now, time.clock_gettime(time.CLOCK_BOOTTIME))
+        except OSError:
+            pass
+    return now - birth
+
+
 class ConnectorEnv(drive_science.Env):
     """Retain the frozen driver's scientific and resource hooks unchanged."""
 
-    def __init__(self, *, repo=None, branch=None, spool=None, timeout_s=300.0,
+    def __init__(self, *, repo=None, branch=None, spool=None, timeout_s=600.0,
                  science_path="minifly_a_v3/results/science"):
         super().__init__()
         self.repo = Path(repo) if repo is not None else ROOT.parent
@@ -49,6 +65,16 @@ class ConnectorEnv(drive_science.Env):
         self.science_path = science_path
         self.ack_poll_s = 1.0
         self.driver = None
+        self._driver_clock = self.clock
+        self.last_driver_clock = None
+        self.clock = self._tracked_clock
+
+    def _tracked_clock(self):
+        # Return the original clock value unchanged. At persistence the most
+        # recent Driver clock read is its loop poll, before receipt validation.
+        value = self._driver_clock()
+        self.last_driver_clock = value
+        return value
 
     def watchdog(self, children, started, baseline, hard) -> None:
         """Enforce the frozen limits while the driver waits for persistence.
@@ -69,7 +95,7 @@ class ConnectorEnv(drive_science.Env):
                 birth = int(stat.rsplit(")", 1)[1].split()[19]) / os.sysconf("SC_CLK_TCK")
             except FileNotFoundError:
                 continue
-            age = time.monotonic() - birth
+            age = process_age_s(birth)
             reason = ("deadline" if age > hard["per_world_arm_life_s_max"] else
                       "rss" if self.rss(proc.pid) > hard["peak_rss_bytes_per_worker"] else None)
             if reason:
@@ -89,25 +115,35 @@ class ConnectorEnv(drive_science.Env):
                                                    "elapsed_persistence_s": elapsed})
             raise RuntimeError("persistence watchdog: cumulative budget exhausted")
 
-    def verify_remote(self) -> None:
-        head = git(self.repo, "rev-parse", "HEAD")
-        remote = git(self.repo, "ls-remote", "origin", f"refs/heads/{self.branch}").split()
+    def verify_remote(self, *, git_call=None) -> None:
+        run_git = git_call if git_call is not None else lambda *args: git(self.repo, *args)
+        head = run_git("rev-parse", "HEAD")
+        remote = run_git("ls-remote", "origin", f"refs/heads/{self.branch}").split()
         if not remote or remote[0] != head:
             raise RuntimeError(f"remote head {remote[:1]} != local head {head}")
 
     def persist(self, message: str) -> None:
         children = mp.active_children()
-        started = time.monotonic()
+        started = self.last_driver_clock if self.last_driver_clock is not None else time.monotonic()
         baseline = dict(self.driver.ledger) if self.driver is not None else {}
         hard = self.budget()["hard_budget"] if self.driver is not None else {}
-        self.verify_remote()
-        self.watchdog(children, started, baseline, hard)
-        parent = git(self.repo, "rev-parse", "HEAD")
-        pre_staged = git(self.repo, "diff", "--cached", "--name-only").splitlines()
+
+        def guarded_git(*args):
+            self.watchdog(children, started, baseline, hard)
+            try:
+                return git(self.repo, *args)
+            finally:
+                # Check even when Git fails or times out: a budget failure must
+                # retain its stricter category before infrastructure handling.
+                self.watchdog(children, started, baseline, hard)
+
+        self.verify_remote(git_call=guarded_git)
+        parent = guarded_git("rev-parse", "HEAD")
+        pre_staged = guarded_git("diff", "--cached", "--name-only").splitlines()
         if any(not p.startswith(self.science_path + "/") for p in pre_staged):
             raise RuntimeError("refusing to include unrelated staged changes")
-        git(self.repo, "add", "--", self.science_path)
-        changed = git(self.repo, "diff", "--cached", "--name-status").splitlines()
+        guarded_git("add", "--", self.science_path)
+        changed = guarded_git("diff", "--cached", "--name-status").splitlines()
         if not changed:
             return
         entries = []
@@ -117,11 +153,11 @@ class ConnectorEnv(drive_science.Env):
                 raise RuntimeError(f"unexpected persistence change: {line}")
             if path.endswith(".json.gz") and status != "A":
                 raise RuntimeError(f"refusing to replace an existing receipt: {path}")
-            mode, sha, stage = git(self.repo, "ls-files", "-s", "--", path).split("\t")[0].split()
+            mode, sha, stage = guarded_git("ls-files", "-s", "--", path).split("\t")[0].split()
             if stage != "0" or mode != "100644":
                 raise RuntimeError(f"unexpected staged object: {path}")
             entries.append({"path": path, "sha": sha, "mode": mode, "type": "blob"})
-        tree = git(self.repo, "write-tree")
+        tree = guarded_git("write-tree")
         request_id = uuid.uuid4().hex
         request = {"schema": "MINIFLY-A3-CONNECTOR-PERSISTENCE-v1", "request_id": request_id,
                    "repository": "ChangweiZhou/digitalbaby", "branch": self.branch,
@@ -144,22 +180,20 @@ class ConnectorEnv(drive_science.Env):
         commit = ack.get("commit_sha", "")
         if len(commit) != 40 or any(c not in "0123456789abcdef" for c in commit):
             raise RuntimeError("invalid connector commit SHA")
-        git(self.repo, "fetch", "--quiet", "origin", f"refs/heads/{self.branch}")
-        self.watchdog(children, started, baseline, hard)
-        fetched = git(self.repo, "rev-parse", "FETCH_HEAD")
+        guarded_git("fetch", "--quiet", "origin", f"refs/heads/{self.branch}")
+        fetched = guarded_git("rev-parse", "FETCH_HEAD")
         if fetched != commit:
             raise RuntimeError(f"remote changed before ACK verification: {fetched} != {commit}")
-        if git(self.repo, "show", "-s", "--format=%P", commit) != parent:
+        if guarded_git("show", "-s", "--format=%P", commit) != parent:
             raise RuntimeError("connector commit has unexpected parent(s)")
-        if git(self.repo, "rev-parse", f"{commit}^{{tree}}") != tree:
+        if guarded_git("rev-parse", f"{commit}^{{tree}}") != tree:
             raise RuntimeError("connector commit tree differs from staged snapshot")
-        if git(self.repo, "write-tree") != tree:
+        if guarded_git("write-tree") != tree:
             raise RuntimeError("local index changed during connector persistence")
         # Compare-and-swap only the local branch; the connector already performed
         # the non-force remote update. Keep the working files/index untouched.
-        git(self.repo, "update-ref", "HEAD", commit, parent)
-        self.verify_remote()
-        self.watchdog(children, started, baseline, hard)
+        guarded_git("update-ref", "HEAD", commit, parent)
+        self.verify_remote(git_call=guarded_git)
         atomic_json(self.spool / f"{request_id}.verified.json",
                     {"request_id": request_id, "commit_sha": commit, "tree_sha": tree, "ok": True})
 
