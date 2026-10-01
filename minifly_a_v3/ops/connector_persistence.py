@@ -22,11 +22,30 @@ sys.path.insert(0, str(ROOT / "src"))
 import drive_science  # noqa: E402
 
 
-def git(repo: Path, *args: str) -> str:
-    proc = subprocess.run(["git", *args], cwd=repo, text=True, capture_output=True, timeout=10)
+def git(repo: Path, *args: str, watchdog=None) -> str:
+    """Bound Git at 60s while allowing live limit checks every five seconds."""
+    proc = subprocess.Popen(["git", *args], cwd=repo, text=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    deadline = time.monotonic() + 60.0
+    try:
+        while True:
+            if watchdog is not None:
+                watchdog()
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise subprocess.TimeoutExpired(["git", *args], 60)
+            try:
+                stdout, stderr = proc.communicate(timeout=min(5.0, remaining))
+                break
+            except subprocess.TimeoutExpired:
+                continue
+    finally:
+        if proc.poll() is None:
+            proc.kill()
+            proc.communicate()
     if proc.returncode:
-        raise RuntimeError(f"git {args[0]} failed: {proc.stderr[-500:]}")
-    return proc.stdout.strip()
+        raise RuntimeError(f"git {args[0]} failed: {stderr[-500:]}")
+    return stdout.strip()
 
 
 def atomic_json(path: Path, value: dict) -> None:
@@ -131,7 +150,8 @@ class ConnectorEnv(drive_science.Env):
         def guarded_git(*args):
             self.watchdog(children, started, baseline, hard)
             try:
-                return git(self.repo, *args)
+                return git(self.repo, *args,
+                           watchdog=lambda: self.watchdog(children, started, baseline, hard))
             finally:
                 # Check even when Git fails or times out: a budget failure must
                 # retain its stricter category before infrastructure handling.

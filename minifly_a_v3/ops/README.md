@@ -30,8 +30,11 @@ The driver still validates existing/new receipts, starts only missing world-arms
 uses the original four-worker budget and yoked dependencies, and requests
 persistence every four accepted receipts and at stop. Real connector publications
 took about 150 seconds and 230 seconds (the latter for eight blobs). ACK waiting
-is bounded at 600 seconds to accommodate larger receipt batches; each Git command
-is bounded at 10 seconds. These are transport bounds, not enlarged science budgets.
+is bounded at 600 seconds to accommodate larger receipt batches. Each Git command
+is bounded at 60 seconds and polled every five seconds with live limit checks.
+These are transport bounds, not enlarged science budgets. The first recovery
+startup stopped safely before dispatch when a remote lookup exceeded the earlier
+ten-second bound; the recorded infrastructure stop is retained.
 While the driver is inside persistence, a separate
 operational watchdog in this adapter checks worker RSS/deadlines, disk, cumulative
 wall time, and a conservative worker-time bound. It polls every second during ACK

@@ -50,12 +50,12 @@
  ],
  "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
  "locked_files_verified": 146,
- "operational_qualification_at_utc": "2026-10-01T15:37:37.845999+00:00",
+ "operational_qualification_at_utc": "2026-10-01T15:45:46.863278+00:00",
  "operational_source_sha256": {
   "ops/audit_science_replay.py": "679a1be1f113d8e4c4f91638f1cc7ef77683d399d6633e6d501189946461a50d",
-  "ops/connector_persistence.py": "4b8e1d24495f35a0527cc41ea4fc53b3008d100d7fc40cad83a7602f83a7d4c3",
+  "ops/connector_persistence.py": "4524967e95085ee70d0e5b5cf38dd50aded7fc7fa5a404c1db69b60b901c6530",
   "ops/test_audit_science_replay.py": "e1ac494f57685023a05245917d1f5df0ac0b7f02a158d17544518a6bf5e33a95",
-  "ops/test_connector_persistence.py": "ef8e546fe36034e37ea06f7e60abc86cd127a9e2235e24c1ca5735021287f929"
+  "ops/test_connector_persistence.py": "a36d8d07d9297604da2f8eb78089a06b6a71fc2366463bec505c30bc8d571b92"
  },
  "receipt_sha256": {
   "results/science/P0/190001.json.gz": "9909b95c689f31d8e4882c94a0306e69211dd8fb385b49d5de1dd8e094799cba",
@@ -755,10 +755,16 @@
  },
  "schema": "MINIFLY-A3-RECOVERY-VERIFICATION-v1",
  "source_changed": false,
- "transport_live_watchdog": "Polls every1s during ACK wait (max600s); checks before and after every Git command (max10s); elapsed measured from unchanged driver clock last poll; original budget failure categories retained",
+ "startup_infrastructure_stop": {
+  "cause": "10-second remote lookup timeout",
+  "failure_id": "db52d8f6a5d64326bb2dd33b1c9e1657",
+  "resolution": "Bound network calls at60s with5s live resource polling; reverify persistence before resuming via frozen infrastructure-recovery policy",
+  "science_jobs_dispatched": 0
+ },
+ "transport_live_watchdog": "Polls every1s during ACK wait (max600s); checks before, after and every5s during Git commands (max60s); elapsed measured from unchanged driver clock last poll; original budget failure categories retained",
  "transport_tests": {
   "command": "python -m pytest -q -p no:cacheprovider minifly_a_v3/ops/test_connector_persistence.py",
-  "passed": 22
+  "passed": 24
  },
  "validation_seconds": 149.86189701900003,
  "worlds_remaining": [

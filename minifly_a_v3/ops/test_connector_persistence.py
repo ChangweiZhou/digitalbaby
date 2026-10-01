@@ -190,9 +190,9 @@ def test_every_persistence_git_command_is_guarded_and_snapshot_preserved(setup, 
         assert snapshot is children and len(snapshot) == 2
         assert started == 123.25
         events.append("watch")
-    def tracked_git(repo, *args):
+    def tracked_git(repo, *args, **kwargs):
         events.append(("git", args))
-        return git(repo, *args)
+        return git(repo, *args, **kwargs)
     monkeypatch.setattr(env, "watchdog", watch)
     monkeypatch.setattr(transport, "git", tracked_git)
     with concurrent.futures.ThreadPoolExecutor() as pool:
@@ -211,7 +211,7 @@ def test_watchdog_runs_after_a_failed_git_command(setup, monkeypatch):
     env, _ = setup
     events = []
     monkeypatch.setattr(env, "watchdog", lambda *args: events.append("watch"))
-    def broken_git(*args):
+    def broken_git(*args, **kwargs):
         events.append("git")
         raise RuntimeError("synthetic Git failure")
     monkeypatch.setattr(transport, "git", broken_git)
@@ -262,3 +262,42 @@ def test_boottime_unavailable_falls_back_to_original_clock(monkeypatch):
         raise OSError("unsupported")
     monkeypatch.setattr(transport.time, "clock_gettime", unavailable)
     assert transport.process_age_s(80.0) == 20.0
+
+
+def test_slow_git_is_polled_with_live_watchdog(monkeypatch):
+    class Process:
+        returncode = None
+        calls = 0
+        def communicate(self, timeout=None):
+            self.calls += 1
+            if self.calls <= 2:
+                raise subprocess.TimeoutExpired(["git"], timeout)
+            self.returncode = 0
+            return "verified\n", ""
+        def poll(self):
+            return self.returncode
+        def kill(self):
+            self.returncode = -9
+    proc = Process()
+    monkeypatch.setattr(transport.subprocess, "Popen", lambda *args, **kwargs: proc)
+    checks = []
+    assert git(Path("."), "status", watchdog=lambda: checks.append(True)) == "verified"
+    assert len(checks) == 3
+
+
+def test_budget_failure_kills_pending_git_process(monkeypatch):
+    class Process:
+        returncode = None
+        def communicate(self, timeout=None):
+            return "", ""
+        def poll(self):
+            return self.returncode
+        def kill(self):
+            self.returncode = -9
+    proc = Process()
+    monkeypatch.setattr(transport.subprocess, "Popen", lambda *args, **kwargs: proc)
+    def stop():
+        raise RuntimeError("budget stop")
+    with pytest.raises(RuntimeError, match="budget stop"):
+        git(Path("."), "status", watchdog=stop)
+    assert proc.returncode == -9
