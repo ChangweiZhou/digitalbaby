@@ -1,0 +1,271 @@
+{
+  "arms": [
+    "FE0",
+    "T_OFF",
+    "T",
+    "H",
+    "J_ADD",
+    "J",
+    "J_SHUFFLE"
+  ],
+  "bouts": 6,
+  "calibration": {
+    "gain": 0.4237781016501581,
+    "rule": "RMS of per-row channel-centered cycle1 FE0 W pre-teacher raw values",
+    "source_receipt_sha256": "84aeee032d92be134e936d79234faafa99e881df8c4fa9b3f530a975117face8"
+  },
+  "created_utc": "2026-10-01T16:28:11Z",
+  "documents": {
+    "SPEC_LOCK.md": "663c1e6ae693936c92596d128c673c8d6fecfe3b5af8a935fe08969d04e3450d",
+    "design/CYCLE3_AUDIT.md": "a5f88b32960c2572d70778f7d7a1ceb8313bd54b813e419ab80e28b11da84992",
+    "results/CYCLE3_TESTS.txt": "1772d3603782084c4e0f360debf2860c999e94d3fa98c412572b31f88dc9cf53",
+    "results/cycle3/FINAL_METRICS.json": "e1d130f6e06543b21424c7d79f4821bf3cf68815799946cba6274aea797eb18a"
+  },
+  "expected_receipt_runtime": {
+    "imported_repo_modules": {
+      "minifly_a_v3/package/REFERENCE_SOURCE/BYTE_CORE_1_20260922/bytecore.py": "ec0667d33f85392e05ce07fc705cbde0efb5140d4e3b7a737c2d30f92e73605f",
+      "minifly_a_v3/package/REFERENCE_SOURCE/BYTE_CORE_V9/brain_byte.py": "30f1f76048a4fee928161293d16b93f9e86b63f3e7ef0d48e6ecc360fd77b67c",
+      "minifly_a_v3/package/REFERENCE_SOURCE/FULL151_INPUT_STEP6_FADING_PAIR_20260927/model.py": "4ec9628aba767dbc3c5948810f87aaa494368415916ee4b421385c528aebb55e",
+      "minifly_a_v3/package/REFERENCE_SOURCE/FULL151_VISIBLE_CONTEXT_BRIDGE_20260927/content_model.py": "386f75da29e802b65ef13b766636dd2e28b84ffb13eb35534e60ccbc07ff413b",
+      "minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/common_platform.py": "fb7eb1293ce4a1c52df76570c3f62e61e16362de881013d02826d6b1e61cc0e5",
+      "minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/fixture.py": "5ad9cfb56517bc40bcb4ae4f3b6764dd3f53b9b5786e0240c2476826bb3db49e",
+      "minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/z1_model.py": "257ceb58c3e3d99865e858865b4a9f4fd96e2c079cfb66038e797f4f80aa32cd",
+      "minifly_a_v3/package/REFERENCE_SOURCE/V88/minifly_rce_v87_followup_runner.py": "49b19beb9248c3a848c972659c7fe2fa714f313badecf086102048c5d898d435",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/V82E/src/common_evo.py": "595211c5136bf5c13392d7390ce6c55ecb30f99fe21a537374eb3794cee68ad7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/V82E/src/model_evo.py": "ccdeaab99a889e6a74e47f95d641bba79ed95597b8bd902181e1c535942e25d7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration10/src/common.py": "0280313a3e930ed9cba7c8693636640d60ef1162cac2332198d795cd780cb287",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration10/src/experiment.py": "634c4bd21e123d0f42e660ef44b7e6d4d61210bd4df7d0ee151309255ac87442",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration10/src/smallfly.py": "a8e55c8133d4a5ec99747ee9338767286c74f65bcbd1843d5266f7e48d5546d7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration11/src/v66_common.py": "897d28de9950060940968e146bc4d1b701b3bf4679a1bfc790b428cdca723ce6",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration12/src/ports.py": "23e4d97b4f82e1464dfb4c0f496a21697b2234abe7903835c2a98e4101fdf315",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration12/src/v67_common.py": "f0182348062503a401af719ae9e00499729445e12f559a631f7c39cba73b73a4",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration13/src/v68_common.py": "8f90855004508e1eed94ace1f27674cbe86d9eabf9a46d7303da01281c858e77",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration14/src/actions.py": "55ffa006bb8f4354d332a0925081954243baa7223618fcb3b9cb8da86e0bc9ef",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration14/src/v69_common.py": "395d612376032cce9d79c349a82b4061a29ca6553b948d53938c769b8528290c",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration15/src/v70_actions.py": "c0102fdc3fd60522bee71c720ac1e32c5fab748c373c69a11423bf563fbe3171",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration15/src/v70_common.py": "d2a52d091639808e6412c270c539680c5050711426e7d8876625de9557acf1d8",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration16/src/receivers.py": "eb87e43a9823d599c0557bec969d9c4ee31bfccd39ff784332b9ab0c2943bc60",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration16/src/v71_common.py": "6fa2c8275a770c0b3a0fde2626df9131b5b0b8fd00bc83ee03832f5a5bbe5e1a",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration17/src/v72_common.py": "167e4ab6ee44ae56a3777390838f4014c32a0b56df672fed8badf25b4e3d39bb",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration18/src/model73.py": "3c787427f25887c9a6d13865d539c637d828caf901c1b5791bbadae7e75e4f61",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration18/src/v73_common.py": "d418c7519b8a2ce009a5bc0af0d6456c9b2cd94d27647fead17ff3d96ff0bef4",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration19/src/common74.py": "c55f76fbdb3e65a9f4a2b55af493f784862db9677c0f98d4b4b5f8ce4062e338",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration19/src/model74.py": "2a992df8bacf7a9a18b96285f063ae3be3351a2c65fde82f208806d4ba2248c7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration20/src/bridge75.py": "f1609e2aa820897ebcf25ffb92bc21f5abd974f83cf82d5735d21264e09c94c2",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration20/src/common75.py": "8fd12e2e986bddd5c7d861c4dc0254a0aa0d307761b3ef9fe041b57b6ead6d94",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration21/src/assays76.py": "fe26e700487abd87cfbb5a79ec3104333c4c879e190fe18d4e951c7441284901",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration21/src/common76.py": "2967f5f20f8446fc4e8af3919e7400378a9831e8a18695acb9ffea9b361351e5",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration21/src/model76.py": "03f1e1a7b219fdfa75ccf92b94e84d449c7ed5baaa521a2ce04190f189e448ff",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration22/src/common77.py": "689b96f25f6c237a5ba309c7254476761151a22d87a3990ea1ce002cb53f37d9",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration22/src/model77.py": "05a40150d5dcaa026c314b3a29ae2a2ac9667bc31d7c2b872285015eca70c54f",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration23/src/common78.py": "1de794d715e750596e123e3de8161088ac502f14588840326d5eaa6002279efb",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration24/src/common79.py": "e2e565ba7e62c2084c08d81ffc94163c3f4687865f63e7437eadce741f858847",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration24/src/model79.py": "8e2383954a68808f5030a34a5de7259a9dbbad44c854c8b2eeae4043a890040d",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration4/src/causal_memory.py": "0751287a4b2154a11a9f3ebe08577db4f4cfabe4ea7878bc4cd784a6bc7400d3",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration5/src/hybrid.py": "d6c2ddfbe34f0399a3296f730a869d6e3fed970abe2fa84baa3a2737d7c95bf3",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration5/src/prepare_interface.py": "1e11268ec03368ccb5cd0c442cb03981b8d9481396fc0baf4bcdf6db4aceeb87",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration6/src/retention_model.py": "55ab8fc3c4d83d549ddf8ca0fe2373d4aa4073bffd8c179d9069bfd56010cc3f",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration8/src/readout.py": "2f53afd0af22423f3221e7f6288b0a48ef058b8ff1549f15f7fc661e3dd8f53d",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/paper_refinement/src/memory_model.py": "c768e1851ad1b956f8c6b4714d59e4c8801298765354190dd9cb971cfcc7e014",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/v66_design_review/feasibility_check.py": "d3495cd4b4cfa530d1e3a8aae5d8aead68e1fadf4d4fbc02c057113a6f688927",
+      "minifly_a_v3/package/portable_birth.py": "4d3a5cc6dba12e0f12b46ae6817e6a20186ad182260bf36f31032d6b809e10c7",
+      "minifly_a_v3/src/paths.py": "6ac8673a0436a25de3373f076d207bf15cdabcf8de30dc574811be4f80557f25",
+      "minifly_a_v3/src/stores.py": "c7947354db408ac22bbd6ccc8aa646b9513814ac84fc4342e5dd959515b0eca4",
+      "response_mechanisms/src/assay.py": "af8ef90a8a23a069bf3ec2dbe9f00dcdb1b04b9c13218c442e34e73f586e7c18",
+      "response_mechanisms/src/audit_receipts.py": "89d22d3b179362761650c1207f54fc8285dc1f1ce70cbc51bc213fea76b38616",
+      "response_mechanisms/src/locked_run.py": "1feb7b92bdfcda04a93d2335a8062fad305464fe7c7722f3bdd26d67cd880267",
+      "response_mechanisms/src/mechanism_model.py": "7c087ee0178cf8c62c60c0cabc11e29619937573ddb8099199254e36c05a12cf"
+    },
+    "numba": "0.61.2",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "python": "3.11.15",
+    "scipy": "1.14.1",
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMBA_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "params": {
+    "eligibility_tau": 10.0,
+    "homeo_beta": 0.0625,
+    "j_bound": 16.0,
+    "j_gain": 0.4237781016501581,
+    "j_lr": 0.25,
+    "j_tau": 86400.0,
+    "recent_tau": 10.0,
+    "revision": 3,
+    "timing_lr": 0.05,
+    "timing_tau": 10.0
+  },
+  "primary": [
+    [
+      "T",
+      "T_OFF"
+    ],
+    [
+      "H",
+      "FE0"
+    ],
+    [
+      "J",
+      "J_ADD"
+    ],
+    [
+      "J",
+      "J_SHUFFLE"
+    ]
+  ],
+  "replay_jobs": [
+    [
+      300001,
+      "FE0"
+    ],
+    [
+      300001,
+      "T_OFF"
+    ],
+    [
+      300001,
+      "T"
+    ],
+    [
+      300001,
+      "H"
+    ],
+    [
+      300001,
+      "J_ADD"
+    ],
+    [
+      300001,
+      "J"
+    ],
+    [
+      300001,
+      "J_SHUFFLE"
+    ]
+  ],
+  "resource_caps": {
+    "active_session_hours": 12.0,
+    "peak_rss_bytes": 800000000,
+    "per_life_seconds": 300.0,
+    "results_bytes": 200000000,
+    "worker_hours": 8.0,
+    "workers": 1
+  },
+  "runtime": {
+    "imported_repo_modules": {
+      "minifly_a_v3/package/REFERENCE_SOURCE/BYTE_CORE_1_20260922/bytecore.py": "ec0667d33f85392e05ce07fc705cbde0efb5140d4e3b7a737c2d30f92e73605f",
+      "minifly_a_v3/package/REFERENCE_SOURCE/BYTE_CORE_V9/brain_byte.py": "30f1f76048a4fee928161293d16b93f9e86b63f3e7ef0d48e6ecc360fd77b67c",
+      "minifly_a_v3/package/REFERENCE_SOURCE/FULL151_INPUT_STEP6_FADING_PAIR_20260927/model.py": "4ec9628aba767dbc3c5948810f87aaa494368415916ee4b421385c528aebb55e",
+      "minifly_a_v3/package/REFERENCE_SOURCE/FULL151_VISIBLE_CONTEXT_BRIDGE_20260927/content_model.py": "386f75da29e802b65ef13b766636dd2e28b84ffb13eb35534e60ccbc07ff413b",
+      "minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/common_platform.py": "fb7eb1293ce4a1c52df76570c3f62e61e16362de881013d02826d6b1e61cc0e5",
+      "minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/fixture.py": "5ad9cfb56517bc40bcb4ae4f3b6764dd3f53b9b5786e0240c2476826bb3db49e",
+      "minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/z1_model.py": "257ceb58c3e3d99865e858865b4a9f4fd96e2c079cfb66038e797f4f80aa32cd",
+      "minifly_a_v3/package/REFERENCE_SOURCE/V88/minifly_rce_v87_followup_runner.py": "49b19beb9248c3a848c972659c7fe2fa714f313badecf086102048c5d898d435",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/V82E/src/common_evo.py": "595211c5136bf5c13392d7390ce6c55ecb30f99fe21a537374eb3794cee68ad7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/V82E/src/model_evo.py": "ccdeaab99a889e6a74e47f95d641bba79ed95597b8bd902181e1c535942e25d7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration10/src/common.py": "0280313a3e930ed9cba7c8693636640d60ef1162cac2332198d795cd780cb287",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration10/src/experiment.py": "634c4bd21e123d0f42e660ef44b7e6d4d61210bd4df7d0ee151309255ac87442",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration10/src/smallfly.py": "a8e55c8133d4a5ec99747ee9338767286c74f65bcbd1843d5266f7e48d5546d7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration11/src/v66_common.py": "897d28de9950060940968e146bc4d1b701b3bf4679a1bfc790b428cdca723ce6",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration12/src/ports.py": "23e4d97b4f82e1464dfb4c0f496a21697b2234abe7903835c2a98e4101fdf315",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration12/src/v67_common.py": "f0182348062503a401af719ae9e00499729445e12f559a631f7c39cba73b73a4",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration13/src/v68_common.py": "8f90855004508e1eed94ace1f27674cbe86d9eabf9a46d7303da01281c858e77",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration14/src/actions.py": "55ffa006bb8f4354d332a0925081954243baa7223618fcb3b9cb8da86e0bc9ef",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration14/src/v69_common.py": "395d612376032cce9d79c349a82b4061a29ca6553b948d53938c769b8528290c",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration15/src/v70_actions.py": "c0102fdc3fd60522bee71c720ac1e32c5fab748c373c69a11423bf563fbe3171",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration15/src/v70_common.py": "d2a52d091639808e6412c270c539680c5050711426e7d8876625de9557acf1d8",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration16/src/receivers.py": "eb87e43a9823d599c0557bec969d9c4ee31bfccd39ff784332b9ab0c2943bc60",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration16/src/v71_common.py": "6fa2c8275a770c0b3a0fde2626df9131b5b0b8fd00bc83ee03832f5a5bbe5e1a",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration17/src/v72_common.py": "167e4ab6ee44ae56a3777390838f4014c32a0b56df672fed8badf25b4e3d39bb",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration18/src/model73.py": "3c787427f25887c9a6d13865d539c637d828caf901c1b5791bbadae7e75e4f61",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration18/src/v73_common.py": "d418c7519b8a2ce009a5bc0af0d6456c9b2cd94d27647fead17ff3d96ff0bef4",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration19/src/common74.py": "c55f76fbdb3e65a9f4a2b55af493f784862db9677c0f98d4b4b5f8ce4062e338",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration19/src/model74.py": "2a992df8bacf7a9a18b96285f063ae3be3351a2c65fde82f208806d4ba2248c7",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration20/src/bridge75.py": "f1609e2aa820897ebcf25ffb92bc21f5abd974f83cf82d5735d21264e09c94c2",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration20/src/common75.py": "8fd12e2e986bddd5c7d861c4dc0254a0aa0d307761b3ef9fe041b57b6ead6d94",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration21/src/assays76.py": "fe26e700487abd87cfbb5a79ec3104333c4c879e190fe18d4e951c7441284901",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration21/src/common76.py": "2967f5f20f8446fc4e8af3919e7400378a9831e8a18695acb9ffea9b361351e5",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration21/src/model76.py": "03f1e1a7b219fdfa75ccf92b94e84d449c7ed5baaa521a2ce04190f189e448ff",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration22/src/common77.py": "689b96f25f6c237a5ba309c7254476761151a22d87a3990ea1ce002cb53f37d9",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration22/src/model77.py": "05a40150d5dcaa026c314b3a29ae2a2ac9667bc31d7c2b872285015eca70c54f",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration23/src/common78.py": "1de794d715e750596e123e3de8161088ac502f14588840326d5eaa6002279efb",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration24/src/common79.py": "e2e565ba7e62c2084c08d81ffc94163c3f4687865f63e7437eadce741f858847",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration24/src/model79.py": "8e2383954a68808f5030a34a5de7259a9dbbad44c854c8b2eeae4043a890040d",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration4/src/causal_memory.py": "0751287a4b2154a11a9f3ebe08577db4f4cfabe4ea7878bc4cd784a6bc7400d3",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration5/src/hybrid.py": "d6c2ddfbe34f0399a3296f730a869d6e3fed970abe2fa84baa3a2737d7c95bf3",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration5/src/prepare_interface.py": "1e11268ec03368ccb5cd0c442cb03981b8d9481396fc0baf4bcdf6db4aceeb87",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration6/src/retention_model.py": "55ab8fc3c4d83d549ddf8ca0fe2373d4aa4073bffd8c179d9069bfd56010cc3f",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/iteration8/src/readout.py": "2f53afd0af22423f3221e7f6288b0a48ef058b8ff1549f15f7fc661e3dd8f53d",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/paper_refinement/src/memory_model.py": "c768e1851ad1b956f8c6b4714d59e4c8801298765354190dd9cb971cfcc7e014",
+      "minifly_a_v3/package/REFERENCE_SOURCE/minifly/v66_design_review/feasibility_check.py": "d3495cd4b4cfa530d1e3a8aae5d8aead68e1fadf4d4fbc02c057113a6f688927",
+      "minifly_a_v3/package/portable_birth.py": "4d3a5cc6dba12e0f12b46ae6817e6a20186ad182260bf36f31032d6b809e10c7",
+      "minifly_a_v3/src/paths.py": "6ac8673a0436a25de3373f076d207bf15cdabcf8de30dc574811be4f80557f25",
+      "minifly_a_v3/src/stores.py": "c7947354db408ac22bbd6ccc8aa646b9513814ac84fc4342e5dd959515b0eca4",
+      "response_mechanisms/src/assay.py": "af8ef90a8a23a069bf3ec2dbe9f00dcdb1b04b9c13218c442e34e73f586e7c18",
+      "response_mechanisms/src/audit_receipts.py": "89d22d3b179362761650c1207f54fc8285dc1f1ce70cbc51bc213fea76b38616",
+      "response_mechanisms/src/locked_run.py": "1feb7b92bdfcda04a93d2335a8062fad305464fe7c7722f3bdd26d67cd880267",
+      "response_mechanisms/src/mechanism_model.py": "7c087ee0178cf8c62c60c0cabc11e29619937573ddb8099199254e36c05a12cf"
+    },
+    "numba": "0.61.2",
+    "numpy": "2.2.6",
+    "pandas": "2.2.3",
+    "python": "3.11.15",
+    "scipy": "1.14.1",
+    "thread_environment": {
+      "MKL_NUM_THREADS": "1",
+      "NUMBA_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "schema": "RESPONSE-SOURCE-LOCK-v1",
+  "source_hashes": {
+    "a3_source_lock": "f321f6c00e43a7f476728522357d50514444e7e5d7cfe2ca3996e2c8b8976572",
+    "src/analyze.py": "39ca7c42ed91b744ec8a345b90f5f2fd424a7bfbd924f52f1b3cea3f2df3316d",
+    "src/assay.py": "af8ef90a8a23a069bf3ec2dbe9f00dcdb1b04b9c13218c442e34e73f586e7c18",
+    "src/audit_receipts.py": "89d22d3b179362761650c1207f54fc8285dc1f1ce70cbc51bc213fea76b38616",
+    "src/locked_run.py": "1feb7b92bdfcda04a93d2335a8062fad305464fe7c7722f3bdd26d67cd880267",
+    "src/mechanism_model.py": "7c087ee0178cf8c62c60c0cabc11e29619937573ddb8099199254e36c05a12cf",
+    "tests/test_analysis.py": "f11bc88fe4a865a00081b28a90c66907c29b3906ea4864eabf39a49166907e2a",
+    "tests/test_contract.py": "52d3523d7b73fd5d8d3a093ae39be6f307d7a818b4d26c545251651dab5a150b"
+  },
+  "worlds": [
+    300001,
+    300002,
+    300003,
+    300004,
+    300005,
+    300006,
+    300007,
+    300008,
+    300009,
+    300010,
+    300011,
+    300012,
+    300013,
+    300014,
+    300015,
+    300016,
+    300017,
+    300018,
+    300019,
+    300020,
+    300021,
+    300022,
+    300023,
+    300024,
+    300025,
+    300026,
+    300027,
+    300028,
+    300029,
+    300030,
+    300031,
+    300032
+  ]
+}

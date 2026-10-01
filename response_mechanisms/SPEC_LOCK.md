@@ -2,7 +2,7 @@
 
 Prospective specification for the new, separate Full151 response-mechanism program.
 Freeze together with executable code, tests, exact runtime and SOURCE_LOCK.json
-only after cycle3 pilot passes; do not open final worlds before independent launch
+only after cycle 3 pilot passes; do not open final worlds before independent launch
 approval. No changes to A V3 science or existing receipts.
 
 ## Source and task
@@ -15,7 +15,7 @@ checkpoints: birth0,old_end15,840,old_day102,240,new_end118,080,final204,480 sec
 Probes clone each continuing state; no teacher, homeostasis or weight updates are
 committed from probes.
 
-Worlds300001–300032 inclusive, exactly32; every world has all7 arms. Pilot worlds
+Worlds 300001–300032 inclusive, exactly32; every world has all 7 arms. Pilot worlds
 290000/290001/290002 and technical290099 are excluded. W teaches both cohorts;
 N_old observes identical bytes/timing but old native and added-bank write flags
 are literally false. New teaching is enabled in both. Unsupervised exposure-driven
@@ -41,7 +41,7 @@ is separately disclosed, and J versus FE0 is an architecture-package comparison.
 - J_ADD: additive recent/current receptor eligibility, same bank size/learning
   equation/gain/decay/bounds as J
 - J: local recent×current receptor eligibility accumulated over cue bytes with
-  recent tau10s and eligibility tau10s; reset each record. Four88×88 float64
+  recent tau10s and eligibility tau10s; reset each record. Four 88×88 float64
   output banks, born zero. Per-output normalized bank update eta.25 times signed
   local reward residual times eligibility/max(1,||eligibility||²), target+1 for
   rewarded channel and−1 otherwise. Clip each weight to±16, decay tau86,400s.
@@ -51,7 +51,7 @@ is separately disclosed, and J versus FE0 is an architecture-package comparison.
   at write; ordinary eligibility at read. Fixed SHA256 seed uses world+record.
   It matches architecture and rule, not realized residual-dependent update dose
 
-J/J_ADD/J_SHUFFLE gain0.4237781016501581, fixed from cycle1 FE0 W pre-teacher
+J/J_ADD/J_SHUFFLE gain0.4237781016501581, fixed from cycle 1 FE0 W pre-teacher
 channel-centered activity RMS, without labels/correctness. No other scaling,
 threshold or candidate-selection fit is permitted. Resolved parameters are saved
 in every receipt and checked against the lock.
@@ -69,7 +69,7 @@ Random target row/column effects are reported, not assumed zero.
 Primary outcome: W final old-pair accuracy. Primary paired contrasts:
 T−T_OFF,H−FE0,J−J_ADD,J−J_SHUFFLE. World is the independent unit. Two-sided paired
 Student-t95% intervals and tests; Holm correction across these4 tests,alpha.05.
-All224 lives are required; no outcome-dependent stopping, selective exclusion,
+All 224 lives are required; no outcome-dependent stopping, selective exclusion,
 positive-result selection or final-source revision. Missing/extra/duplicate worlds,
 wrong dose, mixed parameters/revision or source/runtime changes stop validation.
 
@@ -97,11 +97,11 @@ establish equivalence or no possible benefit.
 ## Verification and resources
 Receipt-only reconstruction independently recomputes fixtures, scoring and tensor
 reductions, but shares a declared decomposition function and is not a simulation
-replay. All7 arms in final world300001 are preselected for exact fresh-process
+replay. All 7 arms in final world 300001 are preselected for exact fresh-process
 replay; compare every field except resource measurements. Record distinct PIDs,
 all replay receipts and replay audit. Final audit enforces their presence/equality.
 
-Python3.11.15,NumPy2.2.6,SciPy1.14.1,Numba0.61.2,pandas2.2.3; numeric thread counts1.
+Python 3.11.15,NumPy 2.2.6,SciPy 1.14.1,Numba 0.61.2,pandas 2.2.3; numeric thread counts1.
 One worker. Hard caps:8 worker-hours including replay and interrupted jobs,300s per
 life,800MB worker RSS,200MB new results,12 elapsed wall-hours from initial launch,
 including publication waits/resumes. No purchases. Cap violations or technical
@@ -111,6 +111,6 @@ conservatively charged from its saved start time; budget does not reset on resum
 Receipts are write-once. Publish checkpoints after every complete world on branch
 response-mechanisms-20261001 using ordinary fast-forward updates. Publication ACK
 must bind world, lock digest and remotely verified commit and be retained. After
-all224 primary lives plus7 replays, run the locked analysis/audit and publish all
+all 224 primary lives plus7 replays, run the locked analysis/audit and publish all
 positive/negative/failure results with exact remote commit verification. No merging
 or force-pushing is part of this experiment program.

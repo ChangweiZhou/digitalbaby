@@ -7,11 +7,15 @@ confirmation and does not modify that experiment.
 
 ## Status
 
-Two design–independent-audit–pilot–revision cycles are complete. The third-cycle design and code passed39 tests, including a sealed-final-path smoke test on a technical world; its pilot is pending shared-resource availability. Cycle1's
-cross-record timing implementation was identified as a mismatch to the intended
-within-cue hypothesis and is preserved explicitly as exploratory development.
-The final fresh-world run has **not** started. This README will be updated with
-the locked roster and audited final outcomes.
+All three design–independent-audit–pilot–revision cycles are complete, with all
+21 exploratory lives retained and 39 tests passed. No efficacy win is claimed
+from these pilots. The final source is locked for 32 fresh worlds × seven arms,
+plus seven preselected fresh-process replays. The final run has not started yet.
+
+Cycle 1's cross-record timing implementation was identified as a mismatch to the
+intended within-cue hypothesis. Cycle 2 corrected it; cycle 3 strengthened the
+complete measurement, validation, resource and publication contract. See the
+cycle histories, pilot reports and `SPEC_LOCK.md` for full limitations and methods.
 
 ## Reproduction
 
@@ -39,3 +43,11 @@ and interfering new 4×4 cue grids. It does not establish withheld-pair relation
 transfer, general reasoning, or a biological explanation. The historical numeric
 claims supplied as motivation could not yet be independently located and are not
 accepted thresholds. All numerical conclusions will come from the saved new data.
+
+## Pilot source history
+
+Each `design/cycleN_source/` directory preserves the exact Python source for that
+pilot. To reproduce an older pilot, restore its runner/model files to `src/` and
+its `test_*.py` files to `tests/` in a separate checkout. Do not overwrite the
+locked final source or existing write-once receipts. Pilot outcomes never enter
+the final statistical sample.

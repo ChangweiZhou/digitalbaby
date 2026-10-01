@@ -1,7 +1,7 @@
-# Cycle3 prospective design: qualification, auditing and final lock
+# Cycle 3 prospective design: qualification, auditing and final lock
 
-Prepare before running world290002. Retain all seven arms and the cycle2 equations
-and shared gain; there is no selection of successful pilot variants. Cycle3 uses
+Prepare before running world 290002. Retain all seven arms and the cycle 2 equations
+and shared gain; there is no selection of successful pilot variants. Cycle 3 uses
 six repetitions per cohort, the planned final-life dose, on one fresh exploratory
 world. All scientific outcomes remain exploratory.
 
@@ -19,8 +19,8 @@ world. All scientific outcomes remain exploratory.
 - Freeze analysis, mechanism, runner, audit and tests before opening final worlds
 
 ## Prespecified final design and inference
-32 independent, previously unused worlds300001..300032. Every world runs FE0,
-T_OFF,T,H,J_ADD,J,J_SHUFFLE with all16 old and16 new random pairs, six repetitions
+32 independent, previously unused worlds 300001..300032. Every world runs FE0,
+T_OFF,T,H,J_ADD,J,J_SHUFFLE with all 16 old and16 new random pairs, six repetitions
 per cohort, exactly the same labels/order/timing across arms, and W/N_old branches.
 No final world may influence design, parameters, arm inclusion or endpoints.
 
@@ -53,11 +53,11 @@ credited as an online learner or used for tuning. Report target-table F/G/H RMS
 variation, update doses, clipping, memory, timings and all world-level observations.
 
 ## Resource and persistence proposal
-One worker, thread-count1 for numeric libraries. Based on cycle2 measurement so far
+One worker, thread-count1 for numeric libraries. Based on cycle 2 measurement so far
 51–61s per4-repeat life, plan approximately4–6 worker-hours for224 final6-repeat
 lives (32×7), with an8-worker-hour hard cap,300s individual-life cap,800MB per-worker
 RSS cap,200MB new results cap and12h elapsed-session cap excluding explicit resume
-time. These bounds will be finalized from cycle3 before lock. No purchases or new
+time. These bounds will be finalized from cycle 3 before lock. No purchases or new
 paid machines. Immutable receipts; stop on technical failure or source drift;
 ordinary fast-forward checkpoint publication on the separate authorized branch.
 Scientific failure does not stop the roster. A technical abort is not a negative
@@ -66,8 +66,8 @@ invalidates the affected final run and requires a new prospective decision.
 
 ## Independent-audit clarification before pilot
 Final validation is automatically tied to SOURCE_LOCK.json, including exact
-runtime import hashes and pandas2.2.3. Probe clocks are checked. All7 arms of
-world300001 are prospectively selected for fresh-process replay; only resource
+runtime import hashes and pandas 2.2.3. Probe clocks are checked. All 7 arms of
+world 300001 are prospectively selected for fresh-process replay; only resource
 measurements may differ. Replay time counts in the8h worker cap. The12h wall cap
 runs from initial launch and includes publication and resumes without reset.
 Mechanistic signature gates remain prespecified supportive nominal95% checks,
