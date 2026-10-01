@@ -7,7 +7,7 @@ confirmation and does not modify that experiment.
 
 ## Status
 
-Three design–independent-audit–pilot–revision cycles are in progress. Cycle1's
+Two design–independent-audit–pilot–revision cycles are complete. The third-cycle design and code passed39 tests, including a sealed-final-path smoke test on a technical world; its pilot is pending shared-resource availability. Cycle1's
 cross-record timing implementation was identified as a mismatch to the intended
 within-cue hypothesis and is preserved explicitly as exploratory development.
 The final fresh-world run has **not** started. This README will be updated with

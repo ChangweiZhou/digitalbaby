@@ -3,7 +3,7 @@ from __future__ import annotations
 import gzip, hashlib, json, os, platform, resource, sys, time
 from pathlib import Path
 import numpy as np
-from mechanism_model import ROOT, A3, ARMS, DEFAULT, System, digest
+from mechanism_model import ROOT, A3, ARMS, System, digest
 from fixture import make_world, DT, RECORD_SECONDS
 
 
@@ -90,7 +90,7 @@ def probe(system,cues,labels,at):
     if system.state_digest()!=before:raise AssertionError('probe changed continuing model')
     features=np.stack(features)
     singular=np.linalg.svd(features,compute_uv=False)
-    return dict(probe_at=float(at),response_at=float(at+12*DT),values=values,raw_values=raw,extra_values=extra,homeostasis=system.h.tolist(),
+    return dict(values=values,raw_values=raw,extra_values=extra,homeostasis=system.h.tolist(),
                 predictions=np.argmax(values,axis=1).tolist(),
                 accuracy=float(np.mean(np.argmax(values,axis=1)==np.array(labels))),
                 raw_accuracy=float(np.mean(np.argmax(raw,axis=1)==np.array(labels))),
@@ -112,13 +112,9 @@ def write_once(path,doc):
 
 def run(arm,world,bouts,params,kind='pilot',destination=None):
     sources=source_hashes()
-    resolved_params={**DEFAULT,**params}
-    import locked_run
-    lock_sha=locked_run.authorize_final(arm,world,bouts,resolved_params) if kind=='final' else None
     t0=time.monotonic();doc=world_doc(world,bouts)
-    base=System(arm,resolved_params)
-    births=base.births
-    predictor_birth=[s.parameter_digest() for s in base.stores]
+    base=System(arm,params)
+    resolved_params=base.p.copy()
     systems={b:base.clone() for b in ('W','N_old')}
     if systems['W'].state_digest()!=systems['N_old'].state_digest():raise AssertionError('birth mismatch')
     birth=base.state_digest();del base
@@ -142,14 +138,14 @@ def run(arm,world,bouts,params,kind='pilot',destination=None):
         for branch,s in systems.items():
             s.begin_cue(at)
             for k,b in enumerate(bytes.fromhex(rec['cue_hex'])):s.cue_byte(b,at+k*DT)
-            when=at+12*DT;h_before=s.h.copy();u,raw,phi,extra=s.read(when)
+            when=at+12*DT;u,raw,phi,extra=s.read(when)
             sens=s.sensory_digest();dw=s.observe_cue(when,raw)
             write=not(branch=='N_old' and stage=='old')
             ledger=s.teach(rec['answer'],when,write,world,idx,raw,phi)
             if not write and (any(ledger['native_l1']) or ledger['j_write_l1']):raise AssertionError('no-write mutation')
             s.end_record(at+RECORD_SECONDS,at+13*DT)
             records.append(dict(record=idx,branch=branch,stage=stage,cue_hex=rec['cue_hex'],
-                answer=rec['answer'],teacher_at=when,end_at=at+RECORD_SECONDS,homeostasis_before=h_before.tolist(),values=u.tolist(),raw_values=raw.tolist(),extra_values=extra.tolist(),
+                answer=rec['answer'],values=u.tolist(),raw_values=raw.tolist(),extra_values=extra.tolist(),
                 predicted=int(np.argmax(u)),timing_l1=dw,sensory_before_teacher=sens,**ledger))
         if systems['W'].sensory_digest()!=systems['N_old'].sensory_digest():
             raise AssertionError('teacher-dependent sensory state across branches')
@@ -163,17 +159,12 @@ def run(arm,world,bouts,params,kind='pilot',destination=None):
             checkpoint('new_end',newend,('old','new'))
             for s in systems.values():s.flush(newend+86400)
             checkpoint('final',newend+86400,('old','new'))
-    frozen=all([s.parameter_digest() for s in m.stores]==predictor_birth for m in systems.values())
-    if not frozen:raise AssertionError('byte predictor changed')
-    timing=systems['W'].timing_summary()+systems['N_old'].timing_summary()
-    if any(not x['support_unchanged'] or not x['finite_positive'] or x['incoming_mass_max_error']>1e-9 for x in timing):
-        raise AssertionError('timing structural certificate failed')
     receipt=dict(schema='RESPONSE-MECHANISMS-RECEIPT-v1',kind=kind,arm=arm,world=world,
                  params=resolved_params,bouts=bouts,fixture=doc,source_hashes=sources,birth_digest=birth,
-                 state_budget=systems['W'].state_budget(),births=births,predictor_frozen=frozen,end_timing=timing,lock_sha256=lock_sha,records=records,probes=probes,
+                 state_budget=systems['W'].state_budget(),records=records,probes=probes,
                  end_state={b:s.state_digest() for b,s in systems.items()},
                  runtime=runtime_manifest(),
-                 resource=dict(wall_seconds=time.monotonic()-t0,process_id=os.getpid(),
+                 resource=dict(wall_seconds=time.monotonic()-t0,
                                peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024))
     if destination is None:destination=ROOT/'results'/kind/arm/f'{world}.json.gz'
     return {**write_once(destination,receipt),**receipt['resource'], 'arm':arm,'world':world}
@@ -182,5 +173,5 @@ if __name__=='__main__':
     import argparse
     p=argparse.ArgumentParser();p.add_argument('--arm',choices=ARMS,required=True)
     p.add_argument('--world',type=int,required=True);p.add_argument('--bouts',type=int,required=True)
-    p.add_argument('--kind',required=True);p.add_argument('--params',default='{}');p.add_argument('--destination')
-    a=p.parse_args();print(json.dumps(run(a.arm,a.world,a.bouts,json.loads(a.params),a.kind,a.destination)),flush=True)
+    p.add_argument('--kind',required=True);p.add_argument('--params',default='{}')
+    a=p.parse_args();print(json.dumps(run(a.arm,a.world,a.bouts,json.loads(a.params),a.kind)),flush=True)

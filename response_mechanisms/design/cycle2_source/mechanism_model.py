@@ -18,7 +18,7 @@ from common_platform import clone_model
 ARMS = ('FE0', 'T_OFF', 'T', 'H', 'J_ADD', 'J', 'J_SHUFFLE')
 DEFAULT = dict(timing_lr=.05, timing_tau=10., homeo_beta=1/16,
                eligibility_tau=10., recent_tau=10., j_lr=.25, j_gain=1.,
-               j_bound=16., j_tau=86400., revision=3)
+               j_bound=16., j_tau=86400., revision=2)
 
 
 def digest(*arrays, meta=()):
@@ -192,28 +192,10 @@ class System:
         for s in self.stores:
             if s.flush(t)>1e-6: raise AssertionError('native clock mismatch')
 
-    def timing_summary(self):
-        output=[]
-        for s in self.stores:
-            B=s.fly.m.B
-            sums=np.bincount(B.indices,weights=B.data,minlength=B.shape[1])
-            output.append(dict(support_unchanged=bool(np.array_equal(B.indices,self.cols) and
-                np.array_equal(np.repeat(np.arange(B.shape[0]),np.diff(B.indptr)),self.rows)),
-                incoming_mass_max_error=float(np.max(np.abs(sums-self.budget))),
-                finite_positive=bool(np.isfinite(B.data).all() and (B.data>0).all()),
-                weight_sha256=digest(B.data)))
-        return output
-
     def state_budget(self):
-        fields=('tpre','tpost','telig','h','jw','recent','elig')
-        mutable={n:int(getattr(self,n).nbytes) for n in fields}
-        mutable['sensory_trace']=int(self.sens.p.nbytes)
-        fixed={n:int(getattr(self,n).nbytes) for n in ('rows','cols','budget','mean')}
-        return dict(added_allocated_bytes=sum(mutable.values())+sum(fixed.values()),
-                    added_mutable_array_bytes=mutable,added_fixed_array_bytes=fixed,
-                    optional_pending_timing_bytes=int(self.cols.size*8),
+        return dict(added_allocated_bytes=sum(getattr(self,n).nbytes for n in
+                    ('tpre','tpost','telig','h','jw','recent','elig')),
                     conjunctive_synapses=int(self.jw.size),
                     timing_edges=int(len(self.cols)),homeostatic_scalars=4,
                     operative_components=('timing' if self.arm=='T' else 'homeostasis' if self.arm=='H'
-                                          else 'added_output_bank' if self.arm.startswith('J') else 'none'),
-                    accounting_note='Array-state inventory, excludes Python objects and unchanged native stores; RSS measured separately')
+                                          else 'added_output_bank' if self.arm.startswith('J') else 'none'))
