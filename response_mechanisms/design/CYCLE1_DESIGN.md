@@ -1,0 +1,33 @@
+# Response-mechanism program: exploratory cycle 1
+
+Status: design before pilot, 2026-10-01. This is a separate exploratory program, not an amendment to the frozen A V3 confirmation.
+
+## Question and source status
+Decompose each four-output response tensor V[a,b,c] over the complete 4×4 cue grid as B[c]+F[a,c]+G[b,c]+H[a,b,c]. B is grand mean; F and G are mean-centered first/second-input main effects; H is the doubly centered residual. Report RMS magnitudes (bias is channel-centered B), g12/g1 and g12/g2, zero-denominator flags, reconstruction error, and raw tensors. The decomposition is descriptive, not an assumption that the learned mechanism is additive. The historical numerical claims 'second input 2.3–2.5×' and 'centering 30.5→47.6%' have not been found in the bundled primary sources and will not be treated as established facts or used for thresholds. Recompute independently on this new assay.
+
+## Bounded assay
+Use actual canonical Full151 FE0 four-store models and the existing 12-byte random-balanced fact cue generator, not an abstract surrogate. Old 4×4 digits 0..3 and new 4×4 digits 4..7 map to world-specific balanced random four-way outputs. Full final life provisionally: six old repetitions (96 teachers), six new repetitions (96), a day after each cohort, same record and byte timing as A V3. Probe all old 16 pairs after old learning, after day, after interference, and at final day; new pairs after new and final. Pair memorization and retention are tested; this does not test held-out pair generalization or broad reasoning.
+
+Two matched trajectories: W writes both cohorts; N_old observes identical bytes and receives identical native adaptation/time but no old value or conjunctive writes. Candidate unsupervised sensory plasticity and own-output homeostasis remain exposure driven on both branches. No labels or task IDs enter those unsupervised mechanisms. Every permitted flag is recorded literally and checked. All probes operate on disposable clones with no homeostasis or plastic updates committed. Candidate states and outcomes on one branch never drive the other.
+
+## Arms (provisional seven)
+- FE0: canonical native four stores, no added output contribution
+- T_OFF: FE0 with the exact timing-state allocation and computations but PN→KC updates disabled (numerical FE0 parity required)
+- T: P4-like antisymmetric recent-PN×current-KC minus current-PN×recent-KC updates at cue completion, on fixed canonical PN→KC support, fixed incoming budget per KC. Separate FE0 cue-only sensor receives cue bytes, never teacher or newline; its traces are reset at record boundary and temporal memory persists only from cue observations. Native frontend still follows original bytes. Teacher counterfactual must leave T weights/traces identical, including across multiple records. T is a new timing variant, not the frozen A V3 P4
+- H: one scalar EMA per output channel updated from that channel's own pre-teacher raw activity. Corrected output is raw value minus EMA. Each scalar gets no label, no task ID, no other channel's state, and no evaluation data. Same update count on W and N_old; probe reads freeze it
+- J_ADD: separately writable recent+current sensory eligibility bank, same number of synapses, same bounded local teacher update and output gain as J
+- J: separately writable recent×current sensory eligibility bank. Recent receptor traces and current receptor activation form local conjunction eligibility before the teacher; update after teacher is eligibility times bounded signed local reward residual. Teacher only gates the write, never computes eligibility
+- J_SHUFFLE: same J birth, state, eligibility, dose, and local update but deterministic per-record eligibility-coordinate permutation at write, breaking stable cue-conjunction alignment; seed uses world and record, never target
+
+All arms allocate equal added persistent arrays including dormant fields, and record actual operative/writable and total state separately. J versus J_ADD and J_SHUFFLE is the primary causal comparison; J versus FE0 is explicitly an architecture-package comparison. Timing versus T_OFF and H versus FE0 are their primary comparisons. No winner selection by pilot accuracy is permitted for final-arm inclusion.
+
+## Cycle-1 pilot
+One exploratory world 290000, two old/new repetitions. Parameters: timing learning rate .05, trace tau 330 s, positive-weight floor 1e-9, original per-KC incoming mass; homeostasis EMA gain 1/16 per observation; J eligibility recent tau10 s and accumulation tau10 s, local normalized least-mean-square learning rate .25, prediction target +1 for rewarded output and -1 otherwise. Output gain fixed 1 native unit provisionally, to be audited against measured native activity scale without accuracy-based tuning. Native teacher rule remains unchanged. Keep all pilot results including failures. Do not touch final worlds.
+
+## Planned audit→pilot→revision sequence
+Cycle 1 audits information flow, source parity, literal writes, state allocation, and meaningful nonzero candidate updates; pilot establishes timing, dynamic range, feature rank, response decomposition and technical failure cases. Revise for identified measurement/design defects.
+Cycle 2 independently audits the revised design and code; use fresh exploratory world 290001 and four repetitions. Revise only with documented exploratory evidence, retaining all arms and results.
+Cycle 3 independently audits again; use fresh exploratory world 290002 and six repetitions. Make final methodological corrections and then lock source, parameters, endpoints, worlds and resource caps before final launch. Final controls/endpoints may be strengthened before lock; no final outcomes or labels may be inspected beforehand.
+
+## Final endpoints to lock after pilots
+Prospectively fresh world roster; target 32 worlds subject to measured cost. Paired world-level contrasts with all worlds included. Primary behavioral endpoint old random-pair accuracy at final. Secondary old immediate, interference decrement, new accuracy, W−N_old learning benefit. Timing mechanistic signature requires both interaction/main-effect ratios to rise, not global amplification. H signature requires bias reduction while F/G/H remain within numerical tolerance under readout subtraction. J requires increased interaction response and paired random-mapping gain over additive and shuffled controls. Report raw and corrected activity separately, all contrasts, uncertainty and multiple-comparison correction. Negative evidence must distinguish insufficient power from demonstrated equivalence. No claims that three methods share identical intrinsic capacity.

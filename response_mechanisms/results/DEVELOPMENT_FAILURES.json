@@ -1,0 +1,16 @@
+[
+  {
+    "stage": "cycle1_initial_test_collection",
+    "status": "fixed_before_pilot",
+    "error": "AttributeError: partially initialized module 'model' has no attribute 'bc'",
+    "cause": "New file model.py shadowed frozen FadingPair source's module named model",
+    "resolution": "Rename new module mechanism_model.py; rerun all18 tests successfully"
+  },
+  {
+    "stage": "cycle1_independent_code_audit",
+    "status": "preserve_pilot_then_revise_cycle2",
+    "issue": "T sampled cue endpoints and therefore tested cross-record rather than intended within-cue timing",
+    "interpretation": "Cycle1 T is not an instantiation of the intended within-cue timing hypothesis",
+    "resolution": "Cycle2 adds cue-byte timing eligibility and record-boundary resets, preserving original pilot"
+  }
+]
