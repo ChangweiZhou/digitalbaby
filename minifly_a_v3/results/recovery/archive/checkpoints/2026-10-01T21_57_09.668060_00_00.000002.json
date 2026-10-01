@@ -1,16 +1,18 @@
 {
- "base_commit": "ac400c25c2cf49758530f9760fa83a4b89dc9d07",
- "latest_checkpoint": {
-  "path": "minifly_a_v3/results/recovery/archive/checkpoints/2026-10-01T21_57_09.668060_00_00.000002.json",
-  "sequence": 2,
-  "sha256": "6c11b7f289a247153fa2a58d831356074f65abb621e4bb64299e68931c097e9f",
-  "validated_receipts": 694
+ "checkpoint_stop_category": null,
+ "counter_definition": "Worker-seconds include original lost computation and conservative interruption reservations; not a sum of surviving receipt durations.",
+ "created_at_utc": "2026-10-01T21:57:09.668060+00:00",
+ "cumulative_resource_counters": {
+  "active_wall_s": 124302.20721360456,
+  "worker_s": 494177.601318366
  },
  "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
- "native_receipt_files_at_base_commit": 689,
- "note": "Archive coverage is distinct from native receipt-file coverage. Restore verifies every chunk and original compressed-byte SHA256.",
- "original_survivor_receipts": 690,
- "purpose": "Lossless same-repository backup of validated synthetic experiment receipts; native science files and source lock unchanged",
+ "previous_remote_checkpoint": {
+  "path": "minifly_a_v3/results/recovery/archive/checkpoints/2026-10-01T21_42_01.845131_00_00.000001.json",
+  "sequence": 1,
+  "sha256": "02cfbdaaa4607683300e0f3f3977d8443339e28b2a925c8ba0e8d366600a8149",
+  "validated_receipts": 690
+ },
  "receipt_sha256": {
   "results/science/P0/190001.json.gz": "9909b95c689f31d8e4882c94a0306e69211dd8fb385b49d5de1dd8e094799cba",
   "results/science/P0/190002.json.gz": "dd285d4571d1dc098e9def29f4126afe9572574fd762f6b9845dcaeab88fe2ae",
@@ -707,328 +709,22 @@
   "results/science/Z2_rand/190052.json.gz": "d93503ecda8e4973a1ec649be54c4c764e366505f5388d04b11492915e3553f0",
   "results/science/Z2_rand/190053.json.gz": "f8beb905de7c0f423a2412e6835d06b7599e80155087b953404f53be3ce45b76"
  },
- "receipts": [
-  {
-   "arm": "R3",
-   "chunk_encoding": "base64 ASCII with final LF; independently encoded contiguous original-byte slices",
-   "chunks": [
-    {
-     "decoded_sha256": "0fcc50321777e6980c59304c6b921d7803834a9d413c5b66e6664a662d6804ff",
-     "decoded_size": 98304,
-     "git_blob_sha": "9d7da03ad2ab4455bf42d07cc91c60010222d092",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-000.b64",
-     "sha256": "ca4e5934debc74d013aed9a26c97ceddbcddf96d274120d7acc5bc5dd7b70348",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "f45e8c8873c611ac72a5bb68859d10054753768b37fd3aa8c821c55ad250aef3",
-     "decoded_size": 98304,
-     "git_blob_sha": "b0861b3276f1a5a0a7da96cb6ff4f395caa9006c",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-001.b64",
-     "sha256": "1da7dddb94b00cc5b3f66429fe602c8f9d322272942155607ba1cf920d2f3869",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "34772fd37e391ba5ac129ba2f8f279a2b91ac87a7eae8dc94a3d289301ed18a3",
-     "decoded_size": 98304,
-     "git_blob_sha": "ac9792a12fe9225a56a095f9ad9b6e2546f602d3",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-002.b64",
-     "sha256": "a4ecf6abb72ada475822ba1989c67bfddf06978d0e7a60f10e43024edd27c35d",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "1b102017f627fc13bbcc6d4737a0862b5fd69510187cecd8b7c89afd2d6d1675",
-     "decoded_size": 98304,
-     "git_blob_sha": "74315d34e3661bded0c6a576ca4b931ed14bc15e",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-003.b64",
-     "sha256": "80f8d09865f2d4253a14a7603bfc8cc92ab6be40cb08cbbab66d8140296dbf65",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "75690945990e5d826697d5f4298b033e9ca3559402108cca8b01583ced78a078",
-     "decoded_size": 98304,
-     "git_blob_sha": "147ab3636a258327f992f4fb5be1c4f3a2eee40d",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-004.b64",
-     "sha256": "db4f5391a702bdf53f2bd6e482890ad73ef2e716f820c6413a42e05b674f19e4",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "d2cde043814b58f1fff317cf61ce3b36ebf434be2cdd661bfc2544a99e4890b7",
-     "decoded_size": 98304,
-     "git_blob_sha": "c78b1da471bb7a7d52c8d68116e667bcadd8848a",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-005.b64",
-     "sha256": "1d904932a32e9281511baf104d8edcbd96925b783a9ff60c68080d5f7e3c995d",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "814cf5739d4d360d745119480010e75e406f94926646840ebeaee185d79b4830",
-     "decoded_size": 57427,
-     "git_blob_sha": "223549f66237c4a36dacbc7d8f3f6a15ecab28de",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3/190054/part-006.b64",
-     "sha256": "a06ab91bfc5d5a3f72420da4da2bf404a28d754efad0c1a4a1c71933543149ae",
-     "size": 76573
-    }
-   ],
-   "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
-   "original_git_blob_sha": "3af57fe1dd53bef3ef43721cc4b30b70eaee6616",
-   "original_path": "minifly_a_v3/results/science/R3/190054.json.gz",
-   "original_sha256": "291bd47fdf44b0ce26c124d3e80994e039a197e8800a1c02b937dbb0b28ceec3",
-   "original_size": 647251,
-   "schema": "MINIFLY-A3-CLAUDE-RECEIPT-v1",
-   "world": 190054
-  },
-  {
-   "arm": "R0",
-   "chunk_encoding": "base64 ASCII with final LF; independently encoded contiguous original-byte slices",
-   "chunks": [
-    {
-     "decoded_sha256": "5ad1b4166975d63c14888a02ba5e5c3261e3f2cd30193fbb0969ed551b7f1ddd",
-     "decoded_size": 98304,
-     "git_blob_sha": "c469966ea4edcde091caea71cfad62379fc0e882",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0/190054/part-000.b64",
-     "sha256": "daf22b4a2d61146616232759c8d4d1a850cb0d1e237e6196ab23b850f9db3b78",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "85cf3cd52f74bf8a2ad12465eb3590dff28883bf44f8534ee731dfe22c1ef7ef",
-     "decoded_size": 98304,
-     "git_blob_sha": "a7e87b7838d916a03d921dd67e3e5f41e0f9986a",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0/190054/part-001.b64",
-     "sha256": "aa320fe3abcbc896591cce7ed00fb5fe40284f766e9f2f8a63411d6a0392a317",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "1c63f8c55f6139f331de63422c83cddf5c9f36251582eaef8b2511a97a190f8e",
-     "decoded_size": 98304,
-     "git_blob_sha": "1f4e0af63e4f0e0511b041bd2b31ee5edbba5ef6",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0/190054/part-002.b64",
-     "sha256": "50d969015e524eb444e25bab783ea84abcc5172cba9346be3704b28861dc0434",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "4db60d09198b306a39125f1d1728d662dbbf10f212c631b5bf57d6197afd7348",
-     "decoded_size": 98304,
-     "git_blob_sha": "ee39e6630e860a3413feaa2b2b1dbd99e9fe6a61",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0/190054/part-003.b64",
-     "sha256": "6b976a4f29b467ea02579d6b68cbc79204b1a2318b0d85eb355da38a5c1bbb3c",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "8fbfc061afca63783e65ec41c37b2f545c6c955541ea6e872c67ceb4fdd5c2a8",
-     "decoded_size": 98304,
-     "git_blob_sha": "b0b0714b458ce555bd2ce86bf5c4def6bfdd2747",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0/190054/part-004.b64",
-     "sha256": "90d57eb2ad22a6267387793b723315b7c9ca4e5c87f7ae63cff780ffd51c9350",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "e804aa3057f5d7485d6b2978cf2fc32cfbd0fde22d9063512a314a5e8eda6edd",
-     "decoded_size": 16897,
-     "git_blob_sha": "fd2dea08fdc5730a1e7e1acea4e52b85e0119356",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0/190054/part-005.b64",
-     "sha256": "0ca24f5730d9ba3d5e0f2468d667966a3c6f3aa98627cee75f57dba8e31e433a",
-     "size": 22533
-    }
-   ],
-   "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
-   "original_git_blob_sha": "c0d9b5280759ad066070823f98307f8f5936fe5e",
-   "original_path": "minifly_a_v3/results/science/R0/190054.json.gz",
-   "original_sha256": "66655e90b7d4ba6795cc1a5bcd2648bb178efbdb22c02f07fdf9d23638bdce5d",
-   "original_size": 508417,
-   "reconstruction_after_loss": true,
-   "schema": "MINIFLY-A3-CLAUDE-RECEIPT-v1",
-   "world": 190054
-  },
-  {
-   "arm": "R0_signed",
-   "chunk_encoding": "base64 ASCII with final LF; independently encoded contiguous original-byte slices",
-   "chunks": [
-    {
-     "decoded_sha256": "d3fcb4b343188bf967583cb9f73ced913763b791d3c04bfb1967d88a2b3ba48a",
-     "decoded_size": 98304,
-     "git_blob_sha": "754c589735c12b8e2f6ce56c33f9da1a7ab02759",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0_signed/190054/part-000.b64",
-     "sha256": "726c64201676c390eb2416d5fad0e228643cb780446b2d5988899700c18c8e82",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "4b27db2f1dc3c5c1e2ed15888f5b85ee95ad75be8cacf709dd89aecf84f39e98",
-     "decoded_size": 98304,
-     "git_blob_sha": "6218ce871d09fd967390be11568119f07eff4566",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0_signed/190054/part-001.b64",
-     "sha256": "3b0e34d4b0c27773a69a51e432cd32aca3c614e628f91ea8bfafb29d06d346a9",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "9032838b669f0974498cb87c7ea5dd481fda8ad4201ecff7f94857e35ce9898d",
-     "decoded_size": 98304,
-     "git_blob_sha": "760b5997c8752d9b0ac648e38343ff95e858ae41",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0_signed/190054/part-002.b64",
-     "sha256": "1f73ecf9b0dd4a620a9fe0984d4fdcaf33509cbd6b161d2fe94e86d9e6061ca9",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "c1afbac57d3b1594f0379408ba7b6c6093e6771d1d332ffa510b26be8a88d24f",
-     "decoded_size": 98304,
-     "git_blob_sha": "845c5187ef02fc7fadffd214ede0729d7e68613e",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0_signed/190054/part-003.b64",
-     "sha256": "266cc3ec83893334be224211aa1fec2698cf9d926e1f33dcd2a87c3ff8c1c7af",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "c5ae812e460b84ba74d40686f88ccf1de849e164b6cb97c246933d38d5f19781",
-     "decoded_size": 98304,
-     "git_blob_sha": "5e3e72fc59216a552b1546a9cd84a47c12811570",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0_signed/190054/part-004.b64",
-     "sha256": "bcf0a0369c42a9ab113b6d04c6e25f710d6ff290a176b0e4ca0f498d6b6636d5",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "d31cf96853315999d0c5f685f1983d34f9bccd4ff683ebac0007c628b9151788",
-     "decoded_size": 35296,
-     "git_blob_sha": "af0c1beed35041cca1472e723b4f0809b3cb189d",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R0_signed/190054/part-005.b64",
-     "sha256": "47de3fbda9629a2a1174d349d878a864d65ad349b05019a604780d1652a013af",
-     "size": 47065
-    }
-   ],
-   "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
-   "original_git_blob_sha": "11921acf98e150e9d33cf55ba596d2ca52dd8546",
-   "original_path": "minifly_a_v3/results/science/R0_signed/190054.json.gz",
-   "original_sha256": "d7615314ccc0dbdba0916ec84d335522b8a403b2f5200b483ac093ffc15b9f1f",
-   "original_size": 526816,
-   "reconstruction_after_loss": true,
-   "schema": "MINIFLY-A3-CLAUDE-RECEIPT-v1",
-   "world": 190054
-  },
-  {
-   "arm": "R1",
-   "chunk_encoding": "base64 ASCII with final LF; independently encoded contiguous original-byte slices",
-   "chunks": [
-    {
-     "decoded_sha256": "2141bb601d04b64829f1bf51a544ad0b816a24a42c91b98445fcf5cec424ccd7",
-     "decoded_size": 98304,
-     "git_blob_sha": "ec6f2f1720ceb85d919984cc91495f8b28a2119d",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R1/190054/part-000.b64",
-     "sha256": "0602f72091f4a4786809b72ec42f8edd7293a9da39f78ef64392d0b1244b9dbd",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "ca206ead5ccc090db93a409117d8f573af322f39c4edf7479566d32dea3082be",
-     "decoded_size": 98304,
-     "git_blob_sha": "b11001bbe0899a4c1eae5d83c30a7174de5e3c6d",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R1/190054/part-001.b64",
-     "sha256": "b16d1cccc6c998e229294bd8f5c82a96657b3b8f4db4643f483e0a41ac2fed51",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "ec44b23dd0596850880ef7fbcc83ec17eb6519cf6f4b65b7dfef58ee318d2056",
-     "decoded_size": 98304,
-     "git_blob_sha": "cbbc6f972aa92d9613c5efb80be9b3515e82193b",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R1/190054/part-002.b64",
-     "sha256": "c47ce9161a2cb6c8215c8a1748d5b5bba28749020ee1d6a52a3a4879844c29b0",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "8ac2eff5d3782c9ab57c96ea0abb1a10b587f4080e3b64f77025bcfa04409e50",
-     "decoded_size": 98304,
-     "git_blob_sha": "a675304c39939235892d39a8cb4aefced3888db7",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R1/190054/part-003.b64",
-     "sha256": "845ad9e638712acf5b94955b6efc269cf1f742f07c346960cb3e2d2442955d2a",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "a973db890ba80144ad1b83667fbac271392c5817eb934e57416a9a989b59da8c",
-     "decoded_size": 78829,
-     "git_blob_sha": "72617431fc345428b6b00717d0608040d717f87b",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R1/190054/part-004.b64",
-     "sha256": "54be6d074c1a64e1d9c3f7d79fbd7207256e9b491515a39a1f0591bec77765f1",
-     "size": 105109
-    }
-   ],
-   "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
-   "original_git_blob_sha": "587d29603197bdd01b1de74910873760c3ee885c",
-   "original_path": "minifly_a_v3/results/science/R1/190054.json.gz",
-   "original_sha256": "2d20c7d78013be74db4c8d21cdb72495f9074fa1df151f40550a52801feb436a",
-   "original_size": 472045,
-   "reconstruction_after_loss": true,
-   "schema": "MINIFLY-A3-CLAUDE-RECEIPT-v1",
-   "world": 190054
-  },
-  {
-   "arm": "R3_randtarget",
-   "chunk_encoding": "base64 ASCII with final LF; independently encoded contiguous original-byte slices",
-   "chunks": [
-    {
-     "decoded_sha256": "ca80da7e85653c36965109fdb0c535adb185d156e28ec2d2b07b4434373369c4",
-     "decoded_size": 98304,
-     "git_blob_sha": "4f5385b754efd25aaaf4b20c0a489b6ecd08f3d3",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-000.b64",
-     "sha256": "53357858c73037c9c5d3dc32636be7a7c3c54142884169ae1ba57015004e0460",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "8533fdda37273c87204e76d7a2495893ac46dfdd99d8faff0a37c2f9e90d2290",
-     "decoded_size": 98304,
-     "git_blob_sha": "af3c42b289dcc5dbff30e0ef9be66a5229407fda",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-001.b64",
-     "sha256": "41af6bd21a9856fd1ab5da092a4bf527ec69809a4c321ce3e1e472d74991e06e",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "d4a0261510a1242fd55f555cef8c26d7b373737624541dc995f5e7acddce6460",
-     "decoded_size": 98304,
-     "git_blob_sha": "5d6ea4d49ff54fbaf4b7ada49a96f45d24daef65",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-002.b64",
-     "sha256": "2bc5434a87a1309eedb865f5515f526e7e5e0e04b78212396fcac43dcc36b1e1",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "8140acb38659e14a451e2ae3d86bdc97d31a289adc3f10e45ac21c868a06125c",
-     "decoded_size": 98304,
-     "git_blob_sha": "7b6b2850f15d433b1f5fe11226fd07af028d9e5f",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-003.b64",
-     "sha256": "0a000994f65b949456103d85d849e0b40f5229aa08c32584a5bf6c26ac1585d7",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "0df6cffe2a3cbd6b6e54a398e18aaccb59a063fd5c45cd3a1ac8fb20a141a7ba",
-     "decoded_size": 98304,
-     "git_blob_sha": "0bba6eba69cc7d9f1ed80480f9584d686e1677ff",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-004.b64",
-     "sha256": "69cb03f8c6ffcd3ad64a8b22b5accf6b54e018d15941872a20d55fc5d859cc6a",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "be5132307eb672cf5e0de5326915efa9974a71c011f64d5db137e31b95be9e81",
-     "decoded_size": 98304,
-     "git_blob_sha": "03e4753a02adaec6938e9916ded57feba5fbcfaa",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-005.b64",
-     "sha256": "49f5ac63cc32c060be4e392e778f9970f0b14fb62a128a1b06611a67431d7ec6",
-     "size": 131073
-    },
-    {
-     "decoded_sha256": "40b103f2a7385d9caed053305f53ccc3ce014c125e03885dbb3158daf0dfddc9",
-     "decoded_size": 84467,
-     "git_blob_sha": "4a94604ad46fc1743c984cdb66e0b5e7400a51bc",
-     "path": "minifly_a_v3/results/recovery/archive/chunks/R3_randtarget/190054/part-006.b64",
-     "sha256": "5e8575693e2034fdbaccad5a22a754c73dd6d7c3797a811d84233ff26e8e0679",
-     "size": 112625
-    }
-   ],
-   "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
-   "original_git_blob_sha": "daf7b0df2f79e021ef42446093cab30a7550b754",
-   "original_path": "minifly_a_v3/results/science/R3_randtarget/190054.json.gz",
-   "original_sha256": "7edf289d18d164e62f2147591b8dd9d0230fcc9977077148ffd15dffd540bf4e",
-   "original_size": 674291,
-   "reconstruction_after_loss": true,
-   "schema": "MINIFLY-A3-CLAUDE-RECEIPT-v1",
-   "world": 190054
-  }
- ],
- "reconstruction_authorization_at_utc": "2026-10-01T21:33:56Z",
- "reconstruction_note": "67 accepted receipts lost with previous host; missing records regenerated at unchanged world-arm seeds/code. Archive entries mark reconstructions; no byte equality to unavailable originals is claimed.",
- "schema": "MINIFLY-A3-LOSSLESS-ARCHIVE-v1",
- "source_lock_unchanged": true,
- "total_receipts_covered": 694
+ "reconstruction": {
+  "accepted_receipts_lost": 67,
+  "authorized_at_utc": "2026-10-01T21:33:56Z",
+  "last_validated_before_host_loss": 757,
+  "original_receipts_restored": 690,
+  "replacement_bytes_are_not_original_bytes": true
+ },
+ "runtime": {
+  "machine": "x86_64",
+  "numba": "0.61.2",
+  "numpy": "2.2.6",
+  "pandas": "2.2.3",
+  "python": "3.11.15",
+  "scipy": "1.14.1"
+ },
+ "schema": "MINIFLY-A3-PUBLIC-RECEIPT-CHECKPOINT-v1",
+ "sequence": 2,
+ "validated_receipts": 694
 }
