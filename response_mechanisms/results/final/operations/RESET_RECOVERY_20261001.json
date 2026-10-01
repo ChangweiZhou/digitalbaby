@@ -1,0 +1,55 @@
+{
+  "schema": "RESPONSE-RESET-RECOVERY-v1",
+  "recorded_utc": "2026-10-01T21:33:32.015805+00:00",
+  "state": "blocked_pending_operational_budget_authorization",
+  "remote_commit": "901bcddf6e292711be76b72ed7bf1f9dc4b438cf",
+  "source_lock_sha256": "24943155d4b010c8e17746a265803155e13585a7b0b23fe261f3c0bae95a63fe",
+  "last_confirmed_before_loss": {
+    "completed_primary_lives": 202,
+    "expected_primary_lives": 224,
+    "replays": 7,
+    "observed_utc": "2026-10-01T21:15:50Z",
+    "source": "retained exec poll output for session22231; full local receipt files and full updated ledger are no longer available",
+    "timestamp_note": "UTC time of returned tool output; individual life completion timestamps were not included in that retained stdout chunk."
+  },
+  "recovered": {
+    "primary_lives": 7,
+    "fresh_process_replays": 7,
+    "world": 300001,
+    "receipt_validation_passed": true,
+    "exact_replay_passed_excluding_resource": true,
+    "missing_primary_receipts": 217,
+    "previously_completed_but_not_recovered_at_least": 195
+  },
+  "loss_evidence": [
+    "Previous simulation and git sessions failed to resume after transport outage",
+    "Project and virtual environment absent when shell returned; workspace initial attachments and shared appearance files remained",
+    "No experiment copy found in permitted workspace/shared/tmp scan",
+    "GitHub branch is identical to the verified world300001 checkpoint",
+    "No October1 Library output archive found in full recent-file listing"
+  ],
+  "accounting": {
+    "original_started_unix": 1790872804.660057,
+    "original_started_utc": "2026-10-01T16:40:04.660057+00:00",
+    "restored_remote_ledger_worker_seconds": 1100.5774884790007,
+    "remote_ledger_is_stale_and_must_not_be_used_as_total_consumed_budget": true,
+    "conservative_prior_charge_seconds": 17245.33994293213,
+    "conservative_prior_charge_hours": 4.790372206370036,
+    "conservative_interval_end_utc": "2026-10-01T21:27:30Z",
+    "charge_basis": "All elapsed wall time from original launch to verified reset, an upper bound for at most one active simulation worker, including publication waits and maintenance downtime. This is a conservative accounting bound, not measured CPU/runtime.",
+    "original_worker_cap_hours": 8,
+    "original_wall_cap_hours": 12,
+    "original_wall_cap_ends_utc": "2026-10-02T04:40:04.660057Z",
+    "expected_recompute_hours_at_63_to_75_seconds_per_life": [
+      3.7975,
+      4.520833333333333
+    ],
+    "expected_cumulative_charge_hours": [
+      8.587872206370037,
+      9.31120553970337
+    ],
+    "new_simulations_started": 0
+  },
+  "final_efficacy_analysis_performed": false,
+  "warning": "Do not resume from the restored stale ledger or reset the original budget. No missing receipt has been reconstructed, regenerated, or counted as available."
+}
