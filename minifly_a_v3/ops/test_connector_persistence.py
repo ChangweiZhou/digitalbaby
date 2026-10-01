@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import concurrent.futures
 import json
+import multiprocessing as mp
 import subprocess
 import time
 from pathlib import Path
@@ -129,3 +130,40 @@ def test_unrelated_staged_change_rejected(setup):
     git(env.repo, "add", "other.txt")
     with pytest.raises(RuntimeError, match="unrelated staged"):
         env.persist("must fail")
+
+
+@pytest.mark.parametrize("limit,category", [("rss", "budget_job"), ("deadline", "budget_job"),
+                                           ("wall", "budget_exhausted"), ("worker", "budget_exhausted"),
+                                           ("disk", "budget_exhausted")])
+def test_watchdog_enforces_original_failure_categories(setup, limit, category):
+    env, _ = setup
+    class Driver:
+        def __init__(self):
+            self.failures = []
+        def fail(self, kind, detail):
+            self.failures.append((kind, detail))
+    env.driver = Driver()
+    hard = {"per_world_arm_life_s_max": 2400, "peak_rss_bytes_per_worker": 800000000,
+            "active_wall_hours": 90, "core_hours": 360, "results_disk_bytes": 1000000000}
+    baseline = {"active_wall_s": 0.0, "worker_s": 0.0}
+    if limit == "rss":
+        hard["peak_rss_bytes_per_worker"] = 1
+    elif limit == "deadline":
+        hard["per_world_arm_life_s_max"] = -1
+    elif limit == "wall":
+        hard["active_wall_hours"] = 0
+    elif limit == "worker":
+        hard["core_hours"] = 0
+    else:
+        hard["results_disk_bytes"] = -1
+    proc = mp.get_context("fork").Process(target=time.sleep, args=(30,))
+    proc.start()
+    try:
+        with pytest.raises(RuntimeError, match="watchdog"):
+            env.watchdog([proc], time.monotonic() - 1, baseline, hard)
+        assert not proc.is_alive()
+        assert env.driver.failures[0][0] == category
+    finally:
+        if proc.is_alive():
+            proc.kill()
+        proc.join()

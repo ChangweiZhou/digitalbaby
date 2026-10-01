@@ -28,12 +28,16 @@ credential extraction, or source-lock modification is involved.
 
 The driver still validates existing/new receipts, starts only missing world-arms,
 uses the original four-worker budget and yoked dependencies, and requests
-persistence every four accepted receipts and at stop. Persistence blocks its
-resource polling while workers continue, as with its original Git push. Service
-requests promptly; ACK waiting is limited to 60 seconds and each Git command to
-15 seconds. A long wait may
-conservatively charge completed-but-uncollected jobs or cause a deadline stop.
-Do not clear such a stop without the existing authorization procedure.
+persistence every four accepted receipts and at stop. The first real connector
+publication took about 150 seconds, so ACK waiting is limited to 300 seconds and
+each Git command to 10 seconds. While the driver is inside persistence, a separate
+operational watchdog in this adapter checks worker RSS/deadlines, disk, cumulative
+wall time, and a conservative worker-time bound. It polls every second during ACK
+waiting and between network phases. A breach kills affected work and records the
+frozen driver's existing budget failure category before raising. The next driver
+poll accounts the wait; the watchdog does not double-charge its counters. A long
+wait can still conservatively charge completed-but-uncollected jobs. Do not clear
+a budget stop without the existing authorization procedure.
 
 Run the adapter only with the exact Python/library versions in `SOURCE_LOCK.json`
 and a live authorized controller. Its focused local-remote tests are in

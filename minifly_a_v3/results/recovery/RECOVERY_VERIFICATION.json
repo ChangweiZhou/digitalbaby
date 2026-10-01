@@ -1,4 +1,27 @@
 {
+ "budget_counters_after_reservation": {
+  "active_wall_s": 106651.41066382588,
+  "worker_s": 425234.11058428144
+ },
+ "budget_recovery_adjustment": {
+  "basis": "Reconcile to maximum saved counters, then conservatively reserve the entire elapsed wall gap since last remote checkpoint and four worker-seconds per second. This is a budget reservation, not measured completed compute. Previous host execution is unavailable; no further remote progress observed during recovery. User requested resuming interrupted work.",
+  "checkpoint_commit": "9a793426e5305f1e1c319495b8b6bae323943f0a",
+  "checkpoint_committed_at_utc": "2026-10-01T14:37:16+00:00",
+  "kind": "conservative_host_migration_reservation",
+  "original_ledger_counters": {
+   "active_wall_s": 103334.66068098889,
+   "worker_s": 411967.1106529335
+  },
+  "original_ledger_sha256": "a53a15908feb6e1ab4dcaaa340b7fed42a5762ca5f4c827c8565ef3ec3bc1bf4",
+  "original_status_counters": {
+   "active_wall_s": 103354.67743782589,
+   "worker_s": 412047.17768028146
+  },
+  "original_status_sha256": "059a54418461d58600a6d92b37b898c24a5fe6f796456b9905f78f735e40295b",
+  "recorded_at_utc": "2026-10-01T15:32:12.733226+00:00",
+  "reservation_wall_s": 3296.733226,
+  "reservation_worker_s": 13186.932904
+ },
  "checked_at_utc": "2026-10-01T15:24:52.646504+00:00",
  "checkpoint_commit": "9a793426e5305f1e1c319495b8b6bae323943f0a",
  "environment": {
@@ -719,11 +742,16 @@
   "results/science/Z2_rand/190053.json.gz": "f8beb905de7c0f423a2412e6835d06b7599e80155087b953404f53be3ce45b76"
  },
  "remaining_world_arms": 143,
+ "replay_wrapper_tests": {
+  "model_replay_executed": false,
+  "passed": 19
+ },
  "schema": "MINIFLY-A3-RECOVERY-VERIFICATION-v1",
  "source_changed": false,
+ "transport_live_watchdog": "Per-second ACK-wait checks; network commands bounded10s; fail closed under original budget categories",
  "transport_tests": {
   "command": "python -m pytest -q -p no:cacheprovider minifly_a_v3/ops/test_connector_persistence.py",
-  "passed": 10
+  "passed": 15
  },
  "validation_seconds": 149.86189701900003,
  "worlds_remaining": [
