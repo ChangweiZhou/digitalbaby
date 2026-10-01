@@ -10,7 +10,7 @@ confirmation and does not modify that experiment.
 All three design–independent-audit–pilot–revision cycles are complete, with all
 21 exploratory lives retained and 39 tests passed. No efficacy win is claimed
 from these pilots. The final source is locked for 32 fresh worlds × seven arms,
-plus seven preselected fresh-process replays. The final run has not started yet.
+plus seven preselected fresh-process replays. The final run is in progress. Completed-world receipts and progress are checkpointed on this branch.
 
 Cycle 1's cross-record timing implementation was identified as a mismatch to the
 intended within-cue hypothesis. Cycle 2 corrected it; cycle 3 strengthened the
