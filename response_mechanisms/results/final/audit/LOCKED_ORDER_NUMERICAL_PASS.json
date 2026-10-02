@@ -1,0 +1,92 @@
+{
+  "full_numerical_original_assertions_passed": true,
+  "helper_sha256": "ecb392e0332f4a833840f42c54dc4b1d826ce9081aa6da2e466f3240e20f84e9",
+  "original_helper_sha256": "035df3473c4eba2843fe404b873d6e5f5cca61a0e8b07819d26a9b63cfa98fd5",
+  "result": {
+    "independent_reductions": true,
+    "independent_primary": [
+      {
+        "candidate": "T",
+        "control": "T_OFF",
+        "n": 32,
+        "mean": -0.083984375,
+        "sd": 0.0863831006074945,
+        "ci95": [
+          -0.11512880394585949,
+          -0.05283994605414051
+        ],
+        "p_two_sided": 5.1235407061769115e-06,
+        "p_holm": 2.0494162824707646e-05
+      },
+      {
+        "candidate": "H",
+        "control": "FE0",
+        "n": 32,
+        "mean": 0.029296875,
+        "sd": 0.14461466370206477,
+        "ci95": [
+          -0.022842271274260563,
+          0.08143602127426056
+        ],
+        "p_two_sided": 0.26056549670445234,
+        "p_holm": 0.781696490113357
+      },
+      {
+        "candidate": "J",
+        "control": "J_ADD",
+        "n": 32,
+        "mean": 0.001953125,
+        "sd": 0.01934131436930433,
+        "ci95": [
+          -0.005020162446943859,
+          0.008926412446943859
+        ],
+        "p_two_sided": 0.5719551478049594,
+        "p_holm": 1.0
+      },
+      {
+        "candidate": "J",
+        "control": "J_SHUFFLE",
+        "n": 32,
+        "mean": 0.00390625,
+        "sd": 0.03868262873860866,
+        "ci95": [
+          -0.010040324893887719,
+          0.017852824893887717
+        ],
+        "p_two_sided": 0.5719551478049594,
+        "p_holm": 1.0
+      }
+    ],
+    "independent_qualification": {
+      "T": {
+        "behavior_pass": false,
+        "both_main_effects_at_least_90_percent": {
+          "g1": false,
+          "g2": false
+        },
+        "qualified": false
+      },
+      "H": {
+        "behavior_pass": false,
+        "within_state_bias_change": {
+          "n": 32,
+          "mean": -0.13629634635396126,
+          "sd": 0.1823259745299613,
+          "ci95": [
+            -0.202031870070973,
+            -0.07056082263694952
+          ],
+          "p_two_sided": 0.00019269721447485053
+        },
+        "qualified": false
+      },
+      "J": {
+        "behavior_vs_additive": false,
+        "behavior_vs_shuffle": false,
+        "qualified": false
+      }
+    },
+    "mechanistic_components_remain_nominal_supportive": true
+  }
+}

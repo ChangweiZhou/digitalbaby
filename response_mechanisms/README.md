@@ -7,10 +7,15 @@ confirmation and does not modify that experiment.
 
 ## Status
 
+**Partial GitHub publication:** the complete scientific findings and final audit
+are available here, but this checkpoint contains only 42 of 224 primary raw
+receipts plus all seven replays. Remaining raw receipts are still being uploaded.
+See [publication coverage](results/final/PUBLICATION_STATUS.md).
+
 All three design–independent-audit–pilot–revision cycles are complete, with all
 21 exploratory lives retained and 39 tests passed. No efficacy win is claimed
 from these pilots. The final source is locked for 32 fresh worlds × seven arms,
-plus seven preselected fresh-process replays. The final run is in progress. Completed-world receipts and progress are checkpointed on this branch.
+plus seven preselected fresh-process replays. The final run is complete: all 224 primary receipts and seven replays passed the locked audit, and all 39 tests passed again. None of T, H, or J met the prespecified beneficial behavioral criterion; T reduced retention accuracy. See `results/final/REPORT.md` for the unchanged locked results and `results/final/INDEPENDENT_AUDIT.md` for independent verification, the explicitly documented arithmetic-order roundoff caveat, recovery provenance, and operational amendments.
 
 Cycle 1's cross-record timing implementation was identified as a mismatch to the
 intended within-cue hypothesis. Cycle 2 corrected it; cycle 3 strengthened the
