@@ -1,19 +1,12 @@
-# Partial publication: complete findings, incomplete raw receipt coverage
+# Complete final evidence publication
 
-This checkpoint publishes the complete final report, metrics, independent audit,
-roundoff disposition and operational summary for all 224 primary lives and seven
-replays. The scientific computation and audits are complete.
+This snapshot contains all 224 primary synthetic experiment receipts and seven
+replay receipts, together with the unchanged locked source, final report, metrics,
+independent audit, roundoff disposition and operational records.
 
-GitHub raw-data coverage in this checkpoint is only 42/224 primary receipts and
-7/7 replay receipts. The remaining 182 primary receipts are not yet attached to
-this branch checkpoint. Uploaded but unreferenced Git objects are not counted as
-published. Full raw-data publication and remote byte verification remain pending.
-
-The local source, full receipt roster and locked outputs remain unchanged.
-`FINAL_METRICS.json` and `REPORT.md` describe the complete local experiment; their
-224-receipt audit claim must not be mistaken for full raw-data coverage on GitHub.
-The full dataset is privately backed up.
+The earlier partial-publication checkpoint remains in branch history. Its
+42/224 primary receipt coverage does not describe this complete snapshot.
 
 None of the three mechanisms met its prespecified beneficial behavioral criterion.
-See `INDEPENDENT_AUDIT.md` for the numerical-roundoff caveat and recovery/resource
-limitations. This note is a publication checkpoint, not a change to the analysis.
+See INDEPENDENT_AUDIT.md for the numerical-roundoff caveat and recovery/resource
+limitations. This publication update does not change the analysis.
