@@ -24,3 +24,9 @@ A remains rejected because its frozen static and ordered finite-horizon requirem
 The fail-closed manifest tests should mutate each gate independently, remove required fields, alter source hashes, alter numerical thresholds, and remove the quantitative forecast artifact. A boolean pass flag alone must not override underlying failed values. If no launch-capable executable exists, report a launch eligibility validator rather than implying that a scheduler was exercised. No Package A outcome needs to be read for any validation, and source hashes must show no upstream changes.
 
 Maintain the stated caps, publish negative diagnostics and all three pre-test audits, and issue a clear blocked-full-run decision. This is a completed preflight rejection, not an unfinished scientific run and not prospective falsification by fresh-world data.
+
+## Pre-test conditions resolved
+
+Before execution, reviewed the appended prospective clarification and calibration.py/cycle3.py: the anchor uses only the eligible prefix, empty history returns zero, baseline MSE is channel-centered, and best-other margins are recomputed after correction. The two conditions above are resolved. PASS for the stated historical test.
+
+Scope limitation found in launch_gate.py: the checker validates a manifest digest, required boolean keys and presence of a nonempty forecast designation. It does not independently reconstruct numerical gate evidence or validate a forecast artifact. Report it as a digest-bound eligibility checklist, not a sufficient authorization mechanism for a future full run. No simulation launcher is included, and the present failed gates are correctly blocking.

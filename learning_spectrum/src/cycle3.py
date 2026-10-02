@@ -3,13 +3,14 @@ import numpy as np
 from scipy.stats import t as student
 from geometry import ROOT,source_verify
 from calibration import Observation,predict_baseline
+from history_data import load_history
 
 def center(x):return x-np.mean(x,axis=-1,keepdims=True)
 
 def main():
-    start=time.monotonic();source_verify();prior=ROOT.parent.parent/'minifly-response/response_mechanisms/results/final';rows=[]
+    start=time.monotonic();source_verify();development,_=load_history();rows=[]
     for world in range(300001,300033):
-        d=json.loads(gzip.decompress((prior/'H'/f'{world}.json.gz').read_bytes()))
+        d=development[world]['H']
         obs=[Observation(bytes.fromhex(r['cue_hex']),r['teacher_at'],tuple(r['raw_values'])) for r in d['records'] if r['branch']=='W']
         p=d['probes']['final']['W']['old'];v=np.array(p['raw_values']);h=np.array(p['values']);y=np.array(d['fixture']['old_fact']['labels']);at=p['response_at']
         cues=[bytes.fromhex(x) for x in d['fixture']['old_fact']['cues_hex']]
@@ -26,6 +27,6 @@ def main():
     repairs=sum(r['wrong_to_right'] for r in rows);breaks=sum(r['right_to_wrong'] for r in rows);mseb=float(np.mean([r['decision_baseline_MSE_B'] for r in rows]));mseh=float(np.mean([r['decision_baseline_MSE_H'] for r in rows]))
     summary={'raw_accuracy':float(np.mean([r['raw_accuracy'] for r in rows])),'H_accuracy':float(np.mean([r['H_accuracy'] for r in rows])),'B_accuracy':float(np.mean([r['B_accuracy'] for r in rows])),'accuracy_delta':mean,'paired_ci95':ci,'wrong_to_right':repairs,'right_to_wrong':breaks,'mean_margin_shift':float(np.mean([r['margin_shift_mean'] for r in rows])),'baseline_MSE_B':mseb,'baseline_MSE_H':mseh,'development_gate_pass':bool(repairs>breaks and ci[0]>0 and mseb<mseh),'fresh_world_efficacy_tested':False}
     out={'schema':'LEARNING-SPECTRUM-CYCLE3-v1','summary':summary,'worlds':rows,'resources':{'seconds':time.monotonic()-start,'max_rss_bytes':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024}}
-    with (ROOT/'results/CYCLE3_RESULT.json').open('x') as f:json.dump(out,f,indent=2,allow_nan=False)
+    with (ROOT/'results'/__import__('os').environ.get('CYCLE3_OUTPUT','CYCLE3_RESULT.json')).open('x') as f:json.dump(out,f,indent=2,allow_nan=False)
     print(json.dumps(summary,indent=2));print(out['resources'])
 if __name__=='__main__':main()

@@ -26,7 +26,7 @@ def test_probe_does_not_change_continuing_history():
     np.testing.assert_array_equal(g.mu_a,a);np.testing.assert_array_equal(g.mu_r,r)
 
 def test_original_source_equivalence_without_birth():
-    p=ROOT.parent.parent/'minifly-response/response_mechanisms/src/mechanism_model.py'
+    p=Path(__import__('os').environ.get('RESPONSE_SOURCE_ROOT',str(ROOT.parent/'response_mechanisms')))/'src/mechanism_model.py'
     spec=importlib.util.spec_from_file_location('original_mechanism',p);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
     s=m.System.__new__(m.System);s.p=m.DEFAULT.copy();s.arm='J';s.stores=[]
     s.recent=np.zeros(88);s.elig=np.zeros((88,88));s.sens=bb.bc.FE0();s.cue_last=None
