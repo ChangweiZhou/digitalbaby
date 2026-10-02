@@ -1,0 +1,117 @@
+{
+ "active_wall_s": 131788.89918841695,
+ "cleared": [
+  {
+   "authorization": "persistence re-verified",
+   "failure": {
+    "at_active_wall_s": 45784.269244347,
+    "detail": {
+     "error": "RuntimeError(\"git push failed after retries: fatal: unable to access 'https://github.com/ChangweiZhou/digitalbaby/': Failed to connect to 127.0.0.1 port 40893 after 0 ms: Couldn't connect to server\")",
+     "stage": "persist"
+    },
+    "id": "5eb1bea2907e4beca78b6428ac164c6b",
+    "type": "infrastructure"
+   }
+  },
+  {
+   "authorization": "persistence re-verified",
+   "failure": {
+    "at_active_wall_s": 106651.41066382588,
+    "detail": {
+     "error": "TimeoutExpired(['git', 'ls-remote', 'origin', 'refs/heads/claude/charming-clarke-u9g850'], 10)",
+     "stage": "startup_verify_remote"
+    },
+    "id": "db52d8f6a5d64326bb2dd33b1c9e1657",
+    "type": "infrastructure"
+   }
+  },
+  {
+   "authorization": "persistence re-verified",
+   "failure": {
+    "at_active_wall_s": 125698.11180845561,
+    "detail": {
+     "error": "RuntimeError('Durability backlog reached8 accepted receipts; stop dispatch until verified remote backup catches up')",
+     "stage": "persist"
+    },
+    "id": "53eefa3ce972429a98f0d9d0e7a24343",
+    "type": "infrastructure"
+   }
+  }
+ ],
+ "failure": null,
+ "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
+ "persisted_receipts": 726,
+ "recovery_adjustments": [
+  {
+   "basis": "Reconcile to maximum saved counters, then conservatively reserve the entire elapsed wall gap since last remote checkpoint and four worker-seconds per second. This is a budget reservation, not measured completed compute. Previous host execution is unavailable; no further remote progress observed during recovery. User requested resuming interrupted work.",
+   "checkpoint_commit": "9a793426e5305f1e1c319495b8b6bae323943f0a",
+   "checkpoint_committed_at_utc": "2026-10-01T14:37:16+00:00",
+   "kind": "conservative_host_migration_reservation",
+   "original_ledger_counters": {
+    "active_wall_s": 103334.66068098889,
+    "worker_s": 411967.1106529335
+   },
+   "original_ledger_sha256": "a53a15908feb6e1ab4dcaaa340b7fed42a5762ca5f4c827c8565ef3ec3bc1bf4",
+   "original_status_counters": {
+    "active_wall_s": 103354.67743782589,
+    "worker_s": 412047.17768028146
+   },
+   "original_status_sha256": "059a54418461d58600a6d92b37b898c24a5fe6f796456b9905f78f735e40295b",
+   "recorded_at_utc": "2026-10-01T15:32:12.733226+00:00",
+   "reservation_wall_s": 3296.733226,
+   "reservation_worker_s": 13186.932904
+  },
+  {
+   "additional_wall_reservation_s": 1682.2568221092224,
+   "additional_worker_reservation_s": 6729.02728843689,
+   "at_utc": "2026-10-01T21:42:02.256833+00:00",
+   "authorization": "User2026-10-01T21:33:56Z requested regular GitHub uploads and increased compute quota, replying to explicit request to regenerate67 accepted-lost trajectories with same lock/seeds and original compute counted.",
+   "kind": "user_authorized_host_loss_reconstruction",
+   "last_observed_active_wall_s": 121717.77187667531,
+   "last_observed_validated": 757,
+   "last_observed_worker_s": 483839.86000360106,
+   "lost_clearance_history_note": "Remote history retained. Later lost ledger had no failure at21:15. Known earlier connector ACK timeout6e9e2771e7ce46ff8a992d97a6293998 was cleared under prior user-authorized local-first continuation; exact lost ledger bytes are unavailable. Never present this observation as recovered original ledger.",
+   "missing_total_to_run": 142,
+   "old_remote_ledger_sha256": "5dcba10de702fc9fc90576768e1e466bf0cab4be0e560b3b5c3cf4078f59f8c8",
+   "previously_accepted_receipts_to_reconstruct": 67,
+   "recovered_original_receipts": 690,
+   "reservation_since_utc": "2026-10-01T21:14:00Z",
+   "source_lock_unchanged": true
+  },
+  {
+   "kind": "conservative_clean_restart_validation_reservation",
+   "note": "No scientific counter reset; conservatively reserves restart verification/management at four worker-seconds per second even though no replacement job has yet been dispatched.",
+   "reservation_wall_s": 285.8694865703583,
+   "reservation_worker_s": 1143.477946281433,
+   "since_last_saved_unix_s": 1790893891.857104
+  }
+ ],
+ "schema": "MINIFLY-A3-CLAUDE-RUN-LEDGER-v1",
+ "sessions": [
+  {
+   "started_wall": 1790742572.8870964,
+   "valid_receipts_at_start": 0
+  },
+  {
+   "started_wall": 1790789295.3648217,
+   "valid_receipts_at_start": 236
+  },
+  {
+   "started_wall": 1790807951.6436954,
+   "valid_receipts_at_start": 333
+  },
+  {
+   "started_wall": 1790861612.5003622,
+   "valid_receipts_at_start": 652
+  },
+  {
+   "started_wall": 1790890924.0260613,
+   "valid_receipts_at_start": 690
+  },
+  {
+   "started_wall": 1790894180.3155787,
+   "valid_receipts_at_start": 705
+  }
+ ],
+ "worker_s": 523172.5938980477
+}

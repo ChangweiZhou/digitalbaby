@@ -75,3 +75,22 @@ def test_fs_failure_propagates(env,monkeypatch):
 def test_status_mismatch_refused(env):
  add(env,1);r.write_json(env.sci/'RUN_STATUS.json',{'validated_receipts':2})
  with pytest.raises(AssertionError):env.persist('bad')
+
+def test_verified_private_backup_satisfies_offhost_limit(env):
+ import recovery_with_private as private
+ env.__class__=private.PrivateRecoveryEnv
+ add(env,8);roster={f'results/science/{a}/{w}.json.gz':h for (a,w),h in env.validated.items()}
+ r.write_json(env.root/'results/recovery/PRIVATE_BACKUP_STATUS.json',{'schema':'MINIFLY-A3-VERIFIED-PRIVATE-BACKUP-v1','library_file_id':'test-only','verified_at_utc':'now','lock_digest':'L','receipt_sha256':roster})
+ env.persist('private backup verified')
+ status=json.loads((env.root/'results/recovery/OFF_HOST_STATUS.json').read_text());assert status['verified_github_receipts']==0 and status['verified_private_recoverable_receipts']==8 and status['unprotected_accepted_receipts']==0
+
+def test_missing_private_backup_does_not_bypass_limit(env):
+ import recovery_with_private as private
+ env.__class__=private.PrivateRecoveryEnv;add(env,8)
+ with pytest.raises(RuntimeError,match='without either'):env.persist('no backup')
+
+def test_false_private_backup_is_integrity_failure(env):
+ import recovery_with_private as private
+ env.__class__=private.PrivateRecoveryEnv;add(env,8)
+ r.write_json(env.root/'results/recovery/PRIVATE_BACKUP_STATUS.json',{'schema':'MINIFLY-A3-VERIFIED-PRIVATE-BACKUP-v1','library_file_id':'test-only','verified_at_utc':'now','lock_digest':'L','receipt_sha256':{'results/science/R0/190001.json.gz':'wrong'}})
+ with pytest.raises(AssertionError):env.persist('false backup')

@@ -1,5 +1,5 @@
 {
- "active_wall_s": 152224.4573323593,
+ "active_wall_s": 138986.5138428603,
  "cleared": [
   {
    "authorization": "persistence re-verified",
@@ -36,23 +36,19 @@
     "id": "53eefa3ce972429a98f0d9d0e7a24343",
     "type": "infrastructure"
    }
-  },
-  {
-   "authorization": "persistence re-verified",
-   "failure": {
-    "at_active_wall_s": 138537.34948477836,
-    "detail": {
-     "error": "RuntimeError('Durability backlog reached8 receipts without either verified GitHub or private Library backup')",
-     "stage": "persist"
-    },
-    "id": "c8ac6373b3084d50abffe905b9093571",
-    "type": "infrastructure"
-   }
   }
  ],
- "failure": null,
+ "failure": {
+  "at_active_wall_s": 138537.34948477836,
+  "detail": {
+   "error": "RuntimeError('Durability backlog reached8 receipts without either verified GitHub or private Library backup')",
+   "stage": "persist"
+  },
+  "id": "c8ac6373b3084d50abffe905b9093571",
+  "type": "infrastructure"
+ },
  "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
- "persisted_receipts": 829,
+ "persisted_receipts": 745,
  "recovery_adjustments": [
   {
    "basis": "Reconcile to maximum saved counters, then conservatively reserve the entire elapsed wall gap since last remote checkpoint and four worker-seconds per second. This is a budget reservation, not measured completed compute. Previous host execution is unavailable; no further remote progress observed during recovery. User requested resuming interrupted work.",
@@ -130,96 +126,6 @@
    "reservation_wall_s": 304.86386346817017,
    "reservation_worker_s": 1219.4554538726807,
    "source_lock_unchanged": true
-  },
-  {
-   "accepted_receipts_retained": 752,
-   "amendment_sha256": "07bc23c51c3bf79a0b36c269e1606b474c6073a60c451223ac1db9c9502f5724",
-   "at_utc": "2026-10-02T02:07:29.779019+00:00",
-   "authorization_message_id": "[private administrative locator omitted]",
-   "basis": "Conservatively reserves all time since pre-drain observation at six worker-seconds per second, including overlap with already-charged old-run time. No lost original compute is discarded.",
-   "drained_jobs_verified": [
-    [
-     "P0",
-     190058
-    ],
-    [
-     "P1",
-     190058
-    ],
-    [
-     "R0_signed",
-     190058
-    ],
-    [
-     "R1_rand",
-     190058
-    ],
-    [
-     "R3",
-     190058
-    ],
-    [
-     "R3_randtarget",
-     190058
-    ],
-    [
-     "Z0_resource",
-     190058
-    ],
-    [
-     "Z2",
-     190058
-    ],
-    [
-     "Z2_rand",
-     190058
-    ]
-   ],
-   "kind": "approved_operational_concurrency_change",
-   "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
-   "memory_available_before_validation": 4946784256,
-   "original_ledger_sha256": "4bd300ad68f81a7f2991aae1bd1f938a904c88a00432a16cddf542650bb189af",
-   "original_status_sha256": "00e820854491579b969c5acb7593b33594174ddb74d3cd9866143776b9b4e612",
-   "reservation_since_unix_s": 1790905064.7376313,
-   "reservation_wall_s": 1785.0413796901703,
-   "reservation_worker_s": 10710.248278141022,
-   "source_and_total_budgets_unchanged": true,
-   "workers_after": 6,
-   "workers_before": 4
-  },
-  {
-   "accepted_receipts_retained": 767,
-   "at_utc": "2026-10-02T03:00:43.453082+00:00",
-   "basis": "Reserve all elapsed time since last status through completed frozen revalidation at six worker-seconds per second. This is a conservative reservation, not measured completed compute. Resume only missing lives.",
-   "kind": "conservative_supervisor_interruption_reservation",
-   "last_saved_unix_s": 1790909569.1088629,
-   "liveness_evidence": "Supervisor lock was free, heartbeat stale since2026-10-02T02:52:49Z, and this restart acquired the same exclusive lock before validation or dispatch. Old running[] was treated as stale evidence, not live workers.",
-   "original_counters": {
-    "active_wall_s": 143486.5526858035,
-    "worker_s": 578331.0753650393
-   },
-   "original_ledger_sha256": "233d4ab47628dd34428bbff2e9ec90eb9f48e1a327f87fe12d1aadab69f2f9a1",
-   "original_status_sha256": "1da4f889a66dc384693be051acffdeea6c55e0b8bb3b03c1294bb923cb26e47b",
-   "reservation_wall_s": 474.3442132472992,
-   "reservation_worker_s": 2846.065279483795,
-   "source_lock_unchanged": true
-  },
-  {
-   "accepted_receipts_retained": 789,
-   "at_utc": "2026-10-02T04:00:04.443610+00:00",
-   "basis": "Reserve all elapsed time since last status through completed frozen revalidation at six worker-seconds per second. This is a conservative reservation, not measured completed compute. Resume only missing lives.",
-   "kind": "conservative_supervisor_interruption_reservation",
-   "last_saved_unix_s": 1790913118.6251647,
-   "liveness_evidence": "Supervisor lock was free, heartbeat stale since2026-10-02T03:51:58Z, and this restart acquired the same exclusive lock before validation or dispatch. Old running[] was treated as stale evidence, not live workers.",
-   "original_counters": {
-    "active_wall_s": 147032.55280777486,
-    "worker_s": 599607.0759026528
-   },
-   "original_ledger_sha256": "b3e29a720fe6c965fb08e7c9d5006c35ee57ee2398af397a0ec6838fb6a9e3ad",
-   "original_status_sha256": "0ada625f4a1804a20452f9e029d062ba376c685009121a8f357a5fb8ab008534",
-   "reservation_wall_s": 485.8184313774109,
-   "reservation_worker_s": 2914.9105882644653,
-   "source_lock_unchanged": true
   }
  ],
  "schema": "MINIFLY-A3-CLAUDE-RUN-LEDGER-v1",
@@ -255,19 +161,7 @@
   {
    "started_wall": 1790901763.1834538,
    "valid_receipts_at_start": 729
-  },
-  {
-   "started_wall": 1790906854.0258663,
-   "valid_receipts_at_start": 752
-  },
-  {
-   "started_wall": 1790910045.9726186,
-   "valid_receipts_at_start": 767
-  },
-  {
-   "started_wall": 1790913605.9666672,
-   "valid_receipts_at_start": 789
   }
  ],
- "worker_s": 629356.209027005
+ "worker_s": 551330.8425355242
 }

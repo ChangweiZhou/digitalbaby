@@ -1,5 +1,5 @@
 {
- "active_wall_s": 152224.4573323593,
+ "active_wall_s": 147032.55280777486,
  "cleared": [
   {
    "authorization": "persistence re-verified",
@@ -52,7 +52,7 @@
  ],
  "failure": null,
  "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
- "persisted_receipts": 829,
+ "persisted_receipts": 787,
  "recovery_adjustments": [
   {
    "basis": "Reconcile to maximum saved counters, then conservatively reserve the entire elapsed wall gap since last remote checkpoint and four worker-seconds per second. This is a budget reservation, not measured completed compute. Previous host execution is unavailable; no further remote progress observed during recovery. User requested resuming interrupted work.",
@@ -203,23 +203,6 @@
    "reservation_wall_s": 474.3442132472992,
    "reservation_worker_s": 2846.065279483795,
    "source_lock_unchanged": true
-  },
-  {
-   "accepted_receipts_retained": 789,
-   "at_utc": "2026-10-02T04:00:04.443610+00:00",
-   "basis": "Reserve all elapsed time since last status through completed frozen revalidation at six worker-seconds per second. This is a conservative reservation, not measured completed compute. Resume only missing lives.",
-   "kind": "conservative_supervisor_interruption_reservation",
-   "last_saved_unix_s": 1790913118.6251647,
-   "liveness_evidence": "Supervisor lock was free, heartbeat stale since2026-10-02T03:51:58Z, and this restart acquired the same exclusive lock before validation or dispatch. Old running[] was treated as stale evidence, not live workers.",
-   "original_counters": {
-    "active_wall_s": 147032.55280777486,
-    "worker_s": 599607.0759026528
-   },
-   "original_ledger_sha256": "b3e29a720fe6c965fb08e7c9d5006c35ee57ee2398af397a0ec6838fb6a9e3ad",
-   "original_status_sha256": "0ada625f4a1804a20452f9e029d062ba376c685009121a8f357a5fb8ab008534",
-   "reservation_wall_s": 485.8184313774109,
-   "reservation_worker_s": 2914.9105882644653,
-   "source_lock_unchanged": true
   }
  ],
  "schema": "MINIFLY-A3-CLAUDE-RUN-LEDGER-v1",
@@ -263,11 +246,7 @@
   {
    "started_wall": 1790910045.9726186,
    "valid_receipts_at_start": 767
-  },
-  {
-   "started_wall": 1790913605.9666672,
-   "valid_receipts_at_start": 789
   }
  ],
- "worker_s": 629356.209027005
+ "worker_s": 599607.0759026528
 }

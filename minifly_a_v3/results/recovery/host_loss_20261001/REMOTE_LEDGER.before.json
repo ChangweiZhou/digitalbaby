@@ -1,0 +1,69 @@
+{
+ "active_wall_s": 106651.41066382588,
+ "cleared": [
+  {
+   "authorization": "persistence re-verified",
+   "failure": {
+    "at_active_wall_s": 45784.269244347,
+    "detail": {
+     "error": "RuntimeError(\"git push failed after retries: fatal: unable to access 'https://github.com/ChangweiZhou/digitalbaby/': Failed to connect to 127.0.0.1 port 40893 after 0 ms: Couldn't connect to server\")",
+     "stage": "persist"
+    },
+    "id": "5eb1bea2907e4beca78b6428ac164c6b",
+    "type": "infrastructure"
+   }
+  }
+ ],
+ "failure": {
+  "at_active_wall_s": 106651.41066382588,
+  "detail": {
+   "error": "TimeoutExpired(['git', 'ls-remote', 'origin', 'refs/heads/claude/charming-clarke-u9g850'], 10)",
+   "stage": "startup_verify_remote"
+  },
+  "id": "db52d8f6a5d64326bb2dd33b1c9e1657",
+  "type": "infrastructure"
+ },
+ "lock_digest": "2d8692585aee41cd9e9a70be53b0f656df10447f9b0d3b04b3163e96173d5310",
+ "persisted_receipts": 685,
+ "recovery_adjustments": [
+  {
+   "basis": "Reconcile to maximum saved counters, then conservatively reserve the entire elapsed wall gap since last remote checkpoint and four worker-seconds per second. This is a budget reservation, not measured completed compute. Previous host execution is unavailable; no further remote progress observed during recovery. User requested resuming interrupted work.",
+   "checkpoint_commit": "9a793426e5305f1e1c319495b8b6bae323943f0a",
+   "checkpoint_committed_at_utc": "2026-10-01T14:37:16+00:00",
+   "kind": "conservative_host_migration_reservation",
+   "original_ledger_counters": {
+    "active_wall_s": 103334.66068098889,
+    "worker_s": 411967.1106529335
+   },
+   "original_ledger_sha256": "a53a15908feb6e1ab4dcaaa340b7fed42a5762ca5f4c827c8565ef3ec3bc1bf4",
+   "original_status_counters": {
+    "active_wall_s": 103354.67743782589,
+    "worker_s": 412047.17768028146
+   },
+   "original_status_sha256": "059a54418461d58600a6d92b37b898c24a5fe6f796456b9905f78f735e40295b",
+   "recorded_at_utc": "2026-10-01T15:32:12.733226+00:00",
+   "reservation_wall_s": 3296.733226,
+   "reservation_worker_s": 13186.932904
+  }
+ ],
+ "schema": "MINIFLY-A3-CLAUDE-RUN-LEDGER-v1",
+ "sessions": [
+  {
+   "started_wall": 1790742572.8870964,
+   "valid_receipts_at_start": 0
+  },
+  {
+   "started_wall": 1790789295.3648217,
+   "valid_receipts_at_start": 236
+  },
+  {
+   "started_wall": 1790807951.6436954,
+   "valid_receipts_at_start": 333
+  },
+  {
+   "started_wall": 1790861612.5003622,
+   "valid_receipts_at_start": 652
+  }
+ ],
+ "worker_s": 425234.11058428144
+}
