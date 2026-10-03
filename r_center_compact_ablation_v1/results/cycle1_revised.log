@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/r_center_compact_ablation_v1/cycle.py", line 170, in <module>
+    if __name__ == '__main__': main()
+                               ^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/r_center_compact_ablation_v1/cycle.py", line 166, in main
+    result = {1: cycle1, 2: cycle2, 3: cycle3}[args.cycle]()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/r_center_compact_ablation_v1/cycle.py", line 81, in cycle1
+    'branch_matrix': matrix, 'tamper_rejections': tamper_suite(docs[ARMS[1]]),
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/r_center_compact_ablation_v1/cycle.py", line 45, in tamper_suite
+    trial('nonfinite_value', lambda d: r(d)['prediction']['combined'].__setitem__(0, float('nan')))
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/r_center_compact_ablation_v1/cycle.py", line 33, in trial
+    changed = copy.deepcopy(doc); edit(changed)
+                                  ^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/r_center_compact_ablation_v1/cycle.py", line 45, in <lambda>
+    trial('nonfinite_value', lambda d: r(d)['prediction']['combined'].__setitem__(0, float('nan')))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'tuple' object has no attribute '__setitem__'. Did you mean: '__getitem__'?
