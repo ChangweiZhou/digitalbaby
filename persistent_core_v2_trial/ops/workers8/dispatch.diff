@@ -1,0 +1,25 @@
+--- frozen/supervisor.py
++++ operational/supervisor8.py
+@@ -44,7 +44,7 @@
+     mutex=(results/'supervisor.lock').open('a'); fcntl.flock(mutex,fcntl.LOCK_EX|fcntl.LOCK_NB)
+     status={'state':'RUNNING','stage':'qualification' if args.prepare else 'execution','pid':os.getpid(),
+             'started_utc':now(),'completed_world_arm_assay_jobs':0,'total_world_arm_assay_jobs':768,
+-            'completed_lives':0,'total_lives':2304,'workers':4,'caffeinate_attached':False}
++            'completed_lives':0,'total_lives':2304,'workers':8,'caffeinate_attached':False,'execution_amendment':'ops/workers8/AMENDMENT.json'}
+     caff=None; active={}; completed=[]
+     if platform.system()=='Darwin' and shutil.which('caffeinate'):
+         caff=subprocess.Popen(['caffeinate','-i','-w',str(os.getpid())])
+@@ -73,10 +73,10 @@
+             if receipt.exists():
+                 d=read(receipt); audit_receipt(d,source); completed.append(job); jobs.remove(job); worker_s+=d['worker_s']
+             elif (folder/'checkpoints'/f'{key}.npz').exists(): raise ValueError('partial science requires explicit resume authorization')
+-        status.update(stage='execution',identity=source,science_started_utc=now()); status.pop('qualification_pid',None)
++        status.update(stage='execution',identity=source,science_started_utc=EXECUTION_AMENDMENT["original_science_started_utc"]); status.pop('qualification_pid',None)
+         while jobs or active:
+-            while jobs and len(active)<4:
+-                w,a,s=jobs.pop(0); key=f'{w}_{a}_{s}'; logpath=folder/'logs'/f'{key}.log'; logpath.parent.mkdir(parents=True,exist_ok=True)
++            while jobs and len(active)<8:
++                w,a,s=jobs.pop(0); key=f'{w}_{a}_{s}'; logpath=folder/'logs'/f'{key}.workers8.log'; logpath.parent.mkdir(parents=True,exist_ok=True)
+                 log=logpath.open('w')
+                 proc=subprocess.Popen([sys.executable,'-u',str(ROOT/'worker.py'),'--world',str(w),'--arm',a,'--assay',s],
+                                       stdout=log,stderr=subprocess.STDOUT)

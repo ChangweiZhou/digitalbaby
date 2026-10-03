@@ -1,0 +1,23 @@
+{
+  "identity": "6f0d7a765df41dcc51b8fbc45a5ce5a8278726e34a9162351b652101fc72daf7",
+  "original_supervisor_sha256": "8d33f6579589219b97712f1b452bf2d06f3f63a2a8534c3000b2fb015f629b89",
+  "supervisor8_sha256": "18fbda9ee365f6cb6684b7e8978a16a1f1b77c25e555f6ad70a1cb997b3b1536",
+  "exact_dispatch_changes": [
+    [
+      "'workers':4,'caffeinate_attached':False",
+      "'workers':8,'caffeinate_attached':False,'execution_amendment':'ops/workers8/AMENDMENT.json'"
+    ],
+    [
+      "while jobs and len(active)<4:",
+      "while jobs and len(active)<8:"
+    ],
+    [
+      "science_started_utc=now()",
+      "science_started_utc=EXECUTION_AMENDMENT[\"original_science_started_utc\"]"
+    ],
+    [
+      "f'{key}.log'; logpath.parent",
+      "f'{key}.workers8.log'; logpath.parent"
+    ]
+  ]
+}
