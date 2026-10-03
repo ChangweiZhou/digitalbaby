@@ -1,0 +1,17 @@
+{
+  "version": "V75", "iteration": 20,
+  "bridge_seeds": [7501001,7501002,7501003,7501004,7501005,7501006,7501007,7501008,7501009,7501010,7501011,7501012,7501013,7501014,7501015,7501016],
+  "dose_seeds": [7503001,7503002,7503003,7503004,7503005,7503006,7503007,7503008,7503009,7503010,7503011,7503012,7503013,7503014,7503015,7503016,7503017,7503018,7503019,7503020,7503021,7503022,7503023,7503024,7503025,7503026,7503027,7503028,7503029,7503030,7503031,7503032],
+  "time_seeds": [7507001,7507002,7507003,7507004],
+  "loads": [48,96], "horizons": [0,300,86400], "bouts": [12,18,24],
+  "dose_cases": ["REV","STABLE","ANOMALY1","ANOMALY2"],
+  "bridge_tasks": ["ANOMALY","REVERSAL"], "trials": 1024, "warmup": 256,
+  "activity_modes": ["STATIC","ADAPTED"], "expression_modes": ["LINEAR","CLIPPED"],
+  "update_modes": ["GRADIENT","ROUTE_ERROR","ROUTE_LABEL"], "delta_eta": 0.5,
+  "time_arms": {"EVENT": {}, "LEGACY_10s": {"kind":"legacy","dt":10}, "LEGACY_3s": {"kind":"legacy","dt":3}, "LEGACY_1s": {"kind":"legacy","dt":1}, "HOLD_30s": {"kind":"hold","dt":30}, "HOLD_1s": {"kind":"hold","dt":1}, "ODE_10s": {"kind":"refresh","dt":10}, "ODE_3s": {"kind":"refresh","dt":3}, "ODE_1s": {"kind":"refresh","dt":1}},
+  "bootstrap_seed": 7509001, "bootstrap_draws": 5000,
+  "bridge_material_loss": 0.05, "revision_minimum": 0.1, "safety_accuracy": 0.02, "safety_worst_Hz": 0.05,
+  "workers": 2,
+  "proposal": "[REDACTED_LOCAL_DOCUMENT_PATH]",
+  "prior_banks": ["iteration10/data/input_banks.npz","iteration11/data/input_banks.npz","iteration12/data/input_banks.npz","iteration13/data/validation_inputs.npz","iteration14/data/reserved_inputs.npz","iteration18/data/input_banks.npz","iteration19/data/fresh_inputs.npz"]
+}
