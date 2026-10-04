@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Persistent core V2 · Live monitor</title>
+<style>
+:root{color-scheme:dark;--bg:#0b111b;--panel:#141d2b;--edge:#29374b;--ink:#eef4fc;--muted:#96a8c0;--green:#78dcb0;--blue:#82b7ff;--amber:#f5c778}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,sans-serif}main{max-width:1280px;margin:0 auto;padding:32px 26px 48px}header{display:flex;align-items:center;justify-content:space-between;gap:20px}h1{font-size:30px;letter-spacing:-.7px;margin:0}h2{font-size:17px;margin:0 0 14px}.eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--green);margin-bottom:6px}.muted{color:var(--muted)}p{margin:8px 0}.pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--edge);border-radius:99px;padding:7px 13px;font-size:13px;white-space:nowrap}.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}.topline{display:flex;gap:18px;flex-wrap:wrap;margin:20px 0;color:var(--muted);font-size:13px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.card,.panel{border:1px solid var(--edge);border-radius:14px;background:var(--panel);padding:19px}.label{font-size:13px;color:var(--muted)}.number{font-size:32px;font-weight:650;letter-spacing:-1px;margin:6px 0}.number small{font-size:16px;font-weight:400;color:var(--muted);letter-spacing:0}progress{display:block;width:100%;height:8px;margin:12px 0;accent-color:var(--green)}.help{font-size:12px;color:var(--muted);margin-top:9px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}.panel{margin-bottom:14px}.paneltitle{display:flex;justify-content:space-between;align-items:center;gap:12px}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th{text-align:left;color:var(--muted);font-weight:500;padding:0 10px 11px}td{border-top:1px solid var(--edge);padding:11px 10px;white-space:nowrap}td:first-child,th:first-child{padding-left:0}.tag{display:inline-block;font:11px ui-monospace,monospace;padding:3px 7px;border-radius:5px;background:#23364b;color:var(--blue)}.worlds{display:grid;grid-template-columns:repeat(16,1fr);gap:5px}.world{aspect-ratio:1.2;background:#1b283a;border:1px solid #30425b;border-radius:4px;position:relative}.world.complete{background:#3caa7b;border-color:#78dcb0}.world.partial{background:#214d73;border-color:#569bdd}.world span{position:absolute;left:0;right:0;bottom:0;background:#72b2ee;opacity:.8}.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted)}.legend i{display:inline-block;width:9px;height:9px;margin-right:5px;border-radius:2px}pre{margin:0;background:#0c1420;border-radius:9px;padding:15px;font:12px/1.7 ui-monospace,SFMono-Regular,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:350px;overflow:auto}.resource{display:flex;justify-content:space-between;font-size:13px;margin:8px 0}.notice{border:1px solid #755d3c;background:#2e2418;border-radius:10px;padding:15px;margin:14px 0;color:var(--amber);white-space:pre-wrap;overflow-wrap:anywhere}.notice.error{border-color:#9c5056;background:#321b22;color:#ffafb7}.hidden{display:none}a{color:var(--blue)}.links{display:flex;gap:16px;margin:12px 0}.foot{font-size:12px;color:var(--muted);margin-top:16px}.metrics td:nth-child(2),.metrics td:nth-child(3){text-align:right}.metrics th:nth-child(2),.metrics th:nth-child(3){text-align:right}@media(max-width:850px){.cards{grid-template-columns:repeat(2,1fr)}.columns{grid-template-columns:1fr}header{align-items:flex-start}h1{font-size:25px}}@media(max-width:480px){main{padding:20px 14px}.cards{gap:9px}.card{padding:14px}.number{font-size:26px}.worlds{grid-template-columns:repeat(12,1fr)}}
+</style></head>
+<body><main>
+<header><div><div class="eyebrow">MINIFLY · PERSISTENT CORE</div><h1>V2 experiment monitor</h1><p class="muted">Live execution · 96 paired worlds · four core configurations</p></div><div class="pill"><span class="dot" id="indicator"></span><span id="state">Connecting…</span></div></header>
+<div class="topline"><span id="stage">Stage —</span><span id="fresh">Heartbeat —</span><span id="elapsed">Elapsed —</span><span id="clock">New York —</span></div>
+<div id="notice" class="notice hidden"></div>
+<section class="cards">
+<div class="card"><div class="label">Committed jobs</div><div class="number"><span id="jobs">—</span> <small>/ 768</small></div><progress id="jobbar" max="768" value="0"></progress><div class="help" id="jobpercent">Whole world × configuration × task jobs</div></div>
+<div class="card"><div class="label">Committed lives</div><div class="number"><span id="lives">—</span> <small>/ 2,304</small></div><progress id="lifebar" max="2304" value="0"></progress><div class="help">Counted only after a full job is committed</div></div>
+<div class="card"><div class="label">Fully completed paired worlds</div><div class="number"><span id="worldcount">—</span> <small>/ 96</small></div><progress id="worldbar" max="96" value="0"></progress><div class="help">All four configurations on both tasks</div></div>
+<div class="card"><div class="label">Assigned workers</div><div class="number"><span id="workers">—</span> <small id="workercap">/ 8</small></div><div class="help" id="sleep">Sleep prevention —</div><div class="help">Refreshes automatically every 2 seconds</div></div>
+</section>
+<section class="panel"><div class="paneltitle"><h2>Active jobs</h2><span class="muted" style="font-size:12px">Partial work is shown separately from committed jobs</span></div><div class="scroll"><table><thead><tr><th>World</th><th>Core</th><th>Task</th><th>Life branch</th><th>Saved record cursor</th><th>Heartbeat age</th><th>PID</th></tr></thead><tbody id="active"></tbody></table></div></section>
+<div class="columns">
+<section class="panel"><h2>Paired world completion</h2><div id="worlds" class="worlds"></div><div class="legend"><span><i style="background:#1b283a"></i>Pending</span><span><i style="background:#214d73"></i>Some jobs committed</span><span><i style="background:#3caa7b"></i>All 8 jobs committed</span></div><div class="help">Hover over a world for its ID and completed-job count.</div></section>
+<section class="panel"><h2>Progress by core</h2><table class="metrics"><thead><tr><th>Configuration</th><th>Lifetime / 96</th><th>Reuse / 96</th></tr></thead><tbody id="arms"></tbody></table><div class="help">V1: current core · ERROR: prediction-error writing<br>REPLACE: local conflict replacement · BOTH: both mechanisms</div></section>
+</div>
+<div class="columns">
+<section class="panel"><h2>Resources & execution</h2><div class="resource"><span class="muted">Results on disk</span><span id="disk">—</span></div><progress id="diskbar" max="4294967296" value="0"></progress><div class="resource"><span class="muted">Committed worker time</span><span id="compute">—</span></div><div class="resource"><span class="muted">Supervisor PID</span><span id="supervisor">—</span></div><div class="resource"><span class="muted">Technical qualification</span><span id="qualification">—</span></div><div class="help">Eight-worker execution amendment; the first 16 jobs used four workers. Timing reflects actual execution conditions.</div><div class="links"><a href="https://github.com/ChangweiZhou/digitalbaby/tree/codex/persistent-core-v2-20261003" target="_blank" rel="noreferrer">GitHub branch ↗</a><a id="report" class="hidden" href="/report" target="_blank">Final report ↗</a><a id="bundle" class="hidden" href="/bundle">Result bundle ↓</a></div><div id="verdict" class="help"></div></section>
+<section class="panel"><h2>Recent supervisor log</h2><pre id="log">Waiting for status…</pre></section>
+</div>
+<div class="foot">Read-only local monitor. It reads existing status, cursor and receipt filenames; it never runs a learner, changes the experiment or restarts a job. Intermediate progress is not a scientific verdict. Times use America/New_York.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id), number=n=>Number(n||0).toLocaleString('en-US');
+const stages={execution:'Execution',analysis:'Analysis',accepted:'Accepted'};
+function cellRow(values){const tr=document.createElement('tr');for(const v of values){const td=document.createElement('td');td.textContent=v;tr.append(td)}return tr}
+function age(v){return v==null?'Starting':Math.max(0,v).toFixed(0)+'s'}
+function duration(s){s=Math.max(0,Math.floor(s));return Math.floor(s/3600)+'h '+Math.floor(s%3600/60)+'m'}
+async function refresh(){
+ try{
+  const response=await fetch('/api/status',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);
+  const d=await response.json(),s=d.status,c=d.committed;
+  $('state').textContent=d.observed_state;$('indicator').style.background=d.observed_state==='RUNNING'?'var(--green)':d.observed_state==='COMPLETE'?'var(--blue)':'var(--amber)';
+  $('stage').textContent='Stage: '+(stages[s.stage]||s.stage||'Waiting');$('fresh').textContent='Supervisor heartbeat: '+age(d.heartbeat_age_s)+' ago';
+  $('elapsed').textContent='Elapsed: '+duration(d.elapsed_s);$('clock').textContent='New York: '+new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',dateStyle:'medium',timeStyle:'medium'}).format(new Date(d.now_unix*1000));
+  $('jobs').textContent=number(c.jobs);$('jobbar').value=c.jobs;$('jobpercent').textContent=(100*c.jobs/768).toFixed(1)+'% · whole jobs committed';
+  $('lives').textContent=number(c.lives);$('lifebar').value=c.lives;$('worldcount').textContent=c.full_worlds;$('worldbar').value=c.full_worlds;
+  $('workers').textContent=d.active.length;$('workercap').textContent='/ '+(s.workers||8);$('sleep').textContent='Caffeinate: '+(d.caffeinate_alive?'attached':'not detected');
+  $('active').replaceChildren();for(const x of d.active){$('active').append(cellRow([x.world,x.arm,x.assay,x.branch||'Starting',x.cursor==null?'—':x.cursor+' / '+x.records_per_life,age(x.heartbeat_age_s),x.pid]))}
+  if(!d.active.length)$('active').append(cellRow(['No active jobs','','','','','','']));
+  $('worlds').replaceChildren();for(const x of c.worlds){const div=document.createElement('div');div.className='world '+(x.jobs===8?'complete':x.jobs?'partial':'');div.title='World '+x.world+' · '+x.jobs+' / 8 jobs';if(x.jobs>0&&x.jobs<8){const fill=document.createElement('span');fill.style.height=(100*x.jobs/8)+'%';div.append(fill)}$('worlds').append(div)}
+  $('arms').replaceChildren();for(const a of ['V1','ERROR','REPLACE','BOTH'])$('arms').append(cellRow([a,c.arms[a].lifetime,c.arms[a].reuse]));
+  $('disk').textContent=(Number(s.bytes_used||0)/1048576).toFixed(1)+' MiB / 4 GiB';$('diskbar').value=s.bytes_used||0;
+  $('compute').textContent=(Number(s.committed_worker_s||0)/3600).toFixed(2)+' worker-hours';$('supervisor').textContent=s.pid||'—';$('qualification').textContent=d.qualification;
+  $('log').textContent=d.log||'No log lines yet.';
+  $('report').classList.toggle('hidden',!d.report_available);$('bundle').classList.toggle('hidden',!d.bundle_available);
+  $('verdict').textContent=s.adoption_verdict?'Adoption verdict: '+s.adoption_verdict+(s.github_upload?' · publication '+s.github_upload:''):'';
+  $('notice').classList.toggle('hidden',!d.notice);$('notice').classList.toggle('error',!!d.failure);$('notice').textContent=d.notice||'';
+ }catch(e){$('state').textContent='MONITOR DISCONNECTED';$('indicator').style.background='var(--amber)';$('notice').classList.remove('hidden');$('notice').textContent='Monitor cannot read the current state: '+e.message+'. The experiment is independent of this page.'}
+ setTimeout(refresh,2000);
+}
+refresh();
+</script></body></html>
