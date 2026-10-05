@@ -2,8 +2,6 @@
 
 Final complete-cohort report, 5 October 2026.
 
-**Publication status: complete 64-world results are available below. Upload of the full raw receipt bundle is still pending.** This results-first commit contains the report, complete registered analysis and scientific verification summary. It does not claim that the raw receipt bundle is already on GitHub.
-
 ## Conclusion
 
 ERROR did not repair held-out completion in this fixed experiment. The registered decision is **JOINT_REPAIR_EXCLUDED_BY_REGISTERED_BOUND**. Its held-out accuracy was below the 25% chance level, and its taught-old causal held-out contrast was negative. This conclusion is terminal for the registered question and is confined to taught-dependent held-out table completion in the locked relabeled Latin-table fixture.
@@ -71,16 +69,17 @@ The [original infrastructure blocker report](results/report/INFRASTRUCTURE_BLOCK
 
 The result is restricted to this locked fixture, schedule, output policy and registered controls. It does not authorize sample extension, parameter tuning, a later ERROR variant, or a broader conclusion about learning systems.
 
-## Results available now and pending raw evidence
+## Published evidence and reproducibility boundary
 
-- [Complete public terminal analysis](results/final/analysis.json), including all 64 per-world values and exact interval data
+- [Lossless scientific receipt bundle and restoration instructions](results/bundle/README.md), preserving all 8,453 reviewed final scientific files
+- [Complete public terminal analysis](results/final/analysis.json), including all per-world values and exact interval data
 - [Public scientific verification summary](audits/FINAL_ANALYSIS_SUMMARY.json)
-- [Results-first publication integrity manifest](results/final/PUBLICATION_MANIFEST.json)
+- [Final publication integrity manifest](results/final/PUBLICATION_MANIFEST.json)
 
-The full 64-world raw receipt bundle is being uploaded. Its prepared set contains 8,320 unchanged non-header numeric parts, 128 explicitly labeled header/manifest projections and a complete receipt index. These files have been prepared from the accepted cohort, but this commit does not claim that their GitHub upload is complete. The public analysis's input-manifest hashes identify those prepared public receipts; their files and index will be available with the full bundle.
+The receipts are delivered in a 34,716,904-byte lossless tar.xz archive split into 89 small downloadable chunks. The bundle manifest and readable per-file SHA256 lists identify every decoded path and byte. The supplied Python-standard-library utility verifies the complete archive and all 8,453 files before restoring them to a new directory. Receipt-relative links in the analysis and archived report resolve after restoration. These files are not individually browsable as a raw receipt directory on GitHub.
 
-Every numerical value and decision in the public terminal analysis is unchanged from the sealed analysis; only its input-manifest references and projection metadata differ. Original execution administration, private checkpoint data and approval/session identities are excluded. The public projections must not be passed to validators requiring original private execution identities; the [initial README](README.md) explains the execution-adapter boundary.
+The 8,320 non-header numeric receipt parts are byte-identical to the sealed originals. The 128 receipt headers/manifests are explicitly labeled public projections, and their complete public index is inside the bundle. The terminal analysis preserves every numerical value and decision; only its input-manifest references and projection metadata differ. Original execution administration, private checkpoint data and approval/session identities are excluded. These public projections must not be passed to validators that require the original private execution identities; the [initial README](README.md) explains the execution-adapter boundary.
 
-The initial 397-file source/qualification release and historical infrastructure blocker report remain unchanged. This report will be updated to remove the pending-upload notice only after the complete receipt bundle and final branch have been verified. Inherited source and attribution remain intact; see [NOTICE.md](NOTICE.md) and [COPYING](COPYING).
+The archive also preserves the exact reviewed report, analysis, verification-summary and publication-manifest snapshots. This live report and publication manifest add availability directions; all scientific text, numerical findings and limitations above are unchanged. The initial 397-file source/qualification release and its root integrity manifest remain historical and unchanged. Use the restored supplement alongside that source checkout. Inherited source and attribution remain intact; see [NOTICE.md](NOTICE.md) and [COPYING](COPYING).
 
 SPDX-License-Identifier: GPL-3.0-or-later.
