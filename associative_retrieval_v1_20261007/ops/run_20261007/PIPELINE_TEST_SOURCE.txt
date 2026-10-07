@@ -1,0 +1,127 @@
+"""Synthetic-only dispatch/packaging audit. Never executes native science."""
+import json
+import sys
+import tempfile
+import time
+import zipfile
+from pathlib import Path
+from unittest.mock import patch
+
+ROOT = Path('/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/associative_retrieval_v1_20261007')
+sys.path.insert(0, str(ROOT/'ops/run_20261007'))
+import supervisor as s
+from contracts import require_sources
+from io_utils import write_receipt, atomic_json
+from analysis import evaluate
+from qualify_ops import synthetic_worlds
+
+real_lock = require_sources()
+real_qual = json.loads((ROOT/'ops/run_20261007/QUALIFICATION.json').read_text())
+checks = {}
+
+with tempfile.TemporaryDirectory(prefix='link_ops_synthetic_') as td:
+    b = Path(td)
+    jobs = [{'world': 71009001+i//2, 'assay': ('lifetime','reuse')[i%2],
+             'job': f'{71009001+i//2}_{("lifetime","reuse")[i%2]}'} for i in range(10)]
+    class Fake:
+        next_pid = 1000
+        fail_index = None
+        spawned = []
+        def __init__(self, argv, **kw):
+            self.argv = argv
+            self.index = len(self.spawned)
+            self.spawned.append(self)
+            self.pid = Fake.next_pid
+            Fake.next_pid += 1
+            self.polls = 0
+            folder = Path(argv[argv.index('--folder')+1])
+            w = int(argv[argv.index('--world')+1]); a = argv[argv.index('--assay')+1]
+            assert '--qualification' not in argv and '--limit' not in argv and '--resume' not in argv
+            if self.index == self.fail_index:
+                atomic_json(folder/'failures'/f'{w}_{a}.json', {'error':'synthetic_failure_only', 'world':w,'assay':a})
+            else:
+                write_receipt(folder/'receipts'/f'{w}_{a}.json.gz', {'world':w,'assay':a,'stage':'screen'})
+        def poll(self):
+            self.polls += 1
+            if self.fail_index is not None and self.index != self.fail_index and self.polls == 1:
+                return None
+            return 1 if self.index == self.fail_index else 0
+    def set_root(name):
+        x = b/name; x.mkdir()
+        (x/'results').mkdir()
+        return x
+    for fail in (False, True):
+        root = set_root('failure' if fail else 'success')
+        Fake.spawned = []; Fake.fail_index = 2 if fail else None
+        s.CHILDREN.clear()
+        with patch.object(s.boot,'ROOT',root), patch.object(s,'RESULTS',root/'results'), patch.object(s,'SCIENCE',root/'results/science'), \
+             patch.object(s,'roster',lambda stage:jobs), patch.object(s,'require_sources',lambda:real_lock), \
+             patch.object(s,'make_world',lambda w,a:{'sha256':f'fake-{w}-{a}'}), \
+             patch.object(s,'audit_science',lambda d,l:{'verdict':'SYNTHETIC_PASS'}), \
+             patch.object(s,'analyze_stage',lambda f,st:{'verdict':'SYNTHETIC_ONLY'}), \
+             patch.object(s.subprocess,'Popen',Fake):
+            if fail:
+                try:
+                    s.run_stage('screen', time.time())
+                except RuntimeError as e:
+                    assert 'synthetic_failure_only' in str(e)
+                else:
+                    raise AssertionError('worker failure accepted')
+                assert len(Fake.spawned)==8
+                assert (root/'results/science/screen/STOP_REQUEST.json').exists()
+                d=json.loads((root/'results/science/screen/SESSION_RESULT.json').read_text())
+                assert d['status']=='FAILED'
+                checks['failure_stops_dispatch_preserves_primary_error_no_retry']='PASS'
+            else:
+                assert s.run_stage('screen', time.time())['verdict']=='SYNTHETIC_ONLY'
+                assert len(Fake.spawned)==10
+                assert not s.CHILDREN
+                checks['eight_worker_dispatch_complete_roster_and_receipt_commit']='PASS'
+                # Explicit rerun request only skips committed synthetic jobs.
+                assert s.run_stage('screen', time.time())['verdict']=='SYNTHETIC_ONLY'
+                assert len(Fake.spawned)==10
+                checks['dispatcher_committed_job_skip_no_new_child']='PASS'
+    root=set_root('session_pause')
+    Fake.spawned=[]; Fake.fail_index=None
+    with patch.object(s.boot,'ROOT',root), patch.object(s,'RESULTS',root/'results'), patch.object(s,'SCIENCE',root/'results/science'), \
+         patch.object(s,'roster',lambda stage:jobs), patch.object(s,'require_sources',lambda:real_lock), \
+         patch.object(s,'make_world',lambda w,a:{'sha256':f'fake-{w}-{a}'}), \
+         patch.object(s.subprocess,'Popen',Fake):
+        assert s.run_stage('screen', time.time()-s.DISPATCH_SECONDS-1) is None
+        assert not Fake.spawned
+        assert json.loads((root/'results/STATUS.json').read_text())['stage']=='PAUSED_SESSION_LIMIT'
+        checks['nine_hour_dispatch_halt_and_explicit_resume_pause']='PASS'
+    # Exercise the real package code on completely synthetic audit documents.
+    root=set_root('package')
+    (root/'SCREEN_REPORT.md').write_text('# Synthetic pipeline test only\n\nNo science.\n')
+    package_jobs=[{'world':71009001+i//2,'assay':('lifetime','reuse')[i%2],
+                   'job':f'{71009001+i//2}_{("lifetime","reuse")[i%2]}'} for i in range(16)]
+    folder=root/'results/science/screen/receipts'; folder.mkdir(parents=True)
+    for j in package_jobs:
+        write_receipt(folder/f'{j["job"]}.json.gz', {'world':j['world'],'assay':j['assay']})
+    def fake_audit(d, lock):
+        lives=4 if d['assay']=='lifetime' else 2
+        return {'verdict':'SYNTHETIC_PASS','lives':lives,
+                'records':lives*(864 if d['assay']=='lifetime' else 216)}
+    with patch.object(s.boot,'ROOT',root), patch.object(s,'RESULTS',root/'results'), patch.object(s,'SCIENCE',root/'results/science'), \
+         patch.object(s,'roster',lambda stage:package_jobs), patch.object(s,'require_sources',lambda:real_lock), \
+         patch.object(s,'audit_science',fake_audit):
+        result=evaluate(synthetic_worlds(8,False),'screen')
+        s.finalize(result,None)
+        assert json.loads((root/'results/STATUS.json').read_text())['stage']=='COMPLETE'
+        assert json.loads((root/'results/FINAL_AUDIT.json').read_text())['completed_native_lives']==48
+        with zipfile.ZipFile(root/'RESULT_BUNDLE.zip') as z:
+            assert z.testzip() is None and 'results/SUMMARY.json' in z.namelist()
+        checks['negative_result_acceptance_final_audit_and_valid_result_bundle']='PASS'
+
+# Restore original module context and verify immutable native and operations files.
+assert require_sources()==real_lock
+qualification=dict(real_qual)
+qualification['checks']={**qualification['checks'],**checks}
+qualification['synthetic_pipeline_native_science_lives']=0
+atomic_json(ROOT/'ops/run_20261007/QUALIFICATION.json',qualification)
+atomic_json(ROOT/'ops/run_20261007/PIPELINE_AUDIT.json',{
+    'verdict':'PASS','operations_identity':real_lock['operations_identity'],
+    'checks':checks,'scope':'synthetic-only supervisor and packaging fixtures; no native science',
+    'unchanged_qualified_native_identity':real_lock['native_identity']})
+print(json.dumps(checks))

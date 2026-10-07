@@ -1,0 +1,291 @@
+{
+  "version": "V67",
+  "prospective_iteration": 12,
+  "parent": "iteration10/models/reference.npz",
+  "observer": "iteration8/models/current_RBF64.npz",
+  "freeze_required_before_new_outcomes": true,
+  "stages": {
+    "R": {
+      "kind": "future_retrospective_reanalysis",
+      "source": "iteration11/data/runs/A_*",
+      "independent_streams": 16,
+      "new_trajectories": 0,
+      "targets": [
+        "E",
+        "abs(E)",
+        "E_squared",
+        "max(-E,0)",
+        "P(E < -1 Hz)",
+        "choice_threshold_crossings"
+      ],
+      "primary_horizon_seconds": 86400,
+      "fixed_alignment_bins": [
+        -1.001,
+        -0.2,
+        -0.05,
+        0.05,
+        0.2,
+        1.001
+      ],
+      "ridge_alpha": 1.0
+    },
+    "F": {
+      "kind": "prospective_common_state_feedback_diagnostic",
+      "seeds": [
+        6701001,
+        6701002,
+        6701003,
+        6701004,
+        6701005,
+        6701006,
+        6701007,
+        6701008,
+        6701009,
+        6701010,
+        6701011,
+        6701012,
+        6701013,
+        6701014,
+        6701015,
+        6701016
+      ],
+      "associations": 96,
+      "focal_associations": 4,
+      "bouts_per_association": 6,
+      "presentation_seconds": 30,
+      "rest_seconds": 135,
+      "port_arms": [
+        "INTACT",
+        "G0",
+        "A0",
+        "GA0"
+      ],
+      "dynamic_controls": [
+        "NO_WRITE",
+        "HALF_WRITE_0.5"
+      ],
+      "evaluator_only_control": "G0 endpoint slow-L2-norm-matched rescaling of intact delta",
+      "horizons_seconds": [
+        0,
+        86400
+      ],
+      "main_trajectory": "INTACT only",
+      "primary_contrast": "mean_stream(mean_eligible_focals_events(D_INTACT - D_G0)) at one day",
+      "candidate_lead_thresholds": {
+        "damage_reduction_ci_lower_gt": 0,
+        "relative_damage_reduction_point_min": 0.2,
+        "new_gain_noninferiority_Hz": 0.25,
+        "new_joint_choice_noninferiority_fraction": 0.05
+      },
+      "no_post_outcome_matching": true
+    },
+    "L": {
+      "kind": "local_signal_diagnostic_using_F_checkpoints",
+      "independent_of_F": false,
+      "max_bouts": 12,
+      "conditions": [
+        "TRUE_REVERSAL",
+        "SINGLE_ANOMALOUS_AB_BOUT",
+        "STABLE_REEXPOSURE",
+        "UNRELATED_REPETITION"
+      ],
+      "shared_prefix_check": "reversal and single anomaly identical through first complete A/B bout",
+      "primary_local_features": [
+        "effective_KC_activity",
+        "adaptation",
+        "alpha_fast_prewrite",
+        "alpha_slow_prewrite",
+        "routed_alpha_teacher",
+        "raw_alpha_increment",
+        "fixed_sign_products"
+      ],
+      "secondary_local_features": [
+        "gamma_fast_prewrite",
+        "routed_gamma_teacher"
+      ],
+      "forbidden_features": [
+        "cue_identity",
+        "old_cue_vectors",
+        "KC_identity",
+        "protected_memory_list",
+        "omit_history_footprint",
+        "observer_score",
+        "future_outcome",
+        "global_KC_state_vector",
+        "condition_label",
+        "bout_index"
+      ],
+      "classifier": "fixed regularized logistic diagnostic, stream-held-out, no model search",
+      "suggested_signal_gate": {
+        "mean_heldout_AUROC_min": 0.75,
+        "ci_lower_gt": 0.5
+      }
+    },
+    "P": {
+      "kind": "conditional_single_pilot",
+      "candidate_selected": null,
+      "max_candidates": 1,
+      "skip_allowed": true,
+      "route_option": "F gamma rows multiplied by 0.5, all other parameters frozen",
+      "trace_option": "suppress only slow increment if slow*uA < 0 and alpha_fast*uA <= 0, using pre-write state",
+      "development_seeds": [
+        6701001,
+        6701002,
+        6701003,
+        6701004,
+        6701005,
+        6701006,
+        6701007,
+        6701008
+      ],
+      "validation_seeds": [
+        6703001,
+        6703002,
+        6703003,
+        6703004,
+        6703005,
+        6703006,
+        6703007,
+        6703008,
+        6703009,
+        6703010,
+        6703011,
+        6703012,
+        6703013,
+        6703014,
+        6703015,
+        6703016
+      ],
+      "validation_input_generation_status": "not generated",
+      "validation_from_zero_state": true,
+      "validation_arms": [
+        "INTACT",
+        "one selected candidate",
+        "development-slow-write-budget scalar control"
+      ],
+      "all_association_loads": [
+        12,
+        24,
+        48,
+        96
+      ],
+      "reversal_parent_load": 12,
+      "reversal_doses": [
+        0,
+        6,
+        12
+      ],
+      "common_reversal_endpoint_seconds": 3960,
+      "proposed_engineering_gates": {
+        "load96_day_accuracy_gain_fraction_min": 0.05,
+        "paired_gain_ci_lower_gt": 0,
+        "new_gain_noninferiority_Hz": 0.25,
+        "new_choice_noninferiority_fraction": 0.05,
+        "low_load_accuracy_noninferiority_fraction": 0.05,
+        "all_assigned_joint_revision_noninferiority_fraction": 0.05,
+        "old_eligibility_noninferiority_fraction": 0.05
+      },
+      "physiology_target_manifest": "must be frozen with source definitions before pilot scoring; not generated now"
+    }
+  },
+  "inference": {
+    "unit": "independent stream",
+    "bootstrap_resamples": 2000,
+    "CI_level": 0.95,
+    "no_automatic_seed_expansion": true
+  },
+  "execution_budget_provisional": {
+    "workers": 2,
+    "BLAS_threads_each": 1,
+    "worker_RSS_review_bytes": 1000000000,
+    "summed_worker_seconds_before_review": 5800
+  },
+  "scope_exclusions": [
+    "new physiology fit",
+    "new neuron model",
+    "KC compression sweep",
+    "Oja/homeostasis tournament",
+    "sleep/replay",
+    "extra persistent memory arrays",
+    "new task or subagent"
+  ],
+  "deliverable_limit_bytes": 10000000,
+  "iteration": 12,
+  "status": "execution_protocol",
+  "execution_authorized": true,
+  "analysis_seed": 6709001,
+  "local_sampling": {
+    "active_coordinates_per_presentation": 32,
+    "outcome_blind": true,
+    "shared_seed_across_conditions": true,
+    "gate_mass_statistics_use_all_active_coordinates": true
+  },
+  "local_classifier": {
+    "penalty": 1.0,
+    "max_iterations": 250,
+    "gradient_tolerance": 1e-07,
+    "features_primary": [
+      "dx",
+      "adapt",
+      "fast_alpha",
+      "slow",
+      "teacher_alpha",
+      "raw_alpha",
+      "sign_slow_raw",
+      "sign_fast_raw"
+    ],
+    "features_secondary": [
+      "fast_gamma",
+      "teacher_gamma"
+    ],
+    "contrasts": [
+      "reversal_vs_unrelated",
+      "reversal_vs_anomaly"
+    ],
+    "late_bouts": [
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ]
+  },
+  "trace_lead_gate": {
+    "both_post_prefix_AUROC_mean_min": 0.75,
+    "both_AUROC_lower_gt": 0.5,
+    "reversal_late_conflicting_write_keep_min": 0.8,
+    "reversal_minus_harmful_unrelated_late_keep_gap_min": 0.2,
+    "gap_ci_lower_gt": 0,
+    "harmful_episode_old_E_lt_Hz": -0.1,
+    "minimum_streams_with_both_conflict_masses": 12
+  },
+  "retrospective_feature_blocks": {
+    "DIRECTION": [
+      "z",
+      "signed_cue_cos",
+      "cue_overlap"
+    ],
+    "MAGNITUDE": [
+      "slow_norm",
+      "whole_norm"
+    ],
+    "COMBINED": [
+      "z",
+      "signed_cue_cos",
+      "cue_overlap",
+      "slow_norm",
+      "whole_norm"
+    ],
+    "INTERACTION": [
+      "z",
+      "signed_cue_cos",
+      "cue_overlap",
+      "slow_norm",
+      "whole_norm",
+      "signed_interaction",
+      "absolute_interaction"
+    ]
+  }
+}

@@ -1,0 +1,50 @@
+START screen 71009001_lifetime pid=1000
+START screen 71009001_reuse pid=1001
+START screen 71009002_lifetime pid=1002
+START screen 71009002_reuse pid=1003
+START screen 71009003_lifetime pid=1004
+START screen 71009003_reuse pid=1005
+START screen 71009004_lifetime pid=1006
+START screen 71009004_reuse pid=1007
+COMMIT screen 71009001_lifetime
+COMMIT screen 71009001_reuse
+COMMIT screen 71009002_lifetime
+COMMIT screen 71009002_reuse
+COMMIT screen 71009003_lifetime
+COMMIT screen 71009003_reuse
+COMMIT screen 71009004_lifetime
+COMMIT screen 71009004_reuse
+START screen 71009005_lifetime pid=1008
+START screen 71009005_reuse pid=1009
+COMMIT screen 71009005_lifetime
+COMMIT screen 71009005_reuse
+ANALYSIS screen SYNTHETIC_ONLY
+SKIP committed 71009001_lifetime
+SKIP committed 71009001_reuse
+SKIP committed 71009002_lifetime
+SKIP committed 71009002_reuse
+SKIP committed 71009003_lifetime
+SKIP committed 71009003_reuse
+SKIP committed 71009004_lifetime
+SKIP committed 71009004_reuse
+SKIP committed 71009005_lifetime
+SKIP committed 71009005_reuse
+ANALYSIS screen SYNTHETIC_ONLY
+START screen 71009001_lifetime pid=1010
+START screen 71009001_reuse pid=1011
+START screen 71009002_lifetime pid=1012
+START screen 71009002_reuse pid=1013
+START screen 71009003_lifetime pid=1014
+START screen 71009003_reuse pid=1015
+START screen 71009004_lifetime pid=1016
+START screen 71009004_reuse pid=1017
+FAIL screen 71009002_lifetime: synthetic_failure_only
+COMMIT screen 71009001_lifetime
+COMMIT screen 71009001_reuse
+COMMIT screen 71009002_reuse
+COMMIT screen 71009003_lifetime
+COMMIT screen 71009003_reuse
+COMMIT screen 71009004_lifetime
+COMMIT screen 71009004_reuse
+COMPLETE SCREEN_NO_ADVANCE_RETAIN_ERROR jobs=16 lives=48
+{"eight_worker_dispatch_complete_roster_and_receipt_commit": "PASS", "dispatcher_committed_job_skip_no_new_child": "PASS", "failure_stops_dispatch_preserves_primary_error_no_retry": "PASS", "nine_hour_dispatch_halt_and_explicit_resume_pause": "PASS", "negative_result_acceptance_final_audit_and_valid_result_bundle": "PASS"}
