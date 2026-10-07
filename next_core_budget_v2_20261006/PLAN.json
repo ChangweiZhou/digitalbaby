@@ -1,0 +1,38 @@
+{
+  "schema": "MINIFLY_BUDGET_DESIGN_V2",
+  "date": "2026-10-06",
+  "status": "DESIGN_ONLY_NOT_LAUNCHED",
+  "launch_qualified": false,
+  "science_trajectories_started": 0,
+  "assays": {"lifetime": {"lives_per_job": 4, "records_per_life": 864}, "reuse": {"lives_per_job": 2, "records_per_life": 216}},
+  "report_configurations": ["CENTER", "ERROR", "Q_HALF", "P005", "P0005", "S3_CUE", "S3_RAND", "REL05", "REL10", "REL20", "REL_PERM10", "FIRST10"],
+  "physical_configurations": ["CENTER", "ERROR", "P005", "P0005", "S3_CUE", "S3_RAND", "REL05", "REL10", "REL20", "REL_PERM10", "FIRST10"],
+  "eligible_candidates": ["ERROR", "Q_HALF", "P005", "P0005", "S3_CUE", "REL05", "REL10", "REL20"],
+  "candidate_parent": {"ERROR":"CENTER", "Q_HALF":"ERROR", "P005":"ERROR", "P0005":"ERROR", "S3_CUE":"ERROR", "REL05":"ERROR", "REL10":"ERROR", "REL20":"ERROR"},
+  "screen": {"n": 8, "proposed_world_ids": [61008001,61008002,61008003,61008004,61008005,61008006,61008007,61008008], "exclusion_registry_verified": false, "jobs":176, "lives":528, "inference":"EXPLORATORY", "maximum_finalists":1, "new_mutations_allowed":false},
+  "confirmation": {
+    "n":48,
+    "proposed_world_id_start":61008101,
+    "proposed_world_id_end":61008148,
+    "exclusion_registry_verified":false,
+    "reuse_screen_worlds":false,
+    "allow_sample_extension":false,
+    "physical_roster_by_winner": {
+      "ERROR":["CENTER","ERROR"],
+      "Q_HALF":["CENTER","ERROR"],
+      "P005":["CENTER","ERROR","P005"],
+      "P0005":["CENTER","ERROR","P0005"],
+      "S3_CUE":["CENTER","ERROR","S3_CUE","S3_RAND"],
+      "REL05":["CENTER","ERROR","REL05"],
+      "REL10":["CENTER","ERROR","REL10","REL_PERM10","FIRST10"],
+      "REL20":["CENTER","ERROR","REL20"]
+    }
+  },
+  "selection": {"targets_ordered":["old","new","revision","reuse"], "freeze_configuration_and_target_before_confirmation":true, "score":"(paired_mean_ability_gain / practical_delta) / total_online_W_CPU_ratio", "ties":["normalized_gain_desc","total_online_W_CPU_asc","candidate_id_asc","target_order_asc"], "screen_severe_harm_count_max":0},
+  "statistics": {"sample_unit":"world", "adoption_joint_alpha":0.03, "E3_existence_joint_alpha":0.01, "mechanism_joint_alpha":0.01, "unused_alpha_reallocated":false, "reuse_adoption_requires_E3_existence":true, "severe_harm_threshold_pp":5, "severe_harm_probability_max":0.10, "E1_practical_delta":0.02, "reuse_practical_delta":0.05, "ERROR_revision_practical_delta":0.20, "t_coverage":"approximate", "zero_variance_eta":"UNRESOLVED"},
+  "mechanism_targets": {"S3_CUE":{"controls":["S3_RAND"],"all_comparisons_required":true}, "REL10":{"controls":["REL_PERM10","FIRST10"],"all_comparisons_required":true}},
+  "resource": {"workers":8, "maximum_jobs":656, "maximum_lives":1968, "science_process_CPU_hours_cap":68, "science_charged_worker_hours_cap":70, "all_deliverables_including_archive_GiB_cap":8, "final_W_state_and_ops_GiB_reserve":1, "archive_GiB_reserve":2, "worker_RSS_GiB_cap":1, "job_worker_seconds_cap":3600, "forecast_multiplier":1.5, "forecast_is_hard_wall_guarantee":false},
+  "session": {"stop_dispatch_seconds":28800, "safe_pause_request_seconds":32400, "worker_exit_deadline_seconds":34200, "supervisor_exit_before_seconds":36000, "limit_pause_status":"PAUSED_SESSION_LIMIT", "unresponsive_worker_status":"STOP_NEEDS_REVIEW", "scientific_failure_auto_restart":false, "caffeinate_bound_to_supervisor":true},
+  "latin_in_scope":false,
+  "GitHub_upload_authorized_by_this_design":false
+}
