@@ -1,0 +1,7 @@
+# 第二轮运行前审核与修订
+
+增加计数持久化与禁写真实数组检查，防止类似历史E3问题只写receipt上的False。B预测前不知当前byte；所有新增状态由过去活动产生。模型只读clone上的probe状态与主状态摘要必须一致。
+
+新增检查点只存NPZ/json，拒绝pickle、错source、错shape、越界计数和错pending地址。运行不在parent目录写cache。读写资格mask为native同时read/write坐标，1770/5177；编码四store与B逐位相等。
+
+重要限制：这个局部计数不是context身份表；它会同时累计重叠context的活动，可能减慢修订。不能只宣称解决过度自信，需看完整未改/修订及全byte结果。旧821/811数据不并入本DEV测量。

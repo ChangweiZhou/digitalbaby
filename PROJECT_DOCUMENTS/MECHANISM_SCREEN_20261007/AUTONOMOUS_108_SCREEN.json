@@ -1,0 +1,2486 @@
+[
+  {
+    "id": "M001",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Stateful nonlinear ELM cell (fast s, slow m, recurrent messages, internal MLP)",
+    "where": "ELM2/3/4; byte-ELM sources; scalar temporal runners",
+    "evidence_status": "IMPLEMENTED; PARTIAL TASK EVIDENCE",
+    "finding": "Real stateful recurrent arithmetic, not a conventional frozen random-feature ELM; some earlier training used BPTT and larger vector-valued units.",
+    "disposition": "Retain as an expressive cell reference; do not equate cell count with scalar state or claim autonomous local training established.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Retain as an expressive cell reference; do not equate cell count with scalar state or claim autonomous local training established.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M002",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Scalar-channel ELM with private vector memory",
+    "where": "P4/P6; temporal_elm_core; v8–v25 audits",
+    "evidence_status": "IMPLEMENTED; COMPARATIVE COVERAGE INCOMPLETE",
+    "finding": "A scalar communication channel can conceal several private coordinates and a nonlinear internal map. Temporal-task evidence exists, but the complete six-cell P4 result roster was not recovered.",
+    "disposition": "Keep independent private state; recover missing comparison before declaring cell arithmetic unnecessary.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep independent private state; recover missing comparison before declaring cell arithmetic unnecessary.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M003",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Fixed-time-constant ELM",
+    "where": "P4 fixed_tau",
+    "evidence_status": "SHIPPED; COMPLETE RESULT NOT RECOVERED",
+    "finding": "Directly listed in the six-model same-graph ablation. No decisive completed result was located in this audit.",
+    "disposition": "Unresolved, not pruned experimentally.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Unresolved, not pruned experimentally.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M004",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Linear-dendrite ELM",
+    "where": "P4 linear_dendrite",
+    "evidence_status": "SHIPPED; COMPLETE RESULT NOT RECOVERED",
+    "finding": "Removes dendritic tanh while retaining the internal ELM map; not equivalent to an entirely linear cell.",
+    "disposition": "Unresolved; retain exact definition.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Unresolved; retain exact definition.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M005",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Simple scalar leaky recurrent cell",
+    "where": "P4 leaky; P6 SHD/N-Omniglot",
+    "evidence_status": "IMPLEMENTED/SHIPPED; PARTIAL HISTORICAL EVIDENCE",
+    "finding": "An intended simpler same-graph temporal baseline, not a non-temporal rate-only baseline.",
+    "disposition": "Use as the smallest interpretable stateful reference, not an already demonstrated substitute in every task.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Use as the smallest interpretable stateful reference, not an already demonstrated substitute in every task.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M006",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Adaptive-threshold leaky cell (ALIF-labelled)",
+    "where": "P4 alif",
+    "evidence_status": "SHIPPED; COMPLETE RESULT NOT RECOVERED",
+    "finding": "Adaptive-threshold control listed in the cell-ablation package. Its name alone does not establish a biophysical spiking implementation or successful continual learning.",
+    "disposition": "Unresolved; audit the exact cell before biological claims.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Unresolved; audit the exact cell before biological claims.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M007",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Scalar sparse GRU-like cell",
+    "where": "P4 sparse_gru",
+    "evidence_status": "SHIPPED; COMPLETE RESULT NOT RECOVERED",
+    "finding": "Same 64-cell sparse source graph and presentations were intended; parameter counts unequal and explicitly reported.",
+    "disposition": "Unresolved; do not invent a ranking against ELM.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Unresolved; do not invent a ranking against ELM.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M008",
+    "section": "Neuron/cell implementations",
+    "mechanism": "RG-LRU / simplified Griffin recurrent model",
+    "where": "ELM5.ipynb",
+    "evidence_status": "IMPLEMENTED; LIMITED TASK LOGS",
+    "finding": "Actual gated diagonal recurrent update exists; the notebook reports spike-prediction holdout AUC values. It is not a retention-through-intervening-learning test.",
+    "disposition": "Historical engineering comparison, not a persistent-learning result. PickleLRU in this notebook is a file cache, not another neuron model.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Historical engineering comparison, not a persistent-learning result. PickleLRU in this notebook is a file cache, not another neuron model.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M009",
+    "section": "Neuron/cell implementations",
+    "mechanism": "FLM fast/slow leaky cell with sparse punctuator",
+    "where": "FLM model.ipynb",
+    "evidence_status": "IMPLEMENTED; LANGUAGE/THROUGHPUT LOGS",
+    "finding": "Separate fast/slow time constants and internal MLP; sparse punctuator adds retrieval. Saved comparison has NaN Transformer perplexities, so it cannot establish superiority to that baseline.",
+    "disposition": "Keep implementation evidence; no claim of reliable continual-learning or valid Transformer superiority.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep implementation evidence; no claim of reliable continual-learning or valid Transformer superiority.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M010",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Multi-timescale private neuronal state",
+    "where": "Early temporal roadmap; ELM/FLM; v25/v26 traces",
+    "evidence_status": "PARTIAL POSITIVE",
+    "finding": "Multiple temporal coordinates are distinct from multiple independently stored output banks. Temporal contrast helped controlled sensory tasks.",
+    "disposition": "Retain as a cell-level hypothesis; count state and do not relabel banks as neuron timescales.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "保留多时间尺度状态的假说；须在相同核心、状态和信息预算下比较，不能把多 bank 当作多时间尺度。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "可组织感觉、过去资格、地址兼容或内部动态；本身不提供已验证的自主内容学习、保持和输出。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M011",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Stubborn/adaptable heterogeneous populations",
+    "where": "ELM16 onward; v8–v17 audits",
+    "evidence_status": "PARTIAL POSITIVE; SPECIFICITY NARROWED",
+    "finding": "12 matched route/seed/order pairs gave 11 wins, about +5.4 pp all-class; later uniform/mean-rate controls recovered much of the gain. Gate affects activity updates, not directly synaptic allocation.",
+    "disposition": "Keep heterogeneity as unresolved useful component; reject claims that it already solved selective long-term plasticity.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "异质性有部分信号，但均匀或平均速率控制解释了不少收益；只保留不能被增益控制解释的版本。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "可组织感觉、过去资格、地址兼容或内部动态；本身不提供已验证的自主内容学习、保持和输出。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M012",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Separate write and forget gates",
+    "where": "ELM9/11 and later notebook family; local-learning audit",
+    "evidence_status": "IMPLEMENTED; NOT ISOLATED DECISIVELY",
+    "finding": "Suppressing a new write need not erase old state; learned gate networks have their own training/information costs.",
+    "disposition": "Retain distinction; not equivalent to reducing all learning rates.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "写入和擦除是不同操作。ERROR 已改进修订，新的擦除门必须保护未修订旧知识。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "可组织感觉、过去资格、地址兼容或内部动态；本身不提供已验证的自主内容学习、保持和输出。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M013",
+    "section": "Neuron/cell implementations",
+    "mechanism": "E/I signs, proper log-tau, homeostasis, blank-activity penalty, delay training",
+    "where": "P5 dynamics_repair_bench and interference_memory",
+    "evidence_status": "PARTLY IMPLEMENTED; AUDIT FLAGS",
+    "finding": "Intended progressive interventions address autonomous blank-period activity. Historical audit reports dispatch issues: intended variants were not all actually exercised.",
+    "disposition": "Do not treat all physiological-dynamics controls as completed negatives.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Do not treat all physiological-dynamics controls as completed negatives.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M014",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Raw-node spiking LIF / richer conductance cells",
+    "where": "Digital-fly discussion and proposed reference organism",
+    "evidence_status": "EXTERNAL IMPLEMENTATIONS / PROPOSED LOCALLY",
+    "finding": "No completed, same-raw-core local LIF-versus-leaky-versus-ELM retention comparison was recovered. No recovered HH/Izhikevich result either.",
+    "disposition": "Not pruned. Do not add sophisticated cells merely for realism; first state exactly what dynamics are missing.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Not pruned. Do not add sophisticated cells merely for realism; first state exactly what dynamics are missing.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M015",
+    "section": "Neuron/cell implementations",
+    "mechanism": "Type-shared templates versus merged neurons",
+    "where": "Raw-core and local-learning audits",
+    "evidence_status": "DESIGN CONSTRAINT",
+    "finding": "Fixed type-level parameter templates may be shared; independent root IDs and mutable states must not be silently pooled.",
+    "disposition": "Preserve neuron identity; distinguish structural compression from demonstrated dynamical equivalence.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Preserve neuron identity; distinguish structural compression from demonstrated dynamical equivalence.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M016",
+    "section": "Development/connectivity",
+    "mechanism": "Fixed sparse sensory/recurrent graphs and retinotopic prior",
+    "where": "P0–P3; ELM; fly scaffolds",
+    "evidence_status": "IMPLEMENTED; REFERENCE",
+    "finding": "Useful control shared by many experiments; later matrices and graph blocks have different populations and resource costs.",
+    "disposition": "Retain stable reference topology with explicit provenance.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Retain stable reference topology with explicit provenance.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M017",
+    "section": "Development/connectivity",
+    "mechanism": "Prune-only / random-regrowth / guided-regrowth",
+    "where": "Fashion-MNIST P1/P2; original developmental code",
+    "evidence_status": "IMPLEMENTED; CONTROL/AUDIT LIMITATIONS",
+    "finding": "Guided growth/pruning consult gradient-derived scores; early equal-label comparisons need presentation accounting.",
+    "disposition": "Exact global-gradient method outside strict local-learning candidate; local structural plasticity not disproved.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "全局梯度指导版本不进入局部核心；仅保留有界局部权重学习与真正换边协同的新规则。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "可组织感觉、过去资格、地址兼容或内部动态；本身不提供已验证的自主内容学习、保持和输出。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M018",
+    "section": "Development/connectivity",
+    "mechanism": "New-edge lesion and topology-only transfer",
+    "where": "P0/P3",
+    "evidence_status": "SHIPPED; FULL OUTCOMES NOT RECOVERED",
+    "finding": "Knock out grown edges; transfer only source_idx with weights/cell parameters reset. Designed to distinguish topology from co-adapted weights.",
+    "disposition": "Unresolved where logs missing; not a proven developmental prior.",
+    "screen_20261007": {
+      "budget_status": "DEFER",
+      "label": "封存待定义或补证据",
+      "reason": "Unresolved where logs missing; not a proven developmental prior.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "DEFER",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M019",
+    "section": "Development/connectivity",
+    "mechanism": "Global cosine-kNN graph rewiring, hubs, EMA routing",
+    "where": "ELM2/3/4; byte ELM",
+    "evidence_status": "IMPLEMENTED; CAUSALITY ISSUES IN AUDIT",
+    "finding": "Chunk-level future-information and evaluation-state mutation were flagged in early versions; EMA hub persistence was not a synaptic-retention demonstration.",
+    "disposition": "Exact flawed versions pruned; local message passing/hubs not ruled out.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "原版本有未来信息或评估状态污染，停止原样使用；这是有效性排除，非全家族科学反证。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M020",
+    "section": "Development/connectivity",
+    "mechanism": "Local sensory-only development",
+    "where": "V24 E0/E1/E2/E3; V25/V26",
+    "evidence_status": "TESTED; PARTIAL POSITIVE",
+    "finding": "Separated clean-target BP, observed-target BP, random fixed, and local Hebbian/Oja regimes. Banked behavior survives local-development variants on tested streams.",
+    "disposition": "Retain result with objective and information differences; no universal local-optimizer equivalence.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "历史 local development 有部分证据；P1/P2 及低剂量 P1 已削弱当前直接移植路径，只保留不同稳定机制。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "感觉本身可驱动局部开发，保留source中clean-target/observed-target与无标签局部规则的权限差异；开发表示不是学得内容的证明。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M021",
+    "section": "Development/connectivity",
+    "mechanism": "Clean latent reconstruction target",
+    "where": "V23 encoder development; V24 E0/E1 audit",
+    "evidence_status": "IDENTIFIED PRIVILEGE",
+    "finding": "Clean denoising targets supplied information beyond the observed noisy sensory stream; not downstream task-label leakage, but must be charged.",
+    "disposition": "Historical reproduction only for fully local/no-privileged-teacher claims.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Historical reproduction only for fully local/no-privileged-teacher claims.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M022",
+    "section": "Development/connectivity",
+    "mechanism": "Frozen, live, split-stable encoders; FF/FL/LF/LL address/content states",
+    "where": "V11–17; V25–29",
+    "evidence_status": "TESTED; TRADEOFF",
+    "finding": "Moving features destabilize stored coordinates; stable address or split state helps some contrasts but no general continuing-representation solution.",
+    "disposition": "Retain as compatibility evidence, not proof to freeze representations forever.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "输入坐标变化与旧记忆不兼容是重复出现的约束；保留承诺地址冻结或记忆运输，不再仅漂移输入。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "连续感觉表示改变时保留地址/内容兼容问题；不把固定表示原配方重新开成遗漏实验。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M023",
+    "section": "Development/connectivity",
+    "mechanism": "Dense affine/readout transport and anchor transport",
+    "where": "V11–13",
+    "evidence_status": "TESTED; PARTIAL/NEGATIVE",
+    "finding": "Transported and anchor methods did not recover oracle refit competence; v13 about 38.33% all-20, only part of gap closed.",
+    "disposition": "Keep as nonlocal diagnostics; no solved local coordinate transport.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep as nonlocal diagnostics; no solved local coordinate transport.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M024",
+    "section": "Development/connectivity",
+    "mechanism": "Learned down-stream adapter/recycling",
+    "where": "V23 adapter_retained/recycled",
+    "evidence_status": "TESTED; LOCALITY DISQUALIFICATION",
+    "finding": "Uses V@error and normalization derivatives: handwritten hidden-layer backprop despite NumPy implementation.",
+    "disposition": "Exact candidates excluded by no-hidden-backprop constraint, not by zero numerical benefit.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Exact candidates excluded by no-hidden-backprop constraint, not by zero numerical benefit.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M025",
+    "section": "Early composite architectures",
+    "mechanism": "Learned operator mixtures / neural algebra / global group routing",
+    "where": "Liquid Baby, Genesis, ELM8–25",
+    "evidence_status": "IMPLEMENTED; COMPOSITE DEMOS",
+    "finding": "Operation mixtures, intra/intergroup messages and routing bundled with multiple training mechanisms.",
+    "disposition": "Not independently validated persistent-learning mechanisms.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Not independently validated persistent-learning mechanisms.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M026",
+    "section": "Early composite architectures",
+    "mechanism": "Sinkhorn routing, attention hubs, global workspace, token MoE",
+    "where": "ELM4/8–24; Genesis family",
+    "evidence_status": "IMPLEMENTED; OUTSIDE CURRENT MAINLINE",
+    "finding": "Global differentiable routing and attention often present; no valid inference that removing autograd makes communication local.",
+    "disposition": "Park complete architectures; retain bounded local communication hypotheses only with explicit signals.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Park complete architectures; retain bounded local communication hypotheses only with explicit signals.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M027",
+    "section": "Early composite architectures",
+    "mechanism": "Hebbian key/value fast matrices; residual/predictive Hebbian writes",
+    "where": "ELM8–25; V23 fastweights_*",
+    "evidence_status": "IMPLEMENTED; MIXED",
+    "finding": "Actual online outer products exist; learned q/k/v and global norm clipping may be nonlocal. V23 exact versions did not solve retention/revision jointly.",
+    "disposition": "Keep family and matched controls; no broad success claim.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "旧 outer-product/残差实现不整体保留；R_center 和 ERROR 是当前参照，新增结构须改变可观察操作。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIORITY_DESIGN",
+      "reason": "旧fast-weight源码实际接收label，历史结果混合。保留新的实际byte时序关联/自身误差版本为优先设计，旧版本不改名复活。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M028",
+    "section": "Early composite architectures",
+    "mechanism": "Modern Hopfield memory and episodic tape",
+    "where": "ELM17–19; TensorProductHippocampus ELM20–24",
+    "evidence_status": "IMPLEMENTED; WORKING-MEMORY DEMOS",
+    "finding": "Retrieves context/tape contents. Reset-per-context and selected-rollout reporting do not test knowledge surviving later parameter updates.",
+    "disposition": "Engineering reference only; explicit episodic store not default biological core.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Engineering reference only; explicit episodic store not default biological core.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M029",
+    "section": "Early composite architectures",
+    "mechanism": "Gauge/fiber semantic–surface factorization; contextual router",
+    "where": "ELM25; V75/V78–79; Genesis derivatives",
+    "evidence_status": "IMPLEMENTED; COMPOSITE/SUPERVISED",
+    "finding": "Supervised Transformer-containing merge exists; no clean autonomous local invariance result from it.",
+    "disposition": "Conceptual precedent, not evidence for a biology-based learned semantic space.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Conceptual precedent, not evidence for a biology-based learned semantic space.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M030",
+    "section": "Early composite architectures",
+    "mechanism": "SAC/proposal policies, learned teacher, dialogue warmup, curiosity/ASK actions",
+    "where": "Liquid Baby/Genesis; ELM8–25",
+    "evidence_status": "IMPLEMENTED; CONFOUNDED FOR CURRENT GOAL",
+    "finding": "Teacher language/pretrained weights, task rewards and contextual memory can generate attractive episodes without lifetime retention.",
+    "disposition": "Do not import pretrained/Transformer teacher gains into local core evidence.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Do not import pretrained/Transformer teacher gains into local core evidence.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "老师模型、语言奖励和任务teacher不能混进自主核心证据；只保留实现参照和已指出的混淆。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M031",
+    "section": "Early composite architectures",
+    "mechanism": "MagmaAdamW/global optimizers; neuromorphic detach mode",
+    "where": "ELM12–16; Genesis",
+    "evidence_status": "IMPLEMENTED; LOCALITY LIMIT",
+    "finding": "Detaching states removes some temporal gradient paths, not all hidden training or all nonlocal signals. Dopamine/STDP log labels are not mechanistic proof.",
+    "disposition": "Retain only honest component accounting; no claim entire model biologically local.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Retain only honest component accounting; no claim entire model biologically local.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M032",
+    "section": "Early composite architectures",
+    "mechanism": "Chunking, parallel Hebbian scan, sparse punctuator, scaling optimizations",
+    "where": "Scaling.ipynb; FLM; Genesis",
+    "evidence_status": "IMPLEMENTED; ENGINEERING",
+    "finding": "Speed and memory-throughput measurements do not establish sample-efficient persistent learning.",
+    "disposition": "Keep engineering techniques where causal; do not rank neurons from unequal composite benchmarks.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep engineering techniques where causal; do not rank neurons from unequal composite benchmarks.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M033",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Current-only classifier / ordinary normalized delta",
+    "where": "Early SHD; V20 onward",
+    "evidence_status": "TESTED BASELINE",
+    "finding": "Can erase old decision competence with frozen features. Useful simple reference throughout.",
+    "disposition": "Keep baseline and distinguish output competition from erased input representation.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep baseline and distinguish output competition from erased input representation.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M034",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Cumulative ridge sufficient statistics / exact RLS",
+    "where": "Early v17; V20/23; V35",
+    "evidence_status": "POSITIVE WITH LIMITS",
+    "finding": "Fixed-feature history can be retained: V35 H-RLS A-after-D 95.31%. Revision/safety failed; full inverses/statistics nonlocal and larger state.",
+    "disposition": "Historical reference, not a failed memory family and not a local-biological primitive.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Historical reference, not a failed memory family and not a local-biological primitive.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M035",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Slow-only versus combined fast+slow output",
+    "where": "V18/V19; V40–43",
+    "evidence_status": "TESTED; COMPOSITION MATTERS",
+    "finding": "V18 combined read favored recent classes and underperformed its slow-only read. Later read-only hybrid improved engineering behavior.",
+    "disposition": "Do not assume two good stores add into a good reader automatically.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Do not assume two good stores add into a good reader automatically.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M036",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Fast-feedback weighted ridge consolidation",
+    "where": "V18",
+    "evidence_status": "SMALL SPECIFIC EFFECT; BELOW BASELINE",
+    "finding": "Old-group gains over shuffled/mean-write existed, but all-class 37.88% versus v17 48.37%. Fixed-feature weighted sums do not isolate a timing mechanism.",
+    "disposition": "Exact construction closed as an improvement; biological recurrent teaching remains untested by this comparison.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Exact construction closed as an improvement; biological recurrent teaching remains untested by this comparison.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M037",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Additive consolidation bonus",
+    "where": "V19",
+    "evidence_status": "NEGATIVE EXACT",
+    "finding": "Extra write mass and doubled statistics did not improve the cumulative baseline; all-class 46.93%.",
+    "disposition": "Do not relaunch same additive ridge bonus.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Do not relaunch same additive ridge bonus.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M038",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Synaptic importance / neuron availability / protection",
+    "where": "V23; V24–25",
+    "evidence_status": "PARTIAL POSITIVE; RIGIDITY",
+    "finding": "Pair/neuron protection improved old retention; stronger protection impaired new acquisition and revision. Per-neuron version nearly matched per-synapse at less state.",
+    "disposition": "Keep evidence and rigidity tradeoff; no blanket retirement of metaplasticity.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "弱保护或 neuron availability 仅在真实干扰/饱和出现且可保留修订时使用；强保护原样排除。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M039",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Bayesian/diagonal uncertainty; MESU-inspired gains",
+    "where": "V23 bayes_*; V31 independent run",
+    "evidence_status": "PARTIAL THEN INCONCLUSIVE/NEGATIVE IMPLEMENTATIONS",
+    "finding": "V23 bayes_stable terminal47.64% versus36.66% ordinary; later adequate-task and frozen/shuffled-variance checks did not establish complete mechanism.",
+    "disposition": "Do not conflate approximation with exact MESU or declare family disproved.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "历史有保持与修订权衡；不能按 Bayesian 名称豁免对固定增益/资源匹配控制的要求。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M040",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Orthogonal projection / strict/leaky protected subspaces",
+    "where": "V23 projection16/48; earlier transport",
+    "evidence_status": "TESTED TRADEOFF",
+    "finding": "Protects some old directions but larger protection impedes acquisition/revision; exact Gram–Schmidt/projection nonlocal.",
+    "disposition": "Reference/closed exact local candidate; not proof inhibition-based separation impossible.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Reference/closed exact local candidate; not proof inhibition-based separation impossible.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M041",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Two- and three-state coupled synapses",
+    "where": "V23 fast_slow2/3",
+    "evidence_status": "TESTED NEGATIVE SCREEN",
+    "finding": "Real bidirectional local substate coupling, not only two rates. Terminal38.43/35.61 versus ordinary36.66 with acquisition/revision issues.",
+    "disposition": "Archive exact parameters; do not call coupled synapses untried or biologically refuted.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Archive exact parameters; do not call coupled synapses untried or biologically refuted.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M042",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Feedback-gated local synaptic coupling",
+    "where": "V23 feedback_consolidation",
+    "evidence_status": "TESTED NEGATIVE SCREEN",
+    "finding": "Terminal36.45%; no complete advantage. Surprise-modulated coupling is not delayed channel-specific reinforcement.",
+    "disposition": "Do not rename as new without a changed observable operation.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Do not rename as new without a changed observable operation.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M043",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Discrete cascade depth 4/8",
+    "where": "V23 cascade4/8",
+    "evidence_status": "TESTED TRADEOFF/NEGATIVE",
+    "finding": "Larger depth improved initial old recall but hurt new learning/revision; terminal35.42/25.38.",
+    "disposition": "Close exact variants; retain family uncertainty.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close exact variants; retain family uncertainty.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M044",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Active forgetting / surprise-triggered reopening / capacity release",
+    "where": "V23; V24–25; older V75",
+    "evidence_status": "TESTED MIXED/NEGATIVE",
+    "finding": "Surprise-based release can damage useful memories; global decay and immediate/smoothed surprise did not supply broad improvement.",
+    "disposition": "Noise, novelty and revision must be separated; no blanket equation surprise=obsolete.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "停止全局和无条件 surprise release；只保留可区分错误与暂时不相关知识的局部规则。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M045",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Sparse distributed address memory and adaptive prototypes",
+    "where": "V23 sparse96/384_*",
+    "evidence_status": "TESTED; ADAPTATION COST",
+    "finding": "Fixed larger address layer helped; adaptive versions weak, with much larger parameter state.",
+    "disposition": "Do not treat as exact SDM theorem or whole-family rejection.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "固定较大地址层有用但有状态成本；只能作为有容量上限的地址分离比较，不能恢复编码器轮换。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M046",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Allocate/recycle local records",
+    "where": "V23 allocate32/128/no_recycle",
+    "evidence_status": "TESTED; SATURATION BIAS",
+    "finding": "Very high early retention can coexist with failed late acquisition. Original victim-selection/initialization flaws narrowed conclusions.",
+    "disposition": "Engineering comparator; not evidence slots are mandatory or allocation generally impossible.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Engineering comparator; not evidence slots are mandatory or allocation generally impossible.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M047",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Quantized allocation / integer precision",
+    "where": "V23 quantized_allocate128; V25 int8",
+    "evidence_status": "TESTED; ACCOUNTING CAVEAT",
+    "finding": "V23 labelled quantized arm used doubled dense address storage and was not genuine total compression; V25 narrower precision tests separate.",
+    "disposition": "Retain only measured state/quality tradeoffs, not label-based memory savings.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Retain only measured state/quality tradeoffs, not label-based memory savings.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M048",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Separate banks, fixed vs inferred routing, hard/blended reading",
+    "where": "V23 silent/context; V24–25",
+    "evidence_status": "PARTIAL POSITIVE REPLICATED",
+    "finding": "8-bank fixed route around59.09% terminal in V23 versus36.66 ordinary; later controls separate banking, routing and recent-access prior.",
+    "disposition": "Useful selective-storage component; not independent proof of biological compartments or learned routing necessity.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Useful selective-storage component; not independent proof of biological compartments or learned routing necessity.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M049",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Silent memories, context reinstatement, unlabeled reminders",
+    "where": "V23 silent/context_*",
+    "evidence_status": "PROMISING SCREEN; ASSAY LIMIT",
+    "finding": "Stored banks worked, but cohorts lacked guaranteed distinguishable context; reminder results do not establish silent-memory recovery mechanism.",
+    "disposition": "Keep unresolved; measure recovery before answer re-exposure and false reinstatement.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "提醒试验没有证明选择性恢复。只有实际存在 dormant-return 短板时再考虑，先于答案再暴露测恢复。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "先有连续流核心自主学习，再按实际缺陷启用；不因名称含内部/预测就自动发射。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M050",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Bounded reservoir/recent replay, current repetition, fast-head replay",
+    "where": "V14/14.1; V23 replay_*/repeat_current/fastslow_replay_*",
+    "evidence_status": "TESTED MIXED; NOT CURRENT CANDIDATE",
+    "finding": "Some screen retention gains, serious moving-representation and stale-revision failures. All extra presentations must count.",
+    "disposition": "Retain as historical controls; do not silently introduce replay or declare all biological reactivation invalid.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "关闭原 replay buffer 默认升级路线；生物式有限重激活只在有独立证据的时间窗口机制下保留。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "先有连续流核心自主学习，再按实际缺陷启用；不因名称含内部/预测就自动发射。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M051",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Recent cache retrieval, hard/soft episodic reads",
+    "where": "V23 retrieve_*; early tapes",
+    "evidence_status": "TESTED MOSTLY NULL",
+    "finding": "Small recent caches mostly reproduced ordinary endpoints; 32-entry variants slightly different.",
+    "disposition": "Reject exact add-on claim, not retrieval generally.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Reject exact add-on claim, not retrieval generally.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M052",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Spillover, local normalization, fixed-target correction, update-norm controls",
+    "where": "V24–25",
+    "evidence_status": "TESTED; BENEFIT NARROWED",
+    "finding": "Same-array spillover alters write mass; apparent early winner did not establish generic benefit once norm/current-correction effects separated.",
+    "disposition": "Do not count an unmatched write-scale gain as anatomical transfer.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Do not count an unmatched write-scale gain as anatomical transfer.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M053",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Dense Hebbian/Oja encoder adaptation",
+    "where": "V24–29",
+    "evidence_status": "TESTED TRADEOFF",
+    "finding": "Useful adaptation can damage stored representation coordinates; headroom and genuine recall needed together.",
+    "disposition": "Continue only within a meaningful acquisition–retention assay.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "P1/P2 原配方及两档 P1 移植低剂量停止；真正连续 Oja 或有地址保护的联合规则属于新结构。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "感觉Hebb/Oja可无答案更新，但旧改坐标会破坏已存内容；原P负结果继续约束原配方，只有不同连续活动规则才待设计。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M054",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Novelty/shuffled/norm gates for encoder change",
+    "where": "V26",
+    "evidence_status": "NEGATIVE SPECIFICITY",
+    "finding": "Random/rate-matched gating explained the apparent compatibility effect.",
+    "disposition": "Close exact selection heuristic; not all event-level teaching ever ruled out.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close exact selection heuristic; not all event-level teaching ever ruled out.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M055",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Competitive top-response plasticity, random subset, bottom-k",
+    "where": "V26–28",
+    "evidence_status": "NO ESTABLISHED FRONTIER WIN; TASK ISSUES",
+    "finding": "Matched sparse/budget controls undermined competition. V27 implementations had opposite task-validity defects.",
+    "disposition": "Close current claim, not biological competition as a family.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close current claim, not biological competition as a family.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M056",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Temporal contrast / fast-minus-slow sensory channels",
+    "where": "V26–29",
+    "evidence_status": "PARTIAL POSITIVE",
+    "finding": "Survived several structured/permuted/distributed sensory controls; not a universal byte encoder.",
+    "disposition": "Retain sensory mechanism; its transfer to discrete byte windows must be tested separately.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "感官时间对比有历史正信号，但不是现在必须再换 encoder 的理由；仅在明确时序缺失时调用。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "可组织感觉、过去资格、地址兼容或内部动态；本身不提供已验证的自主内容学习、保持和输出。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M057",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Variance salience / coordinate selection",
+    "where": "V26–27",
+    "evidence_status": "TASK-SPECIFIC",
+    "finding": "Benefits failed rotation/variance-matched controls; permutation alone was insufficient.",
+    "disposition": "Retire generic feature-learning claim.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Retire generic feature-learning claim.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M058",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Full covariance/co-activation-directed writes",
+    "where": "V30; V31 revision stream; V33/34",
+    "evidence_status": "POSITIVE WITH COST/REVISION LIMITS",
+    "finding": "V30 overlap retention advantage about15.89pp with near-neutral transfer; quadratic statistics and revision cost. Later variants differ.",
+    "disposition": "Keep precise positive evidence; not a compact local core yet.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep precise positive evidence; not a compact local core yet.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M059",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Lag96 temporal-position-preserving byte encoding",
+    "where": "V31–35 onward",
+    "evidence_status": "TASK-USEFUL",
+    "finding": "Byte contrast encoder could be inadequate; lag-position coding exposed learnable signal.",
+    "disposition": "Useful controlled byte interface; not a biologically inferred sensory code.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Useful controlled byte interface; not a biologically inferred sensory code.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "可组织感觉、过去资格、地址兼容或内部动态；本身不提供已验证的自主内容学习、保持和输出。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M060",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Four sparse compartments with local covariance",
+    "where": "V34",
+    "evidence_status": "TESTED NEGATIVE",
+    "finding": "C4-P acquired A/D but untouched-A retention after D about3.125%, matching ordinary compartment result.",
+    "disposition": "Not an untried idea; exact sparse-compartment covariance construction closed.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Not an untried idea; exact sparse-compartment covariance construction closed.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M061",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Shared residual, local residual, absolute local values",
+    "where": "V35",
+    "evidence_status": "STRONG ENGINEERING DECOMPOSITION",
+    "finding": "Local residual retained29.69% versus shared7.03%; absolute local values99.22%. Stored residual semantics drift when reference predictor changes.",
+    "disposition": "Retain finding; fixed encoder does not make a residual reference predictor stationary.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "保留 shared/private 及中心化教学结果；learned shared prediction 对 R3 增益的贡献未获消融支持。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "残差参考漂移是直接历史限制。自行产生预测误差作更新信号，不等于把漂移参考下的残差当作恒定可读内容。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M062",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Exact dictionary versus generalizing ownership",
+    "where": "V35–36",
+    "evidence_status": "POSITIVE ENGINEERING, UNBOUNDED",
+    "finding": "Exact record memory retains exact forms but not unseen aliases; generalized ownership joins aliases under controls.",
+    "disposition": "Baseline/diagnostic, not default biology or unlimited-capacity solution.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Baseline/diagnostic, not default biology or unlimited-capacity solution.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M063",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Read authority: HARD/SHADOW/CORR2/SIM-MIX/fixed alpha/random",
+    "where": "V37",
+    "evidence_status": "POSITIVE ENGINEERING",
+    "finding": "Hard retrieved values damage ordinary prediction; corroborated authority/fixed mixtures trade reading safely on shared histories.",
+    "disposition": "Retain as read-versus-write lesson; not a new synaptic circuit.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "Q_HALF 有有限确认增益却未通过采用；earned authority V2 的历史重放很弱，关闭该精确观察器配方。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "读权限和混合只读已有值，不生成内容学习目标。Q_HALF未采用、LINK v1有效筛选停止分别保留，不能整体归因成自主学习。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M064",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Predictive Bayes arbitration, slot evidence, shuffled-PBF",
+    "where": "V38",
+    "evidence_status": "PARTIAL; SPECIFICITY GATE FAIL",
+    "finding": "Prediction gains existed but full planned PBF claim failed Q10; exact read histories shared.",
+    "disposition": "No universal evidence arbiter established.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "原完整 specificity gate 未通过；新支持信号必须能预测当前所需行为，不重复原证据仲裁包装。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M065",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "TRACE-CORR probation and distinct-rendering admission",
+    "where": "V39 Codex",
+    "evidence_status": "USEFUL BOUNDED ENGINEERING",
+    "finding": "Reduced clutter-driven permanent storage by about11x, near retained quality; formal all-gates verdict not established.",
+    "disposition": "Retain benchmark and evidence principle; object admission is not a biological mechanism by itself.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Retain benchmark and evidence principle; object admission is not a biological mechanism by itself.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M066",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Fixed-cap slots, exact-repeat admission, shuffled-pair admission",
+    "where": "V39 Codex",
+    "evidence_status": "TESTED CONTROLS",
+    "finding": "Simple cap and repeated identical contexts did not match distinct corroboration under clutter.",
+    "disposition": "Shows event/identity semantics mattered in that explicit-store system.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Shows event/identity semantics mattered in that explicit-store system.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M067",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Bounded superposition, exact hashing, separation ladder, load scaling",
+    "where": "V39 Claude",
+    "evidence_status": "PARTIAL POSITIVE; CAPACITY LOSS",
+    "finding": "Stationary superposition generalized early but decayed with load; exact hashing reduced transfer. Distinct experiment from Codex V39.",
+    "disposition": "Keep fast predictor reference; not whole family permanently inferior to slots.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep fast predictor reference; not whole family permanently inferior to slots.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M068",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Read-only hybrid versus full feedback into admission",
+    "where": "V40 Claude; V41",
+    "evidence_status": "DECISIVE DESIGN DISTINCTION",
+    "finding": "Using fast output for reading helped; allowing its current success to suppress admission harmed later durability. V40 wall hid costs.",
+    "disposition": "Current correctness is not future durability; do not generalize to all fast/slow feedback forbidden.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Current correctness is not future durability; do not generalize to all fast/slow feedback forbidden.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M069",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Utility-based replacement; LFU-rate/LRU/random; TRACE-U",
+    "where": "V40 Codex; V41",
+    "evidence_status": "INVALID/UNDERPOWERED ASSAY",
+    "finding": "V40 task_invalid; V41 only one valid utility seed; frequency/predictability and trace restoration confounded.",
+    "disposition": "Unresolved, not established and not a main biological-core proposal.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "旧 task_invalid/低样本不能计淘汰，但 utility replacement 不是本阶段默认核心方向；封顶且低优先级。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M070",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Mute probationary exact traces; supported similarity retention",
+    "where": "V42",
+    "evidence_status": "FIXED-HISTORY POSITIVE AUDIT",
+    "finding": "Silencing trace reads improved loss; removing supported similarity harmed held-out recall. Four reused histories, not new replications.",
+    "disposition": "Retain limited read diagnosis.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Retain limited read diagnosis.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M071",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Local/global Bayesian authority; zero/E2 init; fixed50; shuffled alpha",
+    "where": "V43",
+    "evidence_status": "ARBITRATION SIGNAL; PRIMARY VALIDITY FAIL",
+    "finding": "Fixed50 strong; local evidence predicts ordinary G events. High-load slow acquisition fails; E2 init worse than zero. Identity targets scarce in G-event population.",
+    "disposition": "Not a qualified persistent architecture or demonstrated target-memory classifier.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "证据预测不等于有效控制；新 authority 必须跨教学行为与相对选择之间的语义缺口。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M072",
+    "section": "Memory/readout/plasticity",
+    "mechanism": "Trace versus mature-slot capacity relief",
+    "where": "V44",
+    "evidence_status": "STRONG CONDITIONAL CAUSAL RESULT",
+    "finding": "D native acquisition about66.75→99.85% with slot relief, not trace relief; ~98% ever promoted, later generations often quickly evicted.",
+    "disposition": "Diagnoses current slots only. Does not prove a particular replacement rule or ideal-capacity bound.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Diagnoses current slots only. Does not prove a particular replacement rule or ideal-capacity bound.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M073",
+    "section": "Representation/new architectures",
+    "mechanism": "General/phase normalization, KC expansion, coding-level sweeps",
+    "where": "V36 Claude; V39",
+    "evidence_status": "TESTED; DRIFT CONFOUND",
+    "finding": "Better geometric ratio with drifting coordinates did not prove or disprove stable separation benefit.",
+    "disposition": "Preserve stationarity distinction; no universal ratio threshold.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Preserve stationarity distinction; no universal ratio threshold.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M074",
+    "section": "Representation/new architectures",
+    "mechanism": "PHASE-FROZEN versus PHASE-LIVE versus LAG",
+    "where": "V41 stationarity panel",
+    "evidence_status": "ACTUALLY TESTED",
+    "finding": "Frozen improved live but did not beat LAG; earlier statement that this remained unrun was wrong.",
+    "disposition": "Do not propose as newly missing experiment.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Do not propose as newly missing experiment.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M075",
+    "section": "Representation/new architectures",
+    "mechanism": "Corroborated distributed synaptic consolidation (Candidate A)",
+    "where": "Three-route screen",
+    "evidence_status": "SMALL SPECIFIC SIGNAL; ARCHITECTURE WEAKER",
+    "finding": "Correct corroboration beat matched random/shuffled on selected recall contrasts but worse broad loss and worse than incumbent slot hybrid at larger load.",
+    "disposition": "Close exact architecture improvement; retain causal evidence signal as limited result.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close exact architecture improvement; retain causal evidence signal as limited result.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M076",
+    "section": "Representation/new architectures",
+    "mechanism": "32-factor coded output with dense/modular/rewired access (Candidate B)",
+    "where": "Three-route screen",
+    "evidence_status": "COMPRESSION TRADEOFF; TOPOLOGY UNSUPPORTED",
+    "finding": "Shared factors use fewer parameters; loss/retention penalties remain. Modular support not better than degree rewire; stochastic adequacy entangles optimization.",
+    "disposition": "Compression candidate, not validated fly topology or arbitrary-distribution equivalence.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Compression candidate, not validated fly topology or arbitrary-distribution equivalence.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M077",
+    "section": "Representation/new architectures",
+    "mechanism": "Reusable positive-pair invariance (Candidate C)",
+    "where": "Three-route screen; V45–47",
+    "evidence_status": "REPLICATED SYNTHETIC REPRESENTATION EFFECT",
+    "finding": "No evaluator identities used for pair proposals; positive relation improves new-ID geometry/probability on designed transforms and byte permutation. Delayed accuracy often low.",
+    "disposition": "Retain narrow result; not general concepts or continuously adapting persistent representation.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "保留无标签 nuisance removal 的窄正信号；必须分开 same outcome 与 same identity，不能伪造同题配对。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史pair corroboration使用后来观察到的byte，有无标签成分；但配对合法性和同答案混淆仍存在，未验证当前连续流保持。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M078",
+    "section": "Representation/new architectures",
+    "mechanism": "Invariance plus global slow consolidation factorial",
+    "where": "V45",
+    "evidence_status": "REAL SMALL GAIN; QUALIFICATION FAIL",
+    "finding": "PAIR-RAND versusRAW-RAND heldout loss −0.0582bit at256 with CI below0, below0.10 criterion; larger benefit128. CORR no additional gain, verifier event supply collapsed.",
+    "disposition": "Report subthreshold positive separately from verdict. No general scaling-law conclusion from two loads.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "关闭原 PAIR 加全局 CORR 的扩展承诺；仅保留 PAIR 本身的窄可复用信号，不能沿用失败 CORR。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M079",
+    "section": "Representation/new architectures",
+    "mechanism": "Learned overlapping pathway responsibility",
+    "where": "V46",
+    "evidence_status": "NEGATIVE EXACT",
+    "finding": "Healthy8-way usage and matched51-active writes; harmful cross-talk increased and predictive feedback not better than simpler controls.",
+    "disposition": "Close exact prototype/responsibility construction, not all biological recurrence or compartments.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close exact prototype/responsibility construction, not all biological recurrence or compartments.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M080",
+    "section": "Representation/new architectures",
+    "mechanism": "Signed protection within PAIR nuisance subspace",
+    "where": "V47",
+    "evidence_status": "NEGATIVE EXACT WITH LOCAL TRADEOFF",
+    "finding": "Restoring8of20directions damaged desired geometry; lower some harmful interference but worse terminal loss. Correct negatives not better than shuffled.",
+    "disposition": "Close exact protection construction; not all contrastive learning.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close exact protection construction; not all contrastive learning.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M081",
+    "section": "Representation/new architectures",
+    "mechanism": "One-byte surprise filter on negative development",
+    "where": "V47",
+    "evidence_status": "NO DETECTABLE ADDED VALUE",
+    "finding": "Admitted~88% of conflicts; not selective on this assay. This was not a persistent plasticity-allocation test.",
+    "disposition": "Do not claim contextual information gating tested generally.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Do not claim contextual information gating tested generally.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M082",
+    "section": "Representation/new architectures",
+    "mechanism": "Exact sparse encoding of local output values",
+    "where": "Engineering equivalence unit test",
+    "evidence_status": "IMPLEMENTED UNIT TEST; NOT FULL SYSTEM RESULT",
+    "finding": "Unobserved output coordinates remain zero under value update; tested dense reconstruction bitwise after10k updates.",
+    "disposition": "Independent engineering opportunity; no proof of whole-model equivalence or biological mechanism.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Independent engineering opportunity; no proof of whole-model equivalence or biological mechanism.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M083",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Full graph reduction and core peeling",
+    "where": "fly_learning_core_results; connectivity audit",
+    "evidence_status": "STRUCTURAL RESULT ONLY",
+    "finding": "10k candidate met3mass/motif criteria, missed99%weak-component seed threshold; larger graph did not fix all isolated seeds.",
+    "disposition": "Does not prove no small functional core; do not minimize before functionality.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Does not prove no small functional core; do not minimize before functionality.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M084",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Direct/indirect MBON→DAN relay distillation",
+    "where": "architecture_distillation reports",
+    "evidence_status": "STRUCTURAL RESULT ONLY",
+    "finding": "One rank1approx loses82.08%; exactdirect+8nonnegative indirectpatterns6.73%globalerror but poor weakdestinations. Deleting relay cells ≠ preserving their effect.",
+    "disposition": "Useful extraction with node provenance; not8biologicalcompartments or dynamical equivalence.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Useful extraction with node provenance; not8biologicalcompartments or dynamical equivalence.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M085",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Unsigned composed KC→MBON→DAN→KC spatial gate",
+    "where": "Raw operator audit; V20–22 descendants",
+    "evidence_status": "STRUCTURAL/ABSTRACT NEGATIVE",
+    "finding": "Dense normalized composed operator and small spectral radius concern a chosen linear normalization, not measured loop physiology.",
+    "disposition": "Close simple spatial-protection reading; temporal/compartmental teaching not ruled out.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close simple spatial-protection reading; temporal/compartmental teaching not ruled out.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M086",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Output gain modulation; exact/compressed/shuffled anatomy",
+    "where": "V20",
+    "evidence_status": "TESTED NULL",
+    "finding": "All five local arms equal final60.88% in3seedpilot; ridge retainedold but revisedpoorly.",
+    "disposition": "No effect for this mean-normalized output-gain design.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "No effect for this mean-normalized output-gain design.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M087",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Input-only anatomical write addressing",
+    "where": "V21",
+    "evidence_status": "TESTED NO ESTABLISHED ADVANTAGE",
+    "finding": "Unsigned teaching selects active feature rows with matched current correction; not synapse-local compartment reconstruction.",
+    "disposition": "Close exact input-row mask claim.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close exact input-row mask claim.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M088",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Joint input/readout addressing and scrambled control",
+    "where": "V22; V23 controls",
+    "evidence_status": "TESTED NO BROAD ADVANTAGE",
+    "finding": "More specific mask did not beat ordinary robustly; sparse mask alone does not protect within its active substrate.",
+    "disposition": "Close implementation; real independently signalled synaptic compartments still a different claim.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Close implementation; real independently signalled synaptic compartments still a different claim.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M089",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "KC-family/lobe bins, whole-cell overlap compartment candidates",
+    "where": "Raw architecture audit",
+    "evidence_status": "STRUCTURAL DESCRIPTORS, NOT PHYSIOLOGY",
+    "finding": "Dominant family assignment discards mixed contacts;46overlap pairs are not46verified spatial compartments; type pooling can erase roles.",
+    "disposition": "Keep provenance and denominators; do not infer memorytimescale or exclusivebanks.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep provenance and denominators; do not infer memorytimescale or exclusivebanks.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M090",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Raw KC↔APL scalar suppressive controller",
+    "where": "V48",
+    "evidence_status": "NEGATIVE EXACT",
+    "finding": "Same51-active budget; no selective interference/persistence advantage and no superiority to rewires. Sign/gain/within-context iterations engineered.",
+    "disposition": "Closes scalar profile abstraction, not APL biological function or local dendritic inhibition.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Closes scalar profile abstraction, not APL biological function or local dendritic inhibition.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M091",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Aligned raw PN→KC→MBON plastic mask",
+    "where": "V49 A",
+    "evidence_status": "LEARNS CURRENT; NO RAW SUPERIORITY ESTABLISHED",
+    "finding": "699PN/4552KC/104MBON;15523learnedscalars. D~89.70%, Aoldtrained~5.13%, oldheldout~1.51%. Alignment contrast CI broad.",
+    "disposition": "Acquisitionwithoutpersistence under artificialbyteadaptor/codebook/allbyteupdates. Not proof rawtopology functionally irrelevant.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Acquisitionwithoutpersistence under artificialbyteadaptor/codebook/allbyteupdates. Not proof rawtopology functionally irrelevant.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M092",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Recorded-count heterogeneity, binary support, count shuffle",
+    "where": "V49 A; earlier raw thresholds",
+    "evidence_status": "TRADEOFF; SPECIFIC ASSIGNMENT UNRESOLVED",
+    "finding": "Raw versus binary improved oldloss but worsened wholeloss; countshuffle largely matched. Count ≠ signed efficacy/plasticity/timeconstant.",
+    "disposition": "Do not conclude strong=specific/slow and weak=shared/fast from countthresholds alone.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Do not conclude strong=specific/slow and weak=shared/fast from countthresholds alone.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M093",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "Unsigned linear raw MBON recurrence at radius0.25",
+    "where": "V49 B",
+    "evidence_status": "NEGATIVE EXACT",
+    "finding": "Increased delayedloss~0.110bit and wholeloss~0.028; no updateefficiencybenefit or rewirespecificity.",
+    "disposition": "Not a test of arbitrary nonlinear/spiking attractor networks or complete feedback dynamics.",
+    "screen_20261007": {
+      "budget_status": "STOP_RECIPE",
+      "label": "停止原样投入",
+      "reason": "Not a test of arbitrary nonlinear/spiking attractor networks or complete feedback dynamics.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIOR_RECIPE_STOP",
+      "reason": "保留此前有效负面、因果/资格不合格或预算停止的具体配方；自主目标不使旧失败配方原样复活。",
+      "prior_budget_status": "STOP_RECIPE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M094",
+    "section": "Raw fly graph/circuit",
+    "mechanism": "KC↔KC weak recurrence, DPM, broad modulatory feedback",
+    "where": "Raw re-audits",
+    "evidence_status": "STRUCTURALLY MEASURED; FUNCTIONAL TEST INCOMPLETE",
+    "finding": "Pair-row abundance differs from total counts; many weak edges and threshold dependence. No fully validated dynamic learner from these blocks.",
+    "disposition": "Preserve as measured possibilities without picking a new motif merely because the previous one failed.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "未测试有界 KC↔KC/DPM/反馈动态不能被 PN→KC 图负结果排除；不得把静态 motif 当动态证据。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "真实递归/调制块仍缺完整合格动态学习实验。作为潜在构件，不用边数或信号名称证明内生学习。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M095",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Full raw-graph functional reference followed by lesion/distillation",
+    "where": "Other-thread engineering request; Sept6 review",
+    "evidence_status": "PROPOSED; NO RECOVERED LOCAL SUCCESS",
+    "finding": "Working sensory–neural–teaching–plasticity–readout system should precede aggressive reduction; no need to insist entire166kgraph initially.",
+    "disposition": "Primary integration need, not another static motif tournament.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Primary integration need, not another static motif tournament.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M096",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Bidirectional/local DAN teaching with delayed eligibility",
+    "where": "ELM14; local-learning review; recent brainstorms",
+    "evidence_status": "PARTIAL PROXIES; FULL ASSAY UNESTABLISHED",
+    "finding": "Immediate nonnegative dopamine multiplier, unsigned routing and trace/object eligibility are not a validated timing-sensitive synaptic teacher.",
+    "disposition": "Unresolved crucial interface; use explicit boundedstateandcausal signal, not a biological label pasted onto globalerror.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "ERROR 支持改教学目标；延迟/双向 compartment teacher 仍需独立、因果、有界规则，不凭 DAN 标签采用。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "PRIORITY_DESIGN",
+      "reason": "优先明确真实观察生成的局部更新信号和资格recipient。现有监督DAN代理没有完成此验证，不借生物名称证明自主学习。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M097",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Two-unit recurrent STM→LTM teaching (Fly-2)",
+    "where": "Recent conversation; earlier fastslow proxies",
+    "evidence_status": "PROPOSED; PROVENANCE WARNING",
+    "finding": "Specific fast/slow labels came from publications, not raw adjacency. Earlier coupledstates did run but do not reproduce this circuit.",
+    "disposition": "Do not present as raw-data-deduced minimalcore or mandatory nextversion.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "Fly-2 不是从原解剖推导的必选核心；仅作有明确新增动态与状态成本的候选。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "Fly-2为提议并有来源警告；内部STM教LTM不自动增加真信息，不能当作完成的自主机制。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M098",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Incremental long-vs-short information gate",
+    "where": "PostV47 brainstorms",
+    "evidence_status": "PROPOSED; NOT SCIENTIFICALLY RUN",
+    "finding": "Log predictive ratio and boundedgate were proposed; absolute surprise and informationgain differ. Future-derived mass controls are nondeployable diagnostics.",
+    "disposition": "No outcome yet. Mark information provenance and coefficientmass≠actualupdate-norm.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "绝对 surprise 已无通用收益依据；增量信息门仍未定义有效控制规律，不自动进入运行名册。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "长短预测比可从真实后来byte计算，但须先有两个合法在线预测；窗口未来信息不能在线分配写入。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M099",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Multi-horizon residual hierarchy",
+    "where": "PostV47/Flycore other-thread ideas",
+    "evidence_status": "PROPOSED",
+    "finding": "1/2/4/8/12 or1/8/64 horizons; no coherent boundedpersistent test in recovered record.",
+    "disposition": "Not established, not entitled to become nextstep by versionchain.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "多 horizon 层级缺少完整有界比较；只在能说明新增经验组织功能且不扩大任务时保留。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "多horizon目标须等真实byte到达后更新先前资格活动；单步基线未成立前不叠加整套层次。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M100",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Fixed plasticity quota; competition across time",
+    "where": "PostV47 brainstorms",
+    "evidence_status": "PROPOSED",
+    "finding": "Window-wide allocations can use future information; need a causal version and separate diagnostic matching.",
+    "disposition": "Unrun. Not a consequence of rawconnectome alone.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "仅保留严格因果的跨时间 quota；未来窗口预算匹配不能作为部署规则。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "先有连续流核心自主学习，再按实际缺陷启用；不因名称含内部/预测就自动发射。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M101",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Homeostatic forgetting / targeted bidirectional extinction",
+    "where": "Earlier active forgetting + later proposals",
+    "evidence_status": "SPECIFIC PROXIES TESTED; FULL CLAIM OPEN",
+    "finding": "Decay exists in historical variants; an effective recurrent teaching-driven revision system has not been established.",
+    "disposition": "Do not call all forgetting new or all decay impossible without it.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "REPLACE/BOTH 损伤旧知识，ERROR 已解决大部分修订；局部有目标的擦除以剩余修订缺陷为启动条件。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M102",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Persistent scratchpad and feedback memory",
+    "where": "Other-thread file context, earlier hubs/tapes",
+    "evidence_status": "PROPOSED/RELATED IMPLEMENTATIONS",
+    "finding": "64–256-variable gated scratchpad and feedback was proposed; older actual tapes use different objects/training.",
+    "disposition": "No completed cleanresult recovered; preserve statebudget and original source distinction.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "有界工作状态可保留为结构备选，不增加开放生成或 AGI 验收；旧 tape 成功不是该候选的证据。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "CONDITIONAL_AFTER_STREAM_BASELINE",
+      "reason": "先有连续流核心自主学习，再按实际缺陷启用；不因名称含内部/预测就自动发射。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M103",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Short-context/phase+2 slot admission",
+    "where": "Claude supplied audit, seed43101",
+    "evidence_status": "ONE-SEED DIAGNOSTIC; FULL GRID NOT RUN",
+    "finding": "Keybyte candidates75.1%, framing11.7%, target13.3%; filteredgatekeeps90.2%targets versus59.7%uniformexpected. Counts are candidateadmissions, not residentcausalutility.",
+    "disposition": "Useful workload insight; not validated newlearning rule or authority to return to slots.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Useful workload insight; not validated newlearning rule or authority to return to slots.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M104",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Class-specific write lesions on V49",
+    "where": "Latest review proposal",
+    "evidence_status": "PROPOSED; NOT RUN",
+    "finding": "All-byte/no-key/no-framing/association-only oracles could localize interference; oracle masks not deployable and writecountmustbecontrolled.",
+    "disposition": "A focused diagnostic on currentbaseline, not proof allocation alone will rescuelearning.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "A focused diagnostic on currentbaseline, not proof allocation alone will rescuelearning.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "NOT_NEXT_ROUND",
+      "reason": "没有当前合法连续自学习操作与独立收益依据；保留原条目科学范围，不据此证伪整族。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M105",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Positive-and-negative reusable metric outside protected subspace",
+    "where": "V47 broader brainstorm",
+    "evidence_status": "PROPOSED FAMILY; ONE EXACT FORM FAILED",
+    "finding": "Sameoutcome notsameidentity; nearconflict may be noise/contextshift. No fullygeneral equivalencelearner validated.",
+    "disposition": "Do not close whole metricfamily or restart it without different evidencequestion.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "正负 metric 精确旧版本不复活；只保留有可信因果配对来源且匹配旧知识保持的新版本。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "SUPERVISED_OR_SIGNAL_HOLD",
+      "reason": "历史结果继续有效，但没有完成不依赖任务教师的当前核心验证；需独立定义信号、时序和原生贡献。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M106",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Frozen/slow residual reference, transport compensation, constraint-only slow memory",
+    "where": "PostV44 architecture brainstorm",
+    "evidence_status": "PROPOSED; RELATED NEGATIVE PRECEDENT",
+    "finding": "V35 residual failure applies while referencepredictionsdrift; encoderstationarity alone doesnotfixit.",
+    "disposition": "No new implementation success; requires explicit costed transport/frozenpredictor assumption.",
+    "screen_20261007": {
+      "budget_status": "CONDITIONAL",
+      "label": "有条件保留",
+      "reason": "reference predictor 漂移确实会破坏残差语义；冻结/运输必须显式计费并优于当前 center/ERROR。",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "ENABLING_COMPONENT",
+      "reason": "保存慢/冻结参考与合法成本，不能让外挂预测器改变后使存储残差失去原语义。",
+      "prior_budget_status": "CONDITIONAL",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M107",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Indexed retrieval (hash/tree/HNSW/ANN), exact value compaction",
+    "where": "Complexity and capacity discussions",
+    "evidence_status": "ENGINEERING BACKLOG",
+    "finding": "Can reduce scan/payloadcost, doesnotbyitselfsupplybiologicallearning or representation.",
+    "disposition": "Do not make the biological core a database optimization problem.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Do not make the biological core a database optimization problem.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  },
+  {
+    "id": "M108",
+    "section": "Proposed/unresolved work",
+    "mechanism": "Natural byte corpora, varied wrappers, nonshared transforms",
+    "where": "Multiple designs aftersynthetic screens",
+    "evidence_status": "PROPOSED/LARGELY DEFERRED",
+    "finding": "Earlierlanguage notebooks donotvalidate latestlearner; repeatedfixed14bytefixturecannotestablishgeneralbytelearning.",
+    "disposition": "Keep transfer goal visible; do not report finalsyntheticassociationwin as endpoint.",
+    "screen_20261007": {
+      "budget_status": "REFERENCE",
+      "label": "基线 对照 工程或范围外参照",
+      "reason": "Keep transfer goal visible; do not report finalsyntheticassociationwin as endpoint.",
+      "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+    },
+    "autonomous_screen_20261007": {
+      "budget_status": "REFERENCE_NOT_AUTONOMOUS_PROOF",
+      "reason": "实现、结构、反模型或范围参照保留；完整自主持续学习来源或当前核心贡献未经这些历史摘要认证。",
+      "prior_budget_status": "REFERENCE",
+      "scientific_evidence_unchanged": true,
+      "native_autonomous_core_verified_by_this_record": false,
+      "source_scope": "原source finding/disposition及本轮重点代码核对；不是每份历史源码重跑或全部训练权限认证"
+    }
+  }
+]
