@@ -19,14 +19,6 @@
 
 最新U045实例更新：三轮DEV练习已完成，技术可运行，但最终两DEV的新内容保持B87.5%对A100%；当前实例暂缓正式发射。该开发结果不整族排除U045，也不替换A。见[三轮报告](/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/observation_content_core_v1_20261007/THREE_CYCLE_REPORT.md)。8条方向分类数量未变，方向优先不等于当前实例可发射。
 
-## 本次有限加法三轮 DEV 结果
-
-三轮设计—审查—试跑—修订完成。最后两个新 DEV 世界中，新 U045 ordinal 内容实例的未教组合正确率为 87.5%，相对禁旧学习 +62.5 pp、相对打乱旧答案 +75 pp；延迟旧题正确率为 69.23%，低于预先锁定的 75% 保持门槛。因此保持 **HOLD_RETENTION_GUARD**，未采用 V2、未启动正式确认。该信号仅涉及工程数字/角色输入和 ordinal 输出先验下的开发实例，不是未修改 Full151 的加法能力证明。
-
-U069/U070 在本次作为双方共同的固定角色特征采样构件使用，不计成两个独立机制胜出。旧精确键 U045 的 HOLD 和所有旧科学结论不改写；71 条总账、8 条候选方向及 8 项构件的数量均不变。下一步若继续，应保护同一任务中的已学数值，不重启字节编码器轮换，不扩大为更多运算或 AGI 门槛，也不凭两个 DEV 世界整体筛除或采用机制家族。
-
-[本次三轮报告](/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_rule_dev_v1_20261007/THREE_CYCLE_REPORT.md) · [本次更新前总账](history/pre_addition_three_cycle_result/NEXT_ROUND_PRIORITY.md)。
-
 ## V2加法里程碑更新
 
 用户最新指定：V2应在有限精度范围内，从合适训练数据与模糊外部反馈学到加法规则。此后允许外部反馈，不再把完全无外部正确性信号作为本里程碑的准入条件。用户已选择首轮使用带噪或缺失答案的训练示例；噪声比例、剂量及科学协议仍须冻结。旧自主观察及失败配方的结论、锁与证据级别不变。
