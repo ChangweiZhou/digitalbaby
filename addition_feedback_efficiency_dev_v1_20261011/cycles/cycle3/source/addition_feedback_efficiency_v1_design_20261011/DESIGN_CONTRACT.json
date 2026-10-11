@@ -1,0 +1,101 @@
+{
+  "version": "FEEDBACK_EFFICIENCY_V1",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "reference": "COV-R",
+  "mechanism_ids": [
+    "U045",
+    "U047"
+  ],
+  "roster": [
+    "COV-R",
+    "COV-I",
+    "DIAG-I",
+    "DIAG-R",
+    "COV-REPLAY",
+    "COV-EXTRA"
+  ],
+  "selectable": [
+    "COV-I",
+    "DIAG-I",
+    "DIAG-R",
+    "COV-REPLAY",
+    "COV-EXTRA"
+  ],
+  "old_checkpoints": [
+    10,
+    20,
+    40,
+    80,
+    160,
+    320
+  ],
+  "new_checkpoints": [
+    20,
+    40,
+    80
+  ],
+  "primary": {
+    "population": "opaque BLURRY",
+    "old_prior_samples": 320,
+    "endpoint": "J delayed NEW held-out",
+    "weights": [
+      0.25,
+      0.5,
+      0.25
+    ],
+    "minimum_confirm_gain": 0.05,
+    "one_sided_alpha": 0.05
+  },
+  "confirmation_geometry": "TRIANGLE_TAIL",
+  "confirmation_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ]
+  ],
+  "dev_worlds": 12,
+  "dev_configs": 6,
+  "confirmation_worlds": {
+    "opaque_blurry": 64,
+    "opaque_standard": 32,
+    "ordinary": 32
+  },
+  "max_confirm_configs": 3,
+  "records_per_full_job": 2560,
+  "max_jobs": 456,
+  "max_external_records": 1167360,
+  "old_histories": [
+    "W",
+    "N_OLD",
+    "SHUFFLED_OLD"
+  ],
+  "additional_new_histories_at_old320": [
+    "N_NEW",
+    "SHUFFLED_NEW"
+  ],
+  "mutable_state_limit_ratio": 2,
+  "production_cpu_limit_ratio": 1.5,
+  "worker_rss_limit_mib": 512,
+  "workers_initial": 2,
+  "session_limit_hours": 10,
+  "admission_target_hours": 8,
+  "three_cycles_required": true,
+  "three_cycles_completed": false,
+  "science_authorized": false
+}
