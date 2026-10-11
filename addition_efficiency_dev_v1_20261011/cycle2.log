@@ -1,0 +1,21 @@
+CYCLE 2 TECH 834003 U021-SF1 D40
+CYCLE 2 TECH 834003 STABLE D40
+CYCLE 2 TECH 834003 U042-WG1 D40
+CYCLE 2 TECH 834004 STABLE D40
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_efficiency_dev_v1_20261011/cycles.py", line 72, in <module>
+    try:run_cycle(a.cycle)
+        ^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_efficiency_dev_v1_20261011/cycles.py", line 48, in run_cycle
+    receipt=execute(w,arm,dose,path);receipts.append(receipt);rows.append(metrics(receipt));paths.append(path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_efficiency_dev_v1_20261011/runner.py", line 79, in execute
+    s=time.process_time();r['independent_audit']=audit(r);r['audit_cpu_seconds']=time.process_time()-s
+                                                 ^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_efficiency_dev_v1_20261011/audit.py", line 121, in audit
+    p=probabilities(value);close(pred['probabilities'],p,'ordinal probabilities');require(pred['emitted']==48+int(np.argmax(p)),'model own output')
+                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_efficiency_dev_v1_20261011/audit.py", line 8, in require
+    if not ok:raise AssertionError(msg)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: model own output
