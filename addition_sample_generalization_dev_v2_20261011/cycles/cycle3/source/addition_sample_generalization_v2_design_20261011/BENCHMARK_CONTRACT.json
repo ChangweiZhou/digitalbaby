@@ -1,0 +1,138 @@
+{
+  "protocol": "MINIFLY_SAMPLE_GEN_V2",
+  "date": "2026-10-11",
+  "status": "SCIENTIFIC_DESIGN_SPECIFIED_IMPLEMENTATION_AND_QUALIFICATION_PENDING",
+  "execution_authorized": false,
+  "claim": "bounded_sample_efficient_persistent_generalization_with_disclosed_additive_priors",
+  "old_opaque_alphabet": "ABCDE",
+  "new_opaque_alphabet": "FGHIJ",
+  "ordinary_operand_alphabet": "01234",
+  "answer_alphabet": "012345678",
+  "public_features": {
+    "dimension": 31,
+    "active_features": 3,
+    "role_identity_features": 30,
+    "constant_features": 1,
+    "latent_value_is_public": false,
+    "ordinal_input_features": false,
+    "semantic_pair_hash": false,
+    "ordinal_output_prior": true
+  },
+  "families": {
+    "PATH_LOOP": {"masks": 300, "dev": true, "primary_confirmation": false},
+    "STAR_LOOP": {"masks": 5, "dev": true, "primary_confirmation": false},
+    "ODD_CYCLE": {"masks": 12, "dev": false, "primary_confirmation": true}
+  },
+  "geometry": {
+    "unordered_pairs_including_diagonal": 15,
+    "taught_semantic_pairs": 5,
+    "held_out_semantic_pairs": 10,
+    "epoch_external_records": 10,
+    "independent_role_rank_without_constant": 9,
+    "diagonal_slots": 2,
+    "off_diagonal_orientations": 2,
+    "test_unit": "semantic_unordered_pair",
+    "statistical_unit": "world"
+  },
+  "feedback": {
+    "STANDARD": {"correct": 0.8, "wrong": 0.1, "missing": 0.1},
+    "BLURRY": {"correct": 0.6, "wrong": 0.2, "missing": 0.2},
+    "wrong_target": "uniform_among_eight_nontruth_digits",
+    "count_missing_and_wrong_as_external_samples": true,
+    "replay_counts_as_external_samples": false,
+    "replay_costs_charged": true
+  },
+  "old_sample_checkpoints": [10, 20, 40, 80, 160, 320],
+  "new_samples_per_continuation": 80,
+  "persistent_total_sample_checkpoints": [90, 100, 120, 160, 240, 400],
+  "new_geometry": "PATH_LOOP",
+  "rest_seconds_before_new": 86400,
+  "rest_seconds_after_new": 86400,
+  "model_seconds_per_tick": "30/14",
+  "ticks_per_record": 6,
+  "causal_histories": ["W", "N_OLD", "SHUFFLED"],
+  "forbid_all_old_target_induced_state_in_N_OLD": true,
+  "records_per_history": 800,
+  "records_per_full_job": 2400,
+  "state_trajectories_per_full_job": 21,
+  "shared_prefixes_reexecuted": false,
+  "roster": [
+    {"id": "STABLE-ID", "role": "reference"},
+    {"id": "COMPACT-ID", "role": "reference"},
+    {"id": "COV-R", "mechanism": "U045", "role": "candidate"},
+    {"id": "DIAG-R", "mechanism": "U045", "role": "selectable_comparator"},
+    {"id": "TOPO-G", "mechanism": "U043", "role": "candidate"},
+    {"id": "TOPO-S", "mechanism": "U043", "role": "selectable_static_comparator"},
+    {"id": "TOPO-R", "mechanism": "U043", "role": "selectable_random_comparator"},
+    {"id": "REPLAY-P", "mechanism": "U047", "role": "candidate"},
+    {"id": "REPLAY-U", "mechanism": "U047", "role": "selectable_uniform_comparator"}
+  ],
+  "primary": {
+    "history": "W",
+    "task": "OLD_held_out_semantic_pairs_after_rest_new_learning_rest",
+    "score": "normalized_trapezoidal_area_against_log2_total_external_samples",
+    "reference": "COMPACT-ID",
+    "minimum_mean_gain": 0.05,
+    "lower_bound": "one_sided_95_percent_stratified_paired_student",
+    "zero_variance_fallback": "Hoeffding_for_paired_difference_in_minus1_plus1",
+    "causal_gain_lower_bounds_required": ["W_minus_N_OLD", "W_minus_SHUFFLED"],
+    "minimum_final_old_accuracy": 0.75,
+    "minimum_final_new_accuracy": 0.60,
+    "ordinary_guard_maximum_point_loss": 0.05,
+    "memorization_contributes_to_primary": false
+  },
+  "development": {
+    "worlds": 12,
+    "strata": 4,
+    "worlds_per_stratum": 3,
+    "configurations": 9,
+    "maximum_full_jobs": 108,
+    "winner_limit": 1,
+    "minimum_point_score_gain": 0.03,
+    "recipes_fixed_before_endpoint_inspection": true
+  },
+  "confirmation": {
+    "worlds": 96,
+    "primary_opaque_odd_cycle_worlds": 64,
+    "primary_worlds_per_noise_regime": 32,
+    "ordinary_guard_worlds": 32,
+    "guard_worlds_per_stratum": 8,
+    "maximum_configurations": 5,
+    "maximum_full_jobs": 480,
+    "private_entropy_generated_after_selection_lock": true
+  },
+  "conditional_maximum": {
+    "full_jobs": 588,
+    "external_records": 1411200,
+    "upper_bound_training_bytes": 8467200,
+    "mandatory_confirmation": false
+  },
+  "resources": {
+    "candidate_mutable_state_bytes": 131072,
+    "sensory_cache_bytes": 51200,
+    "scalar_operations_per_present_external_target": 20000,
+    "qualified_worst_case_wall_hours": 8,
+    "session_cap_wall_hours": 10,
+    "maximum_new_artifact_bytes": 2147483648,
+    "default_detached_workers": 2,
+    "automatic_retry": false
+  },
+  "qualification_required": [
+    "all_nine_configs_before_DEV",
+    "common_parser_and_feature_map",
+    "compact_equivalence_including_output_boundaries",
+    "independent_causal_state_audit",
+    "read_only_probe_and_fork_equivalence",
+    "mechanism_equations_and_tamper_cases",
+    "three_design_audit_test_cycles",
+    "detached_process_and_packaging_failures",
+    "runtime_disk_state_compute_projection",
+    "actual_source_lock"
+  ],
+  "terminal_verdicts": [
+    "NO_CANDIDATE_ADVANCES",
+    "CONFIRMATION_UNRESOLVED",
+    "RETAIN_REFERENCE",
+    "ADOPT_BOUNDED_SAMPLE_EFFICIENT_CORE"
+  ]
+}

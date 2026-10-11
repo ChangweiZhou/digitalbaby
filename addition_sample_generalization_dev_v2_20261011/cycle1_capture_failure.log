@@ -1,0 +1,24 @@
+{"cycle": 1, "stage": "LOCAL_AUDIT_PASS"}
+{"cycle": 1, "committed_jobs": 1, "world": 835001, "arm": "STABLE-ID", "seconds": 1.794270166894421}
+{"cycle": 1, "committed_jobs": 2, "world": 835001, "arm": "COMPACT-ID", "seconds": 1.10273279203102}
+{"cycle": 1, "committed_jobs": 3, "world": 835001, "arm": "COV-R", "seconds": 1.2045159169938415}
+{"cycle": 1, "committed_jobs": 4, "world": 835001, "arm": "DIAG-R", "seconds": 1.241224457975477}
+{"cycle": 1, "committed_jobs": 5, "world": 835001, "arm": "TOPO-G", "seconds": 1.7125001249369234}
+{"cycle": 1, "committed_jobs": 6, "world": 835001, "arm": "TOPO-S", "seconds": 1.667422499973327}
+{"cycle": 1, "committed_jobs": 7, "world": 835001, "arm": "TOPO-R", "seconds": 1.7851042499532923}
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/cycles.py", line 148, in <module>
+    execute(a.cycle)
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/cycles.py", line 52, in execute
+    audit_result = commit(result, path)
+                   ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/runner.py", line 56, in commit
+    result = audit(loaded, expected_source=receipt['source'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/runner.py", line 289, in audit
+    audit_snapshot(branch['birth'], reference, ticks, seen)
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/runner.py", line 239, in audit_snapshot
+    require(checksum(state) == reference.digest() == actual['core_seal'], 'checkpoint operative state')
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/runner.py", line 208, in require
+    raise AssertionError(message)
+AssertionError: checkpoint operative state
