@@ -1,25 +1,24 @@
-# MiniFly机制筛选：FEEDBACK-EFFICIENCY确认后
+# MiniFly mechanism priorities after U042 adoption
 
-2026-10-11。目标不变：以更少外部训练样本，提高有限范围内未见加法题的模型自身输出能力，并保持旧知识。来源ID、71条去重映射及冻结实验不改写。[本次更新前快照](history/pre_feedback_efficiency_confirmation_20261011/NEXT_ROUND_PRIORITY.md)。
+2026-10-11。当前开发核心采用COV-SUPPORT，由用户明确决定；COV-R保留为比较锚点。**这是开发采用，不是通过独立确认的低样本升级。** 原实验NO_ADVANCE_RETAIN_COV_R结论不变。
 
-**71条总账仍在；当前7条尚未验证的研究方向=1条优先U042+6条条件方向。另2个已采用实例(U018原生E0/E1、U045工程COV-R有限E3)，8个构件，54条非当前候选/旧实例暂停。不能把这些数当成可运行变体数或“未证伪家族”数。**
+[采用记录](../../addition_core_v2_support_v1_20261011/ADOPTION.json)、[统计重新分析](../../addition_observation_support_dev_v1_20261011/posthoc/reanalysis_20261011/REANALYSIS.json)、[当前核心入口](../CURRENT_ADDITION_CORE.json)、[此前筛选快照](history/pre_U042_user_adoption_20261011/NEXT_ROUND_PRIORITY.md)。
 
-本轮六个配置中，COV-R保留；五个非参考具体配方不继续采用。其中COV-EXTRA正式确认未通过，COV-REPLAY只有同行描述性比较，COV-I/DIAG-I/DIAG-R在DEV未过。**本轮没有新增整族证伪。** [详细配方账](FEEDBACK_EFFICIENCY_VARIANT_REVIEW_20261011.json)。
-
-[结果与下一步判断](POST_FEEDBACK_EFFICIENCY_REVIEW_20261011.md)。U045不再是“未找到工作实例”的方向；U042成为下一设计优先。U047只在有实质不同的再激活假说时重开；U021/U057/U058仍为预条件未满足的暂存方向。旧行中未更新的证据理由属于历史预算筛选，并非本轮检验；旧文件完整保存在快照。
+71条去重记录仍在。3个采用条目分属不同证据范围：U018原生观察E0/E1，U045工程COV-R有限E3，U042用户采用的支持门。另有6个条件方向、8个构件及54个非当前候选/暂缓条目。没有新增整族证伪，也没有新实验运行授权。
 
 | 分类 | 数量 |
 |---|---:|
-| ADOPTED_BASELINE | 2 |
+| ADOPTED_BASELINE | 3 |
 | CONDITIONAL_CANDIDATE | 6 |
 | ENABLING_COMPONENT | 8 |
 | NOT_NEXT_ROUND | 48 |
-| PRIORITY_DESIGN | 1 |
 | RECIPE_HOLD | 4 |
 | REFERENCE_ONLY | 1 |
 | STOP_CURRENT_RECIPE | 1 |
 
-| ID | 名称 | 当前分类 | 具体实例/本轮判断 |
+下一步仍研究未见加法的样本效率。U055多经验协调与U043实际连接调整为有条件方向；U047旧均匀重放不重启，U021/U057/U058的启动前提未满足。新增循环、状态或重复更新本身不是效能提升。
+
+| ID | 名称 | 当前分类 | 当前实例 |
 |---|---|---|---|
 | U001 | FE2 / Temporal contrast | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U002 | LAT4 / Latency classes | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
@@ -62,7 +61,7 @@
 | U039 | CORR2 证据支持读权限 | RECIPE_HOLD | HELD_NOT_REHABILITATED |
 | U040 | 固定 partial mixture 包括 Q_HALF | REFERENCE_ONLY | NO_NEW_QUALIFIED_INSTANCE |
 | U041 | 细胞内部多时间尺度私有状态 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
-| U042 | 相互独立的写入门与遗忘门 | PRIORITY_DESIGN | NEW_CONTEXT_SUPPORT_WRITE_GATE_PROPOSAL_NOT_QUALIFIED |
+| U042 | 相互独立的写入门与遗忘门 | ADOPTED_BASELINE | USER_ADOPTED_SUPPORT_WRITE_GATE_DEV_EVIDENCE |
 | U043 | 局部边权学习与真实换边协同 P×S | CONDITIONAL_CANDIDATE | HOLD_OLD_TOPO_RECIPES_REQUIRE_NEW_OPERATION |
 | U044 | 稳定地址与可塑内容分离或输入坐标兼容 | ENABLING_COMPONENT | NO_NEW_QUALIFIED_INSTANCE |
 | U045 | 有界Hebbian key/value或predictive residual fast matrix | ADOPTED_BASELINE | ADOPTED_ENGINEERED_COV_R_BOUNDED_E3 |

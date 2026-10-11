@@ -1,28 +1,25 @@
 {
   "date": "2026-10-11",
-  "revision": "POST_FEEDBACK_EFFICIENCY_CONFIRMATION",
-  "screening_axis": "bounded addition sample efficiency; exact recipe closure distinct from family rejection",
+  "revision": "POST_U042_USER_ADOPTION",
+  "screening_axis": "Bounded addition sample efficiency; user adoption distinguished from confirmation",
   "input_retained_entries": 71,
   "counts": {
-    "NOT_NEXT_ROUND": 48,
-    "ENABLING_COMPONENT": 8,
-    "ADOPTED_BASELINE": 2,
-    "RECIPE_HOLD": 4,
+    "ADOPTED_BASELINE": 3,
     "CONDITIONAL_CANDIDATE": 6,
+    "ENABLING_COMPONENT": 8,
+    "NOT_NEXT_ROUND": 48,
+    "RECIPE_HOLD": 4,
     "REFERENCE_ONLY": 1,
-    "PRIORITY_DESIGN": 1,
     "STOP_CURRENT_RECIPE": 1
   },
-  "priority_ids": [
-    "U042"
-  ],
+  "priority_ids": [],
   "native_autonomous_core_configurations_verified": 1,
   "science_launch_authorized": false,
   "native_trajectories_run_by_this_document_update": 0,
   "frozen_scientific_files_changed": false,
   "S_ERROR_hypothesis": "S_ERROR_SUPERVISED_HYPOTHESIS.md",
-  "next_step": "保持COV-R；前瞻性设计U042观察答案一致性软写入门，目标不变：更少外部样本上的未见加法泛化。未授权运行下一实验。",
-  "count_warning": "71是去重ID池；7是尚未验证的条件研究方向，非7个可运行变体。2个已采用实例的底物和证据级别不同，8个构件不另算核心。本轮关闭5个非参考配方的继续采用路线，不整族排除。",
+  "next_step": "以用户采用的COV-SUPPORT为开发核心、COV-R为比较锚点；讨论不同经验间的共享约束机制，不启动新实验。",
+  "count_warning": "71条去重记录；3个采用条目中U042为用户开发采用，非通过确认。U018原生E0/E1与U045工程有限E3仍保持各自证据边界；6个条件方向不是6个已准备变体。",
   "historical108_autonomous_budget_counts": {
     "REFERENCE_NOT_AUTONOMOUS_PROOF": 30,
     "ENABLING_COMPONENT": 12,
@@ -52,64 +49,23 @@
   ],
   "adopted_instance_ids": [
     "U018",
+    "U042",
     "U045"
   ],
-  "candidate_directions_to_consider": 7,
-  "immediate_design_directions": 1,
+  "candidate_directions_to_consider": 6,
+  "immediate_design_directions": 0,
   "conditional_design_directions": 6,
   "component_entries_not_independent_candidates": 8,
   "noncandidate_or_held_entries": 54,
-  "evidence_report": "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_feedback_efficiency_dev_v1_20261011/results/REPORT.md",
-  "current_review": "POST_FEEDBACK_EFFICIENCY_REVIEW_20261011.md",
-  "history_snapshot": "history/pre_feedback_efficiency_confirmation_20261011/",
+  "evidence_report": "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_observation_support_dev_v1_20261011/results/REPORT.md",
+  "current_review": "POST_U042_USER_ADOPTION_20261011.md",
+  "history_snapshot": "history/pre_U042_user_adoption_20261011/",
   "classification_changes": [
     {
-      "id": "U021",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "CONDITIONAL_CANDIDATE",
-      "reason": "稳定/灵活分区保留历史方向，但当前没有证据需要用双bank解决NEW低样本问题；等待可重复的干扰缺口，不额外复制核心。"
-    },
-    {
       "id": "U042",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "PRIORITY_DESIGN",
-      "reason": "优先定义基于过去实际答案一致性的软写入门；与COV-R同表示/反馈/读出，目标是带噪20/40/80样本的未见题效率。不是增加遗忘，也不是重试COV-I不确定度阈值。假说尚未验证。"
-    },
-    {
-      "id": "U043",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "CONDITIONAL_CANDIDATE",
-      "reason": "旧TOPO-G/S/R继续停止；真正换边仅在同内容坐标和预算下有具体泛化/访存收益假说时重新设计。本轮没有检验拓扑，不作整族淘汰。"
-    },
-    {
-      "id": "U045",
       "previous": "PRIORITY_DESIGN",
       "current": "ADOPTED_BASELINE",
-      "reason": "COV-R已在此前SAMPLE-GEN V2正式采用，本轮保留。COV-I在DEV未过；DIAG-I/R保持不足，不继续同一裁剪或对角配方。仅具体工程实例有效，非整个Hebbian家族或未修改Full151。"
-    },
-    {
-      "id": "U047",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "CONDITIONAL_CANDIDATE",
-      "reason": "COV-EXTRA正式主增益1.07pp、单侧下界-1.08pp，未采用。COV-REPLAY作为诊断同行主J低于参考0.59pp。关闭这两个配方；更换选择策略不能自动复活，须先有不同收益/成本假说。"
-    },
-    {
-      "id": "U055",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "CONDITIONAL_CANDIDATE",
-      "reason": "保留有界递归/协同误差修正。仅重复当前/旧样本不够，因此新变体必须改变多条经验如何共同约束更新，给出有限步数和成本；本轮不是递归家族的否定。"
-    },
-    {
-      "id": "U057",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "CONDITIONAL_CANDIDATE",
-      "reason": "长短预测信息门暂不排期：当前反馈是单个观察答案，缺少两个独立预测源的增量收益论证。"
-    },
-    {
-      "id": "U058",
-      "previous": "CONDITIONAL_CANDIDATE",
-      "current": "CONDITIONAL_CANDIDATE",
-      "reason": "多horizon层次暂不排期：有限加法当前样本瓶颈不要求更长反馈时域，不转向NLP或预训练。"
+      "basis": "Explicit owner adoption; frozen scientific no-advance decision preserved."
     }
   ],
   "latest_milestone": "Bounded exact addition-rule learning with suitable training data and blurry external feedback",
@@ -173,10 +129,18 @@
   },
   "historical_native_observation_evidence_report": "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/autonomous_observation_v1_20261007/results/confirm/REPORT.md",
   "current_engineered_reference": {
-    "id": "U045",
-    "recipe": "COV-R",
-    "adopted_by": "SAMPLE-GEN V2 confirmation",
-    "current_trial_verdict": "RETAIN_COV_R",
-    "scope": "Bounded engineered addition E3, distinct from native U018 observation E0/E1"
+    "default": "COV-SUPPORT",
+    "comparison_anchor": "COV-R",
+    "adoption_basis": "USER_DECISION",
+    "record": "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_core_v2_support_v1_20261011/ADOPTION.json"
+  },
+  "latest_U042_result": {
+    "scientific_verdict": "NO_ADVANCE_RETAIN_COV_R",
+    "DEV_worlds": 12,
+    "science_jobs": 36,
+    "external_records": 92160,
+    "confirmation_worlds": 0,
+    "user_adopted": true,
+    "incremental_low_sample_gain_confirmed": false
   }
 }
