@@ -1,0 +1,3 @@
+# Cycle 1 design and audit
+
+Five fixed configurations; no DEV/CONF admission. First cycle checks both parent baselines bit for bit, independent support/restoration equations, matching trigger and dose/RNG, zero-direction fallback, oriented keys, two-key guard, cap64, PSD, no-write/missing/query inertia and complete checkpoint state. One reserved STANDARD PATH_LOOP world across all five configurations is run only after local and operational audits pass. Scientific endpoint, delta .25, window8/cadence8/cap64 and sample budget are unchanged. Cold checkpoints use a repeated public target fixture so restoration state is actually exercised, rather than a changing-target stream with no support. No efficacy selection from technical scores.

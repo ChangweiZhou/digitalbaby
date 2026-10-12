@@ -1,0 +1,174 @@
+{
+  "version": "SUPPORT_DIRECTION_RESTORATION_V1",
+  "date": "2026-10-11",
+  "status": "DRAFT_TECHNICAL_ONLY",
+  "evidence_level": "bounded engineered addition E3",
+  "mechanism_id": "U034",
+  "reference": "COV-SUPPORT",
+  "roster": [
+    "COV-R",
+    "COV-SUPPORT",
+    "SUPPORT-DIR",
+    "SUPPORT-RAND",
+    "SUPPORT-ISO"
+  ],
+  "sole_selectable_candidate": "SUPPORT-DIR",
+  "diagnostic_only": [
+    "SUPPORT-RAND",
+    "SUPPORT-ISO"
+  ],
+  "support": {
+    "key": "actual ordered left/right operand bytes",
+    "merge_reverse_keys": false,
+    "max_keys": 32,
+    "key_eviction": "FIFO first insertion; reads do not reorder",
+    "answer_window": 8,
+    "minimum_mode_count": 2,
+    "strict_majority_required": true,
+    "current_target_excluded_from_support": true,
+    "conflict_multiplier": 0.25,
+    "otherwise_multiplier": 1.0,
+    "insert_downweighted_observation": true,
+    "phase_reset": false,
+    "query_can_read_support_for_output": false
+  },
+  "learning_state_immutable_on_missing_or_forbidden": [
+    "w",
+    "P",
+    "support_cache",
+    "conflict_history",
+    "learning_rng",
+    "learning_counters"
+  ],
+  "same_multiplier_for_weight_and_information_update": true,
+  "extra_updates": 0,
+  "old_checkpoints": [
+    10,
+    20,
+    40,
+    80,
+    160,
+    320
+  ],
+  "new_checkpoints": [
+    20,
+    40,
+    80
+  ],
+  "primary": {
+    "population": "opaque BLURRY",
+    "old_prior_records": 320,
+    "endpoint": "delayed NEW never-taught exact own-output J",
+    "weights": [
+      0.25,
+      0.5,
+      0.25
+    ],
+    "sole_confirmatory_efficacy_contrast": "SUPPORT-DIR must beat both COV-SUPPORT and COV-R",
+    "minimum_dev_gain": 0.03,
+    "minimum_confirm_gain": 0.05,
+    "one_sided_alpha": 0.05,
+    "required_baselines": [
+      "COV-SUPPORT",
+      "COV-R"
+    ]
+  },
+  "confirmation_geometry": "TRIANGLE_TAIL",
+  "confirmation_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      0
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ]
+  ],
+  "direct_new_support_attenuation_first_possible_record": 21,
+  "early_new_gate_prediction_applies_to": "TRIANGLE_TAIL with disjoint OLD/NEW bytes",
+  "dev": {
+    "worlds": 12,
+    "families": [
+      "PATH_LOOP",
+      "STAR_LOOP"
+    ],
+    "noise": [
+      "STANDARD",
+      "BLURRY"
+    ],
+    "worlds_per_family_noise": 3,
+    "configs": 5,
+    "jobs": 60,
+    "external_records": 153600
+  },
+  "confirmation": {
+    "opaque_blurry_worlds": 64,
+    "opaque_standard_worlds": 32,
+    "ordinary_standard_worlds": 16,
+    "ordinary_blurry_worlds": 16,
+    "worlds": 128,
+    "configs": 5,
+    "jobs": 640,
+    "external_records": 1638400,
+    "conditional_on_dev_advance": true
+  },
+  "records_per_full_job": 2560,
+  "correlated_trajectories_per_full_job": 23,
+  "old_histories": [
+    "W",
+    "N_OLD",
+    "SHUFFLED_OLD"
+  ],
+  "additional_new_histories_at_old320": [
+    "N_NEW",
+    "SHUFFLED_NEW"
+  ],
+  "max_jobs": 700,
+  "max_external_records": 1792000,
+  "max_correlated_state_trajectories": 16100,
+  "protection_decline_limit": 0.03,
+  "primary_old_final_absolute_floor": 0.85,
+  "production_cpu_limit_ratio": 1.5,
+  "mutable_payload_limit_ratio": 2.0,
+  "worker_rss_limit_mib": 512,
+  "workers_initial": 2,
+  "session_limit_hours": 10,
+  "admission_target_hours": 8,
+  "runtime_estimate_requires_new_technical_measurement": true,
+  "three_cycles_required": true,
+  "scientific_sources_locked": false,
+  "science_authorized": false,
+  "publication_authorized": false,
+  "new_trajectories_run": 0,
+  "qualification_record": "../addition_uncertainty_restoration_dev_v1_20261011/QUALIFICATION.json",
+  "anchors": [
+    "COV-SUPPORT",
+    "COV-R"
+  ],
+  "restoration": {
+    "window": 8,
+    "cadence": 8,
+    "max_events": 64,
+    "delta": 0.25,
+    "zero_norm": 1e-12,
+    "minimum_distinct_keys": 2,
+    "eligibility": "past strict majority exists and current observed answer agrees",
+    "direction": "sum clipped pre-update residual times input",
+    "zero_direction_fallback": "current input / sqrt(3)",
+    "same_nominal_trace_per_trigger": true,
+    "PSD_upper_eigenvalue": 26.0,
+    "extra_weight_updates": 0
+  }
+}
