@@ -1292,32 +1292,52 @@
     ],
     "dedup_note": "C095与C063中的reopening为同名同操作；只计一次。",
     "launch_authorized": false,
-    "priority_status": "PRIORITY_DESIGN",
+    "priority_status": "STOP_CURRENT_RECIPE",
     "prior_budget_status": "NOT_NEXT_ROUND",
     "autonomous_learning_verified": false,
-    "priority_reason": "重新进入设计候选：有支持的反复预测冲突只重开相关约束方向的不确定性，不全局遗忘。旧对角近似的得失不能否定完整协方差版本。当前P不是校准后验，早期过度收缩是待检验假说而非已定位原因。",
-    "readiness": "Prospective operation direction; equations, budgets, controls and qualification NOT locked; no launch authorization",
+    "priority_reason": "SUPPORT-DIR正式DEV未晋级：BLURRY未教NEW综合J对当前COV-SUPPORT增量0pp，对COV-R增量+4.375pp；生产CPU约1.18倍SUPPORT。移出当前实验候选，不调剂量/窗口救援、不提升RAND/ISO；12世界DEV不是全部U034变体的证伪。",
+    "readiness": "COMPLETED_DEV_NO_ADVANCE; no confirmation; no new launch authorization",
     "proposed_operation": "bayes_reopening",
-    "previous_priority_status": "NOT_NEXT_ROUND",
+    "previous_priority_status": "PRIORITY_DESIGN",
     "previous_priority_reason": "保护/资源/替换机制需要实际容量、饱和或干扰收益假说。当前只到24键，不能从通过推断无容量问题，也不能默认加锁会保留可修订性。旧配方证据保留。",
-    "screening_revision": "POST_U055_ATTRIBUTION_CORRECTION_20261011",
+    "screening_revision": "POST_U034_COMPLETED_DEV_20261011",
     "evidence_refs": [
       "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/autonomous_observation_v1_20261007/results/confirm/REPORT.md",
       "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/autonomous_observation_v1_20261007/results/confirm/SUMMARY.json",
-      "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/autonomous_observation_v1_20261007/results/confirm/FINAL_AUDIT.json"
+      "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/autonomous_observation_v1_20261007/results/confirm/FINAL_AUDIT.json",
+      "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_uncertainty_restoration_dev_v1_20261011/results/REPORT.md",
+      "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_uncertainty_restoration_dev_v1_20261011/results/FINAL_AUDIT.json"
     ],
-    "activation_condition": "先定义与旧对角Bayes及全局surprise遗忘不同的有支持、方向性正定重开；当前过度收缩原因未证实。与当前核心相同输入和费用，旧知识保护，不能隐含环境改变或使用未见题标签。",
-    "current_instance_status": "SUPPORTED_DIRECTIONAL_UNCERTAINTY_REOPENING",
+    "activation_condition": "当前U034操作移出排期。不得仅改剂量、窗口、触发阈值或把诊断臂改名来复活；真正不同的操作需新的独立依据，不因家族未被全盘证伪而自动排期。",
+    "current_instance_status": "CLOSED_SUPPORT_DIR_DEV_NO_ADVANCE",
     "current_goal_review": {
       "goal": "Own-output unseen bounded addition generalization per external noisy/missing training sample and charged compute",
-      "reason": "重新进入设计候选：有支持的反复预测冲突只重开相关约束方向的不确定性，不全局遗忘。旧对角近似的得失不能否定完整协方差版本。当前P不是校准后验，早期过度收缩是待检验假说而非已定位原因。",
+      "reason": "SUPPORT-DIR正式DEV未晋级：BLURRY未教NEW综合J对当前COV-SUPPORT增量0pp，对COV-R增量+4.375pp；生产CPU约1.18倍SUPPORT。移出当前实验候选，不调剂量/窗口救援、不提升RAND/ISO；12世界DEV不是全部U034变体的证伪。",
       "family_wide_exclusion": false,
       "evidence_refs": [
         "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/results/CONFIRM_REPORT.md",
         "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_feedback_efficiency_dev_v1_20261011/results/CONFIRM_REPORT.md",
         "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_observation_support_dev_v1_20261011/posthoc/reanalysis_20261011/REANALYSIS.json",
-        "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_core_v2_support_v1_20261011/minifly_addition_core/core.py"
+        "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_core_v2_support_v1_20261011/minifly_addition_core/core.py",
+        "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_uncertainty_restoration_dev_v1_20261011/results/REPORT.md"
       ]
+    },
+    "completed_recipe": {
+      "candidate": "SUPPORT-DIR",
+      "controls": [
+        "SUPPORT-RAND",
+        "SUPPORT-ISO"
+      ],
+      "status": "NO_ADVANCE_RETAIN_USER_CORE",
+      "DEV_worlds": 12,
+      "BLURRY_worlds": 6,
+      "jobs": 60,
+      "records": 153600,
+      "confirmation_worlds": 0,
+      "adopted": false,
+      "gain_vs_SUPPORT": 0.0,
+      "gain_vs_COV_R": 0.04375,
+      "report": "../../addition_uncertainty_restoration_dev_v1_20261011/results/REPORT.md"
     }
   },
   {
@@ -1838,7 +1858,7 @@
     "priority_status": "PRIORITY_DESIGN",
     "prior_budget_status": "NOT_NEXT_ROUND",
     "autonomous_learning_verified": false,
-    "priority_reason": "优先设计：有界存储真实已观察样本，按约束方向覆盖/当前信息不足选择再激活，不按最大误差或随机均匀重复。确认中的均匀REPLAY/EXTRA未证明增量，只关闭旧配方；所有额外运算、访问和内部呈现计费，同一记录不得冒充独立证据。",
+    "priority_reason": "下一项可设计候选：同一完整COV/SUPPORT底物，按约束覆盖选择实际允许观察的缓存样本，与残差优先、均匀选择严格等额外更新预算比较；重放不再收缩P、不把重放当新样本。已有REPLAY-P/U与COV-REPLAY负面保留，不声称回放从未测试。",
     "readiness": "Prospective operation direction; equations, budgets, controls and qualification NOT locked; no launch authorization",
     "proposed_operation": "有限选择性再激活/有界offline O",
     "previous_priority_status": "CONDITIONAL_CANDIDATE",
@@ -1855,7 +1875,7 @@
     "current_instance_status": "BOUNDED_INFORMATION_DIVERSE_REACTIVATION",
     "current_goal_review": {
       "goal": "Own-output unseen bounded addition generalization per external noisy/missing training sample and charged compute",
-      "reason": "优先设计：有界存储真实已观察样本，按约束方向覆盖/当前信息不足选择再激活，不按最大误差或随机均匀重复。确认中的均匀REPLAY/EXTRA未证明增量，只关闭旧配方；所有额外运算、访问和内部呈现计费，同一记录不得冒充独立证据。",
+      "reason": "下一项可设计候选：同一完整COV/SUPPORT底物，按约束覆盖选择实际允许观察的缓存样本，与残差优先、均匀选择严格等额外更新预算比较；重放不再收缩P、不把重放当新样本。已有REPLAY-P/U与COV-REPLAY负面保留，不声称回放从未测试。",
       "family_wide_exclusion": false,
       "evidence_refs": [
         "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_sample_generalization_dev_v2_20261011/results/CONFIRM_REPORT.md",

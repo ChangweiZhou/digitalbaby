@@ -1,26 +1,25 @@
-# MiniFly当前机制优先级：U055归属纠正后
+# MiniFly当前机制优先级：U034正式DEV之后
 
-> 版本级补充：上一轮方向排序尚未覆盖具体版本，尤其漏述了已测REPLAY-P和TOPO-G。请以[版本复核](VERSION_REGISTER_20261011/REVIEW.md)和机器可读版本索引补充判断，不能将该方向排序当作最终配方选择。
+> 此表仅记录旧71项子集的排期状态，不是完整机制筛选，也没有冻结下一轮配方。请先看[108项、136条目录和254个版本的全量复核](FULL_REVIEW_POST_U034_20261011/REVIEW.md)；其中U047只是暂定设计选项，回溯重加权和从观察学习角色关系也是不同的未验证操作。
 
+2026-10-11。目标不变：更少带噪/缺失外部样本和计费计算下，对未见加法组合自身输出泛化；旧知识保持为保护项。默认COV-SUPPORT，锚点COV-R。此更新没有运行或授权新实验。
 
-2026-10-11。当前开发默认COV-SUPPORT，比较锚点COV-R；目标固定为更少带噪/缺失外部样本与计费计算下的未见加法自身输出泛化，旧知识保持受保护。用户采用与科学确认分开。未运行或授权新实验。
+**划掉 ~~U034 / SUPPORT-DIR~~。** 正式DEV的低样本NEW J相对SUPPORT增量0pp，CPU约1.18倍；没有进入确认。退出当前排期，不改剂量/窗口救援，不临时晋级RAND/ISO。该结论不宣称整个不确定性机制不可能有效。
 
-[本次完整复核与71条理由](POST_U055_RESCREEN_20261011.md)、[原始交叉引用](POST_U055_RESCREEN_20261011.json)、[此前快照](history/pre_U055_attribution_correction_20261011/NEXT_ROUND_PRIORITY.md)。
+[当前配方与下一步](CURRENT_TEST_SHORTLIST_20261011.md) · [数据复核](POST_U034_REVIEW_20261011.json) · [实际版本总账](VERSION_REGISTER_20261011/REVIEW.md)
 
-U055原来源是KC递归/DPM/广义反馈，不能直接对应通用多观察联合重估，已撤销默认第一的推荐。优先设计U047选择性再激活和U034有支持的不确定性重开；U059因果预算分配为第二顺位。均尚未形成锁定可运行配方。
-
-| 分类 | 数量 |
+| 分类 | 条目数 |
 |---|---:|
 | ADOPTED_BASELINE | 3 |
 | CONDITIONAL_CANDIDATE | 6 |
 | ENABLING_COMPONENT | 8 |
 | NOT_NEXT_ROUND | 46 |
-| PRIORITY_DESIGN | 2 |
+| PRIORITY_DESIGN | 1 |
 | RECIPE_HOLD | 4 |
 | REFERENCE_ONLY | 1 |
-| STOP_CURRENT_RECIPE | 1 |
+| STOP_CURRENT_RECIPE | 2 |
 
-71是历史条件集合，不是全部机制。8个考虑方向含2项优先设计、6项条件备选；8个构件不算独立候选。所有历史结果和原来源ID保留，旧exact-context E1统计不作为本任务整族排除依据。
+旧子集仍为71条：表内**1个优先方向U047、6个条件备选，共7个考虑方向**；另有3项已采用基线、8个构件，以及53项参照/暂停/当前不排期或停止的配方。这些是原子集标签，不是全账仍存活机制的数量或最终实验选择。
 
 | ID | 名称 | 分类 | 当前实例状态 |
 |---|---|---|---|
@@ -57,7 +56,7 @@ U055原来源是KC递归/DPM/广义反馈，不能直接对应通用多观察联
 | U031 | Recurrent post-event consolidation window | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U032 | Stubborn/adaptable heterogeneous populations | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U033 | bayes_stable | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
-| U034 | bayes_reopening | PRIORITY_DESIGN | SUPPORTED_DIRECTIONAL_UNCERTAINTY_REOPENING |
+| U034 | bayes_reopening | STOP_CURRENT_RECIPE | CLOSED_SUPPORT_DIR_DEV_NO_ADVANCE |
 | U035 | context_fixed 四bank固定路由 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U036 | context_inferred 四bank推断路由 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U037 | silent_fixed 八bank固定路由 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |

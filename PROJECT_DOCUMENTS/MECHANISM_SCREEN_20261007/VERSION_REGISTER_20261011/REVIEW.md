@@ -1,3 +1,6 @@
+
+> 当前完整范围：[完整M/C/版本对照入口](../FULL_REVIEW_POST_U034_20261011/REVIEW.md)。108项/136行/254版本逐项保留；71只是旧筛选子集，不能据此声称只剩7个机制。
+
 # 机制版本复核而非只筛家族
 
 此前两次筛选主要在U编号方向层面，压缩了具体版本和组合，遗漏了已做的残差优先回放和当前权重加换边实现。本复核纠正这一粒度错误。当前默认仍为用户采用的COV-SUPPORT，COV-R是比较锚点；不新增定位实验、不启动新科学运行。
@@ -41,3 +44,7 @@
 ## 今后的筛选记账
 
 每一条必须保留“机制→操作版本→参数配置→对照→结果适用范围→是否已实际运行”。同名称跨程序不自动合并；不同视图不算新生命；单参数剂量与实质算法改变分开；同一版本失败不替其它版本判死，也不允许靠名称变化复活相同失败操作。当前核心与所有冻结实验不变。本次未运行任何科学记录。
+
+## Completed U034 DEV supplement
+
+The original census above had 249 program/version records. The current VERSIONS.json adds the five actually executed SUPPORT_DIRECTION_V1 configurations, giving **254 records**, including two repeated baselines and two diagnostics; this is not five new mechanisms. SUPPORT-DIR failed its predeclared DEV advance gate (0-point mean NEW J gain over SUPPORT, about 1.18 times training CPU). U034 is removed from current scheduling; no confirmation was run and diagnostics are not promoted. Current decisions are in [the updated shortlist](../CURRENT_TEST_SHORTLIST_20261011.md). The qualified experiment sources and frozen scientific verdict are unchanged.
