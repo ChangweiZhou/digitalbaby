@@ -1,0 +1,585 @@
+[
+  {
+    "name": "ordinary",
+    "family": "reference",
+    "kind": "legacy",
+    "params": {
+      "mode": "uniform_delta"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "ordinary_slow",
+    "family": "reference",
+    "kind": "legacy",
+    "params": {
+      "mode": "uniform_delta",
+      "eta": 0.15
+    },
+    "feature": "sparse",
+    "note": "Low-rate retention/plasticity control."
+  },
+  {
+    "name": "v21_input",
+    "family": "reference",
+    "kind": "legacy",
+    "params": {
+      "mode": "g1_feedback"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "v22_joint",
+    "family": "reference",
+    "kind": "legacy",
+    "params": {
+      "mode": "joint_feedback"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "v22_scrambled",
+    "family": "reference",
+    "kind": "legacy",
+    "params": {
+      "mode": "joint_scrambled"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "historical_ridge",
+    "family": "reference",
+    "kind": "legacy",
+    "params": {
+      "mode": "cumulative_ridge"
+    },
+    "feature": "sparse",
+    "note": "Covariance memory and equally weighted obsolete labels are explicit costs/limitations."
+  },
+  {
+    "name": "pair_importance",
+    "family": "importance_and_availability",
+    "kind": "importance",
+    "params": {
+      "granularity": "pair",
+      "strength": 3
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "pair_importance_strong",
+    "family": "importance_and_availability",
+    "kind": "importance",
+    "params": {
+      "granularity": "pair",
+      "strength": 12
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "neuron_availability",
+    "family": "importance_and_availability",
+    "kind": "importance",
+    "params": {
+      "granularity": "neuron",
+      "strength": 3
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "pair_importance_shuffled",
+    "family": "importance_and_availability",
+    "kind": "importance",
+    "params": {
+      "granularity": "pair",
+      "strength": 3,
+      "scramble": true
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "joint_plus_importance",
+    "family": "importance_and_availability",
+    "kind": "importance",
+    "params": {
+      "granularity": "pair",
+      "strength": 3,
+      "anatomical": true
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "importance_surprise_release",
+    "family": "importance_and_availability",
+    "kind": "importance",
+    "params": {
+      "granularity": "pair",
+      "strength": 3,
+      "release": true
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "bayes_stable",
+    "family": "uncertainty",
+    "kind": "bayes",
+    "params": {
+      "process_noise": 0.0
+    },
+    "feature": "sparse",
+    "note": "Diagonal Bayesian filter proxy; not exact MESU."
+  },
+  {
+    "name": "bayes_reopening",
+    "family": "uncertainty",
+    "kind": "bayes",
+    "params": {
+      "process_noise": 0.003
+    },
+    "feature": "sparse",
+    "note": "Diagonal Bayesian filter proxy; not exact MESU."
+  },
+  {
+    "name": "projection16_strict",
+    "family": "subspace",
+    "kind": "projection",
+    "params": {
+      "rank": 16,
+      "leak": 0.0
+    },
+    "feature": "sparse",
+    "note": "Causal incremental input basis; no task-boundary SVD or oracle past probes."
+  },
+  {
+    "name": "projection48_strict",
+    "family": "subspace",
+    "kind": "projection",
+    "params": {
+      "rank": 48,
+      "leak": 0.0
+    },
+    "feature": "sparse",
+    "note": "Causal incremental input basis; no task-boundary SVD or oracle past probes."
+  },
+  {
+    "name": "projection16_leaky",
+    "family": "subspace",
+    "kind": "projection",
+    "params": {
+      "rank": 16,
+      "leak": 0.15
+    },
+    "feature": "sparse",
+    "note": "Causal incremental input basis; no task-boundary SVD or oracle past probes."
+  },
+  {
+    "name": "fast_slow2",
+    "family": "consolidation",
+    "kind": "consolidation",
+    "params": {
+      "states": 2,
+      "feedback": false
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "fast_slow3",
+    "family": "consolidation",
+    "kind": "consolidation",
+    "params": {
+      "states": 3,
+      "feedback": false
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "feedback_consolidation",
+    "family": "consolidation",
+    "kind": "consolidation",
+    "params": {
+      "states": 2,
+      "feedback": true
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "cascade4",
+    "family": "discrete_metaplasticity",
+    "kind": "cascade",
+    "params": {
+      "levels": 4
+    },
+    "feature": "sparse",
+    "note": "Bounded stochastic depth proxy, not exact Fusi cascade."
+  },
+  {
+    "name": "cascade8",
+    "family": "discrete_metaplasticity",
+    "kind": "cascade",
+    "params": {
+      "levels": 8
+    },
+    "feature": "sparse",
+    "note": "Bounded stochastic depth proxy, not exact Fusi cascade."
+  },
+  {
+    "name": "active_forgetting",
+    "family": "controlled_forgetting",
+    "kind": "active_forgetting",
+    "params": {
+      "fast_decay": 0.01,
+      "slow_decay": 0.0001
+    },
+    "feature": "sparse",
+    "note": "Task-free ensemble proxy, not published CAF protocol."
+  },
+  {
+    "name": "surprise_immediate",
+    "family": "surprise",
+    "kind": "surprise",
+    "params": {
+      "mode": "immediate"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "surprise_smoothed",
+    "family": "surprise",
+    "kind": "surprise",
+    "params": {
+      "mode": "smoothed"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "fastweights_hebbian",
+    "family": "fast_association",
+    "kind": "fastweights",
+    "params": {
+      "mode": "hebbian"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "fastweights_residual",
+    "family": "fast_association",
+    "kind": "fastweights",
+    "params": {
+      "mode": "residual"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "sparse96_fixed",
+    "family": "sparse_geometry",
+    "kind": "sparse_specialization",
+    "params": {
+      "width": 96,
+      "k": 8,
+      "adaptive": false
+    },
+    "feature": "dense",
+    "note": "Positive normalized competitive address proxy; additional width is counted."
+  },
+  {
+    "name": "sparse96_adaptive",
+    "family": "sparse_geometry",
+    "kind": "sparse_specialization",
+    "params": {
+      "width": 96,
+      "k": 8,
+      "adaptive": true
+    },
+    "feature": "dense",
+    "note": "Positive normalized competitive address proxy; additional width is counted."
+  },
+  {
+    "name": "sparse384_fixed",
+    "family": "sparse_geometry",
+    "kind": "sparse_specialization",
+    "params": {
+      "width": 384,
+      "k": 24,
+      "adaptive": false
+    },
+    "feature": "dense",
+    "note": "Positive normalized competitive address proxy; additional width is counted."
+  },
+  {
+    "name": "sparse384_adaptive",
+    "family": "sparse_geometry",
+    "kind": "sparse_specialization",
+    "params": {
+      "width": 384,
+      "k": 24,
+      "adaptive": true
+    },
+    "feature": "dense",
+    "note": "Positive normalized competitive address proxy; additional width is counted."
+  },
+  {
+    "name": "allocate32",
+    "family": "bounded_allocation",
+    "kind": "allocation",
+    "params": {
+      "slots": 32,
+      "threshold": 0.9,
+      "recycle": true,
+      "quantized": false
+    },
+    "feature": "sparse",
+    "note": "ART/SQHN-inspired bounded slot proxy; not hierarchical MAP SQHN or unbounded expansion."
+  },
+  {
+    "name": "allocate128",
+    "family": "bounded_allocation",
+    "kind": "allocation",
+    "params": {
+      "slots": 128,
+      "threshold": 0.9,
+      "recycle": true,
+      "quantized": false
+    },
+    "feature": "sparse",
+    "note": "ART/SQHN-inspired bounded slot proxy; not hierarchical MAP SQHN or unbounded expansion."
+  },
+  {
+    "name": "allocate32_no_recycle",
+    "family": "bounded_allocation",
+    "kind": "allocation",
+    "params": {
+      "slots": 32,
+      "threshold": 0.9,
+      "recycle": false,
+      "quantized": false
+    },
+    "feature": "sparse",
+    "note": "ART/SQHN-inspired bounded slot proxy; not hierarchical MAP SQHN or unbounded expansion."
+  },
+  {
+    "name": "quantized_allocate128",
+    "family": "bounded_allocation",
+    "kind": "allocation",
+    "params": {
+      "slots": 128,
+      "threshold": 0.9,
+      "recycle": true,
+      "quantized": true
+    },
+    "feature": "sparse",
+    "note": "ART/SQHN-inspired bounded slot proxy; not hierarchical MAP SQHN or unbounded expansion."
+  },
+  {
+    "name": "silent_inferred",
+    "family": "storage_and_access",
+    "kind": "silent_memory",
+    "params": {
+      "banks": 8,
+      "routing": "inferred"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "context_inferred",
+    "family": "context_routing",
+    "kind": "context_gating",
+    "params": {
+      "banks": 4,
+      "routing": "inferred"
+    },
+    "feature": "sparse",
+    "note": "Routes inferred from numerical input; no externally supplied task or phase ID."
+  },
+  {
+    "name": "silent_fixed",
+    "family": "storage_and_access",
+    "kind": "silent_memory",
+    "params": {
+      "banks": 8,
+      "routing": "fixed"
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "context_fixed",
+    "family": "context_routing",
+    "kind": "context_gating",
+    "params": {
+      "banks": 4,
+      "routing": "fixed"
+    },
+    "feature": "sparse",
+    "note": "Routes inferred from numerical input; no externally supplied task or phase ID."
+  },
+  {
+    "name": "adapter_retained",
+    "family": "capacity_recycling",
+    "kind": "recycling",
+    "params": {
+      "width": 96,
+      "k": 24,
+      "replace": false,
+      "interval": 48
+    },
+    "feature": "dense",
+    "note": "Trainable downstream address units; the shared ELM itself stays frozen."
+  },
+  {
+    "name": "adapter_recycled",
+    "family": "capacity_recycling",
+    "kind": "recycling",
+    "params": {
+      "width": 96,
+      "k": 24,
+      "replace": true,
+      "interval": 48
+    },
+    "feature": "dense",
+    "note": "Trainable downstream address units; the shared ELM itself stays frozen."
+  },
+  {
+    "name": "replay_reservoir8",
+    "family": "replay_reference",
+    "kind": "replay",
+    "params": {
+      "policy": "reservoir",
+      "capacity": 8
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "replay_reservoir32",
+    "family": "replay_reference",
+    "kind": "replay",
+    "params": {
+      "policy": "reservoir",
+      "capacity": 32
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "replay_recent8",
+    "family": "replay_reference",
+    "kind": "replay",
+    "params": {
+      "policy": "recent",
+      "capacity": 8
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "replay_recent32",
+    "family": "replay_reference",
+    "kind": "replay",
+    "params": {
+      "policy": "recent",
+      "capacity": 32
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "repeat_current",
+    "family": "exposure_control",
+    "kind": "repeat_current",
+    "params": {},
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "retrieve_hard8",
+    "family": "episodic_retrieval",
+    "kind": "retrieval",
+    "params": {
+      "mode": "hard",
+      "policy": "recent",
+      "capacity": 8
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "retrieve_soft8",
+    "family": "episodic_retrieval",
+    "kind": "retrieval",
+    "params": {
+      "mode": "soft",
+      "policy": "recent",
+      "capacity": 8
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "retrieve_hard32",
+    "family": "episodic_retrieval",
+    "kind": "retrieval",
+    "params": {
+      "mode": "hard",
+      "policy": "recent",
+      "capacity": 32
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "retrieve_soft32",
+    "family": "episodic_retrieval",
+    "kind": "retrieval",
+    "params": {
+      "mode": "soft",
+      "policy": "recent",
+      "capacity": 32
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "fastslow_replay8",
+    "family": "combination",
+    "kind": "replay_consolidation",
+    "params": {
+      "policy": "reservoir",
+      "capacity": 8,
+      "states": 2,
+      "feedback": false
+    },
+    "feature": "sparse",
+    "note": ""
+  },
+  {
+    "name": "fastslow_replay32",
+    "family": "combination",
+    "kind": "replay_consolidation",
+    "params": {
+      "policy": "reservoir",
+      "capacity": 32,
+      "states": 2,
+      "feedback": false
+    },
+    "feature": "sparse",
+    "note": ""
+  }
+]

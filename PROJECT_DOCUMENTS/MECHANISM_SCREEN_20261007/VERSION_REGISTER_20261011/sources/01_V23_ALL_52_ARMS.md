@@ -1,0 +1,82 @@
+# Archived V23 full 52-arm screen
+
+Source: `elm_fly_v23_20260906_173231_28825_results.zip/REPORT.md`. Six seeds, shared frozen encoder. These are screen means, not equal-capacity comparisons or 52 independently validated mechanisms.
+
+| Arm | n | A after B | B learned | Revision after C | Second revision | Terminal all | Mutable KiB |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| ordinary | 6 | 53.94 | 99.77 | 59.26 | 100.00 | 36.66 | 3.0 |
+| ordinary_slow | 6 | 62.27 | 97.45 | 64.35 | 92.13 | 40.26 | 3.0 |
+| v21_input | 6 | 46.53 | 96.06 | 45.83 | 100.00 | 32.68 | 3.0 |
+| v22_joint | 6 | 45.60 | 93.75 | 48.15 | 100.00 | 33.90 | 3.0 |
+| v22_scrambled | 6 | 41.67 | 95.14 | 46.76 | 99.54 | 34.47 | 3.0 |
+| historical_ridge | 6 | 98.84 | 99.54 | 42.13 | 38.43 | 54.12 | 75.0 |
+| pair_importance | 6 | 78.24 | 95.37 | 68.06 | 72.69 | 47.29 | 6.0 |
+| pair_importance_strong | 6 | 94.44 | 69.68 | 31.02 | 25.93 | 37.61 | 6.0 |
+| neuron_availability | 6 | 78.70 | 96.06 | 67.13 | 71.30 | 46.89 | 3.8 |
+| pair_importance_shuffled | 6 | 60.42 | 99.77 | 58.33 | 96.76 | 37.27 | 9.0 |
+| joint_plus_importance | 6 | 71.53 | 78.94 | 53.70 | 60.65 | 37.10 | 6.0 |
+| importance_surprise_release | 6 | 56.71 | 100.00 | 62.50 | 100.00 | 37.29 | 6.0 |
+| bayes_stable | 6 | 63.66 | 100.00 | 76.85 | 91.20 | 47.64 | 3.8 |
+| bayes_reopening | 6 | 56.02 | 100.00 | 65.74 | 100.00 | 38.01 | 3.8 |
+| projection16_strict | 6 | 75.23 | 98.38 | 44.44 | 73.15 | 36.03 | 15.0 |
+| projection48_strict | 6 | 87.27 | 72.45 | 29.63 | 39.35 | 33.23 | 39.0 |
+| projection16_leaky | 6 | 74.54 | 100.00 | 63.43 | 98.61 | 38.11 | 15.0 |
+| fast_slow2 | 6 | 46.53 | 88.43 | 37.96 | 95.83 | 38.43 | 6.0 |
+| fast_slow3 | 6 | 45.60 | 91.20 | 42.59 | 96.76 | 35.61 | 9.0 |
+| feedback_consolidation | 6 | 37.73 | 93.75 | 35.65 | 100.00 | 36.45 | 6.0 |
+| cascade4 | 6 | 58.80 | 70.37 | 54.17 | 73.15 | 35.42 | 0.8 |
+| cascade8 | 6 | 73.61 | 56.94 | 29.17 | 12.04 | 25.38 | 0.8 |
+| active_forgetting | 6 | 40.97 | 98.61 | 46.76 | 100.00 | 32.89 | 6.0 |
+| surprise_immediate | 6 | 52.31 | 99.54 | 56.02 | 100.00 | 36.89 | 3.0 |
+| surprise_smoothed | 6 | 52.31 | 99.54 | 56.48 | 100.00 | 37.10 | 3.0 |
+| fastweights_hebbian | 6 | 20.60 | 92.59 | 25.00 | 98.15 | 29.84 | 6.0 |
+| fastweights_residual | 6 | 46.99 | 93.98 | 39.81 | 100.00 | 38.15 | 6.0 |
+| sparse96_fixed | 6 | 36.57 | 94.91 | 49.54 | 99.54 | 34.36 | 3.8 |
+| sparse96_adaptive | 6 | 25.46 | 43.29 | 38.89 | 66.20 | 25.90 | 147.8 |
+| sparse384_fixed | 6 | 67.36 | 100.00 | 74.54 | 100.00 | 39.75 | 15.0 |
+| sparse384_adaptive | 6 | 27.31 | 46.99 | 44.91 | 81.94 | 27.59 | 591.0 |
+| allocate32 | 6 | 100.00 | 47.69 | 73.15 | 81.48 | 31.69 | 26.5 |
+| allocate128 | 6 | 100.00 | 100.00 | 100.00 | 100.00 | 61.36 | 106.0 |
+| allocate32_no_recycle | 6 | 100.00 | 46.53 | 78.70 | 78.70 | 32.93 | 26.5 |
+| quantized_allocate128 | 6 | 100.00 | 100.00 | 100.00 | 100.00 | 57.72 | 202.0 |
+| silent_inferred | 6 | 94.44 | 99.07 | 89.35 | 99.07 | 59.57 | 30.1 |
+| context_inferred | 6 | 87.96 | 99.77 | 87.50 | 100.00 | 54.63 | 15.1 |
+| silent_fixed | 6 | 85.65 | 93.52 | 82.41 | 88.89 | 59.09 | 30.1 |
+| context_fixed | 6 | 81.94 | 94.68 | 83.33 | 93.98 | 52.46 | 15.1 |
+| adapter_retained | 6 | 74.77 | 100.00 | 80.09 | 100.00 | 46.91 | 77.2 |
+| adapter_recycled | 6 | 76.16 | 100.00 | 80.56 | 100.00 | 48.30 | 77.2 |
+| replay_reservoir8 | 6 | 64.58 | 97.92 | 69.44 | 100.00 | 37.71 | 9.1 |
+| replay_reservoir32 | 6 | 79.17 | 97.92 | 71.76 | 100.00 | 40.55 | 27.5 |
+| replay_recent8 | 6 | 52.31 | 99.54 | 58.80 | 100.00 | 36.41 | 9.1 |
+| replay_recent32 | 6 | 50.69 | 100.00 | 57.87 | 100.00 | 37.48 | 27.5 |
+| repeat_current | 6 | 50.69 | 100.00 | 58.33 | 100.00 | 36.60 | 3.0 |
+| retrieve_hard8 | 6 | 53.94 | 99.77 | 59.26 | 100.00 | 36.66 | 9.1 |
+| retrieve_soft8 | 6 | 53.94 | 99.77 | 59.26 | 100.00 | 36.66 | 9.1 |
+| retrieve_hard32 | 6 | 53.94 | 100.00 | 59.26 | 100.00 | 37.75 | 27.5 |
+| retrieve_soft32 | 6 | 53.94 | 100.00 | 59.26 | 100.00 | 37.75 | 27.5 |
+| fastslow_replay8 | 6 | 57.64 | 78.01 | 42.59 | 93.52 | 38.32 | 12.1 |
+| fastslow_replay32 | 6 | 64.58 | 77.31 | 55.56 | 91.20 | 39.10 | 30.5 |
+
+## Protocol and interpretation
+
+- Original A/B/revision data and order preserve V22 RNG namespaces; STREAMS.json records prefix checks. C and a third-label revision follow, then the declared novel/revision stress waves. Cohort names and IDs belong only to the evaluator.
+- Every external event is predicted before its label enters observe(). Replay adds a charged presentation. Decay/consolidation advances once per external event, with no time ticks for probes or reminders.
+- The larger stress stream deliberately exceeds the 96-dimensional readout capacity in some regimes. Current-label offline ridge feasibility references are privileged diagnostics, never online contestants or accuracy upper bounds.
+- Extra addresses, slots, banks, covariance, importance and uncertainty are memory costs. This is not an equal-capacity comparison. Mutable bytes, declared fixed bytes, presentations and elapsed loop time are reported. Reported numeric bytes exclude Python object overhead and shared encoder/anatomy/evaluator arrays.
+- Historical ridge retains conflicting labels; strict projection can prevent revision; replay can preserve obsolete targets. Acquisition, retention, revision, and cost must be read together.
+- Frozen reminders supply unlabeled sensory information. Reminder identities are excluded from target evaluation. Matched and unrelated reminders leave storage, gate state, clock and RNG unchanged. Recovery of a superseded label is recorded separately and is not adaptation success. A and B are random cohorts without guaranteed distinguishable context, so a null reminder effect does not reject biological silent traces.
+- Sampled write effects compare net score changes, including decay and consolidation, against a hypothetical ordinary additive write on the same input feature and expressed residual. This is score displacement, not intrinsically harmful forgetting. Old-label MSE change is reported separately. Retrieval and allocation can be nonlinear; this is not an exact matched-parameter counterfactual for them.
+- SDM is represented by positive competitive address proxies, not merely a new top-k fraction. The quantized allocation arm is not full hierarchical MAP SQHN. Bayesian filtering is not exact MESU. Incremental projection has no task-boundary SVD. Availability alone is not the full context-selective Barry model. The active-forgetting proxy receives no task IDs, unlike published CAF experiments. Frozen-storage recovery is a computational diagnostic, not the biological recovery process.
+- No full trajectory dump or automatic hyperparameter selection is performed. A best-of-many result needs subsequent confirmation; the tested variants do not eliminate entire mechanism families.
+
+## Exposure totals
+
+- Seed 17: 264 identities, 528 unique sensory training inputs, 756 distinct input/outcome pairs, 2304 external presentations per arm; 384 encoder-development training plus 64 calibration presentations. Extra presentations across arms: 16121.
+- Seed 29: 264 identities, 528 unique sensory training inputs, 744 distinct input/outcome pairs, 2304 external presentations per arm; 384 encoder-development training plus 64 calibration presentations. Extra presentations across arms: 16121.
+- Seed 43: 264 identities, 528 unique sensory training inputs, 758 distinct input/outcome pairs, 2304 external presentations per arm; 384 encoder-development training plus 64 calibration presentations. Extra presentations across arms: 16121.
+- Seed 59: 264 identities, 528 unique sensory training inputs, 752 distinct input/outcome pairs, 2304 external presentations per arm; 384 encoder-development training plus 64 calibration presentations. Extra presentations across arms: 16121.
+- Seed 71: 264 identities, 528 unique sensory training inputs, 754 distinct input/outcome pairs, 2304 external presentations per arm; 384 encoder-development training plus 64 calibration presentations. Extra presentations across arms: 16121.
+- Seed 89: 264 identities, 528 unique sensory training inputs, 750 distinct input/outcome pairs, 2304 external presentations per arm; 384 encoder-development training plus 64 calibration presentations. Extra presentations across arms: 16121.
+
+FROZEN_REMINDERS.csv records additional reminder inputs; these are information exposures without labeled updates. Stored-state coupling operations are unlabeled arithmetic, not new unique examples. METRICS.csv includes both external and total labeled presentations at each checkpoint.
+

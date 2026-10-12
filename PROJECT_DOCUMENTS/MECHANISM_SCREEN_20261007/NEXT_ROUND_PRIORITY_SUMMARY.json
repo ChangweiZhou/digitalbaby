@@ -1,25 +1,29 @@
 {
   "date": "2026-10-11",
-  "revision": "POST_U042_USER_ADOPTION",
+  "revision": "POST_U055_ATTRIBUTION_CORRECTION",
   "screening_axis": "Bounded addition sample efficiency; user adoption distinguished from confirmation",
   "input_retained_entries": 71,
   "counts": {
-    "ADOPTED_BASELINE": 3,
-    "CONDITIONAL_CANDIDATE": 6,
+    "NOT_NEXT_ROUND": 46,
     "ENABLING_COMPONENT": 8,
-    "NOT_NEXT_ROUND": 48,
+    "ADOPTED_BASELINE": 3,
     "RECIPE_HOLD": 4,
+    "CONDITIONAL_CANDIDATE": 6,
+    "PRIORITY_DESIGN": 2,
     "REFERENCE_ONLY": 1,
     "STOP_CURRENT_RECIPE": 1
   },
-  "priority_ids": [],
+  "priority_ids": [
+    "U034",
+    "U047"
+  ],
   "native_autonomous_core_configurations_verified": 1,
   "science_launch_authorized": false,
   "native_trajectories_run_by_this_document_update": 0,
   "frozen_scientific_files_changed": false,
   "S_ERROR_hypothesis": "S_ERROR_SUPERVISED_HYPOTHESIS.md",
-  "next_step": "以用户采用的COV-SUPPORT为开发核心、COV-R为比较锚点；讨论不同经验间的共享约束机制，不启动新实验。",
-  "count_warning": "71条去重记录；3个采用条目中U042为用户开发采用，非通过确认。U018原生E0/E1与U045工程有限E3仍保持各自证据边界；6个条件方向不是6个已准备变体。",
+  "next_step": "根据具体版本及当前加法DEV/CONF证据选择差异明确的配方；上一轮两个方向的次序暂定，不授权运行。",
+  "count_warning": "71是历史去重条件集合，不是全部可能机制；2项可优先设计、6项条件备选均未锁定/资格化。预算筛选不等于科学整族淘汰。",
   "historical108_autonomous_budget_counts": {
     "REFERENCE_NOT_AUTONOMOUS_PROOF": 30,
     "ENABLING_COMPONENT": 12,
@@ -32,10 +36,10 @@
   "conditional_ids": [
     "U021",
     "U043",
-    "U047",
     "U055",
     "U057",
-    "U058"
+    "U058",
+    "U059"
   ],
   "component_ids": [
     "U004",
@@ -52,34 +56,52 @@
     "U042",
     "U045"
   ],
-  "candidate_directions_to_consider": 6,
-  "immediate_design_directions": 0,
+  "candidate_directions_to_consider": 8,
+  "immediate_design_directions": 2,
   "conditional_design_directions": 6,
   "component_entries_not_independent_candidates": 8,
-  "noncandidate_or_held_entries": 54,
+  "noncandidate_or_held_entries": 52,
   "evidence_report": "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/addition_observation_support_dev_v1_20261011/results/REPORT.md",
-  "current_review": "POST_U042_USER_ADOPTION_20261011.md",
-  "history_snapshot": "history/pre_U042_user_adoption_20261011/",
+  "current_review": "POST_U055_RESCREEN_20261011.md",
+  "history_snapshot": "history/pre_U055_attribution_correction_20261011/",
   "classification_changes": [
     {
-      "id": "U042",
-      "previous": "PRIORITY_DESIGN",
-      "current": "ADOPTED_BASELINE",
-      "basis": "Explicit owner adoption; frozen scientific no-advance decision preserved."
+      "id": "U034",
+      "previous": "NOT_NEXT_ROUND",
+      "current": "PRIORITY_DESIGN",
+      "basis": "Current-task budget rescreen, not new scientific evidence"
+    },
+    {
+      "id": "U047",
+      "previous": "CONDITIONAL_CANDIDATE",
+      "current": "PRIORITY_DESIGN",
+      "basis": "Current-task budget rescreen, not new scientific evidence"
+    },
+    {
+      "id": "U059",
+      "previous": "NOT_NEXT_ROUND",
+      "current": "CONDITIONAL_CANDIDATE",
+      "basis": "Current-task budget rescreen, not new scientific evidence"
     }
   ],
   "latest_milestone": "Bounded exact addition-rule learning with suitable training data and blurry external feedback",
   "addition_priority": {
-    "matched_baseline": "U045/COV-R",
+    "matched_baseline": "USER_ADOPTED_COV-SUPPORT",
+    "comparison_anchor": "COV-R",
     "native_observation_reference": "U018 (E0/E1 only)",
-    "first_candidate_direction": "U042_context_support_soft_write_gate",
-    "common_components": [
-      "U069",
-      "U070"
+    "first_candidate_directions": [
+      "U034",
+      "U047"
     ],
-    "conditional_recurrence": "U055",
-    "feedback_policy": "Observed noisy/missing answer bytes; BLURRY primary; freeze before next run",
-    "science_authorized": false
+    "secondary_candidate_direction": "U059",
+    "conditional_recurrence": "U055 requires explicit original-source circuit, not generic joint estimation",
+    "common_components": [
+      "U044",
+      "U062"
+    ],
+    "feedback_policy": "Observed noisy/missing answer bytes; primary held-out NEW learning curve, retention guard and full costs",
+    "science_authorized": false,
+    "priority_is_provisional_until_variant_selection": true
   },
   "addition_milestone_history": "history/pre_V2_addition_milestone/",
   "addition_three_cycle_history": "history/pre_addition_three_cycle_result/",
@@ -142,5 +164,28 @@
     "confirmation_worlds": 0,
     "user_adopted": true,
     "incremental_low_sample_gain_confirmed": false
+  },
+  "source_correction": "Previous mapping of generic multi-observation re-estimation to U055/M094 was not justified; superseded.",
+  "version_review": {
+    "report": "VERSION_REGISTER_20261011/REVIEW.md",
+    "index": "VERSION_REGISTER_20261011/VERSIONS.json",
+    "coverage_counts": {
+      "V23": 52,
+      "V24": 101,
+      "V25": 58,
+      "V30_DIRECTION": 10,
+      "V31_UNCERTAINTY": 10,
+      "SAMPLE_GEN_V2": 9,
+      "FEEDBACK_EFFICIENCY_V1": 6,
+      "OBSERVATION_SUPPORT_V1": 3
+    },
+    "priority_scope": "Direction-only provisional; not a completed variant ranking",
+    "missed_actual_versions": [
+      "SAMPLE_GEN_V2/REPLAY-P",
+      "SAMPLE_GEN_V2/REPLAY-U",
+      "SAMPLE_GEN_V2/TOPO-G",
+      "V24/101 named configurations",
+      "V31_UNCERTAINTY/finite horizons"
+    ]
   }
 }

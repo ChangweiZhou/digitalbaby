@@ -1,5 +1,7 @@
 # U042 development adoption and next decisions
 
+> 后续纠正：本文关于将多观察联合重估归入U055的建议依据不足，已由[来源复核](POST_U055_RESCREEN_20261011.md)取代。用户采用记录与统计结果保持原状。
+
 The owner selected COV-SUPPORT as the current development core on 11 October 2026. Its default entrypoint is documented in [the release](../../addition_core_v2_support_v1_20261011/README.md); COV-R remains an explicit comparison anchor. The adoption does not amend the frozen DEV verdict or substitute for confirmation.
 
 BLURRY low-sample NEW J changed by −0.83 percentage points in six paired worlds; the exploratory paired Student p value is 0.50 and its 95% interval is [−3.79,+2.12]. Stratifying by the two task geometries gives [−5.33,+3.66], p=0.55. The result does not establish harm, equivalence, or benefit. BLURRY OLD held-out final improved by 25.83 points; STANDARD NEW J improved by 12.08 points. These signals support retaining the mechanism for development, with their unconfirmed scope explicit.

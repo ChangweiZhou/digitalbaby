@@ -1,24 +1,28 @@
-# MiniFly mechanism priorities after U042 adoption
+# MiniFly当前机制优先级：U055归属纠正后
 
-2026-10-11。当前开发核心采用COV-SUPPORT，由用户明确决定；COV-R保留为比较锚点。**这是开发采用，不是通过独立确认的低样本升级。** 原实验NO_ADVANCE_RETAIN_COV_R结论不变。
+> 版本级补充：上一轮方向排序尚未覆盖具体版本，尤其漏述了已测REPLAY-P和TOPO-G。请以[版本复核](VERSION_REGISTER_20261011/REVIEW.md)和机器可读版本索引补充判断，不能将该方向排序当作最终配方选择。
 
-[采用记录](../../addition_core_v2_support_v1_20261011/ADOPTION.json)、[统计重新分析](../../addition_observation_support_dev_v1_20261011/posthoc/reanalysis_20261011/REANALYSIS.json)、[当前核心入口](../CURRENT_ADDITION_CORE.json)、[此前筛选快照](history/pre_U042_user_adoption_20261011/NEXT_ROUND_PRIORITY.md)。
 
-71条去重记录仍在。3个采用条目分属不同证据范围：U018原生观察E0/E1，U045工程COV-R有限E3，U042用户采用的支持门。另有6个条件方向、8个构件及54个非当前候选/暂缓条目。没有新增整族证伪，也没有新实验运行授权。
+2026-10-11。当前开发默认COV-SUPPORT，比较锚点COV-R；目标固定为更少带噪/缺失外部样本与计费计算下的未见加法自身输出泛化，旧知识保持受保护。用户采用与科学确认分开。未运行或授权新实验。
+
+[本次完整复核与71条理由](POST_U055_RESCREEN_20261011.md)、[原始交叉引用](POST_U055_RESCREEN_20261011.json)、[此前快照](history/pre_U055_attribution_correction_20261011/NEXT_ROUND_PRIORITY.md)。
+
+U055原来源是KC递归/DPM/广义反馈，不能直接对应通用多观察联合重估，已撤销默认第一的推荐。优先设计U047选择性再激活和U034有支持的不确定性重开；U059因果预算分配为第二顺位。均尚未形成锁定可运行配方。
 
 | 分类 | 数量 |
 |---|---:|
 | ADOPTED_BASELINE | 3 |
 | CONDITIONAL_CANDIDATE | 6 |
 | ENABLING_COMPONENT | 8 |
-| NOT_NEXT_ROUND | 48 |
+| NOT_NEXT_ROUND | 46 |
+| PRIORITY_DESIGN | 2 |
 | RECIPE_HOLD | 4 |
 | REFERENCE_ONLY | 1 |
 | STOP_CURRENT_RECIPE | 1 |
 
-下一步仍研究未见加法的样本效率。U055多经验协调与U043实际连接调整为有条件方向；U047旧均匀重放不重启，U021/U057/U058的启动前提未满足。新增循环、状态或重复更新本身不是效能提升。
+71是历史条件集合，不是全部机制。8个考虑方向含2项优先设计、6项条件备选；8个构件不算独立候选。所有历史结果和原来源ID保留，旧exact-context E1统计不作为本任务整族排除依据。
 
-| ID | 名称 | 当前分类 | 当前实例 |
+| ID | 名称 | 分类 | 当前实例状态 |
 |---|---|---|---|
 | U001 | FE2 / Temporal contrast | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U002 | LAT4 / Latency classes | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
@@ -53,7 +57,7 @@
 | U031 | Recurrent post-event consolidation window | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U032 | Stubborn/adaptable heterogeneous populations | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U033 | bayes_stable | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
-| U034 | bayes_reopening | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
+| U034 | bayes_reopening | PRIORITY_DESIGN | SUPPORTED_DIRECTIONAL_UNCERTAINTY_REOPENING |
 | U035 | context_fixed 四bank固定路由 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U036 | context_inferred 四bank推断路由 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U037 | silent_fixed 八bank固定路由 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
@@ -66,7 +70,7 @@
 | U044 | 稳定地址与可塑内容分离或输入坐标兼容 | ENABLING_COMPONENT | NO_NEW_QUALIFIED_INSTANCE |
 | U045 | 有界Hebbian key/value或predictive residual fast matrix | ADOPTED_BASELINE | ADOPTED_ENGINEERED_COV_R_BOUNDED_E3 |
 | U046 | 有界分布式地址层与自适应原型 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
-| U047 | 有限选择性再激活或bounded offline O | CONDITIONAL_CANDIDATE | STOP_UNIFORM_REPLAY_FROZEN_P_AND_CURRENT_EXTRA_RECIPES |
+| U047 | 有限选择性再激活或bounded offline O | PRIORITY_DESIGN | BOUNDED_INFORMATION_DIVERSE_REACTIVATION |
 | U048 | 真正连续活动的稳定Oja与兼容记忆的输入适应 | ENABLING_COMPONENT | NO_NEW_QUALIFIED_INSTANCE |
 | U049 | 历史结构化感觉输入的fast-minus-slow时间对比 | ENABLING_COMPONENT | NO_NEW_QUALIFIED_INSTANCE |
 | U050 | SIM-MIX 带exact-member权限的相似读出 | STOP_CURRENT_RECIPE | CLOSED_NEGATIVE_SCREEN |
@@ -74,11 +78,11 @@
 | U052 | 有界utility replacement或TRACE-U | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U053 | 局部Bayesian读权限控制 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U054 | Candidate C positive-pair nuisance removal | RECIPE_HOLD | HELD_NOT_REHABILITATED |
-| U055 | 有界KC↔KC递归与广义调制反馈 | CONDITIONAL_CANDIDATE | CONDITIONAL_NEW_BOUNDED_CORRECTION_CIRCUIT |
+| U055 | 有界KC↔KC递归与广义调制反馈 | CONDITIONAL_CANDIDATE | HOLD_REQUIRE_EXPLICIT_RECURRENT_CIRCUIT |
 | U056 | Fly-2 两单元STM→LTM递归教学 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U057 | 增量long-vs-short信息门 | CONDITIONAL_CANDIDATE | PARK_NO_TWO_PREDICTOR_NEED |
 | U058 | 多horizon residual hierarchy | CONDITIONAL_CANDIDATE | PARK_NO_LONGER_HORIZON_NEED |
-| U059 | 因果plasticity quota与跨时间竞争 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
+| U059 | 因果plasticity quota与跨时间竞争 | CONDITIONAL_CANDIDATE | CAUSAL_INFORMATION_BUDGET_ALLOCATION |
 | U060 | 有界persistent scratchpad与反馈工作状态 | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U061 | positive-and-negative reusable metric | NOT_NEXT_ROUND | NO_NEW_QUALIFIED_INSTANCE |
 | U062 | 冻结或慢残差参考与reference transport或constraint-only slow memory | ENABLING_COMPONENT | NO_NEW_QUALIFIED_INSTANCE |
