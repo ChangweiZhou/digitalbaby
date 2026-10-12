@@ -1,0 +1,14 @@
+# Independent audit findings and fixes
+
+Three-cycle scope: technical implementation and acceptance only; no efficacy selection, DEV or confirmation.
+
+1. Fixed storage: snapshots now carry mutable serialized payload, fixed assets and their total separately; the independent auditor reconstructs all three. The contracted 2× payload gate remains mutable serialized state. Resident process memory is measured separately. KCI stores dense31×31 float64 adjacency (7,688 bytes); its four nonzero active edges are not a measured four-edge-only memory access claim.
+2. Acceptance source: commit binds to config.lock(), independently audits the serialized artifact, and checks that same lock again before atomic acceptance. Actual commit tests reject forged source, failed audit and automatic repeat of a preserved failed artifact.
+3. Failure handling: explicit FAILED marker and provisional artifact survive an audit exception, its live claim is released; stale crash claims stay blocking and require explicit operations review. No trajectory is automatically restarted. Timeout cancels/terminates the detached process group. Only two jobs are admitted concurrently.
+4. Tampering: common permission, source, scope, output/state, numeric resource, payload/traffic and concrete mechanism event fields are rejected. CPU/RSS metadata are measured by the locked runner and checked for valid finite fields and per-record production/inclusive CPU relations; a separate hardware meter is not claimed.
+5. Operations: cold process resume, atomic commits, failed-artifact preservation, synthetic finishing and constant-time status checks are tested. Real science admission still requires an authorization-only adapter; no science10-hour session has been executed. The bundle includes source-relative parent dependencies; technical timing includes acceptance IO/audit via cycle averages, with a conservative multiplier and explicit setup allowance, not a guaranteed duration.
+6. Algorithmic scans/edges/bytes are conservative proxy charges rather than hardware bandwidth. Historical cycle sources are preserved; final cost eligibility uses the final cycle only. Diagnostic peers' costs are reported; the scientific1.5× CPU/2× payload caps apply to selectable candidates.
+
+ROLE permutation is the frozen seeded shuffle [14,1,4,0,5,12,13,11,8,2,3,9,7,6,10]. Coordinates1 and8 remain fixed; this is a partial permutation control, not an all-wrong identity derangement. Eligibility is preserved for the true current symbol while only the right coupling endpoint is rewired.
+
+Early preflight floating equality eta=.01 was corrected to a1e-15 test tolerance. A discarded SUPPORT timing smoke executed2,560 technical records without committing a receipt; it is outside the117 committed-cycle jobs and all science counts. This note does not promote technical behavior to E3 evidence.

@@ -1,0 +1,9 @@
+# Science handoff boundary after technical cycles
+
+The three cycles qualify transition equations, byte/branch provenance and technical acceptance. They do not authorize science. An authorization-only operations adapter must bind the frozen DEV manifest, exact ordinary=False/boolean metadata, paired byte/source/audit identities, fresh disjoint seeds and the one locked selected candidate before confirmation. Prospective select()/confirm() are arithmetic reducers, not provenance or authorization gates. No new core mechanism or efficacy-driven tuning is required for this handoff.
+
+PATH_LOOP/STAR_LOOP have five taught orbits, including a diagonal repeated in two epoch slots (nine distinct ordered keys). TRIANGLE_TAIL is exactly (0,1),(0,2),(1,2),(2,3),(3,4): ten distinct non-diagonal ordered keys. Thus NEW20 can supply at most two votes for every TRIANGLE_TAIL key; no diagonal early-trigger advantage exists there. Actual discordant RETRO discount needs at least four cached votes and a3:1 majority. Any late activation is measured, not repaired after DEV.
+
+Source audit distinguishes technically qualified peers from candidate-only CPU/payload eligibility. The final resource fields are measured locked-runner metadata; independent audit checks finite values, per-record production/inclusive ordering and deterministic algorithmic charges, not a separate hardware measurement nor a proof of all enclosing top-level CPU sums. Real science8-hour admission/10-hour boundary stop and concurrent science finishing remain adapter requirements; filesystem synthetic tests do not claim a10-hour science run.
+
+Full scientific run has not started. Neither historical cycle cost nor technical behavior chooses a winning learning mechanism. Fixed numeric priors, partial ROLE permutation, all counterpart costs and negative technical/cost outcomes remain disclosed.

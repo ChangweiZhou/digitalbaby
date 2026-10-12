@@ -1,0 +1,61 @@
+# FOUR-OPERATION ADDITION V1 — DEV_REPORT
+
+Verdict: NO_ADVANCE_RETAIN_USER_CORE
+
+E3 improvement test for bounded addition from noisy/missing observed answer bytes. Own outputs on never-taught combinations, delayed probes and intervening learning. Role/additivity and ordinal-output priors are engineered; this is not unrestricted arithmetic or AGI.
+
+```json
+{
+  "verdict": "NO_ADVANCE_RETAIN_USER_CORE",
+  "selected": null,
+  "gates": {
+    "ROLE": {
+      "COV-R_gain": true,
+      "COV-R_primary_guard": true,
+      "COV-R_standard_guard": true,
+      "COV-SUPPORT_gain": false,
+      "COV-SUPPORT_primary_guard": true,
+      "COV-SUPPORT_standard_guard": true,
+      "causal": true,
+      "resources": true,
+      "paired_payload": true
+    },
+    "KCI": {
+      "COV-R_gain": true,
+      "COV-R_primary_guard": true,
+      "COV-R_standard_guard": true,
+      "COV-SUPPORT_gain": false,
+      "COV-SUPPORT_primary_guard": true,
+      "COV-SUPPORT_standard_guard": true,
+      "causal": true,
+      "resources": false,
+      "paired_payload": true
+    }
+  },
+  "source": {
+    "addition_multimechanism_dev_v1_20261011/config.py": "0657fe6266e105b85de3467bed6884ebdeb8a6c94ed12bcdf321ce738cf72fbc",
+    "addition_multimechanism_dev_v1_20261011/cores.py": "d7b307b2d7362f9e0b72e69df525f41afeb9db605440c8cfea0b86e4b2495d91",
+    "addition_multimechanism_dev_v1_20261011/cycles.py": "597c64b34ebde47e3a796581184ad819e3cbd31a2bb5a0aca7234f730a242abb",
+    "addition_multimechanism_dev_v1_20261011/decision.py": "111a19dbeb7bac8844f13c4f401411d66ade00bf48cf3aee6d1867b3ef608d2b",
+    "addition_multimechanism_dev_v1_20261011/operations.py": "f0278b1e8296120303713c66eeafbecd621c4f2fb925d6479cf5eabfa482afa3",
+    "addition_multimechanism_dev_v1_20261011/parent_decision.py": "50e9f3ce615d38bf3a3429b7c77ea4b6cae6366beb63df29631c3712d3590b74",
+    "addition_multimechanism_dev_v1_20261011/pipeline.py": "a29937d5852daf3bc71f316e12b9b7cfcd22fdac1eb0c662f8ab88370aafee06",
+    "addition_multimechanism_dev_v1_20261011/reference.py": "c9d6cd158eb4af00c7a4b1880bd81950a1679d486d65cfd74294b8eb12228778",
+    "addition_multimechanism_dev_v1_20261011/runner.py": "0171503cddea377a2a6bef963d2ef0dbce68f420e89ec27ddd20215a4deac7e8",
+    "addition_multimechanism_dev_v1_20261011/technical.py": "cc4fea1e18f2385b2a1e02d22bfcff3031b1489e2f66b7b14a8dc29333fed5a2",
+    "addition_multimechanism_dev_v1_20261011/worlds.py": "33868baa2dc1c48ade25efbcbb5ffd2b9abcaa820d10dfe6793b2c2df2b4caf3",
+    "addition_multimechanism_v1_design_20261011/DESIGN_CONTRACT.json": "03978a31a1264830d4bbf9b9e57d8de9823583a6becf098c184986fb3c03390f",
+    "addition_multimechanism_v1_design_20261011/EXPERIMENT.md": "6d85f82235f7fb36227680da326fbb4d00dc261b96a86c9873e979782eaecf9d",
+    "addition_observation_support_dev_v1_20261011/cores.py": "01bd197fe0286da76f2c6cc1ffd85033e7bffaf94ec5a70cd10b3dbd37219e30",
+    "addition_sample_generalization_v2_design_20261011/benchmark_fixtures.py": "6ad19404d423663fd72f244892e2e424de0c0538683ca5bd77f67777df4b7228",
+    "addition_multimechanism_dev_v1_20261011/ops/science_20261011/science.py": "3014280ab33c6a81dee9ce0d57e5c481d778d4d489df38703fb1c4f7a43d0c4d",
+    "addition_multimechanism_dev_v1_20261011/results/AUTHORIZATION.json": "eaa4a2417cbb0c932d19dd68f6c3496c21e9737933a6bc58e98346da3ca1f2df",
+    "addition_multimechanism_dev_v1_20261011/results/ROSTER_AMENDMENT.json": "d9c72dc60cf71a470d56d486c9eadd98eb986dca8f506ea398e8dfdf30fdb22a",
+    "addition_multimechanism_dev_v1_20261011/results/PRIOR_WORLD_CENSUS.json": "dc252ac15f0a55c44ef562c7a283e47e3475ba86a2e2a02a1078abd695768f77"
+  },
+  "locked_epoch": 1791776280.714848,
+  "confirmation_entropy_created": false,
+  "dev_manifest_sha256": "ca95d684f848a676c281af71049f61f162a89ff5fe9b2796add559be1db471a2",
+  "dev_world_metrics_sha256": "7ace35a38a96467db70be2d9439bdeb272b8ff6edac260e5f5b8848cea10257b"
+}
+```
