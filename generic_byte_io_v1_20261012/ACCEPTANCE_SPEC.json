@@ -1,0 +1,85 @@
+{
+  "classification": "GENERIC_IO_ENGINEERING_ACCEPTANCE_V1",
+  "evidence": "E0 interface plus E1 taught sequence acquisition/retention; no E3 or prior-core conversion claim",
+  "declared_before_outcomes": true,
+  "world_seeds": [
+    120126001,
+    120126002,
+    120126003,
+    120126004,
+    120126005,
+    120126006,
+    120126007,
+    120126008
+  ],
+  "episodes_per_cohort": 16,
+  "cohorts": [
+    "OLD",
+    "NEW"
+  ],
+  "new_prompt_zero_length_override": 1,
+  "distinct_prompt_policy": "Regenerate any duplicate within or across cohorts; OLD alone has an empty prompt",
+  "epochs_per_cohort": 8,
+  "prompt_payload_lengths": [
+    0,
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    96,
+    128,
+    5,
+    17,
+    33,
+    65,
+    97,
+    129
+  ],
+  "answer_payload_lengths": [
+    0,
+    1,
+    2,
+    3,
+    7,
+    8,
+    15,
+    31,
+    63,
+    127,
+    256,
+    5,
+    13,
+    29,
+    61,
+    125
+  ],
+  "all_256_payload_answer": "OLD index 10 uses bytes(range(256)); NEW index 10 uses reversed bytes(range(256))",
+  "same_suffix_stress": "distinct prompts length >=8 at indices4..9 end with NUL,=,LF,FF; all earlier bytes retained in declared context",
+  "training": "begin sequence; admit actual prompt bytes learn=True; explicit start reply; admit actual answer bytes learn=True; observe real EOS learn=True",
+  "inference": "same framing; prompt learn=False; own generate max_bytes=512; no teacher prefix/no answer length",
+  "controls": [
+    "matched no-write all observations",
+    "erase learned bank after learning"
+  ],
+  "retention": "OLD immediate, 86400 simulated seconds then NEW cohort, another 86400 simulated seconds then OLD and NEW",
+  "pass": {
+    "exact_sequence_and_model_EOS_mean_min": 0.95,
+    "each_world_old_and_new_retained_min": 0.9,
+    "old_gain_over_no_write_and_erase_min": 0.8,
+    "all_interface_adversarial_checks": "pass",
+    "production_learning_state_unchanged_during_all_inference": true
+  },
+  "additional_checks": [
+    "full alphabet admission and emission",
+    "input stream beyond context with explicit overflow",
+    "chunk parity",
+    "checkpoint pending + own continuation parity",
+    "EOS-at-generation-cap and zero-byte cap semantics",
+    "no payload LF reset"
+  ],
+  "counts": "This is engineering qualification, not scientific confirmation world/life counts. Track episodes, actual target updates and generated output tokens separately.",
+  "no_background_or_new_mechanism_search": true
+}

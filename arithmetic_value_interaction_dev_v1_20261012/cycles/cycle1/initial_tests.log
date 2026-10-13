@@ -1,0 +1,21 @@
+test_binary_chunking_checkpoint_overflow (test_core.CoreTests.test_binary_chunking_checkpoint_overflow) ... ok
+test_births_sizes_independent (test_core.CoreTests.test_births_sizes_independent) ... ok
+test_gradients_every_array_and_path (test_core.CoreTests.test_gradients_every_array_and_path) ... FAIL
+test_independent_gradients_and_initial_zero (test_core.CoreTests.test_independent_gradients_and_initial_zero) ... ok
+test_no_true_target_at_inference (test_core.CoreTests.test_no_true_target_at_inference) ... ok
+test_observed_only_aux_and_preupdate (test_core.CoreTests.test_observed_only_aux_and_preupdate) ... ok
+test_optimizer_exact (test_core.CoreTests.test_optimizer_exact) ... ok
+test_parser_and_no_write (test_core.CoreTests.test_parser_and_no_write) ... ok
+
+======================================================================
+FAIL: test_gradients_every_array_and_path (test_core.CoreTests.test_gradients_every_array_and_path)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/arithmetic_value_interaction_dev_v1_20261012/test_core.py", line 22, in test_gradients_every_array_and_path
+    self.assertAlmostEqual(num,float(grads[key][ix]),delta=2e-5,msg=f'{name}/{key}/{y}')
+AssertionError: -0.02483207879322435 != -0.00202869065068264 within 2e-05 delta (0.022803388142541712 difference) : BYTE-ADD/B/None
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.816s
+
+FAILED (failures=1)

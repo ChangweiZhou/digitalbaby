@@ -1,0 +1,64 @@
+{
+  "classification": "INDEPENDENT_TECHNICAL_AUDIT_NOT_SCIENCE",
+  "checks": {
+    "independent_binary_utf8_empty_order_same_suffix_own_output": true,
+    "all_256_payload_emitted_in_one_learned_answer": true,
+    "generation_freezes_entire_learned_bank_and_counter": true,
+    "matched_no_write_does_not_recite": true,
+    "zero_cap_exact_cap_and_truncated_continuation": true,
+    "learned_chunk_parity_after_context_overflow": true,
+    "cold_process_checkpoint_and_hash_seed_parity": true,
+    "prediction_array_not_aliasing_learning_state": true,
+    "strided_memoryview_admission": true,
+    "rest_clock_persisted_and_no_spontaneous_learning": true
+  },
+  "source_sha256": "49d19c453abf987f8772865d81dd92f74fd480c31d1bb627f0c0714bc56ea313",
+  "rows": [
+    {
+      "prompt_hex": "66697273742d41003d0aff",
+      "answer_len": 12,
+      "selected_events": 13
+    },
+    {
+      "prompt_hex": "66697273742d42003d0aff",
+      "answer_len": 12,
+      "selected_events": 13
+    },
+    {
+      "prompt_hex": "4142003d0aff",
+      "answer_len": 16,
+      "selected_events": 17
+    },
+    {
+      "prompt_hex": "4241003d0aff",
+      "answer_len": 256,
+      "selected_events": 257
+    },
+    {
+      "prompt_hex": "00ff0a3d",
+      "answer_len": 0,
+      "selected_events": 1
+    },
+    {
+      "prompt_hex": "",
+      "answer_len": 1,
+      "selected_events": 2
+    }
+  ],
+  "storage": {
+    "learned_weight_bytes": 4210688,
+    "fixed_context_ring_bytes": 8192,
+    "persistent_array_bytes": 4218880,
+    "output_categories": 257,
+    "payload_categories": 256,
+    "active_cells_per_event": 16,
+    "context_event_bound": 4096,
+    "learning_events": 1023,
+    "context_overflow_events": 0,
+    "elapsed_seconds": 86400.0,
+    "time_dynamics": "stable engineered bank; rest advances clock only",
+    "production_context_work": "O(max_context_events)",
+    "production_read_write_work": "O(contacts * 257)",
+    "checkpoint_and_digest_work": "O(cells * 257 + max_context_events)"
+  }
+}

@@ -1,0 +1,352 @@
+{
+  "schema": "ARITHMETIC_VALUE_INTERACTION_DESIGN_V1",
+  "date": "2026-10-12",
+  "status": "DESIGN_DELIVERED_PENDING_IMPLEMENTATION_AND_THREE_CYCLES",
+  "goal": "Better retained exact own-output generalization to unseen four-operation problems per external training sample and compute",
+  "design": "EXPERIMENT.md",
+  "review": "DESIGN_REVIEW.md",
+  "configs": [
+    "BYTE-ADD",
+    "VALUE-ADD",
+    "BYTE-PROD",
+    "VALUE-PROD",
+    "LEGACY-B"
+  ],
+  "selectable": [
+    "BYTE-ADD",
+    "VALUE-ADD",
+    "BYTE-PROD",
+    "VALUE-PROD"
+  ],
+  "baseline": "LEGACY-B",
+  "engineering_provenance": {
+    "M024": "new retained shared adapter with stable sensory bypass",
+    "M025": "new low-rank learned feature product; not operand arithmetic",
+    "common_numeric_readout": "disclosed base-ten periodic features of model-predicted value; learned 257-class head"
+  },
+  "native_Full151_claim": false,
+  "history_names": [
+    "W",
+    "N_ALL",
+    "SHUFFLE"
+  ],
+  "factors": {
+    "value_auxiliary": [
+      false,
+      true
+    ],
+    "feature_combination": [
+      "ADD",
+      "PROD"
+    ]
+  },
+  "task_source": "../arithmetic_representation_learning_dev_v1_20261012/vendor/task_source.py",
+  "world_algorithm_source": "../arithmetic_representation_learning_dev_v1_20261012/worlds.py",
+  "legacy_source": "../arithmetic_representation_learning_dev_v1_20261012/vendor/legacy_core.py",
+  "checkpoints_per_operation": [
+    4,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  "technical_namespace": [
+    202610129600,
+    202610129699
+  ],
+  "science_worlds": [
+    202610129701,
+    202610129702,
+    202610129703,
+    202610129704,
+    202610129705,
+    202610129706,
+    202610129707,
+    202610129708,
+    202610129709,
+    202610129710,
+    202610129711,
+    202610129712,
+    202610129713,
+    202610129714,
+    202610129715,
+    202610129716,
+    202610129717,
+    202610129718,
+    202610129719,
+    202610129720,
+    202610129721,
+    202610129722,
+    202610129723,
+    202610129724,
+    202610129725,
+    202610129726,
+    202610129727,
+    202610129728,
+    202610129729,
+    202610129730,
+    202610129731,
+    202610129732,
+    202610129733,
+    202610129734,
+    202610129735,
+    202610129736,
+    202610129737,
+    202610129738,
+    202610129739,
+    202610129740,
+    202610129741,
+    202610129742,
+    202610129743,
+    202610129744,
+    202610129745,
+    202610129746,
+    202610129747,
+    202610129748
+  ],
+  "namespace_status": "proposed; implementation must audit historical manifests before use",
+  "jobs": 240,
+  "correlated_histories": 720,
+  "external_record_applications": 368640,
+  "max_records_per_history": 512,
+  "expected_writable_numeric_auxiliary_events": 98304,
+  "recipe": {
+    "sensory_dimensions": 96,
+    "prompt_feature_scale": "sqrt(96)",
+    "hidden_width": 64,
+    "interaction_rank": 16,
+    "decoder_width": 64,
+    "decoder_input_dimensions": 166,
+    "shared_parameter_shapes": {
+      "A": [
+        64,
+        96
+      ],
+      "B": [
+        16,
+        96
+      ],
+      "C": [
+        16,
+        96
+      ],
+      "E": [
+        64,
+        16
+      ],
+      "b": [
+        64
+      ],
+      "bB": [
+        16
+      ],
+      "bC": [
+        16
+      ],
+      "w_value": [
+        64
+      ],
+      "b_value": [
+        1
+      ],
+      "D": [
+        64,
+        166
+      ],
+      "bD": [
+        64
+      ],
+      "R": [
+        96,
+        257
+      ],
+      "V": [
+        64,
+        257
+      ],
+      "c": [
+        257
+      ]
+    },
+    "shared_parameter_count": 62466,
+    "memory_rows": 4096,
+    "memory_contacts": 16,
+    "memory_dtype": "float32",
+    "shared_dtype": "float64",
+    "memory_independent_ce_rate": 4.0,
+    "memory_logit_mix": 0.25,
+    "shared_training": "shared-only byte CE + optional numeric auxiliary squared error at actual EOS, all directions from preupdate state; one joint update per actual reply event",
+    "numeric_prediction": "16*(w_value@f+b_value)",
+    "numeric_loss": "0.5*((prediction-observed_integer)/16)^2",
+    "numeric_aux_weight": 1.0,
+    "numeric_observation_grammar": "canonical ASCII signed integer; no plus, leading zero, minus zero, empty, whitespace or other bytes",
+    "numeric_aux_abs_limit": 1000000,
+    "numeric_aux_invalid_action": "skip auxiliary only; still admit and byte-train all payloads",
+    "numeric_decoder_features": [
+      "v/16",
+      "sqrt(v*v+1e-8)/16",
+      "sin(2*pi*v/10)",
+      "cos(2*pi*v/10)",
+      "sin(2*pi*v/100)",
+      "cos(2*pi*v/100)"
+    ],
+    "feature_rms_epsilon_squared": 1e-06,
+    "optimizer": {
+      "kind": "bias-corrected exponential second-moment normalized gradient",
+      "learning_rate": 0.001,
+      "second_moment_beta": 0.99,
+      "denominator_epsilon": 1e-08,
+      "global_gradient_norm_cap": 1.0,
+      "steps_per_observed_reply_event": 1,
+      "replay": false,
+      "warmup": false,
+      "hidden_multipass": false
+    },
+    "shared_mutable_parameter_and_moment_array_bytes": 999456,
+    "total_mutable_float_array_bytes": 5210144,
+    "context_events": 4096,
+    "generation_payload_cap": 16,
+    "initialization": "independent Gaussian projection substreams, std inverse sqrt input dimension; all biases/value head/direct head/decoder head/memory/moments/step zero; matched independent arrays across four arms"
+  },
+  "statistics": {
+    "unit": "paired_world",
+    "n_worlds": 48,
+    "family_size": 82,
+    "contrasts": [
+      "BYTE-ADD:vs_LEGACY-B:J_samples",
+      "BYTE-ADD:vs_LEGACY-B:J_cpu_pair_legacy",
+      "VALUE-ADD:vs_LEGACY-B:J_samples",
+      "VALUE-ADD:vs_LEGACY-B:J_cpu_pair_legacy",
+      "BYTE-PROD:vs_LEGACY-B:J_samples",
+      "BYTE-PROD:vs_LEGACY-B:J_cpu_pair_legacy",
+      "VALUE-PROD:vs_LEGACY-B:J_samples",
+      "VALUE-PROD:vs_LEGACY-B:J_cpu_pair_legacy",
+      "VALUE-ADD_minus_BYTE-ADD:J_samples",
+      "VALUE-ADD_minus_BYTE-ADD:J_cpu_four_arm_common",
+      "VALUE-PROD_minus_BYTE-PROD:J_samples",
+      "VALUE-PROD_minus_BYTE-PROD:J_cpu_four_arm_common",
+      "BYTE-PROD_minus_BYTE-ADD:J_samples",
+      "BYTE-PROD_minus_BYTE-ADD:J_cpu_four_arm_common",
+      "VALUE-PROD_minus_VALUE-ADD:J_samples",
+      "VALUE-PROD_minus_VALUE-ADD:J_cpu_four_arm_common",
+      "value_x_product_interaction:J_samples",
+      "value_x_product_interaction:J_cpu_four_arm_common",
+      "BYTE-ADD:final_W_minus_N_ALL:+",
+      "BYTE-ADD:final_W_minus_SHUFFLE:+",
+      "BYTE-ADD:final_W_minus_N_ALL:-",
+      "BYTE-ADD:final_W_minus_SHUFFLE:-",
+      "BYTE-ADD:final_W_minus_N_ALL:*",
+      "BYTE-ADD:final_W_minus_SHUFFLE:*",
+      "BYTE-ADD:final_W_minus_N_ALL:/",
+      "BYTE-ADD:final_W_minus_SHUFFLE:/",
+      "VALUE-ADD:final_W_minus_N_ALL:+",
+      "VALUE-ADD:final_W_minus_SHUFFLE:+",
+      "VALUE-ADD:final_W_minus_N_ALL:-",
+      "VALUE-ADD:final_W_minus_SHUFFLE:-",
+      "VALUE-ADD:final_W_minus_N_ALL:*",
+      "VALUE-ADD:final_W_minus_SHUFFLE:*",
+      "VALUE-ADD:final_W_minus_N_ALL:/",
+      "VALUE-ADD:final_W_minus_SHUFFLE:/",
+      "BYTE-PROD:final_W_minus_N_ALL:+",
+      "BYTE-PROD:final_W_minus_SHUFFLE:+",
+      "BYTE-PROD:final_W_minus_N_ALL:-",
+      "BYTE-PROD:final_W_minus_SHUFFLE:-",
+      "BYTE-PROD:final_W_minus_N_ALL:*",
+      "BYTE-PROD:final_W_minus_SHUFFLE:*",
+      "BYTE-PROD:final_W_minus_N_ALL:/",
+      "BYTE-PROD:final_W_minus_SHUFFLE:/",
+      "VALUE-PROD:final_W_minus_N_ALL:+",
+      "VALUE-PROD:final_W_minus_SHUFFLE:+",
+      "VALUE-PROD:final_W_minus_N_ALL:-",
+      "VALUE-PROD:final_W_minus_SHUFFLE:-",
+      "VALUE-PROD:final_W_minus_N_ALL:*",
+      "VALUE-PROD:final_W_minus_SHUFFLE:*",
+      "VALUE-PROD:final_W_minus_N_ALL:/",
+      "VALUE-PROD:final_W_minus_SHUFFLE:/",
+      "BYTE-ADD:J_samples_vs_LEGACY-B:+",
+      "BYTE-ADD:final_accuracy_vs_LEGACY-B:+",
+      "BYTE-ADD:J_samples_vs_LEGACY-B:-",
+      "BYTE-ADD:final_accuracy_vs_LEGACY-B:-",
+      "BYTE-ADD:J_samples_vs_LEGACY-B:*",
+      "BYTE-ADD:final_accuracy_vs_LEGACY-B:*",
+      "BYTE-ADD:J_samples_vs_LEGACY-B:/",
+      "BYTE-ADD:final_accuracy_vs_LEGACY-B:/",
+      "VALUE-ADD:J_samples_vs_LEGACY-B:+",
+      "VALUE-ADD:final_accuracy_vs_LEGACY-B:+",
+      "VALUE-ADD:J_samples_vs_LEGACY-B:-",
+      "VALUE-ADD:final_accuracy_vs_LEGACY-B:-",
+      "VALUE-ADD:J_samples_vs_LEGACY-B:*",
+      "VALUE-ADD:final_accuracy_vs_LEGACY-B:*",
+      "VALUE-ADD:J_samples_vs_LEGACY-B:/",
+      "VALUE-ADD:final_accuracy_vs_LEGACY-B:/",
+      "BYTE-PROD:J_samples_vs_LEGACY-B:+",
+      "BYTE-PROD:final_accuracy_vs_LEGACY-B:+",
+      "BYTE-PROD:J_samples_vs_LEGACY-B:-",
+      "BYTE-PROD:final_accuracy_vs_LEGACY-B:-",
+      "BYTE-PROD:J_samples_vs_LEGACY-B:*",
+      "BYTE-PROD:final_accuracy_vs_LEGACY-B:*",
+      "BYTE-PROD:J_samples_vs_LEGACY-B:/",
+      "BYTE-PROD:final_accuracy_vs_LEGACY-B:/",
+      "VALUE-PROD:J_samples_vs_LEGACY-B:+",
+      "VALUE-PROD:final_accuracy_vs_LEGACY-B:+",
+      "VALUE-PROD:J_samples_vs_LEGACY-B:-",
+      "VALUE-PROD:final_accuracy_vs_LEGACY-B:-",
+      "VALUE-PROD:J_samples_vs_LEGACY-B:*",
+      "VALUE-PROD:final_accuracy_vs_LEGACY-B:*",
+      "VALUE-PROD:J_samples_vs_LEGACY-B:/",
+      "VALUE-PROD:final_accuracy_vs_LEGACY-B:/"
+    ],
+    "positive_variance_interval": "two-sided family95 Bonferroni paired t",
+    "zero_variance_interval": "Hoeffding ordinary radius sqrt(2*ln(2*82/0.05)/48) in [-1,1]; interaction twice ordinary radius in [-2,2]",
+    "nonfinite_or_missing_cpu": "unavailable; preserve family82",
+    "cpu_domains": {
+      "legacy_comparison": "per-world common interval of candidate and legacy",
+      "factorial": "per-world common interval of all four new arms"
+    },
+    "sample_score": "fixed log2 trapezoidal area at per-op4,8,16,32,64,128",
+    "cpu_score": "per-world log CPU linear interpolation, integral divided by log(U/L); scores in [0,1]; L<=0 or U<=L unavailable",
+    "complete_world_requirement": "48 paired worlds required; any missing CPU common domain makes formal contrast UNAVAILABLE; valid subset descriptive only"
+  },
+  "adoption": {
+    "macro_sample_and_compute_vs_legacy": "both adjusted lower bounds >0",
+    "causal": "all four operations final W-N_ALL and W-SHUFFLE lower bounds >0",
+    "operation_guards": "per-op J_samples and final unseen accuracy vs legacy lower bounds >=0",
+    "taught_guard": "observational per-world/cue correct-set coverage of legacy; no population equivalence claim",
+    "tie_break": [
+      "final four-op macro accuracy descending",
+      "median W training CPU ascending",
+      "persistent array bytes ascending",
+      "name ascending"
+    ]
+  },
+  "operations": {
+    "workers": 2,
+    "blas_threads_per_worker": 1,
+    "detached": true,
+    "caffeinate": true,
+    "read_only_live_monitor": true,
+    "stop_admission_hours": 8,
+    "hard_session_hours": 10,
+    "automatic_retries": false
+  },
+  "shared_learning_fixture": {
+    "science": false,
+    "outputs": [
+      "A",
+      "BC",
+      "-7",
+      "12",
+      "49"
+    ],
+    "observation_records": 1024,
+    "score": "shared-only exact taught answer plus own EOS",
+    "countermodel_level": "E1 functionality only"
+  },
+  "qualification_completed": false,
+  "technical_cycles_executed": 0,
+  "scientific_jobs_executed": 0,
+  "science_launch_authorized": false,
+  "github_upload_authorized": false,
+  "current_adopted_core_changed": false
+}
