@@ -1,0 +1,90 @@
+{
+  "status": "DESIGN_ONLY_PREPARATION_PENDING",
+  "goal": "Own-byte-output unseen four-operation ability per training sample and compute",
+  "full_version_register_rows_reviewed": 254,
+  "seed_operands": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "operators": [
+    "+",
+    "-",
+    "*",
+    "/"
+  ],
+  "division": "exact integer inverses of product families; denominator nonzero",
+  "family_counts": {
+    "SUM": 36,
+    "PRODUCT": 36
+  },
+  "held_families_per_type": 12,
+  "training_families_per_type": 24,
+  "held_seed_domain": "2 <= a <= b <= 7",
+  "noise_rate": 0,
+  "missing_rate": 0,
+  "configs": [
+    "LINEAR-FIXED-DIAG",
+    "LINEAR-FIXED-FULL",
+    "LINEAR-LOCAL-DIAG",
+    "LINEAR-LOCAL-FULL",
+    "COMP-FIXED-DIAG",
+    "COMP-FIXED-FULL",
+    "COMP-LOCAL-DIAG",
+    "COMP-LOCAL-FULL",
+    "HASH"
+  ],
+  "scientific_reference": "LINEAR-FIXED-FULL",
+  "selectable_configs": [
+    "LINEAR-FIXED-DIAG",
+    "LINEAR-LOCAL-DIAG",
+    "LINEAR-LOCAL-FULL",
+    "COMP-FIXED-DIAG",
+    "COMP-FIXED-FULL",
+    "COMP-LOCAL-DIAG",
+    "COMP-LOCAL-FULL"
+  ],
+  "selection": "qualified candidates ordered by final W CPU median, state bytes, config name",
+  "histories": [
+    "W",
+    "N_ALL",
+    "SHUFFLE"
+  ],
+  "per_operation_sample_checkpoints": [
+    4,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  "records_per_history": 512,
+  "records_per_job": 1536,
+  "fresh_paired_worlds": 48,
+  "world_config_jobs": 432,
+  "correlated_full_histories": 1296,
+  "record_applications": 663552,
+  "statistics": {
+    "paired_unit": "world",
+    "predeclared_contrasts": 116,
+    "family_error_rate": 0.05,
+    "method": "two-sided paired t with Bonferroni",
+    "individual_interval_level": 0.9995689655172414
+  },
+  "fixed_accuracy_thresholds": null,
+  "fixed_pp_gain_thresholds": null,
+  "scientific_launch_authorized": false,
+  "github_upload_authorized": false,
+  "three_cycle_exercise_completed": false,
+  "session": {
+    "admission_stop_hours": 8,
+    "hard_limit_hours": 10,
+    "concurrency": "set from complete technical job cost",
+    "automatic_resume_or_restart": false
+  }
+}

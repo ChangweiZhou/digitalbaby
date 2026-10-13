@@ -1,0 +1,33 @@
+{
+  "scope": "Read-only postrun review. No training, model replay, changed gates, or alteration of scientific verdict.",
+  "official_verdict": "NO_CONFIRMED_REPLACEMENT",
+  "evidence_level": "No demonstrated retained four-operation E3 for new candidates. Taught association is impaired in the low-sample regime.",
+  "confirmed_findings": [
+    "Current byte expansion replaced the earlier specialist scalar additive learner; it did not preserve that model and only change serialization.",
+    "New candidates selected immediate EOS on 46.5–54.7% of final held-out probes, compared with 1.03% for LEGACY-B.",
+    "At 16 and 32 samples per operation, new candidates had zero taught accuracy and all taught probes returned an empty reply. At 64, BYTE candidates remained there and VALUE candidates barely recovered.",
+    "Final taught macro accuracy is 66.9–69.2% for new candidates and 99.72% for LEGACY-B.",
+    "Numerical auxiliary learning lowered held-out MAE from 10.64 to 6.42 in ADD and from 10.19 to 6.15 in PROD, but did not produce exact arithmetic byte answers.",
+    "The final technical world already had 0% held-out accuracy for all four candidates and only 66.5–72.7% pooled taught accuracy.",
+    "The shared-only qualification fixture used 1024 records across only five fixed contexts: about 205 repeats per context. That established eventual memorization, not the required sample efficiency.",
+    "PROD multiplies two learned projections of the entire prompt. Neither projection is an identified operand value or role.",
+    "Scientific tasks are single binary operations interleaved in a history; mixed expressions with precedence and parentheses were not tested."
+  ],
+  "source_grounded_inference": {
+    "hypothesis": "A frequent unconditional EOS preference in the newly shared categorical learner overtakes conditional byte predictions and the fixed 0.25 memory contribution before useful prompt/position discrimination develops.",
+    "support": "EOS is about 45.1% of all observed reply events; the code has a learned global categorical bias, independent shared CE, and fixed uncalibrated logit mixing. Output trajectories show immediate termination through the middle budgets.",
+    "not_proved": "No per-probe branch logits or final scientific parameter checkpoints were retained, so branch dominance cannot be causally quantified from these receipts alone."
+  },
+  "review_failure": "Technical validity was reported as readiness without surfacing the already-observed learning collapse. The formal design did not have a scientific E1 feasibility gate, so this is a preparation/design weakness, not a retroactive invalidation of the recorded run.",
+  "mechanism_scope": "Reject the tested recipes within their budget; do not globally eliminate numerical supervision, feature interaction, arbitrary byte I/O, or other inventory families.",
+  "next_design_principle": "Keep unseen four-operation exact own byte output per sample/compute as primary. Preserve a numerical/relational learning path across interface changes, represent operand roles and operation-conditioned relationships explicitly or with a learnable decomposition, and qualify the actual low-sample training/decoder regime before formal confirmation. Do not replace E3 with taught recall or numerical MAE.",
+  "summary_source": "WORLD_BALANCED_FINDINGS.json",
+  "source_references": {
+    "earlier_addition": "../../../addition_core_v2_support_v1_20261011/minifly_addition_core/core.py",
+    "new_forward": "../../core.py:100",
+    "new_objectives": "../../core.py:126",
+    "new_memory_update": "../../core.py:155",
+    "technical_fixture": "../../functional_fixture.py:4",
+    "technical_results": "../../cycles/cycle3/finish/REPORT.md"
+  }
+}

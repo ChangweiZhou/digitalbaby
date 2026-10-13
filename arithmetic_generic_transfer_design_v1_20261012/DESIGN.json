@@ -1,0 +1,122 @@
+{
+  "status": "DESIGN_ONLY_NOT_SOURCE_LOCKED_NOT_RUN",
+  "goal": "Learn unseen bounded subtraction from fewer observed examples through generic byte output, retaining prior addition",
+  "evidence_target": "Engineered bounded E3; numeric and positional priors disclosed; not NLP or native Full151 claim",
+  "domain": {
+    "operands": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "operators": [
+      "+",
+      "-"
+    ],
+    "noise_rate": 0,
+    "missing_rate": 0,
+    "outputs": "all256 payload bytes plus EOS; exact decimal string required",
+    "generation_cap_bytes": 8
+  },
+  "held_add_unordered": [
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      3
+    ]
+  ],
+  "held_sub_unordered": [
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      1,
+      4
+    ]
+  ],
+  "train_questions_per_operator": 17,
+  "held_questions_per_operator": 8,
+  "configs": [
+    "HASH",
+    "SHARED"
+  ],
+  "selectable": [
+    "SHARED"
+  ],
+  "histories": [
+    "W",
+    "N_ADD",
+    "N_SUB"
+  ],
+  "old_add_records": 128,
+  "sub_records_max": 256,
+  "sub_checkpoints": [
+    8,
+    16,
+    32,
+    64,
+    128,
+    256
+  ],
+  "add_refresh_records_per_checkpoint_fork": 32,
+  "simulated_idle_seconds": 86400,
+  "primary": "mean exact held-out subtraction after refresh and delay at six new-example budgets",
+  "physical_training_record_applications_per_world_config_job": 1600,
+  "dev": {
+    "paired_worlds": 8,
+    "world_config_jobs": 16,
+    "physical_record_applications": 25600
+  },
+  "conditional_confirm": {
+    "fresh_paired_worlds": 48,
+    "world_config_jobs": 96,
+    "physical_record_applications": 153600
+  },
+  "maximum": {
+    "worlds": 56,
+    "world_config_jobs": 112,
+    "physical_record_applications": 179200
+  },
+  "scientific_seed_rosters": "created and source-locked after three preparation cycles; confirmation entropy not created unless DEV advances",
+  "inference_frozen": true,
+  "multiplicity": {
+    "inferential_contrasts": 4,
+    "method": "paired Student t, Bonferroni",
+    "individual_two_sided_interval_level": 0.9875
+  },
+  "operations": {
+    "admission_stop_hours": 8,
+    "session_hard_limit_hours": 10,
+    "initial_concurrency_proposal": 2,
+    "no_automatic_restart": true,
+    "no_automatic_dose_extension": true,
+    "background_launch_authorized": false,
+    "github_upload_authorized": false
+  },
+  "frozen_past_sources_modified": false
+}

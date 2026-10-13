@@ -1,0 +1,109 @@
+{
+  "status": "PASS_LOGICAL_DESIGN_CHECKS_IMPLEMENTATION_UNTESTED",
+  "checks": {
+    "per_job_physical_record_arithmetic": true,
+    "dev_count": true,
+    "confirm_count": true,
+    "conditional_max_count": true,
+    "ADD_split_no_overlap": true,
+    "ADD_all_answers_in_training": true,
+    "ADD_reverse_held_out": true,
+    "SUB_split_no_overlap": true,
+    "SUB_all_answers_in_training": true,
+    "SUB_reverse_held_out": true,
+    "family_interval_level": true,
+    "only_one_selectable_candidate": true,
+    "not_launched": true
+  },
+  "splits": {
+    "ADD": {
+      "train_count": 17,
+      "held_count": 8,
+      "held_pairs": [
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          0
+        ]
+      ],
+      "constant_oracle_upper_bound": 0.25,
+      "left_operand_oracle_upper_bound": 0.625
+    },
+    "SUB": {
+      "train_count": 17,
+      "held_count": 8,
+      "held_pairs": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          1
+        ]
+      ],
+      "constant_oracle_upper_bound": 0.25,
+      "left_operand_oracle_upper_bound": 0.5
+    }
+  },
+  "source_implementation_exists": false,
+  "learner_test_runs": 0,
+  "science_jobs": 0,
+  "corrections_before_outcomes": [
+    "DEV retention difference may be zero; require greater than -5pp, not strictly positive",
+    "technical held-out probes allowed without training",
+    "runtime safety factor is estimate, not unsupported confidence guarantee"
+  ],
+  "next_step": "Three design-audit-test-revise cycles, then explicit science launch authorization"
+}
