@@ -1,0 +1,28 @@
+{"stage": "RETRY_PUSHING_EXISTING_COMMITS", "epoch": 1792018591.934201, "pid": 69917, "branch": "codex/addition-u042-core-adoption-20261011", "native_records_executed": 0, "published_commits": ["adb210772e65899d8fd970c7da9630791f824553"]}
+send-pack: unexpected disconnect while reading sideband packet
+fatal: the remote end hung up unexpectedly
+Done
+{"stage": "FAILED", "epoch": 1792018606.684669, "pid": 69917, "branch": "codex/addition-u042-core-adoption-20261011", "native_records_executed": 0, "error": "CalledProcessError(1, ['git', '-c', 'http.version=HTTP/1.1', '-c', 'pack.window=0', '-c', 'pack.depth=0', '-c', 'pack.threads=2', '-c', 'core.compression=1', 'push', '--porcelain', 'origin', 'HEAD:refs/heads/codex/addition-u042-core-adoption-20261011'])", "published_commits": ["adb210772e65899d8fd970c7da9630791f824553"]}
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/PROJECT_DOCUMENTS/PUBLICATION_20261014/publish.py", line 104, in <module>
+    main()
+    ~~~~^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/PROJECT_DOCUMENTS/PUBLICATION_20261014/publish.py", line 65, in main
+    push()
+    ~~~~^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/PROJECT_DOCUMENTS/PUBLICATION_20261014/publish.py", line 29, in push
+    run(['git', '-c', 'http.version=HTTP/1.1', '-c', 'pack.window=0',
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         '-c', 'pack.depth=0', '-c', 'pack.threads=2', '-c', 'core.compression=1',
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         'push', '--porcelain', 'origin',
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+         'HEAD:refs/heads/' + BRANCH])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/PROJECT_DOCUMENTS/PUBLICATION_20261014/publish.py", line 16, in run
+    result = subprocess.run(args, cwd=ROOT, env=env, text=True,
+                            stdout=subprocess.PIPE if capture else None, check=True)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', '-c', 'http.version=HTTP/1.1', '-c', 'pack.window=0', '-c', 'pack.depth=0', '-c', 'pack.threads=2', '-c', 'core.compression=1', 'push', '--porcelain', 'origin', 'HEAD:refs/heads/codex/addition-u042-core-adoption-20261011']' returned non-zero exit status 1.
