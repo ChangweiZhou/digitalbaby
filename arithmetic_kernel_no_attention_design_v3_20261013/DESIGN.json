@@ -1,0 +1,212 @@
+{
+  "schema": "KERNEL_SEARCH_NO_ATTENTION_V3",
+  "date": "2026-10-13",
+  "status": "DESIGN_ONLY",
+  "goal": "Retained exact own-output unseen four-operation and bounded mixed-expression generalization per external training sample and actual compute, learned from feedback without supplied arithmetic representations or rules",
+  "hard_constraints": {
+    "transformers_allowed": false,
+    "attention_allowed": false,
+    "applies_to_all_models_and_submodules": true,
+    "all_semantic_representations_learned": true,
+    "supplied_arithmetic_rules": false,
+    "human_numeric_or_role_features": false,
+    "own_generation_changes_learning_state": false
+  },
+  "operator_allowlist": [
+    "GRU",
+    "affine",
+    "categorical_embedding",
+    "concatenation",
+    "elementwise_gate",
+    "elementwise_neuron_modulation",
+    "generic_update_MLP",
+    "local_gated_convolution",
+    "raw_observation_replay",
+    "vocabulary_softmax"
+  ],
+  "prohibited_mechanisms": [
+    "Transformer",
+    "self_attention",
+    "cross_attention",
+    "linear_attention",
+    "query_key_scoring",
+    "content_addressed_key_value_read",
+    "content_weighted_sequence_pooling",
+    "attention_external_memory",
+    "fast_weight_key_value_attention"
+  ],
+  "models": [
+    {
+      "id": "G0",
+      "role": "reference",
+      "operators": [
+        "categorical_embedding",
+        "GRU",
+        "affine",
+        "vocabulary_softmax"
+      ],
+      "sequence_access": "chronological",
+      "readout": "terminal_state_affine",
+      "attention": false,
+      "transformer": false,
+      "specification": {
+        "embedding": [
+          259,
+          16
+        ],
+        "GRU_width": 64,
+        "layers": 1,
+        "GRU_convention": "framework standard reset-after recurrent affine;2bias vectors/gate",
+        "affine_output": [
+          64,
+          257
+        ],
+        "parameters": 36593,
+        "parameter_plus_Adam_moment_bytes_float32": 439116
+      },
+      "replay": false
+    },
+    {
+      "id": "G1",
+      "role": "replay_comparison",
+      "operators": [
+        "categorical_embedding",
+        "GRU",
+        "affine",
+        "vocabulary_softmax",
+        "raw_observation_replay"
+      ],
+      "sequence_access": "chronological",
+      "readout": "terminal_state_affine",
+      "attention": false,
+      "transformer": false,
+      "specification": {
+        "embedding": [
+          259,
+          16
+        ],
+        "GRU_width": 64,
+        "layers": 1,
+        "GRU_convention": "framework standard reset-after recurrent affine;2bias vectors/gate",
+        "affine_output": [
+          64,
+          257
+        ],
+        "parameters": 36593,
+        "parameter_plus_Adam_moment_bytes_float32": 439116
+      },
+      "replay": true
+    },
+    {
+      "id": "R",
+      "role": "structural_candidate",
+      "operators": [
+        "categorical_embedding",
+        "GRU",
+        "affine",
+        "concatenation",
+        "vocabulary_softmax"
+      ],
+      "sequence_access": "repeated_complete_chronological_scans",
+      "readout": "terminal_and_work_state_affine",
+      "attention": false,
+      "transformer": false,
+      "controls": [
+        "one_scan",
+        "untied_scan_transitions"
+      ],
+      "verified_parameter_count": null
+    },
+    {
+      "id": "C",
+      "role": "structural_candidate",
+      "operators": [
+        "categorical_embedding",
+        "local_gated_convolution",
+        "elementwise_gate",
+        "affine",
+        "vocabulary_softmax"
+      ],
+      "sequence_access": "fixed_local_neighbors_of_known_prefix",
+      "readout": "terminal_position_affine",
+      "attention": false,
+      "transformer": false,
+      "minimum_steps": "ceil((L-1)/neighbor_radius)",
+      "verified_parameter_count": null
+    },
+    {
+      "id": "P",
+      "role": "learning_candidate",
+      "operators": [
+        "categorical_embedding",
+        "GRU",
+        "affine",
+        "generic_update_MLP",
+        "elementwise_gate",
+        "elementwise_neuron_modulation",
+        "vocabulary_softmax"
+      ],
+      "sequence_access": "chronological",
+      "readout": "terminal_state_affine",
+      "persistent_fast_state": "bounded_neuron_modulation_vector",
+      "fast_state_reads": "fixed_neuronwise_gain_or_bias",
+      "attention": false,
+      "transformer": false,
+      "controls": [
+        "stop_gradient_update_policy",
+        "reset_modulation"
+      ],
+      "verified_parameter_count": null
+    }
+  ],
+  "baseline_ids": [
+    "G0",
+    "G1"
+  ],
+  "structural_directions": [
+    "R",
+    "C",
+    "P"
+  ],
+  "excluded_previous_arms": [
+    "T0",
+    "T1"
+  ],
+  "removed_previous_design_components": [
+    "K01_cross_attention_workspace",
+    "K03_query_pooling",
+    "K04_associative_key_value_matrix"
+  ],
+  "historical_proposal": "arithmetic_kernel_brainstorm_v2_20261013/EXPERIMENT.md",
+  "inherited_sections_only": [
+    "data",
+    "representations",
+    "metrics",
+    "replay",
+    "histories"
+  ],
+  "data_metric_source": "arithmetic_end_to_end_design_v1_20261013/DESIGN.json",
+  "inherited_roster_or_allocation": false,
+  "semantic_input": "raw_categorical_bytes_only",
+  "generation": "own_payload_and_EOS;truncation_distinct",
+  "evidence_target": "bounded_retained_E3",
+  "evidence_earned_by_this_revision": "NONE",
+  "core_adoption": "NONE",
+  "earlier_results_unchanged": true,
+  "family_wide_exclusions_added": false,
+  "implementation_completed": false,
+  "technical_cycles_executed": 0,
+  "scientific_jobs_executed": 0,
+  "training_records_executed": 0,
+  "execution_qualification_completed": false,
+  "science_authorized": false,
+  "github_upload_authorized": false,
+  "allocation_status": "UNLOCKED;implementation_state_audit_and_complete_job_cost_required",
+  "resource_boundary": {
+    "admission_hours": 8,
+    "hard_session_hours": 10,
+    "all_internal_work_charged": true,
+    "automatic_retry": false
+  },
+  "full_inventory_review": "arithmetic_feedback_rule_discovery_dev_v1_20261013/ops/read_only_review_20261013/inventory/FULL_INVENTORY_REVIEW.md"
+}

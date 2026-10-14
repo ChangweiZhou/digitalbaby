@@ -1,0 +1,38 @@
+{
+  "schema": "NO_ATTENTION_DESIGN_REVIEW_V3",
+  "accepted_at_design_level": true,
+  "checks": [
+    "hard_no_transformers",
+    "hard_no_attention",
+    "baseline_subset",
+    "no_T_arm_in_active_roster",
+    "no_active_model_declares_attention",
+    "operators_whitelisted",
+    "no_prohibited_operator",
+    "no_content_weighted_pool_readout",
+    "full_chronological_reread",
+    "local_receptive_field_budget_declared",
+    "plasticity_not_key_value_memory",
+    "no_inherited_transformer_roster_or_allocation",
+    "goal_unchanged",
+    "no_supplied_semantics",
+    "no_new_training_or_adoption",
+    "no_invented_candidate_parameter_counts",
+    "referenced_data_and_inventory_exist"
+  ],
+  "checks_passed": 17,
+  "scope": "Manifest and prose architecture consistency only; no executable models exist to audit yet. Not a behavioral, numerical, interface or no-attention implementation qualification.",
+  "changes": [
+    "Transformer arms removed from active references",
+    "query and weighted-pool workspace access replaced by chronological/local fixed routes",
+    "key/value fast memory replaced by neuron modulation",
+    "goal/data/evidence requirements preserved"
+  ],
+  "remaining_before_lock": [
+    "Implement kernels and controls",
+    "Inspect complete forward/read/write paths for attention equivalents",
+    "Qualify causal/state/gradient contracts",
+    "Measure complete-job cost and fix allocation/inference family"
+  ],
+  "scientific_jobs": 0
+}

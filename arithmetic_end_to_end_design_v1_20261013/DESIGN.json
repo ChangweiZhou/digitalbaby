@@ -1,0 +1,339 @@
+{
+  "schema": "E2E_RULE_DESIGN_V1",
+  "date": "2026-10-13",
+  "status": "DESIGN_ONLY_STATIC_DATA_VALIDATION_PASSED",
+  "goal": "Retained exact own-output unseen four-operation and bounded mixed-expression generalization per external training sample and actual compute, learned from feedback without supplied arithmetic representations or rules",
+  "implemented": false,
+  "technical_cycles_executed": 0,
+  "scientific_jobs_executed": 0,
+  "science_authorized": false,
+  "github_upload_authorized": false,
+  "adopted_core_unchanged": true,
+  "representations": {
+    "input": "raw categorical byte identities",
+    "all_semantic_features_learned": true,
+    "trainable_embeddings": true,
+    "trainable_encoder_decoder": true,
+    "human_numeric_or_role_features": false,
+    "task_ID_side_channel": false,
+    "AST_or_intermediate_targets_to_learner": false,
+    "output_vocabulary_mask": false,
+    "pseudo_label_training": false,
+    "arithmetic_parser_in_core": false,
+    "public_generic_controls": [
+      "BEGIN",
+      "REPLY",
+      "EOS"
+    ],
+    "generic_causal_and_absent_padding_masks_allowed": true,
+    "per_world_payload_permutation": "uniform permutation of all256 payload values; inverse never provided to model"
+  },
+  "models": {
+    "G": {
+      "embedding": [
+        259,
+        16
+      ],
+      "GRU_width": 64,
+      "layers": 1,
+      "GRU_convention": "framework standard reset-after recurrent affine;2bias vectors/gate",
+      "affine_output": [
+        64,
+        257
+      ],
+      "parameters": 36593,
+      "parameter_plus_Adam_moment_bytes_float32": 439116
+    },
+    "T": {
+      "embedding": [
+        259,
+        32
+      ],
+      "learned_positions": [
+        128,
+        32
+      ],
+      "width": 32,
+      "layers": 2,
+      "attention_heads": 4,
+      "FF_width": 64,
+      "activation": "GELU",
+      "normalization": "2preLayerNorm per block plus final LayerNorm; allgamma/beta trainable",
+      "output": [
+        32,
+        257
+      ],
+      "parameters": 38017,
+      "parameter_plus_Adam_moment_bytes_float32": 456204
+    }
+  },
+  "initialization": {
+    "embedding_and_position": "N(0,1/sqrt(width))",
+    "GRU": "framework standard U(-1/sqrt(hidden_width),+1/sqrt(hidden_width)), including2gate biases",
+    "other_linear_weights": "Xavier uniform",
+    "other_linear_biases": "zero",
+    "LayerNorm_gamma": 1,
+    "LayerNorm_beta": 0,
+    "dropout": 0,
+    "all_init_draws_task_independent": true,
+    "within_architecture_birth_parity": true,
+    "independent_mutable_storage": true,
+    "seed_derivation": "first8bytesSHA256(E2E_RULE_V1|world|architecture)mod2^63;sortedparameternameinitorder",
+    "framework_defaults_used": false
+  },
+  "learning": {
+    "loss": "mean cross entropy over actual response payload/EOS per record",
+    "all_model_parts_receive_gradient": true,
+    "class_weights": false,
+    "output_head_unit_normalization": false,
+    "feedback_timing": "parameters fixed throughout frame;one joint optimizerstep at actual permittedEOS",
+    "optimizer": "AdamW +generic cap on complete actual parameterdisplacement",
+    "rate": 0.001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "epsilon": 1e-08,
+    "weight_decay": 0.0001,
+    "gradient_norm_clip": 1,
+    "maximum_RMS_parameter_displacement_per_step": 0.001,
+    "cap_includes_weight_decay": true,
+    "optimizer_moments_advance_from_permitted_gradient": true,
+    "dtype": "float32",
+    "target_framework": "PyTorch;exactinstalledversion pinned at qualification",
+    "same_code_across_operations_and_phases": true,
+    "no_write_freezes": [
+      "parameters",
+      "gradients",
+      "optimizer_moments",
+      "decay",
+      "learning_step",
+      "replay_buffer",
+      "reservoir_eligible_count",
+      "replay_RNG"
+    ],
+    "displacement_norm_accumulation": "float64 squaredsum of float32 proposals;cap then float32apply;moments/agefrompermittedgradient"
+  },
+  "context": {
+    "G_credit_horizon": 128,
+    "T_window": 128,
+    "variable_length_inputs": true,
+    "overflow_logged": true,
+    "output_payload_cap": 16,
+    "extra_EOS_decision": true,
+    "TRUNCATED_is_not_EOS": true,
+    "learning_state_pure_generation": true,
+    "G_long_gradient_policy": "per-target128transitionunrollfromdetachedboundary;alltargetgradientsaccumulate;no oldlossdiscard",
+    "T_long_policy": "last128raw IDs;positions0..len-1;recompute undercurrenttheta"
+  },
+  "replay": {
+    "reservoir_record_capacity": 64,
+    "record_payload_byte_cap": 64,
+    "total_raw_payload_byte_cap": 4096,
+    "record_metadata_charged_separately": true,
+    "sampling": "standard reservoir over eligible permitted external records; prior sample before current insert",
+    "max_prior_records_per_permitted_external_record": 1,
+    "stored_targets": "only actually observed permitted replies",
+    "stored_hidden_features": false,
+    "reencode_under_current_parameters": true,
+    "loss_combination": "equal average of current record mean loss and sampled record mean loss;one optimizerstep",
+    "extra_optimizer_steps": 0,
+    "extra_forward_backward_passes_charged": true,
+    "self_generated_or_probe_insertion": false,
+    "inference_answer_lookup": false
+  },
+  "configurations": [
+    {
+      "id": "G0",
+      "model": "G",
+      "replay": false,
+      "role": "reference",
+      "selectable": false
+    },
+    {
+      "id": "G1",
+      "model": "G",
+      "replay": true,
+      "selectable": true
+    },
+    {
+      "id": "T0",
+      "model": "T",
+      "replay": false,
+      "selectable": true
+    },
+    {
+      "id": "T1",
+      "model": "T",
+      "replay": true,
+      "selectable": true
+    }
+  ],
+  "data": {
+    "binary_seed_range": [
+      0,
+      15
+    ],
+    "seed_families_per_kind": 136,
+    "eligible_nontrivial_families_per_kind": 105,
+    "held_families_per_kind": 32,
+    "train_families_per_kind": 104,
+    "binary_holdout_closure": [
+      "exchange",
+      "signed_inverse_subtraction",
+      "exact_integer_division"
+    ],
+    "binary_per_operation_budgets": [
+      64,
+      128,
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "binary_endpoint_records": 8192,
+    "binary_schedule": "operation-balanced4record shuffled microblocks;within-op shuffled pool cycles",
+    "mixed": {
+      "primitive_source": "join2taught binary primitive rows; no withheldbinary primitive in anymixed record",
+      "intermediate_values_supplied_to_learner": false,
+      "grammar": "fullyparenthesized two-operation expressions",
+      "operator_pairs": 16,
+      "train_groups_per_pair": 32,
+      "held_groups_per_pair": 16,
+      "train_groups": 512,
+      "held_groups": 256,
+      "group_closure": [
+        "commutative swaps",
+        "sameoperator associativity"
+      ],
+      "budgets": [
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048
+      ],
+      "endpoint_records": 2048,
+      "schedule": "16record operatorpair-balanced shuffled microblocks;group cycles",
+      "input_reply_byte_support_audited": true,
+      "negative_inner_generalization_claim": false,
+      "primary_held_form": "one fixed seeded representative/group beforelearning;allotherforms stillwithheld"
+    },
+    "counting_warmup": false,
+    "numeric_auxiliary_training": false,
+    "noise_is_primary": false,
+    "data_feasibility_rejection": "deterministic withinworld attempts for declared bytecoverage/groupavailability only, allmanifests frozen beforemodellearning"
+  },
+  "histories": [
+    "W",
+    "N_BINARY",
+    "SH_BINARY",
+    "N_MIXED"
+  ],
+  "shared_binary_prefixes": 3,
+  "mixed_continuations": 4,
+  "external_record_applications_per_job": 32768,
+  "permitted_original_record_optimizer_updates_per_job": 22528,
+  "replayed_record_applications_per_replay_job": 22525,
+  "W_history_external_observations": 10240,
+  "idle_delay_seconds": 86400,
+  "idle_advance_is_noop": true,
+  "actual_retention_pressure": "mixed arithmetic learning",
+  "metrics": {
+    "primary": "complete ownpayload and ownEOS exact",
+    "joint_ability_weights": {
+      "equaloperation_binary": 0.5,
+      "equaloperatorpair_mixed": 0.5
+    },
+    "J": "leftcontinuous jointability staircase over0..10240 Wexternalobservations",
+    "G": "paired normalized staircase over common actualproductioncompute horizon;includes originaltraining/replay/mandatoryscoredown-outputqueries",
+    "retained_binary_peroperation_after_mixed": true,
+    "retained_old_taught_measured": true,
+    "new_mixed_taught_vs_N_MIXED_diagnostic": true,
+    "no_best_checkpoint_selection": true,
+    "numeric_proximity_is_diagnostic_only": true,
+    "causal_comparators": [
+      "N_BINARY",
+      "SH_BINARY"
+    ],
+    "shortcut_envelope": "exact/canonical trainedkey tables and4feedback-only frequency/context modes; never a model input",
+    "J_retention_interpretation": "lifecycleability/sampleAUC plusseparate finalretentiongates;notinterfered-at-each-checkpointAUC",
+    "G_path": "candidate-W vsG0-W:count prefixonce,Wcontinuation,Wmandatoryqueries;control/peer/auditCPU separate",
+    "J_MIX": "ability mean across6fixed mixed checkpoints,16pairs;paidexposurecoords8192+m",
+    "taught_queries": "literal forms actually observed in corresponding Wprefix",
+    "group_weighting": "equalfamily withinbinaryoperation andequalmixedgroup withinoperatorpair"
+  },
+  "DEV": {
+    "worlds": 4,
+    "world_ids": [
+      202610133001,
+      202610133004
+    ],
+    "configurations": 4,
+    "jobs": 16,
+    "max_selected": 1,
+    "selection": "positive J/G vsG0 and each retained causal/shortcut direction;rank Jgain,Ggain,lowercompute,thenG1/T0/T1",
+    "screen_not_significance": true
+  },
+  "CONFIRM": {
+    "worlds": 24,
+    "world_ids": [
+      202610134001,
+      202610134024
+    ],
+    "configurations": 3,
+    "jobs": 72,
+    "conditional": true,
+    "peer_map": {
+      "G1": "T1",
+      "T0": "T1",
+      "T1": "T0"
+    },
+    "primary_tests": 17,
+    "test_groups": {
+      "final_retained_binary4ops_vs3causal_shortcut_controls": 12,
+      "mixed_J_vs3causal_shortcut_controls": 3,
+      "J_G_vs_reference": 2
+    },
+    "holm_alpha": 0.05,
+    "independent_unit": "pairedworld",
+    "peer_not_late_selectable": true,
+    "nonconstant_test": "one-sidedpairedworldmeanStudentt;two-sided95%tCI",
+    "constant_test": "d>0:p=min(1,exp(-n*d^2/2));else1;95%CI=d±sqrt(2log40/n) clipped[-1,1]"
+  },
+  "maximum_jobs": 88,
+  "maximum_external_record_applications": 2883584,
+  "maximum_internal_replayed_record_applications": 1261400,
+  "maximum_eligible_original_gradient_records": 1982464,
+  "independent_life_claim": false,
+  "operations": {
+    "future_workers": 2,
+    "threads_per_worker": 1,
+    "detached": true,
+    "caffeinate_follows_supervisor": true,
+    "read_only_monitor_if_authorized": true,
+    "conservative_session_admission_hours": 8,
+    "hard_session_limit_hours": 10,
+    "cost_admission": "3times measured slowestcompletejob/finalization;newkernels must be measured",
+    "runtime_currently_measured": false,
+    "no_auto_restart_resume_or_extension": true
+  },
+  "full_inventory_reference": "arithmetic_feedback_rule_discovery_dev_v1_20261013/ops/read_only_review_20261013/inventory/FULL_INVENTORY_REVIEW.json",
+  "mechanism_lineage": [
+    "M001",
+    "M007",
+    "M031",
+    "M033",
+    "M026",
+    "M050",
+    "U047"
+  ],
+  "family_wide_exclusions_added": false,
+  "scope_limits": [
+    "boundedintegerarithmetic and fullyparenthesized2operation composition",
+    "no precedencewithoutparentheses claim",
+    "no NLP/pretraining/scaling or localflymechanism claim",
+    "no ability adoption fromstaticvalidation"
+  ]
+}
