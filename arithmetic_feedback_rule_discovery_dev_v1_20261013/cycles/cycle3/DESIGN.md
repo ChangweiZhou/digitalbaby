@@ -1,0 +1,7 @@
+# Cycle 3 — final matched roster, independent audit and readiness decision
+
+Run all seven fixed configurations on reserved world 202610130102 using the revised implementation. This is a complete technical workload per configuration (3 roots + 18 retention forks; 2,112 record applications), not DEV or confirmation. No changes to sample counts, arithmetic generation, initial parameters, rates, loss or readout rules.
+
+Audit before tests: reject any attempt to use DEV seeds; verify matched independent births and pinned legacy source; rerun affected gradients/state/write checks after the cycle-2 revisions; independently reduce complete output receipts and reject corrupted write, exposure, count, probe, resource, fork and source records. Test common-compute integration and multiplicity on synthetic values only. Measure production CPU, full technical-job wall cost and dense work/storage explicitly.
+
+Review goal remains retained unseen arithmetic generalization per sample and compute, without supplied arithmetic rules. A code pass and a behavioral failure are separate outcomes. The revised preparation must block formal science when it reproduces absent retained signal; no percentage threshold, evaluator helper or extra training is introduced to manufacture a pass. Future background dispatcher/confirmation qualification is deferred if that block occurs; do not claim it is already qualified.

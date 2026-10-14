@@ -1,0 +1,175 @@
+{
+  "schema": "FULL_MECHANISM_REVIEW_MODEL_AND_REWARD",
+  "date": "2026-10-13",
+  "goal": "Retained exact own-output unseen four-operation and mixed arithmetic per all training samples and compute, learned from real answers during warmup and ultimately scalar 0/1 without arithmetic rules, attention or Transformers.",
+  "counts": {
+    "historical108": 108,
+    "catalogue136": 136,
+    "versions254": 254,
+    "subset71": 71,
+    "first16": 16
+  },
+  "counts_warning": "These are overlapping historical views, not additive or unique surviving candidates.",
+  "all_original_rows_preserved": true,
+  "scientifically_validated_end_to_end_unseen_four_operation_core_count": 0,
+  "direct_drop_in_positive_recipe_identified": false,
+  "scientific_survivor_count": null,
+  "directions": {
+    "D1": {
+      "name": "学得题面保留与独立生成工作状态",
+      "role": "PRIORITY_HYPOTHESIS",
+      "historical": [
+        "M007",
+        "M012",
+        "M102"
+      ],
+      "subset": [
+        "U042",
+        "U060"
+      ],
+      "operation": "普通递归/门控保留一个学得题面状态，生成状态逐字节演化且始终受其普通仿射条件影响；不检索位置或KV。",
+      "existing_limit": "旧GRU已递归，增加8次计算的旧R8也失败；本方向不是再增加次数或ELM私有状态。题面快照条件化是未测新版本。"
+    },
+    "D2": {
+      "name": "整段实际动作的延迟资格与信用",
+      "role": "PRIORITY_HYPOTHESIS",
+      "historical": [
+        "M096"
+      ],
+      "catalogue": [
+        "C050",
+        "C051",
+        "C077"
+      ],
+      "subset": [
+        "U011",
+        "U012",
+        "U019"
+      ],
+      "operation": "在生成整串回答时保存有界动作特异信用，真实0/1到达后更新参与生成的可学习状态/参数。",
+      "existing_limit": "旧Z1没有改善且修正E3较差；A_ELIG证据来自其他底物。当前答案监督已覆盖题内全部梯度，不能把失败说成32-event信用截断。V24/V25只有四动作反馈。"
+    },
+    "D3": {
+      "name": "奖励预期调制与可学习预测基线",
+      "role": "PRIORITY_HYPOTHESIS",
+      "historical": [
+        "M030",
+        "M096"
+      ],
+      "catalogue": [
+        "C076",
+        "C128"
+      ],
+      "operation": "只从实际奖励学习预期，用实际奖励与预期的差异调制动作信用；不提供正确答案或数值误差。",
+      "existing_limit": "旧V24/V25已有reward-minus-chosen-value；不是新发现，也尚未证明可训练通用字节表示。旧预训练教师和SAC复合结果不继承。"
+    },
+    "D4": {
+      "name": "表示与输出联合学习及优化一致性",
+      "role": "ENGINEERING_ENABLER",
+      "historical": [
+        "M022",
+        "M024",
+        "M031",
+        "M061"
+      ],
+      "operation": "在可见答案阶段联合训练categorical encoder/readout；在scalar阶段使用与真实动作和奖励一致的目标。",
+      "existing_limit": "当前SOURCE-CELL已联合CE训练但获取仍弱；方向是优化/结构的配套约束，非额外已成功的昆虫机制。固定特征RLS历史成功不能继承。"
+    },
+    "D5": {
+      "name": "收费的交错重复与有界再激活",
+      "role": "CONDITIONAL_TRAINING_SUPPORT",
+      "historical": [
+        "M050"
+      ],
+      "catalogue": [
+        "C115",
+        "C116",
+        "C117"
+      ],
+      "subset": [
+        "U047"
+      ],
+      "operation": "真实观察的重复和跨难度交错，不用模型猜测伪造答案；所有存储、选择、曝光和算力计费。",
+      "existing_limit": "reservoir/recent/REPLAY-P/REPLAY-U/COV-REPLAY已测；旧纯字节模型充分重复可记已教题，却未学会可靠未见乘法。不是主机制或未试的新办法。"
+    }
+  },
+  "directions_are_not_a_survivor_census": true,
+  "latest_evidence": [
+    "arithmetic_source_derived_kernel_dev_v1_20261013/PREPARATION_REPORT.md",
+    "arithmetic_stream_transfer_dev_v1_20261013/PREPARATION_REPORT.md",
+    "arithmetic_kernel_no_attention_dev_v3_20261013/ops/read_only_lineage_review_20261013/REVIEW.md",
+    "arithmetic_feedback_rule_discovery_dev_v1_20261013/ops/read_only_review_20261013/FINDINGS.md",
+    "addition_sample_generalization_dev_v2_20261011/results/REPORT.md",
+    "addition_feedback_efficiency_dev_v1_20261011/results/REPORT.md",
+    "PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FIRST16_SCREEN.json",
+    "PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/VERSION_REGISTER_20261011/sources/03_elm_fly_local_memory_v24.py",
+    "PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/VERSION_REGISTER_20261011/sources/05_elm_fly_address_content_v25.py",
+    "PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/VERSION_REGISTER_20261011/sources/04_REPORT.md"
+  ],
+  "clarifications": [
+    "A file named elm_fly is not automatically an ELM cell: memory/update rules must be identified by operation.",
+    "V23/V24 FastWeightsMemory is a decaying output matrix, not QKV attention. Its exact recipes remain low priority on evidence, not by an attention label.",
+    "V24/V25 already tested scalar chosen-action reward and eligibility; four-action associative performance is not end-to-end byte sequence credit or arithmetic generalization.",
+    "Current SOURCE-CELL W already had actual correct reply/EOS supervision and full frame credit; insufficient answer availability or 32-event truncation cannot explain those technical trajectories.",
+    "U042 names in the historical 71 subset and the OBSERVATION_SUPPORT experiment are different operations. Likewise SUPPORT-DIR and historical bayes_reopening must not be conflated.",
+    "A learned prompt snapshot/conditioned decoder is a new generic version, not an existing successful biological scratchpad or address/content split.",
+    "Partial positive synthetic choices, retention and revision remain valid within their source scope. Do not convert them into four-operation capability or erase them on present-task failure."
+  ],
+  "biological_sources": [
+    {
+      "url": "https://www.nature.com/articles/s41593-020-0607-9",
+      "supports": "Recurrent sensory/output feedback to DANs and integrated predictions in larval associative learning; not arithmetic algorithms."
+    },
+    {
+      "url": "https://pubmed.ncbi.nlm.nih.gov/31230716/",
+      "supports": "Timing-sensitive bidirectional odor-association plasticity via dopamine receptors; not a demonstrated generic sequence credit rule."
+    }
+  ],
+  "training_executed": false,
+  "science_sources_modified": false,
+  "new_launch_authorized": false,
+  "priority_counts_by_view": {
+    "historical108": {
+      "EXCLUDED": 6,
+      "REFERENCE": 7,
+      "DEFERRED": 45,
+      "PRIMARY": 5,
+      "INCOMPATIBLE": 7,
+      "ENGINEERING": 8,
+      "ENABLER": 5,
+      "STOP_RECIPE": 24,
+      "SUPPORT": 1
+    },
+    "catalogue136": {
+      "DEFERRED": 67,
+      "STOP_RECIPE": 24,
+      "INCOMPATIBLE": 17,
+      "REFERENCE": 18,
+      "ENABLER": 2,
+      "PRIMARY": 5,
+      "SUPPORT": 3
+    },
+    "versions254": {
+      "REFERENCE": 29,
+      "DEFERRED": 156,
+      "STOP_RECIPE": 22,
+      "SUPPORT": 16,
+      "INCOMPATIBLE": 31
+    },
+    "subset71": {
+      "DEFERRED": 58,
+      "PRIMARY": 5,
+      "STOP_RECIPE": 5,
+      "REFERENCE": 1,
+      "INCOMPATIBLE": 1,
+      "SUPPORT": 1
+    },
+    "first16": {
+      "STOP_RECIPE": 9,
+      "REFERENCE": 1,
+      "DEFERRED": 6
+    }
+  },
+  "full_review": "FULL_REVIEW.json",
+  "coverage_audit": "COVERAGE_AUDIT.json"
+}

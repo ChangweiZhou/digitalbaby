@@ -1,0 +1,214 @@
+{
+  "version": "ADDITION_MULTIMECHANISM_V1",
+  "date": "2026-10-11",
+  "status": "DESIGN_UNDER_HOSTILE_AUDIT",
+  "science_authorized": false,
+  "evidence_level": "engineered finite-addition E3 only",
+  "common_anchors": [
+    "COV-R",
+    "COV-SUPPORT"
+  ],
+  "candidate_order": [
+    "COVER",
+    "RETRO",
+    "ROLE",
+    "KCI"
+  ],
+  "reserve_not_scored": [
+    "U059"
+  ],
+  "dev_roster": [
+    "COV-R",
+    "COV-SUPPORT",
+    "COVER",
+    "RETRO",
+    "ROLE",
+    "KCI"
+  ],
+  "confirmation_peers": {
+    "COVER": [
+      "COVER-UNIFORM",
+      "COVER-RESIDUAL"
+    ],
+    "RETRO": [
+      "RETRO-FIXED",
+      "RETRO-RANDOM"
+    ],
+    "ROLE": [
+      "ROLE-FIXED",
+      "ROLE-PERMUTED"
+    ],
+    "KCI": [
+      "KCI-GLOBAL-NORM"
+    ]
+  },
+  "shared": {
+    "feature_count": 31,
+    "left_coordinates": [
+      0,
+      14
+    ],
+    "right_coordinates": [
+      15,
+      29
+    ],
+    "bias_coordinate": 30,
+    "birth_weight": 0.0,
+    "birth_P_diagonal": 10.0,
+    "allowed_present_observation_only": true,
+    "pre_feedback_own_output": true,
+    "heldout_semantic_orbit_never_taught": true,
+    "support_factor_on_conflict": 0.25,
+    "support_factor_otherwise": 1.0,
+    "huber_threshold": 1.0,
+    "no_target_dependent_change_on_forbidden_or_missing": true,
+    "queries_clone_and_never_write": true
+  },
+  "candidate_specs": {
+    "COVER": {
+      "historical_ids": [
+        "U047",
+        "M050"
+      ],
+      "global_fifo_observation_ring": 32,
+      "selection": "argmax x_i^T P x_i over pre-insertion ring, oldest tie",
+      "extra_weight_only_corrections_per_allowed_observation": 1,
+      "extra_P_contractions": 0,
+      "uniform_peer_seed": 20261011047,
+      "matched_selectors": [
+        "uniform",
+        "absolute_current_residual"
+      ],
+      "stored_support_factor": "arrival-time immutable",
+      "repeated_key_occurrences": "separate rows",
+      "residual_peer": "deterministic max absolute current residual, oldest-insertion tie",
+      "log_repeated_winner_rate": true
+    },
+    "RETRO": {
+      "historical_ids": [
+        "M034",
+        "M061",
+        "M106"
+      ],
+      "writer": "weighted ridge sufficient statistics H,b; w=clip(inv(H)b); P=inv(H)",
+      "ridge_diagonal": 0.1,
+      "global_fifo_observation_ledger": 32,
+      "same_ordered_key_cached_vote_window": 8,
+      "minimum_cached_votes": 3,
+      "modal_vote_fraction_at_least": 0.75,
+      "discordant_weight_fraction_of_arrival": 0.25,
+      "aligned_weight_fraction_of_arrival": 1.0,
+      "random_revision_peer_seed": 20261011034,
+      "evicted_contributions_remain_in_statistics": true,
+      "arrival_weight_rule": "own pre-answer SUPPORT/Huber state per arm",
+      "event_order": "past-vote SUPPORT gate; add actual arrival to H,b and FIFO; evict/freeze oldest; inspect last eight still-cached same-key occurrences including current; revise only older eligible rows; solve",
+      "current_arrival_not_revised_retroactively": true,
+      "only_older_rows_in_last_eight_may_change": true,
+      "out_of_window_cached_weights_frozen": true,
+      "random_peer": "permute own desired quarter/full factor multiset across eligible older same-key rows with fixed seed; realized mass need not match",
+      "audit_revision_counts_by": "OLD/NEW and diagonal/off-diagonal; first trigger record ordinal"
+    },
+    "ROLE": {
+      "historical_ids": [
+        "M077",
+        "M105"
+      ],
+      "global_fifo_unmatched_reverse_observation_queue": 32,
+      "reverse_answer_agreement_absolute_difference_at_most": 1,
+      "eta_scale": 0.05,
+      "eta_pseudocount": 4,
+      "birth_eta": 0.0,
+      "fixed_strength_peer_eta": 0.05,
+      "permuted_right_role_peer_seed": 20261011077,
+      "P_update": "ordinary COV-SUPPORT",
+      "reverse_match": "consume oldest unmatched opposite order; do not enqueue current if consumed; self-pairs ignored",
+      "seen_role_flags": "permitted present observation only",
+      "projection_scope": "distinct current symbols seen in both roles, after every permitted present observation",
+      "fixed_strength_peer_is_not_dose_matched": true
+    },
+    "KCI": {
+      "historical_ids": [
+        "U055",
+        "M094"
+      ],
+      "meaning": "engineering proxy for local lateral plasticity allocation; no KC-to-feature homology",
+      "graph_seed": 20261011055,
+      "source_out_degree_per_role": 2,
+      "no_self_bias_or_cross_role_edges": true,
+      "adjacency_orientation": "A_ij is source j to target i",
+      "lambda": 1.0,
+      "sensory_gate": "g_i=1/(1+(1-x_i)(Ax)_i)",
+      "bias_gate": 1.0,
+      "P_update": "ordinary COV-SUPPORT",
+      "global_norm_peer": "c=norm(g*q)/norm(q), q=0 means c=1, matched preclip norm only",
+      "zero_lambda_or_adjacency_exact_baseline": true,
+      "graph_edge_weight": 1.0,
+      "audit_cases": [
+        "correlated P with inactive q",
+        "q=0",
+        "r=0",
+        "saturation",
+        "lambda=0 baseline parity",
+        "A=0 baseline parity"
+      ]
+    }
+  },
+  "three_cycles": [
+    "operation_source_lock_and_hand_cases",
+    "causal_null_restore_resume_and_cost_audit",
+    "full_technical_life_and_resource_admission"
+  ],
+  "technical_science_worlds": 0,
+  "records_per_full_job": 2560,
+  "dev": {
+    "worlds": 12,
+    "family_noise_cells": [
+      "PATH_LOOP/STANDARD",
+      "PATH_LOOP/BLURRY",
+      "STAR_LOOP/STANDARD",
+      "STAR_LOOP/BLURRY"
+    ],
+    "worlds_per_cell": 3,
+    "jobs": 72,
+    "external_records": 184320,
+    "minimum_J_gain_over_each_anchor": 0.03,
+    "select_at_most_one_candidate": true,
+    "tie_break": "largest paired J gain versus SUPPORT; then lower CPU; then fixed candidate order"
+  },
+  "confirmation": {
+    "conditional_on_dev_selection": true,
+    "fresh_TRIANGLE_TAIL_worlds": 128,
+    "opaque_blurry": 64,
+    "opaque_standard": 32,
+    "ordinary_blurry": 16,
+    "ordinary_standard": 16,
+    "maximum_arms": 5,
+    "maximum_jobs": 640,
+    "maximum_external_records": 1638400,
+    "minimum_J_gain_over_each_anchor": 0.05,
+    "paired_one_sided_alpha": 0.05,
+    "peer_specificity_required_for_mechanism_claim": true,
+    "shortcut_gap_minimum": 0.05,
+    "shortcut_set": "parent gated global/key modes and means plus fixed rank; learned one-operand descriptive",
+    "four_causal_lower_bounds_positive": [
+      "W-N_NEW J",
+      "W-SHUFFLED_NEW J",
+      "W-N_OLD old_score",
+      "W-SHUFFLED_OLD old_score"
+    ],
+    "peer_primary_J_lower_bound_positive": true,
+    "ordinary_guard_pooled_with_noise_splits_reported": true
+  },
+  "maximum_total_science_jobs": 712,
+  "maximum_total_external_records": 1822720,
+  "primary": "opaque BLURRY delayed NEW never-taught exact own-output J=0.25*A20+0.50*A40+0.25*A80 after OLD320",
+  "old_protection_max_decline": 0.03,
+  "old_final_minimum": 0.85,
+  "production_cpu_limit_ratio_to_SUPPORT": 1.5,
+  "mutable_payload_limit_ratio_to_SUPPORT": 2.0,
+  "worker_rss_limit_mib": 512,
+  "session_admission_target_hours": 8,
+  "session_hard_stop_hours": 10,
+  "runtime_estimate_requires_cycle3_measurement": true,
+  "new_science_trajectories_run": 0
+}

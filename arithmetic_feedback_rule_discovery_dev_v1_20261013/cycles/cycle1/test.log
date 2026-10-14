@@ -1,0 +1,21 @@
+test_abort_and_generated_eos_do_not_flush (test_core.Tests.test_abort_and_generated_eos_do_not_flush) ... ok
+test_all_bytes_and_pure_prediction_generation (test_core.Tests.test_all_bytes_and_pure_prediction_generation) ... ok
+test_checkpoint_mid_sequence_and_chunking (test_core.Tests.test_checkpoint_mid_sequence_and_chunking) ... FAIL
+test_confidence_stability (test_core.Tests.test_confidence_stability) ... ok
+test_gradient_preupdate_online_readouts (test_core.Tests.test_gradient_preupdate_online_readouts) ... ok
+test_independent_write_protection (test_core.Tests.test_independent_write_protection) ... ok
+test_no_write_and_frozen (test_core.Tests.test_no_write_and_frozen) ... ok
+test_payload_permutation_equivariance (test_core.Tests.test_payload_permutation_equivariance) ... ok
+
+======================================================================
+FAIL: test_checkpoint_mid_sequence_and_chunking (test_core.Tests.test_checkpoint_mid_sequence_and_chunking)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/arithmetic_feedback_rule_discovery_dev_v1_20261013/test_core.py", line 100, in test_checkpoint_mid_sequence_and_chunking
+    self.assertEqual(pickle.dumps(a,protocol=5),pickle.dumps(b,protocol=5))
+AssertionError: b'\x8[1483490 chars]x95\x9e\x88\x00\x00\x00\x00\x00\x00\x94h\x1dKA[102148 chars]eub.' != b'\x8[1483490 chars]x95\x07\x89\x00\x00\x00\x00\x00\x00\x94h\x1dKA[102351 chars]eub.'
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.138s
+
+FAILED (failures=1)

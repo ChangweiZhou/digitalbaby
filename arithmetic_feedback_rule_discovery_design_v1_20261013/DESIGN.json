@@ -1,0 +1,234 @@
+{
+  "schema": "RAW_RULE_DESIGN_V1",
+  "date": "2026-10-13",
+  "status": "THREE_CYCLES_COMPLETE_TECHNICAL_PASS_BEHAVIORAL_NOT_READY",
+  "goal": "Learn retained exact own-output unseen four-operation arithmetic from observed byte feedback, improving ability per sample and compute",
+  "design": "EXPERIMENT.md",
+  "static_review": "DESIGN_REVIEW.md",
+  "science_authorized": false,
+  "github_upload_authorized": false,
+  "scientific_jobs_executed": 0,
+  "technical_cycles_executed": 3,
+  "forbidden_priors": [
+    "arithmetic parser",
+    "digit-value features",
+    "operand slots",
+    "operation IDs",
+    "numerical auxiliary targets",
+    "decimal periodic features",
+    "predefined arithmetic or inverse relations",
+    "numeric output formatter",
+    "answer length",
+    "arithmetic vocabulary or EOS masks",
+    "arithmetic-specific warmup"
+  ],
+  "general_priors": [
+    "finite gated recurrent state",
+    "tied processing steps",
+    "categorical feedback fit",
+    "full or diagonal recursive confidence",
+    "engineered truncated backpropagation"
+  ],
+  "native_Full151_claim": false,
+  "configs": [
+    {
+      "id": "R1-DIAG",
+      "encoder": "learned",
+      "depth": 1,
+      "confidence": "diagonal",
+      "selectable": false
+    },
+    {
+      "id": "R1-FULL",
+      "encoder": "learned",
+      "depth": 1,
+      "confidence": "full",
+      "selectable": true
+    },
+    {
+      "id": "R4-DIAG",
+      "encoder": "learned",
+      "depth": 4,
+      "confidence": "diagonal",
+      "selectable": false
+    },
+    {
+      "id": "R4-FULL",
+      "encoder": "learned",
+      "depth": 4,
+      "confidence": "full",
+      "selectable": true
+    },
+    {
+      "id": "F1-FULL",
+      "encoder": "frozen",
+      "depth": 1,
+      "confidence": "full",
+      "selectable": false
+    },
+    {
+      "id": "F4-FULL",
+      "encoder": "frozen",
+      "depth": 4,
+      "confidence": "full",
+      "selectable": false
+    },
+    {
+      "id": "LEGACY-B",
+      "encoder": "published reference",
+      "selectable": false,
+      "numerical_prior_disclosed": true
+    }
+  ],
+  "mechanism_sources": [
+    "M001",
+    "M007",
+    "M024",
+    "U045",
+    "M061",
+    "M106"
+  ],
+  "recipe": {
+    "embedding_rows": 259,
+    "embedding_width": 16,
+    "recurrent_width": 64,
+    "readout_width_with_bias": 65,
+    "output_categories": 257,
+    "encoder_parameters": 19696,
+    "readout_parameters": 16705,
+    "full_confidence_entries": 4225,
+    "diagonal_confidence_entries": 65,
+    "episodic_bank": false,
+    "encoder_loss": "mean permitted observed categorical squared error; pre-update online readout held fixed for feature derivatives",
+    "encoder_update_time": "actual observed EOS only",
+    "gradient_event_window": 32,
+    "encoder_learning_rate": 0.001,
+    "optimizer_beta": 0.99,
+    "optimizer_epsilon": 1e-08,
+    "global_gradient_clip": 1.0,
+    "readout_V_init": 0,
+    "confidence_init": 10,
+    "generation_cap": 16,
+    "idle_decay": false,
+    "long_stream_policy": "bounded recurrent summary plus rolling gradient tape; older events may remain compressed"
+  },
+  "history_permissions": {
+    "W": {
+      "old_reply": true,
+      "new_cohort_reply": true,
+      "probe": false
+    },
+    "N_OLD": {
+      "old_reply": false,
+      "new_cohort_reply": true,
+      "probe": false
+    },
+    "SHUFFLE_OLD": {
+      "old_reply": true,
+      "shuffle_within_operation_budget_block": true,
+      "new_cohort_reply": true,
+      "probe": false
+    }
+  },
+  "exposure": {
+    "arithmetic_records_per_operation": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128
+    ],
+    "arithmetic_root_max_records": 512,
+    "new_cohort_records_per_fork": 32,
+    "new_cohort_unique_keys": 8,
+    "new_cohort_repeats": 4,
+    "total_records_per_scored_scenario": [
+      48,
+      64,
+      96,
+      160,
+      288,
+      544
+    ],
+    "scalar_numerical_targets_to_core": false,
+    "extra_warmup_records": 0,
+    "prompt_learning": false,
+    "countermodels_evaluator_only": true
+  },
+  "counts": {
+    "roots_per_job": 3,
+    "cohort_forks_per_job": 18,
+    "correlated_state_trajectories_per_job": 21,
+    "record_applications_per_full_job": 2112,
+    "dev_worlds": 8,
+    "dev_configurations": 7,
+    "dev_jobs": 56,
+    "dev_record_applications": 118272,
+    "conditional_confirm_worlds": 48,
+    "conditional_confirm_configurations": 5,
+    "conditional_confirm_jobs": 240,
+    "conditional_confirm_record_applications": 506880,
+    "maximum_jobs": 296,
+    "maximum_root_histories": 888,
+    "maximum_cohort_forks": 5328,
+    "maximum_record_applications": 625152
+  },
+  "namespaces": {
+    "technical": [
+      202610130100,
+      202610130199
+    ],
+    "dev": [
+      202610130201,
+      202610130208
+    ],
+    "confirm": [
+      202610130301,
+      202610130348
+    ],
+    "status": "proposed; final full-history census required"
+  },
+  "selection": {
+    "selectable": [
+      "R1-FULL",
+      "R4-FULL"
+    ],
+    "eligibility": "All four sign-based conditions in EXPERIMENT.md section 8",
+    "ranking": "J(W)-J(matched frozen), then lower production CPU, then depth 1",
+    "at_most_one_selected": true,
+    "no_parameter_changes_after_dev": true,
+    "confirmation_roster": "selected FULL; matched frozen depth; other learned FULL depth; same-depth learned DIAG; LEGACY-B"
+  },
+  "statistics": {
+    "independent_unit": "world",
+    "sample_score": "equal mean retained own-output accuracy over four operations and six declared stopping budgets",
+    "compute_score": "pairwise common-CPU staircase integral normalized by its common terminal CPU",
+    "primary_hypotheses": 12,
+    "primary_family": "one-sided paired Student-t; Holm alpha 0.05; exact one-sided paired sign test for zero variance",
+    "secondary_hypotheses": 2,
+    "secondary_family": "matched depth and confidence J contrasts, separately Holm alpha 0.05",
+    "rule_grid_complete": "zero terminal retained held-out errors on every operation in every confirmation world; separate from incremental gain",
+    "no_raw_four_operation_learning_positive_control": true
+  },
+  "operations": {
+    "planned_workers": 2,
+    "threads_per_worker": 1,
+    "background": true,
+    "caffeinate_follows_supervisor": true,
+    "live_readonly_monitor": true,
+    "conservative_admission_hours": 8,
+    "hard_session_hours": 10,
+    "measured_full_job_and_fork_cost_required": true,
+    "automatic_restart": false,
+    "automatic_resume": false,
+    "estimated_runtime_hours": null
+  },
+  "evidence_boundary": "Possible bounded E3 from raw-byte feedback. No supplied arithmetic rules, NLP claim, mixed-expression claim, or biological-local learning claim.",
+  "prior_experiment": "../arithmetic_value_interaction_dev_v1_20261012/results/REPORT.md",
+  "implementation": "../arithmetic_feedback_rule_discovery_dev_v1_20261013",
+  "preparation_report": "../arithmetic_feedback_rule_discovery_dev_v1_20261013/PREPARATION_REPORT.md",
+  "qualification": "../arithmetic_feedback_rule_discovery_dev_v1_20261013/QUALIFICATION.json",
+  "ready_for_formal_science": false,
+  "preparation_revision": "PREPARATION_REVISION_V1R1.md"
+}

@@ -1,0 +1,1 @@
+All 13 operator/peer transition paths and complete 2,560-record causal branch jobs were independently reconstructed before receipt acceptance. Missing/forbidden state, clone/erase, cold process recovery, numeric bounds, prospective decision failures and receipt tampering were checked. Technical output scores did not select a candidate.

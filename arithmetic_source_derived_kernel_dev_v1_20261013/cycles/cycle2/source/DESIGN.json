@@ -1,0 +1,421 @@
+{
+  "schema": "SOURCE_DERIVED_KERNEL_DESIGN_V1",
+  "date": "2026-10-13",
+  "status": "CONCRETE_DESIGN_ONLY_NOT_IMPLEMENTED_OR_QUALIFIED",
+  "goal": "Retained exact own-output unseen four-operation and bounded mixed arithmetic ability per external sample and actual compute, learned from real byte feedback without supplied arithmetic rules",
+  "implementation_completed": false,
+  "technical_cycles_executed": 0,
+  "scientific_jobs_executed": 0,
+  "science_authorized": false,
+  "adopted_core_changed": false,
+  "transformers_allowed": false,
+  "attention_allowed": false,
+  "interfaces": {
+    "payload_values": 256,
+    "EOS": 256,
+    "BEGIN": 257,
+    "REPLY": 258,
+    "output_payload_cap": 16,
+    "extra_EOS_decision": true,
+    "cap_is_explicit_resource_limit_not_semantic_mask": true,
+    "input_context_policy": "streaming recurrent state withlast32transitionsforcredit;no rawinput suffix truncation;taskframesauditedwithin32",
+    "generated_targets_learned": false,
+    "semantic_features": "all learned from categorical byte identity",
+    "model_api": "observe(prompt_bytes,reply_bytes,allow_learning);generate(prompt_bytes)",
+    "task_frame_events_expected_maximum": 32
+  },
+  "configurations": [
+    {
+      "id": "B16",
+      "family": "source reset-before GRU",
+      "width": 64,
+      "embedding": 16,
+      "selectable": false,
+      "role": "faithful reference",
+      "parameters_formula": 36401,
+      "parameters_expected": 36401
+    },
+    {
+      "id": "B24",
+      "family": "source reset-before GRU",
+      "width": 64,
+      "embedding": 24,
+      "selectable": false,
+      "role": "input-width reference",
+      "parameters_formula": 40009,
+      "parameters_expected": 40009
+    },
+    {
+      "id": "B69",
+      "family": "source reset-before GRU",
+      "width": 69,
+      "embedding": 24,
+      "selectable": false,
+      "role": "near-parameter reference",
+      "parameters_formula": 43664,
+      "parameters_expected": 43664
+    },
+    {
+      "id": "E6",
+      "family": "DevelopmentalELM byte adaptation",
+      "neurons": 64,
+      "private_states_per_neuron": 6,
+      "internal_hidden": 12,
+      "branches": 8,
+      "slots_per_branch": 4,
+      "sensory_slots_per_branch": 3,
+      "embedding": 24,
+      "train_kappa": true,
+      "selectable": true,
+      "role": "fixed source-derived candidate recipe",
+      "parameters_expected": 43913,
+      "allocated_parameter_or_frozen_parameter_slots": 43913,
+      "working_state_scalars": 448
+    },
+    {
+      "id": "E6_FIX",
+      "family": "DevelopmentalELM byte adaptation",
+      "neurons": 64,
+      "private_states_per_neuron": 6,
+      "internal_hidden": 12,
+      "branches": 8,
+      "slots_per_branch": 4,
+      "sensory_slots_per_branch": 3,
+      "embedding": 24,
+      "train_kappa": false,
+      "selectable": true,
+      "role": "fixed source-derived candidate recipe",
+      "parameters_expected": 43529,
+      "allocated_parameter_or_frozen_parameter_slots": 43913,
+      "working_state_scalars": 448
+    }
+  ],
+  "selectable": [
+    "E6",
+    "E6_FIX"
+  ],
+  "generic_head": {
+    "equation": "u=concat(activity,1)/L2norm(concat(activity,1));logits=u@V",
+    "classes": 257,
+    "V_initial": "allzero",
+    "why": "inherit exact ANSWER-0 head and equalize candidate/control readout; ELM image head replacement mandatory"
+  },
+  "learning": {
+    "objective": "mean CE over actual permitted reply payload andEOS",
+    "prompt_prediction_objective": false,
+    "cadence": "one joint step at actual permittedEOS",
+    "optimizer": "source bias-corrected RMS second moment",
+    "rate": 0.001,
+    "beta": 0.99,
+    "epsilon": 1e-08,
+    "gradient_norm_clip": 1.0,
+    "decay": 0.0,
+    "dtype": "float64",
+    "credit_events_per_target": 32,
+    "no_replay": true,
+    "no_hidden_warmup": true,
+    "no_Adam_or_parameter_displacement_cap": true,
+    "parameter_update": "v=beta*v+(1-beta)*clipped_g^2;theta-=rate*clipped_g/(sqrt(v/(1-beta^step))+epsilon)",
+    "no_write_freezes": [
+      "parameters",
+      "moments",
+      "step",
+      "pending_gradients",
+      "learning_RNG",
+      "stored_fast_learning_state"
+    ],
+    "persistent_knowledge": "parameters and optimizer state; not per-frame private neuron state",
+    "nominal_delay_seconds": 86400,
+    "idle_parameter_evolution": "none; retention pressure is intervening mixed learning",
+    "production_backend": "allfiveCPU PyTorchfloat64 explicit source equations andsameRMS;originalNumPy source remainsnumericaloracle;sourceequivalence mandatory"
+  },
+  "cell": {
+    "source": "DevelopmentalELM, not TemporalELM",
+    "gain": "softplus(branch_gain_raw)",
+    "kappa": ".08+(.995-.08)*sigmoid(kappa_raw)",
+    "kappa_birth": "tau=logspace(log10(1.5),log10(32),6);k=exp(-1/tau);+N(0,.06);clip(.0801,.9949);inversebounded",
+    "activity": "sigmoid(4*(voltage-softplus(threshold_raw)))",
+    "private_state": "m_next=kappa*m+(1-kappa)*tanh(MLP(concat(branch_activity,m)))",
+    "readout_activity": "scalar neuronal activity64vector; no direct memory pooling",
+    "reset": "all transient state atBEGIN; carry state throughprompt,REPLY,andreply",
+    "E6_FIX": "freeze identical birthkappa, retain allsixstates andsamegraph/parameters otherwise",
+    "topology": "percell randompermutation ofall24latentchannels splitinto8triples;8distinct nonselfrecurrent sourcesuniform withoutreplacement;fixed thereafter",
+    "geometry": "no pixelcoordinates, retinotopy, orderedlatentchannels orgrid masks",
+    "extra_internal_passes": 0,
+    "structural_plasticity": false,
+    "activity_regularizers": false,
+    "initialization": "exactDevelopmentalELM distributions andperneuron Xavier; no frameworkdefaults; generic embedding inheritedRademacher/sqrt24"
+  },
+  "data": {
+    "generator": "unchanged V3 worlds.py and evaluator validator",
+    "binary_seed_range": [
+      0,
+      15
+    ],
+    "held_family_count_each_SUM_PRODUCT": 32,
+    "training_family_count_each_SUM_PRODUCT": 104,
+    "closures": [
+      "exchange",
+      "signed inverse subtraction",
+      "exact integer division"
+    ],
+    "binary_budgets_total": [
+      256,
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ],
+    "binary_final": 8192,
+    "mixed_operator_pairs": 16,
+    "mixed_train_groups": 512,
+    "mixed_held_groups": 256,
+    "mixed_budgets": [
+      64,
+      128,
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "mixed_final": 2048,
+    "mixed_grammar": "fullyparenthesized twooperations; bothprimitiveinstances frombinarytrainingpool",
+    "opaque_permutation": "uniformall256payloadbytes, inverse evaluator-only",
+    "actual_schedule": "fixedoperationorderwithinbalancedblocks, shuffledpoolcycles; inheritactualsource, not claim shuffled operation blocks",
+    "noise_primary": false,
+    "counts_more_than_unique_facts": true,
+    "no_counting_or_traces": true
+  },
+  "histories": {
+    "binary_prefixes": [
+      "W",
+      "N_BINARY",
+      "SH_BINARY"
+    ],
+    "mixed_continuations": [
+      "W",
+      "N_BINARY",
+      "SH_BINARY",
+      "N_MIXED"
+    ],
+    "N_MIXED": "clone W atbinaryendpoint, do not rerunbinaryprefix",
+    "W": "alltruefeedbackupdates",
+    "N_BINARY": "oldteachingwritesoff, latermixedwriteson",
+    "SH_BINARY": "length-stratifiedshuffledoldreplies, latertrue mixedwriteson",
+    "N_MIXED_policy": "true mixedbytes read, updatesfullyoff",
+    "full_job_external_records": 32768,
+    "full_job_permitted_optimizer_steps": 22528,
+    "W_external_records": 10240,
+    "full_job_correlated_final_histories": 4,
+    "independent_unit": "world"
+  },
+  "metrics": {
+    "checkpoints_external_W": [
+      0,
+      256,
+      512,
+      1024,
+      2048,
+      4096,
+      8192,
+      8256,
+      8320,
+      8448,
+      8704,
+      9216,
+      10240
+    ],
+    "every_checkpoint": "all128binaryheldrepresentatives andall256mixedheldrepresentatives; nofeedback",
+    "A_equation": ".5*equal4operationbinaryexact+.5*equal16operatorpairmixedexact",
+    "J_sample": "leftcontinuousstaircaseintegral A over0..10240 dividedby10240",
+    "C_star": "B69-W productionCPU endpoint in fixed full-budget technicalcycle3 world202610138903;fixedbeforeDEV independently ofcandidatebehavior",
+    "J_compute": "same A staircase over0..C_star, chronologicalpaid query completioncoordinates;0beforebirthquery;holdlastcompletedscoreafterbudget",
+    "compute_includes": [
+      "Wtrainforwardbackward",
+      "RMSupdates",
+      "initialandmandatoryheldqueries",
+      "ownEOSdecisions",
+      "promptreading"
+    ],
+    "separate_costs": [
+      "causalcontrolhistories",
+      "peerconfigurations",
+      "clone/digest",
+      "independentaudit",
+      "packaging"
+    ],
+    "no_measured_runtime_claim": true,
+    "retention": "finalaftermixed; compareperoperation withcausalcontrols andpredeclaredshortcutenvelope",
+    "taught": "E1diagnosticonly; actualliteralexposurecount",
+    "posthoc_zero_nonzero": "diagnosticonly,no gate",
+    "no_best_checkpoint": true,
+    "N_MIXED_binary_curve": "reference actualWprefixcurveandstate,notrerunornewnativequeries"
+  },
+  "shortcuts": [
+    "raw exactkey",
+    "canonicalgroup exactkey",
+    "globalreplymode",
+    "promptlengthreplymode",
+    "last2rawbytesreplymode",
+    "rawbytebagreplymode"
+  ],
+  "DEV": {
+    "world_ids": [
+      202610138101,
+      202610138102,
+      202610138103,
+      202610138104
+    ],
+    "configurations": [
+      "B16",
+      "B24",
+      "B69",
+      "E6",
+      "E6_FIX"
+    ],
+    "full_jobs": 20,
+    "independent_worlds": 4,
+    "selection_eligible": "mean J_sample/J_compute positive vs each ofthreeGRUreferences;fourfinaloperationandmixedcausal/shortcutcontrasts positive; mixedteachingcontrastpositive",
+    "selection_rank": "max min(candidateJsample-maxGRUJsample,candidateJcompute-maxGRUJcompute);thenlowerproductionCPU,lowertrainableparameters,thenE6_FIXbeforeE6",
+    "selected_reference": "max meanJsampleamongB16/B24/B69;thenmaxJcompute;lowerCPU;lexicalID",
+    "max_selected": 1,
+    "no_significance_claim": true,
+    "no_afterDEV_recipe_or_budget_change": true
+  },
+  "CONFIRM": {
+    "world_ids": [
+      202610138201,
+      202610138202,
+      202610138203,
+      202610138204,
+      202610138205,
+      202610138206,
+      202610138207,
+      202610138208,
+      202610138209,
+      202610138210,
+      202610138211,
+      202610138212,
+      202610138213,
+      202610138214,
+      202610138215,
+      202610138216,
+      202610138217,
+      202610138218,
+      202610138219,
+      202610138220,
+      202610138221,
+      202610138222,
+      202610138223,
+      202610138224
+    ],
+    "independent_worlds": 24,
+    "configurations": "selectedELMrecipe, frozenselectedGRUreference, fixedELMtwin",
+    "full_jobs": 72,
+    "conditional": true,
+    "samefreshworlds": true,
+    "primary_tests": 8,
+    "tests": [
+      "J_sample(candidate)-J_sample(reference)",
+      "J_compute(candidate)-J_compute(reference)",
+      "retained+ W-max(N_BINARY,SH_BINARY,shortcut)",
+      "retained- W-max(N_BINARY,SH_BINARY,shortcut)",
+      "retained* W-max(N_BINARY,SH_BINARY,shortcut)",
+      "retained/ W-max(N_BINARY,SH_BINARY,shortcut)",
+      "retainedmixed W-max(N_BINARY,SH_BINARY,shortcut)",
+      "retainedmixed W-N_MIXED"
+    ],
+    "statistical_rule": "all8one-sidedpaired-worldmean tests pass Holm alpha.05; individual two-sided95%t intervals descriptive",
+    "constant_rule": "allpairedvaluesidentical: ifmean<=0 p=1;otherwise boundedHoeffding p=min(1,exp(-n*mean^2/2));never assign p=0 fromzerovariance",
+    "adoption_scope": "boundedE3andrelativeefficiency vsselectedreference, not broadarithmeticmastery, biologicallocallearning,NLPorFull151generalupgrade",
+    "ELM_twin": "diagnostic only, not later selectable",
+    "source_control_selection_limits": "strongestDEVsample reference; no assertion ofbeating everypossibleGRU tuning"
+  },
+  "maximum_scientific_jobs": 92,
+  "maximum_scientific_record_applications": 3014656,
+  "maximum_correlated_final_histories": 368,
+  "technical_cycles_planned": [
+    {
+      "cycle": 1,
+      "world": 202610138901,
+      "scope": "source-step/gradient/byte/state fixtures; no formal science",
+      "native_arithmetic_jobs": 0
+    },
+    {
+      "cycle": 2,
+      "world": 202610138902,
+      "configurations": 5,
+      "binary_n": 1024,
+      "mixed_n": 256,
+      "native_technical_jobs": 5,
+      "native_external_records": 20480
+    },
+    {
+      "cycle": 3,
+      "world": 202610138903,
+      "configurations": 5,
+      "binary_n": 8192,
+      "mixed_n": 2048,
+      "native_technical_jobs": 5,
+      "native_external_records": 163840
+    }
+  ],
+  "operations": {
+    "workers": 2,
+    "threads_each": 1,
+    "detached": true,
+    "caffeinate": true,
+    "live_monitor": true,
+    "admission_hours": 8,
+    "hard_session_hours": 10,
+    "admission_rule": "reserve analysis/audit/package time plus3xslowestqualifiedwholejob bound; no new job withoutsafe fullcompletion estimate",
+    "runtime_estimate": "not measured; no launch beforewholejob benchmarks",
+    "whole_job_boundary": true,
+    "no_automatic_restart_resume_or_sample_extension": true,
+    "negative_no_advance_valid_completion": true
+  },
+  "full_inventory_reference": "arithmetic_kernel_no_attention_dev_v3_20261013/ops/read_only_lineage_review_20261013/original_sources/inventory/FULL_INVENTORY_REVIEW.json",
+  "mechanism_ids": [
+    "M001",
+    "M007",
+    "M010",
+    "M016",
+    "M031",
+    "M033"
+  ],
+  "prior_warnings": [
+    "M022",
+    "M027",
+    "M034",
+    "M035",
+    "M041",
+    "M050",
+    "M053",
+    "M061",
+    "M102",
+    "M106"
+  ],
+  "new_family_wide_exclusions": 0,
+  "do_not_silently_inherit": [
+    "Full151fastslowsynapses",
+    "CONTENTexactkeys",
+    "COVoperandroles",
+    "numericrenderer",
+    "imageepisode",
+    "pixelgeometry",
+    "oldactivityloss",
+    "rewiring",
+    "V3rescans",
+    "V3modulation",
+    "learnedKVattention"
+  ],
+  "qualification_debts": [
+    "source-equivalent GRU port",
+    "actual ELM source-step parity",
+    "all-part gradients and no-write purity",
+    "measured parameters/state/production costs",
+    "paid-curve reducer and multiplicity qualification",
+    "detached full-job admission/commit/analysis/packaging qualification"
+  ]
+}

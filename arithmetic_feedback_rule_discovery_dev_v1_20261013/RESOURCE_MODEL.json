@@ -1,0 +1,16 @@
+{
+  "encoder_parameters": 19696,
+  "readout_parameters": 16705,
+  "full_confidence_entries": 4225,
+  "learned_full_persistent_array_bytes": 482576,
+  "learned_diagonal_persistent_array_bytes": 449296,
+  "gradient_tape_max_events": 32,
+  "transient_gradient_buffers_extra": true,
+  "global_dense_engineered_model_not_native_scalar_neurons": true,
+  "GRU_forward_dense_multiply_add_flops_per_transition": "6*d*(m+d), plus O(d) gate arithmetic",
+  "categorical_prediction_dense_flops_per_decision": "2*(d+1)*257, plus loss/probability arithmetic",
+  "confidence_update_full_complexity": "O((d+1)^2 + (d+1)*257)",
+  "encoder_update_complexity": "O(window*d*(m+d) + permitted_targets*(K-1)*d*(m+d) + encoder_parameters)",
+  "logical_array_traffic": "Each dense transition reads input/recurrent matrices; each readout decision reads V. Cache/DRAM traffic not measured; never label logical reads as measured DRAM bandwidth.",
+  "all_runtime_costs_charged_in_saved_resources": true
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "USER_KERNEL_AND_FEEDBACK_REQUIREMENT",
+  "date": "2026-10-13",
+  "goal": "Retained exact own-output unseen four-operation and bounded mixed arithmetic ability per external sample and actual compute, learned from real byte feedback without supplied arithmetic rules",
+  "status": "DESIGN_REQUIREMENT_NOT_IMPLEMENTED_OR_LAUNCHED",
+  "elm": {
+    "active_search_status": "EXCLUDED_BY_USER",
+    "families": [
+      "ELM"
+    ],
+    "withdrawn_recipes": [
+      "E6",
+      "E6_FIX"
+    ],
+    "historical_sources_and_results_preserved": true,
+    "claim": "Operational exclusion; the two technical worlds are not a statistical impossibility proof of the whole family."
+  },
+  "feedback": {
+    "warmup": "The learner may observe the expected output bytes and its end marker as real training feedback.",
+    "transition": "Expected outputs may become sporadic or imperfect, with the received observation/provenance explicit. Exact transition and corruption model are not locked.",
+    "terminal": "Only a scalar 0/1 judgement of the learner's complete generated response; no hidden answer-byte, numeric-error or intermediate-result loss.",
+    "joint_design": "Co-design model state, credit assignment and feedback curriculum. Do not assume an architecture change alone or a weaker feedback stream alone resolves acquisition.",
+    "current_source_cell_training_fact": "Every permitted W record already used real expected reply bytes and EOS in cross-entropy; absence of supervised answers cannot explain this preparation's poor acquisition."
+  },
+  "constraints": {
+    "end_to_end_raw_bytes": true,
+    "all_256_payload_bytes": true,
+    "own_output_and_end_marker": true,
+    "transformers_allowed": false,
+    "attention_allowed": false,
+    "arithmetic_parser_in_learner": false,
+    "provided_numeric_features_roles_rules_or_solution_traces": false,
+    "noise_robustness_is_primary_goal": false
+  },
+  "next_design_basis": {
+    "reference": "Faithful old ANSWER-0 recurrent source, retained as a reference rather than an adopted new arithmetic core.",
+    "hypothesis": "A learned prompt-preservation path and separate evolving generation state may improve information access and credit; no successful repair is yet established.",
+    "controls_needed": [
+      "Continuous expected-output feedback under the same problem stream",
+      "Warmup-matched frozen learning during the later 0/1 phase",
+      "Architecture-matched feedback comparisons"
+    ],
+    "count_separately": [
+      "Unique problem groups",
+      "All problem presentations, including warmup and replay",
+      "Expected-output payload bytes revealed",
+      "0/1 verification events",
+      "Actual training, exploration and generation compute"
+    ],
+    "selection_and_curriculum": "Tune only on development/training information, keep held-out relation groups absent from all warmup and later feedback, freeze finite budgets before confirmation.",
+    "primary_evaluation": "Retained exact own-output generalization to unseen four-operation/mixed cases across the full sample and compute history, plus improvement during the scalar-feedback phase."
+  },
+  "evidence": {
+    "current_preparation": "arithmetic_source_derived_kernel_dev_v1_20261013/PREPARATION_REPORT.md",
+    "older_engineered_addition_source": "addition_core_v2_support_v1_20261011/minifly_addition_core/core.py",
+    "older_raw_byte_reference": "arithmetic_stream_transfer_dev_v1_20261013/PREPARATION_REPORT.md",
+    "older_context_geometry_scope": "arithmetic_feedback_rule_discovery_dev_v1_20261013/ops/read_only_review_20261013/FINDINGS.md",
+    "external_curriculum_context": "https://arxiv.org/html/1410.4615",
+    "external_limit": "Learning to Execute reports teacher-forced accuracy and uses a substantially larger LSTM; it is not a matched own-output feasibility result for this core."
+  },
+  "frozen_experiment_mutations": false,
+  "new_training_executed": false,
+  "github_upload_executed": false
+}

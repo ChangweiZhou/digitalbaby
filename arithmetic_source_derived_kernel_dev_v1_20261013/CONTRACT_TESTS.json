@@ -1,0 +1,704 @@
+{
+  "accepted": true,
+  "scope": "source/state/gradient/byte qualification only",
+  "checks": [
+    {
+      "check": "B16 exact count/dtype",
+      "accepted": true,
+      "parameters": 36401
+    },
+    {
+      "check": "B16 full no-write arbitrary payload and long input",
+      "accepted": true
+    },
+    {
+      "check": "B16 batched/serial own generation parity and purity",
+      "accepted": true
+    },
+    {
+      "check": "B16 independent mutable clone",
+      "accepted": true
+    },
+    {
+      "check": "B16 no vocabulary mask, ownEOS vs cap",
+      "accepted": true
+    },
+    {
+      "check": "B16 derivative E",
+      "accepted": true,
+      "analytic": -0.021037280648692355,
+      "finite_difference": -0.021037280362179445
+    },
+    {
+      "check": "B16 derivative Wz",
+      "accepted": true,
+      "analytic": -0.0014362073144438144,
+      "finite_difference": -0.0014362071532048049
+    },
+    {
+      "check": "B16 derivative Uz",
+      "accepted": true,
+      "analytic": -0.0014503695119242972,
+      "finite_difference": -0.0014503696021961332
+    },
+    {
+      "check": "B16 derivative bz",
+      "accepted": true,
+      "analytic": 0.0034327376069170543,
+      "finite_difference": 0.0034327374276443834
+    },
+    {
+      "check": "B16 derivative Wr",
+      "accepted": true,
+      "analytic": -0.00039701715944285307,
+      "finite_difference": -0.00039701708587358553
+    },
+    {
+      "check": "B16 derivative Ur",
+      "accepted": true,
+      "analytic": 0.0005251163425920324,
+      "finite_difference": 0.0005251166168562804
+    },
+    {
+      "check": "B16 derivative br",
+      "accepted": true,
+      "analytic": -0.00164760835476122,
+      "finite_difference": -0.0016476082720373597
+    },
+    {
+      "check": "B16 derivative Wg",
+      "accepted": true,
+      "analytic": 0.007696974362768141,
+      "finite_difference": 0.0076969743911803334
+    },
+    {
+      "check": "B16 derivative Ug",
+      "accepted": true,
+      "analytic": 0.0048226733239350615,
+      "finite_difference": 0.004822673149718071
+    },
+    {
+      "check": "B16 derivative bg",
+      "accepted": true,
+      "analytic": 0.03196026223481771,
+      "finite_difference": 0.031960262214525414
+    },
+    {
+      "check": "B16 derivative V",
+      "accepted": true,
+      "analytic": -0.21999610281161877,
+      "finite_difference": -0.21999610266831837
+    },
+    {
+      "check": "B16 separate target gradient 19",
+      "accepted": true
+    },
+    {
+      "check": "B16 separate target gradient 256",
+      "accepted": true
+    },
+    {
+      "check": "B16 trained no-write freezes full learning state",
+      "accepted": true
+    },
+    {
+      "check": "B24 exact count/dtype",
+      "accepted": true,
+      "parameters": 40009
+    },
+    {
+      "check": "B24 full no-write arbitrary payload and long input",
+      "accepted": true
+    },
+    {
+      "check": "B24 batched/serial own generation parity and purity",
+      "accepted": true
+    },
+    {
+      "check": "B24 independent mutable clone",
+      "accepted": true
+    },
+    {
+      "check": "B24 no vocabulary mask, ownEOS vs cap",
+      "accepted": true
+    },
+    {
+      "check": "B24 derivative E",
+      "accepted": true,
+      "analytic": -0.019968453154215415,
+      "finite_difference": -0.019968452891205857
+    },
+    {
+      "check": "B24 derivative Wz",
+      "accepted": true,
+      "analytic": -0.0009312525855950517,
+      "finite_difference": -0.0009312524085203222
+    },
+    {
+      "check": "B24 derivative Uz",
+      "accepted": true,
+      "analytic": -0.0007623295216178064,
+      "finite_difference": -0.0007623295328329505
+    },
+    {
+      "check": "B24 derivative bz",
+      "accepted": true,
+      "analytic": -0.00207839151158518,
+      "finite_difference": -0.0020783916809818948
+    },
+    {
+      "check": "B24 derivative Wr",
+      "accepted": true,
+      "analytic": 0.00022258560706376715,
+      "finite_difference": 0.00022258506149341883
+    },
+    {
+      "check": "B24 derivative Ur",
+      "accepted": true,
+      "analytic": 0.00026592519580592716,
+      "finite_difference": 0.0002659252817949209
+    },
+    {
+      "check": "B24 derivative br",
+      "accepted": true,
+      "analytic": 0.000988206624896816,
+      "finite_difference": 0.0009882066276389878
+    },
+    {
+      "check": "B24 derivative Wg",
+      "accepted": true,
+      "analytic": -0.008674457628864282,
+      "finite_difference": -0.008674457374624467
+    },
+    {
+      "check": "B24 derivative Ug",
+      "accepted": true,
+      "analytic": -0.004885565326606104,
+      "finite_difference": -0.0048855655077062465
+    },
+    {
+      "check": "B24 derivative bg",
+      "accepted": true,
+      "analytic": 0.04480251416310958,
+      "finite_difference": 0.0448025141430719
+    },
+    {
+      "check": "B24 derivative V",
+      "accepted": true,
+      "analytic": -0.24984226678362778,
+      "finite_difference": -0.2498422664309885
+    },
+    {
+      "check": "B24 separate target gradient 19",
+      "accepted": true
+    },
+    {
+      "check": "B24 separate target gradient 256",
+      "accepted": true
+    },
+    {
+      "check": "B24 trained no-write freezes full learning state",
+      "accepted": true
+    },
+    {
+      "check": "B69 exact count/dtype",
+      "accepted": true,
+      "parameters": 43664
+    },
+    {
+      "check": "B69 full no-write arbitrary payload and long input",
+      "accepted": true
+    },
+    {
+      "check": "B69 batched/serial own generation parity and purity",
+      "accepted": true
+    },
+    {
+      "check": "B69 independent mutable clone",
+      "accepted": true
+    },
+    {
+      "check": "B69 no vocabulary mask, ownEOS vs cap",
+      "accepted": true
+    },
+    {
+      "check": "B69 derivative E",
+      "accepted": true,
+      "analytic": -0.015215245707945253,
+      "finite_difference": -0.015215245507960162
+    },
+    {
+      "check": "B69 derivative Wz",
+      "accepted": true,
+      "analytic": -0.0012563438345537595,
+      "finite_difference": -0.001256343695743567
+    },
+    {
+      "check": "B69 derivative Uz",
+      "accepted": true,
+      "analytic": 0.0013244356228107543,
+      "finite_difference": 0.0013244356722452721
+    },
+    {
+      "check": "B69 derivative bz",
+      "accepted": true,
+      "analytic": 0.004083262081990009,
+      "finite_difference": 0.004083262616916272
+    },
+    {
+      "check": "B69 derivative Wr",
+      "accepted": true,
+      "analytic": -0.0002843179897025515,
+      "finite_difference": -0.0002843176805100711
+    },
+    {
+      "check": "B69 derivative Ur",
+      "accepted": true,
+      "analytic": 0.00030267819570355196,
+      "finite_difference": 0.0003026781048021121
+    },
+    {
+      "check": "B69 derivative br",
+      "accepted": true,
+      "analytic": -0.001424628444643508,
+      "finite_difference": -0.001424628637280989
+    },
+    {
+      "check": "B69 derivative Wg",
+      "accepted": true,
+      "analytic": -0.007626279497667713,
+      "finite_difference": -0.007626279385775092
+    },
+    {
+      "check": "B69 derivative Ug",
+      "accepted": true,
+      "analytic": -0.004842360610059773,
+      "finite_difference": -0.004842360956658354
+    },
+    {
+      "check": "B69 derivative bg",
+      "accepted": true,
+      "analytic": -0.041531341143585046,
+      "finite_difference": -0.041531341032907676
+    },
+    {
+      "check": "B69 derivative V",
+      "accepted": true,
+      "analytic": -0.23680867342257966,
+      "finite_difference": -0.2368086733373076
+    },
+    {
+      "check": "B69 separate target gradient 19",
+      "accepted": true
+    },
+    {
+      "check": "B69 separate target gradient 256",
+      "accepted": true
+    },
+    {
+      "check": "B69 trained no-write freezes full learning state",
+      "accepted": true
+    },
+    {
+      "check": "E6 exact count/dtype",
+      "accepted": true,
+      "parameters": 43913
+    },
+    {
+      "check": "E6 full no-write arbitrary payload and long input",
+      "accepted": true
+    },
+    {
+      "check": "E6 batched/serial own generation parity and purity",
+      "accepted": true
+    },
+    {
+      "check": "E6 independent mutable clone",
+      "accepted": true
+    },
+    {
+      "check": "E6 no vocabulary mask, ownEOS vs cap",
+      "accepted": true
+    },
+    {
+      "check": "E6 derivative E",
+      "accepted": true,
+      "analytic": -0.001101374297535302,
+      "finite_difference": -0.0011013743250742891
+    },
+    {
+      "check": "E6 derivative syn_weight",
+      "accepted": true,
+      "analytic": 0.0006377199934052323,
+      "finite_difference": 0.0006377198769058623
+    },
+    {
+      "check": "E6 derivative branch_bias",
+      "accepted": true,
+      "analytic": -0.003704172049445887,
+      "finite_difference": -0.003704172080176704
+    },
+    {
+      "check": "E6 derivative branch_gain_raw",
+      "accepted": true,
+      "analytic": 0.0002620425807258088,
+      "finite_difference": 0.00026204283187780675
+    },
+    {
+      "check": "E6 derivative internal_w1",
+      "accepted": true,
+      "analytic": 0.00039985484115133397,
+      "finite_difference": 0.0003998545938799225
+    },
+    {
+      "check": "E6 derivative internal_w2",
+      "accepted": true,
+      "analytic": -0.0005648468220455447,
+      "finite_difference": -0.0005648468359709113
+    },
+    {
+      "check": "E6 derivative internal_b1",
+      "accepted": true,
+      "analytic": 0.004398001544125871,
+      "finite_difference": 0.004398001296479492
+    },
+    {
+      "check": "E6 derivative internal_b2",
+      "accepted": true,
+      "analytic": -0.005597618927802002,
+      "finite_difference": -0.0055976192570028616
+    },
+    {
+      "check": "E6 derivative kappa_raw",
+      "accepted": true,
+      "analytic": -0.0001602970754717925,
+      "finite_difference": -0.00016029733096445398
+    },
+    {
+      "check": "E6 derivative memory_to_activity",
+      "accepted": true,
+      "analytic": 0.0008980283624480391,
+      "finite_difference": 0.0008980285404192045
+    },
+    {
+      "check": "E6 derivative branch_to_activity",
+      "accepted": true,
+      "analytic": 0.002061721379444282,
+      "finite_difference": 0.002061721460222543
+    },
+    {
+      "check": "E6 derivative activity_bias",
+      "accepted": true,
+      "analytic": 0.009853909610842666,
+      "finite_difference": 0.00985390946617315
+    },
+    {
+      "check": "E6 derivative threshold_raw",
+      "accepted": true,
+      "analytic": -0.005199252305486135,
+      "finite_difference": -0.005199252584020542
+    },
+    {
+      "check": "E6 derivative V",
+      "accepted": true,
+      "analytic": -0.30853603249238076,
+      "finite_difference": -0.3085360329446729
+    },
+    {
+      "check": "E6 separate target gradient 19",
+      "accepted": true
+    },
+    {
+      "check": "E6 separate target gradient 256",
+      "accepted": true
+    },
+    {
+      "check": "E6 trained no-write freezes full learning state",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX exact count/dtype",
+      "accepted": true,
+      "parameters": 43529
+    },
+    {
+      "check": "E6_FIX full no-write arbitrary payload and long input",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX batched/serial own generation parity and purity",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX independent mutable clone",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX no vocabulary mask, ownEOS vs cap",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX derivative E",
+      "accepted": true,
+      "analytic": -0.001101374297535302,
+      "finite_difference": -0.0011013743250742891
+    },
+    {
+      "check": "E6_FIX derivative syn_weight",
+      "accepted": true,
+      "analytic": 0.0006377199934052323,
+      "finite_difference": 0.0006377198769058623
+    },
+    {
+      "check": "E6_FIX derivative branch_bias",
+      "accepted": true,
+      "analytic": -0.003704172049445887,
+      "finite_difference": -0.003704172080176704
+    },
+    {
+      "check": "E6_FIX derivative branch_gain_raw",
+      "accepted": true,
+      "analytic": 0.0002620425807258088,
+      "finite_difference": 0.00026204283187780675
+    },
+    {
+      "check": "E6_FIX derivative internal_w1",
+      "accepted": true,
+      "analytic": 0.00039985484115133397,
+      "finite_difference": 0.0003998545938799225
+    },
+    {
+      "check": "E6_FIX derivative internal_w2",
+      "accepted": true,
+      "analytic": -0.0005648468220455447,
+      "finite_difference": -0.0005648468359709113
+    },
+    {
+      "check": "E6_FIX derivative internal_b1",
+      "accepted": true,
+      "analytic": 0.004398001544125871,
+      "finite_difference": 0.004398001296479492
+    },
+    {
+      "check": "E6_FIX derivative internal_b2",
+      "accepted": true,
+      "analytic": -0.005597618927802002,
+      "finite_difference": -0.0055976192570028616
+    },
+    {
+      "check": "E6_FIX derivative memory_to_activity",
+      "accepted": true,
+      "analytic": 0.0008980283624480391,
+      "finite_difference": 0.0008980285404192045
+    },
+    {
+      "check": "E6_FIX derivative branch_to_activity",
+      "accepted": true,
+      "analytic": 0.002061721379444282,
+      "finite_difference": 0.002061721460222543
+    },
+    {
+      "check": "E6_FIX derivative activity_bias",
+      "accepted": true,
+      "analytic": 0.009853909610842666,
+      "finite_difference": 0.00985390946617315
+    },
+    {
+      "check": "E6_FIX derivative threshold_raw",
+      "accepted": true,
+      "analytic": -0.005199252305486135,
+      "finite_difference": -0.005199252584020542
+    },
+    {
+      "check": "E6_FIX derivative V",
+      "accepted": true,
+      "analytic": -0.30853603249238076,
+      "finite_difference": -0.3085360329446729
+    },
+    {
+      "check": "E6_FIX separate target gradient 19",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX separate target gradient 256",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX trained no-write freezes full learning state",
+      "accepted": true
+    },
+    {
+      "check": "B16 original birth exactly reproduced",
+      "accepted": true
+    },
+    {
+      "check": "B16 original RMS/state/long-credit record 0",
+      "accepted": true,
+      "maximum_error": 8.881784197001252e-16
+    },
+    {
+      "check": "B16 original RMS/state/long-credit record 1",
+      "accepted": true,
+      "maximum_error": 5.329070518200751e-15
+    },
+    {
+      "check": "B16 original RMS/state/long-credit record 2",
+      "accepted": true,
+      "maximum_error": 2.6645352591003757e-15
+    },
+    {
+      "check": "B16 original RMS/state/long-credit record 3",
+      "accepted": true,
+      "maximum_error": 7.105427357601002e-15
+    },
+    {
+      "check": "B16 original RMS/state/long-credit record 4",
+      "accepted": true,
+      "maximum_error": 2.6645352591003757e-15
+    },
+    {
+      "check": "B24 original birth exactly reproduced",
+      "accepted": true
+    },
+    {
+      "check": "B24 original RMS/state/long-credit record 0",
+      "accepted": true,
+      "maximum_error": 8.881784197001252e-16
+    },
+    {
+      "check": "B24 original RMS/state/long-credit record 1",
+      "accepted": true,
+      "maximum_error": 2.6645352591003757e-15
+    },
+    {
+      "check": "B24 original RMS/state/long-credit record 2",
+      "accepted": true,
+      "maximum_error": 2.6645352591003757e-15
+    },
+    {
+      "check": "B24 original RMS/state/long-credit record 3",
+      "accepted": true,
+      "maximum_error": 5.329070518200751e-15
+    },
+    {
+      "check": "B24 original RMS/state/long-credit record 4",
+      "accepted": true,
+      "maximum_error": 7.105427357601002e-15
+    },
+    {
+      "check": "B69 original birth exactly reproduced",
+      "accepted": true
+    },
+    {
+      "check": "B69 original RMS/state/long-credit record 0",
+      "accepted": true,
+      "maximum_error": 8.881784197001252e-16
+    },
+    {
+      "check": "B69 original RMS/state/long-credit record 1",
+      "accepted": true,
+      "maximum_error": 4.440892098500626e-15
+    },
+    {
+      "check": "B69 original RMS/state/long-credit record 2",
+      "accepted": true,
+      "maximum_error": 1.7763568394002505e-15
+    },
+    {
+      "check": "B69 original RMS/state/long-credit record 3",
+      "accepted": true,
+      "maximum_error": 6.217248937900877e-15
+    },
+    {
+      "check": "B69 original RMS/state/long-credit record 4",
+      "accepted": true,
+      "maximum_error": 7.993605777301127e-15
+    },
+    {
+      "check": "ELM original forward state at every step",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient syn_weight",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient branch_bias",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient branch_gain_raw",
+      "accepted": true,
+      "maximum_error": 4.336808689942018e-19
+    },
+    {
+      "check": "ELM original gradient internal_w1",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient internal_w2",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient internal_b1",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient internal_b2",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient kappa_raw",
+      "accepted": true,
+      "maximum_error": 4.336808689942018e-19
+    },
+    {
+      "check": "ELM original gradient memory_to_activity",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient branch_to_activity",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient activity_bias",
+      "accepted": true,
+      "maximum_error": 0.0
+    },
+    {
+      "check": "ELM original gradient threshold_raw",
+      "accepted": true,
+      "maximum_error": 1.0408340855860843e-17
+    },
+    {
+      "check": "ELM train/fixed initial state and topology parity",
+      "accepted": true
+    },
+    {
+      "check": "E6 fixed nonsemantic graph fan-in",
+      "accepted": true
+    },
+    {
+      "check": "E6_FIX fixed nonsemantic graph fan-in",
+      "accepted": true
+    },
+    {
+      "check": "operative core imports and information-flow whitelist",
+      "accepted": true
+    }
+  ],
+  "check_count": 135,
+  "generic_fixture_records": 65,
+  "native_arithmetic_records": 0,
+  "scientific_jobs": 0,
+  "derivative_scope": "one maximum-gradient coordinate per trainable component, plus original-source all-array gradient parity; not full Jacobian or arithmetic capability"
+}

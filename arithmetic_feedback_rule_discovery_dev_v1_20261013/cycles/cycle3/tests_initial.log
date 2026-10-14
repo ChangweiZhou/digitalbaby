@@ -1,0 +1,41 @@
+test_abort_and_generated_eos_do_not_flush (test_core.Tests.test_abort_and_generated_eos_do_not_flush) ... ok
+test_all_bytes_and_pure_prediction_generation (test_core.Tests.test_all_bytes_and_pure_prediction_generation) ... ok
+test_checkpoint_mid_sequence_and_chunking (test_core.Tests.test_checkpoint_mid_sequence_and_chunking) ... ok
+test_confidence_stability (test_core.Tests.test_confidence_stability) ... ok
+test_empty_reply_is_legal_and_not_masked (test_core.Tests.test_empty_reply_is_legal_and_not_masked) ... FAIL
+test_gradient_preupdate_online_readouts (test_core.Tests.test_gradient_preupdate_online_readouts) ... ok
+test_independent_write_protection (test_core.Tests.test_independent_write_protection) ... ok
+test_no_write_and_frozen (test_core.Tests.test_no_write_and_frozen) ... ok
+test_payload_permutation_equivariance (test_core.Tests.test_payload_permutation_equivariance) ... ok
+test_readout_equation_and_prearrival_choice (test_core.Tests.test_readout_equation_and_prearrival_choice) ... ok
+test_truncated_gradient_detaches_old_state_and_drops_old_losses (test_core.Tests.test_truncated_gradient_detaches_old_state_and_drops_old_losses) ... ok
+test_all_births_matched_independent_and_reference_pinned (test_pipeline.Tests.test_all_births_matched_independent_and_reference_pinned) ... ok
+test_branch_permissions_and_parent_fork (test_pipeline.Tests.test_branch_permissions_and_parent_fork) ... ok
+test_control_guard_rejects_actual_bad_writer (test_pipeline.Tests.test_control_guard_rejects_actual_bad_writer) ... ok
+test_long_stream_bounded_and_actual_eos_after_max_payload (test_pipeline.Tests.test_long_stream_bounded_and_actual_eos_after_max_payload) ... ok
+test_metrics_common_clock_and_holm (test_pipeline.Tests.test_metrics_common_clock_and_holm) ... ok
+test_no_evaluator_imports_or_numerical_features (test_pipeline.Tests.test_no_evaluator_imports_or_numerical_features) ... ok
+test_probes_preserve_pending_gradients (test_pipeline.Tests.test_probes_preserve_pending_gradients) ... ok
+test_tampered_full_receipts_rejected (test_pipeline.Tests.test_tampered_full_receipts_rejected) ... ok
+test_technical_admission_only (test_pipeline.Tests.test_technical_admission_only) ... ok
+
+======================================================================
+FAIL: test_empty_reply_is_legal_and_not_masked (test_core.Tests.test_empty_reply_is_legal_and_not_masked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/arithmetic_feedback_rule_discovery_dev_v1_20261013/test_core.py", line 108, in test_empty_reply_is_legal_and_not_masked
+    self.assertEqual((y,status),(b'', 'EOS'));self.assertEqual(before,c.state_digest())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Tuples differ: (b'', 'TRUNCATED') != (b'', 'EOS')
+
+First differing element 1:
+'TRUNCATED'
+'EOS'
+
+- (b'', 'TRUNCATED')
++ (b'', 'EOS')
+
+----------------------------------------------------------------------
+Ran 20 tests in 5.444s
+
+FAILED (failures=1)
