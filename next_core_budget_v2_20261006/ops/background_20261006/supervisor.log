@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/next_core_budget_v2_20261006/ops/background_20261006/run_background.py", line 39, in main
+    out = pipeline.run(resume=False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/next_core_budget_v2_20261006/pipeline.py", line 90, in run
+    sm=manifest('screen');result=dispatch(sm,ROOT/'science/screen',resume=resume,session_origin=ORIGIN)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/next_core_budget_v2_20261006/dispatcher.py", line 71, in dispatch
+    disk=sum(x.stat().st_size for x in ROOT.rglob('*') if x.is_file() and 'scratch' not in x.parts);last_resource=elapsed
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/next_core_budget_v2_20261006/dispatcher.py", line 71, in <genexpr>
+    disk=sum(x.stat().st_size for x in ROOT.rglob('*') if x.is_file() and 'scratch' not in x.parts);last_resource=elapsed
+             ^^^^^^^^
+  File "/Users/pencilbard/anaconda3/lib/python3.11/pathlib.py", line 1013, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/next_core_budget_v2_20261006/science/screen/active/61008001_P0005_lifetime.json.pending-fqd3h206'

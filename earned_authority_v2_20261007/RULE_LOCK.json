@@ -1,0 +1,23 @@
+{
+  "schema": "AUTHORITY_V2_RULE_BEFORE_REPLAY",
+  "rule": "SUPPORT_CONDITIONED_PREQUENTIAL_HELP_HURT_V2",
+  "status": "PROTOTYPE_NOT_SCIENCE_RELEASE",
+  "native_learning": "unchanged ERROR",
+  "scales": [1.4911274663291492, 1.3452365735750882],
+  "weights": [1.0, 0.5],
+  "cache_capacity": 64,
+  "cache_replacement": "FIFO; a repeated key is not promoted",
+  "key": "last four non-space bytes in current line, identical to CONTENT; short context INVALID",
+  "update": "After arriving teacher, permitted records only: compare pre-feedback ERROR and Q_HALF correctness; increment stratum count/help/hurt; insert key after scoring",
+  "strata": ["unsupported", "supported"],
+  "query_stratum": "supported iff every presented option is in the past-write cache",
+  "selector": "alpha=0.5 iff past stratum help > hurt; else alpha=1.0",
+  "empty_or_equal_prior": "ERROR",
+  "controls": ["ERROR", "Q_HALF", "GLOBAL_CALIBRATION", "SUPPORT_ONLY"],
+  "support_only": "alpha=0.5 on unsupported query, else1; diagnostic only",
+  "prohibited_inputs": ["task", "world", "stage", "evaluator_taught_flag", "correct_answer_at_query", "future_feedback"],
+  "causal_control": "N_old suppresses old native and authority writes together; observer-only-old is a separately named diagnostic",
+  "replay": "Exploratory new observer learning on archived predictions; zero new native trajectories",
+  "revision_allowed_after_replay": false,
+  "formal_science_authorized": false
+}
