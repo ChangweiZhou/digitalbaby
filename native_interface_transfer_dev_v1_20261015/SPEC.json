@@ -1,0 +1,91 @@
+{
+  "A": {
+    "all_clean_correct_gate": true,
+    "conditional_max_record_applications": 4608,
+    "gate_uses_immediate_probe": true,
+    "histories": [
+      "W",
+      "NO_WRITE"
+    ],
+    "map_seed": 202610155002,
+    "per_history_max": 768,
+    "record_doses": [
+      0,
+      12,
+      48,
+      192,
+      768
+    ],
+    "rest_seconds": 86400,
+    "seed": 202610155001,
+    "stages": [
+      "A1-LEGACY-C4",
+      "A2-SCHEDULED-C16",
+      "A3-SEQUENCE-C16"
+    ],
+    "stop_on_behavior_failure": true
+  },
+  "B": {
+    "NEW_doses": [
+      0,
+      1,
+      4,
+      16,
+      64,
+      256,
+      1024
+    ],
+    "OLD_doses": [
+      0,
+      32,
+      128,
+      512,
+      2048,
+      8192,
+      16384
+    ],
+    "correlated_histories": 12,
+    "full_jobs": 4,
+    "histories": [
+      "W",
+      "N_OLD",
+      "SH_OLD"
+    ],
+    "models": [
+      "KEEP-C16-CE",
+      "G62-C16-CE"
+    ],
+    "record_applications": 208896,
+    "split_sizes": {
+      "HELD": 20,
+      "NEW": 20,
+      "OLD": 60
+    },
+    "statistics": "descriptive; no promotion gate",
+    "unseen": [
+      "NEW at dose zero",
+      "HELD at all checkpoints"
+    ],
+    "whole_commutative_orbits_held": true,
+    "worlds": [
+      202610155101,
+      202610155102
+    ]
+  },
+  "automatic_adoption": false,
+  "automatic_publication": false,
+  "date": "2026-10-15",
+  "formal_campaign": false,
+  "goal": "Unseen addition own-output generalization per all training presentations and compute; relevant OLD retention",
+  "language_deferred": true,
+  "operations": {
+    "admission_seconds": 28800,
+    "automatic_retry": false,
+    "caffeinate": true,
+    "completed_job_overwrite": false,
+    "hard_seconds": 36000,
+    "workers": 2
+  },
+  "schema": "NATIVE_INTERFACE_TRANSFER_DEVELOPMENT_SPEC_V1",
+  "science": false
+}

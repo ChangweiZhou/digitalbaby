@@ -1,0 +1,271 @@
+**The make-up experiment is useful, but it changes the diagnosis more than it improves the model. We now have three distinct problems: an incompletely qualified sequence interface for the native memory system, weak compositional generalization in the recurrent models, and interference when those recurrent models learn new material. These should no longer be treated as one problem requiring one larger “Minifly core.”**
+
+I reviewed the October 15 publication at **`8f1df9cd`**, including the lineage comparison, post-run review, actual adapters and qualification tests, resource report, and earlier native and engineering-core descriptions. This is a review of the saved results and source, not a rerun. The new publication contains **15 technical world–version jobs**, but the full-dose behavioral evidence comes from only **two worlds**; there are no formal confirmation results.  
+
+My recommendation is now more specific: **retain the original memory result, make one bounded attempt to qualify its new sequence interface, and move the main research effort toward reusable learned representations. Keep the recurrent models as explicitly separate comparison systems—not as unannounced successors to Full151.**
+
+## 1. The structural deviation was substantive
+
+Mr. Zhou was right to question the continuity of the project. The repository documents three different systems whose achievements cannot simply be accumulated under one model name.
+
+| System | What it actually contains | What its evidence can support |
+|---|---|---|
+| **Native Full151 / R_center** | Native plastic states, fixed input encodings and readers; R_center adds a private four-byte-context bank | Taught-cue acquisition and retention under the original protocol |
+| **COV-R / COV-SUPPORT** | Engineered operand roles, an additive readout, ordinal output, and additional learning controls | A bounded engineering solution for addition with those structural assumptions |
+| **KEEP / G62** | Learned byte embeddings, GRU/LSTM dynamics, gradient-based learning | Independent end-to-end recurrent learning experiments |
+
+The R_center release explicitly says that its tested interface is a **12-byte cue followed by one output from `0`–`3`**. It does not claim a general sequence parser, learned stopping, or autonomous multi-byte generation. The COV-SUPPORT release explicitly identifies its engineered operand roles and additive readout. These are not minor implementation details.  
+
+**My earlier advice should have maintained this separation more forcefully.** The GRU/LSTM experiments tell us something useful about recurrent learning, but they do not show that the original fly-derived memory architecture has been progressively improved—or progressively disproved.
+
+The make-up comparison addresses that problem by restoring actual native stores and distinguishing them from recurrent references. However, it also introduces a new **C16 output code and sequence controller**. Thus it restores source lineage without restoring the original task interface unchanged. The design correctly acknowledges this distinction. 
+
+## 2. What the make-up experiment actually found
+
+This experiment deliberately simplifies the problem to addition with operands from 0 to 9, with **complete correct answer supervision throughout**. It is not another sparse-reward experiment.
+
+Each full-dose history teaches 60 OLD problems through 16,384 presentations—about **273 presentations per problem**—then teaches 20 NEW problems through 1,024 presentations. Twenty HELD problems never receive feedback. Reversed operand pairs are held out together, so learning `2+3` and testing `3+2` cannot masquerade as new-combination generalization. 
+
+The post-run review supplies an important result missing from the headline report: **OLD retention after NEW learning**.
+
+### Full-dose results, averaged across the two worlds
+
+| Version | OLD after initial learning and rest | OLD after NEW learning and final rest | NEW final | HELD final |
+|---|---:|---:|---:|---:|
+| N151-C16 | 0.83% | 0.83% | 0% | 0% |
+| C151-C16 | 0% | 0% | 0% | 0% |
+| RC151-C16 | 5.83% | 5.83% | 0% | 0% |
+| KEEP-C16-CE | **100%** | **49.17%** | **100%** | **5%** |
+| G62-C16-CE | **100%** | **22.50%** | **100%** | **0%** |
+
+These are exact self-generated answer-plus-EOS scores, not teacher-forced token scores. They remain descriptive technical results rather than population-level estimates.  
+
+The implications differ by model family.
+
+**For the native variants, acquisition through the new interface is already failing.** Their results therefore do not isolate an arithmetic-generalization limitation. A system that cannot reliably reproduce the taught answers has not yet provided a clean test of whether it could generalize their structure.
+
+**For the recurrent variants, acquisition is no longer the principal ambiguity in this particular experiment.** Both memorize OLD, then memorize NEW. Yet they fail to demonstrate useful generalization to the untaught combinations, and NEW learning substantially reduces OLD performance.
+
+Also, the recurrent `rest` operation explicitly leaves its parameters unchanged. Their 100% retention through the first simulated day is therefore not evidence of an active consolidation mechanism. Their informative retention test is what happens during subsequent learning. 
+
+### There is one positive result worth developing
+
+The experiment does **not** show that prior experience is useless.
+
+The saved controls compare correct OLD training with no OLD learning and with shuffled-answer OLD training. Averaging the reported NEW endpoints gives:
+
+| Prior OLD experience | KEEP: NEW accuracy after the fixed NEW dose | G62: NEW accuracy after the fixed NEW dose |
+|---|---:|---:|
+| No OLD learning | 17.5% | 17.5% |
+| OLD answers shuffled | 75% | 42.5% |
+| Correct OLD training | **100%** | **100%** |
+
+These averages are calculated from the two reported world-level results.  
+
+This separates two kinds of transfer:
+
+> **Prior training helps the model learn subsequently taught problems. It has not demonstrated that the model can answer untaught combinations.**
+
+Even shuffled-answer training helps subsequent acquisition. That suggests that part of the benefit may concern the byte interface, output distribution, stopping behavior, or a generally useful learned representation. Correct OLD training provides a further advantage in these worlds, but the experiment does not identify its mechanism.
+
+That is a better research lead than “nothing transfers.” It also prevents us from prematurely calling all of the benefit an addition rule.
+
+## 3. Why the native failure is not yet a clean verdict on native memory
+
+The post-run audit identifies several real issues. Two are particularly important mechanistically.
+
+### A. The private context can lose information that the next output requires
+
+R_center’s private encoder retains the most recent four non-space bytes. That was explicitly limited even in the original release. During multi-byte answer generation, generated answer bytes displace part of the question. The new review documents conflicting private keys under actual teaching histories.  
+
+For example:
+
+```text
+Question: 1+9=    Generated prefix: 1    Required next byte: 0
+Question: 2+9=    Generated prefix: 1    Required next byte: 1
+```
+
+In both cases the four-byte suffix is:
+
+```text
++9=1
+```
+
+The private input key no longer distinguishes the situations.
+
+**This is not a whole-model impossibility proof.** The shared FE0 route and dynamic adaptation might retain distinguishing information. The audit explicitly makes that qualification. But the example demonstrates why a memory component that works for single-output associations is not automatically a reliable sequence generator. 
+
+The immediate missing capability is **maintaining the relevant question–answer-prefix relationship throughout production**, not merely retaining a fact for a longer time.
+
+This also gives the language proposal a much more concrete target: preserving a referent or bound item while other symbols are being produced.
+
+### B. C16 is an intervention, not a neutral connector
+
+All five models now produce 16 values that are decoded through a fixed 257-class codebook. The native models use 16 or 32 separately instantiated stores; the recurrent models replace their free output heads with a 16-component head.  
+
+There is a useful mathematical distinction here. Let \(C\) be the \(257\times16\) code matrix. Each row has eight \(+1\) entries and eight \(-1\) entries, so
+
+\[
+C\mathbf 1=0,\qquad \operatorname{rank}(C)\leq15.
+\]
+
+The logits consequently lie in a subspace of dimension at most 15. All 257 classes can still be individually expressed and distinguished—the code construction ensures that—but their output geometry is coupled.
+
+Therefore:
+
+**“Every desired byte can be decoded from its ideal codeword” does not imply “the inherited learning rule can reliably acquire those codewords under competing updates.”**
+
+The recurrent models’ 100% taught-item performance shows that C16 is not universally fatal to acquisition. It does not establish that C16 is harmless for native opponent or centered teaching.
+
+The qualification tests also stop short of the necessary functional check. One test establishes that the adapted and original four-class readouts have the same argmax; it does not assert that this argmax is the taught target. Other tests establish valid generation status and state isolation, not reliable learned answer-plus-EOS production. Those are valuable software checks, but a different claim. 
+
+### C. Some efficiency claims require correction
+
+The audit finds that native training performs updates without the promised prefeedback output readout, so its measured training cost omits part of the intended closed-loop computation. It also identifies incomplete shortcut-envelope and cost reporting. Held-out output scores remain useful; the cost scope and qualification language need correction. 
+
+Nor should the current C16 recurrent versions continue to be called approximately 44,000-parameter models. Their parameter byte counts correspond to **28,440 parameters for KEEP and 28,800 for G62**, after changing the output head and removing the critic. The native variants have quite different storage and replication costs. This is not a parameter-matched ranking of mechanism families. 
+
+## 4. The diagnosis I would now use
+
+I would organize the project around three questions rather than a succession of model names.
+
+### Can remembered information be expressed through the new interface?
+
+For native Full151, this remains unresolved. The original memory evidence concerned a narrower protocol. The new autonomous sequence adaptation has not demonstrated adequate taught-item acquisition. **The old memory result survives, but its transfer to the new interface has not been established.**  
+
+### Can the learned representation support an untaught combination?
+
+For KEEP and G62, the new experiment gives a cleaner negative result than the earlier four-operation curriculum: taught-item acquisition succeeds, while held-out combination performance is poor. KEEP’s 5% final HELD score is also 5% in the no-OLD-learning control on average; G62 is zero in both. The current endpoints therefore do not establish an incremental final held-out benefit from OLD teaching. 
+
+This supports prioritizing **systematic reuse**, although it does not prove that an architectural change rather than a training change is necessary.
+
+### Can new learning preserve useful existing competence?
+
+The recurrent models now show interference under **pure supervised learning**, without the old policy-gradient procedure. Therefore, fixing the scalar-reward update was only part of the story.
+
+SAFE remains a useful finding from the previous experiment: it reduced degradation relative to OLD updates. But this make-up run shows that interference is not exclusively a reinforcement-learning problem.  
+
+The goal should still be preservation of **relevant** knowledge, not every past association. Here OLD answers remain correct and are explicitly queried, so their loss is a real capability loss under this benchmark. It should not become a universal requirement to retain irrelevant material indefinitely.
+
+## 5. My revised experimental recommendation
+
+I would stop the unchanged five-model comparison before expanding it into a large formal campaign. Its own post-run review recommends the same. More worlds would estimate the present failures more precisely, but would not resolve the interface confounds. 
+
+Instead, I would make the next work **two tightly scoped tracks**, with a clear stopping point for the first.
+
+### Track A: qualify the native sequence interface once
+
+This should be a diagnostic bridge, not another mechanism search.
+
+Use a small set of arbitrary cue–response associations, including one-byte and two-byte responses, and compare three progressively stronger requirements:
+
+| Diagnostic | What it isolates |
+|---|---|
+| Original fixed-time, single-output protocol | Reproduction of the existing memory capability |
+| Same cue discrimination with C16 output | Learnability of the new output coding |
+| C16 with autonomous answer continuation and EOS | Context preservation and sequence control |
+
+An externally scheduled output can be used in the diagnostic condition, but must not be reported as autonomous generation. All associations should be arbitrary so arithmetic structure cannot explain success.
+
+The key measurements are the **correct-target margin**, actual acquired outputs, premature EOS, and performance on cues deliberately chosen to share suffixes. Distinguish “stops eventually” from “stops at the correct point”: immediate empty EOS is not competent sequence production.
+
+This yields actionable outcomes. Failure at the C16 stage directs attention to the code/readout/teaching interface. Success there but failure during continuation directs attention to the controller and retained context. Failure even under the original protocol indicates a reproduction problem.
+
+**Do not hold the entire project hostage to this diagnostic.** If the native system remains reliable only under its original protocol, preserve it as a validated associative-memory component and declare the generative interface a new development task. Do not repeatedly rerun addition hoping the same interface will become adequate.
+
+### Track B: investigate the positive acquisition-transfer result and the missing compositional transfer
+
+The strongest new lead is the difference between correct, shuffled, and absent OLD learning.
+
+I would retain those three controls and measure NEW acquisition as a curve over a fixed set of doses—not only its endpoint. Separately measure performance on genuinely untaught combinations.
+
+That would distinguish:
+
+\[
+\text{transfer that improves learning from new examples}
+\]
+
+from
+
+\[
+\text{transfer that permits solving without those examples}.
+\]
+
+The next question is whether correct experience creates something beyond generic familiarity with the byte/output protocol. The shuffled-answer condition is particularly valuable here; it should not be discarded now that it has produced a substantial effect.
+
+For the main capability experiment, I still favor a small compositional language. But **use KEEP as an explicitly labelled recurrent reference, not as the adopted native core**, and avoid adding several new architectural mechanisms simultaneously.
+
+## 6. What I would now borrow from human language
+
+My earlier language proposal emphasized role–filler composition. That remains appropriate, but the make-up run suggests a more precise order.
+
+### First: preserve the content being expressed
+
+The native suffix collision is a concrete example of losing the identity of the item being discussed while producing its description.
+
+A proposed learned interface should retain a bounded representation of the complete prompt throughout output, while a separate evolving state represents the generated prefix:
+
+\[
+q=f_\theta(\text{raw prompt}),\qquad
+h_{t+1}=g_\theta(h_t,\text{generated byte}_t,q).
+\]
+
+Here \(q\) must be learned from raw input, not supplied operand values or grammatical roles. This is a design proposal, not a result—and KEEP already has a form of prompt reinjection, so adding it elsewhere must not be marketed as an entirely new discovery. 
+
+For a native-memory hybrid, introducing such a learned interface would be a **declared modification** to FE0/CONTENT, while retaining the verified native storage mechanism. It would not be “unmodified Full151.”
+
+### Second: learn constructions that accept newly learned content
+
+A suitable target remains:
+
+```text
+Observed:
+    wug          → A
+    blick        → B
+    wug twice    → AA
+    blick twice  → BB
+    dax          → C
+
+Untaught:
+    dax twice    → CC
+```
+
+The words and output symbols are arbitrary conventions. The learner receives demonstrations, not an implementation of “twice.” More demanding versions should include order reversal and scope, with held-out combinations and fresh vocabulary.
+
+The important improvement over another addition sweep is interpretability: the experiment can tell us whether a construction learned with some fillers accepts a newly acquired filler.
+
+Research provides a reason to test this, not a guarantee. Galke and colleagues found benefits of compositional linguistic structure for recurrent learners, but their scene inputs were already represented using one-hot shape identities and angle features. We should borrow the experimental hypothesis while explicitly refusing to inherit a claim of learning structure from raw input that their setup did not test. [Nature](https://www.nature.com/articles/s41467-024-55158-1?utm_source=chatgpt.com)
+
+### Third: make representation stability part of memory integration
+
+A native store can retain its arrays while becoming unusable if the learned encoder changes the meaning of its inputs. I would therefore begin a hybrid test with a **learned but temporarily frozen interface**, then compare otherwise identical systems with native writes enabled and disabled.
+
+That would test whether the native memory contributes anything beyond the recurrent learner. It would also prevent a successful hybrid from quietly obtaining all its performance through the new encoder/decoder.
+
+Freezing would be an experimental isolation device, not the final persistent-learning solution. Later, the project would need an explicit method for changing representations without invalidating relevant memories.
+
+There is relevant precedent for treating interference as a problem of preserving learned computation rather than merely adding storage: Duncker and colleagues studied recurrent learning rules that preserve previously used activity subspaces while allowing reuse of learned dynamics. That work motivates an eventual comparison; it does not establish that the same technique is appropriate for native Full151. [NeurIPS Papers](https://papers.nips.cc/paper/2020/hash/a576eafbce762079f7d1f77fca1c5cc2-Abstract.html?utm_source=chatgpt.com)
+
+I would **not** add inner speech, an external parser, a program interpreter, or a large collection of memory banks at this stage. They would make attribution harder before the simpler capability has been demonstrated.
+
+## 7. What should remain fixed—and what should change
+
+The project needs one short, authoritative model manifest for every experiment: actual parent, input representation, persistent arrays, within-example state, update rule, output rule, and which inherited claim has been rechecked. An experiment that changes any of these should receive an explicit variant name.
+
+That is not a request for another large audit project. It is a way to prevent the same research discontinuity from recurring.
+
+The substantive priorities should now be:
+
+**Preserve the validated memory component without inflating its scope.** Single-outcome associative memory is a legitimate result. Autonomous sequence generation is a separate capability.
+
+**Use the recurrent models to study why acquisition transfers but rules do not.** Their positive NEW-learning result is worth retaining, while their lack of held-out advantage and loss of OLD competence remain visible.
+
+**Make the next architectural intervention address a demonstrated bottleneck.** For the native route, that is first the cue/output interface. For the recurrent route, it is reusable structure and stability during new learning—not merely another retention gate.
+
+The make-up run does not show that the project should abandon biological inspiration. It shows that **biological inspiration must be attached to a specific implemented mechanism and a specific demonstrated function**.
+
+The next persuasive milestone would combine the pieces rather than merely rename them:
+
+> **A learner acquires a new item, uses it in an untaught but previously learned construction, and retains that ability through subsequent relevant learning—with an ablation showing what the native memory mechanism contributes.**
+
+That would be a genuine advance beyond both the original memory demonstration and the current recurrent memorization results.
