@@ -1,0 +1,154 @@
+{
+  "accepted": true,
+  "implemented": true,
+  "cycles_completed": 3,
+  "verdict": "TECHNICALLY_QUALIFIED_EFFECT_INSUFFICIENT",
+  "native_technical_jobs": 6,
+  "native_record_applications": 450560,
+  "related_terminal_histories": 42,
+  "native_state_archives": 96,
+  "generic_mapping_presentations": 8192,
+  "generic_mapping_cases": 8,
+  "generic_tests": {
+    "architecture_and_boundary": {
+      "name": "architecture_and_boundary",
+      "accepted": true,
+      "cpu": 0.029694999999999916,
+      "detail": {
+        "parameters": {
+          "KEEP": 44170,
+          "G62": 44046
+        },
+        "imports": [
+          "copy",
+          "hashlib",
+          "json",
+          "math",
+          "numpy",
+          "pathlib",
+          "time",
+          "torch"
+        ]
+      }
+    },
+    "keep_historical_parity": {
+      "name": "keep_historical_parity",
+      "accepted": true,
+      "cpu": 0.11842699999999995,
+      "detail": {
+        "records": 8,
+        "optimizer_and_sampling_parity": true
+      }
+    },
+    "lstm_independent_cell": {
+      "name": "lstm_independent_cell",
+      "accepted": true,
+      "cpu": 0.003234999999999988,
+      "detail": {
+        "independent_reference": "torch.nn.LSTMCell",
+        "steps": 11,
+        "batch": 3
+      }
+    },
+    "objective_gradients": {
+      "name": "objective_gradients",
+      "accepted": true,
+      "cpu": 0.04334500000000008,
+      "detail": {
+        "component_objective_derivatives": 52,
+        "max_absolute_error": 1.1293487499342003e-10
+      }
+    },
+    "byte_output_purity_and_roundtrip": {
+      "name": "byte_output_purity_and_roundtrip",
+      "accepted": true,
+      "cpu": 0.2650180000000001,
+      "detail": {
+        "raw_payload_values": 256,
+        "roundtrip_models": 2,
+        "serial_batch_parity": true,
+        "independent_clone": true
+      }
+    },
+    "feedback_permissions_and_cache": {
+      "name": "feedback_permissions_and_cache",
+      "accepted": true,
+      "cpu": 0.038197000000000036,
+      "detail": {
+        "all_four_no_write_phases": true,
+        "scalar_hidden_answer_rejected": true,
+        "consumed_and_stale_cache_rejected": true
+      }
+    },
+    "safe_independent_math_and_atomicity": {
+      "name": "safe_independent_math_and_atomicity",
+      "accepted": true,
+      "cpu": 0.02986500000000003,
+      "detail": [
+        {
+          "model": "KEEP",
+          "accepted_alpha": 1.0,
+          "measured_KL": 0.0007017452296075704,
+          "rejected_scales": 8
+        },
+        {
+          "model": "G62",
+          "accepted_alpha": 1.0,
+          "measured_KL": 0.00016199997699146778,
+          "rejected_scales": 8
+        }
+      ]
+    },
+    "generic_acquisition": {
+      "name": "generic_acquisition",
+      "accepted": true,
+      "cpu": 21.253347,
+      "detail": [
+        {
+          "model": "KEEP",
+          "presentations": 4096,
+          "initial_exact": 0,
+          "final_exact": 8,
+          "cases": 8,
+          "cpu": 9.924044
+        },
+        {
+          "model": "G62",
+          "presentations": 4096,
+          "initial_exact": 0,
+          "final_exact": 8,
+          "cases": 8,
+          "cpu": 11.305995000000001
+        }
+      ]
+    },
+    "real_backtracking_and_fixed_proposal": {
+      "name": "real_backtracking_and_fixed_proposal",
+      "accepted": true,
+      "cpu": 0.02895000000000003,
+      "detail": [
+        {
+          "model": "KEEP",
+          "tried_scales": 3,
+          "accepted_alpha": 0.25
+        },
+        {
+          "model": "G62",
+          "tried_scales": 2,
+          "accepted_alpha": 0.5
+        }
+      ]
+    }
+  },
+  "tamper_rejections": 21,
+  "exact_shape_checks": 2688,
+  "science_jobs": 0,
+  "DEV_authorized": false,
+  "CONFIRM_authorized": false,
+  "GitHub_authorized": false,
+  "cstar": 96.51260700000029,
+  "efficacy_adopted": false,
+  "complete_hardware_memory_traffic_measured": false,
+  "resource_scope": "Actual production CPU, peak RSS, model/RMS bytes and explicit SAFE parameter destination-copy bytes; copy counter is not total physical memory traffic",
+  "scope": "Technical implementation qualification only, not a new-core or arithmetic-mastery claim"
+}

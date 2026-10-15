@@ -1,0 +1,467 @@
+{
+  "schema": "GATED_FEEDBACK_V2_DESIGN",
+  "date_client": "2026-10-14",
+  "timezone": "America/New_York",
+  "status": "DESIGN_SHIPPED_PENDING_THREE_CYCLE_QUALIFICATION",
+  "goal": "Retained own-output unseen four-operation and two-step mixed arithmetic generalization per all external samples and actual compute, learned from real feedback without supplied arithmetic representations or rules",
+  "implemented": false,
+  "technical_cycles_executed": 0,
+  "scientific_jobs_executed": 0,
+  "training_records_executed": 0,
+  "model_forward_passes_executed": 0,
+  "science_launch_authorized": false,
+  "github_upload_authorized": false,
+  "prohibitions": {
+    "transformers": true,
+    "attention_all_forms": true,
+    "content_addressed_KV": true,
+    "ELM_architecture_or_code_reuse": true,
+    "ELM_runtime_imports": true,
+    "predefined_arithmetic_representations_or_rules": true,
+    "operand_slots": true,
+    "numeric_targets_to_actor": true,
+    "hidden_answers_during_scalar": true,
+    "forced_EOS": true,
+    "vocabulary_masks": true,
+    "candidate_answer_selection": true,
+    "external_pretraining": true
+  },
+  "byte_IO": {
+    "payload_values": 256,
+    "input_embedding_rows": 259,
+    "output_classes": 257,
+    "EOS": 256,
+    "BEGIN": 257,
+    "REPLY": 258,
+    "max_prompt_payload_bytes": 256,
+    "max_output_payload_bytes": 16,
+    "termination_attempts": 17,
+    "overflow_status": "TRUNCATED",
+    "training_policy": "one categorical response before feedback",
+    "test_policy": "one greedy response with own EOS"
+  },
+  "models": {
+    "KEEP": {
+      "cell": "source_faithful_reset_before_GRU_with_C",
+      "width": 64,
+      "embedding": 24,
+      "parameters": 44170,
+      "parameter_and_RMS_bytes": 706720,
+      "inference_state_scalars": 128,
+      "runtime_ELM_imports_allowed": false,
+      "source_parity_required": true
+    },
+    "G62": {
+      "cell": "standard_LSTM_no_peepholes",
+      "width": 62,
+      "embedding": 24,
+      "parameters": 44046,
+      "parameter_and_RMS_bytes": 704736,
+      "inference_state_scalars": 124,
+      "forget_bias": 1.0,
+      "other_bias": 0.0,
+      "ELM_source_reuse_allowed": false,
+      "prompt_snapshot_C": false,
+      "attention": false
+    }
+  },
+  "learning_recipes": [
+    "CE_ONLY",
+    "OLD",
+    "SAFE"
+  ],
+  "configurations": [
+    "KEEP_CE_ONLY",
+    "KEEP_OLD",
+    "KEEP_SAFE",
+    "G62_CE_ONLY",
+    "G62_OLD",
+    "G62_SAFE"
+  ],
+  "selectable": [
+    "G62_SAFE"
+  ],
+  "optimizer": {
+    "dtype": "float64",
+    "CPU_threads_per_worker": 1,
+    "RMS_beta": 0.99,
+    "epsilon": 1e-08,
+    "learning_rate": 0.001,
+    "actor_global_gradient_clip": 1.0,
+    "critic_independent_gradient_clip": 1.0,
+    "actor_critic_shared_clipping": false
+  },
+  "objective": {
+    "CE": "mean token cross-entropy on actual observed reply plus EOS",
+    "PG": "negative actual reward-minus-preaction-detached-baseline times SUM log probability of actual actions",
+    "CE_coefficient": 1.0,
+    "PG_coefficient": 1.0,
+    "WARM_PG": false,
+    "critic": "MSE actual scalar reward on detached normalized preaction hidden state plus bias",
+    "CE_ONLY_PG": false,
+    "CE_ONLY_has_more_answer_information": true
+  },
+  "safe": {
+    "KL_limit_nats": 0.01,
+    "candidate_scales": [
+      1.0,
+      0.5,
+      0.25,
+      0.125,
+      0.0625,
+      0.03125,
+      0.015625,
+      0.0078125
+    ],
+    "max_candidate_evaluations": 8,
+    "KL_definition": "SUM of full-vocabulary conditional KL on the one actually sampled reply trace, recomputed from the same raw prompt and actual prefixes",
+    "not_expected_trajectory_KL": true,
+    "global_monotonicity_guarantee": false,
+    "require_current_actor_loss_nonincrease": true,
+    "candidate_baseline": "cached preaction old baseline, fixed across candidates",
+    "accept_moments": "one unscaled proposed RMS moment; commit once with accepted displacement",
+    "all_reject_actor_state": "restore parameters, moments and actor step exactly",
+    "critic_after_actor_rejection": "one actual reward update still allowed",
+    "new_reward_queries": 0,
+    "hidden_answer_queries": 0,
+    "all_internal_recomputation_charged": true
+  },
+  "course": {
+    "WARM": {
+      "binary": 16384,
+      "mixed": 4096,
+      "records": 20480,
+      "answer_probability": 1.0
+    },
+    "HALF": {
+      "records": 2048,
+      "answer_probability": 0.5
+    },
+    "SPARSE": {
+      "records": 2048,
+      "answer_probability": 0.125
+    },
+    "SCALAR": {
+      "records": 4096,
+      "answer_probability": 0.0
+    },
+    "tail_binary_fraction": 0.5,
+    "first_binary_only_records": 4096,
+    "remaining_warm_ratio_binary_to_mixed": [
+      3,
+      1
+    ],
+    "main_history_records": 28672,
+    "teacher_trace_or_numeric_auxiliary_data": false
+  },
+  "data": {
+    "source": "../arithmetic_model_feedback_dev_v1_20261014/worlds.py",
+    "evaluator_source": "../arithmetic_end_to_end_design_v1_20261013/validate_design.py",
+    "algorithm_changed": false,
+    "base_seed_pair_range": [
+      0,
+      15
+    ],
+    "held_families_per_kind": 32,
+    "binary_held_representatives_per_operation": 32,
+    "mixed_training_groups": 512,
+    "mixed_held_groups": 256,
+    "mixed_ordered_operation_pairs": 16,
+    "mixed_held_representatives_per_pair": 16,
+    "byte_permutation_size": 256,
+    "semantic_fields_may_enter_learner": false,
+    "negative_subtraction_included": true,
+    "division": "exact integer and nonzero divisor only"
+  },
+  "prefixes": [
+    "TRUE",
+    "N_WARM",
+    "SH_WARM"
+  ],
+  "histories": [
+    "CE_ONLY",
+    "OLD",
+    "SAFE",
+    "N_WARM_SAFE",
+    "SH_WARM_SAFE",
+    "FREEZE_OLD",
+    "FREEZE_SAFE"
+  ],
+  "shared_prefixes_train_once": true,
+  "frozen_branches": {
+    "FREEZE_OLD": "OLD after SPARSE",
+    "FREEZE_SAFE": "SAFE after SPARSE"
+  },
+  "no_write_covers": [
+    "actor_parameters",
+    "critic_parameters",
+    "moments",
+    "steps",
+    "training_RNG",
+    "all other future-learning state"
+  ],
+  "counts": {
+    "world_core_job_external_applications": 110592,
+    "world_external_applications": 221184,
+    "related_terminal_histories_per_job": 7,
+    "full_state_archives_per_job": 16,
+    "DEV_worlds": 8,
+    "DEV_jobs": 16,
+    "DEV_external_applications": 1769472,
+    "DEV_related_histories": 112,
+    "CONFIRM_worlds": 32,
+    "CONFIRM_jobs": 64,
+    "CONFIRM_external_applications": 7077888,
+    "CONFIRM_related_histories": 448,
+    "conditional_max_jobs": 80,
+    "conditional_max_external_applications": 8847360,
+    "conditional_max_related_histories": 560
+  },
+  "technical": {
+    "cycle1": "source/architecture/gradient/purity/atomicity/roundtrip and generic mapping fixtures, no science",
+    "cycle2": {
+      "worlds": [
+        202610142901
+      ],
+      "binary": 512,
+      "mixed": 128,
+      "stages": [
+        128,
+        128,
+        128
+      ],
+      "jobs": 2,
+      "external_applications": 8192
+    },
+    "cycle3": {
+      "worlds": [
+        202610142902,
+        202610142903
+      ],
+      "binary": 16384,
+      "mixed": 4096,
+      "stages": [
+        2048,
+        2048,
+        4096
+      ],
+      "jobs": 4,
+      "external_applications": 442368
+    },
+    "arithmetic_held_effect_tuning_permitted": false,
+    "effect_evidence_is_science": false
+  },
+  "DEV": {
+    "worlds": [
+      202610142001,
+      202610142002,
+      202610142003,
+      202610142004,
+      202610142005,
+      202610142006,
+      202610142007,
+      202610142008
+    ],
+    "gate": "technical audit accepted AND all 20 locked paired effect means strictly positive; no significance/adoption claim"
+  },
+  "CONFIRM": {
+    "worlds": [
+      202610142101,
+      202610142102,
+      202610142103,
+      202610142104,
+      202610142105,
+      202610142106,
+      202610142107,
+      202610142108,
+      202610142109,
+      202610142110,
+      202610142111,
+      202610142112,
+      202610142113,
+      202610142114,
+      202610142115,
+      202610142116,
+      202610142117,
+      202610142118,
+      202610142119,
+      202610142120,
+      202610142121,
+      202610142122,
+      202610142123,
+      202610142124,
+      202610142125,
+      202610142126,
+      202610142127,
+      202610142128,
+      202610142129,
+      202610142130,
+      202610142131,
+      202610142132
+    ],
+    "gate": "all 20 locked paired world one-sided 95% Student-t lower bounds strictly positive",
+    "statistical_family": "intersection-union; one fixed candidate; no isolated positive adoption",
+    "extend_n": false,
+    "candidate_replacement": false,
+    "power_guaranteed": false
+  },
+  "required_contrasts": [
+    {
+      "id": "J_sample_vs_KEEP_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "KEEP_SAFE",
+      "endpoint": "J_sample"
+    },
+    {
+      "id": "J_compute_vs_KEEP_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "KEEP_SAFE",
+      "endpoint": "J_compute"
+    },
+    {
+      "id": "J_sample_vs_KEEP_OLD",
+      "candidate": "G62_SAFE",
+      "reference": "KEEP_OLD",
+      "endpoint": "J_sample"
+    },
+    {
+      "id": "J_compute_vs_KEEP_OLD",
+      "candidate": "G62_SAFE",
+      "reference": "KEEP_OLD",
+      "endpoint": "J_compute"
+    },
+    {
+      "id": "binary_+_vs_N_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_N_WARM_SAFE",
+      "endpoint": "binary_+"
+    },
+    {
+      "id": "binary_+_vs_SH_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_SH_WARM_SAFE",
+      "endpoint": "binary_+"
+    },
+    {
+      "id": "binary_+_vs_shortcut_envelope",
+      "candidate": "G62_SAFE",
+      "reference": "G62_shortcut_envelope",
+      "endpoint": "binary_+"
+    },
+    {
+      "id": "binary_-_vs_N_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_N_WARM_SAFE",
+      "endpoint": "binary_-"
+    },
+    {
+      "id": "binary_-_vs_SH_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_SH_WARM_SAFE",
+      "endpoint": "binary_-"
+    },
+    {
+      "id": "binary_-_vs_shortcut_envelope",
+      "candidate": "G62_SAFE",
+      "reference": "G62_shortcut_envelope",
+      "endpoint": "binary_-"
+    },
+    {
+      "id": "binary_*_vs_N_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_N_WARM_SAFE",
+      "endpoint": "binary_*"
+    },
+    {
+      "id": "binary_*_vs_SH_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_SH_WARM_SAFE",
+      "endpoint": "binary_*"
+    },
+    {
+      "id": "binary_*_vs_shortcut_envelope",
+      "candidate": "G62_SAFE",
+      "reference": "G62_shortcut_envelope",
+      "endpoint": "binary_*"
+    },
+    {
+      "id": "binary_/_vs_N_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_N_WARM_SAFE",
+      "endpoint": "binary_/"
+    },
+    {
+      "id": "binary_/_vs_SH_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_SH_WARM_SAFE",
+      "endpoint": "binary_/"
+    },
+    {
+      "id": "binary_/_vs_shortcut_envelope",
+      "candidate": "G62_SAFE",
+      "reference": "G62_shortcut_envelope",
+      "endpoint": "binary_/"
+    },
+    {
+      "id": "mixed_vs_N_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_N_WARM_SAFE",
+      "endpoint": "mixed_macro"
+    },
+    {
+      "id": "mixed_vs_SH_WARM_SAFE",
+      "candidate": "G62_SAFE",
+      "reference": "G62_SH_WARM_SAFE",
+      "endpoint": "mixed_macro"
+    },
+    {
+      "id": "mixed_vs_shortcut_envelope",
+      "candidate": "G62_SAFE",
+      "reference": "G62_shortcut_envelope",
+      "endpoint": "mixed_macro"
+    },
+    {
+      "id": "scalar_increment",
+      "candidate": "G62_SAFE",
+      "reference": "G62_FREEZE_SAFE",
+      "endpoint": "final_A"
+    }
+  ],
+  "metrics": {
+    "A": "0.5 binary four-op macro exact-own-payload-plus-EOS + 0.5 mixed sixteen-pair macro",
+    "J_sample": "left-continuous normalized A integral over 0..28672 actual main-history record presentations",
+    "J_compute": "same staircase on actual production CPU, same frozen Cstar for all",
+    "Cstar_rule": "median full-dose technical KEEP_OLD main-history final production CPU; freeze before DEV, never recompute on DEV/CONFIRM",
+    "countermodels": [
+      "exact_key",
+      "canonical_family_key",
+      "global_frequency",
+      "prompt_length",
+      "last_two_bytes",
+      "raw_byte_bag"
+    ],
+    "countermodel_training": "only observed answer or own reply actually verified with reward=1"
+  },
+  "execution": {
+    "detached_workers": 2,
+    "caffeinate_attached_to_supervisor": true,
+    "read_only_monitor": true,
+    "admission_stop_hours": 8,
+    "hard_session_hours": 10,
+    "remaining_window_must_fit_job_plus_audit_package": true,
+    "pause_boundary": "whole world-core job",
+    "automatic_resume_or_retry": false,
+    "repeat_native_trajectories": false,
+    "publication_requires_separate_authorization": true
+  },
+  "scope": {
+    "E0": "source and byte interface only",
+    "E1": "actual exposed cue representatives only",
+    "E3": "bounded held arithmetic improvement with causal prior-teaching controls",
+    "E4": false,
+    "idle_time_decay_tested": false,
+    "retention": "during stated interleaved course and subsequent scalar learning only",
+    "not_a_four_operation_mastery_certificate": true
+  },
+  "mechanism_review": "../PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FULL_REVIEW_MODEL_REWARD_20261013/FULL_REVIEW.json"
+}

@@ -1,0 +1,504 @@
+{
+  "full_views": {
+    "historical108": "../PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FULL_REVIEW_MODEL_REWARD_20261013/HISTORICAL108.json",
+    "catalogue136": "../PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FULL_REVIEW_MODEL_REWARD_20261013/CATALOGUE136.json",
+    "versions254": "../PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FULL_REVIEW_MODEL_REWARD_20261013/VERSIONS254.json",
+    "subset71": "../PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FULL_REVIEW_MODEL_REWARD_20261013/SUBSET71.json",
+    "first16": "../PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/FULL_REVIEW_MODEL_REWARD_20261013/FIRST16.json"
+  },
+  "views_overlap_not_additive": true,
+  "not_a_replacement_for_full_inventory": true,
+  "new_family_exclusions": [],
+  "ELM": "user exclusion, not a statistical impossibility finding",
+  "linked_original_rows": [
+    {
+      "id": "M010",
+      "use_this_design": "not implemented; no ELM/multi-timescale private-state port",
+      "original_full_row": {
+        "id": "M010",
+        "original_review_row": {
+          "id": "M010",
+          "original": {
+            "id": "M010",
+            "section": "Neuron/cell implementations",
+            "mechanism": "Multi-timescale private neuronal state",
+            "where": "Early temporal roadmap; ELM/FLM; v25/v26 traces",
+            "evidence_status": "PARTIAL POSITIVE",
+            "finding": "Multiple temporal coordinates are distinct from multiple independently stored output banks. Temporal contrast helped controlled sensory tasks.",
+            "disposition": "Retain as a cell-level hypothesis; count state and do not relabel banks as neuron timescales.",
+            "screen_20261007": {
+              "budget_status": "CONDITIONAL",
+              "label": "有条件保留",
+              "reason": "保留多时间尺度状态的假说；须在相同核心、状态和信息预算下比较，不能把多 bank 当作多时间尺度。",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "REFERENCE",
+          "broad_core_label": "长期参照/混合历史证据",
+          "updated_scope_note": "保留私有多时间尺度方向；它与复制多个完整银行不是同一个操作。",
+          "current_addition_review": {
+            "mapped_subset_entries": [
+              {
+                "dedup_id": "U041",
+                "name": "细胞内部多时间尺度私有状态",
+                "priority_status": "NOT_NEXT_ROUND",
+                "priority_reason": "巩固、多时间尺度或跨流绑定需要当前收益假说；工程核心休息不衰减，当前重点是新组合低样本学习。旧任务保持数字不构成本任务整族反证，增加bank/时间常数本身不提供新约束。"
+              }
+            ],
+            "not_mapped_is_not_excluded": false
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "DEFERRED",
+          "reason": "通用多时间尺度不等于ELM，但增加状态本身没有当前收益；ELM实现已退出。",
+          "directions": []
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M012",
+      "use_this_design": "principle: independent learned write and retention gates, new standard LSTM version",
+      "original_full_row": {
+        "id": "M012",
+        "original_review_row": {
+          "id": "M012",
+          "original": {
+            "id": "M012",
+            "section": "Neuron/cell implementations",
+            "mechanism": "Separate write and forget gates",
+            "where": "ELM9/11 and later notebook family; local-learning audit",
+            "evidence_status": "IMPLEMENTED; NOT ISOLATED DECISIVELY",
+            "finding": "Suppressing a new write need not erase old state; learned gate networks have their own training/information costs.",
+            "disposition": "Retain distinction; not equivalent to reducing all learning rates.",
+            "screen_20261007": {
+              "budget_status": "CONDITIONAL",
+              "label": "有条件保留",
+              "reason": "写入和擦除是不同操作。ERROR 已改进修订，新的擦除门必须保护未修订旧知识。",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "CONDITIONAL_OPERATION",
+          "broad_core_label": "长期仍有条件价值，须区别具体版本",
+          "updated_scope_note": "当前只采用U042的SUPPORT写门实例；低样本提升未确认，不代表独立遗忘门已通过。",
+          "current_addition_review": {
+            "mapped_subset_entries": [
+              {
+                "dedup_id": "U042",
+                "name": "相互独立的写入门与遗忘门",
+                "priority_status": "ADOPTED_BASELINE",
+                "priority_reason": "用户已采用SUPPORT写门。未实现独立遗忘门；不把目录家族名当已测试全部结构，不改写原DEV未晋级结果。"
+              }
+            ],
+            "not_mapped_is_not_excluded": false
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "PRIMARY",
+          "reason": "分开的保留与写入门是D1原则；普通GRU已有门，不把再次使用门称为新发现。",
+          "directions": [
+            "D1"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M022",
+      "use_this_design": "representation/readout compatibility evidence; no frozen address lookup",
+      "original_full_row": {
+        "id": "M022",
+        "original_review_row": {
+          "id": "M022",
+          "original": {
+            "id": "M022",
+            "section": "Development/connectivity",
+            "mechanism": "Frozen, live, split-stable encoders; FF/FL/LF/LL address/content states",
+            "where": "V11–17; V25–29",
+            "evidence_status": "TESTED; TRADEOFF",
+            "finding": "Moving features destabilize stored coordinates; stable address or split state helps some contrasts but no general continuing-representation solution.",
+            "disposition": "Retain as compatibility evidence, not proof to freeze representations forever.",
+            "screen_20261007": {
+              "budget_status": "CONDITIONAL",
+              "label": "有条件保留",
+              "reason": "输入坐标变化与旧记忆不兼容是重复出现的约束；保留承诺地址冻结或记忆运输，不再仅漂移输入。",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "CONDITIONAL_OPERATION",
+          "broad_core_label": "长期仍有条件价值，须区别具体版本",
+          "updated_scope_note": "FF/FL/LF/LL及冻结/活动/稳定split都已有具体版本；当前角色输入固定，不把旧结构重命名成未测。",
+          "current_addition_review": {
+            "mapped_subset_entries": [
+              {
+                "dedup_id": "U044",
+                "name": "稳定地址与可塑内容分离或输入坐标兼容",
+                "priority_status": "ENABLING_COMPONENT",
+                "priority_reason": "地址稳定与内容兼容是公共构件；当前角色坐标固定。不把已经成立的接口再次包装为独立候选。"
+              }
+            ],
+            "not_mapped_is_not_excluded": false
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "ENABLER",
+          "reason": "D4要求表示和读出共同学习；旧地址/内容FF-FL实验不是题内encoder/decoder保留的直接证据。",
+          "directions": [
+            "D4"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M024",
+      "use_this_design": "end-to-end learning now allowed, not old adapter reuse",
+      "original_full_row": {
+        "id": "M024",
+        "original_review_row": {
+          "id": "M024",
+          "original": {
+            "id": "M024",
+            "section": "Development/connectivity",
+            "mechanism": "Learned down-stream adapter/recycling",
+            "where": "V23 adapter_retained/recycled",
+            "evidence_status": "TESTED; LOCALITY DISQUALIFICATION",
+            "finding": "Uses V@error and normalization derivatives: handwritten hidden-layer backprop despite NumPy implementation.",
+            "disposition": "Exact candidates excluded by no-hidden-backprop constraint, not by zero numerical benefit.",
+            "screen_20261007": {
+              "budget_status": "REFERENCE",
+              "label": "基线 对照 工程或范围外参照",
+              "reason": "Exact candidates excluded by no-hidden-backprop constraint, not by zero numerical benefit.",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "INVALID_OR_PARTIAL",
+          "broad_core_label": "因果/资格/统计限制，非整族负面",
+          "updated_scope_note": "adapter采用隐藏BP的版本局部性不合格，不是数值上等同失败。",
+          "current_addition_review": {
+            "mapped_subset_entries": [],
+            "not_mapped_is_not_excluded": true,
+            "decision": "完整条目未被71子集覆盖；不能凭此排除。是否用于加法须另看操作/当前错误/样本与计算成本。"
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "ENABLER",
+          "reason": "隐层反传目前允许；D4可借通用学习适配，但旧回收器与新题面保留必须分开登记。",
+          "directions": [
+            "D4"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M030",
+      "use_this_design": "critic already in OLD; not a new mechanism success",
+      "original_full_row": {
+        "id": "M030",
+        "original_review_row": {
+          "id": "M030",
+          "original": {
+            "id": "M030",
+            "section": "Early composite architectures",
+            "mechanism": "SAC/proposal policies, learned teacher, dialogue warmup, curiosity/ASK actions",
+            "where": "Liquid Baby/Genesis; ELM8–25",
+            "evidence_status": "IMPLEMENTED; CONFOUNDED FOR CURRENT GOAL",
+            "finding": "Teacher language/pretrained weights, task rewards and contextual memory can generate attractive episodes without lifetime retention.",
+            "disposition": "Do not import pretrained/Transformer teacher gains into local core evidence.",
+            "screen_20261007": {
+              "budget_status": "REFERENCE",
+              "label": "基线 对照 工程或范围外参照",
+              "reason": "Do not import pretrained/Transformer teacher gains into local core evidence.",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "REFERENCE",
+          "broad_core_label": "长期参照/混合历史证据",
+          "updated_scope_note": "奖励/预训练/教师先验与本核心获取信息预算不同，先保留参照。",
+          "current_addition_review": {
+            "mapped_subset_entries": [],
+            "not_mapped_is_not_excluded": true,
+            "decision": "完整条目未被71子集覆盖；不能凭此排除。是否用于加法须另看操作/当前错误/样本与计算成本。"
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "PRIMARY",
+          "reason": "D3可借奖励预期/critic思路，但预训练教师、语言能力和SAC复合演示不能继承；新critic仅学真实0/1。",
+          "directions": [
+            "D3"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M031",
+      "use_this_design": "preserve optimizer to avoid compound comparison",
+      "original_full_row": {
+        "id": "M031",
+        "original_review_row": {
+          "id": "M031",
+          "original": {
+            "id": "M031",
+            "section": "Early composite architectures",
+            "mechanism": "MagmaAdamW/global optimizers; neuromorphic detach mode",
+            "where": "ELM12–16; Genesis",
+            "evidence_status": "IMPLEMENTED; LOCALITY LIMIT",
+            "finding": "Detaching states removes some temporal gradient paths, not all hidden training or all nonlocal signals. Dopamine/STDP log labels are not mechanistic proof.",
+            "disposition": "Retain only honest component accounting; no claim entire model biologically local.",
+            "screen_20261007": {
+              "budget_status": "REFERENCE",
+              "label": "基线 对照 工程或范围外参照",
+              "reason": "Retain only honest component accounting; no claim entire model biologically local.",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "ENGINEERING",
+          "broad_core_label": "工程组件/对照或信息边界",
+          "updated_scope_note": "全局优化器/隐藏梯度改变学习信息与成本；局部detach名称不自动消除这些差别。",
+          "current_addition_review": {
+            "mapped_subset_entries": [],
+            "not_mapped_is_not_excluded": true,
+            "decision": "完整条目未被71子集覆盖；不能凭此排除。是否用于加法须另看操作/当前错误/样本与计算成本。"
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "ENABLER",
+          "reason": "D4联合CE/序列奖励优化是工程构件，允许反传但不称为昆虫局部规则；当前梯度非零不等于已优化好。",
+          "directions": [
+            "D4"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M038",
+      "use_this_design": "not synaptic-importance protection; SAFE is distinct new engineering operation",
+      "original_full_row": {
+        "id": "M038",
+        "original_review_row": {
+          "id": "M038",
+          "original": {
+            "id": "M038",
+            "section": "Memory/readout/plasticity",
+            "mechanism": "Synaptic importance / neuron availability / protection",
+            "where": "V23; V24–25",
+            "evidence_status": "PARTIAL POSITIVE; RIGIDITY",
+            "finding": "Pair/neuron protection improved old retention; stronger protection impaired new acquisition and revision. Per-neuron version nearly matched per-synapse at less state.",
+            "disposition": "Keep evidence and rigidity tradeoff; no blanket retirement of metaplasticity.",
+            "screen_20261007": {
+              "budget_status": "CONDITIONAL",
+              "label": "有条件保留",
+              "reason": "弱保护或 neuron availability 仅在真实干扰/饱和出现且可保留修订时使用；强保护原样排除。",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "CONDITIONAL_OPERATION",
+          "broad_core_label": "长期仍有条件价值，须区别具体版本",
+          "updated_scope_note": "importance/availability多版本保护旧知识与获取/修订有代价；不以旧保持替代NEW效率。",
+          "current_addition_review": {
+            "mapped_subset_entries": [
+              {
+                "dedup_id": "U014",
+                "name": "`pair_importance`",
+                "priority_status": "NOT_NEXT_ROUND",
+                "priority_reason": "重要性/可用性/元可塑性可能保护旧知识，也会抑制新学习。当前必须证明从观察噪声和未见组合中获益，旧24键保持率不能直接作为本任务否定依据。暂不优先。"
+              },
+              {
+                "dedup_id": "U015",
+                "name": "`neuron_availability`",
+                "priority_status": "NOT_NEXT_ROUND",
+                "priority_reason": "重要性/可用性/元可塑性可能保护旧知识，也会抑制新学习。当前必须证明从观察噪声和未见组合中获益，旧24键保持率不能直接作为本任务否定依据。暂不优先。"
+              }
+            ],
+            "not_mapped_is_not_excluded": false
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "DEFERRED",
+          "reason": "保护改善旧保持但限制新获取；目前已教内容都不稳，不优先保护错误或频率策略。",
+          "directions": []
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M040",
+      "use_this_design": "not orthogonal protected-subspace projection",
+      "original_full_row": {
+        "id": "M040",
+        "original_review_row": {
+          "id": "M040",
+          "original": {
+            "id": "M040",
+            "section": "Memory/readout/plasticity",
+            "mechanism": "Orthogonal projection / strict/leaky protected subspaces",
+            "where": "V23 projection16/48; earlier transport",
+            "evidence_status": "TESTED TRADEOFF",
+            "finding": "Protects some old directions but larger protection impedes acquisition/revision; exact Gram–Schmidt/projection nonlocal.",
+            "disposition": "Reference/closed exact local candidate; not proof inhibition-based separation impossible.",
+            "screen_20261007": {
+              "budget_status": "REFERENCE",
+              "label": "基线 对照 工程或范围外参照",
+              "reason": "Reference/closed exact local candidate; not proof inhibition-based separation impossible.",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "REFERENCE",
+          "broad_core_label": "长期参照/混合历史证据",
+          "updated_scope_note": "严格/泄漏保护子空间有保持收益及僵硬代价；投影非局部成本另列。",
+          "current_addition_review": {
+            "mapped_subset_entries": [],
+            "not_mapped_is_not_excluded": true,
+            "decision": "完整条目未被71子集覆盖；不能凭此排除。是否用于加法须另看操作/当前错误/样本与计算成本。"
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "DEFERRED",
+          "reason": "旧投影有刚性代价；不依靠冻结更多方向来生成缺失的运算能力。",
+          "directions": []
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M096",
+      "use_this_design": "actual sequence credit already in OLD; no family-wide rejection",
+      "original_full_row": {
+        "id": "M096",
+        "original_review_row": {
+          "id": "M096",
+          "original": {
+            "id": "M096",
+            "section": "Proposed/unresolved work",
+            "mechanism": "Bidirectional/local DAN teaching with delayed eligibility",
+            "where": "ELM14; local-learning review; recent brainstorms",
+            "evidence_status": "PARTIAL PROXIES; FULL ASSAY UNESTABLISHED",
+            "finding": "Immediate nonnegative dopamine multiplier, unsigned routing and trace/object eligibility are not a validated timing-sensitive synaptic teacher.",
+            "disposition": "Unresolved crucial interface; use explicit boundedstateandcausal signal, not a biological label pasted onto globalerror.",
+            "screen_20261007": {
+              "budget_status": "CONDITIONAL",
+              "label": "有条件保留",
+              "reason": "ERROR 支持改教学目标；延迟/双向 compartment teacher 仍需独立、因果、有界规则，不凭 DAN 标签采用。",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "CONDITIONAL_OPERATION",
+          "broad_core_label": "长期仍有条件价值，须区别具体版本",
+          "updated_scope_note": "当前普通到来byte可驱动学习的E0/E1基线有效；完整local DAN/延迟/双向回路尚未全部通过。",
+          "current_addition_review": {
+            "mapped_subset_entries": [
+              {
+                "dedup_id": "U018",
+                "name": "Consequence-specific DAN-like teaching",
+                "priority_status": "ADOPTED_BASELINE",
+                "priority_reason": "保留原生观察学习E0/E1参照；不是当前工程COV-SUPPORT的独立加法E3证据。"
+              },
+              {
+                "dedup_id": "U019",
+                "name": "Delayed eligibility-gated teaching",
+                "priority_status": "ENABLING_COMPONENT",
+                "priority_reason": "当前答案在完整表达式后到来，已有pending context连接答案与输入；更长eligibility/STC须说明新增的当前信息，不能用旧延迟任务收益替代未见加法收益。"
+              },
+              {
+                "dedup_id": "U027",
+                "name": "Single-DAN acquisition/erasure duality",
+                "priority_status": "RECIPE_HOLD",
+                "priority_reason": "原配方保持暂停：分区、双向教学、读权限或nuisance配对需要当前任务的合法信号与公平对照；同答案不等于同题，未获得这些条件不列入下一轮。"
+              }
+            ],
+            "not_mapped_is_not_excluded": false
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "PRIMARY",
+          "reason": "D2/D3最相关：动作/序列特异资格与真实奖励调制；旧即时非负倍率、Z1和四动作反馈不等于当前端到端序列信用。",
+          "directions": [
+            "D2",
+            "D3"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    },
+    {
+      "id": "M102",
+      "use_this_design": "generic learned within-record work state only, no arithmetic scratchpad targets",
+      "original_full_row": {
+        "id": "M102",
+        "original_review_row": {
+          "id": "M102",
+          "original": {
+            "id": "M102",
+            "section": "Proposed/unresolved work",
+            "mechanism": "Persistent scratchpad and feedback memory",
+            "where": "Other-thread file context, earlier hubs/tapes",
+            "evidence_status": "PROPOSED/RELATED IMPLEMENTATIONS",
+            "finding": "64–256-variable gated scratchpad and feedback was proposed; older actual tapes use different objects/training.",
+            "disposition": "No completed cleanresult recovered; preserve statebudget and original source distinction.",
+            "screen_20261007": {
+              "budget_status": "CONDITIONAL",
+              "label": "有条件保留",
+              "reason": "有界工作状态可保留为结构备选，不增加开放生成或 AGI 验收；旧 tape 成功不是该候选的证据。",
+              "scientific_scope": "保留原 evidence_status；本字段不把预算淘汰改写成科学反证，也不排除整族。"
+            }
+          },
+          "broad_core_status": "REFERENCE",
+          "broad_core_label": "长期参照/混合历史证据",
+          "updated_scope_note": "scratchpad/tape是工作状态，不直接等于可迁移规则；完整生命周期结果缺失。",
+          "current_addition_review": {
+            "mapped_subset_entries": [
+              {
+                "dedup_id": "U060",
+                "name": "有界persistent scratchpad与反馈工作状态",
+                "priority_status": "NOT_NEXT_ROUND",
+                "priority_reason": "scratchpad为未定义结构备选；当前已有合法短期上下文和有界support历史，新增状态必须说明信息如何变成可泛化约束。不自动算成新的学习机制。"
+              }
+            ],
+            "not_mapped_is_not_excluded": false
+          },
+          "family_wide_exclusion": false,
+          "new_run_authorized": false
+        },
+        "current_model_reward_review": {
+          "priority": "PRIMARY",
+          "reason": "D1的有界、学得工作状态最贴近当前缺口；禁止KV查询、人工操作数槽位和解题栈，新固定题面条件通路尚未测。",
+          "directions": [
+            "D1"
+          ]
+        },
+        "new_run_authorized": false,
+        "new_scientific_family_exclusion": false
+      }
+    }
+  ]
+}
