@@ -1,0 +1,109 @@
+{
+  "scope": "Technical five-way addition comparison; no automatic historical capability inheritance or core adoption",
+  "utc": "2026-10-15T04:29:50.249079+00:00",
+  "versions": [
+    {
+      "banks": 1,
+      "family": "native_Full151",
+      "front_end": "frozen FE0 and anatomy PN-to-KC",
+      "id": "N151-C16",
+      "implementation": "core.Native",
+      "native_store_count": 16,
+      "not_inherited": [
+        "No COV-R/SUPPORT role or numeric feature branch",
+        "No V9 byte-prediction w/bias used",
+        "No attention/Transformer/ELM",
+        "C16 is a new registered adaptation; only C4 source compatibility is asserted"
+      ],
+      "output_dependency": "source native fast/slow/adapt -> fixed native association readout ->16 values ->common fixed code",
+      "parent": "r_center_core_v1/vendor/src/stores.py",
+      "persistent_state": "16 or32 independent source fast/slow/adapt arrays",
+      "readout": "Center 16 values u by their mean; use common fixed balanced codebook, logits=C@(u-mean(u))/4; argmax all257 categories",
+      "scope": "Historical-mechanism control with an explicit new output-port adapter; not a fully learned-representation candidate.",
+      "stores_per_bank": 16,
+      "write": "native binary opponent r_j=(1-C[target,j])/2"
+    },
+    {
+      "banks": 1,
+      "family": "native_Full151_centered",
+      "front_end": "same frozen FE0 and anatomy PN-to-KC as N151-C16",
+      "id": "C151-C16",
+      "implementation": "core.Native",
+      "native_store_count": 16,
+      "not_inherited": [
+        "No COV-R/SUPPORT role or numeric feature branch",
+        "No V9 byte-prediction w/bias used",
+        "No attention/Transformer/ELM",
+        "C16 is a new registered adaptation; only C4 source compatibility is asserted"
+      ],
+      "output_dependency": "source native fast/slow/adapt -> fixed native association readout ->16 values ->common fixed code",
+      "parent": "r_center_core_v1/vendor/src/stores.py",
+      "persistent_state": "16 or32 independent source fast/slow/adapt arrays",
+      "readout": "Center 16 values u by their mean; use common fixed balanced codebook, logits=C@(u-mean(u))/4; argmax all257 categories",
+      "scope": "Matched native write-rule comparison; fixed-representation control, not an end-to-end representation-learning claim.",
+      "stores_per_bank": 16,
+      "write": "native signed primitive b=0, s_j=(mean_class_code_j-C[target,j])/2"
+    },
+    {
+      "banks": 2,
+      "family": "R_center_derived",
+      "front_end": "FE0 shared; original four-visible-byte CONTENT private",
+      "id": "RC151-C16",
+      "implementation": "core.Native",
+      "native_store_count": 32,
+      "not_inherited": [
+        "No COV-R/SUPPORT role or numeric feature branch",
+        "No V9 byte-prediction w/bias used",
+        "No attention/Transformer/ELM",
+        "C16 is a new registered adaptation; only C4 source compatibility is asserted"
+      ],
+      "output_dependency": "source native fast/slow/adapt -> fixed native association readout ->16 values ->common fixed code",
+      "parent": "r_center_core_v1/centered_core/core.py",
+      "persistent_state": "16 or32 independent source fast/slow/adapt arrays",
+      "readout": "Center 16 values u by their mean; use common fixed balanced codebook, logits=C@(u-mean(u))/4; argmax all257 categories",
+      "scope": "Explicit R_center port adaptation, with fixed engineered front ends; no automatic E3 inheritance.",
+      "stores_per_bank": 16,
+      "write": "shared code-bit native opponent; private centered signed code-bit teaching"
+    },
+    {
+      "banks": 0,
+      "family": "independent_GRU_reference",
+      "front_end": "learned 259-by-24 byte/control embeddings; source-faithful reset-before GRU width 64 and prompt feedback C",
+      "id": "KEEP-C16-CE",
+      "implementation": "core.Recurrent",
+      "native_store_count": 0,
+      "not_inherited": [
+        "No COV-R/SUPPORT role or numeric feature branch",
+        "No V9 byte-prediction w/bias used",
+        "No attention/Transformer/ELM",
+        "C16 is a new registered adaptation; only C4 source compatibility is asserted"
+      ],
+      "output_dependency": "learned byte embeddings/recurrent actor weights ->learned16-value head ->common fixed code",
+      "parent": "arithmetic_gated_feedback_dev_v2_20261014/core.py",
+      "persistent_state": "source-derived embedding/recurrent actor/C16 parameters and RMS moments; no critic/PG",
+      "readout": "Center 16 values u by their mean; use common fixed balanced codebook, logits=C@(u-mean(u))/4; argmax all257 categories",
+      "scope": "Independent end-to-end recurrent reference with explicit common output-head adaptation; recurrent equations/optimizer retained, historical free 257-class head is not unchanged.",
+      "write": "source-derived supervised CE optimization under common 16-component code head; no PG/SAFE/critic"
+    },
+    {
+      "banks": 0,
+      "family": "independent_LSTM_reference",
+      "front_end": "learned 259-by-24 byte/control embeddings; source-faithful LSTM width 62",
+      "id": "G62-C16-CE",
+      "implementation": "core.Recurrent",
+      "native_store_count": 0,
+      "not_inherited": [
+        "No COV-R/SUPPORT role or numeric feature branch",
+        "No V9 byte-prediction w/bias used",
+        "No attention/Transformer/ELM",
+        "C16 is a new registered adaptation; only C4 source compatibility is asserted"
+      ],
+      "output_dependency": "learned byte embeddings/recurrent actor weights ->learned16-value head ->common fixed code",
+      "parent": "arithmetic_gated_feedback_dev_v2_20261014/core.py",
+      "persistent_state": "source-derived embedding/recurrent actor/C16 parameters and RMS moments; no critic/PG",
+      "readout": "Center 16 values u by their mean; use common fixed balanced codebook, logits=C@(u-mean(u))/4; argmax all257 categories",
+      "scope": "Independent end-to-end recurrent reference with explicit common output-head adaptation; recurrent equations/optimizer retained, historical free 257-class head is not unchanged.",
+      "write": "source-derived supervised CE optimization under common 16-component code head; no PG/SAFE/critic"
+    }
+  ]
+}
