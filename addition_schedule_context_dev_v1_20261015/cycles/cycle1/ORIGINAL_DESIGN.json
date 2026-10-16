@@ -1,0 +1,232 @@
+{
+  "schema": "ADDITION_ORDER_NATIVE_CONTEXT_DESIGN_V1",
+  "date": "2026-10-15",
+  "timezone": "America/New_York",
+  "status": "DESIGN_ONLY",
+  "implemented": false,
+  "test_runs_executed": 0,
+  "training_record_applications_executed": 0,
+  "formal_launch_authorized": false,
+  "background_launch_authorized": false,
+  "github_upload_authorized": false,
+  "goal": "Better retained own-output unseen addition generalization per all training presentations and actual compute; no supplied arithmetic rules.",
+  "language_deferred": true,
+  "attention": false,
+  "transformer": false,
+  "ELM": false,
+  "automatic_adoption": false,
+  "automatic_expansion": false,
+  "source_result": "native_interface_transfer_dev_v1_20261015",
+  "source_commit": "1343248",
+  "arithmetic": {
+    "parent": "addition_core_lineage_comparison_dev_v1_20261015/core.py::Recurrent",
+    "recipe": "KEEP-C16-CE",
+    "independent_of_Full151": true,
+    "actor_parameters": 28440,
+    "parameter_groups": {
+      "E": 6216,
+      "R": 17088,
+      "C": 4096,
+      "V": 1040
+    },
+    "worlds": [
+      202610156101,
+      202610156102,
+      202610156103,
+      202610156104,
+      202610156105,
+      202610156106,
+      202610156107,
+      202610156108
+    ],
+    "n_paired_worlds": 8,
+    "split": {
+      "OLD": 60,
+      "NEW": 20,
+      "HELD": 20,
+      "whole_commutative_orbits": true
+    },
+    "OLD_presentations": 16384,
+    "NEW_presentations": 1024,
+    "histories": [
+      "W",
+      "SH_OLD",
+      "N_OLD"
+    ],
+    "schedules": [
+      "BLOCKED",
+      "INTERLEAVED"
+    ],
+    "interleaving": "For j=0..1023: O[16*j:16*j+16], then N[j]; source internal orders and target pairing fixed.",
+    "primary_global_checkpoints": [
+      0,
+      32,
+      128,
+      512,
+      2048,
+      8192,
+      16384,
+      17408
+    ],
+    "auxiliary_NEW_checkpoints": [
+      0,
+      1,
+      2,
+      4,
+      8,
+      16,
+      64,
+      256,
+      1024
+    ],
+    "shared_rest_after_global_records": [
+      16384,
+      17408
+    ],
+    "rest_seconds": 86400,
+    "primary_metric": "Normalized trapezoidal HELD exact-answer-plus-EOS AUC over log2(total presentations+1)",
+    "primary_contrast": "INTERLEAVED/W minus BLOCKED/W, paired by world",
+    "interval": "Prespecified paired Student-t 95% interval df=7; small bounded study, no automatic adoption.",
+    "secondary": [
+      "final delayed HELD",
+      "causal W-SH_OLD and W-N_OLD",
+      "shortcut envelope",
+      "OLD and NEW retention",
+      "production CPU curves"
+    ],
+    "shortcuts": [
+      "answer frequency",
+      "raw-key lookup with frequency fallback",
+      "canonical-key lookup with frequency fallback",
+      "single raw input position conditional modes"
+    ],
+    "jobs": 16,
+    "correlated_training_histories": 48,
+    "record_applications": 835584,
+    "feedback": "Full observed expected payload and EOS throughout; no scalar-only or noisy-feedback claim."
+  },
+  "update_diagnostics": {
+    "source": "BLOCKED/W production pre/post states only",
+    "NEW_update_indices": [
+      1,
+      2,
+      4,
+      8,
+      16
+    ],
+    "views": [
+      "NONE",
+      "ALL",
+      "E_ONLY",
+      "R_ONLY",
+      "C_ONLY",
+      "V_ONLY",
+      "INTERNAL_ONLY"
+    ],
+    "operative_updates_reexecuted": 0,
+    "learned_candidates_added": 0,
+    "timing": "Capture actual applied deltas; offline read-only functional probes after production trajectories finish.",
+    "probes": "OLD60 own-output, correct-target conditional margins/logits/NLL; teacher-prefix diagnostics never scored as autonomous answers."
+  },
+  "native": {
+    "parent": "native_interface_transfer_dev_v1_20261015/models.py::SequenceC16",
+    "variants": [
+      "ROLLING-C16",
+      "BOUND-C16"
+    ],
+    "engineering_only": true,
+    "learned_representation_claim": false,
+    "maps": [
+      202610156201,
+      202610156202
+    ],
+    "histories": [
+      "W",
+      "NO_WRITE"
+    ],
+    "independent_stores_per_model": 32,
+    "shared_stores": 16,
+    "private_stores": 16,
+    "stimuli_per_map": 16,
+    "all_prompt_visible_lengths": 12,
+    "collision_cues": 8,
+    "matched_noncollision_cues": 8,
+    "matched_response_length_multisets": true,
+    "matched_pair_hamming_distance": 1,
+    "record_presentations_per_history": 768,
+    "record_seconds": 165,
+    "checkpoints": [
+      0,
+      16,
+      64,
+      256,
+      768
+    ],
+    "final_rest_seconds": 86400,
+    "modified_interface": "Keep full raw prompt q frozen after REPLY; after first payload use a fixed label-free q/p-prefix sketch for private write and read.",
+    "first_payload_private_PN_unchanged": true,
+    "shared_FE0_unchanged": true,
+    "receptor_sketch": {
+      "domain": "RCPROMPTPREFIX-v1",
+      "seed": "SHA256(domain || uint16le(len(q)) || q || uint8(len(p)) || p)[:8], little-endian",
+      "dimension": 88,
+      "contacts": 24,
+      "amplitude_uniform": [
+        0.4,
+        1.0
+      ],
+      "normalization": "same parent _norm",
+      "cache_limit": 65536,
+      "query_cache_isolated": true
+    },
+    "generic_prompt_cap_bytes": 256,
+    "generation_cap_bytes": 16,
+    "EOS": 256,
+    "qualification": "Exact finite-fixture 16/16 own-output+EOS immediately and after rest; both maps reported; no core promotion.",
+    "jobs": 4,
+    "correlated_training_histories": 8,
+    "record_applications": 6144,
+    "A1_A2": "Archived regression evidence plus necessary short technical checks, not new research stages."
+  },
+  "checkpoints": {
+    "arithmetic_global": [
+      0,
+      8192,
+      16384,
+      17408
+    ],
+    "extra_BLOCKED_W_NEW": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      256
+    ],
+    "native": [
+      "birth",
+      "final continuing state"
+    ],
+    "complete_optimizer_and_controller": true
+  },
+  "budget": {
+    "jobs": 20,
+    "correlated_training_histories": 56,
+    "total_record_applications": 841728,
+    "maximum_technical_record_applications": 96,
+    "all_new_training_in_this_design_turn": 0,
+    "independent_arithmetic_worlds": 8,
+    "native_maps_not_pooled_into_n": true,
+    "maximum_workers": 2,
+    "admission_stop_hours": 8,
+    "hard_session_limit_hours": 10,
+    "planning_allowance_minutes": [
+      45,
+      90
+    ],
+    "time_estimate_measured": false,
+    "caffeinate": true
+  },
+  "human_design": "EXPERIMENT.md",
+  "static_review": "STATIC_REVIEW.md"
+}

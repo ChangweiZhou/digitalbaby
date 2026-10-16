@@ -1,0 +1,233 @@
+**The newest run has made the situation substantially clearer. Native Minifly can reproduce the original association task, can learn the C16 output interface on a small fixture, and can generate simple multi-byte answers. Its remaining interface failure is concentrated in maintaining the right context during continuation. Separately, the recurrent models clearly benefit from prior training when learning new examples, but still have not demonstrated reusable addition rules.**
+
+I checked the active branch, `codex/addition-u042-core-adoption-20261011`, at **`13432483`**, published **October 15, 2026, at 4:20 p.m. Eastern**. The new work is `native_interface_transfer_dev_v1_20261015`, following the lineage-repair experiment. I reviewed its reports, intermediate curves, data generator, model wrappers, inherited updater, and final audit; I did not rerun training. The current project instruction explicitly keeps **addition as the main task and defers the language proposal**.  
+
+**My recommendation: do not repeat the completed qualification exercise or launch a large confirmation campaign. The next addition experiment should distinguish a training-schedule/interference problem from a representation/generalization problem. Keep the native continuation repair as one separately identified interface intervention—not another wholesale replacement of the core.**
+
+## 1. What has actually changed since our last review
+
+The latest work implements the two bounded investigations we discussed. Its audit records **4,608 native-track presentations and 208,896 addition-track presentations**, with two addition-development worlds. The execution and source checks passed; this does not mean every behavioral target passed or that a new core was adopted. 
+
+### The native interface is no longer an undifferentiated failure
+
+| Native test | Result | What it establishes |
+|---|---:|---|
+| **A1: original scheduled four-output protocol** | 12/12 taught targets correct, including after rest | The original mechanism works on these new protocol-reproduction fixtures. |
+| **A2: scheduled C16 output** | 12/12 correct, including after rest | The C16 adaptation is learnable under this small single-output workload. |
+| **A3: autonomous sequence output** | 8/8 clean cues correct; 2/4 context-collision challenges correct | Simple continuation and EOS work, but the complete sequence qualification fails. |
+
+The no-write controls were substantially worse. These remain finite association tests, not addition-generalization tests. Also, A2 taught only four distinct output bytes while allowing all 257 output classes to compete; it did not establish arbitrary-alphabet or high-load reliability.  
+
+This updates two earlier possibilities:
+
+**“The C16 port simply cannot learn” is now too strong.** It demonstrably learns the scheduled fixture.
+
+**“Native Minifly cannot produce sequences” is also too strong.** It produces all eight clean responses with its own EOS.
+
+The remaining failure is more specific. One target that should produce `02` produces `0` and stops. Another that should produce `30` produces `3`, then byte `0xA8`, then `3`, and stops. Both begin correctly. That is evidence of a continuation/context problem, not merely an inability to recognize the cue or emit the first symbol. 
+
+### The addition result is clearer but still negative on the main capability
+
+For the independent recurrent references:
+
+| Measure, averaged across two worlds | KEEP-C16-CE | G62-C16-CE |
+|---|---:|---:|
+| NEW acquisition-curve area after correct OLD training | **0.4932** | **0.4829** |
+| After shuffled-answer OLD training | 0.1990 | 0.1596 |
+| Without OLD learning | 0.0553 | 0.0407 |
+| Final NEW accuracy after correct OLD training | **100%** | **100%** |
+| Final always-untaught HELD accuracy | **0%** | **0%** |
+| OLD retention after learning NEW | **27.5%** | **22.5%** |
+
+The acquisition area is normalized over the prescribed logarithmic NEW-dose axis. It measures how quickly subsequently taught items are acquired; it is not itself a measure of answering untaught additions. The preceding 16,384 OLD presentations are part of the cost. 
+
+So the positive finding survives:
+
+> **Correct prior experience makes the learner easier to teach.**
+
+But the stronger claim still does not:
+
+> **Correct prior experience has taught an addition procedure that works on combinations never taught.**
+
+That distinction should remain the organizing principle of the next experiment.
+
+## 2. Three additional conclusions from the intermediate curves
+
+The curves are more informative than the final table.
+
+### A. The damage starts almost immediately
+
+For KEEP, averaging the two worlds gives:
+
+| NEW presentations | NEW accuracy | OLD accuracy |
+|---:|---:|---:|
+| 0 | 2.5% | 100% |
+| 1 | 5% | **87.5%** |
+| 4 | 2.5% | **75.8%** |
+| 64 | 72.5% | 42.5% |
+| 256 | **100%** | 32.5% |
+| 1,024 | **100%** | 27.5% |
+
+These are arithmetic averages of the saved world-level curves. G62 also loses OLD accuracy early, although its first few updates are less destructive in these particular worlds.    
+
+**A large loss after one or four updates is a reason to inspect the update geometry and output margins—not immediately to add memory capacity.**
+
+There are several possible explanations: shared parameters may support many OLD outputs; those outputs may have fragile decision margins; the output head may move in a way that affects many answers simultaneously; or the adaptive optimizer may turn a new gradient into a relatively large parameter displacement. The current curves do not distinguish these.
+
+The code clips the gradient and then applies an RMS-style preconditioner. That is not the same as directly bounding the resulting parameter displacement or its effect on OLD answers. RMS methods scale updates using accumulated squared gradients, so the nominal learning rate alone does not describe the effective step. This is a plausible diagnostic lead, **not a finding that the optimizer is the cause**.  [PyTorch Documentation](https://docs.pytorch.org/docs/stable/generated/torch.optim.rmsprop.RMSprop_class.html?utm_source=chatgpt.com)
+
+### B. Much of the late training is unproductive at the measured endpoints
+
+All four model–world combinations reach **100% NEW accuracy by 256 NEW presentations**. From 256 to 1,024 presentations, the recorded NEW accuracy stays at 100%, HELD stays at zero, and OLD retention declines further.    
+
+Likewise, all four runs already achieve 100% OLD accuracy at the 8,192-presentation checkpoint. Continuing to 16,384 does not produce a consistent HELD improvement.    
+
+This does **not** justify retrospectively selecting a favorable checkpoint and declaring success. It suggests a prospective training-control question: can a rule based only on permitted training observations avoid continued destructive updating after acquisition has saturated?
+
+Such a rule would be an efficiency/retention intervention. It would not by itself solve generalization.
+
+### C. Forgetting cannot explain the entire generalization failure
+
+HELD performance was already poor **before** NEW training. In the four correctly trained histories, HELD accuracy after OLD training was 0%, 5%, 0%, and 0%. It was not a strong generalization capability subsequently erased by NEW learning.    
+
+Moreover, the recorded answer-frequency control achieves **10% HELD accuracy in each world**, versus the correctly trained recurrent models’ final zero. This is a more relevant reference than calling the task “random guessing,” because outputs are complete variable-length byte strings rather than a balanced binary decision. 
+
+Therefore, the project has **both** a generalization problem and an interference problem. Protecting memorized examples may improve the latter while leaving the former untouched.
+
+## 3. One important qualification to the native-context diagnosis
+
+The source supports the suffix-collision explanation, but does not yet isolate it completely.
+
+The clean native fixtures use **eight spaces followed by four visible bytes**. The challenging fixtures use **twelve visible bytes**. Thus the clean-versus-challenge comparison changes meaningful input length as well as the collision condition. A2-to-A3 also changes the controller and the output requirements together.  
+
+The private-key collision itself is concrete. Two challenge cues end in `Axyz` and `Bxyz`, respectively. Their answers begin with `0`. Once that first answer byte is consumed, both private suffixes become:
+
+```text
+xyz0
+```
+
+Yet the required next bytes differ. The shared FE0 route may still distinguish the inputs, so this is not a proof that the entire model has identical information. It is a demonstration that **one important route loses the needed distinction at exactly the relevant point**.  
+
+My resulting judgment is:
+
+**The leading native-interface hypothesis is loss or underuse of prompt identity during generation. But the next intervention must test that hypothesis, rather than label every continuation failure a confirmed suffix-collision failure.**
+
+## 4. What I would do next on the addition task
+
+I would make the next main run a **small, controlled addition-training comparison**, not another five-core competition.
+
+### Primary comparison: blocked versus interleaved experience
+
+Use the existing KEEP-C16-CE implementation as a named engineering reference. This is not a promotion of KEEP to the native core, nor a conclusion that GRUs are generally superior to LSTMs.
+
+Construct two conditions with:
+
+- The **same OLD and NEW examples, target bytes, and presentation counts**.
+- The same initialization and optimizer.
+- The same untouched HELD set and evaluation checkpoints.
+- A difference only in the order of the permitted training presentations.
+
+One condition reproduces OLD-then-NEW blocking. The other interleaves the same presentation multiset under a prespecified schedule. The learner receives no OLD/NEW identifiers.
+
+**The question is not “does rehearsal help memory?”** The question is:
+
+> **With the same information and computation budget, does removing the abrupt distribution switch produce a representation that supports both taught examples and untaught addition combinations?**
+
+Interleaving is a legitimate control for the sequential-learning burden. It is not automatically a deployable persistent-learning solution: when old examples are unavailable in the intended application, an interleaved condition has access that must be explicitly identified. Replay-based continual-learning research makes this distinction important; retaining or regenerating old examples has its own memory and computational cost. [NeurIPS Proceedings](https://proceedings.neurips.cc/paper/2017/hash/0efbe98067c6c73dba1250d2beaa81f9-Abstract.html?utm_source=chatgpt.com)
+
+Here, the cleanest comparison is to keep the complete presentation multiset identical and change its order—not to give one arm additional old-answer information for free.
+
+### Keep HELD accuracy as the decisive endpoint
+
+The interpretation should be fixed in advance:
+
+| Result | Interpretation |
+|---|---|
+| Interleaving preserves OLD and learns NEW, but HELD remains weak | Sequential interference is partly manageable; reusable addition structure remains missing. |
+| Interleaving improves HELD beyond the controls | Experience ordering contributed to the generalization failure; the same architecture deserves further investigation. |
+| Interleaving cannot fit the taught examples adequately | Acquisition/optimization remains unresolved under that schedule and budget. |
+| Only NEW acquisition improves | Positive transfer in learning speed, still not a demonstrated addition rule. |
+
+This comparison should be small enough to inform the next architectural choice. It should not become another large campaign whose main achievement is confirming that the current recipes are weak.
+
+### Add targeted diagnostics, not a second mechanism search
+
+During the first few NEW updates, record actual parameter displacements and their effects on a fixed set of previously taught examples. Separate the embedding, recurrent computation, prompt-reinjection matrix, and output-head contributions.
+
+A particularly informative diagnostic is to apply the same proposed update on disposable copies, once to the output head alone and once to the internal representation parameters alone, then measure OLD output changes. These are diagnostic interventions, not production models or independent experimental worlds.
+
+This can tell us whether the early damage is primarily:
+
+**a moved readout**, **a changed representation**, or **their interaction**.
+
+Do not infer the answer from gradient norms alone. The model’s decisions and sequence-level margins are what matter. The current updater already reports a global gradient norm, but not the complete functional effect of each parameter group’s step. 
+
+I would also explicitly save common model checkpoints in the next experiment. The current addition runner records curves and state digests; those alone are not substitutes for a serialized state from which controlled continuations can be launched. 
+
+## 5. What to change in the native system—and what not to claim
+
+The native qualification attempt has served its purpose. **Do not repeat A1 and A2 as another research milestone.** Preserve them as regression tests.
+
+For A3, one further *modified-interface* comparison is justified because the failure condition is now specific. I would test a controller that keeps prompt context distinct from generated-prefix context:
+
+\[
+\text{output}_t
+=
+R\!\left(
+M,\,
+q_{\mathrm{prompt}},\,
+s_{\mathrm{generated\ prefix},t}
+\right).
+\]
+
+Here \(M\) denotes the actual native learned stores. The crucial change is that producing an answer byte must not simply overwrite the information needed to identify the prompt.
+
+This is a structural requirement, not a claim that one particular implementation will work. It does not require arithmetic parsing, operand slots, a hard-coded addition rule, attention, or a Transformer.
+
+The implementation must be classified accurately:
+
+**A fixed generic prompt/prefix encoding would be an engineering interface diagnostic.** It would not satisfy the project’s stronger learned-representation objective merely because it accepts bytes.
+
+**A learned prompt/prefix interface would be a new hybrid variant.** Its learned components, supervision and costs must be declared, and native-memory ablations must establish whether the native stores contribute.
+
+For the immediate comparison, use equal-length visible cues and matched output lengths in collision and noncollision conditions. Keep C16, native write rules, bank scales and training dose fixed. That makes the context intervention interpretable.
+
+Even a successful repair would establish better autonomous sequence acquisition—not addition-rule discovery. The same untouched addition test remains necessary.
+
+## 6. How this changes the broader strategy
+
+I would now stop treating the following as interchangeable:
+
+\[
+\text{can store an association}
+\;\neq\;
+\text{can express it as a sequence}
+\;\neq\;
+\text{can learn new associations faster}
+\;\neq\;
+\text{can solve untaught combinations}.
+\]
+
+The newest run gives positive evidence for the first three, each within its own model and scope. It has not established the fourth. The native and recurrent paths remain explicitly independent in both code and reporting.  
+
+That is meaningful progress. It tells us where a further intervention must act.
+
+**More native stores are not the first answer to losing prompt identity during continuation.**
+
+**More retention gates are not the first answer to near-zero HELD accuracy before interference even begins.**
+
+**Faster NEW acquisition is not enough to justify a new core when relevant OLD performance collapses and HELD remains below simple controls.**
+
+After the controlled schedule comparison, the architectural decision becomes much clearer. If the same learner can jointly retain the taught material but still cannot outperform shortcuts on HELD, then the main research effort should go toward **how representations and computations are reused across addition examples**, rather than further polishing generic retention. If schedule changes materially improve HELD, there is a reason to continue with the existing architecture before adding machinery.
+
+The current two-world evidence does not select a specific new compositional architecture. I would not pretend it does. Nor would I reopen language experiments while the agreed scope remains addition.
+
+## Bottom line
+
+**The last recommendations have now been carried out, and the new evidence is specific enough to move beyond another qualification round.**
+
+The next step I recommend is **a same-data, same-budget addition comparison that separates sequential interference from generalization**, accompanied by a focused analysis of the first few destructive updates. In parallel only at a small engineering scale, test **one explicitly versioned prompt-context repair** for the native sequence interface.
+
+Success should still mean **better self-generated answers on never-taught additions, at a stated total learning cost, while retaining relevant old ability**. Better EOS, better memorization, or another passed audit are useful supporting results—not replacements for that objective.
+
+Would a notification when this branch publishes another experiment result be useful?
