@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/native_context_binding_dev_v1_20261016/ops/background_20261016/qualify_dispatcher.py", line 86, in <module>
+    if __name__=="__main__":main()
+                            ^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/native_context_binding_dev_v1_20261016/ops/background_20261016/qualify_dispatcher.py", line 57, in main
+    assert dispatcher.run_stage("DEV",Path("SYNTHETIC_ONLY"),time.monotonic())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/native_context_binding_dev_v1_20261016/campaign_supervisor.py", line 59, in run_stage
+    process=subprocess.Popen(command,stdin=subprocess.DEVNULL,stdout=handle,stderr=subprocess.STDOUT,cwd=c.HERE)
+                                           ^^^^^^^^^^^^^^^^^^
+AttributeError: 'types.SimpleNamespace' object has no attribute 'DEVNULL'

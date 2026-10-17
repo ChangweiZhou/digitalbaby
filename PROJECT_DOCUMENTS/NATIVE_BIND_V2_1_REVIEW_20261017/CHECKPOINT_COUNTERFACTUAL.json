@@ -1,0 +1,60 @@
+{
+  "scope": "One-world posthoc forward-only checkpoint intervention;not confirmatory and not E3",
+  "world": 202610177101,
+  "arm": "F111",
+  "history": "W",
+  "group": "OLD",
+  "n": 60,
+  "source_checkpoints": [
+    "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/native_context_binding_dev_v2_1_20261017/results/DEV_A/jobs/202610177101_F111/W_OLD_END.pt",
+    "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/native_context_binding_dev_v2_1_20261017/results/DEV_A/jobs/202610177101_F111/W_OLD_REST.pt"
+  ],
+  "baseline_original_before_rest_correct": 23,
+  "after_rest_slow_and_theta_retained_in_all_interventions": true,
+  "interventions": [
+    {
+      "name": "AFTER_REST",
+      "correct": 4,
+      "immediate_EOS": 30
+    },
+    {
+      "name": "RESTORE_GAMMA_FAST",
+      "correct": 4,
+      "immediate_EOS": 30
+    },
+    {
+      "name": "RESTORE_ALPHA_FAST",
+      "correct": 4,
+      "immediate_EOS": 21
+    },
+    {
+      "name": "RESTORE_BOTH_FAST",
+      "correct": 4,
+      "immediate_EOS": 21
+    },
+    {
+      "name": "RESTORE_ADAPT_ONLY",
+      "correct": 19,
+      "immediate_EOS": 10
+    },
+    {
+      "name": "RESTORE_FAST_AND_ADAPT",
+      "correct": 23,
+      "immediate_EOS": 6
+    }
+  ],
+  "forward_probes": 360,
+  "training_calls": 0,
+  "CPU_seconds": 18.69,
+  "wall_seconds": 18.83,
+  "production_model_digests_unchanged": true,
+  "frozen_sources_unchanged": true,
+  "decay": {
+    "simulated_seconds": 86400,
+    "gamma_ratio": 9.619021706112752e-21,
+    "alpha_fast_ratio": 7.657790916913986e-12,
+    "slow_ratio": 0.9930111302201424,
+    "theta_and_optimizer_bitwise_unchanged": true
+  },
+  "interpretation": "Strong descriptive evidence of adaptation-dependent retrieval/readout compatibility failure, alongside prior-fact interference;not proof of globally adequate stored knowledge or arithmetic generalization"
+}

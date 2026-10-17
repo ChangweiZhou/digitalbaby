@@ -1,0 +1,194 @@
+{
+  "passed": true,
+  "checks": {
+    "across_record_write_credit_gradient_difference": 0.05095974254874624,
+    "exact_readout_derivative_max_abs": 3.850392671367331e-09,
+    "exact_native_write_derivative_relative_error": 5.417226408949411e-07,
+    "STE_hard_forward_exact": true,
+    "STE_nonzero_declared_backward": 102686554.89527541,
+    "prewrite_MBON_target_invariance": true,
+    "all_eight_configs": {
+      "NATIVE": {
+        "parameters": 0,
+        "W": {
+          "loss": 5.362274823250329,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": true,
+          "applied_update": false
+        },
+        "N": {
+          "loss": 4.356772876922741,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": null,
+        "production_cpu": 0.492718
+      },
+      "BIND": {
+        "parameters": 23424,
+        "W": {
+          "loss": 5.361249141027917,
+          "gradient_norm": 0.1275750391806319,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": true,
+          "applied_update": true
+        },
+        "N": {
+          "loss": 4.354256349960787,
+          "gradient_norm": 0.0,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": null,
+        "production_cpu": 0.6880259999999989
+      },
+      "BIND-FROZEN": {
+        "parameters": 23424,
+        "W": {
+          "loss": 5.361249141027917,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": true,
+          "applied_update": false
+        },
+        "N": {
+          "loss": 4.354256349979762,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": null,
+        "production_cpu": 0.49827700000000164
+      },
+      "BIND-1STEP": {
+        "parameters": 23424,
+        "W": {
+          "loss": 5.362331547842963,
+          "gradient_norm": 0.0821272495268634,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": true,
+          "applied_update": true
+        },
+        "N": {
+          "loss": 4.365887334946797,
+          "gradient_norm": 0.0,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": null,
+        "production_cpu": 0.7109570000000005
+      },
+      "BIND-ADAPT": {
+        "parameters": 23552,
+        "W": {
+          "loss": 5.361249141027917,
+          "gradient_norm": 0.12611178655728542,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": true,
+          "applied_update": true
+        },
+        "N": {
+          "loss": 4.354256349960787,
+          "gradient_norm": 0.0,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": null,
+        "production_cpu": 0.6786659999999998
+      },
+      "BIND-FB": {
+        "parameters": 24192,
+        "W": {
+          "loss": 5.3612491336788235,
+          "gradient_norm": 0.12836045865507448,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": true,
+          "applied_update": true
+        },
+        "N": {
+          "loss": 4.354508576657156,
+          "gradient_norm": 0.0,
+          "actor_steps": 1,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": 0.004167072428078383,
+        "production_cpu": 0.7430210000000024
+      },
+      "FROZEN-ADAPT": {
+        "parameters": 23552,
+        "W": {
+          "loss": 5.361249141027917,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": true,
+          "applied_update": false
+        },
+        "N": {
+          "loss": 4.354256349979762,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": null,
+        "production_cpu": 0.5819210000000012
+      },
+      "FROZEN-FB": {
+        "parameters": 24192,
+        "W": {
+          "loss": 5.3612491336788235,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": true,
+          "applied_update": false
+        },
+        "N": {
+          "loss": 4.354508576676132,
+          "gradient_norm": 0.0,
+          "actor_steps": 0,
+          "records": 4,
+          "allowed": false,
+          "applied_update": false
+        },
+        "feedback_max": 0.0035751959695492145,
+        "production_cpu": 0.5432369999999906
+      }
+    }
+  },
+  "full_record_applications": 72,
+  "source_identity": {
+    "bind_artifacts.py": "5fb294db58eaba1c4511bf3a70c81a0804dfa77accd285cc969b6e26ed30ff41",
+    "bind_kernel.py": "db794fecc35b663537bc590d682ced5332edba3dfae12f2697f1bc9604e3e6d8",
+    "bind_native.py": "45a0aaa50a34143dd2fb57335eacce6f8eb65c367b736365cfb22ab8022c6a19",
+    "bootstrap.py": "9a27795d1ed9fc72d80c63c53ff33bb6479ba56def710aae54880457130402f2",
+    "cycle1.py": "e3005efa326a0e047151b8c5379d33014be7e48a4d452da2ad4a956c4481906d",
+    "cycle2.py": "0d4dd204f38a84a1f904122914ea260e4e79718841fe6f878be748d8bdd245cc",
+    "OUTPUT_CODEBOOK.json": "69fe0ab1a60c018a0c1cced86304f7c5802027587da845170dab7cf38dab5d60"
+  },
+  "elapsed_seconds": 37.2895941734314,
+  "evidence": "E0 source derivatives/causal controls; no efficacy or E3 claim",
+  "science_jobs": 0
+}

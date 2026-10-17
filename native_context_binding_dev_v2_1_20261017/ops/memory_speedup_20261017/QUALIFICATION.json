@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "zero_science_records": true,
+  "checks": {
+    "per_arm_growth": true,
+    "warning_blocks_admission": true,
+    "insufficient_headroom_rejected": true,
+    "adopted_job_not_replayed": true,
+    "already_certified_adopted_job_not_double_counted": true,
+    "complete_external_process_detected": true,
+    "unexpected_exit_detected": true,
+    "ten_hour_session_preserved_in_handoff": true
+  },
+  "live_system": {
+    "available_proxy_bytes": 4566663168,
+    "pressure": 1,
+    "swapouts": 562794265,
+    "swapins": 540517543,
+    "page_size": 16384
+  },
+  "live_policy_projection": {
+    "admit": false,
+    "required_bytes": 6004683573,
+    "new_worker_peak_reserve_bytes": 1914352436,
+    "reserved_growth_bytes": 3553460225,
+    "available_reclaimable_proxy_bytes": 4566663168,
+    "pressure": 1,
+    "system_reserve_bytes": 536870912,
+    "running_workers": [
+      {
+        "arm": "F001",
+        "pid": 54807,
+        "RSS_bytes": 965443584,
+        "physical_footprint_bytes": 302958872,
+        "start_abstime": 29280221586989
+      },
+      {
+        "arm": "F010",
+        "pid": 55567,
+        "RSS_bytes": 358449152,
+        "physical_footprint_bytes": 295602288,
+        "start_abstime": 29283727877323
+      },
+      {
+        "arm": "F011",
+        "pid": 55918,
+        "RSS_bytes": 1243152384,
+        "physical_footprint_bytes": 301844688,
+        "start_abstime": 29286387802820
+      }
+    ],
+    "next_arm": "F100",
+    "rule": "Per-arm observed peak×1.20; remaining growth reserved against live RSS, matching measured peak RSS units; normal OS pressure;max4"
+  },
+  "scientific_source_unchanged": true
+}

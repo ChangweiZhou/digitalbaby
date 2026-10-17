@@ -1,0 +1,49 @@
+{
+  "schema": "NATIVE_BIND_MODEL_MANIFEST_V1",
+  "parent": "native_interface_transfer_dev_v1_20261015/models.py::SequenceC16",
+  "native_engine": "Canonical evolved Full151/R_center functional float64 mirror",
+  "native_stores": 32,
+  "store_layout": "2 banks x 16 code-bit stores; each born separately via canonical_fresh_native",
+  "KCs_per_store": 5177,
+  "retained": [
+    "Canonical B support and weights",
+    "Q/T/F/MM and evolved phenotype",
+    "Native state-dependent fast/slow allocation",
+    "Native fast/slow/adapt dynamics and clipping",
+    "FE0 and CONTENT banks",
+    "Shared native teaching and private signed teaching",
+    "Fixed inherited C16 byte/EOS codebook"
+  ],
+  "declared_changes": [
+    "low_rank_nonuniform_PN_modulation",
+    "trainable_within_record_context",
+    "exact_expression_minus_zero_memory_expression_readout",
+    "four_record_native_write_and_query_BPTT",
+    "hard_forward_topk_with_declared_STE"
+  ],
+  "new_context_parameters": 23424,
+  "adaptive_added_parameters": 128,
+  "feedback_added_parameters": 768,
+  "all_possible_arms": [
+    "NATIVE",
+    "BIND",
+    "BIND-FROZEN",
+    "BIND-1STEP",
+    "BIND-ADAPT",
+    "BIND-FB",
+    "FROZEN-ADAPT",
+    "FROZEN-FB"
+  ],
+  "output": "All 256 payload bytes plus independent EOS; own autoregressive generation",
+  "training": "Four chronological external records of native writes and queries; backprop then detach; every presentation charged",
+  "prohibited": {
+    "attention": false,
+    "transformers": false,
+    "ELM": false,
+    "arithmetic_rules": false,
+    "operand_slots": false,
+    "numeric_features": false,
+    "independent_answer_head": false
+  },
+  "claim_limit": "Learned context may carry an algorithm; this is an integrated native model test, not proof that original native weights discovered arithmetic"
+}

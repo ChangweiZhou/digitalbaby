@@ -1,0 +1,5 @@
+# Cycle 2 audit and revision
+
+104 full technical record applications. For both inherited-teaching and ERROR/additive cases, CUT/THROUGH hard forward states matched before optimizer steps. Isolated first-record fact-write gradients were exactly0 in CUT and nonzero in THROUGH (-1.1957106002 and -1.2016501727). This is a real write-to-later-read derivative, not merely a nonzero controller gradient. Fixed-pi native derivative relative error6.11e-10. All9 configurations passed nonzero denied-fact/parameter/optimizer checks. Frozen full-dose ABAB/tail/floor-ceil construction and held-out orbit isolation passed.
+
+Revision: the third cycle must exercise all9 configurations on actual addition OLD/rest/NEW/rest and both W/N_OLD histories, not spend its whole quota on a synthetic recall task. Keep a separate24-record arbitrary-byte recall probe only for fixed NATIVE/F000/F111 anchors. Total cycle3 reserved236 records, below256; no technical performance-based candidate replacement. Root F000 promotion and all branch selections are tested synthetically.
