@@ -2,7 +2,8 @@
 
 **Development diagnostic only.** Not formal science, no preregistration, no adoption, no registry change. It used
 the three technical worlds of `addition_core_lineage_comparison_dev_v1_20261015` (202610143901–03), not its 16
-formal worlds. 135 runs (3 worlds × 3 seeds per condition), about 1.5 CPU-hours.
+formal worlds. Stages 1–3: 135 runs (3 worlds × 3 seeds per condition), 5.1 CPU-hours. Stage 4 (transfer to
+multiplication): 45 runs, 4.1 CPU-hours.
 
 ## Question
 
@@ -88,12 +89,74 @@ Evidence that the remedy is a reuse pressure, not extra structure:
   decay (8 better, 1 worse). It beats the permuted control in 6–7 of 9 pairs. The best runs reach 95%. It helps but
   does not settle the problem, and errors stay mostly ±1.
 
+## Stage 4: does a learner that generalised addition do better on multiplication?
+
+`transfer.py`, `transfer_grid.py`, `transfer_summary.py` → `results/TRANSFER_SUMMARY.json`, `results/transfer/*.json`.
+
+**Design.** Phase A trains addition with the stage 1/2 code path. Every MEM, WD and GEN phase-A outcome was checked
+against its stored stage-1/2 run and matched exactly (27/27). Phase B then trains **multiplication only** (`a*b=`),
+with a fresh optimizer and the same regime in every arm: full-batch AdamW, weight decay 0 or 1, both run from the
+same phase-A state. It uses the **same split**: the 80 taught pairs are taught as products; the 20 HELD pairs stay
+unseen in both operations. Addition is not rehearsed in phase B; its retention is measured throughout.
+
+| Arm | Phase A | Phase-A unseen + |
+|---|---|---:|
+| FRESH | none (newborn) | — |
+| MEM | addition, wd 0 | 6% |
+| WD | addition, wd 1 | 44% |
+| GEN | addition + counting, wd 1 | 65% |
+| SHUF | addition with answers permuted across the taught prompts + counting, wd 1 | 5% |
+
+SHUF did not fit its permuted table: taught + was 4–11% after 20k steps (weight decay stopped it memorising
+arbitrary answers). It is therefore a "same bytes and regime, no addition learned" control, not a memorised-table
+control.
+
+**Results** (9 runs per cell; phase-B wd 0 / wd 1):
+
+| Arm | Steps to 100% taught × (median) | Unseen × | – with an operand 0 or 1 | – both operands ≥ 2 | Median relative error, both-≥2 answers | + taught / + unseen after 10 × steps | + taught / + unseen at end |
+|---|---|---|---|---|---|---|---|
+| FRESH | 500 / 600 | 17% / 18% | 30% / 31% | 3% / 3% | 0.25 / 0.35 | — | — |
+| MEM | 200 / 250 | 14% / 16% | 26% / 27% | 3% / 3% | 0.24 / 0.26 | 88% / 6% · 88% / 7% | 9% / 3% · 3% / 2% |
+| WD | 250 / 400 | 21% / 18% | 36% / 30% | 6% / 6% | 0.14 / 0.33 | 63% / 22% · 63% / 21% | 3% / 4% · 3% / 2% |
+| GEN | 300 / 450 | 18% / 19% | 28% / 29% | 7% / 7% | 0.15 / 0.24 | 25% / 17% · 24% / 16% | 3% / 4% · 3% / 3% |
+| SHUF | 200 / 300 | 15% / 17% | 29% / 31% | 0% / 1% | 0.44 / 0.48 | 6% / 5% · 6% / 6% | 3% / 3% · 3% / 2% |
+
+40% (8–12 per world) of the 20 unseen × facts have an operand 0 or 1. Every arm, FRESH included, picks up "×0 → 0"
+and "×1 → copy" from the taught facts; that is where most unseen-× accuracy comes from.
+
+**Answers to the three questions:**
+
+1. **Faster multiplication: yes, but not because of addition.** Every pretrained arm reaches 100% taught × sooner
+   than FRESH: 71 of 72 paired comparisons, one tie, none later; on average 167–367 steps sooner. SHUF, which learned
+   no addition, gains about as much as MEM (median 200 vs 200 steps at wd 0, 300 vs 250 at wd 1). The saving comes
+   from generic machinery: reading the prompt bytes and emitting digits + EOS.
+   The networks that generalised addition are *slower* than MEM and SHUF: GEN vs SHUF 8 of 9 slower in both regimes;
+   GEN vs MEM 8–9 of 9 slower.
+2. **Better on unseen multiplication: marginally, and only approximately.** For facts with both operands ≥ 2, GEN and
+   WD get 6–7% right vs 3% for MEM and FRESH and 0–1% for SHUF. GEN vs SHUF unseen × overall: +3 pp (4 better, 1
+   worse, 4 tied) at wd 0, +2 pp (3/2/4) at wd 1. GEN's and WD's both-≥2 answers are closer to the true product: median relative error
+   0.14–0.15 vs 0.24–0.25 for MEM and FRESH and 0.44 for SHUF at phase-B wd 0. This is a weak sign that some magnitude
+   is reused; it is not exact transfer.
+3. **Forgetting addition less: no, the opposite.** Addition collapses in every arm. Ten full-batch multiplication
+   steps take GEN from 100% taught / 65% unseen + to 25% / 17%. MEM still holds 88% taught at step 10 but is at about
+   50% by step 50. Every pretrained arm ends at 3–9% taught + and 2–4% unseen +. Both wd-1 arms, with and without counting, forget
+   fastest. With per-parameter step sizes set by the optimizer, small-weight nets move proportionally further per
+   step, so this likely tracks phase-A weight decay, not generalisation itself.
+
+**Interpretation.** In this learner, the addition structure gained in phase A (ordered and roughly spaced digit
+quantities) is not protected and not reused as a unit. Multiplication training overwrites it within tens of steps.
+What survives and speeds learning is the format machinery, which even the no-addition SHUF arm has. A core that
+"learned addition, so multiplication is easy" would need the digit-quantity representation to persist and to be
+shared by both operations. This plain recurrent learner does neither: no mechanism keeps a learned representation
+stable while a new task is learned on top.
+
 ## Relation to the earlier results
 
 * **No transfer from addition to multiplication.** STREAM-TRANSFER found untaught × at 0–2.7%, and multiplication
-  training erased untaught +. A digit-quantity representation that both operations could reuse is never formed, so
-  there is nothing to transfer. The savings result (correct OLD speeds NEW: 100% vs 17.5%) fits partial structure,
-  such as order, without the precision needed for zero-shot answers.
+  training erased untaught +. Stage 4 reproduces both: unseen × for both-≥2 facts at 0–7%, and unseen + erased
+  within tens of × steps. It adds that a learner which *had* generalised addition still loses it and gains almost
+  nothing on ×. The savings result (correct OLD speeds NEW: 100% vs 17.5%) matches stage 4's generic format savings;
+  SHUF shows that part needs no addition knowledge.
 * **The native cores** (N151, C151, RC151 and the native-bind variants) fail earlier: they do not acquire the taught
   facts through the byte interface (4-byte context ambiguity; retrieval no longer matching the adaptation state
   after rest). This diagnostic covers only learners that do acquire the facts.
@@ -103,9 +166,13 @@ Evidence that the remedy is a reuse pressure, not extra structure:
 3 technical worlds × 3 seeds per cell, wide seed variance in the wd-1 cells, paired sign counts and no tests. The
 learner is a `torch.nn.GRU` with a full softmax, not the exact KEEP code (no C16 head, no context matrix). The
 batch regime trains OLD and NEW together; the lineage trained them in sequence. Stage-1 runs predate the `--aux` and
-`--width` options; the default code path is unchanged, and one replay matched exactly.
+`--width` options; the default code path is unchanged, and one replay matched exactly. Stage 4 trains phase B
+without rehearsal and full-batch; 10 phase-B steps are 10 updates on all 80 product facts, so "fast forgetting" is
+measured in updates, not presentations.
 
 ## Files
 
 `diag.py` (one run), `grid.py` (resumable 4-worker grid, 135 jobs), `summarize.py` → `results/SUMMARY.json`,
 `analyze.py` → `results/ANALYSIS.json`, `results/runs/*.json` (per-run curves, probe and held outputs).
+Stage 4: `transfer.py` (one arm/world/seed: phase A, then phase B at wd 0 and wd 1), `transfer_grid.py` (45 jobs),
+`transfer_summary.py` → `results/TRANSFER_SUMMARY.json`, `results/transfer/*.json`.
