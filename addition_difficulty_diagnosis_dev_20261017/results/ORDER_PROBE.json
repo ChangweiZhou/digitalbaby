@@ -1,0 +1,131 @@
+{
+ "schema": "NATIVE_INPUT_ORDER_PROBE_V1",
+ "byte_interval_s": 2.142857142857143,
+ "fe0_tau_s": 10.0,
+ "weight_by_age_newest_first": [
+  1.0,
+  0.8071177470053893,
+  0.6514390575310556,
+  0.5257880244257798,
+  0.42437284567695,
+  0.34251885509304564,
+  0.2764530466295643,
+  0.22313016014842982,
+  0.1800923121479524
+ ],
+ "note": "Weights are at the moment each byte is fed relative to the newest; the extra REPLY step scales all of them equally before the max-normalisation.",
+ "pairs": [
+  {
+   "a": "3+8=",
+   "b": "8+3=",
+   "differs": "same bytes, reordered",
+   "receptor_cosine": 0.9744973178645431,
+   "kc_jaccard": 0.6880733944954128,
+   "active_kcs": 184
+  },
+  {
+   "a": "5+3*2=",
+   "b": "5*3+2=",
+   "differs": "same bytes, reordered",
+   "receptor_cosine": 0.9844118846370715,
+   "kc_jaccard": 0.7358490566037735,
+   "active_kcs": 184
+  },
+  {
+   "a": "(5+3)*2=",
+   "b": "(5*3)+2=",
+   "differs": "same bytes, reordered",
+   "receptor_cosine": 0.9735690085138975,
+   "kc_jaccard": 0.7523809523809524,
+   "active_kcs": 184
+  },
+  {
+   "a": "12+34=",
+   "b": "34+12=",
+   "differs": "same bytes, reordered",
+   "receptor_cosine": 0.9233845827215102,
+   "kc_jaccard": 0.5333333333333333,
+   "active_kcs": 184
+  },
+  {
+   "a": "(5+3)*2=",
+   "b": "5+3*2=",
+   "differs": "brackets removed",
+   "receptor_cosine": 0.9551556671554619,
+   "kc_jaccard": 0.6283185840707964,
+   "active_kcs": 184
+  },
+  {
+   "a": "2*(5+3)=",
+   "b": "(5+3)*2=",
+   "differs": "operands swapped around brackets",
+   "receptor_cosine": 0.9279356559866109,
+   "kc_jaccard": 0.5726495726495726,
+   "active_kcs": 184
+  },
+  {
+   "a": "1+9=",
+   "b": "2+9=",
+   "differs": "first number changed",
+   "receptor_cosine": 0.9337600666022955,
+   "kc_jaccard": 0.84,
+   "active_kcs": 184
+  },
+  {
+   "a": "3+8=",
+   "b": "4+8=",
+   "differs": "first number changed",
+   "receptor_cosine": 0.9204876422442335,
+   "kc_jaccard": 0.7523809523809524,
+   "active_kcs": 184
+  },
+  {
+   "a": "3+8=",
+   "b": "3+9=",
+   "differs": "last number changed",
+   "receptor_cosine": 0.8054850802593477,
+   "kc_jaccard": 0.3939393939393939,
+   "active_kcs": 184
+  },
+  {
+   "a": "(5+3)*2=",
+   "b": "(6+3)*2=",
+   "differs": "first number changed",
+   "receptor_cosine": 0.9769685651811125,
+   "kc_jaccard": 0.8585858585858586,
+   "active_kcs": 184
+  },
+  {
+   "a": "3+8=1",
+   "b": "8+3=1",
+   "differs": "reordered, after one answer byte",
+   "receptor_cosine": 0.9848085358639589,
+   "kc_jaccard": 0.7951219512195122,
+   "active_kcs": 184
+  },
+  {
+   "a": "the cat sat.",
+   "b": "the dog sat.",
+   "differs": "subject changed",
+   "receptor_cosine": 0.9481276170645447,
+   "kc_jaccard": 0.6428571428571429,
+   "active_kcs": 184
+  },
+  {
+   "a": "dog bites man.",
+   "b": "dog bites cat.",
+   "differs": "last word changed",
+   "receptor_cosine": 0.7397786024843127,
+   "kc_jaccard": 0.3096085409252669,
+   "active_kcs": 184
+  },
+  {
+   "a": "dog bites man.",
+   "b": "man bites dog.",
+   "differs": "words swapped",
+   "receptor_cosine": 0.7206318468328801,
+   "kc_jaccard": 0.1757188498402556,
+   "active_kcs": 184
+  }
+ ]
+}
