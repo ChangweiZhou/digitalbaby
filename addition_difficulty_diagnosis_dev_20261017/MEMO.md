@@ -17,7 +17,7 @@ combinator, no transformers, attention or ELM, nothing that must be redesigned w
 * **Learning addition gives multiplication nothing specific.** Pretraining speeds multiplication equally with or
   without addition knowledge. Learners that generalised addition gain only 3–4 pp on unseen products with both
   operands ≥ 2, and lose addition fastest (taught + 100% → 25% after 10 multiplication updates). Every arm
-  keeps under about 20% of taught addition after 200 updates.
+  keeps about 20% or less of taught addition after 200 updates.
 * **The native fly barely keeps byte order.** Its input is a fading mix of recent bytes. Reordering the same bytes
   changes its code less than changing the last digit does, and brackets are not represented as grouping. Without
   order there are no arithmetic expressions and no language.
