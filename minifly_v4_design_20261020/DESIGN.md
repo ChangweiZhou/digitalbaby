@@ -15,7 +15,8 @@ item-specific memories.
 * No arithmetic-specific structure: no neuron or module designated as digit, operand, carry, place or operator; no
   parser; no supplied numeric features. Arithmetic is in the data only.
 * Raw bytes in and out: each input byte as its 8 bits; each output byte read from 8 bit units plus an end-of-answer
-  unit. No codebooks.
+  unit. No codebooks. Problems and answers are ordinary written byte strings; there is no format engineering (no
+  reversed answers or other conventions chosen to make learning easier).
 * No attention, no transformers or anything derived from them. No backpropagation.
 * The native mushroom-body learning equations are kept. A **larger model is allowed** (more memory cells), and
   evolution may set innate parameters.
@@ -54,18 +55,20 @@ applies wherever wholes are rare and parts recur (words and phrases recur, sente
 This turns "slow warmup, don't bake the brain" into a precise requirement: **commitment follows repetition**, and
 codes settle only after broad experience.
 
-## 4. Answer format (decides feasibility)
+## 4. Answers in ordinary written form: what that requires
 
-* **Least-significant digit first.** Output digit k is a function of the aligned column (aₖ, bₖ) and of the previous
-  column and previous output digit (aₖ₋₁, bₖ₋₁, dₖ₋₁), because the carry is recoverable from those:
-  cₖ₋₁ = (dₖ₋₁ − aₖ₋₁ − bₖ₋₁) mod 10 and cₖ = ⌊(aₖ₋₁ + bₖ₋₁ + cₖ₋₁)/10⌋. Every input is observable in the
-  fly's own recent stream (its emitted digits are fed back). Finite, local conjunctions suffice.
-* **Most-significant digit first (standard).** The first digit can depend on every column's carry; the fly must look
-  ahead across both numbers before emitting. Likewise the sign of a subtraction depends on the most significant
-  differing digit.
+Decision: problems and answers are ordinary byte strings (`1234+5678=6912`), as written. The fly must learn whatever
+the bytes require. What they require, stated precisely so the design can provide generic means for it:
 
-**Default:** pretraining answers are written least-significant first (a data convention — column arithmetic by hand is
-also computed right to left). Standard-order answers are a later stage (§9, stage S4). Open decision D1.
+* An answer digit is emitted most-significant first, but it depends on the aligned column and on the carry arriving
+  from every column to its right. So when the fly emits answer position k (counted from the right), the relevant
+  inputs are the digits at positions k, k−1, …, 1 of both held numbers; in practice a carry chain rarely runs far, so
+  the nearest few columns carry most of the information.
+* The sign of a subtraction depends on the most significant position where the two numbers differ.
+* Therefore the fly needs both numbers **held** with positions counted from their right ends (A3), and conjunctive
+  cells that combine several neighbouring columns of both held numbers with the output position being emitted (A4).
+  This is generic multi-position conjunction over held segments, not arithmetic structure; the larger model is what
+  makes enough such conjunctions available. Gate G0 (§9) measures whether they are.
 
 ## 5. Architecture (generic modules; every one a switch, parameters are genes)
 
@@ -73,9 +76,12 @@ Brain time advances by Δ = 30/14 s per byte, as in the native fly.
 
 **A1 Raw-bit sensors.** 8 bit lines + a byte-present line.
 
-**A2 Segment boundaries.** A boundary unit driven by the raw bits through innate weights (8 weights + threshold,
-evolved) marks a byte as starting a new segment. No byte is listed by hand. Alternative (switch): boundary = high
-surprise under the fly's own next-byte prediction.
+**A2 Segment boundaries, decided by the fly.** The fly learns for itself which bytes restart its position count; no
+byte is listed, chosen or evolved by us. A boundary unit reads the raw bits (8 weights + threshold, neutral at
+birth). Its firing is slightly variable, and its weights change by a reward-modulated local rule: when a restart
+(or its absence) is followed by a smaller answer error than usual, the weights move towards repeating that decision
+(error-signal × eligibility, three-factor; no backprop). Bytes whose restarts make answers more accurate become
+boundaries.
 
 **A3 Segment-relative position codes.**
 * Time cells: a chain restarted at each boundary gives "steps since the last boundary" (used for the output step k
@@ -85,12 +91,13 @@ surprise under the fly's own next-byte prediction.
   activity-silent facilitation registers (v2 M6), each item tagged (segment age, position from end, bits).
 This is generic chunk structure: it codes position within words and phrases equally.
 
-**A4 Conjunctive memory cells (KCs), larger population.** N_KC cells (genes; candidates 2¹⁶ and 2¹⁸; native is
-5,177), sparse top-k coding with v0's one-sided homeostasis. Fan-in follows a **topographic prior**: each cell
-samples inputs from a local window in segment-relative position (positions p and p−1 across the held segments, the
-time-cell step, the most recent emitted byte). Local connectivity in a sensory map is a generic wiring rule (ledger
-M016, fixed sparse graphs with a retinotopic prior). A random (non-topographic) fan-in arm measures what the prior
-buys.
+**A4 Conjunctive memory cells (KCs), larger population.** N_KC cells (genes; candidates 2¹⁶, 2¹⁸ and 2²⁰; native
+is 5,177), sparse top-k coding with v0's one-sided homeostasis. Fan-in follows a **topographic prior** (accepted as
+a generic wiring rule): each cell samples inputs from a local window in segment-relative position — a few
+neighbouring positions across the held segments, the time-cell step, the most recent emitted byte. Window widths vary
+across cells (gene for the distribution), so some cells span several neighbouring columns, which ordinary written
+answers need (§4). Local connectivity in a sensory map has precedent in the ledger (M016, fixed sparse graphs with a
+retinotopic prior). A random (non-topographic) fan-in arm measures what the prior buys.
 
 **A5 Output compartments on one shared KC population.** Nine output channels (8 bits + end-of-answer), each with
 native fast/slow value stores over all KCs, native readout and v0's error-correcting signed write. One mushroom body
@@ -136,10 +143,11 @@ follow measured learning curves and CPU):
 | Stage | Content |
 |---|---|
 | S0 (optional) | single-digit `+ −` facts (tests whether earlier facts are reused) |
-| S1 | 2–4-digit addition, equal and unequal lengths, answers least-significant first |
-| S2 | subtraction in both orders with sign (`52-25` / `25-52`), least-significant first, sign written last |
-| S3 | decimals and unequal lengths (`5.2-3.7`, `12.5+3`) |
-| S4 | standard most-significant-first answers |
+| S1 | 2–4-digit addition, equal and unequal lengths |
+| S2 | subtraction in both orders with sign (`52-25=27` / `25-52=-27`) |
+| S3 | decimals and unequal lengths (`5.2-3.7=1.5`, `12.5+3=15.5`) |
+
+All records are ordinary written byte strings.
 
 Each stage keeps replaying earlier ones at a fixed fraction. Operand digits are uniform; lengths uniform within a
 stage.
@@ -165,7 +173,8 @@ stages. Chance levels measured.
 
 **Predictions (to be locked before running).** B0 and B1 near per-digit chance on unseen problems (no exposed parts,
 or parts not consolidated selectively). B2 above chance but degrading as item traces accumulate. B3 well above chance
-and improving with experience; carry columns lag non-carry columns. Length +1 above chance only with A3.
+and improving with experience; positions that depend on long carry chains lag the rest, and the leading digit is
+hardest. Length +1 above chance only with A3.
 
 ## 9. Gates
 
@@ -195,24 +204,25 @@ configuration. Report the minimal set.
 * **P2** A6 consolidation and warmup rules; G1 on fixtures.
 * **P3** Stage S1 with arms B0–B4 on technical worlds; G2.
 * **P4** S2 (G3), S3, length test (G4), retention (G5).
-* **P5** S4 standard order; trimming; sample-efficiency curves.
+* **P5** Trimming; sample-efficiency curves.
 
 Technical worlds only; results committed with code identity; formal science only on separate approval.
 
 ## 12. Risks and open questions
 
-* **Coverage.** Carry columns need conjunctions of about five items (aₖ, bₖ, aₖ₋₁, bₖ₋₁, dₖ₋₁). G0 measures whether
-  the chosen N_KC and fan-in expose them; structural plasticity that grows useful conjunctions (ledger U043, U005) is
-  the fallback.
-* **Boundary detection** may fail to find useful segments; the surprise-based switch is the alternative.
+* **Coverage.** Ordinary written answers need conjunctions spanning several neighbouring columns of both held numbers
+  plus the output position. G0 measures whether the chosen N_KC and window widths expose them; larger N_KC (the model
+  may grow) and structural plasticity that grows useful conjunctions (ledger U043, U005) are the remedies.
+* **Long carry chains** (`9999+1`) need the widest conjunctions; they are rare in uniform data, so accuracy on them is
+  reported separately and expected to lag.
+* **Boundary learning** may be slow or settle on unhelpful boundaries; its decisions and reward history are logged.
 * **Consolidation parameters** may consolidate too little (nothing permanent) or too much (items consolidate);
   confirmation counts are logged per synapse class to diagnose.
-* **Standard order (S4)** may be out of reach without a hold-and-iterate circuit; it is the last stage for that
-  reason.
-* **Scale and CPU.** 2¹⁸ cells × 9 channels requires the P0 engine; budgets are set from measurements.
+* **Scale and CPU.** 2¹⁸–2²⁰ cells × 9 channels requires the P0 engine; budgets are set from measurements.
 
-## 13. Open decisions
+## 13. Decisions taken
 
-* **D1** Answer format for pretraining: least-significant first (default), standard order only from S4.
-* **D2** Boundary unit: evolved raw-bit unit (default) or surprise-based.
-* **D3** Topographic fan-in prior: accepted as a generic wiring rule, with the random fan-in arm as its test.
+* **Data format:** ordinary written byte strings only; no format engineering.
+* **Boundaries:** decided by the fly itself through a reward-modulated local rule (A2); nothing listed or evolved.
+* **Topographic fan-in prior:** accepted as a generic wiring rule; the random fan-in arm measures its contribution.
+* **Model size:** a larger memory-cell population is allowed.
