@@ -1,0 +1,3 @@
+# Cycle 2 Warmup, local updates and checkpoint audit
+
+The first preregistered local-rate candidate qualified on arbitrary-byte taught fixtures without HELD feedback: eta_max=3e-5, eligibility clip=8, row cap=0.001 of the fixed birth-row anchor, projection bound=0.125. Four arms each received 960 OLD records, with six additional record applications across the two resume branches. Including calibration, this cycle used 3,910 record applications. P-G taught recall was 61.7% versus P-C 86.7% at this dose. Warmup was retained; that cost was not hidden or tuned away. Exact checkpoint/resume passed. A subsequent metric fixture corrected omission of birth-policy compute before the first timed checkpoint.

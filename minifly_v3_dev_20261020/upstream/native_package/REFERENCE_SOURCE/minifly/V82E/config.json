@@ -1,0 +1,270 @@
+{
+ "version": "V82E",
+ "parent_diagnostic": "iteration24",
+ "development_seeds": [
+  8211001,
+  8211002,
+  8211003,
+  8211004,
+  8211005,
+  8211006
+ ],
+ "confirmation_seeds": [
+  8213001,
+  8213002,
+  8213003,
+  8213004,
+  8213005,
+  8213006,
+  8213007,
+  8213008
+ ],
+ "panel_loads": {
+  "development": [
+   48
+  ],
+  "confirmation": [
+   48,
+   96
+  ]
+ },
+ "population_size": 64,
+ "generations": 30,
+ "evolution_seed": 8210001,
+ "gene_names": [
+  "b0",
+  "b_adapt",
+  "b_fast",
+  "b_slow",
+  "g_alpha_gain",
+  "g_support",
+  "g_teach_scale",
+  "g_readout",
+  "g_feedback",
+  "g_mbon",
+  "g_k0",
+  "g_fast_tau",
+  "g_slow_tau",
+  "g_fraction",
+  "g_sparsity",
+  "g_pnkc_weight",
+  "g_pnkc_rewire"
+ ],
+ "gene_bounds": [
+  -2.0,
+  2.0
+ ],
+ "gene_decimals": 6,
+ "mutation_sigma": [
+  0.5,
+  0.465,
+  0.4325,
+  0.4022,
+  0.374,
+  0.3478,
+  0.3235,
+  0.3009,
+  0.2798,
+  0.2602,
+  0.242,
+  0.2251,
+  0.2093,
+  0.1946,
+  0.181,
+  0.1684,
+  0.1566,
+  0.1456,
+  0.1354,
+  0.1259,
+  0.1171,
+  0.1089,
+  0.1013,
+  0.0942,
+  0.0876,
+  0.0815,
+  0.0758,
+  0.0705,
+  0.0655,
+  0.061
+ ],
+ "mutation_probability": 0.5,
+ "random_injection_probability": 0.1,
+ "tournament_size": 3,
+ "allocation_scales": {
+  "fast": 1.0,
+  "slow": 1.0
+ },
+ "loads": [
+  48
+ ],
+ "load": 48,
+ "acquisition_bouts": 6,
+ "bouts": 12,
+ "new_bouts": 6,
+ "mixed_pairs": 12,
+ "common_seconds": 23760,
+ "horizons": [
+  0,
+  86400
+ ],
+ "cases": [
+  "STABLE",
+  "REV",
+  "ANOMALY1",
+  "ANOMALY2",
+  "NEW"
+ ],
+ "constraints": {
+  "slow_ratio": 1.05,
+  "alpha_ratio": 3.0,
+  "capacity_loss": 0.02,
+  "stable_loss": 0.05,
+  "old_accuracy_loss": 0.01,
+  "old_loss_increase": 0.01,
+  "worst_increase_Hz": 0.05
+ },
+ "bootstrap_seed": 7919001,
+ "bootstrap_draws": 10000,
+ "confirmation_material_gain": 0.05,
+ "workers_default": 4,
+ "max_hours_default": 9,
+ "worker_timeout_seconds": 2400,
+ "minimum_free_disk_bytes": 2147483648,
+ "max_run_output_bytes": 2147483648,
+ "launch_authorization": "deliver only; user will launch joint diagnostic and evolution later",
+ "scope": "relaxed-anatomy multi-objective evolution; exploratory; no biological core promotion",
+ "predecessor": "iteration26_evolution (V81E)",
+ "gene_box": {
+  "b0": [
+   -0.5,
+   0.5
+  ],
+  "b_adapt": [
+   -0.75,
+   0.75
+  ],
+  "b_fast": [
+   -0.75,
+   0.75
+  ],
+  "b_slow": [
+   -0.75,
+   0.75
+  ],
+  "g_alpha_gain": [
+   -0.5,
+   0.5
+  ],
+  "g_support": [
+   0.0,
+   1.0
+  ],
+  "g_teach_scale": [
+   -0.5,
+   0.5
+  ],
+  "g_readout": [
+   -0.4,
+   0.4
+  ],
+  "g_feedback": [
+   -1.0,
+   1.0
+  ],
+  "g_mbon": [
+   -1.0,
+   1.0
+  ],
+  "g_k0": [
+   -0.3,
+   0.3
+  ],
+  "g_fast_tau": [
+   -1.0,
+   1.0
+  ],
+  "g_slow_tau": [
+   -1.0,
+   1.0
+  ],
+  "g_fraction": [
+   -1.0,
+   1.0
+  ],
+  "g_sparsity": [
+   -0.5,
+   0.5
+  ],
+  "g_pnkc_weight": [
+   0.0,
+   0.6
+  ],
+  "g_pnkc_rewire": [
+   0.0,
+   0.5
+  ]
+ },
+ "n_genes": 17,
+ "selection": "nsga2_constrained_domination",
+ "objectives": [
+  {
+   "key": "macro_choice",
+   "direction": "max"
+  },
+  {
+   "key": "tail_rise",
+   "direction": "min"
+  },
+  {
+   "key": "slow_ratio",
+   "direction": "min"
+  }
+ ],
+ "alpha_conservation": false,
+ "support_expansion": {
+  "basis": "alpha_readout_without_direct_teacher",
+  "candidate_cells": 544,
+  "reference_teachable": 1226,
+  "max_teachable": 1770,
+  "note": "Declared modelling change: grants alpha teaching to KCs that have alpha readout but no direct DAN route, modelling volume transmission. Not a new anatomical finding."
+ },
+ "bound_rationale": "Run A sampled allocation genes over [-2,2]^4; b0 dominated constraint violation (rank rho +0.345) and only 1 of 720 candidates had |b*|<0.35, so the declared support-expansion axis was effectively unexplored. Bounds narrowed on that evidence before any run-B outcome was seen.",
+ "relaxed_domains": {
+  "connectivity": [
+   "g_teach_scale (DAN->KC magnitude)",
+   "g_readout (KC->MBON magnitude)",
+   "g_pnkc_weight (PN->KC lognormal jitter)",
+   "g_pnkc_rewire (degree-preserving PN->KC rewiring)",
+   "g_support (grants alpha teaching to 544 readout-only KCs)"
+  ],
+  "recurrent": [
+   "g_feedback (gamma->alpha F matrix)",
+   "g_mbon (MBON->MBON MM matrix)"
+  ],
+  "potentials": [
+   "g_k0 (baseline offset vector)"
+  ],
+  "timescales": [
+   "g_fast_tau",
+   "g_slow_tau",
+   "g_fraction (native fast/slow split)"
+  ],
+  "coding": [
+   "g_sparsity (KC active fraction, 5% at neutral)"
+  ],
+  "plasticity": [
+   "b0",
+   "b_adapt",
+   "b_fast",
+   "b_slow",
+   "g_alpha_gain"
+  ]
+ },
+ "declared_departures": "Relaxes anatomy (connectivity magnitudes and PN->KC topology), recurrent gains, baseline potentials, kernel timescales and KC coding sparsity. Any winner is NOT a connectome-constrained fly and voids the inherited physiology scorecard. Confirmation on 8 untouched histories is the only protection against 3,200 evaluations of overfitting.",
+ "mutation_note": "Inherited V79E value 0.5, unchanged.",
+ "corrections_from_V81E": {
+  "objective_double_count": "V81E used 4 objectives including old_accuracy_loss, which is already a component averaged into macro_choice (measured rank correlation -0.937). It inflated the Pareto front by 136 of 287 candidates. Removed; 3 objectives now.",
+  "no_feasibility_pressure": "V81E ranked purely by Pareto over objectives, with violation absent from selection entirely. Median population violation stayed between 63 and 138 across all 50 generations with no trend. Replaced with Deb constrained-domination: a feasible solution dominates any infeasible one; between two infeasible solutions the lower total violation dominates; between two feasible solutions ordinary Pareto dominance applies.",
+  "stale_decision_metadata": "V81E's decision.json recorded version 'V80E' and limits describing a four-coefficient fixed-anatomy family, while the chromosome was 17 genes with relaxed anatomy. Version and limits are now generated from config rather than hardcoded."
+ }
+}

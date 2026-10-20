@@ -1,0 +1,82 @@
+{
+  "schema": "MINIFLY_V3_THREE_CYCLE_AUTHORIZATION",
+  "authorized_by": "User: Do the 3-cycle exercise on v3: design, audit, test run, revise",
+  "date": "2026-10-20",
+  "technical_only": true,
+  "pilot_authorized": false,
+  "confirmation_authorized": false,
+  "github_upload_authorized": false,
+  "engineering_worlds": [
+    202610209901,
+    202610209902
+  ],
+  "arms": [
+    "F-C",
+    "F-G",
+    "P-C",
+    "P-G"
+  ],
+  "old_records": 7680,
+  "new_records": 640,
+  "old_checkpoints": [
+    0,
+    60,
+    120,
+    240,
+    480,
+    960,
+    1920,
+    3840,
+    7680
+  ],
+  "new_checkpoints": [
+    0,
+    20,
+    80,
+    160,
+    320,
+    640
+  ],
+  "histories": [
+    "W",
+    "N_OLD",
+    "SH_OLD"
+  ],
+  "native_time_step": 2.142857142857143,
+  "idle_seconds": 86400,
+  "a0": 0.0625,
+  "H": 960,
+  "calibration_candidates": [
+    {
+      "id": "LOCAL_SMALL",
+      "eta_max": 3e-05,
+      "eligibility_clip": 8.0,
+      "relative_row_cap": 0.001,
+      "projection_bound": 0.125
+    },
+    {
+      "id": "LOCAL_MODERATE",
+      "eta_max": 0.0001,
+      "eligibility_clip": 8.0,
+      "relative_row_cap": 0.001,
+      "projection_bound": 0.125
+    }
+  ],
+  "calibration_selection": "First candidate in increasing eta order passing finite-state, no forbidden leakage, nonzero credit, bounded updates, input access and nonzero taught-correct updates on fixed training fixtures; no scientific or engineering HELD used for selection. No extension of candidate list.",
+  "native_parameter_inheritance": {
+    "delta_temp": 2,
+    "homeo_rate": 0.05,
+    "homeo_c": 5,
+    "homeo_beta": 0.01
+  },
+  "initialization": {
+    "width": 64,
+    "input_bound": "sqrt(6/(88+64))",
+    "recurrent_bound": "sqrt(6/128), with zero diagonals",
+    "gate_bias": -1,
+    "candidate_bias": 0,
+    "forward_rows": "random signs/sqrt(64), row L2=1",
+    "feedback_rows": "8 positive/8 negative signs, shuffled, divided by sqrt(16)"
+  },
+  "source_commit": "2c217b2716fc1cc0796f73a9fcc288f8aca864da"
+}

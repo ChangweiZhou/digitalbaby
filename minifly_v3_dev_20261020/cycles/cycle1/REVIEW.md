@@ -1,0 +1,3 @@
+# Cycle 1 Design audit, tiny tests and revision
+
+The source/native boundary was implemented and audited before comparisons. The original archived package was recovered after strict hashing identified sanitized metadata/helper differences in the local mirror. An initial readout mirror used m.Q instead of the frozen reader’s own Q; this was corrected, with the failed fixture preserved. Scalar/batched state and readout errors then stayed below 5e-14. Direct local derivatives, byte controls, read-only queries, disabled learning and EOS/truncation passed. Two preliminary plus 18 formal technical record applications were used. Exact executed source snapshots are hash-verified.
