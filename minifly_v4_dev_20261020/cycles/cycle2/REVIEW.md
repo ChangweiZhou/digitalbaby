@@ -1,0 +1,7 @@
+# Cycle 2 coverage results and revision
+
+All six predeclared G0 cases failed. At 65,536 KCs, held answer-byte accuracy was 7.47% (neutral deterministic), 7.88% (neutral exploratory) and 5.39% (random exploratory). At 262,144 cells, it was 9.13%, 8.30% and 6.22%. Training byte accuracy was 100% in every case; held teacher-forced record exactness was 0%. These are externally fitted diagnostics, not native learner successes. No native training record was applied in this cycle; 1,152 teacher-forced code-extraction record presentations and 5,430 observed target positions were used by the evaluator.
+
+The unlearned deterministic boundary closes no segment. Exploratory boundaries close around six times per example without semantic guidance. Consequently this pre-learning G0 confounds whether useful generic segment codes can be learned with whether an untrained policy happens to expose them. A future design must qualify boundary learning before treating G0 as a representation stop; current failure is not a theorem that larger/local models cannot work.
+
+No broader task or extra size was added. The expensive P3/G2 run is stopped. A third-cycle bounded G1 diagnostic examines the actual native learning route. Static-review fixes before it preserve passive native adaptation on all bytes, pair fixed KC weights across the wiring lesion, and score the frozen stochastic boundary policy rather than silently changing it to greedy inference. Those changes were not selected on held performance. See the revised design for exact chronology and control definitions.

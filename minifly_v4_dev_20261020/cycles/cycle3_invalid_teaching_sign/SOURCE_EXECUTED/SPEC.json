@@ -1,0 +1,82 @@
+{
+  "schema": "MINIFLY_V4_THREE_CYCLE_TECHNICAL",
+  "claude_commit": "190a26cb430079f2096fd6ffe7da1c635f8611cf",
+  "technical_only": true,
+  "formal_campaign_authorized": false,
+  "automatic_adoption": false,
+  "task": "Addition only, ordinary byte strings, exact own output and own EOS",
+  "worlds": [
+    202610204401,
+    202610204402
+  ],
+  "sizes": [
+    65536,
+    262144
+  ],
+  "segment_slots": 3,
+  "segment_limit": 16,
+  "input_limit": 256,
+  "output_limit": 16,
+  "fan_in": 12,
+  "active_fraction": 0.02,
+  "widths": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "q_tau": 86400,
+  "q0": 4,
+  "q_slope": 1,
+  "fraction_min": 0.0,
+  "fraction_max": 0.5,
+  "boundary_eta": 0.001,
+  "boundary_logit_cap": 4,
+  "boundary_e_clip": 8,
+  "a0": 0.0625,
+  "drift_checkpoint": 16,
+  "drift_threshold": 0.1,
+  "stable_checkpoints_required": 2,
+  "ramp_increment": 0.0625,
+  "homeostasis_window": 256,
+  "homeostasis_eta": 0.005,
+  "G0_train_records": 128,
+  "G0_test_records": 64,
+  "G0_ridge": 0.01,
+  "G0_required_correct_byte_fraction": 0.95,
+  "G1_records": 64,
+  "G1_probe_records": 16,
+  "replay_limit": 8,
+  "replay_capacity": 32,
+  "rest_seconds": 86400,
+  "slow_downscale": 0.999,
+  "stop": "If coverage is below G0, no full P3/G2 campaign; complete bounded interface/learning-sanity tests and report prerequisites unmet.",
+  "arithmetic_features": false,
+  "attention": false,
+  "transformer": false,
+  "ELM": false,
+  "backprop": false,
+  "primary_boundary_evaluation": "stochastic policy with a private frozen copy of learner RNG, no persistent state change",
+  "secondary_boundary_evaluation": "greedy p>0.5 diagnostic only",
+  "cycle3_histories_per_world": [
+    "B0",
+    "B1",
+    "B2",
+    "B3",
+    "B3_RANDOM",
+    "B3_N",
+    "B3_SH"
+  ],
+  "cycle3_worlds": [
+    202610204401,
+    202610204402
+  ],
+  "G1_worlds": [
+    202610204451,
+    202610204452
+  ],
+  "superseded_G1_worlds": {
+    "202610204401": "First B0 invalid replay-zero fixture,64 external+40 replay records; no accepted G1 receipt",
+    "202610204402": "Never started"
+  }
+}

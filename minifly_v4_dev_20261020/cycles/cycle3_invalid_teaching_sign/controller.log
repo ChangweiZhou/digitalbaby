@@ -1,0 +1,47 @@
+PROGRESS 202610204451 B0 16
+PROGRESS 202610204451 B0 32
+PROGRESS 202610204451 B0 48
+PROGRESS 202610204451 B0 64
+ACCEPTED 202610204451 B0 taught 0.0 held 0.0
+PROGRESS 202610204451 B1 16
+PROGRESS 202610204451 B1 32
+PROGRESS 202610204451 B1 48
+PROGRESS 202610204451 B1 64
+ACCEPTED 202610204451 B1 taught 0.0 held 0.0
+PROGRESS 202610204451 B2 16
+PROGRESS 202610204451 B2 32
+PROGRESS 202610204451 B2 48
+PROGRESS 202610204451 B2 64
+ACCEPTED 202610204451 B2 taught 0.0 held 0.0
+PROGRESS 202610204451 B3 16
+PROGRESS 202610204451 B3 32
+PROGRESS 202610204451 B3 48
+PROGRESS 202610204451 B3 64
+ACCEPTED 202610204451 B3 taught 0.0 held 0.0
+PROGRESS 202610204451 B3_RANDOM 16
+PROGRESS 202610204451 B3_RANDOM 32
+PROGRESS 202610204451 B3_RANDOM 48
+PROGRESS 202610204451 B3_RANDOM 64
+ACCEPTED 202610204451 B3_RANDOM taught 0.0 held 0.0
+PROGRESS 202610204451 B3_N 16
+PROGRESS 202610204451 B3_N 32
+PROGRESS 202610204451 B3_N 48
+PROGRESS 202610204451 B3_N 64
+ACCEPTED 202610204451 B3_N taught 0.0 held 0.0
+PROGRESS 202610204451 B3_SH 16
+Traceback (most recent call last):
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v4_dev_20261020/run_cycle.py", line 8, in <module>
+    mod=__import__(f'cycle{cycle}_v4');mod.run()
+                                       ^^^^^^^^^
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v4_dev_20261020/cycle3_v4.py", line 42, in run
+    save(folder/'ACTIVE.json',dict(world=world,arm=arm,completed_external_records=i,pid=os.getpid()))
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v4_dev_20261020/v4_common.py", line 17, in save
+    p=HERE/p;p.parent.mkdir(parents=True,exist_ok=True);q=p.with_suffix(p.suffix+'.pending');q.write_text(json.dumps(d,indent=2,sort_keys=True)+'\n');q.replace(p)
+                                                                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/anaconda3/lib/python3.11/pathlib.py", line 1078, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/pencilbard/anaconda3/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v4_dev_20261020/cycles/cycle3/jobs/202610204451_B3_SH/ACTIVE.json.pending'
