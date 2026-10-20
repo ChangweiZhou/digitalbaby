@@ -1,0 +1,115 @@
+{
+  "status": "TECHNICAL_LOCK_NOT_FORMAL_CAMPAIGN",
+  "precision": "float64",
+  "DT": 2.142857142857143,
+  "native_birth_constructor": "bootstrap.stores.birth(native); NativeBank; independent stacked deviations; no fastmem/codebook import",
+  "native_Q_readerQ_scaling": "old_N/new_N; T unchanged; row resample at seed; requalified here",
+  "reference": "exact matched zero deviations using current adaptation, native clipping and reader",
+  "zero_increment_tolerance": 1e-14,
+  "K": 64,
+  "classes": 6,
+  "N": 65536,
+  "native_parity_N": 5177,
+  "fan_in": 4,
+  "byte_grid": [
+    [
+      0.001,
+      0.0
+    ],
+    [
+      0.001,
+      0.01
+    ],
+    [
+      0.005,
+      0.0
+    ],
+    [
+      0.005,
+      0.01
+    ]
+  ],
+  "a_max_grid": [
+    0.0625,
+    0.25,
+    1
+  ],
+  "W_grid": [
+    256,
+    1024
+  ],
+  "calibration_order": "smallest a_max, longest W first; two paired births; all six settings only if no earlier qualifying pair",
+  "port_births": [
+    202610205101,
+    202610205102
+  ],
+  "fixture_replies_hex": [
+    "",
+    "00",
+    "ff",
+    "80",
+    "00ff",
+    "ff00",
+    "7f80ff",
+    "800001"
+  ],
+  "synthetic_frame_seed": 5100001,
+  "synthetic_frame_count": 32,
+  "synthetic_frame_active_fraction": "same native active_fraction; disjoint by fixture-step where feasible, no target used in address",
+  "calibration_presentations_per_cue": 256,
+  "calibration_probe_rounds": [
+    1,
+    4,
+    16,
+    64,
+    256
+  ],
+  "strict_gate": {
+    "q0": 3,
+    "tau": 86400,
+    "spacing": 60,
+    "ring": 8,
+    "record_sign": "consistent nonzero prospective increments only; mixed -> no confirmation",
+    "replay": "fast only, no confirmations"
+  },
+  "source_lock_before_each_cycle": true,
+  "stage_gate": "Q0 failure prohibits Q1/Q2/Q3/Q4 escalation",
+  "learned_representation_rates_fixed_before_any_training": true,
+  "formal_pilot": false,
+  "confirmation": false,
+  "selected_warmup": {
+    "a_max": 0.0625,
+    "W": 1024,
+    "source": "cycles/cycle2/AUDIT.json",
+    "selection_used_arithmetic": false
+  },
+  "context_description_length": {
+    "type": "approximate predictive two-part/BIC, not literal storage bound",
+    "smoothing": 0.5,
+    "class_dof": "3*C*(A-1): class predictor plus both active-profile prototypes",
+    "identity_dof": "A*(A-1)",
+    "parameter_penalty_bits": ".5*dof*log2(training_transition_count)",
+    "class_assignment_bits": "(A+C)*log2(6)",
+    "dev_pairs": 512,
+    "classes": 6,
+    "rate": 0.001,
+    "checkpoints": [
+      50000,
+      100000,
+      200000
+    ],
+    "no_final_test_selection": true
+  },
+  "integration_fixture_prompts_hex": [
+    "1fff",
+    "20fe",
+    "21fd",
+    "22fc",
+    "23fb",
+    "24fa",
+    "25f9",
+    "26f8"
+  ],
+  "integration_calibration": "8 declared generic sequences; target-free threshold updates; freeze before native writes",
+  "stage": "Q0 qualified, Q1 technical qualification next, no formal pilot"
+}

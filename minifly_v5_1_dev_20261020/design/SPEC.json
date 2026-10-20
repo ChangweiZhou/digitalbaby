@@ -1,0 +1,375 @@
+{
+  "schema": "MINIFLY_REVISED_DESIGN_V1",
+  "version": "MINIFLY_V5_1",
+  "date": "2026-10-20",
+  "status": "DESIGN_ONLY_EXECUTABLE_LOCKS_PENDING",
+  "parent_claude_commit": "8e90d2e6c57d0394ce6246b9e9b69a75a9306ed4",
+  "goal": "Retained exact own-byte-output unseen addition generalization per all training exposure and actual compute",
+  "scope": "Addition only, operands 0..9999, ordinary written prompt and answer bytes",
+  "authorizations": {
+    "design_revision": true,
+    "implementation": false,
+    "training": false,
+    "three_cycle_exercise": false,
+    "formal_science": false,
+    "github_push": false,
+    "automatic_adoption": false
+  },
+  "executed": {
+    "new_training_record_applications": 0,
+    "technical_cycles": 0,
+    "scientific_jobs": 0,
+    "worlds_generated": 0
+  },
+  "evidence": {
+    "achieved": "No new behavioral evidence",
+    "diagnostics": [
+      "E0",
+      "E1"
+    ],
+    "intended": "E3",
+    "claim_boundary": "Incremental reuse of OLD native teaching conditional on the shared frozen listening prestate"
+  },
+  "constraints": {
+    "attention": false,
+    "transformers": false,
+    "ELM_primary_or_fallback": false,
+    "backpropagation": false,
+    "arithmetic_structure_or_rules": false,
+    "separate_answer_head": false,
+    "raw_answer_cache": false,
+    "all_256_payload_bytes_valid": true,
+    "gradual_warmup": true,
+    "other_operations_deferred": true
+  },
+  "io": {
+    "payload_bits": 8,
+    "native_output_compartments": 9,
+    "typed_controls": [
+      "BEGIN",
+      "REPLY",
+      "EOS"
+    ],
+    "input_limit_bytes": 256,
+    "output_limit_bytes": 16,
+    "open_segment_limit_bytes": 16,
+    "closed_segments": 4,
+    "right_offset_limit": 15,
+    "event_dt_simulated_seconds": 2.142857142857143,
+    "eos_consumes_event_interval": true,
+    "reply_counter_separate_from_boundary_age": true,
+    "boundary_byte_starts_new_segment": true,
+    "primary_own_prefix": true,
+    "queries_readonly": true,
+    "input_overflow": "INPUT_LIMIT",
+    "output_overflow": "truncated, incorrect"
+  },
+  "representation": {
+    "byte_units": 64,
+    "class_units": 6,
+    "kc_count": 65536,
+    "kc_fan_in": 4,
+    "larger_kc_sizes_deferred": [
+      262144,
+      1048576
+    ],
+    "raw_bit_bypass": true,
+    "all_256_injective_learned_winners_claimed": false,
+    "byte_eta_max_grid": [
+      0.001,
+      0.005
+    ],
+    "byte_homeostasis_gain_grid": [
+      0,
+      0.01
+    ],
+    "class_eta_max": 0.001,
+    "listening_rate_start_fraction": 0.0625,
+    "byte_freeze_before_context_counts": true,
+    "frozen_before_native_training": [
+      "M2 prototypes/usage/bias",
+      "M3 counts/prototypes/classes",
+      "M4 afferents/thresholds"
+    ],
+    "post_freeze_representation_plasticity": false,
+    "conjunction_claim": "Weighted combination features, no guaranteed AND nonlinearity",
+    "topographic_offset_neighborhood": [
+      -1,
+      0,
+      1
+    ],
+    "semantic_register_wiring": false,
+    "identity_class_checkpoints_bytes": [
+      50000,
+      100000,
+      200000
+    ],
+    "stability_blocks_bytes": [
+      10000,
+      10000
+    ]
+  },
+  "reference": {
+    "formula": "F(x,0,0,adapt,dt;birth)",
+    "baseline": "matched zero learned-value deviation with current adaptation",
+    "learned_value_running_mean": false,
+    "persistent_reference_state": false,
+    "same_train_decode_frame": true,
+    "temperature_initial": 2,
+    "residual": "a_fast(n)*(tanh((z-r)/T)-y)/2",
+    "eos_event_byte_channel_mask": true
+  },
+  "warmup": {
+    "a_max_grid": [
+      0.0625,
+      0.25,
+      1
+    ],
+    "ramp_records_grid": [
+      256,
+      1024
+    ],
+    "schedule": "a_max*(1/16+(15/16)*min(n/W,1))",
+    "selection": "Smallest qualifying a_max, then longest W, using generic fixtures only",
+    "generic_calibration_cap_applications_per_setting": 8192,
+    "single_reply_max_presentations": 256,
+    "paired_births": 2,
+    "isolated_port_before_listening": true,
+    "full_encoder_integration_after_freeze": true,
+    "automatic_efficacy_retuning": false
+  },
+  "commitment": {
+    "q_sign": "signed prospective native alpha increment",
+    "zero_tolerance": "pending numerical lock",
+    "tau_seconds": 86400,
+    "q0": 3,
+    "max_slow_fraction": 0.5,
+    "fraction_formula": "0 if abs(q)<=3 else 0.5*(1-exp(-(abs(q)-3)))",
+    "fraction_uses": "decayed pre-event q from completed earlier records",
+    "min_confirmation_spacing_seconds": 60,
+    "max_confirmations_per_synapse_per_external_record": 1,
+    "recent_prompt_id_ring_size": 8,
+    "globally_unique_confirmation_claimed": false,
+    "identity": "digest of observed prompt only",
+    "replay_confirms_q": false,
+    "replay_writes_slow": false,
+    "negative_writes_symmetric": true,
+    "contradictions_cancel": true,
+    "record_confirmation": "At completed external record after EOS",
+    "record_sign": "One sign if all nonzero prospective increments agree; zero if none or mixed",
+    "temporary_record_sign_accumulator": true
+  },
+  "rest_replay": {
+    "rest_simulated_seconds": 3600,
+    "rests": [
+      "after OLD",
+      "after NEW"
+    ],
+    "extra_slow_downscale": false,
+    "fifo_record_capacity": 128,
+    "replays_per_rest_max": 32,
+    "total_replay_applications_per_history_max": 64,
+    "order": "chronological",
+    "actual_observed_answers_only": true,
+    "clocks_and_presentations_charged": true
+  },
+  "exposure": {
+    "global_holdout_unit": "unordered semantic addition orbit including both orientations",
+    "exclusion_precedes_all_sources": true,
+    "answer_bytes_in_listening_count_as_training": true,
+    "shared_D0_cost_charged_per_learner": true,
+    "train_dev_final_partitions_separate": true,
+    "fresh_draw_is_not_unique_fact": true
+  },
+  "schedule": {
+    "M2_payload_byte_cap": 200000,
+    "M3_payload_byte_cap": 200000,
+    "M4_calibration_payload_byte_cap": 100000,
+    "engineering_recurrence_prefix_cap_records": 1024,
+    "OLD_record_budget_menu": [
+      3000,
+      10000,
+      30000
+    ],
+    "NEW_fraction_of_OLD": 0.3333333333333333,
+    "largest_external_presentations_per_history": 40000,
+    "OLD_operand_digits": [
+      1,
+      2,
+      3
+    ],
+    "NEW_mix": "half 1-3 digits; half with >=1 four-digit operand",
+    "held_old_orbits_per_world": 256,
+    "held_new_orbits_per_world": 256,
+    "taught_probe_records": 64,
+    "dose_selection_uses_arithmetic_dev_accuracy": false
+  },
+  "arms": [
+    {
+      "name": "C-full",
+      "allocation": "strict q gate",
+      "locality": "local",
+      "segments": "learned",
+      "candidate": true,
+      "histories": [
+        "W",
+        "N_OLD",
+        "SH_OLD"
+      ]
+    },
+    {
+      "name": "C-native",
+      "allocation": "pinned native",
+      "locality": "local",
+      "segments": "learned",
+      "candidate": false,
+      "histories": [
+        "W",
+        "N_OLD",
+        "SH_OLD"
+      ]
+    },
+    {
+      "name": "C-random",
+      "allocation": "strict q gate",
+      "locality": "nonlocal matched",
+      "segments": "learned",
+      "candidate": false,
+      "histories": [
+        "W"
+      ]
+    },
+    {
+      "name": "C-noseg",
+      "allocation": "strict q gate",
+      "locality": "matched family/degree",
+      "segments": "record relative rolling window",
+      "candidate": false,
+      "histories": [
+        "W"
+      ]
+    }
+  ],
+  "causal_control": {
+    "N_OLD_disables": [
+      "all OLD native writes",
+      "all OLD q confirmations",
+      "writes on later replay of OLD origin"
+    ],
+    "N_OLD_keeps": [
+      "shared frozen D0",
+      "sensory input",
+      "passive native state evolution",
+      "time",
+      "NEW native learning"
+    ],
+    "SH_OLD": "within-answer-length locked label permutation, correct NEW, matched clocks/target multiset"
+  },
+  "worlds_reserved_not_generated": {
+    "engineering": [
+      202610205101,
+      202610205102
+    ],
+    "development": [
+      202610205111,
+      202610205112,
+      202610205113,
+      202610205114
+    ],
+    "conditional_confirmation": [
+      202610205201,
+      202610205202,
+      202610205203,
+      202610205204,
+      202610205205,
+      202610205206,
+      202610205207,
+      202610205208,
+      202610205209,
+      202610205210,
+      202610205211,
+      202610205212,
+      202610205213,
+      202610205214,
+      202610205215,
+      202610205216
+    ],
+    "collision_audit_required": true,
+    "correlated_histories_per_world": 8,
+    "independent_unit": "world"
+  },
+  "oracle_diagnostic": {
+    "part_of_learner": false,
+    "claim": "empirical finite linear fit, neither native acquisition nor impossibility bound",
+    "kc_count": 65536,
+    "prefix_problems": [
+      1000,
+      3000
+    ],
+    "development_pairs": 512,
+    "ridge_grid": [
+      0.01,
+      1,
+      100
+    ],
+    "max_passes_per_setting": 3,
+    "dense_feature_or_gram_matrix_allowed": false,
+    "sparse_cache_cap_MiB": 128,
+    "cpu_cap_seconds_all_settings": 600,
+    "max_RSS_GiB": 2,
+    "minimum_system_headroom_GiB": 2,
+    "profile_prefix_problems": 128,
+    "solver_and_tolerance": "pending source lock before any fitting",
+    "final_confirmation_labels_available": false
+  },
+  "resources": {
+    "technical_setting_cpu_cap_seconds": 1800,
+    "initial_workers": 1,
+    "numerical_threads_per_worker": 1,
+    "session_admission_hours": 8,
+    "session_hard_hours": 10,
+    "caffeinate": "only when separately authorized run has an active controller",
+    "sparse_compute_claim": false
+  },
+  "outcome": {
+    "primary": "Final OLD-orbit exact complete own-output plus own EOS after NEW/rest",
+    "wrong_length_or_truncation": "incorrect",
+    "efficiency_axes": [
+      "all presentations and answer-bearing bytes",
+      "actual learner CPU including D0/replay/checkpoint"
+    ],
+    "partial_metrics_promote": false,
+    "countermodels": [
+      "exact prompt table",
+      "canonical unordered-pair table",
+      "frequency/length/previous byte",
+      "suffix backoff 0-4"
+    ],
+    "confirmation": "conditional, separate future authorization",
+    "interval": "paired world two-sided 95% Student t",
+    "primary_contrast": "C-full minus C-native final OLD held exact",
+    "joint_lower_bounds_gt_zero": [
+      "primary contrast",
+      "C-full minus N_OLD",
+      "C-full minus SH_OLD",
+      "C-full minus frozen strongest recitation",
+      "sample-axis exact curve integral difference",
+      "CPU-axis exact curve integral difference"
+    ],
+    "retention_lower_bound_ge_zero": "C-full minus C-native final taught OLD exact",
+    "unresolved_precision": "No power/absolute deployment threshold claimed"
+  },
+  "required_locks_before_training": [
+    "native birth/readout/equations/precision hashes",
+    "all executable port/reference and event definitions",
+    "actual M4 wiring/weights/competition/homeostasis details",
+    "calibration fixture bytes/activities/targets and clocks",
+    "deterministic splits/stream/collision audit",
+    "observed-identity and segmentation diagnostics/description length calculation",
+    "measured warmup/dose/resource lock",
+    "oracle solver/tolerance/source lock before fitting",
+    "query schedule/source lock",
+    "authorization for implementation/test/run as applicable"
+  ],
+  "review_resolution": "REVIEW_RESOLUTION.md"
+}
