@@ -1,0 +1,145 @@
+{
+  "date": "2026-10-20",
+  "scope": "Reconcile supplied Claude audit with published v5.1 source/artifacts and bounded counterfactual diagnostics",
+  "reviewed_commit": "b01df0d65f5b70bf227cadc51d5ed411c22757fb",
+  "verdict": "MAIN_DIAGNOSIS_SUPPORTED_R1_INCOMPLETE",
+  "historical_sources_modified": false,
+  "new_native_value_learning_events": 0,
+  "arithmetic_efficacy_runs": 0,
+  "formal_science_jobs": 0,
+  "new_design_or_model_implemented": false,
+  "github_push": false,
+  "findings": [
+    {
+      "id": "A1",
+      "status": "CONFIRMED_WITH_QUANTITATIVE_CORRECTION",
+      "claim": "M2 initialization largely determines failed identity partitions",
+      "initial_final_partition_matches": 6,
+      "settings": 8,
+      "winning_units_initial_and_final": 8,
+      "observed_byte_types": 12,
+      "reconstruction_MSE_reduction_range": [
+        0.686984,
+        0.747519
+      ],
+      "interpretation": "Centroids learned better averages; identity discrimination did not improve. Not literally zero learning."
+    },
+    {
+      "id": "A2",
+      "status": "COUNTERFACTUAL_FAILURE_REPRODUCED",
+      "claim": "M3 can collapse even with perfect byte identities",
+      "seeds": 2,
+      "payload_bytes_unchanged_and_normalization_controls_total": 199992,
+      "occupied_classes": 1,
+      "normalization_only_fixed_collapse": false,
+      "scope_limit": "Approximately 50k bytes per case; particular synthetic perfect-identity assignment; not a learned capability or reproduction of all Claude prefixes"
+    },
+    {
+      "id": "A3",
+      "status": "RISK_CONFIRMED_UNDER_ACTUAL_NATIVE_MASKS",
+      "claim": "First-answer KC codes have large shared support and deterministic cutoff ties",
+      "active_fraction_actual": 0.03535533905932738,
+      "before_pairwise_intersection_fraction": [
+        0.6969177554542092,
+        0.6963181519372201
+      ],
+      "after_pairwise_intersection_fraction": [
+        0.6815677342262761,
+        0.6853087294739582
+      ],
+      "target_free_calibration_bytes_per_seed": 2048,
+      "scope_limit": "Perfect-identity/class encoding-only fixture; not Claude 25.8k calibration; high overlap alone is not proof of unusable arithmetic features"
+    },
+    {
+      "id": "A4",
+      "status": "SPECIFICATION_IMPLEMENTATION_MISMATCH",
+      "claim": "Port lock says same native active fraction; fixture hard-codes .02",
+      "port_fraction": 0.02,
+      "native_fraction": 0.03535533905932738,
+      "source": "minifly_v5_1_dev_20261020/cycle2.py:8-12",
+      "implication": "Port assay supports wiring/sign behavior, not dose qualification at actual candidate density/overlap"
+    },
+    {
+      "id": "A5",
+      "status": "LATENT_INTEGRATION_DEFECT",
+      "claim": "Threshold calibration omits REPLY transition, so the reply-step bank is absent during calibration",
+      "source": "minifly_v5_1_dev_20261020/cycle3.py:58-66",
+      "scope_limit": "Branch did not execute in published exercise because M2 failed; not cause of published M2 failure"
+    },
+    {
+      "id": "A6",
+      "status": "CLAUDE_HISTORY_STATEMENT_CORRECTED",
+      "claim": "All of v3/v4/v5.1 stopped before any arithmetic hypothesis was tested",
+      "correction": "v3 cycle3 ran full OLD/rest/NEW/rest addition histories and held-out scoring; taught OLD end was100%, held final0% in all four arms. Engineering evidence, not formal confirmation. v4 ran bounded addition diagnostics; v5.1 did not run native arithmetic teaching."
+    },
+    {
+      "id": "A7",
+      "status": "MATCHED_EVENT_SENSITIVITY_SUPPORTS_CALIBRATION_FRAME_DEFECT",
+      "claim": "Calibrating on actual prefeedback frames reduces massive cutoff ties without rewiring",
+      "scope": "Perfect identity/class encoding-only fixture; 2048 heard payload bytes and 2048 threshold updates per seed; no native teaching",
+      "after_matched_causal_frame_pairwise_intersection_fraction": [
+        0.6191359974389525,
+        0.6180930040264596
+      ],
+      "after_matched_first_prompt_cutoff_ties_selected_available": {
+        "5101_side0": [
+          1,
+          1
+        ],
+        "5101_side1": [
+          1,
+          2
+        ],
+        "5102_side0": [
+          1,
+          1
+        ],
+        "5102_side1": [
+          1,
+          1
+        ]
+      },
+      "caveat": "Does not qualify real learned identities/classes or establish arithmetic efficacy; residual shared activity may be legitimate or problematic."
+    }
+  ],
+  "interpretation": {
+    "v51_port": "Narrow disjoint-frame E1/sign/wiring result, no overlapping-memory or complete-model capability evidence",
+    "v51_M2": "Generic competitive-learner defect; raw-bit bypass still preserves sensory access",
+    "v3": "Real taught-recall versus held-out-transfer gap remains after current integration defects are fixed",
+    "current_R1": "Do not execute unchanged; addresses M2 only",
+    "process": "Artifact reproducibility checks were insufficient as design and integration validation"
+  },
+  "recommended_next_work": [
+    "One small integrated generic repair, not a larger formal campaign",
+    "Fix recruitment/initialization and normalization consistently in both competitive layers",
+    "Calibrate on exact training/prediction frames including REPLY, actual native activity density and representative overlap",
+    "Fix calibration frame mismatch first and remeasure common-input dominance; change KC wiring only if residual problems remain. Tie resolution must preserve same-frame stability, not add fresh per-query randomness.",
+    "Run learned full byte-to-native-to-own-output addition chain with simultaneous taught, held, EOS, retention, sample and CPU curves",
+    "Retain causal no-prior-teaching controls; perfect representations remain diagnostic-only"
+  ],
+  "diagnostic_compute": {
+    "context_CPU_seconds_total_including_profile_analysis": 5.51,
+    "geometry_CPU_seconds": 21.110603,
+    "byte_check": "Initialization and existing saved endpoints only; no listening rerun",
+    "geometry_subphases": {
+      "original_calibration": 7.392002,
+      "causal_frames_with_extra_terminal_updates": 7.186892,
+      "causal_frames_with_matched_payload_and_update_count": 6.531709
+    }
+  },
+  "scripts_and_evidence": {
+    "CLAUDE_AUDIT_RECEIVED.txt": "c74a10d7bdf440fc3a3e9b21c1a23e1b91e0f11ed8635c827d34e73b7c96796b",
+    "byte/RESULT.json": "04585e24d1efcad247d600dc995b78cac256999946f40a2b971d9894087402aa",
+    "byte/check.py": "d7c12372da974497aee1b94813407a64750e7eb64a7daf258495a3f868b66b48",
+    "context/PROFILE_STATS.json": "06be474172de32ec970ab13ac09838b23f501c50967e24c866ccc73c1177efc6",
+    "context/RESULTS.json": "fd814e398c4376e5319973d392fa93d7ff930bb11fb1c5ea8147d7be6b46c619",
+    "context/check_context.py": "36f57c935e5d2f4a72a3ef786a310128a1537515f5fad40dfbad2d437c0a1ee6",
+    "context/profile_stats.py": "c7d34b4cc37484f75693c9812aead9486ac68b4c760534a632119f44487fc76f",
+    "geometry/CAUSAL_CALIBRATION.json": "0ed2f73d279ed47032a9b9fe20130a89bb12d1a47dc05b3ea15d315d017b6f5c",
+    "geometry/MATCHED_CALIBRATION.json": "fa652105332067b42f5ff6ac4faa08586bda20612d3eeaa65e1344340a48d019",
+    "geometry/RESULT.json": "e1851dc18c12a6e91a79b72e51c80d9dd0a51b8ba6d3571d1b1a5b9c568144be",
+    "geometry/causal_calibration.py": "6db62f895247fedb623920c2d591aca6be1265e8a91e6652ec8e94e94f9e0dbf",
+    "geometry/check.py": "d5a36bc3c61c53265ef783440fb48204a502f3ae836587acaeb17c70b32019de",
+    "geometry/matched_calibration.py": "3dfbe3badcb3a74a962ccd353b5c83ffa660193de28e8ff92778d4ed027cfe0b"
+  }
+}

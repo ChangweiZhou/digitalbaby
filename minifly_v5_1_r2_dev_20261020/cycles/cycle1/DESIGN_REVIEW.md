@@ -1,0 +1,1 @@
+Design: exact observed-data seeding, normalized profiles, matched native reference and readonly/frame invariants. Audit: compare native event equations at5177 and65536, all byte/EOS outputs, zero-D0 BEGIN equivalence and strict gate. Test: cheap synthetic suite under60CPU. Revise: executable locks only; no task-specific features.

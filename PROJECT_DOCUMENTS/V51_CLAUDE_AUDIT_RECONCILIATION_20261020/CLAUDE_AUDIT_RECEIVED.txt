@@ -1,0 +1,51 @@
+Reading Codex's v5.1 code to find out why the byte-learning stage merged 12 byte types into 8 units.
+
+Confirmed that the merging was fixed at birth. Now checking the output-port curves, then testing whether the next stage (context classes) would hit the same problem.
+
+The context-class stage collapses the same way, and the combination cells have a tie problem. Checking whether Codex's threshold calibration fixes the ties before I report.
+
+I went through Codex's newest commit (b01df0d6, "MiniFly v5.1"). Codex reviewed my v5 design, rewrote it as v5.1, and ran three short development rounds ("cycles"). Its verdict was NO_ADVANCE: it stopped at the byte-learning stage and never ran any arithmetic learning. I re-ran parts of its code. The byte-stage failure was fixed by the random starting values, not by learning. The next stage (byte classes) fails the same way even when the byte stage is perfect.
+
+## Codex's review of my v5: mostly right
+- **Output reference:** my running-mean reference would erase bits that are always 1 (bits 4 and 5 are 1 for every digit). Its replacement is better: compare each output against what the same readout gives with all learned values set to zero.
+- **Format check:** answer length is itself arithmetic (49+49 has two digits, 99+1 has three), so it can't be a format-only check.
+- **Dose:** I misread the v4 measurement. The 0.01–0.02 shift per write was measured with teaching already scaled down, so the doses I derived from it don't hold.
+- **Boundary timing:** the `=` segment can only close after the fly emits its first answer byte, and v5 didn't specify that.
+
+## What the three cycles show
+**1. Output port: passes, but it can't fail.** It was exact after the very first round (8 records at teaching strength 0.004). With the zero-value reference, the output depends only on the learned part. The test's activity patterns don't overlap, so any write with the right sign gives the right bit, and decay can't flip a sign. The one-hour retention is guaranteed the same way. Codex correctly calls this a wiring check only. Interference between overlapping memories is still untested.
+
+**2. Byte stage: decided by the random starting values.**
+
+| Starting seed | Bytes merged onto one unit |
+|---|---|
+| …5101 | {0,1,4,8}, {7,=} |
+| …5102 | {0,2}, {1,3,9}, {5,7} |
+
+- **Same groups as at birth:** in 7 of the 8 settings, the final grouping is exactly the one present before any byte was heard. The 8th differs by one swap.
+- **Why:** only the winning unit learns. A unit that starts nearest to two bytes moves to their average and stays nearest to both. Units that never win never move.
+- **Usage bias too weak:** the bias meant to spread wins across units is thousands of times smaller than the distance gaps it would need to overcome.
+- **The 200,000 listening bytes** changed nothing.
+
+**3. Context classes fail next (Codex's revised design, R1, only fixes the byte stage).** I ran Codex's context-class code unchanged on top of a perfect byte stage (one unit per byte):
+- **Collapse:** all 12 bytes fall into one class in both seeds, at 50k, 100k and 200k bytes, so no boundaries form.
+- **Not a data problem:** context profiles of a digit and an operator differ about 8× more than two digits (0.115 vs 0.015). A clustering pass with sensible starting points cleanly gives {+,=} versus the digits, with 0 as a third class when allowed.
+- **Cause:** the same dead-unit problem, plus class prototypes on a different scale from the profiles (they sum to 1; the profiles sum to 2).
+- **Consequence:** fixing only the byte stage guarantees another NO_ADVANCE cycle.
+
+**4. Combination cells: a risk for the stage after that.** I used perfect byte identities and Codex's threshold calibration over 25.8k bytes. My setup was 2% activity and a random split of cells into the two sides; the native bank's split differs.
+- **Shared cells:** at the first answer frame, 64% of active cells are the same for unrelated prompts. They are mostly cells wired to the clock and the previous byte, which are identical at that moment for every prompt (`=` just heard, reply step 0).
+- **Ties:** before calibration, about 400 of the 656 active cells per side were picked from roughly 3,700 tied cells by cell number alone.
+- **Effect:** the operands are a minority of the code at the moment the answer is needed.
+
+## Process
+- **Scale:** 119 files and 28.5k added lines, against 173 CPU-seconds of accepted compute (cycle 3 used 0.9 s).
+- **Track record:** this is the third version in a row (v3, v4, v5.1) that stopped before the arithmetic hypothesis was tested.
+- **Cost of a miss:** the failure was visible from the random starting values in about a second, yet it cost a full cycle plus a design revision.
+
+## Recommendation
+1. **Fix every competitive layer at once.** Use the same fix in the byte stage and the class stage: either recruit an unused unit when an input matches nothing well enough, or use Codex's splitting rule. Checking both stages together takes seconds.
+2. **Rebalance the combination-cell inputs** so the always-on clock and previous-byte inputs can't dominate. Break ties properly before any teaching.
+3. **Run the whole chain once in a quick development harness.** That means byte stage, classes, combination cells, port and addition teaching, with partial-progress curves at every stage. Formal qualification comes only after the chain works end to end.
+
+My check scripts are in `/tmp/claude-0/-home-user-digitalbaby/029f5b11-1f0a-5a9b-9105-3bb53d7ced9b/scratchpad/v51/`. I can write this up as `REVIEW_V5_1.md` with the scripts and push it, or build the development harness myself.

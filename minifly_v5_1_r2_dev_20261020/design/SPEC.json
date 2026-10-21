@@ -1,0 +1,288 @@
+{
+  "schema": "MINIFLY_INTEGRATED_REPAIR_DESIGN_V1",
+  "version": "MINIFLY_V5_1_R2",
+  "date": "2026-10-20",
+  "status": "DESIGN_ONLY_UNIMPLEMENTED_UNTESTED",
+  "goal": "Better retained exact own-output unseen addition generalization per all training presentations and actual compute",
+  "authorization_this_delivery": {
+    "design": true,
+    "implementation": false,
+    "training": false,
+    "three_cycle_exercise": false,
+    "formal_science": false,
+    "github_push": false,
+    "adoption": false
+  },
+  "parent": {
+    "published_exercise_commit": "b01df0d65f5b70bf227cadc51d5ed411c22757fb",
+    "superseded_planning_version": "MINIFLY_V5_1_R1",
+    "reconciled_audit": "../PROJECT_DOCUMENTS/V51_CLAUDE_AUDIT_RECONCILIATION_20261020/AUDIT.json",
+    "historical_results_unchanged": true
+  },
+  "constraints": {
+    "addition_only": true,
+    "raw_256_byte_IO": true,
+    "distinct_own_EOS": true,
+    "ordinary_written_answers": true,
+    "gradual_warmup": true,
+    "attention": false,
+    "transformers": false,
+    "ELM": false,
+    "backpropagation": false,
+    "arithmetic_features_or_rules": false,
+    "separate_answer_model": false,
+    "raw_answer_cache": false,
+    "perfect_representation_in_candidate": false
+  },
+  "evidence": {
+    "current": "No R2 behavioral evidence",
+    "planned_diagnostics": [
+      "E0",
+      "E1"
+    ],
+    "planned_exploratory_endpoint": "E3 conditional on shared D0",
+    "engineering_births_are_confirmation": false,
+    "partial_scores_can_promote": false
+  },
+  "competitive_layers": {
+    "M2_capacity": 64,
+    "M3_capacity_max": 6,
+    "shared_initialization": "seed-paired farthest-first from actually observed vectors; no duplicate placeholder competitors",
+    "reservoir_vector_caps": {
+      "M2": 256,
+      "M3": 64
+    },
+    "input_metric": "mean squared distance within each layer",
+    "seed_distinct_tolerance": "executable precision-test lock before any future training",
+    "M2_seed_at_payload_bytes": 1024,
+    "M3_seed_at_context_payload_bytes": 4096,
+    "usage_bias": 0,
+    "force_uniform_occupancy": false,
+    "local_update": "winner w += eta*(observed_vector-w)",
+    "eta_max": 0.001,
+    "eta_start_fraction": 0.0625,
+    "eta_ramp_observations": 4096,
+    "downstream_activation_ramp_payload_bytes": 1024,
+    "local_learning_during_activation_ramp": true,
+    "dead_prototype_reseed": {
+      "check_interval_payload_bytes": 4096,
+      "requires_zero_wins_complete_postinit_block": true,
+      "vector": "worst reconstructed actual observation",
+      "max_per_layer_per_checkpoint": 1,
+      "requires_remaining_payload_bytes": 1024,
+      "can_extend_phase": false
+    },
+    "M2_frozen_before_M3": true,
+    "post_freeze_representation_plasticity": false,
+    "context_profile": "0.5*concat(normalized_left, normalized_right)",
+    "context_profile_L1_sum": 1,
+    "context_requires_observed_predecessor_and_successor": true,
+    "future_context_access": false,
+    "class_count_candidates": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "class_count_selection": "listening validation next-winner NLL plus approximate two-part/BIC penalty",
+    "smoothing": 0.5,
+    "class_dof": "3*C*(A-1)",
+    "identity_dof": "A*(A-1)",
+    "parameter_penalty_bits": "0.5*dof*log2(training_transition_count)",
+    "assignment_bits": "(A+C)*log2(6)",
+    "inactive_retained_prototypes_counted_in_penalty": true,
+    "class_selection_uses_arithmetic_scores_or_semantic_annotations": false,
+    "class_tie_break": "smallest C",
+    "one_class_forbidden": false
+  },
+  "native_and_sequence": {
+    "N": 65536,
+    "dt_seconds": 2.142857142857143,
+    "temperature": 2,
+    "native_equations": "pinned v5.1 native-memory lineage",
+    "output": "eight bit compartments plus EOS",
+    "reference": "matched zero learned-value native read with same adaptation",
+    "activity_fraction": "read from pinned native birth, never substitute .02",
+    "observed_parent_activity_fraction": 0.03535533905932738,
+    "native_side_masks": true,
+    "wiring_changed_initially": false,
+    "tie_resolution": "stable deterministic; no fresh per-query noise",
+    "input_limit_bytes": 256,
+    "output_limit_payload_bytes": 16,
+    "open_segment_limit_bytes": 16,
+    "closed_registers": 4,
+    "boundary_byte_retained": true,
+    "reply_clock_separate_from_boundary_age": true,
+    "generation_readonly": true
+  },
+  "calibration": {
+    "single_frame_iterator_for": [
+      "calibration",
+      "training",
+      "generation"
+    ],
+    "prompt": "feed byte then passive frame",
+    "REPLY": "set reply_step=0, no payload interval",
+    "answer": "calibrate/read prefeedback frame then feed actual byte",
+    "EOS": "terminal prediction frame, one native interval",
+    "native_value_writes_during_representation_and_threshold_formation": false,
+    "clock_includes_listening_and_EOS": true,
+    "real_encoder_response_curve_activity_quantiles": [
+      "low",
+      "median",
+      "high"
+    ],
+    "disjoint_fixture_qualifies_real_density_dose": false
+  },
+  "provisional_native_warmup": {
+    "a_start": 0.00390625,
+    "a_max": 0.0625,
+    "ramp_external_records": 1024,
+    "formula": "(1/16)*(1/16+(15/16)*min(n/1024,1))",
+    "qualified_for_actual_encoder": false,
+    "automatic_stronger_grid_after_failure": false
+  },
+  "D0_payload_caps": {
+    "A_M2": 4096,
+    "B_M3": 16384,
+    "C_class_selection": 4096,
+    "D_real_frames_M4": 4096,
+    "total_per_birth_max": 28672,
+    "whole_records_only": true,
+    "internal_profile_validation_views_counted": true,
+    "all_answer_bytes_counted": true,
+    "cost_charged_per_branch": true
+  },
+  "development_harness": {
+    "births_reserved_not_generated": [
+      202610205301,
+      202610205302
+    ],
+    "collision_audit_before_generation": true,
+    "independent_unit": "birth/world",
+    "histories_per_birth": [
+      "R-W",
+      "A-W",
+      "R-N_OLD",
+      "R-SH_OLD"
+    ],
+    "main_history_count_max": 8,
+    "OLD_orbits": 16,
+    "OLD_presentations": 512,
+    "OLD_passes": 32,
+    "NEW_orbits": 8,
+    "NEW_presentations": 128,
+    "NEW_passes": 16,
+    "native_main_record_applications_max": 5120,
+    "held_orbits": 64,
+    "held_orbit_subset_for_intermediate_curves": 8,
+    "taught_subset_for_intermediate_curves": 8,
+    "held_both_orientations": true,
+    "global_held_exclusion_before_D0": true,
+    "operand_range": [
+      0,
+      9999
+    ],
+    "held_feedback": false,
+    "old_probe_presentations": [
+      0,
+      16,
+      64,
+      256,
+      512
+    ],
+    "new_probe_presentations": [
+      64,
+      128
+    ],
+    "full_held_probes": [
+      "OLD end",
+      "final after NEW/rest"
+    ],
+    "rests_seconds": [
+      3600,
+      3600
+    ],
+    "replay_enabled": false,
+    "source_streams_paired": true
+  },
+  "controls": {
+    "R-W": "repaired learned encoder, strict q allocation, correct feedback",
+    "A-W": "same encoder, pinned native allocation, correct feedback",
+    "R-N_OLD": "shared D0 and same bytes/clocks; all OLD native writes/confirmations off; NEW writes on",
+    "R-SH_OLD": "within-answer-length locked OLD label permutation, correct NEW",
+    "countermodels": [
+      "raw exact prompt lookup",
+      "canonical unordered-pair lookup",
+      "frequency/length",
+      "suffix0-4"
+    ],
+    "analytic_decoder_in_candidate": false
+  },
+  "retained_strict_gate": {
+    "q0": 3,
+    "tau_seconds": 86400,
+    "spacing_seconds": 60,
+    "recent_prompt_ring": 8,
+    "confirmations": "max one per completed external record, mixed signs suppressed",
+    "allocation": "decayed pre-event q from completed earlier records",
+    "replay_confirmation": false
+  },
+  "metrics": [
+    "byte confusion and occupancy",
+    "context/profile and boundary statistics",
+    "same-prompt code stability",
+    "shared/family activity and cutoff ties",
+    "teacher-forced byte/loss",
+    "own-prefix EOS/length/whole exact",
+    "early/recent taught retention",
+    "held exact and causal contrasts",
+    "all external and internal learning exposures",
+    "production/evaluation/model-selection CPU",
+    "RSS/simulated time/failures"
+  ],
+  "stopping": {
+    "hard_failures": [
+      "target leakage",
+      "forbidden write",
+      "nonfinite state",
+      "IO corruption",
+      "source mismatch"
+    ],
+    "component_warning_blocks_bounded_end_to_end_debugging": false,
+    "reseed_or_model_expansion_after_cap": false,
+    "automatic_new_worlds_or_dose": false,
+    "scientific_adoption_from_engineering": false
+  },
+  "resources": {
+    "component_suite_CPU_cap_seconds": 60,
+    "total_harness_including_component_suite_CPU_cap_seconds": 900,
+    "wall_cap_minutes": 30,
+    "workers": 1,
+    "numerical_threads": 1,
+    "RSS_cap_GiB": 2,
+    "minimum_system_headroom_GiB": 2,
+    "cost_profile_prefix_records": 16,
+    "caffeinate": "only follows a controller during separately requested execution",
+    "copy_sort_sweep_costs_reported": true,
+    "sparse_compute_claim": false
+  },
+  "remaining_executable_locks": [
+    "exact observed-data initializer and precision tolerance",
+    "normalized local class learner and generic selector",
+    "shared prompt/REPLY/prefeedback/EOS iterator",
+    "deterministic train/global-holdout rosters and collision check",
+    "native source/birth/side/activity fingerprint",
+    "actual-frame dose-response and telemetry implementation",
+    "all internal data-view and clock accounting",
+    "source snapshots and readonly-state invariants"
+  ],
+  "execution_by_this_delivery": {
+    "new_training_records": 0,
+    "new_diagnostic_runs": 0,
+    "scientific_jobs": 0,
+    "new_core_adopted": false
+  }
+}
