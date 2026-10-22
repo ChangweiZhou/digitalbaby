@@ -1,0 +1,5 @@
+# Cycle 2 review and revision
+
+Executed1024 records in one correlated native life,3.94 CPU seconds. Payload-bit accuracy at1/4/16/64 passes:87.30%,86.52%,87.89%,95.51%. Whole-value exact plus own EOS:0% at every checkpoint. EOS-on at correct slot4:6.25%,0%,6.25%,25%. More exposure under the unchanged ramp improves payload bits but does not solve exact serialization. This does not identify strength alone: repetitions, strength, consolidation and elapsed native time all changed together.
+
+Revision: Cycle3 must separate payload-byte errors, early/late EOS, and EOS-at-slot4. The endpoint stays own exact with EOS; a forced-length or teacher-prefix diagnostic cannot pass it. Expose original random values and raw margins for independent reduction. Preserve fixed native rules/dose. The EOS target is positive at one position and negative at four payload positions; cross-position interference is a plausible format bias even when supports differ. Test it, do not declare it proved. No new optimization arm is launched.

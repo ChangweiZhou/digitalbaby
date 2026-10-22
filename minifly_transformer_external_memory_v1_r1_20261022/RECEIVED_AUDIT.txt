@@ -1,0 +1,44 @@
+Codex has taken in my last audit and run a full addition chain (R2), and has also published a new "small Transformer + external memory" design. Reading the R2 numbers, then that design.
+
+Reading Codex's new design, which uses MiniFly as external memory for a small Transformer (Codex says you asked for this as a separate track).
+
+I read Codex's two new commits and their result files. I didn't write or run any code. The first commit runs the whole addition chain ("R2") after taking in my last audit. The second is a design (not yet built) that uses MiniFly as external memory for a small Transformer; Codex records that you asked for this as a separate track.
+
+## R2: the full chain ran, and nothing specific to any problem was learned
+- **Results:** 0% exact on the 16 taught problems and 0% on held-out problems, in every arm (variant run), at every checkpoint. The run hit its 900 CPU-second cap with 2 of 8 runs unfinished.
+- **Output:** after 512 teaching presentations (16 problems × 32), birth 1 answered **"1111" to 130 of 144 probes**, taught and held-out alike. Birth 2 gave a few fixed wrong patterns, some running to the 16-byte cap.
+- **What "1111" is:** each of the 8 output bit channels learned its average over all answers at that reply step. That gives "1" (0x31) at each step and an end marker after 4 bytes, the typical answer length.
+- **The decisive control:** the arm taught with **shuffled answers has the same loss curve as the correct-answer arm** (0.172 vs 0.172) and gives the same outputs. Everything learned so far is common to all problems.
+- **Allocation rule doesn't matter yet:** native allocation (A-W) behaved like the strict confirmation gate (R-W).
+- **The gate works as designed:** the slow store mostly consolidated output bits 4 and 5, which are 1 in every digit byte (slow mass 5,694 vs 527 for bit 0). The gate keeps what recurs, but only the format recurs here.
+- **Still learning when stopped:** loss fell steadily from 0.246 and hadn't flattened. Teaching strength rose only from 0.004 to 0.040 and never reached its 1/16 ceiling.
+
+**Why.** Two causes act together:
+- **Shared memory cells:** at answer time most active memory cells are shared across prompts. Codex's own reconciliation measured **62% of active cells shared between different prompts at the first answer frame**, even after its calibration fix. R2 kept the wiring unchanged. Its report shows a different overlap measure, between consecutive frames (16% / 7.5%). Consecutive frames differ in reply step and previous byte by construction, so that measure can't reveal sharing between prompts.
+- **Low teaching dose:** error-correcting learning fits the shared average first. At strength ≤0.04, the part specific to each problem was never reached.
+
+v3, which used the native front end, reached 100% taught recall. So this drop comes from the new encoder plus this dose.
+
+**Codex's next step for R2 is well aimed:** measure how each write affects other prompts' reads, log margins and consolidation per write, then test one change at a time. The deciding measurement should be overlap **between different prompts at the same frame**.
+
+## Codex's corrections to my audit, which I accept
+- **v3 did test arithmetic:** it ran full addition histories (100% taught, 0% held-out). My statement that three versions stopped before arithmetic was tested was wrong for v3.
+- **The byte stage did learn something:** its prototypes moved (reconstruction error fell about 70%). Only the grouping was fixed at birth; Codex counts 6 of 8 settings unchanged, where I said 7.
+- **The tie problem was mostly a calibration bug:** v5.1's threshold calibration skipped the reply-step frames, and my check inherited that. With correct calibration the ties go away. The shared-cell finding still stands.
+
+## External-memory design: well controlled, but likely to fail for the same reason
+Strengths:
+- **Controls:** the design includes no-write, zeroed-memory, foreign-memory and shuffled-value arms, plus exact-table and simple delta-rule baselines.
+- **Address freezing:** key addresses are frozen before the decoder is fitted.
+- **Honest scope:** it claims only taught memory, not arithmetic.
+
+Concerns:
+1. **The Transformer can't add anything to the read.** The stored values are random bytes, so the decoder can only threshold the 9 channels it reads back. In effect this is a native-memory capacity and interference test behind an address encoder trained by backpropagation. The core question can be answered first without a Transformer: write 16 random values using random 88-channel inputs at native density, then read the bits directly. Codex's own outcome table says a failed direct read leaves nothing to conclude about the host.
+2. **The dose is lower than R2's.** At the main endpoint (256 presentations) the per-life ramp reaches only about 0.019 strength, half of R2's final value, where nothing specific was learned. It is then followed by two 1-hour rests, against a fast-store time constant of about 56 minutes, leaving fast traces at roughly 12%. A null result here would most likely reflect the schedule, not the memory.
+3. **One value's bytes may share cells.** Each key gets 9 position addresses that differ only by a learned position term. Nothing pushes them onto different memory cells, so the 4 bytes of one value could interfere: R2's failure in a new form. Overlap within a key and between keys should be measured right after host training, before the decoder is fitted.
+4. **Effect on the main goal:** this setup (the Transformer as slow cortex, MiniFly as a fast episodic store) fits our earlier fast/slow-memory work. It doesn't advance learning arithmetic rules. Against the exact table, the likely best case is "memory effect, no practical advantage", which Codex acknowledges.
+
+## Decision for you
+Does the slow-warmup rule apply to one-off fact writes into a fresh memory? Your rule was there to stop pre-training from baking the fly's brain. Fast-store traces decay within hours, and real flies learn an odour association in a single trial. If you allow it, both the R2 follow-up and the external-memory test could use a fixed write strength, calibrated on training episodes and locked before testing. Otherwise both stay limited by dose.
+
+I can write this up as a review in the repo if you want.

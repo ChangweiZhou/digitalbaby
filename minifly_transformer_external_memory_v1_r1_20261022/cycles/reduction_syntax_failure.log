@@ -1,0 +1,4 @@
+  File "/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_transformer_external_memory_v1_r1_20261022/reduce.py", line 34
+    rows.append(dict(cycle=c,arm=arm,checkpoint=st.get('stage',str(st.get('passes'))),exact=exact,bit_accuracy=bits,payload_all4_if_length_forced_diagnostic_only=float(np.mean(np.all(payload==values,axis=1))),early_EOS=float(np.mean(np.array(eosfirst)<4)),own_EOS_at4=float(np.mean(np.array(eosfirst)==4)),late_or_missing_EOS=float(np.mean(np.array(eosfirst)>4)),target_aligned_payload_margin=float(np.mean(m[:,:4,:8]*(2*bittruth.astype(float)-1))),EOS_slot4_margin_mean=float(m[:,4,8].mean()),shuffled_assignment_exact=float(np.mean([x['payload']==v.tolist() and x['eos'] for x,v in zip(emitted,np.roll(values,1,axis=0))])) )
+               ^
+SyntaxError: '(' was never closed
