@@ -1,0 +1,5 @@
+# Cycle 3 additional code review: generic cap defect
+
+While the fixed main roster ran, code review found that `record` checked lengths but `query` did not reject input beyond 256 bytes. Qualification had checked own-output truncation but omitted the input-overflow assertion. The generation helper also accepted a caller-specified cap above 16. All frozen addition prompts are at most ten bytes and all actual calls use cap16, so this does not alter the arithmetic trajectories or their boundedness. It prevents claiming that the original generic API fully enforced its published limits.
+
+Do not edit/restart the source-locked main kernel. A separate `core_boundary_revision.py` wrapper enforces input/output caps and validates payloads before any observation/write. It delegates all valid computation to the same native learner. Test this guard after the roster ends with zero native events; label it API-only, not a new learning result. Keep both original defect and revision in the package. No efficacy rescue, rate change or arithmetic feature is introduced.

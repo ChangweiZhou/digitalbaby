@@ -1,0 +1,52 @@
+{
+  "published_local_parent_commit": "165501515869159928a9c3ab0ebbc2db500f3641",
+  "Claude_source": {
+    "message": "Add MiniFly v6 design memo: learned procedure plus fast memory\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>\nClaude-Session: https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+    "sha": "19107b68c85a2f78e8093b5dd41f5ffd162bc7d8",
+    "branch": "claude/charming-clarke-u9g850",
+    "path": "minifly_v6_design_20261023/DESIGN.md",
+    "blob_sha": "cd5d43f861caed8d23ea85667f2e02d378fa257a",
+    "tree_sha": "19107b68c85a2f78e8093b5dd41f5ffd162bc7d8"
+  },
+  "original_Claude_design_sha256": "cbe797fee8f2773dfc3d30adaf19f591c79b513ea39174a25a8e1cd7e2b53ccf",
+  "local_files": {
+    "PROJECT_DOCUMENTS/CURRENT_ARITHMETIC_EXPERIMENT_DESIGN.json": "79c74951d98b33c38e5edae23617e5a36a8573c39857d2526eeb72bf8b8144d3",
+    "PROJECT_DOCUMENTS/CURRENT_EXTERNAL_MEMORY_EXPERIMENT_DESIGN.json": "67da509b734b988a53998a0848e3a469619842ae885459e8466ebf5e4aa89301",
+    "minifly_address_capacity_v1_dev_20261023/REPORT.md": "818a20d6bf942eaab384f067be2f4dd105bdc393833c248ee76005f8f0c2a5ee",
+    "minifly_address_capacity_v1_dev_20261023/REVISED_DESIGN.md": "2560db3f13387dff741ab303977bf5cc861e5884ae56ed6c42914f5c631b3823",
+    "minifly_address_capacity_v1_dev_20261023/FINAL_AUDIT.json": "6c47f4b51c25f40b6dfe016302e9e0207a40cd74cccf65429c96b436607638d6",
+    "minifly_stop_only_confirm_v1_20261023/REPORT.md": "29ee68d5a64c08d2ad3915a8d1b16153f504446aac8ee612c37514ad4d09f2c2",
+    "minifly_v5_1_r2_design_20261020/DESIGN.md": "1025dd26fb84ca00cc0fdff8cb2a776f038444049b07c3a7766fa835c332768d",
+    "minifly_v5_1_r2_dev_20261020/REVISED_DESIGN.md": "36590db518fa0f6987924d8c7bb1a237d4284544ece16b2ae52c9feafc859807",
+    "minifly_v5_1_r2_dev_20261020/design/SPEC.json": "4bc30a662bed559efdbfdcffea4d3220279bba5e83475c2dfc5fde3ce95a64b3",
+    "minifly_v5_1_r2_dev_20261020/r2_data.py": "b1a89f87df71975c21b72ddd9dc852b66cb3a1612a4805d8b10afce41a77843e",
+    "minifly_v5_1_dev_20261020/engine.py": "64224073b462eae8694bec15945569f175154686a87521f47b908bc0ac13538f",
+    "minifly_v5_1_dev_20261020/v51_common.py": "e0781f4ef071946deddd81f9dd4a764b3ab8dede0519d418b4e9f507c9a1aa27",
+    "PROJECT_DOCUMENTS/MECHANISM_SCREEN_20261007/VERSION_REGISTER_20261011/VERSIONS.json": "fcccee3ac9e7c672ad7be775ae3ea97ce38b94d6758d0c764f51d10e73806323"
+  },
+  "standing_requirements": {
+    "/Users/pencilbard/Downloads/second_try_copy/AGENTS.md": "1c2a58aa602c015601a48df265fcc66e5d85d1acd06788b6670144b575cdc593",
+    "/Users/pencilbard/Downloads/second_try_copy/MINIFLY_OBJECTIVE_CONTRACT.md": "3832a30f19ad168a03ed112d8c60f43528a5c4d4dd47adf1951f8c01b79ef57d",
+    "/Users/pencilbard/Downloads/second_try_copy/PERSISTENT_CORE_REQUIREMENTS.md": "11b9ef8fc9d4f60bba8a18ed0fc1188874db32dae204ccbdcf663aae222d0713",
+    "/Users/pencilbard/Downloads/second_try_copy/BYTE_CORE_V9_9A/REPORT.md": "47b6ce759d6c0bd55d667068bb6e9f0215f9c4b9efedd323e71bf0433b9e2cc6",
+    "/Users/pencilbard/Downloads/second_try_copy/BYTE_CORE_V9_9B_RANK/REPORT.md": "1ed26100d1b7b820f0f2c08f5716e894bb270c8e01c6c600fe13ea1fd8861eae"
+  },
+  "primary_literature": [
+    {
+      "title": "How Attention Can Create Synaptic Tags for the Learning of Working Memories in Sequential Tasks",
+      "url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004060",
+      "use": "working-memory/eligibility precedent; attention-related feedback prevents unqualified import"
+    },
+    {
+      "title": "A solution to the learning dilemma for recurrent networks of spiking neurons",
+      "url": "https://www.nature.com/articles/s41467-020-17236-y",
+      "use": "separates online eligibility/local learning signals from BPTT; not this rate/native implementation"
+    },
+    {
+      "title": "Simple statistical gradient-following algorithms for connectionist reinforcement learning",
+      "url": "https://doi.org/10.1007/BF00992696",
+      "use": "local stochastic score principle; no claim of convergence or arithmetic performance for this hybrid"
+    }
+  ],
+  "scope": "document provenance only, not an executed runtime source lock"
+}

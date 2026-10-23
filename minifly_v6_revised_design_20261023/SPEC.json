@@ -1,0 +1,150 @@
+{
+  "schema": "MINIFLY_PROCEDURAL_DESIGN",
+  "version": "MINIFLY_V6_R1",
+  "date": "2026-10-23",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "design": "DESIGN.md",
+  "learning_rule": "LEARNING_RULE.md",
+  "review": "REVIEW.md",
+  "goal": "Better retained exact own-output unseen-addition generalization per all observations and actual compute",
+  "authorization": {
+    "design": true,
+    "implementation": false,
+    "three_cycles": false,
+    "training": false,
+    "formal_confirmation": false,
+    "GitHub_push": false,
+    "adoption": false
+  },
+  "constraints": {
+    "attention": false,
+    "Transformer": false,
+    "ELM": false,
+    "backpropagation": false,
+    "arithmetic_specific_structure": false,
+    "separate_answer_network": false,
+    "solution_traces": false,
+    "replay": false,
+    "chunking": false,
+    "arbitration": false,
+    "gradual_warmup": true,
+    "current_arithmetic_track_unchanged": true
+  },
+  "controller": {
+    "H": 88,
+    "input_symbol_count": 259,
+    "presynaptic_dimension": 348,
+    "matrices": [
+      "Wv",
+      "Wg"
+    ],
+    "weight_scalars": 61248,
+    "eligibility_scalars": 61248,
+    "gradient_scalars": 61248,
+    "three_array_groups_bytes_float64": 1469952,
+    "proposal_sigma": 0.1,
+    "initial_gate_probability": 0.1,
+    "nonbias_weight_init_std": "0.05/sqrt(348)",
+    "controller_eta_max": 0.001,
+    "eta_start_fraction": 0.0625,
+    "eta_ramp_records": 1024,
+    "eligibility_lambda": 1.0,
+    "trace_reset": "BOS",
+    "update": "record-end average score gradient; combined Frobenius norm <=1",
+    "reward": "-min(mean eligible softplus(-target_sign*native_margin/2),20)/20",
+    "reward_baseline_rate": 0.0009765625,
+    "autodiff": false,
+    "BPTT": false,
+    "queue_or_address_pointer": false,
+    "history_tape": false,
+    "content_addressing": false,
+    "reward_baseline_scope": "frozen at BOS from previous completed records; EMA update after record mean reward only"
+  },
+  "native": {
+    "N": 5177,
+    "compartments": 9,
+    "canonical_anatomy": true,
+    "gated": false,
+    "value_readout": "native bit signs and native EOS, neutral subtraction, temperature2",
+    "external_STOP_in_primary": false,
+    "allocation": "original",
+    "warmup": "(1/16)*(1/16+(15/16)*min(n/1024,1)); n counts complete external records; continues OLD->NEW",
+    "dt": 2.142857142857143,
+    "calibration": "existing canonical unlabelled calibration; no held calibration",
+    "EXPAND_automatically_integrated": false
+  },
+  "prospective_harness": {
+    "worlds": [
+      202610236101,
+      202610236102
+    ],
+    "independent_units": 2,
+    "arms": [
+      "LEARN",
+      "FROZEN",
+      "NO_OLD",
+      "SH_OLD"
+    ],
+    "histories": 8,
+    "operand_range": [
+      0,
+      9999
+    ],
+    "prompt": "a+b= as observed bytes, evaluator formatting only",
+    "OLD_orbits": 128,
+    "NEW_orbits": 32,
+    "held_orbits": 64,
+    "length_strata": 16,
+    "OLD_per_stratum": 8,
+    "NEW_per_stratum": 2,
+    "held_per_stratum": 4,
+    "OLD_passes": 32,
+    "NEW_passes": 8,
+    "OLD_records": 4096,
+    "NEW_records": 256,
+    "records_per_arm": 4352,
+    "main_total_record_applications": 34816,
+    "main_native_event_upper_bound": 557056,
+    "event_upper_bound_basis": "maximum 10 prompt bytes +5 answer bytes +EOS; actual counts come from frozen manifests",
+    "global_held_both_orientations": true,
+    "held_feedback": false,
+    "input_payload_cap": 256,
+    "output_payload_cap": 16,
+    "EOS_decisions_max": 17,
+    "rests_seconds": [
+      3600,
+      3600
+    ],
+    "evaluation_random_tapes": 3,
+    "best_of_tapes": false,
+    "separate_D0": false,
+    "NO_OLD_disables_both_controller_and_native_learning": true,
+    "countermodels": [
+      "raw_lookup",
+      "unordered_pair_lookup",
+      "byte_answer_length_frequency",
+      "suffix0_4"
+    ],
+    "primary": "per world final held own-output strictly beats NO_OLD,SH_OLD,FROZEN and all observed-exposure countermodels; positive OLD-end/final prior-teaching effect; OLD-taught guard and NEW acquisition guard",
+    "claim": "exploratory E3 only if all behavioral/exposure guards pass; no confirmation or adoption",
+    "holdout_construction": "explicit held set first; globally excluded unordered orbits; OLD/NEW from complement; bounded attempts, no score-dependent reseeding"
+  },
+  "prospective_resources": {
+    "CPU_seconds": 7200,
+    "active_wall_seconds": 10800,
+    "tree_RSS_bytes": 2147483648,
+    "minimum_headroom_bytes": 2147483648,
+    "workers": 1,
+    "numerical_threads": 1,
+    "qualification_full_records_max": 64,
+    "qualification_partial_native_events_max": 512,
+    "profile": "first complete planned history with all its probes; included in roster; stop if conservative remainder cannot fit"
+  },
+  "executed_by_delivery": {
+    "new_native_records": 0,
+    "new_head_fits": 0,
+    "new_controller_fits": 0,
+    "three_cycle_exercises": 0,
+    "new_science_jobs": 0
+  }
+}

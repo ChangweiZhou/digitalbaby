@@ -1,0 +1,9 @@
+# Cycle 2 — integration audit, bounded test, revision
+
+Revision from cycle 1: uniquely named evaluator module; no changes to parameters or learning signals. Re-executed two synthetic native records (10 observed events) and one partial native write. Local and sequence technical checks PASS. Added passive native reference, finite write-state and canonical birth/edge/storage audit on two partial events. Technical totals through cycle 2: four full synthetic records /20 observed events and four partial native events; all excluded from addition science. Numerical score quadrature has no native records.
+
+Design audit confirmed: all four arms share initialization, observation timing and record clock; NO_OLD disables both value and representation/baseline updates; FROZEN never updates controller weights; SH preserves label-length multisets. Learner receives bytes/protocol events, not phase IDs, answers during generation, arithmetic roles, suffix keys or a decoder network. Controller gradients remain frozen within each record and are applied once afterward.
+
+Implementation refinements: independent per-record stochastic tapes prevent probe calls from changing later training; one private native snapshot per generated answer; explicit own-EOS/truncation; full native+controller+RNG checkpoints; observed prompt and answer feedback counted equally. Countermodels and all sampling are evaluator-only. No architecture or rate tuning from held probes.
+
+Cycle 3: source-lock all main code/assets and both manifests before feedback. Run the declared first LEARN history with full probes, then use its actual CPU to decide whether the rest fits. The first history is part of the fixed roster, never a discarded pilot. A resource stop is incomplete evidence, not a negative E3 result. Do not replace a negative result with a new mechanism in this exercise.
