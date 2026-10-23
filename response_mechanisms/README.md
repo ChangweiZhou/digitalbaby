@@ -7,11 +7,6 @@ confirmation and does not modify that experiment.
 
 ## Status
 
-**Partial GitHub publication:** the complete scientific findings and final audit
-are available here, but this checkpoint contains only 42 of 224 primary raw
-receipts plus all seven replays. Remaining raw receipts are still being uploaded.
-See [publication coverage](results/final/PUBLICATION_STATUS.md).
-
 All three design–independent-audit–pilot–revision cycles are complete, with all
 21 exploratory lives retained and 39 tests passed. No efficacy win is claimed
 from these pilots. The final source is locked for 32 fresh worlds × seven arms,
