@@ -1,0 +1,181 @@
+{
+  "A": {
+    "EOS": "normalized native mean EOS plus learned scalar residual; strict logit > 0",
+    "batch_size": 32,
+    "binary_terms_per_fit_max": 2000000,
+    "component_checkpoints": [
+      "OLD_end",
+      "NEW_final",
+      "OLD_S_NEW"
+    ],
+    "conditional_denominator": "nonempty direct-native-payload-correct queries; evaluate after output; undefined if none",
+    "final_OLD_rescue_required_for_component": false,
+    "final_training_loss_inside_term_cap": true,
+    "fit_native_data": "existing V1 training episodes 202610229101-202610229112 only",
+    "fits": 6,
+    "fresh_roster_native_records": 28224,
+    "head_seeds": [
+      202610239401,
+      202610239402,
+      202610239403
+    ],
+    "hidden": 32,
+    "input": 171,
+    "name": "STOP_ONLY",
+    "optimizer": {
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "clip_norm": 1,
+      "decay": 0.0001,
+      "eps": 1e-08,
+      "lr": 0.001,
+      "name": "NumPy AdamW",
+      "warmup_updates": 100
+    },
+    "outputs": 1,
+    "parameters": 5537,
+    "payload": "immutable original native mean signs",
+    "scale": "reuse frozen V1 training RMS by storage",
+    "storage": [
+      "RAW",
+      "STD"
+    ],
+    "updates_per_fit_max": 2000,
+    "view": "MEAN"
+  },
+  "B": {
+    "additional_native_records": 18144,
+    "arms": [
+      "BASE",
+      "CREDIT",
+      "UNIFORM",
+      "SHUFFLED"
+    ],
+    "credit": "1[target*native_margin>0]*tanh(max(0,target*direct_alpha_contribution)/2)",
+    "credit_update": "h+(1-h)*credit, after gated event",
+    "credit_uses": "pre-event native state and observed warmup target; after-write state not used",
+    "gate": "1/(1+h)",
+    "gate_application": "plastic fast0/fast1/slow increments only; passive native evolution unchanged",
+    "gate_range": [
+      0.5,
+      1
+    ],
+    "h_range": [
+      0,
+      1
+    ],
+    "match_tolerance": "1e-12*max(1,T,U)",
+    "mutable_credit_and_timestamp_bytes": 745488,
+    "name": "CREDIT_AVAIL_V1",
+    "protection_decision": "every pair: OLD payload exact strictly greater than BASE/UNIFORM/SHUFFLED and NEW no lower than each; require stated control matching qualification",
+    "readout": "same frozen A STD head per seed, no arm-specific fitting; direct codec always reported",
+    "shuffle_match": "exact gate-value multiset across active KC indices within side/compartment; NOT exact weighted increment L1",
+    "storage": "STD",
+    "trace_decay_seconds": 86400,
+    "uniform_match": "yoked per-compartment/event actual plastic increment L1, when attenuation-only matching feasible",
+    "uniform_saturation": "clip rho to 1, log unmatched excess, no clean matched-dose conclusion",
+    "wait_for_A_success": false
+  },
+  "arithmetic_pointer_sha256": "79c74951d98b33c38e5edae23617e5a36a8573c39857d2526eeb72bf8b8144d3",
+  "authorization": {
+    "background": false,
+    "design": true,
+    "github_push": false,
+    "head_fitting": false,
+    "host": false,
+    "implementation": false,
+    "native_execution": false,
+    "three_cycle_exercise": false
+  },
+  "combined_system": {
+    "component_success_not_adoption": true,
+    "fresh_combined_test_required": true,
+    "joint_OLD_NEW_complete_own_output_required": true,
+    "no_automatic_host": true
+  },
+  "common": {
+    "a": "(1/16)*(1/16+(15/16)*min(n/1024,1))",
+    "absent_keys": 8,
+    "c": "a*(tanh(native_mean_margin/2)-target)/2",
+    "calibration": "reuse V1 frozen unlabeled 2048-vector asset",
+    "cells": 5177,
+    "compartments": 9,
+    "dt": "30/14",
+    "gated": false,
+    "lengths": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "native_sources": [
+      "minifly_v5_1_dev_20261020/engine.py",
+      "minifly_v3_dev_20261020/native.py"
+    ],
+    "new_keys": 18,
+    "old_keys": 18,
+    "passes_per_cohort": 14,
+    "rest_seconds": [
+      3600,
+      3600
+    ],
+    "values_per_length_per_cohort": 2
+  },
+  "constraints": {
+    "ELM": false,
+    "Transformers": false,
+    "arithmetic_rules": false,
+    "arithmetic_track_unchanged": true,
+    "external_attention": false,
+    "gradual_native_schedule_unchanged": true,
+    "native_attention": false,
+    "population_growth": false,
+    "replay": false
+  },
+  "date": "2026-10-23",
+  "evidence_level": "E1 known-key explicitly taught association diagnostics",
+  "executed_this_delivery": {
+    "head_fits": 0,
+    "native_records": 0,
+    "partial_native_events": 0,
+    "technical_cycles": 0
+  },
+  "goal": "Preserve the project goal of retained unseen-addition generalization per all samples/compute; this external-memory component design is not E3",
+  "resources": {
+    "CPU_seconds_max": 1800,
+    "active_wall_seconds_max": 2700,
+    "admission_headroom_bytes_min": 2147483648,
+    "all_failures_and_audits_charged": true,
+    "numerical_threads": 1,
+    "sampled_tree_RSS_bytes_max": 2147483648,
+    "workers": 1
+  },
+  "roster": {
+    "E0_full_records_max": 128,
+    "E0_namespace": 202610239501,
+    "E0_partial_events_max": 16,
+    "base_histories": 72,
+    "independent_unit": "counterfactual pair, not life/head/query",
+    "logical_record_equivalents": 56448,
+    "main_native_events": 231840,
+    "main_native_records": 46368,
+    "pairs": [
+      202610239301,
+      202610239302,
+      202610239303,
+      202610239304
+    ],
+    "passive_continuations": 40,
+    "shared_OLD_logical_equivalents": 10080,
+    "training_seed_reuse": true,
+    "value_lives_per_pair": 2
+  },
+  "schema": "RECOVERABILITY_V1_R2_DESIGN",
+  "status": "DESIGN_ONLY_UNIMPLEMENTED_UNTESTED",
+  "version": "RECOVERABILITY_V1_R2"
+}

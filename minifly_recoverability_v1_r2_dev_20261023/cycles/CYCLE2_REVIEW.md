@@ -1,0 +1,1 @@
+All six 5537-parameter EOS-only fits completed on original training traces, final iterates frozen. No new native records. Revision before fresh evaluation: profile the first complete pair against the cumulative remaining budget; keep protection independent of A success. Dense clone/proposal computation is charged explicitly.

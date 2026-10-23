@@ -1,0 +1,1 @@
+E0 passed: scalar-head finite differences, parameter count 5537, initial EOS skip, native g=1/g=0 and readonly parity. Uses three partial native fixture events. Revision: charge dense proposal/clone overhead explicitly; freeze scalar-head masks and term counting before fitting. No efficacy inference.
