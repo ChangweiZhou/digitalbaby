@@ -1,3 +1,20 @@
+# Repository navigation — 23 October 2026
+
+The consolidated development branch is `codex/minifly-consolidated-20261023`.
+The MiniFly [version/results memo](PROJECT_DOCUMENTS/FULL151_VERSION_CENSUS_20261023/MEMO.md)
+indexes all 53 reported experiment deliveries, the full 254-row mechanism register,
+and the workfolder report census. Historical branches are preserved as tags and
+their commits are reachable from the consolidated branch.
+
+The latest [V6-R1 result](minifly_v6_r1_dev_20261023/REPORT.md) is a negative
+bounded engineering result, with no demonstrated unseen-addition gain. Its
+[publication manifest](minifly_v6_r1_dev_20261023/PUBLICATION_MANIFEST.json)
+covers results and code; new raw experiment data are excluded.
+
+The original Genesis V66 introduction below is preserved historical project
+documentation. Its task and claims are separate from MiniFly's current addition
+experiments.
+
 # DigitalBaby: Emergent Reasoning in Liquid Neural Architectures
 
 **Genesis V66** — A "Pure R1-Zero" experiment in compact reasoning.
