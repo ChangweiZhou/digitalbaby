@@ -1,0 +1,3 @@
+# Cycle2 design/audit/test/revise
+
+All12 training episodes x two storage configurations completed:12096 native records,60480 events,2592 phase-pool traces. All12 heads fit within the update/term ceilings and froze before any evaluation values. No seed selected. Revision: evaluation callbacks now preserve first/fourth-pass acquisition probes before Cycle3; these were absent from training trace logging, whose six end/rest pools matched the actual training specification. Missing early training diagnostics remain missing; no trajectories were rerun. Native feedback, calibration, learned heads and readout architecture unchanged.

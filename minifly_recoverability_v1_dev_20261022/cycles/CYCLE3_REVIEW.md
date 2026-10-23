@@ -1,0 +1,9 @@
+# Cycle 3: design, audit, test, revise
+
+Design: execute all four development episodes and four fresh counterfactual pairs, two independent value lives each, with W/N/within-length SH, shared-OLD S_NEW continuations, ZERO/FOREIGN lesions, direct decoding and every frozen seed. No model selection or further fitting.
+
+Audit/test: complete roster, 42,336 native record applications and 211,680 events. Combined cycles: 54,432 applications and 272,160 events, plus four E0 partial synthetic events. Frozen heads/scales, listed native sources and arithmetic pointer hashes match. Artifact-only inference independently reconstructs emissions, bit/length metrics and pair decisions; the reducing process imports no native engine or optimizer. Integrity acceptance is self-audit plus a separate process, not independent reviewer approval. All four cells fail the unchanged OLD-and-NEW criterion.
+
+Revision: the joint readout damages correct payload signs; normalized native NEW payload-only exact is 61.72% versus 20.57% with MEAN head. NEW writes also damage OLD content: normalized direct OLD payload exact is 53.91% with NEW writes off and 0% with them on. These require separate explanations. Propose one smaller EOS-only learned correction with immutable native payload signs, preserving every native parameter and the primary endpoint. A posthoc bypass improves NEW whole-value recall to about 13% but leaves OLD at zero; it is not a successful preregistered candidate. Native protection remains a distinct later proposal. No V1-R1 fitting or additional native trajectory was run.
+
+Disclose rather than repair by replay: missing early training probes, incomplete prospective dependency closure, sampled RSS and coarse timing. Full detail and the posthoc/prospective boundary appear in REPORT.md and REVISED_DESIGN.md.
