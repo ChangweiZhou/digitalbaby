@@ -1,0 +1,23 @@
+# Cycle 3: causal calibration diagnostic, falsification and fail-closed launch
+
+Written before the cycle 3 test. A remains exactly frozen and fails both necessary static and finite-horizon gates. This cycle cannot reverse those failures by secondary metrics.
+
+## Independent B candidate: fixed history/clock/query-consistent surrogate
+This is a separate diagnostic, never combined with A. It is not claimed to be a uniquely derived native model. For each previous cue i, store its pre-teacher raw four-channel output v_i, cue-only receptor mean embedding x_i (uniform average of R_TABLE across all 12 cue bytes, with no privileged position), and read time t_i. Anchor b0 is mean of the first 16 historical pre-teacher outputs; it is explicitly a mixed early-history anchor, not claimed untrained. At query q,time t use x_q from that one query, and weights w_i=cos(x_q,x_i)^2. Propagate every history output by vhat_i(t)=b0+exp(-(t-t_i)/86400)*(v_i-b0). Set Bhat(q,t)=sum_i w_i vhat_i(t)/sum_i w_i. Only entries strictly earlier than t are available. Zero weight falls back to b0. No labels, evaluator panel averages, future query batch, world ID, task ID, or digit position enter Bhat. The one-day time constant is inherited from J for this explicitly approximate surrogate, not fitted to these scores or asserted to equal native dynamics. This tests a concrete causal time/distribution-adjusted baseline instead of an EMA-time-constant sweep. No alternative surrogate is selected after outcomes.
+
+Using final raw W response tensors from all 32 historical H lives ONLY as development evaluation, subtract Bhat for each query and count wrong→right, right→wrong, per-world accuracy changes, all per-item true-versus-competitor margins, mean true-versus-best-other margin shift, and baseline estimation error relative to the evaluator-only panel mean. Compare raw, original H, oracle and B. The evaluator oracle is never supplied to fit or prediction. Development advancement criterion: net repairs positive, paired Student-t 95% lower confidence bound on accuracy change >0, and baseline MSE below historical H MSE. Even passing these is not held-out efficacy and does not authorize B full science: its native-dynamics model would need an independently frozen prospective prediction contract. A's full run cannot be rescued by B.
+
+## Final small tests and prospective falsification contract
+- Enforce no labels/IDs in geometry/calibrator signatures; mutate evaluation answers and confirm Bhat/features unchanged
+- Change future history suffix, confirm predictions at a past query unchanged
+- Verify all recorded pairwise margins algebraically against m'=m-Bhat_y+Bhat_c
+- Identity-address kernel must fail; degenerate centered kernels must fail; clone queries must not alter history
+- Validate exact operator/direct replay tolerance, zero clipping, feature finite values and source locks
+- Fail-closed launch tool must reject a missing, altered, or failing gate manifest and cannot launch when quantitative total prediction is absent
+- Package A source remains unchanged; forecast file states NO QUANTITATIVE THEORY PREDICTION for its unopened arms
+
+For an eventual new preregistration, a positive theory prediction would have to provide source-derived TOTAL margin tensors or a bounded distribution before fresh outcomes and lock a numerical tolerance. It would be rejected if measured mean margin shift is nonpositive despite a forecast lower bound above zero, or the observed shift falls outside the predeclared interval. That future tolerance is not invented here to manufacture a passing forecast. Current program issues no eligible positive total-margin forecast, so no fresh-world full run starts and no untested theory is called falsified by prospective science. The present candidate is rejected at the preflight gate.
+
+Resources: one thread, <=120 CPU seconds, <=1 GiB RSS, <=50 MB output. Entire preflight <=30 CPU-minutes, <=300 MB; no spending. Keep all negative/failing outputs. Publish cycle specifications, audits, exact sources, raw diagnostic operators/margins, source lock and final launch decision on a new digitalbaby branch. Do not change/merge/force-push existing experiment branches.
+
+Independent pre-test audit clarifications: anchor b0 uses only the first min(16,n_past) eligible entries with t_i<t; if none, return the zero four-vector. Test causality before the 16th history entry as well as after it. Baseline estimation MSE is computed in channel-centered decision space for both Bhat and the saved H offset, against the same evaluator-only raw W panel mean; channel-common offsets cannot decide the gate. This clarifies online availability and the metric without changing any final-history candidate prediction.

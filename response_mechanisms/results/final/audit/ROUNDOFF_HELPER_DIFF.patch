@@ -1,0 +1,11 @@
+--- scratch/final_audit/verify_complete.py
++++ scratch/final_audit/verify_complete_locked_order.py
+@@ -40,7 +40,7 @@
+     base=np.average(v,axis=(0,1))
+     first=np.average(v,axis=1)-base
+     second=np.average(v,axis=0)-base
+-    interaction=v-first[:,None,:]-second[None,:,:]-base
++    interaction=v-base-first[:,None,:]-second[None,:,:]
+     return v,base,first,second,interaction
+ 
+ 
