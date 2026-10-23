@@ -1,0 +1,136 @@
+{
+  "version": "ADDRESS_CAPACITY_V1",
+  "date": "2026-10-23",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "goal": "Better retained own-output unseen-addition generalization per all samples and actual compute; this side experiment supports E1 diagnostics only",
+  "design": "DESIGN.md",
+  "implementation_authorized": false,
+  "execution_authorized": false,
+  "github_push_authorized": false,
+  "native_applications_executed": 0,
+  "head_fits_executed": 0,
+  "three_cycles_executed": 0,
+  "constraints": {
+    "gradual_warmup": true,
+    "arithmetic_track_unchanged": true,
+    "attention": false,
+    "Transformer": false,
+    "ELM": false,
+    "arithmetic_rules": false,
+    "replay": false,
+    "fresh_life_ceiling_start": false,
+    "new_EOS_teaching_weights": false,
+    "new_head_fits": false
+  },
+  "saved_response_analysis": {
+    "source": "minifly_stop_only_confirm_v1_20261023",
+    "inference_only": true,
+    "new_native_events": 0,
+    "status": "PROPOSED_NOT_EXECUTED",
+    "readouts": [
+      "DIRECT",
+      "STOP",
+      "FIXED_LENGTH_0_TO_8_ALL_REPORTED",
+      "POSITION_ONLY_ZERO_RESPONSE_AND_SKIP",
+      "EOS_FOREIGN_KEEP_REAL_PAYLOAD"
+    ],
+    "primary_storage": "STD",
+    "conditional_subset": "real native payload-correct nonempty; identical across readouts; undefined retained",
+    "interpretation": "post-confirmation descriptive; original confirmation not reopened",
+    "CPU_seconds": 300,
+    "wall_seconds": 600,
+    "RSS_bytes": 2147483648
+  },
+  "native_pilot": {
+    "pairs": [
+      202610238101,
+      202610238102,
+      202610238103,
+      202610238104,
+      202610238105,
+      202610238106,
+      202610238107,
+      202610238108
+    ],
+    "lives_per_pair": 2,
+    "storage": [
+      "STD"
+    ],
+    "arms": [
+      {
+        "id": "CANON",
+        "N": 5177
+      },
+      {
+        "id": "EXPAND",
+        "N": 20708
+      }
+    ],
+    "extension_seed": 202610238201,
+    "extension_blocks": 3,
+    "B_edges_multiplier": 4,
+    "active_count": "same canonical ceil(f0*N0_side) caps in both arms; positive-score shortfalls recorded",
+    "gain_rule": "unlabelled per-column mean-drive matching for Q and reader_Q; no N0/N scaling; T and alpha_scale unchanged",
+    "native_branches": [
+      "W",
+      "N",
+      "SH"
+    ],
+    "S_NEW_per_W": true,
+    "OLD_keys": 18,
+    "NEW_keys": 18,
+    "absent_keys": 8,
+    "lengths": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "values_per_length_per_cohort": 2,
+    "passes_per_cohort": 14,
+    "records_per_cohort": 252,
+    "events_per_cohort": 1260,
+    "rests_seconds": [
+      3600,
+      3600
+    ],
+    "warmup": "(1/16)*(1/16+(15/16)*min(n/1024,1)); n continues OLD to NEW",
+    "base_histories": 96,
+    "correlated_S_NEW_continuations": 32,
+    "main_executed_records": 56448,
+    "main_executed_events": 282240,
+    "shared_prefix_logical_record_equivalents": 8064,
+    "total_main_logical_record_equivalents": 64512,
+    "qualification_full_records_max": 96,
+    "qualification_full_record_events_max": 480,
+    "qualification_partial_calibration_events": 288,
+    "heads": "three frozen STD STOP heads 202610239401-202610239403 and original RMS scales; direct codec also reported",
+    "storage_screen": "pair mean of two lives: final OLD payload delta>0 and final NEW payload delta>=0 in every pair; descriptive eight-pair Pareto pilot, not confirmed noninferiority",
+    "integration_screen": "conditional on storage screen; complete OLD delta>0 and complete NEW delta>=0 in every pair under mean of all three frozen STD heads",
+    "attribution_guard": "positive mean EXPAND W-N payload effects in OLD and NEW; publish sizes difference in causal effect, W-SH, and within-size S_NEW-write penalties",
+    "unit": "one paired world; all anatomy claims conditional on one canonical/one fixed extension",
+    "resource_limits": {
+      "CPU_seconds": 3600,
+      "active_wall_seconds": 5400,
+      "RSS_bytes": 2147483648,
+      "admission_headroom_bytes": 2147483648,
+      "workers": 1,
+      "numerical_threads": 1
+    },
+    "no_automatic_confirmation": true,
+    "no_automatic_adoption": true,
+    "resource_projection": "after qualification and first complete counted planned pair; preserve partial roster if budget cannot fit"
+  },
+  "deferred": [
+    "EOS-balanced teaching with dose control",
+    "mature-life history with counted exposures",
+    "replacement protection gate",
+    "host campaign",
+    "arithmetic transfer experiment"
+  ]
+}

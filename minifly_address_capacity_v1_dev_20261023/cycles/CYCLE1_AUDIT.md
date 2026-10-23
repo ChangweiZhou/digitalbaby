@@ -1,0 +1,3 @@
+# Cycle 1 audit and revision
+
+All saved STD W checkpoints were tested with no native learner import. Native payload signs and eligibility counts are identical under the new controls. Fixed endpoint 1 and the zero-response position ablation reproduce the same mean NEW score; STOP exceeds them by only 0.6185 percentage points. Retain the original confirmation, narrow the interpretation of its benefit, and keep expansion independent. Conditional summary means with undefined cases are descriptive defined-subset means only; raw undefined counts and rows are retained. No efficacy inference may pool those away.
