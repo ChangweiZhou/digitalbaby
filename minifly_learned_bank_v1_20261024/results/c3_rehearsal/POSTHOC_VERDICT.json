@@ -1,0 +1,45 @@
+{
+ "label": "POSTHOC fail-closed check (not locked; see docstring)",
+ "results": "results/c3_rehearsal",
+ "locked_code_hashes_match": true,
+ "runtime_closure_all_verified": true,
+ "closure_files": 55,
+ "verdict": {
+  "overall": "INVALID_FOR_VERDICT",
+  "worlds_supporting": 1,
+  "problems": [
+   "worlds present ['D3'] != locked main worlds ['M1', 'M2', 'M3', 'M4']"
+  ],
+  "per_world": {
+   "D3": {
+    "evaluated": true,
+    "balanced_held_L": {
+     "LEARN": 0.9444,
+     "FROZEN": 0.3611,
+     "SHUF": 0.5,
+     "ORACLE": 1.0
+    },
+    "learn_ge_frozen_plus_margin": true,
+    "learn_ge_shuf_plus_margin": true,
+    "learn_gap_rises": true,
+    "learn_kta_rises": true,
+    "gate_oracle_ge_0.90": true,
+    "gate_frozen_codes_unchanged": true,
+    "gate_copy_sys_held_ge_0.30": true,
+    "copy_sys_held": [
+     0.963,
+     0.8148,
+     1.0
+    ],
+    "gates_ok": true,
+    "supports_condition_1": true
+   }
+  }
+ },
+ "comparison_with_locked_summary": {
+  "agree": false,
+  "differences": [
+   "overall: locked summarize 'supported' vs posthoc 'INVALID_FOR_VERDICT'"
+  ]
+ }
+}
