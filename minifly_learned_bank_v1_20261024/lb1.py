@@ -126,11 +126,13 @@ class Bank:
 class Layer:
     """Learned feature layer: a = W1 p + b1, h = relu(a), v = W2 h. W2 and feedback G are fixed random."""
 
-    def __init__(self, rng, hidden):
+    def __init__(self, rng, hidden, centre_tau=0.0):
         self.W1 = rng.normal(0., 1. / math.sqrt(88), (hidden, 88))
         self.b1 = np.zeros(hidden)
         self.W2 = rng.normal(0., 1. / math.sqrt(hidden), (88, hidden))
         self.G = rng.normal(0., 1. / math.sqrt(NBITS), (hidden, NBITS))
+        self.centre_tau = centre_tau
+        self.e_bar = np.zeros(NBITS)
 
     def forward(self, p):
         a = self.W1 @ p + self.b1
@@ -139,6 +141,10 @@ class Layer:
 
     def update(self, p, a, e, eta, lam):
         """Three-factor rule: presynaptic p, postsynaptic gate 1(a>0), broadcast third factor G e."""
+        if self.centre_tau:
+            # baseline-subtracted third factor: residual relative to its running mean (removes the common-mode
+            # part of the error, e.g. answer bits that never vary, which otherwise drives every prompt alike)
+            e, self.e_bar = e - self.e_bar, self.e_bar + (e - self.e_bar) / self.centre_tau
         d = (self.G @ e) * (a > 0)
         self.W1 -= eta * (np.outer(d, p) + lam * self.W1)
         self.b1 -= eta * d
@@ -146,7 +152,7 @@ class Layer:
 
 
 class Model:
-    def __init__(self, arm, seed, hidden=128, eta0=0.003, lam=1e-3, eta_ramp=1024):
+    def __init__(self, arm, seed, hidden=128, eta0=0.003, lam=1e-3, eta_ramp=1024, centre_tau=0.0):
         if arm not in ARMS:
             raise ValueError(arm)
         self.arm = arm
@@ -159,7 +165,7 @@ class Model:
         self.theta = np.zeros(len(m.kc_side))
         self.freq = np.full(len(m.kc_side), m.active_fraction)
         rng = np.random.default_rng(seed)
-        self.layer = Layer(rng, hidden) if arm in ("FROZEN", "LEARN", "SHUF") else None
+        self.layer = Layer(rng, hidden, centre_tau) if arm in ("FROZEN", "LEARN", "SHUF") else None
         self.oracle = rng.normal(size=(256, 88)) if arm == "ORACLE" else None
         self.time = 0.0
         self.records = 0

@@ -8,9 +8,28 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+import data
+
+
+PRIMARY = "PAR"
+MARGIN = 0.20
+
 
 def final(cp):
     return cp[-1]
+
+
+def held_balanced(r, cp, k):
+    """Balanced held accuracy (mean per-answer recall) of bank k (0 sys, 1 S, 2 L) from stored outputs."""
+    world = data.make_world(r["world"])
+    hit = defaultdict(list)
+    for a, b in world["held_pairs"]:
+        out = cp["outputs"][f"{a}{b}"][k]
+        if out is None:
+            return None
+        t = data.answer(r["task"], a, b)
+        hit[t].append(out == t)
+    return round(sum(sum(v) / len(v) for v in hit.values()) / len(hit), 4)
 
 
 def main():
@@ -28,6 +47,8 @@ def main():
         rows.append({
             "task": r["task"], "arm": r["arm"], "world": r["world"], "records": r["train_records"],
             "held_sys": fin["acc"]["held"]["sys"], "held_L": fin["acc"]["held"]["L"], "held_S": fin["acc"]["held"]["S"],
+            "held_bal_sys": held_balanced(r, fin, 0), "held_bal_S": held_balanced(r, fin, 1),
+            "held_bal_L": held_balanced(r, fin, 2),
             "taught_sys": fin["acc"]["taught"]["sys"], "taught_L": fin["acc"]["taught"]["L"],
             "held_L_best_checkpoint": best_pass["acc"]["held"]["L"], "best_label": best_pass["label"],
             "kta_L_birth": mL0.get("kta_all"), "kta_L_final": mL1.get("kta_all"),
@@ -35,38 +56,46 @@ def main():
             "min_drift_L": min([c["meters"].get("L", {}).get("train_code_jaccard_vs_prev", 1.0) for c in cps[1:]]
                                or [1.0]),
             "cpu_per_record": r["train_cpu_per_record_s"], "total_cpu_s": r["total_cpu_s"]})
-    print(f"{'task':5} {'arm':7} {'world':6} {'rec':>5} {'heldSys':>7} {'heldL':>6} {'tchSys':>6} {'tchL':>6} "
+    print(f"{'task':5} {'arm':7} {'world':6} {'rec':>5} {'heldSys':>7} {'heldL':>6} {'balL':>6} {'tchSys':>6} {'tchL':>6} "
           f"{'ktaL0':>7} {'ktaL1':>7} {'gapL0':>7} {'gapL1':>7} {'drift':>6}")
     fmt = lambda v: "   -  " if v is None else f"{v:6.3f}"
     for x in rows:
         print(f"{x['task']:5} {x['arm']:7} {x['world']:6} {x['records']:5d} {fmt(x['held_sys'])} {fmt(x['held_L'])} "
+              f"{fmt(x['held_bal_L'])} "
               f"{fmt(x['taught_sys'])} {fmt(x['taught_L'])} {fmt(x['kta_L_birth'])} {fmt(x['kta_L_final'])} "
               f"{fmt(x['gap_L_birth'])} {fmt(x['gap_L_final'])} {fmt(x['min_drift_L'])}")
-    # decision rule (T-MOD): in every world LEARN held_L > FROZEN held_L and > SHUF held_L,
-    # and LEARN's held transfer gap rises above its birth value while FROZEN's does not.
+    # decision rule (LOCK.json; DESIGN.md amendment A1): primary task PAR, metric = balanced held accuracy of the
+    # learned bank at the final checkpoint. In each world: LEARN >= FROZEN + 0.20 and >= SHUF + 0.20, LEARN's held
+    # transfer gap and kernel-target alignment both above birth; plumbing gates: ORACLE >= 0.90, FROZEN codes unchanged.
     by = defaultdict(dict)
     for x in rows:
         by[(x["task"], x["world"])][x["arm"]] = x
     verdict = {}
     for (task, w), arms in sorted(by.items()):
-        if task != "MOD" or not {"LEARN", "FROZEN", "SHUF"} <= set(arms):
+        if task != PRIMARY or not {"LEARN", "FROZEN", "SHUF"} <= set(arms):
             continue
         L, F, S = arms["LEARN"], arms["FROZEN"], arms["SHUF"]
+        o = arms.get("ORACLE", {}).get("held_bal_L")
         verdict[w] = {
-            "learn_gt_frozen": L["held_L"] > F["held_L"],
-            "learn_gt_shuf": L["held_L"] > S["held_L"],
+            "learn_bal": L["held_bal_L"], "frozen_bal": F["held_bal_L"], "shuf_bal": S["held_bal_L"], "oracle_bal": o,
+            "learn_ge_frozen_plus_margin": L["held_bal_L"] >= F["held_bal_L"] + MARGIN,
+            "learn_ge_shuf_plus_margin": L["held_bal_L"] >= S["held_bal_L"] + MARGIN,
             "learn_gap_rises": L["gap_L_final"] > L["gap_L_birth"],
-            "frozen_gap_flat": not (F["gap_L_final"] > F["gap_L_birth"] + 1e-9),
-            "oracle_ok": arms.get("ORACLE", {}).get("held_L", None),
+            "learn_kta_rises": L["kta_L_final"] > L["kta_L_birth"],
+            "gate_frozen_codes_unchanged": F["min_drift_L"] == 1.0 and F["gap_L_final"] == F["gap_L_birth"],
+            "gate_oracle": None if o is None else o >= 0.90,
         }
-        verdict[w]["supports_condition_1"] = all(verdict[w][k] for k in
-                                                 ("learn_gt_frozen", "learn_gt_shuf", "learn_gap_rises",
-                                                  "frozen_gap_flat"))
+        v = verdict[w]
+        v["gates_ok"] = v["gate_frozen_codes_unchanged"] and v["gate_oracle"] is not False
+        v["supports_condition_1"] = v["gates_ok"] and all(v[k] for k in (
+            "learn_ge_frozen_plus_margin", "learn_ge_shuf_plus_margin", "learn_gap_rises", "learn_kta_rises"))
     if verdict:
         print(json.dumps(verdict, indent=1))
-    out = {"rows": rows, "verdict_by_world": verdict,
-           "supports_condition_1_all_worlds": bool(verdict) and all(v["supports_condition_1"]
-                                                                    for v in verdict.values())}
+    n_ok = sum(v["supports_condition_1"] for v in verdict.values())
+    overall = ("not evaluated" if not verdict else "supported" if n_ok == len(verdict)
+               else "partial" if n_ok >= len(verdict) - 1 and len(verdict) >= 4 else "not supported")
+    print("overall:", overall, f"({n_ok}/{len(verdict)} worlds)")
+    out = {"rows": rows, "verdict_by_world": verdict, "worlds_supporting": n_ok, "overall": overall}
     (d / "SUMMARY.json").write_text(json.dumps(out, indent=1))
 
 

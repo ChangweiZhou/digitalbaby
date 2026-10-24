@@ -103,7 +103,7 @@ def history(job):
     world = data.make_world(wname)
     taught = {p: data.answer(task, *p) for p in world["train_pairs"]}
     if arm == "SHUF":
-        taught = data.derangement(task, world["train_pairs"], wname)
+        taught = data.shuffled_labels(task, world)
     model = lb1.Model(arm, world["model_seed"], **settings)
     order = data.schedule(world, passes)
     per_pass = len(world["train_pairs"])

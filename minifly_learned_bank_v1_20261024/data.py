@@ -17,6 +17,8 @@ def answer(task, a, b):
         return ord(str((a + b) % 10))
     if task == "COPY":
         return ord(str(a))
+    if task == "PAR":
+        return ord(str((a + b) % 2))
     raise ValueError(task)
 
 
@@ -61,6 +63,28 @@ def derangement(task, pairs, name):
         if all(t != u for t, u in zip(taught, truth)):
             return dict(zip(pairs, taught))
     raise RuntimeError("no derangement")
+
+
+def shuffled_labels(task, world):
+    """SHUF teaching. MOD/COPY: derangement over ordered pairs. PAR (binary): a derangement would invert every label,
+    which is anti-parity and just as structured, so labels are permuted among training orbits (both orientations
+    keep one label) until agreement with the truth is as close to half as possible."""
+    pairs = world["train_pairs"]
+    if task != "PAR":
+        return derangement(task, pairs, world["name"])
+    rng = np.random.default_rng(seed_of("shuffle:" + task + ":" + world["name"]))
+    orbits = world["train"]
+    truth = [answer(task, a, b) for a, b in orbits]
+    best = None
+    for _ in range(10000):
+        perm = rng.permutation(len(orbits))
+        agree = sum(truth[i] == t for i, t in enumerate(truth[j] for j in perm))
+        if best is None or abs(agree - len(orbits) / 2) < abs(best[0] - len(orbits) / 2):
+            best = (agree, perm)
+        if abs(agree - len(orbits) / 2) <= 0.5:
+            break
+    lab = {o: truth[j] for o, j in zip(orbits, best[1])}
+    return {(a, b): lab[(min(a, b), max(a, b))] for a, b in pairs}
 
 
 def schedule(world, passes):
