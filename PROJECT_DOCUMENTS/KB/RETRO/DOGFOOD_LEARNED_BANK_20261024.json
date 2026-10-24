@@ -1,0 +1,375 @@
+{
+ "rev": {
+  "executed_checks": [
+   "x1 trace_number (/tmp/rev_lb1/rv/x1_trace.py -> /tmp/rev_lb1/out/x1_trace.out.json, stdlib, ulimit -t 60). Takes held pairs from each history's saved held_orbits, with its own answer function and no delivery imports. Recomputes balanced held accuracy of the learned bank for every PAR arm and world, the margins, the KTA and gap clauses, all three gates and the overall rule. Result: LEARN 0.7257/0.9722/1.0000/0.9643; FROZEN 0.4340/0.3611/0.4667/0.6071; SHUF 0.6215/0.4889/0.6417/0.5000; ORACLE 1.0 everywhere. Margins vs FROZEN +0.292/+0.611/+0.533/+0.357; vs SHUF +0.104/+0.483/+0.358/+0.464. KTA ratio 3.77/6.46/7.17/5.00. Overall partial 3/4. Matches SUMMARY.json and POSTHOC_VERDICT.json to within 5e-5, with no differences. Completeness: 32 histories, M1-M4 only, held orbits the same across arms, records = 150 x train prompts (75/72/73/72), every final checkpoint is final_rest1h.",
+   "x2 reject_input (/tmp/rev_lb1/rv/x2_reject_input.py -> /tmp/rev_lb1/out/x2_reject_input.out.json). Transcribes summarize.py:71-101 (run on mutated copies of SUMMARY.json rows) and posthoc_check.py verdict() (run on mutated copies of the histories); no delivery code runs. 9 mutants. The locked rule failed to reject every must-reject mutant it could be fed: drop ORACLE -> partial; drop all T-COPY -> partial; drop SHUF M1 -> 'supported' 3/3 (an upgrade); only M3 -> supported 1/1; rename to D1-D4 -> partial; add M5 -> partial 4/5; ORACLE held_bal_L None -> partial. posthoc rejected all 8 must-reject mutants as INVALID_FOR_VERDICT, including a LEARN history cut at pass100 (that mutant had no rows to feed the locked rule).",
+   "x3 shortcut_attempt (/tmp/rev_lb1/rv/x3_shortcut.py -> /tmp/rev_lb1/out/x3_shortcut.out.json). Builds the MRK-1 SPEC 9.2 ladder from each world's TAUGHT manifest, with scorer.py@0471fda3 tie-breaks: CONST, LENFREQ, SUFFIX1-3, COPY_A/B, ID_ZERO, DIGIT_NO_CARRY, EXACT, CANON, NEAREST, MODE_REPEAT. Adds 4 lookups outside the ladder: PREFIX1, NEAREST with the largest tie, a kNN vote, and SUFFIX2 when it agrees with PREFIX1. No learner. Best member per world 0.50/0.63/0.52/0.54 balanced, against the 0.82/0.69/0.84/0.81 needed for the locked margins. passed_locked_rule=false. Also computes kit-style strata and the pair_rectangle witness: all held items are determined, S0 = 5/4/0/9 items, LEARN on counted non-S0 items 0.69/0.96/1.00/0.95 balanced.",
+   "x4 determinism (/tmp/rev_lb1/rv/x4_recheck.py -> /tmp/rev_lb1/out/x4_recheck.out.json): results/main/COPY_BASE_M1.json and results/main_recheck/COPY_BASE_M1.json are identical in all 8 checkpoints apart from CPU and RSS timing fields.",
+   "x5 secondary numbers (/tmp/rev_lb1/rv/x5_report_numbers.py -> /tmp/rev_lb1/out/x5_report_numbers.out.json). Balanced held accuracy of the system answer: LEARN 0.545/0.783/0.808/0.643, SHUF 0.653/0.539/0.683/0.500, FROZEN 0.340/0.356/0.383/0.429. The 32 histories total 11.24 CPU-h. LEARN's held learned-bank outputs are byte-identical between pass150 and after the rest in every world.",
+   "x6 kit aggregators (/tmp/rev_lb1/rv/x6_kit_aggregators.py -> /tmp/rev_lb1/out/x6_kit_aggregators.out.json). d_w = LEARN - max(0.5, FROZEN, SHUF, best ladder member) = 0.104/0.472/0.358/0.357. all_worlds >0.20: FAIL. k_of_n 3/4: PASS. paired_lcb (alpha 0.05, t 2.353): LCB 0.140, FAIL at margin 0.20, PASS at 0.10.",
+   "Stable checker retro: python3 -I /tmp/rev_lb1/kit/tools/minifly_check/minifly_check.py --repo-root /home/user/digitalbaby retro origin/charming-head:minifly_learned_bank_v1_20261024 --out /tmp/rev_lb1/retro_out. Exit 0, 11 rows, git refs supported. FLAG: R-LOCKTIME, R-CLOSURE, R-FAILOPEN, R-CLAIM, R-AUTH. PASS: R-LITERAL, R-PATHS, R-INERT. NOT_APPLICABLE: R-CTRL, R-CATALOG, R-POINTER. Output: /tmp/rev_lb1/retro_out/RETRO_ANNOTATIONS_20261024T200821Z.jsonl.",
+   "Stable checker lint on /tmp copies of REPORT.md, MEMO.md, NOTES_FOR_SKILLS_SESSION.md, CYCLE2.md and CYCLE3.md (/tmp/rev_lb1/out/lint.json). Exit 1: one CLM-06 FAIL at NOTES:40. CLM-12 PASS, CLM-16 PASS. A probe file (/tmp/rev_lb1/probe/probe.md) shows CLM-06 fires on 'partial ... by the locked gate' but not on 'partial ... by the locked rule' or 'The verdict is partial', and prints no WARN row for 'largely'.",
+   "git read-only checks. LOCK.json code hashes equal the blobs at 1ce1eadb and at 656228be, and minifly_cls_dev_20261017/bootstrap.py (not hashed by the lock) has the same blob at lock and at final. Lock commit 03:34:11Z; main-run log commit 84c530d4 03:35:53Z. The delivery's commits have no Acting-Agent trailers, git author 'Claude'; branch origin/claude/charming-clarke-u9g850.",
+   "Code read, no execution: lb1.py:179-185 and 235-288. true_byte goes into train() and probe() for every arm but is used only in code_L for ORACLE (lb1.py:182-183). layer.update runs only for LEARN and SHUF (lb1.py:255). run.py:104-108 teaches and schedules only train_pairs, and SHUF changes only the taught labels. I found no held-answer leakage path."
+  ],
+  "findings": [
+   {
+    "id": "R1",
+    "severity": "MAJOR",
+    "fm_ids": [
+     "FM-14",
+     "FM-04"
+    ],
+    "claim": "The locked decision code fails open in a way that can upgrade the verdict, not just tolerate missing input. If the SHUF history of the one failing world (M1) is deleted, summarize.py skips M1 and returns 'supported' (3 of 3) instead of 'partial'. It also returns partial or supported with ORACLE missing, with all T-COPY missing, with a single world, with dev-world names, or with 5 worlds. The outcome of this run is unchanged, because all 32 locked histories are present.",
+    "evidence": "summarize.py:76 (a world without LEARN, FROZEN or SHUF is silently skipped), :92-93 ('is not False'), :99-100 (n_ok == len(verdict); 'partial' tests len(verdict) >= 4) at origin/charming-head. Mutant outputs in /tmp/rev_lb1/out/x2_reject_input.out.json. posthoc_check.py rejects all of them as INVALID_FOR_VERDICT. The saved results/c3_rehearsal/SUMMARY.json already reads 'supported' for 1 of 1 dev world.",
+    "executed": true
+   },
+   {
+    "id": "R2",
+    "severity": "MAJOR",
+    "fm_ids": [
+     "FM-07",
+     "FM-23",
+     "FM-22"
+    ],
+    "claim": "The integrated system answer does not show the effect against the shuffled-label control. Balanced held accuracy of the system answer minus SHUF's is -0.108, +0.244, +0.125 and +0.143, so the 0.20 margin holds in only 1 of 4 worlds, and SHUF beats LEARN in M1. The REPORT's system-answer table lists LEARN, FROZEN and BASE but leaves out SHUF. The pre-registered metric is the learned bank's own readout, so the verdict stands. But it is a component readout, not what the fly itself answers.",
+    "evidence": "/tmp/rev_lb1/out/x5_report_numbers.out.json: system balanced LEARN 0.545/0.783/0.808/0.643 vs SHUF 0.653/0.539/0.683/0.500. SUMMARY.txt SHUF heldSys 0.680/0.464/0.667/0.500. REPORT.md:43-49 has no SHUF row. MINIFLY_OBJECTIVE_CONTRACT.md:30 ('which actual learner branch produces the scored answer'; an integrated test is needed).",
+    "executed": true
+   },
+   {
+    "id": "R3",
+    "severity": "MAJOR",
+    "fm_ids": [
+     "FM-22",
+     "FM-09"
+    ],
+    "claim": "The REPORT never states an evidence level, which contract item 1 requires. It frames the outcome as 'partial support', and 'partial' is a CLM-06 soft word. Under the kit the pre-registered primary is not PASS ('partial' is not 'supported'), so level_earned is NONE. Even read as 3-of-4 PASS, a single-byte learned-bank readout without own-EOS is a component gate capped at E1. There is also no no_prior_teaching arm, which kit E3 requires.",
+    "evidence": "REPORT.md:5 and :75; MEMO.md:6. Kit claimcheck.py level_of (non-PASS -> NONE; component -> at most E1) and gate_type_of at 0471fda3. e3-design SKILL section 3 arms table. grep for E0-E4 across the delivery's .md files finds none. Kit aggregators: all_worlds FAIL, paired_lcb 0.140 < 0.20 (/tmp/rev_lb1/out/x6_kit_aggregators.out.json).",
+    "executed": true
+   },
+   {
+    "id": "R4",
+    "severity": "NOTE",
+    "fm_ids": [
+     "FM-06"
+    ],
+    "claim": "Cheapest-shortcut attempt: no non-learning policy reaches the locked rule. The best ladder member or extra lookup scores at most 0.633 balanced, against 0.69-0.84 needed. The kit ladder is nearly degenerate for a binary parity byte: operand members emit digits, and the exposure-independent members are constants worth exactly 0.50. The only stronger non-learning program is the task rule itself (XOR over a pair_rectangle, 1.00), which is not a shortcut.",
+    "evidence": "/tmp/rev_lb1/out/x3_shortcut.out.json (passed_locked_rule false; member scores per world).",
+    "executed": true
+   },
+   {
+    "id": "R5",
+    "severity": "NOTE",
+    "fm_ids": [
+     "FM-25"
+    ],
+    "claim": "The headline and secondary numbers reproduce exactly from the raw per-prompt outputs with independent code. That covers balanced accuracy per world and arm, both margins, KTA growth of 3.8-7.2x, gap rises of +0.024 to +0.049, gates, 3/4 partial, rest invariance and 11.2 CPU-h.",
+    "evidence": "/tmp/rev_lb1/out/x1_trace.out.json (comparison.match true); /tmp/rev_lb1/out/x5_report_numbers.out.json (11.24 CPU-h, LEARN held outputs unchanged after the rest).",
+    "executed": true
+   },
+   {
+    "id": "R6",
+    "severity": "MINOR",
+    "fm_ids": [
+     "FM-01",
+     "FM-14"
+    ],
+    "claim": "posthoc_check.py is not independent and is not fully fail-closed. It imports the delivery's data.py (make_world, answer) and repeats summarize's held_balanced logic. The FROZEN gate defaults a missing drift meter to 1.0. It reports locked_code_hashes_match and runtime_closure_all_verified but never adds them to problems or to the overall verdict. REPORT.md:78 'independent code' overstates this.",
+    "evidence": "posthoc_check.py:26, :72-80, :140, :164-166 and :179-181 (read). x2 mutant 'FROZEN drift meter key absent' still returns partial under posthoc. My x1 recomputation, which uses the saved held_orbits and no delivery imports, agrees.",
+    "executed": true
+   },
+   {
+    "id": "R7",
+    "severity": "MINOR",
+    "fm_ids": [
+     "FM-22"
+    ],
+    "claim": "The memo turns a possibility into a cause. 'that noise decided M1' ignores that LEARN was weakest in M1 (0.726, alignment still rising). With the same margin, paired_lcb across worlds fails at 0.20 anyway. 'Problems 2 and 1 are largely artifacts' is an untested causal claim that uses a soft word. The REPORT itself words M1 more carefully.",
+    "evidence": "MEMO.md:22 and :25 at origin/charming-head; LEARN M1 trajectory in /tmp/rev_lb1/out/x1_trace.out.json; /tmp/rev_lb1/out/x6_kit_aggregators.out.json.",
+    "executed": true
+   },
+   {
+    "id": "R8",
+    "severity": "MINOR",
+    "fm_ids": [
+     "FM-22"
+    ],
+    "claim": "Confirm wording on dev worlds sits in process notes: the CYCLE2.md:61 heading 'Native confirmation' (D2) and NOTES 'development confirmation'. The REPORT has no confirm tokens.",
+    "evidence": "retro R-CLAIM FLAG rows in /tmp/rev_lb1/retro_out/RETRO_ANNOTATIONS_20261024T200821Z.jsonl; grep -i confirm on REPORT.md finds no matches.",
+    "executed": true
+   },
+   {
+    "id": "R9",
+    "severity": "MINOR",
+    "fm_ids": [
+     "FM-13",
+     "FM-29"
+    ],
+    "claim": "LOCK.json hashes a hand-listed set of files (make_lock.py:12) and leaves bootstrap.py and the minifly_a_v3 modules out. The post-hoc closure check limits the risk: I confirmed that the bootstrap.py blob and the 5 locked delivery files are identical at the lock commit and at the final commit.",
+    "evidence": "retro R-CLOSURE FLAG; git show 1ce1eadb vs origin/charming-head sha256 (lb1/data/run/summarize/main.sh and bootstrap.py identical).",
+    "executed": true
+   },
+   {
+    "id": "R10",
+    "severity": "NOTE",
+    "fm_ids": [
+     "FM-11",
+     "FM-19"
+    ],
+    "claim": "Process notes. The main run started about 1.7 min after the lock commit, so no independent lock acknowledgement was possible. Main-world splits are a deterministic function of public names and are not committed as a held-set hash, so 'generated only after the lock' cannot be verified (no sign of peeking). Amendment A1 picked PAR, where the candidate's local rule already reached 1.00 on dev. The determinism recheck covers COPY BASE M1 only, which never runs the three-factor rule. Unsealed means MAIN, not SEALED_CONFIRM.",
+    "evidence": "git log timestamps 1ce1eadb 03:34:11Z and 84c530d4 03:35:53Z; data.py:38-52 (read); CYCLE2.md:17-36; /tmp/rev_lb1/out/x4_recheck.out.json.",
+    "executed": true
+   },
+   {
+    "id": "R11",
+    "severity": "NOTE",
+    "fm_ids": [
+     "FM-27"
+    ],
+    "claim": "This review is not independent. I am a Claude-family subagent and the delivery was written by Claude: git author 'Claude', branch origin/claude/charming-clarke-u9g850, no Acting-Agent trailers. Under minifly-independent-review sections 1 and 9 this is REVIEW_DEBT. It does not discharge the Codex executing review that the skill (section 10) and claims-knowledge section 5 require before LEARNED-BANK's verdict is cited.",
+    "evidence": "git log --format trailers on minifly_learned_bank_v1_20261024; git branch -r --contains 1ce1eadb.",
+    "executed": true
+   }
+  ],
+  "retro_summary": "The stable checker's retro accepts a git ref (origin/charming-head:minifly_learned_bank_v1_20261024) and ran read-only in 1.4 s, writing only to /tmp/rev_lb1/retro_out.\n\n**Flags**\n- R-FAILOPEN: summarize.py:92-93 'is not False' and :99 n_ok == len(...). Correct, and x2 shows the defect is worse than retro states: a missing control can upgrade the verdict.\n- R-CLOSURE: bootstrap.py is outside LOCK.json, and posthoc_check.py is a verdict script outside the lock. Correct; the latter is disclosed as POSTHOC.\n- R-CLAIM: 'confirmation' wording in CYCLE2:61 and NOTES. Correct, low stakes.\n- R-LOCKTIME: the reason text says results predate the lock. Those are dev-world results (c1_tiny, c2a, c2b, c3_rehearsal), which is expected. The real point is that the main run began about 1.7 min after the lock.\n- R-AUTH: no AUTHORIZATION record. Correct for a legacy delivery.\n\nR-LITERAL, R-PATHS and R-INERT PASS; R-CTRL, R-CATALOG and R-POINTER are NOT_APPLICABLE. The acceptance block ('accepted: False', recall 5/6) is a whole-repo statistic. It has no meaning on a single-delivery run.\n\nRetro is not held-out evidence here. retro.py hard-codes MUST_FLAG rows for exactly these LEARNED-BANK defects (FAILOPEN-lb, CLOSURE-lb, CLAIM-lb, LOCKTIME-lb), so flagging them measures recall on a training example. Retro also did not flag the soft word 'partial' in the REPORT's verdict sentence.\n\n**Cross-check against the reviewer session's review (reviews_20261024/MRK1_KIT_0471fda3.md)**\n\nThat review was written by the LEARNED-BANK session itself, so it is same-family self-review, and it reviews the kit rather than this delivery.\n\nAgreements:\n- It is a component result: parity, one externally delimited byte, no own EOS, no OLD guard.\n- Its mean values (learned bank 0.916, FROZEN 0.467, SHUF 0.563, system 0.695) match my recomputation; 0.695 is LEARN's balanced system accuracy.\n- The native FROZEN floor (0.36-0.61 on M1-M4) sits above the evaluator floor (0.22/0.24).\n- posthoc_check never puts its closure or lock-hash results into problems (its 16(i)).\n- The 11.2 CPU-h figure covers only the 32 final histories (its 16(ii)). I measured 11.24 h, so the REPORT's wording is accurate but leaves out lineage-wide cost.\n\nDisagreements and omissions:\n- It says SHUF noise 'alone decided' M1. LEARN's own weakness in M1 was equally decisive, and the paired-LCB fix it proposes would still fail at margin 0.20 (LCB 0.140).\n- It gives no system answer for SHUF, which beats LEARN's in M1 (my R2).\n- It does not test the fail-open rule with a mutant that turns 'partial' into 'supported' (R1).\n- It runs no shortcut attempt, and does not state that the kit would give level NONE.\n\n**Note for the relayed user question**\n\nEverything here ran against the frozen 0471fda3 kit and read-only git, so it did not interfere with the agent editing the working tree. Any test experiment of the 'new skill' should pin the skills to a commit. The working-tree skills are uncommitted WIP that describe checker 1.0.1 features (CLM-17, CLM-17P, REV-09, commit_family) which the stable kit lacks.",
+  "claim_wording_assessment": "The numbers are honest and reproducible. The framing overstates relative to the claims-knowledge rules and the objective contract.\n\n**What holds**\n- Every number I checked in REPORT.md reproduces from the raw outputs.\n- The REPORT reports the failing world, keeps the 0.20 margin 'as written', and avoids confirm wording.\n- It discloses that the system answer is weaker than the learned bank.\n\n**Problems**\n- The verdict word. 'Answer: partial support (3 of 4 fresh worlds), by the locked rule' (REPORT.md:5) and 'Overall: partial (3 of 4)' (REPORT.md:75) use 'partial', which is on the CLM-06 soft-word list. 'Support' is not closed vocabulary.\n  - v1-compliant wording would be: 'The locked rule passed in 3 of 4 MAIN worlds (M2, M3, M4); M1 failed LEARN >= SHUF + 0.20 (margin 0.104); the pre-registered overall label for 3 of 4 is \"partial\", not \"supported\"; level earned NONE (attempted level not stated).'\n  - The stable lint does not catch REPORT:5 or MEMO:6. It flags 'partial' only when the sentence says 'gate'.\n- No E-level. None is stated anywhere in the delivery, which breaches contract item 1.\n- Component versus objective. The headline metric is the learned bank's own single-byte readout. The integrated system answer is 0.55-0.81 balanced and is not separable from SHUF at the 0.20 margin in 3 of 4 worlds. SHUF's system row is missing from the REPORT table.\n  - So 'the bank answers held-out prompts that a fixed random kernel cannot' is fair for the sub-bank. It is not true of the fly.\n- 'The mechanism is the address kernel' (REPORT.md:90) is close to true by construction, since the layer reaches the bank only through its address. But it rests on correlational meters, not an intervention.\n- 'Became task-aligned' (REPORT.md:7) overstates. Kernel-target alignment rose to 0.195-0.353, against ORACLE's 1.0; 'more task-aligned' would be accurate.\n- 'Independent code' (REPORT.md:78) overstates, because posthoc_check shares data.py with the producer.\n\n**Distance from E3 unseen addition**\nThe distance is large:\n- The task is a 1-bit XOR of operand parities over 55 single-digit orbits.\n- All held items are pair_rectangle-determined S2 interpolation, with no S3 or S4.\n- T-MOD, the column rule, was dropped because the screened backprop settings could not learn it from 74 prompts.\n- There is no own-EOS multi-byte answer, no OLD guard, no intervening learning, no no_prior_teaching arm, no UDI and no seal.\n- It took about 11,000 records for 74 examples.\n\nThe memo adds a causal overclaim ('that noise decided M1', MEMO.md:22) and the soft word 'largely' (MEMO.md:25).",
+  "level_actually_earned": "The delivery earns no evidence level for its pre-registered primary.\n\n- **Kit reading.** The locked overall label is 'partial', not 'supported', so the primary is not PASS and the stable kit's CLM-03 gives level_earned NONE. Even if 3 of 4 counted as PASS, the gate is component-type, which caps the level at E1. Kit-style aggregation also fails: all_worlds fails, and the paired LCB is 0.140, below the 0.20 margin.\n- **Contract reading.** Under MINIFLY_OBJECTIVE_CONTRACT.md the strongest supportable label is E1, for taught association in the learned bank: taught accuracy 0.97-1.00, retained after the 1 h rest.\n- **What the held-out result is.** It is an E3-shaped component diagnostic, not E3. On held-out parity, the learned bank's own readout beat FROZEN and SHUF by at least 0.20 balanced in 3 of 4 MAIN worlds (M1 beat SHUF by only 0.10), and no shortcut came close.\n- **Why it is not E3:**\n  - the pre-registered rule was not met;\n  - there is no no-prior-teaching arm (SHUF only partly plays that role);\n  - the integrated system answer does not carry the effect against SHUF;\n  - the task family is parity, not addition;\n  - the worlds are unsealed;\n  - there has been no cross-family review.\n\nIt is not a promotion and not E3 unseen addition. At most it is a component feasibility signal that a local three-factor rule can make a Full151 learned bank's address task-aligned for a 1-bit interaction.",
+  "skill_friction": [
+   "Identity contradiction. The task asked me to act as the independent reviewer, but the review skill (sections 1 and 9) says a same-family subagent review is REVIEW_DEBT. I am Claude and the author is Claude, so whatever I execute cannot count as the review this delivery needs.",
+   "The review skill pre-states this delivery's defects (section 11 lists the fail-open rule, the lock-closure gap and the distance from E3). That anchors the reviewer before any independent reading. Retro also hard-codes LEARNED-BANK MUST_FLAG rows. Both measure recall on training examples, not held-out detection (FM-30).",
+   "REVIEW_PROTOCOL is written only for v1 deliveries. It needs ENDPOINT_LOCK and ADMISSION, rerun_admission, canary, REVIEW.json, scripts committed under <dir>/review/, and scoring through scorer.score_rows and decide.evaluate. None of that exists or is allowed for a legacy delivery at T0. I had to reimplement the ladder, strata and aggregators by hand, which risks transcription drift. No T0 location for the record is defined: KB/RETRO is in the repo, and the T0 rules let me write only under /tmp.",
+   "rerun_admission and replay are impossible under T0 (no training). The skill gives no T0 substitute, such as checking a recheck pair as I did in x4. The only recheck available covers the BASE arm, which never exercises the learned layer.",
+   "The shortcut ladder is addition-shaped. On a one-byte binary answer the operand members emit digits and score about 0, CONST, LENFREQ and SUFFIX1 are constants worth exactly 0.50 balanced, and FIXED_k and MODE_REPEAT are degenerate. The shortcut_attempt is therefore weak by construction, and the skill gives no guidance for non-addition task families. The S0 rule 'answer equals an operand' marks parity items with operand 0 or 1 as trivial by coincidence.",
+   "Version skew. The working-tree skills are uncommitted WIP (df15253b plus local edits from another agent) and describe checker 1.0.1 features: CLM-17, CLM-17P, REV-09, commit_family and section 8a prose adjudication. The stable 0471fda3 kit I was told to run has none of them. I could not tell which text is authoritative for this review.",
+   "Lint gap (executed probe). Stable CLM-06 flags 'partial' only when the sentence contains 'gate'. 'partial support ... by the locked rule' (REPORT:5, MEMO:6) and 'The verdict is partial' pass. No WARN row is printed for 'largely' outside gate sentences, so T0 memo lint misses the main verdict sentence. Retro R-CLAIM also misses that soft word.",
+   "Retro output is confusing for one delivery. It prints whole-repo acceptance ('accepted: False', recall 5/6) on a single-delivery run. R-LOCKTIME reads like a violation even though the pre-lock results are dev-world results, which is expected. A reviewer has to adjudicate every row by hand.",
+   "The skills give no rule for a pre-registered three-way label such as supported / partial / not supported. CLM-06 bans 'partial' while the legacy lock defines it as a verdict, so mapping it to PASS or FAIL needs judgment the skills do not supply. I reported it both ways."
+  ]
+ },
+ "fit": {
+  "package_dir": "/tmp/sfdr/pkg (main faithful rendering). Variants: /tmp/sfdr/pkg_sim adds SIMULATED launch bookkeeping so claim and publish can run; /tmp/sfdr/pkg_cf assumes an EOS after the answer byte (COUNTERFACTUAL); /tmp/sfdr/pkg_amend replays the real T-MOD lock, then MOD outcomes, then the switch to T-PAR. Reproducible builders and converters are in /tmp/sfdr/tools (build_pkg.sh, build_sim.sh, build_cf.sh, build_amend.sh, convert.py, fill_lock.py, set_shared.py, vendor_pkg.py, sim_attempt.py, recompute.py). Gate logs are in /tmp/sfdr/out, /tmp/sfdr/out_sim, /tmp/sfdr/out_cf, /tmp/sfdr/out_amend, and each variant keeps its gate reports under <variant>/minifly_learned_bank_dev_v1_20261024/checks/.",
+  "stages_run": [
+   "Tooling and honesty notes. The checker is a byte-identical git-archive of 0471fda3 (diff -r against /tmp/sfdr/kit shows no differences). It runs as /tmp/sfdr/venv/bin/python3 -I <variant>/tools/minifly_check/minifly_check.py. Two reasons for that: SELF-01 needs the kit inside the git repo that holds the delivery, and lock build can only resolve the native closure's scipy/numba imports when they are importable (venv in /tmp). No LEARNED-BANK code was executed and nothing was trained. All rows were converted from saved per-prompt JSON with stdlib scripts. The main repo was used read-only (git archive/show/log/grep/ls-tree only).",
+   "kb status: cadence 0, 7 open incidents.",
+   "selftest, run implicitly by SELF-01: PASS, 117 fixtures, 31.6 s.",
+   "init minifly_learned_bank_dev_v1_20261024 --claim-level E1 --task-family other_arithmetic: 54 __FILL__ values.",
+   "gate --stage lock (faithful): FAIL on LOCK-04, LOCK-11 and AUT-01, plus AMD-04 once world ids exist in the repo.",
+   "lock build: refused twice (unrolling the non-literal sys.path in paths.py was a dry-run-only patch), then wrote SOURCE_LOCK. This needed the native package vendored from the tracked zip (46 runtime files sha-verified against POSTHOC_CLOSURE.json) and an operational amendment AMD-1 for files.shared.",
+   "gate --stage roster: FAIL, 10 FAIL and 20 MISSING.",
+   "score --role dev (D2 from c2b): INCOMPLETE. Held exact own-EOS 0.0; best shortcut FIXED_1 0.8235.",
+   "score --role rehearsal (D3): INCOMPLETE. FIXED_1 0.944.",
+   "gate --stage official --dry: FAIL.",
+   "gate --stage official: FAIL, with 33 PASS, 17 FAIL, 20 MISSING and 2 WARN.",
+   "score --role official (M1-M4, 3,460 rows): VERDICT INVALID, INTEGRITY_ALARM.",
+   "launch --stage testbed and launch --stage official with a no-op command: both REFUSED by their gate bundles.",
+   "claim in the faithful pkg: refused, exit 2, 'results/official/ exists without a launch-recorded official attempt'.",
+   "pkg_sim, with simulated ATTEMPTS rows marked simulated_by_dry_run. cycle close dev continue: OK. cycle close rehearsal continue: REFUSED (no PASS dry report), so it was closed as escalate. claim generated the headline.",
+   "pkg_sim publish gate, run three times: verbatim REPORT gave 8 FAIL; after the kit-forced headline line and one proposed finding it gave 7 FAIL; after re-running claim it gave 6 FAIL.",
+   "lint REPORT.md: PASS, with WARN CLM-06 'partial'.",
+   "pkg_cf: score official INCOMPLETE. Held 91.6% against FIXED_1 91.6%, so G 0.0pp. The claim headline was generated.",
+   "pkg_amend: lock gate on v0 (T-MOD) and on v1 after the T-PAR amendment. AMD-02 and AMD-03 FAIL."
+  ],
+  "friction": [
+   {
+    "kind": "schema_gap",
+    "check_or_field": "primary.metric / scorer exactness (MET-01), task.format.eos_hex and gen_cap_bytes",
+    "detail": "LEARNED-BANK reads one answer byte per prompt from 8 opponent bit margins. It has no EOS and no autoregressive continuation, so stream_hex beyond byte 1 does not exist and own_eos is undefined, not merely unrecorded. eos_hex must still be non-empty hex. objective_distance.output own_bytes_evaluator_length is accepted and forces gate_type component (LOCK-03 PASS at E1), but the scorer has no component path: an item is exact only if own_eos is true. So every row scores 0: held exact own-EOS is 0.0% in every world and arm, against the learned bank's real 0.726/0.972/1.000/0.964 balanced.",
+    "proposed_kit_change": "When objective_distance.output is own_bytes_evaluator_length, score a metric exact_evaluator_length (emitted = stream[:len(expected)], own_eos ignored). Keep gate_type component and the E1 cap, and print 'held exact (evaluator length)' in the headline. Add a corpus fixture built from LEARNED-BANK T-PAR."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "INERT-01 / decide precondition 1",
+    "detail": "Because every arm scores exactly 0 under own-EOS, 'candidate minus FROZEN/SHUF is exactly 0 in all 4 worlds' raises INTEGRITY_ALARM. The official verdict and the generated CLAIM become INVALID even though the arms are demonstrably different (LEARN 0.916 against FROZEN 0.467 mean balanced, from the saved outputs).",
+    "proposed_kit_change": "Before INERT, check whether MET-01 found no own-EOS row in the primary cells. If so, return an honest exit such as CANNOT_TEST_CLAIM_AS_SPECIFIED with reason NO_OWN_EOS, or NOT_SCOREABLE, instead of INTEGRITY_ALARM."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "shortcut ladder FIXED_k; LAD-03 WEAK_COMPARATOR",
+    "detail": "Counterfactual (pkg_cf, EOS assumed after the byte): for a constant-length answer, FIXED_1 (the candidate's own stream cut at 1 byte, own EOS assumed) is identical to the candidate. Per world it is 0.726/0.972/1.000/0.964, so v_comp is at least v_cand, d_w is at most 0 and G is 0.0pp in every world. No one-byte or fixed-length task can ever PASS. LAD-03 then labels FROZEN and SHUF weak because they sit below 'the best shortcut', which is the candidate itself.",
+    "proposed_kit_change": "Exclude FIXED_k from the comparator when every expected answer of the pool has length k, or when output is evaluator_length. Report FIXED_k only as a stopping diagnostic. Never let a ladder member equal to a function of the candidate's own stream set the bar on fixed-length pools."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "split.held_manifest / held_set_sha256 / n_items_per_pool / LAD-01 / score_role",
+    "detail": "LEARNED-BANK draws a fresh random 15-orbit split per world: 25-28 held and 72-75 taught prompts. The kit allows one HELD manifest for all worlds and one integer per pool. The rendering used the union (82 prompts), so LAD-01 FAILs on every cell (25-28 items against 82; items differ). Any single-world manifest would make the scorer raise InvalidInput for the other worlds. The kit's own FM-11 judgment question asks whether confirmation 'resamples every factor the claim generalizes over (item split ...)'; LEARNED-BANK does that and the schema forbids it.",
+    "proposed_kit_change": "Allow split.held_manifest (and OLD/NEW) to be a per-world map or a directory manifests/HELD/<world>.jsonl, with per-world sha256s in the lock. Accept n_items_per_pool as an int or a {world: int} map, or 'from_manifest'. Make the scorer, LAD-01, ADM-EXPO and AMD-05 per-world. All splits stay fixed before any stream exists, which keeps the anti-leak property."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "ADM-EXPO",
+    "detail": "It reports 'held prompts exposed in 1546 feedback-bearing rows'. A recomputation found 0 within-world exposures in all 6 rendered worlds: every hit is a prompt held in one world and taught in another. This follows from the single-manifest gap above.",
+    "proposed_kit_change": "Evaluate exposure per world against that world's held set (follows from per-world manifests)."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "LOCK-01 split.old_manifest + LOCK-04 old_pool_exists + RED-01/RED-09/RED-11",
+    "detail": "LOCK-01 requires split.old_manifest to be a non-empty string, and old_pool_exists() returns true whenever it is set. So a delivery with no OLD pool (objective_distance.old_protection_measured false is an allowed enum) fails LOCK-04 ('no old_drop/old_acq guard') and RED-01 ('rule unreachable'). Probe: declaring both guards on an empty OLD pool plus guard predictions makes LOCK-04, LOCK-11 and RED-* PASS, but decide then needs OLD cells that cannot exist, so the verdict stays INCOMPLETE forever. The only way through the lock is a fake guard.",
+    "proposed_kit_change": "Make split.old_manifest/new_manifest nullable. Compute old_pool_exists from n_items_per_pool, primary.pool and guards, not from the manifest key. Allow no OLD guard when old_protection_measured is false and gate_type is component, with an 'OLD not measured' headline. Keep OLD guards mandatory for objective gates."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "LOCK-04 primary.min_worlds (4 < min_worlds_nonpilot 8); CLM-09 worlds_role",
+    "detail": "LEARNED-BANK treated 4 worlds as its main confirmation, and its own report says the SHUF control's sampling SD is about 0.13 with 15 held orbits, which decided M1. The kit correctly refuses MAIN and computes worlds_role PILOT. Fix: label the run PILOT, or run 8 worlds (about +11 CPU-h). The 8-world floor is still a draft pending UD-0001.",
+    "proposed_kit_change": "None to the check. Have S0 print the per-world chance SD of the declared controls next to min_worlds so the author sees why 8 are asked for."
+   },
+   {
+    "kind": "ceremony_cost",
+    "check_or_field": "LOCK-11 predictions",
+    "detail": "DESIGN.md section 7 registered only qualitative expectations. The kit needs numeric point/interval90/p_pass/base_rate predictions on the primary (and on each guard). A probe shows one primary prediction is enough to pass when no guards exist. About 15 minutes of work with some calibration value, but it adds nothing to the locked rule itself.",
+    "proposed_kit_change": "Prefill one primary prediction from init's base rate with __FILL__ only on point and interval. Accept 'none registered' with a reason at E0/E1 component deliveries (scored unresolved)."
+   },
+   {
+    "kind": "missing_runner_data",
+    "check_or_field": "AUT-01 options_shown / recommendation_shown; AUTHORIZATION.verbatim",
+    "detail": "The delivery quotes no owner grant. The only text is a second-hand, elided quote in reviews_20261024/MRK1_KIT_0471fda3.md:32 ('do the 3 cycle refinement ... Then you can run it'). Its UTC is unknown (an upper bound from commit 4d8952c3 was used). The options shown to the owner were never recorded.",
+    "proposed_kit_change": "At S0, write AUTHORIZATION from the chat in the same commit as the design (the template already asks for it). For legacy re-renderings, allow verbatim_source {path, line, sha, second_hand: true}, which caps the claim at DEV/PILOT."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "AUT-02 official stage grant",
+    "detail": "With stages.official true and the verbatim 'Then you can run it', AUT-02 FAILs at the official stage because the verbatim does not contain the literal token 'official'. The test is also too loose: a verbatim 'do not start the official run yet' would satisfy it. A separate fragility: number_in_text accepted max_cycles 3 because '3' occurs in '3 cycle refinement'; that is correct here by coincidence only.",
+    "proposed_kit_change": "Require an explicit GO object for official ({granted, verbatim, utc, lock_shas_shown}) for every official run, not only SEALED_CONFIRM, and drop the 'official' substring test. Match cap numbers only when adjacent to a unit (CPU-h, records, cycles, worlds)."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "ADM-BUDGET (via AUT-02 default caps)",
+    "detail": "The owner's words contain no numeric cap, so the defaults apply (2 CPU-h, 5,000 records), against a lock budget of 12 CPU-h / 360,000 records. LEARNED-BANK actually spent at least 15.2 CPU-h of saved histories (dev 1.23, rehearsal 2.77, main 11.24), plus MOD/COPY dev runs, surrogate tuning and the interrupted COPY phase. The kit is right that this spend was never numerically authorized. The fix is cheap: one owner message.",
+    "proposed_kit_change": "Keep it. Have S0 show the measured per-history cost (LEARNED-BANK: 0.126 CPU-s/record, about 0.4 CPU-h per history) and ask for caps in the owner's own words (MRK1 review item 7)."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "AMD-04 vs WLD-01 world-id scanning",
+    "detail": "AMD-04 token-matches M1/M2/M3 in unrelated legacy code: a path segment V51_Mac_M3 and minifly_rce_v87_followup_runner.py, inside the vendored package. git grep -w on origin/charming-head finds 10 such files repo-wide (catalog .md files, the V51 source). In the same gate, WLD-01 says the same ids are 'fresh ... nowhere else in the repo', because it scans only quoted ids in JSON. Two checks answer the same question differently.",
+    "proposed_kit_change": "Use one shared world-id scanner. At LOCK-01, require world ids of at least 8 characters with a delivery-unique prefix (e.g. lb1_main_w1; a probe with such ids clears AMD-04), and scan only outcome-bearing artifacts plus JSON. State the naming rule in the skill."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "lock build / LOCK-05 / RUN-03 closure",
+    "detail": "The native closure goes through minifly_a_v3/src/paths.py, which uses a non-literal sys.path.insert in a loop, into minifly_a_v3/package/, which is gitignored and extracted from a tracked zip. lock build refuses: the closure is unresolved and the paths collide. After vendoring the 60 package .py files and unrolling the loop (dry-run patch), the static closure has 16 files. The recorded runtime closure has 55: 37 extra reference modules loaded through spec_from_file_location (bytecore.py:209) plus 2 undeclared data assets (FULL151_BIRTH_FINGERPRINT.json, FULL151_CANONICAL_B.npz). Under the kit that is a T2 RUN-03 closure gap. LEARNED-BANK verified these files only post hoc (INC-SEED-13). The remedy is costly: vendoring 60 files, and editing another delivery's frozen paths.py, which conflicts with I9.",
+    "proposed_kit_change": "Support locked archive assets: a tracked zip plus an extraction manifest with per-member sha, counted in SOURCE_LOCK. Constant-fold sys.path loops over literal Path tuples. Let dynamic_imports declare their target set (glob plus shas) so runtime-loaded modules can be locked without vendoring."
+   },
+   {
+    "kind": "ceremony_cost",
+    "check_or_field": "AMD-01 after lock build (files.shared)",
+    "detail": "ENDPOINT_LOCK.files.* must name the closure at S1, before any learner code exists. lock build at C1 then reveals the shared files (64 entries), so the lock changes after its commit and AMD-01 FAILs until an AMENDMENTS row (reason operational, results_seen []) is added. That costs about 10 minutes and needs no UD, but neither skill says so.",
+    "proposed_kit_change": "Let lock build propose the files.shared/native list and write the operational amendment itself when no results exist. Or exclude files.* from the lock sha and lock them in SOURCE_LOCK only. Document this in STAGES.md C1."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "LOCK-07 supplied-arithmetic heuristics (T2 FAIL without a REVIEW finding)",
+    "detail": "Hits: fixture.py:18-19 OLD_DIGITS and NEW_DIGITS, in a module reached statically only through a lazy import in portable_birth.canonical_fresh_native and absent from the runtime closure; and data.py:8 MIN_TRAIN_ORBITS_PER_DIGIT, a split constraint in the generator that the runner imports. None of these supplies arithmetic to the learner.",
+    "proposed_kit_change": "Scan heuristics only over native modules on the runtime path (intersect with RUNTIME_CLOSURE when present). Exempt files.generators constants. Ignore all-caps configuration constants unless they are tables indexed by operands."
+   },
+   {
+    "kind": "missing_runner_data",
+    "check_or_field": "ADM-01, ADM-TB-CEIL/FLOOR, ADM-CTRL-ZERO/ISO/DOSE, ADM-FIX, ADM-GATE, ADM-INPUT, ADM-ACQ, ADM-SHUF, ADM-REUSE",
+    "detail": "These are the 20 MISSING results at roster/official. There is no admit.py and no ADMISSION.json. The testbed (diag_mlp.py) logged only aggregated plain held accuracy on dev worlds D2/D3, for one FROZEN config (H128, lr 0.02) against the kit's 9-config FRF floor grid, with no per-item CEILING_/FLOOR_ rows. There are no receipts with per-channel digests at birth/post_first/end and no write counters at the mutation site; only accumulated magnitudes (native_applied_S/L, layer_drive) and W1_norm per checkpoint. The checks.py results are summary booleans without fixture params. What could be recovered: TAUGHT manifests, including SHUF labels reconstructed exactly from the shared bank's saved outputs. They match LEARNED-BANK's recorded agreement (37/75 D2, 37/73 D3; main 34-37 of 72-75, orbit-consistent), so ADM-SHUF would PASS the [0.35, 0.65] band if it were assessed. ADM-SHUF looks only at technical worlds, and D1 has no PAR run.",
+    "proposed_kit_change": "Ship a receipts helper in admit_skeleton.py that wraps a native store's teach call to count writes and hash state at birth/post_first/end, so legacy native code needs no edits. Let ADM-SHUF also run on dev worlds when no technical world carries SHUF."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "REV-01..07, WIT-01, DEBT-01",
+    "detail": "There was no cross-family review event before roster spend and no reviewer attestation of the lock shas. The main run started 1.7 minutes after the lock commit (1ce1eadb to 84c530d4). The Codex review came mid-run (the posthoc fail-open finding). At T2 the kit needs a review or a REVIEW_DEBT row, and debt only allows a DEV/PILOT label.",
+    "proposed_kit_change": "None. Have the skill say explicitly that a mid-run review cannot retroactively satisfy WIT-01; record it as debt repayment."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "AMD-02 (pkg_amend chronology)",
+    "detail": "Lock v0 is the design's T-MOD endpoint, followed by MOD learner outcomes on D1 (results/c2a), then amendment A1 to T-PAR. AMD-02 FAILs: arms, primary, split and task changed after a learner-arm outcome, and objective_distance.task_family rose from addition_component to other_arithmetic, with no UD, no co-primary and no protocol bump. Even if the C0 screen had been run before learner code, the raised task_family alone requires an owner UD. The objective-distance consequence: T-PAR is further from the objective than T-MOD on the task axis.",
+    "proposed_kit_change": "None to the check. Follow MRK1 review item 10: carry an endpoint that a testbed showed untestable as CANNOT_TEST_CLAIM_AS_SPECIFIED in the headline, instead of a permanent co-primary."
+   },
+   {
+    "kind": "missing_runner_data",
+    "check_or_field": "AMD-03 reason testbed_invalid",
+    "detail": "The testbed_invalid reason needs a checker-scored TESTBED.json on the original endpoint. LEARNED-BANK's ceiling-fail evidence for T-MOD (BP held 0.00/0.11) exists only as cycles/CYCLE2.md and diag_*.log aggregates. Minor: the message is garbled ('testbed_invalid needs no TESTBED result ... shows ceiling FAIL').",
+    "proposed_kit_change": "Fix the message wording. Allow TESTBED evidence produced on dev worlds when it was produced through launch --stage testbed."
+   },
+   {
+    "kind": "missing_runner_data",
+    "check_or_field": "RUN-01, RUN-02, CYC-03, RUN-03, CLM-15, and the claim refusal",
+    "detail": "There are no launch records, no MINIFLY_ATTEMPT_ID in rows, no runtime closure per attempt and no T2 verification subset of receipts. In the faithful pkg, claim refuses outright (exit 2) and the official gate FAILs RUN-01/RUN-02/CYC-03. Simulated ATTEMPTS rows (marked simulated_by_dry_run) were needed to see the headline at all.",
+    "proposed_kit_change": "Provide `MFC import-legacy-run <dir> --from <json glob>`, which writes clearly labelled LEGACY attempt rows: never counted, verdict capped at DEV_NOT_EVIDENCE. Retro-rendering for calibration could then run without forging launch rows."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "CYC-03 rehearsal freshness / launch world check",
+    "detail": "Rehearsal and official both run `sh main.sh`, with worlds passed in environment variables (WORLDS=D3 TAG=c3_rehearsal), so argv-based world checks are blind. D3 had already been used for surrogate tuning (cycles/c2_logs/sur_par_D3.log), but surrogate runs are not attempts, so CYC-03 would PASS a reused rehearsal world (MRK1 review item 8).",
+    "proposed_kit_change": "Add a launch stage 'diagnostic' (counted in designs_tried_k and world freshness) for any run that reads outcomes, surrogates included. Have launch read the worlds actually written from OUTPUTS rows and receipts, not from argv, and refuse when they mismatch the stage."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "designs_tried_k identity (native_closure_sha, params_sha256)",
+    "detail": "LEARNED-BANK passes eta0, passes and probe_every as CLI flags (main.sh COMMON), not through files.params. params.json is never read by the runner, so its sha is constant while the real settings changed: eta0 0.003 with 2 or 30 passes, then 0.03 with 150, plus a surrogate grid over eta0 {0.001, 0.003, 0.01, 0.03}. The kit reports 'best of k=1' when the true k is at least 3 native settings.",
+    "proposed_kit_change": "Fold argv minus world arguments into the design identity, or require (runner contract) that every learner hyperparameter comes from files.params, with receipts echoing the params actually used."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "compute accounting (recovered attempt rusage_lost); G_per_cpu_h; records_total",
+    "detail": "The container restart during the official COPY phase makes the official attempt a recovered row with CPU lost. The claim then reports 4.0 CPU-h in total (dev plus rehearsal) and G_per_cpu_h -0.229, while about 15.2 CPU-h of saved histories exist. records_total_incl_failed is 0 because there are no receipts. LEARNED-BANK's own JSONs carry total_cpu_s per history.",
+    "proposed_kit_change": "When rusage is lost, take CPU and records from runner-written receipts (process_time) with cpu_source: runner. Refuse G_per_cpu_h on an official attempt whose CPU is unknown."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "gates[] semantics; ATTEMPTS units; RUN-02/RUN-04",
+    "detail": "LEARNED-BANK's three gates are per-world outcome gates on official rows: ORACLE >= 0.90, FROZEN codes byte-identical, every T-COPY arm's system held >= 0.30. Kit gates are admission plumbing fixtures only. A second (control) task has no place in OUTPUTS. ATTEMPTS units are keyed (world, arm), so COPY_BASE_M1 and PAR_BASE_M1 collide. The real interrupted run (11 COPY reruns plus a bit-identical COPY BASE M1 replay in results/main_recheck) cannot be represented as a legal resume with RUN-04 replay.",
+    "proposed_kit_change": "Add outcome gates {id, arm, task, pool, checkpoint, metric, op, threshold, per_world} evaluated by decide (a failed gate makes that world uninformative, as LEARNED-BANK's rule did). Add tasks[] with a task field in OUTPUTS rows and in unit keys (task, world, arm)."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "OUTPUTS readout / answer_path",
+    "detail": "LEARNED-BANK's locked primary reads the learned bank's own margins only (L), not the fly's summed system answer. OUTPUTS holds one answer per arm, and answer_path 'native' is self-declared, so the kit cannot see which readout counted. Recomputed from saved outputs, on the system answer the 0.20-margin rule passes in 1 of 4 worlds (balanced LEARN sys 0.545/0.783/0.808/0.643 against SHUF 0.653/0.539/0.683/0.500), which LEARNED-BANK's own rule would call 'not supported', instead of 3 of 4 on the learned bank.",
+    "proposed_kit_change": "Add OUTPUTS.readout (system | sub:<name>) and lock primary.readout. Headline suffix ' | readout <sub>' when it is not the system answer. CLM rule: 'own answer' or I4 language requires readout system."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "LOCK-03 / CLM level cap; units.witness; headline strata",
+    "detail": "The held items are never-taught orbit instances of a relation learned from examples: an E3-type test in the objective contract's terms. Because the task is non-addition and the gate is component, the kit caps the level at E1 ('taught association'), which misdescribes it. units.witness is refused for non-addition formats although pair_rectangle is valid for parity of a+b. The headline prints '[S2+, n=0]' because strata are UNCOMPUTED, while 108 held items were scored. The three-level verdict 'partial (3/4)' has no counterpart: with k_of_n k=4 it is FAIL, and the k achieved is not printed. There is no no_prior_teaching arm, so E3 is unavailable in any case.",
+    "proposed_kit_change": "Separate 'generalization type' (held relation, presentation, taught) from gate_type and objective_distance, e.g. 'E3-type held relation, component (other_arithmetic, evaluator length)'. Allow witnesses for format kind other with a declared operand parser. For non-addition, print '[all held, n=<n>]'. Print 'k_of_n <achieved>/<n>' in the headline."
+   },
+   {
+    "kind": "false_positive",
+    "check_or_field": "CLM-07 lineage wording",
+    "detail": "REPORT.md uses 'native' 5 times in the program's own sense: the I1 native line, the native Full151 stores, answer_path native. CLM-07 FAILs because the lineage parent minifly_cls_dev_20261017 is legacy, not a demonstrated v1 parent. The project's core vocabulary is blocked at T2.",
+    "proposed_kit_change": "Restrict CLM-07 to inheritance claims ('inherited', 'same fly', 'core', '<x> from <parent>'). Treat 'native' as lineage wording only next to a parent name, or allow it when files.shared contains the canonical native package."
+   },
+   {
+    "kind": "ceremony_cost",
+    "check_or_field": "CLM-05, CLM-11, CLM-13, CLM-06 (WARN), CLM-16 (WARN)",
+    "detail": "The REPORT's first line must be the generated headline, and zero findings needs a findings_none_reason. Editing findings_proposed then requires re-running claim (CLM-13), which appends a second DELIVERY_LEDGER row. 'partial' is flagged as a soft word, and a number about prior work ('Codex's 1/16') lacks an F-id. All are cheap (about 20 minutes) and mostly reasonable.",
+    "proposed_kit_change": "Let `MFC claim --findings ROW.json` add findings in one step. Treat the exact headline vocabulary of the delivery's own pre-registered rule ('partial') as allowed when it is quoted from the lock."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "LAD-04 (advisory)",
+    "detail": "The kit independently flags candidate output collapse on TAUGHT at the pass-25 prefix (M1 modal fraction 0.987, entropy 0.10 bit). This matches LEARNED-BANK's own 'code collapse' observation (mean code overlap 0.22-0.34 rising to 0.70-0.83).",
+    "proposed_kit_change": "None."
+   },
+   {
+    "kind": "true_finding",
+    "check_or_field": "INERT-01 identical_streams (on the dry-run converter, not on LEARNED-BANK)",
+    "detail": "The first conversion read the shared bank (index 1 of [sys, S, L]) instead of the learned bank. INERT-01 immediately raised 'arms FROZEN and LEARN have identical stream_hex on every item' (175 rows on D2). The bug was fixed and the repo rebuilt. This shows the integrity alarm catches a real rendering defect cheaply.",
+    "proposed_kit_change": "None. Consider adding a corpus fixture for 'wrong readout column'."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "SOURCE_LOCK.env / external resolution",
+    "detail": "lock build resolves externals in the checker's interpreter: it failed until scipy and numba were importable to the checker. It records that interpreter's env (here numpy 2.5.4, scipy 1.18.1, numba 0.68, Python 3.13), not the runner's: main.sh uses PY=/tmp/venv_n/bin/python (numpy 2.2.6, scipy 1.14.1, numba 0.61.2, Python 3.11).",
+    "proposed_kit_change": "Add `lock build --python <runner interpreter>`, which resolves externals and records env with that interpreter. Have launch refuse a command whose interpreter differs from SOURCE_LOCK.env."
+   },
+   {
+    "kind": "schema_gap",
+    "check_or_field": "runner contract / exposure (FM-12 blind spot)",
+    "detail": "run.py passes the true answer byte into model.train() and model.probe() for every arm. Reading lb1.py shows it drives only the ORACLE address. No kit check can see an expected answer passed as an argument into native objects at probe time: ADM-EXPO inspects TAUGHT streams only.",
+    "proposed_kit_change": "Add a 'reject_input' executed check or canary: re-probe learner arms with a corrupted expected byte and require identical outputs. Or have the runner contract forbid passing expected answers to native calls outside oracle_plumbing arms."
+   },
+   {
+    "kind": "skill_unclear",
+    "check_or_field": "minifly-research-loop / minifly-e3-design / STAGES.md",
+    "detail": "Several gaps in the skills. (a) 'C0 before learner code', but the input code (FE-PERM trace) lives in the learner module lb1.py, which diag_mlp.py imports. (b) init --claim-level E1 still leaves the template's NPT arm with __FILL__ zero_channels. (c) checkpoints must be record indices although per-world record counts differ (10,800-11,250); LEARNED-BANK checkpoints by pass. (d) The skills give no guidance for non-addition tasks, one-byte answers, per-world splits, control tasks or no OLD pool. (e) There is no world-id naming rule. (f) 'No per-cycle audit files' conflicts with an owner who asks for cycle notes (MRK1 review item 9). (g) Headline ' | ORACLE >= candidate' names a positive control as if it beat the candidate.",
+    "proposed_kit_change": "Add a 'non-addition and component endpoints' section to minifly-e3-design with a worked LEARNED-BANK T-PAR lock. Allow checkpoints {name: {pass: n}}. Have init drop or prefill arms by level. Exclude oracle_plumbing and positive_control from the '>= candidate' suffix (or tag them 'positive control at ceiling')."
+   }
+  ],
+  "estimated_adoption_cost": "Running the checker costs almost nothing: the first SELF-01 selftest takes 32 s, gates take 1-3 s each, publish takes 22-31 s.\n\nAgent and owner time for a delivery like LEARNED-BANK, retrofitted to the stable kit:\n- Filling ENDPOINT_LOCK (54 __FILL__ values plus structural mapping, many with no LEARNED-BANK equivalent): about 2-3 h.\n- AUTHORIZATION with options, numeric caps and an official GO: about 15 min of owner time plus 20 min of agent time.\n- An admit.py testbed with per-item CEILING/FLOOR rows over the 9-config FRF grid plus EXACT_BP on technical worlds: about 4-6 h of agent time and under 0.5 CPU-h.\n- The runner contract (OUTPUTS rows, TAUGHT manifests, receipts with per-channel digests and write counters inside shared Full151 stores, the runtime-closure helper, splitting main.sh into one launch per phase, --only-world/--only-arm flags): about 4-8 h, and it touches other deliveries' frozen code.\n- Vendoring the native package (60 files) and fixing the non-literal sys.path: about 1 h.\n- A cross-family Codex review with canary and lock attestation: about 3-5 h of reviewer time plus calendar delay.\n- Predictions, claim, headline and prose: about 45 min.\n- Compute: 8 worlds for MAIN would add about 11 CPU-h (about 3 h on 4 cores); PILOT costs nothing.\n\nTotal: about 2-3 agent-days plus about half a reviewer-day, against LEARNED-BANK's actual one day or so. The bigger cost is that even with all of this, the stable 0471fda3 kit cannot accept this endpoint: no own-EOS scoring path, the FIXED_1 tautology on fixed-length answers, a single held manifest for all worlds, and a mandatory OLD pool. Adoption therefore means either about four kit changes (evaluator-length component metric, per-world split manifests, optional OLD pool, FIXED_k exclusion on constant-length pools; roughly 1-2 days of governance work with cross-agent review) or redesigning the experiment into a multi-byte addition-format task with own EOS, a fixed held set, an OLD pool and 8 worlds, which would be a different experiment.",
+  "verdict_if_run_under_kit": "Under the stable kit at 0471fda3, LEARNED-BANK V1 would never have run.\n\n**Strict outcome.** The lock gate FAILs: LOCK-04 (4 worlds below the 8-world floor, and no OLD guard), LOCK-11 (no predictions), AUT-01 (no options recorded) and AMD-04 (world ids M1-M4 found in other files). So `launch --stage testbed` is REFUSED.\n- The cheap fixes (label the run PILOT, give world ids a unique prefix, register one prediction, record options and numeric caps) clear everything except the OLD-pool false positive. That one can only be passed with fake guards, which leave the verdict INCOMPLETE forever.\n- At the roster gate, admission is MISSING: no admit.py, testbed rows, receipts or fixtures. There is also no cross-family review.\n- In the faithful chronology, AMD-02 also FAILs: T-MOD was switched to T-PAR after learner outcomes, and the switch raises objective_distance without an owner decision. That is the honest exit: stop at S1/C0.\n\n**Consequences for the claim level.**\n- objective_distance: task_family other_arithmetic, output own_bytes_evaluator_length, held unseen_composition, old_protection_measured false.\n- LOCK-03 therefore forces gate_type component, which caps the claim at E1.\n- No E3 is possible: the format is not addition, there are no strata or witness, there is no no_prior_teaching arm, and UDI-01 is only planned.\n- The delivery does not open held E3, so it adds one to the E3 cadence counter.\n\n**If forced through with simulated launch rows**, the official verdict is INVALID (INTEGRITY_ALARM) and claim generates this headline:\n\n`INVALID | earned NONE (attempted E1) | held exact own-EOS 0.0% [S2+, n=0] vs best shortcut FIXED_1 91.6% | G -91.6pp | OLD final not_measured | 4 PILOT worlds | best of k=1 | BASE,FROZEN,SHUF,FIXED_1 >= candidate | WEAK_COMPARATOR`\n\nThe publish gate still FAILs on AMD-04, LAD-01, INERT-01, CLM-07, CLM-15 and RUN-03. In the faithful package without launch rows, claim refuses outright (exit 2).\n\n**Counterfactual with an EOS assumed after the answer byte:** the verdict is INCOMPLETE, with headline held 91.6% against best shortcut FIXED_1 91.6% and G 0.0pp. That 91.6% matches the 0.916 mean balanced learned-bank held accuracy quoted in the MRK-1 review; LEARN ran 0.46 above FROZEN and 0.35 above SHUF on average. With the schema gaps fixed, decide would still FAIL, because FIXED_1 is identical to the candidate.\n\n**With FIXED_1 also excluded**, the margins per world are +0.104, +0.472, +0.358 and +0.357 against the required 0.20. That is 3 of 4 worlds, so FAIL with k=4, which is the same as LEARNED-BANK's own 'partial (3 of 4)'. On the fly's own summed system answer it would be 1 of 4 worlds ('not supported').\n\n**What the kit correctly flags:** 4 worlds is too few for a MAIN claim (so PILOT); the task switch after outcomes needs an owner decision; the owner's grant had no numeric caps; the native closure was unlocked and gitignored (37 modules and 2 data assets loaded only at runtime); there was no review or lock attestation before the run; the output collapse that LEARNED-BANK itself noted; and a readout bug in my own converter (INERT-01).\n\n**What it wrongly blocks or cannot express:** no own-EOS scoring path, the FIXED_1 tautology on fixed-length answers, per-world held splits, delivering without an OLD pool, the word 'native', world-id scanning (AMD-04 and WLD-01 disagree), outcome gates and the T-COPY control task, which bank's answer counts, and compute lost when an interrupted run's CPU is not recorded.\n\n**On the relayed question:** this dry run used only the stable 0471fda3 checker in /tmp and never touched the working tree, so it did not need to wait for the verify agent. Its results describe 0471fda3, not the in-progress 1.0.1 edits."
+ }
+}
