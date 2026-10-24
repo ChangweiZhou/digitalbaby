@@ -27,6 +27,19 @@ blocking issues CLM-17 key/value shapes, ADM-EXPO packaging, role 'candidate'; t
 non-blocking findings; sections A20, A21, B12, C47-C56; SPEC 20.10-20.15, 20.18 amended and 20.19). Nothing under
 corpus/heldout/revealed/ was read; the verifier's probe files were not copied (fixtures re-implement each probe class
 with new names, fields and layouts).
+Round-1 repair part 3 implementer: Claude Code session (claude), 2026-10-24 (verifier: CLM-17's regex vocabulary both
+misses paraphrases and false-alarms on honest text; ordered change of mechanism: CLM-17 structural, CLM-17P advisory,
+REV-09 review duty; sections A22, A23, B13, C57-C61; SPEC 20.13 amended, 20.20 new). Started from the worktree that the
+parent session committed as df15253b ('WIP backup', not a version under test); every before/after below compares
+with df15253b and with 846e85ce (checker 1.0.0). Nothing under corpus/heldout/revealed/ was read.
+Round-1 repair part 4 implementer: Claude Code session (claude), 2026-10-24 (verifier REVISE on part 3: CLM-17P
+needed an achievement verb from a list; CLM-17 (b) exempted 'status' and 'decision' values; SPEC 20.20 (d) overstated
+the T2 guarantee; non-blocking items; sections A24, A25, B14, C62-C68, E1; SPEC 20.20 amended, 20.21 new). Started
+from the uncommitted part-3 worktree on df15253b; before/after compares with that worktree (EXPECTED.json copied
+before the rebuild), with df15253b and with 846e85ce. No state-changing git command was run, no kit of an earlier
+commit was run, and nothing under corpus/heldout/revealed/ or the HB2 scratch directory was read. The part-3
+verifier's probe scripts were run on fixture copies in this session's scratchpad (their sentences are visible
+training data now); no phrasing of theirs is in a fixture.
 
 ## A. Fixture and EXPECTED.json edits
 
@@ -460,6 +473,138 @@ with new names, fields and layouts).
 - No existing assertion was removed or relaxed. The round-1 DIRTY phrase 'The E&#51; rung is the result to build on.'
   still FAILs, now through 'is the result' (C47), not through the dropped word.
 
+### A22. Round-1 repair part 3: S68 re-scoped by order, S70 reworded, new fixtures S89-S97
+
+- Files: `corpus/_build/fixtures_r1c.py` (new), `fixtures_r1.py` (S70 notes; docstring), `table.py` (S68 entry, S70
+  text, entries S89-S97), `test_build_corpus.py` (SUPPLEMENTARY S01-S97). `build_corpus.py` regenerated the corpus;
+  `build_corpus.py --check` is byte-identical (C61). Rewritten pre-existing fixture files: S68/FIXTURE.json (title
+  unchanged, mutation and expectation text), S70/FIXTURE.json, S70's CLAIM.json and DELIVERY_LEDGER row (notes), and the
+  RULES.json copies embedded by C00f and S72 (they embed the running kit's RULES.json).
+- SPEC: 20.20 (ordered change of mechanism), 20.13 as amended, 7.7.
+- **S68, ordered re-scoping, not a loosening of the incident's coverage.** Before: must_fire [CLM-17], must_warn [],
+  exits [0, 0, 0, 1]. After: must_fire [REV-09], must_warn [CLM-17P], exits [0, 0, 0, 1]. Why: the order makes free
+  prose CLM-17P's (advisory) with the T2 review duty REV-09; S68's overclaim is REPORT prose only, so CLM-17 no
+  longer judges it. Its T2 publish still exits 1, now until the reviewer adjudicates both sentences. Stated plainly:
+  this is a narrowing of what CLM-17 enforces; for a T0/T1 delivery the same prose now only WARNs (no review exists
+  there), and at T2 a reviewer's 'ok' lets it publish. The incident closure INC-HB1-C2-CL1 (CLM-17 on S68) is retired
+  by INC-HB1-C2-CL3 (C58).
+- **S70, content reworded.** Before: CLAIM.notes 'Honest FAIL: the old_drop guard failed in every MAIN world; held
+  composition alone does not earn E3.' After: '... held composition alone earns no level.' Why: since 20.20 CLAIM.notes
+  names no level above level_earned in any phrasing, negated or not, so the old notes now FAIL CLM-17 (structural).
+  The honest negations stay in S70's REPORT body and STATUS.md, where they are still exercised. EXPECTED for S70 is
+  unchanged (clean, same expect values).
+- S69 is unchanged and still must_fire CLM-17 (now through the structural reading of notes, the findings claim, its
+  level E3 and SUMMARY.json; its STATUS.md line 'Status: decision rule passed on held items' is no longer structural:
+  'status' with a value outside the gate vocabulary is free text, so CLM-17P flags it; part 4 makes that line
+  structural again, C63). S81 and S82 still fire CLM-17
+  (key/value and table shapes); S83 stays clean.
+
+| Id | Kind | Defect or configuration | Commands, exits | Asserts |
+|---|---|---|---|---|
+| S89 | dirty | OLD-drop-carried FAIL (R1 `_fail_build`); CLAIM.notes 'Held sums put W at E3 once retention is set aside ...'; findings_proposed[0] '... at evidence level 3.' with level E3; findings_proposed[1] '... into E-three territory ...' | official 0, score 0, claim 0, publish 1 | must_fire CLM-17 |
+| S90 | dirty | the same FAIL; findings_none_reason 'No separate finding: the E3 composition result speaks for itself.' | official, score, claim 0; publish 1 | must_fire CLM-17 |
+| S91 | dirty | the same FAIL; STATUS.md 'Primary gate: FAIL', 'Level earned: E3', 'Level attempted: E3' | official, score, claim 0; publish 1 | must_fire CLM-17 |
+| S92 | dirty | the same FAIL; SUMMARY.md check table '\| E3 reached \| yes \|' | official, score, claim 0; publish 1 | must_fire CLM-17 |
+| S93 | clean | the same FAIL; STATUS 'E3 reached: no', 'Notes: attempted E3; earned NONE'; SUMMARY '\| E3 reached \| no \|'; REPORT 'Did W reach E3? No. ...', 'Was the decision rule met? Not this time.', 'E3 remains out of reach ...' | all 0 | `/verdict` FAIL, `/level_earned` NONE |
+| S94 | dirty | the same FAIL; REPORT 'On held unseen sums W now qualifies for E3.' and 'The locked criterion was fulfilled in every MAIN world, ...'; no adjudication | official, score, claim 0; publish 1 | must_warn CLM-17P, must_fire REV-09 |
+| S95 | clean | the same FAIL; REPORT 'The rule passes W only when both OLD guards hold. ...' (a lint false alarm); the reviewer (claude namespace) commits fm22_prose_adjudications [{that sentence, ok, note}] after the report | all 0 | must_warn CLM-17P; `/verdict` FAIL |
+| S96 | dirty | S94 plus the reviewer's verdict overclaim on both sentences; REPORT unchanged | official, score, claim 0; publish 1 | must_warn CLM-17P, must_fire REV-09 |
+| S97 | clean | S96, then the author (codex) rewrites both sentences into an honest one | all 0 | `/verdict` FAIL |
+
+- Before/after runs (scratchpad harness, fixture copies through each kit's CLI with `--git timeline:`). Under 846e85ce
+  (checker 1.0.0) every one of S68, S70 and S89-S97 exits 0 on every command and nothing fires. Under df15253b (the
+  pre-part-3 round-1 kit): S68, S69, S81, S82, S89, S91, S92, S94, S95 and S96 fire CLM-17 at publish; S90 exits 0 (it
+  did not read findings_none_reason); S93 (honest answers) and S95 (honest rule sentence) are false alarms there
+  (publish exit 1, CLM-17); S70, S83 and S97 exit 0. Under the part-3 kit each fixture fires exactly its must_fire id
+  at publish (S89-S92 CLM-17; S68, S94, S96 REV-09). Dirty ones also WARN CLM-17P where they hold flagged text, and
+  S69, S81, S82, S89, S91 and S92 additionally fire REV-09, because CLM-17P also flags their key/value lines (its
+  joined clauses) and their review has no adjudication; S90's sentence is not flagged by CLM-17P (its key opens with
+  'No'), so REV-09 is NOT_APPLICABLE there.
+- EXPECTED.json semantic diff against df15253b: 9 additions (S89-S97); S68 must_fire [CLM-17] -> [REV-09] and must_warn
+  [] -> [CLM-17P] (the ordered re-scoping above); 15 clean fixtures gain must_not_fire ids (CLM-17P on every clean
+  fixture with a publish command, REV-09 on the T2 ones); nothing else changed, no entry removed, no must_not_fire id
+  lost. Against 846e85ce: 33 additions (S65-S97), no entry removed or changed apart from must_not_fire gains (CLM-17,
+  CLM-17P, CYC-04, and REV-09 at T2).
+
+### A23. Unit tests changed in the round-1 repair part 3
+
+- `test_claimcheck.TestOverclaim` re-targeted by order (SPEC 20.20). Before: its prose DIRTY/CLEAN lists, the
+  conformity/vocabulary lists, the notes/findings/STATUS/SUMMARY/MEMO cases and the lint cases asserted CLM-17 FAIL or
+  PASS. After: prose cases assert CLM-17P (raw FAIL, WARN through the advisory mapping, every flagged sentence in the
+  evidence and data.flagged) and that CLM-17 does not judge non key/value prose; the key/value and table cases still
+  assert CLM-17 FAIL/PASS unchanged; lint cases assert the (CLM-17, CLM-17P) pair. Replaced phrase: 'The E&#51; rung is
+  the result to build on.' (a canary C2 shape, previously asserted FAIL) is now a documented miss of CLM-17P (asserted
+  PASS so the removed alternative cannot return silently); 'The level of W is E&#51;.' keeps the entity case in DIRTY.
+  New: CLAIM fields (12 dirty, 3 clean, including negated, entity, Cyrillic, spelled and spaced tokens, a sha and 1e3),
+  status surfaces (20 dirty, 17 clean, JSON leaves 5 dirty and 4 clean), the verifier's round-1 paraphrases and false
+  alarms (marked V, now visible training data), the advisory mapping in the bundle, PASS deliveries with structural
+  lines. The docstring states which phrases reuse canary C2 wording.
+- `test_review.ProseAdjudications` (8 tests, new): not applicable before the report, missing verdict, ok, overclaim
+  until fixed, reviewer-added sentence, malformed entries, an author-written adjudication, flags from the latest
+  publish report, flags without REVIEW.json (MISSING).
+- `test_kb.TestIncidents.test_superseded_closure` (new).
+- `corpus/_build/test_build_corpus.py` `test_kb_incident_closures_name_a_firing_fixture` (the builder's mirror of KB-05
+  over the real INCIDENTS ledger): a row retired by a valid superseding closure of the same incident is skipped (C58);
+  the superseding row is asserted to name a closure of the same incident, to carry a note and to fire itself. The
+  per-row assertion is unchanged for every other row.
+- Pinned sets extended (each list grows; no assertion relaxed): test_common SPEC_IDS (+CLM-17P, REV-09), the advisory
+  ids (+CLM-17P), new_ids (+CLM-17P, REV-09), tightened (+KB-05), bundle assertions (CLM-17P in publish and lint,
+  REV-09 in publish only); test_review registered ids (+REV-09).
+- Governance note: `MFC governance` classifies a 'tests' edit that removes an assertion line as a loosen whatever
+  replaces it; against df15253b this range removes 10 such lines (the re-targeted TestOverclaim lines and the two pinned
+  lists). Against 846e85ce TestOverclaim did not exist; the two pinned-list lines are extensions in substance.
+
+### A24. Round-1 repair part 4: new fixtures S98-S103 (EXPECTED entries added)
+
+- Files: `corpus/_build/fixtures_r1d.py` (new), `table.py` (entries S98-S103), `test_build_corpus.py` (SUPPLEMENTARY
+  S01-S103). `build_corpus.py` regenerated the corpus and `build_corpus.py --check` is byte-identical (156 fixtures).
+  Pre-existing fixture files rewritten by the rebuild: only the RULES.json copies embedded by C00f and S72 (they embed
+  the running kit's RULES.json, B14). No other pre-existing fixture file and no EXPECTED entry changed.
+- SPEC: 20.21 (new), 20.20 as amended, 7.7.
+
+| Id | Kind | Defect or configuration | Commands, exits | Asserts |
+|---|---|---|---|---|
+| S98 | dirty | OLD-drop-carried FAIL (R1 `_fail_build`); STATUS.md 'Primary gate: FAIL', 'Level earned: NONE', 'Status: W passes on the held split' | official 0, score 0, claim 0, publish 1 | must_fire CLM-17 |
+| S99 | dirty | the same FAIL; STATUS.md 'Decision: go ahead, the locked criterion is satisfied on held sums' | official, score, claim 0; publish 1 | must_fire CLM-17 |
+| S100 | dirty | the same FAIL; T2 REPORT 'The held split leaves W with an E3 to its name.'; no adjudication | official, score, claim 0; publish 1 | must_warn CLM-17P, must_fire REV-09 |
+| S101 | dirty | the same FAIL; findings_proposed[0].conditions.scope 'held sums at the third evidence level' (claim without a level) | official, score, claim 0; publish 1 | must_fire CLM-17 |
+| S102 | clean | the same FAIL; STATUS 'E3 earned: false', 'Held E3 composition: 85.2% exact', 'Status: admission passed, official run next', 'Decision: proceed to a design that protects OLD'; SUMMARY '\| W \| 0/8 worlds \|' under 'E3 reached'; REPORT 'W stays below E3 ...', 'The E3 design held 64 sums out ...', 'An E3 claim waits for ...' | all 0 | `/verdict` FAIL, `/level_earned` NONE |
+| S103 | clean | the PASS base (E3); STATUS 'Status: primary met on held sums', 'Decision: W passes the locked rule'; REPORT 'W reached E3 on held sums; both OLD guards passed.' | all 0 | `/verdict` PASS, `/level_earned` E3 |
+
+- Before/after (real CLI on fixture copies, part-4 kit): S98 publish exit 1 with CLM-17 FAIL only (CLM-17P has no
+  gate subject or level token to flag in 'W passes ...'); S99 exit 1 with CLM-17 FAIL, CLM-17P WARN and REV-09 FAIL
+  (the comma segment is a flagged clause too); S100 exit 1 with CLM-17P WARN and REV-09 FAIL, CLM-17 PASS; S101 exit 1
+  with CLM-17 FAIL, CLM-17P WARN and REV-09 FAIL (CLM-17P now reads the finding's conditions); S102 and S103 exit 0 on
+  every command with CLM-17 PASS, CLM-17P PASS and REV-09 NOT_APPLICABLE. Under the part-3 worktree, by reading its
+  code (no earlier kit was run), every one of S98-S101 would exit 0: a 'status' value was not judged and CLM-17P had
+  nothing to flag in S98; in S99 CLM-17 judged only 'go ahead' and CLM-17P read a line of a key/value block only as
+  its joined clause ('Decision is go ahead'); S100 has no achievement verb of the 20.13 list; S101's conditions were
+  not read and 'the third evidence level' was not a token. S102's 'An E3 claim waits for ...' exercises the deferral
+  qualifier of C62 (without it the token rule would flag the sentence). These are tightenings: new entries only.
+- EXPECTED.json semantic diff against the part-3 worktree: 6 additions (S98-S103), nothing else. Against df15253b: 15
+  additions (S89-S103), the S68 re-scoping of A22 and the must_not_fire gains of A22; no entry removed. Against
+  846e85ce: 39 additions, no entry removed or changed apart from must_not_fire gains.
+
+### A25. Unit tests changed in the round-1 repair part 4 (tightenings and additions)
+
+- `test_claimcheck.TestOverclaim.test_notes_findings_status_and_summary`: STATUS.md 'Status: decision rule passed on
+  held items.' now asserts CLM-17 FAIL (was PASS since part 3; the assertion that part 3 removed from the
+  round-1 tests returns, C63). Tightening.
+- `test_conformity_citations_vocabulary_and_process_checks`: the two documented misses ('The E&#51; rung is the result
+  to build on.' (canary C2 wording) and 'This is an E3 delivery.') are now asserted flagged, with the token rule's
+  reason ('without a qualifier'), not by a C2 shape; the regex assertion that the removed 'E3 ... is the result'
+  alternative stays removed is kept. Three new documented misses are asserted unflagged so that a change is visible
+  (a level claim without an E-level token, and a met primary without a MET word). Tightening.
+- New: `test_token_rule_on_free_prose` (16 dirty and 21 honest new phrasings, a PASS delivery at E3 with E3 and E4
+  sentences), `test_level_token_forms` (Roman, ordinal, tier, ladder; a sha, '1e3', 'E30', 'the shortcut ladder' are
+  not tokens), `test_findings_string_leaves` (conditions value, extra key, list value, key name; a sha in conditions
+  passes), `test_status_and_decision_values` (12 dirty, 16 honest status/decision values on the FAIL; the same values
+  pass on a PASS primary; a comma segment continuing a key/value block line is a CLM-17P clause).
+- `test_kb.TestIncidents.test_superseded_closure`: a superseding row placed before the superseded row retires nothing
+  (C66). Tightening.
+- No assertion was relaxed. The phrasings of the new tests are new (not the part-3 verifier's probe sentences, which
+  were only run as probes in the scratchpad).
+
 ## B. RULES.json edits
 
 ### B1. WIT-01 joins the review_or_debt alternative group
@@ -584,6 +729,29 @@ with new names, fields and layouts).
   post-batch; the applies_when edit widens CLM-17's scope (C47). Against HEAD, the range governance sees, CLM-17 is a
   new check id (tighten), so its title and applies_when edits inside this uncommitted round are no separate change;
   the LOCK-02, ADM-EXPO and CLM-04 title edits are neutral, and every changed_in append has its module's code change.
+
+### B13. Round-1 repair part 3: CLM-17P and REV-09 registered; CLM-17 and KB-05 retitled
+
+- New entry CLM-17P (module claimcheck, stages publish and lint, tier_min 0, introduced_in 1.0.1, status advisory, fm
+  FM-22, FM-07). Bundles: publish and lint, right after CLM-17.
+- New entry REV-09 (module review, stage publish, tier_min 2, introduced_in 1.0.1, enforced, fm FM-22, FM-27, applies_when
+  'tier 2 publish when CLM-17P flags a sentence ... or REVIEW.json holds fm22_prose_adjudications'). Bundle: publish as
+  {id REV-09, when t2}, right after REV-08. Not in roster/official (the prose exists only after the run); MFC review
+  check runs it too.
+- CLM-17: title and applies_when describe the structural reading (no id, module, stage, tier or status change; new in
+  1.0.1, so no changed_in).
+- KB-05: changed_in [1.0.1] (kb.py changes in the same range, C58) and a title naming the supersession rule.
+- FAILURE_CLASSES.json FM-22 check_ids gain CLM-17P and REV-09. The C00f/S72 RULES copies follow (A22).
+- Direction: two new check ids (tighten); KB-05's change narrows what it validates (C58, stated as such).
+
+### B14. Round-1 repair part 4: CLM-17 and CLM-17P retitled
+
+- CLM-17 title: 'findings_proposed[].claim' became 'every string leaf of findings_proposed[]' (C64). CLM-17P title:
+  'assert a level above level_earned' became 'name a level above level_earned without a qualifier', and 'a met rule,
+  endpoint, result or failed guard' became 'call a rule, endpoint, result or failed guard met' (C62). No id, module,
+  stage, tier, status, bundle or applies_when change; both are new in 1.0.1, so no changed_in. KB-05 keeps
+  changed_in [1.0.1] (kb.py changes again in this range, C66). The C00f/S72 RULES copies follow (A24).
+- Direction: tighten (CLM-17 reads more fields and values; CLM-17P flags more sentences, so REV-09 asks more).
 
 ## C. Checker interpretation rulings (code, not tests)
 
@@ -973,6 +1141,121 @@ with new names, fields and layouts).
 - C56 Verifier items not changed: CLM-17 stays lexical (a paraphrase outside its vocabulary is the residual the
   reviewer covers); A12 (a neutral-named results/ JSON) is left to RUN-01, which fired on the verifier's probe.
 
+- C57 CLM-17 split by mechanism (round-1 repair part 3; SPEC 20.20 (a)). `claimcheck.claim_field_problems`: CLAIM.notes,
+  findings_none_reason and every findings_proposed[].claim hold no LEVEL_TOKEN_RE token above level_earned
+  (`level_tokens`: markup_skeleton twice, look-alike E fold `_LEVEL_FOLD`, identifier split; 'E 3', 'E-3', 'E-three',
+  'evidence level 3'; a hex sha 'e3b0...' and '1e3' are not tokens), and findings_proposed[].level parses as
+  E0..E4/NONE <= level_earned. `status_pairs`/`json_status_pairs` extract key/value shapes (kv and dash segments,
+  table cells with row key and header, a first-column cell only under an earned-level header, a header-only table's
+  row as data, one-line and two-line question/answer pairs, JSON leaves keyed by the last two path keys);
+  `judge_status_pair` applies the level, guard, gate, gate-subject, E-level-key and E-level-value rules of 20.20 (a)
+  (ii). Scope: the REPORT body plus `_agent_files` (unchanged). The clause heuristics left CLM-17. Narrowing, stated
+  (ordered): prose without a key/value shape is no longer judged by CLM-17 (it is CLM-17P's); the free-text values of a
+  'status' key and gate-key values without gate vocabulary are not judged (stated deviation in 20.20 (a)). Tightening:
+  any level token in the three CLAIM fields, negated or not, findings_none_reason and findings levels, negative values
+  understood (the verifier's false alarms '| E3 reached | no |', 'E3 reached: no', 'Did W reach E3? No.' pass), the
+  first column under an earned-level header, question/answer pairs, guards by VERDICT in key/value form, look-alike E.
+- C58 KB-05 supersession (SPEC 20.20 (e); KB-05 changed_in 1.0.1). `kb.superseded_closures`: a closure row naming an
+  earlier closure of the same incident in `supersedes`, with a note, that itself passes `closure_problems`, retires
+  that earlier row; KB-05 skips retired rows and names them in its detail; `ledger append` checks that each
+  `supersedes` id is a closure of the same incident and that the row has a note. Why: INCIDENTS is append-only, and the
+  ordered re-scoping of S68 (A22) leaves INC-HB1-C2-CL1 (CLM-17 on S68) failing KB-05 for every real publish. Stated
+  plainly: this narrows what KB-05 validates (a stale closure no longer FAILs once a valid closure of the same incident
+  supersedes it); the incident stays closed only through the valid row, and a superseding row that does not hold
+  retires nothing (unit test). Row appended with `MFC ledger append --ledger INCIDENTS` (which ran the validation):
+  INC-HB1-C2-CL3 (CLM-17, S89, supersedes INC-HB1-C2-CL1; its note records the prose residual). CL2 (CLM-17, S69)
+  stands. `kb status` still lists 7 open incidents, none INC-HB1-*.
+- C59 REV-09 (SPEC 20.20 (c)). `review.check_rev_09`: flags = `claimcheck.prose_flags_of` (the CLM-17P reading, lazy
+  import) plus the CLM-17P WARN sentences (data.flagged, else evidence) of the latest publish GATE/DRY report
+  (`common.list_gate_reports`) that are still in the text; NOT_APPLICABLE before a REPORT or CLAIM exists, or with
+  neither flags nor adjudications; MISSING with flags and no REVIEW.json; FAIL for a flagged sentence without a verdict,
+  a malformed entry, an overclaim verdict whose sentence is still present, or a reviewer-owned-field change outside the
+  reviewer's commits (`review_history_problems`) or a non-reviewer introducing commit. Matching: `_norm_sentence`
+  (CLM-17P's rendering, lower case, whitespace folded); an adjudication covers a flag when equal, or when it holds the
+  flagged clause and lies inside the flagged sentence. Tightening (new check).
+- C60 CLM-17P vocabulary (SPEC 20.20 (b)). Removed: the alternative `E-?[0-4] ... (is|was) (now)? the (result|outcome)`
+  (verifier: fitted to canary C2; no SPEC or FAILURE_CLASSES text justifies it). Added generic shapes: a level token as
+  a copula's predicate unless a design/process noun follows (CLM17_LEVEL_ATTR_RE now also lists endpoint, strata,
+  items, worlds, pool, requirements, conditions, criteria, rule, question, hypothesis, target, goal, candidate),
+  'E3-level', hit, exceed, surpass, cross, unlock, grant, accomplish, win, beat, make it to, get to, arrive at; on the gate
+  side hit, accomplished, won, wins, attained, exceeded, surpassed, positive (not 'positive control'). Qualifiers added:
+  short of, fell/falls short, out of/beyond reach, unmet, unreached, missed, lacks/lacking. Questions are skipped; a
+  key/value segment is read only as its joined clause and not at all when its key or header is qualified (attempted,
+  target, plan, design, endpoint, ...). Prose scope widened to every .md/.txt file of the delivery outside checks/,
+  runlog/, review/, results/ and manifests/ (verifier: DISCUSSION.md). Several added verbs come from the verifier's
+  round-1 probe list (stated: that list is now visible training data; generic English achievement verbs, not canary
+  shapes). CLM-17P is advisory, so these choices move only WARN rows and the reviewer's workload.
+- C61 Runs on the final tree: unit tests, builder tests, `build_corpus.py --check`, `selftest`, `selftest --mutate`;
+  summary lines in the round report. Residual risks (SPEC 20.20 (d), README 'Known limitations'): free-prose overclaim is
+  a judgment check; a level claim without an E-level token, or a status key outside the key sets, is CLM-17P's and the
+  reviewer's; at T0/T1 CLM-17P only warns.
+
+- C62 CLM-17P token rule (round-1 repair part 4; SPEC 20.21 (a); verifier blocking issue 3). `prose_flags`: after the
+  qualifier test (`_qualified(..., prose=True)`), a clause whose E-level tokens above level_earned are not on a
+  design or process noun (`_named_levels`, `CLM17_PROCESS_ATTR_RE`: the process subset of the 20.13 attributive
+  nouns; delivery, endpoint, rule, criteria, requirements, conditions and candidate no longer exempt) is flagged with
+  reason 'names E<k> above level_earned ... without a qualifier'; the 20.13 achievement shapes stay for tokens on
+  process nouns. A joined key/value clause whose value starts with a number reads only the value's tokens
+  (`CLM17_MEASURE_RE`; the value now travels with the clause: `_kv_clauses` and `overclaim_clauses` return it, JSON
+  joined docs carry it). `_kv_clauses` skips a pair with a negative value (`_neg_value`); `_json_clause_docs` skips the
+  joined clause of a negative string and reads a short string, or one under a qualified key, only as its joined
+  clause. Qualifiers: `CLM17P_QUALIFIER_RE` (demand, hypothesis, hope, aspire, next, future, await, wait for) for
+  CLM-17P only, kept out of the shared CLM17_QUALIFIER_RE so that CLM-17 (b) loses no FAIL; `CLM17_INTENSIFIER_RE`
+  (not just/merely/only, no/without/beyond doubt, nothing short of/less than/but, no less than, no denying, cannot be
+  denied/doubted/clearer, undeniably, never/not failed/missed to, no longer below/short of/missing/out of reach) is
+  removed before the qualifier test for CLM-17 (b) and CLM-17P (removing words only makes qualifiers rarer). Measured
+  on the part-3 verifier's 30 dirty and 20 honest REPORT sentences (fixture copies, real CLI, base S93): 26/30 flagged
+  with REV-09 FAIL at T2, 0/20 false alarms, CLM-17 PASS on all 50 (prose is not structural). Misses: four met-primary
+  sentences without a MET word and none with an unqualified E-level token. Corpus: the 20 clean fixtures with
+  must_not_fire CLM-17P (the 18 of part 3 plus S102 and S103) stay quiet (selftest), so the rule raised no false
+  alarm in the visible corpus. Tightening of the lint aid
+  and so of REV-09; the deferral and intention qualifiers remove the part-3 false alarm 'The rule demands that W clear
+  both OLD guards; ...' (a loosening of CLM-17P on that class, stated; no fixture depends on it).
+- C63 CLM-17 (b) 'status' and 'decision' values (SPEC 20.21 (b); verifier blocking issue 1). `judge_status_pair`: on a
+  non-PASS primary a status/decision value is judged by the achievement-phrase rule when `_status_value_claims`
+  holds: its MET word is paired with CLM17_GATE_SUBJECT_RE, an E-level above level_earned, or the candidate arm
+  (`_status_basis` carries it, identifiers split) with no process check named; a process check before the first MET
+  word exempts. `_text_pairs` adds, for each comma segment that continues a key/value segment without a key/value shape
+  of its own, a pair of shape kv_ext (with its head value) that only `_judge_ext_pair` reads: under a gate key or a
+  key naming the primary, rule, criterion, endpoint or objective, unless the head value is a gate word or a negation,
+  the segment FAILs like a status value ('Decision: proceed, the rule is met'; not 'Conclusion: FAIL, although held
+  composition passed the shortcut test'). CLM-17P reads the segment as a clause (also inside a key/value block;
+  prior-work citations skipped as in `_clauses_of`). The part-3 verifier's 24
+  status/decision probe lines (S93 base) all FAIL CLM-17; its honest lines pass, except 'Evidence level: below E3'
+  and 'Criterion 1 (G > 5pp margin): met', which FAIL by design. This removes the unstated narrowing of part 3
+  (the exemption of status/decision achievement values; SPEC 20.20 (a) now says so). Tightening.
+- C64 CLM-17 (a) every string leaf of a proposed finding (SPEC 20.21 (c); verifier non-blocking). `_finding_strings`:
+  claim first, then conditions values, extra keys, list members and key names holding a level token; 'level' stays
+  judged as a level. `claim_text_docs` gives CLM-17P the same texts. Tightening.
+- C65 Level tokens and answer words (SPEC 20.21 (b), (c); verifier non-blocking). `LEVEL_TOKEN_RE` adds Roman numerals
+  after a dash ('E-III', and 'e-iii' in a lower-cased key), 'evidence tier/rung/grade N', an ordinal before 'evidence
+  level' and a level or ordinal rung of 'the (evidence) ladder'. `AFF_WORDS` adds absolutely, indeed, certainly,
+  definitely, surely, sure, yep, yeah, yup, affirmed, correct. `NEG_VALUE_RE` adds 'nothing', and `ZERO_COUNT_RE` reads a
+  plain zero count as a negative answer ('0/8 worlds', '0 of 8', '0%'; not '0/8 worlds failed'), which only make
+  honest values pass ('Earned: nothing yet'); 'below E3' stays a FAIL for a level key (stated). The verifier's known gaps 'level E-III', 'level 3 of the evidence ladder' and 'Has W earned
+  E3?' / 'Absolutely.' now FAIL CLM-17.
+- C66 KB-05 supersession order (SPEC 20.21 (e); verifier non-blocking). `kb.superseded_closures` retires a closure only
+  when the superseding row comes later in INCIDENTS. Tightening (INC-HB1-C2-CL3 follows CL1, so it still retires it).
+- C67 Documents (verifier blocking issue 6). SPEC 20.20 (d) and the FM-22 row of Section 18 now say that at T2 a
+  flagged sentence publishes only with the reviewer's 'ok' and an unflagged prose overclaim publishes unless the
+  reviewer adds it. The INC-HB1-C2-CL3 note says the same: that row was appended in part 3 and is not committed
+  (`git diff HEAD` of INCIDENTS.jsonl is still one added line), so its note was reworded in place rather than
+  superseded. README 'Known limitations', SCHEMAS (CLAIM texts, the fm22_prose_adjudications row), the claims skill
+  (the overclaim item no longer advises negations for CLAIM.notes and cites S70/S83/S93/S102 instead of S68), its
+  references, the review skill 8a and `templates/REVIEW.template.json` (fm22_prose_adjudications: []) follow. Skill
+  descriptions are byte-identical to 846e85ce; bodies stay under 400 lines.
+- C68 Not changed: the CLM-17P gate side still needs a MET word ('the primary came out green', 'the rule came out in
+  W's favour' pass; the reviewer's); a qualified overclaim ('W reached E3 without the retention guard') passes; the
+  free-prose rule cannot be a mechanical guarantee (SPEC 20.20 (d)). `heldout score` has no exposure switch: the
+  exposure record of section E is a reporting rule, not code.
+- C69 Runs on the final part-4 tree (uncommitted on df15253b): unit tests 'Ran 608 tests ... OK'; builder tests 'Ran
+  17 tests ... OK'; `build_corpus.py --check` 'byte-identical: 156 fixtures, base and EXPECTED.json' and 'valid: ...
+  FM-01..FM-30 covered'; `selftest` 'selftest: PASS (156 fixtures, 0 failing, 0 preflight problems, 67.5s)';
+  `selftest --mutate` 'selftest: PASS (156 fixtures, 0 failing, 0 preflight problems, 186.8s)' with 137 'ok mutate'
+  lines and no GAP (CLM-17, CLM-17P, KB-05 and REV-09 ok). Removed test-assertion lines against df15253b: still the 10
+  of A23 (part 4 removed none). Removed rule lines (must, never, minifly_check) in skills and documents against
+  df15253b: only part 3's KB-05 title in RULES.json (B13); against 846e85ce none added by part 4.
+
 ## D. Integrator amendments recorded for the verifier (round 2)
 
 - D1 Seed finding ids `F-ARCH-01`..`F-ARCH-12`. SPEC 8 names FINDINGS ids `F-<yyyymmdd>-<agent>-<n>` and seed
@@ -985,3 +1268,11 @@ with new names, fields and layouts).
   valid activation row (`kb.finding_state`), so `MFC kb status` shows F-UF-16 as provisional with caveat
   "uninformative manipulation". KB/README.md now says so instead of calling it active.
 
+## E. Held-out exposure
+
+- E1 HB-20261024-R1-CLAIMS ('HB2', author claude-subagent-E, n 4, FM-07, FM-22, FM-24; sealed, not yet scored). The
+  part-3 verifier relays that the round-1 repair part 3 implementer read summaries of canaries E1 and E2 of this batch
+  in a workflow result file (rsi1_result.json) while writing the CLM-17 split. Recorded before the batch is scored, in
+  `corpus/heldout/README.md` 'Exposure records': E1 and E2 are not held-out evidence for the FM-22 changes of parts 3
+  and 4 (CLM-17, CLM-17P, REV-09; SPEC 20.20, 20.21), and the batch's score is reported with and without them. The
+  part-4 implementer read nothing of the batch and did not open the result file.

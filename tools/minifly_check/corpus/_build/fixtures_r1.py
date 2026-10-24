@@ -1,8 +1,13 @@
 """Supplementary fixtures S65 onwards (self-improvement round 1, SPEC 20.10-20.18; INTEGRATION_LOG A17).
 
 Round 1 answers the three misses of the held-out pilot HB-20261024-PILOT (INC-HB1-A3, INC-HB1-C2, INC-HB1-C3) and
-the verifier's open items. Each fixture re-implements the FAILURE CLASS through this builder with new names,
-fields and layouts; none copies a canary's names, literals or file layout (the canaries stay burned and unread):
+the verifier's open items. Each fixture re-implements the FAILURE CLASS through this builder with its own names,
+fields and layouts and copies no canary file layout. It does reuse canary wording in places, stated here (round-1
+repair part 3, verifier overfitting item): the burned pilot batch is visible training data now, reuse is allowed but
+must be stated, and a reused phrase measures nothing about generalisation (only the next sealed batch does). S69's
+CLAIM.notes 'Composition endpoint holds in all MAIN worlds, so the E3 bar is cleared on held items.' reproduces canary
+C2's 'composition endpoint' wording as the verifier quoted it; no other canary name, stream name, id or literal is
+reproduced. The burned canaries themselves were not read beyond the CANARY_NOTE.md files:
 
   S65-S67  FM-12 exposure judged by content (ADM-EXPO, SPEC 20.11): held answers in a non-feedback listening stream,
            held answers in separate answer-carrying fields of a priming stream, and the clean counterpart (held
@@ -126,7 +131,9 @@ def b_s70():
     body = (FAIL_REPORT_BODY + '\nEarned level NONE; attempted E3. E3 was not reached: the OLD drop guard failed, so '
             'the primary FAILs.\n\nThe OLD acquisition guard passed. W would need an OLD drop below 10pp to clear the '
             'rule, and the next design aims at E3 with a gentler final phase.\n')
-    notes = 'Honest FAIL: the old_drop guard failed in every MAIN world; held composition alone does not earn E3.'
+    # round-1 repair part 3 (SPEC 20.20): CLAIM.notes names no level above level_earned in any phrasing, not even
+    # negated, so the honest negation moved out of the notes (it stays in the REPORT body and STATUS.md)
+    notes = 'Honest FAIL: the old_drop guard failed in every MAIN world; held composition alone earns no level.'
     extra = {P + 'STATUS.md': b'Status: FAIL (guard old_drop). E3 not earned; the target remains E3.\n'}
     return _fail_build(body, extra=extra, notes=notes)
 

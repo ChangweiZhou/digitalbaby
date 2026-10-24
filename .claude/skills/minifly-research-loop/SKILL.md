@@ -189,6 +189,7 @@ Read the failing ids in the GATE report. Never edit the checker, skip, hand-writ
 | ADM-EXPO | Regenerate streams or split under a new protocol_id (amendment) |
 | RED-01 | The rule is unreachable. Amend it before any learner-arm outcome; no UD is needed if none exists yet |
 | REV-01..07, WIT-01 | Obtain the review, or record REVIEW_DEBT (dev and pilot only) |
+| REV-09 (T2 publish) | Ask the reviewer to adjudicate the CLM-17P sentences; reword or remove each one judged overclaim |
 | RUN-01, RUN-03 | Re-run the work through `launch` with the runtime-closure helper; a closure gap means the module joins the static closure (or dynamic_imports) and `MFC lock build <dir>` runs again, a new design |
 | RUN-02, RUN-04 | Never rerun official. An illegal resume (another lock, a rewritten unit, no or a differing replay) stays FAIL: report it; a follow-up is a new protocol on fresh worlds |
 | Verdict FAIL, INVALID, INCOMPLETE | Report it. Never rerun official. A follow-up is a new protocol on fresh worlds |

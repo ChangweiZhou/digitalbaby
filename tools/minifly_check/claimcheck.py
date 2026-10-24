@@ -2137,71 +2137,116 @@ def check_clm_16(ctx: common.Ctx) -> Result:
 
 
 # --------------------------------------------------------------------------------------
-# CLM-17: overclaim in agent-written text (SPEC 20.13; round 1, INC-HB1-C2, FM-22)
+# CLM-17 (structural, enforced) and CLM-17P (free-prose lint aid, advisory): overclaim in agent-written text
+# (SPEC 20.13 as amended by 20.20; round 1, INC-HB1-C2, FM-22)
 # --------------------------------------------------------------------------------------
-# The generated fields (headline, primary_gate, level_earned) are checked by CLM-01/02/05. CLM-17 reads the text the
-# agent writes freely: the REPORT.md body below the headline, CLAIM.notes, findings_proposed[].claim and the
-# STATUS*/SUMMARY*/MEMO* (anywhere in the delivery) and NOTES*/ANALYSIS*/README*/RESULTS* (outside results/ and
-# manifests/) files of the delivery (JSON: string values, and each scalar as '<key words> is <value>').
-# After markup_skeleton (the CLM-04 normalisation; once as written and once with markdown links rendered as their
-# text) the text is cut into clauses. Key/value shapes are read the way the JSON path reads them: a 'key: value' or
-# 'key = value' segment of a line (and a short 'key - value' one, at most 3 words a side) and each data cell of a
-# markdown table row ('| level earned | E3 |', or a column header over a cell) also give the clause '<key> is
-# <value>' (key and value of at most 6 words each; in such a joined clause the conditional words when/whenever/iff/
-# once/provided/assuming also qualify). A clause FAILs when it
-#   (a) asserts an evidence level above level_earned: an E0..E4 token together with an achievement word or shape
-#       (reached, achieved, earned, attained, met, demonstrated, established, cleared, passed, qualifies, secured,
-#       obtained, delivered, supported, warranted, substantiated, proven, 'holds' at the end of a claim, 'is at' /
-#       'at E3', 'level is', 'counts as', 'E3-grade', 'is an E3 learner', 'the result is E3', 'E3 ... is the result'),
-#       or, in a joined clause, an affirmative value ('E3: yes', '| E3 | \u2713 |'), unless every achievement word is
-#       pass/clear and its subject is a process check named before it, with each level token qualifying a process
-#       noun (E3 design, E1 plumbing checks) in that subject or behind a preposition ('the roster gate for this E3 design passed', 'E1 plumbing checks passed', 'admission passed for
-#       the E3 design'), or
-#   (b) when primary_gate is not PASS, describes the primary, the decision rule or criterion, an endpoint, the
-#       objective or 'the result' as met, cleared, passed, satisfied, reached, achieved, fulfilled, successful, a
-#       success or 'holds' (joined: also an affirmative value, 'Primary endpoint: yes'); a clause about guards only fails when a guard it names (or, unnamed, any guard) did not
-#       PASS in VERDICT.
-# A clause with an explicit qualifier (attempted, target, goal, plan, aim, intend, toward(s), not, no, never, neither,
-# nor, n't, fail*, below, would, could, might, if, unless, cannot, without, require*, need*, must, should, expected,
-# predicted, whether, unearned, short of), or that opens with the bare form of an achievement verb (an imperative or
-# a plan: 'Goal: reach E3 next'), is not an assertion. Conformity phrases ('as planned', 'exactly as
-# predicted', 'as expected', 'in line with the plan', 'without exception') and a noun qualifier directly asserted as
-# reached ('the target was reached', 'goal met') are removed first, so they do not qualify the assertion. A sentence
-# that cites prior work (an F-id or catalog id plus a prior-work word) is skipped unless it also points at this
-# delivery (here, this delivery/run/design/report, now, currently); then it is cut at commas too and only its clauses
-# that cite nothing and name no prior work are judged.
+# The generated fields (headline, primary_gate, level_earned) are checked by CLM-01/02/05. Round-1 repair part 3
+# (verifier: guessing overclaims in free prose with regexes both misses paraphrases and false-alarms on honest text)
+# splits the check by mechanism:
+#   CLM-17 (enforced) judges only text with a closed vocabulary:
+#     (a) CLAIM.notes, CLAIM.findings_none_reason and every string leaf of each findings_proposed entry name no
+#         E-level token above level_earned, in any phrasing, negated or not (LEVEL_TOKEN_RE read as rendered:
+#         markup_skeleton, entities, look-alike letters, 'E 3', 'E-three', 'E-III', 'evidence level 3', 'the third
+#         evidence level', 'level 3 of the evidence ladder'); the attempted level lives only in the generated
+#         level_attempted. findings_proposed[].level, when present, is a level <= level_earned.
+#     (b) machine-readable status surfaces: the REPORT.md body, STATUS*/SUMMARY*/MEMO* anywhere in the delivery and
+#         NOTES*/ANALYSIS*/README*/RESULTS* outside results/ and manifests/. Only their key/value shapes are read
+#         (status_pairs): 'key: value' / 'key = value' segments, short 'key - value' segments, markdown table cells
+#         (row key and column header), one-line 'question? answer' pairs and JSON leaves. A key that names the level
+#         or the gate must carry the CLAIM value or a negation; an E-level above level_earned in a key with an
+#         affirmative value, or as a short unqualified value, FAILs (judge_status_pair).
+#   CLM-17P (advisory: WARN, never FAIL) reads free prose (prose_flags). Since round-1 repair part 4 its level side is
+#   a token rule, not a vocabulary: every clause of a non-question sentence that names an E-level above level_earned
+#   without a qualifier is flagged, whatever its verb (a token on a design or process noun is left out). Its gate
+#   side (a met primary, rule, criterion, endpoint or objective; a met guard) still needs a MET word. Every WARN row
+#   lists the flagged sentence; at T2, REV-09 makes the reviewer adjudicate each one
+#   (REVIEW.fm22_prose_adjudications). Free-prose overclaim is a judgment check with a lint aid, not a mechanical
+#   guarantee: a sentence the lint does not flag publishes unless the reviewer adds it.
 
-CLM17_LEVEL_RE = re.compile(r'(?<![A-Za-z0-9])E-?([0-4])(?![0-9])', re.I)
+# Look-alike capital/small E (Cyrillic Ie, Greek Epsilon, Latin open E); NFKC already maps fullwidth, mathematical
+# and script letters and digits.
+_LEVEL_FOLD = {0x0415: 'E', 0x0435: 'e', 0x0395: 'E', 0x03B5: 'e', 0x0190: 'E', 0x025B: 'e'}
+LEVEL_WORDS = {'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4,
+               'zeroth': 0, 'first': 1, 'second': 2, 'third': 3, 'fourth': 4, 'i': 1, 'ii': 2, 'iii': 3, 'iv': 4}
+_LEVEL_SEP = '[  \\-‐-―]?'
+_LEVEL_DASH = '[\\-‐-―]'
+_LEVEL_NUM = r'(?:([0-4])(?![0-9A-Za-z])|(zero|one|two|three|four)\b)'
+_LEVEL_ORD = r'(zeroth|first|second|third|fourth)'
+# Round-1 repair part 4 (verifier non-blocking: token gaps): Roman numerals after a dash ('E-III', and 'e-iii' in a
+# normalised key), 'evidence tier/rung/grade 3', an ordinal before 'evidence level' ('the third evidence level') and a
+# level or ordinal rung of 'the (evidence) ladder' ('level 3 of the evidence ladder', 'the third rung of the ladder')
+# are level tokens too.
+LEVEL_TOKEN_RE = re.compile(
+    r'(?<![A-Za-z0-9])(?:E%(sep)s%(num)s'
+    r'|(?-i:[Ee]%(dash)s(I{1,3}|IV|i{1,3}|iv))(?![0-9A-Za-z])'
+    r'|(?:evidence|E)%(sep)s(?:level|tier|rung|grade)\s+%(num)s'
+    r'|%(ord)s\s+(?:evidence|E)%(sep)s(?:level|tier|rung|grade)\b'
+    r'|(?:level|tier|rung|step|grade)\s+%(num)s\s+(?:of|on|in)\s+the\s+(?:evidence|E)?%(sep)sladder\b'
+    r'|%(ord)s\s+(?:level|tier|rung|step|grade)\s+(?:of|on|in)\s+the\s+(?:evidence|E)?%(sep)sladder\b)'
+    % {'sep': _LEVEL_SEP, 'dash': _LEVEL_DASH, 'num': _LEVEL_NUM, 'ord': _LEVEL_ORD}, re.I)
 CLM17_ACHIEVE_RE = re.compile(
     r'\b(?:reach(?:ed|es|ing)?|achiev(?:e|ed|es|ing)|earn(?:ed|s|ing)?|attain(?:ed|s|ing|ment)?|met|meets?|'
     r'meeting|demonstrat(?:e|ed|es|ing)|establish(?:ed|es|ing)?|clear(?:ed|s|ing)?|pass(?:ed|es|ing)?|'
     r'qualif(?:y|ies|ied|ying)|secur(?:e|ed|es)|obtain(?:ed|s)?|deliver(?:ed|s)?|supported|warranted|substantiated|'
-    r'proven)\b'
+    r'proven|hit(?:s|ting)?|exceed(?:s|ed|ing)?|surpass(?:es|ed|ing)?|cross(?:es|ed|ing)?|unlock(?:s|ed|ing)?|'
+    r'grant(?:s|ed)?|accomplish(?:es|ed|ing)?|wins?|won|beat(?:s|en)?)\b'
+    r'|\b(?:ma(?:ke|kes|de|king)\s+it|g(?:et|ets|ot|otten|etting))\s+(?:up\s+)?to\b'
+    r'|\barriv(?:e|es|ed|ing)\s+at\b'
     r'|\bholds(?=\s*$|\s+(?:up|firm|true|for|on|across|in|at|here|everywhere|throughout|again)\b)'
     r'|\b(?:is|are|was|were|sits?|stands?|performs?|operates?|now|lands?|landed)\s+at\b'
     r'|\bat\s+(?:the\s+|an?\s+)?E-?[0-4]\b|\blevel\s+(?:is|was|=)\b|\b(?:counts?|counted|ranks?|ranked)\s+as\b'
-    r'|(?<![A-Za-z0-9])E-?[0-4][- ]?(?:grade|worthy|quality|class|calib(?:re|er)|strength)\b'
+    r'|(?<![A-Za-z0-9])E-?[0-4][- ]?(?:grade|level|worthy|quality|class|calib(?:re|er)|strength|standard)\b'
     r'|\b(?:is|are|was|were|becomes?|became)\s+(?:now\s+)?(?:an?|the)\s+E-?[0-4](?:[- ]?level)?\s+'
     r'(?:learner|model|system|fly|agent|composer|generali[sz]er)\b'
     r'|\b(?:result|outcome)\s+(?:is|was|=)\s+(?:an?\s+|the\s+)?E-?[0-4]\b'
-    r'|(?<![A-Za-z0-9])E-?[0-4]\b[^.;]{0,60}?\b(?:is|was)\s+(?:now\s+)?the\s+(?:result|outcome)\b', re.I)
+    # a level token as the predicate of a copula ('the evidence level for X is E3', "W's composition is E3")
+    r'|\b(?:is|are|was|were|be|been|becomes?|became|remains?|remained|stays?|stayed)\s+'
+    r'(?:(?:now|already|clearly|firmly|solidly|officially|squarely|fully|thus|therefore|then)\s+)?'
+    r'(?:an?\s+|the\s+)?E-?[0-4](?![0-9A-Za-z])', re.I)
 CLM17_PASSVERB_RE = re.compile(r'^(?:pass(?:ed|es|ing)?|clear(?:ed|s|ing)?)$', re.I)
 CLM17_PROCESS_CHECK_RE = re.compile(
     r'\b(?:lock|roster|admission|testbed|technical|rehearsal|plumbing|smoke|unit|schema|lint|integrity|preflight|'
     r'launch|canary|review|dev|cycle[- ]?0)\s+(?:gates?|checks?|tests?|screens?|stages?|bundles?)\b'
     r'|\b(?:lock|roster|admission|testbed|rehearsal|review|canary|lint|plumbing|schema|preflight|audit)\b', re.I)
-# a level token used attributively on a process noun ('the E3 design', 'E1 plumbing checks')
-CLM17_LEVEL_ATTR_RE = re.compile(r'^[- ]?(?:design|lock|plan|attempt|delivery|stage|gates?|plumbing|checks?|tests?|'
-                                 r'roster|admission|testbed|review|cycle|bundle|setup|protocol|spec|pipeline)\b', re.I)
+# a level token used attributively on a process or design noun ('the E3 design', 'E1 plumbing checks', 'E3 strata')
+_LEVEL_ATTR_NOUNS = (r'design|lock|plan|attempt|delivery|stage|gates?|plumbing|checks?|tests?|roster|admission|testbed|'
+                     r'review|cycle|bundle|setup|protocol|spec|pipeline|endpoint|strata|stratum|items?|worlds?|pool|'
+                     r'requirements?|conditions?|criteria|criterion|rule|question|hypothesis|target|goal|candidate')
+CLM17_LEVEL_ATTR_RE = re.compile(r'^[- ]?(?:level[- ]?)?(?:%s)\b' % _LEVEL_ATTR_NOUNS, re.I)
+# CLM-17P's token rule (round-1 repair part 4) exempts only a level token on a design or process noun: the work, not
+# its outcome. Outcome nouns of _LEVEL_ATTR_NOUNS (delivery, endpoint, rule, criteria, requirements, conditions,
+# candidate) do not exempt ('this is an E3 delivery', 'W fulfils the E3 requirements' are flagged).
+_PROCESS_ATTR_NOUNS = (r'design|lock|plan|attempt|stage|gates?|plumbing|checks?|tests?|roster|admission|testbed|'
+                       r'review|cycle|bundle|setup|protocol|spec|pipeline|strata|stratum|items?|worlds?|pool|'
+                       r'question|hypothes[ie]s|target|goal|pre-?registration|prereg')
+CLM17_PROCESS_ATTR_RE = re.compile(r'^[- ]?(?:level[- ]?)?(?:%s)\b' % _PROCESS_ATTR_NOUNS, re.I)
 CLM17_LEVEL_PP_RE = re.compile(r'\b(?:for|of|on|in|under|behind)\s+(?:(?:the|this|that|our|its|an?)\s+)?$', re.I)
 CLM17_AFFIRM_RE = re.compile(r'\bis\s+(?:yes|y|true|done|ok|okay|complete|completed|achieved|reached|met)\s*$', re.I)
-CLM17_CHECKMARKS = ('\u2713', '\u2714', '\u2611', '\u2705')
+CLM17_CHECKMARKS = ('✓', '✔', '☑', '✅')
 CLM17_QUALIFIER_RE = re.compile(
     r"\b(?:attempt(?:ed|s|ing)?|target(?:ed|s|ing)?|goals?|plan(?:ned|s|ning)?|aim(?:ed|s|ing)?|intend(?:ed|s)?|"
     r"towards?|not|no|never|neither|nor|fail(?:ed|s|ing|ure)?|below|would|could|might|if|unless|cannot|without|"
     r"requir(?:e|es|ed|ing)|need(?:ed|s)?|must|should|expect(?:ed|s)?|predict(?:ed|s|ion)?|whether|unearned|"
-    r"short\s+of)\b|n[’']t\b", re.I)
+    r"short\s+of|fell\s+short|falls?\s+short|out\s+of\s+reach|beyond\s+reach|unmet|unreached|miss(?:ed|es|ing)?|"
+    r"lacks?|lacking)\b|n[’']t\b", re.I)
 CLM17_COND_RE = re.compile(r'\b(?:when|whenever|iff|once|provided|assuming)\b', re.I)
+# Round-1 repair part 4 (SPEC 20.20 (b)): negative-polarity intensifiers and double negations are removed before the
+# qualifier search, so they do not qualify the assertion they strengthen ('not just E2 but E3', 'no doubt W reached
+# E3', 'W never failed to reach E3', 'no longer short of E3'). Removing words only makes qualifiers rarer, so this
+# tightens CLM-17 (b) values and CLM-17P alike.
+CLM17_INTENSIFIER_RE = re.compile(
+    r"\b(?:not|n[’']t)\s+(?:just|merely|only|simply|even\s+close\s+to\s+(?:failing|missing))\b"
+    r"|\b(?:no|without(?:\s+(?:a|any))?|beyond(?:\s+(?:any|all|a))?)\s+(?:doubts?|question)\b"
+    r"|\bnothing\s+(?:short\s+of|less\s+than|but)\b|\bno\s+less\s+than\b|\b(?:there\s+is\s+)?no\s+denying\b"
+    r"|\b(?:cannot|can\s*not|can[’']t)\s+be\s+(?:denied|doubted|questioned|clearer|disputed)\b|\bundeniabl[ey]\b"
+    r"|\b(?:not|never|n[’']t)\s+(?:once\s+)?(?:fail(?:ed|s|ing)?|miss(?:ed|es|ing)?)\s+to\b"
+    r"|\bno\s+longer\s+(?:below|short\s+of|missing|lacking|out\s+of\s+reach|fail(?:s|ing)?)\b", re.I)
+# Qualifier classes CLM-17P also reads (requirement, intention, plan and deferral words like those of
+# CLM17_QUALIFIER_RE); kept out of the shared CLM17_QUALIFIER_RE so that CLM-17 (b), which is enforced, does not lose
+# a FAIL.
+CLM17P_QUALIFIER_RE = re.compile(r'\b(?:demand(?:s|ed|ing)?|hypothes(?:is|es|i[sz]ed?)|hop(?:e|es|ed|ing)|'
+                                 r'aspir(?:e|es|ed|ing|ations?)|next|future|await(?:s|ed|ing)?|'
+                                 r'wait(?:s|ed|ing)?\s+(?:for|until|on))\b', re.I)
 # a clause that opens with the bare form of an achievement verb is an imperative or a plan ('Goal: reach E3 next')
 CLM17_IMPERATIVE_RE = re.compile(r'^\s*(?:to\s+)?(?:reach|achieve|earn|attain|meet|demonstrate|establish|clear|pass|'
                                  r'qualify|secure|obtain|deliver)\b', re.I)
@@ -2219,7 +2264,9 @@ CLM17_GATE_SUBJECT_RE = re.compile(
 CLM17_GUARD_RE = re.compile(r'\bguards?\b', re.I)
 CLM17_MET_RE = re.compile(
     r'\b(?:met|meets?|clear(?:ed|s)?|pass(?:ed|es)?|satisf(?:y|ies|ied)|reach(?:ed|es)?|successful(?:ly)?|'
-    r'succeed(?:ed|s)?|achiev(?:ed|es)|fulfill?(?:ed|s)?|holds)\b'
+    r'succeed(?:ed|s)?|achiev(?:ed|es)|fulfill?(?:ed|s)?|holds|hit|accomplish(?:ed|es)?|wins?|won|attained|'
+    r'exceed(?:ed|s)?|surpass(?:ed|es)?)\b'
+    r'|\bpositive\b(?!\s+controls?)'
     r'|\bsuccess\b(?!\s+(?:criteri|condition|threshold|rule|definition|bar\b))', re.I)
 CLM17_SPLIT_RE = re.compile(
     r'[;:|()\[\]{}]|\s[-–—]+\s|,?\s+\b(?:but|while|whereas|although|though|however|yet|because|since|so|'
@@ -2241,10 +2288,11 @@ GUARD_KIND_WORDS = {'old_drop': ('drop', 'retention', 'forgetting', 'retained'),
 
 
 def _agent_words(text: str, links: bool = False) -> str:
-    """markup_skeleton plus identifier splitting (snake_case and CamelCase become words) for clause matching."""
+    """markup_skeleton plus identifier splitting (snake_case and CamelCase become words) and the look-alike E fold,
+    for clause and key/value matching."""
     t = markup_skeleton(text, links=links)
     t = re.sub(r'(?<=[a-z0-9])(?=[A-Z][a-z])', ' ', t)
-    return t.replace('_', ' ')
+    return t.replace('_', ' ').translate(_LEVEL_FOLD)
 
 
 def _n_words(t: str) -> int:
@@ -2255,18 +2303,551 @@ def _cites_prior(t: str) -> bool:
     return bool(CITATION_RE.search(t) or PRIOR_WORK_RE.search(t))
 
 
+def _token_level(m: 're.Match') -> int:
+    for g in m.groups():
+        if g is not None:
+            return int(g) if g.isdigit() else LEVEL_WORDS[g.lower()]
+    return -1
+
+
+def level_tokens(text: str) -> List[Tuple[int, int, str]]:
+    """(line, level, token) of every E-level token of a text read as rendered (once as written, once with markdown
+    links rendered as their text), look-alike E letters folded and identifiers split ('E_3', 'level_E3')."""
+    out: List[Tuple[int, int, str]] = []
+    seen: Set[Tuple[int, int, str]] = set()
+    for links in (False, True):
+        for i, line in enumerate(_agent_words(text, links=links).splitlines(), 1):
+            for m in LEVEL_TOKEN_RE.finditer(line):
+                k = (i, _token_level(m), m.group(0))
+                if k not in seen:
+                    seen.add(k)
+                    out.append(k)
+    return out
+
+
+def _earned_int(level_earned: Any) -> int:
+    """E0..E4 -> 0..4; NONE (or anything else) -> -1."""
+    if isinstance(level_earned, str) and re.fullmatch(r'E[0-4]', level_earned.strip()):
+        return int(level_earned.strip()[1])
+    return -1
+
+
+def _level_value(v: Any) -> Optional[int]:
+    """A findings_proposed[].level value: 'E0'..'E4' (as rendered) -> 0..4, 'NONE' -> -1, anything else None."""
+    if not isinstance(v, str):
+        return None
+    t = ' '.join(_agent_words(v).split()).strip(' .')
+    if t.upper() == 'NONE':
+        return -1
+    m = LEVEL_TOKEN_RE.fullmatch(t)
+    return _token_level(m) if m else None
+
+
+# --- CLM-17 (a): the agent-edited CLAIM fields --------------------------------------------------------------------
+
+CLAIM_AGENT_TEXT_FIELDS = ('notes', 'findings_none_reason')
+
+
+def _finding_strings(f: dict) -> List[Tuple[str, str]]:
+    """(path, text) of every non-empty string leaf of one findings_proposed entry except its 'level' (and the key
+    names of its objects, which are agent-written too), the claim first."""
+    out: List[Tuple[str, str]] = []
+
+    def walk(o: Any, path: List[str]) -> None:
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if not path and k == 'level':
+                    continue
+                if isinstance(k, str) and LEVEL_TOKEN_RE.search(_agent_words(k)):
+                    out.append(('/'.join(path + [k]) + ' (key)', k))
+                walk(v, path + [str(k)])
+        elif isinstance(o, list):
+            for j, v in enumerate(o):
+                walk(v, path + [str(j)])
+        elif isinstance(o, str) and o.strip():
+            out.append(('/'.join(path), o))
+    walk(f, [])
+    out.sort(key=lambda x: x[0] != 'claim')
+    return out
+
+
+def claim_field_problems(claim: Optional[dict], level_earned: Any, label: str = 'CLAIM.json') -> Tuple[List[str], int]:
+    """(problems, number of fields read) of CLM-17 (a): CLAIM.notes, findings_none_reason and every string leaf of
+    each findings_proposed entry (its claim, conditions values, extra keys and key names; _finding_strings) name no
+    E-level token above level_earned in any phrasing; findings_proposed[].level, when present, is a level <=
+    level_earned."""
+    if not isinstance(claim, dict):
+        return [], 0
+    earned = _earned_int(level_earned)
+    out: List[str] = []
+    n = 0
+
+    def scan(lab: str, text: str) -> None:
+        above = [(ln, lv, tok) for ln, lv, tok in level_tokens(text) if lv > earned]
+        if above:
+            out.append('%s names %s above level_earned %s (%s); agent text never names a level above level_earned, '
+                       'not even negated: the attempted level is the generated level_attempted'
+                       % (lab, ', '.join(sorted(set('E%d' % lv for _l, lv, _t in above))), level_earned,
+                          '; '.join('line %d %r' % (ln, tok) for ln, _lv, tok in above[:4])))
+    for k in CLAIM_AGENT_TEXT_FIELDS:
+        if _s(claim.get(k)):
+            n += 1
+            scan('%s#%s' % (label, k), claim[k])
+    fp = claim.get('findings_proposed')
+    for i, f in enumerate(fp if isinstance(fp, list) else []):
+        if not isinstance(f, dict):
+            continue
+        # round-1 repair part 4 (verifier non-blocking): every agent-written string leaf of the entry (claim,
+        # conditions values, extra keys), not only its claim; 'level' is judged as a level below
+        for path, text in _finding_strings(f):
+            n += 1
+            scan('%s#findings_proposed/%d/%s' % (label, i, path), text)
+        if f.get('level') is not None:
+            n += 1
+            lv = _level_value(f.get('level'))
+            if lv is None:
+                out.append('%s#findings_proposed/%d/level %r is not E0..E4 or NONE' % (label, i, f.get('level')))
+            elif lv > earned:
+                out.append('%s#findings_proposed/%d/level %s is above level_earned %s' % (label, i, f['level'],
+                                                                                        level_earned))
+    return out, n
+
+
+# --- CLM-17 (b): key/value shapes of machine-readable status surfaces -----------------------------------------------
+
+STATUS_SHORT_VALUE_WORDS = 6     # a level value or an E-level key's answer is judged up to this length
+STATUS_GATE_VALUE_WORDS = 8      # an achievement verb in a gate key's value is judged up to this length
+# keys that name level_earned (normalised: lower case, markup and punctuation removed, context words stripped)
+LEVEL_KEYS = frozenset((
+    'level', 'evidence level', 'level earned', 'earned', 'earned level', 'e level', 'e-level',
+    'evidence level earned', 'earned evidence level', 'level reached', 'reached level', 'level achieved',
+    'achieved level', 'level attained', 'attained level', 'claimed level', 'level claimed', 'level of evidence',
+    'evidence level reached', 'evidence level achieved', 'level obtained'))
+CORE_EARNED_KEYS = LEVEL_KEYS - {'level'}
+# keys that name the primary gate or the outcome
+GATE_KEYS = frozenset((
+    'primary gate', 'gate', 'verdict', 'outcome', 'result', 'status', 'primary', 'primary result', 'primary outcome',
+    'primary verdict', 'primary status', 'primary gate result', 'primary gate status', 'gate result', 'gate status',
+    'primary endpoint', 'endpoint', 'primary endpoint result', 'primary endpoint status', 'decision',
+    'primary decision', 'bottom line', 'conclusion', 'headline result', 'headline verdict', 'decision rule result',
+    'rule result', 'objective', 'primary objective'))
+# words that open a key as context only ('Delivery status', 'Final level', JSON 'claim.level_earned')
+_KEY_CONTEXT_RE = re.compile(r'^(?:(?:summary|status|claim|delivery|this delivery|overall|final|official|headline|'
+                             r'current|the|our|this|its)\s+)+')
+# a key that describes the design, the plan or other work, not the outcome of this delivery
+KEY_QUALIFIER_RE = re.compile(r'\b(?:next|design(?:ed)?|protocol|lock(?:ed)?|hypothes[ie]s|question|prior|previous|'
+                              r'parent|earlier|legacy|endpoint|objective|threshold|bar|ladder|definition|meaning|scope|task|'
+                              r'focus|topic)\b',
+                              re.I)
+GATE_VALUE_RE = re.compile(r'(pass|fail|invalid|incomplete|not opened|cannot test claim as specified)(?![a-z])')
+NEG_SYMBOLS = frozenset(('✗', '✘', '❌', '×', '—', '–', '-', '--', '∅'))
+NEG_VALUE_RE = re.compile(r"(?:no|not|none|nope|false|never|fail(?:ed|s|ing|ure)?|missed|unmet|unreached|unearned|"
+                          r"n/a|na|nil|negative|nothing)(?![a-z])")
+# a plain zero count or share is a negative answer ('0/8 worlds', '0 of 8', '0%'); a count followed by anything but
+# counting nouns is not ('0/8 worlds failed' says the opposite)
+ZERO_COUNT_RE = re.compile(r'0(?:\.0+)?\s*(?:/\s*[0-9]+|of\s+[0-9]+|out\s+of\s+[0-9]+|%)'
+                           r'(?:\s+(?:main|official|held|dev|worlds?|items?|sums?|runs?|cases?|arms?|seeds?))*\s*$')
+AFF_WORDS = frozenset(('yes', 'y', 'true', 'met', 'reached', 'pass', 'passed', 'passes', 'passing', 'achieved',
+                       'attained', 'earned', 'done', 'ok', 'okay', 'complete', 'completed', 'success',
+                       'successful', 'succeeded', 'satisfied', 'cleared', 'hit', 'holds', 'confirmed', 'positive',
+                       'won', 'unlocked', 'granted', 'secured', 'obtained', 'demonstrated', 'established',
+                       'fulfilled', 'fulfiled', 'accomplished', 'affirmative',
+                       # round-1 repair part 4 (verifier non-blocking: two-line answers 'Absolutely.', 'Indeed.')
+                       'absolutely', 'indeed', 'certainly', 'definitely', 'surely', 'sure', 'yep', 'yeah', 'yup',
+                       'affirmed', 'correct'))
+TASK_STATE_WORDS = frozenset(('done', 'ok', 'okay', 'complete', 'completed'))   # 'Status: done' is about the work
+_NEG_INSIDE_RE = re.compile(r"\b(?:not|no|never)\b|n[’']t\b", re.I)
+_PAIR_STRIP_RE = re.compile(r"[*`~#>\[\]()\"“”‘’]+")
+
+
+def _nk(k: Optional[str]) -> str:
+    """Normalised key: lower case, markup and brackets removed, list markers and a 'Q:' label dropped, trailing
+    punctuation (and '?') removed."""
+    t = _PAIR_STRIP_RE.sub(' ', k or '').lower()
+    t = re.sub(r'^\s*(?:[-+]|\d+[.)])\s+', '', t)
+    t = re.sub(r'^\s*(?:q|question)\s*[:.]\s*', '', t)
+    t = ' '.join(t.split())
+    return t.strip(' .,;:!?=')
+
+
+def _ck(k: str) -> str:
+    """A normalised key without its context words ('delivery status' -> 'status', 'final level' -> 'level')."""
+    c = _KEY_CONTEXT_RE.sub('', k).strip()
+    return c or k
+
+
+def _nv(v: Optional[str]) -> str:
+    """Normalised value: lower case, markup removed, an 'A:' label and surrounding punctuation dropped."""
+    t = re.sub(r"[*`~]+", ' ', v or '').lower()
+    t = ' '.join(t.split()).strip(' .,;:!"\'')
+    t = re.sub(r'^(?:a|answer)\s*[:.]\s*', '', t)
+    return t
+
+
+def _neg_value(v: str) -> bool:
+    return v in NEG_SYMBOLS or v in ('n', '0', 'x̸') or bool(NEG_VALUE_RE.match(v) or ZERO_COUNT_RE.match(v))
+
+
+def _aff_value(v: str, task_words: bool = True) -> bool:
+    if any(v.startswith(c) for c in CLM17_CHECKMARKS):
+        return True
+    m = re.match(r'[a-z]+', v)
+    head = m.group(0) if m else ''
+    if head not in AFF_WORDS or (not task_words and head in TASK_STATE_WORDS):
+        return False
+    return not _NEG_INSIDE_RE.search(v)
+
+
+def _levels_in(t: str, attributive_ok: bool = True) -> List[int]:
+    """Levels of the E-level tokens of a normalised text; with attributive_ok a token that qualifies a design or
+    process noun ('E3 design', 'E3 strata') is left out."""
+    out = []
+    for m in LEVEL_TOKEN_RE.finditer(t):
+        if attributive_ok and CLM17_LEVEL_ATTR_RE.match(t[m.end():]):
+            continue
+        out.append(_token_level(m))
+    return out
+
+
+def _key_qualified(k: str) -> bool:
+    t = CLM17_NOUN_ASSERTED_RE.sub(' ', k)
+    return bool(CLM17_QUALIFIER_RE.search(t) or KEY_QUALIFIER_RE.search(t) or _cites_prior(k))
+
+
+def _kv_seg(seg: str) -> Optional[Tuple[str, str]]:
+    m = CLM17_KV_RE.match(seg or '')
+    if m and 0 < _n_words(m.group('k')) <= CLM17_KV_MAX_WORDS and _n_words(m.group('v')) > 0:
+        return m.group('k'), m.group('v')
+    m = CLM17_KV_DASH_RE.match(seg or '')
+    if (m and len(re.findall(r'\s[-–—]+\s', seg)) == 1 and 0 < _n_words(m.group('k')) <= CLM17_KV_DASH_MAX_WORDS
+            and 0 < _n_words(m.group('v')) <= CLM17_KV_DASH_MAX_WORDS):
+        return m.group('k'), m.group('v')
+    return None
+
+
+def _table_cells(line: str) -> List[str]:
+    s = line.strip()
+    if s.startswith('|'):
+        s = s[1:]
+    if s.endswith('|'):
+        s = s[:-1]
+    return [c.strip() for c in s.split('|')]
+
+
+def _is_table_line(s: str) -> bool:
+    s = s.strip()
+    return s.startswith('|') and s.count('|') >= 2
+
+
+def _pair(line: int, key: str, header: Optional[str], value: str, shape: str, text: str) -> dict:
+    return {'line': line, 'key': key, 'header': header, 'value': value, 'shape': shape, 'text': text}
+
+
+def _text_pairs(text: str) -> List[dict]:
+    """Key/value shapes of one normalised text: markdown table cells (keyed by the row's first cell and, under a header
+    row, by the column header; a first-column cell is a value only under an earned-level header), 'key: value' /
+    'key = value' segments (cut at ; | and ', ' inside a sentence), short 'key - value' segments, and 'question?
+    answer' pairs (on one line, or a question line followed by a short answer line)."""
+    out: List[dict] = []
+    lines = text.splitlines()
+    i = 0
+    prev_q: Optional[Tuple[int, str]] = None
+    while i < len(lines):
+        s = lines[i].strip()
+        if _is_table_line(s):
+            j = i
+            while j < len(lines) and _is_table_line(lines[j]):
+                j += 1
+            block = [(k + 1, lines[k].strip()) for k in range(i, j)]
+            header: Optional[List[str]] = None
+            rows = block
+            if len(block) > 1 and CLM17_TABLE_SEP_RE.match(block[1][1]) and '-' in block[1][1]:
+                header, rows = _table_cells(block[0][1]), block[2:]
+                if not rows:   # a header-only table: its one row is data
+                    header, rows = None, block[:1]
+            for ln, r in rows:
+                if CLM17_TABLE_SEP_RE.match(r):
+                    continue
+                cells = _table_cells(r)
+                for c, val in enumerate(cells):
+                    if c == 0:
+                        if header and _ck(_nk(header[0])) in CORE_EARNED_KEYS:
+                            out.append(_pair(ln, header[0], None, val, 'table', r))
+                        continue
+                    hd = header[c] if header and c < len(header) else None
+                    out.append(_pair(ln, cells[0], hd, val, 'table', r))
+            prev_q = None
+            i = j
+            continue
+        ln = i + 1
+        i += 1
+        if not s:
+            continue
+        if prev_q is not None and '?' not in s and _n_words(s) <= STATUS_SHORT_VALUE_WORDS:
+            out.append(_pair(ln, prev_q[1], None, s, 'qa', prev_q[1] + ' ' + s))
+        sents = [x for x in re.split(r'(?<=[.!?])\s+', s) if x.strip()]
+        prev_q = (ln, sents[-1]) if sents and sents[-1].rstrip().endswith('?') else None
+        for k, sent in enumerate(sents):
+            if sent.rstrip().endswith('?'):
+                if k + 1 < len(sents) and _n_words(sents[k + 1]) <= STATUS_SHORT_VALUE_WORDS:
+                    out.append(_pair(ln, sent, None, sents[k + 1], 'qa', s))
+                continue
+            for part in re.split(r'[;|]', sent):
+                segs = re.split(r',\s', part)
+                for q, seg in enumerate(segs):
+                    kv = _kv_seg(seg)
+                    if not kv:
+                        continue
+                    out.append(_pair(ln, kv[0], None, kv[1], 'kv', s))
+                    # round-1 repair part 4: each following comma segment that holds no key/value shape continues
+                    # the value, for the gate rules only ('Decision: proceed, the rule is met')
+                    for nxt in segs[q + 1:]:
+                        if _kv_seg(nxt):
+                            break
+                        if nxt.strip():
+                            ext = _pair(ln, kv[0], None, nxt, 'kv_ext', s)
+                            ext['head'] = kv[1]
+                            out.append(ext)
+    return out
+
+
+def status_pairs(text: str) -> List[dict]:
+    """Key/value shapes of a markdown/text status surface (_text_pairs), read as rendered: once as written and once
+    with markdown links rendered as their text; duplicates dropped."""
+    out: List[dict] = []
+    seen: Set[Tuple[Any, ...]] = set()
+    for links in (False, True):
+        for p in _text_pairs(_agent_words(text, links=links)):
+            k = (p['line'], p['key'], p['header'], p['value'])
+            if k not in seen:
+                seen.add(k)
+                out.append(p)
+    return out
+
+
+def json_status_pairs(obj: Any) -> List[dict]:
+    """Key/value shapes of a JSON status surface: every scalar leaf, keyed by its last two path keys (identifiers
+    split into words), true/false as 'true'/'false'; null leaves are skipped."""
+    out: List[dict] = []
+
+    def walk(o: Any, path: List[str]) -> None:
+        if isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, path + [str(k)])
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, path)
+        elif o is not None and path:
+            val = 'true' if o is True else 'false' if o is False else str(o)
+            key = _agent_words(' '.join(path[-2:]))
+            out.append(_pair(0, key, None, _agent_words(val), 'json', '%s: %s' % ('/'.join(path), val)))
+    walk(obj, [])
+    return out
+
+
+def _status_basis(level_earned: Any, primary_gate: Any, guards: Dict[str, Any], lock: Optional[dict]) -> dict:
+    cand = str(_dig(lock or {}, 'primary.candidate_arm') or '').lower()
+    cand_words = ' '.join(_agent_words(cand).lower().split())
+    return {'earned': _earned_int(level_earned), 'level_earned': level_earned, 'gate': primary_gate,
+            'guards': guards or {}, 'names': _guard_names(lock), 'candidate': cand_words,
+            'row_subjects': {'', 'primary', 'overall', 'this delivery', 'delivery', 'claim', 'headline', 'this'}
+            | ({cand} if cand else set()) | ({cand_words} if cand_words else set())}
+
+
+def _status_value_claims(v: str, b: dict) -> bool:
+    """A 'status' or 'decision' value (normalised) that pairs a MET word with an outcome subject: the primary, the rule,
+    a criterion, an endpoint, the objective or the result (CLM17_GATE_SUBJECT_RE), an E-level above level_earned, or
+    the candidate arm when no process check is named ('W passes' claims, 'W passed review' does not). A process check
+    named before the first MET word is that verb's subject ('lock gate passed for the primary design', 'admission
+    passed')."""
+    m = CLM17_MET_RE.search(v)
+    if not m:
+        return False
+    if CLM17_PROCESS_CHECK_RE.search(v[:m.start()]):
+        return False
+    if CLM17_GATE_SUBJECT_RE.search(v) or any(lv > b['earned'] for lv in _levels_in(v)):
+        return True
+    cand = b.get('candidate')
+    if not cand or not re.search(r'(?<![a-z0-9])%s(?![a-z0-9])' % re.escape(cand), v):
+        return False
+    return not CLM17_PROCESS_CHECK_RE.search(v)   # 'W passed review': the candidate passed a process check
+
+
+def _guards_named(keys: Sequence[str], names: Dict[str, Tuple[str, ...]]) -> Tuple[bool, List[str]]:
+    """(the keys are about guards, the guard ids they name)."""
+    low = ' '.join(keys)
+    named = [gid for gid, words in names.items() if any(re.search(r'\b%s\b' % re.escape(w), low) for w in words)]
+    return bool(named or CLM17_GUARD_RE.search(low)), named
+
+
+def judge_status_pair(p: dict, b: dict) -> Optional[str]:
+    """CLM-17 (b) verdict on one key/value shape: the reason it FAILs, or None.
+
+    In order: a key naming the attempted level, a target, a plan, the design or prior work (or citing prior work) is
+    not judged for levels. A level key (LEVEL_KEYS) carries level_earned at the head of its value, or a negation; a
+    column header naming the level carries a level <= level_earned or a negation. A key about guards takes no PASS or
+    affirmative value while VERDICT says the guard did not PASS. A gate key (GATE_KEYS; as a column header only with
+    the delivery, 'primary' or the candidate arm as row key) carries primary_gate, a negation or no gate word; on a
+    non-PASS primary it takes no affirmative value and no short unqualified achievement phrase; for 'status' and
+    'decision' only a phrase that pairs the achievement word with an outcome subject counts (_status_value_claims:
+    'Status: primary met' FAILs, 'Status: admission passed' does not), and a value continued over comma segments
+    ('Decision: proceed, the rule is met') is read by these gate rules too (_judge_ext_pair). A key naming the primary, the rule, a criterion, an endpoint or the objective takes no
+    affirmative value or short unqualified achievement phrase on a non-PASS primary. An E-level above level_earned in
+    an unqualified key takes no affirmative value, and a short unqualified value is no E-level above level_earned."""
+    row = _nk(p['key'])
+    hd = _nk(p['header']) if p.get('header') else ''
+    v = _nv(p['value'])
+    if not v or not row and not hd:
+        return None
+    if p.get('shape') == 'kv_ext':
+        return _judge_ext_pair(p, b, row, v)
+    keys = [x for x in (row, hd) if x]
+    if any(_cites_prior(x) for x in keys) or _cites_prior(v):
+        return None
+    earned, gate = b['earned'], b['gate']
+    gate_n = str(gate or '').lower().replace('_', ' ')
+    qual = any(_key_qualified(x) for x in keys)
+    attempted = any('attempt' in x for x in keys)
+    neg, aff = _neg_value(v), _aff_value(v)
+    tag = '%s%s' % (' '.join(p['key'].split()), (' / ' + ' '.join(p['header'].split())) if p.get('header') else '')
+    shown = ' '.join(p['value'].split())
+    row_c, hd_c = _ck(row), (_ck(hd) if hd else '')
+    subject_row = row_c in b['row_subjects']
+    # level keys
+    if not qual and not attempted and (row_c in LEVEL_KEYS or hd_c in LEVEL_KEYS):
+        head_none = re.match(r'none(?![a-z])', v) is not None   # the level NONE, not a negation
+        if neg and not head_none:
+            return None
+        if row_c in LEVEL_KEYS:
+            # the value is the level: level_earned at its head, any other level only behind a qualifier
+            m = LEVEL_TOKEN_RE.search(v)
+            if head_none:
+                head_lv, rest = -1, v[4:]
+            elif m and not v[:m.start()].strip():
+                head_lv, rest = _token_level(m), v[m.end():]
+            else:
+                return ('%r gives %r: a level key carries level_earned %s at its head, or a negation'
+                        % (tag, shown, b['level_earned']))
+            if head_lv != earned:
+                return '%r says %s, level_earned is %s' % (tag, shown, b['level_earned'])
+            above = [lv for lv in _levels_in(rest) if lv > earned]
+            if above and not CLM17_QUALIFIER_RE.search(rest):
+                return '%r adds E%d above level_earned %s without a qualifier' % (tag, max(above), b['level_earned'])
+            return None
+        lv_all = [_token_level(m) for m in LEVEL_TOKEN_RE.finditer(v)]
+        if not lv_all and not head_none:
+            return ('%r gives %r: a level column carries a level <= level_earned %s, or a negation'
+                    % (tag, shown, b['level_earned']))
+        if lv_all and max(lv_all) > earned and not CLM17_QUALIFIER_RE.search(v):
+            return '%r says %s, above level_earned %s' % (tag, shown, b['level_earned'])
+        return None
+    # keys about guards
+    about_guard, named = _guards_named(keys, b['names'])
+    if about_guard and not qual:
+        gm = GATE_VALUE_RE.match(v)
+        if (gm and gm.group(1) == 'pass') or (aff and not gm):
+            pool = named or sorted(b['names']) or ['<any guard>']
+            bad = [g for g in pool if str(b['guards'].get(g)) != 'PASS']
+            if bad:
+                return '%r says %s; VERDICT says %s' % (tag, shown, ', '.join('%s %s' % (g, b['guards'].get(g))
+                                                                            for g in bad))
+        return None
+    # gate keys
+    gk = row_c if row_c in GATE_KEYS else (hd_c if hd_c in GATE_KEYS and subject_row else None)
+    if gk is not None:
+        gm = GATE_VALUE_RE.match(v)
+        if gm:
+            if gm.group(1) not in ('fail', gate_n):
+                return '%r says %s, CLAIM.primary_gate is %s' % (tag, shown, gate)
+            return None
+        if neg:
+            return None
+        if gate != 'PASS':
+            if _aff_value(v, task_words=gk not in ('status', 'decision')):
+                return '%r says %s while primary_gate is %s' % (tag, shown, gate)
+            # round-1 repair part 4 (verifier blocking issue 1): a 'status' or 'decision' value is judged when it pairs
+            # a MET word with an outcome subject ('Status: primary met', 'Decision: W passes the locked rule');
+            # free status text without one ('Status: admission passed, roster next') is not
+            if (_n_words(v) <= STATUS_GATE_VALUE_WORDS and CLM17_MET_RE.search(v) and not _qualified(v, True)
+                    and (gk not in ('status', 'decision') or _status_value_claims(v, b))):
+                return '%r calls the outcome met (%r) while primary_gate is %s' % (tag, shown, gate)
+    else:
+        subjects = [row] + ([hd] if hd and subject_row else [])
+        if gate != 'PASS' and not neg and any(CLM17_GATE_SUBJECT_RE.search(x) for x in subjects):
+            if aff:
+                return '%r says %s while primary_gate is %s' % (tag, shown, gate)
+            if _n_words(v) <= STATUS_GATE_VALUE_WORDS and CLM17_MET_RE.search(v) and not _qualified(v, True):
+                return '%r calls it met (%r) while primary_gate is %s' % (tag, shown, gate)
+    if attempted or qual:
+        return None
+    # an E-level above level_earned in the key, answered affirmatively
+    klev = [lv for x in keys for lv in _levels_in(x)]
+    if klev and max(klev) > earned and aff:
+        return '%r answers %s for E%d above level_earned %s' % (tag, shown, max(klev), b['level_earned'])
+    # a short value that is an E-level above level_earned
+    vlev = _levels_in(v)
+    if (vlev and max(vlev) > earned and _n_words(v) <= STATUS_SHORT_VALUE_WORDS and not neg
+            and not _qualified(v, True)):
+        return '%r gives E%d above level_earned %s as its value (%r)' % (tag, max(vlev), b['level_earned'], shown)
+    return None
+
+
+def _judge_ext_pair(p: dict, b: dict, row: str, v: str) -> Optional[str]:
+    """A comma segment that continues a key's value ('Decision: proceed, the rule is met' gives the pair Decision /
+    'the rule is met', shape kv_ext): only the gate rules read it, on a non-PASS primary, under a gate key or a key
+    naming the primary, the rule, a criterion, an endpoint or the objective, and only when the head value is no gate
+    word or negation ('Conclusion: FAIL, although ...' elaborates an honest gate). The segment FAILs when it is a short
+    unqualified achievement phrase that pairs its MET word with an outcome subject (_status_value_claims), so 'Result:
+    see the table, although the OLD acquisition guard passed' is not judged here."""
+    gate = b['gate']
+    if gate == 'PASS' or _cites_prior(row) or _cites_prior(v):
+        return None
+    row_c = _ck(row)
+    if row_c not in GATE_KEYS and not CLM17_GATE_SUBJECT_RE.search(row):
+        return None
+    head = _nv(p.get('head'))
+    if GATE_VALUE_RE.match(head) or _neg_value(head) or GATE_VALUE_RE.match(v) or _neg_value(v):
+        return None
+    if (_n_words(v) <= STATUS_GATE_VALUE_WORDS and CLM17_MET_RE.search(v) and not _qualified(v, True)
+            and _status_value_claims(v, b)):
+        return '%r continues with %r while primary_gate is %s' % (' '.join(p['key'].split()),
+                                                                  ' '.join(p['value'].split()), gate)
+    return None
+
+
+def status_pair_problems(docs: Sequence[dict], b: dict) -> List[str]:
+    out: List[str] = []
+    for d in docs:
+        pairs = d.get('pairs')
+        if pairs is None:
+            pairs = status_pairs(d['text'])
+        for p in pairs:
+            why = judge_status_pair(p, b)
+            if why:
+                out.append('%s:%s %s' % (d['label'], p['line'] or '-', why))
+    return out
+
+
+# --- CLM-17P: free-prose clause heuristics (advisory lint aid) -------------------------------------------------------
+
 def _clauses_of(sent: str) -> List[str]:
     """Clauses of one sentence. A sentence citing prior work is skipped, unless it also points at this delivery: then
-    it is cut at commas too and only the clauses that cite nothing and name no prior work are kept."""
+    it is cut at commas too and only the clauses that cite nothing and name no prior work are kept. A sentence with a
+    key/value segment whose joined clause is read (_kv_clause) is taken segment by segment without that segment, so
+    'E3 reached: no' is never judged as the bare key 'E3 reached'."""
     cites = CITATION_RE.search(sent) and PRIOR_WORK_RE.search(sent)
     if cites and not CLM17_PRESENT_RE.search(sent):
         return []
+    segs = CLM17_KV_SEG_SPLIT_RE.split(sent)
+    kvs = [seg for seg in segs if _kv_seg(seg) and _kv_clause(*_kv_seg(seg))]
+    pieces = [seg for seg in segs if seg not in kvs] if kvs else [sent]
     out = []
-    for cl in CLM17_SPLIT_RE.split(sent):
-        for part in (re.split(r',\s*', cl or '') if cites else [cl]):
-            part = (part or '').strip(' ,.;')
-            if part and not (cites and _cites_prior(part)):
-                out.append(part)
+    for piece in pieces:
+        for cl in CLM17_SPLIT_RE.split(piece or ''):
+            for part in (re.split(r',\s*', cl or '') if cites else [cl]):
+                part = (part or '').strip(' ,.;')
+                if part and not (cites and _cites_prior(part)):
+                    out.append(part)
     return out
 
 
@@ -2281,62 +2862,34 @@ def _kv_clause(key: str, value: str) -> Optional[str]:
     return '%s is %s' % (key, value)
 
 
-def _table_cells(line: str) -> List[str]:
-    s = line.strip()
-    if s.startswith('|'):
-        s = s[1:]
-    if s.endswith('|'):
-        s = s[:-1]
-    return [c.strip() for c in s.split('|')]
-
-
-def _kv_clauses(text: str) -> List[Tuple[int, str]]:
-    """(line, '<key> is <value>') for the key/value shapes of a normalised text: 'key: value' / 'key = value'
-    segments of a line, and markdown table rows (first cell as key; with a header row, each column header as the key
-    of its cell too)."""
-    out: List[Tuple[int, str]] = []
-    lines = text.splitlines()
-    header: Optional[List[str]] = None
-    in_table = False
-    for i, raw in enumerate(lines):
-        ln = i + 1
-        s = raw.strip()
-        if s.startswith('|') and s.count('|') >= 2:
-            if CLM17_TABLE_SEP_RE.match(s):
-                continue
-            cells = _table_cells(s)
-            if not in_table:
-                in_table = True
-                nxt = lines[i + 1].strip() if i + 1 < len(lines) else ''
-                if CLM17_TABLE_SEP_RE.match(nxt) and '-' in nxt:
-                    header = cells
-                    continue
-                header = None
-            for j in range(1, len(cells)):
-                for k in ([cells[0]] + ([header[j]] if header and j < len(header) else [])):
-                    cl = _kv_clause(k, cells[j])
-                    if cl:
-                        out.append((ln, cl))
+def _kv_clauses(text: str) -> List[Tuple[int, str, str, str]]:
+    """(line, '<key> is <value>', line text, value) for the key/value shapes of a normalised text (_text_pairs; a cell under
+    a header row gives a clause for its row key and one for its column header). A pair whose row key or header is
+    qualified (_key_qualified: the attempted level, a target, a plan, the design, the endpoint, prior work, a
+    negation) gives no clause: CLM-17 (b) judges such pairs structurally."""
+    out: List[Tuple[int, str, str, str]] = []
+    for p in _text_pairs(text):
+        if p['shape'] == 'kv_ext':
+            # a comma segment continuing a key/value line is read as a clause of its own (a key/value block line
+            # is not read as a sentence)
+            cl = p['value'].strip(' *_.,')
+            cites = CITATION_RE.search(p['text']) and PRIOR_WORK_RE.search(p['text'])
+            if _n_words(cl) and not _cites_prior(cl) and not (cites and not CLM17_PRESENT_RE.search(p['text'])):
+                out.append((p['line'], cl, p['text'], None))   # prior work is skipped as in _clauses_of
             continue
-        in_table = False
-        header = None
-        if not s:
+        if p['shape'] == 'qa':
             continue
-        for sent in re.split(r'(?<=[.!?])\s+', s):
-            for seg in CLM17_KV_SEG_SPLIT_RE.split(sent):
-                m = CLM17_KV_RE.match(seg or '')
-                if m:
-                    cl = _kv_clause(m.group('k'), m.group('v'))
-                    if cl:
-                        out.append((ln, cl))
-                    continue
-                m = CLM17_KV_DASH_RE.match(seg or '')
-                if (m and len(re.findall(r'\s[-–—]+\s', seg)) == 1
-                        and _n_words(m.group('k')) <= CLM17_KV_DASH_MAX_WORDS
-                        and _n_words(m.group('v')) <= CLM17_KV_DASH_MAX_WORDS):
-                    cl = _kv_clause(m.group('k'), m.group('v'))
-                    if cl:
-                        out.append((ln, cl))
+        keys = [p['key']] + ([p['header']] if p.get('header') else [])
+        if any(_key_qualified(_nk(k)) for k in keys):
+            continue   # 'Endpoint: E3 composition', 'Next: E3', '| level attempted | E3 |' under any header: a design,
+            #            plan or attempted-level key (judged by CLM-17 (b)), for the row key and the header alike
+        if _neg_value(_nv(p['value'])):
+            continue   # 'E3 earned: false', 'Reached E3: N', '| E1 | — |', '0/8 worlds' under 'E3 reached': a negative
+            #            value asserts nothing (CLM-17 (b) judges the pair structurally)
+        for k in keys:
+            cl = _kv_clause(k, p['value'])
+            if cl:
+                out.append((p['line'], cl, p['text'], p['value']))
     return out
 
 
@@ -2363,47 +2916,66 @@ def _kv_blocks_standalone(text: str) -> str:
     return '\n'.join(out)
 
 
-def overclaim_clauses(text: str) -> List[Tuple[int, str, bool]]:
-    """(line, clause, joined) of every clause of one text, after normalisation (as written, and with markdown links
-    rendered as their text); joined marks a '<key> is <value>' clause built from a key/value shape. Sentences citing
-    prior work are skipped (see _clauses_of)."""
-    out: List[Tuple[int, str, bool]] = []
+def overclaim_clauses(text: str) -> List[Tuple[int, str, bool, str, Optional[str]]]:
+    """(line, clause, joined, sentence, value) of every clause of one text, after normalisation (as written, and with
+    markdown links rendered as their text); joined marks a '<key> is <value>' clause built from a key/value shape (its
+    sentence is the source line, value its value; None for a free clause). Questions ('...?') assert nothing and are
+    skipped; a table row or a key/value line is read only as joined clauses. Sentences citing prior work are skipped
+    (see _clauses_of)."""
+    out: List[Tuple[int, str, bool, str, Optional[str]]] = []
     seen: Set[Tuple[int, str]] = set()
     for links in (False, True):
         words = _agent_words(text, links=links)
-        found: List[Tuple[int, str, bool]] = []
+        found: List[Tuple[int, str, bool, str, Optional[str]]] = []
         for ln, sent, _head in text_units(_kv_blocks_standalone(words), False):
-            found.extend((ln, cl, False) for cl in _clauses_of(sent))
-        for ln, cl in _kv_clauses(words):
+            if sent.startswith('|') or sent.rstrip().endswith('?'):
+                continue
+            found.extend((ln, cl, False, sent, None) for cl in _clauses_of(sent))
+        for ln, cl, line, value in _kv_clauses(words):
             if CITATION_RE.search(cl) and PRIOR_WORK_RE.search(cl):
                 continue
-            found.append((ln, cl, True))
-        for ln, cl, joined in found:
+            found.append((ln, cl, True, line, value))
+        for ln, cl, joined, sent, value in found:
             if (ln, cl) not in seen:
                 seen.add((ln, cl))
-                out.append((ln, cl, joined))
+                out.append((ln, cl, joined, sent, value))
     return out
 
 
-def _qualified(clause: str, joined: bool = False) -> bool:
-    """True when the clause carries an explicit qualifier. Conformity phrases ('as planned', 'without exception') and
-    a noun qualifier asserted as reached ('the E3 target was reached', 'goal met') are removed first, so they do not
-    qualify their own assertion. In a joined key/value clause conditional words (when, iff, once, ...) qualify too:
-    'Decision rule: W passes when LCB > 0' defines the rule."""
-    t = CLM17_NOUN_ASSERTED_RE.sub(' ', CLM17_CONFORMITY_RE.sub(' ', clause))
+# a key/value value that is a measurement: a number first ('85.2% exact', '0.852', '41.3pp', '62.5% [S2+, n=80]')
+CLM17_MEASURE_RE = re.compile(r'^\s*[~≈<>=±+-]*\s*\d')
+
+
+def _qualified(clause: str, joined: bool = False, prose: bool = False) -> bool:
+    """True when the clause carries an explicit qualifier. Conformity phrases ('as planned', 'without exception'),
+    negative-polarity intensifiers and double negations ('not just', 'no doubt', 'never failed to') and a noun
+    qualifier asserted as reached ('the E3 target was reached', 'goal met') are removed first, so they do not qualify
+    their own assertion. In a joined key/value clause conditional words (when, iff, once, ...) qualify too: 'Decision
+    rule: W passes when LCB > 0' defines the rule. With prose (CLM-17P) the requirement, intention and plan words of
+    CLM17P_QUALIFIER_RE qualify as well."""
+    t = CLM17_NOUN_ASSERTED_RE.sub(' ', CLM17_INTENSIFIER_RE.sub(' ', CLM17_CONFORMITY_RE.sub(' ', clause)))
     return bool(CLM17_QUALIFIER_RE.search(t) or CLM17_IMPERATIVE_RE.match(t)
-                or (joined and CLM17_COND_RE.search(t)))
+                or (joined and CLM17_COND_RE.search(t)) or (prose and CLM17P_QUALIFIER_RE.search(t)))
+
+
+def _named_levels(cl: str) -> List[int]:
+    """Levels of the E-level tokens of a clause, leaving out a token on a design or process noun (CLM17_PROCESS_ATTR_RE:
+    'the E3 design', 'E1 plumbing checks', 'E3 strata')."""
+    return [_token_level(m) for m in LEVEL_TOKEN_RE.finditer(cl) if not CLM17_PROCESS_ATTR_RE.match(cl[m.end():])]
 
 
 def _level_asserted(cl: str, joined: bool = False) -> bool:
-    """CLM-17 (a) shape: an achievement word or shape (in a joined key/value clause also an affirmative value: 'E3:
+    """CLM-17P (a) shape: an achievement word or shape (in a joined key/value clause also an affirmative value: 'E3:
     yes'), unless every achievement word is pass/clear and its subject is a process check named before it ('the E3
     lock gate passed', 'admission passed for the E3 design'): each level token then qualifies a process noun (E3
     design, E1 plumbing checks, E3 lock) and sits in that subject or after a preposition (for/of/on/in/under) behind
-    the verb, never as its object ('the lock passed E3', 'the review passed W for E3' still assert)."""
+    the verb, never as its object ('the lock passed E3', 'the review passed W for E3' still assert). A level token
+    that is the predicate of a copula counts only when no design or process noun follows it ('this is an E3 design'
+    asserts nothing)."""
     if joined and CLM17_AFFIRM_RE.search(cl):
         return True
-    ms = list(CLM17_ACHIEVE_RE.finditer(cl))
+    ms = [m for m in CLM17_ACHIEVE_RE.finditer(cl)
+          if not (LEVEL_TOKEN_RE.search(m.group(0)) and CLM17_LEVEL_ATTR_RE.match(cl[m.end():]))]
     if not ms:
         return False
     if all(CLM17_PASSVERB_RE.match(m.group(0)) for m in ms):
@@ -2411,7 +2983,7 @@ def _level_asserted(cl: str, joined: bool = False) -> bool:
         if CLM17_PROCESS_CHECK_RE.search(cl[:first]) and all(
                 CLM17_LEVEL_ATTR_RE.match(cl[m.end():])
                 and (m.start() < first or CLM17_LEVEL_PP_RE.search(cl[first:m.start()][-24:]))
-                for m in CLM17_LEVEL_RE.finditer(cl)):
+                for m in LEVEL_TOKEN_RE.finditer(cl)):
             return False
     return True
 
@@ -2425,26 +2997,45 @@ def _guard_names(lock: Optional[dict]) -> Dict[str, Tuple[str, ...]]:
     return out
 
 
-def overclaim_problems(docs: Sequence[dict], level_earned: Any, primary_gate: Any, guards: Dict[str, Any],
-                       lock: Optional[dict]) -> List[str]:
-    earned = int(level_earned[1]) if isinstance(level_earned, str) and re.fullmatch(r'E[0-4]', level_earned) else -1
+def prose_flags(docs: Sequence[dict], level_earned: Any, primary_gate: Any, guards: Dict[str, Any],
+                lock: Optional[dict]) -> List[dict]:
+    """CLM-17P: {label, line, sentence, clause, reason} of every free-prose clause that (a) names an E-level above
+    level_earned without a qualifier (the token rule, round-1 repair part 4: no achievement word is needed; a token on
+    a design or process noun is left out, _named_levels), or holds such a token on a process noun with an achievement
+    word or shape ('W passed the E3 gate'), or (b) on a non-PASS primary calls the primary, the rule, an endpoint, the
+    objective or the result met, or calls a guard met that VERDICT says did not PASS. Questions, sentences citing
+    prior work and key/value shapes with a qualified key or a negative value assert nothing (overclaim_clauses). A
+    lint aid: the reviewer adjudicates every flag at T2 (REV-09)."""
+    earned = _earned_int(level_earned)
     names = _guard_names(lock)
-    out: List[str] = []
+    out: List[dict] = []
+
+    def flag(d: dict, ln: int, cl: str, sent: str, reason: str) -> None:
+        out.append({'label': d['label'], 'line': ln, 'sentence': ' '.join(sent.split()), 'clause': cl[:200],
+                    'reason': reason})
     for d in docs:
-        for ln, cl, joined in overclaim_clauses(d['text']):
+        for ln, cl, joined, sent, value in overclaim_clauses(d['text']):
             joined = joined or bool(d.get('joined'))
-            if _qualified(cl, joined):
+            value = value if value is not None else d.get('value')
+            if _qualified(cl, joined, prose=True):
                 continue
-            levels = [int(m.group(1)) for m in CLM17_LEVEL_RE.finditer(cl)]
+            named = _named_levels(cl)
+            if joined and value is not None and CLM17_MEASURE_RE.match(value):
+                # 'Held E3 composition: 85.2% exact' measures the E3 task; only a level in the value names one (an
+                # achievement word on the key, 'E3 reached: 8/8 worlds', is still read below)
+                named = _named_levels(value)
+            if named and max(named) > earned:
+                flag(d, ln, cl, sent, 'names E%d above level_earned %s without a qualifier' % (max(named), level_earned))
+                continue
+            levels = [_token_level(m) for m in LEVEL_TOKEN_RE.finditer(cl)]
             if levels and max(levels) > earned and _level_asserted(cl, joined):
-                out.append('%s:%d asserts E%d above level_earned %s: %r' % (d['label'], ln, max(levels),
-                                                                           level_earned, cl[:140]))
+                flag(d, ln, cl, sent, 'asserts E%d above level_earned %s' % (max(levels), level_earned))
                 continue
             if primary_gate == 'PASS' or not (CLM17_MET_RE.search(cl) or (joined and CLM17_AFFIRM_RE.search(cl))):
                 continue
             if CLM17_GATE_SUBJECT_RE.search(cl):
-                out.append('%s:%d describes the primary/rule/endpoint/result as met while primary_gate is %s: %r'
-                           % (d['label'], ln, primary_gate, cl[:140]))
+                flag(d, ln, cl, sent, 'describes the primary/rule/endpoint/result as met while primary_gate is %s'
+                     % primary_gate)
                 continue
             if CLM17_GUARD_RE.search(cl):
                 low = cl.lower()
@@ -2453,20 +3044,27 @@ def overclaim_problems(docs: Sequence[dict], level_earned: Any, primary_gate: An
                 pool = named or sorted(names) or ['<any guard>']
                 bad = [gid for gid in pool if str(guards.get(gid)) != 'PASS']
                 if bad:
-                    out.append('%s:%d describes guard(s) %s as met; VERDICT says %s (primary_gate %s): %r'
-                               % (d['label'], ln, ', '.join(pool), ', '.join('%s %s' % (g, guards.get(g)) for g in bad),
-                                  primary_gate, cl[:140]))
+                    flag(d, ln, cl, sent, 'describes guard(s) %s as met; VERDICT says %s (primary_gate %s)'
+                         % (', '.join(pool), ', '.join('%s %s' % (g, guards.get(g)) for g in bad), primary_gate))
     return out
 
 
+def overclaim_problems(docs: Sequence[dict], level_earned: Any, primary_gate: Any, guards: Dict[str, Any],
+                       lock: Optional[dict]) -> List[str]:
+    """prose_flags as one line each: '<label>:<line> <reason>: <clause> | sentence: <sentence>'."""
+    return ['%s:%d %s: %r | sentence: %s' % (f['label'], f['line'], f['reason'], f['clause'][:140], f['sentence'])
+            for f in prose_flags(docs, level_earned, primary_gate, guards, lock)]
+
+
 def _json_clause_docs(obj: Any, label: str) -> List[dict]:
-    """JSON agent text: each string value as text, and each scalar leaf as the clause '<key words> is <value>'
-    ('... is not true' for false)."""
+    """JSON agent text for CLM-17P: each string value as text, and each scalar leaf as the clause '<key words> is
+    <value>' ('... is not true' for false)."""
     docs: List[dict] = []
 
-    def joined(lab: str, text: str) -> dict:
+    def joined(lab: str, text: str, value: Any) -> dict:
         d = _doc(lab, text, False)
         d['joined'] = True   # a '<key> is <value>' clause: read like a markdown key/value line
+        d['value'] = value if isinstance(value, str) else json.dumps(value)
         return d
 
     def walk(o: Any, path: List[str]):
@@ -2480,13 +3078,18 @@ def _json_clause_docs(obj: Any, label: str) -> List[dict]:
             words = ' '.join(path[-2:]) if path else ''
             lab = '%s#/%s' % (label, '/'.join(path))
             if isinstance(o, str):
-                docs.append(_doc(lab, o, False))
-                if words:
-                    docs.append(joined(lab, '%s is %s.' % (words, o)))
+                # a short string under a key is read as its joined clause only, and a string under a qualified key
+                # ('level_attempted', 'next_step', 'target') not at all as text: {"level_attempted": "E3"} asserts
+                # nothing (round-1 repair part 4, for the token rule)
+                if not words or not (_key_qualified(_nk(_agent_words(words)))
+                                     or _n_words(_agent_words(o)) <= CLM17_KV_MAX_WORDS):
+                    docs.append(_doc(lab, o, False))
+                if words and not _neg_value(_nv(_agent_words(o))):   # {"E3_earned": "false"} asserts nothing
+                    docs.append(joined(lab, '%s is %s.' % (words, o), o))
             elif isinstance(o, bool):
-                docs.append(joined(lab, '%s is %s.' % (words, 'true' if o else 'not true')))
+                docs.append(joined(lab, '%s is %s.' % (words, 'true' if o else 'not true'), o))
             elif o is not None:
-                docs.append(joined(lab, '%s is %s.' % (words, o)))
+                docs.append(joined(lab, '%s is %s.' % (words, o), o))
     walk(obj, [])
     return docs
 
@@ -2495,28 +3098,58 @@ AGENT_FILE_PREFIXES = ('STATUS', 'SUMMARY', 'MEMO')
 # Round-1 repair (verifier: scope): agent notes and analyses inside the delivery, outside the generated results/
 # and the learner's manifests/.
 AGENT_NOTE_PREFIXES = ('NOTES', 'NOTE_', 'ANALYSIS', 'README', 'RESULTS')
+AGENT_SKIP_DIRS = ('checks/', 'runlog/', 'review/')
+AGENT_OUTPUT_DIRS = ('results/', 'manifests/')
 
 
 def _agent_files(ctx: common.Ctx) -> List[str]:
+    """The delivery's status surfaces (CLM-17 (b), CLM-17P): STATUS*/SUMMARY*/MEMO* anywhere outside checks/,
+    runlog/ and review/; NOTES*/ANALYSIS*/README*/RESULTS* also outside results/ and manifests/ (.md, .txt, .json)."""
     out = []
     for rel in ctx.delivery_files():
-        if rel.startswith(('checks/', 'runlog/', 'review/')):
+        if rel.startswith(AGENT_SKIP_DIRS):
             continue
         base = rel.rsplit('/', 1)[-1]
         if not base.lower().endswith(('.md', '.txt', '.json')):
             continue
         up = base.upper()
         if up.startswith(AGENT_FILE_PREFIXES) or (up.startswith(AGENT_NOTE_PREFIXES)
-                                                   and not rel.startswith(('results/', 'manifests/'))):
+                                                   and not rel.startswith(AGENT_OUTPUT_DIRS)):
+            out.append(rel)
+    return out
+
+
+def _prose_files(ctx: common.Ctx) -> List[str]:
+    """CLM-17P's wider prose scope: the status surfaces plus every other .md/.txt file of the delivery outside
+    checks/, runlog/, review/, results/ and manifests/ (REPORT.md is read as its body)."""
+    out = list(_agent_files(ctx))
+    for rel in ctx.delivery_files():
+        if rel in out or rel == 'REPORT.md' or rel.startswith(AGENT_SKIP_DIRS + AGENT_OUTPUT_DIRS):
+            continue
+        if rel.lower().endswith(('.md', '.txt')):
             out.append(rel)
     return out
 
 
 def _agent_file_docs(path: Path, label: str) -> List[dict]:
+    """CLM-17P documents of a file: JSON as string values and joined leaf clauses, anything else as text."""
     raw = path.read_bytes()
     if path.name.lower().endswith('.json'):
         try:
             return _json_clause_docs(common.loads_strict(raw), label)
+        except InvalidInput:
+            pass
+    return [_doc(label, raw.decode('utf-8', 'replace'), False)]
+
+
+def _status_file_docs(path: Path, label: str) -> List[dict]:
+    """CLM-17 (b) documents of a status surface: a parseable JSON file as its leaf pairs, anything else as text."""
+    raw = path.read_bytes()
+    if path.name.lower().endswith('.json'):
+        try:
+            d = _doc(label, '', False)
+            d['pairs'] = json_status_pairs(common.loads_strict(raw))
+            return [d]
         except InvalidInput:
             pass
     return [_doc(label, raw.decode('utf-8', 'replace'), False)]
@@ -2530,32 +3163,58 @@ def _report_body(text: str) -> str:
     return ''
 
 
-def agent_text_docs(ctx: common.Ctx, delivery: Optional[Path] = None, claim: Optional[dict] = None) -> List[dict]:
-    """The agent-written texts CLM-17 reads (REPORT body, CLAIM notes and findings claims, STATUS/SUMMARY/MEMO)."""
+def claim_text_docs(claim: Optional[dict], label: str = 'CLAIM.json') -> List[dict]:
+    """The agent-edited CLAIM texts as documents (notes, findings_none_reason and every string leaf of each
+    findings_proposed entry but its level)."""
     docs: List[dict] = []
     if isinstance(claim, dict):
-        if _s(claim.get('notes')):
-            docs.append(_doc('CLAIM.json#notes', claim['notes'], False))
-        for i, f in enumerate(claim.get('findings_proposed') or []):
-            if isinstance(f, dict) and _s(f.get('claim')):
-                docs.append(_doc('CLAIM.json#findings_proposed/%d/claim' % i, f['claim'], False))
+        for k in CLAIM_AGENT_TEXT_FIELDS:
+            if _s(claim.get(k)):
+                docs.append(_doc('%s#%s' % (label, k), claim[k], False))
+        fp = claim.get('findings_proposed')
+        for i, f in enumerate(fp if isinstance(fp, list) else []):
+            if isinstance(f, dict):
+                for path, text in _finding_strings(f):
+                    docs.append(_doc('%s#findings_proposed/%d/%s' % (label, i, path), text, False))
+    return docs
+
+
+def agent_text_docs(ctx: common.Ctx, delivery: Optional[Path] = None, claim: Optional[dict] = None) -> List[dict]:
+    """CLM-17P's free-prose documents: the REPORT body, the agent-edited CLAIM texts and the delivery's other prose
+    files (_prose_files)."""
+    docs = claim_text_docs(claim)
+    if ctx.path('REPORT.md').is_file():
+        docs.append(_doc('REPORT.md', _report_body(ctx.path('REPORT.md').read_text('utf-8', 'replace')), False))
+    for rel in _prose_files(ctx):
+        docs.extend(_agent_file_docs(ctx.path(rel), rel))
+    return docs
+
+
+def status_surface_docs(ctx: common.Ctx) -> List[dict]:
+    """CLM-17 (b)'s documents: the REPORT body and the delivery's status surfaces (_agent_files)."""
+    docs: List[dict] = []
     if ctx.path('REPORT.md').is_file():
         docs.append(_doc('REPORT.md', _report_body(ctx.path('REPORT.md').read_text('utf-8', 'replace')), False))
     for rel in _agent_files(ctx):
-        docs.extend(_agent_file_docs(ctx.path(rel), rel))
+        docs.extend(_status_file_docs(ctx.path(rel), rel))
     return docs
 
 
 def _claim_basis(ctx: common.Ctx) -> Tuple[Any, Any, Dict[str, Any], str]:
     """(level_earned, primary_gate, VERDICT guards, basis): the fresh regeneration when it can be computed, else the
     committed CLAIM.json."""
+    key = 'wp5_clm17_basis'
+    if key in ctx._cache:
+        return ctx._cache[key]
     try:
         fresh, _x = generate_claim(ctx, None)
         guards = ((inputs(ctx).get('verdict') or {}).get('guards')) or {}
-        return fresh.get('level_earned'), fresh.get('primary_gate'), guards, 'fresh claim'
+        res = (fresh.get('level_earned'), fresh.get('primary_gate'), guards, 'fresh claim')
     except (MissingInput, InvalidInput) as e:
         c = _read_claim(ctx)
-        return c.get('level_earned'), c.get('primary_gate'), {}, 'committed CLAIM.json (regeneration: %s)' % e
+        res = (c.get('level_earned'), c.get('primary_gate'), {}, 'committed CLAIM.json (regeneration: %s)' % e)
+    ctx._cache[key] = res
+    return res
 
 
 DELIVERY_REF_RE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9][A-Za-z0-9_.-]*_(?:design|dev)_v[0-9]+_[0-9]{8})'
@@ -2629,12 +3288,15 @@ def _named_delivery_texts(ctx: common.Ctx, text: str) -> Dict[str, str]:
     return dict((k, '\n\n'.join(v)) for k, v in out.items())
 
 
-def _lint_overclaims(ctx: common.Ctx) -> Tuple[List[str], int, List[str]]:
-    """Lint mode: each file is judged against the CLAIM.json of the v1 delivery directory that contains it; a file
-    outside every delivery is judged, part by part, against each delivery it names (_named_delivery_texts)."""
+def _lint_units(ctx: common.Ctx) -> Tuple[List[Tuple[dict, Optional[dict], dict, List[Tuple[str, dict]], List[dict],
+                                                     List[dict]]], List[str], List[str]]:
+    """Lint mode for CLM-17 and CLM-17P: [(claim, lock, verdict, [(label, linted CLAIM)], status docs, prose docs)],
+    problems,
+    skipped labels. A file inside a v1 delivery is judged against that delivery's CLAIM.json; a file outside every
+    delivery is judged, part by part, against each delivery it names (_named_delivery_texts)."""
+    units = []
     probs: List[str] = []
     skipped: List[str] = []
-    n = 0
     for p in [Path(x) for x in ctx.options.get('lint_files') or []]:
         d = next((a for a in p.resolve().parents if (a / 'CLAIM.json').is_file() and (a / 'ENDPOINT_LOCK.json').is_file()),
                  None)
@@ -2650,10 +3312,8 @@ def _lint_overclaims(ctx: common.Ctx) -> Tuple[List[str], int, List[str]]:
                 except (MissingInput, InvalidInput) as e:
                     probs.append('%s: the claim of %s cannot be read (%s)' % (label, name, e))
                     continue
-                n += 1
-                probs.extend(overclaim_problems([_doc('%s (about %s)' % (label, name), parts[name], False)],
-                                                claim.get('level_earned'), claim.get('primary_gate'),
-                                                verdict.get('guards') or {}, lock))
+                doc = _doc('%s (about %s)' % (label, name), parts[name], False)
+                units.append((claim, lock, verdict, [], [doc], [doc]))
             continue
         try:
             claim, lock, verdict = _delivery_basis(d)
@@ -2661,33 +3321,37 @@ def _lint_overclaims(ctx: common.Ctx) -> Tuple[List[str], int, List[str]]:
             probs.append('%s: its delivery claim cannot be read (%s)' % (label, e))
             continue
         if p.name == 'CLAIM.json':
-            docs = []
-            if _s(claim.get('notes')):
-                docs.append(_doc(label + '#notes', claim['notes'], False))
-            for i, f in enumerate(claim.get('findings_proposed') or []):
-                if isinstance(f, dict) and _s(f.get('claim')):
-                    docs.append(_doc('%s#findings_proposed/%d/claim' % (label, i), f['claim'], False))
+            units.append((claim, lock, verdict, [(label, claim)], [], claim_text_docs(claim, label)))
         elif p.name == 'REPORT.md':
-            docs = [_doc(label, _report_body(p.read_text('utf-8', 'replace')), False)]
+            doc = _doc(label, _report_body(p.read_text('utf-8', 'replace')), False)
+            units.append((claim, lock, verdict, [], [doc], [doc]))
         else:
-            docs = _agent_file_docs(p, label)
-        n += len(docs)
-        probs.extend(overclaim_problems(docs, claim.get('level_earned'), claim.get('primary_gate'),
-                                        verdict.get('guards') or {}, lock))
-    return probs, n, skipped
+            units.append((claim, lock, verdict, [], _status_file_docs(p, label), _agent_file_docs(p, label)))
+    return units, probs, skipped
 
 
 @check('CLM-17')
 def check_clm_17(ctx: common.Ctx) -> Result:
     if _lint_mode(ctx):
         _lint_missing(ctx)
-        probs, n, skipped = _lint_overclaims(ctx)
+        units, probs, skipped = _lint_units(ctx)
+        n = 0
+        for claim, lock, verdict, claims, sdocs, _pd in units:
+            for lab, c in claims:
+                pr, k = claim_field_problems(c, claim.get('level_earned'), lab)
+                probs.extend(pr)
+                n += k
+            if sdocs:
+                n += len(sdocs)
+                probs.extend(status_pair_problems(sdocs, _status_basis(claim.get('level_earned'),
+                                                                       claim.get('primary_gate'),
+                                                                       verdict.get('guards') or {}, lock)))
         if n == 0 and not probs:
             return Result('CLM-17', NOT_APPLICABLE, 'no lint input inside, or naming, a v1 delivery with CLAIM.json '
                           '(%s)' % (', '.join(skipped[:5]) or 'none'))
-        return _finish('CLM-17', probs, [], 'no clause asserts a level above level_earned or a met rule on a non-PASS '
-                       'primary (%d texts%s)' % (n, '; outside and naming no delivery: %s' % ', '.join(skipped[:5])
-                                                 if skipped else ''))
+        return _finish('CLM-17', probs, [], 'no CLAIM text names a level above level_earned and no status key/value '
+                       'shape contradicts the claim (%d texts%s)' % (n, '; outside and naming no delivery: %s'
+                                                                     % ', '.join(skipped[:5]) if skipped else ''))
     level, gate, guards, basis = _claim_basis(ctx)
     claim = None
     if ctx.path('CLAIM.json').is_file():
@@ -2695,13 +3359,61 @@ def check_clm_17(ctx: common.Ctx) -> Result:
             claim = _read_claim(ctx)
         except (MissingInput, InvalidInput):
             claim = None
+    probs, n = claim_field_problems(claim, level)
+    sdocs = status_surface_docs(ctx)
+    if n == 0 and not any(d['text'].strip() or d.get('pairs') for d in sdocs):
+        return Result('CLM-17', NOT_APPLICABLE, 'no agent-written CLAIM text and no status surface (REPORT body, '
+                      'STATUS/SUMMARY/MEMO, NOTES/ANALYSIS/README/RESULTS)')
+    probs.extend(status_pair_problems(sdocs, _status_basis(level, gate, guards, _lock_or_none(ctx))))
+    return _finish('CLM-17', probs, [], 'CLAIM notes, findings_none_reason and findings name no level above %s; '
+                   'status key/value shapes carry the claim (primary_gate %s; %d CLAIM texts, %d status surfaces; '
+                   'basis %s)' % (level, gate, n, len(sdocs), basis))
+
+
+def prose_flags_of(ctx: common.Ctx) -> Tuple[List[dict], List[dict]]:
+    """(CLM-17P flags, the prose documents read) of a delivery; shared with REV-09."""
+    level, gate, guards, _basis = _claim_basis(ctx)
+    claim = None
+    if ctx.path('CLAIM.json').is_file():
+        try:
+            claim = _read_claim(ctx)
+        except (MissingInput, InvalidInput):
+            claim = None
     docs = agent_text_docs(ctx, claim=claim)
-    if not any(d['text'].strip() for d in docs):
-        return Result('CLM-17', NOT_APPLICABLE, 'no agent-written text (REPORT body, CLAIM notes or findings claims, '
-                      'STATUS/SUMMARY/MEMO)')
-    probs = overclaim_problems(docs, level, gate, guards, _lock_or_none(ctx))
-    return _finish('CLM-17', probs, [], 'agent-written text asserts no level above %s and no met rule, guard or '
-                   'endpoint beyond VERDICT (primary_gate %s; %d texts; basis %s)' % (level, gate, len(docs), basis))
+    return prose_flags(docs, level, gate, guards, _lock_or_none(ctx)), docs
+
+
+def _flag_line(f: dict) -> str:
+    return '%s:%s %s | sentence: %s' % (f['label'], f['line'], f['reason'], f['sentence'])
+
+
+@check('CLM-17P')
+def check_clm_17p(ctx: common.Ctx) -> Result:
+    if _lint_mode(ctx):
+        _lint_missing(ctx)
+        units, probs, skipped = _lint_units(ctx)
+        flags: List[dict] = []
+        n = 0
+        for claim, lock, verdict, _claims, _sdocs, pdocs in units:
+            n += len(pdocs)
+            flags.extend(prose_flags(pdocs, claim.get('level_earned'), claim.get('primary_gate'),
+                                     verdict.get('guards') or {}, lock))
+        if n == 0 and not probs:
+            return Result('CLM-17P', NOT_APPLICABLE, 'no lint input inside, or naming, a v1 delivery with CLAIM.json')
+    else:
+        flags, docs = prose_flags_of(ctx)
+        probs = []
+        n = len(docs)
+        if not any(d['text'].strip() for d in docs):
+            return Result('CLM-17P', NOT_APPLICABLE, 'no agent-written prose (REPORT body, CLAIM texts, status or '
+                          'other prose files)')
+    lines = probs + [_flag_line(f) for f in flags]
+    if lines:
+        return Result('CLM-17P', FAIL, 'lint aid, judged by the reviewer (REV-09 at T2): %d sentence(s) flagged: %s'
+                      % (len(flags), ' || '.join(lines[:8]) + (' (+%d more)' % (len(lines) - 8) if len(lines) > 8 else '')),
+                      evidence=lines, data={'flagged': flags})
+    return Result('CLM-17P', PASS, 'no free-prose clause flagged (%d texts); free-prose overclaim is a judgment check, '
+                  'this lint is only an aid' % n)
 
 
 # --------------------------------------------------------------------------------------

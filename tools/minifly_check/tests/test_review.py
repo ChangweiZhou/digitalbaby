@@ -1,4 +1,4 @@
-"""Unit tests for review.py (WP4): REV-01..08, DEBT-01..02, `MFC review`. TimelineGit fixtures; stdlib only."""
+"""Unit tests for review.py (WP4): REV-01..09, DEBT-01..02, `MFC review`. TimelineGit fixtures; stdlib only."""
 import contextlib
 import io
 import json
@@ -7,6 +7,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 KIT = Path(__file__).resolve().parents[1]
 HERE = Path(__file__).resolve().parent
@@ -14,6 +15,7 @@ for p in (str(KIT), str(HERE)):
     if p not in sys.path:
         sys.path.insert(0, p)
 
+import claimcheck  # noqa: E402
 import common  # noqa: E402
 import review  # noqa: E402
 from test_admitcheck import (C1, C2, C3, C4, C5, CLAUDE, CLAUDE_BR, CODEX, CODEX_BR, NAME, WP4Fixture,  # noqa: E402
@@ -109,7 +111,87 @@ class CleanReview(ReviewCase):
     def test_registered_ids_match_rules(self):
         rules = common.load_rules()
         mine = sorted(r['id'] for r in rules['rules'] if r['module'] == 'review')
-        self.assertEqual(mine, sorted(list(review.REV_PRIMARY) + ['REV-08', 'DEBT-01', 'DEBT-02']))
+        self.assertEqual(mine, sorted(list(review.REV_PRIMARY) + ['REV-08', 'REV-09', 'DEBT-01', 'DEBT-02']))
+
+
+class ProseAdjudications(ReviewCase):
+    """REV-09 (SPEC 20.20): at T2 the reviewer adjudicates every CLM-17P flagged sentence; an overclaim verdict blocks
+    publish until the sentence is gone from the agent-written text. CLM-17P's flags are stubbed here (its own
+    heuristics are tested in test_claimcheck.TestOverclaim)."""
+
+    SENT = 'W now qualifies for E3 on held unseen sums.'
+    FLAG = {'label': 'REPORT.md', 'line': 3, 'sentence': SENT, 'clause': 'W now qualifies for E3 on held unseen sums',
+            'reason': 'asserts E3 above level_earned NONE'}
+
+    def prose(self, flags, text):
+        return mock.patch.object(claimcheck, 'prose_flags_of',
+                                 return_value=(list(flags), [{'label': 'REPORT.md', 'text': text}]))
+
+    def pub(self):
+        return self.ctx(stage='publish')
+
+    def adjudicate(self, adjs):
+        self.edit_review(fm22_prose_adjudications=adjs)
+        self.f.w('REPORT.md', b'HEADLINE\n\nprose\n')
+
+    def test_not_applicable_before_any_report(self):
+        self.assertStatus('REV-09', common.NOT_APPLICABLE)
+
+    def test_flag_needs_a_verdict(self):
+        self.f.w('REPORT.md', b'HEADLINE\n\nprose\n')
+        with self.prose([self.FLAG], self.SENT):
+            self.assertStatus('REV-09', common.FAIL, ctx=self.pub(), contains='has no verdict')
+        with self.prose([], 'nothing flagged'):
+            self.assertStatus('REV-09', common.NOT_APPLICABLE, ctx=self.pub())
+
+    def test_ok_verdict_passes_and_overclaim_blocks_until_fixed(self):
+        self.adjudicate([{'sentence': self.SENT, 'verdict': 'ok', 'note': 'qualifies names the design target'}])
+        with self.prose([self.FLAG], self.SENT):
+            self.assertStatus('REV-09', common.PASS, ctx=self.pub())
+        self.adjudicate([{'sentence': '  w now QUALIFIES for E3 on held unseen sums ', 'verdict': 'overclaim',
+                          'note': 'the primary FAILed'}])
+        with self.prose([self.FLAG], self.SENT):
+            self.assertStatus('REV-09', common.FAIL, ctx=self.pub(), contains='still in the agent-written text')
+        with self.prose([], 'W does not qualify for anything on held sums.'):      # the author fixed the sentence
+            self.assertStatus('REV-09', common.PASS, ctx=self.pub())
+
+    def test_reviewer_overclaim_on_an_unflagged_sentence_blocks(self):
+        self.adjudicate([{'sentence': 'The held curve says it all.', 'verdict': 'overclaim', 'note': 'implies E3'}])
+        with self.prose([], 'The held curve says it all.'):
+            self.assertStatus('REV-09', common.FAIL, ctx=self.pub(), contains='still in')
+
+    def test_malformed_adjudications(self):
+        for bad in ([{'sentence': self.SENT, 'verdict': 'maybe', 'note': 'x'}], [{'sentence': self.SENT, 'verdict': 'ok'}],
+                    'all fine'):
+            self.adjudicate(bad)
+            with self.prose([self.FLAG], self.SENT):
+                self.assertStatus('REV-09', common.FAIL, ctx=self.pub())
+
+    def test_author_written_adjudication_fails(self):
+        rel = NAME + '/' + review.REVIEW_REL
+        write(self.f.fx / 'history' / C4 / rel, (self.f.d / review.REVIEW_REL).read_bytes())
+        self.edit_review(recommit=False, fm22_prose_adjudications=[{'sentence': self.SENT, 'verdict': 'ok',
+                                                                     'note': 'author says fine'}])
+        self.f.commit_review(extra=[{'sha': C5, 'trailers': CODEX, 'branches': CODEX_BR, 'paths': [rel]}])
+        self.f.w('REPORT.md', b'HEADLINE\n\nprose\n')
+        with self.prose([self.FLAG], self.SENT):
+            self.assertStatus('REV-09', common.FAIL, ctx=self.pub(), contains='reviewer-owned fields')
+
+    def test_flags_of_the_latest_publish_report_count_while_present(self):
+        self.f.w('REPORT.md', b'HEADLINE\n\nprose\n')
+        rep = {'stage': 'publish', '_path': 'checks/DRY_publish_20261103T120000Z.json',
+               'results': [{'id': 'CLM-17P', 'status': 'WARN', 'data': {'flagged': [self.FLAG]}}]}
+        with mock.patch.object(common, 'list_gate_reports', return_value=[rep]):
+            with self.prose([], self.SENT):
+                self.assertStatus('REV-09', common.FAIL, ctx=self.pub(), contains='has no verdict')
+            with self.prose([], 'reworded since'):
+                self.assertStatus('REV-09', common.NOT_APPLICABLE, ctx=self.pub())
+
+    def test_flags_without_review_are_missing(self):
+        (self.f.d / review.REVIEW_REL).unlink()
+        self.f.w('REPORT.md', b'HEADLINE\n\nprose\n')
+        with self.prose([self.FLAG], self.SENT):
+            self.assertStatus('REV-09', common.MISSING, ctx=self.pub())
 
 
 class IdentityChecks(ReviewCase):

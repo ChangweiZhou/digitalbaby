@@ -39,6 +39,7 @@
         "CLM-12",
         "CLM-16",
         "CLM-17",
+        "CLM-17P",
         "PTR-01",
         "PTR-02",
         "PTR-03",
@@ -173,6 +174,7 @@
         "CLM-15",
         "CLM-16",
         "CLM-17",
+        "CLM-17P",
         "ERR-01",
         "KB-01",
         "KB-02",
@@ -193,6 +195,10 @@
         {
           "id": "REV-08",
           "when": "sealed_or_adoption"
+        },
+        {
+          "id": "REV-09",
+          "when": "t2"
         },
         "DEBT-02"
       ],
@@ -1762,6 +1768,22 @@
       "title": "Post-run replay digests equal the official rows for SEALED_CONFIRM or adoption"
     },
     {
+      "applies_when": "tier 2 publish when CLM-17P flags a sentence (now or in the latest publish/dry GATE report) or REVIEW.json holds fm22_prose_adjudications",
+      "fm_ids": [
+        "FM-22",
+        "FM-27"
+      ],
+      "id": "REV-09",
+      "introduced_in": "1.0.1",
+      "module": "review",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "T2 review duty for free prose: REVIEW.fm22_prose_adjudications adjudicates every CLM-17P flagged sentence (current text and the latest publish/dry GATE report) as ok or overclaim, written by the reviewer family; an overclaim verdict blocks publish until the sentence is gone"
+    },
+    {
       "applies_when": "tier 2 roster without a valid REVIEW (the alternative to REV-01..07 and WIT-01)",
       "fm_ids": [
         "FM-27"
@@ -2097,7 +2119,7 @@
       "title": "Numbers about prior work cite an F-id or catalog id (WARN)"
     },
     {
-      "applies_when": "agent-written text exists (REPORT body, CLAIM notes or findings claims, STATUS/SUMMARY/MEMO or NOTES/ANALYSIS/README/RESULTS files; lint: files inside a v1 delivery with CLAIM.json, or files that name one)",
+      "applies_when": "agent-edited CLAIM text or a status surface exists (REPORT body, STATUS/SUMMARY/MEMO or NOTES/ANALYSIS/README/RESULTS files; lint: files inside a v1 delivery with CLAIM.json, or files that name one)",
       "fm_ids": [
         "FM-22",
         "FM-07"
@@ -2111,7 +2133,24 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "Agent-written text (REPORT body, CLAIM notes and findings claims, STATUS/SUMMARY/MEMO, NOTES/ANALYSIS/README/RESULTS; key/value lines and table rows read as clauses) asserts no evidence level above level_earned and, unless primary_gate is PASS, no met/cleared/passed rule, endpoint, result or failed guard"
+      "title": "Structural agent-text claims (FM-22): CLAIM.notes, findings_none_reason and every string leaf of findings_proposed[] name no E-level token above level_earned in any phrasing and findings_proposed[].level <= level_earned; key/value lines, table cells, question/answer pairs and JSON leaves of the REPORT body and STATUS/SUMMARY/MEMO/NOTES/ANALYSIS/README/RESULTS files carry the CLAIM level and gate or a negation"
+    },
+    {
+      "applies_when": "agent-written prose exists (REPORT body, CLAIM texts, status or other .md/.txt files of the delivery; lint: files inside a v1 delivery with CLAIM.json, or files that name one)",
+      "fm_ids": [
+        "FM-22",
+        "FM-07"
+      ],
+      "id": "CLM-17P",
+      "introduced_in": "1.0.1",
+      "module": "claimcheck",
+      "stages": [
+        "publish",
+        "lint"
+      ],
+      "status": "advisory",
+      "tier_min": 0,
+      "title": "Free-prose overclaim lint aid (WARN): clauses of the REPORT body, CLAIM texts and the delivery's prose files that name a level above level_earned without a qualifier or, on a non-PASS primary, call a rule, endpoint, result or failed guard met; every flagged sentence is listed for the T2 reviewer (REV-09)"
     },
     {
       "applies_when": "CLAIM.json has been published before",
@@ -2341,6 +2380,9 @@
     },
     {
       "applies_when": "incident closure rows exist",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-26"
       ],
@@ -2352,7 +2394,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "Incident closure needs a RULES check id and a fixture whose must_fire includes it"
+      "title": "Incident closure needs a RULES check id and a fixture whose must_fire includes it; a closure that a valid later closure of the same incident supersedes (with a note) is retired, not validated"
     },
     {
       "applies_when": "always",

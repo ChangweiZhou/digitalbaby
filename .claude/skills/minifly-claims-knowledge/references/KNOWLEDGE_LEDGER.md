@@ -132,6 +132,13 @@ gets a narrowing row (anyone appends it).
 The seed incidents INC-SEED-01..23 predate the freeze (heldout_eligible false). Their closure rows are pending corpus
 fixtures and do not count until KB-05 passes.
 
+Retiring a closure (spec 20.20). The ledger is append-only, so when an ordered change re-scopes a closure's fixture
+(its EXPECTED.must_fire no longer holds the check), append a new closure row of the same incident with
+`supersedes: <old closure id>` and a note that says what changed and what residual remains. KB-05 then validates the
+new row and retires the old one; the incident stays closed only while the new row holds, and only a row appended
+after the old one retires it (spec 20.21). Example: INC-HB1-C2-CL3
+(CLM-17 on S89) supersedes INC-HB1-C2-CL1, whose S68 became the prose case of CLM-17P and REV-09.
+
 ## 8. Errata
 
 ERRATA.jsonl sits in the delivery and exists only if a published verdict changes. ERR-01 requires a row whenever

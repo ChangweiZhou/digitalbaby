@@ -837,6 +837,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - REV-06: REVIEW is committed before the first dev output. decision is ADMIT. No open BLOCKER or MAJOR finding remains. A REFUTED BLOCKER is countersigned_by_reviewer or has a ruling_user_decision.
 - REV-07: No executed-check output is byte-identical to an output in another delivery's review/ (padding).
 - REV-08 (SEALED_CONFIRM or adoption): postrun.replay digests equal the digests of the official rows for the same (world, arm).
+- REV-09 (T2 publish; introduced_in 1.0.1, SPEC 20.20): REVIEW.fm22_prose_adjudications gives a verdict (ok | overclaim, with a note) for every sentence CLM-17P flags, now or in the latest publish/dry GATE report while the sentence is still in the text; the field is reviewer-owned; an overclaim verdict blocks publish until the sentence is gone.
 - DEBT-01 (T2 roster without a valid REVIEW): an open REVIEW_DEBT row for this delivery exists, and open debts program-wide are below review_debt_max_open.
 - DEBT-02: A delivery with open debt cannot be SEALED_CONFIRM, cannot have findings activated, and fails the pointer stage.
 - CAN-01: The unmutated copy reproduces the original statuses.
@@ -865,6 +866,9 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - CLM-15 (T2): Verification subset committed: official OUTPUTS for counted pools (gz/zip allowed), TAUGHT, receipts, both locks and GATE reports. If it exceeds the size cap, use mode digest_plus_sample: per-(world, arm) digests plus a reviewer-seeded full-row sample.
 - CLM-16 (WARN): Numbers about prior work in REPORT or memos cite an F-id or catalog id.
 - CLM-17 (publish and lint; introduced_in 1.0.1, SPEC 20.13): agent-written text asserts no evidence level above level_earned and, unless primary_gate is PASS, never calls the rule, an endpoint, the result or a failed guard met.
+- CLM-17 as amended by 20.20 (round-1 repair part 3): structural. CLAIM.notes, findings_none_reason and findings_proposed[].claim name no E-level token above level_earned in any phrasing, findings_proposed[].level <= level_earned, and the key/value lines, table cells, question/answer pairs and JSON leaves of the REPORT body and the status files carry the CLAIM level and gate or a negation.
+- CLM-17P (publish and lint; advisory, WARN; introduced_in 1.0.1, SPEC 20.20): the free-prose clause heuristics of 20.13; every WARN row lists the flagged sentences for the T2 reviewer (REV-09). A lint aid, not a mechanical guarantee.
+- CLM-17 and CLM-17P as amended by 20.21 (round-1 repair part 4): CLM-17 reads every string leaf of a proposed finding and judges 'status' and 'decision' values that pair a MET word with an outcome subject; CLM-17P's level side is a token rule (an E-level above level_earned in an unqualified clause is flagged whatever the verb).
 - ERR-01: If CLAIM.primary_gate changes between commits after the first publish, an ERRATA row is required (BUG_FIX or POST_HOC). POST_HOC never upgrades. A BUG_FIX upgrade needs a corpus fixture id and a reviewer sign-off.
 - WLD-01: Official world ids occur nowhere else in the repo (other deliveries' manifests, JSON, receipts) and in no dev row. Official outputs were first committed after the lock and the reveal.
 - WLD-02 (WARN): Overlap of canonical held items with earlier deliveries' held or taught sets. Reported in the headline when greater than 0.
@@ -880,6 +884,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - KB-03: activation and reconciliation rows are authored by a family different from the finding's author. As amended in 20.15 (changed_in 1.0.1): the activator is the acting family of the commit introducing the row (trailer and namespace, common.commit_family), and the row's author_agent must equal it.
 - KB-04: Activation is allowed only for findings from T2 deliveries with worlds_role MAIN or SEALED_CONFIRM and no open debt.
 - KB-05: An incident closure row requires a check_id present in RULES and a fixture whose EXPECTED.must_fire includes that check.
+- KB-05 as amended in 20.20 (changed_in 1.0.1): a closure row that a later closure row of the same incident names in `supersedes` (with a note), and that later row itself satisfies KB-05, is retired rather than validated. Since 20.21 'later' is checked: only a row appended after the superseded one retires it.
 
 **WP6 (governance)**
 - GOV-SELF: selftest passes at head.
@@ -904,7 +909,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 | technical launch | lock bundle + LOCK-05..07, CYC-01 |
 | roster (also `launch --stage dev/rehearsal`) | technical bundle + ADM-*, RED-01..11, DEC-01, CYC-02. At T2 add: RUN-01, WIT-01, REV-01..07 (or DEBT-01). |
 | official (also `launch --stage official`) | roster bundle + MET-01/02, LAD-01..04, STR-01, DET-01, INERT-01 on dev and rehearsal rows; CYC-03, AMD-04, RUN-02, GOV-COI, WLD-01. When intended: OC-01. For SEALED_CONFIRM: SEAL-01..05, CONF-01. |
-| publish | SELF-01, SCHEMA-01, AMD-01..05, MET-01/02, LAD-01, STR-01, DET-01, INERT-01, UDI-01 (if applicable), DEC-01, CLM-01..16, ERR-01, KB-01..05, WLD-01/02. At T2 add RUN-01 and GOV-COI. REV-08 for SEALED_CONFIRM or adoption. DEBT-02. Since 1.0.1 (20.13, 20.16): CLM-17 and CYC-04 (RULES.json is authoritative: RUN-01..04 are in the publish bundle too, 20.7/20.8). |
+| publish | SELF-01, SCHEMA-01, AMD-01..05, MET-01/02, LAD-01, STR-01, DET-01, INERT-01, UDI-01 (if applicable), DEC-01, CLM-01..16, ERR-01, KB-01..05, WLD-01/02. At T2 add RUN-01 and GOV-COI. REV-08 for SEALED_CONFIRM or adoption. DEBT-02. Since 1.0.1 (20.13, 20.16, 20.20): CLM-17, CLM-17P (advisory) and CYC-04, and REV-09 at T2 (RULES.json is authoritative: RUN-01..04 are in the publish bundle too, 20.7/20.8). |
 | pointer | SELF-01, PTR-01..07, CLM-02, DEBT-02 |
 
 **Advisory handling.**
@@ -1615,7 +1620,7 @@ Gate runtimes are recorded in GATE reports for prune reviews.
 | FM-19 accounting gaps | launch ATTEMPTS (child rusage), RUN-01, CYC-04, compute totals including failed in CLAIM, G_per_cpu_h | Deterministic op counters optional |
 | FM-20 resource-stop truncation | ADM-BUDGET paired_atomic; INCOMPLETE on missing pairs; RUN-02; RUN-04 (resume and recovered-attempt replay, 20.8, 20.17); caps restated in verbatim | Mid-run cap changes need a new AUTHORIZATION |
 | FM-21 statistics | One decide implementation (t/Hoeffding, per-world floor); min_worlds/PILOT (CLM-09); OC-01; CONF-01 family alpha | — |
-| FM-22 claim inflation | Generated headline; enums; CLM-04/05/06/09; CLM-17 level and met-rule clauses in agent-written text (20.13) | Body prose outside CLM-17's vocabulary advisory |
+| FM-22 claim inflation | Generated headline; enums; CLM-04/05/06/09; CLM-17 structural: no level above level_earned in CLAIM text, status key/value shapes carry the claim (20.20, 20.21); CLM-17P free-prose lint aid (an unqualified E-level above level_earned is flagged whatever the verb, 20.21) adjudicated by the T2 reviewer (REV-09) | Free-prose overclaim is a judgment check, not mechanical: at T2 a sentence CLM-17P flags publishes only with the reviewer's 'ok', and a prose overclaim CLM-17P does not flag (no E-level token, or a met primary without a MET word) publishes unless the reviewer adds it on their own; at T0/T1 CLM-17P only warns |
 | FM-23 lineage and answer-path drift | LOCK-13 computed family and parent; LOCK-07; CLM-07; answer_path native; priors in headline | Equation-level diff is review judgment |
 | FM-24 narrowings not propagating | FINDINGS fold; PTR-02/04/06; pointers copied from CLAIM; generated views avoided by copy rule | CATALOG and MEMO remain hand-written legacy (retro flags) |
 | FM-25 misremembered facts | Predictions cite F-ids (LOCK-11); CLM-16; reviewer trace_number | Prose citation lint is advisory |
@@ -1818,14 +1823,15 @@ Gate runtimes are recorded in GATE reports for prune reviews.
     other deliveries and skipped, unless it also points at this delivery (here, now, currently, this delivery/run/
     design/report/...): then it is cut at commas too and only its parts that cite nothing and name no prior work are
     judged. Each text is read twice (20.12: as written, and with markdown links rendered as their text). The round-1
-    word 'rung' was dropped from the achievement vocabulary (verifier: it occurs in no kit document, only in a canary);
-    'the E3 rung is the result' still fails through 'is the result'. level_earned and
+    word 'rung' was dropped from the achievement vocabulary (verifier: it occurs in no kit document, only in a canary),
+    and 20.20 removed the 'E3 ... is the result' alternative as well (fitted to canary C2). level_earned and
     primary_gate come from the fresh claim regeneration (the committed CLAIM when regeneration is impossible). Corpus:
     S68 (REPORT prose), S69 (notes, a findings claim, STATUS.md, SUMMARY.json), S70 (clean: honest negations such as
     'E3 was not reached', 'attempted E3', 'the OLD drop guard failed, so the primary FAILs'); round-1 repair: S81 (a
     STATUS key/value block 'evidence_level: E3', 'Decision criterion: satisfied'), S82 (a REPORT quantity/value table
     with '| level earned | E3 |'), S83 (clean: honest key/value lines, table rows, NOTES.md and 'the roster gate for
-    this E3 design passed').
+    this E3 design passed'). Amended by 20.20: the clause heuristics above are the advisory CLM-17P; CLM-17 keeps only
+    the structural reading (CLAIM text tokens and status key/value shapes).
 14. **The decision comparator includes role 'other' (amends 20.6; relabel loophole).** IMPLIED_COMPARATOR_ROLES is
     no_prior_teaching, shuf, frozen, lesion and other. Relabelling a control as 'other' no longer removes it from the
     comparator; oracle_plumbing, positive_control and CEILING_/FLOOR_ arms are still never added. Corpus S80 (clean,
@@ -1900,3 +1906,129 @@ Gate runtimes are recorded in GATE reports for prune reviews.
     corpus fixtures S81-S88 (INTEGRATION_LOG A20); no new check id. Left as residual risks: integer answers and the
     other ADM-EXPO residuals listed in 20.11, positive_control/oracle_plumbing copies of the candidate (20.14), and a
     first-parent identity rule (20.15).
+20. **Round-1 repair part 3: FM-22 by mechanism, not vocabulary (amends 20.13 and KB-05; new CLM-17P and REV-09,
+    introduced_in 1.0.1; KB-05 changed_in 1.0.1).** The verifier showed that guessing overclaims in free prose with
+    regexes both misses paraphrases ('W hits E3', 'crosses the E3 threshold', 'shows E3-level generalisation') and
+    false-alarms on honest text ('| E3 reached | no |', 'Did W reach E3? No.'), and that one alternative ('E3 ... is the
+    result') was fitted to canary C2's sentence. A larger vocabulary would only continue the arms race, so the check is
+    split by what can be judged mechanically.
+    (a) CLM-17 (enforced, structural). (i) CLAIM.notes, CLAIM.findings_none_reason and every findings_proposed[].claim
+    name no E-level token above level_earned, in any phrasing and even negated. Tokens are read as rendered (the 20.12
+    skeleton: entities, markup, format characters, combining marks; look-alike E letters folded; 'E 3', 'E-3',
+    'E-three', 'evidence level 3'); an agent states the attempted level only through the generated level_attempted.
+    findings_proposed[].level, when present, is E0..E4 or NONE and <= level_earned. (ii) Status surfaces, that is the
+    REPORT body and the STATUS*/SUMMARY*/MEMO*/NOTES*/ANALYSIS*/README*/RESULTS* files of 20.13's scope, are read only
+    for their key/value shapes: 'key: value' and 'key = value' segments, short 'key - value' segments, markdown table
+    cells (keyed by the row's first cell and by the column header of the header row; a first-column cell is a value only
+    under an earned-level header), one-line 'question? answer' pairs (or a question line followed by a short answer
+    line) and JSON leaves (keyed by their last two path keys). Keys are compared after markup, list markers and context
+    words (delivery, final, claim, overall, ...) are removed. A level key (level, evidence level, level earned, earned,
+    level reached/achieved/attained, ...) carries level_earned at the head of its value, or a negation; a level column
+    header carries a level <= level_earned, or a negation. A gate key (primary gate, gate, verdict, outcome, result,
+    status, primary, primary endpoint, endpoint, decision, bottom line, conclusion, objective, ...; as a column header
+    only when the row key is the delivery, 'primary' or the candidate arm) carries primary_gate, a negation, or no gate
+    word at all; on a non-PASS primary it takes no affirmative value (yes, true, met, reached, pass, passed, achieved, a
+    check mark, ...; for status and decision the task words done, ok and complete do not count) and, except status and
+    decision, no short (at most 8 words) unqualified achievement phrase. A key naming the primary, the rule, a criterion,
+    an endpoint or the objective takes no affirmative value or short unqualified achievement phrase on a non-PASS
+    primary. A key about guards takes no PASS or affirmative value while VERDICT says that guard did not PASS. A key that
+    holds an E-level above level_earned FAILs with an affirmative value and passes with a negative one (no, false, not
+    met, not reached, fail, failed, a cross mark, a dash). A short (at most 6 words) unqualified value that is an E-level
+    above level_earned FAILs ('Composition: E3', 'state: E3 unlocked'). Keys naming the attempted level, a target, goal,
+    plan, next step, design, protocol, lock, endpoint, objective, scope or prior work are not judged for levels, and
+    text citing prior work is skipped. Deviation from the order, stated: a gate key whose value holds no gate word,
+    affirmative or achievement verb ('Status: draft', 'Result: see the table') is not judged, because 'status' and
+    'result' also head free text; a level key's value is judged strictly, because its vocabulary is closed ('Level
+    earned: pending' FAILs). Amended by 20.21: until then a 'status' or 'decision' value with an achievement verb
+    was not judged either ('Status: decision rule passed on held items' passed CLM-17), an unstated narrowing that
+    20.21 removes.
+    (b) CLM-17P (advisory: WARN, never FAIL; publish and lint) runs 20.13's clause heuristics on free prose: the REPORT
+    body, the agent-edited CLAIM texts, the status surfaces and every other .md/.txt file of the delivery outside
+    checks/, runlog/, review/, results/ and manifests/ (so DISCUSSION.md is read too). Changes against 20.13: the 'E3 ...
+    is the result' alternative is removed (fitted to canary C2; nothing in this SPEC or in FAILURE_CLASSES.json justifies
+    it); generic shapes are added (a level token as the predicate of a copula unless a design or process noun follows,
+    'E3-level', and the achievement verbs hit, exceed, surpass, cross, unlock, grant, accomplish, win, beat, make it to,
+    get to, arrive at; on the gate side hit, accomplished, won and positive); questions assert nothing; a key/value
+    segment is read only as its joined clause, and not at all when its key or header is qualified; out of reach, short
+    of, unmet, missed and lacking qualify. Every WARN row lists each flagged sentence (evidence lines, and data.flagged
+    [{label, line, sentence, clause, reason}]).
+    (c) REV-09 (T2 publish, enforced): REVIEW.fm22_prose_adjudications [{sentence, verdict ok | overclaim, note}] gives a
+    verdict for every sentence CLM-17P flags in the current text, and for every sentence of a CLM-17P WARN row of the
+    delivery's latest publish GATE or DRY report that is still in the text. Sentences are compared as rendered (markup
+    removed, case and whitespace folded; an adjudication may quote the part of a sentence that holds the flagged
+    clause). An overclaim verdict blocks publish while its sentence is still in the agent-written text; the fix is to
+    reword or remove it. The reviewer may adjudicate sentences the lint did not flag, and an overclaim verdict on them
+    blocks just the same. The field is reviewer-owned: only reviewer-family commits may change it (review_history_problems),
+    and the commit introducing REVIEW.json must be the reviewer's. Flagged sentences without a REVIEW.json are MISSING;
+    a REVIEW_DEBT does not discharge the duty. MFC review check runs REV-09 too.
+    (d) What this guarantees. Free-prose overclaim is a judgment check with a lint aid, not a mechanical guarantee. At
+    T2 a sentence CLM-17P flags publishes only if the reviewer adjudicates it ok; a prose overclaim CLM-17P does not
+    flag publishes with exit 0 unless the reviewer adds it to fm22_prose_adjudications on their own (an overclaim
+    verdict then blocks). At T0/T1 (no review) CLM-17P only warns. The structural part is mechanical within its
+    vocabulary (E-level tokens, the key sets above, the table, key/value, question/answer and JSON shapes). A level
+    claim worded without an E-level token ('the top rung', 'the composition level') or a status key outside the key
+    sets is left to CLM-17P and the reviewer. (Corrected by 20.21: this paragraph first said that at T2 a prose
+    overclaim publishes only with the reviewer's 'ok', which held only for flagged sentences.)
+    (e) KB-05 and append-only closures. INCIDENTS is append-only, so a closure whose fixture an ordered change re-scoped
+    cannot be edited. A closure row may name earlier closures of the same incident in `supersedes`, with a note; KB-05
+    then retires the superseded rows, provided the superseding row itself satisfies KB-05 (EXPECTED.json available, its
+    check in RULES, its fixture's must_fire holding the check). This narrows what KB-05 validates (a stale closure no
+    longer FAILs once a valid closure of the same incident replaces it) and is recorded in INTEGRATION_LOG C58; the
+    incident stays closed only through a valid row. INC-HB1-C2-CL1 (CLM-17 on S68) is superseded by INC-HB1-C2-CL3
+    (CLM-17 on S89, the structural notes and findings case), whose note records the prose residual; INC-HB1-C2-CL2
+    (CLM-17 on S69) stands.
+    Corpus (INTEGRATION_LOG A22): S68 re-scoped by order (must_fire CLM-17 became must_warn CLM-17P plus must_fire
+    REV-09; its T2 publish still exits 1), S70's CLAIM.notes reworded (it named E3, negated), new S89-S92 (dirty,
+    structural: notes and findings, findings_none_reason, 'Level earned: E3', '| E3 reached | yes |'), S93 (clean:
+    negative answers and values), S94 and S96 (dirty: REPORT prose without an adjudication; adjudicated overclaim left in
+    place), S95 and S97 (clean: a lint false alarm adjudicated ok; an adjudicated overclaim rewritten).
+21. **Round-1 repair part 4: CLM-17P by token, status and decision values, findings leaves (amends 20.20; CLM-17,
+    CLM-17P and KB-05 stay changed_in 1.0.1; no new check id; verifier REVISE on part 3).** The verifier showed that
+    CLM-17P still needed an achievement verb from a list (12 of 30 new paraphrases flagged, 10 of the 23 that carry an
+    unqualified E-level token), so REV-09 asked the reviewer about few prose overclaims; that CLM-17 (b) exempted
+    'status' and 'decision' values from the achievement-phrase rule; and that 20.20 (d) overstated the T2 guarantee.
+    (a) CLM-17P token rule. Every clause of a non-question free-prose sentence, and every joined key/value clause, that
+    names an E-level above level_earned is flagged when it carries no qualifier, whatever its verb. Left out: a token on
+    a design or process noun (design, lock, plan, attempt, stage, gate, plumbing, checks, tests, roster, admission,
+    testbed, review, cycle, bundle, setup, protocol, spec, pipeline, strata, items, worlds, pool, question, hypothesis,
+    target, goal, pre-registration: 'the E3 design', 'E1 plumbing checks'); outcome nouns (delivery, endpoint, rule,
+    criteria, requirements, conditions, candidate) do not exempt. A key/value shape whose value is a measurement (it
+    starts with a number: 'Held E3 composition: 85.2% exact') is read for the levels of its value only, while an
+    achievement word on its key ('E3 reached: 8/8 worlds') is still read by the 20.13 shapes. A key/value shape with a
+    negative value ('E3 earned: false', 'Reached E3: N', '0/8 worlds') or a qualified key asserts nothing, and a short
+    JSON string under a key is read as its joined clause only. The 20.13 achievement shapes stay for a token on a
+    process noun ('W passed the E3 gate'). Qualifiers are those of 20.13 plus, for CLM-17P only, requirement, intention,
+    plan and deferral words (demand, hypothesis, hope, aspire, next, future, await, wait for); for CLM-17 (b) and
+    CLM-17P alike, negative-polarity intensifiers and double negations are removed before the qualifier test ('not
+    just', 'no doubt', 'beyond doubt', 'nothing short of', 'never failed to', 'no longer short of'), which only makes
+    qualifiers rarer. The gate side (a met primary, rule, criterion, endpoint, objective or guard) still needs a MET
+    word; a met primary worded without one ('came out green') is the reviewer's. Measured on the part-3 verifier's 30
+    dirty and 20 honest REPORT sentences (visible training data now): 26 of 30 flagged, 0 of 20.
+    (b) CLM-17 (b) status and decision values. On a non-PASS primary a 'status' or 'decision' value (context words
+    removed: 'Overall status') FAILs when it is a short (at most 8 words) unqualified phrase whose MET word is paired
+    with an outcome subject: the primary, the rule, a criterion, an endpoint, the objective or the result, an E-level
+    above level_earned, or the candidate arm when no process check is named ('W passes', not 'W passed review'). A
+    process check named before the first MET word is that verb's subject ('Status: lock gate passed for the primary
+    design', 'Status: admission passed'). A comma segment that continues a gate key's value (or that of a key naming the
+    primary, the rule, a criterion, an endpoint or the objective) without a key/value shape of its own is judged like a
+    status value, unless the head value is a gate word or a negation: 'Decision: proceed, the rule is met' FAILs,
+    'Conclusion: FAIL, although held composition passed the shortcut test' does not; CLM-17P reads the segment as a
+    clause, also inside a key/value block. Negative values gain 'nothing' and a plain zero count ('Earned: nothing yet',
+    '0/8 worlds', not '0/8 worlds failed'); 'below E3' stays a FAIL for a level key (it is neither the level nor a
+    negation). Affirmative answers gain absolutely, indeed, certainly, definitely, surely, sure, yep, yeah, yup,
+    affirmed and correct ('Has W earned E3?' / 'Absolutely.').
+    (c) CLM-17 (a) reads every string leaf of each findings_proposed entry (its claim, conditions values, extra keys,
+    and key names holding a level token), not only its claim. Level tokens also include Roman numerals after a dash
+    ('E-III'), 'evidence tier/rung/grade 3', an ordinal before 'evidence level' ('the third evidence level') and a level
+    or ordinal rung of 'the (evidence) ladder' ('level 3 of the evidence ladder'); 'rung 3 of the shortcut ladder' is
+    not one.
+    (d) 20.20 (d) is corrected above: at T2 an unflagged prose overclaim publishes unless the reviewer adds it. The
+    FM-22 row of Section 18 and the INC-HB1-C2-CL3 note (an uncommitted row of this range, reworded in place) say the
+    same.
+    (e) KB-05 supersession checks the order: only a closure row appended after the superseded row retires it.
+    Corpus (INTEGRATION_LOG A24): S98 ('Status: W passes on the held split'), S99 ('Decision: go ahead, the locked
+    criterion is satisfied on held sums') and S101 (a finding's conditions scope 'held sums at the third evidence
+    level'), all must_fire CLM-17; S100 (T2 REPORT 'The held split leaves W with an E3 to its name.', must_warn CLM-17P,
+    must_fire REV-09); S102 (clean FAIL: negative answers, a measurement keyed by the E3 task, process-check status
+    text, qualified prose) and S103 (clean PASS at E3: 'Status: primary met on held sums', 'Decision: W passes the
+    locked rule'). The phrasings are new. Held-out exposure of this range: INTEGRATION_LOG E1.

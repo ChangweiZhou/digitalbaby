@@ -125,6 +125,21 @@ JSON-encoded string payloads and pairs consecutive records of a stream in ADM-EX
 to post-batch-excluded held-out numbers, and classifies a changed_in append as neutral only together with a code
 change in the check's import closure. Corpus S81-S88.
 
+The round-1 repair part 3 (SPEC 20.20, still 1.0.1) changes the FM-22 mechanism instead of growing its vocabulary.
+CLM-17 is now structural and enforced: CLAIM.notes, findings_none_reason and findings claims name no E-level token above
+level_earned in any phrasing (findings levels <= level_earned), and the key/value lines, table cells, question/answer
+pairs and JSON leaves of the REPORT body and the status files carry the CLAIM level and gate or a negation. The
+free-prose heuristics are the advisory CLM-17P (WARN, every flagged sentence listed), and at T2 REV-09 requires the
+reviewer to adjudicate each flagged sentence in REVIEW.fm22_prose_adjudications (ok | overclaim; an overclaim blocks
+publish until the sentence is gone). KB-05 retires a closure that a valid closure of the same incident supersedes.
+Corpus S89-S97; S68 re-scoped (INTEGRATION_LOG A22).
+
+The round-1 repair part 4 (SPEC 20.21, still 1.0.1) makes CLM-17P's level side a token rule (an unqualified clause
+naming an E-level above level_earned is flagged whatever its verb, so REV-09 asks the reviewer about it), judges
+'status' and 'decision' values that pair a MET word with the primary, the rule, a criterion, an endpoint, the
+objective, the candidate or a level (CLM-17), reads every string leaf of a proposed finding, and adds Roman, ordinal
+and ladder forms of level tokens. Corpus S98-S103 (INTEGRATION_LOG A24).
+
 ## Known limitations
 
 These parts of enforced checks are incomplete in checker 1.0.0 (still so in 1.0.1). Each item says what the kit does
@@ -151,9 +166,15 @@ instead.
   with small sums), does not join operands split over separate fields, does not pair records two or more apart or
   across different fields, and does not scan files.assets or neutrally named JSON under results/. A string-valued
   number equal to a held sum beside a held prompt counts as an answer (fails closed). A reviewer covers the rest.
-- CLM-17 (1.0.1) is lexical: clauses outside its achievement, met and qualifier vocabularies pass, and so does a
-  level claim phrased as a process check that passed ('the E3 lock gate passed'). The generated headline and CLAIM
-  fields remain the authoritative statement.
+- Free-prose overclaim (FM-22) is a judgment check with a lint aid, not a mechanical guarantee. CLM-17 (structural)
+  reads only E-level tokens in the CLAIM texts (every string leaf of a proposed finding) and the key/value shapes of
+  status surfaces. CLM-17P is advisory. Its level side is a token rule (SPEC 20.21): any unqualified clause naming
+  an E-level above level_earned is flagged, whatever its verb, so it false-alarms on honest sentences without a
+  qualifier word ('An E3 claim is the subject of a later memo') and misses a qualified overclaim ('W reached E3
+  without the retention guard') and a level claim worded without an E-level token ('the top rung'). Its gate side
+  still needs a MET word ('the primary came out green' passes). At T2 the reviewer adjudicates every flagged sentence
+  (REV-09); a sentence the lint does not flag publishes with exit 0 unless the reviewer adds it on their own. At
+  T0/T1 nothing reviews prose. The generated headline and CLAIM fields remain the authoritative statement.
 - A control arm declared positive_control or oracle_plumbing stays out of the decision comparator by design; the
   reviewer checks that such an arm changes what its role says.
 - Identity (1.0.1): a commit contained in both namespaces is shared history and keeps its trailer's family, so a

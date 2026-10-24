@@ -620,10 +620,14 @@ T += [
       'fields equal the sum.', 'ADM-EXPO PASS (content holds no answer); every stage exits 0 with the base verdict',
       R1.b_s67, [ROSTER, OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0, 0],
       expect={'/verdict': 'PASS', '/primary_gate': 'PASS', '/headline': BASE_HEADLINE}),
-    X('S68', 'guard-carried FAIL re-described as an earned level and a met rule in REPORT prose', ['FM-22', 'FM-07'],
-      'W drops one OLD item at final in every official world (old_drop guard FAIL, primary FAIL); the generated '
-      'headline and CLAIM stay; the REPORT body says W "sits at evidence level E3" and "satisfies the locked decision '
-      'rule in every MAIN world".', R1.b_s68, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    # Round-1 repair part 3 (SPEC 20.20; INTEGRATION_LOG A22, ordered re-scoping): free prose is CLM-17P's (advisory)
+    # with the T2 review duty REV-09; S68 was must_fire CLM-17 and is now must_warn CLM-17P, must_fire REV-09 (publish
+    # still exits 1 at T2, now until the reviewer adjudicates the sentences).
+    XW('S68', 'guard-carried FAIL re-described as an earned level and a met rule in REPORT prose', ['FM-22', 'FM-07'],
+       'W drops one OLD item at final in every official world (old_drop guard FAIL, primary FAIL); the generated '
+       'headline and CLAIM stay; the REPORT body says W "sits at evidence level E3" and "satisfies the locked decision '
+       'rule in every MAIN world"; the review has no fm22_prose_adjudications.', R1.b_s68,
+       [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17P'], ['REV-09']),
     X('S69', 'guard-carried FAIL overclaimed in CLAIM.notes, a findings claim, STATUS.md and SUMMARY.json',
       ['FM-22', 'FM-07'],
       'As S68 with honest REPORT prose; CLAIM.notes "Composition endpoint holds in all MAIN worlds, so the E3 bar is '
@@ -635,8 +639,10 @@ BY_ID = {e['id']: e for e in T}
 T += [
     E('S70', 'guard-carried FAIL described honestly with negations and qualifiers', [], None, 'clean', SUP,
       "As S68; REPORT body 'Earned level NONE; attempted E3. E3 was not reached: the OLD drop guard failed, so the "
-      "primary FAILs. The OLD acquisition guard passed. W would need ... to clear the rule ...'; CLAIM.notes and "
-      'STATUS.md likewise.', 'CLM-17 PASS; publish exit 0 (an honest FAIL is reported, SPEC 3.3)', R1.b_s70,
+      "primary FAILs. The OLD acquisition guard passed. W would need ... to clear the rule ...'; STATUS.md likewise; "
+      "CLAIM.notes 'Honest FAIL: ... held composition alone earns no level.' (since SPEC 20.20 CLAIM.notes names no "
+      "level above level_earned, not even negated).", 'CLM-17 PASS; publish exit 0 (an honest FAIL is reported, SPEC '
+      '3.3)', R1.b_s70,
       [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0],
       expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL', '/level_earned': 'NONE', '/guards/old_drop': 'FAIL',
               '/guards/old_acq': 'PASS'}),
@@ -745,5 +751,95 @@ T += [
     E('S88', 'markdown link syntax inside a DEV confirm word', ['FM-22', 'FM-11'], None, 'dirty', SUP,
       "C00e (T1, DEV) plus SUMMARY.md 'Carry reuse con[]()firmed on the dev worlds.'.",
       'CLM-04', R1B.b_s88, [SC_DEV, CLAIM, PUBLISH], [0, 0, 1], ['CLM-04'], tier=1),
+]
+BY_ID = {e['id']: e for e in T}
+
+# ---------------------------------------------------------------------------------------------
+# Supplementary fixtures of the round-1 repair part 3 (SPEC 20.13 as amended by 20.20; INTEGRATION_LOG A22): CLM-17
+# structural, CLM-17P advisory, the T2 review duty REV-09.
+import fixtures_r1c as R1C  # noqa: E402
+
+T += [
+    X('S89', 'guard-carried FAIL named as a level in CLAIM.notes and proposed findings', ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; CLAIM.notes 'Held sums put W at E3 once retention is set aside ...', "
+      "findings_proposed[0] '... at evidence level 3.' with level E3, findings_proposed[1] '... into E-three territory "
+      "...'.", R1C.b_s89, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    X('S90', 'guard-carried FAIL named as a level in findings_none_reason', ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; findings_none_reason 'No separate finding: the E3 composition result speaks "
+      "for itself.'", R1C.b_s90, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    X('S91', "guard-carried FAIL with 'Level earned: E3' in STATUS.md", ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; STATUS.md 'Primary gate: FAIL', 'Level earned: E3', 'Level attempted: E3'.",
+      R1C.b_s91, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    X('S92', "guard-carried FAIL with a table row '| E3 reached | yes |'", ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; SUMMARY.md check table rows '| E3 reached | yes |', '| OLD guards | see "
+      "VERDICT |'.", R1C.b_s92, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S93', 'guard-carried FAIL stated with negative answers and values only', [], None, 'clean', SUP,
+      "As S68; STATUS.md 'E3 reached: no', 'Level earned: NONE', 'Notes: attempted E3; earned NONE'; SUMMARY.md "
+      "'| E3 reached | no |'; REPORT 'Did W reach E3? No. ...', 'Was the decision rule met? Not this time.', 'This "
+      "delivery attempted E3; earned NONE. E3 remains out of reach ...'.",
+      'CLM-17 PASS, CLM-17P flags nothing, REV-09 NOT_APPLICABLE; publish exit 0', R1C.b_s93,
+      [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0],
+      expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL', '/level_earned': 'NONE'}),
+    XW('S94', 'T2 REPORT prose overclaim without a reviewer adjudication', ['FM-22', 'FM-27'],
+       "As S68 with new paraphrases: REPORT 'On held unseen sums W now qualifies for E3.' and 'The locked criterion was "
+       "fulfilled in every MAIN world, with retention as the lone exception.'; the review has no "
+       'fm22_prose_adjudications.', R1C.b_s94, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17P'],
+       ['REV-09']),
+    E('S95', 'T2 lint-aid false alarm adjudicated ok by the reviewer', [], None, 'clean', SUP,
+      "As S68; REPORT 'The rule passes W only when both OLD guards hold. The OLD drop guard failed, so W did not "
+      "pass.'; after the report the reviewer (claude namespace) commits REVIEW.fm22_prose_adjudications [{the first "
+      "sentence, verdict ok, note}].", 'CLM-17P WARN; REV-09 PASS; publish exit 0', R1C.b_s95,
+      [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0], must_warn=['CLM-17P'],
+      expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL'}),
+    XW('S96', 'T2 REPORT prose adjudicated overclaim and left in place', ['FM-22', 'FM-27'],
+       "S94, then the reviewer commits fm22_prose_adjudications with verdict overclaim for both sentences; the REPORT "
+       'is not changed.', R1C.b_s96, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17P'], ['REV-09']),
+    E('S97', 'T2 REPORT prose adjudicated overclaim and then rewritten', [], None, 'clean', SUP,
+      "S96, then the author (codex) rewrites the two sentences into 'W does not qualify for any level on held unseen "
+      "sums: the locked criterion fails through the OLD drop guard in every MAIN world.'",
+      'CLM-17P flags nothing; REV-09 PASS (both overclaim verdicts fixed); publish exit 0', R1C.b_s97,
+      [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0], expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL'}),
+]
+BY_ID = {e['id']: e for e in T}
+
+# ---------------------------------------------------------------------------------------------
+# Supplementary fixtures of the round-1 repair part 4 (SPEC 20.13 as amended by 20.20; INTEGRATION_LOG A24): the
+# CLM-17P token rule, CLM-17 (b) status and decision values, every string leaf of a proposed finding.
+import fixtures_r1d as R1D  # noqa: E402
+
+T += [
+    X('S98', "guard-carried FAIL whose 'Status:' value says the candidate passes", ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; STATUS.md 'Primary gate: FAIL', 'Level earned: NONE', 'Status: W passes on "
+      "the held split'.", R1D.b_s98, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    X('S99', "guard-carried FAIL whose 'Decision:' value puts the met criterion behind a comma", ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; STATUS.md 'Decision: go ahead, the locked criterion is satisfied on held "
+      "sums'.", R1D.b_s99, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    XW('S100', 'T2 REPORT prose naming E3 without an achievement verb, no adjudication', ['FM-22', 'FM-27'],
+       "As S68; REPORT 'The held split leaves W with an E3 to its name.'; the review has no "
+       'fm22_prose_adjudications.', R1D.b_s100, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17P'],
+       ['REV-09']),
+    X('S101', 'guard-carried FAIL whose proposed finding gives its scope as the third evidence level',
+      ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; findings_proposed[0].conditions.scope 'held sums at the third evidence "
+      "level' (the claim names no level).", R1D.b_s101, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S102', 'guard-carried FAIL with negative answers, an E3-task measurement and qualified prose', [], None, 'clean',
+      SUP,
+      "As S68; STATUS.md 'E3 earned: false', 'Held E3 composition: 85.2% exact', 'Status: admission passed, official "
+      "run next', 'Decision: proceed to a design that protects OLD'; SUMMARY.md '| W | 0/8 worlds |' under 'E3 "
+      "reached'; REPORT 'W stays below E3 ...', 'The E3 design held 64 sums out ...', 'An E3 claim waits for ...'.",
+      'CLM-17 PASS, CLM-17P flags nothing, REV-09 NOT_APPLICABLE; publish exit 0', R1D.b_s102,
+      [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0],
+      expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL', '/level_earned': 'NONE'}),
+    E('S103', 'PASS at E3 whose status and decision values call the outcome met', [], None, 'clean', SUP,
+      "Base (PASS, E3); STATUS.md 'Primary gate: PASS', 'Level earned: E3', 'Status: primary met on held sums', "
+      "'Decision: W passes the locked rule'; REPORT 'W reached E3 on held sums; both OLD guards passed.'",
+      'CLM-17 PASS, CLM-17P flags nothing; publish exit 0', R1D.b_s103, [OFFICIAL, SC_OFF, CLAIM, PUBLISH],
+      [0, 0, 0, 0], expect={'/verdict': 'PASS', '/primary_gate': 'PASS', '/level_earned': 'E3'}),
 ]
 BY_ID = {e['id']: e for e in T}

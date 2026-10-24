@@ -1,7 +1,7 @@
-"""MRK-1 independent-review checks (WP4): REV-01..08, DEBT-01..02 and `MFC review` (SPEC 5, 6.4, 7.4, 8).
+"""MRK-1 independent-review checks (WP4): REV-01..09, DEBT-01..02 and `MFC review` (SPEC 5, 6.4, 7.4, 8, 20.20).
 
     MFC review replay-plan <dir> --seed HEX [--n 4]   # seeded (world, arm) choice for the post-run replay
-    MFC review check <dir>                            # REV-01..07 (or DEBT-01), REV-08 when applicable, DEBT-02
+    MFC review check <dir>                            # REV-01..07 (or DEBT-01), REV-08 when applicable, REV-09, DEBT-02
 
 Identity is never taken from git author names (Codex commits as the owner's identity). A commit counts as the
 reviewer's only when every `Acting-Agent:` trailer names the reviewer family (the family opposite to
@@ -691,6 +691,128 @@ def check_rev_08(ctx: common.Ctx) -> Result:
 
 
 # --------------------------------------------------------------------------------------
+# REV-09: the T2 reviewer adjudicates every CLM-17P flagged sentence (SPEC 20.20; round-1 repair part 3, FM-22)
+# --------------------------------------------------------------------------------------
+# Free-prose overclaim is a judgment check with a lint aid (CLM-17P), not a mechanical guarantee. At T2 the reviewer
+# family adjudicates each sentence CLM-17P flags, in the current text and in the CLM-17P WARN rows of the delivery's
+# latest publish/dry GATE report while that sentence is still in the text, as ok or overclaim
+# (REVIEW.fm22_prose_adjudications [{sentence, verdict, note}]); an overclaim verdict blocks publish until the sentence
+# is gone from the agent-written text (the fix). Sentences are compared as rendered (markup removed, case and
+# whitespace folded). The reviewer may adjudicate sentences the lint did not flag; an overclaim verdict on them blocks
+# just the same.
+
+ADJ_KEY = 'fm22_prose_adjudications'
+ADJ_VERDICTS = ('ok', 'overclaim')
+
+
+def _norm_sentence(t: Any) -> str:
+    import claimcheck  # lazy (SPEC 7.2): CLM-17P's rendering of agent text
+    s_ = ' '.join(claimcheck._agent_words(str(t or '')).lower().split())
+    return s_.strip(' .,;:!?"\'')
+
+
+def _report_flags(ctx: common.Ctx) -> Tuple[Optional[str], List[dict]]:
+    """(path, flags) of the CLM-17P WARN rows of the delivery's latest publish GATE or DRY report."""
+    reps = [r for r in common.list_gate_reports(ctx) if r.get('stage') == 'publish']
+    if not reps:
+        return None, []
+    rep = reps[-1]
+    out: List[dict] = []
+    for r in rep.get('results') or []:
+        if not isinstance(r, dict) or r.get('id') != 'CLM-17P' or r.get('status') != WARN:
+            continue
+        fl = (r.get('data') or {}).get('flagged') if isinstance(r.get('data'), dict) else None
+        if isinstance(fl, list):
+            out.extend(f for f in fl if isinstance(f, dict) and s(f.get('sentence')))
+        else:
+            for ev in r.get('evidence') or []:
+                if isinstance(ev, str) and ' | sentence: ' in ev:
+                    out.append({'label': ev.split(':', 1)[0], 'line': None,
+                                'sentence': ev.split(' | sentence: ', 1)[1], 'clause': '', 'reason': 'from ' + rep['_path']})
+    return rep['_path'], out
+
+
+def _adjudication_covers(adj_n: str, f: dict) -> bool:
+    sent, cl = _norm_sentence(f.get('sentence')), _norm_sentence(f.get('clause'))
+    return bool(adj_n) and (adj_n == sent or (bool(cl) and cl in adj_n and adj_n in sent))
+
+
+@check('REV-09')
+def check_rev_09(ctx: common.Ctx) -> Result:
+    import claimcheck  # lazy (SPEC 7.2)
+    if not ctx.path('REPORT.md').is_file() and not ctx.path('CLAIM.json').is_file():
+        flags, docs = [], []   # before the report (the review itself, roster): no agent prose to adjudicate yet
+    else:
+        flags, docs = claimcheck.prose_flags_of(ctx)
+    texts = [_norm_sentence(d.get('text')) for d in docs]
+
+    def present(n: str) -> bool:
+        return bool(n) and any(n in t for t in texts)
+    rep_path, rep_flags = _report_flags(ctx)
+    have = set(_norm_sentence(f['sentence']) for f in flags)
+    for f in rep_flags:
+        n = _norm_sentence(f.get('sentence'))
+        if n and n not in have and present(n):
+            flags.append(dict(f, reason='%s (CLM-17P WARN in %s)' % (f.get('reason') or 'flagged', rep_path)))
+            have.add(n)
+    review: Optional[dict] = None
+    if ctx.path(REVIEW_REL).is_file():
+        review = read_review(ctx)
+    adjs_raw = review.get(ADJ_KEY) if isinstance(review, dict) else None
+    if not flags and adjs_raw is None:
+        return Result('REV-09', NOT_APPLICABLE, 'CLM-17P flags no sentence (now or in the latest publish/dry GATE '
+                      'report%s) and REVIEW.json holds no %s' % ((' ' + rep_path) if rep_path else '', ADJ_KEY))
+    if review is None:
+        return Result('REV-09', MISSING, '%d CLM-17P flagged sentence(s) need the T2 reviewer\'s adjudication in %s.%s '
+                      '(a REVIEW_DEBT does not discharge it): %s' % (len(flags), REVIEW_REL, ADJ_KEY,
+                                                                       ' || '.join(f['sentence'] for f in flags[:5])),
+                      evidence=['%s:%s %s' % (f.get('label'), f.get('line'), f['sentence']) for f in flags])
+    problems: List[str] = []
+    adjs: List[Tuple[str, str, dict]] = []
+    if adjs_raw is not None and not isinstance(adjs_raw, list):
+        problems.append('REVIEW.%s must be a list of {sentence, verdict, note}' % ADJ_KEY)
+        adjs_raw = []
+    for i, a in enumerate(adjs_raw or []):
+        if not isinstance(a, dict):
+            problems.append('%s[%d] is not an object' % (ADJ_KEY, i))
+            continue
+        bad = []
+        if not s(a.get('sentence')):
+            bad.append('no sentence')
+        if a.get('verdict') not in ADJ_VERDICTS:
+            bad.append('verdict %r is not ok|overclaim' % (a.get('verdict'),))
+        if not s(a.get('note')):
+            bad.append('no note')
+        if bad:
+            problems.append('%s[%d]: %s' % (ADJ_KEY, i, ', '.join(bad)))
+            continue
+        adjs.append((_norm_sentence(a['sentence']), a['verdict'], a))
+    unadjudicated = [f for f in flags if not any(_adjudication_covers(n, f) for n, _v, _a in adjs)]
+    for f in unadjudicated:
+        problems.append('CLM-17P flagged %s:%s %r (%s) and REVIEW.%s has no verdict for it'
+                        % (f.get('label'), f.get('line'), f['sentence'][:160], f.get('reason'), ADJ_KEY))
+    unfixed = [a for n, v, a in adjs if v == 'overclaim' and present(n)]
+    for a in unfixed:
+        problems.append('the reviewer judged %r an overclaim and it is still in the agent-written text: fix the '
+                        'sentence (reword or remove it) before publish' % a['sentence'][:160])
+    fixed = [a for n, v, a in adjs if v == 'overclaim' and not present(n)]
+    if adjs_raw:
+        af, rf = families(ctx)
+        hist, intro = review_history_problems(ctx, rf)
+        problems.extend(hist)
+        if intro is None:
+            problems.append('%s is not committed: the adjudications must be the reviewer\'s committed record' % REVIEW_REL)
+        else:
+            ok, why = is_family_commit(ctx, intro, rf)
+            if not ok:
+                problems.append('the commit introducing REVIEW.json is not the reviewer family %s: %s' % (rf, why))
+    return finish('REV-09', problems, [], '%d CLM-17P flagged sentence(s) adjudicated by the reviewer (%d ok); %d '
+                  'overclaim verdict(s), each fixed in the text%s' % (
+                      len(flags), sum(1 for _n, v, _a in adjs if v == 'ok'), len(fixed) + len(unfixed),
+                      ('; latest publish report %s' % rep_path) if rep_path else ''))
+
+
+# --------------------------------------------------------------------------------------
 # DEBT-01 / DEBT-02
 # --------------------------------------------------------------------------------------
 
@@ -810,7 +932,8 @@ REV_PRIMARY = ('REV-01', 'REV-02', 'REV-03', 'REV-04', 'REV-05', 'REV-06', 'REV-
 
 def review_results(ctx: common.Ctx) -> List[Result]:
     """REV-01..07 with DEBT-01 as the declared alternative (as in the roster bundle), REV-08 when SEALED_CONFIRM or
-    adoption is intended, and DEBT-02."""
+    adoption is intended, REV-09 (the free-prose adjudications; NOT_APPLICABLE until CLM-17P flags a sentence) and
+    DEBT-02."""
     rules = ctx.rules or common.load_rules()
     idx = common.rule_index(rules)
     out: List[Result] = []
@@ -835,6 +958,7 @@ def review_results(ctx: common.Ctx) -> List[Result]:
         out.extend(prim)
         out.extend(fb)
     out.extend(common.run_check(ctx, idx['REV-08']))
+    out.extend(common.run_check(ctx, idx['REV-09']))
     out.extend(common.run_check(ctx, idx['DEBT-02']))
     return out
 

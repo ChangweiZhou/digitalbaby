@@ -262,6 +262,38 @@ class TestIncidents(TmpCase):
         fx = kb_only(self.tmp, {'INCIDENTS': [self.REPORT]})
         self.assertEqual(status(fx.ctx(delivery=None), 'KB-05'), [NOT_APPLICABLE])
 
+    def test_superseded_closure(self):
+        # SPEC 20.20: INCIDENTS is append-only, so a closure whose fixture was re-scoped is retired by a later valid
+        # closure of the same incident that names it in `supersedes` and says why in `note`
+        old = self.closure(id='I-20261101-1-CL1', refers_to='I-20261101-1', fixture_id='C26')
+        new = self.closure(id='I-20261101-1-CL2', refers_to='I-20261101-1', fixture_id='C27',
+                           supersedes='I-20261101-1-CL1', note='C26 re-scoped; the structural part is C27')
+        corpus = self.tmp / 'corpus'
+        for f in ('C26', 'C27'):
+            (corpus / f).mkdir(parents=True)
+        exp = {'C26': {'must_fire': ['REV-09']}, 'C27': {'must_fire': ['CLM-10']}}
+        with mock.patch.object(kbmod, 'kit_expected', return_value=exp), \
+                mock.patch.object(kbmod, 'corpus_dir', return_value=corpus):
+            fx = kb_only(self.tmp / 'a', {'INCIDENTS': [self.REPORT, old]})
+            self.assertEqual(status(fx.ctx(delivery=None), 'KB-05'), [FAIL])
+            fx = kb_only(self.tmp / 'b', {'INCIDENTS': [self.REPORT, old, new]})
+            res = run(fx.ctx(delivery=None), 'KB-05')
+            self.assertEqual(res[0].status, PASS, res[0].detail)
+            self.assertIn('I-20261101-1-CL1 by I-20261101-1-CL2', res[0].detail)
+            self.assertEqual(kbmod.open_incidents(fx.ctx(delivery=None).kb), [])
+            # the superseding row must itself hold, carry a note and close the same incident
+            for bad in (dict(new, fixture_id='C26'), {k: v for k, v in new.items() if k != 'note'},
+                        dict(new, refers_to='I-20261101-9', id='I-20261101-9-CL1')):
+                fx = kb_only(self.tmp / ('c%d' % len(str(bad))), {'INCIDENTS': [self.REPORT, old, bad]})
+                self.assertEqual(status(fx.ctx(delivery=None), 'KB-05'), [FAIL], bad)
+            # round-1 repair part 4: only a LATER row retires a closure (a row appended before it never does)
+            fx = kb_only(self.tmp / 'd', {'INCIDENTS': [self.REPORT, new, old]})
+            self.assertEqual(status(fx.ctx(delivery=None), 'KB-05'), [FAIL])
+            idx = {'CLM-10': {'id': 'CLM-10'}, 'REV-09': {'id': 'REV-09'}}
+            self.assertEqual(kbmod.superseded_closures([self.REPORT, old, new], idx, exp),
+                             {'I-20261101-1-CL1': 'I-20261101-1-CL2'})
+            self.assertEqual(kbmod.superseded_closures([self.REPORT, new, old], idx, exp), {})
+
 
 class TestCadence(TmpCase):
     def cadence(self, rows, constraints=None):

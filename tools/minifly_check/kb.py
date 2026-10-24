@@ -243,6 +243,12 @@ def row_problems(name: str, row: Any) -> List[str]:
             rt = row.get('refers_to')
             if rt is not None and not _s(rt):
                 p.append('refers_to must be an incident id or null')
+            sup = row.get('supersedes')
+            if sup is not None:
+                if not (_s(sup) or (isinstance(sup, list) and sup and all(_s(x) for x in sup))):
+                    p.append('supersedes must be a closure id or a non-empty list of closure ids')
+                if not _s(row.get('note')):
+                    p.append('a superseding closure needs a note saying why the earlier closure no longer holds')
     elif name == 'USER_DECISIONS':
         uid = row.get('id')
         if not (isinstance(uid, str) and UD_ID_RE.match(uid)):
@@ -387,6 +393,42 @@ def closure_problems(row: dict, rule_idx: Dict[str, dict], expected: Optional[di
 def incident_closure_target(row: dict) -> Optional[str]:
     rt = row.get('refers_to')
     return rt if _s(rt) else row.get('id')
+
+
+def _supersedes(row: dict) -> List[str]:
+    sup = row.get('supersedes')
+    if _s(sup):
+        return [sup]
+    return [x for x in sup if _s(x)] if isinstance(sup, list) else []
+
+
+def superseded_closures(rows: Sequence[dict], rule_idx: Dict[str, dict], expected: Optional[dict]) -> Dict[str, str]:
+    """{closure id: superseding closure id} (SPEC 20.20; INCIDENTS is append-only, so a closure whose fixture or check
+    was re-scoped by an ordered change is retired by a later closure row, never edited). A closure counts as
+    superseded only when a closure row of the SAME incident names it in `supersedes`, carries a note, and itself
+    satisfies KB-05 (closure_problems empty, EXPECTED.json available); the incident then stays closed only through
+    that valid row. The superseding row is a LATER row of the ledger (round-1 repair part 4, verifier non-blocking):
+    a row can retire only closures appended before it, never one appended after it."""
+    closures = [(i, r) for i, r in enumerate(rows) if r.get('kind') == 'closure']
+    by_id: Dict[Any, Tuple[int, dict]] = {}
+    for i, r in closures:
+        if _s(r.get('id')) and r.get('id') not in by_id:
+            by_id[r.get('id')] = (i, r)
+    out: Dict[str, str] = {}
+    if expected is None:
+        return out
+    for i, r in closures:
+        targets = _supersedes(r)
+        if not targets or not _s(r.get('note')) or closure_problems(r, rule_idx, expected):
+            continue
+        for t in targets:
+            hit = by_id.get(t)
+            if hit is None:
+                continue
+            j, old = hit
+            if j < i and old is not r and incident_closure_target(old) == incident_closure_target(r):
+                out[t] = str(r.get('id'))
+    return out
 
 
 def open_incidents(kb: common.KB, rule_idx: Optional[Dict[str, dict]] = None,
@@ -860,6 +902,12 @@ def append_problems(ctx: common.Ctx, name: str, row: dict) -> List[str]:
             if row.get('kind') == 'closure' and not any(r.get('id') == tgt and r.get('kind') == 'report'
                                                         for r in kb.rows('INCIDENTS')):
                 p.append('closure refers to %r, which is not a report row' % (tgt,))
+            for t in _supersedes(row):
+                old = [r for r in kb.rows('INCIDENTS') if r.get('id') == t and r.get('kind') == 'closure']
+                if not old:
+                    p.append('supersedes %r, which is not a closure row' % (t,))
+                elif incident_closure_target(old[-1]) != tgt:
+                    p.append('supersedes %r, a closure of another incident (%s)' % (t, incident_closure_target(old[-1])))
     elif name == 'REVIEW_DEBT':
         if row.get('repaid_by'):
             if not any(r.get('id') == row.get('id') and not r.get('repaid_by') for r in kb.rows('REVIEW_DEBT')):
@@ -1614,10 +1662,15 @@ def check_kb_05(ctx: common.Ctx) -> Result:
         expected = None
     problems: List[str] = []
     missing: List[str] = []
+    sup = superseded_closures(rows, rule_idx, expected)
     for r in closures:
+        if r.get('id') in sup:
+            continue   # retired by a valid later closure of the same incident (SPEC 20.20)
         miss: List[str] = []
         for p in closure_problems(r, rule_idx, expected, miss):
             problems.append('%s (%s): %s' % (r.get('id'), r.get('check_id'), p))
         missing.extend('%s: %s' % (r.get('id'), m) for m in miss)
-    return _finish('KB-05', problems, missing, '%d closure(s), each with a RULES check and a fixture that must fire it'
-                   % len(closures))
+    return _finish('KB-05', problems, missing, '%d closure(s), each with a RULES check and a fixture that must fire it%s'
+                   % (len(closures) - len(sup), ('; superseded by a valid closure of the same incident: %s'
+                                                % ', '.join('%s by %s' % kv for kv in sorted(sup.items())))
+                      if sup else ''))

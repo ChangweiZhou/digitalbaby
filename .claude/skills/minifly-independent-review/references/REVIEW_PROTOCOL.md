@@ -38,6 +38,13 @@ Later updates go in new commits of yours: source_lock_acks [{sha, utc, note}] be
 SEALED_CONFIRM (SEAL_PROTOCOL.md), and postrun {replay, utc} after the official run. The author's only edits are
 reconciled_by_author and the reconciliation status of each finding.
 
+At T2, once the REPORT exists: fm22_prose_adjudications [{sentence, verdict, note}] (REV-09, spec 20.20; SKILL.md
+section 8a). Copy each sentence from the CLM-17P WARN row of the author's latest publish or dry publish GATE report
+(or from the current text; matching ignores markup, case and spacing), give verdict ok or overclaim with a note that
+cites CLAIM or VERDICT, and add any sentence the lint missed. An overclaim verdict blocks publish until the author
+rewords or removes the sentence. Free-prose overclaim is a judgment check with a lint aid, not a mechanical guarantee:
+the lint flags, you decide.
+
 ## 2. Executed-check recipes
 
 Common rules for every kind:

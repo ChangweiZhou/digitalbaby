@@ -37,3 +37,14 @@ this directory only ever holds ciphertext (`sealed/<batch>.bin`) until a batch i
 The checker's score is held-out recall per checker version. A rise in corpus recall without a rise in
 held-out recall counts as overfitting. Progress of the program is never measured by recall, gates or
 flags (I11).
+
+## Exposure records
+
+A sealed batch measures only checker changes written by people who have not seen it. When a kit author sees any part
+of a sealed batch before it is scored (a canary file, a summary of one, its key), the exposure is recorded here before
+the batch is scored. The score of that batch is then reported twice, with and without the exposed canaries, and a hit
+on an exposed canary is not held-out evidence for any change written after the exposure.
+
+| Batch | Canaries | What was seen | By | Consequence |
+|---|---|---|---|---|
+| HB-20261024-R1-CLAIMS (the second batch, 'HB2' in the workflow; author claude-subagent-E; FM-07, FM-22, FM-24) | E1, E2 | summaries of the two canaries in a workflow result file (rsi1_result.json), not the canary files or the key | the round-1 repair part 3 implementer (claude), who reported it to the part-3 verifier; recorded by the part-4 implementer, who read nothing of the batch (2026-10-24) | E1 and E2 are not held-out evidence for the FM-22 changes of round-1 repair parts 3 and 4 (CLM-17, CLM-17P, REV-09; SPEC 20.20, 20.21); recall is also reported on the batch's other canaries alone |

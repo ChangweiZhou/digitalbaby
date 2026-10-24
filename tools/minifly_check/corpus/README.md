@@ -10,7 +10,7 @@ corpus/
   _build/                build_corpus.py and its modules (stdlib only; never import checker code)
     base/                the hand-designed clean base (TimelineGit format) + EXPECTED_VALUES.md
   C00a .. C30, G01 .. G05, K01     one directory per SPEC 12.2 row
-  S01 .. S88             supplementary fixtures (not SPEC 12.2 rows), see below
+  S01 .. S103            supplementary fixtures (not SPEC 12.2 rows), see below
     FIXTURE.json         {id, title, fm_ids, source_incident, kind dirty|clean, built_from, mutation, ...}
     timeline.json        {head, dirty, shallow, commits: [{sha, utc, author, trailers, paths, branches, label}]}
     repo/                final tree (worktree)
@@ -43,7 +43,7 @@ needs). Executor artifacts that follow from the mutated design (row digests, ATT
 REPORT headline, the executor copies of TESTBED.json and dev SCORES.json) are regenerated consistently,
 so nothing else differs.
 
-## Supplementary fixtures S01-S88
+## Supplementary fixtures S01-S103
 
 The SPEC 12.2 table leaves many check ids without a fixture in which they fire, so `selftest --mutate`
 would report them as 'check not exercised' (SPEC 7.7, 20.2). S01-S25 add one documented mutation each
@@ -82,7 +82,8 @@ S66 feed held answers through declared non-feedback streams (one hex field holdi
 listening stream; a text cue with a separate answer field in a per-world priming stream) and fire ADM-EXPO; S67 (clean)
 shows held prompts without answers in a non-feedback stream. S68 and S69 re-describe an OLD-guard-carried FAIL as an
 earned level and a met rule in REPORT prose, and in CLAIM.notes, a findings claim, STATUS.md and SUMMARY.json (CLM-17);
-S70 (clean) describes it with honest negations. S71 activates the author's own finding under a forged reviewer trailer
+S70 (clean) describes it with honest negations. Since the round-1 repair part 3 (SPEC 20.20) S68 is CLM-17P's (WARN)
+and fails publish through the T2 review duty REV-09 instead of CLM-17, and S70's CLAIM.notes no longer names E3. S71 activates the author's own finding under a forged reviewer trailer
 pushed to the author namespace (KB-03), S72 binds a governance review record whose only claude-named branch is on
 another remote (GOV-REV), S73 (clean) is a genuine activation from origin/claude/*. S74-S76 hide DEV confirm wording
 behind an HTML entity, markdown emphasis and an HTML comment (CLM-04). S77 edits an earlier ATTEMPTS row after the run
@@ -103,6 +104,23 @@ a tab-separated tape (ADM-EXPO); S86 (clean) plays JSON payloads with held promp
 FROZEN control role 'candidate' (LOCK-02; the VERDICT, scored anyway, is FAIL with comparator FROZEN). S88 splits a DEV
 confirm word with markdown link syntax (CLM-04). Under the HEAD kit (checker 1.0.0) every one of them exits 0 on all its
 commands.
+
+S89-S97 (round-1 repair part 3, SPEC 20.20; built in `_build/fixtures_r1c.py`) exercise the split of the FM-22 check.
+CLM-17 (structural) fires on S89 (a level named in CLAIM.notes and proposed findings in three new phrasings, one finding
+with level E3), S90 (findings_none_reason naming E3), S91 (STATUS.md 'Level earned: E3') and S92 (a check table row
+'| E3 reached | yes |'); S93 (clean) states the FAIL with negative answers and values only ('E3 reached: no', '| E3
+reached | no |', 'Did W reach E3? No.', 'attempted E3; earned NONE'). The T2 review duty: S94 overclaims in REPORT prose
+with no adjudication (CLM-17P WARN, REV-09 FAIL), S95 (clean) is a lint false alarm the reviewer adjudicates ok, S96
+leaves an adjudicated overclaim in place (REV-09 FAIL) and S97 (clean) rewrites it. Under the HEAD kit (checker 1.0.0)
+every one of them exits 0 on all its commands.
+
+S98-S103 (round-1 repair part 4, SPEC 20.21; built in `_build/fixtures_r1d.py`) exercise the CLM-17P token rule and the
+status/decision values of CLM-17. CLM-17 fires on S98 ('Status: W passes on the held split'), S99 ('Decision: go
+ahead, the locked criterion is satisfied on held sums') and S101 (a proposed finding whose conditions scope names
+the third evidence level); S100 names E3 in T2 REPORT prose without any achievement verb ('The held split leaves W
+with an E3 to its name.', CLM-17P WARN, REV-09 FAIL); S102 (clean FAIL) holds negative answers, a measurement keyed by
+the E3 task, process-check status text and qualified prose; S103 (clean PASS at E3) says 'Status: primary met on
+held sums' and 'Decision: W passes the locked rule', which are honest there.
 
 ## Adding a fixture from an incident (through governance only)
 

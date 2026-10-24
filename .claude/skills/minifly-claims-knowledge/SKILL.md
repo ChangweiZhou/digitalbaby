@@ -67,19 +67,44 @@ MFC claim <dir>                      # writes CLAIM.json and the headline; appen
 
 - The prose below the headline is yours, but it is linted at publish: confirm wording (CLM-04), soft words (CLM-06),
   native/core/inherited wording (CLM-07), absolute local paths (CLM-12) and uncited prior numbers (CLM-16, WARN).
-- Overclaim (CLM-17, spec 20.13): REPORT prose, CLAIM.notes, findings claims and the STATUS/SUMMARY/MEMO and
+- Overclaim (spec 20.13, 20.20, 20.21; checked by CLM-17, CLM-17P and REV-09, next item): REPORT prose, the CLAIM texts and the STATUS/SUMMARY/MEMO and
   NOTES/ANALYSIS/README/RESULTS files of a delivery must never assert a level above level_earned ('sits at E3', 'attains
   E3', 'E3 holds', 'the result is E3', `{"evidence_level": "E3"}`), and on a primary_gate other than PASS must never call
   the rule, an endpoint, the result or a failed guard met, cleared, passed, satisfied or successful ('W clears the
-  locked rule', 'the composition endpoint is met'). Key/value lines and table rows are read as clauses too:
-  'Level earned: E3', 'Decision rule: satisfied' and '| level earned | E3 |' fail like the sentence (corpus S81,
-  S82). 'As planned', 'as expected' or 'without exception' do not qualify a claim, and a sentence citing earlier work
-  is skipped only when it says nothing about this delivery. A guard is part of the rule: a guard-carried FAIL is a FAIL.
-  Write the earned level and the gate result with explicit negations or qualifiers: 'E3 was not reached', 'attempted
-  E3', 'Level earned: NONE', 'the OLD drop guard failed, so the primary FAILs'; a process check may be reported as
-  passed ('the roster gate for this E3 design passed') (corpus S68-S70, S83; pilot miss INC-HB1-C2). `MFC lint`
-  applies CLM-17 to files inside a delivery against its CLAIM.json, and to a project document part by part against
-  each delivery it names.
+  locked rule', 'the locked criterion is fulfilled'). Key/value lines and table rows are read structurally:
+  'Level earned: E3', 'Decision rule: satisfied', 'Status: primary met' and '| level earned | E3 |' FAIL (corpus S81,
+  S82, S98, S99). 'As planned', 'as expected', 'without exception', 'not
+  just' or 'no doubt' do not qualify a claim, and a sentence citing earlier work is skipped only when it says nothing
+  about this delivery. A guard is part of the rule: a guard-carried FAIL is a FAIL. In REPORT prose and the status
+  files, write the earned level and the gate result with explicit negations or qualifiers: 'E3 was not reached',
+  'attempted E3', 'Level earned: NONE', 'the OLD drop guard failed, so the primary FAILs'; a process check may be
+  reported as passed ('the roster gate for this E3 design passed') (corpus S70, S83, S93, S102; pilot miss
+  INC-HB1-C2). CLAIM.notes, findings_none_reason and every field of a proposed finding are stricter: they name no level
+  above level_earned at all, not even negated (next item). `MFC lint` applies CLM-17 and CLM-17P to files inside a
+  delivery against its CLAIM.json, and to a project document part by part against each delivery it names.
+- How it is checked since spec 20.20 (the verifier showed that guessing overclaims in free prose with regexes both
+  misses paraphrases and false-alarms on honest text):
+  - CLM-17 (enforced, structural). Never name a level above level_earned in CLAIM.notes, findings_none_reason or any
+    field of a proposed finding (claim, conditions, extra keys), in any phrasing ('E3', 'E-III', 'the third evidence
+    level', 'level 3 of the evidence ladder'), not even to deny it ('W did not reach E3' in notes FAILs): the attempted
+    level is the generated level_attempted. Write 'the primary FAILed on the OLD drop guard' instead. A findings level
+    is E0..E4 or NONE and never above level_earned (corpus S89, S90, S101).
+  - CLM-17 also reads the key/value shapes of the REPORT body and the status files (key: value lines, table cells
+    with their header row, 'question? answer' pairs, JSON leaves): a level key carries level_earned or a negation, a
+    gate key carries primary_gate or a negation, and an E-level above level_earned takes only a negative answer.
+    'Level earned: E3' and '| E3 reached | yes |' FAIL on NONE; '| E3 reached | no |', 'E3 reached: no', 'Did W
+    reach E3? No.' and 'attempted E3; earned NONE' pass (corpus S89-S93). On a non-PASS primary a 'Status:' or
+    'Decision:' value that calls the primary, the rule, a criterion, an endpoint, the objective, the candidate or a
+    level met FAILs ('Status: W passes', 'Decision: proceed, the rule is met'); process checks do not ('Status:
+    admission passed') (corpus S98, S99, S102, S103).
+  - Free prose is CLM-17P's: an advisory lint aid (WARN) that lists every flagged sentence. Since 20.21 it flags any
+    unqualified clause that names a level above level_earned, whatever the verb ('W walks away with E3'), so an
+    honest sentence needs its qualifier ('E3 would need ...', 'E3 was not reached'); a level on a design noun ('the E3
+    design') is not flagged (corpus S100, S102). At T2 the reviewer
+    adjudicates each one in REVIEW.fm22_prose_adjudications (REV-09); an overclaim verdict blocks publish until you
+    reword or remove the sentence (corpus S94-S97). Run `MFC gate --stage publish --dry <dir>` and hand the listed
+    sentences to the reviewer. Free-prose overclaim is a judgment check with a lint aid, not a mechanical guarantee:
+    write as if no lint existed, and at T0/T1, where nobody reviews, the WARN is yours to act on.
 - Never hand-write a measurement, a verdict or a STATUS boolean. Numbers in the prose are copied from CLAIM, SCORES
   or VERDICT, or computed by a committed script whose path you cite.
 
@@ -115,17 +140,18 @@ MFC claim <dir>                      # writes CLAIM.json and the headline; appen
 - 'Persistent learning core' is a project goal, not a result label (`minifly_b/package/DOCS/MINIFLY_OBJECTIVE_CONTRACT.md:19`).
 - Word lists catch listed words only. Synonyms in body prose are an open loophole (spec 15); the generated headline is
   the real defence, so do not reach for 'well on the way' either.
-- CLM-17 reads level and met-rule claims clause by clause since 1.0.1, but it is lexical too: a paraphrase outside
-  its vocabulary is the residual loophole the reviewer covers.
+- CLM-17P (advisory since spec 20.20) reads level and met-rule claims clause by clause, but it is lexical: a
+  paraphrase outside its vocabulary is the residual loophole the reviewer covers (REV-09 at T2).
 
 ## 4. Publish gate and the T2 verification subset
 
 ```
 MFC gate --stage publish <dir>       # S7 exit criterion
-MFC lint <files...>                  # T0 text (memos, saved-data reanalysis): CLM-06, CLM-12, CLM-16, PTR-01..07
+MFC lint <files...>                  # T0 text (memos, saved-data reanalysis): CLM-06, CLM-12, CLM-16, CLM-17, CLM-17P, PTR-01..07
 ```
 
-- Checker 1.0.1 adds CLM-17 (overclaim, publish and lint) and CYC-04 (append-only runlog at publish) to the bundle
+- Checker 1.0.1 adds CLM-17 (structural overclaim, publish and lint), CLM-17P (prose lint aid, WARN), REV-09 (the T2
+  reviewer's prose adjudications) and CYC-04 (append-only runlog at publish) to the bundle
   below. For a T1 delivery whose first SOURCE_LOCK predates 1.0.1 they are advisory (ADVISORY_FAIL, spec 20.10); every
   T2 publish enforces them.
 
@@ -209,8 +235,12 @@ Detail: KNOWLEDGE_LEDGER.md sections 1-4. Append rows only with
   EXPECTED.must_fire includes that check (KB-05). The check, fixture and EXPECTED entry go through `minifly-governance`.
 - Never close an incident with prose, a skill sentence or a memo. 'Lessons stay prose' is FM-26.
 - The seed closure rows (INC-SEED-xx-CLn) are pending their corpus fixtures and do not count until KB-05 passes.
+- The ledger is append-only, so a closure whose fixture an ordered change re-scoped is retired by a new closure row of
+  the same incident with `supersedes: <old closure id>` and a note saying why; KB-05 then validates the new row
+  instead of the old one (spec 20.20).
 - The held-out pilot misses INC-HB1-A3, INC-HB1-C2 and INC-HB1-C3 are closed by rows INC-HB1-A3-CL1/2 (ADM-EXPO,
-  S65/S66), INC-HB1-C2-CL1/2 (CLM-17, S68/S69) and INC-HB1-C3-CL1/2 (KB-03 S71, GOV-REV S72). A visible closure is
+  S65/S66), INC-HB1-C2-CL2/CL3 (CLM-17, S69/S89; CL3 supersedes CL1, whose S68 is now the prose case of CLM-17P and
+  REV-09) and INC-HB1-C3-CL1/2 (KB-03 S71, GOV-REV S72). A visible closure is
   not held-out recall: the next sealed batch measures that.
 
 ## 9. Errata

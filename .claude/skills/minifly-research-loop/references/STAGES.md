@@ -173,6 +173,8 @@ Exit: exactly one completed official run (one attempt, or a legal resume chain).
 - [ ] Predictions are scored into CLAIM.predictions_scored; an unopened endpoint is scored unresolved.
 - [ ] Propose 0-3 findings in CLAIM.findings_proposed (zero needs findings_none_reason). Only the other family activates them.
 - [ ] File incidents: `MFC ledger append --ledger INCIDENTS --row ROW.json`.
+- [ ] T2: run `MFC gate --stage publish --dry <dir>` and hand the CLM-17P WARN sentences to the reviewer, who
+      adjudicates each in REVIEW.fm22_prose_adjudications (REV-09); reword or remove any sentence judged overclaim.
 - [ ] `MFC gate --stage publish <dir>`; for a pointer update also `MFC gate --stage pointer --pointer P <dir>`.
 - [ ] Return to S0 with what you learned.
 

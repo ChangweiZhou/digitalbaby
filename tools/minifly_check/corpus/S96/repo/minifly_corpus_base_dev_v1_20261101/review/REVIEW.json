@@ -1,0 +1,105 @@
+{
+  "admission_sha256": "46142e7193cbdb8820c05cc3d3d892107f340f85c4ca8d1f21a66e1bb3f6fa79",
+  "author_agent": "codex",
+  "canary": {
+    "detected": 15,
+    "n": 15,
+    "report": "checks/CANARY_20261101T143000Z.json",
+    "seed": "5eed01"
+  },
+  "cheapest_shortcut_attempt": {
+    "description": "DIGIT_NO_CARRY substitution for W on the technical world",
+    "passed_locked_rule": false,
+    "script": "review/shortcut_attempt.py"
+  },
+  "decision": "ADMIT",
+  "delivery": "minifly_corpus_base_dev_v1_20261101",
+  "executed_checks": [
+    {
+      "cmd": "python3 -I review/rerun_admission.py",
+      "compared_to": "results/receipts/w_tech_1/W.json",
+      "cpu_cap_s": 60,
+      "id": "X1",
+      "kind": "rerun_admission",
+      "match": true,
+      "output": "review/out_rerun_admission.json",
+      "output_sha256": "375074b34dde3a0248efb2d721fda420ad62a3ad8bfc3432a892c9750137e0a9",
+      "result": "match",
+      "script": "review/rerun_admission.py",
+      "script_sha256": "69adf0a6aa5218851c1d71b1112d4e41c9b8135728b0ac51d501b77ba32de2d1"
+    },
+    {
+      "cmd": "python3 -I review/reject_input.py",
+      "compared_to": null,
+      "cpu_cap_s": 60,
+      "id": "X2",
+      "kind": "reject_input",
+      "match": null,
+      "output": "review/out_reject_input.json",
+      "output_sha256": "de4a4ac7b832116fea13cbb39a6966238fad7a7231b1a2fc1d60856f70d26e02",
+      "result": "rejected",
+      "script": "review/reject_input.py",
+      "script_sha256": "6991f2b6933574f5a09dcce40c5a4ec444bcb42e941d84d83fe48cfa2e9bca8a"
+    },
+    {
+      "cmd": "python3 -I review/trace_number.py",
+      "compared_to": null,
+      "cpu_cap_s": 60,
+      "id": "X3",
+      "kind": "trace_number",
+      "match": null,
+      "output": "review/out_trace_number.json",
+      "output_sha256": "39760fb808505efb2bef54ebb512029d8aaa67b363dc1001491b2553372492d8",
+      "result": "traced",
+      "script": "review/trace_number.py",
+      "script_sha256": "aba2df29be465f60be93f355611d47e6a05aca45799040b0a71debc4b6faf587"
+    },
+    {
+      "cmd": "python3 -I review/shortcut_attempt.py",
+      "compared_to": null,
+      "cpu_cap_s": 60,
+      "id": "X4",
+      "kind": "shortcut_attempt",
+      "match": null,
+      "output": "review/out_shortcut_attempt.json",
+      "output_sha256": "d9e7dd054dd0447e729c56cbf9e4a0cbbd8779a8a2df832bcdcb8899d0ea2998",
+      "result": "not_passed",
+      "script": "review/shortcut_attempt.py",
+      "script_sha256": "669852c5e47ba9f338a2bafbed2dd0f500e87bf359c302562e09c1160cf7f4c2"
+    }
+  ],
+  "findings": [],
+  "fm22_prose_adjudications": [
+    {
+      "note": "level_earned is NONE; qualifying for E3 is what the FAIL denies.",
+      "sentence": "On held unseen sums W now qualifies for E3.",
+      "verdict": "overclaim"
+    },
+    {
+      "note": "The criterion includes the guards; it was not fulfilled.",
+      "sentence": "The locked criterion was fulfilled in every MAIN world, with retention as the lone exception.",
+      "verdict": "overclaim"
+    }
+  ],
+  "fm_judgments": {
+    "FM-02": "write_pair is the only mutation site; NPT writes 0 there.",
+    "FM-03": "NPT cuts pair_memory only; readout equals W at post_first.",
+    "FM-12": "No held orbit occurs in any taught stream.",
+    "FM-23": "No parent; no priors added; answer_path native."
+  },
+  "postrun": null,
+  "reviewed_endpoint_lock_sha256": "abe473784e57fe25f6b21b72dd5670d14bce8f995cc01143b18a60db52693cb5",
+  "reviewer_agent": "claude",
+  "reviewer_branch": "claude/minifly-corpus-review",
+  "reviewer_session": "s-corpus-review",
+  "schema": "minifly.review.v1",
+  "seal": null,
+  "source_lock_acks": [
+    {
+      "note": "Closure diff since the review: none; final SOURCE_LOCK acknowledged.",
+      "sha": "1d1ae58050de0e944c86ff527091772e2ea37b52db26dbb4d03e95fa223f4110",
+      "utc": "20261102T105000Z"
+    }
+  ],
+  "utc": "20261101T145000Z"
+}

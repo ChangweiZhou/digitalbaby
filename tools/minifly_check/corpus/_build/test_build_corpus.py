@@ -28,7 +28,7 @@ SPEC_IDS = (['C00a', 'C00b', 'C00c', 'C00d', 'C00e', 'C00f', 'C01', 'C02a', 'C02
              'C11a', 'C11b', 'C12', 'C13a', 'C13b', 'C13c', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19',
              'C20', 'C21', 'C22', 'C23', 'C24', 'C25', 'C26', 'C27', 'C28', 'C29', 'C30']
             + ['G0%d' % i for i in range(1, 6)] + ['K01'])
-SUPPLEMENTARY = ['S%02d' % i for i in range(1, 89)]  # S01-S25 (WP7), S26-S45 (round 1), S46-S50 (round 2), S51-S55 (round 3), S56-S64 (round 4), S65-S80 (self-improvement round 1), S81-S88 (round-1 repair)
+SUPPLEMENTARY = ['S%02d' % i for i in range(1, 104)]  # S01-S25 (WP7), S26-S45 (round 1), S46-S50 (round 2), S51-S55 (round 3), S56-S64 (round 4), S65-S80 (self-improvement round 1), S81-S88 (round-1 repair), S89-S97 (round-1 repair part 3), S98-S103 (round-1 repair part 4)
 LITERAL_NAME = re.compile(r'(_ok|_passed|_passes|overlap|_verified|_independent)$|^(no_|all_)')
 
 
@@ -103,13 +103,33 @@ class TestTableAndExpected(unittest.TestCase):
 
 
     def test_kb_incident_closures_name_a_firing_fixture(self):
-        """KB-05 consistency with the real KB: every closure row's check fires in its fixture."""
+        """KB-05 consistency with the real KB: every closure row's check fires in its fixture, except a row retired by
+        a later closure of the same incident that names it in `supersedes`, carries a note and fires itself (SPEC
+        20.20; the ledger is append-only)."""
         path = os.path.join(os.path.dirname(os.path.dirname(KIT)), 'PROJECT_DOCUMENTS', 'KB', 'INCIDENTS.jsonl')
         with open(path, 'rb') as fh:
             closures = [json.loads(x) for x in fh.read().decode('utf-8').splitlines()
                         if x.strip() and json.loads(x)['kind'] == 'closure']
         self.assertTrue(closures)
+
+        def fires(r):
+            return r.get('fixture_id') in self.exp and r.get('check_id') in self.exp[r['fixture_id']]['must_fire']
+
+        def target(r):
+            return r.get('refers_to') or r.get('id')
+        by_id = dict((r['id'], r) for r in closures)
+        retired = set()
+        for r in closures:
+            sup = r.get('supersedes')
+            for t in ([sup] if isinstance(sup, str) else list(sup or [])):
+                self.assertIn(t, by_id, r['id'])
+                self.assertEqual(target(by_id[t]), target(r), r['id'])
+                self.assertTrue(r.get('note'), r['id'])
+                self.assertTrue(fires(r), r['id'])
+                retired.add(t)
         for row in closures:
+            if row['id'] in retired:
+                continue
             self.assertIn(row['check_id'], self.exp[row['fixture_id']]['must_fire'], row['id'])
 
 

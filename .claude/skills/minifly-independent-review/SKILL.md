@@ -57,6 +57,7 @@ description: "Use when you review a MiniFly delivery you did not author (require
 | SOURCE_LOCK ack | before the official run, after the final `lock build` | an entry in source_lock_acks, after a short delta review of the closure diff | WIT-01 (official) |
 | Seal (SEALED_CONFIRM only) | after the final locks, around the owner's GO | `review/SEAL_COMMIT.json`, then `review/SEAL_REVEAL.json` | SEAL-01..05 |
 | Post-run replay (SEALED_CONFIRM or adoption) | after the official outputs exist | postrun.replay digests | REV-08 |
+| Prose adjudication (T2) | after the REPORT exists, when a publish or dry publish GATE report lists CLM-17P WARN sentences | fm22_prose_adjudications in REVIEW.json | REV-09 (publish) |
 
 - WIT-01: reviewed_endpoint_lock_sha256 equals the current ENDPOINT_LOCK. The commit that introduces your attestation
   must be in your namespace and be an ancestor of the first dev output commit. For official, source_lock_acks must
@@ -167,6 +168,33 @@ MFC review replay-plan <dir> --seed HEX --n 4
   history; it is executor-run, so it never replaces REV-08. When the run was resumed, include in your plan at least one
   unit from each side of the interruption (from attempt and resume_of in runlog/ATTEMPTS.jsonl), and check the
   runtime closures (`runlog/RUNTIME_CLOSURE_<attempt_id>.json`, RUN-03) against the closure you acked.
+
+## 8a. Free-prose adjudication (T2 publish, REV-09)
+
+Free-prose overclaim is a judgment check with a lint aid, not a mechanical guarantee (spec 20.20). CLM-17 checks only
+closed-vocabulary text: CLAIM.notes, findings_none_reason and findings claims name no E-level above level_earned, and
+status key/value lines, table cells, question/answer pairs and JSON leaves carry the CLAIM level and gate. Prose is
+CLM-17P's: an advisory lint whose WARN row lists each flagged sentence. At T2 you are the check.
+
+```
+MFC gate --stage publish --dry <dir>     # the author runs it; the CLM-17P WARN row lists the sentences
+MFC review check <dir>                   # after your commit: REV-09 PASS, or the sentences still missing
+```
+
+- Adjudicate every listed sentence in REVIEW.fm22_prose_adjudications: {sentence (copied from the WARN row), verdict
+  ok | overclaim, note}. Read it against CLAIM.json and VERDICT.json, not against the author's intent: ok only when the
+  sentence asserts nothing beyond level_earned, primary_gate and the guards ('The rule passes W only when both guards
+  hold' defines the rule: ok); overclaim when it implies a level above level_earned or a met rule, endpoint or guard
+  that VERDICT does not show ('W now qualifies for E3', 'the criterion was fulfilled' on a FAIL).
+- An overclaim verdict blocks publish until the author rewords or removes the sentence (REV-09). Never edit the
+  REPORT yourself; the author fixes it, and the next publish sees the sentence gone.
+- The lint flags any unqualified sentence naming a level above level_earned (spec 20.21), so expect honest sentences
+  that only lack a qualifier word: adjudicate them ok. It misses level claims without an E-level token ('the top
+  rung'), qualified overclaims ('W reached E3 without the retention guard') and a met primary without a MET word
+  ('came out green'). Read the whole REPORT body and the delivery's other prose, and add any sentence you judge an
+  overclaim with verdict overclaim: it blocks publish just the same. A sentence nobody flags publishes.
+- Commit the field on your namespace like the rest of REVIEW.json; an author commit that touches it fails REV-09.
+  Without a REVIEW.json the duty is MISSING, and a REVIEW_DEBT does not discharge it (corpus S94-S97).
 
 ## 9. Review debt
 

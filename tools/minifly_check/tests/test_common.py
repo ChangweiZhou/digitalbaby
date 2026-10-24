@@ -28,6 +28,7 @@ SPEC_IDS = (
     ['SELF-01', 'SCHEMA-01', 'TIER-01', 'RUN-01', 'RUN-02', 'CYC-01', 'CYC-02', 'CYC-03']
     + ['RUN-03', 'RUN-04']  # SPEC 20.7, 20.8 (hardening round 4)
     + ['CLM-17', 'CYC-04']  # SPEC 20.13, 20.16 (self-improvement round 1, introduced_in 1.0.1)
+    + ['CLM-17P', 'REV-09']  # SPEC 20.20 (round-1 repair part 3, introduced_in 1.0.1)
     + ['LOCK-%02d' % i for i in range(1, 14)] + ['AMD-%02d' % i for i in range(1, 6)] + ['WIT-01']
     + ['SEAL-%02d' % i for i in range(1, 6)] + ['CONF-01']
     + ['MET-01', 'MET-02', 'LAD-01', 'LAD-02', 'LAD-03', 'LAD-04', 'STR-01', 'DET-01', 'INERT-01', 'UDI-01',
@@ -791,16 +792,18 @@ class TestRealRules(unittest.TestCase):
     def test_fields_and_statuses(self):
         self.assertEqual(common.validate_rules(self.rules), [])
         adv = sorted(i for i, r in self.idx.items() if r['status'] == 'advisory')
-        self.assertEqual(adv, ['CLM-16', 'LAD-03', 'LAD-04', 'PTR-06', 'WLD-02'])
+        self.assertEqual(adv, ['CLM-16', 'CLM-17P', 'LAD-03', 'LAD-04', 'PTR-06', 'WLD-02'])
         # SPEC 20.2: ids without corpus coverage or a faithful definition are 'planned' (README 'Not yet enforced')
         self.assertEqual(sorted(i for i, r in self.idx.items() if r['status'] == 'planned'), ['UDI-01'])
         # SPEC 20.10: checks added after the held-out pilot carry introduced_in 1.0.1; checks it tightened keep their
         # introduced_in and list 1.0.1 in changed_in
-        new_ids = ['CLM-17', 'CYC-04']
+        new_ids = ['CLM-17', 'CYC-04', 'CLM-17P', 'REV-09']   # CLM-17P, REV-09: round-1 repair part 3 (SPEC 20.20)
         tightened = ['ADM-EXPO', 'CLM-04', 'DEBT-02', 'DEC-01', 'GOV-COI', 'GOV-REV', 'HELD-03', 'KB-03', 'RED-02',
                      'RED-03', 'REV-01', 'RUN-04', 'SEAL-02', 'WIT-01',
                      # round-1 repair: LOCK-02 (role candidate) and the checks whose behaviour the exposure strata changed
-                     'LOCK-02', 'STR-01', 'DET-01', 'ADM-TB-CEIL', 'ADM-TB-FLOOR', 'UDI-01']
+                     'LOCK-02', 'STR-01', 'DET-01', 'ADM-TB-CEIL', 'ADM-TB-FLOOR', 'UDI-01',
+                     # round-1 repair part 3: KB-05 retires a closure superseded by a valid closure (SPEC 20.20)
+                     'KB-05']
         self.assertEqual(common.CHECKER_VERSION, '1.0.1')
         self.assertEqual(self.rules['checker_version'], common.CHECKER_VERSION)
         for i, r in self.idx.items():
@@ -837,6 +840,13 @@ class TestRealRules(unittest.TestCase):
         self.assertIn('CLM-17', b('lint'))
         self.assertIn('CYC-04', publish)
         self.assertNotIn('CYC-04', official)
+        # SPEC 20.20 (round-1 repair part 3): the free-prose lint aid at publish and in lint; the T2 review duty at
+        # publish only
+        self.assertIn('CLM-17P', publish)
+        self.assertIn('CLM-17P', b('lint'))
+        self.assertIn('REV-09', publish)
+        self.assertNotIn('REV-09', official)
+        self.assertNotIn('REV-09', b('lint'))
         self.assertNotIn('UDI-01', publish)  # planned: excluded from every bundle (SPEC 20.2)
         for st in self.rules['bundles']:
             self.assertNotIn('UDI-01', b(st), st)
