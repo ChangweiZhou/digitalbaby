@@ -10,7 +10,7 @@ a collaborator. No MiniFly experiment, training or historical code was run for a
   - 检查器 `tools/minifly_check` 把散文规则变成"不通过即停"的程序检查。
   - 知识库 `PROJECT_DOCUMENTS/KB` 只追加地记录结论、事故和预测。
 - **为什么。** 历史上最贵的失败都是"跑完才发现"：Package B 的控制臂失效、STOP-ONLY 的对照比较器恒为零、V6-R1 的线索与噪声之比、LEARNED-BANK 的不可学任务。共同原因是规则只是散文。
-- **自我改进如何防作弊。** 检查器像 MiniFly 一样，要在"没见过的题"上考试：由看不到代码的 agent 编造新的作弊方式，先封存再测。第一批结果：可见语料 117/117，留出攻击 6/9。三处漏检随后修复，修复本身又被独立验证者两次以上打回，其中一次查出修复里写进了只在旧样本中出现的词，属于过拟合。
+- **自我改进如何防作弊。** 检查器像 MiniFly 一样，要在"没见过的题"上考试：由看不到代码的 agent 编造新的作弊方式，先封存再测。第一批结果：可见语料 117/117，留出攻击 6/9。三处漏检随后修复，修复本身又被独立验证者打回 4 次，其中一次查出修复里写进了只在旧样本中出现的词，属于过拟合。
 - **局限。**
   - 尚未在真实实验上运行。
   - 阈值是草稿，需要周先生批准（UD-0001）。
@@ -116,6 +116,8 @@ What happened today:
    - Hyperparameters passed as CLI flags included in the design identity.
    - Caps requested with a measured cost.
    - Fixes for the false-positive scanners, and the per-arm comparator LCB option.
+   - SPEC 3.5 enforced mechanically: no hand-written verdict fields outside the generated CLAIM.json or VERDICT.json
+     (INC-HB2-E3).
    - The LEARNED-BANK session's 16 review items (`reviews_20261024/MRK1_KIT_0471fda3.md` on that branch).
 2. **Cross-family governance review of the kit by Codex** (Phase 0, step 4). Everything here was written and reviewed
    by Claude-family agents.
@@ -141,7 +143,9 @@ What happened today:
 5. **Whether sealed per-world digit-byte relabeling may be used** for E3 confirmations. It would make "no supplied
    arithmetic structure" testable, but it changes the raw-byte surface.
 6. **Numeric objective targets** for E3: the held exact own-EOS level, and per-sample and per-compute budgets.
-7. **Your local AGENTS.md:** merge the lines in `KB/AGENTS_POINTER.md`. A tracked root AGENTS.md was deliberately not
+7. **Negated level mentions in CLAIM.notes** (INC-HB2-E1): allow them, or keep the ban and state it where CLAIM is
+   written.
+8. **Your local AGENTS.md:** merge the lines in `KB/AGENTS_POINTER.md`. A tracked root AGENTS.md was deliberately not
    created, because it would collide with your local file.
 
 ## 8. File map
