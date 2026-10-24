@@ -1,0 +1,93 @@
+{
+  "admission_sha256": "4bc7b2cfaf232ee85056ed41243c7575934a545c3b122c1d377818380b9ded86",
+  "author_agent": "codex",
+  "canary": {
+    "detected": 15,
+    "n": 15,
+    "report": "checks/CANARY_20261101T143000Z.json",
+    "seed": "5eed01"
+  },
+  "cheapest_shortcut_attempt": {
+    "description": "DIGIT_NO_CARRY substitution for W on the technical world",
+    "passed_locked_rule": false,
+    "script": "review/shortcut_attempt.py"
+  },
+  "decision": "ADMIT",
+  "delivery": "minifly_pairteach_dev_v1_20261101",
+  "executed_checks": [
+    {
+      "cmd": "python3 -I review/rerun_admission.py",
+      "compared_to": "results/receipts/w_tech_1/W.json",
+      "cpu_cap_s": 60,
+      "id": "X1",
+      "kind": "rerun_admission",
+      "match": true,
+      "output": "review/out_rerun_admission.json",
+      "output_sha256": "24396b2016a4de29f4ef8b362784843a689af3808dc11baf8f4bb19cac58845a",
+      "result": "match",
+      "script": "review/rerun_admission.py",
+      "script_sha256": "69adf0a6aa5218851c1d71b1112d4e41c9b8135728b0ac51d501b77ba32de2d1"
+    },
+    {
+      "cmd": "python3 -I review/reject_input.py",
+      "compared_to": null,
+      "cpu_cap_s": 60,
+      "id": "X2",
+      "kind": "reject_input",
+      "match": null,
+      "output": "review/out_reject_input.json",
+      "output_sha256": "0580d2003a8ff6054a544fdf9c4dd06b0ed5e455bc82de1aad844240dbe5d473",
+      "result": "rejected",
+      "script": "review/reject_input.py",
+      "script_sha256": "6991f2b6933574f5a09dcce40c5a4ec444bcb42e941d84d83fe48cfa2e9bca8a"
+    },
+    {
+      "cmd": "python3 -I review/trace_number.py",
+      "compared_to": null,
+      "cpu_cap_s": 60,
+      "id": "X3",
+      "kind": "trace_number",
+      "match": null,
+      "output": "review/out_trace_number.json",
+      "output_sha256": "17a8f390f1e64238da9a7ef5ea48cfdd7fce9f86a9f51ccd5992acc99a8f05d0",
+      "result": "traced",
+      "script": "review/trace_number.py",
+      "script_sha256": "aba2df29be465f60be93f355611d47e6a05aca45799040b0a71debc4b6faf587"
+    },
+    {
+      "cmd": "python3 -I review/shortcut_attempt.py",
+      "compared_to": null,
+      "cpu_cap_s": 60,
+      "id": "X4",
+      "kind": "shortcut_attempt",
+      "match": null,
+      "output": "review/out_shortcut_attempt.json",
+      "output_sha256": "497b540835597466a5574ed82d034178df2ca99647dacc7d62e161cd50d15e4c",
+      "result": "not_passed",
+      "script": "review/shortcut_attempt.py",
+      "script_sha256": "669852c5e47ba9f338a2bafbed2dd0f500e87bf359c302562e09c1160cf7f4c2"
+    }
+  ],
+  "findings": [],
+  "fm_judgments": {
+    "FM-02": "write_pair is the only mutation site; NPT writes 0 there.",
+    "FM-03": "NPT cuts pair_memory only; readout equals W at post_first.",
+    "FM-12": "No held orbit occurs in any taught stream.",
+    "FM-23": "No parent; no priors added; answer_path native."
+  },
+  "postrun": null,
+  "reviewed_endpoint_lock_sha256": "83b57e8c51204400f68b043efcec58db836636e178ca338606953c1f009ddce1",
+  "reviewer_agent": "claude",
+  "reviewer_branch": "claude/minifly-corpus-review",
+  "reviewer_session": "s-corpus-review",
+  "schema": "minifly.review.v1",
+  "seal": null,
+  "source_lock_acks": [
+    {
+      "note": "Closure diff since the review: none; final SOURCE_LOCK acknowledged.",
+      "sha": "0399ed486c409df2e3147d0ad5a44dcaef9a3b93972c82a35115c0607baba435",
+      "utc": "20261102T105000Z"
+    }
+  ],
+  "utc": "20261101T145000Z"
+}

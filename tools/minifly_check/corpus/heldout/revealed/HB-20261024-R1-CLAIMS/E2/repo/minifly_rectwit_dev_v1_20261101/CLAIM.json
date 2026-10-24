@@ -1,0 +1,132 @@
+{
+  "amendments": [],
+  "authorization": {
+    "path": "AUTHORIZATION.json",
+    "recommendation_shown": "A, because it opens held E3 at low cost."
+  },
+  "checker_sha256": null,
+  "compute": {
+    "cpu_h_total_incl_failed": 0.36,
+    "family_cpu_h": 0.36,
+    "records_total_incl_failed": 9600
+  },
+  "confirm_attempt": null,
+  "coprimary_results": [],
+  "delivery": "minifly_rectwit_dev_v1_20261101",
+  "designs_tried_k": 1,
+  "dev_shadow_verdict": null,
+  "family_id": "FAM-ac88a8e2",
+  "findings_none_reason": null,
+  "findings_proposed": [
+    {
+      "author_agent": "codex",
+      "caveat": null,
+      "claim": "Teaching the cross through 5 lets W answer unseen single-digit sums exactly with its own EOS: 66.4% vs DIGIT_NO_CARRY 50.0% on all 8 MAIN worlds (S2+S3 determined, n=128).",
+      "conditions": {
+        "best_shortcut": "DIGIT_NO_CARRY",
+        "comparator": "DIGIT_NO_CARRY",
+        "dose": "10 presentations per taught unit",
+        "feedback": "gradual_warmup",
+        "input_code": "raw bytes",
+        "metric_definition": "exact_own_eos",
+        "priors_supplied": "none",
+        "substrate": "minifly_rectwit_dev_v1_20261101/learner.py",
+        "worlds": "8 MAIN"
+      },
+      "delivery": "minifly_rectwit_dev_v1_20261101",
+      "effect": {
+        "ci": [
+          0.105122,
+          0.223003
+        ],
+        "unit": "abs",
+        "value": 0.164062
+      },
+      "id": "F-20261103-codex-1",
+      "kind": "finding",
+      "level": "E3",
+      "refers_to": null,
+      "source": "minifly_rectwit_dev_v1_20261101/REPORT.md:5@6c72453ac1ded9b94742e7b45c8a8b61db9de4bb",
+      "status": "proposed",
+      "utc": "20261103T125000Z"
+    }
+  ],
+  "gate_type": "objective",
+  "headline": "FAIL | earned NONE (attempted E3) | held exact own-EOS 66.4% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 10.2pp | OLD final 96.9% (drop 3.1pp) | 8 MAIN worlds | best of k=1",
+  "invalid_reason": null,
+  "labels": [],
+  "level_attempted": "E3",
+  "level_earned": "NONE",
+  "lineage_parent": null,
+  "n_worlds": 8,
+  "native_path_only": true,
+  "notes": "",
+  "objective_metric": {
+    "G": 0.101562,
+    "G_per_cpu_h": 0.282118,
+    "G_per_sample": 0.677083,
+    "best_other_arm": {
+      "name": "NPT",
+      "value": 0.5625
+    },
+    "best_shortcut": {
+      "name": "DIGIT_NO_CARRY",
+      "value": 0.5
+    },
+    "determined_fraction": 1.0,
+    "headroom": 0.164062,
+    "held_by_stratum": {},
+    "held_exact_own_eos": 0.664062,
+    "new_final": 1.0,
+    "old_drop": 0.03125,
+    "old_end": 1.0,
+    "old_final": 0.96875
+  },
+  "posthoc_files": [],
+  "predictions_scored": [
+    {
+      "brier": 0.49,
+      "hit": true,
+      "id": "P1",
+      "interval_score": 0.35,
+      "observed": 0.664062
+    },
+    {
+      "brier": 0.0225,
+      "hit": true,
+      "id": "P2",
+      "interval_score": 0.08,
+      "observed": 0.03125
+    },
+    {
+      "brier": 0.01,
+      "hit": true,
+      "id": "P3",
+      "interval_score": 0.2,
+      "observed": 0.5
+    }
+  ],
+  "primary_gate": "FAIL",
+  "protocol_id": "minifly_rectwit_dev_v1_20261101-p1",
+  "provenance": {
+    "interrupted": false,
+    "replay_units": [],
+    "resume_attempts": [],
+    "resumed_units": []
+  },
+  "reuse_specificity": "not_tested",
+  "review": {
+    "decision": "ADMIT",
+    "path": "review/REVIEW.json"
+  },
+  "review_debt_id": null,
+  "schema": "minifly.claim.v1",
+  "stop_reason": null,
+  "verdict_source": {
+    "decide_version": "1.0.0",
+    "endpoint_lock_sha256": "cdd1c32fb08eb0559e79d203d54add3ca45296ba03eff6dcf24d11b41666d15b",
+    "source_lock_sha256": "99e09007987e032bd9cc370bb8bbe9ab36b63245f054bbbbca648ccdb07e8515",
+    "verdict_sha256": null
+  },
+  "worlds_role": "MAIN"
+}

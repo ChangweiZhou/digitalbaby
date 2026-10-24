@@ -1,0 +1,144 @@
+{
+ "batch_id": "HB-20261024-R1-CLAIMS",
+ "checker_commit": "b69cb3ae",
+ "note": "scored by direct call: n=4 is below the heldout tool minimum of 10; pilot",
+ "score": {
+  "fixtures": {
+   "E1": {
+    "clean": true,
+    "fired": [],
+    "post_batch": [
+     "CLM-17"
+    ],
+    "batch_checker_version": "1.0.0",
+    "exits": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "false_alarm": false,
+    "false_alarm_raw": true
+   },
+   "E2": {
+    "clean": false,
+    "expected": [
+     "FM-22",
+     "FM-24"
+    ],
+    "fired": [],
+    "fired_fm": [],
+    "post_batch": [
+     "CLM-17"
+    ],
+    "batch_checker_version": "1.0.0",
+    "exits": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "caught": false,
+    "caught_raw": false,
+    "per_class": {
+     "FM-22": false,
+     "FM-24": false
+    },
+    "errors": []
+   },
+   "E3": {
+    "clean": false,
+    "expected": [
+     "FM-07",
+     "FM-22"
+    ],
+    "fired": [],
+    "fired_fm": [],
+    "post_batch": [],
+    "batch_checker_version": "1.0.0",
+    "exits": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "caught": false,
+    "caught_raw": false,
+    "per_class": {
+     "FM-07": false,
+     "FM-22": false
+    },
+    "errors": []
+   },
+   "E4": {
+    "clean": false,
+    "expected": [
+     "FM-22"
+    ],
+    "fired": [],
+    "fired_fm": [],
+    "post_batch": [
+     "CLM-17",
+     "REV-09"
+    ],
+    "batch_checker_version": "1.0.0",
+    "exits": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ],
+    "caught": false,
+    "caught_raw": true,
+    "per_class": {
+     "FM-22": false
+    },
+    "errors": []
+   }
+  },
+  "recall_per_class": {
+   "FM-07": {
+    "caught": 0,
+    "n": 1,
+    "recall": 0.0
+   },
+   "FM-22": {
+    "caught": 0,
+    "n": 3,
+    "recall": 0.0
+   },
+   "FM-24": {
+    "caught": 0,
+    "n": 1,
+    "recall": 0.0
+   }
+  },
+  "recall_fixtures": 0.0,
+  "n_dirty": 3,
+  "false_alarm_rate_clean": 0.0,
+  "n_clean": 1,
+  "recall_fixtures_raw": 0.3333333333333333,
+  "false_alarm_rate_clean_raw": 1.0,
+  "post_batch": {
+   "E1": [
+    "CLM-17"
+   ],
+   "E2": [
+    "CLM-17"
+   ],
+   "E4": [
+    "CLM-17",
+    "REV-09"
+   ]
+  },
+  "post_batch_rule": "fired ids whose RULES introduced_in or changed_in is later than the checker_version in the canary's own SOURCE_LOCK are post_batch: listed, never counted (SPEC 20.18)"
+ }
+}

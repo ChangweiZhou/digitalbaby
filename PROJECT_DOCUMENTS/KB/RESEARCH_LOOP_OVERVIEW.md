@@ -88,13 +88,13 @@ What happened today:
 | build | 10 work packages, 3 integration rounds, 1 hardening round, each accepted only by an independent verifier | 563 tests; 117 fixtures; every check exercised (`selftest --mutate`) |
 | retro | read-only scan of the whole history | 16/16 known incidents flagged; 5.9% adjudicated false flags (29.4% raw, reported) |
 | held-out 1 | 12 canaries from 3 code-blind authors, against checker 0471fda3 | **6/9 attacks caught, 0/2 false alarms**, against 117/117 visible: the overfitting signal |
-| self-improvement round 1 | generalizing fixes for the 3 misses (exposure by content, claim-level overclaim, commit identity) | rejected by independent verifiers several times, once for a fix fitted to a canary word; final status in `tools/minifly_check/INTEGRATION_LOG.md` |
-| held-out 2 | 4 canaries on the claims layer (two authors were stopped by a safety classifier; not re-dispatched) against checker 1.0.1 | see `KB/RETRO/HELDOUT_20261024_R1_CLAIMS.md` |
+| self-improvement round 1 | generalizing fixes for the 3 misses (exposure by content, claim-level overclaim, commit identity) giving checker 1.0.1 (`b69cb3ae`) | independent verifiers rejected it 4 times, once for a fix fitted to a canary word. The loop was then stopped on request; 1.0.1 is green (608 tests, 156 fixtures, every check exercised) but **not verifier-accepted**. Open items are in `tools/minifly_check/INTEGRATION_LOG.md` |
+| held-out 2 | 4 canaries on the claims layer against checker 1.0.1; two authors were stopped by a safety classifier and not re-dispatched, and 2 canaries were exposed to a repair agent | 2/3 attacks caught (1/2 unexposed), 1 false alarm on honest negated text, and 1 new miss (a hand-written subset verdict in STATUS.json). Too small to show improvement (`KB/RETRO/HELDOUT_20261024_R1_CLAIMS.md`) |
 | dogfood | the kit applied at T0 to the completed LEARNED-BANK V1 | 7 real problems caught, but 7 false positives and 11 schema gaps: the kit is addition-shaped (`KB/RETRO/DOGFOOD_LEARNED_BANK_20261024.md`) |
 
 ## 5. What is enforced, and what is not
 
-- **Enforced:** about 135 checks; the list and status of each are in `tools/minifly_check/RULES.json`. Planned and
+- **Enforced:** about 137 checks; the list and status of each are in `tools/minifly_check/RULES.json`. Planned and
   not yet enforced: UDI-01, the leave-units-out dependency index required for E3 promotion.
 - **Judgment, not mechanism:**
   - Overclaiming in free prose. A lexical lint (CLM-17P) is only an aid; the T2 reviewer must adjudicate flagged
