@@ -1,4 +1,5 @@
-"""Cycle-1 unit checks for LEARNED-BANK V1. Run: python checks.py  (prints one line per check; exits 1 on failure)."""
+"""Unit checks for LEARNED-BANK V1 (cycle 1, extended in cycle 3 for PAR).
+Run: python checks.py [out.json]  (prints one line per check; exits 1 on failure)."""
 import json
 import sys
 import time
@@ -34,6 +35,18 @@ check("schedule never contains held pairs", all(p not in held for p in sched))
 der = data.derangement("MOD", world["train_pairs"], "D1")
 check("derangement has no fixed point",
       all(der[p] != data.answer("MOD", *p) for p in world["train_pairs"]))
+check("PAR answers are '0'/'1' for (a+b) mod 2",
+      all(data.answer("PAR", a, b) == ord("01"[(a + b) % 2]) for a, b in all_pairs))
+for wn in ("D1", "D2", "D3"):
+    w = data.make_world(wn)
+    sh = data.shuffled_labels("PAR", w)
+    agree = sum(sh[p] == data.answer("PAR", *p) for p in w["train_pairs"])
+    mirror = all(sh[(a, b)] == sh[(b, a)] for a, b in w["train_pairs"])
+    check(f"{wn}: PAR SHUF labels cover the training pairs, orbit-consistent, agreement near half",
+          set(sh) == set(w["train_pairs"]) and mirror and abs(agree - len(sh) / 2) <= 2,
+          {"agree": agree, "n": len(sh)})
+    check(f"{wn}: MOD SHUF is still the derangement",
+          data.shuffled_labels("MOD", w) == data.derangement("MOD", w["train_pairs"], wn))
 
 for arm in ("BASE", "FROZEN", "LEARN", "ORACLE"):
     m = lb1.Model(arm, world["model_seed"], eta_ramp=1)

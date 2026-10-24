@@ -66,7 +66,8 @@ def main():
               f"{fmt(x['gap_L_birth'])} {fmt(x['gap_L_final'])} {fmt(x['min_drift_L'])}")
     # decision rule (LOCK.json; DESIGN.md amendment A1): primary task PAR, metric = balanced held accuracy of the
     # learned bank at the final checkpoint. In each world: LEARN >= FROZEN + 0.20 and >= SHUF + 0.20, LEARN's held
-    # transfer gap and kernel-target alignment both above birth; plumbing gates: ORACLE >= 0.90, FROZEN codes unchanged.
+    # transfer gap and kernel-target alignment both above birth; gates: ORACLE >= 0.90, FROZEN codes unchanged, and every
+    # T-COPY arm's system held accuracy >= 0.30 (measurement chain).
     by = defaultdict(dict)
     for x in rows:
         by[(x["task"], x["world"])][x["arm"]] = x
@@ -85,8 +86,11 @@ def main():
             "gate_frozen_codes_unchanged": F["min_drift_L"] == 1.0 and F["gap_L_final"] == F["gap_L_birth"],
             "gate_oracle": None if o is None else o >= 0.90,
         }
+        copy = by.get(("COPY", w), {})
         v = verdict[w]
-        v["gates_ok"] = v["gate_frozen_codes_unchanged"] and v["gate_oracle"] is not False
+        v["gate_copy_sys_held_ge_0.30"] = None if not copy else all(c["held_sys"] >= 0.30 for c in copy.values())
+        v["gates_ok"] = (v["gate_frozen_codes_unchanged"] and v["gate_oracle"] is not False
+                         and v["gate_copy_sys_held_ge_0.30"] is not False)
         v["supports_condition_1"] = v["gates_ok"] and all(v[k] for k in (
             "learn_ge_frozen_plus_margin", "learn_ge_shuf_plus_margin", "learn_gap_rises", "learn_kta_rises"))
     if verdict:

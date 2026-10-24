@@ -144,6 +144,22 @@ def history(job):
     return task, arm, wname, res["total_cpu_s"]
 
 
+def check_lock(worlds, settings, passes, probe_every):
+    """Main worlds (M*) run only under LOCK.json with unchanged code and the locked settings."""
+    import hashlib
+    if not any(w.startswith("M") for w in worlds):
+        return
+    lock = json.loads((HERE / "LOCK.json").read_text())
+    for rel, digest in lock["code_sha256"].items():
+        if hashlib.sha256((HERE / rel).read_bytes()).hexdigest() != digest:
+            raise SystemExit(f"LOCK: {rel} changed since the lock")
+    s = lock["settings"]
+    if settings != {k: s[k] for k in settings} or passes != s["passes"] or probe_every != s["probe_every"]:
+        raise SystemExit("LOCK: settings differ from LOCK.json")
+    if not set(worlds) <= set(lock["main_worlds"]):
+        raise SystemExit("LOCK: unknown main world")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tag", required=True)
@@ -158,6 +174,7 @@ def main():
     ap.add_argument("--jobs", type=int, default=1)
     a = ap.parse_args()
     settings = {"hidden": a.hidden, "eta0": a.eta0, "lam": a.lam}
+    check_lock(a.worlds.split(","), settings, a.passes, a.probe_every)
     outdir = str(HERE / "results" / a.tag)
     jobs = [(t, arm, w, a.passes, a.probe_every, settings, outdir)
             for t in a.tasks.split(",") for w in a.worlds.split(",") for arm in a.arms.split(",")]

@@ -1,0 +1,76 @@
+{
+ "locked": "2026-10-24",
+ "design": "DESIGN.md sections 1-10 with Amendment A1 (section 11)",
+ "code_sha256": {
+  "lb1.py": "6cbad9519e908f11201bdcc525eae5c37b500437f69781aaff861bd80f8c390d",
+  "data.py": "9e5ae8d5ec44968e30d2439df1777513279294816ce87905625f4232768e21f0",
+  "run.py": "731221e826838f511d3d61cb42a3bcaf71668b9061be7600524348e0ca49b359",
+  "summarize.py": "c645131f873628bbbe5b7d602d24f8ab3bc64aa7bc8b792e5f6db3146fbaad73",
+  "main.sh": "a0837938988ce089a236e5cb96a08cc1c65190f68c82699047db66bc3f450b8e",
+  "../minifly_cls_dev_20261017/fastmem.py": "995018ef4d3bbaea7b1cb720fb1fb1d2b0f96ffdb150cdee836a2340282b6505"
+ },
+ "settings": {
+  "hidden": 128,
+  "eta0": 0.03,
+  "lam": 0.001,
+  "eta_ramp": 1024,
+  "centre_tau": 0.0,
+  "passes": 150,
+  "probe_every": 25,
+  "final_rest_s": 3600,
+  "native_warmup": "1/16 -> 1 over 1024 records"
+ },
+ "main_worlds": [
+  "M1",
+  "M2",
+  "M3",
+  "M4"
+ ],
+ "development_worlds": [
+  "D1",
+  "D2",
+  "D3"
+ ],
+ "runs": [
+  {
+   "task": "PAR",
+   "arms": [
+    "LEARN",
+    "FROZEN",
+    "SHUF",
+    "ORACLE",
+    "BASE"
+   ]
+  },
+  {
+   "task": "COPY",
+   "arms": [
+    "LEARN",
+    "FROZEN",
+    "BASE"
+   ]
+  }
+ ],
+ "command": "sh main.sh",
+ "decision_rule": {
+  "metric": "balanced held accuracy of the learned bank, T-PAR, final checkpoint (after 1 h rest)",
+  "per_world": [
+   "LEARN >= FROZEN + 0.20",
+   "LEARN >= SHUF + 0.20",
+   "LEARN held transfer gap final > birth",
+   "LEARN kernel-target alignment final > birth"
+  ],
+  "gates": [
+   "ORACLE >= 0.90",
+   "FROZEN learned-bank codes unchanged",
+   "every T-COPY arm system held >= 0.30"
+  ],
+  "overall": "supported if 4/4 worlds pass; partial if 3/4; not supported otherwise"
+ },
+ "environment": {
+  "python": "3.11.15",
+  "numpy": "2.2.6",
+  "scipy": "1.14.1",
+  "numba": "0.61.2"
+ }
+}

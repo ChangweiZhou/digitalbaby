@@ -105,3 +105,15 @@ After the lock: run the main worlds, write the report with all arms and all worl
 ## 10. Out of scope
 
 Multi-digit numbers, carries across columns, stopping, recurrence, working memory, replay and sleep, worked examples. These follow only if condition 1 is supported here.
+
+## 11. Amendment A1 (cycle 2 evidence, adopted at the cycle-3 lock)
+
+The development-world audit in `cycles/CYCLE2.md` showed that T-MOD cannot test condition 1: with 74 taught prompts even exact gradient descent fails to generalise last-digit addition from this input code (held 0.00 / 0.11 on D2 / D3), so its failure would say nothing about the local rule or the native store. Parity of a+b is an interaction that random features fail (held 0.22 / 0.24, below chance) and that both exact gradient and the candidate's local rule learn (1.00 / 1.00). Sections 4, 5, 7 and 8 are amended as follows; everything else stands.
+
+* **Primary task T-PAR:** prompt `a+b=`, answer byte `'0'` or `'1'` for (a+b) mod 2; same orbit splits. T-MOD is not run on the main worlds. T-COPY stays as the measurement-chain control (BASE, FROZEN, LEARN).
+* **SHUF on T-PAR:** labels permuted among training orbits (both orientations keep one label), the permutation agreeing with the truth on as close to half the orbits as possible (a derangement of binary labels is anti-parity, not a control).
+* **Primary metric:** balanced held accuracy (mean per-answer recall) of the learned bank at the final checkpoint, after the 1 h rest. Held answer classes are unbalanced per world; a constant answer scores exactly 0.50 balanced.
+* **Kernel meters:** centred kernel-target alignment over all 100 prompts, and the held transfer gap (for each held prompt, mean Jaccard to same-answer taught prompts minus mean Jaccard to different-answer taught prompts), replacing the held-only alignment, which is unstable with about 26 held prompts.
+* **Settings:** H = 128, eta0 = 0.03 (ramped over the first 1,024 records), lam = 1e-3, uncentred third factor, 150 passes, read-only probes every 25 passes and after the rest.
+* **Decision rule (per main world M1-M4):** LEARN ≥ FROZEN + 0.20 and LEARN ≥ SHUF + 0.20 in balanced held accuracy of the learned bank; LEARN's held transfer gap and kernel-target alignment both end above birth. Gates: ORACLE ≥ 0.90; FROZEN's learned-bank codes unchanged; every T-COPY arm's system held accuracy ≥ 0.30. **Supported** if all four worlds pass, **partial** if three pass, **not supported** otherwise. A failed gate makes that world uninformative and is reported as such.
+* **Cost (measured):** 0.126 CPU-s per record; 32 histories (8 per world) of up to 11,250 records, about 12 CPU-hours, about 3 hours on 4 cores.
