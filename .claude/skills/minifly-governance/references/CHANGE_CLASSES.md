@@ -28,6 +28,13 @@ How `governance` decides, and what that means for you:
   and GOV-NUM. Split unrelated changes into separate ranges.
 - Planned checks (spec 20.2): moving a `planned` check into a bundle is a tighten. Moving an enforced check to
   advisory or planned is a loosen.
+- `changed_in` (spec 20.10): appending a version to a rule's changed_in list is neutral bookkeeping (the code change
+  that tightened the check is classified on its own) when the same range changes the check's module or a kit module it
+  imports (`governance.require_module_change`, import closure over the head tree); an append without such a code
+  change is a loosen, because it would exclude the check's held-out hits and false alarms as post_batch. Dropping or
+  rewriting a recorded version is a loosen, because it would let held-out scoring count a post-batch tightening. A check added or tightened after a held-out batch is
+  committed must carry a later introduced_in (new check) or changed_in entry (tightened check) than the batch's
+  checker version.
 - A loosening by definition breaks monotonicity, so GOV-MONO reports the non-monotone fixtures. The UD (GOV-UD with
   GOV-NUM) is what authorizes them. Read the `governance` report for how it records that.
 

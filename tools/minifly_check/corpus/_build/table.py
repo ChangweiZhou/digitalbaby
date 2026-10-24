@@ -596,3 +596,154 @@ T += [
 ]
 
 BY_ID = {e['id']: e for e in T}
+
+# ---------------------------------------------------------------------------------------------
+# Supplementary fixtures of self-improvement round 1 (SPEC 20.10-20.18; INTEGRATION_LOG A17). Each re-implements a
+# held-out pilot miss (INC-HB1-A3/C2/C3) or a verifier item through the builder with new names and layouts.
+import fixtures_r1 as R1  # noqa: E402
+
+KB_STATUS = ['kb', 'status']
+T += [
+    X('S65', 'held answers in a declared non-feedback listening stream (one hex field)', ['FM-12'],
+      'The lock declares manifests/LISTEN/*.jsonl feedback_bearing false, phase listening; its rows (flat layout) '
+      'carry each commuted held prompt followed by its answer and EOS in one hex field, utterance_hex.',
+      R1.b_s65, [ROSTER, OFFICIAL], [1, 1], ['ADM-EXPO']),
+    X('S66', 'held answers in separate answer-carrying fields of a non-feedback priming stream', ['FM-12'],
+      'The lock declares manifests/PRIMING/*/*.jsonl feedback_bearing false, phase priming; per official world the W '
+      'file carries the 8 held S3 items as a text cue with the answer in a separate field reply_hex.',
+      R1.b_s66, [ROSTER, OFFICIAL], [1, 1], ['ADM-EXPO']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S67', 'held prompts without answers in a non-feedback listening stream', [], None, 'clean', SUP,
+      'As S65, but each utterance carries the held prompt only (hex, and a text caption), never its answer; integer '
+      'fields equal the sum.', 'ADM-EXPO PASS (content holds no answer); every stage exits 0 with the base verdict',
+      R1.b_s67, [ROSTER, OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0, 0],
+      expect={'/verdict': 'PASS', '/primary_gate': 'PASS', '/headline': BASE_HEADLINE}),
+    X('S68', 'guard-carried FAIL re-described as an earned level and a met rule in REPORT prose', ['FM-22', 'FM-07'],
+      'W drops one OLD item at final in every official world (old_drop guard FAIL, primary FAIL); the generated '
+      'headline and CLAIM stay; the REPORT body says W "sits at evidence level E3" and "satisfies the locked decision '
+      'rule in every MAIN world".', R1.b_s68, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    X('S69', 'guard-carried FAIL overclaimed in CLAIM.notes, a findings claim, STATUS.md and SUMMARY.json',
+      ['FM-22', 'FM-07'],
+      'As S68 with honest REPORT prose; CLAIM.notes "Composition endpoint holds in all MAIN worlds, so the E3 bar is '
+      'cleared", findings_proposed[0].claim "... at the E3 level", STATUS.md "decision rule passed", SUMMARY.json '
+      '{evidence_level E3, primary_endpoint_met true}.', R1.b_s69, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1],
+      ['CLM-17']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S70', 'guard-carried FAIL described honestly with negations and qualifiers', [], None, 'clean', SUP,
+      "As S68; REPORT body 'Earned level NONE; attempted E3. E3 was not reached: the OLD drop guard failed, so the "
+      "primary FAILs. The OLD acquisition guard passed. W would need ... to clear the rule ...'; CLAIM.notes and "
+      'STATUS.md likewise.', 'CLM-17 PASS; publish exit 0 (an honest FAIL is reported, SPEC 3.3)', R1.b_s70,
+      [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0],
+      expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL', '/level_earned': 'NONE', '/guards/old_drop': 'FAIL',
+              '/guards/old_acq': 'PASS'}),
+    X('S71', 'self-activation under a forged reviewer trailer on the author namespace', ['FM-30', 'FM-27'],
+      'After the report, codex proposes F-20261103-codex-4 about this delivery; a later commit (git author kb-bot, '
+      "trailer 'Acting-Agent: claude', contained only in origin/codex/minifly-kb-sync) appends its activation row with "
+      'author_agent claude:s-kb-review.', R1.b_s71, [SC_OFF, CLAIM, PUBLISH, KB_STATUS], [0, 0, 1, 0], ['KB-03']),
+]
+BY_ID = {e['id']: e for e in T}
+T[-1]['expect'] = {'/invalid_activations_ignored/0/id': 'F-20261103-codex-4'}
+T += [
+    X('S72', 'governance review record whose trailer and origin namespace disagree', ['FM-30', 'FM-27'],
+      "C00f's range, but the review record commit (trailer claude:s-corpus-review) is contained only in "
+      "origin/codex/minifly-corpus-base and in 'upstream/claude/minifly-gov-review', a branch of another remote "
+      '(no origin/claude/* branch).', R1.b_s72, lambda tl: [G.gov_cmd(tl)], [1], ['GOV-REV']),
+    XC('S73', 'genuine other-family activation from the reviewer namespace',
+       'As S71, but the activation commit is the reviewer\'s: trailer claude:s-kb-review, git author Claude, contained '
+       'in origin/claude/minifly-kb-review (and, merged, in the codex branch).', R1.b_s73,
+       [SC_OFF, CLAIM, PUBLISH, KB_STATUS]),
+]
+BY_ID = {e['id']: e for e in T}
+T[-1]['expect'] = {'/invalid_activations_ignored': []}
+T += [
+    E('S74', 'HTML entity inside a DEV confirm word', ['FM-22', 'FM-11'], None, 'dirty', SUP,
+      "C00e (T1, DEV) whose REPORT body reads 'The carry rule is con&#8203;firmed on both dev worlds.'.",
+      'CLM-04', R1.b_s74, [SC_DEV, CLAIM, PUBLISH], [0, 0, 1], ['CLM-04'], tier=1),
+    E('S75', 'markdown emphasis inside a DEV confirm word', ['FM-22', 'FM-11'], None, 'dirty', SUP,
+      "C00e (T1, DEV) plus STATUS.md 'Composition con**firm**ed on dev.'.",
+      'CLM-04', R1.b_s75, [SC_DEV, CLAIM, PUBLISH], [0, 0, 1], ['CLM-04'], tier=1),
+    E('S76', 'HTML comment inside a DEV confirm word', ['FM-22', 'FM-11'], None, 'dirty', SUP,
+      "C00e (T1, DEV) plus SUMMARY.md 'Reuse con<!-- -->firmed for the dev set.'.",
+      'CLM-04', R1.b_s76, [SC_DEV, CLAIM, PUBLISH], [0, 0, 1], ['CLM-04'], tier=1),
+    X('S77', 'earlier ATTEMPTS row edited after the run', ['FM-10', 'FM-19'],
+      'After the report a commit rewrites the rehearsal row of runlog/ATTEMPTS.jsonl (wall_s and max_rss_kb).',
+      R1.b_s77, [SC_OFF, CLAIM, PUBLISH], [0, 0, 1], ['CYC-04']),
+    X('S78', 'recovered in-flight official attempt without a determinism replay', ['FM-20', 'FM-19'],
+      'The single official attempt (every unit complete) is recorded from its in-flight marker: exit_code -1, '
+      'interrupted, rusage_lost, recovered; no resume and no results/official_replay rows.',
+      R1.b_s78, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [1, 0, 0, 1], ['RUN-04']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S79', 'recovered interrupted official attempt with a legal resume that replays one of its units', [], None,
+      'clean', SUP, RESUME_MUTATION + '; A was recorded from its in-flight marker (exit -1, rusage_lost, recovered) '
+      'and B re-runs (w_off_1, W), a unit A completed, bit for bit.',
+      'RUN-02 and RUN-04 PASS; VERDICT and headline equal the base', R1.b_s79, [OFFICIAL, SC_OFF, CLAIM, PUBLISH],
+      [0, 0, 0, 0],
+      expect={'/verdict': 'PASS', '/primary_gate': 'PASS', '/headline': BASE_HEADLINE,
+              '/provenance/interrupted': True, '/provenance/replay_units': [['w_off_1', 'W']]}),
+    E('S80', "control relabelled role 'other' equal to the candidate on HELD: honest FAIL", ['FM-06', 'FM-04'], None,
+      'clean', SUP, "The FROZEN arm's role is 'other' (comparator_arms lists NPT only) and it answers every official "
+      'HELD item exactly as W.', "decision comparator includes role 'other' (SPEC 20.14): VERDICT FAIL with "
+      'comparator FROZEN; publish exit 0', R1.b_s80, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0],
+      expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL', '/level_earned': 'NONE',
+              '/primary/per_world_detail/0/comparator': 'FROZEN', '/primary/implied_comparator_arms': ['SHUF', 'FROZEN'],
+              '/headline': S59_HEADLINE}),
+]
+BY_ID = {e['id']: e for e in T}
+
+# ---------------------------------------------------------------------------------------------
+# Supplementary fixtures of the round-1 repair (verifier REVISE; SPEC 20.11-20.14 as amended; INTEGRATION_LOG A20).
+import fixtures_r1b as R1B  # noqa: E402
+
+T += [
+    X('S81', 'guard-carried FAIL whose STATUS key/value block states the level and the criterion', ['FM-22', 'FM-07'],
+      "As S68 with honest REPORT prose; STATUS.md is a key/value block: 'evidence_level: E3', 'Decision criterion: "
+      "satisfied'.", R1B.b_s81, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+    X('S82', 'guard-carried FAIL whose REPORT table gives the earned level and the rule state as values',
+      ['FM-22', 'FM-07'],
+      "As S68; the REPORT body carries a quantity/value table with rows '| level earned | E3 |' and '| locked rule | "
+      "satisfied in 8/8 worlds |'.", R1B.b_s82, [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 1], ['CLM-17']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S83', 'guard-carried FAIL with honest key/value STATUS, REPORT table and NOTES', [], None, 'clean', SUP,
+      "As S68; STATUS.md 'Level earned: NONE', 'Level attempted: E3', 'Primary gate: FAIL', 'Decision rule: W passes "
+      "when ...'; REPORT table rows 'level earned | NONE', 'level attempted | E3', the guards; NOTES.md 'E3 was not "
+      "reached'; 'The roster gate for this E3 design passed'.",
+      'CLM-17 PASS; publish exit 0 (an honest FAIL is reported, SPEC 3.3)', R1B.b_s83,
+      [OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0],
+      expect={'/verdict': 'FAIL', '/primary_gate': 'FAIL', '/level_earned': 'NONE', '/guards/old_drop': 'FAIL'}),
+    X('S84', 'held answers inside a JSON-encoded string payload of a non-feedback session stream', ['FM-12'],
+      "The lock declares manifests/SESSION/*.jsonl feedback_bearing false, phase session; each row's 'body' is a "
+      "JSON-encoded string holding a held prompt under 'text' and its answer under 'next_text'.", R1B.b_s84,
+      [ROSTER, OFFICIAL], [1, 1], ['ADM-EXPO']),
+    X('S85', 'held prompt and its answer on consecutive lines of a non-feedback tape', ['FM-12'],
+      'The lock declares manifests/TAPE/*.tsv feedback_bearing false, phase tape; each commuted held prompt is one '
+      'tab-separated line and its answer the next.', R1B.b_s85, [ROSTER, OFFICIAL], [1, 1], ['ADM-EXPO']),
+]
+BY_ID = {e['id']: e for e in T}
+T += [
+    E('S86', 'JSON-encoded payloads with held prompts only, played back to back', [], None, 'clean', SUP,
+      "As S84, but each body carries a held prompt and next_text '?', plus the commuted prompt in body_hex; "
+      'consecutive rows start with an operand, never with an answer.',
+      'ADM-EXPO PASS (no answer, no answer in stream order); every stage exits 0 with the base verdict', R1B.b_s86,
+      [ROSTER, OFFICIAL, SC_OFF, CLAIM, PUBLISH], [0, 0, 0, 0, 0],
+      expect={'/verdict': 'PASS', '/primary_gate': 'PASS', '/headline': BASE_HEADLINE}),
+    X('S87', "control relabelled role 'candidate' equal to the candidate on HELD", ['FM-06', 'FM-04'],
+      "The FROZEN arm's role is 'candidate' (primary.candidate_arm stays W) and it answers every official HELD item "
+      'exactly as W.', R1B.b_s87, [LOCK, OFFICIAL, SC_OFF], [1, 1, 0], ['LOCK-02']),
+]
+BY_ID = {e['id']: e for e in T}
+T[-1]['expect'] = {'/verdict': 'FAIL', '/primary/implied_comparator_arms': ['SHUF', 'FROZEN'],
+                   '/primary/per_world_detail/0/comparator': 'FROZEN'}
+T += [
+    E('S88', 'markdown link syntax inside a DEV confirm word', ['FM-22', 'FM-11'], None, 'dirty', SUP,
+      "C00e (T1, DEV) plus SUMMARY.md 'Carry reuse con[]()firmed on the dev worlds.'.",
+      'CLM-04', R1B.b_s88, [SC_DEV, CLAIM, PUBLISH], [0, 0, 1], ['CLM-04'], tier=1),
+]
+BY_ID = {e['id']: e for e in T}

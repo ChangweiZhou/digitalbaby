@@ -899,6 +899,33 @@ class TestResumeChecks(CheckCase):
         self.assertEqual(r.status, FAIL)
         self.assertIn('rerun', r.detail)
 
+    def test_recovered_attempt_needs_a_replay_of_its_own_units(self):
+        # SPEC 20.17 (round 1): an official attempt recovered from an in-flight marker (rusage lost) vouches for its
+        # rows only through a determinism replay of one of its OWN units, with the identical digest
+        rec = {'exit_code': -1, 'interrupted': True, 'rusage_lost': True,
+               'recovered': {'utc': '20261103T000000Z', 'reason': 'test: launch process ended'}}
+        self.setup_chain(a_extra=dict(rec))           # B replays A's unit wo1|W
+        r = launch.check_run_04(self.ctx())
+        self.assertEqual(r.status, PASS, r.detail)
+        self.setup_chain(b_extra=dict(rec))           # B itself was recovered: nobody replayed B's unit wo2|W
+        r = launch.check_run_04(self.ctx())
+        self.assertEqual(r.status, FAIL)
+        self.assertIn('recovered official attempt B', r.detail)
+        # a lone recovered attempt that completed every unit, no resume and no replay
+        ra = self.rows('A', [('wo1', 'W')])
+        write(self.d / 'results/official/OUTPUTS.jsonl', jsonl(ra))
+        (self.d / 'results/official_replay/OUTPUTS.jsonl').unlink()
+        a = self.att('A', 'official', ['results/official/OUTPUTS.jsonl'], endpoint_lock_sha256='e',
+                     source_lock_sha256='s', units=launch.units_record({'wo1|W': ra}), **rec)
+        self.attempts([a])
+        r = launch.check_run_04(self.ctx())
+        self.assertEqual(r.status, FAIL)
+        self.assertIn('none was replayed', r.detail)
+        self.assertEqual(launch.replay_analysis(self.ctx())['recovered_unvouched'], {'A': ['wo1|W']})
+        # the same attempt not recovered (an ordinary completed official run): RUN-04 does not apply
+        self.attempts([dict(a, exit_code=0, interrupted=False, rusage_lost=False, recovered=None)])
+        self.assertEqual(launch.check_run_04(self.ctx()).status, common.NOT_APPLICABLE)
+
     def test_replay_rows_only_from_resume_attempts(self):
         self.setup_chain(replay_aid='A')
         r = launch.check_run_04(self.ctx())
@@ -1079,6 +1106,33 @@ class TestCycles(CheckCase):
         self.history([('c1', {'runlog/CYCLES.jsonl': v1, 'runlog/ATTEMPTS.jsonl': a1})], shallow=True)
         self.cycles(rows)
         self.assertEqual(common.run_check(self.ctx(), {'id': 'CYC-01', 'module': 'launch', 'status': 'enforced',
+                                                       'applies_when': 'always'})[0].status, common.MISSING)
+
+    def test_cyc_04_append_only_at_publish(self):
+        # SPEC 20.16 (round 1): the publish-stage check of the same append-only rule; an ATTEMPTS row edited after the
+        # run (here the earlier dev attempt's cpu, in a later commit) cannot pass publish
+        rows = self.rows([('technical', ['T1']), ('dev', ['D1'])])
+        att = [self.att('T1', 'technical'), self.att('D1', 'dev')]
+        v1, a1 = jsonl(rows).encode(), jsonl(att).encode()
+        self.history([('c1', {'runlog/CYCLES.jsonl': v1, 'runlog/ATTEMPTS.jsonl': a1})])
+        self.cycles(rows)
+        self.attempts(att)
+        r = launch.check_cyc_04(self.ctx_stage('publish'))
+        self.assertEqual(r.status, PASS, r.detail)
+        self.assertIn('runlog/ATTEMPTS.jsonl 2 rows', r.detail)
+        edited = [att[0], dict(att[1], cpu_children_user_s=0.01)]
+        self.history([('c1', {'runlog/CYCLES.jsonl': v1, 'runlog/ATTEMPTS.jsonl': a1}),
+                      ('c2', {'runlog/ATTEMPTS.jsonl': jsonl(edited).encode()})])
+        self.attempts(edited)
+        r = launch.check_cyc_04(self.ctx_stage('publish'))
+        self.assertEqual(r.status, FAIL)
+        self.assertIn('runlog/ATTEMPTS.jsonl: commit', r.detail)
+        self.attempts(att[:1] + edited[1:])                              # worktree edit only
+        self.history([('c1', {'runlog/CYCLES.jsonl': v1, 'runlog/ATTEMPTS.jsonl': a1})])
+        self.assertIn('the worktree removes or edits', launch.check_cyc_04(self.ctx_stage('publish')).detail)
+        self.history([('c1', {'runlog/CYCLES.jsonl': v1, 'runlog/ATTEMPTS.jsonl': a1})], shallow=True)
+        self.attempts(att)
+        self.assertEqual(common.run_check(self.ctx(), {'id': 'CYC-04', 'module': 'launch', 'status': 'enforced',
                                                        'applies_when': 'always'})[0].status, common.MISSING)
 
     def test_cyc_02_exit_criteria(self):

@@ -41,11 +41,14 @@ PRE_RUN_STAGES = ('lock', 'technical', 'roster', 'official', 'testbed', 'dev', '
 POOLS = ('TAUGHT', 'OLD', 'NEW', 'HELD', 'PRESENTATION')
 STRATA = ('S0', 'S1', 'S2', 'S3', 'S4')
 GUARD_KINDS = ('old_drop', 'old_acq')
-# SPEC 9.5 as amended (SPEC 20.6): the decision comparator holds the declared comparator_arms plus every declared
-# arm of these roles, so leaving a control out of comparator_arms never weakens the rule (declaration
-# minimization). oracle_plumbing and positive_control arms (expected to be strong) and evaluator-only CEILING_*/
-# FLOOR_* arms are never added; the testbed view (mode 'testbed') adds none.
-IMPLIED_COMPARATOR_ROLES = ('no_prior_teaching', 'shuf', 'frozen', 'lesion')
+# SPEC 9.5 as amended (SPEC 20.6, 20.14): the decision comparator holds the declared comparator_arms plus every
+# declared arm of these roles, so leaving a control out of comparator_arms never weakens the rule (declaration
+# minimization). Role 'other' is included (round 1): relabelling a control as 'other' must not take it out of the
+# comparator. Role 'candidate' on any arm other than primary.candidate_arm is included too (round-1 repair, verifier
+# probe E2; LOCK-02 also rejects such a lock), so relabelling a control 'candidate' does not remove it either.
+# oracle_plumbing and positive_control arms (expected to be strong) and evaluator-only CEILING_*/FLOOR_* arms are never
+# added; the testbed view (mode 'testbed') adds none.
+IMPLIED_COMPARATOR_ROLES = ('no_prior_teaching', 'shuf', 'frozen', 'lesion', 'other', 'candidate')
 OFFICIAL_ROLE = 'official'
 NON_EVIDENCE_ROLES = ('technical', 'dev', 'rehearsal')
 CUSTOM_TIMEOUT_S = 20.0

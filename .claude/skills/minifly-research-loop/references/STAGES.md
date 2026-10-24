@@ -153,6 +153,9 @@ Exit: a PASS `official --dry` GATE report.
       canonical row digest equal to the original (RUN-04). Keep the command identical (CYC-03 compares the template);
       the resume is driven by the environment. CLAIM.provenance records interrupted, resume_attempts, resumed_units
       and replay_units. A resume that breaks a rule FAILs RUN-02 or RUN-04 for good (ATTEMPTS is append-only).
+      A recovered attempt (rusage lost) needs one of its own units replayed with the identical digest before publish
+      (RUN-04 since 1.0.1, spec 20.17); a resume replays one even when no unit is missing, and launch chooses it
+      among the recovered attempt's units.
 
 Writes: review/SEAL_COMMIT.json and review/SEAL_REVEAL.json (reviewer), official OUTPUTS rows (`.jsonl`, `.jsonl.gz`
 or inside RESULT_BUNDLE*.zip) and receipts, checks/GATE_official_<utc>.json, ATTEMPTS row (with the units it wrote and
@@ -193,6 +196,8 @@ Exit: publish gate PASS.
   that counts against the cap; `launch` refuses an attempt of another stage while a cycle is open, and the official
   stage (gate or launch) needs every testbed, technical, dev and rehearsal attempt in a closed cycle (CYC-01).
 - runlog/CYCLES.jsonl and runlog/ATTEMPTS.jsonl are append-only: CYC-01 fails when a committed row is edited or removed.
+- The same rule runs at publish as CYC-04 (checker 1.0.1, spec 20.16): an ATTEMPTS or CYCLES row edited after the
+  official gate still fails the publish gate.
 - One launch per phase; never chain phases inside one unlaunched script. Every `launch` re-verifies ENDPOINT_LOCK,
   SOURCE_LOCK and every closure sha before it starts the command (and again after it ends), so a multi-phase run that
   calls launch once per phase turns a mid-run fix into a loud refusal at the next phase instead of a silent change.

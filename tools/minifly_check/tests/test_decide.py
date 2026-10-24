@@ -159,7 +159,8 @@ class TestEvaluate(unittest.TestCase):
     def test_implied_comparators_close_declaration_minimization(self):
         """SPEC 20.6 (verifier probe 2c): every declared no_prior_teaching, shuf, frozen or lesion arm joins the
         decision comparator even when comparator_arms leaves it out; oracle_plumbing, positive_control and
-        evaluator CEILING_/FLOOR_ arms never do, and the testbed view adds none."""
+        evaluator CEILING_/FLOOR_ arms never do, and the testbed view adds none. Round 1 (SPEC 20.14): an arm of role
+        'other' joins too (relabel loophole); this test pinned the old exclusion and is tightened."""
         lock = base_lock()
         lock['arms'] += [{'id': 'FROZEN', 'role': 'frozen', 'zero_channels': ['pair_memory']},
                          {'id': 'LES', 'role': 'lesion', 'zero_channels': ['readout']},
@@ -169,9 +170,9 @@ class TestEvaluate(unittest.TestCase):
                          {'id': 'OTHER', 'role': 'other', 'zero_channels': []}]
         p = decide.parse_params(lock)[0]
         self.assertEqual(p['declared_comparator_arms'], ['NPT'])
-        self.assertEqual(p['implied_comparator_arms'], ['SHUF', 'FROZEN', 'LES'])
-        self.assertEqual(p['comparator_arms'], ['NPT', 'SHUF', 'FROZEN', 'LES'])
-        self.assertEqual(decide.decision_comparator_arms(lock), ['NPT', 'SHUF', 'FROZEN', 'LES'])
+        self.assertEqual(p['implied_comparator_arms'], ['SHUF', 'FROZEN', 'LES', 'OTHER'])
+        self.assertEqual(p['comparator_arms'], ['NPT', 'SHUF', 'FROZEN', 'LES', 'OTHER'])
+        self.assertEqual(decide.decision_comparator_arms(lock), ['NPT', 'SHUF', 'FROZEN', 'LES', 'OTHER'])
         self.assertEqual(decide.parse_params(lock, implied_comparators=False)[0]['comparator_arms'], ['NPT'])
         # a declared comparator is listed once, in its declared position
         lock2 = base_lock()
@@ -182,12 +183,22 @@ class TestEvaluate(unittest.TestCase):
         # clean positive still passes with every implied control at chance
         v = s.evaluate(s.clean())
         self.assertEqual(v['verdict'], 'PASS', v['reasons'])
-        self.assertEqual(v['primary']['implied_comparator_arms'], ['SHUF', 'FROZEN', 'LES'])
-        # probe 2c: an undeclared FROZEN arm equal to the candidate never lets it pass
-        for arm in ('FROZEN', 'LES', 'SHUF'):
+        self.assertEqual(v['primary']['implied_comparator_arms'], ['SHUF', 'FROZEN', 'LES', 'OTHER'])
+        # probe 2c: an undeclared FROZEN arm equal to the candidate never lets it pass; nor an arm relabelled 'other'
+        for arm in ('FROZEN', 'LES', 'SHUF', 'OTHER'):
             v = s.evaluate(s.cells(lvl, comps={arm: dict(lvl)}))
             self.assertEqual(v['verdict'], 'FAIL', (arm, v['reasons']))
             self.assertTrue(all(x['comparator'] == arm for x in v['primary']['per_world_detail']), arm)
+        # round-1 repair (verifier probe E2): a second arm of role 'candidate' joins the comparator as well
+        lock3 = base_lock()
+        lock3['arms'] += [{'id': 'W2', 'role': 'candidate', 'zero_channels': []}]
+        self.assertEqual(decide.parse_params(lock3)[0]['implied_comparator_arms'], ['SHUF', 'W2'])
+        s3 = reducercheck.Synth(lock3)
+        lvl3 = s3.level(0.9)
+        self.assertEqual(s3.evaluate(s3.clean())['verdict'], 'PASS')
+        v = s3.evaluate(s3.cells(lvl3, comps={'W2': dict(lvl3)}))
+        self.assertEqual(v['verdict'], 'FAIL', v['reasons'])
+        self.assertTrue(all(x['comparator'] == 'W2' for x in v['primary']['per_world_detail']))
         # strong ORACLE / positive-control arms are not comparators (no cells are even required)
         c = s.clean()
         c['cells'] = [g for g in c['cells'] if g['arm'] not in ('ORACLE', 'POS')]

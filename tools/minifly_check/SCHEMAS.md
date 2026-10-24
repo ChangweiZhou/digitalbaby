@@ -55,7 +55,7 @@ committed before any `results/**` exists, and changed afterwards only through `A
 | split.taught_manifest | str | dir holding `TAUGHT/<world>/<arm>.jsonl` |
 | split.held_manifest, old_manifest, new_manifest | str | JSONL manifests (Section 5) |
 | split.split_sha256, held_set_sha256 | str | sha256; the held set is fixed before any stream exists. `held_set_sha256` = sha256 of the held manifest file bytes; `split_sha256` = sha256(canonical_json({"held_manifest": <sha256 of the held file>, "old_manifest": <sha256 of the old file>, "new_manifest": <sha256 of the new file>})) (`common.split_hashes`; `MFC init` fills both when the manifests exist). AMD-05 recomputes both in the worktree and at every commit after the lock (a changed, re-pinned or deleted manifest needs an amendment); LOCK-06 requires the first TAUGHT stream commit to follow the lock commit |
-| exposure_streams[] | obj | `{path_glob, feedback_bearing: bool, phase}`; every TAUGHT or stream file must match one (ADM-EXPO) |
+| exposure_streams[] | obj | `{path_glob, feedback_bearing: bool, phase}`; every TAUGHT or stream file must match one (ADM-EXPO). Since 1.0.1 (SPEC 20.11) every matched file is read for content whatever its feedback flag: no record may carry a held item's expected answer together with its prompt or orbit, in any field (text, hex, base64, byte list, or prompt followed by answer in one value); files must be JSONL, JSON or UTF-8 text |
 | arms[] | obj | `{id, role, zero_channels[], declared_changed[], teaching_withheld[], min_realized_dose}` |
 | arms[].role | str | `candidate` \| `no_prior_teaching` \| `lesion` \| `shuf` \| `frozen` \| `oracle_plumbing` \| `positive_control` \| `other` |
 | causal_control_arm, positive_control_arm | str | arm ids |
@@ -192,6 +192,9 @@ LAD-01 requires every (world, arm, pool, checkpoint) cell of those pools to hold
 | phase | str | e.g. `teach`, `calibration` |
 | feedback_bearing | bool | |
 | presentations | int | |
+
+A row with feedback_bearing false may present a held prompt, never with its answer (ADM-EXPO since 1.0.1); a held orbit
+taught with its answer in any stream is S1 for the scorer (SPEC 9.3, 20.11).
 
 Example: `templates/TAUGHT.example.jsonl`.
 
@@ -391,6 +394,11 @@ equal to the original's. `launch` refuses a resume that cannot be legal (other l
 completed unit yet: then launch without --resume) and exits 1 after one that broke a rule. Without --resume, an official
 attempt after an assessment-bearing one FAILs RUN-02 as before.
 
+(e, RUN-04 since 1.0.1, SPEC 20.17) A recovered official attempt (`rusage_lost` / `recovered`) that wrote official rows
+needs at least one of its own units replayed by a later resume attempt with the identical canonical digest; launch picks
+the replay unit among such units while any recovered attempt is unvouched, and a resume may replay only (every unit
+complete).
+
 ## 11. CYCLES.jsonl (`minifly.cycle.v1`), runlog/CYCLES.jsonl
 
 Appended by `MFC cycle close <dir> --kind K --decision D --reason TEXT`.
@@ -422,7 +430,8 @@ at most one CYCLES row of the same kind, and every listed id exists in ATTEMPTS.
 cycle per stage; closed test cycles plus open test cycles are at most `caps.max_cycles`; at most one stage is open at a
 time (`launch` refuses another stage's attempt while one is open); at the non-dry official stage (gate or launch) and
 once an official attempt exists, no test attempt may be uncovered. CYCLES.jsonl and ATTEMPTS.jsonl are append-only:
-every committed row survives in every later commit and in the worktree (a shallow clone gives MISSING).
+every committed row survives in every later commit and in the worktree (a shallow clone gives MISSING). CYC-01 checks
+this up to the official gate and CYC-04 (checker 1.0.1, SPEC 20.16) again at publish.
 
 Exit criteria (CYC-02, and `cycle close` refuses `continue` without them): testbed - a
 `TESTBED.json` under results/; technical - a PASS non-dry roster gate report at the cycle's
@@ -499,9 +508,10 @@ arm; the headline names any of them at or above the candidate), `best_other_arm 
 `shadow_verdict`, `primary {mean_cand, mean_comp, per_world [], per_world_detail [{world, v_cand, v_comp, comparator,
 ...}], lcb, method, comparator_arms [], implied_comparator_arms []}`, `gates {}`, `guards {}`, `decide_version`,
 `endpoint_lock_sha256`, `source_lock_sha256`, `cells_sha256`, `world_roles {}`. `primary.comparator_arms` is the decision
-comparator (SPEC 9.5 as amended in 20.6): the declared comparator_arms, then every other declared arm whose role is
-no_prior_teaching, shuf, frozen or lesion (`implied_comparator_arms`; never oracle_plumbing, positive_control or
-CEILING_*/FLOOR_* arms; none in the cycle-0 testbed view). Every one of them needs its primary cells (else INCOMPLETE).
+comparator (SPEC 9.5 as amended in 20.6 and 20.14): the declared comparator_arms, then every other declared arm whose
+role is no_prior_teaching, shuf, frozen, lesion or other, or candidate on an arm other than primary.candidate_arm (which
+LOCK-02 rejects) (`implied_comparator_arms`; never oracle_plumbing, positive_control or CEILING_*/FLOOR_* arms; none in
+the cycle-0 testbed view). Every one of them needs its primary cells (else INCOMPLETE).
 INERT-01's zero-variance contrast reads the declared comparator_arms only.
 
 SCORES, VERDICT and TESTBED directly under `results/<role>/` are checker-written and exempt from RUN-01.
@@ -531,7 +541,9 @@ pools and checkpoints is allowed only when it is complete too.
 
 ## 15. CLAIM.json (`minifly.claim.v1`)
 
-Generated by `MFC claim`; agents edit only `findings_proposed`, `findings_none_reason` and `notes`.
+Generated by `MFC claim`; agents edit only `findings_proposed`, `findings_none_reason` and `notes`. The agent-written
+texts (notes, findings_proposed[].claim, the REPORT body, STATUS*/SUMMARY*/MEMO* files) never assert a level above
+level_earned nor, on a non-PASS primary_gate, a met rule, endpoint, result or failed guard (CLM-17, SPEC 20.13).
 
 | Group | Fields |
 |---|---|
@@ -605,6 +617,12 @@ reviewed_commit, paths[], findings[]]}`, cited by a `Governance-Review: <path or
 to the range when it names the range base, a commit in the range, or paths covering every changed protected
 path; a record that names none of these binds when its introducing commit lies inside the range. Its
 introducing commit carries only the reviewer family's Acting-Agent and sits in a `<remote>/<family>/*` branch.
+Since 1.0.1 (SPEC 20.15) that branch must be `origin/<family>/*`: `common.commit_family` derives the acting family of
+every identity-bearing commit (governance records, protected-path commits, REVIEW.json, attestations and acks,
+SEAL_COMMIT, FINDINGS activation and reconciliation rows, REVIEW_DEBT repayments) from the Acting-Agent trailer AND the
+origin/claude/* or origin/codex/* namespace containing it; a trailer whose own namespace does not contain the commit is
+identity_mismatch, a commit in neither namespace is unpushed, and a commit in both is shared history attributed to its
+trailer family.
 
 ### 18.1 CONSTRAINTS.json and FAILURE_CLASSES.json
 CONSTRAINTS keys are listed in SPEC 13.1 (identity, native_forbidden {imports, calls, identifiers},
@@ -623,7 +641,11 @@ judgment_question, archive_fc[], incidents[]}}`, e.g. `{"FM-02": {"title": "unde
 ### 19.1 RULES.json (`minifly.rules.v1`)
 `{schema, checker_version, notes[], rules: [entry], bundles: {name: bundle}}`.
 
-Entry: `{id, module, title, stages[], tier_min: 0|1|2, introduced_in: "X.Y.Z", status, fm_ids[], applies_when, warn_below_tier?}`.
+Entry: `{id, module, title, stages[], tier_min: 0|1|2, introduced_in: "X.Y.Z", changed_in?: ["X.Y.Z", ...], status, fm_ids[], applies_when, warn_below_tier?}`.
+- `changed_in` (SPEC 20.10): the checker versions that tightened the check after introduced_in, increasing, each later
+  than introduced_in and not later than CHECKER_VERSION (selftest validates it). A check added or tightened after a
+  held-out batch is committed carries a later introduced_in or changed_in than the batch's checker version. The
+  advisory window reads introduced_in only; held-out scoring reads both (section 19.8).
 - `status`: `enforced` \| `advisory` (FAIL/MISSING reported as WARN) \| `planned` (registered, not implemented,
   excluded from every bundle and listed in README "Not yet enforced"; a bundle naming it is a CHECKER_ERROR).
 - `applies_when`: text starting with `always` means NOT_APPLICABLE is never allowed; any other text declares the
@@ -725,6 +747,16 @@ this delivery. Gate reports are tamper-evident only.
 `<tempfile.gettempdir()>/minifly_check_selftest_<checker_sha256>.ok` = `{checker_sha256, checker_version, utc, summary}`,
 written by `governance.cmd_selftest` through `common.write_selftest_cache()` after a passing run; SELF-01 accepts it only
 when owned by the current user, not world-writable and naming the same checker sha.
+
+### 19.8 Held-out score report (`MFC heldout score`), PROJECT_DOCUMENTS/KB/RETRO/HELDOUT_<date>.json
+
+`{schema, batch_id, utc, checker_commit, checker_sha256, checker_source, heldout_valid, held_checks[], commitment,
+score}`. score: `{fixtures: {fid: {clean, fired[], post_batch[], batch_checker_version, exits, false_alarm,
+false_alarm_raw | expected, fired_fm, caught, caught_raw, per_class, errors}}, recall_per_class, recall_fixtures,
+recall_fixtures_raw, n_dirty, false_alarm_rate_clean, false_alarm_rate_clean_raw, n_clean, post_batch: {fid: [ids]},
+post_batch_rule}`. `batch_checker_version` is the oldest SOURCE_LOCK.checker_version in the canary's tree (null without
+one). `post_batch` ids (RULES introduced_in or changed_in later than it, SPEC 20.18) are excluded from `fired`, recall
+and false alarms; the `_raw` fields count them (round-1 repair), and both are always reported.
 
 ### 19.7 RETRO_ANNOTATION rows (retro, read-only)
 `{checker_sha256, delivery, check_id, status: PASS | FLAG | NOT_APPLICABLE, reason, evidence_paths[]}`, written only

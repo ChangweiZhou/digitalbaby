@@ -60,7 +60,7 @@ sets the bar. The mean over 8 such worlds is G = 0.294, printed as `G 29.4pp`.
 | Stratum | Definition |
 |---|---|
 | S0 trivial | An operand is 0, or the answer equals an operand |
-| S1 presentation twin | Canonical orbit taught (excluded from E3) |
+| S1 presentation twin | Canonical orbit taught, or fed with its answer in any exposure stream (spec 20.11; excluded from E3) |
 | S2 interpolation | Each operand value appears in its position in some taught pair; no carry |
 | S3 carry | As S2, with carry |
 | S4 extrapolation | An operand value is unseen in its position, or the answer is longer than every taught answer |
@@ -97,7 +97,11 @@ Grammar and examples: [references/RULE_GRAMMAR.md](references/RULE_GRAMMAR.md).
 - Comparator per world = max(chance, comparator arms, shortcut ladder for the pool). The comparator arms are
   comparator_arms plus every declared no_prior_teaching, shuf, frozen and lesion arm (never oracle_plumbing,
   positive_control or CEILING_/FLOOR_ arms), so an undeclared FROZEN arm equal to the candidate on HELD never lets it
-  pass (corpus S59). The ladder always includes FIXED_k of the candidate's own stream. STOP-ONLY's 225,792-record confirmation measured STOP against a DIRECT comparator that
+  pass (corpus S59). An arm of role other joins the comparator too, so relabelling a control 'other' changes
+  nothing (spec 20.14, corpus S80). Role candidate belongs to primary.candidate_arm alone: LOCK-02 FAILs a second
+  'candidate' arm, and decide counts such an arm as a comparator anyway (corpus S87). A strong arm that is not a
+  control is positive_control or oracle_plumbing; those roles stay out of the comparator, so never use them for a
+  control. The ladder always includes FIXED_k of the candidate's own stream. STOP-ONLY's 225,792-record confirmation measured STOP against a DIRECT comparator that
   scored zero; its own stream truncated at one byte reached 10.645% against STOP's 11.263% on NEW
   (`minifly_address_capacity_v1_dev_20261023/REPORT.md:7`). In decide the bar would have been at least FIXED_1.
 - Margins and floors are at least the CONSTRAINTS floors (LOCK-04): margin_abs, the absolute floor above chance,
@@ -172,6 +176,16 @@ ADM-GATE, ADM-INPUT, ADM-ACQ, ADM-SHUF, ADM-EXPO, ADM-BUDGET and ADM-REUSE (T1 o
   by taught_acq_margin, or the verdict is NOT_ACQUIRING.
 - ADM-EXPO: canonical held orbits (exact prompts for E2) never occur in a feedback-bearing stream, and every TAUGHT or
   stream file under manifests/ or results/ is declared in exposure_streams.
+- ADM-EXPO judges content, not declarations (spec 20.11; pilot miss INC-HB1-A3): no row of ANY exposure stream,
+  feedback_bearing true or false, of the TAUGHT directory or of an undeclared stream-like file may carry a held item's
+  answer together with its prompt or orbit, whatever the field names (text, hex, base64 or byte lists; prompt then
+  answer in one field counts). A string that is itself JSON is parsed; an answer a few non-digit characters after the
+  prompt ('3+7 equals 10') or before it ('10 = 3+7') counts; and records are read in stream order, so a record that
+  ends with a held prompt followed by a record whose same field starts with its answer is a leak (corpus S84, S85).
+  A listening or presentation stream may show held prompts, never their answers. A held orbit fed with its answer is
+  S1 (taught) for the scorer and never counted, and a stream file that is not JSONL, JSON or UTF-8 text cannot be
+  checked and fails (corpus S65-S67, S86). A stream-named data file outside manifests/ and results/ (data/warmup.jsonl)
+  must be declared too.
 
 ## 9. Causal reuse for E3 promotion
 

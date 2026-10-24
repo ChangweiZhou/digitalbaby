@@ -410,6 +410,35 @@ class TestScoreDelivery(DeliveryCase):
         self.assertEqual(r.status, common.FAIL)
         self.assertIn('lacks source_lock_sha256', r.detail)
 
+    def test_held_answer_in_any_stream_makes_the_orbit_s1(self):
+        # SPEC 9.3 as amended in 20.11 (round 1, INC-HB1-A3): a held orbit fed with its answer in ANY stream
+        # (here a declared non-feedback listening stream) is S1 (taught) in every world and never counted.
+        self.full()
+        lock = dict(self.lock, exposure_streams=[
+            {'path_glob': 'manifests/TAUGHT/*/*.jsonl', 'feedback_bearing': True, 'phase': 'teach'},
+            {'path_glob': 'manifests/LISTEN/*.jsonl', 'feedback_bearing': False, 'phase': 'listening'}])
+        self.set_lock(lock)
+        s0 = scorer.score(self.ctx(), 'official')['scores']
+        self.assertEqual(s0['strata'], {'S2': 80, 'S3': 80})
+        a, b = H[0]
+        # held prompts alone are not exposure: the strata do not move
+        write(self.d / 'manifests/LISTEN/l.jsonl', jsonl([{'utterance': '%d+%d=' % (b, a)}]))
+        s1 = scorer.score(self.ctx(), 'official')['scores']
+        self.assertEqual(s1['strata'], {'S2': 80, 'S3': 80})
+        # the commuted orbit with its answer, in a field that is neither prompt_hex nor answer_hex
+        write(self.d / 'manifests/LISTEN/l.jsonl', jsonl([{'utterance': '%d+%d=%d' % (b, a, a + b)}]))
+        ctx = self.ctx()
+        sr = scorer.score_role(ctx, 'official')
+        self.assertEqual(sr['exposed_orbits'], [(str(a), str(b))])
+        s2 = scorer.score(self.ctx(), 'official')['scores']
+        # one item per world moves to S1 and leaves the counted strata
+        self.assertEqual(s2['strata'].get('S1'), len(OFFICIAL))
+        self.assertEqual(s2['strata'].get('S2', 0) + s2['strata'].get('S3', 0), 160 - len(OFFICIAL))
+        self.assertEqual(s2['determinacy']['total'], 160 - len(OFFICIAL))
+        held_w = [x for x in sr['cells']['cells'] if x['arm'] == 'W' and x['pool'] == 'HELD' and x['world'] == 'wo1'
+                  and x['checkpoint'] == 'final']
+        self.assertEqual(sum(x['n'] for x in held_w if x['stratum'] == 'S1'), 1)
+
     def test_admission_testbed_acquisition_shuf(self):
         self.full(official=False)
         self.write_taught(TECH, arms=('SHUF',), label=lambda x, y: str((x + y) % 7 + 1).encode())

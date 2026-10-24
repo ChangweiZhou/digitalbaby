@@ -47,6 +47,19 @@ answer_hex as presented, phase, feedback_bearing and presentations.
 - Every feedback-bearing stream is declared in lock.exposure_streams. ADM-EXPO fails on any TAUGHT or stream file under
   `manifests/` or `results/` that is not declared, and on any canonical held orbit (exact prompt for E2) inside a
   feedback-bearing stream, including a calibration stream (corpus fixture C12).
+- Non-feedback streams are scanned too (SPEC 20.11, checker 1.0.1): no row of any declared stream, any TAUGHT file or
+  any undeclared stream-like file may carry a held item's answer together with its prompt or canonical orbit, in any
+  field or encoding (text, hex, base64, byte lists, or prompt followed by answer in one value). A listening,
+  presentation or warm-up stream may show held prompts without their answers. Write stream files as JSONL (JSON or
+  UTF-8 text also work); a binary stream file cannot be checked and fails ADM-EXPO. Corpus S65-S67.
+- Since the round-1 repair the scan also parses string values that are themselves JSON (as text, hex or base64), reads
+  an answer up to 32 non-digit bytes after the prompt or orbit ('3+7 equals 10') or written before it ('10 = 3+7'),
+  and reads records in stream order: a record whose value at some field ends with a held prompt or orbit, followed by
+  a record whose value at the same field starts (after up to 16 non-digit bytes) with its answer, leaks it (corpus
+  S84 JSON payload, S85 consecutive tape lines, S86 clean). Data files whose path names a taught, stream,
+  calibration, curriculum, exposure, warm-up or listening part are stream candidates anywhere in the delivery, not
+  only under manifests/ and results/. Residuals the reviewer covers: integer answers, an answer two or more records
+  later or in another field of the next record, files.assets and neutrally named JSON under results/.
 - G_per_sample uses the taught presentations recorded in receipts; keep the two consistent.
 
 ## 3. Receipts (`minifly.receipt.v1`)

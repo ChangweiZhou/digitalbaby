@@ -42,7 +42,7 @@ if __name__ != 'common':
     # One registry per process: an import as tools.minifly_check.common aliases 'common'.
     sys.modules.setdefault('common', sys.modules[__name__])
 
-CHECKER_VERSION = '1.0.0'
+CHECKER_VERSION = '1.0.1'
 EXIT_PASS, EXIT_FAIL, EXIT_MISSING, EXIT_ERROR = 0, 1, 2, 3
 
 PASS = 'PASS'
@@ -441,6 +441,83 @@ def parse_trailers(message: str) -> Dict[str, List[str]]:
         current = m.group(1)
         out.setdefault(current, []).append(m.group(2))
     return out
+
+
+AGENT_FAMILIES = ('codex', 'claude')
+_NS_RE = re.compile(r'^(?:refs/remotes/|remotes/)?origin/(codex|claude)/.+')
+
+
+def agent_family(agent: Any) -> Optional[str]:
+    """'codex' or 'claude' for an identity string ('claude', 'claude:<session>', 'codex-cli', ...); None when it
+    names neither family."""
+    if not isinstance(agent, str):
+        return None
+    a = agent.strip().lower()
+    for fam in AGENT_FAMILIES:
+        if a == fam or (a.startswith(fam) and a[len(fam):len(fam) + 1] in (':', '-', '_', ' ', '/', '@')):
+            return fam
+    return None
+
+
+def branch_namespace(branch: Any) -> Optional[str]:
+    """The agent namespace of a remote branch: 'claude' for origin/claude/*, 'codex' for origin/codex/*, else None
+    (another remote, or a branch outside both namespaces, never counts)."""
+    m = _NS_RE.match(str(branch or '').strip())
+    return m.group(1) if m else None
+
+
+IDENTITY_OK, IDENTITY_MISMATCH, IDENTITY_UNPUSHED, IDENTITY_NO_COMMIT = 'ok', 'identity_mismatch', 'unpushed', \
+    'no_commit'
+
+
+def commit_family(git: 'GitView', commit: Optional['Commit']) -> Tuple[Optional[str], str, str]:
+    """The acting family of a commit (SPEC 5, SPEC 20.15; round 1, INC-HB1-C3): (family, status, why).
+
+    The family is derived from BOTH the commit's `Acting-Agent:` trailer and the remote branch namespaces that
+    contain it (origin/claude/* vs origin/codex/*); git author names and row fields never count. status:
+      ok                 the trailer names exactly one family and an origin/<family>/* branch contains the commit;
+      identity_mismatch  no trailer, a trailer naming no or both families, or a trailer whose namespace contains
+                         nothing: the commit is contained only in the other family's namespace (each agent pushes
+                         only to its own namespace, so the trailer is forged or the commit was never pushed by it);
+      unpushed           no origin/claude/* or origin/codex/* branch contains the commit (identity not derivable);
+      no_commit          commit is None.
+    A commit contained in both namespaces is shared history (the reviewer branches from the author's work, the
+    author merges the review): it is attributed to its trailer family, which must be one of them. Every caller
+    treats anything but ok as FAIL (unpushed: MISSING where the check allows it)."""
+    if commit is None:
+        return None, IDENTITY_NO_COMMIT, 'no commit'
+    vals = [v.strip() for v in commit.trailer_values('Acting-Agent') if v.strip()]
+    short = commit.sha[:12]
+    if not vals:
+        return None, IDENTITY_MISMATCH, 'commit %s has no Acting-Agent trailer' % short
+    fams = [agent_family(v) for v in vals]
+    if any(f is None for f in fams):
+        return None, IDENTITY_MISMATCH, 'commit %s Acting-Agent %s names no agent family' % (short, vals)
+    if len(set(fams)) != 1:
+        return None, IDENTITY_MISMATCH, 'commit %s Acting-Agent %s names both families' % (short, vals)
+    t = fams[0]
+    branches = [str(b) for b in (git.remote_branches_containing(commit.sha) or [])]
+    ns = sorted(set(f for f in (branch_namespace(b) for b in branches) if f))
+    if not ns:
+        return None, IDENTITY_UNPUSHED, ('commit %s (Acting-Agent %s) is in no origin/%s/* branch, nor in any '
+                                         'origin/claude/* or origin/codex/* branch (branches: %s)'
+                                         % (short, t, t, ', '.join(branches[:4]) or 'none'))
+    if t not in ns:
+        return None, IDENTITY_MISMATCH, ('commit %s says Acting-Agent %s but is in no origin/%s/* branch, only in '
+                                         'origin/%s/* (branches: %s): trailer and namespace disagree'
+                                         % (short, t, t, ns[0], ', '.join(branches[:4])))
+    own = [b for b in branches if branch_namespace(b) == t]
+    return t, IDENTITY_OK, '%s by %s (%s%s)' % (short, t, own[0], ', shared history' if len(ns) > 1 else '')
+
+
+def commit_is_family(git: 'GitView', commit: Optional['Commit'], fam: Optional[str]) -> Tuple[bool, str]:
+    """(ok, why): commit_family(commit) is `fam`."""
+    got, st, why = commit_family(git, commit)
+    if st != IDENTITY_OK:
+        return False, '%s: %s' % (st, why)
+    if got != fam:
+        return False, 'commit %s acts as %s, not %s' % (commit.sha[:12] if commit else '-', got, fam)
+    return True, why
 
 
 class GitView:
@@ -1567,8 +1644,13 @@ def validate_rules(rules: dict) -> List[str]:
                 problems.append('%s lacks %s' % (rid, f))
         if r.get('status') not in RULE_STATUSES:
             problems.append('%s has status %r' % (rid, r.get('status')))
-        if parse_version(r.get('introduced_in')) is None:
+        iv = parse_version(r.get('introduced_in'))
+        if iv is None:
             problems.append('%s has introduced_in %r' % (rid, r.get('introduced_in')))
+        elif parse_version(CHECKER_VERSION) is not None and iv > parse_version(CHECKER_VERSION):
+            problems.append('%s introduced_in %s is later than CHECKER_VERSION %s' % (rid, r.get('introduced_in'),
+                                                                                      CHECKER_VERSION))
+        problems.extend(changed_in_problems(rid, r))
         if r.get('tier_min') not in (0, 1, 2):
             problems.append('%s has tier_min %r' % (rid, r.get('tier_min')))
         if not isinstance(r.get('stages'), list) or not isinstance(r.get('fm_ids'), list):
@@ -1588,6 +1670,52 @@ def validate_rules(rules: dict) -> List[str]:
             if stage not in (idx[i].get('stages') or []):
                 problems.append('%s is in bundle %s but its stages omit it' % (i, stage))
     return problems
+
+
+def changed_in_problems(rid: str, r: dict) -> List[str]:
+    """RULES `changed_in` (optional): the checker versions whose release tightened this check's behaviour after
+    introduced_in (SPEC 20.10). A list of distinct versions, each later than introduced_in and not later than
+    CHECKER_VERSION, in increasing order."""
+    if 'changed_in' not in r:
+        return []
+    ci = r.get('changed_in')
+    if not isinstance(ci, list) or not ci:
+        return ['%s changed_in must be a non-empty list of versions' % rid]
+    iv, cv = parse_version(r.get('introduced_in')), parse_version(CHECKER_VERSION)
+    out: List[str] = []
+    prev = iv
+    for v in ci:
+        pv = parse_version(v)
+        if pv is None:
+            out.append('%s changed_in has %r' % (rid, v))
+            continue
+        if prev is not None and pv <= prev:
+            out.append('%s changed_in %s is not later than %s' % (rid, v, 'introduced_in' if prev == iv else
+                                                                   'the previous entry'))
+        if cv is not None and pv > cv:
+            out.append('%s changed_in %s is later than CHECKER_VERSION %s' % (rid, v, CHECKER_VERSION))
+        prev = pv
+    return out
+
+
+def rule_versions(rule: dict) -> List[str]:
+    """introduced_in followed by every changed_in version of a RULES entry (SPEC 20.10)."""
+    out = [rule.get('introduced_in')] if isinstance(rule.get('introduced_in'), str) else []
+    ci = rule.get('changed_in')
+    if isinstance(ci, list):
+        out.extend(v for v in ci if isinstance(v, str))
+    return out
+
+
+def rule_newer_than(rule: dict, version: Any) -> Optional[str]:
+    """The earliest of introduced_in / changed_in that is later than `version` (the version whose behaviour a
+    held-out batch or a delivery was written against), or None when the check behaves as it did then. An
+    unparseable `version` gives None (nothing can be called newer)."""
+    base = parse_version(version)
+    if base is None:
+        return None
+    later = [v for v in rule_versions(rule) if parse_version(v) is not None and parse_version(v) > base]
+    return min(later, key=parse_version) if later else None
 
 
 def not_applicable_declared(rule: dict) -> bool:

@@ -27,6 +27,7 @@ HAVE_GIT = shutil.which('git') is not None
 SPEC_IDS = (
     ['SELF-01', 'SCHEMA-01', 'TIER-01', 'RUN-01', 'RUN-02', 'CYC-01', 'CYC-02', 'CYC-03']
     + ['RUN-03', 'RUN-04']  # SPEC 20.7, 20.8 (hardening round 4)
+    + ['CLM-17', 'CYC-04']  # SPEC 20.13, 20.16 (self-improvement round 1, introduced_in 1.0.1)
     + ['LOCK-%02d' % i for i in range(1, 14)] + ['AMD-%02d' % i for i in range(1, 6)] + ['WIT-01']
     + ['SEAL-%02d' % i for i in range(1, 6)] + ['CONF-01']
     + ['MET-01', 'MET-02', 'LAD-01', 'LAD-02', 'LAD-03', 'LAD-04', 'STR-01', 'DET-01', 'INERT-01', 'UDI-01',
@@ -210,6 +211,55 @@ class TestTimelineGit(TmpCase):
 
 # ------------------------------------------------------------------------------------------------
 @unittest.skipUnless(HAVE_GIT, 'git not installed')
+class TestCommitFamily(TmpCase):
+    """SPEC 20.15 (round 1, INC-HB1-C3): the acting family of a commit comes from its Acting-Agent trailer AND the
+    origin/<family>/* namespace that contains it; one function serves every identity check."""
+
+    def make(self, trailers, branches):
+        sha = 'f' * 40
+        make_timeline(self.tmp, [commit(sha, ['a.txt'], branches=branches, trailers=trailers)],
+                      repo_files={'a.txt': 'a\n'})
+        g = common.TimelineGit(self.tmp)
+        return g, g.commit(sha)
+
+    def fam(self, trailers, branches):
+        g, c = self.make(trailers, branches)
+        return common.commit_family(g, c)
+
+    def test_trailer_and_namespace_must_agree(self):
+        f, st, why = self.fam({'Acting-Agent': 'claude:s1'}, ['origin/claude/review'])
+        self.assertEqual((f, st), ('claude', common.IDENTITY_OK))
+        # shared history: the reviewer branch and the merged author branch both contain it; the trailer decides
+        f, st, why = self.fam({'Acting-Agent': 'claude:s1'}, ['origin/claude/review', 'origin/codex/main'])
+        self.assertEqual((f, st), ('claude', common.IDENTITY_OK))
+        self.assertIn('shared history', why)
+        # a forged reviewer trailer pushed to the author's own namespace (the C3 class)
+        f, st, why = self.fam({'Acting-Agent': 'claude'}, ['origin/codex/kb-sync'])
+        self.assertEqual((f, st), (None, common.IDENTITY_MISMATCH))
+        self.assertIn('no origin/claude/* branch', why)
+        # a claude-named branch of another remote is no namespace
+        f, st, _ = self.fam({'Acting-Agent': 'claude'}, ['upstream/claude/x', 'origin/codex/y'])
+        self.assertEqual(st, common.IDENTITY_MISMATCH)
+        f, st, _ = self.fam({'Acting-Agent': 'claude'}, ['upstream/claude/x'])
+        self.assertEqual(st, common.IDENTITY_UNPUSHED)
+        # no trailer, a trailer naming no family, a trailer naming both: mismatch whatever the branches
+        for tr in ({}, {'Acting-Agent': 'gpt'}, {'Acting-Agent': ['claude:s1', 'codex']}):
+            self.assertEqual(self.fam(tr, ['origin/claude/r'])[1], common.IDENTITY_MISMATCH, tr)
+        self.assertEqual(common.commit_family(None, None)[1], common.IDENTITY_NO_COMMIT)
+        g, c = self.make({'Acting-Agent': 'codex'}, ['origin/codex/w'])
+        self.assertEqual(common.commit_is_family(g, c, 'codex')[0], True)
+        self.assertEqual(common.commit_is_family(g, c, 'claude')[0], False)
+
+    def test_namespace_and_family_parsing(self):
+        self.assertEqual(common.branch_namespace('origin/claude/a/b'), 'claude')
+        self.assertEqual(common.branch_namespace('remotes/origin/codex/x'), 'codex')
+        self.assertIsNone(common.branch_namespace('origin/claudette/x'))
+        self.assertIsNone(common.branch_namespace('origin/main'))
+        self.assertEqual(common.agent_family('Claude:s-1'), 'claude')
+        self.assertEqual(common.agent_family('codex-cli'), 'codex')
+        self.assertIsNone(common.agent_family('claudette'))
+
+
 class TestRealGit(TmpCase):
     def setUp(self):
         super().setUp()
@@ -744,8 +794,18 @@ class TestRealRules(unittest.TestCase):
         self.assertEqual(adv, ['CLM-16', 'LAD-03', 'LAD-04', 'PTR-06', 'WLD-02'])
         # SPEC 20.2: ids without corpus coverage or a faithful definition are 'planned' (README 'Not yet enforced')
         self.assertEqual(sorted(i for i, r in self.idx.items() if r['status'] == 'planned'), ['UDI-01'])
+        # SPEC 20.10: checks added after the held-out pilot carry introduced_in 1.0.1; checks it tightened keep their
+        # introduced_in and list 1.0.1 in changed_in
+        new_ids = ['CLM-17', 'CYC-04']
+        tightened = ['ADM-EXPO', 'CLM-04', 'DEBT-02', 'DEC-01', 'GOV-COI', 'GOV-REV', 'HELD-03', 'KB-03', 'RED-02',
+                     'RED-03', 'REV-01', 'RUN-04', 'SEAL-02', 'WIT-01',
+                     # round-1 repair: LOCK-02 (role candidate) and the checks whose behaviour the exposure strata changed
+                     'LOCK-02', 'STR-01', 'DET-01', 'ADM-TB-CEIL', 'ADM-TB-FLOOR', 'UDI-01']
+        self.assertEqual(common.CHECKER_VERSION, '1.0.1')
+        self.assertEqual(self.rules['checker_version'], common.CHECKER_VERSION)
         for i, r in self.idx.items():
-            self.assertEqual(r['introduced_in'], '1.0.0', i)
+            self.assertEqual(r['introduced_in'], '1.0.1' if i in new_ids else '1.0.0', i)
+            self.assertEqual(r.get('changed_in'), ['1.0.1'] if i in tightened else None, i)
             self.assertIn(r['status'], ('enforced', 'advisory', 'planned'), i)
             for f in ('id', 'module', 'stages', 'tier_min', 'introduced_in', 'status', 'fm_ids', 'applies_when'):
                 self.assertIn(f, r, i)
@@ -772,10 +832,30 @@ class TestRealRules(unittest.TestCase):
             self.assertIn(i, official)
             self.assertIn(i, publish)
         self.assertNotIn('TIER-01', publish)
+        # SPEC 20.13/20.16 (round 1): CLM-17 at publish and in the T0 lint; CYC-04 (append-only runlog) at publish
+        self.assertIn('CLM-17', publish)
+        self.assertIn('CLM-17', b('lint'))
+        self.assertIn('CYC-04', publish)
+        self.assertNotIn('CYC-04', official)
         self.assertNotIn('UDI-01', publish)  # planned: excluded from every bundle (SPEC 20.2)
         for st in self.rules['bundles']:
             self.assertNotIn('UDI-01', b(st), st)
         self.assertEqual(sorted(b('pointer')), sorted(['SELF-01', 'CLM-02', 'DEBT-02'] + ['PTR-%02d' % i for i in range(1, 8)]))
+
+    def test_changed_in_validation_and_rule_newer_than(self):
+        rules = json.loads(json.dumps(self.rules))
+        r = next(x for x in rules['rules'] if x['id'] == 'ADM-EXPO')
+        for bad in ('1.0.1', [], ['1.0.0'], ['x'], ['9.9.9'], ['1.0.1', '1.0.1']):
+            r['changed_in'] = bad
+            self.assertTrue(common.validate_rules(rules), bad)
+        r['changed_in'] = ['1.0.1']
+        self.assertEqual(common.validate_rules(rules), [])
+        new = next(x for x in rules['rules'] if x['id'] == 'CLM-17')
+        new['introduced_in'] = '9.0.0'                     # later than this checker: a registry error
+        self.assertTrue(any('later than CHECKER_VERSION' in p for p in common.validate_rules(rules)))
+        self.assertEqual(common.rule_newer_than(r, '1.0.0'), '1.0.1')
+        self.assertIsNone(common.rule_newer_than(r, '1.0.1'))
+        self.assertEqual(common.rule_versions(r), ['1.0.0', '1.0.1'])
 
     def test_t2_entries_are_conditional(self):
         entries = common.expand_bundle(self.rules, 'roster')

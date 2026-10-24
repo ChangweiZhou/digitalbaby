@@ -10,7 +10,7 @@ corpus/
   _build/                build_corpus.py and its modules (stdlib only; never import checker code)
     base/                the hand-designed clean base (TimelineGit format) + EXPECTED_VALUES.md
   C00a .. C30, G01 .. G05, K01     one directory per SPEC 12.2 row
-  S01 .. S64             supplementary fixtures (not SPEC 12.2 rows), see below
+  S01 .. S88             supplementary fixtures (not SPEC 12.2 rows), see below
     FIXTURE.json         {id, title, fm_ids, source_incident, kind dirty|clean, built_from, mutation, ...}
     timeline.json        {head, dirty, shallow, commits: [{sha, utc, author, trailers, paths, branches, label}]}
     repo/                final tree (worktree)
@@ -43,7 +43,7 @@ needs). Executor artifacts that follow from the mutated design (row digests, ATT
 REPORT headline, the executor copies of TESTBED.json and dev SCORES.json) are regenerated consistently,
 so nothing else differs.
 
-## Supplementary fixtures S01-S64
+## Supplementary fixtures S01-S88
 
 The SPEC 12.2 table leaves many check ids without a fixture in which they fire, so `selftest --mutate`
 would report them as 'check not exercised' (SPEC 7.7, 20.2). S01-S25 add one documented mutation each
@@ -75,6 +75,34 @@ SOURCE_LOCK lacks (RUN-03 closure gap); S61 (clean) splits the official run over
 replay and S64 replays with a different digest (RUN-04). Since round 4 the base writes
 `runlog/RUNTIME_CLOSURE_<attempt_id>.json` for every counted attempt (listed in its produced_paths) and every
 committed CLAIM.json carries the generated `provenance` field.
+
+S65-S80 (self-improvement round 1, checker 1.0.1, SPEC 20.10-20.18; built in `_build/fixtures_r1.py`) re-implement the
+held-out pilot misses as failure classes with new names and layouts (never the canaries, which stay burned): S65 and
+S66 feed held answers through declared non-feedback streams (one hex field holding prompt then answer in a flat
+listening stream; a text cue with a separate answer field in a per-world priming stream) and fire ADM-EXPO; S67 (clean)
+shows held prompts without answers in a non-feedback stream. S68 and S69 re-describe an OLD-guard-carried FAIL as an
+earned level and a met rule in REPORT prose, and in CLAIM.notes, a findings claim, STATUS.md and SUMMARY.json (CLM-17);
+S70 (clean) describes it with honest negations. S71 activates the author's own finding under a forged reviewer trailer
+pushed to the author namespace (KB-03), S72 binds a governance review record whose only claude-named branch is on
+another remote (GOV-REV), S73 (clean) is a genuine activation from origin/claude/*. S74-S76 hide DEV confirm wording
+behind an HTML entity, markdown emphasis and an HTML comment (CLM-04). S77 edits an earlier ATTEMPTS row after the run
+(CYC-04 at publish). S78 records the only official attempt from its in-flight marker without any replay (RUN-04); S79
+(clean) replays one of the recovered attempt's units in a legal resume. S80 (clean) relabels the FROZEN control as role
+'other' and gets an honest FAIL through the decision comparator. Under the round-0 kit (checker 1.0.0) every dirty one
+exits 0 on all its commands, and the clean S80 fails publish with ERR-01 (the old comparator leaves the 'other' arm out,
+so a fresh verdict says PASS while the claim says FAIL). The 1.0.1 kit fires the listed must_fire ids, and nothing else
+except in S65/S66, where the exposed held orbits also become S1 for the scorer (STR-01, DET-01 and the testbed checks
+ADM-TB-CEIL/FLOOR then fire as consequences).
+
+S81-S88 (round-1 repair after the verifier's REVISE, SPEC 20.19; built in `_build/fixtures_r1b.py`) re-implement the
+verifier's probe classes with new names and layouts. S81 and S82 overclaim the same OLD-guard-carried FAIL as values: a
+STATUS key/value block ('evidence_level: E3', 'Decision criterion: satisfied') and a REPORT quantity/value table
+('| level earned | E3 |'), both CLM-17; S83 (clean) states the FAIL honestly in the same shapes plus NOTES.md. S84 hides
+held answers inside a JSON-encoded string payload and S85 plays each held prompt and its answer on consecutive lines of
+a tab-separated tape (ADM-EXPO); S86 (clean) plays JSON payloads with held prompts only, back to back. S87 relabels the
+FROZEN control role 'candidate' (LOCK-02; the VERDICT, scored anyway, is FAIL with comparator FROZEN). S88 splits a DEV
+confirm word with markdown link syntax (CLM-04). Under the HEAD kit (checker 1.0.0) every one of them exits 0 on all its
+commands.
 
 ## Adding a fixture from an incident (through governance only)
 

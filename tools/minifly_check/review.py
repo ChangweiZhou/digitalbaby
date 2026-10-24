@@ -81,18 +81,9 @@ def trailer_families(c: common.Commit) -> List[Optional[str]]:
 
 
 def is_family_commit(ctx: common.Ctx, c: Optional[common.Commit], fam: str) -> Tuple[bool, str]:
-    """(ok, why): every Acting-Agent trailer names `fam` and the commit is in an origin/<fam>/* branch."""
-    if c is None:
-        return False, 'no commit'
-    tf = trailer_families(c)
-    if not tf:
-        return False, 'commit %s has no Acting-Agent trailer' % c.sha[:12]
-    if any(f != fam for f in tf):
-        return False, 'commit %s Acting-Agent %s is not %s' % (c.sha[:12], c.trailer_values('Acting-Agent'), fam)
-    br = in_namespace(ctx.git.remote_branches_containing(c.sha), fam)
-    if not br:
-        return False, 'commit %s is in no origin/%s/* branch' % (c.sha[:12], fam)
-    return True, '%s in %s' % (c.sha[:12], ','.join(br[:2]))
+    """(ok, why): the commit's acting family (common.commit_family: Acting-Agent trailer AND origin/<family>/*
+    namespace, SPEC 20.15) is `fam`."""
+    return common.commit_is_family(ctx.git, c, fam)
 
 
 def _strip_author_fields(obj: Any) -> Any:
@@ -173,13 +164,13 @@ def check_rev_01(ctx: common.Ctx) -> Result:
     if c_lock is None:
         missing.append('ENDPOINT_LOCK.json is not committed')
     else:
-        lf = trailer_families(c_lock)
-        if not lf:
-            problems.append('the lock commit %s has no Acting-Agent trailer (author family cannot be corroborated)'
-                            % c_lock.sha[:12])
-        elif any(f != af for f in lf):
-            problems.append('the lock commit %s says Acting-Agent %s, lock.author_agent says %s'
-                            % (c_lock.sha[:12], c_lock.trailer_values('Acting-Agent'), af))
+        lf, lst, lwhy = common.commit_family(ctx.git, c_lock)
+        if lst != common.IDENTITY_OK:
+            problems.append('the lock commit %s does not corroborate the author family, lock.author_agent says %s (%s: '
+                            '%s)' % (c_lock.sha[:12], af, lst, lwhy))
+        elif lf != af:
+            problems.append('the lock commit %s acts as %s (trailer and namespace), lock.author_agent says %s'
+                            % (c_lock.sha[:12], lf, af))
     hist, intro = review_history_problems(ctx, rf)
     if intro is None:
         missing.append('review/REVIEW.json is not committed')
@@ -765,15 +756,23 @@ def check_debt_02(ctx: common.Ctx) -> Result:
         except MissingInput:
             af = None
         ok = False
+        why = 'no cross-family review/REVIEW.json'
         try:
             rv = read_review(ctx)
-            ok = family(rv.get('reviewer_agent')) not in (None, af)
+            rf = family(rv.get('reviewer_agent'))
+            ok = rf not in (None, af)
+            if ok:
+                # the repaying review counts only when the commit introducing it acts as the reviewer family
+                # (trailer and namespace, SPEC 20.15)
+                _hist, intro = review_history_problems(ctx, rf)
+                ok, cwhy = is_family_commit(ctx, intro, rf)
+                if not ok:
+                    why = 'the commit introducing review/REVIEW.json is not the reviewer family %s (%s)' % (rf, cwhy)
         except (MissingInput, InvalidInput):
             ok = False
         if not ok:
             mine = mine + repaid
-            notes.append('repaid debt %s has no cross-family review/REVIEW.json: still open'
-                         % ','.join(str(r.get('id')) for r in repaid))
+            notes.append('repaid debt %s: %s; still open' % (','.join(str(r.get('id')) for r in repaid), why))
     if not mine:
         return Result('DEBT-02', PASS, 'no open review debt for %s' % ctx.delivery_rel)
     ids = ','.join(sorted(set(str(r.get('id')) for r in mine)))

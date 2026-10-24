@@ -473,8 +473,12 @@ def source_delivery_status(kb: common.KB, delivery: Any, git: Optional[common.Gi
 
 
 def activation_problems(kb: common.KB, finding: dict, row: dict, git: Optional[common.GitView] = None,
-                        rules: Optional[dict] = None, check_source: bool = True) -> List[str]:
-    """Field-level KB-03 (family) and KB-04 (source) problems of one activation/reconciliation row."""
+                        rules: Optional[dict] = None, check_source: bool = True,
+                        commit_identity: bool = False) -> List[str]:
+    """Field-level KB-03 (family) and KB-04 (source) problems of one activation/reconciliation row. With
+    commit_identity (and git), also the identity of the commit that introduced the row (SPEC 20.15): its acting
+    family (common.commit_family: Acting-Agent trailer AND origin/<family>/* namespace) must be the row's
+    author_agent family and differ from the finding author's family; an uncommitted row has no identity yet."""
     p: List[str] = []
     fa, ra = family(finding.get('author_agent')), family(row.get('author_agent'))
     if fa is None:
@@ -484,11 +488,53 @@ def activation_problems(kb: common.KB, finding: dict, row: dict, git: Optional[c
     if fa is not None and fa == ra:
         p.append('%s by %s of a finding authored by %s (same family %s)' % (
             row.get('kind'), row.get('author_agent'), finding.get('author_agent'), fa))
+    if commit_identity and git is not None:
+        p.extend(row_identity_problems(kb, git, finding, row))
     if check_source and row.get('kind') == 'activation':
         ok, why = source_delivery_status(kb, finding.get('delivery'), git, rules)
         if not ok:
             p.extend(why)
     return p
+
+
+def ledger_line_commits(kb: common.KB, git: common.GitView, name: str) -> Dict[bytes, common.Commit]:
+    """Canonical ledger row -> the first commit whose version of the ledger contains it (cached on the KB;
+    MissingInput when the clone is shallow)."""
+    key = ('line_commits', name, id(git))
+    if key in kb._cache:
+        return kb._cache[key]
+    rel = ledger_rel(name)
+    out: Dict[bytes, common.Commit] = {}
+    for c in git.log([rel]):
+        for line in _lines_canon(git.file_at(c.sha, rel), rel):
+            out.setdefault(line, c)
+    kb._cache[key] = out
+    return out
+
+
+def row_identity_problems(kb: common.KB, git: common.GitView, finding: dict, row: dict) -> List[str]:
+    """KB-03 identity of one committed activation/reconciliation row: the acting family of the commit that
+    introduced it (trailer AND namespace) is the activator; it must equal the row's author_agent family and differ
+    from the finding author's family. Problems name identity_mismatch, an unpushed commit or a missing commit."""
+    rid = row.get('id')
+    try:
+        commits = ledger_line_commits(kb, git, 'FINDINGS')
+    except (MissingInput, NotImplementedError) as e:
+        return ['%s: the commit that introduced it cannot be found (%s)' % (rid, e)]
+    c = commits.get(_canon(row))
+    if c is None:
+        return ['%s %s is not committed: its activator identity cannot be derived' % (row.get('kind'), rid)]
+    fam, st, why = common.commit_family(git, c)
+    if st != common.IDENTITY_OK:
+        return ['%s: %s of the introducing commit (%s)' % (rid, st, why)]
+    out = []
+    if fam != family(row.get('author_agent')):
+        out.append('%s: author_agent %s but the introducing commit %s acts as %s (trailer and namespace)'
+                   % (rid, row.get('author_agent'), c.sha[:12], fam))
+    if fam == family(finding.get('author_agent')):
+        out.append('%s: introduced by the finding author family %s (commit %s): self-activation'
+                   % (rid, fam, c.sha[:12]))
+    return out
 
 
 def _finding_family(kb: common.KB, finding: dict) -> Optional[str]:
@@ -543,7 +589,7 @@ def finding_state(kb: common.KB, fid: str, git: Optional[common.GitView] = None,
         kind = r.get('kind')
         rid = r.get('id')
         if kind == 'activation':
-            pr = activation_problems(kb, base, r, git, rules)
+            pr = activation_problems(kb, base, r, git, rules, commit_identity=git is not None)
             if pr:
                 invalid_acts.append({'id': rid, 'problems': pr})
                 continue
@@ -560,6 +606,8 @@ def finding_state(kb: common.KB, fid: str, git: Optional[common.GitView] = None,
         elif kind == 'reconciliation':
             st = r.get('status')
             other = fa is not None and family(r.get('author_agent')) not in (None, fa)
+            if other and git is not None and row_identity_problems(kb, git, base, r):
+                other = False  # an other-family reconciliation counts only under its commit identity (SPEC 20.15)
             if isinstance(st, str) and st in common.FINDING_STATUS_RANK and st != 'active':
                 statuses.append(st)
             if other and (_s(r.get('evidence')) or _s(r.get('source'))) and st not in ('REFUTED', 'retracted'):
@@ -569,7 +617,8 @@ def finding_state(kb: common.KB, fid: str, git: Optional[common.GitView] = None,
                 transfers[r['outcome']].append(r)
         if (kind in ('activation', 'reconciliation') and r.get('holds_under') in R2_BASES
                 and fa is not None and family(r.get('author_agent')) not in (None, fa)
-                and r.get('outcome') != 'failed'):
+                and r.get('outcome') != 'failed'
+                and (git is None or not row_identity_problems(kb, git, base, r))):
             r2 = True
     status = max(statuses, key=lambda s: common.FINDING_STATUS_RANK.get(s, 2))
     ok_later = [t for t in transfers['ok'] if not _same_delivery(t.get('delivery'), base.get('delivery'))]
@@ -1515,15 +1564,17 @@ def check_kb_03(ctx: common.Ctx) -> Result:
         if c is None:
             missing.append('%s: no commit introduces this row' % rid)
             continue
-        tf = trailer_family(c)
-        if tf is None:
-            problems.append('%s: introducing commit %s has no Acting-Agent trailer' % (rid, c.sha[:12]))
-        elif tf == 'ambiguous':
-            problems.append('%s: introducing commit %s names both agent families' % (rid, c.sha[:12]))
+        # SPEC 20.15: the activator is the acting family of the introducing commit, derived from its Acting-Agent
+        # trailer AND the origin/<family>/* namespace containing it (common.commit_family), never from row fields
+        tf, ist, iwhy = common.commit_family(ctx.git, c)
+        if ist == common.IDENTITY_UNPUSHED:
+            missing.append('%s: %s (push it to the activator namespace)' % (rid, iwhy))
+        elif ist != common.IDENTITY_OK:
+            problems.append('%s: %s of the introducing commit (%s)' % (rid, ist, iwhy))
         else:
             if tf != family(r.get('author_agent')):
-                problems.append('%s: author_agent %s but commit %s is Acting-Agent %s' % (
-                    rid, r.get('author_agent'), c.sha[:12], tf))
+                problems.append('%s: author_agent %s but the introducing commit %s is Acting-Agent %s in the origin/%s/* '
+                                'namespace' % (rid, r.get('author_agent'), c.sha[:12], tf, tf))
             if tf == family(tgt.get('author_agent')):
                 problems.append('%s: committed by the finding author family %s (commit %s)' % (rid, tf, c.sha[:12]))
     return _finish('KB-03', problems, missing, '%d activation/reconciliation row(s) by the other family (%s)'

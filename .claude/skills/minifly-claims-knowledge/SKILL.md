@@ -67,6 +67,19 @@ MFC claim <dir>                      # writes CLAIM.json and the headline; appen
 
 - The prose below the headline is yours, but it is linted at publish: confirm wording (CLM-04), soft words (CLM-06),
   native/core/inherited wording (CLM-07), absolute local paths (CLM-12) and uncited prior numbers (CLM-16, WARN).
+- Overclaim (CLM-17, spec 20.13): REPORT prose, CLAIM.notes, findings claims and the STATUS/SUMMARY/MEMO and
+  NOTES/ANALYSIS/README/RESULTS files of a delivery must never assert a level above level_earned ('sits at E3', 'attains
+  E3', 'E3 holds', 'the result is E3', `{"evidence_level": "E3"}`), and on a primary_gate other than PASS must never call
+  the rule, an endpoint, the result or a failed guard met, cleared, passed, satisfied or successful ('W clears the
+  locked rule', 'the composition endpoint is met'). Key/value lines and table rows are read as clauses too:
+  'Level earned: E3', 'Decision rule: satisfied' and '| level earned | E3 |' fail like the sentence (corpus S81,
+  S82). 'As planned', 'as expected' or 'without exception' do not qualify a claim, and a sentence citing earlier work
+  is skipped only when it says nothing about this delivery. A guard is part of the rule: a guard-carried FAIL is a FAIL.
+  Write the earned level and the gate result with explicit negations or qualifiers: 'E3 was not reached', 'attempted
+  E3', 'Level earned: NONE', 'the OLD drop guard failed, so the primary FAILs'; a process check may be reported as
+  passed ('the roster gate for this E3 design passed') (corpus S68-S70, S83; pilot miss INC-HB1-C2). `MFC lint`
+  applies CLM-17 to files inside a delivery against its CLAIM.json, and to a project document part by part against
+  each delivery it names.
 - Never hand-write a measurement, a verdict or a STATUS boolean. Numbers in the prose are copied from CLAIM, SCORES
   or VERDICT, or computed by a committed script whose path you cite.
 
@@ -95,9 +108,15 @@ MFC claim <dir>                      # writes CLAIM.json and the headline; appen
   (GAIN_CONFIRMED, axis_confirmed or NativeConfirmation in a SUMMARY.json key or value), and zero-width characters,
   accents and look-alike letters are stripped first; only the whole kit names SEALED_CONFIRM, sealed_confirm,
   CONFIRM_LEDGER, confirm_attempt and confirm_alpha_spending are exempt (corpus S56-S58).
+- CLM-04 reads markdown and HTML as rendered (spec 20.12): HTML entities are decoded and HTML comments, tags and the
+  markers `*`, `**`, backticks, `~~` and `__` are removed first, and markdown link and image syntax is also read as its
+  text, so `con&#8203;firmed`, `con**firm**ed`, `con<!-- -->firmed` and `con[]()firmed` are confirm wording (corpus
+  S74-S76, S88). retro uses the same tokenization.
 - 'Persistent learning core' is a project goal, not a result label (`minifly_b/package/DOCS/MINIFLY_OBJECTIVE_CONTRACT.md:19`).
 - Word lists catch listed words only. Synonyms in body prose are an open loophole (spec 15); the generated headline is
   the real defence, so do not reach for 'well on the way' either.
+- CLM-17 reads level and met-rule claims clause by clause since 1.0.1, but it is lexical too: a paraphrase outside
+  its vocabulary is the residual loophole the reviewer covers.
 
 ## 4. Publish gate and the T2 verification subset
 
@@ -105,6 +124,10 @@ MFC claim <dir>                      # writes CLAIM.json and the headline; appen
 MFC gate --stage publish <dir>       # S7 exit criterion
 MFC lint <files...>                  # T0 text (memos, saved-data reanalysis): CLM-06, CLM-12, CLM-16, PTR-01..07
 ```
+
+- Checker 1.0.1 adds CLM-17 (overclaim, publish and lint) and CYC-04 (append-only runlog at publish) to the bundle
+  below. For a T1 delivery whose first SOURCE_LOCK predates 1.0.1 they are advisory (ADVISORY_FAIL, spec 20.10); every
+  T2 publish enforces them.
 
 - The publish bundle runs SELF-01, SCHEMA-01, AMD-01..05, MET-01/02, LAD-01, STR-01, DET-01, INERT-01, DEC-01,
   CLM-01..16, ERR-01, KB-01..05 and WLD-01/02, plus RUN-01 and GOV-COI at T2, REV-08 for SEALED_CONFIRM or adoption,
@@ -151,6 +174,11 @@ Detail: KNOWLEDGE_LEDGER.md sections 1-4. Append rows only with
 - Only the other agent family activates a finding (KB-03), and only when its source is a T2 delivery with worlds_role
   MAIN or SEALED_CONFIRM and no open review debt (KB-04, DEBT-02). Never activate your own finding: C30 in the corpus
   is exactly that.
+- KB-03 derives the activator from the commit that introduces the activation row (spec 20.15): its `Acting-Agent:`
+  trailer AND the origin/<family>/* branch that contains it must both name the other family, and the row's
+  author_agent must equal it. A reviewer trailer on a commit only the author's namespace contains is identity_mismatch
+  and `kb status` ignores the row (corpus S71; pilot miss INC-HB1-C3). As the activator, commit and push from your own
+  namespace (corpus S73).
 - Anyone may append a narrowing, supersession or retraction row. Narrowing is conservative and needs no second agent.
 - R-levels R0-R4 are computed by the checker from the rows; never declare one. Only R3 and above may be called
   'transferable'.
@@ -181,6 +209,9 @@ Detail: KNOWLEDGE_LEDGER.md sections 1-4. Append rows only with
   EXPECTED.must_fire includes that check (KB-05). The check, fixture and EXPECTED entry go through `minifly-governance`.
 - Never close an incident with prose, a skill sentence or a memo. 'Lessons stay prose' is FM-26.
 - The seed closure rows (INC-SEED-xx-CLn) are pending their corpus fixtures and do not count until KB-05 passes.
+- The held-out pilot misses INC-HB1-A3, INC-HB1-C2 and INC-HB1-C3 are closed by rows INC-HB1-A3-CL1/2 (ADM-EXPO,
+  S65/S66), INC-HB1-C2-CL1/2 (CLM-17, S68/S69) and INC-HB1-C3-CL1/2 (KB-03 S71, GOV-REV S72). A visible closure is
+  not held-out recall: the next sealed batch measures that.
 
 ## 9. Errata
 

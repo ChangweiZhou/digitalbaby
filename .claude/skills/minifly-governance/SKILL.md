@@ -79,6 +79,11 @@ Step by step, with trailer formats: CHANGE_CLASSES.md section 4.
 5. Merge as a separate commit range with the trailers `Governance-Review: PROJECT_DOCUMENTS/KB/GOVERNANCE/REVIEW_<id>.json`
    and/or `User-Decision: UD-<yyyymmdd>-<n>`, plus your `Acting-Agent:` trailer. Rerun `MFC governance` on the exact
    range and proceed only on exit 0.
+6. Identity (spec 20.15): GOV-REV takes every family from `common.commit_family`, the `Acting-Agent:` trailer AND
+   the origin/<family>/* branch containing the commit. The review record must be introduced by a commit that acts as
+   the reviewer family, and each protected-path commit must act as one family, so push before you run governance.
+   A trailer whose own namespace does not contain the commit is identity_mismatch (corpus S72: the only claude-named
+   branch is on another remote). Never take identity from git author names.
 
 During Phase 0 integration, every edit to EXPECTED.json or a corpus fixture is also logged in
 `tools/minifly_check/INTEGRATION_LOG.md` with the spec clause that justifies it, and an independent verifier re-reads
@@ -114,6 +119,14 @@ that log for loosening (spec 20.3).
   bundle at the latest version, which closes lock banking.
 - Planned checks (spec 20.2): a check registered `planned` is in no bundle. Implementing it and moving it into a
   bundle is a tightening, and moving an enforced check to planned or advisory is a loosening.
+- Versioning after a held-out batch (spec 20.10; lesson of HB-20261024-PILOT, whose RUN-03 was added after the batch
+  with the same introduced_in 1.0.0, so every canary fired it): a check added or tightened after a held-out batch is
+  committed must carry a later version than the batch's checker version. A new check gets a later introduced_in; a
+  tightened check keeps its introduced_in and appends the new version to its RULES `changed_in` list. Bump
+  CHECKER_VERSION first. The advisory window reads introduced_in only, so a tightening is enforced at once; held-out
+  scoring reads both (section 7). Appending to changed_in is neutral only when the same range changes the check's
+  module or a kit module it imports; an append without such a code change, or dropping or rewriting an entry, is a
+  loosen (it would exclude the check's held-out hits and false alarms as post_batch).
 
 ## 6. The incident to check loop
 
@@ -132,6 +145,14 @@ checker version under test merges (HELD-01), and it is revealed and scored at ce
 (`MFC heldout reveal`, `MFC heldout score --checker-sha S`). The archive digest is training data: archive-derived
 fixtures may extend the visible corpus but never count as held-out. A rise in corpus recall without a rise in held-out
 recall is overfitting.
+
+The score lists as `post_batch`, and never counts toward recall or false alarms, every fired check whose introduced_in or
+changed_in is later than the checker_version in the canary's own SOURCE_LOCK (spec 20.18). Batch authors record there
+the kit version whose SPEC they wrote against. The report always carries the raw numbers too (recall_fixtures_raw,
+false_alarm_rate_clean_raw, post_batch counted); quote both, because a batch stamped with an older version (the
+builder's default SOURCE_LOCK says 1.0.0) excludes every later detection and every later false alarm. Round 1 (1.0.1) closed the pilot misses INC-HB1-A3/C2/C3 with visible
+fixtures S65-S73; only the next sealed batch, written against 1.0.1 and committed before the fixed checker, measures
+whether the fixes generalize.
 
 ## 8. Census (every 5 v1 deliveries, or monthly)
 

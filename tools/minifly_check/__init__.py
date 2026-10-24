@@ -13,4 +13,4 @@ _KIT_DIR = _os.path.dirname(_os.path.abspath(__file__))
 if _KIT_DIR not in _sys.path:
     _sys.path.insert(0, _KIT_DIR)
 
-CHECKER_VERSION = '1.0.0'
+CHECKER_VERSION = '1.0.1'

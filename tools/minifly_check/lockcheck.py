@@ -2134,6 +2134,13 @@ def check_lock_02(ctx: common.Ctx) -> Result:
         problems.append('primary.candidate_arm %r is not an existing arm' % (cand,))
     elif by_id[cand].get('role') != 'candidate':
         problems.append('primary.candidate_arm %s has role %r, not candidate' % (cand, by_id[cand].get('role')))
+    # Round-1 repair (verifier probe E2; SPEC 20.14): role 'candidate' belongs to primary.candidate_arm alone. A second
+    # 'candidate' arm would be neither the tested arm nor a decision comparator, so relabelling a control 'candidate'
+    # would take it out of the rule.
+    extra = [a.get('id') for a in arms if a.get('role') == 'candidate' and a.get('id') != cand]
+    if extra:
+        problems.append('arm(s) %s have role candidate but are not primary.candidate_arm %s (only the tested arm may '
+                        'have role candidate)' % (', '.join(str(x) for x in extra), cand))
     for c in dig(lock, 'primary.comparator_arms') or []:
         if c not in by_id:
             problems.append('comparator arm %r is not an existing arm' % (c,))
@@ -3750,8 +3757,10 @@ def check_wit_01(ctx: common.Ctx) -> Result:
         problems.append('no commit introduces a REVIEW.json attesting the current ENDPOINT_LOCK')
     else:
         br = in_namespace(ctx.git.remote_branches_containing(c_att.sha), fam)
-        if not br:
-            problems.append('attestation commit %s is in no origin/%s/* branch' % (c_att.sha[:12], fam))
+        ok, why = common.commit_is_family(ctx.git, c_att, fam)
+        if not ok:
+            # the acting family is derived from the trailer AND the namespace (SPEC 20.15)
+            problems.append('attestation commit %s is not the reviewer family %s (%s)' % (c_att.sha[:12], fam, why))
         c_dev = first_output_commit(ctx, 'dev')
         if c_dev is not None and not strictly_before(ctx, c_att, c_dev):
             problems.append('attestation commit %s is not an ancestor of the first dev output commit %s'
@@ -3775,9 +3784,10 @@ def check_wit_01(ctx: common.Ctx) -> Result:
             if c_ack is None:
                 problems.append('the SOURCE_LOCK ack is not committed')
             else:
-                br = in_namespace(ctx.git.remote_branches_containing(c_ack.sha), fam)
-                if not br:
-                    problems.append('SOURCE_LOCK ack commit %s is in no origin/%s/* branch' % (c_ack.sha[:12], fam))
+                ok, why = common.commit_is_family(ctx.git, c_ack, fam)
+                if not ok:
+                    problems.append('SOURCE_LOCK ack commit %s is not the reviewer family %s (%s)'
+                                    % (c_ack.sha[:12], fam, why))
                 c_off = first_output_commit(ctx, 'official')
                 if c_off is not None and not strictly_before(ctx, c_ack, c_off):
                     problems.append('SOURCE_LOCK ack commit %s is not an ancestor of the first official output %s'

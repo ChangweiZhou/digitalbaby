@@ -18,7 +18,7 @@ wins wherever it is more specific than the examples below (in particular for the
 | checkpoint | Which of checkpoints {prefix, old_end, final} is scored; the objective uses final |
 | strata_counted | Strata whose determined items count. E3: only S2, S3, S4 (STR-01) |
 | candidate_arm | The arm id the claim is about |
-| comparator_arms | Arm ids whose exact rates enter v_comp_w (include the causal control; for E3, no_prior_teaching). Every declared arm of role no_prior_teaching, shuf, frozen or lesion enters v_comp_w as well, listed or not (section 3) |
+| comparator_arms | Arm ids whose exact rates enter v_comp_w (include the causal control; for E3, no_prior_teaching). Every declared arm of role no_prior_teaching, shuf, frozen, lesion or other (and any role candidate arm besides primary.candidate_arm, which LOCK-02 rejects) enters v_comp_w as well, listed or not (section 3) |
 | ladder | auto: the program shortcut ladder for the pool (section 4). Never a hand-picked list |
 | chance | Chance level for the metric on this pool |
 | margin_abs | Required headroom over the comparator; at least CONSTRAINTS margin_abs (0.05 draft) |
@@ -56,6 +56,8 @@ Then, per world w, on the counted items (determined, in strata_counted, answer_p
 - v_cand = exact rate of the candidate;
 - v_comp_w = max(chance, each decision-comparator arm's exact rate, the best ladder member for the pool), where the
   decision comparator is comparator_arms plus every declared no_prior_teaching, shuf, frozen and lesion arm;
+  since checker 1.0.1 every declared arm of role other, and any arm of role candidate other than
+  primary.candidate_arm, as well (SPEC 20.14);
 - d_w = v_cand - v_comp_w.
 
 Aggregators:
@@ -93,6 +95,14 @@ contrast has zero between-world variance with identical values (the [0,0] interv
   probe 2c a FROZEN arm equal to the candidate on HELD gave PASS because FROZEN was not declared a comparator; now
   d_w = 0 there and the verdict is FAIL (corpus S59). oracle_plumbing and positive_control arms (meant to be strong)
   and evaluator-only CEILING_*/FLOOR_* arms are never added; the cycle-0 testbed view adds none.
+- Round 1 (SPEC 20.14, checker 1.0.1): an arm of role other is a decision comparator too. Relabelling a control as
+  'other' was a way to take it out of the comparator; it no longer is (corpus S80: a FROZEN arm relabelled 'other'
+  that answers HELD like the candidate gives an honest FAIL). IMPLIED_COMPARATOR_ROLES is no_prior_teaching, shuf,
+  frozen, lesion, other and candidate (round-1 repair: a control relabelled 'candidate' is a comparator too, and
+  LOCK-02 rejects any 'candidate' arm other than primary.candidate_arm; corpus S87); oracle_plumbing,
+  positive_control and CEILING_*/FLOOR_* arms stay out. A strong auxiliary arm that is not a control belongs in role
+  positive_control or oracle_plumbing, with the meaning those roles carry; giving a control one of those roles takes
+  it out of the comparator, which only the reviewer can see (residual risk, SPEC 20.14).
 - Every decision-comparator arm needs its primary cells in every world: a missing one is INCOMPLETE (RED-03 drops each).
   VERDICT.primary lists comparator_arms (the decision comparator) and implied_comparator_arms.
 - comparator_arms should still name the causal control (no_prior_teaching for E3; CLM-03 reads the declared list) and SHUF.

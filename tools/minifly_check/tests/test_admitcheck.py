@@ -6,6 +6,7 @@ dev worlds wd1..wd3 (arms W, NPT, SHUF, ORACLE). The candidate W is exact on 19/
 shortcut is DIGIT_NO_CARRY at 0.5, NPT is the causal control (zero channel pair_memory). It is reused by
 test_review.py and test_canary.py.
 """
+import base64
 import contextlib
 import io
 import json
@@ -754,12 +755,25 @@ class ExposureChecks(FixtureCase):
         self.assertStatus('ADM-EXPO', common.FAIL, contains='held orbits exposed')
 
     def test_presentation_only_rows_do_not_count(self):
+        # A presentation-only (non-feedback) row may carry a held prompt without its answer (SPEC 20.11).
+        rows = taught_rows('wt1', 'W')
+        a, b = H[3]
+        rows.append({'world': 'wt1', 'arm': 'W', 'prompt_hex': ph(b, a), 'phase': 'presentation',
+                     'feedback_bearing': False, 'presentations': 1})
+        self.f.w('manifests/TAUGHT/wt1/W.jsonl', jsonl(rows))
+        self.assertStatus('ADM-EXPO', common.PASS)
+
+    def test_presentation_only_row_with_the_answer_fails(self):
+        # Round 1 (INC-HB1-A3, SPEC 20.11): the same row WITH the held answer is exposure, whatever its flag. The
+        # round-4 kit passed it (it skipped non-feedback rows); this test pinned that and is tightened.
         rows = taught_rows('wt1', 'W')
         a, b = H[3]
         rows.append({'world': 'wt1', 'arm': 'W', 'prompt_hex': ph(b, a), 'answer_hex': truth(a, b).hex(),
                      'phase': 'presentation', 'feedback_bearing': False, 'presentations': 1})
         self.f.w('manifests/TAUGHT/wt1/W.jsonl', jsonl(rows))
-        self.assertStatus('ADM-EXPO', common.PASS)
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='held answers exposed')
+        self.assertIn(tuple(sorted((str(a), str(b)), key=lambda x: (len(x), x))), admitcheck.exposed_held_orbits(
+            self.f.ctx(stage='roster')))
 
     def test_undeclared_stream_file_fails(self):
         self.f.w('manifests/calibration.jsonl', jsonl([{'prompt_hex': ph(1, 1), 'answer_hex': '32',
@@ -779,6 +793,134 @@ class ExposureChecks(FixtureCase):
         self.assertStatus('ADM-EXPO', common.PASS)
         self.f.w('manifests/calibration/c1.jsonl', jsonl([{'prompt_hex': ph(b, a)}]))
         self.assertStatus('ADM-EXPO', common.FAIL, contains='held orbits exposed')
+
+    def _nonfb_stream(self, glob='manifests/LISTEN/*.jsonl', phase='listening'):
+        lock = self.f.read('ENDPOINT_LOCK.json')
+        lock['exposure_streams'].append({'path_glob': glob, 'feedback_bearing': False, 'phase': phase})
+        self.f.set_lock(lock)
+
+    def test_non_feedback_stream_with_held_prompts_and_no_answers_passes(self):
+        self._nonfb_stream()
+        rows = []
+        for i, (a, b) in enumerate(H):
+            # held prompts as hex and as text, and integers that equal an answer: none is an answer field
+            rows.append({'episode': i, 'utterance_hex': ph(b, a), 'caption': '%d+%d=' % (a, b), 'repeats': a + b,
+                         'speaker': 'tutor'})
+        self.f.w('manifests/LISTEN/episodes.jsonl', jsonl(rows))
+        self.assertStatus('ADM-EXPO', common.PASS)
+        self.assertEqual(admitcheck.exposed_held_orbits(self.f.ctx(stage='roster')), set())
+
+    def test_non_feedback_stream_answers_in_any_field_fail(self):
+        a, b = H[5]
+        ans = truth(a, b)
+        self._nonfb_stream()
+        variants = [
+            # prompt then answer in one hex field (commuted orbit)
+            {'utterance_hex': (('%d+%d=' % (b, a)).encode() + ans + EOS).hex()},
+            # prompt and answer in two differently named fields: text prompt, hex answer
+            {'cue': '%d+%d=' % (a, b), 'reply_hex': ans.hex()},
+            # text answer next to a hex prompt
+            {'q': ph(a, b), 'a': ans.decode()},
+            # base64 answer
+            {'q': ph(b, a), 'target_b64': base64.b64encode(ans + EOS).decode()},
+            # byte-list encodings
+            {'tokens': list(('%d+%d=' % (a, b)).encode() + ans)},
+            # nested objects, answer with leading zero
+            {'input': {'text': '%d + %d' % (b, a)}, 'output': {'text': '0' + ans.decode()}},
+        ]
+        for v in variants:
+            self.f.w('manifests/LISTEN/episodes.jsonl', jsonl([dict(v, speaker='tutor')]))
+            self.assertStatus('ADM-EXPO', common.FAIL, contains='held answers exposed')
+        # a JSON mapping prompt -> answer, and a text file of solved prompts
+        self._nonfb_stream('manifests/CUES/*', 'priming')
+        (self.f.d / 'manifests/LISTEN/episodes.jsonl').unlink()
+        self.f.w('manifests/CUES/map.json', json.dumps({'%d+%d=' % (a, b): ans.decode()}).encode())
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='held answers exposed')
+        (self.f.d / 'manifests/CUES/map.json').unlink()
+        self.f.w('manifests/CUES/solved.txt', ('%d+%d=%s\n' % (b, a, ans.decode())).encode())
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='held answers exposed')
+        self.assertIn(tuple(sorted((str(a), str(b)), key=lambda x: (len(x), x))), admitcheck.exposed_held_orbits(
+            self.f.ctx(stage='roster')))
+
+    def test_embedded_json_filler_and_stream_order_leaks(self):
+        # Round-1 repair (verifier probes A5, A6, A4): a JSON-encoded string payload, the answer after non-digit filler
+        # or before the equation, and prompt then answer in consecutive records of one stream.
+        a, b = H[5]
+        ans = truth(a, b).decode()
+        self._nonfb_stream()
+        cases = [
+            [{'payload': json.dumps({'q': '%d+%d=' % (a, b), 'a': ans})}],
+            [{'payload_hex': json.dumps({'q': '%d+%d=' % (b, a), 'a': ans}).encode().hex()}],
+            [{'text': '%d+%d equals %s' % (a, b, ans)}],
+            [{'text': '%s = %d + %d' % (ans, b, a)}],
+            [{'utterance_hex': ph(b, a)}, {'utterance_hex': (ans.encode() + EOS).hex()}],
+            [{'line': 'Q: %d+%d=' % (a, b), 'n': 1}, {'line': 'A: %s' % ans, 'n': 2}],
+            [{'tokens': list(('%d+%d=' % (a, b)).encode())}, {'tokens': list(ans.encode() + EOS)}],
+        ]
+        for rows in cases:
+            self.f.w('manifests/LISTEN/episodes.jsonl', jsonl(rows))
+            self.assertStatus('ADM-EXPO', common.FAIL, contains='held answers exposed')
+        self.f.w('manifests/LISTEN/episodes.jsonl', jsonl(cases[4]))
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='(stream order)')
+        self.assertIn(tuple(sorted((str(a), str(b)), key=lambda x: (len(x), x))), admitcheck.exposed_held_orbits(
+            self.f.ctx(stage='roster')))
+        # the same shapes in a JSON list document and in a text file
+        (self.f.d / 'manifests/LISTEN/episodes.jsonl').unlink()
+        self._nonfb_stream('manifests/CUES/*', 'priming')
+        self.f.w('manifests/CUES/play.json', json.dumps(['%d+%d=' % (a, b), ans]).encode())
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='(stream order)')
+        (self.f.d / 'manifests/CUES/play.json').unlink()
+        self.f.w('manifests/CUES/play.txt', ('%d+%d=\n%s\n' % (b, a, ans)).encode())
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='(stream order)')
+
+    def test_stream_order_needs_the_same_field_and_the_answer(self):
+        (a, b), (c, d) = H[5], H[0]
+        self.assertNotEqual(a + b, c + d)
+        self.assertIn((1, 5), H)
+        self._nonfb_stream()
+        clean = [
+            # consecutive held prompts: the next value starts with an operand, not an answer
+            [{'utterance_hex': ph(b, a)}, {'utterance_hex': ph(a + b, 1)}, {'utterance_hex': ph(d, c)}],
+            # the answer digits sit in another field of the next record
+            [{'utterance_hex': ph(b, a), 'seq': '1'}, {'utterance_hex': ph(d, c), 'seq': str(a + b)}],
+            # a wrong answer follows
+            [{'utterance_hex': ph(b, a)}, {'utterance_hex': (str(a + b + 1).encode() + EOS).hex()}],
+            # the hex TEXT of the next utterance starts with the answer digit ('kite' is 6b697465): only the decoded
+            # bytes are heard, so this is no answer
+            [{'utterance_hex': ph(5, 1)}, {'utterance_hex': b'kite'.hex()}],
+        ]
+        for rows in clean:
+            self.f.w('manifests/LISTEN/episodes.jsonl', jsonl(rows))
+            self.assertStatus('ADM-EXPO', common.PASS)
+
+    def test_data_file_named_like_a_stream_must_be_declared(self):
+        # Round-1 repair (verifier probe A8): a stream-named data file outside manifests/ and results/.
+        self.f.w('data/warmup.jsonl', jsonl([{'prompt_hex': ph(1, 1)}]))
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='undeclared TAUGHT/stream file data/warmup.jsonl')
+        lock = self.f.read('ENDPOINT_LOCK.json')
+        lock['exposure_streams'].append({'path_glob': 'data/*.jsonl', 'feedback_bearing': False, 'phase': 'warmup'})
+        self.f.set_lock(lock)
+        self.assertStatus('ADM-EXPO', common.PASS)
+        a, b = H[2]
+        self.f.w('data/warmup.jsonl', jsonl([{'text': '%d+%d=%s' % (a, b, truth(a, b).decode())}]))
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='held answers exposed')
+
+    def test_wrong_answer_or_other_orbit_is_not_a_leak(self):
+        a, b = H[5]
+        self._nonfb_stream()
+        rows = [{'cue': '%d+%d=' % (a, b), 'reply_hex': str(a + b + 1).encode().hex()},
+                {'cue': '%d+%d=' % (9, 9), 'reply_hex': b'18'.hex()}]
+        self.f.w('manifests/LISTEN/episodes.jsonl', jsonl(rows))
+        self.assertStatus('ADM-EXPO', common.PASS)
+
+    def test_unreadable_or_undeclared_calibration_files_fail(self):
+        self._nonfb_stream('manifests/LISTEN/*', 'listening')
+        self.f.w('manifests/LISTEN/blob.bin', b'\xff\xfe\x00\x01')
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='cannot be content-checked')
+        (self.f.d / 'manifests/LISTEN/blob.bin').unlink()
+        self.f.w('results/admission/calibration_log.json', b'{"note": "warm-up"}')
+        self.assertStatus('ADM-EXPO', common.FAIL, contains='undeclared TAUGHT/stream file results/admission/'
+                                                            'calibration_log.json')
 
     def test_e2_uses_exact_prompts(self):
         lock = self.f.read('ENDPOINT_LOCK.json')

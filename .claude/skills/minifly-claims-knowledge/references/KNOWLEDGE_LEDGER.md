@@ -66,6 +66,11 @@ Do this only when you are the other agent family than the finding's author_agent
    UNVERIFIED review finding: do not write it.
 3. Append an activation row whose evidence names your script and its output. If what you find is smaller, append a
    narrowing row instead.
+   Commit it with your `Acting-Agent:` trailer and push it to your own namespace (origin/<your family>/*). KB-03 and the
+   `kb status` fold take the activator from that commit (`common.commit_family`, spec 20.15), never from the row's
+   author_agent or the git author: the trailer must name your family, an origin/<your family>/* branch must contain the
+   commit, and the row's author_agent must equal that family. An unpushed commit gives MISSING; a trailer that its own
+   namespace does not contain is identity_mismatch (FAIL), and the fold ignores the row (corpus S71, S73).
 4. Legacy sources (LEARNED-BANK included) enter as provisional and wait for an executing review recorded in KB/RETRO
    (spec 17) before anyone activates them.
 

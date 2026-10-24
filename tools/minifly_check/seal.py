@@ -341,11 +341,12 @@ def check_seal_02(ctx: common.Ctx) -> Result:
         if c_sc is None:
             problems.append('SEAL_COMMIT.json (current content) is not committed')
         elif fam:
-            br = lockcheck.in_namespace(ctx.git.remote_branches_containing(c_sc.sha), fam)
-            if not br:
-                problems.append('SEAL_COMMIT commit %s is in no origin/%s/* branch' % (c_sc.sha[:12], fam))
+            ok, why = common.commit_is_family(ctx.git, c_sc, fam)
+            if not ok:
+                # trailer AND namespace (SPEC 20.15): the reviewer family seals, never the author
+                problems.append('SEAL_COMMIT commit %s is not the reviewer family %s (%s)' % (c_sc.sha[:12], fam, why))
             else:
-                notes.append('SEAL_COMMIT %s on %s' % (c_sc.sha[:12], br[0]))
+                notes.append('SEAL_COMMIT %s' % why)
     if go is None:
         missing.append('no GO (%s)' % gnote)
     else:
@@ -370,6 +371,11 @@ def check_seal_02(ctx: common.Ctx) -> Result:
                                 % (c_sr.sha[:12], c_go.sha[:12]))
             if c_sc is not None and not lockcheck.strictly_before(ctx, c_sc, c_sr):
                 problems.append('SEAL_REVEAL commit %s does not follow SEAL_COMMIT %s' % (c_sr.sha[:12], c_sc.sha[:12]))
+            if fam:
+                # the reviewer holds the nonce, so the reveal is a reviewer step too (SPEC 10 step 4; 20.15)
+                ok, why = common.commit_is_family(ctx.git, c_sr, fam)
+                if not ok:
+                    problems.append('SEAL_REVEAL commit %s is not the reviewer family %s (%s)' % (c_sr.sha[:12], fam, why))
             notes.append('REVEAL %s' % c_sr.sha[:12])
     c_out = lockcheck.first_output_commit(ctx, 'official')
     outputs = official_outputs_exist(ctx)
@@ -768,8 +774,10 @@ def cmd_reveal(ctx: common.Ctx, args: Any) -> int:
     if c_sc is None:
         _err('seal reveal REFUSED: %s is not committed' % SEAL_COMMIT_REL)
         return common.EXIT_FAIL
-    if fam is None or not lockcheck.in_namespace(ctx.git.remote_branches_containing(c_sc.sha), fam):
-        _err('seal reveal REFUSED: SEAL_COMMIT commit %s is in no origin/%s/* branch' % (c_sc.sha[:12], fam))
+    sc_ok, sc_why = common.commit_is_family(ctx.git, c_sc, fam) if fam else (False, 'no reviewer family')
+    if not sc_ok:
+        _err('seal reveal REFUSED: SEAL_COMMIT commit %s is not the reviewer family %s (%s)' % (c_sc.sha[:12], fam,
+                                                                                              sc_why))
         return common.EXIT_FAIL
     c_go = go_commit(ctx, go)
     if c_go is None or not lockcheck.strictly_before(ctx, c_sc, c_go):

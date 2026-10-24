@@ -97,6 +97,10 @@ Rules:
   missing (world, arm) units under the identical lock shas, never rewrites a completed unit, and re-runs the unit
   launch chooses into `results/official_replay/` with a bit-identical canonical row digest (RUN-02 as amended, RUN-04).
   CLAIM.provenance records interrupted, resume_attempts, resumed_units and replay_units.
+- A recovered official attempt (recorded from its in-flight marker: exit -1, rusage lost) vouches for its rows only
+  through a replay of one of its own units (RUN-04 since 1.0.1, spec 20.17): run `launch --stage official --resume`
+  with the same command even when every unit is complete; launch then picks the replay unit among the recovered
+  attempt's units (corpus S78 fails without it, S79 passes).
 - Honest exits are reported exactly like passes: the generated CLAIM carries them, and nothing penalizes them.
 
 ## 4. Typed cycles
@@ -126,6 +130,8 @@ When the decision is continue, CYC-02 checks the kind's exit criterion:
   count as an open cycle, so skipping `cycle close` never saves a cycle: `launch` refuses another stage's attempt
   until the open cycle is closed, and the official stage needs every test attempt in a closed cycle (CYC-01).
   runlog/CYCLES.jsonl and ATTEMPTS.jsonl are append-only; never edit or delete a row.
+  CYC-04 (checker 1.0.1, spec 20.16) re-checks this at publish, so a row tidied after the official run still fails
+  (corpus S77).
 - End a cycle on a decision, never on a count: revise, stop and escalate are as legitimate as continue.
 - designs_tried_k is computed, never declared: the number of distinct (native_closure_sha, params_sha256) pairs over all
   outcome-bearing attempts and rows. The headline prints `best of k=<k>`.

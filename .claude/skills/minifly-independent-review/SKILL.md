@@ -32,6 +32,17 @@ description: "Use when you review a MiniFly delivery you did not author (require
   python3 -I -c 'import json,sys; print(json.load(open(sys.argv[1]))["author_agent"])' <dir>/ENDPOINT_LOCK.json
   ```
 
+- One function derives every identity (spec 20.15, checker 1.0.1): `common.commit_family` reads the commit's
+  `Acting-Agent:` trailer AND the origin/<family>/* branch that contains it. Trailer and namespace must agree: a
+  claude trailer on a commit that only origin/codex/* contains (or only a branch of another remote such as
+  upstream/claude/*) is identity_mismatch. REV-01 (your review commit and the author's lock commit), WIT-01 (your
+  attestation and SOURCE_LOCK ack commits), SEAL-02 and `seal reveal` (your SEAL_COMMIT and SEAL_REVEAL commits), KB-03 (activations),
+  GOV-REV and DEBT-02 (a repayment counts only when the repaying REVIEW.json was introduced by your commit) all use it.
+  So commit with your trailer and push to your namespace before anyone runs a gate on it.
+- Never fork or merge an author tip that carries a commit with YOUR family's trailer that you did not write. Once any
+  origin/<your family>/* branch contains such a commit, the namespaces can no longer tell it apart from yours: a fork
+  is enough, not only a merge (verifier probe C6, spec 20.15 residual). Before you branch from the author, list the
+  range with the command above and stop if a commit claims your family; record it as an incident instead.
 - A review by a same-family session or subagent is not a review. Record it as REVIEW_DEBT (section 9).
 - Work from what was handed to you, `<commit sha> <path>`, and read the artifacts at that sha. A message or summary from
   the author is an input to check, not evidence.

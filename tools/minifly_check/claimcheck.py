@@ -12,6 +12,7 @@ pointer files.
 from __future__ import annotations
 
 import gzip
+import html
 import json
 import math
 import re
@@ -1586,25 +1587,77 @@ def confirm_skeleton(text: str) -> str:
     return unicodedata.normalize('NFKC', t).translate(_CONFUSABLE_FOLD)
 
 
+_HTML_COMMENT_RE = re.compile(r'<!--.*?(?:-->|\Z)', re.S)
+_HTML_TAG_RE = re.compile(r'</?[A-Za-z][A-Za-z0-9:-]*(?:\s[^<>]*)?/?>')
+_MD_MARK_RE = re.compile(r'\*+|`+|~~|__')
+# Markdown inline links and images render as their text (round-1 repair, verifier probe D4: '[con](#)firmed',
+# 'con[]()firmed'); reference links '[text][ref]' likewise. Nested brackets in the text are not markdown links.
+_MD_INLINE_LINK_RE = re.compile(r'!?\[([^\[\]\n]*)\]\([^()\n]*(?:\([^()\n]*\)[^()\n]*)*\)')
+_MD_REF_LINK_RE = re.compile(r'!?\[([^\[\]\n]*)\]\[[^\[\]\n]*\]')
+
+
+def markup_skeleton(text: str, links: bool = False) -> str:
+    """Rendered text of markdown/HTML (SPEC 20.12; verifier: CLM-04 markup bypass): HTML entities decoded (repeatedly,
+    so &amp;#8203; counts too), HTML comments and tags removed, markdown emphasis and code markers (*, **, `, ~~,
+    __) removed. Single underscores stay: they are identifier characters (SEALED_CONFIRM) and never intraword
+    emphasis in markdown. With links=True, markdown links and images are also replaced by their bracketed text
+    (the link target is not rendered). Then confirm_skeleton (NFKC, format characters, combining marks,
+    confusables)."""
+    t = text
+    for _ in range(3):
+        u = html.unescape(t)
+        if u == t:
+            break
+        t = u
+    t = _HTML_COMMENT_RE.sub('', t)
+    t = _HTML_TAG_RE.sub('', t)
+    if links:
+        for _ in range(3):
+            u = _MD_REF_LINK_RE.sub(r'\1', _MD_INLINE_LINK_RE.sub(r'\1', t))
+            if u == t:
+                break
+            t = u
+    t = _MD_MARK_RE.sub('', t)
+    return confirm_skeleton(t)
+
+
+def _confirm_line_tokens(sk: str) -> List[str]:
+    out: List[str] = []
+    seen: Set[Tuple[int, int]] = set()
+    for m in CONFIRM_CORE_RE.finditer(sk):
+        a, b = m.start(), m.end()
+        while a > 0 and sk[a - 1] in _IDENT_CHARS:
+            a -= 1
+        while b < len(sk) and sk[b] in _IDENT_CHARS:
+            b += 1
+        if (a, b) in seen:
+            continue
+        seen.add((a, b))
+        tok = sk[a:b]
+        if tok in CONFIRM_ALLOWED_TOKENS:
+            continue
+        out.append(tok)
+    return out
+
+
 def confirm_tokens(text: str) -> List[Tuple[int, str]]:
-    """(line number, identifier token) of every confirm token in `text` that is not an allowed kit name."""
+    """(line number, identifier token) of every confirm token in `text` that is not an allowed kit name. The text is
+    read as rendered (markup_skeleton) first, once with markdown link targets kept (a target named *confirm* still
+    counts) and once with links rendered as their text ('[con](#)firmed' is 'confirmed'); a token the second
+    reading adds to a line is reported too. Shared with retro.py (SPEC 20.12)."""
     out: List[Tuple[int, str]] = []
-    for i, line in enumerate(text.splitlines(), 1):
-        sk = confirm_skeleton(line)
-        seen: Set[Tuple[int, int]] = set()
-        for m in CONFIRM_CORE_RE.finditer(sk):
-            a, b = m.start(), m.end()
-            while a > 0 and sk[a - 1] in _IDENT_CHARS:
-                a -= 1
-            while b < len(sk) and sk[b] in _IDENT_CHARS:
-                b += 1
-            if (a, b) in seen:
-                continue
-            seen.add((a, b))
-            tok = sk[a:b]
-            if tok in CONFIRM_ALLOWED_TOKENS:
-                continue
-            out.append((i, tok))
+    kept = markup_skeleton(text).splitlines()
+    rendered = markup_skeleton(text, links=True).splitlines()
+    for i, line in enumerate(kept, 1):
+        toks = _confirm_line_tokens(confirm_skeleton(line))
+        out.extend((i, t) for t in toks)
+        if i <= len(rendered) and rendered[i - 1] != line:
+            have = list(toks)
+            for t in _confirm_line_tokens(confirm_skeleton(rendered[i - 1])):
+                if t in have:
+                    have.remove(t)
+                else:
+                    out.append((i, t))
     return out
 
 
@@ -2081,6 +2134,574 @@ def check_clm_16(ctx: common.Ctx) -> Result:
         return Result('CLM-16', NOT_APPLICABLE, 'no numbers about prior work in the scanned texts')
     hits = prior_number_hits(docs)
     return _finish('CLM-16', hits, [], 'numbers about prior work cite an F-id or catalog id')
+
+
+# --------------------------------------------------------------------------------------
+# CLM-17: overclaim in agent-written text (SPEC 20.13; round 1, INC-HB1-C2, FM-22)
+# --------------------------------------------------------------------------------------
+# The generated fields (headline, primary_gate, level_earned) are checked by CLM-01/02/05. CLM-17 reads the text the
+# agent writes freely: the REPORT.md body below the headline, CLAIM.notes, findings_proposed[].claim and the
+# STATUS*/SUMMARY*/MEMO* (anywhere in the delivery) and NOTES*/ANALYSIS*/README*/RESULTS* (outside results/ and
+# manifests/) files of the delivery (JSON: string values, and each scalar as '<key words> is <value>').
+# After markup_skeleton (the CLM-04 normalisation; once as written and once with markdown links rendered as their
+# text) the text is cut into clauses. Key/value shapes are read the way the JSON path reads them: a 'key: value' or
+# 'key = value' segment of a line (and a short 'key - value' one, at most 3 words a side) and each data cell of a
+# markdown table row ('| level earned | E3 |', or a column header over a cell) also give the clause '<key> is
+# <value>' (key and value of at most 6 words each; in such a joined clause the conditional words when/whenever/iff/
+# once/provided/assuming also qualify). A clause FAILs when it
+#   (a) asserts an evidence level above level_earned: an E0..E4 token together with an achievement word or shape
+#       (reached, achieved, earned, attained, met, demonstrated, established, cleared, passed, qualifies, secured,
+#       obtained, delivered, supported, warranted, substantiated, proven, 'holds' at the end of a claim, 'is at' /
+#       'at E3', 'level is', 'counts as', 'E3-grade', 'is an E3 learner', 'the result is E3', 'E3 ... is the result'),
+#       or, in a joined clause, an affirmative value ('E3: yes', '| E3 | \u2713 |'), unless every achievement word is
+#       pass/clear and its subject is a process check named before it, with each level token qualifying a process
+#       noun (E3 design, E1 plumbing checks) in that subject or behind a preposition ('the roster gate for this E3 design passed', 'E1 plumbing checks passed', 'admission passed for
+#       the E3 design'), or
+#   (b) when primary_gate is not PASS, describes the primary, the decision rule or criterion, an endpoint, the
+#       objective or 'the result' as met, cleared, passed, satisfied, reached, achieved, fulfilled, successful, a
+#       success or 'holds' (joined: also an affirmative value, 'Primary endpoint: yes'); a clause about guards only fails when a guard it names (or, unnamed, any guard) did not
+#       PASS in VERDICT.
+# A clause with an explicit qualifier (attempted, target, goal, plan, aim, intend, toward(s), not, no, never, neither,
+# nor, n't, fail*, below, would, could, might, if, unless, cannot, without, require*, need*, must, should, expected,
+# predicted, whether, unearned, short of), or that opens with the bare form of an achievement verb (an imperative or
+# a plan: 'Goal: reach E3 next'), is not an assertion. Conformity phrases ('as planned', 'exactly as
+# predicted', 'as expected', 'in line with the plan', 'without exception') and a noun qualifier directly asserted as
+# reached ('the target was reached', 'goal met') are removed first, so they do not qualify the assertion. A sentence
+# that cites prior work (an F-id or catalog id plus a prior-work word) is skipped unless it also points at this
+# delivery (here, this delivery/run/design/report, now, currently); then it is cut at commas too and only its clauses
+# that cite nothing and name no prior work are judged.
+
+CLM17_LEVEL_RE = re.compile(r'(?<![A-Za-z0-9])E-?([0-4])(?![0-9])', re.I)
+CLM17_ACHIEVE_RE = re.compile(
+    r'\b(?:reach(?:ed|es|ing)?|achiev(?:e|ed|es|ing)|earn(?:ed|s|ing)?|attain(?:ed|s|ing|ment)?|met|meets?|'
+    r'meeting|demonstrat(?:e|ed|es|ing)|establish(?:ed|es|ing)?|clear(?:ed|s|ing)?|pass(?:ed|es|ing)?|'
+    r'qualif(?:y|ies|ied|ying)|secur(?:e|ed|es)|obtain(?:ed|s)?|deliver(?:ed|s)?|supported|warranted|substantiated|'
+    r'proven)\b'
+    r'|\bholds(?=\s*$|\s+(?:up|firm|true|for|on|across|in|at|here|everywhere|throughout|again)\b)'
+    r'|\b(?:is|are|was|were|sits?|stands?|performs?|operates?|now|lands?|landed)\s+at\b'
+    r'|\bat\s+(?:the\s+|an?\s+)?E-?[0-4]\b|\blevel\s+(?:is|was|=)\b|\b(?:counts?|counted|ranks?|ranked)\s+as\b'
+    r'|(?<![A-Za-z0-9])E-?[0-4][- ]?(?:grade|worthy|quality|class|calib(?:re|er)|strength)\b'
+    r'|\b(?:is|are|was|were|becomes?|became)\s+(?:now\s+)?(?:an?|the)\s+E-?[0-4](?:[- ]?level)?\s+'
+    r'(?:learner|model|system|fly|agent|composer|generali[sz]er)\b'
+    r'|\b(?:result|outcome)\s+(?:is|was|=)\s+(?:an?\s+|the\s+)?E-?[0-4]\b'
+    r'|(?<![A-Za-z0-9])E-?[0-4]\b[^.;]{0,60}?\b(?:is|was)\s+(?:now\s+)?the\s+(?:result|outcome)\b', re.I)
+CLM17_PASSVERB_RE = re.compile(r'^(?:pass(?:ed|es|ing)?|clear(?:ed|s|ing)?)$', re.I)
+CLM17_PROCESS_CHECK_RE = re.compile(
+    r'\b(?:lock|roster|admission|testbed|technical|rehearsal|plumbing|smoke|unit|schema|lint|integrity|preflight|'
+    r'launch|canary|review|dev|cycle[- ]?0)\s+(?:gates?|checks?|tests?|screens?|stages?|bundles?)\b'
+    r'|\b(?:lock|roster|admission|testbed|rehearsal|review|canary|lint|plumbing|schema|preflight|audit)\b', re.I)
+# a level token used attributively on a process noun ('the E3 design', 'E1 plumbing checks')
+CLM17_LEVEL_ATTR_RE = re.compile(r'^[- ]?(?:design|lock|plan|attempt|delivery|stage|gates?|plumbing|checks?|tests?|'
+                                 r'roster|admission|testbed|review|cycle|bundle|setup|protocol|spec|pipeline)\b', re.I)
+CLM17_LEVEL_PP_RE = re.compile(r'\b(?:for|of|on|in|under|behind)\s+(?:(?:the|this|that|our|its|an?)\s+)?$', re.I)
+CLM17_AFFIRM_RE = re.compile(r'\bis\s+(?:yes|y|true|done|ok|okay|complete|completed|achieved|reached|met)\s*$', re.I)
+CLM17_CHECKMARKS = ('\u2713', '\u2714', '\u2611', '\u2705')
+CLM17_QUALIFIER_RE = re.compile(
+    r"\b(?:attempt(?:ed|s|ing)?|target(?:ed|s|ing)?|goals?|plan(?:ned|s|ning)?|aim(?:ed|s|ing)?|intend(?:ed|s)?|"
+    r"towards?|not|no|never|neither|nor|fail(?:ed|s|ing|ure)?|below|would|could|might|if|unless|cannot|without|"
+    r"requir(?:e|es|ed|ing)|need(?:ed|s)?|must|should|expect(?:ed|s)?|predict(?:ed|s|ion)?|whether|unearned|"
+    r"short\s+of)\b|n[’']t\b", re.I)
+CLM17_COND_RE = re.compile(r'\b(?:when|whenever|iff|once|provided|assuming)\b', re.I)
+# a clause that opens with the bare form of an achievement verb is an imperative or a plan ('Goal: reach E3 next')
+CLM17_IMPERATIVE_RE = re.compile(r'^\s*(?:to\s+)?(?:reach|achieve|earn|attain|meet|demonstrate|establish|clear|pass|'
+                                 r'qualify|secure|obtain|deliver)\b', re.I)
+CLM17_NOUN_ASSERTED_RE = re.compile(
+    r'\b(?:target|goal|plan|aim)s?\s+(?:(?:is|was|were|are|has\s+been|have\s+been|got|gets)\s+)?(?:fully\s+|now\s+)?'
+    r'(?:reached|met|achieved|attained|cleared|passed|satisfied|hit|fulfill?ed)\b', re.I)
+CLM17_CONFORMITY_RE = re.compile(
+    r'\b(?:exactly\s+|just\s+|precisely\s+)?as\s+(?:was\s+|had\s+been\s+|we\s+)?(?:planned|expected|predicted|'
+    r'intended|hoped|targeted|designed|anticipated|forecast|projected|registered|locked|aimed)\b'
+    r'|\b(?:in\s+line|consistent)\s+with\s+(?:the\s+|our\s+)?(?:plan|prediction|predictions|expectations?|forecasts?|'
+    r'target|goal)s?\b|\baccording\s+to\s+(?:the\s+)?plan\b|\bon\s+target\b'
+    r'|\bwithout\s+(?:any\s+)?(?:exception|caveats?|qualifications?|issues?|problems?|reservations?)\b', re.I)
+CLM17_GATE_SUBJECT_RE = re.compile(
+    r'\b(?:primary|(?:decision\s+)?rules?|criteri(?:on|a)|endpoints?|objective|the\s+result|the\s+outcome)\b', re.I)
+CLM17_GUARD_RE = re.compile(r'\bguards?\b', re.I)
+CLM17_MET_RE = re.compile(
+    r'\b(?:met|meets?|clear(?:ed|s)?|pass(?:ed|es)?|satisf(?:y|ies|ied)|reach(?:ed|es)?|successful(?:ly)?|'
+    r'succeed(?:ed|s)?|achiev(?:ed|es)|fulfill?(?:ed|s)?|holds)\b'
+    r'|\bsuccess\b(?!\s+(?:criteri|condition|threshold|rule|definition|bar\b))', re.I)
+CLM17_SPLIT_RE = re.compile(
+    r'[;:|()\[\]{}]|\s[-–—]+\s|,?\s+\b(?:but|while|whereas|although|though|however|yet|because|since|so|'
+    r'and|with|whilst|which)\b', re.I)
+CLM17_PRESENT_RE = re.compile(
+    r'\b(?:here|now|currently|today|this\s+(?:delivery|run|design|report|cycle|learner|attempt|work|study))\b', re.I)
+# key/value segments: 'key: value' or 'key = value' inside one line segment
+CLM17_KV_SEG_SPLIT_RE = re.compile(r'[;|]|,\s')
+CLM17_KV_DASH_RE = re.compile(r'^\s*(?:[-*+>]\s+|\d+[.)]\s+|#{1,6}\s+)*(?P<k>[^:=]{1,40}?)\s+[-–—]+\s+(?P<v>[^:=]{1,40}?)'
+                              r'\s*[.!?]?\s*$')
+CLM17_KV_DASH_MAX_WORDS = 3
+CLM17_KV_RE = re.compile(r'^\s*(?:[-*+>]\s*|\d+[.)]\s+|#{1,6}\s+)*(?P<k>[^:=]{1,80}?)\s*(?::|(?<![<>!=])=(?!=))\s*'
+                         r'(?P<v>[^:=]{1,120}?)\s*[.!?]?\s*$')
+CLM17_WORD_RE = re.compile(r'[A-Za-z0-9][A-Za-z0-9./%+-]*')
+CLM17_TABLE_SEP_RE = re.compile(r'^\s*\|?\s*:?-{2,}:?\s*(?:\|\s*:?-{2,}:?\s*)*\|?\s*$')
+CLM17_KV_MAX_WORDS = 6
+GUARD_KIND_WORDS = {'old_drop': ('drop', 'retention', 'forgetting', 'retained'),
+                    'old_acq': ('acq', 'acquisition', 'acquired')}
+
+
+def _agent_words(text: str, links: bool = False) -> str:
+    """markup_skeleton plus identifier splitting (snake_case and CamelCase become words) for clause matching."""
+    t = markup_skeleton(text, links=links)
+    t = re.sub(r'(?<=[a-z0-9])(?=[A-Z][a-z])', ' ', t)
+    return t.replace('_', ' ')
+
+
+def _n_words(t: str) -> int:
+    return len(CLM17_WORD_RE.findall(t))
+
+
+def _cites_prior(t: str) -> bool:
+    return bool(CITATION_RE.search(t) or PRIOR_WORK_RE.search(t))
+
+
+def _clauses_of(sent: str) -> List[str]:
+    """Clauses of one sentence. A sentence citing prior work is skipped, unless it also points at this delivery: then
+    it is cut at commas too and only the clauses that cite nothing and name no prior work are kept."""
+    cites = CITATION_RE.search(sent) and PRIOR_WORK_RE.search(sent)
+    if cites and not CLM17_PRESENT_RE.search(sent):
+        return []
+    out = []
+    for cl in CLM17_SPLIT_RE.split(sent):
+        for part in (re.split(r',\s*', cl or '') if cites else [cl]):
+            part = (part or '').strip(' ,.;')
+            if part and not (cites and _cites_prior(part)):
+                out.append(part)
+    return out
+
+
+def _kv_clause(key: str, value: str) -> Optional[str]:
+    key, value = key.strip(' *_.,'), value.strip(' *_.,')
+    if value in CLM17_CHECKMARKS:
+        value = 'yes'
+    if not key or not value or _n_words(key) == 0 or _n_words(value) == 0:
+        return None
+    if _n_words(key) > CLM17_KV_MAX_WORDS or _n_words(value) > CLM17_KV_MAX_WORDS:
+        return None
+    return '%s is %s' % (key, value)
+
+
+def _table_cells(line: str) -> List[str]:
+    s = line.strip()
+    if s.startswith('|'):
+        s = s[1:]
+    if s.endswith('|'):
+        s = s[:-1]
+    return [c.strip() for c in s.split('|')]
+
+
+def _kv_clauses(text: str) -> List[Tuple[int, str]]:
+    """(line, '<key> is <value>') for the key/value shapes of a normalised text: 'key: value' / 'key = value'
+    segments of a line, and markdown table rows (first cell as key; with a header row, each column header as the key
+    of its cell too)."""
+    out: List[Tuple[int, str]] = []
+    lines = text.splitlines()
+    header: Optional[List[str]] = None
+    in_table = False
+    for i, raw in enumerate(lines):
+        ln = i + 1
+        s = raw.strip()
+        if s.startswith('|') and s.count('|') >= 2:
+            if CLM17_TABLE_SEP_RE.match(s):
+                continue
+            cells = _table_cells(s)
+            if not in_table:
+                in_table = True
+                nxt = lines[i + 1].strip() if i + 1 < len(lines) else ''
+                if CLM17_TABLE_SEP_RE.match(nxt) and '-' in nxt:
+                    header = cells
+                    continue
+                header = None
+            for j in range(1, len(cells)):
+                for k in ([cells[0]] + ([header[j]] if header and j < len(header) else [])):
+                    cl = _kv_clause(k, cells[j])
+                    if cl:
+                        out.append((ln, cl))
+            continue
+        in_table = False
+        header = None
+        if not s:
+            continue
+        for sent in re.split(r'(?<=[.!?])\s+', s):
+            for seg in CLM17_KV_SEG_SPLIT_RE.split(sent):
+                m = CLM17_KV_RE.match(seg or '')
+                if m:
+                    cl = _kv_clause(m.group('k'), m.group('v'))
+                    if cl:
+                        out.append((ln, cl))
+                    continue
+                m = CLM17_KV_DASH_RE.match(seg or '')
+                if (m and len(re.findall(r'\s[-–—]+\s', seg)) == 1
+                        and _n_words(m.group('k')) <= CLM17_KV_DASH_MAX_WORDS
+                        and _n_words(m.group('v')) <= CLM17_KV_DASH_MAX_WORDS):
+                    cl = _kv_clause(m.group('k'), m.group('v'))
+                    if cl:
+                        out.append((ln, cl))
+    return out
+
+
+def _is_kv_line(s: str) -> bool:
+    s = s.strip()
+    if not s or s.startswith('|'):
+        return False
+    m = CLM17_KV_RE.match(s)
+    return bool(m and 0 < _n_words(m.group('k')) <= CLM17_KV_MAX_WORDS and _n_words(m.group('v')) > 0)
+
+
+def _kv_blocks_standalone(text: str) -> str:
+    """The text with every line of a run of two or more consecutive 'key: value' lines (a STATUS-style block) marked
+    as a single-line unit, so text_units does not join one record with the next into one sentence. Line numbers are
+    kept."""
+    lines = text.split('\n')
+    kv = [_is_kv_line(x) for x in lines]
+    out = []
+    for i, x in enumerate(lines):
+        if kv[i] and ((i > 0 and kv[i - 1]) or (i + 1 < len(lines) and kv[i + 1])):
+            out.append('| ' + x.strip())
+        else:
+            out.append(x)
+    return '\n'.join(out)
+
+
+def overclaim_clauses(text: str) -> List[Tuple[int, str, bool]]:
+    """(line, clause, joined) of every clause of one text, after normalisation (as written, and with markdown links
+    rendered as their text); joined marks a '<key> is <value>' clause built from a key/value shape. Sentences citing
+    prior work are skipped (see _clauses_of)."""
+    out: List[Tuple[int, str, bool]] = []
+    seen: Set[Tuple[int, str]] = set()
+    for links in (False, True):
+        words = _agent_words(text, links=links)
+        found: List[Tuple[int, str, bool]] = []
+        for ln, sent, _head in text_units(_kv_blocks_standalone(words), False):
+            found.extend((ln, cl, False) for cl in _clauses_of(sent))
+        for ln, cl in _kv_clauses(words):
+            if CITATION_RE.search(cl) and PRIOR_WORK_RE.search(cl):
+                continue
+            found.append((ln, cl, True))
+        for ln, cl, joined in found:
+            if (ln, cl) not in seen:
+                seen.add((ln, cl))
+                out.append((ln, cl, joined))
+    return out
+
+
+def _qualified(clause: str, joined: bool = False) -> bool:
+    """True when the clause carries an explicit qualifier. Conformity phrases ('as planned', 'without exception') and
+    a noun qualifier asserted as reached ('the E3 target was reached', 'goal met') are removed first, so they do not
+    qualify their own assertion. In a joined key/value clause conditional words (when, iff, once, ...) qualify too:
+    'Decision rule: W passes when LCB > 0' defines the rule."""
+    t = CLM17_NOUN_ASSERTED_RE.sub(' ', CLM17_CONFORMITY_RE.sub(' ', clause))
+    return bool(CLM17_QUALIFIER_RE.search(t) or CLM17_IMPERATIVE_RE.match(t)
+                or (joined and CLM17_COND_RE.search(t)))
+
+
+def _level_asserted(cl: str, joined: bool = False) -> bool:
+    """CLM-17 (a) shape: an achievement word or shape (in a joined key/value clause also an affirmative value: 'E3:
+    yes'), unless every achievement word is pass/clear and its subject is a process check named before it ('the E3
+    lock gate passed', 'admission passed for the E3 design'): each level token then qualifies a process noun (E3
+    design, E1 plumbing checks, E3 lock) and sits in that subject or after a preposition (for/of/on/in/under) behind
+    the verb, never as its object ('the lock passed E3', 'the review passed W for E3' still assert)."""
+    if joined and CLM17_AFFIRM_RE.search(cl):
+        return True
+    ms = list(CLM17_ACHIEVE_RE.finditer(cl))
+    if not ms:
+        return False
+    if all(CLM17_PASSVERB_RE.match(m.group(0)) for m in ms):
+        first = ms[0].start()
+        if CLM17_PROCESS_CHECK_RE.search(cl[:first]) and all(
+                CLM17_LEVEL_ATTR_RE.match(cl[m.end():])
+                and (m.start() < first or CLM17_LEVEL_PP_RE.search(cl[first:m.start()][-24:]))
+                for m in CLM17_LEVEL_RE.finditer(cl)):
+            return False
+    return True
+
+
+def _guard_names(lock: Optional[dict]) -> Dict[str, Tuple[str, ...]]:
+    out: Dict[str, Tuple[str, ...]] = {}
+    for g in ((lock or {}).get('guards') or []):
+        if isinstance(g, dict) and _s(g.get('id')):
+            words = (g['id'].replace('_', ' ').lower(),) + GUARD_KIND_WORDS.get(str(g.get('kind')), ())
+            out[g['id']] = words
+    return out
+
+
+def overclaim_problems(docs: Sequence[dict], level_earned: Any, primary_gate: Any, guards: Dict[str, Any],
+                       lock: Optional[dict]) -> List[str]:
+    earned = int(level_earned[1]) if isinstance(level_earned, str) and re.fullmatch(r'E[0-4]', level_earned) else -1
+    names = _guard_names(lock)
+    out: List[str] = []
+    for d in docs:
+        for ln, cl, joined in overclaim_clauses(d['text']):
+            joined = joined or bool(d.get('joined'))
+            if _qualified(cl, joined):
+                continue
+            levels = [int(m.group(1)) for m in CLM17_LEVEL_RE.finditer(cl)]
+            if levels and max(levels) > earned and _level_asserted(cl, joined):
+                out.append('%s:%d asserts E%d above level_earned %s: %r' % (d['label'], ln, max(levels),
+                                                                           level_earned, cl[:140]))
+                continue
+            if primary_gate == 'PASS' or not (CLM17_MET_RE.search(cl) or (joined and CLM17_AFFIRM_RE.search(cl))):
+                continue
+            if CLM17_GATE_SUBJECT_RE.search(cl):
+                out.append('%s:%d describes the primary/rule/endpoint/result as met while primary_gate is %s: %r'
+                           % (d['label'], ln, primary_gate, cl[:140]))
+                continue
+            if CLM17_GUARD_RE.search(cl):
+                low = cl.lower()
+                named = [gid for gid, words in names.items() if any(re.search(r'\b%s\b' % re.escape(w), low)
+                                                                    for w in words)]
+                pool = named or sorted(names) or ['<any guard>']
+                bad = [gid for gid in pool if str(guards.get(gid)) != 'PASS']
+                if bad:
+                    out.append('%s:%d describes guard(s) %s as met; VERDICT says %s (primary_gate %s): %r'
+                               % (d['label'], ln, ', '.join(pool), ', '.join('%s %s' % (g, guards.get(g)) for g in bad),
+                                  primary_gate, cl[:140]))
+    return out
+
+
+def _json_clause_docs(obj: Any, label: str) -> List[dict]:
+    """JSON agent text: each string value as text, and each scalar leaf as the clause '<key words> is <value>'
+    ('... is not true' for false)."""
+    docs: List[dict] = []
+
+    def joined(lab: str, text: str) -> dict:
+        d = _doc(lab, text, False)
+        d['joined'] = True   # a '<key> is <value>' clause: read like a markdown key/value line
+        return d
+
+    def walk(o: Any, path: List[str]):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                walk(v, path + [str(k)])
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, path)
+        else:
+            words = ' '.join(path[-2:]) if path else ''
+            lab = '%s#/%s' % (label, '/'.join(path))
+            if isinstance(o, str):
+                docs.append(_doc(lab, o, False))
+                if words:
+                    docs.append(joined(lab, '%s is %s.' % (words, o)))
+            elif isinstance(o, bool):
+                docs.append(joined(lab, '%s is %s.' % (words, 'true' if o else 'not true')))
+            elif o is not None:
+                docs.append(joined(lab, '%s is %s.' % (words, o)))
+    walk(obj, [])
+    return docs
+
+
+AGENT_FILE_PREFIXES = ('STATUS', 'SUMMARY', 'MEMO')
+# Round-1 repair (verifier: scope): agent notes and analyses inside the delivery, outside the generated results/
+# and the learner's manifests/.
+AGENT_NOTE_PREFIXES = ('NOTES', 'NOTE_', 'ANALYSIS', 'README', 'RESULTS')
+
+
+def _agent_files(ctx: common.Ctx) -> List[str]:
+    out = []
+    for rel in ctx.delivery_files():
+        if rel.startswith(('checks/', 'runlog/', 'review/')):
+            continue
+        base = rel.rsplit('/', 1)[-1]
+        if not base.lower().endswith(('.md', '.txt', '.json')):
+            continue
+        up = base.upper()
+        if up.startswith(AGENT_FILE_PREFIXES) or (up.startswith(AGENT_NOTE_PREFIXES)
+                                                   and not rel.startswith(('results/', 'manifests/'))):
+            out.append(rel)
+    return out
+
+
+def _agent_file_docs(path: Path, label: str) -> List[dict]:
+    raw = path.read_bytes()
+    if path.name.lower().endswith('.json'):
+        try:
+            return _json_clause_docs(common.loads_strict(raw), label)
+        except InvalidInput:
+            pass
+    return [_doc(label, raw.decode('utf-8', 'replace'), False)]
+
+
+def _report_body(text: str) -> str:
+    lines = text.splitlines()
+    for i, ln in enumerate(lines):
+        if ln.strip():
+            return '\n'.join(lines[i + 1:])
+    return ''
+
+
+def agent_text_docs(ctx: common.Ctx, delivery: Optional[Path] = None, claim: Optional[dict] = None) -> List[dict]:
+    """The agent-written texts CLM-17 reads (REPORT body, CLAIM notes and findings claims, STATUS/SUMMARY/MEMO)."""
+    docs: List[dict] = []
+    if isinstance(claim, dict):
+        if _s(claim.get('notes')):
+            docs.append(_doc('CLAIM.json#notes', claim['notes'], False))
+        for i, f in enumerate(claim.get('findings_proposed') or []):
+            if isinstance(f, dict) and _s(f.get('claim')):
+                docs.append(_doc('CLAIM.json#findings_proposed/%d/claim' % i, f['claim'], False))
+    if ctx.path('REPORT.md').is_file():
+        docs.append(_doc('REPORT.md', _report_body(ctx.path('REPORT.md').read_text('utf-8', 'replace')), False))
+    for rel in _agent_files(ctx):
+        docs.extend(_agent_file_docs(ctx.path(rel), rel))
+    return docs
+
+
+def _claim_basis(ctx: common.Ctx) -> Tuple[Any, Any, Dict[str, Any], str]:
+    """(level_earned, primary_gate, VERDICT guards, basis): the fresh regeneration when it can be computed, else the
+    committed CLAIM.json."""
+    try:
+        fresh, _x = generate_claim(ctx, None)
+        guards = ((inputs(ctx).get('verdict') or {}).get('guards')) or {}
+        return fresh.get('level_earned'), fresh.get('primary_gate'), guards, 'fresh claim'
+    except (MissingInput, InvalidInput) as e:
+        c = _read_claim(ctx)
+        return c.get('level_earned'), c.get('primary_gate'), {}, 'committed CLAIM.json (regeneration: %s)' % e
+
+
+DELIVERY_REF_RE = re.compile(r'(?<![A-Za-z0-9_.-])([A-Za-z0-9][A-Za-z0-9_.-]*_(?:design|dev)_v[0-9]+_[0-9]{8})'
+                             r'(?![A-Za-z0-9_])')
+
+
+def _delivery_basis(d: Path) -> Tuple[dict, Optional[dict], dict]:
+    """(CLAIM, ENDPOINT_LOCK, VERDICT) of a v1 delivery directory, for lint."""
+    claim = common.load_json_file(d / 'CLAIM.json')
+    lock = common.load_json_file(d / 'ENDPOINT_LOCK.json')
+    vp = d / 'results/official/VERDICT.json'
+    verdict = common.load_json_file(vp) if vp.is_file() else {}
+    if not isinstance(claim, dict):
+        raise InvalidInput('%s/CLAIM.json is not an object' % d.name)
+    return claim, (lock if isinstance(lock, dict) else None), (verdict if isinstance(verdict, dict) else {})
+
+
+def _named_delivery_texts(ctx: common.Ctx, text: str) -> Dict[str, str]:
+    """For a file outside every delivery (round-1 repair, verifier: project status documents): the parts of its text
+    that name exactly one v1 delivery of this repo, per delivery, with the name replaced by 'this delivery'. Prose
+    is taken per sentence (a sentence naming several deliveries per clause); a table row is taken with its header."""
+    root = Path(ctx.repo_root)
+    known: Dict[str, bool] = {}
+
+    def is_del(name: str) -> bool:
+        if name not in known:
+            d = root / name
+            known[name] = (d / 'CLAIM.json').is_file() and common.is_v1_delivery(d)
+        return known[name]
+
+    def names(t: str) -> List[str]:
+        return sorted(set(n for n in DELIVERY_REF_RE.findall(t) if is_del(n)))
+
+    out: Dict[str, List[str]] = {}
+
+    def put(name: str, part: str) -> None:
+        out.setdefault(name, []).append(DELIVERY_REF_RE.sub(lambda m: 'this delivery' if m.group(1) == name
+                                                             else m.group(1), part))
+    lines = text.splitlines()
+    i = 0
+    while i < len(lines):
+        s = lines[i].strip()
+        if s.startswith('|') and s.count('|') >= 2:
+            j = i
+            while j < len(lines) and lines[j].strip().startswith('|'):
+                j += 1
+            block = [x.strip() for x in lines[i:j]]
+            head = block[:2] if len(block) > 1 and CLM17_TABLE_SEP_RE.match(block[1]) else []
+            for row in block[len(head):]:
+                for n in names(row):
+                    put(n, '\n'.join(head + [row]))
+            i = j
+            continue
+        para = []
+        while i < len(lines) and lines[i].strip() and not lines[i].strip().startswith('|'):
+            para.append(lines[i].strip())
+            i += 1
+        if not para:
+            i += 1
+            continue
+        for sent in re.split(r'(?<=[.!?])\s+', ' '.join(para)):
+            ns = names(sent)
+            if len(ns) == 1:
+                put(ns[0], sent)
+            elif len(ns) > 1:
+                for cl in re.split(r',\s*', sent):
+                    for part in CLM17_SPLIT_RE.split(cl):
+                        pn = names(part or '')
+                        if len(pn) == 1:
+                            put(pn[0], part)
+    return dict((k, '\n\n'.join(v)) for k, v in out.items())
+
+
+def _lint_overclaims(ctx: common.Ctx) -> Tuple[List[str], int, List[str]]:
+    """Lint mode: each file is judged against the CLAIM.json of the v1 delivery directory that contains it; a file
+    outside every delivery is judged, part by part, against each delivery it names (_named_delivery_texts)."""
+    probs: List[str] = []
+    skipped: List[str] = []
+    n = 0
+    for p in [Path(x) for x in ctx.options.get('lint_files') or []]:
+        d = next((a for a in p.resolve().parents if (a / 'CLAIM.json').is_file() and (a / 'ENDPOINT_LOCK.json').is_file()),
+                 None)
+        label = _label_of(ctx, p)
+        if d is None:
+            parts = _named_delivery_texts(ctx, p.read_text('utf-8', 'replace'))
+            if not parts:
+                skipped.append(label)
+                continue
+            for name in sorted(parts):
+                try:
+                    claim, lock, verdict = _delivery_basis(Path(ctx.repo_root) / name)
+                except (MissingInput, InvalidInput) as e:
+                    probs.append('%s: the claim of %s cannot be read (%s)' % (label, name, e))
+                    continue
+                n += 1
+                probs.extend(overclaim_problems([_doc('%s (about %s)' % (label, name), parts[name], False)],
+                                                claim.get('level_earned'), claim.get('primary_gate'),
+                                                verdict.get('guards') or {}, lock))
+            continue
+        try:
+            claim, lock, verdict = _delivery_basis(d)
+        except (MissingInput, InvalidInput) as e:
+            probs.append('%s: its delivery claim cannot be read (%s)' % (label, e))
+            continue
+        if p.name == 'CLAIM.json':
+            docs = []
+            if _s(claim.get('notes')):
+                docs.append(_doc(label + '#notes', claim['notes'], False))
+            for i, f in enumerate(claim.get('findings_proposed') or []):
+                if isinstance(f, dict) and _s(f.get('claim')):
+                    docs.append(_doc('%s#findings_proposed/%d/claim' % (label, i), f['claim'], False))
+        elif p.name == 'REPORT.md':
+            docs = [_doc(label, _report_body(p.read_text('utf-8', 'replace')), False)]
+        else:
+            docs = _agent_file_docs(p, label)
+        n += len(docs)
+        probs.extend(overclaim_problems(docs, claim.get('level_earned'), claim.get('primary_gate'),
+                                        verdict.get('guards') or {}, lock))
+    return probs, n, skipped
+
+
+@check('CLM-17')
+def check_clm_17(ctx: common.Ctx) -> Result:
+    if _lint_mode(ctx):
+        _lint_missing(ctx)
+        probs, n, skipped = _lint_overclaims(ctx)
+        if n == 0 and not probs:
+            return Result('CLM-17', NOT_APPLICABLE, 'no lint input inside, or naming, a v1 delivery with CLAIM.json '
+                          '(%s)' % (', '.join(skipped[:5]) or 'none'))
+        return _finish('CLM-17', probs, [], 'no clause asserts a level above level_earned or a met rule on a non-PASS '
+                       'primary (%d texts%s)' % (n, '; outside and naming no delivery: %s' % ', '.join(skipped[:5])
+                                                 if skipped else ''))
+    level, gate, guards, basis = _claim_basis(ctx)
+    claim = None
+    if ctx.path('CLAIM.json').is_file():
+        try:
+            claim = _read_claim(ctx)
+        except (MissingInput, InvalidInput):
+            claim = None
+    docs = agent_text_docs(ctx, claim=claim)
+    if not any(d['text'].strip() for d in docs):
+        return Result('CLM-17', NOT_APPLICABLE, 'no agent-written text (REPORT body, CLAIM notes or findings claims, '
+                      'STATUS/SUMMARY/MEMO)')
+    probs = overclaim_problems(docs, level, gate, guards, _lock_or_none(ctx))
+    return _finish('CLM-17', probs, [], 'agent-written text asserts no level above %s and no met rule, guard or '
+                   'endpoint beyond VERDICT (primary_gate %s; %d texts; basis %s)' % (level, gate, len(docs), basis))
 
 
 # --------------------------------------------------------------------------------------

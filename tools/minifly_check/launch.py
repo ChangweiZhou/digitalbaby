@@ -35,7 +35,7 @@ import sys
 import time
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 import common
 from common import (FAIL, MISSING, NOT_APPLICABLE, PASS, WARN, InvalidInput, MissingInput, Result, check)
@@ -789,6 +789,8 @@ def replay_analysis(ctx: common.Ctx) -> dict:
             problems.append('%s rows of attempt %r: only a resume attempt (launch --resume) writes them'
                             % (common.REPLAY_OUTPUTS, aid))
     completed: Dict[str, str] = {}   # unit -> original digest
+    owner: Dict[str, Any] = {}       # unit -> the official attempt whose rows completed it
+    vouched: Set[str] = set()        # units replayed with the original digest
     for a in official:
         aid = a.get('attempt_id')
         if aid in resume_ids:
@@ -813,12 +815,33 @@ def replay_analysis(ctx: common.Ctx) -> dict:
                 if got != completed[u]:
                     problems.append('resume attempt %s replay of unit %s has canonical digest %s, the original %s'
                                     % (aid, u, got[:12], completed[u][:12]))
+                else:
+                    vouched.add(u)
             replayed[aid] = sorted(reps)
         rec = _recorded_units(a) or {}
         for u, rows in rows_by.get(aid, {}).items():
             completed.setdefault(u, (rec.get(u) or {}).get('digest') or _row_digest(rows))
+            owner.setdefault(u, aid)
+    # SPEC 20.17 (round 1): a recovered in-flight official attempt (its launch process died: exit code and rusage are
+    # lost) vouches for its rows only through a determinism replay: at least one unit it completed must be re-run
+    # by a later resume attempt with the identical canonical digest
+    recovered = [a.get('attempt_id') for a in official if attempt_recovered(a)]
+    unvouched: Dict[str, List[str]] = {}
+    for rid in recovered:
+        mine = sorted(u for u, o in owner.items() if o == rid)
+        if mine and not (set(mine) & vouched):
+            unvouched[str(rid)] = mine
+            problems.append('recovered official attempt %s (rusage lost) completed %d unit(s) but none was replayed with '
+                            'an identical digest (run launch --stage official --resume, which replays one of them)'
+                            % (rid, len(mine)))
     return {'resumes': sorted(resume_ids), 'replayed': replayed, 'problems': problems,
-            'replay_attempts': sorted(str(x) for x in replay)}
+            'replay_attempts': sorted(str(x) for x in replay), 'recovered': [str(x) for x in recovered],
+            'recovered_unvouched': unvouched}
+
+
+def attempt_recovered(a: dict) -> bool:
+    """An ATTEMPTS row that launch reconstructed from an in-flight marker (rusage_lost / recovered)."""
+    return bool(a.get('rusage_lost')) or bool(a.get('recovered'))
 
 
 # --------------------------------------------------------------------------------------
@@ -1069,7 +1092,10 @@ def cmd_launch(args: Any) -> int:
                      % '\n  '.join((ra['pending_problems'] + ra['problems'])[:20]))
                 return common.EXIT_FAIL
             done = sorted(ra['completed'])
-            pick = secrets.SystemRandom().choice(done)
+            # a recovered attempt's rows are vouched for only by a replay of one of its own units (SPEC 20.17): pick
+            # among those while any recovered attempt is still unvouched
+            unv = sorted(set(u for us in replay_analysis(ctx)['recovered_unvouched'].values() for u in us) & set(done))
+            pick = secrets.SystemRandom().choice(unv or done)
             resume_fields = {'resume_of': ra['official'][-1], 'replay_requested': [pick.split('|', 1)]}
             resume_env = {'MINIFLY_RESUME_OF': ra['official'][-1],
                           'MINIFLY_COMPLETED_UNITS': json.dumps([u.split('|', 1) for u in done]),
@@ -1405,8 +1431,9 @@ def check_run_04(ctx: common.Ctx) -> Result:
     arm) unit completed by an earlier official attempt (every unit launch chose) into results/official_replay/, and
     each replayed unit's canonical row digest (attempt_id excluded) equals the original's."""
     ra = replay_analysis(ctx)
-    if not ra['resumes'] and not ra['replay_attempts']:
-        return Result('RUN-04', NOT_APPLICABLE, 'no resumed official attempt and no %s rows' % common.REPLAY_OUTPUTS)
+    if not ra['resumes'] and not ra['replay_attempts'] and not ra['recovered']:
+        return Result('RUN-04', NOT_APPLICABLE, 'no resumed or recovered official attempt and no %s rows'
+                      % common.REPLAY_OUTPUTS)
     if ra['problems']:
         return Result('RUN-04', FAIL, '; '.join(ra['problems'][:8]), evidence=ra['problems'][:40], data=ra)
     return Result('RUN-04', PASS, '%d resume attempt(s); replayed units %s reproduce the original rows bit for bit'
@@ -1635,6 +1662,21 @@ def check_cyc_01(ctx: common.Ctx) -> Result:
     return Result('CYC-01', PASS, '%d test cycles (%d closed%s) <= cap %s (%s); %d attempts in closed cycles' % (
         n, len(closed), ', open: %s' % '/'.join(open_test) if open_test else '', cap, basis, len(acc['covered'])),
         data={'closed': len(closed), 'open': open_test, 'cap': cap})
+
+
+@check('CYC-04')
+def check_cyc_04(ctx: common.Ctx) -> Result:
+    """runlog/ATTEMPTS.jsonl and runlog/CYCLES.jsonl are append-only at publish too (SPEC 20.16, round 1): every row
+    any commit recorded survives unchanged in every later commit and in the worktree (CYC-01's append-only part
+    ran only up to the official gate, so an earlier ATTEMPTS row edited after the run reached publish unseen). A
+    shallow clone gives MISSING."""
+    problems = runlog_append_only_problems(ctx)
+    if problems:
+        return Result('CYC-04', FAIL, 'runlog is not append-only: %s' % '; '.join(problems[:6]), evidence=problems[:40])
+    n = {rel: len(_raw_lines(ctx.path(rel).read_bytes())) if ctx.path(rel).is_file() else 0
+         for rel in RUNLOG_APPEND_ONLY}
+    return Result('CYC-04', PASS, 'append-only over the history and the worktree: %s'
+                  % ', '.join('%s %d rows' % (k, v) for k, v in sorted(n.items())))
 
 
 @check('CYC-02')

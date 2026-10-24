@@ -85,8 +85,12 @@ class Fixture:
     def drop(self, rel):
         self.files.pop(rel, None)
 
-    def commit(self, label, rels=None, trailers=None, branches=(), utc='20261101T000000Z'):
+    def commit(self, label, rels=None, trailers=None, branches=None, utc='20261101T000000Z'):
         s = sha(label)
+        if branches is None:
+            # a pushed commit sits in its acting family's namespace (SPEC 20.15: identity = trailer AND namespace)
+            fams = sorted(set(common.agent_family(v) for v in (trailers or {}).get('Acting-Agent', [])) - {None})
+            branches = ['origin/%s/test' % f for f in fams]
         rels = sorted(self.files) if rels is None else list(rels)
         for rel in rels:
             if rel in self.files:
@@ -691,6 +695,26 @@ class TestTextChecks(TmpCase):
         self.assertEqual(claimcheck.confirm_tokens('SEALED_CONFIRMED and xSEALED_CONFIRM'),
                          [(1, 'SEALED_CONFIRMED'), (1, 'xSEALED_CONFIRM')])
 
+    def test_clm04_reads_markup_as_rendered(self):
+        """SPEC 20.12 (round 1; verifier non-blocking finding): HTML entities, HTML comments and tags, and markdown
+        emphasis/code markers inside a confirm word are read as the rendered word."""
+        fx = build(self.tmp, official=False)
+        self.claim(fx, stub=False)
+        d = fx.repo / NAME
+        base = (d / 'REPORT.md').read_text()
+        for text in ('Reuse con&#8203;firmed.', 'Reuse con&amp;#8203;firmed.', 'Reuse con**firm**ed.',
+                     'Reuse con<!-- -->firmed.', 'Reuse con<!--\nsplit\n-->firmed.', 'Reuse con<b>firm</b>ed.',
+                     'Reuse con`firm`ed.', 'Reuse con~~~~firmed.', 'Reuse c&#111;nfirmed.',
+                     # round-1 repair (verifier probe D4): markdown link and image syntax render as their text
+                     'Reuse [con](#)firmed.', 'Reuse con[]()firmed.', 'Reuse ![con](x.png)firmed.',
+                     'Reuse [con][1]firmed.', 'See [the run](results/confirmed_runs.md).'):
+            (d / 'REPORT.md').write_text(base + '\n' + text + '\n')
+            self.assertEqual(status(fx.ctx(), 'CLM-04'), [FAIL], text)
+        for text in ('The SEALED_CONFIRM role needs a seal.', '**Status**: dev only.', 'a <b>bold</b> claim',
+                     'See [the lock](ENDPOINT_LOCK.json).'):
+            (d / 'REPORT.md').write_text(base + '\n' + text + '\n')
+            self.assertEqual(status(fx.ctx(), 'CLM-04'), [NOT_APPLICABLE], text)
+
     def test_clm07_lineage_wording(self):
         fx = build(self.tmp)
         self.claim(fx)
@@ -746,6 +770,220 @@ class TestTextChecks(TmpCase):
         self.assertEqual(u[0], (1, 'Title line', True))
         self.assertIn((3, 'Another one continues here.', False), u)
         self.assertIn((5, '| a | b |', False), u)
+
+
+class TestOverclaim(TmpCase):
+    """CLM-17 (SPEC 20.13; round 1, INC-HB1-C2): agent-written text never asserts a level above level_earned, and on a
+    non-PASS primary never calls the rule, an endpoint, the result or a failed guard met."""
+
+    def clm17(self, fx):
+        # the fresh claim needs ADM-EXPO's status, which this synthetic delivery stubs like claim() does
+        with mock.patch.object(claimcheck, '_check_status', side_effect=adm_expo_pass):
+            return run(fx.ctx(stage='publish'), 'CLM-17')[0]
+
+    def fail_delivery(self):
+        fx = build(self.tmp)
+        self.claim(fx)
+        vp = fx.repo / NAME / 'results/official/VERDICT.json'
+        v = json.loads(vp.read_text())
+        v['verdict'] = 'FAIL'
+        v['guards'] = {'old_drop': 'FAIL', 'old_acq': 'PASS'}
+        vp.write_text(json.dumps(v))
+        _rc, c = self.claim(fx)   # the claim and headline follow the FAIL verdict
+        self.assertEqual((c['primary_gate'], c['level_earned']), ('FAIL', 'NONE'))
+        return fx
+
+    DIRTY = ['Held unseen addition sits at evidence level E3 for this learner.',
+             'This delivery attains E3.',
+             'Held composition is established at E3.',
+             'W satisfies the locked decision rule on every MAIN world.',
+             'The primary endpoint is successful; only the retention guard objects.',
+             'Decision rule cleared on 8/8 MAIN worlds.',
+             'Composition generalises at E3 under this learner.',
+             'The E3 target was reached.',
+             'Both OLD guards passed.',
+             'E3 reached with no caveats.',
+             'The result is a success: the criterion is met.',
+             'Evidence level is E3.',
+             'The E&#51; rung is the result to build on.',
+             'W **meets** the rule.']
+    CLEAN = ['E3 was not reached: the OLD drop guard failed, so the primary FAILs.',
+             'Earned level NONE; attempted E3.',
+             'The decision rule did not pass in 3 of 8 worlds.',
+             'W would need a paired LCB above 5pp to clear the rule.',
+             'The next design aims at E3 with a smaller OLD drop.',
+             'The OLD acquisition guard passed.',
+             'The roster gate passed on 1 November.',
+             'All REV checks passed and the canary detected 15 of 15 mutants.',
+             'The OLD guard failed, so the primary FAILs.',
+             'This delivery attempted E3 and earned NONE.',
+             'E3 is the target; the target was not reached.',
+             'The rule requires both guards to pass.',
+             "W didn't clear the rule.",
+             'The parent delivery reached E3 earlier (F-UF-15).']
+
+    def test_report_body_clauses(self):
+        fx = self.fail_delivery()
+        rp = fx.repo / NAME / 'REPORT.md'
+        head = rp.read_text().splitlines()[0]
+        for body in self.DIRTY:
+            rp.write_text(head + '\n\n' + body + '\n')
+            res = self.clm17(fx)
+            self.assertEqual(res.status, FAIL, body)
+        for body in self.CLEAN:
+            rp.write_text(head + '\n\n' + body + '\n')
+            res = self.clm17(fx)
+            self.assertEqual(res.status, PASS, (body, res.detail))
+        # the generated headline itself ('earned NONE (attempted E3)') is never read as agent text
+        rp.write_text(head + '\n')
+        self.assertEqual(self.clm17(fx).status, NOT_APPLICABLE)
+
+    def test_notes_findings_status_and_summary(self):
+        fx = self.fail_delivery()
+        d = fx.repo / NAME
+        cp = d / 'CLAIM.json'
+        claim = json.loads(cp.read_text())
+        base_claim = json.dumps(claim)
+        cases = [('notes', 'Composition endpoint holds in all MAIN worlds.'),
+                 ('findings', 'W composes unseen sums at the E3 level.')]
+        for kind, text in cases:
+            c = json.loads(base_claim)
+            if kind == 'notes':
+                c['notes'] = text
+            else:
+                c['findings_proposed'] = [{'claim': text, 'conditions': {'best_shortcut': 'DIGIT_NO_CARRY'},
+                                           'source': NAME + '/REPORT.md:1'}]
+            cp.write_text(json.dumps(c))
+            res = self.clm17(fx)
+            self.assertEqual(res.status, FAIL, kind)
+            self.assertIn('CLAIM.json#', res.detail)
+        cp.write_text(base_claim)
+        for rel, data in (('STATUS.md', 'Status: decision rule passed on held items.\n'),
+                          ('SUMMARY.json', json.dumps({'evidence_level': 'E3'})),
+                          ('SUMMARY.json', json.dumps({'primary_endpoint_met': True})),
+                          ('MEMO_week44.md', 'The composition endpoint is met.\n')):
+            (d / rel).write_text(data)
+            res = self.clm17(fx)
+            self.assertEqual(res.status, FAIL, (rel, data))
+            (d / rel).unlink()
+        for rel, data in (('SUMMARY.json', json.dumps({'primary_endpoint_met': False, 'level_attempted': 'E3'})),
+                          ('STATUS.md', 'Status: FAIL (guard old_drop). E3 not earned.\n')):
+            (d / rel).write_text(data)
+            self.assertEqual(self.clm17(fx).status, PASS, (rel, data))
+            (d / rel).unlink()
+
+    def test_pass_delivery_levels_and_guards(self):
+        fx = build(self.tmp)
+        self.claim(fx)
+        rp = fx.repo / NAME / 'REPORT.md'
+        head = rp.read_text().splitlines()[0]
+        for body, want in (('E3 was reached on held addition; both OLD guards passed.', PASS),
+                           ('W satisfies the locked decision rule.', PASS),
+                           ('This delivery demonstrates E4 promotion.', FAIL)):
+            rp.write_text(head + '\n\n' + body + '\n')
+            self.assertEqual(self.clm17(fx).status, want, body)
+
+    def test_lint_mode_reads_the_delivery_claim(self):
+        fx = self.fail_delivery()
+        d = fx.repo / NAME
+        rp = d / 'REPORT.md'
+        rp.write_text(rp.read_text().splitlines()[0] + '\n\nThis delivery attains E3.\n')
+        memo = fx.repo / 'MEMO.md'
+        memo.write_text('This delivery attains E3.\n')
+        for files, want in (([str(rp)], FAIL), ([str(memo)], NOT_APPLICABLE)):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                claimcheck.cmd_lint(fx.args(files=files, json=True))
+            st = {r['id']: r['status'] for r in json.loads(out.getvalue())['results']}
+            self.assertEqual(st['CLM-17'], want, files)
+
+    # Round-1 repair (verifier blocking issue: key and value were cut into different clauses at ':' and '|').
+    KV_DIRTY = [('STATUS.md', 'Level earned: E3\nPrimary endpoint: met\n'),
+                ('STATUS.md', 'Evidence level: E3\n'), ('STATUS.md', 'Earned: E3\n'), ('STATUS.md', 'level_earned: E3\n'),
+                ('STATUS.md', 'E3: reached\n'), ('STATUS.md', 'Decision rule: satisfied\n'),
+                ('STATUS.md', '- **Level earned:** E3\n'), ('STATUS.md', 'level_earned = E3\n'),
+                ('STATUS.md', 'Level earned \u2014 E3\n'), ('STATUS.md', 'Status: E3; primary: met\n'),
+                ('STATUS.md', 'E3: yes\n'), ('SUMMARY.md', '| level earned | E3 |\n'),
+                ('SUMMARY.md', '| evidence level | E3 |\n| decision rule | satisfied |\n'),
+                ('SUMMARY.md', '| field | value |\n|---|---|\n| level earned | E3 |\n'),
+                ('SUMMARY.md', '| arm | level earned | primary |\n|---|---|---|\n| W | E3 | met |\n'),
+                ('SUMMARY.md', '| E3 | \u2713 |\n'), ('SUMMARY.json', json.dumps({'E3': True}))]
+    KV_CLEAN = [('STATUS.md', 'Level earned: NONE\nLevel attempted: E3\nTarget level: E3\nPrimary gate: FAIL\n'),
+                ('STATUS.md', 'Decision rule: W passes when the paired LCB > 0\nDecision rule: not satisfied\n'),
+                ('STATUS.md', 'Goal: reach E3 in the next cycle\nPlanned: E3\n'),
+                ('SUMMARY.md', '| level earned | NONE |\n| level attempted | E3 |\n'),
+                ('SUMMARY.md', '| guard | status |\n|---|---|\n| old_drop | FAIL |\n| old_acq | PASS |\n'),
+                ('SUMMARY.md', '| stage | gate | exit |\n|---|---|---|\n| lock | PASS | 0 |\n| roster | PASS | 0 |\n')]
+
+    def test_key_value_lines_and_table_rows(self):
+        fx = self.fail_delivery()
+        d = fx.repo / NAME
+        for rel, data in self.KV_DIRTY:
+            (d / rel).write_text(data)
+            res = self.clm17(fx)
+            self.assertEqual(res.status, FAIL, (rel, data))
+            (d / rel).unlink()
+        for rel, data in self.KV_CLEAN:
+            (d / rel).write_text(data)
+            res = self.clm17(fx)
+            self.assertEqual(res.status, PASS, (rel, data, res.detail))
+            (d / rel).unlink()
+        rp = d / 'REPORT.md'
+        head = rp.read_text().splitlines()[0]
+        rp.write_text(head + '\n\n| quantity | value |\n|---|---|\n| evidence level | E3 |\n')
+        self.assertEqual(self.clm17(fx).status, FAIL)
+
+    # Round-1 repair (verifier non-blocking): conformity phrases and citations no longer exempt a level claim about this
+    # delivery; vocabulary gaps; process checks that passed are not level claims.
+    MORE_DIRTY = ['E3 reached as planned.', 'E3 was reached without exception.', 'W reached E3 exactly as predicted.',
+                  'As expected, W is an E3 learner.', 'In line with earlier F-20261101-codex-1, W reached E3 here.',
+                  'E3 holds.', 'W is E3-grade.', 'E3 is supported.', 'Success on the primary endpoint.',
+                  'The result is E3.', 'W [reached](#) E3.', 'The lock gate passed, E3 reached.', 'W passed the E3 gate.',
+                  'The review passed W for E3.', 'The lock passed E3.']
+    MORE_CLEAN = ['The roster gate for this E3 design passed.', 'The E3 lock gate passed on 1 November.',
+                  'E1 plumbing checks passed.', 'The E3 lock passed review.', 'Admission passed for the E3 design.',
+                  'This delivery builds on F-UF-15, where the parent reached E3.', 'W fell short of E3.',
+                  'If W had cleared the guard, E3 would have been earned.']
+
+    def test_conformity_citations_vocabulary_and_process_checks(self):
+        fx = self.fail_delivery()
+        rp = fx.repo / NAME / 'REPORT.md'
+        head = rp.read_text().splitlines()[0]
+        for body in self.MORE_DIRTY:
+            rp.write_text(head + '\n\n' + body + '\n')
+            self.assertEqual(self.clm17(fx).status, FAIL, body)
+        for body in self.MORE_CLEAN:
+            rp.write_text(head + '\n\n' + body + '\n')
+            res = self.clm17(fx)
+            self.assertEqual(res.status, PASS, (body, res.detail))
+
+    def test_notes_analysis_readme_in_scope(self):
+        fx = self.fail_delivery()
+        d = fx.repo / NAME
+        for rel in ('NOTES.md', 'ANALYSIS.md', 'README.md', 'RESULTS.txt', 'docs/NOTES_week44.md'):
+            (d / rel).parent.mkdir(parents=True, exist_ok=True)
+            (d / rel).write_text('Level earned: E3\n')
+            self.assertEqual(self.clm17(fx).status, FAIL, rel)
+            (d / rel).write_text('Level earned: NONE; E3 was not reached.\n')
+            self.assertEqual(self.clm17(fx).status, PASS, rel)
+            (d / rel).unlink()
+
+    def test_lint_project_document_naming_a_delivery(self):
+        fx = self.fail_delivery()
+        doc = fx.repo / 'PROJECT_DOCUMENTS' / 'STATUS_board.md'
+        doc.parent.mkdir(parents=True, exist_ok=True)
+        cases = [('%s reached E3 on held addition.\n' % NAME, FAIL),
+                 ('| delivery | level earned |\n|---|---|\n| %s | E3 |\n' % NAME, FAIL),
+                 ('%s earned NONE (attempted E3).\n' % NAME, PASS),
+                 ('No delivery is named here; W reached E3.\n', NOT_APPLICABLE),
+                 ('minifly_other_dev_v1_20261101 reached E3.\n', NOT_APPLICABLE)]
+        for text, want in cases:
+            doc.write_text(text)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                claimcheck.cmd_lint(fx.args(files=[str(doc)], json=True))
+            st = {r['id']: r['status'] for r in json.loads(out.getvalue())['results']}
+            self.assertEqual(st['CLM-17'], want, text)
 
 
 class TestPredictionsAndHistory(TmpCase):

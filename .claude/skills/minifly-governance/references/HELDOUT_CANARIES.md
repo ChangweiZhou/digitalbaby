@@ -45,6 +45,16 @@ in held-out recall counts as overfitting.
    - Reveal checks that the bundle and key hashes match the commitment (HELD-02).
    - The score runs the frozen checker at S (extracted with git archive) and reports recall per FM class and the false
      alarm rate on the clean canaries, written to `PROJECT_DOCUMENTS/KB/RETRO/HELDOUT_<date>.json`.
+   - Post-batch checks (spec 20.18): each canary's version is the checker_version in its own SOURCE_LOCK (the oldest
+     one in its tree). A fired id whose RULES introduced_in or changed_in is later is listed under `post_batch`, per
+     fixture and in the report, and never counts: it neither catches a dirty canary nor makes a clean one a false alarm.
+     A canary without a SOURCE_LOCK has no version, and nothing is excluded. Authors set the version they wrote
+     against (corpus builder option `source_lock_patch`); a batch written against 1.0.1 is scored on the round-1
+     checks. The pilot's raw recall 3/9 with false alarms 3/3 was exactly this drift (RUN-03).
+   - The report always carries the raw numbers next to the excluded ones (`recall_fixtures_raw`,
+     `false_alarm_rate_clean_raw`, and per fixture `caught_raw` / `false_alarm_raw`), and `heldout score` prints both.
+     Quote both: a batch built with the builder's default SOURCE_LOCK (checker_version 1.0.0) excludes every 1.0.1
+     detection and every 1.0.1 false alarm, so its excluded numbers alone say nothing about round 1.
 5. **Burn.** A scored batch moves into the visible corpus through governance and is never held-out again.
 6. **Fixes after a miss must generalize.** A reviewer rejects any fix that matches canary literals (names, layouts,
    magic values), and the next sealed batch tests it.

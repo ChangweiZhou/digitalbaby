@@ -283,13 +283,16 @@ def _entropy_bits(counter: Dict[bytes, int]) -> float:
 
 
 def score_rows(rows: Iterable[dict], lock: dict, taught_by_world_arm: Any = None, allow_evaluator: bool = False,
-               item_detail: Optional[Tuple[str, str]] = None) -> dict:
+               item_detail: Optional[Tuple[str, str]] = None,
+               exposed_orbits: Optional[Iterable[Tuple[str, str]]] = None) -> dict:
     """Recompute and aggregate OUTPUTS rows into cells (SPEC 8 SCORES.cells) plus the shortcut ladder.
 
     rows: iterable of minifly.outputs.v1 rows (consumed once). taught_by_world_arm: {(world, arm): [TAUGHT rows]}
     (also {world: {arm: rows}}). allow_evaluator: count answer_path 'evaluator' rows of CEILING_*/FLOOR_* arms
     (cycle-0 testbed only); learner arms count only answer_path native. item_detail=(pool, checkpoint): also
-    return the candidate's per-item exactness there (for UDI) under 'item_exact'.
+    return the candidate's per-item exactness there (for UDI) under 'item_exact'. exposed_orbits: canonical orbits
+    whose expected answer was fed with the orbit in some exposure stream (admitcheck.exposed_held_orbits); such an
+    item is S1 (taught) in every world and never counted (SPEC 9.3 as amended in 20.11). S0 stays S0.
 
     A conflicting duplicate key (world, arm, pool, checkpoint, item_id), an unknown pool or checkpoint, a
     missing required field, or the same item_id with two prompts raises InvalidInput (fail closed)."""
@@ -319,6 +322,7 @@ def score_rows(rows: Iterable[dict], lock: dict, taught_by_world_arm: Any = None
     off = (lock.get('worlds') or {}).get('official') if isinstance(lock.get('worlds'), dict) else None
     official_listed = bool(isinstance(off, dict) and off.get('ids'))
     tmap = _normalize_taught_map(taught_by_world_arm)
+    exposed = set(addition.canonical(a, b) for a, b in (exposed_orbits or ())) if is_add else set()
     counted_keys = set([(ppool, pck)] + list(COUNTED_KEYS_EXTRA))
 
     tindex: Dict[str, Optional[TaughtIndex]] = {}
@@ -360,6 +364,10 @@ def score_rows(rows: Iterable[dict], lock: dict, taught_by_world_arm: Any = None
                 st = det = None
                 if exp is not None and ti is not None:
                     st = addition.stratum({'prompt_hex': ph}, ti.taught)
+                    if exposed and st not in (None, 'S0'):
+                        pr = addition.parse(ph, fmt)
+                        if pr is not None and addition.canonical(*pr) in exposed:
+                            st = 'S1'
                     if witness is not None:
                         det = addition.determined({'prompt_hex': ph}, ti.taught, witness, commutative)
                 c = (exp, st, det)
@@ -829,6 +837,18 @@ def split_manifest_items(ctx: common.Ctx, lock: Optional[dict] = None) -> Dict[s
     return out
 
 
+def exposed_orbits_of(ctx: common.Ctx) -> Set[Tuple[str, str]]:
+    """Held orbits taught with their answers in any exposure stream (SPEC 9.3 / 20.11), from ADM-EXPO's content scan.
+    Only orbit-keyed (E3 addition) locks have any; the scan's own errors propagate (fail closed)."""
+    lock = ctx.lock
+    fmt = (lock.get('task') or {}).get('format') if isinstance(lock.get('task'), dict) else None
+    split = lock.get('split') if isinstance(lock.get('split'), dict) else {}
+    if not addition.is_addition(fmt) or lock.get('claim_level_target') == 'E2' or not split.get('held_manifest'):
+        return set()  # exact-prompt locks have no orbit strata; a lock without a held manifest fails LOCK-01
+    import admitcheck  # noqa: E402 - admitcheck imports the scorer lazily, never at import time
+    return admitcheck.exposed_held_orbits(ctx)
+
+
 def score_role(ctx: common.Ctx, role: str) -> dict:
     """Cached scoring of results/<role>/OUTPUTS rows: {'role', 'cells', 'testbed_rows', 'variant_rows', ...}.
 
@@ -874,7 +894,9 @@ def score_role(ctx: common.Ctx, role: str) -> dict:
             yield r
 
     item_detail = ('HELD', 'final') if vworlds else None
-    cells = score_rows(gen(), lock, taught, allow_evaluator=(role == 'admission'), item_detail=item_detail)
+    exposed = exposed_orbits_of(ctx)
+    cells = score_rows(gen(), lock, taught, allow_evaluator=(role == 'admission'), item_detail=item_detail,
+                       exposed_orbits=exposed)
     if count[0] == 0:
         raise common.MissingInput('no rows in %s (or .gz / RESULT_BUNDLE*.zip members)' % outputs_pattern(role))
     if n_foreign[0]:
@@ -884,7 +906,7 @@ def score_role(ctx: common.Ctx, role: str) -> dict:
     item_exact = cells.pop('item_exact', None)
     out = {'role': role, 'cells': cells, 'n_rows': count[0], 'testbed_rows': testbed_rows,
            'variant_rows': variant_rows, 'variant_worlds': sorted(vworlds), 'item_exact': item_exact,
-           'taught': taught, 'split_cells': split_cells}
+           'taught': taught, 'split_cells': split_cells, 'exposed_orbits': sorted(exposed)}
     ctx._cache[key] = out
     return out
 
@@ -1091,7 +1113,7 @@ def testbed(ctx: common.Ctx) -> dict:
             continue
         lv = decide.testbed_lock(lock, arm)
         tmap = taught_with_aliases(sr['taught'], cand, [arm])
-        cells = score_rows(arows, lv, tmap, allow_evaluator=True)
+        cells = score_rows(arows, lv, tmap, allow_evaluator=True, exposed_orbits=sr.get('exposed_orbits'))
         worlds = tworlds or sorted(cells['worlds'])
         v = decide.evaluate(cells, lv, {'mode': 'testbed', 'expected_worlds': worlds, 'n_items_per_pool': nip})
         res = decide.verdict_or_shadow(v)
@@ -1238,7 +1260,8 @@ def udi(ctx: common.Ctx, role: str = 'official') -> dict:
     base_items = sr['item_exact'] or {}
     cand = (lock.get('primary') or {}).get('candidate_arm')
     taught = sr['taught']
-    var_cells = score_rows(sr['variant_rows'], lock, taught, item_detail=('HELD', 'final')) if sr['variant_rows'] else None
+    var_cells = (score_rows(sr['variant_rows'], lock, taught, item_detail=('HELD', 'final'),
+                            exposed_orbits=sr.get('exposed_orbits')) if sr['variant_rows'] else None)
     var_items = (var_cells or {}).get('item_exact') or {}
     counted = set(((lock.get('primary') or {}).get('strata_counted')) or [])
     problems: List[str] = []

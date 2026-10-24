@@ -109,9 +109,26 @@ the form ``- `ID`: reason``; selftest asserts this list equals the planned ids i
   is planned, `claim` writes reuse_specificity not_tested even when SCORES carries a UDI value, and CLM-03
   reports "E3 promotion not certifiable: UDI-01 planned".
 
+## Checker 1.0.1 (self-improvement round 1)
+
+CHECKER_VERSION 1.0.1 answers the held-out pilot misses (SPEC 20.10-20.18): ADM-EXPO judges stream content (held
+answers in any stream, any field), CLM-17 reads agent-written text for overclaims, every identity check derives the
+acting family from the `Acting-Agent:` trailer and the origin namespace (`common.commit_family`), CLM-04 reads markup as
+rendered, role `other` arms join the decision comparator, CYC-04 checks the runlog append-only at publish, a recovered
+official attempt needs a replay of its own units (RUN-04), and `heldout score` lists post-batch checks without counting
+them. New checks carry introduced_in 1.0.1 and tightened ones changed_in [1.0.1]; for a T1 delivery locked under 1.0.0
+the new checks are advisory (ADVISORY_FAIL), every T2 publish enforces them.
+
+The round-1 repair (SPEC 20.19, still 1.0.1) reads key/value lines and table rows as CLM-17 clauses, parses
+JSON-encoded string payloads and pairs consecutive records of a stream in ADM-EXPO, rejects a second role
+`candidate` arm in LOCK-02 (decide also compares W with it), reads markdown link syntax in CLM-04, prints raw next
+to post-batch-excluded held-out numbers, and classifies a changed_in append as neutral only together with a code
+change in the check's import closure. Corpus S81-S88.
+
 ## Known limitations
 
-These parts of enforced checks are incomplete in checker 1.0.0. Each item says what the kit does instead.
+These parts of enforced checks are incomplete in checker 1.0.0 (still so in 1.0.1). Each item says what the kit does
+instead.
 
 - CLM-15 `digest_plus_sample` mode (fails closed): a verification subset above
   `CONSTRAINTS.verification_subset_max_mb` FAILs ("not implemented in checker 1.0.0"). An over-cap
@@ -129,6 +146,19 @@ These parts of enforced checks are incomplete in checker 1.0.0. Each item says w
 - A runtime closure (RUN-03) is written by the runner itself; the checker verifies what it lists against the lock but
   cannot see a module the runner hides from sys.modules. A killed run leaves only the closure of its last helper
   call (the contract calls it after the imports and at the end).
+- ADM-EXPO's content scan (1.0.1) reads string fields, keys, byte lists and JSON-encoded strings, and pairs a record
+  with the next one at the same field; it does not read integer fields as answers (counts and indices would collide
+  with small sums), does not join operands split over separate fields, does not pair records two or more apart or
+  across different fields, and does not scan files.assets or neutrally named JSON under results/. A string-valued
+  number equal to a held sum beside a held prompt counts as an answer (fails closed). A reviewer covers the rest.
+- CLM-17 (1.0.1) is lexical: clauses outside its achievement, met and qualifier vocabularies pass, and so does a
+  level claim phrased as a process check that passed ('the E3 lock gate passed'). The generated headline and CLAIM
+  fields remain the authoritative statement.
+- A control arm declared positive_control or oracle_plumbing stays out of the decision comparator by design; the
+  reviewer checks that such an arm changes what its role says.
+- Identity (1.0.1): a commit contained in both namespaces is shared history and keeps its trailer's family, so a
+  forged-trailer commit that the impersonated family itself merged, or forked a branch from, cannot be told apart
+  (SPEC 20.15).
 - TimelineGit (corpus mode) lists a worktree edit of a committed file only when the fixture carries the
   committed version under `history/`; `selftest` freezes every fixture copy before its commands run, so
   commands that rewrite committed files are seen as worktree edits, as in real git.

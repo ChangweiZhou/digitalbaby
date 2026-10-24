@@ -1,0 +1,375 @@
+{
+  "admission_thresholds": {
+    "analytic_input_snr": 1.7,
+    "input_contrast_min": 2.0,
+    "prompt_id_margin_min": 0.1,
+    "shuf_band": [
+      0.35,
+      0.65
+    ],
+    "taught_acq_margin_min": 0.05
+  },
+  "arms": [
+    {
+      "declared_changed": [],
+      "id": "W",
+      "min_realized_dose": null,
+      "role": "candidate",
+      "teaching_withheld": [],
+      "zero_channels": []
+    },
+    {
+      "declared_changed": [],
+      "id": "NPT",
+      "min_realized_dose": 0.05,
+      "role": "no_prior_teaching",
+      "teaching_withheld": [
+        "pair_teaching"
+      ],
+      "zero_channels": [
+        "pair_memory"
+      ]
+    },
+    {
+      "declared_changed": [],
+      "id": "SHUF",
+      "min_realized_dose": null,
+      "role": "shuf",
+      "teaching_withheld": [],
+      "zero_channels": []
+    },
+    {
+      "declared_changed": [],
+      "id": "FROZEN",
+      "min_realized_dose": 0.05,
+      "role": "frozen",
+      "teaching_withheld": [],
+      "zero_channels": [
+        "pair_memory",
+        "readout"
+      ]
+    },
+    {
+      "declared_changed": [
+        "readout"
+      ],
+      "id": "ORACLE",
+      "min_realized_dose": null,
+      "role": "oracle_plumbing",
+      "teaching_withheld": [],
+      "zero_channels": []
+    }
+  ],
+  "author_agent": "codex",
+  "budget": {
+    "max_cpu_h": 4,
+    "max_records": 20000
+  },
+  "causal_control_arm": "NPT",
+  "checkpoints": {
+    "final": 160,
+    "old_end": 80,
+    "prefix": 40
+  },
+  "claim_level_target": "E3",
+  "constraints_sha256": "377f414a2f90481f9778f06b39e889966bfe955655d4b8f477b6381c0ce5db29",
+  "coprimary": [],
+  "created_utc": "20261101T085000Z",
+  "delivery": "minifly_corpus_base_dev_v1_20261101",
+  "e3_cadence": {
+    "waiver_user_decision": null
+  },
+  "endpoint_files_sha256": {
+    "admit.py": "38526453af6b1f3f82791a1f26b80305f9861e3fc7594dd0d6649486880205bc"
+  },
+  "exposure_streams": [
+    {
+      "feedback_bearing": true,
+      "path_glob": "manifests/TAUGHT/*/*.jsonl",
+      "phase": "teach"
+    },
+    {
+      "feedback_bearing": false,
+      "path_glob": "manifests/SESSION/*.jsonl",
+      "phase": "session"
+    }
+  ],
+  "files": {
+    "admit": "admit.py",
+    "assets": [],
+    "evaluator": [],
+    "generators": [],
+    "native": [
+      "learner.py"
+    ],
+    "params": "params.json",
+    "runner": [
+      "run.py"
+    ],
+    "shared": []
+  },
+  "gates": [
+    {
+      "description": "EOS is emitted only after a readout commit",
+      "id": "stop_gate"
+    }
+  ],
+  "guards": [
+    {
+      "id": "old_drop",
+      "kind": "old_drop",
+      "max_drop": 0.1,
+      "pool": "OLD"
+    },
+    {
+      "id": "old_acq",
+      "kind": "old_acq",
+      "margin": 0.05,
+      "pool": "OLD"
+    }
+  ],
+  "intent": "diagnostic",
+  "lineage": {
+    "changes_declared": [],
+    "parent": null,
+    "priors_added": []
+  },
+  "objective_distance": {
+    "feedback": "gradual_warmup",
+    "held": "unseen_composition",
+    "native_only_path": true,
+    "old_protection_measured": true,
+    "output": "own_bytes_own_eos",
+    "task_family": "addition_single_digit"
+  },
+  "ports": [
+    {
+      "id": "pair_write",
+      "signs": [
+        "+",
+        "-"
+      ]
+    }
+  ],
+  "positive_control_arm": "ORACLE",
+  "predictions": [
+    {
+      "base_rate_forecast": {
+        "source": "DELIVERY_LEDGER Laplace (no v1 rows)",
+        "value": 0.3
+      },
+      "basis_findings": [
+        "none"
+      ],
+      "id": "P1",
+      "interval90": [
+        0.6,
+        0.95
+      ],
+      "p_pass": 0.7,
+      "point": 0.8,
+      "target": "primary"
+    },
+    {
+      "base_rate_forecast": {
+        "source": "DELIVERY_LEDGER Laplace (no v1 rows)",
+        "value": 0.7
+      },
+      "basis_findings": [
+        "none"
+      ],
+      "id": "P2",
+      "interval90": [
+        0.0,
+        0.08
+      ],
+      "p_pass": 0.85,
+      "point": 0.03,
+      "target": "guard:old_drop"
+    },
+    {
+      "base_rate_forecast": {
+        "source": "DELIVERY_LEDGER Laplace (no v1 rows)",
+        "value": 0.7
+      },
+      "basis_findings": [
+        "none"
+      ],
+      "id": "P3",
+      "interval90": [
+        0.3,
+        0.5
+      ],
+      "p_pass": 0.9,
+      "point": 0.45,
+      "target": "guard:old_acq"
+    }
+  ],
+  "primary": {
+    "absolute_floor": 0.25,
+    "aggregator": {
+      "alpha": 0.05,
+      "type": "paired_lcb"
+    },
+    "candidate_arm": "W",
+    "chance": 0.05,
+    "checkpoint": "final",
+    "comparator_arms": [
+      "NPT"
+    ],
+    "ladder": "auto",
+    "margin_abs": 0.05,
+    "metric": "exact_own_eos",
+    "min_worlds": 8,
+    "n_items_per_pool": {
+      "HELD": 16,
+      "NEW": 7,
+      "OLD": 8,
+      "TAUGHT": 15
+    },
+    "per_world_floor": -0.05,
+    "pool": "HELD",
+    "rule_type": "declarative",
+    "strata_counted": [
+      "S2",
+      "S3"
+    ],
+    "task_id": "add1",
+    "unconditional": true
+  },
+  "protocol_id": "minifly_corpus_base_dev_v1_20261101-p1",
+  "schedule": {
+    "paired_atomic": true
+  },
+  "schema": "minifly.endpoint_lock.v1",
+  "split": {
+    "held_manifest": "manifests/HELD.jsonl",
+    "held_set_sha256": "12ecf0ba93283a87441df52948886e3b85407507a9f31081625f5610b5593464",
+    "new_manifest": "manifests/NEW.jsonl",
+    "old_manifest": "manifests/OLD.jsonl",
+    "split_sha256": "f70d1d724ed050cc5ce3680dc16de5560c4248229ae1fa1445438dfafe6ad27e",
+    "taught_manifest": "manifests/TAUGHT"
+  },
+  "stage_chain": false,
+  "task": {
+    "family": "addition_single_digit",
+    "format": {
+      "eos_hex": "0a",
+      "gen_cap_bytes": 4,
+      "kind": "addition",
+      "normalize_leading_zeros": true,
+      "sep_hex": "2b",
+      "terminator_hex": "3d"
+    },
+    "id": "add1"
+  },
+  "testbed": {
+    "ceiling_grid": [
+      {
+        "id": "EXACT_BP",
+        "learner": "EXACT_BP"
+      },
+      {
+        "id": "ORACLE_FEATURES",
+        "learner": "ORACLE_FEATURES"
+      }
+    ],
+    "floor_grid": [
+      {
+        "id": "FRF_W256_LR0.001",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.001,
+        "width": 256
+      },
+      {
+        "id": "FRF_W256_LR0.005",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.005,
+        "width": 256
+      },
+      {
+        "id": "FRF_W256_LR0.02",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.02,
+        "width": 256
+      },
+      {
+        "id": "FRF_W1024_LR0.001",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.001,
+        "width": 1024
+      },
+      {
+        "id": "FRF_W1024_LR0.005",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.005,
+        "width": 1024
+      },
+      {
+        "id": "FRF_W1024_LR0.02",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.02,
+        "width": 1024
+      },
+      {
+        "id": "FRF_W4096_LR0.001",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.001,
+        "width": 4096
+      },
+      {
+        "id": "FRF_W4096_LR0.005",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.005,
+        "width": 4096
+      },
+      {
+        "id": "FRF_W4096_LR0.02",
+        "learner": "FROZEN_RANDOM_FEATURES",
+        "readout_lr": 0.02,
+        "width": 4096
+      }
+    ]
+  },
+  "tier_declared": 2,
+  "udi": null,
+  "units": {
+    "commutative": true,
+    "witness": "pair_rectangle"
+  },
+  "user_decisions": [],
+  "worlds": {
+    "dev": [
+      "w_dev_1",
+      "w_dev_2"
+    ],
+    "official": {
+      "ids": [
+        "w_off_1",
+        "w_off_2",
+        "w_off_3",
+        "w_off_4",
+        "w_off_5",
+        "w_off_6",
+        "w_off_7",
+        "w_off_8"
+      ],
+      "mode": "listed",
+      "n": 8
+    },
+    "official_role_intended": "MAIN",
+    "rehearsal": [
+      "w_reh_1"
+    ],
+    "technical": [
+      "w_tech_1",
+      "w_tech_2",
+      "w_tech_3",
+      "w_tech_4",
+      "w_tech_5",
+      "w_tech_6",
+      "w_tech_7",
+      "w_tech_8"
+    ]
+  }
+}

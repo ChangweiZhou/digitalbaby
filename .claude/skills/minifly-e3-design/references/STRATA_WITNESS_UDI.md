@@ -17,6 +17,9 @@ this file is the bug (report it through `minifly-governance`).
 | S4 extrapolation | An operand value is unseen in its position, or the answer is longer than every taught answer | yes, if determined |
 
 - S0 and S1 are exclusions: an item that is trivial or whose orbit is taught never counts for E3, whatever else holds.
+- Taught includes any exposure stream that fed the orbit with its answer (SPEC 20.11): the scorer takes those orbits
+  from ADM-EXPO's content scan (`admitcheck.exposed_held_orbits`) and makes the item S1 in every world, even when the
+  candidate's TAUGHT manifest is clean.
 - "In its position" means first operand or second operand. Strata are position-specific even when the task is
   commutative; the witness below may use either orientation.
 - Carry: for single-digit operands, a + b >= 10; for multi-digit operands, any column produces a carry.

@@ -188,9 +188,19 @@ def bundle_ids(stage, sealed=None, tier=None):
     return out
 
 
+REPORT_CHECKER_VERSION = '1.0.0'  # the committed corpus reports were written by checker 1.0.0
+
+
+def _vkey(v):
+    return tuple(int(x) for x in str(v).split('.'))
+
+
 def gate_report(stage, dry, utc, git_head, lock_sha, sl_sha, invoked_by, family_id,
                 sealed=None, delivery=D):
-    ids = bundle_ids(stage, sealed)
+    # A report records the checks of the checker that wrote it: ids introduced after REPORT_CHECKER_VERSION
+    # (SPEC 20.10) are not in a 1.0.0 report.
+    intro = dict((r['id'], r.get('introduced_in', '1.0.0')) for r in _rules()['rules'])
+    ids = [i for i in bundle_ids(stage, sealed) if _vkey(intro.get(i, '1.0.0')) <= _vkey(REPORT_CHECKER_VERSION)]
     results = []
     for i in ids:
         st = 'NOT_APPLICABLE' if i in NA_IN_BASE else 'PASS'
@@ -199,7 +209,7 @@ def gate_report(stage, dry, utc, git_head, lock_sha, sl_sha, invoked_by, family_
     for r in results:
         counts[r['status']] = counts.get(r['status'], 0) + 1
     return {'schema': 'minifly.gate_report.v1', 'stage': stage, 'dry': dry, 'delivery': delivery,
-            'utc': utc, 'checker_sha256': EMPTY_SHA256, 'checker_version': '1.0.0',
+            'utc': utc, 'checker_sha256': EMPTY_SHA256, 'checker_version': REPORT_CHECKER_VERSION,
             'git_mode': 'timeline', 'git_head': git_head, 'endpoint_lock_sha256': lock_sha,
             'source_lock_sha256': sl_sha, 'tier': CTX['tier'],
             'tier_reasons': ['declared: %d' % CTX['tier']],

@@ -73,8 +73,12 @@ class Timeline:
                 hp = self.root / 'history' / sha / p
                 hp.parent.mkdir(parents=True, exist_ok=True)
                 hp.write_text(v, encoding='utf-8')
+        if branches is None:
+            # a pushed commit sits in its acting family's namespace (SPEC 20.15: identity = trailer AND namespace)
+            fams = sorted(set(common.agent_family(v) for v in (trailers or {}).get('Acting-Agent', [])) - {None})
+            branches = ['origin/%s/test' % f for f in fams]
         self.commits.append({'sha': sha, 'utc': '2026110%dT000000Z' % (len(self.commits) % 9 + 1), 'author': author,
-                             'trailers': trailers or {}, 'paths': sorted(changes), 'branches': branches or []})
+                             'trailers': trailers or {}, 'paths': sorted(changes), 'branches': branches})
         return sha
 
     def write(self, dirty=None):
@@ -196,6 +200,23 @@ class TestClassification(TmpCase):
         gone = gov.classify_rules('R', json.dumps(old).encode(), json.dumps({'rules': [], 'bundles': {}}).encode())
         self.assertTrue(any(c['class'] == 'loosen' and 'removed check id A-01' in c['what'] for c in gone))
         self.assertTrue(any(c['class'] == 'loosen' and 'bundle lock removed' in c['what'] for c in gone))
+
+    def test_changed_in_append_needs_a_module_change(self):
+        # Round-1 repair (verifier): appending a changed_in version is neutral only with a change to the rule's module
+        old = json.loads(base_files()[KR + '/RULES.json'])
+        new = json.loads(json.dumps(old))
+        new['rules'][0]['changed_in'] = ['1.0.1']
+        ch = gov.classify_rules(KR + '/RULES.json', json.dumps(old).encode(), json.dumps(new).encode())
+        ci = [c for c in ch if 'changed_in' in c['what']]
+        self.assertEqual([(c['class'], c.get('changed_in_module')) for c in ci], [('neutral', KR + '/m.py')])
+        with_code = gov.require_module_change(json.loads(json.dumps(ci)), [KR + '/RULES.json', KR + '/m.py'])
+        self.assertEqual([c['class'] for c in with_code], ['neutral'])
+        without = gov.require_module_change(json.loads(json.dumps(ci)), [KR + '/RULES.json', KR + '/other.py'])
+        self.assertEqual([c['class'] for c in without], ['loosen'])
+        self.assertIn('without a change to %s/m.py' % KR, without[0]['what'])
+        # dropping a recorded version stays a loosening, with or without code
+        back = gov.classify_rules(KR + '/RULES.json', json.dumps(new).encode(), json.dumps(old).encode())
+        self.assertEqual([c['class'] for c in back if 'changed_in' in c['what']], ['loosen'])
 
     def test_expected_id_removed_is_loosen(self):
         tl = self.fixture()
@@ -863,6 +884,73 @@ def make_batch(root, n=10, n_clean=3):
         key[fid] = [] if i < n_clean else (['FM-01'] if i % 2 else ['B-01'])
     (root / 'KEY.json').write_text(json.dumps(key))
     return root
+
+
+class TestHeldoutPostBatch(unittest.TestCase):
+    """SPEC 20.18 (round 1): fired ids introduced or tightened after the checker_version a canary was written
+    against are post_batch: listed, never counted toward recall or a false alarm."""
+
+    RULES = {'rules': [
+        {'id': 'OLD-1', 'introduced_in': '1.0.0', 'fm_ids': ['FM-12']},
+        {'id': 'NEW-1', 'introduced_in': '1.0.1', 'fm_ids': ['FM-12']},
+        {'id': 'TIGHT-1', 'introduced_in': '1.0.0', 'changed_in': ['1.0.1'], 'fm_ids': ['FM-22']}]}
+
+    @staticmethod
+    def oc(fired, exits):
+        o = gov.RunOutcome()
+        for rid in fired:
+            o.statuses[rid] = {FAIL}
+        o.exits = list(exits)
+        return o
+
+    def test_post_batch_ids_are_listed_and_excluded(self):
+        entries = {'C1': {'classes': []}, 'C2': {'classes': []}, 'D1': {'classes': ['FM-12']},
+                   'D2': {'classes': ['FM-22']}, 'D3': {'classes': ['FM-12']}, 'D4': {'classes': ['FM-22']}}
+        outs = {'C1': self.oc(['NEW-1'], [1]),            # format drift on a clean canary: not an alarm
+                'C2': self.oc(['OLD-1', 'NEW-1'], [1]),   # a 1.0.0 check fired too: an alarm
+                'D1': self.oc(['NEW-1'], [1]),            # caught only by a check added after the batch: a miss
+                'D2': self.oc(['TIGHT-1'], [1]),          # caught only by a later tightening: a miss
+                'D3': self.oc(['OLD-1', 'NEW-1'], [1]),   # caught by a 1.0.0 check: caught
+                'D4': self.oc(['TIGHT-1'], [1])}          # written against 1.0.1: the tightening counts
+        versions = {'C1': '1.0.0', 'C2': '1.0.0', 'D1': '1.0.0', 'D2': '1.0.0', 'D3': '1.0.0', 'D4': '1.0.1'}
+        rep = gov.heldout_score_report(self.RULES, entries, outs, versions)
+        fx = rep['fixtures']
+        self.assertEqual((fx['C1']['false_alarm'], fx['C1']['post_batch'], fx['C1']['fired']), (False, ['NEW-1'], []))
+        self.assertTrue(fx['C2']['false_alarm'])
+        self.assertEqual((fx['D1']['caught'], fx['D1']['post_batch']), (False, ['NEW-1']))
+        self.assertEqual((fx['D2']['caught'], fx['D2']['post_batch']), (False, ['TIGHT-1']))
+        self.assertEqual((fx['D3']['caught'], fx['D3']['post_batch'], fx['D3']['fired']), (True, ['NEW-1'], ['OLD-1']))
+        self.assertEqual((fx['D4']['caught'], fx['D4']['post_batch']), (True, []))
+        self.assertEqual((rep['recall_fixtures'], rep['false_alarm_rate_clean']), (0.5, 0.5))
+        self.assertEqual(rep['post_batch'], {'C1': ['NEW-1'], 'C2': ['NEW-1'], 'D1': ['NEW-1'], 'D2': ['TIGHT-1'],
+                                             'D3': ['NEW-1']})
+        # without a recorded canary version nothing is called post_batch (the raw pilot behaviour)
+        raw = gov.heldout_score_report(self.RULES, entries, outs)
+        self.assertEqual((raw['recall_fixtures'], raw['false_alarm_rate_clean'], raw['post_batch']), (1.0, 1.0, {}))
+        # round-1 repair (verifier): the report always carries the raw numbers next to the excluded ones
+        self.assertEqual((rep['recall_fixtures_raw'], rep['false_alarm_rate_clean_raw']), (1.0, 1.0))
+        self.assertEqual((fx['C1']['false_alarm_raw'], fx['D1']['caught_raw'], fx['D2']['caught_raw']),
+                         (True, True, True))
+        self.assertEqual((raw['recall_fixtures_raw'], raw['false_alarm_rate_clean_raw']), (1.0, 1.0))
+
+    def test_canary_checker_version_reads_the_oldest_source_lock(self):
+        tmp = Path(tempfile.mkdtemp(prefix='mfc_hpb_'))
+        try:
+            self.assertIsNone(gov.canary_checker_version(tmp))
+            for d, v in (('a_dev_v1_20261101', '1.0.1'), ('b_dev_v1_20261101', '1.0.0'), ('c', 'junk')):
+                (tmp / 'repo' / d).mkdir(parents=True)
+                (tmp / 'repo' / d / 'SOURCE_LOCK.json').write_text(json.dumps({'checker_version': v}))
+            self.assertEqual(gov.canary_checker_version(tmp), '1.0.0')
+        finally:
+            shutil.rmtree(str(tmp), ignore_errors=True)
+
+    def test_rule_newer_than(self):
+        r = self.RULES['rules']
+        self.assertIsNone(common.rule_newer_than(r[0], '1.0.0'))
+        self.assertEqual(common.rule_newer_than(r[1], '1.0.0'), '1.0.1')
+        self.assertEqual(common.rule_newer_than(r[2], '1.0.0'), '1.0.1')
+        self.assertIsNone(common.rule_newer_than(r[2], '1.0.1'))
+        self.assertIsNone(common.rule_newer_than(r[1], None))
 
 
 class TestHeldout(TmpCase):

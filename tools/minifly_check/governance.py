@@ -16,6 +16,7 @@ delivery code is never imported or executed.
 from __future__ import annotations
 
 import argparse
+import ast
 import concurrent.futures
 import contextlib
 import functools
@@ -433,7 +434,7 @@ def classify_rules(path: str, old_b: Optional[bytes], new_b: Optional[bytes]) ->
     for rid in sorted(set(oi) - set(ni)):
         out.append(_change(path, 'rules', 'loosen', 'removed check id %s' % rid, [rid]))
     known = {'id', 'module', 'title', 'stages', 'tier_min', 'introduced_in', 'status', 'fm_ids', 'applies_when',
-             'warn_below_tier'}
+             'warn_below_tier', 'changed_in'}
     for rid in sorted(set(oi) & set(ni)):
         a, b = oi[rid], ni[rid]
         if a == b:
@@ -483,6 +484,22 @@ def classify_rules(path: str, old_b: Optional[bytes], new_b: Optional[bytes]) ->
             cls = 'loosen' if c in (1, 2) else 'tighten'
             out.append(_change(path, 'rules', cls, '%s introduced_in %r -> %r' % (rid, a.get('introduced_in'),
                                                                                  b.get('introduced_in')), [rid]))
+        ca, cb = a.get('changed_in'), b.get('changed_in')
+        if ca != cb:
+            # changed_in records the release of a tightening (SPEC 20.10); held-out scoring reads it. Appending a
+            # version is bookkeeping (the code change itself is classified on its own); dropping or rewriting a
+            # recorded version would re-count a post-batch tightening, so it is a loosening.
+            la = ca if isinstance(ca, list) else []
+            lb = cb if isinstance(cb, list) else []
+            appended = isinstance(cb, list) and lb[:len(la)] == la and (ca is None or isinstance(ca, list))
+            # round-1 repair (verifier): an appended version is neutral only together with a change to the rule's
+            # module in the same range (_analyze checks it); a version recorded for unchanged code would exclude the
+            # check's held-out hits and false alarms as post_batch
+            mod = b.get('module') if isinstance(b.get('module'), str) and b.get('module') else None
+            extra_ci = {'changed_in_module': '%s/%s.py' % (path.rsplit('/', 1)[0] if '/' in path else '.', mod)} \
+                if (appended and mod) else {}
+            out.append(_change(path, 'rules', 'neutral' if appended else 'loosen', '%s changed_in %r -> %r'
+                               % (rid, ca, cb), [rid], **extra_ci))
         aw, bw = a.get('applies_when'), b.get('applies_when')
         if aw != bw:
             a_always = isinstance(aw, str) and aw.strip().lower().startswith('always')
@@ -1514,6 +1531,76 @@ def _work_dir(ctx: common.Ctx) -> Path:
     return Path(ctx._cache['gov_work'].name)
 
 
+_LAZY_IMPORT_FUNCS = ('lazy', '_lazy', 'import_module', '__import__')
+
+
+def kit_import_closure(read: Callable[[str], Optional[bytes]], module_path: str) -> Set[str]:
+    """Repo paths of the kit modules a check module can run: the module and, transitively, every kit module it imports
+    (an import statement at any depth, or lazy('x') / importlib.import_module('x') with a literal name)."""
+    kit_dir = module_path.rsplit('/', 1)[0] if '/' in module_path else ''
+    cache: Dict[str, Optional[bytes]] = {}
+
+    def rd(name: str) -> Optional[bytes]:
+        rel = '%s/%s.py' % (kit_dir, name) if kit_dir else '%s.py' % name
+        if rel not in cache:
+            cache[rel] = read(rel)
+        return cache[rel]
+    first = module_path.rsplit('/', 1)[-1][:-3] if module_path.endswith('.py') else module_path
+    seen: Set[str] = set()
+    todo = [first]
+    while todo:
+        m = todo.pop()
+        if m in seen:
+            continue
+        seen.add(m)
+        data = rd(m)
+        if data is None:
+            continue
+        try:
+            tree = ast.parse(data.decode('utf-8', 'replace'))
+        except (SyntaxError, ValueError):
+            continue
+        for node in ast.walk(tree):
+            names: List[str] = []
+            if isinstance(node, ast.Import):
+                names = [a.name.split('.')[0] for a in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                names = [node.module.split('.')[0]]
+            elif isinstance(node, ast.Call) and node.args and isinstance(node.args[0], ast.Constant) \
+                    and isinstance(node.args[0].value, str):
+                fn = node.func
+                fname = fn.id if isinstance(fn, ast.Name) else (fn.attr if isinstance(fn, ast.Attribute) else '')
+                if fname in _LAZY_IMPORT_FUNCS:
+                    names = [node.args[0].value.split('.')[0]]
+            for n in names:
+                if re.fullmatch(r'[A-Za-z_][A-Za-z0-9_]*', n) and n not in seen and rd(n) is not None:
+                    todo.append(n)
+    return set(('%s/%s.py' % (kit_dir, m) if kit_dir else '%s.py' % m) for m in seen)
+
+
+def require_module_change(changes: List[dict], changed: Sequence[str],
+                          read: Optional[Callable[[str], Optional[bytes]]] = None) -> List[dict]:
+    """An appended RULES changed_in version is neutral only when the same range also changes the code the check runs:
+    its module or a kit module the module imports (kit_import_closure over the head tree, when `read` is given)
+    (round-1 repair, verifier): a version recorded for unchanged code would exclude the check's held-out hits and false
+    alarms as post_batch, so without such a change the append is a loosening."""
+    changed_set = set(changed)
+    for c in changes:
+        mp = c.get('changed_in_module')
+        if not mp or c['class'] != 'neutral':
+            continue
+        mp = common.norm_rel(mp)
+        code = kit_import_closure(read, mp) if read is not None else {mp}
+        hit = sorted(code & changed_set)
+        if hit:
+            c['what'] += ' (code changed in the range: %s)' % ', '.join(hit[:4])
+        else:
+            c['class'] = 'loosen'
+            c['what'] += (' without a change to %s or a kit module it imports in the range (a version recorded for '
+                          "unchanged code would exclude the check's held-out hits and false alarms as post_batch)" % mp)
+    return changes
+
+
 def _analyze(ctx: common.Ctx) -> dict:
     git = ctx.git
     b_rev, h_rev = ctx.options.get('base'), ctx.options.get('head')
@@ -1524,7 +1611,8 @@ def _analyze(ctx: common.Ctx) -> dict:
     changed = sorted(git.changed_paths(base, head))
     prot_globs, append_globs = _protected_rules(git, [base, head], ctx.repo_root)
     prot = [p for p in changed if _matches_any(p, prot_globs)]
-    changes = classify_paths(git, base, head, prot)
+    changes = require_module_change(classify_paths(git, base, head, prot), changed,
+                                    lambda rel: git.file_at(head, rel))
     trailers_ud: List[str] = []
     trailers_rev: List[str] = []
     for c in commits:
@@ -1727,12 +1815,15 @@ def check_gov_rev(ctx: common.Ctx) -> Result:
         prot = [p for p in c.paths if _matches_any(p, a['protected_globs'])]
         if not prot:
             continue
-        fams = _acting_families(c)
-        if not fams:
-            unknown.append(_short(c.sha))
-        authors |= fams
+        # the author family of a protected-path commit: trailer AND namespace (common.commit_family, SPEC 20.15)
+        fam, ist, iwhy = common.commit_family(git, c)
+        if ist != common.IDENTITY_OK:
+            unknown.append('%s (%s)' % (_short(c.sha), ist))
+            continue
+        authors.add(fam)
     if unknown:
-        return Result('GOV-REV', FAIL, 'protected-path commits without an Acting-Agent trailer (author family unknown): %s'
+        return Result('GOV-REV', FAIL, 'protected-path commits whose acting family cannot be derived from the '
+                      'Acting-Agent trailer and the origin/<family>/* namespace (author family unknown): %s'
                       % ', '.join(unknown[:8]), evidence=unknown[:20])
     if not a['review_refs']:
         return Result('GOV-REV', FAIL, '%d change(s) need a cross-agent governance review, but no Governance-Review '
@@ -1787,18 +1878,15 @@ def check_gov_rev(ctx: common.Ctx) -> Result:
         if introducing is None:
             problems.append('%s: no commit introduces the review record' % path)
             continue
-        cf = _acting_families(introducing)
-        if rfam not in cf or (cf - {rfam}):
-            problems.append('%s: introduced by %s with Acting-Agent %s, not the reviewer family %s'
-                            % (path, _short(introducing.sha), ','.join(sorted(cf)) or 'none', rfam))
+        ok, why = common.commit_is_family(git, introducing, rfam)
+        if not ok:
+            # trailer AND origin/<family>/* namespace must both say the reviewer family (SPEC 20.15)
+            ns = set(common.branch_namespace(b) for b in git.remote_branches_containing(introducing.sha))
+            problems.append('%s: the introducing commit %s is not the reviewer family %s (%s)%s'
+                            % (path, _short(introducing.sha), rfam, why,
+                               '' if rfam in ns else '; no %s-namespace remote branch contains it' % rfam))
             continue
-        branches = git.remote_branches_containing(introducing.sha)
-        ns = [b for b in branches if re.match(r'^(?:[^/]+/)?%s/' % re.escape(rfam), b)]
-        if not ns:
-            problems.append('%s: introducing commit %s is in no %s-namespace remote branch (branches: %s)'
-                            % (path, _short(introducing.sha), rfam, ', '.join(branches[:5]) or 'none'))
-            continue
-        good.append('%s by %s (%s)' % (path, rfam, ns[0]))
+        good.append('%s by %s (%s)' % (path, rfam, why))
     if good and not problems:
         return Result('GOV-REV', PASS, 'cross-agent review: %s; covers %d change(s)' % ('; '.join(good), len(need)),
                       evidence=sorted(review_paths))
@@ -2039,7 +2127,8 @@ def check_gov_coi(ctx: common.Ctx) -> Result:
     c_lock = ctx.git.first_commit_adding(rel)
     if c_lock is None:
         raise MissingInput('ENDPOINT_LOCK.json is not committed: the lock commit is unknown')
-    fams = set(f for f in [_family(lock.get('author_agent'))] if f) | _acting_families(c_lock)
+    lf, lst, _lwhy = common.commit_family(ctx.git, c_lock)
+    fams = set(f for f in [_family(lock.get('author_agent'))] if f) | (set([lf]) if lst == common.IDENTITY_OK else set())
     if not fams:
         return Result('GOV-COI', FAIL, 'author family unknown (lock.author_agent %r, lock commit %s has no Acting-Agent)'
                       % (lock.get('author_agent'), _short(c_lock.sha)))
@@ -2053,11 +2142,11 @@ def check_gov_coi(ctx: common.Ctx) -> Result:
         prot = [p for p in c.paths if _matches_any(p, globs)]
         if not prot:
             continue
-        cf = _acting_families(c)
-        if not cf:
-            offenders.append((c, 'no Acting-Agent (identity unknown)', prot))
-        elif cf & fams:
-            offenders.append((c, 'Acting-Agent %s' % ','.join(sorted(cf & fams)), prot))
+        cfam, cst, cwhy = common.commit_family(ctx.git, c)
+        if cst != common.IDENTITY_OK:
+            offenders.append((c, '%s (identity unknown: %s)' % (cst, cwhy), prot))
+        elif cfam in fams:
+            offenders.append((c, 'acting family %s (trailer and namespace)' % cfam, prot))
     if not offenders:
         return Result('GOV-COI', PASS, 'no protected-path commit by the author family (%s) after lock commit %s'
                       % (','.join(sorted(fams)), _short(c_lock.sha)))
@@ -2923,12 +3012,17 @@ def check_held_03(ctx: common.Ctx) -> Result:
         if not vals:
             unknown.append(_short(c.sha))
             continue
-        if a_low in vals or (a_fam and any(_family(v) == a_fam for v in vals)) or a_low == c.author.strip().lower():
+        cfam, cst, _cwhy = common.commit_family(git, c)
+        if cst != common.IDENTITY_OK:
+            unknown.append('%s (%s)' % (_short(c.sha), cst))
+            continue
+        if a_low in vals or (a_fam and cfam == a_fam) or a_low == c.author.strip().lower():
             clashes.append(_short(c.sha))
     if clashes:
         return Result('HELD-03', FAIL, 'batch author %r also authored kit commits %s' % (author, ', '.join(clashes[:8])))
     if unknown:
-        return Result('HELD-03', FAIL, 'kit commits without an Acting-Agent (author unknown): %s' % ', '.join(unknown[:8]))
+        return Result('HELD-03', FAIL, 'kit commits without an Acting-Agent, or whose trailer and origin/<family>/* '
+                      'namespace disagree (author unknown): %s' % ', '.join(unknown[:8]))
     return Result('HELD-03', PASS, 'batch author %r differs from every kit-code author up to %s'
                   % (author, _short(merge.sha)))
 
@@ -2974,26 +3068,65 @@ def _score_fixtures(kit: Path, fixtures: Dict[str, Path], entries: Dict[str, dic
     return _run_corpus_jobs(jobs)
 
 
-def heldout_score_report(rules: dict, entries: Dict[str, dict], outs: Dict[str, RunOutcome]) -> dict:
+def canary_checker_version(fixture_dir: Path) -> Optional[str]:
+    """The checker_version a held-out canary was written against: the oldest parseable SOURCE_LOCK.checker_version in
+    its final tree (repo/**/SOURCE_LOCK.json; SPEC 20.18). None when the canary has no SOURCE_LOCK."""
+    found: List[str] = []
+    repo = Path(fixture_dir) / 'repo'
+    if repo.is_dir():
+        for p in sorted(repo.rglob('SOURCE_LOCK.json')):
+            try:
+                v = common.load_json_file(p).get('checker_version')
+            except (MissingInput, InvalidInput, AttributeError):
+                continue
+            if common.parse_version(v) is not None:
+                found.append(v)
+    return min(found, key=common.parse_version) if found else None
+
+
+def heldout_score_report(rules: dict, entries: Dict[str, dict], outs: Dict[str, RunOutcome],
+                         batch_versions: Optional[Dict[str, Optional[str]]] = None) -> dict:
+    """Recall and false-alarm rate of a revealed batch. SPEC 20.18 (round 1; the pilot's RUN-03 drift): a fired id
+    whose RULES introduced_in or changed_in is later than the checker_version in the canary's own SOURCE_LOCK
+    (batch_versions[fid]) is 'post_batch': a check the batch could not have been written against. It is listed per
+    fixture and never counts toward recall or a false alarm (a clean canary whose nonzero exits only post-batch ids
+    explain is not an alarm)."""
     fm_of: Dict[str, Set[str]] = {}
+    ridx: Dict[str, dict] = {}
     for r in rules.get('rules') or []:
         if isinstance(r, dict) and r.get('id'):
             fm_of[str(r['id'])] = set(str(x) for x in (r.get('fm_ids') or []))
+            ridx[str(r['id'])] = r
+    versions = dict(batch_versions or {})
     per: Dict[str, dict] = {}
     fm_tot: Dict[str, List[int]] = {}
+    post_all: Dict[str, List[str]] = {}
     caught_n = dirty_n = clean_n = alarms = 0
+    caught_raw = alarms_raw = 0
     for fid, e in sorted(entries.items()):
         oc = outs.get(fid)
-        fired = sorted(oc.fired) if oc else []
+        fired_all = sorted(oc.fired) if oc else []
+        bv = versions.get(fid)
+        post = sorted(rid for rid in fired_all if rid in ridx and common.rule_newer_than(ridx[rid], bv))
+        fired = [rid for rid in fired_all if rid not in post]
+        if post:
+            post_all[fid] = post
         fired_fm = set()
         for rid in fired:
             fired_fm |= fm_of.get(rid, set())
+        fired_fm_raw = set()
+        for rid in fired_all:
+            fired_fm_raw |= fm_of.get(rid, set())
         classes = list(e['classes'])
         if not classes:
             clean_n += 1
-            alarm = bool(fired) or (oc is None) or any(x != 0 for x in (oc.exits if oc else [1]))
+            bad_exit = any(x != 0 for x in (oc.exits if oc else [1]))
+            alarm = bool(fired) or (oc is None) or (bad_exit and not post) or bool(oc and oc.exit3_errors)
+            alarm_raw = bool(fired_all) or (oc is None) or bad_exit or bool(oc and oc.exit3_errors)
             alarms += int(alarm)
-            per[fid] = {'clean': True, 'fired': fired, 'exits': oc.exits if oc else None, 'false_alarm': alarm}
+            alarms_raw += int(alarm_raw)
+            per[fid] = {'clean': True, 'fired': fired, 'post_batch': post, 'batch_checker_version': bv,
+                        'exits': oc.exits if oc else None, 'false_alarm': alarm, 'false_alarm_raw': alarm_raw}
             continue
         dirty_n += 1
         hit = {}
@@ -3005,13 +3138,23 @@ def heldout_score_report(rules: dict, entries: Dict[str, dict], outs: Dict[str, 
             fm_tot[c][0] += int(ok)
         caught = all(hit.values())
         caught_n += int(caught)
+        c_raw = all(((c in fired_fm_raw) if FM_RE.match(c) else (c in fired_all)) for c in classes)
+        caught_raw += int(c_raw)
         per[fid] = {'clean': False, 'expected': classes, 'fired': fired, 'fired_fm': sorted(fired_fm),
-                    'exits': oc.exits if oc else None, 'caught': caught, 'per_class': hit,
+                    'post_batch': post, 'batch_checker_version': bv,
+                    'exits': oc.exits if oc else None, 'caught': caught, 'caught_raw': c_raw, 'per_class': hit,
                     'errors': (oc.errors + [m for _i, m in oc.exit3_errors]) if oc else ['not run']}
     return {'fixtures': per,
             'recall_per_class': {k: {'caught': v[0], 'n': v[1], 'recall': v[0] / float(v[1])} for k, v in sorted(fm_tot.items())},
             'recall_fixtures': (caught_n / float(dirty_n)) if dirty_n else None, 'n_dirty': dirty_n,
-            'false_alarm_rate_clean': (alarms / float(clean_n)) if clean_n else None, 'n_clean': clean_n}
+            'false_alarm_rate_clean': (alarms / float(clean_n)) if clean_n else None, 'n_clean': clean_n,
+            # round-1 repair (verifier): the raw numbers, post_batch ids counted, are always reported next to the
+            # excluded ones, so a batch stamped with an old version cannot hide a later check's hits and alarms
+            'recall_fixtures_raw': (caught_raw / float(dirty_n)) if dirty_n else None,
+            'false_alarm_rate_clean_raw': (alarms_raw / float(clean_n)) if clean_n else None,
+            'post_batch': post_all,
+            'post_batch_rule': 'fired ids whose RULES introduced_in or changed_in is later than the checker_version in '
+                               "the canary's own SOURCE_LOCK are post_batch: listed, never counted (SPEC 20.18)"}
 
 
 def cmd_heldout(args: Any) -> int:
@@ -3123,7 +3266,8 @@ def cmd_heldout(args: Any) -> int:
             return common.EXIT_FAIL
         rules = common.load_json_file(kit / 'RULES.json')
         outs = _score_fixtures(kit, fixtures, entries)
-        rep = heldout_score_report(rules if isinstance(rules, dict) else {}, entries, outs)
+        versions = {fid: canary_checker_version(p) for fid, p in fixtures.items()}
+        rep = heldout_score_report(rules if isinstance(rules, dict) else {}, entries, outs, versions)
         valid = rc == common.EXIT_PASS
         report = {'schema': HELDOUT_REPORT_SCHEMA, 'batch_id': batch, 'utc': common.utc_now(), 'checker_commit': s,
                   'checker_sha256': common.checker_sha256(kit, refresh=True), 'checker_source': note,
@@ -3131,7 +3275,11 @@ def cmd_heldout(args: Any) -> int:
                   'commitment': row, 'score': rep}
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(common.dumps_pretty(common._jsonable(report)), encoding='utf-8')
-    print('heldout score %s: recall %s, false-alarm rate %s; report %s%s'
-          % (batch, rep['recall_fixtures'], rep['false_alarm_rate_clean'], out,
+    print('heldout score %s: recall %s, false-alarm rate %s (raw, post_batch counted: recall %s, false-alarm rate %s)'
+          '%s; report %s%s'
+          % (batch, rep['recall_fixtures'], rep['false_alarm_rate_clean'], rep['recall_fixtures_raw'],
+             rep['false_alarm_rate_clean_raw'],
+             '; post_batch ids excluded: %s' % ', '.join(sorted(set(i for v in rep['post_batch'].values() for i in v)))
+             if rep['post_batch'] else '', out,
              '' if valid else ' (NOT a valid held-out measurement: a HELD check did not pass)'))
     return rc

@@ -15,7 +15,11 @@ call the scorer's verdict functions (that would recurse).
 from __future__ import annotations
 
 import ast
+import base64
+import binascii
+import gzip
 import importlib
+import json
 import math
 import re
 from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Set, Tuple
@@ -1398,6 +1402,33 @@ def check_adm_shuf(ctx: common.Ctx) -> Result:
 # --------------------------------------------------------------------------------------
 # ADM-EXPO (exposure leakage and undeclared streams)
 # --------------------------------------------------------------------------------------
+# SPEC 7.4 ADM-EXPO, FM-12 and SPEC 20.11 (round 1, INC-HB1-A3): exposure is judged by CONTENT, not by the stream's
+# feedback_bearing declaration or by field names. (1) A feedback-bearing row (declared stream flag, or the row's own
+# flag) never carries a held prompt (E2) or canonical held orbit (E3), in any string field. (2) No row of ANY
+# exposure stream (feedback-bearing or not), of the TAUGHT directory, or of an undeclared TAUGHT/stream/calibration-
+# like file carries the expected answer of a held item together with that item's prompt or orbit: every string value
+# and key of the row is read as text, as hex and as base64, and byte lists as bytes; a held prompt or orbit anywhere
+# in the row plus a value equal to its answer, or one value holding the prompt followed by the answer, is a leak.
+# Round-1 repair (verifier probes A5/A6/A4): a string value that is itself JSON (also hex/base64-coded JSON) is parsed
+# and read as part of the row; inside one value the answer may follow the prompt or orbit after up to 32 bytes of
+# non-digit filler ('3+7 equals 10', '"q": "3+7=", "a": "10"') or precede it as 'c = a+b'; and records are read in
+# stream order: a record whose value at some field ends with a held prompt or orbit, followed by a record whose value
+# at the same field starts (after up to 16 bytes of non-digit filler) with its answer, is a leak too (a listening
+# stream that plays '3+7=' and then '10'). Non-feedback streams may hold held prompts WITHOUT answers (listening,
+# presentation). The same scan gives the scorer the held orbits that were taught with their answers (SPEC 9.3: such
+# items are S1, never counted).
+
+STREAM_NAME_PARTS = ('taught', 'stream', 'calib', 'curric', 'expos', 'warm', 'listen')
+_HEX_STR_RE = re.compile(r'^(?:[0-9A-Fa-f]{2})+$')
+_B64_STR_RE = re.compile(r'^[A-Za-z0-9+/]+={0,2}$')
+_TEXT_FIELD_SPLIT_RE = re.compile(r'[,\t;|]')
+_MAX_EXPO_HITS = 200
+_JSON_START_RE = re.compile(r'^\s*[\[{]')
+_MAX_EMBEDDED_JSON = 1 << 20
+# data files outside manifests/ and results/ that a learner could read (round-1 repair, verifier probe A8)
+DATA_EXTS = ('.jsonl', '.json', '.txt', '.tsv', '.csv', '.jsonl.gz', '.json.gz', '.txt.gz')
+NON_DELIVERY_DATA_DIRS = ('checks/', 'runlog/', 'review/', 'results/', 'manifests/')
+
 
 def _stream_decls(lock: dict) -> Tuple[List[Tuple[str, bool]], List[str]]:
     es = lock.get('exposure_streams')
@@ -1425,7 +1456,10 @@ def _logical_files(ctx: common.Ctx) -> Tuple[List[str], Set[str]]:
 
 
 def _is_stream_candidate(rel: str, excluded: Set[str]) -> bool:
-    """A TAUGHT or stream file that must be declared in exposure_streams (SPEC ADM-EXPO)."""
+    """A TAUGHT, stream or calibration-like file that must be declared in exposure_streams (SPEC ADM-EXPO, 20.11):
+    every file under manifests/ except the split manifests, and under results/ (receipts aside) every non-canonical
+    JSONL file and every file whose path names a taught/stream/calibration/curriculum/exposure/warm-up/listening
+    part."""
     name = rel.rsplit('/', 1)[-1]
     if rel in excluded or name == '.gitkeep' or name.lower().endswith('.md'):
         return False
@@ -1434,53 +1468,391 @@ def _is_stream_candidate(rel: str, excluded: Set[str]) -> bool:
     if rel.startswith('results/'):
         if rel.startswith('results/receipts/'):
             return False
-        if any(('taught' in part.lower() or 'stream' in part.lower()) for part in rel.split('/')):
+        if any(any(k in part.lower() for k in STREAM_NAME_PARTS) for part in rel.split('/')):
             return True
         return rel.endswith('.jsonl') and rel not in CANONICAL_ROW_FILES and rel != common.REPLAY_OUTPUTS
-    return False
+    # round-1 repair: a data file elsewhere in the delivery whose path names a stream part (data/warmup.jsonl)
+    if rel.startswith(NON_DELIVERY_DATA_DIRS) or not rel.lower().endswith(DATA_EXTS):
+        return False
+    return any(any(k in part.lower() for k in STREAM_NAME_PARTS) for part in rel.split('/'))
 
 
-@check('ADM-EXPO')
-def check_adm_expo(ctx: common.Ctx) -> Result:
-    addition = lazy('addition')
-    lock = ctx.lock
-    fmt = dig(lock, 'task.format')
-    decls, problems = _stream_decls(lock)
-    missing: List[str] = []
-    split = lock.get('split') if isinstance(lock.get('split'), dict) else {}
-    held_rel = split.get('held_manifest')
-    if not s(held_rel):
-        raise InvalidInput('lock.split.held_manifest is not set')
-    held_rel = _logical_row_path(ctx, held_rel)
-    if not ctx.row_sources(held_rel):
-        raise MissingInput('held manifest %s absent' % held_rel)
-    level = lock.get('claim_level_target')
-    is_add = addition.is_addition(fmt)
-    exact = level == 'E2' or not is_add
+def _decodings(v: Any) -> List[bytes]:
+    """Byte readings of one row value: a string as UTF-8 text, as hex and as base64 (when it is valid for either);
+    a list of ints 0..255 as bytes."""
+    return [d for d, _rich in _decodings_tagged(v)]
 
-    def key_of(ph: Any) -> Optional[tuple]:
+
+def _textlike(b: bytes) -> bool:
+    """Bytes a learner could read as text: UTF-8 with printable characters and whitespace only, after trailing control
+    bytes (an EOS such as 0x03 or 0x00) are set aside."""
+    try:
+        t = b.decode('utf-8')
+    except UnicodeDecodeError:
+        return False
+    t = t.rstrip(''.join(chr(c) for c in range(32)))
+    return all(ch.isprintable() or ch in '\t\n\r' for ch in t)
+
+
+def _decodings_tagged(v: Any) -> List[Tuple[bytes, bool]]:
+    """_decodings with a 'rich' flag: True for a reading the filler, stream-order and 'c = a+b' rules may use (round-1
+    repair). The raw text of a hex-shaped string is the encoding, not what the learner hears ('6b' must not read as
+    the answer 6), and a hex or base64 decoding that is not text is noise (base64 of a hex string decodes to random
+    bytes), so those readings keep only the exact rules."""
+    if isinstance(v, str):
+        t = v.strip()
+        hex_shaped = bool(_HEX_STR_RE.match(t))
+        out = [(v.encode('utf-8', 'surrogatepass'), not hex_shaped)]
+        if hex_shaped:
+            d = bytes.fromhex(t)
+            out.append((d, _textlike(d)))
+        if len(t) >= 4 and len(t) % 4 == 0 and _B64_STR_RE.match(t):
+            try:
+                d = base64.b64decode(t, validate=True)
+                out.append((d, _textlike(d)))
+            except (ValueError, binascii.Error):
+                pass
+        return out
+    if (isinstance(v, list) and v and len(v) <= 4096
+            and all(isinstance(x, int) and not isinstance(x, bool) and 0 <= x <= 255 for x in v)):
+        d = bytes(v)
+        return [(d, _textlike(d))]
+    return []
+
+
+class TextRecord(list):
+    """One line of a text stream: [line, field 1, field 2, ...]. Its items keep their position as their path."""
+
+
+def _embedded_json(t: str) -> Any:
+    """A string that is itself a JSON object or array (a JSON-encoded payload), parsed; otherwise None."""
+    if len(t) > _MAX_EMBEDDED_JSON or not _JSON_START_RE.match(t):
+        return None
+    try:
+        o = json.loads(t)   # lenient on purpose: NaN or duplicate keys must not hide an embedded payload
+    except (ValueError, RecursionError):
+        return None
+    return o if isinstance(o, (dict, list)) else None
+
+
+def _flat_items(obj: Any, out: List[Tuple[tuple, Any]], path: tuple = (), depth: int = 0) -> None:
+    """(path, value) of every string value, key and byte list inside obj (one fed record). Keys are listed under
+    their object's path + ('<key>',); list elements under the list's path + ('*',); the line and fields of a
+    TextRecord under ('<line>',) and ('<field>', j). A string that is itself a JSON object or array (as text, hex or
+    base64) is parsed and its content listed under path + ('<json>',) (round-1 repair, verifier probe A5)."""
+    if depth > 64:
+        return
+    if isinstance(obj, TextRecord) and not path:
+        for j, x in enumerate(obj):
+            if x != '':
+                _flat_items(x, out, ('<line>',) if j == 0 else ('<field>', j), depth + 1)
+    elif isinstance(obj, dict):
+        for k, v in obj.items():
+            out.append((path + ('<key>',), str(k)))
+            _flat_items(v, out, path + (str(k),), depth + 1)
+    elif isinstance(obj, list):
+        if _decodings(obj) and not all(isinstance(x, str) for x in obj):
+            out.append((path, obj))
+        for x in obj:
+            if isinstance(x, (dict, list, str)):
+                _flat_items(x, out, path + ('*',), depth + 1)
+    elif isinstance(obj, str):
+        out.append((path, obj))
+        seen = set()
+        for d in _decodings(obj):
+            try:
+                t = d.decode('utf-8')
+            except UnicodeDecodeError:
+                continue
+            if t in seen:
+                continue
+            seen.add(t)
+            emb = _embedded_json(t)
+            if emb is not None:
+                _flat_items(emb, out, path + ('<json>',), depth + 1)
+
+
+def _flat_values(obj: Any, out: List[Any], depth: int = 0) -> None:
+    """Every string value, key and byte list inside obj (one fed record), embedded JSON included."""
+    items: List[Tuple[tuple, Any]] = []
+    _flat_items(obj, items, (), depth)
+    out.extend(v for _p, v in items)
+
+
+def _doc_records(obj: Any) -> List[Any]:
+    """Records of a JSON document: the elements of a top-level list; for a top-level object, each object element
+    of its list values plus the object without those lists; otherwise the document itself."""
+    if isinstance(obj, list):
+        return list(obj)
+    if isinstance(obj, dict):
+        recs: List[Any] = []
+        rest = {}
+        for k, v in obj.items():
+            if isinstance(v, list) and v and all(isinstance(x, dict) for x in v):
+                recs.extend(v)
+            else:
+                rest[k] = v
+        if rest:
+            recs.append(rest)
+        return recs
+    return [obj]
+
+
+class HeldIndex(object):
+    """Held items of the lock for the exposure scan: keys (canonical orbit for E3 addition, exact prompt otherwise)
+    with their item id and expected answer bytes."""
+
+    def __init__(self, ctx: common.Ctx):
+        addition = lazy('addition')
+        self.addition = addition
+        lock = ctx.lock
+        self.fmt = dig(lock, 'task.format')
+        self.is_add = addition.is_addition(self.fmt)
+        self.exact = lock.get('claim_level_target') == 'E2' or not self.is_add
+        self.problems: List[str] = []
+        self.notes: List[str] = []
+        split = lock.get('split') if isinstance(lock.get('split'), dict) else {}
+        held_rel = split.get('held_manifest')
+        if not s(held_rel):
+            raise InvalidInput('lock.split.held_manifest is not set')
+        held_rel = _logical_row_path(ctx, held_rel)
+        if not ctx.row_sources(held_rel):
+            raise MissingInput('held manifest %s absent' % held_rel)
+        self.held_rel = held_rel
+        self.items: Dict[tuple, str] = {}
+        self.answer: Dict[tuple, bytes] = {}
+        self.prompts: Dict[bytes, tuple] = {}
+        if self.is_add:
+            self.sep, self.term = addition._sep_term(self.fmt)
+            self.eos = bytes.fromhex(self.fmt['eos_hex']) if s(self.fmt.get('eos_hex')) else b''
+            self.rx = re.compile(rb'(?<![0-9])([0-9]{1,64})[ \t]*' + re.escape(self.sep) + rb'[ \t]*([0-9]{1,64})'
+                                 rb'(?:[ \t]*(' + re.escape(self.term) + rb')[ \t]*([0-9]{1,65})?)?(?![0-9])')
+            # round-1 repair: the answer after non-digit filler, before the equation ('c = a+b'), and the shapes
+            # of a value that ends with a prompt or starts with an answer (stream order)
+            self.after_rx = re.compile(rb'[^0-9]{0,32}?([0-9]{1,65})(?![0-9])', re.S)
+            self.head_rx = re.compile(rb'[^0-9]{0,16}?([0-9]{1,65})(?![0-9])', re.S)
+            self.operand_rx = re.compile(rb'[ \t]*' + re.escape(self.sep) + rb'[ \t]*[0-9]')
+            self.before_rx = re.compile(rb'(?<![0-9])([0-9]{1,65})[ \t]*' + re.escape(self.term) + rb'[ \t]*$')
+        else:
+            self.eos = b''
+        self.tail_rx = re.compile(rb'[ \t\r\n?.:]*' + (rb'(?:' + re.escape(self.eos) + rb')*' if self.eos else b'')
+                                  + rb'[ \t\r\n]*$')
+        no_answer = 0
+        for label, ln, r in ctx.iter_rows_with_source(held_rel):
+            k = self.key_of_hex(r.get('prompt_hex'))
+            if k is None:
+                self.problems.append('%s:%d held item without prompt_hex' % (label, ln))
+                continue
+            if not self.exact and k[0] != 'orbit':
+                self.problems.append('%s:%d held prompt %r does not parse as addition' % (label, ln, r.get('prompt_hex')))
+                continue
+            self.items.setdefault(k, str(r.get('item_id')))
+            ans = None
+            if self.is_add:
+                ans = addition.expected_bytes(r.get('prompt_hex'), self.fmt)
+            elif isinstance(r.get('expected_hex'), str):
+                try:
+                    ans = bytes.fromhex(r['expected_hex'])
+                except ValueError:
+                    ans = None
+            if ans:
+                self.answer.setdefault(k, ans)
+            else:
+                no_answer += 1
+            try:
+                pb = bytes.fromhex(r.get('prompt_hex'))
+            except (TypeError, ValueError):
+                pb = b''
+            if pb:
+                self.prompts.setdefault(pb, k)
+        if no_answer:
+            self.notes.append('%d held item(s) carry no expected answer in %s: only their prompts are checked'
+                              % (no_answer, held_rel))
+
+    def key_of_hex(self, ph: Any) -> Optional[tuple]:
         if not isinstance(ph, str):
             return None
         p = ph.strip().lower()
-        if not exact:
-            pr = addition.parse(p, fmt)
+        if not self.exact:
+            pr = self.addition.parse(p, self.fmt)
             if pr is not None:
-                return ('orbit',) + addition.canonical(*pr)
+                return ('orbit',) + self.addition.canonical(*pr)
         return ('prompt', p)
 
-    held: Dict[tuple, str] = {}
-    for label, ln, r in ctx.iter_rows_with_source(held_rel):
-        k = key_of(r.get('prompt_hex'))
-        if k is None:
-            problems.append('%s:%d held item without prompt_hex' % (label, ln))
-            continue
-        if not exact and k[0] != 'orbit':
-            problems.append('%s:%d held prompt %r does not parse as addition' % (label, ln, r.get('prompt_hex')))
-            continue
-        held.setdefault(k, str(r.get('item_id')))
+    def _answer_form(self, b: bytes) -> bytes:
+        t = b.strip()
+        while self.eos and t.endswith(self.eos):
+            t = t[:-len(self.eos)].rstrip()
+        if self.is_add and t and all(48 <= c <= 57 for c in t):
+            t = t.lstrip(b'0') or b'0'
+        return t
+
+    def _number_after(self, d: bytes, pos: int, rx: 're.Pattern') -> Optional[bytes]:
+        """The first digit run at or after pos when only non-digit filler lies before it (rx bounds the filler),
+        unless it is the first operand of a following sum ('3+7= 10+4=' holds no answer for 3+7)."""
+        m = rx.match(d, pos)
+        if not m or self.operand_rx.match(d, m.end(1)):
+            return None
+        return m.group(1)
+
+    def scan_value(self, d: bytes) -> Tuple[Set[tuple], Set[tuple]]:
+        """(held keys whose prompt or orbit occurs in d, held keys whose prompt is followed by its answer in d)."""
+        keys, both, _tails = self.scan_value_full(d)
+        return keys, both
+
+    def scan_value_full(self, d: bytes, rich: bool = True) -> Tuple[Set[tuple], Set[tuple], Set[tuple]]:
+        """(keys present in d, keys answered in d, keys whose prompt or orbit ends d): the answer directly after the
+        terminator or, when d is a rich (text) reading, after up to 32 bytes of non-digit filler ('3+7 equals 10') or
+        before the equation ('10 = 3+7')."""
+        keys: Set[tuple] = set()
+        both: Set[tuple] = set()
+        tails: Set[tuple] = set()
+        if self.is_add:
+            for m in self.rx.finditer(d):
+                a, b = m.group(1).decode('ascii'), m.group(2).decode('ascii')
+                if self.exact:
+                    k = ('prompt', (m.group(1) + self.sep + m.group(2) + self.term).hex())
+                    if m.group(3) is None:
+                        continue  # an exact prompt includes its terminator
+                else:
+                    k = ('orbit',) + self.addition.canonical(a, b)
+                if k not in self.items:
+                    continue
+                keys.add(k)
+                want = self._answer_form(self.answer.get(k, b''))
+                if m.group(4) is not None:
+                    if want and self._answer_form(m.group(4)) == want:
+                        both.add(k)
+                    continue
+                if not rich:
+                    continue
+                nxt = self._number_after(d, m.end(), self.after_rx)
+                if want and nxt is not None and self._answer_form(nxt) == want:
+                    both.add(k)
+                    continue
+                if not self.exact:
+                    pm = self.before_rx.search(d[max(0, m.start() - 80):m.start()])
+                    if want and pm and self._answer_form(pm.group(1)) == want:
+                        both.add(k)
+                        continue
+                if self.tail_rx.match(d, m.end()):
+                    tails.add(k)
+        else:
+            t = d.strip()
+            for pb, k in self.prompts.items():
+                if t == pb or (len(pb) >= 3 and pb in d):
+                    keys.add(k)
+                    ans = self.answer.get(k)
+                    if ans and (pb + ans) in d:
+                        both.add(k)
+                    elif rich and d.rstrip().endswith(pb):
+                        tails.add(k)
+        return keys, both, tails
+
+    def heads_of(self, d: bytes, rich: bool = True) -> Set[bytes]:
+        """Answer forms a value starts with: the whole value, and for a rich (text) reading (addition) the first digit
+        run after up to 16 bytes of non-digit filler that is not a sum's first operand ('10', 'A: 10', '10 next');
+        non-addition: the value."""
+        out = {self._answer_form(d)}
+        if not rich:
+            return out
+        if self.is_add:
+            n = self._number_after(d, 0, self.head_rx)
+            if n is not None:
+                out.add(self._answer_form(n))
+        else:
+            out.add(d.lstrip())
+        return out
+
+    def answered_by(self, k: tuple, heads: Set[bytes]) -> bool:
+        ans = self.answer.get(k)
+        if not ans:
+            return False
+        want = self._answer_form(ans)
+        if self.is_add:
+            return want in heads
+        return any(h == want or h.startswith(ans) for h in heads)
+
+    def scan_items(self, items: Sequence[Tuple[tuple, Any]]) -> Tuple[Set[tuple], Set[tuple], Dict[tuple, Set[tuple]],
+                                                                      Dict[tuple, Set[bytes]]]:
+        """(keys present, keys present with their answer, per field path the unanswered keys whose prompt or orbit
+        ends the field's last value, per field path the answer forms its first value starts with)."""
+        present: Set[tuple] = set()
+        leaked: Set[tuple] = set()
+        answers: Set[bytes] = set()
+        tails: Dict[tuple, Set[tuple]] = {}
+        heads: Dict[tuple, Set[bytes]] = {}
+        for path, v in items:
+            tk: Set[tuple] = set()
+            hs: Set[bytes] = set()
+            for d, rich in _decodings_tagged(v):
+                k, both, tl = self.scan_value_full(d, rich)
+                present |= k
+                leaked |= both
+                tk |= tl
+                answers.add(self._answer_form(d))
+                hs |= self.heads_of(d, rich)
+            tails[path] = tk          # the last value at a path ends the field
+            heads.setdefault(path, hs)  # the first value at a path starts it
+        for k in present - leaked:
+            ans = self.answer.get(k)
+            if ans and self._answer_form(ans) in answers:
+                leaked.add(k)
+        return present, leaked, dict((p, ks - leaked) for p, ks in tails.items() if ks - leaked), heads
+
+    def scan_record(self, values: Sequence[Any]) -> Tuple[Set[tuple], Set[tuple]]:
+        """(held keys present in the record, held keys present together with their expected answer)."""
+        present, leaked, _t, _h = self.scan_items([((), v) for v in values])
+        return present, leaked
+
+
+def _file_records(ctx: common.Ctx, rel: str, row_paths: Set[str]) -> Tuple[Optional[List[Tuple[str, int, Any]]], str]:
+    """(records [(label, line, record)], why) of one stream file: JSONL rows, JSON document records, or text lines
+    (each line plus its comma/tab/semicolon/pipe fields). None when the content cannot be read as any of these."""
+    if rel in row_paths:
+        return [(label, ln, r) for label, ln, r in ctx.iter_rows_with_source(rel)], 'jsonl'
+    p = ctx.path(rel)
+    if not p.is_file():
+        return None, 'not a file'
+    raw = p.read_bytes()
+    if rel.endswith('.gz'):
+        try:
+            raw = gzip.decompress(raw)
+        except (OSError, EOFError) as e:
+            return None, 'gzip unreadable (%s)' % e
+    try:
+        text = raw.decode('utf-8')
+    except UnicodeDecodeError:
+        return None, 'not UTF-8 text, JSON or JSONL'
+    if rel.endswith('.json') or rel.endswith('.json.gz'):
+        try:
+            obj = common.loads_strict(text, what=rel)
+        except InvalidInput as e:
+            return None, 'JSON does not parse (%s)' % e
+        return [(rel, i + 1, r) for i, r in enumerate(_doc_records(obj))], 'json'
+    out: List[Tuple[str, int, Any]] = []
+    for i, line in enumerate(text.splitlines(), 1):
+        if line.strip():
+            out.append((rel, i, TextRecord([line] + [x.strip() for x in _TEXT_FIELD_SPLIT_RE.split(line)])))
+    return out, 'text'
+
+
+def exposure_scan(ctx: common.Ctx) -> dict:
+    """The content scan behind ADM-EXPO and the scorer's exposure strata (cached per ctx). Returns {'held':
+    HeldIndex, 'problems', 'missing', 'fb_hits', 'leaks', 'leaked_keys', 'n_rows', 'n_fb', 'scanned',
+    'undeclared'}. leaked_keys: held keys whose expected answer occurs with the prompt or orbit in some row."""
+    key = 'wp4_exposure_scan'
+    if key in ctx._cache:
+        return ctx._cache[key]
+    lock = ctx.lock
+    held = HeldIndex(ctx)
+    decls, problems = _stream_decls(lock)
+    problems = list(held.problems) + problems
+    missing: List[str] = []
+    split = lock.get('split') if isinstance(lock.get('split'), dict) else {}
     excluded = set()
-    for key in ('held_manifest', 'old_manifest', 'new_manifest'):
-        v = _logical_row_path(ctx, split.get(key))
+    for k in ('held_manifest', 'old_manifest', 'new_manifest'):
+        v = _logical_row_path(ctx, split.get(k))
         if v:
             excluded.add(v)
     udi = lock.get('udi')
@@ -1492,48 +1864,104 @@ def check_adm_expo(ctx: common.Ctx) -> Result:
                   and not any(common.glob_match(f, g) for g, _fb in decls)]
     for f in undeclared:
         problems.append('undeclared TAUGHT/stream file %s (not matched by any exposure_streams path_glob)' % f)
-    hits: List[str] = []
+    fb_hits: List[str] = []
+    leaks: List[str] = []
+    leaked_keys: Dict[tuple, List[str]] = {}
     n_rows = n_fb = 0
-    scanned = []
+    scanned: List[str] = []
     for f in files:
-        matched = [fb for g, fb in decls if common.glob_match(f, g)]
-        in_taught = f.startswith(tdir + '/')
-        if not matched and not in_taught:
-            continue
         if f in excluded:
             continue
-        declared_fb = any(matched)
-        if f not in row_paths:
-            if declared_fb:
-                problems.append('feedback-bearing stream %s is not JSONL rows with prompt_hex: exposure cannot be '
-                                'checked' % f)
+        matched = [fb for g, fb in decls if common.glob_match(f, g)]
+        in_taught = f.startswith(tdir + '/')
+        if not matched and not in_taught and f not in undeclared:
+            continue
+        name = f.rsplit('/', 1)[-1]
+        if name == '.gitkeep' or name.lower().endswith('.md'):
+            continue
+        declared_fb = any(matched) or (f in undeclared)
+        recs, how = _file_records(ctx, f, row_paths)
+        if recs is None:
+            problems.append('exposure stream %s cannot be content-checked: %s (stream files must be JSONL, JSON or '
+                            'UTF-8 text)' % (f, how))
             continue
         scanned.append(f)
-        for label, ln, r in ctx.iter_rows_with_source(f):
+        prev_tails: Dict[tuple, Set[tuple]] = {}
+        prev_where = ''
+        for label, ln, r in recs:
             n_rows += 1
-            fb = r.get('feedback_bearing')
+            fb = r.get('feedback_bearing') if isinstance(r, dict) else None
             if fb is None:
                 fb = declared_fb
             elif not isinstance(fb, bool):
                 problems.append('%s:%d feedback_bearing %r is not a boolean' % (label, ln, fb))
-                continue
-            if not fb:
-                continue
-            n_fb += 1
-            k = key_of(r.get('prompt_hex'))
-            if k is None:
-                problems.append('%s:%d feedback-bearing row without prompt_hex' % (label, ln))
-                continue
-            if k in held:
-                hits.append('%s:%d prompt %s is in held %s %s' % (label, ln, r.get('prompt_hex'),
-                                                                 'prompt' if exact else 'orbit', held[k]))
-    if hits:
-        problems.insert(0, 'held %s exposed in %d feedback-bearing row(s): %s' % ('prompts' if exact else 'orbits',
-                                                                               len(hits), '; '.join(hits[:5])))
-    return finish('ADM-EXPO', problems, missing, '%d held %s; %d feedback-bearing rows in %d declared stream files never '
-                  'touch them; no undeclared TAUGHT/stream files' % (len(held), 'prompts (E2: exact)' if exact
-                                                                   else 'canonical orbits', n_fb, len(scanned)),
-                  evidence=hits[:60] or None)
+                fb = True
+            items: List[Tuple[tuple, Any]] = []
+            _flat_items(r, items)
+            present, leaked, tails, heads = held.scan_items(items)
+            # stream order (round-1 repair, verifier probe A6): the previous record's field ended with a held prompt or
+            # orbit and this record's same field starts with its answer
+            cross: Set[tuple] = set()
+            for path, ks in prev_tails.items():
+                hs = heads.get(path)
+                for k in sorted(ks):
+                    if hs and k not in leaked and held.answered_by(k, hs):
+                        leaked.add(k)
+                        cross.add(k)
+                        if len(leaks) < _MAX_EXPO_HITS:
+                            leaks.append('%s:%d starts with the answer of held %s %s that %s ends with (stream order)'
+                                         % (label, ln, 'prompt' if held.exact else 'orbit', held.items[k], prev_where))
+            prev_tails, prev_where = tails, '%s:%d' % (label, ln)
+            if fb:
+                n_fb += 1
+                if isinstance(r, dict):
+                    k = held.key_of_hex(r.get('prompt_hex'))
+                    if k is None:
+                        problems.append('%s:%d feedback-bearing row without prompt_hex' % (label, ln))
+                    elif k in held.items:
+                        present.add(k)
+                for k in sorted(present):
+                    if len(fb_hits) < _MAX_EXPO_HITS:
+                        fb_hits.append('%s:%d %s %s is in a feedback-bearing row' % (
+                            label, ln, 'prompt of held' if held.exact else 'orbit of held', held.items[k]))
+            for k in sorted(leaked):
+                leaked_keys.setdefault(k, []).append('%s:%d' % (label, ln))
+                if k not in cross and len(leaks) < _MAX_EXPO_HITS:
+                    leaks.append('%s:%d carries held %s %s together with its answer (%s stream)' % (
+                        label, ln, 'prompt' if held.exact else 'orbit', held.items[k],
+                        'feedback-bearing' if fb else 'non-feedback'))
+    out = {'held': held, 'problems': problems, 'missing': missing, 'fb_hits': fb_hits, 'leaks': leaks,
+           'leaked_keys': leaked_keys, 'n_rows': n_rows, 'n_fb': n_fb, 'scanned': scanned, 'undeclared': undeclared}
+    ctx._cache[key] = out
+    return out
+
+
+def exposed_held_orbits(ctx: common.Ctx) -> Set[Tuple[str, str]]:
+    """Canonical held orbits whose expected answer occurs with the orbit in any exposure stream, TAUGHT file or
+    undeclared stream-like file (SPEC 9.3 as amended in 20.11: such items are S1 and never counted). Empty for
+    exact-prompt (E2 or non-addition) locks, whose strata are not orbit-based."""
+    sc = exposure_scan(ctx)
+    return set((k[1], k[2]) for k in sc['leaked_keys'] if k and k[0] == 'orbit')
+
+
+@check('ADM-EXPO')
+def check_adm_expo(ctx: common.Ctx) -> Result:
+    sc = exposure_scan(ctx)
+    held = sc['held']
+    problems = list(sc['problems'])
+    if sc['leaks']:
+        problems.insert(0, 'held answers exposed in %d row(s) (prompt or orbit with its expected answer, any stream, '
+                        'any field): %s' % (sum(len(v) for v in sc['leaked_keys'].values()), '; '.join(sc['leaks'][:5])))
+    if sc['fb_hits']:
+        problems.insert(0, 'held %s exposed in %d feedback-bearing row(s): %s' % (
+            'prompts' if held.exact else 'orbits', len(sc['fb_hits']), '; '.join(sc['fb_hits'][:5])))
+    return finish('ADM-EXPO', problems, sc['missing'],
+                  '%d held %s; %d rows (%d feedback-bearing) in %d stream files: no held %s in a feedback-bearing row, '
+                  'no held answer with its %s in any row; no undeclared TAUGHT/stream files%s'
+                  % (len(held.items), 'prompts (E2: exact)' if held.exact else 'canonical orbits', sc['n_rows'],
+                     sc['n_fb'], len(sc['scanned']), 'prompt' if held.exact else 'orbit',
+                     'prompt' if held.exact else 'orbit', ('; ' + '; '.join(held.notes)) if held.notes else ''),
+                  evidence=(sc['fb_hits'] + sc['leaks'])[:60] or None)
 
 
 # --------------------------------------------------------------------------------------

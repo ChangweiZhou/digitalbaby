@@ -114,10 +114,18 @@ ordinary values and are reported exactly like PASS.
 | absolute local paths `/Users/`, `/home/`, `/tmp/`, `C:` | claim text (CLM-12); pointers (PTR-05) | — | CLM-12, PTR-05 |
 | bare boolean keys matching confirm, pass, passes, passed, success, qualified | at any depth of a pointer | — | PTR-03 |
 | numbers about prior work without an F-id or catalog id | — | WARN | CLM-16 |
+| an achievement clause with an evidence level above level_earned (an E0-E4 token with reached, achieved, earned, attained, met, demonstrated, established, cleared, passed, qualifies, secured, obtained, delivered, supported, warranted, substantiated, proven, 'holds' ending a claim, 'is at', 'at E3', 'level is', 'counts as', 'E3-grade', 'is an E3 learner', 'the result is E3', 'E3 ... is the result'; in a key/value clause also an affirmative value such as 'E3: yes'); on a non-PASS primary_gate, a clause calling the primary, the rule or criterion, an endpoint, the objective or 'the result' met, cleared, passed, satisfied, reached, achieved, fulfilled, successful, a success or 'holds', or a guard met that VERDICT did not PASS. A pass/clear clause whose subject is a process check (lock, roster, admission, testbed, review, canary, plumbing checks, ...) with the level only qualifying a process noun ('the roster gate for this E3 design passed') is not a level claim | REPORT body below the headline, CLAIM.notes, findings_proposed[].claim, STATUS*/SUMMARY*/MEMO* files anywhere in the delivery and NOTES*/ANALYSIS*/README*/RESULTS* files outside results/ and manifests/ (JSON: values, and '<key words> is <value>' per scalar; markdown and text: 'key: value', 'key = value' and short 'key - value' segments and table rows, with a column header over a cell, also read as '<key> is <value>'). A clause with an explicit qualifier (attempted, target, goal, plan, aim, intend, toward(s), not, no, never, neither, nor, n't, fail*, below, would, could, might, if, unless, cannot, without, require*, need*, must, should, expected, predicted, whether, unearned, short of), or one that opens with the bare verb ('reach E3 next cycle'), is not an assertion; in a key/value clause when, whenever, iff, once, provided and assuming qualify too. 'As planned', 'as expected', 'exactly as predicted', 'in line with the plan' and 'without exception' are removed before the qualifier test, so they never qualify. A sentence citing prior work (an F-id or catalog id with a prior-work word) is skipped unless it also points at this delivery (here, now, this delivery/run/design/report): then only its comma-separated parts that cite nothing are judged | — | CLM-17 (1.0.1) |
 
 Where they are checked: the publish gate (`MFC gate --stage publish <dir>`, all CLM ids), the pointer gate
 (`MFC gate --stage pointer --pointer PATH <dir>`, PTR-01..07 and CLM-02), and `MFC lint <files...>` for T0 text
-(CLM-06, CLM-12, CLM-16, PTR-01..07).
+(CLM-06, CLM-12, CLM-16, CLM-17, PTR-01..07; CLM-17 judges a linted file against the CLAIM.json of the v1 delivery
+that contains it; a file outside every delivery is judged sentence by sentence, and table row by table row with its
+header, against the CLAIM.json of each v1 delivery it names, and is NOT_APPLICABLE when it names none).
+
+- Every text is first read as rendered (spec 20.12): HTML entities decoded, HTML comments and tags and the markdown
+  markers `*`, `**`, backticks, `~~` and `__` removed, and a second reading with markdown links and images replaced by
+  their text (`[con](#)firmed` is `confirmed`; a link target named confirm* still counts in the first reading). CLM-04
+  and CLM-17 share this normalisation.
 
 - 'approved' blocks too: a memo's 'approved' is not authorization ("A prior memo's word 'approved' is not human
   authorization", `minifly_v6_revised_design_20261023/REVIEW.md:12`).

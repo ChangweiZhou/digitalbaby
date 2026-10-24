@@ -223,7 +223,8 @@ class TestSealOrdering(SealCase):
     def test_reveal_command_refuses_before_committed_go(self):
         rc, _o, err = self.seal_cmd('commit-nonce', extra=['--agent', 'claude'])
         self.assertEqual(rc, 0, err)
-        self.fx.commit(branches=REVIEWER)
+        # round 1 (SPEC 20.15): the reviewer's seal commit carries its Acting-Agent trailer, as a real one does
+        self.fx.commit(branches=REVIEWER, trailers={'Acting-Agent': ['claude:s9']})
         rc, _o, err = self.seal_cmd('reveal')
         self.assertEqual(rc, common.EXIT_FAIL)
         self.assertIn('never reveal before GO', err)
@@ -233,10 +234,26 @@ class TestSealOrdering(SealCase):
         self.assertIn('reveal before GO', err)
         self.assertFalse((self.fx.repo / DNAME / 'review' / 'SEAL_REVEAL.json').exists())
 
+    def test_reveal_commit_must_act_as_the_reviewer(self):
+        # SPEC 20.15 (round 1): the reveal is a reviewer step; the author committing SEAL_REVEAL fails SEAL-02
+        rc, out, err = self.seal_cmd('commit-nonce', extra=['--agent', 'claude', '--session', 's9'])
+        self.assertEqual(rc, 0, err)
+        self.fx.commit(branches=REVIEWER, trailers={'Acting-Agent': ['claude:s9']})
+        self.go()
+        self.fx.commit(branches=CODEX)
+        rc, out, err = self.seal_cmd('reveal')
+        self.assertEqual(rc, 0, err)
+        self.fx.commit(branches=CODEX, trailers={'Acting-Agent': ['codex']})
+        res = run(self.ctx(), 'SEAL-02')
+        self.assertEqual(res[0].status, FAIL)
+        self.assertIn('SEAL_REVEAL commit', res[0].detail)
+        self.assertIn('not the reviewer family claude', res[0].detail)
+
     def test_seal_commit_outside_reviewer_namespace_fails(self):
         rc, _o, err = self.seal_cmd('commit-nonce', extra=['--agent', 'claude'])
         self.assertEqual(rc, 0, err)
-        self.fx.commit(branches=CODEX)
+        # a reviewer trailer on a commit that only the author namespace contains (forged identity, SPEC 20.15)
+        self.fx.commit(branches=CODEX, trailers={'Acting-Agent': ['claude:s9']})
         self.go()
         self.fx.commit(branches=CODEX)
         rc, _o, err = self.seal_cmd('reveal')
@@ -264,7 +281,7 @@ class TestSealOrdering(SealCase):
     def test_reveal_after_official_outputs_and_ledger_order(self):
         rc, _o, err = self.seal_cmd('commit-nonce', extra=['--agent', 'claude'])
         self.assertEqual(rc, 0, err)
-        self.fx.commit(branches=REVIEWER)
+        self.fx.commit(branches=REVIEWER, trailers={'Acting-Agent': ['claude:s9']})
         self.go()
         self.fx.commit(branches=CODEX)
         self.fx.write(DNAME + '/results/official/OUTPUTS.jsonl', jsonl(outputs_rows(self.sl, world='x', role='official')))

@@ -26,6 +26,7 @@ from common import FAIL, MISSING, NOT_APPLICABLE, PASS, WARN  # noqa: E402
 DNAME = 'minifly_unit_dev_v1_20261101'
 CODEX = ['origin/codex/work']
 CLAUDE = ['origin/claude/review', 'origin/codex/work']
+REVIEWER_TRAILER = {'Acting-Agent': ['claude:s1']}  # the reviewer's commits (WIT-01 reads trailer AND namespace)
 WP2_IDS = (['LOCK-%02d' % i for i in range(1, 14)] + ['AMD-%02d' % i for i in range(1, 6)] + ['WIT-01'])
 
 CONSTRAINTS = {
@@ -492,6 +493,16 @@ class TestLock01to04(TmpCase):
                     a['zero_channels'] = []
         res = self.assertStatus(self.edit_lock(f), 'LOCK-02', FAIL, 'role shuf')
         self.assertIn('zero_channels', res[0].detail)
+
+    def test_lock02_role_candidate_only_on_the_primary_candidate(self):
+        # Round-1 repair (verifier probe E2): a control relabelled 'candidate' is neither tested nor compared.
+        def f(l):
+            for a in l['arms']:
+                if a['role'] == 'shuf':
+                    a['role'] = 'candidate'
+        res = self.assertStatus(self.edit_lock(f), 'LOCK-02', FAIL,
+                                'have role candidate but are not primary.candidate_arm')
+        self.assertIn('role shuf', res[0].detail)   # the required shuf role is now missing too
 
     def test_lock02_units_required_for_e2(self):
         def f(l):
@@ -1208,13 +1219,14 @@ class TestWit01(TmpCase):
         self.fx.write(DNAME + '/results/dev/OUTPUTS.jsonl', jsonl(outputs_rows(sl)))
         self.fx.commit()
         write_review(self.fx)
-        self.fx.commit(branches=CLAUDE)
+        self.fx.commit(branches=CLAUDE, trailers=REVIEWER_TRAILER)
         self.assertStatus(self.fx.ctx(tier=2), 'WIT-01', FAIL, 'not an ancestor of the first dev output')
 
     def test_wrong_namespace_and_stale_lock(self):
         standard_history(self.fx, review=False)
         write_review(self.fx)
-        self.fx.commit(branches=['origin/codex/work'])
+        # the reviewer's trailer on a commit only the author namespace contains (SPEC 20.15: trailer AND namespace)
+        self.fx.commit(branches=['origin/codex/work'], trailers=REVIEWER_TRAILER)
         self.assertStatus(self.fx.ctx(tier=2), 'WIT-01', FAIL, 'origin/claude/*')
         rv = self.fx.read_json(DNAME + '/review/REVIEW.json')
         rv['reviewed_endpoint_lock_sha256'] = 'f' * 64
@@ -1229,14 +1241,14 @@ class TestWit01(TmpCase):
     def test_official_needs_source_lock_ack(self):
         sl = standard_history(self.fx, review=False, results=False)
         write_review(self.fx, source_lock_acks=[])
-        self.fx.commit(branches=CLAUDE)
+        self.fx.commit(branches=CLAUDE, trailers=REVIEWER_TRAILER)
         self.fx.write(DNAME + '/results/dev/OUTPUTS.jsonl', jsonl(outputs_rows(sl)))
         self.fx.commit()
         self.assertStatus(self.fx.ctx(stage='roster', tier=2), 'WIT-01', PASS)
         self.assertStatus(self.fx.ctx(stage='official', tier=2), 'WIT-01', FAIL, 'source_lock_acks lacks')
         self.assertStatus(self.fx.ctx(stage='official', tier=2, dry=True), 'WIT-01', WARN, 'deferred')
         write_review(self.fx)
-        self.fx.commit(branches=CLAUDE)
+        self.fx.commit(branches=CLAUDE, trailers=REVIEWER_TRAILER)
         self.assertStatus(self.fx.ctx(stage='official', tier=2), 'WIT-01', PASS, 'acked')
 
 

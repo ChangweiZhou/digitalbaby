@@ -201,7 +201,7 @@ GATE_TOKEN_RE = re.compile(r'\bG\d+\b|\b[A-Z]{2,}-\d+\b|(?i:\bprimary[ _-]gate\b
                            r'\bmet\b')
 SENTENCE_SPLIT_RE = re.compile(r'(?<=[.!?;])\s+|\s+[|]\s+')
 LEGIT_CONFIRM_RE = re.compile(r'(?i)\b(sealed|fresh)\b')
-CONFIRM_RE = re.compile(r'(?i)\bconfirm\w*')
+# confirm tokens come from claimcheck.confirm_tokens (SPEC 20.12; see confirm_normalized), never from a local regex
 DEV_WORLD_RE = re.compile(r'\b(D\d+)\b|(?i:\b(dev|tuning|development)\b)')
 # A confirm word counts as confirm wording ON a dev/tuning world only when the dev-world reference is bound to it in
 # one clause. Designs routinely list DEV and confirmation as separate stages ("DEV and conditional confirmation",
@@ -932,12 +932,28 @@ def adapter_failopen(d: Delivery) -> List[dict]:
     return [row(d.label, 'R-FAILOPEN', PASS, 'no fail-open reducer pattern in %d Python files' % len(pys))]
 
 
+def confirm_normalized(ln: str) -> Tuple[str, int]:
+    """(line, number of confirm tokens): the line as CLM-04 reads it (claimcheck.markup_skeleton: entities, HTML
+    comments/tags and markdown markers removed, NFKC, format characters and confusables folded) with every confirm
+    token that claimcheck.confirm_tokens finds (identifier tokens such as GAIN_CONFIRMED, NativeConfirmation or
+    con<U+200B>firmed; the kit names SEALED_CONFIRM, CONFIRM_LEDGER, ... excepted) rewritten to the word 'confirm', so
+    the binding rules below see the same confirm wording as CLM-04 (SPEC 20.12: one shared tokenization)."""
+    import claimcheck  # lazy (SPEC 7.2): the shared CLM-04 tokenization
+    sk = claimcheck.markup_skeleton(ln).replace('\n', ' ')
+    toks = sorted(set(t for _i, t in claimcheck.confirm_tokens(ln)), key=len, reverse=True)
+    for t in toks:
+        sk = re.sub(r'(?<![A-Za-z0-9_])%s(?![A-Za-z0-9_])' % re.escape(t), 'confirm', sk)
+    return sk, len(toks)
+
+
 def dev_confirm_wording(ln: str, in_cycle: bool) -> bool:
-    """Confirm wording ON a dev/tuning world: a confirm word, not negated and not sealed/fresh, whose dev-world
-    reference is bound to it in one clause (DEV_CONFIRM_BOUND_RES). In a cycle note, a heading that names a
-    confirmation and no dev world at all also counts (a legacy cycle is never SEALED_CONFIRM); a heading that lists
-    DEV and confirmation as separate stages ("## 10. Finite DEV and confirmation roster") does not."""
-    if not CONFIRM_RE.search(ln) or NEGATION_RE.search(ln) or LEGIT_CONFIRM_RE.search(ln):
+    """Confirm wording ON a dev/tuning world: a confirm token (claimcheck.confirm_tokens, shared with CLM-04), not
+    negated and not sealed/fresh, whose dev-world reference is bound to it in one clause (DEV_CONFIRM_BOUND_RES). In a
+    cycle note, a heading that names a confirmation and no dev world at all also counts (a legacy cycle is never
+    SEALED_CONFIRM); a heading that lists DEV and confirmation as separate stages ("## 10. Finite DEV and
+    confirmation roster") does not."""
+    ln, n_tok = confirm_normalized(ln)
+    if not n_tok or NEGATION_RE.search(ln) or LEGIT_CONFIRM_RE.search(ln):
         return False
     if any(rx.search(ln) for rx in DEV_CONFIRM_BOUND_RES):
         return True

@@ -38,6 +38,7 @@
         "CLM-06",
         "CLM-12",
         "CLM-16",
+        "CLM-17",
         "PTR-01",
         "PTR-02",
         "PTR-03",
@@ -172,6 +173,7 @@
         "CLM-14",
         "CLM-15",
         "CLM-16",
+        "CLM-17",
         "ERR-01",
         "KB-01",
         "KB-02",
@@ -184,6 +186,7 @@
         "RUN-03",
         "RUN-02",
         "RUN-04",
+        "CYC-04",
         {
           "id": "GOV-COI",
           "when": "t2"
@@ -260,7 +263,7 @@
       "extends": "lock"
     }
   },
-  "checker_version": "1.0.0",
+  "checker_version": "1.0.1",
   "notes": [
     "RULES.json is authoritative for check ids, modules, stages, tier_min, introduced_in, status and bundles (SPEC 7.4, 7.5, 20.2).",
     "status: enforced | advisory (FAIL/MISSING reported as WARN) | planned (registered but not implemented; excluded from every bundle; listed in README 'Not yet enforced').",
@@ -379,7 +382,10 @@
       "warn_below_tier": 2
     },
     {
-      "applies_when": "an official resume attempt (ATTEMPTS resume_of) or results/official_replay rows exist",
+      "applies_when": "an official resume attempt (ATTEMPTS resume_of), a recovered official attempt (rusage_lost / recovered) or results/official_replay rows exist",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-20",
         "FM-19"
@@ -393,7 +399,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "Every official resume attempt re-ran at least one completed (world, arm) unit (each unit launch chose) into results/official_replay/ with a canonical row digest equal to the original"
+      "title": "Every official resume attempt re-ran at least one completed (world, arm) unit (each unit launch chose) into results/official_replay/ with a canonical row digest equal to the original, and every recovered in-flight official attempt (rusage lost) has at least one of its own units replayed so"
     },
     {
       "applies_when": "always",
@@ -447,6 +453,22 @@
     {
       "applies_when": "always",
       "fm_ids": [
+        "FM-10",
+        "FM-19"
+      ],
+      "id": "CYC-04",
+      "introduced_in": "1.0.1",
+      "module": "launch",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "runlog/ATTEMPTS.jsonl and runlog/CYCLES.jsonl are append-only at publish: every committed row survives unchanged in every later commit and the worktree"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
         "FM-22"
       ],
       "id": "LOCK-01",
@@ -464,6 +486,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-02",
         "FM-03",
@@ -480,7 +505,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "Contract block complete"
+      "title": "Contract block complete; role candidate only on primary.candidate_arm"
     },
     {
       "applies_when": "always",
@@ -779,6 +804,9 @@
     },
     {
       "applies_when": "tier 2",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-13"
       ],
@@ -791,7 +819,7 @@
       ],
       "status": "enforced",
       "tier_min": 2,
-      "title": "External witness: reviewer-namespace attestation of the lock shas before dev/official outputs"
+      "title": "External witness: the attestation (and the SOURCE_LOCK ack) commits act as the reviewer family (trailer AND namespace), before dev/official outputs"
     },
     {
       "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
@@ -810,6 +838,9 @@
     },
     {
       "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-11"
       ],
@@ -821,7 +852,7 @@
       ],
       "status": "enforced",
       "tier_min": 2,
-      "title": "Seal ordering and reviewer-namespace SEAL_COMMIT"
+      "title": "Seal ordering, and the SEAL_COMMIT and SEAL_REVEAL commits act as the reviewer family (trailer AND namespace)"
     },
     {
       "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
@@ -982,6 +1013,9 @@
     },
     {
       "applies_when": "addition task formats (strata are computed from addition item content)",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-06"
       ],
@@ -998,6 +1032,9 @@
     },
     {
       "applies_when": "a units block is declared (E2 and above)",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-05"
       ],
@@ -1031,6 +1068,9 @@
     },
     {
       "applies_when": "E3 promotion intended or a udi block declared",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-06",
         "FM-12"
@@ -1063,6 +1103,9 @@
     },
     {
       "applies_when": "the VERDICT part applies once results/official/VERDICT.json exists; the rule_type part always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-01",
         "FM-14"
@@ -1097,6 +1140,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-04"
       ],
@@ -1113,6 +1159,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-14"
       ],
@@ -1275,6 +1324,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-05",
         "FM-16"
@@ -1292,6 +1344,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-05",
         "FM-16"
@@ -1454,6 +1509,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-12"
       ],
@@ -1466,7 +1524,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "Held orbits never in feedback-bearing streams; no undeclared stream files"
+      "title": "Held prompts/orbits never in feedback-bearing rows; no row of any exposure stream, TAUGHT file or undeclared stream-like file carries a held answer with its prompt or orbit (content, any field, embedded JSON, answer after filler, next record in stream order); no undeclared stream files"
     },
     {
       "applies_when": "always",
@@ -1575,6 +1633,9 @@
     },
     {
       "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-27"
       ],
@@ -1587,7 +1648,7 @@
       ],
       "status": "enforced",
       "tier_min": 2,
-      "title": "Reviewer family differs from the author; trailer and reviewer-namespace branch"
+      "title": "Reviewer family differs from the author; review and lock commits carry the right acting family (Acting-Agent trailer AND origin/<family>/* namespace) and the reviewer-namespace branch"
     },
     {
       "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
@@ -1719,6 +1780,9 @@
     },
     {
       "applies_when": "always",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-27"
       ],
@@ -1830,6 +1894,9 @@
     },
     {
       "applies_when": "confirm* tokens appear in REPORT, STATUS, SUMMARY or the headline",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-11",
         "FM-22"
@@ -1842,7 +1909,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "confirm* tokens require SEALED_CONFIRM with SEAL-* and WLD-01 PASS"
+      "title": "confirm* tokens (read as rendered: entities decoded, HTML comments/tags, markdown markers and link syntax removed) require SEALED_CONFIRM with SEAL-* and WLD-01 PASS"
     },
     {
       "applies_when": "always",
@@ -2029,6 +2096,23 @@
       "status": "advisory",
       "tier_min": 0,
       "title": "Numbers about prior work cite an F-id or catalog id (WARN)"
+    },
+    {
+      "applies_when": "agent-written text exists (REPORT body, CLAIM notes or findings claims, STATUS/SUMMARY/MEMO or NOTES/ANALYSIS/README/RESULTS files; lint: files inside a v1 delivery with CLAIM.json, or files that name one)",
+      "fm_ids": [
+        "FM-22",
+        "FM-07"
+      ],
+      "id": "CLM-17",
+      "introduced_in": "1.0.1",
+      "module": "claimcheck",
+      "stages": [
+        "publish",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Agent-written text (REPORT body, CLAIM notes and findings claims, STATUS/SUMMARY/MEMO, NOTES/ANALYSIS/README/RESULTS; key/value lines and table rows read as clauses) asserts no evidence level above level_earned and, unless primary_gate is PASS, no met/cleared/passed rule, endpoint, result or failed guard"
     },
     {
       "applies_when": "CLAIM.json has been published before",
@@ -2225,6 +2309,9 @@
     },
     {
       "applies_when": "activation or reconciliation rows exist",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-30"
       ],
@@ -2236,7 +2323,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "Activation and reconciliation by a different family than the finding author"
+      "title": "Activation and reconciliation by a different family than the finding author: the activator is the acting family of the commit introducing the row (Acting-Agent trailer AND origin/<family>/* namespace), and the row author_agent equals it"
     },
     {
       "applies_when": "activation rows exist",
@@ -2316,6 +2403,9 @@
     },
     {
       "applies_when": "tighten, new or neutral changes exist",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-30"
       ],
@@ -2327,7 +2417,7 @@
       ],
       "status": "enforced",
       "tier_min": 0,
-      "title": "tighten/new/neutral changes need an other-family review record"
+      "title": "tighten/new/neutral changes need an other-family review record introduced by a commit of that family (trailer AND namespace)"
     },
     {
       "applies_when": "loosen or constraint changes exist",
@@ -2407,6 +2497,9 @@
     },
     {
       "applies_when": "official and publish stages at tier 2",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-15",
         "FM-30"
@@ -2454,6 +2547,9 @@
     },
     {
       "applies_when": "a held-out batch is sealed, revealed or scored",
+      "changed_in": [
+        "1.0.1"
+      ],
       "fm_ids": [
         "FM-30"
       ],

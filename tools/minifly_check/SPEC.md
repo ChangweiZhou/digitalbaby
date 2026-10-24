@@ -726,6 +726,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - CYC-01: Closed test cycles are at most caps.max_cycles.
 - CYC-02: Each closed cycle with decision continue met its kind's exit criterion.
 - CYC-03: Rehearsal world ids appear in no earlier dev or technical row, receipt or attempt argv. The rehearsal argv template equals the official one with world arguments removed.
+- CYC-04 (publish; introduced_in 1.0.1, SPEC 20.16): runlog/ATTEMPTS.jsonl and runlog/CYCLES.jsonl are append-only at publish: every committed row survives unchanged in every later commit and in the worktree.
 
 **WP2 (lockcheck, seal)**
 - LOCK-01: Schema; required fields non-null; no '__FILL__' values; enums valid.
@@ -821,7 +822,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - ADM-INPUT: input_contrast.ratio is at least the minimum, and prompt_id_loo_acc is at least chance plus the margin. The structure meters must be present; they are reported, not gated.
 - ADM-ACQ: Computed by the checker from admission rows: candidate exact own-EOS on TAUGHT at the prefix checkpoint is at least the best exposure-independent shortcut plus taught_acq_margin. Failure gives NOT_ACQUIRING.
 - ADM-SHUF: Computed by the checker from the SHUF arm's TAUGHT manifest against the true answers. Agreement lies within shuf_band, and labels are orbit-consistent.
-- ADM-EXPO: Canonical held orbits (exact prompts for E2) have an empty intersection with every feedback-bearing stream. Any TAUGHT or stream file under manifests/ or results/ that is not declared in exposure_streams fails.
+- ADM-EXPO: Canonical held orbits (exact prompts for E2) have an empty intersection with every feedback-bearing stream. Any TAUGHT or stream file under manifests/ or results/ that is not declared in exposure_streams fails. As amended in 20.11 (changed_in 1.0.1): no row of any exposure stream, feedback-bearing or not, carries a held item's expected answer together with its prompt or orbit, judged by content in every field.
 - ADM-BUDGET: lock.budget is within the AUTHORIZATION caps, and schedule.paired_atomic is true.
 - ADM-REUSE (T1 only): If the native closure, task and split equal the parent's and the parent's admission passed, the parent ADMISSION sha may be cited to skip ADM-INPUT and LOCK-12.
 - AUT-01: AUTHORIZATION.json fields present: verbatim, utc, session, options_shown, recommendation_shown and stages.
@@ -863,6 +864,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - CLM-14: Each cited GATE report's checker_sha256 equals the committed checker at that report's commit.
 - CLM-15 (T2): Verification subset committed: official OUTPUTS for counted pools (gz/zip allowed), TAUGHT, receipts, both locks and GATE reports. If it exceeds the size cap, use mode digest_plus_sample: per-(world, arm) digests plus a reviewer-seeded full-row sample.
 - CLM-16 (WARN): Numbers about prior work in REPORT or memos cite an F-id or catalog id.
+- CLM-17 (publish and lint; introduced_in 1.0.1, SPEC 20.13): agent-written text asserts no evidence level above level_earned and, unless primary_gate is PASS, never calls the rule, an endpoint, the result or a failed guard met.
 - ERR-01: If CLAIM.primary_gate changes between commits after the first publish, an ERRATA row is required (BUG_FIX or POST_HOC). POST_HOC never upgrades. A BUG_FIX upgrade needs a corpus fixture id and a reviewer sign-off.
 - WLD-01: Official world ids occur nowhere else in the repo (other deliveries' manifests, JSON, receipts) and in no dev row. Official outputs were first committed after the lock and the reveal.
 - WLD-02 (WARN): Overlap of canonical held items with earlier deliveries' held or taught sets. Reported in the headline when greater than 0.
@@ -875,7 +877,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 - PTR-07: A legacy target requires a UD and a KB/RETRO annotation path.
 - KB-01: Ledger row schemas are valid.
 - KB-02: Append-only: the git diff of each ledger shows only added lines, and ids are unique.
-- KB-03: activation and reconciliation rows are authored by a family different from the finding's author.
+- KB-03: activation and reconciliation rows are authored by a family different from the finding's author. As amended in 20.15 (changed_in 1.0.1): the activator is the acting family of the commit introducing the row (trailer and namespace, common.commit_family), and the row's author_agent must equal it.
 - KB-04: Activation is allowed only for findings from T2 deliveries with worlds_role MAIN or SEALED_CONFIRM and no open debt.
 - KB-05: An incident closure row requires a check_id present in RULES and a fixture whose EXPECTED.must_fire includes that check.
 
@@ -902,7 +904,7 @@ Each RULES.json entry is {id, module, stages[], tier_min, introduced_in, status:
 | technical launch | lock bundle + LOCK-05..07, CYC-01 |
 | roster (also `launch --stage dev/rehearsal`) | technical bundle + ADM-*, RED-01..11, DEC-01, CYC-02. At T2 add: RUN-01, WIT-01, REV-01..07 (or DEBT-01). |
 | official (also `launch --stage official`) | roster bundle + MET-01/02, LAD-01..04, STR-01, DET-01, INERT-01 on dev and rehearsal rows; CYC-03, AMD-04, RUN-02, GOV-COI, WLD-01. When intended: OC-01. For SEALED_CONFIRM: SEAL-01..05, CONF-01. |
-| publish | SELF-01, SCHEMA-01, AMD-01..05, MET-01/02, LAD-01, STR-01, DET-01, INERT-01, UDI-01 (if applicable), DEC-01, CLM-01..16, ERR-01, KB-01..05, WLD-01/02. At T2 add RUN-01 and GOV-COI. REV-08 for SEALED_CONFIRM or adoption. DEBT-02. |
+| publish | SELF-01, SCHEMA-01, AMD-01..05, MET-01/02, LAD-01, STR-01, DET-01, INERT-01, UDI-01 (if applicable), DEC-01, CLM-01..16, ERR-01, KB-01..05, WLD-01/02. At T2 add RUN-01 and GOV-COI. REV-08 for SEALED_CONFIRM or adoption. DEBT-02. Since 1.0.1 (20.13, 20.16): CLM-17 and CYC-04 (RULES.json is authoritative: RUN-01..04 are in the publish bundle too, 20.7/20.8). |
 | pointer | SELF-01, PTR-01..07, CLM-02, DEBT-02 |
 
 **Advisory handling.**
@@ -1598,30 +1600,30 @@ Gate runtimes are recorded in GATE reports for prune reviews.
 | FM-04 non-discriminating gate | Ladder always in the comparator; RED-02/07/10; LAD-02; ADM-GATE; ADM-SHUF; ADM-FIX; LAD-04 | Novel shortcuts outside the ladder become incidents and new ladder members |
 | FM-05 untestable testbed | ADM-TB-CEIL/FLOOR in C0 before learner code; RED-01; DET-01; OC-01 for confirm; CANNOT_TEST is unpenalized | Floor learners are executor-run (grid fixed; reviewer reruns one) |
 | FM-06 weak comparator or guard | Comparator = max(chance, arms, ladder) in decide; S0/S1 excluded; old_acq guard; LAD-03 in headline | — |
-| FM-07 proxy metric | LOCK-03 (otherwise component); objective metric in every headline and pointer; PTR-03; answer_path native; MET-01 | — |
+| FM-07 proxy metric | LOCK-03 (otherwise component); objective metric in every headline and pointer; PTR-03; answer_path native; MET-01; CLM-17 (a sub-result never described as the met rule, 20.13) | — |
 | FM-08 post-outcome amendment | AMD-01..05; UD for any primary or guard change after learner outcomes or any distance increase; co-primary in headline; ERR-01 | — |
 | FM-09 objective drift | LOCK-09 computed cadence with honest-exit-proof reset; objective_distance in lock and claim; UD for distance increase; component bridge predictions | Choosing the most informative step stays judgment |
-| FM-10 in-cycle design search | designs_tried_k computed (best of k in headline); typed cycles with exit criteria; CYC-03 fresh rehearsal; dev worlds never MAIN | Task-shaped priors: priors_added in headline plus review |
+| FM-10 in-cycle design search | designs_tried_k computed (best of k in headline); typed cycles with exit criteria; CYC-03 fresh rehearsal; CYC-04 append-only runlog at publish (20.16); dev worlds never MAIN | Task-shaped priors: priors_added in headline plus review |
 | FM-11 holdout reuse | WLD-01, AMD-04, seal (SEAL-*), CONFIRM_LEDGER, WLD-02 item-universe overlap | MAIN worlds not seal-derived (no confirm wording there) |
-| FM-12 exposure leakage | ADM-EXPO canonical intersection plus undeclared-stream rejection; LOCK-07 evaluator unreachable from native; supplied-arithmetic heuristics to review | No input tap (deferred); digit relabeling is an owner decision |
+| FM-12 exposure leakage | ADM-EXPO canonical intersection plus undeclared-stream rejection, and the content scan of every stream for held answers (20.11); exposed orbits are S1; LOCK-07 evaluator unreachable from native; supplied-arithmetic heuristics to review | No input tap (deferred); digit relabeling is an owner decision |
 | FM-13 lock timing and closure | LOCK-05/06, WIT-01, RUN-01, seal ordering, CLM-08 POSTHOC | T1 ordering is local only |
 | FM-14 fail-open reducers | No delivery reducers (DEC-01); RED-03..06; LOCK-08; MET-01 two-source | — |
 | FM-15 test edited after failure | AMD-05 for endpoint and evaluator files; governance (GOV-SEP, GOV-COI, GOV-MONO) for checks; ERR-01 | Delivery-internal unit assertions are engineering; reviewer |
 | FM-16 technical vs behavioral readiness | LOCK-12, ADM-INPUT (with structure meters), ADM-ACQ, ADM-TB, all before roster | — |
 | FM-17 directional or fixture mismatch | ADM-DIR, ADM-FIX | Checkpoint resume round-trip is review judgment |
 | FM-18 environment and import defects | LOCK-05 resolution outside root fails; launch requires a clean closure; env versions in SOURCE_LOCK | Loud defects are left to the executor by design |
-| FM-19 accounting gaps | launch ATTEMPTS (child rusage), RUN-01, compute totals including failed in CLAIM, G_per_cpu_h | Deterministic op counters optional |
-| FM-20 resource-stop truncation | ADM-BUDGET paired_atomic; INCOMPLETE on missing pairs; RUN-02; caps restated in verbatim | Mid-run cap changes need a new AUTHORIZATION |
+| FM-19 accounting gaps | launch ATTEMPTS (child rusage), RUN-01, CYC-04, compute totals including failed in CLAIM, G_per_cpu_h | Deterministic op counters optional |
+| FM-20 resource-stop truncation | ADM-BUDGET paired_atomic; INCOMPLETE on missing pairs; RUN-02; RUN-04 (resume and recovered-attempt replay, 20.8, 20.17); caps restated in verbatim | Mid-run cap changes need a new AUTHORIZATION |
 | FM-21 statistics | One decide implementation (t/Hoeffding, per-world floor); min_worlds/PILOT (CLM-09); OC-01; CONF-01 family alpha | — |
-| FM-22 claim inflation | Generated headline; enums; CLM-04/05/06/09 | Body prose advisory |
+| FM-22 claim inflation | Generated headline; enums; CLM-04/05/06/09; CLM-17 level and met-rule clauses in agent-written text (20.13) | Body prose outside CLM-17's vocabulary advisory |
 | FM-23 lineage and answer-path drift | LOCK-13 computed family and parent; LOCK-07; CLM-07; answer_path native; priors in headline | Equation-level diff is review judgment |
 | FM-24 narrowings not propagating | FINDINGS fold; PTR-02/04/06; pointers copied from CLAIM; generated views avoided by copy rule | CATALOG and MEMO remain hand-written legacy (retro flags) |
 | FM-25 misremembered facts | Predictions cite F-ids (LOCK-11); CLM-16; reviewer trace_number | Prose citation lint is advisory |
 | FM-26 lessons stay prose | Incident closure needs check plus fixture (KB-05); FAILURE_CLASSES linked to checks; prediction scoring; R-levels; held-out recall | — |
-| FM-27 self or padded review | REV-01 (family plus namespace); REV-02 executed checks; UNVERIFIED rule; REV-07 padding; DEBT-* | In-repo identity is spoofable |
+| FM-27 self or padded review | REV-01 (family plus namespace, common.commit_family 20.15); REV-02 executed checks; UNVERIFIED rule; REV-07 padding; DEBT-* | In-repo identity is spoofable |
 | FM-28 authorization | AUT-01..04 (numbers in verbatim, defaults, no '(Recommended)', non-beneficiary conditionals); LOCK-10 | Transcription is trusted; owner spot-check |
 | FM-29 unverifiable publication | CLM-12/15; PTR-05; kit and KB in repo; retro marks UNVERIFIABLE_IN_REPO | Size cap is an owner decision |
-| FM-30 meta-loop Goodhart | Governance classes, GOV-UD/NUM/REV/SEP/COI/MONO, SELF-01, CLM-14, sealed held-out canaries, progress only sealed G, KB-03 | Without an owner-held anchor, governance is tamper-evident only |
+| FM-30 meta-loop Goodhart | Governance classes, GOV-UD/NUM/REV/SEP/COI/MONO, SELF-01, CLM-14, sealed held-out canaries (post-batch checks excluded, 20.18), progress only sealed G, KB-03 (activator from trailer and namespace, 20.15) | Without an owner-held anchor, governance is tamper-evident only |
 
 ---
 
@@ -1714,3 +1716,187 @@ Gate runtimes are recorded in GATE reports for prune reviews.
    (closure_clean_after). A multi-phase run therefore calls launch once per phase and never chains phases inside one
    unlaunched script, so a fix between phases fails loudly at the next launch (unit test
    test_launch.TestLaunch.test_every_phase_relaunch_rechecks_the_lock).
+10. **Versioning after a held-out batch (self-improvement round 1; governance lesson of HB-20261024-PILOT).** The
+    pilot's raw score (recall 3/9, false alarms 3/3) measured schema churn: RUN-03 was added after the batch was authored
+    with the same introduced_in 1.0.0, so every canary fired it. Rule: **a check added or tightened after a held-out
+    batch is committed carries a later version than the batch's checker version**: a new check gets introduced_in, a
+    tightened one keeps introduced_in and appends the version to the RULES field `changed_in` (a list, each entry later
+    than introduced_in and not later than CHECKER_VERSION; `selftest` validates it). Round 1 is CHECKER_VERSION 1.0.1:
+    CLM-17 and CYC-04 have introduced_in 1.0.1; ADM-EXPO, CLM-04, KB-03, REV-01, GOV-REV, GOV-COI, WIT-01, SEAL-02,
+    DEBT-02, HELD-03, DEC-01, RED-02, RED-03 and RUN-04 list changed_in [1.0.1], and since the round-1 repair (20.19)
+    also LOCK-02 (role candidate, 20.14) and STR-01, DET-01, ADM-TB-CEIL, ADM-TB-FLOOR and UDI-01, whose results the
+    exposure strata of 20.11 change (S65/S66 fire them under 1.0.1, not under 1.0.0). The advisory window (introduced_in later
+    than a delivery's first SOURCE_LOCK checker_version gives ADVISORY_FAIL below T2 official/publish/pointer) keys on
+    introduced_in only: a tightening of an existing check is enforced at once, so changed_in never relaxes a check.
+    Held-out scoring reads both fields (20.18). Governance classifies an appended changed_in entry as neutral when the
+    same range changes the check's module or a kit module it imports (an import-closure over the head tree; round-1
+    repair: a version recorded for unchanged code would exclude the check's held-out hits and false alarms as
+    post_batch), as a loosening without such a change, and a dropped or rewritten entry as a loosening. The corpus keeps its 1.0.0 SOURCE_LOCKs and committed 1.0.0 gate reports
+    (the builder lists only checks introduced by 1.0.0 in them), so T1 corpus deliveries see the new checks through
+    the advisory window, as a real older delivery would.
+11. **Exposure is judged by content, not declarations (amends ADM-EXPO and 9.3; FM-12, INC-HB1-A3).** ADM-EXPO scans
+    every declared exposure stream (feedback_bearing true or false), every file under the TAUGHT directory and every
+    undeclared TAUGHT/stream/calibration-like file (all of manifests/ except the split manifests; under results/,
+    receipts aside, every non-canonical JSONL file and every path part naming taught, stream, calib, curric, expos,
+    warm or listen). Records: JSONL rows; for JSON documents the elements of a top-level list, the objects in its
+    top-level lists and the rest of the object; for text files each line with its comma/tab/semicolon/pipe fields. Every
+    string value and key is read as UTF-8 text, as hex and as base64, and every list of byte values as bytes. A record
+    leaks a held item when it carries the item's prompt (E2, exact) or canonical orbit (E3 addition; `a+b`, with or
+    without the terminator, in any field) together with its expected answer (a value equal to the answer bytes after
+    EOS, whitespace and leading zeros are stripped, or one value holding the prompt followed by the answer). Round-1
+    repair (verifier probes A4-A6): a string value that is itself a JSON object or array (as text, hex or base64) is
+    parsed and its content is part of the record; inside one value the answer may follow the prompt or orbit after up
+    to 32 bytes of non-digit filler ('3+7 equals 10', '"q": "3+7=", "a": "10"'), unless that number is the first
+    operand of a following sum, or precede it as 'c = a+b'; and records are read in stream order: when a record's value
+    at some field path ends with a held prompt or orbit (only whitespace, '?', '.', ':' and EOS after it) and the next
+    record's value at the same path starts, after up to 16 bytes of non-digit filler, with its answer (not a sum's
+    first operand), the held item leaked (text lines: the line and each field position are paths). The filler, 'c =
+    a+b' and stream-order rules read text only: the raw text of a hex-shaped string (it is the encoding, so '6b...'
+    is never the answer 6) and a hex, base64 or byte-list decoding that is not printable UTF-8 (base64 of a hex string
+    decodes to noise) keep only the exact rules above. Any leak
+    FAILs ADM-EXPO, whatever the stream's or the row's feedback flag; in a feedback-bearing row a held prompt/orbit in
+    any field FAILs as before. Non-feedback streams may hold held prompts WITHOUT answers (listening, presentation). A
+    stream file that cannot be read as JSONL, JSON or UTF-8 text FAILs (its content cannot be checked). Integer fields
+    are not read as answers (counts and indices would collide with small sums): a residual risk the reviewer covers.
+    Since the round-1 repair a data file (.jsonl, .json, .txt, .tsv, .csv and their .gz) anywhere else in the delivery
+    (outside checks/, runlog/, review/) whose path names one of those stream parts is a candidate too (data/warmup.jsonl).
+    Residuals the reviewer covers: an answer two or more records later, or in another field of the next record; files
+    listed in files.assets; neutrally named JSON under results/; a string-valued number equal to a held sum next to a
+    held prompt counts as an answer (fails closed).
+    Strata (9.3): a held orbit that occurs with its answer in any such record is S1 (taught) in every world and is
+    never counted; the scorer takes the orbits from the same scan (`admitcheck.exposed_held_orbits`). Corpus: S65 (one
+    hex field, prompt then answer, in a listening stream), S66 (text cue and a separate answer field in a priming
+    stream), S67 (clean: held prompts without answers in a non-feedback stream); round-1 repair: S84 (a JSON-encoded
+    string payload with the answer under another key), S85 (prompt and answer on consecutive lines of a tab-separated
+    tape), S86 (clean: JSON payloads with held prompts only, back to back). The round-4 unit test that let a
+    presentation-only row carry the answer is tightened.
+12. **confirm wording is read as rendered (CLM-04; verifier non-blocking finding).** Before the 20.5 normalisation,
+    `claimcheck.markup_skeleton` decodes HTML entities (repeatedly), removes HTML comments and tags, and removes the
+    markdown markers `*`, `**`, backticks, `~~` and `__` (single underscores stay: they are identifier characters, and
+    intraword `_` is never emphasis in markdown). So `con&#8203;firmed`, `con**firm**ed` and `con<!-- -->firmed` are
+    confirm tokens (corpus S74-S76). Round-1 repair (verifier probe D4): each text is read a second time with markdown
+    inline links, images and reference links replaced by their bracketed text (`[con](#)firmed`, `con[]()firmed`), and
+    a token that reading adds to a line counts too; the first reading keeps link targets, so a target named confirm*
+    still counts (corpus S88). retro.py's R-CLAIM reuses `claimcheck.confirm_tokens` (one tokenization); its
+    binding rules then read each token as the word 'confirm'. Re-running `retro --all` with the shared tokenization
+    gave the same 1234 rows, statuses and reasons as the committed RETRO_20261024.json (acceptance true).
+13. **CLM-17: overclaim in agent-written text (new check, introduced_in 1.0.1; FM-22, INC-HB1-C2).** Scope (publish):
+    the REPORT.md body below the headline, CLAIM.notes, findings_proposed[].claim and the STATUS*/SUMMARY*/MEMO* files
+    of the delivery, and since the round-1 repair its NOTES*/ANALYSIS*/README*/RESULTS* files outside results/ and
+    manifests/ (JSON: each string value, and each scalar leaf as the clause '<key words> is <value>', false as 'is
+    not true'). Lint (T0): a file inside a v1 delivery with CLAIM.json is judged against that claim; a file outside
+    every delivery is judged per sentence (per clause when a sentence names several) and per table row with its header
+    against the claim of each v1 delivery of the repo it names, with the name read as 'this delivery'; a file that names
+    none is NOT_APPLICABLE. The text is normalised as in 20.12, identifiers are split into words, sentences are cut into clauses
+    at ; : | ( ) [ ] dashes and the conjunctions but, while, whereas, although, though, however, yet, because, since,
+    so, and, with, whilst, which. Key/value shapes are read like the JSON path (round-1 repair, verifier blocking issue:
+    the split cut 'Level earned: E3' into 'Level earned' and 'E3'): every 'key: value' or 'key = value' segment of a
+    line (segments cut at ; | and ', '), every short 'key - value' segment (at most 3 words a side) and every data cell
+    of a markdown table row (keyed by the row's first cell and, under a header row, by its column header) also gives
+    the joined clause '<key> is <value>' (key and value of at most 6 words); a run of two or more key/value lines is
+    read line by line, never joined into one sentence. A clause FAILs when (a) it holds an E0..E4 token above
+    level_earned together with an achievement word or shape (reached, achieved, earned, attained, met, demonstrated,
+    established, cleared, passed, qualifies, secured, obtained, delivered, supported, warranted, substantiated, proven,
+    'holds' ending a claim, 'is at', 'at E3', 'level is', 'counts as', 'E3-grade', 'is an E3 learner', 'the result is
+    E3', 'E3 ... is the result'; in a joined clause also an affirmative value: yes, true, done, a check mark), unless
+    every achievement word is pass/clear, its subject is a process check named before it (lock, roster, admission,
+    testbed, rehearsal, review, canary, lint, plumbing, schema, preflight, audit, or a stage word with gate/check/test/
+    screen/stage/bundle) and each level token qualifies a process noun (E3 design, E1 plumbing checks) in that subject
+    or after a preposition behind the verb ('the roster gate for this E3 design passed'; 'the lock passed E3' still
+    asserts), or (b) primary_gate is not PASS and it calls the primary, the (decision) rule or criterion, an endpoint,
+    the objective, 'the result' or 'the outcome' met, cleared, passed, satisfied, reached, achieved, fulfilled,
+    successful, a success or 'holds' (joined: also an affirmative value); a clause about guards only fails when a guard
+    it names (by id or kind word: drop/retention, acquisition), or unnamed any guard, is not PASS in VERDICT. A clause
+    with an explicit qualifier (attempted, target, goal, plan, aim, intend, toward(s), not, no, never, neither, nor,
+    n't, fail*, below, would, could, might, if, unless, cannot, without, require*, need*, must, should, expected,
+    predicted, whether, unearned, short of), or one that opens with the bare form of an achievement verb (an imperative
+    or plan: 'Goal: reach E3 next cycle'), is not an assertion; in a joined clause when, whenever, iff, once, provided
+    and assuming qualify too ('Decision rule: W passes when ...' defines the rule). Conformity phrases ('as planned',
+    'exactly as predicted', 'as expected', 'in line with the plan', 'on target', 'without exception') are removed before
+    the qualifier test, and a noun qualifier directly asserted as reached ('the E3 target was reached', 'goal met') does
+    not qualify itself. A sentence that cites prior work (an F-id or catalog id together with a prior-work word) is about
+    other deliveries and skipped, unless it also points at this delivery (here, now, currently, this delivery/run/
+    design/report/...): then it is cut at commas too and only its parts that cite nothing and name no prior work are
+    judged. Each text is read twice (20.12: as written, and with markdown links rendered as their text). The round-1
+    word 'rung' was dropped from the achievement vocabulary (verifier: it occurs in no kit document, only in a canary);
+    'the E3 rung is the result' still fails through 'is the result'. level_earned and
+    primary_gate come from the fresh claim regeneration (the committed CLAIM when regeneration is impossible). Corpus:
+    S68 (REPORT prose), S69 (notes, a findings claim, STATUS.md, SUMMARY.json), S70 (clean: honest negations such as
+    'E3 was not reached', 'attempted E3', 'the OLD drop guard failed, so the primary FAILs'); round-1 repair: S81 (a
+    STATUS key/value block 'evidence_level: E3', 'Decision criterion: satisfied'), S82 (a REPORT quantity/value table
+    with '| level earned | E3 |'), S83 (clean: honest key/value lines, table rows, NOTES.md and 'the roster gate for
+    this E3 design passed').
+14. **The decision comparator includes role 'other' (amends 20.6; relabel loophole).** IMPLIED_COMPARATOR_ROLES is
+    no_prior_teaching, shuf, frozen, lesion and other. Relabelling a control as 'other' no longer removes it from the
+    comparator; oracle_plumbing, positive_control and CEILING_/FLOOR_ arms are still never added. Corpus S80 (clean,
+    honest FAIL: a FROZEN arm relabelled 'other' answers HELD like W). test_decide pinned the old exclusion and is
+    tightened (DEC-01, RED-02, RED-03 changed_in 1.0.1). Round-1 repair (verifier blocking issue, probe E2): role
+    'candidate' did the same, since only primary.candidate_arm is tested. Now LOCK-02 FAILs any arm of role candidate
+    other than primary.candidate_arm (LOCK-02 changed_in 1.0.1), and IMPLIED_COMPARATOR_ROLES also holds 'candidate',
+    so such an arm is a decision comparator whenever a lock carrying it is scored anyway. Corpus S87 (dirty: FROZEN
+    relabelled 'candidate' answers HELD like W; LOCK-02 fires at lock and official, and the VERDICT is FAIL with
+    comparator FROZEN). Residual risk: a copy of the candidate declared positive_control or oracle_plumbing stays out of
+    the comparator by design (those roles are meant to be strong); the reviewer checks that such an arm really changes
+    what its role says.
+15. **Identity is derived from the trailer AND the namespace, by one function (amends 5, KB-03; FM-27/FM-30,
+    INC-HB1-C3).** `common.commit_family(git, commit)` returns the acting family of a commit: its `Acting-Agent:` trailer
+    must name exactly one family, and an `origin/<family>/*` branch of that family must contain the commit. A trailer
+    whose namespace contains nothing (the commit is only in the other family's namespace, or only on branches of other
+    remotes such as upstream/claude/*) is identity_mismatch (FAIL); a commit in no origin/claude/* or origin/codex/*
+    branch is unpushed (identity not derivable); git author names and row fields never count. Every identity check uses
+    it: KB-03 (the activator is the family of the commit introducing the activation row; the row's author_agent must
+    equal it; the `kb status` fold ignores an activation whose commit identity fails and gives such a reconciliation no R1/R2 credit), REV-01 (the
+    review commit and the lock commit), the REVIEW.json history rule, WIT-01 (attestation and SOURCE_LOCK ack commits),
+    SEAL-02 (the SEAL_COMMIT and SEAL_REVEAL commits) and `seal reveal` (the SEAL_COMMIT commit), GOV-REV (the review record's introducing commit and the author
+    family of every protected-path commit), GOV-COI, HELD-03 and DEBT-02 (a repayment counts only when the review's
+    introducing commit acts as the reviewer family). On "all containing branches must be one namespace": in git a
+    commit is contained in every branch that descends from it, so the author's commits are always contained in the
+    reviewer's branch (which forks from them) and the reviewer's commits in the author's branch once it merges the
+    review. A literal one-namespace rule would make every shared commit a mismatch (it would fail the clean base of the
+    corpus and every real two-family history). The implemented rule is the strongest one git can decide: the namespace
+    of the trailer's family must contain the commit, and a commit contained only in the other namespace (or only
+    outside origin/claude|codex) is a mismatch; a commit in both namespaces is shared history and keeps its trailer's
+    family. Residual risk: once any branch of the impersonated family's namespace contains a forged-trailer commit, the
+    namespaces cannot tell. That happens when that family merges such a branch AND when it merely forks a new branch from
+    the author's tip (verifier probe C6: a forged activation later contained in a forked origin/claude/* branch passes
+    KB-03). Reviewers must neither merge nor fork from an author tip that carries a commit with their own family's
+    trailer they did not write (minifly-independent-review section 1); a first-parent rule is not implemented.
+    Corpus: S71 (a self-activation under a forged 'Acting-Agent: claude' trailer pushed to origin/codex/*), S72 (a
+    governance review record whose only claude-named branch is on another remote), S73 (clean: a genuine activation
+    from origin/claude/*). Unit tests of REV-01, WIT-01, SEAL and GOV that built reviewer commits without trailers or
+    without branches now give those commits the trailer and namespace a real pushed commit has.
+16. **CYC-04: append-only runlog at publish (new check, introduced_in 1.0.1).** CYC-01's append-only rule ran only up to
+    the official gate, so an earlier ATTEMPTS or CYCLES row edited after the run reached publish unseen. CYC-04 runs the
+    same rule (every committed row survives unchanged in every later commit and in the worktree; shallow clone:
+    MISSING) at publish. Corpus S77 (the rehearsal ATTEMPTS row rewritten after the report). Like every new check it is
+    advisory for a T1 delivery whose first SOURCE_LOCK predates 1.0.1 (20.10) and enforced at every T2 publish.
+17. **A recovered official attempt needs a replay of its own units (amends 20.8; RUN-04 changed_in 1.0.1).** An official
+    attempt recorded from its in-flight marker (rusage_lost / recovered: the launch process died, so exit code and CPU
+    are unknown) vouches for its rows only through a determinism replay: at least one (world, arm) unit it completed
+    must be re-run by a later `launch --stage official --resume` into results/official_replay/ with the identical
+    canonical digest. Otherwise RUN-04 FAILs at official and publish. `launch --resume` chooses its replay unit among
+    the units of unvouched recovered attempts while any exist (a replay-only resume is legal when every unit is
+    complete). Corpus: S78 (a recovered attempt that completed every unit, no replay), S79 (clean: S61 with a recovered
+    first attempt whose unit is replayed).
+18. **Held-out scoring excludes post-batch checks (amends 12.3 step 4; the pilot's RUN-03 drift).** `heldout score` reads
+    each revealed canary's checker_version from its own SOURCE_LOCK (the oldest one in its tree) and classifies every
+    fired id whose RULES introduced_in or changed_in is later than it as `post_batch`. Post-batch ids are listed per
+    fixture and in the report, and never count toward recall or toward a false alarm (a clean canary whose nonzero exits
+    only post-batch ids explain is not an alarm). A canary without a SOURCE_LOCK has no version, and nothing is
+    excluded. Batch authors record in the SOURCE_LOCK the kit version whose SPEC and SCHEMAS they wrote against (the
+    builder's `source_lock_patch` option sets it); a batch written against 1.0.1 is scored on the round-1 checks, while
+    re-scoring the burned pilot batch with 1.0.1 excludes them as post_batch. Round-1 repair (verifier): the report also
+    carries the raw numbers with post_batch ids counted (recall_fixtures_raw, false_alarm_rate_clean_raw, per fixture
+    caught_raw and false_alarm_raw) and `heldout score` prints both, because a batch built with the builder's default
+    SOURCE_LOCK (checker_version 1.0.0) excludes every round-1 detection and every round-1 false alarm. Unit tests:
+    test_governance.TestHeldoutPostBatch.
+19. **Round-1 repair (verifier REVISE after 20.10-20.18; checker version stays 1.0.1, nothing was committed in
+    between).** Blocking issues: CLM-17 key/value lines and table rows (20.13), ADM-EXPO JSON-encoded payloads and
+    stream order (20.11), role 'candidate' on a control (20.14). Overfitting: 'rung' dropped from the CLM-17 vocabulary
+    (20.13). Non-blocking findings addressed: changed_in bookkeeping and the code-change requirement (20.10), raw
+    held-out numbers (20.18), CLM-17 conformity phrases, citations about this delivery, vocabulary, process-check false
+    alarms, scope and project-level lint (20.13), CLM-04 markdown link syntax (20.12), ADM-EXPO prose answers and
+    stream-named data files outside manifests/ and results/ (20.11), the fork case of identity laundering (20.15). New
+    corpus fixtures S81-S88 (INTEGRATION_LOG A20); no new check id. Left as residual risks: integer answers and the
+    other ADM-EXPO residuals listed in 20.11, positive_control/oracle_plumbing copies of the candidate (20.14), and a
+    first-parent identity rule (20.15).

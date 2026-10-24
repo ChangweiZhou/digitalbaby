@@ -1,6 +1,6 @@
 {
   "schema": "minifly.rules.v1",
-  "checker_version": "1.0.0",
+  "checker_version": "1.0.1",
   "notes": [
     "RULES.json is authoritative for check ids, modules, stages, tier_min, introduced_in, status and bundles (SPEC 7.4, 7.5, 20.2).",
     "status: enforced | advisory (FAIL/MISSING reported as WARN) | planned (registered but not implemented; excluded from every bundle; listed in README 'Not yet enforced').",
@@ -121,19 +121,22 @@
     {
       "id": "RUN-04",
       "module": "launch",
-      "title": "Every official resume attempt re-ran at least one completed (world, arm) unit (each unit launch chose) into results/official_replay/ with a canonical row digest equal to the original",
+      "title": "Every official resume attempt re-ran at least one completed (world, arm) unit (each unit launch chose) into results/official_replay/ with a canonical row digest equal to the original, and every recovered in-flight official attempt (rusage lost) has at least one of its own units replayed so",
       "stages": [
         "official",
         "publish"
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-20",
         "FM-19"
       ],
-      "applies_when": "an official resume attempt (ATTEMPTS resume_of) or results/official_replay rows exist"
+      "applies_when": "an official resume attempt (ATTEMPTS resume_of), a recovered official attempt (rusage_lost / recovered) or results/official_replay rows exist"
     },
     {
       "id": "CYC-01",
@@ -185,6 +188,22 @@
       "applies_when": "always"
     },
     {
+      "id": "CYC-04",
+      "module": "launch",
+      "title": "runlog/ATTEMPTS.jsonl and runlog/CYCLES.jsonl are append-only at publish: every committed row survives unchanged in every later commit and the worktree",
+      "stages": [
+        "publish"
+      ],
+      "tier_min": 0,
+      "introduced_in": "1.0.1",
+      "status": "enforced",
+      "fm_ids": [
+        "FM-10",
+        "FM-19"
+      ],
+      "applies_when": "always"
+    },
+    {
       "id": "LOCK-01",
       "module": "lockcheck",
       "title": "Schema, required fields, no __FILL__, valid enums",
@@ -205,7 +224,7 @@
     {
       "id": "LOCK-02",
       "module": "lockcheck",
-      "title": "Contract block complete",
+      "title": "Contract block complete; role candidate only on primary.candidate_arm",
       "stages": [
         "lock",
         "technical",
@@ -214,6 +233,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-02",
@@ -520,13 +542,16 @@
     {
       "id": "WIT-01",
       "module": "lockcheck",
-      "title": "External witness: reviewer-namespace attestation of the lock shas before dev/official outputs",
+      "title": "External witness: the attestation (and the SOURCE_LOCK ack) commits act as the reviewer family (trailer AND namespace), before dev/official outputs",
       "stages": [
         "roster",
         "official"
       ],
       "tier_min": 2,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-13"
@@ -551,12 +576,15 @@
     {
       "id": "SEAL-02",
       "module": "seal",
-      "title": "Seal ordering and reviewer-namespace SEAL_COMMIT",
+      "title": "Seal ordering, and the SEAL_COMMIT and SEAL_REVEAL commits act as the reviewer family (trailer AND namespace)",
       "stages": [
         "official"
       ],
       "tier_min": 2,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-11"
@@ -730,6 +758,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-06"
@@ -746,6 +777,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-05"
@@ -778,6 +812,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "planned",
       "fm_ids": [
         "FM-06",
@@ -812,6 +849,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-01",
@@ -845,6 +885,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-04"
@@ -861,6 +904,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-14"
@@ -1023,6 +1069,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-05",
@@ -1040,6 +1089,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-05",
@@ -1195,13 +1247,16 @@
     {
       "id": "ADM-EXPO",
       "module": "admitcheck",
-      "title": "Held orbits never in feedback-bearing streams; no undeclared stream files",
+      "title": "Held prompts/orbits never in feedback-bearing rows; no row of any exposure stream, TAUGHT file or undeclared stream-like file carries a held answer with its prompt or orbit (content, any field, embedded JSON, answer after filler, next record in stream order); no undeclared stream files",
       "stages": [
         "roster",
         "official"
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-12"
@@ -1316,13 +1371,16 @@
     {
       "id": "REV-01",
       "module": "review",
-      "title": "Reviewer family differs from the author; trailer and reviewer-namespace branch",
+      "title": "Reviewer family differs from the author; review and lock commits carry the right acting family (Acting-Agent trailer AND origin/<family>/* namespace) and the reviewer-namespace branch",
       "stages": [
         "roster",
         "official"
       ],
       "tier_min": 2,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-27"
@@ -1467,6 +1525,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-27"
@@ -1571,12 +1632,15 @@
     {
       "id": "CLM-04",
       "module": "claimcheck",
-      "title": "confirm* tokens require SEALED_CONFIRM with SEAL-* and WLD-01 PASS",
+      "title": "confirm* tokens (read as rendered: entities decoded, HTML comments/tags, markdown markers and link syntax removed) require SEALED_CONFIRM with SEAL-* and WLD-01 PASS",
       "stages": [
         "publish"
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-11",
@@ -1769,6 +1833,23 @@
         "FM-25"
       ],
       "applies_when": "numbers about prior work appear"
+    },
+    {
+      "id": "CLM-17",
+      "module": "claimcheck",
+      "title": "Agent-written text (REPORT body, CLAIM notes and findings claims, STATUS/SUMMARY/MEMO, NOTES/ANALYSIS/README/RESULTS; key/value lines and table rows read as clauses) asserts no evidence level above level_earned and, unless primary_gate is PASS, no met/cleared/passed rule, endpoint, result or failed guard",
+      "stages": [
+        "publish",
+        "lint"
+      ],
+      "tier_min": 0,
+      "introduced_in": "1.0.1",
+      "status": "enforced",
+      "fm_ids": [
+        "FM-22",
+        "FM-07"
+      ],
+      "applies_when": "agent-written text exists (REPORT body, CLAIM notes or findings claims, STATUS/SUMMARY/MEMO or NOTES/ANALYSIS/README/RESULTS files; lint: files inside a v1 delivery with CLAIM.json, or files that name one)"
     },
     {
       "id": "ERR-01",
@@ -1966,12 +2047,15 @@
     {
       "id": "KB-03",
       "module": "kb",
-      "title": "Activation and reconciliation by a different family than the finding author",
+      "title": "Activation and reconciliation by a different family than the finding author: the activator is the acting family of the commit introducing the row (Acting-Agent trailer AND origin/<family>/* namespace), and the row author_agent equals it",
       "stages": [
         "publish"
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-30"
@@ -2057,12 +2141,15 @@
     {
       "id": "GOV-REV",
       "module": "governance",
-      "title": "tighten/new/neutral changes need an other-family review record",
+      "title": "tighten/new/neutral changes need an other-family review record introduced by a commit of that family (trailer AND namespace)",
       "stages": [
         "governance"
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-30"
@@ -2155,6 +2242,9 @@
       ],
       "tier_min": 2,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-15",
@@ -2201,6 +2291,9 @@
       ],
       "tier_min": 0,
       "introduced_in": "1.0.0",
+      "changed_in": [
+        "1.0.1"
+      ],
       "status": "enforced",
       "fm_ids": [
         "FM-30"
@@ -2380,6 +2473,7 @@
         "CLM-14",
         "CLM-15",
         "CLM-16",
+        "CLM-17",
         "ERR-01",
         "KB-01",
         "KB-02",
@@ -2392,6 +2486,7 @@
         "RUN-03",
         "RUN-02",
         "RUN-04",
+        "CYC-04",
         {
           "id": "GOV-COI",
           "when": "t2"
@@ -2458,6 +2553,7 @@
         "CLM-06",
         "CLM-12",
         "CLM-16",
+        "CLM-17",
         "PTR-01",
         "PTR-02",
         "PTR-03",

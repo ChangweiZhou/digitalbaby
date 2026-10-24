@@ -28,7 +28,7 @@ SPEC_IDS = (['C00a', 'C00b', 'C00c', 'C00d', 'C00e', 'C00f', 'C01', 'C02a', 'C02
              'C11a', 'C11b', 'C12', 'C13a', 'C13b', 'C13c', 'C14', 'C15', 'C16', 'C17', 'C18', 'C19',
              'C20', 'C21', 'C22', 'C23', 'C24', 'C25', 'C26', 'C27', 'C28', 'C29', 'C30']
             + ['G0%d' % i for i in range(1, 6)] + ['K01'])
-SUPPLEMENTARY = ['S%02d' % i for i in range(1, 65)]  # S01-S25 (WP7), S26-S45 (round 1), S46-S50 (round 2), S51-S55 (round 3), S56+ (round 4)
+SUPPLEMENTARY = ['S%02d' % i for i in range(1, 89)]  # S01-S25 (WP7), S26-S45 (round 1), S46-S50 (round 2), S51-S55 (round 3), S56-S64 (round 4), S65-S80 (self-improvement round 1), S81-S88 (round-1 repair)
 LITERAL_NAME = re.compile(r'(_ok|_passed|_passes|overlap|_verified|_independent)$|^(no_|all_)')
 
 
