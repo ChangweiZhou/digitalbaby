@@ -1,0 +1,119 @@
+{
+  "version": "NATIVE_NEXT_V1",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "date": "2026-10-23",
+  "authorization": {
+    "design_delivery": true,
+    "implementation": false,
+    "three_cycles": false,
+    "training": false,
+    "confirmation_execution": false,
+    "github_push": false,
+    "adoption": false
+  },
+  "goal": "Retained exact own-output unseen-addition generalization per all observed samples and actual compute",
+  "constraints": {
+    "gradual_warmup": true,
+    "arithmetic_specific_structure": false,
+    "attention": false,
+    "Transformer": false,
+    "ELM": false,
+    "backpropagation": false,
+    "payload_decoder_refit": false,
+    "arithmetic_track_changed": false
+  },
+  "protocols": {
+    "A": {
+      "name": "UNCHANGED_EXPAND_CONFIRM",
+      "evidence": "E1",
+      "independent_pairs": 32,
+      "value_lives_per_pair": 2,
+      "arms": [
+        "CANON",
+        "EXPAND"
+      ],
+      "base_histories": 384,
+      "passive_continuations": 128,
+      "main_records": 225792,
+      "main_events": 1128960,
+      "logical_records": 258048,
+      "expanded_birth_changed": false,
+      "head_fits": 0,
+      "primary_family_size": 6,
+      "family_alpha": 0.05,
+      "bounds": "one-sided paired Student t, alpha=0.05/6, df31; approximate",
+      "qualification_full_records_max": 96,
+      "qualification_partial_events_max": 288,
+      "cpu_seconds": 7200,
+      "wall_seconds": 10800
+    },
+    "B": {
+      "name": "V6_R1_R2",
+      "evidence": "Exploratory E3 attempt; E0 birth admission",
+      "independent_worlds": 2,
+      "arms": [
+        "ORIGINAL",
+        "RESCALED",
+        "RESCALED_FROZEN",
+        "RESCALED_NO_OLD",
+        "RESCALED_SH_OLD"
+      ],
+      "base_histories": 10,
+      "main_records_if_admitted": 43520,
+      "observed_event_upper_bound": 696320,
+      "native_N": 5177,
+      "expanded_memory": false,
+      "symbol_weight_SD": 0.05,
+      "recurrent_weight_SD": "0.05/sqrt(88)",
+      "proposal_sigma": 0.1,
+      "input_gate": "each world/length group DeltaJ>0 and support ID>1/8; nonzero sides; positive signed native self-minus-other for payload0/EOS8",
+      "input_gate_changes_training_roster": false,
+      "failed_input_gate_prevents_roster": true,
+      "input_gate_partial_native_events": 128,
+      "qualification_full_records_max": 64,
+      "qualification_partial_events_max": 512,
+      "cpu_seconds": 7200,
+      "wall_seconds": 10800
+    },
+    "C": {
+      "name": "EXPAND_EOS_ATTENUATION",
+      "evidence": "E1 development only",
+      "requires": "Separately accepted A storage confirmation; separate human execution authorization",
+      "independent_pairs": 8,
+      "value_lives_per_pair": 2,
+      "arms": [
+        "BASE",
+        "EOS_BAL",
+        "EOS_UNIFORM"
+      ],
+      "native_N": 20708,
+      "base_histories": 144,
+      "passive_continuations": 48,
+      "main_records": 84672,
+      "main_events": 423360,
+      "logical_records": 96768,
+      "weight_rule": "At BOS rho=min(1,(P+0.5)/(M+0.5)); p=(P+0.5)/(P+M+1); beta=p+(1-p)*rho. P/M count completed-record targets only. No positive-event amplification.",
+      "payload_teaching_changed": false,
+      "head_fits": 0,
+      "qualification_full_records_max": 96,
+      "qualification_partial_events_max": 128,
+      "cpu_seconds": 3600,
+      "wall_seconds": 5400
+    }
+  },
+  "common": {
+    "workers_per_protocol": 1,
+    "numerical_threads": 1,
+    "sampled_tree_RSS_bytes": 2147483648,
+    "admission_headroom_bytes": 2147483648,
+    "automatic_chaining": false,
+    "automatic_retry": false,
+    "retained_new_raw_artifacts": true,
+    "publication_raw_requires_explicit_scope": true
+  },
+  "executed_by_this_delivery": {
+    "new_native_records": 0,
+    "new_fits": 0,
+    "three_cycle_exercises": 0
+  }
+}
