@@ -1,0 +1,101 @@
+{
+  "amendments": [],
+  "authorization": {
+    "path": "AUTHORIZATION.json",
+    "recommendation_shown": "A, because it opens held E3 at low cost."
+  },
+  "checker_sha256": null,
+  "compute": {
+    "cpu_h_total_incl_failed": 0.36,
+    "family_cpu_h": 0.36,
+    "records_total_incl_failed": 9600
+  },
+  "confirm_attempt": null,
+  "coprimary_results": [],
+  "delivery": "minifly_corpus_base_dev_v1_20261101",
+  "designs_tried_k": 1,
+  "dev_shadow_verdict": null,
+  "family_id": "FAM-bb29644f",
+  "findings_none_reason": null,
+  "findings_proposed": [
+    "F-20261103-codex-1"
+  ],
+  "gate_type": "objective",
+  "headline": "FAIL | earned NONE (attempted E3) | held exact own-EOS 85.2% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 28.9pp | OLD final 92.2% (drop 7.8pp) | 8 MAIN worlds | best of k=1",
+  "invalid_reason": null,
+  "labels": [],
+  "level_attempted": "E3",
+  "level_earned": "NONE",
+  "lineage_parent": null,
+  "n_worlds": 8,
+  "native_path_only": true,
+  "notes": "Composition endpoint met on 8/8 MAIN worlds (E3 rung; paired LCB 26.7pp over the 5pp margin). The FAIL comes only from the OLD retention side condition.",
+  "objective_metric": {
+    "G": 0.289062,
+    "G_per_cpu_h": 0.802951,
+    "G_per_sample": 1.927083,
+    "best_other_arm": {
+      "name": "NPT",
+      "value": 0.5625
+    },
+    "best_shortcut": {
+      "name": "DIGIT_NO_CARRY",
+      "value": 0.5
+    },
+    "determined_fraction": 1.0,
+    "headroom": 0.351562,
+    "held_by_stratum": {},
+    "held_exact_own_eos": 0.851562,
+    "new_final": 1.0,
+    "old_drop": 0.078125,
+    "old_end": 1.0,
+    "old_final": 0.921875
+  },
+  "posthoc_files": [],
+  "predictions_scored": [
+    {
+      "brier": 0.49,
+      "hit": true,
+      "id": "P1",
+      "interval_score": 0.35,
+      "observed": 0.851562
+    },
+    {
+      "brier": 0.7225,
+      "hit": true,
+      "id": "P2",
+      "interval_score": 0.08,
+      "observed": 0.078125
+    },
+    {
+      "brier": 0.01,
+      "hit": true,
+      "id": "P3",
+      "interval_score": 0.2,
+      "observed": 0.5
+    }
+  ],
+  "primary_gate": "FAIL",
+  "protocol_id": "minifly_corpus_base_dev_v1_20261101-p1",
+  "provenance": {
+    "interrupted": false,
+    "replay_units": [],
+    "resume_attempts": [],
+    "resumed_units": []
+  },
+  "reuse_specificity": "not_tested",
+  "review": {
+    "decision": "ADMIT",
+    "path": "review/REVIEW.json"
+  },
+  "review_debt_id": null,
+  "schema": "minifly.claim.v1",
+  "stop_reason": null,
+  "verdict_source": {
+    "decide_version": "1.0.0",
+    "endpoint_lock_sha256": "53ff12ad951a636825d5f11b22eda29d43a7a3885dd9742a0fb82d01ce082f3a",
+    "source_lock_sha256": "f7f2c57f8b3867dfee2874eca844167d9d70f00a3525e459a08dc26362e86711",
+    "verdict_sha256": null
+  },
+  "worlds_role": "MAIN"
+}

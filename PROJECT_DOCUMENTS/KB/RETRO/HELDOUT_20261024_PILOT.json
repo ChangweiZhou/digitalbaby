@@ -1,0 +1,412 @@
+{
+  "schema": "minifly.heldout_report.v1",
+  "batch_id": "HB-20261024-PILOT",
+  "utc": "20261024T150903Z",
+  "checker_commit": "0471fda3c7141e6721ebcda60b861f60f9d6039c",
+  "checker_sha256": "0bc1d137717856c5eb56c7ae694feca32bb86d3394c493855c6d91b246d861b9",
+  "checker_source": "git archive 0471fda3c714 tools/minifly_check",
+  "heldout_valid": false,
+  "held_checks": [
+    {
+      "id": "HELD-01",
+      "status": "MISSING",
+      "detail": "shallow clone: history-dependent git query unavailable (git fetch --unshallow)",
+      "evidence": [],
+      "data": {
+        "runtime_s": 0.0051
+      }
+    },
+    {
+      "id": "HELD-02",
+      "status": "PASS",
+      "detail": "bundle and key hashes match the commitment; 2377 files authenticated",
+      "evidence": [],
+      "data": {
+        "runtime_s": 0.5623
+      }
+    },
+    {
+      "id": "HELD-03",
+      "status": "MISSING",
+      "detail": "shallow clone: history-dependent git query unavailable (git fetch --unshallow)",
+      "evidence": [],
+      "data": {
+        "runtime_s": 5.2037
+      }
+    }
+  ],
+  "commitment": {
+    "author_identity": "claude-subagents-A-B-C (code-blind fresh contexts; same agent family as kit authors; pilot)",
+    "batch_id": "HB-20261024-PILOT",
+    "bundle_sha256": "53d5cd7e0a63a0952f8f050fe20057ac8a0d5b8004b0adbac6affab7e981ec28",
+    "checker_sha_under_test": "pending:first-commit-adding-tools/minifly_check/minifly_check.py-after-this-row",
+    "fm_coverage": [
+      "FM-02",
+      "FM-03",
+      "FM-06",
+      "FM-07",
+      "FM-10",
+      "FM-11",
+      "FM-12",
+      "FM-13",
+      "FM-19",
+      "FM-22",
+      "FM-27",
+      "FM-30"
+    ],
+    "key_sha256": "8e4162078fa38af7a2b859ed14265c15b2dfac22868c4232ca0d2c1ba535af4d",
+    "n": 12,
+    "n_clean": 3,
+    "revealed_utc": null,
+    "utc": "20261024T141939Z"
+  },
+  "score": {
+    "fixtures": {
+      "A1": {
+        "clean": true,
+        "fired": [
+          "RUN-03"
+        ],
+        "exits": [
+          0,
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "false_alarm": true
+      },
+      "A2": {
+        "clean": false,
+        "expected": [
+          "FM-03",
+          "FM-02",
+          "FM-06"
+        ],
+        "fired": [
+          "ADM-CTRL-ISO",
+          "RUN-03"
+        ],
+        "fired_fm": [
+          "FM-03",
+          "FM-13",
+          "FM-18"
+        ],
+        "exits": [
+          1,
+          1,
+          0
+        ],
+        "caught": false,
+        "per_class": {
+          "FM-03": true,
+          "FM-02": false,
+          "FM-06": false
+        },
+        "errors": []
+      },
+      "A3": {
+        "clean": false,
+        "expected": [
+          "FM-12"
+        ],
+        "fired": [
+          "RUN-03"
+        ],
+        "fired_fm": [
+          "FM-13",
+          "FM-18"
+        ],
+        "exits": [
+          1,
+          1
+        ],
+        "caught": false,
+        "per_class": {
+          "FM-12": false
+        },
+        "errors": []
+      },
+      "A4": {
+        "clean": false,
+        "expected": [
+          "FM-22",
+          "FM-06",
+          "FM-07"
+        ],
+        "fired": [
+          "ERR-01",
+          "RUN-03"
+        ],
+        "fired_fm": [
+          "FM-08",
+          "FM-13",
+          "FM-15",
+          "FM-18"
+        ],
+        "exits": [
+          0,
+          0,
+          1
+        ],
+        "caught": false,
+        "per_class": {
+          "FM-22": false,
+          "FM-06": false,
+          "FM-07": false
+        },
+        "errors": []
+      },
+      "B1": {
+        "clean": false,
+        "expected": [
+          "FM-27",
+          "FM-13"
+        ],
+        "fired": [
+          "DEBT-01",
+          "REV-06",
+          "RUN-03",
+          "WIT-01"
+        ],
+        "fired_fm": [
+          "FM-13",
+          "FM-18",
+          "FM-27"
+        ],
+        "exits": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "caught": true,
+        "per_class": {
+          "FM-27": true,
+          "FM-13": true
+        },
+        "errors": []
+      },
+      "B2": {
+        "clean": true,
+        "fired": [
+          "RUN-03"
+        ],
+        "exits": [
+          0,
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "false_alarm": true
+      },
+      "B3": {
+        "clean": false,
+        "expected": [
+          "FM-11",
+          "FM-13"
+        ],
+        "fired": [
+          "RUN-03",
+          "SEAL-02"
+        ],
+        "fired_fm": [
+          "FM-11",
+          "FM-13",
+          "FM-18"
+        ],
+        "exits": [
+          1
+        ],
+        "caught": true,
+        "per_class": {
+          "FM-11": true,
+          "FM-13": true
+        },
+        "errors": []
+      },
+      "B4": {
+        "clean": false,
+        "expected": [
+          "FM-10",
+          "FM-19"
+        ],
+        "fired": [
+          "CYC-01",
+          "RUN-03"
+        ],
+        "fired_fm": [
+          "FM-10",
+          "FM-13",
+          "FM-18"
+        ],
+        "exits": [
+          1,
+          0,
+          0,
+          1
+        ],
+        "caught": false,
+        "per_class": {
+          "FM-10": true,
+          "FM-19": false
+        },
+        "errors": []
+      },
+      "C1": {
+        "clean": true,
+        "fired": [
+          "CLM-11"
+        ],
+        "exits": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "false_alarm": true
+      },
+      "C2": {
+        "clean": false,
+        "expected": [
+          "FM-22",
+          "FM-07"
+        ],
+        "fired": [
+          "CLM-11"
+        ],
+        "fired_fm": [
+          "FM-26"
+        ],
+        "exits": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "caught": false,
+        "per_class": {
+          "FM-22": false,
+          "FM-07": false
+        },
+        "errors": []
+      },
+      "C3": {
+        "clean": false,
+        "expected": [
+          "FM-30"
+        ],
+        "fired": [
+          "CLM-11"
+        ],
+        "fired_fm": [
+          "FM-26"
+        ],
+        "exits": [
+          0,
+          0,
+          1,
+          0
+        ],
+        "caught": false,
+        "per_class": {
+          "FM-30": false
+        },
+        "errors": []
+      },
+      "C4": {
+        "clean": false,
+        "expected": [
+          "FM-30"
+        ],
+        "fired": [
+          "GOV-NUM",
+          "GOV-SKILL"
+        ],
+        "fired_fm": [
+          "FM-30"
+        ],
+        "exits": [
+          1
+        ],
+        "caught": true,
+        "per_class": {
+          "FM-30": true
+        },
+        "errors": []
+      }
+    },
+    "recall_per_class": {
+      "FM-02": {
+        "caught": 0,
+        "n": 1,
+        "recall": 0.0
+      },
+      "FM-03": {
+        "caught": 1,
+        "n": 1,
+        "recall": 1.0
+      },
+      "FM-06": {
+        "caught": 0,
+        "n": 2,
+        "recall": 0.0
+      },
+      "FM-07": {
+        "caught": 0,
+        "n": 2,
+        "recall": 0.0
+      },
+      "FM-10": {
+        "caught": 1,
+        "n": 1,
+        "recall": 1.0
+      },
+      "FM-11": {
+        "caught": 1,
+        "n": 1,
+        "recall": 1.0
+      },
+      "FM-12": {
+        "caught": 0,
+        "n": 1,
+        "recall": 0.0
+      },
+      "FM-13": {
+        "caught": 2,
+        "n": 2,
+        "recall": 1.0
+      },
+      "FM-19": {
+        "caught": 0,
+        "n": 1,
+        "recall": 0.0
+      },
+      "FM-22": {
+        "caught": 0,
+        "n": 2,
+        "recall": 0.0
+      },
+      "FM-27": {
+        "caught": 1,
+        "n": 1,
+        "recall": 1.0
+      },
+      "FM-30": {
+        "caught": 1,
+        "n": 2,
+        "recall": 0.5
+      }
+    },
+    "recall_fixtures": 0.3333333333333333,
+    "n_dirty": 9,
+    "false_alarm_rate_clean": 1.0,
+    "n_clean": 3
+  }
+}
