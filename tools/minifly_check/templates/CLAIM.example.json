@@ -1,0 +1,89 @@
+{
+  "schema": "minifly.claim.v1",
+  "delivery": "minifly_example_dev_v1_20261101",
+  "protocol_id": "minifly_example_dev_v1_20261101-p1",
+  "level_attempted": "E3",
+  "level_earned": "E3",
+  "reuse_specificity": "not_tested",
+  "primary_gate": "PASS",
+  "dev_shadow_verdict": "PASS",
+  "invalid_reason": null,
+  "stop_reason": null,
+  "gate_type": "objective",
+  "labels": [],
+  "worlds_role": "MAIN",
+  "n_worlds": 8,
+  "objective_metric": {
+    "held_exact_own_eos": 0.625,
+    "held_by_stratum": {
+      "S2": 0.7,
+      "S3": 0.55,
+      "S4": 0.6
+    },
+    "determined_fraction": 0.8,
+    "old_end": 0.93,
+    "old_final": 0.91,
+    "old_drop": 0.02,
+    "new_final": 0.88,
+    "best_shortcut": {
+      "name": "CANON",
+      "value": 0.125
+    },
+    "best_other_arm": {
+      "name": "NPT",
+      "value": 0.2
+    },
+    "headroom": 0.425,
+    "G": 0.413,
+    "G_per_sample": 0.0215,
+    "G_per_cpu_h": 0.138
+  },
+  "designs_tried_k": 2,
+  "amendments": [],
+  "coprimary_results": [],
+  "posthoc_files": [],
+  "lineage_parent": null,
+  "family_id": "FAM-1a2b3c4d",
+  "native_path_only": true,
+  "compute": {
+    "records_total_incl_failed": 61440,
+    "cpu_h_total_incl_failed": 2.99,
+    "family_cpu_h": 2.99
+  },
+  "provenance": {
+    "interrupted": false,
+    "resume_attempts": [],
+    "resumed_units": [],
+    "replay_units": []
+  },
+  "verdict_source": {
+    "decide_version": "1.0.0",
+    "verdict_sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+    "endpoint_lock_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+    "source_lock_sha256": "4444444444444444444444444444444444444444444444444444444444444444"
+  },
+  "predictions_scored": [
+    {
+      "id": "P1",
+      "observed": 0.625,
+      "hit": true,
+      "interval_score": 0.41,
+      "brier": 0.09
+    }
+  ],
+  "findings_proposed": [],
+  "findings_none_reason": "Example: nothing durable beyond the headline.",
+  "review": {
+    "path": "review/REVIEW.json",
+    "decision": "ADMIT"
+  },
+  "review_debt_id": null,
+  "authorization": {
+    "path": "AUTHORIZATION.json",
+    "recommendation_shown": "Example recommendation text"
+  },
+  "confirm_attempt": null,
+  "notes": "",
+  "checker_sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+  "headline": "PASS | earned E3 (attempted E3) | held exact own-EOS 62.5% [S2+ determined, n=80] vs best shortcut CANON 12.5% | G 41.3pp | OLD final 91.0% (drop 2.0pp) | 8 MAIN worlds | best of k=2"
+}

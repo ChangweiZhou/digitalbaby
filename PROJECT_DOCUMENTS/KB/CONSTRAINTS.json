@@ -1,0 +1,173 @@
+{
+  "schema": "minifly.constraints.v1",
+  "owner": "Mr. Changwei Zhou",
+  "version": "1",
+  "status": "DRAFT_PENDING_OWNER_DECISION",
+  "user_decision": null,
+  "objective_ref": {
+    "path": "minifly_b/package/DOCS/MINIFLY_OBJECTIVE_CONTRACT.md",
+    "sha256": "3832a30f19ad168a03ed112d8c60f43528a5c4d4dd47adf1951f8c01b79ef57d"
+  },
+  "native_forbidden": {
+    "imports": [
+      "torch.autograd",
+      "torch.optim",
+      "torch.nn.MultiheadAttention",
+      "transformers",
+      "jax",
+      "sklearn.linear_model"
+    ],
+    "calls": [
+      ".backward(",
+      "scaled_dot_product_attention(",
+      "numpy.linalg.lstsq(",
+      "numpy.linalg.pinv(",
+      "torch.linalg.lstsq("
+    ],
+    "identifiers": [
+      "transformer",
+      "attention",
+      "elm",
+      "requires_grad=True"
+    ]
+  },
+  "supplied_arithmetic_heuristics": [
+    "int() over decoded operand bytes",
+    "carry or digit tables",
+    "'+' applied to parsed operands"
+  ],
+  "evaluator_only_exemptions": [],
+  "io": {
+    "raw_bytes": true,
+    "own_eos_required": true
+  },
+  "warmup": {
+    "start_ceiling": "1/16",
+    "ramp": "gradual"
+  },
+  "objective_targets": "TARGET_UNSET",
+  "threshold_floors": {
+    "margin_abs": 0.05,
+    "absolute_floor_above_chance": 0.05,
+    "per_world_floor": -0.05,
+    "min_worlds_nonpilot": 8,
+    "min_items_per_stratum": 8,
+    "input_contrast_min": 2.0,
+    "prompt_id_margin_min": 0.1,
+    "taught_acq_margin_min": 0.05,
+    "min_realized_dose": 0.05,
+    "shuf_band": [
+      0.35,
+      0.65
+    ],
+    "old_max_drop": 0.1,
+    "old_acq_margin": 0.05,
+    "analytic_input_snr_min": 0.5,
+    "oc_min_power": 0.8,
+    "alpha_max": 0.05
+  },
+  "tier_thresholds": {
+    "t0_max_cpu_h": 1,
+    "t1_max_cpu_h": 4,
+    "t1_max_records": 20000,
+    "family_t1_max_cpu_h": 12
+  },
+  "default_grant_caps": {
+    "max_cpu_h": 2,
+    "max_records": 5000,
+    "max_cycles": 3,
+    "official": false,
+    "push": false,
+    "adoption": false,
+    "pointer_update": false
+  },
+  "e3_cadence_max": 2,
+  "e3_cadence_counts_legacy": false,
+  "review_debt_max_open": 3,
+  "required_arms_by_level": {
+    "E1": [
+      "candidate",
+      "shuf"
+    ],
+    "E2": [
+      "candidate",
+      "shuf",
+      "positive_control"
+    ],
+    "E3": [
+      "candidate",
+      "no_prior_teaching",
+      "shuf",
+      "oracle_plumbing"
+    ]
+  },
+  "testbed_floor_grid": [
+    {
+      "id": "FRF_W256_LR0.001",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 256,
+      "readout_lr": 0.001
+    },
+    {
+      "id": "FRF_W256_LR0.005",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 256,
+      "readout_lr": 0.005
+    },
+    {
+      "id": "FRF_W256_LR0.02",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 256,
+      "readout_lr": 0.02
+    },
+    {
+      "id": "FRF_W1024_LR0.001",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 1024,
+      "readout_lr": 0.001
+    },
+    {
+      "id": "FRF_W1024_LR0.005",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 1024,
+      "readout_lr": 0.005
+    },
+    {
+      "id": "FRF_W1024_LR0.02",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 1024,
+      "readout_lr": 0.02
+    },
+    {
+      "id": "FRF_W4096_LR0.001",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 4096,
+      "readout_lr": 0.001
+    },
+    {
+      "id": "FRF_W4096_LR0.005",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 4096,
+      "readout_lr": 0.005
+    },
+    {
+      "id": "FRF_W4096_LR0.02",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "width": 4096,
+      "readout_lr": 0.02
+    }
+  ],
+  "testbed_ceiling_grid": [
+    {
+      "id": "EXACT_BP",
+      "learner": "EXACT_BP"
+    },
+    {
+      "id": "ORACLE_FEATURES",
+      "learner": "ORACLE_FEATURES"
+    }
+  ],
+  "confirm_alpha_spending": "geometric_0.05_2^-j",
+  "verification_subset_max_mb": 50,
+  "notes": "Draft values transcribed from MRK-1 spec section 13.1 (tools/minifly_check/SPEC.md). Nothing in this file is an owner decision: every value is pending UD-0001, which Mr. Zhou records in their own words. evaluator_only_exemptions is empty: the only exemption is structural (files.admit and files.evaluator lie outside the native/runner purity scan and must be unreachable from it, LOCK-07). e3_cadence_counts_legacy is false pending the owner's decision. Ceiling-grid configs beyond the learner names are not specified by the spec."
+}

@@ -1,0 +1,656 @@
+{
+  "FM-01": {
+    "title": "Common-mode auditor (verification shares code or semantics with the system under test)",
+    "definition": "An auditor, reducer or 'independent' check imports, copies or rebuilds its expectations from the same functions or manifests the executor uses, so a defect in that shared semantics passes both the run and its audit.",
+    "check_ids": [
+      "MET-01",
+      "MET-02",
+      "DEC-01",
+      "INERT-01"
+    ],
+    "fixture_ids": [
+      "C01"
+    ],
+    "judgment_question": "The reviewer names the shared helper on which the verdict depends and asks which check would notice if that helper were wrong. At least one expectation must have been derived from the protocol text by an agent who did not write the executor.",
+    "archive_fc": [
+      "FC01",
+      "FC08"
+    ],
+    "incidents": [
+      "INC-SEED-01"
+    ],
+    "mechanism": "Program-owned scorer and decide (MET-01/02, DEC-01). Control expectations come from lock declarations. INERT-01. Reviewer trace_number and rerun_admission.",
+    "residual": "The checker is a program-wide common mode (mitigated by clean fixtures, --mutate, owner spot-check)"
+  },
+  "FM-02": {
+    "title": "Undelivered manipulation (treatment or control arm identical or near-inert)",
+    "definition": "The intervention or lesion that the causal claim depends on was never applied, or was applied too weakly to matter, and the resulting null is reported as if it were informative.",
+    "check_ids": [
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-DOSE",
+      "INERT-01"
+    ],
+    "fixture_ids": [
+      "C02a",
+      "C02b"
+    ],
+    "judgment_question": "Would a null at this realized dose rule out anything about the mechanism family?",
+    "archive_fc": [
+      "FC01",
+      "FC09"
+    ],
+    "incidents": [],
+    "mechanism": "ADM-CTRL-ZERO, ADM-CTRL-DOSE, INERT-01; INVALID with reason TREATMENT_NOT_DELIVERED distinct from FAIL",
+    "residual": "Write counter is executor code; reviewer checks the write site; canary M01"
+  },
+  "FM-03": {
+    "title": "Confounded intervention (control cuts the wrong path, or several factors change at once)",
+    "definition": "The comparison changes more than the hypothesis names, or a lesion alters several inputs to the scored decision, so the effect cannot be attributed to one cause.",
+    "check_ids": [
+      "ADM-CTRL-ISO",
+      "CLM-03"
+    ],
+    "fixture_ids": [
+      "C03"
+    ],
+    "judgment_question": "Is this a one-factor change against an unchanged, executable parent? If not, is the claim worded as an integrated package?",
+    "archive_fc": [
+      "FC09"
+    ],
+    "incidents": [],
+    "mechanism": "ADM-CTRL-ISO at post_first; more than one declared change labels integrated_intervention (CLM-03)",
+    "residual": "Multi-factor dataflow beyond the first record is review judgment"
+  },
+  "FM-04": {
+    "title": "Non-discriminating gate (a check that cannot fail)",
+    "definition": "A gate, control or test passes by construction, at ceiling or by tautology, so a pass carries no information.",
+    "check_ids": [
+      "RED-02",
+      "RED-07",
+      "RED-10",
+      "LAD-02",
+      "ADM-GATE",
+      "ADM-SHUF",
+      "ADM-FIX",
+      "LAD-04"
+    ],
+    "fixture_ids": [
+      "C04a",
+      "C04b"
+    ],
+    "judgment_question": "The reviewer must name a plausible wrong learner that this gate rejects, and must have seen it rejected.",
+    "archive_fc": [
+      "FC06",
+      "FC10",
+      "FC11"
+    ],
+    "incidents": [
+      "INC-SEED-02",
+      "INC-SEED-03"
+    ],
+    "mechanism": "Ladder always in the comparator; RED-02/07/10; LAD-02; ADM-GATE; ADM-SHUF; ADM-FIX; LAD-04",
+    "residual": "Novel shortcuts outside the ladder become incidents and new ladder members"
+  },
+  "FM-05": {
+    "title": "Untestable testbed or unreachable gate (a check that cannot pass)",
+    "definition": "No known-capable learner could pass the primary gate at this split, input code and data budget, or the decision rule has near-zero power at the target effect, so a negative result says nothing about the mechanism.",
+    "check_ids": [
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "RED-01",
+      "DET-01",
+      "OC-01"
+    ],
+    "fixture_ids": [
+      "C05a",
+      "C05b",
+      "C05c"
+    ],
+    "judgment_question": "If this run comes out null, what will we have learned about the mechanism, as opposed to the harness?",
+    "archive_fc": [
+      "FC18"
+    ],
+    "incidents": [
+      "INC-SEED-04",
+      "INC-SEED-05"
+    ],
+    "mechanism": "ADM-TB-CEIL/FLOOR in C0 before learner code; RED-01; DET-01; OC-01 for confirm; CANNOT_TEST is unpenalized",
+    "residual": "Floor learners are executor-run (grid fixed; reviewer reruns one)"
+  },
+  "FM-06": {
+    "title": "Weak comparator, missing trivial baseline, or weak guard",
+    "definition": "A gain is measured against a structurally weak reference (one at or below chance, or a never-taught arm) while the strongest cheap policy is omitted, so trivial strategies can pass or nearly pass.",
+    "check_ids": [
+      "LAD-03"
+    ],
+    "fixture_ids": [
+      "C06a",
+      "C06b",
+      "C06c"
+    ],
+    "judgment_question": "Is the comparator the strongest policy available without memory? Does the claim name only the strata that pass?",
+    "archive_fc": [
+      "FC06"
+    ],
+    "incidents": [
+      "INC-SEED-06",
+      "INC-SEED-07"
+    ],
+    "mechanism": "Comparator = max(chance, arms, ladder) in decide; S0/S1 excluded; old_acq guard; LAD-03 in headline",
+    "residual": null
+  },
+  "FM-07": {
+    "title": "Proxy, conditional or component metric displaces the objective",
+    "definition": "Loss, teacher-forced accuracy, thresholded rank separation, conditional subsets, external fitted heads or component gates are reported as success while the objective (exact own-EOS unseen addition with OLD protected) is near zero or not measured.",
+    "check_ids": [
+      "LOCK-03",
+      "PTR-03",
+      "MET-01",
+      "CLM-02"
+    ],
+    "fixture_ids": [
+      "C07"
+    ],
+    "judgment_question": "How would a PASS here change the E3 metric? Would an agent reading only the pointer draw the wrong conclusion?",
+    "archive_fc": [
+      "FC05",
+      "FC16"
+    ],
+    "incidents": [
+      "INC-SEED-08"
+    ],
+    "mechanism": "LOCK-03 (otherwise component); objective metric in every headline and pointer; PTR-03; answer_path native; MET-01",
+    "residual": null
+  },
+  "FM-08": {
+    "title": "Post-outcome amendment of task, endpoint, metric, threshold or normaliser",
+    "definition": "After candidate outcomes are seen, the primary task, metric, decision margin or compute normaliser is changed, often in the observed candidate's favour, and nothing mechanical records it or gets it re-authorized.",
+    "check_ids": [
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "ERR-01"
+    ],
+    "fixture_ids": [
+      "C08a",
+      "C08b"
+    ],
+    "judgment_question": "Was the amendment blind to the candidate's results? What is the new endpoint's distance from E3 unseen addition, and is that stated?",
+    "archive_fc": [
+      "FC03"
+    ],
+    "incidents": [
+      "INC-SEED-09"
+    ],
+    "mechanism": "AMD-01..05; UD for any primary or guard change after learner outcomes or any distance increase; co-primary in headline; ERR-01",
+    "residual": null
+  },
+  "FM-09": {
+    "title": "Program-level objective drift: prerequisite treadmill and component-proxy chasing",
+    "definition": "Each step is locally justified, but over many deliveries the loop stops opening the held E3 endpoint and chases whatever component the last diagnosis lit up, without distinguishing authorized from silent narrowing.",
+    "check_ids": [
+      "LOCK-09"
+    ],
+    "fixture_ids": [
+      "C09a",
+      "C09b"
+    ],
+    "judgment_question": "Is this the most informative step toward the stated objective, or a detour? Is the narrowing authorized, or is it drift?",
+    "archive_fc": [
+      "FC04"
+    ],
+    "incidents": [],
+    "mechanism": "LOCK-09 computed cadence with honest-exit-proof reset; objective_distance in lock and claim; UD for distance increase; component bridge predictions",
+    "residual": "Choosing the most informative step stays judgment"
+  },
+  "FM-10": {
+    "title": "Outcome-driven in-cycle design search under an untyped 'three cycles' contract",
+    "definition": "Within untyped 'cycles', architectures or priors are swapped after reading held-out outcomes and the winner is reported as if it were the only design, with the cycle count acting as a budget rather than a stopping rule.",
+    "check_ids": [
+      "CYC-03"
+    ],
+    "fixture_ids": [
+      "C10"
+    ],
+    "judgment_question": "Did the designer, rather than the learner, supply the function class? Would the result survive being reported as best of k?",
+    "archive_fc": [],
+    "incidents": [],
+    "mechanism": "designs_tried_k computed (best of k in headline); typed cycles with exit criteria; CYC-03 fresh rehearsal; dev worlds never MAIN",
+    "residual": "Task-shaped priors: priors_added in headline plus review"
+  },
+  "FM-11": {
+    "title": "Holdout and world reuse; confirmation freshness unverifiable",
+    "definition": "Held-out items, dev worlds or item universes are reused across iterations, experiments and confirmation, so confirmation freshness rests on self-attestation.",
+    "check_ids": [
+      "WLD-01",
+      "AMD-04",
+      "SEAL-01",
+      "SEAL-02",
+      "SEAL-03",
+      "SEAL-04",
+      "SEAL-05",
+      "WLD-02",
+      "CLM-04"
+    ],
+    "fixture_ids": [
+      "C11a",
+      "C11b"
+    ],
+    "judgment_question": "Does the confirmation population resample every factor the claim generalizes over (item split, relabeling, geometry)? Which population does the interval cover?",
+    "archive_fc": [],
+    "incidents": [
+      "INC-SEED-10"
+    ],
+    "mechanism": "WLD-01, AMD-04, seal (SEAL-*), CONFIRM_LEDGER, WLD-02 item-universe overlap",
+    "residual": "MAIN worlds not seal-derived (no confirm wording there)"
+  },
+  "FM-12": {
+    "title": "Exposure leakage and illegitimate (task-shaped) features",
+    "definition": "Held information reaches the learner through listening, calibration, segmentation timing, prompt-derived seeds or designer-supplied arithmetic priors, while the exposure audit checks the manifest rather than what the learner was actually fed.",
+    "check_ids": [
+      "ADM-EXPO",
+      "LOCK-07"
+    ],
+    "fixture_ids": [
+      "C12"
+    ],
+    "judgment_question": "Is a Kapoor-Narayanan-style leakage sheet answered? Are representation priors task-shaped, and are they declared in the claim?",
+    "archive_fc": [
+      "FC07"
+    ],
+    "incidents": [],
+    "mechanism": "ADM-EXPO canonical intersection plus undeclared-stream rejection; LOCK-07 evaluator unreachable from native; supplied-arithmetic heuristics to review",
+    "residual": "No input tap (deferred); digit relabeling is an owner decision"
+  },
+  "FM-13": {
+    "title": "Lock timing and closure gaps; verdict code written after data exists",
+    "definition": "Preregistration cannot be verified because design, locks and results land in one commit, locks omit the runtime import closure or the executable gate code, or main runs launch immediately after self-written locks.",
+    "check_ids": [
+      "LOCK-05",
+      "LOCK-06",
+      "WIT-01",
+      "RUN-01",
+      "SEAL-02",
+      "CLM-08"
+    ],
+    "fixture_ids": [
+      "C13a",
+      "C13b",
+      "C13c"
+    ],
+    "judgment_question": "Is anything that decides the verdict outside the lock? Were posthoc audits labelled (they are still valuable; Package B's final audit found the bug)?",
+    "archive_fc": [],
+    "incidents": [
+      "INC-SEED-11",
+      "INC-SEED-12",
+      "INC-SEED-13"
+    ],
+    "mechanism": "LOCK-05/06, WIT-01, RUN-01, seal ordering, CLM-08 POSTHOC",
+    "residual": "T1 ordering is local only"
+  },
+  "FM-14": {
+    "title": "Fail-open reducers and self-attested integrity fields",
+    "definition": "Verdict code treats missing inputs as passes, ignores the planned denominator, or writes integrity fields and compliance prose as literals, so the machine-readable verdicts that other agents read overstate the evidence.",
+    "check_ids": [
+      "DEC-01",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "LOCK-08",
+      "MET-01"
+    ],
+    "fixture_ids": [
+      "C14"
+    ],
+    "judgment_question": "Would an agent reading only the JSON reach the same conclusion as the prose caveats?",
+    "archive_fc": [
+      "FC02"
+    ],
+    "incidents": [
+      "INC-SEED-14",
+      "INC-SEED-15"
+    ],
+    "mechanism": "No delivery reducers (DEC-01); RED-03..06; LOCK-08; MET-01 two-source",
+    "residual": null
+  },
+  "FM-15": {
+    "title": "Test or gate edited after it failed, without independent classification",
+    "definition": "An assertion, gate or expectation that just failed is rewritten by the same agent, who also decides whether the edit is a fix or a loosening.",
+    "check_ids": [
+      "AMD-05",
+      "GOV-SEP",
+      "GOV-COI",
+      "GOV-MONO",
+      "ERR-01"
+    ],
+    "fixture_ids": [
+      "C15"
+    ],
+    "judgment_question": "Does a derivation from the spec, not convenience, show that the old assertion was wrong?",
+    "archive_fc": [
+      "FC03"
+    ],
+    "incidents": [],
+    "mechanism": "AMD-05 for endpoint and evaluator files; governance (GOV-SEP, GOV-COI, GOV-MONO) for checks; ERR-01",
+    "residual": "Delivery-internal unit assertions are engineering; reviewer"
+  },
+  "FM-16": {
+    "title": "Technical qualification mistaken for behavioral readiness (no cheap E0/E1 futility preflight)",
+    "definition": "Plumbing passes but nobody checks whether input reaches the state, whether taught items are acquired, or whether the next stage works on a perfect upstream, so expensive rosters return predictable zeros.",
+    "check_ids": [
+      "LOCK-12",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR"
+    ],
+    "fixture_ids": [
+      "C16"
+    ],
+    "judgment_question": "What is the cheapest computation that could show this run will be uninformative, and has it been run?",
+    "archive_fc": [
+      "FC18"
+    ],
+    "incidents": [
+      "INC-SEED-16"
+    ],
+    "mechanism": "LOCK-12, ADM-INPUT (with structure meters), ADM-ACQ, ADM-TB, all before roster",
+    "residual": null
+  },
+  "FM-17": {
+    "title": "Directional, sign and fixture-production mismatch errors",
+    "definition": "Implementation errors such as reversed teaching signs, slice bugs, fixtures at non-production density or frame type, checkpoints missing state and silently dropped checks invert or misrepresent learning.",
+    "check_ids": [
+      "ADM-DIR",
+      "ADM-FIX"
+    ],
+    "fixture_ids": [
+      "C17"
+    ],
+    "judgment_question": "Does each fixture go through the production code path at production density and frame type?",
+    "archive_fc": [
+      "FC17"
+    ],
+    "incidents": [],
+    "mechanism": "ADM-DIR, ADM-FIX",
+    "residual": "Checkpoint resume round-trip is review judgment"
+  },
+  "FM-18": {
+    "title": "Recurring environment, import and serialization defects",
+    "definition": "Known engineering defect classes (module-name collisions, missing dependencies, vendor overwrite, JSON or numpy type round-trips, identity fields in equality, platform non-determinism) are rediscovered delivery after delivery, each costing a cycle.",
+    "check_ids": [
+      "LOCK-05"
+    ],
+    "fixture_ids": [
+      "C18"
+    ],
+    "judgment_question": "Low judgment content. Was a genuinely new defect class added to the ledger with a check?",
+    "archive_fc": [
+      "FC17"
+    ],
+    "incidents": [],
+    "mechanism": "LOCK-05 resolution outside root fails; launch requires a clean closure; env versions in SOURCE_LOCK",
+    "residual": "Loud defects are left to the executor by design"
+  },
+  "FM-19": {
+    "title": "Evidence persistence and compute-accounting gaps",
+    "definition": "Gate inputs are not saved before assertions run and calls, attempts, tuning, surrogate or failed runs go uncounted or are mismeasured, which biases the per-sample and per-compute objective itself.",
+    "check_ids": [
+      "RUN-01"
+    ],
+    "fixture_ids": [
+      "C19"
+    ],
+    "judgment_question": "Is the efficiency claim computed on the lineage-wide total, including the search that found the candidate?",
+    "archive_fc": [],
+    "incidents": [],
+    "mechanism": "launch ATTEMPTS (child rusage), RUN-01, compute totals including failed in CLAIM, G_per_cpu_h",
+    "residual": "Deterministic op counters optional"
+  },
+  "FM-20": {
+    "title": "Resource-stop truncation of causal controls and mid-run operational amendments",
+    "definition": "Budgets run out or caps are amended mid-run in ways that remove causal controls or leave the intended dose unreached.",
+    "check_ids": [
+      "ADM-BUDGET",
+      "RUN-02"
+    ],
+    "fixture_ids": [
+      "C20"
+    ],
+    "judgment_question": "Did any cut fall on a causal control? Is the reason for the amendment operational only?",
+    "archive_fc": [],
+    "incidents": [],
+    "mechanism": "ADM-BUDGET paired_atomic; INCOMPLETE on missing pairs; RUN-02; caps restated in verbatim",
+    "residual": "Mid-run cap changes need a new AUTHORIZATION"
+  },
+  "FM-21": {
+    "title": "Underpowered, inconsistent or uncorrected statistics; small-N verdicts and winner's curse",
+    "definition": "Decision rules lack operating-characteristic analysis, so dev winners shrink at confirmation, point guards pass inside the noise, small-N pilots serve as verdicts, conventions differ and there is no program-level error budget.",
+    "check_ids": [
+      "OC-01",
+      "CLM-09",
+      "CONF-01"
+    ],
+    "fixture_ids": [
+      "C21"
+    ],
+    "judgment_question": "Is a null here informative? Is a pass robust to the selection that produced it?",
+    "archive_fc": [
+      "FC10",
+      "FC18"
+    ],
+    "incidents": [
+      "INC-SEED-17"
+    ],
+    "mechanism": "One decide implementation (t/Hoeffding, per-world floor); min_worlds/PILOT (CLM-09); OC-01; CONF-01 family alpha",
+    "residual": null
+  },
+  "FM-22": {
+    "title": "Claim-label inflation and free-text evidence vocabulary",
+    "definition": "Wording or free-text evidence labels (soft verbs on failed gates, 'confirmation' on tuning worlds, 'partial' primaries, 'approved' without authorization) upgrade results beyond what the gate table supports.",
+    "check_ids": [
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-09"
+    ],
+    "fixture_ids": [
+      "C22"
+    ],
+    "judgment_question": "Does any sentence say more than the gate table supports?",
+    "archive_fc": [
+      "FC05",
+      "FC14",
+      "FC15",
+      "FC16"
+    ],
+    "incidents": [
+      "INC-SEED-18",
+      "INC-SEED-19"
+    ],
+    "mechanism": "Generated headline; enums; CLM-04/05/06/09",
+    "residual": "Body prose advisory"
+  },
+  "FM-23": {
+    "title": "Lineage, identity and answer-path drift; mechanism aliasing",
+    "definition": "Capability is credited to 'the MiniFly core' or a 'native' learner after its substrate, equations or answer path changed or engineered components were added, and drifting aliases let tested ideas be re-proposed as new.",
+    "check_ids": [
+      "LOCK-13",
+      "LOCK-07",
+      "CLM-07"
+    ],
+    "fixture_ids": [
+      "C23"
+    ],
+    "judgment_question": "Is the capability credited to the same executable learner that produced it, under the same dose and priors?",
+    "archive_fc": [
+      "FC14",
+      "FC15"
+    ],
+    "incidents": [],
+    "mechanism": "LOCK-13 computed family and parent; LOCK-07; CLM-07; answer_path native; priors in headline",
+    "residual": "Equation-level diff is review judgment"
+  },
+  "FM-24": {
+    "title": "Narrowings, statuses and pointers do not propagate to the summary layer",
+    "definition": "Later corrections stay in local reports while catalogs, memos and CURRENT pointers, which agents read first, keep stale headlines, contradictory statuses and orphaned priorities.",
+    "check_ids": [
+      "PTR-02",
+      "PTR-04",
+      "PTR-06",
+      "PTR-03",
+      "PTR-05"
+    ],
+    "fixture_ids": [
+      "C24"
+    ],
+    "judgment_question": "Does the layer an agent reads first carry the latest caveat?",
+    "archive_fc": [
+      "FC12"
+    ],
+    "incidents": [
+      "INC-SEED-20"
+    ],
+    "mechanism": "FINDINGS fold; PTR-02/04/06; pointers copied from CLAIM; generated views avoided by copy rule",
+    "residual": "CATALOG and MEMO remain hand-written legacy (retro flags)"
+  },
+  "FM-25": {
+    "title": "Misremembered or uncited prior facts; dropped caveats; cross-decoder number mixing",
+    "definition": "Designs, memos and audits restate prior results from memory with wrong counts, dropped scope caveats or mixed provenance, and corrections depend on manual review by the other agent.",
+    "check_ids": [
+      "LOCK-11",
+      "CLM-16"
+    ],
+    "fixture_ids": [
+      "C25"
+    ],
+    "judgment_question": "Has the reviewer re-derived at least one key number from source or measurement files?",
+    "archive_fc": [
+      "FC13",
+      "FC19"
+    ],
+    "incidents": [],
+    "mechanism": "Predictions cite F-ids (LOCK-11); CLM-16; reviewer trace_number",
+    "residual": "Prose citation lint is advisory"
+  },
+  "FM-26": {
+    "title": "Lessons stay prose: failure classes are re-derived and predictions are neither registered nor scored",
+    "definition": "Known failure classes are not compiled into standing checks and forecasts are deleted rather than scored, so failures recur and the knowledge base gets no signal on whether findings generalise.",
+    "check_ids": [
+      "KB-05",
+      "CLM-10"
+    ],
+    "fixture_ids": [
+      "C26",
+      "K01"
+    ],
+    "judgment_question": "Which past incident is this design most likely to repeat, and which check covers it?",
+    "archive_fc": [
+      "FC12",
+      "FC13"
+    ],
+    "incidents": [
+      "INC-SEED-21"
+    ],
+    "mechanism": "Incident closure needs check plus fixture (KB-05); FAILURE_CLASSES linked to checks; prediction scoring; R-levels; held-out recall",
+    "residual": null
+  },
+  "FM-27": {
+    "title": "Self-review, padded review, and non-independent or overclaiming review",
+    "definition": "Reviews and audits are written by the designing agent or by a script called 'independent', agent identity is not recorded, and cross-agent findings overclaim unless reconciled with executed scripts.",
+    "check_ids": [
+      "REV-01",
+      "REV-02",
+      "REV-07",
+      "DEBT-01",
+      "DEBT-02"
+    ],
+    "fixture_ids": [
+      "C27"
+    ],
+    "judgment_question": "Did the review execute anything (re-run a gate on an input it should reject, run the next stage on an oracle upstream, trace a quoted number to a code line)? Read-only findings are labelled UNVERIFIED.",
+    "archive_fc": [
+      "FC19"
+    ],
+    "incidents": [],
+    "mechanism": "REV-01 (family plus namespace); REV-02 executed checks; UNVERIFIED rule; REV-07 padding; DEBT-*",
+    "residual": "In-repo identity is spoofable"
+  },
+  "FM-28": {
+    "title": "Agent-authored authorization, scope creep and constraint renegotiation",
+    "definition": "The agent writes scope and caps for short grants, judges conditional grants itself, frames options with a recommendation, lets grants grow into pilots and proposes relaxing standing constraints to 'raise the odds'.",
+    "check_ids": [
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-10"
+    ],
+    "fixture_ids": [
+      "C28"
+    ],
+    "judgment_question": "Was the user's choice framed neutrally? Would the user recognise this scope and cost as what they granted?",
+    "archive_fc": [
+      "FC04"
+    ],
+    "incidents": [
+      "INC-SEED-22"
+    ],
+    "mechanism": "AUT-01..04 (numbers in verbatim, defaults, no '(Recommended)', non-beneficiary conditionals); LOCK-10",
+    "residual": "Transcription is trusted; owner spot-check"
+  },
+  "FM-29": {
+    "title": "Unverifiable publication and divergent knowledge bases across agents",
+    "definition": "Raw-data-free publications, local-only rules and evidence, absolute local paths, scratchpad review scripts and branches without the shared knowledge base stop another agent from re-verifying claims or seeing the same guidance.",
+    "check_ids": [
+      "CLM-12",
+      "CLM-15",
+      "PTR-05"
+    ],
+    "fixture_ids": [
+      "C29"
+    ],
+    "judgment_question": "Could a different agent in a clean container reproduce the headline and read the operative rules?",
+    "archive_fc": [],
+    "incidents": [],
+    "mechanism": "CLM-12/15; PTR-05; kit and KB in repo; retro marks UNVERIFIABLE_IN_REPO",
+    "residual": "Size cap is an owner decision"
+  },
+  "FM-30": {
+    "title": "Meta-loop Goodhart (prospective): skills, gates and lessons themselves become targets",
+    "definition": "Once skills and gates are agent-editable, the cheapest 'improvement' is to edit or game the checker, and lessons written by the delivering agent can omit that agent's own unflagged defects.",
+    "check_ids": [
+      "GOV-CLASS",
+      "GOV-UD",
+      "GOV-NUM",
+      "GOV-REV",
+      "GOV-SEP",
+      "GOV-COI",
+      "GOV-MONO",
+      "SELF-01",
+      "CLM-14",
+      "HELD-01",
+      "HELD-02",
+      "HELD-03",
+      "KB-03"
+    ],
+    "fixture_ids": [
+      "C30",
+      "G01",
+      "G02",
+      "G03",
+      "G04",
+      "G05"
+    ],
+    "judgment_question": "Does a proposed skill change make the loop harder to fool, or merely easier to pass? Who besides the beneficiary reviewed it?",
+    "archive_fc": [],
+    "incidents": [
+      "INC-SEED-23"
+    ],
+    "mechanism": "Governance classes, GOV-UD/NUM/REV/SEP/COI/MONO, SELF-01, CLM-14, sealed held-out canaries, progress only sealed G, KB-03",
+    "residual": "Without an owner-held anchor, governance is tamper-evident only"
+  }
+}

@@ -138,8 +138,8 @@ A delivery supplies declarations and saved outputs, never verdict code. Cost sca
 ## 2. File tree
 
 ```
-PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md  pointer text (<=20 lines; protected) for Mr. Zhou to paste into his own
-                                  untracked root AGENTS.md. A tracked root AGENTS.md is NOT created (it would collide with his local file).
+PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md  pointer text (<=20 lines; protected) for Mr. Zhou to paste into their own
+                                  untracked root AGENTS.md. A tracked root AGENTS.md is NOT created (it would collide with that local file).
 .gitattributes                    PROJECT_DOCUMENTS/KB/*.jsonl merge=union (protected)
 README.md                         + 6-line 'Research-loop kit (schema v1)' section
 .claude/skills/
@@ -335,7 +335,7 @@ This defeats salami-slicing, and the T1 'cannot' list removes its payoff.
    - loosening any check or skill;
    - official GO.
 
-   Agents transcribe his words verbatim and he spot-checks them. At each census he traces 3 random CLAIM numbers to raw artifacts.
+   Agents transcribe the owner's words verbatim and the owner spot-checks them. At each census the owner traces 3 random CLAIM numbers to raw artifacts.
 5. **Held-out author** (the owner, or a fresh session that has not read `tools/minifly_check/*.py`). Writes sealed canary batches from FAILURE_CLASSES definitions and SCHEMAS.md only.
 
 **Single-agent mode.** If the other family is unavailable:
@@ -1560,7 +1560,7 @@ Gate runtimes are recorded in GATE reports for prune reviews.
 2. Run selftest green (under 20 s) and `selftest --mutate`.
 3. Run `retro --all --out <scratch>` and measure recall and false-flag rate against Section 12.4.
 4. Codex performs the cross-agent governance review of the whole kit and reconciles it.
-5. Do NOT track a root AGENTS.md: Mr. Zhou keeps an untracked local root AGENTS.md (its sha256 is cited in several EVIDENCE.json/SOURCE_LOCK.json files), and a tracked file at the same path would block his pull. Instead, PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md holds the pointer lines for him to merge into his own file; Claude Code discovers .claude/skills/ directly.
+5. Do NOT track a root AGENTS.md: Mr. Zhou keeps an untracked local root AGENTS.md (its sha256 is cited in several EVIDENCE.json/SOURCE_LOCK.json files), and a tracked file at the same path would block their pull. Instead, PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md holds the pointer lines for the owner to merge into the owner's own file; Claude Code discovers .claude/skills/ directly.
 6. The owner records UD-0001. Verbatim, it restates the CONSTRAINTS numbers and freezes checker 1.0.0, CONSTRAINTS v1, and the seed ledgers as provisional.
 7. Commit the retro annotations to KB/RETRO as RETRO_ANNOTATION, not verdicts.
 
@@ -1645,7 +1645,72 @@ Gate runtimes are recorded in GATE reports for prune reviews.
 
 ## 20. Integrator amendments (applied before implementation)
 
-1. **No tracked root AGENTS.md.** The pointer lives in `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` (protected, <=20 lines) for the owner to merge into his own local AGENTS.md. GOV-SKILL checks that file (and a root AGENTS.md only if one is tracked).
+1. **No tracked root AGENTS.md.** The pointer lives in `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` (protected, <=20 lines) for the owner to merge into the owner's own local AGENTS.md. GOV-SKILL checks that file (and a root AGENTS.md only if one is tracked).
 2. **Honest implementation status.** Every check id in Section 7.4 is either implemented and exercised by the corpus, or registered in RULES.json with `status: "planned"`, excluded from every bundle, and listed in tools/minifly_check/README.md under "Not yet enforced". A check function is never stubbed to return PASS. `selftest` fails if a bundle references a planned or unregistered id.
 3. **Integration changes to tests are governed even in Phase 0.** When the corpus and the checker disagree during integration, the integrator decides from this spec. Every edit to EXPECTED.json or to a fixture is logged in `tools/minifly_check/INTEGRATION_LOG.md` with the spec clause that justifies it, and an independent verifier re-reads that log for loosening before the kit is committed.
 4. **Repo-scale scans are bounded.** Repo-wide scans (WLD-01, REV-07, LOCK-13 family, retro) read only `*.json`, `*.jsonl`, `*.jsonl.gz`, `*.md` and `*.py` files outside `.git/`, skip files over 64 MiB and archive members, and report the scan scope in their detail field. A scan that cannot complete gives MISSING, never PASS.
+5. **Confirm wording is matched as identifier tokens (hardening round 4; CLM-04, I6, 3.4).** Before matching, CLM-04
+   normalises each text with NFKC, removes Unicode format characters (category Cf: U+200B-U+200F, U+2060, U+FEFF, the
+   soft hyphen and the bidi controls) and combining marks, and folds the Cyrillic and Greek letters that look like the
+   Latin letters of "confirm". Every case-insensitive occurrence of "confirm" is then a confirm token, taken with its
+   enclosing identifier token `[A-Za-z0-9_]+`, so snake_case and CamelCase labels count (GAIN_CONFIRMED,
+   axis_confirmed, SCIENTIFIC_CONFIRMATION, NativeConfirmation, dev_confirmed, NOT_CONFIRMED, reconfirms,
+   con<U+200B>firmed). The only exempt tokens are the whole kit enum and schema names SEALED_CONFIRM, sealed_confirm
+   (official_role_intended / worlds_role values), CONFIRM_LEDGER (as in CONFIRM_LEDGER.jsonl), confirm_attempt and
+   confirm_alpha_spending, matched case-sensitively. The scope is unchanged: REPORT.md, STATUS*/SUMMARY* files (JSON
+   keys and string values), the headline, notes and proposed finding claims. Corpus S56-S58 (DEV) must fire CLM-04;
+   C00d (SEALED_CONFIRM) stays clean. `dev_touched` (CLM-09, WLD-01) fails closed on a receipt that does not parse or
+   is not an object instead of skipping it.
+6. **The decision comparator includes every declared control arm (amends 9.5; verifier probe 2c).** v_comp_w =
+   max(chance, decision-comparator arms, best shortcut for the pool), where the decision comparator is
+   primary.comparator_arms plus every declared arm whose role is no_prior_teaching, shuf, frozen or lesion. Arms of
+   role oracle_plumbing or positive_control and evaluator-only CEILING_*/FLOOR_* arms are never added, and the cycle-0
+   testbed view (decide mode testbed) adds none. This closes declaration minimization: a FROZEN arm identical to the
+   candidate on HELD gave PASS because FROZEN was not a declared comparator; now d_w = 0 and the verdict is FAIL (corpus
+   S59, clean, honest FAIL). Every decision-comparator arm needs its primary cells (a missing one is INCOMPLETE);
+   RED-02 and RED-03 qualify the rule against each of them. VERDICT.primary records comparator_arms and
+   implied_comparator_arms; SCORES records decision_comparators, and the headline suffix ` | <arm> >= candidate` names
+   any decision-comparator arm at or above the candidate. INERT-01's zero-variance contrast, LAD-03 (WEAK_COMPARATOR),
+   CLM-03's no_prior_teaching requirement and canary M06 keep reading the declared comparator_arms, so a failing
+   candidate at the level of a FROZEN or SHUF arm is an honest FAIL, not an integrity alarm. G (9.6) is unchanged.
+7. **RUN-03 runtime closure (new check; LEARNED-BANK lesson: a hand-listed lock covered 6 files while the runtime
+   closure was 55, 44 of them package modules).** The checker still never imports delivery code; the runner records
+   what it imported. Every counted run (stage technical, dev, rehearsal or official) writes
+   `runlog/RUNTIME_CLOSURE_<attempt_id>.json` = {schema minifly.runtime_closure.v1, attempt_id, files: [{path
+   (repo-relative), sha256}]} for every repo file in sys.modules at the end of the run plus the data assets it opened
+   from its declared list, with the 12-line stdlib helper of the runner contract (also in templates/admit_skeleton.py),
+   called after the imports and again at the end. `launch` sets MINIFLY_REPO_ROOT and MINIFLY_RUNTIME_CLOSURE and
+   records the file in produced_paths. RUN-03 (stages roster, official, publish; T2 enforced, T1 WARN like RUN-01):
+   for every such attempt that produced any path, the file exists, is in its produced_paths with the current sha256,
+   and every listed repo .py file is in the SOURCE_LOCK.closure_sha256 the attempt ran under (found by sha) with the
+   same sha256; a file present at runtime but absent from the lock FAILs with "closure gap". Other listed files are data
+   assets and must be in files.assets, files.params, endpoint_files_sha256 or SOURCE_LOCK with the same sha256. CLM-15
+   adds the official attempts' runtime closures to the verification subset. Corpus: S60 fires (a bootstrap.py reached
+   only by importlib); every clean fixture now carries runtime closures.
+8. **Resumable official runs with a determinism replay (amends RUN-02 and 3.1 S6; new check RUN-04; LEARNED-BANK
+   lesson: the container restarted mid-run, the session resumed only the missing histories under the identical lock and
+   re-ran one completed history to show bit-identical determinism).** `MFC launch --stage official --resume <dir> --
+   <same cmd>` continues an interrupted official attempt. A resume attempt (ATTEMPTS resume_of) is legal only if (a)
+   its ENDPOINT_LOCK and SOURCE_LOCK shas equal those of the interrupted attempt; (b) the interrupted attempt is the
+   latest earlier official attempt, its ATTEMPTS row exists, and it ended with a nonzero or killed exit or an
+   incomplete (world, arm) unit set; (c) it writes OUTPUTS rows and receipts only for units no earlier official attempt
+   has rows for (no overwrite, no duplicates): every earlier attempt's recorded `units` (canonical digests written by
+   launch) still match and no other file an earlier official attempt produced is rewritten or removed; and (d) RUN-04:
+   when it wrote official rows, it re-ran the unit(s) launch chose at random (at least one unit completed by an earlier
+   attempt) into `results/official_replay/`, and their canonical row digest (attempt_id excluded) equals the original.
+   Any deviation FAILs. Without --resume, a second official attempt that produces rows still FAILs RUN-02. RUN-02 and
+   RUN-04 run at the official and publish stages. The resume uses the same command (CYC-03) and is driven by
+   MINIFLY_RESUME_OF, MINIFLY_COMPLETED_UNITS, MINIFLY_REPLAY_UNITS and MINIFLY_REPLAY_DIR. When the launch process
+   itself dies, its in-flight marker `runlog/INFLIGHT_<attempt_id>.json` lets the next launch record the attempt
+   (exit -1, interrupted, recovered, rusage lost), so (b) can be met after a container restart; RUN-01 FAILs while a
+   marker has no ATTEMPTS row. CLAIM gains the generated field provenance {interrupted, resume_attempts, resumed_units,
+   replay_units}. Corpus: S61 (legal resume, clean), S62 (a completed unit rewritten: RUN-02), S63 (no replay: RUN-04),
+   S64 (replay digest differs: RUN-04). Governance note: RUN-02 now accepts a legal resume that it used to reject; in
+   the SPEC 13.2 sense that part is a loosening of RUN-02, bounded by (a)-(d), and it needs the owner's UD at the
+   freeze (UD-0001) like every pre-freeze kit change.
+9. **One launch per phase (per-phase lock re-check).** Every `launch` invocation re-runs its stage bundle (LOCK-05:
+   SOURCE_LOCK.closure equals a fresh lock build, from the technical bundle on) and re-verifies ENDPOINT_LOCK,
+   SOURCE_LOCK and every closure, files.* and endpoint file sha before the command starts, and again after it ends
+   (closure_clean_after). A multi-phase run therefore calls launch once per phase and never chains phases inside one
+   unlaunched script, so a fix between phases fails loudly at the next launch (unit test
+   test_launch.TestLaunch.test_every_phase_relaunch_rechecks_the_lock).

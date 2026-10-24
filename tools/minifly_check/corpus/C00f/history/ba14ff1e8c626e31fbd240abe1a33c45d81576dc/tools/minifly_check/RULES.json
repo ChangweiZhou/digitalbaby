@@ -1,0 +1,2471 @@
+{
+  "bundles": {
+    "canary": {
+      "checks": [
+        "CAN-01",
+        "CAN-02",
+        "CAN-03"
+      ],
+      "description": "Command bundle: MFC canary (not a gate stage)",
+      "kind": "command"
+    },
+    "governance": {
+      "checks": [
+        "GOV-SELF",
+        "GOV-SEP",
+        "GOV-CLASS",
+        "GOV-REV",
+        "GOV-UD",
+        "GOV-NUM",
+        "GOV-MONO",
+        "GOV-APPEND",
+        "GOV-SKILL"
+      ],
+      "description": "Command bundle: MFC governance (not a gate stage)",
+      "kind": "command"
+    },
+    "heldout": {
+      "checks": [
+        "HELD-01",
+        "HELD-02",
+        "HELD-03"
+      ],
+      "description": "Command bundle: MFC heldout (not a gate stage)",
+      "kind": "command"
+    },
+    "lint": {
+      "checks": [
+        "CLM-06",
+        "CLM-12",
+        "CLM-16",
+        "PTR-01",
+        "PTR-02",
+        "PTR-03",
+        "PTR-04",
+        "PTR-05",
+        "PTR-06",
+        "PTR-07"
+      ],
+      "description": "Command bundle: MFC lint (T0 text and pointer lint; not a gate stage)",
+      "kind": "command"
+    },
+    "lock": {
+      "checks": [
+        "SELF-01",
+        "SCHEMA-01",
+        "TIER-01",
+        "LOCK-01",
+        "LOCK-02",
+        "LOCK-03",
+        "LOCK-04",
+        "LOCK-08",
+        "LOCK-09",
+        "LOCK-10",
+        "LOCK-11",
+        "LOCK-12",
+        "LOCK-13",
+        "AMD-01",
+        "AMD-02",
+        "AMD-03",
+        "AMD-04",
+        "AMD-05",
+        "AUT-01",
+        "AUT-02",
+        "AUT-03",
+        "AUT-04"
+      ],
+      "description": "Lock gate (also launch --stage testbed)"
+    },
+    "official": {
+      "checks": [
+        "MET-01",
+        "MET-02",
+        "LAD-01",
+        "LAD-02",
+        "LAD-03",
+        "LAD-04",
+        "STR-01",
+        "DET-01",
+        "INERT-01",
+        "CYC-03",
+        "RUN-02",
+        "RUN-04",
+        "GOV-COI",
+        "WLD-01",
+        {
+          "id": "OC-01",
+          "when": "oc_intended"
+        },
+        {
+          "id": "SEAL-01",
+          "when": "sealed_confirm"
+        },
+        {
+          "id": "SEAL-02",
+          "when": "sealed_confirm"
+        },
+        {
+          "id": "SEAL-03",
+          "when": "sealed_confirm"
+        },
+        {
+          "id": "SEAL-04",
+          "when": "sealed_confirm"
+        },
+        {
+          "id": "SEAL-05",
+          "when": "sealed_confirm"
+        },
+        {
+          "id": "CONF-01",
+          "when": "sealed_confirm"
+        }
+      ],
+      "description": "Official gate (also launch --stage official); always tier 2",
+      "extends": "roster"
+    },
+    "pointer": {
+      "checks": [
+        "SELF-01",
+        "PTR-01",
+        "PTR-02",
+        "PTR-03",
+        "PTR-04",
+        "PTR-05",
+        "PTR-06",
+        "PTR-07",
+        "CLM-02",
+        "DEBT-02"
+      ],
+      "description": "Pointer gate (--pointer PATH); always tier 2"
+    },
+    "publish": {
+      "checks": [
+        "SELF-01",
+        "SCHEMA-01",
+        "AMD-01",
+        "AMD-02",
+        "AMD-03",
+        "AMD-04",
+        "AMD-05",
+        "MET-01",
+        "MET-02",
+        "LAD-01",
+        "STR-01",
+        "DET-01",
+        "INERT-01",
+        "DEC-01",
+        "CLM-01",
+        "CLM-02",
+        "CLM-03",
+        "CLM-04",
+        "CLM-05",
+        "CLM-06",
+        "CLM-07",
+        "CLM-08",
+        "CLM-09",
+        "CLM-10",
+        "CLM-11",
+        "CLM-12",
+        "CLM-13",
+        "CLM-14",
+        "CLM-15",
+        "CLM-16",
+        "ERR-01",
+        "KB-01",
+        "KB-02",
+        "KB-03",
+        "KB-04",
+        "KB-05",
+        "WLD-01",
+        "WLD-02",
+        "RUN-01",
+        "RUN-03",
+        "RUN-02",
+        "RUN-04",
+        {
+          "id": "GOV-COI",
+          "when": "t2"
+        },
+        {
+          "id": "REV-08",
+          "when": "sealed_or_adoption"
+        },
+        "DEBT-02"
+      ],
+      "description": "Publish gate"
+    },
+    "roster": {
+      "checks": [
+        "ADM-01",
+        "ADM-TB-CEIL",
+        "ADM-TB-FLOOR",
+        "ADM-CTRL-ZERO",
+        "ADM-CTRL-ISO",
+        "ADM-CTRL-DOSE",
+        "ADM-DIR",
+        "ADM-FIX",
+        "ADM-GATE",
+        "ADM-INPUT",
+        "ADM-ACQ",
+        "ADM-SHUF",
+        "ADM-EXPO",
+        "ADM-BUDGET",
+        "ADM-REUSE",
+        "RED-01",
+        "RED-02",
+        "RED-03",
+        "RED-04",
+        "RED-05",
+        "RED-06",
+        "RED-07",
+        "RED-08",
+        "RED-09",
+        "RED-10",
+        "RED-11",
+        "DEC-01",
+        "CYC-02",
+        "RUN-01",
+        "RUN-03",
+        {
+          "fallback": [
+            "DEBT-01"
+          ],
+          "group": "review_or_debt",
+          "primary": [
+            "REV-01",
+            "REV-02",
+            "REV-03",
+            "REV-04",
+            "REV-05",
+            "REV-06",
+            "REV-07",
+            "WIT-01"
+          ],
+          "when": "t2"
+        }
+      ],
+      "description": "Roster gate (also launch --stage dev/rehearsal)",
+      "extends": "technical"
+    },
+    "technical": {
+      "checks": [
+        "LOCK-05",
+        "LOCK-06",
+        "LOCK-07",
+        "CYC-01"
+      ],
+      "description": "Technical launch",
+      "extends": "lock"
+    }
+  },
+  "checker_version": "1.0.0",
+  "notes": [
+    "RULES.json is authoritative for check ids, modules, stages, tier_min, introduced_in, status and bundles (SPEC 7.4, 7.5, 20.2).",
+    "status: enforced | advisory (FAIL/MISSING reported as WARN) | planned (registered but not implemented; excluded from every bundle; listed in README 'Not yet enforced').",
+    "warn_below_tier N: FAIL/MISSING are reported as WARN while the computed tier is below N.",
+    "applies_when: 'always...' means the check may never return NOT_APPLICABLE; any other text declares the condition under which NOT_APPLICABLE is allowed.",
+    "bundle entries: an id, {id, when}, or {group, when, primary[], fallback[]}; when is one of t2, sealed_confirm, sealed_or_adoption, oc_intended, udi_applicable.",
+    "bundles with kind 'command' list the checks a command runs; they are not gate stages."
+  ],
+  "rules": [
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-15",
+        "FM-30"
+      ],
+      "id": "SELF-01",
+      "introduced_in": "1.0.0",
+      "module": "common",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish",
+        "pointer"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Checker worktree equals HEAD and selftest passed for this checker sha (cached); failure exits 3"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [],
+      "id": "SCHEMA-01",
+      "introduced_in": "1.0.0",
+      "module": "common",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Delivery is schema v1; otherwise exit 2 legacy delivery: use retro"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [],
+      "id": "TIER-01",
+      "introduced_in": "1.0.0",
+      "module": "common",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Computed tier and reasons (Section 4); informational, drives the bundles"
+    },
+    {
+      "applies_when": "always (FAIL/MISSING become WARN below tier 2)",
+      "fm_ids": [
+        "FM-13",
+        "FM-19"
+      ],
+      "id": "RUN-01",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every result file is launch-recorded with matching sha256 from a clean closure, and every OUTPUTS row names an ATTEMPTS row (T2 enforced, T1 WARN)",
+      "warn_below_tier": 2
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-20"
+      ],
+      "id": "RUN-02",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "At most one official attempt produced assessment-bearing rows; never rerun official, except a legal `launch --resume` of an interrupted attempt (identical lock shas, only units without earlier rows, earlier rows unchanged)"
+    },
+    {
+      "applies_when": "always (FAIL/MISSING become WARN below tier 2)",
+      "fm_ids": [
+        "FM-13",
+        "FM-18"
+      ],
+      "id": "RUN-03",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every counted attempt (technical, dev, rehearsal, official) produced runlog/RUNTIME_CLOSURE_<attempt_id>.json (launch-recorded) and every repo .py file in it is in its SOURCE_LOCK.closure_sha256 with the same sha256; data assets are declared and locked (T2 enforced, T1 WARN)",
+      "warn_below_tier": 2
+    },
+    {
+      "applies_when": "an official resume attempt (ATTEMPTS resume_of) or results/official_replay rows exist",
+      "fm_ids": [
+        "FM-20",
+        "FM-19"
+      ],
+      "id": "RUN-04",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every official resume attempt re-ran at least one completed (world, arm) unit (each unit launch chose) into results/official_replay/ with a canonical row digest equal to the original"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-10"
+      ],
+      "id": "CYC-01",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Closed test cycles are at most caps.max_cycles; every attempt wrote only within its stage (results dir, worlds, testbed CEILING_/FLOOR_ arms)"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-10"
+      ],
+      "id": "CYC-02",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Each closed cycle with decision continue met its exit criterion"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-10",
+        "FM-11"
+      ],
+      "id": "CYC-03",
+      "introduced_in": "1.0.0",
+      "module": "launch",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Rehearsal worlds are fresh and the rehearsal argv template equals the official one"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-22"
+      ],
+      "id": "LOCK-01",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Schema, required fields, no __FILL__, valid enums"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-02",
+        "FM-03",
+        "FM-06"
+      ],
+      "id": "LOCK-02",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Contract block complete"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-07"
+      ],
+      "id": "LOCK-03",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Objective primary metric or forced component"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04",
+        "FM-06",
+        "FM-21"
+      ],
+      "id": "LOCK-04",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Thresholds meet CONSTRAINTS floors; OLD guards exist"
+    },
+    {
+      "applies_when": "technical and later stages",
+      "fm_ids": [
+        "FM-13",
+        "FM-18"
+      ],
+      "id": "LOCK-05",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "SOURCE_LOCK closure equals a fresh lock build; static closure complete"
+    },
+    {
+      "applies_when": "technical and later stages",
+      "fm_ids": [
+        "FM-13"
+      ],
+      "id": "LOCK-06",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Lock timing precedes results and TAUGHT streams; lock and results never share a commit"
+    },
+    {
+      "applies_when": "technical and later stages",
+      "fm_ids": [
+        "FM-12",
+        "FM-23"
+      ],
+      "id": "LOCK-07",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Native purity over native and runner closure"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-14"
+      ],
+      "id": "LOCK-08",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No literal integrity booleans or zeros"
+    },
+    {
+      "applies_when": "E3 cadence due (deliveries_since_last_e3 >= e3_cadence_max) and the lock is not E3-opening",
+      "fm_ids": [
+        "FM-09"
+      ],
+      "id": "LOCK-09",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "E3 cadence: open held E3 or owner waiver"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-28"
+      ],
+      "id": "LOCK-10",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "constraints_sha256 and governed fields"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-25"
+      ],
+      "id": "LOCK-11",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Predictions registered on primary and guards"
+    },
+    {
+      "applies_when": "no lineage parent, or lineage.changes_declared includes frontend, read or init",
+      "fm_ids": [
+        "FM-16"
+      ],
+      "id": "LOCK-12",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Analytic input SNR when required"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-23"
+      ],
+      "id": "LOCK-13",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Lineage: no undeclared parent (closure Jaccard >= 0.5)"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-08"
+      ],
+      "id": "AMD-01",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every distinct committed ENDPOINT_LOCK after the first is linked by an AMENDMENTS row"
+    },
+    {
+      "applies_when": "an amendment exists",
+      "fm_ids": [
+        "FM-08"
+      ],
+      "id": "AMD-02",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Post-outcome primary/guard/arm/unit/split/task change or distance increase needs UD, co-primary and protocol bump"
+    },
+    {
+      "applies_when": "an amendment exists",
+      "fm_ids": [
+        "FM-08"
+      ],
+      "id": "AMD-03",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Amendment reason enum; testbed_invalid evidence; results_seen equals computed list"
+    },
+    {
+      "applies_when": "official world ids are listed or seal-derived",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "AMD-04",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Official world ids appear in no earlier outcome artifact and no other delivery"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-08",
+        "FM-15"
+      ],
+      "id": "AMD-05",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No change to endpoint files or the split manifests (split.held_set_sha256, split_sha256) after the lock without an amendment"
+    },
+    {
+      "applies_when": "tier 2",
+      "fm_ids": [
+        "FM-13"
+      ],
+      "id": "WIT-01",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "External witness: reviewer-namespace attestation of the lock shas before dev/official outputs"
+    },
+    {
+      "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "SEAL-01",
+      "introduced_in": "1.0.0",
+      "module": "seal",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "SEALED_CONFIRM requires SEAL_COMMIT, GO and SEAL_REVEAL"
+    },
+    {
+      "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "SEAL-02",
+      "introduced_in": "1.0.0",
+      "module": "seal",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Seal ordering and reviewer-namespace SEAL_COMMIT"
+    },
+    {
+      "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "SEAL-03",
+      "introduced_in": "1.0.0",
+      "module": "seal",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Nonce hash matches; GO verbatim names the lock shas"
+    },
+    {
+      "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "SEAL-04",
+      "introduced_in": "1.0.0",
+      "module": "seal",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Official world ids equal the seal-derived ones"
+    },
+    {
+      "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "SEAL-05",
+      "introduced_in": "1.0.0",
+      "module": "seal",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "CONFIRM_LEDGER row precedes outcomes"
+    },
+    {
+      "applies_when": "worlds.official_role_intended == SEALED_CONFIRM or CLAIM.worlds_role == SEALED_CONFIRM",
+      "fm_ids": [
+        "FM-11",
+        "FM-21"
+      ],
+      "id": "CONF-01",
+      "introduced_in": "1.0.0",
+      "module": "seal",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Lock alpha <= CONFIRM_LEDGER alpha_allocated (family alpha spending)"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-01",
+        "FM-07",
+        "FM-14"
+      ],
+      "id": "MET-01",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "own-EOS and emitted recomputed from stream_hex agree with the runner; only native answer_path counts"
+    },
+    {
+      "applies_when": "addition task formats",
+      "fm_ids": [
+        "FM-01"
+      ],
+      "id": "MET-02",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "expected_hex recomputed from prompt_hex for addition formats"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04",
+        "FM-20"
+      ],
+      "id": "LAD-01",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every lock-implied (world, arm, pool, checkpoint) cell exists with n_items_per_pool items; HELD/OLD/NEW cells hold exactly the locked split manifests"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "LAD-02",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Substitution: decide must not PASS with the best shortcut substituted for the candidate"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-06"
+      ],
+      "id": "LAD-03",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official"
+      ],
+      "status": "advisory",
+      "tier_min": 0,
+      "title": "Comparator arm below the best shortcut on dev is noted WEAK_COMPARATOR (WARN)"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "LAD-04",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official"
+      ],
+      "status": "advisory",
+      "tier_min": 0,
+      "title": "Modal output fraction > 0.9 or entropy < 0.5 bit in any pool (WARN)"
+    },
+    {
+      "applies_when": "addition task formats (strata are computed from addition item content)",
+      "fm_ids": [
+        "FM-06"
+      ],
+      "id": "STR-01",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Strata computed from content; counted strata valid for the level with enough items"
+    },
+    {
+      "applies_when": "a units block is declared (E2 and above)",
+      "fm_ids": [
+        "FM-05"
+      ],
+      "id": "DET-01",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Determinacy under units.witness; enough determined counted items"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-01",
+        "FM-02"
+      ],
+      "id": "INERT-01",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "INVALID INTEGRITY_ALARM for identical arms or a zero-variance primary contrast"
+    },
+    {
+      "applies_when": "E3 promotion intended or a udi block declared",
+      "fm_ids": [
+        "FM-06",
+        "FM-12"
+      ],
+      "id": "UDI-01",
+      "introduced_in": "1.0.0",
+      "module": "scorer",
+      "stages": [
+        "publish"
+      ],
+      "status": "planned",
+      "tier_min": 0,
+      "title": "Leave-units-out variants valid under the witness; UDI with world-level LCB"
+    },
+    {
+      "applies_when": "official stage when SEALED_CONFIRM or adoption is intended",
+      "fm_ids": [
+        "FM-05",
+        "FM-21"
+      ],
+      "id": "OC-01",
+      "introduced_in": "1.0.0",
+      "module": "decide",
+      "stages": [
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Simulated P(pass | target) >= oc_min_power for SEALED_CONFIRM or adoption"
+    },
+    {
+      "applies_when": "the VERDICT part applies once results/official/VERDICT.json exists; the rule_type part always",
+      "fm_ids": [
+        "FM-01",
+        "FM-14"
+      ],
+      "id": "DEC-01",
+      "introduced_in": "1.0.0",
+      "module": "decide",
+      "stages": [
+        "roster",
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "VERDICT produced by program decide with both lock shas and cells sha; custom rules need UD, review and property fixtures"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-05"
+      ],
+      "id": "RED-01",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Clean positive must PASS (rule reachable)"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "RED-02",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Candidate equal to the strongest comparator must not PASS"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-14"
+      ],
+      "id": "RED-03",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Missing comparator arm gives INCOMPLETE"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-14",
+        "FM-21"
+      ],
+      "id": "RED-04",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Fewer than min_worlds must not PASS"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-14"
+      ],
+      "id": "RED-05",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "None or NaN gives INVALID"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-14"
+      ],
+      "id": "RED-06",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "All-dev worlds give DEV_NOT_EVIDENCE"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "RED-07",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Candidate at comparator + margin - 1e-9 must not PASS"
+    },
+    {
+      "applies_when": "addition strata are available for the lock",
+      "fm_ids": [
+        "FM-06"
+      ],
+      "id": "RED-08",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Gain only on S0/S1 must not PASS"
+    },
+    {
+      "applies_when": "an OLD pool exists",
+      "fm_ids": [
+        "FM-06"
+      ],
+      "id": "RED-09",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "OLD guard failure must not PASS"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "RED-10",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Shortcut substituted for the candidate must not PASS"
+    },
+    {
+      "applies_when": "an OLD pool exists",
+      "fm_ids": [
+        "FM-06"
+      ],
+      "id": "RED-11",
+      "introduced_in": "1.0.0",
+      "module": "reducercheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "OLD_END at shortcut level with zero drop must not PASS"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-16",
+        "FM-13"
+      ],
+      "id": "ADM-01",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "ADMISSION.json schema, lock shas, producer admit.py, technical worlds only, committed before the first dev output"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-05",
+        "FM-16"
+      ],
+      "id": "ADM-TB-CEIL",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Testbed: at least one ceiling config passes the delivery rule; grid covers CONSTRAINTS"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-05",
+        "FM-16"
+      ],
+      "id": "ADM-TB-FLOOR",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Testbed: every floor config and the best floor fail the rule"
+    },
+    {
+      "applies_when": "arms with non-empty zero_channels exist",
+      "fm_ids": [
+        "FM-02"
+      ],
+      "id": "ADM-CTRL-ZERO",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Zeroed channels: zero writes, unchanged digests at post_first; W writes; write site in the closure"
+    },
+    {
+      "applies_when": "arms with non-empty zero_channels exist",
+      "fm_ids": [
+        "FM-03"
+      ],
+      "id": "ADM-CTRL-ISO",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Control isolation: digests equal W on every channel outside Z and declared_changed at post_first"
+    },
+    {
+      "applies_when": "arms with zero_channels or min_realized_dose exist",
+      "fm_ids": [
+        "FM-02"
+      ],
+      "id": "ADM-CTRL-DOSE",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "realized_dose >= max(min_realized_dose, floor)"
+    },
+    {
+      "applies_when": "lock.ports is non-empty",
+      "fm_ids": [
+        "FM-17"
+      ],
+      "id": "ADM-DIR",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Directional fixtures per port and sign"
+    },
+    {
+      "applies_when": "fixtures exist (ports or gates declared)",
+      "fm_ids": [
+        "FM-04",
+        "FM-17"
+      ],
+      "id": "ADM-FIX",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Fixture params equal the SOURCE_LOCK params within tolerances"
+    },
+    {
+      "applies_when": "lock.gates is non-empty",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "ADM-GATE",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every plumbing gate has a negative and a positive fixture"
+    },
+    {
+      "applies_when": "always, except when ADM-REUSE validly cites a parent admission at T1",
+      "fm_ids": [
+        "FM-16"
+      ],
+      "id": "ADM-INPUT",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Input contrast and prompt-id distinguishability with structure meters"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-16"
+      ],
+      "id": "ADM-ACQ",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Candidate taught acquisition above the best exposure-independent shortcut plus margin"
+    },
+    {
+      "applies_when": "a shuf arm exists",
+      "fm_ids": [
+        "FM-04"
+      ],
+      "id": "ADM-SHUF",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "SHUF agreement within shuf_band and orbit-consistent labels"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-12"
+      ],
+      "id": "ADM-EXPO",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Held orbits never in feedback-bearing streams; no undeclared stream files"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-20",
+        "FM-28"
+      ],
+      "id": "ADM-BUDGET",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "lock.budget within AUTHORIZATION caps; schedule.paired_atomic"
+    },
+    {
+      "applies_when": "tier 1 only, when ADMISSION.parent_admission_sha is cited",
+      "fm_ids": [
+        "FM-16"
+      ],
+      "id": "ADM-REUSE",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "T1 only: parent ADMISSION sha may be cited when closure, task and split equal the parent"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-28"
+      ],
+      "id": "AUT-01",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "AUTHORIZATION fields present"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-28"
+      ],
+      "id": "AUT-02",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Cap numbers literal in the verbatim text or defaults apply; stage covered"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-28"
+      ],
+      "id": "AUT-03",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No '(Recommended)' in option labels"
+    },
+    {
+      "applies_when": "AUTHORIZATION.conditionals is non-empty",
+      "fm_ids": [
+        "FM-28"
+      ],
+      "id": "AUT-04",
+      "introduced_in": "1.0.0",
+      "module": "admitcheck",
+      "stages": [
+        "lock",
+        "technical",
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Conditionals have checker-evaluated predicates or a non-beneficiary evaluator"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-01",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Reviewer family differs from the author; trailer and reviewer-namespace branch"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-02",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Executed checks of the required kinds with committed scripts and matching sha256"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-03",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "A mismatching rerun_admission has a finding"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-04",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Shortcut attempt recorded; passing it forces BLOCK"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-05",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Canary detected all mutants after the lock"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-06",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "REVIEW before the first dev output; ADMIT; no open BLOCKER/MAJOR; refuted blockers countersigned"
+    },
+    {
+      "applies_when": "tier 2 roster and official (DEBT-01 is the declared alternative)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "REV-07",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "No executed-check output byte-identical to another delivery (padding)"
+    },
+    {
+      "applies_when": "SEALED_CONFIRM or adoption intended",
+      "fm_ids": [
+        "FM-01",
+        "FM-11"
+      ],
+      "id": "REV-08",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "Post-run replay digests equal the official rows for SEALED_CONFIRM or adoption"
+    },
+    {
+      "applies_when": "tier 2 roster without a valid REVIEW (the alternative to REV-01..07 and WIT-01)",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "DEBT-01",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "roster",
+        "official"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "T2 roster without a valid REVIEW: open REVIEW_DEBT row and program-wide debt below the cap"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "DEBT-02",
+      "introduced_in": "1.0.0",
+      "module": "review",
+      "stages": [
+        "publish",
+        "pointer"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Open debt blocks SEALED_CONFIRM, findings activation and the pointer stage"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-27",
+        "FM-15"
+      ],
+      "id": "CAN-01",
+      "introduced_in": "1.0.0",
+      "module": "canary",
+      "stages": [
+        "canary"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Unmutated copy reproduces the original statuses"
+    },
+    {
+      "applies_when": "applicable mutants exist",
+      "fm_ids": [
+        "FM-27",
+        "FM-15"
+      ],
+      "id": "CAN-02",
+      "introduced_in": "1.0.0",
+      "module": "canary",
+      "stages": [
+        "canary"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every applicable mutant is caught"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-27"
+      ],
+      "id": "CAN-03",
+      "introduced_in": "1.0.0",
+      "module": "canary",
+      "stages": [
+        "canary"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "At least 50% of operators are applicable"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-22"
+      ],
+      "id": "CLM-01",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "CLAIM.json schema and enums"
+    },
+    {
+      "applies_when": "a v1 delivery with a generated CLAIM (publish), or a v1 pointer target; NOT_APPLICABLE for a legacy pointer target (PTR-07)",
+      "fm_ids": [
+        "FM-07",
+        "FM-22"
+      ],
+      "id": "CLM-02",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish",
+        "pointer"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "CLAIM fields equal a fresh regeneration including the headline"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-03",
+        "FM-22"
+      ],
+      "id": "CLM-03",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Level rules (E2+, E3, promotion, integrated_intervention)"
+    },
+    {
+      "applies_when": "confirm* tokens appear in REPORT, STATUS, SUMMARY or the headline",
+      "fm_ids": [
+        "FM-11",
+        "FM-22"
+      ],
+      "id": "CLM-04",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "confirm* tokens require SEALED_CONFIRM with SEAL-* and WLD-01 PASS"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-22"
+      ],
+      "id": "CLM-05",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "First non-empty REPORT.md line equals the headline"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-22"
+      ],
+      "id": "CLM-06",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Soft words FAIL in gate sentences, WARN elsewhere"
+    },
+    {
+      "applies_when": "native, core, inherited or 'same fly' wording appears",
+      "fm_ids": [
+        "FM-23"
+      ],
+      "id": "CLM-07",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "native/core/inherited/'same fly' require a demonstrated lineage parent (WARN at T1)",
+      "warn_below_tier": 2
+    },
+    {
+      "applies_when": "files were added after the official lock",
+      "fm_ids": [
+        "FM-13"
+      ],
+      "id": "CLM-08",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Files added after the official lock are POSTHOC and never VERDICT inputs"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-21",
+        "FM-22"
+      ],
+      "id": "CLM-09",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "worlds_role is computed"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-26"
+      ],
+      "id": "CLM-10",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Every lock prediction is scored"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-26"
+      ],
+      "id": "CLM-11",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "0-3 findings_proposed with best_shortcut and source; reason when zero"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-29"
+      ],
+      "id": "CLM-12",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No absolute local paths; relative links resolve"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-26",
+        "FM-09"
+      ],
+      "id": "CLM-13",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "A DELIVERY_LEDGER row was appended by claim"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "CLM-14",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Cited GATE reports carry the committed checker sha"
+    },
+    {
+      "applies_when": "tier 2",
+      "fm_ids": [
+        "FM-29"
+      ],
+      "id": "CLM-15",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "T2 verification subset committed (or digest_plus_sample)"
+    },
+    {
+      "applies_when": "numbers about prior work appear",
+      "fm_ids": [
+        "FM-25"
+      ],
+      "id": "CLM-16",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish",
+        "lint"
+      ],
+      "status": "advisory",
+      "tier_min": 0,
+      "title": "Numbers about prior work cite an F-id or catalog id (WARN)"
+    },
+    {
+      "applies_when": "CLAIM.json has been published before",
+      "fm_ids": [
+        "FM-08",
+        "FM-15"
+      ],
+      "id": "ERR-01",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "A changed published primary_gate needs an ERRATA row; POST_HOC never upgrades"
+    },
+    {
+      "applies_when": "official world ids exist",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "WLD-01",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Official world ids occur nowhere else and in no dev row; outputs after lock and reveal"
+    },
+    {
+      "applies_when": "canonical held items exist",
+      "fm_ids": [
+        "FM-11"
+      ],
+      "id": "WLD-02",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "publish"
+      ],
+      "status": "advisory",
+      "tier_min": 0,
+      "title": "Canonical held items overlapping earlier deliveries (WARN; headline)"
+    },
+    {
+      "applies_when": "pointer stage or lint with a pointer file",
+      "fm_ids": [
+        "FM-24",
+        "FM-28"
+      ],
+      "id": "PTR-01",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Pointer schema, previous snapshot in the same commit, authorization or adoption UD"
+    },
+    {
+      "applies_when": "pointer stage or lint with a pointer file",
+      "fm_ids": [
+        "FM-24",
+        "FM-07"
+      ],
+      "id": "PTR-02",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Pointer fields byte-equal to the referenced CLAIM"
+    },
+    {
+      "applies_when": "pointer stage or lint with a pointer file",
+      "fm_ids": [
+        "FM-07",
+        "FM-24"
+      ],
+      "id": "PTR-03",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No bare boolean keys matching confirm|pass|passes|passed|success|qualified"
+    },
+    {
+      "applies_when": "pointer stage or lint with a pointer file",
+      "fm_ids": [
+        "FM-24"
+      ],
+      "id": "PTR-04",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Quoted narrowed or superseded findings cite their narrowing row"
+    },
+    {
+      "applies_when": "pointer stage or lint with a pointer file",
+      "fm_ids": [
+        "FM-29"
+      ],
+      "id": "PTR-05",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No absolute local paths in pointers"
+    },
+    {
+      "applies_when": "pointer stage or lint with a pointer file",
+      "fm_ids": [
+        "FM-24"
+      ],
+      "id": "PTR-06",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "advisory",
+      "tier_min": 0,
+      "title": "A newer v1 delivery exists in the same track (WARN)"
+    },
+    {
+      "applies_when": "pointer target is a legacy delivery",
+      "fm_ids": [
+        "FM-24"
+      ],
+      "id": "PTR-07",
+      "introduced_in": "1.0.0",
+      "module": "claimcheck",
+      "stages": [
+        "pointer",
+        "lint"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "A legacy target requires a UD and a KB/RETRO annotation"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-26"
+      ],
+      "id": "KB-01",
+      "introduced_in": "1.0.0",
+      "module": "kb",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Ledger row schemas valid"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-26",
+        "FM-30"
+      ],
+      "id": "KB-02",
+      "introduced_in": "1.0.0",
+      "module": "kb",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Ledgers append-only with unique ids"
+    },
+    {
+      "applies_when": "activation or reconciliation rows exist",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "KB-03",
+      "introduced_in": "1.0.0",
+      "module": "kb",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Activation and reconciliation by a different family than the finding author"
+    },
+    {
+      "applies_when": "activation rows exist",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "KB-04",
+      "introduced_in": "1.0.0",
+      "module": "kb",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Activation only for T2 MAIN or SEALED_CONFIRM findings without open debt"
+    },
+    {
+      "applies_when": "incident closure rows exist",
+      "fm_ids": [
+        "FM-26"
+      ],
+      "id": "KB-05",
+      "introduced_in": "1.0.0",
+      "module": "kb",
+      "stages": [
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Incident closure needs a RULES check id and a fixture whose must_fire includes it"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-SELF",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "selftest passes at head"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-15",
+        "FM-30"
+      ],
+      "id": "GOV-SEP",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "A range touching protected paths touches no delivery directory"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-CLASS",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Computed change class for each change"
+    },
+    {
+      "applies_when": "tighten, new or neutral changes exist",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-REV",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "tighten/new/neutral changes need an other-family review record"
+    },
+    {
+      "applies_when": "loosen or constraint changes exist",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-UD",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "loosen and constraint changes need a covering User-Decision"
+    },
+    {
+      "applies_when": "a loosen UD is cited",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-NUM",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "A loosen UD restates every changed number"
+    },
+    {
+      "applies_when": "check code or corpus changes exist",
+      "fm_ids": [
+        "FM-15",
+        "FM-30"
+      ],
+      "id": "GOV-MONO",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "fired(head) is a superset of fired(base); clean fixtures stay clean"
+    },
+    {
+      "applies_when": "append-only files changed",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-APPEND",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Append-only files show only additions"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "GOV-SKILL",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "governance"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "SKILL.md frontmatter/body limits; AGENTS_POINTER lists all five skills"
+    },
+    {
+      "applies_when": "official and publish stages at tier 2",
+      "fm_ids": [
+        "FM-15",
+        "FM-30"
+      ],
+      "id": "GOV-COI",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "official",
+        "publish"
+      ],
+      "status": "enforced",
+      "tier_min": 2,
+      "title": "A protected-path commit by the author after its own lock fails without a UD naming the delivery"
+    },
+    {
+      "applies_when": "a held-out batch is sealed, revealed or scored",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "HELD-01",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "heldout"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Held-out commitment row precedes the merge of the checker under test"
+    },
+    {
+      "applies_when": "a held-out batch is sealed, revealed or scored",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "HELD-02",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "heldout"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Revealed bundle and key hashes match the commitment"
+    },
+    {
+      "applies_when": "a held-out batch is sealed, revealed or scored",
+      "fm_ids": [
+        "FM-30"
+      ],
+      "id": "HELD-03",
+      "introduced_in": "1.0.0",
+      "module": "governance",
+      "stages": [
+        "heldout"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Batch author differs from checker authors in the interval"
+    }
+  ],
+  "schema": "minifly.rules.v1"
+}

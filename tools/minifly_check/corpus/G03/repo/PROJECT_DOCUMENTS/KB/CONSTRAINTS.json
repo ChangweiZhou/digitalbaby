@@ -1,0 +1,173 @@
+{
+  "confirm_alpha_spending": "geometric_0.05_2^-j",
+  "default_grant_caps": {
+    "adoption": false,
+    "max_cpu_h": 2,
+    "max_cycles": 3,
+    "max_records": 5000,
+    "official": false,
+    "pointer_update": false,
+    "push": false
+  },
+  "e3_cadence_counts_legacy": false,
+  "e3_cadence_max": 2,
+  "evaluator_only_exemptions": [],
+  "io": {
+    "own_eos_required": true,
+    "raw_bytes": true
+  },
+  "native_forbidden": {
+    "calls": [
+      ".backward(",
+      "scaled_dot_product_attention(",
+      "numpy.linalg.lstsq(",
+      "numpy.linalg.pinv(",
+      "torch.linalg.lstsq("
+    ],
+    "identifiers": [
+      "transformer",
+      "attention",
+      "elm",
+      "requires_grad=True"
+    ],
+    "imports": [
+      "torch.autograd",
+      "torch.optim",
+      "torch.nn.MultiheadAttention",
+      "transformers",
+      "jax",
+      "sklearn.linear_model"
+    ]
+  },
+  "notes": "Corpus copy of the DRAFT values of SPEC 13.1 (pending UD-0001).",
+  "objective_ref": {
+    "path": "minifly_b/package/DOCS/MINIFLY_OBJECTIVE_CONTRACT.md",
+    "sha256": "3832a30f19ad168a03ed112d8c60f43528a5c4d4dd47adf1951f8c01b79ef57d"
+  },
+  "objective_targets": "TARGET_UNSET",
+  "owner": "Mr. Changwei Zhou",
+  "required_arms_by_level": {
+    "E1": [
+      "candidate",
+      "shuf"
+    ],
+    "E2": [
+      "candidate",
+      "shuf",
+      "positive_control"
+    ],
+    "E3": [
+      "candidate",
+      "no_prior_teaching",
+      "shuf",
+      "oracle_plumbing"
+    ]
+  },
+  "review_debt_max_open": 3,
+  "schema": "minifly.constraints.v1",
+  "status": "DRAFT_PENDING_OWNER_DECISION",
+  "supplied_arithmetic_heuristics": [
+    "int() over decoded operand bytes",
+    "carry or digit tables",
+    "'+' applied to parsed operands"
+  ],
+  "testbed_ceiling_grid": [
+    {
+      "id": "EXACT_BP",
+      "learner": "EXACT_BP"
+    },
+    {
+      "id": "ORACLE_FEATURES",
+      "learner": "ORACLE_FEATURES"
+    }
+  ],
+  "testbed_floor_grid": [
+    {
+      "id": "FRF_W256_LR0.001",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.001,
+      "width": 256
+    },
+    {
+      "id": "FRF_W256_LR0.005",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.005,
+      "width": 256
+    },
+    {
+      "id": "FRF_W256_LR0.02",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.02,
+      "width": 256
+    },
+    {
+      "id": "FRF_W1024_LR0.001",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.001,
+      "width": 1024
+    },
+    {
+      "id": "FRF_W1024_LR0.005",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.005,
+      "width": 1024
+    },
+    {
+      "id": "FRF_W1024_LR0.02",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.02,
+      "width": 1024
+    },
+    {
+      "id": "FRF_W4096_LR0.001",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.001,
+      "width": 4096
+    },
+    {
+      "id": "FRF_W4096_LR0.005",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.005,
+      "width": 4096
+    },
+    {
+      "id": "FRF_W4096_LR0.02",
+      "learner": "FROZEN_RANDOM_FEATURES",
+      "readout_lr": 0.02,
+      "width": 4096
+    }
+  ],
+  "threshold_floors": {
+    "absolute_floor_above_chance": 0.05,
+    "alpha_max": 0.05,
+    "analytic_input_snr_min": 0.5,
+    "input_contrast_min": 2.0,
+    "margin_abs": 0.03,
+    "min_items_per_stratum": 8,
+    "min_realized_dose": 0.05,
+    "min_worlds_nonpilot": 8,
+    "oc_min_power": 0.8,
+    "old_acq_margin": 0.05,
+    "old_max_drop": 0.1,
+    "per_world_floor": -0.05,
+    "prompt_id_margin_min": 0.1,
+    "shuf_band": [
+      0.35,
+      0.65
+    ],
+    "taught_acq_margin_min": 0.05
+  },
+  "tier_thresholds": {
+    "family_t1_max_cpu_h": 12,
+    "t0_max_cpu_h": 1,
+    "t1_max_cpu_h": 4,
+    "t1_max_records": 20000
+  },
+  "user_decision": null,
+  "verification_subset_max_mb": 50,
+  "version": "1",
+  "warmup": {
+    "ramp": "gradual",
+    "start_ceiling": "1/16"
+  }
+}

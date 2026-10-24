@@ -1,0 +1,15 @@
+{
+  "built_from": "supplementary (not a SPEC 12.2 row)",
+  "delivery": "minifly_corpus_base_dev_v1_20261101",
+  "expectation": "RUN-02",
+  "fm_ids": [
+    "FM-20"
+  ],
+  "format": "TimelineGit",
+  "generator": "tools/minifly_check/corpus/_build/build_corpus.py",
+  "id": "S62",
+  "kind": "dirty",
+  "mutation": "The official run is split over two launches: attempt A (exit -9, interrupted) completes every arm of w_off_1..w_off_5 and records its units with canonical digests; attempt B (launch --stage official --resume, resume_of A, identical lock shas) runs every arm of w_off_6..w_off_8, appending to results/official/OUTPUTS.jsonl.gz with A's rows unchanged; B also re-runs the completed unit (w_off_1, NPT): its rows and receipt now carry B's attempt id. The replay of (w_off_1, W) is bit-identical.",
+  "source_incident": null,
+  "title": "resume rewrites a completed official unit"
+}

@@ -87,3 +87,10 @@ I am Changwei Zhou, focusing on **Liquid Intelligence**. This repository is an e
 
 ---
 *Note: This is an active research repo. Level 4 training (Multi-object persistence) is currently in progress.*
+
+## Research-loop kit (schema v1)
+MiniFly research deliveries created after owner decision UD-0001 follow the MRK-1 research-loop kit:
+- Agent pointer (to merge into the owner's local AGENTS.md): [PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md](PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md)
+- Skills: `.claude/skills/minifly-*` (research-loop, e3-design, claims-knowledge, independent-review, governance)
+- Checker: [tools/minifly_check/README.md](tools/minifly_check/README.md) (`python3 -I tools/minifly_check/minifly_check.py`; a nonzero exit means stop)
+- Knowledge base and ledgers: [PROJECT_DOCUMENTS/KB/README.md](PROJECT_DOCUMENTS/KB/README.md)

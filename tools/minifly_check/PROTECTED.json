@@ -1,0 +1,21 @@
+{
+  "schema": "minifly.protected.v1",
+  "paths": [
+    ".claude/skills/minifly-*/**",
+    "PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md",
+    "AGENTS.md",
+    ".gitattributes",
+    "tools/minifly_check/**",
+    "PROJECT_DOCUMENTS/KB/CONSTRAINTS.json",
+    "PROJECT_DOCUMENTS/KB/USER_DECISIONS.jsonl"
+  ],
+  "append_only": [
+    "PROJECT_DOCUMENTS/KB/*.jsonl"
+  ],
+  "notes": [
+    "Globs use the kit's glob_match: '*' stays within one path segment, '**' crosses segments.",
+    "AGENTS.md matters only if a root AGENTS.md is ever tracked; none is (SPEC 20.1). PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md holds the pointer text.",
+    "tools/minifly_check/** has no exclusions: INTEGRATION_LOG.md, corpus/, EXPECTED.json, RULES.json and this file are protected too.",
+    "append_only covers every KB ledger: FINDINGS, INCIDENTS, USER_DECISIONS, DELIVERY_LEDGER, CONFIRM_LEDGER, REVIEW_DEBT and CANARY_COMMITMENTS (invariant I8)."
+  ]
+}

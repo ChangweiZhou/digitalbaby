@@ -1,0 +1,48 @@
+{
+  "bundles": {
+    "lock": {
+      "checks": [
+        "LOCK-08",
+        "LOCK-11"
+      ],
+      "description": "Lock gate"
+    }
+  },
+  "checker_version": "1.0.0",
+  "notes": [
+    "Miniature kit used only inside governance corpus fixtures."
+  ],
+  "rules": [
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-14"
+      ],
+      "id": "LOCK-08",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "No literal integrity booleans"
+    },
+    {
+      "applies_when": "always",
+      "fm_ids": [
+        "FM-25"
+      ],
+      "id": "LOCK-11",
+      "introduced_in": "1.0.0",
+      "module": "lockcheck",
+      "stages": [
+        "lock"
+      ],
+      "status": "enforced",
+      "tier_min": 0,
+      "title": "Predictions registered"
+    }
+  ],
+  "schema": "minifly.rules.v1"
+}

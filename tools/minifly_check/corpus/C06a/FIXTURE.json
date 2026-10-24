@@ -1,0 +1,15 @@
+{
+  "built_from": "minifly_address_capacity_v1_dev_20261023/REPORT.md:7",
+  "delivery": "minifly_corpus_base_dev_v1_20261101",
+  "expectation": "expect /verdict FAIL, headline best shortcut FIXED_2; must_warn LAD-03",
+  "fm_ids": [
+    "FM-06"
+  ],
+  "format": "TimelineGit",
+  "generator": "tools/minifly_check/corpus/_build/build_corpus.py",
+  "id": "C06a",
+  "kind": "dirty",
+  "mutation": "HELD gains 4 carry items (20 items, 8 S2 + 12 S3); W is wrong on S2 and emits every S3 answer with the right 2-byte prefix but closes it with EOS on only 6 (odd worlds) or 5 (even worlds); NPT (the declared comparator) answers \"0\". FIXED_2 of W's own stream is 0.6 > DIGIT_NO_CARRY 0.4. FIXED_1 cannot be the unique best on single-digit addition (DIGIT_NO_CARRY is right on every 1-digit answer), so the incident's FIXED_1 becomes FIXED_2 here.",
+  "source_incident": "INC-SEED-06",
+  "title": "candidate at its own-stream truncation shortcut; comparator at 0"
+}

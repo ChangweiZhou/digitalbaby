@@ -1,0 +1,4338 @@
+{
+  "C00a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "canary",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--seed",
+        "c0ffee"
+      ]
+    ],
+    "expect": {
+      "/designs_tried_k": 1,
+      "/headline": "PASS | earned E3 (attempted E3) | held exact own-EOS 85.2% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 28.9pp | OLD final 96.9% (drop 3.1pp) | 8 MAIN worlds | best of k=1",
+      "/level_earned": "E3",
+      "/objective_metric/best_shortcut/name": "DIGIT_NO_CARRY",
+      "/primary_gate": "PASS",
+      "/verdict": "PASS",
+      "/worlds_role": "MAIN"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "REV-01",
+      "REV-02",
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06",
+      "REV-07",
+      "WIT-01",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "LAD-02",
+      "LAD-03",
+      "LAD-04",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CYC-03",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "WLD-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-02",
+      "DEBT-02",
+      "CAN-01",
+      "CAN-02",
+      "CAN-03"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C00b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": "FAIL | earned NONE (attempted E3) | held exact own-EOS 64.8% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 8.6pp | OLD final 96.9% (drop 3.1pp) | 8 MAIN worlds | best of k=1",
+      "/primary_gate": "FAIL",
+      "/verdict": "FAIL"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "REV-01",
+      "REV-02",
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06",
+      "REV-07",
+      "WIT-01",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "LAD-02",
+      "LAD-03",
+      "LAD-04",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CYC-03",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "WLD-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-02",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C00c": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "admission"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": "CANNOT_TEST_CLAIM_AS_SPECIFIED | earned NONE (attempted E3) | held exact own-EOS not_measured | 0 PILOT worlds | best of k=0",
+      "/primary_gate": "CANNOT_TEST_CLAIM_AS_SPECIFIED",
+      "/stop_reason": {
+        "contains": "CANNOT_TEST"
+      }
+    },
+    "expected_exit": [
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "DEC-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-01",
+      "WLD-02",
+      "RUN-01",
+      "RUN-03",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C00d": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": "PASS | earned E3 (attempted E3) | held exact own-EOS 85.2% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 28.9pp | OLD final 96.9% (drop 3.1pp) | 8 SEALED_CONFIRM worlds | best of k=1",
+      "/verdict": "PASS",
+      "/worlds_role": "SEALED_CONFIRM"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "REV-01",
+      "REV-02",
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06",
+      "REV-07",
+      "WIT-01",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "LAD-02",
+      "LAD-03",
+      "LAD-04",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CYC-03",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "WLD-01",
+      "OC-01",
+      "SEAL-01",
+      "SEAL-02",
+      "SEAL-03",
+      "SEAL-04",
+      "SEAL-05",
+      "CONF-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-02",
+      "REV-08",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C00e": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": {
+        "contains": "dev shadow"
+      },
+      "/primary_gate": "NOT_OPENED",
+      "/worlds_role": "DEV"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-01",
+      "WLD-02",
+      "RUN-02",
+      "RUN-04",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C00f": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "e25444de7690373a322eed51cfddce0f17d2f2cc"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "GOV-SELF",
+      "GOV-SEP",
+      "GOV-CLASS",
+      "GOV-REV",
+      "GOV-UD",
+      "GOV-NUM",
+      "GOV-MONO",
+      "GOV-APPEND",
+      "GOV-SKILL"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C01": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-01"
+    ],
+    "must_fire": [
+      "MET-01",
+      "MET-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-01"
+  },
+  "C02a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-02"
+    ],
+    "must_fire": [
+      "ADM-CTRL-ZERO",
+      "INERT-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-01"
+  },
+  "C02b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-02"
+    ],
+    "must_fire": [
+      "ADM-CTRL-DOSE"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C03": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-03"
+    ],
+    "must_fire": [
+      "ADM-CTRL-ISO"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C04a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-04"
+    ],
+    "must_fire": [
+      "ADM-FIX",
+      "ADM-GATE"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-02"
+  },
+  "C04b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-04"
+    ],
+    "must_fire": [
+      "ADM-SHUF"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-03"
+  },
+  "C05a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/stop_reason": {
+        "contains": "CANNOT_TEST"
+      },
+      "/verdict": "CANNOT_TEST_CLAIM_AS_SPECIFIED"
+    },
+    "expected_exit": [
+      1,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-05"
+    ],
+    "must_fire": [
+      "ADM-TB-CEIL"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-04"
+  },
+  "C05b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-05"
+    ],
+    "must_fire": [
+      "ADM-TB-FLOOR"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-04"
+  },
+  "C05c": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-05"
+    ],
+    "must_fire": [
+      "RED-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-05"
+  },
+  "C06a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": {
+        "contains": "vs best shortcut FIXED_2 60.0%"
+      },
+      "/objective_metric/best_shortcut/name": "FIXED_2",
+      "/verdict": "FAIL"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-06"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [
+      "LAD-03"
+    ],
+    "source_incident": "INC-SEED-06"
+  },
+  "C06b": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ]
+    ],
+    "expect": {
+      "/verdict": "FAIL"
+    },
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [
+      "FM-06"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-07"
+  },
+  "C06c": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ]
+    ],
+    "expect": {
+      "/guards/old_acq": "FAIL",
+      "/verdict": "FAIL"
+    },
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [
+      "FM-06"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-07"
+  },
+  "C07": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-07"
+    ],
+    "must_fire": [
+      "LOCK-03",
+      "CLM-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-08"
+  },
+  "C08a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-08"
+    ],
+    "must_fire": [
+      "AMD-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-09"
+  },
+  "C08b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-08"
+    ],
+    "must_fire": [
+      "AMD-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C09a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-09"
+    ],
+    "must_fire": [
+      "LOCK-09"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C09b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-09"
+    ],
+    "must_fire": [
+      "LOCK-09"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C10": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/designs_tried_k": 3,
+      "/headline": {
+        "contains": "best of k=3"
+      }
+    },
+    "expected_exit": [
+      1,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-10"
+    ],
+    "must_fire": [
+      "CYC-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C11a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-11"
+    ],
+    "must_fire": [
+      "WLD-01",
+      "AMD-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-10"
+  },
+  "C11b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-11"
+    ],
+    "must_fire": [
+      "SEAL-01",
+      "CLM-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C12": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-12"
+    ],
+    "must_fire": [
+      "ADM-EXPO"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C13a": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-13"
+    ],
+    "must_fire": [
+      "LOCK-06"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-11"
+  },
+  "C13b": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-13"
+    ],
+    "must_fire": [
+      "LOCK-05"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-13"
+  },
+  "C13c": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-13"
+    ],
+    "must_fire": [
+      "WIT-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-13"
+  },
+  "C14": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-14"
+    ],
+    "must_fire": [
+      "LOCK-08",
+      "DEC-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-14"
+  },
+  "C15": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-15"
+    ],
+    "must_fire": [
+      "AMD-05"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C16": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-16"
+    ],
+    "must_fire": [
+      "LOCK-12",
+      "ADM-INPUT",
+      "ADM-ACQ"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-16"
+  },
+  "C17": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-17"
+    ],
+    "must_fire": [
+      "ADM-DIR"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C18": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-18"
+    ],
+    "must_fire": [
+      "LOCK-05"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C19": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-19"
+    ],
+    "must_fire": [
+      "RUN-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C20": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ]
+    ],
+    "expect": {
+      "/verdict": "INCOMPLETE"
+    },
+    "expected_exit": [
+      1,
+      0
+    ],
+    "fm_ids": [
+      "FM-20"
+    ],
+    "must_fire": [
+      "ADM-BUDGET"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C21": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-21"
+    ],
+    "must_fire": [
+      "OC-01",
+      "CLM-09"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-17"
+  },
+  "C22": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-22"
+    ],
+    "must_fire": [
+      "CLM-05",
+      "CLM-06",
+      "CLM-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-18"
+  },
+  "C23": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-23"
+    ],
+    "must_fire": [
+      "LOCK-13",
+      "LOCK-07"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C24": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "pointer",
+        "--pointer",
+        "PROJECT_DOCUMENTS/CURRENT_ADDITION_E3_POINTER.json",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-24"
+    ],
+    "must_fire": [
+      "PTR-04",
+      "PTR-03",
+      "PTR-05"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-20"
+  },
+  "C25": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-25"
+    ],
+    "must_fire": [
+      "LOCK-11"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C26": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-26"
+    ],
+    "must_fire": [
+      "CLM-10",
+      "KB-05"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-21"
+  },
+  "C27": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-27"
+    ],
+    "must_fire": [
+      "REV-01",
+      "REV-02",
+      "REV-07",
+      "DEBT-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C28": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-28"
+    ],
+    "must_fire": [
+      "AUT-02",
+      "AUT-03",
+      "AUT-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-22"
+  },
+  "C29": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-29"
+    ],
+    "must_fire": [
+      "CLM-15",
+      "CLM-12"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "C30": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "KB-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": "INC-SEED-23"
+  },
+  "G01": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "2b51f344a7938ee4efe9e63da72f3bdc0ced765b"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-SEP",
+      "GOV-UD"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "G02": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "31b641295257865ae6da3121bd87076ff54fc8e9"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-CLASS",
+      "GOV-UD",
+      "GOV-MONO"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "G03": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "2b3da480f8bfe0ef36954e6f45ef554628e178b5"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-NUM"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "G04": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-COI"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "G05": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "39be62d6696d75e612dae88a6bc2513ee42872d2"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-CLASS",
+      "GOV-UD"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "K01": {
+    "commands": [
+      [
+        "kb",
+        "score"
+      ]
+    ],
+    "expect": {
+      "/brier_mean": 0.353333,
+      "/skill": {
+        "contains": "INSUFFICIENT_N"
+      }
+    },
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [
+      "FM-26"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S01": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      3
+    ],
+    "fm_ids": [
+      "FM-15",
+      "FM-30"
+    ],
+    "must_fire": [
+      "SELF-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S02": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      2
+    ],
+    "fm_ids": [],
+    "must_fire": [
+      "SCHEMA-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S03": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-22"
+    ],
+    "must_fire": [
+      "LOCK-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S04": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-02"
+    ],
+    "must_fire": [
+      "LOCK-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S05": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-04"
+    ],
+    "must_fire": [
+      "LOCK-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S06": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-28"
+    ],
+    "must_fire": [
+      "LOCK-10"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S07": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-28"
+    ],
+    "must_fire": [
+      "AUT-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S08": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-08"
+    ],
+    "must_fire": [
+      "AMD-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S09": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-06"
+    ],
+    "must_fire": [
+      "RED-09",
+      "RED-11"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S10": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-06"
+    ],
+    "must_fire": [
+      "RED-08"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S11": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-04"
+    ],
+    "must_fire": [
+      "RED-10",
+      "LAD-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S12": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-04",
+      "FM-20"
+    ],
+    "must_fire": [
+      "LAD-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S13": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-05",
+      "FM-06"
+    ],
+    "must_fire": [
+      "STR-01",
+      "DET-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S14": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-16",
+      "FM-13"
+    ],
+    "must_fire": [
+      "ADM-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S15": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-10"
+    ],
+    "must_fire": [
+      "CYC-01",
+      "CYC-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S16": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-20"
+    ],
+    "must_fire": [
+      "RUN-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S17": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-22"
+    ],
+    "must_fire": [
+      "CLM-01",
+      "CLM-07",
+      "CLM-11",
+      "CLM-13"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S18": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-08",
+      "FM-15"
+    ],
+    "must_fire": [
+      "ERR-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S19": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-27"
+    ],
+    "must_fire": [
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S20": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-26",
+      "FM-30"
+    ],
+    "must_fire": [
+      "KB-01",
+      "KB-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S21": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "pointer",
+        "--pointer",
+        "PROJECT_DOCUMENTS/CURRENT_ADDITION_E3_POINTER.json",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-24",
+      "FM-27"
+    ],
+    "must_fire": [
+      "PTR-01",
+      "PTR-02",
+      "DEBT-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S22": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-11",
+      "FM-21",
+      "FM-01"
+    ],
+    "must_fire": [
+      "SEAL-02",
+      "SEAL-03",
+      "SEAL-04",
+      "SEAL-05",
+      "CONF-01",
+      "REV-08"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S23": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "61d37dc3204563254bbb3234a42dfebc94dec434"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-APPEND"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S24": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "8d07cf0b9d2951b3d2fe1ef43280cbab4f3f6026"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-SKILL"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S25": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "6bb3ed6a24bf6185459f41c17b65d9478b8a5e62"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-REV"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S26": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-04",
+      "FM-21"
+    ],
+    "must_fire": [
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S27": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-16"
+    ],
+    "must_fire": [
+      "ADM-REUSE"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S28": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-22"
+    ],
+    "must_fire": [
+      "CLM-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S29": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-13"
+    ],
+    "must_fire": [
+      "CLM-08"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S30": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "CLM-14"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S31": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      2
+    ],
+    "fm_ids": [
+      "FM-19"
+    ],
+    "must_fire": [
+      "TIER-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S32": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-26",
+      "FM-24"
+    ],
+    "must_fire": [
+      "KB-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S33": {
+    "commands": [
+      [
+        "governance",
+        "--base",
+        "ba14ff1e8c626e31fbd240abe1a33c45d81576dc",
+        "--head",
+        "ea1ef8970cb6fe254b0faf44de8b130f32a9c2f9"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "GOV-SELF"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S34": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "pointer",
+        "--pointer",
+        "PROJECT_DOCUMENTS/CURRENT_ADDITION_LEGACY_POINTER.json",
+        "minifly_corpus_legacy_dev_20261001"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-24"
+    ],
+    "must_fire": [
+      "PTR-07"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S35": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "pointer",
+        "--pointer",
+        "PROJECT_DOCUMENTS/CURRENT_ADDITION_LEGACY_POINTER.json",
+        "minifly_corpus_legacy_dev_20261001"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "PTR-01",
+      "PTR-02",
+      "PTR-03",
+      "PTR-04",
+      "PTR-05",
+      "PTR-06",
+      "PTR-07",
+      "CLM-02",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S36": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-25"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [
+      "CLM-16"
+    ],
+    "source_incident": null
+  },
+  "S37": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [
+      "FM-04"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [
+      "LAD-04"
+    ],
+    "source_incident": null
+  },
+  "S38": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-11"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [
+      "WLD-02"
+    ],
+    "source_incident": null
+  },
+  "S39": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "pointer",
+        "--pointer",
+        "PROJECT_DOCUMENTS/CURRENT_ADDITION_E3_POINTER.json",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-24"
+    ],
+    "must_fire": [
+      "PTR-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [
+      "PTR-06"
+    ],
+    "source_incident": null
+  },
+  "S40": {
+    "commands": [
+      [
+        "canary",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--seed",
+        "c0ffee"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-02",
+      "FM-27"
+    ],
+    "must_fire": [
+      "CAN-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S41": {
+    "commands": [
+      [
+        "canary",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--seed",
+        "c0ffee"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-27"
+    ],
+    "must_fire": [
+      "CAN-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S42": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "REV-01",
+      "REV-02",
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06",
+      "REV-07",
+      "WIT-01",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-01",
+      "WLD-02",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S43": {
+    "commands": [
+      [
+        "canary",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--seed",
+        "c0ffee"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-13",
+      "FM-18"
+    ],
+    "must_fire": [
+      "CAN-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S44": {
+    "commands": [
+      [
+        "heldout",
+        "reveal",
+        "--batch",
+        "MECH1",
+        "--key-file",
+        "../owner.key",
+        "--out",
+        "../revealed"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0
+    ],
+    "fm_ids": [],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S45": {
+    "commands": [
+      [
+        "heldout",
+        "reveal",
+        "--batch",
+        "MECH1",
+        "--key-file",
+        "../owner.key",
+        "--out",
+        "../revealed"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-30"
+    ],
+    "must_fire": [
+      "HELD-01",
+      "HELD-02",
+      "HELD-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S46": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-10"
+    ],
+    "must_fire": [
+      "CYC-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S47": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-10"
+    ],
+    "must_fire": [
+      "CYC-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S48": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-10"
+    ],
+    "must_fire": [
+      "CYC-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S49": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-10",
+      "FM-08"
+    ],
+    "must_fire": [
+      "CYC-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S50": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": "INVALID | earned NONE (attempted E3) | held exact own-EOS 85.2% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 28.9pp | OLD final 96.9% (drop 3.1pp) | 8 MAIN worlds | best of k=1",
+      "/invalid_reason": "TREATMENT_NOT_DELIVERED",
+      "/n_worlds": 8,
+      "/primary_gate": "INVALID",
+      "/stop_reason": {
+        "contains": "INVALID"
+      },
+      "/verdict": "INVALID",
+      "/worlds_role": "MAIN"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-02"
+    ],
+    "must_fire": [],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S51": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "roster",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-10"
+    ],
+    "must_fire": [
+      "CYC-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S52": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "lock",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-11",
+      "FM-08"
+    ],
+    "must_fire": [
+      "AMD-05",
+      "LAD-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S53": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      1
+    ],
+    "fm_ids": [
+      "FM-11",
+      "FM-04"
+    ],
+    "must_fire": [
+      "LAD-01"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S54": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1
+    ],
+    "fm_ids": [
+      "FM-11",
+      "FM-08"
+    ],
+    "must_fire": [
+      "AMD-05"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S55": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-19"
+    ],
+    "must_fire": [
+      "CLM-15"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S56": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-22",
+      "FM-11"
+    ],
+    "must_fire": [
+      "CLM-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S57": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-22",
+      "FM-11"
+    ],
+    "must_fire": [
+      "CLM-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S58": {
+    "commands": [
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "dev"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-22",
+      "FM-11"
+    ],
+    "must_fire": [
+      "CLM-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S59": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": "FAIL | earned NONE (attempted E3) | held exact own-EOS 85.2% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 28.9pp | OLD final 96.9% (drop 3.1pp) | 8 MAIN worlds | best of k=1 | FROZEN >= candidate",
+      "/level_earned": "NONE",
+      "/primary/implied_comparator_arms": [
+        "SHUF",
+        "FROZEN"
+      ],
+      "/primary/per_world_detail/0/comparator": "FROZEN",
+      "/primary/per_world_detail/7/comparator": "FROZEN",
+      "/primary_gate": "FAIL",
+      "/verdict": "FAIL"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-06",
+      "FM-04"
+    ],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "REV-01",
+      "REV-02",
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06",
+      "REV-07",
+      "WIT-01",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "LAD-02",
+      "LAD-03",
+      "LAD-04",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CYC-03",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "WLD-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-02",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S60": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-13",
+      "FM-18"
+    ],
+    "must_fire": [
+      "RUN-03"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S61": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {
+      "/headline": "PASS | earned E3 (attempted E3) | held exact own-EOS 85.2% [S2+ determined, n=128] vs best shortcut DIGIT_NO_CARRY 50.0% | G 28.9pp | OLD final 96.9% (drop 3.1pp) | 8 MAIN worlds | best of k=1",
+      "/primary_gate": "PASS",
+      "/provenance/interrupted": true,
+      "/provenance/replay_units": [
+        [
+          "w_off_1",
+          "W"
+        ]
+      ],
+      "/provenance/resumed_units": [
+        [
+          "w_off_6",
+          "FROZEN"
+        ],
+        [
+          "w_off_6",
+          "NPT"
+        ],
+        [
+          "w_off_6",
+          "ORACLE"
+        ],
+        [
+          "w_off_6",
+          "SHUF"
+        ],
+        [
+          "w_off_6",
+          "W"
+        ],
+        [
+          "w_off_7",
+          "FROZEN"
+        ],
+        [
+          "w_off_7",
+          "NPT"
+        ],
+        [
+          "w_off_7",
+          "ORACLE"
+        ],
+        [
+          "w_off_7",
+          "SHUF"
+        ],
+        [
+          "w_off_7",
+          "W"
+        ],
+        [
+          "w_off_8",
+          "FROZEN"
+        ],
+        [
+          "w_off_8",
+          "NPT"
+        ],
+        [
+          "w_off_8",
+          "ORACLE"
+        ],
+        [
+          "w_off_8",
+          "SHUF"
+        ],
+        [
+          "w_off_8",
+          "W"
+        ]
+      ],
+      "/verdict": "PASS"
+    },
+    "expected_exit": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "fm_ids": [
+      "FM-20",
+      "FM-19"
+    ],
+    "must_fire": [],
+    "must_not_fire": [
+      "SELF-01",
+      "SCHEMA-01",
+      "TIER-01",
+      "LOCK-01",
+      "LOCK-02",
+      "LOCK-03",
+      "LOCK-04",
+      "LOCK-08",
+      "LOCK-09",
+      "LOCK-10",
+      "LOCK-11",
+      "LOCK-12",
+      "LOCK-13",
+      "AMD-01",
+      "AMD-02",
+      "AMD-03",
+      "AMD-04",
+      "AMD-05",
+      "AUT-01",
+      "AUT-02",
+      "AUT-03",
+      "AUT-04",
+      "LOCK-05",
+      "LOCK-06",
+      "LOCK-07",
+      "CYC-01",
+      "ADM-01",
+      "ADM-TB-CEIL",
+      "ADM-TB-FLOOR",
+      "ADM-CTRL-ZERO",
+      "ADM-CTRL-ISO",
+      "ADM-CTRL-DOSE",
+      "ADM-DIR",
+      "ADM-FIX",
+      "ADM-GATE",
+      "ADM-INPUT",
+      "ADM-ACQ",
+      "ADM-SHUF",
+      "ADM-EXPO",
+      "ADM-BUDGET",
+      "ADM-REUSE",
+      "RED-01",
+      "RED-02",
+      "RED-03",
+      "RED-04",
+      "RED-05",
+      "RED-06",
+      "RED-07",
+      "RED-08",
+      "RED-09",
+      "RED-10",
+      "RED-11",
+      "DEC-01",
+      "CYC-02",
+      "RUN-01",
+      "RUN-03",
+      "REV-01",
+      "REV-02",
+      "REV-03",
+      "REV-04",
+      "REV-05",
+      "REV-06",
+      "REV-07",
+      "WIT-01",
+      "MET-01",
+      "MET-02",
+      "LAD-01",
+      "LAD-02",
+      "LAD-03",
+      "LAD-04",
+      "STR-01",
+      "DET-01",
+      "INERT-01",
+      "CYC-03",
+      "RUN-02",
+      "RUN-04",
+      "GOV-COI",
+      "WLD-01",
+      "CLM-01",
+      "CLM-02",
+      "CLM-03",
+      "CLM-04",
+      "CLM-05",
+      "CLM-06",
+      "CLM-07",
+      "CLM-08",
+      "CLM-09",
+      "CLM-10",
+      "CLM-11",
+      "CLM-12",
+      "CLM-13",
+      "CLM-14",
+      "CLM-15",
+      "CLM-16",
+      "ERR-01",
+      "KB-01",
+      "KB-02",
+      "KB-03",
+      "KB-04",
+      "KB-05",
+      "WLD-02",
+      "DEBT-02"
+    ],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S62": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-20"
+    ],
+    "must_fire": [
+      "RUN-02"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S63": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-20",
+      "FM-19"
+    ],
+    "must_fire": [
+      "RUN-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  },
+  "S64": {
+    "commands": [
+      [
+        "gate",
+        "--stage",
+        "official",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "score",
+        "minifly_corpus_base_dev_v1_20261101",
+        "--role",
+        "official"
+      ],
+      [
+        "claim",
+        "minifly_corpus_base_dev_v1_20261101"
+      ],
+      [
+        "gate",
+        "--stage",
+        "publish",
+        "minifly_corpus_base_dev_v1_20261101"
+      ]
+    ],
+    "expect": {},
+    "expected_exit": [
+      1,
+      0,
+      0,
+      1
+    ],
+    "fm_ids": [
+      "FM-20",
+      "FM-19"
+    ],
+    "must_fire": [
+      "RUN-04"
+    ],
+    "must_not_fire": [],
+    "must_warn": [],
+    "source_incident": null
+  }
+}

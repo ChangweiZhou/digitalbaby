@@ -1,0 +1,33 @@
+{
+  "schema": "minifly.admission.v1",
+  "endpoint_lock_sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+  "source_lock_sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+  "producer": {
+    "script": "admit.py",
+    "sha256": "5555555555555555555555555555555555555555555555555555555555555555"
+  },
+  "worlds": [
+    "w_tech_1"
+  ],
+  "testbed_outputs": "results/admission/OUTPUTS.jsonl",
+  "receipts_glob": "results/receipts/w_tech_1/*.json",
+  "fixtures": "results/admission/FIXTURES.jsonl",
+  "input_contrast": {
+    "metric_definition": "L2 distance of post-read state codes between prompts (same input different noise vs different input same noise)",
+    "analytic_snr": 1.7,
+    "same_input_diff_noise": 0.12,
+    "diff_input_same_noise": 0.41,
+    "ratio": 3.42,
+    "prompt_id_loo_acc": 0.31,
+    "chance": 0.01
+  },
+  "structure_meters": {
+    "shared_operand_similarity": 0.44,
+    "nonshared_operand_similarity": 0.21,
+    "modal_output_fraction": 0.18,
+    "code_overlap_birth": 0.02,
+    "code_overlap_end": 0.07
+  },
+  "parent_admission_sha": null,
+  "created_utc": "20261101T091500Z"
+}

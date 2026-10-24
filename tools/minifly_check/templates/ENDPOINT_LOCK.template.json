@@ -1,0 +1,249 @@
+{
+  "schema": "minifly.endpoint_lock.v1",
+  "delivery": "__FILL__",
+  "protocol_id": "__FILL__",
+  "created_utc": "__FILL__",
+  "author_agent": "__FILL__",
+  "tier_declared": "__FILL__",
+  "intent": "__FILL__",
+  "claim_level_target": "__FILL__",
+  "task": {
+    "id": "__FILL__",
+    "family": "__FILL__",
+    "format": {
+      "kind": "addition",
+      "sep_hex": "2b",
+      "terminator_hex": "3d",
+      "eos_hex": "0a",
+      "gen_cap_bytes": "__FILL__",
+      "normalize_leading_zeros": true
+    }
+  },
+  "objective_distance": {
+    "task_family": "__FILL__",
+    "output": "own_bytes_own_eos",
+    "held": "__FILL__",
+    "native_only_path": true,
+    "feedback": "gradual_warmup",
+    "old_protection_measured": true
+  },
+  "units": {
+    "witness": "__FILL__",
+    "commutative": true
+  },
+  "split": {
+    "taught_manifest": "manifests/TAUGHT",
+    "held_manifest": "manifests/HELD.jsonl",
+    "old_manifest": "manifests/OLD.jsonl",
+    "new_manifest": "manifests/NEW.jsonl",
+    "split_sha256": "__FILL__",
+    "held_set_sha256": "__FILL__"
+  },
+  "exposure_streams": [
+    {
+      "path_glob": "manifests/TAUGHT/*/*.jsonl",
+      "feedback_bearing": true,
+      "phase": "__FILL__"
+    }
+  ],
+  "arms": [
+    {
+      "id": "W",
+      "role": "candidate",
+      "zero_channels": [],
+      "declared_changed": [],
+      "teaching_withheld": [],
+      "min_realized_dose": null
+    },
+    {
+      "id": "NPT",
+      "role": "no_prior_teaching",
+      "zero_channels": ["__FILL__"],
+      "declared_changed": [],
+      "teaching_withheld": ["__FILL__"],
+      "min_realized_dose": 0.05
+    },
+    {
+      "id": "SHUF",
+      "role": "shuf",
+      "zero_channels": [],
+      "declared_changed": [],
+      "teaching_withheld": [],
+      "min_realized_dose": null
+    },
+    {
+      "id": "ORACLE",
+      "role": "oracle_plumbing",
+      "zero_channels": [],
+      "declared_changed": ["__FILL__"],
+      "teaching_withheld": [],
+      "min_realized_dose": null
+    }
+  ],
+  "causal_control_arm": "NPT",
+  "positive_control_arm": "__FILL__",
+  "ports": [
+    {
+      "id": "__FILL__",
+      "signs": ["+", "-"]
+    }
+  ],
+  "primary": {
+    "task_id": "__FILL__",
+    "metric": "exact_own_eos",
+    "unconditional": true,
+    "pool": "HELD",
+    "checkpoint": "final",
+    "strata_counted": ["S2", "S3", "S4"],
+    "candidate_arm": "W",
+    "comparator_arms": ["NPT"],
+    "ladder": "auto",
+    "chance": "__FILL__",
+    "margin_abs": 0.05,
+    "absolute_floor": "__FILL__",
+    "per_world_floor": -0.05,
+    "aggregator": {
+      "type": "paired_lcb",
+      "alpha": 0.05
+    },
+    "min_worlds": 8,
+    "n_items_per_pool": {
+      "TAUGHT": "__FILL__",
+      "OLD": "__FILL__",
+      "NEW": "__FILL__",
+      "HELD": "__FILL__"
+    },
+    "rule_type": "declarative"
+  },
+  "gates": [
+    {
+      "id": "__FILL__",
+      "description": "__FILL__"
+    }
+  ],
+  "guards": [
+    {
+      "id": "old_drop",
+      "kind": "old_drop",
+      "pool": "OLD",
+      "max_drop": 0.1
+    },
+    {
+      "id": "old_acq",
+      "kind": "old_acq",
+      "pool": "OLD",
+      "margin": 0.05
+    }
+  ],
+  "udi": null,
+  "checkpoints": {
+    "prefix": "__FILL__",
+    "old_end": "__FILL__",
+    "final": "__FILL__"
+  },
+  "stage_chain": false,
+  "worlds": {
+    "technical": ["__FILL__"],
+    "dev": ["__FILL__"],
+    "rehearsal": ["__FILL__"],
+    "official": {
+      "mode": "__FILL__",
+      "ids": [],
+      "n": 8
+    },
+    "official_role_intended": "__FILL__"
+  },
+  "schedule": {
+    "paired_atomic": true
+  },
+  "budget": {
+    "max_records": "__FILL__",
+    "max_cpu_h": "__FILL__"
+  },
+  "admission_thresholds": {
+    "analytic_input_snr": "__FILL__",
+    "input_contrast_min": 2.0,
+    "prompt_id_margin_min": 0.1,
+    "taught_acq_margin_min": 0.05,
+    "shuf_band": [0.35, 0.65]
+  },
+  "testbed": {
+    "ceiling_grid": [
+      {"id": "EXACT_BP", "learner": "EXACT_BP"},
+      {"id": "ORACLE_FEATURES", "learner": "ORACLE_FEATURES"}
+    ],
+    "floor_grid": [
+      {"id": "FRF_W256_LR0.001", "learner": "FROZEN_RANDOM_FEATURES", "width": 256, "readout_lr": 0.001},
+      {"id": "FRF_W256_LR0.005", "learner": "FROZEN_RANDOM_FEATURES", "width": 256, "readout_lr": 0.005},
+      {"id": "FRF_W256_LR0.02", "learner": "FROZEN_RANDOM_FEATURES", "width": 256, "readout_lr": 0.02},
+      {"id": "FRF_W1024_LR0.001", "learner": "FROZEN_RANDOM_FEATURES", "width": 1024, "readout_lr": 0.001},
+      {"id": "FRF_W1024_LR0.005", "learner": "FROZEN_RANDOM_FEATURES", "width": 1024, "readout_lr": 0.005},
+      {"id": "FRF_W1024_LR0.02", "learner": "FROZEN_RANDOM_FEATURES", "width": 1024, "readout_lr": 0.02},
+      {"id": "FRF_W4096_LR0.001", "learner": "FROZEN_RANDOM_FEATURES", "width": 4096, "readout_lr": 0.001},
+      {"id": "FRF_W4096_LR0.005", "learner": "FROZEN_RANDOM_FEATURES", "width": 4096, "readout_lr": 0.005},
+      {"id": "FRF_W4096_LR0.02", "learner": "FROZEN_RANDOM_FEATURES", "width": 4096, "readout_lr": 0.02}
+    ]
+  },
+  "files": {
+    "admit": "admit.py",
+    "evaluator": [],
+    "generators": [],
+    "runner": ["run.py"],
+    "native": ["__FILL__"],
+    "shared": [],
+    "assets": [],
+    "params": "params.json"
+  },
+  "endpoint_files_sha256": {
+    "admit.py": "__FILL__"
+  },
+  "lineage": {
+    "parent": "__FILL__",
+    "changes_declared": [],
+    "priors_added": []
+  },
+  "predictions": [
+    {
+      "id": "P1",
+      "target": "primary",
+      "point": "__FILL__",
+      "interval90": ["__FILL__", "__FILL__"],
+      "p_pass": "__FILL__",
+      "basis_findings": ["__FILL__"],
+      "base_rate_forecast": {
+        "value": "__FILL__",
+        "source": "__FILL__"
+      }
+    },
+    {
+      "id": "P2",
+      "target": "guard:old_drop",
+      "point": "__FILL__",
+      "interval90": ["__FILL__", "__FILL__"],
+      "p_pass": "__FILL__",
+      "basis_findings": ["__FILL__"],
+      "base_rate_forecast": {
+        "value": "__FILL__",
+        "source": "__FILL__"
+      }
+    },
+    {
+      "id": "P3",
+      "target": "guard:old_acq",
+      "point": "__FILL__",
+      "interval90": ["__FILL__", "__FILL__"],
+      "p_pass": "__FILL__",
+      "basis_findings": ["__FILL__"],
+      "base_rate_forecast": {
+        "value": "__FILL__",
+        "source": "__FILL__"
+      }
+    }
+  ],
+  "e3_cadence": {
+    "waiver_user_decision": null
+  },
+  "constraints_sha256": "__FILL__",
+  "user_decisions": [],
+  "coprimary": []
+}

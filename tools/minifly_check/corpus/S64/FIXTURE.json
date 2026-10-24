@@ -1,0 +1,16 @@
+{
+  "built_from": "supplementary (not a SPEC 12.2 row)",
+  "delivery": "minifly_corpus_base_dev_v1_20261101",
+  "expectation": "RUN-04",
+  "fm_ids": [
+    "FM-20",
+    "FM-19"
+  ],
+  "format": "TimelineGit",
+  "generator": "tools/minifly_check/corpus/_build/build_corpus.py",
+  "id": "S64",
+  "kind": "dirty",
+  "mutation": "The official run is split over two launches: attempt A (exit -9, interrupted) completes every arm of w_off_1..w_off_5 and records its units with canonical digests; attempt B (launch --stage official --resume, resume_of A, identical lock shas) runs every arm of w_off_6..w_off_8, appending to results/official/OUTPUTS.jsonl.gz with A's rows unchanged; B's replay of (w_off_1, W) answers HELD item h02 with 99 (canonical digest differs).",
+  "source_incident": null,
+  "title": "resume whose replay is not bit-identical"
+}
