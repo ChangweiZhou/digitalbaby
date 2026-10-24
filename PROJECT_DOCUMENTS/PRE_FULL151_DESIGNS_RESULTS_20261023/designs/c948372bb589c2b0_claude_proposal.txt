@@ -1,0 +1,94 @@
+Running the self-test first, then launching the stage.
+
+Self-test passes. Launching the reliability stage in the background.
+
+Geometry jobs are moving fast (11/16 seeds in ~80s). I'll set a watcher and turn to MiniFly.
+
+`sequential_observations.csv` has per-probe raw *and* reset values for both compartments — enough to test the readout idea directly. Let me check it.
+
+That result changes the recommendation. Let me check one anatomical fact.
+
+## 1. V53 reliability — running, early signal is null
+
+Self-test passes (period discovery 14/14/14/14, all firewall assertions hold). The stage is running under `caffeinate`, 4 of 16 seeds done. Note it needs `python3` (numpy 2.4) — the `_omnibus10_env` numpy 1.26 can't unpickle the graph cache.
+
+| seed | RELIABILITY | SHUFFLED | MATCHED | RAW |
+|---|---:|---:|---:|---:|
+| 53501 | 0.0000 | 0.0000 | 0.0625 | 0.0000 |
+| 53502 | 0.0000 | 0.0000 | 0.0312 | 0.0000 |
+| 53503 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+| 53504 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
+
+The self-test geometry already hinted at this: the reliability learner puts only 1.42× more weight on invariant positions than elsewhere (0.476 vs 0.334) and **drops full-gallery retrieval to 0.570 from V51-LAG's 0.883** — it is suppressing informative positions along with variable ones. It's also scored under `ALL` writing, where V51-LAG itself only reaches 0.0059, so there's almost no headroom to detect a gain. I'll report the full 16 seeds when it lands, but prepare for a negative.
+
+## 2. MiniFly iteration 6
+
+I tested the thing I'd want to propose before proposing it, and the first version died.
+
+**The diagnosis.** The heaviest caveat on iteration 5 is the reset clone: every headline number is a difference against a counterfactual no animal could compute. So I asked what it would actually take to remove it, using the 1,200 existing probes in `sequential_observations.csv`.
+
+| clone-free readout | sign agreement | detects real change | false alarms |
+|---|---:|---:|---:|
+| `raw_alpha3` alone | 44.2% | 98.2% | 100.0% |
+| `raw_alpha3 − raw_gamma` | — (R² = −5.50) | — | — |
+| `raw_alpha3 − own naive reading` | **92.0%** | 88.5% | 19.5% |
+
+Cross-compartment differencing fails outright — the fitted gamma coefficient is −0.007, gamma carries nothing, and the innate components only correlate 0.39 between compartments. Raw alpha3 alone is *worse than chance* on sign. But subtracting the cue's own pre-training reading recovers R² = 0.661 and a usable decision signal.
+
+**So the model does not need the plastic-reset clone. It needs a naive reference for the cue in front of it.** That's a much weaker requirement, and it has a biological answer.
+
+**The proposal: take the reference from the lateral horn.** I verified this holds in MiniFly's own graph — same FlyWire v630 specimen, same neurons, no cross-specimen join:
+
+- **295 of the same 302 ALPNs** project to LH-class cells: 13,338 pairs, 29,549 counts, reaching 520 of 521 LH cells
+- (sanity check: the same code reproduces ALPN→KC at exactly 27,572 pairs, matching the report)
+
+This is the textbook parallel pathway — LH innate valence, MB learned, driven by the same PNs. It costs **zero mutable bytes** (static weights, like the rest of the anatomy), adds no memory or teaching family, and attacks the top item on `PROJECT_STATE.md`'s own unresolved list.
+
+**Stage 0 — a cheap gate that kills it early if wrong.** Before any learning run: regress the MB naive readout on LH activity across the 16 development + 40 evaluation patterns, no outcomes involved. Pre-declared bounds are already known — must beat **44.2%** (no reference), bounded above by **92.0%** (per-cue oracle reference). If LH can't predict the naive readout, stop and report the negative. One anatomical question needs settling in the same pass: where the two pathways converge. `cell_type` didn't match 'MBON' in v630 so I couldn't check LH→MBON directly; the convergence target must be located in the graph or declared as a modelling choice, not assumed.
+
+**Then:** rerun the frozen iteration-5 panel scoring the LH-referenced autonomous readout *alongside* the clone-based contrast, reporting both. The headline becomes "X/8 pairs learn by a readout the model computes itself."
+
+**Also in scope, all cheap:** report `interference_beyond_matched_rest` as the primary retention criterion (the current one misnames a decay failure — 77–95% of the loss is passive decay); extend the feedback/retention tradeoff to all 8 pairs; publish the 4/8 both-criteria number; account for the 323 KCs holding state no input can reach.
+
+**Out of scope, deliberately.** No new memory or teaching family — the handoff's own rule, and V54 just returned a clean negative on the analogous move. No retention claim beyond 24 h without >24 h data; that line is data-blocked, which is exactly why I'd put the readout ahead of it. No compression, no new download.
+
+**On DoOR** — worth knowing it's ready but I'd defer it. The bundle already has `door_to_hemibrain_glomeruli.csv` and a 61-odor × 15-glomerulus dense subset, and since MiniFly groups its ALPNs into 81 annotated types, glomerulus labels would plug in type-level with no specimen merge. But 15 well-covered glomeruli against 88 input channels is thin, and it answers "is this biologically calibrated," not "is this a learner." It's the right *next* thing once the parent has an autonomous readout.
+
+The through-line worth noting: MiniFly's clone problem and the ELM line's target-position problem are the same problem — *establishing a reference frame without an oracle*. The byte side turned out to get its reference from record structure. The anatomical side, if this works, gets it from a parallel pathway.
+
+Seed 53504 complete — all four arms at 0.0000, matching the table I reported. 12 seeds remaining; nothing new to act on yet.
+
+No change — seed 53505 RELIABILITY at 0.0000, same as the prior four.
+
+These per-arm notifications are pure noise at 0.0000. Let me tighten the filter to only fire on a nonzero result, an error, or completion.
+
+Those two are the already-known replays from re-reading the log head. The filter is now set — I'll only surface a genuinely nonzero result, a failure, or the final gates table when the stage completes.
+
+Seed 53507: `RELIABILITY-MATCHED` at 0.0312. Worth noting the pattern now firming up — through 7 seeds, `RELIABILITY` itself is 0.0000 everywhere, and the only nonzero values anywhere in the stage come from `RELIABILITY-MATCHED` (0.0625, 0.0312, 0.0312), which is a non-deployable control. The learned arm is tracking at or below its own matched control.
+
+Seed 53508: `RELIABILITY-RAW` at 0.0625. That's the unweighted-context control, so through 8 seeds both controls have now produced nonzero values while the learned arm has produced none. `RELIABILITY` is tracking below both of its own controls, not just one.
+
+Seed 53510: `RELIABILITY-RAW` at 0.0312. Same pattern, no change to the read. 10 of 16 seeds done; I'll report the gates table when it completes.
+
+## V53 reliability stage — complete, 16 seeds, clean negative
+
+| arm | mean U | nonzero seeds | j_ratio | retrieval | tail weight / elsewhere |
+|---|---:|---:|---:|---:|---|
+| `RELIABILITY` | **0.00000** | 0/16 | 2.190 | 0.470 | 0.454 / 0.334 |
+| `RELIABILITY-SHUFFLED` | 0.00000 | 0/16 | 0.000 | 0.008 | 0.000 / 0.000 |
+| `RELIABILITY-MATCHED` | 0.00781 | 3/16 | 2.390 | 0.830 | 0.688 / 0.650 |
+| `RELIABILITY-RAW` | 0.00586 | 2/16 | 2.354 | 0.895 | 1.000 / 1.000 |
+
+`U_vs_matched = −0.0078`. The learned arm finishes below both of its controls and never once produces a nonzero U.
+
+**The mechanism failure is legible.** The reliability learner achieves only **1.36×** selectivity (0.454 on invariant positions vs 0.334 elsewhere) while cutting retrieval nearly in half (0.895 → 0.470). It suppresses too hard and discriminates too weakly — it is throwing away signal along with variance. The matched control suppresses almost uniformly (1.06×) but gently, and keeps retrieval at 0.830, which is why it edges ahead.
+
+Two things to flag about the test itself:
+
+**`RELIABILITY-SHUFFLED` is degenerate, not null.** Retrieval 0.008, j_ratio 0.000, all weights 0.000 — shuffled pair proposals suppress the representation to nothing. A control that zeroes the encoder tells you nothing about whether real pair proposals carry information. It should be rebuilt norm-matched, the same correction that was applied to the V52 damage reference.
+
+**More importantly, I was wrong about this being the decisive experiment — the stage is hardcoded to the `ALL` write policy** (`run_trial(s, load, m, 'ALL', ...)` at `elm_v53_cue_formation.py:700`). In that regime V51-LAG scores 0.0059 and even INVARIANT-CUE only reaches 0.340. `RELIABILITY-RAW` lands at 0.005859375 — *bit-identical* to the V51-LAG ALL cell in `PANEL_GATES.csv`, which at least confirms the harness is consistent. But it means the whole stage ran on a floor where the spread between "works" and "does nothing" is under one percentage point. Distinguishing 0.000 from 0.006 is not a test of a cue mechanism.
+
+**The fix is cheap and follows from the delimiter result.** Since the write gate is recoverable label-free, scoring cue mechanisms at `TARGET-ONLY` is legitimate rather than an oracle — and that's where headroom exists (0.203 raw cue → 0.922 invariant cue). Re-running the four reliability arms at `TARGET-ONLY` is a one-line change and puts the mechanism in a regime where it can actually be measured. I'd pair that with the norm-matched shuffled control and a gentler suppression schedule, since the geometry says over-suppression is the proximate fault.
+
+So: the reliability learner as built does not work, and the run as designed could not have shown it working either. Both facts are worth carrying into the next round.

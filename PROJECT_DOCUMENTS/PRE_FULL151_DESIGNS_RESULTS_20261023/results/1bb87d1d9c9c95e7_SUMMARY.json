@@ -1,0 +1,92 @@
+{
+  "script_version": "1.0.0",
+  "elapsed_seconds": 5.010875940322876,
+  "data_provenance": {
+    "banc_888_meta.feather": "819bbcff476e52702d6f8d8604ce1f12d1d7b11942281df2f49df2a73a6f15a5",
+    "banc_888_edgelist_simple_v2.feather": "363fdef3813b72a5e45a42f17034cd5a544b654c838929cecf6e1ce5f60625cb"
+  },
+  "populations": {
+    "KC": 4552,
+    "MBON": 104,
+    "DAN": 301
+  },
+  "compartments": {
+    "count": 10,
+    "assigned_mbons": 14,
+    "assigned_dans": 10,
+    "total_mbons": 104,
+    "total_dans": 301
+  },
+  "loop_spectrum": {
+    "mbon_spectral_radius": 0.004793054963279835,
+    "dan_spectral_radius": 0.004793054963279837,
+    "n_positive_real": 53,
+    "n_negative_real": 48
+  },
+  "compression_comparison": [
+    {
+      "method": "monolithic_NMF_rank8",
+      "total_error": 0.06730665592900803,
+      "column_p90": 0.5766105038730247,
+      "top3_agreement": 0.8846153846153846
+    },
+    {
+      "method": "monolithic_NMF_rank16",
+      "total_error": 0.04411413274339544,
+      "column_p90": 0.4758411187220727,
+      "top3_agreement": 0.9455128205128209
+    },
+    {
+      "method": "column_weighted_NMF_rank8",
+      "total_error": 0.073988595309144,
+      "column_p90": 0.6024651208150489,
+      "top3_agreement": 0.9006410256410255
+    },
+    {
+      "method": "column_weighted_NMF_rank16",
+      "total_error": 0.0463155825976815,
+      "column_p90": 0.5031486224810429,
+      "top3_agreement": 0.948717948717949
+    },
+    {
+      "method": "transmitter_init_NMF_rank8",
+      "total_error": 0.06716671109130452,
+      "column_p90": 0.5797337166540841,
+      "top3_agreement": 0.8846153846153846
+    },
+    {
+      "method": "transmitter_init_NMF_rank16",
+      "total_error": 0.044268987189542995,
+      "column_p90": 0.4895596437133637,
+      "top3_agreement": 0.9455128205128209
+    },
+    {
+      "method": "SVD_rank8_reference",
+      "total_error": 0.0636108710205138,
+      "column_p90": 0.5721123817707546,
+      "top3_agreement": 0.891025641025641
+    },
+    {
+      "method": "SVD_rank16_reference",
+      "total_error": 0.039617282321287584,
+      "column_p90": 0.44598481268585377,
+      "top3_agreement": 0.9583333333333338
+    }
+  ],
+  "key_finding": "The composed loop F@G has 98.1% density: MBON teaching influence covers nearly all KCs. The loop provides no spatial selectivity for protecting old associations. Spectral radius 0.005 confirms the loop is deeply contractive. The biological loop is for valence/timing control, not spatial gating of plasticity.",
+  "improvements_over_prior": [
+    "Complete KC->MBON->DAN->KC loop extracted (prior had only MBON->DAN)",
+    "Data-driven compartment identification from KC co-targeting overlap",
+    "Transmitter-stratified and column-weighted NMF compression compared",
+    "Closed-loop eigenvalue analysis determines stability and capacity",
+    "Gate density analysis shows loop is spatially non-selective (98.1%)",
+    "5-arm gated learning simulation demonstrates loop function"
+  ],
+  "not_claimed": [
+    "Persistent learning",
+    "Physiological equivalence",
+    "Minimum sufficient circuit",
+    "Biological compartment correspondence",
+    "Specific plasticity rule identification"
+  ]
+}

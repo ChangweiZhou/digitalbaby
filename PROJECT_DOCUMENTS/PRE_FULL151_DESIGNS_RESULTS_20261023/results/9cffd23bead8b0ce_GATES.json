@@ -1,0 +1,81 @@
+{
+ "G0_implementation": {
+  "pass": true,
+  "completed_primary_arm_seed_cells": 64,
+  "expected": 64
+ },
+ "G1_raw_motif": {
+  "pass": true,
+  "audit": {
+   "side": "right",
+   "right_kc": 2267,
+   "kc_to_apl_nz": 2144,
+   "apl_to_kc_nz": 2113,
+   "reciprocal": 2057,
+   "kc_to_apl_count": 10747,
+   "apl_to_kc_count": 12228,
+   "apl_root": "720575941482622627"
+  }
+ },
+ "G2_acquisition": {
+  "pass": true
+ },
+ "G3_selective_interference": {
+  "diffout_APL_minus_TOPK": {
+   "n": 16,
+   "mean": 7.179710434787693e-05,
+   "low": 1.6510708975089963e-05,
+   "high": 0.00012708349972066389,
+   "sd": 0.00010375360840789505
+  },
+  "sameid_APL_minus_TOPK": {
+   "n": 16,
+   "mean": -0.002932657369678498,
+   "low": -0.007567201432102602,
+   "high": 0.0017018866927456062,
+   "sd": 0.008697450187511585
+  },
+  "pass": false
+ },
+ "G4_persistent_gain": {
+  "APL_minus_TOPK_heldout_bpb": {
+   "n": 16,
+   "mean": -0.006216043707037988,
+   "low": -0.04300622436552759,
+   "high": 0.030574136951451614,
+   "sd": 0.06904255507269881
+  },
+  "pass": false
+ },
+ "G5_raw_topology_specificity": {
+  "APL_minus_rewire": {
+   "n": 16,
+   "mean": 0.00041473616971698934,
+   "low": -0.0274802395241451,
+   "high": 0.028309711863579078,
+   "sd": 0.052349305198387035
+  },
+  "APL_minus_weightshuffle": {
+   "n": 16,
+   "mean": -0.008954071684646847,
+   "low": -0.05240206450603802,
+   "high": 0.03449392113674433,
+   "sd": 0.08153698577929941
+  },
+  "pass": false
+ },
+ "G6_prediction_safety": {
+  "APL_minus_TOPK_whole_bpb": {
+   "n": 16,
+   "mean": 0.008565942494265316,
+   "low": 0.007286196421125873,
+   "high": 0.009845688567404759,
+   "sd": 0.0024016446006065216
+  },
+  "pass": true
+ },
+ "G7_state_bounded": {
+  "pass": true
+ },
+ "verdict": "NO_SELECTIVE_INTERFERENCE_GAIN"
+}

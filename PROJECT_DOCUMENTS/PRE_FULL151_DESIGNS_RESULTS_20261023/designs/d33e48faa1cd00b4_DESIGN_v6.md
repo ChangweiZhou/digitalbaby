@@ -1,0 +1,597 @@
+# BYTE-CORE-FEAS-1 (v6) — Can a deployable, biologically motivated byte front end improve FULL_151?
+
+**Namespace:** `BYTE-CORE-FEAS-1`
+**Date:** 23 September 2026
+**Status:** design for review. **Not locked. No code written. Nothing run.**
+**Authority:** this is the only executable FEAS-1 design. v1 (`DESIGN_DRAFT.md`) and v2–v5 are history and must not be executed.
+**Implements:** `ROADMAP_20260923.md` §3.1, revised with this document.
+**Parents (read-only):**
+- `BYTE_CORE_1_20260922` — the frozen round.
+- `BYTE_CORE_1_ERRATUM_20260923` — post-hoc re-analysis, cited as "erratum §n"; 19 self-tests.
+
+---
+
+## R. Response to the 23 Sep review of v5 (targeted revision)
+
+| # | Finding | Change in v6 |
+|---|---|---|
+| 1 | FK cannot split the gain into an identity part and a non-identity part. FK also changes repetition-dependent front-end state, yet v5 said other paths "cancel" and called B "identity part dominates". In fact B = ΔI − 2ΔFK: an operational threshold, not a decomposition. | **Renamed and re-scoped** (§1, §8.2). C_id becomes **E_FK, the total effect of switching to fresh keys** on the candidate's advantage. That effect includes the loss of any identity learning, the change in repetition-dependent front-end state, and their interactions with everything held fixed. B is kept as an **empirical screening criterion** ("advantage lost with fresh keys exceeds advantage retained") and no mechanism is claimed from it. The "cancels" wording is corrected: a shared outcome sequence controls effects common to both arms, not their interaction with front-end state. |
+| 2 | Confirmation turned "not confirmed" into "confirmed absent": C_id lower ≤ 0 gave `GAIN_NOT_IDENTITY_DEPENDENT`, and B lower ≤ 0 gave `GAIN_IDENTITY_NOT_DOMINANT`. | **Every decision quantity now has a three-way status:** POS (lower > 0), NEG (upper < 0), UNRESOLVED (the CI contains 0) (§9.0). A reverse verdict needs NEG. No equivalence margin is set in this round, so "no dependence" is never concluded. The confirmation label is derived from the status vector, and the vector is always reported (§9.5). |
+| 3 | "≥ 95% power" overclaimed. It was computed from the selected candidate's development mean and SD, with FK quantities that have no history. | **Renamed "planned power (from development estimates)."** n is set under **conservative inputs**: half the development mean, and the one-sided 90% upper confidence bound of the development SD. `CONFIRM_PLAN.json` reports a scenario grid and lists every scenario that misses the target (§9.4). |
+| 4 | FE-NI and FE1 differ in more than rest-period decay, so FE-NI's R cannot by itself refute the rest-recovery account of FE1's loss. | **Prediction wording tightened** (§13). FE-NI's R is an observation about FE-NI. A decisive test would vary rest decay within one front end; it is deferred. |
+| 5 | (Roadmap) Bridge precision was planned from FE-ID's learning-contrast SD, which need not match the byte front ends'. | **The bridge now plans n from its own calibration worlds**, using each front end's write/no-write contrast and the 90% upper SD bound. FE-ID's SD is context only (roadmap §3.2b). |
+
+Everything else in v5 is unchanged: interfaces, streams, arms, readout, retention measure, phases, checkpoint, qualification and budget.
+
+---
+
+## 0. Acceptance contract
+
+| Item | Contract |
+|---|---|
+| **Question** | Does one explicit, deployable, **biologically motivated** byte front end improve the frozen FULL_151 on R2/F3 under a prespecified readout, satisfying three conditions? (a) The candidate's discrimination advantage shrinks when keys stop recurring, with the outcome sequence, timing, wrappers and consequence bytes held identical. (b) It passes the recurrence screening criterion B. (c) It also improves retention of unchanged pairs across ≥ 24 h. |
+| **Decides** | Whether the byte line's default front end changes automatically. Every other outcome keeps FE0 as default and goes to the owner with its status vector. It does **not** decide S2 readiness (roadmap §3.2b). |
+| **Stream** | BYTE-CORE-1 world: V88 schedule plus amendment A10 (1,824 trials, ≈ 27 simulated days). R2 with reserved bytes 0xF1 and 0xF0. Frozen F3 rendering. Massed, clock ×1, episode 30 s, gap 135 s. Fresh namespaces. |
+| **Interfaces (§3)** | Front ends receive only (byte, time), and `read()` is pure. The innate detector's event reaches only the frozen learner, identically in every arm. The code is taken when a detector byte arrives, before that byte is integrated; this is causally verified (Q2). |
+| **Learner** | FULL_151 `151ebd9e2d054ec9ec14`, frozen. Adapter `S0-EPISODE` unchanged. Frozen reader Q. |
+| **Stream conditions** | **I** intact. **FK** fresh keys (primary control). **UNP** frozen `unpaired_world` (sensitivity). |
+| **Arms** | **Reference:** FE0. **Candidates:** FE1, FE-NI. **Engineering benchmark:** FE-LAG, under identical rules. All four run under I, FK and UNP. **Fixtures:** XR and FE-TAIL4 (calibration-phase positive controls); NI-READLOCKED (Q3). |
+| **Readout** | p(aversive) = σ(a·s + c), s = −v. One fitting procedure on intact CAL lives, frozen before development. FK and UNP arms inherit the intact readout. |
+| **Decision quantities (§8)** | **A1:** intact Δη. **E_FK:** fresh-key effect in AUC. **B:** recurrence screening criterion in AUC. **R:** Δη on delayed returns of unchanged pairs. All per world, paired vs FE0, each with a three-way status. **S_unp:** sensitivity. |
+| **Automatic adoption** | Only if A1, E_FK, B and R are all POS (§9.5). |
+| **Development** | 16 worlds, plus one pre-set extension of 16. For selection only. Screening line 0.02 on A1. |
+| **Confirmation** | One frozen candidate on untouched worlds. n is fixed in advance (32–64) from planned power under conservative inputs. Confirmation runs automatically only if `IMPROVES` is plausibly reachable (§9.4). |
+| **Budget** | ≤ 287 lives always. Ceiling ≤ 815 lives, a limit and not a target (§10). |
+
+---
+
+## 1. What this round can and cannot establish
+
+| Claim | Licensed by | Meaning |
+|---|---|---|
+| **Usable gain** | A1 POS | The complete strategy (front end + frozen learner + declared readout) predicts delivered consequences better than FE0 on the actual stream. |
+| **Advantage depends on keys recurring** | E_FK POS | The candidate's discrimination advantage over FE0 is smaller when no key ever recurs. The delivered-outcome sequence (times, sides, runs), schedule, wrappers and consequence bytes are held identical. This is the **total** effect of the switch to fresh keys. It includes the loss of any identity learning, the change in repetition-dependent front-end state (such as FE1's habituation to repeated keys and FE-NI's self-cancellation), and their interactions with the fixed outcome sequence. **It does not isolate identity learning.** |
+| **Recurrence screening criterion met** | B POS | The advantage lost when keys stop recurring exceeds the advantage retained under fresh keys. B = E_FK − ΔFK = ΔI − 2ΔFK. It is an operational screening criterion against advantages that mostly survive without recurrence. **No mechanism claim** ("identity dominates" or similar) follows from it. |
+| **Retention gain** | R POS | Delayed (≥ 24 h) returns of pairs whose consequence has not changed are predicted better than by FE0. |
+| **Sensitivity** | S_unp | The same contrast with the unpaired control. That control keeps cue identities and presentation times, destroys contingency and changes the outcome sequence. It is reported and sets the wording (§9.5); it does not gate. |
+
+**What holding the outcome sequence fixed achieves.** FK receives the same outcome sequence as I. So any effect of that sequence which does not interact with key recurrence is common to both arms and drops out of E_FK. Interactions with repetition-dependent front-end state do not drop out.
+
+**Not claimed:**
+- **Write dependence**, or any locus of an advantage (front end, learner writes, or their interaction). See v5 §R: CD left cue bytes tied to outcomes, non-detection is not exclusion, and FULL_151's event kernel receives the punishment value even when writes are disabled.
+- **Identity learning as a separable component.** Neither E_FK nor B isolates it.
+- **Own-cue vs partner-cue learning.** Under R2 pairing both depend on recurrence. Separating them needs independent consequences (S2-ID at R8).
+- **"No dependence on recurrence."** No equivalence margin is set, so an UNRESOLVED E_FK is never read as absence.
+
+---
+
+## 2. Evidence this design uses
+
+| Evidence | Value | Source |
+|---|---|---|
+| FULL_151 + FE0 learns above chance on F3, weakly | In-stream AUC 0.613 (no-learning 0.496). η 0.0047 with the frozen decoder, 0.0263 with the CAL-fitted bias decoder | erratum §2, PH-1 |
+| Exploratory in-stream gains (DEV, n = 16) | FE1 +0.0254 [0.0178, 0.0330] (SD 0.0143). FE-LAG +0.0295 [0.0235, 0.0355] (SD 0.0112) | erratum §5, §12 |
+| Retention differs by horizon | 24-h day probes of new pairs: FE1 +0.027 [+0.003, +0.050]. Delayed returns of unchanged pairs (40 per life): FE1 −0.044 [−0.075, −0.013] (DEV), −0.040 [−0.076, −0.004] (CAL). Per-world SD 0.043–0.082 | erratum §12, §13 |
+| Key-tail oracle advantage (a positive control here) | FE-TAIL4 − FE0: ΔAUC +0.159 (CON) | erratum PH-5 |
+| Frozen unpaired control | FE0 F3 UNPAIRED AUC 0.4948 | erratum §2 |
+| Roles are randomized | Drawn per world as complementary pairs of pair indices, independent of keys. Acquisition order is permuted per block | `bytecore.py` `create_world` |
+| No-write events still receive the punishment value | `event(..., plastic=False)` → `advance73(x, dt, punishment, …, plastic)` | `model_evo.py` |
+| Read timing | `present` locates the reserved byte, feeds up to it, advances to its arrival, reads, teaches, then feeds the rest | `bytecore.py` 949–970 |
+
+Frozen oracle and no-learning numbers are context only. The exception is FE-TAIL4, which is re-run here as a positive control.
+
+---
+
+## 3. Interfaces and causality
+
+| Component | Receives | Never receives |
+|---|---|---|
+| **Front end** | (byte, time) for every byte, in arrival order | The detector event; record boundaries; identity, role, key position, wrapper id; tags; truth |
+| **Innate detector** (fixed; part of the animal) | Each arriving byte | Anything else |
+| **Learner** (frozen) | The detector event; the front end's output at the detector moment | Truth, identity, role, wrapper id, tags |
+| **Evaluator only** | Delivered and committed truth, identities, roles, tags, schedule, stream condition | — |
+
+- **Detector event.** It fires when 0xF1 (US on) or 0xF0 (US off) arrives, so once per record, neutral records included. This is BYTE-CORE-1's S0 convention (§3.3, §4.2, amendment A1), not a fly finding. All arms share it identically.
+- **Read moment.** The front end is advanced to the detector byte's arrival and read before that byte is integrated. The frozen adapter finds this position by scanning ahead in code; no future information is used. **Q2** requires a byte-by-byte driver to reproduce the adapter bit for bit in every arm. On each arrival the driver lets the detector inspect the byte. If the detector fires, the driver commits the snapshot from before the byte, then teaches, then feeds the byte.
+- **Read purity.** `read()` computes from the current state and modifies nothing: no caches, no counters. **Q3** inserts extra reads at random times and requires later outputs and the final state to be bit-identical. NI-READLOCKED must fail.
+
+---
+
+## 4. Worlds and stream conditions
+
+### 4.1 Namespaces
+
+| Namespace | Block | Indices | Use |
+|---|---|---|---|
+| `FEAS1-ENG` | `Q` | 0–1 | Technical fixtures |
+| `FEAS1-CAL` | `K` | 0–7 | Readout and NLMS-rate fitting; checks H2–H6 |
+| `FEAS1-DEV` | `D` | 0–15, plus 16–31 (extension) | Development (selection) |
+| `FEAS1-CON` | `V` | 0 … n_V − 1 | Confirmation. Generated only after `CONFIRM_PLAN.json` is hashed |
+
+Worlds come from the frozen `create_world(ns, block, index, "R2", "massed")`, seeded `BYTE-CORE-1|<ns>|<block>|<index>`.
+
+**Every intact life has:**
+- 3,648 scored consequence events;
+- 13 day checkpoints (12 with relevant-pair probes, 320 probes in all);
+- 40 delayed returns of unchanged pairs (erratum §13; fixed by the schedule).
+
+### 4.2 World identity
+
+1. **No seed or world reuse.** Q12 checks that every FEAS-1 world hash differs from every other FEAS-1 world hash and from every BYTE-CORE-1 world hash in its job files.
+2. **Keys unique within a world.** The frozen `audit_world` checks this, extended to every key used in an FK life.
+3. **Cross-world key coincidences are counted and reported, not failed.** About 1.5 are expected by chance with BYTE-CORE-1: the key space is 36⁶ ≈ 2.2 × 10⁹, with ~396 keys per world. Every life starts from re-initialized state, and nothing crosses lives.
+
+### 4.3 Stream conditions
+
+**FK (fresh keys), exactly.**
+- The j-th presented record of a life, in life order, uses key k_j instead of its cue's key.
+- k_j is drawn from a world-seeded stream (`…|fk|…`) over the key alphabet. Any key already used in that world is rejected: original keys, neighbours, earlier fresh keys.
+- Everything else is identical to the intact life: the event list and times, the sides, the delivered consequences (and so the consequence-byte sequence), the tags, the wrapper index w (from the **original** cue's presentation count), the XOR masks applied to k_j, and the newline.
+- Probes in FK lives also use fresh keys. They are recorded and excluded from every decision quantity.
+- Reserved bytes cannot occur in any rendered FK context (the amendment-A1 argument; Q4).
+
+**UNP.** The frozen `unpaired_world(w)` permutes whole trials' deliveries across trials.
+
+| | I | FK | UNP |
+|---|---|---|---|
+| Cue identities recur | yes | **no** | yes |
+| Cue→consequence contingency | yes | none (nothing recurs) | **destroyed** |
+| Delivered-outcome sequence (time, side, runs) | — | **identical to I** | **changed** |
+| Consequence-byte sequence seen by the front end | — | identical to I | changed |
+| Presentation times, schedule, tags | — | identical | identical |
+| Wrappers | — | identical | identical |
+| Within-trial pairing (one aversive per trial) | yes | identical | kept |
+| Repetition-dependent front-end state | yes | **changed** (FK's confound) | identical |
+
+---
+
+## 5. Learner, adapter, driver
+
+**Learner and adapter (frozen), per record:**
+1. The context is fed.
+2. At the detector moment the code is taken (§3), encoded live with `encode_sparse`, and v is recorded.
+3. Teaching is one 30 s event with punishment = [0xF1].
+4. The remaining bytes are fed, then the 135 s gap.
+
+**FEAS driver.**
+- A copy of the frozen `run_life`, with three additions: a learner factory, an FK key hook, and an external recording wrapper.
+- No frozen module is patched.
+- **Q1** requires that, with FK off, it reproduces the frozen `run_life` bit for bit for intact and UNP lives.
+
+---
+
+## 6. Front ends
+
+Every front end:
+- receives only (byte, time);
+- keeps all state in counted arrays;
+- has no learned parameters;
+- has a pure `read()`;
+- is identical across worlds.
+
+The receptor table **R** (256 × 88) is frozen: 6 channels per byte, amplitudes U[0.4, 1.0], seed `BYTE-CORE-1|RECEPTOR|v1`.
+
+| Arm | Role | Definition | State | Basis (label) |
+|---|---|---|---:|---|
+| **FE0** | Reference; frozen `bytecore.FE0` | p ← p·e^(−Δt/10 s) + R[b]; `read()` = p/max p | 88 floats | Hallem & Carlson 2006 (R) |
+| **FE1** | Candidate; frozen `bytecore.FE1` | Input R[b]⊙(1 − h). Per byte, h ← clip(h + 0.3(1 − h)⊙R[b], 0, 1). h decays with τh = 1,800 s. p as in FE0 | 176 floats | Short-term odorant-selective habituation (Das et al. 2011, C+) |
+| **FE-NI** | Candidate; new | FE0 integration plus an exposure-driven negative image m | 176 floats | Long-term habituation via glomerulus-selective potentiated inhibition (Das et al. 2011, C+); negative-image proposal (Ramaswami 2014, T) |
+| **FE-LAG** | Engineering benchmark; frozen `bytecore.FELAG`. Identical rules; never adopted (C8) | V51 lag code of the last 12 bytes; signed 8-contact adaptor; tanh; rectified; normalized | 12 bytes | Delay lines; not biological |
+
+**FE-NI, exactly.**
+- **State:** p (as in FE0) and m, with m₀ = 0.
+- **`advance(t)`:** p decays. m never changes, so there is no decay in silence.
+- **`feed(b, t)`**, in order:
+  1. `advance(t)`;
+  2. p̂ = p / max p (zero if p = 0);
+  3. m ← m + (p̂ − m)/1,792;
+  4. p ← p + R[b].
+- **`read()`** is pure: recompute p̂ from the current p, then return o / max o where o = max(p̂ − m, 0). Return zero if max o = 0.
+- **Empty reads** are counted by the external wrapper, never inside `read()`.
+- **N_m = 1,792** = 128 records × 14 bytes. Twelve massed records of one pair make up 9.0% of m. Convergence reaches 95% after ≈ 383 records, which is within block 0 (576 records).
+- **Expected weakness:** a late separator is under-cancelled, because it is present in only 2 of 14 samples.
+
+**How FE-NI differs from FE1** (relevant to §13): subtractive vs divisive; pattern-level vs channel-gain; sampled at every byte arrival vs driven by each byte's input; no decay in silence vs τh = 1,800 s. FE-NI is therefore not a one-factor variant of FE1.
+
+**Fixtures (never candidates):**
+
+| Fixture | Definition | Used in |
+|---|---|---|
+| **XR** | FE0 plus q, which decays with τ = 600 s. On arrival of a reserved byte, q += R[b], added after the read. `read()` = normalize(p + q), pure. It carries earlier consequences into later reads (weight ≈ 0.76 for the previous one) and deliberately uses the reserved-byte class. Its advantage cannot require key recurrence | H5 (CAL) |
+| **FE-TAIL4** | Frozen oracle: FE0 fed only key bytes 2–5. Its advantage over FE0 (+0.159 AUC in CON, erratum PH-5) comes from how it codes each key, which is useless when no key recurs | H6 (CAL) |
+| **NI-READLOCKED** | v2's FE-NI, with m updated inside `read()` | Q3 (must fail) |
+
+**Not candidates, and not dismissed:** FE1-NI, which inherits FE1's retention cost (erratum §13); the read-locked and output-driven negative images; a sparser receptor table; slot-geometry kernels; FE-SURP.
+
+---
+
+## 7. Declared readout
+
+- **Score and model:** s = −v; p(aversive) = σ(a·s + c).
+- **Fit data:** all scored events of the arm's 8 intact CAL lives, pooled. Worlds are weighted equally, since each life has 3,648 events.
+- **Fit method:**
+  - maximum Bernoulli likelihood against the delivered byte;
+  - Newton's method (IRLS) from (0, 0), stopping at max |gradient| < 10⁻¹⁰;
+  - objective-only clip at [10⁻¹², 1 − 10⁻¹²];
+  - one function for every arm.
+- **Freeze:** the fit is written to `READOUT.json`, which is hashed before any DEV world exists.
+- **Inherited readouts:** FK and UNP arms use their intact parent's (a, c). Their η is reported but never decides anything, because the readout is mismatched under those streams.
+- **Clipping:** every η uses clip ε = 10⁻³.
+- **Never:** recalibration or online correction.
+
+The CODE-NLMS rate (reference only) is chosen in the same phase over {0.1, 0.3, 1, 2}.
+
+---
+
+## 8. Outcomes
+
+### 8.1 η (BYTE-CORE-1 §5.2)
+
+- Per scored item: p̃(y) = clip(p if aversive, else 1 − p; ε, 1 − ε).
+- Bits saved: s = log₂ p̃(y) + 1. Relevant information per item: i = 1. Per world, η = Σs / Σi.
+- In-stream truth is the **delivered** byte, anomalies included.
+- **Units:** a Δη of 0.02 is 2 bits per 100 bits of relevant consequence information. It is not 2 percentage points of accuracy.
+
+### 8.2 Decision quantities (per world, paired vs FE0 on identical worlds)
+
+AUC is computed over all in-stream scored events of the life (3,648).
+
+| ID | Definition | Currency | Name |
+|---|---|---|---|
+| — | ΔI = AUC(c, I) − AUC(FE0, I) | AUC | intact discrimination advantage (reported) |
+| — | ΔFK = AUC(c, FK) − AUC(FE0, FK) | AUC | advantage retained under fresh keys (reported) |
+| **A1** | η(c, I) − η(FE0, I) | η | usable gain |
+| **E_FK** | ΔI − ΔFK | AUC | **fresh-key effect** — total change in the advantage when keys stop recurring |
+| **B** | E_FK − ΔFK = ΔI − 2ΔFK | AUC | **recurrence screening criterion** (empirical, not a decomposition) |
+| **R** | η(c, I) − η(FE0, I) over the 40 delayed returns of unchanged pairs per life (tags `stable` and `react`; ≥ 24 h since the previous presentation) | η | retention gain |
+| **S_unp** (sensitivity; not a gate) | ΔI − [AUC(c, UNP) − AUC(FE0, UNP)] | AUC | unpaired-control effect |
+
+**Why AUC for E_FK, B and S_unp.** FK and UNP lives run under readouts fitted on intact lives, so their η mixes learning with readout mismatch (erratum §2 caveat). AUC is readout-free.
+
+**Why this R** (erratum §13):
+- It is the owner's in-stream η, restricted to delayed demand for unchanged pairs.
+- Revisions, anomalies and misleading reminders are excluded; they stay in A1.
+- The earlier 24-h day-probe measure showed FE1 gaining while delayed returns showed it losing.
+- Tags are used by the evaluator only.
+
+### 8.3 Reported, with no decision role
+
+| ID | Quantity |
+|---|---|
+| R1 | Intact in-stream AUC (ΔI); native paired accuracy |
+| R2 | Retention profile: η and AUC by time since the previous presentation (< 1 h, 1–24 h, 24 h–7 d, ≥ 7 d) and by tag; 24-h day-probe η and AUC; final 7-day probe η and AUC |
+| R3 | Windows W1–W13 and day checkpoints: η, observed aversive frequency, unconditional mean p, AUC, n |
+| R4 | Offset share (learned minus no-learning copy below 0), per window |
+| R5 | FK and UNP lives: ΔFK, ΔUNP, and per-arm AUC and η |
+| R6 | Side-1 first-presentation AUC (descriptive) |
+| R7 | CODE-NLMS on the same codes |
+| R8 | Live interface statistics from the external wrapper |
+| R9 | Resources |
+| R10 | F4 day probes (intact) |
+
+---
+
+## 9. Decision rules
+
+### 9.0 Statistics and status of a quantity
+
+- **Unit and pairing.** The world is the unit, and arms are paired on identical worlds. Each quantity is the per-world difference, summarized by its mean, its SD and a 95% two-sided t interval (df = n − 1).
+- **Multiplicity.** Development is selection, so there is no multiplicity adjustment there. Confirmation tests one frozen candidate.
+
+Each of A1, E_FK, B and R has exactly one status:
+
+| Status | Condition | Meaning |
+|---|---|---|
+| **POS** | lower bound > 0 | Positive direction supported |
+| **NEG** | upper bound < 0 | Negative direction supported |
+| **UNRESOLVED** | interval contains 0 | Neither direction is supported. **This is never read as "no effect"**, because no equivalence margin is set in this round |
+
+The three statuses are exclusive and exhaustive. Every classification below is a decision tree in which the first matching row wins.
+
+### 9.1 Development (n = 16), for each candidate c ∈ {FE1, FE-NI}
+
+| Step | Condition | Status |
+|---|---|---|
+| D1 | A1 upper < 0.02 (screening line), or E_FK is NEG, or B is NEG | **FUTILE** |
+| D2 | A1 mean ≥ 0.02 and A1 is POS, and R is NEG | **TRADE_OFF_IN_DEVELOPMENT** (to the owner; not confirmed automatically) |
+| D3 | A1 mean ≥ 0.02 and A1 is POS, and E_FK is POS, and B mean > 0, and R mean ≥ 0 | **SELECTABLE** |
+| D4 | Otherwise | **INCONCLUSIVE** |
+
+FE-LAG is classified by the same tree and reported as an engineering benchmark. It never enters selection.
+
+### 9.2 Extension (still development)
+
+- **Runs only if** no candidate is SELECTABLE at n = 16 and at least one is INCONCLUSIVE.
+- **What runs:** FE0 and every INCONCLUSIVE candidate, under I, FK and UNP, on DEV 16–31.
+- **After it:** the tree is re-applied at n = 32. Anything still INCONCLUSIVE becomes **NOT_SELECTED**.
+- There is no second extension.
+
+### 9.3 Selection
+
+- **Choice:** among SELECTABLE candidates, the one with the **largest A1 lower bound**. Ties go to the larger E_FK lower bound, then to the smaller state.
+- **Reported as:** "usable gain supported (estimate meets the screening line 0.02); the advantage is smaller when keys do not recur (fresh-key effect positive); retention estimate not negative". Never as an established gain of any size, and never as identity learning.
+- `SELECTION.json` is hashed.
+- If nothing is selected, the result is `NO_CANDIDATE_SELECTED` (§9.6).
+
+### 9.4 Confirmation plan (fixed before worlds exist)
+
+**Inputs for each Q ∈ {A1, E_FK, B, R}:**
+- m_Q, the development mean;
+- s_Q, the development per-world SD;
+- n_D, the final development n.
+
+**Conservative planning inputs:**
+- Δ_plan = m_Q / 2;
+- SD_plan = s_Q · √((n_D − 1) / χ²₀.₁₀,ₙ_D₋₁). This is the one-sided 90% upper confidence bound on the SD: the factor is 1.325 at n_D = 16 and 1.203 at n_D = 32.
+
+**Confirmation size n_V.** The smallest n ≥ 32 with **planned power ≥ 0.90** for each of A1, E_FK and B to be POS under the conservative inputs. Power comes from the noncentral t for a two-sided 95% interval. The cap is 64; if the cap is exceeded, the result is `NOT_CONFIRMABLE_THIS_ROUND` and nothing runs.
+
+**Worked example (A1, frozen FE1 numbers):** SD_plan = 0.0143 × 1.325 = 0.0189 and Δ_plan = 0.0127, The exact noncentral-t calculation gives n = 26 (planned power 0.907), so n_V = 32.
+
+**Reachability of `IMPROVES`.**
+- Compute R's planned power to be POS at n_V under the conservative inputs. If m_R ≤ 0, Δ_plan = 0.
+- If that power is ≥ 0.80, the plan's status is **RUN**.
+- Otherwise the status is **`AWAITING_OWNER`** and the runner stops.
+
+**What `CONFIRM_PLAN.json` records:**
+- the candidate, n_V, the readout hash, and the six arms (candidate and FE0 under I, FK and UNP);
+- a **scenario grid** of planned power at n_V for each Q, over Δ ∈ {m_Q/2, m_Q/4} × SD ∈ {s_Q, SD_plan};
+- **an explicit list of every scenario below 0.80**;
+- this statement: "Planned power is computed from the selected candidate's development estimates. It is not a guarantee: selection biases the mean upward, the SD is itself estimated, and the fresh-key quantities have no history."
+
+The file is hashed before any CON world is generated.
+
+### 9.5 Confirmation (one candidate; 95% CIs)
+
+**Step 1 — status vector.** Each of A1, E_FK, B and R gets POS, NEG or UNRESOLVED (§9.0). The vector is always reported first.
+
+**Step 2 — summary label** (first matching row wins):
+
+| Step | Condition on the status vector | Label | Consequence |
+|---|---|---|---|
+| L1 | A1 NEG | **`WORSE_THAN_FE0`** | Not adopted |
+| L2 | A1 POS and R NEG | **`TRADE_OFF`** | Owner decision; FE0 stays default |
+| L3 | A1 POS and (E_FK NEG or B NEG) | **`GAIN_NOT_TIED_TO_RECURRENCE`** | Owner decision; FE0 stays default |
+| L4 | A1 POS and E_FK POS and B POS and R POS | **`IMPROVES`** | The default changes automatically; the S2 bridge must still be passed |
+| L5 | Otherwise | **`UNRESOLVED`** | FE0 stays default. The report names each UNRESOLVED quantity and gives its interval. The owner decides whether any follow-up is warranted |
+
+**Pre-registered readings of each status:**
+
+| Quantity | POS | NEG | UNRESOLVED |
+|---|---|---|---|
+| A1 | Usable gain confirmed | Candidate worse than FE0 | Gain neither confirmed nor excluded |
+| E_FK | The advantage is smaller when keys do not recur (total fresh-key effect; not identity learning in isolation) | The advantage is larger when keys do not recur | Dependence on recurrence neither shown nor excluded |
+| B | Screening criterion met: advantage lost > advantage retained | Criterion failed: advantage retained > advantage lost | Criterion not decided |
+| R | Retention of unchanged pairs across ≥ 24 h improved | Retention worse (trade-off) | The data allow a retention change anywhere between the interval bounds |
+
+**Sensitivity wording (S_unp; never changes the label):**
+- If S_unp is POS: "the advantage also shrinks under the unpaired control".
+- Otherwise: "the unpaired control, which also changes the outcome sequence, did not show it".
+
+**Always reported:** each estimate against the screening line; A1's interval; ΔI and ΔFK with their intervals.
+
+There is no loss margin anywhere.
+
+### 9.6 Round-level readings
+
+- **`NO_CANDIDATE_SELECTED`** means no biologically motivated candidate met §9.1.
+  - **If FE-LAG would have been SELECTABLE,** the report says a deployable byte/time front end can meet these rules and the biologically motivated candidates fall short. Promoting an engineering front end is the owner's decision (C8).
+  - **If FE-LAG also fails,** no tested deployable front end meets the rules.
+- **`TRADE_OFF_IN_DEVELOPMENT`, `AWAITING_OWNER`, and every confirmation label other than `IMPROVES`** go to the owner with their status vectors.
+
+---
+
+## 10. Phases, roster, budget
+
+Unchanged from v5.
+
+| Phase | Arms × worlds | Lives | Runs |
+|---|---|---:|---|
+| **Q** Fixtures | Q1 (11), Q2 (8), Q4 (2), Q6 (1), Q11 (1) | 23 | Always |
+| **K** Calibration and instrument checks | Intact FE0, FE1, FE-NI, FE-LAG × CAL 0–7 (32); FE0 FK (8); XR I and FK (16); FE-TAIL4 I and FK (16) | 72 | Always |
+| **D** Development | FE0, FE1, FE-NI, FE-LAG × {I, FK, UNP} × DEV 0–15 | 192 | Always |
+| **X** Extension | FE0 and ≤ 2 INCONCLUSIVE candidates × {I, FK, UNP} × DEV 16–31 | ≤ 144 | Only under §9.2 |
+| **V** Confirmation | Candidate and FE0 × {I, FK, UNP} × CON 0 … n_V − 1 | 192–384 | Only if the plan's status is RUN |
+
+**Q-roster:**
+- **Q1:** FE0 and FE1 through both the FEAS driver and the frozen `run_life` on ENG 0–1 (8); one failing variant (1); FE0 on `unpaired_world` through both paths (2).
+- **Q2:** the byte-causal driver for FE0, FE1, FE-NI and FE-LAG (4); the frozen path for FE-NI and FE-LAG (2); two failing variants (2).
+- **Q4:** FE0 under FK (1); one failing variant (1).
+- **Q6:** one failing probe variant.
+- **Q11:** the empty-read positive control.
+
+**Totals:**
+
+| Scope | Lives | CPU (4–9 s per life) |
+|---|---:|---|
+| Always | 287 | ≈ 19–43 CPU-min |
+| With extension | ≤ 431 | — |
+| Ceiling | ≤ 815 | ≈ 54–122 CPU-min |
+
+For comparison, BYTE-CORE-1 ran 3,856 lives.
+
+---
+
+## 11. Instrument checkpoint (after Q and K; before any DEV world)
+
+Any halt writes `CHECKPOINT.json` and stops the runner. No DEV world is generated until a written amendment has been reviewed.
+
+| ID | Halt if |
+|---|---|
+| H1 | Any Q check fails, or any negative or positive control misbehaves. |
+| H2 | 2-fold readout cross-fit on CAL (worlds 0–3 ↔ 4–7) fails for any intact arm: \|held-out η − in-sample η\| > 0.01, or held-out mean p outside 0.50 ± 0.05. |
+| H3 | FE-NI empty-read rate on CAL > 1%. |
+| H4 | FE0's CAL in-stream η is not POS (frozen CAL: 0.0243). |
+| H5 | **Fresh keys fail to keep a key-independent advantage:** ΔFK(XR) = AUC(XR, FK) − AUC(FE0, FK) is not POS (n = 8). Without this positive control, ΔFK, and therefore E_FK and B, cannot be trusted to register advantages that do not need recurrence. |
+| H6 | **The fresh-key effect fails to register a recurrence-dependent advantage:** E_FK(FE-TAIL4) is not POS (n = 8). Without this positive control, E_FK cannot be trusted. |
+
+---
+
+## 12. Qualification (phase Q)
+
+Unchanged from v5 except Q8. Each check has a negative control (a defect it must catch); diagnostics also have a positive control (a known effect they must register). Results are computed from archived runs; no flag is a literal.
+
+| ID | Check | Negative control | Positive control |
+|---|---|---|---|
+| Q1 | **Driver identity.** With FK off, the FEAS driver reproduces the frozen `run_life` bit for bit (all `ev_*` and `pr_*` arrays and the final digest): FE0 and FE1 on ENG 0–1, and FE0 on `unpaired_world` | A wrapper that adds one active KC must break identity | — |
+| Q2 | **Causal read moment.** The byte-by-byte driver matches the frozen adapter for FE0, FE1, FE-NI and FE-LAG on ENG 0 | (a) A snapshot after integrating the detector byte, and (b) a snapshot at the previous byte's arrival, must each break identity | — |
+| Q3 | **Read purity.** Each front end (FE0, FE1, FE-NI, FE-LAG, XR), driven alone on ENG 0's bytes, gets 1,000 extra `read()` calls at random times. Scheduled outputs, final state and the wrapper's counters must stay bit-identical | NI-READLOCKED must fail | — |
+| Q4 | **Stream conditions.** FK: (a) the event log (times, sides, delivered bytes, tags, wrapper indices) is identical to I; (b) no key recurs in the life, and none equals an original key or neighbour; (c) no reserved byte appears in any rendered context. UNP: a structural diff shows keys, tags, timing and one aversive per trial kept, with deliveries permuted across trials | An FK variant that reuses the original key on alternate presentations must fail (b). An FK variant that derives wrappers from fresh keys must fail (a). A UNP variant that permutes sides within trials must fail the pairing check | H5 and H6 in phase K |
+| Q5 | **No annotation reaches a front end.** New classes reject `set_oracle`; the learner accepts only byte records | An FE-NI variant exposing `set_oracle(key_offset)` must be flagged | The frozen FE-TAIL4 is flagged |
+| Q6 | **Probes are read-only.** The persistent digest (learner, plus front-end p, h, m, q) is unchanged across every probe | A probe that reads the live front end must raise | — |
+| Q7 | **Readout fitting.** It refuses non-CAL worlds, and a shuffled-label fit gives η ≤ 0.002 on ENG | Injecting a DEV world must raise | On frozen CAL FE0 F3 data it reproduces the erratum's fit (a = 0.06543, c = −0.8256) within 10⁻³ |
+| Q8 | **Metric, status and decision fixtures.** η, AUC, paired accuracy and window summaries on known inputs. The status function (§9.0), the development tree, the confirmation label tree and the planning function (§9.4) are fed synthetic per-world inputs. They must return pre-computed outputs for every branch and boundary. This includes: exclusivity; a CI straddling 0 giving UNRESOLVED, not NEG; and the planning function reproducing a noncentral-t power table | A constant-offset synthetic stream gives flat window means | A planted drift is tracked by the window means |
+| Q9 | **R6 detector** (descriptive) | Frozen FE0 F1, FE-TAIL4 F3 and FE-ID F3 (CON) stay quiet | Frozen V50-REF F1 (0.759) and FE3 F3 (0.569) fire |
+| Q10 | **Retention and day-probe measures.** On frozen files, reproduce erratum §12 (FE1 − FE0 day-probe Δη +0.0266, DEV) and §13 (FE1 − FE0 R −0.0438, DEV; 40 events per life) | Shuffled labels give η ≤ 0 | The reproductions themselves |
+| Q11 | **Empty reads.** FE-NI < 1% on ENG | — | A variant with m₀ = 1 on every channel must exceed the limit |
+| Q12 | **World identity (§4.2)** | A world built with a reused BYTE-CORE-1 namespace and index must be rejected. A world with a duplicated key must be rejected | — |
+| Q13 | **Source lock** over new files, hashes of the frozen imports, and the frozen `SOURCE_LOCK.json` | An appended comment must raise | — |
+| Q14 | **Frozen folders unchanged**, before and after each phase | A one-byte change in a scratch copy must be detected | — |
+| Q15 | **Output manifest** | Removing an output must fail packaging | — |
+
+---
+
+## 13. Predictions, written before any run
+
+| Arm | A1 | E_FK, B | R and other quantities |
+|---|---|---|---|
+| FE0 | — | AUC(FE0, FK) ≈ 0.5 or slightly below: no recurrence, and partner generalization is anti-informative | In-stream η ≈ 0.026; retention-subset η ≈ 0.014 |
+| FE1 | ≈ +0.025 (frozen) | E_FK POS expected (intact ΔAUC ≈ 0.05). ΔFK small: side-1 first-presentation AUC is 0.518 (erratum §10). B POS likely | **R ≈ −0.04** (frozen −0.044 and −0.040), so expected status **`TRADE_OFF_IN_DEVELOPMENT`** |
+| FE-NI | Positive if the common-component account holds; no magnitude predicted | E_FK POS if A1 POS | R not below FE0. **FE-NI's R is an observation about FE-NI only.** FE-NI differs from FE1 in several respects (§6), not only in rest decay, so its R can neither confirm nor refute the rest-recovery account of FE1's loss. A decisive test varies rest decay within one front end (deferred, §17) |
+| FE-LAG (benchmark) | ≈ +0.03 (frozen) | Unknown | R ≈ 0 (frozen +0.011 DEV, −0.003 CAL; CIs span 0), so likely INCONCLUSIVE on R |
+| XR | — | ΔFK(XR) POS (H5) | — |
+| FE-TAIL4 | — | E_FK ≈ its intact advantage, ≈ +0.16 (H6) | — |
+
+**Observations that would count against FE-NI's own rationale:**
+- the offset share falls toward 0.5 while A1 is not POS, which would suggest the offset is a symptom rather than the cause;
+- FE-NI's R is NEG, meaning its no-decay adaptation, in this form, does not protect retention.
+
+---
+
+## 14. Limits of any result
+
+- **Complete strategies only.** No locus of an advantage is claimed.
+- **E_FK is a total fresh-key effect.** B is an empirical criterion. Neither isolates identity learning.
+- **Own-cue vs partner-cue learning** is not separated.
+- **UNRESOLVED is never read as absence.** No equivalence margin is set.
+- **Planned power is not a guarantee** (§9.4).
+- **R is imprecise** (40 events per life), and automatic adoption is correspondingly hard to reach. This is stated in advance.
+- **Scope:** R2/F3, frozen FULL_151, this world family, biologically motivated candidates.
+- **Not S2 readiness.**
+
+---
+
+## 15. Implementation plan (after review; no code now)
+
+Unchanged from v5.
+
+**New files in `BYTE_CORE_FEAS_1_20260923/`:**
+
+| File | Contents |
+|---|---|
+| `feas1.py` | FE-NI, XR, NI-READLOCKED; learner factory; external recording wrapper |
+| `feas1_driver.py` | Copied driver with the FK hook; Q1 |
+| `feas1_worlds.py` | FK key streams; world identity |
+| `feas1_readout.py` | Readout fitting |
+| `feas1_analyze.py` | §8 quantities; §9 status, trees and planning; report |
+| `feas1_qualify.py` | Q1–Q15 |
+| `run_feas1.py` | Runner |
+| `package_feas1.py` | Packaging |
+
+The frozen `bytecore.py` is imported read-only; nothing is patched.
+
+**Gating sequence:**
+
+```
+Q → QUALIFICATION.json
+K → READOUT.json (hashed) → CHECKPOINT.json (H1–H6; halt here if any)
+D → SELECTION_D16.json (hashed)
+[X → SELECTION_D32.json (hashed)]                      only under §9.2
+SELECTION.json (hashed)
+CONFIRM_PLAN.json (hashed; status RUN or AWAITING_OWNER; scenario grid)
+[V]                                                   only if RUN
+DECISION.json (status vector + label) → REPORT.md → MANIFEST.json → package
+```
+
+**Outputs (`results/`):**
+- **Gating files:** `QUALIFICATION.json`, `CHECKPOINT.json`, `READOUT.json`, `SELECTION_D16.json`, `SELECTION_D32.json` (if run), `SELECTION.json`, `CONFIRM_PLAN.json`.
+- **Development and confirmation:** `DEV_CELLS.csv`, `DEV_CONTRASTS.csv` (A1, E_FK, B, R, S_unp, ΔI, ΔFK), `CONFIRM_CELLS.csv`, `CONFIRM_CONTRASTS.csv`.
+- **Diagnostics:** `RETENTION_PROFILE.csv`, `WINDOWS.csv`, `CHECKPOINTS.csv`, `XRECORD.csv`, `NLMS.csv`, `LIVE_INTERFACE.csv`, `WORLD_IDENTITY.csv`, `RESOURCES.csv`.
+- **Decision and package:** `DECISION.json`, `REPORT.md`, `MANIFEST.json`, `qualification/`, `jobs/`.
+
+**Environment of record:** the V88 venv (Python 3.11.5, numpy 2.2.6, scipy 1.14.1, numba 0.61.2).
+
+---
+
+## 16. Known risks
+
+| Risk | Handling |
+|---|---|
+| FK changes repetition-dependent front-end state | E_FK is named a total effect and B an empirical criterion (§1); UNP sensitivity has a different confound |
+| Many outcomes may end UNRESOLVED | Stated in advance; UNRESOLVED keeps FE0 as default and goes to the owner |
+| Planned power relies on selected estimates | Conservative inputs, a scenario grid, and an explicit list of shortfalls (§9.4) |
+| R is imprecise | Automatic confirmation only when reachable |
+| H5 or H6 may not fire at n = 8 | Halt rather than proceed without sensitivity |
+| FE-NI may be too weak to test the common-component account sharply | Stated (§6) |
+| Winner's curse | Untouched confirmation |
+| FK and UNP η are mismatched to the readout | Reported only; E_FK, B and S_unp use AUC |
+
+---
+
+## 17. Deferred (roadmap §3.3)
+
+- FE1-NI.
+- **A within-front-end test of FE1's retention loss:** FE1 with habituation held (no decay) during silences vs FE1 as is, on the same worlds.
+- The timing-vs-framing split.
+- The variable-filler format.
+- The clock time gate, including FE0's collapse at ×2.
+- Wrapper invariance (V52 H-I).
+- The read-locked and output-driven negative images.
+- A sparser receptor table.
+- Separating own-cue from partner-cue learning (S2-ID at R8).
+- Localizing any advantage to the front end or the learner.
+- An equivalence margin for "no recurrence dependence."
+
+---
+
+## 18. Changes from v5
+
+| v5 | v6 |
+|---|---|
+| C_id "identity-dependent gain"; other paths "cancel" | E_FK, the total fresh-key effect; only effects common to both arms drop out (§1) |
+| B "identity part dominates" | B, an empirical recurrence screening criterion; no mechanism claim |
+| Lower ≤ 0 → `GAIN_NOT_IDENTITY_DEPENDENT` / `GAIN_IDENTITY_NOT_DOMINANT` | Three-way statuses (POS / NEG / UNRESOLVED) for A1, E_FK, B and R. The label comes from the status vector; UNRESOLVED is never read as absence |
+| A1 lower ≤ 0 → `NOT_CONFIRMED` | A1 NEG → `WORSE_THAN_FE0`; A1 UNRESOLVED falls under `UNRESOLVED` |
+| "≥ 95% power" from development estimates | Planned power ≥ 0.90 under conservative inputs (half the mean, 90% upper SD bound), plus a scenario grid with shortfalls listed |
+| FE-NI's R could "contradict the rest-recovery account" | An observation about FE-NI only; a within-front-end test is deferred |
+| Positive controls named in terms of N and C_id | H5 = ΔFK(XR) POS; H6 = E_FK(FE-TAIL4) POS |
+| Q8 tested trees | Q8 also tests the status function (a CI straddling 0 gives UNRESOLVED) and the planning function |
+
+---
+
+## Appendix A — FE-NI parameters
+
+- 14 samples per record; N_m = 1,792.
+- Self-cancellation: 1 − (1 − 1/1792)¹⁶⁸ = 0.0896.
+- Convergence: ln 0.05 / ln(1 − 1/1792) = 5,367 samples ≈ 383 records.
+
+## Appendix B — Planning inputs (erratum §5, §12, §13; PH-5)
+
+| Quantity | Value |
+|---|---|
+| SD of A1-type Δη (DEV) | FE1 0.0143; FE-LAG 0.0112 |
+| SD of R-type Δη | FE1 0.0576 (DEV), 0.0430 (CAL); FE-LAG 0.0815, 0.0698 |
+| FE-TAIL4 − FE0 ΔAUC (CON) | +0.159 |
+| 90% upper SD factor | 1.325 (n = 16); 1.203 (n = 32); 1.572 (n = 8) |
+| Life wall time | 4–9 s |
+
+No historical SD exists for E_FK or B: FK has never been run. The development estimates are their only planning input, which the conservative SD bound and the scenario grid address.
+
+## Appendix C — Literature (abstracts checked on Europe PMC, 23 Sep 2026)
+
+| Paper | Used for | Label |
+|---|---|---|
+| Das et al., PNAS 2011 (PMID 21795607) | Odorant-selective short- and long-term habituation via glomerulus-selective potentiated inhibition onto PNs | C+ |
+| Ramaswami, Neuron 2014 (PMID 24945768) | Negative-image proposal | T |
+| Roselli, Ramaswami & Aranha, Bio-protocol 2024 (PMID 39525971) | Long-term habituation after 4-day exposure lasts > 24 h | Protocol citing prior work |
+| Hallem & Carlson, Cell 2006 | Receptor table (inherited) | R |

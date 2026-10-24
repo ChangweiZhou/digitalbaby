@@ -1,0 +1,82 @@
+{
+  "comparison_summaries": {
+    "development_deletion": {
+      "expected_cells": 6,
+      "matched_cells": 6,
+      "mean_all20_delta_pp": -12.341666666666667,
+      "mean_latest_delta_pp": -7.083333333333335,
+      "mean_old_delta_pp": -13.65625,
+      "mean_presentation_ratio": 0.2380952380952381,
+      "ties": 0,
+      "wins": 0
+    },
+    "heterogeneity_vs_ordinary": {
+      "expected_cells": 6,
+      "matched_cells": 6,
+      "mean_all20_delta_pp": 0.21666666666666687,
+      "mean_latest_delta_pp": 0.24999999999999925,
+      "mean_old_delta_pp": 0.2083333333333326,
+      "mean_presentation_ratio": 1.0,
+      "ties": 0,
+      "wins": 4
+    },
+    "heterogeneity_vs_uniform": {
+      "expected_cells": 6,
+      "matched_cells": 6,
+      "mean_all20_delta_pp": -0.10000000000000024,
+      "mean_latest_delta_pp": -1.4583333333333328,
+      "mean_old_delta_pp": 0.23958333333333384,
+      "mean_presentation_ratio": 1.0,
+      "ties": 0,
+      "wins": 2
+    },
+    "randomization_robustness": {
+      "expected_cells": 6,
+      "matched_cells": 6,
+      "mean_all20_delta_pp": -0.3750000000000003,
+      "mean_latest_delta_pp": -0.33333333333333065,
+      "mean_old_delta_pp": -0.38541666666666585,
+      "mean_presentation_ratio": 1.0,
+      "ties": 0,
+      "wins": 2
+    },
+    "threshold_deletion": {
+      "expected_cells": 6,
+      "matched_cells": 6,
+      "mean_all20_delta_pp": 0.0,
+      "mean_latest_delta_pp": 0.0,
+      "mean_old_delta_pp": 0.0,
+      "mean_presentation_ratio": 1.0,
+      "ties": 6,
+      "wins": 0
+    }
+  },
+  "expected_matched_cells": 6,
+  "fixed_binary_heterogeneity_supported_without_training": false,
+  "note": "Descriptive engineering gates only. They never alter training, stopping, data order, or checkpoint selection.",
+  "phase1_neural_development_deletable": false,
+  "recommendation": "Keep phase-1 representation development for now; the random reservoir did not recover the trained fixed-compartment phenotype.",
+  "status": "complete",
+  "surprise_threshold_deletable": true,
+  "tolerances": {
+    "development_deletion": {
+      "all20_pp": 2.0,
+      "max_presentation_ratio": 0.3,
+      "old_pp": 3.0
+    },
+    "heterogeneity_support": {
+      "min_all20_advantage_pp": 1.0,
+      "min_old_advantage_pp": 1.0,
+      "min_win_fraction": 0.6666666666666666
+    },
+    "randomization": {
+      "all20_pp": 2.0,
+      "old_pp": 3.0
+    },
+    "threshold_deletion": {
+      "all20_pp": 1.0,
+      "old_pp": 2.0
+    }
+  },
+  "v15_randomization_robust": true
+}

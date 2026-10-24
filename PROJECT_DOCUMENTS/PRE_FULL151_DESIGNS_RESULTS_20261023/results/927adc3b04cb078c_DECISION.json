@@ -1,0 +1,34 @@
+{
+  "status": "ORIGINAL_99PCT_GATE_UNATTAINABLE_IN_THRESHOLD5_UNIVERSE",
+  "learning_claim": false,
+  "new_structural_promotion": false,
+  "prior_decision_preserved": {
+    "criteria": {
+      "combined_ppr_mass_retention": 0.9,
+      "motif_depth3_retention": 0.9,
+      "seed_in_largest_weak_component_fraction": 0.99,
+      "seed_incident_synaptic_mass_retention": 0.9
+    },
+    "decision_scope": "connectomic structural retention only; not a learning-performance claim",
+    "interpretation": "If a <=10k PPR core passes, the next round should instantiate that exact individual-neuron subgraph with shared type-level dynamics but independent neuron states. If only >10k cores pass, do not force the 10k target; inspect which network/semantic shells enter between 10k and the first passing budget. If no tested budget passes, expand the budget ladder or reconsider the seed/universe definitions before dynamics experiments.",
+    "smallest_ppr_actual_nodes_passing": null,
+    "smallest_ppr_budget_passing": null,
+    "smallest_ppr_scenario_passing": null,
+    "ten_thousand_neuron_hypothesis_structurally_supported": false
+  },
+  "threshold5_maximum_seed_component_fraction_in_full_graph": 0.9092511013215859,
+  "threshold5_10k_selection_induced_isolated_seeds": 13,
+  "threshold5_10k_seed_pair_retention": 0.9949671004686624,
+  "threshold1_10k_isolated_seeds": 59,
+  "threshold3_10k_isolated_seeds": 192,
+  "threshold5_10k_isolated_seeds": 528,
+  "next_action": "Audit weak-edge and universe-boundary exclusions before revising the connectivity criterion. Increasing the node budget inside this same universe cannot satisfy the original 99% gate.",
+  "limits": [
+    "Original 10k/15k memberships are fixed; no PPR reranking.",
+    "Weak connectivity ignores direction; directed degrees and strong components are also reported.",
+    "Seed-pair retention is an explanatory metric, not a replacement passing threshold.",
+    "External edges do not establish a path reconnecting a seed to the learning circuit.",
+    "Threshold sensitivity does not establish biological efficacy of weaker edges.",
+    "No cells are merged, seeds deleted, neural models trained, or learning performance inferred."
+  ]
+}

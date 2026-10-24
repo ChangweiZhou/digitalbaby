@@ -1,0 +1,115 @@
+{
+  "runner_version": "A6_STRUCTURED_DRIFT_20260920_v1",
+  "pass": true,
+  "main_sha256": "a4c71090cfba60eb7b40d26ded96ee4250c34ca8211e2d343a9c7b984c775c4e",
+  "source_audit": {
+    "pass": true,
+    "compile_ok": true,
+    "compile_errors": [],
+    "helper_hashes": {
+      "core_recovery_workstreamA_worlds.py": {
+        "expected": "e811fd2737acc523e26fd6d95b3823f8311635deb5aceeb086ebc4cef605e647",
+        "actual": "e811fd2737acc523e26fd6d95b3823f8311635deb5aceeb086ebc4cef605e647",
+        "match": true
+      },
+      "core_recovery_workstreamA_metrics.py": {
+        "expected": "b88b09f5a9442cc7eec46631019dba5036b66553707f80464a4e17cede6a2e73",
+        "actual": "b88b09f5a9442cc7eec46631019dba5036b66553707f80464a4e17cede6a2e73",
+        "match": true
+      },
+      "core_recovery_workstreamA2_targetslot.py": {
+        "expected": "5d598da8d7c5e64bfa44b16fb91b87023d0d5e54deb58ebb883fc44fa7afca3a",
+        "actual": "5d598da8d7c5e64bfa44b16fb91b87023d0d5e54deb58ebb883fc44fa7afca3a",
+        "match": true
+      },
+      "core_recovery_workstreamA2_selectivity.py": {
+        "expected": "2eef02eaa258cc7a1277d4fe4f32b9e36f98a62104429747bd42a17a03aa2a9c",
+        "actual": "2eef02eaa258cc7a1277d4fe4f32b9e36f98a62104429747bd42a17a03aa2a9c",
+        "match": true
+      },
+      "dh_accounting.py": {
+        "expected": "ea9bac1f4ac95fff61327cf4ba21f252e8843d50d4b1b50d16a9e2f659b5d03c",
+        "actual": "ea9bac1f4ac95fff61327cf4ba21f252e8843d50d4b1b50d16a9e2f659b5d03c",
+        "match": true
+      },
+      "core_recovery_workstreamA4_effdim_dh.py": {
+        "expected": "b8ada53c3a694188c798b15439f0c041afd7a04abd15f25607515d10c63642a2",
+        "actual": "b8ada53c3a694188c798b15439f0c041afd7a04abd15f25607515d10c63642a2",
+        "match": true
+      },
+      "core_recovery_workstreamA5_capacity.py": {
+        "expected": "53b25c65734d0b8295652540a8c54a81cb622fcdaf01529f820eb1f9f4635b01",
+        "actual": "53b25c65734d0b8295652540a8c54a81cb622fcdaf01529f820eb1f9f4635b01",
+        "match": true
+      }
+    },
+    "forbidden_identifiers_present": [],
+    "optimizer_import_present": false,
+    "unclassified_production_float_literals": [],
+    "classified_production_float_literals": [
+      0.0,
+      0.5,
+      1.0,
+      330.0,
+      1024.0
+    ],
+    "qualification_gate_bad_terms": [],
+    "qualification_gate_source_lines": [
+      547,
+      548,
+      549,
+      550,
+      551,
+      552,
+      553,
+      554,
+      555,
+      556
+    ],
+    "static_design_checks": {
+      "selected_K1_K2_K8_only": true,
+      "cross_block_coordinate_gate": true,
+      "lobo_excludes_heldout": true,
+      "no_online_centering_rule": true,
+      "exact_shapley_present": true,
+      "source_destination_matrix_present": true,
+      "lobo_heldout_subtraction": true
+    }
+  },
+  "synthetic_selftest_pass": true,
+  "aggregate_synthetic": {
+    "pass": true,
+    "n_arms": 3,
+    "pairwise_count": 28
+  },
+  "completed_A5_fixture_audit": {
+    "pass": true,
+    "selected_arm_files": 32,
+    "manifest_checks": {
+      "manifest_runner": true,
+      "manifest_blocks": true,
+      "manifest_all_qualified": true
+    }
+  },
+  "sparse_scale_stress": {
+    "pass": true,
+    "shape": [
+      12096,
+      5177
+    ],
+    "nnz": 9267907,
+    "density": 0.1480000029383118,
+    "groups": 4,
+    "seconds": 2.5147948265075684
+  },
+  "native_FULL_151_run_in_container": false,
+  "native_limitation": "The frozen V88 project tree and sealed 64-world substrate live on the user Mac; native A6 block replay cannot be executed in this container. The launcher therefore performs block-0 native qualification before expansion.",
+  "clean_unzip_candidate": {
+    "zip_integrity_pass": true,
+    "sha256sum_pass": true,
+    "source_audit_pass": true,
+    "synthetic_selftest_pass": true,
+    "aggregate_synthetic_pass": true,
+    "completed_A5_fixture_audit_pass": true
+  }
+}

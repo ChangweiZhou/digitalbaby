@@ -1,0 +1,25 @@
+# FE1 single-mechanism case, protocol v1
+
+Status: frozen before any FE1 science-world result. This is a test case for the later mechanism-search workflow, not a screen of the other 16 mechanisms. The source-lock and independent technical audits must pass before science runs.
+
+## Question and scope
+
+Does the existing, fixed FE1 sensory habituation route improve delayed, never-reinforced relation choice relative to FE0, without materially damaging taught-byte recall? FE1 uses the BYTE-CORE-1 parameters `tau_p=10 s`, `kappa=0.3`, `tau_h=1800 s`, the same frozen receptor table and the same Full151 learner. Its new `h` state starts at zero when the V9.2 FE0 checkpoint is converted; inherited `p`, time, predictor state and Full151 synapses remain identical. No parameter tuning follows a result.
+
+Task A reuses the qualified 12-byte `##`-wrapped relation generator and internal `L/R` choice organ. Six old edges are taught in both orientations, three old edges are never taught, then a day, a disjoint taught cohort, and another day elapse. The answer is emitted before feedback. `W` and `N` see identical bytes, labels and clocks; `N` disables only old native value writes. An exact or space-normalized pair-key table has no answer for the held-out edge. Position and frequency shortcuts are balanced. A one-bit class rule learned from the old feedback can solve this synthetic family. Thus a positive causal result is limited E3, not general reasoning. The fixed `##` wrapper is part of the claim; this run does not establish robustness to arbitrary prefixes.
+
+Task B reuses Step 13's 16 arbitrary-label `a+b=` facts, 192 teaching records and four native Full151 output stores. The arriving answer byte chooses the teaching channel; the model emits `0`–`3` before that byte arrives. The final exact-taught score is E1. Never-taught spacing is a narrow E2 description that a canonicalizer might also pass. FE0 and PAIR are same-world comparators. Tasks A and B have different output structures: passing both does not prove one integrated architecture has both abilities.
+
+## Frozen roster and endpoints
+
+Task A technical world 60900; 128 fresh science worlds 61001–61128. Each has FE0-W/N and FE1-W/N. Its single primary estimand is the world-mean interaction `theta = (FE1_W−FE1_N)final,heldout − (FE0_W−FE0_N)final,heldout`. A substantive gain requires a two-sided world-level Student-t 95% lower bound above zero, point estimate at least +0.10, FE1's own held-out W−N lower bound above zero, and the FE1 W absolute final held-out 95% lower bound above 0.50. The last guard prevents a below-chance N arm from masquerading as successful behavior. At final, FE1 trained-W versus FE0 trained-W must have a 95% lower bound greater than −0.10. FE1 new-cohort trained W and N at new-cohort end must each be at least 0.65. Report old-end held-out values, each answer side, and fixed-prefix limitation regardless of verdict.
+
+Task B technical world 61900; 32 fresh science worlds 62001–62032. Each has FE0, FE1 and PAIR, with W/N for each. Its safety estimand is final taught canonical W accuracy FE1−FE0, with a world-level 95% lower bound greater than −0.10. Report every cue, four answer classes, W−N, never-taught spacing, and same-world PAIR. FE1 below PAIR cannot be called a solved crowded-address bridge merely because it beats FE0.
+
+The A primary is the only confirmatory efficacy test. B is a prespecified safety guard; secondary contrasts are descriptive. `NO_DEMONSTRATED_INCREMENT`, `TRADEOFF`, `INCONCLUSIVE`, and `FE1_LIMITED_E3_GAIN_WITH_E1_SAFETY` are possible outcomes. Do not enlarge the roster, alter FE1 parameters, select a new prefix, or launch another mechanism on the basis of intermediate outcomes. FE1 results never exclude the other 16 mechanism variants.
+
+## Execution and audit gates
+
+Each technical world is new and excluded from inference. Against the unmodified qualified runners on that new world, FE0 A and FE0/PAIR B receipts must match at every probe and training hash. The FE1 adapter must demonstrate clone isolation, nonzero habituation on repeated bytes, 24-hour decay, snapshot/restore equality, h-sensitive digests, W/N sensory equality, no read-only probe mutation, equal predictor state, correct output-byte arithmetic, exact write counts, and no held-out feedback. An independent receipt auditor checks world IDs, source hashes, fixture hashes, chronological training, emitted choices, labels, world-level reductions and deliberate tamper failures. No science may start if a technical audit or resource projection fails.
+
+Each task's science stage has a four-hour wall-clock cap and the combined persistent receipts have a 100 MB cap. Technical-world runtime and receipt size are projected with safety margin before science. Receipts commit atomically by world and are never overwritten. A scientific failure stops the run without automatic restart; no completed world is rerun. A single `caffeinate` process stays attached to the active launcher on macOS.

@@ -1,0 +1,35 @@
+{
+  "version": "V79",
+  "completed": true,
+  "fresh_histories": 32,
+  "reused_robustness_histories": 8,
+  "fresh_rows": 27648,
+  "classifications": {
+    "GLOBAL_LOW": {
+      "phases": {
+        "COMMON": "NO_MATERIAL_DIFFERENCE_AT_COMMON_LOW_BUDGET",
+        "MIXED": "NO_MATERIAL_DIFFERENCE_AT_COMMON_LOW_BUDGET"
+      },
+      "challenge_subdivision_direction_warning": false,
+      "robustness_is_reused_data": true
+    },
+    "ROUTE_SHARED": {
+      "phases": {
+        "COMMON": "NO_MATERIAL_DIFFERENCE_AT_COMMON_LOW_BUDGET",
+        "MIXED": "NO_MATERIAL_DIFFERENCE_AT_COMMON_LOW_BUDGET"
+      },
+      "challenge_subdivision_direction_warning": false,
+      "robustness_is_reused_data": true
+    }
+  },
+  "parent_model_promoted": false,
+  "inference": "16 prespecified two-sided paired Monte Carlo tests; Holm family; history-level bootstrap",
+  "inference_assumptions": "Paired sign-flips assume symmetric/exchangeable history differences, not randomized treatment assignment; percentile bootstrap family intervals are approximate.",
+  "guard_scope": "Pooled REV COMMON/day and MIXED/day only; other cases and load/age strata are descriptive, not a whole-learner safety acceptance.",
+  "limits": [
+    "Global common-min tests only the lower matched budget, not dose-only sufficiency at high dose.",
+    "Route-shared controls remove unmatched route/sign mass; inspect retained coverage.",
+    "Frozen source replay is not an autonomous recovered-adaptation learner.",
+    "Synthetic cues and inherited EVENT kernel do not establish fly physiology or a persistent core."
+  ]
+}

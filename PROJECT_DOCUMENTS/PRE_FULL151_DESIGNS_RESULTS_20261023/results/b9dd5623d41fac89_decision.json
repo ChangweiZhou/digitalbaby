@@ -1,0 +1,99 @@
+{
+  "version": "V84E",
+  "completed": true,
+  "behavioral_candidate_passes": false,
+  "outcome": "CONFIRMATION_NOT_PASSED",
+  "chromosome": [
+    0.330853,
+    -0.75,
+    -0.349499,
+    -0.090123,
+    -0.152739,
+    1.0,
+    -0.233097,
+    -0.076526,
+    0.602103,
+    0.804988,
+    0.042987,
+    0.054654,
+    0.0,
+    0.035756,
+    -0.5,
+    0.008166,
+    0.0
+  ],
+  "candidate_id": "f5735e5ee71151b46ea1",
+  "unchanged_reference": true,
+  "biological_core_promoted": false,
+  "physiology_tested": false,
+  "generations": 50,
+  "population": 64,
+  "confirmation_histories": 16,
+  "checks_passed": 28,
+  "checks_assigned": 77,
+  "resource_checks_passed": 640,
+  "gene_names": [
+    "b0",
+    "b_adapt",
+    "b_fast",
+    "b_slow",
+    "g_alpha_gain",
+    "g_support",
+    "g_teach_scale",
+    "g_readout",
+    "g_feedback",
+    "g_mbon",
+    "g_k0",
+    "g_fast_tau",
+    "g_slow_tau",
+    "g_fraction",
+    "g_sparsity",
+    "g_pnkc_weight",
+    "g_pnkc_rewire"
+  ],
+  "n_genes": 17,
+  "objectives": [
+    "macro_choice",
+    "tail_rise",
+    "slow_ratio"
+  ],
+  "selection": "nsga2_constrained_domination",
+  "relaxed_domains": {
+    "connectivity": [
+      "g_teach_scale (DAN->KC magnitude)",
+      "g_readout (KC->MBON magnitude)",
+      "g_pnkc_weight (PN->KC lognormal jitter)",
+      "g_pnkc_rewire (degree-preserving PN->KC rewiring)",
+      "g_support (grants alpha teaching to 544 readout-only KCs)"
+    ],
+    "recurrent": [
+      "g_feedback (gamma->alpha F matrix)",
+      "g_mbon (MBON->MBON MM matrix)"
+    ],
+    "potentials": [
+      "g_k0 (baseline offset vector)"
+    ],
+    "timescales": [
+      "g_fast_tau",
+      "g_slow_tau",
+      "g_fraction (native fast/slow split)"
+    ],
+    "coding": [
+      "g_sparsity (KC active fraction, 5% at neutral)"
+    ],
+    "plasticity": [
+      "b0",
+      "b_adapt",
+      "b_fast",
+      "b_slow",
+      "g_alpha_gain"
+    ]
+  },
+  "limits": [
+    "17-gene family: b0, b_adapt, b_fast, b_slow, g_alpha_gain, g_support, g_teach_scale, g_readout, g_feedback, g_mbon, g_k0, g_fast_tau, g_slow_tau, g_fraction, g_sparsity, g_pnkc_weight, g_pnkc_rewire.",
+    "Relaxes anatomy (connectivity magnitudes and PN->KC topology), recurrent gains, baseline potentials, kernel timescales and KC coding sparsity. Any winner is NOT a connectome-constrained fly and voids the inherited physiology scorecard. Confirmation on 8 untouched histories is the only protection against 3,200 evaluations of overfitting.",
+    "Bootstrap family intervals approximate with eight held-out histories; no tuning after confirmation.",
+    "b0 permits constant allocation retuning; a winner does not establish adaptation-specific causation.",
+    "Anomaly endpoints test recovery after contradictions, not immediate contradiction immunity."
+  ]
+}

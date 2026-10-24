@@ -1,0 +1,695 @@
+{
+ "kind": "order_flyroute",
+ "design_sha256": "4b5ef278f2ca86542545fa21d69ca897a93cc6a557a2fedc83c4aaf4c6f98678",
+ "script_sha256": "1e6cf233339e8815fcf19d652b2f1fdfd2ae23b7e004038951900fdd75f31936",
+ "v9_experiment_sha256": "22e5c08e9ada79263bb2176f550d47d6ccf040ef5da72a3e6ac2d25e32309d05",
+ "v9_brain_byte_sha256": "30f1f76048a4fee928161293d16b93f9e86b63f3e7ef0d48e6ecc360fd77b67c",
+ "v8_trial_sha256": "fca11acaddf0a43aaac7154e2ed4332925c76ce872f2c180b772f41248658e30",
+ "bytecore_sha256": "ec0667d33f85392e05ce07fc705cbde0efb5140d4e3b7a737c2d30f92e73605f",
+ "lr": 0.03,
+ "bias_lr": 0.001,
+ "delta_s": 2.142857142857143,
+ "checks": {
+  "scoring_never_changed_parameters": true,
+  "fly_inputs_are_all_native_kcs": true,
+  "frozen_twins_stay_zero": true
+ },
+ "pass_all_worlds": {
+  "FLY_FE0": false,
+  "FLY_TRACE88": false,
+  "V9_POSITIVE": true
+ },
+ "verdict_fly_route_reads_order": false,
+ "worlds": {
+  "201": {
+   "baselines": {
+    "unigram": {
+     "target_bpb": 6.00004127485225,
+     "target_accuracy": 0.0,
+     "target_macro_accuracy": 0.0,
+     "fullstream_bpb": 4.500047939137827,
+     "noninvariant_bpb": 6.000041274852248,
+     "noninvariant_accuracy": 0.0,
+     "noninvariant_count": 3584
+    },
+    "markov1": {
+     "target_bpb": 5.000879770945101,
+     "target_accuracy": 0.0,
+     "target_macro_accuracy": 0.0,
+     "fullstream_bpb": 3.5010288107343897,
+     "noninvariant_bpb": 5.00087977094509,
+     "noninvariant_accuracy": 0.0,
+     "noninvariant_count": 3584
+    },
+    "markov2": {
+     "target_bpb": 0.053523479477170365,
+     "target_accuracy": 1.0,
+     "target_macro_accuracy": 1.0,
+     "fullstream_bpb": 2.0145184237070746,
+     "noninvariant_bpb": 0.05352347947716925,
+     "noninvariant_accuracy": 1.0,
+     "noninvariant_count": 3584
+    },
+    "oracle_last1": {
+     "target_bpb": 4.000000502551869,
+     "target_accuracy": 0.0625,
+     "target_macro_accuracy": 0.0625,
+     "noninvariant_bpb": 4.00000050255182,
+     "noninvariant_accuracy": 0.03571428571428571,
+     "noninvariant_count": 3584
+    },
+    "oracle_last2": {
+     "target_bpb": 0.051764524616536176,
+     "target_accuracy": 1.0,
+     "target_macro_accuracy": 1.0,
+     "noninvariant_bpb": 0.05176452461653501,
+     "noninvariant_accuracy": 1.0,
+     "noninvariant_count": 3584
+    }
+   },
+   "gate": {
+    "FLY_FE0": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": false,
+     "slot_last1_gap_at_least_one_bit": false,
+     "swap_penalty_at_least_0p1_bpb": false,
+     "pass": false
+    },
+    "FLY_TRACE88": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": false,
+     "slot_last1_gap_at_least_one_bit": false,
+     "swap_penalty_at_least_0p1_bpb": true,
+     "pass": false
+    },
+    "V9_POSITIVE": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": true,
+     "slot_last1_gap_at_least_one_bit": true,
+     "swap_penalty_at_least_0p1_bpb": true,
+     "pass": true
+    }
+   },
+   "arms": {
+    "FLY_FE0": {
+     "arm": "FLY_FE0",
+     "world": 201,
+     "plastic": true,
+     "score": {
+      "target_bpb": 4.243275778634961,
+      "target_accuracy": 0.180908203125,
+      "target_macro_accuracy": 0.180908203125,
+      "fullstream_bpb": 3.289455889307811,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 10.704676834007842,
+      "noninvariant_bpb": 4.317087433037443,
+      "noninvariant_accuracy": 0.15848214285714285,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 4.358086593931078,
+      "noninvariant_accuracy": 0.12639508928571427,
+      "target_bpb": 4.280758167587218
+     },
+     "swap_penalty_noninvariant_bpb": 0.040999160893634645,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 145.08116879199224,
+     "kc_inputs": 5177,
+     "frozen_params_zero": null
+    },
+    "FLY_TRACE88": {
+     "arm": "FLY_TRACE88",
+     "world": 201,
+     "plastic": true,
+     "score": {
+      "target_bpb": 4.733275424859035,
+      "target_accuracy": 0.1103515625,
+      "target_macro_accuracy": 0.1103515625,
+      "fullstream_bpb": 3.5796659735931105,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 10.754736417002277,
+      "noninvariant_bpb": 4.766799980365053,
+      "noninvariant_accuracy": 0.09765625,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 4.942214810289468,
+      "noninvariant_accuracy": 0.045200892857142856,
+      "target_bpb": 4.886672303428157
+     },
+     "swap_penalty_noninvariant_bpb": 0.17541482992441537,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 146.560921708995,
+     "kc_inputs": 5177,
+     "frozen_params_zero": null
+    },
+    "FLY_FE0_frozen": {
+     "arm": "FLY_FE0_frozen",
+     "world": 201,
+     "plastic": false,
+     "score": {
+      "target_bpb": 8.0,
+      "target_accuracy": 0.0,
+      "target_macro_accuracy": 0.0,
+      "fullstream_bpb": 8.0,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 9.704760207998333,
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 8.0
+     },
+     "swap_penalty_noninvariant_bpb": 0.0,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 135.6144085420092,
+     "kc_inputs": 5177,
+     "frozen_params_zero": true
+    },
+    "FLY_TRACE88_frozen": {
+     "arm": "FLY_TRACE88_frozen",
+     "world": 201,
+     "plastic": false,
+     "score": {
+      "target_bpb": 8.0,
+      "target_accuracy": 0.0,
+      "target_macro_accuracy": 0.0,
+      "fullstream_bpb": 8.0,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 9.890103917001397,
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 8.0
+     },
+     "swap_penalty_noninvariant_bpb": 0.0,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 136.88586433300225,
+     "kc_inputs": 5177,
+     "frozen_params_zero": true
+    },
+    "V9_POSITIVE": {
+     "arm": "V9_POSITIVE",
+     "world": 201,
+     "plastic": true,
+     "score": {
+      "target_bpb": 0.19324008227156944,
+      "target_accuracy": 1.0,
+      "target_macro_accuracy": 1.0,
+      "fullstream_bpb": 2.072938297052942,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 15.410311665997142,
+      "noninvariant_bpb": 0.19309270577907647,
+      "noninvariant_accuracy": 1.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.356711007522026,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 7.336394635273763
+     },
+     "swap_penalty_noninvariant_bpb": 8.16361830174295,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 251.76900025000214
+    }
+   }
+  },
+  "202": {
+   "baselines": {
+    "unigram": {
+     "target_bpb": 6.00004127485225,
+     "target_accuracy": 0.0,
+     "target_macro_accuracy": 0.0,
+     "fullstream_bpb": 4.500047939137827,
+     "noninvariant_bpb": 6.000041274852248,
+     "noninvariant_accuracy": 0.0,
+     "noninvariant_count": 3584
+    },
+    "markov1": {
+     "target_bpb": 5.000879770945101,
+     "target_accuracy": 0.0,
+     "target_macro_accuracy": 0.0,
+     "fullstream_bpb": 3.5010288107343897,
+     "noninvariant_bpb": 5.00087977094509,
+     "noninvariant_accuracy": 0.0,
+     "noninvariant_count": 3584
+    },
+    "markov2": {
+     "target_bpb": 0.053523479477170365,
+     "target_accuracy": 1.0,
+     "target_macro_accuracy": 1.0,
+     "fullstream_bpb": 2.0144074585994844,
+     "noninvariant_bpb": 0.05352347947716925,
+     "noninvariant_accuracy": 1.0,
+     "noninvariant_count": 3584
+    },
+    "oracle_last1": {
+     "target_bpb": 4.000000502551869,
+     "target_accuracy": 0.0625,
+     "target_macro_accuracy": 0.0625,
+     "noninvariant_bpb": 4.00000050255182,
+     "noninvariant_accuracy": 0.03571428571428571,
+     "noninvariant_count": 3584
+    },
+    "oracle_last2": {
+     "target_bpb": 0.051764524616536176,
+     "target_accuracy": 1.0,
+     "target_macro_accuracy": 1.0,
+     "noninvariant_bpb": 0.05176452461653501,
+     "noninvariant_accuracy": 1.0,
+     "noninvariant_count": 3584
+    }
+   },
+   "gate": {
+    "FLY_FE0": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": false,
+     "slot_last1_gap_at_least_one_bit": false,
+     "swap_penalty_at_least_0p1_bpb": false,
+     "pass": false
+    },
+    "FLY_TRACE88": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": false,
+     "slot_last1_gap_at_least_one_bit": false,
+     "swap_penalty_at_least_0p1_bpb": true,
+     "pass": false
+    },
+    "V9_POSITIVE": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": true,
+     "slot_last1_gap_at_least_one_bit": true,
+     "swap_penalty_at_least_0p1_bpb": true,
+     "pass": true
+    }
+   },
+   "arms": {
+    "FLY_FE0": {
+     "arm": "FLY_FE0",
+     "world": 202,
+     "plastic": true,
+     "score": {
+      "target_bpb": 4.233032105162943,
+      "target_accuracy": 0.1875,
+      "target_macro_accuracy": 0.1875,
+      "fullstream_bpb": 3.29449339402947,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 10.713023667005473,
+      "noninvariant_bpb": 4.3037734934430905,
+      "noninvariant_accuracy": 0.169921875,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 4.349585866419181,
+      "noninvariant_accuracy": 0.13197544642857142,
+      "target_bpb": 4.2734947537672765
+     },
+     "swap_penalty_noninvariant_bpb": 0.04581237297609064,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 144.31040575000225,
+     "kc_inputs": 5177,
+     "frozen_params_zero": null
+    },
+    "FLY_TRACE88": {
+     "arm": "FLY_TRACE88",
+     "world": 202,
+     "plastic": true,
+     "score": {
+      "target_bpb": 4.73405421446419,
+      "target_accuracy": 0.105712890625,
+      "target_macro_accuracy": 0.105712890625,
+      "fullstream_bpb": 3.5814724825454713,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 10.840234458999475,
+      "noninvariant_bpb": 4.771188671541161,
+      "noninvariant_accuracy": 0.09207589285714286,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 4.942044276425382,
+      "noninvariant_accuracy": 0.03766741071428571,
+      "target_bpb": 4.885315453974499
+     },
+     "swap_penalty_noninvariant_bpb": 0.17085560488422136,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 146.7701613340032,
+     "kc_inputs": 5177,
+     "frozen_params_zero": null
+    },
+    "FLY_FE0_frozen": {
+     "arm": "FLY_FE0_frozen",
+     "world": 202,
+     "plastic": false,
+     "score": {
+      "target_bpb": 8.0,
+      "target_accuracy": 0.0,
+      "target_macro_accuracy": 0.0,
+      "fullstream_bpb": 8.0,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 9.66949895900325,
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 8.0
+     },
+     "swap_penalty_noninvariant_bpb": 0.0,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 135.07644400000572,
+     "kc_inputs": 5177,
+     "frozen_params_zero": true
+    },
+    "FLY_TRACE88_frozen": {
+     "arm": "FLY_TRACE88_frozen",
+     "world": 202,
+     "plastic": false,
+     "score": {
+      "target_bpb": 8.0,
+      "target_accuracy": 0.0,
+      "target_macro_accuracy": 0.0,
+      "fullstream_bpb": 8.0,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 7.8862071670009755,
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 8.0
+     },
+     "swap_penalty_noninvariant_bpb": 0.0,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 134.64604300000065,
+     "kc_inputs": 5177,
+     "frozen_params_zero": true
+    },
+    "V9_POSITIVE": {
+     "arm": "V9_POSITIVE",
+     "world": 202,
+     "plastic": true,
+     "score": {
+      "target_bpb": 0.19461009264773843,
+      "target_accuracy": 1.0,
+      "target_macro_accuracy": 1.0,
+      "fullstream_bpb": 2.072994897954952,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 13.586476167009096,
+      "noninvariant_bpb": 0.19406928815766172,
+      "noninvariant_accuracy": 1.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.246112702145608,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 7.240083080163827
+     },
+     "swap_penalty_noninvariant_bpb": 8.052043413987946,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 228.15030837499944
+    }
+   }
+  },
+  "203": {
+   "baselines": {
+    "unigram": {
+     "target_bpb": 6.00004127485225,
+     "target_accuracy": 0.0,
+     "target_macro_accuracy": 0.0,
+     "fullstream_bpb": 4.500047939137827,
+     "noninvariant_bpb": 6.000041274852248,
+     "noninvariant_accuracy": 0.0,
+     "noninvariant_count": 3584
+    },
+    "markov1": {
+     "target_bpb": 5.000879770945101,
+     "target_accuracy": 0.0,
+     "target_macro_accuracy": 0.0,
+     "fullstream_bpb": 3.5010288107343897,
+     "noninvariant_bpb": 5.00087977094509,
+     "noninvariant_accuracy": 0.0,
+     "noninvariant_count": 3584
+    },
+    "markov2": {
+     "target_bpb": 0.053523479477170365,
+     "target_accuracy": 1.0,
+     "target_macro_accuracy": 1.0,
+     "fullstream_bpb": 2.014519283078787,
+     "noninvariant_bpb": 0.05352347947716925,
+     "noninvariant_accuracy": 1.0,
+     "noninvariant_count": 3584
+    },
+    "oracle_last1": {
+     "target_bpb": 4.000000502551869,
+     "target_accuracy": 0.0625,
+     "target_macro_accuracy": 0.0625,
+     "noninvariant_bpb": 4.00000050255182,
+     "noninvariant_accuracy": 0.03571428571428571,
+     "noninvariant_count": 3584
+    },
+    "oracle_last2": {
+     "target_bpb": 0.051764524616536176,
+     "target_accuracy": 1.0,
+     "target_macro_accuracy": 1.0,
+     "noninvariant_bpb": 0.05176452461653501,
+     "noninvariant_accuracy": 1.0,
+     "noninvariant_count": 3584
+    }
+   },
+   "gate": {
+    "FLY_FE0": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": false,
+     "slot_last1_gap_at_least_one_bit": false,
+     "swap_penalty_at_least_0p1_bpb": false,
+     "pass": false
+    },
+    "FLY_TRACE88": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": false,
+     "slot_last1_gap_at_least_one_bit": false,
+     "swap_penalty_at_least_0p1_bpb": true,
+     "pass": false
+    },
+    "V9_POSITIVE": {
+     "coverage": true,
+     "beats_plasticity_off": true,
+     "accuracy_and_bpb": true,
+     "slot_last1_gap_at_least_one_bit": true,
+     "swap_penalty_at_least_0p1_bpb": true,
+     "pass": true
+    }
+   },
+   "arms": {
+    "FLY_FE0": {
+     "arm": "FLY_FE0",
+     "world": 203,
+     "plastic": true,
+     "score": {
+      "target_bpb": 4.235026564434396,
+      "target_accuracy": 0.178466796875,
+      "target_macro_accuracy": 0.178466796875,
+      "fullstream_bpb": 3.2937627900049784,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 8.5569351669983,
+      "noninvariant_bpb": 4.313465015514345,
+      "noninvariant_accuracy": 0.15318080357142858,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 4.354345305233677,
+      "noninvariant_accuracy": 0.12165178571428571,
+      "target_bpb": 4.273139933656258
+     },
+     "swap_penalty_noninvariant_bpb": 0.040880289719331664,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 142.5301093750022,
+     "kc_inputs": 5177,
+     "frozen_params_zero": null
+    },
+    "FLY_TRACE88": {
+     "arm": "FLY_TRACE88",
+     "world": 203,
+     "plastic": true,
+     "score": {
+      "target_bpb": 4.732650820042076,
+      "target_accuracy": 0.10400390625,
+      "target_macro_accuracy": 0.10400390625,
+      "fullstream_bpb": 3.5814162710005055,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 7.472426334003103,
+      "noninvariant_bpb": 4.768359442427303,
+      "noninvariant_accuracy": 0.08956473214285714,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 4.945959911471024,
+      "noninvariant_accuracy": 0.03766741071428571,
+      "target_bpb": 4.886276005055832
+     },
+     "swap_penalty_noninvariant_bpb": 0.17760046904372118,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 140.40666887500265,
+     "kc_inputs": 5177,
+     "frozen_params_zero": null
+    },
+    "FLY_FE0_frozen": {
+     "arm": "FLY_FE0_frozen",
+     "world": 203,
+     "plastic": false,
+     "score": {
+      "target_bpb": 8.0,
+      "target_accuracy": 0.0,
+      "target_macro_accuracy": 0.0,
+      "fullstream_bpb": 8.0,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 8.601551792002283,
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 8.0
+     },
+     "swap_penalty_noninvariant_bpb": 0.0,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 132.77626458399754,
+     "kc_inputs": 5177,
+     "frozen_params_zero": true
+    },
+    "FLY_TRACE88_frozen": {
+     "arm": "FLY_TRACE88_frozen",
+     "world": 203,
+     "plastic": false,
+     "score": {
+      "target_bpb": 8.0,
+      "target_accuracy": 0.0,
+      "target_macro_accuracy": 0.0,
+      "fullstream_bpb": 8.0,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 8.422596749995137,
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.0,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 8.0
+     },
+     "swap_penalty_noninvariant_bpb": 0.0,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 132.85481783399882,
+     "kc_inputs": 5177,
+     "frozen_params_zero": true
+    },
+    "V9_POSITIVE": {
+     "arm": "V9_POSITIVE",
+     "world": 203,
+     "plastic": true,
+     "score": {
+      "target_bpb": 0.18747432025251973,
+      "target_accuracy": 1.0,
+      "target_macro_accuracy": 1.0,
+      "fullstream_bpb": 2.07425868485322,
+      "frozen_parameters": true,
+      "scored_before_target": true,
+      "scored_targets": 4096,
+      "runtime_s": 13.238228125002934,
+      "noninvariant_bpb": 0.18611538244677026,
+      "noninvariant_accuracy": 1.0,
+      "noninvariant_count": 3584
+     },
+     "swap_score": {
+      "noninvariant_bpb": 8.195495651713168,
+      "noninvariant_accuracy": 0.0,
+      "target_bpb": 7.195717527978481
+     },
+     "swap_penalty_noninvariant_bpb": 8.009380269266398,
+     "parameters_unchanged_by_scoring": true,
+     "runtime_s": 221.7329418330046
+    }
+   }
+  }
+ },
+ "diagnostic": [
+  {
+   "front_end": "FE0",
+   "world": 201,
+   "train_slots": 16384,
+   "test_slots": 4096,
+   "PN_a": 0.21484375,
+   "PN_b": 0.867431640625,
+   "KC_a": 0.379638671875,
+   "KC_b": 0.818115234375,
+   "KC_y": 0.482666015625,
+   "NC_KC_y_shuffled_labels": 0.06640625,
+   "PC_engineered_a": 1.0,
+   "PC_engineered_b": 1.0
+  },
+  {
+   "front_end": "TRACE88",
+   "world": 201,
+   "train_slots": 16384,
+   "test_slots": 4096,
+   "PN_a": 0.3466796875,
+   "PN_b": 0.997314453125,
+   "KC_a": 0.4560546875,
+   "KC_b": 0.965087890625,
+   "KC_y": 0.469482421875,
+   "NC_KC_y_shuffled_labels": 0.060791015625,
+   "PC_engineered_a": 1.0,
+   "PC_engineered_b": 1.0
+  }
+ ],
+ "runtime_s": 393.30575504100125
+}

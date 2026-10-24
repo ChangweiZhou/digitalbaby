@@ -1,0 +1,177 @@
+{
+  "repairs_applied": [
+    "incoming objective and scoring use the DELIVERED role of each teach call; committed truth tracked and reported separately (v1 used committed truth and optimised the opposite answer in 6/48 windows)",
+    "the FULL incoming set is scored (24 acquisition / 12 challenge facts per window, 864 total) instead of one frozen anchor",
+    "per-event incoming noninferiority constraint with a frozen lambda ladder and a native fallback, replacing v1's soft sum",
+    "surrogate uses the fast+slow SUM coefficient exp(-dt/tau_s)-exp(-dt/tau_f) = 0.00884545 rather than the slow-only 0.99999756 (v1 was wrong by 113.1x)",
+    "budget and identity qualification recorded at EVERY changed update and for the FULL window, not one plastic event",
+    "--resume actually implemented, keyed on source identity, atomic per window"
+  ],
+  "qualification": {
+    "windows": 48,
+    "full_window_identity_reproduces_native": true,
+    "per_event_violations": 0,
+    "c_sum_coefficient": 0.008845445962555876,
+    "lambda_mean": 0.7622251157407408,
+    "lambda_at_1_fraction": 0.7622251157407408,
+    "cumulative_budget_intended_equals_chosen": true,
+    "reference_P1_P7_reproduced": true
+  },
+  "results": {
+    "immediate": {
+      "protected": {
+        "d_correct": 241,
+        "n": 4320,
+        "pp": 5.578703703703703,
+        "native_pct": 67.12962962962963,
+        "blocks": 8,
+        "blocks_positive": 8,
+        "blocks_negative": 0,
+        "block_mean_pp": 5.578703703703704,
+        "low": 4.644507742310858,
+        "high": 6.51289966509655,
+        "per_block_pp": [
+          6.111111111111111,
+          4.2592592592592595,
+          5.37037037037037,
+          7.592592592592593,
+          5.7407407407407405,
+          5.0,
+          4.2592592592592595,
+          6.296296296296297
+        ],
+        "facts_worse_margin": 771,
+        "facts_better_margin": 3491
+      },
+      "incoming_delivered": {
+        "d_correct": 19,
+        "n": 864,
+        "pp": 2.199074074074074,
+        "native_pct": 72.45370370370371,
+        "blocks": 8,
+        "blocks_positive": 6,
+        "blocks_negative": 0,
+        "block_mean_pp": 2.199074074074074,
+        "low": 0.6543468220036948,
+        "high": 3.743801326144453,
+        "per_block_pp": [
+          0.0,
+          2.7777777777777777,
+          4.62962962962963,
+          2.7777777777777777,
+          1.8518518518518519,
+          0.9259259259259259,
+          0.0,
+          4.62962962962963
+        ],
+        "facts_worse_margin": 290,
+        "facts_better_margin": 566
+      },
+      "incoming_committed": {
+        "d_correct": 19,
+        "n": 864,
+        "pp": 2.199074074074074,
+        "native_pct": 63.773148148148145,
+        "blocks": 8,
+        "blocks_positive": 6,
+        "blocks_negative": 0,
+        "block_mean_pp": 2.199074074074074,
+        "low": 0.49619416213368583,
+        "high": 3.901953986014462,
+        "per_block_pp": [
+          0.0,
+          1.8518518518518519,
+          5.555555555555555,
+          2.7777777777777777,
+          1.8518518518518519,
+          0.9259259259259259,
+          0.0,
+          4.62962962962963
+        ],
+        "facts_worse_margin": 337,
+        "facts_better_margin": 519
+      }
+    },
+    "after_24h_rest": {
+      "protected": {
+        "d_correct": 294,
+        "n": 4320,
+        "pp": 6.805555555555555,
+        "native_pct": 67.31481481481481,
+        "blocks": 8,
+        "blocks_positive": 8,
+        "blocks_negative": 0,
+        "block_mean_pp": 6.805555555555555,
+        "low": 5.63304397481024,
+        "high": 7.97806713630087,
+        "per_block_pp": [
+          5.7407407407407405,
+          5.555555555555555,
+          7.777777777777778,
+          8.88888888888889,
+          8.518518518518519,
+          6.666666666666667,
+          5.925925925925926,
+          5.37037037037037
+        ],
+        "facts_worse_margin": 772,
+        "facts_better_margin": 3475
+      },
+      "incoming_delivered": {
+        "d_correct": 18,
+        "n": 864,
+        "pp": 2.0833333333333335,
+        "native_pct": 70.02314814814815,
+        "blocks": 8,
+        "blocks_positive": 7,
+        "blocks_negative": 1,
+        "block_mean_pp": 2.0833333333333335,
+        "low": 0.34008785685167586,
+        "high": 3.826578809814991,
+        "per_block_pp": [
+          -0.9259259259259259,
+          1.8518518518518519,
+          5.555555555555555,
+          0.9259259259259259,
+          1.8518518518518519,
+          0.9259259259259259,
+          1.8518518518518519,
+          4.62962962962963
+        ],
+        "facts_worse_margin": 278,
+        "facts_better_margin": 574
+      },
+      "incoming_committed": {
+        "d_correct": 17,
+        "n": 864,
+        "pp": 1.9675925925925926,
+        "native_pct": 62.15277777777778,
+        "blocks": 8,
+        "blocks_positive": 7,
+        "blocks_negative": 1,
+        "block_mean_pp": 1.9675925925925926,
+        "low": 0.39540137166691536,
+        "high": 3.5397838135182695,
+        "per_block_pp": [
+          -0.9259259259259259,
+          1.8518518518518519,
+          4.62962962962963,
+          0.9259259259259259,
+          1.8518518518518519,
+          0.9259259259259259,
+          1.8518518518518519,
+          4.62962962962963
+        ],
+        "facts_worse_margin": 320,
+        "facts_better_margin": 532
+      }
+    }
+  },
+  "populations": {
+    "protected_total": 4320,
+    "incoming_total": 864,
+    "overlap_any": false,
+    "windows_where_committed_differs_from_delivered": 24
+  },
+  "scope": "8 existing blocks, 48 windows, DEVELOPMENT REUSE; blocks are the unit; windows/facts within a block are repeated measurements"
+}

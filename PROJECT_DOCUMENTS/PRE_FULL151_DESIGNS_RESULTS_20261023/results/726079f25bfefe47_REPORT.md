@@ -1,0 +1,20 @@
+# Full151 bridge write/read route diagnostic
+
+All **64/64** new worlds completed and passed the independent receipt audit. This is a descriptive mechanism-localization experiment on the immediate old-teaching endpoint, not another delayed-persistence confirmation or arithmetic test. Each cell is the prior-native-write effect (W−N) on never-reinforced pair choices; two-sided 95% world-level Student-t intervals are shown.
+
+| Training route → read route | FE0 read | BRIDGE read |
+|---|---:|---:|
+| FE0 training | +17.7 pp [+8.1, +27.3] | -15.1 pp [-25.7, -4.5] |
+| BRIDGE training | -2.1 pp [-12.9, +8.7] | -14.1 pp [-25.1, -3.0] |
+
+Prespecified localization contrasts: bridge-write cost with FE0 read = **-19.8 pp [-27.6, -12.0]**; bridge-read cost after FE0 write = **-32.8 pp [-46.9, -18.7]**; interaction = **+20.8 pp [+9.5, +32.2]**. The diagonal bridge-minus-FE0 contrast was -31.8 pp [-46.9, -16.6] and is a replication diagnostic, not a tuned gate. These multiple intervals are descriptive and carry no familywise guarantee.
+
+Immediate taught-pair W choice was FE0→FE0 0.9219, FE0→BRIDGE 0.5391, BRIDGE→FE0 0.5365, and BRIDGE→BRIDGE 0.5833. The mean last-teaching-eligibility-to-read sparse-support Jaccard values in that order were 1.000, 0.565, 0.566, and 0.988. Jaccard is a code geometry diagnostic, not a learning endpoint.
+
+**Interpretation:** Both cross-route cells are poor, but their last-write/read support overlap is only about 0.565. They therefore cannot, by themselves, prove that either the bridge writer or bridge reader is intrinsically defective: a mismatched code is an expected obstacle. More revealing is the matched BRIDGE→BRIDGE cell. Its write/read support overlap is 0.988, yet its taught-pair choice is 0.5833 and its held-out write effect is negative on this roster. Thus simple support retention is not enough to restore the learned value relation. In a [postrun descriptive reduction](results/POSTRUN_CODE_DIAGNOSTIC.json), the mean read-code support Hamming distance between held-out opposite orientations was 78.9 with BRIDGE versus 14.3 with FE0, despite the worse bridge choice. Greater KC separation is not the missing behavioral criterion. These diagnostics do not establish a specific cellular mechanism, full-code amplitude stability, or that the bridge must fail in every task.
+
+The 144 old records and immediate pre-feedback probes use the inherited V9.8 E3 class-pair task. Six pairings were taught; three pairings were withheld in both orientations. Exact pair recitation cannot score the held-out pairs; a learned one-bit class per symbol can. All W/N arms received matched sensory bytes, labels, predictor updates and clock, differing only in old native write permission. The four read routes are discarded probes from identical respective post-teaching states. `L/R` is a fixed value comparator over two supplied alternatives, not a learned answer generator. No new Full151 synapses or bridge parameters were tuned.
+
+Technical world 2299 had exact diagonal old-end pair-margin parity with the frozen previous runner; three targeted unit tests passed. The receipt audit checked source hashes, fresh-world roster, held-out exclusions, 144/0 native write ledgers, route metadata, action and score arithmetic, code diagnostics and world-level intervals. See [DESIGN.md](DESIGN.md), [results/WORLD_METRICS.csv](results/WORLD_METRICS.csv), [results/SUMMARY.json](results/SUMMARY.json), [results/AUDIT.json](results/AUDIT.json) and [results/TECHNICAL.json](results/TECHNICAL.json). The predictor was allowed to update online in all training arms, so these contrasts do not isolate predictor plasticity or the fixed projection geometry separately.
+
+The next engineering decision is to preserve the demonstrated FE0 value route while testing a smaller or separately gated temporal contribution against **early taught and held-out choice**. That requires a new protocol and fresh worlds; these completed trajectories should not be recycled for gain tuning. W4's 513-way arithmetic action interface remains a separate unresolved link, so no arithmetic or evolution run is justified by this diagnostic.

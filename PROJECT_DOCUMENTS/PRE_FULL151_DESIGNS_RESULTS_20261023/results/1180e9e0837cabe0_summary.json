@@ -1,0 +1,111 @@
+{
+  "config": {
+    "seed": 7,
+    "data_dir": "/Users/pencilbard/documents/second_try/data",
+    "output_root": "/Users/pencilbard/documents/second_try/sample_efficiency_runs",
+    "run_name": "adaptive_n500_seed7",
+    "device": "auto",
+    "epochs": 30,
+    "batch_size": 256,
+    "arch_batch_size": 128,
+    "learning_rate": 0.002,
+    "weight_decay": 0.0001,
+    "grad_clip": 1.0,
+    "num_workers": 0,
+    "weight_train_size": 50000,
+    "architecture_size": 5000,
+    "validation_size": 5000,
+    "train_limit": 500,
+    "architecture_limit": 128,
+    "validation_limit": 5000,
+    "test_limit": 10000,
+    "neurons": 64,
+    "grid_height": 8,
+    "grid_width": 8,
+    "memory_dim": 6,
+    "branches": 8,
+    "synapses_per_branch": 4,
+    "input_synapses_per_branch": 3,
+    "internal_hidden": 12,
+    "kappa_low": 0.08,
+    "kappa_high": 0.995,
+    "firing_gain": 4.0,
+    "protocol": "flash",
+    "flash_steps": 4,
+    "delay_steps": 8,
+    "target_activity": 0.1,
+    "homeostasis_coef": 4.0,
+    "decorrelation_coef": 0.002,
+    "rewire_start_epoch": 4,
+    "rewire_end_epoch": 14,
+    "rewire_every": 2,
+    "rewire_fraction": 0.04,
+    "architecture_batches": 1,
+    "minimum_edge_age": 2,
+    "input_wiring_cost": 0.6,
+    "recurrent_wiring_cost": 0.3,
+    "analysis_samples": 1000,
+    "prototype_neurons": 6,
+    "prototypes_per_neuron": 4,
+    "explained_samples": 3,
+    "quick": false,
+    "analyze_only": ""
+  },
+  "test": {
+    "loss": 2.171102647781372,
+    "accuracy": 0.3128,
+    "mean_activity": 0.12798030831813811,
+    "per_class_accuracy": {
+      "T-shirt/top": 0.904,
+      "Trouser": 0.0,
+      "Pullover": 0.0,
+      "Dress": 0.5,
+      "Coat": 0.084,
+      "Sandal": 0.83,
+      "Shirt": 0.006,
+      "Sneaker": 0.0,
+      "Bag": 0.804,
+      "Ankle boot": 0.0
+    }
+  },
+  "delay_generalization": [
+    {
+      "delay_steps": 8,
+      "accuracy": 0.3128,
+      "mean_activity": 0.12798030831813811
+    },
+    {
+      "delay_steps": 12,
+      "accuracy": 0.3128,
+      "mean_activity": 0.13703139379024507
+    },
+    {
+      "delay_steps": 16,
+      "accuracy": 0.3019,
+      "mean_activity": 0.14517942111492158
+    },
+    {
+      "delay_steps": 24,
+      "accuracy": 0.2699,
+      "mean_activity": 0.15905130116939545
+    }
+  ],
+  "topology": {
+    "input_retained_fraction": 0.8606770634651184,
+    "recurrent_retained_fraction": 0.865234375,
+    "mean_input_wiring_distance": 0.19497111861392113,
+    "mean_recurrent_wiring_distance": 0.2997450465190923,
+    "reciprocal_recurrent_pairs": 50,
+    "highest_recurrent_out_degree": 25,
+    "highest_out_degree_neuron": 41,
+    "mean_absolute_synaptic_weight": 0.17468273639678955
+  },
+  "selected_neurons": [
+    14,
+    44,
+    11,
+    8,
+    31,
+    41
+  ]
+}

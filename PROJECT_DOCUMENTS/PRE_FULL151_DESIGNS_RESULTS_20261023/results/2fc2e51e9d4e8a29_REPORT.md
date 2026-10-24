@@ -1,0 +1,23 @@
+# Output Step 2: the delivered teacher byte now controls the write channel
+
+**Result: `BYTE_TEACHER_E1_INTERFACE_PASS`.** The locked technical preflight and all **16/16 new science worlds** (11201–11216; 80 branch lives) completed without an execution failure. The independent receipt audit and four in-memory tamper tests passed. Each world contained four directly taught two-letter cues and 48 chronological teaching records. The learner selected one byte at the fixed `=` prompt before each teacher byte arrived.
+
+| Branch | Final correct choices, 64 total | World-level 95% interval |
+|---|---:|---:|
+| `W`: delivered true byte, native writes on | **60/64 (93.75%)** | 87.79–99.71% |
+| `M`: same delivered stream, deliberately wrong hidden metadata | **60/64 (93.75%)** | 87.79–99.71% |
+| `N`: true stream, native writes off | 16/64 (25%) | zero-variance interval unresolved |
+| `S`: delivered teacher byte cyclically changed, writes on; scored against changed byte | **60/64 (93.75%)** | 87.79–99.71% |
+| `SN`: changed stream, writes off | 16/64 (25%) | zero-variance interval unresolved |
+
+`W` beat `N` in all 16 worlds, and `S` beat `SN` in all 16; the two-sided exact lower bound for each world-win proportion was 79.41%. `S` matched the *original* unshifted answer on only **2/64** probes. The prespecified absolute and matched-control gates all passed. Four worlds had 3/4 rather than 4/4 correct in both `W` and `S`; this does not change the gate. These are world-level intervals, not 64 independent-trial intervals.
+
+The change is narrow and causal at the **engineered router**. The environment materializes `(cue bytes, teacher byte)` records; the training function receives those bytes but no cue index, answer table, or class metadata. Its fixed decoder maps only the arriving raw ASCII `0`–`3` byte to a class, then delivers the same inherited native `p=0`/`p=1` teaching policy as Output Step 1. `M` used the same delivered stream as `W`; its wrong answer metadata was computed **after training**, so their exact state/action equality is a code-path consistency check, **not** an independent metadata-intervention result. Changing the delivered teacher byte caused native writes and learned answers to follow the changed class, while `SN` controls for the changed byte's sensory exposure without writes. Technical missing-byte and invalid-byte cases made no native teaching call or write. The independent audit rebuilt each world stream, verified every delivered byte and decoded route, all class-value argmax outputs, full roster and source hashes, and rejected tampered teacher, route, state, and output receipts.
+
+The result remains **E1 taught-cue learning plus an E0 causal interface check**. The correct digit is supplied by the environment, so this is externally supervised learning, **not self-supervision**. The fixed raw-ASCII decoder is engineered; the experiment does not show Full151's FE0/KC activity identifying the teacher digit. It still uses four complete native learner copies, a fixed answer prompt, one output byte, and exact taught cue keys. A lookup table could solve the cue task. No changed-presentation transfer, unseen sum, continuous byte generation, learned stopping, arithmetic, or persistent-core claim follows. The earlier [Output Step 1](../FULL151_OUTPUT_STEP1_FOUR_BYTE_20260927/REPORT.md) remains the four-channel feasibility result; its completed worlds were not rerun.
+
+The next isolated technical decision is whether to require a native sensory teacher route or accept this explicit supervised decoder as the teaching interface. Independently, an input front end must preserve complete expression information at the actual answer time, and a separate output-loop test must show model-chosen continuation/termination before `1+2=3;` is a meaningful end-to-end E1 check. This run neither qualifies the proposed fading-pair input front end nor changes the previous Step 8 E2 failure.
+
+Artifacts: [design](DESIGN.md), [frozen runner](output_step2.py), [independent audit](audit.py), [source lock](results/SOURCE_LOCK.json), [technical receipt](results/TECHNICAL.json), [world receipts](results/worlds), and [summary](results/SUMMARY.json).
+
+**Post-audit clarification (27 September 2026):** The earlier version of this report described `M` too strongly as a counterfactual metadata control. Inspection of the frozen runner shows that `M_wrong_metadata` is constructed only after the training loop. No scientific code or receipt was changed in this clarification. The defensible evidence for byte-controlled routing is the frozen router code, delivered-byte/route receipts, `W` versus `N`, and `S` versus `SN`; it does not establish native sensory decoding of the teacher.

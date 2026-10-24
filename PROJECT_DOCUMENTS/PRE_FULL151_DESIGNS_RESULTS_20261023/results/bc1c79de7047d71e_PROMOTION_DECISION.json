@@ -1,0 +1,45 @@
+{
+  "criteria": {
+    "primary_beats_v11_transport_in_at_least_4_of_6": false,
+    "primary_prefeedback_not_more_than_5pp_below_driver": true,
+    "primary_reduces_oracle_gap_by_at_least_half": false,
+    "protected_and_shared_invariants_all_hold": true,
+    "shared_driver_reproduces_v11_within_0p5pp": true
+  },
+  "matched_cells": 6,
+  "means": {
+    "full_stale": 0.16341666666666665,
+    "oracle_full64": 0.506,
+    "oracle_gap_fraction_reduced": -0.9142997061704214,
+    "oracle_gap_primary_pp": 32.574999999999996,
+    "oracle_gap_ref_pp": 17.016666666666662,
+    "primary_split_residual": 0.18025,
+    "stable_only": 0.3609166666666667,
+    "transported_split_challenger": 0.22525000000000003,
+    "v11_full_transport": 0.3358333333333334
+  },
+  "note": "Descriptive predeclared promotion heuristic, not a p-value. All memory trackers share one encoder trajectory per seed/order.",
+  "stage_a": {
+    "diagnostic_only": true,
+    "means": {
+      "crosszero64_accuracy": 0.4980833333333334,
+      "crosszero64_latest_group_accuracy": 0.5458333333333334,
+      "crosszero64_old_groups_mean": 0.48614583333333333,
+      "crosszero_gap_from_full_pp": -0.7916666666666674,
+      "full64_accuracy": 0.506,
+      "full64_latest_group_accuracy": 0.5279166666666667,
+      "full64_old_groups_mean": 0.5005208333333334,
+      "plastic32_accuracy": 0.42824999999999996,
+      "plastic32_latest_group_accuracy": 0.48874999999999996,
+      "plastic32_old_groups_mean": 0.41312499999999996,
+      "stable32_accuracy": 0.3609166666666667,
+      "stable32_latest_group_accuracy": 0.42416666666666664,
+      "stable32_old_groups_mean": 0.3451041666666666,
+      "stable_fraction_of_full": 0.7138728671853346
+    },
+    "n": 6,
+    "predeclared_descriptive_rule": "stable32 >=60% of full64 accuracy and crosszero64 within 3 pp of full64; Stage B runs regardless to avoid a second execution.",
+    "split_memory_descriptively_supported": true
+  },
+  "status": "fail"
+}
