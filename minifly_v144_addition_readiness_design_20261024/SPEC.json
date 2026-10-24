@@ -1,0 +1,138 @@
+{
+  "schema": "MINIFLY_DESIGN_PROPOSAL",
+  "serial_version": "V144",
+  "title": "Addition readiness and learning-signal diagnosis",
+  "date": "2026-10-24",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED_OR_RUN",
+  "design": "DESIGN.md",
+  "parent_serial_alias": "V143",
+  "parent_experiment": "LEARNED-BANK V1",
+  "parent_source_commit": "4c12621d0804d2495c2eacaebf4e17aaeb994771",
+  "goal": "Retained complete own-byte-output and own-EOS generalization to unseen addition per all presentations and actual compute",
+  "implementation_authorized": false,
+  "training_started": false,
+  "three_cycles_executed": false,
+  "formal_native_campaign_included": false,
+  "new_core_adopted": false,
+  "constraints": {
+    "gradual_warmup": true,
+    "expected_output_feedback_permitted": true,
+    "scalar_only_assessed": false,
+    "attention": false,
+    "transformer": false,
+    "elm_kernel": false,
+    "arithmetic_specific_structure": false,
+    "extra_task_or_noise_objective": false
+  },
+  "stages": {
+    "A": {
+      "kind": "integrity_and_accounting_qualification",
+      "source_closure_required": true,
+      "hash_failure_invalidates_verdict": true,
+      "count_all_attempts": true
+    },
+    "B": {
+      "kind": "native_telemetry_development",
+      "task": "V143 parity diagnostic only",
+      "world": "D2 from V143",
+      "arms": [
+        "LEARN",
+        "FROZEN"
+      ],
+      "histories": 2,
+      "passes": 150,
+      "max_training_records": 24000,
+      "cpu_ceiling_hours": 1.5,
+      "new_scientific_intervention": false
+    },
+    "C": {
+      "kind": "evaluator_reference_capacity_screen",
+      "task": "ordinary addition a,b in 0..9; ASCII sum and own EOS",
+      "hidden_sizes": [
+        128,
+        256,
+        512
+      ],
+      "learning_rates": [
+        0.003,
+        0.01,
+        0.03
+      ],
+      "weight_decays": [
+        0,
+        0.001,
+        0.01
+      ],
+      "grid_size": 27,
+      "modes": [
+        "BP_REFERENCE",
+        "DFA_REFERENCE",
+        "FEATURE_FROZEN_LESION"
+      ],
+      "training_orbit_doses": [
+        20,
+        30,
+        40
+      ],
+      "held_orbits": 15,
+      "development_worlds": [
+        "V144-CAP-D1",
+        "V144-CAP-D2"
+      ],
+      "holdback_worlds": [
+        "V144-CAP-H1",
+        "V144-CAP-H2"
+      ],
+      "probe_passes": [
+        0,
+        1,
+        4,
+        16,
+        64,
+        256,
+        1024,
+        4096
+      ],
+      "first_sweep_passes": 64,
+      "shortlist_configurations": 3,
+      "development_fit_starts_max": 66,
+      "holdback_fit_starts": 18,
+      "max_training_records": 10567680,
+      "max_observed_target_tokens": 31703040,
+      "cpu_ceiling_hours": 6,
+      "output_token_bits": 9,
+      "EOS": 256,
+      "invalid_output_codes": [
+        257,
+        511
+      ],
+      "generation_decision_cap": 8,
+      "native_candidate": false,
+      "selection": "Development BP final complete orbit accuracy; CPU,H,lexicographic tie break",
+      "holdback_tuning_allowed": false
+    }
+  },
+  "resource_policy": {
+    "numerical_threads_per_process": 1,
+    "max_concurrent_processes": 2,
+    "automatic_restart": false,
+    "automatic_resume": false,
+    "stage_limits_include_failed_attempts": true,
+    "resource_limit_is_incomplete_not_scientific_failure": true
+  },
+  "mechanism_inputs": {
+    "human_catalog_rows": 150,
+    "historical_recipe_rows": 254,
+    "counts_additive": false,
+    "crosswalk": "MECHANISM_CROSSWALK.csv",
+    "crosswalk_scope": "Full human inventory triage; targeted exact historical recipe crosswalk, not full-text literature verification",
+    "human_catalog_sha256": "06210d443e8dab880a174be72d502aca6135ee965a7e0a7293f5128394eb5982"
+  },
+  "evidence_boundary": "E0/E1 diagnostics and bounded reference held-relation feasibility; no native persistent-E3 confirmation or adoption",
+  "next_native_comparison": "Separate design and authorization after capacity and generic own-output interface rehearsal",
+  "feedback_input": {
+    "path": "CLAUDE_FEEDBACK.md",
+    "attachment_sha256": "bea693b0a338380df93808164866ef311ebdb5f2230a78e81d6dfef263df587d"
+  },
+  "historical_frozen_files_changed": false
+}
