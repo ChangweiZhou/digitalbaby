@@ -1,5 +1,7 @@
 # Human-learning mechanism audit — literature crosswalk (2026-10-24)
 
+> **SUPERSEDED (2026-10-24):** This preliminary memo was written before locating Claude's original 150-entry human-learning catalog and before incorporating V143/V144 results. It is retained for provenance only. **Use [REVISED_AUDIT.md](REVISED_AUDIT.md) as the current, source-resolved assessment.** Do not treat the earlier literature crosswalk as a complete mechanism audit.
+
 **Status:** Research synthesis committed for review; **not an implementation, experimental confirmation, or claim of newly missing mechanisms.** This document audits *human learning* as a source of mechanistic hypotheses, **not Drosophila cognition**, and does not change native MiniFly's experimental gates.
 
 ## Scope correction and provenance
