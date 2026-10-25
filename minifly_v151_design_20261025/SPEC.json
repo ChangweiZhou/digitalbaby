@@ -1,0 +1,102 @@
+{
+  "version": "V151",
+  "name": "Native teaching-response operator",
+  "status": "DESIGN_ONLY",
+  "goal": "Better complete own-byte/EOS unseen-addition generalization per total samples and compute; this is a bounded E0/E1 subsystem diagnostic",
+  "constraints": {
+    "gradual_warmup": "s(n)=1/16+(15/16)*min(n/1024,1); inherit counter",
+    "local_rules_only": true,
+    "attention": false,
+    "Transformers": false,
+    "ELM": false,
+    "arithmetic_specific_structure": false,
+    "vocabulary": 257,
+    "native_compartments": 16,
+    "homeostasis": false,
+    "fresh_adaptation": true,
+    "native_equations_changed": false,
+    "codebook_frozen_for_primary": true,
+    "primary_temperature": 1,
+    "eta": 0.1,
+    "corpus_or_trajectory_replay": false,
+    "new_training_campaign": false,
+    "gain_in_model_or_per_item_loss_tuning": false
+  },
+  "roster": {
+    "primary_anchors": 6,
+    "source_sites_per_anchor": 6,
+    "calibration_sources": 2,
+    "scored_sources": 4,
+    "pulse_radii": [
+      0.001,
+      0.0005
+    ],
+    "signed_coordinate_pulses_per_site": 64,
+    "response_branches_per_site": 67,
+    "response_branches": 2412,
+    "partial_coordinate_writes": 2304,
+    "calibration_full_vector_target_branches": 24,
+    "scored_full_vector_target_branches": 72,
+    "primary_conditions": [
+      "A_COMMON",
+      "B_COMMON",
+      "B_MATCHED"
+    ],
+    "C_ancillary_anchors": 2,
+    "C_scored_sites_per_anchor": 4,
+    "C_factorial_branches_per_site": 4,
+    "C_factorial_branches": 32,
+    "C_feedback_branches": 24,
+    "C_native_vector_write_branches": 16,
+    "calibration_full_vector_queries": "immediate displacement only; no loss before gain lock"
+  },
+  "gain_matching": {
+    "target": "centered immediate native displacement L2, not log loss",
+    "formula": "lambda=sqrt(sum_cal ||P dv_A||^2 / sum_cal ||P dv_B||^2)",
+    "scope": "one frozen positive scalar per primary anchor",
+    "admissible_interval": [
+      0.25,
+      4
+    ],
+    "out_of_range_or_numerically_zero_response": "MATCH_UNIDENTIFIABLE; no clipping or retuning; continue fixed eligible branches only",
+    "freeze_before_scored_results": true
+  },
+  "counts_caps": {
+    "preflight_real_target_events": 8,
+    "preflight_extra_native_vector_readouts": 256,
+    "total_observed_target_applications": 128,
+    "total_nonzero_compartment_write_increments_max": 4224,
+    "signed_API_calls_including_zero_max": 40320,
+    "branch_events_including_passive_max": 2556,
+    "native_vector_readouts_max": 10388,
+    "max_source_or_query_prefix_bytes": 16,
+    "full_training_histories": 0,
+    "scientific_addition_records": 0,
+    "preflight_all_event_branches": 16
+  },
+  "resources": {
+    "summed_CPU_seconds": 1800,
+    "wall_seconds": 2700,
+    "workers": 1,
+    "numerical_threads": 1,
+    "resident_memory_target_MiB": 1024,
+    "operator_storage": "16x16 evaluator matrices only, not a candidate controller",
+    "branch_processing": "serial discard-only clones",
+    "count_clone_hash_io_prefix_passive_signed_inner_events_separately": true,
+    "automatic_retry_or_budget_extension": false
+  },
+  "evidence": {
+    "operator": "E0",
+    "taught_context_one_write_response": "E1 diagnostic",
+    "cross_context_rule_or_arithmetic_claim_allowed": false,
+    "new_core_adoption_allowed": false
+  },
+  "authorization": {
+    "design_delivery": true,
+    "implementation": false,
+    "three_cycle_exercise": false,
+    "native_interventions": false,
+    "training": false,
+    "github_push": false
+  }
+}

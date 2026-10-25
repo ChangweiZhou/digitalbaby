@@ -1,0 +1,28 @@
+{
+  "version": "V151",
+  "timing": "Before any V151 native event or observed target",
+  "authorization": "User: Do the 3 cycle exercise.",
+  "design_snapshot": "minifly_v151_design_20261025",
+  "interpretation": "Counterfactual native writes only; no sequential retraining, no addition or language campaign",
+  "qualification": {
+    "finite_difference_gradient_absolute_error": 0.000001,
+    "matched_zero_repeat_and_passive_vector_absolute_error": 1e-12,
+    "gain_response_floor": "max(4 sqrt(16) times repeat_error,100 float64_eps times max(1,norm(v_zero))); sum squared across calibration sites",
+    "audit_vector_reduction_absolute_error": 1e-10,
+    "role": "Numerical reproducibility checks, not efficacy thresholds"
+  },
+  "preflight": {
+    "observed_target_applications": 6,
+    "technical_resume": "2 prefix targets,2 parent continuation targets,2 child continuation targets; discarded technical state only",
+    "other_events": "one zero,one passive,two single-compartment sign pulses",
+    "maximum_event_paths": 16,
+    "remaining_reserved_targets_not_used_to_enlarge_roster": true
+  },
+  "counter_policy": "Artificial pulses do not advance observed-target warmup. Each observed target branch advances its private counter once. No target byte is fed.",
+  "scoring": "Calibration immediate displacement norms only; lock multipliers before any scored intervention. No loss used to tune gains.",
+  "unidentifiable_match": "Explicit missing condition, no clipping, per-site tuning or replacement",
+  "reported_clone_bandwidth": "Known minimum mutable fast/slow/adapt array bytes copied. Temporary copies inside inherited clones are additional and are not claimed measured exactly. CPU and peak RSS measured.",
+  "automatic_retries": 0,
+  "new_core_adoption": false,
+  "github_push_authorized": false
+}
