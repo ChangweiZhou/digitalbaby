@@ -1,0 +1,754 @@
+{
+ "text": "alice",
+ "tag": "main",
+ "prefixes_kb": [
+  0.0,
+  5.0,
+  10.0,
+  20.0,
+  40.0
+ ],
+ "calib_kb": 5,
+ "held_kb": 10,
+ "offsets": {
+  "train": [
+   0,
+   682
+  ],
+  "calib": [
+   682,
+   762
+  ],
+  "held": [
+   2290,
+   2478
+  ],
+  "n_records": 2478
+ },
+ "prefix_records": {
+  "0.0": 0,
+  "5.0": 79,
+  "10.0": 159,
+  "20.0": 321,
+  "40.0": 682
+ },
+ "corpus_sha256": "5ce9042c0d8536b072b61d4c7c4e6d70c72d9dbb5f3d816261326d9280749266",
+ "passes": [
+  1,
+  2,
+  4
+ ],
+ "checkpoints": [
+  {
+   "kb": 0.0,
+   "pass": 1,
+   "records": 0,
+   "symbols": 0,
+   "minifly": {
+    "T": 0.02,
+    "calib_bpb": 8.005624549193879,
+    "held_bpb": 8.005624549193877,
+    "held_bpb_T1": 8.005624549193877,
+    "held_acc": 0.0,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.9961089494163391,
+    "held_argmax_unseen_rate": 1.0,
+    "eval_cpu_s": 191.7
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683
+    },
+    "unigram": {
+     "held_bpb": 8.005624549192683
+    },
+    "bigram": {
+     "held_bpb": 8.005624549192683
+    },
+    "ppmc2": {
+     "held_bpb": 8.005624549192683
+    },
+    "ppmc3": {
+     "held_bpb": 8.005624549192683
+    },
+    "ppmc4": {
+     "held_bpb": 8.005624549192683
+    },
+    "ppmc5": {
+     "held_bpb": 8.005624549192683
+    }
+   }
+  },
+  {
+   "kb": 5.0,
+   "pass": 1,
+   "records": 79,
+   "symbols": 5162,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 7.012173499465765,
+    "held_bpb": 7.1943421928837905,
+    "held_bpb_T1": 7.2146305573506915,
+    "held_acc": 0.10044773213938096,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.659526476143095,
+    "held_argmax_unseen_rate": 0.21627408993576017,
+    "held_bpb_renorm_seen": 5.493670385810207,
+    "T_renorm_seen": 1.1392848794539172,
+    "held_fraction_target_seen": 0.9978586723768736,
+    "taught_first5k_bpb": 6.425171619258712,
+    "taught_first5k_acc": 0.16970166602092213,
+    "taught_last5k_bpb": 6.421141424538316,
+    "taught_last5k_acc": 0.16978557504873296,
+    "eval_cpu_s": 323.9
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.669330922844798,
+     "taught_first5k_bpb": 4.571091241169876,
+     "taught_last5k_bpb": 4.561998281824562
+    },
+    "bigram": {
+     "held_bpb": 3.844641405523966,
+     "taught_first5k_bpb": 3.4110713445899115,
+     "taught_last5k_bpb": 3.4095580622022363
+    },
+    "ppmc2": {
+     "held_bpb": 3.544867658223599,
+     "taught_first5k_bpb": 2.472014666357273,
+     "taught_last5k_bpb": 2.4746666046809307
+    },
+    "ppmc3": {
+     "held_bpb": 3.437609493164975,
+     "taught_first5k_bpb": 1.7539133030095653,
+     "taught_last5k_bpb": 1.7547633681566683
+    },
+    "ppmc4": {
+     "held_bpb": 3.477445441616356,
+     "taught_first5k_bpb": 1.437509095286934,
+     "taught_last5k_bpb": 1.4370393008747961
+    },
+    "ppmc5": {
+     "held_bpb": 3.4979102093010566,
+     "taught_first5k_bpb": 1.3149521647516385,
+     "taught_last5k_bpb": 1.3142697061928046
+    }
+   }
+  },
+  {
+   "kb": 10.0,
+   "pass": 1,
+   "records": 159,
+   "symbols": 10270,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 6.945423867187144,
+    "held_bpb": 7.128091409042901,
+    "held_bpb_T1": 7.129094274121952,
+    "held_acc": 0.10181039517227954,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.6291537122123384,
+    "held_argmax_unseen_rate": 0.24089935760171305,
+    "held_bpb_renorm_seen": 5.51335289745393,
+    "T_renorm_seen": 1.1392848794539172,
+    "held_fraction_target_seen": 0.9988320031146584,
+    "taught_first5k_bpb": 6.7435338721096985,
+    "taught_first5k_acc": 0.12456412243316543,
+    "taught_last5k_bpb": 6.283428696047851,
+    "taught_last5k_acc": 0.17890262751159197,
+    "eval_cpu_s": 334.0
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.6548103296275665,
+     "taught_first5k_bpb": 4.55286098149211,
+     "taught_last5k_bpb": 4.411830451594028
+    },
+    "bigram": {
+     "held_bpb": 3.790435098082008,
+     "taught_first5k_bpb": 3.4520742370698416,
+     "taught_last5k_bpb": 3.4112701433476653
+    },
+    "ppmc2": {
+     "held_bpb": 3.3909852678582815,
+     "taught_first5k_bpb": 2.5606657119226037,
+     "taught_last5k_bpb": 2.559874921405907
+    },
+    "ppmc3": {
+     "held_bpb": 3.213484473567498,
+     "taught_first5k_bpb": 1.8712308248007639,
+     "taught_last5k_bpb": 1.888665981468522
+    },
+    "ppmc4": {
+     "held_bpb": 3.243862255309417,
+     "taught_first5k_bpb": 1.5160080653062569,
+     "taught_last5k_bpb": 1.503187085763721
+    },
+    "ppmc5": {
+     "held_bpb": 3.2678548423335783,
+     "taught_first5k_bpb": 1.3673933381129555,
+     "taught_last5k_bpb": 1.3357430603294083
+    }
+   }
+  },
+  {
+   "kb": 20.0,
+   "pass": 1,
+   "records": 321,
+   "symbols": 20543,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 6.9598422893592184,
+    "held_bpb": 7.095431499677286,
+    "held_bpb_T1": 7.1015382340361475,
+    "held_acc": 0.11008370644344949,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.618193709999123,
+    "held_argmax_unseen_rate": 0.19661280903250924,
+    "held_bpb_renorm_seen": 5.534653815914115,
+    "T_renorm_seen": 1.1392848794539172,
+    "held_fraction_target_seen": 1.0,
+    "taught_first5k_bpb": 6.80787015666377,
+    "taught_first5k_acc": 0.13076327005036809,
+    "taught_last5k_bpb": 6.346418243421624,
+    "taught_last5k_acc": 0.18633900928792568,
+    "eval_cpu_s": 329.9
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.636228181604796,
+     "taught_first5k_bpb": 4.5422625786338715,
+     "taught_last5k_bpb": 4.478709607682106
+    },
+    "bigram": {
+     "held_bpb": 3.728469793960017,
+     "taught_first5k_bpb": 3.4870209381138797,
+     "taught_last5k_bpb": 3.4607287284278065
+    },
+    "ppmc2": {
+     "held_bpb": 3.2238663749447727,
+     "taught_first5k_bpb": 2.620740707790347,
+     "taught_last5k_bpb": 2.6382171889925394
+    },
+    "ppmc3": {
+     "held_bpb": 2.986027493240283,
+     "taught_first5k_bpb": 1.969783602771453,
+     "taught_last5k_bpb": 1.9777242737364409
+    },
+    "ppmc4": {
+     "held_bpb": 2.9889392321712798,
+     "taught_first5k_bpb": 1.6001125505392775,
+     "taught_last5k_bpb": 1.5934730517853353
+    },
+    "ppmc5": {
+     "held_bpb": 3.022857153222945,
+     "taught_first5k_bpb": 1.4345674243063817,
+     "taught_last5k_bpb": 1.4098736141262393
+    }
+   }
+  },
+  {
+   "kb": 40.0,
+   "pass": 1,
+   "records": 682,
+   "symbols": 40993,
+   "minifly": {
+    "T": 0.8777435898906348,
+    "calib_bpb": 7.011479795530091,
+    "held_bpb": 7.10438970955202,
+    "held_bpb_T1": 7.109616711499586,
+    "held_acc": 0.09879306988514697,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.6344310151748879,
+    "held_argmax_unseen_rate": 0.2942378820323146,
+    "held_bpb_renorm_seen": 5.546135631700277,
+    "T_renorm_seen": 1.1392848794539172,
+    "held_fraction_target_seen": 1.0,
+    "taught_first5k_bpb": 7.027614887027021,
+    "taught_first5k_acc": 0.10228593568384348,
+    "taught_last5k_bpb": 6.500863164580953,
+    "taught_last5k_acc": 0.14299498263218835,
+    "eval_cpu_s": 306.8
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.624648774439614,
+     "taught_first5k_bpb": 4.538562673034946,
+     "taught_last5k_bpb": 4.623158400450021
+    },
+    "bigram": {
+     "held_bpb": 3.6832706020903796,
+     "taught_first5k_bpb": 3.5184782479002874,
+     "taught_last5k_bpb": 3.545419773443146
+    },
+    "ppmc2": {
+     "held_bpb": 3.119468364435016,
+     "taught_first5k_bpb": 2.6705484966081148,
+     "taught_last5k_bpb": 2.6930041879335658
+    },
+    "ppmc3": {
+     "held_bpb": 2.819382451375154,
+     "taught_first5k_bpb": 2.0457314006454754,
+     "taught_last5k_bpb": 2.0840455277680947
+    },
+    "ppmc4": {
+     "held_bpb": 2.778230131960032,
+     "taught_first5k_bpb": 1.6754565386488443,
+     "taught_last5k_bpb": 1.7044784903118024
+    },
+    "ppmc5": {
+     "held_bpb": 2.807437941822277,
+     "taught_first5k_bpb": 1.4992723604014528,
+     "taught_last5k_bpb": 1.4868429294112546
+    }
+   }
+  },
+  {
+   "kb": 40.0,
+   "pass": 2,
+   "records": 682,
+   "symbols": 40993,
+   "minifly": {
+    "T": 1.0,
+    "calib_bpb": 7.035120396842239,
+    "held_bpb": 7.121380791683614,
+    "held_bpb_T1": 7.121380791683614,
+    "held_acc": 0.09957173447537473,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.6447257046405618,
+    "held_argmax_unseen_rate": 0.3385244306015184,
+    "held_bpb_renorm_seen": 5.5385643059347585,
+    "T_renorm_seen": 1.2979700365523268,
+    "held_fraction_target_seen": 1.0,
+    "taught_first5k_bpb": 7.013207795606211,
+    "taught_first5k_acc": 0.10654784967067028,
+    "taught_last5k_bpb": 6.620455087027106,
+    "taught_last5k_acc": 0.13990737167116943,
+    "eval_cpu_s": 336.7
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.624648774439614,
+     "taught_first5k_bpb": 4.538562673034946,
+     "taught_last5k_bpb": 4.623158400450021
+    },
+    "bigram": {
+     "held_bpb": 3.6832706020903796,
+     "taught_first5k_bpb": 3.5184782479002874,
+     "taught_last5k_bpb": 3.545419773443146
+    },
+    "ppmc2": {
+     "held_bpb": 3.119468364435016,
+     "taught_first5k_bpb": 2.6705484966081148,
+     "taught_last5k_bpb": 2.6930041879335658
+    },
+    "ppmc3": {
+     "held_bpb": 2.819382451375154,
+     "taught_first5k_bpb": 2.0457314006454754,
+     "taught_last5k_bpb": 2.0840455277680947
+    },
+    "ppmc4": {
+     "held_bpb": 2.778230131960032,
+     "taught_first5k_bpb": 1.6754565386488443,
+     "taught_last5k_bpb": 1.7044784903118024
+    },
+    "ppmc5": {
+     "held_bpb": 2.807437941822277,
+     "taught_first5k_bpb": 1.4992723604014528,
+     "taught_last5k_bpb": 1.4868429294112546
+    }
+   }
+  },
+  {
+   "kb": 40.0,
+   "pass": 4,
+   "records": 682,
+   "symbols": 40993,
+   "minifly": {
+    "T": 1.2979700365523268,
+    "calib_bpb": 7.1683131986181134,
+    "held_bpb": 7.248243742036108,
+    "held_bpb_T1": 7.314758606297991,
+    "held_acc": 0.09003309324508468,
+    "held_symbols": 10274,
+    "held_mass_on_unseen_symbols": 0.6598650497840555,
+    "held_argmax_unseen_rate": 0.42154954253455323,
+    "held_bpb_renorm_seen": 5.604286777433364,
+    "T_renorm_seen": 1.6847262157876486,
+    "held_fraction_target_seen": 1.0,
+    "taught_first5k_bpb": 7.129764130806266,
+    "taught_first5k_acc": 0.09628051142967842,
+    "taught_last5k_bpb": 6.940999277892489,
+    "taught_last5k_acc": 0.11018911617136241,
+    "generations": [
+     {
+      "prefix": "As soon as",
+      "true": " the jury had a little recovered from the shock of being",
+      "own": "\u00ab\u00a8\u0002h, R\u00abs\u00e5\u000e\u0093\u00e5Y h,\u00e5\u0007\u00c8Et l\u00ab \u0000hJ F}R\u00abd\u00ab a\u00ab\u00ab4",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "upset, and",
+      "true": " their slates and pencils had been found and handed back to",
+      "own": " oR\u00bdY\u0000\u0000\u0011 nn \u0011o\u008f e\n\u008fRkz\u00f7>R\u00f3zho\u001fk\u00abe\u00a9(e\u00ad\u0000  \u00bbkRkeki\u0000 ekkke\u00bc,>\u00f3kz\u00f3han",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "them, they",
+      "true": " set to work very diligently to write out a history of the",
+      "own": "\u00e5ERYh\u0006>hs>",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "accident, ",
+      "true": "all except the Lizard, who seemed too much overcome to do",
+      "own": "h\u00e5dek\u0000He koEk>ond Hhe \u00b4\u0004\u00a8(\u007fkhkk\u00e9o(ka\u0093\u00abha\u00cf\u00e5\u00bd\u007f\u00e4k\u00bfh\u00f6z\u00cfkseh\u00f3\u00ab\u00f3n> f,\u00ab",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "anything b",
+      "true": "ut sit with its mouth open, gazing up into the roof of the",
+      "own": "$h, is \u00aca\u00f3 as\u00d1>kk \u00f7\u00e5Rkhm\u00bbk\u00bc, hen\u00e57\u00f3i\u0000Y hhekd\u00f3",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'What do y",
+      "true": "ou know about this business?' the King said to Alice.",
+      "own": "X\u00acea\u00ac R\u00abme\u0002\u0000ke kRR>\u00cfk\u00e5kR,haznd fz,\u00e5k\u00d1zHk R\u00f7\u00e5\u0006\u00f37o\u00f3kka\u00abo\u00f6\u00df\u00abhk zekk",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'Nothing,'",
+      "true": " said Alice.",
+      "own": "hh,\u000f7nk\u00d1\u0000e>\u00f3\u00d1e>h\u007fo\u00ab\u00abnd\u0000kh\u0093zfhek\u007fke\u00d1\u0000kz Ed z\u00abd\u00ac\u0093 ihy zt>\u00e5y 3ohe l",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'Nothing W",
+      "true": "HATEVER?' persisted the King.",
+      "own": "\u00ab\u0014YiEk\u000f\u00d3\u0011\u00ackagk\u0000en",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'Nothing w",
+      "true": "hatever,' said Alice.",
+      "own": "\u0011:zt\u00bbnk\u0003\u0000kono\u0000\u00ab\u00a8R\u00e5, \u00c1 ,\u00e5nn>th\u00bdhae>Ee\u00cf\u00e5\u00f7ha \u001fhe \u00acezekk>a\u00abk ho\u001fne \u0091",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'That's ve",
+      "true": "ry important,' the King said, turning to the jury. They were",
+      "own": "+ ekt\u00aby Rk\u00ab\u0000nk oE, and \u00f1k\u00f3 h\u00bb\u008f\u0001zkke\u00f3\u00fazkhe an",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "just begin",
+      "true": "ning to write this down on their slates, when the White Rabbit",
+      "own": "\u00f3 o \u00a8, \u00d1\u00ac\u00d1mee\u00f3he \u00a9\u0003on\u0093Y,\u0006\u00d1k\u0002t\u00ac\u00f3\u00a0 \u00abe\u00d1k\u001f\u0093 H,z\u00f3xz  \u008fan4\u00f7kk>\u00d1zo*her\u00af",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "interrupte",
+      "true": "d: 'UNimportant, your Majesty means, of course,' he said in a",
+      "own": "k\u0000\u0003\u00b3\u00f3, R\u0006\u008f\u00f3\u00bc\u00cfo\bh\u0006 \u0000x\u00b0\u00abe\u00cfhe \u007fak\u001f\u00fbEkek\u00d1\u00d1\u001f\u00d1y he  \u00acH\u001fhen\u001f Rhekek\u007fek\u001f",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "very respe",
+      "true": "ctful tone, but frowning and making faces at him as he spoke.",
+      "own": "\u0006\u0000z>ae'R\u00f3Rzr\u007fh\u001f e\u00d1\u0000kR\u00abo\u0003\u00d1kt\u0000 \u00f3 R,\u00ad\u00c1rdY\u00d1,R,>\u00efn aeekk\u00f3k\u00ab k H\u00f3hk>k,",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'UNimporta",
+      "true": "nt, of course, I meant,' the King hastily said, and went on",
+      "own": "ek\u00b2\u0000>\u00e5e\u0002\u00e5\u0000\u00ackR,\u00a0 khkzHho5z\u00ac, \u00f3sRk>kk\u0006zhakxdz\u007f\u00e5Rk oH,>anRin, and  ",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "to himself",
+      "true": " in an undertone,",
+      "own": "Ee \u00ec E\u0002t\u00aclk\u00abe\u0000 oa\u0094 F\u00abR\u0003k\u0006ke eR\u0000a \u007fF\u00e5k z>oEk oFk  E\u00ab ink\u00f7on k\u00ab\u0093y\u00f3",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'important",
+      "true": "--unimportant--unimportant--important--' as if he were trying",
+      "own": " \u00abh\u0000\u0018\u0000\u0001 \u00f3\u0003kE \u00cf\u00f3hk\u00d1\u0000k\u00e5k oEk\u00d1E\u0000e  \u000e\u00e5\u00f7e  h,zen\u0006 \u0011z\u00aczk, a\u0011\u00af\u0093ktoe Rh\u00f3",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "which word",
+      "true": " sounded best.",
+      "own": "k\u00d1\u0004  a\u0000\u00d1t^\u00f3 anykr;*\u00e5t\u00ab\u00ab\u00b3\u00ab\u00eb\u0000\u0007\u00dfM\u00faEae\u0006ee",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "Some of th",
+      "true": "e jury wrote it down 'important,' and some 'unimportant.'",
+      "own": "\u0002i\u00033\u0000e\u00d1R\u00ab\u00f3E\u00f3R\u00a8\u00e1^Hze\u00ac\u0000\u00e5ezk,k, zE\u00cfkeY hk ztono hhkkzloRk",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "Alice coul",
+      "true": "d see this, as she was near enough to look over their slates;",
+      "own": " \u007fa\u00abz\u0003oR, \u00d1\u0003\u0000ktY,ha\u0011k  \u0002kihe H\u0011\u00ab \u0093aFkake",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'but it do",
+      "true": "esn't matter a bit,' she thought to herself.",
+      "own": "\u0003\u0006\u0000tz\u0000\u0000R\u0000\u0006kak\u00e5*e\u007f\u00be\u0000H k\u00fahk,\u0000eki\u0000\u00ab",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "At this mo",
+      "true": "ment the King, who had been for some time busily writing in",
+      "own": "E\u0000,i\u001c\u00d1\u0000\u00f3,z\u0000 \u0006e\u0018>hknd\u0006hR\u00e5\u00f3Reno\u0003E>\u00d1iz\u00abh,k \u00e5Re\u0094 i\u00abe  hakd>RzH\u00f3",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "his note-b",
+      "true": "ook, cackled out 'Silence!' and read out from his book, 'Rule",
+      "own": "\u0000e\u000f\u0094\u0005, e>*\u00ab  wir\u0006\u00e5z1\u00e5Y \u00f3\u00f7h4 kR\u00d1 \u00d1>E\u00f3 oE\u00abk\u001dhFegink Hza\u00e5\u00aberk\u0006\u0000\u00bdeni",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "Forty-two.",
+      "true": " ALL PERSONS MORE THAN A MILE HIGH TO LEAVE THE COURT.'",
+      "own": "\u0000\u00acR, ,(\u00d1 \u0000e\u008fk \u0000asn,\u0000\u0000my \u0091hake\u00abeny zzhRkyRk\u008czHhk \u00a8aH H\u00f3",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "Everybody ",
+      "true": "looked at Alice.",
+      "own": "\u00bb\u00d1\u0003\u0000 t \u0000\u00f3\u00f3RekkR\u0006\u00f6\u00cfo\u0000h\u00cf\u00f3\u0000z \u00ecR\u001d\u001f\u00be, ko\u008fzkt>o >RkzE\u00abk \u00c4\u00f3,>k >tak h,\u00bc",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'I'M not a",
+      "true": " mile high,' said Alice.",
+      "own": "n\u0000 ek\u00d1kR>t, ,z.,\u00e5 e7\u001eee RoRkvkt\u001fE\u00ab k\u00d4\u00c8\u00ab\rk,k\u00f7\u001fk\u0006kao, hat\u0003kk oR\u00e5kH",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'You are,'",
+      "true": " said the King.",
+      "own": "kkn> z\u0003oze6\u0011te \u00f3 \u00ab\u00f3\u00ab\u00a8XR\u00ac\u0018k\u00b3\u0010ek:kE>\u00bex,zkk \u00a8z \u00f6\u0093e\u0001 a\u00f3\u00d1z\u00f3,>a R, \u00f3\u0093e",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'Nearly tw",
+      "true": "o miles high,' added the Queen.",
+      "own": "\u0006 ,z9kdz\u0000o, \u0000\u0081R\u00f3>\u00cfetR\u00ab\u00a8 X\u00e5yY{\u00cfH\u00f3 ",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'Well, I s",
+      "true": "han't go, at any rate,' said Alice: 'besides, that's not a",
+      "own": "\u00fa\u0000\u0000 skR\u0003>\u00e5\u00f3\u00f6\u00d1\u0093\u001dRo\u00a6  \u007f \u00dfk\u00d1\u0000ene Rh, \u0093\u00f3ike>>\u00ab\u00e5k\u00ab\u00bbhHn\u00e5\u0006R F RReVyek\u00e5z",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "regular ru",
+      "true": "le: you invented it just now.'",
+      "own": "RRk\u00e5, \u001f,dh\u00d1oee\u00cf\u00d3\u0000^\u00abeno\u0000e\u00fbk\u0093\u00faEsk \u0003a\u00d1r\u00e5 H\u00f3(\u00c7\u00e5\u00e5\u00e5E se\u00ab\u00f6n\u0093 kh, \u00fa\u0093\u00b3k\u0011e",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'It's the ",
+      "true": "oldest rule in the book,' said the King.",
+      "own": "xR\u0004\u001c\u0093e.\u0000dk(yEoEk oE>ezr,z\u00f7 .k\u00d1ne\u0000 s\u0093\u0000kanR ",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'Then it o",
+      "true": "ught to be Number One,' said Alice.",
+      "own": "a3`es\u00ca(\u0000h\u00cfz\u0000Rkx\u0091Rho  hi\u0011e\u00ab \u00ac\u00f3\u008e\u00ab\u00ab z \u007f\u00bb iRx\u00f3Xn Ra Rke7\u00ac \u00eaYRze\u00fak\u00f3!\u00f3",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "The King t",
+      "true": "urned pale, and shut his note-book hastily. 'Consider your",
+      "own": "ot\u00abe\u001c\u0000\u00cfat\u00f7ho\u00ab\u00ab\u0093\u00ddk fhk\u00e5k >ahkz\u0004\u00ec d Rher kReee\u00e5\u00f3\u00ab\u00fdnz>\u00d1> z(\u001fk\u00e5",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "verdict,' ",
+      "true": "he said to the jury, in a low, trembling voice.",
+      "own": " a\u0000)\u0000enE\u0000k\u0013\u00d1\u0003\u0000,\u00ackRt>R\u00f3z\u00fa)\u0006z\u00f3oR\u00d1k Ez\u00f3( H\u00f3d\u00d1e Rozkz\u00a8>k zh\u00e5her>kk",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'There's m",
+      "true": "ore evidence to come yet, please your Majesty,' said the White",
+      "own": "h+\u0000kskk\u0002\u00d4a' en\u0093\u00f7R, n\u00af\u0002Rkaan \u00f3EXRk, \u00f3(a\u00c8\u00d1\u0006\u0006\u0093\u00067ka<Rikar\u00f3a\u007fe\u00fakRaFkk",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "Rabbit, ju",
+      "true": "mping up in a great hurry; 'this paper has just been picked",
+      "own": "d\u0018\u00e5\u0003 \u001f\u0003ykka\u00abe\u001f E+\u0012Ret\u0000kk ,zhz\u00fb\u00caRHyzh, \u00a6 Rher\u00f3h\u001fky>e kz\u00f3\u00f1kk o\u00ack  ",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'What's in",
+      "true": " it?' said the Queen.",
+      "own": "\u0000 \u00cf\u00abeze\u0000*ek eo\u001fkR\u00e5\u00f3\u00c8Ea\u001f\u00f3h, k, \u00f7kha\u001f,hkk\u0094 ,\u00e5k\u00e5k\u00abdz\u00abhn\u00ab Ehzzhe y\u00abk",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'I haven't",
+      "true": " opened it yet,' said the White Rabbit, 'but it seems to be a",
+      "own": "n\u00e1 a\u0011 ek(\u0006\u0004+ek\u00e5kE oz(ee\u00c8\u00ab\u00d1 ,zoRs (>\u00d3\u007fRzEherdH\u001c\u00c8\u00e5t \u00d1h,\u00e5eE e\u00e5ed\u00abe\u00ab",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "letter, wr",
+      "true": "itten by the prisoner to--to somebody.'",
+      "own": "\u0004zee\u0000,\u0000\u0000\u00a8an> Ra\u00eb \u00d1\u00cf",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'It must h",
+      "true": "ave been that,' said the King, 'unless it was written to",
+      "own": "e\u0003\u0000ks\u0093\u001e\u0001k\u0000\u0003d .(\u0000kk\u0000\rH\u00bd\u0093\u00fahe lkk, ,\u00e5\u00e5dk\u00ca\u00f7hekk\u00ab",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "nobody, wh",
+      "true": "ich isn't usual, you know.'",
+      "own": "ed v\u0000 \u0011\u00f3\u00b8ol\u0006\u0002\u00ac\u00d1 eh\u0000 o n\u00d1\u0003\u0000\u00e5\u008fa \u0000hR\u00abn>\u00e5 zoR\u00abenk\u00ackn",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'Who is it",
+      "true": " directed to?' said one of the jurymen.",
+      "own": "\u0006\u00abe ,\u0006\u0000e\u001f\u0000Re\u00d0e\u0003\u0006>Ezl,n\u00ab\u00abk( \u007f\u00bbd \u00ac zlk H\u0093\u001fe Eah> \u00f3\u00bdh, \u00f7, end \u00f3Rk a",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'It isn't ",
+      "true": "directed at all,' said the White Rabbit; 'in fact, there's",
+      "own": "al\u0006\u0003\u0000n",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "nothing wr",
+      "true": "itten on the OUTSIDE.' He unfolded the paper as he spoke, and",
+      "own": "\u0002\u0000\u00f3>,\u0000\u0000z",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "added 'It ",
+      "true": "isn't a letter, after all: it's a set of verses.'",
+      "own": "\u001dk he \u00ack\u001fek ak\u0002\u00bdY ,het\u001d\u00f7\u00fa4d\u00f7Qhan\u0093>\u001d,\u0093$o\u00ac  \u00f3k\u00abkezhk  hkkn\u00abzH\u00f3>zRk",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'Are they ",
+      "true": "in the prisoner's handwriting?' asked another of the jurymen.",
+      "own": "\u0011kme>\u00ecRagezHoeR\u00bdRR\u00f3a\u00f8\u00abrmst\u0000\u00a8 e e,\u00bd\u0000\u00e5had Eo\u00ac\u00ab\u00ab\u00afzlk \u00c8\u00d1e, \u00bdk>\u00f3\u0018zzk,",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'No, they'",
+      "true": "re not,' said the White Rabbit, 'and that's the queerest thing",
+      "own": "EE\u00ab\u00d1\u001f\u00abhger \u0004kni\u0000\u00e5\u0006\u001ckzHhatRao RR\ta)9 Fh\u00cf E\u00cf\u00b3kY\u00a8h, t,k\u00f7\u00e5\u00cfk\u00f3Yh\u00f3\u00f7,\u00abo",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "about it.'",
+      "true": " (The jury all looked puzzled.)",
+      "own": "\u0000\u0093\u0005 hak\u00007n\u00bd\u00f3\u0000\u00f3",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "'He must h",
+      "true": "ave imitated somebody else's hand,' said the King. (The jury",
+      "own": "a\u0000\u00d1ke\u0093\u0000\u0006\u00f3\u00b2\u00d1Ra\r h\u001f\u00d2\u00efex\u00e5YkiY\u00f7o\u008f\u00f3\u00ab>\u007f(\u00e5 \u00fak Ek\u00a3kz\u0011enz hR>\u00f3\u00d3eR,\u00f1\u00abk\u00ab5\u00ab\u00f0",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "all bright",
+      "true": "ened up again.)",
+      "own": "\u00e5eH i\u0011YYe\u0000\u00f7k)\u00ebe\u0000ae\u0000k\u0011\u00bb\u00fa\u0000e \u00ac\u0000k\u007fa\u00f3hX\u00acY>hn>>hk\u008dzt\u00f3  zhaz >kk hhink\u00e5",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "'Please yo",
+      "true": "ur Majesty,' said the Knave, 'I didn't write it, and they",
+      "own": "\u0000\u0000\u00cfh\u00f3\u008c\u0000e\u00c8.\u0006\u001cE\u00f3E,t\u00f6d (zen\u0093\u0001\u00datthen\u00d1\u0006\u0000ed\u008c\u0000\u00e5\u0000\u00f3\u00abya\u0091\u007f\u00f3R\u00abe\u00ab\u00cank ah\u001fnz  \u007f",
+      "stop": "CAP"
+     }
+    ],
+    "eval_cpu_s": 390.8
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549192683,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.624648774439614,
+     "taught_first5k_bpb": 4.538562673034946,
+     "taught_last5k_bpb": 4.623158400450021
+    },
+    "bigram": {
+     "held_bpb": 3.6832706020903796,
+     "taught_first5k_bpb": 3.5184782479002874,
+     "taught_last5k_bpb": 3.545419773443146
+    },
+    "ppmc2": {
+     "held_bpb": 3.119468364435016,
+     "taught_first5k_bpb": 2.6705484966081148,
+     "taught_last5k_bpb": 2.6930041879335658
+    },
+    "ppmc3": {
+     "held_bpb": 2.819382451375154,
+     "taught_first5k_bpb": 2.0457314006454754,
+     "taught_last5k_bpb": 2.0840455277680947
+    },
+    "ppmc4": {
+     "held_bpb": 2.778230131960032,
+     "taught_first5k_bpb": 1.6754565386488443,
+     "taught_last5k_bpb": 1.7044784903118024
+    },
+    "ppmc5": {
+     "held_bpb": 2.807437941822277,
+     "taught_first5k_bpb": 1.4992723604014528,
+     "taught_last5k_bpb": 1.4868429294112546
+    }
+   }
+  }
+ ],
+ "train_cpu_s": 5930.450682599,
+ "peak_rss_mb": 348.3,
+ "complete": true
+}

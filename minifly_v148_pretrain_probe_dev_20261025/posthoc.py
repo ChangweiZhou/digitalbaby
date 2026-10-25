@@ -29,8 +29,12 @@ def acc(model, recs):
 
 def gen_stats(texts, vocab):
     toks = [t.lower() for s in texts for t in TOK.findall(s)]
+    long = [t for t in toks if len(t) >= 2]          # single letters match "a", "i" and contraction fragments
     rep = [1 - len({s[i:i + 3] for i in range(len(s) - 2)}) / (len(s) - 2) for s in texts if len(s) > 3]
     return {"tokens": len(toks), "real_word_fraction": sum(t in vocab for t in toks) / max(1, len(toks)),
+            "tokens_2plus_letters": len(long),
+            "real_word_fraction_2plus_letters": sum(t in vocab for t in long) / max(1, len(long)),
+            "real_words_2plus_letters": sorted({t.decode() for t in long if t in vocab}),
             "repetition_3gram": sum(rep) / max(1, len(rep)), "mean_bytes": sum(map(len, texts)) / len(texts)}
 
 
