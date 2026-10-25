@@ -20,6 +20,8 @@ TEXTS = {   # name: (path, sha256)
     "buster": (V148 / "data" / "burgess-busterbrown.txt", _v148.TEXTS["buster"][1]),
     "bryant": (V148 / "data" / "bryant-stories.txt", _v148.TEXTS["bryant"][1]),
     "brown": (HERE / "data" / "chesterton-brown.txt", "67027976205b4b30e367c704807f56c8ffac3e8ea6037d993e57ab1fe28447ec"),
+    "edgeworth": (HERE / "data" / "edgeworth-parents.txt",    # second rehearsal (cycle 3), fresh
+                  "543b2162782f839b9917b88956acbd7507df37c543286c16c228b36dda0cf950"),
 }
 
 

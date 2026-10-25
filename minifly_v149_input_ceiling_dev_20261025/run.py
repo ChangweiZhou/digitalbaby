@@ -59,6 +59,7 @@ def r1_eval(Xtr, ctr, Xca, yca, Xhe, yhe, cls, grid, maxiter, recs_he):
     P = R.predict_r1(theta, Xhe, cls.K)
     bits = cls.bits(P, yhe)
     return {"held_bpb": float(bits.mean()), "held_acc": cls.accuracy(P, yhe), "lam": lam, "calib_bpb": cb,
+            "lam_at_grid_edge": lam in (max(grid), min(grid)),
             "path": path, "lines": R.bits_to_line_sums(bits, recs_he).tolist(), "cpu_s": round(time.process_time() - t0, 1)}
 
 
