@@ -1,0 +1,267 @@
+{
+  "version": "V152",
+  "name": "Addition learning, output calibration and temporal credit",
+  "status": "DESIGN_ONLY",
+  "goal": "Retained complete own-byte/EOS unseen-addition generalization per total feedback and actual compute",
+  "parent_native_commit": "6801a21d3ad60e34d824a52c9ccc3aaa11b1f09f",
+  "constraints": {
+    "arithmetic_specific_candidate_structure": false,
+    "attention": false,
+    "Transformers": false,
+    "ELM_or_reservoir_readout_training_route": false,
+    "BPE": false,
+    "local_candidate_updates_only": true,
+    "BPTT": "R_BP and evaluator gradients only",
+    "old_arithmetic_pointer_replaced": false,
+    "global_scalar_or_blurry_feedback_claim": false
+  },
+  "models": [
+    {
+      "id": "N_A",
+      "family": "native",
+      "role": "unchanged teaching control",
+      "native_factor": null,
+      "bias": false
+    },
+    {
+      "id": "N_2B",
+      "family": "native",
+      "role": "fixed dose-corrected control",
+      "native_factor": 2,
+      "bias": false
+    },
+    {
+      "id": "N_2B_Q",
+      "family": "native_with_added_output_bias",
+      "role": "native candidate with explicit added output parameter",
+      "native_factor": 2,
+      "bias": true
+    },
+    {
+      "id": "Q_ONLY",
+      "family": "frequency_control",
+      "role": "context-independent symbol-frequency control, not a core",
+      "bias": true
+    },
+    {
+      "id": "R_BP",
+      "family": "independent_recurrent_reference",
+      "role": "BPTT diagnostic comparator, never native evidence",
+      "credit": "exact_BPTT"
+    },
+    {
+      "id": "R_LE",
+      "family": "independent_recurrent_reference",
+      "role": "analytic local temporal eligibility",
+      "credit": "neuron_local_history"
+    },
+    {
+      "id": "R_LE0",
+      "family": "independent_recurrent_reference",
+      "role": "temporal eligibility ablation",
+      "credit": "instantaneous_no_history"
+    }
+  ],
+  "native": {
+    "lineage": "V151 canonical Full151/R_center signed interface",
+    "stores": 16,
+    "frontend": "FE-PERM normalized",
+    "fresh_adaptation": true,
+    "homeostasis": false,
+    "fixed_C16": true,
+    "native_equations_changed": false,
+    "eta": 0.1,
+    "B_factor": 2,
+    "bias_eta": 0.03,
+    "online_reply_updates": true
+  },
+  "reference": {
+    "neurons": 64,
+    "states_per_unit": 2,
+    "incoming_edges_per_unit": 4,
+    "self_edge_included": true,
+    "edges": 256,
+    "graph": "seeded signs and mask without task labels; independent comparator, no anatomical claim",
+    "fast_alpha": 0.25,
+    "slow_beta": 0.05,
+    "recurrent_gain": 0.5,
+    "raw_input_bytes": 256,
+    "output_classes": 257,
+    "fixed_C16": true,
+    "trainable_shapes": {
+      "U": [
+        64,
+        256
+      ],
+      "b": [
+        64
+      ],
+      "edge_theta": [
+        256
+      ],
+      "R": [
+        16,
+        128
+      ],
+      "q": [
+        257
+      ]
+    },
+    "parameter_count": 19009,
+    "eligibility_values": 33408,
+    "eligibility_bytes_float64": 267264,
+    "parameter_updates": "one weighted answer-loss SGD update at EOS; parameters held fixed within a record",
+    "eta_menu": [
+      0.01,
+      0.03
+    ],
+    "eta_selection": "one common eta by equal-method final-W validation BPS on calibration world; lower eta tie",
+    "gradient_component_clip": [
+      -1,
+      1
+    ],
+    "edge_theta_projection": [
+      -3,
+      3
+    ],
+    "instantaneous_output_signal": "R transpose times categorical C16 value gradient",
+    "core_autograd_in_local_methods": false
+  },
+  "data": {
+    "task": "unsigned addition, operands 0 through19 inclusive",
+    "prompt": "ASCII a+b=",
+    "reply": "ASCII decimal sum then own EOS; no parser in model",
+    "unordered_orbits": 210,
+    "OLD": 64,
+    "NEW": 64,
+    "validation": 32,
+    "assessment": 50,
+    "orientation": "one seeded orientation per orbit, no reverse augmentation",
+    "whole_orbit_holdout": true,
+    "calibration_world": 202610255201,
+    "assessment_worlds": [
+      202610255211,
+      202610255212,
+      202610255213
+    ],
+    "named_rng": "PCG64 seeded from SHA256 V152|world|stream; separate split, orientation, pass order, graph and weights",
+    "dataset_materialized": false,
+    "model_state_transferred_from_calibration": false
+  },
+  "feedback": {
+    "expected_reply_and_EOS_during_run": true,
+    "prompt_prediction_extra_objective": false,
+    "warmup": "1/16+(15/16)*min(n/1024,1), n previous observed reply/EOS targets incl repeated and inhibited targets",
+    "queries_write_free": true,
+    "generation_cap_decisions": 4,
+    "EOS_class": 256,
+    "all_256_payload_bytes_legal": true,
+    "forced_EOS_or_vocabulary_mask": false
+  },
+  "histories": {
+    "OLD_passes": 8,
+    "NEW_passes": 8,
+    "records_per_phase": 512,
+    "checkpoints_passes": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "branches": [
+      "W",
+      "N_OLD",
+      "SH_OLD"
+    ],
+    "shared_OLD_prefix_W_N_OLD": true,
+    "physical_phase_streams_per_group": 5,
+    "records_per_group": 2560,
+    "idle_byte_steps": 128,
+    "native_DELTA_seconds": "30/14",
+    "transient_state_reset_each_query": true,
+    "native_passive_parameter_decay_vs_reference_static_weights_disclosed": true
+  },
+  "admission": {
+    "calibration_groups": 6,
+    "assessment_groups": 21,
+    "reference_readiness": "selected R_BP taught complete-answer accuracy increases in each phase, with already-perfect pre-feedback ceiling accepted",
+    "failure": "REFERENCE_NOT_READY; no wider grid or assessment launch",
+    "assessment_labels_opened_after": "frozen acquisition/retention summaries and settings; first own choices precede teacher-forced loss evaluation"
+  },
+  "credit_diagnostic": {
+    "R_LE_snapshots_per_assessment_world": 4,
+    "snapshot_points": [
+      "OLD1",
+      "OLD8",
+      "NEW1",
+      "NEW8"
+    ],
+    "snapshots": 12,
+    "record": "first predeclared training record in current phase",
+    "gradient_passes_per_snapshot": 3,
+    "update_control_passes_per_snapshot": 5,
+    "update_controls": [
+      "ZERO",
+      "LE_CORE_ONLY",
+      "LE_HEAD_ONLY",
+      "LE_JOINT",
+      "BP_JOINT_BLOCK_NORM_MATCHED"
+    ],
+    "model_gradients_compared_in_same_coordinates": true,
+    "native_vs_reference_parameter_cosine": false,
+    "labeled_record_applications": 96,
+    "target_upper_bound": 288,
+    "query_pairs": 120
+  },
+  "counts_caps": {
+    "calibration_groups": 6,
+    "assessment_groups": 21,
+    "correlated_full_histories": 81,
+    "main_and_calibration_record_applications": 69120,
+    "credit_diagnostic_record_applications": 96,
+    "preflight_record_applications": 64,
+    "all_record_applications": 69280,
+    "all_observed_reply_EOS_target_applications_upper_bound": 207840,
+    "ordinary_assessment_query_pairs": 87822,
+    "hybrid_ablation_query_pairs": 3204,
+    "calibration_query_pairs": 24768,
+    "credit_query_pairs": 120,
+    "preflight_query_pairs": 128,
+    "all_query_pairs": 116042,
+    "output_distributions_upper_bound": 812294,
+    "assessment_held_reply_teaching": 0
+  },
+  "resources": {
+    "summed_CPU_seconds": 7200,
+    "wall_seconds": 10800,
+    "audit_CPU_reserve": 600,
+    "workers": 1,
+    "numerical_threads": 1,
+    "memory_target_bytes": 1073741824,
+    "comparison_training_CPU_points": [
+      15,
+      60,
+      240,
+      960
+    ],
+    "auto_retry_or_extra_pass_or_budget_reset": false,
+    "keep_awake": "caffeinate follows future authorized active supervisor"
+  },
+  "evidence": {
+    "E0": "interfaces/derivatives",
+    "E1": "taught answer acquisition and retention",
+    "E3": "never-taught orbit own output with prior teaching causal contrast, recitation controls and delayed/intervening retention; descriptive development only",
+    "intermediate_cost_curves": "taught acquisition and retention only",
+    "unseen_scoring": "single final post-idle state per branch, reported with actual exposure and compute; no unseen learning-curve claim",
+    "reference_result_is_native_result": false,
+    "automatic_adoption": false
+  },
+  "authorization": {
+    "design_delivery": true,
+    "implementation": false,
+    "three_cycle_exercise": false,
+    "training": false,
+    "assessment_scoring": false,
+    "github_push": false
+  }
+}
