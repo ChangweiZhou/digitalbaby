@@ -70,7 +70,11 @@ The permutation only relabels channels by lag, so it does not change that share.
 * Both give proper distributions over all 257 symbols.
 
 ## 4. C0 testbed (before new learner code): a ceiling must pass and a floor must fail
-On the C2 dev split, using evaluator-side codes, as in V149:
+On *Buster Bear* at **full size (40 / 5 / 10 KB)**, using evaluator-side codes, as in V149.
+
+*Correction before any run:* the first version said "on the C2 dev split", which is the reduced 10 / 2 / 4 KB. V149's tiny run showed these checks are size-sensitive: the one-hot check failed at 4 KB and passed at 40 KB. C0 uses no states, so full size costs seconds.
+
+The checks:
 * R1 on the one-hot last symbol must land within 0.15 of bigram (ceiling);
 * R1 on a constant code must not beat unigram by more than 0.02 (floor).
 
