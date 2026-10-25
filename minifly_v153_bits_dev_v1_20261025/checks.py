@@ -47,7 +47,7 @@ for r in recs:
 check("P95 and N81 codes (and N81 observed activity) equal V149's PERM-x / FE0-x / FE0-obs states", ok)
 
 # the four cells differ where they should
-x = {c: states.record_states(states.new_memory(c), recs[0])[0] for c in states.CELLS}
+x = {c: states.record_states(states.new_memory(c), recs[2])[0] for c in states.CELLS}   # a 65-byte line (recs[0] is the one-byte line "I")
 check("cells give different codes beyond the first byte",
       all(not np.array_equal(x[u][3:], x[v][3:]) for u in states.CELLS for v in states.CELLS if u < v))
 check("all cells give the same code after exactly one byte (no history yet)",
@@ -60,7 +60,7 @@ for r in recs[:3]:
 view = mem.clone()
 view._control(True)
 view._control(False)
-frozen = states.record_states(states.new_memory("N81"), recs[4])[1]
+frozen_x, frozen = states.record_states(states.new_memory("N81"), recs[4])
 same = True
 for i in range(len(recs[4]) + 1):
     f = view.fe.clone()
@@ -68,10 +68,10 @@ for i in range(len(recs[4]) + 1):
     xx = view.encode(f.read())[0]
     fly = view.bank[0].fly.clone()
     fly.rest(fm.DELTA)
-    same &= np.array_equal(fm.NATIVE.common.observed_activity(fly.m, xx[None, :])[0], frozen[i])
+    same &= np.array_equal(xx, frozen_x[i]) and float(np.abs(fm.NATIVE.common.observed_activity(fly.m, xx[None, :])[0] - frozen[i]).max()) <= 1e-12
     if i < len(recs[4]):
         view._event(recs[4][i])
-check("NATIVE after teaching reads exactly the frozen FE0 observed state (thresholds stay zero)", same and not mem.theta.any())
+check("NATIVE after teaching reads the frozen FE0 state: identical codes, observed activity within 1e-12 (adaptation rounding), thresholds zero", same and not mem.theta.any())
 
 # C16 readout equals the native logits formula
 rng = np.random.default_rng(0)
