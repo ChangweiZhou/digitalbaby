@@ -60,7 +60,7 @@ If a check fails, the readout cannot measure what this round asks. The verdict i
 * **Texts:**
   * Cycle 2 (dev): *Buster Bear*.
   * Cycle 3 (rehearsal): Bryant's *Stories to Tell to Children*. It has not been used to tune this round.
-  * Main: *The Innocence of Father Brown* (`chesterton-brown.txt`), new to this project, pinned by SHA-256 in cycle 1. *Alice* is not used; it stays reserved for comparing later components on V148's split (V148 design section 9).
+  * Main: *The Wisdom of Father Brown* (G. K. Chesterton, 1914; `chesterton-brown.txt`), new to this project, pinned by SHA-256 in cycle 1. (Correction made in cycle 1, before any run: the first version of this design named *The Innocence of Father Brown*, but NLTK's `chesterton-brown.txt` is *The Wisdom of Father Brown*. The file and its role are unchanged.) *Alice* is not used; it stays reserved for comparing later components on V148's split (V148 design section 9).
 * **Counting ladder:** the V148 `ladder.py` rungs on the same split (uniform, unigram, bigram, PPM-C orders 2–5).
 
 ## 6. Decision rule (fixed now; scored once on the main text)
