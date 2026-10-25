@@ -5,6 +5,32 @@
 * Only the dev texts were used (Bryant, Buster). The main text (Alice) was not touched, so it stays clean for later comparisons.
 * About 0.3 CPU-hours in total, including reruns.
 
+## Erratum (added after Mr. Zhou's review, 25 Oct 2026)
+**The recommendation of option A is withdrawn.**
+* **A does not generalise to later language tasks.** One compartment per symbol is a lookup table on the output side:
+  * Its cost grows with the vocabulary: 15× already for 257 bytes, and out of reach for word-level outputs.
+  * Output symbols share nothing, so nothing learned about one symbol helps another.
+  * Its best case equals the counting ladder (section 3), so it cannot meet section 9's own criterion of beating the best counting rung, which this note quotes.
+* **B has the same scaling flaw.** A random code needs roughly as many bits as there are symbols in use.
+
+**What went wrong in the analysis.** The options were judged only against V148's metric (held-out bits/byte against the ladder). They were not judged against the program's aim: pre-training whose representations carry over to later language tasks. Every option should also have been checked for three things:
+1. how its cost grows with the vocabulary;
+2. whether output symbols share anything;
+3. whether its best case can exceed counting.
+
+**Check added afterwards: falsifier 4 (`learned_code.py`, Bryant, evaluator-only).** Is the limit the 16 dimensions, or the fixed random binary code? Same ceilings as section 2, held-out bits/byte, no context / 1 previous byte:
+
+| 16-dimensional output code | Best possible values |
+|---|---:|
+| C16, random ±1 words (as now) | 7.04 / 6.10 |
+| ±1 words built from the text (signs of the top 16 principal directions of each symbol's predecessor counts) | 6.61 / 5.34 |
+| graded (real-valued) code fitted to the text together with the context vectors (evaluator-only reference) | unigram level / **3.73** (bigram 3.71) |
+
+* Sixteen dimensions are enough. The limit is that the code is fixed, random and binary with equal-weight words; the equal weights mean it cannot even express how frequent a symbol is.
+* Text-derived ±1 words help only partly.
+* A graded output code learned from the text keeps the width fixed as the vocabulary grows, and lets similar symbols share code. That is the direction that would carry to language tasks.
+* It is untested whether MiniFly can learn such a code with a local rule, without back-propagation, and where its per-bit teaching settles on a learned code. No new recommendation is made until those are checked.
+
 ## 1. Knowledge-base status (`MFC kb status`)
 * There are 28 open incidents. They concern earlier arithmetic deliveries, program-level practice and the kit's own held-out canaries; none concerns text prediction.
 * There is no sealed G series yet.
@@ -82,7 +108,7 @@ These are linear estimates, not measurements.
 | D | Keep C16 and measure what a bit code can express: exact recall or exact continuation of taught lines | Not computed here | low | Leaves noisy-text prediction, the reason V148 was run |
 | E | Stop the text line here and decide the next direction in discussion | — | none | — |
 
-**Recommendation (shown separately from the options).** A is the smallest change that the analysis says could reach the counting rungs: one component, with the native rule unchanged.
+**Recommendation (shown separately from the options). WITHDRAWN, see the erratum at the top.** A is the smallest change that the analysis says could reach the counting rungs: one component, with the native rule unchanged.
 * Its own cheapest falsifier comes before any full run: a 257-compartment memory on about 2 KB of dev text, about 0.5 CPU-h. It reads two things: how negative the stored values for never-taught symbols become (the range condition above), and held bits/byte against unigram.
 * A 40 KB history exceeds the default grant (2 CPU-h, 5,000 records). Any run beyond the falsifier needs a grant with numbers in Mr. Zhou's own words.
 
@@ -100,4 +126,5 @@ These are linear estimates, not measurements.
 * `code_width.py` produces `code_width_bryant.json` and `.log`.
 * `onehot.py` produces `onehot_bryant.json` and `.log`.
 * `cost_profile.py` produces `cost_profile.log`.
+* `learned_code.py` (added with the erratum) produces `learned_code_bryant.json` and `.log`.
 * All scripts run from this folder with the V148 venv. They import only `corpus.py` and `ladder.py` from the V148 folder, plus the codebook JSON; the profile alone also imports `probe.py` to run the memory for timing.
