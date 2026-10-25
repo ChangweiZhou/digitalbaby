@@ -1,0 +1,199 @@
+{
+  "schema": "MINIFLY_OUTPUT_LEARNING_DIAGNOSTIC_DESIGN_V1",
+  "status": "DESIGN_ONLY",
+  "date": "2026-10-25",
+  "separate_diagnostic": true,
+  "arithmetic_pointer_replaced": false,
+  "source_commit": "6f4a46a61ebbacf5a998b7f405ac4f029e564962",
+  "goal": "Complete own-byte/EOS unseen-addition generalization per total sample and compute; this study only diagnoses the output subsystem",
+  "constraints": {
+    "gradual_warmup": true,
+    "local_output_gradients_explicit": true,
+    "backprop_through_encoder_TopK_native_dynamics_time": false,
+    "attention": false,
+    "transformers": false,
+    "ELM_ridge_candidate": false,
+    "arithmetic_specific_structure": false,
+    "all_payload_bytes": 256,
+    "EOS": 256,
+    "vocabulary": 257,
+    "width": 16,
+    "centering_effective_dimension": 15,
+    "learned_code_row_norm_max": 4,
+    "code_initialization": "Original pinned C16",
+    "primary_temperature": 1,
+    "vocabulary_mask": false
+  },
+  "updates": {
+    "warmup": "1/16+(15/16)*min(n/1024,1); n=previous observed target events inclEOS",
+    "A": "legacy independent-bit residual, scaled by common eta and warmup",
+    "B": "g_v=P*C.T*(p-onehot_y)/4",
+    "C": "B plus g_C=(p-onehot_y)*u.T; all pre-update; row-center and norm<=4",
+    "code_learning_rate": "eta/16",
+    "eta_menu": [
+      0.03,
+      0.1
+    ],
+    "eta_selection": "Equal-weight mean validation BPS over main54fits, smallereta tie",
+    "native_sign": "Test with <=64 partial signed writes; no automatic coefficient repair"
+  },
+  "toy_stage": {
+    "fixtures": [
+      "uniform257",
+      "skewed_full_support",
+      "four_context_full_support"
+    ],
+    "seeds": [
+      11,
+      12,
+      13
+    ],
+    "rates": [
+      0.03,
+      0.1
+    ],
+    "main_arms": [
+      "A",
+      "B",
+      "C"
+    ],
+    "main_fits": 54,
+    "control_fits": 12,
+    "controls": [
+      "learned_code_context_ignored",
+      "fixed_CE_plus_shared_bias"
+    ],
+    "targets_per_fit": 4096,
+    "validation_targets_per_fit": 1024,
+    "total_fits": 66,
+    "total_observed_targets": 270336,
+    "total_write_free_validation_targets": 67584,
+    "context_keys": "Perfect output-only reference; not native solver",
+    "replay_passes": 1
+  },
+  "native_stage": {
+    "conditional_on_toy_gate_and_future_execution_authorization": true,
+    "front": "perm, existing normalization",
+    "homeostasis": false,
+    "fresh_adaptation": true,
+    "native_stores": 16,
+    "native_update_equations_changed": false,
+    "main_arms": [
+      "A",
+      "B",
+      "C"
+    ],
+    "histories": 6,
+    "passes": 1,
+    "corpora": {
+      "bryant": {
+        "source_file": "bryant-stories.txt",
+        "source_sha256": "c87f2c50a00055010f02edb6bb643aabe2473465da7f62db43cb4cda1a1c768d",
+        "role": "Previously used development text; no independent confirmation",
+        "record_offsets": {
+          "train": [
+            0,
+            47
+          ],
+          "calibration": [
+            47,
+            65
+          ],
+          "development_evaluation": [
+            4085,
+            4122
+          ]
+        },
+        "source_records": 4122,
+        "train": {
+          "records": 47,
+          "payload_bytes": 2014,
+          "targets_including_EOS": 2061
+        },
+        "calibration": {
+          "records": 18,
+          "payload_bytes": 1006,
+          "targets_including_EOS": 1024
+        },
+        "development_evaluation": {
+          "records": 37,
+          "payload_bytes": 2058,
+          "targets_including_EOS": 2095
+        }
+      },
+      "buster": {
+        "source_file": "burgess-busterbrown.txt",
+        "source_sha256": "7d8b1648ffeaa7268819c62852e5653f2f295528411c8c895ce3941581146331",
+        "role": "Previously used development text; no independent confirmation",
+        "record_offsets": {
+          "train": [
+            0,
+            33
+          ],
+          "calibration": [
+            33,
+            48
+          ],
+          "development_evaluation": [
+            1282,
+            1314
+          ]
+        },
+        "source_records": 1314,
+        "train": {
+          "records": 33,
+          "payload_bytes": 2074,
+          "targets_including_EOS": 2107
+        },
+        "calibration": {
+          "records": 15,
+          "payload_bytes": 1035,
+          "targets_including_EOS": 1050
+        },
+        "development_evaluation": {
+          "records": 32,
+          "payload_bytes": 2058,
+          "targets_including_EOS": 2090
+        }
+      }
+    },
+    "full_line_training_records": 240,
+    "observed_targets_including_EOS": 12504,
+    "compartment_teaching_calls": 200064,
+    "passive_teacher_forced_line_queries": 306,
+    "passive_target_position_probes": 18777,
+    "own_continuations": 96,
+    "generation_cap": 64,
+    "max_generated_decisions": 6144,
+    "max_input_prefix_bytes": 768,
+    "Alice_access": false,
+    "independent_confirmation": false
+  },
+  "limits": {
+    "summed_process_CPU_seconds": 7200,
+    "stage_A_admission_seconds": 600,
+    "stage_B_admission_seconds": 1200,
+    "stage_C_admission_seconds": 3600,
+    "reserve_seconds": 1800,
+    "native_workers": 1,
+    "numerical_threads": 1,
+    "extra_partial_native_fixture_writes": 64,
+    "extra_synthetic_target_fixture_events": 256,
+    "max_combined_observed_targets_including_extra_target_fixtures": 283096,
+    "automatic_retries": 0,
+    "automatic_longer_training": false,
+    "main_English_campaign": false
+  },
+  "claims": {
+    "native_efficacy_requires_actual_native_branch": true,
+    "toy_success_is_E0_output_diagnostic": true,
+    "E3_addition_claim_allowed": false,
+    "NLP_or_scaling_claim_allowed": false
+  },
+  "implementation_authorized": false,
+  "training_authorized": false,
+  "three_cycles_executed": false,
+  "new_model_runs": 0,
+  "new_core_adopted": false,
+  "github_pushed": false
+}
