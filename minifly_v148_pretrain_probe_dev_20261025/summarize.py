@@ -25,7 +25,7 @@ def main():
         m, L = c["minifly"], c["ladder"]
         lines.append(f"| {c['kb']:g} | {c.get('pass', 1)} | {f(m['held_bpb'])} | {m['T']:.2f} | {f(m['held_acc'])} | "
                      f"{f(m.get('taught_first5k_bpb'))} | {f(m.get('taught_last5k_bpb'))} | "
-                     f"{f(m['held_mass_on_unseen_symbols'])} | {f(m.get('held_bpb_renorm_seen'))} | "
+                     f"{f(m.get('held_mass_on_unseen_symbols'))} |{f(m.get('held_bpb_renorm_seen'))} | "
                      + " | ".join(f(L[k]['held_bpb']) for k in ("unigram", "bigram", "ppmc2", "ppmc3", "ppmc4", "ppmc5"))
                      + " |")
     gens = next((c["minifly"]["generations"] for c in r["checkpoints"] if "generations" in c["minifly"]), [])
