@@ -7,33 +7,69 @@
  "channel": "Claude Code session chat (owner's own message)",
  "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
  "options_shown": [
-  {"label": "Step 1: two diagnostics on frozen states",
+  {
+   "label": "Step 1: two diagnostics on frozen states",
    "text": "The 2x2 front-end comparison (scrambling on/off x fade 0.81/0.95) plus a before-top-k reading; and the four-way readout comparison on the same states (batch R1, online local rule, C16 plus class bias, native readout). Both reuse the V149 machinery.",
    "cost": "a few CPU-h (stated in the message as 'within a few CPU-hours')",
-   "objective_distance": "Diagnostic of where predictive bits are lost; measures no new learning mechanism and no transfer."},
-  {"label": "Step 2: input-side plasticity",
+   "objective_distance": "Diagnostic of where predictive bits are lost; measures no new learning mechanism and no transfer."
+  },
+  {
+   "label": "Step 2: input-side plasticity",
    "text": "Predictive (CLAPP-type) against competitive Hebbian learning of the input-to-KC connections, judged with the best native-learnable readout from step 1 as well as with R1.",
    "cost": "not costed",
-   "objective_distance": "First learned representation; still no transfer test."},
-  {"label": "Data budget question",
+   "objective_distance": "First learned representation; still no transfer test."
+  },
+  {
+   "label": "Data budget question",
    "text": "Keep 40 KB with counted passes, or allow more text, for step 2.",
    "cost": "-",
-   "objective_distance": "-"}
+   "objective_distance": "-"
+  }
  ],
  "recommendation_shown": "Revised position: step 1 first, then step 2 judged with the best native-learnable readout; the data budget question stands for step 2.",
  "stages": {
   "implementation": true,
   "technical": true,
   "dev_cycles": true,
-  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "official": {
+   "granted": false,
+   "verbatim": null,
+   "utc": null,
+   "lock_shas_shown": null
+  },
   "push": false,
   "push_lock": false,
   "adoption": false,
   "pointer_update": false
  },
  "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
- "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
- "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "adoption", "pointer_update"],
+ "caps": {
+  "max_cpu_h": 2.2,
+  "max_records": 5000,
+  "max_cycles": 3
+ },
+ "defaults_applied": [
+  "max_records",
+  "max_cycles",
+  "official",
+  "adoption",
+  "pointer_update"
+ ],
  "conditionals": [],
- "scope_adjustment_before_any_code": "The before-top-k reading in option 'Step 1' is deferred: a dense 5,177-unit regression costs about 25x a sparse one and does not fit the default 2 CPU-h (design section 2)."
+ "scope_adjustment_before_any_code": "The before-top-k reading in option 'Step 1' is deferred: a dense 5,177-unit regression costs about 25x a sparse one and does not fit the default 2 CPU-h (design section 2).",
+ "grants": [
+  {
+   "n": 1,
+   "verbatim": "Let us adopt your version, and use the recursive improvement skill to work on a new version.",
+   "utc": "2026-10-25 (owner message received shortly before 2026-10-25T22:26:38Z)",
+   "effect": "implementation, technical, dev cycles; default caps"
+  },
+  {
+   "n": 2,
+   "verbatim": "2.2 is fine.",
+   "utc": "2026-10-25 (owner message, after the C1 cost projection)",
+   "in_reply_to": "Cap request with measured cost: used 0.20 CPU-h; C2 about 0.43; C3 about 1.6; total about 2.2. Proposed: 3 CPU-h, 5,000 records, 3 test cycles; no main run, no adoption, no pointer update.",
+   "effect": "max_cpu_h raised from the default 2 to 2.2 (the owner's number); records and cycles keep their defaults"
+  }
+ ]
 }

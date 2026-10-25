@@ -90,6 +90,7 @@ def main():
     ap.add_argument("--passes", type=int, default=3)
     ap.add_argument("--r2grid", default="0.001,0.003,0.01,0.03,0.1")
     ap.add_argument("--maxiter", type=int, default=300)
+    ap.add_argument("--grids", default=None, help='JSON per-arm grids, e.g. {"P95": [300,100,30], "B_R1": [30,10,3]}')
     ap.add_argument("--testbed", action="store_true")
     ap.add_argument("--blocks", default="A,B")
     ap.add_argument("--tag", required=True)
@@ -100,9 +101,9 @@ def main():
         s = lock["settings"]
         if a.text != lock["main_text"]:
             raise SystemExit("LOCK: main text differs")
-        a.train, a.calib, a.held, a.l2, a.c16l2, a.eta, a.passes, a.r2grid, a.maxiter = (
+        a.train, a.calib, a.held, a.l2, a.c16l2, a.eta, a.passes, a.r2grid, a.maxiter, a.grids = (
             s["train_kb"], s["calib_kb"], s["held_kb"], s["l2"], s["c16l2"], s["eta"], s["passes"], s["r2grid"],
-            s["maxiter"])
+            s["maxiter"], json.dumps(s["grids"]))
     out_dir = HERE / "results" / STAGE / a.tag
     out_dir.mkdir(parents=True, exist_ok=True)
     t0 = time.process_time()
@@ -110,6 +111,8 @@ def main():
     res = {"text": a.text, "tag": a.tag, "stage": STAGE, "attempt": ATTEMPT, "argv": sys.argv,
            "sizes_kb": [a.train, a.calib, a.held], "offsets": sp["offsets"], "corpus_sha256": corpus.TEXTS[a.text][1]}
     grid, c16grid, etas, r2grid = floats(a.l2), floats(a.c16l2), floats(a.eta), floats(a.r2grid)
+    per_arm = json.loads(a.grids) if a.grids else {}
+    g = lambda arm, default: [float(v) for v in per_arm.get(arm, default)]  # noqa: E731
     ytr = np.array([s for r in sp["train"] for s in list(r) + [corpus.EOS]])
     yca = np.array([s for r in sp["calib"] for s in list(r) + [corpus.EOS]])
     yhe = np.array([s for r in sp["held"] for s in list(r) + [corpus.EOS]])
@@ -141,12 +144,12 @@ def main():
             res["A"] = {}
             for c in states.CELLS:
                 Xtr, Xca, Xhe = (R.with_empty(S[c]) for S in (Str, Sca, She))
-                res["A"][c] = r1_eval(Xtr, ctr, Xca, yca, Xhe, yhe, cls, grid, a.maxiter, sp["held"])
+                res["A"][c] = r1_eval(Xtr, ctr, Xca, yca, Xhe, yhe, cls, g(c, grid), a.maxiter, sp["held"])
                 print("A", c, round(res["A"][c]["held_bpb"], 3), flush=True)
         if "B" in blocks:
             Xtr, Xca, Xhe = (R.with_empty(S["N81-obs"]) for S in (Str, Sca, She))
             B = res["B"] = {}
-            B["R1"] = r1_eval(Xtr, ctr, Xca, yca, Xhe, yhe, cls, grid, a.maxiter, sp["held"])
+            B["R1"] = r1_eval(Xtr, ctr, Xca, yca, Xhe, yhe, cls, g("B_R1", grid), a.maxiter, sp["held"])
             print("B R1", round(B["R1"]["held_bpb"], 3), flush=True)
             on = []
             for eta in etas:
@@ -169,10 +172,11 @@ def main():
                   flush=True)
             for name, wq in (("C16", False), ("C16Q", True)):
                 t1 = time.process_time()
-                (cb, lam, theta), path = RO.c16_path(Xtr, ytr, Xca, yca, c16grid, wq, a.maxiter)
+                cg = g(name, c16grid)
+                (cb, lam, theta), path = RO.c16_path(Xtr, ytr, Xca, yca, cg, wq, a.maxiter)
                 bits, Z = RO.c16_bits(theta, Xhe, yhe, wq)
                 B[name] = {"held_bpb": float(bits.mean()), "held_acc": float(np.mean(Z.argmax(1) == yhe)), "lam": lam,
-                           "calib_bpb": cb, "lam_at_grid_edge": lam in (max(c16grid), min(c16grid)), "path": path,
+                           "calib_bpb": cb, "lam_at_grid_edge": lam in (max(cg), min(cg)), "grid": cg, "path": path,
                            "lines": R.bits_to_line_sums(bits, sp["held"]).tolist(),
                            "cpu_s": round(time.process_time() - t1, 1)}
                 print("B", name, round(B[name]["held_bpb"], 3), flush=True)
@@ -202,6 +206,7 @@ def main():
             A = res["A"]
             res["A_bootstrap_sd"] = {f"{u}-{v}": boot_sd(A[u]["lines"], A[v]["lines"], n_lines)
                                      for u, v in (("P81", "N81"), ("P95", "N95"), ("P95", "P81"), ("N95", "N81"))}
+    res["grids"] = per_arm
     res["learner_records"] = learner_records
     res["cpu_s"] = round(time.process_time() - t0, 1)
     res["peak_rss_mb"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1)
