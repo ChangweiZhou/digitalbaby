@@ -27,7 +27,8 @@ assets = [ROOT / "minifly_a_v3/package/FULL151_CANONICAL_B.npz",
           HERE / "summarize.py",                                   # scores the decision and the predictions
           HERE / "data" / "chesterton-brown.txt",
           ROOT / "minifly_v148_pretrain_probe_dev_20261025/data/burgess-busterbrown.txt",
-          ROOT / "minifly_v148_pretrain_probe_dev_20261025/data/bryant-stories.txt"]
+          ROOT / "minifly_v148_pretrain_probe_dev_20261025/data/bryant-stories.txt",
+          HERE / "data" / "edgeworth-parents.txt"]
 closure = {str(p.relative_to(ROOT)): sha(p) for p in sorted(mods) + assets}
 lock = {
     "locked": "2026-10-25",
@@ -43,6 +44,8 @@ lock = {
               "PERM-x beating PERM-last by more than 0.10 weakens it",
         "P3": "R2 at least 0.30 worse than R1 on PERM-obs; within 0.30 weakens it",
         "scoring": "summarize.py (hashed in closure_sha256), applied once to results/main",
+        "dev_informed_expectation_not_a_prediction": "FE0-x R1 beat bigram on the dev texts by 0.33 (Buster), "
+                                                     "0.06 (Bryant) and 0.20 (Edgeworth); text-dependent",
     },
     "python": sys.version.split()[0],
     "packages": {m: sys.modules[m].__version__ for m in ("numpy", "scipy") if m in sys.modules},
