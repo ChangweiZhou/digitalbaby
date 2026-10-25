@@ -1,0 +1,127 @@
+{
+  "schema": "V147_PROSPECTIVE_DESIGN",
+  "version": "V147",
+  "status": "DESIGN_ONLY_NOT_IMPLEMENTED",
+  "goal": "Better complete own-byte/EOS unseen ordinary addition generalization per total sample and compute",
+  "diagnostic": "Randomly relabelled modular composition; diagnostic success does not satisfy the addition goal",
+  "learner_parent_commit": "03cf7cd7",
+  "learner_parent_source": "minifly_v146_r1_dev_20261024/core.py",
+  "local_rules_only": true,
+  "gradual_warmup": {
+    "initial_factor": 0.0625,
+    "final_factor": 1,
+    "completed_records": 1024
+  },
+  "attention_allowed": false,
+  "transformers_allowed": false,
+  "ELM_allowed": false,
+  "backprop_allowed": false,
+  "arithmetic_specific_candidate_structure_allowed": false,
+  "task": {
+    "alphabet_size": 23,
+    "payload_vocabulary": 256,
+    "EOS_control": 256,
+    "hidden_relation": "sigma((a+b) mod 23); evaluator only",
+    "prompt": "two raw bytes; generic end-of-prompt boundary",
+    "observed_response": "one raw byte followed by observed EOS",
+    "generation": "own payload and own EOS, no forced length or vocabulary mask",
+    "output_decision_cap": 8,
+    "unordered_orbits": 276,
+    "train_orbits": 207,
+    "held_orbits": 69,
+    "held_orbits_per_result_symbol": 3,
+    "both_orientations_same_split": true,
+    "maximum_split_attempts": 10000,
+    "coverage": "Every symbol in both taught input positions and among taught outputs"
+  },
+  "architecture": {
+    "identity_trace_channels": 88,
+    "unused_map_channels": 32,
+    "map_channel_values": 0,
+    "hidden_ReLU_units": 128,
+    "fixed_projection_outputs": 88,
+    "expansion": "canonical parent PN/KC connectivity and sidewise top-k",
+    "output": "nine opponent local delta pairs",
+    "feature_peak_rate": 0.003,
+    "shrinkage": false,
+    "ordinary_weight_decay": false,
+    "replay": false,
+    "trace_cache_max_entries": 4096
+  },
+  "arms": [
+    "FIXED",
+    "LOCAL",
+    "SHUFFLED",
+    "NO-WRITE"
+  ],
+  "development": {
+    "worlds": [
+      "V147-D1",
+      "V147-D2"
+    ],
+    "arms": [
+      "FIXED",
+      "LOCAL"
+    ],
+    "naming_rates": [
+      0.003,
+      0.03
+    ],
+    "passes": 256,
+    "fits": 8,
+    "selection_uses_held_scores": false,
+    "acquisition_ready": "One route at a common alpha reaches >=95% taught complete accuracy in both worlds",
+    "selection": "Among eligible alpha, highest mean taught complete over routes/worlds, then lower summed CPU, then lower alpha"
+  },
+  "technical_rehearsal": {
+    "world": "V147-TECH1",
+    "passes": 16,
+    "fits": 4
+  },
+  "assessment": {
+    "worlds": [
+      "V147-H1",
+      "V147-H2",
+      "V147-H3",
+      "V147-H4"
+    ],
+    "passes": 4096,
+    "fits": 16,
+    "checkpoints": [
+      0,
+      1,
+      4,
+      16,
+      64,
+      256,
+      1024,
+      4096
+    ],
+    "primary": "final held complete own-byte/EOS accuracy, orientation-averaged within orbit",
+    "primary_mechanistic_contrast": "LOCAL minus FIXED",
+    "no_population_confirmation_claim": true
+  },
+  "maximum_exposures": {
+    "calibration_records": 847872,
+    "rehearsal_records": 26496,
+    "assessment_records": 27131904,
+    "substantive_records": 28006272,
+    "technical_record_applications": 4096,
+    "combined_record_applications": 28010368,
+    "observed_target_tokens": 56020736,
+    "external_tokens": 112041472
+  },
+  "execution_ceiling": {
+    "summed_process_CPU_seconds": 21600,
+    "maximum_workers": 2,
+    "numerical_threads_per_worker": 1
+  },
+  "return_test": "Separate fresh ordinary-addition proposal using unchanged kernel and byte/EOS interface; no claim of transfer from a fresh model",
+  "implementation_authorized": false,
+  "training_authorized": false,
+  "main_worlds_generated": false,
+  "new_core_adopted": false,
+  "github_pushed": false,
+  "random_generator": "NumPy PCG64, runtime version pinned at implementation",
+  "shuffle_maximum_attempts": 10000
+}
