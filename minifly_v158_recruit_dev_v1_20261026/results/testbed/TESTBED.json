@@ -1,0 +1,47 @@
+{
+ "stage": "testbed",
+ "settings": {
+  "oracle": {
+   "units_per_set_per_side": 46,
+   "column_sum": 1.114,
+   "seed": 158,
+   "ceiling": 0.05,
+   "floor": 0.01
+  },
+  "fixture": {
+   "seeds": [
+    0,
+    1
+   ],
+   "n_lines": 300,
+   "length": 40,
+   "pairs": 2000,
+   "pair_seed_base": 11,
+   "pass_mark": 0.01
+  }
+ },
+ "streams": {
+  "0": {
+   "positions": 12300,
+   "FROZEN": 0.004236413043478271,
+   "ORACLE": 0.003910326086956517,
+   "ORACLE-CODE": 0.4822038043478262,
+   "oracle_units_active_in_set_contexts": 0.0
+  },
+  "1": {
+   "positions": 12300,
+   "FROZEN": 0.005029891304347833,
+   "ORACLE": 0.004850543478260874,
+   "ORACLE-CODE": 0.48281793478260865,
+   "oracle_units_active_in_set_contexts": 0.0
+  }
+ },
+ "learner_records": 0,
+ "checks": {
+  "floor_frozen_at_most": true,
+  "measurement_oracle_code": true,
+  "ceiling_oracle_keys": false
+ },
+ "verdict": "CANNOT_TEST_CLAIM_AS_SPECIFIED",
+ "cpu_s": 94.3
+}
