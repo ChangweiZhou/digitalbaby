@@ -324,3 +324,26 @@ Rates: η ∈ {0.01, 0.03, 0.1} for both rules. L-PRED uses one shared rate for 
 **12.8 Caps.**
 * The owner's go-ahead named no numbers, so the defaults apply: 2 CPU-h, 5,000 learner records, 3 test cycles.
 * C0 and C1 fit within them. Caps for C2 and C3 will be requested with the costs measured in C0 and C1.
+
+**12.9 Reference revision after synthetic qualification (still before the lock; no text outcome read).**
+The references of §2 and §12.6 were checked on a synthetic teacher task, before any text was used. Synthetic receptor traces were labelled by a fixed random readout of the code that hidden *teacher* keys produce (same wiring, birth weights permuted).
+* A student given the teacher keys reaches 2.03 bits; frozen birth keys give 2.55. That is 0.5 bits of known headroom.
+* Back-propagation through the binary top-k layer recovered at most about 0.1 of it (best 2.44). This held for every set-up tried: ReLU stand-in or straight-through sigmoid estimator, Adam or SGD, learning rates 1e-3 to 3e-2, up to 20 epochs. Code overlap with the teacher rose only from 0.189 to at most 0.198.
+* Such a reference cannot support gate G0. Its failure to find headroom would not show that the wiring lacks it (the lesson of Codex's V152 reference).
+* Free graded hidden layers (as in the headroom check's T3) train reliably. On the same teacher task, however, they did worse than the frozen binary code (2.60–2.68 against 2.55). At this data size they are not a guaranteed bound on learned binary keys.
+
+Therefore:
+* **REF-N and REF-D become free hidden layers** (302 PN inputs → 5,177 ReLU units → softmax). REF-N is masked to the birth synapses; REF-D is dense.
+  * Training follows T3: AdamW, lr 1e-3, weight decay 1e-4, batch 256, at most 60 epochs, patience 6 on calibration bits, seed 0.
+  * Dropout ∈ {0, 0.5} is chosen on calibration at C0 and then fixed.
+  * They are scored by their own held-out bits.
+  * They are **descriptive**: they show how much a representation learned by back-propagation gains under each wiring. They are not a gate, and capture against them is reported, not used as a pass mark.
+* **FLOOR is replaced by PERM:** the birth wiring with the birth weights permuted (seed 1), with no training, scored by R1.
+* **C0 verdict** (the skill's ceiling and floor logic; the §12.1 rule is withdrawn):
+  * CONTINUE requires all of: parity (FROZEN = 2.963 ± 0.005); ceiling (FROZEN − REF-D ≥ 0.08); floor (PERM ≥ FROZEN − 0.03); and neither reference stopped by the epoch budget.
+  * If the ceiling or the qualification fails: CANNOT_TEST_CLAIM_AS_SPECIFIED.
+  * If parity or the floor fails: INVALID.
+  * REF-N − REF-D is reported as the descriptive wiring effect.
+* **LEARNS (§5) becomes absolute:** the arm beats FROZEN by ≥ 0.05 bits **and** by ≥ 3 line-bootstrap SDs on the same text's held-out lines. The capture fraction is reported beside it. CARRIES is unchanged.
+* **§12.6 is withdrawn**, including the top-k stand-in, the projections and the learning-rate grid. The keys-scale remark made while drafting it was based on a misread weight range: the birth weights have median 0.159 (range 0.005–1.29), not about 0.0055.
+* Cost: the references are cheaper than the withdrawn ones (no R1 fit each), and PERM needs one R1 fit and no training.
