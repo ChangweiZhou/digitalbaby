@@ -1,0 +1,99 @@
+{
+ "design": "minifly_v166_memloop_design_20261026/DESIGN.md",
+ "settings": {
+  "memory": {
+   "items": 32,
+   "pn_dim": 32,
+   "n_kc": 512,
+   "kc_fanin": 6,
+   "kc_active": 16,
+   "code_seed": 7
+  },
+  "line": {
+   "chains": 4,
+   "study_distract": 8,
+   "delay": 6,
+   "episodes": 4,
+   "markers": [
+    "STUDY",
+    "DISTRACT",
+    "Q1",
+    "Q2",
+    "WAIT",
+    "ANS"
+   ]
+  },
+  "worlds": {
+   "technical": {
+    "train": [
+     101,
+     4000
+    ],
+    "calib": [
+     102,
+     200
+    ],
+    "test": [
+     103,
+     1000
+    ]
+   },
+   "dev": {
+    "train": [
+     201,
+     4000
+    ],
+    "calib": [
+     202,
+     200
+    ],
+    "test": [
+     203,
+     1000
+    ]
+   }
+  },
+  "net": {
+   "H": 64,
+   "init_seed": 0
+  },
+  "train": {
+   "lr": 0.001,
+   "wd": 0.0001,
+   "batch": 32,
+   "clip": 5.0,
+   "max_epochs": 60,
+   "patience": 10,
+   "order_seed": 13
+  },
+  "rules": {
+   "read_tol": 1e-12,
+   "oracle_acc": 0.99,
+   "sanity_bits": 0.5,
+   "ceiling_q2": 1.0,
+   "ceiling_q1": 0.5,
+   "floor_q2": 1.5,
+   "pass_bits": 0.5,
+   "pass_sd": 3,
+   "guard_q1": 0.5
+  },
+  "boot": {
+   "reps": 1000,
+   "seed": 0
+  },
+  "parallel": 2
+ },
+ "python": "3.11.15",
+ "packages": {
+  "torch": "2.14.1+cu130"
+ },
+ "closure_sha256": {
+  "minifly_v166_memloop_design_20261026/DESIGN.md": "fcf4cd704e9f54f90bda9185dd0570050bd34f103d870b570d4f577cfcc42e85",
+  "minifly_v166_memloop_dev_v1_20261026/launch.py": "fcc405154ba80657039a8540dfa600079bd2032428138a36c5f0d99207ed355a",
+  "minifly_v166_memloop_dev_v1_20261026/SETTINGS.json": "8aed11f208b4b2cd63b89d2c5437c035b242b700750a359e25095c5aba370099",
+  "minifly_v166_memloop_dev_v1_20261026/AUTHORIZATION.json": "2e765d5caccc6407ecb3f852679da0ce71bb312a2621f198a8b7058f7c732d78",
+  "minifly_v166_memloop_dev_v1_20261026/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
+  "minifly_v166_memloop_dev_v1_20261026/v166_lib.py": "8e6f17aad2fd250f51fea9391d27956ac1c8ef51310b1cd2374b996b6b15131b",
+  "minifly_v166_memloop_dev_v1_20261026/v166_testbed.py": "d912d104e332bbdbd6b8a44a223473d9cca867e5f7cb01960b88556e91255417"
+ }
+}

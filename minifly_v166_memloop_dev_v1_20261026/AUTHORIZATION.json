@@ -1,0 +1,26 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v166_memloop_dev_v1_20261026",
+ "design": "minifly_v166_memloop_design_20261026/DESIGN.md",
+ "verbatim": "Assign a separate agent to work on P1-B to speed things up.",
+ "utc": "2026-10-26T22:20Z (approximate; owner message after the attached ChatGPT joint review of V163-V164 and the V165 assignment)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message), relayed to this separate agent by the main session",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7 (separate agent for V166)",
+ "context_verbatim": ["Activate the recursive improvement skill, turn this to V165.", "Assign a separate agent to work on P1-B to speed things up."],
+ "options_shown": [
+  {"label": "Review P1-A", "text": "Fix V163's 512-unit layer and test a task-related local feedback rule (DFA / direct feedback), with RAND-H, SSL-H, BP-H and shuffled-feedback controls.", "cost": "about 0.3 CPU-h and 4,500 learner records", "objective_distance": "Can the representation layer close the gap to BP-H without global back-propagation into it; no native integration."},
+  {"label": "Review P1-B", "text": "Memory-to-workspace architecture test.", "cost": "not costed; needs its own design", "objective_distance": "Whether retrieved knowledge can take part in the next internal computation."}
+ ],
+ "recommendation_shown": "Recorded by the main session (V165 AUTHORIZATION.json): P1-A as V165; P1-B proposed as V166 with its own design.",
+ "interpretation": "Run the review's P1-B as V166 in parallel with V165 and not on condition of it: an architecture-sufficiency test of a memory -> workspace loop with BPTT as the instrument (positive control), matched NO-LOOP, shuffled-memory and null-memory controls, on strictly defined synthetic one-hop (delay) and two-hop (composition) tasks. No local learning rule, no native integration. No number was written, so the default caps apply. BPTT-trained arms are evaluator instruments (0 learner records), as V163/V164's back-propagation references were.",
+ "stages": {"implementation": true, "technical": true, "dev_cycles": true,
+  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "push": false, "push_lock": false, "adoption": false, "pointer_update": false},
+ "push_note": "Pushed to claude/charming-clarke-u9g850 only, under the session's standing instruction.",
+ "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
+ "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "conditionals": [],
+ "restated_to_owner_before_acting": "V166 runs under the default caps, since no numbers were given: at most 2 CPU-h of child CPU, 5,000 learner records and 3 test cycles; no official run, no adoption, no pointer update; pushes to this branch only. It is sized at about 0.3 CPU-h (worst case 0.7) and 0 learner records (every arm is a BPTT evaluator instrument). Stated in the V166 design and in the report.",
+ "grants": [{"n": 1, "verbatim": "Assign a separate agent to work on P1-B to speed things up.", "utc": "2026-10-26T22:20Z", "effect": "implementation, technical, dev cycles for V166 (review P1-B); default caps"}]
+}

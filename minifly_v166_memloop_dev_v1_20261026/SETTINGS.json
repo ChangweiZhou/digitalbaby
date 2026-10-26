@@ -1,0 +1,13 @@
+{
+ "memory": {"items": 32, "pn_dim": 32, "n_kc": 512, "kc_fanin": 6, "kc_active": 16, "code_seed": 7},
+ "line": {"chains": 4, "study_distract": 8, "delay": 6, "episodes": 4,
+          "markers": ["STUDY", "DISTRACT", "Q1", "Q2", "WAIT", "ANS"]},
+ "worlds": {"technical": {"train": [101, 4000], "calib": [102, 200], "test": [103, 1000]},
+            "dev": {"train": [201, 4000], "calib": [202, 200], "test": [203, 1000]}},
+ "net": {"H": 64, "init_seed": 0},
+ "train": {"lr": 0.001, "wd": 0.0001, "batch": 32, "clip": 5.0, "max_epochs": 60, "patience": 10, "order_seed": 13},
+ "rules": {"read_tol": 1e-12, "oracle_acc": 0.99, "sanity_bits": 0.5, "ceiling_q2": 1.0, "ceiling_q1": 0.5,
+           "floor_q2": 1.5, "pass_bits": 0.5, "pass_sd": 3, "guard_q1": 0.5},
+ "boot": {"reps": 1000, "seed": 0},
+ "parallel": 2
+}
