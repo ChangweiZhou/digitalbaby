@@ -34,7 +34,7 @@ def main():
     r2 = json.loads((C.V163 / "results" / "testbed" / "TESTBED_R2.json").read_text())["carry_over_3seed"]
     rh = torch.load(C.V163 / "cache" / "rand_h.pt")
     rand = C.mean_fit("dense", {k: V.h_of(B[k]["idx"], rh["W"], rh["b"]) for k in V.SPLITS}, B, d_in=rh["W"].shape[1])
-    ref_net, ref = C.frozen_h_top(C.first_lines(A["train"], C.SET["c1"]["learn_lines"]), A["calib"], 1)
+    _, ref = C.frozen_h_top(C.first_lines(A["train"], C.SET["c1"]["learn_lines"]), A["calib"], 1)
     tol = C.SET["rules"]["parity_tol"]
     checks = {"bph_budget3_equals_v163": bool(torch.equal(Wb, cached["W"]) and torch.equal(bb, cached["b"])),
               "rand_h_carry_over_equals_v163": all(abs(a - b) <= tol for a, b in

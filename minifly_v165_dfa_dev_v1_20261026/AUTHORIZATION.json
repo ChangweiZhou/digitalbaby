@@ -7,18 +7,61 @@
  "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
  "channel": "Claude Code session chat (owner's own message; the attached review is input, not authority)",
  "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
- "options_shown": [{"label": "Review P1-A", "text": "Fix V163's 512-unit layer and test a task-related local feedback rule (DFA / direct feedback), with RAND-H, SSL-H, BP-H and shuffled-feedback controls.", "cost": "about 0.3 CPU-h and 4,500 learner records", "objective_distance": "Can the representation layer close the gap to BP-H without global back-propagation into it; no native integration."},
-                   {"label": "Review P1-B", "text": "Memory-to-workspace architecture test.", "cost": "not costed; needs its own design", "objective_distance": "Whether retrieved knowledge can take part in the next internal computation."}],
+ "options_shown": [
+  {
+   "label": "Review P1-A",
+   "text": "Fix V163's 512-unit layer and test a task-related local feedback rule (DFA / direct feedback), with RAND-H, SSL-H, BP-H and shuffled-feedback controls.",
+   "cost": "about 0.3 CPU-h and 4,500 learner records",
+   "objective_distance": "Can the representation layer close the gap to BP-H without global back-propagation into it; no native integration."
+  },
+  {
+   "label": "Review P1-B",
+   "text": "Memory-to-workspace architecture test.",
+   "cost": "not costed; needs its own design",
+   "objective_distance": "Whether retrieved knowledge can take part in the next internal computation."
+  }
+ ],
  "recommendation_shown": "V163's pre-stated reading (pass with phi < 0.5) calls for feedback from the top; the review's P1-A is that step.",
- "interpretation": "'Turn this to V165' is taken as the review's P1-A (concretely specified, and V163's pre-stated next step). P1-B is proposed as V166 with its own design. No number was written, so the default caps apply. Stated to the owner before acting.",
- "stages": {"implementation": true, "technical": true, "dev_cycles": true,
-  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
-  "push": false, "push_lock": false, "adoption": false, "pointer_update": false},
+ "interpretation": "'Turn this to V165' is taken as the review's P1-A (concretely specified, and V163's pre-stated next step). P1-B is proposed as V166 with its own design. No number was written, so the default caps apply. Stated to the owner before acting. Update: the owner then wrote 'Assign a separate agent to work on P1-B to speed things up.'; P1-B is run as V166 by a separate agent in parallel, in its own folders.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": true,
+  "official": {
+   "granted": false,
+   "verbatim": null,
+   "utc": null,
+   "lock_shas_shown": null
+  },
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
  "push_note": "Pushed to claude/charming-clarke-u9g850 only, under the session's standing instruction.",
  "back_propagation_scope": "As in V163 (owner-confirmed): back-propagation only within the top block; H learns from a broadcast error through fixed random feedback.",
- "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
- "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "caps": {
+  "max_cpu_h": 2,
+  "max_records": 5000,
+  "max_cycles": 3
+ },
+ "defaults_applied": [
+  "max_cpu_h",
+  "max_records",
+  "max_cycles",
+  "official",
+  "push",
+  "adoption",
+  "pointer_update"
+ ],
  "conditionals": [],
  "restated_to_owner_before_acting": "Under the skill's rules, caps default to 2 CPU-h, 5,000 learner records and 3 test cycles, since no numbers were given. V165 is sized to fit: about 0.3 CPU-h and about 4,500 records. The record cap limits each feedback-trained layer to 3 epochs. No official run and no adoption; pushes go to this branch only.",
- "grants": [{"n": 1, "verbatim": "Activate the recursive improvement skill, turn this to V165.", "utc": "2026-10-26", "effect": "implementation, technical, dev cycles for V165; default caps"}]
+ "grants": [
+  {
+   "n": 1,
+   "verbatim": "Activate the recursive improvement skill, turn this to V165.",
+   "utc": "2026-10-26",
+   "effect": "implementation, technical, dev cycles for V165; default caps"
+  }
+ ]
 }
