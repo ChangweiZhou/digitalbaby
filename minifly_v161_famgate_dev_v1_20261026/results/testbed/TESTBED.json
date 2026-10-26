@@ -1,0 +1,163 @@
+{
+ "stage": "testbed",
+ "settings": {
+  "gate": {
+   "tau_percentile": 5
+  },
+  "x2": {
+   "beta": 1.0,
+   "unseen_min": 0.8,
+   "seen_min": 0.95,
+   "shuffled_max": 0.65,
+   "oracle_unseen_min": 0.9,
+   "oracle_seen_min": 0.95,
+   "s_unseen_max": 0.65
+  },
+  "x3": {
+   "beta_grid": [
+    0,
+    0.25,
+    0.5,
+    1,
+    2
+   ],
+   "tau_percentiles": [
+    null,
+    1,
+    5,
+    10
+   ],
+   "s_grid_A": [
+    100,
+    30,
+    10
+   ],
+   "s_grid_B": [
+    300,
+    100,
+    30,
+    10
+   ],
+   "g_grid": [
+    10,
+    1,
+    0.1,
+    0.01
+   ],
+   "maxiter": 300,
+   "min_gain_bits": 0.02,
+   "min_sd": 3
+  },
+  "v160_parity": {
+   "poe_unseen": {
+    "0": 0.7404255319148936,
+    "1": 0.7024793388429752
+   },
+   "gshuf_unseen": {
+    "0": 0.4978723404255319,
+    "1": 0.5
+   }
+  }
+ },
+ "seeds": {
+  "0": {
+   "S": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6340425531914894,
+     "bits": 1.3648369269436078
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.11176992602507015
+    }
+   },
+   "tau": 0.967391304347826,
+   "gate": {
+    "off_unseen": 0.7446808510638298,
+    "off_seen": 0.03065134099616858,
+    "mean_f_unseen": 0.915263644773358,
+    "mean_f_seen": 0.9936906546726638,
+    "auc_novelty_unseen_vs_seen": 0.9226868835086003
+   },
+   "ORACLE-PoE (ungated, V160)": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.9446808510638298,
+     "bits": 1.2838076259303088
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 1.0,
+     "bits": 0.10533041094131232
+    }
+   },
+   "ORACLE-GATED": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 1.0,
+     "bits": 3.180854297641406
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 1.0,
+     "bits": 0.19152866089006082
+    }
+   }
+  },
+  "1": {
+   "S": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6157024793388429,
+     "bits": 1.5689822354800442
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09678624252540416
+    }
+   },
+   "tau": 0.967391304347826,
+   "gate": {
+    "off_unseen": 0.7892561983471075,
+    "off_seen": 0.01953125,
+    "mean_f_unseen": 0.904801473230327,
+    "mean_f_seen": 0.9951808763586958,
+    "auc_novelty_unseen_vs_seen": 0.9329238765495868
+   },
+   "ORACLE-PoE (ungated, V160)": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.9338842975206612,
+     "bits": 1.5339234610524404
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.1050414211221053
+    }
+   },
+   "ORACLE-GATED": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.9752066115702479,
+     "bits": 3.4687590048084993
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.99609375,
+     "bits": 0.1555771328377675
+    }
+   }
+  }
+ },
+ "learner_records": 0,
+ "checks": {
+  "ceiling_oracle_gated": true,
+  "floor_s_alone": true
+ },
+ "verdict": "CONTINUE",
+ "cpu_s": 218.6
+}
