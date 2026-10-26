@@ -76,3 +76,6 @@ V160 DESIGN (owner go-ahead; written and committed before any V160 code)
   * EVEN keys;
   * own-output generation;
   * unseen addition.
+
+## 6. Pre-code refinement of one check
+V159 did not save its learned matrix, so the check "the predictive layer reproduces V159's learned matrix bit for bit" cannot be run as written. It is replaced by a stronger end-to-end parity check: **G alone must reproduce V159's diagnostic accuracies on unseen members exactly** (0.8170 and 0.8017). It uses the same predictive layer, trace, centring, readout and grid.
