@@ -1,0 +1,58 @@
+{
+  "error": "TypeError(\"dict() got multiple values for keyword argument 'stage'\")",
+  "traceback": "Traceback (most recent call last):\n  File \"/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v157_dev_20261026/run157.py\", line 25, in run\n    s.save('STATUS.json',dict(status='RUNNING_A1',cycle=3,world=world,stage='taught_histories'));s.stage('execution');rr=e.run_world(datasets[world]);results+=rr;s.stage('audit');audits.append(audit.world(datasets[world],rr));s.log('WORLD_TAUGHT_AUDIT_COMMIT',world=world,status='ACCEPTED');s.save('COUNTS.json',s.state())\n                                                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v157_dev_20261026/engine157.py\", line 52, in run_world\n    roots={p:old(d,p) for p in ['W','SH_OLD']};assert roots['W']['n']==roots['SH_OLD']['n'] and roots['W']['time']==roots['SH_OLD']['time'];results=[]\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v157_dev_20261026/engine157.py\", line 52, in <dictcomp>\n    roots={p:old(d,p) for p in ['W','SH_OLD']};assert roots['W']['n']==roots['SH_OLD']['n'] and roots['W']['time']==roots['SH_OLD']['time'];results=[]\n             ^^^^^^^^\n  File \"/Users/pencilbard/Downloads/second_try_copy/DIGITALBABY_CLAUDE_B_D4E4578_20260929/minifly_v157_dev_20261026/engine157.py\", line 18, in old\n    s.log('OLD_PASS_COMMIT',case=key,pass_no=pass_no,records=count,n=m.n);s.save('ACTIVE.json',dict(case=key,stage='OLD',next_record=count,**s.state()))\n                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: dict() got multiple values for keyword argument 'stage'\n",
+  "active": {
+    "stage": "OLD",
+    "case": "202610265701_W"
+  },
+  "partial_state": {
+    "path": "local/PRESERVED_PARTIAL.pkl",
+    "sha256": "45975263a8a19373a1d95c4f2c44a369d205b0bbb038d9d44c8141d2472cc3d1",
+    "bytes": 22827377
+  },
+  "counts": {
+    "CPU": 16.106648,
+    "wall": 702.9797770923469,
+    "counts": {
+      "native_model_clones": 162,
+      "native_minimum_clone_bytes": 429401088,
+      "observed_records": 75,
+      "observed_targets": 214,
+      "technical_records": 11,
+      "technical_targets": 33,
+      "updated_records": 70,
+      "observed_prompt_bytes": 379,
+      "feedback_payload_bytes": 139,
+      "feedback_EOS": 75,
+      "native_encoding_global_sorts": 3698,
+      "output_distributions": 214,
+      "native_vector_readouts": 214,
+      "native_signed_API_calls": 3184,
+      "inhibited_records": 5,
+      "digest_bytes": 502203059,
+      "technical_pairs": 44,
+      "logical_evaluator_distributions": 380,
+      "evaluator_distributions": 340,
+      "native_evaluator_distributions": 340,
+      "identical_first_read_reuses": 40,
+      "technical_queries": 20,
+      "OLD_updating_records": 64,
+      "OLD_updating_targets": 181,
+      "native_training_distributions": 181
+    },
+    "stage": "execution",
+    "stage_CPU": {
+      "qualification": 10.714041,
+      "execution": 5.392609
+    },
+    "timings": {
+      "native_clone_CPU": 0.043086000000002955,
+      "native_encoding_CPU": 0.34993999999999625,
+      "native_training_CPU": 4.625464,
+      "digest_CPU": 0.29752200000000073,
+      "OLD_updating_CPU": 3.8829880000000006
+    },
+    "RSS_peak_bytes": 238370816
+  },
+  "no_automatic_retry": true
+}
