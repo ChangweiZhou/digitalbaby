@@ -73,7 +73,8 @@ def gain(split, in_var_inv):
 def targets(split, scorer, pos):
     y = split["y"][pos.clamp(min=0).numpy()]
     valid = (pos >= 0).numpy() & (y >= 0) if isinstance(scorer, Synth) else (pos >= 0).numpy()
-    enc = scorer.encode(np.where(valid, y, 0) if isinstance(scorer, Synth) else y)
+    yy = np.where(valid, y, 0) if isinstance(scorer, Synth) else y
+    enc = np.asarray(scorer.encode(yy.reshape(-1))).reshape(yy.shape)
     return torch.from_numpy(np.asarray(enc)), torch.from_numpy(valid)
 
 
