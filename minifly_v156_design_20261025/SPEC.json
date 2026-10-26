@@ -1,0 +1,153 @@
+{
+  "version": "V156",
+  "status": "DESIGN_ONLY",
+  "execution_authorized": false,
+  "model_runs_performed": 0,
+  "solver_runs_performed": 0,
+  "new_training_record_applications": 0,
+  "goal": "Retained complete own-byte/EOS unseen-addition generalization per all sample and compute",
+  "candidate_parent": "V154 N_2B; native Full151/R_center",
+  "constraints": {
+    "gradual_warmup": true,
+    "local_candidate_updates": true,
+    "expected_outputs_during_warmup_allowed": true,
+    "arithmetic_specific_structure": false,
+    "attention": false,
+    "transformers": false,
+    "ELM": false,
+    "all_output_classes": 257,
+    "own_decision_cap": 4,
+    "forced_EOS": false,
+    "assessment_labels_opened": false,
+    "core_adoption": false
+  },
+  "worlds": [
+    202610255401,
+    202610255402
+  ],
+  "fronts": [
+    "I_FAST",
+    "P_SLOW"
+  ],
+  "lane_F": {
+    "level": "E0",
+    "feature_view": "normalized OBS only",
+    "feature_columns": 5177,
+    "records_per_case": 128,
+    "target_rows_per_case_max": 384,
+    "family_case_checks": 12,
+    "families": [
+      {
+        "id": "C0",
+        "logits": "A U phi",
+        "class_bias": false,
+        "latent_intercept": false
+      },
+      {
+        "id": "CQ",
+        "logits": "A U phi + b257",
+        "class_bias": true,
+        "latent_intercept": "subsumed by class bias"
+      },
+      {
+        "id": "FQ",
+        "logits": "W phi + b257",
+        "class_bias": true
+      }
+    ],
+    "A": "C (I - 11^T/16) / 4",
+    "unit_margin": 1,
+    "norm_cap": null,
+    "regularization": null,
+    "constructive_interpolation_first": true,
+    "solver": {
+      "separation_scans_per_cell_max": 64,
+      "total_iterations_per_cell_max": 5000,
+      "new_constraints_per_scan_max": 256,
+      "cpu_seconds_per_cell_max": 60,
+      "shared_cpu_seconds_max": 900,
+      "separation_constraint_evaluations_max": 75497472
+    },
+    "feasible": "Independently error-bounded verification of every unit-margin inequality after any rescaling",
+    "infeasible": "Exact independently verified Farkas/rational certificate or sound alternative proof",
+    "fallback": "UNRESOLVED",
+    "witness_generation_queries_max": 1536,
+    "witness_interface": "Exact cached/regenerated normalized feature parity or certified discrepancy bounds preserving all decisions",
+    "native_answer_path": false
+  },
+  "lane_M": {
+    "level": "E1",
+    "checkpoints": 8,
+    "start_checkpoints": 4,
+    "start": "OLD_W",
+    "archived_endpoint": "final W",
+    "warmup_counter": "Preserve checkpoint n; no reset or accelerated ramp",
+    "teacher": "a=0.2*s(n)*P*C^T*(p-e_y)/4; q=0",
+    "warmup": "s(n)=1/16+(15/16)*min(n/1024,1)",
+    "selected_NEW_per_start": 16,
+    "order": "SHA256('V156|'+world+'|margin-order|'+record_id), digest byte order then record_id",
+    "panel": {
+      "all_OLD": 64,
+      "selected_NEW": 16,
+      "total": 80,
+      "retention_subset": "initially correct OLD only"
+    },
+    "forks": [
+      "actual_written_record",
+      "same_observations_writes_inhibited",
+      "elapsed_seconds_idle_only"
+    ],
+    "matched_idle": "FastMemory.rest(idle, actual_end.time-parent.time); never Native.rest(seconds)",
+    "final_idle": "Native.rest(128) byte steps",
+    "same_vs_other": "raw record ID only",
+    "attribution": [
+      "I=m(idle)-m(parent)",
+      "O=m(observed0)-m(idle)",
+      "W=m(written)-m(observed0)"
+    ],
+    "scope": "New correlated diagnostic continuation, not V154 replay or early warmup reconstruction",
+    "native_panel_query_pairs_max": 16320,
+    "updating_records_max": 64,
+    "inhibited_records_max": 64
+  },
+  "technical": {
+    "record_reserve": 16,
+    "payload_bytes_max": 2,
+    "target_reserve_max": 48,
+    "query_pairs_reserve": 64,
+    "no_native_positive_control_claim": true
+  },
+  "totals": {
+    "new_observed_record_applications_max": 144,
+    "new_reply_EOS_targets_max": 432,
+    "native_panel_output_distributions_max": 114240,
+    "witness_distributions_max": 6144,
+    "technical_distributions_max": 448,
+    "all_output_distributions_max": 120832
+  },
+  "resources": {
+    "cpu_seconds_total": 3600,
+    "cpu_F": 900,
+    "cpu_M": 1800,
+    "cpu_qualification": 300,
+    "cpu_audit_package": 600,
+    "wall_seconds": 7200,
+    "workers": 1,
+    "numerical_threads": 1,
+    "RSS_bytes_max": 1073741824,
+    "local_output_bytes_max": 1073741824,
+    "automatic_retries": false,
+    "automatic_resumption": false
+  },
+  "success_boundary": "Resolved finite decisions and auditable native margin attribution; no efficacy threshold or E3/adoption verdict",
+  "raw_publication": false,
+  "github_push_authorized_this_delivery": false,
+  "remote_followup": {
+    "branch": "claude/charming-clarke-u9g850",
+    "commit": "2501683d4867d2111a004f060edd28aaee67ffb4",
+    "completed": "V155 text headroom instrument",
+    "proposal_only": "V155 local-key learning",
+    "no_authorization_inherited": true,
+    "no_text_task_added": true
+  }
+}
