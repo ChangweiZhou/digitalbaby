@@ -1,0 +1,42 @@
+{
+ "checks": [
+  {
+   "check": "autograd update equals the explicit three-factor formula (float64, <= 1e-10)",
+   "pass": true,
+   "detail": {
+    "max_abs_diff": 3.3306690738754696e-16,
+    "max_abs_grad_W": 0.12266146463186352
+   }
+  },
+  {
+   "check": "probe training leaves W untouched and the features carry no gradient",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "one pass on 50 lines is deterministic",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "after one pass, positive beats negative on >= 60% of A's calibration pairs",
+   "pass": true,
+   "detail": {
+    "separation": 0.9738458490192193,
+    "at_initialisation_B0": 0.0,
+    "loss": [
+     1.6179772184810177
+    ],
+    "cpu_s_per_pass": [
+     12.3
+    ]
+   }
+  }
+ ],
+ "diagnostics_one_pass": {
+  "dead_units_calib": 0,
+  "mean_active_units": 57.87568283081055
+ },
+ "learner_records": 805,
+ "cpu_s": 18.4
+}

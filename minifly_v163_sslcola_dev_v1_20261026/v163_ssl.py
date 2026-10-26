@@ -67,7 +67,7 @@ def explicit_grads(m, idx, t, neg):
 
 def train(A, passes, checkpoints=(), lines=None, seed_offset=0):
     """Train from RAND-H's initialisation on A's taught text (or its first `lines` lines). Returns the model, the
-    (W, b) at each checkpoint pass, records (passes x lines used) and the per-pass loss."""
+    (W, b, B) at each checkpoint pass, records (passes x lines used) and the per-pass loss."""
     t0 = time.process_time()
     split = A["train"]
     if lines is not None:
@@ -92,11 +92,11 @@ def train(A, passes, checkpoints=(), lines=None, seed_offset=0):
             opt.zero_grad()
             loss.backward()
             opt.step()
-            tot += float(loss) * len(t)
+            tot += float(loss.detach()) * len(t)
         losses.append(tot / len(perm))
         cost.append(round(time.process_time() - tp, 1))
         if p in checkpoints:
-            snaps[p] = (m.W.detach().clone(), m.b.detach().clone())
+            snaps[p] = (m.W.detach().clone(), m.b.detach().clone(), m.B.detach().clone())
     return m, snaps, {"records": passes * len(split["n"]), "loss_per_pass": losses, "cpu_s_per_pass": cost,
                       "cpu_s": round(time.process_time() - t0, 1)}
 
