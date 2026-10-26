@@ -82,3 +82,10 @@ Counting ladder: unigram 4.445, bigram 3.538, PPM-2 2.986, PPM-3 2.667.
 * Owner's reply, verbatim: "Okay, let us push it."
 * The V153 main run is therefore not run. Stage official stays not granted.
 * The next round, a native readout with a class bias on the scrambled fast-fade front end, includes the V153 baselines.
+
+## Addendum (26 October 2026): the "next round targets the port" recommendation is withdrawn
+* The decision rule picked the largest measured cost. Judged against the program's aim (the S0 erratum's three checks), a native readout with a class bias cannot exceed counting.
+  * Every native readout is linear in the KC code, so the best it can approach is R1 on the frozen code: about PPM-2.
+  * It also learns nothing that carries over to other tasks.
+* The headroom check (`minifly_v155_headroom_check_20261026/REPORT.md`) found the next gain on the representation side: keys learned by back-propagation (as a measuring stick only) beat the frozen random keys by 0.26 bits.
+* The next round is designed in `minifly_v155_keys_design_20261026/DESIGN.md`. The numbers above are unchanged.
