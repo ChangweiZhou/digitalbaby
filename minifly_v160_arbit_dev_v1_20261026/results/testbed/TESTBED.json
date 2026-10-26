@@ -1,0 +1,136 @@
+{
+ "stage": "testbed",
+ "settings": {
+  "x2": {
+   "beta": 1.0,
+   "unseen_min": 0.8,
+   "seen_min": 0.95,
+   "shuffled_max": 0.65,
+   "oracle_unseen_min": 0.9,
+   "oracle_seen_min": 0.95,
+   "s_unseen_max": 0.65
+  },
+  "x3": {
+   "beta_grid": [
+    0,
+    0.25,
+    0.5,
+    1,
+    2
+   ],
+   "s_grid_A": [
+    100,
+    30,
+    10
+   ],
+   "s_grid_B": [
+    300,
+    100,
+    30,
+    10
+   ],
+   "g_grid": [
+    10,
+    1,
+    0.1,
+    0.01
+   ],
+   "maxiter": 300,
+   "min_gain_bits": 0.02,
+   "min_sd": 3
+  },
+  "v159_parity_g_alone_unseen": {
+   "0": 0.8170212765957446,
+   "1": 0.8016528925619835
+  }
+ },
+ "seeds": {
+  "0": {
+   "S": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6340425531914894,
+     "bits": 1.3648369269436078
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.11176992602507015
+    },
+    "lam": 30
+   },
+   "ORACLE_expert": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 1.0,
+     "bits": 3.5575256659169825
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9885057471264368,
+     "bits": 3.6012707250835745
+    },
+    "lam": 0.1
+   },
+   "ORACLE-PoE": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.9446808510638298,
+     "bits": 1.2838076259303088
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 1.0,
+     "bits": 0.10533041094131232
+    }
+   }
+  },
+  "1": {
+   "S": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6157024793388429,
+     "bits": 1.5689822354800442
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09678624252540416
+    },
+    "lam": 30
+   },
+   "ORACLE_expert": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 1.0,
+     "bits": 3.6708081052781725
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.99609375,
+     "bits": 3.6822522545063237
+    },
+    "lam": 0.1
+   },
+   "ORACLE-PoE": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.9338842975206612,
+     "bits": 1.5339234610524404
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.1050414211221053
+    }
+   }
+  }
+ },
+ "learner_records": 0,
+ "checks": {
+  "ceiling_oracle_poe": true,
+  "floor_s_alone": true
+ },
+ "verdict": "CONTINUE",
+ "cpu_s": 222.1
+}
