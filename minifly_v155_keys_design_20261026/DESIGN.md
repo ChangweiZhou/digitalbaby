@@ -347,3 +347,22 @@ Therefore:
 * **LEARNS (§5) becomes absolute:** the arm beats FROZEN by ≥ 0.05 bits **and** by ≥ 3 line-bootstrap SDs on the same text's held-out lines. The capture fraction is reported beside it. CARRIES is unchanged.
 * **§12.6 is withdrawn**, including the top-k stand-in, the projections and the learning-rate grid. The keys-scale remark made while drafting it was based on a misread weight range: the birth weights have median 0.159 (range 0.005–1.29), not about 0.0055.
 * Cost: the references are cheaper than the withdrawn ones (no R1 fit each), and PERM needs one R1 fit and no training.
+
+**12.10 Correction of L-PRED before any learner code (after C0, which is evaluator-only).**
+* **The error.** §4.2's rule updates only the units of the *predicted* code b, with the dendritic prediction (W ã_t)_j. That makes codes conform to what their *past* predicts: contexts with similar pasts come to share KCs. §4.2's stated purpose is that contexts with similar *futures* share KCs. The rule as written does not do that.
+* **The correction.** Add the second, retrograde term of the sequence-predictive rule (CLAPP, Illing et al. 2021; from memory). For each pair with γ ≠ 0, the units of the *context* code a = x_t are also updated, with the prediction read backwards through the same matrix:
+
+  ΔB_ij = η · c_j · γ · (Wᵀ b̃)_j · q̂^(j)_{t,i}, for every active j of x_t and i ∈ S_j.
+
+  * The forward term on b is unchanged.
+  * Both terms are computed from the same B and W before any update.
+  * Clipping and rescaling then cover every touched column.
+  * W ← clip(W + η·γ·b aᵀ, −1, 1) as before.
+  * This reads the prediction matrix in reverse, which assumes lateral prediction synapses that can be read in both directions; it is stated, not hidden. It is still a three-factor rule with no error sent through any other matrix.
+* **The C1 fixture (§8.1, now precise).**
+  * Two synthetic streams (seeds 0 and 1) of 300 lines of 40 bytes. Each byte of S1 = {a…h} is followed by a byte drawn uniformly from F1 = {q…x}, and each byte of S2 = {i…p} by a byte from F2 = {y, z, A…F}. Each F byte is followed by a byte drawn uniformly from S1 ∪ S2.
+  * So contexts ending in S1 bytes share their futures and contexts ending in S2 bytes share theirs, while their pasts are identical in distribution.
+  * Index: mean code overlap (|x ∩ x′| / 184) over 2,000 random pairs of positions ending in *different* bytes of the same set, minus that over 2,000 pairs ending in bytes of different sets.
+  * **Pass:** L-PRED (η 0.03, 2 passes) raises the index over FROZEN by ≥ 0.01 on both streams. L-COMP is shown for comparison, with no requirement.
+  * Failure is CANNOT_TEST_CLAIM_AS_SPECIFIED for L-PRED, and the design returns to the owner.
+  * Fixture records count as learner records (about 2,400).
