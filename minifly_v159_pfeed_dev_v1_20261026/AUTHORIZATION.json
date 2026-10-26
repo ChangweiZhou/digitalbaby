@@ -1,0 +1,37 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v159_pfeed_dev_v1_20261026",
+ "design": "minifly_v159_pfeed_design_20261026/DESIGN.md",
+ "verbatim": "Let us activate the recursive improvement skill and do the experiments.",
+ "utc": "2026-10-26 (owner message, after the predictive-feedback proposal)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {"label": "X1: property check", "text": "Learn the predictive layer on V155's fixture streams; same-future index on its output; pass >= 0.5.", "cost": "about 0.02 CPU-h", "objective_distance": "Positive control of the mechanism; no generalisation or text."},
+  {"label": "X2: generalisation", "text": "Synthetic class-transfer task; FROZEN, PF-READ, PF-KC, SHUFFLED, ORACLE; pass = PF clearly above chance on members never seen before the target while FROZEN and SHUFFLED stay at chance.", "cost": "about 0.1 CPU-h", "objective_distance": "Decisive test of whether fed-back shared structure yields generalisation; synthetic only."},
+  {"label": "X3: text", "text": "Thursday -> Edgeworth; same-text and carry-over with 10 KB; FROZEN vs PF; only if X2 passes.", "cost": "about 0.5 CPU-h", "objective_distance": "First text evidence of a sample-efficiency/transfer gain; no addition."},
+  {"label": "X4: even fan-out", "text": "Even-fan-out key matrix scored like PERM.", "cost": "about 0.1 CPU-h", "objective_distance": "Technical check of the frozen code; no learning."}
+ ],
+ "recommendation_shown": "X1 and X2 first (grant about 0.15 CPU-h); X3 and X4 on the owner's go-ahead after X2.",
+ "interpretation": "'Do the experiments' is taken as X1-X4, with X3 conditional on X2's pre-stated pass and X4 independent, all within the default caps. PF-KC is deferred in the design (stated before any code). This was stated to the owner before acting.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": true,
+  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
+ "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
+ "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "conditionals": [{"predicate": {"artifact": "results/technical/CHECKS.json", "pointer": "/x2_pass", "op": "==", "value": true},
+                   "evaluated_by": "checker (emulated: the dev script refuses to run unless this field is true)", "result": null, "utc": null,
+                   "applies_to": "X3 (dev cycle)"}],
+ "restated_to_owner_before_acting": "Proceeding with V159 within the default caps: at most 2 CPU-h, 5,000 learner records and 3 test cycles; no official run, no adoption; pushes to this session's branch only. Scope: X1 and X2; X3 only if X2 passes its pre-stated rule; X4 as an independent technical check.",
+ "grants": [{"n": 1, "verbatim": "Let us activate the recursive improvement skill and do the experiments.", "utc": "2026-10-26",
+             "effect": "implementation, technical, dev cycles for X1-X4 (X3 conditional on X2); default caps"}]
+}
