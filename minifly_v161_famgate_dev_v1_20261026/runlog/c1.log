@@ -1,0 +1,12 @@
+PASS familiarity equals an independent per-row computation 
+PASS tau is a percentile of calibration familiarity only 
+PASS predictive layer is deterministic 
+X2 seed 0 {'S': (0.634, 0.996), 'G': (0.817, 0.801), 'G-SHUF': (0.498, 0.51), 'PoE (a=1, V160)': (0.74, 0.996), 'GATED': (0.817, 0.985), 'GATED-SHUF': (0.519, 0.977)}
+X2 seed 1 {'S': (0.616, 1.0), 'G': (0.802, 0.777), 'G-SHUF': (0.5, 0.5), 'PoE (a=1, V160)': (0.702, 1.0), 'GATED': (0.773, 0.992), 'GATED-SHUF': (0.479, 0.988)}
+PASS a = 1 everywhere reproduces V160's PoE (unseen accuracy) {'0': 0.7404255319148936, '1': 0.7024793388429752}
+PASS G-SHUF alone reproduces V160 (unseen accuracy) 
+PASS validity: G-SHUF alone <= 0.65 on unseen members (both seeds) 
+FAIL X2: GATED >= 0.80 unseen and >= 0.95 seen, GATED-SHUF <= 0.65 unseen, both seeds {'0': {'GATED': (0.8170212765957446, 0.9846743295019157), 'GATED-SHUF': (0.5191489361702127, 0.9770114942528736)}, '1': {'GATED': (0.7727272727272727, 0.9921875), 'GATED-SHUF': (0.4793388429752066, 0.98828125)}}
+6 / 7 pass; learner records 1200
+{"attempt_id": "technical-002", "exit_code": 1, "child_cpu_s": 261.7, "learner_records": 1200}
+exit 1
