@@ -44,7 +44,7 @@
  },
  "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
  "caps": {
-  "max_cpu_h": 2.2,
+  "max_cpu_h": 3,
   "max_records": 5000,
   "max_cycles": 3
  },
@@ -70,6 +70,13 @@
    "utc": "2026-10-25 (owner message, after the C1 cost projection)",
    "in_reply_to": "Cap request with measured cost: used 0.20 CPU-h; C2 about 0.43; C3 about 1.6; total about 2.2. Proposed: 3 CPU-h, 5,000 records, 3 test cycles; no main run, no adoption, no pointer update.",
    "effect": "max_cpu_h raised from the default 2 to 2.2 (the owner's number); records and cycles keep their defaults"
+  },
+  {
+   "n": 3,
+   "verbatim": "I will increase the cap to 3 hours. Finish it.",
+   "utc": "2026-10-26 (owner message, after the rehearsal was paused at 1.88 CPU-h)",
+   "in_reply_to": "Options: A finish the rehearsal (cap 2.4 CPU-h) or B stop; the rehearsal was suspended to stay within 2.2.",
+   "effect": "max_cpu_h raised to 3 (the owner's number); records and cycles keep their defaults"
   }
  ]
 }
