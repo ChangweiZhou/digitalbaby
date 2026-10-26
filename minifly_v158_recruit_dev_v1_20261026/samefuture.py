@@ -1,4 +1,4 @@
-"""V158 fixture (design section 2): the V155 same-future streams, their front-end traces, and the overlap index.
+"""V158 same-future fixture (design section 2; not named fixture.py, which MiniFly's native code imports): the V155 same-future streams, their front-end traces, and the overlap index.
 stream() and overlap_index() are V155 technical.py's functions, unchanged (V155's script runs its checks on import).
 """
 import json

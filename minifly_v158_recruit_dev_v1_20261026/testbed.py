@@ -18,8 +18,8 @@ from scipy import sparse  # noqa: E402
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import runtime  # noqa: E402  (V158's own, imported before V155 modules)
-import fixture  # noqa: E402
-from fixture import codes  # noqa: E402
+import samefuture as fixture  # noqa: E402  (named samefuture: MiniFly has its own "fixture" module)
+from samefuture import codes  # noqa: E402
 
 STAGE = os.environ.get("MINIFLY_STAGE", "unlaunched")
 OR = json.loads((HERE / "SETTINGS.json").read_text())["oracle"]
