@@ -52,7 +52,7 @@ def main():
         y, n = data["test"]["y"], data["test"]["n"]
         prev1 = ST.previous_bytes(y, n, 1)
         for label, want in (("unseen", False), ("seen", True)):
-            sel = [t for t in range(len(y)) if prev1[t] in ST.S1 + ST.S2 and seen(prev1[t]) == want]
+            sel = [t for t in range(len(y)) if prev1[t] >= 0 and prev1[t] in ST.S1 + ST.S2 and seen(prev1[t]) == want]
             score = Rv["test"][sel] @ (f1 - f2)
             truth = np.array([1 if prev1[t] in ST.S1 else -1 for t in sel])
             row[f"D4_{label}"] = {"n": len(sel), "accuracy": float(np.mean(np.sign(score) == truth)),
