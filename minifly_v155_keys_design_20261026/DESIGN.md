@@ -257,3 +257,70 @@ This tests that the predictive rule does what it claims before any text is used.
 | Settings tuned on held-out text | Rates are tuned on calibration in C2 only and then fixed; passes are fixed at 1, 3 and 10 |
 | Bits on the same text taken as the whole aim | Carry-over to a second author is a primary yardstick |
 | CPU projection from `ps` | Child CPU is measured by the attempt wrapper against the cap, as in the check |
+
+## 12. Pre-lock refinements (26 October 2026, after the owner's go-ahead, before any code or outcome)
+These changes are made at the S1 lock. No V155 code existed and no V155 outcome had been read when they were written. Sections 1–11 above are the version the owner saw. Where they differ, this section governs.
+
+**12.1 Stage placement (the skill requires the testbed before learner code).**
+* **C0 testbed = gate G0.** It is evaluator-only, and no local-rule code exists yet. On *Thursday* (V153 split) it runs:
+  * FROZEN parity: R1 must reproduce 2.963 within 0.005;
+  * REF-N and REF-D;
+  * a **floor**: REF-N trained on the taught text with its targets permuted (fixed seed), for the same number of epochs as the chosen REF-N, then scored by R1 against the true targets.
+* **C0 verdict:**
+  * CONTINUE if all three hold: parity; FLOOR ≥ FROZEN − 0.03 (a pipeline that gains from shuffled targets is broken); and FROZEN − REF-N ≥ 0.08.
+  * Otherwise one of: CANNOT_TEST_CLAIM_AS_SPECIFIED (the G0 rows of §5, with their stated next steps), or INVALID (floor or parity failed).
+* **C1 technical:** the local rules and their fixtures, including the synthetic interchangeable-bytes fixture of §8.1, which moves here from C0.
+* **C2:** no longer contains G0. **C3** still confirms G0 on its fresh text.
+
+**12.2 Passes and records.**
+* Passes are reduced to **4** (codes scored after passes 1, 2 and 4), instead of 10 (1, 3, 10).
+* The rate grid is compared at pass 2 on ONLINE calibration bits. The chosen run of each rule then continues to pass 4.
+* Reason: to stay within the kit's draft T1 limit of 20,000 learner records per delivery.
+  * C2: 3 rates × 2 rules × 2 passes × 705 lines, plus 2 rules × 2 further passes × 705 = about 11,280.
+  * C3: 2 rules × 4 passes × the rehearsal text's lines = about 5,600.
+  * C1 fixtures: at most 1,000.
+
+**12.3 Accounting.**
+* **Learner records** are line presentations to a key-learning rule (passes × taught lines, per run).
+* L-PRED's negative replays are counted separately: they are earlier taught inputs replayed, not new text.
+* Readout and reference fits (R1, ONLINE, REF-N, REF-D, FLOOR) are evaluator presentations, reported separately. In V155, ONLINE evaluates a code; it is not an arm, unlike in V153.
+
+**12.4 Readouts.**
+* **ONLINE:** V153's online delta rule (η 0.01, 3 passes, binary code plus empty-state indicator). It is used for rate selection (calibration bits) and reported on held-out lines after passes 1, 2 and 4 for the chosen runs.
+* **R1:** V153's settings (L2 grid 100, 30, 10; 300 iterations), fitted on the pass-4 code of the chosen runs, and on FROZEN, REF-N, REF-D and FLOOR.
+* **Carry-over** (text B, 10 KB taught): R1 with L2 grid 300, 100, 30, 10, plus ONLINE.
+
+**12.5 The rules, exactly.**
+Definitions:
+* c_j is the birth column sum of KC j;
+* S_j is its birth synapses (KCs with no synapse never change);
+* q̂^(j) is q restricted to S_j and normalised to sum 1 over S_j (no update when that sum is 0).
+
+L-COMP:
+* For each active j: B_Sj,j ← B_Sj,j + η · (c_j · q̂^(j) − B_Sj,j).
+* This is a convex step, so each column keeps sum c_j and stays non-negative without separate rescaling.
+
+L-PRED: the score is normalised, s(a, b) = b̃ᵀ W ã with ã = a/‖a‖₁, so s ∈ [−1, 1], and the hinge margin is 0.5. At each position t whose code x_t is non-empty and whose next position lies in the same line:
+* **Positive pair:** b = x_{t+1}; γ = +1 if s < 0.5, else 0.
+* **Negative pair:** the input of a position drawn uniformly (seeded) from positions already presented in this run with a non-empty code, re-encoded with the current keys; γ = −1 if s > −0.5, else 0.
+* **Update order:** both γ are computed from the current B and W. Then, for each pair with γ ≠ 0, the key update B_ij ← B_ij + η · c_j · γ · (W ã_t)_j · q̂^(j)_i is applied to every active j of b and every i ∈ S_j. Then W ← clip(W + η · γ · b aᵀ, −1, 1), with binary a = x_t.
+* **After the B update:** B is clipped at 0, and each touched column is rescaled to sum c_j. A column whose sum reaches 0 is reset to its birth weights, and the reset is counted.
+
+Rates: η ∈ {0.01, 0.03, 0.1} for both rules. L-PRED uses one shared rate for B and W.
+
+**12.6 References.**
+* **Training:** torch, one thread, seed 0. Adam with learning rate ∈ {1e-3, 3e-3}, batch 256, at most 20 epochs, stopping after 3 epochs without improvement in the calibration cross-entropy of the reference's own linear readout.
+* **Initialisation:** birth weights; readout at zero.
+* **Top-k stand-in:** for each side, a_j = ReLU(pre_j − τ_side), where τ_side is that side's 92nd-largest pre-activation (held constant in the backward pass).
+* **After every optimiser step:** B ≥ 0. REF-N is restricted to S_j. Columns are rescaled to c_j, and a zero column is reset to birth.
+* **REF-N** is computed sparsely, on the existing synapses only. **REF-D** is dense, with all 302 × 5,177 entries learnable.
+* The learning rate is chosen on calibration cross-entropy. The chosen B's binary top-k code is then scored by R1.
+
+**12.7 Winner monopoly.**
+* Measure: KC-usage entropy over taught positions in the last pass, normalised by log 5,177.
+* Monopoly is declared if it falls below 0.8 × FROZEN's.
+* The cycle decision is then "revise": the homeostatic thresholds are added to every arm, as one new design (k + 1), within the caps.
+
+**12.8 Caps.**
+* The owner's go-ahead named no numbers, so the defaults apply: 2 CPU-h, 5,000 learner records, 3 test cycles.
+* C0 and C1 fit within them. Caps for C2 and C3 will be requested with the costs measured in C0 and C1.

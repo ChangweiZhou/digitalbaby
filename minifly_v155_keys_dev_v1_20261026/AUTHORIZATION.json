@@ -1,0 +1,57 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v155_keys_dev_v1_20261026",
+ "design": "minifly_v155_keys_design_20261026/DESIGN.md",
+ "verbatim": "Okay now you can activate the skill and start the next experiment.",
+ "utc": "2026-10-26 (owner message, after the V155 design and headroom-check analysis were pushed)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {
+   "label": "D1-a: capture plus carry-over at 40 KB",
+   "text": "Same-text capture of the native-wiring headroom plus carry-over to a second author (readout on 10 KB of text B); text A stays at 40 KB with counted passes.",
+   "cost": "about 3 CPU-h and 60,000 learner records for C0-C3 as costed in the design (section 9, D2)",
+   "objective_distance": "Measures whether a local rule learns a better and transferable KC representation; no native integration, no output port, no arithmetic."
+  },
+  {
+   "label": "D1-b: more taught text, keep 'beat counting'",
+   "text": "Allow more taught text (for example 160 KB) and keep outperforming counting on the same text as the yardstick.",
+   "cost": "not costed; needs a different design and larger caps",
+   "objective_distance": "Tests whether learned keys overtake counting with more data; carry-over not measured."
+  },
+  {
+   "label": "D3: new synapses",
+   "text": "If G0 finds the native wiring is the limit, may a later round let rules grow new PN-to-KC synapses?",
+   "cost": "-",
+   "objective_distance": "Not needed for V155, which stops at G0 in that case."
+  },
+  {
+   "label": "D4: back-propagation references",
+   "text": "Back-propagation references (REF-N, REF-D) used as evaluator instruments only.",
+   "cost": "-",
+   "objective_distance": "-"
+  }
+ ],
+ "recommendation_shown": "D1-a (recorded in the design, section 3 and section 9).",
+ "interpretation": "No option was named. 'Start the next experiment' is taken as the design as written: yardstick D1-a and back-propagation references as evaluator instruments (D4). D3 is not needed for V155. No number was written, so every cap takes its default; the caps the design proposed (3 CPU-h, 60,000 records) are NOT granted. This interpretation was stated to the owner before acting.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": true,
+  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
+ "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
+ "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "conditionals": [],
+ "restated_to_owner_before_acting": "Proceeding with V155 within the default caps: at most 2 CPU-h, 5,000 learner records and 3 test cycles; no official run, no adoption, no pointer update; pushes to this session's branch only, under its standing instruction. C0 and C1 fit the defaults; C2 and C3 need about 18,000 learner records and about 3 CPU-h, so caps will be requested with measured costs before C2.",
+ "grants": [
+  {"n": 1, "verbatim": "Okay now you can activate the skill and start the next experiment.",
+   "utc": "2026-10-26", "effect": "implementation, technical, dev cycles; default caps"}
+ ]
+}
