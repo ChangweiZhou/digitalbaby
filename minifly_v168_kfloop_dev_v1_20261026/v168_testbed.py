@@ -75,6 +75,10 @@ def check_wiring():
             "pass": bool(fwd_equal and rel <= L.SET["rules"]["wiring_tol"] and nonoverlap)}
 
 
+def arg(name, default):
+    return sys.argv[sys.argv.index(name) + 1] if name in sys.argv else default
+
+
 def main():
     smoke = "--smoke" in sys.argv
     if len(sys.argv) > 3 and sys.argv[1] == "--fit":
@@ -86,7 +90,12 @@ def main():
     wiring = check_wiring()
     orc = L.L166.oracle(L.world("v168_technical", "test", SMOKE["test"] if smoke else None))
     print("T0-a", json.dumps(wiring), "T0-b", orc, flush=True)
-    order = L.SET["config_order"]
+    # amendment 1: --configs runs only the named configs; --prior gives an earlier TESTBED file whose configs keep
+    # their recorded outcome in the selection (first qualifying config in SETTINGS.config_order); --out names the file
+    run_now = arg("--configs", ",".join(L.SET["config_order"])).split(",")
+    prior_file = arg("--prior", None)
+    prior = json.loads((HERE / prior_file).read_text())["per_config"] if prior_file else {}
+    order = [c for c in L.SET["config_order"] if c in run_now]
     fits = [(c, r) for c in reversed(order) for r in L.SET["references"]]     # longest configs first
     env = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
     pending, running, failed = list(fits), [], []
@@ -117,27 +126,35 @@ def main():
         cfg = L.SET["configs"][c]
         per_cfg[c] = {"config": cfg, "ceiling": ceiling, "floor": floor, "qualifies": bool(ceiling["pass"] and floor["pass"]),
                       "references": desc, "c2_learner_records": 2 * cfg["n_train"] * cfg["max_epochs"]}
-        if selected is None and per_cfg[c]["qualifies"]:
+    for c in L.SET["config_order"]:
+        rec = per_cfg.get(c) or prior.get(c)
+        if rec is not None and rec["qualifies"]:
             selected = c
+            break
+    per_cfg_all = {**{c: v for c, v in prior.items()}, **per_cfg}
     checks = {"T0-a_wiring": wiring,
               "T0-b_oracle": {"acc": orc, "pass": all(orc[k] >= ru["oracle_acc"] for k in orc if k.endswith("acc"))},
-              "T0-c_budget_grid": {"selected": selected, "pass": selected is not None}}
+              "T0-c_budget_grid": {"selected": selected, "prior_file": prior_file,
+                                   "prior_qualifies": {c: v["qualifies"] for c, v in prior.items()},
+                                   "pass": selected is not None}}
     verdict = "CONTINUE" if all(c["pass"] for c in checks.values()) else "CANNOT_TEST_CLAIM_AS_SPECIFIED"
     need = None if selected is None else {
         "config": selected, "c1_planned_records": C1_PLANNED_RECORDS,
-        "c2_learner_records": per_cfg[selected]["c2_learner_records"],
-        "total_records": C1_PLANNED_RECORDS + per_cfg[selected]["c2_learner_records"],
-        "fits_default_caps": C1_PLANNED_RECORDS + per_cfg[selected]["c2_learner_records"] <= 5000}
+        "c2_learner_records": per_cfg_all[selected]["c2_learner_records"],
+        "total_records": C1_PLANNED_RECORDS + per_cfg_all[selected]["c2_learner_records"],
+        "fits_default_caps": C1_PLANNED_RECORDS + per_cfg_all[selected]["c2_learner_records"] <= 5000}
     out = {"stage": STAGE, "smoke": smoke, "settings": L.SET, "checks": checks, "verdict": verdict, "per_config": per_cfg,
            "records_needed": need, "training": {f"{c}|{r}": res[c][r]["training"] for c in order for r in res[c]},
            "line": {f"{c}|{r}": res[c][r]["line"] for c in order for r in res[c]},
            "learner_records": 0, "wall_s": round(time.time() - t0, 1)}
+    out_name = arg("--out", "TESTBED.json")
+    assert out_name.startswith("TESTBED")
     if smoke:
-        (CACHE / "smoke_TESTBED.json").write_text(json.dumps(out, indent=1))
+        (CACHE / f"smoke_{out_name}").write_text(json.dumps(out, indent=1))
     else:
         d = HERE / "results" / STAGE
         d.mkdir(parents=True, exist_ok=True)
-        (d / "TESTBED.json").write_text(json.dumps(out, indent=1))
+        (d / out_name).write_text(json.dumps(out, indent=1))
     print(json.dumps({"checks": checks, "verdict": verdict, "records_needed": need,
                       "per_config": {c: {k: v for k, v in per_cfg[c].items() if k != "config"} for c in per_cfg}}, indent=1))
     if not smoke:
