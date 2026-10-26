@@ -1,0 +1,328 @@
+{
+ "stage": "testbed",
+ "settings": {
+  "pf": {
+   "eta": 0.1,
+   "passes": 2,
+   "fade": 0.807,
+   "variant_gamma": 0.5,
+   "shuffle_seed": 7
+  },
+  "x1": {
+   "seeds": [
+    0,
+    1
+   ],
+   "pass_index": 0.5
+  },
+  "x2": {
+   "seeds": [
+    0,
+    1
+   ],
+   "train_lines": 200,
+   "calib_lines": 50,
+   "test_lines": 100,
+   "segments": 10,
+   "p_type2": 0.5,
+   "r1_grid": [
+    100,
+    30,
+    10,
+    3,
+    1,
+    0.3,
+    0.1
+   ],
+   "maxiter": 300,
+   "oracle_min": 0.9,
+   "frozen_max": 0.65,
+   "pf_min": 0.8,
+   "block_normalise": true
+  },
+  "x3": {
+   "r1_grid_A": [
+    100,
+    30,
+    10
+   ],
+   "r1_grid_B": [
+    300,
+    100,
+    30,
+    10
+   ],
+   "maxiter": 300,
+   "online_eta": 0.01,
+   "online_passes": 3,
+   "min_gain_bits": 0.02,
+   "min_sd": 3
+  },
+  "x4": {
+   "seed": 4
+  }
+ },
+ "x2": {
+  "0": {
+   "positions": {
+    "train": 6516,
+    "calib": 1605,
+    "test": 3496
+   },
+   "FROZEN": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6340425531914894,
+     "bits": 1.3648369269436078
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.11176992602507015
+    },
+    "calib_bpb": 2.5580780182996063,
+    "lam": 30,
+    "lam_at_grid_edge": false,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.559305854463893,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.5580780182996063,
+      "iterations": 157,
+      "converged": true
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.716848865403888,
+      "iterations": 184,
+      "converged": true
+     },
+     {
+      "lam": 3,
+      "calib_bits": 3.045149056891339,
+      "iterations": 243,
+      "converged": true
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.4242268050209215,
+      "iterations": 233,
+      "converged": true
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.8913248880961535,
+      "iterations": 245,
+      "converged": true
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.354075580311997,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 1.0
+   },
+   "ORACLE": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.9404255319148936,
+     "bits": 0.8582756126467399
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 1.0,
+     "bits": 0.1492803572537992
+    },
+    "calib_bpb": 2.4885079256884195,
+    "lam": 100,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.4885079256884195,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.5181874722886963,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.6875170801127517,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 3.016167607556565,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.392469930149912,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.8541552736090887,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.312910148130449,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 10.882468279276635
+   }
+  },
+  "1": {
+   "positions": {
+    "train": 6490,
+    "calib": 1648,
+    "test": 3498
+   },
+   "FROZEN": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6157024793388429,
+     "bits": 1.5689822354800442
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09678624252540416
+    },
+    "calib_bpb": 2.4312555528323245,
+    "lam": 30,
+    "lam_at_grid_edge": false,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.441106556588124,
+      "iterations": 243,
+      "converged": true
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.4312555528323245,
+      "iterations": 174,
+      "converged": true
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.5693689472164776,
+      "iterations": 167,
+      "converged": true
+     },
+     {
+      "lam": 3,
+      "calib_bits": 2.8622320660258076,
+      "iterations": 184,
+      "converged": true
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.206157820998662,
+      "iterations": 226,
+      "converged": true
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.634168938768217,
+      "iterations": 263,
+      "converged": true
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.060799274989053,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 1.0
+   },
+   "ORACLE": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.9710743801652892,
+     "bits": 0.9155872777796601
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.14439967597696798
+    },
+    "calib_bpb": 2.3672395935039416,
+    "lam": 100,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.3672395935039416,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.3919104321547655,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.545019396685737,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 2.8416311554895213,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.188611513876135,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.6128585520137495,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.036753605978321,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 10.930200347909576
+   }
+  }
+ },
+ "learner_records": 0,
+ "x2_checks": {
+  "ceiling_oracle_unseen": true,
+  "floor_frozen_unseen": true
+ },
+ "x2_verdict": "CONTINUE",
+ "cpu_s": 488.1
+}
