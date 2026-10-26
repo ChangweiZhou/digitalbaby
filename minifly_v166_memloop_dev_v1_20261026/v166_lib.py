@@ -20,7 +20,7 @@ NPAIR = 2 * LINE["chains"]
 T_STUDY = NPAIR + LINE["study_distract"]
 T_Q0 = T_STUDY + LINE["delay"]
 T = T_Q0 + 3 * LINE["episodes"]
-LOOP_ARMS = ("LOOP", "LOOP-NULL")
+LOOP_ARMS = ("LOOP", "LOOP-NULL", "LOOP-SHUF")
 
 
 # ---------------------------------------------------------------- memory code (design section 1)
@@ -91,15 +91,25 @@ def make_world(world, part, task, n=None):
             tgt[i, t + 2] = b if hp == 1 else c
             hop[i, t + 2] = hp
             eps[i, e] = (t, hp, a, b, c)
-    return {"x": x, "keys": keys, "vals": vals, "wstep": wstep, "tgt": tgt, "hop": hop, "episodes": eps, "n": n,
-            "world": world, "part": part, "task": task}
+    vals_shuf = np.stack([vals[i][derangement(np.random.default_rng([SET["shuffle_seed"], seed, i]))] for i in range(n)])
+    return {"x": x, "keys": keys, "vals": vals, "vals_shuf": vals_shuf, "wstep": wstep, "tgt": tgt, "hop": hop,
+            "episodes": eps, "n": n, "world": world, "part": part, "task": task}
+
+
+def derangement(rng):
+    """A random permutation of the NPAIR pairs with no fixed point (rejection sampling); LOOP-SHUF's written values.
+    Its own generator, so the lines themselves are unchanged by it."""
+    while True:
+        p = rng.permutation(NPAIR)
+        if not np.any(p == np.arange(NPAIR)):
+            return p
 
 
 def memory_tensors(w, idx, arm, dtype=torch.float32):
     """Key codes K (B, NPAIR, NKC) scaled by 1/S, value one-hots V (B, NPAIR, NI), write steps (B, NPAIR).
-    LOOP-NULL writes nothing (V = 0)."""
+    LOOP-NULL writes nothing (V = 0); LOOP-SHUF writes the deranged values (same keys, same multiset of values)."""
     K = torch.from_numpy(CODES[w["keys"][idx]] / S).to(dtype)
-    V = F.one_hot(torch.from_numpy(w["vals"][idx]), NI).to(dtype)
+    V = F.one_hot(torch.from_numpy(w["vals_shuf" if arm == "LOOP-SHUF" else "vals"][idx]), NI).to(dtype)
     if arm == "LOOP-NULL":
         V = torch.zeros_like(V)
     return K, V, torch.from_numpy(w["wstep"][idx])
@@ -153,8 +163,9 @@ class Net(torch.nn.Module):
         self.Wo, self.Wor = w(NI, H), w(NI, NI)
         self.bo = torch.nn.Parameter(torch.zeros(NI))
 
-    def forward(self, x, K, V, wstep, collect=False):
-        """Logits (B, T, NI); collect=True also returns states (B, T, H) and queries (B, T, NKC)."""
+    def forward(self, x, K, V, wstep, collect=False, cut=False):
+        """Logits (B, T, NI); collect=True also returns states (B, T, H) and queries (B, T, NKC).
+        cut=True ignores the r -> h path (LOOP-CUT, a test-time ablation)."""
         B = x.shape[0]
         U = x @ self.Wx.T + self.bh
         h = x.new_zeros(B, self.Wh.shape[0])
@@ -162,7 +173,7 @@ class Net(torch.nn.Module):
         outs, hs, qs = [], [], []
         for t in range(x.shape[1]):
             pre = U[:, t] + h @ self.Wh.T
-            if self.loop:
+            if self.loop and not cut:
                 pre = pre + r @ self.Wr.T
             h = torch.tanh(pre)
             q = torch.relu(h @ self.Wq.T + self.bq)
@@ -181,15 +192,16 @@ def batch(w, idx, arm, dtype=torch.float32):
     return torch.from_numpy(w["x"][idx]).to(dtype), K, V, ws, torch.from_numpy(w["tgt"][idx])
 
 
-def evaluate(net, w, arm, bs=100):
-    """Per-line bit sums, counts and correct counts at Q1 and Q2 ANS steps, plus the mean over all scored steps."""
+def evaluate(net, w, arm, bs=100, cut=False):
+    """Per-line bit sums, counts and correct counts at Q1 and Q2 ANS steps, plus the mean over all scored steps.
+    arm selects the memory written (a trained net can be read with another arm's memory: a test-time ablation)."""
     n = w["n"]
     out = {k: np.zeros(n) for k in ("q1_sum", "q2_sum", "q1_n", "q2_n", "q1_ok", "q2_ok")}
     with torch.no_grad():
         for i in range(0, n, bs):
             idx = np.arange(i, min(i + bs, n))
             x, K, V, ws, tg = batch(w, idx, arm)
-            lp = torch.log_softmax(net(x, K, V, ws).double(), -1)
+            lp = torch.log_softmax(net(x, K, V, ws, cut=cut).double(), -1)
             hop = torch.from_numpy(w["hop"][idx])
             for hp in (1, 2):
                 m = hop == hp
@@ -261,6 +273,29 @@ def boot_sd(a_sums, b_sums, counts):
         i = rng.integers(0, len(counts), len(counts))
         d.append((a_sums[i].sum() - b_sums[i].sum()) / counts[i].sum())
     return float(np.std(d))
+
+
+def targeting(net, w, arm, bs=100):
+    """Design section 4 diagnostic: at the Q, WAIT and ANS steps of every Q2 episode, which of the line's keys has the
+    largest k_i . q_t; share of episodes where it is the cue a and where it is the intermediate b = f(a)."""
+    hit = {s: {"cue": 0, "intermediate": 0} for s in ("Q", "WAIT", "ANS")}
+    cnt = 0
+    with torch.no_grad():
+        for i in range(0, w["n"], bs):
+            idx = np.arange(i, min(i + bs, w["n"]))
+            x, K, V, ws, _ = batch(w, idx, arm)
+            _, _, q = net(x, K, V, ws, collect=True)
+            sc = torch.einsum("bpk,btk->btp", K, q).numpy()            # (B, T, NPAIR)
+            for j, li in enumerate(idx):
+                for t, hp, a, b, c in w["episodes"][li]:
+                    if hp != 2:
+                        continue
+                    cnt += 1
+                    for k, s in enumerate(("Q", "WAIT", "ANS")):
+                        top = w["keys"][li][int(np.argmax(sc[j, t + k]))]
+                        hit[s]["cue"] += int(top == a)
+                        hit[s]["intermediate"] += int(top == b)
+    return {s: {k: v / cnt for k, v in d.items()} for s, d in hit.items()} | {"episodes": cnt}
 
 
 def oracle(w):
