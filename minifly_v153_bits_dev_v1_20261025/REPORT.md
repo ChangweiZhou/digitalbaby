@@ -76,3 +76,9 @@ Counting ladder: unigram 4.445, bigram 3.538, PPM-2 2.986, PPM-3 2.667.
 * **Next round** (per the decision rule; to be designed):
   * a native readout with a class bias, plus the scrambled fast-fade front end;
   * then separate the 0.78-bit native-structure cost.
+
+## Owner decision (26 October 2026)
+* The recommendation shown was to skip the V153 main run and carry its baselines into the next round's single official run.
+* Owner's reply, verbatim: "Okay, let us push it."
+* The V153 main run is therefore not run. Stage official stays not granted.
+* The next round, a native readout with a class bias on the scrambled fast-fade front end, includes the V153 baselines.
