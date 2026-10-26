@@ -1,0 +1,87 @@
+{
+ "design": "minifly_v164_cola_design_20261026/DESIGN.md",
+ "settings": {
+  "rnn": {
+   "H": 256,
+   "init_seed": 0,
+   "g_probes": [
+    1.0,
+    1.1
+   ],
+   "lyap_lines": 100,
+   "batch_lines": 16,
+   "lr": 0.001,
+   "wd": 0.0001,
+   "clip": 5.0,
+   "order_seed": 13
+  },
+  "synthetic": {
+   "symbols": 8,
+   "length": 120,
+   "lines": {
+    "train": 100,
+    "calib": 20,
+    "test": 50
+   },
+   "seeds": {
+    "train": 1,
+    "calib": 2,
+    "test": 3
+   },
+   "tasks": {
+    "S-COPY": {
+     "lags": [
+      8
+     ]
+    },
+    "S-SUM": {
+     "lags": [
+      2,
+      6
+     ]
+    }
+   },
+   "max_epochs": 10,
+   "patience": 3
+  },
+  "text": {
+   "max_epochs": 4,
+   "patience": 3
+  },
+  "cola": {
+   "rho_alpha": 0.995,
+   "rho_mu": 0.98,
+   "alpha_clip": 0.99,
+   "mu_cap": 0.99,
+   "denom_floor": 0.001,
+   "eps": 1e-08
+  },
+  "rules": {
+   "qualify_bits": 0.3,
+   "qualify_sd": 3,
+   "pass_frac": 0.5,
+   "pass_sd": 3
+  },
+  "boot": {
+   "reps": 1000,
+   "seed": 0
+  }
+ },
+ "python": "3.11.15",
+ "packages": {
+  "torch": "2.14.1+cu130"
+ },
+ "closure_sha256": {
+  "minifly_v164_cola_design_20261026/DESIGN.md": "232e27520b5b1e0a703888c90e428c3f924c5c3c3b9a50898384a74935205d24",
+  "minifly_v163_sslcola_dev_v1_20261026/v163_lib.py": "7fba45bcb75dfeaebc1790aa685bf193cf815fcbdead2b0e550a731830e8629c",
+  "minifly_v163_sslcola_dev_v1_20261026/SETTINGS.json": "9fbdefa4492f4707d8488eb19a04cf9dca7f2de0f99b921b0e1efdb902a81120",
+  "minifly_v163_sslcola_dev_v1_20261026/cache/codes.npz": "2072b75e1ebc826035c54359d400635e55123f9d4eac02be25cb546567130c0b",
+  "minifly_v163_sslcola_dev_v1_20261026/results/testbed/TESTBED.json": "ab2af8705c330f70818e045999d21db5c0cc226fbf7e7462a93e4310f711f367",
+  "minifly_v149_input_ceiling_dev_20261025/readouts.py": "b3b65f47e2ad75e8a4a7c7252d6b5f52579434e21976575615e50a63730fd6e5",
+  "minifly_v164_cola_dev_v1_20261026/launch.py": "7956332eb9572563bf458a4bcfe412fd961cc0906d32d345acb5fbcb113f796e",
+  "minifly_v164_cola_dev_v1_20261026/SETTINGS.json": "c55673de33b588b841aebdf9443ce3bb66fd7232f50ef10840257e3ea613cbf2",
+  "minifly_v164_cola_dev_v1_20261026/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
+  "minifly_v164_cola_dev_v1_20261026/v164_lib.py": "59f5fecf5963599e351a779728b71e1c32907879f6d0759f56c8b044391d3259",
+  "minifly_v164_cola_dev_v1_20261026/v164_testbed.py": "7baf1293478fcf0d8319865d00e6fdb3f1bd225bbf56945ec1d17c7dee9201b2"
+ }
+}
