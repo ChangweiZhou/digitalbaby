@@ -1,0 +1,337 @@
+{
+  "version": "V154",
+  "title": "Native context, readout and stopping: bounded bridge diagnosis",
+  "status": "AUTHORIZED_BOUNDED_EXERCISE",
+  "goal": "Retained complete own-byte/EOS unseen-addition generalization per total feedback and actual compute",
+  "native_parent_commit": "1712155ec7fd69c4d568606e4ae2b5200249f374",
+  "new_kernel_claim": false,
+  "prior_exercise": "V152 REFERENCE_NOT_READY; no native efficacy assessed",
+  "constraints": {
+    "gradual_warmup": true,
+    "local_native_updates_only": true,
+    "attention": false,
+    "Transformers": false,
+    "ELM_or_reservoir_candidate": false,
+    "arithmetic_specific_candidate_features_or_rules": false,
+    "offline_readouts": "evaluator-only accessibility instruments; never candidate/E3 baselines or answer/write path",
+    "new_recurrent_training": false,
+    "explicit_class_bias_primary_comparison": false,
+    "all_257_output_classes": true,
+    "seen_class_OTHER_compression": false
+  },
+  "fronts": [
+    {
+      "id": "I_FAST",
+      "permutation": false,
+      "tau_seconds": 10.0,
+      "byte_decay": 0.8071177470053893
+    },
+    {
+      "id": "P_FAST",
+      "permutation": true,
+      "tau_seconds": 10.0,
+      "byte_decay": 0.8071177470053893
+    },
+    {
+      "id": "I_SLOW",
+      "permutation": false,
+      "tau_seconds": 41.7765551704793,
+      "byte_decay": 0.95
+    },
+    {
+      "id": "P_SLOW",
+      "permutation": true,
+      "tau_seconds": 41.7765551704793,
+      "byte_decay": 0.95
+    }
+  ],
+  "native": {
+    "configurations": [
+      {
+        "id": "N_2B_I_FAST",
+        "front": "I_FAST",
+        "teacher": "N_2B",
+        "deployable_candidate": true
+      },
+      {
+        "id": "N_2B_P_FAST",
+        "front": "P_FAST",
+        "teacher": "N_2B",
+        "deployable_candidate": true
+      },
+      {
+        "id": "N_2B_I_SLOW",
+        "front": "I_SLOW",
+        "teacher": "N_2B",
+        "deployable_candidate": true
+      },
+      {
+        "id": "N_2B_P_SLOW",
+        "front": "P_SLOW",
+        "teacher": "N_2B",
+        "deployable_candidate": true
+      },
+      {
+        "id": "N_A_P_SLOW",
+        "front": "P_SLOW",
+        "teacher": "N_A",
+        "deployable_candidate": true
+      }
+    ],
+    "compartments": 16,
+    "fixed_C16": true,
+    "fixed_receptors_connectivity": true,
+    "homeostasis": false,
+    "fresh_adaptation": true,
+    "normalization": "p/max(p) if nonempty",
+    "PERM_operation": "p[existing_PERM] on payload feed only; no permutation on pure advance",
+    "DELTA": 2.142857142857143,
+    "N_A": "0.1*s(n)*(tanh(Pv/2)-C_y)/2",
+    "N_2B": "0.2*s(n)*P*C.T@(p-onehot(y))/4",
+    "bias_q": 0,
+    "coefficient_clipping": false,
+    "recalibrate_native_gain": false
+  },
+  "data": {
+    "task": "unsigned addition 0..19",
+    "development_worlds": [
+      202610255401,
+      202610255402
+    ],
+    "orbits": 210,
+    "OLD": 64,
+    "NEW": 64,
+    "validation": 32,
+    "assessment": 50,
+    "one_orientation_per_orbit": true,
+    "reverse_augmentation": false,
+    "named_rng": "PCG64 from SHA256 V154|world|stream, independently named split/orientation/order/initialization",
+    "dataset_materialized": false,
+    "prompt": "raw decimal a+b=, no parser in learner",
+    "feedback": "predict then reveal actual expected answer payload/EOS; teacher-force observations only",
+    "generation_cap_decisions": 4,
+    "EOS": 256,
+    "warmup": "1/16+(15/16)*min(n/1024,1)",
+    "warmup_counter": "all observed reply/EOS positions incl repeated and write-inhibited, never evaluator queries",
+    "prompt_auxiliary_loss": false
+  },
+  "lane_C": {
+    "status": "PLANNED_READ_ONLY",
+    "existing_world": 202610255201,
+    "eta": 0.03,
+    "methods": [
+      "R_BP",
+      "R_LE",
+      "R_LE0"
+    ],
+    "snapshots": [
+      "OLD_W",
+      "FINAL_W_POST_IDLE"
+    ],
+    "anchor_question_count": 576,
+    "conditions": [
+      "FULL",
+      "NO_Q",
+      "Q_ONLY"
+    ],
+    "query_pairs": 1728,
+    "max_output_distributions": 12096,
+    "new_training_records": 0,
+    "new_optimizer_steps": 0,
+    "held_labels": false,
+    "missing_asset": "ASSET_UNAVAILABLE; never recreate by retraining; no native veto",
+    "conditional_Q0_retraining": false
+  },
+  "lane_A": {
+    "fronts": 4,
+    "taps": [
+      "RHO",
+      "X",
+      "OBS"
+    ],
+    "worlds": 2,
+    "feature_views": 24,
+    "physical_feature_record_applications": 1280,
+    "max_feature_reply_EOS_positions": 3840,
+    "records_per_front_world": 160,
+    "collection": "untaught true-prefix native trajectories, three aligned taps per physical trajectory",
+    "feature_normalization_for_instruments": "h/max(1,L2norm(h)); no bias, position or empty-state feature",
+    "raw_amplitude_fitted": false,
+    "probe": "OFF_257",
+    "collision_audit": true,
+    "claim": "finite-probe accessibility and recorded exact ambiguity; no mutual-information or upper-bound assertion"
+  },
+  "lane_B": {
+    "feature_cases_for_extra_instruments": [
+      {
+        "front": "I_FAST",
+        "tap": "X"
+      },
+      {
+        "front": "I_FAST",
+        "tap": "OBS"
+      },
+      {
+        "front": "P_SLOW",
+        "tap": "X"
+      },
+      {
+        "front": "P_SLOW",
+        "tap": "OBS"
+      }
+    ],
+    "instruments": {
+      "OFF_257": {
+        "fits": 24,
+        "family": "257-class linear logits W*phi",
+        "optimizer": "batch",
+        "deployable_candidate": false,
+        "E3_scoring": false,
+        "can_answer_for_native": false
+      },
+      "LOC_257": {
+        "fits": 8,
+        "family": "257-class linear logits W*phi",
+        "optimizer": "analytic online categorical gradient",
+        "deployable_candidate": false,
+        "E3_scoring": false,
+        "can_answer_for_native": false
+      },
+      "OFF_C16": {
+        "fits": 8,
+        "family": "C*P*V*phi/4",
+        "optimizer": "batch",
+        "deployable_candidate": false,
+        "E3_scoring": false,
+        "can_answer_for_native": false
+      },
+      "LOC_C16": {
+        "fits": 8,
+        "family": "C*P*V*phi/4",
+        "optimizer": "analytic online categorical gradient",
+        "deployable_candidate": false,
+        "E3_scoring": false,
+        "can_answer_for_native": false
+      }
+    },
+    "shared_instrument_settings": {
+      "initialization": "zero",
+      "bias": false,
+      "Tcap": 3072,
+      "objective": "mean of warmup-weighted W-history CE + norm(weights)^2/(2*Tcap)",
+      "batch_max_iterations": 60,
+      "batch_max_objective_gradient_evaluations": 120,
+      "batch_numerical_gradient_inf_tolerance": 1e-06,
+      "unconverged": "OPTIMIZER_UNRESOLVED, no widening, no native veto",
+      "online_eta": "1/(1+L^2), L=1 for full port; L=spectral_norm(CP/4) for C16",
+      "gradient_through_encoder": false,
+      "held_or_own_sequence_generation": false,
+      "regularization": "same quadratic objective online; lazy exact uniform decay permitted and charged"
+    },
+    "native_independent_admission": true,
+    "native_group_count": 10
+  },
+  "histories": {
+    "OLD_passes": 8,
+    "NEW_passes": 8,
+    "checkpoints_passes": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "phase_records": 512,
+    "branches": [
+      "W",
+      "SH_OLD",
+      "N_OLD"
+    ],
+    "shared_OLD_W_N_OLD": true,
+    "physical_phase_streams_per_native_group": 5,
+    "records_per_native_group": 2560,
+    "correlated_histories": 30,
+    "native_idle_byte_steps": 128,
+    "immediate_probes": "after each actually updating native record"
+  },
+  "admission": {
+    "native_held_readiness": "per group: W OLD complete accuracy improves versus initial; W NEW complete accuracy improves versus pre-NEW; already-perfect baseline accepted",
+    "readiness_is_quality_threshold": false,
+    "freeze_before_held": "all native acquisition/retention summaries, settings and per-group admission across roster",
+    "probe_or_BP_failure_can_block_native": false,
+    "assessment": "once only at final post-idle W/SH_OLD/N_OLD of ready groups",
+    "unscored_groups": "missing, never imputed as zero",
+    "confirmation_or_adoption": false
+  },
+  "counts": {
+    "native_record_applications": 25600,
+    "native_target_upper": 76800,
+    "online_probe_record_presentations": 16384,
+    "online_probe_target_upper": 49152,
+    "feature_record_applications": 1280,
+    "feature_target_upper": 3840,
+    "technical_record_applications": 64,
+    "technical_target_upper": 192,
+    "total_record_applications": 43328,
+    "total_record_target_upper": 129984,
+    "batch_fits": 32,
+    "online_fits": 16,
+    "batch_objective_evaluations": 3840,
+    "batch_virtual_target_reuses_upper": 11796480,
+    "native_query_pairs_acquisition": 40320,
+    "native_query_pairs_held_upper": 1500,
+    "native_query_pairs_total": 41820,
+    "lane_C_query_pairs": 1728,
+    "technical_query_pairs": 128,
+    "total_own_TF_query_pairs": 43676,
+    "pair_output_distributions_upper": 305732,
+    "instrument_TF_record_evaluations": 8704,
+    "instrument_TF_output_distributions_upper": 26112,
+    "total_readout_evaluation_distributions_upper": 331844,
+    "training_and_optimizer_distributions": "additional, explicitly charged"
+  },
+  "resources": {
+    "summed_CPU_seconds": 7200,
+    "wall_seconds": 10800,
+    "audit_CPU_reserve": 600,
+    "workers": 1,
+    "numerical_threads": 1,
+    "RSS_target_bytes": 1073741824,
+    "schedule": "qualify; C if assets available; native groups; diagnostic fits; audit; no fit expansion",
+    "shared_clock_all_lanes": true,
+    "whole_record_stop": true,
+    "auto_retry_or_resume": false,
+    "auto_grid_or_n_expansion": false,
+    "computer_awake": "only during later authorized active controller"
+  },
+  "evidence": {
+    "E0": "encoding/interface/numerical attribution",
+    "E1": "native taught acquisition/retention",
+    "E3": "native-only final unseen whole orbits with W-SH_OLD, retention and recitation/frequency controls; two-world descriptive development",
+    "E4": false,
+    "external_probe_is_native_learning": false,
+    "unseen_learning_curve": false
+  },
+  "authorization": {
+    "design": true,
+    "implementation": true,
+    "checkpoint_inference": true,
+    "training": true,
+    "three_cycles": true,
+    "assessment_scoring": true,
+    "github_push": false
+  },
+  "qualification": {
+    "known_scorer_witness": "expected payload plus EOS, evaluator only; never candidate",
+    "taught_recitation_witness": "exact-key table on taught questions, evaluator only",
+    "C16_port": "all 257 unique argmax classes feasible with q=0; no witness inserted into native",
+    "C16_port_failure": "PORT_NOT_QUALIFIED; no codebook edit, forced EOS or class mask",
+    "trained_positive_control_assumed": false,
+    "feasibility_check_is_learning_success": false
+  },
+  "naming": {
+    "user_assigned_version": "V154",
+    "provisional_design": "minifly_v153_design_20261025",
+    "reason": "Claude is working on V153; user requests V154 for this exercise",
+    "world_namespace_changed_before_data_materialization": true
+  }
+}
