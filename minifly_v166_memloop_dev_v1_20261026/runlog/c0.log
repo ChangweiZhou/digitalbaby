@@ -1,0 +1,46 @@
+T0-a read diff 0.0 T0-b oracle {'ONE-HOP': {'q1_acc': 1.0, 'q1_n': 4000, 'q2_n': 0}, 'MIXED': {'q1_acc': 1.0, 'q2_acc': 1.0, 'q1_n': 2000, 'q2_n': 2000}}
+c0_NO-LOOP_ONE-HOP {"q1_bits": 0.000497604640734326, "q1_acc": 1.0, "all_bits": 0.000497604640734326} 60 60 294.4
+c0_LOOP_ONE-HOP {"q1_bits": 0.0006535664160622645, "q1_acc": 1.0, "all_bits": 0.0006535664160622645} 60 60 301.2
+c0_LOOP-NULL_MIXED {"q1_bits": 4.966461648984224, "q1_acc": 0.053, "q2_bits": 4.9709477091178265, "q2_acc": 0.0485, "all_bits": 4.968704679051026} 12 22 110.6
+c0_LOOP_MIXED {"q1_bits": 0.0016583506813070167, "q1_acc": 1.0, "q2_bits": 0.023864138234660215, "q2_acc": 0.995, "all_bits": 0.012761244457983614} 60 60 299.5
+{
+ "checks": {
+  "T0-a_read": {
+   "max_abs_diff": 0.0,
+   "pass": true
+  },
+  "T0-b_oracle": {
+   "acc": {
+    "ONE-HOP": {
+     "q1_acc": 1.0,
+     "q1_n": 4000,
+     "q2_n": 0
+    },
+    "MIXED": {
+     "q1_acc": 1.0,
+     "q2_acc": 1.0,
+     "q1_n": 2000,
+     "q2_n": 2000
+    }
+   },
+   "pass": true
+  },
+  "T0-c_one_hop_sanity": {
+   "LOOP": 0.0006535664160622645,
+   "NO-LOOP": 0.000497604640734326,
+   "pass": true
+  },
+  "T0-d_ceiling": {
+   "q2": 0.023864138234660215,
+   "q1": 0.0016583506813070167,
+   "best_epoch_at_edge": true,
+   "pass": true
+  },
+  "T0-e_floor": {
+   "q2": 4.9709477091178265,
+   "pass": true
+  }
+ },
+ "verdict": "CONTINUE"
+}
+{"attempt_id": "testbed-001", "exit_code": 0, "child_cpu_s": 1028.6, "learner_records": 0}
