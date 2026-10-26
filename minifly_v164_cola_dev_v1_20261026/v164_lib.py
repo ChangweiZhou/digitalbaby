@@ -89,7 +89,8 @@ def evaluate(net, split, scorer, batch=64):
             P = torch.softmax(net.out(net.run(idx)).double(), -1)
             for j, l in enumerate(lines):
                 v = valid[j]
-                b = scorer.bits(P[j][v].numpy(), ctr[j][v].numpy())
+                raw = ctr[j][v].numpy() if isinstance(scorer, Synth) else split["y"][pos[j][v].numpy()]
+                b = scorer.bits(P[j][v].numpy(), raw)   # V149's bits encodes symbols itself
                 sums[l], counts[l] = b.sum(), v.sum()
     return sums, counts
 
