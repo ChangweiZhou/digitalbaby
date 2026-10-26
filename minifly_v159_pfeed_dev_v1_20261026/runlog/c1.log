@@ -1,0 +1,12 @@
+PASS delta-rule step equals M + eta (target - M x) x^T 6.938893903907228e-18
+PASS batch prediction equals the per-position prediction 
+PASS feedback trace at t uses only predictions before t 
+PASS feedback trace resets at each line start 
+PASS learning is deterministic 
+FAIL X1: same-future index of r >= 0.5 on both streams {0: {'FROZEN_codes': 0.001350543478260871, 'PF_r': 0.010013528069215294}, 1: {'FROZEN_codes': 0.003834239130434791, 'PF_r': 0.010621977065817467}}
+X2 seed 0 {'PF-READ': (0.651, 0.996, 30), 'SHUFFLED': (0.647, 0.992, 100)}
+X2 seed 1 {'PF-READ': (0.595, 1.0, 30), 'SHUFFLED': (0.612, 1.0, 30)}
+FAIL X2: PF-READ >= 0.80 on unseen members, FROZEN and SHUFFLED <= 0.65, both seeds {0: {'PF-READ': 0.6510638297872341, 'SHUFFLED': 0.6468085106382979}, 1: {'PF-READ': 0.5950413223140496, 'SHUFFLED': 0.6115702479338843}}
+5 / 7 pass; learner records 2002
+{"attempt_id": "technical-003", "exit_code": 1, "child_cpu_s": 699.9, "learner_records": 2002}
+exit 1
