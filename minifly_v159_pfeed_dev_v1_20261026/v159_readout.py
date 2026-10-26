@@ -24,10 +24,19 @@ def past_trace(V, n, fade):
     return Z
 
 
-def features(X, extra=None):
-    """Binary KC code with V149's empty-state column, plus optional dense extra channels."""
+def features(X, extra=None, scale=1.0):
+    """Binary KC code with V149's empty-state column, plus optional dense extra channels multiplied by `scale`."""
     F = R.with_empty(X)
-    return F if extra is None else sparse.hstack([F, sparse.csr_matrix(extra)]).tocsr()
+    return F if extra is None else sparse.hstack([F, sparse.csr_matrix(extra * scale)]).tocsr()
+
+
+def block_scale(Xtr, Etr):
+    """Design section 6: one factor so that the extra block's mean squared norm per position equals the KC block's
+    (KC code plus empty-state column), computed on the training stream."""
+    kc = R.with_empty(Xtr)
+    m_kc = float(np.asarray(kc.multiply(kc).sum(1)).mean())
+    m_e = float((Etr ** 2).sum(1).mean())
+    return float(np.sqrt(m_kc / m_e)) if m_e > 0 else 1.0
 
 
 def line_sums(bits, n):

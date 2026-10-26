@@ -110,3 +110,16 @@ The native-learnable ONLINE readout (V153; η 0.01, 3 passes) is reported where 
 * Native integration, meaning the 16-compartment port and own-output generation.
 * Retention.
 * Unseen addition, which probably also needs multi-step computation.
+
+## 6. Testbed-driven redesign of X2's readout (after C0 attempt 1; before any predictive-layer code)
+**C0 attempt 1:** X2 was CANNOT_TEST_CLAIM_AS_SPECIFIED. ORACLE reached only 0.723 and 0.694 on unseen members (0.90 required). FROZEN gave 0.638 and 0.607. Both arms chose L2 = 10, the top of the grid.
+
+**Cause (evaluator-side).** With L2 regularisation, explaining the seen members' targets costs far less when small weights are spread over the 184 active, member-specific KC features than when weight is put on 2 shared class channels. A contribution c costs about c²/184 one way and c²/0.65 the other. So the readout under-uses any low-dimensional shared signal. Any fed-back channel block, including PF's, would meet the same bias.
+
+**Change, applied identically to every arm with extra channels (ORACLE now; PF-READ and SHUFFLED in C1; X3):**
+* **Block normalisation.** The extra-channel block is multiplied by one factor, computed on the training stream so that its mean squared norm per position equals that of the KC block, including the empty-state column. The same factor is applied to the calibration and test streams.
+* **Wider L2 grid:** {100, 30, 10, 3, 1, 0.3, 0.1}.
+
+Thresholds, streams and arms are unchanged. **This is the only testbed redesign:** if the ceiling still fails, X2 is untestable as designed, and V159 stops X2 and reports.
+
+**X4 (no change):** EVEN keys scored 2.867 against FROZEN's 2.963 (−0.096, line-bootstrap SD 0.011).
