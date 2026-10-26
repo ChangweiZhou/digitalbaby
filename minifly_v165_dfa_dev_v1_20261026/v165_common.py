@@ -14,6 +14,15 @@ from v163_testbed_r2 import mean_fit  # noqa: E402,F401
 SET = json.loads((HERE / "SETTINGS.json").read_text())
 
 
+def write_closure():
+    """V165's own runtime closure (V163's runtime.py is also on sys.path; load ours by file path)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("v165_runtime", HERE / "runtime.py")
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    m.write_closure()
+
+
 def first_lines(split, k):
     e = int(split["n"][:k].sum())
     return {"idx": split["idx"][:e], "y": split["y"][:e], "n": split["n"][:k]}

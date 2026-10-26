@@ -50,8 +50,7 @@ def main():
     (d / "TESTBED.json").write_text(json.dumps(out, indent=1))
     print(json.dumps({k: out[k] for k in ("checks", "verdict", "rand_h_carry_over")}, indent=1),
           "frozen-H ref calib", ref["calib_bpb"])
-    import runtime
-    runtime.write_closure()
+    C.write_closure()
 
 
 if __name__ == "__main__":
