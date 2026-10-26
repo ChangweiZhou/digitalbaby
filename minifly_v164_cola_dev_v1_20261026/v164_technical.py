@@ -45,6 +45,7 @@ def main():
     tasks = {x[0]: x for x in L.settings()}
     _, tr, ca, te, sc, iv, _, _ = tasks["S-COPY"]
     A, cls = L.text_splits()
+    torch.set_default_dtype(torch.float64)     # V163's run() creates its zero state in the default dtype
     e1 = grads_equal(tr, sc, iv, list(range(16)))
     e2 = grads_equal(A["train"], cls, L.V.SET["lane_L"]["init_var_inv"], list(range(16)))
     check(out, "mu = 0: COLA gradient equals TBPTT-1 autograd (float64, <= 1e-10), S-COPY and text", max(e1, e2) <= 1e-10,
@@ -62,6 +63,7 @@ def main():
         den = torch.clamp(1 - torch.clamp(mu * ph, -0.99, 0.99), min=1e-3)
         errs.append(float((d - e / den).abs().max()))
     check(out, "teaching signal equals Eq. 23 with the cap (non-zero mu)", max(errs) <= 1e-12, {"max_abs": max(errs)})
+    torch.set_default_dtype(torch.float32)
     # hand-computed two-unit case for Eqs. 25-30
     co = CO.COLA(2, torch.float64)
     d_prev, d = torch.tensor([[1.0, 2.0]], dtype=torch.float64), torch.tensor([[0.5, -1.0]], dtype=torch.float64)
