@@ -1,0 +1,48 @@
+{
+ "checks": [
+  {
+   "check": "mu = 0: COLA gradient equals TBPTT-1 autograd (float64, <= 1e-10), S-COPY and text",
+   "pass": true,
+   "detail": {
+    "S-COPY": 3.469446951953614e-17,
+    "text": 8.326672684688674e-17
+   }
+  },
+  {
+   "check": "teaching signal equals Eq. 23 with the cap (non-zero mu)",
+   "pass": true,
+   "detail": {
+    "max_abs": 0.0
+   }
+  },
+  {
+   "check": "alpha and mu equal Eqs. 25-30 on a hand-computed two-unit case",
+   "pass": true,
+   "detail": {
+    "alpha": [
+     0.499999000002,
+     -0.499999750000125
+    ],
+    "alpha_hand": [
+     0.499999000002,
+     -0.499999750000125
+    ],
+    "mu": [
+     1.9900142478574334e-05,
+     3.331479185641792
+    ],
+    "mu_hand": [
+     1.9900142478574334e-05,
+     3.331479185641793
+    ]
+   }
+  },
+  {
+   "check": "COLA training is deterministic (one epoch, 16 lines)",
+   "pass": true,
+   "detail": null
+  }
+ ],
+ "learner_records": 32,
+ "cpu_s": 3.2
+}
