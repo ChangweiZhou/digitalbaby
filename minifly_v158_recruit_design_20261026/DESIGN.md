@@ -55,3 +55,12 @@ Can the fixture's index detect sharing when sharing is built in? V155's fixture 
 ## 6. Cost
 * C0: fixture traces (about 1 CPU-minute) and two code computations per stream; well under 0.1 CPU-h.
 * C1: about 1,300 learner records; at most about 0.2 CPU-h. L-PRED cost 5.6 ms per position in V155, and the band roughly doubles the key-update work.
+
+## 7. Addition before any code: a measurement control beside ORACLE
+ORACLE keys test whether key changes can express sharing that the index detects. If ORACLE failed, though, it would be ambiguous: the index could be broken, or the oracle's scale could be too weak to win the top-k competition.
+* **ORACLE-CODE** therefore also runs. It takes FROZEN's codes, and for positions ending in a byte of S1 replaces the 46 lowest-ranked active units on each side with a fixed seeded set of 46 units per side (likewise for S2, with a disjoint set). The code stays at 92 per side.
+* It tests only the index and its sampling, and should raise the index far above 0.05.
+* **Reading:**
+  * ORACLE-CODE fails: the measurement is broken (INVALID).
+  * ORACLE-CODE passes but ORACLE fails: the index works, but this oracle's key-level sharing does not survive the top-k competition (CANNOT_TEST_CLAIM_AS_SPECIFIED, stop).
+  * Both pass: CONTINUE.
