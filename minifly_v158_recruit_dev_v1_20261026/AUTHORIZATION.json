@@ -1,0 +1,42 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v158_recruit_dev_v1_20261026",
+ "design": "minifly_v158_recruit_design_20261026/DESIGN.md",
+ "verbatim": "Okay, we do option A. Call this V158.",
+ "utc": "2026-10-26 (owner message, after V155 stopped at its C1 decision point)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {"label": "A: revise L-PRED and repeat the technical cycle",
+   "text": "Let predicted units in a band just below threshold update (e.g. top 2 x 92 per side by pre-activation instead of only the 92 active); rerun the fixture as a new design.",
+   "cost": "about 0.15 CPU-h and 2,500 records; fits the default caps",
+   "objective_distance": "Tests whether the rule can produce same-future sharing at all; measures nothing on text."},
+  {"label": "B: continue with L-COMP only",
+   "text": "Dev and rehearsal with L-COMP, which passed its checks but can only make KCs more selective, not shared.",
+   "cost": "about 1.5 CPU-h and 9,000 records; above the defaults",
+   "objective_distance": "At most a small tiling gain; little about carry-over."},
+  {"label": "C: stop and write up",
+   "text": "Write the two honest exits (L-PRED cannot test the claim; native wiring leaves little room) and the selectivity argument.",
+   "cost": "about 0.3 agent-hours, no CPU",
+   "objective_distance": "None measured."}
+ ],
+ "recommendation_shown": "A (given separately from the options), because the cause is specific and cheap to test and the fixture shows directly whether a fix produces sharing before any spending on text.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": false,
+  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
+ "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
+ "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "conditionals": [],
+ "restated_to_owner_before_acting": "Proceeding with V158 (option A) within the default caps: at most 2 CPU-h and 5,000 learner records; testbed and technical cycles only; no dev or rehearsal, no official run, no adoption; pushes to this session's branch only. One revision of L-PRED; the fixture and its pass mark are unchanged; if the revised rule fails, V158 stops. Added before any code: a testbed positive control for the fixture's index.",
+ "grants": [{"n": 1, "verbatim": "Okay, we do option A. Call this V158.", "utc": "2026-10-26",
+             "effect": "implementation and technical (option A: revise L-PRED, repeat the technical cycle); default caps"}]
+}
