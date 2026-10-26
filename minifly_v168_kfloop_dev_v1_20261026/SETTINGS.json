@@ -1,0 +1,19 @@
+{
+ "v166_lib": "minifly_v166_memloop_dev_v1_20261026/v166_lib.py",
+ "worlds": {"v168_technical": {"train": [1681, 1000], "calib": [1682, 200], "test": [1683, 1000]},
+            "v168_dev": {"train": [1691, 1000], "calib": [1692, 200], "test": [1693, 1000]}},
+ "configs": {"A1": {"n_train": 400, "max_epochs": 6, "batch": 2, "lr": 0.001},
+             "A2": {"n_train": 400, "max_epochs": 6, "batch": 2, "lr": 0.002},
+             "B1": {"n_train": 800, "max_epochs": 12, "batch": 4, "lr": 0.001},
+             "B2": {"n_train": 800, "max_epochs": 12, "batch": 4, "lr": 0.002},
+             "D": {"n_train": 1000, "max_epochs": 24, "batch": 4, "lr": 0.001}},
+ "config_order": ["A1", "A2", "B1", "B2", "D"],
+ "train": {"wd": 0.0001, "clip": 5.0, "patience": 10, "order_seed": 13},
+ "references": ["BPTT", "TBPTT-1", "TBPTT-2", "TBPTT-3"],
+ "rules": {"read_tol": 1e-12, "oracle_acc": 0.99, "ceiling_q2": 1.0, "ceiling_q1": 0.5, "floor_gap_bits": 1.0,
+           "floor_gap_sd": 3, "recover_share": 0.5, "pass_sd": 3, "guard_q1_margin": 0.5, "wiring_tol": 1e-12},
+ "kf": {"sign_seed": 31, "shuf_seed": 37},
+ "c1": {"exact_lines": 2, "exact_tol": 1e-10, "enum_prefix": 6, "shuf_lines": 4, "eprop_lines": 8, "eprop_tol": 1e-12,
+        "det_lines": 16, "learn_lines": 32, "align_lines": 8, "align_draws": 4, "max_records": 200},
+ "parallel": 2
+}
