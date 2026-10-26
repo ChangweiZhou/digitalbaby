@@ -2,7 +2,8 @@
 Cross (role B), with V155's untaught P81 front end and birth keys. Evaluator-side, no learning.
 Run through launch.py:  python launch.py run --stage testbed -- /tmp/venv_n/bin/python v167_export.py
 Checks: birth keys equal V155's recorded SHA and the native model; the cached-code path equals MiniFly's own encode at every
-position; labels and line lengths follow V155's corpus rules. Writes cache/codes_rehearsal.npz and results/testbed/EXPORT.json.
+position; labels and line lengths follow V155's corpus rules,
+after amendment 1 (each text is cut at its 'End of Project Gutenberg' record; only The Ball and the Cross has one). Writes cache/codes_rehearsal.npz and results/testbed/EXPORT.json.
 """
 import hashlib
 import importlib.util
@@ -53,6 +54,16 @@ def padded(X):
     return out
 
 
+GUTENBERG_END = b"End of Project Gutenberg"
+
+
+def splits(text, role):
+    """Amendment 1: cut the text at its first 'End of Project Gutenberg' record, then apply V155's split rules."""
+    recs = corpus.records(corpus.load(text))
+    cut = next((i for i, r in enumerate(recs) if r.startswith(GUTENBERG_END)), len(recs))
+    return corpus.split(recs[:cut], *corpus.SIZES[role]), len(recs) - cut
+
+
 def main():
     t0 = time.process_time()
     rec = json.loads((V155 / "results" / "testbed" / "cache_thursday_A.json").read_text())
@@ -66,7 +77,11 @@ def main():
     out, info = {}, {}
     for tag, role in (("A", "A"), ("B", "B")):
         text = SET["texts"][tag]
-        sp = corpus.splits(text, role)
+        sp, dropped = splits(text, role)
+        info[f"{tag}_records_dropped_by_amendment1"] = dropped
+        if tag == "A":
+            ref = corpus.splits(text, role)
+            checks[f"{tag}_{text}_unchanged_by_amendment1"] = all(ref[k] == sp[k] for k in SPLITS)
         mism = pos = 0
         for k in SPLITS:
             P, Xn, y = [], [], []
