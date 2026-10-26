@@ -1,0 +1,114 @@
+{
+ "design": "minifly_v163_sslcola_design_20261026/DESIGN.md",
+ "settings": {
+  "data": {
+   "A": "thursday",
+   "B": "edgeworth",
+   "n_kc": 5177,
+   "empty_col": 5177,
+   "pad": 5178,
+   "max_active": 185
+  },
+  "probe": {
+   "hidden": 2048,
+   "dropout": 0.5,
+   "lr": 0.001,
+   "wd": 0.0001,
+   "batch": 256,
+   "max_epochs": 60,
+   "patience": 6,
+   "seed": 0
+  },
+  "lane_L": {
+   "H": 512,
+   "init_var_inv": 184,
+   "init_seed": 0,
+   "ssl": {
+    "lr": 0.001,
+    "batch": 256,
+    "passes": 8,
+    "checkpoints": [
+     1,
+     2,
+     4,
+     8
+    ],
+    "passes_default_caps": 4,
+    "checkpoints_default_caps": [
+     1,
+     2,
+     4
+    ],
+    "neg_seed": 7,
+    "order_seed": 11
+   }
+  },
+  "lane_C": {
+   "H": 256,
+   "init_seed": 0,
+   "g_probes": [
+    1.0,
+    1.1
+   ],
+   "lyap_lines": 100,
+   "batch_lines": 16,
+   "lr": 0.001,
+   "wd": 0.0001,
+   "clip": 5.0,
+   "max_epochs": 15,
+   "patience": 4,
+   "order_seed": 13,
+   "cola": {
+    "rho_alpha": 0.995,
+    "rho_mu": 0.98,
+    "alpha_clip": 0.99,
+    "mu_cap": 0.99,
+    "denom_floor": 0.001,
+    "eps": 1e-08
+   }
+  },
+  "rules": {
+   "parity_tol": 0.001,
+   "ceiling_L": 0.06,
+   "noise_L": 0.01,
+   "learns_C": 0.05,
+   "ceiling_C": 0.03,
+   "pass_L_bits": 0.03,
+   "pass_L_sd": 3,
+   "pass_C_frac": 0.5,
+   "pass_C_sd": 3,
+   "clapp_sep_min": 0.6
+  },
+  "boot": {
+   "reps": 1000,
+   "seed": 0
+  }
+ },
+ "python": "3.11.15",
+ "packages": {
+  "numpy": "2.2.6",
+  "scipy": "1.14.1",
+  "torch": "2.14.1+cu130"
+ },
+ "closure_sha256": {
+  "minifly_v148_pretrain_probe_dev_20261025/corpus.py": "51ffc0bddd41c0123adad7c902bf20627ddbe4812a64c81b595f55ce30c070aa",
+  "minifly_v149_input_ceiling_dev_20261025/readouts.py": "b3b65f47e2ad75e8a4a7c7252d6b5f52579434e21976575615e50a63730fd6e5",
+  "minifly_v155_headroom_check_20261026/results/main/REFERENCE.json": "cc89f170c03a3170ddcabb0d2541021a099d7182e0856284a4af8005ac5b4d0c",
+  "minifly_v155_headroom_check_20261026/results/main/states.npz": "0c281097abd40a08387c414b5e66dc69626fcb920ec894b65f331b2c0a5fd7d3",
+  "minifly_v155_headroom_check_20261026/results/main/x_calib.npz": "35b20c795fa372670faccaf8db92a93a18bf9e034f91d43d7d8222fe51ce5e65",
+  "minifly_v155_headroom_check_20261026/results/main/x_held.npz": "5741240af9728d5c53775766e49e792e2b2b12cda80472d682e06c131a02c3e5",
+  "minifly_v155_headroom_check_20261026/results/main/x_train.npz": "3a64aa675e86201191f67ed2b163bbcd8d2b07d647d00d0f387cf9590e2afbba",
+  "minifly_v155_keys_dev_v1_20261026/cache/birth.npz": "d500bfc82011ee441175287243458425feea1a5e4cb48d865d60817bc9f67d60",
+  "minifly_v155_keys_dev_v1_20261026/cache/thursday_A.npz": "4edec43146c61d66cf309283708e3f5bc77418be40e74c91f41c950c9660ab8d",
+  "minifly_v155_keys_dev_v1_20261026/codes.py": "d6641e569070d5bf414b7a56d717eb324ca3eaca3a3a75adcb0d0790ae3f07c5",
+  "minifly_v155_keys_dev_v1_20261026/corpus.py": "6c99657e71c83269ce256f6eefde1d6c3e2643f26a1d05944a14f6abf25557c3",
+  "minifly_v162_text_dev_v1_20261026/cache/edgeworth_B.npz": "72c32fe74f578a009ed035df021cb01864629e986ed83368cb2220d6c4486f99",
+  "minifly_v163_sslcola_design_20261026/DESIGN.md": "a7e0f7a8f63bc365cce91b28b8b6277502c5ac51e75d6a216475a04fdfb542b3",
+  "minifly_v163_sslcola_dev_v1_20261026/SETTINGS.json": "9fbdefa4492f4707d8488eb19a04cf9dca7f2de0f99b921b0e1efdb902a81120",
+  "minifly_v163_sslcola_dev_v1_20261026/launch.py": "5c45155cb78f541912cc1ab2e051c3ee537c3bb1e557a47c0d8f76b2acd1dcab",
+  "minifly_v163_sslcola_dev_v1_20261026/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
+  "minifly_v163_sslcola_dev_v1_20261026/v163_export.py": "0faec55d8ceab1dd4bd675c93a60b1fc1f91b0a64fff711d40a481993f109abe",
+  "minifly_v163_sslcola_dev_v1_20261026/v163_lib.py": "7fba45bcb75dfeaebc1790aa685bf193cf815fcbdead2b0e550a731830e8629c",
+  "minifly_v163_sslcola_dev_v1_20261026/v163_testbed.py": "9e65c9e48358b559c8ee683b088db757eee5d6ce3dade7fb07c3c48a1ddf0d01"
+ }
+}

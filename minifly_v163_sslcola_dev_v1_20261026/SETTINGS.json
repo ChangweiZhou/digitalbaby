@@ -1,0 +1,13 @@
+{
+ "data": {"A": "thursday", "B": "edgeworth", "n_kc": 5177, "empty_col": 5177, "pad": 5178, "max_active": 185},
+ "probe": {"hidden": 2048, "dropout": 0.5, "lr": 0.001, "wd": 0.0001, "batch": 256, "max_epochs": 60, "patience": 6, "seed": 0},
+ "lane_L": {"H": 512, "init_var_inv": 184, "init_seed": 0,
+            "ssl": {"lr": 0.001, "batch": 256, "passes": 8, "checkpoints": [1, 2, 4, 8], "passes_default_caps": 4,
+                    "checkpoints_default_caps": [1, 2, 4], "neg_seed": 7, "order_seed": 11}},
+ "lane_C": {"H": 256, "init_seed": 0, "g_probes": [1.0, 1.1], "lyap_lines": 100, "batch_lines": 16,
+            "lr": 0.001, "wd": 0.0001, "clip": 5.0, "max_epochs": 15, "patience": 4, "order_seed": 13,
+            "cola": {"rho_alpha": 0.995, "rho_mu": 0.98, "alpha_clip": 0.99, "mu_cap": 0.99, "denom_floor": 0.001, "eps": 1e-8}},
+ "rules": {"parity_tol": 0.001, "ceiling_L": 0.06, "noise_L": 0.01, "learns_C": 0.05, "ceiling_C": 0.03,
+           "pass_L_bits": 0.03, "pass_L_sd": 3, "pass_C_frac": 0.5, "pass_C_sd": 3, "clapp_sep_min": 0.6},
+ "boot": {"reps": 1000, "seed": 0}
+}

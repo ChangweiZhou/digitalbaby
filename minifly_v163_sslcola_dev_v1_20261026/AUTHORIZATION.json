@@ -1,0 +1,35 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v163_sslcola_dev_v1_20261026",
+ "design": "minifly_v163_sslcola_design_20261026/DESIGN.md",
+ "verbatim": "1 your understanding is correct. 2) This is fine. 3) Sure.",
+ "utc": "2026-10-26T20:45Z (approximate; owner message after the V163 design was pushed as 99a7e079)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {"label": "1: interpretation of 'last few layers doing back-propagation'",
+   "text": "Back-propagation in the top block (one hidden layer plus output) only, gradient stopped at its input; lane L local SSL below; lane C COLA for the recurrent layer's credit across time.",
+   "cost": "-", "objective_distance": "-"},
+  {"label": "2: caps",
+   "text": "3 CPU-h, 20,000 learner records, 3 test cycles. Within the defaults (2 CPU-h, 5,000 records): lane L with at most 4 SSL passes, lane C C0 only, COLA not built.",
+   "cost": "about 1.8 CPU-h and 17,700 learner records estimated",
+   "objective_distance": "Tests whether a local self-supervised layer above the frozen KC code gives transferable features under a back-propagated top, and whether COLA's temporal credit has anything to approximate at 40 KB."},
+  {"label": "3: go-ahead", "text": "Activate the skill and run V163.", "cost": "-", "objective_distance": "-"}
+ ],
+ "recommendation_shown": "Run both lanes' C0 together, lane L in full, COLA only if its C0 finds headroom.",
+ "interpretation": "Interpretation confirmed; go-ahead for implementation, technical and dev cycles. The owner approved the requested caps ('This is fine') by reference to my numbers, but AUT-02 counts only cap numbers in the owner's own text, so the default caps are recorded. C0 and C1 fit the defaults; before C2 needs more, the owner is asked to write the numbers. This was stated to the owner before acting.",
+ "stages": {"implementation": true, "technical": true, "dev_cycles": true,
+  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "push": false, "push_lock": false, "adoption": false, "pointer_update": false},
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction.",
+ "back_propagation_scope": "Owner-directed relaxation of the programme's no-back-propagation constraint, confined to the top block (design, opening section): 'So we are going to try local SSL with last few layer doing back-propagation or COLA.' Confirmed: '1 your understanding is correct.'",
+ "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
+ "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "conditionals": [],
+ "restated_to_owner_before_acting": "Your 'This is fine' clearly approves 3 CPU-h, 20,000 records and 3 cycles. But the skill's rule (AUT-02) only counts cap numbers written in your own words, so I'm recording default caps for now. C0 and C1 fit inside them. Before C2 needs more, I'll ask you to write the numbers.",
+ "grants": [
+  {"n": 1, "verbatim": "1 your understanding is correct. 2) This is fine. 3) Sure.", "utc": "2026-10-26",
+   "effect": "implementation, technical, dev cycles for V163; default caps"}
+ ]
+}
