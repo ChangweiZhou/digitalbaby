@@ -92,9 +92,14 @@ def main():
     print("T0-a", json.dumps(wiring), "T0-b", orc, flush=True)
     # amendment 1: --configs runs only the named configs; --prior gives an earlier TESTBED file whose configs keep
     # their recorded outcome in the selection (first qualifying config in SETTINGS.config_order); --out names the file
+    # amendment 2: --prior takes comma-separated files; with --fit-caps the selection keeps only configs whose C2
+    # (2 learner arms x R, plus the planned C1 records) fits AUTHORIZATION.caps.max_records
     run_now = arg("--configs", ",".join(L.SET["config_order"])).split(",")
     prior_file = arg("--prior", None)
-    prior = json.loads((HERE / prior_file).read_text())["per_config"] if prior_file else {}
+    prior = {}
+    for pf in (prior_file.split(",") if prior_file else []):
+        prior.update(json.loads((HERE / pf).read_text())["per_config"])
+    cap = json.loads((HERE / "AUTHORIZATION.json").read_text())["caps"]["max_records"] if "--fit-caps" in sys.argv else None
     order = [c for c in L.SET["config_order"] if c in run_now]
     fits = [(c, r) for c in reversed(order) for r in L.SET["references"]]     # longest configs first
     env = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
@@ -126,15 +131,19 @@ def main():
         cfg = L.SET["configs"][c]
         per_cfg[c] = {"config": cfg, "ceiling": ceiling, "floor": floor, "qualifies": bool(ceiling["pass"] and floor["pass"]),
                       "references": desc, "c2_learner_records": 2 * cfg["n_train"] * cfg["max_epochs"]}
+    unconstrained = None
     for c in L.SET["config_order"]:
         rec = per_cfg.get(c) or prior.get(c)
         if rec is not None and rec["qualifies"]:
-            selected = c
-            break
+            unconstrained = unconstrained or c
+            if cap is None or rec["c2_learner_records"] + C1_PLANNED_RECORDS <= cap:
+                selected = c
+                break
     per_cfg_all = {**{c: v for c, v in prior.items()}, **per_cfg}
     checks = {"T0-a_wiring": wiring,
               "T0-b_oracle": {"acc": orc, "pass": all(orc[k] >= ru["oracle_acc"] for k in orc if k.endswith("acc"))},
-              "T0-c_budget_grid": {"selected": selected, "prior_file": prior_file,
+              "T0-c_budget_grid": {"selected": selected, "prior_file": prior_file, "records_cap": cap,
+                                   "first_qualifying_ignoring_cap": unconstrained,
                                    "prior_qualifies": {c: v["qualifies"] for c, v in prior.items()},
                                    "pass": selected is not None}}
     verdict = "CONTINUE" if all(c["pass"] for c in checks.values()) else "CANNOT_TEST_CLAIM_AS_SPECIFIED"
