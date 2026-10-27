@@ -116,7 +116,7 @@ Two decisions rest with the owner, because they determine how A5/C1 and A6 are c
 
 ### 7.1 Interpretation
 1. **Locality.** Learning rules need not be synapse-local. They may use information exchanged among nearby neurons, as in local cortical circuits, and connections may change dynamically, including structural plasticity. Exact global back-propagation remains outside this admissible class; online, circuit-local computation of credit is within it.
-2. **Structure.** The architecture may differ between tasks and may adapt to them. **Unresolved:** whether that adaptation must be produced by the system itself, or whether a designer may also select generic structural components for a task. Earlier standing constraints excluded hard-coded task structure and components that must be redesigned when the task changes (`addition_difficulty_diagnosis_dev_20261017/MEMO.md`). Pending the owner's clarification, this note assumes the stricter reading: structure may adapt, by the system's own mechanisms or through generic components declared as scaffolding, but no task-specific solution is hand-built.
+2. **Structure.** The architecture may differ between tasks and may adapt to them. **Resolved in section 7.4 in favour of the stricter reading below.** Formerly unresolved: whether that adaptation must be produced by the system itself, or whether a designer may also select generic structural components for a task. Earlier standing constraints excluded hard-coded task structure and components that must be redesigned when the task changes (`addition_difficulty_diagnosis_dev_20261017/MEMO.md`). Pending the owner's clarification, this note assumes the stricter reading: structure may adapt, by the system's own mechanisms or through generic components declared as scaffolding, but no task-specific solution is hand-built.
 
 ### 7.2 Reclassification
 | Issue | Before | After the decisions | Consequence |
@@ -136,3 +136,32 @@ The decisions turn the principal open problem, temporal credit through memory, f
    * adaptive re-entry with a learned controller for writes, queries and hop count;
    * a corrected guard (V170);
    * the role-binding test of C2.
+
+### 7.4 Clarification: generic learning, with next-byte prediction as the meta-task
+**Owner's words, verbatim:** "So in general, the minifly should figure out what to learn depending on the input and the environment feedback just as the real fly. We only prescribe generic learning rules for the minifly at this stage, but ideally speaking once it becomes more intelligent it can jump ahead / goes back when reads a text on its own for example. We do not pre-specify fixed learning rules for each task, and in the future they would become more flexible. For now predicting next byte as the meta-task is okay."
+
+**Principle:**
+1. The designers specify only generic learning rules and generic architectural components.
+2. What is learned is determined by the system from its input and its environmental feedback. That includes what to store, when to retrieve, and how its structure adapts.
+3. At this stage, next-byte prediction is the meta-task. All learning signals derive from next-byte prediction error, together with environmental feedback where present. Particular tasks, such as addition, are posed within the byte stream; they do not receive task-specific objectives or rules.
+4. Self-directed reading, in which the system chooses to skip ahead or return within a text, is a long-term aim outside the present scope.
+
+This resolves section 7.1, point 2, in favour of the stricter reading. Task-specific structure, marker-gated memory writes and objectives restricted to answer positions are admissible only as **diagnostic instruments** that isolate a mechanism. They are not admissible as properties of the learner.
+
+**Consequences for experimental design:**
+1. **Objective:** learners are trained on next-byte prediction at every position. Task performance is reported as a subset of those predictions, for example the answer bytes.
+2. **Memory writes:** writing is governed by a generic rule driven by the learner's own signals, for example Hebbian writes gated by prediction error or surprise. Input markers no longer gate it. This is the concrete form of issue A3.
+3. **Re-entry and control:** re-entry pathways are generic components present in every task. Gating and hop decisions are learned from the meta-task, not fixed by episode timing.
+4. **One set of rules:** the same rules apply to text and to arithmetic streams.
+5. **Scaffolded fixtures:** those of V166, V168 and V170 remain admissible for diagnosing a mechanism. Thereafter scaffolds are removed one at a time (synthesis E5).
+
+**Revised order of work** (supersedes section 7.3):
+1. **Temporal-credit diagnostic** (synthesis E1/E2) on V166's fixture: the exact three-step forward-sensitivity reference and the analysis of V168's learning signal. A diagnostic instrument.
+2. **Circuit-level credit learner** on the same fixture: memory-conditioned error delivered through a Hebbian-symmetric reciprocal pathway, with short eligibility traces, against the exact reference and a shuffled-feedback control.
+3. **The first meta-task step**, independent of 1 and 2:
+   * V166's episodes rendered as a byte stream;
+   * next-byte prediction at every position;
+   * surprise-gated memory writes in place of study markers.
+
+   The question is whether storage and single retrieval emerge from the meta-task alone. Thereafter, the same with the learned loop.
+4. **Role binding** under the meta-task (issue C2).
