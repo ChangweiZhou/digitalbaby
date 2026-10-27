@@ -1,0 +1,51 @@
+N2B {'OLD8': 5, 'OLD16': 7, 'FINAL': 10, 'REST': 10} cpu 202.7
+N2B-H {'OLD8': 6, 'OLD16': 12, 'FINAL': 12, 'REST': 12} cpu 202.1
+DELTA {'OLD8': 26, 'OLD16': 37, 'FINAL': 29, 'REST': 29} cpu 199.4
+DELTA-H {'OLD8': 33, 'OLD16': 50, 'FINAL': 39, 'REST': 40} cpu 205.2
+{
+ "final_correct": {
+  "N2B": 10,
+  "N2B-H": 12,
+  "DELTA": 29,
+  "DELTA-H": 39
+ },
+ "effects": {
+  "writer": {
+   "items": 23.0,
+   "boot_sd": 4.134533158350529,
+   "pass": true
+  },
+  "homeostasis": {
+   "items": 6.0,
+   "boot_sd": 2.0073296783288987,
+   "pass": false
+  },
+  "interaction": {
+   "items": 8.0,
+   "boot_sd": 4.127053398006864
+  }
+ },
+ "retention": {
+  "N2B": {
+   "OLD16_correct": 7,
+   "retained_at_FINAL": 3
+  },
+  "N2B-H": {
+   "OLD16_correct": 12,
+   "retained_at_FINAL": 6
+  },
+  "DELTA": {
+   "OLD16_correct": 37,
+   "retained_at_FINAL": 15
+  },
+  "DELTA-H": {
+   "OLD16_correct": 50,
+   "retained_at_FINAL": 23
+  }
+ },
+ "reference_reproduced": true,
+ "cls_level": false,
+ "learner_records": 4608,
+ "cpu_s": 809.4
+}
+{"attempt_id": "dev-003", "exit_code": 0, "child_cpu_s": 811.0, "learner_records": 4608}
