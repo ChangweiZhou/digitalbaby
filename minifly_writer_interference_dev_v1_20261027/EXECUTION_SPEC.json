@@ -1,0 +1,193 @@
+{
+  "identity": "WCFI-V1",
+  "date": "2026-10-27",
+  "status": "AUTHORIZED_THREE_CYCLES",
+  "numeric_version": null,
+  "implemented": true,
+  "execution_authorized": true,
+  "GitHub_push_authorized": false,
+  "new_model_queries": 0,
+  "new_native_training_records": 0,
+  "new_core_adopted": false,
+  "goal": "generic local acquisition, updating, retention and reuse per total samples and actual compute; tasks are probes",
+  "evidence": [
+    "E0 matched native write mechanics",
+    "E1 acquisition",
+    "E1-R taught retention"
+  ],
+  "E2_or_E3_claim": false,
+  "source_commit": "8c808c38fc82149085d01eb5bbc27d134d669997",
+  "native": {
+    "class": "fastmem.FastMemory",
+    "compartments": 16,
+    "front": "FE-PERM .95",
+    "fresh_adapt": true,
+    "homeostasis": false,
+    "class_bias_q": 0,
+    "output": "fixed C16 over256 payloadbytes andEOS256",
+    "own_decision_cap": 4,
+    "new_retrieval_path": false
+  },
+  "constraints": {
+    "local_candidate_rules": true,
+    "gradual_warmup": true,
+    "attention": false,
+    "Transformers": false,
+    "ELM": false,
+    "task_specific_model_structure": false,
+    "arithmetic_rules": false,
+    "independent_answer_decoder": false
+  },
+  "writers": {
+    "N": "P16 C^T(p-e_y)/4",
+    "D": "(tanh(P16 v/2)-C_y)/2",
+    "coefficient": "w(n)*alpha(form,level)*f(form)",
+    "N_gain_bounds": [
+      0,
+      2
+    ],
+    "D_gain_bounds": [
+      0,
+      1
+    ],
+    "warmup": "1/16+15/16*min(n/1024,1)",
+    "counter": "actual arriving payload/EOS targets, including observed inhibited records",
+    "main_gain_policy": "one fixed gain per form/level; no per-event oracle"
+  },
+  "strength": {
+    "observable": "RMS(P257 C P16 (v_pulse-v_zero)/4)",
+    "low_anchor": "median calibration d(N,alpha=.2)",
+    "high_anchor": "min(median calibration d(N,alpha=2),median calibration d(D,alpha=1))",
+    "calibration_contexts": 16,
+    "gain_evaluations_per_scalar_solve_max": 20,
+    "median_relative_match_tolerance": 0.01,
+    "separate_paired_pulse_exact_strength_assay": true,
+    "paired_main_contexts": 32,
+    "statewise_target_scale": "min(1,A_i/D_high), same scaling forlow/high",
+    "unattainable_or_zero_response": "report; no case replacement or direction-effect claim",
+    "longitudinal_strength_identity_guaranteed": false,
+    "oracle_yoking_is_candidate_rule": false
+  },
+  "data": {
+    "task": "opaque byte association",
+    "fresh_worlds_reserved": [
+      202610277311,
+      202610277312
+    ],
+    "freshness_verified": false,
+    "calibration_world_reserved": 202610277390,
+    "technical_world_reserved": 202610277391,
+    "cue_alphabet_size": 8,
+    "shared_suffix_length": 2,
+    "prompt_length": 5,
+    "variable_prefix_length": 3,
+    "reply_alphabet_size": 16,
+    "payload_length": 1,
+    "OLD": 64,
+    "NEW": 16,
+    "OLD_reply_balance": 4,
+    "NEW_reply_balance": 1,
+    "byte_alphabets": "seeded distinct rawbytes withoutsemanticorder",
+    "arithmetic_task": false,
+    "exact_key_countermodel_can_solve": true,
+    "held_random_mapping_scored": false,
+    "read_only_address_preflight_episodes": 160,
+    "preflight_target_contexts": 320
+  },
+  "common_OLD": {
+    "writer": "DELTA",
+    "gain": 1,
+    "homeostasis": false,
+    "passes": 16,
+    "records_per_world": 1024,
+    "target_arrivals_per_world": 2048,
+    "warmup_reset_at_fork": false,
+    "zero_OLD_acquisition": "retainworld; conditionalretentionunmeasurable"
+  },
+  "main_writing_arms": [
+    "N-low",
+    "N-high",
+    "D-low",
+    "D-high"
+  ],
+  "NEW": {
+    "records_per_branch": 128,
+    "passes": 8,
+    "records_per_pass": 16,
+    "same_inputs_feedback_order_and_event_clocks": true,
+    "checkpoint_passes": [
+      1,
+      2,
+      4,
+      8
+    ]
+  },
+  "controls": {
+    "OBS": "identical NEW bytes,targetarrivals,teacher/eventcalls withvaluewriteflaginhibited; advanceactualexposurecounter",
+    "IDLE": "separateOLDprestatecloneatendpoint; rest exactly measured native delta_t seconds, no fabricatedinputs/counterincrements",
+    "OBS_physically_shared_across_writer_arms": true,
+    "homeostasis_updates": false,
+    "decomposition": [
+      "writer-OBS:total value-write effect",
+      "OBS-IDLE:observation effect",
+      "IDLE-prestate:elapsedtime effect"
+    ]
+  },
+  "sentinels": {
+    "OLD_per_matched_pulse": 8,
+    "selection": "fixedhash independentofcorrectnessandtargets"
+  },
+  "counts": {
+    "main_common_OLD_records": 2048,
+    "main_NEW_writing_records": 1024,
+    "main_NEW_OBS_records": 256,
+    "main_full_records": 3328,
+    "main_full_record_targets": 6656,
+    "calibration_full_records": 128,
+    "calibration_targets": 256,
+    "qualification_full_records_max": 16,
+    "qualification_targets_max": 32,
+    "full_records_total_max": 3472,
+    "full_record_targets_total_max": 6944,
+    "shadow_partial_target_events_max": 4096,
+    "main_physical_own_TF_pairs": 4000,
+    "pulse_sentinel_own_TF_pairs": 1280,
+    "qualification_own_TF_pairs_max": 128,
+    "own_TF_pair_cap": 5408,
+    "held_relation_decisions": 0
+  },
+  "resources": {
+    "CPU_seconds": 3600,
+    "wall_seconds": 7200,
+    "workers": 1,
+    "numerical_threads": 1,
+    "RSS_bytes": 1073741824,
+    "output_bytes": 1073741824,
+    "native_vector_reads": 160000,
+    "distributions": 120000,
+    "charged_preflight_required": true,
+    "automatic_retry": false,
+    "automatic_extension": false,
+    "automatic_extra_worlds": false
+  },
+  "inference": {
+    "independent_randomized_worlds": 2,
+    "canonical_wiring_shared": true,
+    "item_bootstrap_is_world_replication": false,
+    "main_difference_direction_only_if_doses_diverge": false,
+    "pure_form_claim_source": "same-state matched-pulse assay",
+    "binary_posthoc_efficacy_gate": false,
+    "adoption_automatic": false
+  },
+  "replay_in_current_roster": false,
+  "every_byte_deployed_learner_tested": false,
+  "execution_details": {
+    "generator_salt": "WCFI-V1",
+    "hash_selection": "sha256 WCFI-V1|world|purpose|id",
+    "solver": "endpoints+midpoint, then bounded bisection, maximum20 evaluations",
+    "zero_floor": "max(1e-12,100*zero_write_residual)",
+    "timing_admission_multiplier": 1.5,
+    "calibration_prompts": "same opaque generator restricted first32;balanced16labels",
+    "own_decisions": 4
+  }
+}
