@@ -1,0 +1,95 @@
+{
+ "design": "minifly_v172_native_e1_design_20261027/DESIGN.md",
+ "settings": {
+  "worlds": {
+   "technical": 202610277201,
+   "dev": 202610277211,
+   "rehearsal_reserved": 202610277221
+  },
+  "data": {
+   "salt": "V172",
+   "operand_max": 19,
+   "OLD": 64,
+   "NEW_pool": 64,
+   "NEW": 16
+  },
+  "dose": {
+   "OLD_passes": 16,
+   "OLD_orders": 8,
+   "NEW_passes": 8
+  },
+  "arms": {
+   "N2B": {
+    "writer": "N2B",
+    "homeo": false
+   },
+   "N2B-H": {
+    "writer": "N2B",
+    "homeo": true
+   },
+   "DELTA": {
+    "writer": "DELTA",
+    "homeo": false
+   },
+   "DELTA-H": {
+    "writer": "DELTA",
+    "homeo": true
+   }
+  },
+  "writer": {
+   "n2b_gain": 0.2,
+   "delta_temp": 2.0,
+   "warmup_start": 0.0625,
+   "warmup_targets": 1024
+  },
+  "homeo": {
+   "rate": 0.05,
+   "c": 5.0,
+   "beta": 0.01
+  },
+  "generation_cap": 4,
+  "rest_steps": 128,
+  "panels": [
+   "OLD8",
+   "OLD16",
+   "FINAL",
+   "REST"
+  ],
+  "testbed": {
+   "ridge_lambda": 1.0,
+   "ceiling_pass": 72,
+   "floor_fail_max": 8
+  },
+  "rules": {
+   "writer_items": 16,
+   "homeo_items": 8,
+   "sd": 3,
+   "reference_max": 16,
+   "cls_level": 64
+  },
+  "boot": {
+   "reps": 2000,
+   "seed": 0
+  }
+ },
+ "python": "3.11.15",
+ "packages": {
+  "numpy": "2.2.6",
+  "numba": "0.61.2"
+ },
+ "vendored_from": "ec38e8be63e0a448d387e4698fd619c7368ddf12 (minifly_v152_dev_20261025/models152.py, support152.py)",
+ "closure_sha256": {
+  "minifly_v172_native_e1_design_20261027/DESIGN.md": "5d4f0b1189f5e034fe9809e3e45a6fa5afe55da5598afc0498c1003c489a8702",
+  "minifly_cls_dev_20261017/fastmem.py": "995018ef4d3bbaea7b1cb720fb1fb1d2b0f96ffdb150cdee836a2340282b6505",
+  "minifly_cls_dev_20261017/bootstrap.py": "148e5307716473602442d2a7647ee76afa61d693c3fecc878e19af3c6dcd7b92",
+  "minifly_cls_dev_20261017/OUTPUT_CODEBOOK.json": "69fe0ab1a60c018a0c1cced86304f7c5802027587da845170dab7cf38dab5d60",
+  "minifly_a_v3/src/stores.py": "c7947354db408ac22bbd6ccc8aa646b9513814ac84fc4342e5dd959515b0eca4",
+  "minifly_v172_native_e1_dev_v1_20261027/vendor/models152.py": "3e911c012850b04cd96702c5fdce50e5d2a22d108eb07a8559028d73bd4c1659",
+  "minifly_v172_native_e1_dev_v1_20261027/vendor/support152.py": "8605d933bd708b811b2b5d70d4ebad8cdc23aeb219efbfd2103998da6bfd6984",
+  "minifly_v172_native_e1_dev_v1_20261027/launch.py": "6d8f59818bded483dc299cbc36a5720ff60d49327325b473993febce73bc0704",
+  "minifly_v172_native_e1_dev_v1_20261027/SETTINGS.json": "833da62ee09c3aad77407b4867a1c4c2d4f3e3c3a5c36236a61a0832b01ecc9d",
+  "minifly_v172_native_e1_dev_v1_20261027/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
+  "minifly_v172_native_e1_dev_v1_20261027/v172_lib.py": "e474ab2cc282c7866a3677f5a044df1ecd789b485b1059d32c9bf1597a8c2278",
+  "minifly_v172_native_e1_dev_v1_20261027/v172_testbed.py": "f819b7e54dbac62a035789cbced570a4d883b7fb9233cbcc044bf27f18860a66"
+ }
+}
