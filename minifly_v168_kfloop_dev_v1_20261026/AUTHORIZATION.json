@@ -10,7 +10,8 @@
  "context_verbatim": [
   "Assign a separate agent to work on P1-B to speed things up.",
   "Okay, you can do these.",
-  "3 hours should be fine. No need for a lot of work as we are not testing scaling law etc."
+  "3 hours should be fine. No need for a lot of work as we are not testing scaling law etc.",
+  "Run V168 with 20,000 records"
  ],
  "options_shown": [
   {
@@ -46,11 +47,10 @@
  "push_note": "Pushed to claude/charming-clarke-u9g850 only, under the session's standing instruction.",
  "caps": {
   "max_cpu_h": 3,
-  "max_records": 5000,
+  "max_records": 20000,
   "max_cycles": 3
  },
  "defaults_applied": [
-  "max_records",
   "max_cycles",
   "official",
   "push",
@@ -74,6 +74,14 @@
    "channel": "Claude Code session chat (owner's own message), relayed to this agent by the main session",
    "effect": "max_cpu_h 3 (the owner's number); max_records 5,000 and max_cycles 3 stay at the defaults (no number written); stages unchanged; keep the experiment small",
    "relayed_instruction": "Keep the learner runs small and within 5,000 learner records in total; if C2 as designed needs more, use the smallest form that answers the question through a recorded design amendment made before any learner outcome; if C2 cannot fit in 5,000 records at all, stop after C1 and say what it would need."
+  },
+  {
+   "n": 3,
+   "verbatim": "Run V168 with 20,000 records",
+   "utc": "2026-10-27T00:30Z (approximate)",
+   "channel": "Claude Code session chat (owner's own message), relayed to this agent by the main session",
+   "effect": "max_records 20,000 (the owner's number); max_cpu_h 3 (grant 2); max_cycles 3 (default); run C2 as designed",
+   "note": "Grant 3 reopens C2 after the technical cycle (technical-004) was closed with decision 'stop' for the 5,000-record cap. The C2 design, budget selection rule, arms and pass rules are unchanged; with the cap at 20,000 the cap-aware selection of amendment 2 picks E1 (C2 19,200 records, total 19,384)."
   }
  ]
 }
