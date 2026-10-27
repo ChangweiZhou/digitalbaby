@@ -29,6 +29,8 @@ CACHE.mkdir(exist_ok=True)
 SCRATCH = {"technical": {"train": [990701, 1600], "calib": [990702, 200], "test": [990703, 1000]}}
 SMOKE = {"n_train": 12, "calib": 12, "test": 24, "max_epochs": 2}
 R = L.SET["rules"]
+A_CONFIGS = None
+OUT = "TESTBED.json"
 
 
 def seeds(smoke):
@@ -121,11 +123,13 @@ def main(smoke):
                    for p in ("T", "H")}
     out["T0-c"]["pass"] = all(out["T0-c"][p][f"q{h}_acc"] >= R["oracle_acc"] for p in ("T", "H") for h in (1, 2))
     jobs = []
-    for c in L.SET["a_order"]:
+    for c in (A_CONFIGS or L.SET["a_order"]):
         jobs += [(c, "A", "BPTT"), (c, "A-CUT", "BPTT")]
-    for c in L.SET["b_order"]:
-        jobs += [(c, "LOOP", "BPTT"), (c, "LOOP", "TBPTT-1")]
+    if not A_CONFIGS:                                   # amendment 1: LOOP fits are reused from testbed-001's cache
+        for c in L.SET["b_order"]:
+            jobs += [(c, "LOOP", "BPTT"), (c, "LOOP", "TBPTT-1")]
     run_fits(jobs, smoke)
+    out["fits_run_in_this_attempt"] = [list(j) for j in jobs]
     cfgs = {}
     for c in L.SET["b_order"]:
         row = {}
@@ -136,7 +140,12 @@ def main(smoke):
         row["T0-f"] = {"loop_gap": gl,
                        "pass": bool(lb["test_T"]["test"]["q2_bits"] <= R["ceiling_q2"] and lb["test_T"]["test"]["q1_bits"] <= R["ceiling_q1"]
                                     and gl["gain_bits"] >= R["floor_gap_bits"] and gl["z"] is not None and gl["z"] >= R["pass_sd"])}
-        if c in L.SET["a_order"]:
+        cfgs[c] = row
+    for c in L.SET["a_order"]:
+        row = cfgs.setdefault(c, {})
+        lt = load(L.SET["configs"][c]["loop_ref"], "LOOP", "TBPTT-1", smoke)
+        row["loop_ref"] = L.SET["configs"][c]["loop_ref"]
+        if True:
             ab, ac = load(c, "A", "BPTT", smoke), load(c, "A-CUT", "BPTT", smoke)
             row["A-BPTT"] = {"test_T": ab["test_T"]["test"], "test_H": ab["test_H"]["test"], "best_epoch": ab["training"]["best_epoch"]}
             row["A-CUT-BPTT"] = {"test_T": ac["test_T"]["test"], "test_H": ac["test_H"]["test"], "best_epoch": ac["training"]["best_epoch"]}
@@ -144,9 +153,8 @@ def main(smoke):
             row["T0-d"] = {"pass": bool(ab["test_T"]["test"]["q2_bits"] <= R["ceiling_q2"] and ab["test_T"]["test"]["q1_bits"] <= R["ceiling_q1"])}
             ok = all(g["gain_bits"] >= R["floor_gap_bits"] and g["z"] is not None and g["z"] >= R["pass_sd"] for g in (g_cut, g_loop))
             row["T0-e"] = {"cut_gap": g_cut, "loop_tbptt1_gap": g_loop, "pass": bool(ok)}
-        cfgs[c] = row
     out["configs"] = cfgs
-    pres = {c: L.SET["configs"][c]["n_train"] * L.SET["configs"][c]["max_epochs"] for c in L.SET["b_order"]}
+    pres = {c: L.SET["configs"][c]["n_train"] * L.SET["configs"][c]["max_epochs"] for c in L.SET["configs"]}
     ra = next((c for c in L.SET["a_order"] if cfgs[c]["T0-d"]["pass"] and cfgs[c]["T0-e"]["pass"]), None)
     rb = next((c for c in L.SET["b_order"] if cfgs[c]["T0-f"]["pass"]), None)
     rec_a = 3 * pres[ra] if ra else 0
@@ -159,7 +167,7 @@ def main(smoke):
                         "B": ("C2" if base and b_fits else ("NOT_RUN: needs " + (f"{2 * pres[rb]} C2 records at {rb} plus C1" if rb
                                                                                  else "a budget beyond E1 (no qualifying LOOP reference up to 9,600 presentations)")))}
     out["wall_s"] = round(time.time() - t0, 1)
-    dest = (CACHE / "smoke_TESTBED.json") if smoke else (HERE / "results" / "testbed" / "TESTBED.json")
+    dest = (CACHE / "smoke_TESTBED.json") if smoke else (HERE / "results" / "testbed" / OUT)
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_text(json.dumps(out, indent=1))
     if not smoke:
@@ -173,6 +181,10 @@ def main(smoke):
 if __name__ == "__main__":
     a = sys.argv[1:]
     smoke = "--smoke" in a
+    if "--configs" in a:                                 # amendment 1: run only these A configs
+        A_CONFIGS = a[a.index("--configs") + 1].split(",")
+    if "--out" in a:
+        OUT = a[a.index("--out") + 1]
     if "--fit" in a:
         i = a.index("--fit")
         fit(a[i + 1], a[i + 2], a[i + 3], smoke)
