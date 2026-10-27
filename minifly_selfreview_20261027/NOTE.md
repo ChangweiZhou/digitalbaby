@@ -98,3 +98,10 @@ Both lines now place one question ahead of refining the credit rule: how memory 
 1. The no-attention boundary for state-dependent reads of native memory.
 2. One objective for both lines: answer-site supervision or the next-byte meta-task.
 3. A shared numbering registry across the branches.
+
+## Addendum (27 October 2026): corrections after V171-R1
+`minifly_review_v171r1_20261027/NOTE.md` §2 corrects this note:
+* **§1.2.1 is withdrawn as stated.** Temporal credit exists in the recurrent block. The narrower claim retained is that the memory-feedback route is weak.
+* **§1.2.3's inference is withdrawn.** Per-prefix oracle gates reach 47/80 and 57/80. The parent's E1 failure stands.
+* **§1.2.4 is resolved negatively.** All-80 scoring shows no hidden benefit.
+* **The V170 order erratum is strengthened.** Two of the three held pairs are unidentifiable from training.
