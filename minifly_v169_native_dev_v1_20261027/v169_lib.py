@@ -54,6 +54,7 @@ def cont(net0, cls, A_train, B_train, B_calib, replay, max_epochs, patience):
     net = copy.deepcopy(net0)
     FH, FT = feedbacks(cls)
     p = V.SET["probe"]
+    torch.manual_seed(p["seed"])                      # dropout masks: seeded at the start, as V167's train() does
     opt = torch.optim.AdamW(net.parameters(), lr=p["lr"], weight_decay=p["wd"])
     g_order = torch.Generator().manual_seed(p["seed"])
     g_replay = torch.Generator().manual_seed(SET["persist"]["replay_seed"])

@@ -1,0 +1,55 @@
+{
+ "checks": [
+  {
+   "check": "a replay batch has equal B and A parts, with A indices inside A's taught text",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "continued learning leaves the starting network untouched",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "continued learning is deterministic (10 lines, one epoch)",
+   "pass": false,
+   "detail": null
+  },
+  {
+   "check": "B symbols unseen in A are scored as OTHER",
+   "pass": true,
+   "detail": {
+    "unseen_symbols": [
+     33,
+     34,
+     40,
+     41,
+     49,
+     57,
+     63,
+     66,
+     68,
+     70,
+     71,
+     78,
+     89,
+     106,
+     107,
+     122
+    ],
+    "records_replay_run": 20
+   }
+  },
+  {
+   "check": "cost per epoch measured (10-line runs)",
+   "pass": true,
+   "detail": {
+    "cont_cpu_s": 0.9,
+    "replay_cpu_s": 0.8,
+    "local_cpu_s": 3.8
+   }
+  }
+ ],
+ "learner_records": 50,
+ "cpu_s": 7.0
+}
