@@ -1,103 +1,94 @@
-V169 DESIGN (owner go-ahead; written and committed before any V169 code)
+V169 DESIGN, REVISION 2 (owner go-ahead; revised before any V169 code was written or run)
 
-# V169 design: a fully local learner against calibrated counting in low-data transfer, with replication and a persistence test (27 October 2026)
+# V169 design: a persistent local learner against counting under a matched protocol, with replication and retention (27 October 2026)
 
 **Owner's words:** "No need. 1) Push all the discussions above as a memo after streamlining to the repo in academic language. Be well organized. 2) Launch the two experiments using the skills." V169 is the memo's first experiment (`minifly_memo_credit_horizon_20261027/MEMO.md`, section 7). V170 runs in parallel, by a separate agent.
 
-**Caps:** the defaults, since no numbers were written: 2 CPU-h, 5,000 learner records, 3 test cycles. No official run, no adoption. V169 is sized to fit (§6).
+**Why revision 2:** revision 1 (commit 1ba07110) was premised on the memo's exploratory finding that learners beat counting in low-data transfer. That finding came from a script error, which added 1 bit to every counting number (memo erratum, commit f88fe8e1). Corrected, counting pre-trained on the first text beats every learner by about 0.4 bits.
+
+As the corrected memo notes, the comparison was not like for like: counting carries its whole predictor from A to B, while the learners refit only a readout on B. Revision 2 replaces revision 1's question Q2 with the matched comparison, and drops the native online readouts to keep within the record cap. No V169 code existed when this revision was made.
+
+**Caps:** the defaults: 2 CPU-h, 5,000 learner records, 3 test cycles. No official run, no adoption.
 
 ## 0. Questions
-* **Q1, replication.** Does the fully local learner of V167 (no back-propagation anywhere) replicate on a second, unused text pair, *Emma* → *The Ball and the Cross*?
-* **Q2, counting with native readouts.** With MiniFly-style readouts in place of the evaluator's fitted probes, does that learner beat the **strongest calibrated counting baseline** on the new author with 10 KB? The baseline is interpolated Kneser–Ney or tuned PPM, fitted on both texts.
-* **Q3, persistence.** When the same network continues learning on the second text, how much of the first does it retain, and does replay reduce the loss?
+* **Q1, replication.** Does V167's fully local learner (no back-propagation anywhere) replicate on a second, unused pair, *Emma* (A) → *The Ball and the Cross* (B)?
+* **Q2, matched comparison with counting.** A persistent learner learns A and then continues learning on B. Compare its held-out bits on B with the strongest calibrated counting model fitted on A and then B.
+* **Q3, retention.** After continuing on B, how much of A does the learner retain, with and without replay? Counting's retention is computed for comparison.
 
-## 1. Fixed components (reused unchanged)
-* **Texts, codes and references:** V167's rehearsal pair, with *The Ball and the Cross* cut at its Project Gutenberg end marker (V167 amendment 1). The KC codes are V167's cached export, SHA-checked. V167's C0 references on this pair are reused: RAND-H 3.552, TOP 3.374, BP-H 3.172 (3-seed carry-over probe).
-* **The learner (LOCAL):** V167's code unchanged (`v167_local.train`, mode `local`), on *Emma*. KC code → H (512) → T (2,048, dropout 0.5) → readout:
-  * direct feedback alignment for H and T;
-  * a delta-rule readout;
-  * AdamW, at most 3 epochs, patience 3 (V167's reduced form).
+## 1. Fixed components
+* **Texts, codes and references:** V167's rehearsal pair, with *The Ball and the Cross* cut at its Gutenberg end marker (V167 amendment 1). KC codes are V167's cached export, SHA-checked. V167's C0 references are reused for Q1: RAND-H 3.552, TOP 3.374, BP-H 3.172.
+* **The learner, LOCAL:** V167's code unchanged (`v167_local.train`, mode `local`).
+  * Network: KC code → H (512) → T (2,048, dropout 0.5) → readout.
+  * Learning: direct feedback alignment for H and T, a delta-rule readout, AdamW, batch 256, at most 3 epochs, patience 3.
+  * Its own top (T and readout) makes its predictions; classes are A's seen symbols plus OTHER over 257 symbols.
 
-## 2. Counting baselines (evaluator, no records)
-* **PPM-C:** V148's ladder implementation, with the order chosen from {2, 3, 4, 5}.
-* **Interpolated Kneser–Ney:**
-  * absolute discount D for each order, continuation counts for the lower orders, and a uniform base over the 257 symbols;
-  * contexts never cross a line boundary, as in the ladder;
-  * order chosen from {2, 3, 4, 5} and D from {0.5, 0.75, 0.9}.
-* **Two training sets each:** B's 10 KB only; A's 40 KB followed by B's 10 KB.
-* **Hyperparameters** are chosen on B's calibration lines. B's held-out lines are scored once.
-* **COUNT\*** is the best of the four (method × training set) on calibration. It is the yardstick for Q2.
-* **Computed for both text pairs.** *Thursday* → *Edgeworth* is reported, not gated, because the native readouts are run only on the second pair (§6).
+## 2. Arms (learners; records counted)
+* **LOCAL-A:** LOCAL trained on A, with the best epoch chosen on A's calibration bits.
+* **CONT:** LOCAL-A continues learning on B's taught text with the same rule, for at most 3 epochs. The epoch with the best B calibration bits is kept. A's classes are kept; B symbols unseen in A map to OTHER.
+* **CONT-REPLAY:** as CONT, but each batch of 256 B positions is accompanied by 256 A positions drawn from A's taught text (fixed seed).
+* **LOCAL-B:** LOCAL trained from scratch on B's taught text only, with the same rule and budget, using A's classes for comparability. This shows whether learning A helps the learner on B.
 
-## 3. Native readouts on B (learners; records counted)
-* **ONLINE:** V153's online delta rule with warm-up, reimplemented and checked equal to V153's code (C1). For each position: predict, then update by the delta rule; classes are B's seen symbols plus OTHER.
-  * η ∈ {0.01, 0.003} and passes ∈ {1, 2}, chosen on B's calibration.
-* **Applied to two inputs:**
-  * **NATIVE-TOP:** the frozen KC code, with no learned layer;
-  * **NATIVE-LOCAL:** LOCAL's frozen H.
-* **Fixed scaling:** H's features are scaled so that their mean squared norm on B's training text equals the KC code's. This keeps η comparable between the two inputs.
+## 3. Counting (evaluator; no records)
+* **Models:**
+  * PPM-C (V148's ladder, unchanged), order chosen from {2, 3, 4, 5};
+  * interpolated Kneser–Ney: absolute discount D, continuation counts at lower orders, uniform base over 257 symbols, contexts that never cross a line; order chosen from {2, 3, 4, 5} and D from {0.5, 0.75, 0.9}.
+* **Training sets:** A only; B only; A then B.
+* **Selection:** hyperparameters are chosen on B's calibration lines for the B readings, and on A's calibration lines for the A reading.
+* **COUNT\*** is the best model fitted on A then B, by B's calibration bits. It is the yardstick for Q2.
+* **Retention reading for counting:** A's held-out bits under the A-only model and under the A-then-B model.
 
-## 4. Persistence (Q3; learners; records counted)
-1. **Start:** LOCAL, trained on *Emma* (§1), at its best epoch.
-2. **Continue on B:** the same network keeps learning on B's taught text with the same rule (direct feedback for H and T, delta-rule readout) for 2 epochs. *Emma*'s classes are kept; B symbols not seen in *Emma* map to OTHER.
-   * **CONT:** B only.
-   * **CONT-REPLAY:** each batch of 256 B positions is accompanied by 256 positions drawn from *Emma*'s taught text (fixed seed).
-3. **Measures:** the network's own held-out bits on *Emma* and on B, before and after.
-   * **Forgetting:** F = Emma_after − Emma_before.
-   * **Learning:** L = B_before − B_after.
-   * Line-bootstrap SDs throughout.
-
-## 5. Cycles and rules
+## 4. Cycles and rules
 **C0 testbed** (evaluator; no learner code; no records):
-* V167's code file and references are SHA-matched.
-* The counting baselines on both pairs:
-  * the Kneser–Ney probabilities sum to 1 over the 257 symbols, within 1e-9, at 200 random contexts;
-  * the ladder's PPM-C reproduces the memo's exploratory numbers.
-* COUNT\* is selected on B's calibration for each pair.
-* **Floor:** COUNT\* on *The Ball and the Cross* is no better than V167's BP-H reference (3.172). Otherwise Q2 is CANNOT_TEST, because counting would already beat the learned ceiling.
+* V167's codes and references are SHA-matched.
+* Kneser–Ney probabilities sum to 1 over 257 symbols, within 1e-9, at 200 random contexts.
+* The ladder's PPM-C reproduces the corrected memo numbers (PPM-4, A then B: 2.9548 on this pair) within 1e-4.
+* The counting grid is run and COUNT\* selected.
 
 **C1 technical:**
-* the ONLINE reimplementation equals V153's `online_delta` exactly on random sparse data, and the dense version equals the sparse one on the same data;
-* H's scaling follows its formula;
-* a CONT-REPLAY batch is exactly half B positions and half *Emma* positions;
+* a CONT-REPLAY batch is exactly half B and half A positions, with A's positions drawn from A's taught text only;
+* continued learning starts from LOCAL-A's exact parameters and optimiser-free state (a fresh AdamW, as specified);
 * continued learning is deterministic (10 lines);
+* B symbols unseen in A are scored as OTHER;
 * cost per epoch is measured.
 
-**C2 dev (*Emma* → *The Ball and the Cross*):**
-* **P1, replication:** LOCAL's frozen H with the 3-seed back-propagated probe on B beats TOP (3.374) by ≥ 0.03 bits and ≥ 3 line-bootstrap SDs.
-* **P2, counting:** NATIVE-LOCAL beats COUNT\* on B's held-out lines by ≥ 0.03 bits and ≥ 3 SDs.
+**C2 dev:**
+* **P1, replication:** LOCAL-A's frozen H, with the 3-seed back-propagated probe fitted on B, beats TOP (3.374) by ≥ 0.03 bits and ≥ 3 line-bootstrap SDs.
+* **P2, matched comparison:** the persistent learner (CONT or CONT-REPLAY, whichever has the better B calibration bits) beats COUNT\* on B's held-out lines by ≥ 0.03 bits and ≥ 3 SDs.
 * **Reported, not gated:**
-  * NATIVE-TOP against COUNT\* (does the frozen KC code alone beat counting?);
-  * NATIVE-LOCAL against NATIVE-TOP;
-  * φ = (RAND-H − LOCAL) / (RAND-H − BP-H) for P1.
-* **Q3, descriptive with readings fixed in advance:** F and L for CONT and CONT-REPLAY. **Replay is effective** if F(CONT) − F(CONT-REPLAY) ≥ 0.05 bits and ≥ 3 SDs, with CONT-REPLAY's L at least half CONT's.
+  * the signed gap between the persistent learner and COUNT\*;
+  * LOCAL-B against CONT (does A help the learner?);
+  * COUNT\* against counting on B only (does A help counting?);
+  * φ for P1.
+* **Q3, readings fixed in advance:**
+  * forgetting F = A_after − A_before (the learner's own A held-out bits), for CONT and CONT-REPLAY;
+  * **replay is effective** if F(CONT) − F(CONT-REPLAY) ≥ 0.05 bits and ≥ 3 SDs, with CONT-REPLAY's B held-out bits no worse than CONT's by more than 0.05;
+  * counting's change in A held-out bits from adding B is reported beside them.
 
-## 6. Readings fixed in advance
-* **P1 and P2 pass:** a system with no back-propagation in any component, including its readout, beats calibrated counting on a new author with 10 KB, and the representation result replicates on a second pair. This is the memo's low-data claim in native form.
-* **P1 passes, P2 fails:** the learned layer replicates, but the native online readout loses what the evaluator probes had. Next: the readout. V153 found an online-learning cost of 0.15 bits.
-* **P2 passes only for NATIVE-TOP:** the frozen code's data efficiency, not the learned layer, beats counting.
-* **P1 fails:** V167's *Thursday* result does not replicate; report it as pair-specific.
+## 5. Readings fixed in advance
+* **P2 passes:** under a matched protocol, a persistent learner with no back-propagation anywhere beats calibrated counting on a new author. The memo's corrected section 4 attributed the gap to the protocol, not to the learner, and this would confirm it.
+* **P2 fails:** counting's advantage survives a matched protocol. The signed gap measures how far the learner's representation and memory fall short of exact n-gram statistics at 50 KB. That deficit then becomes the first-order problem on the representation side, ahead of native integration.
+* **P1 fails:** V167's *Thursday* result is pair-specific.
 * **Q3:**
-  * a large F that replay removes means the slow learner needs consolidation by replay, in line with the CLS round;
-  * a small F without replay means the layer is robust to continued learning at this scale.
+  * a large F removed by replay means the slow learner needs replay consolidation (as in the CLS round);
+  * a small F means the layer is robust to continued learning at this scale.
 
-## 7. Accounting and predictions
+## 6. Accounting and predictions
 **Learner records:**
 
 | Item | Records |
 |---|---:|
-| LOCAL on *Emma*, 3 × 657 lines | 1,971 |
-| ONLINE, 2 inputs × 2 η × 2 passes × 170 B lines | 1,360 |
-| CONT, 2 × 170 | 340 |
-| CONT-REPLAY, 2 × (170 B + 170 *Emma*-equivalent) | 680 |
+| LOCAL-A, 3 × 657 | 1,971 |
+| CONT, 3 × 170 | 510 |
+| CONT-REPLAY, 3 × (170 + 170 A-equivalent) | 1,020 |
+| LOCAL-B, 3 × 170 | 510 |
 | C1 | about 60 |
-| **Total** | **about 4,410** (within 5,000) |
+| **Total** | **about 4,070** (within 5,000) |
 
-**Estimated CPU:** about 0.4 h.
+**Estimated CPU:** about 0.3 h.
 
 **Predictions:**
 * P1 passes: 0.7;
-* COUNT\* is interpolated Kneser–Ney fitted on A then B: 0.6;
-* P2 passes: 0.5;
-* NATIVE-TOP beats COUNT\*: 0.55;
+* COUNT\* is Kneser–Ney: 0.6;
+* P2 passes: 0.15;
+* CONT beats LOCAL-B: 0.85;
 * replay is effective: 0.4.
