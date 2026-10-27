@@ -110,3 +110,29 @@ Two decisions rest with the owner, because they determine how A5/C1 and A6 are c
 ## References
 * Jaeger, H. (2002). Short term memory in echo state networks. GMD Report 152.
 * Repository: the V153, V155, V159 and V162–V170 reports; `minifly_memo_credit_horizon_20261027/MEMO.md`; `minifly_cls_dev_20261017/REPORT.md`; `addition_difficulty_diagnosis_dev_20261017/MEMO.md`; `PROJECT_DOCUMENTS/MINIFLY_MECHANISM_SYNTHESIS_20261026/` (Codex branch, commit fb6d9b5b).
+
+## 7. Addendum: owner decisions and consequent reclassification (27 October 2026)
+**Owner's words, verbatim:** "1) It does not need to be synapse local. A neuron can interact with some nearby neurons as in human brain and the connection can be dynamic. 2) The structure can be adaptable depending on the task."
+
+### 7.1 Interpretation
+1. **Locality.** Learning rules need not be synapse-local. They may use information exchanged among nearby neurons, as in local cortical circuits, and connections may change dynamically, including structural plasticity. Exact global back-propagation remains outside this admissible class; online, circuit-local computation of credit is within it.
+2. **Structure.** The architecture may differ between tasks and may adapt to them. **Unresolved:** whether that adaptation must be produced by the system itself, or whether a designer may also select generic structural components for a task. Earlier standing constraints excluded hard-coded task structure and components that must be redesigned when the task changes (`addition_difficulty_diagnosis_dev_20261017/MEMO.md`). Pending the owner's clarification, this note assumes the stricter reading: structure may adapt, by the system's own mechanisms or through generic components declared as scaffolding, but no task-specific solution is hand-built.
+
+### 7.2 Reclassification
+| Issue | Before | After the decisions | Consequence |
+|---|---|---|---|
+| A5 / C1: temporal credit through memory | Architectural if synapse-locality is required; otherwise technical | **Technical**, with an admissible circuit-level mechanism | The memory is written by a Hebbian outer product (M ← M + e_b k(a)ᵀ). A reciprocal pathway written by the same rule from the same pre- and postsynaptic activity holds exactly Mᵀ. Memory-conditioned error can therefore reach the query units without weight transport. What remains open is carrying that credit back about two steps, by short eligibility traces or exact short-window forward sensitivities. This is testable: synthesis E1/E2, followed by the circuit-level approximation. |
+| A6: sample inefficiency of learned composition | Architectural, with structural remedy of uncertain admissibility | **Architectural, structural remedy admissible** | Fixed or adaptive re-entry pathways (V170, strategy A) are permitted. The open question moves to how such structure is adapted to the task (A3). |
+| A3: learned control of memory | Architectural | **Architectural, addition admissible** | A state-dependent controller of writing, querying and hop count may be added as a local circuit with dynamic connections. |
+| A4: order as lag, not role | Architectural | **Architectural, addition admissible** | An explicit role-binding mechanism may be added. Whether it is needed still requires the role-binding test (C2). |
+| C3: value semantics | Not classifiable | Unchanged, but an admissible remedy exists | An adaptive ordinal or magnitude representation is permitted if prediction alone does not induce one. |
+| A1, A2 | Architectural | Unchanged; additions admissible | The memory–workspace loop and content-addressed storage during processing remain the required additions. |
+
+### 7.3 Implication for the next experiments
+The decisions turn the principal open problem, temporal credit through memory, from a question of admissibility into a question of mechanism. Proposed order:
+1. **The exact short-window reference** for V166's loop (synthesis E1/E2), to establish whether three-step forward sensitivities learn the loop at the target budget.
+2. **A circuit-level learner:** memory-conditioned error delivered through a Hebbian-symmetric reciprocal pathway, combined with short eligibility traces, compared against that reference and against a shuffled-feedback control.
+3. **A structural line:**
+   * adaptive re-entry with a learned controller for writes, queries and hop count;
+   * a corrected guard (V170);
+   * the role-binding test of C2.
