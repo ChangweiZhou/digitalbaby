@@ -1,0 +1,156 @@
+{
+ "design": "minifly_v170_reentry_design_20261027/DESIGN.md",
+ "settings": {
+  "v166_lib": "minifly_v166_memloop_dev_v1_20261026/v166_lib.py",
+  "markers": [
+   "STUDY",
+   "DISTRACT",
+   "INSTR",
+   "QUERY",
+   "ANS"
+  ],
+  "n_tokens": 6,
+  "heldout_pairs": [
+   [
+    0,
+    3
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    4,
+    5
+   ]
+  ],
+  "worlds": {
+   "technical": {
+    "train": [
+     1701,
+     1600
+    ],
+    "calib": [
+     1702,
+     200
+    ],
+    "test": [
+     1703,
+     1000
+    ]
+   },
+   "dev": {
+    "train": [
+     1711,
+     1600
+    ],
+    "calib": [
+     1712,
+     200
+    ],
+    "test": [
+     1713,
+     1000
+    ]
+   }
+  },
+  "configs": {
+   "G1": {
+    "n_train": 100,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003
+   },
+   "G2": {
+    "n_train": 250,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003
+   },
+   "G3": {
+    "n_train": 500,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003
+   },
+   "G4": {
+    "n_train": 800,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003
+   },
+   "E1": {
+    "n_train": 800,
+    "max_epochs": 12,
+    "batch": 4,
+    "lr_a": null,
+    "lr_loop": 0.003
+   }
+  },
+  "a_order": [
+   "G1",
+   "G2",
+   "G3",
+   "G4"
+  ],
+  "b_order": [
+   "G1",
+   "G2",
+   "G3",
+   "G4",
+   "E1"
+  ],
+  "train": {
+   "wd": 0.0001,
+   "clip": 5.0,
+   "patience": 10,
+   "order_seed": 13,
+   "init_seed": 0
+  },
+  "shuffle_seed": 17,
+  "b_rule": {
+   "lambda": 0.7165313105737893,
+   "feedback_seed": 41,
+   "shuf_seed": 43
+  },
+  "rules": {
+   "wiring_tol": 1e-12,
+   "oracle_acc": 0.99,
+   "ceiling_q2": 1.0,
+   "ceiling_q1": 0.5,
+   "floor_gap_bits": 1.0,
+   "pass_sd": 3,
+   "recover_share": 0.5,
+   "guard_q1_margin": 0.5,
+   "structure_bits": 4.0,
+   "exact_tol": 1e-10,
+   "distinct_share_of_expected": 0.95
+  },
+  "max_records": 5000,
+  "c1_records_cap": 200,
+  "boot": {
+   "reps": 1000,
+   "seed": 0
+  },
+  "parallel": 2
+ },
+ "python": "3.11.15",
+ "packages": {
+  "torch": "2.14.1+cu130"
+ },
+ "closure_sha256": {
+  "minifly_v170_reentry_design_20261027/DESIGN.md": "e482a60be58e7ef4e24418efb97812d2f3437e90df9b949f0e4fd0635124a23b",
+  "minifly_v170_reentry_dev_v1_20261027/launch.py": "9f63c0a76cd0a1dcc798f3ac951c2326454081654a8045dc514f11caefc587a5",
+  "minifly_v170_reentry_dev_v1_20261027/SETTINGS.json": "d8efca16398e8502bfe6de85a12d618652030cbfe976b62ab551ce81709f016b",
+  "minifly_v170_reentry_dev_v1_20261027/AUTHORIZATION.json": "fc7d2e3a45e7a0a933f7cef4d23b85fe39a2fe4a7a53e28c1ed0f6b88600873e",
+  "minifly_v166_memloop_dev_v1_20261026/v166_lib.py": "f355d8747a3245754ef182b3ffd04f238b2885afdb731a35ab93ff03d72368ad",
+  "minifly_v166_memloop_dev_v1_20261026/SETTINGS.json": "26f471714a5b5d51a99072c106a52743d2f24205e382ab3206b8c012d3d5ee18",
+  "minifly_v170_reentry_dev_v1_20261027/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
+  "minifly_v170_reentry_dev_v1_20261027/v170_lib.py": "91c1d060ad20f9f0b33a38139c9130b47594863d34312cf173bafbe3a6536856",
+  "minifly_v170_reentry_dev_v1_20261027/v170_testbed.py": "5ef4ff892cf4622202857a9da40a2811a8a2fe85858e842ff9350ed8a62a2c34"
+ }
+}
