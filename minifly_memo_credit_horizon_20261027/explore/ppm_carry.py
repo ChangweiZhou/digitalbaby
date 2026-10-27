@@ -1,3 +1,4 @@
+# Corrected 27 Oct 2026 (see MEMO erratum): the first version summed (bits, symbols) before dividing, adding 1 bit.
 # Exploratory (S0, evaluator-only, no learning records): counting baselines for the carry-over readings of V163-V167.
 # PPM-C (V148 ladder, unchanged) fitted on B's 10 KB alone, and on A's 40 KB followed by B's 10 KB; scored on B's held-out.
 import sys, time, json
@@ -22,7 +23,8 @@ for A, B, cut in (("thursday", "edgeworth", False), ("emma", "ball", True)):
     for k in (2, 3, 4, 5):
         for name, train in (("B_only", sb["train"]), ("A_then_B", sa["train"] + sb["train"])):
             m = ladder.PPMC(k).fit(train)
-            b = float(np.sum(ladder.bits(m, held))) / n
+            tot, _ = ladder.bits(m, held)          # ladder.bits returns (total bits, symbols)
+            b = tot / n
             out[f"{A}->{B}|ppmc{k}|{name}"] = round(b, 4)
             print(A, B, k, name, round(b, 4), flush=True)
 print(json.dumps(out, indent=1)); print("cpu_s", round(time.process_time() - t0, 1))

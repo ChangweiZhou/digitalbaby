@@ -1,5 +1,7 @@
 MEMO (discussion record; no experiment, no claim promotion). Owner-requested summary of the discussion after V163–V168.
 
+**ERRATUM (27 October 2026, same day):** section 4 originally reported counting baselines that were too high by exactly 1 bit/symbol. The exploratory script summed the pair (total bits, symbol count) returned by the ladder before dividing by the symbol count. With the error corrected, **counting pre-trained on the first text beats every learner in the low-data transfer regime, including the back-propagated layer, by about 0.4 bits**, and counting fitted on the new author's 10 KB alone ties the best learner. The original claim that the circuit's advantage lies in data efficiency is withdrawn. Sections 4 and 7 have been corrected. The erroneous output is kept as `explore/ppm_carry_output_ERRONEOUS_plus1bit.txt`.
+
 # Credit assignment, order and horizons in MiniFly: where the programme stands (27 October 2026)
 
 ## 1. Purpose and scope
@@ -48,13 +50,13 @@ When retrieved memory content re-enters the working state, a recurrent network t
 * **An unbiased approximation of real-time recurrent learning** (KF-RTRL; Mujika et al., 2018) is too noisy at this data budget. It recovers 3% of the gap (V168).
 * **COLA** (Wang et al., 2026) fails for a related reason. Its teaching signal is a rescaled immediate error, so it cannot assign credit to a step that produces no error of its own (V164).
 
-## 4. Evaluation frame: counting in the low-data transfer regime
-The programme assessed progress against counting on the training text at 40 KB, a regime in which no learner of this kind wins. The counting baselines for carry-over were specified in V155 but never computed. An exploratory computation, made outside any delivery (`explore/ppm_carry.py`, about 1.4 CPU-s), gives the following, all scored on the same held-out lines:
+## 4. Evaluation frame: counting in the low-data transfer regime (corrected)
+The programme assessed progress against counting on the training text at 40 KB. The counting baselines for carry-over were specified in V155 but never computed. An exploratory computation, made outside any delivery (`explore/ppm_carry.py`, corrected; about 1.4 CPU-s), gives the following, all scored on the same held-out lines:
 
 | Bits/symbol on B's held-out lines | *Thursday* → *Edgeworth* | *Emma* → *The Ball and the Cross* |
 |---|---:|---:|
-| PPM-4 fitted on B's 10 KB only | 4.07 | 4.17 |
-| PPM-4 fitted on A's 40 KB, then B's 10 KB | 3.68 | 3.95 |
+| PPM-4 fitted on B's 10 KB only | 3.07 | 3.17 |
+| **PPM-4 fitted on A's 40 KB, then B's 10 KB** | **2.68** | **2.95** |
 | Frozen KC code, linear readout fitted on B (V162) | 3.32 | – |
 | Frozen KC code, back-propagated readout fitted on B (V163, V167 C0) | 3.33 | 3.37 |
 | Layer learned with no back-propagation anywhere (V167) | 3.13 | not run |
@@ -62,12 +64,11 @@ The programme assessed progress against counting on the training text at 40 KB, 
 
 *The Ball and the Cross* is cut at its Project Gutenberg end marker (V167 amendment 1).
 
-**Interpretation:** in the low-data transfer regime, even the frozen KC code with a linear readout scores below counting pre-trained on the first text, by about 0.36 bits. The learned layer adds a further 0.2 bits. The circuit's advantage therefore appears to lie in data efficiency, which is the regime the programme set out to study.
+**Interpretation:** counting wins in this regime as well.
+* Counting pre-trained on the first text beats the best learner by about 0.4 bits.
+* Counting fitted on the new author's 10 KB alone ties it.
 
-**Caveats:**
-* PPM-C is a simple counting baseline; stronger estimators (Kneser–Ney, tuned PPM) may close part of the gap.
-* The readouts in these comparisons are fitted by the evaluator, not learned by MiniFly.
-* The learned-layer results use one learner seed and, for the local rule, one text pair.
+**The comparison is not like for like in one respect, which matters for the plan.** Counting carries its entire predictor from A to B: the exact n-gram statistics of English transfer across authors. The learners carry only a representation from A, and refit their readout on B's 10 KB alone. A learner that is trained on A and then **continues** learning on B, which is what a persistent learner does, is the like-for-like comparison. It has not yet been made. The headroom check found back-propagated learners within about 0.1 bits of counting when they see all the data (2.70 against 2.61 on the same text), so the gap under a matched protocol may be much smaller than 0.4 bits.
 
 ## 5. Representation of order
 ### 5.1 Current mechanism
@@ -136,11 +137,10 @@ A slow fade therefore trades resolution for reach. Exact long-range information 
 ## 7. Plan
 Two experiments, run in parallel under the research-loop skill, each with pre-registered criteria, matched controls and qualifying references.
 
-**V169: consolidate the spatial-credit result in the low-data transfer regime, and measure persistence.** On the second text pair (*Emma* → *The Ball and the Cross*):
+**V169: replicate the local learner and compare a persistent learner with counting under a matched protocol.** On the second text pair (*Emma* → *The Ball and the Cross*):
 * **Replication:** replicate the fully local learner of V167.
-* **Native readouts:** read it, and the frozen KC code, with MiniFly-style local readouts instead of evaluator fits.
-* **Stronger counting:** compare against interpolated Kneser–Ney and a tuned PPM, with hyperparameters chosen on calibration lines.
-* **Persistence:** after learning the first text, continue learning the second. Measure retention of the first with and without replay.
+* **Matched comparison:** train the local network on the first text, continue learning on the second, and compare its held-out bits on both texts with counting fitted on the first text and then the second. Counting baselines are interpolated Kneser–Ney and a tuned PPM, with hyperparameters chosen on calibration lines.
+* **Persistence:** measure retention of the first text with and without replay.
 
 **V170: temporal credit for the memory loop, with order generalisation tested explicitly.** Two strategies, in this order:
 1. **Architectural.** The retrieved item is re-encoded through the same fixed expansion that encodes input and serves as the next query, so that only one-step decisions (whether to re-query, how to read out) remain to be learned.
