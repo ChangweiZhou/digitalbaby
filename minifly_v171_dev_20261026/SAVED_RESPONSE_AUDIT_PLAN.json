@@ -1,0 +1,19 @@
+{
+  "type": "bounded supplementary saved-response analysis",
+  "prospective_relative_to_inspection": "Written during calibration without inspecting its score panels or final results; motivated by the declared positive expression-gate box",
+  "purpose": "Separate an instantaneous native-read actuation restriction from a failure of short-path learning",
+  "inputs": "NATIVE last NEW-pass16 pre-update target tapes from each calibration world; existing expected targets only",
+  "max_sites": 128,
+  "method": "For every rival compute the maximum target-minus-rival logit gap over independent gates in [0.5,1.5]. A negative upper bound proves the target cannot beat that rival at this fixed saved native read.",
+  "formula": "a=center(C[y]-C[r])*v/4; max_gap=sum(a)+0.5*sum(abs(a))",
+  "numerical_tolerance": "1e-12*max(1,L1(v))",
+  "not_proved_by_no_negative_bound": "Joint feasibility, controller reachability, future native-state feasibility or own-sequence success",
+  "other_summaries": "Actual native-value norm, actual gate departures from 1 and direct/local teaching-signal magnitudes",
+  "additional_training_records": 0,
+  "additional_model_queries": 0,
+  "assessment_labels_opened": false,
+  "target_reuses_charged": true,
+  "CPU_within_original_cap": true,
+  "qualification_gate_changed": false,
+  "native_sources_or_scientific_runner_changed": false
+}

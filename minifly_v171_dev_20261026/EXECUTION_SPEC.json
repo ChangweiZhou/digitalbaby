@@ -1,0 +1,271 @@
+{
+  "version": "V171",
+  "date": "2026-10-26",
+  "status": "DESIGN_ONLY",
+  "goal": "retained complete own-byte/EOS unseen-addition generalization per all samples and actual compute",
+  "implemented": false,
+  "execution_authorized": true,
+  "GitHub_push_authorized": false,
+  "model_runs": 0,
+  "new_observed_records": 0,
+  "constraints": {
+    "gradual_warmup": true,
+    "candidate_local_rules_only": true,
+    "attention": false,
+    "Transformers": false,
+    "ELM": false,
+    "arithmetic_specific_structure": false,
+    "independent_answer_head": false,
+    "expected_output_training_feedback": true,
+    "scalar_only_learning_claim": false,
+    "own_payload_bytes": 256,
+    "EOS": 256,
+    "output_classes": 257,
+    "input_byte_cap": 64,
+    "own_decision_cap": 4
+  },
+  "native": {
+    "commit": "ec38e8be63e0a448d387e4698fd619c7368ddf12",
+    "class": "native154.Native(N_2B,P_SLOW)",
+    "compartments": 16,
+    "homeostasis": false,
+    "fresh_adaptation": true,
+    "q_bias": 0,
+    "writer": "unchanged ungated native N_2B error",
+    "output_change": "bounded multiplicative gates on native C16 expression",
+    "cue_learning_added": false,
+    "V166_key_value_retrieval_adopted": false
+  },
+  "controller": {
+    "H": 64,
+    "byte_embedding": [
+      64,
+      256
+    ],
+    "recurrent_fanin": 4,
+    "gate_fanin": 8,
+    "native_channels": 16,
+    "trainable_parameters_ON": 17872,
+    "trainable_parameters_OFF64": 16848,
+    "trainable_parameters_CAP_OFF69": 18153,
+    "initial_ranges": {
+      "U": 0.0625,
+      "W": 0.015625,
+      "R": 0.0078125,
+      "G": 0.03125
+    },
+    "bias_initial": 0,
+    "leak": 0.75,
+    "innovation": 0.25,
+    "gate_amplitude": 0.5,
+    "feedback_native_normalization": "tanh(center(v)/4)",
+    "output": "C @ center(g * v)/4",
+    "h_to_logits_additive": false,
+    "feedback_rule": "fixed independent signed reverse-topology feedback; two delayed rounds; memory-conditioned gate derivative",
+    "short_window_transitions": 3,
+    "feedback_weight_scale": "recipient incoming feedback degree^(-1/2)",
+    "record_end_eta": 0.0009765625,
+    "per_synapse_update_clip": 1,
+    "parameter_caps": {
+      "U": 1,
+      "W": 0.125,
+      "R": 0.03125,
+      "G": 0.125,
+      "b": 0.25,
+      "c": 0.25
+    },
+    "candidate_Adam": false,
+    "candidate_global_norm_clip": false,
+    "parameter_updates": "fixed weights inside record, local accumulation, apply once at EOS",
+    "trace_scope": "current plus two preceding payload transitions, cleared at record boundary"
+  },
+  "warmup": {
+    "native": "1/16+(15/16)*min(n/1024,1)",
+    "controller": "1/16+(15/16)*min(n/2048,1)",
+    "n": "all arriving reply bytes and EOS, including inhibited prior histories",
+    "later_blurry_or_scalar_stage": false
+  },
+  "comparisons": {
+    "main_roles": [
+      "NATIVE",
+      "ON3",
+      "ON1",
+      "MIS3",
+      "OFF3",
+      "CAP-OFF3"
+    ],
+    "priors": [
+      "W",
+      "SH_OLD"
+    ],
+    "SH_OLD": "OLD native writes and controller updates inhibited; NEW updates active; observations/clocks/warmup matched",
+    "credit_controls": [
+      "ON1 immediate",
+      "MIS3 swapped delayed presynaptic age tags"
+    ],
+    "calibration_instruments": [
+      "NATIVE",
+      "EXACT3",
+      "EXACT_RECORD"
+    ],
+    "instruments_eligible_candidates": false,
+    "native_sharing": "identical teacher-forced base native trajectories only; independent mutable controllers and distinct own continuations"
+  },
+  "data": {
+    "generator": "V154 dataset(world), unchanged V154 RNG convention",
+    "main_worlds": [
+      202610269701,
+      202610269702
+    ],
+    "calibration_worlds": [
+      202610269711,
+      202610269712
+    ],
+    "technical_seed": 202610269790,
+    "freshness_verified": false,
+    "operand_domain": [
+      0,
+      19
+    ],
+    "OLD_distinct": 64,
+    "selected_NEW_distinct": 16,
+    "NEW_selection": "SHA256(V169|world|NEW|id), ascending digest then id",
+    "assessment_orbits": 50,
+    "excluded_NEW": 48,
+    "excluded_validation": 32,
+    "commutative_orbits_disjoint": true,
+    "OLD_passes": 16,
+    "OLD_order": "parent eight permutations twice",
+    "NEW_passes": 16,
+    "NEW_order": "selected-ID order, interleaved",
+    "OLD_presentations": 1024,
+    "NEW_presentations": 256,
+    "per_logical_history": 1280,
+    "OLD_panels_passes": [
+      8,
+      16
+    ],
+    "NEW_panels_records": [
+      32,
+      64,
+      128,
+      256
+    ],
+    "final_idle_native_steps": 128,
+    "held_after_global_taught_lock": true,
+    "held_scored_even_if_main_acquisition_poor": true,
+    "calibration_assessment_opened": false
+  },
+  "counts": {
+    "main_logical_histories": 24,
+    "calibration_logical_histories": 6,
+    "physical_shared_native_histories": 6,
+    "main_logical_records": 30720,
+    "calibration_logical_records": 7680,
+    "technical_records": 32,
+    "all_logical_records": 38432,
+    "max_arriving_reply_EOS_targets": 115296,
+    "physical_shared_native_records_before_technical": 7680,
+    "paired_taught_records_per_history": 368,
+    "paired_taught_records_with_technical": 11104,
+    "base_held_own_queries": 2400,
+    "held_intervention_queries": 800,
+    "taught_intervention_own_queries": 2880,
+    "held_unique_main_orbits": 100,
+    "synthetic_loss_evaluations": 512,
+    "synthetic_loss_target_reuses_max": 1536,
+    "countermodels": 11,
+    "countermodel_fitting_target_reuses_max": 1268256
+  },
+  "held_interventions": {
+    "roles": [
+      "ON3"
+    ],
+    "priors": [
+      "W",
+      "SH_OLD"
+    ],
+    "endpoints": [
+      "final",
+      "post_idle"
+    ],
+    "conditions": [
+      "feedback_cut",
+      "constant_native_carrier"
+    ],
+    "decisions_committed_before_scoring": true
+  },
+  "taught_interventions": {
+    "roles": [
+      "ON3"
+    ],
+    "priors": [
+      "W",
+      "SH_OLD"
+    ],
+    "endpoints": [
+      "OLD_pass16",
+      "final_NEW",
+      "post_idle"
+    ],
+    "conditions": [
+      "feedback_cut",
+      "constant_native_carrier",
+      "native_zero"
+    ]
+  },
+  "countermodels": [
+    "raw_key",
+    "canonical_orbit_key",
+    "favorite_answer",
+    "position_frequency",
+    "prompt_length",
+    "suffix0",
+    "suffix1",
+    "suffix2",
+    "suffix3",
+    "suffix4",
+    "character_bag_ridge"
+  ],
+  "evidence": {
+    "E0": "signal/interface/numerical qualification",
+    "E1": "complete taught own output and retention",
+    "E2": "not tested",
+    "E3": "complete held relation with matched prior teaching, shortcuts and causal controls",
+    "formal_confirmation": false,
+    "automatic_adoption": false,
+    "retained_superiority": "no greater OLD loss on shared initially correct set in either world",
+    "efficiency_claim": "requires actual samples/CPU frontier, not equal sample accuracy alone"
+  },
+  "cycles": {
+    "1": "whole-record implementation and technical audit",
+    "2": "fixed reference qualification on two calibration worlds; stop if exact-three/full do not beat native complete NEW and retention gate",
+    "3": "six local/native roles on two main worlds; global taught lock then held",
+    "automatic_retries": false,
+    "automatic_search": false,
+    "automatic_extension": false
+  },
+  "resources": {
+    "CPU_seconds": 14400,
+    "wall_seconds": 21600,
+    "workers": 1,
+    "numerical_threads": 1,
+    "RSS_bytes": 1073741824,
+    "output_bytes": 1073741824,
+    "native_vector_read_cap": 400000,
+    "categorical_distribution_cap": 280000,
+    "charged_preflight_required": true,
+    "stage_CPU_reallocation_after_outcomes": false
+  },
+  "local_only_artifacts": [
+    "raw_data",
+    "checkpoints",
+    "per_prefix_arrays",
+    "per_target_responses"
+  ],
+  "frozen_history_edited": false,
+  "current_arithmetic_pointer_replaced": false,
+  "new_core_adopted": false,
+  "origin_design": "V169",
+  "version_change_only": true
+}
