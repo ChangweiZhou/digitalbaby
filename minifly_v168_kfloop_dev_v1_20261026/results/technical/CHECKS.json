@@ -1,0 +1,120 @@
+{
+ "stage": "technical",
+ "selected_config": "E1",
+ "config": {
+  "n_train": 800,
+  "max_epochs": 12,
+  "batch": 4,
+  "lr": 0.003
+ },
+ "checks": {
+  "1_tbptt1_identity": {
+   "rel_diff": 1.2958009575459903e-16,
+   "per_parameter": {
+    "Wx": 1.5194799733405682e-16,
+    "Wh": 1.6260527292638665e-16,
+    "bh": 1.2284641040655487e-16,
+    "Wr": 1.500256445966795e-16,
+    "Wq": 1.1430745740687716e-16,
+    "bq": 1.1675216449801618e-16,
+    "Wo": 9.774547648500631e-17,
+    "Wor": 9.956849928664606e-17,
+    "bo": 1.170987342983265e-16
+   },
+   "pass": true
+  },
+  "2_exact_rtrl_identity": {
+   "rel_diff": 9.539976665263628e-16,
+   "per_parameter": {
+    "Wx": 9.391799184039118e-16,
+    "Wh": 1.1276800948997734e-15,
+    "bh": 1.0497946888121537e-15,
+    "Wr": 9.5206287365417e-16,
+    "Wq": 8.815946348446028e-16,
+    "bq": 7.549454600711856e-16,
+    "Wo": 9.774547648500631e-17,
+    "Wor": 9.956849928664606e-17,
+    "bo": 1.170987342983265e-16
+   },
+   "bptt_minus_tb1_share_of_norm": 0.8821587779966972,
+   "pass": true
+  },
+  "3_unbiased_enumeration": {
+   "line": 1,
+   "first_write_step": 1,
+   "prefix_steps": 6,
+   "recurrent": {
+    "sequences": 32,
+    "rel_diff_of_mean": 4.315260735999524e-16,
+    "rel_diff_single_draw": 3.136889674303272,
+    "J_norm": 43.33146998656476
+   },
+   "query": {
+    "sequences": 32,
+    "rel_diff_of_mean": 3.7096833432384917e-16,
+    "rel_diff_single_draw": 1.869830685556437,
+    "J_norm": 1.8066625145189181
+   },
+   "pass": true
+  },
+  "4_shuf": {
+   "derangements_2000_draws": true,
+   "perm": [
+    3,
+    2,
+    1,
+    0
+   ],
+   "tb1_part_identical": true,
+   "carried_part_differs": true,
+   "identity_perm_reproduces_kf": true,
+   "pass": true
+  },
+  "5_diagonal_traces_eprop": {
+   "query_update_rel_diff_vs_tbptt1": 1.5156183962854352e-16,
+   "pass": true,
+   "non_gating": {
+    "cos_eprop_tbptt1": 0.9923024117733309,
+    "cos_eprop_bptt": 0.39254501213860804,
+    "cos_tbptt1_bptt": 0.38888392876446065,
+    "recurrent_group_projection_share_of_bptt_carried": 0.0031260574849811475,
+    "recurrent_group_norm_ratio_eprop_extra_to_bptt_carried": 0.052830534388247155
+   }
+  },
+  "6_determinism": {
+   "identical_parameters": true,
+   "calib_bits": [
+    5.117560619592982,
+    5.117560619592982
+   ],
+   "pass": true
+  },
+  "7_learns": {
+   "train_bits_before": 5.1104976126480715,
+   "train_bits_after": 4.8786185409745855,
+   "updates": 8,
+   "pass": true
+  }
+ },
+ "all_pass": true,
+ "alignment_at_init_non_gating": {
+  "cos_single_draw_bptt": [
+   0.30942976725229293,
+   0.2254013045042117,
+   0.4352187860369399,
+   0.3240523705146363
+  ],
+  "cos_mean_of_draws_bptt": 0.5889342115295539,
+  "cos_tbptt1_bptt": 0.38888392876446065,
+  "cos_carried_single_draw_vs_bptt_carried": [
+   0.2519223298357193,
+   0.1962363340250945,
+   0.42622874844283504,
+   0.2856691299776604
+  ],
+  "cos_carried_mean_vs_bptt_carried": 0.5449055480378416,
+  "lines": 8
+ },
+ "learner_records": 184,
+ "cpu_s": 8.9
+}
