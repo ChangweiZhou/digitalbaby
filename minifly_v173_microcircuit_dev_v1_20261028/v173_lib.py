@@ -42,7 +42,7 @@ S = SET["schedule"]
 
 
 class MC(torch.nn.Module):
-    def __init__(self, gated=True, dtype=torch.float32):
+    def __init__(self, gated=True, dtype=torch.float32, gate_init="zero"):
         super().__init__()
         nc, n, nin = M["circuits"], M["neurons"], M["inputs"]
         D = nin + n + 1
@@ -55,7 +55,15 @@ class MC(torch.nn.Module):
             return w.to(dtype)
         self.gated = gated
         self.Wq = torch.nn.Parameter(rows())
-        self.Wg = torch.nn.Parameter(rows()) if gated else None
+        wg = rows()
+        # gate-bias initialisation: 'zero' (sigma = 0.5) or 'spread' (amendment 2): initial retention times T_c spread
+        # log-uniformly over circuits, gate = 1/T_c, bias = -log(T_c - 1); LEAK uses the same per-circuit gate, fixed
+        lo, hi = SET.get("amendment_2", {}).get("spread_timescales", [2, 64])
+        Tc = lo * (hi / lo) ** (torch.arange(nc, dtype=torch.float64) / (nc - 1))
+        bias = -torch.log(Tc - 1) if gate_init == "spread" else torch.zeros(nc, dtype=torch.float64)
+        wg[:, :, -1] = bias[:, None].to(dtype)
+        self.Wg = torch.nn.Parameter(wg) if gated else None
+        self.leak = torch.sigmoid(bias).to(dtype)[None, :, None] if gate_init == "spread" else None
         torch.manual_seed(M["init_seed"])
         self.out = torch.nn.Linear(nc * n, M["classes"]).to(dtype)
         self.nc, self.n, self.nin, self.D = nc, n, nin, D
@@ -69,7 +77,10 @@ class MC(torch.nn.Module):
         B = x.shape[0]
         v = torch.cat([x[:, None, :].expand(B, self.nc, self.nin), s, torch.ones(B, self.nc, 1, dtype=s.dtype)], -1)
         q = torch.tanh(torch.einsum("cid,bcd->bci", self.Wq, v))
-        g = torch.sigmoid(torch.einsum("cid,bcd->bci", self.Wg, v)) if self.gated else torch.full_like(q, M["leak_gate"])
+        if self.gated:
+            g = torch.sigmoid(torch.einsum("cid,bcd->bci", self.Wg, v))
+        else:
+            g = self.leak.expand_as(q) if self.leak is not None else torch.full_like(q, M["leak_gate"])
         return (1 - g) * s + g * q, v, q, g
 
     def run(self, idx, truncate=False):
@@ -143,12 +154,12 @@ def autograd_grad(model, idx, valid, ctr, truncate):
     F.cross_entropy(logits[valid], ctr[valid]).backward()
 
 
-def train(split_tr, split_ca, rule, epochs, gated=True):
+def train(split_tr, split_ca, rule, epochs, gated=True, lr=None, gate_init="zero"):
     """V164's schedule. rule: 'rtrl' | 'diag' (forward sensitivities) | 'bptt' | 't1' (autograd references)."""
     t0 = time.process_time()
     sc = L4.Synth()
-    model = MC(gated=gated)
-    opt = torch.optim.AdamW(model.parameters(), lr=S["lr"], weight_decay=S["wd"])
+    model = MC(gated=gated, gate_init=gate_init)
+    opt = torch.optim.AdamW(model.parameters(), lr=S["lr"] if lr is None else lr, weight_decay=S["wd"])
     gen = torch.Generator().manual_seed(S["order_seed"])
     curve, best, since, ep_run = [], (np.inf, 0, None), 0, 0
     for ep in range(1, epochs + 1):
@@ -175,7 +186,7 @@ def train(split_tr, split_ca, rule, epochs, gated=True):
             if since >= S["patience"]:
                 break
     model.load_state_dict(best[2])
-    info = {"rule": rule, "gated": gated, "best_epoch": best[1], "epochs_run": ep_run, "calib_bpb": best[0],
+    info = {"rule": rule, "gated": gated, "lr": S["lr"] if lr is None else lr, "gate_init": gate_init, "best_epoch": best[1], "epochs_run": ep_run, "calib_bpb": best[0],
             "calib_curve": curve, "cut_off_by_budget": best[1] == epochs and ep_run == epochs,
             "cpu_s": round(time.process_time() - t0, 1), "records": ep_run * len(split_tr["n"])}
     return model, info

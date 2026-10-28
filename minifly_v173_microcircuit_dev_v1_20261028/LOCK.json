@@ -31,7 +31,35 @@
    "sd": 3,
    "ablation_bits": 0.3
   },
-  "threads": 1
+  "threads": 1,
+  "amendment_2": {
+   "grid": [
+    {
+     "name": "G-lr",
+     "lr": 0.003,
+     "gate_init": "zero"
+    },
+    {
+     "name": "G-spread",
+     "lr": 0.001,
+     "gate_init": "spread"
+    },
+    {
+     "name": "G-spread-lr",
+     "lr": 0.003,
+     "gate_init": "spread"
+    }
+   ],
+   "epochs": [
+    10,
+    20
+   ],
+   "spread_timescales": [
+    2,
+    64
+   ],
+   "selection": "first qualifying config at 10 epochs in grid order, else at 20 epochs in grid order; C2 at 10 epochs runs MC-RTRL, MC-DIAG, MC-LEAK; at 20 epochs MC-RTRL and MC-DIAG only; none qualifies: CANNOT_TEST, stop"
+  }
  },
  "python": "3.11.15",
  "packages": {
@@ -45,9 +73,10 @@
   "minifly_v163_sslcola_dev_v1_20261026/v163_lib.py": "7fba45bcb75dfeaebc1790aa685bf193cf815fcbdead2b0e550a731830e8629c",
   "minifly_v163_sslcola_dev_v1_20261026/SETTINGS.json": "9fbdefa4492f4707d8488eb19a04cf9dca7f2de0f99b921b0e1efdb902a81120",
   "minifly_v173_microcircuit_dev_v1_20261028/launch.py": "46f93358e9e6f9262133d7289e0fe88425583a798401c91ce0579ad7da47735b",
-  "minifly_v173_microcircuit_dev_v1_20261028/SETTINGS.json": "16e685e5f8da136c90a737c6afb98cf37335412da23a12c0ac45ccefdad48fe0",
+  "minifly_v173_microcircuit_dev_v1_20261028/SETTINGS.json": "355322e2a76b75ee9af6b20ae4e91268c65e74808ca9821a38058f6f98b35ba9",
   "minifly_v173_microcircuit_dev_v1_20261028/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
-  "minifly_v173_microcircuit_dev_v1_20261028/v173_lib.py": "691e2181d4aa7450268a2ab5b281e0bdfe93a2ec459b02eb54fd18f66fa4c455",
-  "minifly_v173_microcircuit_dev_v1_20261028/v173_testbed.py": "cdcf85e163efe7cc8ea1f4653cfd09081e403aa45a813cbce509e9dd25e17ec4"
+  "minifly_v173_microcircuit_dev_v1_20261028/v173_lib.py": "30711a39e2678f8475729b0e5975f3d55fc3c2a0aa1331f17e8658e37b4aee36",
+  "minifly_v173_microcircuit_dev_v1_20261028/v173_testbed.py": "cdcf85e163efe7cc8ea1f4653cfd09081e403aa45a813cbce509e9dd25e17ec4",
+  "minifly_v173_microcircuit_dev_v1_20261028/v173_testbed2.py": "e6011d036c6b40874378f7b8a3ef0df188be3f5c22b47dda01df6dfa93f2bea6"
  }
 }
