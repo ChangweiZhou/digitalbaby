@@ -10,6 +10,8 @@ import os
 import sys
 from pathlib import Path
 
+import numpy as np
+
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import v173_lib as L  # noqa: E402
@@ -28,7 +30,7 @@ def main():
         res[name] = {"training": info, **L.test(model, te, refs["tbptt1"]["line_sums"])}
         print(name, round(res[name]["test_bpb"], 4), info["best_epoch"], info["epochs_run"], info["calib_curve"], flush=True)
     b, f = res["MC-BPTT"], res["MC-T1"]
-    sd = L.L4.boot_sd(f["line_sums"], b["line_sums"], b["counts"])
+    sd = L.L4.boot_sd(np.asarray(f["line_sums"]), np.asarray(b["line_sums"]), np.asarray(b["counts"]))
     gap = f["test_bpb"] - b["test_bpb"]
     ceiling10 = b["test_bpb"] <= Mid
     ceiling20 = res["MC-BPTT-20"]["test_bpb"] <= Mid
