@@ -41,14 +41,20 @@ def main():
     records += 6
     checks["1_h0_equals_v172_delta"] = {"pass": bool(np.array_equal(a.values(), b.values()))}
 
-    w, i = a.clone(), a.clone()
-    before = L.values_digest(i)
-    w.train(d["OLD"][3]["prompt"], d["OLD"][3]["answer"], write=True)
-    i.train(d["OLD"][3]["prompt"], d["OLD"][3]["answer"], write=False)
-    records += 2
-    checks["2_inhibited_slot"] = {"pass": bool(L.values_digest(i) == before and L.values_digest(w) != before
-                                               and i.time == w.time and i.n == w.n),
-                                  "time": [i.time, w.time], "n": [i.n, w.n]}
+    # amendment 2: native fast/slow stores decay passively in every event (exp(-dt/tau)), so the reference for a
+    # write-inhibited record is the same record run as ordinary non-teaching events on an identical clone
+    w, i, o = a.clone(), a.clone(), a.clone()
+    r4 = d["OLD"][3]
+    w.train(r4["prompt"], r4["answer"], write=True)
+    i.train(r4["prompt"], r4["answer"], write=False)
+    o._prompt(r4["prompt"])
+    for y in (*r4["answer"], L.EOS):
+        o.values()
+        o._event(y)
+    records += 3
+    checks["2_inhibited_slot"] = {"pass": bool(L.values_digest(i) == L.values_digest(o) and L.values_digest(w) != L.values_digest(i)
+                                               and i.time == w.time == o.time and i.n == w.n),
+                                  "time": [i.time, w.time, o.time], "n": [i.n, w.n]}
 
     hist = list(three)
     mb, db = L.fork(a, hist, d, world, replay=False, passes=1)
