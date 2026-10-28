@@ -92,6 +92,11 @@ def old_phase(world, homeo, d):
     return m, hist
 
 
+def slot_index(g, n):
+    """The slot draw: uniform over the n earlier presentations; depends only on the generator and n."""
+    return int(g.integers(0, n))
+
+
 def fork(m0, hist0, d, world, replay, passes=None):
     """NEW phase from the OLD checkpoint: each NEW record is followed by one slot record drawn uniformly (fixed seed)
     from all earlier presentations; REPLAY writes it, BLOCKED observes it write-inhibited."""
@@ -102,11 +107,11 @@ def fork(m0, hist0, d, world, replay, passes=None):
             r = d["NEW"][i]
             m.train(r["prompt"], r["answer"])
             hist.append(r)
-            k = int(g.integers(0, len(hist)))
+            k = slot_index(g, len(hist))
             s = hist[k]
             m.train(s["prompt"], s["answer"], write=replay)
             hist.append(s)
-            draws.append(s["id"])
+            draws.append((k, s["id"]))
     return m, draws
 
 

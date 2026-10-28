@@ -61,7 +61,8 @@ def main():
     bank = L.make(False)
     res = {w: screen(L.SET["worlds"][w], bank) for w in ("W1", "W2")}
     src = inspect.getsource(L.fork)
-    label_free = all(k not in src for k in ('"OLD"', "'OLD'", "is_old", "phase")) and "rng(world, \"slot\")" in src
+    label_free = (list(inspect.signature(L.slot_index).parameters) == ["g", "n"]
+                  and "slot_index(g, len(hist))" in src and 'rng(world, "slot")' in src)
     out = {"stage": STAGE, "learner_records": 0, "results": res, "slot_draw_label_free": label_free,
            "decision": "continue" if label_free and all(r["ceiling_pass"] and r["floor_fails"] for r in res.values())
            else "CANNOT_TEST_CLAIM_AS_SPECIFIED", "cpu_s": round(time.process_time() - t0, 1)}

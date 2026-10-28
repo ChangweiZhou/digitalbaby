@@ -54,7 +54,9 @@ def main():
     mb, db = L.fork(a, hist, d, world, replay=False, passes=1)
     mr, dr = L.fork(a, hist, d, world, replay=True, passes=1)
     records += 2 * 32
-    checks["3_identical_slot_draws"] = {"pass": db == dr, "draws": len(db),
+    g = L.rng(world, "slot")
+    content_free = [L.slot_index(g, len(hist) + 2 * j + 1) for j in range(len(db))]
+    checks["3_identical_slot_draws"] = {"pass": db == dr and [k for k, _ in db] == content_free, "draws": len(db),
                                         "differs_after_replay_writes": L.values_digest(mb) != L.values_digest(mr)}
 
     dg = L.L2.digest(a)
