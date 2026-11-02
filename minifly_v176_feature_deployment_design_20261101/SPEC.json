@@ -1,0 +1,265 @@
+{
+  "identity": "V176-NATIVE-FEATURE-BRIDGE-V1",
+  "global_version": 176,
+  "date": "2026-11-01",
+  "status": "DESIGN_ONLY",
+  "execution_authorized": false,
+  "implementation_present": false,
+  "model_queries": 0,
+  "trained_records": 0,
+  "core_adopted": false,
+  "primary_question": "Can locally learned predictive features improve fresh native own-byte/EOS deployment on a different text versus matched frozen features?",
+  "scope": {
+    "staged_component_integration": true,
+    "end_to_end_persistent_core_claim": false,
+    "E3_reasoning_claim": false,
+    "evidence": [
+      "E0",
+      "E1",
+      "bounded predictive-feature reuse",
+      "rest-only E1-R"
+    ]
+  },
+  "source_refs": {
+    "design_base": "783a5ea066049f66ee0a25d9daed332fb7ca22bd",
+    "native": "52e73caae1259ecd4aa7c95e7ad4cd02d1a9881c",
+    "local_features": "f4146856c3241d94f7fa948e0b7d30fa0b869bc1"
+  },
+  "constraints": {
+    "gradual_applied_step_warmup": true,
+    "local_candidate_rules": true,
+    "attention": false,
+    "Transformer": false,
+    "ELM_candidate": false,
+    "arithmetic_features": false,
+    "task_specific_model_structure": false,
+    "independent_operative_answer_decoder": false,
+    "replay": false
+  },
+  "auxiliary_head": {
+    "phase": "source feature pretraining only",
+    "declared_as_actual_learner": true,
+    "used_for_native_answers": false,
+    "discard_before_native_birth": true,
+    "strict_no_auxiliary_head_interpretation": "cannot execute this design without prospective reframing"
+  },
+  "encoder": {
+    "sensory": "native FE-PERM .95 and original per-side TopK",
+    "H": 512,
+    "activation": "ReLU",
+    "H_init_variance": 0.005434782608695652,
+    "native_KCs_expected": 5177,
+    "H_inputs": "original x0, not bridged xH",
+    "bridge": {
+      "shape": [
+        88,
+        512
+      ],
+      "H_fanout": 2,
+      "weights": 0.5,
+      "receptor_degrees": [
+        11,
+        12
+      ],
+      "seed": "V176|bridge",
+      "normalization": "native max normalization; zero stays zero",
+      "learned": false,
+      "column_patterns": 88,
+      "geometry_preservation_guaranteed": false
+    },
+    "native_cue": "original TopK(B^T native_norm(AH))"
+  },
+  "pretrainer": {
+    "graph": [
+      "x0",
+      "H512-ReLU",
+      "T2048-ReLU-dropout.5",
+      "257-softmax"
+    ],
+    "rule": "local readout delta and separate fixed direct feedback to H and T; no cross-layer backprop",
+    "classes": 257,
+    "passes": 3,
+    "checkpoint": "last",
+    "batch": 256,
+    "rate": 0.001,
+    "weight_decay": 0.0001,
+    "adam_betas": [
+      0.9,
+      0.999
+    ],
+    "adam_epsilon": 1e-08,
+    "gradient_clipping": false,
+    "warmup": "1/16+15/16*min(actual arriving byte/EOS targets/1024,1), applied after adaptive normalization including decay",
+    "literal_V167_replication": false,
+    "same_birth_within_pair": true,
+    "independent_birth_between_pairs": true
+  },
+  "native": {
+    "compartments": 16,
+    "writer": "DELTA",
+    "gain": 1,
+    "temp": 2,
+    "homeostasis": false,
+    "q": 0,
+    "classes": 257,
+    "own_decisions_cap": 4,
+    "input_bytes_cap": 128,
+    "feature_updates_during_B": false,
+    "fresh_value_birth_after_A": true,
+    "warmup_targets": 1024
+  },
+  "arms": [
+    "TRUE-H",
+    "FROZEN-H",
+    "SHUFFLED-H",
+    "RAW",
+    "TRUE-H-NOWRITE",
+    "FROZEN-H-NOWRITE"
+  ],
+  "primary_control": "FROZEN-H",
+  "shuffle": "within each batch error rows to H and T; readout retains true errors",
+  "pairs": [
+    [
+      "chesterton-thursday.txt",
+      "edgeworth-parents.txt"
+    ],
+    [
+      "austen-emma.txt",
+      "chesterton-ball.txt"
+    ]
+  ],
+  "corpus_sha256": {
+    "chesterton-thursday.txt": "8b431a2a8db84089cd6f83fa66610c3b12c04114609df6e90137c0c58f2c5493",
+    "edgeworth-parents.txt": "543b2162782f839b9917b88956acbd7507df37c543286c16c228b36dda0cf950",
+    "austen-emma.txt": "71b0923d75fcf2f1faa897b22da8de8e2476d7478a2b22388eb58a3420e00215",
+    "chesterton-ball.txt": "c6b6d4e8c09a3f49a09f37f4e47663d4d6f048b62d86c70ccafdfd8f27059a58"
+  },
+  "data_protocol": {
+    "parent_records": "nonempty lines; parent title/CR handling; split >128 bytes; real record EOS",
+    "footer": "V167 End of Project Gutenberg correction",
+    "A_split_KiB": [
+      40,
+      5,
+      10
+    ],
+    "B_split_KiB": [
+      10,
+      5,
+      10
+    ],
+    "B_grouping": "exact prefix across all B splits; quarantine overlaps, then label-blind hash",
+    "B_held_A_overlap": "quarantine exact prompt overlap with all A observations/probe exposure",
+    "target_per_context": "first chronological occurrence; no majority/easy selection",
+    "train_contexts": 128,
+    "held_contexts": 128,
+    "B_passes": 8,
+    "selection_salt": "V176|pair|split|prompt_hex",
+    "new_independent_confirmation_texts": false
+  },
+  "qualification": {
+    "probe_only_on": "A calibration",
+    "feature_spaces": [
+      "direct H",
+      "bridged native xH"
+    ],
+    "per_space_arms": [
+      "TRUE-H",
+      "FROZEN-H",
+      "SHUFFLED-H"
+    ],
+    "probe_hidden": 2048,
+    "probe_classes": 257,
+    "probe_dropout": 0.5,
+    "probe_passes": 3,
+    "probe_train_target_positions": 2048,
+    "probe_eval": "remaining A calibration positions",
+    "probe_rule": "source-family BP evaluator, never changes H/native",
+    "entry_to_native_B": "TRUE lower NLL than FROZEN in both spaces and both pairs; ties stop, no grid",
+    "failure_scopes": [
+      "SOURCE_FEATURE_SIGNAL_NOT_QUALIFIED_WITH_THIS_PROBE",
+      "BRIDGED_SIGNAL_NOT_QUALIFIED_WITH_THIS_PROBE",
+      "PROBE_UNQUALIFIED",
+      "RESOURCE_NOT_ADMITTED",
+      "MISSING_SOURCE_ASSET"
+    ],
+    "negative_probe_inference": "cannot distinguish lost information from optimization/conditioning/readout limits"
+  },
+  "panels": {
+    "main": [
+      "B0",
+      "B4",
+      "B8"
+    ],
+    "main_items": [
+      "128 taught",
+      "128 held"
+    ],
+    "rest": "after B8,128 native steps, taught128 only"
+  },
+  "counts": {
+    "source_record_applications_expected": 12258,
+    "native_record_applications": 12288,
+    "native_targets": 24576,
+    "probe_fit_target_applications": 73728,
+    "probe_source_record_touch_cap": 2048,
+    "technical_full_records_cap": 32,
+    "full_record_or_touch_cap": 28000,
+    "planned_record_or_touch_ceiling": 26626,
+    "main_own_TF_pairs": 10752,
+    "all_own_TF_pair_cap": 10816,
+    "all_training_target_cap": 1200000,
+    "probability_evaluation_cap": 1600000,
+    "native_read_cap": 100000
+  },
+  "resources": {
+    "CPU_seconds": 7200,
+    "wall_seconds": 14400,
+    "RSS_bytes": 1073741824,
+    "output_bytes": 2147483648,
+    "workers": 1,
+    "numerical_threads": 1,
+    "forecast_multiplier": 1.5,
+    "automatic_retry": false,
+    "automatic_extension": false
+  },
+  "outcome": {
+    "primary": "TRUE-FROZEN held native complete accuracy and payload NLL at fixed B8, pairwise",
+    "positive_development": "accuracy higher AND payload NLL lower in EACH pair; no technical failure; no significance/adoption claim",
+    "mixed_or_tied": "not positive",
+    "arbitrary_item_gain_gate": null,
+    "countermodels": [
+      "frequency",
+      "exact-key backoff",
+      "pinned counting reference secondary"
+    ],
+    "write_mediated_signal": "main positive development plus positive value-write interaction in accuracy and payload NLL benefit in EACH pair"
+  },
+  "publication": {
+    "design_only": true,
+    "raw_data": false,
+    "new_experiment_version_after": 177
+  },
+  "controls": {
+    "native_write_off": [
+      "TRUE-H-NOWRITE",
+      "FROZEN-H-NOWRITE"
+    ],
+    "same_observed_targets_counter_clock": true,
+    "additional_H_pretraining_for_no_write": false,
+    "native_write_interaction": "(TRUE-write minus TRUE-blocked) minus (FROZEN-write minus FROZEN-blocked); accuracy and loss-benefit endpoints"
+  },
+  "rng": {
+    "PCG64": "first16 SHA256bytes big endian",
+    "torch": "first8 SHA256bytes big endian masked to63bits",
+    "source_streams": "V176|pair|H-init,T-init,O-init,F-H,F-T,batch,dropout,shuffle",
+    "B_order": "V176|pair|B-pass|k",
+    "probe": "V176|pair|probe|space"
+  },
+  "counting_reference": {
+    "source": "ClaudeV169 pinned before fitting",
+    "order": 5,
+    "discount": 0.9,
+    "grid_search": false,
+    "prompt_byte_updates": "information-matched, not native update-site-matched; counted explicitly"
+  }
+}
