@@ -1,8 +1,8 @@
 # MiniFly versioned experiment navigation — 1 November 2026
 
-**Latest allocated experiment number: V175 (DESIGN ONLY; not run or adopted).** [V175 local pattern-separation design](minifly_v175_local_decorrelation_design_20261101/DESIGN.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
+**Latest allocated experiment number: V175 (three cycles complete; DEV_SCREEN_FAILED; not adopted).** [V175 design](minifly_v175_local_decorrelation_design_20261101/DESIGN.md) | [V175 results](minifly_v175_local_decorrelation_dev_20261101/REPORT.md) | [Self-hostile audit](PROJECT_DOCUMENTS/MINIFLY_V175_SELF_HOSTILE_AUDIT_20261101.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
 
-V172 (native writer), V173 (recurrent microcircuits), and V174 (replay/retention) were developed on [Claude's separate branch](https://github.com/ChangweiZhou/digitalbaby/tree/claude/charming-clarke-u9g850); these experimental sources have **not** thereby been merged into this consolidated branch. V175 is an independent design based on the existing native/WCFI substrate. The adopted core and existing experiment-design pointers are unchanged. A new number denotes a proposed experiment, not validated performance.
+V172 (native writer), V173 (recurrent microcircuits), and V174 (replay/retention) were developed on [Claude's separate branch](https://github.com/ChangweiZhou/digitalbaby/tree/claude/charming-clarke-u9g850); these experimental sources have **not** thereby been merged into this consolidated branch. V175 independently tested local inhibition on the native/WCFI substrate; both its capability and mechanism screens failed. The adopted core and existing experiment-design pointers are unchanged. V175's completed development does not establish improved learning capability.
 
 ---
 
