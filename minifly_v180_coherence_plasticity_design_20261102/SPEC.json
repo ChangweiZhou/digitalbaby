@@ -1,0 +1,266 @@
+{
+  "schema": "minifly_experiment_v1",
+  "identity": "V180-CGLP-D1",
+  "version": 180,
+  "as_of": "2026-11-02",
+  "state": "DESIGN_ONLY",
+  "experiment_training_authorized": false,
+  "core_adopted": false,
+  "scientific_question": "Does per-neuron agreement across independent real-record teaching gradients improve transferable next-byte learning and revised feedback while reducing late-pass overfitting, beyond a lower effective hidden step size?",
+  "source_anchor": {
+    "parent_branch": "codex/minifly-consolidated-20261023",
+    "parent_commit": "540fb267d01a8ae0656d21a26e5cc3872db6ffe6",
+    "source_local_learning": "minifly_v179_continuous_local_life_dev_20261102/learner.py",
+    "V167_original": "minifly_v167_local_dev_v1_20261026/v167_local.py",
+    "source_sensory": "minifly_v179_continuous_local_life_dev_20261102/data.py",
+    "latest_lifetime": "minifly_v179_continuous_local_life_dev_20261102/REPORT.md",
+    "late_pass_diagnostic": "minifly_v179_lifetime_diagnostic_20261102/REPORT.md",
+    "hidden_plasticity_diagnostic": "minifly_v179_plasticity_location_20261102/REPORT.md",
+    "previous_verdict": "BOUNDED_PLASTICITY_PACKAGE_LEAD_NO_ADOPTION"
+  },
+  "operative_model": {
+    "local_source": "V167/V179 fixed random output-error feedback through H512/T2048 ReLU; readout local CE",
+    "sensor": "literal FE-PERM fixed sparse KC, 5177 KCs + empty5177 and pad5178",
+    "H": 512,
+    "T": 2048,
+    "learnable_parameter_count": 4229377,
+    "output_classes": 257,
+    "EOS": 256,
+    "dropout": 0.5,
+    "FH": {
+      "shape": [
+        257,
+        512
+      ],
+      "seed": 21,
+      "variance": 0.0038910505836575876,
+      "frozen": true
+    },
+    "FT": {
+      "shape": [
+        257,
+        2048
+      ],
+      "seed": 22,
+      "variance": 0.0038910505836575876,
+      "frozen": true
+    },
+    "optimizer": {
+      "type": "AdamW",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "eps": 1e-8,
+      "real_batch_size_max": 256,
+      "chronological_batches": true,
+      "internal_half_grad_groups": "distinct-record hash-balanced partition",
+      "preserve_moments_and_clocks": true,
+      "correct_Full151_native_sensory": false
+    },
+    "forbidden": [
+      "attention",
+      "Transformer",
+      "ELM",
+      "external answer head",
+      "batch-fitted native learner outputs",
+      "BPTT in candidate",
+      "hard-coded numerals or task roles",
+      "forced EOS",
+      "full-vocabulary masking",
+      "phase labels to plasticity",
+      "A->B weight/optimizer reset",
+      "hidden replay",
+      "pretrained model",
+      "new explicit value bank"
+    ],
+    "only_scientific_change": "multiplicative effective post-AdamW H/T neuron-wise applied-step factor based on same-minibatch source-local gradient vector cosine across 2 record-distinct groups"
+  },
+  "gate": {
+    "name": "CGLP",
+    "minimum": 0.25,
+    "maximum": 1,
+    "coherence": "clamp(dot(g1,g2)/(||g1||*||g2||+1e-12),0,1)",
+    "applied_neuron_gain": "0.25+0.75*coherence",
+    "unreliable_batch": "if group1 or group2 fewer than 2 distinct records, coherence=0 for all hidden neurons; report fraction",
+    "split_assignment": "sort distinct raw record IDs within batch by sha256('V180|micro|'+recordID), alternate into halves, never split a record",
+    "g1g2": "ordinary V167 H/T local teaching gradients (weights plus bias) normalized by actual group target count, using same single forward/dropout batch",
+    "full_gradient_reconstruction": "(n1*g1+n2*g2)/(n1+n2) equals literal V179 H/T gradient; finite-difference and source parity",
+    "moment_rule": "all Adam moments/step clocks updated from original full unscaled gradient, all phases",
+    "effective_step": "theta <- theta - 0.001*gate*(m_hat/(sqrt(v_hat)+1e-8)+0.0001*theta)",
+    "readout_rule": "ordinary output-local AdamW, gate=1",
+    "no_additional_parameters": true,
+    "no_source_label_features": true,
+    "phase_blind": true
+  },
+  "arms": [
+    {
+      "arm": "NORMAL",
+      "gain": "1.0 on all H/T neurons",
+      "role": "literal original V179 local learner control"
+    },
+    {
+      "arm": "FIXED-LOW",
+      "gain": "0.35 constant on all H/T neurons",
+      "role": "smaller effective hidden step/weight decay control"
+    },
+    {
+      "arm": "RMS-SHAM",
+      "gain": "per-H and per-T layer gain sqrt(sum(gamma_neuron^2 * ||unscaled_adam_step||^2)/sum(||unscaled_adam_step||^2))",
+      "role": "per-batch approximately write-energy matched nonselective control"
+    },
+    {
+      "arm": "CGLP",
+      "gain": "0.25+0.75*positive cosine of two record-disjoint per-neuron local gradient vectors",
+      "role": "candidate selective/reversible update rule"
+    }
+  ],
+  "new_worlds": [
+    {
+      "world": "D1",
+      "role": "development",
+      "A": "austen-persuasion.txt",
+      "B": "austen-sense.txt"
+    },
+    {
+      "world": "D2",
+      "role": "development",
+      "A": "chesterton-brown.txt",
+      "B": "melville-moby_dick.txt"
+    },
+    {
+      "world": "G1",
+      "role": "prospective_guard",
+      "A": "shakespeare-hamlet.txt",
+      "B": "shakespeare-macbeth.txt"
+    },
+    {
+      "world": "G2",
+      "role": "prospective_guard",
+      "A": "milton-paradise.txt",
+      "B": "bible-kjv.txt"
+    }
+  ],
+  "corpus": {
+    "provider": "NLTK Gutenberg fileids (no network substitute once source-locked)",
+    "reference": "https://www.nltk.org/book_1ed/ch02.html",
+    "preprocessing": "source-locked V176 corpus.py raw byte records, footer exclusion, length cap <=128; check exact raw SHA256 before model training",
+    "A": {
+      "train_records": 512,
+      "calib_records": 128,
+      "held_records": 128,
+      "train_passes": 3,
+      "split": "first512, next128, last128"
+    },
+    "B": {
+      "train_records": 128,
+      "calib_records": 128,
+      "held_records": 128,
+      "train_passes": 3,
+      "split": "first128, next128, last128"
+    },
+    "C": {
+      "train_records": 64,
+      "passes_each": 2,
+      "branches": [
+        "EDIT",
+        "NOEDIT"
+      ],
+      "parent": "exact same real B3 checkpoint and optimizer/dropout RNG",
+      "train_edits_only": true
+    },
+    "correction": {
+      "context_bytes": 2,
+      "contexts_selected": 4,
+      "min_train_context_count": 32,
+      "min_modal_share": 0.6,
+      "original_byte": "most frequent following ASCII letter only",
+      "replacement": "different ASCII letter from top16 training letters by frozen SHA256 key",
+      "raw_byte_selection": "against original unmodified source; no cascade; preserve record lengths and genuine EOS",
+      "train_record_selector": "first64 edited A-train record IDs by SHA256",
+      "minimum_held_changed_sites": 24,
+      "minimum_held_stable_same_label": 128,
+      "minimum_held_same_KC_stable_sites": 128,
+      "invalid_fixture": "record incomplete correction outcome, do not replace corpus/edit parameters or retune"
+    },
+    "world_status": "new prospectively named corpora, not a claim of secret uncontaminated statistical sample",
+    "guard_rule": "all code/hyperparams/evaluation fixes frozen in D1 source lock; no guard score used for selection; guard runs regardless development efficacy if source valid"
+  },
+  "evaluation": {
+    "all_actual_targets": "full257 own teacher-forced next-byte/EOS log loss, accuracy and EOS NLL/false-terminal/Brier",
+    "train_vs_held": "same fixed checkpoint, same target subset, dropout off; report B1,B2,B3",
+    "A_OLD": "unchanged A held original prefixes and labels",
+    "A_prime_same_KC": "corrected A' held positions, unchanged target and full FE-PERM sparse KC code equal original",
+    "A_prime_changed_KC": "corrected A' held positions, unchanged target and sparse KC different from original",
+    "A_prime_changed_label": "corrected A' held position where expected byte changed; score corrected new byte, old/new log odds and full-class top1",
+    "B_before_after_C": "B held loss at actual B3 vs at EDIT C2",
+    "generation": "own 128-step max continuation from 3 observed bytes; emitted genuine EOS, truncation, length histogram, payload/EOS calibration; arbitrary prose exact matching NOT an efficacy gate",
+    "C_controls": "EDIT vs NOEDIT same learning arm, exact common B3 origin, equal record/site exposure",
+    "external_count_reference": "unigram, PPM and interpolated Kneser-Ney fit on actually seen source data; evaluator only; counts/CPU separately",
+    "primary_scientific_domains": [
+      "B held at B3",
+      "B held after edited C2",
+      "corrected A' same-KC stable held after edited C2",
+      "corrected A' changed-target held after edited C2"
+    ],
+    "composite": "one quarter each of primary four domains; display all components and per-world signed differences",
+    "guard_primary": {
+      "required_worlds": [
+        "G1",
+        "G2"
+      ],
+      "CGLP_vs_RMS_SHAM_composite_gain_min_bits": 0.05,
+      "CGLP_vs_FIXED_LOW_composite_gain_min_bits": 0.05,
+      "per_domain_worse_than_either_comparator_max_bits": 0.1,
+      "acquisition_A3_vs_NORMAL_worse_max_bits": 0.1,
+      "corrected_target_C2_vs_NORMAL_worse_max_bits": 0.1,
+      "protocol_and_resource_clean": true
+    },
+    "secondary": {
+      "B_held_deterioration_B3_minus_B1_reduction_vs_NORMAL_min_bits": 0.1,
+      "no_promotion_if_composite_fails": true
+    },
+    "evidence_boundary": "promising guarded *development* on predictive statistics if passed; no E2 semantic memory, E3 arithmetic, independent population claim, or core adoption",
+    "source_guard_independence_caveat": "check historical exposure registry; any prior mechanism tuning on guard corpus invalidates 'fresh guard' descriptor without silently substituting texts"
+  },
+  "budget": {
+    "A_training_record_applications_per_arm_world": 1536,
+    "B_training_record_applications_per_arm_world": 384,
+    "C_EDIT_and_NOEDIT_training_record_applications_per_arm_world": 256,
+    "per_arm_world": 2176,
+    "number_of_arms": 4,
+    "number_of_worlds": 4,
+    "scheduled_training_records": 34816,
+    "technical_full_records_max": 64,
+    "total_record_cap": 35000,
+    "source_bytes_per_record_max": 128,
+    "max_supervised_targets_per_record": 129,
+    "total_target_upper": 4499520,
+    "target_cap": 4550000,
+    "cpu_seconds_cap": 7200,
+    "wall_seconds_cap": 14400,
+    "rss_bytes_cap": 2147483648,
+    "output_bytes_cap": 2147483648,
+    "preflight_reserve_ratio": 1.5,
+    "approval_required": true,
+    "no_training_in_design": true
+  },
+  "registered_interpretations": [
+    "SELECTIVITY_ADDS_VALUE_DEV",
+    "REDUCED_MAGNITUDE_SUFFICIENT",
+    "UNIFORM_GATE_SUFFICIENT",
+    "CGLP_NOT_SUPPORTED",
+    "INVALID_SOURCE",
+    "CORRECTION_FIXTURE_INSUFFICIENT",
+    "INVALID_NUMERIC_PARITY",
+    "RESOURCE_NOT_ADMITTED"
+  ],
+  "governance": {
+    "next_version_to_allocate": 181,
+    "research_process_memory": "PROJECT_DOCUMENTS/MINIFLY_ACTIVE_LIFETIME_CONTRACT_20261102.json",
+    "all_arms_A_B_C_must_run_even_if_weak": true,
+    "no_adaptive_stopping_or_posthoc_rate_tuning": true,
+    "no_phase_specific_H_T_freeze": true,
+    "no_automatic_V181": true
+  }
+}
