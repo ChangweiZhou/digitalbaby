@@ -1,0 +1,54 @@
+{
+  "probe": {
+    "regularization": 0.01,
+    "normalization": "training mean/std; constant columns scale1",
+    "objective": "mean cross entropy + .01/2 weight squared, unregularized bias",
+    "optimizer": "L-BFGS-B max200",
+    "converged": true,
+    "iterations": 79,
+    "objective_evaluations": 83,
+    "scores": {
+      "train": {
+        "bits": 0.5149642229770468,
+        "accuracy": 0.8803571428571428
+      },
+      "calib": {
+        "bits": 0.8603936700913548,
+        "accuracy": 0.7816964285714286
+      },
+      "test": {
+        "bits": 0.8715844515522355,
+        "accuracy": 0.7825
+      }
+    },
+    "unique_fit_positions": 11200,
+    "not_model_output": true
+  },
+  "dynamics": {
+    "train_only_Lyapunov": -0.024389350684750982,
+    "eight_step_product_singular_max": 7.78542320297326,
+    "eight_step_product_singular_median": 0.00014227193537090895,
+    "input_sensitivity_singular_values": [
+      14.666145469139328,
+      11.888606423174187,
+      9.169297460112052,
+      7.52433149241218,
+      5.967024014030868,
+      4.501381596937466,
+      3.311621265712424,
+      2.3680765205144585
+    ],
+    "input_sensitivity_scope": "Eight actually used input-coordinate directions at t8, propagated through J9..J16; first training line",
+    "mean_tanh_saturation": 0.1295234374003485,
+    "mean_gate": null,
+    "state_variance": 0.595177799883108
+  },
+  "calibration_lesions": {
+    "recurrence_off": 3.0680306953294787
+  },
+  "lesions_shift_state_distribution": true,
+  "extra_probe_record_exposures": 8300,
+  "extra_probe_target_applications": 929600,
+  "extra_state_readonly_records": 170,
+  "CPU": 0.3823249999999998
+}

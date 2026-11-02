@@ -1,0 +1,26 @@
+{
+  "stages": [
+    "A",
+    "B",
+    "C",
+    "conditional GUARD_A+GUARD_C"
+  ],
+  "first_failing_B_or_C_extension": 10,
+  "epochs_matched": 10,
+  "source_gain": 3.1475108458573424,
+  "optimizer": "Original PyTorch AdamW .001,decay.0001,global clip5,batch16,orderseed13",
+  "no_added_warmup": "Instrumental literal historical reference; no new adopted/local candidate.",
+  "probe": {
+    "type": "multinomial softmax",
+    "regularization": 0.01,
+    "objective": "meanCE+.005*L2 excludingbias",
+    "training_only_normalization": true,
+    "optimizer": "L-BFGS-B max200 ftol1e-10 gtol1e-7",
+    "no_grid": true
+  },
+  "historical_test_10_if_calibration_pass_else_final_extension_20_only": true,
+  "compiled_loop_selected": false,
+  "technical_records_consumed": 64,
+  "extra_acceleration_gradient_record_exposures": 32,
+  "technical_examples_not_main_updates": true
+}
