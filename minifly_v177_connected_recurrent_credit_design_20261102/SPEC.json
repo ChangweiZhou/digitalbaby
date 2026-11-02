@@ -1,0 +1,157 @@
+{
+  "identity": "V177-CRPC-LC-D1",
+  "global_version": 177,
+  "date": "2026-11-02",
+  "state": "DESIGN_ONLY",
+  "execution_authorized": false,
+  "research_question": "Can a connected sparse recurrent graph learn a temporal dependency under BPTT and recover that capability using forward-only, circuit-local eligibility with fixed random error feedback?",
+  "model": {
+    "H": 128,
+    "modules": 16,
+    "neurons_per_module": 8,
+    "within_inputs_per_neuron": 8,
+    "cross_inputs_per_neuron": 8,
+    "directed_recurrent_edges_per_gate": 2048,
+    "input_embedding": [
+      257,
+      16
+    ],
+    "input_embedding_learned": false,
+    "recurrent_parameter_count": 8448,
+    "output_parameter_count": 33153,
+    "total_learned_parameters": 41601,
+    "output_classes": 257,
+    "attention": false,
+    "spiking": false,
+    "external_decoder": false,
+    "prior_Full151_modified": false
+  },
+  "data": {
+    "name": "SDEL-8",
+    "worlds": {
+      "pilot": 202611027701,
+      "main": [
+        202611027711,
+        202611027712
+      ]
+    },
+    "pilot_records": {
+      "train": 32,
+      "val": 16,
+      "held": 32
+    },
+    "main_records": {
+      "train": 64,
+      "val": 16,
+      "held": 64
+    },
+    "alphabet_size": 8,
+    "newline_byte": 10,
+    "EOS": 256,
+    "copy_probability": 0.875,
+    "lag": 8,
+    "body_length": 96,
+    "train_targets_per_record": 97,
+    "primary_scored_payload_targets": 88,
+    "rollout_prefix_endpoints": [
+      7,
+      15,
+      23,
+      31,
+      39,
+      47,
+      55,
+      63,
+      71,
+      79,
+      87
+    ],
+    "rollout_length": 8,
+    "no_fake_EOS": true,
+    "full_257_output_softmax": true
+  },
+  "arms": {
+    "BP": "full-sequence BPTT reference (not candidate)",
+    "BS": "within-module RTRL eligibility with exact instantaneous output-transpose feedback (optimistic reference)",
+    "BR": "same eligibility with independent fixed random feedback (candidate)"
+  },
+  "optimizer": {
+    "batch_records": 8,
+    "pilot_epochs": 5,
+    "main_epochs": 10,
+    "pilot_rates": [
+      0.001,
+      0.003
+    ],
+    "pilot_gate_biases": [
+      0,
+      -1.5
+    ],
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "epsilon": 1e-8,
+    "weight_decay": 0.0001,
+    "row_norm_cap": 1,
+    "warmup": "(1/16)+(15/16)*min(n/1024,1) applied to actual optimizer and decay step",
+    "main_selection": "pilot validation final epoch only"
+  },
+  "budget": {
+    "technical_full_records": 32,
+    "pilot_train_records": 640,
+    "main_BP_records": 1280,
+    "main_BS_BR_records": 2560,
+    "max_full_train_records": 4512,
+    "full_record_cap": 5000,
+    "main_supervised_targets": 372480,
+    "overall_target_upper": 437664,
+    "cpu_seconds_cap": 7200,
+    "wall_seconds_cap": 14400,
+    "rss_bytes_cap": 2147483648,
+    "output_bytes_cap": 2147483648,
+    "admission_reserve_multiplier": 1.5
+  },
+  "gates": {
+    "C2_BP": {
+      "gain_over_train_fitted_unigram_bits_per_held_target_min": 0.75,
+      "unmasked_own_first_token_accuracy_min": 0.35,
+      "applies_to_both_worlds": true
+    },
+    "C3_BS": {
+      "gain_fraction_of_BP_min": 0.5,
+      "own_first_token_accuracy_min": 0.25
+    },
+    "C3_BR": {
+      "gain_fraction_of_BP_min": 0.5,
+      "own_first_token_accuracy_min": 0.25,
+      "premature_EOS_fraction_max": 0.2
+    },
+    "C3_CPU": {
+      "BR_gain_per_CPU_relative_to_BP_min": 0.3333333333333333
+    },
+    "EOS_diagnostic": {
+      "early_EOS_warning_fraction": 0.05,
+      "post_newline_EOS_warning_accuracy_below": 0.9,
+      "nonblocking_for_temporal_credit": true
+    }
+  },
+  "exclusions": [
+    "attention",
+    "Transformer",
+    "content addressed key-value reads",
+    "ELM",
+    "spike-and-reset",
+    "pretrained input features",
+    "numeral, operand or lag feature supplied",
+    "position index as input",
+    "target leak",
+    "synthetic EOS after every example",
+    "forced output length",
+    "BPTT in local candidate",
+    "V175 inhibition",
+    "V176 feature bridge",
+    "replay",
+    "retuning on opened main worlds"
+  ],
+  "evidence_level": "E0 and bounded temporal predictive generalization; not E2 or E3",
+  "next_unallocated_global_version": 178
+}

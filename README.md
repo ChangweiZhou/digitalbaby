@@ -1,8 +1,10 @@
-# MiniFly versioned experiment navigation — 1 November 2026
+# MiniFly versioned experiment navigation — 2 November 2026
 
-**Latest allocated experiment number: V175 (three cycles complete; DEV_SCREEN_FAILED; not adopted).** [V175 design](minifly_v175_local_decorrelation_design_20261101/DESIGN.md) | [V175 results](minifly_v175_local_decorrelation_dev_20261101/REPORT.md) | [Self-hostile audit](PROJECT_DOCUMENTS/MINIFLY_V175_SELF_HOSTILE_AUDIT_20261101.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
+**V177 (DESIGN ONLY) is the latest allocated experiment.** [Full V177 connected recurrent-credit design](minifly_v177_connected_recurrent_credit_design_20261102/DESIGN.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
 
-V172 (native writer), V173 (recurrent microcircuits), and V174 (replay/retention) were developed on [Claude's separate branch](https://github.com/ChangweiZhou/digitalbaby/tree/claude/charming-clarke-u9g850); these experimental sources have **not** thereby been merged into this consolidated branch. V175 independently tested local inhibition on the native/WCFI substrate; both its capability and mechanism screens failed. The adopted core and existing experiment-design pointers are unchanged. V175's completed development does not establish improved learning capability.
+**V176 is the latest completed development: NO_CONFIRMED_NATIVE_FEATURE_DEPLOYMENT_SIGNAL.** [V176 completed results](minifly_v176_feature_deployment_dev_20261101/campaign_20261102/REPORT.md). V175's [failed screening](minifly_v175_local_decorrelation_dev_20261101/REPORT.md) and [hostile audit](PROJECT_DOCUMENTS/MINIFLY_V175_SELF_HOSTILE_AUDIT_20261101.md) remain preserved.
+
+V177 proposes a separate generic non-attention recurrent core. It has not been implemented or executed, and does not change the adopted Full151 native learner. V172–V174 are located on Claude's separate development branch and are not implicitly merged.
 
 ---
 
