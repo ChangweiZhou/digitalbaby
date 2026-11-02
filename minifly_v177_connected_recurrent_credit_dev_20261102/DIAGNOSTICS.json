@@ -1,0 +1,155 @@
+{
+  "results": [
+    {
+      "world": 202611027711,
+      "lesions": {
+        "cross_edges_off": {
+          "lag_bits": 3.337519549067245,
+          "lag_accuracy": 0.15696022727272727,
+          "initial_bits": 4.415582110182014,
+          "newline_accuracy": 0.0,
+          "EOS_accuracy": 0.328125,
+          "early_EOS": 0.0037828947368421053,
+          "evaluated_targets": 6208,
+          "rollouts": 704,
+          "rollout_step_accuracy": [
+            0.15198863636363635,
+            0.16619318181818182,
+            0.12926136363636365,
+            0.11505681818181818,
+            0.17045454545454544,
+            0.16193181818181818,
+            0.12357954545454546,
+            0.11505681818181818
+          ],
+          "exact_eight": 0.0,
+          "rollout_premature_EOS": 0
+        },
+        "recurrence_off": {
+          "lag_bits": 6.150720929848404,
+          "lag_accuracy": 0.09889914772727272,
+          "initial_bits": 6.164442209590094,
+          "newline_accuracy": 0.0,
+          "EOS_accuracy": 1.0,
+          "early_EOS": 0.2633223684210526,
+          "evaluated_targets": 6208,
+          "rollouts": 704,
+          "rollout_step_accuracy": [
+            0.08948863636363637,
+            0.08096590909090909,
+            0.056818181818181816,
+            0.048295454545454544,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "exact_eight": 0.0,
+          "rollout_premature_EOS": 704
+        }
+      },
+      "gradient_diagnostics": [
+        {
+          "arm": "BS",
+          "hidden_gradient_cosine": 0.8031067734302129,
+          "output_gradient_cosine": 1.0000000000000004,
+          "hidden_applied_step_cosine": 0.9920887013751222,
+          "output_applied_step_cosine": 1.0
+        },
+        {
+          "arm": "BR",
+          "hidden_gradient_cosine": -0.4653538958806639,
+          "output_gradient_cosine": 1.0000000000000004,
+          "hidden_applied_step_cosine": 0.9477928205723548,
+          "output_applied_step_cosine": 1.0
+        }
+      ],
+      "parameter_norms": {
+        "hidden": 23.53361833612943,
+        "output": 20.795845128299995,
+        "feedback": 15.989770344500158
+      },
+      "distinct_body_bytes": 8,
+      "checkpoint_unchanged": true
+    },
+    {
+      "world": 202611027712,
+      "lesions": {
+        "cross_edges_off": {
+          "lag_bits": 3.2233871048472724,
+          "lag_accuracy": 0.134765625,
+          "initial_bits": 4.067594299588494,
+          "newline_accuracy": 0.0,
+          "EOS_accuracy": 1.0,
+          "early_EOS": 0.0,
+          "evaluated_targets": 6208,
+          "rollouts": 704,
+          "rollout_step_accuracy": [
+            0.15482954545454544,
+            0.09517045454545454,
+            0.2002840909090909,
+            0.17897727272727273,
+            0.11647727272727272,
+            0.17755681818181818,
+            0.22443181818181818,
+            0.23863636363636365
+          ],
+          "exact_eight": 0.0,
+          "rollout_premature_EOS": 0
+        },
+        "recurrence_off": {
+          "lag_bits": 5.988280345105843,
+          "lag_accuracy": 0.11487926136363637,
+          "initial_bits": 5.98150218343211,
+          "newline_accuracy": 0.0,
+          "EOS_accuracy": 1.0,
+          "early_EOS": 0.0,
+          "evaluated_targets": 6208,
+          "rollouts": 704,
+          "rollout_step_accuracy": [
+            0.14204545454545456,
+            0.08664772727272728,
+            0.234375,
+            0.1278409090909091,
+            0.11931818181818182,
+            0.11221590909090909,
+            0.13210227272727273,
+            0.13352272727272727
+          ],
+          "exact_eight": 0.0,
+          "rollout_premature_EOS": 0
+        }
+      },
+      "gradient_diagnostics": [
+        {
+          "arm": "BS",
+          "hidden_gradient_cosine": 0.9434957839800138,
+          "output_gradient_cosine": 1.0000000000000002,
+          "hidden_applied_step_cosine": 0.9964616972560763,
+          "output_applied_step_cosine": 0.9999999999999999
+        },
+        {
+          "arm": "BR",
+          "hidden_gradient_cosine": 0.12892793807863795,
+          "output_gradient_cosine": 1.0000000000000002,
+          "hidden_applied_step_cosine": 0.9396264523088862,
+          "output_applied_step_cosine": 0.9999999999999999
+        }
+      ],
+      "parameter_norms": {
+        "hidden": 23.78225110201149,
+        "output": 20.162765279351582,
+        "feedback": 15.944273568381474
+      },
+      "distinct_body_bytes": 8,
+      "checkpoint_unchanged": true
+    }
+  ],
+  "CPU": 0.934286,
+  "extra_gradient_record_exposures": 48,
+  "extra_gradient_target_evaluations": 4656,
+  "extra_inference_record_evaluations": 256,
+  "extra_autonomous_rollouts": 2816,
+  "applied_step_computed_without_parameter_mutation": true,
+  "no_candidate_training": true
+}
