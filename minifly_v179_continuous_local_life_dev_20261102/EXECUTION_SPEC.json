@@ -1,0 +1,29 @@
+{
+  "identity": "V179-CLLR-D1",
+  "authorization": "current user three-cycle request for this design and its explicit bounds",
+  "no_added_warmup": "literal V179 frozen reference schedule; expected bytes observed throughout; not an adopted new warmup policy",
+  "parameter_birth": "original V163 init_H and Probe; original local source make(K=257)",
+  "AdamW": {
+    "lr": 0.001,
+    "wd": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "all_branches": true,
+  "no_efficacy_gate": true,
+  "technical_records": 24,
+  "dropout": "global PyTorch RNG namespaced V179|world|dropout at birth; KEEP/RESET inherit A RNG; B-COLD retains original birth RNG; C clones identical KEEP state/RNG",
+  "class_dictionary": "fixed raw 0..255 plus EOS256",
+  "batch": "256 consecutive actual targets in chronological whole-record stream; residual batch retained per pass",
+  "partial_records": "charged when last target including EOS completes; all target updates counted",
+  "panels": "every registered B/C pass; birth and A-complete; full257 log2 probabilities; no state reload from validation-best",
+  "generation": "all A/B held records, 3 observed bytes, own argmax bytes/EOS, cap32; truncation flagged",
+  "count_grid": "literal V169 PPM2..5; IKN2..5 x discounts .5,.75,.9; calibration-only minimum; add-one unigram",
+  "raw_publication": "local raw panels only; compact summaries/manifests published",
+  "no_attention": true,
+  "local_rules_only": true,
+  "no_arithmetic_structure": true
+}
