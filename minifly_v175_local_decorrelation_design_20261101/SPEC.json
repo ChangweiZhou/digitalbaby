@@ -1,0 +1,136 @@
+{
+  "identity": "MINIFLY-V175-LPS16-D1",
+  "global_version": 175,
+  "as_of": "2026-11-01",
+  "status": "DESIGN_ONLY",
+  "name": "Learned Local Pattern Separation to reduce write interference",
+  "parent_lineage": "WCFI-V1 native Full151 FE-PERM DELTA D-high, homeostasis off",
+  "cross_branch_previous_completed": "V174 (Claude replay, dev only)",
+  "allowed_benchmark_tier": [
+    "E0",
+    "E1",
+    "E1-R"
+  ],
+  "forbidden": [
+    "attention/key-value content-addressed reads",
+    "Transformer",
+    "replay",
+    "task-specific features",
+    "extra output decoder",
+    "new value writer",
+    "global backprop",
+    "label-dependent encoding",
+    "online evaluator oracle"
+  ],
+  "arms": [
+    "BASE",
+    "LPS-16"
+  ],
+  "worlds": {
+    "technical": 202611017501,
+    "main": [
+      202611017511,
+      202611017512
+    ],
+    "state": "reserved not checked by code"
+  },
+  "topology": {
+    "per_side": true,
+    "degree": 16,
+    "offsets": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "symmetric": true,
+    "seed": "SHA256(V175|topology|side)",
+    "precision": "float32",
+    "initial_L": 0
+  },
+  "encoder": {
+    "rounds": 1,
+    "initial": "native side TopK(positive raw drive)",
+    "activity": "binary",
+    "ranking": "u - gamma[side]*sum(L[j,k]*z0[k])",
+    "eligibility": "u>0 (pre-inhibition)",
+    "fixed_pop_count": true,
+    "gamma": "0.25*median_64_unlabeled_prompts(std(positive u within side))",
+    "gamma_world": 202611017501
+  },
+  "inhibitor_learning": {
+    "eta": 0.03125,
+    "decay": 0.00048828125,
+    "clip": [
+      0,
+      1
+    ],
+    "sample": "z0 at first answer site before answer target",
+    "update": "once AFTER fully observed EOS record",
+    "target_or_phase_access": false,
+    "read_only_updates": false
+  },
+  "writer": {
+    "family": "DELTA",
+    "gain": 1,
+    "temp": 2,
+    "homeostasis": false,
+    "warmup": "1/16+(15/16)*min(n/1024,1)",
+    "native_compartments": 16,
+    "own_output_classes": 257,
+    "correct_requires": "own bytes+own EOS in <=4 decisions"
+  },
+  "data": {
+    "salt": "V175",
+    "old": 64,
+    "new": 16,
+    "old_passes": 16,
+    "new_passes": 8,
+    "reply_bytes": 1,
+    "EOS_targets_per_record": 1
+  },
+  "budget": {
+    "cpu_hours": 2,
+    "learner_records_max": 5000,
+    "technical_full_records_max": 32,
+    "main_full_records": 4608,
+    "main_targets": 9216,
+    "cycles": 3,
+    "rss_bytes_max": 1073741824,
+    "forecast_multiplier": 1.5
+  },
+  "panels": [
+    "INITIAL",
+    "OLD8",
+    "OLD16",
+    "NEW4",
+    "FINAL",
+    "REST128"
+  ],
+  "gates": {
+    "P1": {
+      "delta_final_total_each_world_min": 8,
+      "delta_new_each_world_min": -2,
+      "delta_old_boundary_conditional_retention_each_world_min": -0.05
+    },
+    "P2": {
+      "mean_old_new_jaccard_drop_each_world_min": 0.05,
+      "old_code_same_prompt_stability_min": 0.85,
+      "required_nonzero_code_changes": true,
+      "conflicting_duplicate_codes_max": 0
+    },
+    "P3": {
+      "technical_parity": true,
+      "within_budget": true,
+      "no_forbidden_mechanisms": true
+    }
+  },
+  "next_state_if_all_pass": "PROMISING_DEV_NOT_ADOPTED",
+  "next_action": "separately authorized frozen confirmation only",
+  "execution_authorized": false,
+  "implementation_present": false
+}

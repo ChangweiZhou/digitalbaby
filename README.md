@@ -1,3 +1,11 @@
+# MiniFly versioned experiment navigation — 1 November 2026
+
+**Latest allocated experiment number: V175 (DESIGN ONLY; not run or adopted).** [V175 local pattern-separation design](minifly_v175_local_decorrelation_design_20261101/DESIGN.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
+
+V172 (native writer), V173 (recurrent microcircuits), and V174 (replay/retention) were developed on [Claude's separate branch](https://github.com/ChangweiZhou/digitalbaby/tree/claude/charming-clarke-u9g850); these experimental sources have **not** thereby been merged into this consolidated branch. V175 is an independent design based on the existing native/WCFI substrate. The adopted core and existing experiment-design pointers are unchanged. A new number denotes a proposed experiment, not validated performance.
+
+---
+
 # Repository navigation — 23 October 2026
 
 The consolidated development branch is `codex/minifly-consolidated-20261023`.
