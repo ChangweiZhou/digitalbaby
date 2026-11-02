@@ -1,0 +1,170 @@
+{
+  "identity": "V178-RRFL-D1",
+  "version": 178,
+  "as_of": "2026-11-02",
+  "status": "DESIGN_ONLY",
+  "training_authorized": false,
+  "core_adopted": false,
+  "purpose": "Reproduce original V164 BPTT S-COPY and localize the first matched-dose trainability failure along dense tanh -> sparse tanh -> sparse gated at width256",
+  "source_anchor": {
+    "consolidated_commit": "207c2aab30f3196a63e7359808a4dfbcfa599772",
+    "claude_reference_branch": "claude/charming-clarke-u9g850",
+    "claude_reference_commit": "f4146856c3241d94f7fa948e0b7d30fa0b869bc1",
+    "historical_source": "minifly_v164_cola_dev_v1_20261026/v164_lib.py",
+    "historical_settings": "minifly_v164_cola_dev_v1_20261026/SETTINGS.json",
+    "historical_hash_lock": "minifly_v164_cola_dev_v1_20261026/LOCK.json",
+    "historical_test_results": "minifly_v164_cola_dev_v1_20261026/results/testbed/TESTBED.json",
+    "original_BPTT_test_bits": 1.1516320951135754,
+    "original_BPTT_calibration_bits": 1.14564,
+    "original_train_only_recurrent_gain": 3.1475108458573424
+  },
+  "task": {
+    "name": "V164-S-COPY",
+    "symbols": 8,
+    "reference_input": "iid integer classes 0..7",
+    "sequence_length": 120,
+    "lag": 8,
+    "labels": "y[t]=x[t-8] for t>=8; before unscored",
+    "train_lines": 100,
+    "calibration_lines": 20,
+    "test_lines": 50,
+    "scored_targets_per_line": 112,
+    "head_classes": 8,
+    "training_is_next_byte": false,
+    "has_EOS": false,
+    "task_is_reused_open_development": true
+  },
+  "stages": [
+    {
+      "id": "A",
+      "architecture": "256 dense tanh original V164",
+      "max_matched_epochs": 10,
+      "stop_if_failure": true,
+      "calibration_bits_pass_at10": 1.35,
+      "held_test_bits_pass": 1.35,
+      "strict_historical_test_parity_delta": 0.05,
+      "record_applications": 1000
+    },
+    {
+      "id": "B",
+      "architecture": "256 sparse tanh, 32 modulesx8, 16 recurrent incoming per neuron, masked recurrent birth+operator norm matching",
+      "requires": "A matches source/functional reference",
+      "max_matched_epochs": 10,
+      "calibration_bits_pass_at10": 1.5,
+      "descriptive_held_guard_bits": 1.65,
+      "stop_if_failure": true,
+      "record_applications": 1000
+    },
+    {
+      "id": "C",
+      "architecture": "256 sparse gated with same tanh pathway and zero-birth gating weights, gating bias0",
+      "requires": "B passes matched-dose",
+      "max_matched_epochs": 10,
+      "calibration_bits_pass_at10": 1.5,
+      "descriptive_held_guard_bits": 1.65,
+      "stop_if_failure": true,
+      "record_applications": 1000
+    },
+    {
+      "id": "GUARD",
+      "architecture": "fresh A dense and C sparse gated",
+      "requires": "A,B,C all pass at 10 epochs",
+      "reserved_world": "202611027811",
+      "max_epochs_each": 10,
+      "calibration_bits_each_max": 1.5,
+      "held_bits_each_max": 1.6,
+      "C_held_minus_A_held_bits_max": 0.35,
+      "record_applications": 2000
+    }
+  ],
+  "sparse_graph": {
+    "H": 256,
+    "modules": 32,
+    "neurons_per_module": 8,
+    "directed_edges": 4096,
+    "degree": 16,
+    "intra_module": 8,
+    "inter_module": 8,
+    "neighbors_offsets": [
+      -2,
+      -1,
+      1,
+      2
+    ],
+    "initial_weight_rule": "W_B=g*(mask*Wbar)/spectral_norm(mask*Wbar)",
+    "gain_policy": "fixed historical g for all stages, no outcome gain search",
+    "gating_weights_birth": "zero",
+    "gating_bias_birth": 0
+  },
+  "train": {
+    "optimizer": "PyTorch AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "clip_global_grad_norm": 5,
+    "batch_lines": 16,
+    "epochs_matched": 10,
+    "order_seed": 13,
+    "final_epoch10_checkpoint_primary": true,
+    "historical_best_epoch_reported_separately": true,
+    "adaptive_extension_only_at_first_B_or_C_failure": {
+      "extra_epochs": 10,
+      "must_stop_ladder": true,
+      "continue_exact_optimizer_state": true,
+      "extension_does_not_rescue_original_gate": true
+    }
+  },
+  "outcome": {
+    "success": "REFERENCE_BRIDGE_FEASIBLE_DEV",
+    "failures": [
+      "SOURCE_UNAVAILABLE",
+      "NUMERIC_PARITY_FAILED",
+      "REFERENCE_NOT_REPRODUCED",
+      "SPARSE_PACKAGE_FAIL_10",
+      "GATED_PACKAGE_FAIL_10",
+      "NO_REPLICATED_REFERENCE_FEASIBILITY",
+      "RESOURCE_NOT_ADMITTED",
+      "INVALID"
+    ],
+    "not_claimed": [
+      "local learning",
+      "E2 retention",
+      "E3 arithmetic",
+      "V177 128/257 reference trainability",
+      "native Full151 adoption"
+    ]
+  },
+  "budget": {
+    "historical_world_full_records_max": 3000,
+    "fresh_guard_full_records_if_success": 2000,
+    "optional_first_failure_extension_records": 1000,
+    "guard_and_extension_mutually_exclusive": true,
+    "technical_full_records_max": 64,
+    "possible_training_record_applications_max": 5064,
+    "full_record_cap": 5100,
+    "scored_targets_per_record": 112,
+    "guard_route_main_target_applications": 560000,
+    "total_target_upper": 567168,
+    "cpu_seconds": 7200,
+    "wall_seconds": 14400,
+    "rss_bytes": 2147483648,
+    "artifact_bytes": 2147483648,
+    "whole_route_forecast_margin": 1.5
+  },
+  "excluded": [
+    "attention",
+    "Transformer",
+    "pretrained learner",
+    "e-prop/COLA/BS/BR candidate training",
+    "V175 inhibition",
+    "V176 learned feature bridge",
+    "EOS",
+    "raw next-byte task",
+    "257 output classes",
+    "hidden lag input",
+    "task-specific learner features",
+    "extra retuning after failure",
+    "new memory writer",
+    "replay"
+  ],
+  "next_version_to_allocate": 179
+}

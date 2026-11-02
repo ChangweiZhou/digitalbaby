@@ -1,10 +1,10 @@
 # MiniFly versioned experiment navigation — 2 November 2026
 
-**V177 (DESIGN ONLY) is the latest allocated experiment.** [Full V177 connected recurrent-credit design](minifly_v177_connected_recurrent_credit_design_20261102/DESIGN.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
+**V178 is now the latest allocated experiment (DESIGN ONLY).** [V178 reference reproduction / failure-localization design](minifly_v178_recurrent_failure_localization_design_20261102/DESIGN.md) | [Machine-readable V178 specification](minifly_v178_recurrent_failure_localization_design_20261102/SPEC.json) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
 
-**V176 is the latest completed development: NO_CONFIRMED_NATIVE_FEATURE_DEPLOYMENT_SIGNAL.** [V176 completed results](minifly_v176_feature_deployment_dev_20261101/campaign_20261102/REPORT.md). V175's [failed screening](minifly_v175_local_decorrelation_dev_20261101/REPORT.md) and [hostile audit](PROJECT_DOCUMENTS/MINIFLY_V175_SELF_HOSTILE_AUDIT_20261101.md) remain preserved.
+**Latest completed experiment: V177 — REFERENCE_NOT_QUALIFIED.** [V177 results](minifly_v177_connected_recurrent_credit_dev_20261102/REPORT.md) | [V177 original design](minifly_v177_connected_recurrent_credit_design_20261102/DESIGN.md). V176 remains [NO_CONFIRMED_NATIVE_FEATURE_DEPLOYMENT_SIGNAL](minifly_v176_feature_deployment_dev_20261101/campaign_20261102/REPORT.md); V175 [failed its native inhibition screen](minifly_v175_local_decorrelation_dev_20261101/REPORT.md).
 
-V177 proposes a separate generic non-attention recurrent core. It has not been implemented or executed, and does not change the adopted Full151 native learner. V172–V174 are located on Claude's separate development branch and are not implicitly merged.
+V178 uses V164's historical Claude-branch BPTT S-COPY success as a separately pinned reference. It diagnoses dense→sparse→gated recurrence at width256 and does **not** train local-credit candidates, modify native Full151, or claim E2/E3 progress. V172–V174 remain on Claude's separate branch, not merged by these navigation edits.
 
 ---
 
