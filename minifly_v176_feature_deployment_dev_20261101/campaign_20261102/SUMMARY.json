@@ -1,0 +1,69 @@
+{
+  "verdict": "NO_CONFIRMED_NATIVE_FEATURE_DEPLOYMENT_SIGNAL",
+  "native_B_run": true,
+  "source_record_applications": 12258,
+  "source_target_applications": 738324,
+  "probe_fit_target_applications": 73728,
+  "probe_record_touches": 1170,
+  "native_lives": 12,
+  "native_records": 12288,
+  "native_targets": 24576,
+  "probe_checks": {
+    "P1": {
+      "direct": {
+        "TRUE": 2.9052609867390955,
+        "FROZEN": 3.054954518352656,
+        "benefit": 0.14969353161356036,
+        "passed": true
+      },
+      "bridged": {
+        "TRUE": 3.007207549586602,
+        "FROZEN": 3.2238040498413154,
+        "benefit": 0.21659650025471322,
+        "passed": true
+      }
+    },
+    "P2": {
+      "direct": {
+        "TRUE": 2.982581704274661,
+        "FROZEN": 3.174717881203007,
+        "benefit": 0.19213617692834584,
+        "passed": true
+      },
+      "bridged": {
+        "TRUE": 3.213251519108485,
+        "FROZEN": 3.392485183971995,
+        "benefit": 0.17923366486351,
+        "passed": true
+      }
+    }
+  },
+  "core_adopted": false,
+  "evidence": "Local feature/probe diagnostic if stopped; bounded native predictive deployment only if completed; no arithmetic/E3 result.",
+  "contrasts": [
+    {
+      "pair": "P1",
+      "complete_accuracy_difference": 0.0078125,
+      "payload_NLL_difference": -0.23262769520707938,
+      "positive": true,
+      "write_accuracy_interaction": 0.0078125,
+      "write_NLL_benefit_interaction": 0.23262769520707938,
+      "write_mediated": true,
+      "gained_ids": [
+        "P1:held:64"
+      ],
+      "lost_ids": []
+    },
+    {
+      "pair": "P2",
+      "complete_accuracy_difference": 0.0,
+      "payload_NLL_difference": -0.04601908228552265,
+      "positive": false,
+      "write_accuracy_interaction": 0.0,
+      "write_NLL_benefit_interaction": 0.04601908228552265,
+      "write_mediated": false,
+      "gained_ids": [],
+      "lost_ids": []
+    }
+  ]
+}

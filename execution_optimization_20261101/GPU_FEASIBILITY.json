@@ -1,0 +1,40 @@
+{
+  "torch": "2.14.0",
+  "mps_available": true,
+  "training_records": 0,
+  "model_changes": false,
+  "native_float64_supported": false,
+  "float64_error": "Cannot convert a MPS Tensor to float64 dtype as the MPS framework doesn't support float64. Please use float32 instead.",
+  "benchmarks": [
+    {
+      "batch": 1,
+      "CPU_wall_seconds": 3.703336697071791e-05,
+      "GPU_wall_seconds": 0.00015478748828172683,
+      "speedup": 0.23925297439618587,
+      "max_float32_difference": 1.087784767150879e-06,
+      "bitwise_equal": false
+    },
+    {
+      "batch": 16,
+      "CPU_wall_seconds": 9.988539386540651e-05,
+      "GPU_wall_seconds": 0.00032763960771262644,
+      "speedup": 0.3048636108520074,
+      "max_float32_difference": 1.9073486328125e-06,
+      "bitwise_equal": false
+    },
+    {
+      "batch": 256,
+      "CPU_wall_seconds": 0.0013527750037610532,
+      "GPU_wall_seconds": 0.0007904729107394814,
+      "speedup": 1.7113489727251279,
+      "max_float32_difference": 0.0,
+      "bitwise_equal": true
+    }
+  ],
+  "device_allocated_bytes": 16646144,
+  "resident_operands": true,
+  "host_transfers_excluded": true,
+  "CPU": 0.39552599999999993,
+  "peak_RSS_bytes": 333234176,
+  "verdict": "GPU_NOT_SELECTED_FOR_FLOAT64_NATIVE; dense feature accelerator only, requiring separate numerical qualification"
+}
