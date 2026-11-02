@@ -1,0 +1,256 @@
+{
+  "schema": "minifly_experiment_v1",
+  "version": 181,
+  "id": "V181-MINI-CGLP-D1",
+  "date": "2026-11-02",
+  "state": "DESIGN_ONLY",
+  "training_authorized": false,
+  "source_anchor": {
+    "parent_branch": "codex/minifly-consolidated-20261023",
+    "parent_commit": "414b56f0b069b9155f71303b815a997ce08e73f2",
+    "original_V180_design": "minifly_v180_coherence_plasticity_design_20261102/DESIGN.md",
+    "technical_V180_report": "minifly_v180_coherence_plasticity_dev_20261102/REPORT.md",
+    "original_V180_science": "NOT_RUN",
+    "original_V180_resource": "RESOURCE_NOT_ADMITTED",
+    "local_learner": "minifly_v179_continuous_local_life_dev_20261102/learner.py",
+    "fixed_sensory": "minifly_v179_continuous_local_life_dev_20261102/data.py",
+    "V180_gate_source": "minifly_v180_coherence_plasticity_dev_20261102/gate.py",
+    "V180_sensor_metadata": "minifly_v180_coherence_plasticity_dev_20261102/DATA_AUDIT.json"
+  },
+  "purpose": "Replace oversized V180 with one physically bounded local learner and small whole-life scientific test without changing its CGLP hypothesis; normal/fixed/sham controls are the same mini model",
+  "mini": {
+    "KC_units": 5177,
+    "PN_or_receptor_channels": 88,
+    "hidden_H": 64,
+    "hidden_T": 64,
+    "categorical_output_units": 257,
+    "explicit_KC_H_fanin": 256,
+    "static_input_edge_count": 16384,
+    "input_KC_fanout_min": 3,
+    "input_KC_fanout_max": 4,
+    "trainable_params": {
+      "KC_H_weights": 16384,
+      "KC_H_biases": 64,
+      "H_T_weights": 4096,
+      "H_T_biases": 64,
+      "T_O_weights": 16448,
+      "T_O_biases": 257,
+      "total": 37313,
+      "hard_cap": 40000
+    },
+    "physical_float32_bytes": {
+      "weights": 149252,
+      "adam_two_moments": 298504,
+      "feedback_FH_FT": 131584,
+      "KC_H_uint16_indices": 32768
+    },
+    "sensory_native_type": "one immutable source-locked FE-PERM/KC birth, no 16-bank value store",
+    "sensory_birth_count": 1,
+    "learned_pretrained_feature_model": false,
+    "sensor_plus_network_model_specific_inference_memory_cap_bytes": 8388608,
+    "full_mutable_checkpoint_cap_bytes": 1048576,
+    "float32_weights": true,
+    "weight_inflation_from_mask": false,
+    "full_257_softmax": true,
+    "readout_trained_locally": true,
+    "dropout": 0.1,
+    "dropout_change_from_original_V179_declared": true,
+    "feedforward_no_new_recurrent_workspace": true,
+    "input_invariance": "fixed shuffled KC permutation and cyclic 256 fanin for each 64 H neurons, 3 or4 paths per KC, no byte-target or task based selection"
+  },
+  "learning": {
+    "supervision": "authentic next observed payload byte, genuine one EOS per complete record; source sensory history only, no future target",
+    "local_gradient": "H/T fixed Gaussian error broadcasts from p-y with each neuron ReLU derivative and actual same-batch dropout; O ordinary local categorical CE",
+    "FH_shape": [
+      257,
+      64
+    ],
+    "FT_shape": [
+      257,
+      64
+    ],
+    "feedback_variance": "1/257",
+    "no_BPTT": true,
+    "optimizer": {
+      "type": "AdamW",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "eps": 1e-8,
+      "batch_real_targets_max": 256,
+      "shuffle_records": false,
+      "no_warmup": true,
+      "continuous_weights_moments_clocks": true
+    },
+    "candidate_gate": {
+      "name": "CGLP",
+      "minimum": 0.25,
+      "formula": "0.25+0.75*max(0,cos(g_neuron_group1,g_neuron_group2))",
+      "group_split": "two independent complete-record sets by SHA256 immutable ID, min 2 distinct source records per group; same forward and dropout masks",
+      "fallback_gain": 0.25,
+      "update_scope": "applied post-AdamW preconditioned H/T weight-and-bias movement, including decoupled decay; normal Adam moment updates from original full batch gradient",
+      "readout_gain": 1,
+      "consistency_requirement": "weighted recombination of group source-local gradients equals exact full-batch source-local gradient",
+      "neuron_local_not_synapse_only": true
+    }
+  },
+  "arms": [
+    {
+      "id": "NORMAL",
+      "H_T_effective_gain": "1",
+      "role": "ungated mini local learner"
+    },
+    {
+      "id": "FIXED-LOW",
+      "H_T_effective_gain": "0.35",
+      "role": "plain smaller hidden step"
+    },
+    {
+      "id": "RMS-SHAM",
+      "H_T_effective_gain": "one uniform scale per layer matched to proposed CGLP squared step at its own current state",
+      "role": "nonselective strength control"
+    },
+    {
+      "id": "CGLP",
+      "H_T_effective_gain": "neuron-wise positive source-local microgradient cosine",
+      "role": "selective phase-blind candidate"
+    }
+  ],
+  "worlds": [
+    {
+      "id": "M1",
+      "role": "development",
+      "A": "austen-persuasion.txt",
+      "A_sha256": "cec097657cbfeb62aafe178973f514fa07ab66a5e28ea025ebd5d51ca870e40f",
+      "B": "austen-sense.txt",
+      "B_sha256": "57b169c7cfa502896dee25bd66616f61cc1d21084caf31f015176ee46fda9718"
+    },
+    {
+      "id": "M2",
+      "role": "prospective_second_world_check",
+      "A": "shakespeare-hamlet.txt",
+      "A_sha256": "1eceab7027ad7e0cc25c6b6aadcb2e6bb070395cb2085f775ac732d63d5db240",
+      "B": "shakespeare-macbeth.txt",
+      "B_sha256": "d4a204352cfe5924cbae76f764225d120e9f7617d39cb8c949dedd3f306353ac"
+    }
+  ],
+  "data": {
+    "max_payload_bytes_per_record": 128,
+    "true_targets_per_record_max": 129,
+    "A": {
+      "unique_train_records": 160,
+      "calib_records": 32,
+      "held_records": 64,
+      "train_passes": 2,
+      "train_selection": "first160 qualifying",
+      "calib_selection": "next32",
+      "held_selection": "last64"
+    },
+    "B": {
+      "unique_train_records": 48,
+      "calib_records": 32,
+      "held_records": 64,
+      "train_passes": 3,
+      "train_selection": "first48 qualifying",
+      "calib_selection": "next32",
+      "held_selection": "last64"
+    },
+    "C": {
+      "train_records_per_branch": 24,
+      "EDIT_passes": 2,
+      "NOEDIT_passes": 2,
+      "edit_selector": "single most frequent A-train two-byte context with modal next ASCII letter>=0.6, occurrence>=12, maximize #distinct modified A-train records, SHA256 ties",
+      "replacement": "different ASCII letter from top16 A-train letters, fixed SHA256",
+      "select_records": "first24 edited original A record IDs by hash, original bytes edit noncascading",
+      "no_model_phase_labels": true,
+      "train_only_selection": true,
+      "modified_A_held_target_min": 8,
+      "identical_KC_stable_A_held_target_min": 64,
+      "insufficient": "A/B reportable; C not qualified; no replacing source/edit rule"
+    }
+  },
+  "score": {
+    "own_output": "unmasked 257-class model next-byte/EOS NLL and accuracy on identical held target sites from same checkpoint",
+    "epochs_scored": "birth;A1;A2;B1;B2;B3;C EDIT1/2;C NOEDIT1/2",
+    "retention_partitions": [
+      "A_OLD original context and label",
+      "A'_SAME_KC corrected context stable target and exact same full KC code",
+      "A'_ALTERED_KC corrected context stable target different KC code",
+      "A'_CHANGED corrected target on corrected context"
+    ],
+    "B_retention": "same B-held original after B3 and after corrected C2",
+    "corrected_control": "EDIT vs NOEDIT fork identical B3 weights Adam optimizer state and dropout RNG",
+    "eos": "genuine EOS NLL/Brier and premature EOS separately",
+    "generation": "own 64-step max generation from 3 observed bytes on 16 A and16 B held prompts at A2 B3 edited-C2, output EOS/length/truncation, no arbitrary prose exact requirement",
+    "external_count": "train-only unigram, fixed Kneser-Ney calibrated on source validation, never learner output",
+    "primary_composite": "unweighted mean of B_held_B3, B_held_after_EDIT_C2, A'_SAME_KC_held_after_EDIT_C2, A'_CHANGED_held_after_EDIT_C2",
+    "selectivity_gate": {
+      "worlds_required": [
+        "M1",
+        "M2"
+      ],
+      "composite_gain_vs_FIXED_LOW_min_bits": 0.03,
+      "composite_gain_vs_RMS_SHAM_min_bits": 0.03,
+      "max_single_domain_regression_vs_fixed_or_sham_bits": 0.1,
+      "max_A2_acquisition_regression_vs_NORMAL_bits": 0.1,
+      "corrected_loss_improvement_EDIT_vs_NOEDIT_min_bits": 0.1,
+      "basic_A_competence": "NORMAL or CGLP A-held at A2 beats unigram by>=0.05 bits; without this no mechanism promotion",
+      "no_benchmark_scores_used_to_change_training_schedule": true
+    },
+    "evidence_level": "two opened text ecologies with no prior V180 neural efficacy; bounded development only, not E1 complete response nor E2 semantic retention nor E3 arithmetic"
+  },
+  "budget": {
+    "worlds": 2,
+    "arms": 4,
+    "A_full_records_per_arm_world": 320,
+    "B_full_records_per_arm_world": 144,
+    "C_EDIT_records_per_arm_world": 48,
+    "C_NOEDIT_records_per_arm_world": 48,
+    "full_records_per_arm_world": 560,
+    "scheduled_main_records": 4480,
+    "technical_records_max": 32,
+    "hard_full_record_cap": 5000,
+    "absolute_target_application_max": 582048,
+    "hard_supervised_target_application_cap": 600000,
+    "cpu_seconds": 900,
+    "wall_seconds": 1800,
+    "peak_RSS_bytes": 1073741824,
+    "output_bytes": 268435456,
+    "full_mutable_checkpoint_max_bytes": 1048576,
+    "checkpoint_count_max": 80,
+    "storage_reserve_multiplier": 1.5,
+    "mandatory_immutable_sensor_content_hash": true,
+    "new_training_requires_authorization": true
+  },
+  "constraints": {
+    "no_more_than_40k_learnable": true,
+    "no_16_bank_sensory_duplicate": true,
+    "no_dense_masked_fake_weights": true,
+    "no_BPTT": true,
+    "no_Attention": true,
+    "no_Transformer": true,
+    "no_ELM": true,
+    "no_arithmetic_parser": true,
+    "no_teacher_future_feed": true,
+    "no_forced_EOS": true,
+    "no_hidden_extra_models": true,
+    "no_retroactive_rescue": true,
+    "no_partially_omitted_controls": true,
+    "no_automatic_next_version": true
+  },
+  "outcomes": [
+    "DESIGN_ONLY",
+    "SOURCE_UNAVAILABLE",
+    "MINI_MEMORY_INVALID",
+    "MINI_RESOURCE_NOT_ADMITTED",
+    "NUMERIC_INVALID",
+    "CORRECTION_FIXTURE_NOT_QUALIFIED",
+    "MINI_CAPACITY_OR_LEARNING_GAP",
+    "CGLP_NOT_SUPPORTED_MINI",
+    "LOW_STEP_SUFFICIENT",
+    "UNIFORM_STRENGTH_SUFFICIENT",
+    "SELECTIVE_PLASTICITY_MINI_DEV"
+  ],
+  "next_version_to_allocate": 182
+}
