@@ -1,10 +1,10 @@
-# MiniFly versioned experiment navigation — 2 November 2026
+# MiniFly research and version navigation — 2 November 2026
 
-**V178 is now the latest allocated experiment (DESIGN ONLY).** [V178 reference reproduction / failure-localization design](minifly_v178_recurrent_failure_localization_design_20261102/DESIGN.md) | [Machine-readable V178 specification](minifly_v178_recurrent_failure_localization_design_20261102/SPEC.json) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
+**Latest experiment: V179 (DESIGN ONLY).** [V179 continuous local-lifetime design](minifly_v179_continuous_local_life_design_20261102/DESIGN.md) | [Machine-readable spec](minifly_v179_continuous_local_life_design_20261102/SPEC.json) | [Program correction memo](PROJECT_DOCUMENTS/MINIFLY_RESEARCH_RESET_20261102/MEMO.md) | [Active lifetime research contract](PROJECT_DOCUMENTS/MINIFLY_ACTIVE_LIFETIME_CONTRACT_20261102.json) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
 
-**Latest completed experiment: V177 — REFERENCE_NOT_QUALIFIED.** [V177 results](minifly_v177_connected_recurrent_credit_dev_20261102/REPORT.md) | [V177 original design](minifly_v177_connected_recurrent_credit_design_20261102/DESIGN.md). V176 remains [NO_CONFIRMED_NATIVE_FEATURE_DEPLOYMENT_SIGNAL](minifly_v176_feature_deployment_dev_20261101/campaign_20261102/REPORT.md); V175 [failed its native inhibition screen](minifly_v175_local_decorrelation_dev_20261101/REPORT.md).
+**Latest completed experiment: V178 — SPARSE_PACKAGE_FAIL_10.** [V178 results](minifly_v178_recurrent_failure_localization_dev_20261102/REPORT.md). The original V164 dense BPTT copy reference reproduced, but one sparse-ungated interim model did not qualify; V178 did not test a gated candidate or local learning. Earlier V177 failed its BPTT reference gate, V176 had no confirmed native feature deployment, and V175 failed its interference/decorrelation screens.
 
-V178 uses V164's historical Claude-branch BPTT S-COPY success as a separately pinned reference. It diagnoses dense→sparse→gated recurrence at width256 and does **not** train local-credit candidates, modify native Full151, or claim E2/E3 progress. V172–V174 remain on Claude's separate branch, not merged by these navigation edits.
+The corrected active research program no longer makes an arbitrary sparsity constraint, a fresh native feature bridge, or a failed component positive-control mandatory prerequisites. V179 instead follows an **operative local H/T predictor** across A→B→corrected-A with full optimizer continuity and matched counterfactuals. It does not claim E2 or E3 success and does not modify the adopted native Full151 core. The Claude V167/V169 source branch remains separate and is only referenced, not merged.
 
 ---
 

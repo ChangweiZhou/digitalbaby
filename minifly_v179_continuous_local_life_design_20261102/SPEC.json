@@ -1,0 +1,235 @@
+{
+  "schema": "MiniFlyExperimentDesignV1",
+  "id": "V179-CLLR-D1",
+  "version": 179,
+  "date": "2026-11-02",
+  "status": "DESIGN_ONLY",
+  "execution_authorized": false,
+  "adopted_core_changed": false,
+  "research_question": "Can one fully local predictive learner preserve valid predictions, revise changed predictions, and reuse prior experience across A->B->edited-A learning with one continuing parameter and optimizer state?",
+  "sources": {
+    "default_parent_commit": "885d47ae2b24e0738f0159a6c78a1ab5026ee509",
+    "claude_branch": "claude/charming-clarke-u9g850",
+    "claude_commit": "f4146856c3241d94f7fa948e0b869bc1",
+    "local_learner": "minifly_v167_local_dev_v1_20261026/v167_local.py",
+    "persistent_learner": "minifly_v169_native_dev_v1_20261027/v169_lib.py",
+    "data": "minifly_v176_feature_deployment_dev_20261101/DATA_AUDIT.json",
+    "encoder": "minifly_v176_feature_deployment_dev_20261101/native_stage.py",
+    "prior_evidence": {
+      "B_cold_bits": 3.9173033558064585,
+      "B_continue_bits": 3.4433068853331923,
+      "count_B_bits": 2.819209435794579
+    }
+  },
+  "learner": {
+    "structure": "fixed FE-PERM sparse native KC -> H512 ReLU -> T2048 ReLU/dropout.5 -> own 257-way softmax",
+    "KCs": 5177,
+    "H": 512,
+    "T": 2048,
+    "payload_classes": 256,
+    "EOS": 256,
+    "OTHER_class": false,
+    "heads_fitted_externally": false,
+    "attention": false,
+    "Transformer": false,
+    "pretrained_weights": false,
+    "native_value_store_touched": false,
+    "supervised_local_learning": "output-local CE readout; H and T input-matched direct fixed-random output-error broadcast with ReLU derivatives and dropout mask",
+    "feedback_H": {
+      "shape": [
+        257,
+        512
+      ],
+      "seed": 21,
+      "variance": 0.0038910505836575876,
+      "frozen": true
+    },
+    "feedback_T": {
+      "shape": [
+        257,
+        2048
+      ],
+      "seed": 22,
+      "variance": 0.0038910505836575876,
+      "frozen": true
+    },
+    "optimizer": {
+      "name": "AdamW",
+      "lr": 0.001,
+      "wd": 0.0001,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "eps": 1e-8,
+      "batch_target_sites": 256,
+      "shuffle": false,
+      "whole_record_chronology": true,
+      "warmup": "none",
+      "continuous_parameters_and_moments": true
+    },
+    "stage_transition": "no weight reset, no optimizer reset for KEEP, no validation-best checkpoint reload",
+    "adaptations_vs_V169": [
+      "fixed 257-class output instead of A-seen+OTHER",
+      "chronological record-order batches",
+      "optimizer state preserved across A/B/C",
+      "train-only deterministic A-revision environment",
+      "no automatic best epoch selection"
+    ]
+  },
+  "worlds": [
+    {
+      "id": "W1",
+      "A": {
+        "text": "chesterton-thursday.txt",
+        "sha256": "8b431a2a8db84089cd6f83fa66610c3b12c04114609df6e90137c0c58f2c5493",
+        "train_records": 705,
+        "train_targets": 41017,
+        "passes": 3
+      },
+      "B": {
+        "text": "edgeworth-parents.txt",
+        "sha256": "543b2162782f839b9917b88956acbd7507df37c543286c16c228b36dda0cf950",
+        "train_records": 156,
+        "train_targets": 10287,
+        "passes": 3
+      }
+    },
+    {
+      "id": "W2",
+      "A": {
+        "text": "austen-emma.txt",
+        "sha256": "71b0923d75fcf2f1faa897b22da8de8e2476d7478a2b22388eb58a3420e00215",
+        "train_records": 657,
+        "train_targets": 41019,
+        "passes": 3
+      },
+      "B": {
+        "text": "chesterton-ball.txt",
+        "sha256": "c6b6d4e8c09a3f49a09f37f4e47663d4d6f048b62d86c70ccafdfd8f27059a58",
+        "train_records": 170,
+        "train_targets": 10274,
+        "passes": 3
+      }
+    }
+  ],
+  "histories": [
+    {
+      "arm": "KEEP",
+      "birth": "shared A-trained state",
+      "B_passes": 3,
+      "optimizer": "continue",
+      "C": "EDITED-C",
+      "role": "primary one continuous model"
+    },
+    {
+      "arm": "RESET-OPT",
+      "birth": "shared A-trained state",
+      "B_passes": 3,
+      "optimizer": "reset only moments and step count",
+      "C": null,
+      "role": "optimizer continuity counterfactual"
+    },
+    {
+      "arm": "B-COLD",
+      "birth": "same original untrained birth",
+      "B_passes": 3,
+      "optimizer": "fresh",
+      "C": null,
+      "role": "prior-A exposure/reuse counterfactual"
+    },
+    {
+      "arm": "NOEDIT-C",
+      "birth": "KEEP B-complete state clone",
+      "B_passes": 0,
+      "optimizer": "continue",
+      "C": "original A, same 64 record IDs and 2 presentations",
+      "role": "correction specific causal control"
+    }
+  ],
+  "revision": {
+    "contexts": 4,
+    "preceding_bytes": 2,
+    "context_occurrences_min": 32,
+    "modal_share_min": 0.6,
+    "old_label": "modal following ordinary byte, selected only from A_train",
+    "exclude_old_labels": [
+      10,
+      256
+    ],
+    "new_label": "deterministic hash from 16 frequent A-train ordinary bytes, different from old",
+    "edit_rule": "one pass on original bytes; change target only for original matching context+old label; re-encode all corrected records from observed bytes; preserve genuine EOS",
+    "revision_train_records_per_world": 64,
+    "revision_passes": 2,
+    "minimum_changed_held_targets": 24,
+    "minimum_stable_held_targets": 128,
+    "control": "NOEDIT-C receives original same record IDs with same schedule and target count; no learner phase labels",
+    "insufficient_coverage": "keep A/B results and label correction fixture not admitted; no replace/tune"
+  },
+  "metrics": {
+    "common": "held next-byte/EOS bits per actual target on model's own unmasked 257 softmax, record-level paired effects, zero-shot B, after A, every B pass, after each C pass",
+    "acquisition": {
+      "gain_from_birth_bits_min": 0.2,
+      "gain_beyond_A_unigram_bits_min": 0.05
+    },
+    "reuse": {
+      "B_COLD_minus_RESET_OPT_B_after_one_pass_bits_min": 0.05,
+      "B_COLD_minus_RESET_OPT_after_three_passes_bits_min": 0.05
+    },
+    "retention": {
+      "A_stable_B_minus_A_max_bits": 0.1,
+      "A_stable_C_minus_A_max_bits": 0.15,
+      "B_held_C_minus_B_max_bits": 0.1
+    },
+    "revision": {
+      "extra_updated_target_log_odds_gain_v_NOEDIT_bits_min": 0.2,
+      "NOEDIT_minus_EDITED_new_target_bits_min": 0.1
+    },
+    "secondary": [
+      "full record own generative continuations max32 bytes, complete byte/EOS rate",
+      "unigram and Kneser Ney calibrated count controls",
+      "counting gap",
+      "A stable vs obsolete positions",
+      "optimizer reset effect",
+      "total sample/CPU efficiency"
+    ],
+    "all_four_pass_both_worlds": "PROMISING_LIFETIME_DEV",
+    "otherwise": "LIFETIME_DEV_GAPS",
+    "efficacy_does_not_gate_subsequent_stages": true,
+    "worlds_previously_opened": true,
+    "no_independent_confirmation": true,
+    "evidence_boundary": "bounded continual predictive learning proxy only, not E1 complete response or E2 true relevance or E3 addition"
+  },
+  "budget": {
+    "A_shared_record_applications": 4086,
+    "B_KEEP": 978,
+    "B_RESET_OPT": 978,
+    "B_COLD": 978,
+    "C_EDITED": 256,
+    "C_NOEDIT": 256,
+    "scheduled_records": 7532,
+    "technical_records_cap": 32,
+    "full_records_cap": 7600,
+    "A_full_targets": 246108,
+    "B_total_full_targets": 185049,
+    "C_upper_targets": 66048,
+    "technical_upper_targets": 4128,
+    "target_applications_upper": 501333,
+    "target_applications_cap": 510000,
+    "cpu_seconds_cap": 7200,
+    "wall_seconds_cap": 14400,
+    "rss_bytes_cap": 2147483648,
+    "output_bytes_cap": 2147483648,
+    "admission_reserve": 1.5,
+    "budget_requires_explicit_future_approval": true
+  },
+  "controls": {
+    "no_auto_rescue_or_mechanism_search": true,
+    "all_lifetime_outcomes_reported_even_when_A_is_weak": true,
+    "reject_if_source_unauthenticated": true,
+    "no_untrusted_corpus_substitution": true,
+    "holdouts_not_used_for_tuning": true,
+    "no_BPTT_no_attention_no_arithmetic_roles": true,
+    "source_locked_before_any_scored_training": true,
+    "full_raw_panels_needed_for_independent_claims": true
+  },
+  "next_unallocated": 180
+}
