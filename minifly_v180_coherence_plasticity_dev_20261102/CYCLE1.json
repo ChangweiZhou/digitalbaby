@@ -1,0 +1,56 @@
+{
+  "status": "PASS_AFTER_FIXTURE_REVISION",
+  "checks": {
+    "gamma1_literal_all_state_RNG_parity": true,
+    "full_source_gradients_exact": true,
+    "reliable_uneven_disjoint_groups": true,
+    "independent_Adam_effective_step": true,
+    "quarter_real_hidden_movement": true,
+    "output_never_scaled": true,
+    "analytic_coherence_cases": true,
+    "unreliable_floor": true,
+    "reversible_coherence_gain": true,
+    "finite_difference_local_and_output": true
+  },
+  "initial_balanced_fixture_history": "history/cycle1_balanced_fixture",
+  "uneven_gradient_fixture": {
+    "group_records": [
+      2,
+      2
+    ],
+    "reliable": true,
+    "group_targets": [
+      128,
+      127
+    ],
+    "split_gradient_max_errors": {
+      "W": 1.6298145055770874e-09,
+      "b": 9.313225746154785e-10,
+      "top.first.weight": 7.450580596923828e-09,
+      "top.first.bias": 1.862645149230957e-09
+    },
+    "cosine_mean": {
+      "H": 0.026769569143652916,
+      "T": 0.08765369653701782
+    },
+    "gain_mean": {
+      "H": 0.2700771689414978,
+      "T": 0.3157402575016022
+    },
+    "gain_min": {
+      "H": 0.25,
+      "T": 0.25
+    },
+    "gain_max": {
+      "H": 0.45291540026664734,
+      "T": 0.7859464883804321
+    }
+  },
+  "no_optimizer_trajectory_repeated": true,
+  "counts": {
+    "records": 8,
+    "targets": 512,
+    "optimizer_steps": 2,
+    "gradient_only_targets": 263
+  }
+}

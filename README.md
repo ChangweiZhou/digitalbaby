@@ -1,10 +1,10 @@
 # MiniFly current research navigation — 2 November 2026
 
-**V180 allocated (DESIGN ONLY).** [V180 phase-blind local plasticity design](minifly_v180_coherence_plasticity_design_20261102/DESIGN.md) | [V180 machine specification](minifly_v180_coherence_plasticity_design_20261102/SPEC.json) | [Evaluation correction](PROJECT_DOCUMENTS/MINIFLY_V180_EVALUATION_CORRECTION_20261102.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
+**V180 work stopped at the user's request for a mini-scale review.** [Current technical report](minifly_v180_coherence_plasticity_dev_20261102/REPORT.md) | [Scale review note](minifly_v180_coherence_plasticity_dev_20261102/EXECUTION_SCALE_NOTE.md) | [Original design](minifly_v180_coherence_plasticity_design_20261102/DESIGN.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
 
 **Latest completed numbered experiment: V179 — LIFETIME_DEV_GAPS.** [Full lifetime](minifly_v179_continuous_local_life_dev_20261102/REPORT.md) | [Instrumented train/held divergence](minifly_v179_lifetime_diagnostic_20261102/REPORT.md) | [Paired hidden-plasticity intervention](minifly_v179_plasticity_location_20261102/REPORT.md). V179 showed B training fitting accompanied by worse held loss, while hidden freeze improved later B but impaired continued correction retention. The adopted Full151 core remains unchanged.
 
-V180 tests **one new phase-blind local effective plasticity gate**, against normal learning, fixed lower hidden steps and matched-strength nonselective hidden updates, with the operative learner retaining its parameter/optimizer states across A→B→corrected A. Its new corpus roster and measured retention/EOS contracts are prospective; the 35,000-record budget **requires separate future authorization**. No V180 training, source retrieval or confirmation has been launched. No E2/E3/addition success is claimed.
+V180 completed64 technical record applications and its numeric/matched-control checks, but no scientific text training or guard model scoring was launched. The proposed execution footprint failed its output budget; the user requested stopping expansion and publishing the work. No larger budget, new mechanism, official run, core adoption or V181 is authorized.
 
 ---
 
