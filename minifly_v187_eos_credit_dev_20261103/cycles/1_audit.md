@@ -1,0 +1,1 @@
+The inherited hidden feedback receives the 257 raw-output derivatives. The stop row starts with the parent EOS weights and a −log(256) bias offset; this matches the uniform reference only. The numerical oracle is evaluator-only.

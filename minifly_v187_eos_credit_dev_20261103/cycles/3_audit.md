@@ -1,0 +1,1 @@
+Require deterministic forks, an unchanged ancestor, a correction-induced state difference, full and residual training batches, and checkpoint size within the cap. This integration harness is synthetic and is not a fresh-roster launch runner.

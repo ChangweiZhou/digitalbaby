@@ -1,0 +1,1 @@
+Use the factorized joint distribution for inference and analytic joint-NLL credit for local updates. Explicitly test the parent-relative birth offset and gradients on mixed, all-EOS and all-payload batches.

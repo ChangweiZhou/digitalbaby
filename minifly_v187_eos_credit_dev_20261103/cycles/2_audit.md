@@ -1,0 +1,1 @@
+The denominator depends only on reference and prefix lengths. Wrong bytes with a timely stop and exact bytes with a timely stop must be distinguished. Cover early, late, empty, cap-boundary and ineligible cases.

@@ -1,0 +1,1 @@
+Use arm-tagged serialized state for fork continuation and reject cross-arm restore. Add a two-world reduced integration rehearsal across both native arms, real decoding, receipts and archive readback.
