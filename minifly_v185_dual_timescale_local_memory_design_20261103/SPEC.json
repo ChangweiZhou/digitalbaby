@@ -1,0 +1,166 @@
+{
+  "identity": "V185-DTLM-D1",
+  "date_local": "2026-11-03",
+  "status": "DESIGN_ONLY",
+  "parent": {
+    "repo": "ChangweiZhou/digitalbaby",
+    "branch": "codex/minifly-consolidated-20261023",
+    "commit": "9203640ce5b65907fef41c893e456c999d23c66e",
+    "latest_completed": 184,
+    "verdict": "REJECT_V184_EXACT_PACKAGE"
+  },
+  "scope": "New compact local memory lineage, NOT continuation of trained V181/V184; no technical/scientific authorization",
+  "hypotheses": {
+    "candidate": "Synapse-local conflict+release metaplastic slow writing reduces interference while preserving new acquisition/revision",
+    "contrast": "Equivalent per-site slow-write L1 without coordinate selectivity"
+  },
+  "sensor": {
+    "native_FE_PERM": true,
+    "receptors": 88,
+    "KCs": 5177,
+    "one_sensory_birth": true,
+    "fixed_projection_rows": 64,
+    "fixed_projection_fanin": 256,
+    "incidence": "V181 I_jr",
+    "edge_sign": "SHA256('V185|projection-sign|j|r') low bit +1 if 1, else -1",
+    "activity": "h_j=tanh(sum_{r=0}^{255}(sign[j,r]*KC[I[j,r]])/3)",
+    "task_specific_features": false
+  },
+  "model": {
+    "classes": 257,
+    "eos_class": 256,
+    "fast_shape": [
+      257,
+      64
+    ],
+    "slow_shape": [
+      257,
+      64
+    ],
+    "class_bias_shape": [
+      257
+    ],
+    "learnable_scalars": 33153,
+    "fast_slow_bias_start_zero": true,
+    "prediction": "softmax((F+S) @ h + b)",
+    "readout_task_labels_before_prediction": false,
+    "forward_pretrained": false,
+    "inference_lookup": false
+  },
+  "plasticity": {
+    "direction": "d_cj=(1[y==c]-p_c)*h_j/(1+sum(h^2)); e_c=(1[y==c]-p_c)",
+    "fast": "Fplus=(1-1/1024)*F+0.25*d",
+    "bias": "bplus=b+0.03*e",
+    "slow": "Splus=S+0.25*a*d",
+    "candidate_gate": "g_cj=1 if S_cj*d_cj>=0 OR (F_cj*S_cj<0 AND abs(F_cj)>2*abs(S_cj)); otherwise 0.10",
+    "slow_uniform": "u=sum(abs(d)*g)/sum(abs(d)) (if zero, 1); a_cj=u",
+    "slow_full": "a_cj=1",
+    "slow_selective": "a_cj=g_cj",
+    "source_math": "all pre-update, target only after forward, not across learned hidden",
+    "gamma": 0.1,
+    "learning_rate_fast": 0.25,
+    "learning_rate_slow": 0.25,
+    "learning_rate_bias": 0.03,
+    "fast_decay_per_teaching_target": 0.0009765625
+  },
+  "arms": [
+    "FULL",
+    "UNIFORM",
+    "SELECTIVE"
+  ],
+  "roster": {
+    "development_ecologies": 1,
+    "ecology_seed": "SHA256('V185|DEV|20261103')",
+    "tasks": "random deterministic ASCII byte-key => independent two ASCII byte answer, genuine EOS; changed answer for 8 selected keys only in EDIT",
+    "independent_keys": 80,
+    "old_keys": 64,
+    "new_keys": 16,
+    "changed_keys": 8,
+    "old_passes": 16,
+    "new_passes": 8,
+    "edit_passes": 4,
+    "noedit_passes": 4,
+    "records_per_main_arm": 1216,
+    "records_main_all_arms": 3648,
+    "records_B_only_all_arms": 384,
+    "science_record_presentations": 4032,
+    "science_supervised_targets": 12096,
+    "full_main_checkpoints_per_arm": [
+      "birth",
+      "A8",
+      "A16",
+      "B4",
+      "B8",
+      "EDIT4",
+      "NOEDIT4"
+    ],
+    "B_only_states": [
+      "birth",
+      "B8"
+    ],
+    "total_full_checkpoints": 27,
+    "partitions": [
+      "OLD_ACQUIRED",
+      "OLD_RETAINED",
+      "NEW",
+      "STILL_VALID",
+      "CHANGED",
+      "OBSOLETE_NOT_GUARDED"
+    ],
+    "held_relation_E3": false
+  },
+  "preflight": {
+    "source_and_parity": "single native FE-PERM + fixed hash signed projection, no native value banks or output lookup",
+    "finite_training_ceiling": "80/80 full two-byte+EOS oracle with same 64-feature forward code, C0 reference only; no candidate BP",
+    "stage_ids_never_model_features": true,
+    "technical_record_reserve_max": 256,
+    "technical_target_reserve_max": 768,
+    "proofs": [
+      "pre-feedback",
+      "three arm source parity at all-zero birth",
+      "moment/RNG not applicable except actual state",
+      "uniform gate absolute slow-write L1 matching at same state",
+      "exact fork serialization",
+      "true EOS",
+      "all physical byte+resource counts"
+    ]
+  },
+  "limits": {
+    "learnable_scalars_max": 40000,
+    "model_inference_bytes_max": 8388608,
+    "full_checkpoint_bytes_max": 1048576,
+    "physical_record_presentations_max": 5000,
+    "declared_science_plus_technical_presentations_ceiling": 4288,
+    "supervised_targets_max": 600000,
+    "cpu_seconds_max": 900,
+    "execution_wall_seconds_max": 1800,
+    "process_peak_rss_max": 1073741824,
+    "complete_output_bytes_max": 268435456
+  },
+  "decision": {
+    "acquisition_each_arm_min_old_complete": 40,
+    "selective_old_retained_gain_items_over_each_control_min": 8,
+    "selective_old_acquisition_downside_max_items": 2,
+    "selective_new_B8_downside_max_items": 2,
+    "selective_final_total_gain_over_each_control_min": 8,
+    "selective_net_B8_total_gain_vs_own_A16_min": 8,
+    "changed_EDIT4_min_complete": 6,
+    "still_valid_fraction_min": 0.9,
+    "changed_log_odds_EDIT_over_NOEDIT_required": true,
+    "EOS_own_no_mask": true,
+    "positive_status": "BOUNDED_DEV_POSITIVE_ONLY",
+    "negative_status": "REJECT_V185_EXACT_PACKAGE",
+    "reference_fail_status": "ACQUISITION_REFERENCE_UNQUALIFIED_OR_REPRESENTATION_CEILING_FAILED",
+    "confirmation": "NOT_STARTED",
+    "E3": false,
+    "adopted": false
+  },
+  "authorization": {
+    "design": true,
+    "implementation": false,
+    "technical": false,
+    "science": false,
+    "cross_family_review": "PENDING",
+    "formal_MRK1": "UNAVAILABLE"
+  }
+}
