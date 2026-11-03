@@ -1,0 +1,40 @@
+{
+  "status": "COMPLETE_TECHNICAL_ONLY",
+  "cycles": [
+    {
+      "cycle": 1,
+      "design": "literal fixed-alpha residual and magnitude sham at unchanged capacity",
+      "audit": "parent parity, causal input timing/source, physical weights and sham validity domain",
+      "tests": [
+        "CYCLE1.json"
+      ],
+      "revision": "Make numeric validity tolerance/stop behavior explicit; retain original cap8 and distinguish benign all-zero from invalid nonzero residual"
+    },
+    {
+      "cycle": 2,
+      "design": "same O head and unchanged local H/T teacher with actual arm error",
+      "audit": "source gradients, dropout, output-local derivative and actual post-Adam motion",
+      "tests": [
+        "CYCLE2.json",
+        "CHECKPOINT_CONFIG_REVIEW.json"
+      ],
+      "revision": "Store/validate static arm/alpha to prevent cross-arm replay; norm matching is not movement matching; no numeric learning change"
+    },
+    {
+      "cycle": 3,
+      "design": "complete fixed lifetime, paired-record inference and frozen H-alignment",
+      "audit": "moment/RNG forks, tails, saved-site EOS and mean forecast, record denominators, resource bounds",
+      "tests": [
+        "CYCLE3.json",
+        "REDUCER_REVIEW.json",
+        "SAVED_SITE_REVIEW.json",
+        "RESOURCE_ADMISSION.json"
+      ],
+      "revision": "Freeze bootstrap/hash/eligible-site/EOS conventions and wrong-sign-point veto; retain full per-site alignment trace and clarify source/runtime/evidence limits"
+    }
+  ],
+  "scientific_records": 0,
+  "no_main_scientific_run": true,
+  "no_alpha_gain_grid": true,
+  "same_family_self_audit_only": true
+}

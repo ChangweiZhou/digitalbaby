@@ -1,0 +1,179 @@
+{
+  "identity": "V184-HRES-R1",
+  "date_local": "2026-11-02",
+  "status": "TECHNICAL_QUALIFIED_WITH_RUNTIME_CONTROL_GUARD",
+  "parent": {
+    "repo": "ChangweiZhou/digitalbaby",
+    "branch": "codex/minifly-consolidated-20261023",
+    "commit": "840f2a7b9dcd25f4262c3e17058bb1cf30139bf2",
+    "latest_completed": 183,
+    "latest_completed_verdict": "HPC_NOT_SUPPORTED"
+  },
+  "owner_scope": "Authorized three-cycle implementation/technical exercise; main requires separate launch instruction",
+  "scientific_claim": "Output-route information deployment; predictive development E0/predictive only, not E1/E2/E3",
+  "candidate": "HRES",
+  "mechanism": {
+    "source": "V181 37,313-param KC5177 -> H64 -> T64 -> O257",
+    "original_forward": "z = dropout_mask * relu(T @ h + Tb); logits = O @ z + Ob",
+    "h_residual_forward": "z = dropout_mask * (relu(T @ h + Tb) + alpha * h); logits = O @ z + Ob",
+    "norm_sham_forward": "z = dropout_mask * u * clip(norm(mask*(u+alpha*h))/max(norm(mask*u),1e-6),0,8)",
+    "h": "relu(H @ sparse_KC + Hb)",
+    "alpha": 0.5,
+    "sham_epsilon": 1e-06,
+    "sham_max_gain": 8,
+    "locality": "O exact output-local CE error. H and T fixed-feedback original gradient, no backprop through learned downstream or temporal states",
+    "data_before_feedback": "Observed raw bytes and current neural/dropout state only; never target, world role or editing labels",
+    "trainable_parameters_per_arm": 37313,
+    "additional_trainable_parameters": 0,
+    "sensory": "unchanged authentic FE-PERM 88-channel native 5177-KC single circuit",
+    "output_classes": 257,
+    "eos_index": 256,
+    "dropout": 0.1,
+    "AdamW": {
+      "learning_rate": 0.001,
+      "beta1": 0.9,
+      "beta2": 0.999,
+      "eps": 1e-08,
+      "weight_decay": 0.0001
+    }
+  },
+  "roster": {
+    "science_worlds": [
+      "M1"
+    ],
+    "world_kind": "OPENED_DEVELOPMENT_NOT_CONFIRMATION",
+    "arms": [
+      "NORMAL",
+      "HRES",
+      "NORM_SHAM"
+    ],
+    "same_birth": "V181|M1|birth",
+    "stages": {
+      "A": {
+        "records": 160,
+        "passes": 2
+      },
+      "B": {
+        "records": 48,
+        "passes": 3
+      },
+      "EDIT": {
+        "records": 24,
+        "passes": 2
+      },
+      "NOEDIT": {
+        "records": 24,
+        "passes": 2
+      }
+    },
+    "fork_at": "B3 identical weights+moments+clock+dropout RNG",
+    "records_per_arm": 560,
+    "optimizer_targets_per_arm": 34364,
+    "total_scientific_optimizer_records": 1680,
+    "total_scientific_optimizer_targets": 103092,
+    "full_state_stages": [
+      "birth",
+      "A2",
+      "B3",
+      "EDIT2",
+      "NOEDIT2"
+    ],
+    "full_states_expected": 15,
+    "correlated_C_child_branches": 6,
+    "source_manifest": "minifly_v183_h_credit_dev_20261102/campaign/MANIFEST.json",
+    "source_audit": "minifly_v183_h_credit_dev_20261102/campaign/FINAL_AUDIT.json"
+  },
+  "ceilings": {
+    "trainable_parameters": 40000,
+    "inference_bytes": 8388608,
+    "mutable_checkpoint_bytes": 1048576,
+    "output_bytes": 268435456,
+    "training_record_presentations_including_technical": 5000,
+    "supervised_target_evaluations_including_technical": 600000,
+    "cpu_seconds": 900,
+    "wall_seconds": 1800,
+    "peak_rss_bytes": 1073741824,
+    "technical_reserve_records_max": 32,
+    "technical_reserve_targets_max": 3840
+  },
+  "preflight": {
+    "source_parity": "NORMAL literal; HRES(alpha=0) literal; local H/T gradient; readout finite difference; all 257 classes",
+    "sham": "No prediction target in gain, match realized post-dropout feature norm within same state; record clipping and degenerate cases",
+    "cost_status": "ADMITTED",
+    "state_roundtrip": "Required",
+    "data_hashes": "Must lock authentic source assets before execution",
+    "control_norm_material_tolerance": {
+      "atol": 1e-07,
+      "rtol": 1e-06,
+      "fractional_exemption": false
+    },
+    "control_invalid_response": "CONTROL_NOT_QUALIFIED; preserve partial data and stop before affected update; no cap8 change"
+  },
+  "primary": {
+    "stage": "A2",
+    "panel": "M1/A_held 64 records",
+    "signed_pairwise": "HRES\u2212NORMAL<0 and HRES\u2212NORM_SHAM<0 with record-cluster bootstrap 95% upper CI <0",
+    "marginal_guards": "HRES below its own A-train mean forecast and source-matched A-train unigram",
+    "alignment": "Frozen read-only H residual shuffled across different records matched on site position; evaluate aligned vs shuffled eligible-only sites; no training on sham",
+    "caveat": "No automatic E1/E3, model adoption or independent confirmation"
+  },
+  "lifetime_guards": {
+    "B3": [
+      "A_held_still_valid",
+      "B_held"
+    ],
+    "EDIT2": [
+      "EDIT_held_SAME_KC",
+      "EDIT_held_ALTERED_KC",
+      "B_held"
+    ],
+    "correction": "EDIT2 vs NOEDIT2 changed-target new/old log2 odds",
+    "eos": [
+      "real_EOS_NLL",
+      "EOS_Brier",
+      "premature_argmax_EOS",
+      "own_64_decision_generation_and_true_EOS"
+    ],
+    "arbitrary_natural_text_exactness": "DESCRIPTIVE_ONLY"
+  },
+  "statuses": {
+    "implementation": "IMPLEMENTED",
+    "technical": "QUALIFIED_CONDITIONAL_RUNTIME_CONTROL_DOMAIN",
+    "scientific": "NOT_RUN",
+    "independent_review": "PENDING",
+    "formal_MRK1": "UNAVAILABLE",
+    "core_adopted": false
+  },
+  "inference_conventions": {
+    "primary": "pooled total byte/EOS loss, point<0 and percentile CI95 upper<0 versus both controls",
+    "bootstrap_replicates": 10000,
+    "bootstrap_seed": "V184|M1|A2|paired-bootstrap|10000",
+    "bootstrap_unit": "paired source record, not token/world",
+    "bootstrap_denominator": "resampled actual target counts",
+    "payload_CIs": "reported, no new posthoc co-primary",
+    "alignment_hash": "V184|M1|A2|H-align|POSITION|INPUT_SHA|RECORD_INDEX",
+    "alignment_permutation": "cyclic successor in hash-ordered eligible records; require different record at same position",
+    "alignment_eligible_profile": 4054,
+    "lifetime_margins": "nonpositive point-loss differences as D1; not certified safety",
+    "EOS_panels": {
+      "A2": [
+        "A_held",
+        "B_held"
+      ],
+      "B3": [
+        "A_held",
+        "B_held"
+      ],
+      "EDIT2": [
+        "EDIT_held",
+        "B_held"
+      ]
+    },
+    "EOS_metrics": [
+      "EOS_NLL",
+      "EOS_Brier",
+      "premature_EOS_rate"
+    ],
+    "static_checkpoint_configuration": "arm/alpha stored and mismatched restore rejected"
+  }
+}

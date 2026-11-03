@@ -1,0 +1,41 @@
+{
+  "status": "PASS_WITH_ENFORCED_RUNTIME_CONTROL_DOMAIN",
+  "source_parity_NORMAL_and_alpha0_bitwise": true,
+  "parameters": 37313,
+  "canonical_sensor_digest": "7e0b78ae71cd9f508e9069018ec2343a88ab8bfd9263067506ee6eb3fae4962b",
+  "same_dropout_RNG": true,
+  "matched_control_empty_zero_is_harmless": true,
+  "invalid_control_witnesses_rejected": {
+    "zero_T_nonzero_H": {
+      "sites": 7,
+      "gain_min": 0.0,
+      "gain_max": 8.0,
+      "clipped_sites": 6,
+      "zero_denominator_sites": 7,
+      "harmless_both_zero_sites": 1,
+      "material_norm_mismatch_sites": 6,
+      "max_abs_norm_error": 3.4119120978826842,
+      "max_relative_norm_error": 1.0
+    },
+    "gain_clip_51_not_cap_retune": {
+      "sites": 7,
+      "gain_min": 0.0,
+      "gain_max": 8.0,
+      "clipped_sites": 6,
+      "zero_denominator_sites": 1,
+      "harmless_both_zero_sites": 1,
+      "material_norm_mismatch_sites": 6,
+      "max_abs_norm_error": 2.934244368155129,
+      "max_relative_norm_error": 0.8431372598073379
+    }
+  },
+  "policy": "actual nonnegligible mismatch in a future trajectory stops as CONTROL_NOT_QUALIFIED; no cap change",
+  "M1_only_all_source_and_C_ID_hashes_match": true,
+  "technical_counts": {
+    "technical_record_equivalents": 10,
+    "technical_supervised_target_evaluations": 0,
+    "technical_optimizer_updates": 0,
+    "read_only_record_views": 0,
+    "read_only_forward_sites": 0
+  }
+}
