@@ -5,6 +5,19 @@ description: "Use when updating MiniFly research skills, process rules, acceptan
 
 # MiniFly research governance — current entry point, 2026-11-02
 
+## 0. Route the user's intent before selecting any MiniFly workflow (proposed correction, 2026-11-03)
+
+**Recursive self-improvement is about improving this research process, NOT advancing the MiniFly model.** In this repository the recursive self-improvement skill is \`minifly-governance\`: incident → generalizable check/repair → contrasting regression cases → independent adversarial review → retained/rejected prospective process change. It is distinct from \`minifly-research-loop\`, which designs, qualifies and assesses experiments. The historical executable \`MFC\` is absent; reading this skill is not executing the original automated checker.
+
+- If the user asks to **activate recursive self-improvement**, repair the **skill/checker/process itself**. First name the incident and the flawed process decision. **NEVER allocate a model version, register a new architecture, start experiments or change the version index merely because a model experiment completed.** A separate explicit owner request for *model* design/execution is required. An ambiguous “activate the skill and iterate” must be grounded in the prior named skill instead of defaulting to a new experiment.
+- If the user explicitly asks for a **new model design**, a design-only document may be appropriate under the research skill, but it is not self-improvement. Do not treat permission to write a design as permission for implementation, qualification, or scientific training.
+- Each claimed governance improvement needs both **a failure case it catches** and **a legitimate case it allows**, plus a reviewer-originated novel counterexample. Running the same visible text fixtures or writing a memo does **not** establish generalization. Mark \`PROPOSED_NOT_VERIFIED\` when the checker is missing or independent execution is unavailable.
+- When a proposed experimental test uses an external optimization/oracle/solver, **estimate and cap the actual feasibility-test computation before constructing matrices or opening a scored run**: number of sites, alternatives, variables, estimated dense/sparse intermediate bytes, solver workspace, framework overhead, peak-process cap and a hard runtime memory guard. If no resource-bounded witness can be implemented within the existing fixed limits, stop with \`RESOURCE_ADMISSION_UNRESOLVED\`. A theoretically inexpensive learner does not make an unbounded evaluator/oracle feasible. This check does **not** prohibit a *design-only* proposal or require a particular solver; it prohibits treating an unadmitted computational plan as ready to run.
+
+**Known incident:** V184→V185 was mistakenly treated as a research-model iteration although the owner intended recursive process self-improvement. Its newly introduced multiclass ceiling test subsequently consumed approximately 3.80 GiB RSS against a 1 GiB cap without certifying the 80/80 readout ceiling; the correct status is \`RESOURCE_NOT_ADMITTED\`, scientific training 0. See [incident and proposed tests](references/SELF_IMPROVEMENT_INCIDENT_V185_20261103.md). The skill proposal itself requires an independent cross-family governance review before it is merged or called active.
+
+
+
 **Read:** [minifly-research-loop](../minifly-research-loop/SKILL.md), [integration/readiness](../minifly-research-loop/references/SKILL_READINESS_20261102.md), and [Claude's original governance skill](references/ORIGINAL_CLAUDE_SKILL_20261102.md). The detailed old [CHANGE_CLASSES](references/CHANGE_CLASSES.md) and [HELDOUT_CANARIES](references/HELDOUT_CANARIES.md) procedures are preserved as reference designs, **not currently verified executable gates**.
 
 ## 1. Protect scientific evidence, not ritual
