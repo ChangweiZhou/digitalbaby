@@ -1,0 +1,266 @@
+{
+  "schema": "minifly_experiment_design_v1",
+  "version": 183,
+  "identity": "V183-HPC-R1",
+  "date": "2026-11-02",
+  "state": "TECHNICAL_QUALIFIED_WITH_DECLARED_AMENDMENTS",
+  "implementation_authorized": true,
+  "qualification_authorized": true,
+  "training_authorized": false,
+  "core_adopted": false,
+  "source_commit": "e3cd3b368342a72e1acac4ae7d4ada8369a86a5d",
+  "baseline_source": "minifly_v182_shallow_local_dev_20261102/parent_learner.py",
+  "question": "Does H-only loss-sensitive perturbation credit improve own conditional learning at the fixed mini budget?",
+  "architecture": {
+    "KC": 5177,
+    "H": 64,
+    "T": 64,
+    "O": 257,
+    "H_fanin": 256,
+    "learned_parameters": 37313,
+    "weights_float": "float32",
+    "auxiliary_counterfactual_float": "float64",
+    "dropout": 0.1,
+    "dropout_location": "T_before_O",
+    "sensor_digest": "7e0b78ae71cd9f508e9069018ec2343a88ab8bfd9263067506ee6eb3fae4962b"
+  },
+  "optimizer": {
+    "name": "AdamW",
+    "lr": 0.001,
+    "beta1": 0.9,
+    "beta2": 0.999,
+    "eps": 1e-08,
+    "weight_decay": 0.0001,
+    "target_batch_max": 256,
+    "warmup": false,
+    "state_continuous": true
+  },
+  "candidate": {
+    "modified_layer": "H_only",
+    "sigma_relative_RMS": 0.01,
+    "sigma_RMS_floor": 0.001,
+    "noise": "independent standard Gaussian per target and H neuron",
+    "scientific_pairs_per_batch": 1,
+    "shared_T_dropout_mask": true,
+    "q": "(per_site_loss_plus-per_site_loss_minus)/(2*sigma)",
+    "delta_H": "q_i*xi_ij/n",
+    "extra_H_ReLU_derivative": false,
+    "T_O_source_rule_unchanged": true,
+    "future_target_before_prediction": false,
+    "gradient_float_before_Adam": "float32",
+    "sigma_treated_as_constant_within_pair_and_derivative_reference": true,
+    "estimator_scope": "fixed-sigma smoothed loss; no unbiased-exact-original-loss claim"
+  },
+  "arms": [
+    {
+      "id": "NORMAL",
+      "loss_evaluations_per_target": 1
+    },
+    {
+      "id": "HPC",
+      "loss_evaluations_per_target": 3
+    },
+    {
+      "id": "SHUFFLED",
+      "loss_evaluations_per_target": 3,
+      "shuffle": "uniform nonzero cyclic shift of q across target sites",
+      "n1_credit": 0,
+      "H_step_strength": "same-state post-Adam H/Hb squared movement matched to counterfactual unshuffled proposal",
+      "zero_norm_threshold": 1e-20,
+      "invalid_policy": "SHAM_STRENGTH_INVALID"
+    }
+  ],
+  "rng": {
+    "seed_conversion": "first8 SHA256 bytes unsigned big-endian modulo2^63-1",
+    "noise": "V183|M1|H-credit",
+    "shuffle": "V183|M1|H-shuffle",
+    "qualification_noise": "V183|qualification|WORLD|STAGE|BATCH|DRAW|noise",
+    "qualification_shuffle": "V183|qualification|WORLD|STAGE|BATCH|DRAW|shuffle",
+    "dropout": "unchanged V181 birth and stream",
+    "extra_generators_serialized": true
+  },
+  "scientific_worlds": [
+    "M1"
+  ],
+  "M2_role": "opened frozen-state qualification only; no scientific life; not sealed",
+  "schedule_per_arm": {
+    "A_unique_train": 160,
+    "A_passes": 2,
+    "B_unique_train": 48,
+    "B_passes": 3,
+    "C_original_A_ids": 24,
+    "EDIT_passes": 2,
+    "NOEDIT_passes": 2,
+    "calibration_records_each_source": 32,
+    "held_records_each_source": 64,
+    "optimizer_record_applications": 560,
+    "unperturbed_target_applications": 34364,
+    "stage_roster": [
+      "birth",
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "B3",
+      "EDIT1",
+      "EDIT2",
+      "NOEDIT1",
+      "NOEDIT2"
+    ],
+    "tail_target_sizes": {
+      "A": 194,
+      "B": 52,
+      "EDIT": 7,
+      "NOEDIT": 7
+    }
+  },
+  "correction": {
+    "original_manifest": "minifly_v181_mini_local_plasticity_dev_20261102/campaign_20261102/MANIFEST.json",
+    "context_hex": "7468",
+    "old": 101,
+    "new": 117,
+    "noncascading": true,
+    "source_IDs_unchanged": true
+  },
+  "qualification": {
+    "states": [
+      "birth",
+      "A2"
+    ],
+    "worlds": [
+      "M1",
+      "M2"
+    ],
+    "batches_each": 4,
+    "sites_per_batch": 256,
+    "independent_draws_each": 2,
+    "loss_evaluations_per_site_max": 6,
+    "record_equivalents": 636,
+    "target_evaluations": 24576,
+    "technical_optimizer_records_max": 32,
+    "technical_record_equivalents_max": 96,
+    "technical_target_evaluations_max": 12384,
+    "M1_mean_cosine_min": 0.05,
+    "M1_cosine_advantage_over_shuffle_min": 0.05,
+    "M1_gate_each_state": true,
+    "M2_gating": false,
+    "mature_NORMAL_moment_probe": "advisory only, not candidate optimizer history",
+    "technical_fixture_cap_includes_synthetic_and_gradient_only": true,
+    "M1_positive_one_pair_cosines_min_per_stage": 6,
+    "M1_batch_draws_per_stage": 8,
+    "instrument_origin": "Authenticated V181 parent NORMAL states; not literal V182 archive replication",
+    "conservative_frozen_forward_paths_per_site": 7,
+    "conservative_record_equivalents": 742,
+    "conservative_target_evaluations": 28672,
+    "original_D1_literal_census_reproduced": false
+  },
+  "gates": {
+    "A2_gain_over_NORMAL_min_bits": 0.05,
+    "A2_gain_over_SHUFFLED_min_bits": 0.05,
+    "A2_gain_over_unigram_min_bits": 0.05,
+    "A2_gain_over_own_mean_forecast_min_bits": 0.05,
+    "unigram_A_held_bits": 4.403066543210908,
+    "lifetime_domain_regression_vs_each_control_max_bits": 0.1,
+    "SAME_KC_A2_to_EDIT2_max_bits": 0.15,
+    "B_B3_to_EDIT2_max_bits": 0.1,
+    "NOEDIT_minus_EDIT_changed_loss_min_bits": 0.1,
+    "EOS_regression_vs_each_control_max_bits": 0.25,
+    "EOS_stages": [
+      "A2",
+      "B3",
+      "EDIT2"
+    ],
+    "ORIGINAL_A_HELD_ALL_after_C": "diagnostic only; includes obsolete targets",
+    "EOS_panel_by_stage": {
+      "A2": [
+        "A_held",
+        "B_held"
+      ],
+      "B3": [
+        "A_held",
+        "B_held"
+      ],
+      "EDIT2": [
+        "EDIT_held",
+        "B_held"
+      ]
+    },
+    "NO_INFORMATION_ASSIGNMENT_ADVANTAGE": {
+      "SHUFFLED_gain_over_NORMAL_A2_min_bits": 0.05,
+      "HPC_gain_over_SHUFFLED_A2_strictly_less_bits": 0.05
+    },
+    "ORIGINAL_A_HELD_ALL_A2_to_B3_max_bits": 0.1
+  },
+  "budget": {
+    "main_optimizer_record_applications": 1680,
+    "main_record_equivalents": 3920,
+    "main_learning_target_evaluations": 240548,
+    "total_optimizer_record_applications_max": 1712,
+    "total_record_equivalents_max": 4652,
+    "total_learning_admission_target_evaluations_max": 277508,
+    "hard_record_equivalent_cap": 5000,
+    "hard_learning_admission_target_cap": 600000,
+    "CPU_seconds": 900,
+    "wall_seconds": 1800,
+    "peak_RSS_bytes": 1073741824,
+    "total_outputs_including_state_archive_bytes": 268435456,
+    "learned_parameter_cap": 40000,
+    "inference_state_bytes": 8388608,
+    "checkpoint_bytes": 1048576,
+    "checkpoint_count": 30,
+    "runtime_profile_reserve_multiplier": 1.5,
+    "prior_exploration_CPU_carried": 30,
+    "readonly_panel_target_evaluations": 999210,
+    "readonly_record_views": 16320,
+    "generation_decisions_max": 18432,
+    "observed_generation_prefix_bytes_max": 864,
+    "mean_forecast_reuses_existing_A2_panel": true,
+    "optional_repeated_mean_forecast_sites": 10178,
+    "scheduled_all_site_evaluations_max": 1295150,
+    "R1_max_record_equivalents": 4758,
+    "R1_max_learning_admission_target_evaluations": 281604,
+    "hard_caps_unchanged": true
+  },
+  "generation": {
+    "stages": [
+      "A2",
+      "B3",
+      "EDIT2"
+    ],
+    "A_prompts": 16,
+    "B_prompts": 16,
+    "observed_prefix_bytes": 3,
+    "own_output_limit": 64,
+    "forced_EOS": false,
+    "arbitrary_literary_exactness_gate": false
+  },
+  "outcomes": [
+    "HPC_DEV_GAIN",
+    "HPC_RELATIVE_GAIN_ONLY",
+    "HPC_NOT_SUPPORTED",
+    "NO_INFORMATION_ASSIGNMENT_ADVANTAGE",
+    "CREDIT_SIGNAL_NOT_QUALIFIED",
+    "NUMERIC_INVALID",
+    "SHAM_STRENGTH_INVALID",
+    "SOURCE_UNAVAILABLE",
+    "RESOURCE_NOT_ADMITTED",
+    "NOT_RUN"
+  ],
+  "confirmation_started": false,
+  "cross_family_certification": "PENDING",
+  "formal_MRK1_checker": "UNAVAILABLE",
+  "no_automatic_successor": true,
+  "mean_forecast_evaluator": {
+    "source": "all A-train unperturbed predictions at A2",
+    "held_labels_used_for_fitting": false,
+    "accumulation": "streaming log-sum-exp",
+    "saved_record_class_log_sums_shape": [
+      160,
+      257
+    ],
+    "dtype": "float64",
+    "bytes_per_arm": 328960,
+    "class_masking": false
+  },
+  "metric": "pooled actual byte-plus-EOS target mean, original fixed site denominators"
+}
