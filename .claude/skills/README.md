@@ -17,3 +17,8 @@ Each updated skill preserves Claude's old `SKILL.md` as `references/ORIGINAL_CLA
 **Readiness warning:** The old checker documentation references `tools/minifly_check/minifly_check.py` and supporting modules that are not in the original committed checker runtime. The integrated skills are operational **decision guides**, **not an executable MRK-1 official certification system**. See [readiness](minifly-research-loop/references/SKILL_READINESS_20261102.md) and [dated evidence](minifly-research-loop/references/CURRENT_EVIDENCE_20261102.md). The historical KB at `PROJECT_DOCUMENTS/KB` remains provisional; integration does not authorize threshold changes, activate findings or invent owner decisions.
 
 The new source-only update is **review-pending** until an independent cross-family audit. It does not run or adopt a model.
+
+
+## New meta-level entry (proposal, 2026-11-03)
+
+[minifly-recursive-self-improvement](minifly-recursive-self-improvement/SKILL.md) targets the research *process* rather than a MiniFly architecture. Its limited executable guards and test cases are in tools/minifly_meta_guard; the formal original MRK-1 remains unavailable and independent review is pending.

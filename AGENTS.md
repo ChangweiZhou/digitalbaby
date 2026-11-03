@@ -1,5 +1,12 @@
 # MiniFly / DigitalBaby cross-agent working agreement
 
+When the user explicitly requests **recursive self-improvement**, first read the separate
+[MiniFly recursive self-improvement skill](.claude/skills/minifly-recursive-self-improvement/SKILL.md)
+rather than defaulting to another scientific model version. Run the executable partial tests
+at tools/minifly_meta_guard/guard.py and keep meta-process patches on a governance branch.
+The historical MRK-1 checker is not runnable here, and self-validation is not independent review.
+
+
 For **MiniFly research, audits, experimental design, result claims, version changes, architecture changes or skill updates**, first read:
 
 - [Integrated research loop](.claude/skills/minifly-research-loop/SKILL.md)

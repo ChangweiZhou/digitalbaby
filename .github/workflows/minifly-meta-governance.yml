@@ -1,0 +1,25 @@
+name: MiniFly partial recursive-governance tests
+on:
+  pull_request:
+    paths:
+      - '.claude/skills/minifly-*/**'
+      - 'tools/minifly_meta_guard/**'
+      - 'AGENTS.md'
+      - '.github/workflows/minifly-meta-governance.yml'
+  workflow_dispatch:
+
+jobs:
+  partial-meta:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Run executable regression cases
+        run: python3 -m unittest discover -s tools/minifly_meta_guard -p 'test_*.py' -v
+      - name: Verify meta-only PR scope
+        if: github.event_name == 'pull_request'
+        run: |
+          python3 tools/minifly_meta_guard/guard.py verify-scope --mode meta \
+            --base-ref "${{ github.event.pull_request.base.sha }}" \
+            --head-ref "${{ github.event.pull_request.head.sha }}"
