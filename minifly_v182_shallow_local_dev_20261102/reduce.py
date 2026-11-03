@@ -22,6 +22,7 @@ def main():
     for name,m in job[stage].items():
      if name.startswith('_'):continue
      bits=z[name+'__bits'];y=z[name+'__y'];assert len(bits)==m['targets'];assert abs(float(bits.mean())-m['bits'])<1e-10
+     assert abs(float(bits[y==256].mean())-m['EOS_NLL'])<1e-10
      assert sum(y==256)==len(m['record_target_counts']);off=np.cumsum([0]+m['record_target_counts']);assert all(y[i-1]==256 for i in off[1:]);sums=[float(bits[a:b].sum()) for a,b in zip(off[:-1],off[1:])];assert np.allclose(sums,m['record_bit_sums'],rtol=0,atol=1e-9);sitechecks+=len(bits)
      if name=='EDIT_held':
       changed=y!=z['A_held__y'];same=z[name+'__same_KC'];masks={'SAME_KC':~changed&same,'ALTERED_KC':~changed&~same,'CHANGED':changed}
