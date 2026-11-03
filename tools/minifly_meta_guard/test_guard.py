@@ -16,7 +16,7 @@ class ScopeTest(unittest.TestCase):
         self.assertEqual(x["status"],"FAIL_SCOPE")
         self.assertEqual(len(x["prohibited"]),2)
     def test_allow_real_meta(self):
-        self.assertEqual(scope([".claude/skills/minifly-recursive-self-improvement/SKILL.md","tools/minifly_meta_guard/guard.py"])["status"],"PASS_SCOPE_ONLY")
+        self.assertEqual(scope([".claude/skills/minifly-recursive-self-improvement/SKILL.md",".claude/skills/README.md","tools/minifly_meta_guard/guard.py"])["status"],"PASS_SCOPE_ONLY")
     def test_disallow_ordinary_changes(self):
         self.assertEqual(scope(["README.md"])["status"],"FAIL_SCOPE")
     def test_empty_is_not_pass(self):

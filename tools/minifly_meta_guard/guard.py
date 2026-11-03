@@ -19,7 +19,7 @@ EXIT_ADMISSION_FAIL=21
 EXIT_RSS_KILLED=22
 EXIT_TIME_KILLED=23
 MODEL_PATH=re.compile(r"^minifly_v\d+(?:_[^/]*)?(?:/|$)",re.I)
-META_ALLOWED=(".claude/skills/minifly-","tools/minifly_meta_guard/",
+META_ALLOWED=(".claude/skills/minifly-",".claude/skills/README.md","tools/minifly_meta_guard/",
               ".github/workflows/minifly-meta-governance.yml","AGENTS.md",
               "PROJECT_DOCUMENTS/MINIFLY_META_","PROJECT_DOCUMENTS/KB/")
 
