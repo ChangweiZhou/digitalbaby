@@ -1,0 +1,9 @@
+# V185 three-cycle technical exercise
+
+**Disposition** `RESOURCE_NOT_ADMITTED`. The fixed projection's 80/80 readout ceiling is unresolved. Scientific training did not start.
+
+1. Design and implementation. Pinned the registered V185 design at 617bc8605d8d656d5c5a22e98388b5c039e026a8. Implemented the three local writers and a deterministic roster. The implementation chooses printable ASCII 33–125, a tilde terminator, salted SHA-256 generation and pass ordering, and a three-output cap for exact two-byte-plus-EOS qualification. The cap permits exactly the full expected output.
+2. Audit and test. Verified the authentic native sensor digest, common zero-state predictions, same-state proposed L1 matching on the fixture, deterministic continuation from a copied state, and EOS/cap behavior. The fixed projection produced 240 distinct labeled-site feature rows. The multiclass margin feasibility solver timed out without a validated witness and reached 3,798,089,728 bytes RSS against the 1 GiB cap. An interior-point attempt started before the first run's RSS artifact was inspected and was interrupted upon discovery. Its peak memory and CPU are unknown. Distinct features alone do not establish a feasible linear readout.
+3. Revision. The next C0 implementation must use a compact solver and enforce resource limits before construction and through execution. See REVISED_DESIGN.md. The complete on-disk checkpoint, full physical accounting and roster resource profile remain unqualified.
+
+Conservative technical accounting across both attempts is 160 oracle record presentations and 480 labeled sites, plus four synthetic target updates. The first attempt used 69.02 CPU seconds and 68.95 wall seconds. Both attempts used the same 80 mappings. No candidate saw the roster with teaching feedback. Exact-key lookup would score 80/80 on the taught mapping by construction. A future positive result on this roster would address E1 acquisition, retention and revision.
