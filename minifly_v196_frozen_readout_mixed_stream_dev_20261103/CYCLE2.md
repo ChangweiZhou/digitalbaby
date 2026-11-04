@@ -1,0 +1,1 @@
+Refinement: pair EDIT and NOEDIT on distractor bytes and start indices, and balance the sham within each 32-block stratum. Audit exact accepted-update counts, frozen state, and no post-fork teach entry. Test the clean/source invariant and frozen-map negative control.

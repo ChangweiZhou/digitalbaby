@@ -1,0 +1,2 @@
+Refinement: lock the runner and exact world hashes before science. Count every technical life including the bounded historical replay, mask test and all rehearsal forks.
+Audit: run the same entry point on two reduced worlds through all arms, checkpoint verification, paired reduction and ZIP readback. Verify exposure, memory, CPU and outputs before launch. The real reducer computes paired-world effects only on the eight-world roster.
