@@ -1,0 +1,1 @@
+Freeze a clean-prefix count gate and make the sham exact by permuting only training assignment bits within blocks. Restrict evaluator graph label votes to actually observed feedback, retaining the label associated with the phase when it arrived.

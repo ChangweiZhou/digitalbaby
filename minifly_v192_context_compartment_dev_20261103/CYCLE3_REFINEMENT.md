@@ -1,0 +1,1 @@
+Pin the production runner and validate paired output end to end. Debit every physical technical presentation, including the entire historical comparator call, before admission. Keep the full roster and the proposed caps intact.

@@ -1,0 +1,1 @@
+Check two strides independently. Change unseen bytes at and after a transition destination and verify the routing score is unchanged. Count foreground writes per complete and residual block. Verify DIRECT, ORACLE, and candidate masks and pair reversal closure. Test the candidate threshold on a different synthetic roster from its calibration roster, without fitting a learner.

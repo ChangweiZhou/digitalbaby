@@ -1,0 +1,1 @@
+Check the exact historical source hash, paired holdout and label balance, actual source clean score, and native EOS clean reference on a separate engineering world. Check 257-way readout, byte feedback after prediction, repeated deterministic serialization, and <=8 MiB checkpoint. The historical newline score is recorded separately.

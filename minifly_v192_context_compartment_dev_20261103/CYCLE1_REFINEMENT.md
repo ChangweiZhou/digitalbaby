@@ -1,0 +1,1 @@
+Adapt the pinned local direct readout to 257 classes. A fixed learned-independent suffix projection feeds the already emitted byte to the same head. The actual EOS target is taught only after prediction. Use float32 arrays in the proposed learner and retain the unchanged historical float64 reference as an engineering comparator.

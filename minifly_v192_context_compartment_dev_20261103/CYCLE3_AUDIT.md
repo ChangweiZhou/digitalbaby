@@ -1,0 +1,1 @@
+Inspect arm/fork pairing and the eight-world census. Run the actual entry point through checkpoint restore, reducer, verified receipt hashes and ZIP readback on two small worlds. Check fixture measurements and scale against state/CPU/RSS caps. Compare the total actual technical plus planned science record and target census against the launch limits.
