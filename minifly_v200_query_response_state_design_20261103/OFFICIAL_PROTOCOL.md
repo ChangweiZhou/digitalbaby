@@ -1,0 +1,9 @@
+# V200 official execution protocol
+
+User authorization recorded by “Do the official run.” Use the eight existing dry-roster hashes and the rehearsed learner. One process, one numerical thread, one live model at a time. The implementation leaves the original design, roster, training schedule and progression gates intact.
+
+Lock the filler before training. Use the three historical V199 prose strings, uniformly sampled with a distinct seeded RNG stream once before each marked record and for each of 256 delay records. Filler arrives outside the query boundary and neither writes nor carries into the fresh query buffer. Count every filler record and byte. Charge 120 additional technical presentations on a separate profile roster, 40 per arm, including free-generation and diagnostic calls. Conservatively carry 60 CPU seconds and 120 active wall seconds from the prior technical exercise. Check headroom before opening science and enforce cumulative caps during execution.
+
+The primary controller forwards every terminated first payload verbatim. Gold-prefix scoring, gold hop two, and shortcut scores remain evaluator-only. Each world-arm receipt retains all three checkpoints and a digest of learned state. Recompute the decision from the committed receipts and verify the package on readback.
+
+The first admission attempt completed the 120-profile-presentation block and stopped before science on the CPU projection. Preserve its lock and failure record. The projection wrongly scaled per-panel full-state audits alongside byte work. Recheck by timing full-width read-only scoring, synthetic row arithmetic and checkpoint hashing separately. No additional marked records are allowed. Use a factor of three on measured component costs plus 60 seconds for orchestration and packaging, in addition to the carried technical CPU charge.
