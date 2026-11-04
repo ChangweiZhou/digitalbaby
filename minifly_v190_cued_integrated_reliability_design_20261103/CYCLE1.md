@@ -1,0 +1,1 @@
+Refinement: register V190 locally and lock a reversal-closed, balanced held-distance roster. Audit the domains, class balance, reverse-pair leakage and total presentation census before the roster test.

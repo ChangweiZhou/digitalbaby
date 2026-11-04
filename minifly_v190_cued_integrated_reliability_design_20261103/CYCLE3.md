@@ -1,0 +1,1 @@
+Refinement: require the Round 4 source and accompanying manifests for the pinned integration. Audit availability of both memo modules before implementing or running a model. Use the source-admission test as the stop condition rather than silently substituting a different model.

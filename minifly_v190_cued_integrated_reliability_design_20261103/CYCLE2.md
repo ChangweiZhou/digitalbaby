@@ -1,0 +1,1 @@
+Refinement: key vote eligibility by the supplied tag and raw training prompt together. Require own EOS after the answer byte. Audit first-versus-repeat vote counts on a paired stream and test missing EOS, premature EOS and extra payload rejection.
