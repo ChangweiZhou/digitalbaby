@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V216 · Live monitor</title>
+<style>
+:root{color-scheme:light dark;--bg:#101922;--card:#192634;--line:#35485a;--ink:#eff7ff;--dim:#b4c5d6;--accent:#83e2c4;--warn:#ffd285}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+main{max-width:960px;margin:auto;padding:32px 20px 56px} h1,h2,p{margin:0 0 12px} h1{font-size:clamp(25px,5vw,38px);line-height:1.2} h2{font-size:18px}
+.muted{color:var(--dim)} .status{font-weight:700;color:var(--accent)} .warn{color:var(--warn);white-space:pre-wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.card,section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px} section{margin:14px 0;overflow:auto}
+.value{font-size:24px;font-weight:700;font-variant-numeric:tabular-nums} progress{width:100%;accent-color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums} th,td{text-align:left;white-space:nowrap;padding:9px;border-bottom:1px solid var(--line)}
+a{color:var(--accent);margin-right:15px} [hidden]{display:none!important}
+</style>
+<main>
+<header><p class="muted">MINIFLY / EXPERIENCE PRETRAINING</p><h1>V216 实验监控</h1><p id="status" class="status">正在读取运行状态</p><p id="time" class="muted"></p><p id="warning" class="warn" role="status"></p></header>
+<div class="grid">
+<div class="card"><div class="muted">已提交世界族</div><div class="value" id="families">—</div></div>
+<div class="card"><div class="muted">已记录训练事件</div><div class="value" id="events">—</div><progress id="bar" max="1" value="0" aria-label="训练事件进度"></progress></div>
+<div class="card"><div class="muted">活动 worker</div><div class="value" id="workers">—</div></div>
+</div>
+<section><h2>世界族检查点</h2><table><thead><tr><th>世界族</th><th>状态</th><th>FEW</th><th>MANY</th><th>PID</th></tr></thead><tbody id="worlds"></tbody></table>
+<p class="muted">活动世界族按最近落盘的检查点显示。已提交意味着完整双臂收据已被控制器接收。</p></section>
+<section><h2>资源账</h2><table><thead><tr><th>指标</th><th>已记录</th><th>准入估计</th><th>预算上限</th></tr></thead><tbody id="budget"></tbody></table></section>
+<section id="results" hidden><h2>配对结果</h2><p id="verdict"></p><table><thead><tr><th>对比</th><th>平均差</th><th>95% 区间</th></tr></thead><tbody id="metrics"></tbody></table><p><a href="/report">下载报告</a><a href="/bundle">下载结果包</a></p></section>
+<p class="muted">本地只读页面，每 5 秒刷新。</p>
+</main>
+<script>
+const get = id => document.getElementById(id);
+const put = (id, value) => { get(id).textContent = value; };
+const number = new Intl.NumberFormat("zh-CN", {maximumFractionDigits: 1});
+const fmt = x => x == null ? "—" : number.format(x);
+const stateNames = {RUNNING:"运行中",COMPLETED:"已完成",FAILED:"失败",WAITING:"等待状态"};
+const resources = {observed_bytes:"观察字节",target_sites:"预测位点",cpu_seconds:"CPU 秒",rss_bytes:"峰值 RSS（字节）",wall_seconds:"墙钟秒",output_bytes:"输出字节"};
+const names = {dose:"经验剂量",diversity:"环境多样性",adaptation:"换义适应",write_effect:"写入效应"};
+function table(id, rows) {
+  get(id).replaceChildren(...rows.map(row => {
+    const tr = document.createElement("tr");
+    row.forEach(value => { const td = document.createElement("td"); td.textContent = value; tr.append(td); });
+    return tr;
+  }));
+}
+function draw(d) {
+  put("status", stateNames[d.state] || d.state);
+  put("time", d.heartbeat ? "控制器最近更新 " + new Date(d.heartbeat*1000).toLocaleString() : "尚未收到控制器状态");
+  const stale = d.state === "RUNNING" && d.heartbeat && d.now-d.heartbeat > 20;
+  put("warning", d.error || (stale ? "控制器心跳超过 20 秒未更新。进程状态待核实。" : ""));
+  put("families", d.worlds.filter(w => w.committed).length + " / " + d.worlds.length);
+  put("events", fmt(d.totals.events) + " / " + fmt(d.budgets.events));
+  put("workers", d.worlds.filter(w => w.pid).length);
+  get("bar").value = d.budgets.events ? Math.min(1,d.totals.events/d.budgets.events) : 0;
+  table("worlds", d.worlds.map(w => [w.index+1,w.committed?"已提交":w.pid?"运行中":"等待",
+    fmt(w.checkpoints.FEW || null),fmt(w.checkpoints.MANY || null),w.pid || "—"]));
+  table("budget", Object.entries(resources).map(([k,name]) => [name,fmt(d.totals[k]),fmt(d.projected[k]),fmt(d.budgets[k])]));
+  get("results").hidden = !d.metrics;
+  if (d.metrics) {
+    const pct = x => fmt(x*100) + " pp";
+    put("verdict", d.eligible ? "达到后续实验筛选门槛" : "未达到后续实验筛选门槛");
+    table("metrics", Object.entries(d.metrics).map(([k,m]) => [names[k] || k,pct(m.mean),m.ci95.map(pct).join(" 至 ")]));
+  }
+}
+async function refresh() {
+  try {
+    const response = await fetch("/api/status", {signal:AbortSignal.timeout(4000)});
+    if (!response.ok) throw Error(response.status);
+    draw(await response.json());
+  } catch (_) {
+    put("warning", "暂时无法读取监控服务。保留最近一次显示的数据。");
+  } finally {
+    setTimeout(refresh,5000);
+  }
+}
+refresh();
+</script>
+</html>
