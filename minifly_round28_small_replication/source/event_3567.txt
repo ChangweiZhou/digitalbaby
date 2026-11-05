@@ -1,0 +1,8 @@
+cd /tmp/evo; python - <<'EOF'
+s=open('inner.py').read()
+s=s.replace("def life(z, data, ans_spans, score_from, seed=0, plastic=True):","def life(z, data, ans_spans, score_from, seed=0, plastic=True, fast=True, n=None):\n    global N,K\n    if n: N=n; K=max(4,n//16)")
+s=s.replace("            Rf*=P['lam_r']; Rf[y]+=P['eta_r']*m*h","            if fast: Rf*=P['lam_r']; Rf[y]+=P['eta_r']*m*h")
+s=s.replace("        if plastic:\n            Wf*=P['lam_f']","        if plastic and fast:\n            Wf*=P['lam_f']")
+open('inner2.py','w').write(s)
+EOF
+sleep 240; tail -3 es.out | cut -c1-120

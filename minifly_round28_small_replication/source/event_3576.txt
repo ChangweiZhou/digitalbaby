@@ -1,0 +1,14 @@
+cd /tmp/evo; cat > ctl.py <<'EOF'
+import numpy as np, json, sys
+sys.path.insert(0,'/tmp/evo'); from es import make_life; import inner2
+from multiprocessing import Pool
+mu=np.array([json.loads(l) for l in open('/tmp/evo/es_log.jsonl') if 'mu' in l][-1]['mu'])
+VAL=[900001,900002,900003,900004]
+def ev(a):
+    z,s,fast,n=a; d,ans,off=make_life(s); return inner2.life(z,d,ans,off,seed=s,fast=fast,n=n)
+with Pool(4) as p:
+    for name,fast,n in (('evolved N=256',True,256),('evolved, fast plasticity frozen',False,256),('evolved N=1024',True,1024)):
+        r=p.map(ev,[(mu,s,fast,n) for s in VAL]); print(name,'bpb %.3f ans bits %.2f'%(np.mean([x[0] for x in r]),np.mean([x[1] for x in r])),flush=True)
+    r=p.map(ev,[(np.zeros_like(mu),s,True,256) for s in VAL]); print('random/initial genome','bpb %.3f ans bits %.2f'%(np.mean([x[0] for x in r]),np.mean([x[1] for x in r])))
+EOF
+timeout 290 python ctl.py

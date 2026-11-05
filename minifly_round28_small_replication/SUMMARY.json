@@ -1,0 +1,112 @@
+{
+  "groups": {
+    "gen10_fast_off": {
+      "bpb": {
+        "mean": 1.230218882273526,
+        "ci95": [
+          1.185262343817008,
+          1.2734191968401305
+        ]
+      },
+      "answer_bits_including_newline": {
+        "mean": 10.224739976831756,
+        "ci95": [
+          9.648216151232665,
+          10.831728551844172
+        ]
+      }
+    },
+    "gen10_fast_on": {
+      "bpb": {
+        "mean": 1.2833418437728104,
+        "ci95": [
+          1.2364405579186588,
+          1.3266561277939755
+        ]
+      },
+      "answer_bits_including_newline": {
+        "mean": 10.601147776286256,
+        "ci95": [
+          9.982042988333687,
+          11.226670033192217
+        ]
+      }
+    },
+    "initial_fast_on": {
+      "bpb": {
+        "mean": 4.068537949950173,
+        "ci95": [
+          3.9165077381470454,
+          4.210070140014848
+        ]
+      },
+      "answer_bits_including_newline": {
+        "mean": 22.262323238344308,
+        "ci95": [
+          21.15451732695602,
+          23.11781506384169
+        ]
+      }
+    },
+    "parity_gen10": {
+      "bpb": {
+        "mean": 1.3481230092890968,
+        "ci95": [
+          1.1732439807752044,
+          1.4833371637162374
+        ]
+      },
+      "answer_bits_including_newline": {
+        "mean": 10.71541063538167,
+        "ci95": [
+          9.965938454082492,
+          11.464882816680845
+        ]
+      }
+    },
+    "parity_initial": {
+      "bpb": {
+        "mean": 3.984483880071011,
+        "ci95": [
+          3.873806743522949,
+          4.10175694522947
+        ]
+      },
+      "answer_bits_including_newline": {
+        "mean": 24.58411926611103,
+        "ci95": [
+          22.602109253840936,
+          27.550737516660213
+        ]
+      }
+    }
+  },
+  "fast_write_benefit_off_minus_on": {
+    "bpb": {
+      "mean": -0.05312296149928411,
+      "ci95": [
+        -0.06348944035115578,
+        -0.04570420478926735
+      ]
+    },
+    "answer_bits_including_newline": {
+      "mean": -0.3764077994544994,
+      "ci95": [
+        -0.6797694500535407,
+        -0.17172007746410756
+      ]
+    }
+  },
+  "wall_seconds": 13.4426109790802,
+  "worker_cpu_seconds": 25.823906,
+  "jobs_completed": 32,
+  "numpy": "2.4.0",
+  "scope": "Run A generation 10 only; original validation is parity, not fresh evidence. Positive paired effect favors fast writing.",
+  "caveats": [
+    "Final genomes absent",
+    "Original answer spans include newline",
+    "Original score floors probability at 1e-6",
+    "Fast-off control disables fast readout and recurrent writes from birth, while slow readout remains trainable",
+    "No ES rerun, GLN rerun, scale test or autonomous generation"
+  ]
+}

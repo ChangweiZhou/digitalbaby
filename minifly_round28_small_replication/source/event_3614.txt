@@ -1,0 +1,19 @@
+cd /tmp/evo; python - <<'EOF'
+s=open('inner2.py').read()
+s=s.replace("        logit=(Ro+P['g_ro']*Rf)@h; logit-=logit.max(); p=np.exp(logit); p/=p.sum()",
+"""        ls=Ro@h; ls-=ls.max(); ps=np.exp(ls); ps/=ps.sum()
+        lf=Rf@h; lf-=lf.max(); pf=np.exp(lf); pf/=pf.sum()
+        al=1/(1+math.exp(-ZG[3])); p=(1-al)*ps+al*pf""")
+s=s.replace("            Ro[y]+=P['lr_o']*h; Ro-=P['lr_o']*np.outer(p,h)","            Ro[y]+=P['lr_o']*h; Ro-=P['lr_o']*np.outer(ps,h)")
+s=s.replace("            if fast: Rf*=P['lam_r']; Rf[y]+=P['eta_r']*m*h","            if fast: Rf*=P['lam_r']; Rf[y]+=P['eta_r']*m*h; Rf-=P['eta_r']*m*np.outer(pf,h)")
+s=s.replace("    P=decode(z); rng=np.random.default_rng(seed)","    P=decode(z); ZG=z; rng=np.random.default_rng(seed)")
+open('inner3.py','w').write(s)
+s=open('es2.py').read().replace("from inner import life, GENES","from inner3 import life; from inner import GENES").replace("es_log_'+os.environ.get('FIT','bpb')+'","es_log_v3_'+os.environ.get('FIT','bpb')+'")
+open('es3.py','w').write(s)
+EOF
+python - <<'EOF'
+import sys; sys.path.insert(0,'/tmp/evo'); import numpy as np
+from es import make_life; import inner3
+d,ans,off=make_life(900001); print(inner3.life(np.zeros(15),d,ans,off,seed=1), inner3.life(np.zeros(15),d,ans,off,seed=1,fast=False))
+EOF
+cd /tmp/evo; nohup env FIT=ans G=40 POP=16 python es3.py > es_v3.out 2>&1 & echo started

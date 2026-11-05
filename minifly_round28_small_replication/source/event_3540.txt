@@ -1,0 +1,33 @@
+cat > /tmp/evo/es.py <<'EOF'
+import numpy as np, sys, json, time, os
+sys.path.insert(0,'/tmp/evo'); from worlds import world_text; from inner import life, GENES
+from multiprocessing import Pool
+def make_life(seed,K=2):
+    hist=b''
+    for i in range(K): d,_=world_text(seed*100+i); hist+=d
+    t,ans=world_text(seed*100+99); off=len(hist)
+    return hist+t,[(a+off,l) for a,l in ans],off
+def ev(args):
+    z,seed,plastic=args; d,ans,off=make_life(seed); return life(z,d,ans,off,seed=seed,plastic=plastic)
+if __name__=='__main__':
+    G=int(os.environ.get('G','40')); POP=int(os.environ.get('POP','16')); SIG=0.3; LR=0.15; NL=2
+    rng=np.random.default_rng(0); mu=np.zeros(len(GENES)); VAL=[900001,900002,900003,900004]
+    log=open('/tmp/evo/es_log.jsonl','w')
+    with Pool(4) as pool:
+        def validate(g):
+            r=pool.map(ev,[(mu,s,True) for s in VAL]); r0=pool.map(ev,[(mu,s,False) for s in VAL])
+            rec={'gen':g,'val_bpb':float(np.mean([x[0] for x in r])),'val_ans_bits':float(np.mean([x[1] for x in r])),
+                 'val_bpb_noplastic':float(np.mean([x[0] for x in r0])),'mu':mu.round(3).tolist()}
+            log.write(json.dumps(rec)+'\n'); log.flush(); print(rec,flush=True)
+        validate(0)
+        for g in range(1,G+1):
+            eps=rng.standard_normal((POP,len(GENES))); seeds=[int(rng.integers(1,10**6)) for _ in range(NL)]
+            jobs=[(mu+SIG*s*e,sd,True) for e in eps for s in (1,-1) for sd in seeds]
+            res=pool.map(ev,jobs); f=np.array([r[0] for r in res]).reshape(POP,2,NL).mean(2)   # bpb (lower better)
+            allf=f.ravel(); ranks=np.empty_like(allf); ranks[np.argsort(allf)]=np.arange(len(allf)); util=(0.5-ranks/(len(allf)-1)).reshape(POP,2)
+            grad=((util[:,0]-util[:,1])[:,None]*eps).sum(0)/(POP*SIG)
+            mu=mu+LR*grad
+            log.write(json.dumps({'gen':g,'train_bpb_mean':float(f.mean()),'train_best':float(f.min())})+'\n'); log.flush()
+            if g%5==0: validate(g)
+EOF
+cd /tmp/evo; nohup env G=40 POP=16 python es.py > es.out 2>&1 & sleep 60; cat es.out

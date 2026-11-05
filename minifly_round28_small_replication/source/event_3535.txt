@@ -1,0 +1,78 @@
+mkdir -p /tmp/evo; cat > /tmp/evo/worlds.py <<'EOF'
+import random
+SYL=['ka','lo','mi','ru','te','sa','no','vi','da','pe','zu','ho','bi','fe','go','ra','li','mu','to','ne']
+TPL=['{N} went to the {L}.','{N} moved to the {L}.','{N} is now in the {L}.','The {L} is where {N} went.','{N} ran into the {L}.','{N} arrived at the {L}.']
+def word(r): return ''.join(r.choice(SYL) for _ in range(r.choice([2,3])))
+def world_text(seed,nq=30):
+    r=random.Random(seed); names=[];places=[]
+    while len(names)<3:
+        w=word(r).capitalize()
+        if w not in names: names.append(w)
+    while len(places)<4:
+        w=word(r)
+        if w not in places and w.capitalize() not in names: places.append(w)
+    tpl=r.sample(TPL,2); loc={}; out=[]; ans=[]; q=0; pos=0
+    while q<nq:
+        n=r.choice(names); l=r.choice([p for p in places if p!=loc.get(n)]); loc[n]=l
+        s=r.choice(tpl).format(N=n,L=l)+'\n'; out.append(s)
+        if r.random()<0.5:
+            m=r.choice(sorted(loc)); s='Where is %s? '%m; out.append(s); a=loc[m]+'\n'
+            cur=sum(map(len,out)); ans.append((cur,len(a))); out.append(a); q+=1
+    return ''.join(out).encode(), ans
+EOF
+cat > /tmp/evo/inner.py <<'EOF'
+"""Generic plastic recurrent byte learner (no backprop, no attention). Genome parameterizes the local rules.
+state: h_t = kWTA( Ein[x_t] + g_rec*Ws h + g_fast*Wf h )   (binary sparse, k active of N)
+predict: score = softplus-free positive mixture: p = normalize( exp( (Ro + g_ro*Rf) h ) )
+learning, all local:
+  Ro  += lr_o * (y - p) h^T                                (slow delta rule readout)
+  Rf   = lam_r*Rf + eta_r * m * y h^T                       (fast Hebbian state->next-byte association)
+  Wf   = lam_f*Wf + eta_f * m * (A post pre^T + B pre + C post + D)   (fast recurrent plasticity, ABCD)
+  m    = sigmoid(g0 + g1 * surprise)                         (neuromodulator from local prediction error)"""
+import numpy as np, math
+N=256; K=16
+GENES=['lr_o','g_rec','g_fast','g_ro','eta_r','lam_r','eta_f','lam_f','A','B','C','D','g0','g1','g_in']
+def decode(z):
+    d=dict(zip(GENES,z))
+    sg=lambda v:1/(1+math.exp(-v))
+    return dict(lr_o=0.1*math.exp(d['lr_o']), g_rec=d['g_rec'], g_fast=d['g_fast'], g_ro=math.exp(d['g_ro']),
+                eta_r=0.5*math.exp(d['eta_r']), lam_r=sg(3+d['lam_r']), eta_f=0.05*math.exp(d['eta_f']), lam_f=sg(3+d['lam_f']),
+                A=d['A'],B=0.1*d['B'],C=0.1*d['C'],D=0.01*d['D'],g0=d['g0'],g1=d['g1'],g_in=math.exp(d['g_in']))
+def life(z, data, ans_spans, score_from, seed=0, plastic=True):
+    P=decode(z); rng=np.random.default_rng(seed)
+    Ein=(rng.random((256,N))<0.05).astype(np.float32)*P['g_in']
+    Ws=(rng.standard_normal((N,N))*(rng.random((N,N))<0.05)).astype(np.float32)
+    Wf=np.zeros((N,N),np.float32); Ro=np.zeros((256,N),np.float32); Rf=np.zeros((256,N),np.float32)
+    h=np.zeros(N,np.float32); bits=np.zeros(len(data))
+    for t in range(len(data)):
+        logit=(Ro+P['g_ro']*Rf)@h; logit-=logit.max(); p=np.exp(logit); p/=p.sum()
+        y=data[t]; py=max(p[y],1e-6); bits[t]=-math.log2(py)
+        if plastic:
+            s=-math.log(py); m=1/(1+math.exp(-(P['g0']+P['g1']*s)))
+            Ro[y]+=P['lr_o']*h; Ro-=P['lr_o']*np.outer(p,h)
+            Rf*=P['lam_r']; Rf[y]+=P['eta_r']*m*h
+        pre=h
+        u=Ein[y]+P['g_rec']*(Ws@h)+P['g_fast']*(Wf@h)
+        idx=np.argpartition(-u,K)[:K]; h=np.zeros(N,np.float32); h[idx]=1.0
+        if plastic:
+            Wf*=P['lam_f']
+            if P['eta_f']*m>1e-6:
+                Wf[idx]+=P['eta_f']*m*(P['A']*pre+P['C'])[None,:] if True else 0
+                Wf+=P['eta_f']*m*(P['B']*pre[None,:]+P['D'])
+    tot=bits[score_from:].sum()/max(1,len(data)-score_from)
+    ab=[bits[a:a+l].sum() for a,l in ans_spans if a>=score_from]
+    return tot, (sum(ab)/len(ab) if ab else 0.0)
+EOF
+cat > /tmp/evo/tinytest.py <<'EOF'
+import numpy as np, time, sys
+sys.path.insert(0,'/tmp/evo'); from worlds import world_text; from inner import life, GENES
+def make_life(seed,K=2):
+    hist=b''; 
+    for i in range(K): d,_=world_text(seed*100+i); hist+=d
+    t,ans=world_text(seed*100+99); off=len(hist)
+    return hist+t,[(a+off,l) for a,l in ans],off
+d,ans,off=make_life(1)
+print(len(d),off)
+z=np.zeros(len(GENES)); t0=time.time(); print(life(z,d,ans,off), time.time()-t0)
+EOF
+python /tmp/evo/tinytest.py
