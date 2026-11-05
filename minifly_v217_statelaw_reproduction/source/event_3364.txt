@@ -1,0 +1,5 @@
+cd /tmp/mdl; cat >> statelaw.py <<'EOF'
+if MODE=='full':
+    for (sg,op),(h,n) in sorted(OPREL.items(),key=lambda z:-z[1][1])[:16]: print(f'{sg:35s} {op:5s} {h:4d}/{n:4d}')
+EOF
+python statelaw.py /tmp/gln/mw.txt full | tail -16

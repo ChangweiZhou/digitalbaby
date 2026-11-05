@@ -1,0 +1,10 @@
+cd /tmp/mdl; python - <<'EOF'
+s=open('statelaw.py').read()
+s=s.replace("known=sorted(ANS) or [a];","recentp={ws[i] for (sg,ws,sl) in RECENT[-60:] for k,i in enumerate(sl) if placeprob(sg,k)>0.5}; known=recentp or {a};")
+s=s.replace("0.15/max(len(known),1)*(a in ANS) + (0 if a in ANS else 0.15*1e-3)","0.15/max(len(known),1)*(a in known) + (0 if a in known else 0.15*1e-3)")
+s=s.replace("        kind='obj' if 'the' in qw else 'per'","        kind='obj' if 'the' in qw else 'per'; top=max(sc,key=sc.get) if sc else None; DIAG[kind].append((a in c, top==a))")
+s=s.replace("ANS=set();","ANS=set(); DIAG=collections.defaultdict(list);")
+s=s.replace("print(json.dumps({'mode':MODE,","print(json.dumps({'mode':MODE,'avail_top1':{k:(round(sum(x for x,_ in v)/len(v),2),round(sum(y for _,y in v)/len(v),2)) for k,v in DIAG.items()},")
+open('statelaw.py','w').write(s)
+EOF
+for m in full shufsig noupd; do python statelaw.py /tmp/gln/mw.txt $m; done

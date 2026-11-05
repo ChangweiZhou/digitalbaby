@@ -1,0 +1,8 @@
+cd /tmp/mdl; python - <<'EOF'
+s=open('statelaw.py').read()
+s=s.replace("def rare(w): return math.log((1+NL[0])/(1+DF[w]))>2.0 or w[0].isupper() and DF[w]<20","WIN=collections.defaultdict(set)\ndef rare(w): return len(WIN[w])<3   # dispersion: function words recur across many stretches of the life")
+s=s.replace("    for w in set(ws): DF[w]+=1\n    NL[0]+=1\n    sig,sl=event(ws)","    for w in set(ws): DF[w]+=1; WIN[w].add(NL[0]//300)\n    NL[0]+=1\n    sig,sl=event(ws)")
+s=s.replace("        for w in set(qw): DF[w]+=1\n","        for w in set(qw): DF[w]+=1; WIN[w].add(NL[0]//300)\n")
+open('statelaw.py','w').write(s)
+EOF
+for m in full ptronly snaponly shufsig noupd; do python statelaw.py /tmp/gln/mw.txt $m | head -1; done; python statelaw.py /tmp/gln/mw.txt full | tail -12

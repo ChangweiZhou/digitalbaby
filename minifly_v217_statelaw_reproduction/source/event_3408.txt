@@ -1,0 +1,33 @@
+cd /tmp/mdl; python - <<'EOF'
+import random,json
+src=open('/tmp/mw/miniworld2.py').read().split("class Learner")[0]; exec(src)
+def world2(r,pool):
+    while True:
+        w=world(r,pool); toks=[x.lower() for x in w[0]+w[1]+w[2]]
+        if len(set(toks))==len(toks) and len(w[0])==4 and len(w[1])==6 and len(w[2])==3: return w
+def render(r,w,nq):
+    out=[]
+    for k,x in stream(r,w,nq):
+        if k=='s': out.append(x)
+        else: q,a,kind=x; out.append(q+' '+a)
+    return out
+hom=0
+for sd in range(10):
+    r=random.Random(100+sd); hist=[l for _ in range(24) for l in render(r,world2(r,MOVE_TR),60)]
+    test=render(random.Random(500+sd),world2(random.Random(600+sd),MOVE_TE),80)
+    for k,h in (('k0',[]),('k24',hist)):
+        open(f'/tmp/mdl/u_{sd}_{k}.txt','w').write('\n'.join(h+test)+'\n'); json.dump(len(h),open(f'/tmp/mdl/u_{sd}_{k}.off','w'))
+EOF
+for sd in 0 1 2 3 4 5 6 7 8 9; do for k in k0 k24; do echo "$sd $k $(TESTFROM=$(cat u_${sd}_$k.off) python statelaw_t.py u_${sd}_$k.txt noprint 2>/dev/null | head -1)"; done; done > transfer_u.txt; python - <<'EOF'
+import json,numpy as np
+R={}
+for l in open('/tmp/mdl/transfer_u.txt'):
+    sd,k,js=l.split(' ',2); d=json.loads(js); R[(sd,k)]=d
+for k in ('k0','k24'):
+    pt=[R[(s,k)]['test_top1']['per'] for s in map(str,range(10))]; ot=[R[(s,k)]['test_top1']['obj'] for s in map(str,range(10))]
+    pb=[R[(s,k)]['per_test'] for s in map(str,range(10))]; ob=[R[(s,k)]['obj_test'] for s in map(str,range(10))]
+    print(k,'per top1 %.3f obj top1 %.3f | per bits %.2f obj bits %.2f'%(np.mean(pt),np.mean(ot),np.mean(pb),np.mean(ob)))
+    print('  per-seed obj top1',ot); print('  per-seed per top1',pt)
+d=[R[(s,'k0')]['obj_test']-R[(s,'k24')]['obj_test'] for s in map(str,range(10))]; e=[R[(s,'k0')]['per_test']-R[(s,'k24')]['per_test'] for s in map(str,range(10))]
+print('bits saved per answer (k24 vs fresh): obj %.2f ± %.2f, per %.2f ± %.2f'%(np.mean(d),1.96*np.std(d,ddof=1)/np.sqrt(10),np.mean(e),1.96*np.std(e,ddof=1)/np.sqrt(10)))
+EOF

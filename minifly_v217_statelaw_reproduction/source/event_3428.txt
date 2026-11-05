@@ -1,0 +1,39 @@
+cd /tmp/mdl; python - <<'EOF'
+import random,json
+src=open('/tmp/mw/miniworld2.py').read().split("class Learner")[0]; exec(src)
+USED=set()
+def world3(r,pool,used):
+    while True:
+        w=world(r,pool); toks=[x.lower() for x in w[0]+w[1]+w[2]]
+        if len(set(toks))==len(toks) and len(w[0])==4 and len(w[1])==6 and len(w[2])==3 and not (set(toks)&used):
+            used|=set(toks); return w
+SYL3=None
+def render(r,w,nq):
+    out=[]
+    for k,x in stream(r,w,nq):
+        if k=='s': out.append(x)
+        else: q,a,kind=x; out.append(q+' '+a)
+    return out
+# vocabulary words also must not collide with function words
+FUNC={w.lower() for t in MOVE_TR+MOVE_TE+GET+DROP for w in t.replace('{N}','').replace('{L}','').replace('{O}','').replace('.','').split()}|{'where','is'}
+for sd in range(10):
+    used=set(FUNC); r=random.Random(100+sd)
+    hist=[l for _ in range(24) for l in render(r,world3(r,MOVE_TR,used),60)]
+    tw=world3(random.Random(600+sd),MOVE_TE,used)
+    test=render(random.Random(500+sd),tw,80)
+    for k,h in (('k0',[]),('k24',hist)):
+        open(f'/tmp/mdl/v_{sd}_{k}.txt','w').write('\n'.join(h+test)+'\n'); json.dump(len(h),open(f'/tmp/mdl/v_{sd}_{k}.off','w'))
+print('ok')
+EOF
+for sd in 0 1 2 3 4 5 6 7 8 9; do for k in k0 k24; do echo "$sd $k $(TESTFROM=$(cat v_${sd}_$k.off) python statelaw_t.py v_${sd}_$k.txt noprint 2>/dev/null | head -1)"; done; done > transfer_v.txt; python - <<'EOF'
+import json,numpy as np
+R={}
+for l in open('/tmp/mdl/transfer_v.txt'):
+    sd,k,js=l.split(' ',2); R[(sd,k)]=json.loads(js)
+S=list(map(str,range(10)))
+for k in ('k0','k24'):
+    print(k,'per top1 %.3f obj top1 %.3f | per bits %.2f obj bits %.2f'%(np.mean([R[(s,k)]['test_top1']['per'] for s in S]),np.mean([R[(s,k)]['test_top1']['obj'] for s in S]),np.mean([R[(s,k)]['per_test'] for s in S]),np.mean([R[(s,k)]['obj_test'] for s in S])))
+    print('  obj top1',[R[(s,k)]['test_top1']['obj'] for s in S]); print('  per top1',[R[(s,k)]['test_top1']['per'] for s in S])
+d=[R[(s,'k0')]['obj_test']-R[(s,'k24')]['obj_test'] for s in S]; e=[R[(s,'k0')]['per_test']-R[(s,'k24')]['per_test'] for s in S]
+print('bits saved per answer: obj %.2f ± %.2f, per %.2f ± %.2f'%(np.mean(d),1.96*np.std(d,ddof=1)/np.sqrt(10),np.mean(e),1.96*np.std(e,ddof=1)/np.sqrt(10)))
+EOF

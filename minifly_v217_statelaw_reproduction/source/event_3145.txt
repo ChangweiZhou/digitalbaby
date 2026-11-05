@@ -1,0 +1,21 @@
+cd /tmp/gln; python - <<'EOF'
+import random,sys
+sys.argv=['x']; src=open('/tmp/mw/miniworld2.py').read().split("class Learner")[0]; exec(src)
+r=random.Random(1); out=[]; ans=[]
+for wi in range(25):
+    w=world(r,MOVE_TR)
+    for k,x in stream(r,w,60):
+        if k=='s': out.append(x+'\n')
+        else:
+            q,a,kind=x; s=q+' '; out.append(s); pos=sum(map(len,out)); out.append(a+'\n'); ans.append((pos,len(a),kind))
+open('mw.txt','w').write(''.join(out)); import json; json.dump(ans,open('mw_ans.json','w'))
+print(len(''.join(out)), len(ans)); print(''.join(out)[:400])
+EOF
+python - <<'EOF'
+s=open('/tmp/gln/cm.py').read()
+s=s.replace("tot+=-math.log2(p if bit else 1-p)","bits=-math.log2(p if bit else 1-p); tot+=bits; BITS[i]+=bits")
+s=s.replace("tot=0.0;","BITS=np.zeros(len(data)); tot=0.0;")
+s+="\nnp.save(sys.argv[1]+'.bits.npy',BITS)\n"
+open('/tmp/gln/cm2.py','w').write(s)
+EOF
+timeout 280 python cm2.py mw.txt | tail -2; xz -9e -k -c mw.txt | wc -c

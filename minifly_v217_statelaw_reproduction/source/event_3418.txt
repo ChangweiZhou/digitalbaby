@@ -1,0 +1,24 @@
+cd /tmp/mdl; python - <<'EOF'
+for fn in ('statelaw_t.py','dbg_t.py'):
+    s=open(fn).read()
+    s=s.replace("def rare(w): return len(WIN[w])<3   # dispersion: function words recur across many stretches of the life",
+"FIRST={}; LASTSEEN={}\ndef rare(w):\n    w=w.lower(); return not (w in FIRST and LASTSEEN[w]-FIRST[w]>SPAN)   # function words: long-lived across the life")
+    s=s.replace("for w in set(ws): DF[w]+=1; WIN[w].add(NL[0]//300)","for w in set(ws): DF[w]+=1; wl=w.lower(); FIRST.setdefault(wl,NL[0]); LASTSEEN[wl]=NL[0]")
+    s=s.replace("for w in set(qw): DF[w]+=1; WIN[w].add(NL[0]//300)","for w in set(qw): DF[w]+=1; wl=w.lower(); FIRST.setdefault(wl,NL[0]); LASTSEEN[wl]=NL[0]")
+    s=s.replace("TESTFROM=int(os.environ.get('TESTFROM','0'));","TESTFROM=int(os.environ.get('TESTFROM','0')); SPAN=int(os.environ.get('SPAN','1500'));")
+    s=s.replace("        else: s.append(w.lower())","        else: s.append(w.lower())")
+    open(fn,'w').write(s)
+EOF
+grep -c "SPAN" statelaw_t.py; for sd in 0 1 2 3 4 5 6 7 8 9; do for k in k0 k24; do echo "$sd $k $(TESTFROM=$(cat u_${sd}_$k.off) python statelaw_t.py u_${sd}_$k.txt noprint 2>/dev/null | head -1)"; done; done > transfer_u2.txt; sed -i 's#transfer_u.txt#transfer_u2.txt#' /dev/null; python - <<'EOF'
+import json,numpy as np
+R={}
+for l in open('/tmp/mdl/transfer_u2.txt'):
+    sd,k,js=l.split(' ',2); R[(sd,k)]=json.loads(js)
+S=list(map(str,range(10)))
+for k in ('k0','k24'):
+    f=lambda key,kk: [R[(s,k)][key][kk] if isinstance(R[(s,k)][key],dict) else R[(s,k)][key] for s in S]
+    print(k,'per top1 %.3f obj top1 %.3f | per bits %.2f obj bits %.2f'%(np.mean(f('test_top1','per')),np.mean(f('test_top1','obj')),np.mean([R[(s,k)]['per_test'] for s in S]),np.mean([R[(s,k)]['obj_test'] for s in S])))
+    print('  obj top1',[R[(s,k)]['test_top1']['obj'] for s in S])
+d=[R[(s,'k0')]['obj_test']-R[(s,'k24')]['obj_test'] for s in S]; e=[R[(s,'k0')]['per_test']-R[(s,'k24')]['per_test'] for s in S]
+print('bits saved per answer: obj %.2f ± %.2f, per %.2f ± %.2f'%(np.mean(d),1.96*np.std(d,ddof=1)/np.sqrt(10),np.mean(e),1.96*np.std(e,ddof=1)/np.sqrt(10)))
+EOF

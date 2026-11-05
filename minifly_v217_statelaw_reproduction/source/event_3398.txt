@@ -1,0 +1,26 @@
+cd /tmp/mdl; python - <<'EOF'
+s=open('statelaw.py').read()
+s=s.replace("        half='2nd' if T[0]>len(lines)*0.45 else '1st'","        half='2nd' if T[0]>len(lines)*0.45 else '1st'")
+s=s.replace("        bits[(kind,'2nd' if T[0]>len(lines)*0.45 else '1st')].append(-math.log2(max(pv,1e-6)))",
+"""        if LI[0]>=TESTFROM: bits[(kind,'test')].append(-math.log2(max(pv,1e-6))); TOP[kind].append(top==a)""")
+s=s.replace("ANS=set();","ANS=set(); TOP=collections.defaultdict(list); LI=[0]; import os; TESTFROM=int(os.environ.get('TESTFROM','0'));")
+s=s.replace("for ln in lines:\n    if not ln.strip(): continue","for ln in lines:\n    LI[0]+=1\n    if not ln.strip(): continue")
+s=s.replace("print(json.dumps({'mode':MODE,","print(json.dumps({'mode':MODE,'test_top1':{k:round(sum(v)/len(v),3) for k,v in TOP.items()},")
+open('statelaw_t.py','w').write(s)
+EOF
+python - <<'EOF'
+import random,json
+src=open('/tmp/mw/miniworld2.py').read().split("class Learner")[0]; exec(src)
+def render(r,w,nq):
+    out=[]
+    for k,x in stream(r,w,nq):
+        if k=='s': out.append(x)
+        else: q,a,kind=x; out.append(q+' '+a)
+    return out
+for sd in range(5):
+    r=random.Random(100+sd); hist=[l for _ in range(24) for l in render(r,world(r,MOVE_TR),60)]
+    test=render(random.Random(500+sd),world(random.Random(600+sd),MOVE_TE),80)
+    for k,h in (('k0',[]),('k24',hist)):
+        open(f'/tmp/mdl/t_{sd}_{k}.txt','w').write('\n'.join(h+test)+'\n'); json.dump(len(h),open(f'/tmp/mdl/t_{sd}_{k}.off','w'))
+EOF
+for sd in 0 1 2 3 4; do for k in k0 k24; do echo "$sd $k $(TESTFROM=$(cat t_${sd}_$k.off) python statelaw_t.py t_${sd}_$k.txt full | head -1)"; done; done | tee transfer.txt | cut -c1-200

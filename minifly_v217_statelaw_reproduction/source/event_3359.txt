@@ -1,0 +1,9 @@
+cd /tmp/mdl; python - <<'EOF'
+s=open('statelaw.py').read()
+s=s.replace("    for op,v in ops.items():\n        if v is None: continue","    for op,v in ops.items():\n        if v is None: continue\n        if MODE.endswith('only') and op not in (MODE[:-4].upper(),'CO','OWN'): continue")
+open('statelaw.py','w').write(s)
+EOF
+for m in ptronly snaponly; do python statelaw.py /tmp/gln/mw.txt $m; done; python - <<'EOF'
+import re,collections
+# learned op choice per signature (inspect)
+EOF

@@ -1,0 +1,144 @@
+{
+  "native": {
+    "mode": "noprint",
+    "test_top1": {
+      "obj": 0.627,
+      "per": 0.828
+    },
+    "avail_top1": {
+      "obj": [
+        0.76,
+        0.63
+      ],
+      "per": [
+        0.93,
+        0.83
+      ]
+    },
+    "obj_test": 1.84,
+    "per_test": 1.13,
+    "n": {
+      "obj_test": 51,
+      "per_test": 29
+    }
+  },
+  "metrics": {
+    "per": {
+      "n": 29,
+      "top1": 0.8275862068965517,
+      "raw_answer_bits": 1.1310903696194727,
+      "candidate_coverage": 0.9310344827586207,
+      "gold_fallback_count": 0
+    },
+    "obj": {
+      "n": 51,
+      "top1": 0.6274509803921569,
+      "raw_answer_bits": 1.8398294798174926,
+      "candidate_coverage": 0.7647058823529411,
+      "gold_fallback_count": 1
+    }
+  },
+  "halves": {
+    "first45pct": {
+      "per": {
+        "n": 18,
+        "top1": 0.8333333333333334,
+        "raw_answer_bits": 1.162620425523125,
+        "candidate_coverage": 0.9444444444444444,
+        "gold_fallback_count": 0
+      },
+      "obj": {
+        "n": 18,
+        "top1": 0.6666666666666666,
+        "raw_answer_bits": 1.577872217046928,
+        "candidate_coverage": 0.7777777777777778,
+        "gold_fallback_count": 1
+      }
+    },
+    "last55pct": {
+      "per": {
+        "n": 11,
+        "top1": 0.8181818181818182,
+        "raw_answer_bits": 1.0794957326862238,
+        "candidate_coverage": 0.9090909090909091,
+        "gold_fallback_count": 0
+      },
+      "obj": {
+        "n": 33,
+        "top1": 0.6060606060606061,
+        "raw_answer_bits": 1.9827152595105266,
+        "candidate_coverage": 0.7575757575757576,
+        "gold_fallback_count": 0
+      }
+    }
+  },
+  "total_questions": 80,
+  "scored_questions": 80,
+  "learned_operations": [
+    {
+      "signature": "_ _ _ _",
+      "op": "OWN",
+      "hits": 5,
+      "trials": 6
+    },
+    {
+      "signature": "_ _ _ _",
+      "op": "PTR",
+      "hits": 34,
+      "trials": 56
+    },
+    {
+      "signature": "_ _ _ _",
+      "op": "SNAP",
+      "hits": 19,
+      "trials": 54
+    },
+    {
+      "signature": "_ _ _ _ _",
+      "op": "CO",
+      "hits": 22,
+      "trials": 23
+    },
+    {
+      "signature": "_ _ _ _ _",
+      "op": "OWN",
+      "hits": 22,
+      "trials": 23
+    },
+    {
+      "signature": "_ _ _ _ _",
+      "op": "PTR",
+      "hits": 14,
+      "trials": 23
+    },
+    {
+      "signature": "_ _ _ _ _",
+      "op": "SNAP",
+      "hits": 2,
+      "trials": 23
+    }
+  ],
+  "diagnostics": {
+    "empty_fallback_count": 1,
+    "subnormalized_count": 1
+  },
+  "spec": {
+    "id": "r24_24017_C_k0_span_1500",
+    "round": 24,
+    "seed": 24017,
+    "condition": "C",
+    "arm": "k0",
+    "detector": "span",
+    "span": 1500,
+    "mode": "noprint",
+    "stream": "data/r24_24017_C_k0.txt",
+    "source": "recovered/statelaw_t.py",
+    "testfrom": 0
+  },
+  "receipts": {
+    "source_sha256": "edca09982f9c99e19b8e7738bb21856b4ad1f406287b6b0617cdc9640b015c04",
+    "stream_sha256": "95cbbdca6d7e66d68a1fb9132cc644622fe8c21a57fe5fdee94d8989595737c7",
+    "python_hash_seed": "241105",
+    "python": "3.11.5 (main, Sep 11 2023, 08:31:25) [Clang 14.0.6 ]"
+  }
+}
