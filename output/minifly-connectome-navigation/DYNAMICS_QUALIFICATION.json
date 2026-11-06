@@ -1,0 +1,706 @@
+{
+  "graph_inputs": {
+    "EXTRACT.npz": "87c072d49853ed41705f753772aa7be556473b5b864ed2257fe22eb27990c86c",
+    "COMPARTMENT_MAP.json": "4f9b072c10d07780edbe4da223f54d7424ec82cd296550a2bd2b5d622a0edc35",
+    "RESOLVED_BOUNDARY.json": "861342bbf3e243dcd0ea1932b2aabe8687f0f041928952ffc4f44ffe08b037df",
+    "SYNAPSE_COMPARTMENTS.json": "e7cb043dd0b1dc43589593d0c489ced3559911a4415adb3788bbfb2c1f21a68a"
+  },
+  "parameter_order": {
+    "compass": [
+      "EPG recurrence",
+      "Delta7 inhibition",
+      "PEN feedback",
+      "yaw gain"
+    ],
+    "steering": [
+      "FB phase offset in radians",
+      "Delta7 gain",
+      "FC2 gain",
+      "PFL3 threshold"
+    ]
+  },
+  "compass": {
+    "aggregate": {
+      "native": {
+        "params": [
+          0.95,
+          1.2,
+          0.65,
+          30.0
+        ],
+        "yaw_mode": "opponent",
+        "calibration": {
+          "stationary_pass": 10,
+          "stationary_n": 16,
+          "turn_median_deg": 69.66468714414518,
+          "turn_n": 32,
+          "turn_pass": 1,
+          "turn_retained": 32,
+          "stationary_median_deg": 14.329905326869358
+        },
+        "qualification": {
+          "stationary_pass": 9,
+          "stationary_n": 16,
+          "turn_median_deg": 44.80113376614658,
+          "turn_n": 96,
+          "turn_pass": 22,
+          "turn_retained": 96,
+          "stationary_median_deg": 17.25794214164444
+        }
+      },
+      "recurrence_off_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 68.7549354156988,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 2.856991511468501
+      },
+      "rewired_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 93.54878866329733,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 128.13822950999509
+      },
+      "no_yaw_native_parameters": {
+        "stationary_pass": 9,
+        "stationary_n": 16,
+        "turn_median_deg": 59.41049227784857,
+        "turn_n": 96,
+        "turn_pass": 14,
+        "turn_retained": 96,
+        "stationary_median_deg": 17.25794214164444
+      },
+      "rewired": {
+        "params": [
+          1.25,
+          1.2,
+          1.0,
+          30.0
+        ],
+        "yaw_mode": "opponent",
+        "calibration": {
+          "stationary_pass": 0,
+          "stationary_n": 16,
+          "turn_median_deg": 90.29470348958857,
+          "turn_n": 32,
+          "turn_pass": 1,
+          "turn_retained": 15,
+          "stationary_median_deg": 89.69234149603038
+        },
+        "qualification": {
+          "stationary_pass": 0,
+          "stationary_n": 16,
+          "turn_median_deg": 89.88336035214869,
+          "turn_n": 96,
+          "turn_pass": 0,
+          "turn_retained": 22,
+          "stationary_median_deg": 89.87451312944236
+        }
+      }
+    },
+    "pb_proximity": {
+      "native": {
+        "params": [
+          1.55,
+          0.4,
+          0.3,
+          30.0
+        ],
+        "yaw_mode": "opponent",
+        "calibration": {
+          "stationary_pass": 8,
+          "stationary_n": 16,
+          "turn_median_deg": 26.965699677004757,
+          "turn_n": 32,
+          "turn_pass": 12,
+          "turn_retained": 23,
+          "stationary_median_deg": 18.813936911610288
+        },
+        "qualification": {
+          "stationary_pass": 7,
+          "stationary_n": 16,
+          "turn_median_deg": 23.79459271541492,
+          "turn_n": 96,
+          "turn_pass": 37,
+          "turn_retained": 76,
+          "stationary_median_deg": 23.39236015156882
+        }
+      },
+      "recurrence_off_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 68.7549354156988,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 2.856991511468501
+      },
+      "rewired_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 90.00041819855318,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 89.99991417013987
+      },
+      "no_yaw_native_parameters": {
+        "stationary_pass": 7,
+        "stationary_n": 16,
+        "turn_median_deg": 63.754203850249084,
+        "turn_n": 96,
+        "turn_pass": 12,
+        "turn_retained": 84,
+        "stationary_median_deg": 23.39236015156882
+      },
+      "rewired": {
+        "params": [
+          1.25,
+          1.2,
+          0.3,
+          15.0
+        ],
+        "yaw_mode": "single_side",
+        "calibration": {
+          "stationary_pass": 0,
+          "stationary_n": 16,
+          "turn_median_deg": 71.12254977013524,
+          "turn_n": 32,
+          "turn_pass": 0,
+          "turn_retained": 0,
+          "stationary_median_deg": 80.1318684638641
+        },
+        "qualification": {
+          "stationary_pass": 0,
+          "stationary_n": 16,
+          "turn_median_deg": 80.84070935141563,
+          "turn_n": 96,
+          "turn_pass": 0,
+          "turn_retained": 0,
+          "stationary_median_deg": 82.8472876268831
+        }
+      }
+    },
+    "observed_contacts": {
+      "native": {
+        "params": [
+          1.55,
+          0.4,
+          0.3,
+          30.0
+        ],
+        "yaw_mode": "opponent",
+        "calibration": {
+          "stationary_pass": 8,
+          "stationary_n": 16,
+          "turn_median_deg": 24.78732098286886,
+          "turn_n": 32,
+          "turn_pass": 15,
+          "turn_retained": 31,
+          "stationary_median_deg": 24.33685741635043
+        },
+        "qualification": {
+          "stationary_pass": 7,
+          "stationary_n": 16,
+          "turn_median_deg": 27.692046654696973,
+          "turn_n": 96,
+          "turn_pass": 36,
+          "turn_retained": 95,
+          "stationary_median_deg": 25.27855036824736
+        }
+      },
+      "recurrence_off_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 68.7549354156988,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 2.856991511468501
+      },
+      "rewired_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 90.00036290705427,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 90.0000239518811
+      },
+      "no_yaw_native_parameters": {
+        "stationary_pass": 7,
+        "stationary_n": 16,
+        "turn_median_deg": 60.53938341884073,
+        "turn_n": 96,
+        "turn_pass": 14,
+        "turn_retained": 96,
+        "stationary_median_deg": 25.27855036824736
+      },
+      "rewired": {
+        "params": [
+          1.25,
+          0.8,
+          1.0,
+          30.0
+        ],
+        "yaw_mode": "opponent",
+        "calibration": {
+          "stationary_pass": 0,
+          "stationary_n": 16,
+          "turn_median_deg": 89.99595164235461,
+          "turn_n": 32,
+          "turn_pass": 2,
+          "turn_retained": 20,
+          "stationary_median_deg": 89.99286667014076
+        },
+        "qualification": {
+          "stationary_pass": 0,
+          "stationary_n": 16,
+          "turn_median_deg": 89.95405209247423,
+          "turn_n": 96,
+          "turn_pass": 4,
+          "turn_retained": 38,
+          "stationary_median_deg": 89.98742540138878
+        }
+      }
+    }
+  },
+  "steering": {
+    "native": {
+      "params": [
+        0.0,
+        0.5,
+        1.0,
+        0.25
+      ],
+      "calibration": {
+        "correct": 63,
+        "n": 64,
+        "opposite_goal_pairs": 31,
+        "median_abs_output": 0.2941033087475416,
+        "closed_loop_median_error_deg": 11.506581302346671,
+        "closed_loop_within_20_deg": 50
+      },
+      "qualification": {
+        "correct": 94,
+        "n": 96,
+        "opposite_goal_pairs": 46,
+        "median_abs_output": 0.27575617422527376,
+        "closed_loop_median_error_deg": 12.69529400676009,
+        "closed_loop_within_20_deg": 75
+      },
+      "no_goal": {
+        "correct": 48,
+        "n": 96,
+        "opposite_goal_pairs": 0,
+        "median_abs_output": 0.04848931545766024,
+        "closed_loop_median_error_deg": 72.31133502597403,
+        "closed_loop_within_20_deg": 15
+      },
+      "no_heading": {
+        "correct": 47,
+        "n": 96,
+        "opposite_goal_pairs": 14,
+        "median_abs_output": 0.043561456542291474,
+        "closed_loop_median_error_deg": 69.41654777326613,
+        "closed_loop_within_20_deg": 11
+      }
+    },
+    "rewired_native_parameters": {
+      "correct": 52,
+      "n": 96,
+      "opposite_goal_pairs": 9,
+      "median_abs_output": 0.13839979707525218,
+      "closed_loop_median_error_deg": 59.542875552974984,
+      "closed_loop_within_20_deg": 12
+    },
+    "rewired": {
+      "params": [
+        0.5235987755982988,
+        1.0,
+        2.0,
+        0.25
+      ],
+      "calibration": {
+        "correct": 38,
+        "n": 64,
+        "opposite_goal_pairs": 13,
+        "median_abs_output": 0.21416171078670357
+      },
+      "qualification": {
+        "correct": 49,
+        "n": 96,
+        "opposite_goal_pairs": 14,
+        "median_abs_output": 0.22119512413530357,
+        "closed_loop_median_error_deg": 58.18898248319335,
+        "closed_loop_within_20_deg": 14
+      },
+      "no_goal": {
+        "correct": 48,
+        "n": 96,
+        "opposite_goal_pairs": 0,
+        "median_abs_output": 0.16597658203908644,
+        "closed_loop_median_error_deg": 74.4541514341806,
+        "closed_loop_within_20_deg": 13
+      },
+      "no_heading": {
+        "correct": 49,
+        "n": 96,
+        "opposite_goal_pairs": 14,
+        "median_abs_output": 0.18486053973423572,
+        "closed_loop_median_error_deg": 99.63901119144322,
+        "closed_loop_within_20_deg": 13
+      }
+    }
+  },
+  "compass_separate_timescales": {
+    "pb_proximity": {
+      "native": {
+        "params": [
+          1.55,
+          0.4,
+          1.0,
+          8.0
+        ],
+        "rest_rate": 0.055,
+        "calibration": {
+          "stationary_pass": 16,
+          "stationary_n": 16,
+          "turn_median_deg": 11.354634565858905,
+          "turn_n": 64,
+          "turn_pass": 51,
+          "turn_retained": 64,
+          "stationary_median_deg": 7.283552015361009
+        },
+        "qualification": {
+          "stationary_pass": 16,
+          "stationary_n": 16,
+          "turn_median_deg": 10.547727898935674,
+          "turn_n": 96,
+          "turn_pass": 74,
+          "turn_retained": 96,
+          "stationary_median_deg": 6.192465793029224
+        }
+      },
+      "rewired_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 45.38101172556645,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 30,
+        "stationary_median_deg": 12.526422015776877
+      },
+      "recurrence_off_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 61.879441874128915,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 2.8361211318561024
+      },
+      "no_yaw_native_parameters": {
+        "stationary_pass": 16,
+        "stationary_n": 16,
+        "turn_median_deg": 61.879441874128915,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 96,
+        "stationary_median_deg": 6.192465793029224
+      },
+      "rewired": {
+        "params": [
+          1.55,
+          0.8,
+          0.3,
+          8.0
+        ],
+        "rest_rate": 0.055,
+        "calibration": {
+          "stationary_pass": 1,
+          "stationary_n": 16,
+          "turn_median_deg": 65.12612262394651,
+          "turn_n": 64,
+          "turn_pass": 2,
+          "turn_retained": 10,
+          "stationary_median_deg": 19.990728371948265
+        },
+        "qualification": {
+          "stationary_pass": 1,
+          "stationary_n": 16,
+          "turn_median_deg": 62.415235904240234,
+          "turn_n": 96,
+          "turn_pass": 1,
+          "turn_retained": 15,
+          "stationary_median_deg": 19.823441367840324
+        }
+      }
+    },
+    "observed_contacts": {
+      "native": {
+        "params": [
+          1.55,
+          0.4,
+          1.0,
+          8.0
+        ],
+        "rest_rate": 0.055,
+        "calibration": {
+          "stationary_pass": 16,
+          "stationary_n": 16,
+          "turn_median_deg": 9.35710216034066,
+          "turn_n": 64,
+          "turn_pass": 56,
+          "turn_retained": 64,
+          "stationary_median_deg": 11.522995232032162
+        },
+        "qualification": {
+          "stationary_pass": 16,
+          "stationary_n": 16,
+          "turn_median_deg": 8.556029361348061,
+          "turn_n": 96,
+          "turn_pass": 81,
+          "turn_retained": 96,
+          "stationary_median_deg": 11.448684753946862
+        }
+      },
+      "rewired_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 54.53901723732716,
+        "turn_n": 96,
+        "turn_pass": 5,
+        "turn_retained": 42,
+        "stationary_median_deg": 16.698532144214113
+      },
+      "recurrence_off_native_parameters": {
+        "stationary_pass": 0,
+        "stationary_n": 16,
+        "turn_median_deg": 61.879441874128915,
+        "turn_n": 96,
+        "turn_pass": 0,
+        "turn_retained": 0,
+        "stationary_median_deg": 2.8361211318561024
+      },
+      "no_yaw_native_parameters": {
+        "stationary_pass": 16,
+        "stationary_n": 16,
+        "turn_median_deg": 61.879441874128915,
+        "turn_n": 96,
+        "turn_pass": 5,
+        "turn_retained": 96,
+        "stationary_median_deg": 11.448684753946862
+      },
+      "rewired": {
+        "params": [
+          1.55,
+          0.8,
+          1.0,
+          30.0
+        ],
+        "rest_rate": 0.055,
+        "calibration": {
+          "stationary_pass": 2,
+          "stationary_n": 16,
+          "turn_median_deg": 82.82285901911673,
+          "turn_n": 64,
+          "turn_pass": 7,
+          "turn_retained": 55,
+          "stationary_median_deg": 20.366903852377618
+        },
+        "qualification": {
+          "stationary_pass": 1,
+          "stationary_n": 16,
+          "turn_median_deg": 84.81123583597768,
+          "turn_n": 96,
+          "turn_pass": 11,
+          "turn_retained": 85,
+          "stationary_median_deg": 23.269457510734107
+        }
+      }
+    }
+  },
+  "combined_supplied_goal": {
+    "native": {
+      "40": {
+        "n": 96,
+        "within_20_deg": 41,
+        "goal_error_median_deg": 22.663487275147762,
+        "compass_error_median_deg": 11.445039863090383
+      },
+      "80": {
+        "n": 96,
+        "within_20_deg": 42,
+        "goal_error_median_deg": 21.948500489655302,
+        "compass_error_median_deg": 21.075901323546358
+      }
+    },
+    "no_yaw": {
+      "40": {
+        "n": 96,
+        "within_20_deg": 27,
+        "goal_error_median_deg": 42.16202542980342,
+        "compass_error_median_deg": 94.55545776987229
+      },
+      "80": {
+        "n": 96,
+        "within_20_deg": 8,
+        "goal_error_median_deg": 87.91301317986245,
+        "compass_error_median_deg": 100.86456066728155
+      }
+    },
+    "no_goal": {
+      "40": {
+        "n": 96,
+        "within_20_deg": 5,
+        "goal_error_median_deg": 78.25833576478641,
+        "compass_error_median_deg": 7.731826531940678
+      },
+      "80": {
+        "n": 96,
+        "within_20_deg": 11,
+        "goal_error_median_deg": 77.31369367894916,
+        "compass_error_median_deg": 14.772413290986186
+      }
+    },
+    "rewired": {
+      "40": {
+        "n": 96,
+        "within_20_deg": 14,
+        "goal_error_median_deg": 86.16722749547057,
+        "compass_error_median_deg": 74.79678275765886
+      },
+      "80": {
+        "n": 96,
+        "within_20_deg": 11,
+        "goal_error_median_deg": 77.19411089445768,
+        "compass_error_median_deg": 84.75086228720596
+      }
+    }
+  },
+  "combined_rate_check": {
+    "0.054": {
+      "native": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 47,
+          "goal_error_median_deg": 20.725272502869025,
+          "compass_error_median_deg": 11.309370428169027
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 39,
+          "goal_error_median_deg": 23.8626772734306,
+          "compass_error_median_deg": 20.846741900046275
+        }
+      },
+      "no_yaw": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 37,
+          "goal_error_median_deg": 33.88860255793474,
+          "compass_error_median_deg": 95.87278664836334
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 9,
+          "goal_error_median_deg": 123.70283393653787,
+          "compass_error_median_deg": 120.35232628994099
+        }
+      },
+      "no_goal": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 8,
+          "goal_error_median_deg": 70.50000000000001,
+          "compass_error_median_deg": 11.041693371811565
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 13,
+          "goal_error_median_deg": 70.5,
+          "compass_error_median_deg": 11.330247581703215
+        }
+      },
+      "rewired": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 16,
+          "goal_error_median_deg": 72.04196552817473,
+          "compass_error_median_deg": 63.4624216129715
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 14,
+          "goal_error_median_deg": 98.88442132288594,
+          "compass_error_median_deg": 94.06277743541429
+        }
+      }
+    },
+    "0.12": {
+      "native": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 47,
+          "goal_error_median_deg": 21.509478032032654,
+          "compass_error_median_deg": 11.531054167522521
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 39,
+          "goal_error_median_deg": 23.800218418653806,
+          "compass_error_median_deg": 21.4180705605187
+        }
+      },
+      "no_yaw": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 24,
+          "goal_error_median_deg": 40.336147843159026,
+          "compass_error_median_deg": 95.87278664836334
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 11,
+          "goal_error_median_deg": 95.22433530059509,
+          "compass_error_median_deg": 108.10540490237601
+        }
+      },
+      "no_goal": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 8,
+          "goal_error_median_deg": 70.50000000000001,
+          "compass_error_median_deg": 11.041693371811565
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 13,
+          "goal_error_median_deg": 70.5,
+          "compass_error_median_deg": 11.330247581703215
+        }
+      },
+      "rewired": {
+        "40": {
+          "n": 96,
+          "within_20_deg": 12,
+          "goal_error_median_deg": 78.6983435763718,
+          "compass_error_median_deg": 66.1830711560161
+        },
+        "80": {
+          "n": 96,
+          "within_20_deg": 11,
+          "goal_error_median_deg": 86.68772228703088,
+          "compass_error_median_deg": 87.40223900141235
+        }
+      }
+    }
+  },
+  "scope": "Engineering calibration and disjoint qualification panels. No learned-goal or displacement run."
+}
