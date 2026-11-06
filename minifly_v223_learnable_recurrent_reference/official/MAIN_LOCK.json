@@ -1,0 +1,55 @@
+{
+  "worlds": [
+    66301,
+    66302,
+    66303
+  ],
+  "methods": [
+    "forward",
+    "bp"
+  ],
+  "spec": {
+    "width": 32,
+    "topology": "connected",
+    "route": "direct"
+  },
+  "doses": [
+    4096,
+    8192,
+    16384,
+    32768,
+    65536
+  ],
+  "workers": 6,
+  "profile": {
+    "rows": {
+      "forward": {
+        "probe_cpu_seconds_64": 0.020507000000000053,
+        "sites": 8192,
+        "cpu_seconds": 0.800862,
+        "sites_per_cpu_second": 10228.97827590771,
+        "array_bytes": 589044
+      },
+      "bp": {
+        "probe_cpu_seconds_64": 0.029422999999999977,
+        "sites": 8192,
+        "cpu_seconds": 1.0366669999999998,
+        "sites_per_cpu_second": 7902.248262942682,
+        "array_bytes": 589044
+      }
+    },
+    "main_training_cpu_seconds_estimate": 825.5099032499999,
+    "probe_cpu_seconds_estimate": 23.404687500000016,
+    "training_and_probe_cpu_seconds_with_reserve": 1061.1432384374998,
+    "training_cpu_seconds_planned_with_reserve": 1031.8873790624998,
+    "single_process_peak_rss_bytes_mac": 299024384
+  },
+  "source": {
+    "learner.py": "45dd270cfa7fbe86a11a82e217693f3a2648c8b6a91c8f5a38ab115c32fe5e2c",
+    "reference.py": "954a9a2909b852da384245ecaee569e20c38d2533ca23063acaa507e641bf0c2",
+    "official.py": "3b809ad7fe6d921949c8fd791c85242866f634668ce86575c39b3ad3dff5dc7c",
+    "screen.py": "f8ea2a169eab7699817984f30200b90886c14703293b81fce2dc25b103dd6248"
+  },
+  "scope": "Three fresh paired development worlds. Exact forward and BPTT32.",
+  "A_fact_floor": "52/64 in at least 2 of 3 BPTT references"
+}
