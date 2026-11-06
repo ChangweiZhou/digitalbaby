@@ -43,7 +43,9 @@ LIFE_TASKS = {"add73": ("add", 73), "sub73": ("sub", 73), "dec": ("add", None)}
 LIFE_ARMS = ("M", "S", "H", "C", "D")
 
 
-WINDOW = 10   # the 8-byte window of earlier rounds cannot see the task code or the first operand's units digit by the third answer digit
+WINDOW = 10
+HID = int(os.environ.get("EXP2_HIDDEN", "128"))   # hidden width; the width test sets 256 and 512
+TAG = "" if HID == 128 else f"_h{HID}"   # the 8-byte window of earlier rounds cannot see the task code or the first operand's units digit by the third answer digit
 
 
 def task_key(task):
@@ -158,11 +160,11 @@ def dev_rows(seed, birth):
 
 def develop(seed, birth):
     OUT.mkdir(exist_ok=True)
-    path = OUT / f"dev_{birth}_{seed}.pt"
+    path = OUT / f"dev_{birth}{TAG}_{seed}.pt"
     if path.exists():
         return
     T.manual_seed(seed)
-    m = M.Net(W=WINDOW)
+    m = M.Net(W=WINDOW, H=HID)
     opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=.3, betas=(.9, .98))
     rows = dev_rows(seed, birth)
     F = dict(drop=0., rng=T.Generator().manual_seed(seed + 7))
@@ -180,16 +182,16 @@ def develop(seed, birth):
             curve.append(row)
             print("dev", birth, seed, stop, row["sealed"], flush=True)
     T.save(m.state_dict(), path)
-    (OUT / f"dev_{birth}_{seed}.json").write_text(json.dumps(dict(seed=seed, birth=birth, rows=len(rows), curve=curve), indent=1))
+    (OUT / f"dev_{birth}{TAG}_{seed}.json").write_text(json.dumps(dict(seed=seed, birth=birth, rows=len(rows), curve=curve), indent=1))
 
 
 # ---------------------------------------------------------------- life
 def make_life(arm, seed):
     birth = {"M": "mixed", "S": "single", "H": "shuffled"}.get(arm)
     T.manual_seed(seed)
-    m = M.Net(W=WINDOW)
+    m = M.Net(W=WINDOW, H=HID)
     if birth:
-        m.load_state_dict(T.load(OUT / f"dev_{birth}_{seed}.pt"))
+        m.load_state_dict(T.load(OUT / f"dev_{birth}{TAG}_{seed}.pt"))
     for p in m.parameters():
         p.requires_grad_(True)
     if arm == "D":
@@ -203,7 +205,7 @@ def make_life(arm, seed):
 def life(arm, seed, name, frac):
     OUT.mkdir(exist_ok=True)
     task = LIFE_TASKS[name]
-    path = OUT / f"life_{name}_f{round(frac * 100)}_{arm}_{seed}.json"
+    path = OUT / f"life_{name}_f{round(frac * 100)}_{arm}{TAG}_{seed}.json"
     taught, monitor, sealed = split(task, frac, seed)
     m, F, opt = make_life(arm, seed)
     plastic = [n for n, _ in m.named_parameters()]

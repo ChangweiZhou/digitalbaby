@@ -75,3 +75,27 @@ for s in 73129 93683 116089; do for b in mixed single shuffled; do python3 exp2_
 for t in add73 sub73 dec; do for f in 0.1 0.25; do for arm in M S H C D; do for s in 73129 93683 116089; do python3 exp2_mixed.py life $arm $s $t $f; done; done; done; done
 python3 summarize_exp2.py
 ```
+
+# Width test: does breadth pay once the development tasks are mastered?
+
+**Same day · 72 further runs · hidden width 256 (154,641 parameters) and 512 (438,033 parameters) · same protocol, mod-73 tasks only · random-birth reference at 512**
+
+| Width | Birth | Own six tasks, sealed | add73, 10% | add73, 25% | sub73, 10% | sub73, 25% |
+|---|---|---|---|---|---|---|
+| 128 | mixed | 80–97% | 61 · 60 · 38 | 78 · 69 · 63 | 58 · 65 · 52 | 73 · 81 · 68 |
+| 128 | single | 96–100% (add97) | 80 · 81 · 44 | 86 · 85 · 65 | 79 · 79 · 48 | 85 · 90 · 70 |
+| 128 | random | — | 72 · 50 · 64 | 19 · 32 · 50 | 61 · 59 · 61 | 55 · 1 · 62 |
+| 256 | mixed | 89–99% | 78 · 73 · 50 | 90 · 88 · 81 | 79 · 75 · 57 | 88 · 89 · 83 |
+| 256 | single | 99–100% | 80 · 80 · 78 | 89 · 92 · 91 | 83 · 80 · 81 | 92 · 93 · 92 |
+| 512 | mixed | 92–97% | 79 · 74 · 63 | 93 · 93 · 89 | 84 · 74 · 70 | 93 · 93 · 89 |
+| 512 | single | 100% | 81 · 79 · 75 | 94 · 93 · 93 | 77 · 79 · 75 | 93 · 95 · 92 |
+| 512 | random | — | 39 · 43 · 48 | 94 · 91 · 91 | 53 · 51 · 47 | 93 · 91 · 92 |
+
+Mixed minus single at 25%, per seed: width 128 −9/−16/−2 and −12/−10/−2; width 256 0/−4/−10 and −4/−5/−9; width 512 −1/0/−5 and 0/−2/−3. Wrap subsets track the totals (`exp2/WIDTH_SUMMARY.md`).
+
+- **The capacity explanation holds.** At width 512 the mixed birth masters its six development tasks (92–97%) and its deficit against the single birth closes to within 5 points everywhere. Breadth stops hurting once the network can hold the tasks.
+- **Breadth never pays.** In no cell at any width does the mixed birth beat the single birth by more than 7 points, and the median margin is negative. Six related tasks give a representation that transfers no better than one task's, once both are mastered.
+- **At width 512 the local rule from a random birth matches development at a quarter of the pairs** (91–94% held on both tasks), and the collapses seen at width 128 are gone. Development's value is at a tenth of the pairs, where developed births reach 63–84% and the random birth 39–53%.
+- **The local rule scales.** Sign-symmetric feedback with decay 1.0 reaches 93–95% held at 438,000 parameters with no change of settings, three points under the width-128 backprop ceiling and rising with width.
+
+**What this settles for the ladder.** Development is a sample-efficiency device, not an asymptote device, at this scale: it roughly halves the data a local rule needs and removes the random-birth failure mode, and it does not raise the ceiling. Breadth of development is not a lever worth pulling further on tasks this similar. The open rungs are now the ones development cannot address: working state for multi-step computation, and retention across a sequence of tasks.

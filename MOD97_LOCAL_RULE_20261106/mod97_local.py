@@ -98,13 +98,13 @@ def stream(train, seed):
 
 # ---------------------------------------------------------------- model (shape from models.Modular, shared path only)
 class Net(nn.Module):
-    def __init__(self, W=8):
+    def __init__(self, W=8, H=128):
         super().__init__()
-        self.W = W                                   # ordered byte window (8 in rounds 1-3 and Experiment 1)
+        self.W, self.H = W, H                        # byte window (8 in rounds 1-3 and Experiment 1); hidden width (128 before the width test)
         self.book = nn.Embedding(258, 8, padding_idx=BOS)
-        self.l1 = nn.Linear(8 * W, 128)
-        self.l2 = nn.Linear(128, 128)
-        self.l3 = nn.Linear(128, 257)
+        self.l1 = nn.Linear(8 * W, H)
+        self.l2 = nn.Linear(H, H)
+        self.l3 = nn.Linear(H, 257)
 
     def window(self, x):
         return self.book(pad(x, (self.W - 1, 0), value=BOS).unfold(1, self.W, 1)).flatten(2)
