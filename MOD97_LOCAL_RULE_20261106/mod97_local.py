@@ -98,15 +98,16 @@ def stream(train, seed):
 
 # ---------------------------------------------------------------- model (shape from models.Modular, shared path only)
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, W=8):
         super().__init__()
+        self.W = W                                   # ordered byte window (8 in rounds 1-3 and Experiment 1)
         self.book = nn.Embedding(258, 8, padding_idx=BOS)
-        self.l1 = nn.Linear(64, 128)
+        self.l1 = nn.Linear(8 * W, 128)
         self.l2 = nn.Linear(128, 128)
         self.l3 = nn.Linear(128, 257)
 
     def window(self, x):
-        return self.book(pad(x, (7, 0), value=BOS).unfold(1, 8, 1)).flatten(2)
+        return self.book(pad(x, (self.W - 1, 0), value=BOS).unfold(1, self.W, 1)).flatten(2)
 
     def forward(self, x, keep=False, drop=0., rng=None):
         u = self.window(x)
@@ -203,8 +204,8 @@ def local_grads(m, F, rows, freeze_emb):
     g["l1.weight"] = d1.T @ u
     g["l1.bias"] = d1.sum(0)
     if not freeze_emb:
-        d0 = ((d1 @ S(m.l1.weight)) if sign else (e @ F["F0"])).reshape(N, 8, 8)  # per slot, per embedding dim
-        tok = pad(x, (7, 0), value=BOS).unfold(1, 8, 1).flatten(0, 1)   # N x 8 token ids
+        d0 = ((d1 @ S(m.l1.weight)) if sign else (e @ F["F0"])).reshape(N, m.W, 8)  # per slot, per embedding dim
+        tok = pad(x, (m.W - 1, 0), value=BOS).unfold(1, m.W, 1).flatten(0, 1)   # N x W token ids
         ge = T.zeros(258, 8)
         ge.index_add_(0, tok.flatten(), d0.reshape(-1, 8))
         ge[BOS] = 0

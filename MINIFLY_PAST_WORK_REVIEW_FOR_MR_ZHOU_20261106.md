@@ -243,3 +243,48 @@ The 98,304-update probe at 15% of pairs also showed no delayed rise: backprop wi
 Twenty-four runs of 98,304 updates with decoupled weight decay (AdamW) at 0.1, 0.3 and 1.0, at 15% and 25% of pairs. Decay 0.3 is the best regularizer in the study: 94–99% held at 25% of pairs with taught at 99.9%, held for the rest of training, and 82–89% at 15% where the project's decay of 1e-4 gave 65–72%. Decay 1.0 also repairs the sign-feedback local rule, which ends at 84–88% at both fractions instead of drifting to 35–45%.
 
 There is still no grokking, and the sweep shows why. One seed at decay 1.0 sits near 30% held for 40,000 updates and then jumps to 90%, but its taught accuracy sat at 32% through the same stall and jumped with it. That is a late escape from a partial solution, with taught and held moving together, not memorization followed by generalization. At decay 0.3 held tracks taught from the first checkpoint; at decay 0.1 and below held peaks early and drifts while taught stays at 100%. Across 30 long runs there is no regime where this network memorizes first and finds the rule later. Grokking is not a milestone that generalization must pass through. It appears only where memorization outruns rule-finding, and on this task with a shared path the rule is found at least as fast as the table. The project's 80-fact tables with a random-expansion memory are the opposite regime: the table is always cheaper, so nothing ever pushes toward the rule. Full tables and curves: [MOD97_LOCAL_RULE_20261106/REPORT.md](MOD97_LOCAL_RULE_20261106/REPORT.md).
+
+### 9.4 Experiment 1: development-versus-life transfer (171 runs)
+
+Pre-stated hypothesis, arms and decision rule are in the chat record before launch; full report in [MOD97_LOCAL_RULE_20261106/EXP1_REPORT.md](MOD97_LOCAL_RULE_20261106/EXP1_REPORT.md). Development: backprop on mod-97 addition, or a shuffled-target sham. Life: a new task (subtraction mod 97, or addition mod 89) learned by the sign-symmetric local rule from an aligned birth, a shuffled birth, or a random birth, with backprop from scratch as the ceiling and a scalar-reward three-factor rule as the floor.
+
+| Sealed held exact, final, 3 seeds | Subtraction, 10% taught | Subtraction, 25% | Mod-89 addition, 10% | Mod-89 addition, 25% |
+|---|---|---|---|---|
+| Aligned birth, warm start, local rule | 84 · 91 · 71 | 83 · 94 · 80 | 70 · 88 · 71 | 83 · 90 · 80 |
+| Aligned birth, frozen trunk, local rule | 25 · 48 · 14 | 27 · 52 · 13 | 71 · 88 · 73 | 77 · 92 · 80 |
+| Shuffled birth, warm start, local rule | 28 · 1 · 52 | 1 · 1 · 76 | 30 · 1 · 61 | 50 · 1 · 63 |
+| Random birth, local rule | 63 · 43 · 77 | 78 · 74 · 76 | 42 · 47 · 54 | 65 · 53 · 59 |
+| Random birth, backprop (ceiling) | 71 · 62 · 60 | 95 · 96 · 94 | 29 · 41 · 31 | 92 · 95 · 94 |
+| Aligned birth, scalar-reward rule | 2 · 2 · 2 | 2 · 3 · 3 | 6 · 3 · 8 | 6 · 5 · 7 |
+
+Five things follow. The development-versus-life split works for the local rule when life is a warm start: 80–94% on a new task at a quarter of the pairs, and at a tenth of the pairs it beats backprop trained from scratch on both tasks, because backprop memorizes at that dose and the aligned birth does not. The gain is from what was learned: shuffled births are worse than no birth, and a frozen random trunk with the same head gives 7–28%. Freezing the trunk is safe for the same operation and costly for a different one under the local rule, so lower layers should stay plastic at a low rate; the diagnostic with backprop on the frozen trunk (72–83% on subtraction) shows the features support the task and the local rule is what fails on fixed features. A scalar reward learned nothing at this budget: the life rule needs a vector error at the output, which dopamine alone does not supply. By the pre-stated rule the result advances on mod-89 addition and falls just short on subtraction (margins over the random birth +4, +20, +4 at 25%), so the next development phase is a mixed family of moduli and operations before adding working state.
+
+### 9.5 Codex's connectome navigation test (6 November, afternoon)
+
+Codex built the premise test proposed in section 9's discussion: extract the central complex and mushroom body from FlyWire v630 with signed edges (6,704 neurons, 417,204 signed edges, 106 role-pair gain groups, zero fitted values), map the 47 EPG compass cells and the EPG–PEN1 offsets from synapse coordinates, and ask whether the wiring computes. Reports on the consolidated branch under `output/minifly-connectome-navigation/` (commit 67b7b2f).
+
+| Probe, fixed hand-set gains | Native wiring | Degree-matched rewired control |
+|---|---|---|
+| Hold heading two seconds in darkness | 16/16 | 1/16 (0/16 with recurrence removed) |
+| Turn in darkness, 96 turns | 8.6° median error, 81/96 within 20° | 54.5° |
+| Steer toward a supplied goal, heading clamped | 94/96 correct initial turn | 49/96 (48/96 with goal removed) |
+| Converge on the goal, heading clamped | 75/96 within 20° | 14/96 |
+| **Combined loop: steer using the compass's own estimate** | **42/96 within 20°**, compass error grows 11° → 21° over four seconds | 11/96 |
+
+The wiring computes. Heading maintenance, turning and goal steering each come out of the connectome with large margins over a control that keeps every degree and sign, which is the strongest structural evidence in the project's record and the first result on a circuit other than the mushroom body. The failure is at the first closed loop, where accumulated compass drift under self-generated turns breaks steering, and in the unqualified plasticity mask (no direct MBON-to-central-complex edges; 61 one-relay candidates still to adjudicate). Path integration and reward learning were not reached.
+
+The reading matters. Every gain in this model was set by hand and frozen; nothing was fitted. Drift in a ring attractor under self-motion is exactly a gain-calibration problem. This is the case for the development-phase optimizer stated in section 9's discussion: fit the 106 gain groups under the connectome constraints on the combined task, as Lappalainen and colleagues did for the visual system, then rerun the closed loop against the same rewired control. If the fitted native circuit closes the loop and the fitted rewired one does not, the connectome's computation is established for navigation and the life-learning question can be asked on it. That fitting run is bounded: about a hundred free parameters, a few hundred simulated trials, and the existing probes as the score.
+
+### 9.6 Experiment 2: mixed-family development (99 runs)
+
+Predictions stated before launch; full report in [MOD97_LOCAL_RULE_20261106/EXP2_REPORT.md](MOD97_LOCAL_RULE_20261106/EXP2_REPORT.md). Development on six tasks (addition and subtraction mod 83, 89, 97, with a task-code byte) against development on addition mod 97 alone; life on a held-out modulus 73 and on decimal addition with carries, by the sign-symmetric local rule.
+
+| Sealed held exact, final, 3 seeds | add73, 25% taught | sub73, 25% | decimal, 25% |
+|---|---|---|---|
+| Single-task birth, local rule | 86 · 85 · 65 | 85 · 90 · 70 | 87 · 85 · 85 |
+| Mixed-family birth, local rule | 78 · 69 · 63 | 73 · 81 · 68 | 87 · 84 · 79 |
+| Random birth, local rule | 19 · 32 · 50 | 55 · 1 · 62 | 77 · 80 · 87 |
+| Shuffled birth, local rule | 1 · 1 · 1 | 1 · 1 · 1 | 77 · 72 · 72 |
+| Backprop from scratch (ceiling) | 91 · 88 · 86 | 91 · 90 · 90 | 98 · 100 · 97 |
+
+The main prediction was refuted: breadth of development cost rather than paid. The mixed birth reaches only 80–97% on its own six tasks where the single birth reaches 96–100% on its one, and that lower quality carried into life, where the single birth beats it by 2–21 points on both mod-73 tasks. The quality of the development representation matters more than its coverage at this capacity, so the next knob is width, not more tasks. Three findings held: shuffled births are useless, developed births beat backprop from scratch by 20–40 points at a tenth of the pairs, and decimal addition with carries is learnable by the local rule from scratch (77–89% at a tenth), so carries are not the hard part at this scale. One warning: the random-birth local rule collapsed in two of six modular cells, a failure mode a warm start from any sensible birth removes. The decision rule was not met; the single-task birth from Experiment 1 remains the live positive.
