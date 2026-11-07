@@ -9,9 +9,9 @@ E4_DEV = ("add83", "sub83", "add89", "sub89")
 E4_ARMS = ("A", "A0", "B", "C", "Cs", "D")
 E4_LABEL = {"A": "A shared path alone, decay 1.0", "A0": "A0 shared path alone, decay 0.1", "B": "B + episodic store, no replay",
             "C": "C + store + self-generated replay", "Cs": "C′ + store + replay with random answers", "D": "D backprop, joint ground truth (ceiling)"}
-E5_ARMS = ("Z", "DIR", "SCR", "SCRsh", "DIRbp", "SCRbp")
+E5_ARMS = ("Z", "DIR", "SCR", "SCRsh", "DIRbp", "SCRbp", "SCRr", "SCRrbp")
 E5_LABEL = {"Z": "Z zero-shot (no life)", "DIR": "DIR direct, sign rule", "SCR": "SCR scratchpad, sign rule", "SCRsh": "SCR-sh scratchpad, shuffled finals",
-            "DIRbp": "DIR-bp direct, backprop", "SCRbp": "SCR-bp scratchpad, backprop"}
+            "DIRbp": "DIR-bp direct, backprop", "SCRbp": "SCR-bp scratchpad, backprop", "SCRr": "SCR-R scratchpad, sign rule, replay of single ops", "SCRrbp": "SCR-R-bp scratchpad, backprop, replay of single ops"}
 pct = lambda d, k="exact": 100 * d[k] / d["n"]
 
 
@@ -88,7 +88,8 @@ def e5():
               f"- P5.2 DIR cross-type <30: pm {g('DIR', 'pm')}, mp {g('DIR', 'mp')}; within-type ≥60: pp {g('DIR', 'pp')}, mm {g('DIR', 'mm')}",
               f"- P5.3 SCR cross-type ≥70: pm {g('SCR', 'pm')}, mp {g('SCR', 'mp')}; within-type ≥80: pp {g('SCR', 'pp')}, mm {g('SCR', 'mm')}",
               f"- P5.4 SCR-sh under 10: pm {g('SCRsh', 'pm')}, pp {g('SCRsh', 'pp')}",
-              f"- ceilings: DIR-bp pm {g('DIRbp', 'pm')}, SCR-bp pm {g('SCRbp', 'pm')}"]
+              f"- ceilings: DIR-bp pm {g('DIRbp', 'pm')}, SCR-bp pm {g('SCRbp', 'pm')}",
+              f"- E5-R: SCR-R cross-type ≥70: pm {g('SCRr', 'pm')}, mp {g('SCRr', 'mp')}; within: pp {g('SCRr', 'pp')}, mm {g('SCRr', 'mm')}; backprop with replay pm {g('SCRrbp', 'pm')}, mp {g('SCRrbp', 'mp')}"]
     return "\n".join(lines)
 
 

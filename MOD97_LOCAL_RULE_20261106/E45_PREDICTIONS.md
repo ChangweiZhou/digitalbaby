@@ -47,3 +47,14 @@ Predictions:
 - P5.4 SCR-sh is under 10% on finals.
 - P5.5 Single-op panels do not fall below 80% in any life arm (no forgetting of the parts within one stage).
 Decision: if P5.3 holds and P5.2 holds, scratchpad composition is the form E6 uses; if DIR cross-type also passes, direct composition is used and the scratchpad becomes the fallback; if SCR fails cross-type, composition is not achieved at this scale and E6 is postponed.
+
+## E5-R, composition with replay of the single operations (added 7 November after E4 and E5, before its launch)
+
+Same as arm SCR, with the episodic store holding the single-step items the learner experienced in development (its taught halves of add97 and sub97) and half of every life batch being replayed single-step prompts answered by the model itself (shared path plus store), exactly as in E4 arm C. Arm SCR-R uses the sign rule; SCR-R-bp the same teaching by backprop. Compositions are never written to the store; composition panels are scored by the shared path alone.
+
+Predictions:
+- P5R.1 Single operations retained at or above 80% after life in SCR-R (they fell to 0–7% in every arm without replay).
+- P5R.2 SCR-R cross-type final-answer exact at or above 70% in every seed, with the intermediate right in at least 85%.
+- P5R.3 SCR-R within-type at or above 85%.
+- P5R.4 SCR-R-bp cross-type stays below SCR-R (backprop overfits the taught types even with the parts retained), or, if it does not, the earlier gap was retention alone.
+Decision: if P5R.2 holds in all seeds, E6 runs as designed (sequence of operations with replay, then compositions, then the early operations scored again). If it fails with the single operations retained, scratchpad composition itself is the limit at this scale and E6 is postponed.

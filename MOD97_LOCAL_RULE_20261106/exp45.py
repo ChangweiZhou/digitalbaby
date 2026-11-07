@@ -36,7 +36,7 @@ E4_DEV = ("add83", "sub83", "add89", "sub89")
 E4_LIFE = ("add97", "sub97", "add73", "sub73")
 E4_ARMS = ("A", "A0", "B", "C", "Cs", "D")
 E5_DEV = ("add97", "sub97")
-E5_ARMS = ("Z", "DIR", "SCR", "SCRsh", "DIRbp", "SCRbp")
+E5_ARMS = ("Z", "DIR", "SCR", "SCRsh", "DIRbp", "SCRbp", "SCRr", "SCRrbp")
 TYPES = {"pp": ("+", "+"), "mm": ("-", "-"), "pm": ("+", "-"), "mp": ("-", "+")}
 TAUGHT_TYPES, HELD_TYPES = ("pp", "mm"), ("pm", "mp")
 
@@ -361,10 +361,20 @@ def e5_life(arm, seed):
     m = new_net(seed)
     m.load_state_dict(T.load(OUT / f"e5_dev_{seed}.pt"))
     scratch = arm.startswith("SCR")
-    local = arm not in ("DIRbp", "SCRbp")
+    local = arm not in ("DIRbp", "SCRbp", "SCRrbp")
     opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(1. if local else .3), betas=(.9, .98))
     teach, panels, taught = e5_panels(seed, scratch)
     single = {n: sample_rows(n, split(n, .5, seed)[2], seed, 600) for n in E5_DEV}
+    replay = arm in ("SCRr", "SCRrbp")
+    store, buffer, rrng = None, [], Random(seed + 13)
+    if replay:
+        # the episodic store holds what the learner experienced in development: the taught single-step items
+        store = Store(seed)
+        dev_items = [render(n, *pr) for n in E5_DEV for pr in split(n, .5, seed)[0]]
+        for j in range(0, len(dev_items), 256):
+            x, y, mask = batch_tensor(dev_items[j:j + 256])
+            store.write(x, y, mask)
+        buffer = [pr for pr, _ in rrng.sample(dev_items, 2048)]
     if arm == "SCRsh":
         rng = Random(seed + 5)
         finals = [tt[-3:-1] for _, tt in teach]
@@ -377,12 +387,20 @@ def e5_life(arm, seed):
     if arm != "Z":
         bt = batches(teach, seed + 3)
         for stop in range(BLOCK, STAGE_UPDATES + 1, BLOCK):
-            losses = [update(m, opt, next(bt), local) for _ in range(BLOCK)]
+            losses = []
+            for _ in range(BLOCK):
+                batch = next(bt)
+                if replay:
+                    rp = rrng.sample(buffer, BATCH // 2)
+                    outs = respond(m, rp, store)          # self-generated answers: shared path + store
+                    ans = [o if (len(o) == 3 and o[-1] == EOS) else [ord("0"), ord("0"), EOS] for o in outs]
+                    batch = batch[:BATCH // 2] + list(zip(rp, ans))
+                losses.append(update(m, opt, batch, local))
             if stop % 2048 == 0:
                 curve.append(dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
                                   compose={t: score(m, it) for t, it in panels.items()}, single={n: score(m, it) for n, it in single.items()}))
                 print("e5", arm, seed, stop, {t: v["final"] for t, v in curve[-1]["compose"].items()}, "single", {n: v["exact"] for n, v in curve[-1]["single"].items()}, f"cpu {curve[-1]['cpu']:.0f}s", flush=True)
-    path.write_text(json.dumps(dict(arm=arm, seed=seed, scratch=scratch, shortcuts=sc, curve=curve), indent=1))
+    path.write_text(json.dumps(dict(arm=arm, seed=seed, scratch=scratch, replay=replay, shortcuts=sc, curve=curve), indent=1))
 
 
 # ================================================================ qualification

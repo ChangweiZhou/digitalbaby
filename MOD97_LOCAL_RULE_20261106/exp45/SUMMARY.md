@@ -80,6 +80,8 @@
 | SCR-sh scratchpad, shuffled finals | 1 · 1 · 1 | 1 · 1 · 1 | 2 · 2 · 0 | 1 · 2 · 1 | 4 · 2 · 2 | 0 · 0 |
 | DIR-bp direct, backprop | 95 · 92 · 89 | 94 · 94 · 88 | 1 · 1 · 1 | 1 · 0 · 1 | — | 7 · 0 |
 | SCR-bp scratchpad, backprop | 94 · 95 · 90 | 94 · 91 · 88 | 10 · 36 · 4 | 13 · 19 · 4 | 27 · 45 · 7 | 0 · 0 |
+| SCR-R scratchpad, sign rule, replay of single ops | 68 · 58 · 37 | 63 · 59 · 35 | 14 · 5 · 2 | 18 · 10 · 3 | 23 · 11 · 6 | 89 · 80 |
+| SCR-R-bp scratchpad, backprop, replay of single ops | 91 · 90 · 82 | 91 · 89 · 83 | 20 · 12 · 3 | 26 · 8 · 1 | 45 · 22 · 3 | 96 · 94 |
 
 Shortcut floors (percent of panel): pp: frequency 1.2, last_op_only 0.8, first_op_only 1.5; mm: frequency 0.8, last_op_only 1.0, first_op_only 0.8; pm: frequency 0.0, last_op_only 1.3, first_op_only 0.5; mp: frequency 0.0, last_op_only 0.7, first_op_only 0.5
 
@@ -90,3 +92,4 @@ Shortcut floors (percent of panel): pp: frequency 1.2, last_op_only 0.8, first_o
 - P5.3 SCR cross-type ≥70: pm [42, 58, 53], mp [41, 56, 51]; within-type ≥80: pp [86, 87, 73], mm [85, 84, 70]
 - P5.4 SCR-sh under 10: pm [2, 2, 0], pp [1, 1, 1]
 - ceilings: DIR-bp pm [1, 1, 1], SCR-bp pm [10, 36, 4]
+- E5-R: SCR-R cross-type ≥70: pm [14, 5, 2], mp [18, 10, 3]; within: pp [68, 58, 37], mm [63, 59, 35]; backprop with replay pm [20, 12, 3], mp [26, 8, 1]

@@ -408,3 +408,27 @@ Predictions on file before launch; full report in [MOD97_LOCAL_RULE_20261106/E45
 | Backprop on joint ground truth | 98 · 98 · 95 | 97 · 99 · 97 | 93 · 95 · 94 | 94 · 94 · 95 |
 
 **Composition (P4) is half established.** Direct composition of two taught operations does not transfer across operation types under any rule: backprop fits the taught types to 95% and answers 1% of untaught combinations, the 2018 systematic-generalization failure reproduced. Scratchpad composition, where the learner emits the intermediate result as bytes and continues, transfers partly: 41–58% of untaught combinations exact with the local rule, intermediate right in 60–71%, shuffled control at 1%, and better than backprop's 4–36%. The gap to the predicted 70% has a measured cause: teaching compositions erased the single operations being composed (98% → 0–7%), the same forgetting E4 fixed. The next run, E5-R, teaches compositions with replay of the single operations; prediction cross-type ≥70% with single operations retained. That mechanism is E6's.
+
+### 9.12 Codex's eleven-block mechanism sweep (commit eb60ca9): what it adds
+
+Codex ran the survey's eleven circuits as a Colab screen, 99 jobs (eleven blocks × three arms × three seeds), with a design memo and receipts but no scorecard. Scorecard built from the receipts (`exact_pairs` or within-20° counts out of 64, three seeds):
+
+| Block | Candidate | Matched reference | Control | Reading |
+|---|---|---|---|---|
+| Cortical feedback (mod-97) | sign feedback 60 · 51 · 59 | backprop 61 · 61 · 64 | random feedback 30 · 37 · 36 | **Independent replication** of round 1: sign ≈ backprop, random feedback far below. Advances by the memo's own rule |
+| Actor–critic, delayed reward | eligibility trace 64 · 64 · 64 | immediate credit 0 · 0 · 0 | shifted trace 0 · 0 · 0 | **Positive.** A per-synapse trace solves delayed scalar credit to a discrete choice; this is where traces belong, consistent with their failure on state-holding in rung 3 |
+| Sleep replay (A, B, A′ fixture) | blocked replay 53 · 41 · 40 | interleaved 50 · 35 · 38 | pause 50 · 36 · 38 | Small gain (+3 to +6), below the memo's 10-point rule; the fixture forgets little (B is 256 presentations), unlike E4's regime |
+| Fast/slow two-store | coupled 37 · 37 · 37 | single store 50 · 35 · 38 | uncoupled 42 · 36 · 37 | No gain; the single store is as good or better |
+| Mushroom-body output loop | closed 32 · 37 · 37 | open 32 · 37 · 37 | permuted 32 · 37 · 37 | Identical across arms: the implemented MBON→DAN gain changes no outcome. Uninformative about the circuit |
+| Central complex (hand-set gains) | native 32 · 40 · 37 | rewired 12 · 13 · 8 | displaced landmark 0 · 0 · 1 | Consistent with the pre-fit loop; superseded by the fitted result (80/96) |
+| Grid/head-direction attractor | attractor 0 · 0 · 0 | ordinary integration 56 · 56 · 56 | reset 0 · 0 · 0 | Candidate destroys an integration its control performs perfectly: an implementation fault, unqualified |
+| Thalamocortical three-pass loop | loop 0 · 0 · 0 | three-pass feedforward 0 · 0 · 0 | one pass 33 · 24 · 33 | Both three-pass models fail to train; unqualified by the memo's rule (reference at floor) |
+| Cerebellar calibration | 2 · 0 · 5 | 1 · 1 · 6 | 4 · 3 · 4 | All arms at floor; unqualified |
+| Working-memory gate, scalar reward | learned 0 · 64 · 0 | ungated 0 · 0 · 0 | yoked 59 · 0 · 0 | Bimodal by seed; reward-only learning unstable at this budget, as the scalar-reward arm of Experiment 1 found |
+| Attention reference | 64 · 64 · 64 | 64 · 64 · 64 | 64 · 64 · 64 | Task at ceiling for every arm; reference only |
+
+What it adds: an independent replication of the sign-feedback result on a second machine, and one new positive, the eligibility trace for delayed reward on a choice, which fixes where that rule belongs in the design (action selection in the arena, not the working state). What it does not add: the memo's own three-step qualification was not applied before the campaign, so five of eleven blocks ran with a reference at the floor, a candidate below a perfect control, or arms that do not differ, and 45 of the 99 jobs cannot be read. The sweep confirms the ladder's direction and does not change it; the next Codex step remains the path-integration follow-up.
+
+### 9.13 E5-R: retaining the parts does not give composition (6 runs)
+
+Scratchpad composition taught with self-generated replay of the single operations keeps the single operations (80–96%) and loses composition: untaught combinations fall from 41–58% to 2–18% with the local rule, and backprop with the parts fully retained still answers only 1–26%. My explanation for the E5 shortfall was wrong, and the pre-stated rule applies: scratchpad composition in this form is the limit at this scale, and E6 is postponed. The reason is specific: at the final step the learner re-reads a ten-byte window that contains the first operator, so an untaught combination is a window it has never seen; the intermediate is emitted correctly and the re-reading fails. The one experiment worth running on this property is a canonical scratchpad in which the learner writes the next step as a taught single-operation prompt and then solves it, so that cross-type transfer reduces to the established rule acquisition. Proposed, not started. Details in [MOD97_LOCAL_RULE_20261106/E45_REPORT.md](MOD97_LOCAL_RULE_20261106/E45_REPORT.md).
