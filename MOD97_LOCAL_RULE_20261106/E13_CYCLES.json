@@ -1,0 +1,41 @@
+{
+  "cycle1": {
+    "passed": true,
+    "unique_exact_receipts": 18,
+    "exposure_budgets_exact": true,
+    "default_parameters_unchanged": true
+  },
+  "cycle2": {
+    "passed": true,
+    "checks": [
+      {
+        "script": "E8",
+        "arm": "A",
+        "updates": 18,
+        "exact_model_optimizer_rng_loss_receipt": true
+      },
+      {
+        "script": "E8",
+        "arm": "C",
+        "updates": 18,
+        "exact_model_optimizer_rng_loss_receipt": true
+      },
+      {
+        "script": "E7",
+        "arm": "SCR",
+        "updates": 16,
+        "exact_model_optimizer_rng_loss_receipt": true
+      }
+    ],
+    "scope": "Short exact-update technical histories. Full default lives reproduced separately before official jobs."
+  },
+  "cycle3": {
+    "passed": true,
+    "production_queue_used": true,
+    "unfinished_sibling_ignored": true,
+    "incomplete_exact_receipt_rejected": true,
+    "failed_part_skipped_other_part_continues": true,
+    "duplicate_launch_rejected": true
+  },
+  "all_passed": true
+}

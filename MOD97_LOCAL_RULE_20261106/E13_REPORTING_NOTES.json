@@ -1,0 +1,6 @@
+{
+  "scope": "Readout/reporting clarification only; locked training source and primary endpoints unchanged",
+  "A4_stage_loss": "The inherited E8 receipt aggregates sum(losses[-512:])/512. Batch1024 operation stages have384 updates, so their recorded aggregate loss is scaled down by384/512. Recover the actual stage mean by multiplying that field by512/384. Composition has512 updates and needs no correction. No optimizer step uses this aggregate and no prediction gate depends on it.",
+  "all_other_arms": "At least512 updates/stage; original denominator is correct.",
+  "policy": "Preserve raw receipts; show corrected A4 mean loss explicitly in final report if loss is discussed. Do not infer improved loss from the uncorrected raw aggregate. This is not a scientific intervention or post-outcome tuning."
+}

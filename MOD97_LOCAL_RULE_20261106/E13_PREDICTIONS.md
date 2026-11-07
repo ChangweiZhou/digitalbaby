@@ -1,0 +1,17 @@
+# E13 predictions and execution lock
+
+Source: consolidated branch 1a63f69d. Owner authorization: run E13, three-cycle exercise first. Existing E8/ E7 tasks, seeds73129/93683/116089, checkpoints and panels unchanged; development learning is not repeated.18 scientific jobs plus two default reproduction profiles. Existing open panels remain development evidence. Model470801 parameters. Six single-threaded workers maximum. No new branch; no automatic push.
+
+A1: E8 C batch64 wd0.25 lr0.001, A2 batch256 wd4 lr0.001, A3 batch256 wd1 lr0.002, A4 batch1024 wd1 lr0.001. Fixed393216 items per operation and524288 composition items. Decay explanation predicts A1 final retention>=90 and A2<=80, every seed. Averaging explanation predicts the reverse proximity to the E12 batch64/256 controls; report numerical deltas rather than invent a proximity gate. A4 final retention within3points of batch256 and composition no lower. Approximate cumulative decay equality is not exact equality of AdamW multiplicative factors. A1/A2 also do not separately isolate update-count effects.
+
+B: E7 SCR hidden512, E7_DOSE16384 interpreted as baseline64-item update budget, E7_BATCH256 gives4096 updates and1048576 items. Mean final-answer-with-own-EOS across four held pairs>=80 every seed. Report each pair, within, full scratchpad exact and matched-exposure checkpoint curves. Also compute actual gap reduction; the>=80 gate and half-gap claim are distinct. Historical BP ceiling is not an identical-width/dose matched causal comparator.
+
+C: E8 D batch256 with original BP wd0.3 lr0.001, fixed exposure; eight-operation mean changes by<2points vs archived D batch64. Report before and after composition separately; final mean is primary. Composition changes also reported. More than2points refutes invariance; it does not establish that all local-rule gains have the same cause.
+
+D: execute unchanged path-integration follow-up brief in output/minifly-connectome-navigation. Existing panels and seeds197/281/389. Decompose 48 return vectors per arm/seed, probe frozen compass on existing return schedule, then clamped-heading ceiling. Prior model includes supplied temporal accumulation; active hDeltaB recurrence was near zero. No claim this accumulation was discovered from wiring. STOP before any refit if native clamped-heading median return residual>0.30. Otherwise branch only as prescribed by diagnostics. Existing compass/PFN panels are not changed. D is required for overall completion, including an explicit scientific STOP if its prescribed ceiling test fails.
+
+Commands are stored individually in E13_LOCK.json before launch. Defaults preserve E12/E9 exactly. Three-cycle order: C1 source/exposure/input/optimizer contracts; C2 exact default model/optimizer/RNG/update and receipt parity in both scripts; C3 production-controller regression/failure isolation/duplicate-lock tests and short execution rehearsal. Full default E8 C73129 and E7 SCR73129 reproductions gate the18 new scientific jobs. Initial forecast follows the first measured full life; no fixed completion promise.
+
+E12 lesson: validate ONLY the exact completed job's receipt; never glob unfinished sibling results. Resume retains validated complete jobs, archives partial outputs, and never silently retunes.
+
+Part A reminders from E12 did not show the predicted large mean savings. One seed did show+2.58points at1024 reminders; lack of large savings is not proof all internal information is absent or that only one layer was damaged.

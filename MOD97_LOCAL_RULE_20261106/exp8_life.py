@@ -127,7 +127,11 @@ def life(arm, seed):
     m = X.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e8_dev_{seed}.pt"))
     local = arm != "D"
-    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(1. if local else .3), betas=(.9, .98))
+    life_lr = float(os.environ.get("E8_LR", ".001"))
+    life_wd = float(os.environ.get("E8_WD", "1." if local else ".3"))
+    if not (life_lr > 0 and life_wd >= 0 and life_lr * life_wd < 1):
+        raise ValueError("Invalid life optimizer settings")
+    opt = T.optim.AdamW(m.parameters(), lr=life_lr, weight_decay=life_wd, betas=(.9, .98))
     store = X.Store(seed) if arm == "C" else None
     rng = Random(seed + 9)
     panels = {NAME(*t): panel(t, seed) for t in LIFE}

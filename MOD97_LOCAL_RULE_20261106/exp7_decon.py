@@ -35,6 +35,14 @@ DOSE = int(os.environ.get("E7_DOSE", "8192"))
 if DOSE <= 0 or DOSE % X.BLOCK:
     raise ValueError("E7_DOSE must be a positive multiple of the existing block size.")
 DTAG = "" if DOSE == 8192 else f"_d{DOSE}"
+LIFE_BATCH = int(os.environ.get("E7_BATCH", "64"))
+if LIFE_BATCH not in (16, 64, 256, 1024) or (DOSE * 64) % LIFE_BATCH:
+    raise ValueError("Invalid batch or fixed-exposure dose")
+DOSE = DOSE * 64 // LIFE_BATCH
+LIFE_BLOCK = X.BLOCK * 64 // LIFE_BATCH
+REPORT_INTERVAL = 2048 * 64 // LIFE_BATCH
+RUN_PREFIX = os.environ.get("E7_RUN_PREFIX", "")
+BTAG = "" if LIFE_BATCH == 64 else f"_b{LIFE_BATCH}"
 
 
 def apply(op, a, b):
@@ -108,7 +116,8 @@ def develop(seed):
 
 
 def life(arm, seed):
-    path = OUT / f"e7_life_{arm}{X.WTAG[4:]}{DTAG}_{seed}.json"
+    X.BATCH = LIFE_BATCH
+    path = OUT / f"{RUN_PREFIX}e7_life_{arm}{X.WTAG[4:]}{DTAG}{BTAG}_{seed}.json"
     m = X.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e7_dev{X.WTAG[4:]}_{seed}.pt"))
     canonical = arm.startswith("SCRc")
@@ -132,9 +141,9 @@ def life(arm, seed):
     t0 = time.process_time()
     curve = [dict(step=0, compose={k: score(m, it, canonical) for k, it in panels.items()}, single={op: X.score(m, it) for op, it in single.items()})]
     bt = X.batches(teach, seed + 3)
-    for stop in range(X.BLOCK, DOSE + 1, X.BLOCK):
-        losses = [X.update(m, opt, next(bt), local) for _ in range(X.BLOCK)]
-        if stop % 2048 == 0:
+    for stop in range(LIFE_BLOCK, DOSE + 1, LIFE_BLOCK):
+        losses = [X.update(m, opt, next(bt), local) for _ in range(LIFE_BLOCK)]
+        if stop % REPORT_INTERVAL == 0:
             curve.append(dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
                               compose={k: score(m, it, canonical) for k, it in panels.items()}, single={op: X.score(m, it) for op, it in single.items()}))
             print("e7", arm, seed, stop, {k: v["final"] for k, v in curve[-1]["compose"].items()}, f"cpu {curve[-1]['cpu']:.0f}s", flush=True)
