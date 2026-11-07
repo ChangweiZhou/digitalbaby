@@ -58,3 +58,16 @@ Predictions:
 - P5R.3 SCR-R within-type at or above 85%.
 - P5R.4 SCR-R-bp cross-type stays below SCR-R (backprop overfits the taught types even with the parts retained), or, if it does not, the earlier gap was retention alone.
 Decision: if P5R.2 holds in all seeds, E6 runs as designed (sequence of operations with replay, then compositions, then the early operations scored again). If it fails with the single operations retained, scratchpad composition itself is the limit at this scale and E6 is postponed.
+
+## E5-C, canonical scratchpad (added 7 November after E5-R, before its launch)
+
+The learner rewrites each step as a taught single-operation prompt and solves it: `c24+81-07=` → `r24+81=08;t08-07=01` EOS. The final step's window is then `08;t08-07=`, a taught subtraction prompt with leading bytes, and contains no first operator. Development for this experiment prefixes each single-operation record with 0–3 random letters so the network learns to ignore leading bytes (a stated design change; bare-prompt development never showed leading bytes). Arms under this development: SCR (plain scratchpad, as E5), SCRc (canonical, sign rule), SCRc-sh (canonical with shuffled finals), SCRc-bp (canonical, backprop). No replay (E5-R showed it hurts composition learning at this budget). Same taught types (+,+) and (−,−), same held panels.
+
+Predictions:
+- P5C.1 SCRc cross-type final-answer exact ≥70% in every seed.
+- P5C.2 SCRc rewritten step prompts correct ≥85% on cross-type (both steps).
+- P5C.3 SCRc-sh under 10%.
+- P5C.4 SCR under this development stays ≤60% cross-type (replicating E5).
+Decision: if P5C.1 holds in all seeds, P4 is established in canonical-scratchpad form and E6 resumes with that form plus E4's replay. If the rewritten prompts are right (P5C.2) but the finals fail, the leading-byte invariance is the limit; if the rewriting itself fails cross-type, the copy rule does not generalize across operator positions.
+
+**Amendment before the E5-C rerun (same day).** The first E5-C run failed in every arm including the backprop ceiling (0–2% within-type). Teacher-forced accuracy was near 100% at every target position except the third operand of the rewritten second step (8–13%): by the time the learner writes it, the original operand has left the ten-byte window, so the rewrite is impossible by construction, a design error on my part. The rerun uses an 18-byte window in every arm (development and life, plain and canonical), which holds the whole problem plus the step being written. The first run's receipts stay in the folder as `e5c_*` without a tag; the rerun's carry `_w18`. Predictions P5C.1–P5C.4 are unchanged.

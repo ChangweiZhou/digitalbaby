@@ -24,7 +24,9 @@ from exp3_state import lin
 T.set_num_threads(1)
 EOS, BOS = M.EOS, M.BOS
 SEEDS = M.SEEDS
-W, H = 10, 256
+W = int(os.environ.get("EXP45_WINDOW", "10"))   # 10 for E4/E5/E5-R; 18 for the E5-C rerun (see E45_PREDICTIONS.md)
+H = 256
+WTAG = "" if W == 10 else f"_w{W}"
 BATCH, BLOCK = 64, 512
 OUT = Path(__file__).resolve().parent / "exp45"
 DEV_UPDATES = 24576
@@ -479,3 +481,108 @@ if __name__ == "__main__":
         e5_develop(int(sys.argv[2]))
     elif cmd == "e5":
         e5_life(sys.argv[2], int(sys.argv[3]))
+
+
+# ================================================================ E5-C: canonical scratchpad
+# The learner rewrites each step as a taught single-operation prompt and solves it:
+#   c24+81-07=  ->  r24+81=08;t08-07=01 EOS        (r = add97 code, t = sub97 code)
+# Development for E5-C prefixes single-operation records with 0-3 random letters so the window
+# learns to ignore leading bytes (the scratchpad's step windows carry leading bytes).
+OPCODE = {"+": b"r", "-": b"t"}
+E5C_ARMS = ("SCR", "SCRc", "SCRcsh", "SCRcbp")
+
+
+def render_canonical(t, a, b, c):
+    o1, o2 = TYPES[t]
+    prompt, _ = render_compose(t, a, b, c, False)
+    i, f = compose_answer(t, a, b, c)
+    step1 = list(OPCODE[o1] + f"{a:02d}".encode() + o1.encode() + f"{b:02d}".encode() + b"=") + list(f"{i:02d}".encode())
+    step2 = list(OPCODE[o2] + f"{i:02d}".encode() + o2.encode() + f"{c:02d}".encode() + b"=") + list(f"{f:02d}".encode())
+    return prompt, step1 + [ord(";")] + step2 + [EOS]
+
+
+def with_left_noise(items, rng):
+    out = []
+    for p, t in items:
+        k = rng.randrange(4)
+        out.append(([rng.choice(list(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ")) for _ in range(k)] + p, t))
+    return out
+
+
+def e5c_develop(seed):
+    OUT.mkdir(exist_ok=True)
+    path = OUT / f"e5c_dev{WTAG}_{seed}.pt"
+    if path.exists():
+        return
+    m = new_net(seed)
+    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=.3, betas=(.9, .98))
+    base = [render(n, *p) for n in E5_DEV for p in split(n, .5, seed)[0]]
+    rng = Random(seed + 21)
+    t0 = time.process_time()
+    curve = []
+    order = Random(seed + 1)
+    for stop in range(BLOCK, DEV_UPDATES + 1, BLOCK):
+        losses = []
+        for _ in range(BLOCK):
+            batch = with_left_noise(order.sample(base, BATCH), rng)
+            losses.append(update(m, opt, batch, False))
+        if stop % 4096 == 0 or stop == DEV_UPDATES:
+            row = dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
+                       sealed={n: score(m, sample_rows(n, split(n, .5, seed)[2], seed, 600)) for n in E5_DEV},
+                       sealed_noisy={n: score(m, with_left_noise(sample_rows(n, split(n, .5, seed)[2], seed, 600), Random(seed + 2))) for n in E5_DEV})
+            curve.append(row)
+            print("e5c dev", seed, stop, {n: v["exact"] for n, v in row["sealed"].items()}, "noisy", {n: v["exact"] for n, v in row["sealed_noisy"].items()}, flush=True)
+    T.save(m.state_dict(), path)
+    (OUT / f"e5c_dev{WTAG}_{seed}.json").write_text(json.dumps(dict(seed=seed, curve=curve), indent=1))
+
+
+def score_steps(m, items, canonical):
+    outs = respond(m, [p for p, _ in items], None, cap=22 if canonical else 7)
+    res = dict(n=len(items), exact=sum(o == t for o, (_, t) in zip(outs, items)),
+               final=sum(o[-3:] == t[-3:] for o, (_, t) in zip(outs, items)))
+    if canonical:
+        res["intermediate"] = sum(o[7:9] == t[7:9] for o, (_, t) in zip(outs, items))
+        res["step1_prompt"] = sum(o[:7] == t[:7] for o, (_, t) in zip(outs, items))
+        res["step2_prompt"] = sum(o[10:17] == t[10:17] for o, (_, t) in zip(outs, items))
+    else:
+        res["intermediate"] = sum(o[:3] == t[:3] for o, (_, t) in zip(outs, items))
+    return res
+
+
+def e5c_life(arm, seed):
+    OUT.mkdir(exist_ok=True)
+    path = OUT / f"e5c_life_{arm}{WTAG}_{seed}.json"
+    m = new_net(seed)
+    m.load_state_dict(T.load(OUT / f"e5c_dev{WTAG}_{seed}.pt"))
+    canonical = arm.startswith("SCRc")
+    local = arm != "SCRcbp"
+    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(1. if local else .3), betas=(.9, .98))
+    taught = {t: compose_triples(t, seed, 8000) for t in TAUGHT_TYPES}
+    held = {t: compose_triples(t, seed + 1, 600, exclude=frozenset(taught[t])) for t in TAUGHT_TYPES}
+    held.update({t: compose_triples(t, seed + 1, 600) for t in HELD_TYPES})
+    rend = (lambda t, tr: render_canonical(t, *tr)) if canonical else (lambda t, tr: render_compose(t, *tr, True))
+    teach = [rend(t, tr) for t in TAUGHT_TYPES for tr in taught[t]]
+    panels = {t: [rend(t, tr) for tr in trs] for t, trs in held.items()}
+    single = {n: sample_rows(n, split(n, .5, seed)[2], seed, 600) for n in E5_DEV}
+    if arm == "SCRcsh":
+        rng = Random(seed + 5)
+        finals = [tt[-3:-1] for _, tt in teach]
+        rng.shuffle(finals)
+        teach = [(p, tt[:-3] + f + [EOS]) for (p, tt), f in zip(teach, finals)]
+    t0 = time.process_time()
+    curve = [dict(step=0, compose={t: score_steps(m, it, canonical) for t, it in panels.items()}, single={n: score(m, it) for n, it in single.items()})]
+    bt = batches(teach, seed + 3)
+    for stop in range(BLOCK, STAGE_UPDATES + 1, BLOCK):
+        losses = [update(m, opt, next(bt), local) for _ in range(BLOCK)]
+        if stop % 2048 == 0:
+            curve.append(dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
+                              compose={t: score_steps(m, it, canonical) for t, it in panels.items()}, single={n: score(m, it) for n, it in single.items()}))
+            print("e5c", arm, seed, stop, {t: v["final"] for t, v in curve[-1]["compose"].items()}, f"cpu {curve[-1]['cpu']:.0f}s", flush=True)
+    path.write_text(json.dumps(dict(arm=arm, seed=seed, canonical=canonical, shortcuts=compose_shortcuts(seed, panels, taught), curve=curve), indent=1))
+
+
+if __name__ == "__main__" and sys.argv[1] in ("e5cdev", "e5c"):
+    if sys.argv[1] == "e5cdev":
+        e5c_develop(int(sys.argv[2]))
+    else:
+        e5c_life(sys.argv[2], int(sys.argv[3]))

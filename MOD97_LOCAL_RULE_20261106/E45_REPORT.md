@@ -85,3 +85,27 @@ Prediction on file before launch (P5R.1–P5R.4). Arm SCR-R: as SCR, with the ep
 **Why the window cannot compose across types.** At the final step the learner reads the ten-byte window `+81-07=08;`, which contains the first operator. In the taught types that window always has matching operators; an untaught type's window is a pattern it has never seen, and a stateless network keyed on the whole window has no reason to treat it as "08 minus 07". The intermediate is emitted correctly; it is the re-reading that fails.
 
 **Decision, by the rule on file.** Scratchpad composition in this form is the limit at this scale, and E6 is postponed. The rule said so and it stands. The design-level reading is specific enough to test, and it is the only thing worth testing next on this property: a **canonical scratchpad**, in which the learner writes the next step as a single-operation prompt in the taught format (`08;t08-07=01` rather than `08;01`) and then solves it. The final window is then a taught single-step prompt, so cross-type transfer reduces to the established P1. That is a one-afternoon experiment (E5-C) with the prediction cross-type ≥70% and the shuffled control, and it is proposed, not started.
+
+# E5-C: canonical scratchpad (18-byte window rerun; first run archived)
+
+Prediction on file before launch, amendment on file before the rerun. The learner rewrites each step as a taught single-operation prompt and solves it (`c24+81-07=` → `r24+81=08;t08-07=01`). Development with 0–3 random leading letters on single-operation records, window 18 bytes in every arm. The first run, at the 10-byte window, failed in every arm including backprop because the third operand had left the window by the time the rewrite reached it (teacher-forced accuracy 8–13% at those two positions, near 100% elsewhere); its receipts are kept without the `_w18` tag.
+
+| Arm (18-byte window) | pp within | mm within | pm cross | mp cross | rewritten prompts right, cross (step 1 / step 2) | intermediate right, cross | single ops after life |
+|---|---|---|---|---|---|---|---|
+| SCR plain scratchpad, sign rule | 87 · 88 · 77 | 86 · 86 · 76 | 8 · 48 · 46 | 8 · 46 · 48 | — | 21 · 67 · 68 | 0 · 0 · 0 |
+| **SCRc canonical, sign rule** | 91 · 92 · 86 | 93 · 92 · 87 | **0 · 1 · 6** | **2 · 1 · 1** | 9 · 0 · 0 / 1 · 0 · 0 | 24 · 93 · 35 | 10 · 84 · 5 |
+| SCRc-sh canonical, shuffled finals | 0 · 2 · 2 | 2 · 2 · 2 | 1 · 1 · 2 | 2 · 1 · 1 | 0 / 0 | 18 · 51 · 47 | 10 · 0 · 0 |
+| SCRc-bp canonical, backprop | 100 · 100 · 99 | 100 · 100 · 100 | 0 · 0 · 1 | 8 · 0 · 2 | 59 · 19 · 0 / 4 · 0 · 0 | 84 · 20 · 17 | 89 · 96 · 95 |
+
+| Prediction | Outcome |
+|---|---|
+| P5C.1 canonical cross-type ≥70 | **Refuted**: 0–6% with the sign rule, 0–8% with backprop, against 86–100% within-type. |
+| P5C.2 rewritten prompts right ≥85 cross-type | **Refuted**: step-1 prompt 0–59%, step-2 prompt 0–4%. The rewriting itself does not generalize across operator positions. |
+| P5C.3 shuffled control <10 | Held. |
+| P5C.4 plain scratchpad ≤60 cross-type | Held (8–48%, seed-dependent, consistent with E5). |
+
+**What E5-C settles.** The canonical form was the strongest reasonable design for composition on this architecture, and it fails for a clean reason: the learner does not learn "first operator → its code" and "second operator → its code" as two separable rules; it learns "(+,+) → r…r" and "(−,−) → t…t" as whole patterns, and an untaught pair of operators is a pattern it has never seen. Backprop makes the same error (step-1 prompt right in 0–59%). The intermediate is often right (up to 93%), the final step would be solvable if the prompt were written, and the prompt is not written. That is the systematic-generalization failure of the 2018 literature, reproduced at the level of a copy rule, under both the local rule and backprop, with the task's answer bytes and shortcuts fully audited.
+
+**Decision.** Composition across operation types (P4) is not achieved at this scale in any of three forms: direct, scratchpad, canonical scratchpad. E6 stays postponed, by the rule on file. What the three forms share is a stateless window network with no mechanism that binds "the operator in slot k" to "the code for that operator" independently of what else is in the window. The one structure the survey ranked for this, attention as learned routing, is now permitted and is the natural next arm: a single learned-key layer that selects the operator slot before the rewrite. That is a design change, stated here as a proposal and not run.
+
+**Evidence level.** Development results, three seeds, one harness; the window change is a stated amendment with the first run archived. Shortcut floors below 2% on every panel.
