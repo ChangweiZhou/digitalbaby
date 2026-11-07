@@ -89,3 +89,22 @@ for arm in T F G; do for s in 73129 93683 116089; do python3 exp3_state.py life 
 for s in 73129 93683 116089; do python3 exp3_state.py life rnn F $s; done
 python3 summarize_exp3.py
 ```
+
+# Eligibility-trace rule: a time-local version of the sign rule, tested on the same protocol
+
+**7 November 2026 · 6 runs · 85 CPU minutes each · `exp3_eprop.py`**
+
+**Rule.** Each recurrent synapse of the GRU keeps an eligibility trace, decayed each step by its postsynaptic unit's update gate (the unit's own one-step self-dependence) and incremented by the direct partial of the state with respect to the synapse. The learning signal per unit is the sign-feedback error projected within the step. The update is the sum over steps of signal times trace. The readout and embedding use the within-step rule. Qualification (`exp3/QUALIFY_EPROP.json`): with the decay forced to zero the rule reproduces the within-step gradients exactly on all six gate matrices and biases; with traces on, alignment to the credit-through-time sign gradient rises on every matrix (update-gate input 0.89 → 0.97, recurrent 0.84 → 0.95).
+
+| Arm, warm gated birth, mod 73 at 25% | k ≤ 12 held | k = 20 | Taught at end |
+|---|---|---|---|
+| Sign rule with credit through time (reference) | 68–86% | 49–71% | — |
+| Sign rule with eligibility traces (time-local) | 2–14% | 2–13% | 5–20% |
+| Sign rule, no credit through time | 4–13% | 3–7% | 16–38% |
+| Traces from a random birth | 0–2% | 1–2% | 2–4% |
+
+**The trace adds nothing.** Final held accuracy with traces equals the within-step rule's, and in two of three seeds the training loss rose over life (1.10 → 1.29, 1.33 → 1.36), so the rule is not merely weak but drifting. The cost was 20× the BPTT run time, because the traces are materialized per synapse and per batch element.
+
+**Why, in one line.** The trace rule can be rewritten exactly as a backward recursion of the learning signal along each unit's own gate, with every path through other units dropped. On this task the credit that teaches the network to hold an operand runs through other units, so a per-synapse trace keyed to its own gate cannot carry it. That is also why the alignment gain in qualification (0.84 → 0.95 against the sign gradient) did not translate into learning: the remaining 5% of misalignment is the part that matters.
+
+**What this settles for the ladder.** A time-local rule is not enough on a GRU, whose state is remixed across units at every step. The structure where self-path credit is the whole story is a cell with a diagonal memory, the LSTM cell state or a gated slot of the prefrontal-basal-ganglia kind, where each unit holds its own value and the forget gate is literally the trace decay. E-prop was derived for that case. The next experiment is therefore structural, not a better trace: repeat rung 3 with a diagonal-memory cell, develop it by backprop, and test the trace rule on it. If the trace rule works there and not on the GRU, the working-state structure the project should borrow is the one whose credit is local in time by construction.

@@ -7,7 +7,8 @@ SEEDS = (73129, 93683, 116089)
 ARCHS = ("win", "rnn", "gru")
 KS = ("0", "2", "4", "6", "8", "10", "12", "14", "16", "20")
 LABEL = {"W": "warm, sign rule, no credit through time", "R": "random, sign rule, no credit through time", "B": "random, backprop with BPTT",
-         "T": "warm, true gradient, no credit through time", "F": "warm, sign rule with credit through time", "G": "warm, backprop with BPTT"}
+         "T": "warm, true gradient, no credit through time", "F": "warm, sign rule with credit through time", "G": "warm, backprop with BPTT",
+         "E": "warm, sign rule with eligibility traces (local in time)", "ER": "random, sign rule with eligibility traces"}
 pct = lambda v: 100 * v[0] / v[1]
 
 
@@ -34,7 +35,7 @@ def main():
               "| Arch | Arm | " + " | ".join(f"k={k}" for k in KS) + " |", "|---|---|" + "---|" * len(KS)]
     summary = {}
     for arch in ARCHS:
-        for arm in ("W", "T", "F", "G", "R", "B"):
+        for arm in ("W", "E", "T", "F", "G", "R", "ER", "B"):
             per = {k: [] for k in KS}
             for s in SEEDS:
                 p = OUT / f"life_{arch}_{arm}_{s}.json"
