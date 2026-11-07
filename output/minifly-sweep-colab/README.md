@@ -18,6 +18,8 @@ Use `--blocks` to select individual blocks. The runner verifies the source and i
 
 ## Archived Colab run
 
+The [scorecard](SCORECARD.md) reports every arm and seed, the main findings, and qualification limits.
+
 The [original receipt ZIP](../MiniFly_outputs_receipts.zip) contains 99 completed screen jobs and 33 completed smoke jobs. All 44 block, seed and profile groups have three arms with identical panel hashes within each group. The notebook and receipts share the source and data manifest SHA-256 `fc40a3417bb3b3ed95c6bed3be865aaaf023a5560f1b9d695a29e576ee845299`.
 
 These are development comparisons. The central-complex block uses the prior hand-set navigation gains. The later [fitted compass and steering confirmation](../minifly-connectome-navigation/FIT_OFFICIAL_REPORT.md) and [FlyWire path-integration exercise](../minifly-connectome-navigation/PI_REPORT.md) are separate runs.
