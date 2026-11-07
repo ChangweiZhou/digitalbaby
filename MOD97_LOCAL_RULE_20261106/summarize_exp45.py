@@ -254,3 +254,36 @@ if __name__ == "__main__":
     md = e8()
     (OUT / "SUMMARY_E8.md").write_text(md)
     print(md)
+
+
+def e10(tag=""):
+    ARMS = ("ring_zero", "ring_sign", "ring_bp", "ring_conf_sign", "ring_conf_bp", "flat_bp", "flat_conf_bp")
+    LABEL = {"ring_zero": "ring, single-step development only (zero-shot)", "ring_sign": "ring, life on 12 pairs, sign rule", "ring_bp": "ring, life on 12 pairs, backprop",
+             "ring_conf_sign": "ring, life on confounded 2 pairs, sign rule", "ring_conf_bp": "ring, life on confounded 2 pairs, backprop",
+             "flat_bp": "flat ablation, life on 12 pairs, backprop", "flat_conf_bp": "flat ablation, life on confounded 2 pairs, backprop"}
+    lines = [f"\n## E10 ring with innate operations{tag}: final-answer exact (%) at the end of life, three seeds\n",
+             "| Arm | held pairs (E7: +− −+ >< <> ; confounded: +− −+) | within | single ops after life (mean of 4) |", "|---|---|---|---|"]
+    table = {}
+    for arm in ARMS:
+        held, within, single = [], [], []
+        for s in SEEDS:
+            p = OUT / f"e10_life_{arm}{tag}_{s}.json"
+            if not p.exists():
+                continue
+            d = json.loads(p.read_text()); last = d["curve"][-1]
+            hk = [k for k in last["compose"] if k != "within"]
+            held.append(" ".join(f"{pct(last['compose'][k], 'final'):.0f}" for k in hk))
+            table[(arm, s)] = sum(pct(last["compose"][k], "final") for k in hk) / len(hk)
+            within.append(pct(last["compose"]["within"], "final")); single.append(sum(pct(v) for v in last["single"].values()) / 4)
+        if held:
+            lines.append(f"| {LABEL[arm]} | {' · '.join(held)} | {' · '.join(f'{x:.0f}' for x in within)} | {' · '.join(f'{x:.0f}' for x in single)} |")
+    g = lambda arm: [round(table[(arm, s)]) for s in SEEDS if (arm, s) in table]
+    lines += ["\n### E10 predictions (held-pair mean)\n", f"- P10.1 ring zero-shot ≥90: {g('ring_zero')}", f"- P10.2 ring confounded ≥90 cross: {g('ring_conf_sign')} (sign), {g('ring_conf_bp')} (bp)",
+              f"- P10.3 flat confounded <30: {g('flat_conf_bp')}; flat 12-pair ≥70: {g('flat_bp')}", f"- P10.4 ring sign within 5 of bp: {g('ring_sign')} vs {g('ring_bp')}"]
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    md = e10() + "\n" + e10("_d32768")
+    (OUT / "SUMMARY_E10.md").write_text(md)
+    print(md)

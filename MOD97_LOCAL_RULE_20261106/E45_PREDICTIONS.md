@@ -115,3 +115,16 @@ Predictions:
 - P8.3 Arm D: all eight operations at or above 85%, held pairs at or above 85%.
 - P8.4 Arm C's development operations (mod 89) are not retained (no replay covers them); reported, not gated.
 Decision: P8.1 holding in all seeds is the persistent-learning demonstration (P1, P3, P5 in one life, P2 via the window); P8.2 adds composition in the same life. Either failing is reported with its stage-by-stage curve.
+
+## E10, the ring with innate operations (step 3; added 7 November, before launch)
+
+Model: the prompt is parsed by position into operand slots (two digits each) and operator slots; this parsing is supplied and stated as such. Learned interfaces, shared across slots: digits → a bump (softmax over 97 positions); operator byte → a soft choice among four innate operations on bumps (add = circular convolution, sub = circular correlation, max and min from products of cumulative distributions); final bump → two digit softmaxes. Composition is wiring: the intermediate bump feeds the second operation. A flat ablation keeps the interfaces and replaces the innate operations by a learned MLP on the concatenated bumps. Development by backprop on single-step problems (four operations mod 97, half the pairs). Life by the sign rule or backprop on two-step problems. Panels: E7's four held pairs and within-type; and the E5-style confounded set, taught (+,+) and (−,−), held (+,−) and (−,+). Three seeds.
+
+Predictions:
+- P10.1 Ring, single-step development only, zero-shot on two-step panels: ≥90% on every panel.
+- P10.2 Ring, life on the confounded two-pair set only: ≥90% on the two untaught cross pairs.
+- P10.3 Flat ablation: <30% cross-type on the confounded set; ≥70% on E7's held pairs after life on the twelve taught pairs.
+- P10.4 Ring under the sign rule (twelve taught pairs) within 5 points of backprop.
+Decision: P10.1 and P10.2 holding establish that composition can be innate at this scale with learning confined to interfaces; the supplied parsing then becomes the next thing to learn. P10.1 failing with P10.2 holding localizes the failure to the interfaces' transfer across prompt formats.
+
+**Amendment before the E10 rerun (same day).** The first E10 run's development did not converge in 8,192 updates: single-operation accuracy after development was 5–93% depending on seed and operator (the 97-way bump encoder trains slowly through the innate operations, add and sub slowest). The qualification had checked the innate operations on exact bumps but not the learnability of the interfaces at that dose; that was my omission. In the one seed where development reached 93% on max/min, the ring with backprop life scored 92–100% on E7's held pairs and 100% on the confounded cross pairs, against 2–9% for the flat ablation. The rerun uses 32,768 development updates in every arm (tag `_d32768`); the first run's receipts stay untagged. Predictions P10.1–P10.4 are unchanged.

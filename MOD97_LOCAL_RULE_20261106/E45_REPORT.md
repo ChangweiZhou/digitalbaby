@@ -201,3 +201,30 @@ Predictions on file before launch. One learner (18-byte window, hidden 512) deve
 **What E8 settles.** One learner, one life, local plasticity: eight operations learned in sequence are all held at 75–98% on never-taught inputs after the eighth, where the same learner without replay holds none (0%). That is the persistent-learning demonstration, properties P1, P3 and P5 in one life with the window as working state, and it is the result the project set out to show at toy scale. In the same life, compositions of the learned operations are answered on untaught operator pairs at 48–55%, against 18–26% without replay and 89–91% for the backprop ceiling; P4 is partially present in the same learner. The weakness is specific and measured: the composition stage, which fills half of every batch with two-step problems, costs the carry-type operations 20–35 points while the max/min operations hold. Under the local rule the shared path does not have the slack to absorb 24,000 composition items while rehearsing eight operations at this dose, and the operations that need a carry are the ones that give. The obvious repairs are a longer composition stage with a smaller composition share per batch, or wider capacity, both pre-registrable as a single follow-up; the learned-feedback arm remains the test of the local rule's gap to backprop on composition itself.
 
 **Evidence level.** Development result, three seeds, one harness, no independent confirmation; the store is an exact-key episodic memory whose replayed answers are mostly correct (arm A and E4's random-answer control bound what wrong answers do); two-step compositions under one modulus; shortcut floors at or below 1.2% throughout.
+
+# E10: the ring with innate operations (6 births, 21 runs; first run at a quarter of the development dose archived)
+
+Predictions on file before launch; amendment on file before the rerun. The prompt is parsed by position (supplied). Learned interfaces, shared across slots: two digits → a bump over 97 positions; operator byte → a soft choice among four innate operations on bumps (add = circular convolution, sub = circular correlation, max and min from products of cumulative distributions, all exact on one-hot bumps, `exp45/QUALIFY_E10.json`); bump → two digits. Composition is wiring. A flat ablation keeps the interfaces and replaces the innate operations by a learned mixer. Development by backprop on single-step problems (32,768 updates; the 8,192-update first run did not converge and is archived). Life: 8,192 updates on two-step problems, E7's twelve taught pairs or the confounded (+,+)/(−,−) pair of E5. 20,000 parameters (ring), 58,000 (flat).
+
+Development, single-operation held accuracy after 32,768 updates: ring 100 · 100 · 100 · 100 (seed 73129), 96–97 (116089), 62–93 (93683); flat 3–85.
+
+| Arm | E7 held pairs (+− −+ >< <>) per seed | Confounded cross pairs (+− −+) | Within | Single ops after life |
+|---|---|---|---|---|
+| **Ring, single-step development only, zero-shot** | **100 100 100 100** · 46 42 84 88 · 86 88 94 95 | — | 100 · 64 · 90 | 100 · 78 · 97 |
+| Ring, life on 12 pairs, backprop | 100 100 100 100 · 36 33 88 92 · 60 62 93 95 | — | 100 · 65 · 77 | 100 · 75 · 87 |
+| Ring, life on 12 pairs, sign rule | 100 100 100 100 · 14 15 47 50 · 24 22 54 57 | — | 100 · 32 · 37 | 100 · 37 · 46 |
+| **Ring, life on the confounded pairs, backprop** | — | **100 100** · 67 62 · 71 68 | 100 · 66 · 68 | 99 · 64 · 84 |
+| Ring, life on the confounded pairs, sign rule | — | 100 100 · 22 20 · 24 23 | 100 · 22 · 24 | 58 · 22 · 25 |
+| Flat ablation, life on 12 pairs, backprop | 5 4 10 9 · 5 4 15 28 · 3 4 10 10 | — | 8 · 13 · 6 | 7 · 21 · 8 |
+| Flat ablation, confounded pairs, backprop | — | 7 6 · 5 5 · 4 6 | 7 · 5 · 6 | 4 · 5 · 5 |
+
+| Prediction | Outcome |
+|---|---|
+| P10.1 zero-shot ≥90 on every panel | **Held in the two seeds whose development converged** (100 and 91 held-pair mean; 65 in the seed whose single operations were at 62–93%). Composition accuracy tracks interface accuracy. |
+| P10.2 confounded pairs: untaught cross pairs ≥90 | **Held in the converged seed under both rules** (100%); 62–71% under backprop and 20–24% under the sign rule in the others. No de-confounding was needed where the interfaces were exact. |
+| P10.3 flat ablation <30 confounded; ≥70 on 12 pairs | Confounded held (4–7%). The 12-pair half is unqualified: the flat model's interfaces did not develop (3–85%), so it cannot serve as the E7 reference; E7 itself is that reference (84–97% for the window net). |
+| P10.4 sign rule within 5 of backprop | **Refuted in two seeds.** Life under the sign rule at decay 1.0 erodes the interfaces (zero-shot 65 and 91 fall to 32 and 39); backprop life also loses ground (91 → 77). Where the interfaces were exact, nothing moves. |
+
+**What E10 settles.** Composition across untaught operator pairs is free once the operations are innate and the interfaces are exact: zero-shot 100% on every panel from single-step development alone, 100% on the confounded cross pairs that defeated every learned architecture in E5, E5-C and E6-route, with a flat ablation at 4–10%. The ring converts the composition problem into an interface-learning problem, and interface accuracy sets composition accuracy (62–93% single-step gives 42–88% two-step). This is the project's own idea, composition built into geometry as the central complex composes vectors, confirmed at toy scale with the parsing supplied. Two limits are measured: the interfaces are slow to develop through a 97-way bump (four times the dose of the window net) and seed-sensitive; and life under the sign rule at the decay used elsewhere degrades exact interfaces rather than refining them, so a life rule on this architecture needs a lower decay or a gate that writes only when wrong, which the self-adjusting-rule allowance permits.
+
+**Evidence level.** Development result, three seeds, one harness; parsing by position supplied, which is the next thing to learn; mod-97 arithmetic with four operations; shortcut floors not needed for a zero-shot result but the flat ablation and the confounded design serve as the controls.
