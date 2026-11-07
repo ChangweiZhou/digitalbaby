@@ -1,0 +1,690 @@
+{
+  "created_utc": "2026-11-07T19:35:24.464320+00:00",
+  "reason": "Original completion checker globbed all same-part same-seed receipts and asserted that unfinished sibling jobs were complete. Three finished jobs incorrectly triggered termination of other jobs. This is an orchestration failure, not a learner failure.",
+  "scientific_settings": "UNCHANGED; original E12_LOCK.json and every locked source retained byte for byte",
+  "restart": "Only15 unfinished full lives restarted from same birth and seeds;34 successful jobs retained. No parameter tuning. First-attempt outputs/logs/status preserved.",
+  "archive": "exp45/e12_interrupted_attempt_20261107",
+  "archived_hashes": {
+    "exp45/E12_JOB_C_rp1of2_73129.json": "32ddcde051101d2eedf7e33175e6653432f49e49004f2159b63eb469bcfa2c3a",
+    "exp45/E12_JOB_A_rem_pre_64_116089.json": "d54e214566dc17c816c3ea02bfdbf3e93813bf5b2389fa5614f17f17e8fddad1",
+    "exp45/E12_JOB_A_rem_erased_1024_116089.json": "0117239319a9eae8694d0b05008b8621a55ff31e435509ef35b3cc9f735ef1bb",
+    "exp45/E12_JOB_A_rem_pre_1024_93683.json": "370c5f8b8afe8d96c6332638ee305f06f1161c429c48987b1a4bd701423a6208",
+    "exp45/E12_JOB_B_b16_73129.json": "79cfdd04d189343da3da58fc73e0a829ad96a38ae7f5995bfce685de021efa08",
+    "exp45/E12_JOB_A_rem_birth_1024_116089.json": "fd0432803dfb886cdb4b44f37d5ae9b3417228349420a8ab9d8c9d4d07dbc067",
+    "exp45/E12_JOB_A_73129.json": "d7dd82235326e10c2242ea24af7004d2962965f9c40c8c394a10b05928d1fd98",
+    "exp45/E12_JOB_A_rem_pre_256_116089.json": "0ec6a1a84f5d3fa2b6b00bf9583333d6d8ca3e5c71480908d5ddedf17ddd647b",
+    "exp45/E12_JOB_A_rem_birth_64_73129.json": "b71e494b1361bff55f89b01812a1f330c617209dcfad806800801d6114898946",
+    "exp45/E12_JOB_A_rem_erased_1024_73129.json": "e5d2c484bb21366471cf41ff17922d20106c0aeb9c96fc5d35fbd0958e9a49db",
+    "exp45/E12_JOB_profile.json": "91908368d57fdcf776a6ffb8f7bbf504cd1c176565c00407c6862c1790e9504b",
+    "exp45/E12_JOB_A_rem_erased_64_93683.json": "f3359dd9580a616a60865932760bcdbc8144a38400deac88da30d863a8c4e186",
+    "exp45/E12_JOB_A_116089.json": "cf42688c6c14b00b5abdc7b01d5457b9a46431ef0f71a3e1641e306185324b30",
+    "exp45/E12_JOB_A_rem_pre_256_93683.json": "753ecf58fb7e731893e323dcb25a8935b0719aad8ceb2aa584197bcdb21f80da",
+    "exp45/E12_JOB_A_rem_erased_256_73129.json": "4918b606b184d689afbfc53bf347517a062c826a6cad21cdbbe6ab60392073cc",
+    "exp45/E12_JOB_A_rem_birth_256_73129.json": "589d30380805607efe0134a29efa223826038de9838845dd49876c9bbee03a62",
+    "exp45/E12_JOB_A_rem_pre_64_73129.json": "ad337785e8e8185dbbc60d47b031bd91adfcfb6ff313c6287042230e9827de44",
+    "exp45/E12_JOB_A_rem_birth_1024_73129.json": "b0b14ee841ac61287e1038ad1f575fc53995d7bb388bafc7c56a3c8095164418",
+    "exp45/E12_JOB_D_cap8192_93683.json": "5365b9637eccc5a217e2bb5aca67baca45740e3eaa28affbeb7039e7a71131a9",
+    "exp45/E12_JOB_D_cap128_73129.json": "3f1a66cf55254210921d0f4e07b75fee977d73006d73867a15883406389d8091",
+    "exp45/E12_JOB_B_b16_93683.json": "0042b3aff9092a4b52b17b023a856bb487af840d17aa65ec1fbe69672320a50e",
+    "exp45/E12_JOB_A_rem_pre_1024_73129.json": "ac185b7093b0146f4d84f740a49f800876eeaaa6d4a99ae4afa09a28765ff3f2",
+    "exp45/E12_JOB_A_rem_pre_1024_116089.json": "6658ec7f483e32f873807df5de915eef0280874cbdaa6393806ded530c6a5b27",
+    "exp45/E12_JOB_A_rem_birth_64_93683.json": "96b82c6398b1f6128c3530d13a127da32b9ee3d58466add3649be789b9703417",
+    "exp45/E12_JOB_A_rem_erased_64_116089.json": "ebeea2b7d07a86224355039918e06c43126cf5006838ad88dcac003bae1f83c2",
+    "exp45/E12_JOB_A_rem_birth_64_116089.json": "a548f8b7f6e9f2482a7d08f9920a53d4ee00f270b163791815d50f4373826026",
+    "exp45/E12_JOB_B_b256_73129.json": "d5cddcf99458b0dded8e1774799b59c981ea7c7ef7a4335c89cfa2873f4b1a30",
+    "exp45/E12_JOB_A_93683.json": "d9b8755fdcf9f315cb667d02ed81237105dca1c9a3f2699a57209e0d7d802eb1",
+    "exp45/E12_JOB_A_rem_birth_256_116089.json": "05e15407a220f3768f1ea712d2a33b725c167b68b9db387f0e1c5f80b05fe0a4",
+    "exp45/E12_JOB_A_rem_pre_256_73129.json": "0510bbd468ff4855d5eb421ad235b46735e0530a88aecea8a1d9ad425c567a67",
+    "exp45/E12_JOB_A_rem_erased_64_73129.json": "6587a2fd815e286dcb10b9601fbed12ba188b4be0ad9ccadbfb41840652cd53f",
+    "exp45/E12_JOB_C_rp1of4_73129.json": "ff79669d6108eeb103e995de81b6ca51c3492371a52529bb98193055af6230e2",
+    "exp45/E12_JOB_A_rem_erased_1024_93683.json": "37d440a8a92f54a10284deb69d57d70c5b95db3ce4c83d4524e3669d760346b0",
+    "exp45/E12_JOB_D_cap128_93683.json": "b029f907d53f8aa29e1436d1e46881de8ea77dd56c85b203019813bc55d17cd8",
+    "exp45/E12_JOB_D_cap8192_73129.json": "5a856e22eb6cb291dedb4c25822948f39361a8a7f38c1c87cada1ca35db2a2a5",
+    "exp45/E12_JOB_A_rem_erased_256_116089.json": "b86b5d9a9262a85f05abddc79e9e67bfb5dc31515274c88d991cf65bfd2ae67f",
+    "exp45/E12_JOB_A_rem_birth_1024_93683.json": "a749563058ba8367c5d3ae1ad8c1a7d444a9a273af8caac09c68fdab38ec1d94",
+    "exp45/E12_JOB_A_rem_pre_64_93683.json": "33351ffbc6c47f7cc3c2603ac2408942fe17accbc04bb3a4b10f25feb1141be8",
+    "exp45/E12_JOB_A_rem_birth_256_93683.json": "2e4ca6d12e2b791d0c052cf67475ca7656ca7816dbd5fe6ab82ee2275c3283c3",
+    "exp45/E12_JOB_A_rem_erased_256_93683.json": "30265293f4f567b205c61e3c55d36aadfcd8815733eaa0eca95d460ee2a721ec",
+    "exp45/E12_STATUS.json": "d74f23610e7841b38a0399771ffef52a4ef258b52280a96cad3b579a12355e2f",
+    "E12_REPORT.md": "410b822d81e665c11a3954ea8f404fac9848581d502df7a19fc3b4cfc00fa3f6",
+    "exp45/logs/e12_C_rp1of4_73129.log": "9652d3932a40122d8af1cfa3256969967c5d02bc782c394c6d209d1376edc6f9",
+    "exp45/logs/e12_A_rem_erased_256_73129.log": "e7efe23895df35f4bbae79ae1cd936cf6e761a90b6c0a7b6a398b37277cf26e8",
+    "exp45/logs/e12_A_rem_birth_256_93683.log": "61aab2809af3892c54bb9a778e179833a3b8c43dfaa026898f6cae0f9b2f3a09",
+    "exp45/logs/e12_A_rem_erased_64_116089.log": "979cede4c396a39ad1829f8a85e4384f4980e845d25f87bfe285942a1165f664",
+    "exp45/logs/e12_A_rem_erased_256_116089.log": "f8e8110bddd6d3b7834659afcafc8bf65f13f39c4d6770a79431a6e439e52eea",
+    "exp45/logs/e12_A_rem_birth_1024_93683.log": "6e99cf3e8c08bafa8056a4e1b1dd5278d8ca916e0a28ce38d5b1fcf38d1a45a5",
+    "exp45/logs/e12_campaign.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exp45/logs/e12_A_rem_birth_1024_116089.log": "bd440512fcad913260b0e34d9090e125517065bd15b3d100f3f48a3d4ea2cc3f",
+    "exp45/logs/e12_C_rp1of2_73129.log": "ec4ebb6312a86e5828f8a8a599894f80e6deed5829a6b5a577f824afdc2f241d",
+    "exp45/logs/e12_A_93683.log": "ab3d457741b762610a57072ec4d1832e3d3052aa21b4b335cf6c48b2230e1afe",
+    "exp45/logs/e12_profile.log": "d6beb400515a26d8f55158970dea0ae60a1159613f631196a2ab8f136f4ea1c9",
+    "exp45/logs/e12_D_cap8192_73129.log": "37deb507206c7a03563245d5326d6219abc9d071c40db6ed18addc7e6ecde04e",
+    "exp45/logs/e12_B_b256_73129.log": "98fd0b25d9a9638a043fb9b93700096354718e720562b23ad21498d0b2b72bc9",
+    "exp45/logs/e12_D_cap8192_93683.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "exp45/logs/e12_A_73129.log": "874e35bc41d7ed57a5a58592582d104890653bf8425d41144c6ba9510e9e2c9d",
+    "exp45/logs/e12_A_rem_erased_256_93683.log": "99cf28ba8ddf1c3a8fab53a148182d6f27ac1bccdc9ff02904111357a52ee31d",
+    "exp45/logs/e12_A_rem_birth_256_73129.log": "7b1905c2798078c3341b7e33ab1717e84ca6b4e4257d4e0e1c1a4937395b56a4",
+    "exp45/logs/e12_A_rem_pre_256_116089.log": "e75e408ee6f5deb41a61437a438d799be9cbaca2be51b7afa9ac5da86ffdb914",
+    "exp45/logs/e12_A_rem_birth_1024_73129.log": "501d6122420ac339b209928b5471ce7207340608616e9cb795f63e843efee8b9",
+    "exp45/logs/e12_A_rem_birth_64_116089.log": "9581a990ea6670eddc5bb7e80b53b1f3897c29025e1d4a133c70501456707776",
+    "exp45/logs/e12_A_116089.log": "7d4b5db1ee512ec1871cafb8d71b9641d0fb786e1c4f16d5fe096ddf686509a3",
+    "exp45/logs/e12_A_rem_pre_64_93683.log": "7737246c04d5a3b617dcd07c9b208c8ffe18d946adcca06ccf844e72879eb3a6",
+    "exp45/logs/e12_A_rem_birth_64_93683.log": "a8088581a49e93390cab50095d8f81f1a0c585aef205b7dbd72a496f2375de88",
+    "exp45/logs/e12_A_rem_erased_1024_116089.log": "77ed8907181082277111b6595f30f224b245b0e6ba733f31c58b660c1741aebb",
+    "exp45/logs/e12_A_rem_birth_256_116089.log": "cbc1cd07dfbc9c4e59ea57be799aa7825ecd687ec459c9f297a3f01d534f705d",
+    "exp45/logs/e12_D_cap128_93683.log": "214e5e34777ea15c1664e8890127d67569467fd6947d8aa19d0aab34a9596fd0",
+    "exp45/logs/e12_A_rem_erased_1024_93683.log": "febb191d2413912201fd1aca0a92a71d9e3e5c676c26b6d829b5cb53f6f0fe30",
+    "exp45/logs/e12_A_rem_pre_1024_73129.log": "131c3c208841a1b62c910933f1f1884d7f0b5fdae7ea9d3058722669796ea3cc",
+    "exp45/logs/e12_A_rem_erased_64_93683.log": "3b1d0a692c0f9c93b15d56c1db8e86874ead9671f08219f12138be869a5665eb",
+    "exp45/logs/e12_A_rem_pre_64_116089.log": "75e8256db30827dac3d04975368d00874d5c89abc718ef18c6833b585e33f667",
+    "exp45/logs/e12_B_b16_73129.log": "1d186d0b0f4bf17d82dcfd67a1ea945cf1656b444248eda7c690085cc87c9332",
+    "exp45/logs/e12_A_rem_pre_256_73129.log": "85cd3a4e2e43171267b6c003dd61d3b79afbb876557f55b2980b0385ca707c98",
+    "exp45/logs/e12_A_rem_erased_64_73129.log": "61f694e5822a6a36f5f79de5479222fd5b364e600c772139e051a1b57604bbea",
+    "exp45/logs/e12_A_rem_pre_1024_93683.log": "8e5f033cd213ca685f5adb3dd8d793195e5ee5ccc01d15eda2e916a6c0b516a7",
+    "exp45/logs/e12_A_rem_erased_1024_73129.log": "17c4bdb19c307fbb8336c263b16c0ed4f599771e3041da8ee636b7dd3d97642a",
+    "exp45/logs/e12_D_cap128_73129.log": "048f0020396c8a96474566ab24c120fcb2326e441a275ed044f39af1ad7cb6f7",
+    "exp45/logs/e12_A_rem_pre_1024_116089.log": "7c14823446b2e91a983e4ba913bb08c27dc3ef8dd0bae38e90cafce62d255ed4",
+    "exp45/logs/e12_A_rem_pre_256_93683.log": "de0bcd4e19a225056c0fe8c10e873b924d1a47eb7457efecbddd737dc87f7aad",
+    "exp45/logs/e12_B_b16_93683.log": "d243c0026690fd228485c7149e1dcd506e88aa6c35c3786565c032b48178f241",
+    "exp45/logs/e12_A_rem_pre_64_73129.log": "ba13ae8a66e2ea0b590678ba27d96a54e9bb3d91d262f4a5635a2bdaf583cd6b",
+    "exp45/logs/e12_A_rem_birth_64_73129.log": "793c39bd4a269810b84eb9d03fa6b4718b3a0e1f8ba0b18bd5bd4cc89be9adc7",
+    "exp45/e12_B_e8_life_C_b16_93683.json": "f4475d6dc66abf97a8b0c7e97410f0abcad75fc09d4a1d57c9b9b7df09407e80",
+    "exp45/e12_D_e8_life_C_cap128_73129.json": "69a54a7508cd8b8c57240877257f81a1ca3aecd478de7752826721c54b7f3b3b",
+    "exp45/e12_A_e8_life_A_rp0of1_interleaved_116089.json": "671df6734e53e415c2cd4d2087f7fc4476a8860c5dbade766f2db177687dcdf1",
+    "exp45/e12_A_e8_life_A_rp0of1_interleaved_73129.json": "f77d4a0af8075c74604cbef9f476623dad9ba1a6edcefe50976c3ef2e0c9f5ad",
+    "exp45/e12_D_e8_life_C_cap8192_73129.json": "ddb2a0e4d383d7ffe53389a1536a34e8d0ea7571404c4f6780acf1dc5aa9062f",
+    "exp45/e12_B_e8_life_C_b16_73129.json": "e439cfd685301d3ee3965fa78385d4056ecb27b0492d6ab31e512953da66b6b7",
+    "exp45/e12_D_e8_life_C_cap128_93683.json": "fd7d5d643684c87061002829530202b6169487d3bc269bfed8806d4609319b13",
+    "exp45/e12_profile_e8_life_C_73129.json": "0fe2ef0e34475813d863d23524cc580829e981ca77f97721f4c2cffbbb45d188",
+    "exp45/e12_B_e8_life_C_b256_73129.json": "4818643474d1396476085fb0e5cc9958c403971f5ef559485e30a8526b32963b",
+    "exp45/e12_A_e8_life_A_rp0of1_interleaved_93683.json": "e9562370820c0b0c5a7e8de3dac7a3c367c244c8bbc9b6f319dee12ba6ca903c",
+    "exp45/e12_C_e8_life_C_rp1of4_blocked_recency_73129.json": "9d0dcee3b96829360a79832d7e60c807b7c0695e6b874fc5e54e2f5c549279eb",
+    "exp45/e12_C_e8_life_C_recency_73129.json": "ef40eee20a2a130cd46e972ddcda750b87f71451f43a2986a31ab0eb6381029c"
+  },
+  "resume_source_sha256": "192debb61f6a095f68149b16a5e660ff2fc5d8334bae4d817537dfdc03e9beb8",
+  "jobs": [
+    {
+      "key": "A_73129",
+      "command": [
+        "exp8_life.py",
+        "A",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_A_",
+        "E8_SAVE_STAGES": "1",
+        "E8_SCHEDULE": "interleaved",
+        "E8_REPLAY_SHARE": "0"
+      },
+      "part": "A"
+    },
+    {
+      "key": "B_b16_73129",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_B_",
+        "E8_BATCH": "16"
+      },
+      "part": "B"
+    },
+    {
+      "key": "B_b256_73129",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_B_",
+        "E8_BATCH": "256"
+      },
+      "part": "B"
+    },
+    {
+      "key": "C_rp1of2_73129",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_C_",
+        "E8_REPLAY_SAMPLING": "recency",
+        "E8_REPLAY_SHARE": "1/2"
+      },
+      "part": "C"
+    },
+    {
+      "key": "C_rp1of4_73129",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_C_",
+        "E8_REPLAY_SAMPLING": "recency",
+        "E8_REPLAY_SHARE": "1/4"
+      },
+      "part": "C"
+    },
+    {
+      "key": "D_cap128_73129",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_D_",
+        "E8_BUFFER_CAP": "128"
+      },
+      "part": "D"
+    },
+    {
+      "key": "D_cap8192_73129",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_D_",
+        "E8_BUFFER_CAP": "8192"
+      },
+      "part": "D"
+    },
+    {
+      "key": "A_93683",
+      "command": [
+        "exp8_life.py",
+        "A",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_A_",
+        "E8_SAVE_STAGES": "1",
+        "E8_SCHEDULE": "interleaved",
+        "E8_REPLAY_SHARE": "0"
+      },
+      "part": "A"
+    },
+    {
+      "key": "B_b16_93683",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_B_",
+        "E8_BATCH": "16"
+      },
+      "part": "B"
+    },
+    {
+      "key": "B_b256_93683",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_B_",
+        "E8_BATCH": "256"
+      },
+      "part": "B"
+    },
+    {
+      "key": "C_rp1of2_93683",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_C_",
+        "E8_REPLAY_SAMPLING": "recency",
+        "E8_REPLAY_SHARE": "1/2"
+      },
+      "part": "C"
+    },
+    {
+      "key": "C_rp1of4_93683",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_C_",
+        "E8_REPLAY_SAMPLING": "recency",
+        "E8_REPLAY_SHARE": "1/4"
+      },
+      "part": "C"
+    },
+    {
+      "key": "D_cap128_93683",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_D_",
+        "E8_BUFFER_CAP": "128"
+      },
+      "part": "D"
+    },
+    {
+      "key": "D_cap8192_93683",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "93683"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_D_",
+        "E8_BUFFER_CAP": "8192"
+      },
+      "part": "D"
+    },
+    {
+      "key": "A_116089",
+      "command": [
+        "exp8_life.py",
+        "A",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_A_",
+        "E8_SAVE_STAGES": "1",
+        "E8_SCHEDULE": "interleaved",
+        "E8_REPLAY_SHARE": "0"
+      },
+      "part": "A"
+    },
+    {
+      "key": "B_b16_116089",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_B_",
+        "E8_BATCH": "16"
+      },
+      "part": "B"
+    },
+    {
+      "key": "B_b256_116089",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_B_",
+        "E8_BATCH": "256"
+      },
+      "part": "B"
+    },
+    {
+      "key": "C_rp1of2_116089",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_C_",
+        "E8_REPLAY_SAMPLING": "recency",
+        "E8_REPLAY_SHARE": "1/2"
+      },
+      "part": "C"
+    },
+    {
+      "key": "C_rp1of4_116089",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_C_",
+        "E8_REPLAY_SAMPLING": "recency",
+        "E8_REPLAY_SHARE": "1/4"
+      },
+      "part": "C"
+    },
+    {
+      "key": "D_cap128_116089",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_D_",
+        "E8_BUFFER_CAP": "128"
+      },
+      "part": "D"
+    },
+    {
+      "key": "D_cap8192_116089",
+      "command": [
+        "exp8_life.py",
+        "C",
+        "116089"
+      ],
+      "env": {
+        "E8_RUN_PREFIX": "e12_D_",
+        "E8_BUFFER_CAP": "8192"
+      },
+      "part": "D"
+    },
+    {
+      "key": "A_rem_erased_64_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "erased",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_256_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "erased",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_1024_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "erased",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_64_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "birth",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_256_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "birth",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_1024_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "birth",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_64_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "pre",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_256_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "pre",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_1024_73129",
+      "command": [
+        "exp12_reminder.py",
+        "73129",
+        "pre",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_64_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "erased",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_256_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "erased",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_1024_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "erased",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_64_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "birth",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_256_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "birth",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_1024_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "birth",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_64_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "pre",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_256_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "pre",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_1024_93683",
+      "command": [
+        "exp12_reminder.py",
+        "93683",
+        "pre",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_64_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "erased",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_256_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "erased",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_erased_1024_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "erased",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_64_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "birth",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_256_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "birth",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_birth_1024_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "birth",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_64_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "pre",
+        "64"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_256_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "pre",
+        "256"
+      ],
+      "env": {},
+      "part": "A"
+    },
+    {
+      "key": "A_rem_pre_1024_116089",
+      "command": [
+        "exp12_reminder.py",
+        "116089",
+        "pre",
+        "1024"
+      ],
+      "env": {},
+      "part": "A"
+    }
+  ],
+  "part_A_all_three_seed_scientific_parity_excluding_cpu": true
+}
