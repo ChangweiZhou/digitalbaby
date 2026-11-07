@@ -5,6 +5,7 @@ Window 18, hidden 256 (EXP45_WINDOW=18 set here before importing exp45).
 """
 import os
 os.environ["EXP45_WINDOW"] = "18"
+os.environ.setdefault("EXP45_HIDDEN", "256")
 for k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ[k] = "1"
 import json
@@ -31,6 +32,8 @@ HELD_PAIRS = [("+", "-"), ("-", "+"), (">", "<"), ("<", ">")]
 TAUGHT_PAIRS = [p for p in PAIRS if p not in HELD_PAIRS]
 ARMS = ("SCR", "SCRc", "SCRcsh", "SCRbp", "SCRcbp")
 DOSE = int(os.environ.get("E7_DOSE", "8192"))
+if DOSE <= 0 or DOSE % X.BLOCK:
+    raise ValueError("E7_DOSE must be a positive multiple of the existing block size.")
 DTAG = "" if DOSE == 8192 else f"_d{DOSE}"
 
 

@@ -19,6 +19,7 @@ import sys
 import time
 from pathlib import Path
 from random import Random
+from fractions import Fraction
 
 import torch as T
 
@@ -36,6 +37,15 @@ LIFE = [("add", 97, b"r"), ("sub", 97, b"t"), ("max", 97, b"x"), ("min", 97, b"n
         ("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]
 NAME = lambda op, m, c: f"{op}{m}"
 STAGE_UPDATES, COMPOSE_UPDATES = 6144, 8192
+REPLAY_SHARE = Fraction(os.environ.get("E8_REPLAY_SHARE", "1/2"))
+SCHEDULE = os.environ.get("E8_SCHEDULE", "blocked")
+if not 0 <= REPLAY_SHARE < 1 or (REPLAY_SHARE * X.BATCH).denominator != 1:
+    raise ValueError("Replay share must be a whole number of items in the batch, below one.")
+if SCHEDULE not in ("blocked", "interleaved"):
+    raise ValueError("Schedule must be blocked or interleaved.")
+REPLAY_COUNT = int(REPLAY_SHARE * X.BATCH)
+TAG = "" if (REPLAY_SHARE == Fraction(1, 2) and SCHEDULE == "blocked") else (
+    f"_rp{REPLAY_SHARE.numerator}of{REPLAY_SHARE.denominator}_{SCHEDULE}")
 PAIRS = [(a, b) for a in SYM.values() for b in SYM.values()]
 HELD_PAIRS = [("+", "-"), ("-", "+"), (">", "<"), ("<", ">")]
 TAUGHT_PAIRS = [p for p in PAIRS if p not in HELD_PAIRS]
@@ -101,7 +111,7 @@ def develop(seed):
 
 
 def life(arm, seed):
-    path = OUT / f"e8_life_{arm}_{seed}.json"
+    path = OUT / f"e8_life_{arm}{TAG}_{seed}.json"
     m = X.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e8_dev_{seed}.pt"))
     local = arm != "D"
@@ -117,6 +127,7 @@ def life(arm, seed):
         within += [render_pair(*p, *tr) for tr in triples(p, seed + 1, 150, exclude=frozenset(taught_pairs[p]))]
     comp_panels["within"] = within
     buffer, seen_items = [], []
+    interleaved_prompts = {t[2][0]: {} for t in LIFE}
     t0 = time.process_time(); stages = []
 
     def evaluate(final=False):
@@ -127,24 +138,50 @@ def life(arm, seed):
 
     stages.append(dict(stage=0, task=None, scores=evaluate()))
     schedule = [(NAME(*t), [render(t, a, b) for a, b in split(t, .25, seed)[0]], STAGE_UPDATES) for t in LIFE]
+    if SCHEDULE == "interleaved":
+        combined = [item for _, items, _ in schedule for item in items]
+        schedule = [("interleaved", combined, len(LIFE) * STAGE_UPDATES)]
     schedule.append(("compose", [render_pair(*p, *tr) for p in TAUGHT_PAIRS for tr in taught_pairs[p]], COMPOSE_UPDATES))
     for si, (name, items, dose) in enumerate(schedule, 1):
         cur = X.batches(items, seed + si)
+        if SCHEDULE == "interleaved" and name == "interleaved":
+            # Eight samples per task per full batch, interleaved so a 32-item
+            # prefix also contains four per task. This matches task exposure.
+            def mixed_batches():
+                order = Random(seed + si)
+                pools = [[render(t, a, b) for a, b in split(t, .25, seed)[0]] for t in LIFE]
+                while True:
+                    draws = [order.sample(pool, X.BATCH // len(LIFE)) for pool in pools]
+                    yield [row for position in zip(*draws) for row in position]
+            cur = mixed_batches()
         if arm == "D":
             seen_items = seen_items + items; joint = X.batches(seen_items, seed + si)
         losses = []
         for u in range(dose):
+            current_replay_count = 0
             if arm == "D":
                 batch = next(joint)
-            elif arm == "C" and buffer:
-                rp = rng.sample(buffer, X.BATCH // 2)
+            elif arm == "C" and buffer and REPLAY_COUNT:
+                rp = rng.sample(buffer, min(REPLAY_COUNT, len(buffer)))
+                current_replay_count = len(rp)
                 outs = X.respond(m, rp, store)
                 ans = [o if (len(o) == 3 and o[-1] == EOS) else [ord("0"), ord("0"), EOS] for o in outs]
-                batch = next(cur)[:X.BATCH // 2] + list(zip(rp, ans))
+                batch = next(cur)[:X.BATCH - len(rp)] + list(zip(rp, ans))
             else:
                 batch = next(cur)
             losses.append(X.update(m, opt, batch, local, store if name != "compose" else None))
-        if arm == "C" and name != "compose":
+            if SCHEDULE == "interleaved" and arm == "C" and name == "interleaved":
+                # Replay only prompts already delivered to the learner. Keep a
+                # deterministic bounded FIFO of 1,024 distinct prompts per task.
+                for prompt, _ in batch[:X.BATCH - current_replay_count]:
+                    saved = interleaved_prompts[prompt[0]]
+                    key = tuple(prompt)
+                    if key not in saved:
+                        if len(saved) >= 1024:
+                            del saved[next(iter(saved))]
+                        saved[key] = prompt
+                buffer = [p for saved in interleaved_prompts.values() for p in saved.values()]
+        if arm == "C" and name != "compose" and SCHEDULE == "blocked":
             buffer += [p for p, _ in rng.sample(items, min(1024, len(items)))]
         final = si == len(schedule)
         stages.append(dict(stage=si, task=name, loss=sum(losses[-512:]) / 512, cpu=time.process_time() - t0, scores=evaluate(final)))
