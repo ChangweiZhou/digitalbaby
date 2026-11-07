@@ -15,6 +15,7 @@ os.environ.setdefault("EXP45_HIDDEN", "512")
 for k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
     os.environ[k] = "1"
 import json
+from itertools import accumulate
 import sys
 import time
 from pathlib import Path
@@ -36,7 +37,17 @@ DEV = [("add", 89, b"p"), ("sub", 89, b"q"), ("max", 89, b"v"), ("min", 89, b"w"
 LIFE = [("add", 97, b"r"), ("sub", 97, b"t"), ("max", 97, b"x"), ("min", 97, b"n"),
         ("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]
 NAME = lambda op, m, c: f"{op}{m}"
-STAGE_UPDATES, COMPOSE_UPDATES = 6144, 8192
+BATCH = int(os.environ.get("E8_BATCH", "64"))
+if BATCH <= 0 or 393216 % BATCH or 524288 % BATCH:
+    raise ValueError("Batch must exactly divide both exposure budgets")
+X.BATCH = BATCH
+STAGE_UPDATES, COMPOSE_UPDATES = 393216 // BATCH, 524288 // BATCH
+BUFFER_CAP = int(os.environ.get("E8_BUFFER_CAP", "1024"))
+REPLAY_SAMPLING = os.environ.get("E8_REPLAY_SAMPLING", "uniform")
+SAVE_STAGES = os.environ.get("E8_SAVE_STAGES", "0") == "1"
+RUN_PREFIX = os.environ.get("E8_RUN_PREFIX", "")
+if BUFFER_CAP < 1 or REPLAY_SAMPLING not in ("uniform", "recency"):
+    raise ValueError("Invalid replay configuration")
 REPLAY_SHARE = Fraction(os.environ.get("E8_REPLAY_SHARE", "1/2"))
 SCHEDULE = os.environ.get("E8_SCHEDULE", "blocked")
 if not 0 <= REPLAY_SHARE < 1 or (REPLAY_SHARE * X.BATCH).denominator != 1:
@@ -46,6 +57,7 @@ if SCHEDULE not in ("blocked", "interleaved"):
 REPLAY_COUNT = int(REPLAY_SHARE * X.BATCH)
 TAG = "" if (REPLAY_SHARE == Fraction(1, 2) and SCHEDULE == "blocked") else (
     f"_rp{REPLAY_SHARE.numerator}of{REPLAY_SHARE.denominator}_{SCHEDULE}")
+TAG += (f"_b{BATCH}" if BATCH != 64 else "") + (f"_cap{BUFFER_CAP}" if BUFFER_CAP != 1024 else "") + ("_recency" if REPLAY_SAMPLING != "uniform" else "")
 PAIRS = [(a, b) for a in SYM.values() for b in SYM.values()]
 HELD_PAIRS = [("+", "-"), ("-", "+"), (">", "<"), ("<", ">")]
 TAUGHT_PAIRS = [p for p in PAIRS if p not in HELD_PAIRS]
@@ -111,7 +123,7 @@ def develop(seed):
 
 
 def life(arm, seed):
-    path = OUT / f"e8_life_{arm}{TAG}_{seed}.json"
+    path = OUT / f"{RUN_PREFIX}e8_life_{arm}{TAG}_{seed}.json"
     m = X.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e8_dev_{seed}.pt"))
     local = arm != "D"
@@ -126,7 +138,7 @@ def life(arm, seed):
     for p in (("+", "+"), ("-", "-"), (">", ">"), ("<", "<")):
         within += [render_pair(*p, *tr) for tr in triples(p, seed + 1, 150, exclude=frozenset(taught_pairs[p]))]
     comp_panels["within"] = within
-    buffer, seen_items = [], []
+    buffer, seen_items, buffer_ages = [], [], []
     interleaved_prompts = {t[2][0]: {} for t in LIFE}
     t0 = time.process_time(); stages = []
 
@@ -136,6 +148,13 @@ def life(arm, seed):
             res["compose"] = {k: X.score(m, it) for k, it in comp_panels.items()}
         return res
 
+    def checkpoint(stage):
+        if SAVE_STAGES:
+            T.save(dict(model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
+                        replay_rng=rng.getstate(), stage=stage, seed=seed, arm=arm,
+                        buffer=buffer, buffer_ages=buffer_ages),
+                   OUT/f"{RUN_PREFIX}e8_state_{arm}{TAG}_{seed}_stage{stage}.pt")
+    checkpoint(0)
     stages.append(dict(stage=0, task=None, scores=evaluate()))
     schedule = [(NAME(*t), [render(t, a, b) for a, b in split(t, .25, seed)[0]], STAGE_UPDATES) for t in LIFE]
     if SCHEDULE == "interleaved":
@@ -156,13 +175,24 @@ def life(arm, seed):
             cur = mixed_batches()
         if arm == "D":
             seen_items = seen_items + items; joint = X.batches(seen_items, seed + si)
+        if REPLAY_SAMPLING == "recency" and buffer:
+            weights = list(accumulate(0.5 ** (si-age) for age in buffer_ages))
         losses = []
         for u in range(dose):
             current_replay_count = 0
             if arm == "D":
                 batch = next(joint)
             elif arm == "C" and buffer and REPLAY_COUNT:
-                rp = rng.sample(buffer, min(REPLAY_COUNT, len(buffer)))
+                if REPLAY_SAMPLING == "uniform":
+                    rp = rng.sample(buffer, min(REPLAY_COUNT, len(buffer)))
+                else:
+                    # Sequential weighted sampling without replacement; same eligible buffer.
+                    chosen, used = [], set()
+                    while len(chosen) < min(REPLAY_COUNT, len(buffer)):
+                        idx = rng.choices(range(len(buffer)), cum_weights=weights, k=1)[0]
+                        if idx not in used:
+                            chosen.append(buffer[idx]); used.add(idx)
+                    rp = chosen
                 current_replay_count = len(rp)
                 outs = X.respond(m, rp, store)
                 ans = [o if (len(o) == 3 and o[-1] == EOS) else [ord("0"), ord("0"), EOS] for o in outs]
@@ -177,12 +207,15 @@ def life(arm, seed):
                     saved = interleaved_prompts[prompt[0]]
                     key = tuple(prompt)
                     if key not in saved:
-                        if len(saved) >= 1024:
+                        if len(saved) >= BUFFER_CAP:
                             del saved[next(iter(saved))]
                         saved[key] = prompt
                 buffer = [p for saved in interleaved_prompts.values() for p in saved.values()]
         if arm == "C" and name != "compose" and SCHEDULE == "blocked":
-            buffer += [p for p, _ in rng.sample(items, min(1024, len(items)))]
+            additions = [p for p, _ in rng.sample(items, min(BUFFER_CAP, len(items)))]
+            buffer += additions
+            buffer_ages += [si] * len(additions)
+        checkpoint(si)
         final = si == len(schedule)
         stages.append(dict(stage=si, task=name, loss=sum(losses[-512:]) / 512, cpu=time.process_time() - t0, scores=evaluate(final)))
         sc = stages[-1]["scores"]
