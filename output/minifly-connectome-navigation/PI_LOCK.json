@@ -1,0 +1,281 @@
+{
+  "scope": "Three-cycle engineering exercise, frozen native compass for both PI wirings",
+  "sources": [
+    "https://www.nature.com/articles/s41586-021-04067-0",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC10759448/"
+  ],
+  "files": {
+    "EXTRACT.npz": "87c072d49853ed41705f753772aa7be556473b5b864ed2257fe22eb27990c86c",
+    "COMPARTMENT_MAP.json": "4f9b072c10d07780edbe4da223f54d7424ec82cd296550a2bd2b5d622a0edc35",
+    "RESOLVED_BOUNDARY.json": "861342bbf3e243dcd0ea1932b2aabe8687f0f041928952ffc4f44ffe08b037df",
+    "SYNAPSE_COMPARTMENTS.json": "e7cb043dd0b1dc43589593d0c489ced3559911a4415adb3788bbfb2c1f21a68a",
+    "qualify_dynamics.py": "6f0bc98eee2b17ed685e146c98e033138ff18c2b6e6c5df62f6d9829577eed96",
+    "qualify_interfaces.py": "4828a5c6346d7d1185b067197fd290064f9b9429ed249ba98454ae679ece5f8c",
+    "qualify.py": "51b2a57eff34889a975e505b7275d866fc02e9dfef4b374c6fcf1f5927f43a8e",
+    "DYNAMICS_QUALIFICATION.json": "19d081dbcd53cfad49e28498f211389662abb12929732dca8ed08aa2bc0c1ec1",
+    "fit_gains.py": "a19535d7ef9911e7414da251db0a4663e372438cf3361a2e193a6fe3df8921bc",
+    "fit_gains_followup.py": "9239c49ae6733cda8039202802ffbc0acd5bcb5a84f5bba78b9638ba19229ad1",
+    "FIT_OFFICIAL_LOCK.json": "328f0e51b144da434c0dffede92366c6ec714527c2ed2456297f3acaa6ba5650",
+    "FIT_OFFICIAL_RESULTS.json": "f1d4b1d61d6ca76399d93b5a8a6654e6c9b5c3b58d20e0370de532b27090ea4c",
+    "path_integration.py": "a7d68f598405c29b1dee3b4f48141da31b19e93e00f1bfea2158e49da51d26a2"
+  },
+  "frozen_compass": {
+    "order": [
+      "EPG->EPG",
+      "EPG->PEN",
+      "PEN->EPG",
+      "EPG->D7",
+      "D7->EPG",
+      "EPG->PFL",
+      "D7->PFL",
+      "FC2->PFL",
+      "rest_update",
+      "active_update",
+      "yaw_input",
+      "landmark_amplitude",
+      "goal_phase_offset_rad",
+      "pfl3_threshold",
+      "motor_readout"
+    ],
+    "native_by_seed": {
+      "197": [
+        1.0341324338776965,
+        1.385409132676978,
+        1.408340266916526,
+        1.1120510095236327,
+        0.5715856192346129,
+        0.2516010184704457,
+        1.7535975935722092,
+        0.3665034866692066,
+        0.013636865451460742,
+        0.302012673713664,
+        6.402289150572834,
+        0.9954820672805924,
+        -0.037257073221603765,
+        -0.10182820476915821,
+        0.35658002398658606
+      ],
+      "281": [
+        1.0367553228182358,
+        1.4567637786235963,
+        1.3489646336294003,
+        1.3427403715259385,
+        0.4795989812121408,
+        0.3051040064876325,
+        1.765633772701031,
+        0.3686863176690355,
+        0.013419331022637534,
+        0.3089390019081395,
+        6.24654515181854,
+        0.9948418380202741,
+        -0.03714960648531074,
+        -0.10278399128333882,
+        0.3515853222167899
+      ],
+      "389": [
+        1.0953537989633508,
+        1.3250361730258413,
+        1.4020784036533753,
+        1.0608382983506037,
+        0.5967948325727978,
+        0.26339637851330955,
+        1.9210552112269534,
+        0.3647468906486616,
+        0.014361984063016895,
+        0.3143340146093917,
+        6.4515764839038905,
+        0.9927225923577099,
+        -0.0381898146765427,
+        -0.10040839920230904,
+        0.36066931840201144
+      ]
+    },
+    "official_panel_hashes": {
+      "compass": "c6807c3efe8641bcf560e76da6a83b9e34b71051dfdfaa8e52013071384e2e90",
+      "steering": "479d80cdf14ecc3a45d009c0991a3bae4f5df2e61fa7679bafb8e61ca3316dd6",
+      "combined": "e346fa1f1ef94b972f8b6d1e2313ece43da527c5d6159ea4152a667c612d8aca"
+    }
+  },
+  "parameters": [
+    {
+      "name": "EPG->PFNd",
+      "count": 1,
+      "min": 0.0,
+      "max": 3.0,
+      "center": 1.0,
+      "hand_set": 1.0
+    },
+    {
+      "name": "EPG->PFNv",
+      "count": 1,
+      "min": 0.0,
+      "max": 3.0,
+      "center": 1.0,
+      "hand_set": 1.0
+    },
+    {
+      "name": "PFNd->hDeltaB",
+      "count": 1,
+      "min": 0.0,
+      "max": 3.0,
+      "center": 1.0,
+      "hand_set": 1.0
+    },
+    {
+      "name": "PFNv->hDeltaB",
+      "count": 1,
+      "min": 0.0,
+      "max": 3.0,
+      "center": 1.0,
+      "hand_set": 1.0
+    },
+    {
+      "name": "hDeltaB->hDeltaB",
+      "count": 1,
+      "min": 0.0,
+      "max": 0.025,
+      "center": 0.002,
+      "hand_set": 0.0
+    },
+    {
+      "name": "hDeltaB->PFR",
+      "count": 1,
+      "min": 0.0,
+      "max": 3.0,
+      "center": 1.0,
+      "hand_set": 1.0
+    },
+    {
+      "name": "forward_velocity_input",
+      "count": 1,
+      "min": 0.1,
+      "max": 3.0,
+      "center": 1.0,
+      "hand_set": 1.0
+    },
+    {
+      "name": "hDeltaB_retention",
+      "count": 1,
+      "min": 0.96,
+      "max": 1.0,
+      "center": 0.998,
+      "hand_set": 1.0
+    },
+    {
+      "name": "displacement_scale",
+      "count": 1,
+      "min": 1.0,
+      "max": 180.0,
+      "center": 35.0,
+      "hand_set": 35.0
+    },
+    {
+      "name": "displacement_phase_rad",
+      "count": 1,
+      "min": -3.141592653589793,
+      "max": 3.141592653589793,
+      "center": 0.0,
+      "hand_set": 0.0
+    }
+  ],
+  "free_role_pair_gain_count": 6,
+  "free_adapter_and_dynamics_count": 4,
+  "free_parameter_count": 10,
+  "graph": {
+    "nodes": {
+      "PFNd": 40,
+      "PFNv": 21,
+      "hDeltaB": 18,
+      "PFR": 30,
+      "EPG": 47
+    },
+    "signed_edges": {
+      "EPG->PFNd": 129,
+      "EPG->PFNv": 67,
+      "PFNd->hDeltaB": 390,
+      "PFNv->hDeltaB": 115,
+      "hDeltaB->hDeltaB": 138,
+      "hDeltaB->PFR": 178
+    },
+    "signed_edge_count": 1017,
+    "rewire_swaps": 710,
+    "changed_edges": 662,
+    "rewired_target_sha256": "1aa9bf97a0fbcb1db38bd486043ab294f26f12a60a13cf9184c1c5c1a5762fb1",
+    "native_target_sha256": "41d42c633d3f0c11450fac548f3620b47212f0c9475701d7e2acb8c70185be4e",
+    "signed_degree_preserved": true
+  },
+  "dynamics": {
+    "compass": "One initial landmark, original frozen native EPG state update with scripted yaw; no PI feedback",
+    "PFN": "EPG signed projections with forward-component amplitude. PFNd receives positive and PFNv negative tonic-subtracted modulation using the original +/-45 and +/-135 degree body axes; no sideslip.",
+    "hDeltaB": "Signed deviation state. Next = retention * current + mix * (current @ normalized recurrence - current) + dt * incoming PFN velocity drive. Reset to zero at episode start.",
+    "PFR": "Only the hDeltaB to PFR signed projection. Use the previous FB geometry first harmonic, a common trainable phase offset and a positive scale. No cumulative state in the decoder.",
+    "scope_limit": "The temporal state update is an engineering assumption. The published pathway demonstrates instantaneous travel direction and motivates the cell types."
+  },
+  "panels": {
+    "hashes": {
+      "train": "006f7e0a2ce2d7a8eecfdf6e384724f0ec9a2ee33ab9fbd536a704e1fc56cdd2",
+      "main": "a2cab7111042b720f259f4d8418aef05ee794f931b42907e2a8c7d8a33da5022",
+      "returning": "0eaf4baf5091f69095a519fd474091467ca4495bd4ebcd3a2e5b6c678c3ac16b"
+    },
+    "generation": "PCG64, independently sample one heading per equal-width sector; reuse across yaw conditions within each draw. Score yaw before translation in every step.",
+    "main": "96 episodes. Six legacy dark-turn schedules at steps 41-80; zero yaw elsewhere. Independent Uniform(.5,1.5) forward speed in body lengths/s in each 80-step half.",
+    "returning": "48 episodes. Outbound 50 steps, +/-pi over 60 steps in place, 50 steps back at same Uniform(.5,1.5) speed. True final displacement is zero up to roundoff.",
+    "training": "288 main episodes plus 96 returns with independent headings and speeds from the same recipes.",
+    "note": "Prior navigation probes do not specify a translational speed distribution. The declared uniform speed law is shared by training and both evaluation panels.",
+    "train_seeds": [
+      40129,
+      40130
+    ],
+    "main_seed": 202611071,
+    "return_seed": 202611072,
+    "dt_seconds": 0.05,
+    "checkpoints": [
+      40,
+      80,
+      120,
+      160
+    ],
+    "episodes": {
+      "train": 384,
+      "main": 96,
+      "returning": 48
+    }
+  },
+  "training": {
+    "optimizer": "Adam",
+    "updates": 2048,
+    "batch": 48,
+    "initial_lr": 0.025,
+    "lr_halving_interval": 512,
+    "curve_interval": 128,
+    "permutation_seed": 41053,
+    "seeds": [
+      197,
+      281,
+      389
+    ],
+    "gradient_clip": 5.0,
+    "init": "Common centers in logit coordinates plus iid N(0,.12) using the paired fitting seed.",
+    "loss": "Mean squared vector norm error at 40/80/120/160 plus mean squared wrapped compass error across all 160 steps. Frozen compass term is cached and parameter-independent.",
+    "evaluation": "Final iterate only; both panels score after all six fits are saved."
+  },
+  "gates": {
+    "main_native_angle_count_min": 72,
+    "within_angle_deg": 20.0,
+    "magnitude_ratio_bounds": [
+      0.75,
+      1.25
+    ],
+    "native_return_median_fraction_strictly_below": 0.3,
+    "paired_angle_count_lead_min": 30,
+    "compass_max_regression_deg": 3.0,
+    "joint_count": "Also report count within both angle and magnitude limits and its rewired lead.",
+    "all_seeds_required": true
+  },
+  "contributions": "Report near-zero gains below .01 and RMS of each PFN branch drive at the sealed main episodes, plus removal of hDeltaB recurrence and each PFN branch using the same locked data as a descriptive dependence check. No refitting or gate changes.",
+  "cycles": [
+    "Wire/sign audit, zero-velocity and exact-return geometry checks, frozen compass replay",
+    "Blocked recurrence parity, finite-difference gradients and deterministic Adam replay on training data",
+    "Six matched locked fits, then sealed evaluation and fixed-gain comparison"
+  ]
+}
