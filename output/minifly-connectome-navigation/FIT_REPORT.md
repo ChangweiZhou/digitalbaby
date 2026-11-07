@@ -2,7 +2,7 @@
 
 ## Outcome
 
-**Qualification failed.** Native-fitted reached 55–56/96 goals versus 13–15/96 for equally fitted rewires. The native four-second compass medians spanned 10.12°–11.25°. The native lead was 41–42 goals across matched seeds. All three missed the 72-goal threshold and regressed on dark turns.
+The fitted model covers EPG, PEN, Δ7, PFL3 and FC2 projections, with eight role-pair gains and seven adapter and dynamics scalars for 15 free parameters. The other 98 of 106 extracted role pairs are absent from the loop. **The fit narrowed the gap to the native clamped-heading reference from 33 goals to 18–19 across paired seeds.** The follow-up brief summarized the latter as 17–19. Native fitted clamped-heading steering reached 73–75/96. Native combined success rose from 42/96 to 55–56/96 and four-second compass error fell from 21.1° to 10.12°–11.25°. The fitted rewires reached 13–15/96, up from 11/96 hand-set, leaving a 41–42-goal native lead under matched fitting. All three missed the original 72-goal threshold and regressed on dark turns. The table below preserves those historical gate scores. The follow-up supersedes that verdict with the gap to the clamped reference.
 
 ## Five locked probes
 
@@ -41,7 +41,7 @@ Rewired-fitted reached both native combined thresholds on zero seeds.
 
 Adam differentiated through the full 80-step combined loop. Each fit used the same 384 training episodes and 128 updates of 48 episodes. Each paired seed used identical initial gains and minibatch order across the two wirings. The loss combined the mean squared wrapped compass error throughout the episode and the mean squared wrapped terminal goal error. The initial landmark cue was the only compass cue.
 
-Only eight of the 106 extracted role pairs contribute to this historical simulator. The remaining 98 gains are recorded at unity. Seven adapter or dynamics scalars bring the fitted count to 15. Within each projection the historical signed weights and normalization were preserved, including the fixed Delta7 inhibitory assignment in the prior simulator. Steering uses the same 64-phase normalization with the original statistics recomputed for the continuous path weights. Several gains appear as products or can partly trade off through normalization, so the individual numbers cannot establish unique biological strengths.
+Eight of the 106 extracted role pairs contribute to this historical simulator. The other 98 are absent from its dynamics. Within each projection the historical signed weights and normalization were preserved, including the fixed Delta7 inhibitory assignment in the prior simulator. Steering uses the same 64-phase normalization with the original statistics recomputed for the continuous path weights. Several gains appear as products or can partly trade off through normalization, so the individual numbers cannot establish unique biological strengths.
 
 | Seed | Arm | Training heading MSE start → end | Training terminal-goal MSE start → end |
 | --- | --- | ---: | ---: |
