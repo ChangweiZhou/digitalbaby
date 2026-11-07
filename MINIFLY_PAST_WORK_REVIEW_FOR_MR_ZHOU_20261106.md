@@ -394,3 +394,17 @@ This is the premise test from the discussion section, passed for the compass and
 ### 9.10 Eligibility traces on the GRU: a negative with a reason (6 runs)
 
 The time-local version of the sign rule, with a per-synapse eligibility trace decayed by the unit's own update gate, scores 2–14% held on the rung-3 task from a warm gated birth, the same as the within-step rule and far below the 68–86% of sign feedback with credit through time; two of three seeds drift upward in loss over life. Qualification showed the trace is implemented correctly (exact equality to the within-step rule at zero decay, higher alignment to the through-time gradient with traces on). The reason is structural: the trace carries credit along each unit's own gate only, and on a GRU the credit that teaches holding runs through other units, since the state is remixed across units every step. The next step is a cell with a diagonal memory, the LSTM cell state or a gated slot, where self-path credit is the whole story and the forget gate is the trace decay by construction. Details in [MOD97_LOCAL_RULE_20261106/EXP3_REPORT.md](MOD97_LOCAL_RULE_20261106/EXP3_REPORT.md).
+
+### 9.11 E4 retention and E5 composition (42 runs)
+
+Predictions on file before launch; full report in [MOD97_LOCAL_RULE_20261106/E45_REPORT.md](MOD97_LOCAL_RULE_20261106/E45_REPORT.md). Learner: the window network, developed by backprop, learning by the sign-symmetric local rule in life.
+
+**Retention (P3) is established.** Four operations learned in sequence by the local rule: the shared path alone forgets each one completely at the next stage (96 → 0%), with weight decay low or high, and an episodic store beside it changes nothing on its own. With self-generated replay from that store, half of every batch being earlier prompts answered by the model itself, all four are held at 77–93% on never-taught inputs after the fourth, within 5–15 points of a backprop ceiling that sees every task's ground truth jointly; replay with random answers retains nothing. The fast memory teaches the slow path, and that is what "persistent" costs.
+
+| Sealed held after four stages, 3 seeds | T1 add97 | T2 sub97 | T3 add73 | T4 sub73 |
+|---|---|---|---|---|
+| Shared path alone, local rule | 0 · 0 · 0 | 3 · 4 · 1 | 0 · 0 · 0 | 92 · 95 · 92 |
+| + store + self-generated replay, local rule | 90 · 88 · 78 | 90 · 93 · 82 | 86 · 84 · 77 | 91 · 93 · 86 |
+| Backprop on joint ground truth | 98 · 98 · 95 | 97 · 99 · 97 | 93 · 95 · 94 | 94 · 94 · 95 |
+
+**Composition (P4) is half established.** Direct composition of two taught operations does not transfer across operation types under any rule: backprop fits the taught types to 95% and answers 1% of untaught combinations, the 2018 systematic-generalization failure reproduced. Scratchpad composition, where the learner emits the intermediate result as bytes and continues, transfers partly: 41–58% of untaught combinations exact with the local rule, intermediate right in 60–71%, shuffled control at 1%, and better than backprop's 4–36%. The gap to the predicted 70% has a measured cause: teaching compositions erased the single operations being composed (98% → 0–7%), the same forgetting E4 fixed. The next run, E5-R, teaches compositions with replay of the single operations; prediction cross-type ≥70% with single operations retained. That mechanism is E6's.
