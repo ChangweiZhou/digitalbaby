@@ -174,3 +174,36 @@ if __name__ == "__main__":
     md = e6()
     (OUT / "SUMMARY_E6.md").write_text(md)
     print(md)
+
+
+def e7():
+    ARMS = ("SCR", "SCRc", "SCRcsh", "SCRbp", "SCRcbp")
+    LABEL = {"SCR": "SCR plain scratchpad, sign rule", "SCRc": "SCRc canonical, sign rule", "SCRcsh": "SCRc-sh canonical, shuffled finals",
+             "SCRbp": "SCR-bp plain, backprop", "SCRcbp": "SCRc-bp canonical, backprop"}
+    HELD = ("+-", "-+", "><", "<>")
+    lines = ["\n## E7 de-confounded composition, four operators: final-answer exact (%) at the end of life, three seeds\n",
+             "| Arm | within (taught pairs, new triples) | +− | −+ | >< | <> | held mean | single ops after life (mean of 4) |", "|---|---|---|---|---|---|---|---|"]
+    table = {}
+    for arm in ARMS:
+        cols = {k: [] for k in ("within",) + HELD}; single, hmean = [], []
+        for s in SEEDS:
+            p = OUT / f"e7_life_{arm}_{s}.json"
+            if not p.exists():
+                continue
+            d = json.loads(p.read_text()); last = d["curve"][-1]
+            for k in cols:
+                cols[k].append(pct(last["compose"][k], "final"))
+            hmean.append(sum(pct(last["compose"][k], "final") for k in HELD) / 4); table[(arm, s)] = hmean[-1]
+            single.append(sum(pct(v) for v in last["single"].values()) / 4)
+        if cols["within"]:
+            j = lambda v: " · ".join(f"{x:.0f}" for x in v)
+            lines.append(f"| {LABEL[arm]} | {j(cols['within'])} | " + " | ".join(j(cols[k]) for k in HELD) + f" | {j(hmean)} | {j(single)} |")
+    g = lambda arm: [round(table[(arm, s)]) for s in SEEDS if (arm, s) in table]
+    lines += ["\n### E7 predictions (held-pair mean)\n", f"- P7.1 SCRc ≥70: {g('SCRc')}", f"- P7.2 SCR ≥40: {g('SCR')}", f"- P7.3 SCRc-sh <10: {g('SCRcsh')}", f"- P7.4 SCRc-bp ≥85: {g('SCRcbp')}; SCR-bp {g('SCRbp')}"]
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    md = e7()
+    (OUT / "SUMMARY_E7.md").write_text(md)
+    print(md)

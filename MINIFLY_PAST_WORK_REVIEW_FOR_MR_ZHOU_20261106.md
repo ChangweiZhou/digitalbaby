@@ -24,7 +24,7 @@ Mr. Zhou's goal is a learner that keeps learning through its life and can reason
 | P2 | **Working state.** Holds intermediate information to compute multi-step answers | Correct answers when the needed information is no longer in the input window, and on longer gaps than any seen in training |
 | P3 | **Retention.** Keeps earlier rules while acquiring later ones | Accuracy on the first tasks after the last tasks have been learned, in one life, without replaying the first tasks' data |
 | P4 | **Composition.** Answers untaught combinations of learned rules | Exact answers on two-step problems built from taught one-step rules, where the specific combination was never taught |
-| P5 | **Locality.** All of the above during life with local rules | Every life update uses only a synapse's own activity, the sign of its own weight, neighbouring signals and a broadcast error; development before life may use any optimizer |
+| P5 | **Locality.** All of the above during life with local rules | Every life update uses only a synapse's own activity, the sign of its own weight, neighbouring signals and a broadcast error; development before life may use any optimizer. The learner may edit its own local rules during life provided the edit is local, and, clarified 7 November, "local" does not mean a fixed small neighbourhood: which neurons a synapse takes its signals from can itself be adjusted dynamically, so learned feedback pathways and dynamically weighted traces are inside P5 |
 
 This is what "persistent learning that can reason" means at a scale we can audit completely. Nothing fly-sized reaches reasoning in the general sense, and nothing here claims to.
 
@@ -79,6 +79,19 @@ The remaining properties are P3 and P4, and then all five in one life. Three exp
 ### 6. Stop rules and what counts as done
 
 Every experiment keeps the discipline that produced the last two days: predictions before launch, a backprop ceiling and a shuffled control in every table, sealed panels scored at every checkpoint, receipts on the consolidated branch, one harness, no new branches, no catalogues. A negative result ends its line and is written up with its reason; it does not spawn a version. E6 passing on three seeds, with the shortcut audit and the shuffled control, is "done" for this phase. What follows done is scaling and the question of interfaces between the arena and the symbolic world, which are not decisions for this month.
+
+
+### 1A.7 Next phase, agreed 7 November: composition, de-confounded first
+
+The four composition failures (direct, scratchpad, canonical scratchpad, routed canonical) share a design confound: the two taught operator pairs, (+,+) and (−,−), never let the second operator vary while the first stayed fixed, so the network never saw the factor it was asked to generalize over. The conclusion "composition is not achieved" was too strong; what is established is that a two-factor function is learned as one pattern when its factors are confounded, under either rule. Mr. Zhou has relaxed the no-attention rule as one modest change. The agreed order, each step deciding one thing:
+
+1. **E7, de-confounded composition.** Four single-step operations (addition, subtraction, max, min mod 97) in development; life teaches 12 of the 16 ordered operator pairs in scratchpad form so that every operator appears in both positions, and holds out the four cross pairs. Decides whether P4 was a confound. One afternoon.
+2. **If needed: content attention with a copy path.** The rewrite step becomes copying of slots, which generalizes by construction; the operator-to-code legend can be given in context. Decides whether binding needs a mechanism.
+3. **The ring with innate operations.** Numbers as bump positions, addition and subtraction as innate shifts, learning confined to the byte-to-displacement and operator-to-direction interfaces, as the fly's central complex composes vectors. Decides whether composition should be innate here. Unites the symbolic and connectome lines.
+4. **Meta-learning for compositionality** as the development phase (fresh symbols with meanings given in context, so the network learns to bind at run time), the largest change, saved for last.
+5. **The persistent-life demonstration**, independent of the above: one life, eight operations learned in sequence with replay from the store, every earlier one scored after every later one.
+
+Codex's line continues: the path-integration return-leg diagnosis, then arena learning with the eligibility trace.
 
 ## 2. What was built, in order
 
@@ -440,3 +453,32 @@ The learner rewrites each step as a taught single-operation prompt and solves it
 ### 9.15 E6-route: learned-key routing does not give composition either (21 runs)
 
 A four-head positional-key attention layer over the 18-byte window, feeding the output head only the attended bytes (plus, in one variant, a 16-d summary), was developed on single operations and taught the canonical scratchpad. With backprop it learns the taught types to 82–94% and answers 0–4% of untaught operator combinations, writing the correct second-step prompt for 0–5%; the sign rule is unstable on this architecture (within-type 2–84%). Composition across operation types (P4) is therefore not achieved in four forms, direct, scratchpad, canonical scratchpad and routed canonical scratchpad, under either rule. By the rule on file the composition line stops here. What is missing is a mechanism that makes "which operator" a variable independent of its neighbours; every architecture tried binds the operator to its role as part of a whole-window pattern. That is the known boundary of the systematic-generalization literature, now reproduced under local plasticity with full audits. The program's established results stand: rule acquisition, working state, retention, all with local rules. Details in [MOD97_LOCAL_RULE_20261106/E45_REPORT.md](MOD97_LOCAL_RULE_20261106/E45_REPORT.md).
+
+### 9.16 E7: with the factors de-confounded, composition works under backprop (18 runs)
+
+Four single-step operations (add, sub, max, min mod 97) in development; life teaches twelve of the sixteen ordered operator pairs so every operator appears in both positions, and holds out the four cross pairs. With backprop, the plain scratchpad answers 84–97% of two-step problems whose operator pair was never taught, in every seed (held-pair mean 90–93%), against a shuffled control at 1–2%. The four earlier composition failures were the confound in the E5 design, and the principle is on record: a factor to be composed over must vary independently in training. The canonical rewrite is the weaker form here (34–60% with backprop, inconsistent across pairs); emitting the intermediate and continuing is enough. Under the sign rule the result is partial and under-trained (37–38% held, 39–42% within-type at 8,192 updates on a six-times-larger teaching set); by the rule on file it is being tested at width 512 and at double dose. P4 is achieved under backprop in the de-confounded regime; whether it is achieved under the local rule is the open question of the next run. Details in [MOD97_LOCAL_RULE_20261106/E45_REPORT.md](MOD97_LOCAL_RULE_20261106/E45_REPORT.md).
+
+### 9.17 Codex's second sweep, the "mechanism gaps" (commit 74ca554, 108 jobs): what it adds
+
+Twelve blocks aimed at the gaps the ladder left open, three arms and three seeds each, with a scorecard this time. Readings, with Codex's own caveats where they apply:
+
+| Block | Result (three seeds) | What it adds |
+|---|---|---|
+| Diagonal working state with an online eligibility trace | trace 100 · 100 · 100 = BPTT; no trace 56 · 76 · 93, on a delayed cue with the gap doubled | **The shelf check from the plan, done.** A time-local rule trains a diagonal memory where it failed on the GRU; P2 in life under a local rule is now supported on a single-cue task |
+| Grid transport of learned displacements | structured geometry 100%; shuffled geometry 50–54%; reset 0 | Composition of taught moves to unseen pairs is free on an innate geometry. Direct support for step 3 of the plan, composition built into a ring rather than learned |
+| Separate write and read gates | 87–98% vs 57–82% tied, 20–58% always open | The PBWM gating structure helps hold a cue across distractors; capacity is confounded, as Codex notes |
+| Multi-action delayed credit | traces 100%; immediate 1–25%; shifted 0–20% | Strengthens the earlier trace positive for delayed reward, now over four-action sequences; the arena rule |
+| Fan-shaped-body goal writes (engineered proxy) | aligned 100%; permuted 0; frozen 4–6 | Context-addressed local writes work in a proxy; the real plasticity mask is still unqualified |
+| Operator binding with attention, register or static readers | 5–10% on held operator pairs; the executor is 100% given a correct prompt; every rewrite wrong | Replicates E5-C and E6-route: attention readers do not fix the canonical rewrite. Consistent with E7, where the plain scratchpad composes and the rewrite is the weaker form |
+| Mushroom-body reversal | DAN addressing 71–79% vs permuted 47–55%; APL on = off | Compartment addressing matters in the proxy, APL gain does not |
+| Sparse fast/slow replay | 57–62% vs 51–55% without replay | Same direction as E4, smaller because the fixture forgets little |
+| Adaptive versus fixed feedback | 96–97% vs 97% | On a small proxy, learned feedback adds nothing over fixed; a caution for the learned-feedback arm, which should be judged on the composition task where the sign rule actually trails backprop |
+| Cerebellar timing | localized features RMSE 0.14–0.20 vs 0.73–0.84 | Synthetic; supports the timing role of a sparse expansion |
+| Sleep order and scaling | within 1–3 points | No effect |
+| Thalamic feedback gate | 0 in every arm | Unqualified again |
+
+Three of these change what the ladder does next. The diagonal-trace result closes the rung-3 loose end in the predicted direction and lets E6 use a diagonal cell with a time-local rule. The grid result is the first evidence inside the project that composition can be innate, which raises step 3 (the ring with innate operations) from a hypothesis to a tested direction. The operator-binding result, together with E7, settles the form of the scratchpad: emit the intermediate and continue; do not rewrite.
+
+### 9.18 E7-b: the local rule composes too, and is not at a ceiling (9 runs)
+
+Plain scratchpad with the sign rule on the de-confounded twelve-pair set: width 512 raises the held-pair mean from 37–38% to 52–68% (max/min pairs 76–89%, add/sub pairs 26–49%), double dose at width 256 to 42–50%, and every curve is still rising at its last checkpoint with within-type accuracy at 60–70% against backprop's 92–94%. Neither pre-stated threshold held in every seed, so by the rule on file the program proceeds to the persistent-life demonstration with compositions reported rather than gated. P4 stands as achieved under backprop and partially achieved under the local rule, with the learned-feedback arm as the designated test of the remaining gap. Details in [MOD97_LOCAL_RULE_20261106/E45_REPORT.md](MOD97_LOCAL_RULE_20261106/E45_REPORT.md).

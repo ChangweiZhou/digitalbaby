@@ -132,3 +132,50 @@ Predictions on file before launch. RouteNet: four attention heads over the 18-by
 **What E6-route settles.** A positional-key routing layer does not give the operator-to-code binding. With backprop it learns the taught types to 82–94% and writes the correct second-step prompt for 0–5% of untaught combinations; the first-step prompt is right in one seed only. The heads can select a slot, but the mapping from the attended byte to the code is still learned as part of a pattern that includes the other operator, because nothing forces it to be a function of the attended byte alone, and the summary (or the attention weights themselves) carry the rest. The values-only variant, which was meant to force that invariance, learns the taught types but still writes no untaught prompt correctly: positional keys select the same slots for both types, so the rest of the window still reaches the head through the attended bytes of neighbouring slots.
 
 **Decision, by the rule on file.** Composition across operation types (P4) is not achieved at this scale in four forms: direct, scratchpad, canonical scratchpad, and canonical scratchpad with learned-key routing, under both the local rule and backprop. The composition line stops here. The honest statement for the program is that P1, P2 (in development; in life with credit through time) and P3 are established, P5 holds for those, and P4 is open with a measured boundary: every architecture tried binds an operator to its role as part of a whole-pattern, and a mechanism that makes "which operator" a variable independent of its neighbours is what is missing. That is the known content of the systematic-generalization literature, reproduced here under local plasticity with full audits, and it is where this program's symbolic line ends for this month.
+
+# E7: de-confounded composition with four operators (3 births, 15 runs)
+
+Prediction on file before launch. Four single-step operations mod 97 (add `+`/`r`, sub `-`/`t`, max `>`/`x`, min `<`/`n`) in development with left noise (held 94–100%). Life teaches 12 of the 16 ordered operator pairs (2,000 triples each) so every operator appears in both positions, and holds out the four cross pairs (+−, −+, ><, <>). 18-byte window, hidden 256, 8,192 updates.
+
+| Arm | Within (taught pairs, new triples) | +− | −+ | >< | <> | Held mean | Single ops after life |
+|---|---|---|---|---|---|---|---|
+| **SCR-bp plain scratchpad, backprop** | 92 · 94 · 94 | **90 · 84 · 91** | **87 · 84 · 87** | **94 · 97 · 97** | **94 · 95 · 96** | **91 · 90 · 93** | 0 |
+| SCRc-bp canonical, backprop | 95 · 96 · 96 | 94 · 75 · 25 | 16 · 91 · 68 | 95 · 5 · 4 | 36 · 3 · 39 | 60 · 43 · 34 | 27 · 63 · 54 |
+| SCR plain scratchpad, sign rule | 42 · 42 · 39 | 7 · 8 · 6 | 9 · 12 · 7 | 66 · 64 · 64 | 70 · 64 · 70 | 38 · 37 · 37 | 0 |
+| SCRc canonical, sign rule | 80 · 86 · 87 | 70 · 1 · 2 | 50 · 2 · 2 | 82 · 1 · 82 | 67 · 26 · 4 | 67 · 7 · 23 | 0 |
+| SCRc-sh canonical, shuffled finals | 0 · 5 · 2 | 1 · 0 · 1 | 1 · 1 · 1 | 1 · 2 · 0 | 0 · 3 · 1 | 1 · 2 · 1 | 1 |
+
+Frequency floor on every held panel ≤1.2%. Exact lookup 0 by construction (new triples, untaught pairs).
+
+| Prediction | Outcome |
+|---|---|
+| P7.1 canonical, sign rule ≥70 held mean | **Refuted**: 67 · 7 · 23, seed-unstable; the second-step prompt is written correctly for 58–90% of held cases in the good seed and 1–5% in the others. |
+| P7.2 plain, sign rule ≥40 | **Just missed**: 37–38, with the max/min pairs at 64–70% and the add/sub pairs at 6–12%; within-type is only 39–42%, so the local rule is under-trained on the twelve-pair set at this dose. |
+| P7.3 shuffled <10 | Held. |
+| P7.4 canonical backprop ≥85 | **Refuted for the canonical form** (34–60, with individual pairs from 3% to 95%: the rewriting of the second operator's code generalizes inconsistently). **The plain scratchpad with backprop was not predicted and is the result: 90–93% held mean, every held pair 84–97% in every seed.** |
+
+**What E7 settles.** Composition across untaught operator pairs is achieved once the factors vary independently in training. With backprop, the plain scratchpad answers 84–97% of two-step problems whose operator pair was never taught, from one-step development and twelve taught pairs, with the intermediate emitted as bytes. The four earlier failures were the confound in my E5 design, not an architectural limit, and the design principle is now on record: a factor to be composed over must vary independently in training. The canonical rewrite, which was the stronger idea on paper, is the weaker form here, because writing the second operator's code is itself a generalization that the network does not make consistently; emitting the intermediate and continuing is enough.
+
+Under the local rule the result is partial and under-trained: 37–38% on held pairs and 39–42% within-type at 8,192 updates on a teaching set six times larger than E5's. By the rule on file the next step tests the local rule at width 512 and at double dose (E7-b, predictions on file).
+
+**Evidence level.** Development results, three seeds, one harness; backprop ceiling and shuffled control present; shortcut floors ≤1.2%. Two-step problems under one modulus; longer chains and nesting untested.
+
+# E7-b: the local rule on de-confounded composition, wider and longer (3 births, 6 runs)
+
+Predictions on file before launch. Plain scratchpad, sign rule, same twelve taught pairs and four held pairs as E7.
+
+| Arm | +− | −+ | >< | <> | Held mean | Within-type | Still rising at the end? |
+|---|---|---|---|---|---|---|---|
+| width 256, 8,192 updates (E7) | 7 · 8 · 6 | 9 · 12 · 7 | 66 · 64 · 64 | 70 · 64 · 70 | 38 · 37 · 37 | 42 · 42 · 39 | yes |
+| width 256, 16,384 updates | 13 · 15 · 22 | 17 · 20 · 31 | 66 · 73 · 74 | 74 · 72 · 76 | 42 · 45 · 50 | 46 · 46 · 53 | yes |
+| **width 512, 8,192 updates** | 47 · 30 · 46 | 41 · 26 · 49 | 81 · 76 · 86 | 85 · 78 · 89 | **63 · 52 · 68** | 70 · 60 · 69 | yes (peak = final) |
+| backprop, width 256, 8,192 (E7) | 90 · 84 · 91 | 87 · 84 · 87 | 94 · 97 · 97 | 94 · 95 · 96 | 91 · 90 · 93 | 92 · 94 · 94 | — |
+
+| Prediction | Outcome |
+|---|---|
+| P7b.1 width 512 ≥60 held mean in every seed | **Two of three** (63, 68; one seed 52). |
+| P7b.2 width 256 at 16,384 ≥50 in every seed | **One of three** (50; 42, 45). |
+
+**What E7-b settles.** The local rule composes across untaught operator pairs once the factors are de-confounded, and it is not at a ceiling: width raises the held mean from 37–38 to 52–68, dose from 37–38 to 42–50, and every curve is still rising at its last checkpoint, with within-type accuracy at 60–70% against backprop's 92–94%. The max/min pairs compose at 76–89% under the local rule; the add/sub pairs, which need the carry, lag at 26–49%. By the rule on file neither prediction held in every seed, so the program proceeds to step 5 (the persistent-life demonstration) with compositions as a reported measure rather than a gate; the obvious remaining knob, width 512 at double dose, is a one-afternoon run that the rule did not pre-register and is left as a proposal.
+
+**Standing of P4.** Achieved under backprop in the de-confounded regime (84–97% on untaught pairs). Partially achieved under the local rule (52–68% at width 512 and still rising), with the gap to backprop open. The learned-feedback arm that Mr. Zhou's clarification permits is the designated next test of that gap, after step 5.

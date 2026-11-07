@@ -25,8 +25,8 @@ T.set_num_threads(1)
 EOS, BOS = M.EOS, M.BOS
 SEEDS = M.SEEDS
 W = int(os.environ.get("EXP45_WINDOW", "10"))   # 10 for E4/E5/E5-R; 18 for the E5-C rerun (see E45_PREDICTIONS.md)
-H = 256
-WTAG = "" if W == 10 else f"_w{W}"
+H = int(os.environ.get("EXP45_HIDDEN", "256"))
+WTAG = ("" if W == 10 else f"_w{W}") + ("" if H == 256 else f"_h{H}")
 BATCH, BLOCK = 64, 512
 OUT = Path(__file__).resolve().parent / "exp45"
 DEV_UPDATES = 24576

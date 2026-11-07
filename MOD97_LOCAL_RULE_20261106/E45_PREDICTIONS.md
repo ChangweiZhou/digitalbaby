@@ -82,3 +82,25 @@ Predictions:
 - P6.3 attv cross-type ≥ att cross-type (the values-only head is more invariant).
 - P6.4 attsh <10%; within-type ≥85% in att and attv.
 Decision: P6.1 and P6.2 both held → P4 established with routing; E6 resumes with routing + canonical scratchpad + E4 replay. attbp fails → routing of this form is insufficient and the composition line stops here.
+
+## E7, de-confounded composition with four operators (added 7 November, before launch)
+
+Operations mod 97 with codes and symbols: add `r` `+`, sub `t` `-`, max `x` `>`, min `n` `<`. Development: all four single-step operations, half the pairs each, with 0–3 random leading letters, 18-byte window, hidden 256, backprop. Life: two-step problems `c a o1 b o2 c =`; the 16 ordered operator pairs are split into 12 taught (2,000 triples each) and 4 held: (+,−), (−,+), (>,<), (<,>). Every operator appears in both positions among the taught pairs. Held panels: 600 new triples per held pair; a within-type panel of 600 new triples pooled over four taught pairs. Arms: SCR plain scratchpad and SCRc canonical scratchpad with the sign rule; SCRc-sh shuffled finals; SCR-bp and SCRc-bp backprop ceilings. 8,192 updates, three seeds, shortcut ladder as before.
+
+Predictions:
+- P7.1 SCRc held-pair final-answer exact ≥70% in every seed.
+- P7.2 SCR held-pair ≥40% in every seed.
+- P7.3 SCRc-sh <10%.
+- P7.4 SCRc-bp held-pair ≥85%.
+Decision: P7.1 holds → P4 achieved in the de-confounded regime, the four earlier failures are explained by the confound, and step 2 is skipped; the persistent-life demonstration (step 5) then includes compositions. P7.1 fails but P7.4 holds → the local rule is the limit; test it at width 512. Both fail → binding needs a mechanism; step 2.
+
+## E7-b, the local rule at width 512 and at double dose (added 7 November after E7, before launch)
+
+E7 result: backprop plain scratchpad 90–93% held-pair mean (P4 achieved under backprop; the confound explained the earlier failures); sign rule 37–38% plain and 7–67% canonical, with within-type only 39–42% plain, so the local rule is under-trained on the twelve-pair teaching set at 8,192 updates. By the rule on file the local rule is tested at width 512. Two arms, plain scratchpad with the sign rule: (i) width 512, 8,192 updates (new births at 512); (ii) width 256, 16,384 updates. Three seeds each. Backprop at 256 remains the reference.
+
+Predictions:
+- P7b.1 width 512, sign rule, plain: held-pair mean ≥60% in every seed.
+- P7b.2 width 256 at 16,384 updates, sign rule, plain: held-pair mean ≥50% in every seed.
+Decision: either holds → P4 is achieved under the local rule in the de-confounded regime, and step 5 (persistent life) includes compositions. Both fail → the local rule's ceiling on composition is below backprop's at this scale; report it and proceed to step 5 without compositions, leaving steps 2–4 as options.
+
+**Clarification from Mr. Zhou, 7 November, during E7-b.** A local rule does not mean a fixed small neighbourhood of neurons; which neurons a synapse takes its signals from may be adjusted dynamically during life. Consequences for the ladder: (1) learned feedback pathways (feedback weights that adapt during life, as in Kolen–Pollack or weight-mirror rules) are inside P5 and are the natural next arm if the sign rule stays below backprop on composition; (2) credit through time carried by dynamically weighted traces across neurons, rather than each unit's own gate, is inside P5 and is the natural next arm for the working-state rung. Neither is run yet; E7-b (width and dose) completes first.
