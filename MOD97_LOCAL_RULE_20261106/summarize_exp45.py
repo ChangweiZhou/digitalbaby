@@ -207,3 +207,50 @@ if __name__ == "__main__":
     md = e7()
     (OUT / "SUMMARY_E7.md").write_text(md)
     print(md)
+
+
+def e8():
+    LIFE = ["add97", "sub97", "max97", "min97", "add73", "sub73", "max73", "min73"]
+    DEVT = ["add89", "sub89", "max89", "min89"]
+    LABEL = {"C": "C store + self-generated replay, sign rule", "A": "A no replay, sign rule", "D": "D backprop, joint ground truth"}
+    lines = ["\n## E8 persistent life: sealed exact (%) on every operation after every stage, three seeds\n"]
+    table = {}
+    for arm in ("C", "A", "D"):
+        lines += [f"\n### {LABEL[arm]}\n", "| After stage | " + " | ".join(LIFE) + " | dev ops mean | held pairs | within |", "|---|" + "---|" * (len(LIFE) + 3)]
+        for si in range(0, 10):
+            cells = []
+            for n in LIFE:
+                v = []
+                for s in SEEDS:
+                    p = OUT / f"e8_life_{arm}_{s}.json"
+                    if p.exists():
+                        d = json.loads(p.read_text())
+                        if si < len(d["stages"]):
+                            v.append(pct(d["stages"][si]["scores"][n])); table[(arm, s, si, n)] = v[-1]
+                cells.append(" · ".join(f"{x:.0f}" for x in v))
+            dev, held, within = [], [], []
+            for s in SEEDS:
+                p = OUT / f"e8_life_{arm}_{s}.json"
+                if p.exists():
+                    d = json.loads(p.read_text())
+                    if si < len(d["stages"]):
+                        sc = d["stages"][si]["scores"]; dev.append(sum(pct(sc[n]) for n in DEVT) / 4)
+                        if "compose" in sc:
+                            held.append(sum(pct(sc["compose"][k], "final") for k in ("+-", "-+", "><", "<>")) / 4); within.append(pct(sc["compose"]["within"], "final"))
+                            table[(arm, s, "held")] = held[-1]; table[(arm, s, "within")] = within[-1]
+            if any(cells):
+                label = "birth" if si == 0 else (f"{si} ({LIFE[si - 1]})" if si <= 8 else "9 (compose)")
+                j = lambda v: " · ".join(f"{x:.0f}" for x in v)
+                lines.append(f"| {label} | " + " | ".join(cells) + f" | {j(dev)} | {j(held)} | {j(within)} |")
+    g = lambda arm, key: [round(table[(arm, s, key)]) for s in SEEDS if (arm, s, key) in table]
+    lines += ["\n### E8 predictions (after stage 9)\n",
+              f"- P8.1 C all eight ops ≥70: min over ops per seed {[round(min(table.get(('C', s, 9, n), 0) for n in LIFE)) for s in SEEDS if ('C', s, 9, 'add97') in table]}; A first four ops {[[round(table.get(('A', s, 9, n), 0)) for n in LIFE[:4]] for s in SEEDS if ('A', s, 9, 'add97') in table]}",
+              f"- P8.2 C held pairs ≥40: {g('C', 'held')}; within ≥55: {g('C', 'within')}",
+              f"- P8.3 D ops ≥85: min {[round(min(table.get(('D', s, 9, n), 0) for n in LIFE)) for s in SEEDS if ('D', s, 9, 'add97') in table]}; held {g('D', 'held')}"]
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    md = e8()
+    (OUT / "SUMMARY_E8.md").write_text(md)
+    print(md)

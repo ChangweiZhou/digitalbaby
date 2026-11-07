@@ -104,3 +104,14 @@ Predictions:
 Decision: either holds → P4 is achieved under the local rule in the de-confounded regime, and step 5 (persistent life) includes compositions. Both fail → the local rule's ceiling on composition is below backprop's at this scale; report it and proceed to step 5 without compositions, leaving steps 2–4 as options.
 
 **Clarification from Mr. Zhou, 7 November, during E7-b.** A local rule does not mean a fixed small neighbourhood of neurons; which neurons a synapse takes its signals from may be adjusted dynamically during life. Consequences for the ladder: (1) learned feedback pathways (feedback weights that adapt during life, as in Kolen–Pollack or weight-mirror rules) are inside P5 and are the natural next arm if the sign rule stays below backprop on composition; (2) credit through time carried by dynamically weighted traces across neurons, rather than each unit's own gate, is inside P5 and is the natural next arm for the working-state rung. Neither is run yet; E7-b (width and dose) completes first.
+
+## E8, the persistent-life demonstration (step 5; added 7 November, before launch)
+
+One learner, 18-byte window, hidden 512, developed by backprop on add/sub/max/min mod 89 with left noise. Life by the sign-symmetric rule: eight new operations in sequence (add, sub, max, min mod 97, then the same four mod 73; distinct code bytes), 6,144 updates each, 25% of pairs each; then a ninth stage teaching two-step compositions of the mod-97 operations (the twelve taught operator pairs of E7, plain scratchpad, 8,192 updates). Arms: C store + self-generated replay (the demonstration); A no replay; D backprop on joint ground truth (ceiling). Every operation's sealed panel (600 pairs) scored after every stage; held composition pairs and within-type after the last. Three seeds.
+
+Predictions:
+- P8.1 Arm C: after the ninth stage every one of the eight operations is at or above 70% on its sealed panel; arm A has the first four below 10%.
+- P8.2 Arm C: held composition pairs at or above 40% mean, within-type at or above 55% (replay halves the composition batch; E7-b at width 512 without replay reached 52–68%).
+- P8.3 Arm D: all eight operations at or above 85%, held pairs at or above 85%.
+- P8.4 Arm C's development operations (mod 89) are not retained (no replay covers them); reported, not gated.
+Decision: P8.1 holding in all seeds is the persistent-learning demonstration (P1, P3, P5 in one life, P2 via the window); P8.2 adds composition in the same life. Either failing is reported with its stage-by-stage curve.

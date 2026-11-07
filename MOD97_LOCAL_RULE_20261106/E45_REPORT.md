@@ -179,3 +179,25 @@ Predictions on file before launch. Plain scratchpad, sign rule, same twelve taug
 **What E7-b settles.** The local rule composes across untaught operator pairs once the factors are de-confounded, and it is not at a ceiling: width raises the held mean from 37–38 to 52–68, dose from 37–38 to 42–50, and every curve is still rising at its last checkpoint, with within-type accuracy at 60–70% against backprop's 92–94%. The max/min pairs compose at 76–89% under the local rule; the add/sub pairs, which need the carry, lag at 26–49%. By the rule on file neither prediction held in every seed, so the program proceeds to step 5 (the persistent-life demonstration) with compositions as a reported measure rather than a gate; the obvious remaining knob, width 512 at double dose, is a one-afternoon run that the rule did not pre-register and is left as a proposal.
 
 **Standing of P4.** Achieved under backprop in the de-confounded regime (84–97% on untaught pairs). Partially achieved under the local rule (52–68% at width 512 and still rising), with the gap to backprop open. The learned-feedback arm that Mr. Zhou's clarification permits is the designated next test of that gap, after step 5.
+
+# E8: the persistent-life demonstration (3 births, 9 runs)
+
+Predictions on file before launch. One learner (18-byte window, hidden 512) developed by backprop on four operations mod 89; life by the sign-symmetric rule: eight new operations in sequence (add, sub, max, min mod 97, then mod 73), 6,144 updates and 25% of pairs each, then a ninth stage teaching two-step compositions of the mod-97 operations (the twelve taught operator pairs of E7, plain scratchpad, 8,192 updates). Every operation's sealed panel scored after every stage. Arms: C store + self-generated replay; A no replay; D backprop on joint ground truth. Full stage-by-stage tables in `exp45/SUMMARY_E8.md`.
+
+| Sealed exact (%), three seeds | add97 | sub97 | max97 | min97 | add73 | sub73 | max73 | min73 | Held pairs | Within |
+|---|---|---|---|---|---|---|---|---|---|---|
+| **C after the eighth operation** | 86 · 86 · 87 | 85 · 83 · 86 | 97 · 96 · 94 | 96 · 98 · 97 | 80 · 78 · 76 | 83 · 75 · 81 | 96 · 97 · 94 | 98 · 98 · 95 | — | — |
+| **C after the composition stage** | 83 · 81 · 83 | 68 · 65 · 60 | 89 · 93 · 92 | 90 · 92 · 94 | 65 · 49 · 50 | 59 · 48 · 58 | 90 · 90 · 92 | 93 · 91 · 92 | **55 · 52 · 48** | 61 · 58 · 52 |
+| A after the composition stage | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 18 · 26 · 23 | 20 · 30 · 28 |
+| D after the composition stage | 93 · 95 · 94 | 92 · 94 · 94 | 98 · 98 · 96 | 98 · 99 · 99 | 88 · 91 · 88 | 88 · 93 · 88 | 98 · 98 · 96 | 98 · 98 · 97 | 89 · 91 · 91 | 91 · 92 · 93 |
+
+| Prediction | Outcome |
+|---|---|
+| P8.1 C: all eight ≥70 after the ninth stage; A first four <10 | **Held through the eighth stage** (every operation 75–98%, no replay 0). **Missed after the ninth**: the composition stage pulls the four carry-type operations (add and sub, both moduli) to 48–68% while max and min hold at 89–94%. A's first four are 0 at every stage. |
+| P8.2 C: held pairs ≥40, within ≥55 | **Held pairs held** (48–55, against 18–26 without replay and 89–91 for backprop). Within-type 52–61, two of three seeds above 55. |
+| P8.3 D ≥85 everywhere | Held (88–99; held pairs 89–91). |
+| P8.4 development operations lost without replay | As predicted in every arm (23–38% in C and D, 0 in A). |
+
+**What E8 settles.** One learner, one life, local plasticity: eight operations learned in sequence are all held at 75–98% on never-taught inputs after the eighth, where the same learner without replay holds none (0%). That is the persistent-learning demonstration, properties P1, P3 and P5 in one life with the window as working state, and it is the result the project set out to show at toy scale. In the same life, compositions of the learned operations are answered on untaught operator pairs at 48–55%, against 18–26% without replay and 89–91% for the backprop ceiling; P4 is partially present in the same learner. The weakness is specific and measured: the composition stage, which fills half of every batch with two-step problems, costs the carry-type operations 20–35 points while the max/min operations hold. Under the local rule the shared path does not have the slack to absorb 24,000 composition items while rehearsing eight operations at this dose, and the operations that need a carry are the ones that give. The obvious repairs are a longer composition stage with a smaller composition share per batch, or wider capacity, both pre-registrable as a single follow-up; the learned-feedback arm remains the test of the local rule's gap to backprop on composition itself.
+
+**Evidence level.** Development result, three seeds, one harness, no independent confirmation; the store is an exact-key episodic memory whose replayed answers are mostly correct (arm A and E4's random-answer control bound what wrong answers do); two-step compositions under one modulus; shortcut floors at or below 1.2% throughout.
