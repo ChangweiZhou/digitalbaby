@@ -71,3 +71,14 @@ Predictions:
 Decision: if P5C.1 holds in all seeds, P4 is established in canonical-scratchpad form and E6 resumes with that form plus E4's replay. If the rewritten prompts are right (P5C.2) but the finals fail, the leading-byte invariance is the limit; if the rewriting itself fails cross-type, the copy rule does not generalize across operator positions.
 
 **Amendment before the E5-C rerun (same day).** The first E5-C run failed in every arm including the backprop ceiling (0–2% within-type). Teacher-forced accuracy was near 100% at every target position except the third operand of the rewritten second step (8–13%): by the time the learner writes it, the original operand has left the ten-byte window, so the rewrite is impossible by construction, a design error on my part. The rerun uses an 18-byte window in every arm (development and life, plain and canonical), which holds the whole problem plus the step being written. The first run's receipts stay in the folder as `e5c_*` without a tag; the rerun's carry `_w18`. Predictions P5C.1–P5C.4 are unchanged.
+
+## E6-route: learned-key routing on the canonical scratchpad (added 7 November after E5-C, before launch)
+
+RouteNet: four attention heads over the 18-byte window; query from the window, keys = learned slot-position embeddings, value = the slot's byte embedding; output head sees the four attended bytes plus a 16-d window summary ("att") or the attended bytes only ("attv"). All projections go through the sign-feedback path in life. Development with left noise on single operations, as E5-C. Arms: att, attv (sign rule), attsh (att with shuffled finals), attbp, attvbp (backprop). Same canonical scratchpad, same panels.
+
+Predictions:
+- P6.1 attbp cross-type final ≥70% in every seed.
+- P6.2 att cross-type within 20 points of attbp.
+- P6.3 attv cross-type ≥ att cross-type (the values-only head is more invariant).
+- P6.4 attsh <10%; within-type ≥85% in att and attv.
+Decision: P6.1 and P6.2 both held → P4 established with routing; E6 resumes with routing + canonical scratchpad + E4 replay. attbp fails → routing of this form is insufficient and the composition line stops here.

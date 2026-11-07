@@ -136,3 +136,41 @@ if __name__ == "__main__":
     md = e5c() + "\n" + e5c("_w18")
     (OUT / "SUMMARY_E5C.md").write_text(md)
     print(md)
+
+
+def e6():
+    ARMS = ("att", "attv", "attsh", "attbp", "attvbp")
+    LABEL = {"att": "att routing + summary, sign rule", "attv": "attv routing, values only, sign rule", "attsh": "att, shuffled finals",
+             "attbp": "att routing + summary, backprop", "attvbp": "attv routing, values only, backprop"}
+    lines = ["\n## E6-route: learned-key routing on the canonical scratchpad, final-answer exact (%), three seeds\n",
+             "| Arm | pp within | mm within | pm cross | mp cross | rewritten prompts right, cross (step 1 / step 2) | intermediate right, cross | single ops after life |", "|---|---|---|---|---|---|---|---|"]
+    table = {}
+    for arm in ARMS:
+        cols = {t: [] for t in ("pp", "mm", "pm", "mp")}; s1, s2, inter, single = [], [], [], []
+        for s in SEEDS:
+            p = OUT / f"e6_life_{arm}_{s}.json"
+            if not p.exists():
+                continue
+            d = json.loads(p.read_text()); last = d["curve"][-1]
+            for t in cols:
+                cols[t].append(pct(last["compose"][t], "final")); table[(arm, s, t)] = cols[t][-1]
+            cr = [last["compose"]["pm"], last["compose"]["mp"]]
+            inter.append(sum(pct(c, "intermediate") for c in cr) / 2)
+            s1.append(sum(pct(c, "step1_prompt") for c in cr) / 2); s2.append(sum(pct(c, "step2_prompt") for c in cr) / 2)
+            single.append((pct(last["single"]["add97"]) + pct(last["single"]["sub97"])) / 2)
+        if cols["pp"]:
+            j = lambda v: " · ".join(f"{x:.0f}" for x in v)
+            lines.append(f"| {LABEL[arm]} | {j(cols['pp'])} | {j(cols['mm'])} | {j(cols['pm'])} | {j(cols['mp'])} | {j(s1)} / {j(s2)} | {j(inter)} | {j(single)} |")
+    g = lambda arm, t: [round(table[(arm, s, t)]) for s in SEEDS if (arm, s, t) in table]
+    lines += ["\n### E6-route predictions\n",
+              f"- P6.1 attbp cross ≥70: pm {g('attbp', 'pm')}, mp {g('attbp', 'mp')}",
+              f"- P6.2 att within 20 of attbp: att pm {g('att', 'pm')}, mp {g('att', 'mp')}",
+              f"- P6.3 attv ≥ att: attv pm {g('attv', 'pm')}, mp {g('attv', 'mp')}; attvbp pm {g('attvbp', 'pm')}, mp {g('attvbp', 'mp')}",
+              f"- P6.4 attsh <10: pm {g('attsh', 'pm')}; within ≥85: att pp {g('att', 'pp')}, attv pp {g('attv', 'pp')}"]
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    md = e6()
+    (OUT / "SUMMARY_E6.md").write_text(md)
+    print(md)

@@ -109,3 +109,26 @@ Prediction on file before launch, amendment on file before the rerun. The learne
 **Decision.** Composition across operation types (P4) is not achieved at this scale in any of three forms: direct, scratchpad, canonical scratchpad. E6 stays postponed, by the rule on file. What the three forms share is a stateless window network with no mechanism that binds "the operator in slot k" to "the code for that operator" independently of what else is in the window. The one structure the survey ranked for this, attention as learned routing, is now permitted and is the natural next arm: a single learned-key layer that selects the operator slot before the rewrite. That is a design change, stated here as a proposal and not run.
 
 **Evidence level.** Development results, three seeds, one harness; the window change is a stated amendment with the first run archived. Shortcut floors below 2% on every panel.
+
+# E6-route: learned-key routing on the canonical scratchpad (6 births, 15 runs)
+
+Predictions on file before launch. RouteNet: four attention heads over the 18-byte window (query from the window, keys = slot-position embeddings, value = the slot's byte embedding), output head on the four attended bytes plus a 16-d summary ("att") or the attended bytes alone ("attv"); 65,000–70,000 parameters; all projections through the sign-feedback path in life. Development with left noise reached 92–96% on single operations.
+
+| Arm | pp within | mm within | pm cross | mp cross | rewritten prompts right, cross (step 1 / step 2) | single ops after life |
+|---|---|---|---|---|---|---|
+| att, sign rule | 84 · 2 · 28 | 74 · 2 · 11 | 2 · 2 · 4 | 1 · 2 · 5 | 5 · 61 · 8 / 0 · 0 · 2 | 22 · 0 · 11 |
+| attv, sign rule | 55 · 14 · 15 | 49 · 14 · 16 | 2 · 1 · 0 | 1 · 0 · 0 | 44 · 9 · 3 / 1 · 0 · 0 | 0 · 0 · 0 |
+| att, shuffled finals | 2 · 2 · 1 | 2 · 1 · 1 | 1 · 1 · 1 | 2 · 1 · 0 | 31 · 35 · 52 / 1 · 3 · 2 | 0 · 0 · 2 |
+| **att, backprop** | 94 · 88 · 90 | 94 · 82 · 85 | **1 · 1 · 4** | **0 · 0 · 4** | 94 · 14 · 2 / 0 · 0 · 5 | 7 · 2 · 21 |
+| attv, backprop | 89 · 94 · 94 | 86 · 90 · 90 | 0 · 0 · 0 | 0 · 0 · 0 | 1 · 0 · 1 / 0 · 0 · 0 | 29 · 24 · 0 |
+
+| Prediction | Outcome |
+|---|---|
+| P6.1 routing with backprop ≥70 cross-type | **Refuted**: 0–4%. |
+| P6.2 sign rule within 20 of backprop | Vacuous; both at the floor. The sign rule is also unstable on this architecture (within-type 2–84%). |
+| P6.3 values-only ≥ summary | Refuted in direction; values-only is worse within-type and no better cross-type. |
+| P6.4 shuffled <10; within ≥85 for sign arms | Shuffled held; within-type failed for the sign arms. |
+
+**What E6-route settles.** A positional-key routing layer does not give the operator-to-code binding. With backprop it learns the taught types to 82–94% and writes the correct second-step prompt for 0–5% of untaught combinations; the first-step prompt is right in one seed only. The heads can select a slot, but the mapping from the attended byte to the code is still learned as part of a pattern that includes the other operator, because nothing forces it to be a function of the attended byte alone, and the summary (or the attention weights themselves) carry the rest. The values-only variant, which was meant to force that invariance, learns the taught types but still writes no untaught prompt correctly: positional keys select the same slots for both types, so the rest of the window still reaches the head through the attended bytes of neighbouring slots.
+
+**Decision, by the rule on file.** Composition across operation types (P4) is not achieved at this scale in four forms: direct, scratchpad, canonical scratchpad, and canonical scratchpad with learned-key routing, under both the local rule and backprop. The composition line stops here. The honest statement for the program is that P1, P2 (in development; in life with credit through time) and P3 are established, P5 holds for those, and P4 is open with a measured boundary: every architecture tried binds an operator to its role as part of a whole-pattern, and a mechanism that makes "which operator" a variable independent of its neighbours is what is missing. That is the known content of the systematic-generalization literature, reproduced here under local plasticity with full audits, and it is where this program's symbolic line ends for this month.
