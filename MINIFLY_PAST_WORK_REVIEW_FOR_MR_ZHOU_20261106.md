@@ -292,3 +292,16 @@ The main prediction was refuted: breadth of development cost rather than paid. T
 ### 9.7 Width test (72 runs): breadth stops hurting, never helps
 
 Repeating the mixed and single births at hidden widths 256 and 512 confirms the capacity reading. At width 512 the mixed birth masters its six development tasks (92–97%) and its deficit against the single birth closes to within 5 points on both mod-73 tasks, but in no cell at any width does breadth beat a single task by more than 7 points. At width 512 the local rule from a random birth also reaches 91–94% held at a quarter of the pairs, matching the developed births, and its width-128 collapses are gone; development's value is at a tenth of the pairs (developed 63–84%, random 39–53%). Sign-symmetric feedback scales to 438,000 parameters with no change of settings, three points under the width-128 backprop ceiling. Development is a sample-efficiency device at this scale, not an asymptote device, and breadth is not a lever worth pulling further on tasks this similar. The open rungs are the ones development cannot address: working state for multi-step computation, and retention across a sequence of tasks. Details in [MOD97_LOCAL_RULE_20261106/EXP2_REPORT.md](MOD97_LOCAL_RULE_20261106/EXP2_REPORT.md).
+
+### 9.8 Experiment 3, rung 3: working state for multi-step computation (48 runs)
+
+Predictions stated before launch; full report in [MOD97_LOCAL_RULE_20261106/EXP3_REPORT.md](MOD97_LOCAL_RULE_20261106/EXP3_REPORT.md). The task puts a run of up to 12 distractor bytes between the two operands of a modular sum, so the first operand must be held. Three structures were developed by backprop: a stateless window, an ungated recurrent state, and a gated one (GRU). Then life on a held-out modulus with local rules.
+
+| Held exact on mod 73, warm gated birth, 25% taught | k ≤ 12 distractors | k = 20 (never trained) |
+|---|---|---|
+| Backprop with credit through time (ceiling) | 86–92% | 82–91% |
+| Sign rule with credit through time | 68–86% | 49–71% |
+| True gradient, no credit through time | 58–69% | 29–40% |
+| Sign rule, no credit through time | 4–13% | 3–7% |
+
+Three things follow. The structure to borrow is a gated working state: developed by backprop it holds an operand across every trained run length (84–94%) and extrapolates to twice that length (82–88%); the ungated state degrades with length and the stateless window is at the floor beyond its window by construction. The within-step local rule that sufficed for stateless networks in Experiments 1 and 2 is not enough for a working state: removing the backward weights costs 5–15 points, removing credit through time costs 20–30 and most of the extrapolation, and removing both collapses the rule. Sign feedback with credit through time is a usable life rule at 5–15 points under backprop; what it still needs, to be local in time, is a per-synapse eligibility trace that the error multiplies when it arrives, which is the e-prop construction and the mechanism dopamine acts on in the fly. One process note: the first attempt trained on every byte and was swamped by distractor noise, so every arm was rerun with answer-only loss and the first attempt is archived in the folder.
