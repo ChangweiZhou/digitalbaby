@@ -165,7 +165,8 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=E.WD, replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 == "reservoir" else None))))
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 == "reservoir" else None),
+                                     arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     for si, (fam, block) in enumerate(SCHEDULE, 1):
         cur = entry_stream(entries[fam], seed + si)
         if arm == "D" or REPLAY16 == "oracle":
@@ -233,6 +234,7 @@ def life(arm, seed):
                     if e not in fs:
                         fs.add(e); fl.append(e)
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()} if fbuf else len(buffer)
+            path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))   # E16-V: keep the last block's buffer count too
 
 
 def qualify():
