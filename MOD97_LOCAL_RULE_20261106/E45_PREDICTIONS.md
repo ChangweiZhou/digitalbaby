@@ -218,3 +218,27 @@ One E11 cell learner (10-byte window, hidden 512, diagonal cell, exact trace in 
 **Forecast.** Unloaded 36.5 ms per update for arm T on a mixed batch and 31 ms for arm D; six processes on this machine; forecast taken from the first block's measured pace once it prints, not from the smoke test (E15 ran at about 940 s of CPU per 6,144-update block with twelve processes).
 
 **Commands** (from `MOD97_LOCAL_RULE_20261106/`): `python3 exp16_integrated.py T SEED` and `python3 exp16_integrated.py D SEED`, seeds 73129 93683 116089.
+
+**E16 verdicts (8 November 2026, after the run; details in `E45_REPORT.md`, E16).** P16.1 refuted (F3 0.88–0.97 of the twin; F1 0.87 / 0.85 / 0.69; composition 0.61 / 0.58 / 0.49). P16.2 refuted (F1 −10.6 / −12.0 / −20.8 from block 2 to block 6). P16.3 holds (held pairs 87.0 / 84.3 / 87.0 after block 4; carry pairs 75–84%). P16.4 holds (silenced cell 3–7%; k = 20 within 2–9 points of k = 12). P16.5 holds (twin 95 / 93 / 94 on F1, composition, F3). Measured pace: 13–15 minutes per block with six processes; 80 minutes for the six lives.
+
+## E16-D: why the integrated learner forgets (8 November 2026, written before launch)
+
+E16 acquired every family within 1–9 points of the twin and then lost the earlier ones when the stream changed form (operations −11 to −21 over four blocks, compositions −30 to −41 over two), with the earlier family in the replay half of every batch. Two differences from the twin can carry that: how earlier families are sampled (the learner replays a 1,024-entry-per-block buffer uniformly, so an earlier family's share and operand diversity both shrink; the twin draws fresh items of every seen family with equal weight) and the learning rule itself. Three arm-T controls on the E16 stream, one change each, same births, seeds and settings (`exp16_integrated.py`, `E16_REPLAY`):
+
+| Control | Change from E16 arm T | Question |
+|---|---|---|
+| oracle | the whole batch is the twin's joint stream (fresh items of every seen family, equal weight), learned by the sign rule with the trace | with perfect replay, does the local rule retain like backprop? |
+| balanced | the same 1,024-per-block buffer, kept per family; each replay draw from a family chosen uniformly | is it the share? |
+| all_balanced | every distinct presented entry kept per family; draws balanced per family | is it the share plus operand diversity? |
+
+**Mechanism audit.** The default path (`uniform`) is untouched and reproduces E16 (the new branches are entered only when a per-family buffer exists or the mode is oracle). Oracle shares the twin's stream constructor and seeds, so its data are the twin's data exactly; it differs from arm D only in the rule. In balanced and all_balanced the current family is also in the buffer from its second block, as the twin's current family is in its joint stream. all_balanced buffers hold at most the family's entry count (9,408 / 24,000 / 5,328); sampling is over distinct entries, then fresh-rendered. Dry runs of all three modes passed on the full six-block loop (4 updates per block).
+
+**Predictions.**
+- P16D.1 (oracle) With the twin's data the local rule keeps F1 within 5 points of its block-2 value and the held pairs within 10 points of their block-4 value in every seed. If so, the E16 forgetting is replay sampling, not the rule. If the oracle still loses more than 10 points on the compositions, the sign rule interferes on its own under a balanced stream and no replay design fixes it.
+- P16D.2 (balanced) Balancing the share alone halves the composition loss (≤ 20 points instead of 30–41) but stays more than 10 points below the oracle on the carry pairs: the 2,048 replayed triples are memorized rather than kept as a rule (the E11-D fixed-episode effect on operands).
+- P16D.3 (all_balanced) Within 5 points of the oracle on every family in every seed: share plus diversity is enough, and the 1,024-entry buffer was the limit.
+- P16D.4 Acquisition of each family while current is unchanged by any control (within 3 points of E16 arm T), since the new half of the batch is the same.
+
+**Forecast.** Nine processes on twelve cores (six performance); E16 ran 13–15 minutes per block with six processes, so about 20 minutes per block, two hours for the nine lives; corrected from the first block's print.
+
+**Commands:** `E16_REPLAY={oracle,balanced,all_balanced} python3 exp16_integrated.py T SEED`, seeds 73129 93683 116089.
