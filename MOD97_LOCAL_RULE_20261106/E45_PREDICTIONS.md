@@ -306,3 +306,25 @@ E16-R2's reservoir still stores parsed entries (family, operands) and re-renders
 **Forecast.** Three processes on a free machine, about 13 minutes per block, 80 minutes. **Command:** `E16_REPLAY=raw E16_CAP=65536 python3 exp16_integrated.py T SEED`.
 
 **E16-R3 verdicts (8 November 2026, 18:55 EST; details in `E45_REPORT.md`, E16-R3).** P16R3.1 holds (raw against parsed: F1 +0.4 / −0.9 / −0.9; compositions −2.3 / 0.0 / +2.2; F3 −0.6 / +0.3 / −3.0). P16R3.2 holds (ratios F1 0.98 / 0.96 / 0.87, compositions 0.86 / 0.81 / 0.85, F3 0.98 / 0.98 / 0.92). P16R3.3 holds (k = 20 within 1.2 / 2.4 / 4.9 of k = 12; silenced 2.6 / 5.5 / 6.8%). P16R3.4 holds (1,048,860–1,049,796 bytes). Measured pace 6 minutes per block with three processes.
+
+## E16-S and E16-L: the environment's half of the scaffold, one change each (8 November 2026 19:05 EST, written before launch; launch when Codex's E16-WR2 has had the machine)
+
+After E16-R3 the learner's replay path is label-free, parser-free and bounded. Two scaffolds remain on the environment's side: the stream arrives in six blocks of one family each, and the loss is masked to the answer bytes. Each is removed as one change from E16-R3's arm (raw bytes, 65,536 slots, observed answers), with the twin re-run where the stream changes. Harness knobs `E16_STREAM`, `E16_ADMIT`, `E16_LOSS` in `exp16_integrated.py`; dry runs of all four arms passed on the full loop.
+
+| Arm | Change from E16-R3 | Question |
+|---|---|---|
+| S0: `raw 65536, online` | the reservoir admits each presented item as it arrives (Algorithm R per item) instead of at checkpoint ends | a control: a stream without stages needs online admission, so its effect is measured alone first |
+| S1: `raw 65536, drift, online` | no stages: each new item's family is drawn from weights that move smoothly through the life (raised-cosine bumps, half-width half the life: F1 alone at the start, F1 and F2 equal at one third, F2 alone at the middle, F2 and F3 equal at two thirds, F3 alone at the end); scored at the same six checkpoints | does retention survive when the stream never announces a boundary |
+| S-D: `D, drift` | the twin on the drifting stream (joint ground truth of every family whose weight has been positive, equal weight) | the comparator for S1 |
+| L: `raw 65536, loss all` | next-byte loss on every byte of prompt and answer (padding excluded), the answer mask removed; scoring unchanged | does the learner still acquire and keep the families when the answer is not pointed to |
+
+**Mechanism audit.** Online admission changes only when a raw slot is filled; the count of admitted items is recorded per checkpoint (verified: 64 + 32 per update after the first). The drift stream shares the family entry streams and seeds across arms; the twin's "seen" set is evaluated at checkpoint starts (F2 enters at one third, F3 at two thirds). Under drift, F1's exposure falls to zero by mid-life and is never replayed by schedule; what the learner keeps of it is what the reservoir and the rule keep. The every-byte loss changes the training signal only; replay, reservoir, scoring and shortcut ceilings are untouched; the store's write mask follows the loss mask. The L arm's comparator is the answer-loss twin (conservative: an every-byte twin would likely be lower).
+
+**Predictions.**
+- P16S.0 (control) Online admission is within 3 points of E16-R3 on every family in every seed.
+- P16S.1 (no stages) At the last checkpoint S1 is at or above 0.80 of S-D on every family in every seed, and within 5 points of S0 on F1 and on compositions (the drift stream gives F1 slightly less total exposure and F3 slightly more, so F1 may sit a few points lower).
+- P16S.2 (twin) S-D holds every family at or above 90 / 85 / 90.
+- P16L.1 (acquisition under every-byte loss) F1 after checkpoint 2 within 10 points of E16-R3 (93.6 / 92.7 / 90.4) and compositions after checkpoint 4 within 10 points (87.6 / 86.6 / 89.2): the answer bytes are a quarter to a third of the loss, so acquisition is slower but not blocked.
+- P16L.2 (retention under every-byte loss) At the last checkpoint within 5 points of E16-R3 on every family, ratio to the twin at or above 0.80 on every family in at least two seeds. Predicting the prompt bytes is rehearsal of the operands' format and should not hurt retention; if L is more than 10 points below on compositions, the answer mask was doing work that a language stream will not do for us, and the loss weighting becomes a design question.
+
+**Forecast.** Twelve lives; raw arms cost about 2,150 CPU-seconds each alone; with twelve processes about 15 minutes per checkpoint, 90 minutes. **Commands:** `E16_REPLAY=raw E16_CAP=65536 E16_ADMIT=online python3 exp16_integrated.py T SEED`; `... E16_STREAM=drift E16_ADMIT=online ... T SEED`; `E16_STREAM=drift python3 exp16_integrated.py D SEED`; `E16_REPLAY=raw E16_CAP=65536 E16_LOSS=all python3 exp16_integrated.py T SEED`.

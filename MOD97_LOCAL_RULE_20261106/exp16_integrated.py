@@ -50,6 +50,15 @@ REPLAY16 = os.environ.get("E16_REPLAY", "uniform")
 assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share", "reservoir", "total", "raw")
 RCAP = int(os.environ.get("E16_CAP", "4096"))
 RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir" else f"_tot{RCAP}" if REPLAY16 == "total" else f"_raw{RCAP}" if REPLAY16 == "raw" else f"_{REPLAY16}")
+# E16-S / E16-L (8 Nov 19:10 EST), the environment-side scaffolds, one change each:
+#   E16_STREAM=blocks|drift   drift: no stages; each new item's family is drawn from weights that move smoothly through the life
+#                             (raised-cosine bumps centred where the blocks were, half-width a third of the life), scored at the same six checkpoints
+#   E16_ADMIT=block|online    online: the raw reservoir admits each presented item as it arrives (Algorithm R per item) instead of at checkpoint ends
+#   E16_LOSS=answer|all       all: next-byte loss on every byte of every item (prompt and answer), the answer mask removed; scoring unchanged
+STREAM16 = os.environ.get("E16_STREAM", "blocks"); ADMIT16 = os.environ.get("E16_ADMIT", "block"); LOSS16 = os.environ.get("E16_LOSS", "answer")
+assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
+assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
+RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "")
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -107,6 +116,31 @@ def joint_stream(streams, seed):
     rng = Random(seed + 78)
     while True:
         yield next(streams[rng.randrange(len(streams))])
+
+
+def update16(m, opt, items, rule, store):
+    """E.update, with the answer mask replaced by every-byte prediction when E16_LOSS=all (default path calls E.update unchanged)."""
+    if LOSS16 == "answer":
+        return E.update(m, opt, items, rule, store)
+    x, y, mask = X.batch_tensor(items)
+    mask = y != E.BOS            # every real byte of prompt and answer; padding (BOS) excluded
+    logits, it = E.forward(m, x, local=(rule != "D"), through_time=(rule == "D"), keep=(rule == "T"))
+    loss = E.cross_entropy(logits[mask], y[mask])
+    opt.zero_grad(); loss.backward()
+    if rule == "T":
+        (E.trace_grads_scan if E.TRACE == "scan" else E.trace_grads)(m, it)
+    opt.step()
+    if store is not None:
+        store.write(x, y, mask)
+    return float(loss.detach())
+
+
+def drift_weights(u, total):
+    """Family weights at update u of total: raised-cosine bumps centred at 1/6, 1/2, 5/6 of the life, half-width 1/2
+    (F1 alone at the start, F1 and F2 equal at a third, F2 alone at the middle, F2 and F3 equal at two thirds, F3 alone at the end)."""
+    import math
+    f = u / total
+    return {fam: max(0.0, math.cos(math.pi * (f - c) / 0.5)) if abs(f - c) < 0.5 else 0.0 for fam, c in (("F1", 1 / 6), ("F2", 1 / 2), ("F3", 5 / 6))}
 
 
 # ---------------------------------------------------------------- panels
@@ -171,16 +205,31 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 == "reservoir" else None),
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16,
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
+    fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
+    drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
+    def drift_item(u):
+        w = drift_weights(u, TOTAL); fams = [f for f in ("F1", "F2", "F3") if w[f] > 0] or ["F3"]
+        r = drng.random() * sum(w[f] for f in fams); acc = 0.0
+        for f in fams:
+            acc += w[f]
+            if r <= acc:
+                return next(fstreams[f])
+        return next(fstreams[fams[-1]])
     for si, (fam, block) in enumerate(SCHEDULE, 1):
         cur = entry_stream(entries[fam], seed + si)
         if arm == "D" or REPLAY16 == "oracle":
-            if block == 1:
+            if STREAM16 == "drift":
+                for f in ("F1", "F2", "F3"):     # the twin's joint stream admits a family once its weight is positive at this checkpoint's start
+                    if drift_weights((si - 1) * STAGE_UPDATES, TOTAL)[f] > 0 and f not in nseen:
+                        nseen[f] = True; seen_streams.append(entry_stream(entries[f], seed + 100 + len(nseen)))
+            elif block == 1:
                 seen_streams.append(entry_stream(entries[fam], seed + 100 + si))
             joint = joint_stream(seen_streams, seed + si)
         losses, presented = [], []
         for u in range(STAGE_UPDATES):
+            npres_before = len(presented)
             if arm == "D" or REPLAY16 == "oracle":
                 batch = [next(joint) for _ in range(BATCH)]
             elif fbuf and REPLAY16 == "share" and sorted(fbuf) != [fam]:
@@ -190,7 +239,7 @@ def life(arm, seed):
                 batch = new + rp; presented += new
             elif REPLAY16 in ("total", "raw") and fbuf:
                 rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(BATCH // 2)]
-                new = [next(cur) for _ in range(BATCH // 2)]
+                new = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
             elif fbuf and REPLAY16 != "share":
                 fams = sorted(fbuf)
@@ -202,8 +251,20 @@ def life(arm, seed):
                 new = [next(cur) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
             else:
-                batch = [next(cur) for _ in range(BATCH)]; presented += batch
-            losses.append(E.update(m, opt, batch, rule, store))
+                batch = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH)]; presented += batch
+            nnew = len(presented) - npres_before if local else 0
+            losses.append(update16(m, opt, batch, rule, store))
+            if ADMIT16 == "online" and local:     # raw reservoir, Algorithm R per presented item, as it arrives (new items are the first nnew of the batch)
+                fl = fbuf.setdefault("all", []); n = fseen.get("all", 0)
+                for p_, t_ in batch[:nnew]:
+                    n += 1
+                    if len(fl) < RCAP:
+                        fl.append(("raw", tuple(p_), tuple(t_)))
+                    else:
+                        j = rng.randrange(n)
+                        if j < RCAP:
+                            fl[j] = ("raw", tuple(p_), tuple(t_))
+                fseen["all"] = n
         stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=time.process_time() - t0, scores=evaluate()))
         sc = stages[-1]["scores"]
         print("e16", arm, seed, "after", f"{fam}.{block}",
@@ -213,7 +274,11 @@ def life(arm, seed):
               "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
               f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
         path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
-        if (local or arm == "M") and REPLAY16 != "oracle":
+        if ADMIT16 == "online" and local:
+            stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()}; stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
+            stages[-1]["reservoir_bytes"] = sum(len(e[1]) + len(e[2]) for e in fbuf["all"]); stages[-1]["admitted"] = fseen.get("all", 0)
+            path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
+        elif (local or arm == "M") and REPLAY16 != "oracle":
             # the stage's presented items as replayable entries (family + operands), 1,024 of them, as E11-D/E15
             ents = []
             for p, t in presented:
