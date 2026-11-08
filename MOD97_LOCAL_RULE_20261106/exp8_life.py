@@ -46,6 +46,9 @@ BUFFER_CAP = int(os.environ.get("E8_BUFFER_CAP", "1024"))
 REPLAY_SAMPLING = os.environ.get("E8_REPLAY_SAMPLING", "uniform")
 SAVE_STAGES = os.environ.get("E8_SAVE_STAGES", "0") == "1"
 RUN_PREFIX = os.environ.get("E8_RUN_PREFIX", "")
+COMPOSE_CHECKPOINTS = int(os.environ.get("E8_COMPOSE_CHECKPOINTS", "0"))
+if COMPOSE_CHECKPOINTS < 0:
+    raise ValueError("E8_COMPOSE_CHECKPOINTS must be nonnegative")
 if BUFFER_CAP < 1 or REPLAY_SAMPLING not in ("uniform", "recency"):
     raise ValueError("Invalid replay configuration")
 REPLAY_SHARE = Fraction(os.environ.get("E8_REPLAY_SHARE", "1/2"))
@@ -138,6 +141,7 @@ def life(arm, seed):
         from e14_diagnostics import Logger
         diagnostic = Logger(path.with_suffix(".diagnostics.jsonl"))
     rng = Random(seed + 9)
+    compose_checkpoints = []
     panels = {NAME(*t): panel(t, seed) for t in LIFE}
     panels.update({NAME(*t): panel(t, seed, 300) for t in DEV})
     taught_pairs = {p: triples(p, seed, 2000) for p in TAUGHT_PAIRS}
@@ -212,6 +216,9 @@ def life(arm, seed):
                 losses.append(X.update(m, opt, batch, local, target_store))
             else:
                 losses.append(diagnostic.update(m, opt, batch, local, target_store, name, u + 1))
+            if name == "compose" and COMPOSE_CHECKPOINTS and (u + 1) % COMPOSE_CHECKPOINTS == 0:
+                with T.no_grad():
+                    compose_checkpoints.append(dict(update=u + 1, scores={k: X.score(m, it) for k, it in comp_panels.items()}))
             if SCHEDULE == "interleaved" and arm == "C" and name == "interleaved":
                 # Replay only prompts already delivered to the learner. Keep a
                 # deterministic bounded FIFO of 1,024 distinct prompts per task.
@@ -232,7 +239,10 @@ def life(arm, seed):
         stages.append(dict(stage=si, task=name, loss=sum(losses[-512:]) / 512, cpu=time.process_time() - t0, scores=evaluate(final)))
         sc = stages[-1]["scores"]
         print("e8", arm, seed, "after", name, {k: sc[k]["exact"] for k in panels if k.endswith(("97", "73"))}, ({k: v["final"] for k, v in sc["compose"].items()} if final else ""), f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
-        path.write_text(json.dumps(dict(arm=arm, seed=seed, stages=stages), indent=1))
+        receipt = dict(arm=arm, seed=seed, stages=stages)
+        if COMPOSE_CHECKPOINTS:
+            receipt["compose_checkpoints"] = compose_checkpoints
+        path.write_text(json.dumps(receipt, indent=1))
 
 
 def qualify():
