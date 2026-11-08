@@ -272,3 +272,5 @@ E16-D showed that replaying every presented entry (unbounded) restores retention
 **Forecast.** Nine processes on a free machine; E16-D ran at 18–19 minutes per block with nine; about two hours.
 
 **Commands:** `E16_REPLAY=reservoir E16_CAP={2048,4096,8192} python3 exp16_integrated.py T SEED`, seeds 73129 93683 116089.
+
+**E16-R verdicts (8 November 2026, 16:15 EST; details in `E45_REPORT.md`, E16-R).** P16R.1 monotone holds; 2,048 within 5 of balanced on compositions (1.3 / 5.0 / 4.9) and on F1 in two seeds (0.9 / 1.0 / 6.9); 8,192 within 5 of every-entry on F1 (1.5 / 1.1 / 2.1) but 8.2 / 7.1 / 7.0 short on compositions: partial. P16R.2 ratios at 8,192: compositions 0.82 / 0.79 / 0.81, F3 0.97 / 0.97 / 0.96, F1 0.93 / 0.94 / 0.85: misses by 0.01 in one seed. P16R.3 recovered fractions 46 / 69 / 56%: misses in two seeds. P16R.4 literal misses in three of eighteen comparisons (+3.5, +3.8, +3.8), all better acquisition. Measured pace 17 minutes per block with nine processes.
