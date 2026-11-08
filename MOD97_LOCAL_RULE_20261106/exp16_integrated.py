@@ -32,6 +32,13 @@ import exp45 as X
 
 assert E.WD == 0.25 and E.REPLAY == "fresh" and E.TRACE == "scan" and E.GATES == "single"
 OUT, EOS, BATCH, STAGE_UPDATES, DRYTAG = E.OUT, E.EOS, X.BATCH, E.STAGE_UPDATES, E.DRYTAG
+# E16-D replay controls on arm T (default reproduces E16): uniform = one buffer of 1,024 entries per block, replay drawn uniformly;
+# balanced = the same buffer kept per family, each replay draw from a family chosen uniformly among those in the buffer;
+# all_balanced = every presented entry kept per family (distinct), draws balanced per family;
+# oracle = the whole batch is the twin's joint stream (fresh items of every family seen so far, equal weight), learned by the local rule.
+REPLAY16 = os.environ.get("E16_REPLAY", "uniform")
+assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle")
+RTAG = "" if REPLAY16 == "uniform" else f"_{REPLAY16}"
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -129,7 +136,7 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 
 def life(arm, seed):
-    path = OUT / f"e16_life_{arm}{DRYTAG}_{seed}.json"
+    path = OUT / f"e16_life_{arm}{RTAG if arm != 'D' else ''}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e11_dev_M_{seed}.pt"))
     local = arm != "D"
@@ -139,6 +146,7 @@ def life(arm, seed):
     P, comp = panels(seed)
     entries = {f: family_entries(f, seed) for f in ("F1", "F2", "F3")}
     buffer, seen_streams = [], []
+    fbuf, fset = {}, {}      # balanced modes: per-family entry lists (and sets, for all_balanced's distinct entries)
     t0 = time.process_time(); stages = []
 
     def evaluate():
@@ -149,17 +157,22 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=E.WD, replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES)))
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=E.WD, replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16)))
     for si, (fam, block) in enumerate(SCHEDULE, 1):
         cur = entry_stream(entries[fam], seed + si)
-        if arm == "D":
+        if arm == "D" or REPLAY16 == "oracle":
             if block == 1:
                 seen_streams.append(entry_stream(entries[fam], seed + 100 + si))
             joint = joint_stream(seen_streams, seed + si)
         losses, presented = [], []
         for u in range(STAGE_UPDATES):
-            if arm == "D":
+            if arm == "D" or REPLAY16 == "oracle":
                 batch = [next(joint) for _ in range(BATCH)]
+            elif fbuf:
+                fams = sorted(fbuf)
+                rp = [render(rng.choice(fbuf[fams[rng.randrange(len(fams))]]), rng) for _ in range(BATCH // 2)]
+                new = [next(cur) for _ in range(BATCH // 2)]
+                batch = new + rp; presented += new
             elif buffer:
                 rp = [render(e, rng) for e in rng.sample(buffer, BATCH // 2)]   # fresh-render replay: stored entries, new letters and k
                 new = [next(cur) for _ in range(BATCH // 2)]
@@ -176,7 +189,7 @@ def life(arm, seed):
               "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
               f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
         path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
-        if local:
+        if local and REPLAY16 != "oracle":
             # the stage's presented items as replayable entries (family + operands), 1,024 of them, as E11-D/E15
             ents = []
             for p, _ in presented:
@@ -185,7 +198,16 @@ def life(arm, seed):
                 else:
                     task = next(t for t in F1 + F3 if t[2][0] == p[0])
                     ents.append(("op", task, int(bytes(p[1:3])), int(bytes(p[-3:-1]))))
-            buffer += rng.sample(ents, min(1024, len(ents)))
+            if REPLAY16 == "uniform":
+                buffer += rng.sample(ents, min(1024, len(ents)))
+            elif REPLAY16 == "balanced":
+                fbuf.setdefault(fam, []).extend(rng.sample(ents, min(1024, len(ents))))
+            else:   # all_balanced: every distinct presented entry of the family
+                fs = fset.setdefault(fam, set()); fl = fbuf.setdefault(fam, [])
+                for e in ents:
+                    if e not in fs:
+                        fs.add(e); fl.append(e)
+            stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()} if fbuf else len(buffer)
 
 
 def qualify():
