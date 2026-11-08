@@ -328,3 +328,41 @@ At k = 0 after the fourth stage, add/sub: decay 0.25 alone 15/16, 32/27, 29/46; 
 - P11D.4 (combined at least as good as the better single arm): holds in every seed on add, and on sub within one point.
 
 **What it means.** Decay 1.0 per update was the main reason the trace learner forgot, as E13 found the same day for the window net; with decay 0.25 the learner keeps add and sub at about half after three further operations instead of nothing. Fixed-letter episode replay is a second, smaller cause that shows once decay is fixed: with fresh-render replay the k = 0 scores are kept (60–64% against 15–32%), so the window path stops memorizing the 1,024 fixed prompts and maintains the rule. Together they recover retention to 52–72% on add and sub, 87–96% on max and min, against a ceiling of 88–98%. The remaining gap of 20–35 points on the carry-type operations is the next target; the candidates are lower decay still (E14 Part B measures the curve on the window net), the replay share, and batch 256 (E13 Part B). Interleaving is not a substitute for replay in this learner. The settings for the cell learner going forward are decay 0.25 and fresh-render replay of stored pairs.
+
+## E15: the fixed settings applied (7 November 2026)
+
+Predictions and mechanism audit: `E45_PREDICTIONS.md`, E15. Settings from E11-D: decay 0.25 on local arms, fresh-render replay of stored pairs, trace by the scan form (identical to the forward trace at 1e-6; with split gates, qualification `exp45/QUALIFY_E11_g2.json`). Three seeds each. Tables: `exp45/SUMMARY_E11.md` (E11-D section) and the receipts named below.
+
+**Part A, interleaved stream at decay 0.25** (`exp45/e11_life_MT_wd0.25_int_*`). The four mod-97 operations presented together in one stream of 4 × 6,144 updates, no replay, memory birth, scored after every block. Exact % at k = 12 (add sub max min) after block 1 and after block 4, and k = 20 after block 4:
+
+| Seed | After block 1 | After block 4 | k = 20 after block 4 | E11-D at decay 1.0, after block 4 |
+|---|---|---|---|---|
+| 73129 | 89 89 98 97 | 85 89 98 96 | 84 86 96 96 | 78 70 96 94 |
+| 93683 | 86 89 95 96 | 87 91 98 97 | 87 89 97 96 | 15 12 74 64 |
+| 116089 | 78 83 91 96 | 87 85 94 98 | 86 83 92 97 | 12 16 65 72 |
+
+P15.1 holds in every seed. The mixed-stream failure of E11-D was decay, not the rule or the cell: at decay 0.25 the sign rule with the trace learns four competing operations from one stream to 83–98%, within 2–10 points of the backprop ceiling, and the two seeds that had learned nothing of add and sub at decay 1.0 are at 85–91% after the first block.
+
+**Part B, the no-memory birth at the fixed settings** (`exp45/e11_life_NT_wd0.25_fr_*`): acquisition of holding and its retention in one blocked life with fresh-render replay. Exact % at k = 12:
+
+| Seed | add after its stage (E11 NT at decay 1.0) | After the fourth stage: add sub max min | add+sub mean | k = 20 add sub |
+|---|---|---|---|---|
+| 73129 | 85 (90) | 44 33 89 96 | 38 | 32 25 |
+| 93683 | 88 (78) | 39 31 82 93 | 35 | 29 22 |
+| 116089 | 84 (63) | 55 42 87 94 | 48 | 42 38 |
+
+P15.2: acquisition ≥ 60% holds in every seed (84–88%, and no longer seed-dependent as at decay 1.0); the retention gate of add+sub mean ≥ 40% after the fourth stage holds in one seed (48) and misses by 2–5 points in two (38, 35), against about 1 for the same births at decay 1.0. Holding acquired in life is kept at roughly half the rate of holding developed at birth (E11-D combined arm: 69 / 65 / 56).
+
+**Part D, the ring at decay 0.25** (receipts `exp45/e10_life_ring_sign_d32768_wd0.25_*`, `..._ring_conf_sign_d32768_wd0.25_*`; births unchanged). Single-operation interface accuracy (+ − > <, exact %) at birth and at the end of 8,192 updates of sign-rule life on the taught pairs:
+
+| Seed | Birth | Life at decay 1.0 (E10) | Life at decay 0.25 |
+|---|---|---|---|
+| 73129 | 100 100 100 100 | 100 100 100 100 | 100 100 100 100 |
+| 93683 | 63 62 93 93 | 25 26 49 49 | 67 64 92 92 |
+| 116089 | 96 96 97 97 | 36 33 55 59 | 81 81 96 95 |
+
+Held-pair composition at the end of life at decay 0.25: 100/100/100/100, 45/42/88/90, 65/65/93/94 (birth zero-shot 100/100/100/100, 46/42/84/88, 86/88/94/95). Confounded-pair arm at decay 0.25: 100/100, 70/66, 72/75 on the cross pairs (decay 1.0: 100/100, 22/20, 24/23), and the comparison interfaces that the confounded life never trains stay at 100, 47/48 and 84/85 (decay 1.0: 17/14, 11/13, 13/10). P15.4 holds in seeds 73129 and 93683 (no erosion; 93683's carry interfaces rise 4 points) and misses in 116089 (15 points lost on the carry interfaces). The ring now composes by wiring and learns by the local rule in one life; the residual erosion in one seed points at a lower decay or a gate that writes only when wrong.
+
+**Part C, split write and read gates:** births complete (92–99% at k = 12, as the single-gate births); the fixed-settings lives are running and are filed as an addendum below when they finish.
+
+**What E15 establishes so far.** With decay 0.25 the local-rule learner (a) learns a mixed stream of four operations to within a few points of backprop, which removes the last reason to doubt that the sign rule can learn from an interleaved stream such as text; (b) acquires working state from a birth that never required it in every seed, at 84–88%; (c) on the ring, learns taught compositions by the local rule without eroding the innate interfaces in two seeds of three. The remaining targets are retention of holding acquired in life (35–48% add+sub after three further operations), and the one seed of ring erosion.

@@ -61,7 +61,9 @@ def main():
             lines.append(f"| {arm} | {s} | " + " | ".join(f"{o:.0f}→{v:.0f}" for o, v in zip(own, fin)) + f" | {sum(own)/4:.0f} | {sum(fin)/4:.0f} | {sum(k20)/4:.0f} |")
     # E11-D diagnosis arms (memory birth, trace rule, one change each), alongside the E11 baseline and ceiling
     diag = [("MT", "E11 baseline (decay 1.0, episode replay, blocked)"), ("MT_wd0.25", "decay 0.25"), ("MT_fr", "fresh-render replay"),
-            ("MT_int", "interleaved, no replay"), ("MT_wd0.25_fr", "decay 0.25 + fresh-render"), ("MD", "backprop ceiling")]
+            ("MT_int", "interleaved, no replay"), ("MT_wd0.25_fr", "decay 0.25 + fresh-render"), ("MD", "backprop ceiling"),
+            ("MT_wd0.25_int", "E15-A interleaved at decay 0.25"), ("NT_wd0.25_fr", "E15-B no-memory birth, decay 0.25 + fresh-render"),
+            ("MT_g2_wd0.25_fr", "E15-C split gates, decay 0.25 + fresh-render"), ("ND", "backprop ceiling, no-memory birth")]
     rows = []
     for tag, label in diag:
         for s in SEEDS:
