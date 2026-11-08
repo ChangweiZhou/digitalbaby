@@ -63,3 +63,14 @@ Report each as holds / misses with the number, every seed separately. A miss is 
 ## Budget
 
 Three births (about 1.5 CPU-hours) and six lives (about 9 CPU-hours at the standing pace); with six or more cores, roughly three hours of wall time after the smoke job. State your own forecast from the smoke job's pace.
+
+## Amendment, 8 November 2026 17:45 EST (after the three learner lives were killed in block 6 by the launcher's time limit)
+
+The partial receipts are kept and are already informative (through block 5 the fresh seeds track the standing ones). To finish without hitting the limit again:
+
+1. **Launch lives detached from the command that starts them**, so the tool's time limit cannot kill them: for each life run `nohup setsid env E16_REPLAY=... E16_CAP=... python3 exp16_integrated.py T <seed> > exp45/logs/<name>.log 2>&1 < /dev/null &` from a short command that returns at once, then poll the logs with short commands (one line per finished block). Never run a life in the foreground of a tool call and never `wait` on it inside one.
+2. **Run both remaining sets together, six processes**: the three E16-F2 lives (`E16_REPLAY=total E16_CAP=65536`, the arm that now carries the gate; predictions as amended in `OPUS_TASK_E16F2_RESERVOIR_FRESH_SEEDS_20261108.md`) and the three E16-F reruns (`E16_REPLAY=all_balanced`) from scratch on the same births. Rename the killed receipts and logs with a `_killed` suffix first so the reruns do not overwrite them; the reruns must reproduce the killed receipts' first five blocks exactly (same seed, same code), which is a free parity check: report it.
+3. Forecast from your measured pace: six processes on four cores, about 3.5 hours of wall time. Commit partial receipts after every block as you have been doing.
+4. Pull first: the harness at commit 7703d6c adds the `total` and `raw` modes and the receipt-settings fix; it does not change the `all_balanced` path.
+
+The E16-F predictions stand unchanged; score them on the reruns. If a rerun is killed again, report the limit you observed and stop rather than restart.
