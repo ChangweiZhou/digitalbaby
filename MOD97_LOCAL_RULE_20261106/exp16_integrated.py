@@ -42,10 +42,12 @@ OUT, EOS, BATCH, STAGE_UPDATES, DRYTAG = E.OUT, E.EOS, X.BATCH, E.STAGE_UPDATES,
 # so the rule is the only difference from T.
 # reservoir (E16-R, 8 Nov 14:45 EST): per-family reservoir of at most E16_CAP entries (RCAP; CAP below is the response length cap) filled by Algorithm R over the family's
 #         presentations (one counter and one fixed-size list per family: bounded memory, O(1) work per event); draws balanced per family.
+# total (E16-R2, 8 Nov 16:25 EST): ONE reservoir of E16_CAP entries over all presentations of the whole life, no family label anywhere
+#         (Algorithm R with a single counter); the replay half is drawn uniformly from it. Bounded by a total budget, label-free.
 REPLAY16 = os.environ.get("E16_REPLAY", "uniform")
-assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share", "reservoir")
+assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share", "reservoir", "total")
 RCAP = int(os.environ.get("E16_CAP", "4096"))
-RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir" else f"_{REPLAY16}")
+RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir" else f"_tot{RCAP}" if REPLAY16 == "total" else f"_{REPLAY16}")
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -182,6 +184,10 @@ def life(arm, seed):
                 rp = [render(rng.choice(fbuf[fams[i % len(fams)]]), rng) for i in range(BATCH // 2)]
                 new = [next(cur) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
+            elif REPLAY16 == "total" and fbuf:
+                rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(BATCH // 2)]
+                new = [next(cur) for _ in range(BATCH // 2)]
+                batch = new + rp; presented += new
             elif fbuf and REPLAY16 != "share":
                 fams = sorted(fbuf)
                 rp = [render(rng.choice(fbuf[fams[rng.randrange(len(fams))]]), rng) for _ in range(BATCH // 2)]
@@ -216,8 +222,9 @@ def life(arm, seed):
                 buffer += rng.sample(ents, min(1024, len(ents)))
             elif REPLAY16 in ("balanced", "share"):
                 fbuf.setdefault(fam, []).extend(rng.sample(ents, min(1024, len(ents))))
-            elif REPLAY16 == "reservoir":   # Algorithm R over presentations, per family, capacity CAP
-                fl = fbuf.setdefault(fam, []); n = fseen.get(fam, 0)
+            elif REPLAY16 in ("reservoir", "total"):   # Algorithm R over presentations: per family (reservoir) or one for the whole life (total)
+                key = fam if REPLAY16 == "reservoir" else "all"
+                fl = fbuf.setdefault(key, []); n = fseen.get(key, 0)
                 for e in ents:
                     n += 1
                     if len(fl) < RCAP:
@@ -226,8 +233,10 @@ def life(arm, seed):
                         j = rng.randrange(n)
                         if j < RCAP:
                             fl[j] = e
-                fseen[fam] = n
+                fseen[key] = n
                 stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
+                if REPLAY16 == "total":   # how the label-free reservoir happens to be composed, by family of entry (for reading only)
+                    stages[-1]["reservoir_by_family"] = {f: sum(1 for e in set(fbuf["all"]) if (e[0] == "comp") == (f == "F2") and (f == "F2" or e[1][1] == (97 if f == "F1" else 73))) for f in ("F1", "F2", "F3")}
             else:   # all_balanced: every distinct presented entry of the family
                 fs = fset.setdefault(fam, set()); fl = fbuf.setdefault(fam, [])
                 for e in ents:
