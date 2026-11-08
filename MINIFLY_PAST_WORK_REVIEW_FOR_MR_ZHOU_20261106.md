@@ -665,3 +665,41 @@ The shape is the one a scalable mechanism needs, smooth and monotone in a bounde
 Section E16-R2 of `E45_REPORT.md`. One reservoir filled by Algorithm R over every presentation of the life, no family label anywhere in the replay path, replay drawn uniformly from it; total budgets 24,576 and 65,536; three seeds. At the matched budget the label-free reservoir equals the per-family one of E16-R within 5 points on eight of nine comparisons and is better on the operations in every seed, so the family label was doing nothing; the mechanism audit's expectation of the opposite was wrong and is corrected in the report. At 65,536 entries the learner keeps every family at 0.81–0.99 of the backprop twin after the stream has moved on (operations 0.97 / 0.96 / 0.88, compositions 0.88 / 0.81 / 0.83, later operations 0.99 / 0.98 / 0.95): the Phase A gate of 0.80 on every family, met in every seed, with a replay memory that is bounded, label-free and constant-work per event. Retention remains logarithmic in coverage (14,500 distinct compositions give 75–83%, all 24,000 give 80–85%).
 
 What this does and does not settle. It settles that one cell learner under the local rule, at fixed capacity, can acquire three families of different form from one stream and keep them, given a replay memory of a few hundred kilobytes. It does not yet remove the parser (the reservoir stores parsed entries and re-renders them: E16-R3, verbatim raw bytes at the same budget, is prepared), it is not confirmed on fresh seeds (the cloud session's E16-F2 is redirected to this arm), and the label-free allocation has only been tested on a stream whose families have equal durations. After E16-R3, the schedule questions from the Sleep paper (9.37) and E17, the window's removal, follow.
+
+## 9.35 Codex's E16-WR: bounded stage reservoirs and replay targets on the window net (8 November 2026; Codex's section, filed verbatim from `E16WR_REVIEW_SECTION_9_35.md`)
+
+
+
+|Prediction|Passes|Total|
+|---|---|---|
+|P1|0|3|
+|P2|0|3|
+|P3|1|3|
+|P5|3|3|
+|P4|10|12|
+
+At self-target capacity16,384, final held composition is 32.08 / 24.88 / 31.58%; observed-target finals are 62.46 / 57.00 / 65.42%. Larger self-target reservoirs are not a monotonic retention repair in these runs. The observed-target comparison must be read through the matched input/coverage checks and its per-seed loss differences, not as a new architecture result.
+
+|Seed|Self loss|Observed loss|Loss reduction pp|P5≥10pp|
+|---|---|---|---|---|
+|73129|48.9167|16.8333|32.0833|True|
+|93683|55.6250|14.0417|41.5833|True|
+|116089|52.7917|19.7083|33.0833|True|
+
+All three largest-capacity pairs match actual prompt-order hashes and all nine stage reservoir and draw snapshots exactly. Observed targets were saved with presented examples. This identifies the effect of replacing self-generated replay targets with observed targets at this capacity and schedule, including downstream changes in Store and earlier acquisition. It does not isolate a late-composition-only effect, establish a global capacity optimum, or prove autonomous learning.
+
+Campaign child CPU: 4.4383 hours, including the technical cycles and full default reproduction; controller CPU 1.332s. Campaign wall 46.66min from controller start, excluding prior waiting. Actual peakRSS is recorded per worker in E16WR_FINAL_COSTS.json. Initial forecasts are retained as forecasts, not rewritten to match measured cost.
+
+No final scientific model/optimizer checkpoints were saved under the locked settings. Exact source, hashes, commands, raw receipts, scores, diagnostics and technical trajectory hashes are retained; do not describe these as a complete resumable checkpoint bundle.
+
+Source: E16WR_REPORT.md, E16WR_VERIFICATION.json and exact JOB-selected receipts. Twelve lives, three seeds in each of four arms; one reused-default full reproduction plus separate technical cycles. Existing E16-R review sections were not edited.
+
+## 9.39 E16-WR assessed: self-generated replay targets run away with coverage; observed targets are required (8 November 2026)
+
+Codex's E16-WR (9.35; `E16WR_REPORT.md`, twelve lives, exact batch and reservoir hashes verified) is the window-net mirror of E16-R, and it changes how every E8-family result should be read.
+
+- **Larger self-target reservoirs make retention worse, not better.** With the learner's own answers as replay targets, held composition after four later stages is 32–36% at 1,024 slots per stage, 42–48% at 4,096, and 25–32% at 16,384. The reason is in the exposure records: the fraction of replayed composition targets that are wrong is 17–21% at 1,024 (a small memorized set), 23–38% at 4,096, and climbs through the later stages to 81–91% at 16,384. Wider coverage replays more prompts the learner answers wrongly, those wrong answers are trained in, and the next stage's answers are worse: the positive feedback loop that the Sleep paper (9.37) warns of for iterative self-training, here measured in a 470,000-parameter net.
+- **Observed targets break the loop.** Storing the answer as it was presented, at 16,384 slots, gives held composition of 57–65% after four later stages (a loss of 14–20 points from its post-composition value, against 49–56 for self targets at the same capacity) and keeps the mod-97 operations at 95–96% (self targets: 70–77%). That is the same direction as the cell harness, which has always replayed observed answers, and it is why the cell harness's coverage curve (9.34, 9.38) is monotone while the window net's self-target curve is not.
+- **The remaining loss with observed targets** (14–20 points on compositions) is coverage: 16,384 per-stage slots hold about 12,000 of 24,000 taught triples, and E16-R2 showed the cell learner at 14,500 distinct compositions losing 5–12 points. The window net's next step is the one the cell learner has taken: one label-free reservoir with a total budget and observed targets.
+
+Consequences for the record. E8's persistent-life demonstration (9.19) and every E8-family result since (E9, E12, E13, E14, E14-S, E16-W) used self-generated replay targets. For the eight operations, learned to about 95%, the targets were mostly right and the 94% retention stands; for compositions, learned to about 80%, one replayed target in five was wrong from the start, and the composition losses reported in E9 and E16-W are partly this loop rather than forgetting alone. The pseudo-rehearsal design, replaying one's own answers, is retired for this program: the episodic store keeps each experience with its observed outcome, which is what the complementary-systems account always said it does. Codex's E16-WR2 (brief written) reruns E8's demonstration and the late-family schedule with observed targets and a total-budget reservoir.
