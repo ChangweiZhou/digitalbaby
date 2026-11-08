@@ -288,3 +288,5 @@ E16-R's reservoir was per family, which needs a label the learner is not given a
 - P16R2.4 Acquisition within 4 points of E16 arm T on both families (the tolerance is widened from 3 after E16-R, before launch).
 
 **Forecast.** Six processes on a free machine: about 15 minutes per block, 95 minutes. **Commands:** `E16_REPLAY=total E16_CAP={24576,65536} python3 exp16_integrated.py T SEED`.
+
+**E16-R2 verdicts (8 November 2026, 17:20 EST; details in `E45_REPORT.md`, E16-R2).** P16R2.1 holds on 8 of 9 (compositions seed 116089: 70.3 against 76.3). P16R2.2 partial (compositions −2.0 / −5.0 / −5.4 from every-entry; ratios 0.88 / 0.81 / 0.83; F1 +3.0 / +1.6 / +5.4). P16R2.3 misses in direction (label-free F1 at block 4 higher by 3.7 / 4.7 / 10.0); the audit's reasoning about the reservoir's composition during the composition blocks was wrong (updated at block ends). P16R2.4 holds. Gate at 65,536: F1 0.97 / 0.96 / 0.88, compositions 0.88 / 0.81 / 0.83, F3 0.99 / 0.98 / 0.95, all ≥ 0.80.
