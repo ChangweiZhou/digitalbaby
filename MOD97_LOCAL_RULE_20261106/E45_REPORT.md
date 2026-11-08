@@ -366,3 +366,15 @@ Held-pair composition at the end of life at decay 0.25: 100/100/100/100, 45/42/8
 **Part C, split write and read gates:** births complete (92–99% at k = 12, as the single-gate births); the fixed-settings lives are running and are filed as an addendum below when they finish.
 
 **What E15 establishes so far.** With decay 0.25 the local-rule learner (a) learns a mixed stream of four operations to within a few points of backprop, which removes the last reason to doubt that the sign rule can learn from an interleaved stream such as text; (b) acquires working state from a birth that never required it in every seed, at 84–88%; (c) on the ring, learns taught compositions by the local rule without eroding the innate interfaces in two seeds of three. The remaining targets are retention of holding acquired in life (35–48% add+sub after three further operations), and the one seed of ring erosion.
+
+**Part C addendum, split write and read gates** (`exp45/e11_dev_M_g2_*`, `exp45/e11_life_MT_g2_wd0.25_fr_*`). Births by backprop through time reach 92–99% at k = 12, as the single-gate births. The fixed-settings life, exact % at k = 12 after the fourth stage (add sub max min), with the single-gate learner at the same settings (E11-D combined arm) for comparison:
+
+| Seed | Split gates | add+sub mean | k = 20 add sub | Single gate (E11-D) | add+sub mean | k = 20 add sub |
+|---|---|---|---|---|---|---|
+| 73129 | 59 61 93 96 | 60 | 41 45 | 72 65 92 96 | 69 | 58 54 |
+| 93683 | 55 46 87 94 | 51 | 42 31 | 68 62 90 96 | 65 | 63 58 |
+| 116089 | 60 53 91 97 | 56 | 42 39 | 62 52 92 95 | 56 | 58 47 |
+
+P15.3 is refuted: the split gates are 9–14 points worse in two seeds and equal in one, and extrapolation to k = 20 drops 14–20 points below k = 12 (single gate: 0–14). Codex's shelf result for separate gates does not carry into this learner at this scale; the single tied gate stays. The silenced audit holds (≤ 5% on add and sub).
+
+**E15 verdicts.** P15.1 holds (mixed stream at decay 0.25, every seed). P15.2 holds on acquisition, misses the retention gate by 2–5 points in two seeds. P15.3 refuted. P15.4 holds in two seeds, misses in one.

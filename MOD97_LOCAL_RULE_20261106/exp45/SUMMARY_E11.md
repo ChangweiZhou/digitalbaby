@@ -183,6 +183,9 @@ Each cell: add sub max min.
 | E15-B no-memory birth, decay 0.25 + fresh-render | 73129 | 44 33 89 96 | 38 | 42 30 93 96 | 32 25 79 94 | 43 2 2 0 | 1 1 5 6 |
 | E15-B no-memory birth, decay 0.25 + fresh-render | 93683 | 39 31 82 93 | 35 | 39 34 84 96 | 29 22 77 92 | 45 1 0 1 | 1 0 10 6 |
 | E15-B no-memory birth, decay 0.25 + fresh-render | 116089 | 55 42 87 94 | 48 | 46 45 88 96 | 42 38 83 92 | 43 1 2 0 | 1 0 0 2 |
+| E15-C split gates, decay 0.25 + fresh-render | 73129 | 59 61 93 96 | 60 | 60 63 94 96 | 41 44 83 90 | 39 1 2 0 | 1 0 1 3 |
+| E15-C split gates, decay 0.25 + fresh-render | 93683 | 55 46 86 94 | 50 | 56 52 92 96 | 42 30 81 86 | 40 2 2 0 | 0 1 3 3 |
+| E15-C split gates, decay 0.25 + fresh-render | 116089 | 60 53 91 96 | 56 | 60 59 91 95 | 42 39 88 93 | 44 1 2 0 | 1 0 2 1 |
 | backprop ceiling, no-memory birth | 73129 | 92 87 95 97 | 90 | 90 88 96 98 | 92 86 95 96 | 45 1 0 1 | 0 0 13 11 |
 | backprop ceiling, no-memory birth | 93683 | 90 92 96 96 | 91 | 88 92 96 98 | 90 92 96 96 | 32 0 0 0 | 1 2 14 8 |
 | backprop ceiling, no-memory birth | 116089 | 91 94 96 97 | 92 | 92 94 96 98 | 92 94 96 97 | 48 2 0 0 | 1 2 5 6 |
