@@ -40,9 +40,12 @@ OUT, EOS, BATCH, STAGE_UPDATES, DRYTAG = E.OUT, E.EOS, X.BATCH, E.STAGE_UPDATES,
 #         replayed), so each earlier family's exposure rises (F1 50% of the batch during F2; F1 and F2 25% each during F3).
 # Arm M (added 8 Nov 12:30 EST, before E16-D's results): backprop through time at decay 0.25 on exactly arm T's uniform-replay batches,
 # so the rule is the only difference from T.
+# reservoir (E16-R, 8 Nov 14:45 EST): per-family reservoir of at most E16_CAP entries (RCAP; CAP below is the response length cap) filled by Algorithm R over the family's
+#         presentations (one counter and one fixed-size list per family: bounded memory, O(1) work per event); draws balanced per family.
 REPLAY16 = os.environ.get("E16_REPLAY", "uniform")
-assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share")
-RTAG = "" if REPLAY16 == "uniform" else f"_{REPLAY16}"
+assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share", "reservoir")
+RCAP = int(os.environ.get("E16_CAP", "4096"))
+RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir" else f"_{REPLAY16}")
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -151,7 +154,7 @@ def life(arm, seed):
     P, comp = panels(seed)
     entries = {f: family_entries(f, seed) for f in ("F1", "F2", "F3")}
     buffer, seen_streams = [], []
-    fbuf, fset = {}, {}      # balanced modes: per-family entry lists (and sets, for all_balanced's distinct entries)
+    fbuf, fset, fseen = {}, {}, {}      # balanced modes: per-family entry lists (sets for all_balanced's distinct entries; counters for reservoir)
     t0 = time.process_time(); stages = []
 
     def evaluate():
@@ -162,7 +165,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=E.WD, replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16)))
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=E.WD, replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 == "reservoir" else None))))
     for si, (fam, block) in enumerate(SCHEDULE, 1):
         cur = entry_stream(entries[fam], seed + si)
         if arm == "D" or REPLAY16 == "oracle":
@@ -212,6 +215,18 @@ def life(arm, seed):
                 buffer += rng.sample(ents, min(1024, len(ents)))
             elif REPLAY16 in ("balanced", "share"):
                 fbuf.setdefault(fam, []).extend(rng.sample(ents, min(1024, len(ents))))
+            elif REPLAY16 == "reservoir":   # Algorithm R over presentations, per family, capacity CAP
+                fl = fbuf.setdefault(fam, []); n = fseen.get(fam, 0)
+                for e in ents:
+                    n += 1
+                    if len(fl) < RCAP:
+                        fl.append(e)
+                    else:
+                        j = rng.randrange(n)
+                        if j < RCAP:
+                            fl[j] = e
+                fseen[fam] = n
+                stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
             else:   # all_balanced: every distinct presented entry of the family
                 fs = fset.setdefault(fam, set()); fl = fbuf.setdefault(fam, [])
                 for e in ents:
