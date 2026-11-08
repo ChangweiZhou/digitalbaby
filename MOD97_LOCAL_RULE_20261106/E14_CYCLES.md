@@ -1,0 +1,11 @@
+# E14 three-cycle technical exercise
+
+Cycle1: all46 subprocess keys and exact receipt names unique; six fresh births and39 life jobs plus one extra baseline correctly counted. Fresh-seed scan found no collisions. Fixed exposure checked. Read-only diagnostic tested with local and BP maps: BP raw gradients align1, output raw gradient aligns1 as expected, metrics finite and zero-norm cosine is null. Tiny1e-15 cosine roundoff above1 is numerical rounding, not super-alignment.
+
+Cycle2: original E13 E8 C and D versus patched defaults and stress logging at EVERY update:18 updates per arm in nine-stage technical lives. Model weights, optimizer moments, Torch RNG, losses, replay memory and scientific scores match exactly. Original/patched E7 default SCR:16 updates match exactly. This is a side-effect test, not an accuracy result. Full logged/unlogged E8 and unchanged E7 reproductions still gate campaign launch.
+
+Cycle3: actual production subprocess launcher and queue used on synthetic fixtures. A completed job validated while its same-part sibling was unfinished. Incomplete exact receipt rejected. Deliberate exit7 isolates the failed part, skips its queued sibling and permits another part to finish. Duplicate-launch file lock rejected. Additional source/birth-drift guard was exercised separately: both changes rejected before spawning a child. No scientific training occurred in controller fixtures.
+
+Final engineering refinements before scientific launch: verify immutable inputs at every job launch, verify fresh-birth hashes before each fresh life, retain birth-failure status while unaffected parts proceed, and produce a complete profile-derived resource forecast. The precheck controller and lock are preserved byte-for-byte as e14_campaign_precheck.py and E14_PRECHECK_LOCK.json. These refinements do not alter neural training, diagnostic gradients, data, scores or predictions; they precede the final lock and official profiles.
+
+All technical cycles passed. No formal checker seal, external review or independent implementation replication is claimed. Raw-gradient alignment, adaptive Adam descent alignment and total parameter descent alignment are separately logged; only the original optimizer applies training updates. Report any numerical/scientific negative without tuning or replacing a seed.

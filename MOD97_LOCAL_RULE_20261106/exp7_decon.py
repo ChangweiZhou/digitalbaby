@@ -122,7 +122,10 @@ def life(arm, seed):
     m.load_state_dict(T.load(OUT / f"e7_dev{X.WTAG[4:]}_{seed}.pt"))
     canonical = arm.startswith("SCRc")
     local = arm not in ("SCRbp", "SCRcbp")
-    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(1. if local else .3), betas=(.9, .98))
+    life_wd = float(os.environ.get("E7_WD", "1." if local else ".3"))
+    if not (life_wd >= 0 and .001 * life_wd < 1):
+        raise ValueError("Invalid E7 life decay")
+    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=life_wd, betas=(.9, .98))
     taught = {p: triples(p, seed, 2000) for p in TAUGHT_PAIRS}
     teach = [render_pair(*p, *tr, canonical) for p in TAUGHT_PAIRS for tr in taught[p]]
     panels = {f"{o1}{o2}": [render_pair(o1, o2, *tr, canonical) for tr in triples((o1, o2), seed + 1, 600)] for o1, o2 in HELD_PAIRS}

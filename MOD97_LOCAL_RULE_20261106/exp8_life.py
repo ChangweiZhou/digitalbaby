@@ -133,6 +133,10 @@ def life(arm, seed):
         raise ValueError("Invalid life optimizer settings")
     opt = T.optim.AdamW(m.parameters(), lr=life_lr, weight_decay=life_wd, betas=(.9, .98))
     store = X.Store(seed) if arm == "C" else None
+    diagnostic = None
+    if os.environ.get("E8_DIAGNOSTICS", "0") == "1":
+        from e14_diagnostics import Logger
+        diagnostic = Logger(path.with_suffix(".diagnostics.jsonl"))
     rng = Random(seed + 9)
     panels = {NAME(*t): panel(t, seed) for t in LIFE}
     panels.update({NAME(*t): panel(t, seed, 300) for t in DEV})
@@ -203,7 +207,11 @@ def life(arm, seed):
                 batch = next(cur)[:X.BATCH - len(rp)] + list(zip(rp, ans))
             else:
                 batch = next(cur)
-            losses.append(X.update(m, opt, batch, local, store if name != "compose" else None))
+            target_store = store if name != "compose" else None
+            if diagnostic is None:
+                losses.append(X.update(m, opt, batch, local, target_store))
+            else:
+                losses.append(diagnostic.update(m, opt, batch, local, target_store, name, u + 1))
             if SCHEDULE == "interleaved" and arm == "C" and name == "interleaved":
                 # Replay only prompts already delivered to the learner. Keep a
                 # deterministic bounded FIFO of 1,024 distinct prompts per task.
