@@ -378,3 +378,37 @@ Held-pair composition at the end of life at decay 0.25: 100/100/100/100, 45/42/8
 P15.3 is refuted: the split gates are 9–14 points worse in two seeds and equal in one, and extrapolation to k = 20 drops 14–20 points below k = 12 (single gate: 0–14). Codex's shelf result for separate gates does not carry into this learner at this scale; the single tied gate stays. The silenced audit holds (≤ 5% on add and sub).
 
 **E15 verdicts.** P15.1 holds (mixed stream at decay 0.25, every seed). P15.2 holds on acquisition, misses the retention gate by 2–5 points in two seeds. P15.3 refuted. P15.4 holds in two seeds, misses in one.
+
+## E16: the integrated toy learner, the Phase A exit gate (8 November 2026)
+
+Predictions and mechanism audit: `E45_PREDICTIONS.md`, E16. One E11 cell learner from the memory births at the adopted settings (decay 0.25, fresh-render replay at half of every batch, scan trace), on one stream in six blocks of 6,144 updates: F1 the mod-97 operations with 0–12 distractor letters (interleaved), F2 the twelve taught operator pairs in E8 scratchpad form, F3 the mod-73 operations with distractors. Arm T is the learner, arm D a backprop-through-time twin at decay 0.3 on batches drawn with equal weight from the families seen so far. Three seeds (73129, 93683, 116089). Tables: `exp45/SUMMARY_E16.md`; receipts `exp45/e16_life_{T,D}_{seed}.json`; qualification `exp45/QUALIFY_E16.json`; dry receipts `exp45/archive_e16_dry/`. Wall time 80 minutes for the six lives.
+
+**Each family is acquired by the local rule close to the twin while it is current.**
+
+| Family, scored when its blocks end | T (learner) | D (twin) |
+|---|---|---|
+| F1 mod-97 operations, k = 12, after block 2 | 93.2 · 92.2 · 86.1 | 93.9 · 93.8 · 94.1 |
+| F2 held cross pairs, final answer, after block 4 | 87.0 · 84.3 · 87.0 | 93.8 · 91.2 · 93.7 |
+| of which the carry pairs +- / -+ | 82/84 · 75/75 · 77/80 | 88/90 · 86/83 · 91/86 |
+| F3 mod-73 operations, k = 12, after block 6 | 90.9 · 90.2 · 82.3 | 93.8 · 92.6 · 93.4 |
+
+The composition result is new: inside one learner that also holds operations with distractors, the sign rule composes the four never-taught operator pairs at 84–87% after two blocks, the carry pairs at 75–84% against shortcut ceilings of 1–2%, within 4–9 points of the twin.
+
+**Earlier families are lost when the stream moves on; the twin loses nothing.**
+
+| After block 6 | T | D | T/D | T after its own blocks |
+|---|---|---|---|---|
+| F1 operations, k = 12 | 82.6 · 80.2 · 65.3 | 95.4 · 94.1 · 94.4 | 0.87 · 0.85 · 0.69 | 93.2 · 92.2 · 86.1 |
+| F1 add / sub, k = 12 | 74/69 · 70/62 · 38/42 | 93/92 · 88/92 · 95/89 | | 90/91 · 86/90 · 77/79 |
+| F2 held pairs, final | 56.9 · 53.2 · 46.0 | 93.3 · 92.0 · 93.8 | 0.61 · 0.58 · 0.49 | 87.0 · 84.3 · 87.0 |
+| F2 carry pairs +- / -+ | 34/38 · 22/28 · 18/18 | 87/87 · 84/86 · 91/87 | | 82/84 · 75/75 · 77/80 |
+| F2 held triples of taught pairs | 64 · 61 · 56 | 94 · 94 · 94 | | 89 · 89 · 87 |
+| F3 operations, k = 12 | 90.9 · 90.2 · 82.3 | 93.8 · 92.6 · 93.4 | 0.97 · 0.97 · 0.88 | |
+
+The F1 loss happens during the composition blocks (78.1 · 71.8 · 47.0 after block 4) and partly recovers during F3 (82.6 · 80.2 · 65.3), whose items have F1's form. The F2 loss happens in the two F3 blocks: the carry pairs fall from 75–84% to 18–38%, the taught pairs' held triples from 87–89% to 56–64%, while the comparison pairs stay at 72–85%, close to their 67% visible-only ceiling. In both cases the replay half of every batch carried the earlier family (one third of each batch for F1 during F2; one fifth for F2 during F3) and did not hold it. The cell is still what holds: silencing it at k = 12 leaves 3–7% on the operations and 4–7% on the compositions, and k = 20 is within 2–9 points of k = 12. The development operations (mod 89, not replayed) fall to 9–52% in both arms, as in E8.
+
+**Verdicts.** P16.1 (coexistence gate, 80% of the twin on every family) refuted: F3 passes (0.88–0.97), F1 passes in two seeds (0.85, 0.87) and fails in one (0.69), composition fails in every seed (0.49–0.61). P16.2 (F1 within 10 points of its block-2 value) refuted: −10.6, −12.0, −20.8, with add and sub −16 to −39. P16.3 (composition ≥ 70%, carry pairs ≥ 60% after block 4) holds in every seed. P16.4 (cell still what holds; k = 20 within 10 of k = 12) holds. P16.5 (the twin holds everything) holds: the 10-byte window is not the limit.
+
+**What E16 establishes.** Under a local rule the toy learner acquires every family within 1–9 points of backprop while that family is current, including never-taught compositions inside a learner that also holds operands across distractors. What it does not do is keep an earlier family when the stream moves to a family of a different form: operations lose 11–21 points over four later blocks, compositions 30–41 points over two. P3 is the property that fails at the integrated scale, under the settings that gave 94% retention in E8 (one form, eight operations, window net). Two things differ from E8 and are the candidates: the replay (1,024 entries per block, uniform over the buffer, so an earlier family's share and diversity both shrink as the stream goes on; the twin draws fresh items of every seen family with equal weight) and the learner (the cell learner at window 10, which E11-D already showed forgets carry operations more than the window net). E16-D separates them.
+
+**Evidence level.** Development result, three seeds, one harness; the twin is matched in architecture, window, births and stream content and differs in the learning rule and in how earlier families are sampled; shortcut ceilings 1–2% on the carry pairs, 67% on the comparison pairs (which are therefore not evidence of composition); the store is present and near-inert as in E11/E15. No independent confirmation.

@@ -218,3 +218,5 @@ One E11 cell learner (10-byte window, hidden 512, diagonal cell, exact trace in 
 **Forecast.** Unloaded 36.5 ms per update for arm T on a mixed batch and 31 ms for arm D; six processes on this machine; forecast taken from the first block's measured pace once it prints, not from the smoke test (E15 ran at about 940 s of CPU per 6,144-update block with twelve processes).
 
 **Commands** (from `MOD97_LOCAL_RULE_20261106/`): `python3 exp16_integrated.py T SEED` and `python3 exp16_integrated.py D SEED`, seeds 73129 93683 116089.
+
+**E16 verdicts (8 November 2026, after the run; details in `E45_REPORT.md`, E16).** P16.1 refuted (F3 0.88–0.97 of the twin; F1 0.87 / 0.85 / 0.69; composition 0.61 / 0.58 / 0.49). P16.2 refuted (F1 −10.6 / −12.0 / −20.8 from block 2 to block 6). P16.3 holds (held pairs 87.0 / 84.3 / 87.0 after block 4; carry pairs 75–84%). P16.4 holds (silenced cell 3–7%; k = 20 within 2–9 points of k = 12). P16.5 holds (twin 95 / 93 / 94 on F1, composition, F3). Measured pace: 13–15 minutes per block with six processes; 80 minutes for the six lives.
