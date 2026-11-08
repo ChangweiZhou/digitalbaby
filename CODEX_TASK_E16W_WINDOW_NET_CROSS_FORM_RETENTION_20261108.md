@@ -34,3 +34,15 @@ Nine lives plus the parity checks. Report, after the composition stage and after
 ## Budget
 
 Nine lives of 13 stages each at hidden 512 (about 1.5× an E8 life), roughly 5 CPU-hours; under two hours of wall time with six workers once the E16-D processes finish. The qualified inference acceleration may be used; record that it was.
+
+## Amendment, 8 November 2026 12:15 EST (after Codex's review of this brief; before the nine lives start)
+
+Codex's objections are correct and the arms change accordingly. (i) With 1,024 entries per stage, "choose a stage uniformly, then an item" has the same expected share per stage as "draw uniformly from the whole buffer"; the balanced arm as written changed only repetition and batch correlation, not exposure, so prediction 2 had no intervention behind it. (ii) The backprop arm draws from every item seen so far, so in the mod-73 stages compositions are about 62% of its batches against about 6–10% of the local arm's; it is a ceiling, not a comparison of rules. (iii) A window net that keeps compositions would narrow the cause of E16's loss to the cell learner's side (window length, distractors, order, dose, the store) but would not prove the cell is the cause; prediction 1's second sentence is withdrawn and replaced by "localizes, does not prove".
+
+**Arms, amended (three standing seeds):**
+- **C_uni**: unchanged (sign rule, decay 0.25, share 1/2, batch 64, `late_family`, E8's uniform replay). Answers whether the window net forgets compositions across forms at all.
+- **C_share**: the replay half of every batch during the mod-73 stages is drawn half from the composition stage's buffer and half from the operation stages' buffers (so compositions are 25% of every batch, up from about 6–10%); everything else as C_uni. Log the realized exposure (items per family per stage) in the receipt. This is the real share intervention; `E8_REPLAY_SAMPLING=balanced` as first specified is withdrawn and need not be implemented.
+- **D_ceiling**: backprop with joint ground truth as before, labelled a ceiling, its composition share recorded.
+- **D_matched**: backprop on exactly C_uni's batches (same replay buffer, same draws: run the C_uni data pipeline with the backprop update), so that the rule is the only difference from C_uni. If D_matched keeps the compositions and C_uni does not, the rule is implicated; if both lose them, the replay is.
+
+Twelve lives. Predictions re-locked in `E16W_PREDICTIONS.md` before launch: (1) C_uni loses at least 15 points of held-pair mean over the four mod-73 stages in every seed; if under 10, E16's composition loss is localized to the cell learner's side and not to E8-style replay. (2) C_share loses at least a third less than C_uni in every seed; if it loses as much, exposure share is not the cause. (3) D_matched keeps the held pairs within 10 points of their post-composition value; if it loses as much as C_uni, the replay data, not the rule, is the limit. (4) mod-97 operations stay at or above 90% under both local arms. Budget about 6.5 CPU-hours. The default-parity reproduction already running is kept and counts.

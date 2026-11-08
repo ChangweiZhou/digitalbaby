@@ -1,0 +1,113 @@
+{
+  "timestamp": "2026-11-08T17:18:56.857972+00:00",
+  "original_controller": 35237,
+  "controller_state": "TERMINATED_TO_CANCEL_SUPERSEDED_QUEUE",
+  "stopped": [
+    {
+      "key": "C_uni_73129",
+      "part": "C_uni",
+      "seed": 73129,
+      "arm": "C",
+      "profile": false,
+      "deps": [
+        "profile_C_73129"
+      ],
+      "command": [
+        "e14_acceleration_worker.py",
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "EXP45_HIDDEN": "512",
+        "E8_BATCH": "64",
+        "E8_WD": "0.25",
+        "E8_LR": ".001",
+        "E8_SCHEDULE": "late_family",
+        "E8_REPLAY_SHARE": "1/2",
+        "E8_BUFFER_CAP": "1024",
+        "E8_REPLAY_SAMPLING": "uniform",
+        "E8_SAVE_STAGES": "0",
+        "E8_DIAGNOSTICS": "0",
+        "E8_COMPOSE_CHECKPOINTS": "0",
+        "E8_RUN_PREFIX": "e16w_C_uni_73129_"
+      },
+      "receipt": "e16w_C_uni_73129_e8_life_C_rp1of2_late_family_73129.json",
+      "status": "running",
+      "pid": 38896,
+      "log": "exp45/logs/e16w_C_uni_73129.log"
+    },
+    {
+      "key": "C_bal_73129",
+      "part": "C_bal",
+      "seed": 73129,
+      "arm": "C",
+      "profile": false,
+      "deps": [
+        "profile_C_73129"
+      ],
+      "command": [
+        "e14_acceleration_worker.py",
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "EXP45_HIDDEN": "512",
+        "E8_BATCH": "64",
+        "E8_WD": "0.25",
+        "E8_LR": ".001",
+        "E8_SCHEDULE": "late_family",
+        "E8_REPLAY_SHARE": "1/2",
+        "E8_BUFFER_CAP": "1024",
+        "E8_REPLAY_SAMPLING": "balanced",
+        "E8_SAVE_STAGES": "0",
+        "E8_DIAGNOSTICS": "0",
+        "E8_COMPOSE_CHECKPOINTS": "0",
+        "E8_RUN_PREFIX": "e16w_C_bal_73129_"
+      },
+      "receipt": "e16w_C_bal_73129_e8_life_C_rp1of2_late_family_balanced_73129.json",
+      "status": "running",
+      "pid": 38897,
+      "log": "exp45/logs/e16w_C_bal_73129.log"
+    }
+  ],
+  "retained": [
+    {
+      "key": "D_73129",
+      "part": "D",
+      "seed": 73129,
+      "arm": "D",
+      "profile": false,
+      "deps": [
+        "profile_C_73129"
+      ],
+      "command": [
+        "e14_acceleration_worker.py",
+        "exp8_life.py",
+        "D",
+        "73129"
+      ],
+      "env": {
+        "EXP45_HIDDEN": "512",
+        "E8_BATCH": "64",
+        "E8_WD": "0.3",
+        "E8_LR": ".001",
+        "E8_SCHEDULE": "late_family",
+        "E8_REPLAY_SHARE": "1/2",
+        "E8_BUFFER_CAP": "1024",
+        "E8_REPLAY_SAMPLING": "uniform",
+        "E8_SAVE_STAGES": "0",
+        "E8_DIAGNOSTICS": "0",
+        "E8_COMPOSE_CHECKPOINTS": "0",
+        "E8_RUN_PREFIX": "e16w_D_73129_"
+      },
+      "receipt": "e16w_D_73129_e8_life_D_rp1of2_late_family_73129.json",
+      "status": "running",
+      "pid": 38898,
+      "log": "exp45/logs/e16w_D_73129.log"
+    }
+  ],
+  "reason": "User-authorized design correction; not scientific failure",
+  "pending_new_design": true
+}

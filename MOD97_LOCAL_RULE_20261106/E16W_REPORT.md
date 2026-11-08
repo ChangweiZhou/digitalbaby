@@ -1,9 +1,7 @@
-# E16W window-net cross-form retention
+# E16W — revised campaign in progress
 
-Campaign status: running. 0/10 subprocesses returned (one parity profile, nine scientific lives).
+User-authorized amendment replaces the old balanced arm. Read E16W2_PREDICTIONS.md and E16W2_LOCK.json. Old E16W report generator is superseded and must not be used for this revision.
 
-Prospective predictions: E16W_PREDICTIONS.md. New schedule: four mod97 stages, composition, four mod73 stages (nine training stages, 57,344 updates). No tuning or seed substitution.
+Twelve scientific lives: C_uni, C_share, D_ceiling, D_matched on three standing seeds. One existing ceiling retained, eleven new processes. Full default parity retained. Revised short technical checks PASS. Scientific results are pending.
 
-## Interpretation limits
-
-Uniform and per-stage balanced sampling have identical marginal stage probabilities with equal 1024-entry buffers. They differ in replacement/correlation; no intended composition-share increase is present. Report buffer admission files and replay counts. A negative balanced result cannot exclude increasing composition replay. BP uses joint ground truth and differs in optimizer decay and store use; it is a ceiling, not a rule-only control. A window/cell contrast also differs in window, distractors and schedule. Arithmetic carry pairs have much lower shortcut ceilings than comparison pairs; final-answer accuracy and full-scratchpad accuracy stay separate. No broader autonomous-learning or language claim follows.
+C_uni records exact input/target batches; matched BP uses that stream with identical optimizer settings and .25 decay. The share arm presents exactly16 composition examples per64-item batch in the four late stages. Exposure and batch hashes are recorded. Old locks, partial trajectories and interrupted compute remain archived. Amendment occurred after original runs began; no claim of pre-original-launch registration.
