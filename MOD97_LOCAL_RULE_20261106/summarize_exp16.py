@@ -13,10 +13,10 @@ pct = lambda d: 100 * d["exact"] / d["n"]
 pctf = lambda d: 100 * d["final"] / d["n"]
 
 
-ARMS = ("T", "D", "M", "T_oracle", "T_balanced", "T_all_balanced", "T_share", "T_res2048", "T_res4096", "T_res8192", "T_res16384", "T_tot24576", "T_tot65536")
+ARMS = ("T", "D", "M", "T_oracle", "T_balanced", "T_all_balanced", "T_share", "T_res2048", "T_res4096", "T_res8192", "T_res16384", "T_tot24576", "T_tot65536", "T_raw65536")
 LABEL = {"T": "T learner (uniform replay)", "D": "D twin (joint ground truth)", "M": "M backprop on T's batches", "T_oracle": "T on the twin's stream",
          "T_balanced": "T balanced per family (1,024/block)", "T_all_balanced": "T balanced, every entry", "T_share": "T earlier families 50% of batch",
-         "T_res2048": "T reservoir 2,048/family", "T_res4096": "T reservoir 4,096/family", "T_res8192": "T reservoir 8,192/family", "T_res16384": "T reservoir 16,384/family", "T_tot24576": "T one reservoir 24,576, no labels", "T_tot65536": "T one reservoir 65,536, no labels"}
+         "T_res2048": "T reservoir 2,048/family", "T_res4096": "T reservoir 4,096/family", "T_res8192": "T reservoir 8,192/family", "T_res16384": "T reservoir 16,384/family", "T_tot24576": "T one reservoir 24,576, no labels", "T_tot65536": "T one reservoir 65,536, no labels", "T_raw65536": "T raw bytes verbatim, 65,536, no parser"}
 
 
 def load(arm, seed):

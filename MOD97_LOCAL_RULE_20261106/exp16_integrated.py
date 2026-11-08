@@ -45,9 +45,11 @@ OUT, EOS, BATCH, STAGE_UPDATES, DRYTAG = E.OUT, E.EOS, X.BATCH, E.STAGE_UPDATES,
 # total (E16-R2, 8 Nov 16:25 EST): ONE reservoir of E16_CAP entries over all presentations of the whole life, no family label anywhere
 #         (Algorithm R with a single counter); the replay half is drawn uniformly from it. Bounded by a total budget, label-free.
 REPLAY16 = os.environ.get("E16_REPLAY", "uniform")
-assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share", "reservoir", "total")
+# raw (E16-R3, 8 Nov 17:30 EST): as total, but the reservoir holds the presented BYTES (prompt and answer exactly as they appeared) and
+#         replays them verbatim: no parsing into task and operands, no re-rendering, no recomputed answer. The parser is out of the replay path.
+assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share", "reservoir", "total", "raw")
 RCAP = int(os.environ.get("E16_CAP", "4096"))
-RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir" else f"_tot{RCAP}" if REPLAY16 == "total" else f"_{REPLAY16}")
+RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir" else f"_tot{RCAP}" if REPLAY16 == "total" else f"_raw{RCAP}" if REPLAY16 == "raw" else f"_{REPLAY16}")
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -66,6 +68,8 @@ def render_pair(o1, o2, a, b, c):
 
 
 def render(entry, rng):
+    if entry[0] == "raw":          # verbatim replay of presented bytes
+        return list(entry[1]), list(entry[2])
     if entry[0] == "op":
         _, task, a, b = entry
         return E.render(task, a, b, rng.randint(0, KMAX), rng)
@@ -184,7 +188,7 @@ def life(arm, seed):
                 rp = [render(rng.choice(fbuf[fams[i % len(fams)]]), rng) for i in range(BATCH // 2)]
                 new = [next(cur) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
-            elif REPLAY16 == "total" and fbuf:
+            elif REPLAY16 in ("total", "raw") and fbuf:
                 rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(BATCH // 2)]
                 new = [next(cur) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
@@ -212,7 +216,9 @@ def life(arm, seed):
         if (local or arm == "M") and REPLAY16 != "oracle":
             # the stage's presented items as replayable entries (family + operands), 1,024 of them, as E11-D/E15
             ents = []
-            for p, _ in presented:
+            for p, t in presented:
+                if REPLAY16 == "raw":
+                    ents.append(("raw", tuple(p), tuple(t))); continue
                 if p[0] == ord("c"):
                     ents.append(("comp", chr(p[3]), chr(p[6]), int(bytes(p[1:3])), int(bytes(p[4:6])), int(bytes(p[7:9]))))
                 else:
@@ -222,7 +228,7 @@ def life(arm, seed):
                 buffer += rng.sample(ents, min(1024, len(ents)))
             elif REPLAY16 in ("balanced", "share"):
                 fbuf.setdefault(fam, []).extend(rng.sample(ents, min(1024, len(ents))))
-            elif REPLAY16 in ("reservoir", "total"):   # Algorithm R over presentations: per family (reservoir) or one for the whole life (total)
+            elif REPLAY16 in ("reservoir", "total", "raw"):   # Algorithm R over presentations: per family (reservoir) or one for the whole life (total, raw)
                 key = fam if REPLAY16 == "reservoir" else "all"
                 fl = fbuf.setdefault(key, []); n = fseen.get(key, 0)
                 for e in ents:
@@ -237,6 +243,10 @@ def life(arm, seed):
                 stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
                 if REPLAY16 == "total":   # how the label-free reservoir happens to be composed, by family of entry (for reading only)
                     stages[-1]["reservoir_by_family"] = {f: sum(1 for e in set(fbuf["all"]) if (e[0] == "comp") == (f == "F2") and (f == "F2" or e[1][1] == (97 if f == "F1" else 73))) for f in ("F1", "F2", "F3")}
+                elif REPLAY16 == "raw":   # by first byte of the stored prompt (for reading only; the learner never sees this grouping)
+                    f1c, f3c = {t[2][0] for t in F1}, {t[2][0] for t in F3}
+                    stages[-1]["reservoir_by_family"] = {"F1": sum(1 for e in set(fbuf["all"]) if e[1][0] in f1c), "F2": sum(1 for e in set(fbuf["all"]) if e[1][0] == ord("c")), "F3": sum(1 for e in set(fbuf["all"]) if e[1][0] in f3c)}
+                    stages[-1]["reservoir_bytes"] = sum(len(e[1]) + len(e[2]) for e in fbuf["all"])
             else:   # all_balanced: every distinct presented entry of the family
                 fs = fset.setdefault(fam, set()); fl = fbuf.setdefault(fam, [])
                 for e in ents:

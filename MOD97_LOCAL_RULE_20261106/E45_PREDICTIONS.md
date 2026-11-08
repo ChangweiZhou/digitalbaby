@@ -290,3 +290,17 @@ E16-R's reservoir was per family, which needs a label the learner is not given a
 **Forecast.** Six processes on a free machine: about 15 minutes per block, 95 minutes. **Commands:** `E16_REPLAY=total E16_CAP={24576,65536} python3 exp16_integrated.py T SEED`.
 
 **E16-R2 verdicts (8 November 2026, 17:20 EST; details in `E45_REPORT.md`, E16-R2).** P16R2.1 holds on 8 of 9 (compositions seed 116089: 70.3 against 76.3). P16R2.2 partial (compositions −2.0 / −5.0 / −5.4 from every-entry; ratios 0.88 / 0.81 / 0.83; F1 +3.0 / +1.6 / +5.4). P16R2.3 misses in direction (label-free F1 at block 4 higher by 3.7 / 4.7 / 10.0); the audit's reasoning about the reservoir's composition during the composition blocks was wrong (updated at block ends). P16R2.4 holds. Gate at 65,536: F1 0.97 / 0.96 / 0.88, compositions 0.88 / 0.81 / 0.83, F3 0.99 / 0.98 / 0.95, all ≥ 0.80.
+
+## E16-R3: the parser removed; verbatim raw-byte replay at the same budget (8 November 2026 17:35 EST, written before launch; launch after Codex's E16-WR frees the machine)
+
+E16-R2's reservoir still stores parsed entries (family, operands) and re-renders them with fresh letters: a parser inside the replay path that no learner is given. Replay mode `raw` (`E16_REPLAY=raw E16_CAP=65536`): the same single label-free Algorithm-R reservoir, but each slot holds the presented bytes, prompt and answer exactly as they appeared, and replay returns them verbatim; no task recognition, no operand extraction, no recomputed or re-rendered answer anywhere. The receipt records the distinct count, the composition by first byte (for reading only) and the reservoir's size in bytes. One capacity, 65,536, three standing seeds, three lives; comparator E16-R2's `total 65536` (same budget, parsed and re-rendered) and the twin. Dry run passed (cap 300; about 16 bytes per slot).
+
+**Mechanism audit.** The only difference from E16-R2's arm is what a slot holds and that replay skips `render`; the reservoir update, the draw, the batch assembly and the learner are shared code. E11-D found that replaying 1,024 fixed episodes per stage lets the window path memorize those prompts (fixed letters) instead of keeping the rule; at 65,536 slots over the life the stored prompts cover most operand pairs and many letter strings, so the question is whether verbatim coverage at this budget suffices where fixed-episode replay at 1,024 did not. Answers replayed are the observed correct answers (as in every cell-harness arm), not the learner's own, so E16-V's wrong-target problem does not enter.
+
+**Predictions.**
+- P16R3.1 Verbatim replay at 65,536 is within 5 points of E16-R2's parsed arm on every family in every seed after block 6 (parsed: F1 92.8 / 90.8 / 83.1; compositions 82.5 / 74.8 / 77.9; F3 92.8 / 90.4 / 88.6). If it is more than 10 points lower on the operations at k = 12, fixed letters are being memorized and the parser-free version needs more budget or a different storage form, to be found by a capacity point at 131,072 before anything else changes.
+- P16R3.2 The gate holds without the parser: ratio to the twin at or above 0.80 on every family in every seed.
+- P16R3.3 Extrapolation survives: k = 20 within 10 points of k = 12 on F1 after block 6, and the silenced-cell audit on F1 stays at or below 10% (family mean).
+- P16R3.4 The reservoir holds at most 65,536 × 25 bytes, about 1.6 MB, recorded exactly in the receipt.
+
+**Forecast.** Three processes on a free machine, about 13 minutes per block, 80 minutes. **Command:** `E16_REPLAY=raw E16_CAP=65536 python3 exp16_integrated.py T SEED`.
