@@ -180,3 +180,24 @@ Birth: `e11_dev_M_{seed}.pt` unchanged. Panels, seeds, doses, store, loss, optim
 
 **Commands** (from `MOD97_LOCAL_RULE_20261106/`, seeds 73129 93683 116089): `E11_TRACE=scan E11_WD=0.25 python3 exp11_cell.py MT SEED`; `E11_TRACE=scan E11_REPLAY=fresh python3 exp11_cell.py MT SEED`; `E11_TRACE=scan E11_SCHEDULE=interleaved python3 exp11_cell.py MT SEED`; `E11_TRACE=scan E11_WD=0.25 E11_REPLAY=fresh python3 exp11_cell.py MT SEED`.
 Smoke timing before launch: scan trace 37 ms per update, within-step 32 ms (forward trace 205 ms).
+
+## E15: the fixed settings applied (7 November 2026, written before launch; Codex's E14 running in parallel)
+
+Four one-change parts at the settings E11-D fixed (decay 0.25 on local arms; fresh-render replay of stored pairs; trace by the scan form, identical to the forward trace at 1e-6). Three seeds each.
+
+| Part | Arm | Change | Question |
+|---|---|---|---|
+| A | MT_wd0.25_int | E11 memory birth, interleaved four-operation stream, no replay, decay 0.25 | can the sign rule learn a mixed stream once decay is fixed (E11-D's interleaved arm at decay 1.0 failed in two seeds) |
+| B | NT_wd0.25_fr | E11 no-memory birth, blocked, decay 0.25 + fresh-render replay | acquisition of holding and its retention in one life |
+| C | M_g2 births + MT_g2_wd0.25_fr | split write gate w and read gate o on the cell (`h = r h + w c`, readout `o ⊙ h`), new births by backprop through time, then the fixed-settings life | Codex's shelf check: separate gates 87–98% against 57–82% tied; does it hold in this learner |
+| D | ring_sign_wd0.25, ring_conf_sign_wd0.25 | E10 ring, sign-rule life at decay 0.25 (births d32768 unchanged) | does lower decay stop the interface erosion that refuted P10.4 |
+
+**Mechanism audit.** Interleaved stream: `stream()` draws uniformly over all task-pair entries (E11-D, ran). Fresh-render replay: pairs recovered from prompt bytes, stage's operation (E11-D, ran). Split gates: the trace is re-derived (gc = w(1 − c²), gr = h_{t−1} r(1 − r), gw = c w(1 − w), each with the r-recurrence; the read gate is instantaneous and trained by autograd); qualification compares forward trace, scan and backprop through time on the six cell tensors. Births for C are new (architecture changed); the baseline for C is E11-D's MT_wd0.25_fr (69 / 65 / 56 add+sub mean), whose births differ only by the absent gates. Ring decay: a single optimizer argument; default reproduces E10. Dry runs of all four parts passed (4 updates per stage; 512-update dry birth for C).
+
+**Predictions.**
+- P15.1 (A) With decay 0.25 the interleaved learner reaches ≥ 70% at k = 12 on add and sub in every seed after the four blocks (E11-D at decay 1.0: 78 / 15 / 12 on add). If it still fails in a seed, the mixed-stream failure is not decay and becomes a first-order problem for the language stage.
+- P15.2 (B) From the no-memory birth under the fixed settings, add after its stage ≥ 60% at k = 12 (as E11 NT: 90 / 78 / 63) and after the fourth stage add+sub mean ≥ 40% in every seed (E11 NT: 26 / 24 / 25 total mean, add+sub ≈ 1).
+- P15.3 (C) Split gates: births reach ≥ 85% at k = 12 as the single-gate births did; the fixed-settings life ends with add+sub mean at least 5 points above the single-gate learner in every seed (69 / 65 / 56), and k = 20 within 10 points of k = 12. If within ±5, the gates do not matter at this scale.
+- P15.4 (D) At decay 0.25 the ring's single-operation interfaces after the sign-rule life are within 3 points of their birth values in every seed (at decay 1.0 they eroded), and held-pair composition does not fall during life.
+
+**Commands** (from `MOD97_LOCAL_RULE_20261106/`): A `E11_TRACE=scan E11_WD=0.25 E11_SCHEDULE=interleaved python3 exp11_cell.py MT SEED`; B `E11_TRACE=scan E11_WD=0.25 E11_REPLAY=fresh python3 exp11_cell.py NT SEED`; C `E11_GATES=split python3 exp11_cell.py dev M SEED` then `E11_GATES=split E11_TRACE=scan E11_WD=0.25 E11_REPLAY=fresh python3 exp11_cell.py MT SEED`; D `E10_DEV_DOSE=32768 E10_WD=0.25 python3 exp10_ring.py ring_sign SEED` and `ring_conf_sign SEED`. Seeds 73129 93683 116089.

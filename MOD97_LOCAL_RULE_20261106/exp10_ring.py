@@ -32,6 +32,8 @@ CONF_TAUGHT = [("+", "+"), ("-", "-")]; CONF_HELD = [("+", "-"), ("-", "+")]
 BATCH, BLOCK = 64, 512
 DEV_UPDATES = int(os.environ.get("E10_DEV_DOSE", "8192")); LIFE_UPDATES = 8192
 TAG = "" if DEV_UPDATES == 8192 else f"_d{DEV_UPDATES}"
+WD = float(os.environ.get("E10_WD", "1.0"))   # local-arm decay; default reproduces E10
+WDTAG = "" if WD == 1.0 else f"_wd{WD:g}"
 IDX = T.arange(MOD)
 ADD_IDX = (IDX[:, None] - IDX[None, :]) % MOD      # k - i  -> index of b for add
 SUB_IDX = (IDX[:, None] + IDX[None, :]) % MOD      # k + i  -> ... (sub: a - b = k  <=> b = a - k)
@@ -184,7 +186,7 @@ def develop(seed, flat):
 
 def life(arm, seed):
     """arms: ring_zero, ring_sign, ring_bp, ring_conf_sign, ring_conf_bp, flat_bp, flat_conf_bp"""
-    path = OUT / f"e10_life_{arm}{TAG}_{seed}.json"
+    path = OUT / f"e10_life_{arm}{TAG}{WDTAG}_{seed}.json"
     flat = arm.startswith("flat")
     T.manual_seed(seed); m = RingNet(flat)
     m.load_state_dict(T.load(OUT / f"e10_dev_{'flat' if flat else 'ring'}{TAG}_{seed}.pt"))
@@ -200,7 +202,7 @@ def life(arm, seed):
     curve = [dict(step=0, compose={k: score_pairs(m, it) for k, it in pan.items()}, single={o: score_single(m, it) for o, it in held_single.items()})]
     print("e10", arm, seed, 0, {k: v["final"] for k, v in curve[-1]["compose"].items()}, flush=True)
     if arm != "ring_zero":
-        opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(1. if local else .3), betas=(.9, .98))
+        opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(WD if local else .3), betas=(.9, .98))
         order = Random(seed + 3); t0 = time.process_time()
         for stop in range(BLOCK, LIFE_UPDATES + 1, BLOCK):
             losses = [update(m, opt, order.sample(teach, BATCH), local, True) for _ in range(BLOCK)]

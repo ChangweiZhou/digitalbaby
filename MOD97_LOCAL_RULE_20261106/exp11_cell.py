@@ -60,6 +60,10 @@ WD = float(os.environ.get("E11_WD", "1.0"))
 REPLAY = os.environ.get("E11_REPLAY", "episode")
 SCHEDULE = os.environ.get("E11_SCHEDULE", "blocked")
 TRACE = os.environ.get("E11_TRACE", "forward")
+GATES = os.environ.get("E11_GATES", "single")   # single: h = r h + (1-r) c; split: write gate w and read gate o, each input-driven
+ARCHTAG = "" if GATES == "single" else "_g2"
+DEV_DOSE = int(os.environ.get("E11_DEV_UPDATES", str(DEV_UPDATES)))
+DEVTAG = "" if DEV_DOSE == DEV_UPDATES else f"_dry{DEV_DOSE}"
 DIAGTAG = ("" if WD == 1.0 else f"_wd{WD:g}") + ("" if REPLAY == "episode" else "_fr") + ("" if SCHEDULE == "blocked" else "_int")
 
 
@@ -70,6 +74,8 @@ class CellNet(nn.Module):
         self.l1 = nn.Linear(8 * W, H)
         self.lp = nn.Linear(H, D)
         self.lc, self.lr = nn.Linear(D, C), nn.Linear(D, C)
+        if GATES == "split":
+            self.lw, self.lo = nn.Linear(D, C), nn.Linear(D, C)
         self.lm = nn.Linear(C, H)
         self.l2 = nn.Linear(H, H)
         self.l3 = nn.Linear(H, 257)
@@ -89,44 +95,56 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     p = T.tanh(lin(z1, m.lp, local))
     c = T.tanh(lin(p, m.lc, local))
     r = T.sigmoid(lin(p, m.lr, local))
+    w = T.sigmoid(lin(p, m.lw, local)) if GATES == "split" else 1 - r
+    o = T.sigmoid(lin(p, m.lo, local)) if GATES == "split" else None
     B, L, _ = c.shape
     h = T.zeros(B, C)
     hs, prev = [], []
     for t in range(L):
         hp = h if through_time else h.detach()
         prev.append(hp)
-        h = r[:, t] * hp + (1 - r[:, t]) * c[:, t]
+        h = r[:, t] * hp + w[:, t] * c[:, t]
         if keep:
             h.retain_grad()
         hs.append(h)
     Hs = T.stack(hs, 1)
     if silence:
         Hs = T.zeros_like(Hs)
-    z2 = T.tanh(lin(z1, m.l2, local) + lin(Hs, m.lm, local))
-    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, hs=hs, prev=prev)
+    Hr = o * Hs if o is not None else Hs
+    z2 = T.tanh(lin(z1, m.l2, local) + lin(Hr, m.lm, local))
+    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev)
 
 
 @T.no_grad()
 def trace_grads(m, it):
     """Exact gradient of the loss for the cell's synapses (Wc, bc, Wr, br) from the per-synapse traces and the
     per-step learning signals L_t = hs[t].grad (readout path only, since the state was detached in the forward)."""
-    p, c, r, hs, prev = it["p"], it["c"], it["r"], it["hs"], it["prev"]
+    p, c, r, w, hs, prev = it["p"], it["c"], it["r"], it["w"], it["hs"], it["prev"]
     B = p.shape[0]
+    split = GATES == "split"
     ec = T.zeros(B, C, D); er = T.zeros(B, C, D); ebc = T.zeros(B, C); ebr = T.zeros(B, C)
     gWc = T.zeros(C, D); gWr = T.zeros(C, D); gbc = T.zeros(C); gbr = T.zeros(C)
+    ew = T.zeros(B, C, D); ebw = T.zeros(B, C); gWw = T.zeros(C, D); gbw = T.zeros(C)
     for t in range(len(hs)):
-        rt, ct, pt, hp = r[:, t], c[:, t], p[:, t], prev[t]
-        gc = (1 - rt) * (1 - ct * ct)
-        gr = (hp - ct) * rt * (1 - rt)
+        rt, ct, wt, pt, hp = r[:, t], c[:, t], w[:, t], p[:, t], prev[t]
+        gc = wt * (1 - ct * ct)
+        gr = (hp if split else hp - ct) * rt * (1 - rt)
+        gw = ct * wt * (1 - wt)
         ec = rt[:, :, None] * ec + gc[:, :, None] * pt[:, None, :]
         er = rt[:, :, None] * er + gr[:, :, None] * pt[:, None, :]
         ebc = rt * ebc + gc
         ebr = rt * ebr + gr
+        if split:
+            ew = rt[:, :, None] * ew + gw[:, :, None] * pt[:, None, :]; ebw = rt * ebw + gw
         Lt = hs[t].grad
         if Lt is not None:
             gWc += T.einsum("bc,bcd->cd", Lt, ec); gWr += T.einsum("bc,bcd->cd", Lt, er)
             gbc += (Lt * ebc).sum(0); gbr += (Lt * ebr).sum(0)
+            if split:
+                gWw += T.einsum("bc,bcd->cd", Lt, ew); gbw += (Lt * ebw).sum(0)
     m.lc.weight.grad, m.lc.bias.grad, m.lr.weight.grad, m.lr.bias.grad = gWc, gbc, gWr, gbr
+    if split:
+        m.lw.weight.grad, m.lw.bias.grad = gWw, gbw
 
 
 @T.no_grad()
@@ -134,7 +152,7 @@ def trace_grads_scan(m, it):
     """The same gradient as trace_grads, computed by the algebraically identical backward scan of the learning signal:
     Lambda_s = L_s + r_{s+1} * Lambda_{s+1}; dLoss/dWc = sum_s (Lambda_s * gc_s)^T p_s. Not local in time (a compute trick);
     equality with the forward trace is checked in qualify()."""
-    p, c, r, hs, prev = it["p"], it["c"], it["r"], it["hs"], it["prev"]
+    p, c, r, w, hs, prev = it["p"], it["c"], it["r"], it["w"], it["hs"], it["prev"]
     Ls = T.stack([h.grad if h.grad is not None else T.zeros_like(h) for h in hs], 1)   # (B, L, C)
     Lam = T.zeros_like(Ls)
     acc = T.zeros_like(Ls[:, 0])
@@ -142,10 +160,14 @@ def trace_grads_scan(m, it):
         acc = Ls[:, t] + (r[:, t + 1] * acc if t + 1 < Ls.shape[1] else 0)
         Lam[:, t] = acc
     hp = T.stack(prev, 1)
-    gc = (1 - r) * (1 - c * c)
-    gr = (hp - c) * r * (1 - r)
+    split = GATES == "split"
+    gc = w * (1 - c * c)
+    gr = (hp if split else hp - c) * r * (1 - r)
     m.lc.weight.grad = T.einsum("btc,btd->cd", Lam * gc, p); m.lc.bias.grad = (Lam * gc).sum((0, 1))
     m.lr.weight.grad = T.einsum("btc,btd->cd", Lam * gr, p); m.lr.bias.grad = (Lam * gr).sum((0, 1))
+    if split:
+        gw = c * w * (1 - w)
+        m.lw.weight.grad = T.einsum("btc,btd->cd", Lam * gw, p); m.lw.bias.grad = (Lam * gw).sum((0, 1))
 
 
 def update(m, opt, items, arm, store=None):
@@ -245,7 +267,7 @@ def panel(task, pairs, seed, ks=KS_PANEL, n=400):
 
 # ---------------------------------------------------------------- development and life
 def develop(birth, seed):
-    path = OUT / f"e11_dev_{birth}_{seed}.pt"
+    path = OUT / f"e11_dev_{birth}{ARCHTAG}{DEVTAG}_{seed}.pt"
     if path.exists():
         return
     m = new_net(seed)
@@ -254,22 +276,22 @@ def develop(birth, seed):
     panels = {NAME(*t): panel(t, split(t, .5, seed)[1], seed, ks=(0, 4, 8, 12, 20), n=300) for t in DEV}
     bt = batches(tp, seed, KMAX[birth])
     t0 = time.process_time(); curve = []
-    for stop in range(X.BLOCK, DEV_UPDATES + 1, X.BLOCK):
+    for stop in range(X.BLOCK, DEV_DOSE + 1, X.BLOCK):
         losses = [update(m, opt, next(bt), "D") for _ in range(X.BLOCK)]
-        if stop % 4096 == 0 or stop == DEV_UPDATES:
+        if stop % 4096 == 0 or stop == DEV_DOSE:
             row = dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
                        sealed={n: {k: score(m, it) for k, it in pk.items()} for n, pk in panels.items()})
             curve.append(row)
             print("e11 dev", birth, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
     row["silenced_k12"] = {n: score(m, pk[12], silence=True) for n, pk in panels.items()}
     T.save(m.state_dict(), path)
-    (OUT / f"e11_dev_{birth}_{seed}.json").write_text(json.dumps(dict(birth=birth, seed=seed, kmax=KMAX[birth], curve=curve), indent=1))
+    (OUT / f"e11_dev_{birth}{ARCHTAG}{DEVTAG}_{seed}.json").write_text(json.dumps(dict(birth=birth, seed=seed, kmax=KMAX[birth], curve=curve), indent=1))
 
 
 def life(birth, arm, seed):
-    path = OUT / f"e11_life_{birth}{arm}{DIAGTAG}{DRYTAG}_{seed}.json"
+    path = OUT / f"e11_life_{birth}{arm}{ARCHTAG}{DIAGTAG}{DRYTAG}_{seed}.json"
     m = new_net(seed)
-    m.load_state_dict(T.load(OUT / f"e11_dev_{birth}_{seed}.pt"))
+    m.load_state_dict(T.load(OUT / f"e11_dev_{birth}{ARCHTAG}{DEVTAG}_{seed}.pt"))
     local = arm != "D"
     opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(WD if local else .3), betas=(.9, .98))
     store = X.Store(seed) if local else None
@@ -320,8 +342,11 @@ def life(birth, arm, seed):
 
 
 # ---------------------------------------------------------------- qualification
+CELL_PARAMS = ("lc.weight", "lc.bias", "lr.weight", "lr.bias") + (("lw.weight", "lw.bias") if GATES == "split" else ())
+
+
 def qualify():
-    out = {}
+    out = {"gates": GATES}
     rng = Random(1)
     for t in DEV + LIFE:
         tr, se = split(t, .25, SEEDS[0]); assert not (set(tr) & set(se))
@@ -342,8 +367,8 @@ def qualify():
     loss2 = cross_entropy(logits[mask], y[mask]); m.zero_grad(); loss2.backward()
     within = {n: m.get_parameter(n).grad.clone() for n in ("lc.weight", "lr.weight")}
     trace_grads(m, it)
-    out["trace_vs_bptt_max_rel_err"] = {n: float((m.get_parameter(n).grad - ref[n]).abs().max() / ref[n].abs().max()) for n in ("lc.weight", "lc.bias", "lr.weight", "lr.bias")}
-    fwd = {n: m.get_parameter(n).grad.clone() for n in ("lc.weight", "lc.bias", "lr.weight", "lr.bias")}
+    out["trace_vs_bptt_max_rel_err"] = {n: float((m.get_parameter(n).grad - ref[n]).abs().max() / ref[n].abs().max()) for n in CELL_PARAMS}
+    fwd = {n: m.get_parameter(n).grad.clone() for n in CELL_PARAMS}
     trace_grads_scan(m, it)
     out["scan_vs_forward_trace_max_rel_err"] = {n: float((m.get_parameter(n).grad - fwd[n]).abs().max() / fwd[n].abs().max()) for n in fwd}
     for n in fwd: m.get_parameter(n).grad = fwd[n]
