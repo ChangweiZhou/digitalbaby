@@ -1,0 +1,1043 @@
+[
+  {
+    "kind": "paragraph",
+    "style": "Heading1",
+    "text": "Survey of Circuit-Level Wiring Mechanisms for Lifelong Artificial Learners"
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 1: Hippocampus and Neocortex as Complementary Learning Systems"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Hippocampus and Neocortex as Complementary Learning Systems (CLS)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes dual-rate representation learning by pairing a fast, pattern-separated episodic store with a slow, pattern-completing shared network to integrate statistical regularities without catastrophic forgetting1. This functional division of labor is experimentally shown in mammalian lesion and functional neuroimaging studies2. The strongest single piece of evidence is established by McClelland, McNaughton, & O'Reilly (1995)2 and updated by Kumaran, Hassabis, & McClelland (2016)1."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Entorhinal Cortex (EC Layer II/III) projects via the perforant path to Dentate Gyrus (DG granule cells, exhibiting a 1:10 sparse feedforward expansion) and CA3 pyramidal cells (excitatory). DG granule cells project via mossy fibers to CA3 pyramidal cells (excitatory, 1:10 convergence). CA3 features dense recurrent collateral excitatory connections intermingled with local GABAergic basket cell feedback interneurons (inhibitory). CA3 projects via Schaffer collaterals to CA1 pyramidal cells (excitatory), which project back to EC Layer V (1:1 mapping). EC Layer V projects to deep neocortical layers (Layers 5/6). Neocortex consists of interconnected L2/3/5 pyramidal microcircuits with local GABAergic interneurons."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: The EC-to-DG sparse projection matrix and internal DG feedback inhibitory connectivity that enforces sparse firing rates (2–5%). Plastic in life: CA3 recurrent collateral synapses, CA3-to-CA1 Schaffer collateral projections, and deep-to-superficial neocortical recurrent connections. Plasticity is gated by a scalar novelty modulator (such as septal acetylcholine or dopamine). The best-supported local update rule at fast hippocampal plastic sites is a Differential Hebbian rule, written as: change in synaptic weight equals learning rate times presynaptic firing rate times the temporal derivative of postsynaptic firing rate2. The best-supported rule at slow neocortical plastic sites is a rate-driven covariance rule, written as: change in synaptic weight equals slow neocortical learning rate times the product of presynaptic firing rate minus presynaptic baseline and postsynaptic firing rate minus postsynaptic baseline2."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  to  parameters. When connection strengths are shared per cell-type projection pair, the parameter count depends on target sparsity thresholds in DG, the learning rate ratio between fast and slow stores (), decay rates, and cell-type scaling coefficients2."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "McClelland, McNaughton, & O'Reilly (1995)2, Psychological Review, dual-network connectionist architecture tested on paired-associate learning tasks, successfully resolving catastrophic interference but lacking dynamic schema-driven neocortical updating (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Kumaran & McClelland (2012)7, Psychological Review, recurrent episodic memory model tested on transitive inference and schema integration tasks, demonstrating rapid generalization via recurrent trace interaction (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Pan et al. (2025/2026)8, bioRxiv, deep neural model pairing ultra-sparse episodic adapters with a shared language trunk tested on continual naturalistic memory tasks, demonstrating retention without degradation of core capabilities (code available8)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Retention of old tasks and sample efficiency. The fast hippocampal store rapidly isolates novel byte sequence traces in pattern-separated sparse codes without altering shared network parameters2. Subsequent offline interleaved replay gradually transfers compressed regularities into the 60,000-parameter shared cortical network, preventing catastrophic forgetting during sequential rule acquisition2."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Base network coupled to a 500-slot sparse fast episodic store with an offline interleaved replay cycle. Arm B: Matched 60,000-parameter network updated purely online. Task: Sequential training on 10 distinct modular arithmetic operations (). Measurement: Mean classification accuracy on the first 5 modular arithmetic tasks after completing online training on all 10 tasks."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because the complementary learning architecture is supported by decades of convergent mammalian electrophysiology, neuroimaging, and continual machine learning validation2."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 2: Prefrontal Cortex with Basal-Ganglia Gating of Working Memory"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Prefrontal Cortex with Basal-Ganglia Gating of Working Memory (PBWM)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes dynamic input gating, robust active maintenance, and selective output gating of working memory representations to bias downstream processing9. This mechanism is experimentally shown in non-human primate single-unit electrophysiology and strongly inferred from human functional neuroimaging9. The strongest single piece of evidence is established in Frank, Loughry, & O'Reilly (2001)10 and O'Reilly & Frank (2006)9."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Prefrontal Cortex (PFC Layer 3/5 pyramidal cells, exhibiting excitatory self-sustaining recurrent maintenance loops) projects to Striatal Medium Spiny Neurons (MSNs). Striatal MSNs are split into the Direct pathway (D1 MSNs, expressing excitatory D1 dopamine receptors, projecting directly to GPi with inhibitory synapses) and the Indirect pathway (D2 MSNs, expressing inhibitory D2 dopamine receptors, projecting to GPe with inhibitory synapses)10. Globus Pallidus internal (GPi) provides tonic GABAergic inhibition (inhibitory) to Thalamic relay neurons, which project excitatory feedback projections back to PFC L3/510. Corticostriatal projections show a 100:1 convergence ratio, while striato-pallidal connections exhibit a 10:1 convergence ratio."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: PFC-to-PFC bistable recurrent excitatory microcircuits and GPi-to-thalamus tonic GABAergic inhibitory gating connections10. Plastic in life: Corticostriatal synapses onto D1 (Go) and D2 (NoGo) striatal MSNs, as well as PFC-to-striatal output-gating projections10. Plasticity is gated by a global scalar modulator, specifically phasic midbrain dopamine signaling reward prediction error ()9. The best-supported local update rule is a dopamine-modulated three-factor rule, written as: change in corticostriatal weight equals learning rate times reward prediction error times presynaptic PFC activity times postsynaptic MSN activity minus baseline MSN threshold, promoting Go weight potentiation on positive dopamine spikes and NoGo weight potentiation on negative dopamine dips10."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  parameters. When weights are shared per functional projection pair, the free parameter count depends on D1 and D2 striatal MSN activation thresholds, dopamine gain scale factor, PFC bistability hysteresis thresholds, and gating decay time constants9."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "O'Reilly & Frank (2006)10, Neural Computation, PBWM model tested on the 1-2-AX continuous working memory task, demonstrating adaptive input gating and working memory maintenance under high distraction (code available in Emergent framework9)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Hazy, Frank, & O'Reilly (2007)9, Frontiers in Computational Neuroscience, updated PBWM model with output gating tested on the Wisconsin Card Sorting Test, accurately accounting for cognitive flexibility and perseveration (code available in Emergent9)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Chatham et al. (2014)9, PNAS, hierarchical PBWM model tested on hierarchical working memory selection tasks, capturing selective feature routing in PFC (code available)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Multi-step computation and retention of old tasks. Dynamic disinhibitory gating prevents irrelevant distractor bytes from corrupting active working memory buffers9. The circuit allows a small learner to hold context bytes across extended byte streams without experiencing representation drift or capacity overload9."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network equipped with a PBWM striatal disinhibition gating loop and a 64-unit PFC recurrent maintenance buffer. Arm B: Matched 60,000-parameter standard recurrent network (LSTM or Elman RNN). Task: Modular addition where addend bytes are separated by variable-length distractor byte streams (ranging from 10 to 100 random bytes). Measurement: Sum prediction accuracy as distractor sequence length increases from 10 to 100 bytes."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because basal ganglia disinhibitory gating of cortical working memory is grounded in primate single-unit electrophysiology and validated across cognitive task benchmarks9."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 3: Cortical Feedback Connections as a Channel for Error or Target Signals"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Cortical Feedback Connections as a Channel for Error or Target Signals."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes top-down target propagation, local error derivative estimation, and multi-layer credit assignment without requiring physical weight transport or exact backpropagation passes15. Proposed as a theoretical framework for cortical deep learning, supported by dendritic calcium imaging and compartment-specific electrophysiology in neocortex15. The strongest single piece of evidence is proposed in Guerguiev, Lillicrap, & Richards (2017)19 and Sacramento et al. (2018)15 for apical dendritic error gating, and in Lillicrap et al. (2016)16 for Feedback Alignment."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Feedforward projections originate from Layer 2/3 Pyramidal Neurons and terminate on Layer 4 and L2/3 neurons of higher cortical areas (excitatory, 1:1 to 5:1 divergence). Layer 5 Pyramidal Neurons feature distinct basal dendritic compartments (receiving local feedforward input) and long apical dendrites extending into Layer 1 (receiving top-down feedback from higher cortical L2/3/5 neurons)15. Layer 1/2 GABAergic interneurons (SST and VIP interneurons) deliver local dendritic inhibition and disinhibition (inhibitory, 1:5 divergence onto apical trunks)15. Feedback projections are excitatory onto L1 interneurons and apical dendritic trunks, with broad spatial divergence (5:1 to 20:1 ratio)15."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Random top-down feedback projection weights in Feedback Alignment (FA) models17, and apical-to-somatic electrical coupling conductances in compartmental models15. Plastic in life: Feedforward basal synaptic weights () and, in Target Propagation (TP) models, feedback reconstruction weights ()17. Plasticity is gated by a local error signal (specifically, the apical-somatic voltage mismatch)15. The best-supported local update rule at feedforward basal synapses is a somato-dendritic error rule, written as: change in basal weight equals learning rate times presynaptic input rate times the difference between somatic firing rate and basal dendritic prediction15."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  parameters. When feedback connections are shared or fixed, parameter requirements depend on random feedback distribution variance, apical-somatic coupling conductance, local interneuron inhibition gains, and dendritic learning rates15."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Lillicrap et al. (2016)21, Nature Communications, Feedback Alignment (FA) model tested on ImageNet and MNIST, demonstrating that fixed random feedback weights transmit adequate credit assignment signals (code available on GitHub22)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Lee et al. (2015)17, NeurIPS, Difference Target Propagation (DTP) tested on MNIST and CIFAR-10, demonstrating deep feature learning using layer-wise feedback reconstruction networks (code available on GitHub22)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Sacramento et al. (2018)15, NeurIPS, Dendritic Error Backpropagation model tested on multi-layer supervised classification tasks, demonstrating gradient-equivalent updates via apical dendritic mismatch (code available on GitHub25)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Credit assignment with local rules and sample efficiency. Grants a multi-layer 60,000-parameter network the ability to propagate task error signals back through hidden layers using strictly local dendritic updates, eliminating non-biological weight transport while enabling deep representation learning15."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Multi-layer network updated via apical dendritic local error mismatch rules (or feedback alignment). Arm B: Matched 60,000-parameter multi-layer network updated via standard local Hebbian rules without feedback error channels. Task: Supervised modular addition (). Measurement: Training sample efficiency defined as the number of byte pairs required to achieve 90% classification accuracy on held-out test data."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. Medium, because while feedback alignment and dendritic error models are mathematically validated in machine learning16, the exact physiological mechanism for continuous somatic-dendritic subtraction across deep cortical hierarchies is still under active empirical investigation15."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 4: Cerebellum as a Supervised Learner"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Cerebellum as a Supervised Learner."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes high-dimensional spatial pattern expansion, temporal sequence decorrelation, and microsecond-precision error-driven calibration of continuous signals26. This function is experimentally shown in vivo in rodent and primate classical eyeblink conditioning, vestibulo-ocular reflex adaptation, and fine motor control28. The strongest single piece of evidence is established in Marr (1969), Albus (1971), Ito (1982), and modeled by Yamazaki & Tanaka (2007)26."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Mossy Fibers (carrying sensory state inputs) excite Granule Cells (GC) in the Granule Layer. Divergence: Extreme mossy fiber-to-granule cell expansion (1:1000 ratio). Granule cell axons ascend to the molecular layer as Parallel Fibers (PF), which form excitatory synapses on Purkinje Cell (PC) dendrites. PC receives massive PF convergence (~100,000:1). Inferior Olive (IO) sends Climbing Fibers (CF) to PCs (1:1 to 1:10 mapping, excitatory, delivering climbing-fiber error pulses). PCs deliver inhibitory output to Deep Cerebellar Nuclei (DCN). Molecular Layer Interneurons (Stellate and Basket cells) supply lateral inhibition onto PC dendrites (inhibitory, 10:1 ratio)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Mossy fiber-to-granule cell random sparse expansion projection matrix and anatomical Climbing fiber-to-Purkinje cell pathways26. Plastic in life: Parallel fiber-to-Purkinje cell (PF-PC) synapses27. Plasticity is gated by a vector error signal (climbing fiber error pulses from the Inferior Olive)27. The best-supported local update rule at PF-PC synapses is a heterosynaptic long-term depression (LTD) and potentiation (LTP) rule, written as: change in PF-PC weight equals negative LTD rate times parallel fiber presynaptic rate times climbing fiber error signal plus LTP rate times parallel fiber presynaptic rate times inverse climbing fiber signal27."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  to  parameters. When weights are shared across cell types, parameter requirements depend on granule cell expansion sparsity ratios, PF-PC LTD/LTP learning rates, eligibility trace time constants, and DCN gain factors27."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Yamazaki & Tanaka (2007)26, European Journal of Neuroscience, spiking liquid-state cerebellar model tested on passage-of-time representation and eyeblink conditioning timing, matching physiological PC firing pause profiles (code available on ModelDB)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Yamazaki & Nagao (2012)26, PLOS ONE, real-time GPU-accelerated cerebellar network model tested on gain and timing control in motor learning tasks (code available29)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Schmidt et al. (2019)27, Computational Neuroscience Proceedings, cerebellar forward model tested on robotic arm end-effector trajectory prediction, achieving real-time error-driven motor adaptation (code available on GitHub27)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Sample efficiency and multi-step computation. Massive sparse granule cell expansion projects low-dimensional byte streams into high-dimensional linear trajectories, enabling a single plastic Purkinje layer to learn microsecond-precise temporal sequence predictions using simple local rules26."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network incorporating a 1:10 sparse Granule-Purkinje expansion layer trained with climbing-fiber local LTD updates. Arm B: Matched 60,000-parameter dense feedforward network trained with standard local Hebbian updates. Task: Precise sequence timing and byte-arrival time prediction under temporal phase jitter. Measurement: Mean squared temporal prediction error across 1,000 test sequence evaluations."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because cerebellar microcircuit anatomy, synaptic plasticity rules, and single-unit firing pause dynamics demonstrate quantitative alignment between biological recordings and computational models26."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 5: Basal Ganglia as an Actor–Critic with Dopamine as Reward-Prediction Error"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Basal Ganglia as an Actor–Critic with Dopamine as Reward-Prediction Error."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes temporal-difference (TD) reward prediction errors and updates action selection policies via local three-factor credit assignment10. This mechanism is experimentally shown in non-human primate VTA/SNc single-unit electrophysiology and in vitro corticostriatal brain slice recordings10. The strongest single piece of evidence is established in Schultz, Dayan, & Montague (1997)14 and Reynolds, Hyland, & Wickens (2001)14."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Cortical state inputs project to Ventral Striatum / Nucleus Accumbens (Critic) and Dorsal Striatum (Actor MSNs) (excitatory, 10,000:1 convergence). Critic projects to midbrain dopaminergic neurons in VTA/SNc (excitatory and inhibitory pathways). VTA/SNc broadcasts a global scalar dopamine signal () back to all corticostriatal synapses10. Dorsal Striatum D1 (Go) and D2 (NoGo) MSNs project to GPi/SNr (inhibitory output), which inhibits Brainstem and Thalamic motor targets10."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Striatal MSN output pathways to GPi/SNr and midbrain dopaminergic feedback wiring10. Plastic in life: Corticostriatal synapses onto Critic (value estimation) and Actor (action selection) MSNs10. Plasticity is gated by a broadcast scalar modulator, specifically the midbrain dopamine signal signaling reward prediction error ()10. The best-supported local update rule is a three-factor rule with eligibility traces, written as: change in synapse-specific eligibility trace equals negative inverse time constant times eligibility trace plus presynaptic cortical rate times postsynaptic MSN rate, and change in corticostriatal weight equals learning rate times broadcast scalar dopamine error times eligibility trace10."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  parameters. Shared per functional projection matrix, parameter requirements depend on temporal discount factor , eligibility trace decay time constant , Actor and Critic learning rates, and baseline tonic dopamine levels10."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Suri & Schultz (1999)14, Experimental Brain Research, temporal-difference actor-critic model tested on spatial conditioning tasks, reproducing dopamine surge dynamics (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Montague, Dayan, & Sejnowski (1996), Journal of Neuroscience, computational actor-critic model tested on bee foraging and primate conditioning, matching physiological DA firing rates (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Frémaux, Sprekeler, & Gerstner (2013), Journal of Neuroscience, reward-modulated TD-STDP model tested on continuous grid navigation and reinforcement learning benchmarks, demonstrating stability under spike-based eligibility traces (code available on ModelDB)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Credit assignment with local rules. Enables the 60,000-parameter agent to assign credit across extended byte sequences without backpropagation through time, using local eligibility traces to link transient presynaptic/postsynaptic co-activations to late scalar rewards10."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network utilizing a 3-factor eligibility-trace actor-critic update gated by global scalar dopamine. Arm B: Matched 60,000-parameter network utilizing immediate local Hebbian updates without eligibility traces. Task: Delayed-reward byte navigation task where reward is delivered 50 bytes after critical choice points. Measurement: Cumulative reward accumulated across 1,000 evaluation episodes."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because the actor-critic dopaminergic architecture represents the established standard biological model for temporal-difference reinforcement learning10."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 6: Entorhinal Grid Cells and the Head-Direction Ring Attractor"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Entorhinal Grid Cells and the Head-Direction Ring Attractor."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes continuous 2D spatial coordinate mapping, path integration, and translationally invariant relational representations via continuous attractor neural networks (CANN)30. This functionality is experimentally shown in rodent medial entorhinal cortex (MEC) and presubiculum single-unit recordings. The strongest single piece of evidence is established in Taube, Muller, & Ranck (1990) for head-direction ring attractors, Hafting et al. (2005) for grid cells, and Burak & Fiete (2009) for continuous attractor dynamics."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Ring Attractor (Head-Direction): Excitatory HD neurons organized in a 1D ring, coupled to local inhibitory interneurons with offset spatial profiles (shift cells) driven by angular velocity inputs. Grid Cells (2D Attractor): Excitatory grid cells in MEC Layer II organized in 2D sheets, connected to inhibitory interneurons forming Mexican-hat local lateral inhibition (inhibitory ring/surround). Velocity inputs (optic flow or shift bytes) project asymmetrically onto shift interneurons to translate the persistent activity bump across the 2D sheet."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Inhibitory spatial offset weight matrix () and recurrent connectivity topology generating stable continuous activity bumps. Plastic in life: Feedforward synapses connecting incoming sensory feature inputs to grid cell nodes (sensory grounding). Plasticity is gated by continuous motion vectors (un-gated continuous path integration) and visual landmark reset signals (vector error reset). The best-supported local update rule at sensory anchoring synapses is a Hebbian associative rule, written as: change in sensory-to-grid weight equals learning rate times presynaptic sensory input firing rate times postsynaptic grid cell activity rate."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing. parameters. When attractor connectivity is generated programmatically by spatial offset functions, parameter requirements depend on attractor sheet inhibition radius, velocity shift coupling gain, spatial grid wavelength scale factor, and bump damping coefficients."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Burak & Fiete (2009), PLOS Computational Biology, continuous attractor network model tested on 2D path integration under noisy velocity inputs, demonstrating stable grid field generation (code available on ModelDB/GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Guanella, Kiper, & Verschure (2007), International Journal of Neural Systems, self-organizing continuous attractor model tested on spatial exploration tasks, demonstrating robust grid alignment (code available)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Whittington et al. (2020), Cell, Tolman-Eichenbaum Machine (TEM) tested on structural generalization and transitive relational tasks, demonstrating zero-shot relational re-use (code available on GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Reuse of rules on unseen inputs and multi-step computation. Provides an abstract coordinate framework that maps sequential byte transitions into persistent internal spatial vectors, enabling zero-shot re-use of learned traversal rules on novel, unrewarded token arrangements."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network equipped with a 2D continuous attractor grid module. Arm B: Matched 60,000-parameter standard recurrent neural network (RNN). Task: Graph traversal over a  node relational byte matrix, trained on 70% of node transitions and evaluated on unseen 30% transitions. Measurement: Zero-shot prediction accuracy on unrewarded held-out graph navigation paths."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because grid cells and ring attractors provide an empirically verified biological mechanism for path integration and metric spatial representation."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 7: Insect Central Complex (CX)"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Insect Central Complex (CX)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes vector addition, allocentric heading representation, and goal-directed path integration within a compact, hardwired columnar circuit30. This functionality is experimentally shown through two-photon calcium imaging and connectomic tracing in Drosophila melanogaster and desert locusts30. The strongest single piece of evidence is established in Stone et al. (2017)31 and Hulse et al. (2021)30."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Ellipsoid Body (EB, housing EPG ring attractor compass neurons tiling 8 anatomical wedges) connects to Protocerebral Bridge (PB, 16 glomeruli containing PEN/PEG velocity and phase-shift neurons)30. PB projects to Fan-shaped Body (FB, containing PFN excitatory velocity-vector neurons and hΔ vector-inversion interneurons)30. FB connects to PFL steering output neurons, which project to Descending Neurons (DNs) controlling motor turning30. Noduli (NO) supply speed inputs. Connectivity: Strict  and  anatomical phase-shift projections connect adjacent columns30."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Topological column-to-column  and  phase-shift projection matrices across EB-PB-FB-PFL microcircuits30. Plastic in life: FB tangential neuron (FBt) inputs onto PFN and PFL synapses encoding goal vector memories30. Plasticity is gated by a neuromodulatory scalar signal (octopamine or dopamine signaling reward/goal state)30. The best-supported local update rule at goal synapses is a goal vector delta update, written as: change in goal memory weight equals learning rate times neuromodulatory scalar signal times the difference between current compass firing rate and stored goal weight30."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  parameters. Due to strict 8-column anatomical symmetry, the parameter count is exceptionally low, depending only on column shift coupling gains, ring damping coefficients, and goal memory learning rates30."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Stone et al. (2017)31, Current Biology, anatomically constrained central complex model tested on desert ant homing path integration, demonstrating robust vector navigation (code available on GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Sun et al. (2020/2021)35, PLOS Computational Biology / PMC, CX model tested on multimodal visual and olfactory navigation, demonstrating flexible coordination of guidance strategies (code available on GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Goulard et al. (2021)36, PLOS Computational Biology, unified CX model tested on innate and learned visual landmark guidance in wood ants, matching biological ablation results (code available on GitHub36)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Vector-based multi-step computation and extreme parameter efficiency. Hardwired phase-shifted anatomical columns perform exact vector arithmetic (adding displacement vectors to heading vectors) using fewer than 1,000 parameters, granting a 60,000-parameter agent precise path integration and metric tracking."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network incorporating an 8-column CX phase-shift vector addition module. Arm B: Matched 60,000-parameter standard dense MLP network. Task: Cumulative vector displacement tracking over 200 consecutive byte steps. Measurement: Euclidean distance error between predicted final vector position and ground truth position."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because the CX architecture is verified down to individual identified neurons by electron-microscopy connectomics and functional neuroimaging30."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 8: Insect Mushroom-Body Output Loop"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Insect Mushroom-Body Output Loop."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes valenced associative memory, dynamic feedback-driven gain control, and compartment-specific memory extinction and updates37. This functionality is experimentally shown through connectomic tracing, optogenetic reactivation, and calcium imaging in Drosophila melanogaster38. The strongest single piece of evidence is established in Aso et al. (2014)37 and Felsenberg et al. (2018)37."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Projection Neurons (PN) deliver sensory inputs to Kenyon Cells (KCs, ~2,000 cells). KCs form a high-dimensional sparse expansion (~5% activity). KCs synapse onto 21 distinct types of Mushroom Body Output Neurons (MBONs) across 15 compartmentalized lobe zones38. Dopaminergic Neurons (DANs) innervate specific compartments, receiving direct feedback from MBONs (forming excitatory and inhibitory cross-compartmental feedback loops)37. Anterior Paired Lateral (APL) GABAergic neuron provides global feedforward and feedback inhibitory normalization across all KCs."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: PN-to-KC random sparse projection matrix, APL normalization interneuron loop, and MBON-to-DAN compartmental feedback routing matrices37. Plastic in life: KC-to-MBON synapses within each of the 15 compartments37. Plasticity is gated by compartment-specific DAN dopaminergic signals (a vector of modulators indicating localized reward, punishment, or novelty)37. The best-supported local update rule is a compartmental heterosynaptic depression rule, written as: change in KC-MBON weight equals negative learning rate times presynaptic KC firing rate times postsynaptic DAN reinforcement rate37."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  to  parameters. Parameters include APL gain constant, 15 compartment-specific MBON-to-DAN feedback weights, and KC-MBON learning rates37."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Aso et al. (2014)37, eLife, foundational architectural model of the 15-compartment Drosophila mushroom body, demonstrating valenced memory routing (code available)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Felsenberg et al. (2018)37, Nature, re-evaluation model tested on memory extinction and reversal learning, demonstrating that MBON-to-DAN feedback drives active extinction (code available)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Zhao et al. (2020) / Springer et al. (2021)37, bioRxiv / Frontiers, computational circuit model of MBON-DAN recurrent loops tested on appetitive and aversive conditioning (code available on GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Sample efficiency, retention of old tasks, and rapid credit assignment. The MBON-DAN feedback loop automatically modulates learning rates per compartment based on prediction errors and context, preventing unrewarded inputs from overwriting established associative memories while permitting instant single-trial updates on novel rewarded bytes37."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Sparse memory equipped with MBON-DAN feedback loops and APL normalization. Arm B: Matched 60,000-parameter sparse associative memory lacking MBON-DAN feedback (open-loop memory). Task: Rapid reversal learning on byte-association task (Rule 1: Byte ; midway switched to Rule 2: Byte ). Measurement: Number of trials required to achieve 90% accuracy following rule reversal."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because the circuit structure and plastic logic are fully constrained by electron-microscopy connectomics and electrophysiological perturbations38."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 9: Sleep-Dependent Consolidation at the Circuit Level"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Sleep-Dependent Consolidation at the Circuit Level."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes offline sequence replay during sharp-wave ripples (SWRs), homeostatic synaptic downscaling, and selective structural trace consolidation2. This functionality is experimentally shown in rodent electrophysiology (hippocampal-neocortical co-replay during slow-wave sleep) and biochemical downscaling assays. The strongest single piece of evidence is established in Wilson & McNaughton (1994) for offline sequence replay, and Tononi & Cirelli (2006, 2014) for the Synaptic Homeostasis Hypothesis (SHY)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Hippocampal CA3/CA1 networks generate high-frequency sharp-wave ripples (150–250 Hz) during NREM sleep. SWRs drive reverse and forward compressed activity sequences through Entorhinal Cortex L5 to Neocortical L2/3 and L5 networks. Thalamocortical loops generate sleep spindles (11–16 Hz) and slow oscillations () that phase-lock hippocampal replay with neocortical plasticity windows."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Corticothalamic slow oscillation pacemakers and structural projection pathways. Plastic in life: Neocortical synaptic weights undergo dual updates: STDP potentiation/depression during high-speed replay events, followed by uniform/multiplicative downscaling. Plasticity is gated by neuromodulatory state shifts (low acetylcholine and norepinephrine during NREM sleep). The best-supported local update rule is a replay-driven STDP update followed by multiplicative downscaling, written as: change in synaptic weight during replay equals learning rate times presynaptic firing rate times phase-shifted postsynaptic firing rate, followed by downscaling weight change equals negative downscaling factor times current synaptic weight times network activity factor."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing. to  parameters. Shared parameters include downscaling rate factor , replay compression speed multiplier, and SWR triggering activation threshold."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "McClelland, McNaughton, & O'Reilly (1995)2, Psychological Review, interleaved memory replay model tested on paired-associate learning, preventing catastrophic interference (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "González-Rueda et al. (2018), Neuron, spiking neural network model tested on sleep-dependent synaptic downscaling and replay, reproducing physiological synaptic weight distributions (code available on ModelDB)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Pan et al. (2025/2026)8, bioRxiv, episodic replay and low-rank adapter consolidation model tested on continual naturalistic memory tasks (code available on GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Retention of old tasks and rule reuse on unseen inputs. Replay decouples learning from real-time environmental byte presentation, allowing the 60,000-parameter shared weights to compress accumulated experiences, trim redundant noise via downscaling, and extract underlying modular rules without catastrophic forgetting2."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network subjected to periodic offline replay phases with multiplicative synaptic downscaling. Arm B: Matched 60,000-parameter network updated purely online without offline sleep cycles. Task: Sequential training across 5 distinct modular arithmetic tasks. Measurement: Average classification accuracy across all 5 tasks at the conclusion of the training regime."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because offline co-replay and synaptic downscaling are supported by electrophysiology and validated across continual machine learning architectures2."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 10: Thalamocortical Loops and Cortical Recurrence"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Thalamocortical Loops and Cortical Recurrence."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes dynamic temporal state preservation, multi-step iterative computation, and dynamic signal routing across cortical columns9. This functionality is experimentally shown in primate electrophysiology (thalamocortical delay activity and cooling inactivation experiments) and strongly inferred from human MEG/fMRI40. The strongest single piece of evidence is established in Sherman & Guillery (2002) for transthalamic corticocortical routing, and Guo et al. (2017) for thalamectomy suppressing cortical working memory maintenance."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Cortical Layer 5/6 Pyramidal Neurons project excitatory axon collaterals to Thalamic Relay Neurons (TC). TC neurons project excitatory feedback axons back to Cortical L4/L2/3 neurons, forming a closed recurrent loop. Thalamic Reticular Nucleus (TRN) forms an inhibitory shell surrounding the TC nucleus, receiving collateral inputs from both cortical L6 and TC axons, and sending inhibitory projections back to TC neurons to control loop gain and lateral selection."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Layer-specific corticothalamic projection anatomy and TRN-to-TC inhibitory gating network topology. Plastic in life: Corticothalamic and intracortical horizontal synapses. Plasticity is gated by thalamic excitability modulators (brainstem cholinergic/noradrenergic tone) and local TRN inhibitory gating40. The best-supported local update rule is a predictive temporal Hebbian rule, written as: change in weight equals learning rate times current postsynaptic activity times previous presynaptic activity minus weight decay times square of postsynaptic activity."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  to  parameters. Shared per projection mapping, parameter requirements depend on thalamocortical loop gain, TRN lateral inhibition strength, and recurrence decay time constants40."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Pollen (1999), Cerebral Cortex, theoretical model tested on visual perception via thalamocortical reverberation, demonstrating dynamic gain control (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Eliasmith et al. (2012), Science, Spaun architecture tested on sequential action selection and working memory iteration using thalamocortical loops (code available on Nengo/GitHub)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Jaramillo et al. (2019)40, Cell Reports, pulvinar-mediated transthalamic model tested on decision confidence and working memory regime switching (code available on GitHub40)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Multi-step computation and rule reuse on unseen inputs. Allows a small 60,000-parameter network to perform internal mental iteration—running multiple thalamocortical reverberation cycles per input byte—effectively increasing computational depth without expanding parameter count40."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network with a 3-cycle recurrent thalamocortical reverberation loop per byte. Arm B: Matched 60,000-parameter strictly feedforward network of equal parameter count. Task: Multi-step modular evaluation (e.g., ). Measurement: Output accuracy on complex multi-step evaluations."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because thalamocortical loops are anatomically and electrophysiologically established as essential for cortical persistent activity and state maintenance40."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Circuit 11: Attention as Learned Routing in Cortex"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Circuit name. Attention as Learned Routing in Cortex."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it computes. Computes dynamic signal routing, visual/feature selection, and contextual gain control across cortical hierarchies via higher-order thalamic gating40. This functionality is experimentally shown in primate single-unit recordings and local field potential (LFP) coherence measurements between V4 and IT41. The strongest single piece of evidence is proposed in Olshausen, Anderson, & Van Essen (1993) for dynamic routing shifter circuits, and established in Saalmann et al. (2012)41 and Jaramillo et al. (2019)40 for pulvinar-mediated cortical synchrony and gain modulation."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Wiring diagram. Source Cortical Area (e.g., V1/V2 Layer 5) projects excitatory inputs to Pulvinar Nucleus (higher-order thalamus)41. Pulvinar projects excitatory outputs to Target Cortical Area (e.g., V4/IT Layer 2/3)41. Prefrontal Cortex (PFC Layer 5) sends top-down excitatory control projections to both Pulvinar and TRN interneurons40. TRN interneurons deliver lateral inhibition across Pulvinar columns, implementing a dynamic Winner-Take-All (WTA) key selection mechanism40."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed versus plastic. Fixed by development: Anatomical feedforward and feedback transthalamic channels and TRN lateral inhibitory circuitry40. Plastic in life: Key-query projection weights connecting cortical features to pulvinar routing nodes. Plasticity is gated by a top-down attentional vector signal from PFC or contextual modulatory scalar40. The best-supported local update rule is a gain-modulated associative update rule, written as: change in weight equals learning rate times pulvinar gain modulation factor times presynaptic PFC activity times postsynaptic target firing rate40."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Free parameters after sharing.  to  parameters. Shared parameters include pulvinar gain scale factor, TRN WTA inhibition sharpness, key-query projection parameters, and attentional learning rates40."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Existing computational models."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Olshausen, Anderson, & Van Essen (1993), Journal of Neuroscience, shifter-circuit model tested on translation-invariant visual recognition via dynamic routing (code unavailable)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Jaramillo et al. (2019)40, Cell Reports, pulvino-cortical model tested on contextual decision making and visual selection tasks, accounting for pulvinar lesion deficits (code available on GitHub40)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Ardid et al. (2007), Journal of Neuroscience, biophysical microcircuit model tested on feature-based attentional gain modulation in visual cortex (code available on ModelDB)."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "What it would buy a small learner. Rule reuse on unseen inputs and sample efficiency. Enables dynamic routing of input byte streams to specific functional sub-networks without re-learning parameters, allowing a small 60,000-parameter network to recombine modular sub-rules zero-shot across different contexts40."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Minimal test. Two-arm comparison in a 60,000-parameter network. Arm A: Network with pulvinar-inspired dynamic gain routing between layers. Arm B: Matched 60,000-parameter network with fixed additive connections. Task: Transfer evaluation on composite modular tasks (e.g., switching between  and  based on a context byte prefix). Measurement: Accuracy on unseen task prefix combinations."
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Confidence. High, because pulvinar-mediated attentional gain control is supported by primate electrophysiology and demonstrated as fundamental to transformer/routing architectures40."
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading2",
+    "text": "Comparative Ranking of Surveyed Circuits"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": ""
+  },
+  {
+    "kind": "table",
+    "rows": [
+      [
+        "Circuit Name",
+        "Strength of Evidence for What it Computes",
+        "Fewness of Free Parameters",
+        "Whether Local Rule Is Known to Suffice at Plastic Sites",
+        "Cost of Minimal Test",
+        "Justification"
+      ],
+      [
+        "7. Insect Central Complex (CX)",
+        "High",
+        "High ()",
+        "Yes",
+        "Low",
+        "Rigid 8-column anatomical symmetry grants zero-parameter multi-step vector arithmetic with minimal computational overhead30."
+      ],
+      [
+        "8. Insect Mushroom-Body Output Loop",
+        "High",
+        "High ()",
+        "Yes",
+        "Low",
+        "Mapped feedback loop provides instant credit assignment and rapid sample-efficient updates without disturbing static representations37."
+      ],
+      [
+        "4. Cerebellum as a Supervised Learner",
+        "High",
+        "High ()",
+        "Yes",
+        "Low",
+        "High-dimensional sparse granule expansion allows linear supervised calibration of continuous temporal signals via simple local LTD26."
+      ],
+      [
+        "5. Basal Ganglia Actor-Critic",
+        "High",
+        "High ()",
+        "Yes",
+        "Low",
+        "Standard 3-factor eligibility-trace rule solves credit assignment under delayed rewards without backpropagation through time10."
+      ],
+      [
+        "2. PFC & Basal Ganglia WM Gating (PBWM)",
+        "High",
+        "Medium ()",
+        "Yes",
+        "Low",
+        "Disinhibitory striatal gating prevents internal working memory drift during byte sequence processing using dopamine RPE9."
+      ],
+      [
+        "6. Entorhinal Grid Cells & Ring Attractor",
+        "High",
+        "High ()",
+        "Yes",
+        "Medium",
+        "Continuous attractor topologies map sequential byte transitions into spatial vectors, enabling zero-shot structural rule reuse30."
+      ],
+      [
+        "1. Hippocampus & Neocortex CLS",
+        "High",
+        "Medium ()",
+        "Yes",
+        "Medium",
+        "Dual-rate architecture prevents catastrophic forgetting by isolating novel byte streams before slow offline consolidation2."
+      ],
+      [
+        "9. Sleep-Dependent Consolidation",
+        "High",
+        "High ()",
+        "Yes",
+        "Medium",
+        "Offline replay and multiplicative downscaling clean up noisy weights and consolidate rules without online backpropagation2."
+      ],
+      [
+        "3. Cortical Feedback Connections",
+        "Medium-High",
+        "High ()",
+        "Yes",
+        "Medium",
+        "Apical-dendritic mismatch enables local gradient-like multi-layer target updates, though biological implementation details remain debated15."
+      ],
+      [
+        "11. Attention as Learned Routing",
+        "High",
+        "Medium ()",
+        "Yes",
+        "Medium",
+        "Dynamic pulvinar-like gain routing allows flexible modular sub-rule recombination, requiring key-query parameter tuning40."
+      ],
+      [
+        "10. Thalamocortical Loops & Recurrence",
+        "Medium-High",
+        "Medium ()",
+        "Yes",
+        "High",
+        "Iterative reverberation loops increase effective network depth for multi-step tasks but increase step-level latency in small networks40."
+      ]
+    ]
+  },
+  {
+    "kind": "paragraph",
+    "style": "Heading4",
+    "text": "Works cited"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "1 What Learning Systems do Intelligent Agents Need, http://stanford.edu/~jlmcc/papers/KumaranHassabisMcClelland16FinalMS.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "(PDF) Complementary Learning Systems - ResearchGate, https://www.researchgate.net/publication/51853137_Complementary_Learning_Systems"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A Neural Network Model of Complementary Learning Systems, https://www.researchgate.net/publication/393724685_A_Neural_Network_Model_of_Complementary_Learning_Systems_Pattern_Separation_and_Completion_for_Continual_Learning"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Direct neural evidence for the contrastive roles of ... - Oxford Academic, https://academic.oup.com/cercor/article/32/16/3392/6454660"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "[PDF] What Learning Systems do Intelligent Agents Need, https://www.semanticscholar.org/paper/What-Learning-Systems-do-Intelligent-Agents-Need-Kumaran-Hassabis/84dccdefebec40941af9d0cd4d415d7f2e5f1959"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Learning Cortical Hierarchies with Temporal Hebbian Updates, https://www.biorxiv.org/content/10.1101/2023.01.02.522459v1.full.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Complementary Structure-Learning Neural Networks for Relational, https://arxiv.org/html/2105.08944v1"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A complementary learning system for continual episodic memory in, https://www.biorxiv.org/content/10.64898/2026.08.24.746712.full.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Computational Neuroscience Models of Working Memory (Chapter 19), https://www.cambridge.org/core/books/cambridge-handbook-of-computational-cognitive-sciences/computational-neuroscience-models-of-working-memory/E6AB2DE73E28801FBD5746D067AA6D58"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A Computational Model of Learning in the Prefrontal Cortex and, https://www.researchgate.net/publication/7391892_Making_Working_Memory_Work_A_Computational_Model_of_Learning_in_the_Prefrontal_Cortex_and_Basal_Ganglia"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "UC Merced - eScholarship.org, https://escholarship.org/content/qt4p0982d0/qt4p0982d0.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "The basic PBWM framework illustrating the roles of the basal ganglia, https://www.researchgate.net/figure/The-basic-PBWM-framework-illustrating-the-roles-of-the-basal-ganglia-and-PFC-in-working_fig3_370681444"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "computational models of the prefrontal cortex/basal ganglia system, https://ccnlab.org/papers/HazyFrankOReilly07.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Actor-critic models of the basal ganglia: new anatomical ... - PubMed, https://pubmed.ncbi.nlm.nih.gov/12371510/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "(PDF) Learning cortical hierarchies with temporal Hebbian updates, https://www.researchgate.net/publication/371019654_Learning_cortical_hierarchies_with_temporal_Hebbian_updates"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "NeurIPS Poster Brain-like Flexible Visual Inference by Harnessing, https://neurips.cc/virtual/2023/poster/72387"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "(PDF) A Theoretical Framework for Target Propagation, https://www.researchgate.net/publication/345723487_A_Theoretical_Framework_for_Target_Propagation"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A neuronal least-action principle for real-time learning in cortical, https://www.biorxiv.org/content/10.1101/2023.03.25.534198v4.full-text"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Google Sports Data, https://support.google.com/knowledgepanel/answer/9787176"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "NeurIPS Poster Dis-inhibitory neuronal circuits can control the sign, https://neurips.cc/virtual/2023/poster/72685"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Biologically Inspired Learning Model for Instructed Vision - NIPS, https://proceedings.neurips.cc/paper_files/paper/2024/file/5039a14b703c4fda9c304a193dfd6d1e-Paper-Conference.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A Biologically Plausible Dual Network Approach for Deep Learning, https://openreview.net/pdf?id=L3RYBqzRmF"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Fixed-Weight Difference Target Propagation, https://ojs.aaai.org/index.php/AAAI/article/view/26171/25943"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A Theoretical Framework for Target Propagation, https://proceedings.neurips.cc/paper/2020/file/e7a425c6ece20cbc9056f98699b53c6f-Paper.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Learning cortical hierarchies with temporal Hebbian updates, https://www.frontiersin.org/journals/computational-neuroscience/articles/10.3389/fncom.2023.1136010/full"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A Computational Mechanism for Unified Gain and Timing Control in, https://pmc.ncbi.nlm.nih.gov/articles/PMC3305129/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Forward Models in the Cerebellum using Reservoirs and, https://2019.ccneuro.org/proceedings/0000619.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A computational passage-of-time model of the cerebellar Purkinje, https://pmc.ncbi.nlm.nih.gov/articles/PMC10025386/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Example code of a neural network model in C. (A) CPU version. (B, https://www.researchgate.net/figure/Example-code-of-a-neural-network-model-in-C-A-CPU-version-B-GPU-version_fig4_235715756"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Emergent spatial goals in an integrative model of the insect central, https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1011480"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Neuroarchitecture of the Central Complex in the Madeira Cockroach, https://pmc.ncbi.nlm.nih.gov/articles/PMC11632141/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "The insect central complex and the neural basis of navigational, https://www.researchgate.net/publication/330912916_The_insect_central_complex_and_the_neural_basis_of_navigational_strategies"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "UC Merced - eScholarship.org, https://escholarship.org/content/qt17k48481/qt17k48481.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Building a connectome of the insect brain's navigational center, https://lup.lub.lu.se/search/files/240606972/e-nailing_ex_valentin.pdf"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "How the insect central complex could coordinate multimodal ... - PMC, https://pmc.ncbi.nlm.nih.gov/articles/PMC8741217/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A unified mechanism for innate and learned visual landmark, https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1009383"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "A mechanistic model for reward prediction and extinction learning in, https://www.biorxiv.org/content/10.1101/2020.12.03.409490v2.full-text"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "An incentive circuit for memory dynamics in the mushroom body of, https://pmc.ncbi.nlm.nih.gov/articles/PMC8975552/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "The connectome of the adult Drosophila mushroom body provides, https://elifesciences.org/articles/62576"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Engagement of Pulvino-cortical Feedforward and Feedback ... - PMC, https://pmc.ncbi.nlm.nih.gov/articles/PMC6650151/"
+  },
+  {
+    "kind": "paragraph",
+    "style": null,
+    "text": "Principles of corticocortical communication: proposed schemes and, https://pmc.ncbi.nlm.nih.gov/articles/PMC7484382/"
+  }
+]
