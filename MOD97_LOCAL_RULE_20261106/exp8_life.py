@@ -49,18 +49,20 @@ RUN_PREFIX = os.environ.get("E8_RUN_PREFIX", "")
 COMPOSE_CHECKPOINTS = int(os.environ.get("E8_COMPOSE_CHECKPOINTS", "0"))
 if COMPOSE_CHECKPOINTS < 0:
     raise ValueError("E8_COMPOSE_CHECKPOINTS must be nonnegative")
-if BUFFER_CAP < 1 or REPLAY_SAMPLING not in ("uniform", "recency"):
+if BUFFER_CAP < 1 or REPLAY_SAMPLING not in ("uniform", "recency", "balanced"):
     raise ValueError("Invalid replay configuration")
 REPLAY_SHARE = Fraction(os.environ.get("E8_REPLAY_SHARE", "1/2"))
 SCHEDULE = os.environ.get("E8_SCHEDULE", "blocked")
 if not 0 <= REPLAY_SHARE < 1 or (REPLAY_SHARE * X.BATCH).denominator != 1:
     raise ValueError("Replay share must be a whole number of items in the batch, below one.")
-if SCHEDULE not in ("blocked", "interleaved"):
-    raise ValueError("Schedule must be blocked or interleaved.")
+if SCHEDULE not in ("blocked", "interleaved", "late_family"):
+    raise ValueError("Schedule must be blocked, interleaved or late_family.")
+if REPLAY_SAMPLING == "balanced" and SCHEDULE == "interleaved":
+    raise ValueError("Balanced replay is supported for per-stage blocked/late_family buffers only")
 REPLAY_COUNT = int(REPLAY_SHARE * X.BATCH)
 TAG = "" if (REPLAY_SHARE == Fraction(1, 2) and SCHEDULE == "blocked") else (
     f"_rp{REPLAY_SHARE.numerator}of{REPLAY_SHARE.denominator}_{SCHEDULE}")
-TAG += (f"_b{BATCH}" if BATCH != 64 else "") + (f"_cap{BUFFER_CAP}" if BUFFER_CAP != 1024 else "") + ("_recency" if REPLAY_SAMPLING != "uniform" else "")
+TAG += (f"_b{BATCH}" if BATCH != 64 else "") + (f"_cap{BUFFER_CAP}" if BUFFER_CAP != 1024 else "") + ("_" + REPLAY_SAMPLING if REPLAY_SAMPLING != "uniform" else "")
 PAIRS = [(a, b) for a in SYM.values() for b in SYM.values()]
 HELD_PAIRS = [("+", "-"), ("-", "+"), (">", "<"), ("<", ">")]
 TAUGHT_PAIRS = [p for p in PAIRS if p not in HELD_PAIRS]
@@ -151,12 +153,13 @@ def life(arm, seed):
         within += [render_pair(*p, *tr) for tr in triples(p, seed + 1, 150, exclude=frozenset(taught_pairs[p]))]
     comp_panels["within"] = within
     buffer, seen_items, buffer_ages = [], [], []
+    stage_buffers, admissions = [], []
     interleaved_prompts = {t[2][0]: {} for t in LIFE}
     t0 = time.process_time(); stages = []
 
     def evaluate(final=False):
         res = {k: X.score(m, it, store) for k, it in panels.items()}
-        if final:
+        if final or SCHEDULE == "late_family":
             res["compose"] = {k: X.score(m, it) for k, it in comp_panels.items()}
         return res
 
@@ -173,6 +176,8 @@ def life(arm, seed):
         combined = [item for _, items, _ in schedule for item in items]
         schedule = [("interleaved", combined, len(LIFE) * STAGE_UPDATES)]
     schedule.append(("compose", [render_pair(*p, *tr) for p in TAUGHT_PAIRS for tr in taught_pairs[p]], COMPOSE_UPDATES))
+    if SCHEDULE == "late_family":
+        schedule = schedule[:4] + [schedule[-1]] + schedule[4:-1]
     for si, (name, items, dose) in enumerate(schedule, 1):
         cur = X.batches(items, seed + si)
         if SCHEDULE == "interleaved" and name == "interleaved":
@@ -190,6 +195,9 @@ def life(arm, seed):
         if REPLAY_SAMPLING == "recency" and buffer:
             weights = list(accumulate(0.5 ** (si-age) for age in buffer_ages))
         losses = []
+        presented = set()
+        draw_counts = [0] * len(stage_buffers)
+        malformed = {"operation": 0, "composition": 0}
         for u in range(dose):
             current_replay_count = 0
             if arm == "D":
@@ -197,6 +205,11 @@ def life(arm, seed):
             elif arm == "C" and buffer and REPLAY_COUNT:
                 if REPLAY_SAMPLING == "uniform":
                     rp = rng.sample(buffer, min(REPLAY_COUNT, len(buffer)))
+                elif REPLAY_SAMPLING == "balanced":
+                    rp = []
+                    for _ in range(min(REPLAY_COUNT, len(buffer))):
+                        bi = rng.randrange(len(stage_buffers))
+                        rp.append(rng.choice(stage_buffers[bi]))
                 else:
                     # Sequential weighted sampling without replacement; same eligible buffer.
                     chosen, used = [], set()
@@ -207,11 +220,30 @@ def life(arm, seed):
                     rp = chosen
                 current_replay_count = len(rp)
                 outs = X.respond(m, rp, store)
-                ans = [o if (len(o) == 3 and o[-1] == EOS) else [ord("0"), ord("0"), EOS] for o in outs]
+                if SCHEDULE == "late_family":
+                    ans = []
+                    for prompt, output in zip(rp, outs):
+                        composition = prompt[0] == ord("c")
+                        valid = (len(output) == 6 and output[2] == ord(";") and output[-1] == EOS
+                                 and all(48 <= output[i] <= 57 for i in (0, 1, 3, 4))) if composition else (len(output) == 3 and output[-1] == EOS)
+                        if not valid:
+                            malformed["composition" if composition else "operation"] += 1
+                        ans.append(output if valid else ([48, 48, 59, 48, 48, EOS] if composition else [48, 48, EOS]))
+                    for prompt in rp:
+                        # Instrumentation only: identical prompts may be in several stage buffers.
+                        memberships = [i for i, sb in enumerate(stage_buffers) if tuple(prompt) in stage_members[i]]
+                        assert memberships
+                        draw_counts[memberships[0]] += 1
+                else:
+                    ans = [o if (len(o) == 3 and o[-1] == EOS) else [ord("0"), ord("0"), EOS] for o in outs]
                 batch = next(cur)[:X.BATCH - len(rp)] + list(zip(rp, ans))
             else:
                 batch = next(cur)
-            target_store = store if name != "compose" else None
+            if SCHEDULE == "late_family" and arm == "C":
+                # Current examples only; replayed outputs never become admission provenance.
+                for prompt, _ in batch[:X.BATCH - current_replay_count]:
+                    presented.add(tuple(prompt))
+            target_store = store if (name != "compose" or SCHEDULE == "late_family") else None
             if diagnostic is None:
                 losses.append(X.update(m, opt, batch, local, target_store))
             else:
@@ -230,10 +262,20 @@ def life(arm, seed):
                             del saved[next(iter(saved))]
                         saved[key] = prompt
                 buffer = [p for saved in interleaved_prompts.values() for p in saved.values()]
-        if arm == "C" and name != "compose" and SCHEDULE == "blocked":
-            additions = [p for p, _ in rng.sample(items, min(BUFFER_CAP, len(items)))]
+        if arm == "C" and ((name != "compose" and SCHEDULE == "blocked") or SCHEDULE == "late_family"):
+            eligible = items if SCHEDULE != "late_family" else [(p, t) for p, t in items if tuple(p) in presented]
+            additions = [p for p, _ in rng.sample(eligible, min(BUFFER_CAP, len(eligible)))]
             buffer += additions
             buffer_ages += [si] * len(additions)
+            stage_buffers.append(additions)
+            stage_members = [set(map(tuple, sb)) for sb in stage_buffers]
+            if SCHEDULE == "late_family":
+                import hashlib
+                admissions.append(dict(stage=si, task=name, prompts=additions, n=len(additions),
+                    presented_unique=len(presented), all_presented=all(tuple(p) in presented for p in additions),
+                    sha256=hashlib.sha256(json.dumps(additions,separators=(",", ":")).encode()).hexdigest(),
+                    replay_draws_by_prior_stage=draw_counts, malformed=malformed))
+                path.with_suffix(".buffer.json").write_text(json.dumps(admissions, indent=1))
         checkpoint(si)
         final = si == len(schedule)
         stages.append(dict(stage=si, task=name, loss=sum(losses[-512:]) / 512, cpu=time.process_time() - t0, scores=evaluate(final)))
