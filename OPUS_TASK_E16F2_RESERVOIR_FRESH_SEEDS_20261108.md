@@ -30,3 +30,7 @@ Report holds / misses per seed with the numbers; no reruns, no tuning. Deliverab
 ## Budget
 
 Three lives, about 4.5 CPU-hours at your measured pace (T about 142 ms per update), roughly 1.7 hours of wall time on four cores.
+
+## E16-F3 (added 19:00 EST): after E16-F2, the raw-byte arm on the same fresh seeds
+
+E16-R3 (`E45_REPORT.md`, section E16-R3) removed the parser: `E16_REPLAY=raw E16_CAP=65536` stores presented bytes verbatim and meets the gate on the standing seeds (ratios to the twin: operations 0.98 / 0.96 / 0.87, compositions 0.86 / 0.81 / 0.85, later operations 0.98 / 0.98 / 0.92). Run that arm on seeds 200003, 300007, 400009 after the E16-F2 lives finish: three lives, receipts `e16_life_T_raw65536_<seed>.json`, logs `e16f3_raw65536_<seed>.log`, launched detached as amended. Predictions (lock in `E16F3_PREDICTIONS.md` before launch): P16F3.1 ratio to the twin at or above 0.80 on all three families in every seed; P16F3.2 within 5 points of your own E16-F2 (`tot65536`) result on every family in every seed; P16F3.3 the reservoir's byte size at block 5 between 1.00 and 1.10 MB and its distinct count between 56,000 and 59,000. Tables with `E16_SEEDS=200003,300007,400009 E16_SUMMARY=SUMMARY_E16F3.md`. Deliver `E16F3_REPORT.md` and one paragraph as `E16F3_REVIEW_SECTION_9_43.md`. Verbatim replay is faster than the parsed arm (no rendering), about 2,150 CPU-seconds per life on the standing machine.

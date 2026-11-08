@@ -304,3 +304,5 @@ E16-R2's reservoir still stores parsed entries (family, operands) and re-renders
 - P16R3.4 The reservoir holds at most 65,536 × 25 bytes, about 1.6 MB, recorded exactly in the receipt.
 
 **Forecast.** Three processes on a free machine, about 13 minutes per block, 80 minutes. **Command:** `E16_REPLAY=raw E16_CAP=65536 python3 exp16_integrated.py T SEED`.
+
+**E16-R3 verdicts (8 November 2026, 18:55 EST; details in `E45_REPORT.md`, E16-R3).** P16R3.1 holds (raw against parsed: F1 +0.4 / −0.9 / −0.9; compositions −2.3 / 0.0 / +2.2; F3 −0.6 / +0.3 / −3.0). P16R3.2 holds (ratios F1 0.98 / 0.96 / 0.87, compositions 0.86 / 0.81 / 0.85, F3 0.98 / 0.98 / 0.92). P16R3.3 holds (k = 20 within 1.2 / 2.4 / 4.9 of k = 12; silenced 2.6 / 5.5 / 6.8%). P16R3.4 holds (1,048,860–1,049,796 bytes). Measured pace 6 minutes per block with three processes.
