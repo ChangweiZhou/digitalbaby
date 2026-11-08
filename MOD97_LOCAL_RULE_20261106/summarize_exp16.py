@@ -76,10 +76,13 @@ def main():
         if len(d["stages"]) >= 7:
             sc = d["stages"][-1]["scores"]
             lines.append(f"| {a} | {s} | " + " | ".join("/".join(f"{pct(K(sc, n, k)):.0f}" for k in (0, 8, 12, 20)) for n in F1 + F3) + " |")
-    sc0 = next(iter(runs.values()))["stages"][0]
-    lines += ["\n## Shortcut ceilings on the held pairs (final answer from a visible-only rule, %)\n", "| Pair | ignore o1, use a | ignore o1, use b | ignore o2 | answer = c |", "|---|---:|---:|---:|---:|"]
-    for h, v in sc0["shortcut_ceilings"].items():
-        lines.append(f"| {h} | " + " | ".join(f"{100*v[k]:.1f}" for k in ("ignore_o1_use_a", "ignore_o1_use_b", "ignore_o2", "answer_is_c")) + " |")
+    if runs:
+        sc0 = next(iter(runs.values()))["stages"][0]
+        lines += ["\n## Shortcut ceilings on the held pairs (final answer from a visible-only rule, %)\n", "| Pair | ignore o1, use a | ignore o1, use b | ignore o2 | answer = c |", "|---|---:|---:|---:|---:|"]
+        for h, v in sc0["shortcut_ceilings"].items():
+            lines.append(f"| {h} | " + " | ".join(f"{100*v[k]:.1f}" for k in ("ignore_o1_use_a", "ignore_o1_use_b", "ignore_o2", "answer_is_c")) + " |")
+    else:
+        lines.append(f"\nNo receipts found for seeds {SEEDS}.")
     SUMMARY.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
