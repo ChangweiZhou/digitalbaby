@@ -1,0 +1,2768 @@
+{
+  "title": "Fly learning and circuit computation: source-audited operational catalogue",
+  "date": "2026-11-08",
+  "provenance": "New research; not recovery or reconstruction of the missing original",
+  "original_recovered": false,
+  "new_operational_record_count": 20,
+  "number_of_distinct_unseen_mechanisms": null,
+  "current_repository_audited": false,
+  "scope": "Adult Drosophila; explicitly labeled larval/preprint evidence; separate fixed computations from learning",
+  "entries": [
+    {
+      "id": "F01",
+      "name": "Population normalization with spatially local inhibition",
+      "section": "I. Input conditioning",
+      "sources": [
+        "Olsen2010",
+        "Amin2020"
+      ],
+      "evidence": "Shown: antennal-lobe inhibition produces divisive normalization; APL inhibition within the mushroom body can be spatially localized. These are convergent examples of normalization, not two independent general learning algorithms. The localized APL result specifically argues against equating the entire biological circuit with one global scalar.",
+      "wiring": "Adult fly: sensory afferents excite projection neurons and recruit inhibitory local neurons; in the mushroom body, KCs recruit APL and receive inhibition. Use positive drive and negative inhibitory feedback. The exact pooling neighborhood is architecture, not a universal biological convergence ratio.",
+      "algorithm": "Development fixes pooling neighborhoods and gains; lifetime activity varies without requiring weight learning. Proposed rate approximation: pool_p = sum of locally connected activities; output_i = drive_i / (epsilon + gain * pool_p). A neuronal pooling unit supplies the denominator, rather than a synapse reading the whole network.",
+      "scaling": "H = O(1–10) gains per pooling class; activity state O(N+P), edges O(S_pool), work O(S_pool) per update. Explicit pooling adjacency still occupies storage. Learned normalization weights would add S_pool independent parameters; they are not included for free.",
+      "models": "Olsen et al. (2010) fitted a normalization computation to odor-response measurements. Amin et al. (2020) constrained the spatial implementation. Neither establishes locally learned semantic routing; no separately verified implementation package is claimed here.",
+      "buy": "Gain robustness and controlled competition, not discovery of an arithmetic rule. Local rather than global pooling could preserve several concurrent representations.",
+      "overlap": "Already-covered inhibition/sparsity family. The September ledger records scalar APL work; local neighborhoods are a variant, not a newly discovered family.",
+      "minimal_test": "Local versus global pooling, with equal edge/state budget, training and updates. Measurement: held-out accuracy under input gain variation.",
+      "confidence": "High for normalization; medium for transferring the spatially local variant to MiniFly.",
+      "local_sufficiency": "Fixed computation; learning sufficiency not applicable.",
+      "test_cost": "Low",
+      "verification_status": "Convergent computational role across two circuits; no claim of independent replication of the complete proposed MiniFly motif.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Olsen2010",
+          "P-Amin2020"
+        ],
+        "primary_claims": [
+          "Local inhibitory gain normalization, not semantic rule learning",
+          "APL response and suppression are spatially local; does not demonstrate learned routing"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "FIXED_RATE_COMPUTATION",
+        "distinct_computation": "Local inhibitory/divisive normalization; competing activity is divided by pooled inhibition.",
+        "proposed_equation_or_pseudocode": "p_j = sum_{i in N(j)} a_i; y_i = phi(x_i/(eps + g*p_j)).",
+        "causally_available_learning_signals": "Sensory/locally connected activity; no ground-truth labels.",
+        "writable_state": "P pooling units plus N activity values; optional O(S_pool) inhibitory edge magnitudes.",
+        "parameter_storage_compute_census_or_asymptotics": "O(N+P+S_pool) values; O(S_pool) operations per step.",
+        "observed_minifly_problem_relevance": "Nuisance gain/competition; not a source of semantic invariant rules.",
+        "closest_simpler_resource_matched_control": "Equal-input constant divisive gain and equal-edge global pooling.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "NOT_JUSTIFIED",
+        "uncertainties": "A tested scalar APL proxy in historical lineage is not this local inhibition circuit.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F02",
+      "name": "Adaptive temporal filtering",
+      "section": "I. Input conditioning",
+      "sources": [
+        "Nagel2011"
+      ],
+      "evidence": "Shown: fly olfactory receptor responses have adaptive temporal dynamics, and spike generation adds temporal filtering. This supports a computation over recent history; it does not show durable rule learning.",
+      "wiring": "Adult fly olfactory receptor neurons transform sensory drive before projection-neuron and KC processing. A compact abstraction uses a local slow state that subtracts from current excitation.",
+      "algorithm": "Development fixes time constants and filter signs. Proposed local state rule: a_next = (1-alpha)*a + alpha*x; output = phi(x - beta*a). This is activity-state adaptation, not a weight update. Do not relabel every adaptation time constant as a separate mechanism.",
+      "scaling": "H = O(1–10) per cell class; O(N) adaptive state and work for one filter per channel. K time constants require O(KN) state even if coefficients are shared.",
+      "models": "Nagel & Wilson (2011), Nature Neuroscience: dynamical account of odor-driven responses. It explains temporal response structure, not symbolic transfer.",
+      "buy": "Can suppress persistent nuisance drive while preserving transients; can also erase a sustained cue that matters. It does not solve format invariance without a suitable coding relation.",
+      "overlap": "The historical ledger already contains temporal-contrast/fast-minus-slow sensory variants. This is a source-grounded reference, not an untested recommendation.",
+      "minimal_test": "Adaptive filter versus an equal-state fixed filter, both with matched downstream learning. Measurement: held-out accuracy when only nuisance stimulus persistence changes.",
+      "confidence": "High for temporal filtering; conditional for task usefulness.",
+      "local_sufficiency": "Fixed computation; learning sufficiency not applicable.",
+      "test_cost": "Low",
+      "verification_status": "One primary mechanistic study selected; independent replication not established by this review.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Nagel2011"
+        ],
+        "primary_claims": [
+          "Time filtering from receptor transduction and spikes; not long-term memory"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "FIXED_OR_ADAPTIVE_STATE_COMPUTATION",
+        "distinct_computation": "Remove slowly varying input baseline while preserving input transients.",
+        "proposed_equation_or_pseudocode": "a_t=(1-alpha)a_(t-1)+alpha*x_t; z_t=phi(x_t-beta*a_t).",
+        "causally_available_learning_signals": "Input history only.",
+        "writable_state": "One leaky state per filtered channel.",
+        "parameter_storage_compute_census_or_asymptotics": "O(N) state/work per step; K filters O(KN).",
+        "observed_minifly_problem_relevance": "Format-switch failure could involve changing rendering, but this only handles temporal gain/history.",
+        "closest_simpler_resource_matched_control": "Matched fixed FIR/EMA temporal channel.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "NOT_JUSTIFIED",
+        "uncertainties": "Previous temporal contrast and lag methods are not proof of same adaptive filter.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F03",
+      "name": "Learned inhibition of familiar background",
+      "section": "I. Input conditioning",
+      "sources": [
+        "Das2011",
+        "Sudhakaran2012"
+      ],
+      "evidence": "Shown/inferred: targeted experiments implicate local inhibitory plasticity in odor-specific habituation. This differs from F02: the relevant effective inhibition changes with experience rather than merely tracking a fast adaptation state. A complete synapse-by-synapse learning equation was not measured. Sudhakaran et al. (2012) provides a follow-up dissection of recurrent inhibitory pathways, but is not independent replication by a wholly separate research group.",
+      "wiring": "Adult fly antennal lobe: projection neurons interact with GABAergic local interneurons that suppress odor responses. Represent the plastic inhibitory connection as a nonnegative magnitude with an explicitly negative output sign.",
+      "algorithm": "Development fixes partners. A proposed, not experimentally identified, inhibitory update is: delta inhibitory_magnitude = eta * local_presynaptic_activity * (target_activity - target_rate). It increases inhibition when the target is too active. A familiarity/exposure gate must be locally supplied if used; semantic irrelevance cannot be assumed.",
+      "scaling": "H = O(1–10); S_I plastic inhibitory magnitudes plus O(N) rate state, O(S_I) work. Sharing all magnitudes by type would remove the specificity that makes this useful.",
+      "models": "Das et al. (2011), PNAS: circuit manipulations and behavioral habituation. The proposed rate-target rule here is an engineering candidate, not a reproduction of the animal mechanism.",
+      "buy": "Could reduce interference from repeated formatting or background cues. Failure mode: suppressing a frequent but essential operand or delimiter.",
+      "overlap": "Overlaps inhibitory adaptation and existing input-side plasticity. No claim that a particular MiniFly implementation is untested.",
+      "minimal_test": "Adaptive inhibitory weights versus frozen equal-size inhibitory weights. Measurement: retained task accuracy after exposure to a repeated, task-irrelevant background.",
+      "confidence": "Medium: causal circuit evidence is stronger than knowledge of the update rule.",
+      "local_sufficiency": "Unknown for the biological task under the proposed rule; unestablished for MiniFly.",
+      "test_cost": "Low–medium",
+      "verification_status": "Primary study plus targeted follow-up from overlapping research lineage; not an independent replication claim.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Das2011",
+          "P-Sudhakaran2012"
+        ],
+        "primary_claims": [
+          "Odor-selective habituation involves potentiated inhibition; direct local synaptic rule is not measured",
+          "Related recurrent inhibitory plasticity; not independent corroboration of all Das claims"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "LOCAL_PLASTICITY_PROPOSAL",
+        "distinct_computation": "Learn to attenuate predictable repeated background by strengthening selected inhibitory connections.",
+        "proposed_equation_or_pseudocode": "I_ij <- clip(I_ij + eta*pre_i*(post_j - target_rate_j),0,Imax) [engineering extrapolation; NOT measured biological equation].",
+        "causally_available_learning_signals": "Local presynaptic activation and postsynaptic firing; optional legitimate activity target.",
+        "writable_state": "S_inhib plastic edges + N slow firing states.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_inhib+N) state; O(S_inhib) local updates.",
+        "observed_minifly_problem_relevance": "Could reduce persistent distractors; may erase relevant stable operands.",
+        "closest_simpler_resource_matched_control": "Fixed/adaptive same-state inhibition or equivalent temporal filtering.",
+        "minifly_implementation_class": "UNKNOWN",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "TEST_LATER_CONDITIONAL",
+        "uncertainties": "No evidence current E16 failure comes from sensory habituation rather than replay targets.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F04",
+      "name": "Input-side timing-dependent plasticity",
+      "section": "II. Representation and anchoring",
+      "sources": [
+        "Qiao2022"
+      ],
+      "evidence": "Shown: timing-dependent changes at incoming PN→KC synapses can facilitate olfactory learning, with dopaminergic involvement. This is not merely KC→MBON valence writing at the output. It supplies a specific alternative locus for adapting representations.",
+      "wiring": "Adult fly: excitatory projection-neuron input reaches KC dendrites; dopaminergic signals modulate input plasticity. Keep the anatomical site separate from downstream KC→MBON writes.",
+      "algorithm": "Development fixes sparse partners; lifetime PN→KC magnitudes are plastic. Proposed abstraction: delta w_ij = eta * local_timing_kernel(pre_i, post_j) * local_modulator_j, followed by sign-preserving bounds. The paper supports timing sensitivity, not this exact universal factorization or a particular numerical kernel.",
+      "scaling": "H = O(10) kernel/gain parameters; S_in independent weights and O(S_in) eligibility if traces are synapse-specific. A neuron-shared trace can reduce storage only when the chosen rule permits it.",
+      "models": "Qiao et al. (2022), Current Biology: recordings and olfactory-learning experiments. No verified general byte-learning code or demonstrated abstract-rule induction is supplied by that study.",
+      "buy": "Could retune a representation instead of continually overwriting its readout. It might improve salience and sample efficiency, but also destabilize old readout meanings.",
+      "overlap": "Explicitly present as ITDP/M10 in the September pruning ledger. Keep as a mechanistically specified variant, not a newly found idea.",
+      "minimal_test": "Input-plastic versus input-frozen encoders, matched in storage and downstream updates. Measurement: old-format held-out accuracy after learning the new format.",
+      "confidence": "Medium: identified plastic site and timing effect; algorithmic sufficiency unresolved.",
+      "local_sufficiency": "Partial: a local plastic site is supported; end-to-end sufficiency is not.",
+      "test_cost": "Medium",
+      "verification_status": "One primary causal/physiological study selected; independent replication not established here.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Qiao2022"
+        ],
+        "primary_claims": [
+          "Timing dependent incoming synapse strength changes; not arithmetic-rule acquisition"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "LOCAL_INPUT_PLASTICITY",
+        "distinct_computation": "Modify sensory-to-KC afferents according to relative timing of input and modulatory events.",
+        "proposed_equation_or_pseudocode": "e_ij(t)=lambda*e_ij(t-1)+pre_i(t)*post_j(t); W_ij<-W_ij+eta*d_j(t)*e_ij(t) [candidate timing-window proxy].",
+        "causally_available_learning_signals": "Local pre/post coincidence and separately specified modulatory signal; no future labels.",
+        "writable_state": "S_input plastic synapses and eligibility traces.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_input) plastic and traces; O(S_input) update.",
+        "observed_minifly_problem_relevance": "May stabilize or change input representations; interference with learned downstream addresses possible.",
+        "closest_simpler_resource_matched_control": "Same-plasticity-count Hebbian/Oja input adaptation, frozen encoder.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "TEST_LATER_CONDITIONAL",
+        "uncertainties": "Existing encoding changes/temporal contrast are not necessarily Qiao receptor-specific rule.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F05",
+      "name": "Timing-sensitive, signed associative writing",
+      "section": "III. Teaching and credit",
+      "sources": [
+        "Hige2015",
+        "Handler2019"
+      ],
+      "evidence": "Shown: odor-linked KC→MBON plasticity can be induced by appropriately timed dopamine, and timing can change the sign of the resulting association/plasticity. These findings justify a timing-sensitive local teaching mechanism. They do not establish a universal pre×post×dopamine rule at every such synapse.",
+      "wiring": "Adult fly: cholinergic KCs excite MBONs; compartmental DANs modulate the KC→MBON connections. The teaching input is not the same thing as an excitatory postsynaptic current.",
+      "algorithm": "Development fixes compartments; life changes individual KC→MBON magnitudes. Proposed abstraction: eligibility_next = lambda*eligibility + local_activity_event; delta w = eta*eligibility*signed_local_teaching_signal. A timing kernel or opponent teaching channels determine sign. The effective predictor update must be translated consistently into depression/potentiation of an excitatory physical synapse.",
+      "scaling": "H = O(1–10) per compartment class; S_w plastic weights and up to S_w eligibility traces. Work O(S_active) with sparse events, otherwise O(S_w). Long-lived capture state is additional, not synonymous with eligibility.",
+      "models": "Hige et al. (2015) and Handler et al. (2019) provide experimental constraints. Bennett et al. (2021; F08) shows one computational use of prediction-driven MB plasticity, not a proof that this generic rule solves arbitrary tasks.",
+      "buy": "Delayed local credit and rapid associations. A scalar reward plus eligibility does not by itself identify which hidden representation should be changed to generalize.",
+      "overlap": "Baseline/retained family: local writing and eligibility already exist in the historical project. Synaptic tagging, eligibility and consolidation should not be counted as synonyms or automatically as three new modules.",
+      "minimal_test": "Timed eligibility versus a shuffled-time, equal-storage eligibility control. Measurement: prediction accuracy at a fixed cue-to-reward delay.",
+      "confidence": "High for timing-dependent associative plasticity; low for inferring general rule learning from it.",
+      "local_sufficiency": "Partial; sufficient for specified simple associative models, not established for the target learner.",
+      "test_cost": "Low",
+      "verification_status": "Convergent primary studies of local plasticity and timing; exact equations differ and are not collapsed into one measured rule.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Hige2015",
+          "P-Handler2019"
+        ],
+        "primary_claims": [
+          "Associative compartment plasticity; not all synapse weights globally Hebbian",
+          "Dopamine receptor classes alter temporal learning windows"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "LOCAL_ASSOCIATIVE_PLASTICITY",
+        "distinct_computation": "Modulator-gated signed synaptic write with cue/teaching timing.",
+        "proposed_equation_or_pseudocode": "e_ij <- lambda*e_ij+pre_i*post_j; Delta W_ij=eta*e_ij*d_channel [sign/timing from rule].",
+        "causally_available_learning_signals": "Pre/post activity and externally learned or experimentally supplied reinforcer channel; teacher origin separate.",
+        "writable_state": "O(S_KC-MBON) weights; if delayed, O(S) eligibility traces.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S) state and write operations.",
+        "observed_minifly_problem_relevance": "Credit assignment and selective storage; E16 already has local eligibility and supervised sign-error, not an MB DAN channel.",
+        "closest_simpler_resource_matched_control": "Same signal and state with sign-based local supervised trace writer.",
+        "minifly_implementation_class": "RELATED_IMPLEMENTED_AND_TESTED",
+        "minifly_test_status": "RELATED_COMPUTATIONAL_OPERATION_TESTED_NOT_BIOLOGICAL_EQUIVALENCE",
+        "decision_status": "ALREADY_TESTED_RELATED_ONLY",
+        "uncertainties": "Do not equate current classification CE error with dopamine valence or actual biological timing.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CELL-ELIG",
+          "R-SIGN-BWD"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": true
+      }
+    },
+    {
+      "id": "F06",
+      "name": "Compartment-specific teaching channels",
+      "section": "III. Teaching and credit",
+      "sources": [
+        "Aso2016",
+        "Eschbach2020"
+      ],
+      "evidence": "Shown: adult DAN cell types write and update memories with different dynamics. Larval connectomics and modeling show substantial recurrent organization around teaching neurons. This supports heterogeneous teaching channels; it does not establish independent, arbitrary target vectors for every neuron.",
+      "wiring": "Adult: distinct DAN projections modulate different KC→MBON compartments. Larval evidence supplies additional recurrent motifs but is explicitly cross-stage evidence. Connection signs must be specified per selected motif, not inferred from the word dopamine.",
+      "algorithm": "Development sets the routing matrix and a small number C of channel types. Proposed lifetime update: delta w_ic = eta_c * e_ic * d_c. Each d_c must be computed by its local circuit from allowed inputs. C independent external target errors are not silently equivalent to one scalar reward.",
+      "scaling": "H = O(C) rule coefficients, potentially O(C²) intercompartment couplings; O(S_w) plastic weights and traces. Scaling C with width increases teaching bandwidth and must be reported.",
+      "models": "Aso & Rubin (2016) supplies cell-type-specific learning constraints. Eschbach et al. (2020), Nature Neuroscience, combines larval recurrent anatomy and computational analysis; biological wiring alone does not certify all training operations as local.",
+      "buy": "Could specialize where credit is delivered and separate stable from flexible channels. It need not improve composition unless useful information reaches the appropriate channel.",
+      "overlap": "Already-covered compartment heterogeneity/teaching allocation. More compartments are not automatically new mechanisms.",
+      "minimal_test": "Compartment-targeted versus channel-permuted modulation, matching modulator amplitudes and all state. Measurement: held-out loss after conflicting teaching events.",
+      "confidence": "High for heterogeneity; medium for a chosen routing abstraction.",
+      "local_sufficiency": "Partial: local modulation exists; sufficiency of learned routing remains task-dependent.",
+      "test_cost": "Low–medium",
+      "verification_status": "Adult cell-type evidence plus larval architecture/model evidence; cross-stage convergence is not adult replication.",
+      "species_stage": "Adult Drosophila melanogaster; F06 additionally labels larval evidence explicitly.",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Aso2016",
+          "P-Eschbach2020"
+        ],
+        "primary_claims": [
+          "Distinct reinforcement channels; no general compositional teaching theorem",
+          "Adult lineage equivalence not established by larval evidence"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "TEACHER_COMPARTMENT_ARCHITECTURE",
+        "distinct_computation": "Separate reinforcement channels with potentially different update signs and persistence.",
+        "proposed_equation_or_pseudocode": "Delta W_ij^(k)=eta_k*e_ij^(k)*d_k(t), k=1..K.",
+        "causally_available_learning_signals": "Compartment-specific reinforcers; need causal local circuit or externally provided teaching source.",
+        "writable_state": "At least S*K or partitioned S weights, K modulators, optional gating and eligibility.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_total+K) state; O(active S) per update.",
+        "observed_minifly_problem_relevance": "Different tasks/conflicting associations; stage/task IDs cannot be leaked as modulatory channels.",
+        "closest_simpler_resource_matched_control": "Equal-size single shared compartment, matched multiple-head without neuromodulatory meaning.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "UNRESOLVED",
+        "uncertainties": "MiniFly multi-store lineages not evidence of modeled adult DAN compartments.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F07",
+      "name": "Activity-dependent amplification of teaching",
+      "section": "III. Teaching and credit",
+      "sources": [
+        "Cervantes2017"
+      ],
+      "evidence": "Shown: reciprocal KC–DAN connectivity includes a positive feedback contribution required for learning. This is an amplification loop, not evidence that the loop subtracts an expected reward.",
+      "wiring": "Adult fly: KCs provide excitatory cholinergic feedback to DANs; DANs modulate KC output synapses. These are different signal types around the loop.",
+      "algorithm": "Development fixes feedback weights and saturation. Proposed dynamics: d_next = clip(external_teaching + gain*sum(local_KC_activity), 0, d_max). Lifetime KC→MBON plasticity remains F05. A learned feedback matrix would be another plastic site requiring its own rule.",
+      "scaling": "H = O(1–10) gain/decay/bound parameters, O(C) DAN state and O(S_feedback) edges/work. Feedback adjacency and any independent feedback weights must be counted.",
+      "models": "Cervantes-Sandoval et al. (2017), eLife: structural/functional intervention evidence. No verified stand-alone byte learner or policy-gradient equivalence is claimed.",
+      "buy": "Could improve salience-dependent write strength or credit delivery with weak teaching. Positive feedback can instead amplify noise and unrelated writes.",
+      "overlap": "Overlaps the retained MB output/teaching loop. Do not conflate this operation with the error subtraction in F08 or the transfer of teacher status in F09.",
+      "minimal_test": "Closed loop versus activity-independent, gain-matched teaching. Measurement: examples needed for a fixed trained-association accuracy.",
+      "confidence": "Medium: supported circuit motif; useful gain schedule is task-specific.",
+      "local_sufficiency": "Partial; local components are available, global sufficiency not established.",
+      "test_cost": "Low",
+      "verification_status": "One selected primary circuit study; no independent replication claim.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Cervantes2017"
+        ],
+        "primary_claims": [
+          "Anatomically/behaviorally motivated positive feedback, not an omniscient target generator"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "RECURRENT_TEACHING_AMPLIFIER",
+        "distinct_computation": "Feedback from learned output increases or prolongs localized teaching activation.",
+        "proposed_equation_or_pseudocode": "d_t = phi(u_t + alpha*MBON_t - beta*z_t) [hypothesis].",
+        "causally_available_learning_signals": "Locally available output feedback plus externally observed reinforcement u_t.",
+        "writable_state": "O(K) modulatory states + feedback edges S_fb.",
+        "parameter_storage_compute_census_or_asymptotics": "O(K+S_fb) values and compute per step.",
+        "observed_minifly_problem_relevance": "May extend sparse teaching and may also amplify erroneous/self-confirming predictions.",
+        "closest_simpler_resource_matched_control": "Same signal budget and scalar teach multiplier without recurrence.",
+        "minifly_implementation_class": "UNKNOWN",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "UNRESOLVED",
+        "uncertainties": "Recurrent cell h is NOT proof of KC-to-DAN recurrent teacher loop.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F08",
+      "name": "Prediction-error computation in an MB output–teaching loop",
+      "section": "III. Teaching and credit",
+      "sources": [
+        "Bennett2021"
+      ],
+      "evidence": "Proposed and tested in models: output-neuron predictions feed back to dopamine-like teaching signals, allowing error-driven rather than absolute-reinforcement updates. Conditioning and blocking simulations are evidence for the model’s behavior, not direct proof that all fly DANs implement this calculation.",
+      "wiring": "Model: KC activity drives output predictions; effective feedback opposes external reinforcement at teaching units. Positive and negative signals require opponent/sign-constrained pathways rather than an unexplained negative dopamine concentration.",
+      "algorithm": "Development fixes circuit signs/routing; life changes effective predictor weights. Minimal local model: prediction = sum_i(v_i*x_i); delta = reward - prediction; e_i_next = lambda*e_i + x_i; delta v_i = eta*delta*e_i. The target/output orientation determines the corresponding physical KC→MBON update sign. No hidden-layer gradient follows from this equation.",
+      "scaling": "H = O(1–10) per channel; S predictor weights, up to S traces, O(S) work. A single output can use scalar error; many outputs need specified local/error routing, not uncounted supervision.",
+      "models": "Bennett, Philippides & Nowotny (2021), Nature Communications: explicit constrained/augmented models and released simulation code. Fits multiple associative-learning phenomena; some explanatory connectivity is postulated. Code existence verified; not rerun here.",
+      "buy": "Prediction calibration and reduced unnecessary writes once a consequence is predicted. Useful for sample efficiency; not a solution to latent-variable discovery or symbolic compositionality.",
+      "overlap": "Potentially an already implemented teacher-quality mechanism. The exact current MiniFly feedback computation has not been re-audited in this review.",
+      "minimal_test": "Prediction-error feedback versus absolute teaching with matched update norm and state budget. Measurement: asymptotic consequence-prediction error.",
+      "confidence": "High for the stated computational result; medium/low for the full biological interpretation.",
+      "local_sufficiency": "Yes in the published model’s specified associative tasks; unknown for MiniFly transfer.",
+      "test_cost": "Low",
+      "verification_status": "Published computational task demonstrations and verified code availability; not experimental replication of biological RPE computation.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Bennett2021"
+        ],
+        "primary_claims": [
+          "Predicted–received reinforcement difference fed back from MBON to DAN; not the supervised byte-label error of MiniFly"
+        ],
+        "biology_support": "PUBLISHED_COMPUTATIONAL_MODEL_NOT_NEW_ANIMAL_EXPERIMENT",
+        "operational_kind": "REINFORCEMENT_PREDICTION_ERROR_MODEL",
+        "distinct_computation": "Use predicted reward fed back to a dopaminergic teacher to subtract expected reward from received reward.",
+        "proposed_equation_or_pseudocode": "Bennett Eq(1): C_RPE=1/2 sum_i(r_hat_i-m_hat_i)^2; Eq(2): P_±=eta*k*(d_±-d_∓); Eq(3): d_+-d_-=r_hat-m_hat. See paper for model signs and derivation.",
+        "causally_available_learning_signals": "Received reinforcer r and MBON-reported prediction; an online true task answer is NOT naturally the same signal.",
+        "writable_state": "KC-MBON weights plus MBON-to-DAN feedback and reward-prediction states; O(S+S_fb).",
+        "parameter_storage_compute_census_or_asymptotics": "O(S+S_fb) parameters; O(active edges) per update, feedback pass.",
+        "observed_minifly_problem_relevance": "Teaching stability/overprediction; E16 CE supervised logits supply a different error.",
+        "closest_simpler_resource_matched_control": "Equal-state supervised prediction residual with no DAN-style recurrent circuit.",
+        "minifly_implementation_class": "NOT_EQUIVALENT_TO_CURRENT_SUPERVISED_ERROR",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "NOT_JUSTIFIED",
+        "uncertainties": "Published MATLAB model exists and was inspected but not reproduced; no proof improves E16 byte prediction.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-SIGN-BWD",
+          "R-CELL-ELIG"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F09",
+      "name": "A learned cue becomes a teacher for another association",
+      "section": "III. Teaching and credit",
+      "sources": [
+        "Yamada2023",
+        "Rachad2025"
+      ],
+      "evidence": "Shown: second-order conditioning uses a hierarchy in which a learned reward-predicting cue can recruit teaching for another compartment. Rachad et al. (2025) supplies convergent circuit/behavioral/model evidence for higher-order associative chains. This is stronger than merely observing anatomical recurrence, but remains distinct from learning a reusable arithmetic operation.",
+      "wiring": "Adult fly: a relatively stable teacher compartment influences faster student compartments through an excitatory intermediary; additional experiments identify excitatory and inhibitory feedback around dopaminergic signaling. Avoid treating all routes as one universal fixed diagram.",
+      "algorithm": "Development fixes teacher→intermediary→student routes. Proposed abstraction: d_student = external_reward + alpha*teacher_output; delta w_student = eta*student_eligibility*d_student. Teacher output must be learned from experience, not supplied from labels at test time. The full biological update and safeguards against self-reinforcing false predictions remain incompletely identified.",
+      "scaling": "H = O(C) channel gains and time constants, O(S_teacher+S_student) plastic state, plus bounded intermediary state. Dense teacher–student connectivity costs O(C²); sparse hierarchy O(C).",
+      "models": "Yamada et al. (2023), eLife: anatomical/physiological/behavioral work with modeling. Rachad et al. (2025), Cell Reports: circuit dissection plus computational modeling. A public reusable model-code package was not verified here; anatomical viewer links are not model code.",
+      "buy": "Composes learned associations without direct primary reward for every link. This supports an operational teaching-transfer hypothesis, not a claim of zero-shot algebra.",
+      "overlap": "Subfamily of existing MB feedback and fast/slow compartments, but teaching transfer is an identifiable extra operation. Current exact implementation status unknown.",
+      "minimal_test": "Learned teacher output versus equal-amplitude shuffled teacher output, after identical first-order training. Measurement: second-order cue preference without primary reward to that cue.",
+      "confidence": "Medium–high for associative chaining; low for extrapolation to general rule induction.",
+      "local_sufficiency": "Partial: task-level circuit/model evidence; no general sufficiency theorem.",
+      "test_cost": "Medium",
+      "verification_status": "Two primary circuit studies from different research groups support higher-order association; they are convergent, not identical-protocol replications.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Yamada2023",
+          "P-Rachad2025"
+        ],
+        "primary_claims": [
+          "First-order reward predicting odor recruits DAN in student compartment; second-order associations not systematic rule composition",
+          "Higher-order associative learning; not eLife or algorithmic theorem"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "LEARNED_TO_TEACH_ASSOCIATIVE_CHAIN",
+        "distinct_computation": "A first learned cue evokes reinforcing activity for a second association in another compartment.",
+        "proposed_equation_or_pseudocode": "d_student=clip(r_external+alpha*g(confidence_teacher)*teacher_prediction, limits); Delta W_student=eta*e_student*d_student [proposal; paper does not establish this exact confidence gate].",
+        "causally_available_learning_signals": "First-order learned cue, its inferred valence and direct consequences; without external outcomes self-teaching can reinforce errors.",
+        "writable_state": "Separate teacher/student traces plus intermediary readout and feedback edges; O(S_teacher+S_student+S_feedback).",
+        "parameter_storage_compute_census_or_asymptotics": "One additional teacher-recipient pathway plus compartment weights; cost cannot be assumed free.",
+        "observed_minifly_problem_relevance": "Associative chaining may aid novel combinations but NOT systematic arithmetic composition.",
+        "closest_simpler_resource_matched_control": "Equal state two-stage ordinary supervised associator with same exposure and no teacher-generated targets.",
+        "minifly_implementation_class": "UNKNOWN",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "TEST_LATER_CONDITIONAL",
+        "uncertainties": "Teacher confidence/error protection is new engineering, not proven fly circuit; source only second/higher-order conditioning.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F10",
+      "name": "State-dependent readout and disinhibitory routing",
+      "section": "IV. Readout and revision",
+      "sources": [
+        "Krashes2009",
+        "Perisse2016"
+      ],
+      "evidence": "Shown: motivational state can gate memory expression, and learning/motivation can alter feed-forward inhibition in the MB output network. Failure to express a behavior is therefore not automatically loss of the stored association.",
+      "wiring": "Adult fly: state-related signals influence dopaminergic/MB circuits; inhibitory MBON pathways regulate other output pathways. An inhibitory neuron suppressing an inhibitory route can disinhibit the selected output.",
+      "algorithm": "Development fixes routes. Proposed readout: output = g(state)*memory_output, with a small fixed state-to-gain map; a more explicit version uses two inhibitory stages. The evidence does not specify a generally sufficient local rule for learning arbitrary context keys. Changing state can alter reads without changing stored weights.",
+      "scaling": "H = O(C) gains for fixed state channels, O(C+N) activity. Learning a context router adds S_gate weights and its local learning state; do not count only the final gain.",
+      "models": "Krashes et al. (2009), Cell, and Perisse et al. (2016), Neuron: causal circuit/behavioral constraints. Neither is a demonstration of locally trained transformer-style keys.",
+      "buy": "Could separate storage from access and prevent irrelevant context from determining the output. It offers a hypothesis for format-dependent access failures, not proof that E16 is an access failure.",
+      "overlap": "Existing internal-state gating family and overlaps the separate attention/WM survey. No new generic “add a gate” recommendation.",
+      "minimal_test": "State-sensitive readout versus state-permuted readout, holding all stored association weights fixed at evaluation. Measurement: recovery of old-format accuracy.",
+      "confidence": "High for state-dependent expression; low for arbitrary learned routing sufficiency.",
+      "local_sufficiency": "Fixed gate is straightforward; learning the correct gate is unestablished.",
+      "test_cost": "Low",
+      "verification_status": "Convergent behavioral/circuit studies; does not establish an arbitrary learned router.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Krashes2009",
+          "P-Perisse2016"
+        ],
+        "primary_claims": [
+          "Motivational state can gate recall without erasure",
+          "Readout selection depends on hunger/memory rather than storing distinct answer symbols"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "STATE_DEPENDENT_READOUT",
+        "distinct_computation": "Alter which stored valence/representation is expressed as internal state changes.",
+        "proposed_equation_or_pseudocode": "y=Sum_k gate_k(s_t,x_t)*readout_k(x_t) with gate computed from observable internal state.",
+        "causally_available_learning_signals": "Hunger/arousal/activity and sensory context, not evaluator stage label.",
+        "writable_state": "O(K) gate and internal-state variables, separate output connections; optionally K stored weights.",
+        "parameter_storage_compute_census_or_asymptotics": "O(K+S_read) states/compute; cost depends on separate stores.",
+        "observed_minifly_problem_relevance": "Access-versus-erasure diagnosis; gating cannot restore unavailable old information.",
+        "closest_simpler_resource_matched_control": "Equal-weight two readouts with fixed mixture/gating.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "UNRESOLVED",
+        "uncertainties": "Need demonstrate selective retrieval from actual traces, not simply learned switch under explicit phase IDs.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F11",
+      "name": "Opposing learned memories rather than overwriting one trace",
+      "section": "IV. Readout and revision",
+      "sources": [
+        "Felsenberg2018"
+      ],
+      "evidence": "Shown: extinction can involve a parallel opposing memory that competes with the original association. This is not the claim that all forgetting is erasure or that every inhibitory response is a separate memory system.",
+      "wiring": "Adult fly: distinct MB pathways preserve and oppose learned valence, converging on behavioral output. Keep route-specific excitation/inhibition separate from the sign of the net learned preference.",
+      "algorithm": "Development fixes two opposing channels. Proposed effective output: value = original_prediction - opponent_prediction. Both channels can use bounded locally modulated associative updates; omitted expected reinforcement trains the opponent only if that omission signal is explicitly computed. This equation is an abstraction, not the measured complete biological rule.",
+      "scaling": "H = O(1–10); approximately 2S associative weights if both channels have S edges, plus traces if used. Parameter sharing does not remove the second stored trace.",
+      "models": "Felsenberg et al. (2018), Cell: circuit and behavioral evidence for parallel opposing memory. No claim that a generic two-head implementation reproduces every extinction phenomenon.",
+      "buy": "Revision with potential recovery of old behavior instead of irreversible replacement. It can reduce one kind of forgetting but does not discover invariant input representations.",
+      "overlap": "Overlaps banks, compartmental retention and revision already screened. Include as a mechanistic distinction, not another broad memory-management proposal.",
+      "minimal_test": "Opponent trace versus single-trace updating under equal total writable storage. Measurement: old-association recovery after removal of the extinction context.",
+      "confidence": "High for the reported extinction mechanism; conditional for format-transfer failures.",
+      "local_sufficiency": "Partial: local implementation plausible; particular rule must be demonstrated.",
+      "test_cost": "Low–medium",
+      "verification_status": "One selected primary circuit study; no claim of universal extinction mechanism.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Felsenberg2018"
+        ],
+        "primary_claims": [
+          "Co-existing memories are biological observation; an equal-capacity 2-store algorithm improvement is UNPROVEN"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "PARALLEL_OPPOSING_MEMORY_READOUT",
+        "distinct_computation": "Preserve opposing associations and choose net behavior by context-dependent readout.",
+        "proposed_equation_or_pseudocode": "v(x,s)=g_plus(s,x)*w_plus^T*phi(x)-g_minus(s,x)*w_minus^T*phi(x).",
+        "causally_available_learning_signals": "Same input/context and observed outcomes; selector cannot access correct answer or future task identity.",
+        "writable_state": "If two independent full heads each n weights, 2n vs n single head; plus selector p, state g. Can partition w with n total under a resource-matched design.",
+        "parameter_storage_compute_census_or_asymptotics": "O(n_plus+n_minus+p) state; O(active n_plus+n_minus+p) compute.",
+        "observed_minifly_problem_relevance": "May help revision/recall; no demonstrated superiority over equally resourced two-bank memory.",
+        "closest_simpler_resource_matched_control": "Same 2n+p parameter split into generic banks with learned local selector; same training events.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "TEST_LATER_CONDITIONAL",
+        "uncertainties": "Felsenberg supports memory coexistence, not a particular +/− weight coding or E16 benefit.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-E16-E4-REPLAY"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F12",
+      "name": "Bounded post-event teaching reverberation",
+      "section": "V. Consolidation control",
+      "sources": [
+        "Ichinose2015",
+        "Pavlowsky2018",
+        "Matsuno2026"
+      ],
+      "evidence": "Shown/inferred: recurrent reward-related activity contributes to appetitive long-term memory, while inhibitory feedback helps regulate dopaminergic activity. These studies concern different circuit details, so their combination into one controller is proposed. Matsuno et al. (2026) links aberrant post-training dopamine to maladaptive memory broadening, not useful rule generalization.",
+      "wiring": "Adult fly: recurrent MB–DAN signaling supplies persistence; a GABAergic feedback pathway regulates dopaminergic input. Do not assert a direct monosynaptic inhibitory edge where only a functional pathway is established.",
+      "algorithm": "Development fixes loop gains and negative-feedback topology. Proposed two-state controller: d_next = clip((1-a)*d + b*event - c*z,0,d_max); z_next = (1-h)*z + h*d. d gates already eligible local writes. Eligibility must decay or reset so unrelated later inputs are not captured. This is bounded teaching persistence, not an archive replay buffer.",
+      "scaling": "H = O(10) per channel, O(C) controller state plus existing weight/eligibility storage. K post-event updates multiply work by K even if no weights are added.",
+      "models": "Ichinose et al. (2015), eLife, and Pavlowsky et al. (2018), Current Biology: experimental constraints on persistence and feedback. The two-state engineering controller is proposed here, not claimed as their exact model.",
+      "buy": "Can extend an informative teaching event while terminating harmful indiscriminate writing. It addresses write timing; it cannot recreate missing old examples.",
+      "overlap": "Already-covered consolidation/termination family. Keep separate from replay but do not launch it instead of the user-described replay controls.",
+      "minimal_test": "Negative-feedback-terminated versus duration-matched externally truncated teaching, equal total update budget. Measurement: old-task loss after unrelated post-event inputs.",
+      "confidence": "Medium: component findings are strong; synthesis and transfer remain unproven.",
+      "local_sufficiency": "Partial; no established complete local algorithm for the MiniFly failure.",
+      "test_cost": "Medium; K extra updates",
+      "verification_status": "Several primary studies constrain persistence, termination and overgeneralization, but not one jointly validated controller.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Ichinose2015",
+          "P-Pavlowsky2018",
+          "P-Matsuno2026"
+        ],
+        "primary_claims": [
+          "A recurrent loop can sustain instructive activity in a defined context, not generic replay of experiences",
+          "Consolidation-window shutoff is not the same as unlimited teaching persistence",
+          "Broadening memory in this study includes pathological false generalization, not desirable learned composition"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "BOUNDED_POSTEVENT_TEACHING_STATE",
+        "distinct_computation": "Teaching remains active after event then terminates via inhibitory feedback.",
+        "proposed_equation_or_pseudocode": "d_(t+1)=clip((1-a)*d_t+b*u_t-c*z_t,0,dmax); z_(t+1)=(1-h)*z_t+h*d_t [engineering abstraction].",
+        "causally_available_learning_signals": "Recent event and local recurrence/inhibition, no archived past labels.",
+        "writable_state": "O(K) modulatory and inhibitory state plus feedback S_fb.",
+        "parameter_storage_compute_census_or_asymptotics": "O(K+S_fb) state, O(S_fb) per step.",
+        "observed_minifly_problem_relevance": "Sparse delayed credit versus contamination; E16 already contains eligibility but not verified postevent DAN reverberation.",
+        "closest_simpler_resource_matched_control": "Equal-state decaying eligibility without persistent teacher.",
+        "minifly_implementation_class": "UNKNOWN",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "UNRESOLVED",
+        "uncertainties": "Overlong teaching may worsen forgetting and generalization specificity.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CELL-ELIG"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F13",
+      "name": "Re-anchor new sensory renderings to a stable internal coordinate",
+      "section": "II. Representation and anchoring",
+      "sources": [
+        "Fisher2019",
+        "Kim2019",
+        "Plitt2025"
+      ],
+      "evidence": "Shown: the visual input associated with an internal heading representation can be reorganized by sensorimotor experience. Convergent 2019 studies connect stable heading dynamics with adaptable visual mapping. The exact synaptic learning law is inferred/proposed, not directly measured in full. A December 2025 preprint by Plitt et al. reports that octopaminergic feedback conveys heading activity to sensory presynaptic terminals and is necessary/sufficient for the tested anchoring plasticity; this newer claim remains provisional.",
+      "wiring": "Adult fly: visual ring-neuron input inhibits compass E-PG neurons; the compass has recurrent state-maintaining dynamics. Plastic sensory anchoring is distinguished from the recurrent dynamics that maintain the internal coordinate.",
+      "algorithm": "Development fixes the compass kernel; life changes sensory-to-state anchoring. Proposed inhibitory-association variant: delta a_ij = -eta*visual_i*state_j + slow_local_restoration(a_ij), with nonnegative inhibitory magnitudes. Weakening coactive inhibition can anchor the cue to the occupied state. The exact rule/bounds need validation; a privileged correct-state target is not allowed. The preprint motivates replacing direct state_j in the update by a locally delivered modulatory state signal m_j. That spatially structured feedback is not a single uniform global reward scalar and must be explicitly implemented and budgeted.",
+      "scaling": "H = O(10) kernel/rule parameters plus S_anchor independent anchoring weights and O(N) state. Dense M-cue by N-state anchoring costs O(MN); sparse degree-k anchoring O(kM). It is not a ten-parameter learner merely because the ring kernel has ten parameters.",
+      "models": "Fisher et al. (2019) and Kim et al. (2019), Nature: physiological experiments with constrained models. Kim et al. supplies an author data/code page. The task has continuous heading and sensorimotor correspondence, not arbitrary symbolic renaming.",
+      "buy": "A plausible analogue for separating a stable latent computation from a changing input format. It requires an observable bridge between formats; it cannot infer an arbitrary unseen permutation with no paired cues or feedback.",
+      "overlap": "Family overlap with input plasticity and the already-tested CX. Whether the exact sensory-anchor variant was tested is unknown; it must not be announced as new.",
+      "minimal_test": "Plastic versus frozen anchoring with identical recurrent core and allowed observations. Measurement: old-format accuracy after learning a second rendering of the same observable transitions.",
+      "confidence": "Medium–high for sensory remapping; conditional for byte-format transfer.",
+      "local_sufficiency": "Partial: local models exist; target-task sufficiency and unprivileged anchoring unestablished.",
+      "test_cost": "Medium",
+      "verification_status": "Two peer-reviewed 2019 studies converge on flexible anchoring; 2025 feedback mechanism is a separately labeled, unreplicated preprint.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Fisher2019",
+          "P-Kim2019",
+          "P-Plitt2025"
+        ],
+        "primary_claims": [
+          "An informative correspondence makes learning possible; arbitrary unobserved permutation cannot be identified",
+          "Environmental visual changes can alter learned mapping while preserving heading; not general byte-rule transfer",
+          "Preprint not independent confirmation of completed general local mapping rule"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "SENSORY_REANCHORING_PLASTICITY",
+        "distinct_computation": "Learn changed sensory-to-internal coordinate mapping while retaining a stable downstream computation.",
+        "proposed_equation_or_pseudocode": "Delta A_ij=eta*x_i*phi(z_j, cue_correspondence, e_teacher) [source-specific sign and availability required]; output=R(Ax) and downstream R frozen.",
+        "causally_available_learning_signals": "Co-occurring heading/state and sensory view, sensorimotor continuity, explicit calibration feedback, or rewards; arbitrary unobserved permutation is unidentifiable.",
+        "writable_state": "O(S_anchor) plastic afferents and O(K) stable internal coordinate state.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_anchor+K) persistent state and O(S_anchor) update; preserve fixed downstream task weights.",
+        "observed_minifly_problem_relevance": "Directly matches format-switch failure hypothesis *if* damaged representations, rather than bad replay targets, caused it.",
+        "closest_simpler_resource_matched_control": "Equal-state adapter with matched co-occurrence data; frozen representation plus simple mean-normalization.",
+        "minifly_implementation_class": "RELATED_NAVIGATION_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "TEST_LATER_CONDITIONAL",
+        "uncertainties": "MiniFly navigation has development-fitted compass; no verified lifetime byte format reanchoring. Need paired/continuity cues.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CX-STEER",
+          "R-CX-PI"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F14",
+      "name": "Continuous recurrent working state",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Kim2017"
+      ],
+      "evidence": "Shown/inferred through perturbation and modeling: fly heading populations have ring-attractor dynamics. This supports persistent low-dimensional state. It does not establish a locally learned general working-memory program.",
+      "wiring": "Adult fly central brain: E-PG-centered recurrent compass circuitry with effective excitation and inhibition maintains a localized population state. A signed ring kernel is an abstraction; negative effective couplings must be realized through inhibitory pathways.",
+      "algorithm": "Development fixes a translation-structured recurrent kernel. Proposed dynamics: h_next = phi(K*h + B*motion - inhibition); the stable bump encodes state. No lifetime weight changes are necessary for this computation. Sensory anchoring plasticity is F13, not evidence of a plastic ring kernel.",
+      "scaling": "H = O(1–10) kernel/shift parameters; O(N) activity, O(kN) work with k local neighbors or O(N²) for a naive dense kernel. Multiple independent registers multiply state and dynamics; shared coefficients do not provide free memory capacity.",
+      "models": "Kim et al. (2017), Science: perturbation-constrained model with released code. It explains heading-bump behavior, not arbitrary manipulation of multiple symbolic registers.",
+      "buy": "Persistent state and continuous integration with low shared-parameter cost. Useful only when inputs can legitimately be grounded to the state variable.",
+      "overlap": "Already-reviewed/tested central-complex family. Exact implementation details were not inspected here.",
+      "minimal_test": "Structured versus phase-scrambled recurrence, matched degree, gains, state and internal update count. Measurement: drift over a specified delay.",
+      "confidence": "High for the specified state dynamics; low for general program inference.",
+      "local_sufficiency": "Not applicable to the fixed kernel; grounding/readout learning remains separate.",
+      "test_cost": "Low–medium",
+      "verification_status": "Perturbation plus model in a primary paper; code verified, not independently rerun here.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Kim2017"
+        ],
+        "primary_claims": [
+          "Stable internal heading state; not a learned abstract working memory policy"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "RECURRENT_WORKING_STATE",
+        "distinct_computation": "Maintain hidden state across time to integrate intermittent inputs.",
+        "proposed_equation_or_pseudocode": "h_t=r_t*h_(t-1)+w_t*c_t; already exactly implemented in exp11_cell.py.",
+        "causally_available_learning_signals": "Current/previous byte embeddings; state initialized at sequence beginning.",
+        "writable_state": "Existing H cell coordinates, gate/candidate weights; no NEW state for same mechanism.",
+        "parameter_storage_compute_census_or_asymptotics": "Existing state O(C) per stream step; O(CD) cell weights.",
+        "observed_minifly_problem_relevance": "Present E16 retains working state; adding another recurrence not independently justified.",
+        "closest_simpler_resource_matched_control": "Existing gated cell or equal-state leaky integrator, not ablation of essential state.",
+        "minifly_implementation_class": "CODE_AND_TEST_VERIFIED",
+        "minifly_test_status": "RELATED_COMPUTATIONAL_OPERATION_TESTED_NOT_BIOLOGICAL_EQUIVALENCE",
+        "decision_status": "ALREADY_TESTED_WITH_EVIDENCE",
+        "uncertainties": "Biological ring attractor is different from gated byte cell, but computational continuous-state motif exists.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CELL-GATE"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": true
+      }
+    },
+    {
+      "id": "F15",
+      "name": "Accumulate evidence before committing",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Groschner2018"
+      ],
+      "evidence": "Shown: subthreshold dendritic activity in αβ-core KCs integrates olfactory evidence on behaviorally relevant decision timescales. This is a within-neuron temporal computation, not evidence that recurrent weights were learned for the task.",
+      "wiring": "Adult fly: sensory inputs reach KC dendrites; membrane integration precedes spike/decision threshold. A simplified circuit uses excitatory evidence drive, leak and threshold/reset.",
+      "algorithm": "Development fixes integration/threshold parameters. Proposed state rule: z_next = (1-leak)*z + evidence; commit when z reaches threshold, then reset. A signed evidence difference requires separately specified opponent inputs. No weight plasticity is required for the accumulator.",
+      "scaling": "H = O(1–10) per accumulator class; O(N) state and O(S_input+N) work. K integration steps cost K updates. Arbitrary learned evidence encoders add their own weights and credit-assignment problem.",
+      "models": "Groschner et al. (2018), Cell: recordings, manipulations and a perceptual-decision account. The model addresses discrimination timing, not long symbolic reasoning.",
+      "buy": "Can integrate noisy or distributed cues and delay action until sufficient evidence accumulates. This is a different operation from storing an arbitrary item without drift.",
+      "overlap": "Overlap with the recurrent-state/integration family; more specific than adding a generic RNN. Current exact implementation unknown.",
+      "minimal_test": "Accumulator versus matched-state instantaneous decision mechanism, equal total observations and compute. Measurement: decision error at a fixed observation budget.",
+      "confidence": "High for evidence integration; medium for the proposed compact abstraction.",
+      "local_sufficiency": "Fixed computation; sufficiency of a learned encoder is unknown.",
+      "test_cost": "Low",
+      "verification_status": "Primary recordings/manipulations with mechanistic modeling; independent replication not established here.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Groschner2018"
+        ],
+        "primary_claims": [
+          "Integration time constant affects decision; it is not a previously absent recurrent state in MiniFly"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "TEMPORAL_EVIDENCE_ACCUMULATION",
+        "distinct_computation": "Integrate noisy evidence to threshold for delayed commitment.",
+        "proposed_equation_or_pseudocode": "a_t=clip(lambda*a_(t-1)+evidence_t,-A,A); commit when |a_t|>theta.",
+        "causally_available_learning_signals": "Observable sensory evidence stream, no future correct answer.",
+        "writable_state": "O(N_decisions) accumulator variables and threshold; if learned thresholds add params.",
+        "parameter_storage_compute_census_or_asymptotics": "O(K) state/work per step.",
+        "observed_minifly_problem_relevance": "Possibly helpful for sequential noisy tasks; E16 already temporal state and no isolated evidence-accumulation deficiency.",
+        "closest_simpler_resource_matched_control": "Equal-state recurrent integrator and fixed threshold.",
+        "minifly_implementation_class": "RELATED_ONLY",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "NOT_JUSTIFIED",
+        "uncertainties": "Biological integration biophysics does not establish needed learned rule.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CELL-GATE"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": true
+      }
+    },
+    {
+      "id": "F16",
+      "name": "Coordinate transformation by population-vector combination",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Lyu2022",
+        "Ishida2026"
+      ],
+      "evidence": "Shown/inferred from recordings and circuit organization: fan-shaped-body pathways combine movement-related signals to represent allocentric travelling direction. This is a coordinate transformation, not proof of a complete learned home-vector integrator or universal addition engine. Ishida et al. (2026) further shows a population-vector inversion operation associated with a change in firing mode. Inversion is recorded here as a distinct operator within the vector-computation family, not padded into another broad family.",
+      "wiring": "Adult fly: heading and movement signals shape PFN population phases/amplitudes; phase-shifted convergence onto hΔB-related populations combines components. Do not replace the biological arrangement with an unsupported universal eight-column ratio.",
+      "algorithm": "Development fixes phase offsets and coupling. Mathematical abstraction: world_vector = rotation(heading) * body_vector; a population implementation sums appropriately shifted component codes. This is a runtime operation; no local learning law is needed for fixed couplings. Learning what a raw byte denotes remains outside the circuit. For the inversion variant, the mathematical operation is v_out = -v_in, represented as a half-turn of population phase; this does not imply negative firing rates.",
+      "scaling": "H = O(10–100) across selected population types; O(N) population state and O(S_vector) edges/work. Dense implementations may cost O(N²); sparse columnar implementations can cost O(N). The low-dimensional formula does not eliminate neural encoding cost.",
+      "models": "Lyu, Abbott & Maimon (2022), Nature: circuit-linked computational account of travelling direction. It does not test locally learned modular arithmetic from arbitrary byte labels.",
+      "buy": "Composition of grounded transformations. Potentially useful as a computational primitive, but inserting arithmetic structure into development changes what the learner is being asked to discover.",
+      "overlap": "Already-reviewed/tested CX family. No novelty claim for generic vector addition.",
+      "minimal_test": "Correct versus permuted phase-offset circuitry with equal edges, training and update count. Measurement: coordinate-transform error on held-out trajectories.",
+      "confidence": "High for the reported transformation; low for arbitrary symbolic-transfer claims.",
+      "local_sufficiency": "Fixed computation; learning sufficiency not applicable.",
+      "test_cost": "Low–medium",
+      "verification_status": "Primary vector-transformation and later inversion studies; complementary operations, not replicated end-to-end learning.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Lyu2022",
+          "P-Ishida2026"
+        ],
+        "primary_claims": [
+          "Instantaneous direction/velocity-related vector; NOT accumulated displacement",
+          "Biophysical vector inversion, not arithmetic or general rule discovery"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "POPULATION_VECTOR_TRANSFORM",
+        "distinct_computation": "Convert self-centered motion and heading into common allocentric vector; possibly invert via special network.",
+        "proposed_equation_or_pseudocode": "v_world = R(theta_heading)*v_body; instantaneous transform. Displacement requires separate integral D_(t+1)=D_t+Delta_t*v_world.",
+        "causally_available_learning_signals": "Current compass/heading and self-motion estimates, not future true displacement.",
+        "writable_state": "O(K) population vector states, transform edges, and if integrated O(K) displacement state.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_vector+K) edge/state; work per time step proportional to transform edges.",
+        "observed_minifly_problem_relevance": "Navigation path integration already explored, presently fails own gate; not general operand arithmetic.",
+        "closest_simpler_resource_matched_control": "Equal-dimensional analytic coordinate rotation/integration with same observed velocity.",
+        "minifly_implementation_class": "CODE_AND_TEST_VERIFIED_RELATED_NAVIGATION",
+        "minifly_test_status": "RELATED_COMPUTATIONAL_OPERATION_TESTED_NOT_BIOLOGICAL_EQUIVALENCE",
+        "decision_status": "ALREADY_TESTED_RELATED_ONLY",
+        "uncertainties": "Source wiring provides instantaneous vector; temporal sum manually introduced; avoid claim learnt online compositional reasoning.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CX-PI"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": true
+      }
+    },
+    {
+      "id": "F17",
+      "name": "Compare current state with a goal in a common coordinate",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Pires2024",
+        "Westeinde2024"
+      ],
+      "evidence": "Shown: fly steering circuitry transforms heading/goal information into lateralized commands. Convergent 2024 studies identify how such comparisons can drive goal-oriented steering. Their findings do not supply a general local rule for learning all goals from sparse reward.",
+      "wiring": "Adult fly: compass/goal-related populations converge through fan-shaped-body/PFL pathways onto left/right steering outputs. A compact opponent readout represents signed directional error; individual biological signs are pathway-specific.",
+      "algorithm": "Development fixes comparison topology. Proposed abstraction: left = max(0, sin(goal-heading)); right = max(0, sin(heading-goal)). Goal is bounded activity state, not an unexplained task label. A learned goal-setting policy needs an additional local algorithm, which this comparison does not provide.",
+      "scaling": "H = O(10) shared couplings; O(N) activity for population codes and O(S_compare) work. A dense arbitrary goal embedding adds parameters; a formula for angular error is not itself a learned embedding.",
+      "models": "Mussells Pires et al. (2024) and Westeinde et al. (2024), Nature: physiological/circuit models of steering. They support the comparator, not generic planning or symbolic goals.",
+      "buy": "Provides an error direction for an already meaningful state space. It can support controlled iteration but does not determine what goal is correct.",
+      "overlap": "Part of the existing central-complex/goal family; not another independent source of generic learning capacity.",
+      "minimal_test": "Goal-aligned versus goal-label-permuted comparator, matching all state/compute. Measurement: angular goal error on held-out starts.",
+      "confidence": "High for steering comparison; conditional for nonspatial use.",
+      "local_sufficiency": "Not applicable to fixed comparison; learning goal selection remains unknown.",
+      "test_cost": "Low–medium",
+      "verification_status": "Two independent-group 2024 studies converge on steering computation; no inference of generic goal learning.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Pires2024",
+          "P-Westeinde2024"
+        ],
+        "primary_claims": [
+          "An independently sourced steering transformation exists, task-limited",
+          "The March 2025 author correction changes the listed genotype and Extended Data Fig. 2c label; it does not announce retraction of steering result"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "GOAL_REFERENCE_TRANSFORM_STEERING",
+        "distinct_computation": "Compare represented heading with goal after coordinate transform, drive left/right steering.",
+        "proposed_equation_or_pseudocode": "e=wrap(theta_goal-theta_heading); steering=phi(left_goal_projection-right_goal_projection) [architecture-specific].",
+        "causally_available_learning_signals": "Observed compass state and supplied desired heading/goal; clamped goal inputs not self-generated.",
+        "writable_state": "O(K) compass/goal state + steering edges; fitted small gains from development.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_steer+K) state/step; no evidence of lifetime task learning.",
+        "observed_minifly_problem_relevance": "MiniFly navigation steering already tested; cannot be introduced as new missing capability.",
+        "closest_simpler_resource_matched_control": "Matched analytic angular-difference controller or degree-preserving rewires.",
+        "minifly_implementation_class": "CODE_AND_TEST_VERIFIED_NAVIGATION",
+        "minifly_test_status": "RELATED_COMPUTATIONAL_OPERATION_TESTED_NOT_BIOLOGICAL_EQUIVALENCE",
+        "decision_status": "ALREADY_TESTED_WITH_EVIDENCE",
+        "uncertainties": "Goal signal was supplied externally; successful closed loop is not autonomous goal discovery.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CX-STEER"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": true
+      }
+    },
+    {
+      "id": "F18",
+      "name": "Multiplicative interaction through excitation and disinhibition",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Groschner2022"
+      ],
+      "evidence": "Shown with recordings and conductance-based simulation: coincident excitation and release from inhibition produce a multiplication-like nonlinearity in T4 motion neurons. This is an analogue approximation over an operating range, not exact arbitrary signed multiplication.",
+      "wiring": "Adult fly visual circuit: cholinergic inputs excite T4; glutamatergic Mi9 input acts inhibitory in this circuit. The interaction depends on local dendritic conductance, illustrating why transmitter identity alone is not a universal sign label.",
+      "algorithm": "Development fixes input placement/gains. Proposed computational abstraction: output = phi(excitatory_input) * gate(local_disinhibition). Both signals must arrive physically at the neuron. No lifetime synaptic learning is required for the interaction; learning operands or routing into it is a separate problem.",
+      "scaling": "H = O(1–10) gains per motif; O(N) local activity. D input pairs require O(D) interactions; an unrestricted all-pairs bilinear layer costs O(D²). Shared gains do not make all pairings free.",
+      "models": "Groschner et al. (2022), Nature: conductance-based model tested against visual responses and perturbations. No verified general local-rule learner follows from the model.",
+      "buy": "Adds an actual conjunction/gating operation rather than another memory store. Could increase representational/computational expressivity while preserving local signal access.",
+      "overlap": "Potentially a specific variant within the previously reviewed gain/routing family; not established as untested in MiniFly.",
+      "minimal_test": "Multiplicative versus additive interaction, equal input edges, states and training. Measurement: held-out accuracy on conjunctions whose components were seen separately.",
+      "confidence": "High for the measured interaction; medium for the useful abstraction.",
+      "local_sufficiency": "Fixed computation; learning to exploit it remains unestablished.",
+      "test_cost": "Low",
+      "verification_status": "Primary physiology, perturbation and conductance model; not a demonstrated general-purpose arithmetic unit.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Groschner2022"
+        ],
+        "primary_claims": [
+          "Physical multiplicative interaction; MiniFly already contains algebraic multiplication"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "FIXED_MULTIPLICATIVE_NODE",
+        "distinct_computation": "Nonlinear gain/signal gating can implement multiplication-like interaction.",
+        "proposed_equation_or_pseudocode": "y~phi(exc_drive)*(disinhibition_gain), and E16 cell has h_t=r_t*h_prev+w_t*c_t.",
+        "causally_available_learning_signals": "Locally generated excitation, inhibition/gates; no oracle needed for product itself.",
+        "writable_state": "No additional node/state if reusing current cell; biological conductance model adds distinct biophysical parameters.",
+        "parameter_storage_compute_census_or_asymptotics": "O(C) multiply-adds per timestep on E16 cell, already paid.",
+        "observed_minifly_problem_relevance": "Not missing from current byte cell; a different dendritic physical circuit would require distinct justification.",
+        "closest_simpler_resource_matched_control": "Existing gated cell under equal compute/state, not ungated ablation alone.",
+        "minifly_implementation_class": "CODE_AND_TEST_VERIFIED_AS_MATHEMATICAL_OPERATION",
+        "minifly_test_status": "RELATED_COMPUTATIONAL_OPERATION_TESTED_NOT_BIOLOGICAL_EQUIVALENCE",
+        "decision_status": "ALREADY_TESTED_WITH_EVIDENCE",
+        "uncertainties": "Physical T4 multiplication is not identical to arithmetic gate, but same computational primitive exists.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [
+          "R-CELL-GATE"
+        ],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": true
+      }
+    },
+    {
+      "id": "F19",
+      "name": "Predict and cancel self-generated sensory input",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Kim2015"
+      ],
+      "evidence": "Shown: motor-related signals counteract expected visual consequences in fly visuomotor neurons. This supports an efference-copy/cancellation computation; it does not demonstrate a general predictive-coding learning rule.",
+      "wiring": "Adult fly: motor-related signals converge with sensory signals in visual processing. Their effective sign/latency offsets expected reafferent drive. The detailed origin of every cancelling pathway need not be assumed for the abstraction.",
+      "algorithm": "Development supplies a motor-to-sensory prediction map. Runtime: residual = sensory_input - predicted_input(action_copy). A possible lifetime adaptation delta w = eta*action_feature*local_residual is proposed, not established by the cited experiment. The residual must be present at the receiving neuron.",
+      "scaling": "H = O(10) for fixed low-dimensional gains; S_predict independent coefficients if the prediction map is learned, plus local trace state if delay matters. Work O(S_predict).",
+      "models": "Kim, Fitzgerald & Maimon (2015), Nature Neuroscience: electrophysiological evidence. No claim that this study trained a general predictive model locally.",
+      "buy": "Could distinguish an agent’s own output/expected feedback from external novelty. Relevant only when a causal action-feedback channel exists; subtracting predictable task signal can be harmful.",
+      "overlap": "Related to predictive/residual mechanisms, not a synonym for cortical backpropagation. Current exact MiniFly coverage unknown.",
+      "minimal_test": "Action-aligned versus shuffled-action prediction, equal prediction resources. Measurement: residual false alarms during self-generated inputs.",
+      "confidence": "Medium–high for cancellation; low for the general learning extension.",
+      "local_sufficiency": "Fixed cancellation supported; learned-map sufficiency unknown.",
+      "test_cost": "Low–medium",
+      "verification_status": "Primary cellular evidence; learned cancellation rule remains a proposed extension.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Kim2015"
+        ],
+        "primary_claims": [
+          "Prediction/cancellation of motor-driven sensory change, not a full model of byte-stream prediction"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "EFFERENCE_COPY_CANCELLATION",
+        "distinct_computation": "Cancel predicted consequences of self-generated motion to isolate external sensory changes.",
+        "proposed_equation_or_pseudocode": "surprise_t=sensory_t - predicted_sensory(motor_copy_t,h_t).",
+        "causally_available_learning_signals": "Motor command and predicted sensory effects; no task labels by default.",
+        "writable_state": "O(S_predictor) weights + O(N) prediction error state; if fitted predictor must count development params.",
+        "parameter_storage_compute_census_or_asymptotics": "O(S_predictor+N) state/work.",
+        "observed_minifly_problem_relevance": "Relevant embodied closed loop, no observed motor-induced input corruption in E16.",
+        "closest_simpler_resource_matched_control": "Equal-size sensory high-pass predictor without explicit motor copy.",
+        "minifly_implementation_class": "UNKNOWN",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "NOT_JUSTIFIED",
+        "uncertainties": "Not proof of generic predictive learner or scaffold-free replay.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    },
+    {
+      "id": "F20",
+      "name": "Priority competition that produces a sequence",
+      "section": "VI. Fixed computation substrates",
+      "sources": [
+        "Seeds2014"
+      ],
+      "evidence": "Shown/inferred through perturbation: competing grooming programs are organized by suppression relationships; removal of a dominant drive allows another program to emerge. This is innate behavioral sequencing, not demonstrated learning of arbitrary routines.",
+      "wiring": "Adult fly: parallel sensory-to-motor programs compete through effective suppression. Use a directed inhibitory priority graph as the abstraction; the behavioral model is not a complete cell-by-cell connectome.",
+      "algorithm": "Development fixes priority edges. Proposed dynamics: select the highest currently active unsuppressed drive; execution reduces that drive, releasing the next program. No life weight learning is claimed. To learn a different priority graph would require an additional mechanism and rule.",
+      "scaling": "H = O(K) for a fixed ordered hierarchy, but up to O(K²) for an arbitrary competition graph; O(K) drive state. Work depends on graph sparsity.",
+      "models": "Seeds et al. (2014), eLife: hierarchical suppression model and targeted manipulations of grooming sequences. It does not demonstrate learned planning.",
+      "buy": "Provides a compact controller for multi-stage behavior without one dedicated parameterized layer per stage. It can also hard-code an entire solution, so developmental task leakage is a serious risk.",
+      "overlap": "Computational reference only. The historical screen explicitly excluded downstream motor programs from the persistent-memory core; this is not being promoted into the immediate plan.",
+      "minimal_test": "Priority-consistent versus edge-permuted controller with equal graph size. Measurement: completion rate of the same fixed multi-stage routine.",
+      "confidence": "Medium for the operational controller; low as a general learning mechanism.",
+      "local_sufficiency": "Not applicable to fixed sequencing; learned sequencing is unestablished.",
+      "test_cost": "Low",
+      "verification_status": "Behavioral perturbation plus operational model; complete learned neuronal controller not demonstrated.",
+      "species_stage": "Adult Drosophila melanogaster",
+      "minifly_generalization_proven": false,
+      "audit": {
+        "assessment_type": "OPERATIONAL_EVIDENCE_AUDIT",
+        "primary_evidence_ids": [
+          "P-Seeds2014"
+        ],
+        "primary_claims": [
+          "Innate priority sequence, not demonstrated lifetime learning of arbitrary action sequences"
+        ],
+        "biology_support": "BIOLOGICAL_PHENOMENON_SUPPORTED_IN_SPECIFIED_EXPERIMENTS_OR_MODEL",
+        "operational_kind": "PRIORITY_COMPETITION_SEQUENCE",
+        "distinct_computation": "Concurrent motor policies mutually suppress others and release them in priority order.",
+        "proposed_equation_or_pseudocode": "activity_i = phi(drive_i - sum_{j != i} inhibit_ji*activity_j); suppressive state relaxes to switch.",
+        "causally_available_learning_signals": "Simultaneous sensory/motor-need drives, not arbitrary task identity.",
+        "writable_state": "O(K^2) interpolicy inhibition if dense, O(S_inhib) if sparse, plus O(K) activity.",
+        "parameter_storage_compute_census_or_asymptotics": "O(K+S_inhib) state/step.",
+        "observed_minifly_problem_relevance": "Innate grooming sequence is not learned symbolic sequencing; no E16 causality.",
+        "closest_simpler_resource_matched_control": "Equal-size fixed finite-state or priority queue controller.",
+        "minifly_implementation_class": "UNKNOWN",
+        "minifly_test_status": "EXACT_BIOLOGICAL_MECHANISM_TEST_UNKNOWN",
+        "decision_status": "NOT_JUSTIFIED",
+        "uncertainties": "A fixed motor sequence should not be misreported as lifetime learned skill.",
+        "model_equivalence_warning": "Common mathematics does not prove same biological mechanism; different MiniFly lineages are never pooled by score.",
+        "repository_comparison_refs": [],
+        "exact_biological_circuit_implemented_verified": false,
+        "mathematical_operation_code_verified": false
+      }
+    }
+  ],
+  "source_register": {
+    "Olsen2010": {
+      "authors": "Olsen, Bhandawat & Wilson",
+      "year": 2010,
+      "title": "Divisive normalization in olfactory population codes",
+      "venue": "Neuron",
+      "url": "https://doi.org/10.1016/j.neuron.2010.04.009",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Amin2020": {
+      "authors": "Amin et al.",
+      "year": 2020,
+      "title": "Localized inhibition in the Drosophila mushroom body",
+      "venue": "eLife",
+      "url": "https://doi.org/10.7554/eLife.56954",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Nagel2011": {
+      "authors": "Nagel & Wilson",
+      "year": 2011,
+      "title": "Biophysical mechanisms underlying olfactory receptor neuron dynamics",
+      "venue": "Nature Neuroscience",
+      "url": "https://doi.org/10.1038/nn.2725",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Das2011": {
+      "authors": "Das et al.",
+      "year": 2011,
+      "title": "Plasticity of local GABAergic interneurons drives olfactory habituation",
+      "venue": "PNAS",
+      "url": "https://doi.org/10.1073/pnas.1106411108",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Qiao2022": {
+      "authors": "Qiao et al.",
+      "year": 2022,
+      "title": "Input-timing-dependent plasticity at incoming synapses of the mushroom body facilitates olfactory learning in Drosophila",
+      "venue": "Current Biology",
+      "url": "https://doi.org/10.1016/j.cub.2022.09.054",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Hige2015": {
+      "authors": "Hige et al.",
+      "year": 2015,
+      "title": "Heterosynaptic Plasticity Underlies Aversive Olfactory Learning in Drosophila",
+      "venue": "Neuron",
+      "url": "https://doi.org/10.1016/j.neuron.2015.11.003",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Handler2019": {
+      "authors": "Handler et al.",
+      "year": 2019,
+      "title": "Distinct Dopamine Receptor Pathways Underlie the Temporal Sensitivity of Associative Learning",
+      "venue": "Cell",
+      "url": "https://doi.org/10.1016/j.cell.2019.05.040",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Aso2016": {
+      "authors": "Aso & Rubin",
+      "year": 2016,
+      "title": "Dopaminergic neurons write and update memories with cell-type-specific rules",
+      "venue": "eLife",
+      "url": "https://doi.org/10.7554/eLife.16135",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Cervantes2017": {
+      "authors": "Cervantes-Sandoval et al.",
+      "year": 2017,
+      "title": "Reciprocal synapses between mushroom body and dopamine neurons form a positive feedback loop required for learning",
+      "venue": "eLife",
+      "url": "https://doi.org/10.7554/eLife.23789",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Eschbach2020": {
+      "authors": "Eschbach et al.",
+      "year": 2020,
+      "title": "Recurrent architecture for adaptive regulation of learning in the insect brain",
+      "venue": "Nature Neuroscience",
+      "url": "https://doi.org/10.1038/s41593-020-0607-9",
+      "status": "Peer-reviewed primary research",
+      "note": "Larval Drosophila; anatomical, functional and computational evidence must not be silently transferred to adults."
+    },
+    "Bennett2021": {
+      "authors": "Bennett, Philippides & Nowotny",
+      "year": 2021,
+      "title": "Learning with reinforcement prediction errors in a model of the Drosophila mushroom body",
+      "venue": "Nature Communications",
+      "url": "https://doi.org/10.1038/s41467-021-22592-4",
+      "status": "Peer-reviewed computational primary research",
+      "note": "Model, not a new animal experiment. Author code: https://github.com/BrainsOnBoard/paper_RPEs_in_drosophila_mb ; archived code: https://doi.org/10.5281/zenodo.4531420 ."
+    },
+    "Yamada2023": {
+      "authors": "Yamada et al.",
+      "year": 2023,
+      "title": "Hierarchical architecture of dopaminergic circuits enables second-order conditioning in Drosophila",
+      "venue": "eLife",
+      "url": "https://doi.org/10.7554/eLife.79042",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Rachad2025": {
+      "authors": "Rachad et al.",
+      "year": 2025,
+      "title": "Functional dissection of a neuronal brain circuit mediating higher-order associative learning",
+      "venue": "Cell Reports",
+      "url": "https://doi.org/10.1016/j.celrep.2025.115593",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Krashes2009": {
+      "authors": "Krashes et al.",
+      "year": 2009,
+      "title": "A neural circuit mechanism integrating motivational state with memory expression in Drosophila",
+      "venue": "Cell",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/19837040/",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Perisse2016": {
+      "authors": "Perisse et al.",
+      "year": 2016,
+      "title": "Aversive Learning and Appetitive Motivation Toggle Feed-Forward Inhibition in the Drosophila Mushroom Body",
+      "venue": "Neuron",
+      "url": "https://doi.org/10.1016/j.neuron.2016.04.034",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Felsenberg2018": {
+      "authors": "Felsenberg et al.",
+      "year": 2018,
+      "title": "Integration of Parallel Opposing Memories Underlies Memory Extinction",
+      "venue": "Cell",
+      "url": "https://doi.org/10.1016/j.cell.2018.08.021",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Ichinose2015": {
+      "authors": "Ichinose et al.",
+      "year": 2015,
+      "title": "Reward signal in a recurrent circuit drives appetitive long-term memory formation",
+      "venue": "eLife",
+      "url": "https://doi.org/10.7554/eLife.10719",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Pavlowsky2018": {
+      "authors": "Pavlowsky, Schor, Plaçais & Preat",
+      "year": 2018,
+      "title": "A GABAergic Feedback Shapes Dopaminergic Input on the Drosophila Mushroom Body to Promote Appetitive Long-Term Memory",
+      "venue": "Current Biology",
+      "url": "https://doi.org/10.1016/j.cub.2018.04.040",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Matsuno2026": {
+      "authors": "Matsuno et al.",
+      "year": 2026,
+      "title": "Aberrant dopaminergic activity during consolidation causes age-related memory generalization in Drosophila",
+      "venue": "PLOS Biology",
+      "url": "https://doi.org/10.1371/journal.pbio.3003752",
+      "status": "Peer-reviewed primary research",
+      "note": "Memory generalization here includes inappropriate broadening; it is not evidence for systematic rule induction."
+    },
+    "Fisher2019": {
+      "authors": "Fisher, Lu, D’Alessandro & Wilson",
+      "year": 2019,
+      "title": "Sensorimotor experience remaps visual input to a heading-direction network",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-019-1772-4",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Kim2019": {
+      "authors": "Kim, Hermundstad, Romani, Abbott & Jayaraman",
+      "year": 2019,
+      "title": "Generation of stable heading representations in diverse visual scenes",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-019-1767-1",
+      "status": "Peer-reviewed primary research",
+      "note": "Author data/code page: https://research.janelia.org/jayaraman/Kim_etal_Nature2019_Downloads/ . Code link verified; simulations were not rerun in this review."
+    },
+    "Kim2017": {
+      "authors": "Kim, Rouault, Druckmann & Jayaraman",
+      "year": 2017,
+      "title": "Ring attractor dynamics in the Drosophila central brain",
+      "venue": "Science",
+      "url": "https://doi.org/10.1126/science.aal4835",
+      "status": "Peer-reviewed primary research",
+      "note": "Author data/code page: https://research.janelia.org/jayaraman/KimRouaultScience2017_Downloads/ ; code: https://github.com/hrouault/RingAttractor . Code link verified; not rerun here."
+    },
+    "Groschner2018": {
+      "authors": "Groschner et al.",
+      "year": 2018,
+      "title": "Dendritic Integration of Sensory Evidence in Perceptual Decision-Making",
+      "venue": "Cell",
+      "url": "https://doi.org/10.1016/j.cell.2018.03.075",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Lyu2022": {
+      "authors": "Lyu, Abbott & Maimon",
+      "year": 2022,
+      "title": "Building an allocentric travelling direction signal via vector computation",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-021-04067-0",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Pires2024": {
+      "authors": "Mussells Pires et al.",
+      "year": 2024,
+      "title": "Converting an allocentric goal into an egocentric steering signal",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-023-07006-3",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Westeinde2024": {
+      "authors": "Westeinde et al.",
+      "year": 2024,
+      "title": "Transforming a head direction signal into a goal-oriented steering command",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-024-07039-2",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Groschner2022": {
+      "authors": "Groschner, Malis, Zuidinga & Borst",
+      "year": 2022,
+      "title": "A biophysical account of multiplication by a single neuron",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-022-04428-3",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Kim2015": {
+      "authors": "Kim, Fitzgerald & Maimon",
+      "year": 2015,
+      "title": "Cellular evidence for efference copy in Drosophila visuomotor processing",
+      "venue": "Nature Neuroscience",
+      "url": "https://doi.org/10.1038/nn.4083",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Seeds2014": {
+      "authors": "Seeds et al.",
+      "year": 2014,
+      "title": "A suppression hierarchy among competing motor programs drives sequential grooming in Drosophila",
+      "venue": "eLife",
+      "url": "https://doi.org/10.7554/eLife.02951",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "MacKenzie2025": {
+      "authors": "MacKenzie et al.",
+      "year": 2025,
+      "title": "Connectivity biases generate a learning hierarchy in the Drosophila mushroom body",
+      "venue": "bioRxiv",
+      "url": "https://doi.org/10.1101/2025.10.29.684686",
+      "status": "Preprint; not treated as independently verified",
+      "note": "PubMed record 41279960 explicitly marks the retrieved version as a preprint."
+    },
+    "Baltruschat2021": {
+      "authors": "Baltruschat et al.",
+      "year": 2021,
+      "title": "Circuit reorganization in the Drosophila mushroom body calyx accompanies memory consolidation",
+      "venue": "Cell Reports",
+      "url": "https://doi.org/10.1016/j.celrep.2021.108871",
+      "status": "Peer-reviewed primary research",
+      "note": "Structural changes do not by themselves identify a local edge-growth algorithm."
+    },
+    "OkrayRetraction2026": {
+      "authors": "Okray et al.",
+      "year": 2026,
+      "title": "Retraction Note: Multisensory learning binds neurons into a cross-modal memory engram",
+      "venue": "Nature",
+      "url": "https://doi.org/10.1038/s41586-026-10355-4",
+      "status": "Retraction notice",
+      "note": "Published online 25 March 2026. Retracts the 2023 article DOI 10.1038/s41586-023-06013-8. The notice identifies nonreproducible voltage-imaging findings; it does not say every behavioral and connectomic observation failed."
+    },
+    "Sudhakaran2012": {
+      "authors": "Sudhakaran et al.",
+      "year": 2012,
+      "title": "Plasticity of recurrent inhibition in the Drosophila antennal lobe",
+      "venue": "Journal of Neuroscience",
+      "url": "https://doi.org/10.1523/JNEUROSCI.1099-12.2012",
+      "status": "Peer-reviewed primary research",
+      "note": ""
+    },
+    "Plitt2025": {
+      "authors": "Plitt et al.",
+      "year": 2025,
+      "title": "Octopamine instructs head direction plasticity",
+      "venue": "bioRxiv",
+      "url": "https://doi.org/10.64898/2025.12.11.693783",
+      "status": "Preprint; not treated as independently verified",
+      "note": "Retrieved PubMed record 41446116 explicitly labels the December 2025 report as a preprint. No peer-reviewed successor was identified in the targeted search."
+    },
+    "Ishida2026": {
+      "authors": "Ishida, Sethi, Mohren, Haraguchi, Abbott & Maimon",
+      "year": 2026,
+      "title": "Neuronal calcium spikes enable vector inversion in the Drosophila brain",
+      "venue": "Cell",
+      "url": "https://doi.org/10.1016/j.cell.2025.11.040",
+      "status": "Peer-reviewed primary research",
+      "note": "Online publication 29 December 2025; journal issue 5 February 2026. Earlier preprint and final article are one study, not independent replications."
+    }
+  },
+  "crosswalk_basis": "Available Executive Summary(2) reconstructed supplement, not missing original",
+  "old_reconstructed_crosswalk": [
+    {
+      "old_id": 1,
+      "old_title": "Hebbian synaptic plasticity (LTP/LTD)",
+      "disposition": "Merge/re-ground",
+      "destination": "F05; F06",
+      "reason": "General plasticity labels are not independent fly algorithms. Use the identified site, timing and teaching signal; 5/25 are explicitly overlapping.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "General Hebbian LTP/LTD is a plasticity class; Hige and Handler demonstrate fly timing/compartment specificity rather than a single all-purpose rule.",
+        "normalized_operation_links": [
+          "F05",
+          "F06"
+        ],
+        "primary_evidence_ids": [
+          "P-Hige2015"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 2,
+      "old_title": "Spike-timing-dependent plasticity",
+      "disposition": "Merge/re-ground",
+      "destination": "F05; F06",
+      "reason": "General plasticity labels are not independent fly algorithms. Use the identified site, timing and teaching signal; 5/25 are explicitly overlapping.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Spike-timing order is a rule family; do not assume cortical pre/post STDP is the same as Qiao fly input-side timing.",
+        "normalized_operation_links": [
+          "F04",
+          "F05"
+        ],
+        "primary_evidence_ids": [
+          "P-Qiao2022",
+          "P-Handler2019"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 3,
+      "old_title": "BCM/metaplasticity",
+      "disposition": "Archive",
+      "destination": "Existing stability/metaplasticity family",
+      "reason": "Generic stabilizer labels do not establish a new fly circuit or an implementable local rule. Molecular names are not separate algorithms.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "BCM sliding threshold is a distinct possible local metaplastic update but requires an independently validated update law and relevance to E16; old source provides no fly primary model.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 4,
+      "old_title": "Homeostatic synaptic scaling",
+      "disposition": "Archive",
+      "destination": "Existing stability/metaplasticity family",
+      "reason": "Generic stabilizer labels do not establish a new fly circuit or an implementable local rule. Molecular names are not separate algorithms.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Homeostatic scaling is not complementary learning systems. Possible distinct multiplicative gain/homeostat; independent fly-specific citation and observed deficiency not established here.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 5,
+      "old_title": "Heterosynaptic plasticity",
+      "disposition": "Merge/re-ground",
+      "destination": "F05; F06",
+      "reason": "General plasticity labels are not independent fly algorithms. Use the identified site, timing and teaching signal; 5/25 are explicitly overlapping.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Heterosynaptic changes can result from modulatory teacher feedback; distinguish presynaptic KC synapse from general inactive-synapse plasticity.",
+        "normalized_operation_links": [
+          "F05"
+        ],
+        "primary_evidence_ids": [
+          "P-Hige2015"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 6,
+      "old_title": "Neuromodulator-gated three-factor plasticity",
+      "disposition": "Merge/re-ground",
+      "destination": "F05; F06",
+      "reason": "General plasticity labels are not independent fly algorithms. Use the identified site, timing and teaching signal; 5/25 are explicitly overlapping.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "A third factor (reinforcement) requires a source and an interpretation; E16 cross-entropy labels are privileged task-generated supervision, not necessarily DAN RPE.",
+        "normalized_operation_links": [
+          "F05",
+          "F06"
+        ],
+        "primary_evidence_ids": [
+          "P-Aso2016",
+          "P-Handler2019"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 7,
+      "old_title": "Structural synaptic plasticity / spine turnover",
+      "disposition": "Archive with corrected species source",
+      "destination": "Baltruschat2021",
+      "reason": "The old entry was mammalian spine turnover. A fly structural observation exists, but it does not supply a sufficient local edge-growth algorithm.",
+      "audit": {
+        "independent_disposition": "DROSOPHILA_EVIDENCE_RELEVANT_BUT_ENGINEERING_TRANSFER_UNPROVEN",
+        "independent_reason": "Baltruschat supplies adult-fly structural observation; exact bounded online edge-add/delete algorithm remains unknown.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [
+          "P-Baltruschat2021"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 8,
+      "old_title": "Mushroom-body associative coding",
+      "disposition": "Merge",
+      "destination": "F05; F06",
+      "reason": "Existing MB associative/compartment substrate; do not count output learning and its compartment label as wholly separate discoveries.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F05",
+          "F06"
+        ],
+        "primary_evidence_ids": [
+          "P-Hige2015",
+          "P-Aso2016"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 9,
+      "old_title": "Central-complex ring attractor",
+      "disposition": "Retain, split operation from learning",
+      "destination": "F14; F13",
+      "reason": "Ring dynamics are fixed state computation; sensory anchoring plasticity is a distinct operation.",
+      "audit": {
+        "independent_disposition": "DROSOPHILA_EVIDENCE_RELEVANT_BUT_ENGINEERING_TRANSFER_UNPROVEN",
+        "independent_reason": "Kim2017 supports ring heading state; F13 remapping is a separate learnable sensory association, so row must not disappear into static ring label.",
+        "normalized_operation_links": [
+          "F13",
+          "F14"
+        ],
+        "primary_evidence_ids": [
+          "P-Kim2017"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology.",
+        "related_repository_refs": [
+          "R-CX-STEER",
+          "R-CX-PI"
+        ]
+      }
+    },
+    {
+      "old_id": 10,
+      "old_title": "Entorhinal grid-cell coding",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 11,
+      "old_title": "Hippocampal place cells",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 12,
+      "old_title": "Hippocampal pattern separation",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 13,
+      "old_title": "Global inhibition / winner-take-all",
+      "disposition": "Merge with variant labels",
+      "destination": "F01",
+      "reason": "Normalization, lateral inhibition and WTA overlap but are not mathematically identical. Preserve implementation variants within one competition/normalization family.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Olsen and Amin show different spatial normalizations; global single-scalar APL test does not disprove localized inhibition.",
+        "normalized_operation_links": [
+          "F01"
+        ],
+        "primary_evidence_ids": [
+          "P-Amin2020",
+          "P-Olsen2010"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology.",
+        "related_repository_refs": []
+      }
+    },
+    {
+      "old_id": 14,
+      "old_title": "Mushroom-body KC→DAN feedback",
+      "disposition": "Retain and constrain",
+      "destination": "F07",
+      "reason": "KC→DAN positive feedback is not automatically reward-prediction-error subtraction.",
+      "audit": {
+        "independent_disposition": "DROSOPHILA_EVIDENCE_RELEVANT_BUT_ENGINEERING_TRANSFER_UNPROVEN",
+        "independent_reason": "Cervantes Figure 1 shows reciprocal KC-DAN anatomy and learning perturbation; feedback strength/teacher quality must be separately established.",
+        "normalized_operation_links": [
+          "F07"
+        ],
+        "primary_evidence_ids": [
+          "P-Cervantes2017"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology.",
+        "related_repository_refs": []
+      }
+    },
+    {
+      "old_id": 15,
+      "old_title": "Spike-frequency adaptation",
+      "disposition": "Merge temporal-filter variants",
+      "destination": "F02",
+      "reason": "Fast state adaptation differs from durable inhibitory habituation (F03); no doubling just for labels.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F02"
+        ],
+        "primary_evidence_ids": [
+          "P-Nagel2011"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 16,
+      "old_title": "Backpropagating action potentials",
+      "disposition": "Exclude as stated",
+      "destination": "Optional separate cortical/dendritic review",
+      "reason": "Mammalian dendritic mechanisms cannot be used as fly evidence. F18 has its own fly source and is not a validation of these claims.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 17,
+      "old_title": "Hippocampus–neocortex complementary learning",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Mammalian complementary memory theory may motivate a comparative benchmark, but F11 biological extinction cannot be substituted for it.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 18,
+      "old_title": "Pulvinar attention gating",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate 11-circuit survey",
+      "reason": "Cortical/basal-ganglia/thalamic mechanisms were part of a different survey; do not silently relabel them as fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 19,
+      "old_title": "Synaptic tagging and capture",
+      "disposition": "Merge then archive",
+      "destination": "One tag/capture abstraction",
+      "reason": "Entry 21 explicitly refers back to 19. Do not equate durable capture with eligibility or claim a verified fly implementation without a source.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Synaptic tagging/capture and row 21 are not two distinct operations; fly-specific PRP capture not established by the cited mammalian framework.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 20,
+      "old_title": "Hippocampal replay",
+      "disposition": "Archive / exclude cross-species claims",
+      "destination": "Existing replay/consolidation family",
+      "reason": "Several are overlapping replay/sleep/transfer descriptions. No exact duplicate count is inferred merely from family overlap; F12 is teaching persistence, not replay.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 21,
+      "old_title": "Synaptic tagging (see entry 19)",
+      "disposition": "Merge then archive",
+      "destination": "One tag/capture abstraction",
+      "reason": "Entry 21 explicitly refers back to 19. Do not equate durable capture with eligibility or claim a verified fly implementation without a source.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Literal see-entry-19 duplicate, not an additional discovered mechanism.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 22,
+      "old_title": "CA3 pattern completion",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 23,
+      "old_title": "Long-term depression",
+      "disposition": "Merge/re-ground",
+      "destination": "F05; F06",
+      "reason": "General plasticity labels are not independent fly algorithms. Use the identified site, timing and teaching signal; 5/25 are explicitly overlapping.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F05"
+        ],
+        "primary_evidence_ids": [
+          "P-Hige2015"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 24,
+      "old_title": "Intrinsic excitability plasticity",
+      "disposition": "Reject supporting inference",
+      "destination": "None as written",
+      "reason": "A cited synaptic receptor-sensitivity change does not establish intrinsic-excitability plasticity; requires a new appropriate source.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Turrigiano synaptic scaling does not by itself verify intrinsic excitability/ion-channel plasticity; original support attribution is faulty.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 25,
+      "old_title": "Heterosynaptic LTD/LTP",
+      "disposition": "Merge/re-ground",
+      "destination": "F05; F06",
+      "reason": "General plasticity labels are not independent fly algorithms. Use the identified site, timing and teaching signal; 5/25 are explicitly overlapping.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F05"
+        ],
+        "primary_evidence_ids": [
+          "P-Hige2015"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 26,
+      "old_title": "Silent synapse unsilencing",
+      "disposition": "Hold as underspecified",
+      "destination": "No standalone operation",
+      "reason": "A biological event needs species, locus and task evidence plus a distinct computational operation. Do not fill this gap with a generic citation.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "NMDA-only AMPA-silent synapse unsilencing is primarily mammalian; unverified as a fly lifetime learner here.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 27,
+      "old_title": "Bursting and learning",
+      "disposition": "Hold as underspecified",
+      "destination": "No standalone operation",
+      "reason": "A biological event needs species, locus and task evidence plus a distinct computational operation. Do not fill this gap with a generic citation.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Distinct computational content or primary evidence was not established by the supplied fly source register; keep unresolved rather than deleting or pretending it was tested.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 28,
+      "old_title": "REM reactivation",
+      "disposition": "Archive / exclude cross-species claims",
+      "destination": "Existing replay/consolidation family",
+      "reason": "Several are overlapping replay/sleep/transfer descriptions. No exact duplicate count is inferred merely from family overlap; F12 is teaching persistence, not replay.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 29,
+      "old_title": "Synaptic saturation/competition",
+      "disposition": "Archive",
+      "destination": "Existing stability/metaplasticity family",
+      "reason": "Generic stabilizer labels do not establish a new fly circuit or an implementable local rule. Molecular names are not separate algorithms.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F01"
+        ],
+        "primary_evidence_ids": [
+          "P-Olsen2010"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 30,
+      "old_title": "Sequential firing chains",
+      "disposition": "Exclude/retain only as analogy",
+      "destination": "F14/F15/F20 are independently sourced analogies",
+      "reason": "Old claims concern mammalian or generic sequence/working-state mechanisms. The fly examples do not validate those old citations or learned arbitrary sequencing.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Innate or cultured network spike sequence not evidence of learned rule composition.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 31,
+      "old_title": "Recurrent cortical working memory",
+      "disposition": "Exclude/retain only as analogy",
+      "destination": "F14/F15/F20 are independently sourced analogies",
+      "reason": "Old claims concern mammalian or generic sequence/working-state mechanisms. The fly examples do not validate those old citations or learned arbitrary sequencing.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "F14 current gated byte cell independently provides recurrent working state; cortical anatomical label not novel in MiniFly.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology.",
+        "related_repository_refs": [
+          "R-CELL-GATE"
+        ]
+      }
+    },
+    {
+      "old_id": 32,
+      "old_title": "Prefrontal–basal-ganglia gating",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate 11-circuit survey",
+      "reason": "Cortical/basal-ganglia/thalamic mechanisms were part of a different survey; do not silently relabel them as fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 33,
+      "old_title": "Thalamocortical multi-step loops",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate 11-circuit survey",
+      "reason": "Cortical/basal-ganglia/thalamic mechanisms were part of a different survey; do not silently relabel them as fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 34,
+      "old_title": "Dendritic NMDA/plateau potentials",
+      "disposition": "Exclude as stated",
+      "destination": "Optional separate cortical/dendritic review",
+      "reason": "Mammalian dendritic mechanisms cannot be used as fly evidence. F18 has its own fly source and is not a validation of these claims.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 35,
+      "old_title": "BCB/Strong muscle learning",
+      "disposition": "Reject as unidentifiable",
+      "destination": "None",
+      "reason": "No identifiable primary source was found for the named label. It is not retained under an invented corrected meaning.",
+      "audit": {
+        "independent_disposition": "REJECT_UNIDENTIFIABLE_OR_UNSUPPORTED_SOURCE_LABEL",
+        "independent_reason": "BCB/Strong muscle learning is not an identifiable verified mechanism; source label and claim should be withdrawn, not repaired by invention.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 36,
+      "old_title": "Amygdala avoidance conditioning",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate mammalian affect/learning review",
+      "reason": "Species and anatomical scope mismatch; no need to import these to fill an entry quota.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 37,
+      "old_title": "Mushroom-body compartment conditioning",
+      "disposition": "Merge",
+      "destination": "F05; F06",
+      "reason": "Existing MB associative/compartment substrate; do not count output learning and its compartment label as wholly separate discoveries.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "F05/F06 capture the compartmental physiological mechanism; adult fly behavioral evidence strong.",
+        "normalized_operation_links": [
+          "F05",
+          "F06"
+        ],
+        "primary_evidence_ids": [
+          "P-Aso2016",
+          "P-Hige2015"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 38,
+      "old_title": "Cerebellar granule-cell expansion",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cerebellar/BG survey",
+      "reason": "Already reviewed cross-species families; not additional fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Cerebellar granule-cell expansion (vertebrate) is not T4 multiplicative interaction; can be a useful cross-species analogy only.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 39,
+      "old_title": "Cerebellar supervised learning",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cerebellar/BG survey",
+      "reason": "Already reviewed cross-species families; not additional fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 40,
+      "old_title": "Basal-ganglia reinforcement learning",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cerebellar/BG survey",
+      "reason": "Already reviewed cross-species families; not additional fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 41,
+      "old_title": "Eligibility traces",
+      "disposition": "Retain with distinction",
+      "destination": "F05",
+      "reason": "Eligibility is a delay-bridging state, not synonymous with long-term tag/capture. Already represented historically.",
+      "audit": {
+        "independent_disposition": "DROSOPHILA_EVIDENCE_RELEVANT_BUT_ENGINEERING_TRANSFER_UNPROVEN",
+        "independent_reason": "Eligibility is genuinely distinct from simple Hebbian coincidence when reward is delayed; E16 already has cell-level traces and a supervised readout gradient.",
+        "normalized_operation_links": [
+          "F05"
+        ],
+        "primary_evidence_ids": [
+          "P-Hige2015",
+          "P-Handler2019"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology.",
+        "related_repository_refs": [
+          "R-CELL-ELIG"
+        ]
+      }
+    },
+    {
+      "old_id": 42,
+      "old_title": "Hebbian inhibitory plasticity",
+      "disposition": "Replace source basis, do not equate",
+      "destination": "F03",
+      "reason": "Fly inhibitory habituation has direct sources; a cortical inhibitory-STDP equation is not established by those sources.",
+      "audit": {
+        "independent_disposition": "DROSOPHILA_EVIDENCE_RELEVANT_BUT_ENGINEERING_TRANSFER_UNPROVEN",
+        "independent_reason": "Das supports odor-habituation inhibitory circuit, not cortical Hebbian inhibitory STDP in the old label.",
+        "normalized_operation_links": [
+          "F03"
+        ],
+        "primary_evidence_ids": [
+          "P-Das2011",
+          "P-Sudhakaran2012"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 43,
+      "old_title": "Thalamic relay gating",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate 11-circuit survey",
+      "reason": "Cortical/basal-ganglia/thalamic mechanisms were part of a different survey; do not silently relabel them as fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 44,
+      "old_title": "Sensory adaptation",
+      "disposition": "Merge temporal-filter variants",
+      "destination": "F02",
+      "reason": "Fast state adaptation differs from durable inhibitory habituation (F03); no doubling just for labels.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F02"
+        ],
+        "primary_evidence_ids": [
+          "P-Nagel2011"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 45,
+      "old_title": "Lateral-inhibitory pattern detection",
+      "disposition": "Merge with variant labels",
+      "destination": "F01",
+      "reason": "Normalization, lateral inhibition and WTA overlap but are not mathematically identical. Preserve implementation variants within one competition/normalization family.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F01"
+        ],
+        "primary_evidence_ids": [
+          "P-Amin2020"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 46,
+      "old_title": "Reward-triggered synaptic removal",
+      "disposition": "Reject over-broad formulation",
+      "destination": "Existing revision/forgetting reserve",
+      "reason": "Mixed dopamine/cortisol/receptor-removal description is not one verified fly mechanism. F11 is opponent learning, not generic erasure.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Cortisol-induced erasure and dopamine-triggered synapse removal are too broad to treat as one verified mechanism.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 47,
+      "old_title": "Hippocampal–cortical offline replay",
+      "disposition": "Archive / exclude cross-species claims",
+      "destination": "Existing replay/consolidation family",
+      "reason": "Several are overlapping replay/sleep/transfer descriptions. No exact duplicate count is inferred merely from family overlap; F12 is teaching persistence, not replay.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 48,
+      "old_title": "BDNF-like metaplastic stabilizers",
+      "disposition": "Archive",
+      "destination": "Existing stability/metaplasticity family",
+      "reason": "Generic stabilizer labels do not establish a new fly circuit or an implementable local rule. Molecular names are not separate algorithms.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 49,
+      "old_title": "Cortical compartment-specific plasticity",
+      "disposition": "Exclude as stated",
+      "destination": "Optional separate cortical/dendritic review",
+      "reason": "Mammalian dendritic mechanisms cannot be used as fly evidence. F18 has its own fly source and is not a validation of these claims.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 50,
+      "old_title": "Hippocampal neurogenesis",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 51,
+      "old_title": "Cortical predictive remapping",
+      "disposition": "Exclude as stated",
+      "destination": "F19 is an independently sourced analogue",
+      "reason": "Cortical predictive remapping and fly motor-copy cancellation are not identical; the old evidence is not repaired by renaming.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Predictive remapping across eye movement is not the same physical fly efference-copy mechanism in F19.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 52,
+      "old_title": "Pavlovian taste conditioning",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate mammalian affect/learning review",
+      "reason": "Species and anatomical scope mismatch; no need to import these to fill an entry quota.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 53,
+      "old_title": "Spatial sequence preplay",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 54,
+      "old_title": "Higher-order thalamic gating",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate 11-circuit survey",
+      "reason": "Cortical/basal-ganglia/thalamic mechanisms were part of a different survey; do not silently relabel them as fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 55,
+      "old_title": "Cortical acetylcholine gain",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate 11-circuit survey",
+      "reason": "Cortical/basal-ganglia/thalamic mechanisms were part of a different survey; do not silently relabel them as fly mechanisms.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 56,
+      "old_title": "Serotonergic mood learning",
+      "disposition": "Reject unsupported generalization",
+      "destination": "None",
+      "reason": "The statement combines species, region and broad serotonin roles without a traceable task-specific mechanism.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "The previous serotonergic claim is unspecified and should not displace established fly dopamine literature without primary evidence.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 57,
+      "old_title": "Divisive normalization",
+      "disposition": "Merge with variant labels",
+      "destination": "F01",
+      "reason": "Normalization, lateral inhibition and WTA overlap but are not mathematically identical. Preserve implementation variants within one competition/normalization family.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [
+          "F01"
+        ],
+        "primary_evidence_ids": [
+          "P-Olsen2010",
+          "P-Amin2020"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology.",
+        "related_repository_refs": []
+      }
+    },
+    {
+      "old_id": 58,
+      "old_title": "Basal-ganglia sequence learning",
+      "disposition": "Exclude/retain only as analogy",
+      "destination": "F14/F15/F20 are independently sourced analogies",
+      "reason": "Old claims concern mammalian or generic sequence/working-state mechanisms. The fly examples do not validate those old citations or learned arbitrary sequencing.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 59,
+      "old_title": "Ocular dominance plasticity",
+      "disposition": "Exclude as stated",
+      "destination": "MacKenzie2025 is a separate preprint reserve",
+      "reason": "Cortical critical-period/SOM claims do not establish fly developmental connectivity rules; no substitution without provenance.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 60,
+      "old_title": "Sleep synaptic downscaling",
+      "disposition": "Archive / exclude cross-species claims",
+      "destination": "Existing replay/consolidation family",
+      "reason": "Several are overlapping replay/sleep/transfer descriptions. No exact duplicate count is inferred merely from family overlap; F12 is teaching persistence, not replay.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Shares a computational family with at least one other legacy entry; retain source title and do not claim unique extra module. Independent applicability to E16 remains unestablished.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 61,
+      "old_title": "Triplet/quadratic STDP",
+      "disposition": "Archive as a rule variant",
+      "destination": "Timing kernels within F05 only if separately validated",
+      "reason": "Higher-order spike rules are not a new circuit; their general validity and fly locus cannot be assumed.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Triplet STDP is a potentially distinct quantitative update kernel, but paper/model and fly relevance not verified. Do not count it as independent discovered fly architecture.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 62,
+      "old_title": "Adaptive resonance (ART)",
+      "disposition": "Exclude from biological fly evidence",
+      "destination": "Separate model proposal",
+      "reason": "ART is a computational framework, not demonstrated fly circuitry; local computational implementation needs its own assessment.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Adaptive Resonance Theory is an engineering/model family, not evidence of a specific fly circuit.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 63,
+      "old_title": "CRH-mediated fear plasticity",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate mammalian affect/learning review",
+      "reason": "Species and anatomical scope mismatch; no need to import these to fill an entry quota.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 64,
+      "old_title": "Cortical pattern completion",
+      "disposition": "Exclude as stated",
+      "destination": "Separate cortex/attractor review",
+      "reason": "No fly evidence for the named neocortical mechanism; generic recurrence is not proof of this computation.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 65,
+      "old_title": "Surprise-modulated learning",
+      "disposition": "Hold / merge if sourced",
+      "destination": "F06–F08 only after specifying the signal",
+      "reason": "Surprise, novelty and reward prediction error are different quantities. A neuromodulator label is insufficient.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Surprise can mean reward prediction error, input novelty, or teacher disagreement; these are computationally distinct and need precise signal definition.",
+        "normalized_operation_links": [
+          "F08"
+        ],
+        "primary_evidence_ids": [
+          "P-Bennett2021"
+        ],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "TARGETED_PRIMARY_SUPPORT_LINKED",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 66,
+      "old_title": "Systems-level structural consolidation",
+      "disposition": "Archive / exclude cross-species claims",
+      "destination": "Existing replay/consolidation family",
+      "reason": "Several are overlapping replay/sleep/transfer descriptions. No exact duplicate count is inferred merely from family overlap; F12 is teaching persistence, not replay.",
+      "audit": {
+        "independent_disposition": "MERGE_OR_RETAIN_AS_EXISTING_OPERATION_WITH_EXPLICIT_SPECIES_LIMITS",
+        "independent_reason": "Systems-level consolidation is mammalian; does not establish a unique fly algorithm or novelty in existing E16 replay.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 67,
+      "old_title": "Competitive Hebbian self-organizing maps",
+      "disposition": "Exclude as stated",
+      "destination": "MacKenzie2025 is a separate preprint reserve",
+      "reason": "Cortical critical-period/SOM claims do not establish fly developmental connectivity rules; no substitution without provenance.",
+      "audit": {
+        "independent_disposition": "UNRESOLVED_DISTINCT_RULE_OR_INSUFFICIENT_PRIMARY_SOURCE",
+        "independent_reason": "Self-organizing maps are generic computational models and should not be silently equated to MacKenzie2025 fly connectivity preprint.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_ESTABLISHED_IN_REGISTER",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 68,
+      "old_title": "Hippocampal time cells",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 69,
+      "old_title": "Hippocampal remapping/context coding",
+      "disposition": "Exclude from fly evidence",
+      "destination": "Separate cross-species survey only",
+      "reason": "Mammalian/hippocampal evidence is not fly evidence. Some computational analogies were already reviewed elsewhere.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Original entry describes a mammalian/cortical/cerebellar circuit or generic computational analogy, outside the fly-specific evidence basis; this does not disprove the operation or rule out a separately labelled baseline.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    },
+    {
+      "old_id": 70,
+      "old_title": "Nested oscillations gating plasticity",
+      "disposition": "Archive / exclude cross-species claims",
+      "destination": "Existing replay/consolidation family",
+      "reason": "Several are overlapping replay/sleep/transfer descriptions. No exact duplicate count is inferred merely from family overlap; F12 is teaching persistence, not replay.",
+      "audit": {
+        "independent_disposition": "CROSS_SPECIES_ANALOGY_NOT_VERIFIED_DROSOPHILA_OPERATION",
+        "independent_reason": "Mammalian nested theta–gamma phase locking cannot be silently treated as verified fly memory plasticity.",
+        "normalized_operation_links": [],
+        "primary_evidence_ids": [],
+        "source_disposition_not_inherited": true,
+        "fly_biological_evidence_status": "NOT_APPLICABLE_CROSS_SPECIES_WITHIN_CURRENT_SCOPE",
+        "minifly_exact_implementation_status": "UNKNOWN",
+        "minifly_exact_test_status": "UNKNOWN",
+        "implementation_claim_requires": "Exact code path+commit and full experiment config/control/receipt, not matching terminology."
+      }
+    }
+  ],
+  "ranking_order": [
+    "F14",
+    "F01",
+    "F18",
+    "F15",
+    "F17",
+    "F16",
+    "F13",
+    "F09",
+    "F05",
+    "F06",
+    "F10",
+    "F11",
+    "F07",
+    "F03",
+    "F04",
+    "F12",
+    "F19",
+    "F02",
+    "F08",
+    "F20"
+  ],
+  "audit_metadata": {
+    "title": "MiniFly source-fidelity-preserving evidence audit — 8 November 2026",
+    "status": "SUBSTANTIVE_PARTIAL_PRIMARY_SOURCE_AUDIT_WITH_EXPLICIT_UNKNOWNS",
+    "audited_on": "2026-11-08",
+    "scope": "Supplied 70-entry reconstructed supplement + its 20 operational records; no claim to recover missing original 70-entry historical report",
+    "original_missing_catalogue_recovered": false,
+    "original_source_sha256": "537ab6322a04a9e2c0f364d2f32d2c6d42e3ee2f4e6685829482adbdd64f1b2f",
+    "original_zip_sha256": "d19352b35dcf7cad2b589e782ed6f65112da9d45d529e8dfdc39021d3987b7d9",
+    "git_repository": "ChangweiZhou/digitalbaby",
+    "git_branch": "codex/minifly-consolidated-20261023",
+    "pinned_repository_commit": "5e7743f2a7914988e007457ee4bae8af4b6320c0",
+    "not_run": [
+      "training",
+      "inference",
+      "new scientific experiments",
+      "repository modifications"
+    ],
+    "principal_limit": "Paper metadata alone does not verify a result, and local supervised gradient signal does not imply internally generated dopamine prediction error.",
+    "counts": {
+      "legacy_rows": 70,
+      "operational_records": 20,
+      "source_papers_and_notices": 35,
+      "explicit_claim_records": 42,
+      "repository_comparisons_with_path_and_commit": 9,
+      "figure_or_fulltext_or_code_or_retraction_checked_papers": 9,
+      "source_abstract_or_metadata_only_not_fulltext_papers": 26,
+      "exact_biological_circuit_implementation_demonstrated": 0
+    },
+    "outcome": "All 70 and all F20 identity-invariant; independent evidence notes for each. Current repo demonstrates several related computations/controls, not exact adult fly MB biological mechanisms. No new experiment recommended before existing replay campaign completes."
+  }
+}
