@@ -1,0 +1,30 @@
+# Task for Codex: E16-V, independent verification of today's E16 results (no compute), then E16-WR, the window net with bounded reservoir replay (compute, from 16:30 EST)
+
+**Date:** 8 November 2026, 15:00 EST. **Branch:** commit on `codex/minifly-consolidated-20261023`, no new branch. **Folder:** `MOD97_LOCAL_RULE_20261106/`. **Scheduling rule:** this machine runs one producer at a time. Nine E16-R lives occupy it until about 16:30 EST; Part A needs no cores and starts now; Part B starts only after `ps` shows no `exp16_integrated.py` process.
+
+## Part A: E16-V, verification of E16, E16-D and E16-D2 from the receipts
+
+The claims are in `E45_REPORT.md` (sections E16, E16-D, E16-D2) and the receipts in `exp45/e16_life_*.json` (one JSON per life: `stages[0]` is the birth scoring with `shortcut_ceilings` and `settings`; `stages[1..6]` carry `scores` per panel, `loss`, `cpu`, and for buffered arms a `buffer` field). The harness is `exp16_integrated.py`; read it, do not change it. Deliver `E16V_REPORT.md` with one table per check, every seed, and a one-line verdict each (confirmed / discrepancy, with the numbers). No reruns of any life.
+
+1. **Numbers in the report match the receipts.** Recompute every figure quoted in the three report sections and in `exp45/SUMMARY_E16.md` (family means at k = 12, held-pair final-answer means, carry pairs, within, silenced-cell scores, ratios to the twin, block-to-block losses). List any figure that differs by more than rounding.
+2. **Shortcut ceilings, independently.** From the panel construction in `exp16_integrated.py` (`panels`, `render_pair`, `triples`), rebuild the four held-pair panels for each seed with your own code and recompute the four visible-only ceilings; compare with `stages[0].shortcut_ceilings`. Also compute two ceilings the harness does not: final answer = intermediate (copy), and final answer from the most frequent answer per pair.
+3. **Realized exposure of the share arm and the balanced arms.** From the code paths for `uniform`, `balanced`, `all_balanced`, `share` and `oracle`, derive the expected per-family share of each batch in every block, and check it against the `buffer` fields in the receipts (`e16_life_T_share_*`, `e16_life_T_balanced_*`, `e16_life_T_all_balanced_*`). State in one table what fraction of each batch each family received, per block, per arm. This is the check that would have caught the null balanced arm before launch; it should also say exactly how far `share` moved exposure.
+4. **The oracle arm's stream is the twin's stream.** Confirm from the code that `T_oracle` and `D` draw from the same `joint_stream` with the same seeds and the same per-family construction, so they differ only in the update rule (and the optimizer's decay, 0.25 against 0.3: note it). Confirm that arm `M` consumes the same buffer-driven batches as arm `T` with the same RNG stream (same `rng` seed and draw order), and name any place where the two could diverge.
+5. **Cell audit.** From the receipts, tabulate the silenced-cell scores at k = 12 for every arm after block 6 and confirm they are at or below 10% on operations everywhere, so that no arm's retention comes from the window path alone.
+6. **Deviations and provenance.** List what is missing for independent replication: birth weights (`.pt`) are not in the repository for the standing seeds (the cloud session's E16-F recorded this); the E16 dry receipts in `exp45/archive_e16_dry/`; any receipt whose `settings` differ from the report's description.
+
+Budget: reading and small scripts, no lives; about two hours of your time.
+
+## Part B: E16-WR, the window net with bounded reservoir replay (start at or after 16:30 EST, machine free)
+
+E16-R (running here) tests a per-family reservoir of fixed capacity, filled by Algorithm R over the family's presentations (one counter and one fixed-size list per family; duplicates allowed; draws balanced per family). Mirror it on the window net on the E16-W `late_family` schedule, so that the two learners are compared under the same replay. Add `E8_REPLAY_SAMPLING=reservoir` with `E8_RESERVOIR_CAP=C` to `exp8_life.py`: per stage (per family, in E16-W's sense: each operation stage and the composition stage are the strata), a reservoir of at most C presented items filled by Algorithm R over that stage's presentations, kept after the stage ends; the replay half of each batch draws a stratum uniformly among those with a reservoir, then an item uniformly within it. Default path unchanged, parity hashes recorded. Record the distinct count per reservoir in the receipt.
+
+Arms: sign rule, decay 0.25, batch 64, `late_family`, reservoir at **C = 1,024 / 4,096 / 16,384** (the composition stage presents 8,192 × 32 items over 24,000 distinct triples; the operation stages 6,144 × 32 over about 2,350 distinct pairs each, so 4,096 already covers an operation stage), three standing seeds. Nine lives. Comparators (not rerun): E16-W `C_uni` (1,024 per stage, uniform), `D_ceiling`.
+
+Predictions to lock in `E16WR_PREDICTIONS.md` before launch:
+1. Held-pair final-answer mean after the fourth mod-73 stage rises with C in every seed; at C = 16,384 the loss from the post-composition value is at most half of `C_uni`'s (45.6 / 46.4 / 48.1 points).
+2. At C = 16,384 the mod-97 operations after the fourth mod-73 stage are at or above 88% in every seed (`C_uni`: 77 / 79 / 85).
+3. C = 1,024 is within 5 points of `C_uni` on both endpoints (same capacity, different sampling), which would confirm that capacity, not sampling, is the variable.
+4. Acquisition (post-composition held mean) within 3 points of `C_uni`.
+
+Rules as before: predictions first with the forecast from your measured pace; default parity; no tuning; every seed reported; `E16WR_REPORT.md`, receipts under `exp45/`, review paragraph as a separate file `E16WR_REVIEW_SECTION_9_35.md` (9.34 is reserved for E16-R; do not edit the review). Budget about 5 CPU-hours, under an hour of wall time with nine workers on the free machine.

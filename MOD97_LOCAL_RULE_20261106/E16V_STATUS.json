@@ -1,0 +1,58 @@
+{
+  "status": "COMPLETE_WITH_DISCREPANCIES",
+  "completed_at": "2026-11-08T20:40:35.721172+00:00",
+  "source_commit": "0eaeaf3df573740b290bb1e83f3eac1ef360625e",
+  "life_reruns": 0,
+  "network_executions": 0,
+  "receipts": 21,
+  "cross_study_receipts": 12,
+  "numeric_table_components": 3124,
+  "table_discrepancies": 0,
+  "shortcut_panels": 12,
+  "shortcut_comparisons": 48,
+  "buffer_snapshot_matches": 60,
+  "cell_operation_exceptions": 18,
+  "all_score_rows": 15582,
+  "added_check7": "DELIVERED_WITH_C_SHARE_TARGETS_NOT_RECORDED",
+  "replay_audit_process_cpu_seconds_total": 48.02632,
+  "check_verdicts": [
+    {
+      "check": "1 Numbers and literal predictions",
+      "verdict": "DISCREPANCY",
+      "summary": "All 3124 numeric table components match within displayed rounding. Prose bounds and the literal acquisition gates have discrepancies; see claims and gates CSVs."
+    },
+    {
+      "check": "2 Independent shortcut ceilings",
+      "verdict": "CONFIRMED",
+      "summary": "12 panels \u00d74 existing predictors =48 exact fraction comparisons. Extra intermediate-copy is identical to ignore_o2; modal answer is a panel-specific constant upper bound."
+    },
+    {
+      "check": "3 Exposure and buffers",
+      "verdict": "DISCREPANCY",
+      "summary": "36 source-derived whole-batch family-share rows;60 logged buffer snapshots match source counts. Realized draw frequencies are NOT_MEASURED. Share did not double exposure or alter first loss-bearing blocks."
+    },
+    {
+      "check": "4 Stream construction",
+      "verdict": "CONFIRMED_WITH_LIMITS",
+      "summary": "Oracle/D and T/M have identical source-level input/target construction under the pinned helpers. No recorded batch digests attest the actual historical streams. Store and decay differences remain."
+    },
+    {
+      "check": "5 Cell ablation",
+      "verdict": "DISCREPANCY",
+      "summary": "18/168 individual operation scores exceed10%; maximum32.25%. Low family means do not establish\u226410% everywhere. Store was not ablated."
+    },
+    {
+      "check": "6 Settings and provenance",
+      "verdict": "DISCREPANCY",
+      "summary": "Standing births absent from pinned tree;9 dry receipts present. All D receipts label wd=.25 despite source optimizer=.3. Source-at-run, birth and batch hashes not recorded."
+    },
+    {
+      "check": "7 Added replay coverage/target-error audit",
+      "verdict": "DISCREPANCY / MEASURED LIMIT",
+      "summary": "Both arms replay only1,024 distinct compositions cumulatively. Uniform has13.6\u201321.4% wrong full-scratchpad replay targets per late stage. Share targets were not saved; its correctness is NOT_RECORDED."
+    }
+  ],
+  "part_b": "NOT_RUN_TIME_AND_PROCESS_GATE_PENDING",
+  "publication": "LOCAL_ONLY_NOT_PUSHED",
+  "push_authorized": false
+}
