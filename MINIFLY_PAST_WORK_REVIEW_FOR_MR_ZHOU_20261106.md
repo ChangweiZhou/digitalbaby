@@ -490,3 +490,51 @@ One learner, one life, local plasticity: eight new operations learned in sequenc
 ### 9.20 E10: composition is free once the operations are innate (27 runs, one archived rerun)
 
 The ring with innate operations: numbers as bumps over 97 positions, add and sub as circular shifts, max and min from cumulative distributions, learning confined to three interfaces (digits to bump, operator byte to operation, bump to digits), parsing by position supplied. In the seeds whose interfaces developed fully, two-step problems on untaught operator pairs are answered at 100% zero-shot from single-step development alone, and at 100% on the confounded cross pairs that defeated every learned architecture in E5, E5-C and E6-route, with a flat ablation at 4–10%. Composition accuracy tracks interface accuracy (62–93% single-step gives 42–88% two-step), so the ring turns composition into an interface-learning problem, which is the project's own idea confirmed at toy scale. Two measured limits: the interfaces are slow and seed-sensitive to develop through a 97-way bump, and life under the sign rule at the usual decay erodes exact interfaces rather than refining them (a lower decay or a write-when-wrong gate is the fix the self-adjusting-rule allowance permits). The supplied parsing is the next thing to learn. Details in [MOD97_LOCAL_RULE_20261106/E45_REPORT.md](MOD97_LOCAL_RULE_20261106/E45_REPORT.md).
+
+## 9.21 Codex's E9, the price of persistence (7 November 2026, assessed)
+
+Codex ran the three compute sweeps of the E9 brief on the unchanged E8 harness (commits 8581c05, 64e6e5f, merged with E10 in 670ba90). The parameterized script reproduces the archived E8 receipts on its default path, and every source file and birth checkpoint is hash-locked (`E9_LOCK.json`, `E9_DEFAULT_PARITY.json`). Fifteen new lives, three seeds each; the report is `MOD97_LOCAL_RULE_20261106/E9_REPORT.md`.
+
+| Schedule, replay share | Mean of eight operations before composition | After composition | Held composition pairs |
+|---|---|---|---|
+| blocked, 1/2 (E8) | 89–90 | 76–80 | 48–55 |
+| blocked, 1/4 | 78–81 | 62–70 | 47–62 |
+| blocked, 1/8 | 55–58 | 46–53 | 42–54 |
+| blocked, none | 12–13 | 0 | 18–26 |
+| interleaved, 1/2 | 91–92 | 75–77 | 44–50 |
+| interleaved, none | 91–92 | 0 | 65–70 |
+
+What it settles. Replay share buys retention roughly linearly at this budget: a quarter share costs 9–11 points on the eight-operation mean (my prediction of "within five" missed), an eighth costs 33–37 points on the earliest four. Interleaving the eight operations removes the need for replay while they stay in the stream, but the first distribution shift afterwards, the composition stage, erases every standalone response without replay, in every seed, to exactly 0%. So the forgetting is not a property of blocked presentation; it is a property of any change of stream, and replay (or something that does its job) is a standing requirement of this learner, not a scheduling fix. The composition itself was learned better without replay (65–70% held pairs versus 44–50%), which is the same budget trade-off seen in E8: whatever share of the batch rehearses old skills is not learning the new one. The width-512 plain scratchpad under the sign rule at 16,384 updates reaches 75/62/76% on held pairs, two seeds above the 70% target and one still rising; the gap to the backprop ceiling (84–97%) persists but is closing with dose.
+
+What it does not settle. All zeros are own-output scores on the original prompts; whether the internal arithmetic survives (and could be revived by a short reminder) was not measured, and is the natural next check if replay share must be cut.
+
+## 9.22 Reference: Raviv et al., *Science* 394, eaeh9311 (5 November 2026), "The first 1000 days: modeling language learning from individual children's everyday speech"
+
+Child-specific self-supervised models (DINO-SR encoder over 20-ms speech units, transformer decoder predicting the next unit) trained day by day, in recorded order, on ultradense home recordings of eight children's first 1000 days; nightly replay of recent input with probability decaying in temporal distance; an "error-accumulation window" (minutes of input per weight update) fitted per child; a curriculum of growing daily exposure and a staged decoder learning rate. Phoneme-like units emerge by 10–12 months and word-form vocabularies of thousands track each child's measured vocabulary.
+
+What it gives this program:
+
+- **Independent confirmation of E8/E9 on replay.** With one exposure and no replay the model learned essentially no words by 24 months; replaying each day's events about 25–30 times sufficed and more gave little (their Fig. 5F). "Experience alone was insufficient ... it had to be augmented by memory of past input." That is the E9 conclusion from the other direction: replay is a standing requirement of a learner on a lived stream, not a scheduling fix.
+- **A protocol for the language stage (section 1A.7, condition for scaling).** One chronological stream, no epochs or reshuffling, exposure growing with simulated waking time, evaluation each week on the following week's unseen input, and the learner's trajectory compared with a developmental reference rather than a static benchmark. Because the objective is prediction of the stream itself, replay is re-feeding stored recent input, with no self-generated answers: once MiniFly's life task is next-byte prediction on text, the episodic store need only hold raw recent bytes, which removes the fragile regenerate-the-answer step that E4 and E8 depend on.
+- **Three knobs we hold fixed that they fitted per child**, each a one-arm addition to the E9 harness: the error-accumulation window (our fixed batch of 64; theirs 4 min to 1 h, shorter better), the replay amount, and recency-weighted rather than uniform replay sampling. E9 showed the earliest operations suffer most when the share is cut, so recency weighting may hurt a sequence of distinct skills; that is the test.
+
+What it does not give: credit assignment and locality (backprop and a transformer; the authors state the architecture is cognitively, not neurally, plausible), and composition or reasoning (syntax and generalization are explicitly deferred). It supports P1 and P3 at scale and is silent on P4 and P5.
+
+## 9.23 E11: a diagonal memory cell with a time-local trace inside the E8 learner (7 November 2026, executed)
+
+Full section: `MOD97_LOCAL_RULE_20261106/E45_REPORT.md`, E11; predictions and two amendments in `E45_PREDICTIONS.md`.
+
+**Established: property P2 by a local rule.** A diagonal memory cell (each unit reads only its own past state; gates driven by the input) makes the per-synapse eligibility trace exact, which the qualification confirms to one part in a million against backprop through time. In life, with the sign rule everywhere and that trace for the cell's synapses, the learner acquires from a birth that never required it the ability to hold an operand across twelve distractor bytes:
+
+| Add mod 97 at k = 12 after its stage | Trace | Within-step | Backprop through time |
+|---|---|---|---|
+| No-memory birth | 90 / 78 / 63 | 21 / 32 / 5 | 91 / 92 / 94 |
+| Memory birth | 92 / 86 / 82 | 60 / 35 / 25 | 94 / 90 / 96 |
+
+At k = 20, never presented, the trace arms are 52–78% (acquired) and 76–88% (developed). Silencing the cell drops every such score to ≤ 6.5%. The trace needs no backward pass through time and no stored activations; it is credit through time without backpropagation through time, which the E3 trace through a full GRU could not do.
+
+**Refuted: retention in this learner.** After four operations in sequence with half-batch episode replay, add and sub are at 0–15% in every trace arm (from 72–92% after their stages) and the birth operations are largely gone after the first life stage; the backprop ceiling on joint data holds every operation at 87–98%. The E8 window net held eight operations at 75–98% under the same rule; adding the cell made forgetting far worse. Not diagnosed; candidates, one arm each: decay 1.0 per update (E12-B says it costs E8 12–15 points on its own; E13 Part A tests it), the cell as an interference channel (add at k = 0 fell faster than at k = 12 in two seeds, so the window path is overwritten first), rote learning of fixed-letter episodes, and blocked presentation.
+
+**Harness record.** Two restarts in one day, both at the seam between the new learner and a mechanism inherited by name: a buffer-fill slip (now caught by a full-loop dry run, `E11_STAGE_UPDATES`), and E8's store-mediated replay, which silently requires a stage's episodes to fit the 65,536-key store and which random distractor letters break (393,000 distinct prompts per stage). E11 therefore replays stored episodes directly, which is what E8's store delivered when its keys fit. The partial launches are archived. The general rule, now applied: before launch, list every carried-over mechanism and the condition it needs in the new task.
+
+**Where this leaves the five properties.** P1, P3 (window net), P5 established; P2 now established by a local rule inside the persistent learner; P4 achieved under backprop when de-confounded, partial under the local rule (52–76%, and E12's batch-256 package may close much of the gap: E13 Part B), free by wiring with the ring. The open conflict is P2 against P3 in one learner: the cell that gives working state under a local rule also makes the sign rule forget faster. That is the next thing to resolve, before any scaling.

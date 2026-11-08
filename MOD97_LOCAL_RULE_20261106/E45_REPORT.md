@@ -228,3 +228,78 @@ Development, single-operation held accuracy after 32,768 updates: ring 100 · 10
 **What E10 settles.** Composition across untaught operator pairs is free once the operations are innate and the interfaces are exact: zero-shot 100% on every panel from single-step development alone, 100% on the confounded cross pairs that defeated every learned architecture in E5, E5-C and E6-route, with a flat ablation at 4–10%. The ring converts the composition problem into an interface-learning problem, and interface accuracy sets composition accuracy (62–93% single-step gives 42–88% two-step). This is the project's own idea, composition built into geometry as the central complex composes vectors, confirmed at toy scale with the parsing supplied. Two limits are measured: the interfaces are slow to develop through a 97-way bump (four times the dose of the window net) and seed-sensitive; and life under the sign rule at the decay used elsewhere degrades exact interfaces rather than refining them, so a life rule on this architecture needs a lower decay or a gate that writes only when wrong, which the self-adjusting-rule allowance permits.
 
 **Evidence level.** Development result, three seeds, one harness; parsing by position supplied, which is the next thing to learn; mod-97 arithmetic with four operations; shortcut floors not needed for a zero-shot result but the flat ablation and the confounded design serve as the controls.
+
+## E11: a diagonal memory cell with a time-local trace inside the E8 learner (7 November 2026)
+
+Predictions: `E45_PREDICTIONS.md`, section E11 and its two amendments. Script: `exp11_cell.py`; summary: `exp45/SUMMARY_E11.md`; receipts `exp45/e11_*`; qualification `exp45/QUALIFY_E11.json`; shortcut ceilings `exp45/E11_SHORTCUT_CEILINGS.json`. Archived partial launches: `exp45/archive_e11_freshbuffer/`, `exp45/archive_e11_storeoverflow/`.
+
+**Question.** Property P2, working state, under a local rule inside the persistent learner. Exp 3 showed a self-path eligibility trace through a full GRU fails (2–14%) because credit runs through other units; Codex's second sweep found that for a diagonal cell the trace equals backprop through time. E11 adds such a cell to the E8 learner and asks whether the time-local rule (a) re-uses holding developed at birth, (b) acquires holding that birth never required, and (c) keeps it through a sequence of four operations with replay.
+
+**Learner.** E8 window net (hidden 512, 10-byte window) plus a diagonal memory cell of 512 units: `p = tanh(Wp z1)` (64-d), `c = tanh(Wc p + bc)`, `r = sigmoid(Wr p + br)`, `h_t = r ⊙ h_{t−1} + (1 − r) ⊙ c`, readout `z2 = tanh(W2 z1 + Wm h + b2)`. Each unit reads only its own past state and the gates do not read `h`, so the per-synapse trace `e_t = r_t e_{t−1} + ∂h_t/∂w` (one scalar per synapse, carried forward) makes `Σ_t L_t e_t` the exact gradient for the cell's synapses, with `L_t` the sign-feedback learning signal from the readout at step `t`. Qualification: trace versus backprop through time, maximum relative error 1e-6 on all four cell tensors; within-step rule 42–47% off. 800,081 parameters. Cost: trace arm 190 ms per update in the smoke test against 34 (within-step) and 38 (backprop through time); in the runs, about 62 CPU minutes per 6,144-update stage against 14, so about 4.5×, which is Python loop overhead over 25 time steps, not arithmetic.
+
+**Task.** `<code> a a <op> D1..Dk b b = c c EOS` with k uppercase letters between the operator and the second operand, k ∈ 0..12 in life. The first operand is in the window at the answer only for k ≤ 3, so k ≥ 4 needs the cell. Sealed panels at k = 0, 8, 12 and 20 (20 never presented), 400 held pairs each; development operations at k = 12 (300). Shortcut ceiling (the answer equals the visible second operand): max and min 45–54% of items at k ≥ 4, add and sub 0.5–1.5%. So for max and min only scores clearly above half count as memory.
+
+**Births** (backprop through time, 24,576 updates, four operations mod 89): M, memory birth, k ∈ 0..12; N, no-memory birth, k ∈ 0..3.
+
+| Birth | Seed | k=0 | k=12 | k=20 | k=12, cell silenced |
+|---|---|---|---|---|---|
+| M | 73129 | 90 92 99 98 | 91 93 99 99 | 93 94 99 99 | 1 1 39 25 |
+| M | 93683 | 89 89 96 96 | 92 91 97 98 | 91 91 96 97 | 1 0 48 40 |
+| M | 116089 | 93 89 95 95 | 92 88 96 96 | 92 89 96 95 | 0 1 43 39 |
+| N | 73129 | 93 95 98 98 | 1 2 45 43 | 1 1 44 38 | 1 2 41 35 |
+| N | 93683 | 93 93 99 99 | 1 0 50 51 | 1 0 50 51 | 1 1 42 42 |
+| N | 116089 | 95 96 99 97 | 1 2 48 39 | 1 2 48 42 | 1 1 36 33 |
+
+Each cell: add sub max min, exact %. P11.1 holds in full: the memory birth holds the operand at k = 12 at 88–99% and extrapolates to k = 20 within 2 points, silencing the cell drops add and sub to 0–1% (max and min to the shortcut ceiling); the no-memory birth is at 93–99% at k = 0 and 1–2% at k = 12 on add and sub.
+
+**Life.** Four operations mod 97 (codes r t x n), a quarter of the pairs each, 6,144 updates per stage, k ∈ 0..12, in sequence. Replay: half of every batch from a buffer of 1,024 episodes per completed stage (prompt and answer as presented). Two amendments on file explain why this and not E8's store-mediated replay: with random letters every presentation is a new exact key, a stage writes ~393,000 distinct prompts into a 65,536-key store, and replay through the store was unanchored; the episode buffer is what E8's store returned when its keys fit. Arms: **T** sign rule everywhere plus the exact trace for the cell's synapses; **S** sign rule everywhere, cell synapses by the within-step rule (state detached); **D** backprop through time on the joint ground truth (ceiling). AdamW lr .001, decoupled decay 1.0 (local) / 0.3 (backprop), as E8. Every evaluation also scores the k = 12 panels with the cell's state forced to zero.
+
+**Results: k = 12 exact % on each mod-97 operation after its own stage → after the fourth stage** (full tables with k = 0, 8, 12, 20, the development operations and the silenced audit at every stage: `exp45/SUMMARY_E11.md`).
+
+| Arm | Seed | add97 | sub97 | max97 | min97 | mean after own | mean final | k=20 final mean |
+|---|---|---|---|---|---|---|---|---|
+| MT trace, memory birth | 73129 | 92→15 | 84→10 | 90→61 | 87→87 | 88 | 43 | 36 |
+| | 93683 | 86→0 | 76→2 | 76→41 | 58→58 | 74 | 25 | 22 |
+| | 116089 | 82→3 | 72→4 | 82→44 | 66→66 | 76 | 30 | 24 |
+| MS within-step, memory birth | 73129 | 60→4 | 22→2 | 60→49 | 59→59 | 50 | 28 | 26 |
+| | 93683 | 35→2 | 21→2 | 62→50 | 55→55 | 43 | 27 | 25 |
+| | 116089 | 25→2 | 18→2 | 44→43 | 52→52 | 35 | 25 | 18 |
+| MD backprop through time, memory birth | 73129 | 94→89 | 90→88 | 96→96 | 96→96 | 94 | 92 | 92 |
+| | 93683 | 90→90 | 92→90 | 95→95 | 96→96 | 93 | 93 | 92 |
+| | 116089 | 96→92 | 95→95 | 96→97 | 98→98 | 96 | 95 | 95 |
+| NT trace, no-memory birth | 73129 | 90→1 | 34→1 | 52→45 | 55→55 | 58 | 26 | 25 |
+| | 93683 | 78→0 | 30→0 | 55→47 | 48→48 | 53 | 24 | 22 |
+| | 116089 | 63→1 | 41→1 | 70→42 | 55→55 | 57 | 25 | 22 |
+| NS within-step, no-memory birth | 73129 | 21→0 | 1→1 | 48→38 | 52→52 | 30 | 23 | 23 |
+| | 93683 | 32→0 | 1→2 | 51→48 | 50→50 | 33 | 25 | 24 |
+| | 116089 | 5→1 | 1→0 | 45→41 | 48→48 | 25 | 22 | 21 |
+| ND backprop through time, no-memory birth | 73129 | 91→92 | 90→87 | 95→95 | 97→97 | 93 | 93 | 93 |
+| | 93683 | 92→90 | 88→92 | 96→96 | 96→96 | 93 | 94 | 94 |
+| | 116089 | 94→91 | 94→94 | 95→96 | 97→97 | 95 | 94 | 95 |
+
+Shortcut ceiling for max and min at k ≥ 4 is 45–54% (answer equals the visible second operand); every max/min score of the within-step arms, and every max/min score after the fourth stage except MT 73129's max, sits at that ceiling and is not memory. Add and sub have no shortcut (0.5–1.5%).
+
+**Acquisition of holding, k = 12 on add97 after its stage (the first stage, no replay yet), and k = 20 (never presented):**
+
+| Birth | Trace T | Within-step S | Backprop through time D |
+|---|---|---|---|
+| Memory birth M, k=12 | 92 / 86 / 82 | 60 / 35 / 25 | 94 / 90 / 96 |
+| Memory birth M, k=20 | 88 / 78 / 76 | 50 / 30 / 17 | 93 / 90 / 96 |
+| No-memory birth N, k=12 | 90 / 78 / 63 | 21 / 32 / 5 | 91 / 92 / 94 |
+| No-memory birth N, k=20 | 78 / 65 / 52 | 14 / 25 / 2 | 91 / 90 / 94 |
+
+Cell silenced at k = 12: ≤ 6.5% in every arm and stage wherever the live score is ≥ 50% (`SUMMARY_E11.md`).
+
+**Predictions.**
+- P11.1 (births): holds in full.
+- P11.2 (memory birth): MT ≥ 70% after its own stage holds for add, sub and max in every seed and for min in one (87 / 58 / 66); MS at least 15 points below MT holds for add (32–57 points) and sub (54–62) in every seed, for max in two (14 / 38 / 28) and is moot for min, where MS sits at the shortcut ceiling; MD ≥ 85% holds. The memory birth does discriminate the rule.
+- P11.3 (no-memory birth, acquisition): NT ≥ 40% at k = 12 holds for add in every seed (90 / 78 / 63) and max in every seed (52 / 55 / 70, only modestly above the ceiling), for sub in one (34 / 30 / 41) and not for min (at the ceiling). NS ≤ 15% misses in two seeds for add (21%, 32%): the within-step rule picks up a little holding, presumably by closing the gate at the '=' byte, where the instantaneous signal can see it. ND ≥ 70% holds (88–97%).
+- P11.4 (extrapolation within 10 points at k = 20): holds for both backprop arms (1–3 points) and for the trace arm's add and sub from the memory birth (4–9 points); misses by 1–6 points for acquired holding (NT add: 12 / 13 / 11) and MT max (3 / 11 / 16). Holding developed at birth extrapolates; holding acquired in life extrapolates slightly less.
+- P11.5 (retention within 15 points after the fourth stage): **refuted in every seed and both births.** Add and sub fall from 72–92% after their stages to 0–15% after the fourth; the development operations mod 89 fall from 88–99% to 1–41% during the first life stage. The backprop ceiling on joint data keeps every operation at 87–98%, so the task permits retention; this learner under the sign rule, with half-batch episode replay, does not deliver it.
+- P11.6 (silenced audit): holds.
+
+**What E11 establishes.** Property P2, working state, by a local rule: a diagonal memory cell with a per-synapse trace carried forward in time acquires, from a birth that never required it, the ability to hold an operand across twelve distractor bytes (63–90% at k = 12, 52–78% at k = 20 never seen), where the within-step rule reaches 5–32% and backprop through time 91–94%; and it re-uses holding developed at birth at 82–92%. The trace is exact for this cell (qualification) and needs no backward pass through time and no stored activations; the cost in this implementation is about 4.5× per update, which is loop overhead that a parallel scan removes.
+
+**What E11 refutes.** That the E8 learner plus this cell keeps what it learns across a sequence of operations under the sign rule with half-batch episode replay. The forgetting is far worse than E8's (E8 held eight operations at 75–98%; E11 holds the current operation and little else), in both births, and the ceiling shows it is not capacity. E11 does not diagnose the cause. The candidates, each one arm: (1) weight decay 1.0 per update, which E12-B suggests costs 12–15 points of E8 retention by itself and which E10 found erodes exact interfaces; (2) the cell as an interference channel, since the new operation's gates change the state statistics the old readout depends on, and add at k = 0 (where the window alone suffices) fell faster than at k = 8–12 in two seeds, so the window path is overwritten before the cell path; (3) fixed-letter episodes being learned by rote rather than maintaining the rule, testable by replaying fresh renders of the stored pairs with the stored answers; (4) blocked presentation, since E9 showed interleaving holds everything while the stream is stationary. E13 Part A (decay versus averaging) bears on (1) directly.
+
+**Harness lessons, on record.** Two restarts: a buffer-fill slip caught only after the first stage (a dry run of the full loop, now `E11_STAGE_UPDATES`, would have caught it in two minutes), and a mechanism dependency that no dry run catches: E8's store-mediated replay needs a stage's episodes to fit the store, which random letters break. Rule for the next experiment: list every mechanism carried over and the condition it needs in the new task, in the predictions file, before launch.

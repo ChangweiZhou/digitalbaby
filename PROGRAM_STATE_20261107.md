@@ -79,3 +79,10 @@ The four composition failures (direct, scratchpad, canonical scratchpad, routed 
 5. **The persistent-life demonstration**, independent of the above: one life, eight operations learned in sequence with replay from the store, every earlier one scored after every later one.
 
 Codex's line continues: the path-integration return-leg diagnosis, then arena learning with the eligibility trace.
+
+## Addendum, 7 November 2026 evening (E9, E12, E10, E11)
+
+- Replay is structural, not a scheduling fix: interleaving holds eight operations only while the stream is stationary, and the first distribution change erases every standalone response without replay (E9); the erasure is functional, with no savings on relearning (E12-A). Raviv et al. (*Science*, 5 Nov 2026) reach the same conclusion for a model trained day by day on a child's speech. Replay share buys retention roughly linearly; recency weighting hurts; the buffer saturates near 1,024 prompts per stage (E9, E12).
+- Batch 256 at fixed exposure lifts the sign rule to 91–92% retention and 69–73% held composition (E12-B); undiagnosed (decay versus averaging), E13 Part A.
+- Composition by wiring: the ring with innate operations composes untaught pairs at 100% zero-shot where its interfaces developed (E10).
+- Working state by a local rule: the diagonal cell with an exact time-local trace acquires holding from a no-memory birth (63–90% at k = 12) where the within-step rule reaches 5–32% (E11). In the same learner, retention across sequential operations under the sign rule collapses (E11, P11.5 refuted); P2 against P3 is the open conflict to resolve before scaling.
