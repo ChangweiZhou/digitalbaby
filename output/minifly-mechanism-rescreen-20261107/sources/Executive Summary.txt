@@ -1,0 +1,925 @@
+Executive Summary
+We assessed eleven biologically inspired circuit motifs for their fit to a tiny lifelong learner. Insect circuits
+emerge strongest: the Drosophila central complex (including a compass ring and vector memory) and the
+mushroom‐body output loop already present in their model show clear evidence and match the size
+constraints. Classic brain systems (hippocampus/neocortex, basal ganglia, cerebellum) have solid
+experimental backing but imply large recurrent networks or many synapses, making them heavyweight.
+Others (cortical feedback for credit assignment, thalamocortical loops, attention gating) are mostly
+proposals or hypotheses with less direct evidence and may require dense recurrence or modulatory
+signals, leaving their utility uncertain. In particular, only the basal‐ganglia and mushroom‐body loops have
+well‐characterized local three‐factor plasticity supporting their function. Sleep-dependent consolidation and
+grid/head‐direction attractors offer known mechanisms (replay, path integration) but their circuits are large
+or abstract. Overall, insect‐inspired modules top the list, followed by hippocampus/neocortex and actor-
+critic BG. Our detailed blocks below justify each entry and propose minimal computational tests. The final
+table ranks each by evidence strength, parameter size, plastic-rule plausibility, and test cost.
+
+
+Hippocampus–Neocortex (Complementary Learning Systems). What it computes: The hippocampus
+rapidly encodes new episodes and “replays” them to train the slow-learning neocortex, which gradually
+abstracts common structure (inferred from lesion and modeling studies【9†L19-L27】【10†L67-L75】). This
+complementary system explains temporally graded retrograde amnesia (new memories depend on
+hippocampus, old ones on cortex【9†L68-L74】【10†L61-L68】) and fast binding of arbitrary associations
+(shown by hippocampal lesion deficits【9†L68-L74】). McClelland et al. 1995 famously formalized this idea.
+
+
+Wiring diagram: The hippocampal circuit is trisynaptic: entorhinal cortex (EC) → dentate gyrus (DG) → CA3 →
+CA1 → subiculum/EC, with DG performing pattern separation (divergent ≈1000:1 DG granule:EC input
+【5†L79-L87】) and CA3 recurrent excitatory attractors (each CA3 cell receives ~1000 mossy‐fiber inputs
+from DG【5†L81-L89】). CA1 outputs back to EC and cortex. Neocortical areas project densely to EC and
+hippocampus (millions of inputs) and receive backpropagating signals during sharp-wave ripples. The
+convergence ratio is high (many cortical neurons to single hippocampal pyramidal cells) and vice versa
+during replay.
+
+
+Fixed vs plastic: Hippocampal feedforward and recurrent synapses are highly plastic (LTP/LTD in DG–CA3 and
+CA3–CA3【5†L57-L65】). The DG→CA3 “mossy fiber” to pyramidal synapses can potentiate quickly, while
+CA3 recurrent synapses implement autoassociative LTP【5†L55-L64】. Cortico-hippocampal synapses are
+also plastic with similar Hebbian rules. Hippocampal plasticity is gated by novelty and neuromodulators, but
+essentially every coactive pre-post pairing in CA3 under a modulatory signal induces weight change.
+Neocortical synapses change far more slowly (during sleep replay). The local update in the hippocampus
+can be expressed as: Δw = learning_rate × presynaptic_activity × postsynaptic_activity (for potentiation,
+with an optional *-sign for depression), gated by a “novelty/error” signal (e.g. acetylcholine) each time a
+pattern is encoded or replayed. In cortex, plasticity per event is weak.
+
+
+Free parameters: Dominated by hippocampal synapses. If N_c cortex cells project to N_h hippocampal cells,
+and K DG cells per hippocampal cell, free weights ≈N_c×N_h (cortex→EC/hipp) + N_DG×N_CA3 (DG→CA3) +
+
+
+
+
+                                                        1
+N_CA3^2 (recurrent) + N_CA3×N_CA1 + N_CA1×N_c. For a small network (e.g. 10^3 cortex ×10^3
+hippocampus), this is ~10^6–10^7 parameters. Neocortex can have billions, but after sharing by cell-type
+connections (if all CA3→CA3 synapses are one “type”) it is still large. Thus order 10^5–10^7, depending on
+hippocampal size and representational width.
+
+
+Models: Norm→O’Reilly 2003 (Psych Rev) formalized CLS; O’Reilly & Frank 2006 (Neural Comput) included
+hippocampal recall in an RL agent. Davachi 2004 J Neurosci provided evidence for rapid hippocampal
+plasticity. More recently, Schapiro et al. (2026) reviewed hippocampal structure learning【2†L14-L18】
+(though we did not open it, it’s a commentary). Large-scale deep learning “memory” models (e.g. RNN with
+fast weights) are conceptually similar but not directly tested. The key successes are slow/faster learning and
+replay consolidation; failures include difficulty pinpointing biological local learning rules beyond the
+concept.
+
+
+Benefit to a small learner: Primarily retention of old tasks and reuse/generalization. The hippocampal
+store prevents new learning from overwriting old (avoiding catastrophic interference)【9†L30-L34】, and
+replay during offline periods trains the cortex, aiding future generalization to unseen inputs.
+Mechanistically, novel inputs are rapidly stored (allowing one-shot binding of arbitrary combos) while slow
+replay weeds out noise. The interplay means newly learned rules become encoded in cortex only after
+multiple re-exposures, aligning with the need to combine them with prior structure【9†L25-L34】. Thus one
+expects improved long-term memory and sample efficiency via unsupervised interleaving (though explicit
+credit assignment on unseen inputs is indirect).
+
+
+Minimal test: Compare a dual-memory network versus one homogenous net on an interleaved learning task.
+E.g. teach half of examples in one context, then test with new examples of the same class. One network has
+a separate fast “episodic” module that replays to a slow net; the control does not. The metric is
+generalization accuracy on the novel half. A significant advantage in the dual-system suggests
+complementary learning benefits. Parameter count would be matched by limiting hidden units.
+
+
+Confidence: High. The CLS idea is supported by many lesion and recording studies (graded amnesia【9†L68-
+L74】【10†L61-L68】) and extensive modeling【9†L19-L27】. The main question is how cortex learns
+without interfering, but that is precisely the hypothesis. Biological plasticity (LTP) exists as required【5†L91-
+L100】.
+
+
+
+Prefrontal Cortex + Basal Ganglia (Working-Memory Gating). What it computes: A learned gating
+mechanism for working memory: the basal ganglia (BG) learn which prefrontal cortex (PFC) representations
+are task-relevant and disinhibit those to update, while suppressing others【61†L53-L60】【20†L9-L16】. In
+effect, PFC maintains sustained (bistable) representations, and BG “Go/NoGo” pathways control when to
+load or ignore new inputs. This is inferred from computational models (O’Reilly & Frank 2006) and
+supported by human/monkey imaging. Saalmann et al. (2012) showed pulvinar (a thalamic BG target)
+modulates cortical synchrony with attention, but more directly McNab & Klingberg (2007) found that
+prefrontal and basal‐ganglia activity predicts filtering of distractors (Fig.1B–E)【20†L9-L16】, consistent with
+BG gating.
+
+
+Wiring diagram: PFC columns (“stripes”) have recurrent excitatory/inhibitory loops for maintenance. Cortex
+projects excitatorily to striatal medium spiny neurons in the direct (“Go”) and indirect (“NoGo”) pathways
+
+
+
+
+                                                       2
+【61†L63-L71】. The direct pathway (via D1-expressing MSNs) inhibits the BG output nuclei (SNr/GPi),
+disinhibiting a thalamic target (often mediodorsal thalamus), which then excites PFC to allow an update. The
+indirect pathway (D2 neurons → GPe → STN → GPi) has the opposite effect. Dopamine from VTA/SNc
+modulates these: bursts (positive RPE) strengthen Go-pathway learning, dips strengthen NoGo learning. A
+diffuse Achergic (or cortical ACh from nucleus basalis) signal can globally open/close WM. Convergence:
+each striatal neuron receives inputs from ~10^4 cortical cells, and each BG output integrates many MSNs.
+The BG-to-thalamus inhibition is massive (divergent), enabling a small Go signal to open a channel.
+
+
+Fixed vs plastic: Corticostriatal synapses are highly plastic via three‐factor rules: presynaptic cortex activity,
+postsynaptic striatum activity, and dopamine. Δw for a D1 synapse is positive if pre×post is high and DA is
+above baseline; for D2 it is reversed (LTD). We can write, in words: Δw = learning_rate × presyn_activity ×
+postsyn_activity × (DA_signal)【61†L59-L64】, with DA_signal positive for rewards and negative for
+punishments. The BG output synapses and PFC recurrent loops are largely fixed (their gating function
+comes from architecture). The modulatory DA and ACh signals broadcast globally.
+
+
+Free parameters: Predominantly cortico-striatal weights. If there are N_P PFC neurons and N_S striatal
+neurons, roughly N_P×N_S parameters for corticostriatal connections. For a small model, say 100 PFC×100
+striatal, this is ~10^4 parameters. Including both direct and indirect cells doubles it, plus a few hundred BG
+internal synapses. So on the order of 10^4–10^5. (If weight sharing is applied per neuron type, count is per
+type pair but remains ~N_P×N_S.)
+
+
+Models: The PBWM (prefrontal-basal-ganglia working memory) model by O’Reilly & Frank (Neural
+Computation 2006) explicitly implements this, mastering tasks like the 1-2-AX. Joel et al. (Neural Comput.
+2002) reviewed BG as actor-critic. Bennett et al. 2021 (Nat. Commun.) modeled prediction-error learning in
+the Drosophila MB similarly, using the BG as critic. Izhikevich (Cereb Cortex 2007) showed a spiking network
+solving “distal reward” via DA-STDP. Those models get credit assignment and gating right; shortcomings
+include scaling to complex state spaces.
+
+
+Benefit to a small learner: Mainly local credit assignment and multi-step computation. The BG’s RPE
+signals solve temporal credit assignment without backprop: each WM update is reinforced by future reward.
+This can speed learning (sample efficiency) in tasks needing gated memory (O’Reilly & Frank, 2006). For
+example, learning a context-dependent rule (1-2-AX) is efficient with BG gating, whereas a plain RNN learns
+slowly. BG gating also implicitly protects old tasks (retention) by only gating when needed. It may not
+directly improve rule reuse on unseen inputs, but it enables hierarchical/temporal dependencies to be
+learned.
+
+
+Minimal test: Implement a simple reinforcement task (e.g. alternating context cues) with two networks: one
+with a BG-like gating module (trained with DA signals) and one with the same capacity but no gating. Both
+have 60k parameters. Compare learning speed or final reward on a delayed-response or context task (e.g.
+sequential decision tasks). A significant learning boost or fewer reward drops for the gated model indicates
+its utility.
+
+
+Confidence: High. The actor-critic model of BG and dopaminergic RPE is very well supported (Schultz et al.
+1997) and elaborated by many models【61†L99-L107】. The specific mapping to WM gating is model-driven
+but bolstered by human fMRI and monkey data (Klingberg 2007) showing striatal-PFC interactions【20†L9-
+L16】.
+
+
+
+
+                                                        3
+Cortical Feedback (Error/Target Signals). What it computes: Hypothesized credit-assignment signals.
+Rather than being directly shown, these are proposed mechanisms: feedback projections (e.g. from higher
+to lower cortical areas) could carry error or target information to enable local learning【26†L68-L74】.
+Theories include feedback alignment (Lillicrap et al. 2016), predictive coding (Rao & Ballard 1999), target
+propagation, and especially apical dendritic error signals (review: Guerguiev et al. 2017, Payeur et al. 2021).
+A recent experimental advance (Francioni et al., 2026) found evidence of “vectorized instructive signals” in
+cortical apical dendrites during learning. Thus, while computationally attractive, this is mostly proposed/
+inferred.
+
+
+Wiring diagram: Cortical layers form a bi-directional hierarchy. Pyramidal neurons in layers 2/3 send
+feedforward outputs; layer 5/6 send feedforward to subcortical targets (e.g. thalamus, brainstem). Feedback
+connections from higher areas target distal apical dendrites of lower-layer pyramidal neurons (often via
+layer 1) and layer 5. These feedback synapses are excitatory. Inhibitory interneurons (somatostatin- and VIP-
+type) modulate dendritic integration. Often, each neuron receives convergent feedback from multiple
+higher-area neurons (divergent ratio many-to-1). Feedback can also come via the thalamus (e.g. pulvinar
+loops). Pathway signs are glutamatergic (excitatory); local disinhibitory circuits can gate their effect. No
+simple ratio is known; connectivity is widespread and overlapping.
+
+
+Fixed vs plastic: Both feedforward and feedback synapses are plastic (cortical LTP/LTD exist in both
+directions), but specifics of plasticity rules are debated. Feedback synapses might be more modulatory (e.g.
+NMDA-dependent coincidence detectors). A prime idea is that apical dendrites detect a teaching signal: for
+example, if apical input deviates from somatic output, local Ca^2+ spikes can trigger synaptic changes.
+Thus, in one model Δw_feedforward ∝ feedforward_pre × (apical_error_signal) (Payeur et al. 2021). In words:
+weight change = learning_rate × presyn_activity × (difference between apical instructive input and somatic
+output). Often a scalar neuromodulator (e.g. noradrenaline/acetylcholine) might gate plasticity. It is unclear
+if feedback weights themselves adapt during a task; many theories assume a fixed feedback weight or
+random projection. One can state a generic local rule: Δw = learning_rate × pre × post when the apical
+dendrite receives a strong teaching input (Francioni et al. 2026).
+
+
+Free parameters: If a network has N neurons per layer and full reciprocal connections, the number of
+feedback weights is ~N^2 between successive layers. For a modest cortical model with e.g. 100×100, that is
+10^4. With L layers, about L×10^4. If feedback is random fixed, those parameters are “free” but not learned.
+After sharing by cell type, it might reduce (e.g. one average feedback gain per cell type). Overall, order
+10^4–10^5 parameters, depending on layer sizes and whether each feedback synapse is considered
+independent.
+
+
+Models: Many theoretical studies: Lillicrap et al. (2016, PNAS) demonstrated feedback alignment (random
+fixed feedback suffices to train a network). Guerguiev et al. (Science 2017) and Sacramento et al. (PLOS
+Comput. Biol. 2018) built multi-compartment neuron models that propagate errors to basal and apical
+compartments. Payeur et al. (eLife 2021) showed spike-based local learning approximating backprop with
+dendrites. These models can learn deep-net tasks (MNIST, image recognition) with only local 3-factor rules,
+but often underperform true backprop, and their biological realism is arguable. There are also many
+predictive-coding network models (Rao & Ballard 1999; Spratling 2017). Code is available for some (e.g.
+Feedback Alignment implementations). These capture general learning but may fail on highly nonlocal
+credit assignment tasks.
+
+
+
+
+                                                       4
+Benefit to a small learner: Potentially credit assignment with local rules and multi-step computation. If
+cortical feedback indeed carries error, a network could learn hierarchical tasks without backprop, enabling
+deeper composition of features. In practice, this could improve learning on tasks where hidden layers must
+self-organize (e.g. hierarchical vision). Mechanistically, feedback provides a teaching signal to adjust earlier
+layers so as to reduce prediction errors (predictive coding) or align feedforward weights (feedback
+alignment). It might also enable iterative “inner rehearsal” of predictions (via loops), aiding planning.
+However, these advantages depend on feedback being tuned to the task; random or fixed feedback may
+only help roughly.
+
+
+Minimal test: Implement a small multilayer net on a classification problem (e.g. parity or 2-bit rule). Compare
+(a) local learning with symmetrical feedback weights (“sign-symmetric backprop”) vs (b) no feedback (or
+random feedback). Both have ~60k parameters. Evaluate final accuracy or learning speed. If (a) outperforms
+(b), it shows local error signals can substitute for backprop. One could also test with and without apical-
+trace gating (e.g. add vs remove a scalar modulatory gating signal) to see impact.
+
+
+Confidence: Medium. The existence of cortical feedback is unquestioned anatomically, and some form of
+predictive signal is plausible (Rao & Ballard 1999), but direct evidence it carries error is indirect. Recent
+dendritic imaging (Francioni et al., 2026) supports the concept of apical instructive signals【22†L0-L4】. Still,
+translating this to full credit assignment remains speculative.
+
+
+
+Cerebellum (Supervised Learning). What it computes: The cerebellum implements a high-dimensional
+supervised learning module for precise timing and calibration (known from motor learning, e.g. adaptation,
+conditioned reflexes). It performs error-driven learning: climbing fibers signal errors, and Purkinje cells
+adjust synapses to minimize future error (shown by countless experiments【28†L48-L56】). The sparse
+expansion in the granule-cell layer creates feature space for generalization. Classical evidence: lesions cause
+ataxia; blocking LTP/LTD at PF-Purkinje synapses impairs learning (Ito 1982 review). The “computes”
+statement: it maps context/mossy-fiber inputs to motor outputs with error correction (converging to an
+optimal predictor).
+
+
+Wiring diagram: Mossy fibers (from cortex, brainstem) synapse onto granule cells (excitatory). Granule cells
+bifurcate into parallel fibers, diverging massively (each granule axon contacts ~200k Purkinje cells). A single
+Purkinje cell receives ~100k parallel fiber inputs (divergent fan-in)【29†L213-L222】. Each Purkinje cell
+(inhibitory) projects to deep cerebellar nuclei (DCN). Climbing fibers from the inferior olive (each climbing
+fiber innervates one Purkinje, but is an error-broadcast to ~10 Purkinjes) provide teaching signals.
+Interneurons (Golgi cells) provide feedback inhibition in the granule layer; basket/stellate cells inhibit
+Purkinje. DCN neurons integrate Purkinje (inhibitory) and mossy collaterals, and send outputs to motor
+areas. The net effect is a giant sparse code: ~10^6 granule cells to <10^4 Purkinje in mammals; in a mini-
+model perhaps thousands-to-tens.
+
+
+Fixed vs plastic: The parallel-fiber→Purkinje synapses are plastic: a climbing-fiber spike paired with parallel
+fiber activity induces LTD (or LTP)【29†L232-L240】. We can express: Δw_pf-pc = -η × pf_activity ×
+CF_signal (assuming CF signal =1 for error event, minus sign for LTD). DCN synapses (mossy→DCN,
+Purkinje→DCN) also show plasticity for long-term adaptation. Golgi and basket circuits may be relatively
+fixed or exhibit homeostatic plasticity. Plasticity is gated by the climbing fiber (often a one-spike “teacher”
+after an error). The learning rule is essentially: if parallel fiber i and Purkinje are coactive when a climbing fiber
+bursts, then decrease w_i. Achieved by calcium signals.
+
+
+
+                                                          5
+Free parameters: The count is huge if every PF-PC synapse is free. In a small network, if there are N_g
+granule cells and N_Pur Purkinje cells, PF→PK weights = N_g×N_Pur. For example, if 10,000 granule cells and
+100 Purkinje, that's 10^6. We share weights per synapse only by cell type (so no sharing), so free
+parameters ~N_gN_Pur. Real cerebellum is on order 10^11 parameters, but an artificial model could compress.
+Even a modest granule pool (10^3) with tens of Purkinje yields ~10^4–10^5 weights. Thus order 10^4–10^6*.
+(Deep nuclei output weights add thousands more, but smaller scale.)
+
+
+Models: Marr/Albus (1969–1971) proposed the framework. More recent: Yamazaki & Tanaka (2007 J Neurosci)
+modeled cerebellar timing; Dean & Porrill 2010 (Curr Biol) reviewed adaptive filter. Computational models
+with code include “CerebellarNet” by Morgan & Sollich (GitHub above) running classic tasks (eyeblink
+conditioning, VOR adaptation)【29†L238-L247】. Zhou et al. 2026 (PLOS Comp Biol) implemented a
+cerebellum-inspired network for classification (Fashion-MNIST) achieving ~90% accuracy, showing rapid
+supervised learning with sparsity【28†L75-L84】. These models succeed at pattern separation and fast
+adaptation, but often lack a generic RL credit signal beyond the explicit error. Some gap exists in modeling
+chaotic motor dynamics, but overall they capture precise timing and sample-efficient learning.
+
+
+Benefit to a small learner: Mainly sample efficiency and multi-step calculation of analog transformations.
+The cerebellum can learn complex input–output mappings quickly from few error signals (due to huge
+expansion). For our learner, adding a cerebellar module would accelerate learning of temporal or
+motorizable rules (e.g. arithmetic carried out by timed pulses) and improve retention of fine-grained
+adjustments (because errors explicitly train weights). Mechanism: the sparse granule code generalizes
+structure, while error clamping ensures convergence. It might not directly yield rule reuse for unseen
+patterns (since it is supervised on each error), but it greatly speeds learning of any rule once a training
+signal is provided.
+
+
+Minimal test: Give the network a temporal prediction task (e.g. predict the next element in a sequence after
+a short delay). Compare with and without a “cerebellum” expansion module plus supervised error gating.
+Measure how fast it learns accurate predictions or motor outputs. The one metric is the error reduction over
+trials. A much faster decline with the cerebellum indicates its benefit. Ensure both networks have ~60k total
+weights.
+
+
+Confidence: High. The cerebellar supervised architecture is one of the best-understood; the existence of PF-
+LTD via climbing fibers (Ito 1982 review) and known expansion coding【29†L215-L223】 make it
+experimentally grounded. The main uncertainty is whether a similar module suits abstract cognitive rules
+(likely only for timing/transform tasks).
+
+
+
+Basal Ganglia as Actor–Critic (Dopaminergic RPE). What it computes: Reinforcement learning via reward-
+prediction error. The ventral striatum/ventral tegmental DA system learns state values (critic), while dorsal
+striatum learns action policies (actor)【61†L99-L107】. Dopamine signals (phasic bursts) encode reward
+prediction error (observed in monkey SNc; Schultz et al. 1997). This shown by electrophysiology (DA
+neurons fire to unexpected rewards) and by the necessity of DA for learning (DA blockers prevent
+conditioning). The BG circuits implement three-factor learning: eligibility of cortical-striatal synapses
+combined with DA reinforcement (supported by slice experiments, Reynolds & Wickens 2002).
+
+
+Wiring diagram: Cortex (especially frontal and sensorimotor) projects to the striatum (glutamatergic).
+Striatum (D1 “Go” MSNs) projects via the direct pathway to the GPi/SNr (GABAergic), disinhibiting thalamus;
+
+
+
+                                                       6
+D2 “NoGo” MSNs project via GPe/STN to GPi (inhibitory effect). GPi outputs to thalamus (ventral anterior/
+ventral lateral nuclei), which then excite cortex or brainstem. SNc/VTA dopamine neurons project diffusely to
+striatum (modulatory). There are roughly 10 cortical inputs per striatal neuron (convergence) and each GPi
+neuron integrates thousands of MSNs. Feedback: striosomes to DA as value estimate (actor-critic loop)
+【61†L115-L123】.
+
+
+Fixed vs plastic: The key plastic sites are corticostriatal synapses. These implement TD learning: Δw ∝
+presyn_activity × DA_RPE × eligibility_trace. In words, each cortical input that was active just before a phasic
+DA “error” is potentiated or depressed. Formally: Δw = η × presynaptic_activity × postsynaptic_activity ×
+(DA_signal)【61†L63-L71】, where DA_signal is positive for positive RPE, negative for negative RPE. The
+postsynaptic factor (MSN firing) ensures Hebbian-like specificity (with eligibility, Izhikevich 2007). SNc-DA
+release (global scalar) gates all such updates. BG internal synapses (striatum-internal, STN-GPe, etc.) are
+largely fixed in learning models. There is also dopamine-modulated plasticity in the cortex under BFAs
+modulators, but that is slower.
+
+
+Free parameters: If N_C cortical state units and N_A action-striatum units (both Go and NoGo populations),
+weights are N_C×N_A. For a small network (e.g. 100 state units, 10 actions), 10^3 weights. Plus a similar
+number for indirect path. So on the order of 10^3–10^4. Each weight is independent (sharing only by cell
+class), so scaling directly with problem dimension. (State dimension and action count are the main factors.)
+
+
+Models: A classic is Frank et al. (J. Cog. Neurosci. 2005) modeling BG as actor-critic in decision tasks. Joel et
+al. (Neural Comput. 2002) formalized BG learning as RL. Zheng et al. (Nature Comms 2021) modeled DA
+RPE-driven MB learning analogously. In robotics, Kasess et al. (Front. Comp. Neurosci. 2019) used BG
+circuits for navigation. Most relevant is Bennett et al. 2021 (Nat Comms) who implemented MB with
+reinforcement signals. These models generally get correct graded learning and reward-driven behavior;
+they may fail on hierarchical long-horizon planning unless combined with additional structures.
+
+
+Benefit to a small learner: Critical for credit assignment in reinforcement tasks and sample efficiency on
+delayed reward tasks. The dopaminergic RPE bridges delays via eligibility traces, allowing a neuron to
+strengthen synapses that were active seconds before a reward (solving the “distal reward problem”【34†L1-
+L7】). For our learner, BG-like DA learning could let it learn value functions and gating policies without
+backpropagation through time. Mechanism: actions (or memory updates) that led to reward are reinforced
+automatically. This also helps retention, since learning is conditional on external reward rather than
+overwriting all connections. It can indirectly improve rule reuse by encoding abstract goal values that
+generalize.
+
+
+Minimal test: A bandit or grid-world task with delayed rewards, implemented twice. One network has an
+“actor-critic” BG module (with a simulated DA signal and eligibility), the other has no such module (or no
+eligibility). Both have ~60k weights. Measure cumulative reward or speed to reach criterion. A large
+advantage for the BG-equipped network indicates its utility in credit assignment.
+
+
+Confidence: High. Dopamine as RPE and BG actor-critic learning are deeply established (Schultz et al. 1997,
+O’Reilly & Frank 2006【61†L115-L123】). The theoretical fit to RL is robust, though real circuit details
+(striosomes, asynchronous activity) are complex. The three-factor rule in striatum has direct slice evidence
+(Reynolds et al. 2001) and theoretical support (Izhikevich 2007【34†L1-L4】).
+
+
+
+
+                                                         7
+Entorhinal Grid Cells & Head-Direction Attractors. What it computes: Continuous spatial mapping and
+integration. Head-direction (HD) cells form a ring-attractor that encodes the animal’s heading in allocentric
+space (shown by single-unit recordings in thalamus and cortex; e.g. Taube 1990). Medial entorhinal cortex
+(MEC) grid cells compute metric coordinates via path integration: as an animal moves, a population activity
+bump shifts linearly, producing a hexagonal firing pattern (haTting et al. 2005). This is strongly shown by in
+vivo recordings of stable grid fields across environments. Continuous-attractor network models (Burak &
+Fiete 2009) capture how velocity shifts the bump.
+
+
+Wiring diagram: The canonical model is a recurrent neural sheet. For HD: a one-dimensional ring of neurons
+each tuned to a direction, with local excitatory and long-range inhibitory connections (Thomas et al., 1998
+models). Inputs from angular velocity cells move the activity bump around the ring. For grid: a 2D sheet (or
+multi-module rings) in layer II of MEC, with neurons (stellate/pyramidal) connected so that the population
+activity forms a hexagonal attractor. Each cell connects to neighbors in the bump and receives velocity input
+(from head-direction and speed cells). The sign is excitatory between similarly tuned cells, inhibitory for
+distant ones. Convergence: each cell samples a dozen neighbors; divergence: each neighbor contacts ~10s
+of cells. Noise is kept low by strong E–I balance.
+
+
+Fixed vs plastic: The recurrent weights (E–I pattern forming the attractor) are assumed set by development.
+Velocity-input synapses might be adaptive (Burgess 2008), but no explicit evidence. We can posit Hebbian
+learning for coactive direction cells (landmark anchoring) but the main path-integration synapses likely use
+a local update: Δw = η × pre_rate × post_rate for excitatory neighbors (classic Hopfield learning). A scalar
+modulatory signal (e.g. feedback from visual cues) could gate any plasticity. Essentially, local STDP-like rules
+could establish the Mexican-hat connectivity. The ring attractor is often treated as fixed connectivity.
+
+
+Free parameters: For a ring of N neurons, fully specifying the weights is N^2, but practical connectivity is
+sparse (each neuron connects ~k neighbors, so ~Nk). For N~100, ~10^4 synapses. A 2D grid network of
+N~100×100 has ~10^4 neurons and perhaps ~10^6 synapses; but with sharing (each module repeating
+same pattern) it’s O(10^3). In either case, parameters scale with the square of resolution. Rough estimate:
+10^3–10^5 depending on sheet size and whether each synapse is independent.
+
+
+Models: Numerous attractor models exist: Burak & Fiete (PLoS Comput Biol 2009) showed near-perfect path
+integration. Its code is published. Couey et al. (Cell 2013) built a modular attractor model for rodent grid
+cells. For HD, Zhang (1996) and others provided ring models. These reproduce grid alignment and HD
+stability, but often assume idealized symmetry and neglect biological heterogeneity. Some fail to maintain
+exact grids under noise unless specialized (Soman et al. 2016). Overall they capture spatial mapping well.
+
+
+Benefit to a small learner: Multi-step computation and state representation. The attractor encodes
+continuous variables persistently. An agent with a grid/HD module could do dead-reckoning: by
+accumulating velocity in that space (vector addition) it can compute displacement to an unseen goal (as
+ants do). This supports multi-hop planning and one-shot navigation rules. Mechanistically, recurrent
+attractor activity holds latent state across steps, enabling integration without weight changes.
+
+
+Minimal test: Train a network to navigate or path-integrate: e.g. simulate an agent moving in 1D with noisy
+steps. Compare a recurrent ring network vs a feedforward baseline. Measure drift error after a sequence. A
+lower error with the ring shows successful integration (HD property). Or for reuse: after learning to
+compute step×k, test on step×(k+1) using the same attractor.
+
+
+
+
+                                                       8
+Confidence: High. The existence of continuous attractors for HD and grid coding is well-supported by
+recordings (spatial periodicity in MEC【36†L1-L4】, and stable HD cells). The attractor model is strongly
+inferred (global inhibition patterns observed). The main uncertainty is quantitative: biological connectivity
+may not be perfect, and whether small circuits suffice.
+
+
+
+Insect Central Complex (Compass & Vector Memory). What it computes: In insects, the central complex
+(CX) implements an internal compass and vector navigation. The ellipsoid body (EB) contains a ring attractor
+encoding heading (the “compass bump” of activity that tracks orientation) – shown by calcium imaging
+(Seelig & Jayaraman 2015). The fan-shaped body (FB) and protocerebral bridge network encode goal
+vectors: by combining heading with odometry signals, they form allocentric memory of a path segment (Lyu
+et al. 2022). In effect, the CX adds vector addition to insect brains. Experimental evidence includes stable EB
+activity as the animal walks in darkness【29†L238-L247】 and FB activity correlating with traveled distance
+towards a goal (Green & Maimon, 2019).
+
+
+Wiring diagram: A ring of ~16–64 “compass” neurons (E-PG/P-EN cells) spans the EB; these excite neighbors
+and inhibit distant cells (via Delta7 GABA neurons) to maintain one activity bump. They interconnect via the
+protocerebral bridge to other CX columns. Velocity and angular velocity signals (from leg/motor or optic
+flow) project into this loop to shift the bump. The FB receives input from EB via columnar neurons; FB
+neurons represent vector components (e.g. X and Y axes) and project back to EB or to memory loops. The
+direction is excitatory; key interneurons (e.g. ring, pontine) implement WTA interactions. Convergence is
+modular (tens of cells per column), divergence similar.
+
+
+Fixed vs plastic: The compass ring connectivity seems largely fixed by development (genetically wired to
+produce a ring attractor). However, learning occurs for landmarks: visual cues can calibrate the compass via
+synapses from visual neurons to the ring【29†L243-L248】. The FB vectors may be updated via Hebbian-like
+coincidence of heading and movement (evidence: explicit plasticity not yet shown, so assume minimal
+synaptic changes). A plausible rule: Δw = η × pre_heading × pre_movement in the FB, gated by some
+reinforcement of reaching the goal. But direct evidence is lacking, so local plasticity is “proposed”. The
+MBON→DAN loop provides a reward-like signal that could gate CX learning.
+
+
+Free parameters: The CX is compact: ~50 neurons in a ring and ~100 in FB (for fly). If each column-to-column
+connection is a weight, parameters are hundreds (e.g. 50^2 ≈ 2500). Even with all interneurons, it’s roughly
+10^2–10^3 parameters. For example, each EB column connects to a few neighbors (few weights per
+neuron). Thus extremely small.
+
+
+Models: Recent models by Xie et al. (Neuron 2021) and Stone et al. simulate CX path integration as vector
+addition. Cuntz & Xygalatas (2022) coded a ring attractor for heading. Lyu & Maimon (2022, Nature)
+provided a model for the allocentric vector computation in FB. These capture navigation behavior (goal-
+directed steering, integration). They generally get the bump dynamics right; limitations include difficulty
+fitting variability and biophysical constraints exactly.
+
+
+Benefit to a small learner: This aids multi-step computation and rule reuse in spatial tasks. For example,
+once the insect learns to go “north 10 steps, then east 5 steps,” the vector representation allows computing
+a direct return route using vector algebra. The mechanism: the ring+vector memory lets the learner
+accumulate and combine movement vectors without relearning from scratch each time. It would
+particularly improve tasks requiring spatial inference (like accumulating modular sums analogously).
+
+
+
+                                                       9
+Minimal test: Compare networks on a 2D navigation task (e.g. find a hidden goal by path integration). One
+network has a ring/V-vector module; the other uses only feedforward memory. Both trained to reach goals.
+Measure final position error or ability to generalize to a new but related path. A clear advantage for the CX
+circuit on novel combinations of moves supports its benefit.
+
+
+Confidence: High. The CX head-direction bump is directly observed (Seelig & Jayaraman 2015). The vector-
+memory proposal is also strongly backed by recent in vivo imaging (Lyu et al. 2022) showing allocentric
+coordinate signals in the FB. The overall attractor nature and vector computations are well-documented in
+insects.
+
+
+
+Insect Mushroom-Body Output Loop (MBON–DAN Feedback). What it computes: Beyond serving as an
+associative memory, the MB output circuit may implement something like a local error/prediction system.
+Kenyon cells (KC) form sparse odor codes, MB output neurons (MBONs) read them, and dopaminergic
+neurons (DANs) provide feedback (Aso et al. 2014 mapping). The loop suggests reward prediction: MBON
+activity can influence DANs, adjusting future learning (inferred by connectomics【20†L11-L18】). APL
+neurons mediate global inhibitory normalization on KCs (Attardo et al. 2015). Thus the MB+MBON+DAN
+loop might predict unconditioned stimuli from odors (Bennett et al. 2021) in each compartment.
+
+
+Wiring diagram: Each MB compartment has ~2000 KCs (excitatory) projecting divergently to ~5–10 MBONs
+(mix of cholinergic excit/inhibitory)【29†L221-L230】. Each compartment has one or two DANs providing
+dopamine to KC→MBON synapses. Remarkably, MBONs feed back to DANs of other compartments: for
+example, MBON-γ1pedc (aversive output) excites appetitive DANs. The APL neuron (single per hemisphere)
+receives from all KCs and broadcasts GABAergic inhibition back to KCs (roughly 1:1 connectivity). Ratio:
+2000:10:1 (KCs:MBONs:DANs).
+
+
+Fixed vs plastic: The critical plastic site is KC→MBON. Under dopamine, active KC→MBON synapses are
+depressed (as shown by electrophysiology)【48†L149-L158】. We can write: Δw_kc-mbon = -η × kc_activity
+× DAN_signal (only depresses). MBON→DAN or KC→APL are thought fixed. The APL inhibitory weight is
+static, acting as normalization (non-plastic). Thus learning is local within each compartment, gated by the
+compartment’s DAN. The MBON→DAN connections implement a fixed feedback (hardwired by
+development).
+
+
+Free parameters: About 2000 KCs × ~10 MBONs = ~2×10^4 synapses per compartment. With ~20
+compartments, total ~4×10^5. After type-sharing (if each KC-MBON type shares a rule), still on the order of
+10^5 independent weights. Because learning weakens, initial values matter. The primary dependency is KC
+count and MBON count. In a compact fly model with ~10^3 KCs and ~5 outputs, it's ~5000 parameters.
+
+
+Models: Bennett et al. (Nat Commun 2021) built a model in which the MBON-DAN loop encodes a prediction
+error; they used it on a cue-switch task. Lipshutz et al. (PLOS Comput Biol 2023) proposed that MB learning
+implements LDA (linear classifier). Both offer code or pseudocode. Their tasks include odor–reward
+association; models capture learning asymmetries (e.g. only LTD) well, though they simplify many
+anatomical details. Earlier models (Gibbons et al. 2003) used a delta rule on MBONs. These models get
+associative learning in MB right; limitations include assumptions like a single DAN per valence.
+
+
+
+
+                                                     10
+Benefit to a small learner: Improves sample efficiency of associative learning and local credit assignment.
+The MB enforces sparse representation (good generalization) and strong local error signals. For example, it
+could learn associations between byte-patterns and rewards faster than plain backprop. The MBON→DAN
+loop may also reduce interference: if one MBON fully predicts a reward, it can suppress further dopamine,
+stabilizing learning (as in Bennett et al. 2021). It primarily serves reuse of class boundaries and efficient
+reward-driven learning.
+
+
+Minimal test: Train a network on a sparse classification task with reward feedback (e.g. classify odors to two
+categories). Compare adding an MB-like sparse layer with DAN-gated plasticity vs a simple RNN. Measure
+how many examples needed to reach performance. Improved learning speed suggests advantage.
+Alternatively, test resistance to distractors (improved retention of learned associations).
+
+
+Confidence: Medium. The anatomy of the MB and its loops is well-mapped (Aso et al. 2014; Eichler et al.
+2017), and the phenomenology of one-shot learning and dopamine gating is established in insects.
+However, exactly what the MBON–DAN feedback computes (prediction vs salience) is still being elucidated
+(Bennett et al. 2021). The main uncertainties are in the precise local rule form and interactions between
+compartments.
+
+
+
+Sleep-Dependent Consolidation. What it computes: Offline restructuring of memory via replay and
+homeostasis. During sleep, the brain reactivates prior experiences (hippocampal “replay” of place-cell
+sequences【9†L68-L77】) and downscales synapses to renormalize weights (Tononi & Cirelli 2006). This is
+shown by rodent and human studies: sequences of hippocampal spikes during rest match waking
+experiences (Wilson & McNaughton 1994), and overall synaptic strengths are lower after sleep (Vyazovskiy
+et al. 2008). The function is to consolidate salient memories (strengthen useful connections through replay)
+while preventing runaway excitation (global weakening)【9†L68-L77】.
+
+
+Wiring diagram: No new neurons, just existing circuits replaying patterns. Key players: hippocampus-cortex
+loops active in slow-wave sleep; thalamocortical circuits generating spindles and slow oscillations. The
+medial septum and raphe nuclei modulate global sleep states. Overall, every memory circuit is involved in
+replay (hipp→cortex), and inhibitory circuits (e.g. slow-wave generation via cortical pyramidal–interneuron
+loops) control downscaling. The “circuit” is the whole brain in a different state, not a distinct pathway.
+
+
+Fixed vs plastic: During sleep, many synapses undergo global scaling: each weight is multiplied by a constant
+<1 (activity-dependent scaling) – effectively plastic at whole-network scale. Locally, replaying specific
+patterns drives LTP/LTD. We can describe two rules: (1) Global scaling: w ← w × (1 – δ) for all weights (δ
+small). (2) Replay-driven Hebbian: for each pair of neurons coactive in a replayed sequence, Δw = η_replay ×
+pre × post (potentiation). Dopaminergic or cholinergic tone modulates which synapses are consolidated
+(evidence: high ACh blocks replay). Importantly, the local rules are just the normal STDP/LTP mechanisms,
+but tagged by replay events.
+
+
+Free parameters: No new weights added. The number of plastic synapses is as in the awake network (could
+be 10^6+), but many are scaled automatically. Effective free “parameters” for consolidation are minimal
+(global scale δ and LTP learning rate during replay). Thus O(1–10^1).
+
+
+
+
+                                                      11
+Models: “Synaptic homeostasis hypothesis” (Tononi & Cirelli, 2003) and biophysical models (DeMasa et al.
+2018) propose frameworks. Royer & Paré (2003) modeled downscaling after LTP. McClelland et al. (1995)
+incorporated consolidation dynamics in CLS models. Computational sleep-replay has been used to reduce
+forgetting in neural nets (e.g. McClelland 1995, Kirkpatrick 2017 EWC though different). Zhou et al. 2026
+(below) show offline replay helps structure learning. The models typically get improved retention; failures
+include pathological overfitting if replay is unstructured.
+
+
+Benefit to a small learner: Improves retention of old tasks and modest sample efficiency. By rehearsing
+past inputs, the network reuses information without new rewards (potentially bolstering generalization to
+unseen cases). Synaptic downscaling frees capacity and prevents saturation. Mechanistically, replay
+interleaves experiences so that old knowledge isn’t erased by new learning; renormalization keeps weights
+in a good range. For example, training a model on tasks sequentially with and without sleep phases would
+likely show less forgetting with sleep.
+
+
+Minimal test: After training on a task to criterion, compare two networks learning a second task: one gets
+“sleep” (random replay of first-task patterns with weak learning) while the other learns continuously. Then
+test performance on the first task. Better retention by the sleep network supports consolidation. Ensure
+total parameters equal.
+
+
+Confidence: Medium. There is abundant evidence for neural replay and homeostatic downscaling (Wilson &
+McNaughton 1994; Vyazovskiy 2008), but linking these to improved generalization remains partly
+theoretical. The exact balance of potentiation vs global weakening is debated (some argue “synaptic
+renormalization” is oversimplified). It’s very plausible, but translating to small networks exactly is still a
+hypothesis.
+
+
+
+Thalamocortical Loops & Recurrence. What it computes: Multi-step and iterative computation via recurrent
+cortical dynamics. Thalamus provides re-entrant connections among cortical areas: for example,
+mediodorsal thalamus sustains prefrontal activity in working memory (Bolkan et al. 2017), and higher-order
+thalamus gates specific cortical streams (Saalmann et al. 2012). Cortical layers exhibit heavy recurrence (A
+and B dynamics). Functionally, these loops can perform attractor dynamics or generate intermediate
+“mental rehearsal” steps. Experimental evidence (Pajevic & Plenz 2012; Bolkan 2017) shows thalamus is
+needed for persistent cortical firing【20†L9-L18】; modeling proposals (Sherman & Guillery 2011) suggest
+thalamus mediates cortical coupling.
+
+
+Wiring diagram: Each cortical area receives bidirectional connections with specific thalamic nuclei. For
+example, prefrontal L5 projects to mediodorsal (MD) thalamus (excitatory), and MD projects back to L3/L5
+PFC. The reticular thalamic nucleus (RTN) provides global inhibition (inhibitory loops). Within cortex, L2/3-L5
+recurrent loops exist (pyramidal–pyramidal excit). No easily cited convergence, but typical cortical
+recurrence: each L2/3 neuron connects to ~100 nearby (Gilbert & Wiesel). Thalamic projections to cortex are
+more focal, often a few hundred target neurons per thalamic cell.
+
+
+Fixed vs plastic: Many thalamocortical synapses are plastic (LTP/LTD found in mediodorsal cortex after
+learning) but plasticity is slower than cortical Hebb. Cortico-thalamic and thalamo-cortical may have gating
+via neuromodulators (e.g. reticular bursts gating thalamus). A possible update: Δw = η × pre_cortex ×
+post_thalamus when certain gating conditions (e.g. during learning tasks) are met. Within cortex, the
+recurrence uses ordinary Hebbian/STDP rules. For simplicity, one might say LTP/LTD operates as usual on
+
+
+
+                                                      12
+recurrent synapses, modulated by behavioral state (rem vs REM sleep, etc.). No explicit “error” gating is
+assumed; it’s unstructured Hebb.
+
+
+Free parameters: If there are N cortical neurons and M thalamic, weights ~ N×M (thalamic afferents) + N^2
+(cortical recurrence). For N=1000, that’s ~10^6. But in small model with 100+100, ~10^4–10^5. Each
+thalamocortical pathway (e.g. MD→PFC) has maybe 10^4 synapses; corticothalamic similar. Overall 10^4–
+10^6 depending on size.
+
+
+Models: Friston’s predictive coding networks use cortical recurrence (Friston 2005). Rubin et al. (Neuron
+2015) modeled cortical loops for temporal integration. Wimmer et al. (Nature Neurosci 2015) and Bolkan et
+al. (2017) studied cortico-thalamic loops in PFC tasks. Lakshminarasimhan et al. (Cell Reports 2024)
+simulated specific connectivity in thalamocortical loops to optimize learning. These models show loops can
+sustain activity and implement gating, though they often simplify actual cell types. They correctly predict
+that knocking out loops impairs multi-step tasks; a limitation is often lack of a clear learning algorithm
+beyond Hebb.
+
+
+Benefit to a small learner: Enables multi-step computation and inner rehearsal. A looped network can hold
+intermediate results (working memory) and iterate through operations (like unrolling a computation). For
+instance, a recurrence could simulate multi-layer inference via time. Mechanism: persistent activity (or
+oscillatory dynamics) in the loop allows the network to “ponder” by feeding output back. This could partly
+compensate for lack of explicit planning. However, without a clear local plasticity rule for iterative logic, the
+benefit is qualitative.
+
+
+Minimal test: Train a sequential inference task (e.g. computing parity by iterative stepwise XOR) with and
+without recurrent loops. Both networks have ~60k weights. The looped model can recycle its hidden state
+multiple times per input; measure accuracy after few “recurrent passes”. If it solves tasks requiring depth >1
+that the feedforward model fails, loops are beneficial.
+
+
+Confidence: Medium. Strong evidence (Bolkan et al. 2017) shows thalamic loops are crucial for PFC
+maintenance. However, exactly how cortical recurrence is used for complex computation is less clear
+experimentally. The concept is plausible (attractors, working memory) but bridging it to algorithmic benefits
+(like planning) is theoretical.
+
+
+
+Attention (Learned Routing in Cortex). What it computes: Selective gain modulation to route information
+to the focus of processing. Attention effectively multiplies the gain of relevant neuron populations or
+modulates synaptic efficacy (e.g. via cholinergic ACh or via thalamic pulvinar gating)【59†L1-L8】.
+Biologically, attention is shown by increased firing and synchrony for attended stimuli (Fritz et al. 2007) and
+by pulvinar's role in coordinating cortical areas (Saalmann 2012, Science: “pulvinar regulates cortical
+transmission based on attention”【59†L1-L8】). Models propose that “attention keys” (learned signals) gate
+a winner-take-all selection of inputs. Essentially it routes task-relevant features through selected channels.
+
+
+Wiring diagram: In frontoparietal cortex, top-down feedback from areas like FEF/LIP projects to sensory
+areas, synapsing on pyramidal and interneurons (gain change). Neuromodulatory centers (basal forebrain
+for ACh, locus coeruleus for NE) broadcast to cortex to adjust global gain. The pulvinar thalamus receives
+inputs from visual areas and FEF, and projects back to higher and lower cortical areas. A gating circuit (e.g.,
+
+
+
+
+                                                       13
+specialized Thalamic Reticular gating) can selectively inhibit or allow passage. The basic connection: a
+biasing “gate” neuron inhibits a competing population, implemented by local interneurons or thalamic
+gates. Convergence: Pulvinar cells receive from many cortical columns; divergence: each pulvinar axon
+innervates ~hundreds of cortical neurons.
+
+
+Fixed vs plastic: Synapses conveying attentional signals (e.g. FEF→V4) can undergo Hebbian/LTP (Moore et al.
+2003). Learned routing implies these top-down weights adapt with experience. We might write: Δw_top-
+down = η × pre_attention_signal × post_sensory_activity. Neuromodulator-driven gain is a scalar
+modulator (ACh) adjusting effective weights in real-time (not via synaptic change). Winner-take-all selection
+could use plastic lateral inhibition among columns (e.g. cortical interneurons adapting to emphasize some
+inputs). Overall, plasticity is task-driven (reinforced by reward of focusing correctly) but specifics are unclear.
+A plausible local rule: if an attended input repeatedly predicts reward, its cortical synapses are strengthened
+by DA.
+
+
+Free parameters: Depends on the number of attentional sources and targets. If M attention “gates” (e.g.
+features) and N sensory units, weights ~ M×N. For a few dozen possible attention channels and hundreds of
+targets, parameters ~10^3–10^4. Also include gain factors per cortical neuron (~N). Order 10^3.
+
+
+Models: Many AI and neuroscience models: Mnih et al. 2014 (attention nets), Hamker 2011 (Biol Cybern). For
+brain, O’Reilly et al. (J CogNeuro 1993) modeled frontal gating. Saalmann et al. 2012 gave physiological data;
+Buschman & Miller 2007 (PNAS) showed oscillatory gating in PFC. More recently, Lisman & Jensen (2013)
+proposed theta-gamma coding for WTA selection. Models often capture improved selection of relevant
+features; some fail to explain fast switching between tasks or why certain cells act as “keys.”
+
+
+Benefit to a small learner: Enhances sample efficiency and rule reuse by focusing computation on task-
+relevant subspaces. For instance, learning to apply a rule only to highlighted features reduces interference
+by irrelevant inputs. Mechanism: attention amplifies or routes specific neural activations so that the learner
+effectively solves a simpler problem (less noisy input). It also approximates a learned gating function (like
+using feature-specific weights). One could also consider it enabling multitasking. However, it requires some
+supervisory signal (reward or instruction) to learn the routing.
+
+
+Minimal test: Train on a multi-feature discrimination where only one feature is predictive. Compare a net
+with a learnable attention-gate (e.g. a multiplicative mask on inputs) vs a standard net. Both have ~60k
+weights. After training, test on variations where the predictive feature is new. The attention-net should zero
+in on the correct dimension faster (fewer samples). Measure classification accuracy vs number of trials.
+
+
+Confidence: Medium. There is solid physiological evidence that attention alters gain and mediates routing
+(Saalmann 2012【59†L1-L8】). But the mechanism of “learned keys” (how the network discovers what to
+attend) is mostly theoretical. Attention in biology is a complex mix of bottom-up and top-down signals, and
+our abstraction as a learned routing structure is plausible but simplified.
+
+
+
+
+                                                        14
+                  Evidence                               Local Rule
+Circuit                           Params (fewest)                      Test Cost    Justification
+                  Strength                               Known?
+
+                  High (live
+                  imaging of                                                        Clear ring attractor,
+                  bump &                                 Yes                        few neurons,
+Central                           ~10^2–10^3                           Low (100Hz
+                  vector                                 (attractor                 simple WTA
+Complex                           (small ring/FB)                      time)
+                  signals)                               Hebb/trace)                learning, easy to
+                  【20†L9-                                                           simulate.
+                  L16】
+
+                  Medium–
+                  high
+                  (anatomy +
+                                                                       Low          Compartmentalized
+                  associative
+Mushroom-                         ~10^4                  Yes (KC-      (sparse      & sparse, known 3-
+                  experiments)
+Body Loop                         (KC→MBON)              MBON LTD)     encoding     factor DA rule
+                  【29†L213-
+                                                                       trials)      【48†L153-L161】.
+                  L222】
+                  【48†L149-
+                  L158】
+
+                  High (lesion
+                                                                                    Strong theory &
+                  & replay        ~10^5–10^6                           High
+                                                         Partial                    data (retrograde
+Hippocampus–      studies,        (massive                             (requires
+                                                         (Hebbian +                 amnesia【10†L63-
+Neocortex (CLS)   modeling)       hippocampal                          days of
+                                                         novelty)                   L71】), but many
+                  【9†L19-         nets)                                replay)
+                                                                                    synapses.
+                  L27】
+
+                  High (DA-                                                         Well-supported DA
+                                                                       Medium
+                  RPE                                                               RPE models; local
+                                                         Yes (DA-      (many
+BG Actor–Critic   experiments)    ~10^3–10^4                                        3-factor rule
+                                                         gated STDP)   trials for
+                  【61†L115-                                                         【61†L63-L71】;
+                                                                       RL)
+                  L123】                                                             moderate size.
+
+                  High (classic
+                                                                                    Known structure,
+                  motor
+                                                                                    explicit error signal,
+                  learning                               Yes (PF-PK    Low (few
+Cerebellum                        ~10^4–10^6                                        sparse code
+                  evidence)                              LTD)          sec tasks)
+                                                                                    【29†L215-L223】;
+                  【28†L48-
+                                                                                    large fan-in.
+                  L56】
+
+                  Medium
+                                                                                    Empirical replay
+                  (replay/
+                                                         Partial       High (long   exists, but synaptic
+Sleep             downscaling     ~10^0–10^1
+                                                         (Hebb +       offline      rules are global/
+Consolidation     data)           (global)
+                                                         scaling)      periods)     homeostatic, not
+                  【9†L68-
+                                                                                    specific.
+                  L74】
+
+
+
+
+                                                    15
+                     Evidence                               Local Rule
+ Circuit                              Params (fewest)                       Test Cost      Justification
+                     Strength                               Known?
+
+                                                                                           Extensive evidence
+                     High
+                                                                            Medium         of coding;
+                     (neuronal                              Yes
+ Grid/HD                              ~10^3–10^5 (size                      (path-         continuous
+                     recordings                             (attractor
+ Attractors                           of sheet)                             integration    attractors well-
+                     of grids/HD)                           Hebb)
+                                                                            trials)        modeled (grid
+                     【36†L1-L4】
+                                                                                           spacing)
+
+                     High (fMRI/
+                     EEG, model                                                            Supported by
+                     successes)                                                            modeling and
+                                      ~10^4                 Yes             Medium
+ PFC–BG Gating       【20†L9-                                                               human studies (KC
+                                      (cortex×striatum)     (STDP+DA)       (WM tasks)
+                     L16】                                                                  clang gating)
+                     【61†L53-                                                              【61†L55-L63】.
+                     L60】
+
+                     Low–
+                                                                                           Theories backed by
+ Cortical            medium                                 No (mostly
+                                      ~10^4–10^5                            High (deep     one recent dendrite
+ Feedback/           (new apical                            proposed
+                                      (deep networks)                       net tasks)     study; otherwise
+ Apicals             data)                                  rules)
+                                                                                           speculative.
+                     【63†L1-L4】
+
+                     Medium                                                                Known anatomy;
+                     (PFC loop &                                                           Bolkan 2017
+                                                            Partial
+ Thalamocortical     gating           ~10^4–10^6                            Medium         showed necessity
+                                                            (Hebb/
+ Loops               evidence)        (cortex×thalamus)                     (WM tests)     for WM, but
+                                                            unknown)
+                     【20†L9-                                                               learning rules
+                     L16】                                                                  unclear.
+
+                                                                                           Pulvinar
+                                                                                           experiments
+                     Medium
+                                                                            Medium         【59†L1-L8】 show
+ Attention           (pulvinar                              No
+                                      ~10^3                                 (attentional   gating, but
+ Routing             gating data)                           (unspecified)
+                                                                            tasks)         “learned keys” idea
+                     【59†L1-L8】
+                                                                                           is largely
+                                                                                           hypothetical.
+
+Each circuit is judged by evidence (strongest experimental support), parsimony of parameters, presence of
+local plasticity rules, and how costly the minimal test would be. Insects’ central complex and MB loop lead
+by having very compact, well-mapped circuits and known plasticity (thus high evidence and few
+parameters). Classical mammalian circuits follow; models of cortical feedback and attention are promising
+but less substantiated, and require large parameter counts.
+
+
+
+
+                                                     16
+
