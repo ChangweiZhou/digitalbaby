@@ -35,9 +35,13 @@ OUT, EOS, BATCH, STAGE_UPDATES, DRYTAG = E.OUT, E.EOS, X.BATCH, E.STAGE_UPDATES,
 # E16-D replay controls on arm T (default reproduces E16): uniform = one buffer of 1,024 entries per block, replay drawn uniformly;
 # balanced = the same buffer kept per family, each replay draw from a family chosen uniformly among those in the buffer;
 # all_balanced = every presented entry kept per family (distinct), draws balanced per family;
-# oracle = the whole batch is the twin's joint stream (fresh items of every family seen so far, equal weight), learned by the local rule.
+# oracle = the whole batch is the twin's joint stream (fresh items of every family seen so far, equal weight), learned by the local rule;
+# share = per-family buffers of 1,024 per block, the replay half split equally among the EARLIER families (the current family is never
+#         replayed), so each earlier family's exposure rises (F1 50% of the batch during F2; F1 and F2 25% each during F3).
+# Arm M (added 8 Nov 12:30 EST, before E16-D's results): backprop through time at decay 0.25 on exactly arm T's uniform-replay batches,
+# so the rule is the only difference from T.
 REPLAY16 = os.environ.get("E16_REPLAY", "uniform")
-assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle")
+assert REPLAY16 in ("uniform", "balanced", "all_balanced", "oracle", "share")
 RTAG = "" if REPLAY16 == "uniform" else f"_{REPLAY16}"
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
@@ -139,9 +143,10 @@ def life(arm, seed):
     path = OUT / f"e16_life_{arm}{RTAG if arm != 'D' else ''}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e11_dev_M_{seed}.pt"))
-    local = arm != "D"
-    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(E.WD if local else .3), betas=(.9, .98))
+    local = arm not in ("D", "M")
+    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
     store = X.Store(seed) if local else None
+    rule = "D" if arm == "M" else arm      # arm M: T's data pipeline, D's update
     rng = Random(seed + 9)
     P, comp = panels(seed)
     entries = {f: family_entries(f, seed) for f in ("F1", "F2", "F3")}
@@ -168,7 +173,12 @@ def life(arm, seed):
         for u in range(STAGE_UPDATES):
             if arm == "D" or REPLAY16 == "oracle":
                 batch = [next(joint) for _ in range(BATCH)]
-            elif fbuf:
+            elif fbuf and REPLAY16 == "share" and sorted(fbuf) != [fam]:
+                fams = [f for f in sorted(fbuf) if f != fam]
+                rp = [render(rng.choice(fbuf[fams[i % len(fams)]]), rng) for i in range(BATCH // 2)]
+                new = [next(cur) for _ in range(BATCH // 2)]
+                batch = new + rp; presented += new
+            elif fbuf and REPLAY16 != "share":
                 fams = sorted(fbuf)
                 rp = [render(rng.choice(fbuf[fams[rng.randrange(len(fams))]]), rng) for _ in range(BATCH // 2)]
                 new = [next(cur) for _ in range(BATCH // 2)]
@@ -179,7 +189,7 @@ def life(arm, seed):
                 batch = new + rp; presented += new
             else:
                 batch = [next(cur) for _ in range(BATCH)]; presented += batch
-            losses.append(E.update(m, opt, batch, arm, store))
+            losses.append(E.update(m, opt, batch, rule, store))
         stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=time.process_time() - t0, scores=evaluate()))
         sc = stages[-1]["scores"]
         print("e16", arm, seed, "after", f"{fam}.{block}",
@@ -189,7 +199,7 @@ def life(arm, seed):
               "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
               f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
         path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
-        if local and REPLAY16 != "oracle":
+        if (local or arm == "M") and REPLAY16 != "oracle":
             # the stage's presented items as replayable entries (family + operands), 1,024 of them, as E11-D/E15
             ents = []
             for p, _ in presented:
@@ -200,7 +210,7 @@ def life(arm, seed):
                     ents.append(("op", task, int(bytes(p[1:3])), int(bytes(p[-3:-1]))))
             if REPLAY16 == "uniform":
                 buffer += rng.sample(ents, min(1024, len(ents)))
-            elif REPLAY16 == "balanced":
+            elif REPLAY16 in ("balanced", "share"):
                 fbuf.setdefault(fam, []).extend(rng.sample(ents, min(1024, len(ents))))
             else:   # all_balanced: every distinct presented entry of the family
                 fs = fset.setdefault(fam, set()); fl = fbuf.setdefault(fam, [])
