@@ -303,3 +303,78 @@ Cell silenced at k = 12: ≤ 6.5% in every arm and stage wherever the live score
 **What E11 refutes.** That the E8 learner plus this cell keeps what it learns across a sequence of operations under the sign rule with half-batch episode replay. The forgetting is far worse than E8's (E8 held eight operations at 75–98%; E11 holds the current operation and little else), in both births, and the ceiling shows it is not capacity. E11 does not diagnose the cause. The candidates, each one arm: (1) weight decay 1.0 per update, which E12-B suggests costs 12–15 points of E8 retention by itself and which E10 found erodes exact interfaces; (2) the cell as an interference channel, since the new operation's gates change the state statistics the old readout depends on, and add at k = 0 (where the window alone suffices) fell faster than at k = 8–12 in two seeds, so the window path is overwritten before the cell path; (3) fixed-letter episodes being learned by rote rather than maintaining the rule, testable by replaying fresh renders of the stored pairs with the stored answers; (4) blocked presentation, since E9 showed interleaving holds everything while the stream is stationary. E13 Part A (decay versus averaging) bears on (1) directly.
 
 **Harness lessons, on record.** Two restarts: a buffer-fill slip caught only after the first stage (a dry run of the full loop, now `E11_STAGE_UPDATES`, would have caught it in two minutes), and a mechanism dependency that no dry run catches: E8's store-mediated replay needs a stage's episodes to fit the store, which random letters break. Rule for the next experiment: list every mechanism carried over and the condition it needs in the new task, in the predictions file, before launch.
+
+## E11-D: why the trace learner forgets (7 November 2026)
+
+Predictions and mechanism audit: `E45_PREDICTIONS.md`, E11-D. Four one-change arms on the E11 memory-birth trace learner (arm MT), three seeds; receipts `exp45/e11_life_MT_wd0.25_*`, `_fr_*`, `_int_*`, `_wd0.25_fr_*`; tables in `exp45/SUMMARY_E11.md`. The trace gradient was computed by the backward scan that is algebraically identical to the forward trace (qualification: 1e-6), so the updates are E11's; the stage-1 scores reproduce E11's within a point (float-level divergence).
+
+**After the fourth stage, exact % at k = 12 (add sub max min), and the add+sub mean:**
+
+| Arm | 73129 | 93683 | 116089 | add+sub mean |
+|---|---|---|---|---|
+| E11 baseline: decay 1.0, episode replay, blocked | 15 10 61 87 | 0 2 41 58 | 3 4 44 66 | 13 / 1 / 4 |
+| decay 0.25 | 64 48 88 96 | 57 49 72 97 | 45 53 79 93 | 56 / 53 / 49 |
+| fresh-render replay (decay 1.0) | 52 39 87 94 | 14 12 74 85 | 4 1 49 69 | 46 / 13 / 2 |
+| interleaved, no replay (decay 1.0) | 78 70 96 94 | 15 12 74 64 | 12 16 65 72 | 74 / 13 / 14 |
+| decay 0.25 + fresh-render replay | 72 65 92 96 | 68 62 90 96 | 62 52 92 95 | 69 / 65 / 56 |
+| backprop ceiling (E11 MD) | 89 88 96 96 | 90 90 95 96 | 92 95 97 98 | 89 / 90 / 94 |
+
+At k = 0 after the fourth stage, add/sub: decay 0.25 alone 15/16, 32/27, 29/46; combined 64/61, 64/58, 60/53; baseline 6/4, 2/4, 6/9. At k = 20: combined 58/54, 63/58, 58/47. Cell silenced at k = 12: ≤ 5% on add and sub in every arm. Shortcut ceiling for max and min, 45–54%, as E11.
+
+**Verdicts.**
+- P11D.1 (decay 0.25 the dominant cause): the effect is the largest in the table, from 0–15% to 45–64% on add and sub, but the literal gate of ≥ 50% on both in every seed is met in only one seed (73129 add 64 / sub 48 misses on sub; 93683 57 / 49; 116089 45 / 53). The birth's add89 is held at 44–46% after the first life stage (27–41 before); the other birth operations are not, since nothing replays them. Dominant cause confirmed; gate narrowly missed.
+- P11D.2 (fixed-letter episodes): refuted as a cause on its own; +33 points in one seed, +12 and −2 in the others.
+- P11D.3 (blocked presentation): refuted. Interleaving all four operations holds everything at 70–96% in one seed and never acquires add or sub (12–16%) in the other two, in any of the four blocks. For this learner the sign rule does not learn four competing carry-type and comparison operations from a mixed stream reliably; E9's window net did, with eight.
+- P11D.4 (combined at least as good as the better single arm): holds in every seed on add, and on sub within one point.
+
+**What it means.** Decay 1.0 per update was the main reason the trace learner forgot, as E13 found the same day for the window net; with decay 0.25 the learner keeps add and sub at about half after three further operations instead of nothing. Fixed-letter episode replay is a second, smaller cause that shows once decay is fixed: with fresh-render replay the k = 0 scores are kept (60–64% against 15–32%), so the window path stops memorizing the 1,024 fixed prompts and maintains the rule. Together they recover retention to 52–72% on add and sub, 87–96% on max and min, against a ceiling of 88–98%. The remaining gap of 20–35 points on the carry-type operations is the next target; the candidates are lower decay still (E14 Part B measures the curve on the window net), the replay share, and batch 256 (E13 Part B). Interleaving is not a substitute for replay in this learner. The settings for the cell learner going forward are decay 0.25 and fresh-render replay of stored pairs.
+
+## E15: the fixed settings applied (7 November 2026)
+
+Predictions and mechanism audit: `E45_PREDICTIONS.md`, E15. Settings from E11-D: decay 0.25 on local arms, fresh-render replay of stored pairs, trace by the scan form (identical to the forward trace at 1e-6; with split gates, qualification `exp45/QUALIFY_E11_g2.json`). Three seeds each. Tables: `exp45/SUMMARY_E11.md` (E11-D section) and the receipts named below.
+
+**Part A, interleaved stream at decay 0.25** (`exp45/e11_life_MT_wd0.25_int_*`). The four mod-97 operations presented together in one stream of 4 × 6,144 updates, no replay, memory birth, scored after every block. Exact % at k = 12 (add sub max min) after block 1 and after block 4, and k = 20 after block 4:
+
+| Seed | After block 1 | After block 4 | k = 20 after block 4 | E11-D at decay 1.0, after block 4 |
+|---|---|---|---|---|
+| 73129 | 89 89 98 97 | 85 89 98 96 | 84 86 96 96 | 78 70 96 94 |
+| 93683 | 86 89 95 96 | 87 91 98 97 | 87 89 97 96 | 15 12 74 64 |
+| 116089 | 78 83 91 96 | 87 85 94 98 | 86 83 92 97 | 12 16 65 72 |
+
+P15.1 holds in every seed. The mixed-stream failure of E11-D was decay, not the rule or the cell: at decay 0.25 the sign rule with the trace learns four competing operations from one stream to 83–98%, within 2–10 points of the backprop ceiling, and the two seeds that had learned nothing of add and sub at decay 1.0 are at 85–91% after the first block.
+
+**Part B, the no-memory birth at the fixed settings** (`exp45/e11_life_NT_wd0.25_fr_*`): acquisition of holding and its retention in one blocked life with fresh-render replay. Exact % at k = 12:
+
+| Seed | add after its stage (E11 NT at decay 1.0) | After the fourth stage: add sub max min | add+sub mean | k = 20 add sub |
+|---|---|---|---|---|
+| 73129 | 85 (90) | 44 33 89 96 | 38 | 32 25 |
+| 93683 | 88 (78) | 39 31 82 93 | 35 | 29 22 |
+| 116089 | 84 (63) | 55 42 87 94 | 48 | 42 38 |
+
+P15.2: acquisition ≥ 60% holds in every seed (84–88%, and no longer seed-dependent as at decay 1.0); the retention gate of add+sub mean ≥ 40% after the fourth stage holds in one seed (48) and misses by 2–5 points in two (38, 35), against about 1 for the same births at decay 1.0. Holding acquired in life is kept at roughly half the rate of holding developed at birth (E11-D combined arm: 69 / 65 / 56).
+
+**Part D, the ring at decay 0.25** (receipts `exp45/e10_life_ring_sign_d32768_wd0.25_*`, `..._ring_conf_sign_d32768_wd0.25_*`; births unchanged). Single-operation interface accuracy (+ − > <, exact %) at birth and at the end of 8,192 updates of sign-rule life on the taught pairs:
+
+| Seed | Birth | Life at decay 1.0 (E10) | Life at decay 0.25 |
+|---|---|---|---|
+| 73129 | 100 100 100 100 | 100 100 100 100 | 100 100 100 100 |
+| 93683 | 63 62 93 93 | 25 26 49 49 | 67 64 92 92 |
+| 116089 | 96 96 97 97 | 36 33 55 59 | 81 81 96 95 |
+
+Held-pair composition at the end of life at decay 0.25: 100/100/100/100, 45/42/88/90, 65/65/93/94 (birth zero-shot 100/100/100/100, 46/42/84/88, 86/88/94/95). Confounded-pair arm at decay 0.25: 100/100, 70/66, 72/75 on the cross pairs (decay 1.0: 100/100, 22/20, 24/23), and the comparison interfaces that the confounded life never trains stay at 100, 47/48 and 84/85 (decay 1.0: 17/14, 11/13, 13/10). P15.4 holds in seeds 73129 and 93683 (no erosion; 93683's carry interfaces rise 4 points) and misses in 116089 (15 points lost on the carry interfaces). The ring now composes by wiring and learns by the local rule in one life; the residual erosion in one seed points at a lower decay or a gate that writes only when wrong.
+
+**Part C, split write and read gates:** births complete (92–99% at k = 12, as the single-gate births); the fixed-settings lives are running and are filed as an addendum below when they finish.
+
+**What E15 establishes so far.** With decay 0.25 the local-rule learner (a) learns a mixed stream of four operations to within a few points of backprop, which removes the last reason to doubt that the sign rule can learn from an interleaved stream such as text; (b) acquires working state from a birth that never required it in every seed, at 84–88%; (c) on the ring, learns taught compositions by the local rule without eroding the innate interfaces in two seeds of three. The remaining targets are retention of holding acquired in life (35–48% add+sub after three further operations), and the one seed of ring erosion.
+
+**Part C addendum, split write and read gates** (`exp45/e11_dev_M_g2_*`, `exp45/e11_life_MT_g2_wd0.25_fr_*`). Births by backprop through time reach 92–99% at k = 12, as the single-gate births. The fixed-settings life, exact % at k = 12 after the fourth stage (add sub max min), with the single-gate learner at the same settings (E11-D combined arm) for comparison:
+
+| Seed | Split gates | add+sub mean | k = 20 add sub | Single gate (E11-D) | add+sub mean | k = 20 add sub |
+|---|---|---|---|---|---|---|
+| 73129 | 59 61 93 96 | 60 | 41 45 | 72 65 92 96 | 69 | 58 54 |
+| 93683 | 55 46 87 94 | 51 | 42 31 | 68 62 90 96 | 65 | 63 58 |
+| 116089 | 60 53 91 97 | 56 | 42 39 | 62 52 92 95 | 56 | 58 47 |
+
+P15.3 is refuted: the split gates are 9–14 points worse in two seeds and equal in one, and extrapolation to k = 20 drops 14–20 points below k = 12 (single gate: 0–14). Codex's shelf result for separate gates does not carry into this learner at this scale; the single tied gate stays. The silenced audit holds (≤ 5% on add and sub).
+
+**E15 verdicts.** P15.1 holds (mixed stream at decay 0.25, every seed). P15.2 holds on acquisition, misses the retention gate by 2–5 points in two seeds. P15.3 refuted. P15.4 holds in two seeds, misses in one.

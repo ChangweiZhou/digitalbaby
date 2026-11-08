@@ -1,0 +1,66 @@
+{
+  "logged_E8_profile": {
+    "key": "C_wd1_73129",
+    "part": "C",
+    "kind": "E8",
+    "seed": 73129,
+    "command": [
+      "exp8_life.py",
+      "C",
+      "73129"
+    ],
+    "env": {
+      "EXP45_HIDDEN": "512",
+      "E8_BATCH": "64",
+      "E8_LR": ".001",
+      "E8_WD": "1.0",
+      "E8_SCHEDULE": "blocked",
+      "E8_REPLAY_SHARE": "1/2",
+      "E8_BUFFER_CAP": "1024",
+      "E8_REPLAY_SAMPLING": "uniform",
+      "E8_SAVE_STAGES": "0",
+      "E8_DIAGNOSTICS": "1",
+      "E8_RUN_PREFIX": "e14_C_wd1_"
+    },
+    "receipt": "e14_C_wd1_e8_life_C_73129.json",
+    "stages": 10,
+    "diagnostic": "e14_C_wd1_e8_life_C_73129.diagnostics.jsonl",
+    "reference": "e8_life_C_73129.json",
+    "status": "complete",
+    "returncode": 0,
+    "wall_seconds": 2857.3679878748953,
+    "log": "exp45/logs/e14_C_wd1_73129.log"
+  },
+  "E7_profile": {
+    "key": "profile_E7_73129",
+    "part": "profile",
+    "kind": "E7",
+    "seed": 73129,
+    "command": [
+      "exp7_decon.py",
+      "SCR",
+      "73129"
+    ],
+    "env": {
+      "EXP45_HIDDEN": "512",
+      "E7_DOSE": "16384",
+      "E7_BATCH": "64",
+      "E7_WD": "1.0",
+      "E7_RUN_PREFIX": "e14_profile_E7_"
+    },
+    "receipt": "e14_profile_E7_e7_life_SCR_h512_d16384_73129.json",
+    "last_step": 16384,
+    "reference": "e7_life_SCR_h512_d16384_73129.json",
+    "status": "complete",
+    "returncode": 0,
+    "wall_seconds": 748.4914937503636,
+    "log": "exp45/logs/e14_profile_E7_73129.log"
+  },
+  "E8_cpu_seconds": 2477.6299169999998,
+  "E7_cpu_seconds": 630.304064,
+  "forecast_total_cpu_seconds": 65512.07114,
+  "forecast_remaining_cpu_seconds": 62404.137159,
+  "estimated_six_birth_cpu_seconds": 1506.0656669999998,
+  "ideal_remaining_six_core_hours": 2.8890804240277776,
+  "forecast_note": "21 E8 lives,19 E7 lives including profile,6 births. Birth estimate uses historical metadata; batch256 and contention vary. Ideal CPU parallel time is not a wall-clock promise."
+}

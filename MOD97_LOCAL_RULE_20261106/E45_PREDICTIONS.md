@@ -153,3 +153,51 @@ Decision: P10.1 and P10.2 holding establish that composition can be innate at th
 **Amendment (7 November 2026, after stage 2 of the first launch).** The first launch's replay buffer was filled with *fresh* renders of each stage's items (new distractor letters), which had never been presented and whose exact keys the store did not hold, so every replay answer was an unanchored self-generated guess. That is not the E8 mechanism (E8 replays presented items, whose keys the store holds). Observed under the flawed buffer: from the no-memory birth under the trace rule, add97 at k = 12 fell from 90% to 2–4% during the subtraction stage and subtraction itself learned poorly (52% at k = 0). The buffer now holds 1,024 of the stage's presented prompts, as E8. Stage 1 (no replay yet) is deterministic and unchanged; the partial receipts of the first launch are archived under `exp45/archive_e11_freshbuffer/`. No prediction was changed.
 
 **Second amendment (7 November 2026, after stage 2 of the second launch).** With presented prompts in the buffer, replay still failed to retain (add97 from the memory birth under the within-step rule: 80–85% at k = 0 → 1–4% during the subtraction stage). Cause: with distractor letters every presentation is a new exact key; a stage writes about 393,000 distinct prompts (three keys each) into the 65,536-key store, which evicts almost all of them within the stage and all of the previous stage's by the end of the next, so over 95% of replay answers were unanchored self-generated guesses. E8's taught set was 2,350 fixed renders, so its store held every key and replay was, in effect, the presented answer. E11 now keeps that explicitly: the buffer holds 1,024 episodes per stage (prompt and answer as presented) and replay draws from them; the exact-key store is still written and read at evaluation, as before. This is E8's effective mechanism with the store's capacity dependence on random letters removed; it is not self-generated replay, and the report will say so. Partial receipts of the second launch are archived under `exp45/archive_e11_storeoverflow/`. No prediction was changed.
+
+## E11-D: why the trace learner forgets (7 November 2026, written before launch)
+
+**Question.** E11 refuted retention (P11.5): under the sign rule with half-batch episode replay, the E8 learner plus the diagonal cell keeps only the current operation, while the backprop ceiling keeps everything. Four candidate causes, one change each, on the memory-birth trace learner (arm MT, three seeds, everything else as E11). Codex's E13 (same day) found that at batch 64 decay 0.25 alone lifts E8's retention from 76–80% to 94% and held composition from 48–55% to 81–85%, so decay is the first arm.
+
+| Arm | Change from E11 MT | Tests |
+|---|---|---|
+| MT_wd0.25 | decoupled decay 0.25 instead of 1.0 on the local arms | decay as the cause (E13-A1) |
+| MT_fr | replay re-renders the stored pairs with fresh letters and k, answer as stored | rote learning of fixed-letter episodes |
+| MT_int | the four operations presented interleaved in one stream of 4 × 6,144 updates, no replay, scored after each 6,144 | blocked presentation (E9: interleaving holds while stationary) |
+| MT_wd0.25_fr | decay 0.25 and fresh-render replay | the two together |
+
+Birth: `e11_dev_M_{seed}.pt` unchanged. Panels, seeds, doses, store, loss, optimizer otherwise unchanged. Receipts `exp45/e11_life_MT{tag}_{seed}.json`; E11's MT and MD receipts are the baseline and ceiling.
+
+**Compute note, on record.** The trace gradient is computed by the backward scan of the learning signal (`trace_grads_scan`), which is the forward trace's sum re-ordered: Λ_s = L_s + r_{s+1} Λ_{s+1}, dLoss/dWc = Σ_s (Λ_s ⊙ gc_s)ᵀ p_s. Qualification: scan versus forward trace, maximum relative error 1e-6 on all four tensors. The updates are therefore identical to E11's; the scan is not local in time and is used only for speed. The locality claim rests on the forward form, which E11 ran.
+
+**Mechanism audit (what is carried over and the condition each needs).** Episode buffer replay (E11): needs the stored episodes to be the presented ones; satisfied by construction, 1,024 per stage. Fresh-render replay (new): needs the pair and operation recoverable from the stored prompt; the prompt's bytes 1–2 and the two before '=' are the operands, the operation is the stage's; checked in the dry run. Interleaved stream (new): `stream()` already draws uniformly over all task-pair entries; the buffer is unused. The exact-key store (E8/E11): written at every update and read at evaluation; inert for held items; no condition. Births: same architecture file, loaded by path. Dry run of the full loop at 4 updates per stage passed for all four arms.
+
+**Predictions.**
+- P11D.1 Decay 0.25: add and sub at k = 12 after the fourth stage ≥ 50% in every seed (E11 MT: 0–15%); the development operations mod 89 at k = 12 after the first life stage ≥ 40% (E11: 2–41%). If this holds, decay is the dominant cause, as in E8.
+- P11D.2 Fresh-render replay at decay 1.0: add and sub final at least 20 points above E11 MT in every seed, otherwise fixed letters are not the cause. Low confidence.
+- P11D.3 Interleaved, no replay: all four operations ≥ 70% at k = 12 after the fourth block in every seed (E9 analog: 91–92% in the window net).
+- P11D.4 Combined: add and sub final at least as high as the better single arm in every seed.
+- Shortcut ceiling as E11: max and min count as memory only above about 54%.
+
+**Commands** (from `MOD97_LOCAL_RULE_20261106/`, seeds 73129 93683 116089): `E11_TRACE=scan E11_WD=0.25 python3 exp11_cell.py MT SEED`; `E11_TRACE=scan E11_REPLAY=fresh python3 exp11_cell.py MT SEED`; `E11_TRACE=scan E11_SCHEDULE=interleaved python3 exp11_cell.py MT SEED`; `E11_TRACE=scan E11_WD=0.25 E11_REPLAY=fresh python3 exp11_cell.py MT SEED`.
+Smoke timing before launch: scan trace 37 ms per update, within-step 32 ms (forward trace 205 ms).
+
+## E15: the fixed settings applied (7 November 2026, written before launch; Codex's E14 running in parallel)
+
+Four one-change parts at the settings E11-D fixed (decay 0.25 on local arms; fresh-render replay of stored pairs; trace by the scan form, identical to the forward trace at 1e-6). Three seeds each.
+
+| Part | Arm | Change | Question |
+|---|---|---|---|
+| A | MT_wd0.25_int | E11 memory birth, interleaved four-operation stream, no replay, decay 0.25 | can the sign rule learn a mixed stream once decay is fixed (E11-D's interleaved arm at decay 1.0 failed in two seeds) |
+| B | NT_wd0.25_fr | E11 no-memory birth, blocked, decay 0.25 + fresh-render replay | acquisition of holding and its retention in one life |
+| C | M_g2 births + MT_g2_wd0.25_fr | split write gate w and read gate o on the cell (`h = r h + w c`, readout `o ⊙ h`), new births by backprop through time, then the fixed-settings life | Codex's shelf check: separate gates 87–98% against 57–82% tied; does it hold in this learner |
+| D | ring_sign_wd0.25, ring_conf_sign_wd0.25 | E10 ring, sign-rule life at decay 0.25 (births d32768 unchanged) | does lower decay stop the interface erosion that refuted P10.4 |
+
+**Mechanism audit.** Interleaved stream: `stream()` draws uniformly over all task-pair entries (E11-D, ran). Fresh-render replay: pairs recovered from prompt bytes, stage's operation (E11-D, ran). Split gates: the trace is re-derived (gc = w(1 − c²), gr = h_{t−1} r(1 − r), gw = c w(1 − w), each with the r-recurrence; the read gate is instantaneous and trained by autograd); qualification compares forward trace, scan and backprop through time on the six cell tensors. Births for C are new (architecture changed); the baseline for C is E11-D's MT_wd0.25_fr (69 / 65 / 56 add+sub mean), whose births differ only by the absent gates. Ring decay: a single optimizer argument; default reproduces E10. Dry runs of all four parts passed (4 updates per stage; 512-update dry birth for C).
+
+**Predictions.**
+- P15.1 (A) With decay 0.25 the interleaved learner reaches ≥ 70% at k = 12 on add and sub in every seed after the four blocks (E11-D at decay 1.0: 78 / 15 / 12 on add). If it still fails in a seed, the mixed-stream failure is not decay and becomes a first-order problem for the language stage.
+- P15.2 (B) From the no-memory birth under the fixed settings, add after its stage ≥ 60% at k = 12 (as E11 NT: 90 / 78 / 63) and after the fourth stage add+sub mean ≥ 40% in every seed (E11 NT: 26 / 24 / 25 total mean, add+sub ≈ 1).
+- P15.3 (C) Split gates: births reach ≥ 85% at k = 12 as the single-gate births did; the fixed-settings life ends with add+sub mean at least 5 points above the single-gate learner in every seed (69 / 65 / 56), and k = 20 within 10 points of k = 12. If within ±5, the gates do not matter at this scale.
+- P15.4 (D) At decay 0.25 the ring's single-operation interfaces after the sign-rule life are within 3 points of their birth values in every seed (at decay 1.0 they eroded), and held-pair composition does not fall during life.
+
+**Commands** (from `MOD97_LOCAL_RULE_20261106/`): A `E11_TRACE=scan E11_WD=0.25 E11_SCHEDULE=interleaved python3 exp11_cell.py MT SEED`; B `E11_TRACE=scan E11_WD=0.25 E11_REPLAY=fresh python3 exp11_cell.py NT SEED`; C `E11_GATES=split python3 exp11_cell.py dev M SEED` then `E11_GATES=split E11_TRACE=scan E11_WD=0.25 E11_REPLAY=fresh python3 exp11_cell.py MT SEED`; D `E10_DEV_DOSE=32768 E10_WD=0.25 python3 exp10_ring.py ring_sign SEED` and `ring_conf_sign SEED`. Seeds 73129 93683 116089.

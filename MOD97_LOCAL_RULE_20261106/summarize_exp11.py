@@ -59,6 +59,30 @@ def main():
             fin = [100 * st[4]["scores"][n]["12"]["exact"] / 400 for n in L97]
             k20 = [100 * st[4]["scores"][n]["20"]["exact"] / 400 for n in L97]
             lines.append(f"| {arm} | {s} | " + " | ".join(f"{o:.0f}→{v:.0f}" for o, v in zip(own, fin)) + f" | {sum(own)/4:.0f} | {sum(fin)/4:.0f} | {sum(k20)/4:.0f} |")
+    # E11-D diagnosis arms (memory birth, trace rule, one change each), alongside the E11 baseline and ceiling
+    diag = [("MT", "E11 baseline (decay 1.0, episode replay, blocked)"), ("MT_wd0.25", "decay 0.25"), ("MT_fr", "fresh-render replay"),
+            ("MT_int", "interleaved, no replay"), ("MT_wd0.25_fr", "decay 0.25 + fresh-render"), ("MD", "backprop ceiling"),
+            ("MT_wd0.25_int", "E15-A interleaved at decay 0.25"), ("NT_wd0.25_fr", "E15-B no-memory birth, decay 0.25 + fresh-render"),
+            ("MT_g2_wd0.25_fr", "E15-C split gates, decay 0.25 + fresh-render"), ("ND", "backprop ceiling, no-memory birth")]
+    rows = []
+    for tag, label in diag:
+        for s in SEEDS:
+            f = OUT / f"e11_life_{tag}_{s}.json"
+            if not f.exists():
+                continue
+            st = json.load(open(f))["stages"]
+            if len(st) < 5:
+                continue
+            fin = [100 * st[4]["scores"][n]["12"]["exact"] / 400 for n in L97]
+            k0 = [100 * st[4]["scores"][n]["0"]["exact"] / 400 for n in L97]
+            k20 = [100 * st[4]["scores"][n]["20"]["exact"] / 400 for n in L97]
+            dev1 = [100 * st[1]["scores"][n]["12"]["exact"] / 300 for n in D89]
+            sil = [100 * st[4]["scores"]["silenced_k12"][n]["exact"] / 400 for n in L97]
+            rows.append(f"| {label} | {s} | " + " ".join(f"{v:.0f}" for v in fin) + f" | {(fin[0] + fin[1]) / 2:.0f} | " + " ".join(f"{v:.0f}" for v in k0)
+                        + " | " + " ".join(f"{v:.0f}" for v in k20) + " | " + " ".join(f"{v:.0f}" for v in dev1) + " | " + " ".join(f"{v:.0f}" for v in sil) + " |")
+    if rows:
+        lines += ["## E11-D: after the fourth stage / block, exact % (add sub max min)", "",
+                  "| Arm | Seed | k=12 | add+sub mean | k=0 | k=20 | dev mod-89 @12 after stage 1 | k=12 silenced |", "|---|---|---|---|---|---|---|---|"] + rows + [""]
     (OUT / "SUMMARY_E11.md").write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 

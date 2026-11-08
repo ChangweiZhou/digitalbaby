@@ -1,0 +1,75 @@
+{
+  "status": "births",
+  "pid": 21951,
+  "completed": [
+    {
+      "key": "C_wd1_73129",
+      "part": "C",
+      "kind": "E8",
+      "seed": 73129,
+      "command": [
+        "exp8_life.py",
+        "C",
+        "73129"
+      ],
+      "env": {
+        "EXP45_HIDDEN": "512",
+        "E8_BATCH": "64",
+        "E8_LR": ".001",
+        "E8_WD": "1.0",
+        "E8_SCHEDULE": "blocked",
+        "E8_REPLAY_SHARE": "1/2",
+        "E8_BUFFER_CAP": "1024",
+        "E8_REPLAY_SAMPLING": "uniform",
+        "E8_SAVE_STAGES": "0",
+        "E8_DIAGNOSTICS": "1",
+        "E8_RUN_PREFIX": "e14_C_wd1_"
+      },
+      "receipt": "e14_C_wd1_e8_life_C_73129.json",
+      "stages": 10,
+      "diagnostic": "e14_C_wd1_e8_life_C_73129.diagnostics.jsonl",
+      "reference": "e8_life_C_73129.json",
+      "status": "complete",
+      "returncode": 0,
+      "wall_seconds": 2857.3679878748953,
+      "log": "exp45/logs/e14_C_wd1_73129.log"
+    },
+    {
+      "key": "profile_E7_73129",
+      "part": "profile",
+      "kind": "E7",
+      "seed": 73129,
+      "command": [
+        "exp7_decon.py",
+        "SCR",
+        "73129"
+      ],
+      "env": {
+        "EXP45_HIDDEN": "512",
+        "E7_DOSE": "16384",
+        "E7_BATCH": "64",
+        "E7_WD": "1.0",
+        "E7_RUN_PREFIX": "e14_profile_E7_"
+      },
+      "receipt": "e14_profile_E7_e7_life_SCR_h512_d16384_73129.json",
+      "last_step": 16384,
+      "reference": "e7_life_SCR_h512_d16384_73129.json",
+      "status": "complete",
+      "returncode": 0,
+      "wall_seconds": 748.4914937503636,
+      "log": "exp45/logs/e14_profile_E7_73129.log"
+    }
+  ],
+  "active": [
+    "birth_E8_200003",
+    "birth_E7_200003",
+    "birth_E8_300007",
+    "birth_E7_300007",
+    "birth_E8_400009",
+    "birth_E7_400009"
+  ],
+  "queued": [],
+  "failed_parts": [],
+  "planned_subprocesses": 46,
+  "elapsed_seconds": 3605.965085083153
+}

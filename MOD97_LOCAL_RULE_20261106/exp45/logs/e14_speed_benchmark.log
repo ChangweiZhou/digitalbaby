@@ -1,0 +1,23 @@
+/Users/pencilbard/Documents/second_try/MOD97_LOCAL_RULE_20261106/e14_speed_benchmark.py:29: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:821.)
+  a=m(p)[:,-1];b,_=F.last_logits(m,p);maxdiff=max(maxdiff,float((a-b).abs().max()));assert T.equal(a.argmax(1),b.argmax(1))
+{
+  "none": {
+    "prompts": 1120,
+    "old_seconds": 1.589015457779169,
+    "new_seconds": 0.12951679108664393,
+    "speedup": 12.26879885185043,
+    "generated_bytes_exact": true
+  },
+  "episodic": {
+    "prompts": 1120,
+    "old_seconds": 1.194072667043656,
+    "new_seconds": 0.16131045809015632,
+    "speedup": 7.402326428062647,
+    "generated_bytes_exact": true
+  },
+  "maximum_logit_difference": 1.9073486328125e-05,
+  "status": "MICROBENCHMARK_AND_128_UPDATE_PARITY_PASS_NOT_YET_FULL_LIFE_QUALIFIED",
+  "active_campaign_changed": false
+}
+Replay/training speedup 1.4817190422217672
