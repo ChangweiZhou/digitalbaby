@@ -1,10 +1,12 @@
 """Tables for E16 from exp45/e16_life_{T,D}_{seed}.json -> exp45/SUMMARY_E16.md."""
 import json
+import os
 import sys
 from pathlib import Path
 
 OUT = Path(__file__).resolve().parent / "exp45"
-SEEDS = (73129, 93683, 116089)
+SEEDS = tuple(int(x) for x in os.environ.get("E16_SEEDS", "73129,93683,116089").split(","))   # E16-F: E16_SEEDS=200003,300007,400009
+SUMMARY = OUT / os.environ.get("E16_SUMMARY", "SUMMARY_E16.md")
 F1 = ("add97", "sub97", "max97", "min97"); F3 = ("add73", "sub73", "max73", "min73"); DEV = ("add89", "sub89", "max89", "min89")
 HELD = ("+-", "-+", "><", "<>")
 pct = lambda d: 100 * d["exact"] / d["n"]
@@ -43,17 +45,21 @@ def main():
                          f"{sum(pctf(c[h]) for h in HELD)/4:.1f} | " + " | ".join(f"{pctf(c[h]):.1f}" for h in HELD) + f" | {pctf(c['within']):.1f} | {fam_mean(sc, DEV):.1f} |")
     # final table: T vs D and the 80% gate
     lines += ["\n## After the last block: learner against twin (gate: T ≥ 80% of D on every family)\n",
-              "| Seed | Family | T | D | T/D | F1 after block 2 (T) | T k=20 | T silenced k=12 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
+              "| Seed | Arm: family | arm | D | arm/D | F1 after block 2 (T) | T k=20 | T silenced k=12 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
     for s in SEEDS:
-        t, dd = runs[("T", s)], runs[("D", s)]
-        if not t or not dd or len(t["stages"]) < 7 or len(dd["stages"]) < 7:
+        dd = runs.get(("D", s))
+        if not dd or len(dd["stages"]) < 7:
             continue
-        st, sd = t["stages"][-1]["scores"], dd["stages"][-1]["scores"]; s2 = t["stages"][2]["scores"]
-        rows = [("F1 ops k=12", fam_mean(st, F1), fam_mean(sd, F1), fam_mean(s2, F1), sum(pct(K(st, n, 20)) for n in F1) / 4, sum(pct(st["silenced_k12"][n]) for n in F1) / 4),
-                ("F3 ops k=12", fam_mean(st, F3), fam_mean(sd, F3), None, sum(pct(K(st, n, 20)) for n in F3) / 4, sum(pct(st["silenced_k12"][n]) for n in F3) / 4),
-                ("held comp final", sum(pctf(st["compose"][h]) for h in HELD) / 4, sum(pctf(sd["compose"][h]) for h in HELD) / 4, None, None, sum(pctf(st["silenced_compose"][h]) for h in HELD) / 4)]
-        for name, tv, dv, b2, k20, sil in rows:
-            lines.append(f"| {s} | {name} | {tv:.1f} | {dv:.1f} | {tv/dv:.2f} | {'' if b2 is None else f'{b2:.1f}'} | {'' if k20 is None else f'{k20:.1f}'} | {sil:.1f} |")
+        for a in ARMS:
+            t = runs.get((a, s))
+            if a == "D" or not t or len(t["stages"]) < 7:
+                continue
+            st, sd = t["stages"][-1]["scores"], dd["stages"][-1]["scores"]; s2 = t["stages"][2]["scores"]
+            rows = [("F1 ops k=12", fam_mean(st, F1), fam_mean(sd, F1), fam_mean(s2, F1), sum(pct(K(st, n, 20)) for n in F1) / 4, sum(pct(st["silenced_k12"][n]) for n in F1) / 4),
+                    ("F3 ops k=12", fam_mean(st, F3), fam_mean(sd, F3), None, sum(pct(K(st, n, 20)) for n in F3) / 4, sum(pct(st["silenced_k12"][n]) for n in F3) / 4),
+                    ("held comp final", sum(pctf(st["compose"][h]) for h in HELD) / 4, sum(pctf(sd["compose"][h]) for h in HELD) / 4, None, None, sum(pctf(st["silenced_compose"][h]) for h in HELD) / 4)]
+            for name, tv, dv, b2, k20, sil in rows:
+                lines.append(f"| {s} | {LABEL.get(a, a)}: {name} | {tv:.1f} | {dv:.1f} | {tv/dv:.2f} | {'' if b2 is None else f'{b2:.1f}'} | {'' if k20 is None else f'{k20:.1f}'} | {sil:.1f} |")
     # E16-D: retention across arms
     lines += ["\n## Retention across arms: what each family keeps after the stream moves on (block 6 vs the family's own last block)\n",
               "| Arm | Seed | F1 k=12 after 2 → 6 | F1 add/sub after 6 | Held comp after 4 → 6 | +- / -+ after 6 | within after 4 → 6 | F3 after 6 |", "|---|---|---|---|---|---|---|---|"]
@@ -74,7 +80,7 @@ def main():
     lines += ["\n## Shortcut ceilings on the held pairs (final answer from a visible-only rule, %)\n", "| Pair | ignore o1, use a | ignore o1, use b | ignore o2 | answer = c |", "|---|---:|---:|---:|---:|"]
     for h, v in sc0["shortcut_ceilings"].items():
         lines.append(f"| {h} | " + " | ".join(f"{100*v[k]:.1f}" for k in ("ignore_o1_use_a", "ignore_o1_use_b", "ignore_o2", "answer_is_c")) + " |")
-    (OUT / "SUMMARY_E16.md").write_text("\n".join(lines) + "\n")
+    SUMMARY.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 
 
