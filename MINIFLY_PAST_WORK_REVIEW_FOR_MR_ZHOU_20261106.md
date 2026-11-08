@@ -538,3 +538,40 @@ At k = 20, never presented, the trace arms are 52–78% (acquired) and 76–88% 
 **Harness record.** Two restarts in one day, both at the seam between the new learner and a mechanism inherited by name: a buffer-fill slip (now caught by a full-loop dry run, `E11_STAGE_UPDATES`), and E8's store-mediated replay, which silently requires a stage's episodes to fit the 65,536-key store and which random distractor letters break (393,000 distinct prompts per stage). E11 therefore replays stored episodes directly, which is what E8's store delivered when its keys fit. The partial launches are archived. The general rule, now applied: before launch, list every carried-over mechanism and the condition it needs in the new task.
 
 **Where this leaves the five properties.** P1, P3 (window net), P5 established; P2 now established by a local rule inside the persistent learner; P4 achieved under backprop when de-confounded, partial under the local rule (52–76%, and E12's batch-256 package may close much of the gap: E13 Part B), free by wiring with the ring. The open conflict is P2 against P3 in one learner: the cell that gives working state under a local rule also makes the sign rule forget faster. That is the next thing to resolve, before any scaling.
+
+## 9.24 Codex's E13: the batch package is mostly decay; it transfers to composition; path integration stopped (7 November 2026, assessed)
+
+Commits 795836b, 3214dc7, merged 85b0e66; report `MOD97_LOCAL_RULE_20261106/E13_REPORT.md`. Eighteen lives plus two default reproductions, three seeds each, hash-locked as before.
+
+| Arm (E8, blocked, share 1/2, sign rule) | Eight-operation mean after composition | Held composition |
+|---|---|---|
+| batch 64, decay 1.0 (E8) | 76–80 | 48–55 |
+| batch 64, decay 0.25 | 94–95 | 81–85 |
+| batch 256, decay 1.0 (E12) | 92 | 69–73 |
+| batch 256, decay 4.0 | 24–30 | 11–13 |
+| batch 256, lr .002 | 91–92 | 75–77 |
+| batch 1,024 | 89–91 | 40–42 |
+| backprop ceiling, batch 256 | 96 | 84–87 |
+
+What it settles. The decay per unit of exposure is the dominant factor: cutting it four-fold at the original batch gives the best retention and composition of any local-rule arm in the program, 94% and 81–85%, within 2 and 3 points of the batch-256 backprop ceiling's retention and 2 to 6 points of its composition. Raising it four-fold at batch 256 collapses the learner, worse than the baseline, so decay and step count interact rather than cancel. Batch 1,024 keeps retention but halves composition, so bigger is not uniformly better. The E12 package applied to the de-confounded composition test (E7, width 512, fixed exposure) gives 88 / 83 / 88% on held pairs against 75 / 62 / 76 before, two seeds still rising; the historical backprop comparator at that width is 84–97%. So the local rule's composition gap, which this review has carried since E7, is mostly a setting, decay 1.0 per update, not a limit of the rule. The backprop ceiling also moves, by 1–2 points of retention and down a few points of composition at batch 256, so the effect is not exclusive to the local rule.
+
+What it does not settle. Why decay 1.0 hurts the sign rule so much more than backprop (the ceiling at decay 0.3 holds everything) is undiagnosed; the plausible account is that the sign rule's updates are noisier per step, so the same decay erases more signal per unit of learning. E11-D tests decay 0.25 on the cell learner directly.
+
+Path integration. The follow-up ran to its prescribed stop: with the heading clamped to the true heading by an exact inversion of the fixed observer, the return residual is still 0.71 of the outbound distance in every native seed, above the 0.30 gate, so no refit was done. Turn-only compass errors of 38–41° are real but not the whole problem: the extracted PFN→hΔB→PFR wiring supplies an instantaneous displacement-direction signal and the model supplied the accumulator, and that package does not integrate. This line is closed unless the accumulator is taken from the connectome as well.
+
+## 9.25 E11-D: why the trace learner forgot, and the settings that fix most of it (7 November 2026, executed)
+
+Section E11-D of `E45_REPORT.md`. Four one-change arms on the E11 memory-birth trace learner, three seeds.
+
+| Arm | add+sub mean at k = 12 after four operations, per seed |
+|---|---|
+| E11 baseline (decay 1.0, fixed episodes, blocked) | 13 / 1 / 4 |
+| decay 0.25 | 56 / 53 / 49 |
+| fresh-render replay | 46 / 13 / 2 |
+| interleaved, no replay | 74 / 13 / 14 |
+| decay 0.25 + fresh-render replay | 69 / 65 / 56 |
+| backprop ceiling | 89 / 90 / 94 |
+
+Decay 1.0 per update was the dominant cause, as Codex's E13 found for the window net the same day; fixed-letter replay episodes a second, smaller one that shows at k = 0 once decay is fixed (the window path memorizes 1,024 fixed prompts rather than keeping the rule); blocked presentation is not the cause, since interleaving fails to acquire the carry operations at all in two seeds. With both fixes the cell learner keeps add and sub at 52–72% and max and min at 87–96% after four operations, against a ceiling of 88–98%. The P2-against-P3 conflict of 9.23 is therefore mostly a setting, not a property of the cell; a 20–35 point gap on the carry-type operations remains, with lower decay, replay share and batch 256 as the candidates (E13-B, E14). Going forward the cell learner runs at decay 0.25 with fresh-render replay.
+
+Program-wide, the lesson of 7 November is that decay 1.0, chosen in E8 for the local rule and carried since, has been the largest single handicap on the sign rule in E8, E10, E11 and the E7 composition gap. The settings question is now in Codex's hands (E14: fresh-seed confirmation, the decay curve, and the alignment diagnostic that should explain why the sign rule is so much more decay-sensitive than backprop).

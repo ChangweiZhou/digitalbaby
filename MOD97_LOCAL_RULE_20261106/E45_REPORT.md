@@ -303,3 +303,28 @@ Cell silenced at k = 12: ≤ 6.5% in every arm and stage wherever the live score
 **What E11 refutes.** That the E8 learner plus this cell keeps what it learns across a sequence of operations under the sign rule with half-batch episode replay. The forgetting is far worse than E8's (E8 held eight operations at 75–98%; E11 holds the current operation and little else), in both births, and the ceiling shows it is not capacity. E11 does not diagnose the cause. The candidates, each one arm: (1) weight decay 1.0 per update, which E12-B suggests costs 12–15 points of E8 retention by itself and which E10 found erodes exact interfaces; (2) the cell as an interference channel, since the new operation's gates change the state statistics the old readout depends on, and add at k = 0 (where the window alone suffices) fell faster than at k = 8–12 in two seeds, so the window path is overwritten before the cell path; (3) fixed-letter episodes being learned by rote rather than maintaining the rule, testable by replaying fresh renders of the stored pairs with the stored answers; (4) blocked presentation, since E9 showed interleaving holds everything while the stream is stationary. E13 Part A (decay versus averaging) bears on (1) directly.
 
 **Harness lessons, on record.** Two restarts: a buffer-fill slip caught only after the first stage (a dry run of the full loop, now `E11_STAGE_UPDATES`, would have caught it in two minutes), and a mechanism dependency that no dry run catches: E8's store-mediated replay needs a stage's episodes to fit the store, which random letters break. Rule for the next experiment: list every mechanism carried over and the condition it needs in the new task, in the predictions file, before launch.
+
+## E11-D: why the trace learner forgets (7 November 2026)
+
+Predictions and mechanism audit: `E45_PREDICTIONS.md`, E11-D. Four one-change arms on the E11 memory-birth trace learner (arm MT), three seeds; receipts `exp45/e11_life_MT_wd0.25_*`, `_fr_*`, `_int_*`, `_wd0.25_fr_*`; tables in `exp45/SUMMARY_E11.md`. The trace gradient was computed by the backward scan that is algebraically identical to the forward trace (qualification: 1e-6), so the updates are E11's; the stage-1 scores reproduce E11's within a point (float-level divergence).
+
+**After the fourth stage, exact % at k = 12 (add sub max min), and the add+sub mean:**
+
+| Arm | 73129 | 93683 | 116089 | add+sub mean |
+|---|---|---|---|---|
+| E11 baseline: decay 1.0, episode replay, blocked | 15 10 61 87 | 0 2 41 58 | 3 4 44 66 | 13 / 1 / 4 |
+| decay 0.25 | 64 48 88 96 | 57 49 72 97 | 45 53 79 93 | 56 / 53 / 49 |
+| fresh-render replay (decay 1.0) | 52 39 87 94 | 14 12 74 85 | 4 1 49 69 | 46 / 13 / 2 |
+| interleaved, no replay (decay 1.0) | 78 70 96 94 | 15 12 74 64 | 12 16 65 72 | 74 / 13 / 14 |
+| decay 0.25 + fresh-render replay | 72 65 92 96 | 68 62 90 96 | 62 52 92 95 | 69 / 65 / 56 |
+| backprop ceiling (E11 MD) | 89 88 96 96 | 90 90 95 96 | 92 95 97 98 | 89 / 90 / 94 |
+
+At k = 0 after the fourth stage, add/sub: decay 0.25 alone 15/16, 32/27, 29/46; combined 64/61, 64/58, 60/53; baseline 6/4, 2/4, 6/9. At k = 20: combined 58/54, 63/58, 58/47. Cell silenced at k = 12: ≤ 5% on add and sub in every arm. Shortcut ceiling for max and min, 45–54%, as E11.
+
+**Verdicts.**
+- P11D.1 (decay 0.25 the dominant cause): the effect is the largest in the table, from 0–15% to 45–64% on add and sub, but the literal gate of ≥ 50% on both in every seed is met in only one seed (73129 add 64 / sub 48 misses on sub; 93683 57 / 49; 116089 45 / 53). The birth's add89 is held at 44–46% after the first life stage (27–41 before); the other birth operations are not, since nothing replays them. Dominant cause confirmed; gate narrowly missed.
+- P11D.2 (fixed-letter episodes): refuted as a cause on its own; +33 points in one seed, +12 and −2 in the others.
+- P11D.3 (blocked presentation): refuted. Interleaving all four operations holds everything at 70–96% in one seed and never acquires add or sub (12–16%) in the other two, in any of the four blocks. For this learner the sign rule does not learn four competing carry-type and comparison operations from a mixed stream reliably; E9's window net did, with eight.
+- P11D.4 (combined at least as good as the better single arm): holds in every seed on add, and on sub within one point.
+
+**What it means.** Decay 1.0 per update was the main reason the trace learner forgot, as E13 found the same day for the window net; with decay 0.25 the learner keeps add and sub at about half after three further operations instead of nothing. Fixed-letter episode replay is a second, smaller cause that shows once decay is fixed: with fresh-render replay the k = 0 scores are kept (60–64% against 15–32%), so the window path stops memorizing the 1,024 fixed prompts and maintains the rule. Together they recover retention to 52–72% on add and sub, 87–96% on max and min, against a ceiling of 88–98%. The remaining gap of 20–35 points on the carry-type operations is the next target; the candidates are lower decay still (E14 Part B measures the curve on the window net), the replay share, and batch 256 (E13 Part B). Interleaving is not a substitute for replay in this learner. The settings for the cell learner going forward are decay 0.25 and fresh-render replay of stored pairs.
