@@ -432,3 +432,29 @@ Predictions, mechanism audit and the pre-result amendment on the balanced arm: `
 **What follows.** E16-D2, launched 13:00 EST: the share arm (earlier families 50% of the batch during F2, 25% each during F3, current family never replayed) and arm M (backprop on exactly the learner's uniform-replay batches), which should now forget like the learner if the data are the limit. Then E16-R, the gate attempt with diverse replay under a bounded budget (a per-family reservoir, since a buffer of every entry grows with life and fails the scaling requirements), and the parser-free version of that replay as the next design step.
 
 **Evidence level.** Development result, three seeds, one harness; the oracle arm shares the twin's stream constructor and seeds exactly; shortcut ceilings as in E16. No independent confirmation.
+
+## E16-D2: share and rule separated, and Codex's E16-W read beside it (8 November 2026)
+
+Predictions: `E45_PREDICTIONS.md`, E16-D2. Two arms on the E16 stream, three standing seeds; receipts `exp45/e16_life_T_share_*.json`, `exp45/e16_life_M_*.json`; tables `exp45/SUMMARY_E16.md`. Six lives, 23 minutes per block under a shared machine, 2 h 25 min.
+
+| Arm | F1 operations, k = 12, block 2 → 4 → 6 | Held compositions, block 4 → 6 | Carry pairs +- / -+ at 6 |
+|---|---|---|---|
+| E16 learner (uniform, 1,024/block) | 93→78→83 · 92→72→80 · 86→47→65 | 87.0→56.9 · 84.3→53.2 · 87.0→46.0 | 34/38 · 22/28 · 18/18 |
+| share: earlier families 50% of the batch during F2, 25% each during F3 | 94→79→84 · 93→69→78 · 91→47→66 | 88.5→64.5 · 84.5→54.5 · 86.0→49.5 | 38/54 · 27/28 · 24/20 |
+| M: backprop on exactly the learner's batches | 92→88→92 · 93→81→90 · 92→91→90 | 93.6→74.2 · 93.2→65.4 · 93.2→76.7 | 61/53 · 45/43 · 67/69 |
+| oracle (E16-D): the twin's data, local rule | 94→92→94 · 93→92→93 · 91→85→90 | 83.2→82.9 · 85.0→84.0 · 86.9→87.3 | 71/84 · 76/70 · 80/77 |
+| every-entry replay (E16-D) | 94→88→90 · 93→85→89 · 90→61→78 | 90.2→84.5 · 87.4→79.8 · 91.4→83.3 | 76/77 · 68/66 · 74/74 |
+
+**Share is not the lever.** Doubling the earlier families' exposure leaves the operations' loss during the composition blocks unchanged (15 / 24 / 44 points against 15 / 20 / 39) and trims the compositions' loss during F3 by 4–20% (24 / 30 / 37 points against 30 / 31 / 41). P16D2.1 refuted in every seed. Codex's E16-W found the same on the window net: a 25%-of-batch composition share bought 6–11 points, 14–23% of the loss.
+
+**The rule matters on poor data and not on rich data.** Backprop on the learner's own batches keeps the operations (within 3 points of block 2) but loses 17–28 points of composition, ending 65–77% where the local rule ends 46–57% and the local rule on the twin's data ends 83–87%. P16D2.2 misses on compositions, holds on operations. So with 1,024 memorized items per block, both rules forget compositions and the local rule forgets about 20 points more; with the twin's data, both are flat. Codex's E16-W matched-batch backprop arm shows the same ordering on the window net (ends 43–50% against the local rule's 31–37% and the ceiling's 91%).
+
+**Acquisition is unchanged by either arm** (P16D2.3 holds: share within 2 points on compositions, +0.6 to +5 on operations; arm M higher, as backprop).
+
+**Codex's E16-W, assessed.** Twelve lives, predictions re-locked after the amendment, default parity and exact batch matching verified (`E16W_REPORT.md`; review 9.31). The window net loses 46–48 points of held composition over four later mod-73 stages under E8's replay; its mod-97 operations fall from 93–95% to 76–85% during the composition stage itself, as the cell learner's did in E16. Nothing in E16's forgetting is specific to the cell. Codex's caution stands: the matched arms show the limit of this recorded stream, not of all replay, and the ground-truth ceiling holds 91% under far richer exposure.
+
+**What the three studies establish together (E16-D, E16-D2, E16-W).** The integrated learner forgets because its replay covers too few distinct items (1,024 per block, re-rendered or verbatim), not because the stream has too little share for earlier families, and not primarily because of the learning rule: on data with full operand coverage the local rule retains like backprop, 3–9 points lower in level. The local rule pays an extra 20 points on impoverished replay. The one intervention that worked, replaying every presented entry, is unbounded; E16-R has to find the bounded capacity (a per-family reservoir) at which operand coverage suffices, and that capacity, not a learner change, is what the Phase A gate now turns on.
+
+**Verdicts.** P16D2.1 refuted. P16D2.2 holds on operations, misses on compositions (rule implicated on poor data, by about 20 points). P16D2.3 holds.
+
+**Evidence level.** Development result, three seeds, one harness; arm M shares the learner's batches exactly (same buffer, same draws); E16-W is an independent harness and learner reaching the same conclusion, run by Codex, which is the first cross-harness agreement on a mechanism in this program. No independent code replication.
