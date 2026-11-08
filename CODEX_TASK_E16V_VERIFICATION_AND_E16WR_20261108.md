@@ -13,7 +13,11 @@ The claims are in `E45_REPORT.md` (sections E16, E16-D, E16-D2) and the receipts
 5. **Cell audit.** From the receipts, tabulate the silenced-cell scores at k = 12 for every arm after block 6 and confirm they are at or below 10% on operations everywhere, so that no arm's retention comes from the window path alone.
 6. **Deviations and provenance.** List what is missing for independent replication: birth weights (`.pt`) are not in the repository for the standing seeds (the cloud session's E16-F recorded this); the E16 dry receipts in `exp45/archive_e16_dry/`; any receipt whose `settings` differ from the report's description.
 
-Budget: reading and small scripts, no lives; about two hours of your time.
+7. **Coverage and replay-answer error over stages, from your own E16-W batch logs** (your suggestion, adopted). From `exp45/E16W2_BATCHES_ROLE_SEED.json` and the receipts, tabulate per stage for `C_uni` and `C_share`: the number of distinct composition items replayed so far, the fraction of replayed composition targets that were wrong (E8 replay targets are the learner's own answers; mine are the stored observed answers, so this factor exists only on your side), and the held-pair score at that stage. This separates coverage from target error for the window net without any new run.
+
+Budget: reading and small scripts, no lives; about two to three hours of your time.
+
+**Note on what follows E16-R (so Part B's design stays aligned).** Your memo's two design points are adopted for the successor experiments: the replay budget will be a single total capacity without family labels (a per-family cap is bounded only while the number of families is fixed), and the parser will be removed first by replaying raw observed bytes with the answer as it appeared, verbatim, at a capacity E16-R has shown to suffice; generative replay is the fallback, not the next step. Each is one change from E16-R's winner and runs separately. Part B's per-stage reservoir is kept as specified, since it mirrors E16-R; the label-free version follows on both learners afterwards.
 
 ## Part B: E16-WR, the window net with bounded reservoir replay (start at or after 16:30 EST, machine free)
 
