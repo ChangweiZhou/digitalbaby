@@ -55,6 +55,12 @@ KMAX = {"M": 12, "N": 3}
 KS_PANEL = (0, 8, 12, 20)
 DEV_UPDATES, STAGE_UPDATES = X.DEV_UPDATES, int(os.environ.get("E11_STAGE_UPDATES", "6144"))   # override only for dry runs
 DRYTAG = "" if STAGE_UPDATES == 6144 else f"_dry{STAGE_UPDATES}"
+# E11-D diagnosis knobs (defaults reproduce E11 exactly): E11_WD local decay, E11_REPLAY episode|fresh, E11_SCHEDULE blocked|interleaved, E11_TRACE forward|scan
+WD = float(os.environ.get("E11_WD", "1.0"))
+REPLAY = os.environ.get("E11_REPLAY", "episode")
+SCHEDULE = os.environ.get("E11_SCHEDULE", "blocked")
+TRACE = os.environ.get("E11_TRACE", "forward")
+DIAGTAG = ("" if WD == 1.0 else f"_wd{WD:g}") + ("" if REPLAY == "episode" else "_fr") + ("" if SCHEDULE == "blocked" else "_int")
 
 
 class CellNet(nn.Module):
@@ -123,6 +129,25 @@ def trace_grads(m, it):
     m.lc.weight.grad, m.lc.bias.grad, m.lr.weight.grad, m.lr.bias.grad = gWc, gbc, gWr, gbr
 
 
+@T.no_grad()
+def trace_grads_scan(m, it):
+    """The same gradient as trace_grads, computed by the algebraically identical backward scan of the learning signal:
+    Lambda_s = L_s + r_{s+1} * Lambda_{s+1}; dLoss/dWc = sum_s (Lambda_s * gc_s)^T p_s. Not local in time (a compute trick);
+    equality with the forward trace is checked in qualify()."""
+    p, c, r, hs, prev = it["p"], it["c"], it["r"], it["hs"], it["prev"]
+    Ls = T.stack([h.grad if h.grad is not None else T.zeros_like(h) for h in hs], 1)   # (B, L, C)
+    Lam = T.zeros_like(Ls)
+    acc = T.zeros_like(Ls[:, 0])
+    for t in range(Ls.shape[1] - 1, -1, -1):
+        acc = Ls[:, t] + (r[:, t + 1] * acc if t + 1 < Ls.shape[1] else 0)
+        Lam[:, t] = acc
+    hp = T.stack(prev, 1)
+    gc = (1 - r) * (1 - c * c)
+    gr = (hp - c) * r * (1 - r)
+    m.lc.weight.grad = T.einsum("btc,btd->cd", Lam * gc, p); m.lc.bias.grad = (Lam * gc).sum((0, 1))
+    m.lr.weight.grad = T.einsum("btc,btd->cd", Lam * gr, p); m.lr.bias.grad = (Lam * gr).sum((0, 1))
+
+
 def update(m, opt, items, arm, store=None):
     x, y, mask = X.batch_tensor(items)
     logits, it = forward(m, x, local=(arm != "D"), through_time=(arm == "D"), keep=(arm == "T"))
@@ -130,7 +155,7 @@ def update(m, opt, items, arm, store=None):
     opt.zero_grad()
     loss.backward()
     if arm == "T":
-        trace_grads(m, it)
+        (trace_grads_scan if TRACE == "scan" else trace_grads)(m, it)
     opt.step()
     if store is not None:
         store.write(x, y, mask)
@@ -242,11 +267,11 @@ def develop(birth, seed):
 
 
 def life(birth, arm, seed):
-    path = OUT / f"e11_life_{birth}{arm}{DRYTAG}_{seed}.json"
+    path = OUT / f"e11_life_{birth}{arm}{DIAGTAG}{DRYTAG}_{seed}.json"
     m = new_net(seed)
     m.load_state_dict(T.load(OUT / f"e11_dev_{birth}_{seed}.pt"))
     local = arm != "D"
-    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(1. if local else .3), betas=(.9, .98))
+    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(WD if local else .3), betas=(.9, .98))
     store = X.Store(seed) if local else None
     rng = Random(seed + 9)
     panels = {NAME(*t): panel(t, split(t, .25, seed)[1], seed) for t in LIFE}
@@ -260,9 +285,14 @@ def life(birth, arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate()))
-    for si, t in enumerate(LIFE, 1):
-        name, pairs = NAME(*t), split(t, .25, seed)[0]
-        cur = batches([(t, pairs)], seed + si, 12)
+    if SCHEDULE == "interleaved":
+        joint_tp = [(t, split(t, .25, seed)[0]) for t in LIFE]
+        schedule = [("int%d" % i, joint_tp) for i in range(1, 5)]      # four blocks of the one joint stream, scored after each
+    else:
+        schedule = [(NAME(*t), [(t, split(t, .25, seed)[0])]) for t in LIFE]
+    for si, (name, tp) in enumerate(schedule, 1):
+        t, pairs = tp[0]
+        cur = batches(tp, seed + si, 12)
         if arm == "D":
             seen = seen + [(t, pairs)]; joint = batches(seen, seed + si, 12)
         losses, presented = [], []
@@ -270,7 +300,10 @@ def life(birth, arm, seed):
             if arm == "D":
                 batch = next(joint)
             elif buffer:
-                batch = next(cur)[:X.BATCH // 2] + rng.sample(buffer, X.BATCH // 2)   # half replay of stored episodes
+                rp = rng.sample(buffer, X.BATCH // 2)
+                if REPLAY == "fresh":   # same stored pairs and answers, fresh distractor letters and k
+                    rp = [render(tk, a, b, rng.randint(0, 12), rng) for tk, a, b in rp]
+                batch = next(cur)[:X.BATCH // 2] + rp   # half replay
                 presented += batch[:X.BATCH // 2]
             else:
                 batch = next(cur)
@@ -281,8 +314,9 @@ def life(birth, arm, seed):
         print("e11", birth + arm, seed, "after", name, {n: [sc[n][k]["exact"] for k in KS_PANEL] for n in sc if n.endswith("97")},
               "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")], "silenced", [v["exact"] for v in sc["silenced_k12"].values()], f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
         path.write_text(json.dumps(dict(birth=birth, arm=arm, seed=seed, stages=stages), indent=1))
-        if local:
-            buffer += rng.sample(presented, min(1024, len(presented)))   # 1024 episodes (prompt, answer as presented) of this stage: what E8's exact-key store returned when its keys fit
+        if local and SCHEDULE == "blocked":
+            ep = rng.sample(presented, min(1024, len(presented)))
+            buffer += [(t, int(bytes(p[1:3])), int(bytes(p[-3:-1]))) for p, _ in ep] if REPLAY == "fresh" else ep   # 1024 episodes (prompt, answer as presented) of this stage: what E8's exact-key store returned when its keys fit
 
 
 # ---------------------------------------------------------------- qualification
@@ -309,6 +343,10 @@ def qualify():
     within = {n: m.get_parameter(n).grad.clone() for n in ("lc.weight", "lr.weight")}
     trace_grads(m, it)
     out["trace_vs_bptt_max_rel_err"] = {n: float((m.get_parameter(n).grad - ref[n]).abs().max() / ref[n].abs().max()) for n in ("lc.weight", "lc.bias", "lr.weight", "lr.bias")}
+    fwd = {n: m.get_parameter(n).grad.clone() for n in ("lc.weight", "lc.bias", "lr.weight", "lr.bias")}
+    trace_grads_scan(m, it)
+    out["scan_vs_forward_trace_max_rel_err"] = {n: float((m.get_parameter(n).grad - fwd[n]).abs().max() / fwd[n].abs().max()) for n in fwd}
+    for n in fwd: m.get_parameter(n).grad = fwd[n]
     out["within_step_vs_bptt_max_rel_err"] = {n: float((within[n] - ref[n]).abs().max() / ref[n].abs().max()) for n in within}
     out["loss_same_forward"] = [float(loss.detach()), float(loss2.detach())]
     out["params"] = sum(p.numel() for p in m.parameters())
