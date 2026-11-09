@@ -1,0 +1,10 @@
+# 9.53 — E16-F5: the stream without stages on fresh seeds
+
+E16-F5 ran E16-S1's arm on the three fresh seeds of E16-F (200003, 300007, 400009), on E16-F's births, with the re-keyed panels and no change to the harness. The arm is the raw-byte reservoir of 65,536 slots admitting each item as it arrives, on a stream whose family mixture drifts smoothly with no stage boundaries. Each seed has a twin trained on the same drifting stream.
+
+- **The twin holds 90 / 85 / 90 in every seed (P16F5.2).** It ends at 93–96 on every family.
+- **Seeds 200003 and 300007 hold P16F5.1 and P16F5.3.** The learner keeps 0.93 / 0.86 / 0.96 and 0.96 / 0.87 / 0.99 of the twin. Its compositions, 81.5 and 79.3, are within 0.3 points of the same births under block stages in E16-F3.
+- **Seed 400009 misses both.** Its compositions end at 64.9: 0.69 of the twin and 17.5 points below its E16-F3 result of 82.5. The learner's mod-97 operations dipped to 62.0 as the compositions entered. Its compositions peaked at only 80.9 and then lost 16 points as the mod-73 operations took over, with the plus-minus pairs ending near 46 and the max-min pairs near 83. The twin stayed at 94.
+- **The reservoir is not the difference.** It looks the same as in the other two seeds: 1.05 MB and about 55,300 distinct strings.
+
+This is the interference between plus-minus compositions and mod-97 addition and subtraction that broke E16-F4's seed 600013. Here it appears on a birth that passed under stages, so the drifting stream can turn a passing seed into a miss. The drift gate therefore holds on five of six seeds, three standing and three fresh. Together with E16-F4, composition retention under the sign rule is now the place where the label-free result fails, in two of the fifteen raw-byte lives run so far (nine on block stages, six on the drifting stream). Development result on a toy harness; one stream per seed. Sources: `E16F5_REPORT.md`, `E16F5_PREDICTIONS.md`, `exp45/SUMMARY_E16F5.md`, the six receipts and the final weights.
