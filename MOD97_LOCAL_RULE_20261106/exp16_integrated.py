@@ -57,10 +57,17 @@ RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir
 #   E16_LOSS=answer|all       all: next-byte loss on every byte of every item (prompt and answer), the answer mask removed; scoring unchanged
 STREAM16 = os.environ.get("E16_STREAM", "blocks"); ADMIT16 = os.environ.get("E16_ADMIT", "block"); LOSS16 = os.environ.get("E16_LOSS", "answer")
 #   E16_STORE=on|off          off: the E8 exact-key store is absent from the local arms (no writes, no logit bias at scoring); the architecture audit (E16-A)
-STORE16 = os.environ.get("E16_STORE", "on"); assert STORE16 in ("on", "off")
+#   E16_ARCH=window|cell1|bank  (E17, 8 Nov 22:30 EST) window: unchanged; cell1 / bank: the window removed, see arch17.py; births e17_dev_{arch}_{seed}
+ARCH16 = os.environ.get("E16_ARCH", "window"); assert ARCH16 in ("window", "cell1", "bank")
+STORE16 = os.environ.get("E16_STORE", "on" if ARCH16 == "window" else "off"); assert STORE16 in ("on", "off")
+if ARCH16 != "window":
+    import arch17
+    arch17.install(ARCH16)
+PFX = "e16" if ARCH16 == "window" else "e17"
+ATAG = "" if ARCH16 == "window" else f"_{ARCH16}"
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
-RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" else "")
+RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "")   # off is the default for the windowless architectures
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -153,7 +160,8 @@ def score(m, items, store=None, silence=False):
 
 
 def panels(seed):
-    P = {E.NAME(*t): E.panel(t, E.split(t, .25, seed)[1], seed) for t in F1 + F3}          # held pairs, k = 0, 8, 12, 20
+    ks = E.KS_PANEL + ((40,) if ARCH16 != "window" else ())                                   # E17 adds k = 40, beyond any window
+    P = {E.NAME(*t): E.panel(t, E.split(t, .25, seed)[1], seed, ks=ks) for t in F1 + F3}   # held pairs, k = 0, 8, 12, 20 (, 40)
     P.update({E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(12,), n=300) for t in E.DEV})
     taught = {p: set(triples(p, seed, 2000)) for p in TAUGHT_PAIRS}
     comp = {f"{o1}{o2}": [render_pair(o1, o2, *tr) for tr in triples((o1, o2), seed + 1, 600)] for o1, o2 in HELD_PAIRS}
@@ -186,9 +194,9 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 def life(arm, seed):
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
-    path = OUT / f"e16_life_{arm}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
+    path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
-    m.load_state_dict(T.load(OUT / f"e11_dev_M_{seed}.pt"))
+    m.load_state_dict(T.load(OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.pt")))
     local = arm not in ("D", "M")
     opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
     store = X.Store(seed) if (local and STORE16 == "on") else None
@@ -208,7 +216,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16,
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16,
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -370,9 +378,36 @@ def qualify():
     (OUT / "QUALIFY_E16.json").write_text(json.dumps(out, indent=1)); print(json.dumps(out, indent=1))
 
 
+def develop17(seed):
+    """Birth for a windowless architecture: exp11's development (backprop through time on the four mod-89 operations with 0-12
+    distractor letters, 24,576 updates, sealed panels at k = 0/4/8/12/20) on the E16_ARCH net; writes e17_dev_{arch}_{seed}."""
+    assert ARCH16 != "window"
+    path = OUT / f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.pt"
+    if path.exists():
+        return
+    m = E.new_net(seed)
+    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=.3, betas=(.9, .98))
+    tp = [(t, E.split(t, .5, seed)[0]) for t in E.DEV]
+    pan = {E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(0, 4, 8, 12, 20), n=300) for t in E.DEV}
+    bt = E.batches(tp, seed, E.KMAX["M"])
+    t0 = time.process_time(); curve = []
+    for stop in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK):
+        losses = [E.update(m, opt, next(bt), "D") for _ in range(X.BLOCK)]
+        if stop % 4096 == 0 or stop == E.DEV_DOSE:
+            row = dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
+                       sealed={n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()})
+            curve.append(row)
+            print("e17 dev", ARCH16, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
+    row["silenced_k12"] = {n: E.score(m, pk[12], silence=True) for n, pk in pan.items()}
+    T.save(m.state_dict(), path)
+    (OUT / f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.json").write_text(json.dumps(dict(arch=ARCH16, seed=seed, kmax=E.KMAX["M"], curve=curve), indent=1))
+
+
 if __name__ == "__main__":
     OUT.mkdir(exist_ok=True)
     if sys.argv[1] == "qualify":
         qualify()
+    elif sys.argv[1] == "dev":
+        develop17(int(sys.argv[2]))
     else:
         life(sys.argv[1], int(sys.argv[2]))

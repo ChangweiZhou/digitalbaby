@@ -19,8 +19,22 @@ LABEL = {"T": "T learner (uniform replay)", "D": "D twin (joint ground truth)", 
          "T_res2048": "T reservoir 2,048/family", "T_res4096": "T reservoir 4,096/family", "T_res8192": "T reservoir 8,192/family", "T_res16384": "T reservoir 16,384/family", "T_tot24576": "T one reservoir 24,576, no labels", "T_tot65536": "T one reservoir 65,536, no labels", "T_raw65536": "T raw bytes verbatim, 65,536, no parser", "T_raw65536_online": "T raw 65,536, admitted online (control)", "T_raw65536_drift_online": "T raw 65,536, drifting stream, no stages", "D_drift": "D twin on the drifting stream", "T_raw65536_lossall": "T raw 65,536, loss on every byte", "T_raw65536_nostore": "T raw 65,536, exact-key store removed"}
 
 
+E17_ARMS = ("T_cell1_raw65536", "D_cell1", "T_bank_raw65536", "D_bank")
+ARMS = ARMS + E17_ARMS
+LABEL.update({"T_cell1_raw65536": "E17 cell1 (no window), raw 65,536", "D_cell1": "E17 twin, cell1", "T_bank_raw65536": "E17 bank (no window, fixed rates), raw 65,536", "D_bank": "E17 twin, bank"})
+
+
+def twin_of(arm):
+    if arm.endswith("drift_online"):
+        return "D_drift"
+    for a in ("cell1", "bank"):
+        if f"_{a}_" in arm:
+            return f"D_{a}"
+    return "D"
+
+
 def load(arm, seed):
-    p = OUT / f"e16_life_{arm}_{seed}.json"
+    p = OUT / f"{'e17' if arm in E17_ARMS else 'e16'}_life_{arm}_{seed}.json"
     return json.load(open(p)) if p.exists() else None
 
 
@@ -49,8 +63,8 @@ def main():
               "| Seed | Arm: family | arm | D | arm/D | F1 after block 2 (T) | T k=20 | T silenced k=12 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
     for s in SEEDS:
         for a in ARMS:
-            t = runs.get((a, s)); dd = runs.get(("D_drift" if a.endswith("drift_online") else "D", s))
-            if a in ("D", "D_drift") or not t or not dd or len(t["stages"]) < 7 or len(dd["stages"]) < 7:
+            t = runs.get((a, s)); dd = runs.get((twin_of(a), s))
+            if a in ("D", "D_drift", "D_cell1", "D_bank") or not t or not dd or len(t["stages"]) < 7 or len(dd["stages"]) < 7:
                 continue
             st, sd = t["stages"][-1]["scores"], dd["stages"][-1]["scores"]; s2 = t["stages"][2]["scores"]
             rows = [("F1 ops k=12", fam_mean(st, F1), fam_mean(sd, F1), fam_mean(s2, F1), sum(pct(K(st, n, 20)) for n in F1) / 4, sum(pct(st["silenced_k12"][n]) for n in F1) / 4),
