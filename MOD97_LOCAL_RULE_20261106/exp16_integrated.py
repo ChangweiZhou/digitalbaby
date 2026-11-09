@@ -64,7 +64,11 @@ if ARCH16 != "window":
     import arch17
     arch17.install(ARCH16)
 PFX = "e16" if ARCH16 == "window" else "e17"
-ATAG = "" if ARCH16 == "window" else f"_{ARCH16}"
+#   E16_FREEZE=none|bank1  (E17 Phase 1b): bank1 freezes the first bank's write path (l1, lp, lc, lw) after birth; only the second bank, the
+#                           projections from the first bank's state and the readout learn in life. Separates the truncated first-bank trace from the rest.
+FREEZE16 = os.environ.get("E16_FREEZE", "none"); assert FREEZE16 in ("none", "bank1")
+assert FREEZE16 == "none" or ARCH16 == "bank2", "E16_FREEZE=bank1 is defined for bank2 only"
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + ("_frz1" if FREEZE16 == "bank1" else "")
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
 RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "")   # off is the default for the windowless architectures
@@ -205,7 +209,11 @@ def life(arm, seed):
     m.load_state_dict(T.load(birth_file))
     assert STREAM16 == "blocks" or arm == "D" or REPLAY16 in ("raw", "total", "oracle"), "the drifting stream is implemented for the raw/total reservoirs and the twin only"
     local = arm not in ("D", "M")
-    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
+    FROZEN = ("l1.", "lp.", "lc.", "lw.") if FREEZE16 == "bank1" else ()
+    learnable = [p_ for n_, p_ in m.named_parameters() if not n_.startswith(FROZEN)]
+    for n_, p_ in m.named_parameters():
+        p_.requires_grad_(not n_.startswith(FROZEN))
+    opt = T.optim.AdamW(learnable, lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
     store = X.Store(seed) if (local and STORE16 == "on") else None
     rule = "D" if arm == "M" else arm      # arm M: T's data pipeline, D's update
     rng = Random(seed + 9)
@@ -223,7 +231,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
