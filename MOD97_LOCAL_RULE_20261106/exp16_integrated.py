@@ -56,9 +56,11 @@ RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir
 #   E16_ADMIT=block|online    online: the raw reservoir admits each presented item as it arrives (Algorithm R per item) instead of at checkpoint ends
 #   E16_LOSS=answer|all       all: next-byte loss on every byte of every item (prompt and answer), the answer mask removed; scoring unchanged
 STREAM16 = os.environ.get("E16_STREAM", "blocks"); ADMIT16 = os.environ.get("E16_ADMIT", "block"); LOSS16 = os.environ.get("E16_LOSS", "answer")
+#   E16_STORE=on|off          off: the E8 exact-key store is absent from the local arms (no writes, no logit bias at scoring); the architecture audit (E16-A)
+STORE16 = os.environ.get("E16_STORE", "on"); assert STORE16 in ("on", "off")
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
-RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "")
+RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" else "")
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -188,7 +190,7 @@ def life(arm, seed):
     m.load_state_dict(T.load(OUT / f"e11_dev_M_{seed}.pt"))
     local = arm not in ("D", "M")
     opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
-    store = X.Store(seed) if local else None
+    store = X.Store(seed) if (local and STORE16 == "on") else None
     rule = "D" if arm == "M" else arm      # arm M: T's data pipeline, D's update
     rng = Random(seed + 9)
     P, comp = panels(seed)
