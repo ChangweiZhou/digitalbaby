@@ -674,3 +674,20 @@ P17.1b.1 refuted (under 70 after block 2 in every seed). P17.1b.2 holds (the fro
 ## E16-M2, assessed (cloud session, 9 November 2026): the data pipeline is not the cause; ideal data does not close the rule's gap
 
 `E16M2_REPORT.md`, `exp45/SUMMARY_E16M2.md`. On the two failing seeds (400009 under drift, 600013 under stages): arm M, backprop on the learner's own reservoir (identical bytes and distinct counts to the failing life's), ends at 0.97 / 0.95 of the twin on held compositions with the plus-minus pairs at 76.5–86.3 and no mod-97 dip (P16M2.1 holds in both). The sign rule on the twin's joint stream (oracle replay) rises from 64.9 to 84.5 (0.90) and from 64.7 to 78.8 (0.85); the +- pair ends at 74.2 and 62.0 (P16M2.2 holds in 400009, misses in 600013 on the pair clause). Under stages the mod-97 dip when compositions arrive reappears with oracle data (65.7) and not in M (92.2); under drift the oracle arm shows no dip at checkpoint 2 and a fall to 79.2 at checkpoint 3 (P16M2.3 holds in 600013, misses in 400009). Reading: in both seeds the rule is short of the twin with ideal data, and in both the raw reservoir's sampling costs the rule a further 14–20 points that costs backprop nothing: a rule × data interaction, with the rule first. Caveat: 600013's comparators are on the pre-re-keying panels. E16-F6 (six more drift seeds, the failure rate, 600013 under drift, the early signature over twelve seeds) is running on the same worker; its three births passed (89.7% or better on the development operations).
+
+## E17, Phase 1c: the pipeline is cleared, exact feedback only delays the loss, and the trace gap is measured (9 November 2026, 18:15 EST)
+
+Predictions and verdicts: `E45_PREDICTIONS.md`, E17 Phase 1c. Six lives on the frozen bank2; tables `exp45/SUMMARY_E17_PHASE1.md`; gradient check `exp45/QUALIFY_E17_bank2_up.json`.
+
+| Seed | Arm | F1 mean after block 1 / 2 / 3 / 6 | F3 after 6 | Held comp after 6 |
+|---|---|---|---|---|
+| 73129 | M, backprop on the learner's pipeline | 93.1 / 92.4 / 90.2 / 93.0 | 93.4 | 15.8 |
+| 73129 | T, exact feedback, trace as before | 82.4 / 45.8 / 10.9 / 15.0 | 14.1 | 4.3 |
+| 93683 | M | 94.0 / 95.5 / 89.0 / 92.5 | 92.7 | 15.2 |
+| 93683 | T, exact feedback | 78.8 / 49.9 / 10.2 / 17.4 | 16.6 | 5.4 |
+| 116089 | M | 95.1 / 95.2 / 90.8 / 92.1 | 92.9 | 17.7 |
+| 116089 | T, exact feedback | 85.1 / 66.9 / 10.1 / 16.1 | 15.8 | 4.0 |
+| all | T, sign feedback (Phase 1b), for comparison | 71–81 / 15–32 / 12–16 / 17–20 | 18–20 | 4–6 |
+| all | D, frozen twin (Phase 1b) | 94–95 / 93–94 / 89–91 / 92.5–93.0 | 89–91 | 17–18 |
+
+Arm M holds in every seed (P17.1c.2): replay from the reservoir does not hurt the exact update, so the learner's data pipeline is cleared on this architecture as it was on the windowed one (E16-M2). Exact feedback raises the learner's standing after block 2 from 15–32 to 46–67 and does not prevent the collapse, which completes one block later (P17.1c.1 refuted; P17.1c.3's condition met one block late). The gradient check then located the remaining difference: with the first bank frozen and exact feedback, the learner's gradient equals backprop through time's on every learned synapse except the projection feeding the second bank's write, where the within-step gradient has relative error 0.87; the scan extended one layer upstream reproduces the exact credit to 1.6e-7 (`arch17.qualify bank2 up`). The trace was exact for the write synapses and not for the layer feeding them, which the windowed cell never exposed because its input window made within-step credit sufficient. **Phase 1d** runs the extended trace under both feedbacks; predictions written before launch.

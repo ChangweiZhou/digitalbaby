@@ -489,6 +489,48 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | D_bank2_frz1 | 116089 | F2.2 | 92.5 | 91.5 | 90.8 | 31.4 | 19.8 | 12.8 | 5.8 | 32.3 | 28.2 | 52.2 | 32.0 |
 | D_bank2_frz1 | 116089 | F3.1 | 94.1 | 92.0 | 93.2 | 91.8 | 19.8 | 14.8 | 3.0 | 34.5 | 27.0 | 56.7 | 25.9 |
 | D_bank2_frz1 | 116089 | F3.2 | 92.5 | 90.2 | 91.8 | 90.7 | 18.4 | 14.0 | 2.7 | 29.8 | 27.0 | 59.7 | 24.5 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | birth | 26.1 | 20.8 | 15.0 | 30.1 | 6.9 | 1.2 | 1.2 | 16.0 | 9.2 | 3.0 | 95.5 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | F1.1 | 82.4 | 79.5 | 70.0 | 64.9 | 9.6 | 0.7 | 1.5 | 13.3 | 23.0 | 8.7 | 26.4 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | F1.2 | 45.8 | 44.2 | 45.5 | 36.9 | 0.9 | 0.5 | 0.8 | 1.2 | 1.0 | 1.5 | 30.5 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | F2.1 | 10.9 | 0.5 | 2.8 | 10.4 | 3.1 | 0.8 | 1.3 | 4.2 | 6.0 | 3.2 | 10.2 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | F2.2 | 14.0 | 0.8 | 1.8 | 13.4 | 4.2 | 0.8 | 0.8 | 5.7 | 9.5 | 3.3 | 13.8 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | F3.1 | 14.4 | 1.5 | 1.0 | 14.4 | 4.2 | 1.5 | 1.2 | 8.7 | 5.5 | 3.2 | 15.0 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | F3.2 | 15.0 | 2.2 | 2.0 | 14.1 | 4.3 | 0.7 | 1.2 | 7.7 | 7.8 | 4.0 | 14.8 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | birth | 17.3 | 16.8 | 12.0 | 18.4 | 3.6 | 2.2 | 1.5 | 5.5 | 5.3 | 2.2 | 95.2 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | F1.1 | 78.8 | 68.8 | 68.5 | 65.5 | 9.0 | 1.3 | 1.0 | 22.5 | 11.0 | 8.7 | 20.3 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | F1.2 | 49.9 | 31.5 | 32.5 | 43.9 | 0.9 | 0.7 | 1.3 | 0.7 | 0.8 | 1.2 | 21.8 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | F2.1 | 10.2 | 2.5 | 1.2 | 10.9 | 4.2 | 0.8 | 0.7 | 9.5 | 5.7 | 3.7 | 10.3 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | F2.2 | 11.1 | 1.2 | 2.2 | 11.6 | 4.5 | 0.8 | 1.0 | 7.2 | 9.2 | 3.7 | 11.3 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | F3.1 | 16.8 | 1.0 | 3.0 | 17.1 | 6.4 | 0.3 | 1.2 | 12.2 | 11.8 | 3.5 | 18.0 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | F3.2 | 17.4 | 2.8 | 3.2 | 16.6 | 5.4 | 1.3 | 1.0 | 9.7 | 9.5 | 4.8 | 19.5 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | birth | 29.7 | 36.8 | 11.2 | 37.0 | 4.8 | 0.8 | 0.3 | 8.7 | 9.5 | 3.0 | 95.1 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | F1.1 | 85.1 | 76.0 | 75.5 | 67.3 | 8.1 | 1.2 | 1.0 | 17.2 | 13.0 | 8.2 | 35.8 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | F1.2 | 66.9 | 54.5 | 54.0 | 56.3 | 4.9 | 1.0 | 1.2 | 3.5 | 14.0 | 3.3 | 38.2 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | F2.1 | 10.1 | 0.5 | 1.2 | 9.4 | 4.2 | 0.7 | 1.0 | 9.5 | 5.5 | 2.7 | 10.2 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | F2.2 | 11.7 | 0.5 | 2.2 | 11.5 | 4.2 | 0.5 | 0.3 | 6.7 | 9.3 | 3.0 | 11.6 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | F3.1 | 14.1 | 0.8 | 1.2 | 14.1 | 4.2 | 1.0 | 1.0 | 8.7 | 6.2 | 2.0 | 14.7 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | F3.2 | 16.1 | 1.5 | 2.0 | 15.8 | 4.0 | 1.0 | 0.5 | 7.3 | 7.3 | 4.0 | 15.8 |
+| M_bank2_frz1_raw65536 | 73129 | birth | 26.1 | 20.8 | 15.0 | 30.1 | 6.9 | 1.2 | 1.2 | 16.0 | 9.2 | 3.0 | 95.5 |
+| M_bank2_frz1_raw65536 | 73129 | F1.1 | 93.1 | 92.8 | 87.8 | 30.7 | 5.3 | 1.0 | 1.3 | 10.7 | 8.2 | 1.7 | 55.8 |
+| M_bank2_frz1_raw65536 | 73129 | F1.2 | 92.4 | 93.2 | 87.2 | 27.4 | 5.7 | 0.8 | 2.0 | 10.0 | 10.0 | 2.0 | 28.7 |
+| M_bank2_frz1_raw65536 | 73129 | F2.1 | 90.2 | 93.2 | 86.8 | 35.2 | 15.1 | 2.3 | 1.0 | 29.0 | 28.2 | 41.5 | 39.6 |
+| M_bank2_frz1_raw65536 | 73129 | F2.2 | 90.0 | 93.8 | 87.0 | 36.9 | 18.2 | 3.7 | 2.0 | 32.5 | 34.8 | 61.8 | 37.4 |
+| M_bank2_frz1_raw65536 | 73129 | F3.1 | 92.9 | 92.0 | 90.0 | 92.2 | 14.8 | 2.8 | 2.3 | 24.3 | 29.7 | 44.3 | 20.1 |
+| M_bank2_frz1_raw65536 | 73129 | F3.2 | 93.0 | 87.5 | 92.5 | 93.4 | 15.8 | 2.7 | 1.3 | 26.7 | 32.7 | 39.2 | 27.1 |
+| M_bank2_frz1_raw65536 | 93683 | birth | 17.3 | 16.8 | 12.0 | 18.4 | 3.6 | 2.2 | 1.5 | 5.5 | 5.3 | 2.2 | 95.2 |
+| M_bank2_frz1_raw65536 | 93683 | F1.1 | 94.0 | 89.2 | 91.2 | 23.2 | 3.0 | 1.2 | 1.2 | 4.8 | 5.0 | 5.0 | 50.3 |
+| M_bank2_frz1_raw65536 | 93683 | F1.2 | 95.5 | 93.5 | 92.8 | 21.9 | 2.2 | 1.5 | 0.8 | 3.3 | 3.0 | 4.2 | 26.2 |
+| M_bank2_frz1_raw65536 | 93683 | F2.1 | 89.0 | 93.0 | 88.0 | 56.8 | 14.6 | 1.5 | 1.8 | 32.0 | 23.2 | 34.5 | 56.0 |
+| M_bank2_frz1_raw65536 | 93683 | F2.2 | 90.0 | 90.8 | 88.5 | 59.0 | 17.3 | 3.2 | 2.7 | 32.5 | 30.8 | 50.0 | 59.5 |
+| M_bank2_frz1_raw65536 | 93683 | F3.1 | 92.3 | 90.5 | 90.5 | 92.5 | 15.3 | 5.0 | 1.7 | 29.0 | 25.5 | 39.5 | 59.1 |
+| M_bank2_frz1_raw65536 | 93683 | F3.2 | 92.5 | 90.2 | 92.8 | 92.7 | 15.2 | 2.8 | 2.5 | 28.8 | 26.7 | 38.8 | 60.0 |
+| M_bank2_frz1_raw65536 | 116089 | birth | 29.7 | 36.8 | 11.2 | 37.0 | 4.8 | 0.8 | 0.3 | 8.7 | 9.5 | 3.0 | 95.1 |
+| M_bank2_frz1_raw65536 | 116089 | F1.1 | 95.1 | 94.8 | 91.2 | 36.9 | 2.0 | 0.8 | 1.2 | 2.5 | 3.3 | 1.3 | 59.7 |
+| M_bank2_frz1_raw65536 | 116089 | F1.2 | 95.2 | 93.5 | 92.5 | 35.6 | 1.5 | 0.5 | 0.3 | 3.5 | 1.5 | 1.2 | 38.2 |
+| M_bank2_frz1_raw65536 | 116089 | F2.1 | 90.8 | 94.5 | 88.5 | 40.1 | 16.6 | 7.3 | 4.2 | 27.2 | 27.8 | 41.7 | 41.8 |
+| M_bank2_frz1_raw65536 | 116089 | F2.2 | 90.9 | 93.5 | 91.5 | 33.2 | 20.4 | 14.5 | 6.2 | 31.3 | 29.5 | 61.8 | 31.1 |
+| M_bank2_frz1_raw65536 | 116089 | F3.1 | 93.1 | 90.2 | 90.8 | 92.7 | 18.6 | 11.8 | 4.7 | 31.3 | 26.7 | 48.2 | 27.0 |
+| M_bank2_frz1_raw65536 | 116089 | F3.2 | 92.1 | 90.2 | 87.8 | 92.9 | 17.7 | 7.7 | 4.2 | 32.3 | 26.7 | 48.8 | 26.2 |
 
 ## After the last block: learner against twin (gate: T ≥ 80% of D on every family)
 
@@ -557,6 +599,12 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 73129 | E17 twin, bank2, first bank frozen: F1 ops k=12 | 92.9 | 95.9 | 0.97 | 92.9 | 87.3 | 0.0 |
 | 73129 | E17 twin, bank2, first bank frozen: F3 ops k=12 | 91.2 | 93.3 | 0.98 |  | 84.3 | 0.0 |
 | 73129 | E17 twin, bank2, first bank frozen: held comp final | 17.2 | 17.5 | 0.99 |  |  | 0.0 |
+| 73129 | E17 bank2 frozen, exact feedback: F1 ops k=12 | 15.0 | 92.9 | 0.16 | 45.8 | 11.8 | 0.0 |
+| 73129 | E17 bank2 frozen, exact feedback: F3 ops k=12 | 14.1 | 91.2 | 0.15 |  | 12.0 | 0.0 |
+| 73129 | E17 bank2 frozen, exact feedback: held comp final | 4.3 | 17.2 | 0.25 |  |  | 0.0 |
+| 73129 | E17 bank2 frozen, backprop on the learner pipeline: F1 ops k=12 | 93.0 | 92.9 | 1.00 | 92.4 | 87.5 | 0.0 |
+| 73129 | E17 bank2 frozen, backprop on the learner pipeline: F3 ops k=12 | 93.4 | 91.2 | 1.02 |  | 89.4 | 0.0 |
+| 73129 | E17 bank2 frozen, backprop on the learner pipeline: held comp final | 15.8 | 17.2 | 0.92 |  |  | 0.0 |
 | 93683 | T learner (uniform replay): F1 ops k=12 | 80.2 | 94.1 | 0.85 | 92.2 | 76.0 | 5.1 |
 | 93683 | T learner (uniform replay): F3 ops k=12 | 90.2 | 92.6 | 0.97 |  | 89.0 | 6.3 |
 | 93683 | T learner (uniform replay): held comp final | 53.2 | 92.0 | 0.58 |  |  | 6.8 |
@@ -620,6 +668,12 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 93683 | E17 twin, bank2, first bank frozen: F1 ops k=12 | 93.0 | 92.3 | 1.01 | 94.1 | 87.5 | 0.0 |
 | 93683 | E17 twin, bank2, first bank frozen: F3 ops k=12 | 89.4 | 90.3 | 0.99 |  | 84.2 | 0.0 |
 | 93683 | E17 twin, bank2, first bank frozen: held comp final | 17.2 | 15.9 | 1.08 |  |  | 0.0 |
+| 93683 | E17 bank2 frozen, exact feedback: F1 ops k=12 | 17.4 | 93.0 | 0.19 | 49.9 | 15.9 | 0.0 |
+| 93683 | E17 bank2 frozen, exact feedback: F3 ops k=12 | 16.6 | 89.4 | 0.19 |  | 15.2 | 0.0 |
+| 93683 | E17 bank2 frozen, exact feedback: held comp final | 5.4 | 17.2 | 0.31 |  |  | 0.0 |
+| 93683 | E17 bank2 frozen, backprop on the learner pipeline: F1 ops k=12 | 92.5 | 93.0 | 0.99 | 95.5 | 84.6 | 0.0 |
+| 93683 | E17 bank2 frozen, backprop on the learner pipeline: F3 ops k=12 | 92.7 | 89.4 | 1.04 |  | 86.6 | 0.0 |
+| 93683 | E17 bank2 frozen, backprop on the learner pipeline: held comp final | 15.2 | 17.2 | 0.88 |  |  | 0.0 |
 | 116089 | T learner (uniform replay): F1 ops k=12 | 65.3 | 94.4 | 0.69 | 86.1 | 55.9 | 3.4 |
 | 116089 | T learner (uniform replay): F3 ops k=12 | 82.3 | 93.4 | 0.88 |  | 71.9 | 5.4 |
 | 116089 | T learner (uniform replay): held comp final | 46.0 | 93.8 | 0.49 |  |  | 7.3 |
@@ -683,6 +737,12 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 116089 | E17 twin, bank2, first bank frozen: F1 ops k=12 | 92.5 | 94.4 | 0.98 | 94.4 | 84.7 | 0.0 |
 | 116089 | E17 twin, bank2, first bank frozen: F3 ops k=12 | 90.7 | 93.2 | 0.97 |  | 78.8 | 0.0 |
 | 116089 | E17 twin, bank2, first bank frozen: held comp final | 18.4 | 20.5 | 0.90 |  |  | 0.0 |
+| 116089 | E17 bank2 frozen, exact feedback: F1 ops k=12 | 16.1 | 92.5 | 0.17 | 66.9 | 14.4 | 0.0 |
+| 116089 | E17 bank2 frozen, exact feedback: F3 ops k=12 | 15.8 | 90.7 | 0.17 |  | 13.9 | 0.0 |
+| 116089 | E17 bank2 frozen, exact feedback: held comp final | 4.0 | 18.4 | 0.22 |  |  | 0.0 |
+| 116089 | E17 bank2 frozen, backprop on the learner pipeline: F1 ops k=12 | 92.1 | 92.5 | 1.00 | 95.2 | 86.2 | 0.0 |
+| 116089 | E17 bank2 frozen, backprop on the learner pipeline: F3 ops k=12 | 92.9 | 90.7 | 1.02 |  | 85.6 | 0.0 |
+| 116089 | E17 bank2 frozen, backprop on the learner pipeline: held comp final | 17.7 | 18.4 | 0.96 |  |  | 0.0 |
 
 ## Retention across arms: what each family keeps after the stream moves on (block 6 vs the family's own last block)
 
@@ -757,6 +817,12 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | E17 twin, bank2, first bank frozen | 73129 | 92.9 → 92.9 | 93/91 | 16.8 → 17.2 | 11.3 | 3/4 | 50 → 54 | 91.2 |
 | E17 twin, bank2, first bank frozen | 93683 | 94.1 → 93.0 | 93/93 | 16.7 → 17.2 | 12.8 | 5/4 | 44 → 48 | 89.4 |
 | E17 twin, bank2, first bank frozen | 116089 | 94.4 → 92.5 | 90/92 | 19.8 → 18.4 | 13.5 | 14/3 | 52 → 60 | 90.7 |
+| E17 bank2 frozen, exact feedback | 73129 | 45.8 → 15.0 | 2/2 | 4.2 → 4.3 | 1.6 | 1/1 | 3 → 4 | 14.1 |
+| E17 bank2 frozen, exact feedback | 93683 | 49.9 → 17.4 | 3/3 | 4.5 → 5.4 | 2.7 | 1/1 | 4 → 5 | 16.6 |
+| E17 bank2 frozen, exact feedback | 116089 | 66.9 → 16.1 | 2/2 | 4.2 → 4.0 | 1.2 | 1/0 | 3 → 4 | 15.8 |
+| E17 bank2 frozen, backprop on the learner pipeline | 73129 | 92.4 → 93.0 | 88/92 | 18.2 → 15.8 | 9.9 | 3/1 | 62 → 39 | 93.4 |
+| E17 bank2 frozen, backprop on the learner pipeline | 93683 | 95.5 → 92.5 | 90/93 | 17.3 → 15.2 | 11.3 | 3/2 | 50 → 39 | 92.7 |
+| E17 bank2 frozen, backprop on the learner pipeline | 116089 | 95.2 → 92.1 | 90/88 | 20.4 → 17.7 | 11.2 | 8/4 | 62 → 49 | 92.9 |
 
 ## Per-operation exact % at k = 0 / 8 / 12 / 20 after the last block
 
@@ -831,6 +897,12 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | D_bank2_frz1 | 73129 | 94/95/93/88 | 90/91/91/89 | 92/95/95/84 | 91/94/93/88 | 91/92/90/87 | 81/87/86/78 | 93/96/94/84 | 93/96/94/88 |
 | D_bank2_frz1 | 93683 | 94/94/93/90 | 92/95/93/89 | 92/94/93/88 | 94/95/93/84 | 86/85/85/82 | 82/88/84/76 | 92/94/93/90 | 93/96/96/89 |
 | D_bank2_frz1 | 116089 | 91/92/90/80 | 92/92/92/85 | 92/94/93/84 | 94/95/95/90 | 86/88/87/75 | 86/89/88/68 | 93/94/92/82 | 94/97/96/90 |
+| T_bank2_frz1_xfb_raw65536 | 73129 | 0/2/2/2 | 2/2/2/2 | 28/35/32/26 | 28/24/24/18 | 1/1/2/3 | 2/2/2/2 | 31/35/33/29 | 32/25/20/14 |
+| T_bank2_frz1_xfb_raw65536 | 93683 | 4/3/3/2 | 3/3/3/2 | 31/28/28/28 | 39/41/36/31 | 4/4/4/4 | 2/2/2/2 | 38/38/37/33 | 23/22/23/22 |
+| T_bank2_frz1_xfb_raw65536 | 116089 | 1/2/2/1 | 1/2/2/2 | 22/24/24/24 | 34/39/37/32 | 0/1/1/2 | 2/2/2/2 | 26/27/26/22 | 34/37/34/30 |
+| M_bank2_frz1_raw65536 | 73129 | 92/89/88/81 | 91/93/92/86 | 91/97/98/92 | 91/94/94/92 | 95/94/93/90 | 86/88/88/82 | 93/97/98/95 | 90/95/96/92 |
+| M_bank2_frz1_raw65536 | 93683 | 91/91/90/84 | 92/94/93/89 | 92/94/93/85 | 92/94/94/81 | 90/92/92/90 | 85/91/90/87 | 90/94/93/86 | 94/96/95/84 |
+| M_bank2_frz1_raw65536 | 116089 | 87/90/90/84 | 88/88/88/83 | 93/97/95/88 | 94/95/95/89 | 91/92/92/84 | 86/88/86/80 | 96/98/98/88 | 94/97/96/90 |
 
 ## Shortcut ceilings on the held pairs (final answer from a visible-only rule, %)
 
