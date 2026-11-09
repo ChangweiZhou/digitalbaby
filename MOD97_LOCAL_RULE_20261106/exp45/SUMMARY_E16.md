@@ -363,6 +363,27 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | T_raw65536_lossall | 116089 | F2.2 | 28.2 | 3.8 | 0.8 | 8.6 | 84.5 | 81.2 | 72.8 | 91.8 | 92.3 | 86.0 | 8.6 |
 | T_raw65536_lossall | 116089 | F3.1 | 31.6 | 3.8 | 3.0 | 35.1 | 67.7 | 62.0 | 54.2 | 79.3 | 75.3 | 65.0 | 14.4 |
 | T_raw65536_lossall | 116089 | F3.2 | 29.8 | 3.5 | 2.2 | 32.4 | 50.4 | 32.5 | 38.3 | 74.3 | 56.3 | 49.3 | 11.1 |
+| T_raw65536_nostore | 73129 | birth | 52.6 | 39.5 | 10.0 | 57.6 | 30.0 | 1.0 | 0.8 | 60.7 | 57.5 | 13.5 | 95.5 |
+| T_raw65536_nostore | 73129 | F1.1 | 93.2 | 89.0 | 89.0 | 39.1 | 30.6 | 1.8 | 2.0 | 58.0 | 60.7 | 17.0 | 47.2 |
+| T_raw65536_nostore | 73129 | F1.2 | 93.6 | 89.8 | 89.0 | 30.8 | 23.8 | 1.8 | 1.2 | 50.0 | 42.2 | 13.0 | 30.8 |
+| T_raw65536_nostore | 73129 | F2.1 | 88.8 | 86.0 | 80.2 | 9.4 | 84.1 | 76.7 | 79.3 | 88.7 | 91.8 | 84.7 | 7.8 |
+| T_raw65536_nostore | 73129 | F2.2 | 91.2 | 88.5 | 84.8 | 8.9 | 87.6 | 82.0 | 82.7 | 91.7 | 94.0 | 93.0 | 6.2 |
+| T_raw65536_nostore | 73129 | F3.1 | 91.4 | 86.8 | 84.5 | 92.8 | 80.4 | 67.7 | 74.2 | 89.5 | 90.3 | 83.2 | 5.2 |
+| T_raw65536_nostore | 73129 | F3.2 | 93.2 | 88.5 | 89.2 | 92.2 | 80.2 | 63.5 | 74.8 | 91.2 | 91.2 | 81.8 | 6.5 |
+| T_raw65536_nostore | 93683 | birth | 17.9 | 0.0 | 2.0 | 20.3 | 13.5 | 0.8 | 0.3 | 35.2 | 17.5 | 8.8 | 94.7 |
+| T_raw65536_nostore | 93683 | F1.1 | 91.6 | 86.0 | 88.8 | 28.1 | 12.2 | 1.2 | 0.7 | 23.7 | 23.5 | 6.8 | 41.1 |
+| T_raw65536_nostore | 93683 | F1.2 | 92.7 | 88.8 | 88.2 | 27.8 | 18.9 | 0.5 | 0.8 | 20.5 | 53.7 | 9.7 | 27.3 |
+| T_raw65536_nostore | 93683 | F2.1 | 86.4 | 77.0 | 78.5 | 21.7 | 81.1 | 68.2 | 67.0 | 94.5 | 94.7 | 84.5 | 20.3 |
+| T_raw65536_nostore | 93683 | F2.2 | 89.9 | 81.0 | 85.5 | 11.9 | 86.6 | 77.0 | 77.8 | 96.5 | 95.0 | 89.7 | 13.5 |
+| T_raw65536_nostore | 93683 | F3.1 | 90.2 | 83.8 | 81.5 | 89.3 | 76.9 | 62.0 | 64.7 | 89.8 | 91.2 | 83.0 | 16.2 |
+| T_raw65536_nostore | 93683 | F3.2 | 89.9 | 85.5 | 83.0 | 90.7 | 74.8 | 56.3 | 60.0 | 89.5 | 93.3 | 80.8 | 15.6 |
+| T_raw65536_nostore | 116089 | birth | 30.8 | 39.0 | 15.0 | 35.2 | 12.5 | 0.8 | 0.7 | 16.2 | 32.3 | 5.2 | 92.9 |
+| T_raw65536_nostore | 116089 | F1.1 | 86.7 | 77.5 | 82.8 | 39.0 | 18.1 | 1.5 | 0.8 | 18.7 | 51.3 | 13.5 | 37.1 |
+| T_raw65536_nostore | 116089 | F1.2 | 90.4 | 84.5 | 87.0 | 36.2 | 16.8 | 1.3 | 1.0 | 15.7 | 49.2 | 15.2 | 35.7 |
+| T_raw65536_nostore | 116089 | F2.1 | 55.4 | 32.2 | 33.8 | 41.9 | 77.9 | 64.2 | 68.0 | 87.8 | 91.7 | 81.5 | 41.3 |
+| T_raw65536_nostore | 116089 | F2.2 | 71.6 | 55.8 | 54.8 | 48.0 | 89.1 | 82.0 | 82.3 | 94.8 | 97.3 | 89.7 | 48.6 |
+| T_raw65536_nostore | 116089 | F3.1 | 77.4 | 62.5 | 58.5 | 84.4 | 80.0 | 71.0 | 65.3 | 92.2 | 91.5 | 80.2 | 51.6 |
+| T_raw65536_nostore | 116089 | F3.2 | 82.2 | 69.2 | 71.5 | 85.6 | 80.1 | 69.2 | 67.7 | 92.3 | 91.2 | 81.5 | 52.8 |
 
 ## After the last block: learner against twin (gate: T ≥ 80% of D on every family)
 
@@ -413,6 +434,9 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 73129 | T raw 65,536, loss on every byte: F1 ops k=12 | 33.1 | 95.4 | 0.35 | 32.2 | 30.4 | 1.4 |
 | 73129 | T raw 65,536, loss on every byte: F3 ops k=12 | 34.2 | 93.8 | 0.36 |  | 32.5 | 1.7 |
 | 73129 | T raw 65,536, loss on every byte: held comp final | 55.5 | 93.3 | 0.59 |  |  | 1.4 |
+| 73129 | T raw 65,536, exact-key store removed: F1 ops k=12 | 93.2 | 95.4 | 0.98 | 93.6 | 92.0 | 2.6 |
+| 73129 | T raw 65,536, exact-key store removed: F3 ops k=12 | 92.2 | 93.8 | 0.98 |  | 91.9 | 3.6 |
+| 73129 | T raw 65,536, exact-key store removed: held comp final | 80.2 | 93.3 | 0.86 |  |  | 4.0 |
 | 93683 | T learner (uniform replay): F1 ops k=12 | 80.2 | 94.1 | 0.85 | 92.2 | 76.0 | 5.1 |
 | 93683 | T learner (uniform replay): F3 ops k=12 | 90.2 | 92.6 | 0.97 |  | 89.0 | 6.3 |
 | 93683 | T learner (uniform replay): held comp final | 53.2 | 92.0 | 0.58 |  |  | 6.8 |
@@ -458,6 +482,9 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 93683 | T raw 65,536, loss on every byte: F1 ops k=12 | 30.9 | 94.1 | 0.33 | 41.4 | 29.6 | 2.7 |
 | 93683 | T raw 65,536, loss on every byte: F3 ops k=12 | 34.9 | 92.6 | 0.38 |  | 32.1 | 3.6 |
 | 93683 | T raw 65,536, loss on every byte: held comp final | 48.2 | 92.0 | 0.52 |  |  | 2.5 |
+| 93683 | T raw 65,536, exact-key store removed: F1 ops k=12 | 89.9 | 94.1 | 0.96 | 92.7 | 87.5 | 5.5 |
+| 93683 | T raw 65,536, exact-key store removed: F3 ops k=12 | 90.7 | 92.6 | 0.98 |  | 90.2 | 7.4 |
+| 93683 | T raw 65,536, exact-key store removed: held comp final | 74.8 | 92.0 | 0.81 |  |  | 6.2 |
 | 116089 | T learner (uniform replay): F1 ops k=12 | 65.3 | 94.4 | 0.69 | 86.1 | 55.9 | 3.4 |
 | 116089 | T learner (uniform replay): F3 ops k=12 | 82.3 | 93.4 | 0.88 |  | 71.9 | 5.4 |
 | 116089 | T learner (uniform replay): held comp final | 46.0 | 93.8 | 0.49 |  |  | 7.3 |
@@ -503,6 +530,9 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 116089 | T raw 65,536, loss on every byte: F1 ops k=12 | 29.8 | 94.4 | 0.32 | 33.0 | 27.1 | 2.9 |
 | 116089 | T raw 65,536, loss on every byte: F3 ops k=12 | 32.4 | 93.4 | 0.35 |  | 29.8 | 3.4 |
 | 116089 | T raw 65,536, loss on every byte: held comp final | 50.4 | 93.8 | 0.54 |  |  | 1.8 |
+| 116089 | T raw 65,536, exact-key store removed: F1 ops k=12 | 82.2 | 94.4 | 0.87 | 90.4 | 77.3 | 6.8 |
+| 116089 | T raw 65,536, exact-key store removed: F3 ops k=12 | 85.6 | 93.4 | 0.92 |  | 79.0 | 9.9 |
+| 116089 | T raw 65,536, exact-key store removed: held comp final | 80.1 | 93.8 | 0.85 |  |  | 8.6 |
 
 ## Retention across arms: what each family keeps after the stream moves on (block 6 vs the family's own last block)
 
@@ -559,6 +589,9 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | T raw 65,536, loss on every byte | 73129 | 32.2 → 33.1 | 2/2 | 85.0 → 55.5 | 33/33 | 83 → 55 | 34.2 |
 | T raw 65,536, loss on every byte | 93683 | 41.4 → 30.9 | 6/4 | 80.2 → 48.2 | 34/32 | 80 → 52 | 34.9 |
 | T raw 65,536, loss on every byte | 116089 | 33.0 → 29.8 | 4/2 | 84.5 → 50.4 | 32/38 | 86 → 49 | 32.4 |
+| T raw 65,536, exact-key store removed | 73129 | 93.6 → 93.2 | 88/89 | 87.6 → 80.2 | 64/75 | 93 → 82 | 92.2 |
+| T raw 65,536, exact-key store removed | 93683 | 92.7 → 89.9 | 86/83 | 86.6 → 74.8 | 56/60 | 90 → 81 | 90.7 |
+| T raw 65,536, exact-key store removed | 116089 | 90.4 → 82.2 | 69/72 | 89.1 → 80.1 | 69/68 | 90 → 82 | 85.6 |
 
 ## Per-operation exact % at k = 0 / 8 / 12 / 20 after the last block
 
@@ -615,6 +648,9 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | T_raw65536_lossall | 73129 | 22/2/2/2 | 2/2/2/1 | 83/61/60/56 | 85/72/69/63 | 17/3/2/2 | 7/4/4/3 | 83/63/63/60 | 88/68/67/64 |
 | T_raw65536_lossall | 93683 | 22/6/6/6 | 6/3/4/4 | 82/60/60/58 | 79/54/54/51 | 26/10/8/9 | 8/6/6/4 | 77/66/66/61 | 80/61/59/54 |
 | T_raw65536_lossall | 116089 | 30/5/4/2 | 6/3/2/2 | 82/59/56/51 | 82/60/57/53 | 26/6/4/3 | 8/3/4/2 | 78/62/60/56 | 80/63/63/58 |
+| T_raw65536_nostore | 73129 | 88/89/88/88 | 83/90/89/86 | 97/99/98/98 | 96/96/97/96 | 86/89/88/89 | 82/86/86/85 | 94/98/97/96 | 96/98/98/97 |
+| T_raw65536_nostore | 93683 | 86/86/86/82 | 68/85/83/80 | 94/96/96/94 | 95/96/95/94 | 80/86/84/84 | 77/88/86/86 | 96/96/96/96 | 94/96/96/95 |
+| T_raw65536_nostore | 116089 | 70/74/69/65 | 60/72/72/64 | 95/94/92/86 | 96/97/96/94 | 78/81/78/71 | 79/75/72/63 | 97/95/94/90 | 96/98/98/92 |
 
 ## Shortcut ceilings on the held pairs (final answer from a visible-only rule, %)
 
