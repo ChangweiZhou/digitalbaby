@@ -31,22 +31,34 @@ H, D, C, BOS = E.H, E.D, E.C, E.BOS
 RATES = (0.5, 0.8, 0.95, 0.99, 0.999)
 
 
+ARCHS = ("cell1", "bank", "cell1d2", "bank2")
+# Phase 0b variants (8 Nov 23:45 EST, after P17.0 was refuted for cell1 and bank):
+#   cell1d2  cell1 with a deeper readout: two hidden layers between (z1, h) and the logits, so two digits held in the state can interact before the output
+#   bank2    two stacked fixed-rate banks: the second bank's write is computed from the FIRST bank's state (p2 = tanh(Wp2 h1)), so writes can depend on
+#            accumulated context; each bank's own trace stays exact given its input (credit from the readout through the second bank's memory to the
+#            first bank's synapses is truncated, the e-prop approximation)
+
+
 class Net17(nn.Module):
     def __init__(self, arch):
         super().__init__()
-        assert arch in ("cell1", "bank")
+        assert arch in ARCHS
         self.arch = arch
         self.book = nn.Embedding(258, 8, padding_idx=BOS)
         self.l1 = nn.Linear(8, H)            # the current byte only (the window was 8 * W)
         self.lp = nn.Linear(H, D)
         self.lc = nn.Linear(D, C)
-        if arch == "cell1":
+        if arch in ("cell1", "cell1d2"):
             self.lr = nn.Linear(D, C)
         else:
             self.lw = nn.Linear(D, C)
             self.register_buffer("R", T.tensor([RATES[i * len(RATES) // C] for i in range(C)]))
+        if arch == "bank2":
+            self.lp2 = nn.Linear(C, D); self.lc2 = nn.Linear(D, C); self.lw2 = nn.Linear(D, C); self.lm2 = nn.Linear(C, H)
         self.lm = nn.Linear(C, H)
         self.l2 = nn.Linear(H, H)
+        if arch == "cell1d2":
+            self.l2b = nn.Linear(H, H)
         self.l3 = nn.Linear(H, 257)
 
 
@@ -60,7 +72,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     z1 = T.tanh(lin(u, m.l1, local))
     p = T.tanh(lin(z1, m.lp, local))
     c = T.tanh(lin(p, m.lc, local))
-    if m.arch == "cell1":
+    if m.arch in ("cell1", "cell1d2"):
         r = T.sigmoid(lin(p, m.lr, local)); w = 1 - r
     else:
         w = T.sigmoid(lin(p, m.lw, local)); r = m.R.expand_as(c)
@@ -75,15 +87,35 @@ def forward(m, x, local, through_time, keep=False, silence=False):
             h.retain_grad()
         hs.append(h)
     Hs = T.stack(hs, 1)
+    extra = {}
+    if m.arch == "bank2":   # second bank written from the first bank's state
+        p2 = T.tanh(lin(Hs if through_time else Hs.detach(), m.lp2, local)) if False else T.tanh(lin(Hs, m.lp2, local))
+        c2 = T.tanh(lin(p2, m.lc2, local)); w2 = T.sigmoid(lin(p2, m.lw2, local)); r2 = m.R.expand_as(c2)
+        h2 = T.zeros(B, C); hs2, prev2 = [], []
+        for t in range(L):
+            hp2 = h2 if through_time else h2.detach()
+            prev2.append(hp2)
+            h2 = r2[:, t] * hp2 + w2[:, t] * c2[:, t]
+            if keep:
+                h2.retain_grad()
+            hs2.append(h2)
+        Hs2 = T.stack(hs2, 1)
+        extra = dict(p2=p2, c2=c2, r2=r2, w2=w2, hs2=hs2, prev2=prev2)
     if silence:
         Hs = T.zeros_like(Hs)
-    z2 = T.tanh(lin(z1, m.l2, local) + lin(Hs, m.lm, local))
-    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev)
+        if m.arch == "bank2":
+            Hs2 = T.zeros_like(Hs2)
+    pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
+    if m.arch == "bank2":
+        pre = pre + lin(Hs2, m.lm2, local)
+    z2 = T.tanh(pre)
+    if m.arch == "cell1d2":
+        z2 = T.tanh(lin(z2, m.l2b, local))
+    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, **extra)
 
 
 @T.no_grad()
-def trace_grads_scan(m, it):
-    p, c, r, w, hs, prev = it["p"], it["c"], it["r"], it["w"], it["hs"], it["prev"]
+def _scan(p, c, r, w, hs, prev, lc, lgate, gate_is_r):
     Ls = T.stack([h.grad if h.grad is not None else T.zeros_like(h) for h in hs], 1)
     Lam = T.zeros_like(Ls)
     acc = T.zeros_like(Ls[:, 0])
@@ -92,20 +124,25 @@ def trace_grads_scan(m, it):
         Lam[:, t] = acc
     hp = T.stack(prev, 1)
     gc = w * (1 - c * c)
-    m.lc.weight.grad = T.einsum("btc,btd->cd", Lam * gc, p); m.lc.bias.grad = (Lam * gc).sum((0, 1))
-    if m.arch == "cell1":
-        gr = (hp - c) * r * (1 - r)
-        m.lr.weight.grad = T.einsum("btc,btd->cd", Lam * gr, p); m.lr.bias.grad = (Lam * gr).sum((0, 1))
-    else:
-        gw = c * w * (1 - w)
-        m.lw.weight.grad = T.einsum("btc,btd->cd", Lam * gw, p); m.lw.bias.grad = (Lam * gw).sum((0, 1))
+    lc.weight.grad = T.einsum("btc,btd->cd", Lam * gc, p); lc.bias.grad = (Lam * gc).sum((0, 1))
+    gg = (hp - c) * r * (1 - r) if gate_is_r else c * w * (1 - w)
+    lgate.weight.grad = T.einsum("btc,btd->cd", Lam * gg, p); lgate.bias.grad = (Lam * gg).sum((0, 1))
+
+
+@T.no_grad()
+def trace_grads_scan(m, it):
+    cellish = m.arch in ("cell1", "cell1d2")
+    _scan(it["p"], it["c"], it["r"], it["w"], it["hs"], it["prev"], m.lc, m.lr if cellish else m.lw, cellish)
+    if m.arch == "bank2":
+        _scan(it["p2"], it["c2"], it["r2"], it["w2"], it["hs2"], it["prev2"], m.lc2, m.lw2, False)
 
 
 trace_grads = trace_grads_scan
 
 
 def cell_params(arch):
-    return ("lc.weight", "lc.bias") + (("lr.weight", "lr.bias") if arch == "cell1" else ("lw.weight", "lw.bias"))
+    base = ("lc.weight", "lc.bias") + (("lr.weight", "lr.bias") if arch in ("cell1", "cell1d2") else ("lw.weight", "lw.bias"))
+    return base + (("lc2.weight", "lc2.bias", "lw2.weight", "lw2.bias") if arch == "bank2" else ())
 
 
 def install(arch):

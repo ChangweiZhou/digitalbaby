@@ -373,3 +373,23 @@ Everything else is E16-R3's arm: sign rule with the exact trace (scan form), dec
 **E16-L twin verdict (8 November 2026, 23:15 EST).** Backprop under the every-byte loss: mod-97 operations 92 / 91 / 94 at k = 12 after block 2 (prediction: ≥ 80 in every seed): holds. The objective is not the limit under backprop; the local rule on the recurrent learner is (ratios to this twin 0.31–0.35 on operations, 0.53–0.61 on compositions). Next arm: position-weighted learning signal into the state's synapses (λ = 0 and 0.1 on prompt positions), one change from E16-L.
 
 **E17 P17.0 verdict (8 November 2026, 23:35 EST).** Refuted for both architectures: cell1 reaches 23–31% on add89 and 13–17% on sub89 at k = 12 after 24,576 updates; bank 22–30% and 9–13%; comparisons 53–73%; k = 0 no better. Lives not launched. Phase 0b (births only) follows with three one-change variants; predictions below.
+
+## E17, Phase 0b: three one-change variants against the birth gate (8 November 2026 23:55 EST, written before launch; births only, overnight)
+
+P17.0 was refuted for both windowless architectures under backprop. The reading in the report is representational: writes into the state depend on the current byte only, so two digits can interact only in the readout's single hidden layer. Three variants, births only (backprop through time, 24,576 updates unless stated), same gate (at least 85% at k = 12 on all four development operations in every seed), three standing seeds each, nine births (`arch17.py`, `E16_ARCH`):
+
+| Variant | Change from Phase 0 | What it tests |
+|---|---|---|
+| cell1d2 | a second hidden layer in the readout between (z1, h) and the logits | whether the readout's depth was the limit while the state's content was sufficient |
+| bank2 | a second fixed-rate bank whose write is computed from the first bank's state | whether writes that depend on accumulated context are what is missing |
+| bank at 49,152 updates | double dose, nothing else | the slope: whether the single bank is merely slow |
+
+**Mechanism audit.** Trace qualification (`exp45/QUALIFY_E17_cell1d2.json`, `QUALIFY_E17_bank2.json`): cell1d2's trace reproduces backprop through time on the state's synapses to 1e-7; bank2's second bank likewise, while its first bank's trace deviates by 64–88% from backprop through time because credit that reaches the first bank through the second bank's memory is not carried (the e-prop truncation). This matters for a future local-rule life, not for these backprop births. Births are scored at k = 0 / 4 / 8 / 12 / 20 as before; the gate script admits a birth only from a complete receipt with its checkpoint hash recorded; no life is launched by this phase.
+
+**Predictions.**
+- P17.0b.1 (readout depth) cell1d2 improves add89 and sub89 at k = 12 by at least 15 points over cell1 in every seed but does not reach the gate: the state's content, not the readout, is the limit.
+- P17.0b.2 (context-dependent writes) bank2 reaches the gate in at least two seeds. If it does, context-dependent writes are the missing operation and the local-rule life on bank2 is the next run, with its first bank's truncated trace named as the known approximation.
+- P17.0b.3 (dose) the single bank at double dose gains at most 15 points on add89 and stays below 60%: dose is not the answer.
+- P17.0b.4 If none of the three reaches the gate in any seed, a byte-at-a-time learner needs state-dependent writes in a non-diagonal recurrence, for which no exact local trace exists; that becomes a design decision for Mr. Zhou (e-prop approximation, or a short window of two or three bytes as an explicit compromise), not a run.
+
+**Commands.** `E16_ARCH={cell1d2,bank2} python3 exp16_integrated.py dev SEED`; `E16_ARCH=bank E11_DEV_UPDATES=49152 python3 exp16_integrated.py dev SEED` (receipt `e17_dev_bank_dry49152_SEED`, the dose tag). Nine births, about 45 minutes for the six standard ones and 75 for the double-dose three, under the host lock.

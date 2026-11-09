@@ -58,7 +58,7 @@ RTAG = "" if REPLAY16 == "uniform" else (f"_res{RCAP}" if REPLAY16 == "reservoir
 STREAM16 = os.environ.get("E16_STREAM", "blocks"); ADMIT16 = os.environ.get("E16_ADMIT", "block"); LOSS16 = os.environ.get("E16_LOSS", "answer")
 #   E16_STORE=on|off          off: the E8 exact-key store is absent from the local arms (no writes, no logit bias at scoring); the architecture audit (E16-A)
 #   E16_ARCH=window|cell1|bank  (E17, 8 Nov 22:30 EST) window: unchanged; cell1 / bank: the window removed, see arch17.py; births e17_dev_{arch}_{seed}
-ARCH16 = os.environ.get("E16_ARCH", "window"); assert ARCH16 in ("window", "cell1", "bank")
+ARCH16 = os.environ.get("E16_ARCH", "window"); assert ARCH16 in ("window", "cell1", "bank", "cell1d2", "bank2")
 STORE16 = os.environ.get("E16_STORE", "on" if ARCH16 == "window" else "off"); assert STORE16 in ("on", "off")
 if ARCH16 != "window":
     import arch17
