@@ -68,7 +68,14 @@ PFX = "e16" if ARCH16 == "window" else "e17"
 #                           projections from the first bank's state and the readout learn in life. Separates the truncated first-bank trace from the rest.
 FREEZE16 = os.environ.get("E16_FREEZE", "none"); assert FREEZE16 in ("none", "bank1")
 assert FREEZE16 == "none" or ARCH16 == "bank2", "E16_FREEZE=bank1 is defined for bank2 only"
-ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + ("_frz1" if FREEZE16 == "bank1" else "")
+#   E16_FEEDBACK=sign|exact  (E17 Phase 1c): exact replaces the sign-symmetric feedback through every layer by the true transpose (SignLinear -> linear)
+#                           while the state synapses still learn from the eligibility trace (through_time stays off for arm T): separates the error
+#                           signal delivered to the state from the trace that credits its synapses. Arm T only; D and M already use exact feedback.
+FEEDBACK16 = os.environ.get("E16_FEEDBACK", "sign"); assert FEEDBACK16 in ("sign", "exact")
+if FEEDBACK16 == "exact":
+    _fwd16 = E.forward
+    E.forward = lambda m, x, local=False, through_time=False, keep=False, silence=False: _fwd16(m, x, False, through_time, keep, silence)
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + ("_frz1" if FREEZE16 == "bank1" else "") + ("_xfb" if FEEDBACK16 == "exact" else "")
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
 RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "")   # off is the default for the windowless architectures
@@ -209,6 +216,7 @@ def life(arm, seed):
     m.load_state_dict(T.load(birth_file))
     assert STREAM16 == "blocks" or arm == "D" or REPLAY16 in ("raw", "total", "oracle"), "the drifting stream is implemented for the raw/total reservoirs and the twin only"
     local = arm not in ("D", "M")
+    admits = local or arm == "M"       # arm M keeps T's whole data pipeline, including online admission (9 Nov: before this line M admitted at block ends only)
     FROZEN = ("l1.", "lp.", "lc.", "lw.") if FREEZE16 == "bank1" else ()
     learnable = [p_ for n_, p_ in m.named_parameters() if not n_.startswith(FROZEN)]
     for n_, p_ in m.named_parameters():
@@ -231,7 +239,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, feedback=FEEDBACK16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -278,9 +286,9 @@ def life(arm, seed):
                 batch = new + rp; presented += new
             else:
                 batch = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH)]; presented += batch
-            nnew = len(presented) - npres_before if local else 0
+            nnew = len(presented) - npres_before if admits else 0
             losses.append(update16(m, opt, batch, rule, store))
-            if ADMIT16 == "online" and local:     # raw reservoir, Algorithm R per presented item, as it arrives (new items are the first nnew of the batch)
+            if ADMIT16 == "online" and admits:     # raw reservoir, Algorithm R per presented item, as it arrives (new items are the first nnew of the batch)
                 fl = fbuf.setdefault("all", []); n = fseen.get("all", 0)
                 for p_, t_ in batch[:nnew]:
                     n += 1
@@ -300,7 +308,7 @@ def life(arm, seed):
               "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
               f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
         path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
-        if ADMIT16 == "online" and local:
+        if ADMIT16 == "online" and admits:
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()}; stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
             stages[-1]["reservoir_bytes"] = sum(len(e[1]) + len(e[2]) for e in fbuf["all"]); stages[-1]["admitted"] = fseen.get("all", 0)
             path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
