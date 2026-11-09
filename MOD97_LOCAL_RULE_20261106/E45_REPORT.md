@@ -545,3 +545,7 @@ Predictions: `E45_PREDICTIONS.md`, E16-R3. The same single label-free Algorithm-
 ## E16-F, assessed (cloud session, 8–9 November 2026): E16-D on fresh seeds
 
 `E16F_REPORT.md`, review 9.32. Seeds 200003, 300007, 400009, new E11 births (90–99% at k = 12), every-entry balanced replay against the twin. After block 6: compositions 83.3 / 77.0 / 81.5 (standing 84.5 / 79.8 / 83.3); ratios to the twin on mod-97 operations 0.95 / 0.92 / 0.89, compositions 0.89 / 0.84 / 0.87, mod-73 operations 0.99 / 0.98 / 0.98. P16F.1, .2 and .4 hold in every seed; P16F.3 holds in two and misses in 300007 by one clause (compositions −12.0 from block 4, limit 10; carry pairs and subtraction). Reruns after a tool time limit reproduced the killed lives' first five blocks exactly. The E16-D finding transfers in kind and range; composition retention remains its weakest, most seed-dependent part.
+
+## E16-F2, assessed (cloud session, 9 November 2026): the label-free reservoir on fresh seeds
+
+`E16F2_REPORT.md`, review 9.36. One reservoir of 65,536 entries, no family label, on seeds 200003 / 300007 / 400009 against E16-F's twin. Ratios to the twin after block 6: mod-97 operations 0.97 / 0.95 / 0.94, held compositions 0.86 / 0.87 / 0.82, mod-73 operations 0.99 / 0.99 / 0.96; composition loss from block 4 to 6: 8.8 / 8.0 / 11.8 points; distinct entries at block 5: 28,300–28,400. P16F2.1–.3 hold in every seed. The Phase A gate is met on six seeds.
