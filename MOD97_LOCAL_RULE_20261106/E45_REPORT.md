@@ -611,3 +611,22 @@ The scores at k = 0 are the same as at k = 12 (cell1 73129: 27% at both), so the
 **Next (Phase 0b, births only, under backprop, overnight):** three one-change variants against the same gate, each keeping the trace exact within a layer: a deeper readout (two hidden layers between the state and the logits) on cell1; two stacked fixed-rate banks, the second written from the first's state, so writes can depend on accumulated context; and the single bank at double dose (49,152 updates), to measure the slope. If none passes, the honest conclusion is that a byte-at-a-time learner needs state-dependent writes (a non-diagonal recurrence), for which the exact trace does not exist and the e-prop approximation is the tool, and that is a design decision for Mr. Zhou rather than a run.
 
 **Evidence level.** Development result, three seeds, backprop births; no local-rule result exists for these architectures because the gate stopped the lives.
+
+## E17, Phase 0b: context-dependent writes are the missing operation (9 November 2026, 00:57 EST)
+
+Predictions: `E45_PREDICTIONS.md`, E17 Phase 0b. Nine births by backprop through time (`exp45/E17B_BIRTHS.json`; every worker exited 0; 68 minutes for the nine).
+
+| Birth, k = 12 | add89 | sub89 | max89 | min89 | gate |
+|---|---|---|---|---|---|
+| cell1 (Phase 0) | 27 / 31 / 23 | 13 / 14 / 17 | 66 / 70 / 62 | 66 / 73 / 64 | no |
+| cell1d2, deeper readout | 58 / 67 / 54 | 45 / 59 / 47 | 86 / 86 / 79 | 83 / 90 / 82 | no |
+| bank (Phase 0) | 30 / 29 / 22 | 13 / 10 / 9 | 53 / 61 / 58 | 61 / 61 / 61 | no |
+| bank, double dose (49,152) | 28 / 29 / — | 14 / 12 / — | 61 / 62 / — | 56 / — / — | no |
+| **bank2, two stacked banks** | **93 / 95 / 95** | **92 / 92 / 92** | **99 / 97 / 96** | **98 / 97 / 95** | **yes, every seed** |
+| E11 windowed births | 91–92 | 91–92 | 98–99 | 98–99 | |
+
+A deeper readout recovers 30–45 points and stays short; double dose recovers nothing; a second bank whose write is computed from the first bank's state reaches the windowed births' level in every seed. P17.0b.1, .2 and .3 hold. The byte-at-a-time learner needs writes that depend on accumulated context, and one extra diagonal layer supplies them while keeping each bank's own trace exact given its input. The cost is known from qualification: credit from the readout to the first bank through the second bank's memory is not carried by the first bank's trace (64–88% from backprop through time), the e-prop truncation.
+
+**Phase 1 launched** (09:00 EST): bank2 under the local rule on the E16 stream with the raw-byte reservoir, and its twin, three seeds; P17.1–P17.5 as written, plus the clause on the truncated first-bank trace added before launch.
+
+**E16-F4, assessed (cloud session, 9 November 2026).** Raw-byte reservoir on seeds 500011 / 600013 / 700027: ratios to the twin 0.94 / 0.81 / 0.94 on mod-97 operations, 0.87 / 0.69 / 0.83 on compositions, 0.99 / 0.90 / 0.95 on mod-73 operations; the gate holds in two seeds and fails in 600013 on compositions; the retention clause holds in one; acquisition holds in all. Across nine seeds the gate holds on eight. Headline corrected to "eight seeds of nine, one at 0.69 on compositions".
