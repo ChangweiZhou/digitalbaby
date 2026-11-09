@@ -89,7 +89,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
         hp = h if through_time else h.detach()
         prev.append(hp)
         h = r[:, t] * hp + w[:, t] * c[:, t]
-        if keep:
+        if keep and h.requires_grad:     # a bank whose whole input pathway is frozen (book, l1, lp, lc, lw) has no gradient path; its scan is then unused
             h.retain_grad()
         hs.append(h)
     Hs = T.stack(hs, 1)
@@ -102,7 +102,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
             hp2 = h2 if through_time else h2.detach()
             prev2.append(hp2)
             h2 = r2[:, t] * hp2 + w2[:, t] * c2[:, t]
-            if keep:
+            if keep and h2.requires_grad:
                 h2.retain_grad()
             hs2.append(h2)
         Hs2 = T.stack(hs2, 1)

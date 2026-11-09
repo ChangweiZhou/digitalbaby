@@ -430,3 +430,18 @@ The frozen learner and its frozen twin differ in the feedback path (sign-symmetr
 - P17.1d.2 (what sign feedback costs on this architecture) With sign feedback and the extended trace, F1 at or above 60 after block 2 and at or above 50 after block 6 in every seed (without the extension: 15–32 and 17–20). The gap between P17.1d.1 and P17.1d.2 is the cost of sign-symmetric feedback here.
 - P17.1d.3 If the exact-feedback, extended-trace learner still falls under 40 after block 2 while M holds, identical gradients collapse under one decay and not the other, and the arm is the same life at `E11_WD=0.3`.
 - P17.1d.4 Compositions are reported and not predicted; the twin does not acquire them on this architecture.
+
+**E17 Phase 1d stopped (9 November 2026, 18:12 EST).** The six lives were stopped seven minutes after launch when the 9 November audit's embedding finding was confirmed on the Phase 1–1c weights (review 9.60): the local arms' prompt-symbol embeddings receive no gradient and decay to nothing, which the Phase 1d arms inherit. No Phase 1d result exists; P17.1d.1–4 are not evaluated.
+
+## E17, Phase 2: the corrected rerun, embeddings without decay (9 November 2026, 19:00 EST, written before launch)
+
+`E16_BOOKDECAY=off` for births and lives (tag `_nbd`): the embedding table in a no-decay group; the frozen arm (`E16_FREEZE=bank1`) freezes `book`, `l1`, `lp`, `lc`, `lw`; every receipt records which parameters and which byte rows present in the first batch received no gradient. Births `e17_dev_bank2_nbd_<seed>` (three standing seeds, running now), then the twin `D` (running after the births). The three sign-rule arms below are launched only on Mr. Xu's go, pending Mr. Zhou's ruling on what may propagate (review 9.60).
+
+- P17.2.1 (births) each `bank2_nbd` birth reaches at least 85% at k = 12 on the four development operations (Phase 0b with decay: 92–99).
+- P17.2.2 (the twin) `D_bank2_nbd` ends within 3 points of the Phase 1 twin on the F1 and F3 family means in every seed, and its held compositions stay under 30: the architecture's composition failure is not an embedding artefact.
+- P17.2.3 (unfrozen, sign rule) `T_bank2_nbd_raw65536` reaches F1 at or above 60 after block 1 in every seed (Phase 1 with decay: 1–3). If under 20, the block-1 silence has a second cause in the first bank's learning (the truncated credit through the second bank, or the feedback).
+- P17.2.4 (frozen, sign rule) `T_bank2_nbd_frz1_raw65536` holds F1 at or above 70 after block 2 and at or above 60 after block 6 in every seed (with decay: 71–81 → 15–32 → 17–20). If it holds, the Phase 1b collapse was the decayed embeddings alone.
+- P17.2.5 (frozen, exact feedback, trace to the projection) `T_bank2_nbd_frz1_xfb_tup_raw65536` holds F1 at or above 85 after blocks 2 and 6, within 5 points of the frozen twin: with the embeddings kept and the trace complete, the only remaining difference from backprop is decay 0.25 against 0.3. If P17.2.4 misses and P17.2.5 holds, the write-projection credit matters beyond the embeddings; if both miss while the twin holds, a further cause remains.
+- P17.2.6 Compositions are reported, not predicted.
+
+Commands: `E16_ARCH=bank2 E16_BOOKDECAY=off python3 exp16_integrated.py dev SEED`; `... D SEED`; `E16_ARCH=bank2 E16_BOOKDECAY=off E16_REPLAY=raw E16_CAP=65536 python3 exp16_integrated.py T SEED`, with `E16_FREEZE=bank1` and with `E16_FREEZE=bank1 E16_FEEDBACK=exact E16_TRACEUP=proj`. Dry runs on a 512-update dry birth archived in `exp45/archive_e17p2_dry/` (the frozen tensors unchanged, the rest changed, seven stages each).
