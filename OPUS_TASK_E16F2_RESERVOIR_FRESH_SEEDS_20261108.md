@@ -44,3 +44,14 @@ The headline result (E16-R3 / E16-F3: the raw-byte reservoir meets the Phase A g
 3. Tables: `E16_SEEDS=500011,600013,700027 E16_SUMMARY=SUMMARY_E16F4.md python3 summarize_exp16.py`.
 
 Predictions (lock in `E16F4_PREDICTIONS.md` before the births): P16F4.1 births at or above 85% at k = 12 on all four development operations; P16F4.2 the twin at or above 90 / 85 / 90 on family means after block 6; P16F4.3 the raw-byte learner at or above 0.80 of the twin on all three families in every seed (standing: 0.98 / 0.96 / 0.87, 0.86 / 0.81 / 0.85, 0.98 / 0.98 / 0.92); P16F4.4 compositions after block 6 at or above 75% and within 12 points of their block-4 value in every seed (the margin widened from 10 to 12 after E16-F's one miss at 12.0, stated here before launch); P16F4.5 acquisition as in P16F.4. Deliver `E16F4_REPORT.md`, receipts, births (`git add -f` the `.pt` files as before), logs, `exp45/SUMMARY_E16F4.md`, and one paragraph as `E16F4_REVIEW_SECTION_9_45.md`. Budget about 11 CPU-hours on your machine, roughly four hours of wall time with six processes on four cores; forecast from your measured pace.
+
+## E16-F5 (added 8 November 23:20 EST): the stream without stages on the fresh seeds, after E16-F4
+
+E16-S (`E45_REPORT.md`, section E16-S and E16-L) ran the raw-byte reservoir on a stream whose family mixture drifts smoothly with no stage boundaries, with the reservoir admitting items as they arrive, and kept the gate (0.84–0.99 of a twin trained on the same stream). Confirm on seeds 200003, 300007, 400009, using your births. Pull first: the harness at commit f38281c or later carries the audit fixes (held panels re-keyed and operand-disjoint; lives save final weights and record the birth hash). Six lives, detached as amended, launched in one batch:
+
+```
+E16_REPLAY=raw E16_CAP=65536 E16_ADMIT=online E16_STREAM=drift python3 exp16_integrated.py T <seed>
+E16_STREAM=drift python3 exp16_integrated.py D <seed>
+```
+
+Receipts `e16_life_T_raw65536_drift_online_<seed>.json` and `e16_life_D_drift_<seed>.json` (the twin's name now carries the stream tag); logs `e16f5_*`. Predictions to lock in `E16F5_PREDICTIONS.md` before launch: P16F5.1 the learner at or above 0.80 of the drift twin on all three families in every seed (standing: 0.97 / 0.93 / 0.84, 0.86 / 0.87 / 0.86, 0.99 / 0.96 / 0.97); P16F5.2 the drift twin at or above 90 / 85 / 90 on family means; P16F5.3 the learner's compositions after the last checkpoint within 6 points of your E16-F3 raw-byte result on the same seed (the panels differ now, so the band includes about 2 points of panel sampling). Tables with `E16_SEEDS=200003,300007,400009 E16_SUMMARY=SUMMARY_E16F5.md`. Deliver `E16F5_REPORT.md` and one paragraph as `E16F5_REVIEW_SECTION_9_53.md`. About 9 CPU-hours on your machine, roughly 3.5 hours of wall time with six processes.

@@ -28,3 +28,15 @@ for seeds 73129, 93683, 116089. Receipts `exp45/e16_life_T_raw{16384,32768,13107
 - P16RC.4 (bytes) The reservoir's byte size at block 5 is 16 ± 1 bytes per slot at every capacity.
 
 Report holds / misses per seed with the numbers. Deliver `E16RC_PREDICTIONS.md`, `E16RC_REPORT.md`, the nine receipts and logs, `e16rc_tables.py`, `exp45/SUMMARY_E16RC.md`, and one paragraph as `E16RC_REVIEW_SECTION_9_46.md` (do not edit the review). Commit partial receipts after every block.
+
+## E16-RP (added 8 November 23:20 EST): the effect of the held-panel collision, measured directly, after E16-RC
+
+The 8 November static audit found that the held +- composition panel's 600 operand triples were, by a seed collision, all among the taught -> pair's triples (pairing and prompts still held out). The harness at commit f38281c re-keys the held and within panels by split and pair and draws them operand-disjoint from every taught triple. Old receipts cannot be re-scored (no saved weights), so measure the effect directly: rerun E16-R3's arm, which is unchanged except for the panels, on the standing seeds, and compare with E16-R3's receipts.
+
+Pull first (commit f38281c or later). Three lives, detached, after your E16-RC lives finish:
+
+```
+E16_REPLAY=raw E16_CAP=65536 python3 exp16_integrated.py T <seed>      # seeds 73129, 93683, 116089
+```
+
+The receipt name is the same as E16-R3's (`e16_life_T_raw65536_<seed>.json`), so first rename the existing E16-R3 receipts in your checkout to `e16_life_T_raw65536_<seed>_oldpanels.json` (do not delete them; they are the comparator) and run; the new lives also write `e16_life_T_raw65536_<seed>.pt`. Training is identical to E16-R3 (same births, stream, reservoir, draws; the receipt's `settings.birth_sha256` must equal the hash of `e11_dev_M_<seed>.pt`), so every operation panel at every checkpoint must match E16-R3 exactly; only the composition panels differ. Report, per seed and checkpoint, the held pairs and within on the new panels beside the old, with the +- pair singled out. Prediction to lock in `E16RP_PREDICTIONS.md`: P16RP.1 every operation panel at every checkpoint equals E16-R3's (a parity check; any difference means the run is not the same and the comparison is void); P16RP.2 on the +- pair the new panel is within 5 points of the old at every checkpoint, and the mean absolute difference across all held pairs and checkpoints is under 3 points (panel sampling). If the +- difference exceeds 5 points in a consistent direction, the collision had an effect and the record's E16-family composition figures carry that correction. Deliver `E16RP_REPORT.md`, receipts, logs, and one paragraph as `E16RP_REVIEW_SECTION_9_54.md`. About 2 CPU-hours each on your machine, under 2.5 hours of wall time for the three.
