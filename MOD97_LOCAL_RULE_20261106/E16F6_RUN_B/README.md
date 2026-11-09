@@ -1,0 +1,3 @@
+# E16-F6, run B (9 November 2026)
+
+Two cloud sessions ran Job 2 of `OPUS_TASK_E16M2_E16F6_CLOUD_JOBS_20261109.md` on the same six seeds, each making its own births for 800011, 900007 and 1000003. This folder holds the deliverables of the session on branch `claude/vibrant-gauss-tops5f` (final commit ac98a824; four-core Xeon, Python 3.13, PyTorch 2.15.0), which finished first, at 21:47 UTC, and cannot push to the consolidated branch. The other session's run lands under the standard file names in `MOD97_LOCAL_RULE_20261106/` and `exp45/`. Births and sign-rule receipts do not reproduce across machines (E16-RP), so these are two independent runs of the same seeds. The final weights (`.pt`) of this run stay on its branch.
