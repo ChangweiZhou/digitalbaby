@@ -118,11 +118,32 @@ Even the better measure sits below the pre-registered bar. Among the ten passing
   - final `+-` from 63.2 to 72.7.
 - **Raw-byte lives so far:** counting E16-F3, E16-F4, E16-S, E16-F5 and this job, three of the 21 raw-byte reservoir lives fail (nine under block stages, twelve under drift). Seed 600013 fails twice, once under each schedule.
 
-**A caveat on pooling the twelve seeds.** E16-RP found that sign-rule receipts reproduce bit for bit on one machine but diverge across machines from the first update, with `+-` moving by up to 16 points between two runs of one seed. The receipts carry no machine field:
+**A caveat on pooling the twelve seeds.** E16-RP found that sign-rule receipts diverge between the owner's machine and a cloud container from the first update, with `+-` moving by up to 16 points between two runs of one seed. The receipts carry no machine field:
 - **This container:** E16-F5's and this job's nine seeds ran here.
 - **Elsewhere:** E16-S's three seeds (73129, 93683, 116089) ran in another session.
 
-A 16-point swing from the machine alone is larger than the differences P16F6.5's thresholds draw on. That weakens any single-seed reading in the list, though not the rank correlation's miss on twelve.
+If those three ran on the owner's machine, a swing of that size from the machine alone is larger than the differences P16F6.5's thresholds draw on. That would weaken any single-seed reading among them, though not the rank correlation's miss on twelve. Across cloud containers the runs reproduce exactly (next section).
+
+## Cross-check against run B: bit-identical across two cloud containers
+
+Another cloud session ran the same job on the same seeds, and the coordinating session filed it as `E16F6_RUN_B/` (commit c390eff1). Its README says the two runs are independent because "births and sign-rule receipts do not reproduce across machines". They are not independent. Compared after this job finished:
+
+- **All 12 receipts are identical.** Every score at every checkpoint is the same, for learner and twin, on all six seeds.
+- **All 3 births are identical.** Every point of their training curves matches, and the final losses agree to all 17 printed digits (for example 0.033914950538019184 for 800011).
+- **Only the CPU times differ.**
+
+The two machines:
+
+| | This run | Run B |
+|---|---|---|
+| CPU | Intel Xeon, 2.3 GHz, 4 cores | Intel Xeon, 2.1 GHz, 4 cores |
+| Python | 3.11.18 | 3.13 |
+| NumPy | 2.4.6 | 2.5.3 |
+| PyTorch | 2.15.0 CPU | 2.15.0 CPU |
+
+So the harness reproduces bit for bit across these two cloud containers, despite different Python and NumPy versions and a different clock speed. E16-RP's divergence was between the owner's machine (E16-R3) and a cloud container. The likely boundary is the hardware or PyTorch build class, not "any two machines".
+
+This narrows E16-RP's finding: within the cloud containers used so far, a rerun of a seed is a repeat, not a new sample. Run B therefore adds no statistical weight to this job. It confirms the receipts.
 
 ## Machine and pace
 

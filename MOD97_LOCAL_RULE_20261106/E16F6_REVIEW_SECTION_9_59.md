@@ -10,4 +10,6 @@ E16-F6 ran the drift arm on six more seeds: three new births (800011, 900007, 10
 
 **On twelve drift seeds the gate holds in ten.** The two failures, 400009 and 600013, share one mechanism: interference between the plus-minus compositions and mod-97 addition and subtraction under the sign rule, which E16-M2 found the twin's update does not suffer on the same reservoir. Among the passing seeds the final `+-` lies between 63 and 73, too narrow a band for an early measure to rank.
 
-Development result on a toy harness, one stream per seed. E16-S's three seeds ran on another machine, and sign-rule receipts are reproducible only within one machine (E16-RP). Sources: `E16F6_REPORT.md`, `E16F6_PREDICTIONS.md`, `exp45/SUMMARY_E16F6.md`, `exp45/SIGNATURE_E16F6.md`, the twelve receipts, the final weights and the three births.
+**A second session's run of this job (`E16F6_RUN_B/`) is bit-identical to this one in all twelve receipts and all three births, on a different cloud Xeon with a different Python and NumPy.** So E16-RP's cross-machine divergence separates the owner's machine from the cloud containers, not any two machines, and run B is a repeat of this run rather than a second sample.
+
+Development result on a toy harness, one stream per seed. Sources: `E16F6_REPORT.md`, `E16F6_PREDICTIONS.md`, `exp45/SUMMARY_E16F6.md`, `exp45/SIGNATURE_E16F6.md`, the twelve receipts, the final weights and the three births.
