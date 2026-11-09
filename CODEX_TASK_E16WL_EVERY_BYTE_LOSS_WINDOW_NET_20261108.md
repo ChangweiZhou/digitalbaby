@@ -16,3 +16,8 @@ Add `E8_LOSS=answer|all` to `exp8_life.py` (default `answer`, bit-identical; `al
 4. Per-byte loss curves: report the mean loss on prompt bytes and on answer bytes separately per stage (log both), so that "swamped" is measured rather than inferred.
 
 Rules as before: predictions first with the forecast from your pace; default parity with hashes; no tuning; every seed; `E16WL_REPORT.md`, receipts under `exp45/`, review paragraph as `E16WL_REVIEW_SECTION_9_50.md`. Budget six lives, about 3 CPU-hours, under 40 minutes of wall time on a free machine.
+
+## Follow-up after the 8 November static audit (23:10 EST): two fixes for your harness, no new lives
+
+1. **Held-pair operand collision.** `triples()` in `exp8_life.py` / `exp7_decon.py` seeds held panels with `seed + 1`, which for the +- pair equals the taught -> pair's seed (`31·seed + 377`), so the held +- panel's operand triples are all taught -> triples (pairing and prompts still held out). Fix as in `exp16_integrated.py` (commit of 8 Nov 23:10): key held and within panels by split name and pair, exclude every taught triple of every pair, assert operand-level disjointness in a check. Taught streams unchanged. Report, from any saved checkpoints you have, the +- panel re-scored on the fixed panel; if none are saved, say so and save final weights from now on.
+2. **Run identity.** Bind each run's scores, loss sidecars and checkpoint to one run identity (a hash in every artifact), so an answer-loss re-invocation cannot replace an every-byte-loss score. Use the host-wide lock at `/tmp/MINIFLY_MACHINE_LOCK` with ownership (create only if absent or yours; remove only if yours).

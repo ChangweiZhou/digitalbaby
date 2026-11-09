@@ -811,3 +811,38 @@ Provenance first: the document's "executive decision" was drafted by ChatGPT and
 ## 9.51 E16-A: the architecture audit; the last trace of the mushroom-body store does nothing (8 November 2026, executed)
 
 Section E16-A of `E45_REPORT.md`. ChatGPT's critique this evening (9.42's discussion) asked for the ablation that E16-V had already flagged as missing: E16-R3's arm with the exact-key store removed from the learner, everything else identical. The answer is exact: at every checkpoint, on every family, in every seed, the two arms differ by nothing on the operations and by at most one item in 600 on the compositions. The store never entered training and could not score an unseen prompt, so it was inert from E11 onward. The original PN–KC–MBON architecture has left the main model entirely rather than surviving as a module, and the record now says so plainly. The store is retired for new harnesses (E17 and Phase B); the E16 harness keeps the knob so every receipt stays reproducible by name. Where a fast associative memory of the mushroom-body kind may still earn a place is as the sparse-key retriever in the Phase B episodic battery, against a matched generic index, which is the test that was never run because the arithmetic line never posed the task. Standing after today: the learner is fly-constrained (local plasticity, broadcast error, bounded memory) and not fly-structured; the ring in the embodied line remains the one fly circuit that computes.
+
+## 9.50 Codex's E16-WL: the every-byte loss on the window net under both rules (8 November 2026; Codex's section, filed verbatim)
+
+The window net retained operation learning under the every-byte loss. The sign-rule arm reached 92.48–92.98% at stage eight, versus 94.40–95.52% under answer-only loss. Addition and subtraction mod 97 each reached at least 88.5%. P1 missed in all three seeds. Backprop reached 95.98–96.62%, meeting P2 in every seed.
+
+Composition was more sensitive in the sign-rule setup. Held accuracy fell 10.04–24.08 points against its answer-only reference, reaching the predicted 15-point drop in one of three seeds. All three backprop seeds stayed within the predicted loss bound. The two setups use different sampling and Store policies, so their difference cannot isolate the learning rule. The stage losses measure prediction error on prompt and answer positions. They do not measure the relative size or direction of the updates those positions induce.
+
+All six runs passed receipt checks.
+
+Each loss comparison uses its arm’s answer-loss reference. C uses observed replay and a Store. D samples the joint pool of observed examples and has no Store.
+
+| Arm | Seed | Stage 8 mean % | Add97 % | Sub97 % | Final held % | Reference held % | Held loss pp | P1/P2 | P3 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| C | 73129 | 92.48 | 88.50 | 89.00 | 72.71 | 82.75 | +10.04 | False | False |
+| C | 93683 | 92.98 | 90.17 | 90.00 | 69.33 | 80.96 | +11.62 | False | False |
+| C | 116089 | 92.71 | 90.50 | 90.83 | 64.46 | 88.54 | +24.08 | False | True |
+| D | 73129 | 96.38 | 94.50 | 92.50 | 89.75 | 89.29 | -0.46 | True | True |
+| D | 93683 | 95.98 | 95.83 | 94.83 | 89.00 | 91.25 | +2.25 | True | True |
+| D | 116089 | 96.62 | 95.50 | 97.67 | 91.08 | 90.75 | -0.33 | True | True |
+
+The six worker timers sum to 1.720 CPU-hours. Qualification and training took 20.61 minutes after lock acquisition.
+
+## 9.52 ChatGPT's static audit of 8 November, item by item (`PROJECT_DOCUMENTS/MINIFLY_PROJECT_CRITIQUE_AND_STATIC_SOURCE_AUDIT_20261108.md`, commit f0fc6ce), and what was changed tonight
+
+The audit ran no code and read source and receipts. Its findings about this harness are correct in substance, and three of them are fixed as of commit noted below; the rest are recorded. In order:
+
+1. **Held-pair operand collision: correct, fixed, effect bounded.** The held-panel seed `seed + 1` for the +- pair gave `31·seed + 377`, the taught -> pair's seed, so all 600 operand triples of the +- panel were among the -> pair's 2,000 taught triples (verified tonight: 600 of 600). The pairing and the full prompt were still held out, and the shared triples carry a different intermediate and a different final answer under the taught pair, so memorizing them would have hurt +- rather than helped; the receipts agree, with +- never systematically above -+ (E16-R3: 64 / 56 / 69 against 75 / 60 / 68). The other three held pairs did not collide. Fix: held and within panels are now keyed by split name and pair and drawn excluding every taught triple of every pair (operand-level holdout, asserted in qualification); taught streams are unchanged, so every training run is reproducible. New panels apply from E17 on; comparisons of E17 to E16-R3 on compositions are therefore on fresh panels of the same size, and the record says so. The same formula is in E7 and E8 (Codex's harness); Codex is asked to fix it the same way. Old receipts stand with this note; their weights were not saved, so they cannot be re-scored, which is why every life now saves its final weights.
+2. **Qualification's "birth" composition score was taken after smoke updates: correct, fixed.** The number in `QUALIFY_E16.json` was post-update; the scientific stage-zero score was always taken before any update and is the one used everywhere. Qualification now scores before the smoke updates and records the post-update number under its own name.
+3. **V219's generator and dose labels:** not this harness; recorded for the owners of that line.
+4. **The E17 launcher could admit stale births and overwrote the host lock: correct, fixed.** The pipeline now creates the lock only if absent or its own, removes it only if its own, logs every worker's exit code, and admits a birth only if its receipt is complete (24,576 updates), its checkpoint exists, its hash is recorded (`exp45/E17_BIRTHS.json`) and the gate holds; each life records the hash of the birth it loaded. The lock path was already moved to one absolute host-wide file.
+5. **E16-WL artifacts can mix modes:** Codex's harness; passed to Codex.
+6. **Unsupported configurations and the comparator join: correct, fixed.** The drifting stream with the old uniform replay silently fell back to blocked inputs; that combination is now refused (no published arm used it). The summarizer maps the every-byte-loss arm to the every-byte-loss twin and the drift arm to the drift twin, and reports full-scratchpad exact accuracy beside the final-answer figure for compositions (raw-replay lives: 72–80% full scratchpad against 80–82% final answer).
+7–8. **Other lines' restart, scoring and configuration risks:** recorded; not this harness. The store's FIFO eviction note is moot since the store is retired.
+
+The audit's priorities match the queue: freeze the E16 reference (done by receipt and hash from tonight), compare the two objectives under both rules on identical bytes (E16-L, its twin, E16-WL; the one-change loss-weighting arm next), and for composition intervene on the generated intermediate (added to the Phase B battery notes). Its demand that any fly-derived component claimed must be ablated is already met for the store (9.51).

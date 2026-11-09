@@ -95,8 +95,11 @@ def render(entry, rng):
     return render_pair(o1, o2, a, b, c)
 
 
-def triples(pair, seed, n, exclude=frozenset()):
-    rng = Random(seed * 31 + ord(pair[0]) * 7 + ord(pair[1]))
+def triples(pair, seed, n, exclude=frozenset(), split="taught"):
+    """Taught triples keep the original seed (training streams unchanged). Held and within panels are keyed by split name and pair
+    (audit of 8 Nov 2026: `seed + 1` for the held +- pair collided with the taught -> pair's seed, so those 600 operand triples were shared;
+    the pairing and prompts were still held out). Pass exclude = every taught triple so the panels are operand-disjoint from all teaching."""
+    rng = Random(seed * 31 + ord(pair[0]) * 7 + ord(pair[1])) if split == "taught" else Random(f"{split}|{seed}|{pair[0]}{pair[1]}")
     out, seen = [], set(exclude)
     while len(out) < n:
         tr = (rng.randrange(97), rng.randrange(97), rng.randrange(97))
@@ -164,9 +167,9 @@ def panels(seed):
     P = {E.NAME(*t): E.panel(t, E.split(t, .25, seed)[1], seed, ks=ks) for t in F1 + F3}   # held pairs, k = 0, 8, 12, 20 (, 40)
     P.update({E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(12,), n=300) for t in E.DEV})
     taught = {p: set(triples(p, seed, 2000)) for p in TAUGHT_PAIRS}
-    comp = {f"{o1}{o2}": [render_pair(o1, o2, *tr) for tr in triples((o1, o2), seed + 1, 600)] for o1, o2 in HELD_PAIRS}
-    rng = Random(seed + 5)
-    comp["within"] = [render_pair(*p, *tr) for p in TAUGHT_PAIRS for tr in triples(p, seed + 2, 50, exclude=taught[p])]
+    all_taught = frozenset().union(*taught.values())
+    comp = {f"{o1}{o2}": [render_pair(o1, o2, *tr) for tr in triples((o1, o2), seed, 600, exclude=all_taught, split="held")] for o1, o2 in HELD_PAIRS}
+    comp["within"] = [render_pair(*p, *tr) for p in TAUGHT_PAIRS for tr in triples(p, seed, 50, exclude=all_taught, split="within")]
     return P, comp
 
 
@@ -196,7 +199,11 @@ def life(arm, seed):
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
-    m.load_state_dict(T.load(OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.pt")))
+    birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.pt")
+    import hashlib
+    birth_sha = hashlib.sha256(birth_file.read_bytes()).hexdigest()
+    m.load_state_dict(T.load(birth_file))
+    assert STREAM16 == "blocks" or arm == "D" or REPLAY16 in ("raw", "total", "oracle"), "the drifting stream is implemented for the raw/total reservoirs and the twin only"
     local = arm not in ("D", "M")
     opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
     store = X.Store(seed) if (local and STORE16 == "on") else None
@@ -216,7 +223,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16,
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -330,6 +337,7 @@ def life(arm, seed):
                         fs.add(e); fl.append(e)
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()} if fbuf else len(buffer)
             path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))   # E16-V: keep the last block's buffer count too
+    T.save(m.state_dict(), path.with_suffix(".pt"))   # final weights, so panels can be re-scored later (8 Nov audit)
 
 
 def qualify():
@@ -353,10 +361,12 @@ def qualify():
     # held pairs and held triples are disjoint from the taught sets
     P, comp = panels(seed)
     taught = {p: set(triples(p, seed, 2000)) for p in TAUGHT_PAIRS}
+    all_taught = frozenset().union(*taught.values())
     for name, items in comp.items():
         for p, _ in items:
             pair = (chr(p[3]), chr(p[6])); tr = (int(bytes(p[1:3])), int(bytes(p[4:6])), int(bytes(p[7:9])))
-            assert (pair in HELD_PAIRS) if name != "within" else (pair in TAUGHT_PAIRS and tr not in taught[pair])
+            assert (pair in HELD_PAIRS) if name != "within" else (pair in TAUGHT_PAIRS)
+            assert tr not in all_taught, "panel triple appears in some taught pair's training triples"   # operand-level holdout
     out["panel_sizes"] = {n: len(v) for n, v in comp.items()}
     out["shortcut_ceilings"] = shortcut_ceilings(comp)
     # window visibility on the composition prompt: positions whose prediction no longer sees the code byte / first operand
@@ -364,6 +374,7 @@ def qualify():
     out["code_byte_visible_until_output_index"] = E.W - 10     # 0: visible only for the first output byte
     # a batch of mixed items passes through update on every arm
     m = E.new_net(seed); m.load_state_dict(T.load(OUT / f"e11_dev_M_{seed}.pt"))
+    out["birth_compose_final_before_life"] = {n: score(m, it)["final"] for n, it in comp.items()}   # scored BEFORE the smoke updates (audit, 8 Nov)
     opt = T.optim.AdamW(m.parameters(), lr=.001)
     mixed = [render(e, rng) for e in rng.sample(ents["F1"], 20) + rng.sample(ents["F2"], 24) + rng.sample(ents["F3"], 20)]
     sm = {}
@@ -374,7 +385,7 @@ def qualify():
         sm[arm] = (time.process_time() - t0) / 10 * 1000
     out["ms_per_update_mixed"] = sm
     t0 = time.process_time(); score(m, comp["+-"]); out["s_per_compose_panel600"] = time.process_time() - t0
-    out["birth_compose_final_before_life"] = {n: score(m, it)["final"] for n, it in comp.items()}
+    out["compose_final_after_smoke_updates"] = {n: score(m, it)["final"] for n, it in comp.items()}
     (OUT / "QUALIFY_E16.json").write_text(json.dumps(out, indent=1)); print(json.dumps(out, indent=1))
 
 

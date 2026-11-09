@@ -20,13 +20,17 @@ LABEL = {"T": "T learner (uniform replay)", "D": "D twin (joint ground truth)", 
 
 
 E17_ARMS = ("T_cell1_raw65536", "D_cell1", "T_bank_raw65536", "D_bank")
-ARMS = ARMS + E17_ARMS
+ARMS = ARMS + ("D_lossall",) + E17_ARMS
+LABEL["D_lossall"] = "D twin, loss on every byte"
 LABEL.update({"T_cell1_raw65536": "E17 cell1 (no window), raw 65,536", "D_cell1": "E17 twin, cell1", "T_bank_raw65536": "E17 bank (no window, fixed rates), raw 65,536", "D_bank": "E17 twin, bank"})
 
 
 def twin_of(arm):
+    """The comparator shares the arm's stream and objective (audit, 8 Nov): drift -> D_drift, every-byte loss -> D_lossall, E17 arch -> its own twin."""
     if arm.endswith("drift_online"):
         return "D_drift"
+    if "lossall" in arm:
+        return "D_lossall"
     for a in ("cell1", "bank"):
         if f"_{a}_" in arm:
             return f"D_{a}"
@@ -74,13 +78,14 @@ def main():
                 lines.append(f"| {s} | {LABEL.get(a, a)}: {name} | {tv:.1f} | {dv:.1f} | {tv/dv:.2f} | {'' if b2 is None else f'{b2:.1f}'} | {'' if k20 is None else f'{k20:.1f}'} | {sil:.1f} |")
     # E16-D: retention across arms
     lines += ["\n## Retention across arms: what each family keeps after the stream moves on (block 6 vs the family's own last block)\n",
-              "| Arm | Seed | F1 k=12 after 2 → 6 | F1 add/sub after 6 | Held comp after 4 → 6 | +- / -+ after 6 | within after 4 → 6 | F3 after 6 |", "|---|---|---|---|---|---|---|---|"]
+              "| Arm | Seed | F1 k=12 after 2 → 6 | F1 add/sub after 6 | Held comp (final answer) after 4 → 6 | Held comp full scratchpad exact after 6 | +- / -+ after 6 | within after 4 → 6 | F3 after 6 |", "|---|---|---|---|---|---|---|---|---|"]
     for (a, s), d in runs.items():
         if len(d["stages"]) < 7:
             continue
         s2, s4, s6 = (d["stages"][i]["scores"] for i in (2, 4, 6))
         hc = lambda sc: sum(pctf(sc["compose"][h]) for h in HELD) / 4
-        lines.append(f"| {LABEL.get(a, a)} | {s} | {fam_mean(s2, F1):.1f} → {fam_mean(s6, F1):.1f} | {pct(K(s6,'add97',12)):.0f}/{pct(K(s6,'sub97',12)):.0f} | {hc(s4):.1f} → {hc(s6):.1f} | "
+        hx = sum(pct(s6["compose"][h]) for h in HELD) / 4
+        lines.append(f"| {LABEL.get(a, a)} | {s} | {fam_mean(s2, F1):.1f} → {fam_mean(s6, F1):.1f} | {pct(K(s6,'add97',12)):.0f}/{pct(K(s6,'sub97',12)):.0f} | {hc(s4):.1f} → {hc(s6):.1f} | {hx:.1f} | "
                      f"{pctf(s6['compose']['+-']):.0f}/{pctf(s6['compose']['-+']):.0f} | {pctf(s4['compose']['within']):.0f} → {pctf(s6['compose']['within']):.0f} | {fam_mean(s6, F3):.1f} |")
     # per-operation detail at the end
     lines += ["\n## Per-operation exact % at k = 0 / 8 / 12 / 20 after the last block\n", "| Arm | Seed | " + " | ".join(F1 + F3) + " |", "|---|---|" + "---|" * 8]
