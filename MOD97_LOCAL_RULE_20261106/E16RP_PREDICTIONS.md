@@ -58,3 +58,33 @@ SHA-256 of `exp45/e11_dev_M_<seed>.pt`, computed before launch:
 - **Basis.** On this four-core container, nine raw lives at once took about 4,700 CPU-s each (E16-RC).
 - **Three lives at once.** One core each, with no oversubscription. So about 4,700 CPU-s, or less with less contention.
 - **Wall time:** about 1.3 hours.
+
+## Amendment, 9 November 2026, 14:41 UTC: the same-weights measurement, locked before it runs
+
+Authority: the coordinating session's go-ahead in `OPUS_TASK_E16F5_E16RP_CLOUD_JOBS_20261109.md`, at commit 1cccb4d on `codex/minifly-consolidated-20261023`. At this time the three lives are in block 2–3. The script `e16rp_same_weights.py` has been run only on a scratch 64-update dry-run weight file, as a smoke test of the code; it has not been run on any E16-RP life's weights.
+
+### Procedure
+
+Read-only, with no training:
+- Load each finished life's final weights, `exp45/e16_life_T_raw65536_<seed>.pt`, into a fresh net.
+- Score two panel sets on those same weights:
+  - **Old panels:** built exactly as harness 7703d6c's `panels()` did. Held pairs use `triples(pair, seed + 1, 600)`; within uses `triples(p, seed + 2, 50, exclude=taught[p])`.
+  - **New panels:** the current harness's `panels()`.
+- For the four held pairs and within, report:
+  - final-answer accuracy;
+  - full-scratchpad exact accuracy;
+  - the new − old difference per pair;
+  - the mean absolute difference over the four held pairs.
+- Report the disjointness counts: the old +- panel's triples found in the taught -> set (expected 600 of 600), and the new panels' triples found in any taught set (expected 0).
+
+**What is lost.** The E8 exact-key store's contents at block 6 were not saved, so both panel sets are scored on the weights alone, without the store. As a check of what that omission costs, the new-panel scores without the store are also compared with the receipt's block-6 new-panel scores, which were made with the store.
+
+### Prediction
+
+- **P16RP.3** On the same weights, final answer:
+  - +- on the old panel is within 5 points of +- on the new panel, in every seed;
+  - the mean absolute difference over the four held pairs is under 3 points, in every seed.
+
+### Scope
+
+This is the collision's effect at block 6 only.
