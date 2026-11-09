@@ -90,6 +90,16 @@ def main():
               f"- Between 70 and 80 (no clause): {', '.join(str(s) for c2, s, *_ in rows if 70 <= c2 <= 80) or 'none'}."]
     if missing:
         L += ["", f"Not yet finished (excluded): {', '.join(map(str, missing))}."]
+    L += ["", "## Every checkpoint, this job's six seeds: mod-97 operations (k = 12) and held pairs (final answer)", ""]
+    for s in SEEDS[6:]:
+        L += [f"### Seed {s}", "", "| Arm | Ckpt | add97 | sub97 | max97 | min97 | mod-97 mean | +- | -+ | >< | <> | held mean | mod-73 mean |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
+        for lab, tag in (("learner", "T_raw65536_drift_online"), ("twin", "D_drift")):
+            for i, x in enumerate(load(tag, s) or []):
+                sc = x["scores"]; v = fam(sc)
+                L.append(f"| {lab} | {i} | " + " | ".join(f"{op(sc, n):.1f}" for n in F1) + f" | {v[0]:.1f} | "
+                         + " | ".join(f"{pair(sc, h):.1f}" for h in HELD) + f" | {v[1]:.1f} | {v[2]:.1f} |")
+        L.append("")
     (OUT / "SIGNATURE_E16F6.md").write_text("\n".join(L) + "\n")
     print("\n".join(L))
 
