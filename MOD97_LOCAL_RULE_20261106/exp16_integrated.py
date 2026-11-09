@@ -185,7 +185,8 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 
 def life(arm, seed):
-    path = OUT / f"e16_life_{arm}{RTAG if arm != 'D' else ''}{DRYTAG}_{seed}.json"
+    DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
+    path = OUT / f"e16_life_{arm}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
     m.load_state_dict(T.load(OUT / f"e11_dev_M_{seed}.pt"))
     local = arm not in ("D", "M")
