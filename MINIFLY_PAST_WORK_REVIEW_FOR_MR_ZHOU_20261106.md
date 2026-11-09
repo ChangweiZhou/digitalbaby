@@ -759,3 +759,51 @@ E16-F2 ran E16-R2's gate arm, one Algorithm-R reservoir of 65,536 entries over e
 ## 9.44 E16-S and E16-L: the stream without stages holds; the answer mask was doing real work (8 November 2026, executed)
 
 Section E16-S and E16-L of `E45_REPORT.md`. Both on the raw-byte reservoir of 65,536 (9.42's arm), three seeds. **No stages.** On a stream whose family mixture drifts smoothly and never announces a boundary, with the reservoir admitting items as they arrive, the learner keeps every family at 0.84–0.99 of a twin trained on the same stream, within 5 points of the staged control on every family; the gate holds in every seed. The block structure of E16 was a convenience for measurement, not a crutch for the learner, and the one environment-side scaffold that could have been hiding a stage signal is gone. **Loss on every byte.** With the answer mask removed, the sign rule does not acquire addition or subtraction at all (3–5% at k = 12 after their blocks; the later operations 32–35%), while the compositions are acquired and then lost. The prompt bytes are near-uniform and unpredictable, and their loss terms swamp the three answer bytes' signal. A twin under the same loss is queued to say whether backprop fails the same way. Either way this is the first environment-side scaffold whose removal costs something, and it names a Phase B design question in advance: a language stream will not point at the answer, so the learner needs either a loss that weights the predictable or a way to find it. One harness slip (the drift twin's receipt overwrote the staged twin's in the working folder) was caught, the originals restored from the repository and the naming fixed.
+
+## 9.40 Codex's E16-WR2: observed targets and a total-budget reservoir on the window net; E8's demonstration rerun with observed targets (8 November 2026; Codex's section, filed verbatim)
+
+Increasing the total reservoir to 65,536 slots raised final held-composition accuracy by 10.17–12.96 percentage points across the three seeds. It still lost 15.67 / 19.00 / 18.46 points after acquisition, in seed order. Final mod-97 accuracy was 95.33% / 95.62% / 96.67%. P1 met both thresholds in 0 of 3 seeds.
+
+At 16,384 total slots, 0 of 3 seeds met both endpoint bands against the prior per-stage reservoir. Across the two Part A capacities, 3 of 6 lives met the acquisition band against E16-W uniform replay. The larger reservoir finished with 21,351–21,516 distinct prompts. In both capacity arms the stage-end design held up to 393,216 pending records in addition to the retained reservoir.
+
+Part B reproduced the E8 demonstration with observed answers. It changed final held-composition accuracy by +0.46 / -0.04 / +3.54 points relative to E13-A1. The eight-operation means met P4 in 3 of 3 seeds. Composition is taught last in Part B, so the endpoint measures acquisition and retention of prior operations. All three full Part B input streams matched prompt hashes independently reconstructed from the original schedule and sampler. The archived E13-A1 runs supply scores, and their original prompt streams were not recorded.
+
+| Job | Post-compose held % | Final held % | Loss pp | Final held full % | Final mod-97 % | Final eight operations % | Weakest carry | Carry final % |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| A16384_73129 | 85.2500 | 56.0000 | 29.2500 | 50.2083 | 94.2500 | 93.4375 | +- | 21.1667 |
+| A16384_93683 | 83.4167 | 50.0833 | 33.3333 | 43.2083 | 95.6250 | 94.6042 | +- | 18.6667 |
+| A16384_116089 | 84.5000 | 54.7083 | 29.7917 | 48.5000 | 95.4167 | 95.1250 | +- | 21.1667 |
+| A65536_73129 | 81.8333 | 66.1667 | 15.6667 | 59.8333 | 95.3333 | 94.5000 | +- | 37.5000 |
+| A65536_93683 | 81.6250 | 62.6250 | 19.0000 | 58.2083 | 95.6250 | 94.6042 | +- | 33.1667 |
+| A65536_116089 | 86.1250 | 67.6667 | 18.4583 | 63.2083 | 96.6667 | 95.1458 | +- | 34.3333 |
+| B_73129 | 82.7500 | 82.7500 | — | 80.6667 | 95.0417 | 94.2708 | +- | 66.0000 |
+| B_93683 | 80.9583 | 80.9583 | — | 78.9583 | 95.8333 | 94.2292 | +- | 69.0000 |
+| B_116089 | 88.5417 | 88.5417 | — | 86.6250 | 95.8750 | 94.7292 | +- | 80.6667 |
+
+| Prediction | Passing | Evaluated | Expected |
+| --- | --- | --- | --- |
+| P1 | 0 | 3 | 3 |
+| P2 | 0 | 3 | 3 |
+| P3 | 3 | 6 | 6 |
+| P4 | 3 | 3 | 3 |
+| P5 | 2 | 3 | 3 |
+
+The campaign used 3.4059 child CPU-hours and 28.47 minutes of wall time. The total and per-stage arms differ in retained capacity as well as sampling. The observed targets agree byte for byte with the saved observations.
+
+See [the full report](E16WR2_REPORT.md) and [verification receipt](E16WR2_VERIFICATION.json).
+
+## 9.43 The cloud session's E16-F3: the raw-byte reservoir on fresh seeds (9 November 2026; the session's section, filed verbatim)
+
+E16-F3 ran E16-R3's verbatim arm on the three fresh seeds of E16-F (200003, 300007, 400009), using E16-F's births and twin lives and no change to the harness. The arm is one label-free Algorithm-R reservoir of 65,536 slots holding the presented bytes exactly as they appeared, replayed with no parser, re-rendering or recomputed answer. Two of the three predictions hold in every seed.
+
+- **P16F3.1:** after block 6 the learner stands at 0.91–0.98 of the twin on the mod-97 operations, 0.87–0.88 on the held compositions and 0.96–0.98 on the mod-73 operations.
+- **P16F3.3:** at block 5 the reservoir holds 1.048–1.050 MB and 57,715–58,028 distinct byte strings.
+- **P16F3.2**, within 5 points of the parsed reservoir of E16-F2 on every family, holds in two seeds. It misses in 400009, where the raw arm keeps 5.5 points *more* of the compositions: 82.5 against 77.0. There the parsed arm lost 11.8 points from block 4 and the raw arm 6.7. The other eight comparisons are within 3 points.
+
+The label-free gate therefore holds without a parser on six seeds, three standing and three fresh. On these seeds, parsing the replayed examples bought nothing that the stored bytes do not give. Composition retention, at 79.5–82.5% against the twin's 91.5–94.0%, is still the family with the least headroom. The cost forecast missed: verbatim replay was not cheaper than the parsed arm on this machine (5,330 against 5,080 CPU-s per life), unlike on the standing machine. Development result on a toy harness; one stream, three seeds. Sources: `E16F3_REPORT.md`, `E16F3_PREDICTIONS.md`, `exp45/SUMMARY_E16F3.md` and the three receipts.
+
+**9.40 and 9.43 assessed together.** Two confirmations and one new gap. *E16-F3:* the parser-free raw-byte reservoir meets the gate on the three fresh seeds (0.91–0.98 of the twin on the first operations, 0.87–0.88 on compositions, 0.96–0.98 on the later operations), within 3 points of the parsed arm on eight of nine comparisons and 5.5 points better on the ninth; the reservoir is 1.05 MB with 57,700–58,000 distinct byte strings, as predicted. With 9.36 and 9.42 the headline mechanism now stands on six seeds in its final, parser-free form, and E16-F4 is adding three more. *E16-WR2, Part B:* E8's eight-operation demonstration rerun with observed replay targets reproduces E13-A1 within 0–3.5 points on composition and within 2 points on every operation, so the program's headline persistence result stands without pseudo-rehearsal. *E16-WR2, Part A, the gap:* on the window net, one label-free reservoir of 65,536 observed-answer slots loses 16–19 points of held composition over the four later stages (per-stage 16,384: 14–20; self-generated targets: 49–56), with the operations at 95–97%; the cell learner on the same replay design loses 5–12 (9.42). The two learners differ in retention under the same kind of replay, and the candidates are the architecture (the cell, window 10 against 18) and the schedule (E8's blocked single-operation stages and 8,192-update composition stage against E16's interleaved families): a matched comparison, one learner on the other's schedule, is the experiment that separates them and is queued behind the loss work. Codex's prediction P1 (loss at most 8) missed in every seed and is recorded as such.
+
+## 9.49 Reference: Codex's roadmap after the reviews (`MOD97_LOCAL_RULE_20261106/ROADMAP_POST_FABLE_REVIEW_20261108.md`, commit ccf5eb5, read 8 November 2026)
+
+A sequencing document: freeze and audit one E16 reference; a genuine streaming learner (a split-call-stable state API, E17 against the window, and the every-byte-loss bottleneck resolved before the learner is called a language predictor); the Phase B episodic battery with sparse and dense locally trained read heads as competing retrievers; consolidation and transfer under a fixed total budget; then a small natural-text pilot against matched recurrent and Transformer baselines. Its guardrails (one primary question per change; predictions and falsifiers first; failed literal thresholds retained; update rule, capacity, replay quality, memory size, objective and exposure never confounded in one inference; teaching bandwidth counted; every memory budgeted separately; a capability ledger of demonstrated / development-only / failed / untested) are the ones this review has been applying, written down in one place. Its immediate priority order is the one in force here. One addition is adopted from it: the capability ledger will be kept as a single table from Phase B on. One scheduling rule is added here after tonight's overlap (E16-A and E16-WR2 started within a minute of each other on the same machine): a producer takes the machine by creating a lock file and releases it by removing it, and no producer launches while another's lock exists.
