@@ -552,6 +552,90 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | D_bank2_nbd | 116089 | F2.2 | 92.1 | 90.5 | 93.2 | 47.7 | 17.8 | 4.8 | 4.2 | 36.2 | 26.0 | 53.5 | 41.9 |
 | D_bank2_nbd | 116089 | F3.1 | 92.8 | 92.0 | 90.0 | 89.6 | 18.0 | 5.3 | 4.3 | 33.2 | 29.3 | 56.3 | 54.0 |
 | D_bank2_nbd | 116089 | F3.2 | 93.3 | 91.5 | 91.5 | 91.9 | 17.8 | 5.3 | 5.5 | 32.8 | 27.5 | 55.8 | 51.5 |
+| D_bank2_nbd_frz1 | 73129 | birth | 38.6 | 10.0 | 20.2 | 18.7 | 3.6 | 1.5 | 1.3 | 5.3 | 6.2 | 3.2 | 93.4 |
+| D_bank2_nbd_frz1 | 73129 | F1.1 | 91.8 | 88.8 | 90.5 | 29.9 | 5.2 | 0.3 | 1.7 | 8.8 | 9.8 | 3.7 | 61.9 |
+| D_bank2_nbd_frz1 | 73129 | F1.2 | 94.1 | 93.0 | 90.0 | 36.7 | 6.0 | 0.8 | 1.3 | 10.5 | 11.5 | 4.2 | 59.2 |
+| D_bank2_nbd_frz1 | 73129 | F2.1 | 85.3 | 86.2 | 76.2 | 39.8 | 14.5 | 2.8 | 2.3 | 25.3 | 27.3 | 27.0 | 42.7 |
+| D_bank2_nbd_frz1 | 73129 | F2.2 | 85.0 | 85.2 | 81.0 | 42.1 | 15.4 | 2.7 | 1.5 | 28.2 | 29.2 | 35.5 | 38.0 |
+| D_bank2_nbd_frz1 | 73129 | F3.1 | 86.6 | 87.0 | 84.2 | 85.3 | 14.2 | 2.8 | 1.8 | 24.0 | 28.2 | 38.5 | 38.6 |
+| D_bank2_nbd_frz1 | 73129 | F3.2 | 90.2 | 89.8 | 86.2 | 88.6 | 14.9 | 2.5 | 2.5 | 26.3 | 28.2 | 41.5 | 45.5 |
+| D_bank2_nbd_frz1 | 93683 | birth | 23.2 | 3.0 | 25.5 | 11.4 | 5.0 | 0.0 | 1.2 | 13.0 | 6.0 | 3.8 | 94.8 |
+| D_bank2_nbd_frz1 | 93683 | F1.1 | 92.5 | 90.2 | 89.5 | 25.2 | 9.0 | 0.3 | 0.5 | 24.5 | 10.7 | 6.8 | 28.0 |
+| D_bank2_nbd_frz1 | 93683 | F1.2 | 95.0 | 94.0 | 93.5 | 24.2 | 7.5 | 0.5 | 0.5 | 21.0 | 8.0 | 9.3 | 30.9 |
+| D_bank2_nbd_frz1 | 93683 | F2.1 | 89.2 | 91.5 | 87.5 | 24.9 | 14.4 | 1.8 | 1.2 | 28.2 | 26.3 | 37.8 | 11.4 |
+| D_bank2_nbd_frz1 | 93683 | F2.2 | 89.6 | 89.5 | 88.8 | 25.4 | 14.7 | 1.8 | 1.5 | 27.3 | 28.0 | 49.7 | 7.1 |
+| D_bank2_nbd_frz1 | 93683 | F3.1 | 89.8 | 88.8 | 91.2 | 85.8 | 15.5 | 4.0 | 1.2 | 31.7 | 25.2 | 45.0 | 9.9 |
+| D_bank2_nbd_frz1 | 93683 | F3.2 | 90.0 | 93.0 | 88.0 | 88.0 | 17.8 | 10.7 | 1.3 | 33.0 | 26.0 | 51.5 | 14.2 |
+| D_bank2_nbd_frz1 | 116089 | birth | 29.6 | 31.5 | 2.8 | 47.4 | 3.5 | 1.0 | 1.2 | 6.3 | 5.5 | 2.2 | 93.2 |
+| D_bank2_nbd_frz1 | 116089 | F1.1 | 92.6 | 90.8 | 86.8 | 54.1 | 11.4 | 0.5 | 0.8 | 18.8 | 25.5 | 8.8 | 38.0 |
+| D_bank2_nbd_frz1 | 116089 | F1.2 | 93.1 | 93.5 | 89.5 | 54.2 | 12.8 | 1.0 | 1.5 | 22.2 | 26.7 | 8.0 | 35.0 |
+| D_bank2_nbd_frz1 | 116089 | F2.1 | 89.3 | 90.5 | 86.0 | 44.5 | 16.0 | 3.3 | 2.8 | 30.3 | 27.3 | 35.2 | 15.2 |
+| D_bank2_nbd_frz1 | 116089 | F2.2 | 91.8 | 92.5 | 93.8 | 45.9 | 17.5 | 5.7 | 3.3 | 29.5 | 31.5 | 45.5 | 16.0 |
+| D_bank2_nbd_frz1 | 116089 | F3.1 | 91.1 | 91.2 | 86.8 | 86.1 | 17.3 | 5.5 | 3.3 | 29.8 | 30.5 | 45.3 | 27.0 |
+| D_bank2_nbd_frz1 | 116089 | F3.2 | 91.5 | 90.0 | 90.5 | 88.9 | 18.1 | 7.3 | 2.0 | 33.2 | 30.0 | 45.7 | 29.0 |
+| T_bank2_nbd_raw65536 | 73129 | birth | 38.6 | 10.0 | 20.2 | 18.7 | 3.6 | 1.5 | 1.3 | 5.3 | 6.2 | 3.2 | 93.4 |
+| T_bank2_nbd_raw65536 | 73129 | F1.1 | 2.8 | 0.2 | 2.0 | 2.5 | 2.3 | 1.2 | 1.7 | 2.2 | 4.2 | 2.7 | 2.0 |
+| T_bank2_nbd_raw65536 | 73129 | F1.2 | 1.1 | 0.0 | 0.0 | 1.4 | 1.1 | 0.7 | 1.3 | 1.0 | 1.3 | 1.2 | 1.3 |
+| T_bank2_nbd_raw65536 | 73129 | F2.1 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 |
+| T_bank2_nbd_raw65536 | 73129 | F2.2 | 0.5 | 0.8 | 0.5 | 0.8 | 0.7 | 1.3 | 0.7 | 0.3 | 0.5 | 1.8 | 0.9 |
+| T_bank2_nbd_raw65536 | 73129 | F3.1 | 0.8 | 1.0 | 0.5 | 1.0 | 1.5 | 2.2 | 0.7 | 1.5 | 1.7 | 1.3 | 1.2 |
+| T_bank2_nbd_raw65536 | 73129 | F3.2 | 0.7 | 0.8 | 0.5 | 1.1 | 0.7 | 0.5 | 1.3 | 0.7 | 0.3 | 1.0 | 0.7 |
+| T_bank2_nbd_raw65536 | 93683 | birth | 23.2 | 3.0 | 25.5 | 11.4 | 5.0 | 0.0 | 1.2 | 13.0 | 6.0 | 3.8 | 94.8 |
+| T_bank2_nbd_raw65536 | 93683 | F1.1 | 1.6 | 1.0 | 0.2 | 0.6 | 1.2 | 0.5 | 1.3 | 0.5 | 2.7 | 0.8 | 1.7 |
+| T_bank2_nbd_raw65536 | 93683 | F1.2 | 0.6 | 0.2 | 0.5 | 0.6 | 0.7 | 0.0 | 0.5 | 1.3 | 1.0 | 2.0 | 1.0 |
+| T_bank2_nbd_raw65536 | 93683 | F2.1 | 0.9 | 0.0 | 0.8 | 1.6 | 0.4 | 1.0 | 0.5 | 0.0 | 0.0 | 1.0 | 1.7 |
+| T_bank2_nbd_raw65536 | 93683 | F2.2 | 1.1 | 0.2 | 1.0 | 1.4 | 1.7 | 1.0 | 1.5 | 2.0 | 2.3 | 1.2 | 0.7 |
+| T_bank2_nbd_raw65536 | 93683 | F3.1 | 1.1 | 1.2 | 1.5 | 0.8 | 0.3 | 0.3 | 0.8 | 0.0 | 0.0 | 0.2 | 0.9 |
+| T_bank2_nbd_raw65536 | 93683 | F3.2 | 1.1 | 1.0 | 0.8 | 1.1 | 0.6 | 1.2 | 1.2 | 0.0 | 0.0 | 0.5 | 0.5 |
+| T_bank2_nbd_raw65536 | 116089 | birth | 29.6 | 31.5 | 2.8 | 47.4 | 3.5 | 1.0 | 1.2 | 6.3 | 5.5 | 2.2 | 93.2 |
+| T_bank2_nbd_raw65536 | 116089 | F1.1 | 1.5 | 1.2 | 0.8 | 1.2 | 1.5 | 0.7 | 1.3 | 1.8 | 2.0 | 1.2 | 1.1 |
+| T_bank2_nbd_raw65536 | 116089 | F1.2 | 0.8 | 0.5 | 0.8 | 1.1 | 1.8 | 1.0 | 0.2 | 3.3 | 2.5 | 0.7 | 0.9 |
+| T_bank2_nbd_raw65536 | 116089 | F2.1 | 0.6 | 0.2 | 1.0 | 1.5 | 0.9 | 0.8 | 0.3 | 1.7 | 0.8 | 1.8 | 0.9 |
+| T_bank2_nbd_raw65536 | 116089 | F2.2 | 1.7 | 1.5 | 0.2 | 0.9 | 1.0 | 1.5 | 0.3 | 0.3 | 1.8 | 1.3 | 1.0 |
+| T_bank2_nbd_raw65536 | 116089 | F3.1 | 1.2 | 1.0 | 0.8 | 2.1 | 1.3 | 0.7 | 0.8 | 1.8 | 1.8 | 1.3 | 1.3 |
+| T_bank2_nbd_raw65536 | 116089 | F3.2 | 1.2 | 1.2 | 1.0 | 2.2 | 1.0 | 0.3 | 0.2 | 2.8 | 0.8 | 1.0 | 1.4 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | birth | 38.6 | 10.0 | 20.2 | 18.7 | 3.6 | 1.5 | 1.3 | 5.3 | 6.2 | 3.2 | 93.4 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | F1.1 | 81.4 | 77.8 | 63.0 | 40.6 | 8.5 | 1.2 | 1.5 | 17.3 | 13.8 | 4.3 | 50.6 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | F1.2 | 82.1 | 76.5 | 64.8 | 43.1 | 8.5 | 1.2 | 1.3 | 17.2 | 14.3 | 4.7 | 56.1 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | F2.1 | 52.1 | 27.2 | 17.5 | 28.1 | 8.5 | 0.5 | 1.8 | 14.7 | 16.8 | 10.5 | 28.1 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | F2.2 | 50.8 | 26.2 | 13.0 | 28.8 | 9.6 | 1.3 | 0.8 | 17.3 | 19.0 | 13.5 | 29.2 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | F3.1 | 55.9 | 34.0 | 18.5 | 64.7 | 7.5 | 0.8 | 1.5 | 11.7 | 16.0 | 9.3 | 33.3 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | F3.2 | 59.4 | 41.2 | 24.0 | 67.8 | 5.8 | 1.0 | 0.8 | 9.3 | 12.0 | 7.3 | 31.0 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | birth | 23.2 | 3.0 | 25.5 | 11.4 | 5.0 | 0.0 | 1.2 | 13.0 | 6.0 | 3.8 | 94.8 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | F1.1 | 86.6 | 83.5 | 77.2 | 20.7 | 7.0 | 0.7 | 1.2 | 20.2 | 6.2 | 4.5 | 39.1 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | F1.2 | 86.9 | 85.0 | 74.8 | 22.1 | 7.2 | 1.0 | 1.2 | 19.0 | 7.7 | 4.3 | 36.8 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | F2.1 | 53.1 | 33.0 | 20.2 | 22.5 | 8.8 | 0.3 | 0.7 | 17.2 | 17.2 | 13.0 | 21.8 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | F2.2 | 52.0 | 30.5 | 13.8 | 25.9 | 11.5 | 1.5 | 0.8 | 24.0 | 19.8 | 17.2 | 20.4 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | F3.1 | 61.4 | 43.2 | 23.0 | 62.9 | 8.6 | 1.5 | 1.0 | 17.8 | 14.0 | 12.5 | 27.8 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | F3.2 | 62.4 | 45.5 | 27.8 | 68.2 | 9.2 | 0.7 | 0.5 | 19.0 | 16.5 | 14.3 | 30.1 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | birth | 29.6 | 31.5 | 2.8 | 47.4 | 3.5 | 1.0 | 1.2 | 6.3 | 5.5 | 2.2 | 93.2 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | F1.1 | 84.2 | 80.8 | 65.2 | 50.1 | 10.8 | 0.8 | 1.2 | 17.5 | 23.8 | 9.2 | 31.6 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | F1.2 | 83.9 | 76.5 | 69.0 | 47.4 | 9.8 | 1.3 | 1.2 | 16.3 | 20.2 | 8.5 | 30.1 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | F2.1 | 57.6 | 36.8 | 25.0 | 36.6 | 8.8 | 0.7 | 1.2 | 18.3 | 15.2 | 11.0 | 26.2 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | F2.2 | 53.8 | 29.8 | 17.2 | 39.1 | 10.0 | 1.7 | 0.7 | 19.8 | 18.0 | 13.7 | 27.8 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | F3.1 | 59.8 | 42.2 | 24.0 | 68.4 | 9.8 | 1.0 | 0.8 | 18.8 | 18.5 | 9.2 | 35.8 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | F3.2 | 61.2 | 45.8 | 23.0 | 71.6 | 8.5 | 1.5 | 1.5 | 15.2 | 15.8 | 9.2 | 38.6 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | birth | 38.6 | 10.0 | 20.2 | 18.7 | 3.6 | 1.5 | 1.3 | 5.3 | 6.2 | 3.2 | 93.4 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | F1.1 | 93.1 | 94.8 | 87.0 | 34.2 | 5.4 | 0.8 | 1.8 | 9.3 | 9.7 | 4.0 | 55.2 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | F1.2 | 93.7 | 93.2 | 87.8 | 33.8 | 5.8 | 0.8 | 1.5 | 10.5 | 10.5 | 2.5 | 57.1 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | F2.1 | 82.9 | 84.0 | 74.8 | 41.4 | 13.9 | 3.5 | 2.0 | 25.0 | 25.0 | 30.3 | 40.2 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | F2.2 | 84.9 | 87.5 | 78.0 | 43.7 | 15.5 | 3.3 | 3.0 | 30.2 | 25.5 | 45.2 | 43.7 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | F3.1 | 87.9 | 85.2 | 84.0 | 90.6 | 11.9 | 2.0 | 2.2 | 20.0 | 23.3 | 32.5 | 43.4 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | F3.2 | 87.5 | 84.2 | 85.0 | 91.4 | 13.4 | 3.5 | 3.2 | 23.2 | 23.8 | 24.3 | 40.8 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | birth | 23.2 | 3.0 | 25.5 | 11.4 | 5.0 | 0.0 | 1.2 | 13.0 | 6.0 | 3.8 | 94.8 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | F1.1 | 93.9 | 91.5 | 90.2 | 24.4 | 8.5 | 0.2 | 0.7 | 24.5 | 8.5 | 7.3 | 25.9 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | F1.2 | 93.6 | 88.5 | 92.8 | 25.4 | 7.7 | 0.8 | 0.5 | 21.5 | 8.0 | 8.3 | 27.4 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | F2.1 | 87.8 | 92.2 | 84.5 | 26.6 | 13.9 | 1.7 | 1.3 | 26.5 | 26.0 | 40.2 | 4.6 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | F2.2 | 88.5 | 89.5 | 85.8 | 27.7 | 14.5 | 3.0 | 1.3 | 26.5 | 27.2 | 53.3 | 2.7 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | F3.1 | 91.2 | 89.2 | 89.2 | 91.8 | 15.4 | 2.5 | 1.2 | 30.0 | 28.0 | 39.2 | 7.8 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | F3.2 | 90.1 | 90.0 | 89.0 | 90.7 | 14.3 | 2.7 | 1.2 | 28.3 | 25.0 | 36.0 | 11.8 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | birth | 29.6 | 31.5 | 2.8 | 47.4 | 3.5 | 1.0 | 1.2 | 6.3 | 5.5 | 2.2 | 93.2 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | F1.1 | 94.5 | 94.0 | 90.0 | 57.2 | 12.7 | 1.2 | 1.7 | 20.8 | 27.2 | 9.8 | 35.7 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | F1.2 | 95.0 | 93.5 | 92.5 | 60.1 | 13.3 | 1.0 | 1.2 | 23.0 | 28.2 | 9.2 | 38.2 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | F2.1 | 88.8 | 87.2 | 87.8 | 40.9 | 14.5 | 2.2 | 2.2 | 27.7 | 26.2 | 29.8 | 16.9 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | F2.2 | 88.9 | 91.0 | 86.8 | 44.0 | 18.5 | 4.5 | 3.3 | 32.7 | 33.7 | 47.7 | 16.8 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | F3.1 | 90.9 | 91.5 | 86.2 | 90.3 | 16.1 | 3.0 | 2.7 | 31.2 | 27.5 | 32.0 | 28.8 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | F3.2 | 91.9 | 91.0 | 88.5 | 90.9 | 15.0 | 2.8 | 1.3 | 27.8 | 28.0 | 33.5 | 30.6 |
 
 ## After the last block: learner against twin (gate: T ≥ 80% of D on every family)
 
@@ -605,30 +689,27 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 73129 | T raw 65,536, exact-key store removed: F1 ops k=12 | 93.2 | 95.4 | 0.98 | 93.6 | 92.0 | 2.6 |
 | 73129 | T raw 65,536, exact-key store removed: F3 ops k=12 | 92.2 | 93.8 | 0.98 |  | 91.9 | 3.6 |
 | 73129 | T raw 65,536, exact-key store removed: held comp final | 80.2 | 93.3 | 0.86 |  |  | 4.0 |
-| 73129 | D twin, loss on every byte: F1 ops k=12 | 94.9 | 94.9 | 1.00 | 93.8 | 94.7 | 2.1 |
-| 73129 | D twin, loss on every byte: F3 ops k=12 | 92.4 | 92.4 | 1.00 |  | 92.1 | 2.0 |
-| 73129 | D twin, loss on every byte: held comp final | 90.6 | 90.6 | 1.00 |  |  | 1.7 |
 | 73129 | E17 bank2 (two stacked banks), raw 65,536: F1 ops k=12 | 0.0 | 95.9 | 0.00 | 0.0 | 0.0 | 0.0 |
 | 73129 | E17 bank2 (two stacked banks), raw 65,536: F3 ops k=12 | 0.0 | 93.3 | 0.00 |  | 0.0 | 0.0 |
 | 73129 | E17 bank2 (two stacked banks), raw 65,536: held comp final | 1.2 | 17.5 | 0.07 |  |  | 0.0 |
-| 73129 | E17 twin, bank2: F1 ops k=12 | 95.9 | 95.4 | 1.01 | 93.6 | 92.3 | 0.0 |
-| 73129 | E17 twin, bank2: F3 ops k=12 | 93.3 | 93.8 | 1.00 |  | 92.0 | 0.0 |
-| 73129 | E17 twin, bank2: held comp final | 17.5 | 93.3 | 0.19 |  |  | 0.0 |
 | 73129 | E17 bank2, first bank frozen, raw 65,536: F1 ops k=12 | 19.9 | 92.9 | 0.21 | 21.3 | 17.5 | 0.0 |
 | 73129 | E17 bank2, first bank frozen, raw 65,536: F3 ops k=12 | 19.9 | 91.2 | 0.22 |  | 17.5 | 0.0 |
 | 73129 | E17 bank2, first bank frozen, raw 65,536: held comp final | 4.5 | 17.2 | 0.26 |  |  | 0.0 |
-| 73129 | E17 twin, bank2, first bank frozen: F1 ops k=12 | 92.9 | 95.9 | 0.97 | 92.9 | 87.3 | 0.0 |
-| 73129 | E17 twin, bank2, first bank frozen: F3 ops k=12 | 91.2 | 93.3 | 0.98 |  | 84.3 | 0.0 |
-| 73129 | E17 twin, bank2, first bank frozen: held comp final | 17.2 | 17.5 | 0.99 |  |  | 0.0 |
 | 73129 | E17 bank2 frozen, exact feedback: F1 ops k=12 | 15.0 | 92.9 | 0.16 | 45.8 | 11.8 | 0.0 |
 | 73129 | E17 bank2 frozen, exact feedback: F3 ops k=12 | 14.1 | 91.2 | 0.15 |  | 12.0 | 0.0 |
 | 73129 | E17 bank2 frozen, exact feedback: held comp final | 4.3 | 17.2 | 0.25 |  |  | 0.0 |
 | 73129 | E17 bank2 frozen, backprop on the learner pipeline: F1 ops k=12 | 93.0 | 92.9 | 1.00 | 92.4 | 87.5 | 0.0 |
 | 73129 | E17 bank2 frozen, backprop on the learner pipeline: F3 ops k=12 | 93.4 | 91.2 | 1.02 |  | 89.4 | 0.0 |
 | 73129 | E17 bank2 frozen, backprop on the learner pipeline: held comp final | 15.8 | 17.2 | 0.92 |  |  | 0.0 |
-| 73129 | E17 Phase 2 twin, bank2, embeddings without decay: F1 ops k=12 | 92.3 | 95.9 | 0.96 | 93.2 | 89.3 | 0.0 |
-| 73129 | E17 Phase 2 twin, bank2, embeddings without decay: F3 ops k=12 | 92.6 | 93.3 | 0.99 |  | 90.2 | 0.0 |
-| 73129 | E17 Phase 2 twin, bank2, embeddings without decay: held comp final | 15.5 | 17.5 | 0.89 |  |  | 0.0 |
+| 73129 | E17 Phase 2 bank2, sign rule: F1 ops k=12 | 0.7 | 92.3 | 0.01 | 1.1 | 0.4 | 0.0 |
+| 73129 | E17 Phase 2 bank2, sign rule: F3 ops k=12 | 1.1 | 92.6 | 0.01 |  | 0.7 | 0.0 |
+| 73129 | E17 Phase 2 bank2, sign rule: held comp final | 0.7 | 15.5 | 0.05 |  |  | 0.0 |
+| 73129 | E17 Phase 2 bank2 frozen, sign rule: F1 ops k=12 | 59.4 | 90.2 | 0.66 | 82.1 | 52.4 | 0.0 |
+| 73129 | E17 Phase 2 bank2 frozen, sign rule: F3 ops k=12 | 67.8 | 88.6 | 0.77 |  | 61.1 | 0.0 |
+| 73129 | E17 Phase 2 bank2 frozen, sign rule: held comp final | 5.8 | 14.9 | 0.39 |  |  | 0.0 |
+| 73129 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: F1 ops k=12 | 87.5 | 90.2 | 0.97 | 93.7 | 73.3 | 0.0 |
+| 73129 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: F3 ops k=12 | 91.4 | 88.6 | 1.03 |  | 80.9 | 0.0 |
+| 73129 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: held comp final | 13.4 | 14.9 | 0.90 |  |  | 0.0 |
 | 93683 | T learner (uniform replay): F1 ops k=12 | 80.2 | 94.1 | 0.85 | 92.2 | 76.0 | 5.1 |
 | 93683 | T learner (uniform replay): F3 ops k=12 | 90.2 | 92.6 | 0.97 |  | 89.0 | 6.3 |
 | 93683 | T learner (uniform replay): held comp final | 53.2 | 92.0 | 0.58 |  |  | 6.8 |
@@ -677,30 +758,27 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 93683 | T raw 65,536, exact-key store removed: F1 ops k=12 | 89.9 | 94.1 | 0.96 | 92.7 | 87.5 | 5.5 |
 | 93683 | T raw 65,536, exact-key store removed: F3 ops k=12 | 90.7 | 92.6 | 0.98 |  | 90.2 | 7.4 |
 | 93683 | T raw 65,536, exact-key store removed: held comp final | 74.8 | 92.0 | 0.81 |  |  | 6.2 |
-| 93683 | D twin, loss on every byte: F1 ops k=12 | 93.5 | 93.5 | 1.00 | 91.9 | 92.2 | 0.0 |
-| 93683 | D twin, loss on every byte: F3 ops k=12 | 89.9 | 89.9 | 1.00 |  | 89.6 | 0.0 |
-| 93683 | D twin, loss on every byte: held comp final | 90.5 | 90.5 | 1.00 |  |  | 2.1 |
 | 93683 | E17 bank2 (two stacked banks), raw 65,536: F1 ops k=12 | 0.8 | 92.3 | 0.01 | 0.0 | 0.6 | 0.0 |
 | 93683 | E17 bank2 (two stacked banks), raw 65,536: F3 ops k=12 | 0.9 | 90.3 | 0.01 |  | 0.7 | 0.0 |
 | 93683 | E17 bank2 (two stacked banks), raw 65,536: held comp final | 0.7 | 15.9 | 0.04 |  |  | 0.0 |
-| 93683 | E17 twin, bank2: F1 ops k=12 | 92.3 | 94.1 | 0.98 | 94.3 | 83.4 | 0.0 |
-| 93683 | E17 twin, bank2: F3 ops k=12 | 90.3 | 92.6 | 0.98 |  | 79.4 | 0.0 |
-| 93683 | E17 twin, bank2: held comp final | 15.9 | 92.0 | 0.17 |  |  | 0.0 |
 | 93683 | E17 bank2, first bank frozen, raw 65,536: F1 ops k=12 | 17.6 | 93.0 | 0.19 | 15.2 | 14.6 | 0.0 |
 | 93683 | E17 bank2, first bank frozen, raw 65,536: F3 ops k=12 | 17.8 | 89.4 | 0.20 |  | 14.9 | 0.0 |
 | 93683 | E17 bank2, first bank frozen, raw 65,536: held comp final | 5.8 | 17.2 | 0.33 |  |  | 0.0 |
-| 93683 | E17 twin, bank2, first bank frozen: F1 ops k=12 | 93.0 | 92.3 | 1.01 | 94.1 | 87.5 | 0.0 |
-| 93683 | E17 twin, bank2, first bank frozen: F3 ops k=12 | 89.4 | 90.3 | 0.99 |  | 84.2 | 0.0 |
-| 93683 | E17 twin, bank2, first bank frozen: held comp final | 17.2 | 15.9 | 1.08 |  |  | 0.0 |
 | 93683 | E17 bank2 frozen, exact feedback: F1 ops k=12 | 17.4 | 93.0 | 0.19 | 49.9 | 15.9 | 0.0 |
 | 93683 | E17 bank2 frozen, exact feedback: F3 ops k=12 | 16.6 | 89.4 | 0.19 |  | 15.2 | 0.0 |
 | 93683 | E17 bank2 frozen, exact feedback: held comp final | 5.4 | 17.2 | 0.31 |  |  | 0.0 |
 | 93683 | E17 bank2 frozen, backprop on the learner pipeline: F1 ops k=12 | 92.5 | 93.0 | 0.99 | 95.5 | 84.6 | 0.0 |
 | 93683 | E17 bank2 frozen, backprop on the learner pipeline: F3 ops k=12 | 92.7 | 89.4 | 1.04 |  | 86.6 | 0.0 |
 | 93683 | E17 bank2 frozen, backprop on the learner pipeline: held comp final | 15.2 | 17.2 | 0.88 |  |  | 0.0 |
-| 93683 | E17 Phase 2 twin, bank2, embeddings without decay: F1 ops k=12 | 93.7 | 92.3 | 1.01 | 95.1 | 87.6 | 0.0 |
-| 93683 | E17 Phase 2 twin, bank2, embeddings without decay: F3 ops k=12 | 91.6 | 90.3 | 1.01 |  | 82.6 | 0.0 |
-| 93683 | E17 Phase 2 twin, bank2, embeddings without decay: held comp final | 21.0 | 15.9 | 1.32 |  |  | 0.0 |
+| 93683 | E17 Phase 2 bank2, sign rule: F1 ops k=12 | 1.1 | 93.7 | 0.01 | 0.6 | 1.0 | 0.0 |
+| 93683 | E17 Phase 2 bank2, sign rule: F3 ops k=12 | 1.1 | 91.6 | 0.01 |  | 1.2 | 0.0 |
+| 93683 | E17 Phase 2 bank2, sign rule: held comp final | 0.6 | 21.0 | 0.03 |  |  | 0.0 |
+| 93683 | E17 Phase 2 bank2 frozen, sign rule: F1 ops k=12 | 62.4 | 90.0 | 0.69 | 86.9 | 54.4 | 0.0 |
+| 93683 | E17 Phase 2 bank2 frozen, sign rule: F3 ops k=12 | 68.2 | 88.0 | 0.78 |  | 61.9 | 0.0 |
+| 93683 | E17 Phase 2 bank2 frozen, sign rule: held comp final | 9.2 | 17.8 | 0.52 |  |  | 0.0 |
+| 93683 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: F1 ops k=12 | 90.1 | 90.0 | 1.00 | 93.6 | 82.9 | 0.0 |
+| 93683 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: F3 ops k=12 | 90.7 | 88.0 | 1.03 |  | 84.7 | 0.0 |
+| 93683 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: held comp final | 14.3 | 17.8 | 0.81 |  |  | 0.0 |
 | 116089 | T learner (uniform replay): F1 ops k=12 | 65.3 | 94.4 | 0.69 | 86.1 | 55.9 | 3.4 |
 | 116089 | T learner (uniform replay): F3 ops k=12 | 82.3 | 93.4 | 0.88 |  | 71.9 | 5.4 |
 | 116089 | T learner (uniform replay): held comp final | 46.0 | 93.8 | 0.49 |  |  | 7.3 |
@@ -749,30 +827,27 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | 116089 | T raw 65,536, exact-key store removed: F1 ops k=12 | 82.2 | 94.4 | 0.87 | 90.4 | 77.3 | 6.8 |
 | 116089 | T raw 65,536, exact-key store removed: F3 ops k=12 | 85.6 | 93.4 | 0.92 |  | 79.0 | 9.9 |
 | 116089 | T raw 65,536, exact-key store removed: held comp final | 80.1 | 93.8 | 0.85 |  |  | 8.6 |
-| 116089 | D twin, loss on every byte: F1 ops k=12 | 95.4 | 95.4 | 1.00 | 93.0 | 94.1 | 0.0 |
-| 116089 | D twin, loss on every byte: F3 ops k=12 | 92.9 | 92.9 | 1.00 |  | 92.7 | 0.0 |
-| 116089 | D twin, loss on every byte: held comp final | 92.1 | 92.1 | 1.00 |  |  | 0.3 |
 | 116089 | E17 bank2 (two stacked banks), raw 65,536: F1 ops k=12 | 0.9 | 94.4 | 0.01 | 1.8 | 1.3 | 0.0 |
 | 116089 | E17 bank2 (two stacked banks), raw 65,536: F3 ops k=12 | 0.9 | 93.2 | 0.01 |  | 1.5 | 0.0 |
 | 116089 | E17 bank2 (two stacked banks), raw 65,536: held comp final | 0.6 | 20.5 | 0.03 |  |  | 0.0 |
-| 116089 | E17 twin, bank2: F1 ops k=12 | 94.4 | 94.4 | 1.00 | 93.4 | 91.4 | 0.0 |
-| 116089 | E17 twin, bank2: F3 ops k=12 | 93.2 | 93.4 | 1.00 |  | 84.2 | 0.0 |
-| 116089 | E17 twin, bank2: held comp final | 20.5 | 93.8 | 0.22 |  |  | 0.0 |
 | 116089 | E17 bank2, first bank frozen, raw 65,536: F1 ops k=12 | 17.2 | 92.5 | 0.19 | 31.8 | 16.0 | 0.0 |
 | 116089 | E17 bank2, first bank frozen, raw 65,536: F3 ops k=12 | 18.8 | 90.7 | 0.21 |  | 16.3 | 0.0 |
 | 116089 | E17 bank2, first bank frozen, raw 65,536: held comp final | 4.3 | 18.4 | 0.23 |  |  | 0.0 |
-| 116089 | E17 twin, bank2, first bank frozen: F1 ops k=12 | 92.5 | 94.4 | 0.98 | 94.4 | 84.7 | 0.0 |
-| 116089 | E17 twin, bank2, first bank frozen: F3 ops k=12 | 90.7 | 93.2 | 0.97 |  | 78.8 | 0.0 |
-| 116089 | E17 twin, bank2, first bank frozen: held comp final | 18.4 | 20.5 | 0.90 |  |  | 0.0 |
 | 116089 | E17 bank2 frozen, exact feedback: F1 ops k=12 | 16.1 | 92.5 | 0.17 | 66.9 | 14.4 | 0.0 |
 | 116089 | E17 bank2 frozen, exact feedback: F3 ops k=12 | 15.8 | 90.7 | 0.17 |  | 13.9 | 0.0 |
 | 116089 | E17 bank2 frozen, exact feedback: held comp final | 4.0 | 18.4 | 0.22 |  |  | 0.0 |
 | 116089 | E17 bank2 frozen, backprop on the learner pipeline: F1 ops k=12 | 92.1 | 92.5 | 1.00 | 95.2 | 86.2 | 0.0 |
 | 116089 | E17 bank2 frozen, backprop on the learner pipeline: F3 ops k=12 | 92.9 | 90.7 | 1.02 |  | 85.6 | 0.0 |
 | 116089 | E17 bank2 frozen, backprop on the learner pipeline: held comp final | 17.7 | 18.4 | 0.96 |  |  | 0.0 |
-| 116089 | E17 Phase 2 twin, bank2, embeddings without decay: F1 ops k=12 | 93.3 | 94.4 | 0.99 | 91.9 | 89.4 | 0.0 |
-| 116089 | E17 Phase 2 twin, bank2, embeddings without decay: F3 ops k=12 | 91.9 | 93.2 | 0.99 |  | 87.1 | 0.0 |
-| 116089 | E17 Phase 2 twin, bank2, embeddings without decay: held comp final | 17.8 | 20.5 | 0.87 |  |  | 0.0 |
+| 116089 | E17 Phase 2 bank2, sign rule: F1 ops k=12 | 1.2 | 93.3 | 0.01 | 0.8 | 1.1 | 0.0 |
+| 116089 | E17 Phase 2 bank2, sign rule: F3 ops k=12 | 2.2 | 91.9 | 0.02 |  | 2.0 | 0.0 |
+| 116089 | E17 Phase 2 bank2, sign rule: held comp final | 1.0 | 17.8 | 0.06 |  |  | 0.0 |
+| 116089 | E17 Phase 2 bank2 frozen, sign rule: F1 ops k=12 | 61.2 | 91.5 | 0.67 | 83.9 | 53.0 | 0.0 |
+| 116089 | E17 Phase 2 bank2 frozen, sign rule: F3 ops k=12 | 71.6 | 88.9 | 0.81 |  | 60.0 | 0.0 |
+| 116089 | E17 Phase 2 bank2 frozen, sign rule: held comp final | 8.5 | 18.1 | 0.47 |  |  | 0.0 |
+| 116089 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: F1 ops k=12 | 91.9 | 91.5 | 1.00 | 95.0 | 84.6 | 0.0 |
+| 116089 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: F3 ops k=12 | 90.9 | 88.9 | 1.02 |  | 80.0 | 0.0 |
+| 116089 | E17 Phase 2 bank2 frozen, exact feedback, trace to the projection: held comp final | 15.0 | 18.1 | 0.83 |  |  | 0.0 |
 
 ## Retention across arms: what each family keeps after the stream moves on (block 6 vs the family's own last block)
 
@@ -856,6 +931,18 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | E17 Phase 2 twin, bank2, embeddings without decay | 73129 | 93.2 → 92.3 | 93/88 | 15.7 → 15.5 | 11.5 | 2/2 | 47 → 54 | 92.6 |
 | E17 Phase 2 twin, bank2, embeddings without decay | 93683 | 95.1 → 93.7 | 92/92 | 18.8 → 21.0 | 15.0 | 16/8 | 57 → 62 | 91.6 |
 | E17 Phase 2 twin, bank2, embeddings without decay | 116089 | 91.9 → 93.3 | 92/92 | 17.8 → 17.8 | 14.1 | 5/6 | 54 → 56 | 91.9 |
+| E17 Phase 2 twin, bank2 no-decay, first bank frozen | 73129 | 94.1 → 90.2 | 90/86 | 15.4 → 14.9 | 10.4 | 2/2 | 36 → 42 | 88.6 |
+| E17 Phase 2 twin, bank2 no-decay, first bank frozen | 93683 | 95.0 → 90.0 | 93/88 | 14.7 → 17.8 | 11.2 | 11/1 | 50 → 52 | 88.0 |
+| E17 Phase 2 twin, bank2 no-decay, first bank frozen | 116089 | 93.1 → 91.5 | 90/90 | 17.5 → 18.1 | 13.6 | 7/2 | 46 → 46 | 88.9 |
+| E17 Phase 2 bank2, sign rule | 73129 | 1.1 → 0.7 | 1/0 | 0.7 → 0.7 | 0.0 | 0/1 | 2 → 1 | 1.1 |
+| E17 Phase 2 bank2, sign rule | 93683 | 0.6 → 1.1 | 1/1 | 1.7 → 0.6 | 0.0 | 1/1 | 1 → 0 | 1.1 |
+| E17 Phase 2 bank2, sign rule | 116089 | 0.8 → 1.2 | 1/1 | 1.0 → 1.0 | 0.0 | 0/0 | 1 → 1 | 2.2 |
+| E17 Phase 2 bank2 frozen, sign rule | 73129 | 82.1 → 59.4 | 41/24 | 9.6 → 5.8 | 3.6 | 1/1 | 14 → 7 | 67.8 |
+| E17 Phase 2 bank2 frozen, sign rule | 93683 | 86.9 → 62.4 | 46/28 | 11.5 → 9.2 | 6.6 | 1/0 | 17 → 14 | 68.2 |
+| E17 Phase 2 bank2 frozen, sign rule | 116089 | 83.9 → 61.2 | 46/23 | 10.0 → 8.5 | 4.5 | 2/2 | 14 → 9 | 71.6 |
+| E17 Phase 2 bank2 frozen, exact feedback, trace to the projection | 73129 | 93.7 → 87.5 | 84/85 | 15.5 → 13.4 | 9.2 | 4/3 | 45 → 24 | 91.4 |
+| E17 Phase 2 bank2 frozen, exact feedback, trace to the projection | 93683 | 93.6 → 90.1 | 90/89 | 14.5 → 14.3 | 9.1 | 3/1 | 53 → 36 | 90.7 |
+| E17 Phase 2 bank2 frozen, exact feedback, trace to the projection | 116089 | 95.0 → 91.9 | 91/88 | 18.5 → 15.0 | 10.7 | 3/1 | 48 → 34 | 90.9 |
 
 ## Per-operation exact % at k = 0 / 8 / 12 / 20 after the last block
 
@@ -939,6 +1026,18 @@ Scores are exact answers (%) on sealed panels; composition rows give final-answe
 | D_bank2_nbd | 73129 | 92/93/93/88 | 89/88/88/84 | 94/95/95/93 | 92/95/94/93 | 86/88/88/86 | 82/88/87/83 | 94/97/98/97 | 94/97/97/95 |
 | D_bank2_nbd | 93683 | 92/92/92/85 | 92/93/92/82 | 93/95/94/92 | 94/96/95/91 | 89/90/88/68 | 85/90/90/82 | 94/96/94/90 | 92/95/94/90 |
 | D_bank2_nbd | 116089 | 94/94/92/86 | 92/93/92/85 | 93/95/94/94 | 94/96/96/94 | 85/88/87/82 | 86/89/88/79 | 94/96/95/92 | 92/98/97/96 |
+| D_bank2_nbd_frz1 | 73129 | 90/93/90/70 | 79/89/86/72 | 89/93/93/84 | 84/92/92/81 | 83/88/84/70 | 64/83/81/66 | 88/95/96/89 | 86/96/94/86 |
+| D_bank2_nbd_frz1 | 93683 | 90/94/93/83 | 88/92/88/77 | 89/92/89/80 | 94/94/90/80 | 83/88/87/78 | 75/82/80/66 | 89/94/93/88 | 92/96/92/85 |
+| D_bank2_nbd_frz1 | 116089 | 88/92/90/81 | 88/90/90/80 | 86/92/91/86 | 86/94/94/85 | 84/88/86/72 | 80/85/85/75 | 89/94/92/72 | 80/93/93/74 |
+| T_bank2_nbd_raw65536 | 73129 | 0/0/1/0 | 0/2/0/0 | 0/2/0/0 | 0/2/1/0 | 0/1/1/0 | 0/1/1/1 | 4/2/0/0 | 2/2/2/1 |
+| T_bank2_nbd_raw65536 | 93683 | 1/2/1/0 | 2/1/1/1 | 2/2/2/2 | 2/1/1/1 | 1/2/1/1 | 0/1/1/1 | 5/4/2/2 | 0/1/1/0 |
+| T_bank2_nbd_raw65536 | 116089 | 2/1/1/1 | 0/1/1/2 | 0/1/1/1 | 2/1/2/1 | 1/1/2/2 | 1/1/2/1 | 1/3/2/4 | 4/2/2/2 |
+| T_bank2_nbd_frz1_raw65536 | 73129 | 37/43/41/32 | 15/24/24/18 | 67/84/85/78 | 72/89/87/81 | 41/58/55/46 | 25/36/34/28 | 84/92/92/88 | 72/90/90/82 |
+| T_bank2_nbd_frz1_raw65536 | 93683 | 46/50/46/32 | 13/30/28/20 | 72/86/84/76 | 75/92/93/89 | 44/56/52/44 | 22/37/35/29 | 84/94/92/86 | 81/95/94/88 |
+| T_bank2_nbd_frz1_raw65536 | 116089 | 38/48/46/35 | 16/27/23/16 | 64/82/84/79 | 71/94/92/82 | 47/59/56/39 | 34/49/44/29 | 80/95/94/88 | 77/94/92/85 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 73129 | 84/87/84/60 | 82/86/85/70 | 86/93/92/84 | 82/92/88/78 | 89/92/89/70 | 80/90/89/78 | 93/96/96/92 | 88/94/92/84 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 93683 | 90/91/90/86 | 85/90/89/83 | 89/92/91/80 | 90/92/90/82 | 88/90/88/83 | 83/88/87/81 | 93/95/94/88 | 93/95/94/87 |
+| T_bank2_nbd_frz1_xfb_tup_raw65536 | 116089 | 88/92/91/86 | 85/90/88/82 | 87/94/94/88 | 91/96/94/82 | 88/90/88/80 | 83/88/86/80 | 94/96/96/79 | 86/96/93/81 |
 
 ## Shortcut ceilings on the held pairs (final answer from a visible-only rule, %)
 

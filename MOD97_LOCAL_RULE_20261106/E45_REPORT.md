@@ -712,3 +712,16 @@ Arm M holds in every seed (P17.1c.2): replay from the reservoir does not hurt th
 | 116089 | 95.7 / 85.0 / 97.0 / 94.0 | 93.3 / 91.9 | 94.4 / 93.2 | 17.8 / 20.5 |
 
 P17.2.1 holds; P17.2.2 holds in two seeds and misses in 73129 by 0.6 point on F1. Keeping the embeddings out of decay changes the backprop reference by at most a few points and leaves its composition failure where it was. The nine sign-rule lives (P17.2.3–5) and the three frozen twins run under the lock; `exp45/SUMMARY_E17_PHASE2.md`.
+
+## E17, Phase 2: the sign-rule arms with the embeddings kept (9 November 2026, 22:10 EST)
+
+Three local arms on `bank2` with the embeddings out of decay, three seeds each, against the frozen twin in the same regime (`D_bank2_nbd_frz1`, added at launch). Family means at k = 12; held compositions by final answer; `exp45/SUMMARY_E17_PHASE2.md`.
+
+| Arm | F1 after block 1 | F1 after block 2 | F1 after block 4 | F1 after block 6 | F3 after 6 | Held comp after 6 | add / sub after 6 |
+|---|---|---|---|---|---|---|---|
+| `T_bank2_nbd_raw65536` (sign rule, both banks) | 2.8 / 1.6 / 1.5 | 1.1 / 0.6 / 0.8 | 0.5 / 1.1 / 1.7 | 0.7 / 1.1 / 1.2 | 1.1 / 1.1 / 2.2 | 0.7 / 0.6 / 1.0 | 1 / 1, 1 / 1, 1 / 1 |
+| `T_bank2_nbd_frz1_raw65536` (sign rule, first bank and embeddings frozen) | 81.4 / 86.6 / 84.2 | 82.1 / 86.9 / 83.9 | 50.8 / 52.0 / 53.8 | 59.4 / 62.4 / 61.2 | 67.8 / 68.2 / 71.6 | 5.8 / 9.2 / 8.5 | 41 / 24, 46 / 28, 46 / 23 |
+| `T_bank2_nbd_frz1_xfb_tup_raw65536` (frozen, exact feedback, trace to the projection) | 93.1 / 93.9 / 94.5 | 93.7 / 93.6 / 95.0 | 84.9 / 88.5 / 88.9 | 87.5 / 90.1 / 91.9 | 91.4 / 90.7 / 90.9 | 13.4 / 14.3 / 15.0 | 84 / 85, 90 / 89, 91 / 89 |
+| `D_bank2_nbd_frz1` (frozen twin) | — | 94.1 / 95.0 / 93.1 | 85.0 / 89.6 / 91.8 | 90.2 / 90.0 / 91.5 | 88.6 / 88.0 / 88.9 | 14.9 / 17.8 / 18.1 | 90 / 86, 93 / 88, 90 / 91 |
+
+Verdicts: P17.2.3 misses in every seed; P17.2.4 holds in 93683 and 116089 and misses 73129 by 0.6 on the block-6 clause; P17.2.5 holds in every seed; P17.2.6 reported (hard pairs `+-` / `-+` at 1–4 in the local arms and 1–11 in the twin). First-update zero-gradient report: 36 of 47 byte rows in the unfrozen local arm, 2 in backprop; embedding rows without gradient end at exactly their birth values. In the unfrozen local arm the digit and separator rows, the ones the rule reaches, shrink from row norm 4.1 to 0.3 with sign flips during block 1, and the development operations fall from 93–95 to 1–2: the rule's own embedding update destroys the birth. CPU-seconds per life: 7,475–7,515 (unfrozen), 6,853–6,923 (frozen), 6,667–6,808 (exact feedback, extended trace), 5,611–5,738 (frozen twin); wall 2 h 29 min for twelve processes. Review 9.61.
