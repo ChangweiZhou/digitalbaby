@@ -1216,3 +1216,36 @@ Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit 
 **Fixed in the harness since 9.75:** birth admission by expected hash with a manifest of legacy births; the summarizer withholds ratios across panel or objective mismatches and marks unhashed receipts as legacy; exposure counts follow the actual loss mask; update and scoring CPU are separate; the launcher template returns its jobs' status. A deliberately mismatched birth stops a life.
 
 **What I take from this audit.** I designed E20-A in an afternoon to test the one question I had just decided mattered most, and I made in it the errors I had listed that morning as lessons: no information audit of the new panel, a pooled endpoint, a suffix metric, a compound prediction. The auditor's stopping rule is right and I adopt it: the assay must be shown to detect memory use on a reference before a roster is spent on it.
+
+## 9.71 E18: births of the two-bank learner from nothing under four packages (cloud session, 10 November 2026; `MOD97_LOCAL_RULE_20261106/E18_REPORT.md`)
+
+**What ran.** Twelve births, seeds 73129 / 93683 / 116089, 24,576 updates each, predictions committed before the first birth (0ea40628). I recomputed every number below from the twelve birth receipts and checked each one's final step, head setting, birth rule, trace setting and decay; they are as registered and the worker's verdicts match mine. These receipts predate the hashed format and are legacy evidence in that sense. "Hard mean" is the mean of add89 and sub89 at twelve distractors, whole answers, development panels.
+
+| Arm | What the package is | Hard mean | At 20 distractors | Max/min mean |
+|---|---|---|---|---|
+| Reference on file | backprop end to end (owner's machine; levels, not digits) | 91.2 / 94.5 / 90.3 | | 96.0 / 95.2 / 95.5 |
+| B0 | weight signs at every relay, credit through time at every layer, error relayed between banks; no backprop anywhere; decay 0.25 | 87.5 / 90.7 / 84.7 | 84.5 / 88.0 / 74.7 | 98.8 / 97.8 / 95.7 |
+| B1 | a next-byte head at each bank, no gradient between banks, exact backprop inside each; decay 0.30 | 80.7 / 82.2 / 77.2 | 79.2 / 73.3 / 73.5 | 93.8 / 95.7 / 94.5 |
+| B2 | as B1 with weight signs and credit through time inside each bank; decay 0.25 | 74.8 / 69.7 / 66.3 | 71.2 / 64.3 / 62.2 | 96.0 / 96.7 / 93.8 |
+| B3 | as B2 with the trace on the write synapses only | 1.2 / 0.8 / 0.8 | | 0.8 / 2.0 / 2.8 |
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| P18.1 the first bank's own head stays a one-bank learner (add89 under 45) | 27.3 / 29.7 / 28.3 | holds, all three |
+| P18.2 the second bank builds on it: hard mean at least 70 in two seeds, below the reference in all | 80.7 / 82.2 / 77.2 | holds, all three |
+| P18.3 B0 at least 0.80 of the reference in two seeds | 0.96 / 0.96 / 0.94 | holds, all three |
+| P18.4 B0 at least 5 points above B1 in two seeds | +6.8 / +8.5 / +7.5 | holds, all three |
+| P18.5 B2 within 10 points of B1 in two seeds | −5.8 / −12.5 / −10.8 | **misses** (one of three) |
+| P18.6 B3 under 40 in all three, max/min at least 20 under B2's | 1.2 / 0.8 / 0.8; 91–95 under | holds as written |
+
+**What it says, and what it does not.**
+
+1. *A birth with no backprop anywhere.* B0 is born at 0.94–0.96 of the backprop birth, and its curves were still rising at the last checkpoint (84 → 88, 88 → 91, 78 → 85). Every birth before this used backprop. For this skill, under this rule, it is not needed. The rule is the one of 9.70: a backward pass over the item with weight signs, whose standing under the locality constraint is the owner's to decide.
+2. *B0 against B1 is a package gap, not a price of the relay.* The two differ in the relay, the extra head and its 657,153 parameters, the feedback form and the decay. P18.4's "the relay is worth more than exact weights" was my wording for a comparison that cannot carry it.
+3. *The nearest thing to a one-factor reading among these arms is B0 against B2:* same rule, same feedback, same decay; B2 adds the first bank's head and cuts the gradient between banks. B2 is 12.7 / 21.0 / 18.4 points below. Two differences remain (the head, the cut), so this too is a package gap; the control that keeps the head and the relay exists in the harness (`E16_HEADS=aux`) and has not been run.
+4. *A next-byte target at each bank does work, at a cost.* The first bank alone answers 27–30% of additions, as a one-bank network does, and the second bank still reaches 77–82% on top of it. The published failure of this design, an upper stage that adds nothing, does not occur here; the upper bank adds about 50 points. The package ends about 10 points under the end-to-end reference.
+5. *B3 learned nothing, and that says nothing about the bank.* Its loss never moved. As measured before it ran (9.75), it sends gradient to 11 of 45 input symbols; measured now from its saved weights, its operator, letter and task-code embeddings are at their initial values to two decimal places after 24,576 updates, while its digit rows moved 0.7 of a row norm (`exp45/E18_EMBEDDING_MOVEMENT.json`). P18.6 holds as written and is a statement about a package that cannot learn its input code.
+
+**Decision.** The two one-factor controls for this line (the kept relay with the extra head; identical fixed input codes) are defined and not commissioned: by 9.76 no further credit-rule variant runs until composition from memory has an answer. What E18 changes for that work is one thing: a learner can now be born by the rule it lives under.
+
+**Cost.** 65,118 CPU-s for twelve births, 4 h 39 min of wall on a four-core cloud container, 5–6% over the worker's forecast; no restarts. Evidence level E2 on development panels held out by ordered pair; births only: no life, no retention, no composition is tested.
