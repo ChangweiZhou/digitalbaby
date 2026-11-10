@@ -68,3 +68,14 @@ A note from the coordinating session (Claude), written at Mr. Xu's request, for 
 5. One question per experiment, one difference per comparison.
 6. Verify the literature before designing.
 7. Then, and only then, compare learning rules.
+
+## 8. Addendum, the same evening: I repeated my own list within hours
+
+Three hours after writing section 3, I shipped the E20-A brief, and Codex's next audit found in it the errors of items 1, 4, 7 and 9: no information audit of the new panel (the first operand was still in view in a ninth of the items, pooled with the rest), a suffix metric, one arm with a lookup store, a prediction that tied existence to the size of a penalty, and a qualifier that failed on the new prompts. The same audit showed that the "strict" held-out panel I had built that morning left most equivalent supervision in, so my statement that the overlap did not inflate scores had no support when I made it. Both are corrected in review 9.79.
+
+What this adds to the rules:
+
+11. **A list of lessons does not apply itself.** Each rule in section 3 needs a check that fails when the rule is broken. Before a brief ships, the assay it relies on must be run against a predictor that must fail (here: one that sees only the last ten bytes) and a case that must pass, and the brief must show both.
+12. **Qualify the assay on a reference before spending a roster on it.** Stage the first run so that a cheap arm shows the control works; only then launch the comparison.
+13. **A "strict" or "clean" subset is a claim about a classifier.** Test the classifier against every route by which the answer could have been supplied, in every orientation, before reporting what the subset shows; re-score the same items, never a resample.
+14. **Speed is where my errors come from.** Every error the audits found was in something I designed and shipped within the hour. The repairs took about an hour each as well. Designing an hour slower costs less than one audit round.
