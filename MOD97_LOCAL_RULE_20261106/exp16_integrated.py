@@ -15,6 +15,7 @@ Arms: T  sign rule everywhere + exact trace, decay 0.25, replay (the learner)
       D  backprop through time, each batch drawn from the families seen so far with equal weight, decay 0.3 (the twin)
 """
 import os
+import re
 os.environ.setdefault("E11_WD", "0.25")
 os.environ.setdefault("E11_REPLAY", "fresh")
 os.environ.setdefault("E11_TRACE", "scan")
@@ -100,18 +101,34 @@ if TRACEUP16 == "all":
 #   E16_BIRTHRULE=D|T        (E18): the rule used by `dev`. D (default) is backprop through time, as every birth before. T is the life's own rule with
 #                           the feedback and trace settings in force (E16_FEEDBACK, E16_TRACEUP), decay 0.25: a birth with no backprop anywhere.
 #                           Birth files and the lives started from them carry _bT (the birth also its _xfb/_tup/_tall).
-HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local")
-assert HEADS16 == "top" or (ARCH16 == "bank2" and FREEZE16 == "none"), "E16_HEADS=local is defined for bank2 with nothing frozen"
+#   Added after the 10 November source audit (PROJECT_DOCUMENTS/MINIFLY_E16_E19_HOSTILE_SOURCE_AUDIT_20261110.md); every default reproduces earlier receipts:
+#   E16_HEADS=aux            the first bank's own head with the relay between banks kept: the one-factor control for E16_HEADS=local. Tag _ah.
+#   E16_PROJFB=raw|scaled    feedback map inside the projection trace (E16_TRACEUP=proj): raw sign(W) as Phases 3-4 ran it, or sign(W) * mean|W|
+#                           as every other relay uses. Tag _tups for scaled.
+#   E16_FIXEDCODES=on        the byte embeddings stay at their random initial values in birth and life (a labelled restriction: identical fixed
+#                           input codes for every arm, so that a rule's ability to learn its input code is separated from the rest). Tag _fc.
+#   E16_OUTTAG=<text>        appended to a life's receipt name, so that a repeat on the current panels never overwrites an original receipt.
+HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local", "aux")
+assert HEADS16 == "top" or (ARCH16 == "bank2" and FREEZE16 == "none"), "E16_HEADS=local|aux is defined for bank2 with nothing frozen"
+PROJFB16 = os.environ.get("E16_PROJFB", "raw"); assert PROJFB16 in ("raw", "scaled")
+assert PROJFB16 == "raw" or (TRACEUP16 == "proj" and FEEDBACK16 == "sign"), "E16_PROJFB=scaled applies to E16_TRACEUP=proj with sign feedback"
+FIXEDCODES16 = os.environ.get("E16_FIXEDCODES", "off"); assert FIXEDCODES16 in ("on", "off")
+assert FIXEDCODES16 == "off" or ARCH16 != "window", "E16_FIXEDCODES is defined for the E17 architectures only"
+OUTTAG16 = os.environ.get("E16_OUTTAG", ""); assert re.fullmatch(r"[A-Za-z0-9_]*", OUTTAG16)
+LAST_AUX = [None]      # the first bank's head loss of the last update (the logged loss is the main head's)
 BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
 assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
-HTAG = "_lh" if HEADS16 == "local" else ""
-DEVRULETAG = "" if BIRTHRULE16 == "D" else "_bT" + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else "")
-if HEADS16 == "local":
-    arch17.LOCAL_HEADS = True
+HTAG = ("_lh" if HEADS16 == "local" else "_ah" if HEADS16 == "aux" else "") + ("_fc" if FIXEDCODES16 == "on" else "")
+TUPTAG = ("_tups" if PROJFB16 == "scaled" else "_tup") if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else ""
+DEVRULETAG = "" if BIRTHRULE16 == "D" else "_bT" + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG
+if HEADS16 != "top":
+    arch17.LOCAL_HEADS = True; arch17.LOCAL_DETACH = HEADS16 == "local"
+if ARCH16 != "window":
+    arch17.PROJ_SCALED = PROJFB16 == "scaled"
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
 assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
-ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + HTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else "") + ("_bT" if BIRTHRULE16 == "T" else "")
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + HTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG + ("_bT" if BIRTHRULE16 == "T" else "")
 
 
 def adamw16(m, lr, wd, frozen=()):
@@ -136,8 +153,39 @@ def zero_grad_report(m, x):
     rows = sorted(set(int(v) for v in x.unique().tolist()))
     g = m.book.weight.grad
     dead = [r for r in rows if g is None or not bool(g[r].any())] if m.book.weight.requires_grad else rows
+    by_role = {}
+    for r in rows:      # 10 Nov audit: the census by symbol role (an active tensor does not show that the rows it needs are learning)
+        e = by_role.setdefault(byte_role(r), dict(present=0, with_gradient=0)); e["present"] += 1; e["with_gradient"] += r not in dead
     return dict(params_without_gradient=none, book_rows_in_batch=len(rows), book_rows_in_batch_without_gradient=len(dead),
-                dead_rows=[chr(r) if 32 <= r < 127 else r for r in dead])
+                dead_rows=[chr(r) if 32 <= r < 127 else r for r in dead], by_role=by_role)
+
+
+def byte_role(r):
+    if r >= 256:
+        return "BOS/EOS"
+    c = chr(r)
+    return ("digit" if c.isdigit() else "equals" if c == "=" else "operator" if c in "+-<>" else "task code" if c.islower()
+            else "distractor letter" if c.isupper() else "separator" if c == ";" else "other")
+
+
+def book_shift(m, book0):
+    """Mean distance of each role's embedding rows from their initial values, relative to the mean initial row norm."""
+    d = (m.book.weight.detach() - book0).norm(dim=1); n0 = float(book0[:256].norm(dim=1).mean())
+    out = {}
+    for r in range(32, 127):
+        out.setdefault(byte_role(r), []).append(float(d[r]))
+    return {k: round(sum(v) / len(v) / n0, 4) for k, v in out.items() if k != "other"}
+
+
+def sha_file(path):
+    import hashlib
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def save_weights(m, path):
+    """Weights first, by rename, then their hash: a receipt is complete only when it names the hash of weights that exist (10 Nov audit)."""
+    tmp = Path(str(path) + ".tmp"); T.save(m.state_dict(), tmp); os.replace(tmp, path)
+    return sha_file(path)
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
 #   E16_RSHARE=<fraction>  (E16-M3, 9 Nov 21:20 EST) the share of every batch drawn from the raw/total reservoir once it holds anything;
@@ -145,6 +193,7 @@ assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented
 RSHARE16 = float(os.environ.get("E16_RSHARE", "0.5")); assert 0.0 <= RSHARE16 <= 1.0
 assert RSHARE16 == 0.5 or REPLAY16 in ("raw", "total"), "E16_RSHARE is defined for the raw/total reservoirs only"
 NREP = round(BATCH * RSHARE16)
+assert RSHARE16 == 0.5 or NREP == round(BATCH * round(100 * RSHARE16) / 100), "this replay share and another give the same _rs tag but different replay rows per batch (10 Nov audit); use a share that is a whole number of rows"
 RSTAG = "" if RSHARE16 == 0.5 else f"_rs{round(100 * RSHARE16)}"
 RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "") + RSTAG   # off is the default for the windowless architectures
 F1 = E.LIFE                                                                        # mod 97: r t x n
@@ -212,13 +261,16 @@ def joint_stream(streams, seed):
 def update16(m, opt, items, rule, store):
     """E.update, with the answer mask replaced by every-byte prediction when E16_LOSS=all (default path calls E.update unchanged)."""
     if LOSS16 == "answer" and HEADS16 == "top":
+        LAST_AUX[0] = None
         return E.update(m, opt, items, rule, store)
     x, y, mask = X.batch_tensor(items)
     if LOSS16 == "all":
         mask = y != E.BOS        # every real byte of prompt and answer; padding (BOS) excluded
     logits, it = E.forward(m, x, local=(rule != "D"), through_time=(rule == "D"), keep=(rule == "T"))
     loss = E.cross_entropy(logits[mask], y[mask])
-    total = loss + E.cross_entropy(it["logits1"][mask], y[mask]) if HEADS16 == "local" else loss   # E18: each bank's own error; no path joins them
+    aux = E.cross_entropy(it["logits1"][mask], y[mask]) if HEADS16 != "top" else None     # E18: the first bank's own error
+    LAST_AUX[0] = float(aux.detach()) if aux is not None else None
+    total = loss + aux if aux is not None else loss
     opt.zero_grad(); total.backward()
     if rule == "T":
         (E.trace_grads_scan if E.TRACE == "scan" else E.trace_grads)(m, it)
@@ -263,6 +315,28 @@ def panels(seed):
     return P, comp
 
 
+def strict_panels(seed):
+    """10 Nov audit: held single-operation pairs with no semantic route into teaching. A held pair (a, b) is dropped if the operation is
+    commutative and (b, a) is taught, or (mod 97) if it is supervised as the first or second step of a taught composition's scratchpad.
+    Scored at k = 12 beside the registered panels; the registered panels and the split are unchanged."""
+    sub = {}
+    for o1, o2 in TAUGHT_PAIRS:
+        for a, b, c in triples((o1, o2), seed, 2000):
+            sub.setdefault(SYM_OP[o1], set()).add((a, b)); sub.setdefault(SYM_OP[o2], set()).add((E.apply(SYM_OP[o1], 97, a, b), c))
+    out, counts = {}, {}
+    for t in F1 + F3:
+        taught, held = E.split(t, .25, seed); ts = set(taught)
+        ok = [(a, b) for a, b in held if not (t[0] in ("add", "max", "min") and a != b and (b, a) in ts) and not (t[1] == 97 and (a, b) in sub.get(t[0], ()))]
+        counts[E.NAME(*t)] = dict(held=len(held), strict=len(ok))
+        out[E.NAME(*t)] = E.panel(t, ok, seed + 11, ks=(12,), n=min(400, len(ok)))[12]
+    return out, counts
+
+
+def panel_sha(P, comp, strict):
+    import hashlib
+    return hashlib.sha256(json.dumps([P, comp, strict], sort_keys=True, default=list).encode()).hexdigest()
+
+
 def shortcut_ceilings(comp):
     """Final answer from a visible-only rule: ignore the first operator (f = o2(a, c), f = o2(b, c)) or the second (f = o1(a, b))."""
     out = {}
@@ -287,7 +361,7 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 def life(arm, seed):
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
-    path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
+    path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
     birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}.pt")
     import hashlib
@@ -297,12 +371,15 @@ def life(arm, seed):
     local = arm not in ("D", "M")
     admits = local or arm == "M"       # arm M keeps T's whole data pipeline, including online admission (9 Nov: before this line M admitted at block ends only)
     FROZEN = ((("book.",) if BOOKDECAY16 == "off" else ()) + ("l1.", "lp.", "lc.", "lw.")) if FREEZE16 == "bank1" else ()
-    if FREEZE16 == "book": FROZEN = ("book.",)
+    if FREEZE16 == "book" or FIXEDCODES16 == "on": FROZEN = ("book.",)
     opt = adamw16(m, .001, (E.WD if arm != "D" else .3), FROZEN)
     store = X.Store(seed) if (local and STORE16 == "on") else None
     rule = "D" if arm == "M" else arm      # arm M: T's data pipeline, D's update
     rng = Random(seed + 9)
     P, comp = panels(seed)
+    SP, strict_counts = strict_panels(seed)
+    f1c, f3c = {t[2][0] for t in F1}, {t[2][0] for t in F3}
+    fam_of = lambda p_: "F2" if p_[0] == ord("c") else "F1" if p_[0] in f1c else "F3" if p_[0] in f3c else "other"
     entries = {f: family_entries(f, seed) for f in ("F1", "F2", "F3")}
     buffer, seen_streams = [], []
     fbuf, fset, fseen = {}, {}, {}      # balanced modes: per-family entry lists (sets for all_balanced's distinct entries; counters for reservoir)
@@ -313,12 +390,17 @@ def life(arm, seed):
         res["compose"] = {n: score(m, it, store) for n, it in comp.items()}
         res["silenced_k12"] = {n: score(m, pk[12], store, silence=True) for n, pk in P.items() if not n.endswith("89")}
         res["silenced_compose"] = {n: score(m, it, store, silence=True) for n, it in comp.items() if n != "within"}
-        if HEADS16 == "local":
+        if HEADS16 != "top":
             res["head1_k12"] = {n: head1(score, m, pk[12], store) for n, pk in P.items()}
+        res["strict_k12"] = {n: score(m, it, store) for n, it in SP.items()}          # 10 Nov audit: no reversal taught, no taught sub-step
+        if store is not None:       # 10 Nov audit: what the network answers without the score-time store, so arms with and without one can be compared
+            res["nostore_k12"] = {n: score(m, pk[12], None) for n, pk in P.items()}
+            res["nostore_compose"] = {n: score(m, it, None) for n, it in comp.items()}
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, heads=HEADS16, birthrule=BIRTHRULE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, nrep=NREP, batch=BATCH, heads=HEADS16, birthrule=BIRTHRULE16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, outtag=OUTTAG16,
+                                     panel_sha256=panel_sha(P, comp, SP), strict_panel_counts=strict_counts, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -340,7 +422,7 @@ def life(arm, seed):
             elif block == 1:
                 seen_streams.append(entry_stream(entries[fam], seed + 100 + si))
             joint = joint_stream(seen_streams, seed + si)
-        losses, presented = [], []
+        losses, presented, expo, aux_losses = [], [], {}, []
         for u in range(STAGE_UPDATES):
             npres_before = len(presented)
             if arm == "D" or REPLAY16 == "oracle":
@@ -366,7 +448,13 @@ def life(arm, seed):
             else:
                 batch = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH)]; presented += batch
             nnew = len(presented) - npres_before if admits else 0
+            nfresh = len(presented) - npres_before
+            for i_, (p_, t_) in enumerate(batch):      # 10 Nov audit: rows and supervised tokens by origin and family (logging only)
+                key = f"{'joint' if (arm == 'D' or REPLAY16 == 'oracle') else 'fresh' if i_ < nfresh else 'replay'}/{fam_of(p_)}"
+                e_ = expo.setdefault(key, [0, 0]); e_[0] += 1; e_[1] += len(t_)
             losses.append(update16(m, opt, batch, rule, store))
+            if LAST_AUX[0] is not None:
+                aux_losses.append(LAST_AUX[0])
             if si == 1 and u == 0:    # 9 Nov audit: record what received no gradient on the first update (grads persist until the next zero_grad)
                 stages[0]["settings"]["zero_grad_first_update"] = zero_grad_report(m, X.batch_tensor(batch)[0])
                 print("e16 zero-grad check:", stages[0]["settings"]["zero_grad_first_update"], flush=True)
@@ -381,7 +469,10 @@ def life(arm, seed):
                         if j < RCAP:
                             fl[j] = ("raw", tuple(p_), tuple(t_))
                 fseen["all"] = n
-        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=time.process_time() - t0, scores=evaluate()))
+        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=time.process_time() - t0, scores=evaluate(),
+                           exposure_rows_tokens=expo))
+        if aux_losses:
+            stages[-1]["loss_head1"] = sum(aux_losses[-512:]) / min(512, len(aux_losses))
         sc = stages[-1]["scores"]
         print("e16", arm, seed, "after", f"{fam}.{block}",
               "F1@k", {n: [sc[n][k]["exact"] for k in KS] for n in sc if n.endswith("97")},
@@ -435,7 +526,9 @@ def life(arm, seed):
                         fs.add(e); fl.append(e)
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()} if fbuf else len(buffer)
             path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))   # E16-V: keep the last block's buffer count too
-    T.save(m.state_dict(), path.with_suffix(".pt"))   # final weights, so panels can be re-scored later (8 Nov audit)
+    wsha = save_weights(m, path.with_suffix(".pt"))   # final weights, so panels can be re-scored later (8 Nov audit)
+    path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages,
+                                    complete=dict(stages=len(stages), weights=path.with_suffix(".pt").name, weights_sha256=wsha)), indent=1))
 
 
 def qualify():
@@ -491,30 +584,51 @@ def develop17(seed):
     """Birth for a windowless architecture: exp11's development (backprop through time on the four mod-89 operations with 0-12
     distractor letters, 24,576 updates, sealed panels at k = 0/4/8/12/20) on the E16_ARCH net; writes e17_dev_{arch}_{seed}."""
     assert ARCH16 != "window"
+    assert LOSS16 == "answer", "births are trained on the answer loss; an every-byte birth would need its own file name (10 Nov audit)"
     stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}"
     path = OUT / f"{stem}.pt"
-    if path.exists():
+    cfg = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16,
+               fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE)
+    if path.exists():     # 10 Nov audit: never accept a checkpoint on its file name alone
+        jp = OUT / f"{stem}.json"
+        assert jp.exists(), f"{path.name} exists without its receipt: remove or move it before a new birth"
+        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE)
+        bad = {k: (old.get(k, dflt.get(k)), v) for k, v in cfg.items() if old.get(k, dflt.get(k)) != v}
+        assert not bad, f"{path.name} exists with a different configuration {bad}"
+        assert "weights_sha256" not in old or old["weights_sha256"] == sha_file(path), f"{path.name} does not match the hash in its receipt"
+        print("e17 dev", stem, "exists with the same configuration; nothing to do", flush=True)
         return
     m = E.new_net(seed)
-    plain = HEADS16 == "top" and BIRTHRULE16 == "D"       # every birth before E18: E.update with backprop, decay .3
+    book0 = m.book.weight.detach().clone()
+    plain = HEADS16 == "top" and BIRTHRULE16 == "D" and FIXEDCODES16 == "off"       # every birth before E18: E.update with backprop, decay .3
     step = (lambda items: E.update(m, opt, items, "D")) if plain else (lambda items: update16(m, opt, items, BIRTHRULE16, None))
-    opt = adamw16(m, .001, .3 if BIRTHRULE16 == "D" else E.WD)      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
+    opt = adamw16(m, .001, .3 if BIRTHRULE16 == "D" else E.WD, ("book.",) if FIXEDCODES16 == "on" else ())
+    census = None      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
     tp = [(t, E.split(t, .5, seed)[0]) for t in E.DEV]
     pan = {E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(0, 4, 8, 12, 20), n=300) for t in E.DEV}
     bt = E.batches(tp, seed, E.KMAX["M"])
     t0 = time.process_time(); curve = []
     for stop in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK):
-        losses = [step(next(bt)) for _ in range(X.BLOCK)]
+        losses, aux_losses = [], []
+        for _ in range(X.BLOCK):
+            items = next(bt); losses.append(step(items))
+            if not plain and LAST_AUX[0] is not None:
+                aux_losses.append(LAST_AUX[0])
+            if census is None:     # which embedding rows the first update reached, by symbol role (grads persist until the next zero_grad)
+                census = zero_grad_report(m, X.batch_tensor(items)[0]); print("e17 dev credit census:", census["by_role"], flush=True)
         if stop % 4096 == 0 or stop == E.DEV_DOSE:
             row = dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
-                       sealed={n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()})
+                       sealed={n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()}, book_shift_by_role=book_shift(m, book0))
+            if aux_losses:
+                row["loss_head1"] = sum(aux_losses) / len(aux_losses)
             curve.append(row)
             print("e17 dev", ARCH16 + HTAG + DEVRULETAG, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
     row["silenced_k12"] = {n: E.score(m, pk[12], silence=True) for n, pk in pan.items()}
-    if HEADS16 == "local":
+    if HEADS16 != "top":
         row["head1"] = {n: {k: head1(E.score, m, it) for k, it in pk.items()} for n, pk in pan.items()}
-    T.save(m.state_dict(), path)
-    (OUT / f"{stem}.json").write_text(json.dumps(dict(arch=ARCH16, seed=seed, kmax=E.KMAX["M"], bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, decay=opt.defaults["weight_decay"], curve=curve), indent=1))
+    wsha = save_weights(m, path)
+    (OUT / f"{stem}.json").write_text(json.dumps(dict(seed=seed, kmax=E.KMAX["M"], **cfg, credit_census_first_update=census,
+                                                      weights=path.name, weights_sha256=wsha, complete=True, curve=curve), indent=1))
 
 
 if __name__ == "__main__":

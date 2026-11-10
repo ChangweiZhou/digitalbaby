@@ -32,6 +32,8 @@ LABEL.update({"T_cell1_raw65536": "E17 cell1 (no window), raw 65,536", "D_cell1"
 
 def twin_of(arm):
     """The comparator shares the arm's stream and objective (audit, 8 Nov): drift -> D_drift, every-byte loss -> D_lossall, E17 arch -> its own twin."""
+    if "drift_online" in arm and "lossall" in arm:      # 10 Nov audit: no such comparator exists; never fall through to the answer-loss one
+        return "D_drift_lossall"
     if "drift_online" in arm:
         return "D_drift"
     if "lossall" in arm:
@@ -105,6 +107,26 @@ def main():
             lines.append(f"| {h} | " + " | ".join(f"{100*v[k]:.1f}" for k in ("ignore_o1_use_a", "ignore_o1_use_b", "ignore_o2", "answer_is_c")) + " |")
     else:
         lines.append(f"\nNo receipts found for seeds {SEEDS}.")
+    # 10 Nov audit: a ratio is only a one-factor comparison if arm and comparator were scored on the same panels with the same objective.
+    # Joined on the receipts' own fields, not on file names.
+    def fields(r):
+        st = [x["settings"] for x in r["stages"] if "settings" in x]
+        st = st[-1] if st else {}
+        return dict(panels=("corrected" if "keyed by split" in st.get("panels", "") else "original (pre-fix)"), panel_sha256=st.get("panel_sha256"),
+                    stream=st.get("stream", "blocks"), loss=st.get("loss", "answer"))
+    warn = []
+    for arm in ARMS:
+        for seed in SEEDS:
+            a, t = load(arm, seed), load(twin_of(arm), seed)
+            if a is None or t is None or arm == twin_of(arm):
+                continue
+            fa, ft = fields(a), fields(t)
+            bad = {k: (fa[k], ft[k]) for k in ("panels", "loss") if fa[k] != ft[k]}
+            if fa["panel_sha256"] and ft["panel_sha256"] and fa["panel_sha256"] != ft["panel_sha256"]:
+                bad["panel_sha256"] = "differ"
+            if bad:
+                warn.append(f"- `{arm}` against `{twin_of(arm)}`, seed {seed}: {bad}")
+    lines += ["", "## Comparator checks (arm and comparator must share panels and objective)", ""] + (warn or ["No mismatch among the receipts summarized here."])
     SUMMARY.write_text("\n".join(lines) + "\n")
     print("\n".join(lines))
 

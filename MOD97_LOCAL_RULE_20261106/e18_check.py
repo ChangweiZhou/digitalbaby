@@ -12,8 +12,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 if len(sys.argv) > 1:
     os.environ.update(E16_ARCH="bank2", E16_BOOKDECAY="off", E16_REPLAY="raw", E16_CAP="65536")
-    if sys.argv[1] == "on":
-        os.environ["E16_HEADS"] = "local"
+    if sys.argv[1] in ("on", "leak"):
+        os.environ["E16_HEADS"] = "local" if sys.argv[1] == "on" else "aux"     # aux: head kept, relay kept: the fixture that MUST leak
     from random import Random
     import torch as T
     from torch.nn.functional import cross_entropy
@@ -52,7 +52,9 @@ if len(sys.argv) > 1:
                 m.zero_grad(); cross_entropy((lg if which == "main" else it["logits1"])[mask], y[mask]).backward()
                 other = [n for n, p in m.named_parameters() if (n.split(".")[0] in mod1) == (which == "main")]
                 leak[f"{name}_{which}_loss_into_other_module"] = max(float(m.get_parameter(n).grad.abs().max()) if m.get_parameter(n).grad is not None else 0.0 for n in other)
-        out["leak"] = leak
+        out["leak" if sys.argv[1] == "on" else "leak_fixture_relay_kept"] = leak
+        if sys.argv[1] == "leak":
+            print(json.dumps(out)); sys.exit(0)
         # plain sign rule: the harness update's gradient on the first bank's write synapses against a scan of the first head's error alone
         lg, it = E.forward(m, x, local=True, through_time=False, keep=True)
         m.zero_grad(); (cross_entropy(lg[mask], y[mask]) + cross_entropy(it["logits1"][mask], y[mask])).backward(); E.trace_grads_scan(m, it)
@@ -67,7 +69,19 @@ if len(sys.argv) > 1:
     print(json.dumps(out))
 else:
     res = {}
-    for mode in ("off", "on"):
+    for mode in ("off", "on", "leak"):
         r = subprocess.run([sys.executable, __file__, mode], capture_output=True, text=True); assert r.returncode == 0, r.stderr[-3000:]
         res.update(json.loads(r.stdout.strip().splitlines()[-1]))
+    # 10 Nov audit: the gate is on the numbers, not on the subprocess exit code, and a fixture that must fail is part of it
+    fails = []
+    if res["off_vs_a3c0b675_max_abs_grad_diff"] != 0.0: fails.append("options off: gradients differ from a3c0b675")
+    if res["shared_init_max_abs_diff"] != 0.0: fails.append("shared layers do not start from the plain network's weights")
+    fails += [f"gradient crosses between banks: {k} = {v}" for k, v in res["leak"].items() if v != 0.0]
+    if res["bank1_write_from_head1_only_max_abs_diff"] != 0.0 or res["bank2_write_from_main_only_max_abs_diff"] != 0.0: fails.append("a write trace hears the other bank's head")
+    if res["head1_out_switch"] is not True: fails.append("HEAD1_OUT does not return the first bank's head")
+    # the fixture keeps the relay; both directions that exist in that network must show a nonzero gradient or the leak test cannot see a leak
+    fx = res["leak_fixture_relay_kept"]
+    fails += [f"leak fixture not detected: {k} = {v}" for k, v in fx.items() if "main_loss" in k and not v > 0.0]
+    res["passed"] = not fails; res["failures"] = fails
     (HERE / "exp45" / "E18_CHECK.json").write_text(json.dumps(res, indent=1)); print(json.dumps(res, indent=1))
+    sys.exit(0 if not fails else 1)

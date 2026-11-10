@@ -43,6 +43,14 @@ FB_SIGN = True
 # prediction error only; no error is relayed between banks. HEAD1_OUT makes forward return the first bank's head (scoring only).
 LOCAL_HEADS = False
 HEAD1_OUT = False
+# 10 Nov audit: with FB_SIGN the projection trace (_proj) relayed raw sign(W) for the content and gate matrices, while every other backward
+# relay uses sign(W) * mean|W| (SignLinear). The two matrices have different mean magnitudes, so the raw form weights the two terms
+# differently and changes the direction of the projection's gradient. PROJ_SCALED uses the same map as everywhere else. Default False
+# reproduces the Phase 3 and Phase 4 receipts; exp16 sets it from E16_PROJFB=scaled (tag _tups).
+PROJ_SCALED = False
+# 10 Nov audit: LOCAL_DETACH False keeps the first bank's own head but leaves every gradient path between the banks open (E16_HEADS=aux):
+# the one-factor control for "no relay between banks" (same heads, same objective, only the detach toggled).
+LOCAL_DETACH = True
 # Phase 0b variants (8 Nov 23:45 EST, after P17.0 was refuted for cell1 and bank):
 #   cell1d2  cell1 with a deeper readout: two hidden layers between (z1, h) and the logits, so two digits held in the state can interact before the output
 #   bank2    two stacked fixed-rate banks: the second bank's write is computed from the FIRST bank's state (p2 = tanh(Wp2 h1)), so writes can depend on
@@ -103,7 +111,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     extra = {}
     lh = hasattr(m, "l3a")
     if m.arch == "bank2":   # second bank written from the first bank's state
-        p2 = T.tanh(lin(Hs.detach() if lh else Hs, m.lp2, local))
+        p2 = T.tanh(lin(Hs.detach() if (lh and LOCAL_DETACH) else Hs, m.lp2, local))
         c2 = T.tanh(lin(p2, m.lc2, local)); w2 = T.sigmoid(lin(p2, m.lw2, local)); r2 = m.R.expand_as(c2)
         h2 = T.zeros(B, C); hs2, prev2 = [], []
         for t in range(L):
@@ -121,7 +129,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
             Hs2 = T.zeros_like(Hs2)
     if lh:
         extra["logits1"] = lin(T.tanh(lin(z1, m.l2a, local) + lin(Hs, m.lma, local)), m.l3a, local)
-        pre = lin(z1.detach(), m.l2, local) + lin(Hs.detach(), m.lm, local)
+        pre = (lin(z1.detach(), m.l2, local) + lin(Hs.detach(), m.lm, local)) if LOCAL_DETACH else (lin(z1, m.l2, local) + lin(Hs, m.lm, local))
     else:
         pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
     if m.arch == "bank2":
@@ -152,8 +160,9 @@ def _scan(p, c, r, w, hs, prev, lc, lgate, gate_is_r):
 @T.no_grad()
 def _proj(Lam, gc, gg, lc, lgate, lp, x, p):
     """TRACEUP: credit through time for the projection p = tanh(Wp x) that feeds the write, replacing its within-step gradient."""
-    Wc = lc.weight.sign() if FB_SIGN else lc.weight
-    Wg = lgate.weight.sign() if FB_SIGN else lgate.weight
+    sc = (lambda W: W.sign() * W.abs().mean()) if PROJ_SCALED else (lambda W: W.sign())   # 10 Nov audit: raw signs mix the two terms differently from SignLinear
+    Wc = sc(lc.weight) if FB_SIGN else lc.weight
+    Wg = sc(lgate.weight) if FB_SIGN else lgate.weight
     dpre = ((Lam * gc) @ Wc + (Lam * gg) @ Wg) * (1 - p * p)          # (B, T, D)
     lp.weight.grad = T.einsum("btd,bth->dh", dpre, x); lp.bias.grad = dpre.sum((0, 1))
 
