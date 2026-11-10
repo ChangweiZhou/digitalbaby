@@ -462,3 +462,5 @@ Nine lives on the Mac, seeds 73129 / 93683 / 116089, `bank2` with embeddings out
 - P17.3.4 Compositions are reported, not predicted; no arm is expected above 25 on the held pairs.
 
 Reading, written before the result: P17.3.1 and P17.3.2 holding together place the remaining gap in the feedback, which the propagation answer excludes; P17.3.2 holding with P17.3.1 missing places it in the trace, which is local in the sense of 9.60's case G and stands or falls with the sign rule itself. P17.3.3 decides whether Phase 3's unfrozen arm is worth a Phase 4. Cost about 6,700–7,500 CPU-s per life; nine processes on the Mac, about 2 h 15 min of wall time from the Phase 2 pace. Dry runs of the three command shapes (four updates per block, seven stages each, 130–141 CPU-s) in `exp45/archive_e17p3_dry/`; launcher `e17p3_lives.sh`.
+
+**Phase 3 go (9 November 2026, 23:21 EST).** Mr. Xu: "Launch Phase 3." The nine lives launched at 23:21:40 EST under the machine lock by `e17p3_lives.sh` (block admission, as Phase 2); predictions P17.3.1–P17.3.4 unchanged. Expected finish about 01:40 EST, 10 November, from the Phase 2 pace.
