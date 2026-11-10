@@ -725,3 +725,18 @@ Three local arms on `bank2` with the embeddings out of decay, three seeds each, 
 | `D_bank2_nbd_frz1` (frozen twin) | — | 94.1 / 95.0 / 93.1 | 85.0 / 89.6 / 91.8 | 90.2 / 90.0 / 91.5 | 88.6 / 88.0 / 88.9 | 14.9 / 17.8 / 18.1 | 90 / 86, 93 / 88, 90 / 91 |
 
 Verdicts: P17.2.3 misses in every seed; P17.2.4 holds in 93683 and 116089 and misses 73129 by 0.6 on the block-6 clause; P17.2.5 holds in every seed; P17.2.6 reported (hard pairs `+-` / `-+` at 1–4 in the local arms and 1–11 in the twin). First-update zero-gradient report: 36 of 47 byte rows in the unfrozen local arm, 2 in backprop; embedding rows without gradient end at exactly their birth values. In the unfrozen local arm the digit and separator rows, the ones the rule reaches, shrink from row norm 4.1 to 0.3 with sign flips during block 1, and the development operations fall from 93–95 to 1–2: the rule's own embedding update destroys the birth. CPU-seconds per life: 7,475–7,515 (unfrozen), 6,853–6,923 (frozen), 6,667–6,808 (exact feedback, extended trace), 5,611–5,738 (frozen twin); wall 2 h 29 min for twelve processes. Review 9.61.
+
+## E17, Phase 3: the two changes one at a time, and the embeddings alone frozen (10 November 2026, 01:05 EST)
+
+Family means at k = 12; held compositions by final answer; three seeds 73129 / 93683 / 116089; `exp45/SUMMARY_E17_PHASE3.md`. Comparators from Phase 2 in the last three rows.
+
+| Arm | F1 after block 1 | F1 after block 2 | F1 after block 4 | F1 after block 6 | F3 after 6 | Held comp after 6 | add / sub after 6 |
+|---|---|---|---|---|---|---|---|
+| `T_bank2_nbd_frz1_xfb_raw65536` (frozen, exact feedback alone) | 88.8 / 88.9 / 89.0 | 84.9 / 89.8 / 90.4 | 59.1 / 64.5 / 66.8 | 67.9 / 72.9 / 72.8 | 81.8 / 78.8 / 78.6 | 8.8 / 8.3 / 8.8 | 54 / 42, 63 / 50, 64 / 48 |
+| `T_bank2_nbd_frz1_tup_raw65536` (frozen, trace to the projection alone) | 90.7 / 93.8 / 91.0 | 90.8 / 93.2 / 92.4 | 78.1 / 80.7 / 84.2 | 80.1 / 84.9 / 84.9 | 87.6 / 88.4 / 86.6 | 12.2 / 13.2 / 12.0 | 78 / 66, 84 / 77, 83 / 72 |
+| `T_bank2_nbd_frzb_raw65536` (embeddings alone frozen, sign rule on both banks) | 1.8 / 1.8 / 1.1 | 1.3 / 0.5 / 1.4 | 0.2 / 0.9 / 1.2 | 1.3 / 1.2 / 1.1 | 1.9 / 2.6 / 2.0 | 1.0 / 2.0 / 1.7 | 1 / 2, 1 / 1, 1 / 1 |
+| Phase 2 `T_bank2_nbd_frz1_raw65536` (frozen, sign rule) | 81.4 / 86.6 / 84.2 | 82.1 / 86.9 / 83.9 | 50.8 / 52.0 / 53.8 | 59.4 / 62.4 / 61.2 | 67.8 / 68.2 / 71.6 | 5.8 / 9.2 / 8.5 | 41 / 24, 46 / 28, 46 / 23 |
+| Phase 2 `T_bank2_nbd_frz1_xfb_tup_raw65536` (both changes) | 93.1 / 93.9 / 94.5 | 93.7 / 93.6 / 95.0 | 84.9 / 88.5 / 88.9 | 87.5 / 90.1 / 91.9 | 91.4 / 90.7 / 90.9 | 13.4 / 14.3 / 15.0 | 84 / 85, 90 / 89, 91 / 89 |
+| Phase 2 `D_bank2_nbd_frz1` (frozen twin) | — | 94.1 / 95.0 / 93.1 | 85.0 / 89.6 / 91.8 | 90.2 / 90.0 / 91.5 | 88.6 / 88.0 / 88.9 | 14.9 / 17.8 / 18.1 | 90 / 86, 93 / 88, 90 / 91 |
+
+Verdicts: P17.3.1 misses in every seed; P17.3.2's first clause holds (21–24 above the sign rule) and its second misses, the trace arm ending 12 points above the exact-feedback arm; P17.3.3 misses in every seed (development operations 1.3 / 1.5 / 1.2 after block 1 with the embeddings frozen: the rule's update to the first bank destroys the birth on its own); P17.3.4 reported. Ratios to the frozen twin after block 6, trace alone: mod-97 0.89 / 0.94 / 0.93, mod-73 0.99 / 1.00 / 0.97, held compositions 0.82 / 0.75 / 0.66. First-update zero-gradient report: 47 of 47 byte rows in every arm (the table is frozen in all three). CPU-seconds per life 4,840–5,602; wall 1 h 35 min for nine processes. Review 9.66.
