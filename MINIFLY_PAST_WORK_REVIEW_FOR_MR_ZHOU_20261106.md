@@ -1116,3 +1116,45 @@ The first bank's projection gets an update uncorrelated with the gradient, and t
 4. *On the frozen first stage.* The memo reports adult plasticity at every stage of the fly's olfactory pathway after the receptor neurons, and a receptor layer that is comparatively stable after an early-adult window. Both are reported without argument. Mr. Xu's answer in 9.67 stands as given; the memo neither supports freezing a bank nor contradicts the answer.
 
 Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit session's roadmap note, are to be quoted in the corrected form from now on.
+
+## 9.70 E17 Phase 4: with credit through time at every layer, the windowless learner keeps its birth with nothing frozen (10 November 2026, 10:31–12:35 EST; `MOD97_LOCAL_RULE_20261106/exp45/SUMMARY_E17_PHASE4.md`)
+
+**What ran.** Nine lives on `bank2` with the embeddings out of decay and nothing frozen, seeds 73129 / 93683 / 116089, launched on Mr. Xu's go at 10:31:24 EST from the harness at a3c0b675: the new arm (`T_bank2_nbd_tall`: weight-sign feedback, credit carried through time at every layer); the Phase 3 trace with nothing frozen (`T_bank2_nbd_tup`: credit through time to the write projections only); and backprop on the learner's own pipeline (`M_bank2_nbd`: same blocks, reservoir, replay share and decay as the learner, one difference, the update). Comparator: the unfrozen twin `D_bank2_nbd` (backprop on the joint stream, a ceiling). All nine lives loaded the same three births (hashes in the receipts) and ran seven stages; no error, no restart.
+
+**Mod-97 mean after each block, and the end of the life.**
+
+| Arm | Seed | Block 1 | Block 2 | Block 3 | Block 4 | Block 5 | Block 6 | mod-73 at 6 | Ratio to twin, mod-97 · mod-73 |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---|
+| New arm | 73129 | 92.9 | 90.2 | 82.9 | 80.6 | 86.0 | 87.9 | 90.8 | 0.95 · 0.98 |
+| | 93683 | 92.1 | 93.0 | 84.9 | 82.0 | 82.2 | 86.1 | 86.9 | 0.92 · 0.95 |
+| | 116089 | 90.7 | 92.4 | 75.5 | 81.6 | 83.9 | 86.9 | 89.4 | 0.93 · 0.97 |
+| One-layer trace | 73129 | 65.0 | 65.5 | 35.6 | 31.8 | 41.9 | 44.2 | 49.9 | 0.48 · 0.54 |
+| | 93683 | 75.3 | 75.7 | 40.0 | 29.1 | 42.1 | 42.1 | 47.2 | 0.45 · 0.52 |
+| | 116089 | 74.9 | 74.2 | 39.2 | 37.6 | 41.4 | 42.6 | 46.9 | 0.46 · 0.51 |
+| Backprop, same pipeline | 73129 | 93.6 | 93.2 | 87.6 | 89.4 | 92.2 | 90.9 | 93.5 | 0.98 · 1.01 |
+| | 93683 | 94.5 | 93.2 | 90.8 | 86.1 | 92.8 | 92.3 | 93.2 | 0.99 · 1.02 |
+| | 116089 | 93.8 | 94.0 | 90.2 | 92.4 | 93.4 | 94.2 | 93.2 | 1.01 · 1.01 |
+| Twin | all | 92.2–93.6 | | | | | 92.3–93.7 | 91.6–92.6 | |
+| Sign rule as run (Phase 2) | all | 1.5–2.8 | | | | | 0.7–1.2 | 1.1–2.2 | |
+
+**Verdicts, against the predictions of 10:30 EST.**
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| P17.4.1 the birth survives: new arm at or above 80 on mod-97 after block 1 in two of three, above 50 in all | 92.9 / 92.1 / 90.7 | **holds, all three** |
+| P17.4.2 closure: new arm at or above 0.80 of the twin on mod-97 and mod-73 after block 6 in two of three | 0.95 · 0.98, 0.92 · 0.95, 0.93 · 0.97 | **holds, all three** |
+| P17.4.3 one layer is not enough: one-layer trace below 50 on mod-97 after block 1 in two of three | 65.0 / 75.3 / 74.9 | **misses as written** |
+| P17.4.4 the pipeline's ceiling: backprop on the pipeline at or above 0.90 of the twin on both families in all three | 0.98–1.01 and 1.01–1.02 | **holds, all three** |
+| P17.4.5 compositions, reported: none above 25 on held pairs, hard pairs at or under 15 | held 12.8–14.7 (new arm), 7.7–9.0 (one-layer), 14.0–18.5 (backprop); hard pairs 0.8–8.6 | as expected; nothing composes |
+
+**What the three arms say.**
+
+1. *The statement in 9.66 that the first bank must be frozen is withdrawn.* With credit carried through time at every layer and weight-sign feedback kept, the unfrozen learner does not lose its birth: it learns the first family to 91–93 in block 1, where the rule as run fell to 2, and ends at 0.92–0.95 of the twin on mod-97 and 0.95–0.98 on mod-73. It ends above the frozen learner of Phase 3 (80.1 / 84.9 / 84.9) in every seed. What the first bank needed was credit that reaches it through time, as the alignment measurement of 9.67 said beforehand.
+2. *What weight signs cost, against the matched control.* Backprop on the same pipeline ends 3–7 points above the new arm on mod-97 and 3–6 on mod-73. The gap is in addition and subtraction (new arm 77–86, backprop 88–93); the comparisons are level (91–94 against 92–97). The pipeline itself costs backprop nothing here (0.98–1.02 of the twin), so that gap belongs to the weight signs.
+3. *One layer of extension keeps the learner alive and no more.* P17.4.3 misses as written: with the trace extended to the write projections only, the birth is not destroyed in block 1 (65–75). But neither reading I wrote beforehand obtained. The cheaper trace does not suffice: it ends at 42–44 on mod-97 and 47–50 on mod-73, about half the twin, and loses 30–46 points when the compositions enter. The embeddings and the first layer, still credited within the step, are the difference: under this arm 36 of the 47 embedding rows in a batch get no gradient at all, under the new arm 2.
+4. *The rule keeps less of what is not rehearsed.* The development operations (mod 89) are never shown in life and are in no reservoir. After block 6 the new arm holds 10.7 / 22.2 / 43.2 on them; backprop on the same pipeline holds 48.6 / 41.4 / 53.6 and the twin 49.1 / 37.9 / 51.5. This is the E16-M3 finding again in another form (9.64, item 4): under the rule, what replay does not carry is lost faster.
+5. *Nothing composes,* in any arm, the twin included. That remains the architecture's open problem (Phase 1) and no rule arm bears on it.
+
+**What this is and is not.** The new arm is, plainly, backprop through time over one item with weight signs in place of weights, computed by a backward pass over the item. Mr. Xu's go was read as accepting that for a diagnostic (9.67 item 4), not as a ruling; whether it meets the project's locality constraint is disputed and is Mr. Zhou's to decide. The literature check found no published test of weight-sign feedback through time (9.72), so this result rests on these nine receipts: three seeds, one life each, evidence level E2 on sealed panels, no reuse on never-reinforced inputs claimed. A forward-only form of the same credit is the question of E19.
+
+**Cost and pace.** CPU-seconds per life: new arm 6,672–6,787 (forecast 6,000–6,800); one-layer trace 7,034–7,068 (forecast 7,500–7,900, under); backprop on the pipeline 6,615–6,732 (forecast 5,500–6,500, over by 2–4%). Wall 10:31:24 to 12:35:27 EST, 2 h 04 min for nine processes against a forecast of 2 h 20 (range 2 h to 2 h 40); the E18 checks and dry runs shared the machine for part of it. The launcher released the lock at 12:35:27.
