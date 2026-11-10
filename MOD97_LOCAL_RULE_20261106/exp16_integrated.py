@@ -95,10 +95,23 @@ if TRACEUP16 == "all":
 #                           through the state (operators, letters, task codes) receive no gradient, and AdamW's decay erased them (factor 0.215 per
 #                           block), which confounds E17 Phases 1-1c. "off" puts `book` in a no-decay group in lives AND births (birth file tagged
 #                           `_nbd`), and the frozen arm freezes `book` with the first bank. Default "on" reproduces every receipt made before.
+#   E16_HEADS=top|local      (E18, 10 Nov): local gives the first bank its own next-byte head and cuts every gradient path between the two banks
+#                           (arch17.LOCAL_HEADS): each bank learns from its own prediction error, no error is relayed between banks. bank2 only. Tag _lh.
+#   E16_BIRTHRULE=D|T        (E18): the rule used by `dev`. D (default) is backprop through time, as every birth before. T is the life's own rule with
+#                           the feedback and trace settings in force (E16_FEEDBACK, E16_TRACEUP), decay 0.25: a birth with no backprop anywhere.
+#                           Birth files and the lives started from them carry _bT (the birth also its _xfb/_tup/_tall).
+HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local")
+assert HEADS16 == "top" or (ARCH16 == "bank2" and FREEZE16 == "none"), "E16_HEADS=local is defined for bank2 with nothing frozen"
+BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
+assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
+HTAG = "_lh" if HEADS16 == "local" else ""
+DEVRULETAG = "" if BIRTHRULE16 == "D" else "_bT" + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else "")
+if HEADS16 == "local":
+    arch17.LOCAL_HEADS = True
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
 assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
-ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else "")
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + HTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else "") + ("_bT" if BIRTHRULE16 == "T" else "")
 
 
 def adamw16(m, lr, wd, frozen=()):
@@ -198,13 +211,15 @@ def joint_stream(streams, seed):
 
 def update16(m, opt, items, rule, store):
     """E.update, with the answer mask replaced by every-byte prediction when E16_LOSS=all (default path calls E.update unchanged)."""
-    if LOSS16 == "answer":
+    if LOSS16 == "answer" and HEADS16 == "top":
         return E.update(m, opt, items, rule, store)
     x, y, mask = X.batch_tensor(items)
-    mask = y != E.BOS            # every real byte of prompt and answer; padding (BOS) excluded
+    if LOSS16 == "all":
+        mask = y != E.BOS        # every real byte of prompt and answer; padding (BOS) excluded
     logits, it = E.forward(m, x, local=(rule != "D"), through_time=(rule == "D"), keep=(rule == "T"))
     loss = E.cross_entropy(logits[mask], y[mask])
-    opt.zero_grad(); loss.backward()
+    total = loss + E.cross_entropy(it["logits1"][mask], y[mask]) if HEADS16 == "local" else loss   # E18: each bank's own error; no path joins them
+    opt.zero_grad(); total.backward()
     if rule == "T":
         (E.trace_grads_scan if E.TRACE == "scan" else E.trace_grads)(m, it)
     opt.step()
@@ -226,6 +241,15 @@ def score(m, items, store=None, silence=False):
     outs = E.respond(m, [p for p, _ in items], store, cap=CAP, silence=silence)
     return dict(n=len(items), exact=sum(o == t for o, (_, t) in zip(outs, items)),
                 final=sum(o[-3:] == t[-3:] for o, (_, t) in zip(outs, items)))
+
+
+def head1(fn, *a):
+    """E18: a score taken from the first bank's own head (what the first bank alone can answer)."""
+    arch17.HEAD1_OUT = True
+    try:
+        return fn(*a)
+    finally:
+        arch17.HEAD1_OUT = False
 
 
 def panels(seed):
@@ -265,7 +289,7 @@ def life(arm, seed):
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
-    birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{BTAG}{E.DEVTAG}_{seed}.pt")
+    birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}.pt")
     import hashlib
     birth_sha = hashlib.sha256(birth_file.read_bytes()).hexdigest()
     m.load_state_dict(T.load(birth_file))
@@ -289,10 +313,12 @@ def life(arm, seed):
         res["compose"] = {n: score(m, it, store) for n, it in comp.items()}
         res["silenced_k12"] = {n: score(m, pk[12], store, silence=True) for n, pk in P.items() if not n.endswith("89")}
         res["silenced_compose"] = {n: score(m, it, store, silence=True) for n, it in comp.items() if n != "within"}
+        if HEADS16 == "local":
+            res["head1_k12"] = {n: head1(score, m, pk[12], store) for n, pk in P.items()}
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, heads=HEADS16, birthrule=BIRTHRULE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -465,25 +491,30 @@ def develop17(seed):
     """Birth for a windowless architecture: exp11's development (backprop through time on the four mod-89 operations with 0-12
     distractor letters, 24,576 updates, sealed panels at k = 0/4/8/12/20) on the E16_ARCH net; writes e17_dev_{arch}_{seed}."""
     assert ARCH16 != "window"
-    path = OUT / f"e17_dev_{ARCH16}{BTAG}{E.DEVTAG}_{seed}.pt"
+    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}"
+    path = OUT / f"{stem}.pt"
     if path.exists():
         return
     m = E.new_net(seed)
-    opt = adamw16(m, .001, .3)      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
+    plain = HEADS16 == "top" and BIRTHRULE16 == "D"       # every birth before E18: E.update with backprop, decay .3
+    step = (lambda items: E.update(m, opt, items, "D")) if plain else (lambda items: update16(m, opt, items, BIRTHRULE16, None))
+    opt = adamw16(m, .001, .3 if BIRTHRULE16 == "D" else E.WD)      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
     tp = [(t, E.split(t, .5, seed)[0]) for t in E.DEV]
     pan = {E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(0, 4, 8, 12, 20), n=300) for t in E.DEV}
     bt = E.batches(tp, seed, E.KMAX["M"])
     t0 = time.process_time(); curve = []
     for stop in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK):
-        losses = [E.update(m, opt, next(bt), "D") for _ in range(X.BLOCK)]
+        losses = [step(next(bt)) for _ in range(X.BLOCK)]
         if stop % 4096 == 0 or stop == E.DEV_DOSE:
             row = dict(step=stop, loss=sum(losses) / len(losses), cpu=time.process_time() - t0,
                        sealed={n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()})
             curve.append(row)
-            print("e17 dev", ARCH16, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
+            print("e17 dev", ARCH16 + HTAG + DEVRULETAG, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
     row["silenced_k12"] = {n: E.score(m, pk[12], silence=True) for n, pk in pan.items()}
+    if HEADS16 == "local":
+        row["head1"] = {n: {k: head1(E.score, m, it) for k, it in pk.items()} for n, pk in pan.items()}
     T.save(m.state_dict(), path)
-    (OUT / f"e17_dev_{ARCH16}{BTAG}{E.DEVTAG}_{seed}.json").write_text(json.dumps(dict(arch=ARCH16, seed=seed, kmax=E.KMAX["M"], bookdecay=BOOKDECAY16, curve=curve), indent=1))
+    (OUT / f"{stem}.json").write_text(json.dumps(dict(arch=ARCH16, seed=seed, kmax=E.KMAX["M"], bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, decay=opt.defaults["weight_decay"], curve=curve), indent=1))
 
 
 if __name__ == "__main__":

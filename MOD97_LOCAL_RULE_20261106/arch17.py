@@ -38,6 +38,11 @@ ARCHS = ("cell1", "bank", "cell1d2", "bank2")
 # No new approximation: given Lambda, this is backprop through time's own credit for lp. Set by exp16 (E16_TRACEUP, E16_FEEDBACK).
 TRACEUP = False
 FB_SIGN = True
+# E18 (10 Nov): LOCAL_HEADS gives the first bank its own next-byte head (l2a, lma, l3a) and cuts every gradient path between the two banks:
+# the second bank and the main readout read the first bank's state and first layer detached. Each bank then learns from its own
+# prediction error only; no error is relayed between banks. HEAD1_OUT makes forward return the first bank's head (scoring only).
+LOCAL_HEADS = False
+HEAD1_OUT = False
 # Phase 0b variants (8 Nov 23:45 EST, after P17.0 was refuted for cell1 and bank):
 #   cell1d2  cell1 with a deeper readout: two hidden layers between (z1, h) and the logits, so two digits held in the state can interact before the output
 #   bank2    two stacked fixed-rate banks: the second bank's write is computed from the FIRST bank's state (p2 = tanh(Wp2 h1)), so writes can depend on
@@ -66,6 +71,8 @@ class Net17(nn.Module):
         if arch == "cell1d2":
             self.l2b = nn.Linear(H, H)
         self.l3 = nn.Linear(H, 257)
+        if arch == "bank2" and LOCAL_HEADS:     # created last, so every other layer's initial weights are those of the plain bank2 net of the same seed
+            self.l2a = nn.Linear(H, H); self.lma = nn.Linear(C, H); self.l3a = nn.Linear(H, 257)
 
 
 def new_net(seed, arch):
@@ -94,8 +101,9 @@ def forward(m, x, local, through_time, keep=False, silence=False):
         hs.append(h)
     Hs = T.stack(hs, 1)
     extra = {}
+    lh = hasattr(m, "l3a")
     if m.arch == "bank2":   # second bank written from the first bank's state
-        p2 = T.tanh(lin(Hs if through_time else Hs.detach(), m.lp2, local)) if False else T.tanh(lin(Hs, m.lp2, local))
+        p2 = T.tanh(lin(Hs.detach() if lh else Hs, m.lp2, local))
         c2 = T.tanh(lin(p2, m.lc2, local)); w2 = T.sigmoid(lin(p2, m.lw2, local)); r2 = m.R.expand_as(c2)
         h2 = T.zeros(B, C); hs2, prev2 = [], []
         for t in range(L):
@@ -111,13 +119,18 @@ def forward(m, x, local, through_time, keep=False, silence=False):
         Hs = T.zeros_like(Hs)
         if m.arch == "bank2":
             Hs2 = T.zeros_like(Hs2)
-    pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
+    if lh:
+        extra["logits1"] = lin(T.tanh(lin(z1, m.l2a, local) + lin(Hs, m.lma, local)), m.l3a, local)
+        pre = lin(z1.detach(), m.l2, local) + lin(Hs.detach(), m.lm, local)
+    else:
+        pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
     if m.arch == "bank2":
         pre = pre + lin(Hs2, m.lm2, local)
     z2 = T.tanh(pre)
     if m.arch == "cell1d2":
         z2 = T.tanh(lin(z2, m.l2b, local))
-    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, z1=z1, **extra)
+    out = extra["logits1"] if (lh and HEAD1_OUT) else lin(z2, m.l3, local)
+    return out, dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, z1=z1, **extra)
 
 
 @T.no_grad()
