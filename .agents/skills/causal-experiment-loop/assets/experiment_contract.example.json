@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "experiment_id": "EXAMPLE-001",
   "status": "PREREGISTERED",
   "question": "Does an exact-gradient reference outperform a local rule when both see identical observations?",
@@ -16,14 +16,24 @@
   "dataset_hash": "sha256:REPLACE_WITH_REAL_HASH",
   "panel_hash": "sha256:REPLACE_WITH_REAL_HASH",
   "birth_checkpoint_hash": "sha256:REPLACE_WITH_REAL_HASH",
-  "seeds": [101, 202, 303],
+  "seeds": [
+    101,
+    202,
+    303
+  ],
   "arms": [
     {
       "id": "local",
       "role": "candidate",
       "comparator_type": "matched",
       "stream_id": "observed_raw_v1",
-      "config": {"architecture": "cell", "update": "local", "replay": "raw65536", "loss": "answer_only", "decay": 0.25}
+      "config": {
+        "architecture": "cell",
+        "update": "local",
+        "replay": "raw65536",
+        "loss": "answer_only",
+        "decay": 0.25
+      }
     },
     {
       "id": "bp_matched",
@@ -31,8 +41,17 @@
       "comparator_type": "matched",
       "stream_id": "observed_raw_v1",
       "baseline": "local",
-      "intended_changes": ["update"],
-      "config": {"architecture": "cell", "update": "bp", "replay": "raw65536", "loss": "answer_only", "decay": 0.25}
+      "intended_changes": [
+        "update"
+      ],
+      "config": {
+        "architecture": "cell",
+        "update": "bp",
+        "replay": "raw65536",
+        "loss": "answer_only",
+        "decay": 0.25
+      },
+      "comparison_claim": "single_factor"
     },
     {
       "id": "bp_richer",
@@ -40,12 +59,25 @@
       "comparator_type": "ceiling",
       "stream_id": "joint_stream_v1",
       "baseline": "local",
-      "intended_changes": ["update", "replay", "decay"],
-      "config": {"architecture": "cell", "update": "bp", "replay": "joint_stream", "loss": "answer_only", "decay": 0.30}
+      "intended_changes": [
+        "update",
+        "replay",
+        "decay"
+      ],
+      "config": {
+        "architecture": "cell",
+        "update": "bp",
+        "replay": "joint_stream",
+        "loss": "answer_only",
+        "decay": 0.3
+      }
     }
   ],
   "primary_metric": "hard_composition_exact_percent",
-  "hard_subgroups": ["plus_minus", "minus_plus"],
+  "hard_subgroups": [
+    "plus_minus",
+    "minus_plus"
+  ],
   "predictions": [
     {
       "id": "P1",
@@ -54,12 +86,66 @@
       "operator": ">=",
       "threshold": 80,
       "population": "held-out hard compositions",
-      "pass_policy": "all_seeds"
+      "pass_policy": "all_seeds",
+      "prediction_origin": "prospective_new_seeds",
+      "metric_scope": "hard_subgroup"
     }
   ],
-  "negative_controls": ["shuffled_targets", "no_replay"],
-  "quality_gates": ["no_train_held_overlap_including_intermediates", "gradients_reachable", "no_decayed_unreachable_parameters", "locked_panels_unchanged"],
-  "halt_if": ["dataset_or_panel_hash_changes", "nonfinite_losses", "gradient_reachability_invariant_fails", "machine_lock_unavailable"],
-  "artifacts": ["receipts_by_arm_seed", "scores_by_checkpoint", "weights_and_birth_hashes", "gradient_audit", "resource_ledger", "verdict_file"],
-  "run_authorization": "NOT_AUTHORIZED_BY_TEMPLATE"
+  "negative_controls": [
+    "shuffled_targets",
+    "no_replay"
+  ],
+  "quality_gates": [
+    "no_train_held_overlap_including_intermediates",
+    "gradients_reachable",
+    "no_decayed_unreachable_parameters",
+    "locked_panels_unchanged",
+    "gradient_alignment_by_layer_and_time",
+    "independent_confirmation_seeds",
+    "exposure_dose_measured"
+  ],
+  "halt_if": [
+    "dataset_or_panel_hash_changes",
+    "nonfinite_losses",
+    "gradient_reachability_invariant_fails",
+    "machine_lock_unavailable"
+  ],
+  "artifacts": [
+    "receipts_by_arm_seed",
+    "scores_by_checkpoint",
+    "weights_and_birth_hashes",
+    "gradient_audit",
+    "resource_ledger",
+    "verdict_file"
+  ],
+  "run_authorization": "NOT_AUTHORIZED_BY_TEMPLATE",
+  "decision_stage": "CONFIRMATORY",
+  "discovery_seeds": [
+    11,
+    22
+  ],
+  "confirmation_seeds": [
+    101,
+    202,
+    303
+  ],
+  "evidence_plan": {
+    "primary_population": "held-out hard compositions; whole-history intermediate-step audit",
+    "report_subgroups": [
+      "hard_plus_minus",
+      "easy_max_min",
+      "whole_worked_answer",
+      "single_operation"
+    ],
+    "replay_share_fraction": 0.5,
+    "replay_share_denominator": "batch_slots",
+    "required_report": [
+      "acquisition_checkpoint",
+      "final_retention",
+      "per_distinct_observation_presentations",
+      "fresh_observations",
+      "CPU_seconds_per_fresh_observation",
+      "gradient_cosine_and_norm_ratio_by_layer_and_time"
+    ]
+  }
 }
