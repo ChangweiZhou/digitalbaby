@@ -445,3 +445,5 @@ The frozen learner and its frozen twin differ in the feedback path (sign-symmetr
 - P17.2.6 Compositions are reported, not predicted.
 
 Commands: `E16_ARCH=bank2 E16_BOOKDECAY=off python3 exp16_integrated.py dev SEED`; `... D SEED`; `E16_ARCH=bank2 E16_BOOKDECAY=off E16_REPLAY=raw E16_CAP=65536 python3 exp16_integrated.py T SEED`, with `E16_FREEZE=bank1` and with `E16_FREEZE=bank1 E16_FEEDBACK=exact E16_TRACEUP=proj`. Dry runs on a 512-update dry birth archived in `exp45/archive_e17p2_dry/` (the frozen tensors unchanged, the rest changed, seven stages each).
+
+**Phase 2 go (9 November 2026, 19:25 EST).** Mr. Xu: "Launch after twins." The three sign-rule arms (P17.2.3–P17.2.5) are queued behind the twins by `e17p2_lives.sh`; predictions unchanged.
