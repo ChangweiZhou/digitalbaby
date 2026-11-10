@@ -16,6 +16,11 @@ Repository: `<owner/repo>` | Ref: `<exact SHA>` | Reviewed: `<timestamp>` | Revi
 - **Are hard subgroups and shortcut baselines reported?**
 - **Do the original preregistered predictions still read exactly as locked?**
 - **What was invalidated and which old receipts remain usable?**
+- **Discovery seeds (hypothesis selection) vs independent confirmation seeds:**
+- **Early signature predictive value on new seeds, with Spearman/calibration:**
+- **Same-data update-rule effect vs richer-stream reference ceiling:**
+- **Replay dose, acquisition peak, end retention and CPU per novel item:**
+- **Depth-by-time gradient cosine / norm ratio and upstream input reachability:**
 - **Independent seeds vs byte-identical reruns:**
 - **Actual CPU-seconds, RAM, all memory components, per-distinct presentations:**
 
