@@ -702,3 +702,13 @@ Arm M holds in every seed (P17.1c.2): replay from the reservoir does not hurt th
 - **E17 Phase 1b:** the frozen twin ranges 89.4–95.0 by block, not "93 throughout".
 - **E16-F6:** one run; run B is a bit-for-bit repeat (`E16F6_RUN_B/`).
 - **Held-panel keying:** fixed in `exp16_integrated.py`; `exp7_decon.py`, `exp8_life.py`, `exp8_e16w2.py`, `exp8_e16wr.py`, `exp8_e16wr2.py`, `exp10_ring.py` still key on `seed + 1` (frozen experiments; on Codex's list).
+
+## E17, Phase 2: births and twins without embedding decay (9 November 2026, 19:40 EST; sign-rule lives running)
+
+| Seed | Birth `bank2_nbd` add / sub / max / min at k = 12 | Twin `D_bank2_nbd` F1 / F3 after block 6 | Phase 1 twin F1 / F3 | Held comp after 6 (nbd / Phase 1) |
+|---|---|---|---|---|
+| 73129 | 93.0 / 89.3 / 97.7 / 94.3 | 92.3 / 92.6 | 95.9 / 93.3 | 15.5 / 17.5 |
+| 93683 | 94.7 / 94.3 / 94.7 / 95.7 | 93.7 / 91.6 | 92.3 / 90.3 | 21.0 / 15.9 |
+| 116089 | 95.7 / 85.0 / 97.0 / 94.0 | 93.3 / 91.9 | 94.4 / 93.2 | 17.8 / 20.5 |
+
+P17.2.1 holds; P17.2.2 holds in two seeds and misses in 73129 by 0.6 point on F1. Keeping the embeddings out of decay changes the backprop reference by at most a few points and leaves its composition failure where it was. The nine sign-rule lives (P17.2.3–5) and the three frozen twins run under the lock; `exp45/SUMMARY_E17_PHASE2.md`.
