@@ -1,3 +1,8 @@
 /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp19_kbank.py:294: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
 Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
   loss = cross_entropy(logits[mask], y[mask]); loss.backward(); loss = float(loss)
+e19 dev bptt 93683 4096 {'add89': [52, 57, 58, 47, 42], 'sub89': [19, 28, 27, 30, 28], 'max89': [189, 219, 202, 199, 192], 'min89': [194, 211, 207, 206, 192]} loss 0.646 cpu 441s
+e19 dev bptt 93683 8192 {'add89': [109, 112, 94, 95, 78], 'sub89': [45, 57, 67, 67, 62], 'max89': [219, 239, 227, 221, 201], 'min89': [237, 253, 251, 245, 232]} loss 0.404 cpu 897s
+e19 dev bptt 93683 12288 {'add89': [131, 142, 129, 124, 101], 'sub89': [78, 111, 118, 110, 85], 'max89': [259, 278, 272, 266, 242], 'min89': [247, 268, 256, 247, 226]} loss 0.272 cpu 1305s
+e19 dev bptt 93683 16384 {'add89': [168, 171, 163, 148, 132], 'sub89': [118, 139, 142, 136, 123], 'max89': [262, 275, 267, 253, 243], 'min89': [263, 281, 275, 263, 243]} loss 0.197 cpu 1722s
+e19 dev bptt 93683 20480 {'add89': [188, 199, 197, 181, 169], 'sub89': [129, 166, 172, 158, 146], 'max89': [265, 276, 276, 273, 254], 'min89': [269, 286, 282, 282, 266]} loss 0.148 cpu 2155s
