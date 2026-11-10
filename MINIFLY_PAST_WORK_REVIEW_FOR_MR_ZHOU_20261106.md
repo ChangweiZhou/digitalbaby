@@ -1316,3 +1316,34 @@ Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit 
 **Earlier decisions this changes.** 9.76 held all rule variants until E20 reports. E18b (briefed as an exception) is put behind the every-byte lives, as the note asks. The every-byte lives themselves are a second exception, taken on instruction; they use options that already existed and the corrected rule.
 
 **Addendum to 9.82 (10 November 2026, 19:15 EST): the rulings are Mr. Xu's and they stand.** Asked whether the three working rulings were his to set or Mr. Zhou's, Mr. Xu answered: "Mine, they stand." So, as rulings and no longer as my reading: (1) the life rule is a backward sweep over the item with weight signs in place of weights, the sweep length a declared budget, exact weight transport outside the line; (2) a bounded input window is an allowed sensory buffer; (3) references may use any optimizer, and a candidate is born by its own rule before any promotion claim. The phrase "the owner's to decide" in 9.60, 9.67, 9.70, 9.71 and 9.79 is closed for these three questions. Two consequences follow from the note and are now in force: the learning rule is not what is new in this project, and the fixed-rate two-bank design has no claim to stay if E20-B finds a windowless network that composes from memory.
+
+## 9.77 E20-A, stage 1: the window reference composes with an operand in memory, at a cost (cloud session, 10 November 2026; `MOD97_LOCAL_RULE_20261106/exp45/E20A_TABLES.md`)
+
+**What ran.** Stage 1 of E20-A version 2 only: three lives of the window learner's backprop reference (joint stream), seeds 73129 / 93683 / 116089, taught with 0 to 6 letters twice around each composition, inside the prompt or in front of it with equal probability. Predictions were committed before launch (0ea4ce45). I recomputed everything below from the three receipts: each has seven stages, a completion record, a weight hash that matches its file, a birth admitted by the manifest, and for seed 73129 the memory-panel hash of my own qualification record. The worker's verdicts match mine. All scores are whole worked answers with no store, at the end of life.
+
+| | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Plus-minus twins, both members right (a recent-bytes responder scores 0 by construction) | 63 of 300, 21.0% | 80 of 300, 26.7% | 130 of 300, 43.3% |
+| The same twins, single items right | 42.3% | 47.7% | 66.3% |
+| The same items with the letters in front, everything in view | 78.3% | 70.0% | 80.7% |
+| Comparison twins, both right | 63.7% | 58.7% | 56.0% |
+| Operand hidden, new instances of taught operator pairs | 72.3% | 72.3% | 85.7% |
+| Operand hidden, taught triples themselves | 82.7% | 78.3% | 84.3% |
+| Twins with the recurrent state zeroed, single items | 0.0% | 0.0% | 0.2% |
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| P20.1 existence: both right on at least 20% of plus-minus twins in two seeds | 21.0 / 26.7 / 43.3 | holds, all three |
+| P20.2 cost: single items at least 15 points below the in-view control in all three | 36.0 / 22.3 / 14.3 | **misses** (two of three) |
+| P20.3 the control works: at least 70% on the in-view control in two seeds | 78.3 / 70.0 / 80.7 | holds, all three; one seed exactly on the mark (420 of 600) |
+
+**What it says.**
+
+1. *A learner on file composes from memory.* With the first operand outside its window, the window reference gets both members of a twin right 21–43% of the time, which no responder limited to the recent bytes can do at all. This answers the question of 9.76, for backprop on the window architecture: yes, partly.
+2. *Hiding the operand costs 14 to 36 points,* against the same items at the same length with everything in view. The cost is real in every seed; my threshold of 15 was met in two.
+3. *The harder step is the untaught operator pair, not the memory.* With the operand hidden the reference still answers 72–86% of new instances of operator pairs it was taught, and 42–66% of single items of the untaught plus-minus pairs.
+4. *Teaching with letters costs the in-view task too:* the registered letter-free plus-minus panel ends at 69–81 whole answers, where the reference taught without letters ended at 85–89.
+
+**Stage 2 goes ahead, by my decision,** since the control works: the sign-rule window learner, backprop on its pipeline, and the windowless two-bank reference, nine lives. One caveat is written now, before those results exist. The window learner's rule gives credit through time to the synapses of its memory cell only; the layers above the cell are credited within the step, which is the defect 9.67 found in the windowless learner, and the corrected rule cannot yet run on the window architecture. So if the rule arm misses P20.5, that miss cannot be separated from credit truncated above the cell; the comparison that can carry a conclusion about the pipeline is backprop on it (P20.6), and porting the sweep to the window architecture is the follow-up if the rule arm fails.
+
+Evidence level E2 on panels held out by operand triple and operator pair; one life per seed; backprop is a reference here, not a candidate.

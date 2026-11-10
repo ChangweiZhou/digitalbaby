@@ -207,3 +207,7 @@ On Mr. Xu's instruction the audit session's next-steps note is implemented. Work
 ## Addendum, 10 November 19:15 EST: the rulings stand
 
 Mr. Xu: "Mine, they stand." The three working rulings of 9.82 are his rulings: the backward sweep with weight signs is the life rule (sweep length a declared budget; exact weight transport outside the line); a bounded window is an allowed sensory buffer; references may use any optimizer and a candidate is born by its own rule before a promotion claim. The locality question carried since 9.60 is closed. The twelve lives launched at 17:12 EST are still running.
+
+## Addendum, 10 November 19:30 EST: E20-A stage 1 filed (review 9.77); stage 2 is go
+
+The window reference under backprop composes with the first operand out of view: both members of a plus-minus twin right in 21.0 / 26.7 / 43.3% of twins, where a recent-bytes responder scores none; single items 42–66% against 70–81% for the same items in view. P20.1 and P20.3 hold in all three seeds; P20.2 misses (the cost is 36.0 / 22.3 / 14.3 points against a mark of 15). The harder step is the untaught operator pair: with the operand hidden, new instances of taught pairs are at 72–86%. Stage 2 (nine lives: the sign-rule window learner, backprop on its pipeline, the windowless reference) goes ahead on the cloud. Caveat filed before its results: a miss by the rule arm cannot be separated from credit truncated above the memory cell, because the corrected rule does not yet run on the window architecture. On the owner's machine the twelve next-step lives are still running.
