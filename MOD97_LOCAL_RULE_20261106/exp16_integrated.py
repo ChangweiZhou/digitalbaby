@@ -739,8 +739,9 @@ def develop17(seed):
     """Birth for a windowless architecture: exp11's development (backprop through time on the four mod-89 operations with 0-12
     distractor letters, 24,576 updates, sealed panels at k = 0/4/8/12/20) on the E16_ARCH net; writes e17_dev_{arch}_{seed}."""
     assert ARCH16 != "window"
-    assert LOSS16 == "answer", "births are trained on the answer loss; an every-byte birth would need its own file name (10 Nov audit)"
-    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}"
+    # E18b (10 Nov): a birth under the every-byte loss (E16_LOSS=all) has its own name (_lossall) and always goes through update16, which applies
+    # the mask; the plain backprop path would ignore it, so it is never taken with that loss. Lives still start from answer-loss births.
+    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{E.DEVTAG}_{seed}"
     path = OUT / f"{stem}.pt"
     cfg = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16,
                fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE)
@@ -755,7 +756,7 @@ def develop17(seed):
         return
     m = E.new_net(seed)
     book0 = m.book.weight.detach().clone()
-    plain = HEADS16 == "top" and BIRTHRULE16 == "D" and FIXEDCODES16 == "off"       # every birth before E18: E.update with backprop, decay .3
+    plain = HEADS16 == "top" and BIRTHRULE16 == "D" and FIXEDCODES16 == "off" and LOSS16 == "answer"   # every birth before E18: E.update with backprop, decay .3
     step = (lambda items: E.update(m, opt, items, "D")) if plain else (lambda items: update16(m, opt, items, BIRTHRULE16, None))
     opt = adamw16(m, .001, .3 if BIRTHRULE16 == "D" else E.WD, ("book.",) if FIXEDCODES16 == "on" else ())
     census = None      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
