@@ -1,73 +1,83 @@
-# E16-F6 predictions: the plus-minus tail, six more seeds of the drifting stream (9 November 2026, written before any birth or life)
+# E16-F6 predictions: the plus-minus tail, six more seeds of the drifting stream (9 November 2026, written before the births)
 
-## Source and branch
+Brief: `OPUS_TASK_E16M2_E16F6_CLOUD_JOBS_20261109.md`, Job 2. This session ran Job 1 (E16-M2, commit 2af0fa00) and now runs Job 2, as the brief asks when only one worker is available. Harness at commit 2af0fa00, which contains 1470401b; no harness file is changed by this job.
 
-- **Brief:** `OPUS_TASK_E16M2_E16F6_CLOUD_JOBS_20261109.md`, Job 2 (commit 1470401b).
-- **Harness:** `exp16_integrated.py` and `exp11_cell.py` at 1470401b. No harness file is changed by this job.
-- **Branch:** `claude/vibrant-gauss-tops5f`, reset to `origin/codex/minifly-consolidated-20261023` at 1470401b. This session cannot push to the consolidated branch.
-- **Job choice:** this session first started Job 1 (E16-M2) and ran its four dry runs only partly. They were stopped when the owner said another worker has Job 1. Their dry receipts were deleted uncommitted, and no E16-M2 life was launched.
+## Before launch
 
-## Pre-launch checks
-
-- **No births exist for the new seeds.** As of 17:04 UTC, no `exp45/e11_dev_M_<seed>.*` exists for 800011, 900007 or 1000003.
-- **No drift receipts exist for the reused seeds.** No `exp45/e16_life_T_raw65536_drift_online_<seed>.json` or `exp45/e16_life_D_drift_<seed>.json` exists for 500011, 600013 or 700027.
-
-## Dry runs
-
-Each passed with seven stages (a full birth curve for the birth) and no error. Receipts and logs are in `exp45/archive_e16f6_dry/`.
-
-| Run | Command | CPU-s | Notes |
-|---|---|---:|---|
-| Learner | `E11_STAGE_UPDATES=4 E16_REPLAY=raw E16_CAP=65536 E16_ADMIT=online E16_STREAM=drift ... T 500011` | 249 | Receipt settings: stream drift, admit online |
-| Twin | `E11_STAGE_UPDATES=4 E16_STREAM=drift ... D 500011` | 257 | |
-| Birth | `E11_DEV_UPDATES=4096 python3 exp11_cell.py dev M 800011` | 499 | A sixth of the dose, all curve points written. The resulting `_dry4096` birth is archived and is not used by any life. |
-
-All three ran together, in 518 s of wall time.
+- **Births:** no `exp45/e11_dev_M_<seed>.*` existed for 800011, 900007 or 1000003 (checked 18:13 UTC, 9 November).
+- **Lives:** no `exp45/e16_life_T_raw65536_drift_online_<seed>.*` or `exp45/e16_life_D_drift_<seed>.*` existed for any of the six seeds.
 
 ## Runs
 
-**First wave**, launched together, detached with `setsid nohup`. Logs are written to the session scratch folder and copied into `exp45/logs/` at commits.
-- The three births: `python3 exp11_cell.py dev M <seed>` for 800011, 900007, 1000003.
-- Six lives:
-  - `E16_REPLAY=raw E16_CAP=65536 E16_ADMIT=online E16_STREAM=drift python3 exp16_integrated.py T <seed>` for 500011, 600013, 700027;
-  - `E16_STREAM=drift python3 exp16_integrated.py D <seed>` for the same seeds.
+Phase 1, launched together and detached:
+- the three births, `python3 exp11_cell.py dev M <seed>` for 800011, 900007, 1000003;
+- the six lives of 500011, 600013 and 700027 (E16-F4's births).
 
-**Second wave.** A detached launcher waits for each birth's `.json` (written after its `.pt`) and its process to exit. It then starts that seed's learner and twin with the same commands, whatever the birth scored.
+Phase 2, when the births have finished: the same two lives for 800011, 900007 and 1000003, whether or not the births meet P16F6.1.
+
+```
+E16_REPLAY=raw E16_CAP=65536 E16_ADMIT=online E16_STREAM=drift python3 exp16_integrated.py T <seed>
+E16_STREAM=drift python3 exp16_integrated.py D <seed>
+```
+
+Tables: `E16_SEEDS=500011,600013,700027,800011,900007,1000003 E16_SUMMARY=SUMMARY_E16F6.md python3 summarize_exp16.py`. The twelve-seed signature list and its correlation are added by a small read-only script of this job's own (`e16f6_signature.py`); the summarizer is not edited.
+
+Logs are written to the session's scratch folder and copied to `exp45/logs/e16f6_<arm>_<seed>.log` and `exp45/logs/e16f6_birth_<seed>.log`.
 
 ## Predictions (from the brief; not to be changed)
 
 - **P16F6.1 (births)** Each new birth reaches at least 85% at k = 12 on all four development operations.
-- **P16F6.2 (twin)** The drift twin is at or above 90 / 85 / 90 on the three family means after the last checkpoint, in every seed. Seed 500011's twin under stages reached only 84.0 on compositions and was still rising; a repeat is a result.
+- **P16F6.2 (twin)** The drift twin is at or above 90 / 85 / 90 on the three family means after the last checkpoint in every seed. Seed 500011's twin under stages reached only 84.0 on compositions and was still rising; a repeat is a result.
 - **P16F6.3 (rate)** At least four of the six seeds end at or above 0.80 of their drift twin on all three families.
-- **P16F6.4 (seed 600013)** It misses the composition clause under drift as it did under stages: below 0.80 of its twin on held compositions. That would make it a seed-level fragility, not a schedule-level one.
-- **P16F6.5 (the early signature)** This one covers twelve drift seeds: 73129, 93683, 116089, 200003, 300007, 400009 from E16-S and E16-F5, plus these six.
-  - The Spearman rank correlation between the learner's mod-97 family mean at checkpoint 2 and its `+-` pair (final answer) at checkpoint 6 is at least 0.5.
-  - Every seed below 70 at checkpoint 2 ends with `+-` below 60.
-  - Every seed above 80 at checkpoint 2 ends with `+-` above 65.
+- **P16F6.4 (seed 600013)** misses the composition clause under drift as it did under stages, below 0.80 of its twin on held compositions: a seed-level fragility, not a schedule-level one.
+- **P16F6.5 (the early signature)** Over the twelve drift seeds (73129, 93683, 116089, 200003, 300007, 400009 from E16-S and E16-F5, and these six):
+  - the Spearman rank correlation between the learner's mod-97 family mean at checkpoint 2 and its `+-` pair by final answer at checkpoint 6 is at least 0.5;
+  - every seed below 70 at checkpoint 2 ends with `+-` below 60;
+  - every seed above 80 at checkpoint 2 ends with `+-` above 65.
 
-## How these are scored
+## Dry run
 
-- **Family means** follow the summarizer:
-  - operations: mean exact accuracy at k = 12 over the family's four operations;
-  - compositions: mean final-answer accuracy over `+-`, `-+`, `><`, `<>`.
-- **"Checkpoint 2" and "checkpoint 6"** are receipt stages 2 and 6.
-- **Spearman correlation:** average ranks for ties.
-- **Panel mix in P16F6.5.** The three standing seeds' drift receipts (E16-S) were scored on the old held panels, where the `+-` triples are shared with the taught `->` pair. The other nine seeds are scored on the re-keyed panels. E16-RP measured the panel difference on the same weights at +1.0 / +6.8 / −0.8 on `+-`. The comparison is used as it stands, with this noted.
+The two commands were run once on seed 500011 with `E11_STAGE_UPDATES=4`, at the same time. Each ran its seven stages without error, in about 4.6 min of wall time:
 
-## Forecast, from the dry runs and E16-RP's measured pace on this container
-
-**Inputs.**
-
-| Run | CPU-s, full |
+| Life | CPU-s |
 |---|---:|
-| Learner life (E16-RP, three processes) | about 5,000 |
-| Twin life (0.87 of a learner, the ratio on E16-F5's machine) | about 4,400 |
-| Birth (six times the dry run) | about 3,000 |
+| Learner | 206 |
+| Twin | 199 |
 
-The total is 3 × 3,000 + 6 × 5,000 + 6 × 4,400 ≈ 65,000 CPU-s, a lower bound of 4.5 hours on four cores.
+The receipts are in `exp45/archive_e16f6_dry/`.
 
-**Waves.**
-- **First wave:** nine processes on four cores, about 44% CPU each. The births finish around 1.9 hours after launch.
-- **Second wave:** starts then. The first-wave lives end about 3.3 hours after launch, and the second wave about 5.3 hours after launch.
+A first attempt at 18:13 UTC was cut off:
+- the learner's dry run was killed after four blocks by a restart of this session's container;
+- the twin's dry run never started, because a second detached command in the same tool call lost its working directory.
 
-**Forecast:** launch about 17:10 UTC, all lives finished about 22:30 UTC, about 5.3 hours of wall time.
+The partial receipt was deleted, the attempt's log was kept in the scratch folder, and both dry runs were launched again from one script at 18:30 UTC.
+
+## Forecast
+
+The dry run measures the evaluation cost, so the forecast uses this machine's measured lives on the same commands (E16-F5) and births (E16-F4):
+
+| Item | CPU-s |
+|---|---:|
+| Learner life | 4,690–4,740 |
+| Twin life | 4,060–4,200 |
+| Birth | about 3,100 (E16-F4's 500011: 3,122) |
+
+**Phase 1:** nine processes on four cores. The births finish after about 7,000 s, about 1.9 h, when each of the six lives has used about 3,100 CPU-s.
+
+**Phase 2:** twelve processes. The remaining work is about 6 × 1,300 + 26,500 ≈ 34,300 CPU-s, about 2.4 h on four cores.
+
+**Expected:**
+- about 62,000 CPU-s in all (17 CPU-hours);
+- about 4.3 h of wall time, up to 5 h if oversubscription slows the processes;
+- the six phase-1 lives finish at about 2.5 h;
+- the phase-2 lives finish at about 4.3–5 h.
+
+The brief's estimate is about 5 hours.
+
+## If the container restarts
+
+This session's container restarted once today (above), and a restart kills every process, detached or not. A life killed before it writes its seventh stage has not finished. Such a life will be launched again from its birth with the same command and seed, and the report will say so. Its partial receipt will be kept as `*_killed.json` beside the new one. A birth killed by a restart is treated the same way. No finished life is rerun.
+
+## Push target
+
+As for E16-F5 and E16-M2, this session can push to `codex/minifly-consolidated-20261023`, so it commits there, pulls with `--rebase` before each push and never forces. Partial receipts are pushed as blocks finish.

@@ -32,6 +32,12 @@ RATES = (0.5, 0.8, 0.95, 0.99, 0.999)
 
 
 ARCHS = ("cell1", "bank", "cell1d2", "bank2")
+# E17 Phase 1d (9 Nov): the projection feeding each bank's write (lp, lp2) otherwise learns from within-step credit only (hp detached), while
+# the write synapses (lc, lw) get exact credit through time from the scan. TRACEUP extends the scan one layer upstream: with Lambda_s in hand,
+# dL/dp_s = (Lambda_s * gc_s) Wc + (Lambda_s * gg_s) Wg, delivered through sign(W) (FB_SIGN) or W, then dL/dWp = sum_s (dL/dp_s * (1 - p_s^2))^T x_s.
+# No new approximation: given Lambda, this is backprop through time's own credit for lp. Set by exp16 (E16_TRACEUP, E16_FEEDBACK).
+TRACEUP = False
+FB_SIGN = True
 # Phase 0b variants (8 Nov 23:45 EST, after P17.0 was refuted for cell1 and bank):
 #   cell1d2  cell1 with a deeper readout: two hidden layers between (z1, h) and the logits, so two digits held in the state can interact before the output
 #   bank2    two stacked fixed-rate banks: the second bank's write is computed from the FIRST bank's state (p2 = tanh(Wp2 h1)), so writes can depend on
@@ -83,7 +89,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
         hp = h if through_time else h.detach()
         prev.append(hp)
         h = r[:, t] * hp + w[:, t] * c[:, t]
-        if keep:
+        if keep and h.requires_grad:     # a bank whose whole input pathway is frozen (book, l1, lp, lc, lw) has no gradient path; its scan is then unused
             h.retain_grad()
         hs.append(h)
     Hs = T.stack(hs, 1)
@@ -96,7 +102,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
             hp2 = h2 if through_time else h2.detach()
             prev2.append(hp2)
             h2 = r2[:, t] * hp2 + w2[:, t] * c2[:, t]
-            if keep:
+            if keep and h2.requires_grad:
                 h2.retain_grad()
             hs2.append(h2)
         Hs2 = T.stack(hs2, 1)
@@ -111,7 +117,7 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     z2 = T.tanh(pre)
     if m.arch == "cell1d2":
         z2 = T.tanh(lin(z2, m.l2b, local))
-    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, **extra)
+    return lin(z2, m.l3, local), dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, z1=z1, **extra)
 
 
 @T.no_grad()
@@ -127,14 +133,28 @@ def _scan(p, c, r, w, hs, prev, lc, lgate, gate_is_r):
     lc.weight.grad = T.einsum("btc,btd->cd", Lam * gc, p); lc.bias.grad = (Lam * gc).sum((0, 1))
     gg = (hp - c) * r * (1 - r) if gate_is_r else c * w * (1 - w)
     lgate.weight.grad = T.einsum("btc,btd->cd", Lam * gg, p); lgate.bias.grad = (Lam * gg).sum((0, 1))
+    return Lam, gc, gg
+
+
+@T.no_grad()
+def _proj(Lam, gc, gg, lc, lgate, lp, x, p):
+    """TRACEUP: credit through time for the projection p = tanh(Wp x) that feeds the write, replacing its within-step gradient."""
+    Wc = lc.weight.sign() if FB_SIGN else lc.weight
+    Wg = lgate.weight.sign() if FB_SIGN else lgate.weight
+    dpre = ((Lam * gc) @ Wc + (Lam * gg) @ Wg) * (1 - p * p)          # (B, T, D)
+    lp.weight.grad = T.einsum("btd,bth->dh", dpre, x); lp.bias.grad = dpre.sum((0, 1))
 
 
 @T.no_grad()
 def trace_grads_scan(m, it):
     cellish = m.arch in ("cell1", "cell1d2")
-    _scan(it["p"], it["c"], it["r"], it["w"], it["hs"], it["prev"], m.lc, m.lr if cellish else m.lw, cellish)
+    Lam, gc, gg = _scan(it["p"], it["c"], it["r"], it["w"], it["hs"], it["prev"], m.lc, m.lr if cellish else m.lw, cellish)
+    if TRACEUP and m.lp.weight.requires_grad:
+        _proj(Lam, gc, gg, m.lc, m.lr if cellish else m.lw, m.lp, it["z1"], it["p"])
     if m.arch == "bank2":
-        _scan(it["p2"], it["c2"], it["r2"], it["w2"], it["hs2"], it["prev2"], m.lc2, m.lw2, False)
+        Lam2, gc2, gg2 = _scan(it["p2"], it["c2"], it["r2"], it["w2"], it["hs2"], it["prev2"], m.lc2, m.lw2, False)
+        if TRACEUP:
+            _proj(Lam2, gc2, gg2, m.lc2, m.lw2, m.lp2, T.stack(it["hs"], 1), it["p2"])
 
 
 trace_grads = trace_grads_scan
@@ -154,23 +174,32 @@ def install(arch):
     E.CELL_PARAMS = cell_params(arch)
 
 
-def qualify(arch):
-    """Trace against backprop through time on the state's synapses, on a mixed batch; pace per update; parameter count."""
+def qualify(arch, up=False):
+    """Trace against backprop through time on the state's synapses, on a mixed batch; pace per update; parameter count.
+    up=True (Phase 1d): TRACEUP with exact feedback, the projections lp/lp2 included in the comparison; with the first bank frozen
+    (lp.requires_grad False) the second bank's path is exact given its input, so lp2's trace must match BPTT to rounding."""
+    global TRACEUP, FB_SIGN
     install(arch)
-    out = {"arch": arch, "rates": (RATES if arch == "bank" else None)}
+    TRACEUP, FB_SIGN = up, not up
+    out = {"arch": arch, "rates": (RATES if arch == "bank" else None), "traceup": up}
     rng = Random(1); seed = X.SEEDS[0]
     m = new_net(seed, arch)
+    names = cell_params(arch) + ((("lp.weight", "lp.bias") + (("lp2.weight", "lp2.bias") if arch == "bank2" else ())) if up else ())
+    if up and arch == "bank2":   # the Phase 1b/1c/1d setting: first bank frozen
+        for n_ in ("l1", "lp", "lc", "lw"):
+            getattr(m, n_).weight.requires_grad_(False); getattr(m, n_).bias.requires_grad_(False)
+        names = tuple(n for n in names if not n.startswith(("lp.", "lc.", "lw.")))
     items = [E.render(t, a, b, rng.randint(0, 12), rng) for t in E.DEV for a, b in E.split(t, .5, seed)[0][:16]]
     x, y, mask = X.batch_tensor(items)
     logits, _ = forward(m, x, False, through_time=True)
     loss = cross_entropy(logits[mask], y[mask]); m.zero_grad(); loss.backward()
-    ref = {n: m.get_parameter(n).grad.clone() for n in cell_params(arch)}
+    ref = {n: m.get_parameter(n).grad.clone() for n in names}
     logits2, it = forward(m, x, False, through_time=False, keep=True)
     loss2 = cross_entropy(logits2[mask], y[mask]); m.zero_grad(); loss2.backward()
-    within = {n: m.get_parameter(n).grad.clone() for n in cell_params(arch)}
+    within = {n: m.get_parameter(n).grad.clone() for n in names}
     trace_grads_scan(m, it)
-    out["trace_vs_bptt_max_rel_err"] = {n: float((m.get_parameter(n).grad - ref[n]).abs().max() / ref[n].abs().max()) for n in cell_params(arch)}
-    out["within_step_vs_bptt_max_rel_err"] = {n: float((within[n] - ref[n]).abs().max() / ref[n].abs().max()) for n in cell_params(arch)}
+    out["trace_vs_bptt_max_rel_err"] = {n: float((m.get_parameter(n).grad - ref[n]).abs().max() / ref[n].abs().max()) for n in names}
+    out["within_step_vs_bptt_max_rel_err"] = {n: float((within[n] - ref[n]).abs().max() / ref[n].abs().max()) for n in names}
     out["loss_same_forward"] = [float(loss.detach()), float(loss2.detach())]
     out["params"] = sum(p.numel() for p in m.parameters())
     opt = T.optim.AdamW(m.parameters(), lr=.001)
@@ -182,8 +211,8 @@ def qualify(arch):
             E.update(m, opt, next(bt), arm)
         sm[arm] = (time.process_time() - t0) / 10 * 1000
     out["ms_per_update"] = sm
-    (E.OUT / f"QUALIFY_E17_{arch}.json").write_text(json.dumps(out, indent=1)); print(json.dumps(out, indent=1))
+    (E.OUT / f"QUALIFY_E17_{arch}{'_up' if up else ''}.json").write_text(json.dumps(out, indent=1)); print(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
-    qualify(sys.argv[1])
+    qualify(sys.argv[1], up=(len(sys.argv) > 2 and sys.argv[2] == "up"))

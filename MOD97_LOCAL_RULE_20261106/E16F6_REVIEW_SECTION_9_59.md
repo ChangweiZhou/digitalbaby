@@ -1,15 +1,15 @@
-**9.59 E16-F6 (cloud session, 9 November 2026): under the drifting stream the gate holds on 10 of 12 seeds; 600013 fails again; the checkpoint-2 signature does not predict the tail.**
+# 9.59 — E16-F6: the plus-minus tail on twelve drift seeds
 
-`E16F6_REPORT.md`, `exp45/SUMMARY_E16F6.md`, `exp45/E16F6_SIGNATURE.md`.
+E16-F6 ran the drift arm on six more seeds: three new births (800011, 900007, 1000003) and E16-F4's three. The arm is the raw-byte reservoir of 65,536 slots admitting each item online, with a drift twin for each seed.
 
-**What was run.** Three new births (800011, 900007, 1000003; 89–98% at k = 12, P16F6.1 holds) and twelve drift lives, a learner and a twin on each of six seeds, as in E16-S. The raw reservoir held 65,536 slots with online admission.
+- **The births pass (P16F6.1).** All three score 89.0–98.3 at k = 12.
+- **Every twin passes 90 / 85 / 90 (P16F6.2).** 500011's twin, at 84.0 under stages, reaches 88.4.
+- **Five of the six learners stay at or above 0.80 of their twin on all three families (P16F6.3).** 1000003 passes by 0.01 on the mod-97 operations.
+- **Seed 600013 fails under drift as it did under stages (P16F6.4).** It ends at 0.71 of the twin on compositions, `+-` 41.7 and `-+` 47.8, with max-min at 89 and the twin at 94.8. Its mod-97 addition and subtraction collapsed to 28 and 25 as the compositions entered. Its reservoir is indistinguishable from the passing seeds'.
+- **The pre-registered early signature fails (P16F6.5).** Over twelve drift seeds, the rank correlation between the checkpoint-2 mod-97 mean and the final `+-` pair is 0.22, against the 0.5 required. Three seeds above 80 at checkpoint 2 end with `+-` at 63–64, below 65. 600013 itself was at 79.9 at checkpoint 2 and collapsed one checkpoint later. An exploratory measure chosen after the fact, the lowest mod-97 mean over checkpoints 2–4, ranks the two failing seeds lowest but correlates only 0.40.
 
-**Results.**
-- **Twins (P16F6.2): hold.** Every twin is at 90 / 85 / 90 or above. Seed 500011's twin reaches 88.4 on compositions, where its twin under stages had stopped at 84.0.
-- **Learners (P16F6.3): hold, five of six.** Five learners stay at or above 0.80 of their twin on all three families, with composition ratios of 0.83–0.89.
-- **Seed 600013 (P16F6.4): holds.** It misses again (compositions 0.705, mod-97 operations 0.774) with the same signature as under stages: `+-` and `-+` near 42–48, max/min pairs at 89, add and sub mod 97 near 50, the twin untouched at 94. That makes its fragility a property of the seed, not of the schedule.
-- **The early signature (P16F6.5): misses.** Over twelve seeds, the Spearman correlation between the checkpoint-2 mod-97 mean and the final `+-` is 0.217 (0.450 on the nine re-keyed-panel seeds alone), against 0.5. Four seeds above 80 at checkpoint 2 end at or below 65 on `+-`. The reason is that 600013 dips at checkpoint 3 (47.2), not at checkpoint 2 (79.9).
+**On twelve drift seeds the gate holds in ten.** The two failures, 400009 and 600013, share one mechanism: interference between the plus-minus compositions and mod-97 addition and subtraction under the sign rule, which E16-M2 found the twin's update does not suffer on the same reservoir. Among the passing seeds the final `+-` lies between 63 and 73, too narrow a band for an early measure to rank.
 
-**An exploratory reading, not a prediction.** The minimum mod-97 mean over the life separates the two failing seeds (47.2, 62.0) from the ten passing ones (66.7 and above). That is fitted after the fact, so it would need a locked prediction on new seeds before it could be used. It also suggests that the E16-M2 question (rule or data) is about when compositions displace addition and subtraction, not when that happens on a fixed clock.
+**A second session's run of this job (`E16F6_RUN_B/`) is bit-identical to this one in all twelve receipts and all three births, on a different cloud Xeon with a different Python and NumPy.** So E16-RP's cross-machine divergence separates the owner's machine from the cloud containers, not any two machines, and run B is a repeat of this run rather than a second sample.
 
-**Pace.** 4.7 hours of wall time against a forecast of 5.3. The births, learners and twins each came within 3% of their forecast CPU cost.
+Development result on a toy harness, one stream per seed. Sources: `E16F6_REPORT.md`, `E16F6_PREDICTIONS.md`, `exp45/SUMMARY_E16F6.md`, `exp45/SIGNATURE_E16F6.md`, the twelve receipts, the final weights and the three births.

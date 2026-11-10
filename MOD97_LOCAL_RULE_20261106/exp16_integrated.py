@@ -75,10 +75,55 @@ FEEDBACK16 = os.environ.get("E16_FEEDBACK", "sign"); assert FEEDBACK16 in ("sign
 if FEEDBACK16 == "exact":
     _fwd16 = E.forward
     E.forward = lambda m, x, local=False, through_time=False, keep=False, silence=False: _fwd16(m, x, False, through_time, keep, silence)
-ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + ("_frz1" if FREEZE16 == "bank1" else "") + ("_xfb" if FEEDBACK16 == "exact" else "")
+#   E16_TRACEUP=none|proj    (E17 Phase 1d): proj extends the scan trace one layer upstream, to the projection feeding each bank's write (lp2; lp when
+#                           the first bank learns), replacing its within-step credit by the exact credit through time given Lambda (arch17.TRACEUP).
+TRACEUP16 = os.environ.get("E16_TRACEUP", "none"); assert TRACEUP16 in ("none", "proj")
+assert TRACEUP16 == "none" or ARCH16 != "window", "E16_TRACEUP is defined for the E17 architectures only"
+if ARCH16 != "window":
+    arch17.TRACEUP = TRACEUP16 == "proj"; arch17.FB_SIGN = FEEDBACK16 == "sign"
+#   E16_BOOKDECAY=on|off     (9 Nov audit, Fable 5.2 memo section 3): under the local arms the byte embeddings of every prompt symbol that enters only
+#                           through the state (operators, letters, task codes) receive no gradient, and AdamW's decay erased them (factor 0.215 per
+#                           block), which confounds E17 Phases 1-1c. "off" puts `book` in a no-decay group in lives AND births (birth file tagged
+#                           `_nbd`), and the frozen arm freezes `book` with the first bank. Default "on" reproduces every receipt made before.
+BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
+assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
+BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + ("_frz1" if FREEZE16 == "bank1" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "")
+
+
+def adamw16(m, lr, wd, frozen=()):
+    """AdamW over the learnable parameters; with E16_BOOKDECAY=off the embedding table is in a group of its own with no decay."""
+    learn = [(n_, p_) for n_, p_ in m.named_parameters() if not n_.startswith(frozen)]
+    for n_, p_ in m.named_parameters():
+        p_.requires_grad_(not n_.startswith(frozen))
+    if BOOKDECAY16 == "off":
+        groups = [{"params": [p_ for n_, p_ in learn if not n_.startswith("book.")]},
+                  {"params": [p_ for n_, p_ in learn if n_.startswith("book.")], "weight_decay": 0.0}]
+        groups = [g for g in groups if g["params"]]
+    else:
+        groups = [p_ for n_, p_ in learn]
+    return T.optim.AdamW(groups, lr=lr, weight_decay=wd, betas=(.9, .98))
+
+
+@T.no_grad()
+def zero_grad_report(m, x):
+    """After an update, before zero_grad: which parameters got no gradient at all, and how many embedding rows present in the batch got none
+    (9 Nov audit: the check that would have caught the decayed embeddings in E17 Phase 1)."""
+    none = [n_ for n_, p_ in m.named_parameters() if p_.requires_grad and (p_.grad is None or not bool(p_.grad.any()))]
+    rows = sorted(set(int(v) for v in x.unique().tolist()))
+    g = m.book.weight.grad
+    dead = [r for r in rows if g is None or not bool(g[r].any())] if m.book.weight.requires_grad else rows
+    return dict(params_without_gradient=none, book_rows_in_batch=len(rows), book_rows_in_batch_without_gradient=len(dead),
+                dead_rows=[chr(r) if 32 <= r < 127 else r for r in dead])
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
-RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "")   # off is the default for the windowless architectures
+#   E16_RSHARE=<fraction>  (E16-M3, 9 Nov 21:20 EST) the share of every batch drawn from the raw/total reservoir once it holds anything;
+#                           default 0.5 reproduces every receipt made before. Other values tag the receipt `_rs<percent>`. Raw/total replay only.
+RSHARE16 = float(os.environ.get("E16_RSHARE", "0.5")); assert 0.0 <= RSHARE16 <= 1.0
+assert RSHARE16 == 0.5 or REPLAY16 in ("raw", "total"), "E16_RSHARE is defined for the raw/total reservoirs only"
+NREP = round(BATCH * RSHARE16)
+RSTAG = "" if RSHARE16 == 0.5 else f"_rs{round(100 * RSHARE16)}"
+RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "") + RSTAG   # off is the default for the windowless architectures
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -210,18 +255,15 @@ def life(arm, seed):
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{DRYTAG}_{seed}.json"
     m = E.new_net(seed)
-    birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.pt")
+    birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{BTAG}{E.DEVTAG}_{seed}.pt")
     import hashlib
     birth_sha = hashlib.sha256(birth_file.read_bytes()).hexdigest()
     m.load_state_dict(T.load(birth_file))
     assert STREAM16 == "blocks" or arm == "D" or REPLAY16 in ("raw", "total", "oracle"), "the drifting stream is implemented for the raw/total reservoirs and the twin only"
     local = arm not in ("D", "M")
     admits = local or arm == "M"       # arm M keeps T's whole data pipeline, including online admission (9 Nov: before this line M admitted at block ends only)
-    FROZEN = ("l1.", "lp.", "lc.", "lw.") if FREEZE16 == "bank1" else ()
-    learnable = [p_ for n_, p_ in m.named_parameters() if not n_.startswith(FROZEN)]
-    for n_, p_ in m.named_parameters():
-        p_.requires_grad_(not n_.startswith(FROZEN))
-    opt = T.optim.AdamW(learnable, lr=.001, weight_decay=(E.WD if arm != "D" else .3), betas=(.9, .98))
+    FROZEN = ((("book.",) if BOOKDECAY16 == "off" else ()) + ("l1.", "lp.", "lc.", "lw.")) if FREEZE16 == "bank1" else ()
+    opt = adamw16(m, .001, (E.WD if arm != "D" else .3), FROZEN)
     store = X.Store(seed) if (local and STORE16 == "on") else None
     rule = "D" if arm == "M" else arm      # arm M: T's data pipeline, D's update
     rng = Random(seed + 9)
@@ -239,7 +281,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, feedback=FEEDBACK16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -272,8 +314,8 @@ def life(arm, seed):
                 new = [next(cur) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
             elif REPLAY16 in ("total", "raw") and fbuf:
-                rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(BATCH // 2)]
-                new = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH // 2)]
+                rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(NREP)]
+                new = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH - NREP)]
                 batch = new + rp; presented += new
             elif fbuf and REPLAY16 != "share":
                 fams = sorted(fbuf)
@@ -288,6 +330,9 @@ def life(arm, seed):
                 batch = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH)]; presented += batch
             nnew = len(presented) - npres_before if admits else 0
             losses.append(update16(m, opt, batch, rule, store))
+            if si == 1 and u == 0:    # 9 Nov audit: record what received no gradient on the first update (grads persist until the next zero_grad)
+                stages[0]["settings"]["zero_grad_first_update"] = zero_grad_report(m, X.batch_tensor(batch)[0])
+                print("e16 zero-grad check:", stages[0]["settings"]["zero_grad_first_update"], flush=True)
             if ADMIT16 == "online" and admits:     # raw reservoir, Algorithm R per presented item, as it arrives (new items are the first nnew of the batch)
                 fl = fbuf.setdefault("all", []); n = fseen.get("all", 0)
                 for p_, t_ in batch[:nnew]:
@@ -409,11 +454,11 @@ def develop17(seed):
     """Birth for a windowless architecture: exp11's development (backprop through time on the four mod-89 operations with 0-12
     distractor letters, 24,576 updates, sealed panels at k = 0/4/8/12/20) on the E16_ARCH net; writes e17_dev_{arch}_{seed}."""
     assert ARCH16 != "window"
-    path = OUT / f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.pt"
+    path = OUT / f"e17_dev_{ARCH16}{BTAG}{E.DEVTAG}_{seed}.pt"
     if path.exists():
         return
     m = E.new_net(seed)
-    opt = T.optim.AdamW(m.parameters(), lr=.001, weight_decay=.3, betas=(.9, .98))
+    opt = adamw16(m, .001, .3)      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
     tp = [(t, E.split(t, .5, seed)[0]) for t in E.DEV]
     pan = {E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(0, 4, 8, 12, 20), n=300) for t in E.DEV}
     bt = E.batches(tp, seed, E.KMAX["M"])
@@ -427,7 +472,7 @@ def develop17(seed):
             print("e17 dev", ARCH16, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
     row["silenced_k12"] = {n: E.score(m, pk[12], silence=True) for n, pk in pan.items()}
     T.save(m.state_dict(), path)
-    (OUT / f"e17_dev_{ARCH16}{E.DEVTAG}_{seed}.json").write_text(json.dumps(dict(arch=ARCH16, seed=seed, kmax=E.KMAX["M"], curve=curve), indent=1))
+    (OUT / f"e17_dev_{ARCH16}{BTAG}{E.DEVTAG}_{seed}.json").write_text(json.dumps(dict(arch=ARCH16, seed=seed, kmax=E.KMAX["M"], bookdecay=BOOKDECAY16, curve=curve), indent=1))
 
 
 if __name__ == "__main__":
