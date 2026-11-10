@@ -69,6 +69,22 @@ def validate_contract(obj):
         seeds = []
     elif len(seeds) != len({str(s) for s in seeds}):
         errors.append("seeds contain duplicates: repeated runs are not new seeds")
+    # A threshold chosen on old seeds is not independent confirmation.
+    discovery = obj.get("discovery_seeds", [])
+    confirmation = obj.get("confirmation_seeds", [])
+    if not isinstance(discovery, list) or not isinstance(confirmation, list):
+        errors.append("discovery_seeds and confirmation_seeds must be arrays")
+        discovery, confirmation = [], []
+    ds, cs = {str(s) for s in discovery}, {str(s) for s in confirmation}
+    if ds & cs:
+        errors.append(f"discovery/confirmation seed overlap: {sorted(ds & cs)}")
+    if obj.get("decision_stage") == "CONFIRMATORY":
+        if not confirmation:
+            warnings.append("CONFIRMATORY experiment has no independent confirmation_seeds")
+        if not cs.issubset({str(s) for s in seeds}):
+            errors.append("confirmation_seeds must be present in experiment seeds")
+        if ds & {str(s) for s in seeds}:
+            errors.append("CONFIRMATORY experiment reuses discovery seeds as evidence")
     arms = obj.get("arms", [])
     if not isinstance(arms, list) or len(arms) == 0:
         errors.append("arms must be a nonempty array")
@@ -108,6 +124,8 @@ def validate_contract(obj):
             errors.append(f"arm {aid} needs explicit intended_changes compared with {base_id}")
         elif sorted(expected) != diff:
             errors.append(f"arm {aid} changed config keys {diff}, but intended_changes is {sorted(expected)}")
+        if arm.get("comparison_claim") == "single_factor" and len(diff) != 1:
+            errors.append(f"arm {aid} claims single_factor but changed {diff}")
         if arm.get("comparator_type") == "matched" and arm.get("stream_id") != base.get("stream_id"):
             errors.append(f"arm {aid} claims matched comparison but stream_id differs from {base_id}")
         if arm.get("comparator_type") == "ceiling" and arm.get("stream_id") != base.get("stream_id"):
@@ -188,6 +206,16 @@ def validate_receipts(obj, receipts):
             errors.append(f"receipt {i} panel_hash mismatch")
         if r.get("status") not in {"COMPLETE", "PARTIAL", "INVALIDATED", "STOPPED"}:
             errors.append(f"receipt {i} invalid/missing status")
+        for g in r.get("gradient_probe", []):
+            if not isinstance(g, dict):
+                errors.append(f"receipt {i} gradient_probe entry must be an object")
+                continue
+            if g.get("grad_norm") == 0 and g.get("decay_rate", 0) > 0 and not g.get("frozen", False):
+                errors.append(f"receipt {i} zero-gradient but decayed parameter {g.get('parameter', '?')}")
+            elif g.get("grad_norm") == 0 and not g.get("frozen", False):
+                warnings.append(f"receipt {i} unreachable parameter (not decayed) {g.get('parameter', '?')}")
+        if "replay_share" in r and (not isinstance(r["replay_share"], (int, float)) or not 0 <= r["replay_share"] < 1):
+            errors.append(f"receipt {i} replay_share must be in [0, 1)")
     for arm in sorted(arm_ids):
         missing = sorted(seed_ids - {s for a, s in observed if a == arm})
         if missing:
