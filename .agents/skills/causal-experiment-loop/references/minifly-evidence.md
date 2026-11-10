@@ -1,6 +1,6 @@
 # MiniFly casebook: why the causal experiment loop matters
 
-**Context:** A distilled workflow example grounded in the public repository `ChangweiZhou/digitalbaby`, consolidated branch `codex/minifly-consolidated-20261023`, checked through commit `55ad552930e8` (2026-11-09 EST). This file is **historical evidence**, not a claim about the current head at execution time. Refresh the repo before invoking the skill on a live project.
+**Context:** A distilled workflow example grounded in the public repository `ChangweiZhou/digitalbaby`, consolidated branch `codex/minifly-consolidated-20261023`, checked through commit `0ea406286201` (2026-11-10 EST). This file is **historical evidence**, not a claim about the current head at execution time. Refresh the repo before invoking the skill on a live project.
 
 ## Case A — 220+ versions versus representation diagnosis
 
@@ -50,7 +50,35 @@ The E16-F6 job was run in two separate cloud containers and matched bit-for-bit 
 
 Source: https://github.com/ChangweiZhou/digitalbaby/blob/55ad552930e8/MOD97_LOCAL_RULE_20261106/E16F6_REPORT.md
 
+## Case H — E17 Phase 3: temporal credit, not exact feedback alone, explains most of the rescue
+
+Dismantling the Phase 2 multi-change rescue on a frozen first bank found F1 mod-97 family means of **67.9/72.9/72.8** with exact feedback alone versus **80.1/84.9/84.9** with the upstream extended trace alone; the combined arm scored **87.5/90.1/91.9**, and the frozen BP twin **90.2/90.0/91.5**. Freezing the embeddings alone while letting both banks update still collapsed. At birth, the ordinary sign rule's first-bank write projection had cosine **0.09/-0.06/0.05** with a BPTT reference; carrying sign-feedback credit through time to every layer increased per-layer cosine to **0.45-0.81**. **Lesson:** compare learning-signal *reachability and alignment over depth and time*, not only sign-vs-exact weight feedback; a whole-layer freeze is a diagnostic and not the lifelong learner goal.
+
+Sources:
+- https://github.com/ChangweiZhou/digitalbaby/blob/0ea406286201/MOD97_LOCAL_RULE_20261106/E45_REPORT.md
+- https://github.com/ChangweiZhou/digitalbaby/blob/0ea406286201/MOD97_LOCAL_RULE_20261106/exp45/E17_ALIGN_AT_BIRTH.md
+
+## Case I — E16-M3: a preregistered dose-direction prediction failed
+
+The hypothesis predicted more replay would injure the sign rule's hard pairs while backprop stayed flat. Over replay shares **0.25/0.50/0.75**, hard-pair results instead increased: seed 400009 **43.7/46.3/73.2**, seed 600013 **23.3/44.8/60.2**, seed 300007 **59.2/67.7/75.7**. Backprop improved in the same direction but by less. Share zero left almost no old hard-pair retention. The improvement was mostly final retention rather than peak acquisition, and a larger share reduces the slots available for novel observations. **Lesson:** report a dose-response in actual replay fractions, novel presentations and CPU-seconds; an inverted prediction is valuable and must not be silently reclassified as predicted. Higher replay is *not* intrinsically a more efficient lifelong learner.
+
+Source: https://github.com/ChangweiZhou/digitalbaby/blob/0ea406286201/MOD97_LOCAL_RULE_20261106/E16M3_REPORT.md
+
+## Case J — E16-F7: an in-sample early warning did not generalize
+
+Six new drifting-stream seeds all passed the predeclared family means, making **16/18** total drift seeds passing, but only **4/18** passed the hard plus-minus pair threshold. The early signature S was selected after analyzing the prior 12 seeds; prospective confirmation on six additional seeds made the rank correlation on all eighteen only **0.109**, below the preregistered **0.35**. No new seed tested S's low-threshold clause. Some passing seeds lost the hard pair only after the signature's observation window. **Lesson:** split discovery from genuinely new confirmation samples; report the primary family gate and hard mechanism-relevant subgroup gates together, and do not call a post-hoc separator a validated predictor.
+
+Source: https://github.com/ChangweiZhou/digitalbaby/blob/0ea406286201/MOD97_LOCAL_RULE_20261106/E16F7_REPORT.md
+
+## Case K — E17 Phase 4 and E18: pending contrasts, not results
+
+E17 Phase 4 launched nine lives comparing full-depth **through-time signed credit** against projection-only trace and BP on identical learner data, with no layers frozen; **no completed result** was available at the cited head. E18 separately preregistered four development-stage arms that test a next-byte head at each memory bank with or without cross-bank relayed teaching signals. Its dry-run and gradient-leak checks are **technical qualifications**, not proof that local heads can learn or compose. **Lesson:** always label *prepared / dry run / launched / completed* and establish no-gradient leakage before interpreting a new local-objective experiment.
+
+Sources:
+- https://github.com/ChangweiZhou/digitalbaby/blob/0ea406286201/MOD97_LOCAL_RULE_20261106/E45_PREDICTIONS.md
+- https://github.com/ChangweiZhou/digitalbaby/blob/0ea406286201/MOD97_LOCAL_RULE_20261106/E18_PREDICTIONS.md
+
 ## What to borrow (not what to copy)
 
-- Borrow: fixed scientific target, explicit causal contrasts, BP/strong ceiling, preregistered gates, raw receipts, per-parameter gradient checks, one machine owner, hard-pair slicing, literal failures, correction without erasure.
+- Borrow: fixed scientific target, explicit causal contrasts, BP/strong ceiling, preregistered gates, truly fresh confirmation seeds, raw receipts, depth-by-time gradient checks, one machine owner, hard-pair slicing, replay dose/cost curves, literal failures, correction without erasure.
 - Do **not** copy blindly: modulo-97 arithmetic, E16 model shape, two-bank cell, 65,536 reservoir slots, 0.80 of BP as universal gate, or signed full-depth feedback as universally compliant with local synaptic learning.
