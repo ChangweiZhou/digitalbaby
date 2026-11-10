@@ -1347,3 +1347,37 @@ Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit 
 **Stage 2 goes ahead, by my decision,** since the control works: the sign-rule window learner, backprop on its pipeline, and the windowless two-bank reference, nine lives. One caveat is written now, before those results exist. The window learner's rule gives credit through time to the synapses of its memory cell only; the layers above the cell are credited within the step, which is the defect 9.67 found in the windowless learner, and the corrected rule cannot yet run on the window architecture. So if the rule arm misses P20.5, that miss cannot be separated from credit truncated above the cell; the comparison that can carry a conclusion about the pipeline is backprop on it (P20.6), and porting the sweep to the window architecture is the follow-up if the rule arm fails.
 
 Evidence level E2 on panels held out by operand triple and operator pair; one life per seed; backprop is a reference here, not a candidate.
+
+## 9.68 E16-M4, incomplete: stopped at five of six checkpoints; predictions not judged; the replay-share line closes here (10 November 2026, 20:00 EST)
+
+**What happened.** The cloud session ran all twelve lives (share 0.75 on the six E16-F7 seeds; shares 0.875 and 0.9375 on the three E16-M3 seeds) beside E19 on one four-core container. Its container was restarted at about 23:50 UTC with every life inside its sixth and last stretch; the harness cannot resume a life; the session then had to be stopped. Its branch is merged here. The twelve receipts end at checkpoint 5 and are kept under their `_killed` names; there are no final weights. **P16M4.1 to P16M4.5 are all written for the last checkpoint and are not judged.** By my decision the job is not rerun: the next-steps note adopted in 9.82 ends the replay-share line with this job, and the cost-curve run of its section 3.3 replaces it.
+
+**What the five checkpoints show.** Everything below is at checkpoint 5, five sixths of the life, against the comparator lives at the same checkpoint. It is description, not a verdict, and the reading of 9.75 item 3 applies: a higher share is also fewer fresh items.
+
+Share 0.75 on the six seeds it was not found on (plus-minus pairs, final answer):
+
+| Seed | Share 0.5 | Share 0.75 | Reference | Ratio at 0.5 | Ratio at 0.75 |
+|---|---:|---:|---:|---:|---:|
+| 1100009 | 62.2 | 71.1 | 89.7 | 0.69 | 0.79 |
+| 1200007 | 45.2 | 69.5 | 89.9 | 0.50 | 0.77 |
+| 1300021 | 69.6 | 76.4 | 88.9 | 0.78 | 0.86 |
+| 1400017 | 71.8 | 76.5 | 87.4 | 0.82 | 0.88 |
+| 1500007 | 71.3 | 70.2 | 90.2 | 0.79 | 0.78 |
+| 1600033 | 64.6 | 75.1 | 81.6 | 0.79 | 0.92 |
+
+- The hard pairs are higher at 0.75 in five of six seeds, by 5 points or more in four. Three of six are at or above 0.80 of the reference, against one at share 0.5. All six pass the family gate at this checkpoint at both shares except 1600033 at 0.5.
+- In the two seeds whose `+-` fell late at share 0.5, the fall from checkpoint 4 to 5 was 29.2 and 21.2 points; at 0.75 it is 7.3 and 8.5.
+
+The curve beyond 0.75, three seeds (plus-minus pairs; mod-73 mean):
+
+| Seed | 0.5 | 0.75 | 0.875 | 0.9375 |
+|---|---|---|---|---|
+| 400009 | 51.5; 89.7 | 69.8; 87.8 | 70.1; 82.4 | 72.2; 82.1 |
+| 600013 | 46.2; 80.8 | 56.9; 80.4 | 69.2; 77.4 | 73.9; 78.3 |
+| 300007 | 68.8; 89.9 | 75.4; 89.8 | 56.5; 87.5 | 79.8; 88.0 |
+
+- The hard pairs are still rising at 0.9375 in all three seeds, with one unexplained dip at 0.875 (300007). The family being taught at that point, mod-73, is 2 to 6 points lower at the two highest shares: with four fresh rows in a batch of 64 it is acquired more slowly, but at checkpoint 5 no seed has fallen under the family gate. I predicted the curve would turn by 0.9375; at this checkpoint it has not.
+
+**What it adds.** The direction E16-M3 found on three seeds appears on six seeds it was not found on, at one checkpoint short of the end. It does not settle a default share, and nothing is claimed about the end of the life.
+
+**What the loss teaches.** A life that cannot resume should not run on a machine that can restart. Fifteen processes on four cores also stretched the job to six hours, which is what put it in harm's way. Making lives resumable (weights and optimizer state at each checkpoint, the data stream replayed without training up to it, and a test that an interrupted life matches an uninterrupted one exactly) comes before any further life job on a cloud container.

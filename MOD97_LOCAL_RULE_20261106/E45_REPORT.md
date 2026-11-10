@@ -772,3 +772,7 @@ Twelve births of the two-bank learner from nothing (review 9.71). With weight si
 ## The twelve repeats on the corrected panels (10 November 2026, 17:15 EST)
 
 Review 9.81; table in `exp45/E16_AUDIT_TABLES.md`. All eighteen drift seeds are now on the corrected panels: 16 of 18 pass on family means, 5 of 18 on the plus-minus pairs alone, 12 of 18 on whole worked answers. The three development seeds pass every gate; the fifteen later seeds, on which no setting was chosen, pass the hard-pair gate in 2 of 15, and that is the figure to trust. On one machine and one panel, backprop on the learner's own pipeline reaches 0.94–0.98 of the reference on held compositions and the sign rule 0.64–0.83, so E16-M2's conclusion stands on new receipts. The score-time store changes no held composition score.
+
+## E16-M4, incomplete (10 November 2026, 20:00 EST)
+
+Stopped by a container restart at five of six checkpoints; predictions not judged; not rerun (review 9.68). At checkpoint 5, share 0.75 gives higher plus-minus pairs than share 0.5 in five of the six seeds it was not found on (three of six at or above 0.80 of the reference against one), and beyond 0.75 the hard pairs are still rising at 0.9375 while the family being taught is 2 to 6 points lower. Description at one checkpoint short of the end, under the allocation caveat of 9.75.
