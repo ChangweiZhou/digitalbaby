@@ -18,5 +18,7 @@ export E16_OUTTAG=_cp
     echo "exp45/logs/audit_cp_D_staged_$s.log|python3 exp16_integrated.py D $s"
   done
 } | run_jobs exp45/logs/audit_cp_exit_codes.txt
-echo "all exit codes zero: $([ $? -eq 0 ] && echo yes || echo NO)"
+rc=$?
+echo "all exit codes zero: $([ $rc -eq 0 ] && echo yes || echo NO)"
 lock_release
+exit $rc      # second audit of 10 Nov: the wrapper's status is the jobs' status, not the cleanup's

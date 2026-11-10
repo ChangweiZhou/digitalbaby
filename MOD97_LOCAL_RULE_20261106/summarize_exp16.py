@@ -70,8 +70,21 @@ def main():
             lines.append(f"| {a} | {s} | {st['task'] or 'birth'} | {fam_mean(sc, F1):.1f} | {pct(K(sc,'add97',12)):.1f} | {pct(K(sc,'sub97',12)):.1f} | {fam_mean(sc, F3):.1f} | "
                          f"{sum(pctf(c[h]) for h in HELD)/4:.1f} | " + " | ".join(f"{pctf(c[h]):.1f}" for h in HELD) + f" | {pctf(c['within']):.1f} | {fam_mean(sc, DEV):.1f} |")
     # final table: T vs D and the 80% gate
+    def contract(a_, d_):
+        """Second audit of 10 Nov: no ratio without a comparison contract. Returns (ratio allowed, status text)."""
+        def f(r):
+            st_ = [x["settings"] for x in r["stages"] if "settings" in x]; st_ = st_[-1] if st_ else {}
+            return ("corrected" if "keyed by split" in st_.get("panels", "") else "original"), st_.get("loss", "answer"), st_.get("panel_sha256"), r.get("complete")
+        (pa, la, ha, ca), (pd_, ld, hd, cd) = f(a_), f(d_)
+        if pa != pd_:
+            return False, f"WITHHELD: panels differ ({pa} / {pd_})"
+        if la != ld:
+            return False, f"WITHHELD: objective differs ({la} / {ld})"
+        if ca and cd and ha and hd:
+            return True, "bound: completion records and panel hashes present" + ("" if ha == hd else "; single-operation panels are architecture-specific, compare composition only")
+        return True, "legacy: no completion record or panel hash; not admissible to a new gate"
     lines += ["\n## After the last block: learner against twin (gate: T ≥ 80% of D on every family)\n",
-              "| Seed | Arm: family | arm | D | arm/D | F1 after block 2 (T) | T k=20 | T silenced k=12 |", "|---|---|---:|---:|---:|---:|---:|---:|"]
+              "| Seed | Arm: family | arm | D | arm/D | F1 after block 2 (T) | T k=20 | T silenced k=12 | Evidence status |", "|---|---|---:|---:|---:|---:|---:|---:|---|"]
     for s in SEEDS:
         for a in ARMS:
             t = runs.get((a, s)); dd = runs.get((twin_of(a), s))
@@ -81,8 +94,9 @@ def main():
             rows = [("F1 ops k=12", fam_mean(st, F1), fam_mean(sd, F1), fam_mean(s2, F1), sum(pct(K(st, n, 20)) for n in F1) / 4, sum(pct(st["silenced_k12"][n]) for n in F1) / 4),
                     ("F3 ops k=12", fam_mean(st, F3), fam_mean(sd, F3), None, sum(pct(K(st, n, 20)) for n in F3) / 4, sum(pct(st["silenced_k12"][n]) for n in F3) / 4),
                     ("held comp final", sum(pctf(st["compose"][h]) for h in HELD) / 4, sum(pctf(sd["compose"][h]) for h in HELD) / 4, None, None, sum(pctf(st["silenced_compose"][h]) for h in HELD) / 4)]
+            allowed, status = contract(t, dd)
             for name, tv, dv, b2, k20, sil in rows:
-                lines.append(f"| {s} | {LABEL.get(a, a)}: {name} | {tv:.1f} | {dv:.1f} | {tv/dv:.2f} | {'' if b2 is None else f'{b2:.1f}'} | {'' if k20 is None else f'{k20:.1f}'} | {sil:.1f} |")
+                lines.append(f"| {s} | {LABEL.get(a, a)}: {name} | {tv:.1f} | {dv:.1f} | {f'{tv/dv:.2f}' if allowed else 'withheld'} | {'' if b2 is None else f'{b2:.1f}'} | {'' if k20 is None else f'{k20:.1f}'} | {sil:.1f} | {status} |")
     # E16-D: retention across arms
     lines += ["\n## Retention across arms: what each family keeps after the stream moves on (block 6 vs the family's own last block)\n",
               "| Arm | Seed | F1 k=12 after 2 → 6 | F1 add/sub after 6 | Held comp (final answer) after 4 → 6 | Held comp full scratchpad exact after 6 | +- / -+ after 6 | within after 4 → 6 | F3 after 6 |", "|---|---|---|---|---|---|---|---|---|"]

@@ -115,13 +115,17 @@ assert PROJFB16 == "raw" or (TRACEUP16 == "proj" and FEEDBACK16 == "sign"), "E16
 FIXEDCODES16 = os.environ.get("E16_FIXEDCODES", "off"); assert FIXEDCODES16 in ("on", "off")
 assert FIXEDCODES16 == "off" or ARCH16 != "window", "E16_FIXEDCODES is defined for the E17 architectures only"
 OUTTAG16 = os.environ.get("E16_OUTTAG", ""); assert re.fullmatch(r"[A-Za-z0-9_]*", OUTTAG16)
-#   E16_COMPGAP=<k>          (E20, 10 Nov) 0..k distractor letters after each operator of a composition prompt, in teaching and in the panels.
-#                           Without it a composition prompt is exactly ten bytes, the width of the window learner's window, so that learner
-#                           composes with every operand in view; with it the first operand and operator must be carried in memory. Tag _cg<k>.
-#                           The same held triples are also scored without letters (compose_nogap). Raw or oracle replay, or arm D.
+#   E16_COMPGAP=<k>          (E20, redesigned after the second audit of 10 Nov) distractor letters around composition prompts in teaching:
+#                           each taught composition gets a total of g1 + g2 letters (each 0..k); with probability one half they go INSIDE
+#                           (g1 after the first operator, g2 after the second), otherwise they LEAD the prompt. Same lengths either way; inside,
+#                           the first operand leaves a ten-byte window, leading, every operand stays in view. The registered composition
+#                           panels are unchanged (no letters). Memory use is measured on separate panels (memory_panels): twins that are
+#                           byte-identical in the last ten bytes at "=" and differ only in the hidden first operand, scored both-correct on
+#                           whole answers without the store, with the same items re-rendered with leading letters as the in-view control.
+#                           Raw or oracle replay, or arm D. Tag _cm<k>.
 COMPGAP16 = int(os.environ.get("E16_COMPGAP", "0")); assert 0 <= COMPGAP16 <= 12
-CGTAG = f"_cg{COMPGAP16}" if COMPGAP16 else ""
-COMP_NOGAP = [None]
+CGTAG = f"_cm{COMPGAP16}" if COMPGAP16 else ""
+MEMORY = [None]
 LAST_AUX = [None]      # the first bank's head loss of the last update (the logged loss is the main head's)
 BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
 assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
@@ -184,6 +188,22 @@ def book_shift(m, book0):
     return {k: round(sum(v) / len(v) / n0, 4) for k, v in out.items() if k != "other"}
 
 
+def admit_birth(birth_file, sha):
+    """Second audit of 10 Nov: an observed hash identifies a birth; admission needs an expected one. A birth is admitted if its own receipt
+    is complete and names this hash, or if exp45/BIRTH_MANIFEST.json (births that predate hashed receipts, entered by the coordinator)
+    names it. Anything else stops the life, unless E16_LEGACY_BIRTH=allow, which is recorded in the receipt."""
+    rec = birth_file.with_suffix(".json")
+    if rec.exists():
+        r = json.loads(rec.read_text())
+        if r.get("complete") and r.get("weights_sha256") == sha:
+            return "own receipt"
+    man = OUT / "BIRTH_MANIFEST.json"
+    if man.exists() and json.loads(man.read_text()).get(birth_file.name, {}).get("sha256") == sha:
+        return "manifest"
+    assert os.environ.get("E16_LEGACY_BIRTH") == "allow", f"{birth_file.name} ({sha[:12]}) is neither bound by its own receipt nor in BIRTH_MANIFEST.json"
+    return "legacy, allowed by E16_LEGACY_BIRTH"
+
+
 def sha_file(path):
     import hashlib
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
@@ -214,10 +234,16 @@ CAP = 6   # longest answer: i i ; f f EOS
 
 
 # ---------------------------------------------------------------- items: an entry is replayable; render makes the bytes
-def render_pair(o1, o2, a, b, c, rng=None):
+def render_pair(o1, o2, a, b, c, rng=None, inside=None, lead=b""):
+    """inside = (letters after the first operator, letters after the second); lead = letters before the prompt. With rng and E16_COMPGAP the
+    placement is drawn: total length g1 + g2, inside or leading with probability one half each."""
     i = E.apply(SYM_OP[o1], 97, a, b); f = E.apply(SYM_OP[o2], 97, i, c)
-    gap = (lambda: bytes(rng.choice(E.DISTRACT) for _ in range(rng.randint(0, COMPGAP16)))) if (COMPGAP16 and rng is not None) else (lambda: b"")
-    prompt = list(b"c" + f"{a:02d}".encode() + o1.encode() + gap() + f"{b:02d}".encode() + o2.encode() + gap() + f"{c:02d}".encode() + b"=")
+    if inside is None:
+        inside = (b"", b"")
+        if COMPGAP16 and rng is not None:
+            g = [bytes(rng.choice(E.DISTRACT) for _ in range(rng.randint(0, COMPGAP16))) for _ in range(2)]
+            inside, lead = ((g[0], g[1]), b"") if rng.random() < .5 else ((b"", b""), g[0] + g[1])
+    prompt = list(lead + b"c" + f"{a:02d}".encode() + o1.encode() + inside[0] + f"{b:02d}".encode() + o2.encode() + inside[1] + f"{c:02d}".encode() + b"=")
     return prompt, list(f"{i:02d}".encode()) + [ord(";")] + list(f"{f:02d}".encode()) + [EOS]
 
 
@@ -320,30 +346,113 @@ def panels(seed):
     all_taught = frozenset().union(*taught.values())
     comp = {f"{o1}{o2}": [render_pair(o1, o2, *tr) for tr in triples((o1, o2), seed, 600, exclude=all_taught, split="held")] for o1, o2 in HELD_PAIRS}
     comp["within"] = [render_pair(*p, *tr) for p in TAUGHT_PAIRS for tr in triples(p, seed, 50, exclude=all_taught, split="within")]
-    COMP_NOGAP[0] = None
-    if COMPGAP16:      # the same triples with letters, drawn once per panel item from a generator of its own; the letter-free version is kept
-        COMP_NOGAP[0] = comp; g = Random(f"compgap|{seed}|{COMPGAP16}")
-        gapped = {f"{o1}{o2}": [render_pair(o1, o2, *tr, g) for tr in triples((o1, o2), seed, 600, exclude=all_taught, split="held")] for o1, o2 in HELD_PAIRS}
-        gapped["within"] = [render_pair(*p, *tr, g) for p in TAUGHT_PAIRS for tr in triples(p, seed, 50, exclude=all_taught, split="within")]
-        comp = gapped
+    MEMORY[0] = memory_panels(seed, all_taught) if COMPGAP16 else None
     return P, comp
 
 
-def strict_panels(seed):
-    """10 Nov audit: held single-operation pairs with no semantic route into teaching. A held pair (a, b) is dropped if the operation is
-    commutative and (b, a) is taught, or (mod 97) if it is supervised as the first or second step of a taught composition's scratchpad.
-    Scored at k = 12 beside the registered panels; the registered panels and the split are unchanged."""
-    sub = {}
+def exposure_sources(seed):
+    """Every route by which a single-operation relation is supervised somewhere in a life (second audit of 10 Nov): standalone teaching in
+    each family and at birth, and both steps of every taught composition. Keys are operation names; values are sets of ordered pairs."""
+    src = {"standalone": {}, "substep": {}, "other_modulus": {}}
+    for t in F1 + F3:
+        src["standalone"][E.NAME(*t)] = set(E.split(t, .25, seed)[0])
+    for t in E.DEV:
+        src["standalone"][E.NAME(*t)] = set(E.split(t, .5, seed)[0])
     for o1, o2 in TAUGHT_PAIRS:
         for a, b, c in triples((o1, o2), seed, 2000):
-            sub.setdefault(SYM_OP[o1], set()).add((a, b)); sub.setdefault(SYM_OP[o2], set()).add((E.apply(SYM_OP[o1], 97, a, b), c))
-    out, counts = {}, {}
+            src["substep"].setdefault(SYM_OP[o1], set()).add((a, b)); src["substep"].setdefault(SYM_OP[o2], set()).add((E.apply(SYM_OP[o1], 97, a, b), c))
+    for t in F1 + F3 + list(E.DEV):      # max and min give the same answer under every modulus that contains both operands
+        if t[0] in ("max", "min"):
+            src["other_modulus"][E.NAME(*t)] = set().union(*[src["standalone"][E.NAME(*u)] for u in F1 + F3 + list(E.DEV) if u[0] == t[0] and u[1] != t[1]])
+    return src
+
+
+def exposure_flags(t, a, b, src):
+    """Which equivalent supervision exists for held pair (a, b) of task t. Commutative operations are checked in both orientations."""
+    comm = t[0] in ("add", "max", "min"); name = E.NAME(*t); f = []
+    if comm and a != b and (b, a) in src["standalone"][name]:
+        f.append("reversal taught")
+    sub = src["substep"].get(t[0], ()) if t[1] == 97 else ()
+    if (a, b) in sub or (comm and (b, a) in sub):
+        f.append("step of a taught composition")
+    om = src["other_modulus"].get(name, ())
+    if (a, b) in om or (b, a) in om:
+        f.append("taught under another modulus")
+    return f
+
+
+def strict_panels(seed):
+    """Held single-operation pairs with no equivalent supervision by any route in exposure_sources (corrected after the second audit of
+    10 Nov: the first version checked composition steps in one orientation only and ignored max/min under other moduli, which left most
+    equivalent supervision in). Scored at k = 12 beside the registered panels; the registered panels and the split are unchanged.
+    Small by construction; the count is recorded."""
+    src = exposure_sources(seed); out, counts = {}, {}
     for t in F1 + F3:
-        taught, held = E.split(t, .25, seed); ts = set(taught)
-        ok = [(a, b) for a, b in held if not (t[0] in ("add", "max", "min") and a != b and (b, a) in ts) and not (t[1] == 97 and (a, b) in sub.get(t[0], ()))]
+        held = E.split(t, .25, seed)[1]
+        ok = [(a, b) for a, b in held if not exposure_flags(t, a, b, src)]
         counts[E.NAME(*t)] = dict(held=len(held), strict=len(ok))
         out[E.NAME(*t)] = E.panel(t, ok, seed + 11, ks=(12,), n=min(400, len(ok)))[12]
     return out, counts
+
+
+def memory_panels(seed, all_taught, n=150):
+    """E20 assay. For each held operator pair, n twins: two prompts with the same operators, second and third operands, and the same letters
+    in the same places, differing only in the first operand, which is outside the last ten bytes at "=". The two worked answers differ in
+    both the intermediate and the final result. A predictor that sees only the last ten bytes gives the same answer to both, so it can get
+    at most one of a twin and never both. `lead` re-renders the same items with the same letters moved in front: same length, every operand
+    in view. Also, with the first operand hidden: new instances of taught operator pairs, and taught triples themselves. Checked here,
+    fail-closed, every time the panels are built."""
+    g = Random(f"memory|{seed}|{COMPGAP16}"); out = dict(twins={}, lead={}, census={})
+    def letters():
+        while True:
+            a, b = (bytes(g.choice(E.DISTRACT) for _ in range(g.randint(0, COMPGAP16))) for _ in range(2))
+            if len(a) + len(b) >= 3:
+                return a, b
+    for o1, o2 in HELD_PAIRS:
+        tw, ld = [], []
+        while len(tw) < n:
+            b_, c_, a1, a2 = (g.randrange(97) for _ in range(4)); ins = letters()
+            x, y = render_pair(o1, o2, a1, b_, c_, inside=ins), render_pair(o1, o2, a2, b_, c_, inside=ins)
+            if a1 == a2 or x[1][:2] == y[1][:2] or x[1][3:5] == y[1][3:5] or (a1, b_, c_) in all_taught or (a2, b_, c_) in all_taught:
+                continue
+            assert x[0][-10:] == y[0][-10:] and x[0] != y[0] and x[1] != y[1], "twins must share the last ten bytes and differ in the answer"
+            tw.append((x, y)); ld.append((render_pair(o1, o2, a1, b_, c_, lead=ins[0] + ins[1]), render_pair(o1, o2, a2, b_, c_, lead=ins[0] + ins[1])))
+            assert len(ld[-1][0][0]) == len(x[0]) and bytes(ld[-1][0][0][-10:]).startswith(b"c"), "the control must have the same length with the whole prompt in view"
+        out["twins"][f"{o1}{o2}"], out["lead"][f"{o1}{o2}"] = tw, ld
+        out["census"][f"{o1}{o2}"] = dict(twins=n, second_operand_hidden=sum(len(x[0]) - 10 - (len(x[0]) - x[0].index(ord(o2), 4) - 1 - 3) > 5 for x, _ in tw),
+                                           mean_prompt_bytes=round(sum(len(x[0]) for x, _ in tw) / n, 2))
+    def hidden(pairs, split, m_):
+        res = []
+        for p_ in pairs:
+            for tr in (triples(p_, seed, 2000)[:m_] if split == "taught" else triples(p_, seed, m_, exclude=all_taught, split="memory-within")):
+                res.append(render_pair(*p_, *tr, inside=letters()))
+        return res
+    out["within_hidden"] = hidden(TAUGHT_PAIRS, "within", 25)       # new operand triples of taught operator pairs
+    out["taught_hidden"] = hidden(TAUGHT_PAIRS, "taught", 25)       # triples that are taught (letters are fresh)
+    # the assay must reject a last-ten-bytes predictor and accept the true answers
+    table = {}
+    both = 0
+    for tw in out["twins"].values():
+        for x, y in tw:
+            guess = table.setdefault(bytes(x[0][-10:]), x[1]); both += (guess == x[1]) and (guess == y[1])
+    assert both == 0, "a suffix-only predictor must score zero both-correct twins"
+    return out
+
+
+def score_memory(m, mem, silence=False):
+    """Whole answers, no store, for every arm alike. Twins: both members correct."""
+    res = {}
+    for key in (("twins",) if silence else ("twins", "lead")):
+        res[key] = {}
+        for pair, tw in mem[key].items():
+            flat = [it for xy in tw for it in xy]
+            outs = E.respond(m, [p for p, _ in flat], None, cap=CAP, silence=silence)
+            ok = [o == t for o, (_, t) in zip(outs, flat)]
+            res[key][pair] = dict(pairs=len(tw), items_correct=sum(ok), both_correct=sum(ok[2 * i] and ok[2 * i + 1] for i in range(len(tw))))
+    if not silence:
+        for key in ("within_hidden", "taught_hidden"):
+            res[key] = score(m, mem[key], None)
+    return res
 
 
 def panel_sha(P, comp, strict):
@@ -381,6 +490,7 @@ def life(arm, seed):
     birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}.pt")
     import hashlib
     birth_sha = hashlib.sha256(birth_file.read_bytes()).hexdigest()
+    birth_admission = admit_birth(birth_file, birth_sha)
     m.load_state_dict(T.load(birth_file))
     assert STREAM16 == "blocks" or arm == "D" or REPLAY16 in ("raw", "total", "oracle"), "the drifting stream is implemented for the raw/total reservoirs and the twin only"
     local = arm not in ("D", "M")
@@ -407,17 +517,19 @@ def life(arm, seed):
         res["silenced_compose"] = {n: score(m, it, store, silence=True) for n, it in comp.items() if n != "within"}
         if HEADS16 != "top":
             res["head1_k12"] = {n: head1(score, m, pk[12], store) for n, pk in P.items()}
-        if COMP_NOGAP[0] is not None:
-            res["compose_nogap"] = {n: score(m, it, store) for n, it in COMP_NOGAP[0].items()}
+        if MEMORY[0] is not None:
+            res["memory"] = score_memory(m, MEMORY[0]); res["memory_silenced"] = score_memory(m, MEMORY[0], silence=True)
         res["strict_k12"] = {n: score(m, it, store) for n, it in SP.items()}          # 10 Nov audit: no reversal taught, no taught sub-step
         if store is not None:       # 10 Nov audit: what the network answers without the score-time store, so arms with and without one can be compared
             res["nostore_k12"] = {n: score(m, pk[12], None) for n, pk in P.items()}
             res["nostore_compose"] = {n: score(m, it, None) for n, it in comp.items()}
         return res
 
-    stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(COMP_NOGAP[0] or comp),
+    stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
                        entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, nrep=NREP, batch=BATCH, heads=HEADS16, birthrule=BIRTHRULE16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, outtag=OUTTAG16, compgap=COMPGAP16,
-                                     panel_sha256=panel_sha(P, comp, SP), strict_panel_counts=strict_counts, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                                     memory_panels=(dict(design="v2 twins/lead, letters inside or leading 50/50 in teaching", census=MEMORY[0]["census"],
+                                                         sha256=__import__("hashlib").sha256(json.dumps(MEMORY[0], sort_keys=True, default=list).encode()).hexdigest()) if MEMORY[0] else None),
+                                     panel_sha256=panel_sha(P, comp, SP), strict_panel_counts=strict_counts, birth=birth_file.name, birth_sha256=birth_sha, birth_admission=birth_admission, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -440,6 +552,8 @@ def life(arm, seed):
                 seen_streams.append(entry_stream(entries[fam], seed + 100 + si))
             joint = joint_stream(seen_streams, seed + si)
         losses, presented, expo, aux_losses = [], [], {}, []
+        if si == 1:
+            cpu_score_total = [0.0]
         for u in range(STAGE_UPDATES):
             npres_before = len(presented)
             if arm == "D" or REPLAY16 == "oracle":
@@ -468,7 +582,7 @@ def life(arm, seed):
             nfresh = len(presented) - npres_before
             for i_, (p_, t_) in enumerate(batch):      # 10 Nov audit: rows and supervised tokens by origin and family (logging only)
                 key = f"{'joint' if (arm == 'D' or REPLAY16 == 'oracle') else 'fresh' if i_ < nfresh else 'replay'}/{fam_of(p_)}"
-                e_ = expo.setdefault(key, [0, 0]); e_[0] += 1; e_[1] += len(t_)
+                e_ = expo.setdefault(key, [0, 0]); e_[0] += 1; e_[1] += (len(t_) if LOSS16 == "answer" else len(p_) + len(t_))   # bytes under the loss mask
             losses.append(update16(m, opt, batch, rule, store))
             if LAST_AUX[0] is not None:
                 aux_losses.append(LAST_AUX[0])
@@ -486,8 +600,10 @@ def life(arm, seed):
                         if j < RCAP:
                             fl[j] = ("raw", tuple(p_), tuple(t_))
                 fseen["all"] = n
-        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=time.process_time() - t0, scores=evaluate(),
-                           exposure_rows_tokens=expo))
+        c_before = time.process_time(); sc_now = evaluate(); c_after = time.process_time(); cpu_score_total[0] += c_after - c_before
+        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=c_before - t0, scores=sc_now,
+                           cpu_scoring_so_far=cpu_score_total[0], cpu_updates_so_far=c_after - t0 - cpu_score_total[0],
+                           exposure_rows_tokens=expo, exposure_note=f"[rows, bytes under the loss mask]; loss={LOSS16}; heads applying each byte: {1 if HEADS16 == 'top' else 2}"))
         if aux_losses:
             stages[-1]["loss_head1"] = sum(aux_losses[-512:]) / min(512, len(aux_losses))
         sc = stages[-1]["scores"]
@@ -558,6 +674,8 @@ def qualify():
     # composition rendering and the round trip from bytes back to an entry
     for e in rng.sample(ents["F2"], 200):
         p, t = render(e, rng)
+        raw_len = len(p); p = [b_ for b_ in p if not 65 <= b_ <= 90]      # distractor letters (E16_COMPGAP) are capitals; the rest is the prompt
+        assert raw_len <= 10 + 2 * COMPGAP16 and (COMPGAP16 or raw_len == 10)
         assert len(p) == 10 and len(t) == 6 and t[2] == ord(";") and t[-1] == EOS
         back = ("comp", chr(p[3]), chr(p[6]), int(bytes(p[1:3])), int(bytes(p[4:6])), int(bytes(p[7:9])))
         assert back == e, (back, e)
@@ -575,6 +693,26 @@ def qualify():
             pair = (chr(p[3]), chr(p[6])); tr = (int(bytes(p[1:3])), int(bytes(p[4:6])), int(bytes(p[7:9])))
             assert (pair in HELD_PAIRS) if name != "within" else (pair in TAUGHT_PAIRS)
             assert tr not in all_taught, "panel triple appears in some taught pair's training triples"   # operand-level holdout
+    if COMPGAP16:      # the memory assay's own qualification (second audit of 10 Nov): structured round trip, disjointness, visibility
+        strip = lambda p_: [b_ for b_ in p_ if not 65 <= b_ <= 90]
+        parse = lambda p_: ((chr(p_[3]), chr(p_[6])), (int(bytes(p_[1:3])), int(bytes(p_[4:6])), int(bytes(p_[7:9]))))
+        mem = MEMORY[0]; chk = dict(twins=0, lead=0)
+        for key in ("twins", "lead"):
+            for pair, tw in mem[key].items():
+                for x, y in tw:
+                    for it in (x, y):
+                        pr, tr = parse(strip(it[0])); i_ = E.apply(SYM_OP[pr[0]], 97, tr[0], tr[1])
+                        assert pr in HELD_PAIRS and "".join(pr) == pair and tr not in all_taught
+                        assert int(bytes(it[1][:2])) == i_ and int(bytes(it[1][3:5])) == E.apply(SYM_OP[pr[1]], 97, i_, tr[2]) and it[1][-1] == EOS
+                        first_operand_in_view = bytes(it[0][-10:]).find(bytes(it[0][it[0].index(ord("c")) + 1:it[0].index(ord("c")) + 3])) == 1 and it[0][-10] == ord("c")
+                        assert first_operand_in_view == (key == "lead"), "twins hide the first operand at '='; the leading control shows the whole prompt"
+                        chk[key] += 1
+        for it in mem["within_hidden"]:
+            pr, tr = parse(strip(it[0])); assert pr in TAUGHT_PAIRS and tr not in all_taught
+        for it in mem["taught_hidden"]:
+            pr, tr = parse(strip(it[0])); assert pr in TAUGHT_PAIRS and tr in taught[pr]
+        out["memory_panels"] = dict(checked_items=chk, census=mem["census"], within_hidden=len(mem["within_hidden"]), taught_hidden=len(mem["taught_hidden"]),
+                                    suffix_only_predictor_both_correct=0, sha256=__import__("hashlib").sha256(json.dumps(mem, sort_keys=True, default=list).encode()).hexdigest())
     out["panel_sizes"] = {n: len(v) for n, v in comp.items()}
     out["shortcut_ceilings"] = shortcut_ceilings(comp)
     # window visibility on the composition prompt: positions whose prediction no longer sees the code byte / first operand
