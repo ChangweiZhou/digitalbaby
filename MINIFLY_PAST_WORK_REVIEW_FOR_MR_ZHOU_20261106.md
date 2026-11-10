@@ -1288,3 +1288,29 @@ Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit 
 **Limits.** The `strict_k12` scores inside these twelve receipts were made by the first strict classifier, which was wrong (9.79); they are not used. Composition here is composition in view (9.76).
 
 **Cost.** Learners 6,275–6,307 CPU-s, backprop on the pipeline 5,718–5,742, references 5,675–5,807; 2 h 17 min of wall for twelve processes against a forecast of 2 h 45 (range 2 h 20 to 3 h 10), just under the range, with the E20 and E18b dry runs sharing the machine. The lock was released at 16:44:44.
+
+## 9.82 The audit session's next-steps note, and what is implemented from it (10 November 2026, 19:00 EST)
+
+**The note.** `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/NEXT_STEPS_NOTE_20261110.md`, from the cloud session that wrote the memo of 9 November and the roadmap note, copied here unchanged from its branch at its latest commit. It is a read of the record, not an audit. Mr. Xu's instruction on receiving it: "The Mac is idle. We received the next step note. Now implement the steps." What follows is what was implemented, item by item, and where the reading is mine.
+
+| Note section | What it asks | Done |
+|---|---|---|
+| 3.1 Close the open rulings | accept the backward sweep with weight signs as the working life rule with a declared sweep length; accept a bounded window as a sensory buffer; any optimizer for references, a candidate born by its own rule before any promotion claim; say whose rulings are final | **adopted as working rules, on my reading of Mr. Xu's instruction**; see below |
+| 3.2 If the sweep is accepted, drop the fixed-rate banks | let E20-B choose the windowless network; no repairs to the two-bank design meanwhile | adopted as the decision rule for when E20-B reports |
+| 3.3 step 1 Backprop at zero replay | three lives | **running** on the owner's machine, with the rule at zero replay repeated beside it on the same machine (six lives; predictions P-Z.1–3) |
+| 3.3 steps 2 and 3 | a cost curve with fresh items fixed; one protection mechanism | not started: step 2 needs a new option and waits for step 1; step 3 waits for the literature check |
+| 3.4 A life with every next byte as the target | six lives | **running** (predictions P-E.1–4) |
+| 3.5 One target test, design only | merge the promotion test, the delayed-observation test and the battery | drafted for audit: `PROJECT_DOCUMENTS/TARGET_TEST_DESIGN_DRAFT_20261110.md`; nothing runs from it |
+| 3.6 Two process changes | every brief to Codex before any worker starts; no partial receipts on the default branch | adopted; the waiting briefs carry a status line; partial receipts now go on a session's own branch or stay uncommitted (no new branch is created for them) |
+| 3.7 One more week of arithmetic, then close | E20, 3.3 steps 1 and 2, 3.4; then a one-page close by aid removed | adopted as the plan; close date 17 November |
+
+**The rulings, as now recorded.** Until this note, 9.60, 9.67 and 9.70 each carried the locality question forward as the owner's. Working rules from today:
+
+1. *The life rule is a backward sweep over the item with weight signs in place of weights; the sweep length is a declared budget.* What stays outside the line is exact weight transport. The rule is then not what is new in this project; memory, retention and cost are where it has to earn its place.
+2. *A bounded window is an allowed sensory buffer.* The defect found in 9.76 was a task that fitted inside it.
+3. *References may use any optimizer. A candidate is born by its own rule before any promotion claim.* E18's B0 shows that is possible for single operations.
+4. *Whose rulings are final is not mine to write.* Mr. Xu directs this session and his instruction is why these are in force; if Mr. Zhou rules otherwise, items 1 and 2 are the ones that would change, and the consequence is stated in the note (without the sweep the windowless learner has no working rule on file). I have asked Mr. Xu to confirm that these four are his and to say who has the last word.
+
+**Where I depart from the note.** In one place: it suggests three backprop lives at zero replay against the cloud's rule lives; I run the rule again on the same machine beside them, so that the two arms share machine and panel, which is the lesson of 9.75. And its remark on hippocampal reverse replay is, as it says, from memory; it is not relied on.
+
+**Earlier decisions this changes.** 9.76 held all rule variants until E20 reports. E18b (briefed as an exception) is put behind the every-byte lives, as the note asks. The every-byte lives themselves are a second exception, taken on instruction; they use options that already existed and the corrected rule.

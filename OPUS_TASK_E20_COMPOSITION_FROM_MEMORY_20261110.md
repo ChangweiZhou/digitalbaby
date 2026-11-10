@@ -1,5 +1,7 @@
 # Two cloud jobs for Claude Opus 5.5 workers: E20, composition from memory (10 November 2026, 16:00 EST)
 
+> **Status under the process rules of 10 November (review 9.82).** Job A version 2 and Job B have not been audited by Codex. Send this brief to Codex first; a worker starts only after that audit is answered. **Commits:** one commit at completion on the default branch; partial receipts stay on your session's own branch or uncommitted, never on the default branch. This replaces any sentence below about pushing partial receipts.
+
 **Repository:** `ChangweiZhou/digitalbaby`, branch `codex/minifly-consolidated-20261023`. Fetch and check out; confirm this file is present and **start from the branch head**: the harness was corrected after the 10 November source audit and every receipt now carries a credit census, strict-panel scores, exposure counts and hashes. **Folder:** `MOD97_LOCAL_RULE_20261106/`. Python 3, PyTorch on CPU, NumPy. One job per worker; say which in your first message.
 
 **Branch rule.** Commit to `codex/minifly-consolidated-20261023` if your session can push there (pull with `--rebase` first, never force, at most one push an hour while runs are in flight); otherwise to the branch your session is given, named in your last message. No other branch.

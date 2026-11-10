@@ -1,5 +1,7 @@
 # One read-only job for a Claude Opus 5.5 worker: literature check on learning and memory at several timescales (10 November 2026, 14:15 EST)
 
+> **Status under the process rules of 10 November (review 9.82).** Read-only; it may start without an audit of the brief. Its memo is audited like any other deliverable. **Commits:** one commit at completion on the default branch; partial receipts stay on your session's own branch or uncommitted, never on the default branch. This replaces any sentence below about pushing partial receipts.
+
 **Repository:** `ChangweiZhou/digitalbaby`, branch `codex/minifly-consolidated-20261023`. **This job runs no experiment and edits no existing file.** It needs web access to read papers. If your session cannot open web pages, say so in your first message and stop: a review written from memory is not wanted.
 
 **Branch rule.** Commit your deliverable to `codex/minifly-consolidated-20261023` if your session can push there (pull with `--rebase` first, never force); otherwise to the branch your session is given, and name the branch and commit in your last message. Do not create any other branch.

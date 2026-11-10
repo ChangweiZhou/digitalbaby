@@ -1,5 +1,7 @@
 # One cloud job for a Claude Opus 5.5 worker: E18b, every next byte as the target (10 November 2026, 18:15 EST)
 
+> **Status under the process rules of 10 November (review 9.82).** Not audited by Codex, and on hold: the every-byte lives now running on the owner's machine (predictions P-E.1–4) report first, because this job reads differently depending on them. **Commits:** one commit at completion on the default branch; partial receipts stay on your session's own branch or uncommitted, never on the default branch. This replaces any sentence below about pushing partial receipts.
+
 **Repository:** `ChangweiZhou/digitalbaby`, branch `codex/minifly-consolidated-20261023`. Fetch, check out, **start from the branch head**, and confirm this file is present. **Folder:** `MOD97_LOCAL_RULE_20261106/`. Python 3, PyTorch on CPU, NumPy. A small job for one worker: six births. It has lower priority than E20; run it on an instance that would otherwise be idle.
 
 **Branch rule.** Commit to `codex/minifly-consolidated-20261023` if your session can push there (pull with `--rebase` first, never force, at most one push an hour while runs are in flight); otherwise to the branch your session is given, named in your last message. No other branch.
