@@ -115,6 +115,13 @@ assert PROJFB16 == "raw" or (TRACEUP16 == "proj" and FEEDBACK16 == "sign"), "E16
 FIXEDCODES16 = os.environ.get("E16_FIXEDCODES", "off"); assert FIXEDCODES16 in ("on", "off")
 assert FIXEDCODES16 == "off" or ARCH16 != "window", "E16_FIXEDCODES is defined for the E17 architectures only"
 OUTTAG16 = os.environ.get("E16_OUTTAG", ""); assert re.fullmatch(r"[A-Za-z0-9_]*", OUTTAG16)
+#   E16_COMPGAP=<k>          (E20, 10 Nov) 0..k distractor letters after each operator of a composition prompt, in teaching and in the panels.
+#                           Without it a composition prompt is exactly ten bytes, the width of the window learner's window, so that learner
+#                           composes with every operand in view; with it the first operand and operator must be carried in memory. Tag _cg<k>.
+#                           The same held triples are also scored without letters (compose_nogap). Raw or oracle replay, or arm D.
+COMPGAP16 = int(os.environ.get("E16_COMPGAP", "0")); assert 0 <= COMPGAP16 <= 12
+CGTAG = f"_cg{COMPGAP16}" if COMPGAP16 else ""
+COMP_NOGAP = [None]
 LAST_AUX = [None]      # the first bank's head loss of the last update (the logged loss is the main head's)
 BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
 assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
@@ -207,9 +214,10 @@ CAP = 6   # longest answer: i i ; f f EOS
 
 
 # ---------------------------------------------------------------- items: an entry is replayable; render makes the bytes
-def render_pair(o1, o2, a, b, c):
+def render_pair(o1, o2, a, b, c, rng=None):
     i = E.apply(SYM_OP[o1], 97, a, b); f = E.apply(SYM_OP[o2], 97, i, c)
-    prompt = list(b"c" + f"{a:02d}".encode() + o1.encode() + f"{b:02d}".encode() + o2.encode() + f"{c:02d}".encode() + b"=")
+    gap = (lambda: bytes(rng.choice(E.DISTRACT) for _ in range(rng.randint(0, COMPGAP16)))) if (COMPGAP16 and rng is not None) else (lambda: b"")
+    prompt = list(b"c" + f"{a:02d}".encode() + o1.encode() + gap() + f"{b:02d}".encode() + o2.encode() + gap() + f"{c:02d}".encode() + b"=")
     return prompt, list(f"{i:02d}".encode()) + [ord(";")] + list(f"{f:02d}".encode()) + [EOS]
 
 
@@ -220,7 +228,7 @@ def render(entry, rng):
         _, task, a, b = entry
         return E.render(task, a, b, rng.randint(0, KMAX), rng)
     _, o1, o2, a, b, c = entry
-    return render_pair(o1, o2, a, b, c)
+    return render_pair(o1, o2, a, b, c, rng)
 
 
 def triples(pair, seed, n, exclude=frozenset(), split="taught"):
@@ -312,6 +320,12 @@ def panels(seed):
     all_taught = frozenset().union(*taught.values())
     comp = {f"{o1}{o2}": [render_pair(o1, o2, *tr) for tr in triples((o1, o2), seed, 600, exclude=all_taught, split="held")] for o1, o2 in HELD_PAIRS}
     comp["within"] = [render_pair(*p, *tr) for p in TAUGHT_PAIRS for tr in triples(p, seed, 50, exclude=all_taught, split="within")]
+    COMP_NOGAP[0] = None
+    if COMPGAP16:      # the same triples with letters, drawn once per panel item from a generator of its own; the letter-free version is kept
+        COMP_NOGAP[0] = comp; g = Random(f"compgap|{seed}|{COMPGAP16}")
+        gapped = {f"{o1}{o2}": [render_pair(o1, o2, *tr, g) for tr in triples((o1, o2), seed, 600, exclude=all_taught, split="held")] for o1, o2 in HELD_PAIRS}
+        gapped["within"] = [render_pair(*p, *tr, g) for p in TAUGHT_PAIRS for tr in triples(p, seed, 50, exclude=all_taught, split="within")]
+        comp = gapped
     return P, comp
 
 
@@ -361,7 +375,8 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 def life(arm, seed):
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
-    path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
+    path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{CGTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
+    assert COMPGAP16 == 0 or arm == "D" or REPLAY16 in ("raw", "oracle"), "E16_COMPGAP needs raw or oracle replay (other stores parse fixed positions)"
     m = E.new_net(seed)
     birth_file = OUT / (f"e11_dev_M_{seed}.pt" if ARCH16 == "window" else f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{E.DEVTAG}_{seed}.pt")
     import hashlib
@@ -392,14 +407,16 @@ def life(arm, seed):
         res["silenced_compose"] = {n: score(m, it, store, silence=True) for n, it in comp.items() if n != "within"}
         if HEADS16 != "top":
             res["head1_k12"] = {n: head1(score, m, pk[12], store) for n, pk in P.items()}
+        if COMP_NOGAP[0] is not None:
+            res["compose_nogap"] = {n: score(m, it, store) for n, it in COMP_NOGAP[0].items()}
         res["strict_k12"] = {n: score(m, it, store) for n, it in SP.items()}          # 10 Nov audit: no reversal taught, no taught sub-step
         if store is not None:       # 10 Nov audit: what the network answers without the score-time store, so arms with and without one can be compared
             res["nostore_k12"] = {n: score(m, pk[12], None) for n, pk in P.items()}
             res["nostore_compose"] = {n: score(m, it, None) for n, it in comp.items()}
         return res
 
-    stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, nrep=NREP, batch=BATCH, heads=HEADS16, birthrule=BIRTHRULE16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, outtag=OUTTAG16,
+    stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(COMP_NOGAP[0] or comp),
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, nrep=NREP, batch=BATCH, heads=HEADS16, birthrule=BIRTHRULE16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, outtag=OUTTAG16, compgap=COMPGAP16,
                                      panel_sha256=panel_sha(P, comp, SP), strict_panel_counts=strict_counts, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None

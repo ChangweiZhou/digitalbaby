@@ -1179,3 +1179,21 @@ Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit 
 **Fixed in the harness** (defaults reproduce earlier receipts; two archived dry receipts reproduce score for score and loss for loss): a credit census by symbol role in every life and birth, with embedding movement from initialisation per checkpoint; both head losses logged; strict panels and no-store scores in every receipt; rows and supervised tokens by origin and family per stage; panel hash, replay rows per batch, and a completion record naming the hash of the saved weights; births refuse an existing checkpoint whose receipt is missing or differs, and refuse an every-byte loss; a replay share whose tag does not determine its row count is refused; the isolation check fails on its numbers and includes a fixture that must leak; the summarizer joins arm and comparator on recorded fields and lists mismatches; a lock that is created exclusively with a unique token, and a launcher that records each job's exit code.
 
 **Not fixed, and why.** The E19 items (rate buffers against constants, a streaming inference check, the control arm's memory) are in the worker's files on its branch, mid-run; they are in the addendum and will be applied at merge. Old receipts are not rewritten. Persistent state across records, and the audit's fifth point on durable learning, are design questions, not defects.
+
+## 9.76 A decision on direction: composition from memory comes before more rule and replay variants (10 November 2026, 16:00 EST)
+
+**What the receipts say when taught and untaught compositions are read apart** (end of life, whole worked answers):
+
+| Learner | Taught compositions | Untaught plus-minus pairs | Untaught comparison pairs |
+|---|---|---|---|
+| Window reference, backprop (200003 / 300007 / 400009) | 92.8 / 91.5 / 92.5 | 88.8 / 85.2 / 88.8 | 98.3 / 96.2 / 98.0 |
+| Window learner, sign rule | 77.5 / 84.5 / 82.8 | 67.8 / 66.0 / 44.7 | 89.1 / 88.2 / 76.0 |
+| Windowless two-bank reference, backprop (73129 / 93683 / 116089) | 48.7 / 58.5 / 51.7 | 0.8 / 6.8 / 2.9 | 22.2 / 23.1 / 25.4 |
+| Windowless, backprop on the learner's pipeline | 36.3 / 42.5 / 40.2 | 0.8 / 3.8 / 1.8 | 19.0 / 20.0 / 26.8 |
+| Windowless, weight signs with credit through time | 16.5 / 24.2 / 25.5 | 0.4 / 2.4 / 1.0 | 19.9 / 20.4 / 20.7 |
+
+**The fact that explains the table.** A composition prompt is ten bytes (`cAA+BB-CC=`) and the window learner's window is ten bytes. At `=` the whole prompt is in view; when the final answer is written, the second operator, the third operand and the intermediate result are in view. The window learner has never had to remember an operand in order to compose. The windowless learner must remember all of them, and under backprop it half-learns the compositions it is taught and does not transfer at all; its comparison pairs sit below the 66–69% that ignoring one operator would give.
+
+**The decision, mine.** The project's open problem at this point is not a learning rule and not a replay setting: no learner on file composes from memory. E18, E19 and E16-M4 are left to finish and will be filed, but no further credit-rule or replay-share variant is commissioned until that is answered. Two jobs are briefed (`OPUS_TASK_E20_COMPOSITION_FROM_MEMORY_20261110.md`): E20-A puts distractor letters inside composition prompts so that the window learner, its reference and the windowless reference must carry an operand; E20-B asks whether any ordinary windowless recurrent network of the same size composes from memory under backprop, with one added loop between the banks as the third arm. Backprop is used there as a reference for what can be computed, not as a candidate. The promotion test proposed in the status note of 10 November is not taken up now: an assay of learn, revise and act is premature while the simplest composition from memory has no positive reference; it is the owner's to overrule.
+
+**What this changes in earlier wording.** Wherever this review says the learner "composes", read "composes with every operand in view". The Phase A gate stands as registered and is a gate on that.
