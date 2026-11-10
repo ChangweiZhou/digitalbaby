@@ -77,10 +77,20 @@ if FEEDBACK16 == "exact":
     E.forward = lambda m, x, local=False, through_time=False, keep=False, silence=False: _fwd16(m, x, False, through_time, keep, silence)
 #   E16_TRACEUP=none|proj    (E17 Phase 1d): proj extends the scan trace one layer upstream, to the projection feeding each bank's write (lp2; lp when
 #                           the first bank learns), replacing its within-step credit by the exact credit through time given Lambda (arch17.TRACEUP).
-TRACEUP16 = os.environ.get("E16_TRACEUP", "none"); assert TRACEUP16 in ("none", "proj")
+#   E16_TRACEUP=all          (E17 Phase 4, 10 Nov): credit carried through time at EVERY layer, still delivered through sign(W) at each layer
+#                           (the sign rule's own feedback): the first bank's projection, the first layer and the embeddings get the same
+#                           through-time credit the write synapses always had, and the first bank receives the second bank's credit through time.
+#                           Computed as a backward pass over the item with sign-of-weight feedback (forward kept through time, local=True);
+#                           the scan is then redundant and is switched off. Arm T, sign feedback only (with exact feedback it would be arm M). Tag _tall.
+TRACEUP16 = os.environ.get("E16_TRACEUP", "none"); assert TRACEUP16 in ("none", "proj", "all")
 assert TRACEUP16 == "none" or ARCH16 != "window", "E16_TRACEUP is defined for the E17 architectures only"
+assert TRACEUP16 != "all" or FEEDBACK16 == "sign", "E16_TRACEUP=all with exact feedback is backprop through time: use arm M"
 if ARCH16 != "window":
     arch17.TRACEUP = TRACEUP16 == "proj"; arch17.FB_SIGN = FEEDBACK16 == "sign"
+if TRACEUP16 == "all":
+    _fwd16all = E.forward
+    E.forward = lambda m, x, local=False, through_time=False, keep=False, silence=False: _fwd16all(m, x, local, (True if local else through_time), (False if local else keep), silence)
+    E.trace_grads_scan = E.trace_grads = lambda m, it: None      # the backward pass already carries the credit through time
 #   E16_BOOKDECAY=on|off     (9 Nov audit, Fable 5.2 memo section 3): under the local arms the byte embeddings of every prompt symbol that enters only
 #                           through the state (operators, letters, task codes) receive no gradient, and AdamW's decay erased them (factor 0.215 per
 #                           block), which confounds E17 Phases 1-1c. "off" puts `book` in a no-decay group in lives AND births (birth file tagged
@@ -88,7 +98,7 @@ if ARCH16 != "window":
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
 assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
-ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "")
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else "")
 
 
 def adamw16(m, lr, wd, frozen=()):

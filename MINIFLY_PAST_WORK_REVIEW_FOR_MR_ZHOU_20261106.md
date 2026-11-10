@@ -1016,3 +1016,81 @@ The memo is read-only work from committed receipts and weights, with three scrip
 **Reading.** The windowless two-bank learner under the most local arm that stands or falls with the sign rule (frozen first bank, sign feedback, extended trace) reaches about nine tenths of its backprop twin on the operations and, like the twin, composes nothing. The two open questions for Mr. Zhou are unchanged by Phase 3 and sharpened by it: whether a sign-of-weight feedback relayed layer by layer counts as "full circuit propagation" (9.60, cases A and G), and whether a learner whose first bank must be frozen after a backprop birth meets the project's aim. Evidence level E2 throughout; no reuse on never-reinforced inputs is claimed. No further Mac run is queued.
 
 **Cost and pace.** CPU-seconds per life: exact feedback alone 4,840–4,878; trace alone 5,129–5,152; embeddings alone frozen 5,574–5,602. Wall 23:21:40 to 00:57:03 EST, 1 h 35 min for nine processes, 40 min under the forecast of 2 h 15 min (made from Phase 2's twelve-process pace). The launcher released the lock at 00:57:03 with all nine lives complete.
+
+## 9.62 E16-F7 (cloud session, 10 November 2026, 03:14–08:52 UTC): six more drift seeds; the signature S separates the known failures and does not rank (`MOD97_LOCAL_RULE_20261106/E16F7_REPORT.md`)
+
+**What ran.** The whole of Job 1 of the 9 November brief in one session: six new births (1100009, 1200007, 1300021, 1400017, 1500007, 1600033), each with a drift learner (sign rule, raw reservoir 65,536, online admission) and a drift twin. Predictions committed at d96129c7 before the births; harness unchanged at e78aa83e; receipts at 41f2ba2a. The numbers below were recomputed here from the eighteen pairs of receipts and agree with the worker's tables to the digit.
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| P16F7.1 births ≥ 85 at k = 12 | lowest 86.3 (sub89, 1400017) | holds |
+| P16F7.2 twin ≥ 90 / 85 / 90 | lowest twin means 93.7 / 91.2 / 92.2 | holds |
+| P16F7.3 at least 4 of 6 at ≥ 0.80 on all three families | 6 of 6; 1600033 by 0.005 on mod-97 | holds |
+| P16F7.4 the signature S, both clauses | threshold clauses hold; Spearman over eighteen seeds 0.109 against 0.35 | **misses** |
+| P16F7.5 hard pairs ≤ 2 of 6, family gate ≥ 4 | 1 of 6 on `+-`/`-+`, 6 of 6 on the family gate | holds |
+
+**What it says.**
+
+1. *The pass rate under drift is 16 of 18 on family means and 4 of 18 on the hard pairs alone.* The learner's mean on `+-`/`-+` over the eighteen seeds is 64.8 against the twin's 87.5. The pre-registered gate is not rewritten; both counts are quoted wherever the gate is.
+2. *S is not an early-warning measure.* The threshold clauses hold, but the only seeds below 65 are the two failures S was chosen on; no new seed tested the low clause. Among the six new seeds S ranks almost in reverse (Spearman −0.71, exploratory): 1400017 has S 65.2 and the best final `+-` of all eighteen (79.0); 1200007 and 1300021 have S near 82 and end at 49.7 and 51.5. The reading written in the brief beforehand applies as written: S separates failures and does not rank the passing seeds. It is dropped from later designs.
+3. *A second failure pattern, seen in two seeds.* In 600013 and 400009 the mod-97 operations fell as the compositions entered. In 1200007 and 1300021 the operations held and `+-` was lost later, 15 and 30 points during the mod-73 blocks, after the window S looks at. 1200007 passes the family gate with `+-` at 49.7, level with the failing 400009. This is a description of two streams, not a mechanism; 9.64 measures the handle that bears on it.
+
+**Cost.** 79,218 CPU-s over eighteen runs (births 3,051–3,164, learners 5,329–5,402, twins 4,643–4,848), 5 h 37 min of wall on a 4-core 2.10 GHz cloud container, 4% over the worker's forecast; no restarts. Evidence level E2, one stream per seed; no learning-core claim. Section 9.63 is not used (the job was not split).
+
+## 9.64 E16-M3 (cloud session, 10 November 2026, 03:19–08:21 UTC): the replay share is a dose in the opposite direction (`MOD97_LOCAL_RULE_20261106/E16M3_REPORT.md`)
+
+**What ran.** The whole of Job 2 in one session: fourteen drift lives with the raw reservoir of 65,536. The sign rule at replay shares 0 / 0.25 / 0.75 on 400009, 600013 (the two failing seeds) and 300007 (a pass); backprop on the same pipeline at 0.25 / 0.75 on the two failing seeds, and at 0.5 on 600013. Predictions committed at bec6d07f before launch; harness unchanged; the branch `claude/vibrant-gauss-tops5f` was merged here at cf2fea36 (72 files added, none changed). The share curves were recomputed here from the receipts and agree.
+
+Hard pairs (`+-`/`-+` mean, final answer) at the last checkpoint, by replay share:
+
+| Seed | Rule 0 | Rule 0.25 | Rule 0.5 | Rule 0.75 | Backprop 0.25 | Backprop 0.5 | Backprop 0.75 | Twin |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 400009 | 1.2 | 43.7 | 46.3 | 73.2 | 78.2 | 84.7 | 88.1 | 89.1 |
+| 600013 | 1.0 | 23.3 | 44.8 | 60.2 | 71.9 | 81.8 | 86.7 | 91.2 |
+| 300007 | 1.1 | 59.2 | 67.7 | 75.7 | | | | 85.8 |
+
+| Prediction | Verdict |
+|---|---|
+| P16M3.1 share 0 ends below 0.80 on mod-97, at least 10 under share 0.5 | holds, all three (ratios 0.35 / 0.32 / 0.13) |
+| P16M3.2 less replay helps the rule's hard pairs, more hurts | **misses in both failing seeds, reversed**: 0.75 is 27 and 15 points above 0.5 |
+| P16M3.3 backprop flat across shares | **misses at 0.25** (6 and 10 under 0.5); holds at 0.75 |
+| P16M3.4 the passing seed passes at both shares, 0.25 above 0.75 | **misses**: compositions 0.796 at 0.25; hard pairs 59.2 against 75.7 |
+
+**What it says.**
+
+1. *My premise was wrong.* I read E16-M2's result (the reservoir costs the rule 14–20 points that it costs backprop nothing) as too much verbatim replay. The receipts say the reverse: within 0.25–0.75, more replay is better for both updates and much better for the rule (29 and 37 points across the range against backprop's 10 and 15).
+2. *The share works through retention, not acquisition.* At every share the hard pairs reach a similar peak by checkpoint 4 (the end of the composition blocks); lower shares reach it sooner. Only the higher shares keep them while the stream moves on to mod-73. That is the late-loss pattern of 9.62, item 3, and the same handle bears on it.
+3. *At share 0.75 a failing seed passes.* 400009 meets the family gate (0.93 / 0.87 / 0.97) and reaches 0.82 of the twin on the hard pairs alone. 600013 comes to 0.796 on compositions and 0.66 on the hard pairs. The passing seed 300007 rises to 0.88 on the hard pairs. One life per seed and share: a direction, not yet a setting.
+4. *Without replay everything before the current mixture is lost.* Share 0 ends at about 1% on the hard pairs from peaks of 59–85, and at 0.13–0.35 of the twin on mod-97. Under the sign rule this learner has no retention of its own; the reservoir is doing all of it. That bears on the project's aim directly and is stated here so that the passing gate is not read as more than it is.
+
+**Not tested.** The curve has not flattened at 0.75, and fewer fresh items per batch slow acquisition (the hard-pair peak at checkpoint 3 in 400009 falls from 57 to 41 between 0.5 and 0.75). Where the curve turns, and whether 0.75 helps seeds it was not found on, are the next cloud job (E16-M4, brief of 10 November).
+
+**Cost.** Rule lives 5,132–5,441 CPU-s, backprop lives 4,665–4,733; 5.0 h of wall on a 4-core cloud container, 3–9% over the worker's forecast on the rule lives; nothing failed. Evidence level E2; no learning-core claim. Section 9.65 is not used.
+
+## 9.67 Mr. Xu's two answers of 10 November, what they change, and E17 Phase 4 prepared (10 November 2026, 10:30 EST)
+
+**The answers, in Mr. Xu's words.** To the two questions that closed 9.66: "Since biological animal does not have first bank frozen, I do not feel this meet the aim. The feedback relayed layer by layer or by some sub-network / hyper-connection etc is fine." As in 9.60, these are filed as Mr. Xu's, who directs this session, and not as Mr. Zhou's; they are adopted as the working rule for design until Mr. Zhou says otherwise.
+
+**What they change.**
+
+1. *Case A and case G of 9.60 are inside the line for design purposes.* Sign-of-weight feedback relayed layer by layer is allowed, and so is a separate feedback pathway (a sub-network or direct long-range connections that carry the error). The stop in 9.60 on new sign-rule lives is lifted for prepared designs; runs on the Mac still launch on Mr. Xu's go. My reading of what stays outside, for correction: an update that needs the exact forward weights on the way back (weight transport), which no arm now depends on, since Phase 3 showed the trace and not exact feedback carries the closure.
+2. *A learner with a frozen first bank is not a candidate.* The frozen arms of E17 Phases 1b–3 stand as diagnostics. The claim in 9.66, item 2, that the first bank "has to be born by backprop and frozen" was a statement about the rule as implemented, and the measurement below says which part of the implementation it was about.
+3. *The learner of E16 already meets the first answer.* On the window architecture nothing is frozen (`freeze: none`, `frozen: []` in every receipt): every layer learns in life under the sign rule, and it passes the family gate in 16 of 18 drift seeds. The frozen bank arose only in E17, when the window was removed.
+4. *One point the answers do not settle, flagged before any run.* In a windowless learner the credit for a byte read early must reach the layers that read it after the item has moved on. Carrying it there is credit relayed back along the item in time as well as layer by layer. In the harness that is a backward pass over the item (bounded by the item's length) with sign-of-weight feedback at each layer; a forward-only form exists for these fixed-rate banks but needs, for every synapse above a write, one trace per bank unit. Plainly said, the Phase 4 arm below is backprop through time over one item with weight signs in place of weights. Whether that is acceptable is Mr. Xu's and Mr. Zhou's call; Phase 4 launches only on the go, and the go is read as accepting it for a diagnostic.
+
+**Why the rule destroys the first bank: measured at birth (`exp45/E17_ALIGN_AT_BIRTH.md`, read-only, no training).** Cosine between each rule's update and the true gradient (backprop through time) on 256 first-block items, per layer, seeds 73129 / 93683 / 116089:
+
+| Layer | Sign rule as run | Trace to the write projection (Phase 3) | Exact feedback, same truncation | Sign feedback, credit through time at every layer |
+|---|---|---|---|---|
+| embeddings | 0.13 / 0.28 / 0.32 | same | 0.20 / 0.33 / 0.36 | 0.51 / 0.77 / 0.53 |
+| first layer | 0.24 / 0.16 / 0.32 | same | 0.32 / 0.24 / 0.41 | 0.47 / 0.60 / 0.45 |
+| first bank's projection | 0.09 / −0.06 / 0.05 | 0.54 / 0.61 / 0.34 | 0.08 / −0.01 / 0.26 | 0.81 / 0.78 / 0.55 |
+| first bank's write | 0.55–0.67 | same | 0.59–0.88 | 0.71–0.78 |
+| second bank's projection | 0.52–0.57 | 0.78–0.80 | 0.57–0.66 | 0.78–0.80 |
+| second bank's write, readout | 0.65–0.81 | same | 1.00 | same as the sign rule |
+
+The first bank's projection gets an update uncorrelated with the gradient, and the embeddings and first layer one barely correlated, and exact feedback does not repair it: the damage is the truncation of credit in time, not the weight signs. Under the rule as run, everything above a write learns from the current step only, so a byte that matters later is credited for nothing or for the wrong thing, and the optimizer's per-weight scaling turns those directions into full-size steps. With credit carried through time at every layer and the feedback still by weight signs, every layer is at 0.45–0.81. The window architecture never met this because the window keeps the operands in view within the step.
+
+**E17 Phase 4, prepared, not launched.** New harness option `E16_TRACEUP=all` (tag `_tall`): sign feedback with credit through time at every layer. Checked (`e17p4_check.py`, `exp45/E17P4_CHECK.json`): on the layers that already had through-time credit it reproduces the plain sign rule's gradient to 2e-7; it equals a direct computation exactly; 48.7 ms per update against the plain rule's 54.7 and backprop's 49.4. Nine lives on the Mac, seeds 73129 / 93683 / 116089, `bank2`, embeddings out of decay, nothing frozen, raw reservoir 65,536 at block admission and share 0.5 as in Phases 2–3: the new arm (`T_bank2_nbd_tall`); the Phase 3 trace with nothing frozen (`T_bank2_nbd_tup`, the control for whether one layer of extension is enough); backprop on the learner's own pipeline (`M_bank2_nbd`, the pipeline's ceiling). Comparator: the unfrozen twin `D_bank2_nbd` on file (92.3 / 93.7 / 93.3 on mod-97, 92.6 / 91.6 / 91.9 on mod-73 after block 6). Dry runs of the three commands pass seven stages (`exp45/archive_e17p4_dry/`); under the one-layer trace 36 of 47 embedding rows in the first batch still get no gradient, under the new arm 2 (the padding rows), as under backprop. Predictions P17.4.1–5 are in `E45_PREDICTIONS.md`. Forecast: about 2 h 20 min of wall for nine processes (range 2 h to 2 h 40), from the Phase 2 and Phase 3 paces and the measured cost per update. Launcher `e17p4_lives.sh`.
+
+**The audit session's roadmap note** (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/ROADMAP_NOTE_20261110.md`, branch claude/vibrant-cerf-sje726 at 9f0ed126) is on file as a reference and decides nothing. Two of its points bear on today and are noted: it advises no new sign-rule lives until the propagation ruling is in, which Mr. Xu's answer now supplies for design purposes; and it asks whether births may use full backprop (its section 6), which no answer on file addresses and which every birth so far assumes.
