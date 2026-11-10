@@ -66,8 +66,8 @@ if ARCH16 != "window":
 PFX = "e16" if ARCH16 == "window" else "e17"
 #   E16_FREEZE=none|bank1  (E17 Phase 1b): bank1 freezes the first bank's write path (l1, lp, lc, lw) after birth; only the second bank, the
 #                           projections from the first bank's state and the readout learn in life. Separates the truncated first-bank trace from the rest.
-FREEZE16 = os.environ.get("E16_FREEZE", "none"); assert FREEZE16 in ("none", "bank1")
-assert FREEZE16 == "none" or ARCH16 == "bank2", "E16_FREEZE=bank1 is defined for bank2 only"
+FREEZE16 = os.environ.get("E16_FREEZE", "none"); assert FREEZE16 in ("none", "bank1", "book")   # book (E17 Phase 3, 9 Nov 22:45 EST): the embedding table alone frozen after birth, both banks learning; tag _frzb
+assert FREEZE16 == "none" or ARCH16 == "bank2", "E16_FREEZE=bank1|book is defined for bank2 only"
 #   E16_FEEDBACK=sign|exact  (E17 Phase 1c): exact replaces the sign-symmetric feedback through every layer by the true transpose (SignLinear -> linear)
 #                           while the state synapses still learn from the eligibility trace (through_time stays off for arm T): separates the error
 #                           signal delivered to the state from the trace that credits its synapses. Arm T only; D and M already use exact feedback.
@@ -88,7 +88,7 @@ if ARCH16 != "window":
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
 assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
-ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + ("_frz1" if FREEZE16 == "bank1" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "")
+ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + ("_tup" if TRACEUP16 == "proj" else "")
 
 
 def adamw16(m, lr, wd, frozen=()):
@@ -263,6 +263,7 @@ def life(arm, seed):
     local = arm not in ("D", "M")
     admits = local or arm == "M"       # arm M keeps T's whole data pipeline, including online admission (9 Nov: before this line M admitted at block ends only)
     FROZEN = ((("book.",) if BOOKDECAY16 == "off" else ()) + ("l1.", "lp.", "lc.", "lw.")) if FREEZE16 == "bank1" else ()
+    if FREEZE16 == "book": FROZEN = ("book.",)
     opt = adamw16(m, .001, (E.WD if arm != "D" else .3), FROZEN)
     store = X.Store(seed) if (local and STORE16 == "on") else None
     rule = "D" if arm == "M" else arm      # arm M: T's data pipeline, D's update
