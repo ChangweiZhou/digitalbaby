@@ -5,7 +5,7 @@
 ## 文件结构
 
 - `SKILL.md`：代理主指令；严格执行“证据快照 → 定位瓶颈 → 预注册 → 资格检查 → 最小实验 → 敌意审计 → 下一步”。
-- `references/minifly-evidence.md`：E16/E17/Fable 5.2 等七个具体案例和源码链接。
+- `references/minifly-evidence.md`：E16/E17/Fable 5.2 等十一个具体案例和源码链接。
 - `assets/experiment_contract.example.json`：可程序检查的预注册实验契约示例。
 - `assets/evidence_ledger.template.md`：事实、失败与撤回结论的证据账本。
 - `assets/result_report.template.md`：包含 seed 级数值、对照是否真正匹配、证据来源的结论模板。
