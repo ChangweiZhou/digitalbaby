@@ -1249,3 +1249,42 @@ Claims 2 and 3 of my answer to Mr. Xu, and the corresponding lines of the audit 
 **Decision.** The two one-factor controls for this line (the kept relay with the extra head; identical fixed input codes) are defined and not commissioned: by 9.76 no further credit-rule variant runs until composition from memory has an answer. What E18 changes for that work is one thing: a learner can now be born by the rule it lives under.
 
 **Cost.** 65,118 CPU-s for twelve births, 4 h 39 min of wall on a four-core cloud container, 5–6% over the worker's forecast; no restarts. Evidence level E2 on development panels held out by ordered pair; births only: no life, no retention, no composition is tested.
+
+## 9.81 The twelve repeats on the corrected panels (10 November 2026, 14:27–16:45 EST; `MOD97_LOCAL_RULE_20261106/exp45/E16_AUDIT_TABLES.md`)
+
+**What ran.** Twelve window-learner lives on the owner's machine, launched on Mr. Xu's go after the first source audit, receipts tagged `_cp`, originals untouched. Every job exited with code zero; every receipt has seven stages, a completion record and a weight hash that matches its file; every comparison below is between receipts with the same panel hash; and the arms of each staged seed start from the same composition score at checkpoint zero (24.17; 24.58), which the original receipts did not.
+
+**Drift, the three development seeds (73129 / 93683 / 116089), learner against reference.**
+
+| | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Ratios to reference, mod-97 · held pairs · mod-73 | 0.97 · 0.86 · 0.99 | 0.93 · 0.87 · 0.96 | 0.84 · 0.86 · 0.97 |
+| Plus-minus pairs alone | 0.81 | 0.82 | 0.84 |
+| Whole worked answers | 0.84 | 0.84 | 0.83 |
+
+**Staged, seeds 400009 / 600013: learner, backprop on the learner's pipeline, reference; one machine, one panel.**
+
+| | 400009 | 600013 |
+|---|---|---|
+| Held-pair ratio to reference: sign-rule learner | 0.83 | 0.64 |
+| Held-pair ratio: backprop on the learner's pipeline | 0.98 | 0.94 |
+| Plus-minus pairs, learner / backprop on pipeline / reference | 67.4 / 86.8 / 90.4 | 46.6 / 80.9 / 89.2 |
+
+| Prediction | Result | Verdict |
+|---|---|---|
+| P-CP.1 all three drift seeds pass the family gate again | all nine ratios at or above 0.84 | holds |
+| P-CP.2 at most one of the three passes on the plus-minus pairs alone | 0.81 / 0.82 / 0.84: all three pass | **misses** |
+| P-CP.3 backprop on the pipeline at or above 0.90 on held pairs, the learner at least 0.10 below it, both staged seeds | 0.98 against 0.83; 0.94 against 0.64 | holds, both |
+| P-CP.4 the learner's held-pair mean with and without the store differs by under 1 point | identical to two decimals in all five learner lives | holds |
+
+**What it says.**
+
+1. *The eighteen drift seeds are now one population on one panel version:* 16 of 18 pass on family means, 5 of 18 on the plus-minus pairs alone, 12 of 18 on whole worked answers. Those are the counts to quote.
+2. *But the three development seeds are not like the other fifteen, and I predicted the opposite.* They pass every gate (3 of 3 on the hard pairs); the fifteen later seeds pass the hard-pair gate in 2 of 15. Two things differ between the groups and are confounded: the reservoir size was chosen on these three seeds as the smallest that met the gate in each of them (9.46), and they were born and run on the owner's machine while the fifteen ran on cloud containers. The honest estimate of how often this learner keeps its hard pairs is the fifteen seeds the settings were not chosen on: 2 of 15. The pooled 5 of 18 flatters it.
+3. *E16-M2's conclusion survives a common panel.* With the three arms on one machine and one panel, backprop on the learner's own reservoir and stream reaches 0.94–0.98 of the reference on held compositions and the sign rule 0.64–0.83. What the reservoir pipeline costs the rule it does not cost backprop. The withdrawal in 9.75 item 4 is lifted for this claim, on these new receipts; the original mismatched comparison stays withdrawn.
+4. *The score-time store plays no part in held compositions,* nor, as measured earlier, in held single operations. Comparisons between arms with and without it are not affected by it on these panels.
+5. *On the owner's machine the lives are deterministic:* the three drift repeats reproduce the original single-operation scores to the digit; only the composition panel changed, and the held-pair means moved by under a point.
+
+**Limits.** The `strict_k12` scores inside these twelve receipts were made by the first strict classifier, which was wrong (9.79); they are not used. Composition here is composition in view (9.76).
+
+**Cost.** Learners 6,275–6,307 CPU-s, backprop on the pipeline 5,718–5,742, references 5,675–5,807; 2 h 17 min of wall for twelve processes against a forecast of 2 h 45 (range 2 h 20 to 3 h 10), just under the range, with the E20 and E18b dry runs sharing the machine. The lock was released at 16:44:44.

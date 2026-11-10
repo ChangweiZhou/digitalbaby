@@ -18,9 +18,10 @@ F1n, F3n, H = [E.NAME(*t) for t in G.F1], [E.NAME(*t) for t in G.F3], ("+-", "-+
 pct = lambda d: 100 * d["exact"] / d["n"]
 rows, res = [], {}
 for s in SEEDS:
-    Tr = json.load(open(OUT / f"e16_life_T_raw65536_drift_online_{s}.json"))["stages"]; Dr = json.load(open(OUT / f"e16_life_D_drift_{s}.json"))["stages"]
+    cp = (OUT / f"e16_life_T_raw65536_drift_online_cp_{s}.json").exists() and "--original" not in sys.argv     # repeat on the corrected panels, if one exists
+    Tr = json.load(open(OUT / f"e16_life_T_raw65536_drift_online{'_cp' if cp else ''}_{s}.json"))["stages"]; Dr = json.load(open(OUT / f"e16_life_D_drift{'_cp' if cp else ''}_{s}.json"))["stages"]
     st = [x["settings"] for x in Tr if "settings" in x][-1]
-    ver = "corrected" if "keyed by split" in st.get("panels", "") else "original (pre-fix)"
+    ver = ("corrected" if "keyed by split" in st.get("panels", "") else "original (pre-fix)") + (" (repeat, owner's machine)" if cp else "")
     t, d = Tr[6]["scores"], Dr[6]["scores"]
     fam = lambda sc: (sum(pct(sc[n]["12"]) for n in F1n) / 4, sum(100 * sc["compose"][h]["final"] / sc["compose"][h]["n"] for h in H) / 4, sum(pct(sc[n]["12"]) for n in F3n) / 4)
     r = [a / b for a, b in zip(fam(t), fam(d))]
@@ -34,10 +35,12 @@ L = ["# E16 drift seeds: gates by panel version, and a strict held-out re-score 
 for s in SEEDS:
     v = res[s]; L.append(f"| {s} | {v['panel']} | {v['ratios'][0]:.2f} · {v['ratios'][1]:.2f} · {v['ratios'][2]:.2f} | {'pass' if v['family_gate'] else '**fail**'} | {v['hard_pair_ratio']:.2f} | {'pass' if v['hard_pair_gate'] else 'fail'} | {v['worked_ratio']:.2f} | {'pass' if v['worked_gate'] else 'fail'} |")
 L += ["", "| Stratum | Seeds | Family gate | Hard-pair gate | Worked-answer gate |", "|---|---:|---:|---:|---:|"]
-for name, sel in (("corrected panels", lambda v: v["panel"] == "corrected"), ("original panels (pre-fix)", lambda v: v["panel"] != "corrected"), ("all, mixed (as first filed)", lambda v: True)):
+for name, sel in (("corrected panels, cloud seeds (fifteen later seeds)", lambda v: v["panel"] == "corrected"), ("corrected panels, repeats of the three development seeds", lambda v: "repeat" in v["panel"]),
+                  ("original panels (pre-fix)", lambda v: v["panel"].startswith("original")), ("all seeds in this table", lambda v: True)):
     vs = [v for v in res.values() if sel(v)]
     L.append(f"| {name} | {len(vs)} | {sum(v['family_gate'] for v in vs)} | {sum(v['hard_pair_gate'] for v in vs)} | {sum(v['worked_gate'] for v in vs)} |")
-if "--receipts-only" not in sys.argv:
+L += ["", "The earlier part 2 of this file (a re-score on a resampled \"strict\" panel) is withdrawn; see `E16_EXPOSURE_STRATA.md`, which splits the same registered items by exposure."]
+if "--strict-resample" in sys.argv:
     L += ["", "## 2. Registered against strict held panels, final weights, k = 12, no score-time store", "",
           "Strict: a held pair is dropped if the operation is commutative and its reversal is taught, or (mod 97) if it is supervised as a step of a taught composition.", "",
           "| Seed | Learner mod-97: receipt (with store) | registered, no store | strict, no store | Reference mod-97: registered | strict | Ratio registered | Ratio strict | mod-73 ratio registered | strict |", "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
