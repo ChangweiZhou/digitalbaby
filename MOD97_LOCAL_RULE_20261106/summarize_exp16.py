@@ -20,8 +20,10 @@ LABEL = {"T": "T learner (uniform replay)", "D": "D twin (joint ground truth)", 
 
 
 E17_ARMS = ("T_cell1_raw65536", "D_cell1", "T_bank_raw65536", "D_bank", "T_bank2_raw65536", "D_bank2", "T_bank2_frz1_raw65536", "D_bank2_frz1", "T_bank2_frz1_xfb_raw65536", "M_bank2_frz1_raw65536", "T_bank2_frz1_tup_raw65536", "T_bank2_frz1_xfb_tup_raw65536", "D_bank2_nbd", "T_bank2_nbd_raw65536", "T_bank2_nbd_frz1_raw65536", "T_bank2_nbd_frz1_xfb_tup_raw65536")
-ARMS = ARMS + ("D_lossall",) + E17_ARMS
+RS_ARMS = tuple(f"{a}_raw65536_drift_online_rs{r}" for a in ("T", "M") for r in (0, 25, 75)) + ("M_raw65536_drift_online",)
+ARMS = ARMS + ("D_lossall",) + E17_ARMS + RS_ARMS
 LABEL["D_lossall"] = "D twin, loss on every byte"
+LABEL.update({a: f"E16-M3 {a[0]} raw 65,536, drift, replay share {a.rsplit('_rs', 1)[1] if '_rs' in a else '50'}%" for a in RS_ARMS})
 LABEL.update({"T_cell1_raw65536": "E17 cell1 (no window), raw 65,536", "D_cell1": "E17 twin, cell1", "T_bank_raw65536": "E17 bank (no window, fixed rates), raw 65,536", "D_bank": "E17 twin, bank",
               "T_bank2_raw65536": "E17 bank2 (two stacked banks), raw 65,536", "D_bank2": "E17 twin, bank2",
               "T_bank2_frz1_raw65536": "E17 bank2, first bank frozen, raw 65,536", "D_bank2_frz1": "E17 twin, bank2, first bank frozen", "T_bank2_frz1_xfb_raw65536": "E17 bank2 frozen, exact feedback", "M_bank2_frz1_raw65536": "E17 bank2 frozen, backprop on the learner pipeline", "T_bank2_frz1_tup_raw65536": "E17 bank2 frozen, trace to the projection", "T_bank2_frz1_xfb_tup_raw65536": "E17 bank2 frozen, exact feedback, trace to the projection", "D_bank2_nbd": "E17 Phase 2 twin, bank2, embeddings without decay", "T_bank2_nbd_raw65536": "E17 Phase 2 bank2, sign rule", "T_bank2_nbd_frz1_raw65536": "E17 Phase 2 bank2 frozen, sign rule", "T_bank2_nbd_frz1_xfb_tup_raw65536": "E17 Phase 2 bank2 frozen, exact feedback, trace to the projection"})
@@ -29,7 +31,7 @@ LABEL.update({"T_cell1_raw65536": "E17 cell1 (no window), raw 65,536", "D_cell1"
 
 def twin_of(arm):
     """The comparator shares the arm's stream and objective (audit, 8 Nov): drift -> D_drift, every-byte loss -> D_lossall, E17 arch -> its own twin."""
-    if arm.endswith("drift_online"):
+    if "drift_online" in arm:
         return "D_drift"
     if "lossall" in arm:
         return "D_lossall"

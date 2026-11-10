@@ -117,7 +117,13 @@ def zero_grad_report(m, x):
                 dead_rows=[chr(r) if 32 <= r < 127 else r for r in dead])
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
-RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "")   # off is the default for the windowless architectures
+#   E16_RSHARE=<fraction>  (E16-M3, 9 Nov 21:20 EST) the share of every batch drawn from the raw/total reservoir once it holds anything;
+#                           default 0.5 reproduces every receipt made before. Other values tag the receipt `_rs<percent>`. Raw/total replay only.
+RSHARE16 = float(os.environ.get("E16_RSHARE", "0.5")); assert 0.0 <= RSHARE16 <= 1.0
+assert RSHARE16 == 0.5 or REPLAY16 in ("raw", "total"), "E16_RSHARE is defined for the raw/total reservoirs only"
+NREP = round(BATCH * RSHARE16)
+RSTAG = "" if RSHARE16 == 0.5 else f"_rs{round(100 * RSHARE16)}"
+RTAG += ("_drift" if STREAM16 == "drift" else "") + ("_online" if ADMIT16 == "online" else "") + ("_lossall" if LOSS16 == "all" else "") + ("_nostore" if STORE16 == "off" and ARCH16 == "window" else "") + RSTAG   # off is the default for the windowless architectures
 F1 = E.LIFE                                                                        # mod 97: r t x n
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]   # mod 73 (E8's second four)
 SYM_OP = {v: k for k, v in E.SYM.items()}
@@ -275,7 +281,7 @@ def life(arm, seed):
         return res
 
     stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
-                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
+                       entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, birth=birth_file.name, birth_sha256=birth_sha, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
     fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
@@ -308,8 +314,8 @@ def life(arm, seed):
                 new = [next(cur) for _ in range(BATCH // 2)]
                 batch = new + rp; presented += new
             elif REPLAY16 in ("total", "raw") and fbuf:
-                rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(BATCH // 2)]
-                new = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH // 2)]
+                rp = [render(rng.choice(fbuf["all"]), rng) for _ in range(NREP)]
+                new = [(drift_item(si * STAGE_UPDATES - STAGE_UPDATES + u) if STREAM16 == "drift" else next(cur)) for _ in range(BATCH - NREP)]
                 batch = new + rp; presented += new
             elif fbuf and REPLAY16 != "share":
                 fams = sorted(fbuf)
