@@ -363,3 +363,10 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 ## Addendum, 11 November 18:29 EST (clock): fourth working ruling
 
 Mr. Xu: learned feedback weights are allowed (a separate backward pathway that learns by a local rule and never copies a forward weight). Exact weight transport stays outside the line. Recorded as an addendum to review 9.101. No mechanism is chosen; a source check comes first, and the alignment measurement comes before that.
+
+
+## Addendum, 11 November 18:33 EST (clock): E25 prepared (review 9.102)
+
+- The alignment measurement is written, with hand-written GRU and LSTM steps checked against the library layers on untrained networks (three seeds, all pass), and predictions P25.1 to P25.5 on file.
+- Not run. Seconds per file on the Mac, no training; waits for Mr. Xu's go.
+- Still to write: the brief for the target-test sizing sweep.

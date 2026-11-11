@@ -2123,3 +2123,23 @@ What is not yet ruled out is a change in the harness's birth path between 9 Nove
 
 
 **Addendum to 9.101 (11 November 2026, 18:29 EST by the clock): Mr. Xu's ruling on learned feedback weights.** Asked whether a feedback pathway is inside the line when its weights are separate from the forward weights, learn by a local rule and never copy a forward weight, Mr. Xu answered: "Yes, allowed". This is the fourth working ruling, beside the three of the addendum to 9.82. What it permits is a rule whose backward pathway is learned; exact weight transport stays outside the line, as before. What it does not do is choose a mechanism: the two the audit session names (a weight mirror, and Kolen and Pollack's rule as modified by Akrout and colleagues) are to be source-checked before either steers a design, and nothing is built on them until the alignment measurement of 9.101 D.2 says whether weight signs are enough in a GRU.
+
+
+## 9.102 E25 prepared: the sweep's alignment in a GRU, an LSTM and the two-bank network; predictions on file, nothing read yet (18:33 EST by the clock, 11 November 2026)
+
+The measurement adopted in 9.101 D.2. Script `MOD97_LOCAL_RULE_20261106/e25_alignment.py`, predictions `E25_PREDICTIONS.md`, launcher `e25_run.sh`. It trains nothing: the file contains no optimizer.
+
+**What it does.** On E20-B's saved births and end-of-life files, it computes each parameter's gradient twice, exactly and by the rule's sign path, and reports the cosine between the two. Under answer targets it also reports the cosine of the error at each state by steps back from `=`. The GRU and LSTM steps are written out by hand so that every linear map can run either way.
+
+**Fixtures, on untrained networks only** (`exp45/E25_FIXTURES_<seed>.json`, three seeds, all pass).
+
+- The written-out GRU and LSTM steps equal the library layers: outputs to 5e-7, every gradient to 2e-6 relative.
+- With two gates' recurrent weights swapped, the written-out step no longer matches the library, so the comparison can fail.
+- The sign path leaves the forward pass unchanged and the top layer's own gradient unchanged, and changes the recurrent matrix's gradient.
+- For the two-bank network the exact path equals the harness's backprop gradient exactly.
+
+**A baseline from the fixtures.** On untrained networks the state-error cosine is about 0.73 at `=` in all three. Twelve steps back it is 0.52 to 0.57 in the GRU, 0.47 to 0.58 in the LSTM, 0.59 to 0.64 in the first bank and 0.73 to 0.76 in the second. So even before training the recurrent networks lose more of the direction with distance than the banks do, and not catastrophically. Trained weights are what matters.
+
+**Predictions P25.1 to P25.5** are in the file with their readings. In short: the GRU loses at least half its alignment over twelve steps (60%); the first bank keeps at least 0.8 of its own (65%); the GRU is below the bank at twelve steps (65%).
+
+**Cost.** Seconds per file. It reads E20-B's 18 saved files for the three networks and waits for Mr. Xu's go, like any run on the owner's machine.

@@ -599,3 +599,8 @@ Recomputed by the coordinator from the twelve receipts (`e20a_coordinator_check.
 ## Addendum, 11 November 2026, 16:03 EST (clock): E24 predictions drafted
 
 P24.1 to P24.3 and their readings are in `OPUS_TASK_E24_EVERY_BYTE_CAUSE_20261111.md` at the repository root, a draft for Codex's audit. They are registered when the audited brief is released to a worker, and the worker copies them unchanged into `E24_PREDICTIONS.md` before any new arm starts. No E24 birth has been run at full dose; five dry births at 512 updates are in `exp45/archive_e24_dry/`.
+
+
+## Addendum, 11 November 2026, 18:33 EST (clock): E25, alignment of the sign sweep on E20-B's saved weights
+
+Predictions P25.1 to P25.5 and their readings are in `E25_PREDICTIONS.md`, written and pushed before any saved file is read. Script `e25_alignment.py` (fixtures pass for three seeds on untrained networks), launcher `e25_run.sh`. Not run: it waits for Mr. Xu's go.
