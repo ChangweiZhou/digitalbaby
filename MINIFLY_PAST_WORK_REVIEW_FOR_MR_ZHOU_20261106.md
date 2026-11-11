@@ -1520,3 +1520,91 @@ In no seed are both partners under the marks of P22.2, so this is not parity aft
 **What it does not say.** The learner is answer-supervised and replay-supported; it loses its unrehearsed birth operations however it was born (29–36 against 11–43 at the end, from 90–95); it does not compose (held pairs 13–15 in all six lives); beyond the trained gap it falls (at 40 distractors the mod-97 mean, which includes the max and min shortcut, is 34–43 for the rule-born and 32–49 for the partner); and under every-byte targets the same rule collapses (9.88). The promotion question is separate and untouched.
 
 **Cost.** About 4,400 CPU-s of updates and 300 of scoring per life; six processes, 1 h 22 min of wall against a forecast of 1 h 30 (range 1 h 15 to 1 h 50). The rule-born births cost 4,307–4,321 CPU-s each on a cloud container (9.71). Evidence level E2.
+
+
+## 9.74 Literature check on learning and memory at several timescales, and the answer to Mr. Zhou's question (cloud session's memo; filed 10 November 2026, 21:45 EST by the clock)
+
+Memo: `PROJECT_DOCUMENTS/LIT_CHECK_20261110/LITERATURE_CHECK_MULTI_TIMESCALE.md`. The worker's own paragraph follows unchanged; my reading is after it.
+
+This was a read-only job. About 25 primary sources were opened in the session, and the central numbers were checked against their raw text. It answers Mr. Zhou's question in three parts.
+
+- **The Hope paper is reading C, not oscillation.**
+  - Its "frequencies" are how often blocks of MLP weights are updated (Nested Learning, Sec. 7.1, Eqs. 70–71).
+  - Everything is trained by backprop (AdamW).
+  - The brain-wave hierarchy is cited as inspiration for ordering the levels; it is not tested.
+  - Its continual-learning gains appear only in a figure, on 3B–8B Llama backbones, against ICL, EWC and InCA. There is no replay baseline, no seed count, and no independent replication was found.
+- **Brain rhythms do not hold information for 120 s.** They run at about 0.5–150 Hz, and cortical intrinsic timescales are about 50–350 ms. Over seconds to minutes, the documented carriers are replay, ongoing neuromodulator activity and synaptic processes at several rates. In the fly, slow calcium oscillations in the MP1/MV1 dopamine neurons, about 0.05–0.3 Hz, gate long-term memory after spaced training (Plaçais et al. 2012).
+- **The five claims.**
+  1. Paper: confirmed in outline, corrected in detail.
+  2. Reading A: confirmed. The choice of rates matters, and in one controlled ablation (S4D) real decays lost 5–10 points to complex ones.
+  3. Reading C: confirmed, narrowed.
+     - Benna–Fusi chains (Kaplanis et al. 2018, 2 RL tasks, 3 runs) and a metaplastic hidden weight (Laborieux et al., six permuted MNIST tasks, about 97% against 8–13%, matching EWC without task boundaries) buy retention without rehearsal. Both are synapse-local and need no importance estimate.
+     - Nothing was tested on sequences, against a replay-share curve, or with sign-based credit.
+  4. Cost of non-element-wise recurrence: confirmed for forward-only credit. Under the backward-sweep rule of the 9.82 addendum, an inner loop costs K times the work per byte instead.
+  5. Fly parallel memories: confirmed (9.72). Oscillation's role: narrowed. Theta–gamma ordering is a supported hypothesis, and no function is shown for the fly's 10 Hz mushroom-body oscillation.
+
+Looped models match deeper ones at equal compute (Saunshi et al. 2025), so what an inner loop buys is parameters. No controlled test was found of oscillating units against plain decays for holding ordered items.
+
+**Suggestions, not decisions.**
+- A three-variable Benna–Fusi chain per synapse in the window learner, tested at replay shares 0–0.5 against learning-rate-decay and random-consolidation controls. Cost: 2 floats per synapse.
+- A shared 512×512 loop run K times per byte in the two-bank learner, against unshared layers at matched compute. Cost: about 262K weights and K× work per byte.
+- Complex retentions only if a failure is shown to be about order.
+
+The memo decides nothing.
+
+**My reading (coordinator).** I read the memo's summary, its verdict table and its suggestions. I did not reopen its sources.
+
+*The answer to Mr. Zhou.* Yes, people have worked on it, and under one word they have worked on three different things:
+
+- A. State held at several decay rates, so that something written long ago is still there when something new arrives.
+- B. Units that oscillate.
+- C. Weights that are updated or consolidated at several rates.
+
+The Hope paper is C, trained by backprop; its brain waves are a motivation, not a mechanism it tests. In the nervous systems the memo covers, information from two minutes ago meets information from now through synapses that change at several rates, through replay and through neuromodulators. The rhythms themselves are too fast to carry it.
+
+*Where this project stands on the three.*
+
+- A is built. The two-bank learner holds its state at five fixed retention rates, 0.5 to 0.999 (`arch17.py`, `RATES`).
+- B has no controlled evidence in its favour for holding items in order. It is not on our list and I do not add it.
+- C is absent from this line (E16 to E22): no weight in any of its learners has a slow companion. I have not checked the older MiniFly work for it.
+
+*Decisions.*
+
+1. C is the candidate for the protection-mechanism step of the next-steps note (9.82). The order of that note stays: the cost curve of retention against replay share comes first, and it waits for the resumable-lives branch (E21) to be merged. The reason is 9.88: at zero replay backprop loses everything too, so a protection mechanism has to be read against the replay-share curve under both updates, or a gain cannot be told from "a little replay was enough". The memo's first suggestion already has that shape (replay shares 0 to 0.5, two controls). It is not designed tonight.
+2. The inner loop (second suggestion) is not adopted now. The network decision waits for E20-B (9.76), and the memo's own finding is that a loop at equal compute buys parameters and nothing else that has been shown.
+3. Complex retention rates are not adopted. No failure on file has been shown to be about order.
+4. No expectation is borrowed. Nothing the memo found was tested on sequences, against a replay-share curve, or under sign-based credit. A prediction for any of these would be ours alone.
+
+Literature only; no result on file changes. The memo decides nothing and neither does this section beyond the four points above.
+
+
+## 9.84 Source check of Codex's delayed-observation memo, the reverse-replay remark and sign feedback through time (cloud session's memo; filed 10 November 2026, 21:45 EST by the clock)
+
+Memo: `PROJECT_DOCUMENTS/LIT_CHECK_20261110/SOURCE_CHECK_DELAYED_OBSERVATION.md`. The worker's own paragraph follows unchanged; my reading is after it.
+
+This was a read-only job. Every source cited was opened in the session.
+
+**The memo's seven precedents.** All seven say what the memo says they say. Four need a qualification:
+- CLAPP's "later views" are, in its image experiment, successive patches of a static image. Its fully local form was run on images only: 73.6% against CPC's 81.1%.
+- GIM's own context module uses backprop through time.
+- P-TNCN's 1.70 against 1.38 BPC comes from an arXiv-only paper that reports no seeds.
+- Fly sensory preconditioning appeared in behaviour only after 10 near-simultaneous pairings at a 1-s interval. One pairing, or a 30-s interval, did not produce it, and a reviewer called the behavioural effect weak.
+
+**The reverse-replay remark (3.1).** It holds for awake replay at the end of a run, which is compressed into hundreds of milliseconds and whose rate tracks reward in two labs. "Recent" is contested: one study found replay of paths not run for minutes, and of paths never run. No study opened disrupts reverse replay alone. Its role in credit assignment is proposed (Foster & Wilson 2006), modelled (Mattar & Daw 2018) and correlated with learning in humans (Liu et al. 2021), not shown causally. What the sources describe running backward is reactivated state activity, or value in the models; none describes an error signal.
+
+**The sign-feedback finding of 9.72 now reads more narrowly.** No study was found with sign feedback through recurrent weights or in a sequence model. One 2025–2026 preprint (Goupy et al.) applies unscaled sign symmetry in spiking ResNets trained by backprop through time over 4 steps. It falls to chance there (CIFAR-10: 10.0–10.8% against 87–92%; 8 seeds), but comes within about 1–3 points of backprop in the same paper's event-driven networks without time steps. A 2025 sign-symmetry preprint has since been withdrawn as making false claims.
+
+**Prediction of later observations under local rules.** Among the results opened, only Halvagal & Zenke's latent predictive learning reports a control that destroys temporal contiguity. On images it reduces the rule to the level of a purely Hebbian one. None uses the target shuffle within delay and frequency strata that the memo proposes.
+
+The memo decides nothing.
+
+**My reading (coordinator).** I read the memo's summary paragraph above and did not reopen its sources.
+
+1. *Codex's memo.* Its seven precedents say what it says they say. Two of the four qualifications matter for us: the cited greedy model uses backprop through time in its own context module, and the 1.70 against 1.38 comparison comes from a paper with no seeds. Neither changes a decision. The delayed-observation line (E18b) is on hold for a reason of our own: under every-byte targets the working rule collapses (9.88) and the cause is still open (9.89).
+2. *A requirement recorded for that line.* If a delayed-observation run is designed again, it carries a control that destroys temporal contiguity, in the form Codex's memo proposes (targets shuffled within delay and frequency strata). Among the published results the worker opened, only one has such a control at all.
+3. *Reverse replay is not support for the backward sweep.* What the sources describe running backward is reactivated state, or value in the models, and no study shows it causally assigning credit. The life rule's backward sweep over the item rests on Mr. Xu's working ruling (addendum to 9.82) and on nothing else. No section of this review cites reverse replay for it, and none should.
+4. *Sign feedback through time: our result stands alone.* Phase 4 (9.70) and E22 (9.85) carry sign feedback through time at every layer. The worker found no published study of that in a recurrent or sequence model, and one preprint in which unscaled sign feedback through four time steps of a spiking network falls to chance. Ours differs in three ways at once: the feedback is scaled by the layer's mean absolute weight (`exp3_state.py`, `SignLinear`), the units are not spiking, and the sweep covers one item. Which of the three matters is not known. The independent hand-written check (`e17p4_independent_check.py`) shows that the rule is what we say it is; it does not show that it holds elsewhere. Both results are three seeds, one task family, one network, and should be described as ours and unreplicated. A scaled-against-unscaled comparison would be one factor and cheap in compute, but the scaling sits in frozen shared code, so it would need its own switch and its own check. It is not queued.
+
+Literature only; no result on file changes.
+
+**Erratum to the headings filed on 10 November (9.68, 9.75 to 9.89): time-of-day labels.** Where a heading in those sections gives a single time of day rather than a run's interval, I wrote it without reading the clock, and it runs ahead of the commit by up to four hours (for example 9.87 says 23:00 EST and was committed at 19:41; 9.89 says 11 November 00:45 EST and was committed on 10 November at 21:03). The same holds for the addenda to `PROGRAM_STATE_20261107.md` labelled 20:30 EST on 10 November through 01:15 EST on 11 November. Run intervals (9.81, 9.85, 9.88) were read from logs and are right. For everything else the commit times govern. From this section on I read the clock.
