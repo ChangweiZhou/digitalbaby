@@ -2120,3 +2120,6 @@ What is not yet ruled out is a change in the harness's birth path between 9 Nove
 4. A brief for the sizing sweep, to Codex before a worker.
 5. Step 0's code to Codex.
 6. Then, in this order and each after the one before it: the GRU under backprop with every-byte targets; the GRU born and living under the sweep against backprop on one host. The second is the run the 17 November close needs: a rule and a network that were born and lived together.
+
+
+**Addendum to 9.101 (11 November 2026, 18:29 EST by the clock): Mr. Xu's ruling on learned feedback weights.** Asked whether a feedback pathway is inside the line when its weights are separate from the forward weights, learn by a local rule and never copy a forward weight, Mr. Xu answered: "Yes, allowed". This is the fourth working ruling, beside the three of the addendum to 9.82. What it permits is a rule whose backward pathway is learned; exact weight transport stays outside the line, as before. What it does not do is choose a mechanism: the two the audit session names (a weight mirror, and Kolen and Pollack's rule as modified by Akrout and colleagues) are to be source-checked before either steers a design, and nothing is built on them until the alignment measurement of 9.101 D.2 says whether weight signs are enough in a GRU.

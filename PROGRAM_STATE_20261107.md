@@ -358,3 +358,8 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - **Decisions on the audit session's note:** alignment measurement on E20-B's saved weights before any GRU birth under the rule (next, by the coordinator); a sizing sweep for the target test (brief to follow); E24 is the last experiment on the two-bank network. Asked of Mr. Xu: a ruling on learned feedback weights, and one route for commissions.
 - Errata: 9.71's ratios mixed host classes (0.94 / 0.98 / 0.91 against cloud-born births); E22's births came from different host classes.
 - The Mac is idle.
+
+
+## Addendum, 11 November 18:29 EST (clock): fourth working ruling
+
+Mr. Xu: learned feedback weights are allowed (a separate backward pathway that learns by a local rule and never copies a forward weight). Exact weight transport stays outside the line. Recorded as an addendum to review 9.101. No mechanism is chosen; a source check comes first, and the alignment measurement comes before that.
