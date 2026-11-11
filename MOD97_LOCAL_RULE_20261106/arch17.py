@@ -51,6 +51,10 @@ PROJ_SCALED = False
 # 10 Nov audit: LOCAL_DETACH False keeps the first bank's own head but leaves every gradient path between the banks open (E16_HEADS=aux):
 # the one-factor control for "no relay between banks" (same heads, same objective, only the detach toggled).
 LOCAL_DETACH = True
+# E18c (11 Nov 2026, after the internal audit): LOCAL_DETACH cuts three reads (Hs -> lp2, Hs -> lm, z1 -> l2). Only the first two cross
+# between banks. Z1_DETACH None follows LOCAL_DETACH (every earlier receipt); E16_HEADS=relay sets LOCAL_DETACH False and Z1_DETACH True:
+# the two inter-bank paths open, the first layer's direct path into the main head still cut.
+Z1_DETACH = None
 # E23 (11 Nov 2026, timescale of the upper bank's target): FAR_HEAD adds a third head that reads the second bank's state alone
 # (lmf, l3f; created after every other layer, so all other initial weights are unchanged) and is trained on the byte FAR_DELTA steps
 # ahead (set and applied by exp16_integrated.update16). With LOCAL_DETACH its error reaches only the second bank. Default off.
@@ -135,7 +139,8 @@ def forward(m, x, local, through_time, keep=False, silence=False):
             Hs2 = T.zeros_like(Hs2)
     if lh:
         extra["logits1"] = lin(T.tanh(lin(z1, m.l2a, local) + lin(Hs, m.lma, local)), m.l3a, local)
-        pre = (lin(z1.detach(), m.l2, local) + lin(Hs.detach(), m.lm, local)) if LOCAL_DETACH else (lin(z1, m.l2, local) + lin(Hs, m.lm, local))
+        zd = LOCAL_DETACH if Z1_DETACH is None else Z1_DETACH
+        pre = lin(z1.detach() if zd else z1, m.l2, local) + lin(Hs.detach() if LOCAL_DETACH else Hs, m.lm, local)
     else:
         pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
     if m.arch == "bank2":

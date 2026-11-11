@@ -108,7 +108,9 @@ if TRACEUP16 == "all":
 #   E16_FIXEDCODES=on        the byte embeddings stay at their random initial values in birth and life (a labelled restriction: identical fixed
 #                           input codes for every arm, so that a rule's ability to learn its input code is separated from the rest). Tag _fc.
 #   E16_OUTTAG=<text>        appended to a life's receipt name, so that a repeat on the current panels never overwrites an original receipt.
-HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local", "aux")
+#   E16_HEADS=relay          (E18c, 11 Nov 2026) as aux, but the first layer's direct read into the main head stays detached: the two
+#                           inter-bank paths are the ONLY difference from local. Tag _rh.
+HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local", "aux", "relay")
 assert HEADS16 == "top" or (ARCH16 == "bank2" and FREEZE16 == "none"), "E16_HEADS=local|aux is defined for bank2 with nothing frozen"
 PROJFB16 = os.environ.get("E16_PROJFB", "raw"); assert PROJFB16 in ("raw", "scaled")
 assert PROJFB16 == "raw" or (TRACEUP16 == "proj" and FEEDBACK16 == "sign"), "E16_PROJFB=scaled applies to E16_TRACEUP=proj with sign feedback"
@@ -130,11 +132,12 @@ CENSUS_V2 = [None]
 LAST_AUX = [None]      # the first bank's head loss of the last update (the logged loss is the main head's)
 BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
 assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
-HTAG = ("_lh" if HEADS16 == "local" else "_ah" if HEADS16 == "aux" else "") + ("_fc" if FIXEDCODES16 == "on" else "")
+HTAG = ("_lh" if HEADS16 == "local" else "_ah" if HEADS16 == "aux" else "_rh" if HEADS16 == "relay" else "") + ("_fc" if FIXEDCODES16 == "on" else "")
 TUPTAG = ("_tups" if PROJFB16 == "scaled" else "_tup") if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else ""
 DEVRULETAG = "" if BIRTHRULE16 == "D" else "_bT" + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG
 if HEADS16 != "top":
     arch17.LOCAL_HEADS = True; arch17.LOCAL_DETACH = HEADS16 == "local"
+    arch17.Z1_DETACH = True if HEADS16 == "relay" else None
 if ARCH16 != "window":
     arch17.PROJ_SCALED = PROJFB16 == "scaled"
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
@@ -144,6 +147,13 @@ assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined 
 #                           bank2 with local heads (so its error reaches the second bank alone) and the rule-T birth. Tag _fh<d>.
 #   E16_FARCTRL=none|shuffle shuffle: the far head's targets are permuted among the valid positions of the SAME item, afresh at each update
 #                           (same bytes, same count, same head; the correspondence in time destroyed). Tag suffix s.
+#                           The far head is trained on PROMPT bytes only: a position whose far target is an answer byte or EOS is
+#                           excluded in every E23 arm (the main head already supervises answers; internal audit of 11 Nov).
+#   E16_HEAD1LOSS=answer|all (E23) all: the first bank's head is trained on every next byte (the lower bank predicts the near observation)
+#                           while the main head keeps the answer loss. Births only, E16_HEADS=local. Tag _h1all.
+HEAD1LOSS16 = os.environ.get("E16_HEAD1LOSS", "answer"); assert HEAD1LOSS16 in ("answer", "all")
+assert HEAD1LOSS16 == "answer" or (HEADS16 == "local" and LOSS16 == "answer"), "E16_HEAD1LOSS=all is defined for E16_HEADS=local with the answer loss"
+H1TAG = "_h1all" if HEAD1LOSS16 == "all" else ""
 FARHEAD16 = int(os.environ.get("E16_FARHEAD", "0")); assert 0 <= FARHEAD16 <= 12
 FARCTRL16 = os.environ.get("E16_FARCTRL", "none"); assert FARCTRL16 in ("none", "shuffle")
 assert FARCTRL16 == "none" or FARHEAD16 > 0, "E16_FARCTRL needs E16_FARHEAD"
@@ -202,7 +212,7 @@ def book_shift(m, book0):
     return {k: round(sum(v) / len(v) / n0, 4) for k, v in out.items() if k != "other"}
 
 
-BIRTH_DEFAULTS = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", loss="answer")
+BIRTH_DEFAULTS = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", loss="answer", farhead=0, head1loss="answer")
 
 
 def expected_birth():
@@ -210,7 +220,7 @@ def expected_birth():
     file was loaded, not how it was trained."""
     if ARCH16 == "window":
         return dict(birth="M")
-    e = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, fixedcodes=FIXEDCODES16, loss="answer", final_step=E.DEV_DOSE)
+    e = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, fixedcodes=FIXEDCODES16, loss="answer", final_step=E.DEV_DOSE, farhead=0, head1loss="answer")
     if BIRTHRULE16 == "T":
         e.update(feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16)
     return e
@@ -337,13 +347,15 @@ def update16(m, opt, items, rule, store):
         mask = y != E.BOS        # every real byte of prompt and answer; padding (BOS) excluded
     logits, it = E.forward(m, x, local=(rule != "D"), through_time=(rule == "D"), keep=(rule == "T"))
     loss = E.cross_entropy(logits[mask], y[mask])
-    aux = E.cross_entropy(it["logits1"][mask], y[mask]) if HEADS16 != "top" else None     # E18: the first bank's own error
+    m1 = (y != E.BOS) if HEAD1LOSS16 == "all" else mask      # E23: the first bank's head on every next byte
+    aux = E.cross_entropy(it["logits1"][m1], y[m1]) if HEADS16 != "top" else None     # E18: the first bank's own error
     LAST_AUX[0] = float(aux.detach()) if aux is not None else None
     total = loss + aux if aux is not None else loss
     LAST_FAR[0] = None
     if FARHEAD16:      # E23: the byte FARHEAD16 steps ahead of each input byte, y[:, t + d - 1]; positions past the item's end excluded
         d = FARHEAD16; assert d <= y.shape[1]; yf = T.full_like(y, E.BOS); yf[:, :y.shape[1] - d + 1] = y[:, d - 1:]
-        mf = yf != E.BOS
+        ma = T.zeros_like(mask); ma[:, :y.shape[1] - d + 1] = mask[:, d - 1:]
+        mf = (yf != E.BOS) & ~ma           # prompt-byte targets only
         if FARCTRL16 == "shuffle":
             yf = yf.clone()
             for i in range(yf.shape[0]):
@@ -377,16 +389,23 @@ def score(m, items, store=None, silence=False):
 
 @T.no_grad()
 def far_accuracy(m, items):
-    """E23 diagnostic: the far head's top-1 on its own (unshuffled) target over the item, prompt given (teacher forced), in two strata:
-    every valid position, and positions whose far target is an answer byte or EOS. Never a whole-answer score."""
+    """E23 diagnostic, never a whole-answer score: the far head's top-1 on its own (unshuffled) prompt-byte targets, teacher forced, with a
+    structural baseline (on the same items, the most frequent target given the class of the input byte and the class of the target's
+    position: an upper bound on what structure alone gives). Also the stratum whose target is a digit."""
     x, y, mask = X.batch_tensor(items); d = FARHEAD16
     assert d <= y.shape[1]
     _, it = E.forward(m, x, local=True, through_time=False)
     yf = T.full_like(y, E.BOS); yf[:, :y.shape[1] - d + 1] = y[:, d - 1:]
-    mf = yf != E.BOS
-    ma = T.zeros_like(mf); ma[:, :y.shape[1] - d + 1] = mask[:, d - 1:]
-    hit = it["logits_far"].argmax(-1) == yf
-    return dict(all=[int((hit & mf).sum()), int(mf.sum())], answer=[int((hit & ma).sum()), int(ma.sum())])
+    ma = T.zeros_like(mask); ma[:, :y.shape[1] - d + 1] = mask[:, d - 1:]
+    mf = (yf != E.BOS) & ~ma
+    hit = (it["logits_far"].argmax(-1) == yf) & mf
+    dig = mf & (yf >= 48) & (yf <= 57)
+    cls = lambda b: T.where((b >= 48) & (b <= 57), 0, T.where((b >= 65) & (b <= 90), 1, T.where(b >= 97, 2, T.where(b == 61, 3, 4))))
+    key = cls(x) * 8 + cls(yf)        # input class x target class (the target class is not the target byte)
+    base = 0
+    for k_ in key[mf].unique():
+        sel = mf & (key == k_); base += int(T.bincount(yf[sel]).max())
+    return dict(prompt=[int(hit.sum()), int(mf.sum())], digit=[int((hit & dig).sum()), int(dig.sum())], structural_baseline=[base, int(mf.sum())])
 
 
 def head1(fn, *a):
@@ -550,7 +569,7 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 
 def life(arm, seed):
-    assert FARHEAD16 == 0, "E16_FARHEAD is defined for births only (E23)"
+    assert FARHEAD16 == 0 and HEAD1LOSS16 == "answer", "E16_FARHEAD and E16_HEAD1LOSS are defined for births only (E23)"
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{CGTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
     assert COMPGAP16 == 0 or arm == "D" or REPLAY16 in ("raw", "oracle"), "E16_COMPGAP needs raw or oracle replay (other stores parse fixed positions)"
@@ -809,15 +828,15 @@ def develop17(seed):
     assert ARCH16 != "window"
     # E18b (10 Nov): a birth under the every-byte loss (E16_LOSS=all) has its own name (_lossall) and always goes through update16, which applies
     # the mask; the plain backprop path would ignore it, so it is never taken with that loss. Lives still start from answer-loss births.
-    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{FTAG}{E.DEVTAG}_{seed}"
+    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{H1TAG}{FTAG}{E.DEVTAG}_{seed}"
     path = OUT / f"{stem}.pt"
     cfg = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16,
                fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE,
-            **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}))
+            **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}), **(dict(head1loss=HEAD1LOSS16) if HEAD1LOSS16 != "answer" else {}))
     if path.exists():     # 10 Nov audit: never accept a checkpoint on its file name alone
         jp = OUT / f"{stem}.json"
         assert jp.exists(), f"{path.name} exists without its receipt: remove or move it before a new birth"
-        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none")
+        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none", head1loss="answer")
         bad = {k: (old.get(k, dflt.get(k)), v) for k, v in cfg.items() if old.get(k, dflt.get(k)) != v}
         assert not bad, f"{path.name} exists with a different configuration {bad}"
         assert "weights_sha256" not in old or old["weights_sha256"] == sha_file(path), f"{path.name} does not match the hash in its receipt"
