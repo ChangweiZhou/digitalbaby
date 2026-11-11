@@ -79,6 +79,15 @@ These are admission conditions for step 0. They come from `MINIFLY_M4_E21_CONTIN
 3. **The reference step runs the same held cases in two versions.** Visible: the context inside the bytes the reference can still see or has just read. Hidden: the context at least ten bytes back. A miss on the visible version points at teaching, optimisation or the interface. A miss on the hidden version only points at holding and using earlier context.
 4. **No learning rule is compared until the reference passes both versions and the control of row 3 separates them.** Then the sign sweep is compared on the same network, observations and budget. Interference and revision are added to the same learner state after acquisition is established.
 
+## 7c. The wider-view decision rule, corrected after Codex's audits of step 0 (11 November 16:20 EST, clock)
+
+Row 4 of section 5 asks the wider-view arm to "beat both" comparison streams and reads a failure as "later views add targets, not information". That treated the two streams as two versions of one control. They are different controls and answer different questions.
+
+- **Against the stream with as many extra ordinary bytes.** A gain says the content of the lines helps: stated values are used.
+- **Against the stream with the same lines moved** (within their phase, never across a change of the value they name). Those lines are still true, so that stream tells as much. A gain over it says it matters *when* a value is told relative to the episode it belongs to. No gain over it, with a gain over the first, says the learner uses the stated values whenever they arrive.
+- The two are read separately. Neither result alone is "later views add targets, not information".
+- Before either is read, the disclosure ledger of step 0 must show what each arm had been told at each probe.
+
 ## 8. Why these choices, from this project's own record
 
 - No answer mask and no composition in view, because those were the two aids found late (reviews 9.76 and 9.82).
