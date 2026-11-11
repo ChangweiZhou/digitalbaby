@@ -1,0 +1,123 @@
+{
+ "two-bank birth, final harness against the pre-merge archive": {
+  "weights_sha_equal": true,
+  "curve_equal": true,
+  "note": "the birth made by the final harness in the E24 dry directory; the first directory still held the birth made by the merge before the gate and the E24 option were added, which was equal too"
+ },
+ "two-bank life, final harness against the pre-merge archive": {
+  "stages": [
+   7,
+   7
+  ],
+  "stage_records_equal": 7,
+  "weights_sha_equal": true
+ },
+ "window life, final harness against the default branch harness": {
+  "stages": [
+   7,
+   7
+  ],
+  "stage_records_equal": 7,
+  "weights_sha_equal": true
+ },
+ "E24 dry births": {
+  "e17_dev_bank2_nbd_bT_tall_dry512_73129.json": {
+   "complete": true,
+   "loss": "answer",
+   "lossw": "uniform",
+   "birthrule": "T",
+   "traceup": "all",
+   "heads": "top",
+   "final_step": 512
+  },
+  "e17_dev_bank2_nbd_bT_tall_lossall_bal_dry512_73129.json": {
+   "complete": true,
+   "loss": "all",
+   "lossw": "balanced",
+   "birthrule": "T",
+   "traceup": "all",
+   "heads": "top",
+   "final_step": 512
+  },
+  "e17_dev_bank2_nbd_bT_tall_lossall_dry512_73129.json": {
+   "complete": true,
+   "loss": "all",
+   "lossw": "uniform",
+   "birthrule": "T",
+   "traceup": "all",
+   "heads": "top",
+   "final_step": 512
+  },
+  "e17_dev_bank2_nbd_dry512_73129.json": {
+   "complete": true,
+   "loss": "answer",
+   "lossw": "uniform",
+   "birthrule": "D",
+   "traceup": "none",
+   "heads": "top",
+   "final_step": 512
+  },
+  "e17_dev_bank2_nbd_lossall_dry512_73129.json": {
+   "complete": true,
+   "loss": "all",
+   "lossw": "uniform",
+   "birthrule": "D",
+   "traceup": "none",
+   "heads": "top",
+   "final_step": 512
+  }
+ },
+ "two-bank life, killed and resumed against uninterrupted": {
+  "stages": [
+   7,
+   7
+  ],
+  "stage_records_equal": 7,
+  "weights_sha_equal": true,
+  "resumed": [
+   {
+    "from_stage": 3,
+    "checkpoint": "e17_life_D_bank2_nbd_e20bref_dry4_73129.ckpt",
+    "host": "Changweis-MacBook-Pro.local",
+    "time": "2026-11-11T20:56:51+00:00",
+    "cpu_replay": 0.04908699999999988,
+    "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+   }
+  ]
+ },
+ "window life, killed and resumed against uninterrupted": {
+  "stages": [
+   7,
+   7
+  ],
+  "stage_records_equal": 7,
+  "weights_sha_equal": true,
+  "resumed": [
+   {
+    "from_stage": 4,
+    "checkpoint": "e16_life_T_raw65536_drift_online_dry4_73129.ckpt",
+    "host": "Changweis-MacBook-Pro.local",
+    "time": "2026-11-11T21:00:15+00:00",
+    "cpu_replay": 0.05854300000000001,
+    "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+   }
+  ]
+ },
+ "gate": "E16_RESUME=1 without exp45/RESUME_QUALIFIED.json: refused on both architectures; with E16_RESUME_UNQUALIFIED=allow: resumed, and the receipt records it",
+ "torn final birth receipt beside valid weights and a valid checkpoint, resume asked": "the run stops with a JSON parse error before any checkpoint is considered (Codex gap 2, confirmed)",
+ "a checkpoint written before the source binding was added": "refused: dtype and sources differ from the present configuration (shows the binding refuses; it was not a planned fixture)",
+ "check scripts on the final file": {
+  "e18_check": "exit 0; 20 values, 0 differ from the record on file",
+  "e23_check": "exit 0",
+  "e24_check": "exit 0",
+  "e20b_audit_checks": "exit 0"
+ },
+ "not checked": "E21's 47 acceptance checks have not been run on the merged sources",
+ "sources": {
+  "exp16_integrated.py": "f4559971a6c1770523d641431fe5d4bd56def3f5ee3cafc87a5b869509be50ae",
+  "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+  "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+  "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+  "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24"
+ }
+}

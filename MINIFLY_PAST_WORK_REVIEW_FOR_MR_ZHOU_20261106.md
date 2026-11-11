@@ -1922,3 +1922,62 @@ The two were run on different hosts, so this is not a verdict. As far as it goes
 4. *Probe the stage 2 window checkpoints* (a minute on the Mac, on Mr. Xu's go).
 
 **What waits for E20-B.** The network decision, and with it any work on composition under the rule. G0 and G3 are complete there; G1 is running and G2 is to come.
+
+
+## 9.98 Codex's audit of 11 November, the harness brought to one version, and two briefs (11 November 2026, 16:02 EST by the clock)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_HOSTILE_AUDIT_E20B_STEP0_E18_E21_20261111.md` (commit 6f83bad7), made at revision 376092e, before the merge below existed. It covers E21, the outline of E24, E20-B's stage 1, step 0 version 2, and the E18b/E18c/E23 report.
+
+### A. The harness is one version again
+
+The default branch, the E21 branch and the E18b/E18c/E23 branch each changed `exp16_integrated.py` from a different starting commit. They are merged in that order. There were three textual conflicts, all in that file, each resolved by keeping both sides: the CPU accounting at the start of a life, the birth's configuration record, and one list in the birth loop.
+
+**A defect the merge would have carried in.** On the E18b/E18c/E23 branch the harness cannot be imported with the window architecture, which is the default: one line sets an option on a module that is loaded only for the windowless networks. Every window command on that branch stops at import. Nothing that branch ran used the window learner, so its results are not affected, and its checks did not see it for the same reason. My second smoke test, on the window learner's path, stopped on it. The merge guards the line.
+
+**A mistake of mine in the checks.** In one script I set the resume variables outside a cleaned environment, which strips them. Those runs were ordinary fresh runs and tested nothing about resume. I saw it because the gate test, which must fail, exited zero. Rerun with the variables in the right place.
+
+**What was checked locally on the final file** (`exp45/HARNESS_MERGE_CHECK.json`; one process on the Mac, dry doses).
+
+| Check | Result |
+|---|---|
+| `e18_check.py` | passes; all 20 values equal the record on file |
+| `e23_check.py`, `e20b_audit_checks.py`, `e24_check.py` | pass |
+| Two-bank dry birth and life against the pre-merge archive of 10 November | weights hash equal; birth curve and all 7 stage records equal |
+| Window dry life (sign rule, raw store, drifting stream, online admission) against the pre-merge harness | weights hash equal; all 7 stage records equal |
+| Each of the two lives killed and resumed, against its uninterrupted run | weights hash equal; all 7 stage records equal |
+| Resume asked without a qualification record | refused, on both architectures |
+
+**What was not checked.** E21's 47 acceptance checks have not been run on the merged sources. That is two command shapes at one tiny dose above, against seven shapes and three kill points there.
+
+### B. Codex's findings, each checked, and what was done
+
+| Finding | Checked how | Result | Action |
+|---|---|---|---|
+| Rerun all 47 checks on the merged revision before enabling resume | the merge itself made the case: it carried a defect none of the three branches' own checks had seen | adopted | the harness now refuses `E16_RESUME=1` unless `exp45/RESUME_QUALIFIED.json` names its exact source hashes; brief E21b written |
+| A checkpoint's admission omits source hashes, torch version, dtype, a list of supported commands and a qualification gate | read in `run_config`; E21's own report says the torch version is not in the digest | confirmed | source hashes, torch version and dtype added to what a checkpoint is bound to; the gate added; the command list is in E21b |
+| A torn final birth receipt can be parsed before the valid checkpoint is loaded | fixture: a receipt cut short beside valid weights and a valid checkpoint, resume asked | confirmed: the run stops with a JSON parse error before any checkpoint is considered | in E21b, with a kill during final publication as a required fixture |
+| The far-head shuffle's private generator is not restored on resume | read in the merged birth loop | confirmed | resume is refused for that shape |
+| E24: answer-only and every-byte backprop beside the matched sign conditions; bounded readings | wording | adopted | the brief's readings now say "in this network at this dose" and name an interaction between objective and update, not a cause in general |
+| E20-B: accept the stage 1 qualification; file the early start as a deviation; verify all 24 completion receipts and weight hashes independently of the driver | to be done on the complete record | adopted | see C |
+| Step 0: four corrections | the first is a matter of logic (a moved line is still a true line); the fourth I had seen in my own simulation and handled wrongly, by dropping the twin | all four adopted | the draft is at version 3 |
+| E18c's composition table: its entries are percentages of final suffixes; whole answers on the plus-minus pairs are 0 / 2 / 1 and 3 / 5 / 1 of 1,200 | recomputed from the six life receipts | confirmed exactly | recorded here; the report on that branch should carry the correction |
+| The cross-host comparison with E22 is descriptive and leaves the value of local heads unresolved | wording of my 9.97 | adopted | below |
+
+**Correction to 9.97.** I wrote that E18c "does not show that local heads add anything". That stands. I also wrote, in the summary, that local heads add nothing. That overstates a comparison across two hosts. The right statement is that their added value is unresolved, and that I close the line because nothing on file argues for continuing it.
+
+### C. E20-B: a deviation, recorded
+
+- **Deviation.** Stage 2 of E20-B began at 04:30 UTC on 11 November, twelve minutes after the stage 1 record was committed, before any review of that record and before a release by this session. Amendment 8 of its brief required both.
+- **Stage 1 itself** is accepted on Codex's reading of the committed receipts and mine of the record.
+- **Interrupted work.** A container restart killed the three G0 lives after four of six blocks. Mr. Xu authorized their restart from the same births. The interrupted receipts are kept on the worker's branch and their CPU belongs in the cost ledger.
+- **Before any outcome is read:** all 24 completion receipts and weight hashes are verified by my own script, independently of the worker's driver, which Codex notes can skip work on a receipt's completion field and does not pass on a child's failure. The weights have to be on the branch for that.
+
+### D. Two briefs and a revised draft
+
+- **E21b, resume qualification on the merged harness** (`OPUS_TASK_E21B_RESUME_QUALIFICATION_20261111.md`). It is what Codex's audit asks for, so a worker may start; its result is audited before resume is enabled.
+- **E24, is the every-byte collapse the loss or the rule** (`OPUS_TASK_E24_EVERY_BYTE_CAUSE_20261111.md`). Draft for Codex. It adds one option to the harness, `E16_LOSSW=balanced`, off by default, with its own check and five dry births on file (`exp45/E24_CHECK.json`, `exp45/archive_e24_dry/`). Nine new births and two host-check reruns, about four and a half hours on one cloud instance. No worker starts before the audit.
+- **Step 0 of the target test, version 3** (`OPUS_TASK_TARGET_TEST_STEP0_20261111.md`). Draft for Codex.
+
+### E. What is merged along with the code
+
+The E18b/E18c/E23 branch arrives whole: its plan, predictions, report, thirty-three receipts and their weights (about 260 MB). Its report still marks itself as awaiting Codex; Codex's audit above recomputed its 14 verdicts and asks for the corrections listed in B. Being on the default branch does not change that status.

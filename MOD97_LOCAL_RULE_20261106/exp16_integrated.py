@@ -163,6 +163,10 @@ assert FARHEAD16 == 0 or (HEADS16 == "local" and BIRTHRULE16 == "T" and LOSS16 =
 FTAG = (f"_fh{FARHEAD16}" + ("s" if FARCTRL16 == "shuffle" else "")) if FARHEAD16 else ""
 if ARCH16 != "window":      # harness merge, 11 Nov: on the E18b/E18c/E23 branch this line ran for every architecture and the window learner could not be imported
     arch17.FAR_HEAD = FARHEAD16 > 0
+#   E16_LOSSW=uniform|balanced  (E24, 11 Nov) births with E16_LOSS=all and one head at the top: balanced gives the answer positions half the loss
+#                               and every other real position the other half (a diagnostic: it uses the answer mask to set the weights)
+LOSSW16 = os.environ.get("E16_LOSSW", "uniform"); assert LOSSW16 in ("uniform", "balanced")
+assert LOSSW16 == "uniform" or (LOSS16 == "all" and HEADS16 == "top" and FARHEAD16 == 0), "E16_LOSSW=balanced is defined for E16_LOSS=all births with E16_HEADS=top"
 FAR_GEN = [None]       # the shuffle control's own generator (never the global torch RNG); seeded by develop17
 LAST_FAR = [None]
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
@@ -331,9 +335,10 @@ def run_config(**extra):
                E16_LOSS=LOSS16, E16_ARCH=ARCH16, E16_STORE=STORE16, E16_FREEZE=FREEZE16, E16_FEEDBACK=FEEDBACK16, E16_TRACEUP=TRACEUP16,
                E16_HEADS=HEADS16, E16_PROJFB=PROJFB16, E16_FIXEDCODES=FIXEDCODES16, E16_OUTTAG=OUTTAG16, E16_COMPGAP=COMPGAP16,
                E16_BIRTHRULE=BIRTHRULE16, E16_BOOKDECAY=BOOKDECAY16, E16_RSHARE=RSHARE16, E16_LEGACY_BIRTH=os.environ.get("E16_LEGACY_BIRTH"),
-               batch=BATCH, block=X.BLOCK, torch_threads=T.get_num_threads())
+               batch=BATCH, block=X.BLOCK, torch_threads=T.get_num_threads(),
+               torch_version=T.__version__, dtype=str(T.get_default_dtype()), sources=source_hashes())      # 11 Nov audit: a checkpoint is bound to its sources and its torch
     for k, v in sorted(os.environ.items()):
-        if k.startswith(("E11_", "E16_", "EXP45_")) and k not in cfg and k != "E16_RESUME":
+        if k.startswith(("E11_", "E16_", "EXP45_")) and k not in cfg and k not in ("E16_RESUME", "E16_RESUME_UNQUALIFIED"):
             cfg[k] = v
     cfg.update(extra)
     return json.loads(json.dumps(cfg))
@@ -412,12 +417,36 @@ def ckpt_fresh(ck):
             p.unlink()
 
 
+RESUME_SOURCES = ("exp16_integrated.py", "arch17.py", "exp11_cell.py", "exp45.py", "exp3_state.py")
+RESUME_GATE = [None]
+
+
+def source_hashes():
+    here = Path(__file__).parent
+    return {n: sha_file(here / n) for n in RESUME_SOURCES}
+
+
+def resume_gate():
+    """Codex's audit of E21 (11 Nov): the acceptance checks were passed on the worker's branch, not on the merged sources. E16_RESUME=1 is refused
+    unless exp45/RESUME_QUALIFIED.json names exactly these source hashes. E16_RESUME_UNQUALIFIED=allow is for the qualification run itself; it is
+    written into the receipt's `resumed` entries and is not a setting of the run."""
+    q = OUT / "RESUME_QUALIFIED.json"
+    if q.exists() and json.loads(q.read_text()).get("sources") == source_hashes():
+        RESUME_GATE[0] = "qualified"
+    elif os.environ.get("E16_RESUME_UNQUALIFIED") == "allow":
+        RESUME_GATE[0] = "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    else:
+        raise SystemExit("e21: E16_RESUME=1 is refused: resume has not been qualified on these sources (exp45/RESUME_QUALIFIED.json is absent or names other sources)")
+
+
 def resume_record(from_stage, used, cpu_replay, note=None):
     import datetime, socket
     r = dict(from_stage=from_stage, checkpoint=(used.name if used else None), host=socket.gethostname(),
              time=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), cpu_replay=cpu_replay)
     if note:
         r["note"] = note
+    if RESUME_GATE[0]:
+        r["qualification"] = RESUME_GATE[0]
     return r
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
@@ -504,10 +533,15 @@ def update16(m, opt, items, rule, store):
         LAST_AUX[0] = None
         return E.update(m, opt, items, rule, store)
     x, y, mask = X.batch_tensor(items)
+    amask = mask             # the answer positions
     if LOSS16 == "all":
         mask = y != E.BOS        # every real byte of prompt and answer; padding (BOS) excluded
     logits, it = E.forward(m, x, local=(rule != "D"), through_time=(rule == "D"), keep=(rule == "T"))
-    loss = E.cross_entropy(logits[mask], y[mask])
+    if LOSSW16 == "balanced":    # E24: half the loss on the answer positions, half on all the others
+        other = mask & ~amask
+        loss = .5 * E.cross_entropy(logits[amask], y[amask]) + .5 * E.cross_entropy(logits[other], y[other])
+    else:
+        loss = E.cross_entropy(logits[mask], y[mask])
     m1 = (y != E.BOS) if HEAD1LOSS16 == "all" else mask      # E23: the first bank's head on every next byte
     aux = E.cross_entropy(it["logits1"][m1], y[m1]) if HEADS16 != "top" else None     # E18: the first bank's own error
     LAST_AUX[0] = float(aux.detach()) if aux is not None else None
@@ -738,6 +772,7 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 def life(arm, seed):
     assert FARHEAD16 == 0 and HEAD1LOSS16 == "answer", "E16_FARHEAD and E16_HEAD1LOSS are defined for births only (E23)"
+    assert LOSSW16 == "uniform", "E16_LOSSW=balanced is defined for births only (E24)"
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{CGTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
     assert COMPGAP16 == 0 or arm == "D" or REPLAY16 in ("raw", "oracle"), "E16_COMPGAP needs raw or oracle replay (other stores parse fixed positions)"
@@ -768,6 +803,7 @@ def life(arm, seed):
     # E21: checkpoint / resume. K is the stage the checkpoint was written after (0: start from the birth).
     ck = path.with_suffix(".ckpt"); K, ckobj, ckused, resumed, saved = 0, None, None, [], None
     if RESUME16 == "1":
+        resume_gate()
         ckobj, ckused = ckpt_load(ck)
         if ckobj is None:
             print(f"e21 no checkpoint for {path.name}: starting from the birth", flush=True)
@@ -1062,24 +1098,26 @@ def develop17(seed):
     assert ARCH16 != "window"
     # E18b (10 Nov): a birth under the every-byte loss (E16_LOSS=all) has its own name (_lossall) and always goes through update16, which applies
     # the mask; the plain backprop path would ignore it, so it is never taken with that loss. Lives still start from answer-loss births.
-    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{H1TAG}{FTAG}{E.DEVTAG}_{seed}"
+    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{'_bal' if LOSSW16 == 'balanced' else ''}{H1TAG}{FTAG}{E.DEVTAG}_{seed}"
     path = OUT / f"{stem}.pt"
     cfg = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16,
                fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE,
-            **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}), **(dict(head1loss=HEAD1LOSS16) if HEAD1LOSS16 != "answer" else {}))
+            **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}), **(dict(head1loss=HEAD1LOSS16) if HEAD1LOSS16 != "answer" else {}),
+               **(dict(lossw=LOSSW16) if LOSSW16 != "uniform" else {}))
     assert not (RESUME16 == "1" and FARCTRL16 == "shuffle"), "E16_RESUME is not defined for E16_FARCTRL=shuffle: the shuffle's own generator is not in the checkpoint (harness merge, 11 Nov)"
     ck = OUT / f"{stem}.ckpt"; K, ckobj, ckused, resumed = 0, None, None, []
     # E21: weights written but the receipt not yet (a kill between the two) is resumable from the last checkpoint, which rewrites both
     if path.exists() and not (RESUME16 == "1" and not (OUT / f"{stem}.json").exists() and (ck.exists() or Path(str(ck) + ".prev").exists())):     # 10 Nov audit: never accept a checkpoint on its file name alone
         jp = OUT / f"{stem}.json"
         assert jp.exists(), f"{path.name} exists without its receipt: remove or move it before a new birth"
-        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none", head1loss="answer")
+        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none", head1loss="answer", lossw="uniform")
         bad = {k: (old.get(k, dflt.get(k)), v) for k, v in cfg.items() if old.get(k, dflt.get(k)) != v}
         assert not bad, f"{path.name} exists with a different configuration {bad}"
         assert "weights_sha256" not in old or old["weights_sha256"] == sha_file(path), f"{path.name} does not match the hash in its receipt"
         print("e17 dev", stem, "exists with the same configuration; nothing to do", flush=True)
         return
     if RESUME16 == "1":
+        resume_gate()
         ckobj, ckused = ckpt_load(ck)
         if ckobj is None:
             print(f"e21 no checkpoint for {stem}: starting from the beginning", flush=True)

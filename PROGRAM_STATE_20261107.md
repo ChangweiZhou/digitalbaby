@@ -322,3 +322,14 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - Coordinator's comparison: the relay learner ends a life no better than the E22 top-head learner (80.6 / 87.0 / 77.8 against 88.1 / 84.8 / 84.3, different hosts). Local heads add nothing shown.
 - Decisions: the local-heads line is closed; the every-byte failure becomes the main question (a backprop birth under every-byte targets is the missing cell); the harness is to be unified (E21, then the E18c options).
 - Waiting: E20-B (G0 and G3 complete, G1 running, G2 to come).
+
+
+## Addendum, 11 November 16:03 EST (clock): the harness is one version; Codex's audit answered (review 9.98)
+
+- **Merged on the default branch:** E21 (resumable lives), then the E18b/E18c/E23 branch with its results. Three conflicts in `exp16_integrated.py`, all unions. The other branch's harness could not be imported with the window architecture; guarded in the merge.
+- **Resume is gated off.** `E16_RESUME=1` is refused until `exp45/RESUME_QUALIFIED.json` names the exact sources. Brief E21b (rerun the 47 checks on the merged sources, close the torn-receipt gap, list the qualified command shapes) may start.
+- **Local checks on the final file** (`MOD97_LOCAL_RULE_20261106/exp45/HARNESS_MERGE_CHECK.json`): check scripts pass; dry birth and lives on both architectures equal the pre-merge runs bit for bit; killed lives resume to the same result.
+- **E24** (every-byte: the loss or the rule) is briefed as a draft for Codex, with its option `E16_LOSSW=balanced`, check and dry births on file. Nine births and two reruns. No worker before the audit.
+- **Step 0 of the target test** is at version 3, for Codex.
+- **E20-B:** the early start of stage 2 is recorded as a deviation; stage 1 accepted; G1 lives complete and G2 births started on the worker's branch at 20:12 UTC. All 24 completion receipts and weight hashes are to be verified independently before any outcome is read.
+- The Mac is idle; the lock is released.

@@ -594,3 +594,8 @@ Recomputed by the coordinator from the twelve receipts (`e20a_coordinator_check.
 - P20.5 holds: the sign-rule learner's twin item accuracy is 0.02 / 0.02 / 0.02 of the window reference's.
 - P20.6 misses: backprop on the learner's pipeline is at 0.53 / 0.41 / 0.68, against 0.85.
 - Neither P20.4 nor P20.5 says anything about memory: neither arm passes the control with the operands in view.
+
+
+## Addendum, 11 November 2026, 16:03 EST (clock): E24 predictions drafted
+
+P24.1 to P24.3 and their readings are in `OPUS_TASK_E24_EVERY_BYTE_CAUSE_20261111.md` at the repository root, a draft for Codex's audit. They are registered when the audited brief is released to a worker, and the worker copies them unchanged into `E24_PREDICTIONS.md` before any new arm starts. No E24 birth has been run at full dose; five dry births at 512 updates are in `exp45/archive_e24_dry/`.
