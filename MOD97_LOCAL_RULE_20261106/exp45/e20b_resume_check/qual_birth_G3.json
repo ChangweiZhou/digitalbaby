@@ -1,0 +1,327 @@
+{
+ "experiment": "E20-B",
+ "kind": "birth",
+ "net": "G3",
+ "seed": 73129,
+ "kmax": 12,
+ "dev_updates": 2048,
+ "block": 512,
+ "batch": 64,
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.3,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.3,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "lp.weight",
+     "lp.bias",
+     "lc.weight",
+     "lc.bias",
+     "lw.weight",
+     "lw.bias",
+     "lp2.weight",
+     "lp2.bias",
+     "lc2.weight",
+     "lc2.bias",
+     "lw2.weight",
+     "lw2.bias",
+     "lm2.weight",
+     "lm2.bias",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias",
+     "lb.weight"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "protocol": "exp16_integrated.develop17 plain path (backprop through time, answer loss, four mod-89 operations, k 0..12)",
+ "model": {
+  "cls": "arch20.NetG3",
+  "kind": "g3",
+  "params": 1158033,
+  "params_by_tensor": {
+   "book.weight": 2064,
+   "l1.weight": 4096,
+   "l1.bias": 512,
+   "lp.weight": 32768,
+   "lp.bias": 64,
+   "lc.weight": 32768,
+   "lc.bias": 512,
+   "lw.weight": 32768,
+   "lw.bias": 512,
+   "lp2.weight": 32768,
+   "lp2.bias": 64,
+   "lc2.weight": 32768,
+   "lc2.bias": 512,
+   "lw2.weight": 32768,
+   "lw2.bias": 512,
+   "lm2.weight": 262144,
+   "lm2.bias": 512,
+   "lm.weight": 262144,
+   "lm.bias": 512,
+   "l2.weight": 262144,
+   "l2.bias": 512,
+   "l3.weight": 131584,
+   "l3.bias": 257,
+   "lb.weight": 32768
+  }
+ },
+ "installed": {
+  "E_forward": "arch20.forward",
+  "E_new_net_class": "arch20.NetG3"
+ },
+ "provenance": {
+  "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py dev G3 73129 --out exp45/e20b_qual",
+  "environment_at_start": {
+   "E11_DEV_UPDATES": "2048",
+   "E11_STAGE_UPDATES": "256",
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "0e131a292e1a6b0404bcac5f5bb7340192c21dfe",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "f48279675784f1cba5d451f38869f51560b4eedf1f207875d5eaffed75a7ac9f",
+   "arch17.py": "8735aea2b0d135ecfb1506f0be413dcfad75738a22a69b6d566f6ec6c821805e",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  }
+ },
+ "complete": true,
+ "curve": [
+  {
+   "step": 2048,
+   "loss": 0.7553108290303499,
+   "cpu": 227.54879578,
+   "sealed": {
+    "add89": {
+     "0": {
+      "n": 300,
+      "exact": 18,
+      "final": 18
+     },
+     "4": {
+      "n": 300,
+      "exact": 14,
+      "final": 14
+     },
+     "8": {
+      "n": 300,
+      "exact": 14,
+      "final": 14
+     },
+     "12": {
+      "n": 300,
+      "exact": 12,
+      "final": 12
+     },
+     "20": {
+      "n": 300,
+      "exact": 4,
+      "final": 4
+     }
+    },
+    "sub89": {
+     "0": {
+      "n": 300,
+      "exact": 6,
+      "final": 6
+     },
+     "4": {
+      "n": 300,
+      "exact": 9,
+      "final": 9
+     },
+     "8": {
+      "n": 300,
+      "exact": 8,
+      "final": 8
+     },
+     "12": {
+      "n": 300,
+      "exact": 9,
+      "final": 9
+     },
+     "20": {
+      "n": 300,
+      "exact": 11,
+      "final": 11
+     }
+    },
+    "max89": {
+     "0": {
+      "n": 300,
+      "exact": 278,
+      "final": 278
+     },
+     "4": {
+      "n": 300,
+      "exact": 282,
+      "final": 282
+     },
+     "8": {
+      "n": 300,
+      "exact": 287,
+      "final": 287
+     },
+     "12": {
+      "n": 300,
+      "exact": 285,
+      "final": 285
+     },
+     "20": {
+      "n": 300,
+      "exact": 277,
+      "final": 277
+     }
+    },
+    "min89": {
+     "0": {
+      "n": 300,
+      "exact": 269,
+      "final": 269
+     },
+     "4": {
+      "n": 300,
+      "exact": 288,
+      "final": 288
+     },
+     "8": {
+      "n": 300,
+      "exact": 286,
+      "final": 286
+     },
+     "12": {
+      "n": 300,
+      "exact": 284,
+      "final": 284
+     },
+     "20": {
+      "n": 300,
+      "exact": 275,
+      "final": 275
+     }
+    }
+   },
+   "book_shift_by_role": {
+    "operator": 0.1148,
+    "digit": 0.14,
+    "separator": 0.0,
+    "equals": 0.0546,
+    "distractor letter": 0.1827,
+    "task code": 0.0252
+   },
+   "silenced_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "max89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "min89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    }
+   }
+  }
+ ],
+ "credit_census_first_update": {
+  "params_without_gradient": [],
+  "book_rows_in_batch": 47,
+  "book_rows_in_batch_without_gradient": 2,
+  "dead_rows": [
+   256,
+   257
+  ],
+  "by_role": {
+   "operator": {
+    "present": 4,
+    "with_gradient": 4
+   },
+   "digit": {
+    "present": 10,
+    "with_gradient": 10
+   },
+   "equals": {
+    "present": 1,
+    "with_gradient": 1
+   },
+   "distractor letter": {
+    "present": 26,
+    "with_gradient": 26
+   },
+   "task code": {
+    "present": 4,
+    "with_gradient": 4
+   },
+   "BOS/EOS": {
+    "present": 2,
+    "with_gradient": 0
+   }
+  }
+ },
+ "optimizer_steps": [
+  2048
+ ],
+ "weights": "e20_dev_G3_dry2048_73129.pt",
+ "weights_sha256": "770a4a1087318489f58bc41413c81bbb47a09d63a0504b413491acad40ce5497",
+ "tensors_sha256": "a8a48c6dfde98a14c246397dbb10a3d933919ed8e5b24cf9c1ca6d3ad636b1fd",
+ "cpu_total": 238.322775896
+}
