@@ -1,0 +1,1310 @@
+{
+ "brief": "OPUS_TASK_E21_RESUMABLE_LIVES_20261110.md",
+ "base_commit": "40cb1c208adec3f39351356e52d3f69eba4ade17",
+ "branch_commit": "3d1248139e57b7f51f4cddb4f8936ccaf25f00b0",
+ "tested_sha256": {
+  "exp16_integrated.py": "133902d99de0c831f376af13204f37e8ac44a5c00e3648335b05bc0bb5ecb0bd",
+  "e21_resume_check.py": "8095f45b75cf4174e3926545dcb58a796d855c4367092bb574b4d6144de145eb"
+ },
+ "dirty": false,
+ "machine": {
+  "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "cpus": 4,
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu"
+ },
+ "only": "all",
+ "shapes": [
+  "D_reference",
+  "M_block_admission",
+  "T_compgap6",
+  "T_drift_online_store",
+  "bank2_phase4",
+  "bank2_phase4_lossall",
+  "birth_rule_T_local_heads"
+ ],
+ "wall_seconds": 0,
+ "passed": true,
+ "counts": {
+  "passed": 47,
+  "failed": 0
+ },
+ "results": [
+  {
+   "test": "1 unchanged",
+   "shape": "T_drift_online_store",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T02:45:19+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 46.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 397.4
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:50:25+00:00",
+     "cpu_replay": 0.133968286
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 132.8
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 275.9
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:55:04+00:00",
+     "cpu_replay": 0.15972459900000002
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 252.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 183.2
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "D_reference",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "D_reference",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T02:55:33+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 33.0
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 272.8
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "D_reference",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_D_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:58:21+00:00",
+     "cpu_replay": 0.06524006699999996
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 107.1
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 173.1
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "D_reference",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_D_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:59:58+00:00",
+     "cpu_replay": 0.07763659700000014
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 187.4
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 117.9
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "M_block_admission",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "M_block_admission",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T03:01:47+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 33.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 271.1
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "M_block_admission",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_M_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:03:35+00:00",
+     "cpu_replay": 0.07383913199999981
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 99.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 169.0
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "M_block_admission",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_M_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:05:57+00:00",
+     "cpu_replay": 0.083503667
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 176.8
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 122.8
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "bank2_phase4",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T03:07:23+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 58.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 506.3
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:11:05+00:00",
+     "cpu_replay": 0.1359853369999997
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 185.1
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 321.8
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:18:05+00:00",
+     "cpu_replay": 0.13699161299999973
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 313.9
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 233.3
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "bank2_phase4_lossall",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4_lossall",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T03:17:25+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 57.9
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 669.8
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4_lossall",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_lossall_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:26:26+00:00",
+     "cpu_replay": 0.09448304000000007
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 268.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 412.7
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4_lossall",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_lossall_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:32:51+00:00",
+     "cpu_replay": 0.10882834700000021
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 415.6
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 358.6
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "T_compgap6",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_compgap6",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T03:35:11+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 112.0
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 454.3
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_compgap6",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_cm6_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:38:47+00:00",
+     "cpu_replay": 0.13341079500000008
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 146.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 316.8
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_compgap6",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_T_raw65536_cm6_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:42:17+00:00",
+     "cpu_replay": 0.178704717
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 265.1
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 240.5
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "birth_rule_T_local_heads",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "first segment, before any checkpoint (update 100) [update:100]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "digests_compared": 2,
+   "digests_reference": 2,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-11T04:06:39+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the beginning"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:100",
+     "rc": -9,
+     "seconds": 19.7
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 1566.7
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "updates after the first row (update 5096) [update:5096]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "digests_compared": 3,
+   "digests_reference": 2,
+   "digest_mismatches": [],
+   "replayed": [
+    4096
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 4096,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T04:22:17+00:00",
+     "cpu_replay": 0.829611179
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:5096",
+     "rc": -9,
+     "seconds": 955.6
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 773.7
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "evaluation of the last row, at 8192 (7th score call) [score:8192:7]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "digests_compared": 3,
+   "digests_reference": 2,
+   "digest_mismatches": [],
+   "replayed": [
+    4096
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 4096,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:30:34+00:00",
+     "cpu_replay": 1.012513942
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:8192:7",
+     "rc": -9,
+     "seconds": 1679.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 839.3
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "twice: stage 2 updates (update 21), then, resumed from stage 1, stage 5 evaluation (10th score call)",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 11,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:40:25+00:00",
+     "cpu_replay": 0.08498031299999997
+    },
+    {
+     "from_stage": 4,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T03:43:58+00:00",
+     "cpu_replay": 0.22525577699999966
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:21",
+     "rc": -9,
+     "seconds": 95.6
+    },
+    {
+     "spec": "score:64:10",
+     "rc": -9,
+     "seconds": 213.6
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 97.4
+    }
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E16_LEGACY_BIRTH",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: E16_LEGACY_BIRTH (checkpoint None, now 'allow')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E11_SCHEDULE",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: E11_SCHEDULE (checkpoint 'blocked', now 'interleaved')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "truncated .ckpt -> .ckpt.prev, then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1
+   ],
+   "ok": true,
+   "said_fallback": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-11T03:46:21+00:00",
+     "cpu_replay": 0.0875058209999997
+    }
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "both checkpoints damaged",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry16_73129.ckpt is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21: every checkpoint is damaged, refusing to start over: e16_life_T_raw65536_drift_online_dry16_73129.ckpt: body does not match its sha256 (truncated or damaged); e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev: body does not match its sha256 (truncated or damaged)"
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "pipeline digest edited (file re-sealed)",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+    "e21: the replayed data pipeline does not match e16_life_T_raw65536_drift_online_dry16_73129.ckpt at stage 2; differing components: ['rng']"
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "inside the stage-3 checkpoint write, between the renames -> .ckpt.prev (stage 2), then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-11T03:50:48+00:00",
+     "cpu_replay": 0.13588414300000018
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "dose 512, stage 3 updates (update 1300)",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f01eb05473f567bccffa8ccce2e9baa78f8185032ea6601bdd50f69fc64e767a",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry512_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:07:54+00:00",
+     "cpu_replay": 3.284841669
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:1300",
+     "rc": -9,
+     "seconds": 290.0
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 452.8
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E16_LEGACY_BIRTH",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry512_73129.ckpt was written under a different configuration; changed: E16_LEGACY_BIRTH (checkpoint None, now 'allow')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E11_SCHEDULE",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry512_73129.ckpt was written under a different configuration; changed: E11_SCHEDULE (checkpoint 'blocked', now 'interleaved')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "truncated .ckpt -> .ckpt.prev, then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f01eb05473f567bccffa8ccce2e9baa78f8185032ea6601bdd50f69fc64e767a",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1
+   ],
+   "ok": true,
+   "said_fallback": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry512_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-11T02:18:27+00:00",
+     "cpu_replay": 1.07671385
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "both checkpoints damaged",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry512_73129.ckpt is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry512_73129.ckpt.prev is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21: every checkpoint is damaged, refusing to start over: e16_life_T_raw65536_drift_online_dry512_73129.ckpt: body does not match its sha256 (truncated or damaged); e16_life_T_raw65536_drift_online_dry512_73129.ckpt.prev: body does not match its sha256 (truncated or damaged)"
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "pipeline digest edited (file re-sealed)",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 resuming e16_life_T_raw65536_drift_online_dry512_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry512_73129.ckpt): replaying the data pipeline with the learner off",
+    "e21: the replayed data pipeline does not match e16_life_T_raw65536_drift_online_dry512_73129.ckpt at stage 2; differing components: ['rng']"
+   ]
+  },
+  {
+   "test": "4 larger dose: exact resume",
+   "shape": "bank2_phase4",
+   "kill": "dose 512, stage 3 updates (update 1300)",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "779409715aa314088c0415a08160ef90cc361f3c0b051d80becc7a5efd3495aa",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-11T02:25:45+00:00",
+     "cpu_replay": 0.6817777169999997
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:1300",
+     "rc": -9,
+     "seconds": 360.8
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 603.8
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "changed setting E16_LEGACY_BIRTH",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt was written under a different configuration; changed: E16_LEGACY_BIRTH (checkpoint None, now 'allow')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "changed setting E11_SCHEDULE",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt was written under a different configuration; changed: E11_SCHEDULE (checkpoint 'blocked', now 'interleaved')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "truncated .ckpt -> .ckpt.prev, then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "779409715aa314088c0415a08160ef90cc361f3c0b051d80becc7a5efd3495aa",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1
+   ],
+   "ok": true,
+   "said_fallback": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-11T02:39:47+00:00",
+     "cpu_replay": 0.532523109
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "both checkpoints damaged",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 checkpoint e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21 checkpoint e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt.prev is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21: every checkpoint is damaged, refusing to start over: e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt: body does not match its sha256 (truncated or damaged); e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt.prev: body does not match its sha256 (truncated or damaged)"
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "pipeline digest edited (file re-sealed)",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 resuming e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.json from stage 2 (e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt): replaying the data pipeline with the learner off",
+    "e21: the replayed data pipeline does not match e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt at stage 2; differing components: ['rng']"
+   ]
+  }
+ ],
+ "costs": {
+  "T_drift_online_store": {
+   "checkpoint_bytes": [
+    9635924,
+    9640276,
+    9644628,
+    9648980,
+    9653396,
+    9657748
+   ],
+   "seconds_to_write": [
+    0.0352,
+    0.0652,
+    0.0405,
+    0.0437,
+    0.039,
+    0.0403
+   ],
+   "replay_cpu_seconds_per_stage_at_512": 1.6424208345,
+   "replay_cpu_seconds_per_stage_at_6144_ESTIMATE": 19.709050014,
+   "note": "the full-dose figure is an estimate: replay cost at 512 updates per stage scaled linearly to 6,144 (panel building included)"
+  },
+  "bank2_phase4": {
+   "checkpoint_bytes": [
+    13548273,
+    13552049,
+    13555889,
+    13559665,
+    13563569,
+    13567473
+   ],
+   "seconds_to_write": [
+    0.0628,
+    0.0584,
+    0.0677,
+    0.0624,
+    0.0678,
+    0.065
+   ],
+   "replay_cpu_seconds_per_stage_at_512": 0.34088885849999984,
+   "replay_cpu_seconds_per_stage_at_6144_ESTIMATE": 4.090666301999998,
+   "note": "the full-dose figure is an estimate: replay cost at 512 updates per stage scaled linearly to 6,144 (panel building included)"
+  }
+ },
+ "work": "/tmp/claude-0/-home-user-digitalbaby/cfe7e681-6959-534e-8497-9de6682c0dbe/scratchpad/e21work"
+}
