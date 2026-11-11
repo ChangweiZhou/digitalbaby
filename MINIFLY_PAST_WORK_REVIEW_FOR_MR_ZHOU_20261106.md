@@ -1641,3 +1641,596 @@ Audit: `PROJECT_DOCUMENTS/MINIFLY_E20B_AMENDMENTS_AUDIT_20261110.md` (commit 522
 **Status.** The brief is ready for a worker for stage 1 only (implementation and reduced-dose qualification). Stage 2 waits for Codex's reading of the stage 1 record and my go.
 
 **Erratum to 9.74 and 9.84.** Their headings say "21:45 EST by the clock". The clock read 21:34 when I wrote them and the commit is at 21:36. I wrote the label from an estimate in the very sections that promised to stop doing so. From here on the label is pasted from the `date` command's output.
+
+
+## 9.91 Codex's progress survey and next experiments: its two corrections to step 0 simulated and adopted, its sequence adopted with one ordering of my own (10 November 2026, 22:10 EST by the clock)
+
+Memo: `PROJECT_DOCUMENTS/MINIFLY_PROGRESS_SURVEY_AND_TARGET_ASSAY_20261110.md` (commit 0f44505f). It surveys what the project has established, corrects the step 0 draft of the target test in two places, and recommends four next experiments.
+
+**The survey.** I checked the figures it quotes from this review's own period against the sections that hold them, and they agree: E18's rule-born births at 0.94 to 0.96 of the backprop birth (9.71); E22's three verdicts and the unrehearsed operations at 29 to 36 (9.85); E19 (closed in 9.79); E20-A's 21 to 43% of twins (9.77); 2 of 15 later seeds on the hard pairs (9.81); backprop near 1% on the plus-minus pairs without replay (9.88); the 90 to 93% held-pair mean of E7. The older figures (Full151, V216, V218) I did not recheck. Its account of the E20-B amendments is accurate.
+
+**Its two corrections to step 0, both simulated** (`PROJECT_DOCUMENTS/target_step0_draft_checks.py`, output `TARGET_STEP0_DRAFT_CHECKS.json`; standard library, no learner).
+
+| Correction | What the simulation shows | What changed in the draft |
+|---|---|---|
+| The split leaves no pairs for sealed twins | Confirmed by counting: 216 taught and 72 revealed are all 288 pairs of a family. My draft asked for 150 twins per phase whose pairs "never occur in the stream", from a pool of none. | 216 taught, 48 first-encounter, 24 sealed (12 twin pairs) per family, reserved before generation. Results reported over renderings and over distinct pairs. |
+| The visibility check cannot fail the way I wrote it | Confirmed. A table memorising forty-byte suffixes scores 0 of 300 sealed twins in three worlds, as does an exact context-and-cue table: the mapping is absent, not out of view. The rule-aware evaluator scores 300 of 300 with the whole episode and 0 with the shared suffix only. | Check 3 now uses the rule-aware evaluator under two inputs. The tables are separate memorisation controls (3b). |
+
+**Its question about the control, answered.** The memo asks whether the control with no prior teaching can still infer the answer through the other family. It can. With shared context values, removing every family-1 teaching episode of a context leaves its family-1 answer fixed by family 2 (a solver over Z_97 says determined). With separate values per family it is undetermined. The draft now gives each family its own context values, and check 9 makes the solver confirm it.
+
+**Two things the simulation showed beyond the memo.**
+
+- *Twins with equal values do occur.* In one world of three, a randomly drawn twin had contexts with the same value, and an evaluator that sees only the suffix then scores it. The draft's check 6 already rejects such twins; the simulation shows the check is needed and not decoration.
+- *Twelve distinct twin pairs per family is small.* However many renderings are scored, the claim rests on 24 distinct pairs. This is now a question for the audit (question 7).
+
+**The recommended sequence, and what I decide.**
+
+1. *Probes on the saved E20-A checkpoints.* Adopted. Two probes, both scoring only: the answer when the true intermediate is supplied, against the answer the learner writes alone; and twins with the state reset just before the shared suffix. They say whether a failed twin fails at the intermediate or after it. The receipts already score twins with the state silenced throughout, which is the coarser form of the second probe. I will do these myself on the Mac, with predictions written first, on the three window references of stage 1 and then on stage 2 when all twelve lives are complete. It needs Mr. Xu's go, like any Mac run.
+2. *Qualify the target task with a reference before any rule is compared.* Adopted, and written into the design draft as section 7b: the same held cases in a visible and a hidden version; no rule comparison until the reference passes both and the control separates them.
+3. *Retention cost from one acquired checkpoint.* Adopted as conditions on the cost-curve design: every arm starts from the same checkpoint, fresh observations and their order are fixed, rehearsal is added as extra updates, and one arm gets the same number of extra updates without rehearsal. It still waits for the resumable-lives branch (E21), which is what makes "from the same checkpoint" possible.
+4. *The every-byte failure with one change.* Adopted as conditions on the predictable-filler run: lengths, byte frequencies, answers and target count matched, sign sweep against backprop on one network. Not designed yet.
+
+**My ordering.** The memo says to start with the probes and the step 0 corrections while E20-B qualifies. The step 0 corrections are done tonight. The probes are next. Step 0 version 2 goes back to Codex before any worker starts on it, under the rule of 9.82. Items 3 and 4 keep their place behind E21 and behind the probes.
+
+**What I leave aside.** The memo suggests keeping the native store for a later matched test against a simple index. I agree and do nothing about it now.
+
+
+## 9.92 E20-P prepared: three probes on the saved E20-A checkpoints, with predictions on file and nothing yet run (10 November 2026, 22:18 EST by the clock)
+
+This is the first item of the sequence adopted in 9.91. Script `MOD97_LOCAL_RULE_20261106/e20_probe.py`, predictions `E20P_PREDICTIONS.md`, launcher `e20p_run.sh`. It is scoring only: no weight is changed.
+
+**The three probes.**
+
+1. *Intermediate.* For every twin item: the answer the learner writes alone, the ending it writes when the true intermediate is supplied, and whether its ending is the right second step of its own intermediate. This says whether a failed twin fails at the first step or after it.
+2. *Reset.* The same twins with the state set to zero at two points.
+3. *Readout.* A linear readout of each operand and of the intermediate from the state after `=`, fitted on fresh items and tested on the twins, with shuffled-label and untrained-net controls. This is my addition. It separates a learner that did not keep the hidden operand from one that kept it and could not use it.
+
+**What building it showed about Codex's second probe.** Placed exactly, the reset gives zero twins by construction. If the state is cleared at the point after which the two members of a twin are the same input, they get the same answer, and a twin needs two different answers. So that form is a check that the assay has no leak, and the script asserts it. Placed where the memo's words put it, just before the first of the last ten bytes, it is a real measurement for the window learner, because the window still reaches back to the first operand for up to nine steps. Both are run. The receipts already hold the coarser version (state silenced throughout: zero twins in each of the seven complete lives).
+
+**Fixtures, all on untrained nets and stub answers** (`exp45/E20P_FIXTURES_<seed>.json`, three seeds, all pass).
+
+- Scoring: an oracle scores everything; a responder with a wrong intermediate and a consistent ending scores no intermediate, no whole answer and every "follows its own intermediate"; a responder without the end symbol scores no whole answer.
+- Reset: with no reset the probe's forward pass equals the harness's exactly (difference 0.0); with one, positions before it are unchanged and later ones differ; after the reset at `=` twin members' outputs are identical.
+- Readout: features that contain the operand read out 40 of 40; shuffled labels 1 of 40; features that contain a different operand 0 of 40. The fresh items share no operand triple with the twin panel or with teaching.
+- The panels the probe builds have the same hashes as the panels the three lives scored. At run time the script also refuses to continue unless it reproduces each life's own twin count.
+
+**One number from the fixtures worth keeping.** On an untrained net the in-view third operand reads out from the state on 118 to 134 of 160 twin items, and the hidden first operand on 3 of 160. So if a trained net's state gives up the first operand, that is something the life or the birth taught it.
+
+**Scope.** The three window references of stage 1, which are filed (9.77). Four stage 2 checkpoints are complete as well; they are not probed until stage 2 is complete and filed. The two-bank lives need their own state code, to be written then.
+
+**Predictions P-PR.1 to P-PR.7** are in the predictions file with confidences and readings. In short: most failed twins fail at the intermediate (70%); the second step is sound when the intermediate is given (65%); the first operand reads out on at least half the twin items (60%).
+
+**Cost.** About 20 CPU-seconds per checkpoint, one process. It waits for Mr. Xu's go.
+
+
+## 9.93 E20-P, the probes run: the window reference keeps the hidden operand and loses the twin at the first step (10 November 2026, run 22:48 to 22:49 EST; filed 22:51 EST by the clock)
+
+Script `MOD97_LOCAL_RULE_20261106/e20_probe.py`, scorer `e20p_score.py`, outputs `exp45/E20P_e16_life_D_cm6_<seed>.json`, verdicts `exp45/E20P_VERDICTS.json`. Three checkpoints: the end-of-life weights of the window reference under backprop, E20-A stage 1 (9.77). Scoring only, 12 to 13 CPU-seconds each. Each run reproduced its life's own twin count before going on, and the exact reset gave zero twins, as it must. Evidence level E2, diagnostic. No registered E20-A verdict changes.
+
+**The seven predictions** (seeds 73129 / 93683 / 116089; "holds" is at least two seeds).
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P-PR.1 | at least 70% of failed twins have a wrong intermediate | 91.3 / 89.5 / 77.5% | holds, all three |
+| P-PR.2 | given the true intermediate, the ending is right on at least 85% of twin items with the second operator in view | 92.5 / 92.0 / 94.8% | holds, all three |
+| P-PR.3 | at least 10 points lower where the second operator has left the window | 0.3 / 2.1 / 7.0 points lower | **misses**, all three |
+| P-PR.4 | a wrong intermediate is followed by its own correct second step in at least 60% of cases | 88.8 / 88.1 / 89.8% | holds, all three |
+| P-PR.5 | the hidden first operand reads out on at least 50% of twin items | 100 / 100 / 100% (1,200 of 1,200 each) | holds, all three |
+| P-PR.6 | the intermediate is right 20 points more often where the operand reads out | no item where it does not read out | **cannot be judged**; my expectation that the readout would vary was wrong |
+| P-PR.7 | with the state cleared ten bytes before `=`, twins fall to at most half | 0.47 / 0.42 / 0.13 of the ordinary count | holds, all three |
+
+The readout's controls are in order: shuffled labels 0.7 to 0.9%, an untrained net 2.2 to 3.7%.
+
+**What it shows, on the plus-minus pairs,** where there is no copy shortcut.
+
+| Twin items, plus-minus pairs | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Intermediate right, first operand hidden | 47.0 | 56.8 | 76.2 |
+| Intermediate right, same items with everything in view (leading control) | 83.0 | 79.3 | 90.8 |
+| Ending right when the true intermediate is supplied | 89.7 | 84.0 | 87.3 |
+| Twins both right, written alone | 21.0 | 26.7 | 43.3 |
+| Twins both right with the true intermediate supplied | 81.7 | 73.3 | 76.0 |
+| First operand readable from the state at `=` | 100 | 100 | 100 |
+
+1. *The twin is lost at the first step.* Most failed twins have a wrong intermediate, and supplying the true one rescues 76 / 73 / 67% of all failed twins. The second step is sound: it is right about nine times in ten when given the true intermediate, and it is the right continuation of the learner's own wrong intermediate just as often.
+2. *The hidden operand is not lost.* A linear readout recovers both its digits from the state on every twin item in every seed, against chance for an untrained net. The second operand reads out on 96 to 100%. So the learner arrives at `=` holding what the first step needs.
+3. *It is used less well from memory than from view.* With the same operands in view the first step is right on 79 to 91% of items; from memory, on 47 to 76%. The registered reading for this case applies: the operand is kept and not used, and the limit is the computation from memory, not retention.
+4. *The second operator leaving the window costs little* (P-PR.3 misses). The learner holds it.
+5. *The state before the last ten bytes matters.* Cleared there, twins survive only where the window still reaches the first operand for six or more steps (eight or more in one seed), and never otherwise.
+
+**Limits.**
+
+- Three seeds, one network, backprop, end-of-life weights. Nothing here is about the working rule.
+- I did not read out the first operator, which is also out of view in most twins. "Kept and not used" is shown for the operands. Whether the operator is kept is open.
+- The comparison in point 3 is between the same items rendered two ways, which is clean. A comparison with the taught pairs' hidden-operand panel (first step right on 76 / 76 / 90%) is not like for like, because that panel pools all twelve taught pairs, comparison operators included.
+- I have not looked at what the wrong intermediates are.
+
+**What I take from it.**
+
+- For composition inside one item, this reference does not need more memory. Mechanisms that add or protect within-item storage would not address what fails here. The retention work of 9.74 concerns forgetting across a life and is unaffected.
+- E20-B asks whether a network with no window composes. This result says to expect the same split there: operands held, first step from memory weak. I will run these probes on E20-B's checkpoints myself when they exist; the worker's brief does not change.
+- The next question is small and exploratory: what the wrong intermediates are (the other operator, a neighbouring value, a copied operand), and whether the first operator reads out. It is the same script with more written out, and another minute on the Mac.
+
+
+## 9.94 E20-P2 prepared: the wrong intermediates and the first operator; predictions on file, nothing run (10 November 2026, 23:27 EST by the clock)
+
+The follow-up named at the end of 9.93. Script `MOD97_LOCAL_RULE_20261106/e20_probe2.py`, predictions `E20P2_PREDICTIONS.md`, launcher `e20p2_run.sh`. Scoring only, same three checkpoints. It is exploratory: it was designed after E20-P's results were seen, on the same weights, so it can add detail to 9.93 and cannot confirm it.
+
+**Two parts.**
+
+- *A, what the wrong intermediates are.* Each readable wrong intermediate goes into the first of nine categories it fits (the other operator, operands swapped, another modulus, a copied operand, either operand one digit wrong, off by one, one digit right, other), and the shares are set beside what a uniformly random wrong value would give for the same items. Run on the twins and on the same items with everything in view.
+- *B, whether the first operator is kept.* A four-way readout from the state at `=`.
+
+**A confound caught in the design of B.** Among the four held pairs the first operator determines the second. A readout fitted on held pairs could therefore report the first operator while reading the second, which is often in view. The readout is fitted on fresh items of all sixteen pairs instead. The fixture shows the trap is real: given features that hold only the second operator, a readout fitted on the held four "finds" the first operator on 40 of 40 twin items, and one fitted on sixteen pairs gets 8 to 11 of 40.
+
+**Fixtures** (`exp45/E20P2_FIXTURES_<seed>.json`, three seeds, all pass, untrained nets and stub answers only): a hand-worked item lands in each category as expected; a stub that always uses the other operator is counted there whole; the operator readout finds an operator that is present and not one that is absent; fit and test items share no prompt and no taught triple; the run path executes.
+
+**One thing to keep in mind when reading the result.** On an untrained net the first operator reads out on 35 to 42% of items against a chance of 25%. The untrained control is not at chance for operators, so it is reported beside the trained figure.
+
+**Predictions P-P2.1 to P-P2.4** are in the file. The first operator reads out on at least 90% where it is out of view (65%); the other operator accounts for at least a quarter of wrong intermediates (45%); near misses account for at least half (55%); the largest category is the same in view and from memory (50%).
+
+**Cost.** Under a minute, one process. It waits for Mr. Xu's go.
+
+
+## 9.95 E20-P2, run: the operator is kept too, and the wrong intermediates are near misses of the same kind in view and from memory (10 November 2026, run 23:29 EST; filed 23:31 EST by the clock)
+
+Script `MOD97_LOCAL_RULE_20261106/e20_probe2.py`, scorer `e20p2_score.py`, outputs `exp45/E20P2_e16_life_D_cm6_<seed>.json`, verdicts `exp45/E20P2_VERDICTS.json`. The same three end-of-life checkpoints of the window reference under backprop. Scoring only, 9 CPU-seconds each; each run reproduced its life's own twin item count. Exploratory and diagnostic, E2: designed after 9.93 on the same weights, so it adds detail to that finding and does not confirm it.
+
+**The four predictions** (seeds 73129 / 93683 / 116089).
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P-P2.1 | the first operator reads out on at least 90% where it is out of view, and on the sixteen-pair test | 100 / 100 / 100% on both | holds, all three |
+| P-P2.2 | "the other operator" is at least 25% of wrong intermediates on plus-minus twins | 6.3 / 2.3 / 0.7% | **misses**, all three |
+| P-P2.3 | near misses are at least 50% of them | 78.9 / 86.1 / 93.0%, against 27% for random wrong values | holds, all three |
+| P-P2.4 | the largest category is the same from memory and in view | the same in every seed | holds, all three |
+
+Controls for the operator readout: shuffled labels 22 to 27% (chance is 25%); an untrained net 41 to 50% where the operator is out of view. The second operator also reads out on 100%.
+
+**The wrong intermediates on the plus-minus pairs.**
+
+| Share of readable wrong intermediates | From memory (twins) | In view (same items) | Random wrong value |
+|---|---|---|---|
+| How many are wrong, of 600 items | 318 / 259 / 143 | 102 / 124 / 55 | |
+| The value one changed digit of an operand would give | 72.9 / 77.6 / 86.7% | 90.1 / 87.9 / 80.0% | about 23% |
+| The other operator | 6.3 / 2.3 / 0.7% | 0.0 / 2.4 / 1.8% | 1% |
+| None of the categories | 12.3 / 8.5 / 4.2% | 6.9 / 4.0 / 3.6% | 68% |
+
+1. *Everything the first step needs is in the state.* Both operands (9.93) and both operators read out on every twin item. Nothing was forgotten inside the item.
+2. *The learner does not pick the wrong operation.* The other operator accounts for a few per cent of errors, near the random level in two seeds. My guess of a confusion of roles between the two operators was wrong.
+3. *The errors are near misses.* Three quarters or more of wrong intermediates are the value that one changed digit of an operand would give.
+4. *They are the same errors in view and from memory, two to three times as many.* Hiding the first operand does not bring in a new kind of error. It makes the usual one more frequent (ratios 3.1 / 2.1 / 2.6).
+
+The registered readings that apply: everything is kept and the failure is in computing with it; the first step is the right operation done imprecisely; hiding the operand makes the same errors more frequent.
+
+**What the breakdown cannot say.**
+
+- *Which operand.* For addition and subtraction a changed digit in the first operand and in the second give nearly the same set of values, and the first is checked first. I have added the two rows together above for that reason. The 62 to 78% the scorer files under "first operand" is an artefact of the order.
+- *Operand or arithmetic.* A slip in the addition itself can land on the same values. With the operand's digits readable from the state at 100%, the digit is there; whether it is read badly or added badly this does not show.
+- *The baseline* assumes random wrong values are uniform. Real errors are not, so "about 23%" is a floor to compare against and nothing more.
+
+**What I take from it, and what I do not.**
+
+- For this reference, composing with an operand in memory is not blocked by storage and not by a wrong rule. It costs precision. That is a narrower and more ordinary problem than the one 9.76 set out to look for.
+- I do not conclude that more training would close it. That is a guess this run does not test.
+- The comparison that matters for the project is still open: the working rule's learner scores almost no twins in stage 2. Whether it has lost the operand or cannot compute with it is exactly what these two scripts measure. I will run them on the stage 2 checkpoints once stage 2 is complete and filed, and on E20-B's when they exist.
+- No new run follows from this tonight.
+
+
+## 9.96 Overnight, 10 to 11 November: E20-A complete and recomputed; E21 delivered and not yet mergeable; E20-B past the stop I wrote; a job commissioned by Mr. Xu directly (11 November 2026, 08:51 EST by the clock)
+
+Four things arrived between my last filing (23:31 EST) and this morning. I read each and checked what can be checked from receipts. Nothing was run on the Mac for this section.
+
+### A. E20-A, all twelve lives (default branch, commit de869f90)
+
+The worker's report is `MOD97_LOCAL_RULE_20261106/E20A_REPORT.md` and its paragraph `E20A_REVIEW_SECTION_9_77.md`. I recomputed every figure from the twelve receipts with my own script (`e20a_coordinator_check.py`, output `exp45/E20A_COORDINATOR_CHECK.json`). Contract: all twelve have a completion record, seven stages, weights that match the recorded hash, the same memory panel per seed across the four arms, and the registered settings. No problems. The counts agree with the worker's table in every cell.
+
+| Plus-minus twins, end of life (seeds 73129 / 93683 / 116089) | Both right, of 300 | Twin items, of 600 | Same items in view, of 600 |
+|---|---|---|---|
+| Window reference (backprop) | 63 / 80 / 130 | 254 / 286 / 398 | 470 / 420 / 484 |
+| Backprop on the learner's pipeline | 16 / 11 / 68 | 134 / 117 / 269 | 339 / 269 / 396 |
+| Sign-rule learner | 0 / 0 / 0 | 6 / 7 / 8 | 121 / 83 / 236 |
+| Two-bank reference (backprop, no window) | 0 / 0 / 0 | 7 / 34 / 15 | 6 / 31 / 9 |
+
+- **P20.4 holds** (two-bank reference at most 5% of plus-minus twins in all seeds: 0 of 300 in each).
+- **P20.5 holds** (sign-rule learner at or below 0.60 of the reference's twin item accuracy: 0.02 / 0.02 / 0.02).
+- **P20.6 misses** (backprop on the pipeline at or above 0.85: 0.53 / 0.41 / 0.68).
+- P20.1 to P20.3 were judged at stage 1 (9.77): P20.1 and P20.3 hold, P20.2 misses.
+
+*The worker's reading is right and I adopt it:* P20.4 and P20.5 hold, and neither says anything about memory, because neither arm passes the control with everything in view. The two-bank reference gets 6 / 31 / 9 of 600 plus-minus items with the operands in view. The sign-rule learner gets 121 / 83 / 236. A learner that cannot do the task in view cannot be tested for doing it from memory.
+
+*The relaunches are clean.* A container restart killed four lives. The worker kept the killed receipts and relaunched the same four from their births. Each relaunch reproduced the killed run's scores exactly at every stage the killed run had reached (4, 4, 3 and 3 stages). One killed receipt differs from its relaunch in a logging field added between the two launches; its panel hash and scores are the same. No finished life was rerun.
+
+*What the miss of P20.6 adds.* Backprop on the learner's own data pipeline composes from memory at about half the reference's rate and is also weaker in view. The pipeline (raw reservoir at half share, admission as the stream arrives) costs composition under backprop too. That was already visible in view; it holds from memory.
+
+### B. E21, resumable lives (branch `claude/e21-resumable-lives`, commit 8b3ab4e7)
+
+Delivered: checkpoints at every scored stage of a life and every curve row of a birth, resume by replaying the data stream with the learner off, 47 checks passed on the worker's host, including exact resume after a kill at three points for seven command shapes. Report `E21_RESUME_REPORT.md` on that branch.
+
+It is not mergeable as it stands. The branch starts from 40cb1c20 and was not rebased, and `exp16_integrated.py` conflicts with the default branch (my changes since: the E22 preparations and the seed check in admission). **Not done by me yet:** resolving the conflict and rerunning its 47 checks on the merged file. Until then my promise stands and I do not edit `life()` or `develop17()`.
+
+### C. E20-B (branch `claude/adoring-cori-b07aog`)
+
+*Stage 1 is complete and carefully done* (`exp45/e20b_qual/E20B_STAGE1_RECORD.md`, runner at 0e131a29). By its record: birth parity and seven-stage life parity against my exact reference commands, with identical tensors at the end; the scoring fixtures; the architecture checks for all four networks; G3 bitwise equal to G0 with the added matrix at zero; nine admission refusals. It found and fixed a defect of its own (stage records without scores in a first attempt, kept as defective and not used). I have read this record. I have not rerun its checks.
+
+*Its question to me, answered:* the operational reading at the end of `E20B_PREDICTIONS.md` is correct on all five points (hard mean from the last birth row at k = 12; new instances of taught pairs from `compose.within` at stage 6; plus-minus pooled over the two pairs' 1,200 items; whole answer is `exact`; taught instances kept outside `compose`).
+
+*Stage 2 started without the stop of amendment 8.* The stage 1 record was committed at 04:18 UTC and the stage 2 run script at 04:30 UTC, "released by the coordinator's go". I gave no go, and no reading by Codex is on any branch. If Mr. Xu released it, that is his to do; I record only that the full dose began before the stage 1 record was checked by anyone but its author.
+
+*Then a container restart* killed the three G0 lives after their fourth block of six. The three G0 births are complete. The worker stopped, as amendment 7 requires, and is writing a resumable runner (`exp20_resume.py`, in progress at 13:39 UTC).
+
+*My position on the restart.* Restart the three G0 lives from their births with the runner that was qualified, unchanged, and keep the killed receipts. That is what E20-A did, and there the relaunches reproduced the killed runs exactly. A new resumable runner is a second runner: it may be used for the experiment only after its own kill-and-resume test shows a resumed life equal to an uninterrupted one in scores, losses and final tensors, and after that test has been read.
+
+### D. E18b, E18c and E23 (branch `claude/funny-mendel-34puq7`)
+
+Mr. Xu commissioned this directly in another session on 11 November: finish the every-byte births, then a clean control for the local heads, then targets at different time scales, each after three internal draft-audit-test cycles. His message lifts the hold I had placed on E18b (9.88). The plan is `E18B_E18C_E23_PLAN_20261111.md` on that branch; it marks itself as awaiting Codex.
+
+*E18b is complete.* I read the twelve birth receipts on the branch myself and they agree with the worker's table.
+
+| Birth, hard mean at k = 12 (three seeds) | Answer targets | Every-byte targets |
+|---|---|---|
+| Local heads with credit through time at every layer (B2) | 74.8 / 69.7 / 66.3 | 0.3 / 0.3 / 0.7 |
+| Local heads without it (B3) | 1.2 / 0.8 / 0.8 | 1.0 / 1.7 / 0.2 |
+
+The same-host B2 partner reproduces E18's figures to the decimal. Under every-byte targets the birth collapses, as the life did in 9.88. P18b.1 holds (operator and letter embeddings move); P18b.2, P18b.3 and P18b.4 miss.
+
+*E18c has its births and lives filed and is not yet scored by the worker.* Read from the receipts by me, the relay births (the second bank's error allowed into the first bank, nothing else changed) end at 82.2 / 88.5 / 78.8 against B2's 74.8 / 69.7 / 66.3. That would meet its first prediction. It is the worker's to score and I leave the verdict to its report.
+
+*E23 has four waves still to run.*
+
+### What this leaves
+
+1. **Three versions of the harness.** The default branch, the E21 branch and the E18b/E18c/E23 branch each change `exp16_integrated.py` from a different starting commit. They have to be brought together in one order: E21 onto the current head first, then the options of the E18b/E18c/E23 branch on top. Until that is done, a life started from one branch cannot be compared with a life from another without checking the source it ran.
+2. **Probes on the stage 2 checkpoints.** Stage 2 is now complete and filed here. The two probe scripts run as they are on the window lives (sign rule and backprop on the pipeline). The two-bank lives need state code I have not written, and their in-view failure makes a memory probe of little use there.
+3. **E20-B needs an answer on the restart** (C above).
+4. **My check of E20-B's stage 1** by rerunning its parity on the Mac is still owed.
+
+
+## 9.97 E18b, E18c and E23 complete: what they settle, one comparison their report does not make, and what I act on now (11 November 2026, 14:51 EST by the clock)
+
+Report: `MOD97_LOCAL_RULE_20261106/E18B_E18C_E23_REPORT_20261111.md` on branch `claude/funny-mendel-34puq7` (commit ed07bf61), run at Mr. Xu's request by another session. Thirty-three births and lives, three seeds, one host, no wave interrupted. It marks itself as awaiting Codex. I read the report and its tables, and reread the birth and life receipts for the figures below. E2, development panels.
+
+**What it settles.**
+
+1. *Every-byte targets break the working rule at birth.* A birth that reaches 66 to 75 with answer targets ends at 0.3 to 0.7 with a loss on every byte. Putting every-byte targets on the first bank's head alone is enough to do it (5.5 to 10.0). With 9.88, where the same change collapsed a life, this now holds at birth and in life, in every seed.
+2. *Cutting the error path between the banks costs 7 to 19 points at birth and 12 to 15 after a life.* The relay arm differs from the cut arm in that one path and nothing else.
+3. *The question about later targets was not answered.* Its base arm was already broken by point 1. The report says so and names the lesson: a reference cell needs its own full-length result before a contrast is built on it.
+
+**One comparison the report does not make.** The relay learner should be set beside the learner already on file from E22, which has one head at the top and passes its error down through everything. Same life settings, same seeds, read from the receipts with the report's own score (mean of the four mod-97 operations at k = 12):
+
+| End of life, seeds 73129 / 93683 / 116089 | Mod-97 operations | Mod-73 operations |
+|---|---|---|
+| One head at the top (E22, on the Mac) | 88.1 / 84.8 / 84.3 | 90.7 / 87.5 / 87.1 |
+| Local heads with the relay (E18c) | 80.6 / 87.0 / 77.8 | 88.9 / 89.0 / 84.4 |
+| Local heads with the path cut (E18c) | 68.1 / 73.4 / 63.0 | 77.1 / 79.9 / 69.2 |
+
+The two were run on different hosts, so this is not a verdict. As far as it goes, the relay learner is no better than the E22 learner: lower in two seeds and higher in one. So E18c shows what the cut costs. It does not show that local heads add anything to the rule we already have. That agrees with Mr. Xu's ruling of 10 November that feedback relayed layer by layer is allowed: the relay is the part that works.
+
+**Where the project stands after these three days.**
+
+- The working rule is sign feedback swept backward over the item, with answer targets and replay. For single operations it is born and lives within a few points of backprop (9.85).
+- It has two known limits, and both stand between it and the target test:
+  - *It needs answer-only supervision.* The target test has no answer mask: the learner predicts every next byte. As things stand the rule would fail that test at its first step.
+  - *It does not compose on untaught operator pairs,* in view or from memory (9.96, A).
+- Backprop does not have the first limit in a life (9.88). Whether it has it at birth is not on file.
+
+**Is it time to act? Yes, on what does not depend on E20-B.**
+
+1. *Close the local-heads line.* Local heads add nothing over the top-head rule, and every-byte heads do harm. I do not take up the report's suggested next design (a small-weight extra head) now.
+2. *Make the every-byte failure the main question,* because the target test turns on it. The cell that is missing is the smallest one: a backprop birth of the same network under every-byte targets. If backprop also collapses at birth, the cause is the loss and both updates need the same remedy. If it does not, the cause is in the sign feedback. Beside it, one sign-rule birth with the answer bytes weighted to carry half the loss, which tests whether the answer signal is simply outnumbered. Six births, about two and a half hours on one cloud instance. A brief goes to Codex first.
+3. *Unify the harness.* E21 onto the current head, then this branch's options. The other branch is final now, so this can be done once.
+4. *Probe the stage 2 window checkpoints* (a minute on the Mac, on Mr. Xu's go).
+
+**What waits for E20-B.** The network decision, and with it any work on composition under the rule. G0 and G3 are complete there; G1 is running and G2 is to come.
+
+
+## 9.98 Codex's audit of 11 November, the harness brought to one version, and two briefs (11 November 2026, 16:02 EST by the clock)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_HOSTILE_AUDIT_E20B_STEP0_E18_E21_20261111.md` (commit 6f83bad7), made at revision 376092e, before the merge below existed. It covers E21, the outline of E24, E20-B's stage 1, step 0 version 2, and the E18b/E18c/E23 report.
+
+### A. The harness is one version again
+
+The default branch, the E21 branch and the E18b/E18c/E23 branch each changed `exp16_integrated.py` from a different starting commit. They are merged in that order. There were three textual conflicts, all in that file, each resolved by keeping both sides: the CPU accounting at the start of a life, the birth's configuration record, and one list in the birth loop.
+
+**A defect the merge would have carried in.** On the E18b/E18c/E23 branch the harness cannot be imported with the window architecture, which is the default: one line sets an option on a module that is loaded only for the windowless networks. Every window command on that branch stops at import. Nothing that branch ran used the window learner, so its results are not affected, and its checks did not see it for the same reason. My second smoke test, on the window learner's path, stopped on it. The merge guards the line.
+
+**A mistake of mine in the checks.** In one script I set the resume variables outside a cleaned environment, which strips them. Those runs were ordinary fresh runs and tested nothing about resume. I saw it because the gate test, which must fail, exited zero. Rerun with the variables in the right place.
+
+**What was checked locally on the final file** (`exp45/HARNESS_MERGE_CHECK.json`; one process on the Mac, dry doses).
+
+| Check | Result |
+|---|---|
+| `e18_check.py` | passes; all 20 values equal the record on file |
+| `e23_check.py`, `e20b_audit_checks.py`, `e24_check.py` | pass |
+| Two-bank dry birth and life against the pre-merge archive of 10 November | weights hash equal; birth curve and all 7 stage records equal |
+| Window dry life (sign rule, raw store, drifting stream, online admission) against the pre-merge harness | weights hash equal; all 7 stage records equal |
+| Each of the two lives killed and resumed, against its uninterrupted run | weights hash equal; all 7 stage records equal |
+| Resume asked without a qualification record | refused, on both architectures |
+
+**What was not checked.** E21's 47 acceptance checks have not been run on the merged sources. That is two command shapes at one tiny dose above, against seven shapes and three kill points there.
+
+### B. Codex's findings, each checked, and what was done
+
+| Finding | Checked how | Result | Action |
+|---|---|---|---|
+| Rerun all 47 checks on the merged revision before enabling resume | the merge itself made the case: it carried a defect none of the three branches' own checks had seen | adopted | the harness now refuses `E16_RESUME=1` unless `exp45/RESUME_QUALIFIED.json` names its exact source hashes; brief E21b written |
+| A checkpoint's admission omits source hashes, torch version, dtype, a list of supported commands and a qualification gate | read in `run_config`; E21's own report says the torch version is not in the digest | confirmed | source hashes, torch version and dtype added to what a checkpoint is bound to; the gate added; the command list is in E21b |
+| A torn final birth receipt can be parsed before the valid checkpoint is loaded | fixture: a receipt cut short beside valid weights and a valid checkpoint, resume asked | confirmed: the run stops with a JSON parse error before any checkpoint is considered | in E21b, with a kill during final publication as a required fixture |
+| The far-head shuffle's private generator is not restored on resume | read in the merged birth loop | confirmed | resume is refused for that shape |
+| E24: answer-only and every-byte backprop beside the matched sign conditions; bounded readings | wording | adopted | the brief's readings now say "in this network at this dose" and name an interaction between objective and update, not a cause in general |
+| E20-B: accept the stage 1 qualification; file the early start as a deviation; verify all 24 completion receipts and weight hashes independently of the driver | to be done on the complete record | adopted | see C |
+| Step 0: four corrections | the first is a matter of logic (a moved line is still a true line); the fourth I had seen in my own simulation and handled wrongly, by dropping the twin | all four adopted | the draft is at version 3 |
+| E18c's composition table: its entries are percentages of final suffixes; whole answers on the plus-minus pairs are 0 / 2 / 1 and 3 / 5 / 1 of 1,200 | recomputed from the six life receipts | confirmed exactly | recorded here; the report on that branch should carry the correction |
+| The cross-host comparison with E22 is descriptive and leaves the value of local heads unresolved | wording of my 9.97 | adopted | below |
+
+**Correction to 9.97.** I wrote that E18c "does not show that local heads add anything". That stands. I also wrote, in the summary, that local heads add nothing. That overstates a comparison across two hosts. The right statement is that their added value is unresolved, and that I close the line because nothing on file argues for continuing it.
+
+### C. E20-B: a deviation, recorded
+
+- **Deviation.** Stage 2 of E20-B began at 04:30 UTC on 11 November, twelve minutes after the stage 1 record was committed, before any review of that record and before a release by this session. Amendment 8 of its brief required both.
+- **Stage 1 itself** is accepted on Codex's reading of the committed receipts and mine of the record.
+- **Interrupted work.** A container restart killed the three G0 lives after four of six blocks. Mr. Xu authorized their restart from the same births. The interrupted receipts are kept on the worker's branch and their CPU belongs in the cost ledger.
+- **Before any outcome is read:** all 24 completion receipts and weight hashes are verified by my own script, independently of the worker's driver, which Codex notes can skip work on a receipt's completion field and does not pass on a child's failure. The weights have to be on the branch for that.
+
+### D. Two briefs and a revised draft
+
+- **E21b, resume qualification on the merged harness** (`OPUS_TASK_E21B_RESUME_QUALIFICATION_20261111.md`). It is what Codex's audit asks for, so a worker may start; its result is audited before resume is enabled.
+- **E24, is the every-byte collapse the loss or the rule** (`OPUS_TASK_E24_EVERY_BYTE_CAUSE_20261111.md`). Draft for Codex. It adds one option to the harness, `E16_LOSSW=balanced`, off by default, with its own check and five dry births on file (`exp45/E24_CHECK.json`, `exp45/archive_e24_dry/`). Nine new births and two host-check reruns, about four and a half hours on one cloud instance. No worker starts before the audit.
+- **Step 0 of the target test, version 3** (`OPUS_TASK_TARGET_TEST_STEP0_20261111.md`). Draft for Codex.
+
+### E. What is merged along with the code
+
+The E18b/E18c/E23 branch arrives whole: its plan, predictions, report, thirty-three receipts and their weights (about 260 MB). Its report still marks itself as awaiting Codex; Codex's audit above recomputed its 14 verdicts and asks for the corrections listed in B. Being on the default branch does not change that status.
+
+
+## 9.99 Codex's audit of the E24 brief and of step 0 version 3: every point holds; both documents revised (16:20 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_E24_STEP0_V3_AUDIT_20261111.md` (commit e823e169). Its disposition: hold E24's full dose and revise step 0 before any worker. I checked each point and adopt all of them.
+
+### E24
+
+| Finding | Checked how | Result | Change |
+|---|---|---|---|
+| Both reference baselines in the brief are wrong | reread the six receipts | **confirmed.** The backprop birth is 91.2 / 94.5 / 90.3; the sign-sweep birth with one head at the top is 87.5 / 90.7 / 84.7. I had given the sign-sweep scores to backprop, and to the sign sweep the scores of E18's arm with a head at each bank and backprop inside each (80.7 / 82.2 / 77.2). | corrected; the six original receipts are pinned by hash in the brief, with their weights hashes checked against the manifest |
+| The host checks must be a wave of their own, in fresh paths, and shown to have really run | my own smoke test today hit exactly this: a birth "ran" in a folder that already held it, and the harness returned without running | confirmed | the two reruns go first and alone, in a folder with an empty `exp45`; the worker confirms a new receipt was written |
+| The two updates also differ in weight decay | read in the harness: 0.30 for the backprop birth, 0.25 for the sign sweep, as in every birth of each kind on file | confirmed | the units compared are the two training configurations; the report gives each configuration's penalty per seed and their difference, as an interaction between objective and configuration |
+| A miss of a mark is not a collapse; one seed above 10 misses P24.2 without settling survival; judge the balanced arm against the unbalanced one seed by seed | wording | adopted | the three marks stand unchanged; the readings are narrower |
+| The check compares the every-byte path with a hand calculation and not with the harness before the option | read in `e24_check.py` | confirmed: the brief claimed more than the check did | a fixture added. For both updates and both objectives, with the option unset, the loss and every gradient now equal bit for bit those of the harness at the commit before the option existed (`exp45/E24_CHECK.json`) |
+
+The roster is unchanged at nine new births and two host checks. The brief is at revision 2 and goes back to Codex.
+
+**A reading the corrected baselines allow.** The E18b partner births reproduced E18's births exactly on another host and Python (9.96 and that job's report), so birth scores from the two hosts can be set side by side. Hard mean at birth, three seeds: sign sweep with one head at the top 87.5 / 90.7 / 84.7; local heads with the relay 82.2 / 88.5 / 78.8; local heads with the path cut 74.8 / 69.7 / 66.3. The relay learner is below the top-head learner in every seed. That is descriptive, since the arms were not designed as a pair, and it points the same way as the life comparison in 9.97.
+
+### Step 0 of the target test
+
+| Finding | Result | Change in version 4 |
+|---|---|---|
+| Check 3b still demanded zero first-encounter matches while allowing accidental ones | confirmed: my row contradicted itself | the pass mark is zero twins with both members right; single matches and abstentions are counted separately |
+| Check 3 ran the oracle and the prefix-only solver together | confirmed: I described the oracle as solving from the stream | three separate things: the oracle is given the hidden values; the solver is given the bytes; the visibility test uses the solver |
+| What the solver knows after the revision was not said | confirmed | the solver is told the change point as evaluator-only metadata; a revision must change the value; a revision probe needs three taught episodes of the changed cue after the change, in three contexts |
+| Replacement episodes in the prior-teaching control; reveals and disclosures in that control | confirmed | replacements come from the taught pool; the control is checked against teaching, the other family, reveals and disclosure lines, at every probe |
+| A disclosure line moved across the change tells a future value early or a stale one late | confirmed by reasoning: a line names a cue's value, and the value has two eras | lines move only within a phase and never across the change of a value they name; arms are compared on the disclosure ledger probe by probe |
+| The parent design's decision rule still treats the moved lines as destroying information | confirmed (row 4 of its section 5) | section 7c added to the design draft: the two comparison streams answer two different questions and are read separately |
+
+Version 4 goes back to Codex. The job stays generator-only.
+
+### What this says about my drafts
+
+Two of these errors are of one kind: a number or a claim written from memory and not reread (the baselines; "what they were at the commit before"). Both were in a brief I wrote within the hour of the merge. The audit caught them before any worker started, which is what the rule of 9.82 is for.
+
+
+## 9.100 Codex's release audit: the merge released for fresh births, E24 and step 0 released with changes, resume held (16:38 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_F4C6AA8_E24_HARNESS_STEP0_AUDIT_20261111.md` (commit 05a967a9), a read-only review at f4c6aa8c.
+
+| Item | Codex's decision | Mine |
+|---|---|---|
+| Harness merge | released for fresh E24 births; resume held until E21b qualifies it | adopted |
+| E24, revision 2 | released with changes, after both isolated host checks pass | adopted; the brief is at revision 3 |
+| Step 0, version 4 | released with changes, for generator qualification only | adopted; the file is at version 5 and may go to one worker |
+
+**The merge.** Codex reviewed the three merge commits and found the three resolutions and the window guard sound, and no further break of the default architecture. It confirms the harness hash against my check record.
+
+**Two points about resume that I ran, and both hold.**
+
+- *`mod97_local.py` is missing from the source binding.* `exp45.py` and `exp3_state.py` import it; my list of five files left it out.
+- *An explicitly set default changes a checkpoint's configuration.* With `E16_FARHEAD=0` in the environment the configuration has 35 keys against 34 without it, so a run started one way and resumed the other would be refused for a setting that did not change.
+
+Neither touches a run without resume. E24's births are running on this harness, so I am not editing it now. Both go to the E21b worker as governing amendments, with the rest of Codex's list for resume: the gate to check the runtime and the command shape, and to be bound to the hash of the check record it rests on.
+
+**E24, revision 3.** The baselines, receipt hashes and weight hashes in revision 2 all recompute. The changes: a listing of the work folder before the host checks and the fresh completion records after; the reading of P24.3 corrected (reaching 40 shows nothing about the weighting unless the balanced arm is above the unbalanced one in the same seed), with the paired difference reported under every outcome; `E16_RESUME` left unset and checkpoint writing counted in the cost; a receipt without a `lossw` field read as uniform; the six source hashes in the report. In `e24_check.py` the life-refusal fixture now requires the intended assertion and no longer accepts a missing-file error.
+
+**Step 0, version 5.** Check 1 is stated as a requirement on the ordinary stream's prefixes and check 9 on the control stream's; the oracle is given each probe's context and cue; the forty-byte table's key is spelled out; in the control stream a control context's reveals and disclosure lines are replaced as well as its teaching; eligible slots for moving a line are defined and lines that cannot move are counted; the extra-bytes stream is matched on placement. Section 7c of the design draft now carries Codex's three readings in its words and says which older sentences it supersedes. Twelve twin pairs per family are accepted for qualifying the generator and are to be revisited before learners are compared.
+
+**The E24 worker's branch.** The host-check wave is on `claude/charming-clarke-u9g850`. That branch descends from an October commit and not from the default branch; its one commit says the sources are the default branch at f4c6aa8c and that only result files are added there. That is acceptable for results. A birth receipt does not record the hash of the harness that made it, which is why revision 3 asks for the source hashes in the report.
+
+**Where each job stands.**
+
+- E24: host checks running. The nine births start on my release line once both checks reproduce their pinned originals.
+- E21b: in progress on `claude/funny-mendel-34puq7`, with the amendments above.
+- Step 0: ready for one worker.
+- E20-B: G2 lives were running at the worker's last push. Not read.
+
+
+## 9.101 E20-B verified and read; E24's host check explained; step 0 reproduced; the audit session's six suggestions and what I decide (18:27 EST by the clock, 11 November 2026)
+
+Three jobs reported this evening and the audit session wrote a review with six suggestions (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/REVIEW_AND_NEXT_STEPS_NOTE_20261111.md` on `claude/vibrant-cerf-sje726`, commit 78c099fa). I checked each claim I rely on with my own computation. Nothing was trained.
+
+### A. E20-B: a windowless network composes from memory under backprop
+
+The worker's report and review paragraph are on the default branch (commit fff36103). My own check of the 24 receipts (`exp45/E20B_COORDINATOR_CHECK.json`), done independently of the worker's driver as Codex asked (9.98 C): every birth and life has its completion record, every weights file matches its recorded hash, every life has seven stages. No problems.
+
+| End of life, whole answers, seeds 73129 / 93683 / 116089 | Birth, hard mean | New instances of taught pairs | Untaught plus-minus pairs |
+|---|---|---|---|
+| G0, the two-bank reference | 93.2 / 92.8 / 92.8 | 47.3 / 50.8 / 53.3 | 1.5 / 0.5 / 7.5 |
+| G3, two banks with the added loop | 98.8 / 93.2 / 98.0 | 76.5 / 69.3 / 80.3 | 20.2 / 1.1 / 1.0 |
+| G1, GRU | 95.3 / 99.8 / 97.3 | 89.8 / 87.0 / 91.2 | 73.6 / 78.8 / 75.1 |
+| G2, LSTM | 95.2 / 96.8 / 93.5 | 87.8 / 88.8 / 85.7 | 78.6 / 72.2 / 69.2 |
+
+- **P20.7 holds** (both gated networks are born at 85 or above in every seed). **P20.8 holds. P20.9 holds. P20.10 holds** (the loop adds 29.2 / 18.5 / 27.0 points on new instances of taught pairs; as registered, that measures 32,768 added weights as a package).
+- **Selection, by the rule fixed in amendment 13 before any result.** G3 does not qualify. The GRU and the LSTM both qualify in all three seeds. The tie rule takes the higher three-seed mean on the plus-minus pairs: GRU 75.8, LSTM 73.3. **The windowless candidate is the GRU.** A margin of 2.5 points selects; it is not a finding about the two networks.
+- **What it says.** Composition from memory is learnable at this size by an ordinary recurrent network under backprop with answer targets. The fixed-rate two-bank design does not do it. By the addendum to 9.82 that design has no claim to stay.
+- **What it does not say.** Nothing here was trained by the working rule. The scores are under the registered decoder, which reruns the network for each output byte. E2, development panels.
+- **The deviation of 9.98 C stands on the record:** stage 2 began before review and release, and three G0 lives were interrupted and rerun from their births on Mr. Xu's authorization.
+
+### B. E24's host check stopped, correctly, on a difference between host classes
+
+The sign-sweep birth reproduced its original bit for bit (24 of 24 tensors). The backprop birth of seed 73129 differed at every checkpoint, ending at 93.2 against 91.2, and the worker stopped as instructed. The audit session traced it, and I repeated its comparison on the files:
+
+- the worker ran the harness at f4c6aa8c (its recorded source hash equals the file's);
+- its backprop rerun equals E20-B's G0 birth of the same seed in the hard mean at all six checkpoints, in the losses, and in **24 of 24 weight tensors**, although the two were made by different programs on different cloud hosts;
+- against the pinned original, 1 tensor of 24 is equal, the fixed rate vector;
+- the pinned backprop originals were born on the owner's machine (commit fad2cec7, 9 November); the sign-sweep originals on a cloud host (2eafb07b).
+
+So two cloud hosts and two programs give one result, and the owner's machine gives another. The same command and seed differ by +2.0 / −1.7 / +2.5 points between the host classes. I had pinned, as a host check, an original born on a different class of host. **The E24 brief is at revision 4:** backprop baselines are run on the worker's host for all three seeds; the two that remain are added to the first wave and are expected to equal E20-B's G0 births.
+
+What is not yet ruled out is a change in the harness's birth path between 9 November and now. One backprop birth of seed 73129 on the owner's machine with today's harness settles it: if it reproduces the pinned original, the cause is the host.
+
+**Errata that follow.**
+
+- *9.71* put the rule-born births at 0.96 / 0.96 / 0.94 of the backprop births. That divided cloud-born births by births from the owner's machine. Against cloud-born backprop births (93.2 / 92.8 / 92.8) the ratios are 0.94 / 0.98 / 0.91.
+- *9.85 (E22)* compared two lives on one machine, which is sound, but the two births came from different host classes. The birth-level difference between host classes is about two points, the size of the gaps E22 reads. Its three verdicts stand as registered; "within 3 points" should be read with that beside it.
+- *A rule from now on:* a seed is a pair only within one host class, and differences under about 3 points across host classes are not read.
+
+### C. Step 0 of the target test is delivered and reproduces
+
+`TARGET_TEST_STEP0/` on `claude/target-test-step0` (commit 7005a6af). I ran its check script on the owner's machine: all ten checks pass for the three world seeds, and all 3,722 values of my record equal the worker's. That is determinism across hosts and nothing more; I have not audited the code, and it goes to Codex. The worker raises two points, both from having a disclosure line after every episode: in the moved-lines stream a line names the probed pair before 51 / 47 / 55 of the 96 first-encounter probes, and the disclosure ledger never differs between the aligned and the moved arm.
+
+### D. The audit session's six suggestions
+
+| Suggestion | My decision |
+|---|---|
+| 1. Release E24 on same-host baselines, with the two missing backprop reruns | **Adopted.** Revision 4. The two reruns may start now; they are baselines, not new arms |
+| 2. Before a GRU is born under the rule, measure the sweep's alignment on E20-B's saved weights, by layer and by steps back in time | **Adopted, and it is the next thing I do.** It trains nothing. In every network the rule has worked on, the step back in time crosses no weight matrix; in a GRU it crosses the recurrent weights at every step. I write the GRU and LSTM steps by hand, with the two checks the note names, and measure on G1, G2 and G0 |
+| 3. Size the target test for learnability before more audit rounds | **Adopted.** Step 0 shows the answers are determined by the stream, not that a learner can acquire them. A sizing sweep with a backprop GRU, on world seeds that are never scored, registered as a sizing exercise with no verdict. I also take the point that the design must say what a learner may bring, and I expect to make the stated-value lines the base arm if the sweep shows what the note expects |
+| 4. One ruling: are learned feedback weights inside the line | **Mr. Xu's to give.** My recommendation is yes: a separate feedback pathway that learns by a local rule and never copies a weight is feedback "relayed by a sub-network", which his answer of 10 November allows. The source the note cites needs checking before it steers a design |
+| 5. Make E24 the last experiment on the two-bank network | **Adopted.** After E24, no repair, no predictable-filler stream and no retention curve on that network. Those go to the GRU |
+| 6. Route every commission through the coordinating session | **Mr. Xu's to decide.** I support it. The merge of 11 November is what three starting points cost |
+
+**Two things I owed that this changes.**
+
+- *The probes on the stage 2 window checkpoints* (9.97) asked whether the sign rule's window learner lost the operands or cannot compute with them. That learner is on a network we are leaving. I drop the run unless a question about the GRU needs it.
+- *My rerun of E20-B's stage 1 parity on the owner's machine* (9.96). Codex accepted stage 1 from the receipts, and full-dose evidence now exists that is stronger than my reduced-dose rerun would be: the harness and E20-B's runner give the same G0 birth, byte for byte, at full dose. I count it discharged.
+
+### E. Order of work from here
+
+1. E24: the two backprop baselines now; the nine births on my release line.
+2. One backprop birth on the owner's machine, on Mr. Xu's go.
+3. The alignment measurement on E20-B's saved weights: script and its two checks first, then the measurement on Mr. Xu's go.
+4. A brief for the sizing sweep, to Codex before a worker.
+5. Step 0's code to Codex.
+6. Then, in this order and each after the one before it: the GRU under backprop with every-byte targets; the GRU born and living under the sweep against backprop on one host. The second is the run the 17 November close needs: a rule and a network that were born and lived together.
+
+
+**Addendum to 9.101 (11 November 2026, 18:29 EST by the clock): Mr. Xu's ruling on learned feedback weights.** Asked whether a feedback pathway is inside the line when its weights are separate from the forward weights, learn by a local rule and never copy a forward weight, Mr. Xu answered: "Yes, allowed". This is the fourth working ruling, beside the three of the addendum to 9.82. What it permits is a rule whose backward pathway is learned; exact weight transport stays outside the line, as before. What it does not do is choose a mechanism: the two the audit session names (a weight mirror, and Kolen and Pollack's rule as modified by Akrout and colleagues) are to be source-checked before either steers a design, and nothing is built on them until the alignment measurement of 9.101 D.2 says whether weight signs are enough in a GRU.
+
+
+## 9.102 E25 prepared: the sweep's alignment in a GRU, an LSTM and the two-bank network; predictions on file, nothing read yet (18:33 EST by the clock, 11 November 2026)
+
+The measurement adopted in 9.101 D.2. Script `MOD97_LOCAL_RULE_20261106/e25_alignment.py`, predictions `E25_PREDICTIONS.md`, launcher `e25_run.sh`. It trains nothing: the file contains no optimizer.
+
+**What it does.** On E20-B's saved births and end-of-life files, it computes each parameter's gradient twice, exactly and by the rule's sign path, and reports the cosine between the two. Under answer targets it also reports the cosine of the error at each state by steps back from `=`. The GRU and LSTM steps are written out by hand so that every linear map can run either way.
+
+**Fixtures, on untrained networks only** (`exp45/E25_FIXTURES_<seed>.json`, three seeds, all pass).
+
+- The written-out GRU and LSTM steps equal the library layers: outputs to 5e-7, every gradient to 2e-6 relative.
+- With two gates' recurrent weights swapped, the written-out step no longer matches the library, so the comparison can fail.
+- The sign path leaves the forward pass unchanged and the top layer's own gradient unchanged, and changes the recurrent matrix's gradient.
+- For the two-bank network the exact path equals the harness's backprop gradient exactly.
+
+**A baseline from the fixtures.** On untrained networks the state-error cosine is about 0.73 at `=` in all three. Twelve steps back it is 0.52 to 0.57 in the GRU, 0.47 to 0.58 in the LSTM, 0.59 to 0.64 in the first bank and 0.73 to 0.76 in the second. So even before training the recurrent networks lose more of the direction with distance than the banks do, and not catastrophically. Trained weights are what matters.
+
+**Predictions P25.1 to P25.5** are in the file with their readings. In short: the GRU loses at least half its alignment over twelve steps (60%); the first bank keeps at least 0.8 of its own (65%); the GRU is below the bank at twelve steps (65%).
+
+**Cost.** Seconds per file. It reads E20-B's 18 saved files for the three networks and waits for Mr. Xu's go, like any run on the owner's machine.
+
+
+## 9.103 E25, run: in a trained GRU the sweep keeps its alignment through time, as well as or better than in the two-bank network (run 18:36 to 18:37 EST; filed 18:38 EST by the clock, 11 November 2026)
+
+Script `MOD97_LOCAL_RULE_20261106/e25_alignment.py`, scorer `e25_score.py`, outputs `exp45/E25_ALIGNMENT_<seed>.json`, verdicts and tables `exp45/E25_VERDICTS.json`. Eighteen saved files of E20-B (births and end-of-life files of the two-bank network, the GRU and the LSTM, three seeds), each verified against the hash in its receipt before it was read. Six CPU-seconds per seed. Nothing was trained. Diagnostic, E2.
+
+**The five predictions** (end-of-life files, answer targets, mod-97 operations at k = 12; seeds 73129 / 93683 / 116089).
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P25.1 | in the GRU the state-error cosine twelve steps back is at most half its value at `=` | 0.74 / 0.75 / 0.82 at `=`; 0.71 / 0.76 / 0.72 twelve steps back | **misses**, all three |
+| P25.2 | in the first bank it is at least 0.8 of its value at `=` | 0.56 / 0.53 / 0.55 at `=`; 0.52 / 0.48 / 0.54 twelve back | holds, all three |
+| P25.3 | twelve steps back the GRU is below the first bank | GRU 0.71 / 0.76 / 0.72; first bank 0.52 / 0.48 / 0.54 | **misses**, all three: the GRU is above |
+| P25.4 | twelve steps back the LSTM's cell state is above the GRU by 0.10 | LSTM 0.64 / 0.72 / 0.71; GRU 0.71 / 0.76 / 0.72 | **misses**, all three |
+| P25.5 | for the first layer's weights the GRU is below the two-bank network by 0.10 | GRU 0.72 / 0.51 / 0.60; two-bank 0.77 / 0.41 / 0.51 | **misses**, all three |
+
+Four of five miss, all in the same direction: I expected the sign path to lose the error's direction as it crossed the GRU's recurrent weights again and again, and it does not.
+
+**The error at the state, by steps back from `=`** (cosine between the sweep's error and the true error; end of life, mod-97 operations).
+
+| Steps back | 0 | 4 | 8 | 12 | 16 |
+|---|---|---|---|---|---|
+| GRU | 0.74 / 0.75 / 0.82 | 0.72 / 0.76 / 0.72 | 0.71 / 0.76 / 0.72 | 0.71 / 0.76 / 0.72 | 0.70 / 0.76 / 0.70 |
+| LSTM, cell state | 0.70 / 0.72 / 0.72 | 0.66 / 0.72 / 0.71 | 0.65 / 0.72 / 0.71 | 0.64 / 0.72 / 0.71 | 0.64 / 0.70 / 0.70 |
+| Two-bank, second bank | 0.71 / 0.73 / 0.71 | 0.71 / 0.73 / 0.70 | 0.71 / 0.73 / 0.69 | 0.71 / 0.73 / 0.69 | 0.71 / 0.73 / 0.69 |
+| Two-bank, first bank | 0.56 / 0.53 / 0.55 | 0.55 / 0.53 / 0.53 | 0.54 / 0.51 / 0.54 | 0.52 / 0.48 / 0.54 | 0.47 / 0.46 / 0.50 |
+
+**The update to each weight matrix** (cosine with the true gradient; end of life, answer targets, mod-97 operations).
+
+| | Recurrent or state-writing matrices | First layer | Embedding table |
+|---|---|---|---|
+| GRU | recurrent 0.79 / 0.84 / 0.87; input 0.76 / 0.78 / 0.83 | 0.72 / 0.51 / 0.60 | 0.69 / 0.71 / 0.74 |
+| LSTM | recurrent 0.76 / 0.72 / 0.77; input 0.76 / 0.67 / 0.76 | 0.59 / 0.42 / 0.40 | 0.59 / 0.47 / 0.43 |
+| Two-bank | first bank's write path 0.51 to 0.79; second bank's 0.68 to 0.84 | 0.77 / 0.41 / 0.51 | 0.74 / 0.58 / 0.57 |
+
+1. *On these weights the sweep's update to a GRU is as well aligned as its update to the two-bank network,* on which the rule is known to train (9.70, 9.85). That holds for the recurrent matrix itself, for the layers below it, and twelve to sixteen steps back in time.
+2. *A likely reason, not tested here.* In a trained GRU the step back in time has a part that crosses no weights: the gate value that carries a unit's state forward also carries its error back. Units that hold an operand across the letters have that gate near one. The untrained networks of the fixtures, whose gates sit near one half, lost a quarter of their alignment over twelve steps; the trained ones lose almost none. I have not measured the gate values, so this is a reading and not a result.
+3. *The LSTM is not clearly better than the GRU.* The candidate stays the GRU.
+4. *Under every-byte targets the alignment is not worse.* Over all parameters it is 0.79 / 0.80 / 0.82 in the GRU against 0.67 / 0.64 / 0.74 under answer targets, and 0.83 / 0.78 / 0.82 against 0.71 / 0.68 / 0.68 in the two-bank network. One matrix of the two-bank network (the first bank's projection) is lower in two seeds. So on these weights the every-byte collapse is not a matter of the sweep pointing the wrong way. That is a lead for reading E24 and nothing more.
+
+**The reading registered beforehand applies:** the GRU's alignment at the longest gaps is at or above the two-bank network's, so a GRU birth under the sweep is worth its compute, at a reduced dose first.
+
+**What this does not show**, as the predictions file said before the run. These networks were trained by backprop. Alignment at one point of training is not learning; a high figure is a licence to try a birth under the rule and is not a forecast of its score. Three seeds, one size.
+
+**What follows.** The next job is the one the close of 17 November needs: a GRU born and living under the sweep, against backprop on the same pipeline and host, with the recurrent step written out as it is here. No remedy for the rule is designed before that birth has been tried: on this evidence none is yet called for, and learned feedback weights stay in reserve.
+
+
+## 9.104 E26 briefed as a draft: a GRU born and living under the sweep, beside backprop on the same pipeline and host (18:42 EST by the clock, 11 November 2026)
+
+Brief: `OPUS_TASK_E26_GRU_UNDER_THE_SWEEP_20261111.md`. Draft for Codex; no worker starts before the audit. It is the run the close of 17 November needs: no rule and network on file were born and lived together on a network that composes.
+
+**The design in four lines.**
+
+- *One difference.* Two arms on E20-B's GRU, same initial values, same batches in the same order, same optimizer at weight decay 0.25: one updated by the sweep, one by backprop. Both use the written-out recurrent step of E25, so that only the path back differs.
+- *E20-B's protocol and marks.* The birth and the six-block life on the joint stream under which this network is known to compose, with 85 on new instances of taught pairs and 40 on untaught plus-minus pairs as absolute marks. The learner's own replay pipeline is a later step.
+- *Three stages with a stop after each:* implementation and reduced-dose qualification; the six births; the six lives. The lives are released after the births have been read, the lesson of E23's base arm.
+- *Five predictions,* with the sweep-born birth at 70 or above held at 50% and the two composition marks at 25% each. A candidate pair exists if the sweep's arm meets both marks in the same two seeds.
+
+**Why decay 0.25 in both arms.** Every rule run on file uses 0.25 and every backprop birth 0.30. E24's audit showed that this makes two configurations and not two updates. Here the backprop arm takes the rule's decay. E20-B's own GRU, at 0.30 with the library layer on another host, stays on file as what the network is known to reach and is not an arm.
+
+**Cost.** Measured on one batch on the owner's machine, an update through the written-out step costs 1.4 times the library layer's on the exact path and 1.6 times under the sweep. That puts the twelve runs near 68,000 CPU-seconds, six to seven hours on three cores, to be replaced by stage 1's measurement.
+
+**Four questions are put to the audit:** whether a backprop arm at 0.30 is also needed; whether the joint stream is the right first pipeline; whether a floor for releasing a sweep-born life should be fixed now; and whether the sweep's scale should be per stacked matrix or per gate.
+
+
+## 9.105 Codex's audit of the E26 brief and of step 0's code: E26 released for stage 1 with changes; step 0's ordinary stream accepted and its moved-lines arm to be corrected (18:53 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_E26_STEP0_IMPLEMENTATION_AUDIT_20261111.md` (commit f5dabbfa). I checked the points that can be checked in the source and adopt all of them.
+
+### E26, now at revision 2
+
+| Finding | Checked how | Result | Change |
+|---|---|---|---|
+| The harness's rule update would be the wrong one here | read in `exp11_cell.update`: for the rule it runs the forward with credit cut at every step and then calls the trace routine, which `arch20` replaces by a function that stops with an error | **confirmed.** My brief described the way back in a table and never said which loop to run. A worker following E20-B's runner would have reached for that call | the loop is written out in the brief: one loop for both arms, credit through the whole item, only the path back switched. One real optimizer step is tested in each arm, with the harness's rule update as the fixture that must fail |
+| The scorer must be qualified on the written-out network | the helper I wrote for E25 has no `silence` argument, which the production scorer passes | confirmed | the network gets the harness's full signature; the three scoring fixtures; and E20-B's saved end-of-life GRU files, loaded into the written-out network, must give the counts in their own receipts |
+| Freeze the release of lives before reading the births | my draft left the release of a rule-born life to my judgment of its birth | adopted: that would have let me choose which seeds are compared | all six lives run; the stop before stage 3 checks technical validity only; a life not run is counted as unmeasured |
+| Keep feasibility apart from the paired comparison | wording of the readings | adopted | the absolute marks and the difference from the backprop partner are read separately; a missed reference no longer silences the rule's own result; a birth under 70 is reported with its level |
+| Keep decay 0.25 in both arms, the joint stream, one scale per stacked matrix | my four questions | answered as drafted | a backprop arm at 0.30 is a follow-up, wanted only if the matched reference disappoints |
+
+Stage 1 may go to a worker. Stages 2 and 3 are released by me in turn.
+
+### Step 0
+
+Codex accepts the ordinary stream as a qualified generator for the three filed worlds. With my rerun on another host (9.101 C) that part is done, and the delivered folder `TARGET_TEST_STEP0/` is merged into the default branch with this section.
+
+Two corrections to the moved-lines arm, both adopted in version 6 of the brief:
+
+- *No line may name a pair before that pair's probe.* The worker had reported 51 / 47 / 55 early disclosures out of 96 itself. The lines of first-encounter episodes now stay in place and only teaching lines move; a deliberately early line must fail the exposure check.
+- *The rendered lines are checked as bytes.* I read the delivered check: it compares the symbols named in the lines between the arms and does not parse the values. Each value is now to be parsed from the stream and compared with what its era allows.
+
+Neither touches the ordinary stream. The sizing sweep (9.101 D.3) needs only the ordinary stream and the aligned lines, so it does not wait for these corrections.

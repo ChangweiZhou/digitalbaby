@@ -551,3 +551,67 @@ If both partners end under P22.2's marks, the result is common loss whatever P22
 **E22 version 2: launched (10 November 2026, 19:52 EST).** On Mr. Xu's go ("Yes, run it") the six lives started at 19:52:08 EST under the exclusive lock from the harness at c6732624; source and manifest hashes are in `exp45/logs/e22_source_hashes.txt`; each process's environment was read while running. Predictions P22.1–4 unchanged.
 
 **E22 version 2: verdicts (11 November 2026, 01:15 EST; lives 19:52–21:14 EST on 10 November; six exit codes zero; all three pairs pass the validator written beforehand).** P22.1 **holds in every seed** (rule-born after block 1: mod-97 90.9 / 91.9 / 88.7, hard mean 85.0 / 87.2 / 82.0). P22.2 **holds in every seed** (end: mod-97 88.1 / 84.8 / 84.3, hard mean 84.5 / 77.0 / 76.4, mod-73 90.7 / 87.5 / 87.1). P22.3 **holds in every seed** (partner minus rule-born: mod-97 −0.2 / +1.2 / +2.6, mod-73 +0.1 / −0.6 / +2.2). No seed has both partners under the marks. Review 9.85.
+
+
+## Addendum, 10 November 2026, 22:17 EST (clock): E20-P, probes on saved E20-A checkpoints
+
+Predictions P-PR.1 to P-PR.7 and their readings are in `E20P_PREDICTIONS.md`, written and pushed before any trained checkpoint is probed. Script `e20_probe.py` (fixtures pass for the three seeds, on untrained nets and stub answers only), launcher `e20p_run.sh`. Not run: it waits for Mr. Xu's go.
+
+
+## Verdicts, E20-P (10 November 2026, 22:51 EST, clock; review 9.93)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E20P_VERDICTS.json` (scorer `e20p_score.py`).
+
+- P-PR.1 holds: 91.3 / 89.5 / 77.5% of failed twins have a wrong intermediate.
+- P-PR.2 holds: 92.5 / 92.0 / 94.8%.
+- P-PR.3 misses: 0.3 / 2.1 / 7.0 points, against 10.
+- P-PR.4 holds: 88.8 / 88.1 / 89.8%.
+- P-PR.5 holds: 100 / 100 / 100%; shuffled labels 0.7 to 0.9%, untrained net 2.2 to 3.7%.
+- P-PR.6 cannot be judged: the operand reads out on every item, so there is no second group. The expectation behind it was wrong.
+- P-PR.7 holds: 0.47 / 0.42 / 0.13.
+
+
+## Addendum, 10 November 2026, 23:27 EST (clock): E20-P2, follow-up probes
+
+Predictions P-P2.1 to P-P2.4 and their readings are in `E20P2_PREDICTIONS.md`, written and pushed before `e20_probe2.py` touches a trained checkpoint. Exploratory: designed after E20-P's results. Not run: it waits for Mr. Xu's go.
+
+
+## Verdicts, E20-P2 (10 November 2026, 23:31 EST, clock; review 9.95)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E20P2_VERDICTS.json` (scorer `e20p2_score.py`).
+
+- P-P2.1 holds: the first operator reads out on 100 / 100 / 100% of twin items where it is out of view and on the sixteen-pair test; shuffled labels 22 to 27%, untrained net 41 to 50%.
+- P-P2.2 misses: the other operator is 6.3 / 2.3 / 0.7% of wrong intermediates, against 25.
+- P-P2.3 holds: near misses 78.9 / 86.1 / 93.0%.
+- P-P2.4 holds: the largest category is the same from memory and in view in every seed.
+
+
+## Verdicts, E20-A stage 2 (11 November 2026, 08:51 EST, clock; review 9.96)
+
+Recomputed by the coordinator from the twelve receipts (`e20a_coordinator_check.py`), in agreement with the worker's tables. Seeds 73129 / 93683 / 116089.
+
+- P20.4 holds: the two-bank reference gets 0 / 0 / 0 of 300 plus-minus twins.
+- P20.5 holds: the sign-rule learner's twin item accuracy is 0.02 / 0.02 / 0.02 of the window reference's.
+- P20.6 misses: backprop on the learner's pipeline is at 0.53 / 0.41 / 0.68, against 0.85.
+- Neither P20.4 nor P20.5 says anything about memory: neither arm passes the control with the operands in view.
+
+
+## Addendum, 11 November 2026, 16:03 EST (clock): E24 predictions drafted
+
+P24.1 to P24.3 and their readings are in `OPUS_TASK_E24_EVERY_BYTE_CAUSE_20261111.md` at the repository root, a draft for Codex's audit. They are registered when the audited brief is released to a worker, and the worker copies them unchanged into `E24_PREDICTIONS.md` before any new arm starts. No E24 birth has been run at full dose; five dry births at 512 updates are in `exp45/archive_e24_dry/`.
+
+
+## Addendum, 11 November 2026, 18:33 EST (clock): E25, alignment of the sign sweep on E20-B's saved weights
+
+Predictions P25.1 to P25.5 and their readings are in `E25_PREDICTIONS.md`, written and pushed before any saved file is read. Script `e25_alignment.py` (fixtures pass for three seeds on untrained networks), launcher `e25_run.sh`. Not run: it waits for Mr. Xu's go.
+
+
+## Verdicts, E25 (11 November 2026, 18:38 EST, clock; review 9.103)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E25_VERDICTS.json` (scorer `e25_score.py`). End-of-life files, answer targets, mod-97 operations at k = 12.
+
+- P25.1 misses: the GRU's state-error cosine is 0.74 / 0.75 / 0.82 at `=` and 0.71 / 0.76 / 0.72 twelve steps back.
+- P25.2 holds: the first bank keeps 0.52 / 0.48 / 0.54 of 0.56 / 0.53 / 0.55.
+- P25.3 misses: twelve steps back the GRU (0.71 / 0.76 / 0.72) is above the first bank (0.52 / 0.48 / 0.54).
+- P25.4 misses: the LSTM's cell state (0.64 / 0.72 / 0.71) is not above the GRU.
+- P25.5 misses: on the first layer's weights the GRU is 0.72 / 0.51 / 0.60 and the two-bank network 0.77 / 0.41 / 0.51.

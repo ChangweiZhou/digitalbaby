@@ -784,3 +784,23 @@ Review 9.88. Without replay, backprop on the learner's pipeline loses everything
 ## E22 version 2 filed: one rule at birth and in life (11 November 2026, 01:15 EST)
 
 Review 9.85. Six lives on one host, validated by a script written before they ran. The learner born by the sign-feedback temporal sweep and living under it ends at 88.1 / 84.8 / 84.3 on mod-97 and 90.7 / 87.5 / 87.1 on mod-73, within 3 points of its backprop-born partner in every seed and above the absolute marks set beforehand; all three predictions hold in all three seeds. Single operations only: it does not compose, it loses unrehearsed skills, and it depends on replay and on answer-only targets.
+
+
+## Addendum, 10 November 2026, 22:51 EST (clock): E20-P (review 9.93)
+
+Probes on the end-of-life weights of the three window references of E20-A stage 1, scoring only. The hidden first operand reads out linearly from the state at `=` on every twin item in every seed (controls at chance). Failed twins fail at the intermediate (78 to 91% of them), and supplying the true intermediate raises plus-minus twins from 21 / 27 / 43% to 82 / 73 / 76%. With the same operands in view the first step is right on 79 to 91% of plus-minus items, from memory on 47 to 76%. Five predictions hold, one misses, one cannot be judged. E2, diagnostic; the first operator was not read out.
+
+
+## Addendum, 10 November 2026, 23:31 EST (clock): E20-P2 (review 9.95)
+
+On the same three window references: both operators read out from the state at `=` on every twin item, as both operands did. Wrong intermediates on the plus-minus pairs are near misses (73 to 87% are the value one changed digit of an operand would give, against about 23% for random wrong values), not the other operator (under 7%), and they are the same kind with everything in view, where there are two to three times fewer. Three predictions hold; P-P2.2 misses. Exploratory, E2.
+
+
+## Addendum, 11 November 2026, 08:51 EST (clock): E20-A complete (review 9.96)
+
+Twelve lives, contract checked, counts recomputed. Plus-minus twins both right at end of life: window reference 63 / 80 / 130 of 300; backprop on the learner's pipeline 16 / 11 / 68; sign-rule learner 0 / 0 / 0; two-bank reference 0 / 0 / 0. The last two also fail with the operands in view (121 / 83 / 236 and 6 / 31 / 9 of 600 items), so they say nothing about memory. Four killed lives were relaunched from their births and reproduced the killed runs' scores exactly at every stage reached. E2.
+
+
+## Addendum, 11 November 2026, 18:38 EST (clock): E25 (review 9.103)
+
+On E20-B's saved weights, with nothing trained: the sign sweep's error keeps a cosine of 0.71 / 0.76 / 0.72 with the true error twelve steps back in a trained GRU, against 0.52 / 0.48 / 0.54 in the first bank of the two-bank network and 0.71 / 0.73 / 0.69 in its second. Per-matrix cosines in the GRU are 0.5 to 0.9, as good as or better than the two-bank network's. Four of five predictions miss, all toward better alignment than expected. Alignment is not learning; the result licenses a GRU birth under the sweep and does not forecast it. E2, diagnostic.

@@ -108,7 +108,10 @@ if TRACEUP16 == "all":
 #   E16_FIXEDCODES=on        the byte embeddings stay at their random initial values in birth and life (a labelled restriction: identical fixed
 #                           input codes for every arm, so that a rule's ability to learn its input code is separated from the rest). Tag _fc.
 #   E16_OUTTAG=<text>        appended to a life's receipt name, so that a repeat on the current panels never overwrites an original receipt.
-HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local", "aux")
+#   E16_HEADS=relay          (E18c, 11 Nov 2026) as local, except that the first bank's state feeds the second bank's projection with
+#                           its gradient (the one read between the banks); the main readout's direct reads of the first bank (Hs -> lm,
+#                           z1 -> l2) stay detached, so the main head's error reaches the first bank only through the second. Tag _rh.
+HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local", "aux", "relay")
 assert HEADS16 == "top" or (ARCH16 == "bank2" and FREEZE16 == "none"), "E16_HEADS=local|aux is defined for bank2 with nothing frozen"
 PROJFB16 = os.environ.get("E16_PROJFB", "raw"); assert PROJFB16 in ("raw", "scaled")
 assert PROJFB16 == "raw" or (TRACEUP16 == "proj" and FEEDBACK16 == "sign"), "E16_PROJFB=scaled applies to E16_TRACEUP=proj with sign feedback"
@@ -130,15 +133,42 @@ CENSUS_V2 = [None]
 LAST_AUX = [None]      # the first bank's head loss of the last update (the logged loss is the main head's)
 BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
 assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
-HTAG = ("_lh" if HEADS16 == "local" else "_ah" if HEADS16 == "aux" else "") + ("_fc" if FIXEDCODES16 == "on" else "")
+HTAG = ("_lh" if HEADS16 == "local" else "_ah" if HEADS16 == "aux" else "_rh" if HEADS16 == "relay" else "") + ("_fc" if FIXEDCODES16 == "on" else "")
 TUPTAG = ("_tups" if PROJFB16 == "scaled" else "_tup") if TRACEUP16 == "proj" else "_tall" if TRACEUP16 == "all" else ""
 DEVRULETAG = "" if BIRTHRULE16 == "D" else "_bT" + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG
 if HEADS16 != "top":
     arch17.LOCAL_HEADS = True; arch17.LOCAL_DETACH = HEADS16 == "local"
+    if HEADS16 == "relay":      # only the read between the banks (first bank's state into the second bank's projection) open
+        arch17.LOCAL_DETACH = True; arch17.P2_DETACH = False; arch17.LM_DETACH = True; arch17.Z1_DETACH = True
 if ARCH16 != "window":
     arch17.PROJ_SCALED = PROJFB16 == "scaled"
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
 assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
+#   E16_FARHEAD=<d>          (E23, 11 Nov 2026) a third head on the SECOND bank's state, trained on the byte d steps ahead (d = 1 is the next
+#                           byte) at every position where that byte exists in the item, added to the loss with weight 1; births only,
+#                           bank2 with local heads (so its error reaches the second bank alone) and the rule-T birth. Tag _fh<d>.
+#   E16_FARCTRL=none|shuffle shuffle: the far head's targets are permuted among the valid positions of the SAME item, afresh at each update
+#                           (same bytes, same count, same head; the correspondence in time destroyed). Tag suffix s.
+#                           The far head is trained on PROMPT bytes only: a position whose far target is an answer byte or EOS is
+#                           excluded in every E23 arm (the main head already supervises answers; internal audit of 11 Nov).
+#   E16_HEAD1LOSS=answer|all (E23) all: the first bank's head is trained on every next byte (the lower bank predicts the near observation)
+#                           while the main head keeps the answer loss. Births only, E16_HEADS=local. Tag _h1all.
+HEAD1LOSS16 = os.environ.get("E16_HEAD1LOSS", "answer"); assert HEAD1LOSS16 in ("answer", "all")
+assert HEAD1LOSS16 == "answer" or (HEADS16 == "local" and LOSS16 == "answer"), "E16_HEAD1LOSS=all is defined for E16_HEADS=local with the answer loss"
+H1TAG = "_h1all" if HEAD1LOSS16 == "all" else ""
+FARHEAD16 = int(os.environ.get("E16_FARHEAD", "0")); assert 0 <= FARHEAD16 <= 12
+FARCTRL16 = os.environ.get("E16_FARCTRL", "none"); assert FARCTRL16 in ("none", "shuffle")
+assert FARCTRL16 == "none" or FARHEAD16 > 0, "E16_FARCTRL needs E16_FARHEAD"
+assert FARHEAD16 == 0 or (HEADS16 == "local" and BIRTHRULE16 == "T" and LOSS16 == "answer" and FARHEAD16 <= 4), "E16_FARHEAD (1-4) is defined for E16_HEADS=local E16_BIRTHRULE=T births with the answer loss"
+FTAG = (f"_fh{FARHEAD16}" + ("s" if FARCTRL16 == "shuffle" else "")) if FARHEAD16 else ""
+if ARCH16 != "window":      # harness merge, 11 Nov: on the E18b/E18c/E23 branch this line ran for every architecture and the window learner could not be imported
+    arch17.FAR_HEAD = FARHEAD16 > 0
+#   E16_LOSSW=uniform|balanced  (E24, 11 Nov) births with E16_LOSS=all and one head at the top: balanced gives the answer positions half the loss
+#                               and every other real position the other half (a diagnostic: it uses the answer mask to set the weights)
+LOSSW16 = os.environ.get("E16_LOSSW", "uniform"); assert LOSSW16 in ("uniform", "balanced")
+assert LOSSW16 == "uniform" or (LOSS16 == "all" and HEADS16 == "top" and FARHEAD16 == 0), "E16_LOSSW=balanced is defined for E16_LOSS=all births with E16_HEADS=top"
+FAR_GEN = [None]       # the shuffle control's own generator (never the global torch RNG); seeded by develop17
+LAST_FAR = [None]
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
 ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + HTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG + ("_bT" if BIRTHRULE16 == "T" else "")
 
@@ -189,7 +219,7 @@ def book_shift(m, book0):
     return {k: round(sum(v) / len(v) / n0, 4) for k, v in out.items() if k != "other"}
 
 
-BIRTH_DEFAULTS = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", loss="answer")
+BIRTH_DEFAULTS = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", loss="answer", farhead=0, head1loss="answer")
 
 
 def expected_birth():
@@ -197,7 +227,7 @@ def expected_birth():
     file was loaded, not how it was trained."""
     if ARCH16 == "window":
         return dict(birth="M")
-    e = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, fixedcodes=FIXEDCODES16, loss="answer", final_step=E.DEV_DOSE)
+    e = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, fixedcodes=FIXEDCODES16, loss="answer", final_step=E.DEV_DOSE, farhead=0, head1loss="answer")
     if BIRTHRULE16 == "T":
         e.update(feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16)
     return e
@@ -237,6 +267,187 @@ def save_weights(m, path):
     """Weights first, by rename, then their hash: a receipt is complete only when it names the hash of weights that exist (10 Nov audit)."""
     tmp = Path(str(path) + ".tmp"); T.save(m.state_dict(), tmp); os.replace(tmp, path)
     return sha_file(path)
+
+
+# ---------------------------------------------------------------- E21 (10 Nov): checkpoints at every scored stage, resume by replay
+#   E16_RESUME=1   continue a life or birth from its last checkpoint: the data pipeline is replayed with the learner switched off (every batch
+#                  built, every admission made, the score-time store written; no update, no evaluation) up to the checkpoint, its digest is
+#                  compared with the saved one, then the weights and optimizer are loaded and the run continues as an ordinary one. Exact because
+#                  nothing in the data pipeline reads the weights. Without it a run behaves as before, apart from writing <receipt stem>.ckpt
+#                  (and .ckpt.prev, .ckpt.log) beside its receipt. Not a setting of the run: excluded from the configuration digest.
+RESUME16 = os.environ.get("E16_RESUME", "0"); assert RESUME16 in ("0", "1")
+CKPT_MAGIC = b"E21CKPT1"
+
+
+class Counted:
+    """A stream that counts what it has yielded (E21: part of the pipeline digest). Yields exactly what the wrapped generator yields."""
+    def __init__(self, g):
+        self.g, self.n = g, 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.n += 1
+        return next(self.g)
+
+
+def stream_state(s):
+    """Yield count and the generator's own state: its Random, its shuffled order and its place in it (entry_stream, E.stream, joint_stream)."""
+    if s is None:
+        return None
+    n = s.n if isinstance(s, Counted) else None
+    g = s.g if isinstance(s, Counted) else s
+    f = g.gi_frame
+    if f is None:
+        return [n, "not running"]
+    loc = f.f_locals
+    if "st" in loc:          # E.batches: the state is the inner stream's
+        return [n, stream_state(loc["st"])]
+    return [n, loc["rng"].getstate() if "rng" in loc else None, loc.get("order"), loc.get("i")]
+
+
+def digest_parts(parts):
+    """{component: sha256 of its repr}, and the overall digest of those. repr of ints, strings, bytes, tuples and lists is deterministic."""
+    import hashlib
+    d = {k: hashlib.sha256(repr(v).encode()).hexdigest() for k, v in parts.items()}
+    return dict(overall=hashlib.sha256(json.dumps(d, sort_keys=True).encode()).hexdigest(), parts=d)
+
+
+def store_state(store):
+    if store is None:
+        return None
+    return [store.order, [sorted(store.mem[k].items()) for k in store.order], len(store.mem)]
+
+
+def store_write_only(store, batch):
+    """What update16 / E.update write to the score-time store, under the same mask as the loss, without touching the weights (E21 replay)."""
+    x, y, mask = X.batch_tensor(batch)
+    if LOSS16 == "all":
+        mask = y != E.BOS
+    store.write(x, y, mask)
+
+
+def run_config(**extra):
+    """Every E11_* / E16_* / EXP45_* setting in force, by effective value, and any other such variable as given (E16_RESUME excluded)."""
+    cfg = dict(E11_WD=E.WD, E11_REPLAY=E.REPLAY, E11_SCHEDULE=E.SCHEDULE, E11_TRACE=E.TRACE, E11_GATES=E.GATES, E11_STAGE_UPDATES=STAGE_UPDATES,
+               E11_DEV_UPDATES=E.DEV_DOSE, EXP45_WINDOW=X.W, EXP45_HIDDEN=X.H, E16_REPLAY=REPLAY16, E16_CAP=RCAP, E16_STREAM=STREAM16, E16_ADMIT=ADMIT16,
+               E16_LOSS=LOSS16, E16_ARCH=ARCH16, E16_STORE=STORE16, E16_FREEZE=FREEZE16, E16_FEEDBACK=FEEDBACK16, E16_TRACEUP=TRACEUP16,
+               E16_HEADS=HEADS16, E16_PROJFB=PROJFB16, E16_FIXEDCODES=FIXEDCODES16, E16_OUTTAG=OUTTAG16, E16_COMPGAP=COMPGAP16,
+               E16_BIRTHRULE=BIRTHRULE16, E16_BOOKDECAY=BOOKDECAY16, E16_RSHARE=RSHARE16, E16_LEGACY_BIRTH=os.environ.get("E16_LEGACY_BIRTH"),
+               batch=BATCH, block=X.BLOCK, torch_threads=T.get_num_threads(),
+               torch_version=T.__version__, dtype=str(T.get_default_dtype()), sources=source_hashes())      # 11 Nov audit: a checkpoint is bound to its sources and its torch
+    for k, v in sorted(os.environ.items()):
+        if k.startswith(("E11_", "E16_", "EXP45_")) and k not in cfg and k not in ("E16_RESUME", "E16_RESUME_UNQUALIFIED"):
+            cfg[k] = v
+    cfg.update(extra)
+    return json.loads(json.dumps(cfg))
+
+
+def ckpt_files(ck):
+    return ck, Path(str(ck) + ".prev"), Path(str(ck) + ".log")
+
+
+def ckpt_write(ck, obj):
+    """Temporary file, then rename; the previous checkpoint is kept as .prev. The file carries the sha256 of its own body."""
+    import hashlib, io
+    buf = io.BytesIO(); T.save(obj, buf); body = buf.getvalue()
+    _, prev, _ = ckpt_files(ck); tmp = Path(str(ck) + ".tmp")
+    with open(tmp, "wb") as f:
+        f.write(CKPT_MAGIC + hashlib.sha256(body).digest() + body); f.flush(); os.fsync(f.fileno())
+    if ck.exists():
+        os.replace(ck, prev)
+    os.replace(tmp, ck)
+    return len(body) + 40
+
+
+def ckpt_read(path):
+    import hashlib, io
+    raw = Path(path).read_bytes()
+    if raw[:8] != CKPT_MAGIC or len(raw) < 40:
+        raise ValueError("not a checkpoint, or truncated before its header")
+    if hashlib.sha256(raw[40:]).digest() != raw[8:40]:
+        raise ValueError("body does not match its sha256 (truncated or damaged)")
+    return T.load(io.BytesIO(raw[40:]), weights_only=True)
+
+
+def ckpt_load(ck):
+    """The newest readable checkpoint: (object, file used), or (None, None) if there is none at all. A damaged .ckpt falls back to .ckpt.prev,
+    and says so; with every existing file damaged the run stops (it never starts over silently from a damaged checkpoint)."""
+    cur, prev, _ = ckpt_files(ck)
+    bad = []
+    for p in (cur, prev):
+        if not p.exists():
+            continue
+        try:
+            obj = ckpt_read(p)
+        except Exception as e:      # noqa: BLE001  (any failure to read is a damaged file)
+            bad.append(f"{p.name}: {e}"); print(f"e21 checkpoint {p.name} is unreadable ({e})", flush=True); continue
+        if bad:
+            print(f"e21 falling back to {p.name}", flush=True)
+        return obj, p
+    if bad:
+        raise SystemExit("e21: every checkpoint is damaged, refusing to start over: " + "; ".join(bad))
+    return None, None
+
+
+def ckpt_check_config(obj, cfg, used):
+    old = json.loads(obj["config"])
+    diff = {k: (old.get(k), cfg.get(k)) for k in sorted(set(old) | set(cfg)) if old.get(k) != cfg.get(k)}
+    if diff:
+        raise SystemExit(f"e21: {used.name} was written under a different configuration; changed: "
+                         + ", ".join(f"{k} (checkpoint {a!r}, now {b!r})" for k, (a, b) in diff.items()))
+
+
+def ckpt_check_digest(saved, now, used, what):
+    if saved["overall"] != now["overall"]:
+        bad = [k for k in sorted(set(saved["parts"]) | set(now["parts"])) if saved["parts"].get(k) != now["parts"].get(k)]
+        raise SystemExit(f"e21: the replayed data pipeline does not match {used.name} at {what}; differing components: {bad}")
+
+
+def ckpt_log(ck, **row):
+    with open(ckpt_files(ck)[2], "a") as f:
+        f.write(json.dumps(row, sort_keys=True) + "\n")
+
+
+def ckpt_fresh(ck):
+    """A run that does not resume starts its checkpoint files afresh (a stale checkpoint of an earlier run of the same name is removed)."""
+    for p in ckpt_files(ck):
+        if p.exists():
+            p.unlink()
+
+
+RESUME_SOURCES = ("exp16_integrated.py", "arch17.py", "exp11_cell.py", "exp45.py", "exp3_state.py")
+RESUME_GATE = [None]
+
+
+def source_hashes():
+    here = Path(__file__).parent
+    return {n: sha_file(here / n) for n in RESUME_SOURCES}
+
+
+def resume_gate():
+    """Codex's audit of E21 (11 Nov): the acceptance checks were passed on the worker's branch, not on the merged sources. E16_RESUME=1 is refused
+    unless exp45/RESUME_QUALIFIED.json names exactly these source hashes. E16_RESUME_UNQUALIFIED=allow is for the qualification run itself; it is
+    written into the receipt's `resumed` entries and is not a setting of the run."""
+    q = OUT / "RESUME_QUALIFIED.json"
+    if q.exists() and json.loads(q.read_text()).get("sources") == source_hashes():
+        RESUME_GATE[0] = "qualified"
+    elif os.environ.get("E16_RESUME_UNQUALIFIED") == "allow":
+        RESUME_GATE[0] = "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    else:
+        raise SystemExit("e21: E16_RESUME=1 is refused: resume has not been qualified on these sources (exp45/RESUME_QUALIFIED.json is absent or names other sources)")
+
+
+def resume_record(from_stage, used, cpu_replay, note=None):
+    import datetime, socket
+    r = dict(from_stage=from_stage, checkpoint=(used.name if used else None), host=socket.gethostname(),
+             time=datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"), cpu_replay=cpu_replay)
+    if note:
+        r["note"] = note
+    if RESUME_GATE[0]:
+        r["qualification"] = RESUME_GATE[0]
+    return r
 assert STREAM16 in ("blocks", "drift") and ADMIT16 in ("block", "online") and LOSS16 in ("answer", "all")
 assert ADMIT16 == "block" or REPLAY16 == "raw", "online admission is implemented for the raw reservoir only"
 #   E16_RSHARE=<fraction>  (E16-M3, 9 Nov 21:20 EST) the share of every batch drawn from the raw/total reservoir once it holds anything;
@@ -322,13 +533,29 @@ def update16(m, opt, items, rule, store):
         LAST_AUX[0] = None
         return E.update(m, opt, items, rule, store)
     x, y, mask = X.batch_tensor(items)
+    amask = mask             # the answer positions
     if LOSS16 == "all":
         mask = y != E.BOS        # every real byte of prompt and answer; padding (BOS) excluded
     logits, it = E.forward(m, x, local=(rule != "D"), through_time=(rule == "D"), keep=(rule == "T"))
-    loss = E.cross_entropy(logits[mask], y[mask])
-    aux = E.cross_entropy(it["logits1"][mask], y[mask]) if HEADS16 != "top" else None     # E18: the first bank's own error
+    if LOSSW16 == "balanced":    # E24: half the loss on the answer positions, half on all the others
+        other = mask & ~amask
+        loss = .5 * E.cross_entropy(logits[amask], y[amask]) + .5 * E.cross_entropy(logits[other], y[other])
+    else:
+        loss = E.cross_entropy(logits[mask], y[mask])
+    m1 = (y != E.BOS) if HEAD1LOSS16 == "all" else mask      # E23: the first bank's head on every next byte
+    aux = E.cross_entropy(it["logits1"][m1], y[m1]) if HEADS16 != "top" else None     # E18: the first bank's own error
     LAST_AUX[0] = float(aux.detach()) if aux is not None else None
     total = loss + aux if aux is not None else loss
+    LAST_FAR[0] = None
+    if FARHEAD16:      # E23: the byte FARHEAD16 steps ahead of each input byte, y[:, t + d - 1]; positions past the item's end excluded
+        yf, mf = far_targets(y, mask, FARHEAD16)
+        if FARCTRL16 == "shuffle":
+            yf = yf.clone()
+            for i in range(yf.shape[0]):
+                idx = mf[i].nonzero().squeeze(1)
+                yf[i, idx] = yf[i, idx[T.randperm(len(idx), generator=FAR_GEN[0])]]
+        far = E.cross_entropy(it["logits_far"][mf], yf[mf])
+        LAST_FAR[0] = float(far.detach()); total = total + far
     opt.zero_grad(); total.backward()
     if rule == "T":
         (E.trace_grads_scan if E.TRACE == "scan" else E.trace_grads)(m, it)
@@ -351,6 +578,36 @@ def score(m, items, store=None, silence=False):
     outs = E.respond(m, [p for p, _ in items], store, cap=CAP, silence=silence)
     return dict(n=len(items), exact=sum(o == t for o, (_, t) in zip(outs, items)),
                 final=sum(o[-3:] == t[-3:] for o, (_, t) in zip(outs, items)))
+
+
+FAR_POS_D = 4      # E23: the far head is trained at the SAME input positions in every arm: those whose byte FAR_POS_D ahead is a prompt byte
+
+
+def far_targets(y, mask, d):
+    """E23 (v3, after the second internal audit): target = the byte d steps ahead of input position t (y[:, t + d - 1]); trained positions =
+    those at which the byte FAR_POS_D ahead is still a prompt byte (not an answer digit, not EOS, not padding), identical for d = 1 and d = 4."""
+    D = FAR_POS_D; assert 1 <= d <= D <= y.shape[1]
+    shift = lambda z, k, fill: T.cat([z[:, k - 1:], T.full_like(z[:, :k - 1], fill)], 1)
+    pos = (shift(y, D, E.BOS) != E.BOS) & ~shift(mask, D, False)
+    return shift(y, d, E.BOS), pos
+
+
+@T.no_grad()
+def far_accuracy(m, items):
+    """E23 diagnostic, never a whole-answer score: the far head's top-1 on its own (unshuffled) prompt-byte targets, teacher forced, with a
+    structural baseline (on the same items, the most frequent target given the class of the input byte and the class of the target's
+    position: an upper bound on what structure alone gives). Also the stratum whose target is a digit."""
+    x, y, mask = X.batch_tensor(items)
+    _, it = E.forward(m, x, local=True, through_time=False)
+    yf, mf = far_targets(y, mask, FARHEAD16)
+    hit = (it["logits_far"].argmax(-1) == yf) & mf
+    dig = mf & (yf >= 48) & (yf <= 57)
+    cls = lambda b: T.where(b == E.BOS, 5, T.where((b >= 48) & (b <= 57), 0, T.where((b >= 65) & (b <= 90), 1, T.where(b >= 97, 2, T.where(b == 61, 3, 4)))))
+    key = cls(x) * 8 + cls(yf)        # input class x target class (the target class is not the target byte)
+    base = 0
+    for k_ in key[mf].unique():
+        sel = mf & (key == k_); base += int(T.bincount(yf[sel]).max())
+    return dict(prompt=[int(hit.sum()), int(mf.sum())], digit=[int((hit & dig).sum()), int(dig.sum())], structural_baseline=[base, int(mf.sum())])
 
 
 def head1(fn, *a):
@@ -514,6 +771,8 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 
 def life(arm, seed):
+    assert FARHEAD16 == 0 and HEAD1LOSS16 == "answer", "E16_FARHEAD and E16_HEAD1LOSS are defined for births only (E23)"
+    assert LOSSW16 == "uniform", "E16_LOSSW=balanced is defined for births only (E24)"
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{CGTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
     assert COMPGAP16 == 0 or arm == "D" or REPLAY16 in ("raw", "oracle"), "E16_COMPGAP needs raw or oracle replay (other stores parse fixed positions)"
@@ -541,6 +800,23 @@ def life(arm, seed):
     buffer, seen_streams = [], []
     fbuf, fset, fseen = {}, {}, {}      # balanced modes: per-family entry lists (sets for all_balanced's distinct entries; counters for reservoir)
     t0 = time.process_time(); stages = []
+    # E21: checkpoint / resume. K is the stage the checkpoint was written after (0: start from the birth).
+    ck = path.with_suffix(".ckpt"); K, ckobj, ckused, resumed, saved = 0, None, None, [], None
+    if RESUME16 == "1":
+        resume_gate()
+        ckobj, ckused = ckpt_load(ck)
+        if ckobj is None:
+            print(f"e21 no checkpoint for {path.name}: starting from the birth", flush=True)
+            resumed.append(resume_record(0, None, 0.0, note="no checkpoint: started from the birth"))
+    else:
+        ckpt_fresh(ck)
+
+    def receipt(**extra):
+        d = dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages)
+        if resumed:
+            d["resumed"] = resumed
+        d.update(extra)
+        return d
 
     def evaluate():
         res = {n: {k: score(m, it, store) for k, it in pk.items()} for n, pk in P.items()}
@@ -557,14 +833,25 @@ def life(arm, seed):
             res["nostore_compose"] = {n: score(m, it, None) for n, it in comp.items()}
         return res
 
-    c_e0 = time.process_time(); scores0 = evaluate(); cpu_score_total = [time.process_time() - c_e0]      # the scoring before the first block is scoring, not updating (third audit, 10 Nov)
-    stages.append(dict(stage=0, task=None, scores=scores0, shortcut_ceilings=shortcut_ceilings(comp),
+    cfg21 = run_config(arm=arm, seed=seed, receipt=path.name, birth=birth_file.name, birth_sha256=birth_sha, panel_sha256=panel_sha(P, comp, SP),
+                       memory_sha256=(__import__("hashlib").sha256(json.dumps(MEMORY[0], sort_keys=True, default=list).encode()).hexdigest() if MEMORY[0] else None))
+    if ckobj is not None:
+        ckpt_check_config(ckobj, cfg21, ckused)
+        K, saved = int(ckobj["stage"]), json.loads(ckobj["stages"]); resumed = json.loads(ckobj["resumed"])
+        assert len(saved) == K + 1, f"{ckused.name}: {len(saved)} stage records for stage {K}"
+        print(f"e21 resuming {path.name} from stage {K} ({ckused.name}): replaying the data pipeline with the learner off", flush=True)
+    if K > 0:      # stage 0's record (scores of the birth, settings, first-update census) is the saved one
+        stages.append(json.loads(json.dumps(saved[0])))
+        cpu_score_total = [0.0]      # merge of E21 with the 10 Nov accounting: on a resume the scoring total is read from the checkpoint at the resume point
+    else:
+        c_e0 = time.process_time(); scores0 = evaluate(); cpu_score_total = [time.process_time() - c_e0]      # the scoring before the first block is scoring, not updating (third audit, 10 Nov)
+        stages.append(dict(stage=0, task=None, scores=scores0, shortcut_ceilings=shortcut_ceilings(comp),
                        entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, nrep=NREP, batch=BATCH, heads=HEADS16, birthrule=BIRTHRULE16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, outtag=OUTTAG16, compgap=COMPGAP16,
                                      memory_panels=(dict(design="v2 twins/lead, letters inside or leading 50/50 in teaching", census=MEMORY[0]["census"], census_v2=CENSUS_V2[0],
                                                          sha256=__import__("hashlib").sha256(json.dumps(MEMORY[0], sort_keys=True, default=list).encode()).hexdigest()) if MEMORY[0] else None),
                                      panel_sha256=panel_sha(P, comp, SP), strict_panel_counts=strict_counts, birth=birth_file.name, birth_sha256=birth_sha, birth_admission=birth_admission, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
-    fstreams = {f: entry_stream(entries[f], seed + 200 + i) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
+    fstreams = {f: Counted(entry_stream(entries[f], seed + 200 + i)) for i, f in enumerate(("F1", "F2", "F3"))} if STREAM16 == "drift" else None
     drng = Random(seed + 300); TOTAL = STAGE_UPDATES * len(SCHEDULE); nseen = {}
     def drift_item(u):
         w = drift_weights(u, TOTAL); fams = [f for f in ("F1", "F2", "F3") if w[f] > 0] or ["F3"]
@@ -574,16 +861,24 @@ def life(arm, seed):
             if r <= acc:
                 return next(fstreams[f])
         return next(fstreams[fams[-1]])
+    joint = None
+
+    def pipeline_digest(presented, expo):      # E21: everything the data pipeline carries, at a stage's end (after its admissions)
+        return digest_parts(dict(rng=rng.getstate(), drng=drng.getstate(), cur=stream_state(cur), joint=stream_state(joint),
+                                 seen_streams=[stream_state(s_) for s_ in seen_streams], fstreams=({f: stream_state(s_) for f, s_ in fstreams.items()} if fstreams else None),
+                                 buffer=buffer, fbuf=fbuf, fset={f: sorted(map(repr, v)) for f, v in fset.items()}, fseen=fseen, nseen=nseen,
+                                 presented=presented, exposure=expo, store=store_state(store)))
     for si, (fam, block) in enumerate(SCHEDULE, 1):
-        cur = entry_stream(entries[fam], seed + si)
+        replaying = si <= K     # E21: the learner is off; batches, admissions, store writes and bookkeeping run exactly as written
+        cur = Counted(entry_stream(entries[fam], seed + si))
         if arm == "D" or REPLAY16 == "oracle":
             if STREAM16 == "drift":
                 for f in ("F1", "F2", "F3"):     # the twin's joint stream admits a family once its weight is positive at this checkpoint's start
                     if drift_weights((si - 1) * STAGE_UPDATES, TOTAL)[f] > 0 and f not in nseen:
-                        nseen[f] = True; seen_streams.append(entry_stream(entries[f], seed + 100 + len(nseen)))
+                        nseen[f] = True; seen_streams.append(Counted(entry_stream(entries[f], seed + 100 + len(nseen))))
             elif block == 1:
-                seen_streams.append(entry_stream(entries[fam], seed + 100 + si))
-            joint = joint_stream(seen_streams, seed + si)
+                seen_streams.append(Counted(entry_stream(entries[fam], seed + 100 + si)))
+            joint = Counted(joint_stream(seen_streams, seed + si))
         losses, presented, expo, aux_losses = [], [], {}, []
         for u in range(STAGE_UPDATES):
             npres_before = len(presented)
@@ -614,10 +909,14 @@ def life(arm, seed):
             for i_, (p_, t_) in enumerate(batch):      # 10 Nov audit: rows and supervised tokens by origin and family (logging only)
                 key = f"{'joint' if (arm == 'D' or REPLAY16 == 'oracle') else 'fresh' if i_ < nfresh else 'replay'}/{fam_of(p_)}"
                 e_ = expo.setdefault(key, [0, 0]); e_[0] += 1; e_[1] += (len(t_) if LOSS16 == "answer" else len(p_) + len(t_))   # bytes under the loss mask
-            losses.append(update16(m, opt, batch, rule, store))
-            if LAST_AUX[0] is not None:
+            if replaying:
+                if store is not None:
+                    store_write_only(store, batch)
+            else:
+                losses.append(update16(m, opt, batch, rule, store))
+            if not replaying and LAST_AUX[0] is not None:
                 aux_losses.append(LAST_AUX[0])
-            if si == 1 and u == 0:    # 9 Nov audit: record what received no gradient on the first update (grads persist until the next zero_grad)
+            if si == 1 and u == 0 and not replaying:    # 9 Nov audit: record what received no gradient on the first update (grads persist until the next zero_grad)
                 stages[0]["settings"]["zero_grad_first_update"] = zero_grad_report(m, X.batch_tensor(batch)[0])
                 print("e16 zero-grad check:", stages[0]["settings"]["zero_grad_first_update"], flush=True)
             if ADMIT16 == "online" and admits:     # raw reservoir, Algorithm R per presented item, as it arrives (new items are the first nnew of the batch)
@@ -631,24 +930,31 @@ def life(arm, seed):
                         if j < RCAP:
                             fl[j] = ("raw", tuple(p_), tuple(t_))
                 fseen["all"] = n
-        c_before = time.process_time(); sc_now = evaluate(); c_after = time.process_time(); cpu_score_total[0] += c_after - c_before
-        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=c_before - t0, scores=sc_now,
-                           cpu_scoring_so_far=cpu_score_total[0], cpu_updates_so_far=c_after - t0 - cpu_score_total[0],
-                           exposure_rows_tokens=expo, exposure_note=f"[rows, bytes under the loss mask]; loss={LOSS16}; heads applying each byte: {1 if HEADS16 == 'top' else 2}"))
-        if aux_losses:
-            stages[-1]["loss_head1"] = sum(aux_losses[-512:]) / min(512, len(aux_losses))
-        sc = stages[-1]["scores"]
-        print("e16", arm, seed, "after", f"{fam}.{block}",
-              "F1@k", {n: [sc[n][k]["exact"] for k in KS] for n in sc if n.endswith("97")},
-              "F3@12", [sc[n][12]["exact"] for n in sc if n.endswith("73")],
-              "comp.final", {n: v["final"] for n, v in sc["compose"].items()},
-              "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
-              f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
-        path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
+        if replaying:     # the stage's record is the saved one (its bookkeeping below is recomputed and compared at the resume point)
+            if json.dumps(expo, sort_keys=True) != json.dumps(saved[si]["exposure_rows_tokens"], sort_keys=True):
+                raise SystemExit(f"e21: the replayed exposure of stage {si} differs from {ckused.name}")
+            stages.append(json.loads(json.dumps(saved[si])))
+        else:
+            c_before = time.process_time(); sc_now = evaluate(); c_after = time.process_time(); cpu_score_total[0] += c_after - c_before
+            stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=c_before - t0, scores=sc_now,
+                               cpu_scoring_so_far=cpu_score_total[0], cpu_updates_so_far=c_after - t0 - cpu_score_total[0],
+                               exposure_rows_tokens=expo, exposure_note=f"[rows, bytes under the loss mask]; loss={LOSS16}; heads applying each byte: {1 if HEADS16 == 'top' else 2}"))
+            if aux_losses:
+                stages[-1]["loss_head1"] = sum(aux_losses[-512:]) / min(512, len(aux_losses))
+            sc = stages[-1]["scores"]
+            print("e16", arm, seed, "after", f"{fam}.{block}",
+                  "F1@k", {n: [sc[n][k]["exact"] for k in KS] for n in sc if n.endswith("97")},
+                  "F3@12", [sc[n][12]["exact"] for n in sc if n.endswith("73")],
+                  "comp.final", {n: v["final"] for n, v in sc["compose"].items()},
+                  "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
+                  f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
+        if not replaying:
+            path.write_text(json.dumps(receipt(), indent=1))
         if ADMIT16 == "online" and admits:
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()}; stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
             stages[-1]["reservoir_bytes"] = sum(len(e[1]) + len(e[2]) for e in fbuf["all"]); stages[-1]["admitted"] = fseen.get("all", 0)
-            path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))
+            if not replaying:
+                path.write_text(json.dumps(receipt(), indent=1))
         elif (local or arm == "M") and REPLAY16 != "oracle":
             # the stage's presented items as replayable entries (family + operands), 1,024 of them, as E11-D/E15
             ents = []
@@ -689,10 +995,30 @@ def life(arm, seed):
                     if e not in fs:
                         fs.add(e); fl.append(e)
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()} if fbuf else len(buffer)
-            path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages), indent=1))   # E16-V: keep the last block's buffer count too
+            if not replaying:
+                path.write_text(json.dumps(receipt(), indent=1))   # E16-V: keep the last block's buffer count too
+        # E21: the checkpoint, after the stage's receipt and every stage-end admission
+        dg = pipeline_digest(presented, expo)
+        if replaying:
+            ckpt_log(ck, event="replay", stage=si, pipeline=dg["overall"], parts=dg["parts"])
+        if si == K:       # the resume point: the replay must reproduce the saved pipeline and the saved stage records exactly
+            ckpt_check_digest(json.loads(ckobj["pipeline"]), dg, ckused, f"stage {K}")
+            bad = [s_["stage"] for s_, o_ in zip(stages, saved) if json.dumps(s_, sort_keys=True) != json.dumps(o_, sort_keys=True)]
+            if bad:
+                raise SystemExit(f"e21: the replayed stage-end bookkeeping differs from {ckused.name} at stages {bad}")
+            m.load_state_dict(ckobj["model"]); opt.load_state_dict(ckobj["optimizer"]); T.set_rng_state(ckobj["torch_rng"])
+            cpu_replay = time.process_time() - t0
+            t0 = time.process_time() - float(ckobj["cpu_elapsed"]); cpu_score_total[0] = float(ckobj["cpu_scoring"])
+            resumed.append(resume_record(K, ckused, cpu_replay))
+            print(f"e21 resumed at stage {K}: pipeline digest {dg['overall'][:12]} matches; replay cpu {cpu_replay:.1f}s", flush=True)
+        elif not replaying:
+            c_ck = time.process_time(); w_ck = time.perf_counter()
+            nbytes = ckpt_write(ck, dict(version=1, stage=si, model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
+                                         stages=json.dumps(stages), config=json.dumps(cfg21, sort_keys=True), pipeline=json.dumps(dg),
+                                         cpu_elapsed=c_ck - t0, cpu_scoring=cpu_score_total[0], resumed=json.dumps(resumed)))
+            ckpt_log(ck, event="checkpoint", stage=si, pipeline=dg["overall"], parts=dg["parts"], bytes=nbytes, seconds_to_write=round(time.perf_counter() - w_ck, 4))
     wsha = save_weights(m, path.with_suffix(".pt"))   # final weights, so panels can be re-scored later (8 Nov audit)
-    path.write_text(json.dumps(dict(arm=arm, seed=seed, schedule=SCHEDULE, stages=stages,
-                                    complete=dict(stages=len(stages), weights=path.with_suffix(".pt").name, weights_sha256=wsha)), indent=1))
+    path.write_text(json.dumps(receipt(complete=dict(stages=len(stages), weights=path.with_suffix(".pt").name, weights_sha256=wsha)), indent=1))
 
 
 def qualify():
@@ -772,35 +1098,72 @@ def develop17(seed):
     assert ARCH16 != "window"
     # E18b (10 Nov): a birth under the every-byte loss (E16_LOSS=all) has its own name (_lossall) and always goes through update16, which applies
     # the mask; the plain backprop path would ignore it, so it is never taken with that loss. Lives still start from answer-loss births.
-    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{E.DEVTAG}_{seed}"
+    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{'_bal' if LOSSW16 == 'balanced' else ''}{H1TAG}{FTAG}{E.DEVTAG}_{seed}"
     path = OUT / f"{stem}.pt"
     cfg = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16,
-               fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE)
-    if path.exists():     # 10 Nov audit: never accept a checkpoint on its file name alone
+               fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE,
+            **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}), **(dict(head1loss=HEAD1LOSS16) if HEAD1LOSS16 != "answer" else {}),
+               **(dict(lossw=LOSSW16) if LOSSW16 != "uniform" else {}))
+    assert not (RESUME16 == "1" and FARCTRL16 == "shuffle"), "E16_RESUME is not defined for E16_FARCTRL=shuffle: the shuffle's own generator is not in the checkpoint (harness merge, 11 Nov)"
+    ck = OUT / f"{stem}.ckpt"; K, ckobj, ckused, resumed = 0, None, None, []
+    # E21: weights written but the receipt not yet (a kill between the two) is resumable from the last checkpoint, which rewrites both
+    if path.exists() and not (RESUME16 == "1" and not (OUT / f"{stem}.json").exists() and (ck.exists() or Path(str(ck) + ".prev").exists())):     # 10 Nov audit: never accept a checkpoint on its file name alone
         jp = OUT / f"{stem}.json"
         assert jp.exists(), f"{path.name} exists without its receipt: remove or move it before a new birth"
-        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE)
+        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none", head1loss="answer", lossw="uniform")
         bad = {k: (old.get(k, dflt.get(k)), v) for k, v in cfg.items() if old.get(k, dflt.get(k)) != v}
         assert not bad, f"{path.name} exists with a different configuration {bad}"
         assert "weights_sha256" not in old or old["weights_sha256"] == sha_file(path), f"{path.name} does not match the hash in its receipt"
         print("e17 dev", stem, "exists with the same configuration; nothing to do", flush=True)
         return
+    if RESUME16 == "1":
+        resume_gate()
+        ckobj, ckused = ckpt_load(ck)
+        if ckobj is None:
+            print(f"e21 no checkpoint for {stem}: starting from the beginning", flush=True)
+            resumed.append(resume_record(0, None, 0.0, note="no checkpoint: started from the beginning"))
+    else:
+        ckpt_fresh(ck)
     m = E.new_net(seed)
     book0 = m.book.weight.detach().clone()
+    if FARHEAD16:
+        FAR_GEN[0] = T.Generator().manual_seed(seed + 23)
     plain = HEADS16 == "top" and BIRTHRULE16 == "D" and FIXEDCODES16 == "off" and LOSS16 == "answer"   # every birth before E18: E.update with backprop, decay .3
     step = (lambda items: E.update(m, opt, items, "D")) if plain else (lambda items: update16(m, opt, items, BIRTHRULE16, None))
     opt = adamw16(m, .001, .3 if BIRTHRULE16 == "D" else E.WD, ("book.",) if FIXEDCODES16 == "on" else ())
     census = None      # E16_BOOKDECAY=off: the embedding table without decay, so rows of symbols unseen at birth keep their init
     tp = [(t, E.split(t, .5, seed)[0]) for t in E.DEV]
     pan = {E.NAME(*t): E.panel(t, E.split(t, .5, seed)[1], seed, ks=(0, 4, 8, 12, 20), n=300) for t in E.DEV}
-    bt = E.batches(tp, seed, E.KMAX["M"])
+    cfg21 = run_config(stem=stem, seed=seed, birth=cfg, kmax=E.KMAX["M"],
+                       panel_sha256=__import__("hashlib").sha256(json.dumps(pan, sort_keys=True, default=list).encode()).hexdigest())
+    if ckobj is not None:
+        ckpt_check_config(ckobj, cfg21, ckused)
+        K = int(ckobj["step"]); resumed = json.loads(ckobj["resumed"])
+        print(f"e21 resuming {stem} from update {K} ({ckused.name}): drawing and discarding the batches already used", flush=True)
+    bt = Counted(E.batches(tp, seed, E.KMAX["M"]))
     t0 = time.process_time(); curve = []
     for stop in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK):
-        losses, aux_losses = [], []
+        if stop <= K:      # E21 replay: the stream does not depend on the weights; its batches are drawn and discarded
+            for _ in range(X.BLOCK):
+                next(bt)
+            if stop % 4096 == 0 or stop == E.DEV_DOSE:
+                dg = digest_parts(dict(stream=stream_state(bt)))
+                ckpt_log(ck, event="replay", step=stop, pipeline=dg["overall"], parts=dg["parts"])
+            if stop == K:
+                ckpt_check_digest(json.loads(ckobj["pipeline"]), dg, ckused, f"update {K}")
+                m.load_state_dict(ckobj["model"]); opt.load_state_dict(ckobj["optimizer"]); T.set_rng_state(ckobj["torch_rng"])
+                curve, census = json.loads(ckobj["curve"]), json.loads(ckobj["census"]); row = curve[-1]
+                cpu_replay = time.process_time() - t0; t0 = time.process_time() - float(ckobj["cpu_elapsed"])
+                resumed.append(resume_record(K, ckused, cpu_replay))
+                print(f"e21 resumed at update {K}: stream digest {dg['overall'][:12]} matches; replay cpu {cpu_replay:.1f}s", flush=True)
+            continue
+        losses, aux_losses, far_losses = [], [], []
         for _ in range(X.BLOCK):
             items = next(bt); losses.append(step(items))
             if not plain and LAST_AUX[0] is not None:
                 aux_losses.append(LAST_AUX[0])
+            if not plain and LAST_FAR[0] is not None:
+                far_losses.append(LAST_FAR[0])
             if census is None:     # which embedding rows the first update reached, by symbol role (grads persist until the next zero_grad)
                 census = zero_grad_report(m, X.batch_tensor(items)[0]); print("e17 dev credit census:", census["by_role"], flush=True)
         if stop % 4096 == 0 or stop == E.DEV_DOSE:
@@ -808,14 +1171,24 @@ def develop17(seed):
                        sealed={n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()}, book_shift_by_role=book_shift(m, book0))
             if aux_losses:
                 row["loss_head1"] = sum(aux_losses) / len(aux_losses)
+            if far_losses:
+                row["loss_far"] = sum(far_losses) / len(far_losses)
             curve.append(row)
             print("e17 dev", ARCH16 + HTAG + DEVRULETAG, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
+            dg = digest_parts(dict(stream=stream_state(bt))); c_ck = time.process_time(); w_ck = time.perf_counter()      # E21: the checkpoint at every curve row
+            nbytes = ckpt_write(ck, dict(version=1, step=stop, model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
+                                         curve=json.dumps(curve), census=json.dumps(census), config=json.dumps(cfg21, sort_keys=True),
+                                         pipeline=json.dumps(dg), cpu_elapsed=c_ck - t0, resumed=json.dumps(resumed)))
+            ckpt_log(ck, event="checkpoint", step=stop, pipeline=dg["overall"], parts=dg["parts"], bytes=nbytes, seconds_to_write=round(time.perf_counter() - w_ck, 4))
     row["silenced_k12"] = {n: E.score(m, pk[12], silence=True) for n, pk in pan.items()}
     if HEADS16 != "top":
         row["head1"] = {n: {k: head1(E.score, m, it) for k, it in pk.items()} for n, pk in pan.items()}
+    if FARHEAD16:
+        row["far_head_k12"] = {n: far_accuracy(m, pk[12]) for n, pk in pan.items()}
     wsha = save_weights(m, path)
     (OUT / f"{stem}.json").write_text(json.dumps(dict(seed=seed, kmax=E.KMAX["M"], **cfg, credit_census_first_update=census,
-                                                      weights=path.name, weights_sha256=wsha, complete=True, curve=curve), indent=1))
+                                                      weights=path.name, weights_sha256=wsha, complete=True, curve=curve,
+                                                      **({"resumed": resumed} if resumed else {})), indent=1))
 
 
 if __name__ == "__main__":

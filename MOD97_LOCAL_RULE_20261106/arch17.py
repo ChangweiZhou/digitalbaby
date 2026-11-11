@@ -51,6 +51,17 @@ PROJ_SCALED = False
 # 10 Nov audit: LOCAL_DETACH False keeps the first bank's own head but leaves every gradient path between the banks open (E16_HEADS=aux):
 # the one-factor control for "no relay between banks" (same heads, same objective, only the detach toggled).
 LOCAL_DETACH = True
+# E18c (11 Nov 2026, after two internal audits): LOCAL_DETACH cuts three reads: Hs -> lp2 (the second bank's input: the only read
+# BETWEEN the banks), Hs -> lm and z1 -> l2 (the main readout reading the first bank directly). Each has its own flag; None follows
+# LOCAL_DETACH (every earlier receipt). E16_HEADS=relay opens Hs -> lp2 alone: the main head's error reaches the first bank only through
+# the second bank.
+P2_DETACH = None
+LM_DETACH = None
+Z1_DETACH = None
+# E23 (11 Nov 2026, timescale of the upper bank's target): FAR_HEAD adds a third head that reads the second bank's state alone
+# (lmf, l3f; created after every other layer, so all other initial weights are unchanged) and is trained on the byte FAR_DELTA steps
+# ahead (set and applied by exp16_integrated.update16). With LOCAL_DETACH its error reaches only the second bank. Default off.
+FAR_HEAD = False
 # Phase 0b variants (8 Nov 23:45 EST, after P17.0 was refuted for cell1 and bank):
 #   cell1d2  cell1 with a deeper readout: two hidden layers between (z1, h) and the logits, so two digits held in the state can interact before the output
 #   bank2    two stacked fixed-rate banks: the second bank's write is computed from the FIRST bank's state (p2 = tanh(Wp2 h1)), so writes can depend on
@@ -81,6 +92,8 @@ class Net17(nn.Module):
         self.l3 = nn.Linear(H, 257)
         if arch == "bank2" and LOCAL_HEADS:     # created last, so every other layer's initial weights are those of the plain bank2 net of the same seed
             self.l2a = nn.Linear(H, H); self.lma = nn.Linear(C, H); self.l3a = nn.Linear(H, 257)
+        if arch == "bank2" and LOCAL_HEADS and FAR_HEAD:     # created after l2a/lma/l3a: the E18 local-heads net's initial weights are unchanged
+            self.lmf = nn.Linear(C, H); self.l3f = nn.Linear(H, 257)
 
 
 def new_net(seed, arch):
@@ -111,7 +124,8 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     extra = {}
     lh = hasattr(m, "l3a")
     if m.arch == "bank2":   # second bank written from the first bank's state
-        p2 = T.tanh(lin(Hs.detach() if (lh and LOCAL_DETACH) else Hs, m.lp2, local))
+        p2d = lh and (LOCAL_DETACH if P2_DETACH is None else P2_DETACH)
+        p2 = T.tanh(lin(Hs.detach() if p2d else Hs, m.lp2, local))
         c2 = T.tanh(lin(p2, m.lc2, local)); w2 = T.sigmoid(lin(p2, m.lw2, local)); r2 = m.R.expand_as(c2)
         h2 = T.zeros(B, C); hs2, prev2 = [], []
         for t in range(L):
@@ -129,7 +143,9 @@ def forward(m, x, local, through_time, keep=False, silence=False):
             Hs2 = T.zeros_like(Hs2)
     if lh:
         extra["logits1"] = lin(T.tanh(lin(z1, m.l2a, local) + lin(Hs, m.lma, local)), m.l3a, local)
-        pre = (lin(z1.detach(), m.l2, local) + lin(Hs.detach(), m.lm, local)) if LOCAL_DETACH else (lin(z1, m.l2, local) + lin(Hs, m.lm, local))
+        zd = LOCAL_DETACH if Z1_DETACH is None else Z1_DETACH
+        hd = LOCAL_DETACH if LM_DETACH is None else LM_DETACH
+        pre = lin(z1.detach() if zd else z1, m.l2, local) + lin(Hs.detach() if hd else Hs, m.lm, local)
     else:
         pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
     if m.arch == "bank2":
@@ -137,6 +153,8 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     z2 = T.tanh(pre)
     if m.arch == "cell1d2":
         z2 = T.tanh(lin(z2, m.l2b, local))
+    if hasattr(m, "l3f"):        # E23: the far head reads the second bank's state only
+        extra["logits_far"] = lin(T.tanh(lin(Hs2, m.lmf, local)), m.l3f, local)
     out = extra["logits1"] if (lh and HEAD1_OUT) else lin(z2, m.l3, local)
     return out, dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, z1=z1, **extra)
 

@@ -266,3 +266,129 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - The reference commands of amendment 9 were dry-run on the Mac (first attempt stopped on a birth dose below one block; second ran to completion). The Mac is idle and the lock is released.
 - E20-B is ready for a worker for stage 1 only. Stage 2 waits for Codex's reading of the stage 1 record and the coordinator's go.
 - The time labels of review 9.74 and 9.84 and of the previous addendum (21:45) were nine minutes ahead of the clock (commit at 21:36); labels are now pasted from `date`.
+
+
+## Addendum, 10 November 22:10 EST (clock): Codex's survey memo answered (review 9.91)
+
+- Both corrections to the step 0 draft were simulated and hold; the draft is at version 2 (sealed pool reserved first; visibility checked with the rule-aware evaluator; families share no values; twin members scored from one state). It goes back to Codex before any worker starts.
+- The four recommended experiments are adopted. Order: probes on the saved E20-A checkpoints next (scoring only, on the Mac, predictions first, on Mr. Xu's go); the reference step of the target test with visible and hidden versions (design draft 7b); the retention cost curve from one checkpoint (waits for E21); the every-byte run with predictable filler.
+- Mr. Xu is assigning a cloud worker to E20-B stage 1 (handoff text given at about 22:00 EST). E20-A stage 2 and E21 are still running.
+- The Mac is idle; nothing is queued.
+
+
+## Addendum, 10 November 22:18 EST (clock): E20-P prepared (review 9.92)
+
+- Probes on the saved E20-A checkpoints are written, with fixtures passing for three seeds on untrained nets only, and predictions P-PR.1 to P-PR.7 on file (`MOD97_LOCAL_RULE_20261106/E20P_PREDICTIONS.md`).
+- Not run. About a minute of one process on the Mac for the three stage 1 window references; waits for Mr. Xu's go.
+- Step 0 version 2 of the target test waits for Codex. E20-B stage 1, E20-A stage 2 and E21 are on the cloud.
+
+
+## Addendum, 10 November 22:51 EST (clock): E20-P run and filed (review 9.93)
+
+- Three probes on the three stage 1 window references, 22:48 to 22:49 EST, one process, lock released. Five predictions hold, P-PR.3 misses, P-PR.6 cannot be judged.
+- Finding: the reference keeps the hidden operand (readable on every twin item) and loses the twin at the first step; the second step is sound.
+- Open, exploratory: what the wrong intermediates are, and whether the first operator reads out. Not run.
+- E20-A stage 2: all three M lives now have completion records (worker's commit 28f69eef); the two-bank lives are still out. Nothing of stage 2 is judged yet.
+- The Mac is idle.
+
+
+## Addendum, 10 November 23:27 EST (clock): E20-P2 prepared (review 9.94)
+
+- Follow-up probes on the same three checkpoints: a breakdown of the wrong intermediates, and a readout of the first operator fitted on all sixteen operator pairs. Fixtures pass for three seeds on untrained nets only; predictions P-P2.1 to P-P2.4 on file.
+- Not run. Under a minute of one process on the Mac; waits for Mr. Xu's go.
+
+
+## Addendum, 10 November 23:31 EST (clock): E20-P2 run and filed (review 9.95)
+
+- Run 23:29 EST, one process, lock released. Three predictions hold, P-P2.2 misses.
+- Finding: in the window reference nothing is forgotten inside the item (operands and operators all readable); the first step from memory is the right operation done imprecisely, with the same near-miss errors as in view, two to three times as many.
+- Next use of the two probe scripts: the stage 2 checkpoints once stage 2 is complete and filed, then E20-B's. No run is queued. The Mac is idle.
+- E20-A stage 2: eleven of twelve lives have completion records as of the worker's commit 68914f06 (the two-bank life of seed 116089 is out).
+
+
+## Addendum, 11 November 08:51 EST (clock): overnight catch-up (review 9.96)
+
+- **E20-A complete and recomputed.** P20.4 and P20.5 hold, P20.6 misses; the sign-rule learner and the two-bank reference fail in view, so their zero twins say nothing about memory.
+- **E21 delivered** on `claude/e21-resumable-lives`, 47 checks passed on the worker's host. Not rebased; conflicts with the default branch in `exp16_integrated.py`. Merge and rerun of the checks are owed by the coordinator.
+- **E20-B:** stage 1 complete (record on `claude/adoring-cori-b07aog`). Stage 2 began twelve minutes later without the coordinator's go or a reading by Codex. A container restart killed the three G0 lives; the worker stopped and is writing a resumable runner. Coordinator's position: restart from the births with the qualified runner.
+- **E18b/E18c/E23**, commissioned by Mr. Xu in another session (`claude/funny-mendel-34puq7`): E18b complete, every-byte births collapse (0.3 / 0.3 / 0.7 against 74.8 / 69.7 / 66.3); E18c filed and unscored; E23 running.
+- **Three versions of the harness** are now in flight and need one merge order: E21 first, then the E18b/E18c/E23 options.
+- The Mac is idle; nothing is queued.
+
+
+## Addendum, 11 November 14:51 EST (clock): E18b/E18c/E23 read; decisions (review 9.97)
+
+- E18b/E18c/E23 are complete on `claude/funny-mendel-34puq7` (ed07bf61), awaiting Codex. Every-byte targets collapse the sign-rule birth; the relay between banks is worth 7 to 19 points at birth and 12 to 15 after a life; the later-target question was not answered.
+- Coordinator's comparison: the relay learner ends a life no better than the E22 top-head learner (80.6 / 87.0 / 77.8 against 88.1 / 84.8 / 84.3, different hosts). Local heads add nothing shown.
+- Decisions: the local-heads line is closed; the every-byte failure becomes the main question (a backprop birth under every-byte targets is the missing cell); the harness is to be unified (E21, then the E18c options).
+- Waiting: E20-B (G0 and G3 complete, G1 running, G2 to come).
+
+
+## Addendum, 11 November 16:03 EST (clock): the harness is one version; Codex's audit answered (review 9.98)
+
+- **Merged on the default branch:** E21 (resumable lives), then the E18b/E18c/E23 branch with its results. Three conflicts in `exp16_integrated.py`, all unions. The other branch's harness could not be imported with the window architecture; guarded in the merge.
+- **Resume is gated off.** `E16_RESUME=1` is refused until `exp45/RESUME_QUALIFIED.json` names the exact sources. Brief E21b (rerun the 47 checks on the merged sources, close the torn-receipt gap, list the qualified command shapes) may start.
+- **Local checks on the final file** (`MOD97_LOCAL_RULE_20261106/exp45/HARNESS_MERGE_CHECK.json`): check scripts pass; dry birth and lives on both architectures equal the pre-merge runs bit for bit; killed lives resume to the same result.
+- **E24** (every-byte: the loss or the rule) is briefed as a draft for Codex, with its option `E16_LOSSW=balanced`, check and dry births on file. Nine births and two reruns. No worker before the audit.
+- **Step 0 of the target test** is at version 3, for Codex.
+- **E20-B:** the early start of stage 2 is recorded as a deviation; stage 1 accepted; G1 lives complete and G2 births started on the worker's branch at 20:12 UTC. All 24 completion receipts and weight hashes are to be verified independently before any outcome is read.
+- The Mac is idle; the lock is released.
+
+
+## Addendum, 11 November 16:20 EST (clock): Codex's audit of E24 and step 0 version 3 answered (review 9.99)
+
+- Every point confirmed. The E24 brief is at revision 2: baselines corrected (backprop birth 91.2 / 94.5 / 90.3; sign sweep 87.5 / 90.7 / 84.7), host checks a wave of their own in a fresh folder, the two updates compared as training configurations because their decay differs, narrower readings, and a real parity fixture in `e24_check.py`. Roster unchanged. Back to Codex; no worker.
+- Step 0 is at version 4 (acceptance table fixed; oracle, prefix-only solver and visibility test separated; evidence after the revision defined; disclosure lines not moved across a change). The design draft has section 7c. Back to Codex.
+- E21b has been handed to a cloud worker by Mr. Xu. E20-B: the worker pushed a summary and verification script at 20:58 UTC with G2 lives running.
+
+
+## Addendum, 11 November 16:38 EST (clock): Codex's release audit answered (review 9.100)
+
+- **Released:** the merged harness for fresh E24 births; E24 (now revision 3) after both host checks pass; step 0 (now version 5) for generator qualification by one worker. **Held:** resume, until E21b qualifies it.
+- Two resume gaps confirmed by running them (`mod97_local.py` not in the source binding; an explicitly set default changes a checkpoint's configuration). Both are amendments to the E21b brief; the harness on the default branch is not edited while E24 runs on it.
+- E24's host-check wave is on `claude/charming-clarke-u9g850`; the nine births wait for the coordinator's release line.
+- The Mac is idle.
+
+
+## Addendum, 11 November 18:27 EST (clock): E20-B read, E24's host check explained, the audit session's suggestions decided (review 9.101)
+
+- **E20-B verified by the coordinator** (24 receipts, hashes, stages). P20.7 to P20.10 hold. By the selection rule fixed beforehand **the windowless candidate is the GRU** (untaught plus-minus pairs 73.6 / 78.8 / 75.1; LSTM 78.6 / 72.2 / 69.2; two-bank 1.5 / 0.5 / 7.5). Nothing on it has been trained by the working rule.
+- **E24's host check** stopped on a host-class difference: cloud hosts agree with each other byte for byte and differ from the owner's machine by about 2 points at birth. Brief at revision 4: backprop baselines on the worker's host for all three seeds. The two remaining baselines may start; the nine births wait for the release line.
+- **Step 0** delivered on `claude/target-test-step0`; its ten checks pass on the owner's machine with every value equal to the worker's. To Codex.
+- **Decisions on the audit session's note:** alignment measurement on E20-B's saved weights before any GRU birth under the rule (next, by the coordinator); a sizing sweep for the target test (brief to follow); E24 is the last experiment on the two-bank network. Asked of Mr. Xu: a ruling on learned feedback weights, and one route for commissions.
+- Errata: 9.71's ratios mixed host classes (0.94 / 0.98 / 0.91 against cloud-born births); E22's births came from different host classes.
+- The Mac is idle.
+
+
+## Addendum, 11 November 18:29 EST (clock): fourth working ruling
+
+Mr. Xu: learned feedback weights are allowed (a separate backward pathway that learns by a local rule and never copies a forward weight). Exact weight transport stays outside the line. Recorded as an addendum to review 9.101. No mechanism is chosen; a source check comes first, and the alignment measurement comes before that.
+
+
+## Addendum, 11 November 18:33 EST (clock): E25 prepared (review 9.102)
+
+- The alignment measurement is written, with hand-written GRU and LSTM steps checked against the library layers on untrained networks (three seeds, all pass), and predictions P25.1 to P25.5 on file.
+- Not run. Seconds per file on the Mac, no training; waits for Mr. Xu's go.
+- Still to write: the brief for the target-test sizing sweep.
+
+
+## Addendum, 11 November 18:38 EST (clock): E25 run and filed (review 9.103)
+
+- Run 18:36 to 18:37 EST, one process, lock released. P25.2 holds; P25.1, P25.3, P25.4 and P25.5 miss, all toward better alignment than the coordinator expected.
+- Finding: on backprop-trained weights the sweep's update to a GRU is as well aligned with the true gradient as its update to the two-bank network, including twelve to sixteen steps back in time. The LSTM is not clearly better; the candidate stays the GRU.
+- Next: a brief for a GRU born and living under the sweep against backprop on one host, reduced dose first; and the brief for the target-test sizing sweep. Both to Codex before any worker.
+- The Mac is idle.
+
+
+## Addendum, 11 November 18:42 EST (clock): E26 briefed as a draft (review 9.104)
+
+- `OPUS_TASK_E26_GRU_UNDER_THE_SWEEP_20261111.md`: a GRU born and living under the sweep beside backprop, same data, same decay (0.25), same written-out step, one host per seed; three stages with a stop after each; predictions P26.1 to P26.5. For Codex. No worker.
+- Still to write: the brief for the target-test sizing sweep.
+- Waiting: E24's two backprop baselines and then its nine births; E21b; Codex on step 0's code.
+
+
+## Addendum, 11 November 18:53 EST (clock): Codex's audit of E26 and of step 0's code answered (review 9.105)
+
+- **E26** is at revision 2 and released for stage 1 only: the training loop is written out (the harness's rule update must not be used), the scorer is qualified on the written-out network, all six lives run, feasibility and the paired gap are read separately.
+- **Step 0:** the ordinary stream is accepted and `TARGET_TEST_STEP0/` is merged into the default branch. The moved-lines arm needs two corrections (brief at version 6): no line names a pair before its probe; rendered values are checked as bytes.
+- Still to write: the brief for the sizing sweep.
