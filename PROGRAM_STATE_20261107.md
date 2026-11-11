@@ -281,3 +281,12 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - Probes on the saved E20-A checkpoints are written, with fixtures passing for three seeds on untrained nets only, and predictions P-PR.1 to P-PR.7 on file (`MOD97_LOCAL_RULE_20261106/E20P_PREDICTIONS.md`).
 - Not run. About a minute of one process on the Mac for the three stage 1 window references; waits for Mr. Xu's go.
 - Step 0 version 2 of the target test waits for Codex. E20-B stage 1, E20-A stage 2 and E21 are on the cloud.
+
+
+## Addendum, 10 November 22:51 EST (clock): E20-P run and filed (review 9.93)
+
+- Three probes on the three stage 1 window references, 22:48 to 22:49 EST, one process, lock released. Five predictions hold, P-PR.3 misses, P-PR.6 cannot be judged.
+- Finding: the reference keeps the hidden operand (readable on every twin item) and loses the twin at the first step; the second step is sound.
+- Open, exploratory: what the wrong intermediates are, and whether the first operator reads out. Not run.
+- E20-A stage 2: all three M lives now have completion records (worker's commit 28f69eef); the two-bank lives are still out. Nothing of stage 2 is judged yet.
+- The Mac is idle.

@@ -556,3 +556,16 @@ If both partners end under P22.2's marks, the result is common loss whatever P22
 ## Addendum, 10 November 2026, 22:17 EST (clock): E20-P, probes on saved E20-A checkpoints
 
 Predictions P-PR.1 to P-PR.7 and their readings are in `E20P_PREDICTIONS.md`, written and pushed before any trained checkpoint is probed. Script `e20_probe.py` (fixtures pass for the three seeds, on untrained nets and stub answers only), launcher `e20p_run.sh`. Not run: it waits for Mr. Xu's go.
+
+
+## Verdicts, E20-P (10 November 2026, 22:51 EST, clock; review 9.93)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E20P_VERDICTS.json` (scorer `e20p_score.py`).
+
+- P-PR.1 holds: 91.3 / 89.5 / 77.5% of failed twins have a wrong intermediate.
+- P-PR.2 holds: 92.5 / 92.0 / 94.8%.
+- P-PR.3 misses: 0.3 / 2.1 / 7.0 points, against 10.
+- P-PR.4 holds: 88.8 / 88.1 / 89.8%.
+- P-PR.5 holds: 100 / 100 / 100%; shuffled labels 0.7 to 0.9%, untrained net 2.2 to 3.7%.
+- P-PR.6 cannot be judged: the operand reads out on every item, so there is no second group. The expectation behind it was wrong.
+- P-PR.7 holds: 0.47 / 0.42 / 0.13.

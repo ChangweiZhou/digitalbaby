@@ -1701,3 +1701,52 @@ This is the first item of the sequence adopted in 9.91. Script `MOD97_LOCAL_RULE
 **Predictions P-PR.1 to P-PR.7** are in the predictions file with confidences and readings. In short: most failed twins fail at the intermediate (70%); the second step is sound when the intermediate is given (65%); the first operand reads out on at least half the twin items (60%).
 
 **Cost.** About 20 CPU-seconds per checkpoint, one process. It waits for Mr. Xu's go.
+
+
+## 9.93 E20-P, the probes run: the window reference keeps the hidden operand and loses the twin at the first step (10 November 2026, run 22:48 to 22:49 EST; filed 22:51 EST by the clock)
+
+Script `MOD97_LOCAL_RULE_20261106/e20_probe.py`, scorer `e20p_score.py`, outputs `exp45/E20P_e16_life_D_cm6_<seed>.json`, verdicts `exp45/E20P_VERDICTS.json`. Three checkpoints: the end-of-life weights of the window reference under backprop, E20-A stage 1 (9.77). Scoring only, 12 to 13 CPU-seconds each. Each run reproduced its life's own twin count before going on, and the exact reset gave zero twins, as it must. Evidence level E2, diagnostic. No registered E20-A verdict changes.
+
+**The seven predictions** (seeds 73129 / 93683 / 116089; "holds" is at least two seeds).
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P-PR.1 | at least 70% of failed twins have a wrong intermediate | 91.3 / 89.5 / 77.5% | holds, all three |
+| P-PR.2 | given the true intermediate, the ending is right on at least 85% of twin items with the second operator in view | 92.5 / 92.0 / 94.8% | holds, all three |
+| P-PR.3 | at least 10 points lower where the second operator has left the window | 0.3 / 2.1 / 7.0 points lower | **misses**, all three |
+| P-PR.4 | a wrong intermediate is followed by its own correct second step in at least 60% of cases | 88.8 / 88.1 / 89.8% | holds, all three |
+| P-PR.5 | the hidden first operand reads out on at least 50% of twin items | 100 / 100 / 100% (1,200 of 1,200 each) | holds, all three |
+| P-PR.6 | the intermediate is right 20 points more often where the operand reads out | no item where it does not read out | **cannot be judged**; my expectation that the readout would vary was wrong |
+| P-PR.7 | with the state cleared ten bytes before `=`, twins fall to at most half | 0.47 / 0.42 / 0.13 of the ordinary count | holds, all three |
+
+The readout's controls are in order: shuffled labels 0.7 to 0.9%, an untrained net 2.2 to 3.7%.
+
+**What it shows, on the plus-minus pairs,** where there is no copy shortcut.
+
+| Twin items, plus-minus pairs | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Intermediate right, first operand hidden | 47.0 | 56.8 | 76.2 |
+| Intermediate right, same items with everything in view (leading control) | 83.0 | 79.3 | 90.8 |
+| Ending right when the true intermediate is supplied | 89.7 | 84.0 | 87.3 |
+| Twins both right, written alone | 21.0 | 26.7 | 43.3 |
+| Twins both right with the true intermediate supplied | 81.7 | 73.3 | 76.0 |
+| First operand readable from the state at `=` | 100 | 100 | 100 |
+
+1. *The twin is lost at the first step.* Most failed twins have a wrong intermediate, and supplying the true one rescues 76 / 73 / 67% of all failed twins. The second step is sound: it is right about nine times in ten when given the true intermediate, and it is the right continuation of the learner's own wrong intermediate just as often.
+2. *The hidden operand is not lost.* A linear readout recovers both its digits from the state on every twin item in every seed, against chance for an untrained net. The second operand reads out on 96 to 100%. So the learner arrives at `=` holding what the first step needs.
+3. *It is used less well from memory than from view.* With the same operands in view the first step is right on 79 to 91% of items; from memory, on 47 to 76%. The registered reading for this case applies: the operand is kept and not used, and the limit is the computation from memory, not retention.
+4. *The second operator leaving the window costs little* (P-PR.3 misses). The learner holds it.
+5. *The state before the last ten bytes matters.* Cleared there, twins survive only where the window still reaches the first operand for six or more steps (eight or more in one seed), and never otherwise.
+
+**Limits.**
+
+- Three seeds, one network, backprop, end-of-life weights. Nothing here is about the working rule.
+- I did not read out the first operator, which is also out of view in most twins. "Kept and not used" is shown for the operands. Whether the operator is kept is open.
+- The comparison in point 3 is between the same items rendered two ways, which is clean. A comparison with the taught pairs' hidden-operand panel (first step right on 76 / 76 / 90%) is not like for like, because that panel pools all twelve taught pairs, comparison operators included.
+- I have not looked at what the wrong intermediates are.
+
+**What I take from it.**
+
+- For composition inside one item, this reference does not need more memory. Mechanisms that add or protect within-item storage would not address what fails here. The retention work of 9.74 concerns forgetting across a life and is unaffected.
+- E20-B asks whether a network with no window composes. This result says to expect the same split there: operands held, first step from memory weak. I will run these probes on E20-B's checkpoints myself when they exist; the worker's brief does not change.
+- The next question is small and exploratory: what the wrong intermediates are (the other operator, a neighbouring value, a copied operand), and whether the first operator reads out. It is the same script with more written out, and another minute on the Mac.

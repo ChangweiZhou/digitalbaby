@@ -51,3 +51,16 @@ Reset (a) gives zero twins by construction: after it the two members are the sam
 - They are run on end-of-life weights of one architecture under backprop. They say nothing about the working rule.
 - Max and min pairs have a copy shortcut near 50% per item (erratum in review 9.87). Results are reported per operator pair and the plus-minus pairs carry the reading.
 - A supplied intermediate is not the registered autonomous score. It is reported separately and never added to it.
+
+
+## Verdicts, E20-P (10 November 2026, 22:51 EST, clock; review 9.93)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E20P_VERDICTS.json` (scorer `e20p_score.py`).
+
+- P-PR.1 holds: 91.3 / 89.5 / 77.5% of failed twins have a wrong intermediate.
+- P-PR.2 holds: 92.5 / 92.0 / 94.8%.
+- P-PR.3 misses: 0.3 / 2.1 / 7.0 points, against 10.
+- P-PR.4 holds: 88.8 / 88.1 / 89.8%.
+- P-PR.5 holds: 100 / 100 / 100%; shuffled labels 0.7 to 0.9%, untrained net 2.2 to 3.7%.
+- P-PR.6 cannot be judged: the operand reads out on every item, so there is no second group. The expectation behind it was wrong.
+- P-PR.7 holds: 0.47 / 0.42 / 0.13.

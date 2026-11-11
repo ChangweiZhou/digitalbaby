@@ -784,3 +784,8 @@ Review 9.88. Without replay, backprop on the learner's pipeline loses everything
 ## E22 version 2 filed: one rule at birth and in life (11 November 2026, 01:15 EST)
 
 Review 9.85. Six lives on one host, validated by a script written before they ran. The learner born by the sign-feedback temporal sweep and living under it ends at 88.1 / 84.8 / 84.3 on mod-97 and 90.7 / 87.5 / 87.1 on mod-73, within 3 points of its backprop-born partner in every seed and above the absolute marks set beforehand; all three predictions hold in all three seeds. Single operations only: it does not compose, it loses unrehearsed skills, and it depends on replay and on answer-only targets.
+
+
+## Addendum, 10 November 2026, 22:51 EST (clock): E20-P (review 9.93)
+
+Probes on the end-of-life weights of the three window references of E20-A stage 1, scoring only. The hidden first operand reads out linearly from the state at `=` on every twin item in every seed (controls at chance). Failed twins fail at the intermediate (78 to 91% of them), and supplying the true intermediate raises plus-minus twins from 21 / 27 / 43% to 82 / 73 / 76%. With the same operands in view the first step is right on 79 to 91% of plus-minus items, from memory on 47 to 76%. Five predictions hold, one misses, one cannot be judged. E2, diagnostic; the first operator was not read out.
