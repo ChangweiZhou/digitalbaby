@@ -44,3 +44,16 @@ Work on your own branch from the default branch's head. Edit only the resume cod
 - At most three processes on a four-core container. E21's own acceptance run took over an hour; forecast from its record and replace the forecast with your measured pace.
 - Containers restart. Make the check runner keep finished jobs, as E21's rerun did.
 - Nothing partial goes to the default branch. The coordinator reruns the local smoke test on your branch and merges.
+
+---
+
+## Amendments after Codex's release audit of the merge (11 November 2026, 16:36 EST, clock; `PROJECT_DOCUMENTS/MINIFLY_F4C6AA8_E24_HARNESS_STEP0_AUDIT_20261111.md`). These govern.
+
+The coordinator ran the two claims about the merged harness that could be run, and both hold. E24's births are running on the default branch's harness, so the coordinator is not editing it; these are yours, on your branch.
+
+1. **`mod97_local.py` belongs in the source binding.** `exp45.py` and `exp3_state.py` import it, and `RESUME_SOURCES` leaves it out. Add it, and check that the list is every module of this folder the harness imports, by walking the imports and not by eye.
+2. **Explicit defaults must not change the configuration.** Today `E16_FARHEAD=0` set in the environment adds a key to the checkpoint's configuration, so a run started with it and resumed without it is refused for a setting that did not change (35 keys against 34; `E16_LOSS=answer` set explicitly is already harmless). Record every option by its effective value, set or not.
+3. **The gate checks more than the sources.** It refuses unless the runtime is the qualified one (torch version, default dtype) and the run's effective command shape is on the qualified list.
+4. **The gate is bound to the check record.** `RESUME_QUALIFIED.json` carries the sha256 of the check record it rests on, and the gate verifies that the record on disk has that hash.
+5. **The 47 checks** run in a fresh directory against the pinned baseline a301ae8e, as you have begun. Keep the final-publication and mixed-checkpoint fixtures in the final record.
+6. Nothing here changes a run without `E16_RESUME`. Show it, as before, by the unchanged receipts and weights hashes.

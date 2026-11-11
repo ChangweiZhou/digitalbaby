@@ -2017,3 +2017,36 @@ Version 4 goes back to Codex. The job stays generator-only.
 ### What this says about my drafts
 
 Two of these errors are of one kind: a number or a claim written from memory and not reread (the baselines; "what they were at the commit before"). Both were in a brief I wrote within the hour of the merge. The audit caught them before any worker started, which is what the rule of 9.82 is for.
+
+
+## 9.100 Codex's release audit: the merge released for fresh births, E24 and step 0 released with changes, resume held (16:38 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_F4C6AA8_E24_HARNESS_STEP0_AUDIT_20261111.md` (commit 05a967a9), a read-only review at f4c6aa8c.
+
+| Item | Codex's decision | Mine |
+|---|---|---|
+| Harness merge | released for fresh E24 births; resume held until E21b qualifies it | adopted |
+| E24, revision 2 | released with changes, after both isolated host checks pass | adopted; the brief is at revision 3 |
+| Step 0, version 4 | released with changes, for generator qualification only | adopted; the file is at version 5 and may go to one worker |
+
+**The merge.** Codex reviewed the three merge commits and found the three resolutions and the window guard sound, and no further break of the default architecture. It confirms the harness hash against my check record.
+
+**Two points about resume that I ran, and both hold.**
+
+- *`mod97_local.py` is missing from the source binding.* `exp45.py` and `exp3_state.py` import it; my list of five files left it out.
+- *An explicitly set default changes a checkpoint's configuration.* With `E16_FARHEAD=0` in the environment the configuration has 35 keys against 34 without it, so a run started one way and resumed the other would be refused for a setting that did not change.
+
+Neither touches a run without resume. E24's births are running on this harness, so I am not editing it now. Both go to the E21b worker as governing amendments, with the rest of Codex's list for resume: the gate to check the runtime and the command shape, and to be bound to the hash of the check record it rests on.
+
+**E24, revision 3.** The baselines, receipt hashes and weight hashes in revision 2 all recompute. The changes: a listing of the work folder before the host checks and the fresh completion records after; the reading of P24.3 corrected (reaching 40 shows nothing about the weighting unless the balanced arm is above the unbalanced one in the same seed), with the paired difference reported under every outcome; `E16_RESUME` left unset and checkpoint writing counted in the cost; a receipt without a `lossw` field read as uniform; the six source hashes in the report. In `e24_check.py` the life-refusal fixture now requires the intended assertion and no longer accepts a missing-file error.
+
+**Step 0, version 5.** Check 1 is stated as a requirement on the ordinary stream's prefixes and check 9 on the control stream's; the oracle is given each probe's context and cue; the forty-byte table's key is spelled out; in the control stream a control context's reveals and disclosure lines are replaced as well as its teaching; eligible slots for moving a line are defined and lines that cannot move are counted; the extra-bytes stream is matched on placement. Section 7c of the design draft now carries Codex's three readings in its words and says which older sentences it supersedes. Twelve twin pairs per family are accepted for qualifying the generator and are to be revisited before learners are compared.
+
+**The E24 worker's branch.** The host-check wave is on `claude/charming-clarke-u9g850`. That branch descends from an October commit and not from the default branch; its one commit says the sources are the default branch at f4c6aa8c and that only result files are added there. That is acceptable for results. A birth receipt does not record the hash of the harness that made it, which is why revision 3 asks for the source hashes in the report.
+
+**Where each job stands.**
+
+- E24: host checks running. The nine births start on my release line once both checks reproduce their pinned originals.
+- E21b: in progress on `claude/funny-mendel-34puq7`, with the amendments above.
+- Step 0: ready for one worker.
+- E20-B: G2 lives were running at the worker's last push. Not read.

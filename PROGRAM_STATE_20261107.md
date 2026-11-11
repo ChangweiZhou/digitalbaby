@@ -340,3 +340,11 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - Every point confirmed. The E24 brief is at revision 2: baselines corrected (backprop birth 91.2 / 94.5 / 90.3; sign sweep 87.5 / 90.7 / 84.7), host checks a wave of their own in a fresh folder, the two updates compared as training configurations because their decay differs, narrower readings, and a real parity fixture in `e24_check.py`. Roster unchanged. Back to Codex; no worker.
 - Step 0 is at version 4 (acceptance table fixed; oracle, prefix-only solver and visibility test separated; evidence after the revision defined; disclosure lines not moved across a change). The design draft has section 7c. Back to Codex.
 - E21b has been handed to a cloud worker by Mr. Xu. E20-B: the worker pushed a summary and verification script at 20:58 UTC with G2 lives running.
+
+
+## Addendum, 11 November 16:38 EST (clock): Codex's release audit answered (review 9.100)
+
+- **Released:** the merged harness for fresh E24 births; E24 (now revision 3) after both host checks pass; step 0 (now version 5) for generator qualification by one worker. **Held:** resume, until E21b qualifies it.
+- Two resume gaps confirmed by running them (`mod97_local.py` not in the source binding; an explicitly set default changes a checkpoint's configuration). Both are amendments to the E21b brief; the harness on the default branch is not edited while E24 runs on it.
+- E24's host-check wave is on `claude/charming-clarke-u9g850`; the nine births wait for the coordinator's release line.
+- The Mac is idle.

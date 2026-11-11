@@ -97,8 +97,9 @@ if __name__ == "__main__":
         e = dict(env0, **BASE); e.update(env)
         r = subprocess.run([sys.executable, "-c", "import exp16_integrated"], env=e, capture_output=True, text=True, cwd=HERE)
         out["refusals"][name] = r.returncode != 0 and "E16_LOSSW" in r.stderr; ok = ok and out["refusals"][name]
+    # the life must be refused by the intended assertion and by nothing else (Codex's release audit, 11 Nov: a missing-file error used to count too)
     r = subprocess.run([sys.executable, "exp16_integrated.py", "D", "73129"], env=dict(env0, **BASE, E16_LOSS="all", E16_LOSSW="balanced", E11_STAGE_UPDATES="4"), capture_output=True, text=True, cwd=HERE)
-    out["refusals"]["a life"] = r.returncode != 0 and ("births only (E24)" in r.stderr or "No such file" in r.stderr); out["refusals"]["a life, message"] = r.stderr.strip().splitlines()[-1][:160] if r.stderr.strip() else ""
+    out["refusals"]["a life"] = r.returncode != 0 and "births only (E24)" in r.stderr; out["refusals"]["a life, message"] = r.stderr.strip().splitlines()[-1][:160] if r.stderr.strip() else ""
     ok = ok and out["refusals"]["a life"]
     # 5. parity with the harness before the option existed, option unset, both rules, both objectives
     old = subprocess.run(["git", "show", f"{PREOPTION}:MOD97_LOCAL_RULE_20261106/exp16_integrated.py"], capture_output=True, text=True, cwd=HERE)

@@ -85,7 +85,11 @@ Row 4 of section 5 asks the wider-view arm to "beat both" comparison streams and
 
 - **Against the stream with as many extra ordinary bytes.** A gain says the content of the lines helps: stated values are used.
 - **Against the stream with the same lines moved** (within their phase, never across a change of the value they name). Those lines are still true, so that stream tells as much. A gain over it says it matters *when* a value is told relative to the episode it belongs to. No gain over it, with a gain over the first, says the learner uses the stated values whenever they arrive.
-- The two are read separately. Neither result alone is "later views add targets, not information".
+- The two are read separately, in these words (Codex's audit of 11 November):
+  - a gain over the ordinary-bytes stream measures the disclosure lines as a package;
+  - a gain over the moved-lines stream measures the difference in timing and availability that was tested;
+  - a tie with the moved-lines stream supports "no added benefit of alignment detected under this schedule", and no more.
+- **Row 4 of section 5 and condition 3 of section 7a are superseded by this section.** Their readings ("beat both"; "later views add targets, not information"; the shuffle "breaks only its alignment") are not to be used.
 - Before either is read, the disclosure ledger of step 0 must show what each arm had been told at each probe.
 
 ## 8. Why these choices, from this project's own record

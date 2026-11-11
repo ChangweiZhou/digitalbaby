@@ -1,6 +1,6 @@
 # Draft for audit: E24, is the every-byte collapse the loss or the rule? (11 November 2026)
 
-> **Status.** Draft for Codex's audit. **No worker starts from this file.** Coordinator's design; evidence level aimed at E2, development panels, births only. Codex's note of 11 November on the outline (answer-only and every-byte backprop beside the matched sign conditions at one dose; bounded readings) is taken into the text below.
+> **Status.** Audited three times by Codex and released with changes (revision 3 below). The host-check wave is running; the nine new births wait for the coordinator's release line. Coordinator's design; evidence level aimed at E2, development panels, births only. Codex's note of 11 November on the outline (answer-only and every-byte backprop beside the matched sign conditions at one dose; bounded readings) is taken into the text below.
 
 > **Revision 2, 11 November 2026, 16:19 EST (clock), after Codex's audit of this brief** (`PROJECT_DOCUMENTS/MINIFLY_E24_STEP0_V3_AUDIT_20261111.md`). Every point was checked and holds. Changed:
 > 1. The two reference baselines were mislabelled. The backprop birth is 91.2 / 94.5 / 90.3 and the sign-sweep birth is 87.5 / 90.7 / 84.7. The first draft gave the sign-sweep scores to backprop and a local-head arm's scores to the sign sweep.
@@ -8,7 +8,14 @@
 > 3. The two updates also differ in weight decay (0.30 and 0.25). The units compared are the two training configurations, and the result is read as an interaction between objective and configuration.
 > 4. The readings are narrower: a miss is reported with its level, not as a collapse.
 > 5. The admission check now really compares with the harness before the option existed (a fixture added to `e24_check.py`).
-> The roster is unchanged: nine new births and two host checks. Still a draft; no worker starts before Codex has read this revision.
+> The roster is unchanged: nine new births and two host checks.
+
+> **Revision 3, 11 November 2026, 16:36 EST (clock): released with changes by Codex's audit of revision 2** (`PROJECT_DOCUMENTS/MINIFLY_F4C6AA8_E24_HARNESS_STEP0_AUDIT_20261111.md`). The merged harness is released for fresh births; resume stays off. The nine new births may start **after both host checks have passed and the coordinator has said so**. Changes in this revision:
+> 1. Before the host checks, a listing of the work folder's `exp45` is saved; after them, the two fresh completion records are shown. A zero exit code alone is not accepted.
+> 2. The reading of P24.3 is corrected: reaching 40 does not by itself show an effect of the weighting. The paired difference T-bal minus T-all is reported for every seed whatever the outcome.
+> 3. `E16_RESUME` stays unset. Fresh births still write checkpoints, and that work is part of the measured cost.
+> 4. A receipt without a `lossw` field is a uniform-loss receipt.
+> 5. The report gives the sha256 of the five source files as they were run.
 
 ## Why this job
 
@@ -49,7 +56,7 @@ The local-heads line is closed (review 9.97) and no arm here uses it.
 | **T-all** | sign sweep, decay 0.25 | every byte | `E16_BIRTHRULE=T E16_TRACEUP=all E16_LOSS=all` | new, three seeds |
 | **T-bal** | sign sweep, decay 0.25 | every byte, answer bytes carrying half the loss | the same plus `E16_LOSSW=balanced` | new, three seeds |
 
-- **Host check, a wave of its own.** Run the two reruns alone, before any new birth, in a work folder whose `exp45` is empty except for `BIRTH_MANIFEST.json`. The harness returns without running if it finds a birth of the same name and configuration, so confirm that each check wrote a new receipt (its time and its `cpu` fields) and did not find an old one. Each must reproduce the sealed scores of its pinned original at every checkpoint. If either differs, stop and report; no new birth starts.
+- **Host check, a wave of its own.** Run the two reruns alone, before any new birth, in a work folder whose `exp45` is empty except for `BIRTH_MANIFEST.json`. Save a listing of that `exp45` taken immediately before launch (`ls -la`, with the time), and after the wave show the two completion records with their weights hashes. The harness returns without running if it finds a birth of the same name and configuration, so confirm that each check wrote a new receipt (its time and its `cpu` fields) and did not find an old one. Each must reproduce the sealed scores of its pinned original at every checkpoint. If either differs, stop and report; no new birth starts.
 
   The six originals, pinned (receipt hash, weights hash from the manifest):
 
@@ -82,27 +89,28 @@ Readings, fixed now:
 
 - P24.1 and P24.2 hold: here backprop learns from every byte from nothing and the sign sweep does not. That is an interaction between the objective and the update in the tested configuration, and the next step is to look at what the sign feedback does with targets that cannot be predicted.
 - P24.1 misses (D-all under 60 in two seeds): report the level. A birth under 60 may still have learned a good deal, so a miss is read with the penalty beside it and is not called a collapse unless the scores are near the floor. The rule is then not singled out, and the next step is the stream or the loss, for both configurations.
-- P24.3 holds: in this configuration the weighting restores learning. It establishes the effect of the weighting here and nothing about where such a weighting could come from without an answer mask, which becomes the next question.
-- P24.3 misses with P24.2 holding: the weighting did not restore learning to 40. T-bal is still judged against T-all seed by seed, and a partial improvement below 40 is reported as such.
+- P24.3 holds: T-bal reached 40 in two seeds. That shows an effect of the weighting only where T-bal is above T-all in the same seed; if T-all is as high or higher there, the mark is met and nothing is attributed to the weighting. Where the paired gain is real, it establishes the effect of the weighting in this configuration and nothing about where such a weighting could come from without an answer mask.
+- P24.3 misses with P24.2 holding: the weighting did not restore learning to 40. A partial improvement below 40 is reported as such.
+- Under every outcome the report gives T-bal minus T-all for each seed, and says in words whether the three agree, disagree or are too small to read.
 - P24.2 misses: it takes one T-all seed above 10 to miss, and that leaves the question of survival unresolved, not answered. The three scores are reported, and only if all three are well above the floor are the earlier collapses reread as belonging to the local heads and to the life.
 
 ## Admission, before any run
 
 1. `python3 e24_check.py` exits 0 on your machine. It shows, on one batch: the balanced loss equals one half the answer-position loss plus one half the other-position loss computed separately; its gradient equals that combination of the two gradients; with the option unset, for both updates and both objectives, the loss and every gradient equal bit for bit those of the harness at the commit before the option was added (read from the repository's history; in a clone without that commit this part reports itself as not run and the coordinator's record stands); under `E16_LOSS=all` every operator, digit, letter and task code present in the batch receives a gradient under both updates. The coordinator's record is `exp45/E24_CHECK.json`.
-2. A dry birth of each of the five arms at 512 updates completes with a completion record, the right `loss` and `lossw` fields, and its own file name (`_lossall`, `_lossall_bal`). The coordinator's are in `exp45/archive_e24_dry/`.
+2. A dry birth of each of the five arms at 512 updates completes with a completion record, the right `loss` field, and its own file name (`_lossall`, `_lossall_bal`). Only the balanced arm's receipt carries a `lossw` field; a receipt without one is a uniform-loss receipt. The coordinator's are in `exp45/archive_e24_dry/`.
 3. Births are bound by their completion receipts as before. No file on record may be overwritten: the launcher refuses if a product exists.
 
 ## Running it
 
 - One host, at most three processes on four cores, one thread each.
 - Order: the two host-check births alone. If both reproduce, D-all, then T-all, then T-bal, three seeds at a time.
-- Resume is not qualified on the merged harness yet (Codex's audit of 11 November) and the harness refuses `E16_RESUME=1`. Until `exp45/RESUME_QUALIFIED.json` exists for the sources you run, an interrupted birth is kept as written, stopped and reported, and it is restarted from the beginning only on the coordinator's word. A birth is about an hour, so a restart costs at most that.
+- Leave `E16_RESUME` unset. Fresh births still write a checkpoint at every curve row; that work is inside the CPU-seconds you report and is not subtracted. Resume is not qualified on the merged harness yet (Codex's audit of 11 November) and the harness refuses `E16_RESUME=1`. Until `exp45/RESUME_QUALIFIED.json` exists for the sources you run, an interrupted birth is kept as written, stopped and reported, and it is restarted from the beginning only on the coordinator's word. A birth is about an hour, so a restart costs at most that.
 - Work in progress goes to your own branch. The default branch receives one commit when all eleven completion records and weight hashes are verified.
 - Forecast: nine new births and two reruns at about 3,500 to 4,500 CPU-seconds each, about 45,000 in all, about four and a half hours on three cores. Replace this with the pace you measure on the first wave.
 
 ## Report
 
-Per arm and seed: the sealed scores at every checkpoint; the hard-mean curve; embedding movement by role; the three verdicts; CPU-seconds; the host check. `E24_PREDICTIONS.md`, `E24_REPORT.md`, receipts, weights, logs, and one paragraph as `E24_REVIEW_SECTION.md`. State what was not run. Claim nothing about lives, composition or the target test.
+Per arm and seed: the sealed scores at every checkpoint; the hard-mean curve; embedding movement by role; the three verdicts; the paired penalties and their difference; T-bal minus T-all per seed; CPU-seconds; the host check with its prelaunch listing; the sha256 of `exp16_integrated.py`, `arch17.py`, `exp11_cell.py`, `exp45.py`, `exp3_state.py` and `mod97_local.py` as run. `E24_PREDICTIONS.md`, `E24_REPORT.md`, receipts, weights, logs, and one paragraph as `E24_REVIEW_SECTION.md`. State what was not run. Claim nothing about lives, composition or the target test.
 
 ## Questions for the audit
 
