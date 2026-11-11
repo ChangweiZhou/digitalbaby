@@ -533,3 +533,15 @@ Reading, written before the result. P-E.1 and P-E.2 holding say the answer mask 
 Cost and forecast. Per life on this machine: window learners about 5,700–6,300 CPU-s, two-bank lives about 6,600–6,800, plus scoring. Twelve processes: about 2 h 30 min of wall (range 2 h 10 to 3 h), from the twelve-process paces of Phase 2 (2 h 29) and the corrected-panel repeats (2 h 17).
 
 **E16-M4: not judged (10 November 2026, 20:00 EST).** A container restart stopped all twelve lives inside their last stretch; receipts end at checkpoint 5 (`_killed`). P16M4.1–P16M4.5 are written for the last checkpoint and are not judged. Not rerun; the replay-share line closes here. What the five checkpoints show is described in review 9.68 and is not a verdict.
+
+## E22 version 2: one rule at birth and in life (written 10 November 2026, 23:40 EST, before launch; Mr. Xu's go: "Yes, run it")
+
+Brief: `OPUS_TASK_E22_RULE_BORN_LIFE_20261110.md`, version 2, rewritten after Codex's audit of version 1 (review 9.87). Six lives on the owner's machine, one host, seeds 73129 / 93683 / 116089: the windowless two-bank learner under the working life rule (a sign-feedback temporal sweep, `E16_TRACEUP=all`), started from E18's rule-born birth and, as its partner, from the backprop birth; receipts tagged `_e22`. Launcher `e22_lives.sh`; validator and scorer `e22_validate.py`, written before any life ran. Dry runs of both commands: seven stages, completion records, births admitted by the manifest with their training configuration checked, equal panel hashes, and no setting differing between partners except the birth fields.
+
+Definitions: checkpoint 6 unless a block is named; twelve distractors; whole answers; four operations weighted equally; hard mean = (add97 + sub97) / 2.
+- **P22.1 (acquisition)** After block 1 the rule-born learner's mod-97 mean is at least 80 and its hard mean at least 70, in at least two seeds.
+- **P22.2 (final competence, absolute)** At checkpoint 6 the rule-born learner's mod-97 mean is at least 75, its hard mean at least 65 and its mod-73 mean at least 75, all in the same seed, in at least two seeds.
+- **P22.3 (parity, one-sided)** In at least two seeds, the same two for both families, the rule-born learner is no more than 5 points below its partner on the mod-97 mean and on the mod-73 mean.
+- **P22.4** Reported with no mark: the development operations at every checkpoint, scores at 20 and 40 distractors, compositions.
+
+If both partners end under P22.2's marks, the result is common loss whatever P22.3 says. A cell that fails the validator is not scored. Reading as in the brief. Cost: six processes, about 6,700 CPU-s each; about 1 h 30 min of wall (range 1 h 15 to 1 h 50), from the six- to nine-process paces of Phase 3 and Phase 4.
