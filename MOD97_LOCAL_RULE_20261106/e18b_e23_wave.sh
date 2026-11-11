@@ -40,6 +40,17 @@ mkdir -p "$W/exp45/logs" "$HERE/exp45/logs"
 cp "$HERE"/*.py "$W"/; [ -e "$W/exp45/BIRTH_MANIFEST.json" ] || cp "$HERE/exp45/BIRTH_MANIFEST.json" "$W/exp45/"
 cd "$W"
 sha256sum exp16_integrated.py arch17.py exp11_cell.py exp45.py exp3_state.py > "exp45/logs/e18b_e23_${WAVE}_source_hashes.txt"
+# E18B_RERUN=1 (Mr. Xu, 11 Nov 2026: an interrupted wave is re-run from the start): if this wave was never filed in exp45, any partial
+# products it left in the work folder are moved to interrupted/ and logged, never deleted. A wave filed in exp45 is never re-run.
+if [ "${E18B_RERUN:-0}" = "1" ] && [ ! -e "$HERE/exp45/${STEM}${SUFFIX}_73129.json" ]; then
+  shopt -s nullglob; part=(); for s in $SEEDS; do part+=("$W/exp45/${STEM}_${s}".*); done
+  if [ ${#part[@]} -gt 0 ]; then
+    dst="$W/interrupted/${WAVE}_$(date -u +%Y%m%dT%H%M%SZ)"; mkdir -p "$dst"; mv "${part[@]}" "$dst/"
+    for s in $SEEDS; do [ -e "exp45/logs/e18b_e23_${WAVE}_${s}.log" ] && mv "exp45/logs/e18b_e23_${WAVE}_${s}.log" "$dst/"; done
+    echo "$(date -u +%FT%TZ) $WAVE interrupted products moved to ${dst#$W/}: ${#part[@]} files" | tee -a exp45/logs/e18b_e23_reruns.txt
+  fi
+  shopt -u nullglob
+fi
 # refuse to start if any product of this wave already exists in the work folder or (under its final name) in exp45
 for s in $SEEDS; do
   for f in "$W/exp45/${STEM}_${s}.json" "$HERE/exp45/${STEM}${SUFFIX}_${s}.json"; do
@@ -67,5 +78,6 @@ for s in $SEEDS; do
   done
   cp "exp45/logs/e18b_e23_${WAVE}_${s}.log" "$HERE/exp45/logs/"
 done
-cp exp45/logs/e18b_e23_wall.txt exp45/logs/e18b_e23_copy_map.txt exp45/logs/e18b_e23_exit_codes.txt exp45/logs/e18b_e23_environ_at_launch.txt "exp45/logs/e18b_e23_${WAVE}_source_hashes.txt" "$HERE/exp45/logs/"
+touch exp45/logs/e18b_e23_reruns.txt
+cp exp45/logs/e18b_e23_reruns.txt exp45/logs/e18b_e23_wall.txt exp45/logs/e18b_e23_copy_map.txt exp45/logs/e18b_e23_exit_codes.txt exp45/logs/e18b_e23_environ_at_launch.txt "exp45/logs/e18b_e23_${WAVE}_source_hashes.txt" "$HERE/exp45/logs/"
 exit $bad
