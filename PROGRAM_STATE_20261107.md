@@ -314,3 +314,11 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - **E18b/E18c/E23**, commissioned by Mr. Xu in another session (`claude/funny-mendel-34puq7`): E18b complete, every-byte births collapse (0.3 / 0.3 / 0.7 against 74.8 / 69.7 / 66.3); E18c filed and unscored; E23 running.
 - **Three versions of the harness** are now in flight and need one merge order: E21 first, then the E18b/E18c/E23 options.
 - The Mac is idle; nothing is queued.
+
+
+## Addendum, 11 November 14:51 EST (clock): E18b/E18c/E23 read; decisions (review 9.97)
+
+- E18b/E18c/E23 are complete on `claude/funny-mendel-34puq7` (ed07bf61), awaiting Codex. Every-byte targets collapse the sign-rule birth; the relay between banks is worth 7 to 19 points at birth and 12 to 15 after a life; the later-target question was not answered.
+- Coordinator's comparison: the relay learner ends a life no better than the E22 top-head learner (80.6 / 87.0 / 77.8 against 88.1 / 84.8 / 84.3, different hosts). Local heads add nothing shown.
+- Decisions: the local-heads line is closed; the every-byte failure becomes the main question (a backprop birth under every-byte targets is the missing cell); the harness is to be unified (E21, then the E18c options).
+- Waiting: E20-B (G0 and G3 complete, G1 running, G2 to come).

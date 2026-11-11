@@ -1884,3 +1884,41 @@ The same-host B2 partner reproduces E18's figures to the decimal. Under every-by
 2. **Probes on the stage 2 checkpoints.** Stage 2 is now complete and filed here. The two probe scripts run as they are on the window lives (sign rule and backprop on the pipeline). The two-bank lives need state code I have not written, and their in-view failure makes a memory probe of little use there.
 3. **E20-B needs an answer on the restart** (C above).
 4. **My check of E20-B's stage 1** by rerunning its parity on the Mac is still owed.
+
+
+## 9.97 E18b, E18c and E23 complete: what they settle, one comparison their report does not make, and what I act on now (11 November 2026, 14:51 EST by the clock)
+
+Report: `MOD97_LOCAL_RULE_20261106/E18B_E18C_E23_REPORT_20261111.md` on branch `claude/funny-mendel-34puq7` (commit ed07bf61), run at Mr. Xu's request by another session. Thirty-three births and lives, three seeds, one host, no wave interrupted. It marks itself as awaiting Codex. I read the report and its tables, and reread the birth and life receipts for the figures below. E2, development panels.
+
+**What it settles.**
+
+1. *Every-byte targets break the working rule at birth.* A birth that reaches 66 to 75 with answer targets ends at 0.3 to 0.7 with a loss on every byte. Putting every-byte targets on the first bank's head alone is enough to do it (5.5 to 10.0). With 9.88, where the same change collapsed a life, this now holds at birth and in life, in every seed.
+2. *Cutting the error path between the banks costs 7 to 19 points at birth and 12 to 15 after a life.* The relay arm differs from the cut arm in that one path and nothing else.
+3. *The question about later targets was not answered.* Its base arm was already broken by point 1. The report says so and names the lesson: a reference cell needs its own full-length result before a contrast is built on it.
+
+**One comparison the report does not make.** The relay learner should be set beside the learner already on file from E22, which has one head at the top and passes its error down through everything. Same life settings, same seeds, read from the receipts with the report's own score (mean of the four mod-97 operations at k = 12):
+
+| End of life, seeds 73129 / 93683 / 116089 | Mod-97 operations | Mod-73 operations |
+|---|---|---|
+| One head at the top (E22, on the Mac) | 88.1 / 84.8 / 84.3 | 90.7 / 87.5 / 87.1 |
+| Local heads with the relay (E18c) | 80.6 / 87.0 / 77.8 | 88.9 / 89.0 / 84.4 |
+| Local heads with the path cut (E18c) | 68.1 / 73.4 / 63.0 | 77.1 / 79.9 / 69.2 |
+
+The two were run on different hosts, so this is not a verdict. As far as it goes, the relay learner is no better than the E22 learner: lower in two seeds and higher in one. So E18c shows what the cut costs. It does not show that local heads add anything to the rule we already have. That agrees with Mr. Xu's ruling of 10 November that feedback relayed layer by layer is allowed: the relay is the part that works.
+
+**Where the project stands after these three days.**
+
+- The working rule is sign feedback swept backward over the item, with answer targets and replay. For single operations it is born and lives within a few points of backprop (9.85).
+- It has two known limits, and both stand between it and the target test:
+  - *It needs answer-only supervision.* The target test has no answer mask: the learner predicts every next byte. As things stand the rule would fail that test at its first step.
+  - *It does not compose on untaught operator pairs,* in view or from memory (9.96, A).
+- Backprop does not have the first limit in a life (9.88). Whether it has it at birth is not on file.
+
+**Is it time to act? Yes, on what does not depend on E20-B.**
+
+1. *Close the local-heads line.* Local heads add nothing over the top-head rule, and every-byte heads do harm. I do not take up the report's suggested next design (a small-weight extra head) now.
+2. *Make the every-byte failure the main question,* because the target test turns on it. The cell that is missing is the smallest one: a backprop birth of the same network under every-byte targets. If backprop also collapses at birth, the cause is the loss and both updates need the same remedy. If it does not, the cause is in the sign feedback. Beside it, one sign-rule birth with the answer bytes weighted to carry half the loss, which tests whether the answer signal is simply outnumbered. Six births, about two and a half hours on one cloud instance. A brief goes to Codex first.
+3. *Unify the harness.* E21 onto the current head, then this branch's options. The other branch is final now, so this can be done once.
+4. *Probe the stage 2 window checkpoints* (a minute on the Mac, on Mr. Xu's go).
+
+**What waits for E20-B.** The network decision, and with it any work on composition under the rule. G0 and G3 are complete there; G1 is running and G2 is to come.
