@@ -29,6 +29,12 @@ if [ "$CMD" = "dev" ] && [ -n "${E11_DEV_UPDATES:-}" ] && [ "$E11_DEV_UPDATES" !
 if [ "$CMD" = "T" ] && [ -n "${E11_STAGE_UPDATES:-}" ] && [ "$E11_STAGE_UPDATES" != "6144" ]; then STEM="${STEM}_dry${E11_STAGE_UPDATES}"; fi
 # the host must be idle before anything is touched: no harness process and no other python job (three per wave is the ceiling)
 if pgrep -f "exp16_integrated.py" > /dev/null || pgrep -x python3 > /dev/null; then echo "another python process is running, refusing"; pgrep -af python3; exit 4; fi
+# admission (real runs only): both checks passed in the files as committed, and the step's predictions are on file
+if [ -z "${E11_DEV_UPDATES:-}${E11_STAGE_UPDATES:-}" ]; then
+  grep -q '"passed": true' "$HERE/exp45/E23_CHECK.json" || { echo "E23_CHECK.json not passed"; exit 5; }
+  case "$WAVE" in b2p|b2all|b3p|b3all) PRED=E18B_PREDICTIONS.md ;; r2|lives_b2|lives_r2) PRED=E18C_PREDICTIONS.md ;; *) PRED=E23_PREDICTIONS.md ;; esac
+  git -C "$HERE" ls-files --error-unmatch "$PRED" > /dev/null 2>&1 && [ -z "$(git -C "$HERE" status --porcelain -- "$PRED")" ] || { echo "$PRED not committed unchanged"; exit 5; }
+fi
 mkdir -p "$W/exp45/logs" "$HERE/exp45/logs"
 # refresh code in the work folder from this folder (receipts there are kept); record the hashes the wave ran with
 cp "$HERE"/*.py "$W"/; [ -e "$W/exp45/BIRTH_MANIFEST.json" ] || cp "$HERE/exp45/BIRTH_MANIFEST.json" "$W/exp45/"
@@ -44,7 +50,7 @@ echo "$WAVE start $(date -u +%FT%TZ) loadavg $(cut -d' ' -f1-3 /proc/loadavg) co
 pids=(); logs=()
 for s in $SEEDS; do
   log="exp45/logs/e18b_e23_${WAVE}_${s}.log"
-  env $BASE $ENVX python3 exp16_integrated.py $CMD $s > "$log" 2>&1 < /dev/null &
+  env -i PATH="$PATH" HOME="$HOME" ${E11_DEV_UPDATES:+E11_DEV_UPDATES=$E11_DEV_UPDATES} ${E11_STAGE_UPDATES:+E11_STAGE_UPDATES=$E11_STAGE_UPDATES} $BASE $ENVX python3 exp16_integrated.py $CMD $s > "$log" 2>&1 < /dev/null &
   pids+=($!); logs+=("$log")
   sleep 5; tr '\0' '\n' < /proc/$!/environ | grep -E '^E1[16]_' | sort | sed "s|^|$WAVE $s |" >> exp45/logs/e18b_e23_environ_at_launch.txt
 done

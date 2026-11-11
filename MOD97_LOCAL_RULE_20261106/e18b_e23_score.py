@@ -87,7 +87,7 @@ V = {}
 b = lambda c, s, k="hard": B[(c, s)][k]
 if ok(("B3-all",)):
     shifts = lambda s: B[("B3-all", s)]["book_shift"] or {}
-    V["P18b.1 B3-all operator and letter embeddings moved >= 0.2 row norm, all seeds"] = count(lambda s: all(v >= 0.2 for k, v in shifts(s).items() if k in ("operator", "distractor letter"))) == 3
+    V["P18b.1 B3-all operator and letter embeddings moved >= 0.2 row norm, all seeds"] = count(lambda s: all(shifts(s).get(k, -1) >= 0.2 for k in ("operator", "distractor letter"))) == 3
     V["P18b.2 B3-all max/min >= 66 and hard >= 10, >= 2 seeds"] = count(lambda s: b("B3-all", s, "maxmin") >= 66 and b("B3-all", s) >= 10) >= 2
 if ok(("B3-all", "B2-all")):
     V["P18b.3 B3-all hard >= 20 below B2-all, all seeds"] = count(lambda s: b("B2-all", s) - b("B3-all", s) >= 20) == 3
