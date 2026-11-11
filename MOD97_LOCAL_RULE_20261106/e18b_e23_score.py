@@ -22,9 +22,10 @@ BIRTHS = {   # cell: (stem in exp45, expected receipt config)
     "F4": ("e17_dev_bank2_nbd_lh_bT_tall_h1all_fh4", dict(heads="local", traceup="all", loss="answer", head1loss="all", farhead=4, farctrl="none")),
     "F4s": ("e17_dev_bank2_nbd_lh_bT_tall_h1all_fh4s", dict(heads="local", traceup="all", loss="answer", head1loss="all", farhead=4, farctrl="shuffle")),
 }
-LIVES = {"L-B2": ("e17_life_T_bank2_nbd_lh_tall_bT_raw65536_e18c", "local"), "L-R2": ("e17_life_T_bank2_nbd_rh_tall_bT_raw65536_e18c", "relay")}
+LIVES = {"L-B2": ("e17_life_T_bank2_nbd_lh_tall_bT_raw65536_e18c", "local", "B2"), "L-R2": ("e17_life_T_bank2_nbd_rh_tall_bT_raw65536_e18c", "relay", "R2")}
 COMMON = dict(arch="bank2", bookdecay="off", birthrule="T", feedback="sign", projfb="raw", fixedcodes="off", decay=0.25, updates=DUP)
 problems, B, L = [], {}, {}
+dry_stem = lambda st: st.replace("_e18b", "") + f"_dry{DUP}" + ("_e18b" if st.endswith("_e18b") else "")
 
 
 def k12(row, name, key="sealed"):
@@ -34,7 +35,7 @@ def k12(row, name, key="sealed"):
 
 for cell, (stem, want) in BIRTHS.items():
     for s in SEEDS:
-        sm = stem.replace("_e18b", "") + f"_dry{DUP}" if DRY else stem
+        sm = dry_stem(stem) if DRY else stem
         p = OUT / f"{sm}_{s}.json"
         if not p.exists():
             continue
@@ -56,7 +57,7 @@ for cell, (stem, want) in BIRTHS.items():
                             book_shift=f.get("book_shift_by_role"), census=r.get("credit_census_first_update", {}).get("by_role") if isinstance(r.get("credit_census_first_update"), dict) else None,
                             far=f.get("far_head_k12"), silenced=f.get("silenced_k12"))
 
-for cell, (stem, heads) in LIVES.items():
+for cell, (stem, heads, bcell) in LIVES.items():
     for s in SEEDS:
         p = OUT / f"{stem + (f'_dry{SUP}' if DRY else '')}_{s}.json"
         if not p.exists():
@@ -66,6 +67,10 @@ for cell, (stem, heads) in LIVES.items():
         if [x["stage"] for x in st] != list(range(7)): bad.append("stage sequence")
         want = dict(arch="bank2", bookdecay="off", heads=heads, birthrule="T", traceup="all", feedback="sign", replay16="raw", cap=65536, outtag="_e18c", loss="answer", stage_updates=SUP, freeze="none")
         bad += [f"setting {k}={se.get(k)!r}" for k, v in want.items() if se.get(k) != v]
+        # the life ran in the work folder under the birth's unsuffixed name: bind it by hash to the same-host birth filed in exp45
+        bstem = dry_stem(BIRTHS[bcell][0]) if DRY else BIRTHS[bcell][0]
+        bf = OUT / f"{bstem}_{s}.pt"
+        if not bf.exists() or se.get("birth_sha256") != hashlib.sha256(bf.read_bytes()).hexdigest(): bad.append(f"birth hash differs from {bf.name}")
         cpl = d.get("complete") or {}
         w = OUT / cpl.get("weights", "missing")
         if cpl.get("stages") != 7 or not w.exists() or hashlib.sha256(w.read_bytes()).hexdigest() != cpl.get("weights_sha256"): bad.append("completion record or weight hash")
@@ -100,9 +105,9 @@ if ok(("F4", "N1")):
 if ok(("F4", "F4s")):
     V["P23.2 F4 hard >= F4s + 5, >= 2 seeds"] = count(lambda s: b("F4", s) - b("F4s", s) >= 5) >= 2
 if ok(("N1", "H0")):
-    V["P23.3 |N1 - H0| hard <= 10, >= 2 seeds"] = count(lambda s: abs(b("N1", s) - b("H0", s)) <= 10) >= 2
+    V["P23.3 N1 hard >= H0 - 5, >= 2 seeds"] = count(lambda s: b("N1", s) - b("H0", s) >= -5) >= 2
 if ok(("H0", "B2")):
-    V["P23.4 |H0 - B2| hard <= 10, >= 2 seeds"] = count(lambda s: abs(b("H0", s) - b("B2", s)) <= 10) >= 2
+    V["P23.4 H0 hard >= B2 (same host) - 5, >= 2 seeds"] = count(lambda s: b("H0", s) - b("B2", s) >= -5) >= 2
 if ok(("F4",)):
     def far_gap(s):
         fr = B[("F4", s)]["far"]; h = sum(v["prompt"][0] for v in fr.values()); n = sum(v["prompt"][1] for v in fr.values()); bs = sum(v["structural_baseline"][0] for v in fr.values())

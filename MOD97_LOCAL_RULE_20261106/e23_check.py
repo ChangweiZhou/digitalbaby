@@ -10,9 +10,12 @@ Far-head modes (d, ctrl), all with E16_HEAD1LOSS=all on the B2 package (local he
     targets are every next byte; the main head's are the answer bytes;
 (4) gradients of update16 itself (optimizer step disabled) with the far term on and off (FARHEAD16 = 0) differ only in the far head and
     the second bank, under the same shuffle generator state.
-Relay mode: (5) the first head's loss sends nothing into the second bank's module; the main loss reaches the first bank; with l2's
-weights zeroed (no direct z1 path in either), relay and aux give identical gradients; with them intact, they differ in l1 (the z1 path
-is what relay removes). Writes exp45/E23_CHECK.json; exits 1 on any failure.
+Relay mode (v3: only the read between the banks open): (5) the first head's loss sends nothing into the second bank's module; the main
+loss reaches the first bank; with lp2's weights zeroed (no path through the second bank) relay and local give identical gradients for
+every parameter and both losses; with l2's and lm's weights zeroed (no direct readout paths) relay and aux give identical gradients;
+intact, relay differs from local in the first bank.
+(6) v3, independent of the harness's tensor formula: far targets and trained positions rebuilt from the item lists (prompt, answer); the
+trained positions are the same for d = 1 and d = 4. Writes exp45/E23_CHECK.json; exits 1 on any failure.
 """
 import json, os, subprocess, sys
 from pathlib import Path
@@ -27,23 +30,25 @@ if len(sys.argv) > 1 and sys.argv[1] == "relay":
     items = next(E.batches([(t, E.split(t, .5, seed)[0]) for t in E.DEV], seed, E.KMAX["M"]))
     x, y, mask = X.batch_tensor(items)
     mod1 = ("book", "l1", "lp", "lc", "lw", "l2a", "lma", "l3a")
-    def grads(which, z1det, zero_l2=False):
-        arch17.Z1_DETACH = z1det
+    MODES = dict(relay=(True, False, True, True), local=(True, None, None, None), aux=(False, None, None, None))   # LOCAL, P2, LM, Z1
+    def grads(which, mode, zero=()):
+        arch17.LOCAL_DETACH, arch17.P2_DETACH, arch17.LM_DETACH, arch17.Z1_DETACH = MODES[mode]
         m = E.new_net(seed)
-        if zero_l2:
-            with T.no_grad(): m.l2.weight.zero_()
+        with T.no_grad():
+            for z in zero: m.get_parameter(z).zero_()
         lg, it = arch17.forward(m, x, True, True)
         m.zero_grad(); cross_entropy((lg if which == "main" else it["logits1"])[mask], y[mask]).backward()
         return {n: (p.grad.clone() if p.grad is not None else T.zeros_like(p)) for n, p in m.named_parameters()}
-    g = grads("head1", True)
+    mx = lambda a, b: max(float((a[n] - b[n]).abs().max()) for n in a)
+    g = grads("head1", "relay")
     out["relay_head1_loss_into_bank2_module"] = max(float(v.abs().max()) for n, v in g.items() if n.split(".")[0] not in mod1)
-    g = grads("main", True)
+    g = grads("main", "relay")
     out["relay_main_loss_into_bank1"] = max(float(g[n].abs().max()) for n in ("lp.weight", "lc.weight", "lw.weight", "l1.weight", "book.weight"))
-    r0, a0 = grads("main", True, True), grads("main", False, True)
-    out["relay_vs_aux_l2_zeroed_max_abs_diff"] = max(float((r0[n] - a0[n]).abs().max()) for n in r0)
-    r1, a1 = grads("main", True), grads("main", False)
-    out["relay_vs_aux_l1_diff_intact"] = float((r1["l1.weight"] - a1["l1.weight"]).abs().max())
-    arch17.Z1_DETACH = True
+    out["relay_vs_local_lp2_zeroed_max_abs_diff"] = max(mx(grads(w, "relay", ("lp2.weight",)), grads(w, "local", ("lp2.weight",))) for w in ("main", "head1"))
+    out["relay_vs_aux_l2_lm_zeroed_max_abs_diff"] = max(mx(grads(w, "relay", ("l2.weight", "lm.weight")), grads(w, "aux", ("l2.weight", "lm.weight"))) for w in ("main", "head1"))
+    r1, l1_ = grads("main", "relay"), grads("main", "local")
+    out["relay_vs_local_bank1_diff_intact"] = max(float((r1[n] - l1_[n]).abs().max()) for n in ("lp.weight", "l1.weight"))
+    arch17.LOCAL_DETACH, arch17.P2_DETACH, arch17.LM_DETACH, arch17.Z1_DETACH = MODES["relay"]
     out["tag"] = G.HTAG
     print(json.dumps(out)); sys.exit(0)
 if len(sys.argv) > 1:
@@ -89,10 +94,20 @@ if len(sys.argv) > 1:
     out["head1_targets_are_every_byte"] = bool(T.equal(cyes[1], y[y != E.BOS]))
     far_t = cyes[2]
     data = T.cat([x, y[:, -1:]], 1)       # data[:, t] is input position t; y[:, t] = data[:, t + 1]
-    L = y.shape[1]; exp_t = T.full_like(y, E.BOS); exp_t[:, :L - d + 1] = data[:, d:]
-    ans = T.zeros_like(mask); ans[:, :L - d + 1] = mask[:, d - 1:]
-    exp_m = (exp_t != E.BOS) & ~ans
-    out["far_target_positions"] = int(exp_m.sum()); out["far_targets_answer_or_eos"] = int(((far_t >= 256) | (far_t < 0)).sum())
+    # (6) independent rebuild from the item lists: input position t holds seq[t] with seq = [BOS] + prompt + answer; target seq[t + d];
+    # trained iff t + 4 <= len(prompt) (the byte 4 ahead is a prompt byte)
+    ind_t, ind_pos = [], []
+    for i, (pr, an) in enumerate(items):
+        seq = [E.BOS] + list(pr) + list(an)
+        for t in range(len(pr) + 1):
+            if t + 4 <= len(pr):
+                ind_t.append(seq[t + d]); ind_pos.append((i, t))
+    exp_m = T.zeros_like(mask)
+    for i, t in ind_pos: exp_m[i, t] = True
+    exp_t = T.full_like(y, E.BOS)
+    for (i, t), v in zip(ind_pos, ind_t): exp_t[i, t] = v
+    out["trained_positions"] = sorted(ind_pos) == sorted(map(tuple, G.far_targets(y, mask, d)[1].nonzero().tolist()))
+    out["far_target_positions"] = int(exp_m.sum()); out["far_targets_eos"] = int((far_t >= 256).sum())
     if ctrl == "none":
         out["targets_match_definition"] = bool(T.equal(far_t, exp_t[exp_m]))
     else:
@@ -123,18 +138,21 @@ else:
         if v["update16_loss_terms"] != [2, 3]: fails.append(f"{k}: update16 loss terms {v['update16_loss_terms']}")
         if not v["main_targets_are_answer_bytes"]: fails.append(f"{k}: main head targets are not the answer bytes")
         if not v["head1_targets_are_every_byte"]: fails.append(f"{k}: first head targets are not every next byte")
-        if v["far_targets_answer_or_eos"] != 0: fails.append(f"{k}: far targets include EOS")
+        if v["far_targets_eos"] != 0: fails.append(f"{k}: far targets include EOS")
+        if v["trained_positions"] is not True: fails.append(f"{k}: trained positions differ from the independent rebuild")
         if v["update16_far_term_outside_bank2_max_abs_diff"] != 0.0: fails.append(f"{k}: update16 far term changes gradients outside bank2")
         if not v["update16_far_term_bank2_max_abs_diff"] > 0.0: fails.append(f"{k}: update16 far term does not reach bank2")
     if res["4_none"].get("targets_match_definition") is not True: fails.append("d=4 targets differ from the definition")
     if res["1_none"].get("targets_match_definition") is not True: fails.append("d=1 targets differ from the definition")
     if res["4_shuffle"].get("shuffle_keeps_row_multisets") is not True: fails.append("shuffle changes a row's targets")
     if not res["4_shuffle"].get("shuffle_fraction_moved", 0) > 0.5: fails.append("shuffle moved too few targets")
+    if res["1_none"]["far_target_positions"] != res["4_none"]["far_target_positions"]: fails.append("d=1 and d=4 train at different numbers of positions")
     rl = res["relay"]
     if rl["relay_head1_loss_into_bank2_module"] != 0.0: fails.append("relay: first head's loss reaches the second bank")
     if not rl["relay_main_loss_into_bank1"] > 0.0: fails.append("relay: main loss does not reach the first bank")
-    if rl["relay_vs_aux_l2_zeroed_max_abs_diff"] != 0.0: fails.append("relay differs from aux beyond the z1 path")
-    if not rl["relay_vs_aux_l1_diff_intact"] > 0.0: fails.append("relay does not remove the z1 path")
+    if rl["relay_vs_local_lp2_zeroed_max_abs_diff"] != 0.0: fails.append("relay differs from local beyond the read into lp2")
+    if rl["relay_vs_aux_l2_lm_zeroed_max_abs_diff"] != 0.0: fails.append("relay differs from aux beyond the two readout reads")
+    if not rl["relay_vs_local_bank1_diff_intact"] > 0.0: fails.append("relay does not open the inter-bank read")
     if rl["tag"] != "_rh": fails.append("relay tag")
     res["passed"] = not fails; res["failures"] = fails
     (HERE / "exp45" / "E23_CHECK.json").write_text(json.dumps(res, indent=1)); print(json.dumps(res, indent=1))

@@ -108,8 +108,9 @@ if TRACEUP16 == "all":
 #   E16_FIXEDCODES=on        the byte embeddings stay at their random initial values in birth and life (a labelled restriction: identical fixed
 #                           input codes for every arm, so that a rule's ability to learn its input code is separated from the rest). Tag _fc.
 #   E16_OUTTAG=<text>        appended to a life's receipt name, so that a repeat on the current panels never overwrites an original receipt.
-#   E16_HEADS=relay          (E18c, 11 Nov 2026) as aux, but the first layer's direct read into the main head stays detached: the two
-#                           inter-bank paths are the ONLY difference from local. Tag _rh.
+#   E16_HEADS=relay          (E18c, 11 Nov 2026) as local, except that the first bank's state feeds the second bank's projection with
+#                           its gradient (the one read between the banks); the main readout's direct reads of the first bank (Hs -> lm,
+#                           z1 -> l2) stay detached, so the main head's error reaches the first bank only through the second. Tag _rh.
 HEADS16 = os.environ.get("E16_HEADS", "top"); assert HEADS16 in ("top", "local", "aux", "relay")
 assert HEADS16 == "top" or (ARCH16 == "bank2" and FREEZE16 == "none"), "E16_HEADS=local|aux is defined for bank2 with nothing frozen"
 PROJFB16 = os.environ.get("E16_PROJFB", "raw"); assert PROJFB16 in ("raw", "scaled")
@@ -137,7 +138,8 @@ TUPTAG = ("_tups" if PROJFB16 == "scaled" else "_tup") if TRACEUP16 == "proj" el
 DEVRULETAG = "" if BIRTHRULE16 == "D" else "_bT" + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG
 if HEADS16 != "top":
     arch17.LOCAL_HEADS = True; arch17.LOCAL_DETACH = HEADS16 == "local"
-    arch17.Z1_DETACH = True if HEADS16 == "relay" else None
+    if HEADS16 == "relay":      # only the read between the banks (first bank's state into the second bank's projection) open
+        arch17.LOCAL_DETACH = True; arch17.P2_DETACH = False; arch17.LM_DETACH = True; arch17.Z1_DETACH = True
 if ARCH16 != "window":
     arch17.PROJ_SCALED = PROJFB16 == "scaled"
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
@@ -157,7 +159,7 @@ H1TAG = "_h1all" if HEAD1LOSS16 == "all" else ""
 FARHEAD16 = int(os.environ.get("E16_FARHEAD", "0")); assert 0 <= FARHEAD16 <= 12
 FARCTRL16 = os.environ.get("E16_FARCTRL", "none"); assert FARCTRL16 in ("none", "shuffle")
 assert FARCTRL16 == "none" or FARHEAD16 > 0, "E16_FARCTRL needs E16_FARHEAD"
-assert FARHEAD16 == 0 or (HEADS16 == "local" and BIRTHRULE16 == "T"), "E16_FARHEAD is defined for E16_HEADS=local E16_BIRTHRULE=T births"
+assert FARHEAD16 == 0 or (HEADS16 == "local" and BIRTHRULE16 == "T" and LOSS16 == "answer" and FARHEAD16 <= 4), "E16_FARHEAD (1-4) is defined for E16_HEADS=local E16_BIRTHRULE=T births with the answer loss"
 FTAG = (f"_fh{FARHEAD16}" + ("s" if FARCTRL16 == "shuffle" else "")) if FARHEAD16 else ""
 arch17.FAR_HEAD = FARHEAD16 > 0
 FAR_GEN = [None]       # the shuffle control's own generator (never the global torch RNG); seeded by develop17
@@ -353,9 +355,7 @@ def update16(m, opt, items, rule, store):
     total = loss + aux if aux is not None else loss
     LAST_FAR[0] = None
     if FARHEAD16:      # E23: the byte FARHEAD16 steps ahead of each input byte, y[:, t + d - 1]; positions past the item's end excluded
-        d = FARHEAD16; assert d <= y.shape[1]; yf = T.full_like(y, E.BOS); yf[:, :y.shape[1] - d + 1] = y[:, d - 1:]
-        ma = T.zeros_like(mask); ma[:, :y.shape[1] - d + 1] = mask[:, d - 1:]
-        mf = (yf != E.BOS) & ~ma           # prompt-byte targets only
+        yf, mf = far_targets(y, mask, FARHEAD16)
         if FARCTRL16 == "shuffle":
             yf = yf.clone()
             for i in range(yf.shape[0]):
@@ -387,20 +387,29 @@ def score(m, items, store=None, silence=False):
                 final=sum(o[-3:] == t[-3:] for o, (_, t) in zip(outs, items)))
 
 
+FAR_POS_D = 4      # E23: the far head is trained at the SAME input positions in every arm: those whose byte FAR_POS_D ahead is a prompt byte
+
+
+def far_targets(y, mask, d):
+    """E23 (v3, after the second internal audit): target = the byte d steps ahead of input position t (y[:, t + d - 1]); trained positions =
+    those at which the byte FAR_POS_D ahead is still a prompt byte (not an answer digit, not EOS, not padding), identical for d = 1 and d = 4."""
+    D = FAR_POS_D; assert 1 <= d <= D <= y.shape[1]
+    shift = lambda z, k, fill: T.cat([z[:, k - 1:], T.full_like(z[:, :k - 1], fill)], 1)
+    pos = (shift(y, D, E.BOS) != E.BOS) & ~shift(mask, D, False)
+    return shift(y, d, E.BOS), pos
+
+
 @T.no_grad()
 def far_accuracy(m, items):
     """E23 diagnostic, never a whole-answer score: the far head's top-1 on its own (unshuffled) prompt-byte targets, teacher forced, with a
     structural baseline (on the same items, the most frequent target given the class of the input byte and the class of the target's
     position: an upper bound on what structure alone gives). Also the stratum whose target is a digit."""
-    x, y, mask = X.batch_tensor(items); d = FARHEAD16
-    assert d <= y.shape[1]
+    x, y, mask = X.batch_tensor(items)
     _, it = E.forward(m, x, local=True, through_time=False)
-    yf = T.full_like(y, E.BOS); yf[:, :y.shape[1] - d + 1] = y[:, d - 1:]
-    ma = T.zeros_like(mask); ma[:, :y.shape[1] - d + 1] = mask[:, d - 1:]
-    mf = (yf != E.BOS) & ~ma
+    yf, mf = far_targets(y, mask, FARHEAD16)
     hit = (it["logits_far"].argmax(-1) == yf) & mf
     dig = mf & (yf >= 48) & (yf <= 57)
-    cls = lambda b: T.where((b >= 48) & (b <= 57), 0, T.where((b >= 65) & (b <= 90), 1, T.where(b >= 97, 2, T.where(b == 61, 3, 4))))
+    cls = lambda b: T.where(b == E.BOS, 5, T.where((b >= 48) & (b <= 57), 0, T.where((b >= 65) & (b <= 90), 1, T.where(b >= 97, 2, T.where(b == 61, 3, 4)))))
     key = cls(x) * 8 + cls(yf)        # input class x target class (the target class is not the target byte)
     base = 0
     for k_ in key[mf].unique():

@@ -51,9 +51,12 @@ PROJ_SCALED = False
 # 10 Nov audit: LOCAL_DETACH False keeps the first bank's own head but leaves every gradient path between the banks open (E16_HEADS=aux):
 # the one-factor control for "no relay between banks" (same heads, same objective, only the detach toggled).
 LOCAL_DETACH = True
-# E18c (11 Nov 2026, after the internal audit): LOCAL_DETACH cuts three reads (Hs -> lp2, Hs -> lm, z1 -> l2). Only the first two cross
-# between banks. Z1_DETACH None follows LOCAL_DETACH (every earlier receipt); E16_HEADS=relay sets LOCAL_DETACH False and Z1_DETACH True:
-# the two inter-bank paths open, the first layer's direct path into the main head still cut.
+# E18c (11 Nov 2026, after two internal audits): LOCAL_DETACH cuts three reads: Hs -> lp2 (the second bank's input: the only read
+# BETWEEN the banks), Hs -> lm and z1 -> l2 (the main readout reading the first bank directly). Each has its own flag; None follows
+# LOCAL_DETACH (every earlier receipt). E16_HEADS=relay opens Hs -> lp2 alone: the main head's error reaches the first bank only through
+# the second bank.
+P2_DETACH = None
+LM_DETACH = None
 Z1_DETACH = None
 # E23 (11 Nov 2026, timescale of the upper bank's target): FAR_HEAD adds a third head that reads the second bank's state alone
 # (lmf, l3f; created after every other layer, so all other initial weights are unchanged) and is trained on the byte FAR_DELTA steps
@@ -121,7 +124,8 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     extra = {}
     lh = hasattr(m, "l3a")
     if m.arch == "bank2":   # second bank written from the first bank's state
-        p2 = T.tanh(lin(Hs.detach() if (lh and LOCAL_DETACH) else Hs, m.lp2, local))
+        p2d = lh and (LOCAL_DETACH if P2_DETACH is None else P2_DETACH)
+        p2 = T.tanh(lin(Hs.detach() if p2d else Hs, m.lp2, local))
         c2 = T.tanh(lin(p2, m.lc2, local)); w2 = T.sigmoid(lin(p2, m.lw2, local)); r2 = m.R.expand_as(c2)
         h2 = T.zeros(B, C); hs2, prev2 = [], []
         for t in range(L):
@@ -140,7 +144,8 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     if lh:
         extra["logits1"] = lin(T.tanh(lin(z1, m.l2a, local) + lin(Hs, m.lma, local)), m.l3a, local)
         zd = LOCAL_DETACH if Z1_DETACH is None else Z1_DETACH
-        pre = lin(z1.detach() if zd else z1, m.l2, local) + lin(Hs.detach() if LOCAL_DETACH else Hs, m.lm, local)
+        hd = LOCAL_DETACH if LM_DETACH is None else LM_DETACH
+        pre = lin(z1.detach() if zd else z1, m.l2, local) + lin(Hs.detach() if hd else Hs, m.lm, local)
     else:
         pre = lin(z1, m.l2, local) + lin(Hs, m.lm, local)
     if m.arch == "bank2":

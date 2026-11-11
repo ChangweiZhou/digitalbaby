@@ -27,6 +27,8 @@ esac
 # dry runs (tests of this launcher only): E11_DEV_UPDATES / E11_STAGE_UPDATES change the products' names as the harness does
 if [ "$CMD" = "dev" ] && [ -n "${E11_DEV_UPDATES:-}" ] && [ "$E11_DEV_UPDATES" != "24576" ]; then STEM="${STEM}_dry${E11_DEV_UPDATES}"; fi
 if [ "$CMD" = "T" ] && [ -n "${E11_STAGE_UPDATES:-}" ] && [ "$E11_STAGE_UPDATES" != "6144" ]; then STEM="${STEM}_dry${E11_STAGE_UPDATES}"; fi
+# the host must be idle before anything is touched: no harness process and no other python job (three per wave is the ceiling)
+if pgrep -f "exp16_integrated.py" > /dev/null || pgrep -x python3 > /dev/null; then echo "another python process is running, refusing"; pgrep -af python3; exit 4; fi
 mkdir -p "$W/exp45/logs" "$HERE/exp45/logs"
 # refresh code in the work folder from this folder (receipts there are kept); record the hashes the wave ran with
 cp "$HERE"/*.py "$W"/; [ -e "$W/exp45/BIRTH_MANIFEST.json" ] || cp "$HERE/exp45/BIRTH_MANIFEST.json" "$W/exp45/"
@@ -38,9 +40,7 @@ for s in $SEEDS; do
     [ -e "$f" ] && { echo "exists, refusing: $f"; exit 3; }
   done
 done
-# the host must be idle: no other harness process (three per wave is the ceiling; contention would also skew CPU-s)
-if pgrep -f "exp16_integrated.py" > /dev/null; then echo "another harness process is running, refusing"; pgrep -af exp16_integrated.py; exit 4; fi
-echo "$WAVE start $(date -u +%FT%TZ) loadavg $(cut -d' ' -f1-3 /proc/loadavg) commit $(git -C "$HERE" rev-parse --short HEAD)" >> exp45/logs/e18b_e23_wall.txt
+echo "$WAVE start $(date -u +%FT%TZ) loadavg $(cut -d' ' -f1-3 /proc/loadavg) commit $(git -C "$HERE" rev-parse --short HEAD 2>/dev/null) dirty_tracked_files $(git -C "$HERE" status --porcelain --untracked-files=no 2>/dev/null | wc -l)" >> exp45/logs/e18b_e23_wall.txt
 pids=(); logs=()
 for s in $SEEDS; do
   log="exp45/logs/e18b_e23_${WAVE}_${s}.log"
