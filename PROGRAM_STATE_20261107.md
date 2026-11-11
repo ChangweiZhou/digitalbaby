@@ -290,3 +290,9 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - Open, exploratory: what the wrong intermediates are, and whether the first operator reads out. Not run.
 - E20-A stage 2: all three M lives now have completion records (worker's commit 28f69eef); the two-bank lives are still out. Nothing of stage 2 is judged yet.
 - The Mac is idle.
+
+
+## Addendum, 10 November 23:27 EST (clock): E20-P2 prepared (review 9.94)
+
+- Follow-up probes on the same three checkpoints: a breakdown of the wrong intermediates, and a readout of the first operator fitted on all sixteen operator pairs. Fixtures pass for three seeds on untrained nets only; predictions P-P2.1 to P-P2.4 on file.
+- Not run. Under a minute of one process on the Mac; waits for Mr. Xu's go.

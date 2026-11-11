@@ -569,3 +569,8 @@ Seeds 73129 / 93683 / 116089, from `exp45/E20P_VERDICTS.json` (scorer `e20p_scor
 - P-PR.5 holds: 100 / 100 / 100%; shuffled labels 0.7 to 0.9%, untrained net 2.2 to 3.7%.
 - P-PR.6 cannot be judged: the operand reads out on every item, so there is no second group. The expectation behind it was wrong.
 - P-PR.7 holds: 0.47 / 0.42 / 0.13.
+
+
+## Addendum, 10 November 2026, 23:27 EST (clock): E20-P2, follow-up probes
+
+Predictions P-P2.1 to P-P2.4 and their readings are in `E20P2_PREDICTIONS.md`, written and pushed before `e20_probe2.py` touches a trained checkpoint. Exploratory: designed after E20-P's results. Not run: it waits for Mr. Xu's go.

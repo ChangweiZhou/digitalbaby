@@ -1750,3 +1750,23 @@ The readout's controls are in order: shuffled labels 0.7 to 0.9%, an untrained n
 - For composition inside one item, this reference does not need more memory. Mechanisms that add or protect within-item storage would not address what fails here. The retention work of 9.74 concerns forgetting across a life and is unaffected.
 - E20-B asks whether a network with no window composes. This result says to expect the same split there: operands held, first step from memory weak. I will run these probes on E20-B's checkpoints myself when they exist; the worker's brief does not change.
 - The next question is small and exploratory: what the wrong intermediates are (the other operator, a neighbouring value, a copied operand), and whether the first operator reads out. It is the same script with more written out, and another minute on the Mac.
+
+
+## 9.94 E20-P2 prepared: the wrong intermediates and the first operator; predictions on file, nothing run (10 November 2026, 23:27 EST by the clock)
+
+The follow-up named at the end of 9.93. Script `MOD97_LOCAL_RULE_20261106/e20_probe2.py`, predictions `E20P2_PREDICTIONS.md`, launcher `e20p2_run.sh`. Scoring only, same three checkpoints. It is exploratory: it was designed after E20-P's results were seen, on the same weights, so it can add detail to 9.93 and cannot confirm it.
+
+**Two parts.**
+
+- *A, what the wrong intermediates are.* Each readable wrong intermediate goes into the first of nine categories it fits (the other operator, operands swapped, another modulus, a copied operand, either operand one digit wrong, off by one, one digit right, other), and the shares are set beside what a uniformly random wrong value would give for the same items. Run on the twins and on the same items with everything in view.
+- *B, whether the first operator is kept.* A four-way readout from the state at `=`.
+
+**A confound caught in the design of B.** Among the four held pairs the first operator determines the second. A readout fitted on held pairs could therefore report the first operator while reading the second, which is often in view. The readout is fitted on fresh items of all sixteen pairs instead. The fixture shows the trap is real: given features that hold only the second operator, a readout fitted on the held four "finds" the first operator on 40 of 40 twin items, and one fitted on sixteen pairs gets 8 to 11 of 40.
+
+**Fixtures** (`exp45/E20P2_FIXTURES_<seed>.json`, three seeds, all pass, untrained nets and stub answers only): a hand-worked item lands in each category as expected; a stub that always uses the other operator is counted there whole; the operator readout finds an operator that is present and not one that is absent; fit and test items share no prompt and no taught triple; the run path executes.
+
+**One thing to keep in mind when reading the result.** On an untrained net the first operator reads out on 35 to 42% of items against a chance of 25%. The untrained control is not at chance for operators, so it is reported beside the trained figure.
+
+**Predictions P-P2.1 to P-P2.4** are in the file. The first operator reads out on at least 90% where it is out of view (65%); the other operator accounts for at least a quarter of wrong intermediates (45%); near misses account for at least half (55%); the largest category is the same in view and from memory (50%).
+
+**Cost.** Under a minute, one process. It waits for Mr. Xu's go.
