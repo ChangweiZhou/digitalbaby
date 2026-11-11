@@ -1365,7 +1365,7 @@ Share 0.75 on the six seeds it was not found on (plus-minus pairs, final answer)
 | 1500007 | 71.3 | 70.2 | 90.2 | 0.79 | 0.78 |
 | 1600033 | 64.6 | 75.1 | 81.6 | 0.79 | 0.92 |
 
-- The hard pairs are higher at 0.75 in five of six seeds, by 5 points or more in four. Three of six are at or above 0.80 of the reference, against one at share 0.5. All six pass the family gate at this checkpoint at both shares except 1600033 at 0.5.
+- The hard pairs are higher at 0.75 in five of six seeds, by 5 points or more in four. Three of six are at or above 0.80 of the reference, against one at share 0.5. At this checkpoint all six pass the family gate at share 0.75; at share 0.5 two do not (1200007 on held pairs, 0.73; 1600033 on mod-97, 0.79).
 - In the two seeds whose `+-` fell late at share 0.5, the fall from checkpoint 4 to 5 was 29.2 and 21.2 points; at 0.75 it is 7.3 and 8.5.
 
 The curve beyond 0.75, three seeds (plus-minus pairs; mod-73 mean):
