@@ -1,0 +1,1234 @@
+{
+ "experiment": "E20-B",
+ "stage": 1,
+ "what": "implementation and reduced-dose qualification (amendments 8-12)",
+ "provenance": {
+  "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py check --qual exp45/e20b_qual",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1",
+   "E11_STAGE_UPDATES": "256",
+   "E11_DEV_UPDATES": "2048"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "f48279675784f1cba5d451f38869f51560b4eedf1f207875d5eaffed75a7ac9f",
+   "arch17.py": "8735aea2b0d135ecfb1506f0be413dcfad75738a22a69b6d566f6ec6c821805e",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  }
+ },
+ "dose": {
+  "dev_updates": 2048,
+  "stage_updates": 256
+ },
+ "dispatch": {
+  "arch16": "bank2",
+  "bookdecay16": "off",
+  "compgap16": 0,
+  "store16": "off",
+  "prefix": "e17",
+  "k40_panels_present": true
+ },
+ "architecture": {
+  "G0": {
+   "model": {
+    "cls": "arch17.Net17",
+    "kind": "bank2",
+    "params": 1125265
+   },
+   "installed_forward": "arch17.forward",
+   "params_within_5pct_of_bank2": true,
+   "batch": {
+    "rows": 48,
+    "width": 22,
+    "row_lengths": [
+     10,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     21,
+     22
+    ]
+   },
+   "shapes": {
+    "x": [
+     48,
+     22
+    ],
+    "logits": [
+     48,
+     22,
+     257
+    ],
+    "ok": true
+   },
+   "causality": {
+    "cases": 144,
+    "max_abs_diff_earlier_logits": 0.0,
+    "exact": true
+   },
+   "rows": {
+    "other_rows_changed_max_abs_diff": 0.0,
+    "reordered_max_abs_diff": 0.0,
+    "exact": true
+   },
+   "state_reset": {
+    "module_buffers": [
+     "R"
+    ],
+    "same_batch_after_another_max_abs_diff": 0.0,
+    "each_row_alone_vs_in_batch_max_abs_diff": 5.066394805908203e-07,
+    "tolerance_for_row_alone": 1e-05,
+    "ok": true
+   },
+   "gradients": {
+    "birth_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 45,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "lc.weight": 0.030751820653676987,
+      "lw.weight": 0.0031741310376673937,
+      "lc2.weight": 0.04010980203747749,
+      "lw2.weight": 0.004965185187757015
+     }
+    },
+    "mixed_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 51,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "lc.weight": 0.031590692698955536,
+      "lw.weight": 0.004209719132632017,
+      "lc2.weight": 0.04011448845267296,
+      "lw2.weight": 0.004705722443759441
+     }
+    }
+   },
+   "gradients_ok": true,
+   "optimizer_groups": [
+    {
+     "weight_decay": 0.3,
+     "n_params": 22,
+     "names": [
+      "l1.weight",
+      "l1.bias",
+      "lp.weight",
+      "..."
+     ]
+    },
+    {
+     "weight_decay": 0.0,
+     "n_params": 1,
+     "names": [
+      "book.weight"
+     ]
+    }
+   ],
+   "embedding_without_decay": true,
+   "bos_eos": {
+    "vocab": 258,
+    "padding_idx": 257,
+    "BOS": 257,
+    "EOS": 256,
+    "outputs": 257,
+    "ok": true
+   },
+   "ok": true
+  },
+  "G1": {
+   "model": {
+    "cls": "arch20.NetRNN",
+    "kind": "gru",
+    "params": 1124113
+   },
+   "installed_forward": "arch20.forward",
+   "params_within_5pct_of_bank2": true,
+   "batch": {
+    "rows": 48,
+    "width": 22,
+    "row_lengths": [
+     10,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     21,
+     22
+    ]
+   },
+   "shapes": {
+    "x": [
+     48,
+     22
+    ],
+    "logits": [
+     48,
+     22,
+     257
+    ],
+    "ok": true
+   },
+   "causality": {
+    "cases": 144,
+    "max_abs_diff_earlier_logits": 0.0,
+    "exact": true
+   },
+   "rows": {
+    "other_rows_changed_max_abs_diff": 0.0,
+    "reordered_max_abs_diff": 0.0,
+    "exact": true
+   },
+   "state_reset": {
+    "module_buffers": [],
+    "same_batch_after_another_max_abs_diff": 0.0,
+    "each_row_alone_vs_in_batch_max_abs_diff": 4.172325134277344e-07,
+    "tolerance_for_row_alone": 1e-05,
+    "manual_zero_state_loop_max_abs_diff": 2.384185791015625e-07,
+    "nonzero_initial_state_changes_first_step": 0.9031439423561096,
+    "ok": true
+   },
+   "gradients": {
+    "birth_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 45,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "rnn.weight_hh_l0": 0.0037582358345389366,
+      "rnn.bias_hh_l0": 0.01074350904673338
+     }
+    },
+    "mixed_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 51,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "rnn.weight_hh_l0": 0.003682182403281331,
+      "rnn.bias_hh_l0": 0.009883686900138855
+     }
+    }
+   },
+   "gradients_ok": true,
+   "optimizer_groups": [
+    {
+     "weight_decay": 0.3,
+     "n_params": 12,
+     "names": [
+      "l1.weight",
+      "l1.bias",
+      "rnn.weight_ih_l0",
+      "..."
+     ]
+    },
+    {
+     "weight_decay": 0.0,
+     "n_params": 1,
+     "names": [
+      "book.weight"
+     ]
+    }
+   ],
+   "embedding_without_decay": true,
+   "bos_eos": {
+    "vocab": 258,
+    "padding_idx": 257,
+    "BOS": 257,
+    "EOS": 256,
+    "outputs": 257,
+    "ok": true
+   },
+   "ok": true
+  },
+  "G2": {
+   "model": {
+    "cls": "arch20.NetRNN",
+    "kind": "lstm",
+    "params": 1125873
+   },
+   "installed_forward": "arch20.forward",
+   "params_within_5pct_of_bank2": true,
+   "batch": {
+    "rows": 48,
+    "width": 22,
+    "row_lengths": [
+     10,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     21,
+     22
+    ]
+   },
+   "shapes": {
+    "x": [
+     48,
+     22
+    ],
+    "logits": [
+     48,
+     22,
+     257
+    ],
+    "ok": true
+   },
+   "causality": {
+    "cases": 144,
+    "max_abs_diff_earlier_logits": 0.0,
+    "exact": true
+   },
+   "rows": {
+    "other_rows_changed_max_abs_diff": 0.0,
+    "reordered_max_abs_diff": 0.0,
+    "exact": true
+   },
+   "state_reset": {
+    "module_buffers": [],
+    "same_batch_after_another_max_abs_diff": 0.0,
+    "each_row_alone_vs_in_batch_max_abs_diff": 3.5762786865234375e-07,
+    "tolerance_for_row_alone": 1e-05,
+    "manual_zero_state_loop_max_abs_diff": 2.384185791015625e-07,
+    "nonzero_initial_state_changes_first_step": 0.3104357421398163,
+    "ok": true
+   },
+   "gradients": {
+    "birth_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 45,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "rnn.weight_hh_l0": 0.002175269415602088,
+      "rnn.bias_hh_l0": 0.01224322896450758
+     }
+    },
+    "mixed_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 51,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "rnn.weight_hh_l0": 0.0018946686759591103,
+      "rnn.bias_hh_l0": 0.009705623611807823
+     }
+    }
+   },
+   "gradients_ok": true,
+   "optimizer_groups": [
+    {
+     "weight_decay": 0.3,
+     "n_params": 12,
+     "names": [
+      "l1.weight",
+      "l1.bias",
+      "rnn.weight_ih_l0",
+      "..."
+     ]
+    },
+    {
+     "weight_decay": 0.0,
+     "n_params": 1,
+     "names": [
+      "book.weight"
+     ]
+    }
+   ],
+   "embedding_without_decay": true,
+   "bos_eos": {
+    "vocab": 258,
+    "padding_idx": 257,
+    "BOS": 257,
+    "EOS": 256,
+    "outputs": 257,
+    "ok": true
+   },
+   "ok": true
+  },
+  "G3": {
+   "model": {
+    "cls": "arch20.NetG3",
+    "kind": "g3",
+    "params": 1158033
+   },
+   "installed_forward": "arch20.forward",
+   "params_within_5pct_of_bank2": true,
+   "batch": {
+    "rows": 48,
+    "width": 22,
+    "row_lengths": [
+     10,
+     12,
+     13,
+     14,
+     15,
+     16,
+     17,
+     18,
+     19,
+     21,
+     22
+    ]
+   },
+   "shapes": {
+    "x": [
+     48,
+     22
+    ],
+    "logits": [
+     48,
+     22,
+     257
+    ],
+    "ok": true
+   },
+   "causality": {
+    "cases": 144,
+    "max_abs_diff_earlier_logits": 0.0,
+    "exact": true
+   },
+   "rows": {
+    "other_rows_changed_max_abs_diff": 0.0,
+    "reordered_max_abs_diff": 0.0,
+    "exact": true
+   },
+   "state_reset": {
+    "module_buffers": [
+     "R"
+    ],
+    "same_batch_after_another_max_abs_diff": 0.0,
+    "each_row_alone_vs_in_batch_max_abs_diff": 5.960464477539062e-07,
+    "tolerance_for_row_alone": 1e-05,
+    "ok": true
+   },
+   "gradients": {
+    "birth_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 45,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "lb.weight": 0.09942726045846939,
+      "lc.weight": 0.05276504158973694,
+      "lw.weight": 0.0037727963645011187,
+      "lc2.weight": 0.04040331766009331,
+      "lw2.weight": 0.004517137538641691
+     }
+    },
+    "mixed_batch": {
+     "params_without_finite_nonzero_grad": [],
+     "active_rows": 51,
+     "active_rows_without_grad": [],
+     "bos_row_grad_zero": true,
+     "recurrent_weight_grad_abs_max": {
+      "lb.weight": 0.08447162806987762,
+      "lc.weight": 0.05106820911169052,
+      "lw.weight": 0.004635463934391737,
+      "lc2.weight": 0.04164921119809151,
+      "lw2.weight": 0.003913746681064367
+     }
+    }
+   },
+   "gradients_ok": true,
+   "optimizer_groups": [
+    {
+     "weight_decay": 0.3,
+     "n_params": 23,
+     "names": [
+      "l1.weight",
+      "l1.bias",
+      "lp.weight",
+      "..."
+     ]
+    },
+    {
+     "weight_decay": 0.0,
+     "n_params": 1,
+     "names": [
+      "book.weight"
+     ]
+    }
+   ],
+   "embedding_without_decay": true,
+   "bos_eos": {
+    "vocab": 258,
+    "padding_idx": 257,
+    "BOS": 257,
+    "EOS": 256,
+    "outputs": 257,
+    "ok": true
+   },
+   "g3": {
+    "added": [
+     "lb.weight"
+    ],
+    "added_shape": [
+     64,
+     512
+    ],
+    "added_bias": false,
+    "added_weights": 32768,
+    "params_G0": 1125265,
+    "params_G3": 1158033,
+    "shared_initial_values_equal_G0": true,
+    "lb_zero_outputs_equal_G0_exact": true,
+    "lb_zero_max_abs_diff": 0.0,
+    "lb_enabled_first_step_equal_G0_exact": true,
+    "lb_enabled_later_steps_differ_from_G0": 1.02544105052948,
+    "p_t_recomputed_from_previous_h2_max_abs_diff": 0.0,
+    "ok": true
+   },
+   "ok": true
+  }
+ },
+ "scoring": {
+  "fixtures": {
+   "fully_correct": {
+    "+-": {
+     "n": 600,
+     "exact": 600,
+     "final": 600
+    },
+    "-+": {
+     "n": 600,
+     "exact": 600,
+     "final": 600
+    },
+    "><": {
+     "n": 600,
+     "exact": 600,
+     "final": 600
+    },
+    "<>": {
+     "n": 600,
+     "exact": 600,
+     "final": 600
+    },
+    "within": {
+     "n": 600,
+     "exact": 600,
+     "final": 600
+    },
+    "taught": {
+     "n": 600,
+     "exact": 600,
+     "final": 600
+    }
+   },
+   "wrong_intermediate_right_ending": {
+    "+-": {
+     "n": 600,
+     "exact": 0,
+     "final": 600
+    },
+    "-+": {
+     "n": 600,
+     "exact": 0,
+     "final": 600
+    },
+    "><": {
+     "n": 600,
+     "exact": 0,
+     "final": 600
+    },
+    "<>": {
+     "n": 600,
+     "exact": 0,
+     "final": 600
+    },
+    "within": {
+     "n": 600,
+     "exact": 0,
+     "final": 600
+    },
+    "taught": {
+     "n": 600,
+     "exact": 0,
+     "final": 600
+    }
+   },
+   "missing_end_symbol": {
+    "+-": {
+     "n": 600,
+     "exact": 0,
+     "final": 0
+    },
+    "-+": {
+     "n": 600,
+     "exact": 0,
+     "final": 0
+    },
+    "><": {
+     "n": 600,
+     "exact": 0,
+     "final": 0
+    },
+    "<>": {
+     "n": 600,
+     "exact": 0,
+     "final": 0
+    },
+    "within": {
+     "n": 600,
+     "exact": 0,
+     "final": 0
+    },
+    "taught": {
+     "n": 600,
+     "exact": 0,
+     "final": 0
+    }
+   }
+  },
+  "fixtures_ok": true,
+  "life_scorer_cap": 6,
+  "composition_target_bytes": [
+   6
+  ],
+  "birth_scorer_max_generated": 4,
+  "birth_scorer_used_for": "births only (single operations, 3-byte answers)",
+  "shortcut_ceilings_on_compose_ok": [
+   "+-",
+   "-+",
+   "<>",
+   "><"
+  ],
+  "shortcut_ceilings_with_taught_key": "ValueError: too many values to unpack (expected 2)",
+  "taught_kept_out_of_compose": true,
+  "taught_panel": {
+   "taught_items": 600,
+   "taught_in_F2_entries": 600,
+   "within_in_F2_entries": 0,
+   "held_in_F2_entries": {
+    "+-": 0,
+    "-+": 0,
+    "><": 0,
+    "<>": 0
+   },
+   "sha256": "145001bf3871b4eba5bdc938c47e5a8dd6baca6544fa6c2232c352a87a37eff7"
+  }
+ },
+ "admission": {
+  "own_birth_own_seed": "admitted: E20 receipt: network, seed (receipt, file name, life), dose, optimizer, sources and weights hash checked",
+  "birth_copied_under_another_seed_for_that_seed": "refused: e20_dev_G0_dry2048_93683.pt: receipt seed 73129, file-name seed 93683, life seed 93683 must agree",
+  "birth_of_seed_presented_to_another_seeds_life": "refused: e20_dev_G0_dry2048_73129.pt: receipt seed 73129, file-name seed 73129, life seed 93683 must agree",
+  "birth_presented_to_another_network": "refused: e20_dev_G0_dry2048_73129.pt: receipt network G0, life network G3",
+  "changed_weights_file": "refused: e20_dev_G0_dry2048_73129.pt: weights hash 6a0517b431d0 is not the receipt's b1895f697654",
+  "receipt_names_another_network": "refused: e20_dev_G0_dry2048_73129.pt: receipt network G1, life network G0",
+  "incomplete_receipt": "refused: e20_dev_G0_dry2048_73129.pt: receipt is not complete",
+  "exp16_style_receipt_no_legacy_admission": "refused: e20_dev_G0_dry2048_73129.pt: not an E20-B birth receipt (no legacy admission)",
+  "birth_output_exists": "refused: output path exists, refused: <tmp>/e20_dev_G0_dry2048_73129.pt",
+  "life_output_exists": "refused: output path exists, refused: <tmp>/e20_life_x.json",
+  "ok": true
+ },
+ "parity": {
+  "files": {
+   "reference_birth": "e17_dev_bank2_nbd_dry2048_73129.json",
+   "reference_life": "e17_life_D_bank2_nbd_e20bref_dry256_73129.json",
+   "e20_birth": "e20_dev_G0_dry2048_73129.json",
+   "e20_parity_life": "e20_life_G0_parity_dry2048_dry256_73129.json"
+  },
+  "a_birth": {
+   "curve_rows": 1,
+   "curve_fields_compared": [
+    "step",
+    "loss",
+    "sealed",
+    "book_shift_by_role",
+    "silenced_k12"
+   ],
+   "curve_differences": [],
+   "census_equal": true,
+   "reference_file_sha256": "451e7332c1cd950ff304e2cd5139e3d9f0baecdb79397063c397d0ec5616f231",
+   "e20_file_sha256": "38625b8d657da12667ed5f21bd288b6a48f45b6c0db01303043ad0e09da10567",
+   "reference_tensors_sha256": "efdf392e08dd343bf31bb4b367ae8a154a35cf54ed4e85740248ec7c98fb173c",
+   "e20_tensors_sha256": "efdf392e08dd343bf31bb4b367ae8a154a35cf54ed4e85740248ec7c98fb173c",
+   "reference_resaved_sha256": "8fbb06b2a4716e8378944d36531c3841a870ed675a7ecb9ee0b48f52a397b198",
+   "e20_resaved_sha256": "8fbb06b2a4716e8378944d36531c3841a870ed675a7ecb9ee0b48f52a397b198",
+   "file_sha_note": "torch.save embeds the file's own name in the archive, so files of identical tensors under different names have different hashes; the weights are compared by their tensors and by re-saving both under one name",
+   "weights_equal": true,
+   "pass": true
+  },
+  "b_life": {
+   "stages_reference": 7,
+   "stages_e20": 7,
+   "per_stage": [
+    {
+     "stage": 0,
+     "task": null,
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": []
+    },
+    {
+     "stage": 1,
+     "task": "F1.1",
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": [],
+     "loss_reference": 0.8557225556578487,
+     "loss_e20": 0.8557225556578487,
+     "loss_equal": true,
+     "exposure_equal": true,
+     "updates_reference_from_rows": 256,
+     "optimizer_steps_e20": [
+      256
+     ]
+    },
+    {
+     "stage": 2,
+     "task": "F1.2",
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": [],
+     "loss_reference": 0.77447793725878,
+     "loss_e20": 0.77447793725878,
+     "loss_equal": true,
+     "exposure_equal": true,
+     "updates_reference_from_rows": 256,
+     "optimizer_steps_e20": [
+      512
+     ]
+    },
+    {
+     "stage": 3,
+     "task": "F2.1",
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": [],
+     "loss_reference": 1.2760300068184733,
+     "loss_e20": 1.2760300068184733,
+     "loss_equal": true,
+     "exposure_equal": true,
+     "updates_reference_from_rows": 256,
+     "optimizer_steps_e20": [
+      768
+     ]
+    },
+    {
+     "stage": 4,
+     "task": "F2.2",
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": [],
+     "loss_reference": 1.1121670892462134,
+     "loss_e20": 1.1121670892462134,
+     "loss_equal": true,
+     "exposure_equal": true,
+     "updates_reference_from_rows": 256,
+     "optimizer_steps_e20": [
+      1024
+     ]
+    },
+    {
+     "stage": 5,
+     "task": "F3.1",
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": [],
+     "loss_reference": 1.0420147399418056,
+     "loss_e20": 1.0420147399418056,
+     "loss_equal": true,
+     "exposure_equal": true,
+     "updates_reference_from_rows": 256,
+     "optimizer_steps_e20": [
+      1280
+     ]
+    },
+    {
+     "stage": 6,
+     "task": "F3.2",
+     "shared_score_keys": 16,
+     "score_keys_only_in_e20": [
+      "taught"
+     ],
+     "score_keys_only_in_reference": [],
+     "differing_score_keys": [],
+     "loss_reference": 0.9947653051931411,
+     "loss_e20": 0.9947653051931411,
+     "loss_equal": true,
+     "exposure_equal": true,
+     "updates_reference_from_rows": 256,
+     "optimizer_steps_e20": [
+      1536
+     ]
+    }
+   ],
+   "panel_sha256": {
+    "reference": "00c9368bb64324449d3c1dd4c67d967d473825056e14f51ca7cd52c3f353b6f6",
+    "e20": "00c9368bb64324449d3c1dd4c67d967d473825056e14f51ca7cd52c3f353b6f6",
+    "equal": true
+   },
+   "strict_counts_equal": true,
+   "zero_grad_first_update_equal": true,
+   "shortcut_ceilings_equal": true,
+   "birth_sha256": {
+    "reference": "451e7332c1cd950ff304e2cd5139e3d9f0baecdb79397063c397d0ec5616f231",
+    "e20": "451e7332c1cd950ff304e2cd5139e3d9f0baecdb79397063c397d0ec5616f231",
+    "equal": true
+   },
+   "optimizer_steps_match_reference_updates": true,
+   "total_updates": 1536,
+   "reference_file_sha256": "4f78eab3c5aee509e5b9a4e1c645141e9cb3569b2c4dd1d27bcfe76b89180064",
+   "e20_file_sha256": "7650f662e646bf1868715b5cc3e700b344ffe442d4bff850469e3e0221438588",
+   "reference_tensors_sha256": "361a36f6628b4c15014db1944554228909351ff9b904f1e2cd02c24a95aabc98",
+   "e20_tensors_sha256": "361a36f6628b4c15014db1944554228909351ff9b904f1e2cd02c24a95aabc98",
+   "reference_resaved_sha256": "5e55e95098194c3d6f733a4882a411050ecc9210aaa15b4d6ee5fd6577c46e0f",
+   "e20_resaved_sha256": "5e55e95098194c3d6f733a4882a411050ecc9210aaa15b4d6ee5fd6577c46e0f",
+   "weights_equal": true,
+   "pass": true
+  },
+  "pass": true
+ },
+ "qualification_runs": {
+  "e20_dev_G0_dry2048_73129.json": {
+   "kind": "birth",
+   "net": "G0",
+   "seed": 73129,
+   "complete": true,
+   "dev_updates": 2048,
+   "cpu_total": 303.861953248,
+   "weights_sha256": "38625b8d657da12667ed5f21bd288b6a48f45b6c0db01303043ad0e09da10567",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py dev G0 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "0e131a292e1a6b0404bcac5f5bb7340192c21dfe",
+    "sources_modified_vs_commit": []
+   },
+   "params": 1125265,
+   "cls": "arch17.Net17",
+   "final_hard_k12": {
+    "add89": 27,
+    "sub89": 5
+   }
+  },
+  "e20_dev_G1_dry2048_73129.json": {
+   "kind": "birth",
+   "net": "G1",
+   "seed": 73129,
+   "complete": true,
+   "dev_updates": 2048,
+   "cpu_total": 210.392572845,
+   "weights_sha256": "0d41505a2d9d99f19e39fb16dd7e328502ed48d3b8313d433e7a0611aabffbbd",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py dev G1 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "params": 1124113,
+   "cls": "arch20.NetRNN",
+   "final_hard_k12": {
+    "add89": 18,
+    "sub89": 16
+   }
+  },
+  "e20_dev_G2_dry2048_73129.json": {
+   "kind": "birth",
+   "net": "G2",
+   "seed": 73129,
+   "complete": true,
+   "dev_updates": 2048,
+   "cpu_total": 194.23284172799998,
+   "weights_sha256": "1c1dbfea199ddd7a04ce26c8ac8cd95ee312f38b26e07019b78182eca9c7d248",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py dev G2 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "params": 1125873,
+   "cls": "arch20.NetRNN",
+   "final_hard_k12": {
+    "add89": 18,
+    "sub89": 17
+   }
+  },
+  "e20_dev_G3_dry2048_73129.json": {
+   "kind": "birth",
+   "net": "G3",
+   "seed": 73129,
+   "complete": true,
+   "dev_updates": 2048,
+   "cpu_total": 238.322775896,
+   "weights_sha256": "770a4a1087318489f58bc41413c81bbb47a09d63a0504b413491acad40ce5497",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py dev G3 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "0e131a292e1a6b0404bcac5f5bb7340192c21dfe",
+    "sources_modified_vs_commit": []
+   },
+   "params": 1158033,
+   "cls": "arch20.NetG3",
+   "final_hard_k12": {
+    "add89": 12,
+    "sub89": 9
+   }
+  },
+  "e20_life_G0_dry2048_dry256_73129.json": {
+   "kind": "life",
+   "net": "G0",
+   "seed": 73129,
+   "stages": 7,
+   "complete": {
+    "stages": 7,
+    "weights": "e20_life_G0_dry2048_dry256_73129.pt",
+    "weights_sha256": "660eddb60453fdffd8381b5c59c0d815c88886246f8498fbbdbc88539b81b5a5",
+    "tensors_sha256": "361a36f6628b4c15014db1944554228909351ff9b904f1e2cd02c24a95aabc98",
+    "optimizer_steps": [
+     1536
+    ],
+    "cpu_total": 768.241947688,
+    "cpu_scoring": 559.5809966080001
+   },
+   "stage_updates": 256,
+   "birth": "exp45/e20b_qual/e20_dev_G0_dry2048_73129.pt",
+   "birth_admission": "E20 receipt: network, seed (receipt, file name, life), dose, optimizer, sources and weights hash checked",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py life G0 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "cpu_updates": 208.64604162799992,
+   "cpu_scoring": 559.5809966080001,
+   "final_compose_exact": {
+    "+-": 0,
+    "-+": 0,
+    "><": 67,
+    "<>": 80,
+    "within": 26
+   },
+   "final_taught_exact": 35
+  },
+  "e20_life_G0_parity_dry2048_dry256_73129.json": {
+   "kind": "life",
+   "net": "G0",
+   "seed": 73129,
+   "stages": 7,
+   "complete": {
+    "stages": 7,
+    "weights": "e20_life_G0_parity_dry2048_dry256_73129.pt",
+    "weights_sha256": "7650f662e646bf1868715b5cc3e700b344ffe442d4bff850469e3e0221438588",
+    "tensors_sha256": "361a36f6628b4c15014db1944554228909351ff9b904f1e2cd02c24a95aabc98",
+    "optimizer_steps": [
+     1536
+    ],
+    "cpu_total": 774.988328093,
+    "cpu_scoring": 567.335248874
+   },
+   "stage_updates": 256,
+   "birth": "exp45/e20b_qual/reference/e17_dev_bank2_nbd_dry2048_73129.pt",
+   "birth_admission": "parity: reference birth by path, hash given on the command line and in its receipt",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py life G0 73129 --out exp45/e20b_qual --parity-birth exp45/e20b_qual/reference/e17_dev_bank2_nbd_dry2048_73129.pt --parity-sha 451e7332c1cd950ff304e2cd5139e3d9f0baecdb79397063c397d0ec5616f231",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "cpu_updates": 207.63633896300007,
+   "cpu_scoring": 567.335248874,
+   "final_compose_exact": {
+    "+-": 0,
+    "-+": 0,
+    "><": 67,
+    "<>": 80,
+    "within": 26
+   },
+   "final_taught_exact": 35
+  },
+  "e20_life_G1_dry2048_dry256_73129.json": {
+   "kind": "life",
+   "net": "G1",
+   "seed": 73129,
+   "stages": 7,
+   "complete": {
+    "stages": 7,
+    "weights": "e20_life_G1_dry2048_dry256_73129.pt",
+    "weights_sha256": "65536a0065d7f2f269daff9b23f96b15e98cd369214ff528e7dd14d07cf12ef4",
+    "tensors_sha256": "536909c0b80386b3bd065076c1b3185d21fdee1ba3fa2b6144fb0bf687ddec6c",
+    "optimizer_steps": [
+     1536
+    ],
+    "cpu_total": 505.556138857,
+    "cpu_scoring": 357.30840572700004
+   },
+   "stage_updates": 256,
+   "birth": "exp45/e20b_qual/e20_dev_G1_dry2048_73129.pt",
+   "birth_admission": "E20 receipt: network, seed (receipt, file name, life), dose, optimizer, sources and weights hash checked",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py life G1 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "cpu_updates": 148.23414810999998,
+   "cpu_scoring": 357.30840572700004,
+   "final_compose_exact": {
+    "+-": 0,
+    "-+": 0,
+    "><": 202,
+    "<>": 151,
+    "within": 81
+   },
+   "final_taught_exact": 83
+  },
+  "e20_life_G2_dry2048_dry256_73129.json": {
+   "kind": "life",
+   "net": "G2",
+   "seed": 73129,
+   "stages": 7,
+   "complete": {
+    "stages": 7,
+    "weights": "e20_life_G2_dry2048_dry256_73129.pt",
+    "weights_sha256": "6578fcc87dbc4e71586db6a21e39aefdd8b64d26b2e2116f03c8290adf95a0b5",
+    "tensors_sha256": "fa85e5069c2fd74cf6ca68c6bf296f7e6654986ce4c5337be928e0cd68f048c5",
+    "optimizer_steps": [
+     1536
+    ],
+    "cpu_total": 456.803654004,
+    "cpu_scoring": 319.18374200799997
+   },
+   "stage_updates": 256,
+   "birth": "exp45/e20b_qual/e20_dev_G2_dry2048_73129.pt",
+   "birth_admission": "E20 receipt: network, seed (receipt, file name, life), dose, optimizer, sources and weights hash checked",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py life G2 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "cpu_updates": 137.60673416400004,
+   "cpu_scoring": 319.18374200799997,
+   "final_compose_exact": {
+    "+-": 1,
+    "-+": 0,
+    "><": 207,
+    "<>": 207,
+    "within": 102
+   },
+   "final_taught_exact": 113
+  },
+  "e20_life_G3_dry2048_dry256_73129.json": {
+   "kind": "life",
+   "net": "G3",
+   "seed": 73129,
+   "stages": 7,
+   "complete": {
+    "stages": 7,
+    "weights": "e20_life_G3_dry2048_dry256_73129.pt",
+    "weights_sha256": "8ac4229ec71d017a7f9ffe78aa4827846511d314338f739a2159e277e839e566",
+    "tensors_sha256": "7082f2793a1c15760b3a8489558042494c2ebb8a4bfe630a31aaa98720c233da",
+    "optimizer_steps": [
+     1536
+    ],
+    "cpu_total": 582.2004168689999,
+    "cpu_scoring": 415.39561966699983
+   },
+   "stage_updates": 256,
+   "birth": "exp45/e20b_qual/e20_dev_G3_dry2048_73129.pt",
+   "birth_admission": "E20 receipt: network, seed (receipt, file name, life), dose, optimizer, sources and weights hash checked",
+   "command": "E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 python3 exp20_reference.py life G3 73129 --out exp45/e20b_qual",
+   "environment": {
+    "E11_DEV_UPDATES": "2048",
+    "E11_STAGE_UPDATES": "256",
+    "OMP_NUM_THREADS": "1"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "b0e5bf81361581076258b8ee6f98a004ac8b0105",
+    "sources_modified_vs_commit": []
+   },
+   "cpu_updates": 166.79000286600007,
+   "cpu_scoring": 415.39561966699983,
+   "final_compose_exact": {
+    "+-": 2,
+    "-+": 0,
+    "><": 149,
+    "<>": 149,
+    "within": 66
+   },
+   "final_taught_exact": 80
+  }
+ },
+ "summary": {
+  "architecture_ok": {
+   "G0": true,
+   "G1": true,
+   "G2": true,
+   "G3": true
+  },
+  "scoring_ok": true,
+  "admission_ok": true,
+  "parity_birth": true,
+  "parity_life": true,
+  "parity": true
+ }
+}

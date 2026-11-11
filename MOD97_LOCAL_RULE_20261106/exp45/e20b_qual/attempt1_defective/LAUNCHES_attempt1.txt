@@ -1,0 +1,18 @@
+wave1 launched 03:05:38
+wave 1 commands (cwd MOD97_LOCAL_RULE_20261106, no other E16_/E11_ variable in the environment):
+  E16_ARCH=bank2 E16_BOOKDECAY=off E16_COMPGAP=0 E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp16_integrated.py dev 73129   > logs/ref_dev.log
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py dev G0 73129 --out exp45/e20b_qual   > logs/dev_G0.log
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py dev G1 73129 --out exp45/e20b_qual   > logs/dev_G1.log
+wave 2, 03:10:54 UTC:
+  E16_ARCH=bank2 E16_BOOKDECAY=off E16_COMPGAP=0 E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 E16_OUTTAG=_e20bref python3 exp16_integrated.py D 73129   > logs/ref_life.log
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py life G0 73129 --out exp45/e20b_qual --parity-birth exp45/e17_dev_bank2_nbd_dry2048_73129.pt --parity-sha 451e7332c1cd950ff304e2cd5139e3d9f0baecdb79397063c397d0ec5616f231   > logs/life_G0_parity.log
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py dev G2 73129 --out exp45/e20b_qual   > logs/dev_G2.log
+wave 3a, 03:14:13 UTC (after G2 birth finished):
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py dev G3 73129 --out exp45/e20b_qual   > logs/dev_G3.log
+reference files moved to exp45/e20b_qual/reference/ at 03:23:39 UTC (ref_dev.log, ref_life.log moved there too)
+wave 4, 03:23:39 UTC:
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py life G0 73129 --out exp45/e20b_qual   > logs/life_G0.log
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py life G1 73129 --out exp45/e20b_qual   > logs/life_G1.log
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py life G2 73129 --out exp45/e20b_qual   > logs/life_G2.log
+wave 5, 03:36:31 UTC:
+  E11_DEV_UPDATES=2048 E11_STAGE_UPDATES=256 OMP_NUM_THREADS=1 python3 exp20_reference.py life G3 73129 --out exp45/e20b_qual   > logs/life_G3.log
