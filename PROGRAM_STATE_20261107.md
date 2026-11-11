@@ -378,3 +378,10 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - Finding: on backprop-trained weights the sweep's update to a GRU is as well aligned with the true gradient as its update to the two-bank network, including twelve to sixteen steps back in time. The LSTM is not clearly better; the candidate stays the GRU.
 - Next: a brief for a GRU born and living under the sweep against backprop on one host, reduced dose first; and the brief for the target-test sizing sweep. Both to Codex before any worker.
 - The Mac is idle.
+
+
+## Addendum, 11 November 18:42 EST (clock): E26 briefed as a draft (review 9.104)
+
+- `OPUS_TASK_E26_GRU_UNDER_THE_SWEEP_20261111.md`: a GRU born and living under the sweep beside backprop, same data, same decay (0.25), same written-out step, one host per seed; three stages with a stop after each; predictions P26.1 to P26.5. For Codex. No worker.
+- Still to write: the brief for the target-test sizing sweep.
+- Waiting: E24's two backprop baselines and then its nine births; E21b; Codex on step 0's code.

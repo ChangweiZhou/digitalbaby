@@ -2188,3 +2188,21 @@ Four of five miss, all in the same direction: I expected the sign path to lose t
 **What this does not show**, as the predictions file said before the run. These networks were trained by backprop. Alignment at one point of training is not learning; a high figure is a licence to try a birth under the rule and is not a forecast of its score. Three seeds, one size.
 
 **What follows.** The next job is the one the close of 17 November needs: a GRU born and living under the sweep, against backprop on the same pipeline and host, with the recurrent step written out as it is here. No remedy for the rule is designed before that birth has been tried: on this evidence none is yet called for, and learned feedback weights stay in reserve.
+
+
+## 9.104 E26 briefed as a draft: a GRU born and living under the sweep, beside backprop on the same pipeline and host (18:42 EST by the clock, 11 November 2026)
+
+Brief: `OPUS_TASK_E26_GRU_UNDER_THE_SWEEP_20261111.md`. Draft for Codex; no worker starts before the audit. It is the run the close of 17 November needs: no rule and network on file were born and lived together on a network that composes.
+
+**The design in four lines.**
+
+- *One difference.* Two arms on E20-B's GRU, same initial values, same batches in the same order, same optimizer at weight decay 0.25: one updated by the sweep, one by backprop. Both use the written-out recurrent step of E25, so that only the path back differs.
+- *E20-B's protocol and marks.* The birth and the six-block life on the joint stream under which this network is known to compose, with 85 on new instances of taught pairs and 40 on untaught plus-minus pairs as absolute marks. The learner's own replay pipeline is a later step.
+- *Three stages with a stop after each:* implementation and reduced-dose qualification; the six births; the six lives. The lives are released after the births have been read, the lesson of E23's base arm.
+- *Five predictions,* with the sweep-born birth at 70 or above held at 50% and the two composition marks at 25% each. A candidate pair exists if the sweep's arm meets both marks in the same two seeds.
+
+**Why decay 0.25 in both arms.** Every rule run on file uses 0.25 and every backprop birth 0.30. E24's audit showed that this makes two configurations and not two updates. Here the backprop arm takes the rule's decay. E20-B's own GRU, at 0.30 with the library layer on another host, stays on file as what the network is known to reach and is not an arm.
+
+**Cost.** Measured on one batch on the owner's machine, an update through the written-out step costs 1.4 times the library layer's on the exact path and 1.6 times under the sweep. That puts the twelve runs near 68,000 CPU-seconds, six to seven hours on three cores, to be replaced by stage 1's measurement.
+
+**Four questions are put to the audit:** whether a backprop arm at 0.30 is also needed; whether the joint stream is the right first pipeline; whether a floor for releasing a sweep-born life should be fixed now; and whether the sweep's scale should be per stacked matrix or per gate.
