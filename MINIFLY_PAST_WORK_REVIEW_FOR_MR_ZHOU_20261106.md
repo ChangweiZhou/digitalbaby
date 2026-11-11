@@ -1465,3 +1465,30 @@ Assurance after the fixes: the qualifier and the assay check exit 0; the memory-
 **Consequences.** E18b (births under every-byte targets with local heads) stays on hold; its question now reads differently, and the check above comes before it. The retention work of the next-steps note keeps its order: with both updates at the same floor without replay, a protection mechanism is tested under backprop first.
 
 **Cost.** CPU-seconds per life: 6,251–6,313 and 5,503–5,534 (zero replay, rule and backprop); 7,759–7,784 and 7,598–7,755 (every byte). Wall 2 h 38 min for twelve processes against a forecast of 2 h 30 (range 2 h 10 to 3 h). Evidence level E2; one life per seed and arm.
+
+## 9.89 Three small things while E22 runs: a hypothesis that missed, four read-only jobs received, a draft for step 0 (11 November 2026, 00:45 EST)
+
+**1. The hypothesis of 9.88 is not supported.** I had suggested that the working rule collapses under every-byte targets because weight-sign feedback turns the irreducible error of unpredictable prompt bytes into a steady push that the true gradient averages away. The check (`e18c_drift_check.py`, read-only, its prediction committed at 83b6772e before the first run) measured, at the three backprop every-byte solutions, how coherent the prompt-byte part of the gradient is across 128 batches, for backprop and for the sweep. Prediction: the sweep at least twice as coherent as backprop below the second bank's write, in two of three seeds.
+
+| Coherence of the prompt-byte part, below the second bank's write | 73129 / 93683 / 116089 |
+|---|---|
+| Backprop | 0.34 / 0.31 / 0.48 |
+| Sign-feedback sweep | 0.30 / 0.27 / 0.56 |
+| Ratio | 0.89 / 0.89 / 1.18 |
+
+**The prediction misses.** The sweep is no more coherent than backprop. One weakness of the measurement is stated with it: backprop's own coherence is 0.3 to 0.5, far above the 0.09 that pure noise would give, so these weights are not at rest under the batch mix I drew, and the check could not see a push appear against a zero background. As registered, it does not support the hypothesis, and the cause of the collapse is open. The next single change remains the one the next-steps note named beforehand: predictable distractors.
+
+**2. Four read-only jobs arrived from one cloud session** (merged at 26a86602; all four are that worker's reading and are audited like any deliverable). I have read two of them so far.
+
+*The evidence ledger* (`PROJECT_DOCUMENTS/EVIDENCE_LEDGER_20261111.md`, with `ledger_recompute.py`) recomputed every number in 9.59–9.82 and lists nineteen disagreements with this review. Fifteen are rounding. Four change a sentence, and these are corrected here:
+- *9.66 item 3,* "every arm sits at 8–13 on the held pairs": the arm with only the embeddings frozen is at 1.0–2.0.
+- *9.67 item 3,* "`freeze: none`, `frozen: []` in every receipt": only 6 of the 18 drift receipts carry both fields; the older ones predate them. No receipt records any freezing, and the window learner's code has no freezing path, but the sentence as written was false.
+- *9.79 item 2,* "with the state zeroed its held compositions fall to zero": the plus-minus pairs fall to 0.0; across all four pairs whole answers reach 6.0% and final answers 28.2%.
+- *9.79 item 3,* "the registered mod-97 panel is 94–98% items whose relation is supervised somewhere": that is addition, max and min; subtraction is 72.4%.
+Also 9.71 item 4: the local-heads package ends 10.5 / 12.3 / 13.2 points under the reference, not "about 10".
+
+*The storage audit* (`PROJECT_DOCUMENTS/REPO_STORAGE_AUDIT_20261111.md`): the repository is 10.04 GiB packed and a full clone with its checkout is about 21 GiB, which is more than a cloud container has free; 99.4% of it is at the head of the default branch, so history is not the cause; zip bundles from September and October are 4.31 GiB, model weights 0.9 GiB; partial-receipt commits were 39% of commits since 1 November. A tested shallow sparse clone of the working folder without weights is 275 MiB. That option needs no decision and is now written up for workers (`WORKER_CLONE_INSTRUCTIONS.md`). Its other options (commit weights only at completion; move weights out of git; rewrite history) are Mr. Xu's and Mr. Zhou's to choose.
+
+*Not yet read by me:* the multi-timescale literature check and the source check for the delayed-observation memo (`PROJECT_DOCUMENTS/LIT_CHECK_20261110/`).
+
+**3. Step 0 of the target test is drafted for Codex's audit** (`OPUS_TASK_TARGET_TEST_STEP0_20261111.md`): the stream made concrete with proposed sizes, eight checks that each must pass and each must be shown able to fail, and six questions for the audit, one of them whether to generate a predictable-filler version alongside after the every-byte result. No worker starts from it.
