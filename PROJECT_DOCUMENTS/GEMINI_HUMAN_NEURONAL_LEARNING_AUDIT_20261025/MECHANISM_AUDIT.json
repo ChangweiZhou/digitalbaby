@@ -1,0 +1,190 @@
+{
+  "schema": "GEMINI_HUMAN_NEURONAL_MECHANISMS_AUDIT_V1",
+  "date": "2026-10-25",
+  "status": "TARGETED_SCIENTIFIC_SOURCE_AUDIT_DOCUMENTATION_ONLY",
+  "source": {
+    "title": "Neuronal Mechanisms of Human Learning: Cellular Plasticity, Novel Timing Rules, and Empirical Literature",
+    "type": "user_supplied_11_page_docx",
+    "binary_in_repo": false
+  },
+  "comparison": "human_learning_mechanisms_20261023/CATALOG.md at 4c12621d0804d2495c2eacaebf4e17aaeb994771",
+  "coverage": {
+    "claim_variant_rows": 14,
+    "gemini_references_fully_systematically_reviewed": false,
+    "claude_entries_fully_systematically_reviewed": false
+  },
+  "columns": [
+    "id",
+    "mechanism",
+    "gemini_pages",
+    "corrected_interpretation",
+    "evidence",
+    "disposition",
+    "claude_crosswalk",
+    "primary_source",
+    "caveat"
+  ],
+  "rows": [
+    {
+      "id": "G01",
+      "mechanism": "NMDAR-dependent LTP",
+      "gemini_pages": "1;4",
+      "corrected_interpretation": "direct human ex-vivo cortical and dentate potentiation",
+      "evidence": "H-EXVIVO",
+      "disposition": "supported",
+      "claude_crosswalk": "CELL-01",
+      "primary_source": "https://doi.org/10.1523/JNEUROSCI.3158-13.2013",
+      "caveat": "do not generalize to all circuit forms"
+    },
+    {
+      "id": "G02",
+      "mechanism": "NMDAR-dependent LTD",
+      "gemini_pages": "1;5",
+      "corrected_interpretation": "human ex-vivo bidirectional synaptic depression",
+      "evidence": "H-EXVIVO",
+      "disposition": "supported with regional limit",
+      "claude_crosswalk": "CELL-01",
+      "primary_source": "https://doi.org/10.1523/JNEUROSCI.3158-13.2013",
+      "caveat": "avoid simple universal low-frequency threshold"
+    },
+    {
+      "id": "G03",
+      "mechanism": "presynaptic mossy-fiber non-NMDAR LTP",
+      "gemini_pages": "1;5",
+      "corrected_interpretation": "nonhuman presynaptic mechanism; direct human claim not verified",
+      "evidence": "ANIMAL-CAUSAL",
+      "disposition": "human specificity unsupported",
+      "claude_crosswalk": "CELL-01",
+      "primary_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6772802/",
+      "caveat": "human perforant path is different and NMDAR-dependent"
+    },
+    {
+      "id": "G04",
+      "mechanism": "stimulus-specific response modification",
+      "gemini_pages": "1-2;5",
+      "corrected_interpretation": "human evoked-potential population potentiation",
+      "evidence": "H-INDIRECT",
+      "disposition": "supported LTP-like not single-synapse",
+      "claude_crosswalk": "CELL-01;PERC",
+      "primary_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC1226326/",
+      "caveat": "not molecular proof"
+    },
+    {
+      "id": "G05",
+      "mechanism": "inverse/broad STDP",
+      "gemini_pages": "2;6",
+      "corrected_interpretation": "direct human neocortical slice timing rules",
+      "evidence": "H-EXVIVO",
+      "disposition": "supported restricted cortex",
+      "claude_crosswalk": "CELL-02",
+      "primary_source": "https://doi.org/10.1523/JNEUROSCI.3158-13.2013",
+      "caveat": "not universal human-only timing polarity"
+    },
+    {
+      "id": "G06",
+      "mechanism": "ADP and L-type VGCC gating",
+      "gemini_pages": "2;6",
+      "corrected_interpretation": "human-slice LTP/LTD polarity response to L-type channel blockade",
+      "evidence": "H-EXVIVO",
+      "disposition": "supported mechanistic subtype",
+      "claude_crosswalk": "CELL-02;CELL-10",
+      "primary_source": "https://doi.org/10.1523/JNEUROSCI.3158-13.2013",
+      "caveat": "small pharmacology samples; not independent architecture"
+    },
+    {
+      "id": "G07",
+      "mechanism": "cholinergic modulation of STDP",
+      "gemini_pages": "2;6-7",
+      "corrected_interpretation": "human slice laminar ACh effects; mouse optogenetic fiber stimulation",
+      "evidence": "H-EXVIVO;ANIMAL-CAUSAL",
+      "disposition": "supported with method correction",
+      "claude_crosswalk": "CELL-02;MOD-01",
+      "primary_source": "https://doi.org/10.1038/ncomms12826",
+      "caveat": "do not call mouse optogenetics human"
+    },
+    {
+      "id": "G08",
+      "mechanism": "MTL concept neuron invariance",
+      "gemini_pages": "3;7",
+      "corrected_interpretation": "human intracranial concept responses across modalities",
+      "evidence": "H-VIVO",
+      "disposition": "coding supported; synaptic rule unknown",
+      "claude_crosswalk": "CONC;SYS",
+      "primary_source": "https://doi.org/10.1038/nrn3251",
+      "caveat": "not exclusively one neuron per concept"
+    },
+    {
+      "id": "G09",
+      "mechanism": "rapid conceptual association",
+      "gemini_pages": "3;7",
+      "corrected_interpretation": "human single neurons expand selectivity with picture-association learning",
+      "evidence": "H-VIVO",
+      "disposition": "supported phenomenon; cause unknown",
+      "claude_crosswalk": "SYS-08;CONC",
+      "primary_source": "https://doi.org/10.1016/j.neuron.2015.06.016",
+      "caveat": "does not demonstrate BTSP"
+    },
+    {
+      "id": "G10",
+      "mechanism": "behavioral-timescale synaptic plasticity",
+      "gemini_pages": "3;7",
+      "corrected_interpretation": "rodent CA1 seconds-scale plateau-gated learning",
+      "evidence": "ANIMAL-CAUSAL",
+      "disposition": "human concept-cell assertion unsupported",
+      "claude_crosswalk": "CELL-08",
+      "primary_source": "https://doi.org/10.1126/science.aan3846",
+      "caveat": "do not relabel rodent result direct human"
+    },
+    {
+      "id": "G11",
+      "mechanism": "adult hippocampal neurogenesis",
+      "gemini_pages": "3;7-9",
+      "corrected_interpretation": "human radiocarbon and 2026 multiomics; rate/function debated",
+      "evidence": "H-INDIRECT;ANIMAL-CAUSAL",
+      "disposition": "qualified contested",
+      "claude_crosswalk": "CELL-19;SYS-03",
+      "primary_source": "https://doi.org/10.1038/s41586-026-10169-4",
+      "caveat": "2013 1.75 percent within renewing subset"
+    },
+    {
+      "id": "G12",
+      "mechanism": "intrinsic excitability plasticity",
+      "gemini_pages": "3-4;8",
+      "corrected_interpretation": "human neuronal ion-channel physiology vs causal learning-induced changes",
+      "evidence": "H-EXVIVO;ANIMAL-CAUSAL",
+      "disposition": "human plasticity attribution indirect",
+      "claude_crosswalk": "CELL-05",
+      "primary_source": "https://doi.org/10.1152/jn.00120.2025",
+      "caveat": "static phenotype is not adaptation during learning"
+    },
+    {
+      "id": "G13",
+      "mechanism": "axon initial segment plasticity",
+      "gemini_pages": "4;8",
+      "corrected_interpretation": "activity-induced AIS relocation demonstrated in nonhuman culture; cited 2025 study primarily mouse morphology",
+      "evidence": "ANIMAL-CAUSAL",
+      "disposition": "direct human learning plasticity unsupported",
+      "claude_crosswalk": "CELL-05-related",
+      "primary_source": "https://doi.org/10.1093/cercor/bhaf297",
+      "caveat": "human anatomy observation is not AIS relocation"
+    },
+    {
+      "id": "G14",
+      "mechanism": "metaplasticity",
+      "gemini_pages": "2;9",
+      "corrected_interpretation": "activity history shifts plasticity threshold chiefly animal/ex-vivo literature",
+      "evidence": "ANIMAL-CAUSAL;H-INDIRECT",
+      "disposition": "plausible not human-only mechanism",
+      "claude_crosswalk": "CELL-03",
+      "primary_source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6618441/",
+      "caveat": "do not infer precise BCM from human behavioral effects"
+    }
+  ],
+  "limitations": [
+    "No experimental validation of MiniFly capability",
+    "Biological evidence is not implementation evidence",
+    "Human in-vivo coding does not identify synaptic mechanism",
+    "Do not change archived 150-item catalog without a separate versioned source-level revision",
+    "No new MiniFly training or held assessment"
+  ]
+}
