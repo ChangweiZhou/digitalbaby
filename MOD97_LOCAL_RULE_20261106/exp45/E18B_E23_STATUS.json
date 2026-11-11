@@ -1,0 +1,43 @@
+{
+ "experiment": "E18b/E18c/E23",
+ "date": "2026-11-11",
+ "status": "complete",
+ "branch": "claude/funny-mendel-34puq7",
+ "launch_commit": "ada699a8",
+ "last_wave_commit": "cf4d7ac3",
+ "authorization": "Mr. Xu, 11 Nov 2026 (E18b, clean local-head control, timescales; top-down deferred)",
+ "learner": "arch17 bank2, rule T, local heads; 1,782,418 params (2,176,915 with far head); not a mini learner",
+ "waves_filed": 11,
+ "reruns": 0,
+ "cpu_s_total": 175562,
+ "wall": "02:23:58Z-19:04:36Z",
+ "verdicts": {
+  "P18b.1 B3-all operator and letter embeddings moved >= 0.2 row norm, all seeds": "holds",
+  "P18b.2 B3-all max/min >= 66 and hard >= 10, >= 2 seeds": "misses",
+  "P18b.3 B3-all hard >= 20 below B2-all, all seeds": "misses",
+  "P18b.4 |B2-all - B2| hard <= 15, >= 2 seeds": "misses",
+  "PC.1 R2 hard >= B2 + 5, >= 2 seeds": "holds",
+  "PC.2 R2 checkpoint-mean hard >= B2 + 5, >= 2 seeds": "holds",
+  "PC.3 R2 birth CPU-s within 15% of B2, all seeds": "holds",
+  "PC.5 R2 first-head hard >= B2's + 5, >= 2 seeds": "misses",
+  "PC.4 R2-life F1 after block 6 >= B2-life + 3, >= 2 seeds": "holds",
+  "P23.1 F4 hard >= N1 + 5, >= 2 seeds": "misses",
+  "P23.2 F4 hard >= F4s + 5, >= 2 seeds": "misses",
+  "P23.3 N1 hard >= H0 - 5, >= 2 seeds": "misses",
+  "P23.4 H0 hard >= B2 (same host) - 5, >= 2 seeds": "misses",
+  "P23.5 F4 far-head prompt top-1 >= structural baseline + 3, all seeds": "misses"
+ },
+ "scorer_problems": [],
+ "not_run": [
+  "crossed lives",
+  "aux minus relay",
+  "credit-horizon x target-time crossing",
+  "cross-item control",
+  "E23 lives",
+  "top-down feedback (deferred)",
+  "timescale test on a working base"
+ ],
+ "review": "REVIEW_PENDING (Codex); internal same-family audits only; no formal checker gate",
+ "report": "E18B_E18C_E23_REPORT_20261111.md",
+ "tables": "exp45/E18B_E23_TABLES.md"
+}
