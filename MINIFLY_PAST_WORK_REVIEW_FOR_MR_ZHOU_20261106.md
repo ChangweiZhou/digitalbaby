@@ -1673,3 +1673,31 @@ Memo: `PROJECT_DOCUMENTS/MINIFLY_PROGRESS_SURVEY_AND_TARGET_ASSAY_20261110.md` (
 **My ordering.** The memo says to start with the probes and the step 0 corrections while E20-B qualifies. The step 0 corrections are done tonight. The probes are next. Step 0 version 2 goes back to Codex before any worker starts on it, under the rule of 9.82. Items 3 and 4 keep their place behind E21 and behind the probes.
 
 **What I leave aside.** The memo suggests keeping the native store for a later matched test against a simple index. I agree and do nothing about it now.
+
+
+## 9.92 E20-P prepared: three probes on the saved E20-A checkpoints, with predictions on file and nothing yet run (10 November 2026, 22:18 EST by the clock)
+
+This is the first item of the sequence adopted in 9.91. Script `MOD97_LOCAL_RULE_20261106/e20_probe.py`, predictions `E20P_PREDICTIONS.md`, launcher `e20p_run.sh`. It is scoring only: no weight is changed.
+
+**The three probes.**
+
+1. *Intermediate.* For every twin item: the answer the learner writes alone, the ending it writes when the true intermediate is supplied, and whether its ending is the right second step of its own intermediate. This says whether a failed twin fails at the first step or after it.
+2. *Reset.* The same twins with the state set to zero at two points.
+3. *Readout.* A linear readout of each operand and of the intermediate from the state after `=`, fitted on fresh items and tested on the twins, with shuffled-label and untrained-net controls. This is my addition. It separates a learner that did not keep the hidden operand from one that kept it and could not use it.
+
+**What building it showed about Codex's second probe.** Placed exactly, the reset gives zero twins by construction. If the state is cleared at the point after which the two members of a twin are the same input, they get the same answer, and a twin needs two different answers. So that form is a check that the assay has no leak, and the script asserts it. Placed where the memo's words put it, just before the first of the last ten bytes, it is a real measurement for the window learner, because the window still reaches back to the first operand for up to nine steps. Both are run. The receipts already hold the coarser version (state silenced throughout: zero twins in each of the seven complete lives).
+
+**Fixtures, all on untrained nets and stub answers** (`exp45/E20P_FIXTURES_<seed>.json`, three seeds, all pass).
+
+- Scoring: an oracle scores everything; a responder with a wrong intermediate and a consistent ending scores no intermediate, no whole answer and every "follows its own intermediate"; a responder without the end symbol scores no whole answer.
+- Reset: with no reset the probe's forward pass equals the harness's exactly (difference 0.0); with one, positions before it are unchanged and later ones differ; after the reset at `=` twin members' outputs are identical.
+- Readout: features that contain the operand read out 40 of 40; shuffled labels 1 of 40; features that contain a different operand 0 of 40. The fresh items share no operand triple with the twin panel or with teaching.
+- The panels the probe builds have the same hashes as the panels the three lives scored. At run time the script also refuses to continue unless it reproduces each life's own twin count.
+
+**One number from the fixtures worth keeping.** On an untrained net the in-view third operand reads out from the state on 118 to 134 of 160 twin items, and the hidden first operand on 3 of 160. So if a trained net's state gives up the first operand, that is something the life or the birth taught it.
+
+**Scope.** The three window references of stage 1, which are filed (9.77). Four stage 2 checkpoints are complete as well; they are not probed until stage 2 is complete and filed. The two-bank lives need their own state code, to be written then.
+
+**Predictions P-PR.1 to P-PR.7** are in the predictions file with confidences and readings. In short: most failed twins fail at the intermediate (70%); the second step is sound when the intermediate is given (65%); the first operand reads out on at least half the twin items (60%).
+
+**Cost.** About 20 CPU-seconds per checkpoint, one process. It waits for Mr. Xu's go.

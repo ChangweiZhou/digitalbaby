@@ -274,3 +274,10 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - The four recommended experiments are adopted. Order: probes on the saved E20-A checkpoints next (scoring only, on the Mac, predictions first, on Mr. Xu's go); the reference step of the target test with visible and hidden versions (design draft 7b); the retention cost curve from one checkpoint (waits for E21); the every-byte run with predictable filler.
 - Mr. Xu is assigning a cloud worker to E20-B stage 1 (handoff text given at about 22:00 EST). E20-A stage 2 and E21 are still running.
 - The Mac is idle; nothing is queued.
+
+
+## Addendum, 10 November 22:18 EST (clock): E20-P prepared (review 9.92)
+
+- Probes on the saved E20-A checkpoints are written, with fixtures passing for three seeds on untrained nets only, and predictions P-PR.1 to P-PR.7 on file (`MOD97_LOCAL_RULE_20261106/E20P_PREDICTIONS.md`).
+- Not run. About a minute of one process on the Mac for the three stage 1 window references; waits for Mr. Xu's go.
+- Step 0 version 2 of the target test waits for Codex. E20-B stage 1, E20-A stage 2 and E21 are on the cloud.

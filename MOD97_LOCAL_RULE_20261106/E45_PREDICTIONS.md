@@ -551,3 +551,8 @@ If both partners end under P22.2's marks, the result is common loss whatever P22
 **E22 version 2: launched (10 November 2026, 19:52 EST).** On Mr. Xu's go ("Yes, run it") the six lives started at 19:52:08 EST under the exclusive lock from the harness at c6732624; source and manifest hashes are in `exp45/logs/e22_source_hashes.txt`; each process's environment was read while running. Predictions P22.1–4 unchanged.
 
 **E22 version 2: verdicts (11 November 2026, 01:15 EST; lives 19:52–21:14 EST on 10 November; six exit codes zero; all three pairs pass the validator written beforehand).** P22.1 **holds in every seed** (rule-born after block 1: mod-97 90.9 / 91.9 / 88.7, hard mean 85.0 / 87.2 / 82.0). P22.2 **holds in every seed** (end: mod-97 88.1 / 84.8 / 84.3, hard mean 84.5 / 77.0 / 76.4, mod-73 90.7 / 87.5 / 87.1). P22.3 **holds in every seed** (partner minus rule-born: mod-97 −0.2 / +1.2 / +2.6, mod-73 +0.1 / −0.6 / +2.2). No seed has both partners under the marks. Review 9.85.
+
+
+## Addendum, 10 November 2026, 22:17 EST (clock): E20-P, probes on saved E20-A checkpoints
+
+Predictions P-PR.1 to P-PR.7 and their readings are in `E20P_PREDICTIONS.md`, written and pushed before any trained checkpoint is probed. Script `e20_probe.py` (fixtures pass for the three seeds, on untrained nets and stub answers only), launcher `e20p_run.sh`. Not run: it waits for Mr. Xu's go.

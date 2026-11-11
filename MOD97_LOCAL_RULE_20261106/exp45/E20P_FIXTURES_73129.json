@@ -1,0 +1,97 @@
+{
+ "1_oracle": {
+  "intermediate": 40,
+  "whole": 40,
+  "forced": 40,
+  "own": 40,
+  "both": {
+   "pairs": 20,
+   "intermediate": 20,
+   "whole": 20,
+   "ending_given_true_intermediate": 20
+  }
+ },
+ "1_wrong_intermediate_consistent_ending": {
+  "intermediate": 0,
+  "whole": 0,
+  "own": 40,
+  "failed": {
+   "n": 20,
+   "an_intermediate_wrong": 20,
+   "intermediates_right_ending_wrong": 0,
+   "would_pass_with_true_intermediate": 0
+  }
+ },
+ "1_no_end_symbol": {
+  "intermediate": 40,
+  "whole": 0,
+  "forced": 0,
+  "readable": 40
+ },
+ "2_reset_forward": {
+  "max_abs_difference_without_reset": 0.0,
+  "max_abs_difference_with_reset_at_last_position": 0.053750842809677124,
+  "positions_before_the_reset_unchanged": true,
+  "twin_logit_gap_at_eq": {
+   "no_reset": 6.16610050201416e-05,
+   "reset_before_suffix": 8.661346510052681e-05,
+   "reset_before_eq": 0.0
+  },
+  "untrained_net_same_output_under_eq_reset": 20,
+  "pairs": 20
+ },
+ "3_readout": {
+  "operand_present": {
+   "n": 40,
+   "tens": 40,
+   "units": 40,
+   "both": 40
+  },
+  "shuffled_labels": {
+   "n": 40,
+   "tens": 4,
+   "units": 3,
+   "both": 1
+  },
+  "operand_absent": {
+   "n": 40,
+   "tens": 3,
+   "units": 3,
+   "both": 0
+  }
+ },
+ "3_fresh_items": {
+  "n": 6000,
+  "triples_shared_with_the_twin_panel": 0,
+  "taught_triples": 0
+ },
+ "4_run_path_on_untrained_net": {
+  "cpu_seconds": 1.7,
+  "twins_both_whole": {
+   "twins +-": 0,
+   "twins -+": 0,
+   "twins ><": 0,
+   "twins <>": 0
+  },
+  "first_operand_readout": {
+   "n": 160,
+   "tens": 19,
+   "units": 24,
+   "both": 3
+  },
+  "third_operand_readout": {
+   "n": 160,
+   "tens": 142,
+   "units": 148,
+   "both": 134
+  },
+  "fitted_on": 800
+ },
+ "panel_sha256": "adb936145e3cae7c461a540feb068919fd8be81d78d82b52bd40970faef152d1",
+ "pass": {
+  "scoring": true,
+  "reset": true,
+  "readout": true,
+  "run_path": true
+ }
+}
