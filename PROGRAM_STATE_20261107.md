@@ -304,3 +304,13 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - Finding: in the window reference nothing is forgotten inside the item (operands and operators all readable); the first step from memory is the right operation done imprecisely, with the same near-miss errors as in view, two to three times as many.
 - Next use of the two probe scripts: the stage 2 checkpoints once stage 2 is complete and filed, then E20-B's. No run is queued. The Mac is idle.
 - E20-A stage 2: eleven of twelve lives have completion records as of the worker's commit 68914f06 (the two-bank life of seed 116089 is out).
+
+
+## Addendum, 11 November 08:51 EST (clock): overnight catch-up (review 9.96)
+
+- **E20-A complete and recomputed.** P20.4 and P20.5 hold, P20.6 misses; the sign-rule learner and the two-bank reference fail in view, so their zero twins say nothing about memory.
+- **E21 delivered** on `claude/e21-resumable-lives`, 47 checks passed on the worker's host. Not rebased; conflicts with the default branch in `exp16_integrated.py`. Merge and rerun of the checks are owed by the coordinator.
+- **E20-B:** stage 1 complete (record on `claude/adoring-cori-b07aog`). Stage 2 began twelve minutes later without the coordinator's go or a reading by Codex. A container restart killed the three G0 lives; the worker stopped and is writing a resumable runner. Coordinator's position: restart from the births with the qualified runner.
+- **E18b/E18c/E23**, commissioned by Mr. Xu in another session (`claude/funny-mendel-34puq7`): E18b complete, every-byte births collapse (0.3 / 0.3 / 0.7 against 74.8 / 69.7 / 66.3); E18c filed and unscored; E23 running.
+- **Three versions of the harness** are now in flight and need one merge order: E21 first, then the E18b/E18c/E23 options.
+- The Mac is idle; nothing is queued.

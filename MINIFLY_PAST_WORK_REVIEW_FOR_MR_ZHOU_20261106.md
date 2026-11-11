@@ -1815,3 +1815,72 @@ The registered readings that apply: everything is kept and the failure is in com
 - I do not conclude that more training would close it. That is a guess this run does not test.
 - The comparison that matters for the project is still open: the working rule's learner scores almost no twins in stage 2. Whether it has lost the operand or cannot compute with it is exactly what these two scripts measure. I will run them on the stage 2 checkpoints once stage 2 is complete and filed, and on E20-B's when they exist.
 - No new run follows from this tonight.
+
+
+## 9.96 Overnight, 10 to 11 November: E20-A complete and recomputed; E21 delivered and not yet mergeable; E20-B past the stop I wrote; a job commissioned by Mr. Xu directly (11 November 2026, 08:51 EST by the clock)
+
+Four things arrived between my last filing (23:31 EST) and this morning. I read each and checked what can be checked from receipts. Nothing was run on the Mac for this section.
+
+### A. E20-A, all twelve lives (default branch, commit de869f90)
+
+The worker's report is `MOD97_LOCAL_RULE_20261106/E20A_REPORT.md` and its paragraph `E20A_REVIEW_SECTION_9_77.md`. I recomputed every figure from the twelve receipts with my own script (`e20a_coordinator_check.py`, output `exp45/E20A_COORDINATOR_CHECK.json`). Contract: all twelve have a completion record, seven stages, weights that match the recorded hash, the same memory panel per seed across the four arms, and the registered settings. No problems. The counts agree with the worker's table in every cell.
+
+| Plus-minus twins, end of life (seeds 73129 / 93683 / 116089) | Both right, of 300 | Twin items, of 600 | Same items in view, of 600 |
+|---|---|---|---|
+| Window reference (backprop) | 63 / 80 / 130 | 254 / 286 / 398 | 470 / 420 / 484 |
+| Backprop on the learner's pipeline | 16 / 11 / 68 | 134 / 117 / 269 | 339 / 269 / 396 |
+| Sign-rule learner | 0 / 0 / 0 | 6 / 7 / 8 | 121 / 83 / 236 |
+| Two-bank reference (backprop, no window) | 0 / 0 / 0 | 7 / 34 / 15 | 6 / 31 / 9 |
+
+- **P20.4 holds** (two-bank reference at most 5% of plus-minus twins in all seeds: 0 of 300 in each).
+- **P20.5 holds** (sign-rule learner at or below 0.60 of the reference's twin item accuracy: 0.02 / 0.02 / 0.02).
+- **P20.6 misses** (backprop on the pipeline at or above 0.85: 0.53 / 0.41 / 0.68).
+- P20.1 to P20.3 were judged at stage 1 (9.77): P20.1 and P20.3 hold, P20.2 misses.
+
+*The worker's reading is right and I adopt it:* P20.4 and P20.5 hold, and neither says anything about memory, because neither arm passes the control with everything in view. The two-bank reference gets 6 / 31 / 9 of 600 plus-minus items with the operands in view. The sign-rule learner gets 121 / 83 / 236. A learner that cannot do the task in view cannot be tested for doing it from memory.
+
+*The relaunches are clean.* A container restart killed four lives. The worker kept the killed receipts and relaunched the same four from their births. Each relaunch reproduced the killed run's scores exactly at every stage the killed run had reached (4, 4, 3 and 3 stages). One killed receipt differs from its relaunch in a logging field added between the two launches; its panel hash and scores are the same. No finished life was rerun.
+
+*What the miss of P20.6 adds.* Backprop on the learner's own data pipeline composes from memory at about half the reference's rate and is also weaker in view. The pipeline (raw reservoir at half share, admission as the stream arrives) costs composition under backprop too. That was already visible in view; it holds from memory.
+
+### B. E21, resumable lives (branch `claude/e21-resumable-lives`, commit 8b3ab4e7)
+
+Delivered: checkpoints at every scored stage of a life and every curve row of a birth, resume by replaying the data stream with the learner off, 47 checks passed on the worker's host, including exact resume after a kill at three points for seven command shapes. Report `E21_RESUME_REPORT.md` on that branch.
+
+It is not mergeable as it stands. The branch starts from 40cb1c20 and was not rebased, and `exp16_integrated.py` conflicts with the default branch (my changes since: the E22 preparations and the seed check in admission). **Not done by me yet:** resolving the conflict and rerunning its 47 checks on the merged file. Until then my promise stands and I do not edit `life()` or `develop17()`.
+
+### C. E20-B (branch `claude/adoring-cori-b07aog`)
+
+*Stage 1 is complete and carefully done* (`exp45/e20b_qual/E20B_STAGE1_RECORD.md`, runner at 0e131a29). By its record: birth parity and seven-stage life parity against my exact reference commands, with identical tensors at the end; the scoring fixtures; the architecture checks for all four networks; G3 bitwise equal to G0 with the added matrix at zero; nine admission refusals. It found and fixed a defect of its own (stage records without scores in a first attempt, kept as defective and not used). I have read this record. I have not rerun its checks.
+
+*Its question to me, answered:* the operational reading at the end of `E20B_PREDICTIONS.md` is correct on all five points (hard mean from the last birth row at k = 12; new instances of taught pairs from `compose.within` at stage 6; plus-minus pooled over the two pairs' 1,200 items; whole answer is `exact`; taught instances kept outside `compose`).
+
+*Stage 2 started without the stop of amendment 8.* The stage 1 record was committed at 04:18 UTC and the stage 2 run script at 04:30 UTC, "released by the coordinator's go". I gave no go, and no reading by Codex is on any branch. If Mr. Xu released it, that is his to do; I record only that the full dose began before the stage 1 record was checked by anyone but its author.
+
+*Then a container restart* killed the three G0 lives after their fourth block of six. The three G0 births are complete. The worker stopped, as amendment 7 requires, and is writing a resumable runner (`exp20_resume.py`, in progress at 13:39 UTC).
+
+*My position on the restart.* Restart the three G0 lives from their births with the runner that was qualified, unchanged, and keep the killed receipts. That is what E20-A did, and there the relaunches reproduced the killed runs exactly. A new resumable runner is a second runner: it may be used for the experiment only after its own kill-and-resume test shows a resumed life equal to an uninterrupted one in scores, losses and final tensors, and after that test has been read.
+
+### D. E18b, E18c and E23 (branch `claude/funny-mendel-34puq7`)
+
+Mr. Xu commissioned this directly in another session on 11 November: finish the every-byte births, then a clean control for the local heads, then targets at different time scales, each after three internal draft-audit-test cycles. His message lifts the hold I had placed on E18b (9.88). The plan is `E18B_E18C_E23_PLAN_20261111.md` on that branch; it marks itself as awaiting Codex.
+
+*E18b is complete.* I read the twelve birth receipts on the branch myself and they agree with the worker's table.
+
+| Birth, hard mean at k = 12 (three seeds) | Answer targets | Every-byte targets |
+|---|---|---|
+| Local heads with credit through time at every layer (B2) | 74.8 / 69.7 / 66.3 | 0.3 / 0.3 / 0.7 |
+| Local heads without it (B3) | 1.2 / 0.8 / 0.8 | 1.0 / 1.7 / 0.2 |
+
+The same-host B2 partner reproduces E18's figures to the decimal. Under every-byte targets the birth collapses, as the life did in 9.88. P18b.1 holds (operator and letter embeddings move); P18b.2, P18b.3 and P18b.4 miss.
+
+*E18c has its births and lives filed and is not yet scored by the worker.* Read from the receipts by me, the relay births (the second bank's error allowed into the first bank, nothing else changed) end at 82.2 / 88.5 / 78.8 against B2's 74.8 / 69.7 / 66.3. That would meet its first prediction. It is the worker's to score and I leave the verdict to its report.
+
+*E23 has four waves still to run.*
+
+### What this leaves
+
+1. **Three versions of the harness.** The default branch, the E21 branch and the E18b/E18c/E23 branch each change `exp16_integrated.py` from a different starting commit. They have to be brought together in one order: E21 onto the current head first, then the options of the E18b/E18c/E23 branch on top. Until that is done, a life started from one branch cannot be compared with a life from another without checking the source it ran.
+2. **Probes on the stage 2 checkpoints.** Stage 2 is now complete and filed here. The two probe scripts run as they are on the window lives (sign rule and backprop on the pipeline). The two-bank lives need state code I have not written, and their in-view failure makes a memory probe of little use there.
+3. **E20-B needs an answer on the restart** (C above).
+4. **My check of E20-B's stage 1** by rerunning its parity on the Mac is still owed.

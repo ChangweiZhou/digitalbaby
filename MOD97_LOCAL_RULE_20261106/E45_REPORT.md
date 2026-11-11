@@ -794,3 +794,8 @@ Probes on the end-of-life weights of the three window references of E20-A stage 
 ## Addendum, 10 November 2026, 23:31 EST (clock): E20-P2 (review 9.95)
 
 On the same three window references: both operators read out from the state at `=` on every twin item, as both operands did. Wrong intermediates on the plus-minus pairs are near misses (73 to 87% are the value one changed digit of an operand would give, against about 23% for random wrong values), not the other operator (under 7%), and they are the same kind with everything in view, where there are two to three times fewer. Three predictions hold; P-P2.2 misses. Exploratory, E2.
+
+
+## Addendum, 11 November 2026, 08:51 EST (clock): E20-A complete (review 9.96)
+
+Twelve lives, contract checked, counts recomputed. Plus-minus twins both right at end of life: window reference 63 / 80 / 130 of 300; backprop on the learner's pipeline 16 / 11 / 68; sign-rule learner 0 / 0 / 0; two-bank reference 0 / 0 / 0. The last two also fail with the operands in view (121 / 83 / 236 and 6 / 31 / 9 of 600 items), so they say nothing about memory. Four killed lives were relaunched from their births and reproduced the killed runs' scores exactly at every stage reached. E2.

@@ -584,3 +584,13 @@ Seeds 73129 / 93683 / 116089, from `exp45/E20P2_VERDICTS.json` (scorer `e20p2_sc
 - P-P2.2 misses: the other operator is 6.3 / 2.3 / 0.7% of wrong intermediates, against 25.
 - P-P2.3 holds: near misses 78.9 / 86.1 / 93.0%.
 - P-P2.4 holds: the largest category is the same from memory and in view in every seed.
+
+
+## Verdicts, E20-A stage 2 (11 November 2026, 08:51 EST, clock; review 9.96)
+
+Recomputed by the coordinator from the twelve receipts (`e20a_coordinator_check.py`), in agreement with the worker's tables. Seeds 73129 / 93683 / 116089.
+
+- P20.4 holds: the two-bank reference gets 0 / 0 / 0 of 300 plus-minus twins.
+- P20.5 holds: the sign-rule learner's twin item accuracy is 0.02 / 0.02 / 0.02 of the window reference's.
+- P20.6 misses: backprop on the learner's pipeline is at 0.53 / 0.41 / 0.68, against 0.85.
+- Neither P20.4 nor P20.5 says anything about memory: neither arm passes the control with the operands in view.
