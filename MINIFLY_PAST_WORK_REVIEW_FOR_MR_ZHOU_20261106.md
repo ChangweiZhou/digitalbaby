@@ -1381,3 +1381,25 @@ The curve beyond 0.75, three seeds (plus-minus pairs; mod-73 mean):
 **What it adds.** The direction E16-M3 found on three seeds appears on six seeds it was not found on, at one checkpoint short of the end. It does not settle a default share, and nothing is claimed about the end of the life.
 
 **What the loss teaches.** A life that cannot resume should not run on a machine that can restart. Fifteen processes on four cores also stretched the job to six hours, which is what put it in harm's way. Making lives resumable (weights and optimizer state at each checkpoint, the data stream replayed without training up to it, and a test that an interrupted life matches an uninterrupted one exactly) comes before any further life job on a cloud container.
+
+## 9.86 Codex's memo on E21, the interrupted E16-M4 and progress: what holds and what is changed (10 November 2026, 22:00 EST)
+
+**The memo.** `PROJECT_DOCUMENTS/MINIFLY_M4_E21_CONTINUATION_AUDIT_MEMO_20261110.md` (Codex, source and receipts, nothing run). Opus workers received it too. I ran the claims that can be run; all hold.
+
+| Memo point | After running it | Done |
+|---|---|---|
+| E16-M4 cannot be resumed: its harness saved no weights or optimizer state before the end; a completion would be a fresh full run | agreed; nothing to run | 9.68 stands: closed as incomplete, not reopened. If it is ever reopened it is a new execution of the same twelve cells, counted once per cell, and E21 does not help it |
+| E21 needs six acceptance provisions | all six accepted | written into the brief as governing amendments; the brief is now marked audited |
+| The exposure ledger files compositions that start with letters under "other" | confirmed: 96,142 such rows at stage 3 of the seed-73129 stage 1 life | the family is now read from the first byte that is not a distractor letter, in the ledger and in the reservoir census |
+| The update-CPU field includes the scoring before the first block | confirmed: 718 of "updates" at stage 1 included about 36 of scoring | initial scoring is counted as scoring |
+| The second-operand census reads the wrong gap | confirmed: it counted letters after the first operator (26 of 150 plus-minus twins); the second operand is fully out of view in 31 and partly in 27 | corrected census added beside the old field; the panel items and the panel hash are unchanged |
+| The E16 summarizer still gives a ratio when panel hashes differ | confirmed, and it was my own exception | removed: differing hashes never get a ratio |
+| The worker's E20 reducer accepts a truthy completion field | accepted | stage 2 will be filed from my own recomputation, which checks stages, settings, panel hash and the weight file's hash, as stage 1 was |
+| Target-test draft: the teaching graph must identify held outcomes; separate held pairs per phase; match the wider-view arm | accepted | added to the draft as admission conditions for its step 0 |
+
+Assurance after the fixes: the qualifier and the assay check exit 0; the memory-panel hash is the one recorded for stage 1; two dry lives confirm the training path is unchanged (results in `exp45/archive_audit3_dry/`).
+
+**Errata to 9.77.**
+
+1. *"The harder step is the untaught operator pair, not the memory" is withdrawn.* The two panels behind it differ in more than that: the hidden-operand panel of taught pairs mixes twelve operator pairs, the twins are the plus-minus pairs only, and letters inside a prompt change more than whether the first operand is in view. The gaps between those scores do not isolate which component is hardest.
+2. *The caveat on stage 2's rule arm had its polarity reversed.* P20.5 predicts that the sign-rule learner is at or below 0.60 of the reference, so a low score makes P20.5 hold, not miss. The caveat should read: if the rule arm is low, which P20.5 predicts, that cannot be separated from credit truncated above its memory cell; and whatever it scores says nothing about the backward-sweep rule on the window architecture, which has not been implemented there.

@@ -64,6 +64,14 @@ External bytes delivered; bytes under the loss; replay rows and their bytes; upd
 6. **What evidence level is claimed.** As drafted, first-encounter twins with step 3's control aim at E3 for the acquire phase only.
 7. **Whether arithmetic values are the right hidden structure.** They make held pairs inferable and outcomes checkable; they also invite the shortcuts the E-series met. A table with no algebra would remove inference; a richer world would cost qualification.
 
+## 7a. Conditions added after Codex's first audit of this draft (10 November 22:00 EST)
+
+These are admission conditions for step 0. They come from `MINIFLY_M4_E21_CONTINUATION_AUDIT_MEMO_20261110.md` and are accepted.
+
+1. **The teaching graph must identify every held outcome.** "Every context and every cue appears somewhere" is not enough. With outcome (v(X) + u(C)) mod m, taught pairs fix the values only up to one free shift per connected component of the graph whose nodes are contexts and cues and whose edges are taught pairs; a held pair is determined only if its context and its cue lie in the same component. Step 0d must prove, by enumeration or by this argument applied to the actual split, that every assignment of hidden values consistent with the taught outcomes gives the same outcome for every held pair. A split that fails is rebuilt.
+2. **Separate held combinations for each phase.** A pair scored on first encounter is then revealed and becomes teaching. Acquisition, retention and revision each get their own reserved pairs, fixed before the stream is generated, so that no phase is scored on pairs an earlier phase has already taught.
+3. **The wider-view arm is matched before it is compared.** It gives the learner extra observations and extra bytes under the loss. The two comparison streams carry the same number of extra bytes and targets, at the same delays; the shuffled stream keeps each revealed value's frequency and delay and breaks only its alignment with the episode it describes.
+
 ## 8. Why these choices, from this project's own record
 
 - No answer mask and no composition in view, because those were the two aids found late (reviews 9.76 and 9.82).

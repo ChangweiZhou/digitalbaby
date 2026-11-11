@@ -81,7 +81,9 @@ def main():
         if la != ld:
             return False, f"WITHHELD: objective differs ({la} / {ld})"
         if ca and cd and ha and hd:
-            return True, "bound: completion records and panel hashes present" + ("" if ha == hd else "; single-operation panels are architecture-specific, compare composition only")
+            if ha != hd:      # third audit, 10 Nov: differing panel hashes never get a ratio
+                return False, "WITHHELD: panel hashes differ"
+            return True, "bound: completion records and equal panel hashes"
         return True, "legacy: no completion record or panel hash; not admissible to a new gate"
     lines += ["\n## After the last block: learner against twin (gate: T ≥ 80% of D on every family)\n",
               "| Seed | Arm: family | arm | D | arm/D | F1 after block 2 (T) | T k=20 | T silenced k=12 | Evidence status |", "|---|---|---:|---:|---:|---:|---:|---:|---|"]

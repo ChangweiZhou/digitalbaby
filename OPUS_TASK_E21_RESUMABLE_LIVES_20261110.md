@@ -1,6 +1,6 @@
 # One cloud job for a Claude Opus 5.5 worker: E21, lives and births that survive a restart (10 November 2026, 20:30 EST)
 
-> **Status under the process rules of 10 November (review 9.82).** Not yet audited by Codex. Send this brief to Codex first; the worker starts after that audit is answered. **Commits:** one commit at completion on the branch your session is given; nothing partial on the default branch.
+> **Status under the process rules of 10 November (review 9.82).** Audited by Codex on 10 November (`PROJECT_DOCUMENTS/MINIFLY_M4_E21_CONTINUATION_AUDIT_MEMO_20261110.md`); its six provisions are in the amendments section below, which governs. The worker may start. **Commits:** one commit at completion on the branch your session is given; nothing partial on the default branch.
 
 **Repository:** `ChangweiZhou/digitalbaby`, default branch `codex/minifly-consolidated-20261023`. **Folder:** `MOD97_LOCAL_RULE_20261106/`. Python 3, PyTorch on CPU, NumPy. Clone shallow and sparse if you can (`--depth 1`, only this folder and the files named here): the repository is large. For one worker. This is an engineering job. It runs no experiment and makes no claim about learning.
 
@@ -42,6 +42,21 @@ Command shapes to cover, each at `E11_STAGE_UPDATES=16` (and births at `E11_DEV_
 4. **A larger dose.** Tests 2 and 3 once more for two shapes at `E11_STAGE_UPDATES=512`, one kill each.
 
 Record the cost: checkpoint size, seconds to write one, and replay seconds per stage at the full dose (estimate from the larger dose and say it is an estimate).
+
+## Amendments after Codex's audit of this brief (10 November 22:00 EST; `PROJECT_DOCUMENTS/MINIFLY_M4_E21_CONTINUATION_AUDIT_MEMO_20261110.md`)
+
+All six of the audit's provisions are accepted. Where they differ from the text above, these govern.
+
+1. **The configuration digest is a scientific digest.** It covers the seed, the arm, the dose, the birth's hash, the panel hashes, every setting that changes what is computed (with defaults normalised, so an unset variable and its default are the same), the hashes of `exp16_integrated.py`, `exp11_cell.py`, `exp45.py`, `exp3_state.py` and `arch17.py`, the torch version, thread count and dtype. It excludes operational controls: `E16_RESUME` itself, output tags that only rename files, log paths. A mismatch names the field and both values.
+2. **One checkpoint generation is the authority.** Model, optimizer, pipeline digest, stage index, run ID and the receipt as of that stage are written together in one file. On resume the receipt on disk is ignored and regenerated from the chosen checkpoint: after a crash it may be newer, older or cut short. Test kills during a checkpoint write, during rotation to `.prev`, and during the final publication of weights and receipt, in addition to the kill points above.
+3. **Every pipeline effect is reconstructed and every source of randomness is accounted for.** Store writes under the effective loss mask (already required above). Digests are taken over a canonical form: ordered lists as they are, sets and mappings sorted. Save the state of Python's global `random`, NumPy's global generator and torch's global generator, or show in the report that the life never draws from them and add a test that fails if it does.
+4. **Replay is exact only for modes that have been shown exact.** The seven command shapes are the supported list. `E16_RESUME=1` under any other replay mode, architecture or option combination stops with a message, until that combination has passed test 2.
+5. **Parity and cost are two tables.** Parity compares stage scores, losses, tensors (element-wise, not only file hashes; save both sides through the same code path before hashing) and pipeline digests. Cost is reported apart, because it must differ: CPU before each crash, CPU of reconstruction, checkpoint overhead. Work lost between the last checkpoint and a crash is reported as an interval, not as zero.
+6. **A failed admission stops the real run.** `e21_resume_check.py` writes the hashes of the files it tested; a life started with `E16_RESUME=1` refuses to resume unless those hashes match the running code. Add fixtures that must each stop the run with a named reason: wrong source file, wrong birth, wrong dose, a checkpoint whose model and optimizer come from different stages, and a corrupted state.
+
+State in the report the hardware, library and thread assumptions under which parity was shown; parity across machines is not claimed.
+
+**This job does not recover E16-M4.** Its lives were run by a harness that saved no weights or optimizer state before the end, so there is nothing to resume; E16-M4 stays closed as incomplete (review 9.68). Do not rerun it under this brief.
 
 **If any test fails, stop and report the failure.** Do not loosen a test. A resume that is almost exact is not accepted: one differing score means the replay missed part of the state.
 

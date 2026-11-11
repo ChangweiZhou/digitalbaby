@@ -126,6 +126,7 @@ OUTTAG16 = os.environ.get("E16_OUTTAG", ""); assert re.fullmatch(r"[A-Za-z0-9_]*
 COMPGAP16 = int(os.environ.get("E16_COMPGAP", "0")); assert 0 <= COMPGAP16 <= 12
 CGTAG = f"_cm{COMPGAP16}" if COMPGAP16 else ""
 MEMORY = [None]
+CENSUS_V2 = [None]
 LAST_AUX = [None]      # the first bank's head loss of the last update (the logged loss is the main head's)
 BIRTHRULE16 = os.environ.get("E16_BIRTHRULE", "D"); assert BIRTHRULE16 in ("D", "T")
 assert BIRTHRULE16 == "D" or ARCH16 != "window", "E16_BIRTHRULE=T is defined for the E17 architectures only"
@@ -428,6 +429,13 @@ def memory_panels(seed, all_taught, n=150):
                 res.append(render_pair(*p_, *tr, inside=letters()))
         return res
     out["within_hidden"] = hidden(TAUGHT_PAIRS, "within", 25)       # new operand triples of taught operator pairs
+    def gaps(p_, o2_):
+        j = p_.index(ord(o2_), 4)
+        return j - 6, len(p_) - j - 4          # letters after the first operator, letters after the second
+    CENSUS_V2[0] = {pair: dict(twins=len(tw), second_operand_fully_out_of_view=sum(gaps(x[0], pair[1])[1] >= 6 for x, _ in tw),
+                               second_operand_partly_in_view=sum(gaps(x[0], pair[1])[1] == 5 for x, _ in tw),
+                               note="replaces census.second_operand_hidden, which counted the letters after the first operator (third audit, 10 Nov); not part of the panel hash")
+                    for pair, tw in out["twins"].items()}
     out["taught_hidden"] = hidden(TAUGHT_PAIRS, "taught", 25)       # triples that are taught (letters are fresh)
     # the assay must reject a last-ten-bytes predictor and accept the true answers
     table = {}
@@ -504,7 +512,8 @@ def life(arm, seed):
     P, comp = panels(seed)
     SP, strict_counts = strict_panels(seed)
     f1c, f3c = {t[2][0] for t in F1}, {t[2][0] for t in F3}
-    fam_of = lambda p_: "F2" if p_[0] == ord("c") else "F1" if p_[0] in f1c else "F3" if p_[0] in f3c else "other"
+    code_of = lambda p_: next((b_ for b_ in p_ if not 65 <= b_ <= 90), p_[0])      # the task code is the first byte that is not a distractor letter (third audit, 10 Nov)
+    fam_of = lambda p_: "F2" if code_of(p_) == ord("c") else "F1" if code_of(p_) in f1c else "F3" if code_of(p_) in f3c else "other"
     entries = {f: family_entries(f, seed) for f in ("F1", "F2", "F3")}
     buffer, seen_streams = [], []
     fbuf, fset, fseen = {}, {}, {}      # balanced modes: per-family entry lists (sets for all_balanced's distinct entries; counters for reservoir)
@@ -525,9 +534,10 @@ def life(arm, seed):
             res["nostore_compose"] = {n: score(m, it, None) for n, it in comp.items()}
         return res
 
-    stages.append(dict(stage=0, task=None, scores=evaluate(), shortcut_ceilings=shortcut_ceilings(comp),
+    c_e0 = time.process_time(); scores0 = evaluate(); cpu_score_total = [time.process_time() - c_e0]      # the scoring before the first block is scoring, not updating (third audit, 10 Nov)
+    stages.append(dict(stage=0, task=None, scores=scores0, shortcut_ceilings=shortcut_ceilings(comp),
                        entries={f: len(v) for f, v in entries.items()}, settings=dict(wd=opt.defaults["weight_decay"], replay=E.REPLAY, trace=E.TRACE, stage_updates=STAGE_UPDATES, replay16=REPLAY16, cap=(RCAP if REPLAY16 in ("reservoir", "total", "raw") else None), stream=STREAM16, admit=ADMIT16, loss=LOSS16, arch=ARCH16, freeze=FREEZE16, frozen=list(FROZEN), bookdecay=BOOKDECAY16, feedback=FEEDBACK16, traceup=TRACEUP16, rshare=RSHARE16, nrep=NREP, batch=BATCH, heads=HEADS16, birthrule=BIRTHRULE16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, outtag=OUTTAG16, compgap=COMPGAP16,
-                                     memory_panels=(dict(design="v2 twins/lead, letters inside or leading 50/50 in teaching", census=MEMORY[0]["census"],
+                                     memory_panels=(dict(design="v2 twins/lead, letters inside or leading 50/50 in teaching", census=MEMORY[0]["census"], census_v2=CENSUS_V2[0],
                                                          sha256=__import__("hashlib").sha256(json.dumps(MEMORY[0], sort_keys=True, default=list).encode()).hexdigest()) if MEMORY[0] else None),
                                      panel_sha256=panel_sha(P, comp, SP), strict_panel_counts=strict_counts, birth=birth_file.name, birth_sha256=birth_sha, birth_admission=birth_admission, panels="held/within keyed by split, operand-disjoint from all taught triples (8 Nov audit)",
                                      arm=arm, rule=rule, store=store is not None)))   # E16-V: settings.wd is now the optimizer's actual decay (arm D runs at .3)))
@@ -552,8 +562,6 @@ def life(arm, seed):
                 seen_streams.append(entry_stream(entries[fam], seed + 100 + si))
             joint = joint_stream(seen_streams, seed + si)
         losses, presented, expo, aux_losses = [], [], {}, []
-        if si == 1:
-            cpu_score_total = [0.0]
         for u in range(STAGE_UPDATES):
             npres_before = len(presented)
             if arm == "D" or REPLAY16 == "oracle":
@@ -650,7 +658,7 @@ def life(arm, seed):
                     stages[-1]["reservoir_by_family"] = {f: sum(1 for e in set(fbuf["all"]) if (e[0] == "comp") == (f == "F2") and (f == "F2" or e[1][1] == (97 if f == "F1" else 73))) for f in ("F1", "F2", "F3")}
                 elif REPLAY16 == "raw":   # by first byte of the stored prompt (for reading only; the learner never sees this grouping)
                     f1c, f3c = {t[2][0] for t in F1}, {t[2][0] for t in F3}
-                    stages[-1]["reservoir_by_family"] = {"F1": sum(1 for e in set(fbuf["all"]) if e[1][0] in f1c), "F2": sum(1 for e in set(fbuf["all"]) if e[1][0] == ord("c")), "F3": sum(1 for e in set(fbuf["all"]) if e[1][0] in f3c)}
+                    stages[-1]["reservoir_by_family"] = {f_: sum(1 for e in set(fbuf["all"]) if fam_of(e[1]) == f_) for f_ in ("F1", "F2", "F3")}
                     stages[-1]["reservoir_bytes"] = sum(len(e[1]) + len(e[2]) for e in fbuf["all"])
             else:   # all_balanced: every distinct presented entry of the family
                 fs = fset.setdefault(fam, set()); fl = fbuf.setdefault(fam, [])
