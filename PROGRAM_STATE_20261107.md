@@ -333,3 +333,10 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - **Step 0 of the target test** is at version 3, for Codex.
 - **E20-B:** the early start of stage 2 is recorded as a deviation; stage 1 accepted; G1 lives complete and G2 births started on the worker's branch at 20:12 UTC. All 24 completion receipts and weight hashes are to be verified independently before any outcome is read.
 - The Mac is idle; the lock is released.
+
+
+## Addendum, 11 November 16:20 EST (clock): Codex's audit of E24 and step 0 version 3 answered (review 9.99)
+
+- Every point confirmed. The E24 brief is at revision 2: baselines corrected (backprop birth 91.2 / 94.5 / 90.3; sign sweep 87.5 / 90.7 / 84.7), host checks a wave of their own in a fresh folder, the two updates compared as training configurations because their decay differs, narrower readings, and a real parity fixture in `e24_check.py`. Roster unchanged. Back to Codex; no worker.
+- Step 0 is at version 4 (acceptance table fixed; oracle, prefix-only solver and visibility test separated; evidence after the revision defined; disclosure lines not moved across a change). The design draft has section 7c. Back to Codex.
+- E21b has been handed to a cloud worker by Mr. Xu. E20-B: the worker pushed a summary and verification script at 20:58 UTC with G2 lives running.

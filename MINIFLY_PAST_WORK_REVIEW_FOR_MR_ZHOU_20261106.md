@@ -1981,3 +1981,39 @@ The default branch, the E21 branch and the E18b/E18c/E23 branch each changed `ex
 ### E. What is merged along with the code
 
 The E18b/E18c/E23 branch arrives whole: its plan, predictions, report, thirty-three receipts and their weights (about 260 MB). Its report still marks itself as awaiting Codex; Codex's audit above recomputed its 14 verdicts and asks for the corrections listed in B. Being on the default branch does not change that status.
+
+
+## 9.99 Codex's audit of the E24 brief and of step 0 version 3: every point holds; both documents revised (16:20 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_E24_STEP0_V3_AUDIT_20261111.md` (commit e823e169). Its disposition: hold E24's full dose and revise step 0 before any worker. I checked each point and adopt all of them.
+
+### E24
+
+| Finding | Checked how | Result | Change |
+|---|---|---|---|
+| Both reference baselines in the brief are wrong | reread the six receipts | **confirmed.** The backprop birth is 91.2 / 94.5 / 90.3; the sign-sweep birth with one head at the top is 87.5 / 90.7 / 84.7. I had given the sign-sweep scores to backprop, and to the sign sweep the scores of E18's arm with a head at each bank and backprop inside each (80.7 / 82.2 / 77.2). | corrected; the six original receipts are pinned by hash in the brief, with their weights hashes checked against the manifest |
+| The host checks must be a wave of their own, in fresh paths, and shown to have really run | my own smoke test today hit exactly this: a birth "ran" in a folder that already held it, and the harness returned without running | confirmed | the two reruns go first and alone, in a folder with an empty `exp45`; the worker confirms a new receipt was written |
+| The two updates also differ in weight decay | read in the harness: 0.30 for the backprop birth, 0.25 for the sign sweep, as in every birth of each kind on file | confirmed | the units compared are the two training configurations; the report gives each configuration's penalty per seed and their difference, as an interaction between objective and configuration |
+| A miss of a mark is not a collapse; one seed above 10 misses P24.2 without settling survival; judge the balanced arm against the unbalanced one seed by seed | wording | adopted | the three marks stand unchanged; the readings are narrower |
+| The check compares the every-byte path with a hand calculation and not with the harness before the option | read in `e24_check.py` | confirmed: the brief claimed more than the check did | a fixture added. For both updates and both objectives, with the option unset, the loss and every gradient now equal bit for bit those of the harness at the commit before the option existed (`exp45/E24_CHECK.json`) |
+
+The roster is unchanged at nine new births and two host checks. The brief is at revision 2 and goes back to Codex.
+
+**A reading the corrected baselines allow.** The E18b partner births reproduced E18's births exactly on another host and Python (9.96 and that job's report), so birth scores from the two hosts can be set side by side. Hard mean at birth, three seeds: sign sweep with one head at the top 87.5 / 90.7 / 84.7; local heads with the relay 82.2 / 88.5 / 78.8; local heads with the path cut 74.8 / 69.7 / 66.3. The relay learner is below the top-head learner in every seed. That is descriptive, since the arms were not designed as a pair, and it points the same way as the life comparison in 9.97.
+
+### Step 0 of the target test
+
+| Finding | Result | Change in version 4 |
+|---|---|---|
+| Check 3b still demanded zero first-encounter matches while allowing accidental ones | confirmed: my row contradicted itself | the pass mark is zero twins with both members right; single matches and abstentions are counted separately |
+| Check 3 ran the oracle and the prefix-only solver together | confirmed: I described the oracle as solving from the stream | three separate things: the oracle is given the hidden values; the solver is given the bytes; the visibility test uses the solver |
+| What the solver knows after the revision was not said | confirmed | the solver is told the change point as evaluator-only metadata; a revision must change the value; a revision probe needs three taught episodes of the changed cue after the change, in three contexts |
+| Replacement episodes in the prior-teaching control; reveals and disclosures in that control | confirmed | replacements come from the taught pool; the control is checked against teaching, the other family, reveals and disclosure lines, at every probe |
+| A disclosure line moved across the change tells a future value early or a stale one late | confirmed by reasoning: a line names a cue's value, and the value has two eras | lines move only within a phase and never across the change of a value they name; arms are compared on the disclosure ledger probe by probe |
+| The parent design's decision rule still treats the moved lines as destroying information | confirmed (row 4 of its section 5) | section 7c added to the design draft: the two comparison streams answer two different questions and are read separately |
+
+Version 4 goes back to Codex. The job stays generator-only.
+
+### What this says about my drafts
+
+Two of these errors are of one kind: a number or a claim written from memory and not reread (the baselines; "what they were at the commit before"). Both were in a brief I wrote within the hour of the merge. The audit caught them before any worker started, which is what the rule of 9.82 is for.
