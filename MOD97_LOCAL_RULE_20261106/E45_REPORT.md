@@ -799,3 +799,8 @@ On the same three window references: both operators read out from the state at `
 ## Addendum, 11 November 2026, 08:51 EST (clock): E20-A complete (review 9.96)
 
 Twelve lives, contract checked, counts recomputed. Plus-minus twins both right at end of life: window reference 63 / 80 / 130 of 300; backprop on the learner's pipeline 16 / 11 / 68; sign-rule learner 0 / 0 / 0; two-bank reference 0 / 0 / 0. The last two also fail with the operands in view (121 / 83 / 236 and 6 / 31 / 9 of 600 items), so they say nothing about memory. Four killed lives were relaunched from their births and reproduced the killed runs' scores exactly at every stage reached. E2.
+
+
+## Addendum, 11 November 2026, 18:38 EST (clock): E25 (review 9.103)
+
+On E20-B's saved weights, with nothing trained: the sign sweep's error keeps a cosine of 0.71 / 0.76 / 0.72 with the true error twelve steps back in a trained GRU, against 0.52 / 0.48 / 0.54 in the first bank of the two-bank network and 0.71 / 0.73 / 0.69 in its second. Per-matrix cosines in the GRU are 0.5 to 0.9, as good as or better than the two-bank network's. Four of five predictions miss, all toward better alignment than expected. Alignment is not learning; the result licenses a GRU birth under the sweep and does not forecast it. E2, diagnostic.

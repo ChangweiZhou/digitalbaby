@@ -370,3 +370,11 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - The alignment measurement is written, with hand-written GRU and LSTM steps checked against the library layers on untrained networks (three seeds, all pass), and predictions P25.1 to P25.5 on file.
 - Not run. Seconds per file on the Mac, no training; waits for Mr. Xu's go.
 - Still to write: the brief for the target-test sizing sweep.
+
+
+## Addendum, 11 November 18:38 EST (clock): E25 run and filed (review 9.103)
+
+- Run 18:36 to 18:37 EST, one process, lock released. P25.2 holds; P25.1, P25.3, P25.4 and P25.5 miss, all toward better alignment than the coordinator expected.
+- Finding: on backprop-trained weights the sweep's update to a GRU is as well aligned with the true gradient as its update to the two-bank network, including twelve to sixteen steps back in time. The LSTM is not clearly better; the candidate stays the GRU.
+- Next: a brief for a GRU born and living under the sweep against backprop on one host, reduced dose first; and the brief for the target-test sizing sweep. Both to Codex before any worker.
+- The Mac is idle.

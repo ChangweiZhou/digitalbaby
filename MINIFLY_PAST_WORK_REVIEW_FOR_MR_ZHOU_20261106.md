@@ -2143,3 +2143,48 @@ The measurement adopted in 9.101 D.2. Script `MOD97_LOCAL_RULE_20261106/e25_alig
 **Predictions P25.1 to P25.5** are in the file with their readings. In short: the GRU loses at least half its alignment over twelve steps (60%); the first bank keeps at least 0.8 of its own (65%); the GRU is below the bank at twelve steps (65%).
 
 **Cost.** Seconds per file. It reads E20-B's 18 saved files for the three networks and waits for Mr. Xu's go, like any run on the owner's machine.
+
+
+## 9.103 E25, run: in a trained GRU the sweep keeps its alignment through time, as well as or better than in the two-bank network (run 18:36 to 18:37 EST; filed 18:38 EST by the clock, 11 November 2026)
+
+Script `MOD97_LOCAL_RULE_20261106/e25_alignment.py`, scorer `e25_score.py`, outputs `exp45/E25_ALIGNMENT_<seed>.json`, verdicts and tables `exp45/E25_VERDICTS.json`. Eighteen saved files of E20-B (births and end-of-life files of the two-bank network, the GRU and the LSTM, three seeds), each verified against the hash in its receipt before it was read. Six CPU-seconds per seed. Nothing was trained. Diagnostic, E2.
+
+**The five predictions** (end-of-life files, answer targets, mod-97 operations at k = 12; seeds 73129 / 93683 / 116089).
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P25.1 | in the GRU the state-error cosine twelve steps back is at most half its value at `=` | 0.74 / 0.75 / 0.82 at `=`; 0.71 / 0.76 / 0.72 twelve steps back | **misses**, all three |
+| P25.2 | in the first bank it is at least 0.8 of its value at `=` | 0.56 / 0.53 / 0.55 at `=`; 0.52 / 0.48 / 0.54 twelve back | holds, all three |
+| P25.3 | twelve steps back the GRU is below the first bank | GRU 0.71 / 0.76 / 0.72; first bank 0.52 / 0.48 / 0.54 | **misses**, all three: the GRU is above |
+| P25.4 | twelve steps back the LSTM's cell state is above the GRU by 0.10 | LSTM 0.64 / 0.72 / 0.71; GRU 0.71 / 0.76 / 0.72 | **misses**, all three |
+| P25.5 | for the first layer's weights the GRU is below the two-bank network by 0.10 | GRU 0.72 / 0.51 / 0.60; two-bank 0.77 / 0.41 / 0.51 | **misses**, all three |
+
+Four of five miss, all in the same direction: I expected the sign path to lose the error's direction as it crossed the GRU's recurrent weights again and again, and it does not.
+
+**The error at the state, by steps back from `=`** (cosine between the sweep's error and the true error; end of life, mod-97 operations).
+
+| Steps back | 0 | 4 | 8 | 12 | 16 |
+|---|---|---|---|---|---|
+| GRU | 0.74 / 0.75 / 0.82 | 0.72 / 0.76 / 0.72 | 0.71 / 0.76 / 0.72 | 0.71 / 0.76 / 0.72 | 0.70 / 0.76 / 0.70 |
+| LSTM, cell state | 0.70 / 0.72 / 0.72 | 0.66 / 0.72 / 0.71 | 0.65 / 0.72 / 0.71 | 0.64 / 0.72 / 0.71 | 0.64 / 0.70 / 0.70 |
+| Two-bank, second bank | 0.71 / 0.73 / 0.71 | 0.71 / 0.73 / 0.70 | 0.71 / 0.73 / 0.69 | 0.71 / 0.73 / 0.69 | 0.71 / 0.73 / 0.69 |
+| Two-bank, first bank | 0.56 / 0.53 / 0.55 | 0.55 / 0.53 / 0.53 | 0.54 / 0.51 / 0.54 | 0.52 / 0.48 / 0.54 | 0.47 / 0.46 / 0.50 |
+
+**The update to each weight matrix** (cosine with the true gradient; end of life, answer targets, mod-97 operations).
+
+| | Recurrent or state-writing matrices | First layer | Embedding table |
+|---|---|---|---|
+| GRU | recurrent 0.79 / 0.84 / 0.87; input 0.76 / 0.78 / 0.83 | 0.72 / 0.51 / 0.60 | 0.69 / 0.71 / 0.74 |
+| LSTM | recurrent 0.76 / 0.72 / 0.77; input 0.76 / 0.67 / 0.76 | 0.59 / 0.42 / 0.40 | 0.59 / 0.47 / 0.43 |
+| Two-bank | first bank's write path 0.51 to 0.79; second bank's 0.68 to 0.84 | 0.77 / 0.41 / 0.51 | 0.74 / 0.58 / 0.57 |
+
+1. *On these weights the sweep's update to a GRU is as well aligned as its update to the two-bank network,* on which the rule is known to train (9.70, 9.85). That holds for the recurrent matrix itself, for the layers below it, and twelve to sixteen steps back in time.
+2. *A likely reason, not tested here.* In a trained GRU the step back in time has a part that crosses no weights: the gate value that carries a unit's state forward also carries its error back. Units that hold an operand across the letters have that gate near one. The untrained networks of the fixtures, whose gates sit near one half, lost a quarter of their alignment over twelve steps; the trained ones lose almost none. I have not measured the gate values, so this is a reading and not a result.
+3. *The LSTM is not clearly better than the GRU.* The candidate stays the GRU.
+4. *Under every-byte targets the alignment is not worse.* Over all parameters it is 0.79 / 0.80 / 0.82 in the GRU against 0.67 / 0.64 / 0.74 under answer targets, and 0.83 / 0.78 / 0.82 against 0.71 / 0.68 / 0.68 in the two-bank network. One matrix of the two-bank network (the first bank's projection) is lower in two seeds. So on these weights the every-byte collapse is not a matter of the sweep pointing the wrong way. That is a lead for reading E24 and nothing more.
+
+**The reading registered beforehand applies:** the GRU's alignment at the longest gaps is at or above the two-bank network's, so a GRU birth under the sweep is worth its compute, at a reduced dose first.
+
+**What this does not show**, as the predictions file said before the run. These networks were trained by backprop. Alignment at one point of training is not learning; a high figure is a licence to try a birth under the rule and is not a forecast of its score. Three seeds, one size.
+
+**What follows.** The next job is the one the close of 17 November needs: a GRU born and living under the sweep, against backprop on the same pipeline and host, with the recurrent step written out as it is here. No remedy for the rule is designed before that birth has been tried: on this evidence none is yet called for, and learned feedback weights stay in reserve.

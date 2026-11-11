@@ -45,3 +45,14 @@ The GRU and LSTM steps are written out so that each linear map can run exactly o
 - Alignment at one point in training is not learning. A network trained by the sweep moves to where its own feedback is better aligned; these files were trained by backprop and have had no such chance. A low cosine here is a warning; a high one is a licence to try.
 - Three seeds, one size, end-of-life and birth files only.
 - Nothing about composition, retention or the target test.
+
+
+## Verdicts, E25 (11 November 2026, 18:38 EST, clock; review 9.103)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E25_VERDICTS.json` (scorer `e25_score.py`). End-of-life files, answer targets, mod-97 operations at k = 12.
+
+- P25.1 misses: the GRU's state-error cosine is 0.74 / 0.75 / 0.82 at `=` and 0.71 / 0.76 / 0.72 twelve steps back.
+- P25.2 holds: the first bank keeps 0.52 / 0.48 / 0.54 of 0.56 / 0.53 / 0.55.
+- P25.3 misses: twelve steps back the GRU (0.71 / 0.76 / 0.72) is above the first bank (0.52 / 0.48 / 0.54).
+- P25.4 misses: the LSTM's cell state (0.64 / 0.72 / 0.71) is not above the GRU.
+- P25.5 misses: on the first layer's weights the GRU is 0.72 / 0.51 / 0.60 and the two-bank network 0.77 / 0.41 / 0.51.

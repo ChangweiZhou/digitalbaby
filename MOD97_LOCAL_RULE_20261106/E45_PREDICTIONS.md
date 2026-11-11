@@ -604,3 +604,14 @@ P24.1 to P24.3 and their readings are in `OPUS_TASK_E24_EVERY_BYTE_CAUSE_2026111
 ## Addendum, 11 November 2026, 18:33 EST (clock): E25, alignment of the sign sweep on E20-B's saved weights
 
 Predictions P25.1 to P25.5 and their readings are in `E25_PREDICTIONS.md`, written and pushed before any saved file is read. Script `e25_alignment.py` (fixtures pass for three seeds on untrained networks), launcher `e25_run.sh`. Not run: it waits for Mr. Xu's go.
+
+
+## Verdicts, E25 (11 November 2026, 18:38 EST, clock; review 9.103)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E25_VERDICTS.json` (scorer `e25_score.py`). End-of-life files, answer targets, mod-97 operations at k = 12.
+
+- P25.1 misses: the GRU's state-error cosine is 0.74 / 0.75 / 0.82 at `=` and 0.71 / 0.76 / 0.72 twelve steps back.
+- P25.2 holds: the first bank keeps 0.52 / 0.48 / 0.54 of 0.56 / 0.53 / 0.55.
+- P25.3 misses: twelve steps back the GRU (0.71 / 0.76 / 0.72) is above the first bank (0.52 / 0.48 / 0.54).
+- P25.4 misses: the LSTM's cell state (0.64 / 0.72 / 0.71) is not above the GRU.
+- P25.5 misses: on the first layer's weights the GRU is 0.72 / 0.51 / 0.60 and the two-bank network 0.77 / 0.41 / 0.51.
