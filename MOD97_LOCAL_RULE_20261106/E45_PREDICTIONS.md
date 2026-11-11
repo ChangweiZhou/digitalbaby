@@ -574,3 +574,13 @@ Seeds 73129 / 93683 / 116089, from `exp45/E20P_VERDICTS.json` (scorer `e20p_scor
 ## Addendum, 10 November 2026, 23:27 EST (clock): E20-P2, follow-up probes
 
 Predictions P-P2.1 to P-P2.4 and their readings are in `E20P2_PREDICTIONS.md`, written and pushed before `e20_probe2.py` touches a trained checkpoint. Exploratory: designed after E20-P's results. Not run: it waits for Mr. Xu's go.
+
+
+## Verdicts, E20-P2 (10 November 2026, 23:31 EST, clock; review 9.95)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E20P2_VERDICTS.json` (scorer `e20p2_score.py`).
+
+- P-P2.1 holds: the first operator reads out on 100 / 100 / 100% of twin items where it is out of view and on the sixteen-pair test; shuffled labels 22 to 27%, untrained net 41 to 50%.
+- P-P2.2 misses: the other operator is 6.3 / 2.3 / 0.7% of wrong intermediates, against 25.
+- P-P2.3 holds: near misses 78.9 / 86.1 / 93.0%.
+- P-P2.4 holds: the largest category is the same from memory and in view in every seed.

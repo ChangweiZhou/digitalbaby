@@ -789,3 +789,8 @@ Review 9.85. Six lives on one host, validated by a script written before they ra
 ## Addendum, 10 November 2026, 22:51 EST (clock): E20-P (review 9.93)
 
 Probes on the end-of-life weights of the three window references of E20-A stage 1, scoring only. The hidden first operand reads out linearly from the state at `=` on every twin item in every seed (controls at chance). Failed twins fail at the intermediate (78 to 91% of them), and supplying the true intermediate raises plus-minus twins from 21 / 27 / 43% to 82 / 73 / 76%. With the same operands in view the first step is right on 79 to 91% of plus-minus items, from memory on 47 to 76%. Five predictions hold, one misses, one cannot be judged. E2, diagnostic; the first operator was not read out.
+
+
+## Addendum, 10 November 2026, 23:31 EST (clock): E20-P2 (review 9.95)
+
+On the same three window references: both operators read out from the state at `=` on every twin item, as both operands did. Wrong intermediates on the plus-minus pairs are near misses (73 to 87% are the value one changed digit of an operand would give, against about 23% for random wrong values), not the other operator (under 7%), and they are the same kind with everything in view, where there are two to three times fewer. Three predictions hold; P-P2.2 misses. Exploratory, E2.

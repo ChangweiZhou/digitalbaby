@@ -1770,3 +1770,48 @@ The follow-up named at the end of 9.93. Script `MOD97_LOCAL_RULE_20261106/e20_pr
 **Predictions P-P2.1 to P-P2.4** are in the file. The first operator reads out on at least 90% where it is out of view (65%); the other operator accounts for at least a quarter of wrong intermediates (45%); near misses account for at least half (55%); the largest category is the same in view and from memory (50%).
 
 **Cost.** Under a minute, one process. It waits for Mr. Xu's go.
+
+
+## 9.95 E20-P2, run: the operator is kept too, and the wrong intermediates are near misses of the same kind in view and from memory (10 November 2026, run 23:29 EST; filed 23:31 EST by the clock)
+
+Script `MOD97_LOCAL_RULE_20261106/e20_probe2.py`, scorer `e20p2_score.py`, outputs `exp45/E20P2_e16_life_D_cm6_<seed>.json`, verdicts `exp45/E20P2_VERDICTS.json`. The same three end-of-life checkpoints of the window reference under backprop. Scoring only, 9 CPU-seconds each; each run reproduced its life's own twin item count. Exploratory and diagnostic, E2: designed after 9.93 on the same weights, so it adds detail to that finding and does not confirm it.
+
+**The four predictions** (seeds 73129 / 93683 / 116089).
+
+| | Prediction | Result | Verdict |
+|---|---|---|---|
+| P-P2.1 | the first operator reads out on at least 90% where it is out of view, and on the sixteen-pair test | 100 / 100 / 100% on both | holds, all three |
+| P-P2.2 | "the other operator" is at least 25% of wrong intermediates on plus-minus twins | 6.3 / 2.3 / 0.7% | **misses**, all three |
+| P-P2.3 | near misses are at least 50% of them | 78.9 / 86.1 / 93.0%, against 27% for random wrong values | holds, all three |
+| P-P2.4 | the largest category is the same from memory and in view | the same in every seed | holds, all three |
+
+Controls for the operator readout: shuffled labels 22 to 27% (chance is 25%); an untrained net 41 to 50% where the operator is out of view. The second operator also reads out on 100%.
+
+**The wrong intermediates on the plus-minus pairs.**
+
+| Share of readable wrong intermediates | From memory (twins) | In view (same items) | Random wrong value |
+|---|---|---|---|
+| How many are wrong, of 600 items | 318 / 259 / 143 | 102 / 124 / 55 | |
+| The value one changed digit of an operand would give | 72.9 / 77.6 / 86.7% | 90.1 / 87.9 / 80.0% | about 23% |
+| The other operator | 6.3 / 2.3 / 0.7% | 0.0 / 2.4 / 1.8% | 1% |
+| None of the categories | 12.3 / 8.5 / 4.2% | 6.9 / 4.0 / 3.6% | 68% |
+
+1. *Everything the first step needs is in the state.* Both operands (9.93) and both operators read out on every twin item. Nothing was forgotten inside the item.
+2. *The learner does not pick the wrong operation.* The other operator accounts for a few per cent of errors, near the random level in two seeds. My guess of a confusion of roles between the two operators was wrong.
+3. *The errors are near misses.* Three quarters or more of wrong intermediates are the value that one changed digit of an operand would give.
+4. *They are the same errors in view and from memory, two to three times as many.* Hiding the first operand does not bring in a new kind of error. It makes the usual one more frequent (ratios 3.1 / 2.1 / 2.6).
+
+The registered readings that apply: everything is kept and the failure is in computing with it; the first step is the right operation done imprecisely; hiding the operand makes the same errors more frequent.
+
+**What the breakdown cannot say.**
+
+- *Which operand.* For addition and subtraction a changed digit in the first operand and in the second give nearly the same set of values, and the first is checked first. I have added the two rows together above for that reason. The 62 to 78% the scorer files under "first operand" is an artefact of the order.
+- *Operand or arithmetic.* A slip in the addition itself can land on the same values. With the operand's digits readable from the state at 100%, the digit is there; whether it is read badly or added badly this does not show.
+- *The baseline* assumes random wrong values are uniform. Real errors are not, so "about 23%" is a floor to compare against and nothing more.
+
+**What I take from it, and what I do not.**
+
+- For this reference, composing with an operand in memory is not blocked by storage and not by a wrong rule. It costs precision. That is a narrower and more ordinary problem than the one 9.76 set out to look for.
+- I do not conclude that more training would close it. That is a guess this run does not test.
+- The comparison that matters for the project is still open: the working rule's learner scores almost no twins in stage 2. Whether it has lost the operand or cannot compute with it is exactly what these two scripts measure. I will run them on the stage 2 checkpoints once stage 2 is complete and filed, and on E20-B's when they exist.
+- No new run follows from this tonight.

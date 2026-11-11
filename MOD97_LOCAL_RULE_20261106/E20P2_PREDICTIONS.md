@@ -38,3 +38,13 @@ Among the four held pairs the first operator determines the second. A readout fi
 ## Limits
 
 Three seeds, one network, backprop, end-of-life weights. The categories are mine, their order decides ties, and the baseline assumes uniform wrong values, which real errors are not. Nothing here is about the working rule.
+
+
+## Verdicts, E20-P2 (10 November 2026, 23:31 EST, clock; review 9.95)
+
+Seeds 73129 / 93683 / 116089, from `exp45/E20P2_VERDICTS.json` (scorer `e20p2_score.py`).
+
+- P-P2.1 holds: the first operator reads out on 100 / 100 / 100% of twin items where it is out of view and on the sixteen-pair test; shuffled labels 22 to 27%, untrained net 41 to 50%.
+- P-P2.2 misses: the other operator is 6.3 / 2.3 / 0.7% of wrong intermediates, against 25.
+- P-P2.3 holds: near misses 78.9 / 86.1 / 93.0%.
+- P-P2.4 holds: the largest category is the same from memory and in view in every seed.

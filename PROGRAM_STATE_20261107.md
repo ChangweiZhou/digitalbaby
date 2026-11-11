@@ -296,3 +296,11 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 
 - Follow-up probes on the same three checkpoints: a breakdown of the wrong intermediates, and a readout of the first operator fitted on all sixteen operator pairs. Fixtures pass for three seeds on untrained nets only; predictions P-P2.1 to P-P2.4 on file.
 - Not run. Under a minute of one process on the Mac; waits for Mr. Xu's go.
+
+
+## Addendum, 10 November 23:31 EST (clock): E20-P2 run and filed (review 9.95)
+
+- Run 23:29 EST, one process, lock released. Three predictions hold, P-P2.2 misses.
+- Finding: in the window reference nothing is forgotten inside the item (operands and operators all readable); the first step from memory is the right operation done imprecisely, with the same near-miss errors as in view, two to three times as many.
+- Next use of the two probe scripts: the stage 2 checkpoints once stage 2 is complete and filed, then E20-B's. No run is queued. The Mac is idle.
+- E20-A stage 2: eleven of twelve lives have completion records as of the worker's commit 68914f06 (the two-bank life of seed 116089 is out).
