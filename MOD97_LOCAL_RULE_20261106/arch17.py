@@ -51,6 +51,10 @@ PROJ_SCALED = False
 # 10 Nov audit: LOCAL_DETACH False keeps the first bank's own head but leaves every gradient path between the banks open (E16_HEADS=aux):
 # the one-factor control for "no relay between banks" (same heads, same objective, only the detach toggled).
 LOCAL_DETACH = True
+# E23 (11 Nov 2026, timescale of the upper bank's target): FAR_HEAD adds a third head that reads the second bank's state alone
+# (lmf, l3f; created after every other layer, so all other initial weights are unchanged) and is trained on the byte FAR_DELTA steps
+# ahead (set and applied by exp16_integrated.update16). With LOCAL_DETACH its error reaches only the second bank. Default off.
+FAR_HEAD = False
 # Phase 0b variants (8 Nov 23:45 EST, after P17.0 was refuted for cell1 and bank):
 #   cell1d2  cell1 with a deeper readout: two hidden layers between (z1, h) and the logits, so two digits held in the state can interact before the output
 #   bank2    two stacked fixed-rate banks: the second bank's write is computed from the FIRST bank's state (p2 = tanh(Wp2 h1)), so writes can depend on
@@ -81,6 +85,8 @@ class Net17(nn.Module):
         self.l3 = nn.Linear(H, 257)
         if arch == "bank2" and LOCAL_HEADS:     # created last, so every other layer's initial weights are those of the plain bank2 net of the same seed
             self.l2a = nn.Linear(H, H); self.lma = nn.Linear(C, H); self.l3a = nn.Linear(H, 257)
+        if arch == "bank2" and LOCAL_HEADS and FAR_HEAD:     # created after l2a/lma/l3a: the E18 local-heads net's initial weights are unchanged
+            self.lmf = nn.Linear(C, H); self.l3f = nn.Linear(H, 257)
 
 
 def new_net(seed, arch):
@@ -137,6 +143,8 @@ def forward(m, x, local, through_time, keep=False, silence=False):
     z2 = T.tanh(pre)
     if m.arch == "cell1d2":
         z2 = T.tanh(lin(z2, m.l2b, local))
+    if hasattr(m, "l3f"):        # E23: the far head reads the second bank's state only
+        extra["logits_far"] = lin(T.tanh(lin(Hs2, m.lmf, local)), m.l3f, local)
     out = extra["logits1"] if (lh and HEAD1_OUT) else lin(z2, m.l3, local)
     return out, dict(p=p, c=c, r=r, w=w, hs=hs, prev=prev, z1=z1, **extra)
 

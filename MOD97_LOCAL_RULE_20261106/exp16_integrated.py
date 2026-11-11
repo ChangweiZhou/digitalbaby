@@ -139,6 +139,19 @@ if ARCH16 != "window":
     arch17.PROJ_SCALED = PROJFB16 == "scaled"
 BOOKDECAY16 = os.environ.get("E16_BOOKDECAY", "on"); assert BOOKDECAY16 in ("on", "off")
 assert BOOKDECAY16 == "on" or ARCH16 != "window", "E16_BOOKDECAY=off is defined for the E17 architectures only"
+#   E16_FARHEAD=<d>          (E23, 11 Nov 2026) a third head on the SECOND bank's state, trained on the byte d steps ahead (d = 1 is the next
+#                           byte) at every position where that byte exists in the item, added to the loss with weight 1; births only,
+#                           bank2 with local heads (so its error reaches the second bank alone) and the rule-T birth. Tag _fh<d>.
+#   E16_FARCTRL=none|shuffle shuffle: the far head's targets are permuted among the valid positions of the SAME item, afresh at each update
+#                           (same bytes, same count, same head; the correspondence in time destroyed). Tag suffix s.
+FARHEAD16 = int(os.environ.get("E16_FARHEAD", "0")); assert 0 <= FARHEAD16 <= 12
+FARCTRL16 = os.environ.get("E16_FARCTRL", "none"); assert FARCTRL16 in ("none", "shuffle")
+assert FARCTRL16 == "none" or FARHEAD16 > 0, "E16_FARCTRL needs E16_FARHEAD"
+assert FARHEAD16 == 0 or (HEADS16 == "local" and BIRTHRULE16 == "T"), "E16_FARHEAD is defined for E16_HEADS=local E16_BIRTHRULE=T births"
+FTAG = (f"_fh{FARHEAD16}" + ("s" if FARCTRL16 == "shuffle" else "")) if FARHEAD16 else ""
+arch17.FAR_HEAD = FARHEAD16 > 0
+FAR_GEN = [None]       # the shuffle control's own generator (never the global torch RNG); seeded by develop17
+LAST_FAR = [None]
 BTAG = "_nbd" if BOOKDECAY16 == "off" else ""
 ATAG = ("" if ARCH16 == "window" else f"_{ARCH16}") + BTAG + HTAG + ("_frz1" if FREEZE16 == "bank1" else "_frzb" if FREEZE16 == "book" else "") + ("_xfb" if FEEDBACK16 == "exact" else "") + TUPTAG + ("_bT" if BIRTHRULE16 == "T" else "")
 
@@ -327,6 +340,17 @@ def update16(m, opt, items, rule, store):
     aux = E.cross_entropy(it["logits1"][mask], y[mask]) if HEADS16 != "top" else None     # E18: the first bank's own error
     LAST_AUX[0] = float(aux.detach()) if aux is not None else None
     total = loss + aux if aux is not None else loss
+    LAST_FAR[0] = None
+    if FARHEAD16:      # E23: the byte FARHEAD16 steps ahead of each input byte, y[:, t + d - 1]; positions past the item's end excluded
+        d = FARHEAD16; assert d <= y.shape[1]; yf = T.full_like(y, E.BOS); yf[:, :y.shape[1] - d + 1] = y[:, d - 1:]
+        mf = yf != E.BOS
+        if FARCTRL16 == "shuffle":
+            yf = yf.clone()
+            for i in range(yf.shape[0]):
+                idx = mf[i].nonzero().squeeze(1)
+                yf[i, idx] = yf[i, idx[T.randperm(len(idx), generator=FAR_GEN[0])]]
+        far = E.cross_entropy(it["logits_far"][mf], yf[mf])
+        LAST_FAR[0] = float(far.detach()); total = total + far
     opt.zero_grad(); total.backward()
     if rule == "T":
         (E.trace_grads_scan if E.TRACE == "scan" else E.trace_grads)(m, it)
@@ -349,6 +373,20 @@ def score(m, items, store=None, silence=False):
     outs = E.respond(m, [p for p, _ in items], store, cap=CAP, silence=silence)
     return dict(n=len(items), exact=sum(o == t for o, (_, t) in zip(outs, items)),
                 final=sum(o[-3:] == t[-3:] for o, (_, t) in zip(outs, items)))
+
+
+@T.no_grad()
+def far_accuracy(m, items):
+    """E23 diagnostic: the far head's top-1 on its own (unshuffled) target over the item, prompt given (teacher forced), in two strata:
+    every valid position, and positions whose far target is an answer byte or EOS. Never a whole-answer score."""
+    x, y, mask = X.batch_tensor(items); d = FARHEAD16
+    assert d <= y.shape[1]
+    _, it = E.forward(m, x, local=True, through_time=False)
+    yf = T.full_like(y, E.BOS); yf[:, :y.shape[1] - d + 1] = y[:, d - 1:]
+    mf = yf != E.BOS
+    ma = T.zeros_like(mf); ma[:, :y.shape[1] - d + 1] = mask[:, d - 1:]
+    hit = it["logits_far"].argmax(-1) == yf
+    return dict(all=[int((hit & mf).sum()), int(mf.sum())], answer=[int((hit & ma).sum()), int(ma.sum())])
 
 
 def head1(fn, *a):
@@ -512,6 +550,7 @@ SCHEDULE = [("F1", 1), ("F1", 2), ("F2", 1), ("F2", 2), ("F3", 1), ("F3", 2)]
 
 
 def life(arm, seed):
+    assert FARHEAD16 == 0, "E16_FARHEAD is defined for births only (E23)"
     DTAG = ("_drift" if STREAM16 == "drift" else "") + ("_lossall" if LOSS16 == "all" else "")   # arm D carries the stream/loss tags, not the replay tag
     path = OUT / f"{PFX}_life_{arm}{ATAG}{RTAG if arm != 'D' else DTAG}{CGTAG}{OUTTAG16}{DRYTAG}_{seed}.json"
     assert COMPGAP16 == 0 or arm == "D" or REPLAY16 in ("raw", "oracle"), "E16_COMPGAP needs raw or oracle replay (other stores parse fixed positions)"
@@ -770,14 +809,15 @@ def develop17(seed):
     assert ARCH16 != "window"
     # E18b (10 Nov): a birth under the every-byte loss (E16_LOSS=all) has its own name (_lossall) and always goes through update16, which applies
     # the mask; the plain backprop path would ignore it, so it is never taken with that loss. Lives still start from answer-loss births.
-    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{E.DEVTAG}_{seed}"
+    stem = f"e17_dev_{ARCH16}{BTAG}{HTAG}{DEVRULETAG}{'_lossall' if LOSS16 == 'all' else ''}{FTAG}{E.DEVTAG}_{seed}"
     path = OUT / f"{stem}.pt"
     cfg = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16,
-               fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE)
+               fixedcodes=FIXEDCODES16, decay=(.3 if BIRTHRULE16 == "D" else E.WD), loss=LOSS16, updates=E.DEV_DOSE,
+            **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}))
     if path.exists():     # 10 Nov audit: never accept a checkpoint on its file name alone
         jp = OUT / f"{stem}.json"
         assert jp.exists(), f"{path.name} exists without its receipt: remove or move it before a new birth"
-        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE)
+        old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none")
         bad = {k: (old.get(k, dflt.get(k)), v) for k, v in cfg.items() if old.get(k, dflt.get(k)) != v}
         assert not bad, f"{path.name} exists with a different configuration {bad}"
         assert "weights_sha256" not in old or old["weights_sha256"] == sha_file(path), f"{path.name} does not match the hash in its receipt"
@@ -785,6 +825,8 @@ def develop17(seed):
         return
     m = E.new_net(seed)
     book0 = m.book.weight.detach().clone()
+    if FARHEAD16:
+        FAR_GEN[0] = T.Generator().manual_seed(seed + 23)
     plain = HEADS16 == "top" and BIRTHRULE16 == "D" and FIXEDCODES16 == "off" and LOSS16 == "answer"   # every birth before E18: E.update with backprop, decay .3
     step = (lambda items: E.update(m, opt, items, "D")) if plain else (lambda items: update16(m, opt, items, BIRTHRULE16, None))
     opt = adamw16(m, .001, .3 if BIRTHRULE16 == "D" else E.WD, ("book.",) if FIXEDCODES16 == "on" else ())
@@ -794,11 +836,13 @@ def develop17(seed):
     bt = E.batches(tp, seed, E.KMAX["M"])
     t0 = time.process_time(); curve = []
     for stop in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK):
-        losses, aux_losses = [], []
+        losses, aux_losses, far_losses = [], [], []
         for _ in range(X.BLOCK):
             items = next(bt); losses.append(step(items))
             if not plain and LAST_AUX[0] is not None:
                 aux_losses.append(LAST_AUX[0])
+            if not plain and LAST_FAR[0] is not None:
+                far_losses.append(LAST_FAR[0])
             if census is None:     # which embedding rows the first update reached, by symbol role (grads persist until the next zero_grad)
                 census = zero_grad_report(m, X.batch_tensor(items)[0]); print("e17 dev credit census:", census["by_role"], flush=True)
         if stop % 4096 == 0 or stop == E.DEV_DOSE:
@@ -806,11 +850,15 @@ def develop17(seed):
                        sealed={n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()}, book_shift_by_role=book_shift(m, book0))
             if aux_losses:
                 row["loss_head1"] = sum(aux_losses) / len(aux_losses)
+            if far_losses:
+                row["loss_far"] = sum(far_losses) / len(far_losses)
             curve.append(row)
             print("e17 dev", ARCH16 + HTAG + DEVRULETAG, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
     row["silenced_k12"] = {n: E.score(m, pk[12], silence=True) for n, pk in pan.items()}
     if HEADS16 != "top":
         row["head1"] = {n: {k: head1(E.score, m, it) for k, it in pk.items()} for n, pk in pan.items()}
+    if FARHEAD16:
+        row["far_head_k12"] = {n: far_accuracy(m, pk[12]) for n, pk in pan.items()}
     wsha = save_weights(m, path)
     (OUT / f"{stem}.json").write_text(json.dumps(dict(seed=seed, kmax=E.KMAX["M"], **cfg, credit_census_first_update=census,
                                                       weights=path.name, weights_sha256=wsha, complete=True, curve=curve), indent=1))
