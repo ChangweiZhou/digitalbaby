@@ -295,7 +295,7 @@ def life(net, seed, out, cmd, parity_birth=None, parity_sha=None):
                 stages[0]["settings"]["zero_grad_first_update"] = X16.zero_grad_report(m, X.batch_tensor(batch)[0])
                 print("e20 zero-grad check:", stages[0]["settings"]["zero_grad_first_update"]["by_role"], flush=True)
         cb = time.process_time(); sc = evaluate(); ca = time.process_time(); cpu_score[0] += ca - cb
-        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=cb - t0,
+        stages.append(dict(stage=si, task=f"{fam}.{block}", loss=sum(losses[-512:]) / min(512, len(losses)), cpu=cb - t0, scores=sc,
                            cpu_scoring_so_far=cpu_score[0], cpu_updates_so_far=ca - t0 - cpu_score[0], optimizer_steps=opt_steps(opt),
                            exposure_rows_tokens=expo, exposure_note="[rows, bytes under the loss mask]; loss=answer",
                            exposure_panels=dict(presented, taught_panel_distinct_presented=len(presented["taught_panel_distinct_presented"]))))
