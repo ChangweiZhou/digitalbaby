@@ -780,3 +780,7 @@ Stopped by a container restart at five of six checkpoints; predictions not judge
 ## The two next-step runs (10 November 2026, 23:59 EST)
 
 Review 9.88. Without replay, backprop on the learner's pipeline loses everything as the sign rule does: plus-minus pairs learned to 91–92 and ending at 1, mod-97 at 0.30–0.45 of the reference against the rule's 0.12–0.33. With every next byte as the target in a life, backprop keeps the skill (0.95–0.98 of its answer-loss partner) and the sign-feedback sweep acquires it in the first block and then loses all of it (mod-97 5–10 at the end). Five of seven predictions hold; the two that miss are the ones that said the corrected rule would survive every-byte targets.
+
+## E22 version 2 filed: one rule at birth and in life (11 November 2026, 01:15 EST)
+
+Review 9.85. Six lives on one host, validated by a script written before they ran. The learner born by the sign-feedback temporal sweep and living under it ends at 88.1 / 84.8 / 84.3 on mod-97 and 90.7 / 87.5 / 87.1 on mod-73, within 3 points of its backprop-born partner in every seed and above the absolute marks set beforehand; all three predictions hold in all three seeds. Single operations only: it does not compose, it loses unrehearsed skills, and it depends on replay and on answer-only targets.

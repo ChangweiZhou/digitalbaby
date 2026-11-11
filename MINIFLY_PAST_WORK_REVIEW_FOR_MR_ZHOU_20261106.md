@@ -1492,3 +1492,31 @@ Also 9.71 item 4: the local-heads package ends 10.5 / 12.3 / 13.2 points under t
 *Not yet read by me:* the multi-timescale literature check and the source check for the delayed-observation memo (`PROJECT_DOCUMENTS/LIT_CHECK_20261110/`).
 
 **3. Step 0 of the target test is drafted for Codex's audit** (`OPUS_TASK_TARGET_TEST_STEP0_20261111.md`): the stream made concrete with proposed sizes, eight checks that each must pass and each must be shown able to fail, and six questions for the audit, one of them whether to generate a predictable-filler version alongside after the every-byte result. No worker starts from it.
+
+## 9.85 E22 version 2: a learner born and living under one rule ends where the backprop-born one does (10 November 2026, 19:52–21:14 EST; `MOD97_LOCAL_RULE_20261106/exp45/E22_VALIDATION.json`)
+
+**What ran.** Six lives of the windowless two-bank learner on the owner's machine, on Mr. Xu's go, seeds 73129 / 93683 / 116089, under the working life rule (a sign-feedback temporal sweep over the item; the longest item is 22 bytes): three started from E18's rule-born births and three, their partners, from the backprop births. Version 2 of the brief, rewritten after Codex's audit of version 1 (9.87); version 2 itself was not audited before running, by Mr. Xu's choice. Predictions and the validator were committed before launch (c6732624).
+
+**Validation, by the script written beforehand.** All six exit codes zero; source files and birth manifest unchanged between launch and scoring; every receipt has stages 0 to 6 at the full dose, a completion record and a matching weight hash; each birth is the pinned file, admitted with its training configuration checked; partners differ in no setting except the birth fields and share one panel hash. No cell was excluded. The backprop-born repeats reproduce the Phase 4 receipts of 9.70 to the digit, which also shows the lives are deterministic on this machine.
+
+| Twelve distractors, whole answers | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Rule-born, after block 1: mod-97 mean; hard mean (add, sub) | 90.9; 85.0 | 91.9; 87.2 | 88.7; 82.0 |
+| Rule-born, end: mod-97; hard mean; mod-73 | 88.1; 84.5; 90.7 | 84.8; 77.0; 87.5 | 84.3; 76.4; 87.1 |
+| Backprop-born partner, end: mod-97; hard mean; mod-73 | 87.9; 82.1; 90.8 | 86.1; 79.2; 86.9 | 86.9; 81.8; 89.4 |
+| Partner minus rule-born: mod-97; mod-73 | −0.2; +0.1 | +1.2; −0.6 | +2.6; +2.2 |
+| Development operations, never shown in life, at the end: rule-born; partner | 34; 11 | 36; 22 | 29; 43 |
+
+| Prediction | Verdict |
+|---|---|
+| P22.1 acquisition: after block 1, mod-97 at least 80 and hard mean at least 70, two seeds | holds, all three |
+| P22.2 final competence, absolute: mod-97 at least 75, hard mean at least 65, mod-73 at least 75, same seed, two seeds | holds, all three |
+| P22.3 parity, one-sided: no more than 5 below the partner on mod-97 and on mod-73, same two seeds | holds, all three (largest gap 2.6) |
+
+In no seed are both partners under the marks of P22.2, so this is not parity after common loss.
+
+**What it says.** For single operations in this network, the birth-lineage condition of Mr. Xu's third ruling can be met: one rule at birth and in life, no backprop at any point, ending within 3 points of the backprop-born learner and above an absolute mark, in every seed. The births differ in level as well as in history, so this is a statement about two birth packages, and three seed pairs describe it; they do not establish equivalence.
+
+**What it does not say.** The learner is answer-supervised and replay-supported; it loses its unrehearsed birth operations however it was born (29–36 against 11–43 at the end, from 90–95); it does not compose (held pairs 13–15 in all six lives); beyond the trained gap it falls (at 40 distractors the mod-97 mean, which includes the max and min shortcut, is 34–43 for the rule-born and 32–49 for the partner); and under every-byte targets the same rule collapses (9.88). The promotion question is separate and untouched.
+
+**Cost.** About 4,400 CPU-s of updates and 300 of scoring per life; six processes, 1 h 22 min of wall against a forecast of 1 h 30 (range 1 h 15 to 1 h 50). The rule-born births cost 4,307–4,321 CPU-s each on a cloud container (9.71). Evidence level E2.
