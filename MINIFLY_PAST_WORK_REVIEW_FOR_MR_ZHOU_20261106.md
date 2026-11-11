@@ -2206,3 +2206,31 @@ Brief: `OPUS_TASK_E26_GRU_UNDER_THE_SWEEP_20261111.md`. Draft for Codex; no work
 **Cost.** Measured on one batch on the owner's machine, an update through the written-out step costs 1.4 times the library layer's on the exact path and 1.6 times under the sweep. That puts the twelve runs near 68,000 CPU-seconds, six to seven hours on three cores, to be replaced by stage 1's measurement.
 
 **Four questions are put to the audit:** whether a backprop arm at 0.30 is also needed; whether the joint stream is the right first pipeline; whether a floor for releasing a sweep-born life should be fixed now; and whether the sweep's scale should be per stacked matrix or per gate.
+
+
+## 9.105 Codex's audit of the E26 brief and of step 0's code: E26 released for stage 1 with changes; step 0's ordinary stream accepted and its moved-lines arm to be corrected (18:53 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_E26_STEP0_IMPLEMENTATION_AUDIT_20261111.md` (commit f5dabbfa). I checked the points that can be checked in the source and adopt all of them.
+
+### E26, now at revision 2
+
+| Finding | Checked how | Result | Change |
+|---|---|---|---|
+| The harness's rule update would be the wrong one here | read in `exp11_cell.update`: for the rule it runs the forward with credit cut at every step and then calls the trace routine, which `arch20` replaces by a function that stops with an error | **confirmed.** My brief described the way back in a table and never said which loop to run. A worker following E20-B's runner would have reached for that call | the loop is written out in the brief: one loop for both arms, credit through the whole item, only the path back switched. One real optimizer step is tested in each arm, with the harness's rule update as the fixture that must fail |
+| The scorer must be qualified on the written-out network | the helper I wrote for E25 has no `silence` argument, which the production scorer passes | confirmed | the network gets the harness's full signature; the three scoring fixtures; and E20-B's saved end-of-life GRU files, loaded into the written-out network, must give the counts in their own receipts |
+| Freeze the release of lives before reading the births | my draft left the release of a rule-born life to my judgment of its birth | adopted: that would have let me choose which seeds are compared | all six lives run; the stop before stage 3 checks technical validity only; a life not run is counted as unmeasured |
+| Keep feasibility apart from the paired comparison | wording of the readings | adopted | the absolute marks and the difference from the backprop partner are read separately; a missed reference no longer silences the rule's own result; a birth under 70 is reported with its level |
+| Keep decay 0.25 in both arms, the joint stream, one scale per stacked matrix | my four questions | answered as drafted | a backprop arm at 0.30 is a follow-up, wanted only if the matched reference disappoints |
+
+Stage 1 may go to a worker. Stages 2 and 3 are released by me in turn.
+
+### Step 0
+
+Codex accepts the ordinary stream as a qualified generator for the three filed worlds. With my rerun on another host (9.101 C) that part is done, and the delivered folder `TARGET_TEST_STEP0/` is merged into the default branch with this section.
+
+Two corrections to the moved-lines arm, both adopted in version 6 of the brief:
+
+- *No line may name a pair before that pair's probe.* The worker had reported 51 / 47 / 55 early disclosures out of 96 itself. The lines of first-encounter episodes now stay in place and only teaching lines move; a deliberately early line must fail the exposure check.
+- *The rendered lines are checked as bytes.* I read the delivered check: it compares the symbols named in the lines between the arms and does not parse the values. Each value is now to be parsed from the stream and compared with what its era allows.
+
+Neither touches the ordinary stream. The sizing sweep (9.101 D.3) needs only the ordinary stream and the aligned lines, so it does not wait for these corrections.

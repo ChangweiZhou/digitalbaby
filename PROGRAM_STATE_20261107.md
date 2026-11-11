@@ -385,3 +385,10 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - `OPUS_TASK_E26_GRU_UNDER_THE_SWEEP_20261111.md`: a GRU born and living under the sweep beside backprop, same data, same decay (0.25), same written-out step, one host per seed; three stages with a stop after each; predictions P26.1 to P26.5. For Codex. No worker.
 - Still to write: the brief for the target-test sizing sweep.
 - Waiting: E24's two backprop baselines and then its nine births; E21b; Codex on step 0's code.
+
+
+## Addendum, 11 November 18:53 EST (clock): Codex's audit of E26 and of step 0's code answered (review 9.105)
+
+- **E26** is at revision 2 and released for stage 1 only: the training loop is written out (the harness's rule update must not be used), the scorer is qualified on the written-out network, all six lives run, feasibility and the paired gap are read separately.
+- **Step 0:** the ordinary stream is accepted and `TARGET_TEST_STEP0/` is merged into the default branch. The moved-lines arm needs two corrections (brief at version 6): no line names a pair before its probe; rendered values are checked as bytes.
+- Still to write: the brief for the sizing sweep.
