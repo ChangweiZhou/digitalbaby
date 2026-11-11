@@ -17,6 +17,17 @@
 > 4. A receipt without a `lossw` field is a uniform-loss receipt.
 > 5. The report gives the sha256 of the five source files as they were run.
 
+> **Revision 4, 11 November 2026, 18:26 EST (clock): the backprop baselines are moved to the worker's host class.** The host-check wave ran and stopped, as the brief required: the sign-sweep birth reproduced its original bit for bit, and the backprop birth of seed 73129 differed at every checkpoint (93.2 at the end against 91.2). The coordinator and the audit session each checked what happened (review 9.101):
+> - the pinned backprop originals were born on the owner's machine on 9 November; the sign-sweep originals on a cloud host;
+> - the worker's rerun equals E20-B's birth of the same network and seed (`exp45/e20b/e20_dev_G0_73129`), made by another program on another cloud host, in scores, losses and all 24 weight tensors;
+> - so the cloud hosts give one result and the owner's machine another. The same command and seed differ by +2.0 / −1.7 / +2.5 points between the two host classes.
+> Changes:
+> 1. **D-ans is run on the worker's host for all three seeds.** Seed 73129 is done (93.2). Seeds 93683 and 116089 are added to the first wave. Each is expected to equal E20-B's G0 birth of its seed in every sealed score and every weight tensor (final hard means 92.8 and 92.8; G0 weights files sha256 `55b7c6c84add2b76…` and `93e6d3007476bd6a…`). If one does not, stop and report.
+> 2. **T-ans keeps its originals** (87.5 / 90.7 / 84.7): they are cloud-born and seed 73129 has been reproduced bit for bit.
+> 3. **A host check means reproducing an original born on the same host class.** Figures across host classes are descriptive and are not paired.
+> 4. The roster is now nine new births and four baseline births, of which two are done. The three marks and their readings are unchanged.
+> The nine new births start on the coordinator's release line.
+
 ## Why this job
 
 Three results on file say the working rule fails when every byte is a target instead of the answer bytes only:
@@ -50,8 +61,8 @@ The local-heads line is closed (review 9.97) and no arm here uses it.
 
 | Arm | Update | Targets | Extra environment | Status |
 |---|---|---|---|---|
-| D-ans | backprop, decay 0.30 | answer bytes | (none) | on file: 91.2 / 94.5 / 90.3. Rerun seed 73129 only, as a host check |
-| T-ans | sign sweep, decay 0.25 | answer bytes | `E16_BIRTHRULE=T E16_TRACEUP=all` | on file: 87.5 / 90.7 / 84.7. Rerun seed 73129 only, as a host check |
+| D-ans | backprop, decay 0.30 | answer bytes | (none) | run on the worker's host for all three seeds (revision 4): 93.2 done; 92.8 and 92.8 expected, equal to E20-B's G0 births. The births on file from the owner's machine (91.2 / 94.5 / 90.3) are not used as baselines |
+| T-ans | sign sweep, decay 0.25 | answer bytes | `E16_BIRTHRULE=T E16_TRACEUP=all` | on file, cloud-born: 87.5 / 90.7 / 84.7. Seed 73129 reproduced bit for bit in the host check |
 | **D-all** | backprop, decay 0.30 | every byte | `E16_LOSS=all` | new, three seeds |
 | **T-all** | sign sweep, decay 0.25 | every byte | `E16_BIRTHRULE=T E16_TRACEUP=all E16_LOSS=all` | new, three seeds |
 | **T-bal** | sign sweep, decay 0.25 | every byte, answer bytes carrying half the loss | the same plus `E16_LOSSW=balanced` | new, three seeds |
@@ -103,7 +114,7 @@ Readings, fixed now:
 ## Running it
 
 - One host, at most three processes on four cores, one thread each.
-- Order: the two host-check births alone. If both reproduce, D-all, then T-all, then T-bal, three seeds at a time.
+- Order: the two remaining D-ans births (seeds 93683 and 116089), compared with E20-B's G0 births. Then, on the coordinator's release line, D-all, T-all and T-bal, three seeds at a time.
 - Leave `E16_RESUME` unset. Fresh births still write a checkpoint at every curve row; that work is inside the CPU-seconds you report and is not subtracted. Resume is not qualified on the merged harness yet (Codex's audit of 11 November) and the harness refuses `E16_RESUME=1`. Until `exp45/RESUME_QUALIFIED.json` exists for the sources you run, an interrupted birth is kept as written, stopped and reported, and it is restarted from the beginning only on the coordinator's word. A birth is about an hour, so a restart costs at most that.
 - Work in progress goes to your own branch. The default branch receives one commit when all eleven completion records and weight hashes are verified.
 - Forecast: nine new births and two reruns at about 3,500 to 4,500 CPU-seconds each, about 45,000 in all, about four and a half hours on three cores. Replace this with the pace you measure on the first wave.

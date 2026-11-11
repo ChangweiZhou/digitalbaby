@@ -348,3 +348,13 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - Two resume gaps confirmed by running them (`mod97_local.py` not in the source binding; an explicitly set default changes a checkpoint's configuration). Both are amendments to the E21b brief; the harness on the default branch is not edited while E24 runs on it.
 - E24's host-check wave is on `claude/charming-clarke-u9g850`; the nine births wait for the coordinator's release line.
 - The Mac is idle.
+
+
+## Addendum, 11 November 18:27 EST (clock): E20-B read, E24's host check explained, the audit session's suggestions decided (review 9.101)
+
+- **E20-B verified by the coordinator** (24 receipts, hashes, stages). P20.7 to P20.10 hold. By the selection rule fixed beforehand **the windowless candidate is the GRU** (untaught plus-minus pairs 73.6 / 78.8 / 75.1; LSTM 78.6 / 72.2 / 69.2; two-bank 1.5 / 0.5 / 7.5). Nothing on it has been trained by the working rule.
+- **E24's host check** stopped on a host-class difference: cloud hosts agree with each other byte for byte and differ from the owner's machine by about 2 points at birth. Brief at revision 4: backprop baselines on the worker's host for all three seeds. The two remaining baselines may start; the nine births wait for the release line.
+- **Step 0** delivered on `claude/target-test-step0`; its ten checks pass on the owner's machine with every value equal to the worker's. To Codex.
+- **Decisions on the audit session's note:** alignment measurement on E20-B's saved weights before any GRU birth under the rule (next, by the coordinator); a sizing sweep for the target test (brief to follow); E24 is the last experiment on the two-bank network. Asked of Mr. Xu: a ruling on learned feedback weights, and one route for commissions.
+- Errata: 9.71's ratios mixed host classes (0.94 / 0.98 / 0.91 against cloud-born births); E22's births came from different host classes.
+- The Mac is idle.

@@ -2050,3 +2050,73 @@ Neither touches a run without resume. E24's births are running on this harness, 
 - E21b: in progress on `claude/funny-mendel-34puq7`, with the amendments above.
 - Step 0: ready for one worker.
 - E20-B: G2 lives were running at the worker's last push. Not read.
+
+
+## 9.101 E20-B verified and read; E24's host check explained; step 0 reproduced; the audit session's six suggestions and what I decide (18:27 EST by the clock, 11 November 2026)
+
+Three jobs reported this evening and the audit session wrote a review with six suggestions (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/REVIEW_AND_NEXT_STEPS_NOTE_20261111.md` on `claude/vibrant-cerf-sje726`, commit 78c099fa). I checked each claim I rely on with my own computation. Nothing was trained.
+
+### A. E20-B: a windowless network composes from memory under backprop
+
+The worker's report and review paragraph are on the default branch (commit fff36103). My own check of the 24 receipts (`exp45/E20B_COORDINATOR_CHECK.json`), done independently of the worker's driver as Codex asked (9.98 C): every birth and life has its completion record, every weights file matches its recorded hash, every life has seven stages. No problems.
+
+| End of life, whole answers, seeds 73129 / 93683 / 116089 | Birth, hard mean | New instances of taught pairs | Untaught plus-minus pairs |
+|---|---|---|---|
+| G0, the two-bank reference | 93.2 / 92.8 / 92.8 | 47.3 / 50.8 / 53.3 | 1.5 / 0.5 / 7.5 |
+| G3, two banks with the added loop | 98.8 / 93.2 / 98.0 | 76.5 / 69.3 / 80.3 | 20.2 / 1.1 / 1.0 |
+| G1, GRU | 95.3 / 99.8 / 97.3 | 89.8 / 87.0 / 91.2 | 73.6 / 78.8 / 75.1 |
+| G2, LSTM | 95.2 / 96.8 / 93.5 | 87.8 / 88.8 / 85.7 | 78.6 / 72.2 / 69.2 |
+
+- **P20.7 holds** (both gated networks are born at 85 or above in every seed). **P20.8 holds. P20.9 holds. P20.10 holds** (the loop adds 29.2 / 18.5 / 27.0 points on new instances of taught pairs; as registered, that measures 32,768 added weights as a package).
+- **Selection, by the rule fixed in amendment 13 before any result.** G3 does not qualify. The GRU and the LSTM both qualify in all three seeds. The tie rule takes the higher three-seed mean on the plus-minus pairs: GRU 75.8, LSTM 73.3. **The windowless candidate is the GRU.** A margin of 2.5 points selects; it is not a finding about the two networks.
+- **What it says.** Composition from memory is learnable at this size by an ordinary recurrent network under backprop with answer targets. The fixed-rate two-bank design does not do it. By the addendum to 9.82 that design has no claim to stay.
+- **What it does not say.** Nothing here was trained by the working rule. The scores are under the registered decoder, which reruns the network for each output byte. E2, development panels.
+- **The deviation of 9.98 C stands on the record:** stage 2 began before review and release, and three G0 lives were interrupted and rerun from their births on Mr. Xu's authorization.
+
+### B. E24's host check stopped, correctly, on a difference between host classes
+
+The sign-sweep birth reproduced its original bit for bit (24 of 24 tensors). The backprop birth of seed 73129 differed at every checkpoint, ending at 93.2 against 91.2, and the worker stopped as instructed. The audit session traced it, and I repeated its comparison on the files:
+
+- the worker ran the harness at f4c6aa8c (its recorded source hash equals the file's);
+- its backprop rerun equals E20-B's G0 birth of the same seed in the hard mean at all six checkpoints, in the losses, and in **24 of 24 weight tensors**, although the two were made by different programs on different cloud hosts;
+- against the pinned original, 1 tensor of 24 is equal, the fixed rate vector;
+- the pinned backprop originals were born on the owner's machine (commit fad2cec7, 9 November); the sign-sweep originals on a cloud host (2eafb07b).
+
+So two cloud hosts and two programs give one result, and the owner's machine gives another. The same command and seed differ by +2.0 / −1.7 / +2.5 points between the host classes. I had pinned, as a host check, an original born on a different class of host. **The E24 brief is at revision 4:** backprop baselines are run on the worker's host for all three seeds; the two that remain are added to the first wave and are expected to equal E20-B's G0 births.
+
+What is not yet ruled out is a change in the harness's birth path between 9 November and now. One backprop birth of seed 73129 on the owner's machine with today's harness settles it: if it reproduces the pinned original, the cause is the host.
+
+**Errata that follow.**
+
+- *9.71* put the rule-born births at 0.96 / 0.96 / 0.94 of the backprop births. That divided cloud-born births by births from the owner's machine. Against cloud-born backprop births (93.2 / 92.8 / 92.8) the ratios are 0.94 / 0.98 / 0.91.
+- *9.85 (E22)* compared two lives on one machine, which is sound, but the two births came from different host classes. The birth-level difference between host classes is about two points, the size of the gaps E22 reads. Its three verdicts stand as registered; "within 3 points" should be read with that beside it.
+- *A rule from now on:* a seed is a pair only within one host class, and differences under about 3 points across host classes are not read.
+
+### C. Step 0 of the target test is delivered and reproduces
+
+`TARGET_TEST_STEP0/` on `claude/target-test-step0` (commit 7005a6af). I ran its check script on the owner's machine: all ten checks pass for the three world seeds, and all 3,722 values of my record equal the worker's. That is determinism across hosts and nothing more; I have not audited the code, and it goes to Codex. The worker raises two points, both from having a disclosure line after every episode: in the moved-lines stream a line names the probed pair before 51 / 47 / 55 of the 96 first-encounter probes, and the disclosure ledger never differs between the aligned and the moved arm.
+
+### D. The audit session's six suggestions
+
+| Suggestion | My decision |
+|---|---|
+| 1. Release E24 on same-host baselines, with the two missing backprop reruns | **Adopted.** Revision 4. The two reruns may start now; they are baselines, not new arms |
+| 2. Before a GRU is born under the rule, measure the sweep's alignment on E20-B's saved weights, by layer and by steps back in time | **Adopted, and it is the next thing I do.** It trains nothing. In every network the rule has worked on, the step back in time crosses no weight matrix; in a GRU it crosses the recurrent weights at every step. I write the GRU and LSTM steps by hand, with the two checks the note names, and measure on G1, G2 and G0 |
+| 3. Size the target test for learnability before more audit rounds | **Adopted.** Step 0 shows the answers are determined by the stream, not that a learner can acquire them. A sizing sweep with a backprop GRU, on world seeds that are never scored, registered as a sizing exercise with no verdict. I also take the point that the design must say what a learner may bring, and I expect to make the stated-value lines the base arm if the sweep shows what the note expects |
+| 4. One ruling: are learned feedback weights inside the line | **Mr. Xu's to give.** My recommendation is yes: a separate feedback pathway that learns by a local rule and never copies a weight is feedback "relayed by a sub-network", which his answer of 10 November allows. The source the note cites needs checking before it steers a design |
+| 5. Make E24 the last experiment on the two-bank network | **Adopted.** After E24, no repair, no predictable-filler stream and no retention curve on that network. Those go to the GRU |
+| 6. Route every commission through the coordinating session | **Mr. Xu's to decide.** I support it. The merge of 11 November is what three starting points cost |
+
+**Two things I owed that this changes.**
+
+- *The probes on the stage 2 window checkpoints* (9.97) asked whether the sign rule's window learner lost the operands or cannot compute with them. That learner is on a network we are leaving. I drop the run unless a question about the GRU needs it.
+- *My rerun of E20-B's stage 1 parity on the owner's machine* (9.96). Codex accepted stage 1 from the receipts, and full-dose evidence now exists that is stronger than my reduced-dose rerun would be: the harness and E20-B's runner give the same G0 birth, byte for byte, at full dose. I count it discharged.
+
+### E. Order of work from here
+
+1. E24: the two backprop baselines now; the nine births on my release line.
+2. One backprop birth on the owner's machine, on Mr. Xu's go.
+3. The alignment measurement on E20-B's saved weights: script and its two checks first, then the measurement on Mr. Xu's go.
+4. A brief for the sizing sweep, to Codex before a worker.
+5. Step 0's code to Codex.
+6. Then, in this order and each after the one before it: the GRU under backprop with every-byte targets; the GRU born and living under the sweep against backprop on one host. The second is the run the 17 November close needs: a rule and a network that were born and lived together.
