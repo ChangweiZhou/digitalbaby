@@ -72,6 +72,13 @@ These are admission conditions for step 0. They come from `MINIFLY_M4_E21_CONTIN
 2. **Separate held combinations for each phase.** A pair scored on first encounter is then revealed and becomes teaching. Acquisition, retention and revision each get their own reserved pairs, fixed before the stream is generated, so that no phase is scored on pairs an earlier phase has already taught.
 3. **The wider-view arm is matched before it is compared.** It gives the learner extra observations and extra bytes under the loss. The two comparison streams carry the same number of extra bytes and targets, at the same delays; the shuffled stream keeps each revealed value's frequency and delay and breaks only its alignment with the episode it describes.
 
+## 7b. Conditions added after Codex's survey memo (10 November 22:10 EST, clock; `PROJECT_DOCUMENTS/MINIFLY_PROGRESS_SURVEY_AND_TARGET_ASSAY_20261110.md`)
+
+1. **A sealed pool is reserved before the stream is generated,** and twin members are scored from copies of one learner state (step 0 draft, version 2).
+2. **The families share context symbols and no values,** so that the control of row 3 in section 5 cannot be answered through the other family.
+3. **The reference step runs the same held cases in two versions.** Visible: the context inside the bytes the reference can still see or has just read. Hidden: the context at least ten bytes back. A miss on the visible version points at teaching, optimisation or the interface. A miss on the hidden version only points at holding and using earlier context.
+4. **No learning rule is compared until the reference passes both versions and the control of row 3 separates them.** Then the sign sweep is compared on the same network, observations and budget. Interference and revision are added to the same learner state after acquisition is established.
+
 ## 8. Why these choices, from this project's own record
 
 - No answer mask and no composition in view, because those were the two aids found late (reviews 9.76 and 9.82).

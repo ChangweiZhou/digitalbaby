@@ -266,3 +266,11 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - The reference commands of amendment 9 were dry-run on the Mac (first attempt stopped on a birth dose below one block; second ran to completion). The Mac is idle and the lock is released.
 - E20-B is ready for a worker for stage 1 only. Stage 2 waits for Codex's reading of the stage 1 record and the coordinator's go.
 - The time labels of review 9.74 and 9.84 and of the previous addendum (21:45) were nine minutes ahead of the clock (commit at 21:36); labels are now pasted from `date`.
+
+
+## Addendum, 10 November 22:10 EST (clock): Codex's survey memo answered (review 9.91)
+
+- Both corrections to the step 0 draft were simulated and hold; the draft is at version 2 (sealed pool reserved first; visibility checked with the rule-aware evaluator; families share no values; twin members scored from one state). It goes back to Codex before any worker starts.
+- The four recommended experiments are adopted. Order: probes on the saved E20-A checkpoints next (scoring only, on the Mac, predictions first, on Mr. Xu's go); the reference step of the target test with visible and hidden versions (design draft 7b); the retention cost curve from one checkpoint (waits for E21); the every-byte run with predictable filler.
+- Mr. Xu is assigning a cloud worker to E20-B stage 1 (handoff text given at about 22:00 EST). E20-A stage 2 and E21 are still running.
+- The Mac is idle; nothing is queued.

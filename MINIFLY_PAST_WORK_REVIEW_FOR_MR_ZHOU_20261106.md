@@ -1641,3 +1641,35 @@ Audit: `PROJECT_DOCUMENTS/MINIFLY_E20B_AMENDMENTS_AUDIT_20261110.md` (commit 522
 **Status.** The brief is ready for a worker for stage 1 only (implementation and reduced-dose qualification). Stage 2 waits for Codex's reading of the stage 1 record and my go.
 
 **Erratum to 9.74 and 9.84.** Their headings say "21:45 EST by the clock". The clock read 21:34 when I wrote them and the commit is at 21:36. I wrote the label from an estimate in the very sections that promised to stop doing so. From here on the label is pasted from the `date` command's output.
+
+
+## 9.91 Codex's progress survey and next experiments: its two corrections to step 0 simulated and adopted, its sequence adopted with one ordering of my own (10 November 2026, 22:10 EST by the clock)
+
+Memo: `PROJECT_DOCUMENTS/MINIFLY_PROGRESS_SURVEY_AND_TARGET_ASSAY_20261110.md` (commit 0f44505f). It surveys what the project has established, corrects the step 0 draft of the target test in two places, and recommends four next experiments.
+
+**The survey.** I checked the figures it quotes from this review's own period against the sections that hold them, and they agree: E18's rule-born births at 0.94 to 0.96 of the backprop birth (9.71); E22's three verdicts and the unrehearsed operations at 29 to 36 (9.85); E19 (closed in 9.79); E20-A's 21 to 43% of twins (9.77); 2 of 15 later seeds on the hard pairs (9.81); backprop near 1% on the plus-minus pairs without replay (9.88); the 90 to 93% held-pair mean of E7. The older figures (Full151, V216, V218) I did not recheck. Its account of the E20-B amendments is accurate.
+
+**Its two corrections to step 0, both simulated** (`PROJECT_DOCUMENTS/target_step0_draft_checks.py`, output `TARGET_STEP0_DRAFT_CHECKS.json`; standard library, no learner).
+
+| Correction | What the simulation shows | What changed in the draft |
+|---|---|---|
+| The split leaves no pairs for sealed twins | Confirmed by counting: 216 taught and 72 revealed are all 288 pairs of a family. My draft asked for 150 twins per phase whose pairs "never occur in the stream", from a pool of none. | 216 taught, 48 first-encounter, 24 sealed (12 twin pairs) per family, reserved before generation. Results reported over renderings and over distinct pairs. |
+| The visibility check cannot fail the way I wrote it | Confirmed. A table memorising forty-byte suffixes scores 0 of 300 sealed twins in three worlds, as does an exact context-and-cue table: the mapping is absent, not out of view. The rule-aware evaluator scores 300 of 300 with the whole episode and 0 with the shared suffix only. | Check 3 now uses the rule-aware evaluator under two inputs. The tables are separate memorisation controls (3b). |
+
+**Its question about the control, answered.** The memo asks whether the control with no prior teaching can still infer the answer through the other family. It can. With shared context values, removing every family-1 teaching episode of a context leaves its family-1 answer fixed by family 2 (a solver over Z_97 says determined). With separate values per family it is undetermined. The draft now gives each family its own context values, and check 9 makes the solver confirm it.
+
+**Two things the simulation showed beyond the memo.**
+
+- *Twins with equal values do occur.* In one world of three, a randomly drawn twin had contexts with the same value, and an evaluator that sees only the suffix then scores it. The draft's check 6 already rejects such twins; the simulation shows the check is needed and not decoration.
+- *Twelve distinct twin pairs per family is small.* However many renderings are scored, the claim rests on 24 distinct pairs. This is now a question for the audit (question 7).
+
+**The recommended sequence, and what I decide.**
+
+1. *Probes on the saved E20-A checkpoints.* Adopted. Two probes, both scoring only: the answer when the true intermediate is supplied, against the answer the learner writes alone; and twins with the state reset just before the shared suffix. They say whether a failed twin fails at the intermediate or after it. The receipts already score twins with the state silenced throughout, which is the coarser form of the second probe. I will do these myself on the Mac, with predictions written first, on the three window references of stage 1 and then on stage 2 when all twelve lives are complete. It needs Mr. Xu's go, like any Mac run.
+2. *Qualify the target task with a reference before any rule is compared.* Adopted, and written into the design draft as section 7b: the same held cases in a visible and a hidden version; no rule comparison until the reference passes both and the control separates them.
+3. *Retention cost from one acquired checkpoint.* Adopted as conditions on the cost-curve design: every arm starts from the same checkpoint, fresh observations and their order are fixed, rehearsal is added as extra updates, and one arm gets the same number of extra updates without rehearsal. It still waits for the resumable-lives branch (E21), which is what makes "from the same checkpoint" possible.
+4. *The every-byte failure with one change.* Adopted as conditions on the predictable-filler run: lengths, byte frequencies, answers and target count matched, sign sweep against backprop on one network. Not designed yet.
+
+**My ordering.** The memo says to start with the probes and the step 0 corrections while E20-B qualifies. The step 0 corrections are done tonight. The probes are next. Step 0 version 2 goes back to Codex before any worker starts on it, under the rule of 9.82. Items 3 and 4 keep their place behind E21 and behind the probes.
+
+**What I leave aside.** The memo suggests keeping the native store for a later matched test against a simple index. I agree and do nothing about it now.
