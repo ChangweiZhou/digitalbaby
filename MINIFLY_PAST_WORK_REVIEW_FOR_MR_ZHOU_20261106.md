@@ -1403,3 +1403,21 @@ Assurance after the fixes: the qualifier and the assay check exit 0; the memory-
 
 1. *"The harder step is the untaught operator pair, not the memory" is withdrawn.* The two panels behind it differ in more than that: the hidden-operand panel of taught pairs mixes twelve operator pairs, the twins are the plus-minus pairs only, and letters inside a prompt change more than whether the first operand is in view. The gaps between those scores do not isolate which component is hardest.
 2. *The caveat on stage 2's rule arm had its polarity reversed.* P20.5 predicts that the sign-rule learner is at or below 0.60 of the reference, so a low score makes P20.5 hold, not miss. The caveat should read: if the rule arm is low, which P20.5 predicts, that cannot be separated from credit truncated above its memory cell; and whatever it scores says nothing about the backward-sweep rule on the window architecture, which has not been implemented there.
+
+## 9.87 Codex's audit of E22 and of the E20-B and E18b dispatch: E22 withdrawn and rewritten (10 November 2026, 23:00 EST)
+
+**The audit.** `PROJECT_DOCUMENTS/MINIFLY_E22_DISPATCH_HOSTILE_AUDIT_20261110.md` (Codex, nothing run). I ran what can be run. It holds throughout.
+
+| Audit point | After checking | Done |
+|---|---|---|
+| E22's parity gate passes when both learners collapse together; the family mean hides addition and subtraction; "within 5" is undefined | accepted | acquisition, absolute final competence and one-sided parity are separate verdicts with literal definitions (P22.1–3) |
+| One birth arm per cloud instance confounds host with birth | confirmed from the worker's own note: runs are not bit-identical across machines | version 2 runs all six lives on one host |
+| A birth hash shows identity, not training history | confirmed: the manifest held a hash and nothing else | the manifest now records each birth's training configuration and final step, and a life checks them against what it asks for; a rule-born file presented as a backprop birth stops the life, as does a birth at another dose |
+| "No backprop anywhere" misnames the rule | accepted | it is a sign-feedback temporal sweep, the same in birth and life |
+| Sizing needs a crash policy | accepted | written into the three briefs: keep the partial attempt, stop the cell, report; no restart without authorization |
+| E20-B: parity test covers two checkpoints only; networks need their own checks; G3 and G0 on one host; own file names; a collective miss does not show the teaching is the cause; the premise ignores E20-A stage 1 | accepted | seven amendments in the brief |
+| E18b: a max/min mark of 30 is below a copy shortcut; partners need the same host | **confirmed by measurement**: copying one operand scores 49–52% on the sealed max and min panels | P18b.2 replaced (at least 66 on max/min and at least 10 on the hard mean); partners rerun on the same host |
+
+**Erratum that reaches beyond E18b: max and min are to be read against 50, not against zero.** On every single-operation panel, answering with one of the two operands is right about half the time. Scores I have quoted without that baseline include the one-bank network's births (max 53–61, min 61), the first bank's own head in E18 (max and min 55–60) and B3's 1–3. The first two are at the level of the shortcut and show no learned operation; the third is far below it, which means malformed answers. Family means average four operations, so a learner that only copies an operand already has about 25 points of a family mean. The hard mean (addition and subtraction, shortcuts of 1–3%) is the figure to trust, as the births have been reported since E18; the family gate of the E16 line is on means that include max and min, and that is one more reason its hard-pair and hard-operation counts are the ones to quote.
+
+**What I take from it.** E22 version 1 took me about twenty minutes, after I had written, the same day, that every defect the audits found was in something I shipped within the hour. The process rule adopted today worked as intended: the brief was audited before any worker started.

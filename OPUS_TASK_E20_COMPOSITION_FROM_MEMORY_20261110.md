@@ -83,3 +83,15 @@ A positive reference. If an ordinary recurrent network learns new instances of t
 Reading, written before the result. P20.8 and P20.9 holding for a gated recurrent network say composition from memory is learnable here by a network of this size; they do not say why `bank2` fails. P20.10 says whether one loop between the banks, the only difference from G0, helps. All three missing P20.9 says transfer to untaught operator pairs from memory is not supported by twelve taught pairs at this size, and the next question is the teaching, not the network.
 
 **Report.** Per network and seed: the birth curve; at every checkpoint taught instances, new instances of taught pairs, the four held pairs (whole and final answer), family means, strict-panel means; parameter counts; the acceptance test; four verdicts; CPU-seconds. `E20B_PREDICTIONS.md`, `E20B_REPORT.md`, births, receipts and weights, logs, one paragraph as `E20B_REVIEW_SECTION_9_78.md`. Cost: twelve births and twelve lives, about 100,000 CPU-s, about 7 hours on four cores.
+
+---
+
+## Amendments to Job B after Codex's audit of the dispatch (10 November 23:00 EST; `PROJECT_DOCUMENTS/MINIFLY_E22_DISPATCH_HOSTILE_AUDIT_20261110.md`). These govern.
+
+1. **The premise is updated.** E20-A stage 1 showed that the window reference does compose with an operand in memory, partly (review 9.77). Job B asks whether a network with no window can.
+2. **Acceptance covers the whole life.** Your runner with `arch17`'s `bank2` must reproduce `exp16_integrated.py D <seed>` run on the same host at the same reduced dose, in every score and loss at all seven stages, not the first two. Do not compare a reduced-dose run with the full-dose receipt on file.
+3. **Each new network is checked before it is trained:** tensor shapes; no byte sees a later byte; state is reset between items and nothing leaks between rows of a batch; the start and end symbols are handled as in `arch17`; every parameter receives a gradient on a first batch; embeddings are in the group without decay.
+4. **G3 is compared with G0 on one host.** The instance that runs G0 also runs G3, three processes at a time. G3 starts from the same initial values as G0 for every shared parameter, with the added matrix initialised last. G1 and G2 may run elsewhere and are feasibility packages: their success shows that some network of this size can do the task and says nothing about why the two-bank network does not.
+5. **E20's own file names** (`e20_dev_<net>_<seed>`, `e20_life_<net>_<seed>`). Do not call `develop17` or `life` in a way that can reuse a cached birth or write over a receipt on file; G0's birth is made fresh under its E20 name.
+6. **Reading narrowed.** If all three new networks miss P20.9, that bounds these three packages at this dose. It does not show that the teaching is the cause.
+7. **If a run is interrupted,** keep what it wrote, stop that cell and report it. No restart without authorization.

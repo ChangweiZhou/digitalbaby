@@ -189,18 +189,39 @@ def book_shift(m, book0):
     return {k: round(sum(v) / len(v) / n0, 4) for k, v in out.items() if k != "other"}
 
 
+BIRTH_DEFAULTS = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", loss="answer")
+
+
+def expected_birth():
+    """What the birth this life asks for must have been, from the life's own settings (audit of E22, 10 Nov): a matching hash shows which
+    file was loaded, not how it was trained."""
+    if ARCH16 == "window":
+        return dict(birth="M")
+    e = dict(arch=ARCH16, bookdecay=BOOKDECAY16, heads=HEADS16, birthrule=BIRTHRULE16, fixedcodes=FIXEDCODES16, loss="answer", final_step=E.DEV_DOSE)
+    if BIRTHRULE16 == "T":
+        e.update(feedback=FEEDBACK16, traceup=TRACEUP16, projfb=PROJFB16)
+    return e
+
+
 def admit_birth(birth_file, sha):
-    """Second audit of 10 Nov: an observed hash identifies a birth; admission needs an expected one. A birth is admitted if its own receipt
-    is complete and names this hash, or if exp45/BIRTH_MANIFEST.json (births that predate hashed receipts, entered by the coordinator)
-    names it. Anything else stops the life, unless E16_LEGACY_BIRTH=allow, which is recorded in the receipt."""
+    """An observed hash identifies a birth; admission needs an expected hash AND the expected training configuration. Admitted if its own
+    complete receipt names this hash, or if exp45/BIRTH_MANIFEST.json does; in both cases the recorded configuration and final step must
+    equal expected_birth(). A configuration mismatch always stops the life. E16_LEGACY_BIRTH=allow covers only a birth with no entry at
+    all, and is recorded in the receipt."""
+    exp = expected_birth()
+    def check(cfg, where):
+        got = {k: cfg.get(k, BIRTH_DEFAULTS.get(k)) for k in exp}
+        bad = {k: (got[k], v) for k, v in exp.items() if got[k] != v}
+        assert not bad, f"{birth_file.name}: the birth recorded in {where} is not the one this life asks for {bad}"
     rec = birth_file.with_suffix(".json")
     if rec.exists():
         r = json.loads(rec.read_text())
         if r.get("complete") and r.get("weights_sha256") == sha:
-            return "own receipt"
+            check(dict(r, final_step=r["curve"][-1]["step"]), "its own receipt"); return "own receipt"
     man = OUT / "BIRTH_MANIFEST.json"
-    if man.exists() and json.loads(man.read_text()).get(birth_file.name, {}).get("sha256") == sha:
-        return "manifest"
+    ent = json.loads(man.read_text()).get(birth_file.name, {}) if man.exists() else {}
+    if ent.get("sha256") == sha:
+        check(ent.get("config", {}), "BIRTH_MANIFEST.json"); return "manifest"
     assert os.environ.get("E16_LEGACY_BIRTH") == "allow", f"{birth_file.name} ({sha[:12]}) is neither bound by its own receipt nor in BIRTH_MANIFEST.json"
     return "legacy, allowed by E16_LEGACY_BIRTH"
 

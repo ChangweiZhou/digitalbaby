@@ -55,3 +55,12 @@ Reading, written before the result. P18b.1 and P18b.2 holding say Mr. Xu's pures
 Per arm and seed: the six checkpoints of the birth curve (four operations at five k), the hard and max/min means beside the partner's, the first bank's own head, embedding movement by symbol role at each checkpoint, the credit census, the four verdicts, machine, commit, each process's environment, CPU-seconds, forecast against measured, what went wrong. Recompute your tables from the receipts and check each receipt's final step, loss mode and completion record. `E18B_PREDICTIONS.md`, `E18B_REPORT.md`, six births with weights (`git add -f` the `.pt`), logs, one paragraph as `E18B_REVIEW_SECTION_9_80.md`.
 
 **Standing notes.** Development panels held out by ordered pair (evidence level E2). The rule uses weight-sign feedback, whose standing under the locality constraint is the owner's to decide; B2-all also uses a backward pass over the item inside each bank, B3-all does not. No learning-core improvement is claimed. Cost: the partners took 5,700 (B2) and 6,400 (B3) CPU-s per birth on a four-core cloud container; six births about 36,000 CPU-s, about 2.6 hours.
+
+---
+
+## Amendments after Codex's audit of the dispatch (10 November 23:00 EST). These govern.
+
+1. **P18b.2 is replaced.** Copying one operand scores 49–52% on the sealed max and min panels (measured: `copy first` 50–52, `copy second` 49–50), so 30 was below a shortcut. **P18b.2: B3-all's max/min mean is at least 66 in at least two seeds** (the shortcut plus 15), **and its hard mean is at least 10** (addition and subtraction have shortcuts of 1–3%). Held at about 40%. For the record, B3's 1–3% on max and min was far below the copy shortcut: it did not produce well-formed answers.
+2. **Partners on the same host.** Each instance runs the answer-loss partner first (three births), then the every-byte arm (three births), so that the loss mask is the only difference on one machine. Twelve births in all, about three and a half hours per instance. Births have no output tag, so run each repeated partner in a separate copy of the folder and copy its files out under a `_e18b` suffix; never write over the E18 births on file.
+3. **Readings narrowed.** P18b.2 missing bounds this package at this dose; it does not show that every target needs longer credit. P18b.4 missing does not by itself show dilution.
+4. **If a run is interrupted,** keep what it wrote, stop that cell and report it. No restart without authorization.
