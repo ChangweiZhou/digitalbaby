@@ -776,3 +776,7 @@ Review 9.81; table in `exp45/E16_AUDIT_TABLES.md`. All eighteen drift seeds are 
 ## E16-M4, incomplete (10 November 2026, 20:00 EST)
 
 Stopped by a container restart at five of six checkpoints; predictions not judged; not rerun (review 9.68). At checkpoint 5, share 0.75 gives higher plus-minus pairs than share 0.5 in five of the six seeds it was not found on (three of six at or above 0.80 of the reference against one), and beyond 0.75 the hard pairs are still rising at 0.9375 while the family being taught is 2 to 6 points lower. Description at one checkpoint short of the end, under the allocation caveat of 9.75.
+
+## The two next-step runs (10 November 2026, 23:59 EST)
+
+Review 9.88. Without replay, backprop on the learner's pipeline loses everything as the sign rule does: plus-minus pairs learned to 91–92 and ending at 1, mod-97 at 0.30–0.45 of the reference against the rule's 0.12–0.33. With every next byte as the target in a life, backprop keeps the skill (0.95–0.98 of its answer-loss partner) and the sign-feedback sweep acquires it in the first block and then loses all of it (mod-97 5–10 at the end). Five of seven predictions hold; the two that miss are the ones that said the corrected rule would survive every-byte targets.

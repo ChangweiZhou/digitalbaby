@@ -1421,3 +1421,47 @@ Assurance after the fixes: the qualifier and the assay check exit 0; the memory-
 **Erratum that reaches beyond E18b: max and min are to be read against 50, not against zero.** On every single-operation panel, answering with one of the two operands is right about half the time. Scores I have quoted without that baseline include the one-bank network's births (max 53–61, min 61), the first bank's own head in E18 (max and min 55–60) and B3's 1–3. The first two are at the level of the shortcut and show no learned operation; the third is far below it, which means malformed answers. Family means average four operations, so a learner that only copies an operand already has about 25 points of a family mean. The hard mean (addition and subtraction, shortcuts of 1–3%) is the figure to trust, as the births have been reported since E18; the family gate of the E16 line is on means that include max and min, and that is one more reason its hard-pair and hard-operation counts are the ones to quote.
 
 **What I take from it.** E22 version 1 took me about twenty minutes, after I had written, the same day, that every defect the audits found was in something I shipped within the hour. The process rule adopted today worked as intended: the brief was audited before any worker started.
+
+## 9.88 The two runs from the next-steps note: backprop also loses everything without replay; the working rule does not survive every-byte targets (10 November 2026, 17:12–19:51 EST)
+
+**What ran.** Twelve lives on the owner's machine, predictions on file before launch (P-Z.1–3, P-E.1–4). All twelve exited with code zero; every receipt has seven stages at the full dose, a completion record, a weight hash that matches its file and a birth admitted by the manifest; each pair of arms shares one panel hash.
+
+**Zero replay, window learner, drifting stream, seeds 400009 / 600013 / 300007.** The two arms differ in the update alone.
+
+| End of life | Sign rule | Backprop on the same pipeline |
+|---|---|---|
+| mod-97 mean (ratio to the reference on file) | 31.9 / 31.1 / 11.1 (0.33 / 0.33 / 0.12) | 43.0 / 34.9 / 27.6 (0.45 / 0.37 / 0.30) |
+| Plus-minus pairs, final answer | 1.6 / 0.9 / 1.5 | 1.0 / 1.0 / 0.8 |
+| Plus-minus pairs at their best (checkpoints 3–4) | 61–85 | 91–92 |
+| mod-73 mean (the family being taught at the end) | 89.3 / 83.2 / 89.3 | 96.1 / 93.6 / 94.1 |
+
+| Prediction | Verdict |
+|---|---|
+| P-Z.1 the rule ends under 0.50 on mod-97 and at or under 5 on the plus-minus pairs | holds, all three |
+| P-Z.2 backprop ends under 0.60 on mod-97 and at or under 10 on the plus-minus pairs | holds, all three |
+| P-Z.3 backprop's mod-97 mean is at least 5 above the rule's in two seeds | holds (+11.1 / +3.8 / +16.6) |
+
+*Reading.* Losing everything without replay belongs to this stream under either update. Backprop learns the plus-minus pairs to 91–92 and ends at 1, exactly as the rule does. The sentence in 9.64 item 4, "under the sign rule this learner has no retention of its own", was true and was not a statement about the rule: nothing on file has retention of its own. Backprop keeps somewhat more of the mod-97 operations (4 to 17 points). One thing in the curves is not understood and is noted without a reading: in both arms the mod-97 score is 0 to 1 at the checkpoint where only compositions are being taught and partly returns afterwards.
+
+**Every next byte as the target, windowless two-bank learner, seeds 73129 / 93683 / 116089.** Each arm differs from its Phase 4 partner in the loss mask alone, and the two arms differ from each other in the update alone.
+
+| | Sign-feedback sweep, every byte | Its answer-loss partner | Backprop on the pipeline, every byte | Its answer-loss partner |
+|---|---|---|---|---|
+| mod-97 mean at the end | 10.3 / 5.4 / 9.7 | 87.9 / 86.1 / 86.9 | 89.3 / 90.6 / 89.2 | 90.9 / 92.3 / 94.2 |
+| Hard mean (add, sub) at the end | 1.4 / 1.2 / 0.9 | | 88.8 / 91.1 / 85.2 | |
+| mod-73 mean at the end | 11.9 / 7.7 / 11.9 | 90.8 / 86.9 / 89.4 | 89.2 / 90.8 / 88.1 | 93.5 / 93.2 / 93.2 |
+| mod-97 mean after blocks 1 to 6, seed 73129 | 84, 54, 26, 18, 6, 10 | | 91, 90, 86, 88, 89, 89 | |
+
+| Prediction | Verdict |
+|---|---|
+| P-E.1 backprop tolerates every-byte targets (at least 0.90 of its partner on both families, two seeds) | holds, all three (0.95–0.98) |
+| P-E.2 the rule ends within 10 points of its partner on mod-97 in two seeds | **misses, all three** (76 to 81 points below) |
+| P-E.3 the rule at or above 0.85 of backprop on mod-97 in two seeds | **misses, all three** (0.06–0.12) |
+
+*Reading, as written beforehand.* The objective is fine and the rule is not: with the stream's own next byte as the only target, backprop on the same pipeline keeps the skill within 2 to 5 points, and the sign-feedback sweep acquires it in the first block (82–84) and then loses all of it, the unrehearsed birth operations included (0–3). This is the pattern E16-L showed on 8 November under the older rule; carrying credit through time at every layer did not cure it. It bears directly on Mr. Zhou's delayed-observation idea: in its plainest form it works under backprop and fails under the working life rule. The single next change named beforehand is predictable distractors.
+
+*A hypothesis, not a finding.* Five sixths of the bytes under this loss are prompt bytes that cannot be predicted. Under the true gradient their error averages to nothing once the learner predicts their frequencies. Under weight-sign feedback the relayed error is not the gradient, so the same irreducible error need not average out and may push the weights steadily. This can be checked without training, at a backprop solution: the mean update over many batches should be near zero for backprop and need not be for the rule. I have not run that check.
+
+**Consequences.** E18b (births under every-byte targets with local heads) stays on hold; its question now reads differently, and the check above comes before it. The retention work of the next-steps note keeps its order: with both updates at the same floor without replay, a protection mechanism is tested under backprop first.
+
+**Cost.** CPU-seconds per life: 6,251–6,313 and 5,503–5,534 (zero replay, rule and backprop); 7,759–7,784 and 7,598–7,755 (every byte). Wall 2 h 38 min for twelve processes against a forecast of 2 h 30 (range 2 h 10 to 3 h). Evidence level E2; one life per seed and arm.
