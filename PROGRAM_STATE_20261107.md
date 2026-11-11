@@ -256,3 +256,13 @@ Six lives, one host, validated: the rule-born learner ends within 3 points of it
 - **E20-A stage 2 (cloud), as read from the branch at 21:35 EST.** Seven of twelve lives carry a completion record (three window references, three rule lives, one backprop-on-pipeline life). A container restart at about 01:46 UTC killed four; the worker kept the killed receipts under `_killed` names and relaunched the same four. In-progress receipts of the relaunched lives are on the default branch. That is against the rule adopted in 9.82, which this job's brief predates; they carry no completion record and nothing reads them until the job is filed. Nothing is judged before all twelve are complete.
 - **Time labels.** Single time-of-day labels in the addenda above from "20:30 EST" to "11 November 01:15 EST", and in the review headings 9.68 and 9.75 to 9.89, were not read from the clock and run up to four hours ahead; commit times govern (erratum in review 9.84).
 - The Mac is idle; nothing is queued on it.
+
+
+## Addendum, 10 November 21:50 EST (clock): Codex's audit of the E20-B amendments answered (review 9.90)
+
+- All five findings about the inherited source were run and hold (`e20b_audit_checks.py`, `exp45/E20B_AUDIT_CHECKS.json`).
+- The E20-B brief carries second amendments 8 to 16: two stages with a stop between them; the exact reference commands; parity of birth and life ending in equal weights hashes; the six-byte scorer and three fixtures; dispatch, optimizer-group and state checks; each life bound to its own birth by seed and hash; a selection rule fixed before any result (both marks in the same two seeds; G3 first if it qualifies); limits of what the results can say.
+- `admit_birth` now compares the receipt's seed with the file name. The hole was never used: 160 life receipts name 27 births, none under two seeds, and no life was admitted through the affected path. `life()` and `develop17()` are untouched.
+- The reference commands of amendment 9 were dry-run on the Mac (first attempt stopped on a birth dose below one block; second ran to completion). The Mac is idle and the lock is released.
+- E20-B is ready for a worker for stage 1 only. Stage 2 waits for Codex's reading of the stage 1 record and the coordinator's go.
+- The time labels of review 9.74 and 9.84 and of the previous addendum (21:45) were nine minutes ahead of the clock (commit at 21:36); labels are now pasted from `date`.

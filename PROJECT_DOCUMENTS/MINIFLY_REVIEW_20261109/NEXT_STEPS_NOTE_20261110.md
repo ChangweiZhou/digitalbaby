@@ -176,3 +176,7 @@ Not checked:
 - The sources behind Codex's memo and behind the literature check.
 - The state of the jobs in flight.
 - The CPU figures in section 5 are scaled from the receipts of E16-M3 and E17 Phase 4, not forecast from dry runs.
+
+---
+
+**Note appended by the coordinating session, 10 November 2026 (after Codex's audit of the E20-B amendments; review 9.90).** Section 3.2 says that if all three networks miss P20.9, "the question is the teaching, not the network". That reading is withdrawn. A miss by all three bounds those three packages at that dose and says nothing about the cause (E20 brief, amendments 6 and 14). Section 3.2 also makes a gated network the candidate if it meets P20.8 and P20.9; the rule now in force is amendment 13 of the same brief (both marks in the same two seeds; G3 first if it qualifies). The text above is unchanged.

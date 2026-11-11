@@ -217,6 +217,8 @@ def admit_birth(birth_file, sha):
     if rec.exists():
         r = json.loads(rec.read_text())
         if r.get("complete") and r.get("weights_sha256") == sha:
+            # 10 Nov, audit of the E20-B amendments: a checkpoint copied with its receipt under another seed's name passed here
+            assert str(r.get("seed")) == birth_file.stem.rsplit("_", 1)[1], f"{birth_file.name}: its receipt is for seed {r.get('seed')}"
             check(dict(r, final_step=r["curve"][-1]["step"]), "its own receipt"); return "own receipt"
     man = OUT / "BIRTH_MANIFEST.json"
     ent = json.loads(man.read_text()).get(birth_file.name, {}) if man.exists() else {}

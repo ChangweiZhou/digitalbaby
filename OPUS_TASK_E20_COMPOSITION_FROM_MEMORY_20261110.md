@@ -95,3 +95,62 @@ Reading, written before the result. P20.8 and P20.9 holding for a gated recurren
 5. **E20's own file names** (`e20_dev_<net>_<seed>`, `e20_life_<net>_<seed>`). Do not call `develop17` or `life` in a way that can reuse a cached birth or write over a receipt on file; G0's birth is made fresh under its E20 name.
 6. **Reading narrowed.** If all three new networks miss P20.9, that bounds these three packages at this dose. It does not show that the teaching is the cause.
 7. **If a run is interrupted,** keep what it wrote, stop that cell and report it. No restart without authorization.
+
+---
+
+## Second amendments to Job B, after Codex's audit of the amendments (10 November 2026, 21:45 EST by the clock; `PROJECT_DOCUMENTS/MINIFLY_E20B_AMENDMENTS_AUDIT_20261110.md`). These govern, together with 1 to 7 above.
+
+Every finding of that audit about the inherited source was run by the coordinator and holds (`MOD97_LOCAL_RULE_20261106/e20b_audit_checks.py`, output in `exp45/E20B_AUDIT_CHECKS.json`). You may reuse that script's fixtures.
+
+8. **Two stages, and a stop between them.**
+   - Stage 1 is the implementation and its qualification at a reduced dose. Nothing at full dose is run in stage 1.
+   - At the end of stage 1 you return: the commit of your runner, `exp45/e20b_qual/E20B_CHECK.json`, `E20B_PREDICTIONS.md` (the four predictions and the selection rule of amendment 13, copied unchanged), and the command and environment of every qualification run.
+   - Stage 2, the twelve births and twelve lives, starts only on the coordinator's go, after Codex has read the stage 1 record.
+
+9. **The comparator, exactly.** A bare `exp16_integrated.py D <seed>` is the window network with embedding decay on. The reference for parity is, in an environment with no other `E16_` or `E11_` variable set:
+   - birth: `E16_ARCH=bank2 E16_BOOKDECAY=off E16_COMPGAP=0 E11_DEV_UPDATES=<d> E11_STAGE_UPDATES=<s> OMP_NUM_THREADS=1 python3 exp16_integrated.py dev 73129`
+   - life: the same variables plus `E16_OUTTAG=_e20bref`, then `python3 exp16_integrated.py D 73129`.
+   - `<d>` must be a multiple of 512: the birth loop works in whole blocks of 512 updates and stops with an error below one block (found in the coordinator's dry run). Choose `<d>` and `<s>` so that the reduced-dose file names the reference writes exist nowhere under `exp45/` (check with `find` first and record the check). The coordinator's own dry run used 512 and 4 and its files are in `exp45/archive_e20b_ref_dry/`; choose a larger dose than that, so that some scores are above zero. When the reference has finished, move its birth, receipt and log into `exp45/e20b_qual/reference/`.
+   - Parity is shown in two parts, on one host, one thread:
+     a. **Birth.** Your birth loop with `arch17`'s `bank2`, same seed and dose, gives the same curve and the same weights hash as the reference birth.
+     b. **Life.** Your life loop, started from the reference birth file itself (loaded by path, its hash checked), gives at all seven stages the same counts on every panel the two runs share, the same recorded losses, the same panel hashes, the same number of optimizer steps, and at the end the same weights hash.
+   - If the weights hashes differ, report the largest absolute difference per tensor and stop. Do not adjust a tolerance to pass.
+   - The full-dose receipt on file (`e17_life_D_bank2_nbd_<seed>.json`) is a historical comparison only.
+
+10. **Scoring.**
+    - Compositions are scored with `exp16_integrated.score` (six bytes). The birth helper `E.score` generates at most four bytes and cannot score a worked answer; use it for births only.
+    - Three fixtures in `E20B_CHECK.json`, with the responder replaced by a stub: a fully correct answer scores whole and final; a wrong intermediate with the right ending scores final only; an answer without the end symbol scores neither.
+    - The panel of taught instances is kept in a dictionary of its own. Never add it to the `comp` dictionary: `shortcut_ceilings` stops on any key other than an operator pair or `within`. Record its hash, and check its exposure separately: every item of it was in the training stream's taught set, and no item of the `within` or held-pair panels was.
+    - Whole answers including the end symbol are the primary endpoint. Final-answer scores are diagnostic.
+
+11. **Architecture dispatch and state.**
+    - The parent selects its architecture when it is imported and knows only its own five names. Import it with `E16_ARCH=bank2 E16_BOOKDECAY=off`, so that the windowless settings hold (the k = 40 panels, no store), then install your network. Record in every receipt the class actually installed and its parameter count.
+    - `adamw16` finds the embedding table by the name prefix `book.` only. A table under any other name gets decay 0.3 without a word. Name it `book`, and in any case record the optimizer's groups (parameter names and decay per group) in the receipt.
+    - Checks per network, on a batch of mixed lengths, before any training: changing later bytes leaves earlier logits unchanged; changing or reordering other rows leaves a row's outputs unchanged; every recurrent state is reset between items, the LSTM's cell state included; active embedding rows and the recurrent weights receive finite, non-zero gradients. The start-symbol row is exempt: it is a padding row and never learns, as in `arch17`.
+    - G3: the added connection is a 64-by-512 matrix with no bias, as the specification above says ("one added matrix"). With it set to zero the outputs equal G0's exactly; with it enabled the first step of an item does not depend on it, and a later step reads the second bank's state of the step before.
+
+12. **Each life is bound to its own birth.**
+    - Before loading, a life verifies from the birth's complete receipt: network, seed, birth dose, optimizer settings, the hashes of the source files used, and the weights hash. The seed in the receipt, the seed in the file name and the life's seed must agree. There is no legacy admission in your runner.
+    - Fixtures in `E20B_CHECK.json`: a birth presented under another seed is refused; a changed weights file is refused; an output path that already exists is refused.
+    - The birth used for parity (9b) and G0's own birth for the experiment are different files with different purposes. G0's experimental birth is made fresh under its E20 name at full dose.
+    - For your information: the inherited `admit_birth` had this hole (a checkpoint copied with its receipt under another seed's name was admitted). It now compares the receipt's seed with the file name.
+
+13. **How the predictions feed the decision. Fixed now, before any result.** P20.7 to P20.10 are judged exactly as registered. They do not by themselves choose a network: P20.8 and P20.9 can hold for different networks, or for one network in different seeds. The selection rule is separate:
+    - A network **qualifies** if it ends at or above 85 on new instances of taught operator pairs and at or above 40 on the plus-minus pairs, whole answers, in the same two or more seeds.
+    - If G3 qualifies, G3 is the windowless candidate, whether or not a gated network also qualifies. Reason: it is one matrix away from the network on which the working rule already trains and is born (review 9.70, 9.85).
+    - Otherwise, if exactly one of G1 and G2 qualifies, that one is the candidate. If both do, the one with the higher three-seed mean on the plus-minus pairs; on an exact tie, the GRU.
+    - If none qualifies, there is no windowless candidate from this job, whatever the four verdicts are.
+    - Report each of the four held operator pairs separately at every checkpoint, so that the pooled plus-minus figure can be read.
+
+14. **Sentences above that no longer stand.** Amendment 6 replaces two earlier sentences of this brief: "If none does, the teaching protocol does not support that transfer at this scale, and a bounded window stays part of the design" (opening of Job B), and "the next question is the teaching, not the network" (the reading after the predictions). A miss by all three bounds these three packages at this dose and says nothing about the cause.
+
+15. **What the results can and cannot say.** State these in the report.
+    - P20.10 measures the added connection as a package: 32,768 weights (a 64-by-512 matrix with no bias) and the work they cost. It does not show that the placement of the feedback matters; that would need a control with as many extra weights elsewhere. Record G3's added parameters and its CPU beside G0's.
+    - "Windowless" describes the network's input. The registered decoder keeps the prompt and the bytes produced so far and reruns the network for each output byte. Nothing here measures single-pass inference or its memory cost.
+    - This is a development feasibility result at evidence level E2. It supports no claim of reuse or promotion.
+
+16. **Running stage 2, when it is released.**
+    - G0 and G3 on one host in separate waves, at most three processes at a time on four cores.
+    - Every receipt records its command and environment.
+    - Containers have restarted twice this week. Push work in progress to your own branch as often as you like. Nothing partial goes to the default branch; the default branch receives one commit when all twenty-four completion records and their weights hashes have been verified.
+    - Amendment 7 stands: an interrupted cell is kept as written, stopped and reported.

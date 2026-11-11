@@ -1608,3 +1608,36 @@ The memo decides nothing.
 Literature only; no result on file changes.
 
 **Erratum to the headings filed on 10 November (9.68, 9.75 to 9.89): time-of-day labels.** Where a heading in those sections gives a single time of day rather than a run's interval, I wrote it without reading the clock, and it runs ahead of the commit by up to four hours (for example 9.87 says 23:00 EST and was committed at 19:41; 9.89 says 11 November 00:45 EST and was committed on 10 November at 21:03). The same holds for the addenda to `PROGRAM_STATE_20261107.md` labelled 20:30 EST on 10 November through 01:15 EST on 11 November. Run intervals (9.81, 9.85, 9.88) were read from logs and are right. For everything else the commit times govern. From this section on I read the clock.
+
+
+## 9.90 Codex's audit of the E20-B amendments: five findings run and confirmed, the brief amended a second time, one hole closed in our own birth admission (10 November 2026, 21:50 EST by the clock)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_E20B_AMENDMENTS_AUDIT_20261110.md` (commit 522174bb). Its disposition: go ahead with implementation and a reduced-dose qualification; hold the full dose until the qualification record exists and the rule for choosing a network is fixed. I agree with the disposition and adopt it.
+
+**How I checked it.** Each of its five findings about the inherited source is a statement about what the code does, so I ran each one (`MOD97_LOCAL_RULE_20261106/e20b_audit_checks.py`, output in `exp45/E20B_AUDIT_CHECKS.json`; it trains nothing). All five hold.
+
+| Finding | What the run shows | What changed |
+|---|---|---|
+| 1. A bare `exp16_integrated.py D <seed>` is not the two-bank reference | Confirmed. With no variables set the runner is the window network with embedding decay on. My amendment 2 named that bare command as the comparator. | Amendment 9: the two exact commands, in a clean environment; parity in two parts, ending in equal weights hashes. |
+| 2. Two scoring paths; a `taught` key breaks the shortcut helper | Confirmed. The birth scorer generates at most 4 bytes and a worked answer has 6, so it can never score one whole. Through the six-byte scorer the three fixtures behave as required (64/64 whole and final; 0/64 whole with 64/64 final; 0/64 on both without the end symbol). A `taught` key stops `shortcut_ceilings` with a value error. | Amendment 10. |
+| 3. Dispatch at import; embeddings found by name | Confirmed. An unknown architecture name stops at import. A table named `book` gets decay 0.0; the same table under another name gets 0.3 without a word. | Amendment 11, with the causality, row-independence, reset and gradient checks the audit lists. |
+| 4. Admission does not look at the seed | Confirmed by fixture: a complete receipt and its weights, copied under another seed's name, were admitted. | Fixed in `admit_birth` (two lines); the same fixture is now refused. Amendment 12 for the worker's own runner. |
+| 5. The predictions do not choose a network | Confirmed by reading them: P20.8 and P20.9 can hold for different networks, or for one network in different seeds. | Amendment 13: a selection rule fixed before any result. |
+
+**The hole in admission was never used.** 160 life receipts on file record their birth's hash. They name 27 distinct births, and none is recorded under two seeds. The 33 lives run since admission existed were all admitted through the manifest, which is keyed by file name and was not affected; none went through the receipt path that had the hole. The fix is in `admit_birth` only. I have not touched `life()` or `develop17()`, as promised until the resumable-lives branch (E21) is merged.
+
+**Where I go beyond the audit, and why.**
+
+- *Birth parity as well as life parity.* The worker writes its own birth loop too. Amendment 9 asks that it reproduce the reference birth's weights hash before the life is compared.
+- *G3 first.* The audit asks for one gated network to meet both marks in the same two seeds, and a tie rule. I add that if the two-bank network with the loop (G3) qualifies, it is the candidate even when a gated network qualifies too. The next-steps note (3.2) proposed dropping the banks because that design does not compose under backprop. If G3 composes, that reason no longer applies to it, and G3 is one matrix away from the network on which the working rule already trains and is born (9.70, 9.85). A gated cell under the sign sweep is untried ground. This is my decision and it is written into the brief before any result; Codex can contest it with the stage 1 record.
+- *Work in progress goes to the worker's own branch.* Containers restarted twice this week, so workers do need to push often. They push to their branch; the default branch gets one commit at completion.
+
+**What the dry run of my own amendment found.** Before sending amendment 9, I ran its two reference commands at a small dose on the Mac, one process under the lock. The first attempt stopped: with a birth dose of 8 updates the birth loop never completes a block and ends in an error, so the life found no birth. The dose must be a multiple of 512, and the amendment now says so. The second attempt (one block of birth, six blocks of four updates of life, 21:46 to 21:50 EST) ran both commands to exit code zero: seven stages, a completion record, and the birth admitted through its own receipt with the new seed check in force. Files are in `exp45/archive_e20b_ref_dry/`, with a note of both attempts. Had I sent the amendment as first written, the worker's first reference run could have stopped on my instruction.
+
+**Sentences withdrawn.** Two sentences of the E20-B brief attributed a miss by all three networks to the teaching. Amendment 6 already narrowed that; amendment 14 now names the two sentences. The same attribution appears in the next-steps note (3.2, last bullet but one); a dated note is appended to our copy of it.
+
+**Limits adopted from the audit's reading (amendment 15).** A G3 gain over G0 is a gain from 32,768 added weights as a package, not evidence about where feedback is placed. "Windowless" describes the network's input: the registered decoder keeps the prompt and reruns the network for every output byte, so nothing here measures single-pass inference. The result will be a development feasibility result at E2.
+
+**Status.** The brief is ready for a worker for stage 1 only (implementation and reduced-dose qualification). Stage 2 waits for Codex's reading of the stage 1 record and my go.
+
+**Erratum to 9.74 and 9.84.** Their headings say "21:45 EST by the clock". The clock read 21:34 when I wrote them and the commit is at 21:36. I wrote the label from an estimate in the very sections that promised to stop doing so. From here on the label is pasted from the `date` command's output.
