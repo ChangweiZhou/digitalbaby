@@ -11,7 +11,8 @@ Streams built from one episode list:
     ordinary   episodes only
     wider      after an episode's end byte, d episodes later (d = 0..3, the line's delay stratum), a line "X:vv c:uu\\n" (10 bytes)
                stating that earlier episode's two values, as they were then. A line never crosses its phase or the change point.
-    moved      the same lines permuted among slots of the same phase, delay stratum and value era (the alignment control)
+    moved      the alignment control (version 6): first-encounter lines stay in place; teaching lines are permuted among their own
+               slots of the same segment, delay stratum and value era, so no line names a pair before that pair's probe
     extra      no lines; at each place a line stands in `wider`, 10 ordinary filler bytes (the extra-observation control)
     control    the same four, with every family-1 episode of the control contexts (teaching and first-encounter reveals) replaced at
                the same position by a taught family-1 pair of another context with the same cue and the same filler bytes; lines
@@ -227,12 +228,16 @@ def make_slots(eps, seed):
     return slots
 
 
-def move_lines(slots, seed, in_place=False):
-    """The alignment control: line contents permuted among slots of one class (segment of a phase, delay stratum, value era). Every symbol a line names
-    has one value within a class, so a moved line is still true where it lands. A class of one keeps its line, and is counted."""
+def move_lines(slots, seed, eps, in_place=False):
+    """The alignment control (version 6). The lines of first-encounter episodes stay where they are, so no line names a pair before that
+    pair's probe. The lines of teaching episodes are permuted among their own slots within one class (segment of a phase, delay stratum,
+    value era). Every symbol a line names has one value within a class, so a moved line is still true where it lands. A class with one
+    free line keeps it, and is counted."""
     r = rng(seed, "move"); classes = {}
+    free = [eps[s["describes"]]["kind"] == "teach" for s in slots]
     for k, s in enumerate(slots):
-        classes.setdefault((s["segment"], s["delay"], s["era"]), []).append(k)
+        if free[k]:
+            classes.setdefault((s["segment"], s["delay"], s["era"]), []).append(k)
     content = [s["describes"] for s in slots]
     stayed = 0
     for key, ks in sorted(classes.items()):
@@ -243,8 +248,10 @@ def move_lines(slots, seed, in_place=False):
         perm = [content[k] for k in ks]; r.shuffle(perm)
         for k, d in zip(ks, perm):
             content[k] = d
-    moved = [dict(s, describes=content[k], original=s["describes"]) for k, s in enumerate(slots)]
-    return moved, dict(classes=len(classes), class_sizes=sorted(len(v) for v in classes.values()), lines_that_stayed=stayed)
+    moved = [dict(s, describes=content[k], original=s["describes"], free=free[k]) for k, s in enumerate(slots)]
+    return moved, dict(classes=len(classes), class_sizes=sorted(len(v) for v in classes.values()), lines_that_stayed=stayed,
+                       lines_free_to_move=sum(free), lines_fixed_first_encounter=len(slots) - sum(free),
+                       lines_moved=sum(1 for k in range(len(slots)) if content[k] != slots[k]["describes"]))
 
 
 def render(world, eps, slots, mode, seed):
@@ -332,7 +339,7 @@ def build(seed, shared_context_values=False, split_override=None):
     split = split_override or make_split(world, seed)
     eps, meta = make_episodes(world, split, seed)
     slots = make_slots(eps, seed)
-    moved, move_info = move_lines(slots, seed)
+    moved, move_info = move_lines(slots, seed, eps)
     ceps, replaced = control_episodes(eps, split, seed)
     ceps = fix_outcomes(world, ceps)
     streams, offsets = {}, {}

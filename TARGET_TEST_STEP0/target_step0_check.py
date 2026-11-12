@@ -302,9 +302,15 @@ def ledger(B, stream, episodes_meta=None):
     counts, problems, line_names_pair = {}, [], 0
     for t in toks:
         key = (t["f"], t["x"], t["c"])
-        if t["type"] == "line":
-            if key in held and score_off.get(key) is not None and t["off"] < score_off[key]:
-                line_names_pair += 1
+        if t["type"] == "line":                  # version 6: a line naming a pair is an occurrence of that pair's answer
+            if key in sealed:
+                problems.append(dict(line_names_sealed=key, off=t["off"]))
+            if key in held:
+                so = score_off.get(key)
+                if ctl and t["f"] == 0 and t["x"] in ctl:
+                    problems.append(dict(line_names_control_context_held_pair=key, off=t["off"]))
+                elif so is None or t["off"] < so:
+                    line_names_pair += 1; problems.append(dict(line_before_scoring=key, off=t["off"], scoring_at=so))
             continue
         counts[key] = counts.get(key, 0) + 1
         if key in sealed:
@@ -330,9 +336,17 @@ def check5(B):
     fdata, fo = G.render(B["world"], eps, None, "ordinary", B["seed"])
     B2 = dict(B, streams=dict(B["streams"], fixture=fdata), offsets=dict(B["offsets"], fixture=dict(fo, starts=fo["starts"][:5] + fo["starts"][6:])))
     fx = ledger(B2, "fixture")
-    return result(ok, fx["n_problems"] > 0, **{s: dict(occurrences=v["occurrences"], problems=v["n_problems"],
+    # fixture (version 6): one line, that of a first-encounter episode, placed before its pair's probe
+    e1 = next(e for e in B["episodes"] if e["kind"] == "first" and e["i"] > 10)
+    host = next(h for h in range(e1["i"] - 1, -1, -1) if B["episodes"][h]["segment"] == e1["segment"] and B["episodes"][h]["era"] == e1["era"])
+    sl = sorted([dict(sv, host=host) if sv["describes"] == e1["i"] else sv for sv in B["slots"]], key=lambda sv: (sv["host"], sv["describes"]))
+    ldata, lo = G.render(B["world"], B["episodes"], sl, "lines", B["seed"])
+    fx2 = ledger(dict(B, streams=dict(B["streams"], fixture_line=ldata), offsets=dict(B["offsets"], fixture_line=lo)), "fixture_line")
+    return result(ok, fx["n_problems"] > 0 and fx2["n_problems"] > 0, **{s: dict(occurrences=v["occurrences"], problems=v["n_problems"],
                                                      lines_naming_exactly_a_held_pair_before_its_probe=v["lines_naming_exactly_a_held_pair_before_its_probe"]) for s, v in out.items()},
-                  fixture=dict(what=f"held pair {chr(65 + e0['x'])}{chr(97 + 12 * e0['f'] + e0['c'])} inserted as episode 5", reported=fx["n_problems"]))
+                  fixture=dict(what=f"held pair {chr(65 + e0['x'])}{chr(97 + 12 * e0['f'] + e0['c'])} inserted as episode 5", reported=fx["n_problems"]),
+                  fixture_line=dict(what=f"the line of first-encounter episode {e1['i']} ({chr(65 + e1['x'])}{chr(97 + 12 * e1['f'] + e1['c'])}) hosted at episode {host}, before its probe",
+                                    reported=fx2["n_problems"], problems=fx2["problems"][:3]))
 
 
 # ---------------------------------------------------------------- 6. twins
@@ -393,6 +407,10 @@ def alignment(B, moved_slots):
         true_now = G.line_bytes(w, dict(e, era=host_era))
         if G.line_bytes(w, e) != true_now:
             issues.append(dict(line=s["describes"], slot=s["host"], why="not true where it stands"))
+        if not s.get("free", True):
+            if s["describes"] != s["original"]:
+                issues.append(dict(line=s["describes"], slot=s["host"], why="a first-encounter line moved"))
+            continue
         classes.setdefault((s["segment"], s["delay"], s["era"]), []).append(s)
     for key, ss in classes.items():
         if len(ss) < 2:
@@ -403,8 +421,27 @@ def alignment(B, moved_slots):
             e, h = eps[s["describes"]], eps[s["original"]]
             same_content += (e["f"], e["x"], e["c"]) == (h["f"], h["x"], h["c"])
     lam = sum(1 for ss in classes.values() if len(ss) >= 2)          # a uniform permutation of each class fixes one line on average
-    return dict(lines=len(moved_slots), aligned_lines=fixed, expected_by_chance=lam, p_value=round(poisson_tail(fixed, lam), 6),
+    return dict(lines=len(moved_slots), lines_free_to_move=sum(len(v) for v in classes.values()),
+                lines_moved=sum(1 for ss in classes.values() for s in ss if s["describes"] != s["original"]), aligned_lines=fixed, expected_by_chance=lam, p_value=round(poisson_tail(fixed, lam), 6),
                 lines_describing_an_episode_of_the_same_pair_as_their_slot=same_content, issues=issues[:5], n_issues=len(issues))
+
+
+def line_values(B, data, cb):
+    """Every value read from the stream's bytes against the value allowed in the era in which the line is delivered."""
+    w = B["world"]; bad, n = [], 0
+    for t in parse(data):
+        if t["type"] != "line":
+            continue
+        n += 1; era = int(t["off"] >= cb)
+        u_ok = w["u_new"][t["c"]] if (t["f"] == 0 and era == 1 and t["c"] in w["u_new"]) else w["u"][t["f"]][t["c"]]
+        if t["vv"] != w["v"][t["f"]][t["x"]] or t["uu"] != u_ok:
+            bad.append(dict(off=t["off"], line=f"{chr(65 + t['x'])}:{t['vv']:02d} {chr(97 + 12 * t['f'] + t['c'])}:{t['uu']:02d}", era=era))
+    return dict(lines=n, wrong=len(bad), first_wrong=bad[:3])
+
+
+def solver_contradictions(data, cb):
+    s = SV.PrefixSolver(cb); s.feed(data)
+    return s.inconsistent
 
 
 def check7(B):
@@ -424,11 +461,22 @@ def check7(B):
     for a, b, *_ in lr:
         inside_ok &= all(ch in G.FILL for ch in X[a:b]); outside[a:b] = X[a:b]
     placement = placement and bytes(outside) == X and inside_ok
-    ok = freq_same and al["n_issues"] == 0 and al["p_value"] > 0.001 and placement
-    fx_slots, _ = G.move_lines(B["slots"], B["seed"], in_place=True)
+    vals = {s: line_values(B, B["streams"][s], change_byte(B, s)) for s in ("wider", "moved", "control_wider")}
+    contra = {s: solver_contradictions(B["streams"][s], change_byte(B, s)) for s in ("ordinary", "wider", "moved", "extra", "control", "control_wider")}
+    ok = (freq_same and al["n_issues"] == 0 and al["p_value"] > 0.001 and placement and all(v["wrong"] == 0 for v in vals.values())
+          and all(v == 0 for v in contra.values()))
+    fx_slots, _ = G.move_lines(B["slots"], B["seed"], B["episodes"], in_place=True)
     fx = alignment(B, fx_slots)
-    return result(ok, fx["p_value"] <= 0.001, symbol_frequencies_equal=freq_same, **al, lines_that_stayed=B["move_info"]["lines_that_stayed"],
-                  move_classes=B["move_info"]["classes"], extra_bytes_match_count_and_placement=placement,
+    # fixture (version 6): one wrong value in one line of the moved stream
+    a, b, *_ = next(r_ for r_ in B["offsets"]["moved"]["line_ranges"] if r_[0] > change_byte(B, "moved"))
+    bad = bytearray(MV); vv = int(bad[a + 2:a + 4]); bad[a + 2:a + 4] = b"%02d" % ((vv + 1) % G.M); bad = bytes(bad)
+    fxv = dict(line=bad[a:b - 1].decode(), was=MV[a:b - 1].decode(), values=line_values(B, bad, change_byte(B, "moved")),
+               solver_contradictions=solver_contradictions(bad, change_byte(B, "moved")))
+    fxv["failed"] = fxv["values"]["wrong"] == 1 and fxv["solver_contradictions"] > 0
+    return result(ok, fx["p_value"] <= 0.001 and fxv["failed"], line_values_from_bytes=vals, solver_contradicting_rows=contra,
+                  fixture_wrong_value=fxv, symbol_frequencies_equal=freq_same, **al, lines_that_stayed=B["move_info"]["lines_that_stayed"],
+                  move_classes=B["move_info"]["classes"], lines_fixed_first_encounter=B["move_info"]["lines_fixed_first_encounter"],
+                  extra_bytes_match_count_and_placement=placement,
                   disclosure_ledger=disclosure_ledger(B),
                   fixture=dict(what="a shuffle that leaves every line in place", aligned_lines=fx["aligned_lines"], p_value=fx["p_value"]))
 

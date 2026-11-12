@@ -1,5 +1,23 @@
 # Target test, step 0: generator qualification (report)
 
+**Version 6 corrections (12 November, from `17a5fa35`), first.** Codex's audit (`PROJECT_DOCUMENTS/MINIFLY_E26_STEP0_IMPLEMENTATION_AUDIT_20261111.md`) asked for two corrections to the moved-lines arm. Both are made, and every check passes again for seeds 1, 2 and 3.
+1. **No line names a pair before that pair's probe.** The 96 lines of first-encounter episodes now stay where they are in the moved stream. Only the 3,456 teaching lines move, within the classes already defined (segment × delay × era). Of those, 3,430 / 3,445 / 3,433 moved; the rest landed back in their own slot by chance. The alignment statistic is computed over the free lines: 26 / 11 / 23 aligned, against 20 expected (p 0.11 / 0.99 / 0.28).
+
+   Exact-pair lines before a first-encounter probe are **0 in every stream and seed**: ordinary, wider, moved, extra, control and control with lines (moved was 51 / 47 / 55 before). Check 5 now counts lines as occurrences as well as episodes. A line naming a held pair before its probe, or naming a sealed pair, fails it.
+
+   *New fixture:* the line of one first-encounter episode is hosted one episode earlier, 10 bytes before its probe (seed 1: Pd at episode 915). It is reported, and check 5 fails as required.
+2. **Lines are checked as bytes.** Every line in the wider, moved and control-with-lines streams is parsed from the bytes. Its context value and cue value are compared with the values allowed in the era in which the line is delivered. All 3,552 per stream are right.
+
+   The prefix-only solver, fed each whole stream (ordinary, wider, moved, extra, control, control with lines), finds no row that contradicts another; a contradiction fails check 7.
+
+   *New fixture:* one wrong value in one line of the moved stream, after the change (seed 1: `J:74 i:83` → `J:75 i:83`). One wrong value is found, the solver finds a contradiction, and check 7 fails as required.
+
+**Unchanged bytes.** The ordinary, wider (aligned), extra-bytes, control and control-with-lines streams, all six panels and all held sets have the same sha256 as filed at `17a5fa35`, for all three seeds; only the moved stream changed. The moved stream's new hashes are cda69be51d26 / 55c74509c814 / 343206fd24dc. As Codex notes, with a line after every episode both line arms have disclosed every value before the first probe. The corrected pair of arms therefore tests alignment with the episode under this schedule; a difference in what is known at probe time needs a sparser schedule.
+
+---
+
+*The rest of this report is the version 5 qualification, kept as filed. Rows for checks 5 and 7 and the moved column describe that version except where corrected above.*
+
 Brief `OPUS_TASK_TARGET_TEST_STEP0_20261111.md`, version 5, at `3c928dfa`. No learner was trained. Nothing is concluded about any learner. Standard library only. Python 3.13.
 
 **Files.**
@@ -53,8 +71,8 @@ The six panels and six held sets per seed are hashed in the JSON as well.
 
 ## What I found unclear, and what I chose (for the audit)
 
-1. **Moved lines can state a held pair outright before its probe.** The slot rule permits it. In the moved stream, a line naming exactly the probed pair precedes 51 / 47 / 55 of the 96 first-encounter probes; in the aligned stream it precedes none. Check 5 counts episodes, not lines, so it passes. But first-encounter scores of the aligned and moved arms would then not be compared on equal terms. A rule such as "a line naming a held pair is not moved before that pair's probe" would remove this. That would be a rule change, so I did not make it.
-2. **The disclosure ledger never differs between the aligned and moved arms.** With a line after every revealed episode, both arms have disclosed every context and cue value long before the first probe. The two arms differ only in when a value is told relative to its episode, never in what has been told by a probe. A sparser line schedule (a proposal to revisit) would make the ledger informative.
+1. *Moved lines naming a held pair before its probe* (51 / 47 / 55 at version 5): resolved in version 6, above.
+2. *The disclosure ledger never differs between the line arms* under this dense schedule: unchanged, and noted by Codex; a sparser schedule waits for the sizing sweep.
 3. **The interfere phase is two segments for moving lines.** Moving "within the phase" would let a family-1 line land in the stretch where family 1 is absent. Lines move only within the absence or within the return. This is narrower than the brief's wording, not looser.
 4. **"Three streams."** The aligned wider-view arm is generated too, since the other two are defined from it. Control versions of the ordinary and aligned streams are generated as well.
 5. **Smaller choices:**
