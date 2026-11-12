@@ -28,6 +28,8 @@
 > 4. The roster is now nine new births and four baseline births, of which two are done. The three marks and their readings are unchanged.
 > The nine new births start on the coordinator's release line.
 
+> **Release, 11 November 2026, 20:18 EST (clock): the nine new births may start.** The two remaining backprop baselines ran on the worker's host and equal E20-B's G0 births of their seeds: sealed scores and losses at all six checkpoints, and 24 of 24 weight tensors, checked by the coordinator on the files (review 9.106). The D-ans baselines are therefore 93.2 / 92.8 / 92.8 and the T-ans baselines 87.5 / 90.7 / 84.7, all cloud-born. Run D-all, T-all and T-bal for the three seeds, on the same host and sources, as revision 4 says.
+
 ## Why this job
 
 Three results on file say the working rule fails when every byte is a target instead of the answer bytes only:

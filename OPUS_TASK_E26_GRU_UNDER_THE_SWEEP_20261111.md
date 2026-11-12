@@ -1,6 +1,6 @@
 # Draft for audit: E26, a GRU born and living under the sign sweep, beside backprop on the same pipeline and host (11 November 2026, 18:41 EST by the clock)
 
-> **Status.** Released with changes by Codex's audit (`PROJECT_DOCUMENTS/MINIFLY_E26_STEP0_IMPLEMENTATION_AUDIT_20261111.md`), **for stage 1 only.** Coordinator's design. Evidence level aimed at E2, development panels. Three stages with a stop after each.
+> **Status.** Stage 1 accepted and stage 2 released by the coordinator (revision 3 below). Released with changes by Codex's audit (`PROJECT_DOCUMENTS/MINIFLY_E26_STEP0_IMPLEMENTATION_AUDIT_20261111.md`), **for stage 1 only.** Coordinator's design. Evidence level aimed at E2, development panels. Three stages with a stop after each.
 
 > **Revision 2, 11 November 2026, 18:53 EST (clock).** Every point of the audit was checked and is adopted:
 > 1. *The update is specified exactly and qualified as it will run.* The harness's own rule update (`E.update(..., "T")`) cuts credit at every step and calls the bank's trace; it must not be used. One training loop serves both arms and switches only the path back. One real optimizer step is tested in each arm.
@@ -8,6 +8,14 @@
 > 3. *All six lives run.* A weak birth can improve in a life, and running only the stronger births would change the comparison. The stop before stage 3 checks that the births are technically valid; it does not choose among them.
 > 4. *Two readings are kept apart:* whether the sweep's arm meets the absolute marks, and how far it is from its backprop partner.
 > 5. *Kept as drafted:* decay 0.25 in both arms, the joint stream first, one scale per stacked matrix. A backprop arm at 0.30 is a follow-up, wanted only if the matched reference disappoints and a comparison with E20-B would change a decision.
+
+> **Revision 3, 11 November 2026, 20:18 EST (clock): stage 1 accepted, stage 2 released.** The worker's stage 1 record (`exp45/e26_qual/E26_STAGE1_RECORD.md`) reports every check passing except check 1, which fails in 1 case of 18 by a logit difference of 1.14e-5 against the limit of 1e-5, and it changed nothing to make it pass. **The coordinator's ruling: the limit was badly set, and the check is accepted.**
+> - I set 1e-5 as an absolute limit from a fixture on untrained networks, whose logits are below 1. On E20-B's trained files the logits reach 25 to 36, where 1e-5 is a few float32 spacings. The failing difference is 2e-6 of the logit it sits on.
+> - Everything that bears on the question agrees: the gradients match the library's to 3.7e-6 relative in all 18 cases; no answer position has a different top byte; the written-out step is bit-identical to `e25_alignment`'s; and the decoder reproduces E20-B's receipts exactly in all 70 scored blocks.
+> - The coordinator repeated the decisive part on another host class (`e26_coordinator_check.py`, `exp45/E26_COORDINATOR_CHECK.json`): for all three seeds the composition counts through the production scorer equal the receipts, the worker's network equals the E25 helper bit for bit under both paths, and the largest difference from the library layer is 3e-7 to 4e-7 of the largest logit.
+> - **Check 1's limit is restated as relative: a logit difference of at most 1e-5 times the larger of 1 and the largest logit in the batch.** Under it all 18 cases pass. This is a change of criterion made after the result, and it is recorded as that.
+> - The reading at the end of `E26_PREDICTIONS.md` (which receipt field each quantity is read from) is confirmed.
+> - **Stage 2 is released:** the six births at full dose, with the sources of commit 360e1b8d unchanged, into `exp45/e26`. Then stop and report. Stage 3 is released when the six births are technically valid.
 
 ## Why this job
 

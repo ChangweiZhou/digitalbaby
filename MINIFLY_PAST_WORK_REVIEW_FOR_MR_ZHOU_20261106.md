@@ -2234,3 +2234,32 @@ Two corrections to the moved-lines arm, both adopted in version 6 of the brief:
 - *The rendered lines are checked as bytes.* I read the delivered check: it compares the symbols named in the lines between the arms and does not parse the values. Each value is now to be parsed from the stream and compared with what its era allows.
 
 Neither touches the ordinary stream. The sizing sweep (9.101 D.3) needs only the ordinary stream and the aligned lines, so it does not wait for these corrections.
+
+
+## 9.106 Three jobs reported: E24's baselines agree and its nine births are released; E26's stage 1 is accepted and its births released; step 0's moved-lines arm is corrected (20:18 EST by the clock, 11 November 2026)
+
+Each was checked on the files by me before anything was released. On the owner's machine I ran scoring and check scripts only; nothing was trained.
+
+### E24: the baselines are in, and the nine births are released
+
+The worker ran the two remaining backprop baselines on its host (branch `claude/charming-clarke-u9g850`, commit 661e0e84). I loaded both weight files beside E20-B's G0 births of the same seeds: sealed scores equal at all six checkpoints, losses equal, and 24 of 24 tensors equal, for seed 93683 and for seed 116089. With seed 73129 (9.101 B) that makes all three. So E24's backprop baselines are 93.2 / 92.8 / 92.8 and its sign-sweep baselines 87.5 / 90.7 / 84.7, every one born on a cloud host, and the harness and E20-B's runner are shown equal at full dose for all three seeds. The nine new births are released.
+
+### E26: stage 1 accepted with a ruling on one failed check; stage 2 released
+
+Record: `exp45/e26_qual/E26_STAGE1_RECORD.md` (branch `claude/adoring-cori-b07aog`, commit 87648b01), now merged with its sources `arch26.py` and `exp26_candidate.py`.
+
+- **What the worker found.** Every check passes except check 1, which fails in 1 case of 18: on one trained file the written-out step's logits differ from the library layer's by 1.14e-5, against my limit of 1e-5. The worker changed nothing, reported the check as failed, and held stage 2 for a ruling. That is how a failed check should be handled.
+- **My ruling: the limit was badly set, and the check is accepted.** I had fixed 1e-5 as an absolute limit from untrained networks, whose logits are below 1. Trained logits reach 25 to 36, where that limit is a few float32 spacings. The difference is 2e-6 of the logit it sits on. The limit is restated as relative, and under it all 18 cases pass. I am changing a criterion after seeing the result, and I record it as that; what makes me willing is the check below, which does not depend on any tolerance.
+- **The decisive check holds, on two host classes.** E20-B's saved end-of-life GRU files, loaded into the written-out network and scored by the production scorer, give exactly the counts in their own receipts: all 70 scored blocks on the worker's host, and the five composition panels of all three seeds on the owner's machine (`e26_coordinator_check.py`, `exp45/E26_COORDINATOR_CHECK.json`). On the owner's machine the worker's network also equals my E25 helper bit for bit, in the forward pass and in the sweep's gradients.
+- **The check Codex asked for did its work.** One real optimizer step in each arm equals an independent computation tensor for tensor, and the harness's own rule update, run as the fixture, stops at the trace routine; with the trace disabled it differs in 7 tensors, because it cuts credit at every step.
+- **Cost, measured.** The sweep costs 1.06 to 1.07 times the exact path on the worker's host. Forecast: about 19,800 CPU-seconds for the six births and 31,200 for the six lives, roughly two and three hours.
+
+At the reduced dose both arms learn about as much as each other, which tests nothing and shows only that the sweep's arm is not dead on arrival.
+
+### Step 0: the moved-lines arm is corrected
+
+Branch `claude/target-step0-moved-lines` (commit 8294fb16), now merged. I reran its check script: every check passes for the three world seeds and all 3,815 values equal the worker's. Of the 61 recorded hashes, 58 are unchanged from the accepted version; the 3 that changed are the moved stream of each seed, as intended. Exact-pair lines before a first-encounter probe are zero in every stream. Both new fixtures fail as required: a line placed ten bytes before its pair's probe, and one wrong value in one line. Step 0 is complete for the dense line schedule; whether the schedule should be sparser waits for the sizing sweep.
+
+### Not finished
+
+E21b is still in progress on `claude/funny-mendel-34puq7`.

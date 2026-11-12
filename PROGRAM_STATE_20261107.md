@@ -392,3 +392,12 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - **E26** is at revision 2 and released for stage 1 only: the training loop is written out (the harness's rule update must not be used), the scorer is qualified on the written-out network, all six lives run, feasibility and the paired gap are read separately.
 - **Step 0:** the ordinary stream is accepted and `TARGET_TEST_STEP0/` is merged into the default branch. The moved-lines arm needs two corrections (brief at version 6): no line names a pair before its probe; rendered values are checked as bytes.
 - Still to write: the brief for the sizing sweep.
+
+
+## Addendum, 11 November 20:18 EST (clock): three jobs reported and checked (review 9.106)
+
+- **E24:** both remaining backprop baselines equal E20-B's G0 births (24 of 24 tensors each). The nine new births are released.
+- **E26:** stage 1 accepted. One check failed by 1.14e-5 against an absolute limit of 1e-5 that the coordinator had set from untrained networks; the limit is restated as relative and the ruling is recorded as a change of criterion after the result. The tolerance-free check holds on two host classes: E20-B's saved GRU files score exactly as in their receipts through the written-out network. Stage 2 (six births, about two hours) is released; sources merged into the default branch.
+- **Step 0:** moved-lines arm corrected and merged; the coordinator's rerun equals the worker's record; only the moved stream's hashes changed.
+- **E21b:** in progress.
+- Still to write: the brief for the sizing sweep.
