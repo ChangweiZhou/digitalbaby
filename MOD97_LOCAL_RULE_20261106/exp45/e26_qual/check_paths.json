@@ -1,0 +1,562 @@
+{
+ "part": "paths",
+ "command": "python3 exp26_candidate.py check paths --qual exp45/e26_qual",
+ "provenance": {
+  "command": "python3 exp26_candidate.py check paths --qual exp45/e26_qual",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "360e1b8de55c309bcc73baa0d691881a15e04d74",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "f4559971a6c1770523d641431fe5d4bd56def3f5ee3cafc87a5b869509be50ae",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  }
+ },
+ "e25_alignment_sha256": "5316278dc5f3d79b3ddd80e96a7674d84d6b9e053cb68b878d02518aa54527a3",
+ "cpu_seconds": 6.179529977,
+ "result": {
+  "cases": {
+   "73129 untrained mixed": {
+    "source": null,
+    "batch": "mixed",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.0019775761757045984,
+     "rnn.bias_hh_l0": 0.0054405746050179005
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "73129 untrained birth": {
+    "source": null,
+    "batch": "birth",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.0031279046088457108,
+     "rnn.bias_hh_l0": 0.008879652246832848
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "73129 birth mixed": {
+    "source": {
+     "file": "exp45/e20b/e20_dev_G1_73129.pt",
+     "sha256": "acd19c49456bcd3b15557d0ebd4858d460a9169c06b12f0bdbaee0b4c5554a9b"
+    },
+    "batch": "mixed",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.07802769541740417,
+     "rnn.bias_hh_l0": 0.09494345635175705
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "73129 birth birth": {
+    "source": {
+     "file": "exp45/e20b/e20_dev_G1_73129.pt",
+     "sha256": "acd19c49456bcd3b15557d0ebd4858d460a9169c06b12f0bdbaee0b4c5554a9b"
+    },
+    "batch": "birth",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.011058584786951542,
+     "rnn.bias_hh_l0": 0.01026184856891632
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "93683 untrained mixed": {
+    "source": null,
+    "batch": "mixed",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.004088489338755608,
+     "rnn.bias_hh_l0": 0.0070998831652104855
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "93683 untrained birth": {
+    "source": null,
+    "batch": "birth",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.00396400922909379,
+     "rnn.bias_hh_l0": 0.0070342617109417915
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "93683 birth mixed": {
+    "source": {
+     "file": "exp45/e20b/e20_dev_G1_93683.pt",
+     "sha256": "c531ad43aea6ffac07571d05e6039a850ffb5a8c559a9f4973d2ed40a203fbf8"
+    },
+    "batch": "mixed",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.14984427392482758,
+     "rnn.bias_hh_l0": 0.2400408387184143
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "93683 birth birth": {
+    "source": {
+     "file": "exp45/e20b/e20_dev_G1_93683.pt",
+     "sha256": "c531ad43aea6ffac07571d05e6039a850ffb5a8c559a9f4973d2ed40a203fbf8"
+    },
+    "batch": "birth",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.0005955381784588099,
+     "rnn.bias_hh_l0": 0.00026597417308948934
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "116089 untrained mixed": {
+    "source": null,
+    "batch": "mixed",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.0025220471434295177,
+     "rnn.bias_hh_l0": 0.006494347937405109
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "116089 untrained birth": {
+    "source": null,
+    "batch": "birth",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.003077102592214942,
+     "rnn.bias_hh_l0": 0.007843494415283203
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "116089 birth mixed": {
+    "source": {
+     "file": "exp45/e20b/e20_dev_G1_116089.pt",
+     "sha256": "b46aa9b35741ce4a5f68ffce3d914b5776439b9e78da8aaa53f0efd6d3c353ae"
+    },
+    "batch": "mixed",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.16055116057395935,
+     "rnn.bias_hh_l0": 0.20023605227470398
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 44,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   },
+   "116089 birth birth": {
+    "source": {
+     "file": "exp45/e20b/e20_dev_G1_116089.pt",
+     "sha256": "b46aa9b35741ce4a5f68ffce3d914b5776439b9e78da8aaa53f0efd6d3c353ae"
+    },
+    "batch": "birth",
+    "forward_bitwise_equal": true,
+    "top_layer_grad_max_abs_diff": {
+     "l3.weight": 0.0,
+     "l3.bias": 0.0
+    },
+    "recurrent_grad_max_abs_diff": {
+     "rnn.weight_hh_l0": 0.003908204846084118,
+     "rnn.bias_hh_l0": 0.002839350374415517
+    },
+    "below_top_grad_differs": {
+     "book.weight": true,
+     "l1.weight": true,
+     "l1.bias": true,
+     "rnn.weight_ih_l0": true,
+     "rnn.weight_hh_l0": true,
+     "rnn.bias_ih_l0": true,
+     "rnn.bias_hh_l0": true,
+     "lm.weight": true,
+     "lm.bias": true,
+     "l2.weight": true,
+     "l2.bias": true
+    },
+    "per_arm": {
+     "S": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     },
+     "B": {
+      "params_without_finite_nonzero_grad": [],
+      "active_rows": 45,
+      "active_rows_without_grad": [],
+      "bos_row_grad_zero": true
+     }
+    },
+    "pass": true
+   }
+  },
+  "tolerances": {
+   "top_layer_abs": 1e-07,
+   "recurrent_must_exceed": 1e-06,
+   "note": "1e-7 and 1e-6 as in e25_alignment.fixtures"
+  },
+  "pass": true
+ }
+}

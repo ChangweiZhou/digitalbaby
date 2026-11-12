@@ -1,0 +1,478 @@
+{
+ "part": "data",
+ "command": "python3 exp26_candidate.py check data --qual exp45/e26_qual",
+ "provenance": {
+  "command": "python3 exp26_candidate.py check data --qual exp45/e26_qual",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1",
+   "E11_DEV_UPDATES": "2048",
+   "E11_STAGE_UPDATES": "256"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "8f8bd684a897e7104ee0ae3101a12a4d23a5ee06",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "f4559971a6c1770523d641431fe5d4bd56def3f5ee3cafc87a5b869509be50ae",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  }
+ },
+ "e25_alignment_sha256": "5316278dc5f3d79b3ddd80e96a7674d84d6b9e053cb68b878d02518aa54527a3",
+ "cpu_seconds": 0.01872955300000001,
+ "result": {
+  "check3_data": {
+   "birth_rows": true,
+   "birth_final": true,
+   "life_stages": true,
+   "life_final": true,
+   "birth_digest": {
+    "batches": 2048,
+    "sha256": "4f622d94e0156993925f2343bce626de7d732a27e0e63762f6a97ec8c77895cb"
+   },
+   "life_digest": {
+    "batches": 1536,
+    "sha256": "948066565aa9fc3e5a8919543089ce0f13b46811085a518dc0463a11177e6bc8"
+   },
+   "pass": true
+  },
+  "check4_optimizer": {
+   "S birth": {
+    "groups": [
+     {
+      "weight_decay": 0.25,
+      "n_params": 12,
+      "embedding_only": false
+     },
+     {
+      "weight_decay": 0.0,
+      "n_params": 1,
+      "embedding_only": true
+     }
+    ],
+    "ok": true
+   },
+   "S life": {
+    "groups": [
+     {
+      "weight_decay": 0.25,
+      "n_params": 12,
+      "embedding_only": false
+     },
+     {
+      "weight_decay": 0.0,
+      "n_params": 1,
+      "embedding_only": true
+     }
+    ],
+    "ok": true
+   },
+   "S life_settings": {
+    "groups": [
+     {
+      "weight_decay": 0.25,
+      "n_params": 12,
+      "embedding_only": false
+     },
+     {
+      "weight_decay": 0.0,
+      "n_params": 1,
+      "embedding_only": true
+     }
+    ],
+    "ok": true
+   },
+   "B birth": {
+    "groups": [
+     {
+      "weight_decay": 0.25,
+      "n_params": 12,
+      "embedding_only": false
+     },
+     {
+      "weight_decay": 0.0,
+      "n_params": 1,
+      "embedding_only": true
+     }
+    ],
+    "ok": true
+   },
+   "B life": {
+    "groups": [
+     {
+      "weight_decay": 0.25,
+      "n_params": 12,
+      "embedding_only": false
+     },
+     {
+      "weight_decay": 0.0,
+      "n_params": 1,
+      "embedding_only": true
+     }
+    ],
+    "ok": true
+   },
+   "B life_settings": {
+    "groups": [
+     {
+      "weight_decay": 0.25,
+      "n_params": 12,
+      "embedding_only": false
+     },
+     {
+      "weight_decay": 0.0,
+      "n_params": 1,
+      "embedding_only": true
+     }
+    ],
+    "ok": true
+   },
+   "pass": true
+  },
+  "check7_reduced_runs": {
+   "S": {
+    "birth": {
+     "complete": true,
+     "updates": 2048,
+     "optimizer_steps": [
+      2048
+     ],
+     "weights_sha256": "278f7237aae9696338b3c277ff0240537eb7f85efa327569ae3b69b27cfe76cd",
+     "finite_losses": true,
+     "cpu_updates": 279.15989238900005,
+     "cpu_per_update": 0.13630854120556643,
+     "cpu_scoring": 9.920550121999952,
+     "scored_rows": 1,
+     "cpu_scoring_per_row": 9.271988878999991,
+     "cpu_scoring_silenced_end": 0.6485612429999605,
+     "curve_last_row": {
+      "add89": {
+       "0": {
+        "n": 300,
+        "exact": 18,
+        "final": 18
+       },
+       "4": {
+        "n": 300,
+        "exact": 15,
+        "final": 15
+       },
+       "8": {
+        "n": 300,
+        "exact": 13,
+        "final": 13
+       },
+       "12": {
+        "n": 300,
+        "exact": 14,
+        "final": 14
+       },
+       "20": {
+        "n": 300,
+        "exact": 14,
+        "final": 14
+       }
+      },
+      "sub89": {
+       "0": {
+        "n": 300,
+        "exact": 5,
+        "final": 5
+       },
+       "4": {
+        "n": 300,
+        "exact": 4,
+        "final": 4
+       },
+       "8": {
+        "n": 300,
+        "exact": 6,
+        "final": 6
+       },
+       "12": {
+        "n": 300,
+        "exact": 5,
+        "final": 5
+       },
+       "20": {
+        "n": 300,
+        "exact": 4,
+        "final": 4
+       }
+      },
+      "max89": {
+       "0": {
+        "n": 300,
+        "exact": 294,
+        "final": 294
+       },
+       "4": {
+        "n": 300,
+        "exact": 295,
+        "final": 295
+       },
+       "8": {
+        "n": 300,
+        "exact": 295,
+        "final": 295
+       },
+       "12": {
+        "n": 300,
+        "exact": 292,
+        "final": 292
+       },
+       "20": {
+        "n": 300,
+        "exact": 289,
+        "final": 289
+       }
+      },
+      "min89": {
+       "0": {
+        "n": 300,
+        "exact": 287,
+        "final": 287
+       },
+       "4": {
+        "n": 300,
+        "exact": 290,
+        "final": 290
+       },
+       "8": {
+        "n": 300,
+        "exact": 290,
+        "final": 290
+       },
+       "12": {
+        "n": 300,
+        "exact": 287,
+        "final": 287
+       },
+       "20": {
+        "n": 300,
+        "exact": 291,
+        "final": 291
+       }
+      }
+     }
+    },
+    "life": {
+     "complete": true,
+     "stages": 7,
+     "updates": 1536,
+     "optimizer_steps": [
+      1536
+     ],
+     "weights_sha256": "40276c25162cc8182b332afb74c7682b60512d789fee25f01b6cd2f29fdfdd93",
+     "finite_losses": true,
+     "cpu_updates": 207.0468495199999,
+     "cpu_per_update": 0.13479612598958327,
+     "cpu_scoring": 392.88375243200005,
+     "cpu_scoring_per_checkpoint": 56.12625034742858,
+     "end": {
+      "compose": {
+       "+-": 0,
+       "-+": 0,
+       "><": 200,
+       "<>": 184,
+       "within": 77
+      },
+      "taught": 96
+     }
+    },
+    "forecast_full_dose": {
+     "birth_cpu_s": 3406,
+     "birth_updates_cpu_s": 3350,
+     "birth_scoring_cpu_s": 56,
+     "life_cpu_s": 5362,
+     "life_updates_cpu_s": 4969,
+     "life_scoring_cpu_s": 393
+    }
+   },
+   "B": {
+    "birth": {
+     "complete": true,
+     "updates": 2048,
+     "optimizer_steps": [
+      2048
+     ],
+     "weights_sha256": "339cc13f67967d88eb64f45ae461257158657401e3a381cc9d4889bcbfba9cad",
+     "finite_losses": true,
+     "cpu_updates": 262.459660798,
+     "cpu_per_update": 0.12815413124902345,
+     "cpu_scoring": 8.854212657000005,
+     "scored_rows": 1,
+     "cpu_scoring_per_row": 8.204729121000014,
+     "cpu_scoring_silenced_end": 0.6494835359999911,
+     "curve_last_row": {
+      "add89": {
+       "0": {
+        "n": 300,
+        "exact": 21,
+        "final": 21
+       },
+       "4": {
+        "n": 300,
+        "exact": 20,
+        "final": 20
+       },
+       "8": {
+        "n": 300,
+        "exact": 21,
+        "final": 21
+       },
+       "12": {
+        "n": 300,
+        "exact": 21,
+        "final": 21
+       },
+       "20": {
+        "n": 300,
+        "exact": 23,
+        "final": 23
+       }
+      },
+      "sub89": {
+       "0": {
+        "n": 300,
+        "exact": 10,
+        "final": 10
+       },
+       "4": {
+        "n": 300,
+        "exact": 10,
+        "final": 10
+       },
+       "8": {
+        "n": 300,
+        "exact": 14,
+        "final": 14
+       },
+       "12": {
+        "n": 300,
+        "exact": 14,
+        "final": 14
+       },
+       "20": {
+        "n": 300,
+        "exact": 13,
+        "final": 13
+       }
+      },
+      "max89": {
+       "0": {
+        "n": 300,
+        "exact": 291,
+        "final": 291
+       },
+       "4": {
+        "n": 300,
+        "exact": 295,
+        "final": 295
+       },
+       "8": {
+        "n": 300,
+        "exact": 293,
+        "final": 293
+       },
+       "12": {
+        "n": 300,
+        "exact": 293,
+        "final": 293
+       },
+       "20": {
+        "n": 300,
+        "exact": 293,
+        "final": 293
+       }
+      },
+      "min89": {
+       "0": {
+        "n": 300,
+        "exact": 294,
+        "final": 294
+       },
+       "4": {
+        "n": 300,
+        "exact": 295,
+        "final": 295
+       },
+       "8": {
+        "n": 300,
+        "exact": 295,
+        "final": 295
+       },
+       "12": {
+        "n": 300,
+        "exact": 294,
+        "final": 294
+       },
+       "20": {
+        "n": 300,
+        "exact": 294,
+        "final": 294
+       }
+      }
+     }
+    },
+    "life": {
+     "complete": true,
+     "stages": 7,
+     "updates": 1536,
+     "optimizer_steps": [
+      1536
+     ],
+     "weights_sha256": "392d07b2f2ceb55cd973897a0ae6a7de3508adbec9f3ccd667b8162ecc77d070",
+     "finite_losses": true,
+     "cpu_updates": 193.855816925,
+     "cpu_per_update": 0.1262082141438802,
+     "cpu_scoring": 390.546005962,
+     "cpu_scoring_per_checkpoint": 55.792286565999994,
+     "end": {
+      "compose": {
+       "+-": 1,
+       "-+": 0,
+       "><": 188,
+       "<>": 100,
+       "within": 73
+      },
+      "taught": 82
+     }
+    },
+    "forecast_full_dose": {
+     "birth_cpu_s": 3199,
+     "birth_updates_cpu_s": 3150,
+     "birth_scoring_cpu_s": 50,
+     "life_cpu_s": 5043,
+     "life_updates_cpu_s": 4653,
+     "life_scoring_cpu_s": 391
+    }
+   },
+   "forecast_stage2_six_births_cpu_s": 19815,
+   "forecast_stage3_six_lives_cpu_s": 31215,
+   "pass": true
+  },
+  "pass": true
+ }
+}
