@@ -2,6 +2,13 @@
 
 > **Status.** Draft for Codex's audit. **No worker starts from this file.** Coordinator's design, adopted from the audit session's note of 11 November (its section 4.3; review 9.101 D.3). **This is a sizing exercise. It registers no prediction for judgment, gives no verdict, and concludes nothing about any learning rule.** Its only product is a table that says at what sizes a learner can acquire anything at all from this stream.
 
+> **Revision 2, 11 November 2026, 20:34 EST (clock), after Codex's audit of this brief** (`PROJECT_DOCUMENTS/MINIFLY_TARGET_SIZING_SWEEP_AUDIT_20261111.md`), whose disposition was to hold learner training as written. All four required revisions hold and are adopted:
+> 1. *The modulus did not reach the evaluator.* The generator, the oracle and the solver each carry their own modulus, and the checker reads the generator's when it is imported. The coordinator ran it: with the generator set to 31, the oracle and the solver still compute modulo 97. Every smaller-modulus cell would have been scored against the wrong answers. One explicit configuration is now passed to every component.
+> 2. *The decision rule for taught pairs was defective.* It asked for taught pairs "above the tables". A table keyed by context and cue recalls every taught pair it has seen, so nothing can be above it. Taught recall is now read against that table as its ceiling, and held behaviour is read separately against shortcuts.
+> 3. *A probe inside a training chunk was not defined.* Saving the hidden state cannot undo an update that has already used the probe's reveal. The order of events at a probe is now fixed and tested.
+> 4. *The cost was wrong.* The roster is 81 fits, not 18 cells, and the longest stream is 31.6 times the proposed one, not 64 times as the first draft said: only the first segment's repetitions scale.
+> The job is now in two stages: implementation with a bounded qualification, then the roster on the coordinator's release. Still a draft; it goes back to Codex.
+
 ## Why
 
 Step 0 is done (reviews 9.101 C, 9.105, 9.106): at the proposed sizes every held answer of the target stream is determined by the bytes before it. That is identifiability. It does not show that a learner can acquire those answers, and the brief of step 0 asked this itself as its first question.
@@ -10,7 +17,7 @@ The proposed sizes are small in a way this project has not tried: 216 taught pai
 
 ## What is varied
 
-The generator is `TARGET_TEST_STEP0/target_stream.py`, unedited. Its sizes are set through its `SIZES` table (and its modulus constant) in a copy made at run time; every cell records the full table it used.
+**One configuration for every component.** The generator, the oracle, the prefix-only solver and the checker each take the same explicit configuration (modulus, counts, repetitions), and each still does its own computation from it; none reads another's constants. This needs a small change to the step 0 modules, which is allowed here under two conditions: at the default configuration the pinned hashes of world seed 1 in `TARGET_STEP0_CHECK.json` are reproduced exactly and all ten step 0 checks still pass; and the following fixtures exist for addition and for subtraction at each of 97, 31 and 11: a pair whose sum or difference wraps round the modulus is answered correctly by oracle and solver, and an oracle or solver deliberately left at another modulus is caught. A configuration that does not reach a component stops admission for the cells that use it. Every cell records the configuration it ran.
 
 | Factor | Values |
 |---|---|
@@ -18,7 +25,9 @@ The generator is `TARGET_TEST_STEP0/target_stream.py`, unedited. Its sizes are s
 | Presentations of each taught pair before the first panel | 4 (proposed), 32, 256 |
 | Disclosure lines in the stream | none (the ordinary stream); the aligned lines (`X:vv c:uu` after each episode) |
 
-Eighteen cells. **World seeds 101, 102 and 103**, which are never scored in any later step. Seeds 1, 2 and 3 are not touched.
+Nine settings of arm A and eighteen of arm B (below), each on **world seeds 101, 102 and 103**, which are never scored in any later step: 81 fits. Seeds 1, 2 and 3 are not touched as worlds. One further stream is built at the proposed size only: the stream with as many extra ordinary bytes in the lines' places (step 0's extra-observation control), so that at one setting a gain from the lines can be told from a gain from more bytes.
+
+A smaller modulus changes the task as well as its size: the answers' distribution and the digits' difficulty change with it. Accuracies at different moduli are therefore figures for different task settings and are not compared as if on one scale.
 
 ## The learner, one for every cell
 
@@ -27,16 +36,33 @@ A GRU of E20-B's shape (byte embedding, one layer to 512, a GRU of 256 units, th
 Two ways of feeding the stream, because they answer different questions:
 
 - **A. Episode by episode.** Each episode is one item and the state starts from zero. The network can use only what is in the episode and what its weights have stored. In the ordinary stream that is the context letter and the cue; an answer on a taught pair then shows the weights have learned that pair, and an answer on a held pair shows they have learned the values and the addition. This arm says whether the hidden structure is learnable from outcomes at all at a given size. Disclosure lines cannot help here by construction, so arm A runs on the ordinary stream only: nine cells.
-- **B. As one continuing stream.** The bytes are read once, in order, with the state carried from byte to byte and credit cut every 256 bytes. Nothing is reset. This is how the target test itself runs. It can use a line read earlier only if the state still holds it. Both streams: eighteen cells.
+- **B. As one continuing stream.** The bytes are read once, in order, with the state carried from byte to byte and credit cut every 256 bytes. Nothing is reset. This is how the target test itself runs. It can use a line read earlier only if the state still holds it. Both streams: eighteen settings.
+  - 256 bytes is a limit on credit, not on memory: the state is carried across a cut, so information can survive it, and even a short dependency can straddle one. For every use of a line the report logs the distance in bytes from the line to the probe that needs it and how many cuts lie between. Before a null on the lines is read at all, one controlled dependency that crosses a cut is shown to be learnable by this learner (a fixture stream in which a byte must be repeated a fixed distance later, across a cut).
 
-One pass over the stream in arm B, since a continuing learner sees its stream once. In arm A the same episodes in the same order, once.
+One pass over the stream in arm B, since a continuing learner sees its stream once. In arm A the same episodes in the same order, once. No second pass in this sweep; whether more updates on the same data would help is a separate comparison.
+
+**Pinned for every fit, and recorded:** the model seed (the world seed plus 1000), AdamW at E20-B's birth settings, the batch (arm A: 64 episodes in stream order; arm B: one stream, chunks of 256 bytes), the loss as the mean over the targets of a batch or chunk, and one update per batch or chunk.
+
+## A probe inside the stream (arm B), exactly
+
+A chunk of 256 bytes can hold a probe and the bytes that reveal its answer. The order of events is:
+
+1. Training proceeds chunk by chunk up to the last chunk boundary at or before the probe's `=`. The weights are those after that update.
+2. From that boundary the learner reads forward to `=` with those weights, carrying its state. No update happens in this stretch.
+3. At `=` the state and the byte cursor are saved. The learner writes its whole answer, two digits and the end byte, feeding back its own bytes. For a twin, the state is restored and the other member is answered from the same state.
+4. The state and cursor are restored to their values at `=`. Training then continues from the chunk boundary of step 1 over the true bytes, reveal included, exactly once, as if no probe had happened.
+
+Shown by fixture on the real network and training path: changing the bytes of the reveal and of everything after it leaves the response unchanged; and a run with probes scored and a run with probes skipped end with identical weights. The change point of the revision phase is given to the evaluator and the solver only and never appears in the learner's input.
 
 ## What is read, at the first panel and at the end of the stream
 
-- **Taught pairs**, on fresh renderings with the context ten or more bytes back: whole outcome, two digits and the end byte.
-- **First-encounter pairs**, at their first occurrence, before the reveal.
-- **Sealed twins**: both members right; also single members.
-- Beside each, from the step 0 checker: the ten-byte-suffix table, the exact-key table and the recency table on the same probes, and the prefix-only solver, which is the ceiling.
+Two things are read and never mixed.
+
+*Recall of what was taught.* Step 0 has no taught panel, so one is built and frozen before any fit: for each world, 96 taught pairs per family that are not changed by the revision, each rendered twice, once with filler of 10 to 14 bytes (the context out of the last ten bytes) and once with filler of 0 to 2. The reference beside it is the exact-key table (context and cue), fed the same prefix: it recalls every taught pair it has seen, and it is a ceiling for recall, not a shortcut to beat. The short-filler version says whether a miss is a failure to learn the pair or a failure to hold the context across the filler.
+
+*Behaviour on what was never taught.* First-encounter pairs at their first occurrence, before the reveal; and sealed twins, both members right, counted over the 12 distinct twin pairs per family as well as over renderings. Beside them, shortcut responders built from the same arm's actual prefix: the ten-byte-suffix table, the exact-key table, the recency table, and in the streams with lines a responder that reads the two stated values from the lines seen so far and adds them. The prefix-only solver is the ceiling.
+
+Every figure is given by world, by family and by phase, with the number of times the probed pair, its context and its cue had occurred before the probe.
 - The mean next-byte loss on outcome bytes and on all other bytes, per tenth of the stream.
 - CPU-seconds per cell.
 
@@ -46,9 +72,19 @@ In arm B the probes are scored the way step 0 fixes: the learner's state is save
 
 It is read by eye and decides three things about the design, none about a learner:
 
-1. **Whether the proposed sizes can stay.** If no cell at modulus 97 and four presentations shows the taught pairs above the tables, the proposed sizes are too small for any learner that starts from nothing.
-2. **What a learner must bring.** If only the long, small-modulus cells learn anything, a learner that starts from nothing needs a stream of that length, and the test becomes a test of slow rule learning. The alternative is a learner born on a declared curriculum that shares no pair and no value with the test world. That choice is the coordinator's and Mr. Xu's to make after this table, and it is the main reason for the sweep.
-3. **Whether the stated values should be the base and their absence the harder arm.** If in arm B the cells with lines acquire held pairs and the cells without do not, the order of the design's arms is turned round, and the line schedule is then made sparser so that the disclosure ledger can differ between arms.
+Each fit is put in one of five classes, fixed now:
+
+- *held success:* in that world, first-encounter accuracy at least 20 points above the best shortcut responder's on the same probes, and both members right on at least 20% of the distinct sealed twin pairs;
+- *taught-only success:* long-filler recall of the frozen taught panel at 50% or more, without held success;
+- *negative:* the fit completed, admission passed, and neither holds;
+- *missing:* not built or not admitted, with the reason;
+- *capped:* stopped by the budget.
+
+A setting counts for a decision only if its three worlds agree; otherwise it is reported as mixed.
+
+1. **Can the proposed sizes stay?** Held success in all three worlds at modulus 97 and four presentations supports taking those sizes to the qualification of step 1. If that setting is negative, this says the tested GRU and recipe did not acquire the held answers there. An all-negative grid leaves this GRU and recipe unqualified for the task; it does not show the task is beyond every learner.
+2. **What may a learner bring?** Held success from random weights at a setting shows that no birth curriculum is needed there. A negative leaves the value of a curriculum open: this sweep cannot say whether one would help. If the table leaves that open, the answer comes from a separate comparison, prospectively registered: the same learner from random weights and from a warm start, the warm start trained on worlds with their own independent values and no test pair, with the cost of that pretraining charged to it. That is not part of this job.
+3. **Should the stated values be the base arm?** Ordinary against lines measures the lines as a package: their content, the extra targets they add, and the shift they cause in where the credit cuts fall. At the proposed size the stream with matched extra bytes says how much of a gain is not content. Before any reading, the ledger of what had been disclosed before each probe is checked for the fits compared. A sparser line schedule is a different stream and needs its own qualification.
 
 ## What this is not
 
@@ -68,14 +104,15 @@ It is read by eye and decides three things about the design, none about a learne
 
 - New files only, in `TARGET_TEST_STEP0/sizing/`. The arithmetic harness is not imported; the GRU is built directly.
 - One host, at most three processes on four cores, one thread each.
-- Cost: a cell at the proposed size is a stream of about 46 KB and should take seconds to minutes; a cell at 256 presentations is about 64 times longer. Time the first cell of each size and forecast the rest before running them. If the whole grid would pass twelve hours of CPU, stop and report the forecast.
+- **Two stages.** Stage 1: the configuration change with its fixtures, the frozen taught panels, the probe protocol with its fixtures, the cross-cut dependency fixture, and a timing of the two longest paths (256 presentations, without and with lines), each timed through generation, step 0's learner-free checks, training and scoring. Then stop and return the admission record and a forecast for the 81 fits. Stage 2, the roster, on the coordinator's release.
+- Cost: only the first segment's repetitions scale. The proposed stream has 3,552 episodes; at 32 repetitions it has 15,648 and at 256 it has 112,416, which is 31.6 times the proposed one. Log, for every fit, the bytes read, the target positions, the updates, and the CPU for generation, checks, training and scoring separately. If the forecast for the roster passes twelve hours of CPU, stop and report it; the coordinator then cuts the grid before anything runs, not after.
 - Work on your own branch. One commit when the table is complete.
 
 ## Report
 
 One table per arm (cells by modulus and presentations, three world seeds each, the four readings with the tables' and the solver's figures beside them), the loss curves, the sizes used in every cell, the admission record, CPU per cell, and whatever was unclear. No conclusion about any learner or rule.
 
-## Questions for the audit
+## Questions for the audit (answered by the audit of revision 1: keep arm A as a reset-per-episode diagnostic of what the weights learned, noting that outcomes fix the hidden values only up to a shift within a family, so a held success shows reuse beyond the shortcuts and not recovery of the values themselves; keep arm B to one pass; treat 256 bytes as a credit limit and qualify a dependency across a cut; keep any warm start out of this grid)
 
 1. Arm A resets the state at every episode, which the target test never does. Is it still the right probe of "learnable from outcomes at all", or does it answer a question the design does not ask?
 2. Arm B reads the stream once. Should a second pass be allowed in some cells, marked as such, to separate "too little data" from "too few updates"?

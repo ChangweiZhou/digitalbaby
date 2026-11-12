@@ -2284,3 +2284,21 @@ Brief: `OPUS_TASK_TARGET_SIZING_SWEEP_20261111.md`. Draft for Codex; no worker s
 The second of these is the decision the design has been missing since its first draft, and it is the coordinator's and Mr. Xu's to make once the table exists.
 
 **Four questions are put to the audit,** the sharpest being whether cutting credit every 256 bytes would make the lines useless for a reason that has nothing to do with the sizes.
+
+
+## 9.108 Codex's audit of the sizing-sweep brief: held as written; four defects, all mine, all confirmed; the brief revised (20:34 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_TARGET_SIZING_SWEEP_AUDIT_20261111.md` (commit 5163a452). Disposition: hold learner training as written. No worker had started. The brief is at revision 2 and goes back to Codex.
+
+| Defect in my draft | Checked how | Result | Change |
+|---|---|---|---|
+| The modulus would not have reached the evaluator | run: I set the generator's modulus to 31 and asked the other modules. The oracle still held 97 and so did the solver; the checker reads the generator's value once, when it is imported | **confirmed.** Twelve of the eighteen settings, every one at modulus 31 or 11, would have been scored against answers computed modulo 97. My draft said the sizes are "set through its SIZES table (and its modulus constant)", as if there were one constant | one explicit configuration passed to generator, oracle, solver and checker, each still computing for itself; wraparound and wrong-modulus fixtures for addition and subtraction at each modulus; a configuration that does not reach a component stops admission |
+| The decision rule for taught pairs could never be met | reasoning: a table keyed by context and cue recalls every taught pair it has seen | **confirmed.** I asked for taught pairs "above the tables" | taught recall is read against that table as its ceiling, on a taught panel frozen beforehand (step 0 has none), with a short-filler version beside the long one. Held behaviour is read separately, against shortcuts built from the same arm's prefix, including one that reads the stated values off the lines |
+| A probe inside a training chunk was undefined | reasoning: a chunk can hold a probe and its reveal, and restoring the hidden state does not undo an update that used the reveal | confirmed | the order of events at a probe is written out, with two fixtures on the real training path: changing the reveal and later bytes leaves the response unchanged, and runs with and without probes end with identical weights |
+| The cost was wrong twice | arithmetic on the generator's schedule: 3,552 episodes at four repetitions, 112,416 at 256 | **confirmed.** I wrote "about 64 times longer"; it is 31.6 times, because only the first segment's repetitions scale. And I priced 18 cells where the roster is 81 fits | two stages: implementation and a bounded qualification that times the two longest paths; the roster on release, cut beforehand if the forecast passes the budget |
+
+**The readings, restated as Codex asks.** Five classes for a fit, fixed before any fit. An all-negative grid leaves this GRU and this recipe unqualified; it does not show the task is beyond every learner, which is what my draft's first decision said. A negative from random weights leaves the value of a birth curriculum open; that question needs its own paired comparison and is not answered by this sweep, which is what my draft's second decision implied. Ordinary against lines measures the lines as a package; the matched extra-bytes stream is added at one setting to separate content from bytes.
+
+**Step 0's accepted results are not touched by the first defect.** At the default configuration all three components hold 97, and the oracle, the solver and the stream agree in every check on file.
+
+**What I take from it.** This is the third brief in two days in which an audit found a claim I had not run: the E24 baselines written from memory, the E24 check that did not test what the brief said, and now a modulus I assumed lived in one place. The rule of 9.82 caught each before a worker started. The habit to fix is mine: where a brief says a setting "is changed through" something, I now change it and look, before writing the sentence.

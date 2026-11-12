@@ -409,3 +409,11 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - **Running on cloud instances, releases relayed by Mr. Xu:** E24's nine births (about three hours); E26's six births (about two hours); E21b.
 - **Next reads for the coordinator:** E26's births (then release of the six lives); E24's births (then judge P24.1 to P24.3); E21b's report.
 - The Mac is idle.
+
+
+## Addendum, 11 November 20:34 EST (clock): Codex's audit of the sizing-sweep brief answered (review 9.108)
+
+- Held as written; four defects confirmed and corrected in revision 2: the modulus did not reach the oracle and the solver (run: generator at 31, both still at 97); the taught-pair decision rule could never be met; a probe inside a training chunk was undefined; the cost was mis-stated (31.6 times, not 64; 81 fits, not 18 cells).
+- The job is now two stages, implementation with a bounded qualification first. Back to Codex. No worker.
+- Step 0's accepted results stand: at the default configuration the components agree.
+- Running: E24's nine births, E26's six births, E21b.
