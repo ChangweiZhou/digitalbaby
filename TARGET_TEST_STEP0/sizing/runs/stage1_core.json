@@ -1,0 +1,1901 @@
+{
+ "brief": "OPUS_TASK_TARGET_SIZING_SWEEP_20261111.md, revision 3",
+ "stage": 1,
+ "source_commit": "ea4b2d03db9ba2e70d8cf2c43ad6ee04c18bbd8b",
+ "host": {
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu",
+  "machine": "x86_64",
+  "cores": 4,
+  "threads_per_process": 1
+ },
+ "note": "Stage 1 only. No roster world was trained on and no fit was run. World 104 is used for profiling and fixtures only; every learner here was discarded. Nothing is concluded about any learner or rule.",
+ "1_default_parity": {
+  "seeds": [
+   1,
+   2,
+   3
+  ],
+  "all_checks_passed": true,
+  "values_on_file": 3815,
+  "differences": 0,
+  "first_differences": [],
+  "default_configuration_equals_step0_sizes": true,
+  "allowed_renaming": "check 2 names the files it read: sz_oracle/sz_solver in place of target_oracle/target_solver",
+  "passed": true
+ },
+ "2_modulus_fixtures": {
+  "97": {
+   "positive": {
+    "admitted": true,
+    "modulus": 97,
+    "cfg_hash": "0bdb13f74061905218d5d467bfa68346164c36bb9929aa74b2e02fd347693f88",
+    "reach": {
+     "generator": true,
+     "oracle": true,
+     "solver": true,
+     "checker": true,
+     "scorer": true,
+     "oracle_reports": true,
+     "solver_reports": true,
+     "generator_reports": true
+    },
+    "cases": [
+     {
+      "family": 1,
+      "operation": "addition",
+      "expected": 2,
+      "answers": {
+       "generator_true_outcome": 2,
+       "generator_reveal_bytes": 2,
+       "oracle": 2,
+       "solver_from_episodes": 2,
+       "solver_from_lines": 2,
+       "solver_prompt": 2,
+       "checker_oracle": 2,
+       "checker_solver": 2,
+       "scorer_direct_use": 2
+      }
+     },
+     {
+      "family": 2,
+      "operation": "subtraction",
+      "expected": 94,
+      "answers": {
+       "generator_true_outcome": 94,
+       "generator_reveal_bytes": 94,
+       "oracle": 94,
+       "solver_from_episodes": 94,
+       "solver_from_lines": 94,
+       "solver_prompt": 94,
+       "checker_oracle": 94,
+       "checker_solver": 94,
+       "scorer_direct_use": 94
+      }
+     }
+    ],
+    "wrong": []
+   },
+   "negative": {
+    "generator": {
+     "left_at": 31,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "generator_true_outcome",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "generator_reveal_bytes",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "generator_true_outcome",
+       "answered": 28,
+       "expected": 94
+      },
+      {
+       "family": 2,
+       "component": "generator_reveal_bytes",
+       "answered": 28,
+       "expected": 94
+      }
+     ]
+    },
+    "oracle": {
+     "left_at": 31,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "oracle",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "oracle",
+       "answered": 28,
+       "expected": 94
+      }
+     ]
+    },
+    "solver": {
+     "left_at": 31,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "solver_from_episodes",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "solver_from_lines",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "solver_prompt",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "solver_from_episodes",
+       "answered": 5,
+       "expected": 94
+      },
+      {
+       "family": 2,
+       "component": "solver_from_lines",
+       "answered": 28,
+       "expected": 94
+      },
+      {
+       "family": 2,
+       "component": "solver_prompt",
+       "answered": 5,
+       "expected": 94
+      }
+     ]
+    },
+    "checker": {
+     "left_at": 31,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "checker_oracle",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "checker_solver",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "checker_oracle",
+       "answered": 28,
+       "expected": 94
+      },
+      {
+       "family": 2,
+       "component": "checker_solver",
+       "answered": 5,
+       "expected": 94
+      }
+     ]
+    },
+    "scorer": {
+     "left_at": 31,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "scorer_direct_use",
+       "answered": 6,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "scorer_direct_use",
+       "answered": 28,
+       "expected": 94
+      }
+     ]
+    }
+   },
+   "negative_by_behaviour_alone": {
+    "generator": {
+     "cases": 4,
+     "caught": 4
+    },
+    "oracle": {
+     "cases": 2,
+     "caught": 2
+    },
+    "solver": {
+     "cases": 6,
+     "caught": 6
+    },
+    "checker": {
+     "cases": 4,
+     "caught": 4
+    },
+    "scorer": {
+     "cases": 2,
+     "caught": 2
+    }
+   },
+   "passed": true
+  },
+  "31": {
+   "positive": {
+    "admitted": true,
+    "modulus": 31,
+    "cfg_hash": "fe467b04f8c80df42bb1d31bda9eefc82f597fa82f115d3118cad5efd3f5b52b",
+    "reach": {
+     "generator": true,
+     "oracle": true,
+     "solver": true,
+     "checker": true,
+     "scorer": true,
+     "oracle_reports": true,
+     "solver_reports": true,
+     "generator_reports": true
+    },
+    "cases": [
+     {
+      "family": 1,
+      "operation": "addition",
+      "expected": 2,
+      "answers": {
+       "generator_true_outcome": 2,
+       "generator_reveal_bytes": 2,
+       "oracle": 2,
+       "solver_from_episodes": 2,
+       "solver_from_lines": 2,
+       "solver_prompt": 2,
+       "checker_oracle": 2,
+       "checker_solver": 2,
+       "scorer_direct_use": 2
+      }
+     },
+     {
+      "family": 2,
+      "operation": "subtraction",
+      "expected": 28,
+      "answers": {
+       "generator_true_outcome": 28,
+       "generator_reveal_bytes": 28,
+       "oracle": 28,
+       "solver_from_episodes": 28,
+       "solver_from_lines": 28,
+       "solver_prompt": 28,
+       "checker_oracle": 28,
+       "checker_solver": 28,
+       "scorer_direct_use": 28
+      }
+     }
+    ],
+    "wrong": []
+   },
+   "negative": {
+    "generator": {
+     "left_at": 11,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "generator_true_outcome",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "generator_reveal_bytes",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "generator_true_outcome",
+       "answered": 8,
+       "expected": 28
+      },
+      {
+       "family": 2,
+       "component": "generator_reveal_bytes",
+       "answered": 8,
+       "expected": 28
+      }
+     ]
+    },
+    "oracle": {
+     "left_at": 11,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "oracle",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "oracle",
+       "answered": 8,
+       "expected": 28
+      }
+     ]
+    },
+    "solver": {
+     "left_at": 11,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "solver_from_episodes",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "solver_from_lines",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "solver_prompt",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "solver_from_episodes",
+       "answered": 4,
+       "expected": 28
+      },
+      {
+       "family": 2,
+       "component": "solver_from_lines",
+       "answered": 8,
+       "expected": 28
+      },
+      {
+       "family": 2,
+       "component": "solver_prompt",
+       "answered": 4,
+       "expected": 28
+      }
+     ]
+    },
+    "checker": {
+     "left_at": 11,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "checker_oracle",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "checker_solver",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "checker_oracle",
+       "answered": 8,
+       "expected": 28
+      },
+      {
+       "family": 2,
+       "component": "checker_solver",
+       "answered": 4,
+       "expected": 28
+      }
+     ]
+    },
+    "scorer": {
+     "left_at": 11,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "scorer_direct_use",
+       "answered": 0,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "scorer_direct_use",
+       "answered": 8,
+       "expected": 28
+      }
+     ]
+    }
+   },
+   "negative_by_behaviour_alone": {
+    "generator": {
+     "cases": 4,
+     "caught": 4
+    },
+    "oracle": {
+     "cases": 2,
+     "caught": 2
+    },
+    "solver": {
+     "cases": 6,
+     "caught": 6
+    },
+    "checker": {
+     "cases": 4,
+     "caught": 4
+    },
+    "scorer": {
+     "cases": 2,
+     "caught": 2
+    }
+   },
+   "passed": true
+  },
+  "11": {
+   "positive": {
+    "admitted": true,
+    "modulus": 11,
+    "cfg_hash": "5385555ef317709ad37cbe85ce44c285e06496e560275d7f49f6ebcca34221d8",
+    "reach": {
+     "generator": true,
+     "oracle": true,
+     "solver": true,
+     "checker": true,
+     "scorer": true,
+     "oracle_reports": true,
+     "solver_reports": true,
+     "generator_reports": true
+    },
+    "cases": [
+     {
+      "family": 1,
+      "operation": "addition",
+      "expected": 2,
+      "answers": {
+       "generator_true_outcome": 2,
+       "generator_reveal_bytes": 2,
+       "oracle": 2,
+       "solver_from_episodes": 2,
+       "solver_from_lines": 2,
+       "solver_prompt": 2,
+       "checker_oracle": 2,
+       "checker_solver": 2,
+       "scorer_direct_use": 2
+      }
+     },
+     {
+      "family": 2,
+      "operation": "subtraction",
+      "expected": 8,
+      "answers": {
+       "generator_true_outcome": 8,
+       "generator_reveal_bytes": 8,
+       "oracle": 8,
+       "solver_from_episodes": 8,
+       "solver_from_lines": 8,
+       "solver_prompt": 8,
+       "checker_oracle": 8,
+       "checker_solver": 8,
+       "scorer_direct_use": 8
+      }
+     }
+    ],
+    "wrong": []
+   },
+   "negative": {
+    "generator": {
+     "left_at": 97,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "generator_true_outcome",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "generator_reveal_bytes",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "generator_true_outcome",
+       "answered": 94,
+       "expected": 8
+      },
+      {
+       "family": 2,
+       "component": "generator_reveal_bytes",
+       "answered": 94,
+       "expected": 8
+      }
+     ]
+    },
+    "oracle": {
+     "left_at": 97,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "oracle",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "oracle",
+       "answered": 94,
+       "expected": 8
+      }
+     ]
+    },
+    "solver": {
+     "left_at": 97,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "solver_from_episodes",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "solver_from_lines",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "solver_prompt",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "solver_from_episodes",
+       "answered": 19,
+       "expected": 8
+      },
+      {
+       "family": 2,
+       "component": "solver_from_lines",
+       "answered": 94,
+       "expected": 8
+      },
+      {
+       "family": 2,
+       "component": "solver_prompt",
+       "answered": 19,
+       "expected": 8
+      }
+     ]
+    },
+    "checker": {
+     "left_at": 97,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "checker_oracle",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 1,
+       "component": "checker_solver",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "checker_oracle",
+       "answered": 94,
+       "expected": 8
+      },
+      {
+       "family": 2,
+       "component": "checker_solver",
+       "answered": 19,
+       "expected": 8
+      }
+     ]
+    },
+    "scorer": {
+     "left_at": 97,
+     "admitted": false,
+     "refused_by_hash": true,
+     "wrong_answers": [
+      {
+       "family": 1,
+       "component": "scorer_direct_use",
+       "answered": 13,
+       "expected": 2
+      },
+      {
+       "family": 2,
+       "component": "scorer_direct_use",
+       "answered": 94,
+       "expected": 8
+      }
+     ]
+    }
+   },
+   "negative_by_behaviour_alone": {
+    "generator": {
+     "cases": 4,
+     "caught": 4
+    },
+    "oracle": {
+     "cases": 2,
+     "caught": 2
+    },
+    "solver": {
+     "cases": 6,
+     "caught": 6
+    },
+    "checker": {
+     "cases": 4,
+     "caught": 4
+    },
+    "scorer": {
+     "cases": 2,
+     "caught": 2
+    }
+   },
+   "passed": true
+  },
+  "passed": true
+ },
+ "3_taught_panels": {
+  "file": "TAUGHT_PANELS.json",
+  "panels": 12,
+  "items_per_panel": 384,
+  "reproduced": true,
+  "not_reproduced": [],
+  "sha256": {
+   "101/97": "7e8f5ede639c8796c2a1bb40fc979037c285352cebbb4020a1a12be0469dfaff",
+   "101/31": "5c3bd3e621036072c00efe6458c73ca9a25cf9a7f7993daee803966ac7875a20",
+   "101/11": "b82b47d7632afb39ae982b2adb5158e7d23637763f83c87a38b25aff6ac13195",
+   "102/97": "16ac4fb4fc9e566a36585aa08b3a79ad4353087f23f957ccbce5e427b24d5caa",
+   "102/31": "42203a0b3cf2f4360e1ddcb2034045b5e32e04c8a71e6692414d84b591e2c51f",
+   "102/11": "8bed3ef82a8f2d5bff23761863175ee7283b31283a54382730165d63fcf324bf",
+   "103/97": "409afa8d68bdd4f79360ca018b82721eea42aedcc68f94205746e2b384381c7b",
+   "103/31": "fdbe8eca20fdb4fd49411562daee0722a528304a7187c00b4c680e05619a2e35",
+   "103/11": "6fa37412716f22c08e05bab3f746644e08a1e094a0aa19688a428767e22977fb",
+   "104/97": "749771a74e75040fe64acfab2231e92339808ec7a0003c3eba15aeaeb8ab5b7f",
+   "104/31": "b81b25aac0430d8c925299f368bf0e58f22dc78c8335ac5a7e5dde3f3262d4d8",
+   "104/11": "71e33e831bf7539f3a20aff93e31c07c2a44e4af5e5b9010dd6a817b84d12ab3"
+  },
+  "identical_at_4_32_256_presentations": true,
+  "passed": true
+ },
+ "admission_scoring_fixtures": {
+  "world": 104,
+  "rows": {
+   "97/4/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 40,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/4/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/4/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 1,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/4/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/32/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 169,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/32/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/32/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 1,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/32/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/256/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 262,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/256/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/256/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 6,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "97/256/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/4/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 50,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/4/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/4/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/4/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/32/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 164,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/32/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/32/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/32/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/256/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 261,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/256/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/256/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 21,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "31/256/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/4/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 51,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/4/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/4/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/4/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/32/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 167,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/32/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/32/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 2,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/32/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/256/A_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 274,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/256/B_ordinary": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/256/B_wider": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 15,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   },
+   "11/256/B_extra": {
+    "passed": true,
+    "oracle": {
+     "first_right": 96,
+     "first_n": 96,
+     "twins_both_right": 900,
+     "twins": 900,
+     "distinct_pairs_right_A": 24,
+     "taught_right": 768,
+     "taught_n": 768,
+     "cls": "held success"
+    },
+    "suffix": {
+     "first_right": 0,
+     "first_n": 96,
+     "twins_both_right": 0,
+     "twins": 900,
+     "distinct_pairs_right_A": 0,
+     "taught_right": 0,
+     "taught_n": 768,
+     "cls": "negative"
+    }
+   }
+  },
+  "passed": true,
+  "condition": "the oracle responder scores every first-encounter probe, both members of every twin and every taught-panel item; the ten-byte-suffix responder scores no twin; both through sz_score's own schedule, references and readings"
+ },
+ "4_probe_protocol": {
+  "world": 104,
+  "model_seed": 1104,
+  "configuration": {
+   "contexts": 24,
+   "cues_per_family": 12,
+   "modulus": 97,
+   "window": 10,
+   "taught_per_family": 216,
+   "first_encounter_per_family": 48,
+   "first_encounter_sets": [
+    "acquire",
+    "retain",
+    "revise"
+   ],
+   "per_set": 16,
+   "sealed_twins_per_family": 12,
+   "renderings_per_panel": 150,
+   "panel_filler": [
+    10,
+    14
+   ],
+   "teaching_filler": [
+    0,
+    14
+   ],
+   "first_encounter_filler": [
+    10,
+    14
+   ],
+   "changed_cues": 2,
+   "revision_pairs_with_changed_cue": 6,
+   "acquire_reps": 4,
+   "absent_reps": 2,
+   "return_reps": 1,
+   "revise_reps": 2,
+   "acquire_first_from": 0.5,
+   "retain_within": 0.25,
+   "revise_first_from": 0.4,
+   "change_at_fraction": 0.1,
+   "line_delays": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "control_twins": 2,
+   "distinct_pair_share": 0.8,
+   "evidence_after_change": 3
+  },
+  "F1_reveal_invariance": {
+   "B_first": {
+    "probe_at_episode": 886,
+    "boundary": 11698,
+    "bytes_changed": 29831,
+    "updates": 46,
+    "response": [
+     "24\n",
+     "24\n"
+    ],
+    "logits_bitwise_equal": true,
+    "batched_responses_equal": true
+   },
+   "B_panelA": {
+    "boundary": 23137,
+    "prompts": 984,
+    "bytes_changed": 20139,
+    "responses_equal": true,
+    "logits_bitwise_equal_first_40": true,
+    "updates": 123
+   },
+   "A_first": {
+    "probe_at_episode": 886,
+    "episodes_changed": 2666,
+    "updates": 14,
+    "response": [
+     "7\n=",
+     "7\n="
+    ],
+    "logits_bitwise_equal": true
+   },
+   "passed": true
+  },
+  "F2_boundary_rule_can_fail": {
+   "correct": {
+    "responses": [
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n"
+    ],
+    "follows_reveal": 1,
+    "distinct_responses": 1,
+    "logits_identical_across_reveals": true,
+    "max_logit_change": 0.0
+   },
+   "broken": {
+    "responses": [
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n",
+     "24\n"
+    ],
+    "follows_reveal": 1,
+    "distinct_responses": 1,
+    "logits_identical_across_reveals": false,
+    "max_logit_change": 0.06395387649536133
+   },
+   "A_correct": {
+    "responses": [
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n="
+    ],
+    "follows_reveal": 1,
+    "distinct_responses": 1,
+    "logits_identical_across_reveals": true,
+    "max_logit_change": 0.0
+   },
+   "A_broken": {
+    "responses": [
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n=",
+     "7\n="
+    ],
+    "follows_reveal": 1,
+    "distinct_responses": 1,
+    "logits_identical_across_reveals": false,
+    "max_logit_change": 0.02663707733154297
+   },
+   "first_probe_only_criterion_as_first_written": {
+    "condition": "correct invariant AND broken logits move AND broken response bytes differ across the ten reveals (both arms' logits)",
+    "held": false
+   },
+   "B_all_acquire": {
+    "probes": 32,
+    "probes_whose_response_bytes_moved_with_the_reveal": 7,
+    "responses_starting_with_revealed_digit": 39,
+    "of": 320,
+    "mean_pull_toward_revealed_digit": 0.0842434162894885,
+    "min_pull": 0.02758687337239567,
+    "max_pull": 0.28139111200968425,
+    "updates_at_last_probe": 121
+   },
+   "A_all_acquire": {
+    "probes": 32,
+    "probes_whose_response_bytes_moved_with_the_reveal": 4,
+    "responses_starting_with_revealed_digit": 35,
+    "of": 320,
+    "mean_pull_toward_revealed_digit": 0.018934031989839357,
+    "min_pull": 0.0163514243231881,
+    "max_pull": 0.036386410395304325,
+    "updates_at_last_probe": 27
+   },
+   "passed": true,
+   "note": "'broken' cuts the chunk one target later than the rule, so that its last input is '=' and its last target the first answer digit; the condition holds when the correct boundary's response does not move with the reveal and the broken one's does"
+  },
+  "F3_twins": {
+   "twin_pairs_tested": 24,
+   "second_member_unaffected": 24,
+   "broken_protocol_changed_second_member_logits": 24,
+   "batched_vs_one_by_one_prompts": 984,
+   "batched_vs_one_by_one_mismatches": 0,
+   "state_unchanged_by_panel": true,
+   "passed": true
+  },
+  "F4_probe_on_off_parity": {
+   "B": {
+    "events": 33,
+    "probes_answered": 1016,
+    "updates": 133,
+    "stop": 25600,
+    "on_equals_off": true,
+    "leaky_differs": true,
+    "leaky_differing_entries": 40
+   },
+   "A": {
+    "events": 33,
+    "probes_answered": 1016,
+    "updates": 69,
+    "on_equals_off": true
+   },
+   "compared": "every weight, every AdamW state tensor (step, exp_avg, exp_avg_sq), the carried state, cursor, updates, targets, inputs read, cuts used, schedule index, the loss log",
+   "passed": true
+  },
+  "cpu_seconds": 143.3,
+  "passed": true
+ },
+ "line_use_distances_world104": {
+  "97/4": {
+   "first_encounter": {
+    "n": 96,
+    "context_line_bytes_quantiles_0_10_50_90_100": [
+     15,
+     100,
+     734,
+     2811,
+     12422
+    ],
+    "cue_line_bytes_quantiles_0_10_50_90_100": [
+     13,
+     62,
+     411,
+     1473,
+     11251
+    ],
+    "context_line_cuts_between_quantiles_0_10_50_90_100": [
+     1,
+     1,
+     6,
+     21,
+     57
+    ],
+    "cue_line_cuts_between_quantiles_0_10_50_90_100": [
+     1,
+     1,
+     4,
+     11,
+     52
+    ]
+   },
+   "twin_member": {
+    "n": 1800,
+    "context_line_bytes_quantiles_0_10_50_90_100": [
+     0,
+     126,
+     809,
+     10409,
+     15990
+    ],
+    "cue_line_bytes_quantiles_0_10_50_90_100": [
+     0,
+     30,
+     401,
+     10169,
+     11036
+    ],
+    "context_line_cuts_between_quantiles_0_10_50_90_100": [
+     0,
+     1,
+     7,
+     43,
+     73
+    ],
+    "cue_line_cuts_between_quantiles_0_10_50_90_100": [
+     0,
+     1,
+     4,
+     42,
+     48
+    ]
+   }
+  },
+  "97/256": {
+   "first_encounter": {
+    "n": 96,
+    "context_line_bytes_quantiles_0_10_50_90_100": [
+     13,
+     146,
+     783,
+     3736,
+     13023
+    ],
+    "cue_line_bytes_quantiles_0_10_50_90_100": [
+     13,
+     36,
+     371,
+     1142,
+     12995
+    ],
+    "context_line_cuts_between_quantiles_0_10_50_90_100": [
+     1,
+     2,
+     6,
+     20,
+     74
+    ],
+    "cue_line_cuts_between_quantiles_0_10_50_90_100": [
+     1,
+     1,
+     4,
+     10,
+     68
+    ]
+   },
+   "twin_member": {
+    "n": 1800,
+    "context_line_bytes_quantiles_0_10_50_90_100": [
+     0,
+     77,
+     1013,
+     10469,
+     12027
+    ],
+    "cue_line_bytes_quantiles_0_10_50_90_100": [
+     0,
+     39,
+     453,
+     10258,
+     12347
+    ],
+    "context_line_cuts_between_quantiles_0_10_50_90_100": [
+     0,
+     1,
+     6,
+     43,
+     49
+    ],
+    "cue_line_cuts_between_quantiles_0_10_50_90_100": [
+     0,
+     1,
+     3,
+     43,
+     51
+    ]
+   }
+  }
+ },
+ "cpu_seconds_this_process": {
+  "parity": 3.8,
+  "modulus": 0.1,
+  "panels": 0.0,
+  "scoring_fixtures": 22.6,
+  "probe_fixtures": 143.3,
+  "line_distances": 2.9,
+  "total": 172.7
+ }
+}
