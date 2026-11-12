@@ -1,0 +1,126 @@
+{
+ "part": "arch",
+ "command": "python3 exp26_candidate.py check arch --qual exp45/e26_qual",
+ "provenance": {
+  "command": "python3 exp26_candidate.py check arch --qual exp45/e26_qual",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "360e1b8de55c309bcc73baa0d691881a15e04d74",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "f4559971a6c1770523d641431fe5d4bd56def3f5ee3cafc87a5b869509be50ae",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  }
+ },
+ "e25_alignment_sha256": "5316278dc5f3d79b3ddd80e96a7674d84d6b9e053cb68b878d02518aa54527a3",
+ "cpu_seconds": 4.899581231,
+ "result": {
+  "batch": {
+   "rows": 48,
+   "width": 22,
+   "row_lengths": [
+    10,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    21,
+    22
+   ]
+  },
+  "forward_equal_under_both_paths": true,
+  "shapes": {
+   "x": [
+    48,
+    22
+   ],
+   "logits": [
+    48,
+    22,
+    257
+   ],
+   "ok": true
+  },
+  "causality": {
+   "cases": 144,
+   "max_abs_diff_earlier_logits": 0.0,
+   "exact": true
+  },
+  "rows": {
+   "other_rows_changed_max_abs_diff": 0.0,
+   "reordered_max_abs_diff": 0.0,
+   "exact": true
+  },
+  "state_reset": {
+   "module_buffers": [],
+   "same_batch_after_another_max_abs_diff": 0.0,
+   "each_row_alone_vs_in_batch_max_abs_diff": 4.246830940246582e-07,
+   "tolerance_for_row_alone": 1e-05,
+   "ok": true
+  },
+  "model": {
+   "cls": "arch20.NetRNN",
+   "kind": "gru",
+   "params": 1124113,
+   "forward": "arch26.forward (written-out GRU step, exp3_state.lin at every map)"
+  },
+  "same_initial_values_as_arch20_G1": true,
+  "bos_eos": {
+   "vocab": 258,
+   "padding_idx": 257,
+   "BOS": 257,
+   "EOS": 256,
+   "outputs": 257,
+   "ok": true
+  },
+  "optimizer_read_back": [
+   {
+    "weight_decay": 0.25,
+    "n_params": 12,
+    "names": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "..."
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "n_params": 1,
+    "names": [
+     "book.weight"
+    ]
+   }
+  ],
+  "pass": true
+ }
+}
