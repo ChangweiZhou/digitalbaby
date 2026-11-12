@@ -263,6 +263,37 @@ def sha_file(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
+def write_json(path, obj):
+    """E21b: a receipt is written to a temporary file, flushed, then renamed into place, so a kill can never leave a torn receipt behind."""
+    path = Path(path); tmp = Path(str(path) + ".tmp")
+    with open(tmp, "w") as f:
+        f.write(json.dumps(obj, indent=1)); f.flush(); os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
+def receipt_state(path, birth):
+    """E21b: 'absent', 'torn' (does not parse), 'incomplete' (parses, no completion record) or 'complete'. A receipt is a result only if complete."""
+    path = Path(path)
+    if not path.exists():
+        return "absent"
+    try:
+        r = json.loads(path.read_text())
+    except ValueError:
+        return "torn"
+    if not isinstance(r, dict):
+        return "torn"
+    done = (r.get("complete") is True and "weights_sha256" in r) if birth else isinstance(r.get("complete"), dict)
+    return "complete" if done else "incomplete"
+
+
+def set_aside(path, why):
+    """E21b: a receipt that is not a result is moved aside (never deleted, never read as a result) before the run resumes."""
+    import datetime
+    dst = Path(f"{path}.{why}.{datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')}")
+    os.replace(path, dst); print(f"e21 {Path(path).name} is {why}: set aside as {dst.name}; resuming from the checkpoint", flush=True)
+    return dst.name
+
+
 def save_weights(m, path):
     """Weights first, by rename, then their hash: a receipt is complete only when it names the hash of weights that exist (10 Nov audit)."""
     tmp = Path(str(path) + ".tmp"); T.save(m.state_dict(), tmp); os.replace(tmp, path)
@@ -329,17 +360,17 @@ def store_write_only(store, batch):
 
 
 def run_config(**extra):
-    """Every E11_* / E16_* / EXP45_* setting in force, by effective value, and any other such variable as given (E16_RESUME excluded)."""
+    """Every E11_* / E16_* / EXP45_* option the harness and its modules read, by its effective value, whether it was set or not (E21b amendment 2:
+    an explicitly set default is the same configuration as the default). E16_RESUME and E16_RESUME_UNQUALIFIED are not settings of the run.
+    A variable no module reads cannot change the run and is not part of it; e21_resume_check.py checks that every option read is listed here."""
     cfg = dict(E11_WD=E.WD, E11_REPLAY=E.REPLAY, E11_SCHEDULE=E.SCHEDULE, E11_TRACE=E.TRACE, E11_GATES=E.GATES, E11_STAGE_UPDATES=STAGE_UPDATES,
                E11_DEV_UPDATES=E.DEV_DOSE, EXP45_WINDOW=X.W, EXP45_HIDDEN=X.H, E16_REPLAY=REPLAY16, E16_CAP=RCAP, E16_STREAM=STREAM16, E16_ADMIT=ADMIT16,
                E16_LOSS=LOSS16, E16_ARCH=ARCH16, E16_STORE=STORE16, E16_FREEZE=FREEZE16, E16_FEEDBACK=FEEDBACK16, E16_TRACEUP=TRACEUP16,
                E16_HEADS=HEADS16, E16_PROJFB=PROJFB16, E16_FIXEDCODES=FIXEDCODES16, E16_OUTTAG=OUTTAG16, E16_COMPGAP=COMPGAP16,
-               E16_BIRTHRULE=BIRTHRULE16, E16_BOOKDECAY=BOOKDECAY16, E16_RSHARE=RSHARE16, E16_LEGACY_BIRTH=os.environ.get("E16_LEGACY_BIRTH"),
+               E16_BIRTHRULE=BIRTHRULE16, E16_BOOKDECAY=BOOKDECAY16, E16_RSHARE=RSHARE16, E16_LEGACY_BIRTH=("allow" if os.environ.get("E16_LEGACY_BIRTH") == "allow" else "off"),
+               E16_FARHEAD=FARHEAD16, E16_FARCTRL=FARCTRL16, E16_HEAD1LOSS=HEAD1LOSS16, E16_LOSSW=LOSSW16,
                batch=BATCH, block=X.BLOCK, torch_threads=T.get_num_threads(),
                torch_version=T.__version__, dtype=str(T.get_default_dtype()), sources=source_hashes())      # 11 Nov audit: a checkpoint is bound to its sources and its torch
-    for k, v in sorted(os.environ.items()):
-        if k.startswith(("E11_", "E16_", "EXP45_")) and k not in cfg and k not in ("E16_RESUME", "E16_RESUME_UNQUALIFIED"):
-            cfg[k] = v
     cfg.update(extra)
     return json.loads(json.dumps(cfg))
 
@@ -371,9 +402,11 @@ def ckpt_read(path):
     return T.load(io.BytesIO(raw[40:]), weights_only=True)
 
 
-def ckpt_load(ck):
+def ckpt_load(ck, where, before):
     """The newest readable checkpoint: (object, file used), or (None, None) if there is none at all. A damaged .ckpt falls back to .ckpt.prev,
-    and says so; with every existing file damaged the run stops (it never starts over silently from a damaged checkpoint)."""
+    and says so; with every existing file damaged the run stops (it never starts over silently from a damaged checkpoint).
+    E21b: when .ckpt and .ckpt.prev are both readable they must be one run's two newest checkpoints: the same run id and configuration, and
+    .ckpt.prev at the checkpoint just before .ckpt's (`where` is the position key, 'stage' or 'step'; `before(n)` the position before n)."""
     cur, prev, _ = ckpt_files(ck)
     bad = []
     for p in (cur, prev):
@@ -385,6 +418,21 @@ def ckpt_load(ck):
             bad.append(f"{p.name}: {e}"); print(f"e21 checkpoint {p.name} is unreadable ({e})", flush=True); continue
         if bad:
             print(f"e21 falling back to {p.name}", flush=True)
+        elif p == cur and prev.exists():
+            try:
+                po = ckpt_read(prev)
+            except Exception as e:      # noqa: BLE001
+                print(f"e21 {prev.name} is unreadable ({e}); {cur.name} is intact and is used", flush=True)
+            else:
+                why = []
+                if po.get("run_id") is None or po.get("run_id") != obj.get("run_id"):
+                    why.append(f"run id {po.get('run_id')} differs from {obj.get('run_id')}")
+                if po["config"] != obj["config"]:
+                    why.append("configuration differs")
+                if int(po[where]) != before(int(obj[where])):
+                    why.append(f"{prev.name} is at {where} {int(po[where])}, {cur.name} at {where} {int(obj[where])}: not consecutive")
+                if why:
+                    raise SystemExit(f"e21: {cur.name} and {prev.name} are not one run's two newest checkpoints, refusing: " + "; ".join(why))
         return obj, p
     if bad:
         raise SystemExit("e21: every checkpoint is damaged, refusing to start over: " + "; ".join(bad))
@@ -393,7 +441,13 @@ def ckpt_load(ck):
 
 def ckpt_check_config(obj, cfg, used):
     old = json.loads(obj["config"])
-    diff = {k: (old.get(k), cfg.get(k)) for k in sorted(set(old) | set(cfg)) if old.get(k) != cfg.get(k)}
+    diff = {}
+    for k in sorted(set(old) | set(cfg)):
+        a, b = old.get(k), cfg.get(k)
+        if a != b and isinstance(a, dict) and isinstance(b, dict):      # E21b: name the file (sources) or field that differs
+            diff.update({f"{k}.{j}": (a.get(j), b.get(j)) for j in sorted(set(a) | set(b)) if a.get(j) != b.get(j)})
+        elif a != b:
+            diff[k] = (a, b)
     if diff:
         raise SystemExit(f"e21: {used.name} was written under a different configuration; changed: "
                          + ", ".join(f"{k} (checkpoint {a!r}, now {b!r})" for k, (a, b) in diff.items()))
@@ -417,7 +471,9 @@ def ckpt_fresh(ck):
             p.unlink()
 
 
-RESUME_SOURCES = ("exp16_integrated.py", "arch17.py", "exp11_cell.py", "exp45.py", "exp3_state.py")
+# E21b amendment 1: every module of this folder the harness imports, directly or through another (exp45.py and exp3_state.py import mod97_local.py).
+# e21_resume_check.py walks the imports and checks that this list is exactly that set.
+RESUME_SOURCES = ("exp16_integrated.py", "arch17.py", "exp11_cell.py", "exp45.py", "exp3_state.py", "mod97_local.py")
 RESUME_GATE = [None]
 
 
@@ -426,17 +482,46 @@ def source_hashes():
     return {n: sha_file(here / n) for n in RESUME_SOURCES}
 
 
-def resume_gate():
+def resume_shape(arm):
+    """E21b: the command shape a resume is qualified for. Every setting that changes what the loop does; doses, seeds and output tags are not part of it."""
+    return dict(arm=arm, arch=ARCH16, replay=REPLAY16, stream=STREAM16, admit=ADMIT16, loss=LOSS16, heads=HEADS16, birthrule=BIRTHRULE16,
+                traceup=TRACEUP16, feedback=FEEDBACK16, projfb=PROJFB16, fixedcodes=FIXEDCODES16, bookdecay=BOOKDECAY16, store=STORE16,
+                freeze=FREEZE16, rshare=RSHARE16, compgap=COMPGAP16, farhead=FARHEAD16, farctrl=FARCTRL16, head1loss=HEAD1LOSS16, lossw=LOSSW16,
+                schedule=E.SCHEDULE, window=X.W, hidden=X.H)
+
+
+def resume_gate(arm):
     """Codex's audit of E21 (11 Nov): the acceptance checks were passed on the worker's branch, not on the merged sources. E16_RESUME=1 is refused
-    unless exp45/RESUME_QUALIFIED.json names exactly these source hashes. E16_RESUME_UNQUALIFIED=allow is for the qualification run itself; it is
-    written into the receipt's `resumed` entries and is not a setting of the run."""
+    unless exp45/RESUME_QUALIFIED.json names exactly these source hashes (E21b amendment 1: the whole import closure), the runtime is the qualified
+    one (amendment 3: torch version and default dtype), the check record it rests on is on disk with the hash it names (amendment 4), and the
+    run's command shape is on its list (E21b item 4). E16_RESUME_UNQUALIFIED=allow is for the qualification run itself; it is written into the
+    receipt's `resumed` entries and is not a setting of the run."""
     q = OUT / "RESUME_QUALIFIED.json"
-    if q.exists() and json.loads(q.read_text()).get("sources") == source_hashes():
-        RESUME_GATE[0] = "qualified"
-    elif os.environ.get("E16_RESUME_UNQUALIFIED") == "allow":
+    shape = json.loads(json.dumps(resume_shape(arm)))
+    if not q.exists():
+        why = "exp45/RESUME_QUALIFIED.json is absent"
+    else:
+        import hashlib
+        rec = json.loads(q.read_text()); have = source_hashes()
+        named = Path(str(rec.get("check_record") or "")).name; cr = OUT / named if named else None
+        if rec.get("sources") != have:
+            why = "exp45/RESUME_QUALIFIED.json names other sources: " + ", ".join(sorted(n for n in set(have) | set(rec.get("sources") or {})
+                                                                                        if (rec.get("sources") or {}).get(n) != have.get(n)))
+        elif rec.get("torch") != T.__version__ or rec.get("dtype") != str(T.get_default_dtype()):
+            why = (f"the runtime is not the qualified one: torch {T.__version__}, dtype {T.get_default_dtype()} "
+                   f"(qualified: torch {rec.get('torch')}, dtype {rec.get('dtype')})")
+        elif cr is None or not cr.is_file():
+            why = f"the check record the qualification rests on is not on disk: exp45/{named or '(none named)'}"
+        elif hashlib.sha256(cr.read_bytes()).hexdigest() != rec.get("check_record_sha256"):
+            why = f"the check record exp45/{named} does not have the hash the qualification names (it was altered or replaced)"
+        elif shape not in rec.get("shapes", []):
+            why = f"this command shape is not on the qualified list: {json.dumps(shape, sort_keys=True)}"
+        else:
+            RESUME_GATE[0] = "qualified"; return
+    if os.environ.get("E16_RESUME_UNQUALIFIED") == "allow":
         RESUME_GATE[0] = "unqualified, allowed by E16_RESUME_UNQUALIFIED"
     else:
-        raise SystemExit("e21: E16_RESUME=1 is refused: resume has not been qualified on these sources (exp45/RESUME_QUALIFIED.json is absent or names other sources)")
+        raise SystemExit(f"e21: E16_RESUME=1 is refused: {why}")
 
 
 def resume_record(from_stage, used, cpu_replay, note=None):
@@ -802,9 +887,12 @@ def life(arm, seed):
     t0 = time.process_time(); stages = []
     # E21: checkpoint / resume. K is the stage the checkpoint was written after (0: start from the birth).
     ck = path.with_suffix(".ckpt"); K, ckobj, ckused, resumed, saved = 0, None, None, [], None
+    run_id = None
     if RESUME16 == "1":
-        resume_gate()
-        ckobj, ckused = ckpt_load(ck)
+        resume_gate(arm)
+        if receipt_state(path, birth=False) == "torn":      # E21b: a torn receipt is never read as a result; it is set aside
+            set_aside(path, "torn")
+        ckobj, ckused = ckpt_load(ck, "stage", lambda n: n - 1)
         if ckobj is None:
             print(f"e21 no checkpoint for {path.name}: starting from the birth", flush=True)
             resumed.append(resume_record(0, None, 0.0, note="no checkpoint: started from the birth"))
@@ -837,9 +925,11 @@ def life(arm, seed):
                        memory_sha256=(__import__("hashlib").sha256(json.dumps(MEMORY[0], sort_keys=True, default=list).encode()).hexdigest() if MEMORY[0] else None))
     if ckobj is not None:
         ckpt_check_config(ckobj, cfg21, ckused)
-        K, saved = int(ckobj["stage"]), json.loads(ckobj["stages"]); resumed = json.loads(ckobj["resumed"])
+        K, saved = int(ckobj["stage"]), json.loads(ckobj["stages"]); resumed = json.loads(ckobj["resumed"]); run_id = ckobj.get("run_id")
         assert len(saved) == K + 1, f"{ckused.name}: {len(saved)} stage records for stage {K}"
         print(f"e21 resuming {path.name} from stage {K} ({ckused.name}): replaying the data pipeline with the learner off", flush=True)
+    if run_id is None:      # E21b: one id per run, kept across its resumes, so .ckpt and .ckpt.prev can be shown to belong to one run (os.urandom: no RNG drawn)
+        run_id = __import__("uuid").uuid4().hex
     if K > 0:      # stage 0's record (scores of the birth, settings, first-update census) is the saved one
         stages.append(json.loads(json.dumps(saved[0])))
         cpu_score_total = [0.0]      # merge of E21 with the 10 Nov accounting: on a resume the scoring total is read from the checkpoint at the resume point
@@ -949,12 +1039,12 @@ def life(arm, seed):
                   "dev89@12", [sc[n][12]["exact"] for n in sc if n.endswith("89")],
                   f"cpu {stages[-1]['cpu']:.0f}s", flush=True)
         if not replaying:
-            path.write_text(json.dumps(receipt(), indent=1))
+            write_json(path, receipt())
         if ADMIT16 == "online" and admits:
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()}; stages[-1]["reservoir_distinct"] = {f: len(set(v)) for f, v in fbuf.items()}
             stages[-1]["reservoir_bytes"] = sum(len(e[1]) + len(e[2]) for e in fbuf["all"]); stages[-1]["admitted"] = fseen.get("all", 0)
             if not replaying:
-                path.write_text(json.dumps(receipt(), indent=1))
+                write_json(path, receipt())
         elif (local or arm == "M") and REPLAY16 != "oracle":
             # the stage's presented items as replayable entries (family + operands), 1,024 of them, as E11-D/E15
             ents = []
@@ -996,7 +1086,7 @@ def life(arm, seed):
                         fs.add(e); fl.append(e)
             stages[-1]["buffer"] = {f: len(v) for f, v in fbuf.items()} if fbuf else len(buffer)
             if not replaying:
-                path.write_text(json.dumps(receipt(), indent=1))   # E16-V: keep the last block's buffer count too
+                write_json(path, receipt())   # E16-V: keep the last block's buffer count too
         # E21: the checkpoint, after the stage's receipt and every stage-end admission
         dg = pipeline_digest(presented, expo)
         if replaying:
@@ -1013,12 +1103,12 @@ def life(arm, seed):
             print(f"e21 resumed at stage {K}: pipeline digest {dg['overall'][:12]} matches; replay cpu {cpu_replay:.1f}s", flush=True)
         elif not replaying:
             c_ck = time.process_time(); w_ck = time.perf_counter()
-            nbytes = ckpt_write(ck, dict(version=1, stage=si, model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
+            nbytes = ckpt_write(ck, dict(version=1, run_id=run_id, stage=si, model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
                                          stages=json.dumps(stages), config=json.dumps(cfg21, sort_keys=True), pipeline=json.dumps(dg),
                                          cpu_elapsed=c_ck - t0, cpu_scoring=cpu_score_total[0], resumed=json.dumps(resumed)))
             ckpt_log(ck, event="checkpoint", stage=si, pipeline=dg["overall"], parts=dg["parts"], bytes=nbytes, seconds_to_write=round(time.perf_counter() - w_ck, 4))
     wsha = save_weights(m, path.with_suffix(".pt"))   # final weights, so panels can be re-scored later (8 Nov audit)
-    path.write_text(json.dumps(receipt(complete=dict(stages=len(stages), weights=path.with_suffix(".pt").name, weights_sha256=wsha)), indent=1))
+    write_json(path, receipt(complete=dict(stages=len(stages), weights=path.with_suffix(".pt").name, weights_sha256=wsha)))
 
 
 def qualify():
@@ -1105,10 +1195,18 @@ def develop17(seed):
             **(dict(farhead=FARHEAD16, farctrl=FARCTRL16) if FARHEAD16 else {}), **(dict(head1loss=HEAD1LOSS16) if HEAD1LOSS16 != "answer" else {}),
                **(dict(lossw=LOSSW16) if LOSSW16 != "uniform" else {}))
     assert not (RESUME16 == "1" and FARCTRL16 == "shuffle"), "E16_RESUME is not defined for E16_FARCTRL=shuffle: the shuffle's own generator is not in the checkpoint (harness merge, 11 Nov)"
-    ck = OUT / f"{stem}.ckpt"; K, ckobj, ckused, resumed = 0, None, None, []
+    ck = OUT / f"{stem}.ckpt"; K, ckobj, ckused, resumed, run_id = 0, None, None, [], None
+    # E21b: a receipt is a result only if it parses and carries its completion record. With E16_RESUME=1 and a checkpoint of this birth, one that
+    # does not (torn by a kill while it was being written, or cut short) is never read as a result: it is set aside and the birth resumes from the
+    # checkpoint. A torn receipt otherwise stops the run with that reason, not a parse error. Births older than the completion record (no
+    # checkpoint) keep the earlier behaviour, so a plain rerun of one is unchanged.
+    jp = OUT / f"{stem}.json"; jstate = receipt_state(jp, birth=True); has_ck = ck.exists() or Path(str(ck) + ".prev").exists()
+    if jstate in ("torn", "incomplete") and RESUME16 == "1" and has_ck:
+        resume_gate("dev"); set_aside(jp, jstate)
+    elif jstate == "torn":
+        raise SystemExit(f"e21: {jp.name} is torn (does not parse), not a result; " + ("no checkpoint to resume from" if RESUME16 == "1" else "set E16_RESUME=1 to resume from the checkpoint, or move it aside"))
     # E21: weights written but the receipt not yet (a kill between the two) is resumable from the last checkpoint, which rewrites both
-    if path.exists() and not (RESUME16 == "1" and not (OUT / f"{stem}.json").exists() and (ck.exists() or Path(str(ck) + ".prev").exists())):     # 10 Nov audit: never accept a checkpoint on its file name alone
-        jp = OUT / f"{stem}.json"
+    if path.exists() and not (RESUME16 == "1" and not jp.exists() and has_ck):     # 10 Nov audit: never accept a checkpoint on its file name alone
         assert jp.exists(), f"{path.name} exists without its receipt: remove or move it before a new birth"
         old = json.loads(jp.read_text()); dflt = dict(heads="top", birthrule="D", feedback="sign", traceup="none", projfb="raw", fixedcodes="off", decay=.3, loss="answer", updates=E.DEV_DOSE, farhead=0, farctrl="none", head1loss="answer", lossw="uniform")
         bad = {k: (old.get(k, dflt.get(k)), v) for k, v in cfg.items() if old.get(k, dflt.get(k)) != v}
@@ -1117,8 +1215,9 @@ def develop17(seed):
         print("e17 dev", stem, "exists with the same configuration; nothing to do", flush=True)
         return
     if RESUME16 == "1":
-        resume_gate()
-        ckobj, ckused = ckpt_load(ck)
+        resume_gate("dev")
+        rows = [s_ for s_ in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK) if s_ % 4096 == 0 or s_ == E.DEV_DOSE]
+        ckobj, ckused = ckpt_load(ck, "step", lambda n: rows[rows.index(n) - 1] if n in rows and rows.index(n) > 0 else None)
         if ckobj is None:
             print(f"e21 no checkpoint for {stem}: starting from the beginning", flush=True)
             resumed.append(resume_record(0, None, 0.0, note="no checkpoint: started from the beginning"))
@@ -1138,8 +1237,10 @@ def develop17(seed):
                        panel_sha256=__import__("hashlib").sha256(json.dumps(pan, sort_keys=True, default=list).encode()).hexdigest())
     if ckobj is not None:
         ckpt_check_config(ckobj, cfg21, ckused)
-        K = int(ckobj["step"]); resumed = json.loads(ckobj["resumed"])
+        K = int(ckobj["step"]); resumed = json.loads(ckobj["resumed"]); run_id = ckobj.get("run_id")
         print(f"e21 resuming {stem} from update {K} ({ckused.name}): drawing and discarding the batches already used", flush=True)
+    if run_id is None:      # E21b: see life()
+        run_id = __import__("uuid").uuid4().hex
     bt = Counted(E.batches(tp, seed, E.KMAX["M"]))
     t0 = time.process_time(); curve = []
     for stop in range(X.BLOCK, E.DEV_DOSE + 1, X.BLOCK):
@@ -1176,7 +1277,7 @@ def develop17(seed):
             curve.append(row)
             print("e17 dev", ARCH16 + HTAG + DEVRULETAG, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()}, f"cpu {row['cpu']:.0f}s", flush=True)
             dg = digest_parts(dict(stream=stream_state(bt))); c_ck = time.process_time(); w_ck = time.perf_counter()      # E21: the checkpoint at every curve row
-            nbytes = ckpt_write(ck, dict(version=1, step=stop, model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
+            nbytes = ckpt_write(ck, dict(version=1, run_id=run_id, step=stop, model=m.state_dict(), optimizer=opt.state_dict(), torch_rng=T.get_rng_state(),
                                          curve=json.dumps(curve), census=json.dumps(census), config=json.dumps(cfg21, sort_keys=True),
                                          pipeline=json.dumps(dg), cpu_elapsed=c_ck - t0, resumed=json.dumps(resumed)))
             ckpt_log(ck, event="checkpoint", step=stop, pipeline=dg["overall"], parts=dg["parts"], bytes=nbytes, seconds_to_write=round(time.perf_counter() - w_ck, 4))
@@ -1186,9 +1287,9 @@ def develop17(seed):
     if FARHEAD16:
         row["far_head_k12"] = {n: far_accuracy(m, pk[12]) for n, pk in pan.items()}
     wsha = save_weights(m, path)
-    (OUT / f"{stem}.json").write_text(json.dumps(dict(seed=seed, kmax=E.KMAX["M"], **cfg, credit_census_first_update=census,
-                                                      weights=path.name, weights_sha256=wsha, complete=True, curve=curve,
-                                                      **({"resumed": resumed} if resumed else {})), indent=1))
+    write_json(OUT / f"{stem}.json", dict(seed=seed, kmax=E.KMAX["M"], **cfg, credit_census_first_update=census,
+                                          weights=path.name, weights_sha256=wsha, complete=True, curve=curve,
+                                          **({"resumed": resumed} if resumed else {})))
 
 
 if __name__ == "__main__":

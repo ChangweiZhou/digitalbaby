@@ -1,0 +1,2398 @@
+{
+ "brief": "OPUS_TASK_E21_RESUMABLE_LIVES_20261110.md; E21b: OPUS_TASK_E21B_RESUME_QUALIFICATION_20261111.md",
+ "base_commit": "a301ae8e9d727ffe813e67ec008a2c07f594eb93",
+ "branch_commit": "ab4a91d920a35219c65f6568bfbdd9902f8a5890",
+ "tested_sha256": {
+  "exp16_integrated.py": "1df24530ad880ceb2c0be5c66d3d4393ebb5d0d4a451fa7bf1fc4bd8798de20c",
+  "e21_resume_check.py": "b422a99a9743b87e15051d8cbb3c0236d582067a232d66cac44936fe833ec082"
+ },
+ "dirty": false,
+ "machine": {
+  "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "cpus": 4,
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu"
+ },
+ "only": "all",
+ "shapes": [
+  "D_reference",
+  "M_block_admission",
+  "T_compgap6",
+  "T_drift_online_store",
+  "bank2_phase4",
+  "bank2_phase4_lossall",
+  "birth_rule_T_local_heads"
+ ],
+ "wall_seconds": 5935,
+ "passed": true,
+ "counts": {
+  "passed": 78,
+  "failed": 0
+ },
+ "results": [
+  {
+   "test": "1 unchanged",
+   "shape": "T_drift_online_store",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T06:55:40+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 49.7
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 448.6
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T06:59:53+00:00",
+     "cpu_replay": 0.17879954200000014,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 151.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 281.7
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:04:17+00:00",
+     "cpu_replay": 0.21712202000000014,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 283.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 213.0
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "D_reference",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "D_reference",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T07:08:28+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 39.0
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 291.5
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "D_reference",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_D_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:10:24+00:00",
+     "cpu_replay": 0.10061049699999991,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 112.4
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 192.5
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "D_reference",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "e75d9797b978f64dd13c7226a54bac59dbb0d75838b0615bdb0886cc8b06d8d8",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_D_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:12:56+00:00",
+     "cpu_replay": 0.11643428899999986,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 189.6
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 128.6
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "M_block_admission",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "M_block_admission",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T07:15:42+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 37.1
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 309.2
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "M_block_admission",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_M_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:19:50+00:00",
+     "cpu_replay": 0.18261286999999982,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 112.1
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 179.4
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "M_block_admission",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f2ea189a07bfbf27255b6fcfdbb7de6afe82b4d7033549f3822fbcc28127842c",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_M_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:21:36+00:00",
+     "cpu_replay": 0.1490004100000002,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 185.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 131.7
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "bank2_phase4",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T07:24:51+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 62.4
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 498.2
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:32:57+00:00",
+     "cpu_replay": 0.1447655069999998,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 196.4
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 323.3
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "37e6fb2c2d207caf2c57913ec35e0f765cb553e85653722c1c180d9d3161a0b4",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:36:56+00:00",
+     "cpu_replay": 0.17859589600000003,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 319.9
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 242.0
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "bank2_phase4_lossall",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4_lossall",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T07:42:01+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 63.4
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 727.7
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4_lossall",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_lossall_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:49:43+00:00",
+     "cpu_replay": 0.14718356499999974,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 287.2
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 459.6
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "bank2_phase4_lossall",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4dba8a76e75174a6a900841ff7681fcc3706d3b4ac0f19da52707287a4356946",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_lossall_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T07:58:08+00:00",
+     "cpu_replay": 0.16330869099999967,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 467.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 322.1
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "T_compgap6",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_compgap6",
+   "kill": "stage 1 updates, before any checkpoint [update:4]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "digests_compared": 6,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T08:04:19+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the birth",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:4",
+     "rc": -9,
+     "seconds": 56.0
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 554.5
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_compgap6",
+   "kill": "stage 3 updates (update 40) [update:40]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_cm6_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T08:06:20+00:00",
+     "cpu_replay": 0.20103514799999989,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:40",
+     "rc": -9,
+     "seconds": 169.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 370.9
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_compgap6",
+   "kill": "stage 4 evaluation (25th score call) [score:64:25]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "4c0d9c96b326f6773b0991bc75e68f9c4f3ef8c1e8feab89a1e58ee3780ada30",
+   "digests_compared": 9,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 3,
+     "checkpoint": "e16_life_T_raw65536_cm6_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T08:11:41+00:00",
+     "cpu_replay": 0.29055744100000025,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:64:25",
+     "rc": -9,
+     "seconds": 299.8
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 267.9
+    }
+   ]
+  },
+  {
+   "test": "1 unchanged",
+   "shape": "birth_rule_T_local_heads",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "ok": true
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "first segment, before any checkpoint (update 100) [update:100]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "digests_compared": 2,
+   "digests_reference": 2,
+   "digest_mismatches": [],
+   "replayed": [],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 0,
+     "checkpoint": null,
+     "host": "vm",
+     "time": "2026-11-12T05:23:26+00:00",
+     "cpu_replay": 0.0,
+     "note": "no checkpoint: started from the beginning",
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:100",
+     "rc": -9,
+     "seconds": 23.0
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 1584.6
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "updates after the first row (update 5096) [update:5096]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "digests_compared": 3,
+   "digests_reference": 2,
+   "digest_mismatches": [],
+   "replayed": [
+    4096
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 4096,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T06:05:27+00:00",
+     "cpu_replay": 1.467036662,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:5096",
+     "rc": -9,
+     "seconds": 954.1
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 769.3
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "evaluation of the last row, at 8192 (7th score call) [score:8192:7]",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "digests_compared": 3,
+   "digests_reference": 2,
+   "digest_mismatches": [],
+   "replayed": [
+    4096
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 4096,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T06:14:56+00:00",
+     "cpu_replay": 1.158571373,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "score:8192:7",
+     "rc": -9,
+     "seconds": 1520.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 757.3
+    }
+   ]
+  },
+  {
+   "test": "2 exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "twice: stage 2 updates (update 21), then, resumed from stage 1, stage 5 evaluation (10th score call)",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 11,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T08:14:19+00:00",
+     "cpu_replay": 0.10043002300000037,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    },
+    {
+     "from_stage": 4,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T08:18:23+00:00",
+     "cpu_replay": 0.28493966299999984,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:21",
+     "rc": -9,
+     "seconds": 108.6
+    },
+    {
+     "spec": "score:64:10",
+     "rc": -9,
+     "seconds": 243.5
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 113.6
+    }
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E16_LEGACY_BIRTH",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: E16_LEGACY_BIRTH (checkpoint None, now 'allow')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E11_SCHEDULE",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: E11_SCHEDULE (checkpoint 'blocked', now 'interleaved')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "truncated .ckpt -> .ckpt.prev, then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1
+   ],
+   "ok": true,
+   "said_fallback": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-12T08:18:49+00:00",
+     "cpu_replay": 0.14700059500000018,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "both checkpoints damaged",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry16_73129.ckpt is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21: every checkpoint is damaged, refusing to start over: e16_life_T_raw65536_drift_online_dry16_73129.ckpt: body does not match its sha256 (truncated or damaged); e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev: body does not match its sha256 (truncated or damaged)"
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "pipeline digest edited (file re-sealed)",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+    "e21: the replayed data pipeline does not match e16_life_T_raw65536_drift_online_dry16_73129.ckpt at stage 2; differing components: ['rng']"
+   ]
+  },
+  {
+   "test": "3 fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "inside the stage-3 checkpoint write, between the renames -> .ckpt.prev (stage 2), then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-12T08:25:19+00:00",
+     "cpu_replay": 0.1508874450000004,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: exact resume",
+   "shape": "T_drift_online_store",
+   "kill": "dose 512, stage 3 updates (update 1300)",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f01eb05473f567bccffa8ccce2e9baa78f8185032ea6601bdd50f69fc64e767a",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry512_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T06:05:17+00:00",
+     "cpu_replay": 3.542810408,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:1300",
+     "rc": -9,
+     "seconds": 275.9
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 432.1
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E16_LEGACY_BIRTH",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry512_73129.ckpt was written under a different configuration; changed: E16_LEGACY_BIRTH (checkpoint None, now 'allow')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "changed setting E11_SCHEDULE",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e16_life_T_raw65536_drift_online_dry512_73129.ckpt was written under a different configuration; changed: E11_SCHEDULE (checkpoint 'blocked', now 'interleaved')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "truncated .ckpt -> .ckpt.prev, then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "f01eb05473f567bccffa8ccce2e9baa78f8185032ea6601bdd50f69fc64e767a",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1
+   ],
+   "ok": true,
+   "said_fallback": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry512_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-12T06:22:20+00:00",
+     "cpu_replay": 1.260357645,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "both checkpoints damaged",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry512_73129.ckpt is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21 checkpoint e16_life_T_raw65536_drift_online_dry512_73129.ckpt.prev is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21: every checkpoint is damaged, refusing to start over: e16_life_T_raw65536_drift_online_dry512_73129.ckpt: body does not match its sha256 (truncated or damaged); e16_life_T_raw65536_drift_online_dry512_73129.ckpt.prev: body does not match its sha256 (truncated or damaged)"
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "T_drift_online_store",
+   "kill": "pipeline digest edited (file re-sealed)",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 resuming e16_life_T_raw65536_drift_online_dry512_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry512_73129.ckpt): replaying the data pipeline with the learner off",
+    "e21: the replayed data pipeline does not match e16_life_T_raw65536_drift_online_dry512_73129.ckpt at stage 2; differing components: ['rng']"
+   ]
+  },
+  {
+   "test": "4 larger dose: exact resume",
+   "shape": "bank2_phase4",
+   "kill": "dose 512, stage 3 updates (update 1300)",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "779409715aa314088c0415a08160ef90cc361f3c0b051d80becc7a5efd3495aa",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1,
+    2
+   ],
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T06:34:38+00:00",
+     "cpu_replay": 0.991792797,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "steps": [
+    {
+     "spec": "update:1300",
+     "rc": -9,
+     "seconds": 354.4
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "seconds": 593.2
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "changed setting E16_LEGACY_BIRTH",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt was written under a different configuration; changed: E16_LEGACY_BIRTH (checkpoint None, now 'allow')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "changed setting E11_SCHEDULE",
+   "ok": true,
+   "rc": 1,
+   "named": true,
+   "started": false,
+   "message": [
+    "e21: e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt was written under a different configuration; changed: E11_SCHEDULE (checkpoint 'blocked', now 'interleaved')"
+   ],
+   "first_run_ok": true
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "truncated .ckpt -> .ckpt.prev, then exact",
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "779409715aa314088c0415a08160ef90cc361f3c0b051d80becc7a5efd3495aa",
+   "digests_compared": 8,
+   "digests_reference": 6,
+   "digest_mismatches": [],
+   "replayed": [
+    1
+   ],
+   "ok": true,
+   "said_fallback": true,
+   "resumed": [
+    {
+     "from_stage": 1,
+     "checkpoint": "e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt.prev",
+     "host": "vm",
+     "time": "2026-11-12T06:47:18+00:00",
+     "cpu_replay": 0.7160939320000002,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "both checkpoints damaged",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 checkpoint e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21 checkpoint e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt.prev is unreadable (body does not match its sha256 (truncated or damaged))",
+    "e21: every checkpoint is damaged, refusing to start over: e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt: body does not match its sha256 (truncated or damaged); e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt.prev: body does not match its sha256 (truncated or damaged)"
+   ]
+  },
+  {
+   "test": "4 larger dose: fail-closed",
+   "shape": "bank2_phase4",
+   "kill": "pipeline digest edited (file re-sealed)",
+   "ok": true,
+   "rc": 1,
+   "message": [
+    "e21 resuming e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.json from stage 2 (e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt): replaying the data pipeline with the learner off",
+    "e21: the replayed data pipeline does not match e17_life_T_bank2_nbd_tall_raw65536_dry512_73129.ckpt at stage 2; differing components: ['rng']"
+   ]
+  },
+  {
+   "test": "5 E21b default path: rerun of a birth older than the completion record",
+   "shape": "e17_dev_bank2_nbd_73129",
+   "kill": "E16_RESUME=off",
+   "ok": true,
+   "new": {
+    "dir": "/home/user/e21b_work/final2/runs/e21b_legacy_birth_rerun_plain_new",
+    "rc": 0,
+    "seconds": 1.4,
+    "nothing_to_do": true,
+    "files_unchanged": true,
+    "set_aside": [],
+    "last_lines": [
+     "E16_ARCH=bank2 E16_BOOKDECAY=off exp16_integrated.py dev 73129",
+     "e17 dev e17_dev_bank2_nbd_73129 exists with the same configuration; nothing to do"
+    ]
+   },
+   "base": {
+    "dir": "/home/user/e21b_work/final2/runs/e21b_legacy_birth_rerun_plain_base",
+    "rc": 0,
+    "seconds": 1.6,
+    "nothing_to_do": true,
+    "files_unchanged": true,
+    "set_aside": [],
+    "last_lines": [
+     "E16_ARCH=bank2 E16_BOOKDECAY=off exp16_integrated.py dev 73129",
+     "e17 dev e17_dev_bank2_nbd_73129 exists with the same configuration; nothing to do"
+    ]
+   }
+  },
+  {
+   "test": "5 E21b default path: rerun of a birth older than the completion record",
+   "shape": "e17_dev_bank2_nbd_73129",
+   "kill": "E16_RESUME=1",
+   "ok": true,
+   "new": {
+    "dir": "/home/user/e21b_work/final2/runs/e21b_legacy_birth_rerun_resume_new",
+    "rc": 0,
+    "seconds": 1.5,
+    "nothing_to_do": true,
+    "files_unchanged": true,
+    "set_aside": [],
+    "last_lines": [
+     "E16_ARCH=bank2 E16_BOOKDECAY=off E16_RESUME=1 E16_RESUME_UNQUALIFIED=allow exp16_integrated.py dev 73129",
+     "e17 dev e17_dev_bank2_nbd_73129 exists with the same configuration; nothing to do"
+    ]
+   },
+   "base": {
+    "dir": "/home/user/e21b_work/final2/runs/e21b_legacy_birth_rerun_resume_base",
+    "rc": 0,
+    "seconds": 1.7,
+    "nothing_to_do": true,
+    "files_unchanged": true,
+    "set_aside": [],
+    "last_lines": [
+     "E16_ARCH=bank2 E16_BOOKDECAY=off E16_RESUME=1 E16_RESUME_UNQUALIFIED=allow exp16_integrated.py dev 73129",
+     "e17 dev e17_dev_bank2_nbd_73129 exists with the same configuration; nothing to do"
+    ]
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "source_changed",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "arch17.py changed",
+     "hook_result": "5e7785e2b44a342f105a14618da34de8dfc8c3b2bb73be749e7852a6b4b133cf",
+     "messages": [
+      "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: sources.arch17.py (checkpoint '54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91', now '5e7785e2b44a342f105a14618da34de8dfc8c3b2bb73be749e7852a6b4b133cf')"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "source_changed against mut_sources",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "arch17.py changed",
+      "hook_result": "5e7785e2b44a342f105a14618da34de8dfc8c3b2bb73be749e7852a6b4b133cf",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.2s"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "other_birth",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "another birth under the same name",
+     "hook_result": "752bbf059acee0fb52ea3d6bd2429d9aff2eb43233530a4cb07630880d361475",
+     "messages": [
+      "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: birth_sha256 (checkpoint 'f21c7fb915ede96aaf6d67f2444ec0307e3f6facb2c39a1b4f8a0490c4017ca4', now '752bbf059acee0fb52ea3d6bd2429d9aff2eb43233530a4cb07630880d361475')"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "other_birth against mut_birth",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "another birth under the same name",
+      "hook_result": "752bbf059acee0fb52ea3d6bd2429d9aff2eb43233530a4cb07630880d361475",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.2s"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "stage_dose",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "checkpoint presented to the run at E11_STAGE_UPDATES=32",
+     "hook_result": [
+      "e16_life_T_raw65536_drift_online_dry32_73129.ckpt",
+      "e16_life_T_raw65536_drift_online_dry32_73129.ckpt.log",
+      "e16_life_T_raw65536_drift_online_dry32_73129.ckpt.prev"
+     ],
+     "messages": [
+      "e21: e16_life_T_raw65536_drift_online_dry32_73129.ckpt was written under a different configuration; changed: E11_STAGE_UPDATES (checkpoint 16, now 32), receipt (checkpoint 'e16_life_T_raw65536_drift_online_dry16_73129.json', now 'e16_life_T_raw65536_drift_online_dry32_73129.json')"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "stage_dose against mut_stage_dose",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 1,
+      "hook": "checkpoint presented to the run at E11_STAGE_UPDATES=32",
+      "hook_result": [
+       "e16_life_T_raw65536_drift_online_dry32_73129.ckpt",
+       "e16_life_T_raw65536_drift_online_dry32_73129.ckpt.log",
+       "e16_life_T_raw65536_drift_online_dry32_73129.ckpt.prev"
+      ],
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry32_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry32_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21: the replayed exposure of stage 1 differs from e16_life_T_raw65536_drift_online_dry32_73129.ckpt"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "dev_dose",
+   "steps": [
+    {
+     "spec": "update:5096",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 5096 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "checkpoint presented to the birth at E11_DEV_UPDATES=12288",
+     "hook_result": [
+      "e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129.ckpt",
+      "e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129.ckpt.log"
+     ],
+     "messages": [
+      "e21: e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129.ckpt was written under a different configuration; changed: E11_DEV_UPDATES (checkpoint 8192, now 12288), birth.updates (checkpoint 8192, now 12288), stem (checkpoint 'e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129', now 'e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129')"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "dev_dose against mut_dev_dose",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:5096",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 5096 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 1,
+      "hook": "checkpoint presented to the birth at E11_DEV_UPDATES=12288",
+      "hook_result": [
+       "e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129.ckpt",
+       "e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129.ckpt.log"
+      ],
+      "messages": [
+       "e21: e17_dev_bank2_nbd_lh_bT_tall_dry12288_73129.ckpt was written under a different configuration; changed: birth.updates (checkpoint 8192, now 12288)"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "pairs_nonconsecutive",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": "stage-1 .ckpt.prev copied aside",
+     "hook_result": "copied .ckpt.prev aside",
+     "messages": [
+      "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+      "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.2s",
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "stage-1 .ckpt.prev beside stage-4 .ckpt",
+     "hook_result": "the run's own stage-1 checkpoint put back as .ckpt.prev beside its stage-4 .ckpt",
+     "messages": [
+      "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt and e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev are not one run's two newest checkpoints, refusing: e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev is at stage 1, e16_life_T_raw65536_drift_online_dry16_73129.ckpt at stage 4: not consecutive"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "pairs_nonconsecutive against mut_pairing",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": "stage-1 .ckpt.prev copied aside",
+      "hook_result": "copied .ckpt.prev aside",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.2s",
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "stage-1 .ckpt.prev beside stage-4 .ckpt",
+      "hook_result": "the run's own stage-1 checkpoint put back as .ckpt.prev beside its stage-4 .ckpt",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 4 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 4: pipeline digest e4dd86270548 matches; replay cpu 0.2s"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "pairs_other_run",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "another run's .ckpt.prev",
+     "hook_result": ".ckpt.prev replaced by the one of another run of the same life (e21b_gate_other_source_X_new)",
+     "messages": [
+      "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt and e16_life_T_raw65536_drift_online_dry16_73129.ckpt.prev are not one run's two newest checkpoints, refusing: run id 2fcd1a82a50e4d328f5aa694055bcdb3 differs from 89a95523804b460ea21e66ebb4cd8698"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "pairs_other_run against mut_pairing",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "another run's .ckpt.prev",
+      "hook_result": ".ckpt.prev replaced by the one of another run of the same life (e21b_gate_other_source_X_mut_pairing)",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.1s"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "torch_version",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "torch version edited in the checkpoint",
+     "hook_result": "torch_version edited to 0.0.0+edited in .ckpt (re-sealed); .ckpt.prev removed",
+     "messages": [
+      "e21: e16_life_T_raw65536_drift_online_dry16_73129.ckpt was written under a different configuration; changed: torch_version (checkpoint '0.0.0+edited', now '2.15.0+cpu')"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "torch_version against mut_torch",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "torch version edited in the checkpoint",
+      "hook_result": "torch_version edited to 0.0.0+edited in .ckpt (re-sealed); .ckpt.prev removed",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.1s"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "final_life_after_weights",
+   "steps": [
+    {
+     "spec": "publish:weights",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL after the final weights e16_life_T_raw65536_drift_online_dry16_73129.pt"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 6 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+      "e21 resumed at stage 6: pipeline digest a7dcff130006 matches; replay cpu 0.4s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 6,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T10:24:42+00:00",
+     "cpu_replay": 0.44137798199999967,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "final_life_kill_in_receipt",
+   "steps": [
+    {
+     "spec": "publish:torn",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL half way through writing the final receipt e16_life_T_raw65536_drift_online_dry16_73129.json.tmp"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": "receipt state after the kill",
+     "hook_result": {
+      "receipt": "e16_life_T_raw65536_drift_online_dry16_73129.json",
+      "state": "parses",
+      "tmp": [
+       "e16_life_T_raw65536_drift_online_dry16_73129.json.tmp"
+      ]
+     },
+     "messages": [
+      "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 6 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+      "e21 resumed at stage 6: pipeline digest a7dcff130006 matches; replay cpu 0.4s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 6,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T10:30:54+00:00",
+     "cpu_replay": 0.3746148360000001,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "final_life_kill_in_receipt against base",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "publish:torn",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL half way through writing the final receipt e16_life_T_raw65536_drift_online_dry16_73129.json"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "receipt state after the kill",
+      "hook_result": {
+       "receipt": "e16_life_T_raw65536_drift_online_dry16_73129.json",
+       "state": "torn",
+       "tmp": []
+      },
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 6 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 6: pipeline digest a7dcff130006 matches; replay cpu 0.4s"
+      ]
+     }
+    ],
+    "receipt_equal": true,
+    "first_difference": null,
+    "weights_equal": true,
+    "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+    "ok": false,
+    "resumed": [
+     {
+      "from_stage": 6,
+      "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+      "host": "vm",
+      "time": "2026-11-12T10:31:39+00:00",
+      "cpu_replay": 0.384942122,
+      "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+     }
+    ]
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "final_life_torn_receipt",
+   "steps": [
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": null,
+     "hook_result": null,
+     "messages": []
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": "final receipt cut short",
+     "hook_result": "e16_life_T_raw65536_drift_online_dry16_73129.json cut to 25802 of 51605 bytes",
+     "messages": [
+      "e21 e16_life_T_raw65536_drift_online_dry16_73129.json is torn: set aside as e16_life_T_raw65536_drift_online_dry16_73129.json.torn.20261112T103204730298Z; resuming from the checkpoint",
+      "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 6 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+      "e21 resumed at stage 6: pipeline digest a7dcff130006 matches; replay cpu 0.4s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 6,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T10:32:05+00:00",
+     "cpu_replay": 0.378281828,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "set_aside": [
+    "e16_life_T_raw65536_drift_online_dry16_73129.json.torn.20261112T103204730298Z"
+   ]
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "final_life_torn_receipt against base",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": null,
+      "hook_result": null,
+      "messages": []
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "final receipt cut short",
+      "hook_result": "e16_life_T_raw65536_drift_online_dry16_73129.json cut to 25794 of 51589 bytes",
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 6 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 6: pipeline digest a7dcff130006 matches; replay cpu 0.4s"
+      ]
+     }
+    ],
+    "receipt_equal": true,
+    "first_difference": null,
+    "weights_equal": true,
+    "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+    "ok": false,
+    "resumed": [
+     {
+      "from_stage": 6,
+      "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+      "host": "vm",
+      "time": "2026-11-12T10:38:15+00:00",
+      "cpu_replay": 0.37406777700000005,
+      "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+     }
+    ],
+    "set_aside": []
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "final_birth_after_weights",
+   "steps": [
+    {
+     "spec": "publish:weights",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL after the final weights e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.pt"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21 resuming e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129 from update 8192 (e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt): drawing and discarding the batches already used",
+      "e21 resumed at update 8192: stream digest 85da53915215 matches; replay cpu 2.1s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 8192,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T10:58:37+00:00",
+     "cpu_replay": 2.1152933610000004,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "final_birth_kill_in_receipt",
+   "steps": [
+    {
+     "spec": "publish:torn",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL half way through writing the final receipt e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json.tmp"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": "receipt state after the kill",
+     "hook_result": {
+      "receipt": null,
+      "state": "absent",
+      "tmp": [
+       "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json.tmp"
+      ]
+     },
+     "messages": [
+      "e21 resuming e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129 from update 8192 (e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt): drawing and discarding the batches already used",
+      "e21 resumed at update 8192: stream digest 85da53915215 matches; replay cpu 2.3s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 8192,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T10:59:16+00:00",
+     "cpu_replay": 2.2619375319999997,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ]
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "final_birth_kill_in_receipt against base",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "publish:torn",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL half way through writing the final receipt e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 1,
+      "hook": "receipt state after the kill",
+      "hook_result": {
+       "receipt": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json",
+       "state": "torn",
+       "tmp": []
+      },
+      "messages": []
+     }
+    ],
+    "ok": false,
+    "why": "a step exited wrongly"
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "final_birth_torn_receipt",
+   "steps": [
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": null,
+     "hook_result": null,
+     "messages": []
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": "final receipt cut short",
+     "hook_result": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json cut to 3346 of 6692 bytes",
+     "messages": [
+      "e21 e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json is torn: set aside as e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json.torn.20261112T112648224635Z; resuming from the checkpoint",
+      "e21 resuming e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129 from update 8192 (e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt): drawing and discarding the batches already used",
+      "e21 resumed at update 8192: stream digest 85da53915215 matches; replay cpu 2.3s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "2e71e72389388ce79bb0f365229680a8fcbcb8ada9d9dde15d1c75f96db02221",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 8192,
+     "checkpoint": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T11:26:51+00:00",
+     "cpu_replay": 2.2704871169999996,
+     "qualification": "unqualified, allowed by E16_RESUME_UNQUALIFIED"
+    }
+   ],
+   "set_aside": [
+    "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json.torn.20261112T112648224635Z"
+   ]
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "birth_rule_T_local_heads",
+   "kill": "final_birth_torn_receipt against base",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": null,
+      "hook_result": null,
+      "messages": []
+     },
+     {
+      "spec": "plain",
+      "rc": 1,
+      "hook": "final receipt cut short",
+      "hook_result": "e17_dev_bank2_nbd_lh_bT_tall_dry8192_73129.json cut to 3344 of 6688 bytes",
+      "messages": []
+     }
+    ],
+    "ok": false,
+    "why": "a step exited wrongly"
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "gate_absent",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21: E16_RESUME=1 is refused: exp45/RESUME_QUALIFIED.json is absent"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "gate_listed",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 0,
+     "hook": "qualification record: these sources, this shape",
+     "hook_result": {
+      "mode": "listed",
+      "shapes": 1
+     },
+     "messages": [
+      "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+      "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.3s"
+     ]
+    }
+   ],
+   "receipt_equal": true,
+   "first_difference": null,
+   "weights_equal": true,
+   "weights_sha256": "25ed64e5b963c97ebb451d92a886fd433755a42aad61a8ee6fa24c0f247657ed",
+   "ok": true,
+   "resumed": [
+    {
+     "from_stage": 2,
+     "checkpoint": "e16_life_T_raw65536_drift_online_dry16_73129.ckpt",
+     "host": "vm",
+     "time": "2026-11-12T11:10:58+00:00",
+     "cpu_replay": 0.30494601500000007,
+     "qualification": "qualified"
+    }
+   ]
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "gate_not_listed",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "qualification record: these sources, another shape",
+     "hook_result": {
+      "mode": "not_listed",
+      "shapes": 1
+     },
+     "messages": [
+      "e21: E16_RESUME=1 is refused: this command shape is not on the qualified list: {\"admit\": \"online\", \"arch\": \"window\", \"arm\": \"T\", \"birthrule\": \"D\", \"bookdecay\": \"on\", \"compgap\": 0, \"farctrl\": \"none\", \"farhead\": 0, \"feedback\": \"sign\", \"fixedcodes\": \"off\", \"freeze\": \"none\", \"head1loss\": \"answer\", \"heads\": \"top\", \"hidden\": 512, \"loss\": \"answer\", \"lossw\": \"uniform\", \"projfb\": \"raw\", \"replay\": \"raw\", \"rshare\": 0.5, \"schedule\": \"blocked\", \"store\": \"on\", \"stream\": \"drift\", \"traceup\": \"none\", \"window\": 10}"
+     ]
+    }
+   ],
+   "ok": true
+  },
+  {
+   "test": "5 E21b fixture: able to fail",
+   "shape": "T_drift_online_store",
+   "kill": "gate_not_listed against base",
+   "ok": true,
+   "fixture_verdict_on_defective_harness": {
+    "steps": [
+     {
+      "spec": "update:35",
+      "rc": -9,
+      "hook": null,
+      "hook_result": null,
+      "messages": [
+       "e21-check SIGKILL at update 35 of this process"
+      ]
+     },
+     {
+      "spec": "plain",
+      "rc": 0,
+      "hook": "qualification record: these sources, another shape",
+      "hook_result": {
+       "mode": "not_listed",
+       "shapes": 1
+      },
+      "messages": [
+       "e21 resuming e16_life_T_raw65536_drift_online_dry16_73129.json from stage 2 (e16_life_T_raw65536_drift_online_dry16_73129.ckpt): replaying the data pipeline with the learner off",
+       "e21 resumed at stage 2: pipeline digest be234358c5cb matches; replay cpu 0.2s"
+      ]
+     }
+    ],
+    "ok": false
+   }
+  },
+  {
+   "test": "5 E21b fixture",
+   "shape": "T_drift_online_store",
+   "kill": "gate_other_source",
+   "steps": [
+    {
+     "spec": "update:35",
+     "rc": -9,
+     "hook": null,
+     "hook_result": null,
+     "messages": [
+      "e21-check SIGKILL at update 35 of this process"
+     ]
+    },
+    {
+     "spec": "plain",
+     "rc": 1,
+     "hook": "qualification record: exp45.py hash wrong",
+     "hook_result": {
+      "mode": "wrong_source",
+      "shapes": 1
+     },
+     "messages": [
+      "e21: E16_RESUME=1 is refused: exp45/RESUME_QUALIFIED.json names other sources: exp45.py"
+     ]
+    }
+   ],
+   "ok": true
+  }
+ ],
+ "costs": {
+  "T_drift_online_store": {
+   "checkpoint_bytes": [
+    9636500,
+    9640852,
+    9645204,
+    9649556,
+    9653972,
+    9658324
+   ],
+   "seconds_to_write": [
+    0.04,
+    0.0335,
+    0.0387,
+    0.0382,
+    0.036,
+    0.0423
+   ],
+   "replay_cpu_seconds_per_stage_at_512": 1.771405204,
+   "replay_cpu_seconds_per_stage_at_6144_ESTIMATE": 21.256862448,
+   "note": "the full-dose figure is an estimate: replay cost at 512 updates per stage scaled linearly to 6,144 (panel building included)"
+  },
+  "bank2_phase4": {
+   "checkpoint_bytes": [
+    13548785,
+    13552625,
+    13556401,
+    13560241,
+    13564081,
+    13567985
+   ],
+   "seconds_to_write": [
+    0.0513,
+    0.0531,
+    0.0479,
+    0.0558,
+    0.0553,
+    0.0665
+   ],
+   "replay_cpu_seconds_per_stage_at_512": 0.4958963985,
+   "replay_cpu_seconds_per_stage_at_6144_ESTIMATE": 5.950756782,
+   "note": "the full-dose figure is an estimate: replay cost at 512 updates per stage scaled linearly to 6,144 (panel building included)"
+  }
+ },
+ "work": "/home/user/e21b_work/final2"
+}
