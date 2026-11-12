@@ -1,0 +1,197 @@
+{
+ "part": "scorer_73129",
+ "command": "python3 exp26_candidate.py check scorer 73129 --qual exp45/e26_qual",
+ "provenance": {
+  "command": "python3 exp26_candidate.py check scorer 73129 --qual exp45/e26_qual",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v378-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "8f8bd684a897e7104ee0ae3101a12a4d23a5ee06",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "f4559971a6c1770523d641431fe5d4bd56def3f5ee3cafc87a5b869509be50ae",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  }
+ },
+ "e25_alignment_sha256": "5316278dc5f3d79b3ddd80e96a7674d84d6b9e053cb68b878d02518aa54527a3",
+ "cpu_seconds": 60.839623323,
+ "result": {
+  "signature": [
+   "m",
+   "x",
+   "local",
+   "through_time",
+   "keep=False",
+   "silence=False"
+  ],
+  "signature_ok": true,
+  "stub_fixtures": {
+   "fixtures": {
+    "fully_correct": {
+     "+-": {
+      "n": 600,
+      "exact": 600,
+      "final": 600
+     },
+     "-+": {
+      "n": 600,
+      "exact": 600,
+      "final": 600
+     },
+     "><": {
+      "n": 600,
+      "exact": 600,
+      "final": 600
+     },
+     "<>": {
+      "n": 600,
+      "exact": 600,
+      "final": 600
+     },
+     "within": {
+      "n": 600,
+      "exact": 600,
+      "final": 600
+     },
+     "taught": {
+      "n": 600,
+      "exact": 600,
+      "final": 600
+     }
+    },
+    "wrong_intermediate_right_ending": {
+     "+-": {
+      "n": 600,
+      "exact": 0,
+      "final": 600
+     },
+     "-+": {
+      "n": 600,
+      "exact": 0,
+      "final": 600
+     },
+     "><": {
+      "n": 600,
+      "exact": 0,
+      "final": 600
+     },
+     "<>": {
+      "n": 600,
+      "exact": 0,
+      "final": 600
+     },
+     "within": {
+      "n": 600,
+      "exact": 0,
+      "final": 600
+     },
+     "taught": {
+      "n": 600,
+      "exact": 0,
+      "final": 600
+     }
+    },
+    "missing_end_symbol": {
+     "+-": {
+      "n": 600,
+      "exact": 0,
+      "final": 0
+     },
+     "-+": {
+      "n": 600,
+      "exact": 0,
+      "final": 0
+     },
+     "><": {
+      "n": 600,
+      "exact": 0,
+      "final": 0
+     },
+     "<>": {
+      "n": 600,
+      "exact": 0,
+      "final": 0
+     },
+     "within": {
+      "n": 600,
+      "exact": 0,
+      "final": 0
+     },
+     "taught": {
+      "n": 600,
+      "exact": 0,
+      "final": 0
+     }
+    }
+   },
+   "fixtures_ok": true,
+   "life_scorer_cap": 6
+  },
+  "source": {
+   "file": "exp45/e20b/e20_life_G1_73129.pt",
+   "sha256": "53ba1ca4481fda1a8bd2b9725a50f8c916ce3200a142a2394e5a36a97946fe33"
+  },
+  "installed_forward": "arch26.forward",
+  "scorer_calls_arch26_forward": {
+   "calls": 12,
+   "flags_seen": [
+    [
+     false,
+     true,
+     false
+    ],
+    [
+     false,
+     true,
+     true
+    ]
+   ],
+   "ok": true
+  },
+  "silence": {
+   "vs_arch20_silenced_max_abs_diff": 0.0,
+   "vs_zero_state_readout_max_abs_diff": 0.0,
+   "silenced_differs_from_unsilenced": 27.953493118286133,
+   "ok": true
+  },
+  "cpu_scoring_one_checkpoint": 59.811714429,
+  "receipt_comparison": {
+   "blocks_compared": 70,
+   "differences": [],
+   "required_blocks_equal": true,
+   "all_blocks_equal": true,
+   "compose_counts": {
+    "+-": 443,
+    "-+": 440,
+    "><": 563,
+    "<>": 509,
+    "within": 539
+   }
+  },
+  "pass": true
+ }
+}
