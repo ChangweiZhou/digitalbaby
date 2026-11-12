@@ -615,3 +615,16 @@ Seeds 73129 / 93683 / 116089, from `exp45/E25_VERDICTS.json` (scorer `e25_score.
 - P25.3 misses: twelve steps back the GRU (0.71 / 0.76 / 0.72) is above the first bank (0.52 / 0.48 / 0.54).
 - P25.4 misses: the LSTM's cell state (0.64 / 0.72 / 0.71) is not above the GRU.
 - P25.5 misses: on the first layer's weights the GRU is 0.72 / 0.51 / 0.60 and the two-bank network 0.77 / 0.41 / 0.51.
+
+
+## Verdicts, 12 November 2026, 09:53 EST (clock; review 9.110)
+
+**E26, births** (recomputed from `exp45/e26/e26_dev_<arm>_<seed>.json`; seeds 73129 / 93683 / 116089):
+- P26.1 holds: the sweep-born GRU's hard mean is 98.0 / 98.2 / 99.8.
+- P26.2 holds: it is 0.995 / 0.995 / 1.065 of its backprop partner's (98.5 / 98.7 / 93.7).
+- P26.3 to P26.5 wait for the lives.
+
+**E24** (recomputed from the nine new receipts and the six baselines):
+- P24.1 holds: D-all 91.5 / 89.3 / 91.2.
+- P24.2 holds: T-all 0.8 / 1.0 / 1.2.
+- P24.3 holds: T-bal 81.5 / 79.8 / 83.3; T-bal − T-all +80.7 / +78.8 / +82.1.

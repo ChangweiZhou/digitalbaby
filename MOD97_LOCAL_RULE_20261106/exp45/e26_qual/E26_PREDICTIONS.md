@@ -31,3 +31,12 @@ The marks 85 and 40 are E20-B's, fixed before E20-B ran.
 - **New instances of taught pairs (P26.3, P26.5):** in the life receipt `e26_life_<arm>_<seed>.json`, stage 6: `scores.compose.within.exact` of 600, in percent.
 - **Untaught plus-minus pairs (P26.4, P26.5):** stage 6, `compose["+-"].exact` and `compose["-+"].exact` pooled over 1,200, in percent. Each of the four untaught pairs is also reported separately at every checkpoint.
 - **Whole answer** = `exact` (all six bytes, end symbol included), scored by `exp16_integrated.score`. **Holds** = in at least two of three seeds; for P26.5 the same two seeds for both marks.
+
+
+## Verdicts, 12 November 2026, 09:53 EST (clock; review 9.110)
+
+**E26, births** (recomputed from `exp45/e26/e26_dev_<arm>_<seed>.json`; seeds 73129 / 93683 / 116089):
+- P26.1 holds: the sweep-born GRU's hard mean is 98.0 / 98.2 / 99.8.
+- P26.2 holds: it is 0.995 / 0.995 / 1.065 of its backprop partner's (98.5 / 98.7 / 93.7).
+- P26.3 to P26.5 wait for the lives.
+

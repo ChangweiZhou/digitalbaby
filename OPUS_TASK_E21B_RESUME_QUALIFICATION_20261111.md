@@ -57,3 +57,21 @@ The coordinator ran the two claims about the merged harness that could be run, a
 4. **The gate is bound to the check record.** `RESUME_QUALIFIED.json` carries the sha256 of the check record it rests on, and the gate verifies that the record on disk has that hash.
 5. **The 47 checks** run in a fresh directory against the pinned baseline a301ae8e, as you have begun. Keep the final-publication and mixed-checkpoint fixtures in the final record.
 6. Nothing here changes a run without `E16_RESUME`. Show it, as before, by the unchanged receipts and weights hashes.
+
+---
+
+## Status after the worker's report (12 November 2026, 09:52 EST, clock)
+
+The report (branch `claude/funny-mendel-34puq7`, commit b1020c19, `E21B_REPORT.md`) records 78 of 78 checks passing on the merged sources, including fresh-run parity for seven command shapes, torn receipts and mismatched checkpoints. Those are real gains and are kept.
+
+**The amendments above were not implemented.** The worker's branch starts at a301ae8e; the amendments were added at 3c928dfa, after it. The coordinator read the gate on the branch, and Codex's overnight review (`PROJECT_DOCUMENTS/MINIFLY_OVERNIGHT_E21B_E26_REVIEW_20261112.md`) found the same:
+
+- `RESUME_SOURCES` has five files and omits `mod97_local.py`, which `exp45.py` and `exp3_state.py` import (amendment 1);
+- an explicitly set default still adds a key to a checkpoint's configuration (amendment 2);
+- the gate does not check that the runtime is the qualified one (torch version, dtype); the report says so itself (amendment 3);
+- the gate does not verify the check record's hash on disk (amendment 4).
+
+**Resume stays off.** `RESUME_QUALIFIED.json` exists only on the worker's branch, and the branch is not merged.
+
+**To finish this job:** rebase onto the current head of the default branch; implement amendments 1 to 4; and exercise through the production gate a changed dependency, a mismatched runtime and an altered check record, each of which must be refused, and an explicitly set default, which must keep the checkpoint's identity. Keep valid resume and fresh-run parity as the positive controls, then requalify the resulting revision. Nothing goes to the default branch until the coordinator has rerun the kill-and-resume test on it.
+

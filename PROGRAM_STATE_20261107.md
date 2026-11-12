@@ -424,3 +424,12 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - Codex's four changes adopted: twins forked before either prompt and the pre-probe boundary set by loss targets; the 20-point margin applied to recitation shortcuts only, with the direct-use responder as a separate benchmark and the size decision pinned to the acquisition phase; three fits on the matched extra-bytes stream (84 fits); stage 1 bounded, parameterized copies under `sizing/`.
 - Stage 1 (implementation and qualification) may go to a worker. The roster is held.
 - Running: E24's nine births, E26's six births, E21b.
+
+
+## Addendum, 12 November 09:53 EST (clock): overnight results (review 9.110)
+
+- **E26 births:** the sweep brings E20-B's GRU to birth level with backprop (98.0 / 98.2 / 99.8 against 98.5 / 98.7 / 93.7). P26.1 and P26.2 hold. Admitted by a coordinator ruling on finite losses (Codex's point); stage 3, the six lives, released after the birth weights are committed.
+- **E24 complete:** P24.1 to P24.3 hold. Under every-byte targets backprop loses 1.6 to 3.5 points at birth and the sweep 83.5 to 89.7; half the loss on the answer restores the sweep to within 1.4 to 10.9 points. Last experiment on the two-bank network.
+- **E21b** back to its worker: the brief's amendments were written after its branch began and are not implemented. Resume stays off.
+- **Sizing stage 1:** pipeline qualified; the learner's span is about 12 bytes (no copy at 24 or more). Brief at revision 4 for Codex; roster held.
+- Merged into the default branch: E24's files (by path), E26 stage 2, sizing stage 1.

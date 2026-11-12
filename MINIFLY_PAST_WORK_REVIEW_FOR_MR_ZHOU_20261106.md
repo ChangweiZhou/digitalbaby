@@ -2316,3 +2316,77 @@ Audit: `PROJECT_DOCUMENTS/MINIFLY_TARGET_SIZING_SWEEP_REV2_AUDIT_20261111.md` (c
 | Bound stage 1 and settle where the parameterized code lives | my draft said both "new files only" and "a small change to the step 0 modules" | copies under `sizing/`, with default parity against the accepted step 0 record; profiling on a world seed that is in no roster, 500 updates on each of four paths, two hours of CPU for the stage |
 
 Stage 1 may go to a worker. The roster is released by me after its record: the modulus fixtures, the causal scoring checks, the dependency across a cut, and the cost forecast.
+
+
+## 9.110 Overnight results and Codex's overnight memo: the sweep brings a GRU to birth as backprop does; E24 answers its question; E21b goes back; sizing stage 1 finds the learner's span (09:53 EST by the clock, 12 November 2026)
+
+Codex's memo: `PROJECT_DOCUMENTS/MINIFLY_OVERNIGHT_E21B_E26_REVIEW_20261112.md` (commit 3b58b66c). This section was written by the coordinating session running on Claude Opus 5.5, since Fable was not available. Every figure below was recomputed from receipts or rerun, as in earlier sections.
+
+### A. Codex's memo: both of its points hold, and both are acted on
+
+| Point | Checked how | Result | Action |
+|---|---|---|---|
+| E26's births record finite losses for 3,072 of 24,576 updates each | read in `exp26_candidate.dev`: the list of losses is cleared every 512 updates and flagged only at the six scored rows | confirmed | a coordinator ruling (B below); the lives' loop keeps every loss of a stage, so the lives are covered directly |
+| E21b's gate omits `mod97_local.py`, the qualified runtime and the check record's digest, and explicit defaults still change identity | read the gate on the worker's branch | confirmed. Cause: the worker's branch starts at a301ae8e and the amendments that ask for exactly these things were written after it (3c928dfa) | E21b goes back with the amendments and Codex's four refusal tests; resume stays off |
+
+The memo did not find sizing stage 1, which had been pushed overnight (E below).
+
+### B. E26, the births: the sweep brings a GRU to birth as backprop does
+
+Six births, full dose, one cloud host, the same data in the same order, decay 0.25 in both arms, the same written-out step. Recomputed from the receipts. Hard mean, add89 and sub89 at k = 12, whole answers:
+
+| Seed | Arm S, the sweep | Arm B, backprop | S / B |
+|---|---|---|---|
+| 73129 | 98.0 | 98.5 | 0.995 |
+| 93683 | 98.2 | 98.7 | 0.995 |
+| 116089 | 99.8 | 93.7 | 1.065 |
+
+- **P26.1 holds** in all three seeds (at least 70; I had put it at 50%).
+- **P26.2 holds** in all three (at least 0.85 of the partner; I had put it at 40%).
+- Over the six checkpoints the two arms cross several times. The paired difference S − B is −6.7, +1.3, +8.3, −4.0, +20.2 and +5.2 points on average over the seeds. The learning curves are not distinguishable at three seeds.
+- For reference only, since host, decay and recurrent code all differ: E20-B's GRU (library layer, decay 0.30) was born at 95.3 / 99.8 / 97.3.
+
+**What this is.** The first birth of a network that composes from memory, made by the working rule, and it is level with backprop on the same pipeline. With E25's alignment it says the sweep's weight signs, crossing the GRU's recurrent matrix at every step back, carry enough of the gradient to learn single operations at full accuracy. **What it is not:** composition. That is the lives' question. Answer targets only. E2.
+
+**Ruling on admission.** Codex is right that the flags do not cover every update. I rule that no update of any birth had a non-finite loss, from the record: a non-finite loss or gradient would enter the weights and both of AdamW's moments and could never leave them, and every birth's last 512 losses are finite and its final weights answer 98 to 100% of 1,200 sealed items. Recorded as an inference, in revision 4 of the brief. **Stage 3 is released.** One condition comes first: the six birth weight files, which the worker's `.gitignore` kept off the branch, are committed before the first life starts.
+
+### C. E24 complete: under every-byte targets the sweep collapses at birth and backprop does not; giving the answer half the loss restores it
+
+Nine new births on one cloud host. Recomputed from the receipts. Hard mean:
+
+| Seed | D-ans | D-all | T-ans | T-all | T-bal | Penalty, backprop | Penalty, sweep | T-bal − T-all |
+|---|---|---|---|---|---|---|---|---|
+| 73129 | 93.2 | 91.5 | 87.5 | 0.8 | 81.5 | 1.7 | 86.7 | +80.7 |
+| 93683 | 92.8 | 89.3 | 90.7 | 1.0 | 79.8 | 3.5 | 89.7 | +78.8 |
+| 116089 | 92.8 | 91.2 | 84.7 | 1.2 | 83.3 | 1.6 | 83.5 | +82.1 |
+
+- **P24.1 holds, P24.2 holds, P24.3 holds**, all in all three seeds.
+- The penalty for every-byte targets is 1.6 to 3.5 points under backprop and 83.5 to 89.7 under the sweep: an interaction between objective and training configuration, in the two-bank network at this dose.
+- The two configurations also differ in decay (0.30 against 0.25). The worker's report says so, and the update is not isolated from decay.
+- Giving the answer bytes half the loss brings the sweep back to within 1.4 to 10.9 points of its answer-only level. So in this configuration the harm is a matter of proportion: the answer's share of the error is swamped. Where such a weighting could come from without an answer mask is the open question. The balanced arm uses the mask and is a diagnostic only.
+- With E25, which found the sweep's update no worse aligned under every-byte targets on backprop-trained weights, the collapse is not the sweep pointing the wrong way at one moment. It is what the sweep does over training when most of the targets are unpredictable filler. That is a reading, not a result.
+
+E24 is the last experiment on the two-bank network (9.101). Its 98 files were brought onto the default branch by path, without the unrelated October history of the worker's branch.
+
+### D. E21b goes back
+
+See A. The 78 passing checks are kept. The job is finished on the current head with amendments 1 to 4 and the four refusal tests (status note at the end of its brief). Resume stays off.
+
+### E. Sizing stage 1: the pipeline qualifies, and the learner's span is about 12 bytes
+
+Record: `TARGET_TEST_STEP0/sizing/SIZING_STAGE1_REPORT.md`, merged. The worker reported its one registered failure plainly and changed nothing to pass it.
+
+- Items 1 to 4 and 6 pass. I reran the default parity (0 differences in 3,815 values) and the modulus fixtures on the owner's machine. The code needs Python 3.12 or newer.
+- **Item 5 failed as registered.** The learner copied a byte 12 positions later across a cut at 99.7%, and learned nothing at 24, 40, 60 or 600 positions, cut or no cut, even at 10,000 updates for 60. The limit is span, not the cut.
+- **What that does to the design.** In the line streams a value is stated a median of 411 to 734 bytes before the probe that needs it, so in arm B the lines cannot be read for content. A first-encounter probe in the ordinary stream needs the context letter 12 to 16 bytes back, at the edge of the span.
+- **Revision 4 of the brief**, to Codex:
+  - the roster stays at 84 fits, with the lines read in arm B as a package only and the base-arm question not decided by this sweep;
+  - the copy fixture is added at 16 and 20 bytes before the roster;
+  - the worker's alternative cut plan is adopted (keep the 256-byte grid, read forward without an update, replay the chunk), so that training is identical to a run without probes.
+
+This bears on the target test itself, not only on the sweep. The test as drafted asks a learner to use a disclosure hundreds of bytes after it, or to hold a context across a filler. A GRU of E20-B's shape, trained as here, does not carry information 24 bytes over random filler. Either the test's distances are brought within reach, or the learner it is meant for is not this one.
+
+### F. Where this leaves the close of 17 November
+
+- **The candidate pair has been born:** the sweep and the GRU, level with backprop at birth. If the lives meet E20-B's composition marks in the same two seeds, the close can name it, with three conditions attached: answer targets, a joint rehearsing stream, and E2.
+- **The next question for the target test is already visible.** The target test has no answer mask. E24 shows the sweep collapsing under every-byte targets on the two-bank network. Whether it does so on the GRU is the bridge from E26 to the target test: E26's two arms, born under every-byte targets. I will brief it after the lives have been read, not before.
