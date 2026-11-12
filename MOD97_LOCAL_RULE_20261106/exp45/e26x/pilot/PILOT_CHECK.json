@@ -1,0 +1,89 @@
+{
+ "diag_S_identical": {
+  "tensors": true,
+  "data_digest": true,
+  "scores": true,
+  "losses": true
+ },
+ "diag_B_identical": {
+  "tensors": true,
+  "data_digest": true,
+  "scores": true,
+  "losses": true
+ },
+ "cell_SS": {
+  "birth_sha_is_its_birth": true,
+  "update_local": true,
+  "update_local_expected": true,
+  "local_ok": true,
+  "crossover": {
+   "birth_arm": "S",
+   "update_arm": "S",
+   "update_local": true,
+   "runner": "exp26x_cross.py",
+   "runner_sha256": "24dbb6dd4cfec2f2552cd26de119adb2956c3ed0089ed5edfe80ba0f60dafb46"
+  },
+  "data_digest_equals_orig_S": true,
+  "complete": true,
+  "finite": true
+ },
+ "cell_BB": {
+  "birth_sha_is_its_birth": true,
+  "update_local": false,
+  "update_local_expected": false,
+  "local_ok": true,
+  "crossover": {
+   "birth_arm": "B",
+   "update_arm": "B",
+   "update_local": false,
+   "runner": "exp26x_cross.py",
+   "runner_sha256": "24dbb6dd4cfec2f2552cd26de119adb2956c3ed0089ed5edfe80ba0f60dafb46"
+  },
+  "data_digest_equals_orig_S": true,
+  "complete": true,
+  "finite": true
+ },
+ "cell_SB": {
+  "birth_sha_is_its_birth": true,
+  "update_local": false,
+  "update_local_expected": false,
+  "local_ok": true,
+  "crossover": {
+   "birth_arm": "S",
+   "update_arm": "B",
+   "update_local": false,
+   "runner": "exp26x_cross.py",
+   "runner_sha256": "24dbb6dd4cfec2f2552cd26de119adb2956c3ed0089ed5edfe80ba0f60dafb46"
+  },
+  "data_digest_equals_orig_S": true,
+  "complete": true,
+  "finite": true
+ },
+ "cell_BS": {
+  "birth_sha_is_its_birth": true,
+  "update_local": true,
+  "update_local_expected": true,
+  "local_ok": true,
+  "crossover": {
+   "birth_arm": "B",
+   "update_arm": "S",
+   "update_local": true,
+   "runner": "exp26x_cross.py",
+   "runner_sha256": "24dbb6dd4cfec2f2552cd26de119adb2956c3ed0089ed5edfe80ba0f60dafb46"
+  },
+  "data_digest_equals_orig_S": true,
+  "complete": true,
+  "finite": true
+ },
+ "SB_differs_from_SS": true,
+ "BS_differs_from_BB": true,
+ "SB_differs_from_BB": true,
+ "BS_differs_from_SS": true,
+ "stage1_first_score_add97_k12": {
+  "SS": 336,
+  "BB": 315,
+  "SB": 317,
+  "BS": 273
+ },
+ "pilot_passes": true
+}
