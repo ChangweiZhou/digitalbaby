@@ -2390,3 +2390,30 @@ This bears on the target test itself, not only on the sweep. The test as drafted
 
 - **The candidate pair has been born:** the sweep and the GRU, level with backprop at birth. If the lives meet E20-B's composition marks in the same two seeds, the close can name it, with three conditions attached: answer targets, a joint rehearsing stream, and E2.
 - **The next question for the target test is already visible.** The target test has no answer mask. E24 shows the sweep collapsing under every-byte targets on the two-bank network. Whether it does so on the GRU is the bridge from E26 to the target test: E26's two arms, born under every-byte targets. I will brief it after the lives have been read, not before.
+
+
+## 9.111 The scorer for E26's lives, written before any life exists (09:59 EST by the clock, 12 November 2026)
+
+`MOD97_LOCAL_RULE_20261106/e26_score_lives.py`, with fixtures in `e26_score_lives_fixtures.py`. The practice of E22 (9.85): the reading of a result is fixed in code before the result exists.
+
+**Contract checks**, each of which stops the reading:
+- seven stages and a completion record;
+- finite losses at every stage, which in the life loop covers every update;
+- AdamW read back at decay 0.25 with the embedding table at 0;
+- the weights file matching its hash when present;
+- each life bound to its own arm's and seed's birth by the hash in that birth's receipt;
+- the two arms of a seed fed the same data at every stage, and scored on the same panels.
+
+**What it computes:**
+- P26.3, P26.4 and P26.5;
+- the candidate-pair reading of the brief: arm S meets both marks, 85 on new instances of taught pairs and 40 on the untaught plus-minus pairs, in the same two or more seeds;
+- every endpoint at every stage, each untaught pair separately;
+- the paired difference S − B at every stage.
+
+A life that is missing counts as not meeting a mark, and the denominator stays three, as the brief says.
+
+**Tested on the reduced-dose receipts of stage 1:**
+- It reproduces the counts in the stage 1 record: new instances of taught pairs 77 and 73 of 600.
+- Four corrupted copies are each caught: data that differs between the arms at one stage, a birth hash that is not the birth receipt's, a stage with non-finite losses, and decay 0.30.
+
+At that dose nothing is near a mark, as expected. Nothing here is a result.
