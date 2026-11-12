@@ -1,0 +1,4378 @@
+{
+ "brief": "OPUS_TASK_TARGET_SIZING_SWEEP_20261111.md rev. 3",
+ "arm": "B",
+ "stream": "wider",
+ "modulus": 97,
+ "presentations": 4,
+ "world": 104,
+ "configuration": {
+  "contexts": 24,
+  "cues_per_family": 12,
+  "modulus": 97,
+  "window": 10,
+  "taught_per_family": 216,
+  "first_encounter_per_family": 48,
+  "first_encounter_sets": [
+   "acquire",
+   "retain",
+   "revise"
+  ],
+  "per_set": 16,
+  "sealed_twins_per_family": 12,
+  "renderings_per_panel": 150,
+  "panel_filler": [
+   10,
+   14
+  ],
+  "teaching_filler": [
+   0,
+   14
+  ],
+  "first_encounter_filler": [
+   10,
+   14
+  ],
+  "changed_cues": 2,
+  "revision_pairs_with_changed_cue": 6,
+  "acquire_reps": 4,
+  "absent_reps": 2,
+  "return_reps": 1,
+  "revise_reps": 2,
+  "acquire_first_from": 0.5,
+  "retain_within": 0.25,
+  "revise_first_from": 0.4,
+  "change_at_fraction": 0.1,
+  "line_delays": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "control_twins": 2,
+  "distinct_pair_share": 0.8,
+  "evidence_after_change": 3
+ },
+ "cfg_hash": "0bdb13f74061905218d5d467bfa68346164c36bb9929aa74b2e02fd347693f88",
+ "stream_sha256": "a29e21c623cf9b49aed9d529a5791b2027b9427ee4601b9c362a4395d7784e7e",
+ "taught_panel_sha256": "749771a74e75040fe64acfab2231e92339808ec7a0003c3eba15aeaeb8ab5b7f",
+ "model_seed": 1104,
+ "optimizer": {
+  "decay": [
+   "l1.weight",
+   "l1.bias",
+   "rnn.weight_ih_l0",
+   "rnn.weight_hh_l0",
+   "rnn.bias_ih_l0",
+   "rnn.bias_hh_l0",
+   "lm.weight",
+   "lm.bias",
+   "l2.weight",
+   "l2.bias",
+   "l3.weight",
+   "l3.bias"
+  ],
+  "no_decay": [
+   "book.weight"
+  ],
+  "lr": 0.001,
+  "weight_decay": 0.3,
+  "betas": [
+   0.9,
+   0.98
+  ]
+ },
+ "batch": "one stream, chunks of 256 target positions",
+ "loss": "mean over the targets of a batch or chunk; every next byte; no answer mask",
+ "one_update_per_batch_or_chunk": true,
+ "bytes": 82380,
+ "target_positions": 82380,
+ "updates": 419,
+ "cut_positions": [
+  20538,
+  21857,
+  23240,
+  23417,
+  23668,
+  23984,
+  24506,
+  27137,
+  27276,
+  28327,
+  28682,
+  29407,
+  29481,
+  29595,
+  29907,
+  30126,
+  30697,
+  31760,
+  32525,
+  33625,
+  33897,
+  34076,
+  34199,
+  35427,
+  36629,
+  37216,
+  38285,
+  38761,
+  39087,
+  39855,
+  40215,
+  40714,
+  40737,
+  50705,
+  50793,
+  50853,
+  50903,
+  51038,
+  51058,
+  51124,
+  51290,
+  51393,
+  51633,
+  51684,
+  51738,
+  51965,
+  52028,
+  52181,
+  52266,
+  52378,
+  52476,
+  52585,
+  52611,
+  52653,
+  52831,
+  53081,
+  53257,
+  53418,
+  53530,
+  53651,
+  53669,
+  53706,
+  53788,
+  53894,
+  54008,
+  69527,
+  69806,
+  69825,
+  69883,
+  70334,
+  70668,
+  70874,
+  71364,
+  72225,
+  72705,
+  72725,
+  72777,
+  72941,
+  73133,
+  73323,
+  75317,
+  75709,
+  75793,
+  76023,
+  76869,
+  77380,
+  77709,
+  78065,
+  78115,
+  78733,
+  78863,
+  79030,
+  79467,
+  80275,
+  82193,
+  82268,
+  82316
+ ],
+ "episodes": 3552,
+ "cpu": {
+  "generation": 0.09,
+  "training": 28.03,
+  "scoring_responses": 1.16,
+  "scoring_references_and_readings": 0.12,
+  "checks_recorded_with_setting": 1.11
+ },
+ "responses_written": 2664,
+ "cls": "negative",
+ "class_numbers": {
+  "acquire_first_encounter_accuracy": 0.0,
+  "best_recitation_shortcut": 0.0,
+  "margin": 0.0,
+  "distinct_twin_pairs_right": 0,
+  "distinct_twin_pairs": 24,
+  "taught_long_recall_at_A": 0.015625
+ },
+ "loss_tenths": [
+  {
+   "tenth": 1,
+   "outcome_loss": 3.642525207828468,
+   "outcome_targets": 710,
+   "other_loss": 3.2735123210452994,
+   "other_targets": 7528
+  },
+  {
+   "tenth": 2,
+   "outcome_loss": 2.6509689725516887,
+   "outcome_targets": 712,
+   "other_loss": 2.2435670454568033,
+   "other_targets": 7526
+  },
+  {
+   "tenth": 3,
+   "outcome_loss": 2.406740274154738,
+   "outcome_targets": 712,
+   "other_loss": 1.9907915352161716,
+   "other_targets": 7526
+  },
+  {
+   "tenth": 4,
+   "outcome_loss": 2.4146577342928457,
+   "outcome_targets": 716,
+   "other_loss": 1.9323405608019844,
+   "other_targets": 7522
+  },
+  {
+   "tenth": 5,
+   "outcome_loss": 2.4171354265025493,
+   "outcome_targets": 712,
+   "other_loss": 1.8657797050303804,
+   "other_targets": 7526
+  },
+  {
+   "tenth": 6,
+   "outcome_loss": 2.3363158972789804,
+   "outcome_targets": 711,
+   "other_loss": 1.6988411498468434,
+   "other_targets": 7527
+  },
+  {
+   "tenth": 7,
+   "outcome_loss": 2.533333152323585,
+   "outcome_targets": 713,
+   "other_loss": 1.775881510323995,
+   "other_targets": 7525
+  },
+  {
+   "tenth": 8,
+   "outcome_loss": 2.3502963637771392,
+   "outcome_targets": 714,
+   "other_loss": 1.685677704184505,
+   "other_targets": 7524
+  },
+  {
+   "tenth": 9,
+   "outcome_loss": 2.465971622308265,
+   "outcome_targets": 702,
+   "other_loss": 1.6961216212230095,
+   "other_targets": 7536
+  },
+  {
+   "tenth": 10,
+   "outcome_loss": 2.452354311943054,
+   "outcome_targets": 702,
+   "other_loss": 1.7005626857284735,
+   "other_targets": 7536
+  }
+ ],
+ "loss_log_every_50": [
+  [
+   1,
+   256,
+   5.5503458976745605
+  ],
+  [
+   51,
+   256,
+   2.245908260345459
+  ],
+  [
+   101,
+   256,
+   1.999327540397644
+  ],
+  [
+   151,
+   89,
+   1.930030345916748
+  ],
+  [
+   201,
+   256,
+   1.849753737449646
+  ],
+  [
+   251,
+   153,
+   2.016493320465088
+  ],
+  [
+   301,
+   256,
+   1.7793246507644653
+  ],
+  [
+   351,
+   196,
+   1.9157655239105225
+  ],
+  [
+   401,
+   74,
+   1.8099548816680908
+  ],
+  [
+   419,
+   64,
+   1.252543330192566
+  ]
+ ],
+ "readings": {
+  "first_encounter": [
+   {
+    "at": 886,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 3,
+    "c": 2,
+    "truth": 58,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 18,
+     "cue": 36,
+     "context_in_lines": 18,
+     "cue_in_lines": 35
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 386,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 113,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 942,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 20,
+    "c": 4,
+    "truth": 46,
+    "response": "05\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 18,
+     "cue": 43,
+     "context_in_lines": 18,
+     "cue_in_lines": 43
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 404,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 97,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1003,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 20,
+    "c": 0,
+    "truth": 33,
+    "response": "03\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 17,
+     "cue": 45,
+     "context_in_lines": 17,
+     "cue_in_lines": 45
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 555,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 252,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1009,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 7,
+    "c": 6,
+    "truth": 28,
+    "response": "03\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 11,
+     "cue": 38,
+     "context_in_lines": 11,
+     "cue_in_lines": 38
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1212,
+      "cuts_between": 7
+     },
+     "cue_line": {
+      "bytes": 61,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1020,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 13,
+    "c": 3,
+    "truth": 38,
+    "response": "31\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 26,
+     "cue": 50,
+     "context_in_lines": 26,
+     "cue_in_lines": 50
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 16,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 1473,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 1035,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 15,
+    "c": 1,
+    "truth": 38,
+    "response": "31\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 19,
+     "cue": 39,
+     "context_in_lines": 19,
+     "cue_in_lines": 39
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 145,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 428,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 1057,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 5,
+    "c": 10,
+    "truth": 55,
+    "response": "61\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 26,
+     "cue": 50,
+     "context_in_lines": 26,
+     "cue_in_lines": 50
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 3704,
+      "cuts_between": 20
+     },
+     "cue_line": {
+      "bytes": 285,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1171,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 13,
+    "c": 10,
+    "truth": 70,
+    "response": "22\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 31,
+     "cue": 54,
+     "context_in_lines": 31,
+     "cue_in_lines": 54
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1329,
+      "cuts_between": 7
+     },
+     "cue_line": {
+      "bytes": 1993,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 1177,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 11,
+    "c": 2,
+    "truth": 26,
+    "response": "22\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 26,
+     "cue": 46,
+     "context_in_lines": 26,
+     "cue_in_lines": 46
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1327,
+      "cuts_between": 7
+     },
+     "cue_line": {
+      "bytes": 311,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 1224,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 5,
+    "c": 4,
+    "truth": 7,
+    "response": "29\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 29,
+     "cue": 44,
+     "context_in_lines": 29,
+     "cue_in_lines": 44
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1474,
+      "cuts_between": 9
+     },
+     "cue_line": {
+      "bytes": 764,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 1240,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 17,
+    "c": 2,
+    "truth": 81,
+    "response": "04\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 18,
+     "cue": 49,
+     "context_in_lines": 18,
+     "cue_in_lines": 49
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 541,
+      "cuts_between": 5
+     },
+     "cue_line": {
+      "bytes": 222,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1271,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 12,
+    "c": 9,
+    "truth": 26,
+    "response": "71\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 26,
+     "cue": 47,
+     "context_in_lines": 26,
+     "cue_in_lines": 47
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 751,
+      "cuts_between": 5
+     },
+     "cue_line": {
+      "bytes": 13,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1274,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 14,
+    "c": 2,
+    "truth": 71,
+    "response": "07\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 29,
+     "cue": 50,
+     "context_in_lines": 29,
+     "cue_in_lines": 50
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 451,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 373,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 1279,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 2,
+    "c": 1,
+    "truth": 41,
+    "response": "07\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 16,
+     "cue": 54,
+     "context_in_lines": 16,
+     "cue_in_lines": 54
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 6332,
+      "cuts_between": 36
+     },
+     "cue_line": {
+      "bytes": 607,
+      "cuts_between": 5
+     }
+    }
+   },
+   {
+    "at": 1293,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 21,
+    "c": 11,
+    "truth": 64,
+    "response": "06\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 25,
+     "cue": 49,
+     "context_in_lines": 25,
+     "cue_in_lines": 49
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 31,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 226,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1303,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 12,
+    "c": 6,
+    "truth": 87,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 28,
+     "cue": 51,
+     "context_in_lines": 28,
+     "cue_in_lines": 51
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 465,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 135,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1328,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 9,
+    "c": 4,
+    "truth": 33,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 23,
+     "cue": 56,
+     "context_in_lines": 23,
+     "cue_in_lines": 56
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1459,
+      "cuts_between": 11
+     },
+     "cue_line": {
+      "bytes": 1232,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 1375,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 0,
+    "c": 9,
+    "truth": 29,
+    "response": "31\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 22,
+     "cue": 52,
+     "context_in_lines": 22,
+     "cue_in_lines": 52
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 316,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 593,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 1407,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 18,
+    "c": 11,
+    "truth": 94,
+    "response": "38\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 31,
+     "cue": 52,
+     "context_in_lines": 31,
+     "cue_in_lines": 52
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 653,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 1656,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 1454,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 13,
+    "c": 4,
+    "truth": 95,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 36,
+     "cue": 61,
+     "context_in_lines": 36,
+     "cue_in_lines": 61
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 379,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 463,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 1465,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 3,
+    "c": 4,
+    "truth": 16,
+    "response": "29\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 30,
+     "cue": 56,
+     "context_in_lines": 30,
+     "cue_in_lines": 56
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 594,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 361,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 1472,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 22,
+    "c": 11,
+    "truth": 3,
+    "response": "94\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 31,
+     "cue": 58,
+     "context_in_lines": 31,
+     "cue_in_lines": 58
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1167,
+      "cuts_between": 8
+     },
+     "cue_line": {
+      "bytes": 196,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 1477,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 2,
+    "c": 6,
+    "truth": 52,
+    "response": "94\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 21,
+     "cue": 59,
+     "context_in_lines": 21,
+     "cue_in_lines": 59
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 158,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 835,
+      "cuts_between": 7
+     }
+    }
+   },
+   {
+    "at": 1530,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 21,
+    "c": 7,
+    "truth": 23,
+    "response": "05\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 30,
+     "cue": 48,
+     "context_in_lines": 30,
+     "cue_in_lines": 48
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 400,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 25,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1580,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 9,
+    "c": 10,
+    "truth": 3,
+    "response": "05\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 43,
+     "cue": 69,
+     "context_in_lines": 43,
+     "cue_in_lines": 69
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 290,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 2244,
+      "cuts_between": 11
+     }
+    }
+   },
+   {
+    "at": 1606,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 1,
+    "c": 9,
+    "truth": 38,
+    "response": "05\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 31,
+     "cue": 65,
+     "context_in_lines": 31,
+     "cue_in_lines": 65
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 177,
+      "cuts_between": 2
+     },
+     "cue_line": {
+      "bytes": 37,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1653,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 7,
+    "c": 2,
+    "truth": 78,
+    "response": "83\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 28,
+     "cue": 66,
+     "context_in_lines": 28,
+     "cue_in_lines": 66
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 3543,
+      "cuts_between": 18
+     },
+     "cue_line": {
+      "bytes": 101,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1672,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 20,
+    "c": 10,
+    "truth": 62,
+    "response": "71\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 31,
+     "cue": 75,
+     "context_in_lines": 31,
+     "cue_in_lines": 75
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1811,
+      "cuts_between": 10
+     },
+     "cue_line": {
+      "bytes": 218,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1687,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 1,
+    "c": 11,
+    "truth": 5,
+    "response": "71\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 35,
+     "cue": 69,
+     "context_in_lines": 35,
+     "cue_in_lines": 69
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2886,
+      "cuts_between": 16
+     },
+     "cue_line": {
+      "bytes": 15,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 1722,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 17,
+    "c": 4,
+    "truth": 23,
+    "response": "70\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 28,
+     "cue": 70,
+     "context_in_lines": 28,
+     "cue_in_lines": 70
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 48,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 287,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1737,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 1,
+    "x": 3,
+    "c": 4,
+    "truth": 76,
+    "response": "79\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 32,
+     "cue": 72,
+     "context_in_lines": 32,
+     "cue_in_lines": 72
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1566,
+      "cuts_between": 11
+     },
+     "cue_line": {
+      "bytes": 148,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 1759,
+    "set": "acquire",
+    "phase": "acquire",
+    "era": 0,
+    "family": 2,
+    "x": 18,
+    "c": 8,
+    "truth": 48,
+    "response": "68\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 32,
+     "cue": 72,
+     "context_in_lines": 32,
+     "cue_in_lines": 71
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 152,
+      "cuts_between": 2
+     },
+     "cue_line": {
+      "bytes": 4325,
+      "cuts_between": 25
+     }
+    }
+   },
+   {
+    "at": 2192,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 2,
+    "c": 2,
+    "truth": 29,
+    "response": "05\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 26,
+     "cue": 70,
+     "context_in_lines": 26,
+     "cue_in_lines": 70
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 10032,
+      "cuts_between": 43
+     },
+     "cue_line": {
+      "bytes": 10186,
+      "cuts_between": 43
+     }
+    }
+   },
+   {
+    "at": 2196,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 7,
+    "c": 10,
+    "truth": 92,
+    "response": "02\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 29,
+     "cue": 74,
+     "context_in_lines": 29,
+     "cue_in_lines": 74
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 12422,
+      "cuts_between": 57
+     },
+     "cue_line": {
+      "bytes": 10096,
+      "cuts_between": 44
+     }
+    }
+   },
+   {
+    "at": 2198,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 7,
+    "c": 8,
+    "truth": 38,
+    "response": "02\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 31,
+     "cue": 109,
+     "context_in_lines": 31,
+     "cue_in_lines": 109
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 927,
+      "cuts_between": 6
+     },
+     "cue_line": {
+      "bytes": 471,
+      "cuts_between": 5
+     }
+    }
+   },
+   {
+    "at": 2200,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 9,
+    "c": 6,
+    "truth": 17,
+    "response": "28\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 29,
+     "cue": 70,
+     "context_in_lines": 29,
+     "cue_in_lines": 69
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 10305,
+      "cuts_between": 46
+     },
+     "cue_line": {
+      "bytes": 11251,
+      "cuts_between": 52
+     }
+    }
+   },
+   {
+    "at": 2205,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 0,
+    "c": 2,
+    "truth": 26,
+    "response": "31\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 49,
+     "cue": 99,
+     "context_in_lines": 49,
+     "cue_in_lines": 99
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1912,
+      "cuts_between": 13
+     },
+     "cue_line": {
+      "bytes": 1002,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 2206,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 1,
+    "c": 11,
+    "truth": 43,
+    "response": "31\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 49,
+     "cue": 109,
+     "context_in_lines": 49,
+     "cue_in_lines": 109
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 390,
+      "cuts_between": 8
+     },
+     "cue_line": {
+      "bytes": 930,
+      "cuts_between": 10
+     }
+    }
+   },
+   {
+    "at": 2208,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 3,
+    "c": 1,
+    "truth": 49,
+    "response": "31\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 34,
+     "cue": 77,
+     "context_in_lines": 34,
+     "cue_in_lines": 77
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 15,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 10708,
+      "cuts_between": 51
+     }
+    }
+   },
+   {
+    "at": 2216,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 1,
+    "c": 8,
+    "truth": 50,
+    "response": "38\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 38,
+     "cue": 81,
+     "context_in_lines": 38,
+     "cue_in_lines": 81
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 88,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 454,
+      "cuts_between": 8
+     }
+    }
+   },
+   {
+    "at": 2220,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 2,
+    "c": 5,
+    "truth": 24,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 42,
+     "cue": 121,
+     "context_in_lines": 42,
+     "cue_in_lines": 121
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1319,
+      "cuts_between": 14
+     },
+     "cue_line": {
+      "bytes": 616,
+      "cuts_between": 10
+     }
+    }
+   },
+   {
+    "at": 2231,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 15,
+    "c": 7,
+    "truth": 3,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 49,
+     "cue": 110,
+     "context_in_lines": 49,
+     "cue_in_lines": 110
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 955,
+      "cuts_between": 14
+     },
+     "cue_line": {
+      "bytes": 129,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 2233,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 15,
+    "c": 2,
+    "truth": 93,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 41,
+     "cue": 71,
+     "context_in_lines": 41,
+     "cue_in_lines": 71
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 100,
+      "cuts_between": 2
+     },
+     "cue_line": {
+      "bytes": 966,
+      "cuts_between": 13
+     }
+    }
+   },
+   {
+    "at": 2236,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 1,
+    "c": 3,
+    "truth": 46,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 52,
+     "cue": 110,
+     "context_in_lines": 52,
+     "cue_in_lines": 110
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 134,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 461,
+      "cuts_between": 7
+     }
+    }
+   },
+   {
+    "at": 2246,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 16,
+    "c": 10,
+    "truth": 34,
+    "response": "26\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 61,
+     "cue": 118,
+     "context_in_lines": 61,
+     "cue_in_lines": 118
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 599,
+      "cuts_between": 7
+     },
+     "cue_line": {
+      "bytes": 14,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 2248,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 6,
+    "c": 9,
+    "truth": 75,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 63,
+     "cue": 106,
+     "context_in_lines": 63,
+     "cue_in_lines": 106
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 796,
+      "cuts_between": 10
+     },
+     "cue_line": {
+      "bytes": 232,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 2255,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 22,
+    "c": 1,
+    "truth": 51,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 55,
+     "cue": 110,
+     "context_in_lines": 55,
+     "cue_in_lines": 110
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1561,
+      "cuts_between": 21
+     },
+     "cue_line": {
+      "bytes": 1424,
+      "cuts_between": 19
+     }
+    }
+   },
+   {
+    "at": 2258,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 7,
+    "c": 1,
+    "truth": 20,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 33,
+     "cue": 111,
+     "context_in_lines": 33,
+     "cue_in_lines": 111
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 201,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 62,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 2263,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 9,
+    "c": 9,
+    "truth": 62,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 30,
+     "cue": 74,
+     "context_in_lines": 30,
+     "cue_in_lines": 74
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1462,
+      "cuts_between": 19
+     },
+     "cue_line": {
+      "bytes": 55,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 2266,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 23,
+    "c": 8,
+    "truth": 37,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 33,
+     "cue": 84,
+     "context_in_lines": 33,
+     "cue_in_lines": 84
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1508,
+      "cuts_between": 19
+     },
+     "cue_line": {
+      "bytes": 589,
+      "cuts_between": 8
+     }
+    }
+   },
+   {
+    "at": 2271,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 5,
+    "c": 1,
+    "truth": 53,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 45,
+     "cue": 78,
+     "context_in_lines": 45,
+     "cue_in_lines": 78
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 184,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 1448,
+      "cuts_between": 18
+     }
+    }
+   },
+   {
+    "at": 2272,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 7,
+    "c": 4,
+    "truth": 19,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 34,
+     "cue": 105,
+     "context_in_lines": 34,
+     "cue_in_lines": 105
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 266,
+      "cuts_between": 5
+     },
+     "cue_line": {
+      "bytes": 501,
+      "cuts_between": 8
+     }
+    }
+   },
+   {
+    "at": 2274,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 22,
+    "c": 7,
+    "truth": 45,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 38,
+     "cue": 60,
+     "context_in_lines": 37,
+     "cue_in_lines": 60
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1651,
+      "cuts_between": 23
+     },
+     "cue_line": {
+      "bytes": 55,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 2281,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 23,
+    "c": 7,
+    "truth": 48,
+    "response": "34\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 34,
+     "cue": 61,
+     "context_in_lines": 34,
+     "cue_in_lines": 61
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 302,
+      "cuts_between": 5
+     },
+     "cue_line": {
+      "bytes": 108,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 2291,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 23,
+    "c": 6,
+    "truth": 33,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 50,
+     "cue": 106,
+     "context_in_lines": 50,
+     "cue_in_lines": 106
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 305,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 717,
+      "cuts_between": 10
+     }
+    }
+   },
+   {
+    "at": 2299,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 3,
+    "c": 2,
+    "truth": 37,
+    "response": "37\n",
+    "right": true,
+    "exposure": {
+     "pair": 0,
+     "context": 36,
+     "cue": 73,
+     "context_in_lines": 36,
+     "cue_in_lines": 73
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 471,
+      "cuts_between": 5
+     },
+     "cue_line": {
+      "bytes": 584,
+      "cuts_between": 6
+     }
+    }
+   },
+   {
+    "at": 2306,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 13,
+    "c": 7,
+    "truth": 80,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 54,
+     "cue": 113,
+     "context_in_lines": 54,
+     "cue_in_lines": 113
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2928,
+      "cuts_between": 36
+     },
+     "cue_line": {
+      "bytes": 1224,
+      "cuts_between": 15
+     }
+    }
+   },
+   {
+    "at": 2311,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 5,
+    "c": 7,
+    "truth": 70,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 65,
+     "cue": 114,
+     "context_in_lines": 65,
+     "cue_in_lines": 114
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 734,
+      "cuts_between": 8
+     },
+     "cue_line": {
+      "bytes": 79,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 2316,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 23,
+    "c": 5,
+    "truth": 36,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 35,
+     "cue": 71,
+     "context_in_lines": 35,
+     "cue_in_lines": 71
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 779,
+      "cuts_between": 8
+     },
+     "cue_line": {
+      "bytes": 2067,
+      "cuts_between": 26
+     }
+    }
+   },
+   {
+    "at": 2317,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 1,
+    "c": 9,
+    "truth": 38,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 39,
+     "cue": 76,
+     "context_in_lines": 39,
+     "cue_in_lines": 76
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2341,
+      "cuts_between": 29
+     },
+     "cue_line": {
+      "bytes": 883,
+      "cuts_between": 10
+     }
+    }
+   },
+   {
+    "at": 2318,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 19,
+    "c": 1,
+    "truth": 43,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 56,
+     "cue": 113,
+     "context_in_lines": 56,
+     "cue_in_lines": 113
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1315,
+      "cuts_between": 17
+     },
+     "cue_line": {
+      "bytes": 356,
+      "cuts_between": 6
+     }
+    }
+   },
+   {
+    "at": 2321,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 4,
+    "c": 7,
+    "truth": 35,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 46,
+     "cue": 63,
+     "context_in_lines": 46,
+     "cue_in_lines": 63
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2065,
+      "cuts_between": 27
+     },
+     "cue_line": {
+      "bytes": 245,
+      "cuts_between": 5
+     }
+    }
+   },
+   {
+    "at": 2327,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 2,
+    "x": 20,
+    "c": 4,
+    "truth": 41,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 53,
+     "cue": 107,
+     "context_in_lines": 53,
+     "cue_in_lines": 107
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 158,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 704,
+      "cuts_between": 11
+     }
+    }
+   },
+   {
+    "at": 2330,
+    "set": "retain",
+    "phase": "interfere",
+    "era": 0,
+    "family": 1,
+    "x": 21,
+    "c": 5,
+    "truth": 11,
+    "response": "37\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 36,
+     "cue": 73,
+     "context_in_lines": 36,
+     "cue_in_lines": 73
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 895,
+      "cuts_between": 12
+     },
+     "cue_line": {
+      "bytes": 101,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 3007,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 9,
+    "c": 10,
+    "truth": 8,
+    "response": "80\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 42,
+     "cue": 108,
+     "context_in_lines": 42,
+     "cue_in_lines": 108
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2386,
+      "cuts_between": 10
+     },
+     "cue_line": {
+      "bytes": 703,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 3019,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 11,
+    "c": 9,
+    "truth": 51,
+    "response": "00\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 51,
+     "cue": 102,
+     "context_in_lines": 51,
+     "cue_in_lines": 102
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 170,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 249,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 3020,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 2,
+    "c": 11,
+    "truth": 64,
+    "response": "00\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 39,
+     "cue": 106,
+     "context_in_lines": 39,
+     "cue_in_lines": 106
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1011,
+      "cuts_between": 7
+     },
+     "cue_line": {
+      "bytes": 2168,
+      "cuts_between": 11
+     }
+    }
+   },
+   {
+    "at": 3022,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 4,
+    "c": 6,
+    "truth": 66,
+    "response": "00\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 72,
+     "cue": 139,
+     "context_in_lines": 72,
+     "cue_in_lines": 139
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 948,
+      "cuts_between": 7
+     },
+     "cue_line": {
+      "bytes": 1403,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 3042,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 11,
+    "c": 0,
+    "truth": 71,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 53,
+     "cue": 123,
+     "context_in_lines": 53,
+     "cue_in_lines": 123
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 243,
+      "cuts_between": 2
+     },
+     "cue_line": {
+      "bytes": 326,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 3057,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 6,
+    "c": 6,
+    "truth": 39,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 82,
+     "cue": 140,
+     "context_in_lines": 82,
+     "cue_in_lines": 140
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2111,
+      "cuts_between": 15
+     },
+     "cue_line": {
+      "bytes": 711,
+      "cuts_between": 5
+     }
+    }
+   },
+   {
+    "at": 3065,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 11,
+    "c": 4,
+    "truth": 81,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 73,
+     "cue": 136,
+     "context_in_lines": 73,
+     "cue_in_lines": 136
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 564,
+      "cuts_between": 5
+     },
+     "cue_line": {
+      "bytes": 1018,
+      "cuts_between": 8
+     }
+    }
+   },
+   {
+    "at": 3086,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 18,
+    "c": 2,
+    "truth": 71,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 64,
+     "cue": 133,
+     "context_in_lines": 64,
+     "cue_in_lines": 133
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 556,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 52,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 3121,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 7,
+    "c": 7,
+    "truth": 72,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 44,
+     "cue": 92,
+     "context_in_lines": 44,
+     "cue_in_lines": 92
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 17,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 396,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 3141,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 15,
+    "c": 7,
+    "truth": 87,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 64,
+     "cue": 93,
+     "context_in_lines": 64,
+     "cue_in_lines": 93
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 770,
+      "cuts_between": 6
+     },
+     "cue_line": {
+      "bytes": 407,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 3142,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 12,
+    "c": 5,
+    "truth": 80,
+    "response": "71\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 68,
+     "cue": 105,
+     "context_in_lines": 68,
+     "cue_in_lines": 105
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 175,
+      "cuts_between": 3
+     },
+     "cue_line": {
+      "bytes": 105,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 3144,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 11,
+    "c": 6,
+    "truth": 14,
+    "response": "70\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 56,
+     "cue": 102,
+     "context_in_lines": 56,
+     "cue_in_lines": 102
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1192,
+      "cuts_between": 9
+     },
+     "cue_line": {
+      "bytes": 698,
+      "cuts_between": 7
+     }
+    }
+   },
+   {
+    "at": 3151,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 17,
+    "c": 11,
+    "truth": 55,
+    "response": "70\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 89,
+     "cue": 143,
+     "context_in_lines": 89,
+     "cue_in_lines": 143
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 691,
+      "cuts_between": 6
+     },
+     "cue_line": {
+      "bytes": 103,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 3159,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 0,
+    "c": 8,
+    "truth": 3,
+    "response": "87\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 68,
+     "cue": 152,
+     "context_in_lines": 68,
+     "cue_in_lines": 152
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 773,
+      "cuts_between": 8
+     },
+     "cue_line": {
+      "bytes": 395,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 3167,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 10,
+    "c": 9,
+    "truth": 60,
+    "response": "85\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 51,
+     "cue": 112,
+     "context_in_lines": 51,
+     "cue_in_lines": 112
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 63,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 652,
+      "cuts_between": 9
+     }
+    }
+   },
+   {
+    "at": 3250,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 15,
+    "c": 3,
+    "truth": 90,
+    "response": "85\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 71,
+     "cue": 154,
+     "context_in_lines": 71,
+     "cue_in_lines": 154
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 260,
+      "cuts_between": 2
+     },
+     "cue_line": {
+      "bytes": 178,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 3267,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 20,
+    "c": 5,
+    "truth": 12,
+    "response": "87\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 70,
+     "cue": 168,
+     "context_in_lines": 70,
+     "cue_in_lines": 168
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 4204,
+      "cuts_between": 25
+     },
+     "cue_line": {
+      "bytes": 731,
+      "cuts_between": 5
+     }
+    }
+   },
+   {
+    "at": 3270,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 22,
+    "c": 9,
+    "truth": 14,
+    "response": "87\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 57,
+     "cue": 117,
+     "context_in_lines": 57,
+     "cue_in_lines": 117
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 549,
+      "cuts_between": 6
+     },
+     "cue_line": {
+      "bytes": 135,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 3280,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 18,
+    "c": 5,
+    "truth": 10,
+    "response": "87\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 52,
+     "cue": 112,
+     "context_in_lines": 52,
+     "cue_in_lines": 112
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1906,
+      "cuts_between": 11
+     },
+     "cue_line": {
+      "bytes": 140,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 3316,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 12,
+    "c": 2,
+    "truth": 23,
+    "response": "10\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 69,
+     "cue": 140,
+     "context_in_lines": 69,
+     "cue_in_lines": 140
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 813,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 74,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 3338,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 22,
+    "c": 3,
+    "truth": 6,
+    "response": "10\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 80,
+     "cue": 157,
+     "context_in_lines": 80,
+     "cue_in_lines": 157
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 249,
+      "cuts_between": 2
+     },
+     "cue_line": {
+      "bytes": 565,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 3352,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 23,
+    "c": 11,
+    "truth": 74,
+    "response": "10\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 71,
+     "cue": 153,
+     "context_in_lines": 71,
+     "cue_in_lines": 153
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 3530,
+      "cuts_between": 21
+     },
+     "cue_line": {
+      "bytes": 411,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 3367,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 10,
+    "c": 6,
+    "truth": 23,
+    "response": "10\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 53,
+     "cue": 115,
+     "context_in_lines": 53,
+     "cue_in_lines": 115
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2811,
+      "cuts_between": 19
+     },
+     "cue_line": {
+      "bytes": 206,
+      "cuts_between": 1
+     }
+    }
+   },
+   {
+    "at": 3368,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 7,
+    "c": 0,
+    "truth": 11,
+    "response": "23\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 47,
+     "cue": 173,
+     "context_in_lines": 47,
+     "cue_in_lines": 173
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1602,
+      "cuts_between": 12
+     },
+     "cue_line": {
+      "bytes": 494,
+      "cuts_between": 5
+     }
+    }
+   },
+   {
+    "at": 3395,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 2,
+    "c": 7,
+    "truth": 19,
+    "response": "23\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 57,
+     "cue": 156,
+     "context_in_lines": 57,
+     "cue_in_lines": 156
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 77,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 355,
+      "cuts_between": 2
+     }
+    }
+   },
+   {
+    "at": 3401,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 1,
+    "c": 8,
+    "truth": 12,
+    "response": "23\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 71,
+     "cue": 162,
+     "context_in_lines": 71,
+     "cue_in_lines": 162
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1454,
+      "cuts_between": 11
+     },
+     "cue_line": {
+      "bytes": 396,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 3408,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 17,
+    "c": 7,
+    "truth": 75,
+    "response": "23\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 51,
+     "cue": 99,
+     "context_in_lines": 51,
+     "cue_in_lines": 99
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 1090,
+      "cuts_between": 9
+     },
+     "cue_line": {
+      "bytes": 1459,
+      "cuts_between": 11
+     }
+    }
+   },
+   {
+    "at": 3427,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 9,
+    "c": 5,
+    "truth": 42,
+    "response": "23\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 51,
+     "cue": 118,
+     "context_in_lines": 51,
+     "cue_in_lines": 118
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 908,
+      "cuts_between": 8
+     },
+     "cue_line": {
+      "bytes": 591,
+      "cuts_between": 4
+     }
+    }
+   },
+   {
+    "at": 3460,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 23,
+    "c": 6,
+    "truth": 77,
+    "response": "66\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 59,
+     "cue": 122,
+     "context_in_lines": 59,
+     "cue_in_lines": 121
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 127,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 569,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 3545,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 7,
+    "c": 9,
+    "truth": 64,
+    "response": "71\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 50,
+     "cue": 157,
+     "context_in_lines": 50,
+     "cue_in_lines": 156
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 15,
+      "cuts_between": 1
+     },
+     "cue_line": {
+      "bytes": 429,
+      "cuts_between": 3
+     }
+    }
+   },
+   {
+    "at": 3547,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 2,
+    "x": 21,
+    "c": 3,
+    "truth": 81,
+    "response": "79\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 90,
+     "cue": 165,
+     "context_in_lines": 90,
+     "cue_in_lines": 165
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 504,
+      "cuts_between": 4
+     },
+     "cue_line": {
+      "bytes": 909,
+      "cuts_between": 6
+     }
+    }
+   },
+   {
+    "at": 3550,
+    "set": "revise",
+    "phase": "revise",
+    "era": 1,
+    "family": 1,
+    "x": 18,
+    "c": 7,
+    "truth": 53,
+    "response": "87\n",
+    "right": false,
+    "exposure": {
+     "pair": 0,
+     "context": 58,
+     "cue": 105,
+     "context_in_lines": 58,
+     "cue_in_lines": 105
+    },
+    "shortcuts": {
+     "suffix10": false,
+     "exact": false,
+     "recency": false
+    },
+    "shortcut_answered": {
+     "suffix10": false,
+     "exact": false,
+     "recency": true
+    },
+    "direct_use": true,
+    "line_distance": {
+     "context_line": {
+      "bytes": 2527,
+      "cuts_between": 14
+     },
+     "cue_line": {
+      "bytes": 92,
+      "cuts_between": 2
+     }
+    }
+   }
+  ],
+  "first_encounter_summary": {
+   "acquire": {
+    "n": 32,
+    "right": 0,
+    "shortcut_suffix10": 0,
+    "shortcut_exact": 0,
+    "shortcut_recency": 0,
+    "by_family": {
+     "family1": 0,
+     "family2": 0
+    },
+    "direct_use": 32
+   },
+   "retain": {
+    "n": 32,
+    "right": 1,
+    "shortcut_suffix10": 0,
+    "shortcut_exact": 0,
+    "shortcut_recency": 0,
+    "by_family": {
+     "family1": 1,
+     "family2": 0
+    },
+    "direct_use": 32
+   },
+   "revise": {
+    "n": 32,
+    "right": 0,
+    "shortcut_suffix10": 0,
+    "shortcut_exact": 0,
+    "shortcut_recency": 0,
+    "by_family": {
+     "family1": 0,
+     "family2": 0
+    },
+    "direct_use": 32
+   }
+  },
+  "twins": {
+   "A": {
+    "family1": {
+     "renderings": 150,
+     "both_right": 0,
+     "members_right": 0,
+     "distinct_pairs": 12,
+     "distinct_pairs_right": 0,
+     "shortcuts_both_right": {
+      "suffix10": 0,
+      "exact": 0,
+      "recency": 0
+     },
+     "exposure_members_mean": {
+      "context": 34.553333333333335,
+      "cue": 73.44666666666667,
+      "pair": 0
+     },
+     "direct_use_both_right": 150
+    },
+    "family2": {
+     "renderings": 150,
+     "both_right": 0,
+     "members_right": 0,
+     "distinct_pairs": 12,
+     "distinct_pairs_right": 0,
+     "shortcuts_both_right": {
+      "suffix10": 0,
+      "exact": 0,
+      "recency": 0
+     },
+     "exposure_members_mean": {
+      "context": 34.75,
+      "cue": 73.35333333333334,
+      "pair": 0
+     },
+     "direct_use_both_right": 150
+    }
+   },
+   "I": {
+    "family1": {
+     "renderings": 150,
+     "both_right": 0,
+     "members_right": 0,
+     "distinct_pairs": 12,
+     "distinct_pairs_right": 0,
+     "shortcuts_both_right": {
+      "suffix10": 0,
+      "exact": 0,
+      "recency": 0
+     },
+     "exposure_members_mean": {
+      "context": 34.553333333333335,
+      "cue": 73.44666666666667,
+      "pair": 0
+     },
+     "direct_use_both_right": 150
+    },
+    "family2": {
+     "renderings": 150,
+     "both_right": 0,
+     "members_right": 0,
+     "distinct_pairs": 12,
+     "distinct_pairs_right": 0,
+     "shortcuts_both_right": {
+      "suffix10": 0,
+      "exact": 0,
+      "recency": 0
+     },
+     "exposure_members_mean": {
+      "context": 51.89666666666667,
+      "cue": 109.36666666666666,
+      "pair": 0
+     },
+     "direct_use_both_right": 150
+    }
+   },
+   "R": {
+    "family1": {
+     "renderings": 150,
+     "both_right": 0,
+     "members_right": 0,
+     "distinct_pairs": 12,
+     "distinct_pairs_right": 0,
+     "shortcuts_both_right": {
+      "suffix10": 0,
+      "exact": 0,
+      "recency": 0
+     },
+     "exposure_members_mean": {
+      "context": 60.843333333333334,
+      "cue": 130.16,
+      "pair": 0
+     },
+     "direct_use_both_right": 150
+    },
+    "family2": {
+     "renderings": 150,
+     "both_right": 0,
+     "members_right": 2,
+     "distinct_pairs": 12,
+     "distinct_pairs_right": 0,
+     "shortcuts_both_right": {
+      "suffix10": 0,
+      "exact": 0,
+      "recency": 0
+     },
+     "exposure_members_mean": {
+      "context": 78.91333333333333,
+      "cue": 166.05333333333334,
+      "pair": 0
+     },
+     "direct_use_both_right": 150
+    }
+   }
+  },
+  "taught": {
+   "A": {
+    "family1/long": {
+     "n": 96,
+     "right": 3,
+     "exact_key_ceiling": 96
+    },
+    "family1/short": {
+     "n": 96,
+     "right": 3,
+     "exact_key_ceiling": 96
+    },
+    "family2/long": {
+     "n": 96,
+     "right": 0,
+     "exact_key_ceiling": 96
+    },
+    "family2/short": {
+     "n": 96,
+     "right": 0,
+     "exact_key_ceiling": 96
+    }
+   },
+   "R": {
+    "family1/long": {
+     "n": 96,
+     "right": 3,
+     "exact_key_ceiling": 96
+    },
+    "family1/short": {
+     "n": 96,
+     "right": 2,
+     "exact_key_ceiling": 96
+    },
+    "family2/long": {
+     "n": 96,
+     "right": 0,
+     "exact_key_ceiling": 96
+    },
+    "family2/short": {
+     "n": 96,
+     "right": 3,
+     "exact_key_ceiling": 96
+    }
+   }
+  }
+ },
+ "source_commit": "ea4b2d03db9ba2e70d8cf2c43ad6ee04c18bbd8b",
+ "torch": "2.15.0+cpu",
+ "note": "A sizing fit: no prediction is judged and nothing is concluded about any learner or rule."
+}
