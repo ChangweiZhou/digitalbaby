@@ -2263,3 +2263,24 @@ Branch `claude/target-step0-moved-lines` (commit 8294fb16), now merged. I reran 
 ### Not finished
 
 E21b is still in progress on `claude/funny-mendel-34puq7`.
+
+
+## 9.107 The sizing sweep for the target test, briefed as a draft (20:26 EST by the clock, 11 November 2026)
+
+Brief: `OPUS_TASK_TARGET_SIZING_SWEEP_20261111.md`. Draft for Codex; no worker starts before the audit. It is the third suggestion of the audit session's note, adopted in 9.101.
+
+**What it is.** A sizing exercise and nothing else: it registers no prediction for judgment, gives no verdict and concludes nothing about any rule. One learner, a backprop GRU from random weights with every next byte as its target, is run on the step 0 generator's stream at 18 sizes, on world seeds that are never scored.
+
+**The grid.** Modulus 97, 31 or 11; each taught pair shown 4, 32 or 256 times before the first panel; the stream with or without the lines that state the values.
+
+**Two ways of feeding it, because they answer different questions.** Episode by episode with the state reset, which asks whether the hidden values and their addition can be learned from outcomes at all at a given size. And as one continuing stream read once with the state carried, which is how the target test itself runs.
+
+**What its table decides, all three about the design and none about a learner.**
+
+1. Whether the proposed sizes (modulus 97, four presentations) can stay.
+2. What a learner must be allowed to bring: nothing, in which case the stream has to be long enough to teach a rule slowly; or a birth on a declared curriculum that shares no pair and no value with the test world.
+3. Whether the stated values should be the base arm and their absence the harder one.
+
+The second of these is the decision the design has been missing since its first draft, and it is the coordinator's and Mr. Xu's to make once the table exists.
+
+**Four questions are put to the audit,** the sharpest being whether cutting credit every 256 bytes would make the lines useless for a reason that has nothing to do with the sizes.

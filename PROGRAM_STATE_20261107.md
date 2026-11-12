@@ -401,3 +401,11 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - **Step 0:** moved-lines arm corrected and merged; the coordinator's rerun equals the worker's record; only the moved stream's hashes changed.
 - **E21b:** in progress.
 - Still to write: the brief for the sizing sweep.
+
+
+## Addendum, 11 November 20:26 EST (clock): sizing sweep briefed as a draft (review 9.107); what is running
+
+- `OPUS_TASK_TARGET_SIZING_SWEEP_20261111.md`: 18 cells (modulus, presentations, lines), one backprop GRU from random weights, unscored world seeds, two ways of feeding the stream. A sizing exercise with no verdict. For Codex. No worker.
+- **Running on cloud instances, releases relayed by Mr. Xu:** E24's nine births (about three hours); E26's six births (about two hours); E21b.
+- **Next reads for the coordinator:** E26's births (then release of the six lives); E24's births (then judge P24.1 to P24.3); E21b's report.
+- The Mac is idle.
