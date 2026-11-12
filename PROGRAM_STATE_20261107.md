@@ -417,3 +417,10 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - The job is now two stages, implementation with a bounded qualification first. Back to Codex. No worker.
 - Step 0's accepted results stand: at the default configuration the components agree.
 - Running: E24's nine births, E26's six births, E21b.
+
+
+## Addendum, 11 November 20:47 EST (clock): sizing sweep at revision 3, stage 1 released (review 9.109)
+
+- Codex's four changes adopted: twins forked before either prompt and the pre-probe boundary set by loss targets; the 20-point margin applied to recitation shortcuts only, with the direct-use responder as a separate benchmark and the size decision pinned to the acquisition phase; three fits on the matched extra-bytes stream (84 fits); stage 1 bounded, parameterized copies under `sizing/`.
+- Stage 1 (implementation and qualification) may go to a worker. The roster is held.
+- Running: E24's nine births, E26's six births, E21b.

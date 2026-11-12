@@ -2302,3 +2302,17 @@ Audit: `PROJECT_DOCUMENTS/MINIFLY_TARGET_SIZING_SWEEP_AUDIT_20261111.md` (commit
 **Step 0's accepted results are not touched by the first defect.** At the default configuration all three components hold 97, and the oracle, the solver and the stream agree in every check on file.
 
 **What I take from it.** This is the third brief in two days in which an audit found a claim I had not run: the E24 baselines written from memory, the E24 check that did not test what the brief said, and now a modulus I assumed lived in one place. The rule of 9.82 caught each before a worker started. The habit to fix is mine: where a brief says a setting "is changed through" something, I now change it and look, before writing the sentence.
+
+
+## 9.109 Codex's audit of the sizing sweep, revision 2: stage 1 released with changes, the roster held (20:47 EST by the clock, 11 November 2026)
+
+Audit: `PROJECT_DOCUMENTS/MINIFLY_TARGET_SIZING_SWEEP_REV2_AUDIT_20261111.md` (commit ce7619d5). The four findings of the first audit are accepted as addressed. Four further changes before dispatch, all adopted; the brief is at revision 3.
+
+| Change | Checked how | Result |
+|---|---|---|
+| Fork twins before either prompt; set the boundary before a probe by the last loss target, not the last input | reasoning on my own protocol: I saved the state at the first member's `=`, by which point it has read the first member's context; and a chunk whose last input is `=` has the first answer digit as its target | both confirmed. The twin protocol is rewritten to save the state before the first byte of either member, and the boundary rule is stated on targets, with a fixture that shows the rule can fail |
+| The 20-point margin cannot apply to a responder that uses the disclosed values | step 0's own record: in the streams with lines both stated values have been disclosed before 96 of 96 first-encounter probes | confirmed. Such a responder scores near the ceiling, so my class "held success" was unreachable in every line arm. The margin now applies to recitation shortcuts; the direct-use responder is reported beside the learner as a benchmark. The size decision is pinned to the acquisition phase at the first panel |
+| Say whether the matched extra-bytes stream is trained on | my draft built it and did not say | it is: three fits at the proposed size, so that content can be told from bytes. 84 fits |
+| Bound stage 1 and settle where the parameterized code lives | my draft said both "new files only" and "a small change to the step 0 modules" | copies under `sizing/`, with default parity against the accepted step 0 record; profiling on a world seed that is in no roster, 500 updates on each of four paths, two hours of CPU for the stage |
+
+Stage 1 may go to a worker. The roster is released by me after its record: the modulus fixtures, the causal scoring checks, the dependency across a cut, and the cost forecast.
