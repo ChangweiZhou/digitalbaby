@@ -1,0 +1,436 @@
+{
+ "text": "buster",
+ "tag": "c2_dev_passes",
+ "prefixes_kb": [
+  0.0,
+  2.5,
+  5.0,
+  10.0
+ ],
+ "calib_kb": 2.0,
+ "held_kb": 4.0,
+ "offsets": {
+  "train": [
+   0,
+   164
+  ],
+  "calib": [
+   164,
+   198
+  ],
+  "held": [
+   1252,
+   1314
+  ],
+  "n_records": 1314
+ },
+ "prefix_records": {
+  "0.0": 0,
+  "2.5": 40,
+  "5.0": 81,
+  "10.0": 164
+ },
+ "corpus_sha256": "7d8b1648ffeaa7268819c62852e5653f2f295528411c8c895ce3941581146331",
+ "passes": [
+  1,
+  2,
+  4
+ ],
+ "checkpoints": [
+  {
+   "kb": 0.0,
+   "pass": 1,
+   "records": 0,
+   "symbols": 0,
+   "minifly": {
+    "T": 0.02,
+    "calib_bpb": 8.005624549193879,
+    "held_bpb": 8.005624549193879,
+    "held_bpb_T1": 8.005624549193879,
+    "held_acc": 0.0,
+    "held_symbols": 4096,
+    "held_mass_on_unseen_symbols": 0.996108949416339,
+    "held_argmax_unseen_rate": 1.0,
+    "eval_cpu_s": 75.0
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549194135
+    },
+    "unigram": {
+     "held_bpb": 8.005624549194135
+    },
+    "bigram": {
+     "held_bpb": 8.005624549194135
+    },
+    "ppmc2": {
+     "held_bpb": 8.005624549194135
+    },
+    "ppmc3": {
+     "held_bpb": 8.005624549194135
+    },
+    "ppmc4": {
+     "held_bpb": 8.005624549194135
+    },
+    "ppmc5": {
+     "held_bpb": 8.005624549194135
+    }
+   }
+  },
+  {
+   "kb": 2.5,
+   "pass": 1,
+   "records": 40,
+   "symbols": 2604,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 6.977969038671212,
+    "held_bpb": 7.035337554973794,
+    "held_bpb_T1": 7.086759385813022,
+    "held_acc": 0.107177734375,
+    "held_symbols": 4096,
+    "held_mass_on_unseen_symbols": 0.7037882573357572,
+    "held_argmax_unseen_rate": 0.19970703125,
+    "taught_first5k_bpb": 6.079672248723919,
+    "taught_first5k_acc": 0.2357910906298003,
+    "taught_last5k_bpb": 6.079672248723919,
+    "taught_last5k_acc": 0.2357910906298003,
+    "eval_cpu_s": 146.1
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549194135,
+     "taught_first5k_bpb": 8.005624549194108,
+     "taught_last5k_bpb": 8.005624549194108
+    },
+    "unigram": {
+     "held_bpb": 4.537221684083649,
+     "taught_first5k_bpb": 4.536897435792602,
+     "taught_last5k_bpb": 4.536897435792602
+    },
+    "bigram": {
+     "held_bpb": 3.665529798550158,
+     "taught_first5k_bpb": 3.2751924030865203,
+     "taught_last5k_bpb": 3.2751924030865203
+    },
+    "ppmc2": {
+     "held_bpb": 3.45641932553638,
+     "taught_first5k_bpb": 2.3589123671800514,
+     "taught_last5k_bpb": 2.3589123671800514
+    },
+    "ppmc3": {
+     "held_bpb": 3.453610606045496,
+     "taught_first5k_bpb": 1.6577022137349364,
+     "taught_last5k_bpb": 1.6577022137349364
+    },
+    "ppmc4": {
+     "held_bpb": 3.4575074421081897,
+     "taught_first5k_bpb": 1.3378111317992598,
+     "taught_last5k_bpb": 1.3378111317992598
+    },
+    "ppmc5": {
+     "held_bpb": 3.4683828677105977,
+     "taught_first5k_bpb": 1.2297677492796322,
+     "taught_last5k_bpb": 1.2297677492796322
+    }
+   }
+  },
+  {
+   "kb": 5.0,
+   "pass": 1,
+   "records": 81,
+   "symbols": 5123,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 6.883372091581713,
+    "held_bpb": 7.0005485713964095,
+    "held_bpb_T1": 7.046028040021804,
+    "held_acc": 0.103271484375,
+    "held_symbols": 4096,
+    "held_mass_on_unseen_symbols": 0.6872150852615336,
+    "held_argmax_unseen_rate": 0.2412109375,
+    "taught_first5k_bpb": 6.217641170853096,
+    "taught_first5k_acc": 0.19988288112434122,
+    "taught_last5k_bpb": 6.216760527519361,
+    "taught_last5k_acc": 0.19996094512790472,
+    "eval_cpu_s": 208.6
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549194135,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.4960899508456995,
+     "taught_first5k_bpb": 4.550397391198079,
+     "taught_last5k_bpb": 4.54949366254943
+    },
+    "bigram": {
+     "held_bpb": 3.5917788574129075,
+     "taught_first5k_bpb": 3.330316236536734,
+     "taught_last5k_bpb": 3.329939012180591
+    },
+    "ppmc2": {
+     "held_bpb": 3.2914297327966016,
+     "taught_first5k_bpb": 2.384690760099371,
+     "taught_last5k_bpb": 2.383427207183019
+    },
+    "ppmc3": {
+     "held_bpb": 3.22685455421537,
+     "taught_first5k_bpb": 1.7218558088774896,
+     "taught_last5k_bpb": 1.7203333866187356
+    },
+    "ppmc4": {
+     "held_bpb": 3.226549322984586,
+     "taught_first5k_bpb": 1.385098684751802,
+     "taught_last5k_bpb": 1.3834447424289489
+    },
+    "ppmc5": {
+     "held_bpb": 3.2549036664733966,
+     "taught_first5k_bpb": 1.2626414486446627,
+     "taught_last5k_bpb": 1.2609396808048767
+    }
+   }
+  },
+  {
+   "kb": 10.0,
+   "pass": 1,
+   "records": 164,
+   "symbols": 10264,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 6.873783259898962,
+    "held_bpb": 6.9450051207177905,
+    "held_bpb_T1": 7.0038280806410596,
+    "held_acc": 0.1171875,
+    "held_symbols": 4096,
+    "held_mass_on_unseen_symbols": 0.6589144657810811,
+    "held_argmax_unseen_rate": 0.199462890625,
+    "taught_first5k_bpb": 6.493736951917896,
+    "taught_first5k_acc": 0.1723599453445247,
+    "taught_last5k_bpb": 6.110468746603785,
+    "taught_last5k_acc": 0.2215522271931531,
+    "eval_cpu_s": 210.6
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549194135,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.467569852202495,
+     "taught_first5k_bpb": 4.528078141358325,
+     "taught_last5k_bpb": 4.469092528199671
+    },
+    "bigram": {
+     "held_bpb": 3.5394057804783103,
+     "taught_first5k_bpb": 3.357050327083023,
+     "taught_last5k_bpb": 3.3094902431828075
+    },
+    "ppmc2": {
+     "held_bpb": 3.128541475655491,
+     "taught_first5k_bpb": 2.4341749248036653,
+     "taught_last5k_bpb": 2.386899581895419
+    },
+    "ppmc3": {
+     "held_bpb": 3.0058690195810995,
+     "taught_first5k_bpb": 1.7854902253779954,
+     "taught_last5k_bpb": 1.7540756257608232
+    },
+    "ppmc4": {
+     "held_bpb": 2.9928846929473183,
+     "taught_first5k_bpb": 1.4466958028173267,
+     "taught_last5k_bpb": 1.4704552982104928
+    },
+    "ppmc5": {
+     "held_bpb": 3.017873329922902,
+     "taught_first5k_bpb": 1.306163202187318,
+     "taught_last5k_bpb": 1.307301062696719
+    }
+   }
+  },
+  {
+   "kb": 10.0,
+   "pass": 2,
+   "records": 164,
+   "symbols": 10264,
+   "minifly": {
+    "T": 0.7704338095940986,
+    "calib_bpb": 6.88677425621172,
+    "held_bpb": 6.975245050594632,
+    "held_bpb_T1": 6.98769587692251,
+    "held_acc": 0.115478515625,
+    "held_symbols": 4096,
+    "held_mass_on_unseen_symbols": 0.6470962846169661,
+    "held_argmax_unseen_rate": 0.2294921875,
+    "taught_first5k_bpb": 6.247946371587079,
+    "taught_first5k_acc": 0.19344134296310755,
+    "taught_last5k_bpb": 5.827034572439077,
+    "taught_last5k_acc": 0.25384166504571093,
+    "eval_cpu_s": 212.2
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549194135,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.467569852202495,
+     "taught_first5k_bpb": 4.528078141358325,
+     "taught_last5k_bpb": 4.469092528199671
+    },
+    "bigram": {
+     "held_bpb": 3.5394057804783103,
+     "taught_first5k_bpb": 3.357050327083023,
+     "taught_last5k_bpb": 3.3094902431828075
+    },
+    "ppmc2": {
+     "held_bpb": 3.128541475655491,
+     "taught_first5k_bpb": 2.4341749248036653,
+     "taught_last5k_bpb": 2.386899581895419
+    },
+    "ppmc3": {
+     "held_bpb": 3.0058690195810995,
+     "taught_first5k_bpb": 1.7854902253779954,
+     "taught_last5k_bpb": 1.7540756257608232
+    },
+    "ppmc4": {
+     "held_bpb": 2.9928846929473183,
+     "taught_first5k_bpb": 1.4466958028173267,
+     "taught_last5k_bpb": 1.4704552982104928
+    },
+    "ppmc5": {
+     "held_bpb": 3.017873329922902,
+     "taught_first5k_bpb": 1.306163202187318,
+     "taught_last5k_bpb": 1.307301062696719
+    }
+   }
+  },
+  {
+   "kb": 10.0,
+   "pass": 4,
+   "records": 164,
+   "symbols": 10264,
+   "minifly": {
+    "T": 1.0,
+    "calib_bpb": 6.936234860073927,
+    "held_bpb": 7.029270302516894,
+    "held_bpb_T1": 7.029270302516894,
+    "held_acc": 0.115966796875,
+    "held_symbols": 4096,
+    "held_mass_on_unseen_symbols": 0.6721377760329825,
+    "held_argmax_unseen_rate": 0.26806640625,
+    "taught_first5k_bpb": 6.161791444380775,
+    "taught_first5k_acc": 0.21881709935584617,
+    "taught_last5k_bpb": 5.819880836300808,
+    "taught_last5k_acc": 0.279712118264929,
+    "generations": [
+     {
+      "prefix": "  They are",
+      "true": " no worse; they're not so bad!\"",
+      "own": "\u00d2 \u00abzs \u00achkn\u007ftzn\u0093e\u00d3\u001f.\u00ac\u001f\u00f3 h\u0093 g\u00be\u00ac\u00ac\u00f7kk \u00bbR\u00ab t\u00acz\u00f3Rma ek\u001c E \u00acn\u001f R \u00betE\u00d1e ",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "That is wh",
+      "true": "at Farmer Brown's boy said when he found that Buster Bear had",
+      "own": "k.\u001f\u00edg\u00edt Ez\u00d1oheR\u00ackk \u00f7t\u0093.E \"Aet\u00ab, R ekkHe\u00d1t\u00fa :nt end ek \u00bb, E\u00abwazEz",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "stolen the",
+      "true": " berries he had worked so hard to pick and then had run off",
+      "own": "zk\u00d3a k\u00acRhin \u00ac\u00bb\u0006fah\u00ac\u0094kglto\u00ab (\u00ab \u00f1\u00acz\u00d1\u0093k \u00abs \u00abatk\u00ab\u00f7n\u00abzkh\u00f7\u001f\u00f3 ",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "with the p",
+      "true": "ail. You see, Farmer Brown's boy is learning to be something",
+      "own": "a\u00d1\u00ac.e\u00f6\u00ab soRk\u00f3\u00acs\u001f\u00ac tk\u0006 zs  e Rkizthx  R\u00e2 lRka\u00cfkhR\u0094",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "of a philo",
+      "true": "sopher, one of those people who accept bad things cheerfully",
+      "own": "kk\u008f\u001fe\u00f3\u00ab\u00e5izz\u0087zk\u00d1,.  H\u00abkhe\u008den\u00ef \u0093\u00e5\u0093\u00ac\u00daRR\u00cf \u001f> \u00d2 aha*\u00ac\u00ab Ek\u00ac\u00fan\u00cfk t\u00f7\u00acke ",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "and right ",
+      "true": "away see how they are better than they might have been. When",
+      "own": "ihi\u00ac*k\u00f7 \u001eo kk ao\u00ab\u00e5zt\u0093r\u00ac\u00abE\u00ed",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "he had fir",
+      "true": "st heard some one in the bushes where he had hidden his pail",
+      "own": "\u00ace\u00b3",
+      "stop": "EOS"
+     },
+     {
+      "prefix": "of berries",
+      "true": ", he had been very sure that it was one of the cows or young",
+      "own": "k \u00b2 ztk\u00da\u00e5n\u00cathe tt\u00ab\u00f3s\u00d1ks k\u00ab \u0093\u0093t\u009a\u0093re\u001f \u00ab t\u0006hH\u007f\u00d1 E\u00d1 ;sdoR\u00fazn>eQ\u00ab \u00a8\u0094 ",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "cattle who",
+      "true": " live in the Old Pasture during the summer. He had been afraid",
+      "own": "h  Hn4\u008fE\u0094hes\u00e5\u00c4kg*tz\u00abt\u00acz\u00f6 ea\u00d1.at \u00f6R\u001f\u00cfa\u00d1\u00da e\u008f lo kk \u00b2\u0093\u00d1\u007fz\u00ab \u00ac\u00achkhe m",
+      "stop": "CAP"
+     },
+     {
+      "prefix": "that they ",
+      "true": "might stupidly kick over the pail and spill the berries, and",
+      "own": "in \u00ca. \u0088en\u00ef\u00d1\u0093ak\u00acsxe\u00bce e\n \u00f7h\u00f7tk htd\u00e5 \u00ab\u00d1 toEthen\u00ac\u00f7o",
+      "stop": "EOS"
+     }
+    ],
+    "eval_cpu_s": 211.5
+   },
+   "ladder": {
+    "uniform": {
+     "held_bpb": 8.005624549194135,
+     "taught_first5k_bpb": 8.005624549194144,
+     "taught_last5k_bpb": 8.005624549194144
+    },
+    "unigram": {
+     "held_bpb": 4.467569852202495,
+     "taught_first5k_bpb": 4.528078141358325,
+     "taught_last5k_bpb": 4.469092528199671
+    },
+    "bigram": {
+     "held_bpb": 3.5394057804783103,
+     "taught_first5k_bpb": 3.357050327083023,
+     "taught_last5k_bpb": 3.3094902431828075
+    },
+    "ppmc2": {
+     "held_bpb": 3.128541475655491,
+     "taught_first5k_bpb": 2.4341749248036653,
+     "taught_last5k_bpb": 2.386899581895419
+    },
+    "ppmc3": {
+     "held_bpb": 3.0058690195810995,
+     "taught_first5k_bpb": 1.7854902253779954,
+     "taught_last5k_bpb": 1.7540756257608232
+    },
+    "ppmc4": {
+     "held_bpb": 2.9928846929473183,
+     "taught_first5k_bpb": 1.4466958028173267,
+     "taught_last5k_bpb": 1.4704552982104928
+    },
+    "ppmc5": {
+     "held_bpb": 3.017873329922902,
+     "taught_first5k_bpb": 1.306163202187318,
+     "taught_last5k_bpb": 1.307301062696719
+    }
+   }
+  }
+ ],
+ "train_cpu_s": 1451.2811787369997,
+ "peak_rss_mb": 298.5,
+ "complete": true
+}

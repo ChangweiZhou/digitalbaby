@@ -1,0 +1,41 @@
+{
+ "checks": [
+  {
+   "check": "DFA update equals delta = ReLU'(a) (e F), dW = sum delta x (float64, <= 1e-10)",
+   "pass": true,
+   "detail": {
+    "max_abs_diff": 1.3877787807814457e-17,
+    "max_abs_grad": 0.0339325604798648
+   }
+  },
+  {
+   "check": "with F = 0, W gets no gradient and the top's gradient equals back-propagation within the top",
+   "pass": true,
+   "detail": {
+    "max_abs_W_grad": 0.0,
+    "top_grad_diff": 0.0
+   }
+  },
+  {
+   "check": "the shuffled error is a permutation of the batch's errors",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "one epoch on 25 lines is deterministic",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "learns: after one epoch on 200 lines, A calibration >= 0.01 below the frozen-H top",
+   "pass": true,
+   "detail": {
+    "dfa": 3.715253908419582,
+    "frozen_h": 3.8449940888852354,
+    "cpu_s": 3.6
+   }
+  }
+ ],
+ "learner_records": 250,
+ "cpu_s": 9.2
+}

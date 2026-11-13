@@ -1,0 +1,73 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v161_famgate_dev_v1_20261026",
+ "design": "minifly_v161_famgate_design_20261026/DESIGN.md",
+ "verbatim": "Yes, run V161 with the recursive improvement skill.",
+ "utc": "2026-10-26 (owner message, in reply to 'Should I run V161?' after the V160 report)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {
+   "label": "V161: familiarity-gated arbitration",
+   "text": "A signal of how familiar a context is to the KC memory (novelty detection through KC-to-output synapses that weaken for stored patterns), so that S's say shrinks when it has no evidence; same task, controls and pass marks as V160.",
+   "cost": "about 0.1 CPU-h; within the default caps",
+   "objective_distance": "Tests whether a local familiarity gate lets the shared pathway decide on novel contexts; synthetic only."
+  }
+ ],
+ "recommendation_shown": "V161 as described (the question 'Should I run V161?').",
+ "interpretation": "Run V161 as designed: X2 decisive, X3 text only if X2 passes, default caps.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": true,
+  "official": {
+   "granted": false,
+   "verbatim": null,
+   "utc": null,
+   "lock_shas_shown": null
+  },
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
+ "caps": {
+  "max_cpu_h": 2,
+  "max_records": 5000,
+  "max_cycles": 3
+ },
+ "defaults_applied": [
+  "max_cpu_h",
+  "max_records",
+  "max_cycles",
+  "official",
+  "push",
+  "adoption",
+  "pointer_update"
+ ],
+ "conditionals": [
+  {
+   "predicate": {
+    "artifact": "results/technical/CHECKS.json",
+    "pointer": "/x2_pass",
+    "op": "==",
+    "value": true
+   },
+   "evaluated_by": "checker (emulated: the dev script refuses to run unless this field is true)",
+   "result": null,
+   "utc": null,
+   "applies_to": "X3 (dev cycle)"
+  }
+ ],
+ "restated_to_owner_before_acting": "Proceeding with V161 within the default caps: at most 2 CPU-h, 5,000 learner records and 3 test cycles; no official run, no adoption; pushes to this session's branch only. Scope: familiarity-gated arbitration on the same X2 task, controls and pass marks; X3 only if X2 passes.",
+ "grants": [
+  {
+   "n": 1,
+   "verbatim": "Yes, run V161 with the recursive improvement skill.",
+   "utc": "2026-10-26",
+   "effect": "implementation, technical, dev cycles for V161 (X3 conditional on X2); default caps"
+  }
+ ]
+}

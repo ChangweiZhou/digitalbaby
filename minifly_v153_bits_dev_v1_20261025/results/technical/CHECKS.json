@@ -1,0 +1,70 @@
+[
+ {
+  "check": "fade per byte: P95 0.95, P81/N81 0.807, N95 0.95",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "P95 and N81 codes (and N81 observed activity) equal V149's PERM-x / FE0-x / FE0-obs states",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "cells give different codes beyond the first byte",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "all cells give the same code after exactly one byte (no history yet)",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "NATIVE after teaching reads the frozen FE0 state: identical codes, observed activity within 1e-12 (adaptation rounding), thresholds zero",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "C16 port logits equal fastmem.logits of the 16 linear values",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "C16 analytic gradient matches finite differences (first 40 coords)",
+  "pass": true,
+  "detail": 2.7664545099170823e-08
+ },
+ {
+  "check": "C16Q analytic gradient matches finite differences (first 40 coords)",
+  "pass": true,
+  "detail": 2.868271742340056e-08
+ },
+ {
+  "check": "one online delta step raises the target's probability and uses warmup 1/16 at n=0",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "online delta rule is deterministic",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "readout probabilities sum to 1",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "AUTHORIZATION: official not granted; caps are the defaults 2 CPU-h / 5,000 records / 3 cycles",
+  "pass": true,
+  "detail": null
+ },
+ {
+  "check": "cost measured",
+  "pass": true,
+  "detail": {
+   "states_cpu_s_per_position_4cells_plus_obs": 0.0201,
+   "positions": 1257
+  }
+ }
+]

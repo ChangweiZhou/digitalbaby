@@ -1,0 +1,201 @@
+{
+ "checks": [
+  {
+   "check": "predictive layer is deterministic",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "PoE equals the normalised product",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "beta = 0 gives S exactly",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "G alone reproduces V159's diagnostic (unseen accuracy)",
+   "pass": true,
+   "detail": {
+    "0": 0.8170212765957446,
+    "1": 0.8016528925619835
+   }
+  },
+  {
+   "check": "validity: G-SHUF alone <= 0.65 on unseen members (both seeds)",
+   "pass": true,
+   "detail": {
+    "0": 0.4978723404255319,
+    "1": 0.5
+   }
+  },
+  {
+   "check": "X2: PoE >= 0.80 unseen and >= 0.95 seen, PoE-SHUF <= 0.65 unseen, both seeds",
+   "pass": false,
+   "detail": {
+    "0": {
+     "PoE": [
+      0.7404255319148936,
+      0.9961685823754789
+     ],
+     "PoE-SHUF": [
+      0.6382978723404256,
+      0.9961685823754789
+     ]
+    },
+    "1": {
+     "PoE": [
+      0.7024793388429752,
+      1.0
+     ],
+     "PoE-SHUF": [
+      0.6033057851239669,
+      1.0
+     ]
+    }
+   }
+  }
+ ],
+ "x2": {
+  "0": {
+   "S": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6340425531914894,
+     "bits": 1.3648369269436078
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.11176992602507015
+    }
+   },
+   "G": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.8170212765957446,
+     "bits": 4.680675162638954
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.8007662835249042,
+     "bits": 3.3617730077640835
+    }
+   },
+   "G-SHUF": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.4978723404255319,
+     "bits": 4.679052593077675
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.5095785440613027,
+     "bits": 4.684863540569133
+    }
+   },
+   "PoE": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.7404255319148936,
+     "bits": 2.219421851149632
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.1636389100537977
+    }
+   },
+   "PoE-SHUF": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6382978723404256,
+     "bits": 1.9697294627533133
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.194122360529605
+    }
+   },
+   "lam": {
+    "S": 30,
+    "G": 0.1,
+    "G-SHUF": 0.1
+   }
+  },
+  "1": {
+   "S": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6157024793388429,
+     "bits": 1.5689822354800442
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09678624252540416
+    }
+   },
+   "G": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.8016528925619835,
+     "bits": 4.633541770199845
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.77734375,
+     "bits": 3.71543730484233
+    }
+   },
+   "G-SHUF": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.5,
+     "bits": 4.773077411422202
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.5,
+     "bits": 4.766001076218393
+    }
+   },
+   "PoE": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.7024793388429752,
+     "bits": 2.4833958014486135
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.1544973735664454
+    }
+   },
+   "PoE-SHUF": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6033057851239669,
+     "bits": 2.2508438162099154
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.17924692231181316
+    }
+   },
+   "lam": {
+    "S": 30,
+    "G": 0.1,
+    "G-SHUF": 0.1
+   }
+  }
+ },
+ "x2_pass": false,
+ "valid": true,
+ "learner_records": 1200,
+ "cpu_s": 257.6
+}

@@ -1,0 +1,22 @@
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/minifly_v164_cola_dev_v1_20261026/v164_testbed.py", line 81, in <module>
+    main()
+  File "/home/user/digitalbaby/minifly_v164_cola_dev_v1_20261026/v164_testbed.py", line 38, in main
+    (CACHE / f"c0_{sys.argv[2]}.json").write_text(json.dumps(run_task(sys.argv[2])))
+                                                             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v164_cola_dev_v1_20261026/v164_testbed.py", line 28, in run_task
+    net, info = L.train(tr, ca, sc, g, rule, iv, me, pa)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v164_cola_dev_v1_20261026/v164_lib.py", line 114, in train
+    ctr, valid = targets(train_s, scorer, pos)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v164_cola_dev_v1_20261026/v164_lib.py", line 76, in targets
+    enc = scorer.encode(np.where(valid, y, 0) if isinstance(scorer, Synth) else y)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v149_input_ceiling_dev_20261025/readouts.py", line 27, in encode
+    return np.array([self.idx.get(int(s), self.K - 1) for s in y])
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v149_input_ceiling_dev_20261025/readouts.py", line 27, in <listcomp>
+    return np.array([self.idx.get(int(s), self.K - 1) for s in y])
+                                  ^^^^^^
+TypeError: only 0-dimensional arrays can be converted to Python scalars

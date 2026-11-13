@@ -1,0 +1,233 @@
+{
+ "checks": [
+  {
+   "check": "familiarity equals an independent per-row computation",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "tau is a percentile of calibration familiarity only",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "predictive layer is deterministic",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "a = 1 everywhere reproduces V160's PoE (unseen accuracy)",
+   "pass": true,
+   "detail": {
+    "0": 0.7404255319148936,
+    "1": 0.7024793388429752
+   }
+  },
+  {
+   "check": "G-SHUF alone reproduces V160 (unseen accuracy)",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "validity: G-SHUF alone <= 0.65 on unseen members (both seeds)",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "X2: GATED >= 0.80 unseen and >= 0.95 seen, GATED-SHUF <= 0.65 unseen, both seeds",
+   "pass": false,
+   "detail": {
+    "0": {
+     "GATED": [
+      0.8170212765957446,
+      0.9846743295019157
+     ],
+     "GATED-SHUF": [
+      0.5191489361702127,
+      0.9770114942528736
+     ]
+    },
+    "1": {
+     "GATED": [
+      0.7727272727272727,
+      0.9921875
+     ],
+     "GATED-SHUF": [
+      0.4793388429752066,
+      0.98828125
+     ]
+    }
+   }
+  }
+ ],
+ "x2": {
+  "0": {
+   "tau": 0.967391304347826,
+   "gate": {
+    "off_unseen": 0.7446808510638298,
+    "off_seen": 0.03065134099616858,
+    "mean_f_unseen": 0.915263644773358,
+    "mean_f_seen": 0.9936906546726638,
+    "auc_novelty_unseen_vs_seen": 0.9226868835086003
+   },
+   "S": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6340425531914894,
+     "bits": 1.3648369269436078
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.11176992602507015
+    }
+   },
+   "G": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.8170212765957446,
+     "bits": 4.680675162638954
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.8007662835249042,
+     "bits": 3.3617730077640835
+    }
+   },
+   "G-SHUF": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.4978723404255319,
+     "bits": 4.679052593077675
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.5095785440613027,
+     "bits": 4.684863540569133
+    }
+   },
+   "PoE (a=1, V160)": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.7404255319148936,
+     "bits": 2.219421851149632
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.1636389100537977
+    }
+   },
+   "GATED": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.8170212765957446,
+     "bits": 4.264067950010962
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9846743295019157,
+     "bits": 0.23964376625383504
+    }
+   },
+   "GATED-SHUF": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.5191489361702127,
+     "bits": 4.157279949720317
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9770114942528736,
+     "bits": 0.3079252227226749
+    }
+   }
+  },
+  "1": {
+   "tau": 0.967391304347826,
+   "gate": {
+    "off_unseen": 0.7892561983471075,
+    "off_seen": 0.01953125,
+    "mean_f_unseen": 0.904801473230327,
+    "mean_f_seen": 0.9951808763586958,
+    "auc_novelty_unseen_vs_seen": 0.9329238765495868
+   },
+   "S": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6157024793388429,
+     "bits": 1.5689822354800442
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09678624252540416
+    }
+   },
+   "G": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.8016528925619835,
+     "bits": 4.633541770199845
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.77734375,
+     "bits": 3.71543730484233
+    }
+   },
+   "G-SHUF": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.5,
+     "bits": 4.773077411422202
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.5,
+     "bits": 4.766001076218393
+    }
+   },
+   "PoE (a=1, V160)": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.7024793388429752,
+     "bits": 2.4833958014486135
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.1544973735664454
+    }
+   },
+   "GATED": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.7727272727272727,
+     "bits": 4.4650419077147605
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.9921875,
+     "bits": 0.2036171463246016
+    }
+   },
+   "GATED-SHUF": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.4793388429752066,
+     "bits": 4.499629737446594
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 0.98828125,
+     "bits": 0.2537468991059877
+    }
+   }
+  }
+ },
+ "x2_pass": false,
+ "valid": true,
+ "learner_records": 1200,
+ "cpu_s": 260.4
+}

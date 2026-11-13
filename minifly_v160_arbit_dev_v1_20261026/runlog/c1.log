@@ -1,0 +1,11 @@
+PASS predictive layer is deterministic 
+PASS PoE equals the normalised product 
+PASS beta = 0 gives S exactly 
+X2 seed 0 {'S': (0.634, 0.996), 'G': (0.817, 0.801), 'G-SHUF': (0.498, 0.51), 'PoE': (0.74, 0.996), 'PoE-SHUF': (0.638, 0.996)}
+X2 seed 1 {'S': (0.616, 1.0), 'G': (0.802, 0.777), 'G-SHUF': (0.5, 0.5), 'PoE': (0.702, 1.0), 'PoE-SHUF': (0.603, 1.0)}
+PASS G alone reproduces V159's diagnostic (unseen accuracy) {'0': 0.8170212765957446, '1': 0.8016528925619835}
+PASS validity: G-SHUF alone <= 0.65 on unseen members (both seeds) {'0': 0.4978723404255319, '1': 0.5}
+FAIL X2: PoE >= 0.80 unseen and >= 0.95 seen, PoE-SHUF <= 0.65 unseen, both seeds {'0': {'PoE': (0.7404255319148936, 0.9961685823754789), 'PoE-SHUF': (0.6382978723404256, 0.9961685823754789)}, '1': {'PoE': (0.7024793388429752, 1.0), 'PoE-SHUF': (0.6033057851239669, 1.0)}}
+5 / 6 pass; learner records 1200
+{"attempt_id": "technical-002", "exit_code": 1, "child_cpu_s": 259.0, "learner_records": 1200}
+exit 1

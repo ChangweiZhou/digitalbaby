@@ -1,0 +1,311 @@
+{
+ "stage": "testbed",
+ "settings": {
+  "pf": {
+   "eta": 0.1,
+   "passes": 2,
+   "fade": 0.807,
+   "variant_gamma": 0.5,
+   "shuffle_seed": 7
+  },
+  "x1": {
+   "seeds": [
+    0,
+    1
+   ],
+   "pass_index": 0.5
+  },
+  "x2": {
+   "seeds": [
+    0,
+    1
+   ],
+   "train_lines": 200,
+   "calib_lines": 50,
+   "test_lines": 100,
+   "segments": 10,
+   "p_type2": 0.5,
+   "r1_grid": [
+    10,
+    3,
+    1,
+    0.3,
+    0.1
+   ],
+   "maxiter": 300,
+   "oracle_min": 0.9,
+   "frozen_max": 0.65,
+   "pf_min": 0.8
+  },
+  "x3": {
+   "r1_grid_A": [
+    100,
+    30,
+    10
+   ],
+   "r1_grid_B": [
+    300,
+    100,
+    30,
+    10
+   ],
+   "maxiter": 300,
+   "online_eta": 0.01,
+   "online_passes": 3,
+   "min_gain_bits": 0.02,
+   "min_sd": 3
+  },
+  "x4": {
+   "seed": 4
+  }
+ },
+ "x2": {
+  "0": {
+   "positions": {
+    "train": 6516,
+    "calib": 1605,
+    "test": 3496
+   },
+   "FROZEN": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6382978723404256,
+     "bits": 1.3134773781667342
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.060642206172421366
+    },
+    "calib_bpb": 2.7167552445037684,
+    "lam": 10,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 10,
+      "calib_bits": 2.7167552445037684,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 3.0450967776672124,
+      "iterations": 240,
+      "converged": true
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.4243882854034835,
+      "iterations": 224,
+      "converged": true
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.8915129353878295,
+      "iterations": 288,
+      "converged": true
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.354416131299358,
+      "iterations": 300,
+      "converged": false
+     }
+    ]
+   },
+   "ORACLE": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.723404255319149,
+     "bits": 1.087291036626945
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.05258232689172681
+    },
+    "calib_bpb": 2.708876551048286,
+    "lam": 10,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 10,
+      "calib_bits": 2.708876551048286,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 3.0364662093368535,
+      "iterations": 247,
+      "converged": true
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.414021685710972,
+      "iterations": 220,
+      "converged": true
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.87998072127547,
+      "iterations": 276,
+      "converged": true
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.339218052147331,
+      "iterations": 300,
+      "converged": false
+     }
+    ]
+   }
+  },
+  "1": {
+   "positions": {
+    "train": 6490,
+    "calib": 1648,
+    "test": 3498
+   },
+   "FROZEN": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6074380165289256,
+     "bits": 1.5581286754948018
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.04729736285214263
+    },
+    "calib_bpb": 2.569401749614113,
+    "lam": 10,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 10,
+      "calib_bits": 2.569401749614113,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 2.862332636960777,
+      "iterations": 242,
+      "converged": true
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.2060602036629215,
+      "iterations": 207,
+      "converged": true
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.6345952906481194,
+      "iterations": 273,
+      "converged": true
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.061455552141953,
+      "iterations": 300,
+      "converged": false
+     }
+    ]
+   },
+   "ORACLE": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6942148760330579,
+     "bits": 1.2973802037165498
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.04211072999015323
+    },
+    "calib_bpb": 2.5619941403598796,
+    "lam": 10,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 10,
+      "calib_bits": 2.5619941403598796,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 2.854789173770314,
+      "iterations": 244,
+      "converged": true
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.197976041039986,
+      "iterations": 223,
+      "converged": true
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.625508297134641,
+      "iterations": 292,
+      "converged": true
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.050262499364818,
+      "iterations": 300,
+      "converged": false
+     }
+    ]
+   }
+  }
+ },
+ "learner_records": 0,
+ "x2_checks": {
+  "ceiling_oracle_unseen": false,
+  "floor_frozen_unseen": true
+ },
+ "x2_verdict": "CANNOT_TEST_CLAIM_AS_SPECIFIED",
+ "x4": {
+  "EVEN_held_bpb": 2.8671416310187925,
+  "FROZEN_held_bpb_v155": 2.9628953791236685,
+  "difference": -0.09575374810487602,
+  "bootstrap_sd": 0.010928936802430317,
+  "usage_unused_kcs_train": 327,
+  "keys": {
+   "synapses": 27572,
+   "distinct_after_merge": 27174,
+   "per_channel": [
+    313,
+    314
+   ]
+  },
+  "calib_bpb": 3.0146966879142725,
+  "lam": 30,
+  "lam_at_grid_edge": false,
+  "path": [
+   {
+    "lam": 100,
+    "calib_bits": 3.042038824193067,
+    "iterations": 300,
+    "converged": false
+   },
+   {
+    "lam": 30,
+    "calib_bits": 3.0146966879142725,
+    "iterations": 300,
+    "converged": false
+   },
+   {
+    "lam": 10,
+    "calib_bits": 3.208422913058536,
+    "iterations": 300,
+    "converged": false
+   }
+  ]
+ },
+ "cpu_s": 948.1
+}

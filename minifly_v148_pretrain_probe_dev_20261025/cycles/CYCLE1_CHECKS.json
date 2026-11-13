@@ -1,0 +1,169 @@
+{
+ "pass": true,
+ "cpu_s": 74.4,
+ "checks": [
+  {
+   "check": "alice: SHA-256 pin, 2478 records, max record 72 bytes",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "alice: records deterministic",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "buster: SHA-256 pin, 1314 records, max record 72 bytes",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "buster: records deterministic",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "bryant: SHA-256 pin, 4122 records, max record 73 bytes",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "bryant: records deterministic",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "alice split: train < calib < held, disjoint",
+   "pass": true,
+   "detail": {
+    "train": [
+     0,
+     682
+    ],
+    "calib": [
+     682,
+     762
+    ],
+    "held": [
+     2290,
+     2478
+    ],
+    "n_records": 2478
+   }
+  },
+  {
+   "check": "nested prefixes increasing and within train",
+   "pass": true,
+   "detail": {
+    "5": 79,
+    "10": 159,
+    "20": 321,
+    "40": 682
+   }
+  },
+  {
+   "check": "PPMC2 toy p(b|a) = 1/4",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "PPMC2 toy p(EOS|a) = 1/6 (escape 1/2, order-0 2/6)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "PPMC2 toy p(unseen|a) = 1/(6*253)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "Bigram toy p(b|a) = 0.5*0.5 + 0.5*2/263",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "uniform: probabilities sum to 1 over 257 symbols (max error 3.11e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "unigram: probabilities sum to 1 over 257 symbols (max error 2.44e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "bigram: probabilities sum to 1 over 257 symbols (max error 6.99e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "ppmc2: probabilities sum to 1 over 257 symbols (max error 7.99e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "ppmc3: probabilities sum to 1 over 257 symbols (max error 6.88e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "ppmc4: probabilities sum to 1 over 257 symbols (max error 6.88e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "ppmc5: probabilities sum to 1 over 257 symbols (max error 6.88e-15)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "line_logits shape = len(line)+1 rows x 257",
+   "pass": true,
+   "detail": [
+    73,
+    257
+   ]
+  },
+  {
+   "check": "probe leaves memory state unchanged",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "probe deterministic (two reads identical)",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "generation leaves memory state unchanged",
+   "pass": true,
+   "detail": {
+    "generated_hex": "abd1ab6573d17a65",
+    "stop": "CAP"
+   }
+  },
+  {
+   "check": "temperature calibration returns finite bits",
+   "pass": true,
+   "detail": {
+    "T": 0.40139657795381456,
+    "bpb": 7.0257
+   }
+  },
+  {
+   "check": "pickle round trip: same state hash and same logits",
+   "pass": true,
+   "detail": ""
+  },
+  {
+   "check": "cost measured",
+   "pass": true,
+   "detail": {
+    "train_cpu_s_per_event": 0.0364,
+    "probe_cpu_s_per_symbol": 0.0123,
+    "train_events": 1374,
+    "probe_symbols": 643
+   }
+  }
+ ]
+}

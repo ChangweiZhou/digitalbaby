@@ -1,0 +1,37 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v160_arbit_dev_v1_20261026",
+ "design": "minifly_v160_arbit_design_20261026/DESIGN.md",
+ "verbatim": "Use the recursive improvement skill again to iterate.",
+ "utc": "2026-10-26 (owner message, after the V159 report)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {"label": "Separate pathways with arbitration",
+   "text": "Keep a specific KC memory and a shared predictive pathway separate, each with its own prediction; defer to the shared pathway when the KC memory has no evidence. Test on the X2 task (readout fixed), with even fan-out as the base wiring.",
+   "cost": "about 0.1 CPU-h for the synthetic test",
+   "objective_distance": "Tests whether arbitration recovers generalisation from the shared pathway; synthetic only."}
+ ],
+ "recommendation_shown": "Offered as a hypothesis for a next design, to be designed only on the owner's request.",
+ "interpretation": "'Iterate' is taken as designing and running that follow-up as V160: X2 decisive, X3 text only if X2 passes, default caps. Birth keys are kept (not EVEN) so the comparison with V159 changes one factor; this departs from the 'even fan-out as base wiring' wording shown, for that reason, and is stated to the owner.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": true,
+  "official": {"granted": false, "verbatim": null, "utc": null, "lock_shas_shown": null},
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
+ "caps": {"max_cpu_h": 2, "max_records": 5000, "max_cycles": 3},
+ "defaults_applied": ["max_cpu_h", "max_records", "max_cycles", "official", "push", "adoption", "pointer_update"],
+ "conditionals": [{"predicate": {"artifact": "results/technical/CHECKS.json", "pointer": "/x2_pass", "op": "==", "value": true},
+                   "evaluated_by": "checker (emulated: the dev script refuses to run unless this field is true)", "result": null, "utc": null,
+                   "applies_to": "X3 (dev cycle)"}],
+ "restated_to_owner_before_acting": "Proceeding with V160 within the default caps: at most 2 CPU-h, 5,000 learner records and 3 test cycles; no official run, no adoption; pushes to this session's branch only. Scope: separate pathways combined by arbitration; X2 decides; X3 text only if X2 passes. Birth keys kept for comparability with V159.",
+ "grants": [{"n": 1, "verbatim": "Use the recursive improvement skill again to iterate.", "utc": "2026-10-26",
+             "effect": "implementation, technical, dev cycles for V160 (X3 conditional on X2); default caps"}]
+}

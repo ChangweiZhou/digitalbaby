@@ -1,0 +1,9 @@
+{
+ "rnn": {"H": 256, "init_seed": 0, "g_probes": [1.0, 1.1], "lyap_lines": 100, "batch_lines": 16, "lr": 0.001, "wd": 0.0001, "clip": 5.0, "order_seed": 13},
+ "synthetic": {"symbols": 8, "length": 120, "lines": {"train": 100, "calib": 20, "test": 50}, "seeds": {"train": 1, "calib": 2, "test": 3},
+               "tasks": {"S-COPY": {"lags": [8]}, "S-SUM": {"lags": [2, 6]}}, "max_epochs": 10, "patience": 3},
+ "text": {"max_epochs": 4, "patience": 3},
+ "cola": {"rho_alpha": 0.995, "rho_mu": 0.98, "alpha_clip": 0.99, "mu_cap": 0.99, "denom_floor": 0.001, "eps": 1e-8},
+ "rules": {"qualify_bits": 0.3, "qualify_sd": 3, "pass_frac": 0.5, "pass_sd": 3},
+ "boot": {"reps": 1000, "seed": 0}
+}

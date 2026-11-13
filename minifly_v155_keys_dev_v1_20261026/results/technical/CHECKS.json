@@ -1,0 +1,89 @@
+{
+ "checks": [
+  {
+   "check": "Keys.code equals codes.codes on 400 cached positions",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "L-COMP one update equals the formula",
+   "pass": true,
+   "detail": 5.551115123125783e-17
+  },
+  {
+   "check": "L-COMP keeps column sums and signs",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "L-PRED one update (forward, retrograde, rescaling) equals the formula",
+   "pass": true,
+   "detail": {
+    "pairs": 2,
+    "max_abs_diff": 2.220446049250313e-16
+   }
+  },
+  {
+   "check": "L-PRED W update equals the formula and stays in [-1, 1]",
+   "pass": true,
+   "detail": 1.4901161221603232e-08
+  },
+  {
+   "check": "L-PRED keeps column sums, signs and wiring",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "Keys.BT products track the updated keys",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "L-PRED is deterministic",
+   "pass": true,
+   "detail": {
+    "column_resets": 0,
+    "positive_updates": 1670,
+    "negative_updates": 1669,
+    "replays": 1669,
+    "pairs": 1670
+   }
+  },
+  {
+   "check": "fixture: L-PRED raises the same-future overlap index over FROZEN by >= 0.01 on both streams",
+   "pass": false,
+   "detail": {
+    "0": {
+     "FROZEN": 0.004236413043478271,
+     "L-COMP": 0.0029130434782608586,
+     "L-PRED": 0.0018967391304347964
+    },
+    "1": {
+     "FROZEN": 0.005029891304347833,
+     "L-COMP": 0.0037880434782608732,
+     "L-PRED": 0.003290760869565215
+    }
+   }
+  },
+  {
+   "check": "cost measured",
+   "pass": true,
+   "detail": {
+    "cpu_ms_per_position": {
+     "L-COMP": 0.527,
+     "L-PRED": 5.619
+    },
+    "positions_taught_thursday": 41017,
+    "projection": {
+     "L-COMP": {
+      "cpu_s_per_pass_40KB": 21.6
+     },
+     "L-PRED": {
+      "cpu_s_per_pass_40KB": 230.5
+     }
+    }
+   }
+  }
+ ],
+ "learner_records": 2534
+}

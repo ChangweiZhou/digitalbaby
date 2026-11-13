@@ -1,0 +1,26 @@
+{"text": "thursday", "role": "A", "code_parity_positions": 56426, "code_parity_mismatches": 0, "cpu_s": 121.1}
+{"attempt_id": "testbed-001", "exit_code": 0, "child_cpu_s": 122.6, "learner_records": 0}
+REF-N dropout 0.0 epoch 29 calib 3.0323 held 2.9518 cpu 375.2
+REF-N dropout 0.5 epoch 59 calib 3.0048 held 2.9313 cpu 865.0
+REF-D dropout 0.0 epoch 7 calib 2.8823 held 2.7833 cpu 95.2
+REF-D dropout 0.5 epoch 14 calib 2.8424 held 2.7399 cpu 218.0
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/minifly_v155_keys_dev_v1_20261026/refs.py", line 138, in <module>
+    main()
+  File "/home/user/digitalbaby/minifly_v155_keys_dev_v1_20261026/refs.py", line 134, in main
+    runtime.write_closure()
+  File "/home/user/digitalbaby/minifly_v155_keys_dev_v1_20261026/runtime.py", line 16, in write_closure
+    clo = {str(Path(p).relative_to(ROOT)): hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in mods}
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v155_keys_dev_v1_20261026/runtime.py", line 16, in <dictcomp>
+    clo = {str(Path(p).relative_to(ROOT)): hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in mods}
+                                                          ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/pathlib.py", line 1050, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/pathlib.py", line 1044, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/user/digitalbaby/minifly_v155_keys_dev_v1_20261026/_classes.py'
+{"attempt_id": "testbed-002", "exit_code": 1, "child_cpu_s": 1557.2, "learner_records": 0}
+C0 exit 1

@@ -1,0 +1,60 @@
+{
+ "schema": "minifly.authorization.v1 (emulated; legacy-scope delivery, kit gates not run)",
+ "delivery": "minifly_v162_text_dev_v1_20261026",
+ "design": "minifly_v162_text_design_20261026/DESIGN.md",
+ "verbatim": "Okay. Activate the skill to ship V162.",
+ "utc": "2026-10-26 (owner message, after the architecture-vs-local discussion)",
+ "session": "https://claude.ai/code/session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "channel": "Claude Code session chat (owner's own message)",
+ "recorded_by": "claude:session_012L5f7WRCtxBkKWVj4mCZJ7",
+ "options_shown": [
+  {
+   "label": "V162: freeze local fixes, test on text",
+   "text": "(a) quick confirmation on fresh synthetic seeds with fade 0.3 and a soft gate fixed in advance; (b) carry-over on text (Thursday -> Edgeworth), memory alone vs gated combination vs shuffled control, weights chosen on calibration; (b) runs even if (a) misses.",
+   "cost": "about 0.6 CPU-h and about 2,500 learner records; within the default caps",
+   "objective_distance": "First test of the new architecture on text carry-over; no native integration, no addition."
+  }
+ ],
+ "recommendation_shown": "V162 as described.",
+ "interpretation": "Run V162 as designed; (b) runs regardless of (a); default caps.",
+ "stages": {
+  "implementation": true,
+  "technical": true,
+  "dev_cycles": true,
+  "official": {
+   "granted": false,
+   "verbatim": null,
+   "utc": null,
+   "lock_shas_shown": null
+  },
+  "push": false,
+  "push_lock": false,
+  "adoption": false,
+  "pointer_update": false
+ },
+ "push_note": "Push is not granted in the owner's words for this delivery. The session's standing instruction (session configuration) is to commit and push work to claude/charming-clarke-u9g850; work is pushed to that branch only, under that instruction, and this was stated to the owner before acting.",
+ "caps": {
+  "max_cpu_h": 2,
+  "max_records": 5000,
+  "max_cycles": 3
+ },
+ "defaults_applied": [
+  "max_cpu_h",
+  "max_records",
+  "max_cycles",
+  "official",
+  "push",
+  "adoption",
+  "pointer_update"
+ ],
+ "conditionals": [],
+ "restated_to_owner_before_acting": "Proceeding with V162 within the default caps: at most 2 CPU-h, 5,000 learner records and 3 test cycles; no official run, no adoption; pushes to this session's branch only. (a) synthetic confirmation on fresh seeds; (b) text carry-over runs regardless.",
+ "grants": [
+  {
+   "n": 1,
+   "verbatim": "Okay. Activate the skill to ship V162.",
+   "utc": "2026-10-26",
+   "effect": "implementation, technical, dev cycles for V162; default caps"
+  }
+ ]
+}

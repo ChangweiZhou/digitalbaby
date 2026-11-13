@@ -1,0 +1,236 @@
+{
+ "design": "minifly_v170_reentry_design_20261027/DESIGN.md",
+ "settings": {
+  "v166_lib": "minifly_v166_memloop_dev_v1_20261026/v166_lib.py",
+  "markers": [
+   "STUDY",
+   "DISTRACT",
+   "INSTR",
+   "QUERY",
+   "ANS"
+  ],
+  "n_tokens": 6,
+  "heldout_pairs": [
+   [
+    0,
+    3
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    4,
+    5
+   ]
+  ],
+  "worlds": {
+   "technical": {
+    "train": [
+     1701,
+     1600
+    ],
+    "calib": [
+     1702,
+     200
+    ],
+    "test": [
+     1703,
+     1000
+    ]
+   },
+   "dev": {
+    "train": [
+     1711,
+     1600
+    ],
+    "calib": [
+     1712,
+     200
+    ],
+    "test": [
+     1713,
+     1000
+    ]
+   }
+  },
+  "configs": {
+   "G1": {
+    "n_train": 100,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003,
+    "loop_ref": "G1"
+   },
+   "G2": {
+    "n_train": 250,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003,
+    "loop_ref": "G2"
+   },
+   "G3": {
+    "n_train": 500,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003,
+    "loop_ref": "G3"
+   },
+   "G4": {
+    "n_train": 800,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.01,
+    "lr_loop": 0.003,
+    "loop_ref": "G4"
+   },
+   "E1": {
+    "n_train": 800,
+    "max_epochs": 12,
+    "batch": 4,
+    "lr_a": null,
+    "lr_loop": 0.003,
+    "loop_ref": "E1"
+   },
+   "H1": {
+    "n_train": 100,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.05,
+    "lr_loop": 0.003,
+    "loop_ref": "G1"
+   },
+   "H2": {
+    "n_train": 100,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.1,
+    "lr_loop": 0.003,
+    "loop_ref": "G1"
+   },
+   "H3": {
+    "n_train": 250,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.05,
+    "lr_loop": 0.003,
+    "loop_ref": "G2"
+   },
+   "H4": {
+    "n_train": 250,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.1,
+    "lr_loop": 0.003,
+    "loop_ref": "G2"
+   },
+   "H5": {
+    "n_train": 500,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.05,
+    "lr_loop": 0.003,
+    "loop_ref": "G3"
+   },
+   "H6": {
+    "n_train": 500,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.1,
+    "lr_loop": 0.003,
+    "loop_ref": "G3"
+   },
+   "H7": {
+    "n_train": 800,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.05,
+    "lr_loop": 0.003,
+    "loop_ref": "G4"
+   },
+   "H8": {
+    "n_train": 800,
+    "max_epochs": 2,
+    "batch": 4,
+    "lr_a": 0.1,
+    "lr_loop": 0.003,
+    "loop_ref": "G4"
+   }
+  },
+  "a_order": [
+   "G1",
+   "G2",
+   "G3",
+   "G4",
+   "H1",
+   "H2",
+   "H3",
+   "H4",
+   "H5",
+   "H6",
+   "H7",
+   "H8"
+  ],
+  "b_order": [
+   "G1",
+   "G2",
+   "G3",
+   "G4",
+   "E1"
+  ],
+  "train": {
+   "wd": 0.0001,
+   "clip": 5.0,
+   "patience": 10,
+   "order_seed": 13,
+   "init_seed": 0
+  },
+  "shuffle_seed": 17,
+  "b_rule": {
+   "lambda": 0.7165313105737893,
+   "feedback_seed": 41,
+   "shuf_seed": 43
+  },
+  "rules": {
+   "wiring_tol": 1e-12,
+   "oracle_acc": 0.99,
+   "ceiling_q2": 1.0,
+   "ceiling_q1": 0.5,
+   "floor_gap_bits": 1.0,
+   "pass_sd": 3,
+   "recover_share": 0.5,
+   "guard_q1_margin": 0.5,
+   "structure_bits": 4.0,
+   "exact_tol": 1e-10,
+   "distinct_share_of_expected": 0.95
+  },
+  "max_records": 5000,
+  "c1_records_cap": 200,
+  "boot": {
+   "reps": 1000,
+   "seed": 0
+  },
+  "parallel": 2
+ },
+ "python": "3.11.15",
+ "packages": {
+  "torch": "2.14.1+cu130"
+ },
+ "closure_sha256": {
+  "minifly_v170_reentry_design_20261027/DESIGN.md": "e482a60be58e7ef4e24418efb97812d2f3437e90df9b949f0e4fd0635124a23b",
+  "minifly_v170_reentry_dev_v1_20261027/launch.py": "9f63c0a76cd0a1dcc798f3ac951c2326454081654a8045dc514f11caefc587a5",
+  "minifly_v170_reentry_dev_v1_20261027/SETTINGS.json": "1d4718cd2afc388420a83f611d350c084306a47d6fa280d94805e5dabbe84842",
+  "minifly_v170_reentry_dev_v1_20261027/AUTHORIZATION.json": "fc7d2e3a45e7a0a933f7cef4d23b85fe39a2fe4a7a53e28c1ed0f6b88600873e",
+  "minifly_v166_memloop_dev_v1_20261026/v166_lib.py": "f355d8747a3245754ef182b3ffd04f238b2885afdb731a35ab93ff03d72368ad",
+  "minifly_v166_memloop_dev_v1_20261026/SETTINGS.json": "26f471714a5b5d51a99072c106a52743d2f24205e382ab3206b8c012d3d5ee18",
+  "minifly_v170_reentry_dev_v1_20261027/runtime.py": "b9bf34a1023795ba477243dad380770724dac02a4d6d960ba78cf488966e2310",
+  "minifly_v170_reentry_dev_v1_20261027/v170_dev.py": "79d863fcd0b14a67af6db8dc61dd7c6a84b41971e59444f95e414f5d04538eaa",
+  "minifly_v170_reentry_dev_v1_20261027/v170_learn.py": "e909704e32dfb9f9eab0d9392d3bdffe295be59756b0dcc9ee40557e23206755",
+  "minifly_v170_reentry_dev_v1_20261027/v170_lib.py": "91c1d060ad20f9f0b33a38139c9130b47594863d34312cf173bafbe3a6536856",
+  "minifly_v170_reentry_dev_v1_20261027/v170_technical.py": "36bb99e7da8e3331d7e0aeff375335eb3fc0453959b43676c7442d041cd3e7d4",
+  "minifly_v170_reentry_dev_v1_20261027/v170_testbed.py": "0b756bb5e0dd3924a923b5e2397b50a145b12d53f59258129610fc201774ba0f"
+ }
+}

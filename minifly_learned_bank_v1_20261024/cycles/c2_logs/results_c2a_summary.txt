@@ -1,0 +1,19 @@
+task  arm     world    rec heldSys  heldL tchSys   tchL   ktaL0   ktaL1   gapL0   gapL1  drift
+COPY  BASE    D1      2220  0.885    -    1.000    -      -      -      -      -    1.000
+COPY  FROZEN  D1      2220  0.808  0.577  1.000  1.000  0.423  0.423  0.093  0.093  1.000
+COPY  LEARN   D1      2220  0.885  0.731  1.000  1.000  0.423  0.554  0.093  0.127  0.416
+MOD   BASE    D1      2220  0.038    -    0.973    -      -      -      -      -    1.000
+MOD   FROZEN  D1      2220  0.000  0.077  1.000  1.000  0.157  0.157 -0.023 -0.023  1.000
+MOD   LEARN   D1      2220  0.038  0.000  0.973  0.689  0.157  0.125 -0.023 -0.027  0.509
+MOD   ORACLE  D1      2220  0.885  1.000  1.000  1.000  0.991  0.991  0.957  0.957  1.000
+MOD   SHUF    D1      2220  0.154  0.115  0.987  0.797  0.157  0.127 -0.023 -0.022  0.479
+{
+ "D1": {
+  "learn_gt_frozen": false,
+  "learn_gt_shuf": false,
+  "learn_gap_rises": false,
+  "frozen_gap_flat": true,
+  "oracle_ok": 1.0,
+  "supports_condition_1": false
+ }
+}

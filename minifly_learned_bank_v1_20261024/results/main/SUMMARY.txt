@@ -1,0 +1,96 @@
+task  arm     world    rec heldSys  heldL   balL tchSys   tchL   ktaL0   ktaL1   gapL0   gapL1  drift
+COPY  BASE    M1     11250  0.840    -      -    1.000    -      -      -      -      -    1.000
+COPY  BASE    M2     10800  0.821    -      -    1.000    -      -      -      -      -    1.000
+COPY  BASE    M3     10950  0.815    -      -    1.000    -      -      -      -      -    1.000
+COPY  BASE    M4     10800  0.893    -      -    1.000    -      -      -      -      -    1.000
+COPY  FROZEN  M1     11250  0.800  0.640  0.682  1.000  1.000  0.531  0.531  0.124  0.124  1.000
+COPY  FROZEN  M2     10800  0.929  0.607  0.577  1.000  1.000  0.444  0.444  0.114  0.114  1.000
+COPY  FROZEN  M3     10950  0.815  0.370  0.452  1.000  1.000  0.413  0.413  0.073  0.073  1.000
+COPY  FROZEN  M4     10800  0.714  0.286  0.298  1.000  1.000  0.386  0.386  0.054  0.054  1.000
+COPY  LEARN   M1     11250  0.920  1.000  1.000  1.000  1.000  0.531  0.837  0.124  0.320  0.071
+COPY  LEARN   M2     10800  0.964  1.000  1.000  1.000  1.000  0.444  0.815  0.114  0.311  0.225
+COPY  LEARN   M3     10950  0.926  1.000  1.000  1.000  1.000  0.413  0.813  0.073  0.275  0.116
+COPY  LEARN   M4     10800  1.000  0.964  0.975  1.000  1.000  0.386  0.826  0.054  0.278  0.260
+PAR   BASE    M1     11250  0.280    -      -    1.000    -      -      -      -      -    1.000
+PAR   BASE    M2     10800  0.357    -      -    1.000    -      -      -      -      -    1.000
+PAR   BASE    M3     10950  0.407    -      -    1.000    -      -      -      -      -    1.000
+PAR   BASE    M4     10800  0.429    -      -    1.000    -      -      -      -      -    1.000
+PAR   FROZEN  M1     11250  0.280  0.400  0.434  1.000  1.000  0.052  0.052 -0.005 -0.005  1.000
+PAR   FROZEN  M2     10800  0.286  0.321  0.361  1.000  1.000  0.042  0.042 -0.003 -0.003  1.000
+PAR   FROZEN  M3     10950  0.370  0.444  0.467  1.000  1.000  0.049  0.049 -0.002 -0.002  1.000
+PAR   FROZEN  M4     10800  0.429  0.607  0.607  1.000  0.986  0.043  0.043 -0.007 -0.007  1.000
+PAR   LEARN   M1     11250  0.480  0.680  0.726  1.000  0.987  0.052  0.195 -0.005  0.019  0.083
+PAR   LEARN   M2     10800  0.750  0.964  0.972  1.000  1.000  0.042  0.274 -0.003  0.046  0.222
+PAR   LEARN   M3     10950  0.815  1.000  1.000  1.000  1.000  0.049  0.353 -0.002  0.042  0.099
+PAR   LEARN   M4     10800  0.643  0.964  0.964  1.000  0.972  0.043  0.215 -0.007  0.017  0.332
+PAR   ORACLE  M1     11250  1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.905  0.905  1.000
+PAR   ORACLE  M2     10800  1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.992  0.992  1.000
+PAR   ORACLE  M3     10950  1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.952  0.952  1.000
+PAR   ORACLE  M4     10800  1.000  1.000  1.000  1.000  1.000  1.000  1.000  0.992  0.992  1.000
+PAR   SHUF    M1     11250  0.680  0.640  0.622  1.000  0.987  0.052  0.016 -0.005 -0.004  0.079
+PAR   SHUF    M2     10800  0.464  0.429  0.489  1.000  0.944  0.042  0.032 -0.003  0.006  0.197
+PAR   SHUF    M3     10950  0.667  0.630  0.642  1.000  0.808  0.049  0.017 -0.002 -0.001  0.104
+PAR   SHUF    M4     10800  0.500  0.500  0.500  1.000  0.861  0.043  0.017 -0.007 -0.003  0.330
+{
+ "M1": {
+  "learn_bal": 0.7257,
+  "frozen_bal": 0.434,
+  "shuf_bal": 0.6215,
+  "oracle_bal": 1.0,
+  "learn_ge_frozen_plus_margin": true,
+  "learn_ge_shuf_plus_margin": false,
+  "learn_gap_rises": true,
+  "learn_kta_rises": true,
+  "gate_frozen_codes_unchanged": true,
+  "gate_oracle": true,
+  "gate_copy_sys_held_ge_0.30": true,
+  "gates_ok": true,
+  "supports_condition_1": false
+ },
+ "M2": {
+  "learn_bal": 0.9722,
+  "frozen_bal": 0.3611,
+  "shuf_bal": 0.4889,
+  "oracle_bal": 1.0,
+  "learn_ge_frozen_plus_margin": true,
+  "learn_ge_shuf_plus_margin": true,
+  "learn_gap_rises": true,
+  "learn_kta_rises": true,
+  "gate_frozen_codes_unchanged": true,
+  "gate_oracle": true,
+  "gate_copy_sys_held_ge_0.30": true,
+  "gates_ok": true,
+  "supports_condition_1": true
+ },
+ "M3": {
+  "learn_bal": 1.0,
+  "frozen_bal": 0.4667,
+  "shuf_bal": 0.6417,
+  "oracle_bal": 1.0,
+  "learn_ge_frozen_plus_margin": true,
+  "learn_ge_shuf_plus_margin": true,
+  "learn_gap_rises": true,
+  "learn_kta_rises": true,
+  "gate_frozen_codes_unchanged": true,
+  "gate_oracle": true,
+  "gate_copy_sys_held_ge_0.30": true,
+  "gates_ok": true,
+  "supports_condition_1": true
+ },
+ "M4": {
+  "learn_bal": 0.9643,
+  "frozen_bal": 0.6071,
+  "shuf_bal": 0.5,
+  "oracle_bal": 1.0,
+  "learn_ge_frozen_plus_margin": true,
+  "learn_ge_shuf_plus_margin": true,
+  "learn_gap_rises": true,
+  "learn_kta_rises": true,
+  "gate_frozen_codes_unchanged": true,
+  "gate_oracle": true,
+  "gate_copy_sys_held_ge_0.30": true,
+  "gates_ok": true,
+  "supports_condition_1": true
+ }
+}
+overall: partial (3/4 worlds)

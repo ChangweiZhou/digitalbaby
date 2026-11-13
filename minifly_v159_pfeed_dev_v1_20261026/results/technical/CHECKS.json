@@ -1,0 +1,327 @@
+{
+ "checks": [
+  {
+   "check": "delta-rule step equals M + eta (target - M x) x^T",
+   "pass": true,
+   "detail": 6.938893903907228e-18
+  },
+  {
+   "check": "batch prediction equals the per-position prediction",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "feedback trace at t uses only predictions before t",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "feedback trace resets at each line start",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "learning is deterministic",
+   "pass": true,
+   "detail": null
+  },
+  {
+   "check": "X1: same-future index of r >= 0.5 on both streams",
+   "pass": false,
+   "detail": {
+    "0": {
+     "FROZEN_codes": 0.001350543478260871,
+     "PF_r": 0.010013528069215294
+    },
+    "1": {
+     "FROZEN_codes": 0.003834239130434791,
+     "PF_r": 0.010621977065817467
+    }
+   }
+  },
+  {
+   "check": "X2: PF-READ >= 0.80 on unseen members, FROZEN and SHUFFLED <= 0.65, both seeds",
+   "pass": false,
+   "detail": {
+    "0": {
+     "PF-READ": 0.6510638297872341,
+     "SHUFFLED": 0.6468085106382979
+    },
+    "1": {
+     "PF-READ": 0.5950413223140496,
+     "SHUFFLED": 0.6115702479338843
+    }
+   }
+  }
+ ],
+ "x2": {
+  "0": {
+   "PF-READ": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6510638297872341,
+     "bits": 1.36625986906724
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9961685823754789,
+     "bits": 0.11036141831128983
+    },
+    "calib_bpb": 2.5351213965783286,
+    "lam": 30,
+    "lam_at_grid_edge": false,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.5361442222198316,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.5351213965783286,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.6910020553643874,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 3.0144330321059454,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.3829827756854534,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.842261234870295,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.288863109173924,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 4.199891620867553
+   },
+   "SHUFFLED": {
+    "unseen": {
+     "n": 235,
+     "accuracy": 0.6468085106382979,
+     "bits": 1.4902225976183938
+    },
+    "seen": {
+     "n": 261,
+     "accuracy": 0.9923371647509579,
+     "bits": 0.23164237934054138
+    },
+    "calib_bpb": 2.5367052829487924,
+    "lam": 100,
+    "lam_at_grid_edge": true,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.5367052829487924,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.537589911287632,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.69762536952038,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 3.0232546230557378,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.4009579051359364,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.8922242999672565,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.43443858435669,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 4.1691629111873185
+   },
+   "FROZEN_testbed": {
+    "n": 235,
+    "accuracy": 0.6340425531914894,
+    "bits": 1.3648369269436078
+   },
+   "ORACLE_testbed": {
+    "n": 235,
+    "accuracy": 0.9404255319148936,
+    "bits": 0.8582756126467399
+   }
+  },
+  "1": {
+   "PF-READ": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.5950413223140496,
+     "bits": 1.5734408263800421
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09519082466649313
+    },
+    "calib_bpb": 2.407805757946914,
+    "lam": 30,
+    "lam_at_grid_edge": false,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.4178523975093293,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.407805757946914,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.544146994766058,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 2.8305720746955156,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.1654185043098497,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.5839070487145244,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.0007224788633255,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 4.265903665574836
+   },
+   "SHUFFLED": {
+    "unseen": {
+     "n": 242,
+     "accuracy": 0.6115702479338843,
+     "bits": 1.5720879811019046
+    },
+    "seen": {
+     "n": 256,
+     "accuracy": 1.0,
+     "bits": 0.09628676743738245
+    },
+    "calib_bpb": 2.4104305007937654,
+    "lam": 30,
+    "lam_at_grid_edge": false,
+    "path": [
+     {
+      "lam": 100,
+      "calib_bits": 2.4190234850142596,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 30,
+      "calib_bits": 2.4104305007937654,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 10,
+      "calib_bits": 2.550222120154608,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 3,
+      "calib_bits": 2.846698036570172,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 1,
+      "calib_bits": 3.2072058602739917,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.3,
+      "calib_bits": 3.696284721051391,
+      "iterations": 300,
+      "converged": false
+     },
+     {
+      "lam": 0.1,
+      "calib_bits": 4.264720161415969,
+      "iterations": 300,
+      "converged": false
+     }
+    ],
+    "block_scale": 4.238707485826121
+   },
+   "FROZEN_testbed": {
+    "n": 242,
+    "accuracy": 0.6157024793388429,
+    "bits": 1.5689822354800442
+   },
+   "ORACLE_testbed": {
+    "n": 242,
+    "accuracy": 0.9710743801652892,
+    "bits": 0.9155872777796601
+   }
+  }
+ },
+ "x2_pass": false,
+ "gamma": 0.0,
+ "learner_records": 2002,
+ "cpu_s": 698.5
+}

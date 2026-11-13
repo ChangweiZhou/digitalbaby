@@ -1,0 +1,76 @@
+{
+ "stage": "technical",
+ "checks": {
+  "1_no_loop_isolation": {
+   "NO-LOOP": {
+    "states_equal_zero_mem": true,
+    "states_equal_shuf_mem": true,
+    "max_abs_grad_states_wrt_memory": 0.0
+   },
+   "LOOP": {
+    "states_equal_zero_mem": false,
+    "states_equal_shuf_mem": false,
+    "max_abs_grad_states_wrt_memory": 150.2964628869017
+   },
+   "pass": true
+  },
+  "2_parameter_counts": {
+   "params": {
+    "LOOP": 47072,
+    "NO-LOOP": 47262,
+    "LOOP-SHUF": 47072,
+    "LOOP-NULL": 47072
+   },
+   "widths": {
+    "LOOP": 64,
+    "NO-LOOP": 67,
+    "LOOP-SHUF": 64,
+    "LOOP-NULL": 64
+   },
+   "no_loop_excess": 0.004036369816451391,
+   "formula": {
+    "LOOP": 47072,
+    "NO-LOOP": 47262
+   },
+   "pass": true
+  },
+  "3_shuffle": {
+   "technical_train": {
+    "derangement_every_line": true,
+    "multiset_kept": true,
+    "distinct_permutation_share": 0.87625,
+    "expected_share_uniform": 0.8765365287189953,
+    "regenerated_identically": true
+   },
+   "technical_test": {
+    "derangement_every_line": true,
+    "multiset_kept": true,
+    "distinct_permutation_share": 0.96,
+    "expected_share_uniform": 0.9670678067203379,
+    "regenerated_identically": true
+   },
+   "pass": true
+  },
+  "4_cut": {
+   "wr_zero_equals_cut": true,
+   "cut_changes_states": true,
+   "pass": true
+  },
+  "5_gradient": {
+   "entries": 24,
+   "relative_error": 1.6210913693883138e-08,
+   "pass": true
+  },
+  "6_determinism": {
+   "identical_parameters": true,
+   "calib_bits": [
+    5.119052954003683,
+    5.119052954003683
+   ],
+   "pass": true
+  }
+ },
+ "all_pass": true,
+ "learner_records": 0,
+ "cpu_s": 3.7
+}

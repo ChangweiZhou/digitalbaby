@@ -1,0 +1,107 @@
+config E1 {'n_train': 800, 'max_epochs': 12, 'batch': 4, 'lr': 0.003} records cap 20000
+c2_KF-SHUF {"q1_bits": 3.7693546646733256, "q1_acc": 0.1375, "q2_bits": 3.6568220606636976, "q2_acc": 0.1365, "all_bits": 3.7130883626685116} 12 12 217.8
+c2_KF {"q1_bits": 3.648645239171696, "q1_acc": 0.1535, "q2_bits": 3.3350608383406177, "q2_acc": 0.1915, "all_bits": 3.491853038756157} 6 12 220.1
+/home/user/digitalbaby/minifly_v168_kfloop_dev_v1_20261026/v168_lib.py:67: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return float(loss)
+/home/user/digitalbaby/minifly_v168_kfloop_dev_v1_20261026/v168_lib.py:67: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return float(loss)
+c2_TBPTT-1 {"q1_bits": 3.862630738006902, "q1_acc": 0.1575, "q2_bits": 3.4308704747937386, "q2_acc": 0.187, "all_bits": 3.64675060640032} 6 12 64.0
+c2_BPTT {"q1_bits": 0.3384755782214645, "q1_acc": 0.9335, "q2_bits": 0.5257213628739528, "q2_acc": 0.889, "all_bits": 0.43209847054770867} 12 12 64.5
+/home/user/digitalbaby/minifly_v168_kfloop_dev_v1_20261026/v168_lib.py:67: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return float(loss)
+/home/user/digitalbaby/minifly_v168_kfloop_dev_v1_20261026/v168_lib.py:67: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  return float(loss)
+c2_TBPTT-3 {"q1_bits": 0.4275975117991398, "q1_acc": 0.901, "q2_bits": 0.6047609484699742, "q2_acc": 0.867, "all_bits": 0.516179230134557} 12 12 63.9
+c2_TBPTT-2 {"q1_bits": 3.705459779372195, "q1_acc": 0.1615, "q2_bits": 3.301526567420446, "q2_acc": 0.206, "all_bits": 3.50349317339632} 5 12 65.4
+{
+ "selected_config": "E1",
+ "summary": {
+  "KF": {
+   "q1_bits": 3.648645239171696,
+   "q1_acc": 0.1535,
+   "q2_bits": 3.3350608383406177,
+   "q2_acc": 0.1915,
+   "all_bits": 3.491853038756157
+  },
+  "KF-SHUF": {
+   "q1_bits": 3.7693546646733256,
+   "q1_acc": 0.1375,
+   "q2_bits": 3.6568220606636976,
+   "q2_acc": 0.1365,
+   "all_bits": 3.7130883626685116
+  },
+  "BPTT": {
+   "q1_bits": 0.3384755782214645,
+   "q1_acc": 0.9335,
+   "q2_bits": 0.5257213628739528,
+   "q2_acc": 0.889,
+   "all_bits": 0.43209847054770867
+  },
+  "TBPTT-1": {
+   "q1_bits": 3.862630738006902,
+   "q1_acc": 0.1575,
+   "q2_bits": 3.4308704747937386,
+   "q2_acc": 0.187,
+   "all_bits": 3.64675060640032
+  },
+  "TBPTT-2": {
+   "q1_bits": 3.705459779372195,
+   "q1_acc": 0.1615,
+   "q2_bits": 3.301526567420446,
+   "q2_acc": 0.206,
+   "all_bits": 3.50349317339632
+  },
+  "TBPTT-3": {
+   "q1_bits": 0.4275975117991398,
+   "q1_acc": 0.901,
+   "q2_bits": 0.6047609484699742,
+   "q2_acc": 0.867,
+   "all_bits": 0.516179230134557
+  }
+ },
+ "R-dev": {
+  "bptt_q2": 0.5257213628739528,
+  "bptt_q1": 0.3384755782214645,
+  "gap": {
+   "gain_bits": 2.905149111919786,
+   "boot_sd": 0.04109025095185949,
+   "z": 70.70166388916438
+  },
+  "pass": true
+ },
+ "P1_recovery": {
+  "gain_bits": 0.0958096364531209,
+  "boot_sd": 0.0321801862574196,
+  "z": 2.9772865727596787,
+  "share_of_gap": 0.03297924917520251,
+  "meets_criterion": false,
+  "pass": false
+ },
+ "P2_credit": {
+  "kf_shuf_recovery": {
+   "gain_bits": -0.225951585869959,
+   "boot_sd": 0.036773385915518944,
+   "z": -6.144432454195193,
+   "share_of_gap": -0.07777624389153824,
+   "meets_criterion": false
+  },
+  "kf_vs_kf_shuf": {
+   "gain_bits": 0.3217612223230799,
+   "boot_sd": 0.035626955588793474,
+   "z": 9.031398192897809
+  },
+  "pass": true
+ },
+ "G1_guard": {
+  "kf_q1": 3.648645239171696,
+  "tbptt1_q1": 3.862630738006902,
+  "pass": true
+ },
+ "verdict": "FAIL",
+ "learner_records": 19200
+}
+{"attempt_id": "dev-005", "exit_code": 0, "child_cpu_s": 726.3, "learner_records": 19200}

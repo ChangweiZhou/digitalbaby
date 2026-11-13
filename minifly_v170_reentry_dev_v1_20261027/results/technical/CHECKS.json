@@ -1,0 +1,81 @@
+{
+ "stage": "technical",
+ "smoke": false,
+ "A": {
+  "A1_one_step_equals_bptt": {
+   "max_rel_diff": {
+    "A": 2.157823241011623e-16,
+    "A-SHUF": 5.176721125434128e-16,
+    "A-CUT": 3.4739644205222198e-16
+   },
+   "pass": true
+  },
+  "A2_param_isolation": {
+   "states_bitwise_equal": true,
+   "dynamics_take_parameters": false,
+   "pass": true
+  },
+  "A3_shuf": {
+   "derangements": true,
+   "same_across_epochs": true,
+   "distinct_share": 1.0,
+   "cue_reads_equal": true,
+   "reentered_codes_differ": true,
+   "pass": true
+  },
+  "A4_cut": {
+   "cueless_reads_zero": true,
+   "cue_reads_equal": true,
+   "pass": true
+  },
+  "A5_generic_reentry": {
+   "calls_equal_cueless_steps": true,
+   "reentry_equals_input_encoding": true,
+   "pass": true
+  },
+  "A6_untrained_near_chance": {
+   "test_T": {
+    "q1_bits": 4.999629386285853,
+    "q1_acc": 0.0335,
+    "q2_bits": 4.997456227255736,
+    "q2_acc": 0.0375,
+    "all_bits": 4.998542806770795
+   },
+   "pass": true
+  },
+  "A7_determinism": {
+   "identical": true,
+   "pass": true
+  },
+  "A8_learns": {
+   "train_bits_before": 4.9915141558727125,
+   "after": 4.427756124774436,
+   "pass": true
+  }
+ },
+ "B": {
+  "B1_identity_tbptt1": {
+   "max_rel_diff": 2.0517848111506913e-16,
+   "pass": true
+  },
+  "B2_shuf": {
+   "derangements": true,
+   "readout_equal": true,
+   "feedback_differs": true,
+   "identity_perm_reproduces_B": true,
+   "pass": true
+  },
+  "B3_determinism": {
+   "identical": true,
+   "pass": true
+  },
+  "B4_learns": {
+   "train_bits_before": 5.168705211950981,
+   "after": 5.012681386241303,
+   "pass": true
+  }
+ },
+ "learner_records": 154,
+ "all_pass": true,
+ "records_within_c1_cap": true
+}

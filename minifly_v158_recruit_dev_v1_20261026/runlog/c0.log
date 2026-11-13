@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/minifly_v158_recruit_dev_v1_20261026/testbed.py", line 106, in <module>
+    main()
+  File "/home/user/digitalbaby/minifly_v158_recruit_dev_v1_20261026/testbed.py", line 71, in main
+    bd = fixture.birth()
+         ^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v158_recruit_dev_v1_20261026/fixture.py", line 58, in birth
+    mem = v155_cache.states.new_memory(v155_cache.CELL)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v153_bits_dev_v1_20261025/states.py", line 46, in new_memory
+    mem = fastmem.FastMemory(front=front, homeo=homeo)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_cls_dev_20261017/fastmem.py", line 98, in __init__
+    self.bank = [Compartment() for _ in range(16)]
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_cls_dev_20261017/fastmem.py", line 98, in <listcomp>
+    self.bank = [Compartment() for _ in range(16)]
+                 ^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_cls_dev_20261017/fastmem.py", line 77, in __init__
+    model, self.birth = stores.birth("native")
+                        ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_a_v3/src/stores.py", line 104, in birth
+    model, raw = pb.canonical_fresh_native()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_a_v3/package/portable_birth.py", line 102, in canonical_fresh_native
+    from common_platform import fresh_native
+  File "/home/user/digitalbaby/minifly_a_v3/package/REFERENCE_SOURCE/MINIFLY_THREE_MECHANISM_ROUND_20260928/common_platform.py", line 21, in <module>
+    from fixture import DT, RECORD_SECONDS, make_world, fact_variants
+ImportError: cannot import name 'DT' from 'fixture' (/home/user/digitalbaby/minifly_v158_recruit_dev_v1_20261026/fixture.py)
+{"attempt_id": "testbed-001", "exit_code": 1, "child_cpu_s": 1.4, "learner_records": 0}
+exit 1

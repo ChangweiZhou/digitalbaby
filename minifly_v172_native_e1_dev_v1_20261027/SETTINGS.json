@@ -1,0 +1,15 @@
+{
+ "worlds": {"technical": 202610277201, "dev": 202610277211, "rehearsal_reserved": 202610277221},
+ "data": {"salt": "V172", "operand_max": 19, "OLD": 64, "NEW_pool": 64, "NEW": 16},
+ "dose": {"OLD_passes": 16, "OLD_orders": 8, "NEW_passes": 8},
+ "arms": {"N2B": {"writer": "N2B", "homeo": false}, "N2B-H": {"writer": "N2B", "homeo": true},
+          "DELTA": {"writer": "DELTA", "homeo": false}, "DELTA-H": {"writer": "DELTA", "homeo": true}},
+ "writer": {"n2b_gain": 0.2, "delta_temp": 2.0, "warmup_start": 0.0625, "warmup_targets": 1024},
+ "homeo": {"rate": 0.05, "c": 5.0, "beta": 0.01},
+ "generation_cap": 4,
+ "rest_steps": 128,
+ "panels": ["OLD8", "OLD16", "FINAL", "REST"],
+ "testbed": {"ridge_lambda": 1.0, "ceiling_pass": 72, "floor_fail_max": 8},
+ "rules": {"writer_items": 16, "homeo_items": 8, "sd": 3, "reference_max": 16, "cls_level": 64},
+ "boot": {"reps": 2000, "seed": 0}
+}

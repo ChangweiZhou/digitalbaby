@@ -1,0 +1,14 @@
+MC-BPTT 2.7571 10 10 [2.98822, 2.96538, 2.94912, 2.92541, 2.8999, 2.87405, 2.84549, 2.81264, 2.77734, 2.74293]
+MC-T1 2.861 10 10 [2.99148, 2.97235, 2.96083, 2.94361, 2.92655, 2.91155, 2.89662, 2.87941, 2.86128, 2.84624]
+MC-BPTT-20 2.4311 20 20 [2.98822, 2.96538, 2.94912, 2.92541, 2.8999, 2.87405, 2.84549, 2.81264, 2.77734, 2.74293, 2.70659, 2.67051, 2.63497, 2.59981, 2.5645, 2.53129, 2.49961, 2.46916, 2.44, 2.41347]
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/minifly_v173_microcircuit_dev_v1_20261028/v173_testbed.py", line 53, in <module>
+    main()
+  File "/home/user/digitalbaby/minifly_v173_microcircuit_dev_v1_20261028/v173_testbed.py", line 31, in main
+    sd = L.L4.boot_sd(f["line_sums"], b["line_sums"], b["counts"])
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/minifly_v164_cola_dev_v1_20261026/v164_lib.py", line 144, in boot_sd
+    d.append((a_sums[i].sum() - b_sums[i].sum()) / counts[i].sum())
+              ~~~~~~^^^
+TypeError: only integer scalar arrays can be converted to a scalar index
+{"attempt_id": "testbed-001", "exit_code": 1, "child_cpu_s": 23.4, "learner_records": 0}
