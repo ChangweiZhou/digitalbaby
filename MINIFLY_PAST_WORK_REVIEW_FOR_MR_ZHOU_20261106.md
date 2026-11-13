@@ -2605,3 +2605,23 @@ Every trained network shows the sign path amplifying the non-answer error, the b
 **What I do.** Part A of E29 is released: a read-only measurement of how the born and lived networks use their gates, sweep against backprop, with the seed already seen reported and not judged. Part B, variants at birth, is withdrawn as I drafted it and is rewritten after block A, on a fixture with no single lag and with the controls the audit asked for. The draft was mine and eleven findings against it held.
 
 **For the target test.** The lines stand hundreds of bytes before their use, and what limits a learner there is now an open question again; "span of 12" is no longer a reason to move them.
+
+
+## 9.119 E27 complete: all five predictions miss or are void; neither half of the hypothesis is supported (13 November 2026, 15:30 EST by the clock)
+
+**What was done.** The worker reran E27 with the six E26 life weight files, script and scorer unchanged (hashes 51ada865 and ee2dd33e as before the first run), on branch `claude/sleepy-knuth-q96dd1`, commit 7826d1b1, now merged. I read the new scorer output: nothing is absent, P27.1 to P27.3 and supplements S1 to S5 are identical to the first pass (9.117). Evidence level E2; measurements on saved weights.
+
+**The second half of the hypothesis** was that the sign path's alignment with the exact gradient is worse on untaught composition items, and worse in sweep-lived networks.
+
+| | 73129 | 93683 | 116089 | Result |
+|---|---|---|---|---|
+| P27.4 alignment on untaught pairs at least 0.10 below single operations, both sweep-lived arms | gaps 0.03, 0.08 | -0.04, -0.02 | 0.05, 0.05 | **misses** |
+| P27.5 sweep-lived at least 0.05 below backprop-lived, both births | one of two | none | none | **misses** |
+
+Alignment on untaught pairs is between 0.53 and 0.66 in every arm, and in four of six comparisons the sweep-lived network is the better aligned. S6, untaught minus taught, lies between -0.08 and +0.05 everywhere.
+
+**Outcome for E27:** P27.1 misses, P27.2 void, P27.3 misses, P27.4 misses, P27.5 misses. The hypothesis that the sign path's missing magnitudes explain both the every-byte collapse and the weaker composition is not supported in either half. E26-X stands as measured: lives updated by the sweep carry less to untaught pairs than lives updated by backprop. **This measurement leaves that without an explanation.** One-step alignment at the end of a life does not differ between the arms.
+
+**Two corrections to my 9.117, from the worker.** I wrote that every trained network shows amplification below the top layer. Two files do not in every seed: the sweep-born answer-target two-bank file (0.63 and 0.96 in two seeds) and the backprop-born every-byte file in seed 93683 (1.05). The reading is unchanged: the collapsed file sits inside the range of files that did not collapse, and the balanced file is far above all of them. And the worker checked what I had left open: E27's sign path is the gradient E24's sweep births computed (relative difference 0, 0 and 4.6e-7), with the births then applying it through AdamW.
+
+**What it leaves for the next step.** Per-step direction is not where the two updates differ. What has not been measured is what accumulates over a life: thousands of updates, each through AdamW. E28's saved rows, and E29's look at how the networks use their gates, are the measurements on file that can speak to that.
