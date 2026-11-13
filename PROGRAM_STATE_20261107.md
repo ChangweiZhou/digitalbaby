@@ -433,3 +433,13 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - **E21b** back to its worker: the brief's amendments were written after its branch began and are not implemented. Resume stays off.
 - **Sizing stage 1:** pipeline qualified; the learner's span is about 12 bytes (no copy at 24 or more). Brief at revision 4 for Codex; roster held.
 - Merged into the default branch: E24's files (by path), E26 stage 2, sizing stage 1.
+
+
+## Addendum, 13 November 11:33 EST (clock): E26 lives, the crossover and E21b landed (review 9.112)
+
+- **E26 lives:** the sweep-born, sweep-lived GRU composes from memory at 37 to 54% on untaught pairs (backprop 63 to 89%) and misses the taught-pair mark by 1 to 4 points. P26.3 misses, P26.4 and P26.5 hold. No candidate pair by the registered marks, which are kept.
+- **E26-X (crossover, commissioned outside this session):** a sweep-born GRU living under backprop meets both marks in 3 of 3 seeds; either birth living under the sweep meets them in 0 of 3. The gap is in the update during the life.
+- **E21b merged** after the coordinator's test: default path unchanged, kill-and-resume exact, and the gate refused the owner's machine for its torch version. Resume is available on the qualified runtime for seven shapes.
+- **Codex is unavailable.** The audit session acts as second reader, with the mechanical checks listed in 9.112 F.
+- **Next:** two measurements on saved weights (filler error by layer under the exact and sign paths; alignment on composition items), predictions first. The six E26 life weight files are still only on the worker's container.
+- Erratum to 9.110: birth-curve differences were in answers out of 300, not points.

@@ -2417,3 +2417,76 @@ A life that is missing counts as not meeting a mark, and the denominator stays t
 - Four corrupted copies are each caught: data that differs between the arms at one stage, a birth hash that is not the birth receipt's, a stage with non-finite losses, and decay 0.30.
 
 At that dose nothing is near a mark, as expected. Nothing here is a result.
+
+
+## 9.112 E26's lives and the crossover: the sweep composes from memory, under the registered marks; the gap is in the update used during the life (11:33 EST by the clock, 13 November 2026)
+
+This section lands work that had been sitting on worker branches since 12 November, on the audit session's suggestion (its note of 13 November, relayed by Mr. Xu). Sources: `MOD97_LOCAL_RULE_20261106/exp45/e26/E26_LIVES.md`, `exp45/e26x/E26X_DESIGN.md` and `E26X_RESULTS.md`, and the memo on which the crossover was authorised, `PROJECT_DOCUMENTS/MINIFLY_E26_RESULT_AND_NEXT_STEPS_20261112.md`, which was on the owner's machine only and is committed with this section. The crossover was commissioned and run while I was not in the loop; I read its design after the fact.
+
+### A. The six lives, scored by the scorer written before they existed (9.111)
+
+`e26_score_lives.py` reports no contract problem: seven stages each, finite losses at every update, decay 0.25 read back, each life bound to its own birth, both arms of a seed fed the same data and scored on the same panels. End of life, whole answers, seeds 73129 / 93683 / 116089:
+
+| | New instances of taught pairs (mark 85) | Untaught plus-minus pairs (mark 40) | Both marks |
+|---|---|---|---|
+| Arm S, the sweep | 83.5 / 83.8 / 81.0 | 54.2 / 44.5 / 37.2 | 0 of 3 |
+| Arm B, backprop | 84.7 / 93.7 / 87.2 | 63.2 / 89.2 / 66.3 | 2 of 3 |
+
+- **P26.3 misses** (the sweep is under 85 in all three seeds, by 1.2 to 4.0 points).
+- **P26.4 holds** (40 or more on untaught pairs in two seeds).
+- **P26.5 holds** (backprop meets both marks in two seeds).
+- **No candidate pair exists by the registered reading.** The marks are kept as they were fixed before E20-B ran.
+
+**What the result is, with the marks missed.** A network born and living under the working rule now composes from memory on operator pairs it was never taught: 37 to 54% of whole answers, where the two-bank network under either update scored 0 to 8%. That is the first composition by the rule in this project. It is short of backprop on the same pipeline (63 to 89%) by 9, 45 and 29 points.
+
+### B. The crossover (E26-X): the birth is not where the gap comes from
+
+Six further lives on the same seeds, each starting from an existing admitted birth and living under the other update. All six complete, finite, bound to the right births, weights matching their hashes; I recomputed every figure.
+
+| Birth → update during the life | New instances of taught pairs | Untaught plus-minus pairs | Both marks |
+|---|---|---|---|
+| sweep → sweep | 83.5 / 83.8 / 81.0 | 54.2 / 44.5 / 37.2 | 0 of 3 |
+| backprop → sweep | 85.5 / 81.7 / 83.0 | 39.8 / 45.8 / 53.9 | 0 of 3 |
+| sweep → backprop | 93.2 / 97.3 / 93.0 | 72.3 / 82.8 / 73.9 | 3 of 3 |
+| backprop → backprop | 84.7 / 93.7 / 87.2 | 63.2 / 89.2 / 66.3 | 2 of 3 |
+
+- **A sweep-born GRU that then lives under backprop meets both marks in all three seeds,** better than the backprop-born one. So the sweep's birth is a sound starting point; nothing is missing from it.
+- **Either birth, living under the sweep, misses.** The shortfall belongs to the update used while compositions are being learned.
+- Three of the crossed lives were interrupted by container restarts and finished by a new resumable runner. The audit session reports that they equal the interrupted receipts at every stage those reached. I did not repeat that comparison.
+
+### C. A pattern across the twelve lives, checked on the receipts
+
+Take every checkpoint from the first composition block on at which a life scores between 75 and 88 on new instances of taught pairs. At that equal level of taught skill, lives updated by the sweep score 43.4 on the untaught pairs on average (21 checkpoints) and lives updated by backprop 63.5 (9 checkpoints). So the sweep is not simply behind on a common path that more training would finish: at the same taught skill its solution carries over less to untaught pairs. This is descriptive, pooled over seeds and checkpoints that are not independent.
+
+### D. Erratum to 9.110
+
+9.110 B gave the paired difference between the arms over the six birth checkpoints as −6.7, +1.3, +8.3, −4.0, +20.2 and +5.2 "points on average over the seeds". Those figures are in the worker's table's units, answers out of 300, and not percentage points. In points they are −2.2, +0.4, +2.8, −1.3, +6.7 and +1.7. The reading there, that the two birth curves are not distinguishable, is unaffected. Found by the audit session.
+
+### E. What I take from it for the close and for the next step
+
+- **The close on 17 November keeps the marks and says what happened:** born level with backprop; composes from memory at 37 to 54% against 63 to 89%; the registered marks missed; the gap is in the update during the life and not in the birth.
+- **Next, measurement before training,** as the audit session proposes and as E25 did before E26. One hypothesis would explain both open failures: weight signs carry no magnitudes, so error from unpredictable bytes floods back undamped (the every-byte collapse of E24), and credit does not favour the pathways that already do the work (the weaker carry-over to untaught pairs). Two measurements on saved weights test it without training: the share of filler error reaching each layer under the exact and the sign path, and the sweep's alignment on composition items against single operations, on the sweep-lived and the backprop-lived files. I will write these with predictions first, as E25 was.
+- **If it holds, learned feedback weights are the remedy to try,** inside the line by Mr. Xu's ruling of 11 November, after a source check. The crossover gives it bounds on file: lives from the existing sweep-born births score 37 to 54 under the sweep and 72 to 83 under backprop.
+- **The target test's distances are not shortened yet.** E20-B's GRU held operands across 40 letters after a birth, while the sizing sweep's GRU from random weights carried nothing past 12 bytes. The copy fixture is to be rerun with mixed delays and from E26's born weights before the design is changed.
+
+### F. Auditing without Codex
+
+Codex is not available for now. Between 10 and 12 November it stopped four runs that would have been wrong as briefed, and I confirmed each. Until an outside auditor returns:
+
+- the audit session reads every brief before a worker starts and every result before it is filed. It is the same model family as the coordinator and the workers, so it is a second reader and not an independent one, and briefs say so;
+- every claim about code in a brief carries the command that showed it; every number comes from a script over receipts; each pass mark has one responder that must reach it and one that must not; one real update step per arm is checked against an independent computation;
+- new runs flip one switch on qualified code where they can, as the crossover did, in preference to new training loops.
+
+### G. Still missing from the repository
+
+The end-of-life weights of the six E26 lives are only on the worker's container (its `.gitignore` kept them off the branch; the crossover's six are committed). They are needed for the measurements of E. Asked of the worker with this section.
+
+### H. E21b is merged: resume is qualified for seven command shapes on the qualified runtime
+
+The worker requalified after amendments 1 to 4 (branch `claude/funny-mendel-34puq7`, commit deea398c: 97 of 97 checks, the gate now checking the dependency closure with `mod97_local.py`, the runtime and the check record). Before merging I ran my own test of that harness on the owner's machine, one process at a dry dose:
+
+- a birth and a life without resume equal the pre-merge archive of 10 November, weights hash and all seven stage records, so the default path is unchanged;
+- a life killed after three checkpoints and resumed with the override equals the uninterrupted one, weights hash and all seven stage records;
+- **the production gate refused to resume on the owner's machine,** naming the reason: its torch (2.9.1) is not the qualified one (2.15.0+cpu). That is the refusal Codex asked for, met on a real mismatch and not a fixture.
+
+So resume is available on hosts with the qualified runtime, for the seven listed shapes, and nowhere else. No outside audit has read this revision; Codex's last reading named four refusal tests and the worker's report lists them as passing. The audit session is asked to read the gate.

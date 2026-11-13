@@ -628,3 +628,13 @@ Seeds 73129 / 93683 / 116089, from `exp45/E25_VERDICTS.json` (scorer `e25_score.
 - P24.1 holds: D-all 91.5 / 89.3 / 91.2.
 - P24.2 holds: T-all 0.8 / 1.0 / 1.2.
 - P24.3 holds: T-bal 81.5 / 79.8 / 83.3; T-bal − T-all +80.7 / +78.8 / +82.1.
+
+
+## Verdicts, E26 lives (13 November 2026, 11:33 EST, clock; review 9.112)
+
+From `e26_score_lives.py`, written before the lives existed; no contract problem. Seeds 73129 / 93683 / 116089.
+
+- P26.3 misses: the sweep ends at 83.5 / 83.8 / 81.0 on new instances of taught pairs, against 85.
+- P26.4 holds: 54.2 / 44.5 / 37.2 on untaught plus-minus pairs, against 40.
+- P26.5 holds: backprop ends at 84.7 / 93.7 / 87.2 and 63.2 / 89.2 / 66.3.
+- No candidate pair by the registered reading: the sweep meets both marks in 0 of 3 seeds.
