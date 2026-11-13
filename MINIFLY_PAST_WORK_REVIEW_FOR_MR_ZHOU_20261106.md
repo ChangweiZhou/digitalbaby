@@ -2547,3 +2547,14 @@ Not run by me and accepted on reading: the predictions for A are measured at wei
 One measurement from the audit is worth keeping: at E26's born weights the non-answer positions carry over 99% of the every-byte gradient under backprop and under the sweep alike. Proportion alone therefore does not explain why one rule would collapse and not the other.
 
 Also pushed: a read-only brief for a source check on learned feedback weights (`OPUS_TASK_SOURCE_CHECK_LEARNED_FEEDBACK_20261113.md`).
+
+
+### 9.116 The sizing learner's span: a brief, and a doubt about stage 1's reading (13 November 2026, 12:13 EST by the clock)
+
+**The brief.** `OPUS_TASK_SIZING_SPAN_20261113.md`, revision 2, comes before the held sizing roster: stage 1's copy fixture at fixed distances from 4 to 60 on three seeds, mixed distances, and starts from E26's born weights and from a permuted copy of them. 48 runs, about 9 CPU-hours, backprop only. No run has been made.
+
+**What the hostile audit found that matters beyond the brief.** Stage 1's result, "copies at 12, nothing at 24 or beyond", was not at equal dose. A fixed distance D gives 256/(D+1) repeats per update, so the run at 24 saw about half the repeats of the run at 12, and the run at 12 was itself still at 8% after 13,714 repeats. **The statement that this learner's span is about 12 bytes (9.110, 9.112 E, the sizing brief's revision 4) is therefore unproven: it may be dose.** I repeated that statement in three places without checking the dose. The new brief counts dose in repeats and registers the erratum as a reading if 24 passes.
+
+**A second thing the auditor measured,** which I reran on one birth: on the copy fixture at distance 4, E26's born network learns two to three times slower than random weights. A born start is not a head start on a task of another kind. This bears on "what may a learner bring" in the target test.
+
+Eleven findings in all; all adopted, four rerun by me.
