@@ -232,7 +232,7 @@ def item_dry():
                  role_blocks=len(r["role_curve"]), role_curve_ok=role_ok, finite=r["finite"],
                  weights_hash_matches_file=X16.sha_file(wf) == r["weights_sha256"],
                  host=pv["host"], interpreter=pv["interpreter"], command=pv["command"], environment_at_start=pv["environment_at_start"],
-                 git=pv["git"], optimizer_groups_read_back_equal_expected=r["optimizer_read_back"]["groups"] == C.expected_optimizer(E.new_net(SEED)),
+                 git=pv["git"], optimizer_groups_read_back_equal_expected=r["optimizer_read_back"]["groups"] == C.expected_optimizer(arch26.new_net(SEED)),
                  cpu_per_update=r["cpu_per_update"], cpu_total=r["cpu_total"], cpu_scoring=r["cpu_scoring"],
                  last_row=dict(step=r["curve"][-1]["step"], hard=r["curve"][-1]["hard_mean_add89_sub89_k12"], data_digest_check=r["curve"][-1]["data_digest_check"]),
                  role_curve_last_block=r["role_curve"][-1]["by_role"])
