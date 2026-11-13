@@ -5,18 +5,9 @@
   116089
  ],
  "absent": {
-  "73129": [
-   "exp45/e26/e26_life_S_73129.pt",
-   "exp45/e26/e26_life_B_73129.pt"
-  ],
-  "93683": [
-   "exp45/e26/e26_life_S_93683.pt",
-   "exp45/e26/e26_life_B_93683.pt"
-  ],
-  "116089": [
-   "exp45/e26/e26_life_S_116089.pt",
-   "exp45/e26/e26_life_B_116089.pt"
-  ]
+  "73129": [],
+  "93683": [],
+  "116089": []
  },
  "predictions": {
   "P27_1": {
@@ -87,77 +78,119 @@
   },
   "P27_4": {
    "per_seed": {
-    "73129": "not judgeable",
-    "93683": "not judgeable",
-    "116089": "not judgeable"
+    "73129": "misses",
+    "93683": "misses",
+    "116089": "misses"
    },
    "figures": {
     "73129": {
      "arms": {
-      "sweep -> sweep": null,
+      "sweep -> sweep": {
+       "untaught": 0.6095392059269411,
+       "single": 0.6440186127341546,
+       "gap": 0.03447940680721351,
+       "shows": false
+      },
       "backprop -> sweep": {
        "untaught": 0.5332279720243434,
        "single": 0.6099285793078053,
        "gap": 0.07670060728346195,
        "shows": false
       }
-     },
-     "partial": "one arm only"
+     }
     },
     "93683": {
      "arms": {
-      "sweep -> sweep": null,
+      "sweep -> sweep": {
+       "untaught": 0.6593673163919156,
+       "single": 0.6206333259554762,
+       "gap": -0.038733990436439436,
+       "shows": false
+      },
       "backprop -> sweep": {
        "untaught": 0.660757475617011,
        "single": 0.6412824354056199,
        "gap": -0.019475040211391126,
        "shows": false
       }
-     },
-     "partial": "one arm only"
+     }
     },
     "116089": {
      "arms": {
-      "sweep -> sweep": null,
+      "sweep -> sweep": {
+       "untaught": 0.5863571453233303,
+       "single": 0.6363051519299916,
+       "gap": 0.04994800660666132,
+       "shows": false
+      },
       "backprop -> sweep": {
        "untaught": 0.5754035300779321,
        "single": 0.6282020744179376,
        "gap": 0.05279854434000553,
        "shows": false
       }
-     },
-     "partial": "one arm only"
+     }
     }
    },
-   "overall": "not judgeable"
+   "overall": "misses"
   },
   "P27_5": {
    "per_seed": {
-    "73129": "not judgeable",
-    "93683": "not judgeable",
-    "116089": "not judgeable"
+    "73129": "misses",
+    "93683": "misses",
+    "116089": "misses"
    },
    "figures": {
     "73129": {
      "comparisons": {
-      "sweep -> sweep vs sweep -> backprop": null,
-      "backprop -> sweep vs backprop -> backprop": null
+      "sweep -> sweep vs sweep -> backprop": {
+       "sweep_lived": 0.6095392059269411,
+       "backprop_lived": 0.5631658076645979,
+       "difference": -0.04637339826234321,
+       "shows": false
+      },
+      "backprop -> sweep vs backprop -> backprop": {
+       "sweep_lived": 0.5332279720243434,
+       "backprop_lived": 0.6153093011298202,
+       "difference": 0.08208132910547683,
+       "shows": true
+      }
      }
     },
     "93683": {
      "comparisons": {
-      "sweep -> sweep vs sweep -> backprop": null,
-      "backprop -> sweep vs backprop -> backprop": null
+      "sweep -> sweep vs sweep -> backprop": {
+       "sweep_lived": 0.6593673163919156,
+       "backprop_lived": 0.5525791045286661,
+       "difference": -0.1067882118632495,
+       "shows": false
+      },
+      "backprop -> sweep vs backprop -> backprop": {
+       "sweep_lived": 0.660757475617011,
+       "backprop_lived": 0.5863662010770772,
+       "difference": -0.07439127453993388,
+       "shows": false
+      }
      }
     },
     "116089": {
      "comparisons": {
-      "sweep -> sweep vs sweep -> backprop": null,
-      "backprop -> sweep vs backprop -> backprop": null
+      "sweep -> sweep vs sweep -> backprop": {
+       "sweep_lived": 0.5863571453233303,
+       "backprop_lived": 0.5736185232619535,
+       "difference": -0.01273862206137677,
+       "shows": false
+      },
+      "backprop -> sweep vs backprop -> backprop": {
+       "sweep_lived": 0.5754035300779321,
+       "backprop_lived": 0.6101238766454066,
+       "difference": 0.03472034656747447,
+       "shows": false
+      }
      }
     }
    },
-   "overall": "not judgeable"
+   "overall": "misses"
   }
  },
  "supplements": {
@@ -1514,68 +1547,98 @@
   "S6": {
    "73129": {
     "untaught_minus_taught": {
-     "sweep -> sweep": null,
+     "sweep -> sweep": -0.041052133955209125,
      "backprop -> sweep": -0.02543991293186365,
      "sweep -> backprop": -0.07945421238143113,
-     "backprop -> backprop": null
+     "backprop -> backprop": -0.007658089187002282
     },
     "within_birth": {
-     "sweep -> sweep vs sweep -> backprop": null,
-     "backprop -> sweep vs backprop -> backprop": null
+     "sweep -> sweep vs sweep -> backprop": {
+      "sweep_lived": -0.041052133955209125,
+      "backprop_lived": -0.07945421238143113,
+      "sweep_lived_gap_larger": false
+     },
+     "backprop -> sweep vs backprop -> backprop": {
+      "sweep_lived": -0.02543991293186365,
+      "backprop_lived": -0.007658089187002282,
+      "sweep_lived_gap_larger": true
+     }
     },
     "available_arms": {
-     "sweep_lived_mean": -0.02543991293186365,
-     "backprop_lived_mean": -0.07945421238143113,
+     "sweep_lived_mean": -0.03324602344353639,
+     "backprop_lived_mean": -0.04355615078421671,
      "arms_present": [
+      "sweep -> sweep",
       "backprop -> sweep",
-      "sweep -> backprop"
+      "sweep -> backprop",
+      "backprop -> backprop"
      ],
      "sweep_lived_gap_larger": false,
-     "note": "across births: the within-birth form needs files that are absent"
+     "note": "all four arms"
     }
    },
    "93683": {
     "untaught_minus_taught": {
-     "sweep -> sweep": null,
+     "sweep -> sweep": 0.04520214393633648,
      "backprop -> sweep": -0.005798317464563052,
      "sweep -> backprop": -0.020386160352982574,
-     "backprop -> backprop": null
+     "backprop -> backprop": -0.036087899055491035
     },
     "within_birth": {
-     "sweep -> sweep vs sweep -> backprop": null,
-     "backprop -> sweep vs backprop -> backprop": null
+     "sweep -> sweep vs sweep -> backprop": {
+      "sweep_lived": 0.04520214393633648,
+      "backprop_lived": -0.020386160352982574,
+      "sweep_lived_gap_larger": false
+     },
+     "backprop -> sweep vs backprop -> backprop": {
+      "sweep_lived": -0.005798317464563052,
+      "backprop_lived": -0.036087899055491035,
+      "sweep_lived_gap_larger": false
+     }
     },
     "available_arms": {
-     "sweep_lived_mean": -0.005798317464563052,
-     "backprop_lived_mean": -0.020386160352982574,
+     "sweep_lived_mean": 0.019701913235886714,
+     "backprop_lived_mean": -0.028237029704236805,
      "arms_present": [
+      "sweep -> sweep",
       "backprop -> sweep",
-      "sweep -> backprop"
+      "sweep -> backprop",
+      "backprop -> backprop"
      ],
      "sweep_lived_gap_larger": false,
-     "note": "across births: the within-birth form needs files that are absent"
+     "note": "all four arms"
     }
    },
    "116089": {
     "untaught_minus_taught": {
-     "sweep -> sweep": null,
+     "sweep -> sweep": -0.028789566263075606,
      "backprop -> sweep": -0.03276896438627108,
      "sweep -> backprop": 0.0024228966889284775,
-     "backprop -> backprop": null
+     "backprop -> backprop": -0.07355518290029261
     },
     "within_birth": {
-     "sweep -> sweep vs sweep -> backprop": null,
-     "backprop -> sweep vs backprop -> backprop": null
+     "sweep -> sweep vs sweep -> backprop": {
+      "sweep_lived": -0.028789566263075606,
+      "backprop_lived": 0.0024228966889284775,
+      "sweep_lived_gap_larger": true
+     },
+     "backprop -> sweep vs backprop -> backprop": {
+      "sweep_lived": -0.03276896438627108,
+      "backprop_lived": -0.07355518290029261,
+      "sweep_lived_gap_larger": false
+     }
     },
     "available_arms": {
-     "sweep_lived_mean": -0.03276896438627108,
-     "backprop_lived_mean": 0.0024228966889284775,
+     "sweep_lived_mean": -0.030779265324673344,
+     "backprop_lived_mean": -0.03556614310568207,
      "arms_present": [
+      "sweep -> sweep",
       "backprop -> sweep",
-      "sweep -> backprop"
+      "sweep -> backprop",
+      "backprop -> backprop"
      ],
-     "sweep_lived_gap_larger": true,
-     "note": "across births: the within-birth form needs files that are absent"
+     "sweep_lived_gap_larger": false,
+     "note": "all four arms"
     }
    }
   }
@@ -1583,7 +1646,7 @@
  "readings": [
   "P27.1 misses, P27.2 does not hold (void in 3 seeds): reported as they stand; they do not agree.",
   "P27.3 misses: judged and reported; nothing is read from it (amendment).",
-  "P27.4 not judgeable, P27.5 not judgeable: neither triggers the composition reading; composition is read from S6 only (amendment)."
+  "P27.4 misses, P27.5 misses: neither triggers the composition reading; composition is read from S6 only (amendment)."
  ],
  "read": [
   "exp45/E27_MEASURE_73129.json",

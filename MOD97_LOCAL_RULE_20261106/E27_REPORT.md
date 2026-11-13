@@ -1,10 +1,11 @@
 # E27 report: flood and alignment on saved weights (Opus worker, 13 November 2026)
 
-**Status.** The run is complete for Part A and partly done for Part B. The six E26 life weight files are **absent**, so Part B ran on the six crossover lives only. Evidence level E2, diagnostic. Nothing was trained: the job builds no update rule and uses no optimizer object. `grep -n optim` prints nothing in `e27_measure.py`, `e27_score.py` or `e27_check_split.py`. These figures are gradients at saved weights. They say nothing about any learner's ability. No formal checker gate, seal or outside review has passed. I am the same model family as the coordinator and the auditors, so I am a second reader of their work, not an independent one.
+**Status.** Both parts are complete. In the first pass the six E26 life weight files were absent, and Part B ran on the six crossover lives only. They were then supplied from `claude/adoring-cori-b07aog` at `ce409d64`, and Part B was rerun with all four arms (see *Part B completion* below). Part A was accepted as run. Evidence level E2, diagnostic. Nothing was trained: the job builds no update rule and uses no optimizer object. `grep -n optim` prints nothing in `e27_measure.py`, `e27_score.py` or `e27_check_split.py`. These figures are gradients at saved weights. They say nothing about any learner's ability. No formal checker gate, seal or outside review has passed. I am the same model family as the coordinator and the auditors, so I am a second reader of their work, not an independent one.
 
 - **Source.** Branch `codex/minifly-consolidated-20261023` at `02897c6e` (later than `a5c85319`). The brief is at revision 2, and the predictions file includes its amendment. The work is on branch `claude/sleepy-knuth-q96dd1`.
 - **Run.** Command: `env -i PATH HOME E16_ARCH=bank2 E16_BOOKDECAY=off E16_COMPGAP=0 OMP_NUM_THREADS=1 python3 e27_measure.py run 73129 93683 116089`. One process, one thread, torch 2.15.0+cpu. CPU time was 417 s, 391 s and 402 s for the three seeds. Log: `exp45/logs/e27_run.log`.
 - **Pre-run record.** `exp45/E27_PRERUN.txt`, written at 17:10:51Z (container clock) when no `E27_MEASURE` file existed yet. It holds the sha256 of every script and every fixture record. Each `E27_MEASURE_<seed>.json` also records the scorer's hash at run time (`ee2dd33e…`) and the measure script's hash (`51ada865…`). Both match the pre-run record.
+- **Part B rerun.** Same command and same scripts (`e27_measure.py` 51ada865…, `e27_score.py` ee2dd33e…, both unchanged). The first pass's outputs are kept as `E27_MEASURE_<seed>_partA.json` and `E27_SCORE_partA.json`. CPU time was 376 s, 376 s and 373 s. Log: `exp45/logs/e27_run_partB.log`.
 - **Single commit.** You asked for one commit at completion, so the scorer was hashed before the run instead of committed separately (brief step 4). This difference is disclosed here.
 
 ## Verdicts (scorer `e27_score.py` → `exp45/E27_SCORE.json`)
@@ -14,10 +15,10 @@
 | **P27.1** amplification, all parameters, two-bank born by sweep (answer targets), threshold ≥ 1.5 | 0.532 | 1.409 | 0.797 | **misses** |
 | **P27.2** usable under signs ≤ ½ usable under exact | sign 0.035 / exact −0.130 | −0.006 / −0.232 | 0.035 / −0.153 | **void in all three seeds** (exact usable < 0) → does not hold |
 | **P27.3** sign flood: collapsed ≥ 2 × balanced | 12.81 / 11.61 = 1.10 | 14.86 / 20.38 = 0.73 | 20.60 / 12.46 = 1.65 | **misses** (nothing is read from it, per the amendment) |
-| **P27.4** untaught pairs at least 0.10 below single operations, on both sweep-lived arms | S→S absent; B→S gap 0.077 | absent; −0.020 | absent; 0.053 | scorer: **not judgeable** (one arm absent). See note |
-| **P27.5** untaught cosine, sweep-lived at least 0.05 below backprop-lived, within a birth | needs S→S and B→B | absent | absent | **not judgeable** |
+| **P27.4** untaught pairs at least 0.10 below single operations, on both sweep-lived arms (gap S→S; B→S) | 0.034; 0.077 | −0.039; −0.019 | 0.050; 0.053 | **misses** (no arm reaches 0.10 in any seed) |
+| **P27.5** untaught cosine, sweep-lived at least 0.05 below backprop-lived, within a birth (backprop-lived minus sweep-lived: sweep birth; backprop birth) | −0.046; **+0.082** | −0.107; −0.074 | −0.013; +0.035 | **misses** (1 of 6 comparisons shows it; a seed needs both) |
 
-**Note on P27.4.** The scorer returns "not judgeable" because one of its two arms is absent. However, a seed counts only if both arms show the gap, and the arm that exists (backprop→sweep) shows the 0.10 gap in **no** seed. P27.4 therefore cannot hold whatever the absent S→S files show. In logic its outcome is already a miss. I did not change the scorer after the run. Its output stands as written, and this note is my reading beside it.
+**Note on P27.4 (first pass, now superseded).** With the S→S arm absent, the scorer returned "not judgeable" because one of its two arms is absent. However, a seed counts only if both arms show the gap, and the arm that exists (backprop→sweep) shows the 0.10 gap in **no** seed. P27.4 therefore cannot hold whatever the absent S→S files show. In logic its outcome is already a miss. I did not change the scorer after the run. Its output stands as written, and this note is my reading beside it.
 
 **Combined reading, as the amendment's rules apply.** P27.1 misses and P27.2 is void. They are not a joint miss, so the reading "no amplification at these saved weights" is **not** triggered. The registered figures and the supplements **disagree** (see S1 and S2 below). By the amendment's own rule, the result is reported as mixed, with both sides.
 
@@ -67,7 +68,7 @@ The answer direction is swamped under both paths. This baseline is why P27.2 is 
 
 Below the top layer, every trained GRU and every two-bank backprop-born file shows amplification of about 1.7 to 3, outside its null. Of the six GRU files, three also exceed 1.5 on all parameters. The balanced sweep-born file shows the largest amplification by far: 6.6 to 8.8 on all parameters. In the GRU, the recurrent matrix `rnn.weight_hh_l0` is amplified 1.44 to 2.22 across the six trained files. None of this was predicted, and it is reported as found.
 
-**S6 and Part B. Untaught minus taught (same format).** The taught panel is drawn evenly: 22 items from each of the first four taught pairs and 21 from each of the other eight.
+**S6 and Part B, first pass (crossover arms only; superseded by *Part B completion* below). Untaught minus taught (same format).** The taught panel is drawn evenly: 22 items from each of the first four taught pairs and 21 from each of the other eight.
 
 | cosine, all parameters | single | taught | untaught | untaught − taught |
 |---|---|---|---|---|
@@ -123,7 +124,7 @@ The draft is preserved as git history at `02897c6e:MOD97_LOCAL_RULE_20261106/e27
 - Ambiguities I report rather than resolve:
   1. P27.4's "(either birth)" against the amendment's "a seed counts only if both arms show it". The scorer follows the amendment.
   2. The amendment's "near 1" for S1 and S3. The scorer reports both the null-range and the 0.8–1.25 operationalisations, and flags any disagreement.
-  3. "The sign path" means E25's path: credit through time, sign-scaled at every matrix, as in `arch17.forward(..., local, True)` and `e25_alignment.forward_rnn`. I did not re-establish that this is the exact rule under which the two-bank sweep births were made (birth rule `T`, `traceup all`). The predictions define the path as E25's.
+  3. "The sign path" means E25's path: credit through time, sign-scaled at every matrix, as in `arch17.forward(..., local, True)` and `e25_alignment.forward_rnn`. I did not re-establish that this is the exact rule under which the two-bank sweep births were made (birth rule `T`, `traceup all`). The predictions define the path as E25's. *Now checked: see "The sign path against E24's birth rule" below.*
 
 **Defects, with the draft's line numbers:**
 1. **L72, L83: per-tensor filter `n.endswith("weight")`.** It drops `rnn.weight_ih_l0` and `rnn.weight_hh_l0` and every bias. Fixed: every named parameter is reported, in both A and B.
@@ -135,7 +136,108 @@ The draft is preserved as git history at `02897c6e:MOD97_LOCAL_RULE_20261106/e27
 
 `e27_run.sh` (zsh, under `machine_lock.sh`) was not used. Revision 2 asked for the run in one process, so I ran the command above directly.
 
-## What was absent
+
+## Part B completion (follow-up of 13 November)
+
+**Files.** The six `exp45/e26/e26_life_{S,B}_<seed>.pt` were taken from `claude/adoring-cori-b07aog` at `ce409d64` and copied into place. The life receipts are byte-identical on that commit and on this branch. My loader checked each file against `weights_sha256` in its receipt, and all six match:
+
+| | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| S | `54fbb464…` | `19784a59…` | `a867dfeb…` |
+| B | `ce6d860c…` | `8d16d439…` | `905635ae…` |
+
+No file is absent in the new run.
+
+**Part A is unchanged.** In each new `E27_MEASURE_<seed>.json`, the whole `A` block compares equal (Python `==` on the parsed JSON, so bit-identical floats) to the `_partA` file of that seed. So do the two crossover arms in `B`. The run is deterministic: one thread, fixed null seed.
+
+**Verdicts from the scorer** (`exp45/E27_SCORE.json`): **P27.4 misses** and **P27.5 misses**, in all three seeds. The figures are in the verdict table above. P27.1, P27.2 and P27.3 are as before.
+
+**Reading under the amendment.** P27.4 and P27.5 both miss. The amendment no longer lets either one trigger the composition reading; composition is read from S6 alone.
+
+**S6, all four arms.** Cosine over all parameters, answer targets.
+
+| seed | arm | single | taught (even) | untaught +− | untaught − taught |
+|---|---|---|---|---|---|
+| 73129 | sweep → sweep | 0.644 | 0.651 | 0.610 | −0.041 |
+| 73129 | sweep → backprop | 0.569 | 0.643 | 0.563 | −0.079 |
+| 73129 | backprop → sweep | 0.610 | 0.559 | 0.533 | −0.025 |
+| 73129 | backprop → backprop | 0.634 | 0.623 | 0.615 | −0.008 |
+| 93683 | sweep → sweep | 0.621 | 0.614 | 0.659 | +0.045 |
+| 93683 | sweep → backprop | 0.615 | 0.573 | 0.553 | −0.020 |
+| 93683 | backprop → sweep | 0.641 | 0.667 | 0.661 | −0.006 |
+| 93683 | backprop → backprop | 0.651 | 0.622 | 0.586 | −0.036 |
+| 116089 | sweep → sweep | 0.636 | 0.615 | 0.586 | −0.029 |
+| 116089 | sweep → backprop | 0.610 | 0.571 | 0.574 | +0.002 |
+| 116089 | backprop → sweep | 0.628 | 0.608 | 0.575 | −0.033 |
+| 116089 | backprop → backprop | 0.709 | 0.684 | 0.610 | −0.074 |
+
+Is the sweep-lived gap (untaught below taught) larger than the backprop-lived gap within the same birth?
+
+| seed | sweep birth (S→S vs S→B) | backprop birth (B→S vs B→B) | mean of the sweep-lived arms vs mean of the backprop-lived arms |
+|---|---|---|---|
+| 73129 | no (−0.041 vs −0.079) | **yes** (−0.025 vs −0.008) | no (−0.033 vs −0.044) |
+| 93683 | no (+0.045 vs −0.020) | no (−0.006 vs −0.036) | no (+0.020 vs −0.028) |
+| 116089 | **yes** (−0.029 vs +0.002) | no (−0.033 vs −0.074) | no (−0.031 vs −0.036) |
+
+The pattern S6's reading needs appears in 2 of 6 within-birth comparisons, in different births in different seeds. By arm means it appears in 0 of 3 seeds. Every contrast is between −0.08 and +0.05. **S6 does not support the composition reading.** At the end of life, the sweep's direction on untaught plus-minus pairs, relative to taught pairs in the same format, is not systematically worse than backprop's. In the amendment's terms, the hypothesis finds no support for composition at these weights, and no explanation of E26's weaker carry-over is on file from this measurement.
+
+## Amplification below the top layer against collapse (follow-up item 4)
+
+Each cell gives all parameters except `l3.*`, then the S4 null range in brackets, then the birth's whole-answer score on add89 + sub89 at k = 12 (600 items) at its last step, from the birth's own receipt. Peaks are given where they differ from the last step.
+
+| file | 73129 | 93683 | 116089 | collapsed? |
+|---|---|---|---|---|
+| two-bank untrained | 0.958 [0.97–1.01] | 1.036 [0.97–1.02] | 1.070 [0.97–1.05] | — |
+| two-bank, backprop, answer | **1.929** [0.98–1.03] · 559 | **1.811** [0.96–1.05] · 557 | **1.808** [0.99–1.02] · 557 | no |
+| two-bank, sweep, answer | 0.631 [0.74–1.24] · 525 | **1.593** [0.84–1.18] · 544 | 0.955 [0.83–1.22] · 508 | no |
+| two-bank, backprop, every byte | **2.176** [0.65–1.43] · 549 | 1.049 [0.86–1.06] · 536 | **3.132** [0.72–1.24] · 547 | no |
+| two-bank, sweep, every byte | **1.254** [0.91–1.11] · 5 (peak 63 at 8192) | **1.420** [0.90–1.03] · 6 (peak 47) | **3.047** [0.95–1.12] · 7 (peak 88) | **yes** |
+| two-bank, sweep, balanced | **17.24** [0.86–1.53] · 489 (peak 505) | **12.37** [0.94–1.21] · 479 | **15.69** [0.81–1.64] · 500 | no |
+| GRU untrained | 1.019 [0.99–1.01] | 1.014 [0.98–1.01] | 1.002 [1.00–1.02] | — |
+| GRU, backprop | **2.928** [0.96–1.05] · 591 | **2.087** [0.97–1.03] · 592 | **1.770** [0.97–1.03] · 562 | no |
+| GRU, sweep | **2.469** [0.96–1.03] · 588 | **1.836** [0.98–1.02] · 589 | **1.676** [0.94–1.05] · 599 | no |
+
+Bold marks a value above its null's maximum. The untrained two-bank 93683 and 116089 values are also just above their nulls; see S4.
+
+**The coordinator's reading:** "amplification appears in every trained network, most of all in the balanced file, and so does not mark the collapse."
+
+**Where my figures agree:**
+- The balanced file, which did not collapse (479 to 505 of 600), has by far the largest amplification: 12 to 17 below the top layer, against at most 3.1 anywhere else.
+- The collapsed file's figures (1.25, 1.42, 3.05) fall inside the range of files that did not collapse (1.05 to 3.13 for the backprop-born every-byte file; 1.68 to 2.93 for the GRU births).
+- So amplification below the top layer does not separate the collapsed birth from the others. **I agree that, at these weights, it does not mark the collapse.**
+
+**Where they do not agree:**
+1. **"Every trained network" is not quite right on this aggregate.**
+   - The two-bank network born by the sweep under answer targets is amplified in only 1 of 3 seeds: 0.631 is *below* its null and 0.955 is inside it.
+   - The backprop-born every-byte file is inside its null in 93683 (1.049).
+   - Measured on the letters alone (S2), the sweep-born answer file is amplified in all three seeds (1.95 to 2.77). The difference is which bytes are counted, not whether the network is trained.
+2. **The collapsed file is measured 16,384 updates after its peak.** Its weights are those of a network scoring 5 to 7 of 600. Whatever happened as it fell from 47–88 to 5–7 was never saved. "Does not mark the collapse" holds for the end-state weights only.
+3. **The balanced birth was not trained on the loss E27 measures.** Its update used ½ answer + ½ other. Its amplification here is measured under the uniform every-byte split; on seed 73129 the two gradients have cosine 0.93 (`exp45/E27_RULE_CHECK.jsonl`).
+4. **Both nets were stepped by AdamW, not by the raw gradient.** Raw-gradient amplification is not the size of the step. AdamW rescales each coordinate, so a ratio of gradient norms need not survive into the update.
+
+## The sign path against E24's birth rule (follow-up item 5)
+
+`e27_check_rule.py` → `exp45/E27_RULE_CHECK.jsonl`. The check imports the harness with each sweep birth's own environment, taken from `exp45/e24/environ.txt`: `E16_BIRTHRULE=T E16_TRACEUP=all`, plus `E16_LOSS=all` and `E16_LOSSW=balanced` where the birth used them. With those settings `exp16_integrated` installs the forward its births used. The script then reproduces `update16` (exp16_integrated.py lines 620–644) up to `backward()`, without the step: it builds no update rule and changes no weight.
+
+**Source reading.**
+- `traceup all` (exp16_integrated.py lines 81–94) wraps `E.forward` so that `local=True` forces `through_time=True` and `keep=False`, and it disables both trace routines.
+- Under `birthrule T`, `update16` then calls that forward with `local=True` and runs `loss.backward()`.
+- That is `arch17.forward(m, x, local=True, through_time=True)` with `SignLinear` (sign(W) times mean|W|) at every matrix: the same path `e25_alignment.grads(..., local=True)` takes.
+
+**Measured, seed 73129.** Maximum relative difference between the birth rule's gradient and E27's sign path, with the loss weighted as the birth weighted it:
+- sweep-born, answer targets: **0.0**
+- collapsed (uniform every byte): **0.0**
+- balanced: **4.6e-7**
+
+The two-bank backprop births (`birthrule D`) use `E.update(..., "D")`, which is `forward(local=False, through_time=True)`. That is E27's exact path; E25's fixture showed it equal to the harness's backprop at exactly 0.
+
+**The differences, stated:**
+1. **Gradient path: none.** E27's sign path is the gradient E24's sweep births computed at each step.
+2. **Step.** The births applied that gradient through AdamW, with decay 0.25 for `T` and 0.3 for `D`. AdamW normalises each coordinate by its running second moment, so E27's norm ratios describe the gradient, not the update.
+3. **Loss weighting for the balanced file.** Its birth loss was ½ mean CE over answer positions + ½ mean CE over the others. E27 measures every file under the uniform every-byte split. On 73129 these two gradients have cosine 0.926 at the file's weights.
+4. **No scan.** Under `traceup all` the trace routines are switched off. Nothing in the births added credit outside `backward()`, so E27 omits nothing there.
+
+## What was absent (first pass; resolved by the follow-up)
 
 `exp45/e26/e26_life_S_{73129,93683,116089}.pt` and `exp45/e26/e26_life_B_{73129,93683,116089}.pt` are not on this container. Their receipts exist and name their hashes (S: `54fbb464…`, `19784a59…`, `a867dfeb…`; B: `ce6d860c…`, `8d16d439…`, `905635ae…`), so nothing could be committed or verified. As a result:
 - P27.5 is not judged;
@@ -149,5 +251,6 @@ The draft is preserved as git history at `02897c6e:MOD97_LOCAL_RULE_20261106/e27
 - The weights at which E24's every-byte births collapsed were never saved, so A measures other weights than the ones where the collapse happened.
 - The answer-trained files have 12 to 20 nats of loss on the other bytes. "Flood" there is dominated by bytes the network was never asked to predict, and the registered usable is about 0 under both paths.
 - Three seeds, 256 items a panel, one size.
-- Part B has half its arms.
+- Part B now has all four arms, but each arm is one end-of-life file per seed.
+- The flood ratios describe raw gradients; the births stepped by AdamW (see the follow-up item 5 section).
 - The S4 nulls catch sampling noise only; even an untrained network can fall just outside them.

@@ -4,13 +4,15 @@ Verdicts:
 - **P27.1 misses** (0.53 / 1.41 / 0.80).
 - **P27.2 is void** in all three seeds: usable under the exact path is negative.
 - **P27.3 misses**.
-- **P27.4 and P27.5 are not judgeable.** The six E26 life weight files are absent. P27.4 cannot hold, though: the one sweep-lived arm present shows the 0.10 gap in no seed.
+- **P27.4 misses** and **P27.5 misses**, scored on all four life arms after the six E26 life weight files arrived (`ce409d64`; hashes match the receipts). Part A is bit-identical on the rerun.
 
 The supplements disagree with the registered figures, so the result is mixed.
 - On the sweep-born answer-target file, the sign path amplifies the **distractor letters'** error below the top layer by 1.95 / 2.38 / 2.77, outside the null in all seeds. It damps the structural bytes' error to 0.2 to 0.4, and the two effects cancel in "other". S1 is therefore 0.63 / 1.59 / 0.96.
 - S3 (backprop-born, every byte, below the top layer) is 2.18 / 1.05 / 3.13.
 - Every trained GRU file is amplified about 1.7 to 2.9 below the top layer.
 - On all answer-trained files, the *exact* path's flood is already 89 to 605 times the answer's. The answer direction is swamped under both paths, which makes "usable" uninformative.
-- In Part B (crossover lives only, across births), the untaught-minus-taught contrast is larger on the sweep-lived arm in 1 of 3 seeds.
+- S6 with all four arms: the sweep-lived untaught-minus-taught gap is larger than the backprop-lived one in 2 of 6 within-birth comparisons and in 0 of 3 seeds by arm means, with every contrast between −0.08 and +0.05. S6 does not support the composition reading.
+- Amplification below the top layer does not mark the collapse. The collapsed birth (1.25 / 1.42 / 3.05) sits inside the range of births that did not collapse, and the balanced birth, which did not collapse, is highest (12 to 17). Unlike the coordinator's reading, though, not every trained network is amplified on this aggregate: the sweep-born answer-target file is amplified in 1 of 3 seeds (in all three on letters alone).
+- E27's sign path is exactly the gradient E24's sweep births computed: relative difference 0 or 4.6e-7 under `birthrule T, traceup all`. The births stepped it through AdamW, and the balanced birth weighted its loss ½ answer + ½ other rather than uniformly.
 
 Nothing here says what happened at the weights where E24 collapsed, because those weights were never saved.
