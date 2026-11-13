@@ -2558,3 +2558,35 @@ Also pushed: a read-only brief for a source check on learned feedback weights (`
 **A second thing the auditor measured,** which I reran on one birth: on the copy fixture at distance 4, E26's born network learns two to three times slower than random weights. A born start is not a head start on a task of another kind. This bears on "what may a learner bring" in the target test.
 
 Eleven findings in all; all adopted, four rerun by me.
+
+
+## 9.117 E27, part A: the flood hypothesis is not supported; part B waits on six files (13 November 2026, 14:24 EST by the clock)
+
+**What was done.** An Opus 5.5 worker ran E27's measurements on saved weights, no training (branch `claude/sleepy-knuth-q96dd1`, commit 7515e7cb; not merged, since part B is incomplete). It fixed the four defects in my measurement script that the brief listed and a fifth it found itself: the loss record was overwritten once per path. I read the scorer's output and the three measurement files. The scorer's hash equals the one recorded before the run. Evidence level E2; a measurement on end-of-birth weights.
+
+**Registered predictions.**
+
+| | 73129 | 93683 | 116089 | Result |
+|---|---|---|---|---|
+| P27.1 amplification on the sweep-born two-bank file, all parameters, at least 1.5 | 0.53 | 1.41 | 0.80 | **misses** |
+| P27.2 usable share lower under signs than exact | exact is negative | exact is negative | exact is negative | **void in all three**, as the amendment provides |
+| P27.3 collapsed file at least twice the balanced one | 1.10 | 0.73 | 1.65 | **misses** |
+| P27.4, P27.5 | | | | not judged: the six E26 life files were not on the worker's container |
+
+**The reading.** The hypothesis was that the sign path lets the unpredictable bytes' error flood the lower layers, and that this is why every-byte targets collapse a sweep birth. It is not supported, and the supplements say why more plainly than the misses do. Amplification below the top layer, by file (three seeds):
+
+| File | Amplification | Outcome of that birth |
+|---|---|---|
+| untrained, either network | 0.96 to 1.07 | |
+| two-bank, backprop, answer targets | 1.93 / 1.81 / 1.81 | healthy |
+| two-bank, backprop, every byte | 2.18 / 1.05 / 3.13 | healthy |
+| two-bank, sweep, every byte | 1.25 / 1.42 / 3.05 | **collapsed** |
+| two-bank, sweep, balanced | 17.2 / 12.4 / 15.7 | healthy |
+| GRU, backprop | 2.93 / 2.09 / 1.77 | healthy |
+| GRU, sweep | 2.47 / 1.84 / 1.68 | healthy |
+
+Every trained network shows the sign path amplifying the non-answer error, the backprop-born ones included, and the most amplified file of all is the balanced one, which did not collapse. **Amplification is a property of trained weights under a sign backward path, not a mark of the collapse.** The worker's summary leads with the supplements showing amplification of the letters' error; that is true and it does not discriminate.
+
+**Limits.** These are the weights after the collapse, not where it happened; E24 saved no rows. E28 saves every row of its every-byte sweep births for this reason. The "usable" measure is uninformative on answer-trained files, where the other bytes' error is 89 to 605 times the answer's under the exact path too.
+
+**Also checked:** the six E26 life weight files are now committed (branch `claude/adoring-cori-b07aog`, commit ce409d64) and each file's SHA-256 equals `weights_sha256` in its life receipt. The E27 worker is asked to finish part B from them with the script and scorer unchanged.
