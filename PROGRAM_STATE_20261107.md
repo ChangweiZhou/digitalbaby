@@ -443,3 +443,9 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 - **Codex is unavailable.** The audit session acts as second reader, with the mechanical checks listed in 9.112 F.
 - **Next:** two measurements on saved weights (filler error by layer under the exact and sign paths; alignment on composition items), predictions first. The six E26 life weight files are still only on the worker's container.
 - Erratum to 9.110: birth-curve differences were in answers out of 300, not points.
+
+
+## Addendum, 13 November 11:39 EST (clock): E27 prepared (review 9.113)
+
+- Two measurements on saved weights (filler error under the exact and sign paths; alignment on composition items), fixtures passing on untrained networks, predictions P27.1 to P27.5 on file. Not run; waits for Mr. Xu's go.
+- The six E26 life weight files are still wanted from the worker for part B.

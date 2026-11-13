@@ -638,3 +638,8 @@ From `e26_score_lives.py`, written before the lives existed; no contract problem
 - P26.4 holds: 54.2 / 44.5 / 37.2 on untaught plus-minus pairs, against 40.
 - P26.5 holds: backprop ends at 84.7 / 93.7 / 87.2 and 63.2 / 89.2 / 66.3.
 - No candidate pair by the registered reading: the sweep meets both marks in 0 of 3 seeds.
+
+
+## Addendum, 13 November 2026, 11:39 EST (clock): E27, flood and alignment by item kind on saved weights
+
+Predictions P27.1 to P27.5 and their readings are in `E27_PREDICTIONS.md`, written and pushed before any saved file is read. Script `e27_measure.py` (fixtures pass for three seeds on untrained networks), launcher `e27_run.sh`. Not run.

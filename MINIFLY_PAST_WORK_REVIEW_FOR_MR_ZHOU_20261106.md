@@ -2490,3 +2490,24 @@ The worker requalified after amendments 1 to 4 (branch `claude/funny-mendel-34pu
 - **the production gate refused to resume on the owner's machine,** naming the reason: its torch (2.9.1) is not the qualified one (2.15.0+cpu). That is the refusal Codex asked for, met on a real mismatch and not a fixture.
 
 So resume is available on hosts with the qualified runtime, for the seven listed shapes, and nowhere else. No outside audit has read this revision; Codex's last reading named four refusal tests and the worker's report lists them as passing. The audit session is asked to read the gate.
+
+
+## 9.113 E27 prepared: two measurements on saved weights for one hypothesis; predictions on file, nothing read (11:39 EST by the clock, 13 November 2026)
+
+Script `MOD97_LOCAL_RULE_20261106/e27_measure.py`, predictions `E27_PREDICTIONS.md`, launcher `e27_run.sh`. It trains nothing. It is the fourth step of the audit session's note of 13 November (9.112 E).
+
+**The hypothesis under test:** the sign path carries no magnitudes, and that one fact explains both the every-byte collapse and the weaker composition.
+
+**A, flood.** Under every-byte targets the gradient splits exactly into the answer's part and the other bytes' part. The script computes both under the exact and the sign path and reports how much larger the other bytes' share is under signs, and how much of the answer's direction survives.
+
+**B, alignment by kind of item.** On the end-of-life GRU files, the sweep's cosine with the true gradient on single operations, on taught pairs and on untaught pairs.
+
+**Fixtures, on untrained networks only** (`exp45/E27_FIXTURES_<seed>.json`, three seeds, all pass): the split is exact to 5e-7 under both paths, and it fails when the two shares are swapped.
+
+**Two things the untrained networks already show.** The amplification is 0.98 to 1.05: before any training the sign path lets through no more filler error than the exact path. And the sweep's cosine is the same on all three kinds of item (0.84 to 0.87 in the two-bank network, 0.92 to 0.93 in the GRU). Neither settles anything about trained weights.
+
+**Five predictions,** each held below one half, because E25 already speaks against the hypothesis in its simple form. The readings say in advance what a miss means: if the flood is not there at a single update, the collapse is something that builds over training, and learned feedback weights lose their main motive for it.
+
+**Not available yet:** the weights of the six E26 lives. Part B runs on the six crossover lives now and is completed when the others are committed.
+
+It waits for Mr. Xu's go, like any run on the owner's machine: seconds per file, one process.
