@@ -2590,3 +2590,18 @@ Every trained network shows the sign path amplifying the non-answer error, the b
 **Limits.** These are the weights after the collapse, not where it happened; E24 saved no rows. E28 saves every row of its every-byte sweep births for this reason. The "usable" measure is uninformative on answer-trained files, where the other bytes' error is 89 to 605 times the answer's under the exact path too.
 
 **Also checked:** the six E26 life weight files are now committed (branch `claude/adoring-cori-b07aog`, commit ce409d64) and each file's SHA-256 equals `weights_sha256` in its life receipt. The E27 worker is asked to finish part B from them with the script and scorer unchanged.
+
+
+## 9.118 Slow units and transmission delays: Mr. Xu's question, a brief, and what its audit showed before any run (13 November 2026, 15:09 EST by the clock)
+
+**The question.** Mr. Xu, 13 November: a neuron's decision is shaped by several earlier moments and not by a fixed number of them, through slow neurons that integrate and through finite transmission speed; have we tested this? Not as he means it. The two-bank network had slow units that did not form a circuit. E20-B's G3 had fixed-rate banks with a feedback matrix and scored 20.2 / 1.1 / 1.0. The GRU has learned gates and is born with every unit fast. No experiment here has used transmission delays. He asked for a brief on both mechanisms; it is `OPUS_TASK_E29_SLOW_UNITS_AND_DELAYS_20261113.md`.
+
+**Three things the hostile audit showed, each rerun by me.** None is a result of E29; all are on file already or come from short checks.
+
+1. **Erratum to 9.110, 9.112 E and the sizing brief's revision 4: the GRU's span is not about 12 bytes.** The span job's block B is finished: with distances 4, 12, 24 and 40 mixed in one stream, the plain GRU from random weights passes at every distance at 100% in all three seeds, after about 1,400 to 1,500 repeats of each. Stage 1's failure at a fixed 24 is a plateau of optimisation at that one distance, not a limit on carrying. 9.116 raised the doubt as one of dose; the answer is that mixing distances is enough. The span job's block A, fixed distances at equal dose, is still running, and this erratum does not wait for it: carrying 40 is shown whatever block A gives.
+2. **The trained GRU already holds.** In E26's births of seed 73129 (the auditor's preliminary look), a quarter of the units keep their state at 0.99 or more through the distractor letters, and every unit is fully rewritten somewhere in the item. The gate works as a switch. Training makes holding units out of a network born with none.
+3. **On a copy at one fixed distance a delay is a shortcut.** A unit delayed by the distance less one hands the key to the output: at distance 12, plain 6.6% and the delay arm 100% after 600 chunks. My draft's delay arm would have measured the luck of the draw.
+
+**What I do.** Part A of E29 is released: a read-only measurement of how the born and lived networks use their gates, sweep against backprop, with the seed already seen reported and not judged. Part B, variants at birth, is withdrawn as I drafted it and is rewritten after block A, on a fixture with no single lag and with the controls the audit asked for. The draft was mine and eleven findings against it held.
+
+**For the target test.** The lines stand hundreds of bytes before their use, and what limits a learner there is now an open question again; "span of 12" is no longer a reason to move them.
