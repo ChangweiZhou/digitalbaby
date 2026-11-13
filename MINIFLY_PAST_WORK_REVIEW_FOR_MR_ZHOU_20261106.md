@@ -2511,3 +2511,24 @@ Script `MOD97_LOCAL_RULE_20261106/e27_measure.py`, predictions `E27_PREDICTIONS.
 **Not available yet:** the weights of the six E26 lives. Part B runs on the six crossover lives now and is completed when the others are committed.
 
 It waits for Mr. Xu's go, like any run on the owner's machine: seconds per file, one process.
+
+
+## 9.114 The first hostile audit under the new division of work: E27 held, eleven findings, the main ones run and confirmed (11:49 EST by the clock, 13 November 2026)
+
+**The division of work, from Mr. Xu on 13 November:** all implementation and all runs go to Opus 5.5 workers; the coordinator writes the briefs and has them hostile-audited. I read that as: I start fresh auditor sessions, check their findings by running them, and revise before any worker starts. The auditors are of the same model family as the coordinator and the workers, so they are second readers and not independent ones.
+
+E27 was the first case. I had written its script and predictions myself that morning (9.113). The brief `OPUS_TASK_E27_FLOOD_AND_ALIGNMENT_20261113.md` hands both to a worker as a draft by an interested party, and an auditor read brief, predictions and script before anyone ran them. **Its disposition was to hold.**
+
+| Finding | Run by me | Result |
+|---|---|---|
+| The all-parameter amplification is diluted by the top layer, whose gradient is the same under both paths | on an untrained two-bank network the top layer's amplification is exactly 1.0; in a control that amplifies the first layer 3.19 times the all-parameter figure is 1.55 | confirmed. P27.1's mark of 1.5 sits on the value a real threefold flood would give. The prediction could miss with the hypothesis true |
+| The positive control I suggested in the brief cannot work | one layer scaled to one hundredth: amplification 0.97 | confirmed. The scale cancels. I had written a control without trying it |
+| The script drops the GRU's recurrent matrices from its per-tensor output | listed the keys: five tensors, the two recurrent ones absent | confirmed. A name filter of mine |
+| The taught-pair panel is a biased slice | counted: five pairs at 50, one at 6, none starting with a comparison | confirmed |
+| P27.5 cannot be judged on the files in the repository | the six E26 life weight files are absent | confirmed, and already known; the brief had said to judge it on what exists, which is impossible |
+
+Not run by me and accepted on reading: the predictions for A are measured at weights the every-byte births never visited; "usable" has no baseline; P27.3 compares the sign path with itself and is uninformative; P27.4 mixes composition with item format; one of my readings ("less faithful where composition is learned") claimed something no measurement on these items could show.
+
+**What I did with it.** The five predictions stay as registered, since nothing had been read. An amendment to the predictions file, written before any file is read, says where each is read from, states each one's weakness, registers six supplementary quantities with their readings, and narrows two readings that overclaimed. The brief is at revision 2 with the named defects and the corrected control.
+
+**What it shows about the arrangement.** The auditor found in four minutes what I had not seen in a script I had tested. Five of its eleven findings are of the kind Codex used to find: a claim in a brief that had not been run.

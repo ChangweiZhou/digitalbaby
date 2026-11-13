@@ -2,6 +2,12 @@
 
 > **Status.** Draft. **No worker starts from this file** until a hostile audit has read it and the coordinator has answered the audit. From 13 November all implementation and all runs are done by Opus 5.5 workers; the coordinator writes briefs and has them audited (Mr. Xu's instruction of that date). Codex is not available; the auditors are fresh sessions of the same model family as the coordinator and the workers, so they are second readers and not independent ones.
 
+> **Revision 2, 13 November 2026, 11:49 EST (clock), after a hostile audit** (a fresh session of the same model family; its findings were run by the coordinator, review 9.114). Disposition was hold. Changes, which govern:
+> 1. **The coordinator's script has defects you must fix, and they are named:** its per-tensor output drops the GRU's two recurrent matrices (it filters on names ending in `weight`; `rnn.weight_ih_l0` and `rnn.weight_hh_l0` do not); its taught-pair panel is the first 256 items of `comp["within"]`, which is five pairs at 50 and one at 6 and none beginning with `>` or `<`; it loads weights without checking them against their receipts.
+> 2. **The positive control suggested in step 3 below is wrong.** Scaling a whole layer scales its mean magnitude equally, and the scale cancels: with one layer at one hundredth the amplification stays at 0.97 to 1.02. Use this instead: multiply by 0.01 the top layer's rows for output bytes that are never answer bytes. On an untrained two-bank network that gives about 3.2 on the first layer and 1.55 over all parameters, and exactly 1.0 on the top layer. The negative control is the null of supplement S4.
+> 3. **Supplements S1 to S6** of the amendment at the end of `E27_PREDICTIONS.md` are computed and scored beside the five predictions. The predictions themselves are unchanged.
+> 4. **Part B waits for the six E26 life weight files.** P27.5 cannot be judged without them and P27.4 only on one arm. If they are not on your container, run part A and report part B as not run.
+
 ## What this job is
 
 A measurement on weights that already exist. Nothing is trained: no optimizer may appear in any file of this job. Diagnostic, evidence level E2. It claims nothing about any learner's ability.

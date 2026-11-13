@@ -48,3 +48,39 @@ My confidences are below one half on purpose. E25 already showed the sweep well 
 ## What this cannot say
 
 Gradients at saved weights are not training. Files trained by one update are measured where that update took them. Three seeds, one size, 256 items a panel.
+
+
+---
+
+## Amendment before any saved file is read (13 November 2026, 11:49 EST, clock), after a hostile audit of this file, the brief and the script
+
+The audit's disposition was to hold. The coordinator ran its main findings and they hold (review 9.114). **The five predictions above stay as registered and are judged as written.** What changes is what is recorded beside them and how much each reading may claim. No saved file had been run through the script when this was written.
+
+**Where each prediction is read from** (`exp45/E27_MEASURE_<seed>.json`):
+- P27.1: `A["two-bank born by the sweep, answer targets"].all_parameters.amplification`.
+- P27.2: the same entry, `all_parameters.sign.usable` against `all_parameters.exact.usable`. If either is zero or negative the prediction is void for that seed.
+- P27.3: `A[... (collapsed)].all_parameters.sign.flood` against `A[... balanced].all_parameters.sign.flood`.
+- P27.4: `B[arm].untaught_plus_minus.all_parameters` against `B[arm].single_operations.all_parameters`, for the two arms that lived under the sweep. A seed counts only if both arms show it.
+- P27.5: `B[...].untaught_plus_minus.all_parameters`, sweep-lived against backprop-lived within a birth: two comparisons a seed. A seed counts only if both show it.
+
+**Known weaknesses of the registered predictions, stated before the result.**
+- *P27.1 can miss with the hypothesis true.* The top layer's own gradient is the same under both paths, so its amplification is 1 by construction, and it carries a third to a half of the gradient's squared norm. In a control where every lower tensor is amplified about threefold, the all-parameter figure is only 1.55 in the two-bank network.
+- *P27.1 and P27.2 are measured at weights the every-byte births never visited.* Those births started from random weights, where the amplification is already known to be about 1, and no checkpoint of them exists. And "other bytes" includes operands, the operator and `=`, which are learnable, beside the letters, which are not.
+- *P27.2 has no baseline.* The sign path is misaligned with the exact one in general, so "usable under signs" is low for a reason that has nothing to do with flooding.
+- *P27.3 is not informative.* It compares the sign path with itself, and its denominator follows the answer loss, which differs between the two files for reasons outside the hypothesis. It is judged and reported, and nothing is read from it.
+- *P27.4 mixes composition with format.* Single operations have a 19-byte prompt with letters and three target bytes; composition items have a 10-byte prompt without letters and six. E25 already shows a gap of 0.01 to 0.07 between them on backprop-lived files.
+- *P27.5 cannot be judged until the six E26 life weight files exist.* Each of its comparisons needs one of them.
+
+**Supplementary quantities, registered now, each with its reading.**
+- **S1. Amplification over all parameters except the top layer** (`l3.*`), and per tensor including the GRU's two recurrent matrices. *Reading:* this, not P27.1's figure, says whether filler error is amplified below the top layer. At least 1.5 in two seeds on the sweep-born answer-target file is read as flood present at those weights.
+- **S2. The split of "other" into distractor letters and structural bytes** (operands, operator, task code, `=`), with amplification for each. *Reading:* the hypothesis is about the letters.
+- **S3. Amplification on the file born by backprop under every-byte targets,** where what is left of the other bytes' error is the unpredictable part. *Reading:* the cleanest single test of "unpredictable error floods back under signs" that saved weights allow.
+- **S4. A null:** amplification for random splits of positions at the same shares, twenty draws. *Reading:* a figure inside the null's range is not a flood.
+- **S5. Two baselines for "usable":** the cosine of the sign answer gradient with the exact answer gradient, and of the sign every-byte gradient with the sign answer gradient.
+- **S6. For part B, the same-format contrast:** untaught pairs minus taught pairs, on sweep-lived and on backprop-lived files, with the taught panel drawn evenly from all twelve taught pairs. *Reading:* only this difference, larger on sweep-lived files than on backprop-lived ones, speaks to composition.
+
+**Readings narrowed.**
+- A miss of P27.1 and P27.2 with S1 and S3 also near 1 is read as: *no amplification at these saved weights.* It does not say learned feedback weights have lost their motive, which the first version claimed. The weights where the collapse happens were never saved; that needs a birth with checkpoints, which is a different job.
+- "P27.4 or P27.5 holds" no longer triggers the confirming reading. Composition is read from S6.
+- P27.1 and P27.2 disagreeing, or the registered figures and the supplements disagreeing, is reported as that, with both.
+- No life ever updates on untaught items, so nothing here can show the sweep "less faithful where composition is learned". Part B measures the sweep's direction on items of a kind, at the end of a life.

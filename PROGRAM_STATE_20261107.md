@@ -449,3 +449,10 @@ Mr. Xu: learned feedback weights are allowed (a separate backward pathway that l
 
 - Two measurements on saved weights (filler error under the exact and sign paths; alignment on composition items), fixtures passing on untrained networks, predictions P27.1 to P27.5 on file. Not run; waits for Mr. Xu's go.
 - The six E26 life weight files are still wanted from the worker for part B.
+
+
+## Addendum, 13 November 11:49 EST (clock): new division of work; E27 audited and revised (review 9.114)
+
+- From 13 November: implementation and runs by Opus 5.5 workers; the coordinator writes briefs and has them hostile-audited by fresh sessions.
+- E27: audit held it; main findings confirmed by running them; predictions unchanged, amendment with six supplements and narrower readings; brief at revision 2. Ready for a worker for part A; part B waits for the six E26 life weight files.
+- Next briefs: every-byte targets on the GRU; source check on learned feedback weights; sizing sweep revision with the copy fixture at mixed delays.
