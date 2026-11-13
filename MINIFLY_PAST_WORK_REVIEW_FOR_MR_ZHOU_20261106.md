@@ -2625,3 +2625,55 @@ Alignment on untaught pairs is between 0.53 and 0.66 in every arm, and in four o
 **Two corrections to my 9.117, from the worker.** I wrote that every trained network shows amplification below the top layer. Two files do not in every seed: the sweep-born answer-target two-bank file (0.63 and 0.96 in two seeds) and the backprop-born every-byte file in seed 93683 (1.05). The reading is unchanged: the collapsed file sits inside the range of files that did not collapse, and the balanced file is far above all of them. And the worker checked what I had left open: E27's sign path is the gradient E24's sweep births computed (relative difference 0, 0 and 4.6e-7), with the births then applying it through AdamW.
 
 **What it leaves for the next step.** Per-step direction is not where the two updates differ. What has not been measured is what accumulates over a life: thousands of updates, each through AdamW. E28's saved rows, and E29's look at how the networks use their gates, are the measurements on file that can speak to that.
+
+
+## 9.120 Three jobs read: E28's stage 1 passes and its births are released; the span roster; how the trained GRUs use their gates (13 November 2026, 16:32 EST by the clock)
+
+All three were run by Opus 5.5 workers on cloud hosts (Linux x86-64, Python 3.13.18, torch 2.15.0+cpu) and read by me from their records. The span and E29 branches are complete and merged; E28's is not merged until its births are in.
+
+### A. E28 stage 1: all six items pass; stage 2 released
+
+Branch `claude/charming-cori-ljzwz1`, commit 48a6e563. I checked from the files: both host-check births carry `experiment="E28"`, reproduce E26's `tensors_sha256`, all thirteen tensors bit for bit, and every row's scores and data digest; the cumulative finite-loss flag covers 24,576 of 24,576 updates; the runner has its own loop and never calls `exp26_candidate.dev` or `.step`; the four predictions are identical to the brief's; the balanced loss is checked against the independently weighted form. The first run of the dry-birth check failed through a bug in the check, kept on file and fixed in its own commit. Measured cost 0.127 to 0.134 CPU-seconds per update, about 11.2 CPU-hours for the twelve births. **Released.** Nothing has been read against P28.1 to P28.4.
+
+### B. The span roster: 48 runs, 9.5 CPU-hours
+
+Branch `claude/target-test-sizing-stage-1-drmnlq`, commit cc91ff46. Admission passed, stage 1's counts reproduced exactly. Backprop only; a copy over random filler; no claim about any rule. Class on the last tenth, three seeds (1104 / 1105 / 1106):
+
+| Start | 4 | 12 | 16 | 18 | 20 | 24 | 40 | 60 |
+|---|---|---|---|---|---|---|---|---|
+| random, fixed distance | pass ×3 | pass ×3 | pass ×3 | pass ×3 | pass ×3 | partial / pass / pass | chance / pass / chance | chance / partial / not held |
+| random, mixed {4, 12, 24, 40} | pass ×3 | pass ×3 | | | | pass ×3 | pass ×3 | |
+| born (E26, backprop), fixed | pass ×3 | pass ×3 | | | | pass ×3 | chance / partial / chance | |
+| born, mixed | pass ×3 | pass ×3 | | | | pass ×3 | pass ×3 | |
+| permuted born, fixed | | pass ×3 | | | | pass ×3 | | |
+
+Forecasts: **F1 holds** (18 passes, three of three). **F2 holds** (24 passes, two of three). **F3 misses** (60 passes in none). **F4 holds** (mixed passes at 40 where fixed does not). **F5 holds** (at 12 the born start needs more repeats in two of three pairs, equal in the third). **F6 misses** (born passes at 40 in none).
+
+Readings, as the brief fixed them:
+
+- **Stage 1's "nothing at 24" was dose.** At about 60,000 repeats fixed 24 passes in two of three seeds. The erratum of 9.118 stands and is now complete: the fixed-distance span of this learner at this dose is 24, and with mixed distances it carries 40.
+- **Arm B's ordinary stream carries no span caveat** (it needs 13 to 18; the block's span is 24).
+- **Mixing distances helps, and by a large factor.** At 40, mixed passes in three of three seeds and fixed in one. Where both pass, mixed reaches 50% after about 1,400 repeats of that distance against 9,000 to 47,000 fixed, more than a factor of two in every seed at 12 and 24.
+- **A born start is not a head start here.** At distance 4 it needs two to three times the repeats of random weights (21,333 to 32,000 against 10,666); at 12 and 24 it is level or slower; it passes at 40 no more often. The permuted copy of the born weights does as well as the born weights at 12 and 24, so nothing here is owed to the birth's structure.
+- **One run to remember:** fixed 60, seed 1106, sat near 100% for about forty windows and then fell to chance and stayed there. A learned copy was lost under backprop with every byte a target. One run; it is recorded because E28 asks about exactly this kind of loss.
+
+**For the target test.** The lines stand 411 to 734 bytes before their use and nothing here reaches past 60 at a fixed distance; mixed distances beyond 40 were not run. The sizing roster of 84 fits stays held: its brief (revision 4) carries the withdrawn span claim and has never been audited, and it is rewritten before anything runs.
+
+### C. E29 part A: the trained GRUs hold, and the sweep's hold as much
+
+Branch `claude/wizardly-franklin-sr2l6q`, commit 0e982c10. Read-only, 21 files, 33 CPU-seconds. The hand-built check ran first; the predictions were committed before any trained file was opened (1008de25, five minutes before the results). I recomputed the headline figures from the per-unit arrays.
+
+- Untrained: no gated holder in any seed. Born: 41 to 46% of units in the unseen seeds. After a life: 46 to 63%.
+- **P29.1 holds:** 44.9, 46.1, 43.8, 41.0%, against a mark of 15%. Training at this task makes holding units out of a network born with none.
+- **P29.2 misses:** sweep-born networks have as many holders as backprop-born ones (44.9 against 46.1; 43.8 against 41.0).
+- **P29.3 is not judged.** My wording, "the two ... than the two", can be read as each above each (one of three seeds) or as the means (two of three), and the two readings give opposite outcomes. The fault is in the prediction as I wrote it, and I do not choose a reading after seeing the figures. Both are on file.
+
+A descriptive note, not registered: within a birth, the life updated by backprop ends with more units of retention at least one half than the life updated by the sweep in five of six comparisons, by 5 points or more in four (backprop-born: +9.3, +5.1, +8.6; sweep-born: +3.1, -5.5, +7.8). It is a small difference beside the size of what both have.
+
+**The worker's caution, which I adopt:** in every trained file 251 to 256 of 256 units are rewritten somewhere, so "gated holder" is in effect "holds through at least 90% of the letters".
+
+**What this means for Mr. Xu's question.** Integration by slow units is something the GRU already builds for itself, under either update. So a shortage of holding units is not the explanation of the sweep's weaker composition, at this grain. Part B, variants at birth, is rewritten in the light of B above: fixed 40 and 60 are distances where the plain network stalls, and mixing distances is a competitor that any variant has to beat.
+
+### D. Source checks
+
+The memo on learned feedback weights (branch `claude/charming-clarke-u9g850`, merged) and the page on timescales and delays (with E29) are with a hostile auditor. Neither steers a design until read.
