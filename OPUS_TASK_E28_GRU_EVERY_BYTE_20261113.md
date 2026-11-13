@@ -1,93 +1,107 @@
-# Draft for hostile audit: E28, the GRU born under every-byte targets (13 November 2026, 11:55 EST by the clock)
+# E28, the GRU born under every-byte targets. Revision 2, after a hostile audit (13 November 2026, 12:01 EST by the clock)
 
-> **Status.** Draft. **No worker starts from this file** until a hostile audit has read it and the coordinator has answered. Implementation and runs are an Opus 5.5 worker's; the coordinator writes and audits briefs (Mr. Xu, 13 November). The auditors are fresh sessions of the same model family: second readers, not independent ones. Evidence level aimed at E2, development panels, births only.
+> **Status.** Stage 1 is released to one Opus 5.5 worker. Stage 2 waits for the coordinator's release. Revision 1 (commit 02897c6e) was read by a fresh hostile auditor of the same model family, a second reader and not an independent one. It returned nine findings; the coordinator reran the evidence for seven and adopted all nine (list at the end). Evidence level aimed at E2, development panels, births only.
 
 ## Why
 
-The target test has no answer mask: its learner predicts every next byte. E24 (review 9.110 C) showed, on the two-bank network, that a birth under every-byte targets collapses under the sign sweep (hard mean 0.8 / 1.0 / 1.2) and not under backprop (91.5 / 89.3 / 91.2), and that giving the answer bytes half the loss restores the sweep (81.5 / 79.8 / 83.3). The two-bank network has been left behind. The network that composes is the GRU of E26. **Whether the sweep on the GRU survives every-byte targets is not on file,** and it decides whether the working rule can enter the target test at all.
+The target test has no answer mask: its learner predicts every next byte. E24 (review 9.110 C) showed a birth under every-byte targets collapsing under a sign rule (hard mean 0.8 / 1.0 / 1.2) and not under backprop (91.5 / 89.3 / 91.2), with a balanced loss restoring the sign rule (81.5 / 79.8 / 83.3). **E24's configuration is not E28's in three ways:** the two-bank network; a sweep with credit cut in time and the trace routine (`birthrule T, traceup all` in its receipts; `sed -n '624p' exp16_integrated.py`); and a backprop partner at decay 0.30 against 0.25. E28's sweep is sign feedback through the whole item on the GRU of E26. Whether that survives every-byte targets is not on file.
+
+E28 is necessary for the rule to enter the target test and not sufficient: the test's distances exceed this GRU's measured span of about 12 bytes (review 9.110 E).
 
 ## The question
 
 Born under every-byte targets, does the GRU reach under the sweep what it reaches under backprop?
 
-## One switch on qualified code
+## The code: a new runner, one difference in the condition
 
-The runner is E26's, `MOD97_LOCAL_RULE_20261106/exp26_candidate.py`, whose update is one function used by both arms (shown by `sed -n '84,91p' exp26_candidate.py`):
+The condition differs from E26's birth in the loss mask alone. The code does not: E26's birth loop cannot record what E28 needs, so the loop is new and the host check is what ties it to E26.
 
-```
-x, y, mask = X.batch_tensor(items)
-logits = arch26.forward(m, x, local, True)[0]
-loss = E.cross_entropy(logits[mask], y[mask])
-opt.zero_grad(); loss.backward(); opt.step()
-```
-
-E28 changes the loss mask and nothing else. New files only (`exp28_everybyte.py`, importing `exp26_candidate` and `arch26` unedited):
+- New file `MOD97_LOCAL_RULE_20261106/exp28_everybyte.py`. It imports `exp26_candidate` and `arch26` unedited for the model, the data, the optimizer groups and the scorer. **It does not call or patch `exp26_candidate.dev` or `exp26_candidate.step`**: `dev` writes `experiment="E26"`, an "answer-masked" update string and `e26_dev_` file names (`grep -n '"E26"\|e26_dev_\|answer-masked' exp26_candidate.py`), and `admit_e26` does not look at targets, so a patched birth would pass as an E26 birth.
+- Every receipt carries `experiment="E28"`, a `targets` field (`answer`, `all`, `balanced`), and files are named `e28_dev_<arm>_<seed>` in `exp45/e28/`.
 
 | Targets | Loss |
 |---|---|
-| answer (E26, for the host check only) | `mask` as returned by `X.batch_tensor` |
-| every byte | every real position: `y != E.BOS` (the form `exp16_integrated.update16` uses; shown by `grep -n "mask = y != E.BOS" exp16_integrated.py`) |
-| balanced | one half the mean over answer positions plus one half the mean over all other real positions (the form of `E16_LOSSW=balanced`; shown by `grep -n "balanced" exp16_integrated.py`) |
+| `answer` (host check only) | cross entropy over the answer mask `X.batch_tensor` returns |
+| `all` | cross entropy over every real position, `y != E.BOS` (padding is BOS in y; no real target is BOS) |
+| `balanced` | one half the mean over answer positions plus one half the mean over the other real positions |
 
-Everything else is E26's: the GRU of 256 units with the written-out step, the same initial values per seed, the same birth data in the same order (four mod-89 operations, 0 to 12 distractor letters, 24,576 updates of 64 items), AdamW at 0.001, betas (0.9, 0.98), **decay 0.25 in every arm**, the embedding table without decay, scoring by whole own answers on the sealed panels at the six rows.
+Everything else is E26's: the 256-unit GRU with the written-out step, the same initial values per seed, the same birth data in the same order (24,576 updates of 64 items), AdamW at 0.001, betas (0.9, 0.98), decay 0.25 in every arm (E26's B births used 0.25 too), the embedding table without decay, whole own answers on the sealed panels at the six rows.
 
-## Arms. Seeds 73129, 93683, 116089. One host
+## Arms. Seeds 73129, 93683, 116089
 
 | Arm | Update | Targets | Status |
 |---|---|---|---|
-| S-ans, B-ans | sweep, backprop | answer | on file: E26's births, 98.0 / 98.2 / 99.8 and 98.5 / 98.7 / 93.7 (`exp45/e26/e26_dev_{S,B}_<seed>.json`, cloud host, torch 2.15.0). Rerun seed 73129 of each as the host check |
+| S-ans, B-ans | sweep, backprop | answer | on file: E26's births, 98.0 / 98.2 / 99.8 and 98.5 / 98.7 / 93.7. Seed 73129 of each is rerun as the host check |
 | **S-all** | sweep | every byte | new |
 | **B-all** | backprop | every byte | new |
 | **S-bal** | sweep | balanced | new |
+| **B-bal** | backprop | balanced | new (added on audit: without it a shortfall of S-bal cannot be assigned to the rule) |
 
-Nine new births and two host checks. No lives. No balanced backprop arm: it is wanted only if B-all falls, and is then its own decision.
+Twelve new births and two host checks.
 
-## Stages
+## Host
 
-**Stage 1, then stop.**
-1. *Host check.* With the new runner at answer targets, seed 73129, both arms, in a fresh folder: every weight tensor equals E26's birth of that arm (`exp45/e26/e26_dev_{S,B}_73129.pt`), and the six rows' sealed scores equal its receipt's. If the host is of another class and they differ, stop: the baselines must then be rerun on your host for all three seeds, and you say so before running them.
-2. *The mask.* On one birth batch: the every-byte mask covers every real byte of prompt and answer and no padding position; the balanced loss equals one half of each part computed separately, and so does its gradient, under both paths; with answer targets the loss and every gradient equal `exp26_candidate.step`'s bit for bit.
-3. *One real step per new arm* equals the same AdamW given an independently computed gradient, as E26's check 2a did.
-4. *Dry births* of the three new arms at 2,048 updates complete; report CPU per update.
+**Precondition: Linux x86-64, torch 2.15.0+cpu, the class E26 was born on.** Print both before anything else. On any other host, stop and report; do not run the baselines on another class without the coordinator's word.
 
-**Stage 2, on the coordinator's release:** the nine births.
+## Stage 1, then stop
+
+1. *Host check.* The new runner at `answer` targets, seed 73129, both arms, in a fresh folder: `tensors_sha256` equals E26's receipt for that arm, every tensor equals `exp45/e26/e26_dev_{S,B}_73129.pt`, and all six rows' sealed scores and `data_digest` values equal the receipt's.
+2. *Refusal.* `exp26_candidate.admit_e26` rejects an E28 birth file of every targets value. Show the assertion text.
+3. *The mask.* On the first birth batch: the `all` mask covers every real byte of prompt and answer and no padding position. With `answer` targets, the weights after one step equal `exp26_candidate.step`'s bit for bit under both paths.
+4. *The balanced loss* is checked against an independently written form: unreduced cross entropy with weight 0.5/n_a on answer positions and 0.5/n_o on the others, summed. Loss and every gradient tensor agree to a **relative tolerance of 1e-5 of that tensor's largest entry**, under both paths. They do not agree bit for bit (the auditor measured 3e-7 to 5e-7); do not ask them to.
+5. *One real step per new arm* equals AdamW given an independently computed gradient: bit for bit for `all`, to the tolerance of item 4 for `balanced`.
+6. *Dry births* of the four new arms at 2,048 updates complete, with every record below present. Report CPU per update.
 
 ## What every birth records
 
-- A **cumulative** finite-loss flag over all updates, and the number of updates it covers (the gap Codex found in E26's births, review 9.110).
-- The loss on answer positions and on other positions separately, as means over each 512 updates, for all 48 blocks. E24's every-byte births rose and then died between 8,192 and 12,288 updates and nothing was recorded in between.
-- **The weights at every scored row** (4,096 to 24,576). Commit the six row files of the three S-all births and the final file of every birth; keep the rest on the container and say so. Review 9.114 found that the weights at which E24's collapse happened were never saved.
-- Host, command, environment, source hashes, optimizer groups read back.
+- A **cumulative** finite-loss flag over all 24,576 updates and the count it covers.
+- **Loss by target role**, as means over each 512 updates for all 48 blocks: distractor letters; operand digits; structural bytes (operator, `=`, end); answer bytes. State how each role is identified from the item, and show on one batch that the four roles partition the real positions.
+- The `data_digest` at each row. It hashes x, y and the answer mask, so it must equal E26's for the same seed and row in all twelve births; the runner asserts this.
+- **The weights at every scored row.** Every row file's SHA-256 goes in the receipt.
+- Host, torch, command, environment, source hashes, optimizer groups read back.
+
+**Committing weights.** `.gitignore` ignores `*.pt` (`git check-ignore -v MOD97_LOCAL_RULE_20261106/exp45/e28/x.pt`), so each needs `git add -f`; this is how E26's life weights were left off its branch. Commit the six row files of each S-all birth, the final file of each other birth, and the two host checks: 18 + 9 + 2 = 29 files of 4,501,581 bytes, about 131 MB. The other row files stay on the container with their hashes in the receipts; say so.
 
 ## Endpoints
 
-Final hard mean (add89 and sub89 at k = 12, whole answers) and max/min mean; the six-row curve; the two loss curves. Max and min are read against 50, the level of copying one operand.
+Final hard mean (add89 and sub89 at k = 12, whole answers); the peak hard mean over the six rows and its row; the four loss curves. Max and min means are reported and are descriptive: nothing is predicted of them.
 
-## Predictions (copy unchanged into `E28_PREDICTIONS.md` before stage 2). "Holds" means in at least two of three seeds unless it says all
+## Predictions (copy unchanged into `E28_PREDICTIONS.md` before stage 2)
 
-- **P28.1** B-all ends at a hard mean of at least 85. Confidence about 80%.
-- **P28.2** S-all ends at or below 10 in all three seeds: the collapse of E24 repeats on the GRU. Confidence about 50%.
-- **P28.3** S-bal ends at or above 60. Confidence about 60%.
+- **P28.1** B-all ends at a hard mean of at least 85 in all three seeds. Confidence about 70%.
+- **P28.2** S-all ends at or below 10 in all three seeds. Confidence about 40%: E24's collapse was under a different sweep.
+- **P28.3** S-bal ends at least 20 points above S-all in at least two of three seeds. Confidence about 50%.
+- **P28.4** B-bal ends within 10 points of B-ans in all three seeds. Confidence about 70%.
 
 ## Readings, fixed now
 
-- *Feasibility and gap are read apart.* Each new arm against the absolute level of its answer-target birth, and S-all minus B-all seed by seed.
-- **P28.1 holds and P28.2 holds:** on the GRU as on the two-bank network, every-byte targets defeat the sweep and not backprop, in these configurations at this dose. The rule cannot enter the target test as it stands. The saved row files then let E27's measurement be made where the collapse happens.
-- **P28.2 misses with S-all near its answer-target level in all three seeds:** the collapse of E24 belonged to the two-bank network, and the rule's obstacle to the target test is composition (E26), not the mask.
-- **P28.2 misses with S-all in between:** the levels are reported; one seed above 10 does not settle survival.
-- **P28.3:** reaching 60 shows an effect of the weighting only where S-bal is above S-all in the same seed; the paired difference is given for every seed. The balanced loss uses the answer mask and is a diagnostic, not a candidate.
-- **P28.1 misses:** every-byte targets cost backprop on the GRU too; report the level and do not single out the rule.
+"Near" means within 10 points of the same seed's answer-target birth. Differences under 15 points between two births of one seed are not read: E26's own adjacent rows swing by up to 14.
+
+- **Rule-specific collapse:** S-all at or below half of B-all in all three seeds, with B-all at or above 60 in all three. Then every-byte targets defeat this sweep and not backprop on the GRU, at this dose, and the rule cannot enter the target test as it stands. Whether S-all never learned or learned and then died is read from its peak row (a peak at or above 50 is "learned and died") and said either way.
+- **Survival:** S-all near S-ans in all three seeds. Then E24's collapse belonged to E24's configuration, with no attribution among its three differences, and the rule's obstacle to the target test is composition (E26), not the mask.
+- **Shared cost:** B-all below 60 in any seed. Every-byte targets cost backprop here too; that seed is dropped from the rule-specific reading, and with two or more such seeds no rule-specific claim is made, whatever S-all does. The paired gap is still reported.
+- **Anything else** (S-all between, or split across seeds): the levels and paired gaps are reported and neither survival nor collapse is claimed.
+- **The balanced arms:** S-bal is read against S-all (P28.3) for the effect of the weighting, and S-bal minus B-bal against S-ans minus B-ans for whether the rule pays more than backprop under it. The balanced loss uses the answer mask: a diagnostic, not a candidate.
+- **Flooding is not shown by levels.** At E26's born weights the non-answer loss carries over 99% of the every-byte gradient under both paths (auditor's measurement, rerun by the coordinator), so proportion alone does not separate the rules. A cause is read only from the role curves and from E27's measurement on the saved rows.
 
 ## What this cannot say
 
-Births only; nothing about lives or composition under every-byte targets. One size, three seeds, one host class. The decoder reruns the network for each output byte.
+Births only; nothing about lives or composition under every-byte targets. One size, three seeds, one host class. Not a comparison with E24 like for like.
 
 ## Running it
 
-One host, at most three processes on four cores. E26's births took about 3,100 to 3,300 CPU-seconds each on such a host; eleven births are about ten CPU-hours, three and a half hours of wall time. Replace this with stage 1's measurement. `exp26_candidate` refuses resume variables; an interrupted birth is kept as written and reported, and restarted only on the coordinator's word. Own branch; nothing to the default branch.
+One host, at most three processes on four cores. E26's births took 3,068 to 3,282 CPU-seconds; fourteen are about 12.5 CPU-hours, a little over four hours of wall time. Replace with stage 1's figure. No resume: an interrupted birth is kept as written, reported, and restarted only on the coordinator's word. Own branch; nothing to the default branch.
 
-## Questions for the audit
+## The audit and what was done with it
 
-1. Is one switch really one switch here: does anything else in a birth depend on the mask (the data digest, the census, the scorer)?
-2. Should B-ans and S-ans be rerun for all three seeds on the worker's host regardless, given what E24's host check cost?
-3. Is 162 MB of row files (36 files) worth committing for both every-byte arms, against 81 MB for S-all alone?
+| # | Finding | Coordinator's check | Done |
+|---|---|---|---|
+| 1 | E24's sweep was a different update, and its partner's decay differed | receipts read: `birthrule T, traceup all, decay 0.25` against `D, 0.3` | "Why" and the survival reading rewritten |
+| 2 | Outcomes without readings; undefined "near"; no margin | read against the draft | readings rewritten with fixed margins; P28.1 now all three |
+| 3 | A patched `dev` would pass as an E26 birth | `grep` on `exp26_candidate.py` lines 113, 135, 137, 176 | new runner, new names, refusal test |
+| 4 | Balanced checks cannot hold bit for bit | auditor's script rerun: 3.4e-7 and 5.1e-7 | tolerance and an independent form |
+| 5 | Flooding not separated; S-bal had no partner | script rerun: answer part 0.6 to 0.7% of the every-byte gradient norm under both paths | B-bal added; loss by role; reading on flooding |
+| 6 | `*.pt` ignored; file count wrong | `git check-ignore`; 4,501,581 bytes per file | `git add -f` and the count stated |
+| 7 | Max/min had no prediction | — | declared descriptive |
+| 8 | Host check fails across classes | not runnable here (Mac torch 2.9.1) | host precondition; digests compared |
+| 9 | Necessary, not sufficient, for the target test | review 9.110 E | said in "Why" |

@@ -2532,3 +2532,18 @@ Not run by me and accepted on reading: the predictions for A are measured at wei
 **What I did with it.** The five predictions stay as registered, since nothing had been read. An amendment to the predictions file, written before any file is read, says where each is read from, states each one's weakness, registers six supplementary quantities with their readings, and narrows two readings that overclaimed. The brief is at revision 2 with the named defects and the corrected control.
 
 **What it shows about the arrangement.** The auditor found in four minutes what I had not seen in a script I had tested. Five of its eleven findings are of the kind Codex used to find: a claim in a brief that had not been run.
+
+
+### 9.115 E28 written and audited: the GRU born under every-byte targets (13 November 2026, 12:01 EST by the clock)
+
+**What it asks.** The target test has no answer mask. E24 showed a sign rule collapsing under every-byte targets on the two-bank network; nothing is on file for the sweep on the GRU. E28 is E26's births with the loss mask changed: sweep and backprop, every-byte and balanced targets, three seeds, twelve births and two host checks, about 12.5 CPU-hours. Brief: `OPUS_TASK_E28_GRU_EVERY_BYTE_20261113.md`, revision 2. No run has been made.
+
+**The hostile audit** (a fresh session of the same model family; a second reader, not an independent one) returned nine findings on revision 1. I reran the evidence for seven and adopted all nine. The three that changed the design:
+
+- *E24 is not a like-for-like precedent.* Its sweep cut credit in time and used the trace routine, and its backprop partner ran at decay 0.30. My draft would have read a survival as "the collapse belonged to the two-bank network". The reading now attributes nothing among the three differences.
+- *My draft's readings had holes:* a backprop arm at 84 with the sweep at 1 would have been read as "do not single out the rule". Margins and a paired rule are now fixed before the run.
+- *A balanced backprop arm was missing,* so a shortfall of the balanced sweep could not have been assigned to the rule. Added.
+
+One measurement from the audit is worth keeping: at E26's born weights the non-answer positions carry over 99% of the every-byte gradient under backprop and under the sweep alike. Proportion alone therefore does not explain why one rule would collapse and not the other.
+
+Also pushed: a read-only brief for a source check on learned feedback weights (`OPUS_TASK_SOURCE_CHECK_LEARNED_FEEDBACK_20261113.md`).
