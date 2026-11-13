@@ -2534,7 +2534,7 @@ Not run by me and accepted on reading: the predictions for A are measured at wei
 **What it shows about the arrangement.** The auditor found in four minutes what I had not seen in a script I had tested. Five of its eleven findings are of the kind Codex used to find: a claim in a brief that had not been run.
 
 
-### 9.115 E28 written and audited: the GRU born under every-byte targets (13 November 2026, 12:01 EST by the clock)
+## 9.115 E28 written and audited: the GRU born under every-byte targets (13 November 2026, 12:01 EST by the clock)
 
 **What it asks.** The target test has no answer mask. E24 showed a sign rule collapsing under every-byte targets on the two-bank network; nothing is on file for the sweep on the GRU. E28 is E26's births with the loss mask changed: sweep and backprop, every-byte and balanced targets, three seeds, twelve births and two host checks, about 12.5 CPU-hours. Brief: `OPUS_TASK_E28_GRU_EVERY_BYTE_20261113.md`, revision 2. No run has been made.
 
@@ -2549,7 +2549,7 @@ One measurement from the audit is worth keeping: at E26's born weights the non-a
 Also pushed: a read-only brief for a source check on learned feedback weights (`OPUS_TASK_SOURCE_CHECK_LEARNED_FEEDBACK_20261113.md`).
 
 
-### 9.116 The sizing learner's span: a brief, and a doubt about stage 1's reading (13 November 2026, 12:13 EST by the clock)
+## 9.116 The sizing learner's span: a brief, and a doubt about stage 1's reading (13 November 2026, 12:13 EST by the clock)
 
 **The brief.** `OPUS_TASK_SIZING_SPAN_20261113.md`, revision 2, comes before the held sizing roster: stage 1's copy fixture at fixed distances from 4 to 60 on three seeds, mixed distances, and starts from E26's born weights and from a permuted copy of them. 48 runs, about 9 CPU-hours, backprop only. No run has been made.
 

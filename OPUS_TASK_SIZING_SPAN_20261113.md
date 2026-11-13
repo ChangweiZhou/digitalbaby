@@ -6,7 +6,7 @@
 
 Stage 1 of the sizing sweep (`TARGET_TEST_STEP0/sizing/SIZING_STAGE1_REPORT.md`) found that the sweep's GRU, from random weights, copies a byte 12 positions back at 99.7% and learns nothing at 24, 40 or 60. One seed (1104).
 
-**The audit found that this comparison was not at equal dose.** A fixed distance D gives 256/(D+1) repeats per update: 19.7 at D = 12, 10.2 at 24, 4.2 at 60. At D = 12 the learner was still at 8% after 13,714 repeats and passed later. The run at 24 saw about 30,000 repeats in all, and the run at 60 about 42,000 over 10,000 updates. "Nothing at 24" may be a limit of span or of dose. Review 9.20 E drew a consequence for the target test from it; that is open until this job reports.
+**The audit found that this comparison was not at equal dose.** A fixed distance D gives 256/(D+1) repeats per update: 19.7 at D = 12, 10.2 at 24, 4.2 at 60. At D = 12 the learner was still at 8% after 13,714 repeats and passed later. The run at 24 saw about 30,000 repeats in all, and the run at 60 about 42,000 over 10,000 updates. "Nothing at 24" may be a limit of span or of dose. Review 9.112 E drew a consequence for the target test from it; that is open until this job reports.
 
 What hangs on it: arm B's ordinary stream needs the context letter 13 to 18 positions before its answer digits (`sz_stream.py` line 196: context, filler of 10 to 14, cue, `=`, two digits).
 
@@ -64,7 +64,7 @@ A run that passed in an earlier window and does not pass in the last tenth is "n
 
 ## Readings, fixed now
 
-- **Stage 1's "nothing at 24".** Block A passing at 24: the earlier failure was dose, and the statements built on a span of 12 (review 9.20 E, the sizing brief's revision 4) get an erratum. Block A at chance at 24 with 12 passing: the limit is span at this dose, now on three seeds.
+- **Stage 1's "nothing at 24".** Block A passing at 24: the earlier failure was dose, and the statements built on a span of 12 (review 9.112 E, the sizing brief's revision 4) get an erratum. Block A at chance at 24 with 12 passing: the limit is span at this dose, now on three seeds.
 - **Arm B's ordinary stream.** Block A's span at 18 or more: arm B's held figures in the roster carry no span caveat. A span of 12 or 16: they are reported as limited by span. Fixed 12 not passing: arm B is not readable from random weights.
 - **Mixed against fixed** (B against A at 24 and 40, about 60,000 repeats per D in both). Mixed helps only if B passes where A does not, in two of three seeds. Where both pass, repeats to 50% are compared and read only if they differ by a factor of two or more in all three seeds. Where A passes and B does not, mixing hurt, and that is said.
 - **Born against random** at every shared D (4, 12, 24, 40), by class and by repeats to 50%, with the permuted start beside them at 12 and 24. A born advantage is read as the birth's structure only if the permuted start does not share it. On the Mac at D = 4 the auditor saw the born start learn two to three times slower than random weights (rerun by the coordinator on one birth: 215 of 3,200 against 3,200 of 3,200 in the fourth quarter of 300 chunks); a born failure at 24 or 40 is therefore read against its own D = 4 and 12 before anything is said about span.
@@ -90,6 +90,6 @@ One host, at most three processes on four cores, one thread each. New files only
 | 6 | Stream seed for born runs unspecified; load trap | `StreamLearner` constructor read | pairing stated; load in place |
 | 7 | One-element set not byte-identical if D shares the generator | auditor's output | separate generator and seed string |
 | 8 | Span definitions and F5 had holes | read against the draft | block span with monotone clause; classes; M2 dropped |
-| 9 | Wrong section cited; the 40-letter result is a different demand | review line 2470 | cited as 9.20 E; differences stated |
+| 9 | Wrong section cited; the 40-letter result is a different demand | review line 2470 | cited as 9.112 E; differences stated |
 | 10 | Admission item 4 infeasible as worded | — | `sz_verify_born.py` |
 | 11 | Admission item 2 had no teeth off-class | — | 95% floor |
