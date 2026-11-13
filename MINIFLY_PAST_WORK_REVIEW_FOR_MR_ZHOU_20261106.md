@@ -2677,3 +2677,18 @@ A descriptive note, not registered: within a birth, the life updated by backprop
 ### D. Source checks
 
 The memo on learned feedback weights (branch `claude/charming-clarke-u9g850`, merged) and the page on timescales and delays (with E29) are with a hostile auditor. Neither steers a design until read.
+
+
+## 9.121 The two source checks audited: one negative claim refuted, one cost doubled, one result misread (13 November 2026, 16:43 EST by the clock)
+
+Note: `PROJECT_DOCUMENTS/LIT_CHECK_20261113/AUDIT_OF_BOTH_SOURCE_CHECKS.md`. The auditor (same model family; a second reader) opened the sources. I spot-checked two points and the arithmetic; the rest is the auditor's reading. Literature only; nothing on file changes.
+
+**Learned feedback weights.** The memo's equations and figures hold. Three corrections matter:
+
+- Its finding that nobody has applied learned feedback through time is wrong. Three studies exist on recurrent networks, and the one closest to a Kolen–Pollack rule reported no gain over fixed random feedback.
+- Kolen–Pollack never copies a weight, but the feedback synapse must receive the same two-cell product, rate and decay as its forward partner. Under the ruling of 11 November (a separate pathway that learns by a local rule and never copies a weight) it is inside the line by the letter. Whether it is inside by the spirit is a question I put to Mr. Xu before any design uses it.
+- The extra work per token is about twice the memo's figure.
+
+**Timescales and delays.** In the nearest published study, a spread of time constants at initialisation alone bought about 2 points and letting them be learned bought about 10. That agrees with E29's part A, where training built the holding units in our own networks. Part B's fixed spread at birth is forecast with that in mind. Fixed random delays captured most of what learned delays gave in the one recurrent ablation read.
+
+**My own recall, corrected:** I cited chrono initialisation from memory as spreading timescales; it draws them uniformly up to a length taken from the task, and with torch's gate the bias sign is the opposite of the paper's equation.
