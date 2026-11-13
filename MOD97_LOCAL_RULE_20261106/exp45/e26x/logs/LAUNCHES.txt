@@ -1,0 +1,51 @@
+2026-11-12T21:14:50Z pilot begins; HEAD 77ed46f9c100defc10dcb43c8e86f3a34d7c349c; vm, 4 cores; exp26x_cross.py 24dbb6dd4cfec2f2
+2026-11-12T21:14:50Z sources equal to 360e1b8d: checked
+2026-11-12T21:14:50Z start: python3 exp26_candidate.py life S 73129 --out exp45/e26x/pilot/orig > exp45/e26x/pilot/orig_S.log
+2026-11-12T21:14:50Z start: python3 exp26_candidate.py life B 73129 --out exp45/e26x/pilot/orig > exp45/e26x/pilot/orig_B.log
+2026-11-12T21:14:50Z start: python3 exp26x_cross.py life S S 73129 --out exp45/e26x/pilot > exp45/e26x/pilot/x_SS.log
+2026-11-12T21:15:03Z exit 1: pilot orig_S
+2026-11-12T21:15:03Z exit 1: pilot orig_B
+2026-11-12T21:15:03Z start: python3 exp26x_cross.py life B B 73129 --out exp45/e26x/pilot > exp45/e26x/pilot/x_BB.log
+2026-11-12T21:15:03Z start: python3 exp26x_cross.py life S B 73129 --out exp45/e26x/pilot > exp45/e26x/pilot/x_SB.log
+2026-11-12T21:24:20Z exit 0: pilot x_SB
+2026-11-12T21:24:20Z start: python3 exp26x_cross.py life B S 73129 --out exp45/e26x/pilot > exp45/e26x/pilot/x_BS.log
+2026-11-12T21:24:36Z exit 0: pilot x_BB
+2026-11-12T21:25:03Z exit 0: pilot x_SS
+2026-11-12T21:34:12Z exit 0: pilot x_BS
+2026-11-12T21:34:12Z pilot all finished
+2026-11-12T21:34:14Z pilot reference rerun begins; births copied into exp45/e26x/pilot/orig; failed first attempt's logs kept as orig_*_attempt1.log
+2026-11-12T21:34:14Z start: python3 exp26_candidate.py life S 73129 --out exp45/e26x/pilot/orig > exp45/e26x/pilot/orig_S.log
+2026-11-12T21:34:14Z start: python3 exp26_candidate.py life B 73129 --out exp45/e26x/pilot/orig > exp45/e26x/pilot/orig_B.log
+2026-11-12T21:43:44Z exit 0: pilot orig_B
+2026-11-12T21:44:13Z exit 0: pilot orig_S
+2026-11-12T21:44:13Z pilot reference rerun finished
+2026-11-12T21:44:37Z formal begins; HEAD 7503c06dcbb2e29e963328d5939c93093f92eb2b; vm, 4 cores, torch 2.15.0+cpu; exp26x_cross.py 24dbb6dd4cfec2f2
+2026-11-12T21:44:37Z sources equal to 360e1b8d and exp26x_cross.py equal to the pilot's: checked
+2026-11-12T21:44:37Z start: python3 exp26x_cross.py life S B 73129 --out exp45/e26x > exp45/e26x/logs/life_SB_73129.log
+2026-11-12T21:44:37Z start: python3 exp26x_cross.py life B S 73129 --out exp45/e26x > exp45/e26x/logs/life_BS_73129.log
+2026-11-12T21:44:37Z start: python3 exp26x_cross.py life S B 93683 --out exp45/e26x > exp45/e26x/logs/life_SB_93683.log
+2026-11-12T22:59:02Z exit 0: life SB 93683
+2026-11-12T22:59:02Z start: python3 exp26x_cross.py life B S 93683 --out exp45/e26x > exp45/e26x/logs/life_BS_93683.log
+2026-11-12T22:59:12Z exit 0: life SB 73129
+2026-11-12T22:59:12Z start: python3 exp26x_cross.py life S B 116089 --out exp45/e26x > exp45/e26x/logs/life_SB_116089.log
+2026-11-12T23:03:35Z exit 0: life BS 73129
+2026-11-12T23:03:35Z start: python3 exp26x_cross.py life B S 116089 --out exp45/e26x > exp45/e26x/logs/life_BS_116089.log
+2026-11-13T00:07:14Z INTERRUPTED: container restart (between 00:03Z and 00:07Z) killed the launcher and three lives: BS 93683 (4 of 6 stages written, through F2.2), SB 116089 (5 of 6, through F3.1), BS 116089 (4 of 6, through F2.2). Their partial receipts and logs are kept as written; not restarted.
+2026-11-13T00:40:31Z rerun begins; HEAD 251dd1b67bb6ce2ea13a5f0a86e66a551bbf29ec; vm, 4 cores; exp26_resume.py 111cbd788667c276
+2026-11-13T00:40:31Z sources equal to 360e1b8d: checked
+2026-11-13T00:40:31Z start: python3 exp26_resume.py life B S 93683 --out exp45/e26x >> exp45/e26x/logs/life_BS_93683.log
+2026-11-13T00:40:31Z start: python3 exp26_resume.py life S B 116089 --out exp45/e26x >> exp45/e26x/logs/life_SB_116089.log
+2026-11-13T00:40:31Z start: python3 exp26_resume.py life B S 116089 --out exp45/e26x >> exp45/e26x/logs/life_BS_116089.log
+2026-11-13T00:53:55Z INTERRUPTED: second container restart (~00:52Z) killed the rerun launcher and its three lives; checkpoints present (BS 93683, SB 116089, BS 116089); resuming with run_rerun.sh
+2026-11-13T00:53:55Z rerun begins; HEAD 87d5419cf99934c5d09ae486dee161cda696c520; vm, 4 cores; exp26_resume.py 111cbd788667c276
+2026-11-13T00:53:55Z sources equal to 360e1b8d: checked
+2026-11-13T00:53:55Z start: python3 exp26_resume.py life B S 93683 --out exp45/e26x >> exp45/e26x/logs/life_BS_93683.log
+2026-11-13T00:53:55Z start: python3 exp26_resume.py life S B 116089 --out exp45/e26x >> exp45/e26x/logs/life_SB_116089.log
+2026-11-13T00:53:55Z start: python3 exp26_resume.py life B S 116089 --out exp45/e26x >> exp45/e26x/logs/life_BS_116089.log
+2026-11-13T01:56:10Z exit 0: life SB 116089
+2026-11-13T01:56:15Z published: SB 116089
+2026-11-13T02:00:39Z exit 0: life BS 116089
+2026-11-13T02:00:42Z published: BS 116089
+2026-11-13T02:01:05Z exit 0: life BS 93683
+2026-11-13T02:01:09Z published: BS 93683
+2026-11-13T02:01:09Z rerun all lives finished
