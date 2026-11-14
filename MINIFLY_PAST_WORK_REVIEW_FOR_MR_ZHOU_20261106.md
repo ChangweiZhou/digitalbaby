@@ -2737,3 +2737,5 @@ Both workers wrote E31 independently. No switch, exact recurrent map (H), Kolen�
 Stage 2 is eighteen lives, nine per worker, about 24 CPU-hours.
 
 **Not yet read by me:** E28's twelve births, E30, the span rerun with clean bytes, and the second source check are complete on their branches. The outside review reports E28 as 71.7–74.8 for the sweep under every-byte targets against 93.5–97.7, and E30 as three of four predictions holding. I will verify them from receipts, merge and file them next.
+
+**Addendum to 9.123: amendment to the fifth working ruling (14 November 2026).** Mr. Xu ruled that Kolen–Pollack feedback may start from the forward weights' signs times one mean magnitude, read once at the start and never again. Arm Ks is released to worker B (three lives; addendum 3 of the brief, with P31.10).

@@ -130,3 +130,7 @@ Push after each life. Ks is not run until I say so.
 - **P31.9** Plus-minus does not rise with strength: the strongest push is not the best of the three in at least two of three seeds. About 60%.
 
 Choosing the best of three strengths after the fact flatters it, so a strength that clears P31.8 is run again on fresh seeds before anything is claimed.
+
+## Addendum 3: arm Ks released (14 November 2026)
+
+Mr. Xu ruled that Kolen–Pollack feedback may start from the forward weights' signs, read once at the start. Worker B runs the three full lives of Ks after its other nine, provided the stage 1b dry runs of Ks agree. **P31.10 (mine):** Ks is within 5 points of H on plus-minus in all three seeds, about 60%; and Ks is above K at the end of stage 2 (F1.2) on the F1 mean in all three, about 65%.
