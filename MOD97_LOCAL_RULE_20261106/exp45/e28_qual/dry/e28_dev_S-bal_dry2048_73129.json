@@ -1,0 +1,638 @@
+{
+ "experiment": "E28",
+ "kind": "birth",
+ "arm": "S-bal",
+ "targets": "balanced",
+ "local": true,
+ "net": "G1",
+ "seed": 73129,
+ "kmax": 12,
+ "dev_updates": 2048,
+ "block": 512,
+ "batch": 64,
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "exp28_everybyte.step: forward(local), balanced-target cross entropy, zero_grad, backward, AdamW step (credit through the whole item)",
+ "loss_definition": "0.5 * mean CE over answer positions + 0.5 * mean CE over the other real positions",
+ "roles": {
+  "coarse": [
+   "distractor",
+   "operand",
+   "structural",
+   "answer"
+  ],
+  "fine": [
+   "distractor",
+   "operand",
+   "code",
+   "operator",
+   "equals",
+   "answer_digit",
+   "eos"
+  ],
+  "fine_to_coarse": {
+   "distractor": "distractor",
+   "operand": "operand",
+   "code": "structural",
+   "operator": "structural",
+   "equals": "structural",
+   "answer_digit": "answer",
+   "eos": "answer"
+  },
+  "identification": "from the item's layout (exp11_cell.render): code a1 a2 op d_1..d_k b1 b2 '=' | c1 c2 EOS, k = len(prompt) - 7; byte classes asserted on every item; the answer role equals the answer mask (asserted); EOS counted under answer, the task code under structural"
+ },
+ "protocol": "exp16_integrated.develop17 plain path (four mod-89 operations, k 0..12), as exp26_candidate.dev, loss mask changed only",
+ "model": {
+  "cls": "arch20.NetRNN",
+  "kind": "gru",
+  "params": 1124113,
+  "params_by_tensor": {
+   "book.weight": 2064,
+   "l1.weight": 4096,
+   "l1.bias": 512,
+   "rnn.weight_ih_l0": 393216,
+   "rnn.weight_hh_l0": 196608,
+   "rnn.bias_ih_l0": 768,
+   "rnn.bias_hh_l0": 768,
+   "lm.weight": 131072,
+   "lm.bias": 512,
+   "l2.weight": 262144,
+   "l2.bias": 512,
+   "l3.weight": 131584,
+   "l3.bias": 257
+  },
+  "forward": "arch26.forward (written-out GRU step, exp3_state.lin at every map)"
+ },
+ "installed": {
+  "E_forward": "arch26.forward",
+  "E_new_net_class": "arch20.NetRNN"
+ },
+ "provenance": {
+  "command": "python3 exp28_everybyte.py dev S-bal 73129 --out exp45/e28_qual/dry",
+  "environment_at_start": {
+   "E11_DEV_UPDATES": "2048",
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v445-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "efed20cad11b26f7d64b0c1dfee62c1403b316ea",
+   "sources_modified_vs_commit": []
+  },
+  "interpreter": {
+   "python_executable": "/root/e28venv/bin/python3",
+   "python_version_full": "3.13.18 (main, Oct 26 2026, 14:08:19) [Clang 23.1.3 ]",
+   "packages": {
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4"
+   }
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp28_everybyte.py": "7bc97268e66e4f6e12221f8f7955460058bbce1374520b4a478262430082eb00"
+  }
+ },
+ "complete": true,
+ "curve": [
+  {
+   "step": 2048,
+   "loss": 1.564314999151975,
+   "finite_losses": true,
+   "finite_cumulative": {
+    "all_finite": true,
+    "updates_covered": 2048,
+    "first_nonfinite_update": null
+   },
+   "cpu": 283.784629065,
+   "cpu_scoring_so_far": 8.734391105999975,
+   "cpu_updates_so_far": 275.050237067,
+   "sealed": {
+    "add89": {
+     "0": {
+      "n": 300,
+      "exact": 46,
+      "final": 46
+     },
+     "4": {
+      "n": 300,
+      "exact": 47,
+      "final": 47
+     },
+     "8": {
+      "n": 300,
+      "exact": 48,
+      "final": 48
+     },
+     "12": {
+      "n": 300,
+      "exact": 49,
+      "final": 49
+     },
+     "20": {
+      "n": 300,
+      "exact": 44,
+      "final": 44
+     }
+    },
+    "sub89": {
+     "0": {
+      "n": 300,
+      "exact": 41,
+      "final": 41
+     },
+     "4": {
+      "n": 300,
+      "exact": 41,
+      "final": 41
+     },
+     "8": {
+      "n": 300,
+      "exact": 44,
+      "final": 44
+     },
+     "12": {
+      "n": 300,
+      "exact": 43,
+      "final": 43
+     },
+     "20": {
+      "n": 300,
+      "exact": 42,
+      "final": 42
+     }
+    },
+    "max89": {
+     "0": {
+      "n": 300,
+      "exact": 289,
+      "final": 289
+     },
+     "4": {
+      "n": 300,
+      "exact": 292,
+      "final": 292
+     },
+     "8": {
+      "n": 300,
+      "exact": 289,
+      "final": 289
+     },
+     "12": {
+      "n": 300,
+      "exact": 288,
+      "final": 288
+     },
+     "20": {
+      "n": 300,
+      "exact": 283,
+      "final": 283
+     }
+    },
+    "min89": {
+     "0": {
+      "n": 300,
+      "exact": 283,
+      "final": 283
+     },
+     "4": {
+      "n": 300,
+      "exact": 286,
+      "final": 286
+     },
+     "8": {
+      "n": 300,
+      "exact": 285,
+      "final": 285
+     },
+     "12": {
+      "n": 300,
+      "exact": 284,
+      "final": 284
+     },
+     "20": {
+      "n": 300,
+      "exact": 284,
+      "final": 284
+     }
+    }
+   },
+   "hard_mean_add89_sub89_k12": 15.333333333333332,
+   "book_shift_by_role": {
+    "operator": 0.1421,
+    "digit": 0.1494,
+    "separator": 0.0,
+    "equals": 0.0829,
+    "distractor letter": 0.1976,
+    "task code": 0.0188
+   },
+   "data_digest": {
+    "batches": 2048,
+    "sha256": "4f622d94e0156993925f2343bce626de7d732a27e0e63762f6a97ec8c77895cb"
+   },
+   "data_digest_check": "not asserted: E26's receipts have no row at step 2048 (reduced dose)",
+   "weights": "e28_dev_S-bal_dry2048_73129.pt",
+   "weights_sha256": "b1c74d062817381222df462ec495c23009931122c88f18d9abd1c15a30e093ac",
+   "tensors_sha256": "5a7be0458761b0eee717062ccbfa59fcc6586e9317daedc797981110dda0ceb4",
+   "silenced_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "max89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "min89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    }
+   }
+  }
+ ],
+ "role_curve": [
+  {
+   "block_end": 512,
+   "train_loss": 2.0329361679032445,
+   "by_role": {
+    "distractor": {
+     "mean": 3.5438537918128006,
+     "positions": 196748
+    },
+    "operand": {
+     "mean": 2.853048573129854,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.8112536424341714,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 1.365171226682237,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.5438537918128006,
+     "positions": 196748
+    },
+    "operand": {
+     "mean": 2.853048573129854,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.6110411328700138,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 0.5105695438738178,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 0.3121502505586825,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.9883351791670858,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.11884332171253963,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 1024,
+   "train_loss": 1.691558047896251,
+   "by_role": {
+    "distractor": {
+     "mean": 3.434850235396596,
+     "positions": 196048
+    },
+    "operand": {
+     "mean": 2.722106200224516,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.4686385965842193,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.8542208087250085,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.434850235396596,
+     "positions": 196048
+    },
+    "operand": {
+     "mean": 2.722106200224516,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.4019545827959519,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 0.0022348543239332497,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 0.0017263526327729243,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.2810728014599713,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.0005168232550830732,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 1536,
+   "train_loss": 1.6351383905857801,
+   "by_role": {
+    "distractor": {
+     "mean": 3.430385566322583,
+     "positions": 198052
+    },
+    "operand": {
+     "mean": 2.7171040854650528,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.4682280981402058,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.7408778660506216,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.430385566322583,
+     "positions": 198052
+    },
+    "operand": {
+     "mean": 2.7171040854650528,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.4016126233909745,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 0.0014852130862367287,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 0.0015864579434060706,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.111088138602091,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.0004573209476827504,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 2048,
+   "train_loss": 1.564314999151975,
+   "by_role": {
+    "distractor": {
+     "mean": 3.4305271316173047,
+     "positions": 195946
+    },
+    "operand": {
+     "mean": 2.715033304103599,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.4675699794860498,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.6045426507681154,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.4305271316173047,
+     "positions": 195946
+    },
+    "operand": {
+     "mean": 2.715033304103599,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.3996332402457483,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 0.0008286856325160526,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 0.0022480125798849514,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.906434925917816,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.0007581004687140713,
+     "positions": 32768
+    }
+   }
+  }
+ ],
+ "finite": {
+  "all_finite": true,
+  "updates_covered": 2048,
+  "first_nonfinite_update": null
+ },
+ "credit_census_first_update": {
+  "params_without_gradient": [],
+  "book_rows_in_batch": 47,
+  "book_rows_in_batch_without_gradient": 2,
+  "dead_rows": [
+   256,
+   257
+  ],
+  "by_role": {
+   "operator": {
+    "present": 4,
+    "with_gradient": 4
+   },
+   "digit": {
+    "present": 10,
+    "with_gradient": 10
+   },
+   "equals": {
+    "present": 1,
+    "with_gradient": 1
+   },
+   "distractor letter": {
+    "present": 26,
+    "with_gradient": 26
+   },
+   "task code": {
+    "present": 4,
+    "with_gradient": 4
+   },
+   "BOS/EOS": {
+    "present": 2,
+    "with_gradient": 0
+   }
+  }
+ },
+ "optimizer_steps": [
+  2048
+ ],
+ "optimizer_read_back": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "data_digest": {
+  "batches": 2048,
+  "sha256": "4f622d94e0156993925f2343bce626de7d732a27e0e63762f6a97ec8c77895cb"
+ },
+ "weights": "e28_dev_S-bal_dry2048_73129.pt",
+ "weights_sha256": "b1c74d062817381222df462ec495c23009931122c88f18d9abd1c15a30e093ac",
+ "tensors_sha256": "5a7be0458761b0eee717062ccbfa59fcc6586e9317daedc797981110dda0ceb4",
+ "row_weights": {
+  "2048": {
+   "file": "e28_dev_S-bal_dry2048_73129.pt",
+   "sha256": "b1c74d062817381222df462ec495c23009931122c88f18d9abd1c15a30e093ac"
+  }
+ },
+ "cpu_total": 286.53274299,
+ "cpu_scoring": 11.463018502999944,
+ "cpu_saving_rows": 1.6449999975520768e-06,
+ "cpu_updates": 275.069725064,
+ "cpu_per_update": 0.13431138919140626
+}
