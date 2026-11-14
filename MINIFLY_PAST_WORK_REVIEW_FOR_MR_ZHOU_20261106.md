@@ -2694,3 +2694,31 @@ Note: `PROJECT_DOCUMENTS/LIT_CHECK_20261113/AUDIT_OF_BOTH_SOURCE_CHECKS.md`. The
 **My own recall, corrected:** I cited chrono initialisation from memory as spreading timescales; it draws them uniformly up to a length taken from the task, and with torch's gate the bias sign is the opposite of the paper's equation.
 
 **Addendum to 9.121: Mr. Xu's ruling, 13 November 2026, 17:04 EST by the clock.** Asked whether a feedback synapse that receives the same update as its forward partner at every step (Kolen–Pollack) is inside the line, Mr. Xu answered: "Yes, inside." This is the fifth working ruling. The backward weights still start unequal to the forward ones, are never read from them, and reach them only by receiving the same signals, rate and decay. A design that uses it states the decay and the measured alignment over training, since without decay the two never meet.
+
+## 9.122 Outside review of the day's five deliveries: errata adopted, and the work assigned from it (13 November 2026)
+
+A more capable model reviewed the five deliveries of 13 November at Mr. Xu's request. Mr. Xu instructed me to assign work from it without checking it again, so the corrections below are **adopted on the reviewer's evidence, not rerun by me**. The reviewer found the workers' numbers correct throughout; the errors are in my briefs, my audits and my readings.
+
+**Errata.**
+
+- **9.115 and the E28 brief.** I wrote that E24's sweep arm cut credit in time. It did not (`exp16_integrated.py` lines 91–94; the E27 worker's executed check). E24's sweep arm and E28's S-all differ in the network only. An erratum is appended to the brief. With six of twelve births in (two seeds), the sweep under every-byte targets ends at 74.8 and 74.7 against 93.5 and 97.7 for backprop: on the GRU it costs about 20 points and does not collapse; the collapse belonged to the two-bank network. The registered readings are judged when all twelve are in.
+- **9.119.** "Not supported in either half" overstated E27. Letter error is amplified two to three times under weight signs on every trained GRU, so the mechanism exists; it does not explain the collapse. The worker's report called the first half mixed, and that is the right word.
+- **9.120 B.** "A born start is not a head start" is withdrawn. At distance 24 the born start passes in three of three seeds against two of three and learns sooner in every seed; a permuted copy of the born weights beats the born weights in all six pairs; and the fixture's keys are the capital letters the birth learned to ignore. Two runs lost a learned copy, not one. The target stream at its proposed size gives 281 updates where a fixed carry of 16–20 bytes took 750–3,750.
+- **9.120 C.** "The sweep's networks hold as much" is withdrawn. From 12 to 40 letters on mod-97 addition, sweep-updated lives lose 7.5–11.5 points and backprop-updated lives 0.2–2.2, in all three seeds from either birth. E29's "rewritten somewhere" test pools over 300 items, so nearly every unit passes it, and the lives were measured on mod-89 addition, which they answer 2–40% of the time.
+- **9.121.** My audit's verdict on learned feedback in recurrent networks is unreliable: it found three studies where at least five exist, described a Kolen–Pollack study as showing no gain when its supplement may show it ahead, and missed a clear null result. The forecast I drew from it for E29 part B is withdrawn.
+
+**What the reviewer measured after the fact (unregistered; a lead).** On untaught pairs both updates get the first step right at similar rates; given that, the second step fails in 31–46% of items under the sweep against 7–17%. Most mistakes have exactly one digit right. In sweep-lived networks 73–79% of update-gate values on composition items lie between 0.1 and 0.9, against 43–53%, and this flips within one life when the update is swapped.
+
+**Assigned (briefs at the repository root, none audited by a second reader, on Mr. Xu's instruction).**
+
+| Job | Brief | Kind |
+|---|---|---|
+| E28 stage 2b | erratum and stage 2b appended to `OPUS_TASK_E28_GRU_EVERY_BYTE_20261113.md` | six missing births |
+| E30 | `OPUS_TASK_E30_GATE_MEASURE_20261113.md` | gate measure registered, then read on unseen files |
+| E31 | `OPUS_TASK_E31_ONE_SWITCH_LIVES_20261113.md` | nine lives: exact gate rows, exact recurrent map, Kolen–Pollack feedback; two workers write it independently |
+| Span, clean bytes | `OPUS_TASK_SIZING_SPAN_CLEAN_ALPHABET_20261113.md` | 27 fits |
+| Source check | `OPUS_TASK_SOURCE_CHECK_GATES_AND_APPROX_CREDIT_20261113.md` | literature |
+
+**Held.** The target-test sizing roster and E29 part B, until E31 reports: sizing a stream for a learner with imprecise memory would measure the wrong thing. A local term that pushes each gate away from one half is a new kind of term and waits for Mr. Xu's ruling.
+
+**Process change adopted.** An audit finding is accepted only with the command that shows it. I accepted the E24 claim from reading receipts, which cannot show it.

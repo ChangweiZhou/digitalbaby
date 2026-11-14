@@ -105,3 +105,14 @@ One host, at most three processes on four cores. E26's births took 3,068 to 3,28
 | 7 | Max/min had no prediction | — | declared descriptive |
 | 8 | Host check fails across classes | not runnable here (Mac torch 2.9.1) | host precondition; digests compared |
 | 9 | Necessary, not sufficient, for the target test | review 9.110 E | said in "Why" |
+
+## Erratum and stage 2b (13 November 2026, appended; nothing above is rewritten)
+
+**Erratum.** This brief says E24's sweep arm cut credit in time. It did not: `exp16_integrated.py` lines 91–94 force credit through time under that setting, and the E27 worker's executed check (`e27_check_rule.py`) agrees. So E24's sweep arm and E28's S-all differ in the network only. The registered predictions and readings above stay as written; the sentence about E24 is withdrawn. This correction comes from the outside review of 13 November and was adopted on Mr. Xu's instruction without a rerun by the coordinator.
+
+**Stage 2b: the six missing births.** A container restart stopped stage 2 after six births. Births are deterministic within the host class, so a birth run again from its seed is the same birth; no resume is used.
+
+1. Move the three interrupted receipts (`e28_dev_S-bal_93683.json`, `e28_dev_B-bal_93683.json`, `e28_dev_S-all_116089.json`) and any row files of theirs into `exp45/e28/interrupted/`, unchanged.
+2. Run from scratch, runner and sources unchanged (the `fcedbcef` check in `run_stage2.sh` stays): S-bal 93683, B-bal 93683, and all four arms of 116089. At most three processes.
+3. Commit and push after each birth finishes, so a second restart loses at most the births in flight. If a restart happens, repeat steps 1 and 2 for what is missing.
+4. Report numbers and prediction outcomes with `e28_summarize.py`, no readings. Do not open the saved row files for any other measurement: E30 registers a measure on them first.
