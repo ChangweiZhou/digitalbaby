@@ -1,0 +1,101 @@
+{
+ "experiment": "E32",
+ "kind": "dry births and cost (checks 1, 6, 7, 8)",
+ "worker": "main",
+ "check1_floor_dry2048": {
+  "tensors_sha256": "b49561cf6ef969a367b21a5528ecc58027aae844c5ccad197e03065e6d69e61a",
+  "e28_dry2048": "b49561cf6ef969a367b21a5528ecc58027aae844c5ccad197e03065e6d69e61a",
+  "equal": true
+ },
+ "check6_P4z_8192": {
+  "rows": {
+   "4096": "ffe7eeb15e065cbf16e7c86c8fdce6d9bb54d70adee6e8212fb0a46f333a47f6",
+   "8192": "7efe20d99cb19ed2f216adfd2c476f873938f6a130844fd253112f7101259666"
+  },
+  "e28_rows": {
+   "4096": "ffe7eeb15e065cbf16e7c86c8fdce6d9bb54d70adee6e8212fb0a46f333a47f6",
+   "8192": "7efe20d99cb19ed2f216adfd2c476f873938f6a130844fd253112f7101259666"
+  },
+  "equal_4096": true,
+  "equal_8192": true
+ },
+ "check7_hashes_for_second_worker": {
+  "G": "ad7114bfe44974e889709931e7c1ccadac5ae9d2b835cd8319cc62f01060386a",
+  "H": "7fdaa9ddf66fa2fd8d86502ea42888bda3e8cab2e8fc137f16b15d40b0c1a4dc",
+  "K": "e1433252a2cef41069df76565b9ab0396824be0f9b75f9fd7a0bcdfc6c3cfd5e"
+ },
+ "dry": {
+  "G": {
+   "file": "e32_dev_G_dry2048_73129.json",
+   "dose": 2048,
+   "tensors_sha256": "ad7114bfe44974e889709931e7c1ccadac5ae9d2b835cd8319cc62f01060386a",
+   "rows": {
+    "2048": "ad7114bfe44974e889709931e7c1ccadac5ae9d2b835cd8319cc62f01060386a"
+   },
+   "cpu_total": 291.685482161,
+   "cpu_updates": 284.38558242199997,
+   "cpu_per_update": 0.13886014766699217,
+   "cpu_scoring": 7.2999001059999955
+  },
+  "H": {
+   "file": "e32_dev_H_dry2048_73129.json",
+   "dose": 2048,
+   "tensors_sha256": "7fdaa9ddf66fa2fd8d86502ea42888bda3e8cab2e8fc137f16b15d40b0c1a4dc",
+   "rows": {
+    "2048": "7fdaa9ddf66fa2fd8d86502ea42888bda3e8cab2e8fc137f16b15d40b0c1a4dc"
+   },
+   "cpu_total": 273.679281068,
+   "cpu_updates": 265.088721174,
+   "cpu_per_update": 0.1294378521357422,
+   "cpu_scoring": 8.590559583000015
+  },
+  "K": {
+   "file": "e32_dev_K_dry2048_73129.json",
+   "dose": 2048,
+   "tensors_sha256": "e1433252a2cef41069df76565b9ab0396824be0f9b75f9fd7a0bcdfc6c3cfd5e",
+   "rows": {
+    "2048": "e1433252a2cef41069df76565b9ab0396824be0f9b75f9fd7a0bcdfc6c3cfd5e"
+   },
+   "cpu_total": 273.290571254,
+   "cpu_updates": 265.404822356,
+   "cpu_per_update": 0.12959219841601563,
+   "cpu_scoring": 7.885749544000021
+  },
+  "P4z": {
+   "file": "e32_dev_P4z_dry8192_73129.json",
+   "dose": 8192,
+   "tensors_sha256": "7efe20d99cb19ed2f216adfd2c476f873938f6a130844fd253112f7101259666",
+   "rows": {
+    "4096": "ffe7eeb15e065cbf16e7c86c8fdce6d9bb54d70adee6e8212fb0a46f333a47f6",
+    "8192": "7efe20d99cb19ed2f216adfd2c476f873938f6a130844fd253112f7101259666"
+   },
+   "cpu_total": 1230.2370262099998,
+   "cpu_updates": 1213.4517521900002,
+   "cpu_per_update": 0.14812643459350588,
+   "cpu_scoring": 16.504363574999957
+  },
+  "floor": {
+   "file": "e32_dev_floor_dry2048_73129.json",
+   "dose": 2048,
+   "tensors_sha256": "b49561cf6ef969a367b21a5528ecc58027aae844c5ccad197e03065e6d69e61a",
+   "rows": {
+    "2048": "b49561cf6ef969a367b21a5528ecc58027aae844c5ccad197e03065e6d69e61a"
+   },
+   "cpu_total": 282.205827273,
+   "cpu_updates": 274.42183051200004,
+   "cpu_per_update": 0.13399503442968752,
+   "cpu_scoring": 7.78399846100001
+  }
+ },
+ "check8_forecast_cpu_seconds_per_birth": {
+  "ceiling (E28 B-all, measured on file)": 2701.4038762369996,
+  "G": 3462.4488816329995,
+  "H": 3230.8865466569996,
+  "K": 3234.6797608409997,
+  "P4 (P4z per-update cost after 4,096, plus calibration about 22 s)": 3712.1771491390004
+ },
+ "check8_forecast_total_cpu_seconds": 71297.851538355,
+ "check8_forecast_total_cpu_hours": 19.804958760654166,
+ "check8_forecast_wall_hours_three_processes": 6.601652920218055,
+ "note": "full-birth forecast: the dry births measured cpu per update (2,048 updates; P4z over 8,192) times 24,576, plus E28 S-all full scoring CPU; ceiling as E28 B-all measured"
+}
