@@ -2724,3 +2724,102 @@ A more capable model reviewed the five deliveries of 13 November at Mr. Xu's req
 **Process change adopted.** An audit finding is accepted only with the command that shows it. I accepted the E24 claim from reading receipts, which cannot show it.
 
 **Addendum to 9.122: sixth working ruling (13 November 2026).** Mr. Xu ruled that a term each unit computes from its own gate value alone, nudging the gate away from one half, is inside the line. It uses no error signal and nothing from another unit. A design using it states the strength and how it was set, applies it without sending anything across units or time, and reports the gate distribution it produces. E31 gains arm P (addendum to its brief); the reading fixed there separates "gates become decisive" from "composition improves".
+
+## 9.123 E31 stage 1 read and released with changes (14 November 2026)
+
+Both workers wrote E31 independently. No switch, exact recurrent map (H), Kolen–Pollack feedback (K) and the zero-strength gate push agree bit for bit, and the no-switch arm equals the E26 life at the dry dose. Two arms differed, and both workers stopped as the brief required. I read both branches and `E31_AGREEMENT_B.md`; my rulings are in addendum 2 of the brief.
+
+- **Exact gate rows (G):** the same rule evaluated in two orders; rounding only. Accepted. Agreement now means equal hashes or one-batch gradients within 1e-6.
+- **Gate push (P):** the brief did not say whether padding counts. It does not.
+- **The push as I wrote it is withdrawn before any full life.** At a quarter of the task's pull it drove the undecided share from 65% to 9% in 1,536 updates, well past backprop's 43–53%. This was my design error, caught by the dry run and the outside review. It is replaced by a push that stops once a gate leaves the 0.1–0.9 band, at three strengths (P2a, P2b, P2c). P31.5 and P31.6 are withdrawn unjudged; P31.7 to P31.9 replace them.
+- **K** keeps its random start and is read at the end of life only. A second arm started from the sweep's own sign matrix (Ks) is coded and dry-run, but it reads the forward weight once and so waits for Mr. Xu.
+
+Stage 2 is eighteen lives, nine per worker, about 24 CPU-hours.
+
+**Not yet read by me:** E28's twelve births, E30, the span rerun with clean bytes, and the second source check are complete on their branches. The outside review reports E28 as 71.7–74.8 for the sweep under every-byte targets against 93.5–97.7, and E30 as three of four predictions holding. I will verify them from receipts, merge and file them next.
+
+**Addendum to 9.123: amendment to the fifth working ruling (14 November 2026).** Mr. Xu ruled that Kolen–Pollack feedback may start from the forward weights' signs times one mean magnitude, read once at the start and never again. Arm Ks is released to worker B (three lives; addendum 3 of the brief, with P31.10).
+
+## 9.124 E28 complete, E30, the span rerun and the second source check: read, merged (14 November 2026)
+
+All four branches are merged. E28's scores I recomputed from the twelve receipts; E30 and the span rerun I read from the workers' reports and records without rerunning them. Evidence level E2 for E28; the others are measurements.
+
+**A. E28: the GRU under every-byte targets (twelve births, hard mean at 12 letters).**
+
+| Arm | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Sweep, every byte (S-all) | 74.8 | 74.7 | 71.7 |
+| Backprop, every byte (B-all) | 93.5 | 97.7 | 94.3 |
+| Sweep, balanced (S-bal) | 86.8 | 89.7 | 88.7 |
+| Backprop, balanced (B-bal) | 92.3 | 98.8 | 96.7 |
+| Sweep, answers only (E26) | 98.0 | 98.2 | 99.8 |
+| Backprop, answers only (E26) | 98.5 | 98.7 | 93.7 |
+
+- P28.1 holds (B-all at least 85 in all three). P28.2 misses (S-all is not near zero). P28.3 misses (S-bal is 12 to 17 above S-all, not 20). P28.4 holds.
+- Neither fixed reading applies: there is no collapse (S-all is well above half of B-all), and no survival (S-all is 23 to 28 below S-ans). The sweep pays 19 to 23 points for every-byte targets where backprop pays 0 to 5. Balancing the loss recovers 12 to 17 of them.
+- With the erratum of 9.122: E24's collapse belonged to the two-bank network.
+
+**B. E30: the gate measure, registered and then read.** Calibration passed on all twelve lives. Judged on the seeds complete at the time (two for E28).
+
+- P30.1 holds: sweep every-byte births have 92% of update-gate values undecided against 39–43%.
+- P30.2 holds in two of three seeds for the E26 births (39–49% against 26–33%).
+- P30.3 holds, and by far more than predicted: S-all answers 75–80% at 12 letters and 2% at 40; B-all 94–96% and 82–85%. The answers-only sweep births hold 96–100% at 40.
+- P30.4 misses: along S-all's rows the undecided share rises, 65% to 92%.
+- So the sweep with every byte as a target learns the trained gap and nothing beyond it, and its gates become less decisive as training goes on. This is the condition the target test imposes.
+
+**C. Span with clean bytes (27 runs).** F7 holds; F8, F9 and F10 miss. Because F9 missed (relabelling bytes changed a random start's class in two of six runs), my own rule says the born-against-random comparison cannot be read from single fixed-distance runs. What can be said: the byte clash does not explain the born start's slowness (equal repeats in two of three seeds at distance 4), and the permuted copy still learns sooner in three of three at distance 12. The explanation I adopted in 9.122 is mostly wrong.
+
+**D. Second source check.** Merged as `PROJECT_DOCUMENTS/LIT_CHECK_20261113/SOURCE_CHECK_GATES_AND_APPROX_CREDIT.md`. Per the outside review it agrees with the reviewer's own reading of the disputed study (the Kolen–Pollack variant ahead of random feedback in three of four comparisons). I have not checked it against the papers.
+
+**Next.** E31's eighteen lives (plus three for Ks) are released. `OPUS_TASK_E32_EVERY_BYTE_BIRTH_SWITCHES_20261114.md` puts the same switches on every-byte births with accuracy at 40 letters as the endpoint; it is written and not yet audited.
+
+**Addendum to 9.124: Mr. Xu widens the fifth ruling (14 November 2026).** In his words: "the feedback can read the forward weight, as many times as it wants, we want 'messy' connections to create intelligence." The condition "never reads the forward weight" in the fifth ruling is lifted, so arm Ks needs no special permission. **Open, and asked of Mr. Xu:** whether this also lifts the first ruling, under which exact weight transport (plain backpropagation) is outside the line. Until he answers, E31's arms G and H stay labelled as bounds, and nothing already registered changes.
+
+**Correction to the addendum above (14 November 2026).** I mischaracterised Mr. Xu's direction by asking whether it allowed plain backpropagation. It does not, and he has said so. His ruling, in his terms:
+
+- Transport of information is allowed locally, or at most between neighbours.
+- Skip connections (hyper-links, residual paths) are fine.
+- Information relayed in waves from neuron to neuron is fine.
+- Backpropagation carries weights across the whole network and is **not allowed**. The first ruling stands unchanged.
+
+Within that, a feedback connection may read the forward weight next to it as often as it likes; connections are meant to be messy. E31's arms G and H remain bounds, not candidates. Nothing registered changes.
+
+## 9.125 E32's brief audited by the outside reviewer and rewritten; Mr. Xu's judgment of the work (14 November 2026)
+
+Mr. Xu, on reading the audit: "the work quality is very low." He is right about the brief. Revision 1 was mine alone and it failed on every one of the five points audited. The causes, as I see them:
+
+- **I did not read the code I told a worker to reuse.** I named `arch31.py` as holding the gate push; it holds none of it, and worker A had not written the bounded push at all.
+- **I carried a rule from one setting to another without asking whether it still made sense.** Setting the push's strength on the first batch was written for a trained network at the start of a life. On an untrained network every gate is near one half and the rule is meaningless.
+- **I repeated an error I had just ruled on.** The mask ambiguity that split the two E31 workers was in E32's brief again in different words.
+- **I chose a limit that could not produce what the endpoint measures.** A gate at 0.9 keeps 1.5% of its state across 40 letters.
+- **The readings were not exhaustive and one contradicted the design's own arithmetic.**
+
+I reran the reviewer's commands that need no learner; each gave what the audit reported. The measurements that came from the reviewer's own scripts (untrained gates, keeping units per birth) I did not rerun; the scripts are not on the repository.
+
+Revision 2 of `OPUS_TASK_E32_EVERY_BYTE_BIRTH_SWITCHES_20261114.md` replaces revision 1, with a table of each finding, its evidence and the change. Eighteen births: bounds G and H, Kolen–Pollack feedback, and a gate push switched on at update 4,096 with a limit of 0.99 at three strengths. Endpoints are accuracy at 40 and at 20 letters on the mean of the last three rows, with keeping units counted at every row.
+
+**A consequence for E31.** Its bounded push (P2) stops at 0.9. On lives the composition panel has no letters, so that limit is not disqualifying there, but P2 cannot be read as a test of holding across letters. That is noted here and not changed in the running job.
+
+**For my own briefs from here on:** open every file a brief names and quote the line; write every mask and formula as code; ask of each endpoint what value a perfect arm would need at the unit level; and list the outcome table before the predictions.
+
+## 9.126 E32's brief: second audit and revision 3 (14 November 2026)
+
+The reviewer audited revision 2 and asked for one more revision. Revision 3 adopts every finding; its last section tables each one with its evidence.
+
+**A finding that changes the question (post hoc, unregistered; I reran the reviewer's reader and got the same numbers).** The sweep's every-byte births have 50–62 units at update 4,096 that keep half their state across 12 letters. By update 12,288 they have 2–5, and at the end 0–1, while accuracy at 12 letters rises from 16–26% to 71–80%. Backprop births end with 67–85 such units. So the sweep does not fail to make holding units; it loses them while it learns the trained distance. E32 now asks which change lets it keep them.
+
+**Errors of mine in revision 2:** the push's code used a variable the forward pass does not return, in a way that would silently compute every gate one step late; the mask still included a position with no target; the push on the gate value faded to a thousandth of its strength before the limit I had set; one mark could not be computed because the ceiling's rows were never saved; and the second-worker check compared hashes that two honest implementations could not share.
+
+**Revision 3:** twenty-one births (three ceiling reruns with rows saved, bounds G and H, Kolen–Pollack feedback, and a hinge on the gate's pre-activation at three strengths from update 4,097). Marks and readings are per distance, and holding units are counted only if they also write.
+
+Revision 3 has not been read by the reviewer.
+
+## 9.127 E32's brief: third audit, revision 4, released (14 November 2026)
+
+The reviewer's third audit found all sixteen earlier findings fixed and named six further text changes, saying that with those made it need not see the brief again. Mr. Xu again judged the work quality very low; three audits to reach a runnable brief for one experiment bears that out. Revision 4 makes the six changes as written and nothing else. I reran none of the third audit's measurements.
+
+What the third audit still found in my text: a check ("bit for bit") that correct code could fail; a strength set on one batch when the quantity it scales varies three- to five-fold between batches; a ceiling rerun described so that a worker would have written new code for it; a table read at a distance where its mark was arithmetically impossible; a mark named "retains" whose bar exceeded what existed to be retained; and a reading that pinned an effect to a window the design does not isolate.
+
+Useful numbers from that audit (reviewer's reader, unregistered): the floor's keepers slide from a gate of about 0.98 at update 4,096 to about 0.78 at the end while the gate rows' weight norm rises, so the loss is not weight decay; and the top push strength is by rough estimate 27 to 48 times what erodes them.
+
+E32 is released to two workers under revision 4.
