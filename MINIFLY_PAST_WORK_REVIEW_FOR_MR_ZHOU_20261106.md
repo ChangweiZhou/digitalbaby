@@ -2774,3 +2774,12 @@ All four branches are merged. E28's scores I recomputed from the twelve receipts
 **Next.** E31's eighteen lives (plus three for Ks) are released. `OPUS_TASK_E32_EVERY_BYTE_BIRTH_SWITCHES_20261114.md` puts the same switches on every-byte births with accuracy at 40 letters as the endpoint; it is written and not yet audited.
 
 **Addendum to 9.124: Mr. Xu widens the fifth ruling (14 November 2026).** In his words: "the feedback can read the forward weight, as many times as it wants, we want 'messy' connections to create intelligence." The condition "never reads the forward weight" in the fifth ruling is lifted, so arm Ks needs no special permission. **Open, and asked of Mr. Xu:** whether this also lifts the first ruling, under which exact weight transport (plain backpropagation) is outside the line. Until he answers, E31's arms G and H stay labelled as bounds, and nothing already registered changes.
+
+**Correction to the addendum above (14 November 2026).** I mischaracterised Mr. Xu's direction by asking whether it allowed plain backpropagation. It does not, and he has said so. His ruling, in his terms:
+
+- Transport of information is allowed locally, or at most between neighbours.
+- Skip connections (hyper-links, residual paths) are fine.
+- Information relayed in waves from neuron to neuron is fine.
+- Backpropagation carries weights across the whole network and is **not allowed**. The first ruling stands unchanged.
+
+Within that, a feedback connection may read the forward weight next to it as often as it likes; connections are meant to be messy. E31's arms G and H remain bounds, not candidates. Nothing registered changes.
