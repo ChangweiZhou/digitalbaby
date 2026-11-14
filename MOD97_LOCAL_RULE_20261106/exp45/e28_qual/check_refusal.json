@@ -1,0 +1,74 @@
+{
+ "experiment": "E28",
+ "stage": 1,
+ "item": "refusal",
+ "command": "python3 e28_checks.py refusal",
+ "provenance": {
+  "command": "python3 e28_checks.py refusal",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v445-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "efed20cad11b26f7d64b0c1dfee62c1403b316ea",
+   "sources_modified_vs_commit": []
+  },
+  "interpreter": {
+   "python_executable": "/root/e28venv/bin/python3",
+   "python_version_full": "3.13.18 (main, Oct 26 2026, 14:08:19) [Clang 23.1.3 ]",
+   "packages": {
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4"
+   }
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp28_everybyte.py": "7bc97268e66e4f6e12221f8f7955460058bbce1374520b4a478262430082eb00"
+  }
+ },
+ "extra_sources_sha256": {
+  "e28_checks.py": "bb93fcb45aa70c04fc09b1b0194a3ab41b4235a8b8849e4d8f43c34257916e66",
+  "e25_alignment.py": "5316278dc5f3d79b3ddd80e96a7674d84d6b9e053cb68b878d02518aa54527a3"
+ },
+ "cpu_seconds": 0.030593200999999848,
+ "result": {
+  "cases": {
+   "answer | e28_dev_S-ans_73129.pt | as written | offered to an arm S life": "refused: AssertionError: e28_dev_S-ans_73129.pt: not an E26 birth receipt",
+   "answer | e28_dev_S-ans_73129.pt | renamed to E26's file name | offered to an arm S life": "refused: AssertionError: e26_dev_S_73129.pt: not an E26 birth receipt",
+   "answer | e28_dev_B-ans_73129.pt | as written | offered to an arm B life": "refused: AssertionError: e28_dev_B-ans_73129.pt: not an E26 birth receipt",
+   "answer | e28_dev_B-ans_73129.pt | renamed to E26's file name | offered to an arm B life": "refused: AssertionError: e26_dev_B_73129.pt: not an E26 birth receipt",
+   "all | e28_dev_S-all_dry2048_73129.pt | as written | offered to an arm S life": "refused: AssertionError: e28_dev_S-all_dry2048_73129.pt: not an E26 birth receipt",
+   "all | e28_dev_S-all_dry2048_73129.pt | renamed to E26's file name | offered to an arm S life": "refused: AssertionError: e26_dev_S_73129.pt: not an E26 birth receipt",
+   "all | e28_dev_B-all_dry2048_73129.pt | as written | offered to an arm B life": "refused: AssertionError: e28_dev_B-all_dry2048_73129.pt: not an E26 birth receipt",
+   "all | e28_dev_B-all_dry2048_73129.pt | renamed to E26's file name | offered to an arm B life": "refused: AssertionError: e26_dev_B_73129.pt: not an E26 birth receipt",
+   "balanced | e28_dev_S-bal_dry2048_73129.pt | as written | offered to an arm S life": "refused: AssertionError: e28_dev_S-bal_dry2048_73129.pt: not an E26 birth receipt",
+   "balanced | e28_dev_S-bal_dry2048_73129.pt | renamed to E26's file name | offered to an arm S life": "refused: AssertionError: e26_dev_S_73129.pt: not an E26 birth receipt",
+   "balanced | e28_dev_B-bal_dry2048_73129.pt | as written | offered to an arm B life": "refused: AssertionError: e28_dev_B-bal_dry2048_73129.pt: not an E26 birth receipt",
+   "balanced | e28_dev_B-bal_dry2048_73129.pt | renamed to E26's file name | offered to an arm B life": "refused: AssertionError: e26_dev_B_73129.pt: not an E26 birth receipt"
+  },
+  "note": "admit_e26 refuses at its first receipt assertion (experiment == 'E26'); it does not read `targets`",
+  "pass": true
+ }
+}
