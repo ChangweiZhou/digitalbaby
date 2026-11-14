@@ -2801,3 +2801,15 @@ Revision 2 of `OPUS_TASK_E32_EVERY_BYTE_BIRTH_SWITCHES_20261114.md` replaces rev
 **A consequence for E31.** Its bounded push (P2) stops at 0.9. On lives the composition panel has no letters, so that limit is not disqualifying there, but P2 cannot be read as a test of holding across letters. That is noted here and not changed in the running job.
 
 **For my own briefs from here on:** open every file a brief names and quote the line; write every mask and formula as code; ask of each endpoint what value a perfect arm would need at the unit level; and list the outcome table before the predictions.
+
+## 9.126 E32's brief: second audit and revision 3 (14 November 2026)
+
+The reviewer audited revision 2 and asked for one more revision. Revision 3 adopts every finding; its last section tables each one with its evidence.
+
+**A finding that changes the question (post hoc, unregistered; I reran the reviewer's reader and got the same numbers).** The sweep's every-byte births have 50–62 units at update 4,096 that keep half their state across 12 letters. By update 12,288 they have 2–5, and at the end 0–1, while accuracy at 12 letters rises from 16–26% to 71–80%. Backprop births end with 67–85 such units. So the sweep does not fail to make holding units; it loses them while it learns the trained distance. E32 now asks which change lets it keep them.
+
+**Errors of mine in revision 2:** the push's code used a variable the forward pass does not return, in a way that would silently compute every gate one step late; the mask still included a position with no target; the push on the gate value faded to a thousandth of its strength before the limit I had set; one mark could not be computed because the ceiling's rows were never saved; and the second-worker check compared hashes that two honest implementations could not share.
+
+**Revision 3:** twenty-one births (three ceiling reruns with rows saved, bounds G and H, Kolen–Pollack feedback, and a hinge on the gate's pre-activation at three strengths from update 4,097). Marks and readings are per distance, and holding units are counted only if they also write.
+
+Revision 3 has not been read by the reviewer.
