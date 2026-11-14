@@ -8,6 +8,9 @@ rate 0.001 and decay 0.25, 36,864 updates. By the pattern of exp26x_cross.py (na
 
 Arms: N  no switch (checks only; must equal exp26_candidate life S)          G, H, K  arch31's switches
       P  the floor plus -lambda * mean((z - 0.5)^2) on the update gates       P0  P with lambda = 0 (checks only; must equal N)
+         (P is withdrawn before any full life by addendum 2; kept for the stage 1 record)
+      P2a, P2b, P2c  addendum 2: the floor plus lambda * sum(relu(0.4 - |z - 0.5|)^2) / (masked positions x 256), strengths 0.25, 0.05, 0.01
+      Ks  addendum 2: as K, Bhh starting at sign(W) * mean|W| of the birth's recurrent matrix
 
     python3 exp31_switch.py life <N|G|H|K|P|P0> <seed> [--out DIR]     -> DIR/e31_life_<arm><DEVTAG><DRYTAG>_<seed>.json (+ .pt)
     python3 exp31_switch.py check <seed>                                -> exp45/e31/E31_CHECKS_A_<seed>.json (one-batch checks)
@@ -20,7 +23,8 @@ Choices the brief leaves open, made here and recorded in every receipt (worker A
     After each step: Bhh = (1 - 0.00025) * Bhh + (W1 - (1 - 0.00025) * W0), in that order.
   * P: z_t = sigmoid(lin(z1.detach(), ih, True)[:, t, 256:512] + lin(hp_t.detach(), hh, True)[:, 256:512]) for t = 1 .. L-1 (hp_t the state
     step t reads); the mean over the positions whose input byte is not BOS (BOS is only at position 0 and in padding), and all 256 units.
-    loss_total = task_loss + (-lambda) * mean. lambda = 0.25 * |g_task| / |g_term(lambda=1)| on the first life batch, each norm over the
+    loss_total = task_loss + (-lambda) * mean. P2: the same z and mask; loss_total = task_loss + lambda * sum(relu(0.4 - |z - 0.5|)^2)[mask]
+    / (int(mask.sum()) * 256); lambda as below with 0.25 replaced by the arm's strength and g_term the gradient of +1 * term. lambda = 0.25 * |g_task| / |g_term(lambda=1)| on the first life batch, each norm over the
     concatenation of rows 256-511 of weight_ih_l0, weight_hh_l0, bias_ih_l0, bias_hh_l0 (in that order), the task gradient by the floor's
     path; computed by torch.autograd.grad before the first update, float32 norms, then fixed.
   * U (arm P's stage rows): E30's measure on e29_gates.plus_minus_panel(seed): the share of z with 0.1 <= z <= 0.9 over every item, every
@@ -42,7 +46,9 @@ from exp3_state import lin           # noqa: E402
 X16, X, R = C.X16, C.X, C.R
 OUT = HERE / "exp45" / "e31"
 BIRTHS = HERE / "exp45" / "e26"
-ARMS31 = {"N": None, "G": "G", "H": "H", "K": "K", "P": None, "P0": None}
+ARMS31 = {"N": None, "G": "G", "H": "H", "K": "K", "P": None, "P0": None, "P2a": None, "P2b": None, "P2c": None, "Ks": "K"}
+P2_STRENGTH = {"P2a": 0.25, "P2b": 0.05, "P2c": 0.01}      # addendum 2: the term's gradient norm over the task's on the update-gate rows, first batch
+PUSH_ARMS = ("P", "P0", "P2a", "P2b", "P2c")
 DECAY = 0.00025                       # 0.001 * 0.25, the forward weights' own decay per update
 ZROWS = slice(256, 512)
 PROWS = ("rnn.weight_ih_l0", "rnn.weight_hh_l0", "rnn.bias_ih_l0", "rnn.bias_hh_l0")
@@ -71,6 +77,12 @@ def penalty(m, it, x):
     return ((Z - 0.5) ** 2)[msk].mean(), Z, msk
 
 
+def penalty2(m, it, x):
+    """Addendum 2, arm P2: sum(relu(0.4 - |z - 0.5|)^2) / (masked positions x 256), z and the mask as in penalty()."""
+    _, Z, msk = penalty(m, it, x)
+    return (T.relu(0.4 - (Z - 0.5).abs()) ** 2)[msk].sum() / (int(msk.sum()) * 256), Z, msk
+
+
 def rows_vec(m, grads):
     named = dict(m.named_parameters())
     return T.cat([g[ZROWS].flatten() for n, g in zip(PROWS, grads)]), named
@@ -93,17 +105,17 @@ class Switch:
         assert arm in ARMS31
         self.arm, self.seed, self.switch = arm, seed, ARMS31[arm]
         self.n = 0; self.extras = {}; self.identity = {}; self.lam = None; self.lam_record = None
-        self.Bhh = init_bhh(seed) if arm == "K" else None
+        self.Bhh = init_bhh(seed) if arm == "K" else None          # Ks: set at the first step from the birth's own matrix
         self.Bhh0_sha = (hashlib.sha256(self.Bhh.numpy().tobytes()).hexdigest() if self.Bhh is not None else None)
         if arm == "P0":
             self.lam = 0.0; self.lam_record = dict(lam=0.0, note="arm P0: lambda fixed at 0 (check: must equal arm N bit for bit)")
 
     def stage_row(self, m):
         r = dict(updates=self.n)
-        if self.arm == "K":
+        if self.arm in ("K", "Ks"):
             W = m.rnn.weight_hh_l0.detach(); Bv, Wv = self.Bhh.flatten(), W.flatten()
             r.update(cosine_Bhh_W=float((Bv * Wv).sum()) / (float(Bv.norm()) * float(Wv.norm())), rel_diff=float((self.Bhh - W).norm()) / float(W.norm()))
-        if self.arm in ("P", "P0"):
+        if self.arm in PUSH_ARMS:
             r.update(lam=self.lam, **undecided_share(m, self.seed))
         return r
 
@@ -112,20 +124,26 @@ class Switch:
         logits, it = arch31.forward(m, x, None)
         loss = E.cross_entropy(logits[mask], y[mask])
         gt = T.autograd.grad(loss, params, retain_graph=True)
-        pen, _, _ = penalty(m, it, x)
-        gp = T.autograd.grad(-1.0 * pen, params)
+        if self.arm == "P":
+            pen, _, _ = penalty(m, it, x); gp = T.autograd.grad(-1.0 * pen, params); strength = 0.25
+        else:
+            pen, _, _ = penalty2(m, it, x); gp = T.autograd.grad(1.0 * pen, params); strength = P2_STRENGTH[self.arm]
         nt, _ = rows_vec(m, gt); npn, _ = rows_vec(m, gp)
         nt, npn = float(nt.norm()), float(npn.norm())
-        self.lam = 0.25 * nt / npn
+        self.lam = strength * nt / npn
         self.lam_record = dict(lam=self.lam, task_grad_norm_rows=nt, term_grad_norm_rows_at_lambda_1=npn,
-                               term_grad_norm_rows_at_lambda=self.lam * npn, ratio=self.lam * npn / nt, batch="the first life batch, before the first update")
+                               term_grad_norm_rows_at_lambda=self.lam * npn, ratio=self.lam * npn / nt, strength=strength, batch="the first life batch, before the first update")
 
     def step(self, m, opt, items, local):
         assert local is True, "E31 lives are sweep lives with one switch"
         x, y, mask = X.batch_tensor(items)
         if self.n == 0:
-            if self.arm == "P":
+            if self.arm in ("P", "P2a", "P2b", "P2c"):
                 self.calibrate(m, x, y, mask)
+            if self.arm == "Ks":       # addendum 2: Bhh starts as sign(W) * mean|W| of the birth's recurrent matrix, read once here
+                W = m.rnn.weight_hh_l0.detach()
+                self.Bhh = W.sign() * W.abs().mean()
+                self.Bhh0_sha = hashlib.sha256(self.Bhh.numpy().tobytes()).hexdigest()
             self.extras[0] = self.stage_row(m)
         logits, it = arch31.forward(m, x, self.switch, self.Bhh)
         loss = E.cross_entropy(logits[mask], y[mask])
@@ -133,13 +151,16 @@ class Switch:
         if self.arm in ("P", "P0"):
             pen, _, _ = penalty(m, it, x)
             total = loss + (-self.lam) * pen
+        elif self.arm in ("P2a", "P2b", "P2c"):
+            pen, _, _ = penalty2(m, it, x)
+            total = loss + self.lam * pen
         opt.zero_grad()
         total.backward()
-        if self.arm == "K":
+        if self.arm in ("K", "Ks"):
             W0 = m.rnn.weight_hh_l0.detach().clone(); B0 = self.Bhh.clone()
         opt.step()
         self.n += 1
-        if self.arm == "K":
+        if self.arm in ("K", "Ks"):
             W1 = m.rnn.weight_hh_l0.detach().clone()
             self.Bhh = (1 - DECAY) * self.Bhh + (W1 - (1 - DECAY) * W0)
             if self.n in (1, 10, 100):        # the identity, checked in its difference form: Bhh - W shrinks by (1 - 0.00025)
@@ -151,8 +172,9 @@ class Switch:
 
     def summary(self):
         return dict(arm=self.arm, switch=self.switch, birth_arm="S", worker="A", choices=CHOICES, updates_so_far=self.n, admission=ADMISSIONS,
-                    Bhh=(dict(init="uniform(-1/16, 1/16), torch.Generator().manual_seed(seed + 31)", shape=[768, 256], init_sha256=self.Bhh0_sha,
-                              decay=DECAY, identity_checks=self.identity) if self.arm == "K" else None),
+                    Bhh=(dict(init=("uniform(-1/16, 1/16), torch.Generator().manual_seed(seed + 31)" if self.arm == "K" else
+                                    "sign(W) * mean|W| of the birth's weight_hh_l0, read once at the first step (addendum 2, arm Ks)"),
+                              shape=[768, 256], init_sha256=self.Bhh0_sha, decay=DECAY, identity_checks=self.identity) if self.arm in ("K", "Ks") else None),
                     lam=self.lam_record)
 
 
@@ -345,7 +367,11 @@ def dry_summary(seed=73129, ref=None):
     if "P" in rd:
         out["P_lambda"] = rd["P"]["e31"]["lam"]; out["P_stage_rows"] = {s["stage"]: s.get("e31") for s in rd["P"]["stages"]}
     out["for_agreement"] = {a: hashes.get(a) for a in ("G", "H", "K", "P")}
-    (OUT / "E31_DRY_A.json").write_text(_json.dumps(out, indent=1)); print(_json.dumps(out, indent=1))
+    out["stage_1b"] = {a: dict(tensors_sha256=hashes.get(a), lam=(rd[a]["e31"]["lam"] if a in rd else None),
+                               stage_rows={s["stage"]: s.get("e31") for s in rd[a]["stages"]} if a in rd else None,
+                               Bhh=(rd[a]["e31"]["Bhh"] if a in rd else None)) for a in ("P2a", "P2b", "P2c", "Ks")}
+    name = "E31_DRY_1B_A.json" if any(out["stage_1b"][k]["tensors_sha256"] for k in out["stage_1b"]) else "E31_DRY_A.json"
+    (OUT / name).write_text(_json.dumps(out, indent=1)); print(name, _json.dumps(out["stage_1b"], indent=1)[:3000])
 
 
 if __name__ == "__main__":
