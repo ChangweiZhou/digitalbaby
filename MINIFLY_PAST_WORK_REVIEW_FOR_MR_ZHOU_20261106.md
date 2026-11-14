@@ -2722,3 +2722,5 @@ A more capable model reviewed the five deliveries of 13 November at Mr. Xu's req
 **Held.** The target-test sizing roster and E29 part B, until E31 reports: sizing a stream for a learner with imprecise memory would measure the wrong thing. A local term that pushes each gate away from one half is a new kind of term and waits for Mr. Xu's ruling.
 
 **Process change adopted.** An audit finding is accepted only with the command that shows it. I accepted the E24 claim from reading receipts, which cannot show it.
+
+**Addendum to 9.122: sixth working ruling (13 November 2026).** Mr. Xu ruled that a term each unit computes from its own gate value alone, nudging the gate away from one half, is inside the line. It uses no error signal and nothing from another unit. A design using it states the strength and how it was set, applies it without sending anything across units or time, and reports the gate distribution it produces. E31 gains arm P (addendum to its brief); the reading fixed there separates "gates become decisive" from "composition improves".

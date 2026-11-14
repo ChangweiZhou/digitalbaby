@@ -60,3 +60,25 @@ Worker A runs G and H, worker B runs K, three seeds each. Push after each life. 
 ## Done
 
 Code, check receipts, dry receipts, nine complete lives, and `E31_REPORT.md` with the end-of-life table (within, plus-minus, F1, F3) per arm and seed beside the floor and ceiling, and the four outcomes. No readings beyond them.
+
+## Addendum: arm P, a local push on the update gates (13 November 2026, after Mr. Xu's ruling)
+
+Mr. Xu ruled on 13 November that a term each unit computes from its own gate value, which nudges the gate away from one half, is inside the line. Arm P is added. Both workers write it; worker B runs its three lives after K.
+
+**Arm P.** The sweep everywhere, exactly as the floor, plus one extra term on the update-gate rows only (rows 256–511 of `weight_ih_l0`, `weight_hh_l0` and their biases):
+
+- At each position the update gate is recomputed from detached inputs: `a = lin(z1.detach(), ih)[z rows] + lin(hp.detach(), hh)[z rows]`, `z = sigmoid(a)`.
+- The term is `−λ · mean((z − 0.5)²)` over items, positions after the first byte, and units, added to the loss. Because the inputs are detached, its gradient reaches only those rows: each weight changes by its own input times `(z − 0.5) · z · (1 − z)` of its own unit. Nothing crosses a unit or a time step.
+- `λ` is set once, before the first update, so that on the first batch the term's gradient norm on those rows is 0.25 of the task loss's gradient norm on the same rows. It then stays fixed. Record `λ` and both norms in the receipt.
+- The reset gate gets no such term.
+
+**Checks (stage 1).** With `λ = 0` a dry life equals the no-switch dry life bit for bit. The term's gradient is zero on every tensor and row outside the update-gate rows. On one batch the gradient equals the written two-factor product (≤ 1e-6). A dry life of P for seed 73129 joins the agreement check; both workers must get the same `λ` and the same `tensors_sha256`.
+
+**Every stage row of arm P** records the undecided share U as E30 defines it, on the plus-minus panel.
+
+**Predictions (mine).**
+
+- **P31.5** At the end of life U is at most 60% in all three seeds. About 70%.
+- **P31.6** P is at least 10 points above the floor on plus-minus in at least two of three seeds. About 30%.
+
+**Reading.** P31.5 holds and P31.6 misses: undecided gates go with the gap but do not cause it. Both hold: decisive gating is a remedy that needs no feedback at all, and it is run again on fresh seeds before anything is claimed.
