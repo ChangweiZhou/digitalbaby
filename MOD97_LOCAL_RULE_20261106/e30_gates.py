@@ -1,7 +1,7 @@
 """E30 (brief OPUS_TASK_E30_GATE_MEASURE_20261113.md): a registered gate measure. Read-only; trains nothing; edits nothing existing.
 
     python3 e30_gates.py calibrate      step 1: U on the plus-minus panel for the twelve E26 / E26-X lives -> exp45/e30/E30_CALIBRATION.json
-    python3 e30_gates.py unseen         step 2 (only after step 1 passes and is pushed) -> exp45/e30/E30_UNSEEN.json
+    python3 e30_gates.py unseen <e28 dir> <branch@commit>   step 2 (only after step 1 passes and is pushed) -> exp45/e30/E30_UNSEEN.json
 
 U, the undecided share: over every item, every position after the first byte (input positions 1 .. L-1 of x = [BOS] + prompt +
 answer[:-1]; position 0 is the BOS byte) and all units, the percentage of update-gate values z with 0.1 <= z <= 0.9. Gate values come
@@ -78,11 +78,58 @@ def calibrate():
     return ok
 
 
+def sha_file(p):
+    return X16.sha_file(p)
+
+
+def unseen(e28_dir, e28_source):
+    """Step 2. e28_dir holds the E28 receipts and weight files as committed at e28_source (branch@commit); every file's sha256 is
+    checked against its receipt (final: weights_sha256; rows: row_weights[step].sha256). Only receipts with complete == True are used."""
+    cal = json.loads((OUT / "E30_CALIBRATION.json").read_text())
+    assert cal.get("passed") is True, "step 1 has not passed"
+    arch26.install()
+    e28_dir = Path(e28_dir)
+    jobs = []
+    for rp in sorted(e28_dir.glob("e28_dev_*.json")):
+        rec = json.loads(rp.read_text())
+        if rec.get("complete") is not True:
+            continue
+        arm, seed = rec["arm"], rec["seed"]
+        final_step = max(int(k) for k in rec["row_weights"])
+        jobs.append(("E28", arm, seed, final_step, e28_dir / rec["weights"], rec["weights_sha256"], "final"))
+        if arm == "S-all":
+            for k, v in sorted(rec["row_weights"].items(), key=lambda kv: int(kv[0])):
+                if int(k) < final_step:
+                    jobs.append(("E28", arm, seed, int(k), e28_dir / v["file"], v["sha256"], "row"))
+    for s in SEEDS:
+        for a in ("S", "B"):
+            p = G29.E26 / f"e26_dev_{a}_{s}.pt"
+            jobs.append(("E26", a, s, None, p, json.loads(p.with_suffix(".json").read_text())["weights_sha256"], "final"))
+    rows = []
+    for exp, arm, seed, step, path, want, kind in jobs:
+        t0 = time.process_time()
+        sha = sha_file(path)
+        assert sha == want, f"{path.name}: sha256 {sha[:12]} is not its receipt's {want[:12]}"
+        m = arch26.new_net(seed)
+        m.load_state_dict(T.load(path))
+        m.eval()
+        ua = U_of(m, G29.add89_panel(seed, 12))
+        up = U_of(m, G29.plus_minus_panel(seed))
+        h = H_of(m, E.DEV[0], seed)
+        rows.append(dict(experiment=exp, arm=arm, seed=seed, row=step, kind=kind, file=path.name, sha256=sha,
+                         U_add89_k12=ua["U"], U_plus_minus=up["U"], H=h["H"], acc12=h["acc12"], acc40=h["acc40"],
+                         detail=dict(U_add89_k12=ua, U_plus_minus=up, H=h), cpu_s=round(time.process_time() - t0, 2)))
+        print(f"{exp} {arm} {seed} row {step} {kind}: U add89 {ua['U']:.2f}  U pm {up['U']:.2f}  H {h['H']:.2f} ({h['acc12']:.1f} - {h['acc40']:.1f})", flush=True)
+    rec = dict(brief="OPUS_TASK_E30_GATE_MEASURE_20261113.md", step=2, e28_source=e28_source, rows=rows,
+               python=sys.version.split()[0], torch=T.__version__,
+               not_measured="E28 births without a complete receipt at e28_source (stage 2b in flight): S-bal 93683, B-bal 93683 and all four arms of 116089")
+    (OUT / "E30_UNSEEN.json").write_text(json.dumps(rec, indent=1))
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "calibrate":
         sys.exit(0 if calibrate() else 1)
     if cmd == "unseen":
-        import e30_unseen      # noqa: F401  (written only after step 1 passes)
-        sys.exit(0)
+        unseen(sys.argv[2], sys.argv[3]); sys.exit(0)
     raise SystemExit(__doc__)
