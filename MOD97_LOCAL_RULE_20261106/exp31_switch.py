@@ -27,6 +27,7 @@ Arms (arch31 for the way back):
           on the plus-minus panel (e29_gates.plus_minus_panel, e29_gates.gates).
 
     python3 exp31_switch.py life <none|G|H|K|P> <seed> [--out DIR] [--lambda0]     (--lambda0: arm P with lam = 0, for the check only)
+    Addendum 2 adds P2a, P2b, P2c (the push that stops at a limit; ratios 0.25, 0.05, 0.01) and Ks (K started from sign(W)*mean|W|).
     python3 exp31_switch.py check                                                    -> exp45/e31/E31_CHECK_B.json
 """
 import hashlib
@@ -44,7 +45,8 @@ import arch31                        # noqa: E402
 E, X, X16, R = C.E, C.X, C.X16, C.R
 OUT = HERE / "exp45" / "e31"
 BIRTHS = HERE / "exp45" / "e26"
-ARMS = ("none", "G", "H", "K", "P")
+ARMS = ("none", "G", "H", "K", "P", "P2a", "P2b", "P2c", "Ks")
+P2_RATIO = {"P2a": 0.25, "P2b": 0.05, "P2c": 0.01}   # addendum 2: term gradient norm / task gradient norm on the update-gate rows, first batch
 DECAY = C.LR * C.WD                  # 0.001 * 0.25 = 0.00025, the forward weights' own decoupled decay per step
 Z = slice(256, 512)                  # update-gate rows of the stacked GRU maps
 SOURCES = ("arch31.py", "exp31_switch.py", "e29_gates.py")
@@ -60,9 +62,12 @@ def own_sources():
 
 # ---------------------------------------------------------------- arm K: the learned way back across the recurrent map
 class Feedback:
-    def __init__(self, seed, shape=(768, 256)):
-        g = T.Generator().manual_seed(seed + 31)
-        self.B = T.empty(*shape).uniform_(-1 / 16, 1 / 16, generator=g)
+    def __init__(self, seed, shape=(768, 256), start=None):
+        if start is None:                                   # arm K: a random start that never reads the forward matrix
+            g = T.Generator().manual_seed(seed + 31)
+            self.B = T.empty(*shape).uniform_(-1 / 16, 1 / 16, generator=g)
+        else:                                               # arm Ks (addendum 2): sign(W) * mean|W| of the birth's matrix, read once
+            self.B = start.detach().clone()
         self.B0_sha = R.tensors_sha({"Bhh": self.B})
         self.steps = 0
 
@@ -86,6 +91,34 @@ def gate_term(m, out):
         arch26.lin(hp, arch26.Mat(m.rnn.weight_hh_l0, m.rnn.bias_hh_l0), True)[..., Z]
     z = T.sigmoid(a)
     return ((z - 0.5) ** 2).mean(), dict(z=z.detach(), z1=z1[:, 1:], hp=hp)
+
+
+def gate_term2(m, out, x):
+    """Addendum 2 (arm P2): sum(relu(0.4 - |z - 0.5|)^2) / (masked positions x 256), over items and positions 1..L-1 whose input byte is not
+    BOS (padding excluded: x[:, 1:] != X.BOS), z the update gate recomputed from detached z1 and previous states. Zero for z outside 0.1-0.9."""
+    z1, hp = out["z1"].detach(), T.stack(out["hp"][1:], 1).detach()
+    a = arch26.lin(z1[:, 1:], arch26.Mat(m.rnn.weight_ih_l0, m.rnn.bias_ih_l0), True)[..., Z] + \
+        arch26.lin(hp, arch26.Mat(m.rnn.weight_hh_l0, m.rnn.bias_hh_l0), True)[..., Z]
+    z = T.sigmoid(a)
+    msk = (x[:, 1:] != X.BOS)
+    v = T.relu(0.4 - (z - 0.5).abs()) ** 2 * msk.unsqueeze(-1)
+    n = int(msk.sum()) * z.shape[-1]
+    return v.sum() / n, dict(z=z.detach(), mask=msk, n=n)
+
+
+def calibrate_p2(m, x, y, mask, ratio):
+    params = [p for p, _ in gate_rows(m)]
+    logits, out = arch31.forward(m, x, True, True, switch="P")
+    task = E.cross_entropy(logits[mask], y[mask])
+    gt = T.autograd.grad(task, params, retain_graph=True)
+    term, aux = gate_term2(m, out, x)
+    gg = T.autograd.grad(term, params)
+    nt = rows_norm(list(zip(gt, [Z] * 4)))
+    ng = rows_norm(list(zip(gg, [Z] * 4)))
+    lam = ratio * nt / ng
+    return lam, dict(lam=lam, ratio_target=ratio, task_grad_norm_gate_rows=nt, term_grad_norm_gate_rows_at_lam1=ng,
+                     term_grad_norm_gate_rows_at_lam=lam * ng, ratio=lam * ng / nt, masked_positions=aux["n"] // 256,
+                     batch="the first life batch, before the first update")
 
 
 def gate_rows(m):
@@ -128,29 +161,38 @@ class Arm:
     def __init__(self, arm, seed, lambda0=False):
         assert arm in ARMS
         self.arm, self.seed, self.lambda0 = arm, seed, lambda0
-        self.fb = Feedback(seed) if arm == "K" else None
+        self.fb = Feedback(seed) if arm == "K" else None    # arm Ks: built at the first step from the birth's matrix
         self.lam, self.lam_record = (0.0, dict(lam=0.0, note="--lambda0: check only")) if lambda0 else (None, None)
         self.m = None
         self.stage0 = None
 
     def switch(self):
-        return None if self.arm == "none" else self.arm
+        return {"none": None, "Ks": "K", "P2a": "P", "P2b": "P", "P2c": "P"}.get(self.arm, self.arm)
 
     def step(self, m, opt, items, local):
         assert local is True, "E31 lives use the sweep's update (arm S) with one switch"
         x, y, mask = X.batch_tensor(items)
         if self.m is None:                                  # before the first update: the stage-0 measures on the birth weights
             self.m = m
+            if self.arm == "Ks":
+                W = m.rnn.weight_hh_l0.detach()
+                self.fb = Feedback(self.seed, start=W.sign() * W.abs().mean())
             self.stage0 = self.stage_measures()
         if self.arm == "P" and self.lam is None:
             self.lam, self.lam_record = calibrate_lambda(m, x, y, mask)
             print("e31 P lambda", self.lam_record, flush=True)
+        if self.arm in P2_RATIO and self.lam is None:
+            self.lam, self.lam_record = calibrate_p2(m, x, y, mask, P2_RATIO[self.arm])
+            print("e31", self.arm, "lambda", self.lam_record, flush=True)
         logits, out = arch31.forward(m, x, local, True, switch=self.switch(), Bhh=self.fb.B if self.fb else None)
         loss = E.cross_entropy(logits[mask], y[mask])
         total = loss
         if self.arm == "P":
             term, _ = gate_term(m, out)
             total = loss - self.lam * term
+        if self.arm in P2_RATIO:
+            term, _ = gate_term2(m, out, x)
+            total = loss + self.lam * term
         opt.zero_grad()
         total.backward()
         if self.fb is not None:
@@ -162,9 +204,9 @@ class Arm:
 
     def stage_measures(self):
         m = self.m
-        if self.arm == "K":
+        if self.arm in ("K", "Ks"):
             return self.fb.measures(m.rnn.weight_hh_l0)
-        if self.arm == "P":
+        if self.arm == "P" or self.arm in P2_RATIO:
             return undecided_share(m, self.seed)
         return {}
 
@@ -173,11 +215,18 @@ class Arm:
                 "G": "true weights for rows 0-511 of weight_ih_l0 and weight_hh_l0 on the way back; sign(W)*mean|W| (whole matrix) for rows 512-767 and every other map",
                 "H": "true weights for weight_hh_l0 on the way back; the sweep elsewhere",
                 "K": "error across weight_hh_l0 through Bhh; Bhh0 ~ U(-1/16,1/16) from torch.Generator().manual_seed(seed+31) via Tensor.uniform_; after each step Bhh <- (1-d)Bhh + (W1-(1-d)W0), d=0.00025",
-                "P": "the sweep everywhere plus -lam*mean((z-0.5)^2) over items, positions 1..L-1 of the batch tensor, and 256 units; z from detached inputs; lam set on the first batch (ratio 0.25 on rows 256-511)"}[self.arm]
+                "P": "the sweep everywhere plus -lam*mean((z-0.5)^2) over items, positions 1..L-1 of the batch tensor, and 256 units; z from detached inputs; lam set on the first batch (ratio 0.25 on rows 256-511) [withdrawn by addendum 2]",
+                "Ks": "as K, but Bhh starts as sign(W)*mean|W| of the birth's weight_hh_l0, read once at the start (addendum 2)"}
+        for a_, r_ in P2_RATIO.items():
+            rule[a_] = (f"addendum 2: the sweep everywhere plus lam*sum(relu(0.4-|z-0.5|)^2)/(masked positions x 256), positions 1..L-1 with input "
+                        f"byte not BOS; z from detached inputs; lam set on the first batch so the term's gradient norm on rows 256-511 is {r_} of the task's")
+        rule = rule[self.arm]
         r = dict(arm=self.arm, worker="B", rule=rule, runner_sources_sha256=own_sources())
-        if self.fb is not None:
+        if self.arm == "K":
             r.update(Bhh_seed=self.seed + 31, Bhh_start_tensors_sha256=self.fb.B0_sha, feedback_decay=DECAY)
-        if self.arm == "P":
+        if self.arm == "Ks":
+            r.update(Bhh_start="sign(W)*mean|W| of the birth's weight_hh_l0", Bhh_start_tensors_sha256=self.fb.B0_sha if self.fb else None, feedback_decay=DECAY)
+        if self.arm == "P" or self.arm in P2_RATIO:
             r.update(gate_push=self.lam_record)
         return r
 
@@ -201,7 +250,7 @@ class JsonShim:
                 s["e31"] = self.a.stage0 if s["stage"] == 0 else self.a.stage_measures()
                 self.done.add(s["stage"])
             obj = dict(obj, experiment="E31", arm=self.a.arm, update_arm="S", e31=self.a.record())
-            if self.a.arm == "K" and "complete" in obj:
+            if self.a.arm in ("K", "Ks") and "complete" in obj:
                 obj["e31"]["Bhh_final_tensors_sha256"] = R.tensors_sha({"Bhh": self.a.fb.B})
         return _json.dumps(obj, **kw)
 
