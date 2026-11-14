@@ -2813,3 +2813,13 @@ The reviewer audited revision 2 and asked for one more revision. Revision 3 adop
 **Revision 3:** twenty-one births (three ceiling reruns with rows saved, bounds G and H, Kolen–Pollack feedback, and a hinge on the gate's pre-activation at three strengths from update 4,097). Marks and readings are per distance, and holding units are counted only if they also write.
 
 Revision 3 has not been read by the reviewer.
+
+## 9.127 E32's brief: third audit, revision 4, released (14 November 2026)
+
+The reviewer's third audit found all sixteen earlier findings fixed and named six further text changes, saying that with those made it need not see the brief again. Mr. Xu again judged the work quality very low; three audits to reach a runnable brief for one experiment bears that out. Revision 4 makes the six changes as written and nothing else. I reran none of the third audit's measurements.
+
+What the third audit still found in my text: a check ("bit for bit") that correct code could fail; a strength set on one batch when the quantity it scales varies three- to five-fold between batches; a ceiling rerun described so that a worker would have written new code for it; a table read at a distance where its mark was arithmetically impossible; a mark named "retains" whose bar exceeded what existed to be retained; and a reading that pinned an effect to a window the design does not isolate.
+
+Useful numbers from that audit (reviewer's reader, unregistered): the floor's keepers slide from a gate of about 0.98 at update 4,096 to about 0.78 at the end while the gate rows' weight norm rises, so the loss is not weight decay; and the top push strength is by rough estimate 27 to 48 times what erodes them.
+
+E32 is released to two workers under revision 4.
