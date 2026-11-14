@@ -2739,3 +2739,36 @@ Stage 2 is eighteen lives, nine per worker, about 24 CPU-hours.
 **Not yet read by me:** E28's twelve births, E30, the span rerun with clean bytes, and the second source check are complete on their branches. The outside review reports E28 as 71.7–74.8 for the sweep under every-byte targets against 93.5–97.7, and E30 as three of four predictions holding. I will verify them from receipts, merge and file them next.
 
 **Addendum to 9.123: amendment to the fifth working ruling (14 November 2026).** Mr. Xu ruled that Kolen–Pollack feedback may start from the forward weights' signs times one mean magnitude, read once at the start and never again. Arm Ks is released to worker B (three lives; addendum 3 of the brief, with P31.10).
+
+## 9.124 E28 complete, E30, the span rerun and the second source check: read, merged (14 November 2026)
+
+All four branches are merged. E28's scores I recomputed from the twelve receipts; E30 and the span rerun I read from the workers' reports and records without rerunning them. Evidence level E2 for E28; the others are measurements.
+
+**A. E28: the GRU under every-byte targets (twelve births, hard mean at 12 letters).**
+
+| Arm | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| Sweep, every byte (S-all) | 74.8 | 74.7 | 71.7 |
+| Backprop, every byte (B-all) | 93.5 | 97.7 | 94.3 |
+| Sweep, balanced (S-bal) | 86.8 | 89.7 | 88.7 |
+| Backprop, balanced (B-bal) | 92.3 | 98.8 | 96.7 |
+| Sweep, answers only (E26) | 98.0 | 98.2 | 99.8 |
+| Backprop, answers only (E26) | 98.5 | 98.7 | 93.7 |
+
+- P28.1 holds (B-all at least 85 in all three). P28.2 misses (S-all is not near zero). P28.3 misses (S-bal is 12 to 17 above S-all, not 20). P28.4 holds.
+- Neither fixed reading applies: there is no collapse (S-all is well above half of B-all), and no survival (S-all is 23 to 28 below S-ans). The sweep pays 19 to 23 points for every-byte targets where backprop pays 0 to 5. Balancing the loss recovers 12 to 17 of them.
+- With the erratum of 9.122: E24's collapse belonged to the two-bank network.
+
+**B. E30: the gate measure, registered and then read.** Calibration passed on all twelve lives. Judged on the seeds complete at the time (two for E28).
+
+- P30.1 holds: sweep every-byte births have 92% of update-gate values undecided against 39–43%.
+- P30.2 holds in two of three seeds for the E26 births (39–49% against 26–33%).
+- P30.3 holds, and by far more than predicted: S-all answers 75–80% at 12 letters and 2% at 40; B-all 94–96% and 82–85%. The answers-only sweep births hold 96–100% at 40.
+- P30.4 misses: along S-all's rows the undecided share rises, 65% to 92%.
+- So the sweep with every byte as a target learns the trained gap and nothing beyond it, and its gates become less decisive as training goes on. This is the condition the target test imposes.
+
+**C. Span with clean bytes (27 runs).** F7 holds; F8, F9 and F10 miss. Because F9 missed (relabelling bytes changed a random start's class in two of six runs), my own rule says the born-against-random comparison cannot be read from single fixed-distance runs. What can be said: the byte clash does not explain the born start's slowness (equal repeats in two of three seeds at distance 4), and the permuted copy still learns sooner in three of three at distance 12. The explanation I adopted in 9.122 is mostly wrong.
+
+**D. Second source check.** Merged as `PROJECT_DOCUMENTS/LIT_CHECK_20261113/SOURCE_CHECK_GATES_AND_APPROX_CREDIT.md`. Per the outside review it agrees with the reviewer's own reading of the disputed study (the Kolen–Pollack variant ahead of random feedback in three of four comparisons). I have not checked it against the papers.
+
+**Next.** E31's eighteen lives (plus three for Ks) are released. `OPUS_TASK_E32_EVERY_BYTE_BIRTH_SWITCHES_20261114.md` puts the same switches on every-byte births with accuracy at 40 letters as the endpoint; it is written and not yet audited.
