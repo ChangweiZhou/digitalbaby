@@ -82,3 +82,51 @@ Mr. Xu ruled on 13 November that a term each unit computes from its own gate val
 - **P31.6** P is at least 10 points above the floor on plus-minus in at least two of three seeds. About 30%.
 
 **Reading.** P31.5 holds and P31.6 misses: undecided gates go with the gap but do not cause it. Both hold: decisive gating is a remedy that needs no feedback at all, and it is run again on fresh seeds before anything is claimed.
+
+## Addendum 2: stage 1 read, rulings on the two disagreements, and the release (14 November 2026)
+
+I read both stage 1 branches (`claude/sleepy-knuth-q96dd1` at bc2ddfa9, worker A; `claude/charming-clarke-u9g850` at 96024a77, worker B) and `E31_AGREEMENT_B.md`. No switch, H, K and the zero-strength push agree bit for bit and equal the E26 life at the dry dose. Two arms differ. Both workers stopped correctly.
+
+### Rulings
+
+1. **G: accepted as agreeing.** Both evaluate the rule the brief wrote; one uses two matrix products and one a stacked matrix, and float32 rounding (about 7e-7 per crossing) compounds into a different hash. From here on, agreement between the two implementations means equal hashes, **or** gradients on one common batch within 1e-6 relative when each worker runs the other's function. Worker A's form (two products, as the brief's formula is written) is the one that runs.
+2. **P: padding is excluded.** Padding is not data. Worker A's mask (`x[:, 1:] != X.BOS`) is the definition.
+3. **P as written is withdrawn before any full life.** In worker B's dry run it took the undecided share U from 65% to 9% within 1,536 updates, far past backprop's 43–53%. That would test whether over-saturated gates hurt, not whether decisive gates help. P31.5 and P31.6 are withdrawn unjudged. The replacement is arm P2 below.
+4. **K stays as registered**, with its random start. At the dry dose its feedback is still far from the forward matrix (cosine 0.73 after 1,536 updates), so its early stages are read separately: K is compared with H at the end of life only, as P31.3 says.
+5. **`exp16_integrated.py`.** The births were made with it at a301ae8e; the branch has it at deea398c. Worker A records an admission exception and worker B runs with the older file in a work folder; both give the floor's hash. Each keeps its own way and records it in every receipt.
+
+### Arm P2: a push that stops at a limit
+
+As arm P, with the mask of ruling 2, and this term in place of the old one:
+
+`λ · sum(relu(0.4 − |z − 0.5|)²) / (masked positions × 256)`
+
+- It is zero for any gate outside 0.1 to 0.9, so a gate that has become decisive is left alone.
+- Three strengths, each set once on the first batch as the ratio of the term's gradient norm to the task's on the update-gate rows: **0.25, 0.05 and 0.01**. Arms `P2a`, `P2b`, `P2c`.
+- Every stage row records U on the plus-minus panel.
+
+### Arm Ks: Kolen–Pollack feedback started from the sweep's own matrix (code and dry run now; full lives wait for Mr. Xu)
+
+As arm K, but `Bhh` starts as `sign(W) · mean|W|` of the birth's recurrent matrix, which is what the sweep sends error through at its first step. It reads the forward weight once, at the start, so it is outside the letter of the fifth ruling; Mr. Xu decides whether it runs.
+
+### Stage 1b (both workers, short)
+
+- Dry lives at `E11_STAGE_UPDATES=256`, seed 73129, of P2a, P2b, P2c and Ks. Push hashes and the three λ values.
+- Then compare by the rule in ruling 1. Agreement: go straight to stage 2 without waiting for me. Disagreement: stop and report.
+
+### Stage 2: full lives, three seeds each
+
+| Worker | Lives |
+|---|---|
+| A | G, H, P2b (nine) |
+| B | K, P2a, P2c (nine) |
+
+Push after each life. Ks is not run until I say so.
+
+### Predictions for the new arms (mine)
+
+- **P31.7** At strength 0.05 the end-of-life U lies between 35% and 65% in all three seeds. About 40%.
+- **P31.8** At least one of the three strengths is 10 points or more above the floor on plus-minus in at least two of three seeds. About 35%.
+- **P31.9** Plus-minus does not rise with strength: the strongest push is not the best of the three in at least two of three seeds. About 60%.
+
+Choosing the best of three strengths after the fact flatters it, so a strength that clears P31.8 is run again on fresh seeds before anything is claimed.

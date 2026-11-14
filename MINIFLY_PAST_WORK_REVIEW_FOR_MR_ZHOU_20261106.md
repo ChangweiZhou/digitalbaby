@@ -2724,3 +2724,16 @@ A more capable model reviewed the five deliveries of 13 November at Mr. Xu's req
 **Process change adopted.** An audit finding is accepted only with the command that shows it. I accepted the E24 claim from reading receipts, which cannot show it.
 
 **Addendum to 9.122: sixth working ruling (13 November 2026).** Mr. Xu ruled that a term each unit computes from its own gate value alone, nudging the gate away from one half, is inside the line. It uses no error signal and nothing from another unit. A design using it states the strength and how it was set, applies it without sending anything across units or time, and reports the gate distribution it produces. E31 gains arm P (addendum to its brief); the reading fixed there separates "gates become decisive" from "composition improves".
+
+## 9.123 E31 stage 1 read and released with changes (14 November 2026)
+
+Both workers wrote E31 independently. No switch, exact recurrent map (H), Kolen–Pollack feedback (K) and the zero-strength gate push agree bit for bit, and the no-switch arm equals the E26 life at the dry dose. Two arms differed, and both workers stopped as the brief required. I read both branches and `E31_AGREEMENT_B.md`; my rulings are in addendum 2 of the brief.
+
+- **Exact gate rows (G):** the same rule evaluated in two orders; rounding only. Accepted. Agreement now means equal hashes or one-batch gradients within 1e-6.
+- **Gate push (P):** the brief did not say whether padding counts. It does not.
+- **The push as I wrote it is withdrawn before any full life.** At a quarter of the task's pull it drove the undecided share from 65% to 9% in 1,536 updates, well past backprop's 43–53%. This was my design error, caught by the dry run and the outside review. It is replaced by a push that stops once a gate leaves the 0.1–0.9 band, at three strengths (P2a, P2b, P2c). P31.5 and P31.6 are withdrawn unjudged; P31.7 to P31.9 replace them.
+- **K** keeps its random start and is read at the end of life only. A second arm started from the sweep's own sign matrix (Ks) is coded and dry-run, but it reads the forward weight once and so waits for Mr. Xu.
+
+Stage 2 is eighteen lives, nine per worker, about 24 CPU-hours.
+
+**Not yet read by me:** E28's twelve births, E30, the span rerun with clean bytes, and the second source check are complete on their branches. The outside review reports E28 as 71.7–74.8 for the sweep under every-byte targets against 93.5–97.7, and E30 as three of four predictions holding. I will verify them from receipts, merge and file them next.
