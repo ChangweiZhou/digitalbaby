@@ -2783,3 +2783,21 @@ All four branches are merged. E28's scores I recomputed from the twelve receipts
 - Backpropagation carries weights across the whole network and is **not allowed**. The first ruling stands unchanged.
 
 Within that, a feedback connection may read the forward weight next to it as often as it likes; connections are meant to be messy. E31's arms G and H remain bounds, not candidates. Nothing registered changes.
+
+## 9.125 E32's brief audited by the outside reviewer and rewritten; Mr. Xu's judgment of the work (14 November 2026)
+
+Mr. Xu, on reading the audit: "the work quality is very low." He is right about the brief. Revision 1 was mine alone and it failed on every one of the five points audited. The causes, as I see them:
+
+- **I did not read the code I told a worker to reuse.** I named `arch31.py` as holding the gate push; it holds none of it, and worker A had not written the bounded push at all.
+- **I carried a rule from one setting to another without asking whether it still made sense.** Setting the push's strength on the first batch was written for a trained network at the start of a life. On an untrained network every gate is near one half and the rule is meaningless.
+- **I repeated an error I had just ruled on.** The mask ambiguity that split the two E31 workers was in E32's brief again in different words.
+- **I chose a limit that could not produce what the endpoint measures.** A gate at 0.9 keeps 1.5% of its state across 40 letters.
+- **The readings were not exhaustive and one contradicted the design's own arithmetic.**
+
+I reran the reviewer's commands that need no learner; each gave what the audit reported. The measurements that came from the reviewer's own scripts (untrained gates, keeping units per birth) I did not rerun; the scripts are not on the repository.
+
+Revision 2 of `OPUS_TASK_E32_EVERY_BYTE_BIRTH_SWITCHES_20261114.md` replaces revision 1, with a table of each finding, its evidence and the change. Eighteen births: bounds G and H, Kolen–Pollack feedback, and a gate push switched on at update 4,096 with a limit of 0.99 at three strengths. Endpoints are accuracy at 40 and at 20 letters on the mean of the last three rows, with keeping units counted at every row.
+
+**A consequence for E31.** Its bounded push (P2) stops at 0.9. On lives the composition panel has no letters, so that limit is not disqualifying there, but P2 cannot be read as a test of holding across letters. That is noted here and not changed in the running job.
+
+**For my own briefs from here on:** open every file a brief names and quote the line; write every mask and formula as code; ask of each endpoint what value a perfect arm would need at the unit level; and list the outcome table before the predictions.
