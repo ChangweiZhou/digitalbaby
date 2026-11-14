@@ -4,6 +4,7 @@
 
 Hard mean: (add89 + sub89 exact at k = 12, whole answers, sealed panels of 300) / 600 x 100, as the brief's E26 figures (98.0/98.2/99.8, 98.5/98.7/93.7).
 Prediction outcomes are computed as worded in E28_PREDICTIONS.md; nothing else is concluded.
+Receipts only: no weights file is opened (stage 2b, step 4: E30 registers a measure on the saved row files first).
 """
 import hashlib
 import json
@@ -42,10 +43,6 @@ def main():
                 out["problems"].append(f"{f.name}: not complete (last row {r['curve'][-1]['step'] if r['curve'] else None})")
             curve = [(x["step"], hard(x)) for x in r["curve"]]
             peak = max(curve, key=lambda t: t[1]) if curve else None
-            files_ok = {}
-            for st, w in r.get("row_weights", {}).items():
-                p = D / w["file"]
-                files_ok[st] = p.exists() and sha(p) == w["sha256"]
             blocks = r["role_curve"]
             out["births"][f"{arm} {s}"] = dict(
                 arm=arm, seed=s, targets=r["targets"], complete=r.get("complete"), final=curve[-1][1] if curve else None,
@@ -54,7 +51,7 @@ def main():
                 finite=r["finite"], data_digest_checks=[x["data_digest_check"] for x in r["curve"]],
                 role_blocks=len(blocks),
                 role_curve=[dict(block_end=b["block_end"], train_loss=b["train_loss"], **{k: b["by_role"][k]["mean"] for k in ROLES}) for b in blocks],
-                row_weight_files_match_hash=files_ok, weights_sha256=r.get("weights_sha256"), tensors_sha256=r.get("tensors_sha256"),
+                row_weights_from_receipt=r.get("row_weights"), weights_sha256=r.get("weights_sha256"), tensors_sha256=r.get("tensors_sha256"),
                 cpu_total=r.get("cpu_total"), cpu_per_update=r.get("cpu_per_update"), host=r["provenance"]["host"],
                 git=r["provenance"]["git"], sources_sha256=r["provenance"]["sources_sha256"])
     B = out["births"]; A = out["e26_answer"]
