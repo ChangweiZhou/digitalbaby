@@ -1,0 +1,99 @@
+{
+ "experiment": "E32",
+ "kind": "P4 strengths (check 7), no training",
+ "worker": "main",
+ "host": {
+  "hostname": "vm",
+  "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "cores": 4,
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu",
+  "torch_threads": 1
+ },
+ "interpreter": {
+  "python_executable": "/tmp/venv313/bin/python",
+  "python_version_full": "3.13.18 (main, Oct 26 2026, 15:28:15) [GCC 13.3.0]",
+  "packages": {
+   "torch": "2.15.0+cpu",
+   "numpy": "2.4.6"
+  }
+ },
+ "sources_sha256": {
+  "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+  "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+  "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+  "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+  "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+  "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+  "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+  "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+  "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+  "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+  "exp28_everybyte.py": "7bc97268e66e4f6e12221f8f7955460058bbce1374520b4a478262430082eb00",
+  "exp32_births.py": "0a5b09ea1e0336d80e0f6fedfc10b32621038d613cd8336f34752b48390835bf"
+ },
+ "definition": "lam = ratio * mean task norm / mean term norm at lam 1, over batches 4,097-4,224 at E28 S-all row 4,096; one joint norm over rows 256-511 of weight_ih_l0, weight_hh_l0, bias_ih_l0, bias_hh_l0; task norm as the sweep computes it",
+ "seeds": {
+  "73129": {
+   "mean_task_norm": 0.0747757616097607,
+   "mean_term_norm_at_lam1": 0.9066939671880865,
+   "first_batch_task_norm": 0.036740465844829644,
+   "first_batch_term_norm_at_lam1": 0.8909701148791609,
+   "task_norm_min": 0.034690820514544314,
+   "task_norm_max": 0.18915376962483704,
+   "lam": {
+    "P4a": 0.02061769580359661,
+    "P4b": 0.004123539160719322,
+    "P4c": 0.0008247078321438645
+   },
+   "reviewer_batch_4097": {
+    "task_norm": 0.03674,
+    "term_norm_at_lam1": 0.89097,
+    "rel_diff_task": 1.2679499990251721e-05,
+    "rel_diff_term": 1.2893718178023255e-07
+   },
+   "cpu": 22.266754913000003
+  },
+  "93683": {
+   "mean_task_norm": 0.05825484093858196,
+   "mean_term_norm_at_lam1": 0.8485100666731051,
+   "first_batch_task_norm": 0.07711333170435587,
+   "first_batch_term_norm_at_lam1": 0.8364913917345034,
+   "task_norm_min": 0.037694031355190886,
+   "task_norm_max": 0.09351249853000784,
+   "lam": {
+    "P4a": 0.017163862641898706,
+    "P4b": 0.003432772528379741,
+    "P4c": 0.0006865545056759483
+   },
+   "reviewer_batch_4097": {
+    "task_norm": 0.077113,
+    "term_norm_at_lam1": 0.836491,
+    "rel_diff_task": 4.301536133615436e-06,
+    "rel_diff_term": 4.683068955805e-07
+   },
+   "cpu": 21.487092175
+  },
+  "116089": {
+   "mean_task_norm": 0.057865426007193355,
+   "mean_term_norm_at_lam1": 0.8224646759180856,
+   "first_batch_task_norm": 0.09331974274207541,
+   "first_batch_term_norm_at_lam1": 0.8492413983487749,
+   "task_norm_min": 0.03226909721890125,
+   "task_norm_max": 0.11467387447963433,
+   "lam": {
+    "P4a": 0.017589030781960457,
+    "P4b": 0.0035178061563920916,
+    "P4c": 0.0007035612312784183
+   },
+   "reviewer_batch_4097": {
+    "task_norm": 0.09332,
+    "term_norm_at_lam1": 0.849241,
+    "rel_diff_task": 2.7567287246889463e-06,
+    "rel_diff_term": 4.690644644510749e-07
+   },
+   "cpu": 22.100103954000005
+  }
+ }
+}

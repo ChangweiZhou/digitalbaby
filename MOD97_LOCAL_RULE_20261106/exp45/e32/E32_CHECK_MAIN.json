@@ -1,0 +1,220 @@
+{
+ "experiment": "E32",
+ "kind": "checks",
+ "worker": "main",
+ "seed": 73129,
+ "host": {
+  "hostname": "vm",
+  "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "cores": 4,
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu",
+  "torch_threads": 1
+ },
+ "interpreter": {
+  "python_executable": "/tmp/venv313/bin/python",
+  "python_version_full": "3.13.18 (main, Oct 26 2026, 15:28:15) [GCC 13.3.0]",
+  "packages": {
+   "torch": "2.15.0+cpu",
+   "numpy": "2.4.6"
+  }
+ },
+ "sources_sha256": {
+  "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+  "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+  "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+  "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+  "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+  "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+  "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+  "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+  "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+  "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+  "exp28_everybyte.py": "7bc97268e66e4f6e12221f8f7955460058bbce1374520b4a478262430082eb00",
+  "exp32_births.py": "0a5b09ea1e0336d80e0f6fedfc10b32621038d613cd8336f34752b48390835bf"
+ },
+ "git": {
+  "commit": "f322555aacf9338deceda97d795169be179d3b07",
+  "sources_modified_vs_commit": []
+ },
+ "check3_first_batch_loss": {
+  "arch26_forward": 5.558258056640625,
+  "arms": {
+   "floor": {
+    "loss": 5.558258056640625,
+    "bit_equal_to_arch26_forward": true
+   },
+   "G": {
+    "loss": 5.558258056640625,
+    "bit_equal_to_arch26_forward": true
+   },
+   "H": {
+    "loss": 5.558258056640625,
+    "bit_equal_to_arch26_forward": true
+   },
+   "K": {
+    "loss": 5.558258056640625,
+    "bit_equal_to_arch26_forward": true
+   },
+   "P4a": {
+    "loss": 5.558258056640625,
+    "bit_equal_to_arch26_forward": true
+   }
+  },
+  "ok": true,
+  "note": "data digests are asserted against E28's at every saved row inside every birth"
+ },
+ "floor_grads_equal_arch26": {
+  "bit_equal": true
+ },
+ "check4_G_H": {
+  "G": {
+   "steps": [
+    {
+     "t": 1,
+     "pinned_max_rel": 0.0,
+     "bit_equal_pinned": true,
+     "hand_max_rel": 4.1713173378886345e-07,
+     "vs_sweep_max_rel": 0.5233641048554981
+    },
+    {
+     "t": 11,
+     "pinned_max_rel": 0.0,
+     "bit_equal_pinned": true,
+     "hand_max_rel": 5.714744853215064e-07,
+     "vs_sweep_max_rel": 0.8542489094137548
+    },
+    {
+     "t": 21,
+     "pinned_max_rel": 0.0,
+     "bit_equal_pinned": true,
+     "hand_max_rel": 2.7833282841696533e-07,
+     "vs_sweep_max_rel": 0.18870211633422174
+    }
+   ],
+   "ok": true
+  },
+  "H": {
+   "steps": [
+    {
+     "t": 1,
+     "pinned_max_rel": 0.0,
+     "bit_equal_pinned": true,
+     "hand_max_rel": 0.0,
+     "vs_sweep_max_rel": 0.8057944578884105
+    },
+    {
+     "t": 11,
+     "pinned_max_rel": 0.0,
+     "bit_equal_pinned": true,
+     "hand_max_rel": 0.0,
+     "vs_sweep_max_rel": 1.6292305485913814
+    },
+    {
+     "t": 21,
+     "pinned_max_rel": 0.0,
+     "bit_equal_pinned": true,
+     "hand_max_rel": 0.0,
+     "vs_sweep_max_rel": 0.7457313854713012
+    }
+   ],
+   "ok": true
+  },
+  "G_input_map": {
+   "pinned_bit_equal": true,
+   "hand_max_rel": 8.161845119445778e-07,
+   "note": "random g, real z1"
+  }
+ },
+ "check5_K": {
+  "update_identity": [
+   {
+    "update": 1,
+    "identity_max_abs": 0.0,
+    "contraction_max_abs": 7.450580596923828e-09,
+    "cos_Bhh_W": -0.0005256230571646255,
+    "rel_diff_Bhh_W": 1.4146823909534305,
+    "feedback_updates": 1,
+    "Bhh_tensors_sha256": "e41dcde8cdda9d877a841230e3557efdfc95ff407417a89197905c7badb773f6"
+   },
+   {
+    "update": 10,
+    "identity_max_abs": 0.0,
+    "contraction_max_abs": 1.4901161193847656e-08,
+    "cos_Bhh_W": 0.024312104074510746,
+    "rel_diff_Bhh_W": 1.3973578060833176,
+    "feedback_updates": 10,
+    "Bhh_tensors_sha256": "69304bc2ecee72a95efe4cdf5339366e8138611bf46d7311d82d00586a68d8ac"
+   },
+   {
+    "update": 100,
+    "identity_max_abs": 0.0,
+    "contraction_max_abs": 1.862645149230957e-08,
+    "cos_Bhh_W": 0.31157007804589676,
+    "rel_diff_Bhh_W": 1.1743987743048208,
+    "feedback_updates": 100,
+    "Bhh_tensors_sha256": "58d03201e5c0dc6553a3e5f826320a5b24998ff96728e250c768181f07b65958"
+   }
+  ],
+  "identity_ok": true,
+  "K_equals_H_when_Bhh_is_W": {
+   "max_rel": {
+    "book.weight": 0.0,
+    "l1.weight": 0.0,
+    "l1.bias": 0.0,
+    "rnn.weight_ih_l0": 0.0,
+    "rnn.weight_hh_l0": 0.0,
+    "rnn.bias_ih_l0": 0.0,
+    "rnn.bias_hh_l0": 0.0,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "ok": true
+  }
+ },
+ "check6_P4": {
+  "gate_agreement": {
+   "max_rel_all_positions": 0.0,
+   "identical_all_positions": true,
+   "max_abs_masked": 0.0,
+   "identical_masked": true,
+   "one_step_late_max_abs": 0.9911154508590698,
+   "ok": true
+  },
+  "term_grad_outside_update_gate_rows": {
+   "max_abs": {
+    "book.weight": 0.0,
+    "l1.weight": 0.0,
+    "l1.bias": 0.0,
+    "rnn.weight_ih_l0": 0.0,
+    "rnn.weight_hh_l0": 0.0,
+    "rnn.bias_ih_l0": 0.0,
+    "rnn.bias_hh_l0": 0.0,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "ok": true
+  },
+  "term_grad_two_factor": {
+   "max_rel": {
+    "rnn.weight_ih_l0": 2.064772098163656e-07,
+    "rnn.weight_hh_l0": 2.921834749601229e-07,
+    "rnn.bias_ih_l0": 1.6949751119137847e-07,
+    "rnn.bias_hh_l0": 1.6949751119137847e-07
+   },
+   "ok": true,
+   "form": "d/dW = sum over masked items, positions of input * (-2 relu(C - |a|) sign(a)) / (masked positions * 256)"
+  },
+  "lam0_birth": "exp32_births.py dev P4z 73129 at E11_DEV_UPDATES=8192: rows 4,096 and 8,192 against E28's"
+ },
+ "pass": true
+}
