@@ -1,6 +1,6 @@
 # E34: sweep births with each byte's error scaled by the network's own confidence (15 November 2026, revision 1)
 
-Evidence level E2; stage 1 is a one-seed screen and supports no claim by itself. The remedy and the outline of the design are the outside reviewer's (its memo of 15 November); this specification, the normalisation, the temperatures, the outcome table and the predictions are mine. **Not released: it waits for the reviewer's audit and for the user's ruling on admissibility (last section).** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each.
+Evidence level E2; stage 1 is a one-seed screen and supports no claim by itself. The remedy and the outline of the design are the outside reviewer's (its memo of 15 November); this specification, the normalisation, the temperatures, the outcome table and the predictions are mine. **Not released: it waits for the reviewer's audit. The user has ruled the rule inside the line (last section).** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106`.
 
@@ -146,10 +146,6 @@ Only under outcome 1: the arm that learned in range and extrapolates with the hi
 
 Runner, reader, check receipts, four dry births, three complete births, and `E34_REPORT.md` with: the three-arm table (accuracy at 12, 20, 40 as last-three mean and final row; keepers; loss, mean entropy, mean weight and share of weighted error by fine role at the end), the weight ratio distractor to answer per saved row, which outcome row applies, the three facts listed under the outcome table, and the outcome of each prediction. No readings beyond the table above.
 
-## Admissibility (the user's ruling, requested 15 November)
+## Admissibility (ruled by the user, 15 November)
 
-The question put to the user: is it inside the line for each output position to scale its own error by a gain computed from its own predicted distribution, and for all positions in a batch to share one further common gain (the division by `w.sum()`)? The first part reads nothing but the output unit group's own activity at that position. The second is one number broadcast to every position.
-
-- **If inside:** an arm that passes stage 2 is a candidate rule.
-- **If the common gain is outside:** the brief is revised before release, with the temperatures chosen so that the unnormalised weights clear the optimizer's `eps` at the start, or with a fixed constant in place of `w.sum()`.
-- **If the whole gain is outside:** the births may still run as a measurement of what a label-free loss weighting can reach; no candidate is named from them.
+Both parts are inside the line: each output position scaling its own error by a gain computed from its own predicted distribution, and one common gain shared by the batch (the division by `w.sum()`). The user's words: "Both 1 and 2 are fine", and, as the standing rule, "as long as we do not use full scale backpropagation, anything is fine." An arm that passes stage 2 is therefore a candidate rule. The sweep itself is unchanged here.
