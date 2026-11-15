@@ -14,6 +14,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 7.** Section 20 is added after Mr. Xu pointed out that the plan was returning to the retention schemes of the earlier period. It withdraws item 2 of section 19.3 and sets a rule for adding any mechanism.
 
+**Revision 8.** Section 21 is added after Mr. Xu's statements on scale: the quantity to compare is the total computation needed to reach a threshold, and which axis to scale is to be found by experiment. It asks for one new full-scale job (item 9 of section 1) and adds width as an axis in the small world.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -38,6 +40,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 7. **Brief the long-life programme of Part II**: one protocol brief (job L0, section 17.7), audited once, and the two long births of E34 (section 18), which need no new code.
 
 8. **Brief one more full-scale job, E37 at a tenth of the pairs** (section 19.4): lived and fresh learners on a new family with a tenth of its pairs taught. About 4 CPU-hours by my estimate. It comes to me before any worker starts.
+
+9. **Brief one more full-scale job, E41: computation to threshold by width and by taught fraction** (section 21.3). About 28 CPU-hours by my estimate, to be divided among the three workers that E36, E37 and E38 have freed. It comes to me before any worker starts.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -579,4 +583,59 @@ So:
 - **Retention is not a research question in Part II for now.** Where a store is used it is the plain bounded store of raw items, already qualified in this project. No reminder schedule, slow copy, weighted anchor or second store is a candidate until L2 shows a deficit that the plain store does not cover.
 - **A rule for any added mechanism.** It is tested only if (a) the deficit it addresses has been measured on a learner that generalises, (b) the plain baseline is in the same experiment at equal budget, and (c) its expected effect is stated beforehand from the measured rate laws.
 - **The headline of every report stays generalisation and its trend with experience**; what is kept at a task's return is reported beside it as a constraint.
+
+## 21. Computation to threshold, and scale as an axis (revision 8)
+
+### 21.1 Mr. Xu's statements
+
+Verbatim, with my translation.
+
+- "scaling的帮助如何呢？同样的任务，如果scaling有帮助，也可以认为在固定算力下我们能做的更多。"
+  - *Translation:* how much does scaling help? On the same task, if scaling helps, we can also say that at fixed computation we can do more.
+- "对，如果网络计算规模变大，或者数据变多，但是为了达到目标(threshold)需要的训练次数本身变少，结果一样甚至更好，平均下来算力一样甚至更少。那这是一个可以讨论的目标。至于scale which axis是可以通过实验讨论的。"
+  - *Translation:* yes: if the network's computation grows, or the data grow, but the number of training steps needed to reach the target (a threshold) falls, with the same or a better result and the same or less computation on average, that is a goal worth discussing. Which axis to scale can be settled by experiment.
+
+### 21.2 The quantity
+
+**Computation to threshold.** For a run, the total computation spent up to the first scored row at which its accuracy reaches a threshold.
+
+- *Accuracy* is on operand pairs never taught, whole answers. It is given twice: on the held-out panel at 12 letters, and on held-out pairs that need the reduction, no letters. The second is the one free of what a network can answer without having learned the task's modulus (section 19.2 and the E40 audit).
+- *Thresholds* are 50, 80 and 90%, all three reported, so that no conclusion rests on one number.
+- *Computation* is counted in two ways: the number of weights times the number of items trained on, which does not depend on the host; and CPU-seconds on the qualified host, one thread.
+- A run that does not reach a threshold within its dose is recorded as "not reached", with its highest accuracy.
+
+A learner or a setting is better, in Mr. Xu's sense, if it reaches the same threshold with the same or less computation, whatever it spent that computation on.
+
+### 21.3 What the record has, and what it lacks
+
+- On the window network of early November, width helped: at width 512 a network from random weights reached 91–94% from a quarter of the pairs, as developed networks did, and collapsed at width 128 (9.7); compositions rose from 37–38% to 52–68% between widths 256 and 512 (9.18).
+- For the present GRU there is no measurement at any width but 256. The sizing roster of 11 November was never run.
+- So it is not known whether the saving of E37 (a learner that has lived, against a fresh one) shrinks as the network widens. If a wider fresh network generalises from fewer pairs, experience and width are two ways to the same end, and the comparison between them is one of computation to threshold.
+
+### 21.4 Job E41: the same task, three widths, three taught fractions
+
+**Question.** On the birth family, how does computation to threshold change with the network's width and with the share of pairs taught, under each rule?
+
+- **Task.** The birth family (add, sub, max, min mod 89), E26's stream and panels, 0 to 12 letters.
+- **Grid.** Width at one half, one and two times the present sizes (every hidden size scaled together; the embedding left at 8). Taught fraction 0.10, 0.25 and 0.50. Sweep and backpropagation. Three seeds. Fifty-four runs, all from random weights.
+- **Settings.** Learning rate, decay and batch as E26 at every width.
+- **Dose and rows.** 8,192 updates, and 16,384 at the narrowest width. Scored every 256 updates.
+- **What is tabled.** For each cell: the row at which each threshold is first reached on each of the two accuracies, the computation to that row in both units, the highest accuracy, and the accuracy on taught pairs at that row.
+- **Reading.** None is fixed beforehand; this is a first measurement. The report states, for each rule and fraction, whether computation to the 80% threshold falls, stays within a factor of 1.5, or rises from each width to the next, with the range over seeds.
+- **Checks.** At the present width and fraction 0.50 the run has the hash of E26's dry birth at 2,048 updates, under both rules. Batch digests are equal across widths and rules for a seed and fraction. Each width's parameter count is recorded.
+- **Cost.** By my estimate about 24 CPU-hours of updates and 4 of scoring; three quarters of it is the widest network. One seed per worker divides it evenly.
+- **What it cannot show.** Settings tuned at one width are used at all three, so a width may be handicapped by them. Networks with a life behind them exist at one width only, so the crossing of width with experience is left to the small world.
+
+My expectations, on record: at fraction 0.50 the widest network reaches 80% in fewer updates than the present one, 70%; it does so with less total computation, 25%; at fraction 0.10 the widest network reaches 80% on held-out reduction pairs within its dose, 20%; the reading differs between the rules in some cell, 25%.
+
+### 21.5 In the small world
+
+- Width becomes an axis of job L2 for every arm, at three widths, in place of `naive` at one extra width (section 17.10, item 5).
+- Every table of L1 and L2 gives computation in the two units of 21.2 beside updates, and the first-visit cost of the n-th task is also given as computation to threshold.
+- Comparisons between learners are made at equal total computation with each at its best width, as well as at equal width.
+- The crossing that full scale cannot make is made here: computation to threshold for the n-th new task, by width. It says which buys more, experience or width.
+
+### 21.6 What this replaces
+
+In discussion I had proposed adding fresh networks at other widths to E40. Job E41 replaces that: it uses the same task at every point of the grid, which is what "the same task" in Mr. Xu's statement requires, and E40 stays as released.
 
