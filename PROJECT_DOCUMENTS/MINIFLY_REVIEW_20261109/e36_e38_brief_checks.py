@@ -132,6 +132,16 @@ if "F" in want:
     for arm in "SB":
         st = rec(arm, 73129)['stages']
         print(f"   E38, E26 life {arm} 73129: birth family after block 1 / 2: {hard(st[1]['scores'], 89):.1f} / {hard(st[2]['scores'], 89):.1f} (the 'loses' mark is 50); F1 after block 1 / 2: {hard(st[1]['scores'], 97):.1f} / {hard(st[2]['scores'], 97):.1f} (the 'acquires' mark is 85)")
+    from np_gru import panel
+    for s in SEEDS:                                       # what "everything kept except the wrap" scores on the receipts' held-out panels
+        share = []
+        for t in DEV[:2]:
+            pk = panel(t, split(t, .5, s)[1], s, (12,), 300)[12]
+            ab = [(int(bytes(p[1:3])), int(bytes(p[-3:-1]))) for p, _ in pk]
+            share.append(100 * np.mean([(x + y < 89) if t[0] == "add" else (x - y >= 0) for x, y in ab]))
+        st = {arm: rec(arm, s)['stages'] for arm in "SB"}
+        print(f"   held-out panel of seed {s}: pairs that need no wrap, add {share[0]:.1f}%, sub {share[1]:.1f}%, mean {np.mean(share):.1f}%; E26 after block 1 and 2 (add, sub): "
+              + "; ".join(f"{arm} " + " ".join(f"({pc(st[arm][i]['scores']['add89']['12']):.1f}, {pc(st[arm][i]['scores']['sub89']['12']):.1f})" for i in (1, 2)) for arm in "SB"))
     for arm in "SBK":
         for fam, m, stages in (("F3", 73, (5, 6)), ("F1", 97, (1,))):
             print(f"   E37, life {arm}, {fam}: " + "; ".join(f"after block {si}: " + ", ".join(f"{hard(rec(arm, s)['stages'][si]['scores'], m):.1f}" for s in SEEDS) for si in stages))
