@@ -89,6 +89,7 @@ if "C" in want:
 
 if "D" in want or "E" in want:
     print("D. row 0 of the lived runs on the new family (whole answers, %)")
+    print("   table columns: held-out at 12 letters add, sub, max, min | taught at 12 letters add, sub, max, min | held-out without letters: add no reduction, add reduction, sub no reduction, sub reduction")
     rows = {}
     for arm, f in LIVES.items():
         for s in SEEDS:
@@ -105,6 +106,7 @@ if "D" in want or "E" in want:
                     for m in (97, 73, 89):
                         r[t[0] + f"_wrap_as{m}"] = 100 * np.mean(val[wrap] == raw[wrap] % m)
             rows[(arm, s)] = r
+            print(f"   table | {arm} {s} | " + " | ".join(f"{r[k]:.1f}" for k in ("add_held12", "sub_held12", "max_held12", "min_held12", "add_taught12", "sub_taught12", "max_taught12", "min_taught12", "add_nowrap", "add_wrap", "sub_nowrap", "sub_wrap")) + " |")
             print(f"   lived {arm} {s}: held-out at 12 letters add {r['add_held12']:.1f} sub {r['sub_held12']:.1f} (mean {(r['add_held12'] + r['sub_held12']) / 2:.1f}) max {r['max_held12']:.1f} min {r['min_held12']:.1f} | taught add/sub mean {(r['add_taught12'] + r['sub_taught12']) / 2:.1f}"
                   f" | held-out pairs, no letters: no reduction add {r['add_nowrap']:.1f} sub {r['sub_nowrap']:.1f}; reduction add {r['add_wrap']:.1f} sub {r['sub_wrap']:.1f}"
                   f" | reduction pairs answered as mod 97 / 73 / 89: add {r['add_wrap_as97']:.0f} / {r['add_wrap_as73']:.0f} / {r['add_wrap_as89']:.0f}, sub {r['sub_wrap_as97']:.0f} / {r['sub_wrap_as73']:.0f} / {r['sub_wrap_as89']:.0f}", flush=True)
@@ -118,7 +120,7 @@ if "D" in want or "E" in want:
 if "F" in want:
     print("F. E35-A arm G at f = 0.10 (fresh, backpropagation, mod 89, seed 73129), held-out and taught pairs without letters, whole answers %")
     s = 73129
-    for tag, suffix in (("row 16,384", "_row16384.pt"), ("row 20,480", "_row20480.pt"), ("end", ".pt")):
+    for tag, suffix in (("row 16,384", "_row16384.pt"), ("row 20,480", "_row20480.pt"), ("row 24,576", "_row24576.pt")):
         try:
             W = load_weights(P + f"e35a/e35a_dev_G_f10_{s}{suffix}", "origin/claude/nice-rubin-y5de8k")[0]
         except AssertionError:
