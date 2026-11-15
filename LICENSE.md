@@ -1,8 +1,6 @@
 # Licence and terms of use
 
-**DRAFT for the owner's review. Not in force until the owner confirms it and it is merged into the default branch.**
-
-Copyright © [YEAR(S)] [FULL NAME OF MR. ZHOU] ("the Owner"; GitHub account `changweizhou`). All rights reserved.
+Copyright © 2026–2126 Changwei Zhou ("the Owner"; GitHub account `changweizhou`). All rights reserved.
 
 ## 1. What this covers
 
@@ -40,7 +38,7 @@ All non-commercial use by others needs permission, including, without limit:
 
 ## 6. How permission works
 
-- Ask the Owner in writing at [CONTACT ADDRESS], stating who you are, what you want to use, for what purpose and for how long.
+- Ask the Owner in writing at 0739085@gmail.com, stating who you are, what you want to use, for what purpose and for how long.
 - Permission is valid only if given in writing by the Owner. Silence is not permission.
 - Permission covers only the person, the use and the period it names. It cannot be passed on.
 - The Owner may attach conditions, including attribution in a stated form, and may refuse without giving a reason.
@@ -68,14 +66,4 @@ Earlier versions of `README.md` stated that the repository was under CC BY-NC-ND
 
 ## 12. Governing law
 
-These terms are governed by the law of [JURISDICTION].
-
----
-
-**Notes for the Owner (delete before adoption).**
-
-- Four fields need filling: the years, the full name, a contact address, and the governing law.
-- Section 3 cannot be narrowed below what the hosting service's own terms give its users. If the repository is public on GitHub, other users may view and fork it within GitHub whatever this file says. Making the repository private is the only way to prevent that.
-- Section 8 matters only if other people contribute. Material written by AI assistants at the Owner's or his collaborators' direction is a separate question that a lawyer should look at.
-- Section 11 reflects that a Creative Commons licence cannot be withdrawn for copies already taken.
-- This is a draft by a non-lawyer. It should be reviewed by a qualified lawyer in the chosen jurisdiction before it is relied on.
+These terms are governed by the laws of the United States of America.
