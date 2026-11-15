@@ -1,8 +1,9 @@
 """What does a network answer, at the end of a life, on a birth task the life never rehearsed?  (15 November 2026)
 
 Read-only: forward passes on saved weights with numpy, greedy two-digit answers on every operand pair without letters.
-For add and sub mod 89 it reports the share of answers that equal the result mod 89, mod 97 and mod 73 (the life's two
-moduli), and exact answers separately for pairs that need no wrap (a + b < 89, or a - b >= 0) and pairs that do.
+For add and sub mod 89 it reports exact answers separately for pairs that need no wrap (a + b < 89, or a - b >= 0)
+and pairs that do, and, for the pairs that need the wrap, the share answered with the result mod 97 or mod 73 (the
+life's two moduli).
 
 Run from the repository root:
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/life_answers_on_birth_tasks.py <file> [<file> ...]
@@ -37,4 +38,4 @@ for f in sys.argv[1:]:
         s = a + b if op == "add" else a - b
         c89 = s % 89; c97 = s % 97; c73 = s % 73
         wrap = (s >= 89) if op == "add" else (s < 0)
-        print(f"{f.split('/')[-1]:26s} {tname}: two digits {isnum.mean()*100:5.1f}% | = mod 89 {np.mean(val==c89)*100:5.1f} | = mod 97 {np.mean(val==c97)*100:5.1f} | = mod 73 {np.mean(val==c73)*100:5.1f} | right, no wrap {np.mean((val==c89)[~wrap])*100:5.1f} | right, wrap {np.mean((val==c89)[wrap])*100:5.1f} | units digit right {np.mean((d2-48)==c89%10)*100:5.1f} | tens right {np.mean((d1-48)==c89//10)*100:5.1f} | off by at most 2 (circular) {np.mean(np.minimum((val-c89)%89,(c89-val)%89)<=2)*100:5.1f}")
+        print(f"{f.split('/')[-1]:24s} {tname}: two digits {isnum.mean()*100:5.1f} | all pairs right {np.mean(val==c89)*100:5.1f} | no wrap: right {np.mean((val==c89)[~wrap])*100:5.1f} | wrap: right {np.mean((val==c89)[wrap])*100:5.1f}, answered mod 97 {np.mean((val==c97)[wrap])*100:5.1f}, answered mod 73 {np.mean((val==c73)[wrap])*100:5.1f}", flush=True)
