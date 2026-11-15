@@ -17,6 +17,8 @@ Run from the repository root:
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec-file stats # the coordinator's rules with the file's end symbol (257)
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec stats      # the same rules with the harness's end symbol (256)
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec alloc      # taught items per task under the coordinator's schedule
+  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec events <events.npz> <world>   # a runner's event file against the generator
+  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec score <events.npz> [visits]   # the scorer on a runner's event file
 """
 import hashlib, math, sys
 from random import Random
@@ -213,68 +215,124 @@ class SpecWorld(World):
         return h.hexdigest()
 
 
-# ---------------------------------------------------------------- the scorer, from the brief's table
+# ---------------------------------------------------------------- the scorer
+def symmetric(op):
+    return op[0] != "lin" or op[1] == op[2]
+
+
 def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
-    """ev: dict of equal-length arrays in stream order: update, visit, task, correct, blind, wrap, learned.
-    Returns the brief's quantities.  Readings made where the table is not explicit:
-      * a mean "of its last 32 asked items" exists only once the task has 32 asked items (a shorter window is not used);
-      * the n-th task met is ordered by its first asked item in the stream;
-      * a return visit is a visit to a group met before; absence = visits since the task's previous visit;
-      * relearning within a visit uses a window that starts at the visit's first asked item of the task.
+    """The brief's quantities, with the definitions the audit asks for where the table was not explicit or not sound.
+
+    ev: equal-length arrays in stream order, one record per asked item:
+        update, visit, task, correct, blind, wrap, seen (the task's stream taught items presented before this update).
+    Only the first `visits` visits are read, so a shorter life is scored from the file of a longer one.
+
+      score_by_age, blind_by_age   share right in each visit
+      first_visit                  per task, in order of meeting (first visit, then task id): n, task, the mean of its last
+                                   `window` asked items in its FIRST visit (every task has one full first visit, so nothing is
+                                   censored), and its taught items before the running mean first reaches `level` in that visit
+      cost                         the brief's whole-life cost (taught items before the running mean first reaches `level`);
+                                   descriptive only: a task met late has fewer visits left, so "reached" is not comparable over n
+      kept                         per return visit and task: the share right in the visit's FIRST update (answered before any
+                                   update of the visit), the same over the first `window` items, both split by wrap, the absence
+      relearn                      taught items within the visit before the running mean (over the visit's own items) reaches `level`
+      late_level                   mean score_by_age over the last quarter of the visits
+      score_trend                  least-squares slope of score_by_age on ln(visit + 1) over the second half
+      learning_trend               least-squares slope of the first-visit level on ln(n), n from 3 (after the first group)
+      cost_trend                   the brief's slope of ln(cost) on ln(n) over tasks that reached, n from 2 (biased; see above)
+    A running mean exists only once `window` items are there; a shorter window is never used.
     """
-    upd, vis, task, cor = (np.asarray(ev[k]) for k in ("update", "visit", "task", "correct"))
-    blind, wrap, learned = (np.asarray(ev[k]) for k in ("blind", "wrap", "learned"))
+    keep = np.asarray(ev["visit"]) < visits
+    upd, vis, task, cor, blind, wrap, seen = (np.asarray(ev[k])[keep] for k in ("update", "visit", "task", "correct", "blind", "wrap", "seen"))
     out = {}
     out["score_by_age"] = np.array([cor[vis == v].mean() if (vis == v).any() else np.nan for v in range(visits)])
     out["blind_by_age"] = np.array([blind[vis == v].mean() if (vis == v).any() else np.nan for v in range(visits)])
-    order = []
-    for t in task:
-        if t not in order:
-            order.append(int(t))
-    cost, kept, relearn = [], [], []
+    firstv = {}
+    for t, v in zip(task.tolist(), vis.tolist()):
+        firstv.setdefault(t, v)
+    order = sorted(firstv, key=lambda t: (firstv[t], t))
+
+    def reach(c, sn):
+        """Taught items seen at the first asked item where the mean of the last `window` items is at least `level`."""
+        if len(c) < window:
+            return None
+        run = np.convolve(c, np.ones(window) / window, mode="valid")
+        hit = np.nonzero(run >= level - 1e-12)[0]
+        return int(sn[hit[0] + window - 1]) if len(hit) else None
+
+    first_visit, cost, kept, relearn = [], [], [], []
     for n, t in enumerate(order, 1):
         m = task == t
-        c, lrn, v_t, w_t = cor[m].astype(float), learned[m], vis[m], wrap[m]
-        run = np.convolve(c, np.ones(window) / window, mode="valid") if len(c) >= window else np.array([])
-        hit = np.nonzero(run >= level - 1e-12)[0]
-        if len(hit):
-            cost.append((n, t, int(lrn[hit[0] + window - 1]), None))
-        else:
-            cost.append((n, t, None, float(c[-window:].mean()) if len(c) else float("nan")))
-        visits_t = sorted(set(int(x) for x in v_t))
-        for prev, v in zip(visits_t, visits_t[1:]):
+        c, sn, v_t, w_t, u_t = cor[m].astype(float), seen[m], vis[m], wrap[m], upd[m]
+        f = v_t == firstv[t]
+        first_visit.append(dict(n=n, task=t, level=float(c[f][-window:].mean()), cost=reach(c[f], sn[f])))
+        r = reach(c, sn)
+        cost.append(dict(n=n, task=t, cost=r, level=None if r is not None else float(c[-window:].mean())))
+        vs = sorted(set(v_t.tolist()))
+        for prev, v in zip(vs, vs[1:]):
             mv = v_t == v
-            cv, lv, wv = c[mv], lrn[mv], w_t[mv]
-            first = cv[:window]
-            rec = dict(task=t, visit=v, absence=v - prev, kept=float(first.mean()),
-                       kept_wrap=float(first[wv[:window] == 1].mean()) if (wv[:window] == 1).any() else None,
-                       kept_nowrap=float(first[wv[:window] == 0].mean()) if (wv[:window] == 0).any() else None)
-            kept.append(rec)
-            runv = np.convolve(cv, np.ones(window) / window, mode="valid") if len(cv) >= window else np.array([])
-            hv = np.nonzero(runv >= level - 1e-12)[0]
-            relearn.append(dict(task=t, visit=v, items=int(lv[hv[0] + window - 1] - lv[0]) if len(hv) else None))
-    out["cost"], out["kept"], out["relearn"] = cost, kept, relearn
+            cv, sv, wv, uv = c[mv], sn[mv], w_t[mv], u_t[mv]
+            fu = uv == uv.min()                                             # the visit's first update: nothing relearned yet
+
+            def part(sel):
+                return float(cv[sel].mean()) if sel.any() else None
+            head = np.arange(len(cv)) < window
+            kept.append(dict(task=t, visit=v, absence=v - prev, kept=part(fu), kept_wrap=part(fu & (wv == 1)), kept_nowrap=part(fu & (wv == 0)),
+                             kept32=part(head), kept32_wrap=part(head & (wv == 1)), kept32_nowrap=part(head & (wv == 0))))
+            rr = reach(cv, sv)
+            relearn.append(dict(task=t, visit=v, absence=v - prev, items=None if rr is None else int(rr - sv[0])))
+    out.update(first_visit=first_visit, cost=cost, kept=kept, relearn=relearn)
     q = visits - max(1, visits // 4)
     out["late_level"] = float(np.nanmean(out["score_by_age"][q:]))
     half = np.arange(visits // 2, visits)
     out["score_trend"] = float(np.polyfit(np.log(half + 1), out["score_by_age"][half], 1)[0]) if len(half) > 1 else float("nan")
-    reached = [(n, c) for n, t, c, lvl in cost if c is not None and n >= 2 and c > 0]
-    out["cost_trend"] = float(np.polyfit(np.log([n for n, c in reached]), np.log([c for n, c in reached]), 1)[0]) if len(reached) > 1 else float("nan")
+    fv = [(d["n"], d["level"]) for d in first_visit if d["n"] >= 3]
+    out["learning_trend"] = float(np.polyfit(np.log([n for n, _ in fv]), [l for _, l in fv], 1)[0]) if len(fv) > 1 else float("nan")
+    rc = [(d["n"], d["cost"]) for d in cost if d["cost"] and d["n"] >= 2]
+    out["cost_trend"] = float(np.polyfit(np.log([n for n, _ in rc]), np.log([c for _, c in rc]), 1)[0]) if len(rc) > 1 else float("nan")
     return out
 
 
-def blind_events(world, visits):
-    """The event-file fields that need no network: update, visit, task, blind-correct, needs-wrap, taught items so far."""
-    tid = {t: i for i, t in enumerate(world.tasks)}
-    last, n_taught, ev = {}, {}, dict(update=[], visit=[], task=[], correct=[], blind=[], wrap=[], learned=[])
+def events_without_network(world, visits):
+    """Every column of the event file that does not need a network: update, visit, task id, the blind predictor's result,
+    needs-wrap, the task's stream taught items presented before this update, and whether the mirrored pair is taught."""
+    tid = getattr(world, "tid", None) or {t: i for i, t in enumerate(world.tasks)}
+    taught_set = {t: set(world.taught[t]) for t in world.tasks}
+    last, n_seen = {}, {}
+    ev = dict(update=[], visit=[], task=[], correct=[], blind=[], wrap=[], seen=[], mirror=[])
     for v, u, taught, asked in world.batches(visits):
         for t, pair, prompt, target in asked:                              # asked items are answered before the update
-            ev["update"].append(u); ev["visit"].append(v); ev["task"].append(tid[t])
-            ev["blind"].append(int(last.get(t) == target)); ev["correct"].append(0)
-            ev["wrap"].append(int(needs_wrap(t[0], t[1], *pair))); ev["learned"].append(n_taught.get(t, 0))
+            ev["update"].append(u); ev["visit"].append(v); ev["task"].append(tid[t]); ev["correct"].append(0)
+            ev["blind"].append(int(last.get(t) == target))
+            ev["wrap"].append(int(needs_wrap(t[0], t[1], *pair))); ev["seen"].append(n_seen.get(t, 0))
+            ev["mirror"].append(int(symmetric(t[0]) and pair[0] != pair[1] and (pair[1], pair[0]) in taught_set[t]))
         for t, pair, prompt, target in taught:
-            last[t] = target; n_taught[t] = n_taught.get(t, 0) + 1
+            last[t] = target; n_seen[t] = n_seen.get(t, 0) + 1
     return {k: np.array(x) for k, x in ev.items()}
+
+
+def hand_made():
+    """Two tasks, two visits of 16 updates, 4 asked items per task per update, 24 taught items per task per update.
+    Task 0 is right from update 6 on, wrong again in the first update of visit 1, right after; task 1 is never right."""
+    ev = dict(update=[], visit=[], task=[], correct=[], blind=[], wrap=[], seen=[])
+    for u in range(32):
+        for t in (0, 1):
+            for j in range(4):
+                right = t == 0 and u >= 6 and u != 16
+                ev["update"].append(u); ev["visit"].append(u // 16); ev["task"].append(t); ev["correct"].append(int(right))
+                ev["blind"].append(0); ev["wrap"].append(j % 2); ev["seen"].append(u * 24)
+    r = score({k: np.array(v) for k, v in ev.items()}, visits=2, visit_updates=16)
+    # task 0: items of updates 0-5 (24 items) are wrong.  A window of 32 ending at item i holds 55 - i wrong items for i <= 55;
+    # 0.8 needs at most 6 wrong, so i = 49, the second item of update 12: 12 * 24 = 288 taught items seen.
+    assert r["first_visit"][0] == dict(n=1, task=0, level=1.0, cost=288), r["first_visit"][0]
+    assert r["first_visit"][1] == dict(n=2, task=1, level=0.0, cost=None)
+    assert r["cost"][0]["cost"] == 288 and r["cost"][1] == dict(n=2, task=1, cost=None, level=0.0)
+    k0 = [k for k in r["kept"] if k["task"] == 0][0]
+    assert k0["absence"] == 1 and k0["kept"] == 0.0 and k0["kept32"] == 28 / 32, k0      # first update wrong; the first 32 items hold 4 wrong
+    assert [x for x in r["relearn"] if x["task"] == 0][0]["items"] == 7 * 24               # the window is 28/32 = 0.875 at its first full position, update 23
+    assert abs(r["score_by_age"][0] - 40 / 128) < 1e-12 and abs(r["score_by_age"][1] - 60 / 128) < 1e-12
+    assert abs(r["late_level"] - 60 / 128) < 1e-12
+    print("hand-made event file: every quantity equals its hand-computed value")
 
 
 # ---------------------------------------------------------------- command line
@@ -342,17 +400,20 @@ if __name__ == "__main__":
     elif what == "alloc":
         alloc(mk)
     elif what == "blind":
-        for s in (1, 2):
-            ev = blind_events(mk(s), 16)
-            print(f"world {s}, 16 visits: blind predictor right on {100 * ev['blind'].mean():.1f}% of {len(ev['blind']):,} asked items; needs-wrap share {ev['wrap'].mean():.2f}")
+        for sd in (1, 2):
+            ev = events_without_network(mk(sd), 16)
+            print(f"world {sd}, 16 visits: blind predictor right on {100 * ev['blind'].mean():.1f}% of {len(ev['blind']):,} asked items; needs-wrap share {ev['wrap'].mean():.2f}; asked items whose mirrored pair is taught {100 * ev['mirror'].mean():.1f}%")
     elif what == "scorer":
-        # a hand-made event file: two tasks, one visit each of 2 "visits" of 8 updates, 4 asked items per task per update
-        ev = dict(update=[], visit=[], task=[], correct=[], blind=[], wrap=[], learned=[])
-        for u in range(32):
-            for t in (0, 1):
-                for j in range(4):
-                    ev["update"].append(u); ev["visit"].append(u // 16); ev["task"].append(t)
-                    ev["correct"].append(int(u >= (6 if t == 0 else 40))); ev["blind"].append(0); ev["wrap"].append(j % 2); ev["learned"].append(u * 24)
-        r = score({k: np.array(v) for k, v in ev.items()}, visits=2, visit_updates=16, window=32, level=0.8)
-        # task 0 is right from update 6: its 32-item window (8 updates) first holds 26 of 32 (0.8125) when it ends inside update 12 (items of updates 5..12 -> 7 right updates = 28/32 at end of update 12; first >= 0.8 is the 2nd item of update 12)
-        print("hand-made file: cost", r["cost"], "| score by age", r["score_by_age"], "| late level", r["late_level"])
+        hand_made()
+    elif what == "events":
+        # compare a runner's event file (.npz with arrays update, visit, task, correct, blind, wrap, seen[, mirror]) with the generator
+        f = np.load(sys.argv[3]); seed = int(sys.argv[4]); visits = int(f["visit"].max()) + 1
+        ev = events_without_network(mk(seed), visits)
+        for k in ("update", "visit", "task", "blind", "wrap", "seen", "mirror"):
+            if k in f.files:
+                print(f"   {k}: {'equal' if np.array_equal(np.asarray(f[k]).astype(np.int64), ev[k]) else 'DIFFERENT'}")
+    elif what == "score":
+        f = np.load(sys.argv[3]); visits = int(sys.argv[4]) if len(sys.argv) > 4 else int(f["visit"].max()) + 1
+        r = score({k: f[k] for k in f.files}, visits)
+        print({k: r[k] for k in ("late_level", "score_trend", "learning_trend", "cost_trend")})
+        print("first-visit level by task:", [round(d["level"], 3) for d in r["first_visit"]])
