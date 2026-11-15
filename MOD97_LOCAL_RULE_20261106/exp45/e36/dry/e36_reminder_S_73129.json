@@ -1,0 +1,509 @@
+{
+ "experiment": "E36",
+ "kind": "reminder",
+ "rule": "S",
+ "seed": 73129,
+ "updates": 64,
+ "rows_planned": [
+  0,
+  16,
+  32,
+  64
+ ],
+ "start": {
+  "start": "exp45/e26/e26_life_S_73129.pt",
+  "weights_sha256": "54fbb46407b79afa126fe25042327ec8e453bc3e90295773a76a0545b02ff25c",
+  "tensors_sha256": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+  "receipt_tensors_sha256": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+  "tensors_sha_matches_receipt": true
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "data": "exp11_cell.batches(birth taught half, seed + 36, 12)",
+ "update": "exp26_candidate.step(local=True)",
+ "provenance": {
+  "command": "python3 e36_reminder.py run reminder S 73129 --updates 64 --out exp45/e36/dry",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "18751457a044b01f44d691933880cec1e4312599",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "e36_sources_sha256": {
+   "e36_reminder.py": "910e79fa4720174720775aaf6c59f5a4d9064284c2c50022231085d92484dea4",
+   "arch31_workerB.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+   "exp31_switch_workerB.py": "1a3fa17979808b14c22893e8b2a3b67eea6c7d6cc240a6ab522d16956a971466"
+  }
+ },
+ "rows": [
+  {
+   "updates": 0,
+   "scores": {
+    "birth_held_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 65,
+      "final": 65
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 133,
+      "final": 133
+     },
+     "max89": {
+      "n": 300,
+      "exact": 297,
+      "final": 297
+     },
+     "min89": {
+      "n": 300,
+      "exact": 171,
+      "final": 171
+     }
+    },
+    "birth_all_pairs_k0": {
+     "add89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 49,
+       "final": 49
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 1821,
+       "final": 1821
+      }
+     },
+     "sub89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 14,
+       "final": 14
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 3175,
+       "final": 3175
+      }
+     }
+    },
+    "life_families": {
+     "add97": {
+      "n": 400,
+      "exact": 380,
+      "final": 380
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 362,
+      "final": 362
+     },
+     "add73": {
+      "n": 400,
+      "exact": 341,
+      "final": 341
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 302,
+      "final": 302
+     },
+     "within": {
+      "n": 600,
+      "exact": 501,
+      "final": 515
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 33.0,
+     "wrap_score": 0.8043922369765066,
+     "nowrap_score": 62.37203495630462,
+     "restored": false
+    }
+   },
+   "loss_since_last_row": null,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "weights": "e36_reminder_S_73129_row0.pt",
+   "weights_sha256": "c9e41a1755dee42dbf99a09ba8ae202e494d166239d9d2672b16e03b670378ca",
+   "tensors_sha256": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+   "optimizer_steps": [],
+   "cpu": 13.670915101,
+   "cpu_scoring_so_far": 13.658956411
+  },
+  {
+   "updates": 16,
+   "scores": {
+    "birth_held_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 131,
+      "final": 131
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 152,
+      "final": 152
+     },
+     "max89": {
+      "n": 300,
+      "exact": 294,
+      "final": 294
+     },
+     "min89": {
+      "n": 300,
+      "exact": 290,
+      "final": 290
+     }
+    },
+    "birth_all_pairs_k0": {
+     "add89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 790,
+       "final": 790
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 2599,
+       "final": 2599
+      }
+     },
+     "sub89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 862,
+       "final": 862
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 2818,
+       "final": 2818
+      }
+     }
+    },
+    "life_families": {
+     "add97": {
+      "n": 400,
+      "exact": 173,
+      "final": 173
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 173,
+      "final": 173
+     },
+     "add73": {
+      "n": 400,
+      "exact": 169,
+      "final": 169
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 182,
+      "final": 182
+     },
+     "within": {
+      "n": 600,
+      "exact": 38,
+      "final": 149
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 47.166666666666664,
+     "wrap_score": 21.092951991828397,
+     "nowrap_score": 67.62796504369538,
+     "restored": false
+    }
+   },
+   "loss_since_last_row": 0.697301460430026,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 16,
+    "sha256": "af9cc9ad0252ae4a1e26d3042a3a97b067b5c20e5a3845a80eb4dd03d7510fe1"
+   },
+   "weights": "e36_reminder_S_73129_row16.pt",
+   "weights_sha256": "fdb2680f65f5807465704527854f91459d7e11f335d07cf4b80afb7eb6bab9f1",
+   "tensors_sha256": "5af2fd8c73ce2945684beeb82c6d43e4a3f3c65808ed6515ee9cdb3981297f89",
+   "optimizer_steps": [
+    16
+   ],
+   "cpu": 28.945409571,
+   "cpu_scoring_so_far": 27.089117758
+  },
+  {
+   "updates": 32,
+   "scores": {
+    "birth_held_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 181,
+      "final": 181
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 178,
+      "final": 178
+     },
+     "max89": {
+      "n": 300,
+      "exact": 292,
+      "final": 292
+     },
+     "min89": {
+      "n": 300,
+      "exact": 294,
+      "final": 294
+     }
+    },
+    "birth_all_pairs_k0": {
+     "add89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 1644,
+       "final": 1644
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 3220,
+       "final": 3220
+      }
+     },
+     "sub89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 2173,
+       "final": 2173
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 2643,
+       "final": 2643
+      }
+     }
+    },
+    "life_families": {
+     "add97": {
+      "n": 400,
+      "exact": 151,
+      "final": 151
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 168,
+      "final": 168
+     },
+     "add73": {
+      "n": 400,
+      "exact": 165,
+      "final": 165
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 154,
+      "final": 154
+     },
+     "within": {
+      "n": 600,
+      "exact": 26,
+      "final": 138
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 59.833333333333336,
+     "wrap_score": 48.735955056179776,
+     "nowrap_score": 73.19600499375781,
+     "restored": false
+    }
+   },
+   "loss_since_last_row": 0.3066177563741803,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 32,
+    "sha256": "cee750a0d0db83759f8e7a187383a4b18b726bcef3c69e2b5db5883ad4a540a5"
+   },
+   "weights": "e36_reminder_S_73129_row32.pt",
+   "weights_sha256": "e9b6f9cbaf2da9cb142f75150431e1fdca3b62da96db5a195200c8a4363caeae",
+   "tensors_sha256": "939d712ec9c37fcd3ae46599c0a5882a371e2588c6afc7084b758431996d18d1",
+   "optimizer_steps": [
+    32
+   ],
+   "cpu": 44.02244943,
+   "cpu_scoring_so_far": 40.243828134000005
+  },
+  {
+   "updates": 64,
+   "scores": {
+    "birth_held_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 222,
+      "final": 222
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 256,
+      "final": 256
+     },
+     "max89": {
+      "n": 300,
+      "exact": 299,
+      "final": 299
+     },
+     "min89": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     }
+    },
+    "birth_all_pairs_k0": {
+     "add89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 2489,
+       "final": 2489
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 3653,
+       "final": 3653
+      }
+     },
+     "sub89": {
+      "wrap": {
+       "n": 3916,
+       "exact": 2834,
+       "final": 2834
+      },
+      "nowrap": {
+       "n": 4005,
+       "exact": 3661,
+       "final": 3661
+      }
+     }
+    },
+    "life_families": {
+     "add97": {
+      "n": 400,
+      "exact": 170,
+      "final": 170
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 158,
+      "final": 158
+     },
+     "add73": {
+      "n": 400,
+      "exact": 170,
+      "final": 170
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 176,
+      "final": 176
+     },
+     "within": {
+      "n": 600,
+      "exact": 22,
+      "final": 130
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 79.66666666666666,
+     "wrap_score": 67.96475995914199,
+     "nowrap_score": 91.31086142322098,
+     "restored": false
+    }
+   },
+   "loss_since_last_row": 0.1480867959326133,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 64,
+    "sha256": "e0d854b5a376864c4d934485e21546aae5af4a3078f302db4344505d15dc7d46"
+   },
+   "weights": "e36_reminder_S_73129_row64.pt",
+   "weights_sha256": "de8091e2faaaad05c18f88db7a2b4ba78290dd6520e2cfac9378dc9a929ef132",
+   "tensors_sha256": "e8aa3836b6fc74e4b564a4979aeaafb605a24f020e0cdf923b07a6207cc13be4",
+   "optimizer_steps": [
+    64
+   ],
+   "cpu": 60.877946565,
+   "cpu_scoring_so_far": 53.365628533000006
+  }
+ ],
+ "complete": true,
+ "cpu_total": 60.878297239,
+ "cpu_scoring": 53.365628533000006,
+ "cpu_updates": 7.512670147999998
+}
