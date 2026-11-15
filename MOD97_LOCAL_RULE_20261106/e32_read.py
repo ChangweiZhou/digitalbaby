@@ -132,10 +132,11 @@ def reproduce():
         path = E28 / r["file"]
         m, sha = load_net(path, r["sha256"], r["seed"])
         pk = E.panel(G29.ADD89, E.split(G29.ADD89, .5, r["seed"])[1], r["seed"], ks=(12, 40), n=300)
-        acc = {k: round(100 * X16.score(m, pk[k])["exact"] / 300, 2) for k in (12, 40)}
+        acc = {k: 100 * X16.score(m, pk[k])["exact"] / 300 for k in (12, 40)}
         ua = G30.U_of(m, G29.add89_panel(r["seed"], 12))["U"]
         up = G30.U_of(m, G29.plus_minus_panel(r["seed"]))["U"]
-        mine = dict(acc12=acc[12], acc40=acc[40], U_add89_k12=ua, U_plus_minus=up, H=round(acc[12] - acc[40], 2))
+        # H as E30 computes it: the difference of the unrounded accuracies, then rounded
+        mine = dict(acc12=round(acc[12], 2), acc40=round(acc[40], 2), U_add89_k12=ua, U_plus_minus=up, H=round(acc[12] - acc[40], 2))
         same = all(mine[k] == r[k] for k in mine)
         ok &= same
         out["e30_rows"].append(dict(arm=r["arm"], seed=r["seed"], row=r["row"], file=r["file"], e30={k: r[k] for k in mine}, reader=mine, exact=same))
