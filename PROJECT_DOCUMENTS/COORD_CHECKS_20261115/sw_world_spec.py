@@ -5,7 +5,7 @@ import hashlib
 import sys
 from random import Random
 
-BOS, EOS = 256, 257                       # as exp11_cell: BOS never a target, EOS ends the answer
+EOS, BOS = 256, 257                       # as mod97_local.py lines 34-35: EOS ends the answer; BOS is never a target
 MODULI = list(range(8, 38))               # 30 moduli; operands and answers are two decimal digits
 LINEAR = [(c1, c2) for c1 in (1, 2, -1, -2) for c2 in (1, 2, -1, -2)]          # (c1*a + c2*b) mod p: 16 operations
 OPS = [("lin", c) for c in LINEAR] + [("max", None), ("min", None)]            # 18 operations
@@ -17,6 +17,7 @@ GROUP, BATCH, TAUGHT_PER_BATCH = 2, 64, 48          # tasks per group; items per
 VISIT_UPDATES = 256                       # updates per visit
 P_NEW = 0.2                               # chance that a visit after the first brings a new group
 TAUGHT_FRACTION = 0.5
+PROBE_GROUPS = 20                         # the last 20 groups (tasks 500 to 539) are never scheduled: the world's probe tasks
 
 
 def apply(op, p, a, b):
@@ -32,8 +33,8 @@ def needs_wrap(op, p, a, b):              # for lin operations: the plain intege
 
 
 class World:
-    def __init__(self, seed):
-        self.seed = seed
+    def __init__(self, seed, visit_updates=VISIT_UPDATES, p_new=P_NEW):
+        self.seed, self.visit_updates, self.p_new = seed, visit_updates, p_new
         r = Random(f"world|{seed}|tasks")
         tasks = [(oi, p) for oi in range(len(OPS)) for p in MODULI]             # 540 tasks
         r.shuffle(tasks)
@@ -50,11 +51,12 @@ class World:
     def schedule(self, visits):
         """The group of each visit. Visit 0 is group 0. Later: with chance P_NEW the next unmet group; otherwise a return, whose absence
         class is drawn uniformly from short (last seen 1-4 visits ago), medium (5-32) and long (33 or more), and the group is drawn
-        uniformly among met groups in that class; an empty class falls back to the nearest non-empty one in the order short, medium, long."""
+        uniformly among met groups in that class; if the drawn class is empty, the first non-empty of short, medium, long is used. A visit is
+        new only while fewer than len(groups) - PROBE_GROUPS groups are met."""
         r = Random(f"world|{self.seed}|schedule")
         out, last, met = [], {}, 0
         for v in range(visits):
-            new = v == 0 or (r.random() < P_NEW and met < len(self.groups))
+            new = v == 0 or (r.random() < self.p_new and met < len(self.groups) - PROBE_GROUPS)
             if new:
                 g = met; met += 1
             else:
@@ -81,7 +83,7 @@ class World:
         list of (task_id, a, b, prompt, answer)."""
         r = Random(f"world|{self.seed}|visit|{v}")
         ts = self.groups[group]
-        for _ in range(VISIT_UPDATES):
+        for _ in range(self.visit_updates):
             taught, asked = [], []
             for i in range(BATCH):
                 t = ts[r.randrange(len(ts))]
@@ -113,3 +115,4 @@ if __name__ == "__main__":
     print("pairs per task min/max:", min(len(t['taught']) + len(t['asked']) for t in w.tasks), max(len(t['taught']) + len(t['asked']) for t in w.tasks),
           "| prompt length max:", 2 + 2 + 1 + KMAX + 2 + 1, "| first tasks:", [(t['code'].decode(), chr(t['symbol']), t['op'], t['p']) for t in w.tasks[:3]])
     print("digest of the first 16 visits:", digest(w, 16))
+    print("digest of the first 64 visits:", digest(w, 64))
