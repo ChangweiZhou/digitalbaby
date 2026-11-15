@@ -4,6 +4,11 @@
     python3 e33_read.py read          every saved row of every arm present (seed 73129)                         -> exp45/e33/E33_READ.json
     python3 e33_read.py tables        endpoints, marks, the outcome row and the eight-arm table                 -> exp45/e33/E33_READ_TABLES.md
 
+Addendum 1 (stage 2, seeds 93683 and 116089): every command takes an optional seed, default 73129 (behaviour for 73129 unchanged).
+    python3 e33_read.py reproduce2            check 1: S-all 93683 final 79.67 / 2.33 (E30_UNSEEN.json); S-bal 93683 and 116089 finals reported -> exp45/e33/E33_READ_REPRO_STAGE2.json
+    python3 e33_read.py read <seed>           every saved row of A+D and A+OS for that seed      -> exp45/e33/E33_READ_<seed>.json
+    python3 e33_read.py tables <seed>         per-seed table and the row R1-R4 that applies       -> exp45/e33/E33_READ_TABLES_<seed>.md
+
 panels, measure, load_net and row_files are imported from e32_read unchanged.
 Endpoint: mean of rows 16,384, 20,480, 24,576. Marks: learned in range acc12 >= 70; extrapolates acc40 >= 60; fails acc40 <= 20; intermediate
 between; an arm not learned in range is not read for extrapolation. Outcome rows 0a, 0b, 1, 2, 3, 4 checked in the brief's order.
@@ -28,8 +33,21 @@ ROWS, END_ROWS = R32.ROWS, R32.END_ROWS
 FINE = ("distractor", "operand", "code", "operator", "equals", "answer_digit", "eos")
 
 
-def receipt(arm, seed=SEED):
-    return OUT / f"e33_dev_{arm}_{seed}.json"
+STAGE2_SEEDS = (93683, 116089)
+STAGE2_ARMS = ("A+D", "A+OS")
+
+
+def set_seed(s):
+    global SEED
+    SEED = s
+
+
+def read_path():
+    return OUT / ("E33_READ.json" if SEED == 73129 else f"E33_READ_{SEED}.json")
+
+
+def receipt(arm, seed=None):
+    return OUT / f"e33_dev_{arm}_{SEED if seed is None else seed}.json"
 
 
 # ---------------------------------------------------------------- reproduce
@@ -60,10 +78,10 @@ def reproduce():
 
 # ---------------------------------------------------------------- read
 def read():
-    rp = OUT / "E33_READ_REPRO.json"
+    rp = OUT / ("E33_READ_REPRO.json" if SEED == 73129 else "E33_READ_REPRO_STAGE2.json")
     assert rp.exists() and json.loads(rp.read_text())["passed"] is True, "reproduction has not passed"
     arch26.install()
-    path = OUT / "E33_READ.json"
+    path = read_path()
     done = json.loads(path.read_text()) if path.exists() else dict(rows=[])
     have = {(r["arm"], r["row"], r["sha256"]) for r in done["rows"]}
     pk = panels(SEED)
@@ -151,6 +169,8 @@ def end_losses(arm):
 
 
 def tables():
+    if SEED != 73129:
+        return tables_stage2()
     rows = json.loads((OUT / "E33_READ.json").read_text())["rows"]
     Ep = endpoints(rows)
     assert set(Ep) == set(ARMS), f"endpoints for {sorted(Ep)} only"
@@ -187,8 +207,80 @@ def tables():
     print("\n".join(L))
 
 
+# ---------------------------------------------------------------- addendum 1: stage 2
+def reproduce2():
+    arch26.install()
+    out, ok = dict(rows=[]), True
+    for name, f, seed, want in (("E28 S-all 93683 final", "e28_dev_S-all_93683.pt", 93683, (79.67, 2.33)),
+                                ("E28 S-bal 93683 final (A+DOS reference)", "e28_dev_S-bal_93683.pt", 93683, None),
+                                ("E28 S-bal 116089 final (A+DOS reference)", "e28_dev_S-bal_116089.pt", 116089, None)):
+        rp = HERE / "exp45" / "e28" / f.replace(".pt", ".json")
+        rec = json.loads(rp.read_text())
+        assert rec["weights"] == f
+        m, sha = load_net(rp.parent / f, rec["weights_sha256"], seed)
+        r = measure(m, seed, panels(seed))
+        same = None if want is None else (r["acc12"] == want[0] and r["acc40"] == want[1])
+        ok &= same is not False
+        out["rows"].append(dict(name=name, file=str((rp.parent / f).relative_to(HERE)), seed=seed, sha256=sha,
+                                want=None if want is None else dict(acc12=want[0], acc40=want[1]),
+                                reader={k: r[k] for k in KEYS}, exact=same))
+        print(name, {True: "exact", False: "DIFFERS", None: "reported"}[same], r["acc12"], r["acc20"], r["acc40"], flush=True)
+    out.update(passed=ok, python=sys.version.split()[0], torch=T.__version__,
+               rule="addendum 1 check 1: S-all 93683 acc12 and acc40 equal to E30_UNSEEN.json as rounded (79.67 / 2.33); S-bal finals reported, no figure to match")
+    (OUT / "E33_READ_REPRO_STAGE2.json").write_text(json.dumps(out, indent=1))
+    print("reproduction (stage 2)", "PASSED" if ok else "FAILED")
+    return ok
+
+
+def r_row(Ep):
+    """Addendum 1 rows, checked in the order R4, R2, R3, R1 (note to addendum 1); returns (row, also_met)."""
+    d, o = Ep["A+D"]["mean"], Ep["A+OS"]["mean"]
+    if d["acc12"] < 70 or o["acc12"] < 70:
+        return "R4", []
+    r2 = o["acc40"] < 60
+    r3 = d["acc40"] >= 60 or (o["acc40"] - d["acc40"]) < 40
+    if r2:
+        return "R2", (["R3"] if r3 else [])
+    if r3:
+        return "R3", []
+    return "R1", []
+
+
+def tables_stage2():
+    rows = [r for r in json.loads(read_path().read_text())["rows"] if r["seed"] == SEED]
+    Ep = endpoints(rows)
+    assert set(STAGE2_ARMS) <= set(Ep), f"endpoints for {sorted(Ep)} only"
+    M = {a: mark(Ep[a]["mean"]) for a in STAGE2_ARMS}
+    row, also = r_row(Ep)
+    L = [f"# E33 addendum 1 reader table, seed {SEED} (generated by `e33_read.py tables {SEED}` from `{read_path().name}` and the receipts)", "",
+         "Endpoint = mean of rows 16,384, 20,480, 24,576; the final row (24,576) is in brackets.", "",
+         "| Arm | Acc 12 | Acc 20 | Acc 40 | Keepers 12 / 20 / 40 | Keeps-and-writes 12 / 20 / 40 | Mark |", "|---|---|---|---|---|---|---|"]
+    for a in STAGE2_ARMS:
+        m_, f_ = Ep[a]["mean"], Ep[a]["final"]
+        L.append(f"| {a} | {m_['acc12']:.2f} ({f_['acc12']:.2f}) | {m_['acc20']:.2f} ({f_['acc20']:.2f}) | {m_['acc40']:.2f} ({f_['acc40']:.2f}) | "
+                 f"{m_['keepers12']:.1f} / {m_['keepers20']:.1f} / {m_['keepers40']:.1f} ({f_['keepers12']} / {f_['keepers20']} / {f_['keepers40']}) | "
+                 f"{m_['kw12']:.1f} / {m_['kw20']:.1f} / {m_['kw40']:.1f} ({f_['kw12']} / {f_['kw20']} / {f_['kw40']}) | {M[a]} |")
+    gap = Ep["A+OS"]["mean"]["acc40"] - Ep["A+D"]["mean"]["acc40"]
+    L += ["", f"A+OS minus A+D at 40 letters (endpoints): {gap:.2f} points.", "",
+          f"## Row: {row}" + (f" (the condition of {', '.join(also)} is also met)" if also else ""), "",
+          "## Every saved row", "", "| Arm | Row | Acc 12 | Acc 20 | Acc 40 | Keepers 12 / 20 / 40 | Keeps-and-writes 12 / 20 / 40 |", "|---|---|---|---|---|---|---|"]
+    for a in STAGE2_ARMS:
+        for r in sorted((r for r in rows if r["arm"] == a), key=lambda r: r["row"]):
+            L.append(f"| {a} | {r['row']} | {r['acc12']:.2f} | {r['acc20']:.2f} | {r['acc40']:.2f} | {r['keepers12']} / {r['keepers20']} / {r['keepers40']} | "
+                     f"{r['kw12']} / {r['kw20']} / {r['kw40']} |")
+    (OUT / f"E33_READ_TABLES_{SEED}.md").write_text("\n".join(L) + "\n")
+    rec = json.loads(read_path().read_text())
+    rec.update(endpoints=Ep, marks=M, row=dict(row=row, also_met=also, gap_acc40=gap))
+    read_path().write_text(json.dumps(rec, indent=1))
+    print("\n".join(L))
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
+    if len(sys.argv) > 2:
+        set_seed(int(sys.argv[2]))
+    if cmd == "reproduce2":
+        sys.exit(0 if reproduce2() else 1)
     if cmd == "reproduce":
         sys.exit(0 if reproduce() else 1)
     if cmd == "read":
