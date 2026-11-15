@@ -3043,3 +3043,24 @@ The audit (`AUDIT_E40_NEW_FAMILY_FROM_A_TENTH_20261115.md`, 089409fe) found the 
 **A consequence to keep in view.** The revised verdict is strict: a lived network that only applies the arithmetic it already had, without learning the new modulus, shows no saving by it, though its level is far above a fresh network's. Both are reported.
 
 Also: the wording of E39's check 6 corrected (the buffer's capacity is in items). The reviewer confirms that E39 revision 2 carries its eight changes and that my record of memo revision 7 needs no correction, and agrees that E38's second stage should not be released; E38's rehearsal arm is still worth finishing as the full-scale reference for the plain store.
+
+## 9.138 The objective restated as computation to threshold; E41 drafted (16 November 2026)
+
+Source: the reviewer's memo, revision 8 (557e3749), section 21.
+
+**The user's statements of 15 November, verbatim, as the reviewer records them.**
+
+- "scaling的帮助如何呢？同样的任务，如果scaling有帮助，也可以认为在固定算力下我们能做的更多。"
+- "对，如果网络计算规模变大，或者数据变多，但是为了达到目标(threshold)需要的训练次数本身变少，结果一样甚至更好，平均下来算力一样甚至更少。那这是一个可以讨论的目标。至于scale which axis是可以通过实验讨论的。"
+
+**The quantity adopted: computation to threshold.** For a run, the total computation spent up to the first scored row at which accuracy on never-taught pairs reaches a threshold. Accuracy is given twice (the held-out panel, and held-out pairs that need the reduction); thresholds are 50, 80 and 90; computation is counted as weights times items trained on, and as CPU-seconds on the qualified host. A learner or setting is better if it reaches the same threshold with the same or less computation, whatever it spent it on. Width becomes an axis of the small world's job L2 at three widths, and every table there gives computation beside updates.
+
+**Drafted, awaiting audit: E41** (`OPUS_TASK_E41_COMPUTATION_TO_THRESHOLD_BY_WIDTH_AND_FRACTION_20261116.md`). The same task (the birth family) at three widths, three taught fractions, two rules, three seeds: 54 runs from random weights, about 28 CPU-hours by the reviewer's estimate, one seed per worker.
+
+What I checked before writing it:
+
+- **The present sizes are two numbers.** The feedforward width is 512 and the GRU has 256 units, 1,124,113 parameters in all. I had written "256" for the width in earlier briefs where only the GRU's size mattered. Half and double widths scale both: 317,457 and 4,211,985 parameters.
+- **The dose reaches the threshold at the present sizes.** From the receipts: at fractions 0.50 and 0.25 held-out add and sub pass 80 between 4,096 and 8,192 updates; at 0.10 the network memorises and stays near 17. So 8,192 updates locate the 80% threshold where it exists.
+- **No starting level to subtract.** Every run starts from random weights and scores 0, unlike E40.
+
+What I added to the memo's design: a second version of each threshold (held for three consecutive scored rows), because single rows swing by ten points; a fixed sample of 1,000 reduction pairs per task, to bound scoring; a check of the forward and gradients at the two new widths; and the description (falls, stays within a factor of 1.5, rises) fixed beforehand for updates and for computation separately.
