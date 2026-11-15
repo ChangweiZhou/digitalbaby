@@ -2966,3 +2966,29 @@ Source: the reviewer's memo `MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md` 
 4. E35 runs through stage 1b as released and nothing is briefed after it. The stage in which an allowed rule learns an interface into a hand-wired module answers a question the programme no longer has, since the learner makes its own circuit.
 
 **The form a claim should take**, from the user's first statement: at equal stored numbers and equal updates, with every earlier family scored at every stage, against naive backpropagation.
+
+## 9.135 E36 to E38 audited and released; the user's further statements; the long-life programme (15 November 2026)
+
+Source: the reviewer's audit `AUDIT_E36_E37_E38_BRIEFS_20261115.md` and its memo, revision 3, on `claude/vibrant-cerf-sje726` at 823a3884.
+
+**The user's further statements of 15 November, verbatim, as the reviewer records them.**
+
+- On the nature of the problem: "从哲学角度上来说，最朴素的反向传播只对每个样本进行同样的学习，通过误差进行逐级修正，网络结构是恒定的，虽然可能在RL或其他阶段只是激发网络的一部分。meta learning可以学习最优的某个网络结构，但一般也认为训练的objective是确定的才能做到。但在持续学习情况下，样本之间存在内在结构，学习本身会帮助调整网络结构，不断去自动优化学习样本之间的关系。作为代价静态的backpropagation无法大规模使用。因此我们回到一个全局元学习层次的优化问题。"
+- On direction and pace (to the reviewer): "你可以自己决定实验的快慢，不用等我决定。因为此前目标出现错位，我们先讨论下一步如何做。我们坚持做持续学习。"
+- On what the measure must be able to show: "但是这个还是不能回答问题，因为显然可能出现我们的学习者一开始比传统的学习者更慢，但是在持续学习过程中最后做到“后来居上”的问题。只要我们的学习者还在学习，而传统的学习者卡住了，就不能排除这一点。一天上千个是个好办法，但无法处理这种情况。"
+
+**E36, E37, E38 released as revision 2.** The audit found every testable fact in the three briefs to hold (stream seeds, the saved feedback matrices, the anchor code, the rehearsal stream, and the batch identity of a life's first block, which it rebuilt and matched to the receipts of all nine lives). It required six changes, all made as written, with its recommendations:
+
+- **A real fault in the code path, which I had not seen.** The K lives' runner on the default branch imports `arch31`, which since my merge is the other worker's file with a different `forward`. I renamed worker B's files at the merge (9.128) and did not check that the renamed runner still imported its own module. I confirmed the line and the two signatures. E36 now writes the K step out against `arch31_workerB.forward` with the switch named, since that forward ignores the matrix unless the switch is set.
+- **A check of mine that could not fail.** E36's check 4 compared first-batch losses, which are the same under both rules. It is replaced by the update path against E26's dry births, and E37 gets the same check.
+- **Two marks, proposed by the reviewer and carried by me without testing them on the figures on file.** A network that has lost the wrap and nothing else still scores about 50 on the held-out panel, so "30 above the reference" was met before any reminder and "loses it at 50" sat on the case of interest. Both now read the wrap pairs. I should have computed the row-0 values before adopting the marks; the receipts were open in front of me.
+- **Two errors the anchor checks let through:** an aliased copy of the birth values, and the stronger anchor run at the weaker strength. Both are now checked.
+- **A correction of figures:** counted as whole answers with the end symbol, wrap pairs at the end of a life are right 0.0 to 1.3% of the time and the rest 2.5 to 93%.
+
+**E34 addendum 2: two long births.** The passing arm and plain backpropagation with every byte a target, seed 73129, 98,304 updates, with the reviewer's reading fixed. The memo says no new code is needed; I found one line that prevents it (`exp34_entropy.dev` asserts every saved row is in a reference that ends at 24,576) and wrote the smallest change into the addendum. `exp28_everybyte.dev` runs longer as it is.
+
+**Drafted, awaiting its one audit: E39, the small-world protocol (jobs L0 and L1).** The memo leaves the specification to me. What I fixed, and tested by running it (`PROJECT_DOCUMENTS/COORD_CHECKS_20261115/sw_world_spec.py`): 540 tasks from 18 operations (16 linear ones with coefficients in {1, 2, −1, −2}, max, min) and 30 moduli, a two-byte arbitrary code per task and one symbol per operation shared across moduli; groups of 2 tasks; visits of 256 updates; each update takes 48 taught and 16 asked items from one stream; a schedule in which a fifth of visits bring a new group and returns are spread evenly over short, medium and long absences. In 1,024 visits three worlds meet 189 to 211 of 270 groups. The brief also fixes the learner (E26's GRU at 64 units), four arms with a replay buffer the size of one copy of the weights, an event file per asked item, a scorer that works from the event file alone (score by age, cost of the n-th task, kept at return, late level and two trends), eight checks, and L1 with a size ladder.
+
+**One disagreement with the memo, stated in the brief.** Its calibration gate asks that the first group be 90% right by the end of its first visit. At full scale a birth takes about 8,000 updates to get held-out pairs mostly right, so I expect that gate to fail at any visit length a 1,024-visit life can afford. The protocol does not depend on it, since a task's cost is counted across its visits. L1 reports the figures and a ladder of sizes; the gate is for the reviewer to keep or change in its audit.
+
+**Standing change of method (the memo's section 17.8, under the user's delegation of pace to the reviewer).** Inside the small world: one audit of the protocol, then rosters by one-page note with predictions on file and no audit; at least eight worlds per setting; paired differences with intervals in place of marks on three seeds. Full-scale work keeps the present discipline.

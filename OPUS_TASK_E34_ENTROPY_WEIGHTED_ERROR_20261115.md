@@ -231,3 +231,43 @@ Three births, about 2.5 CPU-hours. Marks as in stage 1.
 ## Done
 
 The check receipt for `B050`; three births with receipts, finals and rows 16,384 and 20,480 committed; an addendum to `E34_REPORT.md` with the per-seed table, the two facts, which reading applies to `B050`, and P34.9 to P34.13. No readings beyond the tables above.
+
+---
+
+# Addendum 2 (15 November 2026): two long births (the reviewer's memo, revision 3, section 18)
+
+**Why.** The user's point of 15 November: a learner that starts slower may overtake later, and neither a short run nor an average over a run can show it. `T050` on seed 73129 is the one case on file with that shape: behind for 12,000 updates (17 against 95 at 12 letters at row 12,288), ahead at the last row (99.3 against 84.7 at 40 letters), with the last three rows still swinging. The test of that shape is a longer run, not more runs. Evidence level E2; one seed.
+
+**Runs.** Seed 73129, 98,304 updates each (four times the dose), rows every 4,096:
+
+- `T050`, the sweep with the gain at tau 0.5 (`exp34_entropy.py`);
+- `B-all`, plain backpropagation with every byte a target (`exp28_everybyte.py`).
+
+About 6.6 CPU-hours by the reviewer's estimate. They may run beside stage 2 within three processes.
+
+**Code. The memo says none is needed; one change is.** `exp28_everybyte.dev` checks the data digest only at rows its reference has (lines 231 and 260), so `E11_DEV_UPDATES=98304` runs as it is. `exp34_entropy.dev` asserts at line 181 that every saved row is in the reference, and S-all's reference ends at 24,576. Make the smallest change that lets a longer dose run: the digest and hash comparisons apply at rows the reference has and are skipped, and recorded as skipped, beyond it. Show that a dry birth of `T050` at 2,048 updates still gives the `tensors_sha256` in `exp45/e34/dry/` after the change.
+
+**Check.** At row 24,576 each long run has the `tensors_sha256` of its existing final receipt (`exp45/e34/e34_dev_T050_73129.json` and `exp45/e28/e28_dev_B-all_73129.json`), since stream and update are unchanged. If either differs, stop and report.
+
+**Files.** Commit the weights at rows 49,152, 73,728 and 98,304 of each run; record the sha256 of the others. Read every row with the reader (12, 20 and 40 letters).
+
+**Reading (fixed; the reviewer's), at 40 letters over the 13 rows from 49,152 to 98,304.**
+
+| Result | Reading |
+|---|---|
+| `T050`'s mean is at least 10 points above `B-all`'s and it is above in at least 10 of the 13 rows | Overtakes and stays, on this seed up to 98,304 updates. The same two runs then go to seeds 93683 and 116089. |
+| `T050`'s mean is not above `B-all`'s | Does not overtake up to 98,304 updates on this seed. |
+| Otherwise | Mixed; the rows are reported. |
+
+Rows at 12 and 20 letters are reported beside them. `B050` (addendum 1) is run at this length only if its endpoint at the present length differs from plain backpropagation's by 15 points or more at 40 letters.
+
+**What it cannot show.** The stream is stationary, so this bears on the shape "slow start, later lead" and not on continual learning. Every statement carries its horizon, 98,304 updates.
+
+**Predictions (mine).**
+
+| | Prediction | Chance |
+|---|---|---|
+| P34.14 | The row-24,576 hash check passes for both runs | 85% |
+| P34.15 | Overtakes and stays | 30% |
+| P34.16 | Does not overtake | 35% |
+| P34.17 | `B-all`'s mean at 40 letters over the 13 rows is below its present endpoint of 82.0 by at least 10 points (backpropagation itself degrades with length of training) | 20% |

@@ -1,6 +1,6 @@
-# E37 (job C): does a learner that has lived need fewer items for a new family than a fresh one? (15 November 2026, revision 1)
+# E37 (job C): does a learner that has lived need fewer items for a new family than a fresh one? (15 November 2026, revision 2)
 
-Evidence level E2. The question and design are the outside reviewer's (its memo at a8b5ace2 on `claude/vibrant-cerf-sje726`, section 6); this specification and the predictions are mine. **Not released: it waits for the reviewer's audit.** One worker.
+Evidence level E2. The question and design are the outside reviewer's (its memo at a8b5ace2 on `claude/vibrant-cerf-sje726`, section 6); this specification and the predictions are mine. Revision 1 (4dd0b9f7) was audited by the reviewer (`AUDIT_E36_E37_E38_BRIEFS_20261115.md` on `claude/vibrant-cerf-sje726` at 823a3884), who stated that with its required changes made as written no re-audit is needed. Revision 2 makes them and the recommendations; the last section lists them. **Released.** One worker.
 
 Shell names: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106`. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each; launch outside any wrapper with a time limit. Edit nothing existing; do not call or patch existing `dev`, `life` or `step` functions except where a line below names one to call.
 
@@ -31,8 +31,9 @@ The life receipts' own panels, `exp16_integrated.panels(seed)[0]`, at k = 12 by 
 ## Checks before the full runs
 
 1. **Part 2's batch digest equals the life's.** After 6,144 updates the `exp26_candidate.Digest` of the batches equals `stages[1].data_digest` of `exp45/e26/e26_life_S_<seed>.json`.
-2. **Part 1's items are the life's.** The count of F3 items a life had seen is in its receipt (`stages[5].exposure_rows_tokens["joint/F3"][0]` and stage 6's). Report those counts beside 131,072 and 262,144, the items at rows 2,048 and 4,096.
-3. One dry run of 256 updates per rule and part, with CPU time and a forecast (the reviewer's estimate: 0.9 CPU-hours for part 1, 1.4 for part 2).
+2. **Part 1's items are the life's.** The count of F3 items a life saw in a block is in its receipt (`stages[5].exposure_rows_tokens["joint/F3"][0]` for block 5, `stages[6]`'s for block 6 alone). Report block 5's count beside 131,072 and the sum of blocks 5 and 6 beside 262,144, the items at rows 2,048 and 4,096. (The audit's rebuild gives 131,079, 131,131, 130,950 and 262,120, 261,736, 261,821.)
+3. **The update path against E26's dry births.** From `arch26.new_net(73129)` with `make_opt`, 2,048 updates on the birth's own stream (`exp11_cell.batches([(t, exp11_cell.split(t, .5, 73129)[0]) for t in exp11_cell.DEV], 73129, 12)`) give the `tensors_sha256` of `exp45/e26_qual/e26_dev_S_dry2048_73129.json` (79618ab2…) under the sweep and of `e26_dev_B_dry2048_73129.json` (adf933d7…) under backpropagation.
+4. One dry run of 256 updates per rule and part, with CPU time and a forecast (the reviewer's estimate: 0.9 CPU-hours for part 1, 1.4 for part 2).
 
 ## Reading (fixed; the reviewer's proposal, adopted)
 
@@ -44,11 +45,18 @@ Life minus fresh, at equal items of the family, under the same rule. The K lives
 | F3 at about 262,000 items | after block 6 (`stages[6]`) | 4,096 |
 | F1 at 393,216 items | after block 1 (`stages[1]`) | 6,144 |
 
-For each comparison and rule, in at least two of three seeds: **saving** if the life is at least 15 points above; **cost** if at least 15 below; **none** if within 15. Otherwise mixed.
+For each comparison and rule, in at least two of three seeds: **saving** if the life is at least 15 points above; **cost** if at least 15 below; **none** if less than 15 either way. Otherwise mixed.
 
 The F1 comparison has a different meaning from the F3 ones and is read separately: the lived learner there has only its birth behind it, and the batches are identical, so it compares a born network with an unborn one on the same 6,144 updates.
 
 Reported beside it: E35-A's arm `G` at f = 0.25 (a fresh GRU on a quarter of the pairs of mod 89 under backpropagation), its held-out add and sub at 12 letters at its 4,096-update row, when that branch has it.
+
+
+## Common to every run (the audit's recommendations)
+
+- Each runner calls `arch26.install()` first, as `dev` and `life` do; the scorer depends on it.
+- Each runner refuses an existing output path (`exp20_reference.refuse_existing`).
+- Outputs go to `exp45/e37/`, one receipt and its weight files per run, named `e37_<kind or arm>_<rule>_<seed>` with `_row<updates>` for saved rows.
 
 ## What it cannot show
 
@@ -69,3 +77,12 @@ Reported beside it: E35-A's arm `G` at f = 0.25 (a fresh GRU on a quarter of the
 ## Done
 
 Runner, check receipts, twelve runs with receipts, and `E37_REPORT.md` with the table (rule × seed × comparison: life, fresh, difference), the verdict per comparison and rule, and the outcome of each prediction. No readings beyond the table above.
+
+## What changed from revision 1 (the audit)
+
+| | Change | Required? |
+|---|---|---|
+| E37-1 | A check of the update path against E26's dry births; check 1 covered the data only | yes |
+| — | Check 2 compares 262,144 with the sum of blocks 5 and 6; "none" is less than 15 either way; output paths, overwrite refusal, `arch26.install()` | recommended |
+
+The audit rebuilt part 2's 6,144 batches and matched `stages[1].data_digest` in all nine life receipts, so the batch identity claimed above holds.
