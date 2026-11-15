@@ -1,0 +1,770 @@
+{
+ "experiment": "E33",
+ "kind": "birth",
+ "arm": "A+D",
+ "arm_classes": "D",
+ "local": true,
+ "net": "G1",
+ "seed": 73129,
+ "kmax": 12,
+ "dev_updates": 24576,
+ "block": 512,
+ "batch": 64,
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "exp33_targets.step: forward(local=True), E33 loss for arm_classes, zero_grad, backward, AdamW step (credit through the whole item)",
+ "loss_definition": "0.5 * mean CE over answer positions + 0.5 * (sum of CE over the selected non-answer positions) / (count of all non-answer real positions); selected = union of classes in arm_classes (D distractor, O operand, S code|operator|equals); unselected positions dropped, nothing rescaled",
+ "roles": {
+  "fine": [
+   "distractor",
+   "operand",
+   "code",
+   "operator",
+   "equals",
+   "answer_digit",
+   "eos"
+  ],
+  "fine_to_coarse": {
+   "distractor": "distractor",
+   "operand": "operand",
+   "code": "structural",
+   "operator": "structural",
+   "equals": "structural",
+   "answer_digit": "answer",
+   "eos": "answer"
+  },
+  "classes": {
+   "D": [
+    "distractor"
+   ],
+   "O": [
+    "operand"
+   ],
+   "S": [
+    "code",
+    "operator",
+    "equals"
+   ]
+  },
+  "identification": "exp28_everybyte.masks / roles_of, imported unchanged"
+ },
+ "protocol": "exp28_everybyte.dev's loop (E28 S arm), loss changed only",
+ "reference": {
+  "file": "exp45/e28/e28_dev_S-bal_73129.json",
+  "checked": "data_digest at every saved row (asserted); tensors_sha256 compared and recorded"
+ },
+ "model": {
+  "cls": "arch20.NetRNN",
+  "kind": "gru",
+  "params": 1124113,
+  "params_by_tensor": {
+   "book.weight": 2064,
+   "l1.weight": 4096,
+   "l1.bias": 512,
+   "rnn.weight_ih_l0": 393216,
+   "rnn.weight_hh_l0": 196608,
+   "rnn.bias_ih_l0": 768,
+   "rnn.bias_hh_l0": 768,
+   "lm.weight": 131072,
+   "lm.bias": 512,
+   "l2.weight": 262144,
+   "l2.bias": 512,
+   "l3.weight": 131584,
+   "l3.bias": 257
+  },
+  "forward": "arch26.forward (written-out GRU step, exp3_state.lin at every map)"
+ },
+ "installed": {
+  "E_forward": "arch26.forward",
+  "E_new_net_class": "arch20.NetRNN"
+ },
+ "provenance": {
+  "command": "python3 exp33_targets.py dev A+D 73129",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "26b62ae186bd1670badf26eb1fbfc75dd4c4304a",
+   "sources_modified_vs_commit": []
+  },
+  "interpreter": {
+   "python_executable": "/root/e33venv/bin/python3",
+   "python_version_full": "3.13.18 (main, Oct 26 2026, 14:08:19) [Clang 23.1.3 ]",
+   "packages": {
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4"
+   }
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp28_everybyte.py": "7bc97268e66e4f6e12221f8f7955460058bbce1374520b4a478262430082eb00",
+   "exp33_targets.py": "85f06048fdad2b965f9c6d51d5b429571f2ae8a7b99257a8e37f94022d93f648"
+  }
+ },
+ "complete": false,
+ "curve": [
+  {
+   "step": 4096,
+   "loss": 0.8630489319330081,
+   "finite_losses": true,
+   "finite_cumulative": {
+    "all_finite": true,
+    "updates_covered": 4096,
+    "first_nonfinite_update": null
+   },
+   "cpu": 487.603985333,
+   "cpu_scoring_so_far": 7.446035343999995,
+   "cpu_updates_so_far": 480.146783039,
+   "sealed": {
+    "add89": {
+     "0": {
+      "n": 300,
+      "exact": 203,
+      "final": 203
+     },
+     "4": {
+      "n": 300,
+      "exact": 207,
+      "final": 207
+     },
+     "8": {
+      "n": 300,
+      "exact": 211,
+      "final": 211
+     },
+     "12": {
+      "n": 300,
+      "exact": 209,
+      "final": 209
+     },
+     "20": {
+      "n": 300,
+      "exact": 198,
+      "final": 198
+     }
+    },
+    "sub89": {
+     "0": {
+      "n": 300,
+      "exact": 167,
+      "final": 167
+     },
+     "4": {
+      "n": 300,
+      "exact": 174,
+      "final": 174
+     },
+     "8": {
+      "n": 300,
+      "exact": 169,
+      "final": 169
+     },
+     "12": {
+      "n": 300,
+      "exact": 174,
+      "final": 174
+     },
+     "20": {
+      "n": 300,
+      "exact": 173,
+      "final": 173
+     }
+    },
+    "max89": {
+     "0": {
+      "n": 300,
+      "exact": 292,
+      "final": 292
+     },
+     "4": {
+      "n": 300,
+      "exact": 293,
+      "final": 293
+     },
+     "8": {
+      "n": 300,
+      "exact": 288,
+      "final": 288
+     },
+     "12": {
+      "n": 300,
+      "exact": 285,
+      "final": 285
+     },
+     "20": {
+      "n": 300,
+      "exact": 279,
+      "final": 279
+     }
+    },
+    "min89": {
+     "0": {
+      "n": 300,
+      "exact": 277,
+      "final": 277
+     },
+     "4": {
+      "n": 300,
+      "exact": 282,
+      "final": 282
+     },
+     "8": {
+      "n": 300,
+      "exact": 272,
+      "final": 272
+     },
+     "12": {
+      "n": 300,
+      "exact": 270,
+      "final": 270
+     },
+     "20": {
+      "n": 300,
+      "exact": 257,
+      "final": 257
+     }
+    }
+   },
+   "hard_mean_add89_sub89_k12": 63.83333333333333,
+   "book_shift_by_role": {
+    "operator": 0.1752,
+    "digit": 0.2235,
+    "separator": 0.0,
+    "equals": 0.1244,
+    "distractor letter": 0.3083,
+    "task code": 0.0351
+   },
+   "data_digest": {
+    "batches": 4096,
+    "sha256": "bbd71ab7ca27b72ed3c777861fe5175d2bbb5768cd79109ef507b98bf7f6e2c6"
+   },
+   "data_digest_check": "equal to exp45/e28/e28_dev_S-bal_73129.json at this row: asserted",
+   "weights": "e33_dev_A+D_73129_row4096.pt",
+   "weights_sha256": "4d90ef3b9ed76dc81ee780461fef25705d9282871bda178a626c23c300a90a2c",
+   "tensors_sha256": "383a8b0d7215a6c16b85f7b2d08fc5971852beecabadcd3d00caec59c45647fa",
+   "tensors_sha256_reference": "3c2c849c315b7a22ccf96709ec6dc546a97612f0002ea834b944b8ff20479ca9",
+   "tensors_equal_to_reference": false
+  }
+ ],
+ "role_curve": [
+  {
+   "block_end": 512,
+   "train_loss": 1.4243785853032023,
+   "by_role": {
+    "distractor": {
+     "mean": 3.3577054361438914,
+     "positions": 196748
+    },
+    "operand": {
+     "mean": 8.50567603323168,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 13.887079886485784,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 1.3004149536886909,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.3577054361438914,
+     "positions": 196748
+    },
+    "operand": {
+     "mean": 8.50567603323168,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 14.387282422743738,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 13.928980083277565,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 13.344977153436048,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.9077071726008032,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.08583051586446616,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 1024,
+   "train_loss": 1.1852478899527341,
+   "by_role": {
+    "distractor": {
+     "mean": 3.2880472947198753,
+     "positions": 196048
+    },
+    "operand": {
+     "mean": 9.792280793456825,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 20.96233187474718,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.8573811123716696,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.2880472947198753,
+     "positions": 196048
+    },
+    "operand": {
+     "mean": 9.792280793456825,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 25.133528091246262,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 19.76648068607028,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 17.986986846924992,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.2859212846413977,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.000300767832213756,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 1536,
+   "train_loss": 1.1580537869594991,
+   "by_role": {
+    "distractor": {
+     "mean": 3.2857206020423506,
+     "positions": 198052
+    },
+    "operand": {
+     "mean": 10.112617576919774,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 24.29294596920954,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.7958368806566014,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.2857206020423506,
+     "positions": 198052
+    },
+    "operand": {
+     "mean": 10.112617576919774,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 30.987490644911304,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 22.31883640194428,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 19.572510860773036,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.1935998958547278,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.0003108502603484597,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 2048,
+   "train_loss": 1.1277192095294595,
+   "by_role": {
+    "distractor": {
+     "mean": 3.2835834988961445,
+     "positions": 195946
+    },
+    "operand": {
+     "mean": 9.886787629537707,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 23.263558187822735,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.7452245156119933,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.2835834988961445,
+     "positions": 195946
+    },
+    "operand": {
+     "mean": 9.886787629537707,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 29.239556708023883,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 21.447197277157102,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 19.103920578287216,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 1.117716389110524,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.0002407686149317476,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 2560,
+   "train_loss": 1.0668975210282952,
+   "by_role": {
+    "distractor": {
+     "mean": 3.282186161845733,
+     "positions": 196531
+    },
+    "operand": {
+     "mean": 9.65085164920842,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 22.19713005408994,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.621622945819808,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.282186161845733,
+     "positions": 196531
+    },
+    "operand": {
+     "mean": 9.65085164920842,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 26.17206010466907,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 20.88830743334256,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 19.531022624258185,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.9322855261458519,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.00029778516772007053,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 3072,
+   "train_loss": 0.974752283655107,
+   "by_role": {
+    "distractor": {
+     "mean": 3.281845943560315,
+     "positions": 197418
+    },
+    "operand": {
+     "mean": 9.760542845314149,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 21.769550023406435,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.4337043147636659,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.281845943560315,
+     "positions": 197418
+    },
+    "operand": {
+     "mean": 9.760542845314149,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 24.92817216075491,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 20.845612827688456,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 19.534865081775934,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.6504632312060612,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.00018648187887529487,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 3584,
+   "train_loss": 0.8972064955160022,
+   "by_role": {
+    "distractor": {
+     "mean": 3.2807976774049785,
+     "positions": 195686
+    },
+    "operand": {
+     "mean": 10.059612006130685,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 21.353636712679872,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.28618322376265026,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.2807976774049785,
+     "positions": 195686
+    },
+    "operand": {
+     "mean": 10.059612006130685,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 24.251910136488732,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 20.41500403577811,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 19.393995965772774,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.42922451856500177,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 0.00010063415794721504,
+     "positions": 32768
+    }
+   }
+  },
+  {
+   "block_end": 4096,
+   "train_loss": 0.8630489319330081,
+   "by_role": {
+    "distractor": {
+     "mean": 3.279755471022773,
+     "positions": 196283
+    },
+    "operand": {
+     "mean": 10.182972689217578,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 19.93452601429696,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.21595360832362434,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.279755471022773,
+     "positions": 196283
+    },
+    "operand": {
+     "mean": 10.182972689217578,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 21.846007902699057,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 19.63055643811822,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 18.3270137020736,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.3238899170538314,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 8.099086321017432e-05,
+     "positions": 32768
+    }
+   }
+  }
+ ],
+ "finite": {
+  "all_finite": true,
+  "updates_covered": 4096,
+  "first_nonfinite_update": null
+ },
+ "credit_census_first_update": {
+  "params_without_gradient": [],
+  "book_rows_in_batch": 47,
+  "book_rows_in_batch_without_gradient": 2,
+  "dead_rows": [
+   256,
+   257
+  ],
+  "by_role": {
+   "operator": {
+    "present": 4,
+    "with_gradient": 4
+   },
+   "digit": {
+    "present": 10,
+    "with_gradient": 10
+   },
+   "equals": {
+    "present": 1,
+    "with_gradient": 1
+   },
+   "distractor letter": {
+    "present": 26,
+    "with_gradient": 26
+   },
+   "task code": {
+    "present": 4,
+    "with_gradient": 4
+   },
+   "BOS/EOS": {
+    "present": 2,
+    "with_gradient": 0
+   }
+  }
+ }
+}
