@@ -1,0 +1,123 @@
+/private/tmp/claude-501/-Users-pencilbard-Downloads-second-try-copy-BYTE-CORE-FEAS-1-20260923/55245d29-91ee-4093-b8cd-a37e21c17e90/scratchpad/repo/PROJECT_DOCUMENTS/COORD_CHECKS_20261115/first_batch_scale.py:25: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:837.)
+vocab torch.Size([64, 22, 257]) real 974 ans 192
+unnormalised 0.5 H0 5.535 w0 1.56e-05 loss 8.649e-05 ref 5.558258 biteq False |g| median 1.66e-09 10pct 4.13e-11 eps 1e-08
+unnormalised 1.0 H0 5.535 w0 3.94e-03 loss 2.193e-02 ref 5.558258 biteq False |g| median 4.21e-07 10pct 1.05e-08 eps 1e-08
+unnormalised 2.0 H0 5.535 w0 6.28e-02 loss 3.491e-01 ref 5.558258 biteq False |g| median 6.71e-06 10pct 1.67e-07 eps 1e-08
+unnormalised inf H0 5.535 w0 1.00e+00 loss 5.558e+00 ref 5.558258 biteq True |g| median 1.07e-04 10pct 2.65e-06 eps 1e-08
+normalised 0.5 H0 5.535 w0 1.56e-05 loss 5.558e+00 ref 5.558258 biteq False |g| median 1.07e-04 10pct 2.66e-06 eps 1e-08
+normalised 1.0 H0 5.535 w0 3.94e-03 loss 5.558e+00 ref 5.558258 biteq False |g| median 1.07e-04 10pct 2.65e-06 eps 1e-08
+normalised 2.0 H0 5.535 w0 6.28e-02 loss 5.558e+00 ref 5.558258 biteq False |g| median 1.07e-04 10pct 2.65e-06 eps 1e-08
+normalised inf H0 5.535 w0 1.00e+00 loss 5.558e+00 ref 5.558258 biteq True |g| median 1.07e-04 10pct 2.65e-06 eps 1e-08
+== seed 73129 S-all
+row role: H mean | CE mean | n ; tau-weighted shares of sum(w*CE) for tau .5 1 2 inf
+4096
+  distractor    H 3.449 CE 3.451 n  2975 share   7.3  29.4  45.1  59.2 | mean w 0.0010 0.0320 0.1785
+  operand       H 2.520 CE 2.703 n  2048 share  28.2  39.4  37.3  31.9 | mean w 0.0088 0.0889 0.2918
+  code          H 1.410 CE 1.390 n   512 share  28.2  15.4   8.6   4.1 | mean w 0.0597 0.2442 0.4942
+  operator      H 0.012 CE 0.001 n   512 share   0.5   0.1   0.0   0.0 | mean w 0.9768 0.9883 0.9941
+  equals        H 0.005 CE 0.001 n   512 share   0.2   0.0   0.0   0.0 | mean w 0.9905 0.9952 0.9976
+  answer_digit  H 0.981 CE 0.804 n  1024 share  35.5  15.7   9.0   4.8 | mean w 0.3258 0.4819 0.6550
+  eos           H 0.003 CE 0.000 n   512 share   0.1   0.0   0.0   0.0 | mean w 0.9936 0.9967 0.9983
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0019 tau 1: 0.0489 tau 2: 0.2320
+8192
+  distractor    H 3.477 CE 3.396 n  2975 share   5.6  28.4  45.5  60.1 | mean w 0.0010 0.0309 0.1758
+  operand       H 2.542 CE 2.711 n  2048 share  23.9  39.6  38.5  33.0 | mean w 0.0087 0.0877 0.2892
+  code          H 1.402 CE 1.400 n   512 share  25.1  16.0   9.1   4.3 | mean w 0.0606 0.2462 0.4962
+  operator      H 0.033 CE 0.005 n   512 share   0.9   0.2   0.1   0.0 | mean w 0.9448 0.9703 0.9845
+  equals        H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9972 0.9986 0.9993
+  answer_digit  H 0.657 CE 0.412 n  1024 share  44.2  15.7   6.9   2.5 | mean w 0.3537 0.5566 0.7331
+  eos           H 0.004 CE 0.003 n   512 share   0.3   0.1   0.0   0.0 | mean w 0.9940 0.9967 0.9983
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0017 tau 1: 0.0439 tau 2: 0.2140
+12288
+  distractor    H 3.469 CE 3.393 n  2975 share   5.5  28.7  45.8  60.3 | mean w 0.0010 0.0312 0.1766
+  operand       H 2.542 CE 2.720 n  2048 share  22.8  39.7  38.7  33.3 | mean w 0.0086 0.0875 0.2890
+  code          H 1.403 CE 1.404 n   512 share  24.0  16.1   9.2   4.3 | mean w 0.0605 0.2459 0.4959
+  operator      H 0.033 CE 0.004 n   512 share   1.1   0.2   0.1   0.0 | mean w 0.9382 0.9680 0.9837
+  equals        H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9979 0.9989 0.9995
+  answer_digit  H 0.536 CE 0.349 n  1024 share  46.6  15.3   6.3   2.1 | mean w 0.4172 0.6158 0.7749
+  eos           H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9979 0.9989 0.9994
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0016 tau 1: 0.0420 tau 2: 0.2078
+16384
+  distractor    H 3.456 CE 3.377 n  2975 share   5.9  29.4  46.1  60.1 | mean w 0.0010 0.0316 0.1777
+  operand       H 2.540 CE 2.760 n  2048 share  24.5  40.9  39.4  33.8 | mean w 0.0087 0.0878 0.2894
+  code          H 1.409 CE 1.389 n   512 share  25.0  16.1   9.1   4.3 | mean w 0.0597 0.2443 0.4943
+  operator      H 0.026 CE 0.004 n   512 share   1.0   0.2   0.0   0.0 | mean w 0.9512 0.9750 0.9873
+  equals        H 0.000 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9990 0.9995 0.9998
+  answer_digit  H 0.477 CE 0.288 n  1024 share  43.6  13.4   5.3   1.8 | mean w 0.4545 0.6476 0.7963
+  eos           H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9976 0.9988 0.9994
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0016 tau 1: 0.0413 tau 2: 0.2057
+20480
+  distractor    H 3.457 CE 3.415 n  2975 share   5.9  29.7  46.5  60.7 | mean w 0.0010 0.0317 0.1778
+  operand       H 2.534 CE 2.706 n  2048 share  22.7  39.8  38.7  33.1 | mean w 0.0086 0.0876 0.2896
+  code          H 1.414 CE 1.391 n   512 share  23.4  15.8   9.0   4.3 | mean w 0.0592 0.2432 0.4932
+  operator      H 0.083 CE 0.016 n   512 share   3.1   0.6   0.2   0.0 | mean w 0.8610 0.9244 0.9605
+  equals        H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9990 0.9995 0.9997
+  answer_digit  H 0.460 CE 0.303 n  1024 share  44.7  14.0   5.6   1.9 | mean w 0.4747 0.6614 0.8042
+  eos           H 0.005 CE 0.001 n   512 share   0.2   0.0   0.0   0.0 | mean w 0.9914 0.9953 0.9975
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0016 tau 1: 0.0410 tau 2: 0.2047
+24576
+  distractor    H 3.476 CE 3.393 n  2975 share   6.1  30.1  46.8  60.7 | mean w 0.0010 0.0309 0.1759
+  operand       H 2.560 CE 2.726 n  2048 share  25.5  41.5  39.5  33.6 | mean w 0.0084 0.0862 0.2867
+  code          H 1.402 CE 1.397 n   512 share  27.5  17.0   9.4   4.3 | mean w 0.0605 0.2460 0.4960
+  operator      H 0.035 CE 0.006 n   512 share   1.4   0.2   0.1   0.0 | mean w 0.9377 0.9672 0.9831
+  equals        H 0.001 CE 0.000 n   512 share   0.1   0.0   0.0   0.0 | mean w 0.9975 0.9987 0.9994
+  answer_digit  H 0.419 CE 0.219 n  1024 share  39.4  11.1   4.2   1.3 | mean w 0.4967 0.6820 0.8185
+  eos           H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9983 0.9991 0.9996
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0014 tau 1: 0.0393 tau 2: 0.2001
+== seed 93683 S-all
+row role: H mean | CE mean | n ; tau-weighted shares of sum(w*CE) for tau .5 1 2 inf
+4096
+  distractor    H 3.451 CE 3.398 n  2969 share   6.8  28.9  44.8  58.8 | mean w 0.0010 0.0317 0.1781
+  operand       H 2.555 CE 2.748 n  2048 share  27.0  39.1  37.6  32.8 | mean w 0.0084 0.0863 0.2871
+  code          H 1.406 CE 1.391 n   512 share  28.7  15.8   8.8   4.1 | mean w 0.0601 0.2452 0.4952
+  operator      H 0.014 CE 0.002 n   512 share   0.6   0.1   0.0   0.0 | mean w 0.9735 0.9865 0.9932
+  equals        H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9978 0.9989 0.9995
+  answer_digit  H 0.936 CE 0.719 n  1024 share  36.8  16.1   8.8   4.3 | mean w 0.3270 0.4882 0.6635
+  eos           H 0.002 CE 0.000 n   512 share   0.1   0.0   0.0   0.0 | mean w 0.9958 0.9979 0.9989
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0018 tau 1: 0.0482 tau 2: 0.2297
+8192
+  distractor    H 3.475 CE 3.427 n  2969 share   5.4  28.0  45.2  60.3 | mean w 0.0010 0.0310 0.1760
+  operand       H 2.519 CE 2.695 n  2048 share  23.7  39.4  38.3  32.7 | mean w 0.0091 0.0896 0.2925
+  code          H 1.394 CE 1.402 n   512 share  24.2  15.7   9.0   4.3 | mean w 0.0615 0.2481 0.4981
+  operator      H 0.029 CE 0.004 n   512 share   1.0   0.2   0.1   0.0 | mean w 0.9454 0.9720 0.9858
+  equals        H 0.002 CE 0.000 n   512 share   0.1   0.0   0.0   0.0 | mean w 0.9968 0.9984 0.9992
+  answer_digit  H 0.664 CE 0.460 n  1024 share  45.5  16.7   7.4   2.8 | mean w 0.3652 0.5598 0.7328
+  eos           H 0.004 CE 0.001 n   512 share   0.1   0.0   0.0   0.0 | mean w 0.9932 0.9964 0.9981
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0017 tau 1: 0.0440 tau 2: 0.2143
+12288
+  distractor    H 3.469 CE 3.403 n  2969 share   5.3  28.3  45.5  60.2 | mean w 0.0010 0.0312 0.1765
+  operand       H 2.542 CE 2.713 n  2048 share  22.1  39.2  38.4  33.1 | mean w 0.0086 0.0875 0.2891
+  code          H 1.403 CE 1.394 n   512 share  23.2  15.8   9.0   4.3 | mean w 0.0604 0.2458 0.4958
+  operator      H 0.058 CE 0.010 n   512 share   1.8   0.4   0.1   0.0 | mean w 0.9017 0.9467 0.9721
+  equals        H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9987 0.9994 0.9997
+  answer_digit  H 0.609 CE 0.396 n  1024 share  47.5  16.3   6.9   2.4 | mean w 0.3764 0.5790 0.7493
+  eos           H 0.005 CE 0.001 n   512 share   0.2   0.0   0.0   0.0 | mean w 0.9918 0.9957 0.9978
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0017 tau 1: 0.0434 tau 2: 0.2122
+16384
+  distractor    H 3.480 CE 3.406 n  2969 share   5.3  29.0  46.3  60.7 | mean w 0.0010 0.0308 0.1755
+  operand       H 2.560 CE 2.705 n  2048 share  22.2  39.9  38.9  33.2 | mean w 0.0084 0.0862 0.2866
+  code          H 1.407 CE 1.391 n   512 share  23.6  16.2   9.2   4.3 | mean w 0.0600 0.2449 0.4948
+  operator      H 0.022 CE 0.003 n   512 share   0.7   0.1   0.0   0.0 | mean w 0.9575 0.9784 0.9891
+  equals        H 0.000 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9993 0.9996 0.9998
+  answer_digit  H 0.474 CE 0.298 n  1024 share  48.1  14.7   5.7   1.8 | mean w 0.4570 0.6500 0.7978
+  eos           H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9979 0.9989 0.9995
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0015 tau 1: 0.0402 tau 2: 0.2029
+20480
+  distractor    H 3.483 CE 3.411 n  2969 share   5.8  29.5  46.5  60.9 | mean w 0.0009 0.0307 0.1753
+  operand       H 2.535 CE 2.709 n  2048 share  26.0  41.8  39.6  33.4 | mean w 0.0089 0.0887 0.2906
+  code          H 1.373 CE 1.405 n   512 share  28.2  17.3   9.5   4.3 | mean w 0.0642 0.2534 0.5034
+  operator      H 0.031 CE 0.004 n   512 share   1.1   0.2   0.1   0.0 | mean w 0.9427 0.9704 0.9850
+  equals        H 0.000 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9995 0.9998 0.9999
+  answer_digit  H 0.418 CE 0.226 n  1024 share  38.8  11.2   4.3   1.4 | mean w 0.5043 0.6853 0.8198
+  eos           H 0.001 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9980 0.9990 0.9995
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0014 tau 1: 0.0389 tau 2: 0.1992
+24576
+  distractor    H 3.479 CE 3.412 n  2969 share   5.9  29.8  46.8  61.0 | mean w 0.0010 0.0309 0.1756
+  operand       H 2.549 CE 2.707 n  2048 share  24.8  41.3  39.4  33.4 | mean w 0.0086 0.0870 0.2882
+  code          H 1.394 CE 1.390 n   512 share  26.6  16.8   9.3   4.3 | mean w 0.0616 0.2481 0.4981
+  operator      H 0.023 CE 0.003 n   512 share   0.8   0.1   0.0   0.0 | mean w 0.9551 0.9772 0.9885
+  equals        H 0.000 CE 0.000 n   512 share   0.0   0.0   0.0   0.0 | mean w 0.9992 0.9996 0.9998
+  answer_digit  H 0.400 CE 0.228 n  1024 share  41.7  11.8   4.4   1.4 | mean w 0.5095 0.6925 0.8255
+  eos           H 0.002 CE 0.000 n   512 share   0.1   0.0   0.0   0.0 | mean w 0.9957 0.9977 0.9988
+  per-position weight, distractor / answer(digits and EOS): tau 0.5: 0.0014 tau 1: 0.0389 tau 2: 0.1989

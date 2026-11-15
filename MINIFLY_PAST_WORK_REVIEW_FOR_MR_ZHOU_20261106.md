@@ -2861,3 +2861,27 @@ Both result branches are merged. E31's end-of-life scores I recomputed from the 
 ## 9.129 E33's brief audited once and released as revision 2 (15 November 2026)
 
 The reviewer found the specification faithful and its code sound, and named three required text changes and three recommendations; revision 2 makes all six as written, and the reviewer said it need not see the brief again. What my revision 1 lacked: the outcome table sent six of eighteen clean patterns to "mixed", including the one the reviewer's hypothesis predicts; outcome 0 gave a wrong reason in one case; and I had named the amount confound only as class size, when two outcome patterns coincide exactly with a threshold on error or on weight. I reran none of the audit's figures. E33 is released to one worker.
+
+## 9.130 E33 stage 1 and the complete E31 merged; a reduced E33 stage 2 released; E34 drafted (15 November 2026)
+
+**Merged.** E33 stage 1 (`claude/vibrant-curie-ivmrt1`, 9349d0b9) and the complete E31 report (`claude/charming-clarke-u9g850`, 1314503d). Evidence level E2 throughout.
+
+**E33 stage 1, seed 73129.** What I checked: the eight endpoints recompute from `E33_READ.json`; the report's checks say the all-classes arm equals S-bal at all six saved rows. I did not re-measure the weight files; the outside reviewer states its reader reproduces all eight endpoints.
+
+- By the registered rule the outcome is row 4, mixed: two arms are intermediate, so no class is named. P33.1, P33.2, P33.7 hold; P33.3 to P33.6 miss.
+- Beside the rule: every arm with distractor targets reaches 2 to 38% at 40 letters and every arm without them 88 to 95%.
+- A threshold on non-answer weight is excluded on this seed (`A+OS` carries more than `A+D` and extrapolates). A threshold on the error the extra targets carry is not.
+- Two births were killed by a 2-hour limit on the launching shell and rerun from the start; the killed rows' hashes equal the reruns'.
+
+**E31, complete (eighteen lives).** Three of eight judged predictions hold (P31.2, P31.4, P31.9). The gate push did not help composition at any strength: against the floor, plus-minus changed by −6.1/−11.3/−2.6 (strength 0.25), −4.3/+29.1/+7.8 (0.05) and −9.3/+3.1/+13.8 (0.01); P31.8 misses. Correction to 9.128: I wrote there that P2c was not run. Worker B ran its three lives under addendum 2's release, and they are in the table. Ks was not run at full length. With E32, the gate-push line is closed. H and K stand as in 9.128: K is a candidate on three seeds, not replicated.
+
+**Released: E33 addendum 1, a reduced stage 2.** `A+D` and `A+OS` on seeds 93683 and 116089, four births, with the replication rule (R1 to R4), the sentence it licenses, and P33.8 to P33.11 fixed before the run.
+
+**Drafted, not released: E34** (`OPUS_TASK_E34_ENTROPY_WEIGHTED_ERROR_20261115.md`). The remedy is the reviewer's: scale each position's output error by `exp(-H / tau)`, H the network's own predictive entropy there; no label, no answer mask. Three temperatures on seed 73129. It waits for the reviewer's audit and for the user's ruling on admissibility.
+
+What I measured before writing it (`PROJECT_DOCUMENTS/COORD_CHECKS_20261115/`, run on the Mac, read-only):
+
+- The reviewer's entropy figures reproduce on S-all's saved rows: distractors 3.45 to 3.48 nats, answer digits 0.98 falling to 0.42; distractors' share of the error 59 to 61% with unit weights and 28 to 30% at tau 1.
+- In the currency E33 used, tau 2 gives a distractor position 0.20 to 0.23 of an answer position's weight, about `A+D`'s 0.245; tau 1 gives 0.04 to 0.05; tau 0.5 gives 0.002.
+- **A fault the outline would have had.** With the weights applied as they are, an untrained network's first-batch weights are all `exp(-5.54 / tau)`; at tau 0.5 the median parameter gradient is 1.7e-9, under AdamW's `eps` of 1e-8, so the optimizer and not the rule would set the early pace. The brief divides by the sum of the weights, which restores S-all's gradient scale at every temperature and leaves the unit-weight loss bit-equal to S-all's on the first batch. That division is one number common to the batch, and it is part of the question put to the user.
+- The baseline itself (S-all, 73129) does not meet the "learned in range" mark: its last three rows at 12 letters are 66, 37 and 75.

@@ -171,3 +171,61 @@ I made these as the audit wrote them and reran none of its figures.
 | 6 | Class S described as the task code in effect, and what "S is harmless" can show | recommended |
 
 P33.5 and P33.6 are restated in the new outcome rows, and P33.6 is new: it is the pattern the reviewer's own hypothesis predicts.
+
+---
+
+# Addendum 1 (15 November 2026): stage 1 read; a reduced stage 2 is released
+
+## Stage 1 as I read it
+
+The worker's branch `claude/vibrant-curie-ivmrt1` (9349d0b9) is merged. I recomputed the eight endpoints from `exp45/e33/E33_READ.json` and they equal the report's; the outside reviewer states that its own reader reproduces them from the weight files. I did not re-measure the weight files.
+
+Seed 73129, mean of the last three rows, percent at 40 letters:
+
+| Distractor targets | Arms | At 40 letters |
+|---|---|---|
+| absent | `A`, `A+O`, `A+S`, `A+OS` | 94.8, 90.2, 88.1, 94.2 |
+| present | `A+D`, `A+DS`, `A+DO`, `A+DOS` | 23.8, 38.1, 2.3, 4.1 |
+
+- **Outcome row 4 (mixed) applies**, as the worker reported: `A+D` and `A+DS` are intermediate, so no class is named by the registered rule. That stands.
+- What the table shows beside the rule: no arm with distractor targets extrapolates, and every arm without them does (means 17.1 against 91.8).
+- A threshold on non-answer weight is excluded on this seed: `A+OS` carries more of it than `A+D` (0.269 against 0.231) and extrapolates. A threshold on the error the extra targets carry is not excluded.
+- P33.1, P33.2 and P33.7 hold; P33.3 to P33.6 miss.
+
+## Stage 2, reduced: four births
+
+Arms `A+D` and `A+OS` on seeds 93683 and 116089. These two arms carry the contrast: distractor targets alone, and both other classes without them. About 3.2 CPU-hours (stage 1 took 2,852 to 2,882 CPU-seconds per birth). The control `A+D-light` is not part of this stage.
+
+**Code.** `exp33_targets.py` unchanged; it already takes the seed. Its reference lookups need `exp45/e28/e28_dev_S-bal_<seed>.json`, which exist for both seeds (`git show $D:$M/exp45/e28/ | grep S-bal`). `e33_read.py` has `SEED = 73129` fixed at line 24: give it an optional seed argument whose default is 73129, and show that `python3 e33_read.py tables` still writes a byte-identical `E33_READ_TABLES.md` for seed 73129.
+
+**Checks before the births.**
+1. The reader, with the new seed argument, reproduces on files already on the default branch the 12- and 40-letter figures of `E30_UNSEEN.json` for `e28_dev_S-all_93683.pt` (79.67 and 2.33), and reports its figures for `e28_dev_S-bal_93683.pt` and `e28_dev_S-bal_116089.pt` (no recorded figure of mine to match; these are the two seeds' `A+DOS` final rows and are reported as references).
+2. Each birth's `data_digest` equals S-bal's of the same seed at every saved row (the runner asserts it).
+
+**Wall time.** Stage 1 lost two births to a 2-hour limit on the launching shell. Launch each birth so that no wrapper limit under 90 minutes applies, at most three at a time.
+
+## Marks and the replication rule (fixed before the run)
+
+Marks as in stage 1, on the mean of the last three rows: learned in range at least 70 at 12 letters; extrapolates at least 60 at 40 letters; fails at most 20; intermediate between. The same marks for both seeds. The note in the brief that 20 is close for seed 93683 concerns `A+DOS`, which is not run here.
+
+| # | On a new seed | Reading for that seed |
+|---|---|---|
+| R1 | `A+OS` extrapolates, and `A+D` does not extrapolate and is at least 40 points below `A+OS` at 40 letters | The contrast replicates on this seed |
+| R2 | `A+OS` does not extrapolate | The contrast does not replicate: extrapolation without distractor targets failed |
+| R3 | `A+D` extrapolates, or is within 40 points of `A+OS` | The contrast does not replicate: distractor targets did not stop it |
+| R4 | Either arm did not learn in range | Not read |
+
+**The sentence, if R1 holds on both new seeds:** "On three seeds, a sweep birth with answer and distractor targets does not extrapolate to 40 letters, and one with answer, operand and task-code targets does." Nothing about why, and nothing about amount against kind. If R1 holds on one seed only, the result is reported as two of three. Otherwise the stage 1 contrast is reported as not replicated.
+
+## Predictions (mine)
+
+| | Prediction | Chance |
+|---|---|---|
+| P33.8 | `A+OS` extrapolates on both new seeds | 75% |
+| P33.9 | `A+D` does not extrapolate on either new seed | 85% |
+| P33.10 | `A+D` fails (at most 20) on both new seeds | 35% |
+| P33.11 | R1 holds on both new seeds | 65% |
+
+## Done
+
+Four complete births with receipts, finals and rows 16,384 and 20,480 committed; the reader's rows for both seeds; an addendum to `E33_REPORT.md` with the per-seed table (both arms; accuracy at 12, 20, 40 as last-three mean and final row; keepers), which of R1 to R4 applies on each seed, and the outcome of P33.8 to P33.11. No readings beyond the table above.
