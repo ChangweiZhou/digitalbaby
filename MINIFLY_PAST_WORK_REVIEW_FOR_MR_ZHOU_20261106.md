@@ -2857,3 +2857,7 @@ Both result branches are merged. E31's end-of-life scores I recomputed from the 
 **D. E33.** `OPUS_TASK_E33_WHICH_TARGETS_BREAK_EXTRAPOLATION_20261115.md`, from the reviewer's design: the sweep with the balanced loss, varying only which classes of non-answer byte are targets (distractor letters, operand digits, structural bytes), all eight subsets on one seed, about 6.5 CPU-hours. I added the two end arms so both references come from the same runner, fixed the weighting as "S-bal's terms, some removed", and wrote the outcome table before the predictions. It is not yet audited.
 
 **Held:** the target test, E29 part B, any further gate push, and a replication of K, which belongs in the confirmatory run of whichever rule first passes the every-byte condition.
+
+## 9.129 E33's brief audited once and released as revision 2 (15 November 2026)
+
+The reviewer found the specification faithful and its code sound, and named three required text changes and three recommendations; revision 2 makes all six as written, and the reviewer said it need not see the brief again. What my revision 1 lacked: the outcome table sent six of eighteen clean patterns to "mixed", including the one the reviewer's hypothesis predicts; outcome 0 gave a wrong reason in one case; and I had named the amount confound only as class size, when two outcome patterns coincide exactly with a threshold on error or on weight. I reran none of the audit's figures. E33 is released to one worker.

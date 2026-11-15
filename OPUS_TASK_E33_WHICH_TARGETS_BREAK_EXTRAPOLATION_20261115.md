@@ -1,6 +1,6 @@
-# E33: which non-answer targets stop the sweep from extrapolating (15 November 2026)
+# E33: which non-answer targets stop the sweep from extrapolating (15 November 2026, revision 2)
 
-Evidence level E2; stage 1 is a one-seed screen and supports no claim by itself. The design is the outside reviewer's (its memo of 15 November); this specification is mine. **Not yet audited: no worker starts until the reviewer has read it or Mr. Xu waives that.** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each.
+Evidence level E2; stage 1 is a one-seed screen and supports no claim by itself. The design is the outside reviewer's (its memo of 15 November); this specification is mine. Revision 1 (00fad472) was audited by the reviewer, who named three required text changes and three recommendations and stated that with the required ones made it need not see the brief again. Revision 2 makes all six; the last section lists them. One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106`.
 
@@ -26,6 +26,8 @@ E32 changed the backward pass and the gates and did not move this: the best arm 
 | **O** operand | `operand` | 4 | no: random digits |
 | **S** structural | `code`, `operator`, `equals` | 3 | the operator and `=` are; the task code is one of four at random |
 
+**Class S is in effect the task code alone.** At the end of S-bal the loss per position is 1.40 nats for the code, 0.004 for the operator and 0.000 for `=`. The code is also an unusual target: it is unpredictable but has no history, since it sits at position 0 where the state is zero.
+
 The fine roles are recorded, so S can be split later if it matters.
 
 ## Arms: all eight subsets, seed 73129
@@ -44,7 +46,7 @@ F      = exp28_everybyte.FINE.index
 cls    = {"D": fine == F("distractor"),
           "O": fine == F("operand"),
           "S": (fine == F("code")) | (fine == F("operator")) | (fine == F("equals"))}
-sel    = torch.zeros_like(other)
+sel    = T.zeros_like(other)
 for c in arm_classes: sel |= cls[c]                               # arm_classes: "", "D", "O", "S", "DO", "DS", "OS", "DOS"
 assert not (sel & ~other).any() and T.equal(cls["D"] | cls["O"] | cls["S"], other)
 loss   = 0.5 * cross_entropy(logits[amask], y[amask])
@@ -60,13 +62,14 @@ One new runner `exp33_targets.py`: E28's birth loop (`exp28_everybyte.dev`) with
 
 - Receipts say `experiment="E33"`, `arm`, `arm_classes`, and go to `exp45/e33/e33_dev_<arm>_<seed>.json`.
 - The loss by fine role is recorded per 512 updates for **all** roles, selected or not, as E28 does.
-- Rows are saved every 4,096 updates. Commit (`git add -f`) the eight final files only; row files are measured, their hashes recorded, and not committed.
+- Rows are saved every 4,096 updates. Commit (`git add -f`) each arm's final file and its rows at 16,384 and 20,480, so the endpoint can be recomputed from the branch (24 files, about 108 MB). Earlier rows are measured, their hashes recorded, and not committed.
 
 ## Checks before any full birth
 
 Tolerance, wherever "agrees" is said: the largest absolute difference is at most 1e-5 of the tensor's largest absolute entry.
 
 1. **`A+DOS` is S-bal.** On the first three batches its loss agrees with `exp28_everybyte.loss_of(logits, y, amask, real, "balanced")` to 1e-6 relative. A dry birth at 2,048 updates has the `tensors_sha256` of `exp45/e28_qual/dry/e28_dev_S-bal_dry2048_73129.json`; if only the last bits differ (a sum divided by a count against a mean), say so and show that the first batch's gradients agree.
+   - If the dry hash is equal, the full `A+DOS` birth must then have, at all six saved rows, the `tensors_sha256` in the `curve` of `exp45/e28/e28_dev_S-bal_73129.json`. Compare as each row is written; on a mismatch, stop.
 2. **Only the selected positions carry error.** For each arm, on the first batch, with `logits.retain_grad()`: the gradient at the logits is exactly zero at every position outside `amask | sel`, and non-zero somewhere in each selected class. Record the count of selected positions by fine role.
 3. **Same data.** Each arm's `data_digest` equals E28's at every saved row (`git show $D:$M/exp45/e28/e28_dev_S-bal_73129.json`, field `curve[*].data_digest`).
 4. **Cost.** One dry birth of each arm at 2,048 updates, with CPU time and a forecast.
@@ -82,7 +85,7 @@ A new script `e33_read.py` imports `panels`, `measure`, `load_net` and `row_file
 
 Every figure is the mean of the last three saved rows (16,384, 20,480, 24,576); the final row is given beside it.
 
-- **Learned in range:** accuracy at 12 letters at least 80.
+- **Learned in range:** accuracy at 12 letters at least 70. (S-bal's own last-three-row mean is 85 to 90 and its single rows swing by up to 12 points.)
 - **Extrapolates:** accuracy at 40 letters at least 60.
 - **Fails:** accuracy at 40 letters at most 20.
 - **Intermediate:** between 20 and 60.
@@ -96,23 +99,42 @@ Checked in this order; the first that applies is the reading.
 
 | # | Pattern over the eight arms | Reading |
 |---|---|---|
-| 0 | `A` does not extrapolate, or `A+DOS` does not fail | The runner does not reproduce the references. Stop; no reading. |
-| 1 | For one class c: all four arms containing c fail and all four without c extrapolate | **c is decisive** on this seed: targets of that class, at S-bal's weight, are what stops extrapolation. |
-| 2 | `A` extrapolates and the other seven fail | **Any class is enough.** No single class accounts for it. |
-| 3 | All three single-class arms extrapolate and `A+DOS` fails | **Only combinations break it.** The pairs' marks are reported; no single class accounts for it. |
-| 4 | Anything else, including any intermediate arm or any arm that did not learn in range | **Mixed.** The eight-arm table is reported with each class's mean over its four arms beside the mean of the four without it. No single class is named. |
+| 0a | `A` does not extrapolate | The answer-only loss at half weight does not behave as E26's answer-only birth. Stop; no reading. |
+| 0b | `A+DOS` does not fail | If its six row hashes matched S-bal's, the birth is S-bal and the "fails" mark is mis-set for a last-three-row mean (only S-bal's final row, 6.0, was known when it was set). Stop, report the rows; I reset the mark before anything is read. If the hashes did not match, the runner is at fault. Stop; no reading. |
+| 1 | There is a non-empty set C of classes such that the failing arms are exactly those containing at least one class of C, and every other arm extrapolates | Targets of any class in C, at S-bal's weight, stop extrapolation on this seed; classes outside C are harmless at their weight. **C of one class:** that class is decisive. If it is D, the sentence ends "pending the control", because this is also what a threshold on error between 12.2 and 20.6 nats per item would give. **C of two:** either of the two suffices. **C of all three:** any class is enough. |
+| 2 | For one class c, the failing arms are exactly those containing c or both of the other two, and every other arm extrapolates | c suffices alone; the other two suffice only together. |
+| 3 | All three single-class arms extrapolate and `A+DOS` fails | Only combinations break it. The pairs' marks are reported. If all three pairs fail, the sentence adds that this is what a threshold on non-answer weight between 0.231 and 0.269 would give. |
+| 4 | Anything else, including any intermediate arm or any arm that did not learn in range | **Mixed.** The eight-arm table is reported with each class's mean over its four arms beside the mean of the four without it. No class is named. |
+
+Whenever S is outside C, the reading says only that one history-free unpredictable target (the task code) is harmless. It says nothing about predictable targets, which carry no error once learned in any arm.
 
 ## What stage 1 cannot show
 
-- **Kind against amount.** Dropping terms lowers the total weight on non-answer targets, and the classes differ in size: per item D has 6 bytes on average, O has 4 and S has 3. If D alone is decisive, that may be because it is the largest class. Stage 2 carries the control.
+- **Kind against amount, in two forms.** Dropping terms lowers both the weight on non-answer targets and the error they carry (the reviewer's figures, from S-bal's end-of-birth losses):
+
+  | Arm | Non-answer weight | Error per item (nats) |
+  |---|---|---|
+  | A+S | 0.115 | 1.4 |
+  | A+O | 0.154 | 10.8 |
+  | A+D | 0.231 | 20.6 |
+  | A+OS | 0.269 | 12.2 |
+  | A+DS | 0.346 | 22.0 |
+  | A+DO | 0.385 | 31.4 |
+  | A+DOS | 0.500 | 32.8 |
+
+  - D decisive is exactly what a threshold on error between 12.2 and 20.6 nats would give.
+  - All pairs failing with every single class passing is exactly what a threshold on weight between 0.231 and 0.269 would give.
+  - If O or S is decisive, a class carrying less error fails while D passes, which already rules amount out.
 - **One seed.** Births of one seed swing by tens of points between rows; the marks are wide for that reason, and nothing is claimed until stage 2.
 - **Why.** A decisive class says where the interference enters, not how.
 
 ## Stage 2 (released by me after stage 1 is read; seeds 93683 and 116089)
 
-- **Outcome 1:** `A+c` and the arm with the other two classes, on both seeds (four births), plus `A+c-light` on all three seeds: class c's terms multiplied by one constant so that their summed weight over the first 128 batches equals class S's (or class O's, if c is S). Three more births.
-- **Outcome 2:** `A+D`, `A+O`, `A+S` on both seeds (six births).
-- **Outcome 3 or 4:** I name the arms from the table before any run.
+- **Outcome 1 with one class c:** `A+c` and the arm with the other two classes, on both seeds (four births).
+- **The control, only if c is D:** `A+D-light` on all three seeds, the D terms multiplied by 0.5. That leaves about 10.3 nats per item, about what O carries (10.8). **Its reading is fixed now:** if `A+D-light` fails while `A+O` extrapolates, it is the kind of target and not the amount of error; if `A+D-light` extrapolates, it is the amount. An intermediate result settles neither.
+- **Outcome 1 with two or three classes:** the single-class arms on both seeds (six births).
+- **Outcome 2, 3 or 4:** I name the arms from the table before any run.
+- The "fails" mark of 20 is close for seed 93683, whose S-bal final row is 16.3 at 40 letters. Stage 2 states its marks per seed before it runs.
 
 ## What follows from it
 
@@ -123,13 +145,29 @@ Checked in this order; the first that applies is the reading.
 
 | | Prediction | Chance |
 |---|---|---|
-| P33.1 | Outcome 0 does not occur: `A` extrapolates and `A+DOS` fails | 85% |
+| P33.1 | Neither 0a nor 0b occurs: `A` extrapolates and `A+DOS` fails | 80% |
 | P33.2 | `A+OS` (no distractor targets) extrapolates | 40% |
 | P33.3 | `A+D` (distractor targets only) fails | 55% |
-| P33.4 | Outcome 1: exactly one class is decisive | 20% |
-| P33.5 | Outcome 2: any class is enough | 20% |
-| P33.6 | All eight arms learn in range | 70% |
+| P33.4 | Outcome 1 with C of exactly one class | 20% |
+| P33.5 | Outcome 1 with C of all three classes (any class is enough) | 20% |
+| P33.6 | Outcome 1 with C = {D, O}: either unpredictable class with history suffices, the task code is harmless | 20% |
+| P33.7 | All eight arms learn in range | 80% |
 
 ## Done
 
 Runner, reader, check receipts, eight complete births, and `E33_REPORT.md` with the eight-arm table (arm; accuracy at 12, 20, 40 as last-three mean and final row; keepers; loss by fine role at the end), which outcome row applies, and the outcome of each prediction. No readings beyond the table above.
+
+## What changed from revision 1 (the reviewer's audit; its script is `e33_brief_checks.py` on `claude/vibrant-cerf-sje726` at 7df89744)
+
+I made these as the audit wrote them and reran none of its figures.
+
+| | Change | Required? |
+|---|---|---|
+| 1 | Outcome rows generalised: failing arms are exactly those containing a class of C, for C of one, two or three; a row for "c, or the other two together"; qualifiers on D decisive and on all pairs failing | yes |
+| 2 | Outcome 0 split and reworded; six-row hash check for `A+DOS` against S-bal | yes |
+| 3 | Both amount confounds stated with the weight and error table; the control fixed as D at half weight, with its reading, and limited to the case c = D | yes |
+| 4 | "Learned in range" at 70 | recommended |
+| 5 | Rows 16,384 and 20,480 committed for every arm | recommended |
+| 6 | Class S described as the task code in effect, and what "S is harmless" can show | recommended |
+
+P33.5 and P33.6 are restated in the new outcome rows, and P33.6 is new: it is the pattern the reviewer's own hypothesis predicts.
