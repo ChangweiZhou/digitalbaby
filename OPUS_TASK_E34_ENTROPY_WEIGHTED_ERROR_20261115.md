@@ -168,3 +168,66 @@ I made these as the audit wrote them. I checked one figure myself: B-all's last-
 | 5 | The report says whether a passing arm is within 15 points of 82.0 | recommended |
 
 The reviewer agreed with the loss code, the division by `w.sum()`, the entropy and weight figures, the three temperatures, the outcome table and the five checks.
+
+---
+
+# Addendum 1 (15 November 2026): stage 1 read; stage 2 released with two additions
+
+## Stage 1 as I read it
+
+The worker's branch `claude/vibrant-curie-ivmrt1` (ba6f5d52) is merged. I recomputed the three endpoints from `exp45/e34/E34_READ.json` and they equal the report's; the reviewer's own reader reproduces them from the committed weight files.
+
+| Arm | tau | At 12 letters | At 40 letters | The three rows at 40 letters | Mark |
+|---|---|---|---|---|---|
+| `T050` | 0.5 | 83.7 | 79.8 | 78.0, 62.0, 99.3 | learned in range; extrapolates |
+| `T100` | 1 | 95.3 | 57.6 | 72.7, 53.0, 47.0 | learned in range; intermediate |
+| `T200` | 2 | 86.1 | 2.0 | 2.3, 1.3, 2.3 | learned in range; fails |
+
+- **Outcome row 1.** `T050` is a candidate on one seed; nothing is claimed. It is 2.2 points below backpropagation's 82.0.
+- P34.1, P34.2 and P34.4 to P34.8 hold; P34.3 misses.
+- **The endpoint hides a swing**, as the table's fourth column shows.
+- **The price of tau 0.5 is slow acquisition** (the reviewer's observation, which the rows confirm). Accuracy at 12 letters by row:
+
+  | Arm | 4,096 | 8,192 | 12,288 | 16,384 | 20,480 | 24,576 |
+  |---|---|---|---|---|---|---|
+  | `T050` | 2.3 | 6.3 | 17.0 | 78.3 | 73.3 | 99.3 |
+  | `T100` | 17.7 | 85.0 | 91.7 | 95.0 | 91.7 | 99.3 |
+  | `T200` | 30.7 | 73.3 | 83.3 | 84.3 | 79.0 | 95.0 |
+
+  An answer the network cannot yet predict has high entropy and so almost no weight: the gain holds back what is new. **The gain therefore does not go into a life until this cost has been measured in stage 2**, and any brief for a life without the answer mask must carry an acquisition score row by row for each new family.
+
+## Stage 2
+
+**As the brief says:** `T050` on seeds 93683 and 116089, two births.
+
+**Addition 1 (the reviewer's): one backpropagation birth with the same gain, arm `B050`, seed 73129.** `exp34_entropy.dev` sets `local = True` at line 138; add an arm whose only difference is `local = False` in the forward, tau 0.5, in a way that leaves the existing arms' code path unchanged. It says whether the gain's effect belongs to the sweep or to the objective.
+
+- **Check before it runs:** with tau infinite and `local = False`, a dry birth at 2,048 updates has the `tensors_sha256` of `exp45/e28_qual/dry/e28_dev_B-all_dry2048_73129.json`.
+- **Its reading, fixed now**, against plain backpropagation's 82.0 at 40 letters (last-three mean) and `T050`'s 79.8, on seed 73129 only:
+
+  | `B050` | Reading |
+  |---|---|
+  | Does not learn in range | Under backpropagation the gain at this temperature prevents in-range learning on this seed. |
+  | Learns in range; at 40 letters within 15 of 82.0 | The gain neither helps nor hurts backpropagation's extrapolation here. What `T050` shows is the sweep being brought to backpropagation's level by the objective. |
+  | Learns in range; at least 15 above 82.0 | The gain helps backpropagation too: the benefit belongs to the objective, not to the rule. |
+  | Learns in range; at least 15 below 82.0 | The gain hurts backpropagation's extrapolation on this seed and not the sweep's. |
+
+**Addition 2 (the reviewer's): two reported facts for every arm of stage 2 and for `T050` on 73129.** The first saved row at which accuracy at 12 letters reaches 70, beside plain backpropagation's (row 4,096 on 73129) and the plain sweep's; and the three rows at 40 letters beside their mean.
+
+**The sentence**, if `T050` learns in range and extrapolates on both new seeds, is the brief's, followed by: "It first learns in range at row … (plain backpropagation: row …)."
+
+Three births, about 2.5 CPU-hours. Marks as in stage 1.
+
+## Predictions (mine)
+
+| | Prediction | Chance |
+|---|---|---|
+| P34.9 | `T050` learns in range and extrapolates on both new seeds | 40% |
+| P34.10 | `T050` does so on at least one new seed | 75% |
+| P34.11 | `T050` first reaches 70 at 12 letters at row 12,288 or later on both new seeds | 65% |
+| P34.12 | `B050` is below 70 at 12 letters at row 8,192 | 60% |
+| P34.13 | `B050` learns in range and is within 15 of 82.0 at 40 letters | 50% |
+
+## Done
+
+The check receipt for `B050`; three births with receipts, finals and rows 16,384 and 20,480 committed; an addendum to `E34_REPORT.md` with the per-seed table, the two facts, which reading applies to `B050`, and P34.9 to P34.13. No readings beyond the tables above.

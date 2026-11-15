@@ -2933,3 +2933,36 @@ The reviewer found both briefs faithful to its programme, recomputed the fixed o
 **Recommendations taken:** the GRU alone runs first and module arms only where there is room; add/sub and max/min are read as separate families; 乙's stage 0 runs both optimizers and three code parameterisations (angle, complex, digit tables), the last as the easiest possible interface so that a stop is well founded; the pass-through and the thin coverage at fraction 0.10 are stated as limits.
 
 **Unverified, as the reviewer says:** that 乙's scrambled control cannot be learned around is its reasoning, not a numerical result; the competition between the direct and module paths is its inference, which the forced arm tests.
+
+## 9.134 E33 complete, E34 stage 1 read, the user's three statements, and three jobs drafted from the reviewer's memo (15 November 2026)
+
+Source: the reviewer's memo `MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md` (revision 2, `claude/vibrant-cerf-sje726` at a8b5ace2). Evidence level E2 throughout; the memo's sections 3.1 to 3.5 are readings of saved files and receipts, not outcomes of a registered test.
+
+**The user's statements of 15 November, verbatim, as the reviewer records them from its session with the user.**
+
+- On the goal: "Note our goal is persistent learning, not conventional training+validation+test data set setting. So the main problem is given fixed memory / computation capacity, how does local learning beat naive back-propagation in generalization tasks."
+- On the line: "I repeatedly said as long as we do not do full backpropagation, anything is okay."
+- On structure: "So now given the circuit structure itself is shaped by learning in our setting, the literature is only of limited help. Our neural network structure would change with time."
+
+**E33 is complete (merged, ba6f5d52).** I recomputed the four new endpoints from the read files; the reviewer reproduces them from the weights. R1 holds on both new seeds, so the addendum's sentence applies: on three seeds, a sweep birth with answer and distractor targets does not extrapolate to 40 letters (23.8, 29.1, 31.6) and one with answer, operand and task-code targets does (94.2, 94.9, 86.9). P33.8, P33.9, P33.11 hold; P33.10 misses.
+
+**E34 stage 1 (merged).** Outcome row 1: at tau 0.5 the sweep with every byte a target and no answer mask learns in range (83.7) and reaches 79.8 at 40 letters on seed 73129; tau 1 is intermediate (57.6); tau 2 fails (2.0). Seven of eight predictions hold. A candidate on one seed. Two cautions, both the reviewer's and both visible in the rows: the endpoint is a mean of 78.0, 62.0 and 99.3, and tau 0.5 does not learn in range until about 16,000 updates, where plain backpropagation is at 74 by 4,096. Stage 2 is released as addendum 1 of the brief, with a backpropagation birth under the same gain and two reported facts added. The gain does not go into a life until its cost in acquisition has been measured.
+
+**A fact not discussed in this review before, which I confirmed from the receipts.** The E26 and E31 lives never rehearse the birth family (mod 89): `exp26_candidate.life` builds entries for F1, F2 and F3 only. Its held-out add and sub at 12 letters fall from 94 to 100 at the start to 1 to 49 after the first block and 14 to 37 at the end, in the sweep and backpropagation lives alike (my read of `stages[i].scores` in the six E26 life receipts; the table is in the E36 brief). I had read those lives for composition and for the taught families and never tabled this column.
+
+**The reviewer's further readings, adopted and not rerun by me:** every trained network holds a circular code of the answer with the same two Fourier frequencies under both rules; a life rebuilds the weights and keeps the form of that code; what is lost of the birth family is chiefly its modulus (pairs needing the wrap at 89: 0 to 2.4% right; pairs not needing it: 10 to 93%); later families reach high held-out scores from a quarter of their pairs in few items.
+
+**Drafted, not released (each waits for the reviewer's audit):**
+
+- `OPUS_TASK_E36_REMINDER_AFTER_A_LIFE_20261115.md` (the memo's job A): how many updates on the birth family bring it back after a life, against learning it from nothing.
+- `OPUS_TASK_E37_FRESH_REFERENCE_FOR_A_LIFE_FAMILY_20261115.md` (job C): fresh networks on a life family's own item stream, so that "learned from fewer items" can be called a saving or not. I made the memo's optional F1 half part of the brief: its batches are identical to a life's first block, which gives an exact check.
+- `OPUS_TASK_E38_WHAT_ERASES_THE_BIRTH_FAMILY_20261115.md` (job B): two-block lives separating decay toward zero from rewriting, with an anchor at the birth weights at two strengths and a rehearsal reference. In place of a second worker's implementation of the three-line anchor step I specified two checks: against torch's own decay with the anchor at zero, and against a second written form.
+
+**Adopted as standing practice (the memo's sections 8 and 9).**
+
+1. Every report with a life or a sequence of families gives each earlier family's held-out score at every stage, with add and sub split by whether the pair needs the wrap.
+2. Beside any online score: a blind predictor that answers from recent history without the operands, and a second score for each family after the stream has left it.
+3. For each arm: the numbers stored beyond the weights, and the rehearsal share of each batch.
+4. E35 runs through stage 1b as released and nothing is briefed after it. The stage in which an allowed rule learns an interface into a hand-wired module answers a question the programme no longer has, since the learner makes its own circuit.
+
+**The form a claim should take**, from the user's first statement: at equal stored numbers and equal updates, with every earlier family scored at every stage, against naive backpropagation.
