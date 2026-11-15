@@ -1,3 +1,5 @@
+> **Terms of use.** Strictly non-commercial. Any use by others requires the prior written permission of the owner, Mr. Zhou. See [LICENSE.md](LICENSE.md).
+
 # Repository navigation — 23 October 2026
 
 The consolidated development branch is `codex/minifly-consolidated-20261023`.
