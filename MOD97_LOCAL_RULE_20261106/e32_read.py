@@ -258,7 +258,7 @@ def tables():
             L.append(f"| {r['arm']} | {r['seed']} | {r['row']} | " + (f"{n['task_norm']:.6g} | {n['term_norm_at_lam1']:.6g} | {n['term_norm_at_lam']:.6g} |" if n else "(term off) | | |"))
         L.append("")
     L += ["## Marks (endpoints: mean of rows 16,384, 20,480, 24,576; two of three seeds)", "",
-          "| Arm | Acc 40: above floor | moves / partial | closes | Acc 20: above floor | moves / partial | closes | Has keepers 12 / 20 / 40 | Harm at 12 (points below floor) |",
+          "| Arm | Acc 40: above floor | moves / partial | closes | Acc 20: above floor | moves / partial | closes | Has keepers 12 / 20 / 40 | Harm at 12: floor minus arm (harm if >= 15) |",
           "|---|---|---|---|---|---|---|---|---|"]
     for arm, d in M.items():
         def mp(x): return "moves" if x["moves"] else ("partial" if x["partial"] else "neither")
