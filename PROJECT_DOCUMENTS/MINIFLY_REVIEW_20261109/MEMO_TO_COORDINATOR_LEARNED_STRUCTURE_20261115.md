@@ -2,6 +2,8 @@
 
 From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for the coordinator to implement."
 
+**Revision 2, the same evening.** E33 addendum 1 and E34 stage 1 have reported on `claude/vibrant-curie-ivmrt1` (ba6f5d52). I recomputed both tables from the committed weights; section 14 gives the check and what it changes. Jobs A, B and C are unchanged. One item is added to section 1 (item 5), one bullet to section 4 and three rows to section 12.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -20,7 +22,9 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 3. **From now on, score every earlier family at every stage of a life**, with add and sub split by wrap (section 9).
 4. **Enter in the record** Mr. Xu's three statements of today (section 2) and the fact that the E26 and E31 lives never rehearsed the birth family and lost it (sections 3.3 and 3.4). I searched the review from 9.111 onward and found no discussion of it.
 
-Running work is unchanged: E33 reduced stage 2, E34, E35.
+5. **Release E34 stage 2 as its brief says, with two additions** (section 14): one backprop birth with the same gain at tau 0.5 on seed 73129, and one reported fact, the row at which each arm first learns in range.
+
+E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
 
@@ -143,6 +147,7 @@ AdamW at learning rate 0.001 with decay 0.25 multiplies every weight outside the
 - **The rule has again made no difference.** Both rules build the same code, lose the same thing in the same block, and acquire later families alike. Every job below runs both and reports the paired difference.
 - **Retention in this learner is a small problem with a large symptom.** What is lost is one parameter per family, the modulus. The symptom is that the whole family scores 1–47%.
 - **Where a claim against naive backprop could come from.** Naive backprop keeps nothing of an unrehearsed family's modulus (0.0–1.0% on wrap pairs in the three backprop lives). Rehearsal keeps it and takes a share of every batch (9.21, 9.64). A learner that keeps it with no rehearsal, at the price of one extra number per weight, would do at equal updates what naive backprop does not. Job B tests the simplest such device. The same device could be added to backprop, so the claim would be against naive backprop only, which is how Mr. Xu put the question.
+- **A second place, since E34.** With every byte a target, naive backprop ends at 82.0, 82.8 and 85.4 at 40 letters. The sweep with E34's confidence gain at tau 0.5 ends at 79.8 on the one seed run, with a final row of 99.3 (section 14). If stage 2 puts it above backprop on the new seeds, that is a claim against naive backprop at no extra memory. The backprop birth with the same gain says whether it belongs to the rule or to the objective.
 - **The form the claim should take:** at equal stored numbers and equal updates, with every earlier family scored at every stage, and with both the memory and the rehearsal share of each arm stated.
 
 ## 5. Job A: the reminder test
@@ -273,6 +278,9 @@ If Mr. Xu relayed them:
 | B | `anchor10` keeps it | 60% |
 | B | Some anchor keeps and acquires | 40% |
 | any | A reading that differs between sweep and backprop | 15% |
+| E34 | T050 learns in range and extrapolates on both new seeds | 40% |
+| E34 | T050 does so on at least one new seed | 75% |
+| E34 | Backprop with the gain at tau 0.5 is below 70 at 12 letters at row 8,192 (plain backprop: 89.3) | 60% |
 
 ## 13. Limits
 
@@ -283,3 +291,54 @@ If Mr. Xu relayed them:
 - A linear read-out of the answer from the state at `=` was too weak an instrument (10–37% where the network itself is 96–99% right), so nothing here uses it.
 - 3.6 is arithmetic. No run has yet separated decay from rewriting.
 - CPU figures are scaled from E26's receipts (557 CPU-seconds per 4,096 birth updates; about 840 per life block with scoring) and are mine.
+
+## 14. E33 addendum 1 and E34 stage 1, read after the first version of this memo
+
+Both are on `claude/vibrant-curie-ivmrt1` at ba6f5d52 and not yet on the default branch.
+
+### 14.1 The check
+
+My numpy reader reproduces every endpoint the two reports give, from the committed final files and rows 16,384 and 20,480 (seven births, 21 files). Rows before 16,384 are not committed and are taken from the worker's tables.
+
+| Birth | Endpoint at 12 / 20 / 40 letters, mine | The report's |
+|---|---|---|
+| E34 T050, 73129 | 83.67 / 82.56 / 79.78 | 83.66 / 82.56 / 79.78 |
+| E34 T100, 73129 | 95.33 / 90.11 / 57.56 | the same |
+| E34 T200, 73129 | 86.11 / 31.56 / 2.00 | 86.11 / 31.55 / 2.00 |
+| E33 A+D, 93683 | 86.00 / 76.67 / 29.11 | the same |
+| E33 A+OS, 93683 | 97.44 / 97.11 / 94.89 | the same |
+| E33 A+D, 116089 | 87.89 / 75.67 / 31.56 | the same |
+| E33 A+OS, 116089 | 93.11 / 91.78 / 86.89 | the same |
+
+```
+python3 -I $R/e33a1_e34_check.py
+```
+
+### 14.2 What they settle
+
+- **E33.** On three seeds, a sweep birth with answer and distractor targets does not extrapolate to 40 letters (23.8, 29.1, 31.6) and one with answer, operand and task-code targets does (94.2, 94.9, 86.9). The question E33 asked is answered.
+- **E34.** On seed 73129 the confidence gain at tau 0.5 learns in range and extrapolates with every byte a target and no answer mask. Tau 1 is intermediate and tau 2 fails. Outcome row 1; a candidate on one seed.
+- **Amount, not only kind.** E33 left open whether distractor targets hurt by their kind or by their weight. E34's three arms give a dose: a distractor position's weight relative to an answer position's ends at 0.001, 0.033 and 0.19, and accuracy at 40 letters at 79.8, 57.6 and 2.0. One seed.
+
+### 14.3 What they change
+
+1. **Nothing in jobs A, B and C.** They stay on answer targets and E26's files, one change at a time.
+2. **E34 stage 2 runs as briefed** (T050 on seeds 93683 and 116089), with two additions.
+   - **One backprop birth with the same gain at tau 0.5, seed 73129** (`local = False`, otherwise arm T050; about 0.8 CPU-hours). The first literature report calls this control essential, and I had made it conditional on a sweep arm passing the backprop reference. The final row now does (99.3 against 84.7) and the endpoint does not (79.8 against 82.0), so run it rather than argue which applies.
+   - **Report the row at which each arm first reaches 70 at 12 letters**, beside plain backprop and the plain sweep. On seed 73129:
+
+     | Arm | 4,096 | 8,192 | 12,288 | 16,384 | 20,480 | 24,576 |
+     |---|---|---|---|---|---|---|
+     | T050 | 2.3 | 6.3 | 17.0 | 78.3 | 73.3 | 99.3 |
+     | T100 | 17.7 | 85.0 | 91.7 | 95.0 | 91.7 | 99.3 |
+     | Backprop, every byte, no gain | 73.7 | 89.3 | 95.0 | 91.3 | 93.3 | 93.7 |
+     | Sweep, every byte, no gain | 15.7 | 56.7 | 61.3 | 66.3 | 37.0 | 75.3 |
+
+3. **The price of tau 0.5 is acquisition.** T050 needs about 16,000 updates to learn in range. Plain backprop is at 74 by 4,096 updates and 89 by 8,192, and tau 1 is at 85 by 8,192. An answer the network cannot yet predict has high entropy and so almost no weight; the gain holds back exactly what is new. In a life, where items needed for a new family are the currency (Job C), every new family would start that way. So the gain does not go into a life until stage 2 has reported and this cost has been measured there; the brief for a mask-free life has to carry a row-by-row acquisition score for each new family, not only an endpoint.
+4. **The endpoint hides a swing.** T050's last three rows at 40 letters are 78.0, 62.0 and 99.3. Stage 2's sentence should give the three rows beside the mean for each seed.
+
+### 14.4 What I did not check
+
+- Rows before 16,384, the keeper counts, the weight-ratio tables and the checks in `E34_CHECKS.json`.
+- Whether a temperature between 0.5 and 1, or one that falls during the birth, keeps the extrapolation without the delay. That is a new arm and I do not propose it before stage 2 reports.
+
