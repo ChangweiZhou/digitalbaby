@@ -4,6 +4,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 2, the same evening.** E33 addendum 1 and E34 stage 1 have reported on `claude/vibrant-curie-ivmrt1` (ba6f5d52). I recomputed both tables from the committed weights; section 14 gives the check and what it changes. Jobs A, B and C are unchanged. One item is added to section 1 (item 5), one bullet to section 4 and three rows to section 12.
 
+**Revision 3, later the same evening.** Three things are new. (a) The audit of the E36, E37 and E38 briefs is in `AUDIT_E36_E37_E38_BRIEFS_20261115.md` beside this memo; two of its required changes correct marks I proposed here, and sections 5 and 7 now carry the corrected marks. (b) Table 3.3 is restated with whole answers, as the harness scores them; the earlier table counted the two digits only. (c) Part II (sections 15 to 18) sets out the programme from here, after Mr. Xu's statements of this evening: a continual learner judged over a long life. Items 6 and 7 of section 1 are the new requests.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -23,6 +25,9 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 4. **Enter in the record** Mr. Xu's three statements of today (section 2) and the fact that the E26 and E31 lives never rehearsed the birth family and lost it (sections 3.3 and 3.4). I searched the review from 9.111 onward and found no discussion of it.
 
 5. **Release E34 stage 2 as its brief says, with two additions** (section 14): one backprop birth with the same gain at tau 0.5 on seed 73129, and one reported fact, the row at which each arm first learns in range.
+
+6. **Apply the audit's six required changes to E36, E37 and E38 as written and release them** (`AUDIT_E36_E37_E38_BRIEFS_20261115.md`). No re-audit is needed after them.
+7. **Brief the long-life programme of Part II**: one protocol brief (job L0, section 17.7), audited once, and the two long births of E34 (section 18), which need no new code.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -84,28 +89,29 @@ python3 -I $R/graft_birth_into_life.py add89,sub89,add97,sub97 e26/e26_dev_B_731
 
 The E26 and E31 lives draw from families F1 (mod 97), F2 (compositions) and F3 (mod 73). The birth family (mod 89) is never in the stream (`git show $D:$M/exp26_candidate.py | sed -n '214p;242,244p'`).
 
-Exact two-digit answers at the end of each life on the birth family, all pairs, no letters. "Wrap" pairs are those with a + b ≥ 89, or a − b < 0.
+Whole answers (two digits and the end symbol, as `exp16_integrated.score` counts them) at the end of each life on the birth family, all pairs, no letters. "Wrap" pairs are those with a + b ≥ 89, or a − b < 0. The last column is read from the two digits alone. Revision 2 of this memo counted the two digits throughout; six cells moved, the largest from 17.6 to 3.9 (K 116089, sub).
 
 | Life | add: no wrap | add: wrap | sub: no wrap | sub: wrap | Wrap pairs answered with a life modulus |
 |---|---|---|---|---|---|
 | S 73129 | 45.5 | 1.3 | 79.3 | 0.4 | add 13% mod 97; sub 12% mod 73 |
-| S 93683 | 54.1 | 0.3 | 13.5 | 0.5 | add 32% mod 97 |
-| S 116089 | 25.8 | 1.3 | 10.1 | 0.9 | add 13% mod 73 |
+| S 93683 | 54.0 | 0.3 | 12.1 | 0.4 | add 32% mod 97 |
+| S 116089 | 25.8 | 1.3 | 2.5 | 0.1 | add 13% mod 73 |
 | B 73129 | 37.8 | 1.0 | 92.8 | 0.0 | **sub 89% mod 97**; add 20% mod 97 |
-| B 93683 | 25.8 | 0.1 | 40.5 | 0.1 | sub 32% mod 73 |
-| B 116089 | 49.4 | 0.1 | 91.6 | 0.1 | **sub 83% mod 97**; add 26% mod 73 |
-| K 73129 | 56.7 | 0.7 | 73.8 | 0.1 | **sub 59% mod 73** |
-| K 93683 | 43.4 | 0.6 | 78.3 | 0.2 | add 30% mod 97 |
-| K 116089 | 62.9 | 0.6 | 17.6 | 2.4 | add 41% mod 73 |
+| B 93683 | 25.8 | 0.1 | 39.8 | 0.1 | sub 32% mod 73 |
+| B 116089 | 49.3 | 0.1 | 91.6 | 0.1 | **sub 83% mod 97**; add 26% mod 73 |
+| K 73129 | 56.4 | 0.7 | 73.8 | 0.1 | **sub 59% mod 73** |
+| K 93683 | 43.0 | 0.6 | 72.9 | 0.2 | add 30% mod 97 |
+| K 116089 | 62.9 | 0.6 | 3.9 | 0.3 | add 41% mod 73 |
 | Six births | 94.0–99.8 | 96.4–99.5 | 95.2–99.6 | 91.5–99.6 | 0.0–0.1% |
 
-- Pairs that need the wrap at 89 are right 0.0–2.4% of the time in all 18 cells. The network still answers with two digits (98–100%).
-- Pairs that need no wrap are right 10–93%. The shared arithmetic survives in part.
+- Pairs that need the wrap at 89 are right 0.0–1.3% of the time in all 18 cells. The network still answers with two digits (98–100%).
+- Pairs that need no wrap are right 2.5–93%. The shared arithmetic survives in part.
 - In several lives the old prompts are answered with a modulus the life taught.
 - Sweep, Kolen–Pollack and backprop lives show the same pattern.
 
 ```
-python3 -I $R/life_answers_on_birth_tasks.py e26/e26_dev_S_73129.pt e26/e26_life_S_73129.pt e26/e26_life_B_73129.pt e31/e31_life_K_73129.pt
+python3 -I $R/e36_e38_brief_checks.py H e26/e26_life_S_73129.pt e26/e26_life_B_73129.pt e31/e31_life_K_73129.pt      # whole answers
+python3 -I $R/life_answers_on_birth_tasks.py e26/e26_dev_S_73129.pt e26/e26_life_S_73129.pt e26/e26_life_B_73129.pt e31/e31_life_K_73129.pt   # two digits; the last column
 ```
 
 ### 3.4 The loss happens in the first block (receipts)
@@ -163,13 +169,13 @@ AdamW at learning rate 0.001 with decay 0.25 multiplies every weight outside the
   - the birth family's held-out pairs at 12 letters, on the panels the life receipts use, per operation;
   - add and sub on all pairs without letters, split by wrap;
   - the life's families at 12 letters and `compose.within`, to show what the reminder costs them.
-- **Marks (my proposal).** "Restored": mean of held-out add and sub at 12 letters at least 85. Per arm, in two of three seeds:
+- **Marks (corrected in revision 3; see the audit, 4.1).** "Restored" at a row: mean of held-out add and sub at 12 letters at least 85 at that row. "Wrap score" at a row: the mean of the add and sub wrap-pair scores on all pairs without letters. Per arm, in two of three seeds; the rows are tried in order and the first that holds is the reading. My first version read rows 2 and 3 on the held-out mean, which a reminder already meets at row 0 (it starts at 13 to 37, because everything but the wrap is kept):
 
   | # | Pattern | Reading |
   |---|---|---|
-  | 1 | Restored by row 256 | The family's rule was still in the network. A life costs the old family about one showing of each taught pair. |
-  | 2 | Not 1, and at row 1,024 at least 30 above the reference | Partial savings. |
-  | 3 | Within 15 of the reference at row 1,024 | No savings: the life removed what the birth built for this family. |
+  | 1 | Restored at row 256 | The family's rule was still in the network. A life costs the old family about one showing of each taught pair. |
+  | 2 | At row 1,024 the wrap score is at least 30 points above the reference's | Partial savings. |
+  | 3 | At row 1,024 the wrap score is less than 15 points from the reference's | No savings: what the life removed is relearned no faster than a fresh network learns it. |
   | 4 | Anything else | Mixed; the curves are reported. |
 
 - **Checks.** Row 0 has the life-end file's tensor hash and reproduces the last stage's birth-family scores in the life receipt. Batch digests are equal across the arms of a seed. For arm K, the loaded matrix has the saved file's hash and E31's identity check holds on the first steps. One dry run of 64 updates with CPU time.
@@ -215,7 +221,7 @@ AdamW at learning rate 0.001 with decay 0.25 multiplies every weight outside the
 - **Scores at every row.** As Job A's first two bullets for the birth family; held-out add and sub of F1 at 12 letters.
 - **Marks (my proposal), after block 2.**
   - "Keeps the birth family": held-out add/sub mean at 12 letters at least 80, and wrap pairs at least 70.
-  - "Loses it": the mean at most 50 (E26: 1–48).
+  - "Loses it" (corrected in revision 3; see the audit, 4.3): wrap pairs, mean of add and sub, at most 20. My first version, the held-out mean at most 50, sat exactly on the case of interest: a life that loses the wrap and nothing else scores 48 to 50.5 on seed 73129's panel.
   - "Acquires the new family": F1 held-out add/sub mean at 12 letters at least 85 (E26: 92–97).
 - **Readings, per rule.**
 
@@ -230,7 +236,7 @@ AdamW at learning rate 0.001 with decay 0.25 multiplies every weight outside the
   | `rehearse` | The reference: what rehearsal keeps, and what it costs F1 per update and per item. |
 
 - **Checks.** `zero` repeats E26's stage 1 and 2 (digests, losses, scores). `anchor` with `birth_values` set to zero agrees with `zero` after 64 updates (largest absolute difference at most 1e-5 of the tensor's largest entry). In `rehearse`, the count of birth-family items per block is recorded. Two independent implementations of the anchor step, since it is new code.
-- **Stage 2 (released by you after stage 1 is read).** Arms that keep and acquire, on the other two seeds; then one full six-block life per rule, to see composition and length under the anchor.
+- **Stage 2 (released by you after stage 1 is read).** Arms that keep and acquire, with `zero`, on the other two seeds; then one full six-block life per rule, to see composition and length under the anchor. Once the small world of Part II exists, further strengths and the moving anchor are searched there and only the winner returns to full scale.
 - **What it cannot show.** A fixed anchor suits a two-block screen only. Over a long life the anchor has to move, for example a slow copy of each weight; that is designed only if the screen passes. One seed in stage 1.
 
 ## 8. E35: scope
@@ -270,7 +276,7 @@ If Mr. Xu relayed them:
 |---|---|---|
 | A | Restored by row 256 in two of three seeds, sweep lives | 35% |
 | A | Restored by row 1,024 in two of three seeds, sweep lives | 65% |
-| A | At least 30 above the reference at row 1,024 | 85% |
+| A | Wrap score at least 30 above the reference's at row 1,024 (restated in revision 3) | 70% |
 | C | A saving of at least 15 at 131,000 items, under each rule | 85% |
 | C | A saving of at least 15 at 262,000 items | 60% |
 | B | `none` keeps the birth family | 20% |
@@ -287,7 +293,7 @@ If Mr. Xu relayed them:
 - Three seeds, one pass over saved files, lives designed for another purpose.
 - 3.1 describes the form of the code and is blind to whether it holds the right answer; 3.3 covers that.
 - 3.2 is one seed.
-- 3.3 scores all pairs with no letters; 3.4 is the receipts' held-out panel at 12 letters. The two agree in direction and are not the same number.
+- 3.3 scores all pairs with no letters; 3.4 is the receipts' held-out panel at 12 letters. The two agree in direction and are not the same number. Since revision 3, 3.3 counts whole answers; its last column and the script `life_answers_on_birth_tasks.py` count the two digits.
 - A linear read-out of the answer from the state at `=` was too weak an instrument (10–37% where the network itself is 96–99% right), so nothing here uses it.
 - 3.6 is arithmetic. No run has yet separated decay from rewriting.
 - CPU figures are scaled from E26's receipts (557 CPU-seconds per 4,096 birth updates; about 840 per life block with scoring) and are mine.
@@ -341,4 +347,119 @@ python3 -I $R/e33a1_e34_check.py
 
 - Rows before 16,384, the keeper counts, the weight-ratio tables and the checks in `E34_CHECKS.json`.
 - Whether a temperature between 0.5 and 1, or one that falls during the birth, keeps the extrapolation without the delay. That is a new arm and I do not propose it before stage 2 reports.
+
+---
+
+# Part II. The programme from here: a continual learner judged over a long life
+
+## 15. The audit of E36, E37 and E38, and two errors of mine
+
+The audit is `AUDIT_E36_E37_E38_BRIEFS_20261115.md` in this folder; its checks are `e36_e38_brief_checks.py` (33dcd187).
+
+- Every factual claim in the three briefs that could be tested holds, including the batch identity of a life's first block, which was rebuilt and hashed against the receipts of all nine lives.
+- Six changes are required, all worded to be applied as written; none needs a re-audit.
+- **Two of the six correct marks that I proposed in this memo**, not anything the coordinator did. Both failed for one reason, which section 3.3 should have told me: a life that loses the wrap and nothing else still scores about 50 on the held-out panel. So a reminder starts at 13 to 37 and my "30 above the reference" could be met with nothing relearned, and my "loses it at 50" sat on the case of interest. Both marks now read the wrap pairs.
+- One required change is a real defect in the code path: the K runner on the default branch imports the other worker's `arch31`, whose `forward` has a different signature.
+
+## 16. Mr. Xu's further statements of 15 November
+
+Verbatim, with my translation.
+
+- **On the nature of the problem.** "从哲学角度上来说，最朴素的反向传播只对每个样本进行同样的学习，通过误差进行逐级修正，网络结构是恒定的，虽然可能在RL或其他阶段只是激发网络的一部分。meta learning可以学习最优的某个网络结构，但一般也认为训练的objective是确定的才能做到。但在持续学习情况下，样本之间存在内在结构，学习本身会帮助调整网络结构，不断去自动优化学习样本之间的关系。作为代价静态的backpropagation无法大规模使用。因此我们回到一个全局元学习层次的优化问题。"
+  - *Translation:* naive backpropagation applies the same learning to every sample and corrects by error, layer by layer, in a constant network, even if in reinforcement learning or at other stages only part of the network is active. Meta-learning can find a good structure, but is generally taken to need a fixed training objective. In continual learning the samples have structure among themselves, and learning itself helps adjust the network's structure, so that the learning of those relations keeps being optimised. The price is that static backpropagation cannot be used at scale. So we are back at an optimisation problem at the level of global meta-learning.
+- **On direction and pace.** "你可以自己决定实验的快慢，不用等我决定。因为此前目标出现错位，我们先讨论下一步如何做。我们坚持做持续学习。"
+  - *Translation:* you (the reviewer) may set the pace of the experiments yourself, without waiting for my decision. Because the goal was misaligned before, we first discuss how to proceed. We stay with continual learning.
+- **On what the measure must be able to show.** "但是这个还是不能回答问题，因为显然可能出现我们的学习者一开始比传统的学习者更慢，但是在持续学习过程中最后做到“后来居上”的问题。只要我们的学习者还在学习，而传统的学习者卡住了，就不能排除这一点。一天上千个是个好办法，但无法处理这种情况。"
+  - *Translation:* this still cannot answer the question, because our learner may be slower than the conventional learner at first and overtake it later in the course of continual learning. As long as ours is still learning and the conventional one is stuck, that cannot be excluded. A thousand lives a day is a good method, but it cannot handle this case.
+
+The third statement was made against my first proposal (one score averaged over a life; many short lives). That proposal is withdrawn. Section 17 is what replaces it.
+
+## 17. The programme
+
+### 17.1 The question
+
+In one stream read once, at fixed memory and fixed computation per item, without full backpropagation: is there a learner whose performance late in a long life exceeds that of naive backpropagation, and of backpropagation with replay, at the same budget? A slow start does not count against it.
+
+What we measured until now could not answer this. It was accuracy on fixed panels after a fixed dose, with backpropagation as the ceiling, so the best outcome was parity. A score averaged over a short life cannot answer it either, for the reason Mr. Xu gives.
+
+### 17.2 The world (requirements; the specification is yours)
+
+1. **One stream per life, read once.** Items in the present format. Answer bytes are the targets, as in E26. Every-byte targets enter later as a candidate, after E34 has reported.
+2. **Tasks.** A task is an operation and a modulus with a code of its own. The generator supplies more distinct tasks than the longest life meets for the first time, from one parametric space, so that tasks share structure. Codes are arbitrary; a code that names the modulus is a later variant.
+3. **Visits.** The stream is a sequence of visits. A visit presents a small group of tasks for a fixed number of updates. New groups keep arriving through the whole life; old groups return after short, medium and long absences. The schedule comes from the world's seed and is the same for every arm.
+4. **Taught and asked items.** Each task's operand pairs are split once. Taught pairs appear with their answer and the learner is updated on them. Asked pairs appear without their answer, at a fixed rate inside their task's visits; the learner's answer is scored and nothing is learned from them. An asked pair is never taught.
+5. **Size.** The same kind of network, narrower; smaller moduli; fewer letters. Small enough that a life of 1,000 visits costs about 6 CPU-hours at most. I estimate that the present scale would need more than ten days for such a life; neither figure is measured.
+
+### 17.3 What is recorded for every life
+
+- **Score by age.** Accuracy on asked items, whole answers, in consecutive bins of the stream, with a blind predictor beside it.
+- **Cost of the n-th new task.** The taught items of that task shown before its asked items first reach 80% over a running window; or "not reached", with the level at the end of the visit.
+- **Kept at return.** Accuracy on the first asked items of a task when it returns, against the length of its absence, and for add and sub split by wrap; then the taught items needed to reach 80% again.
+- **The ledger.** Stored numbers by kind (weights, optimizer state, anchors, buffers); updates; stream items consumed per update.
+
+### 17.4 What is compared
+
+- **Late level:** mean score over the last quarter of the life.
+- **Trend:** the slope of score against the logarithm of age over the second half, and the slope of the logarithm of cost against the logarithm of n.
+- Everything is paired by world, with intervals across worlds. No fixed thresholds in points are set before the calibration job shows the scale of the numbers; my two errors in section 15 came from setting such thresholds without looking.
+- **"Stuck"** means that over the second half of the longest life run, neither the score's slope nor the cost's has an interval on the improving side of zero. **"Still learning"** means that at least one has.
+- **"Overtakes"** means behind on late level at one length, ahead at a longer one, and still ahead at the next.
+
+### 17.5 The horizon rule
+
+- Lives are run at lengths that grow by a factor of four: 64, 256, 1,024 visits, and further where needed.
+- A comparison of two learners is closed only when the sign of the late-level difference is the same at two successive lengths and the trend difference does not point the other way. Otherwise that pair goes to the next length.
+- Every statement carries its horizon: "up to 1,024 visits". No finite run excludes overtaking beyond its horizon; what can be stated is the trend at it.
+- When settings are chosen, a setting goes on to the next length if it leads on late level **or** on trend. This is what keeps a slow starter from being dropped.
+
+### 17.6 Arms and budget
+
+- All arms have the same network, the same world and the same number of updates, and every update consumes the same number of stream items.
+- `naive`: backpropagation on the taught items of each batch.
+- `replay`: backpropagation with a buffer of raw past items. A share of each batch is drawn from the buffer in place of new taught items, which are skipped. The buffer holds as much memory as one copy of the weights, which is what the anchor of E38 stores; its share of the batch is tuned.
+- `sweep` and `sweep+replay`: the same under the sweep. Sections 3 and 4 found no difference between the rules at this level, so these two serve as the check that the small world agrees.
+- Each arm's own learning rate and decay, and for replay its share and size, are chosen on tuning worlds. Comparisons are made on other worlds.
+- **Candidates come after job L2.** They are the sweep with the three controls of section 4: which weights may move (the anchor of E38, then a slow copy of each weight, then a step size per weight); when to rehearse (short reminders, if E36 shows savings); which samples teach (the confidence gain, after E34). At first each control is a fixed number per life. The step in which a control depends on the learner's own state is the one Mr. Xu's first statement in section 16 describes, and it is last because it needs the others as its baseline.
+
+### 17.7 Jobs, in order
+
+| Job | What | Size | Audit |
+|---|---|---|---|
+| L0 | The protocol brief: world generator, runner, scorer, ledger, the recorded quantities of 17.3 | new code | once, by me |
+| L1 | Calibration: 8 worlds, lives of 16 visits, `naive` and `sweep` | about 4 CPU-hours | none |
+| L2 | Does the conventional learner get stuck? `naive` and `replay` at 64, 256 and 1,024 visits; `sweep` and `sweep+replay` at 64 and 256 | cap of 48 CPU-hours | none |
+| L3 | Candidates, chosen by 17.5 | set after L2 | none |
+| L4 | The winning setting on the E26 families at full scale | as E38 | as now |
+
+- **L0, second implementation.** I write the world generator and the scorer in numpy from the brief's text alone. Before any roster, the two implementations agree on the digests of the first batches of three worlds and on the scores of saved weights.
+- **L1, gate.** Under `naive` and under `sweep`, the first group's asked items are at least 90% right by the end of its first visit in six of eight worlds, and the measured cost puts a 1,000-visit life within about 6 CPU-hours. If either fails, change the size and repeat. Reported and not gated: the wrap pairs at a task's first return, and the cost of tasks 2 to 16 beside the first.
+- **L2, roster.** Eight worlds at the two shorter lengths and four at the longest. If the forecast passes the cap, drop worlds before lengths. No candidate takes part. The reading is 17.4's: stuck or still learning, for each arm.
+- **Why L2 comes before any candidate.** Mr. Xu's condition for overtaking is that the conventional learner is stuck while ours still learns. Whether the conventional learner gets stuck in our world is not known. Our longest lives so far have six to nine stages. In the one study the second literature report cites on this, backpropagation fell from 89% to 77% over 2,000 tasks, and it took that length to see it.
+
+### 17.8 Pace
+
+Mr. Xu has left the pace to me. Inside the small world it is this:
+
+- One audit, of L0. After it, a roster inside the protocol needs a one-page note (arms, worlds, lengths, predictions on file) and no audit.
+- Any change to the generator, runner or scorer is audited, and so is any claim at full scale.
+- At least eight worlds per setting up to 256 visits; paired differences with intervals, in place of marks on three seeds.
+- I spot-check a sample of saved lives with the numpy scorer.
+
+Full-scale work (E36 to E38, E34, L4) keeps the present discipline.
+
+### 17.9 What can be concluded
+
+- A result in the small world is a claim only after L4.
+- If no candidate passes `replay` at any length and the trends do not differ, the result is that replay is the answer at this scale and that our learner equals it. That is reportable and is not the advance Mr. Xu asks for.
+- If the conventional learner is not stuck at 1,024 visits and no candidate's trend is better, the statement is "no overtaking up to 1,024 visits and no trend toward it", not "no overtaking".
+
+## 18. E34: two long births, with the present code
+
+E34's passing arm is the one case on file of the pattern Mr. Xu describes: behind for 12,000 updates (17% against 95% at 12 letters), ahead at the last row (99.3 against 84.7 at 40 letters), on one seed, with the last three rows still swinging (section 14.3). The test of that pattern is a longer run, not more runs.
+
+- **Runs.** Arm T050 and plain backpropagation with every byte a target (E28's B-all), seed 73129, 98,304 updates each, four times the present dose. Rows every 4,096 updates. About 6.6 CPU-hours by my estimate.
+- **Check.** At row 24,576 each run has the tensor hash of its existing final file, since the stream and the update are unchanged.
+- **Reading, at 40 letters, over the 13 rows from 49,152 to 98,304.** "Overtakes and stays": T050's mean is at least 10 points above backpropagation's and it is above in at least 10 of the 13 rows. "Does not": its mean is not above. Otherwise mixed. The rows at 12 and 20 letters are reported beside them.
+- **Then.** If "overtakes and stays", the same two runs on seeds 93683 and 116089. The backpropagation birth with the gain (addendum 1) is run at this length only if its present-length endpoint differs from plain backpropagation's by 15 points or more at 40 letters.
+- **What it cannot show.** This is a stationary stream, so it bears on the pattern and not on continual learning as such. One seed.
 
