@@ -42,8 +42,10 @@ def end_row(r, name):
             row["U"] = e[k]
     if "cos_Bhh_W" in e:
         row["cos_Bhh_W"] = e["cos_Bhh_W"]
-    if r.get("e31") and isinstance(r["e31"].get("lam"), dict):
-        row["lam"] = r["e31"]["lam"]["lam"]
+    for key in ("lam", "gate_push"):                      # worker A records lam under "lam", worker B under "gate_push"
+        v = (r.get("e31") or {}).get(key)
+        if isinstance(v, dict) and isinstance(v.get("lam"), (int, float)):
+            row["lam"] = v["lam"]
     return row
 
 
