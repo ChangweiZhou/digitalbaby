@@ -1,6 +1,6 @@
-# E34: sweep births with each byte's error scaled by the network's own confidence (15 November 2026, revision 1)
+# E34: sweep births with each byte's error scaled by the network's own confidence (15 November 2026, revision 2)
 
-Evidence level E2; stage 1 is a one-seed screen and supports no claim by itself. The remedy and the outline of the design are the outside reviewer's (its memo of 15 November); this specification, the normalisation, the temperatures, the outcome table and the predictions are mine. **Not released: it waits for the reviewer's audit. The user has ruled the rule inside the line (last section).** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each.
+Evidence level E2; stage 1 is a one-seed screen and supports no claim by itself. The remedy and the outline of the design are the outside reviewer's (its memo of 15 November); this specification, the normalisation, the temperatures, the outcome table and the predictions are mine. Revision 1 (9291d23b) was audited by the reviewer, who named one required change (the stage 2 rule) and smaller recommendations, and stated that with the required one made it need not see the brief again. Revision 2 makes them; the last section lists them. The user has ruled the rule inside the line. **Released.** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106`.
 
@@ -13,11 +13,11 @@ References, seed 73129, same panels (`git show $D:$M/exp45/e30/E30_UNSEEN.json`,
 | Birth | Targets | At 12 letters | At 40 letters |
 |---|---|---|---|
 | E28 S-all (the baseline here) | every byte equally | 59.6 (final row 75.3) | 1.0 (final row 2.0) |
-| E28 B-all (backpropagation) | every byte equally | final row 93.7 | final row 84.7 |
+| E28 B-all (backpropagation; the like-for-like reference, no mask) | every byte equally | 92.8 (final row 93.7) | 82.0 (final row 84.7) |
 | E33 `A` | answer bytes only, with the mask | 99.0 | 94.8 |
 | E33 `A+OS` | answer, operand and task code, with the mask | 97.7 | 94.2 |
 
-Figures are means of the last three rows where rows exist. S-all's rows at 12 letters are 66.3, 37.0 and 75.3, so **the baseline itself does not meet the "learned in range" mark of 70.**
+Figures are means of the last three rows; S-all's and B-all's are the `floor` and `ceiling` rows of seed 73129 in `$M/exp45/e32/E32_READ.json`. S-all's rows at 12 letters are 66.3, 37.0 and 75.3, so **the baseline itself does not meet the "learned in range" mark of 70.**
 
 ## The rule, as code
 
@@ -29,7 +29,7 @@ with T.no_grad():
     lp = log_softmax(logits[real], -1)
     Hh = -(lp.exp() * lp).sum(-1)                             # predictive entropy in nats, per real position
     w  = T.exp(-Hh / tau)                                     # tau = float("inf") gives w == 1.0 exactly
-    assert T.isfinite(w).all()
+    assert T.isfinite(w).all() and w.sum() > 0
 loss = (w * ce).sum() / w.sum()
 ```
 
@@ -53,6 +53,8 @@ Entropy by class is stable from row 4,096 to the end: distractor 3.45 to 3.48 na
 | Answer digits' share | 39% | 11% | 4% | 1% |
 
 For comparison, in E33's `A+D` a distractor position has 0.245 of an answer position's weight (192 answer positions against 782 others on the first batch), and that arm reached 23.8% at 40 letters. **So tau 2 puts about `A+D`'s weight on distractors, tau 1 about a fifth of it, and tau 0.5 about a hundredth.** These ratios come from a network trained with unit weights; a network trained under the gain may settle elsewhere, which is why the runner records them (below).
+
+**The projections begin at row 4,096, when the answer is partly learned. Earlier the gain is weaker.** The reviewer's estimate from the baseline's loss record, if entropy tracks loss: over the first 512 updates the ratio is about 0.08, 0.29 and 0.54 at tau 0.5, 1 and 2. So at tau 1 the rule starts above `A+D`'s dose and falls below it within about 1,000 updates. I did not rerun this estimate. The division by `w.sum()` also does not hold the gradient scale constant later: as confident positions with near-zero error come to dominate the sum, the reviewer estimates the scale at tau 0.5 falls to roughly a twentieth of the baseline's, still several hundred times the optimizer's floor.
 
 ## Arms, seed 73129
 
@@ -114,8 +116,9 @@ Checked in this order; the first that applies is the reading.
 Reported beside the row, as facts and not readings:
 
 - **Dose order.** Whether accuracy at 40 letters does not rise with tau across the three arms.
-- **Realised weights.** For each arm, the measured ratio of a distractor position's weight to an answer position's, and each role's share of the weighted error, at the end of the birth, beside the projections in the table above.
-- **Range.** Each arm's accuracy at 12 letters beside the baseline's 59.6 and B-all's final 93.7.
+- **Realised weights.** For each arm, the measured ratio of a distractor position's weight to an answer position's, and each role's share of the weighted error, for each of the first eight blocks (updates 1 to 4,096) and at the end of the birth, beside the projections above.
+- **Range.** Each arm's accuracy at 12 letters beside the baseline's 59.6 and B-all's 92.8.
+- **Distance to the reference.** For each arm that extrapolates, whether its accuracy at 40 letters is within 15 points of B-all's 82.0. The "extrapolates" mark of 60 is 22 points below that reference.
 
 ## What stage 1 cannot show
 
@@ -127,7 +130,9 @@ Reported beside the row, as facts and not readings:
 
 ## Stage 2 (released by me after stage 1 is read)
 
-Only under outcome 1: the arm that learned in range and extrapolates with the highest accuracy at 40 letters (a tie goes to the larger tau), on seeds 93683 and 116089. Same marks. If it learns in range and extrapolates on all three seeds, the sentence is: "On three seeds, a sweep birth with every byte a target and each byte's error scaled by the network's own confidence at temperature tau learns in range and extrapolates to 40 letters, with no answer mask." A confirmation on new seeds, and the combination with Kolen–Pollack feedback during a life, need their own brief.
+Only under outcome 1: **every** arm that learned in range and extrapolates runs on seeds 93683 and 116089, about 1.6 CPU-hours per arm. No arm is chosen among those that pass, because two passing arms will usually differ by less than the 15 points that single births are read to. Same marks.
+
+The sentence is stated per temperature. If an arm learns in range and extrapolates on all three seeds: "At temperature tau, a sweep birth with every byte a target and each byte's error scaled by the network's own confidence learns in range and extrapolates to 40 letters on three seeds, with no answer mask. One of the three seeds, 73129, was the screen that selected this temperature." A confirmation on new seeds, and the combination with Kolen–Pollack feedback during a life, need their own brief.
 
 ## Predictions (mine)
 
@@ -144,8 +149,22 @@ Only under outcome 1: the arm that learned in range and extrapolates with the hi
 
 ## Done
 
-Runner, reader, check receipts, four dry births, three complete births, and `E34_REPORT.md` with: the three-arm table (accuracy at 12, 20, 40 as last-three mean and final row; keepers; loss, mean entropy, mean weight and share of weighted error by fine role at the end), the weight ratio distractor to answer per saved row, which outcome row applies, the three facts listed under the outcome table, and the outcome of each prediction. No readings beyond the table above.
+Runner, reader, check receipts, four dry births, three complete births, and `E34_REPORT.md` with: the three-arm table (accuracy at 12, 20, 40 as last-three mean and final row; keepers; loss, mean entropy, mean weight and share of weighted error by fine role at the end), the weight ratio distractor to answer for each of the first eight blocks and per saved row, which outcome row applies, the four facts listed under the outcome table, and the outcome of each prediction. No readings beyond the table above.
 
 ## Admissibility (ruled by the user, 15 November)
 
 Both parts are inside the line: each output position scaling its own error by a gain computed from its own predicted distribution, and one common gain shared by the batch (the division by `w.sum()`). The user's words: "Both 1 and 2 are fine", and, as the standing rule, "as long as we do not use full scale backpropagation, anything is fine." An arm that passes stage 2 is therefore a candidate rule. The sweep itself is unchanged here.
+
+## What changed from revision 1 (the reviewer's audit; its script is `e33_brief_checks.py e34` on `claude/vibrant-cerf-sje726` at 12eb5a9f)
+
+I made these as the audit wrote them. I checked one figure myself: B-all's last-three-row mean of 92.8 and 82.0 is the `ceiling` row of seed 73129 in `E32_READ.json`.
+
+| | Change | Required? |
+|---|---|---|
+| 1 | Stage 2 runs every passing arm on the two new seeds; the sentence is per temperature and says that seed 73129 selected it | yes |
+| 2 | `assert w.sum() > 0` | recommended |
+| 3 | The early-training qualification on the projected ratios; the report gives the realised ratio for the first eight blocks | recommended |
+| 4 | The like-for-like reference (B-all) cited as a last-three-row mean, 92.8 and 82.0 | recommended |
+| 5 | The report says whether a passing arm is within 15 points of 82.0 | recommended |
+
+The reviewer agreed with the loss code, the division by `w.sum()`, the entropy and weight figures, the three temperatures, the outcome table and the five checks.

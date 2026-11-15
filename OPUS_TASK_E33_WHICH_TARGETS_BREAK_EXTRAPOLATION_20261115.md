@@ -229,3 +229,7 @@ Marks as in stage 1, on the mean of the last three rows: learned in range at lea
 ## Done
 
 Four complete births with receipts, finals and rows 16,384 and 20,480 committed; the reader's rows for both seeds; an addendum to `E33_REPORT.md` with the per-seed table (both arms; accuracy at 12, 20, 40 as last-three mean and final row; keepers), which of R1 to R4 applies on each seed, and the outcome of P33.8 to P33.11. No readings beyond the table above.
+
+## Note to addendum 1 (15 November 2026, before any stage 2 birth; from the reviewer's audit)
+
+Rows R2 and R3 can both apply on one seed. The rows are checked in the order R4, R2, R3, R1, and the first that applies is the reading for that seed. If R2 applies and R3's condition is also met, the report says so beside it.
