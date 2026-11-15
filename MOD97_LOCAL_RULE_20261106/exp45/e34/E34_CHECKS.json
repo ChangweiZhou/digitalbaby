@@ -1,0 +1,321 @@
+{
+ "experiment": "E34",
+ "kind": "checks",
+ "seed": 73129,
+ "provenance": {
+  "command": "python3 exp34_entropy.py checks 73129",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "95d57fd1e1ded476783db115ae1f182d61f18140",
+   "sources_modified_vs_commit": [
+    "?? MOD97_LOCAL_RULE_20261106/exp34_entropy.py"
+   ]
+  },
+  "interpreter": {
+   "python_executable": "/root/e33venv/bin/python3",
+   "python_version_full": "3.13.18 (main, Oct 26 2026, 14:08:19) [Clang 23.1.3 ]",
+   "packages": {
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.4"
+   }
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp28_everybyte.py": "7bc97268e66e4f6e12221f8f7955460058bbce1374520b4a478262430082eb00",
+   "exp34_entropy.py": "1a712362023d56c2219795a6e362f1e44116660a6fa7d45704d1922ec8e4dbc4"
+  }
+ },
+ "tolerance": "agrees: largest |difference| <= 1e-5 * largest |entry| of the reference tensor",
+ "check1_loss_three_batches": {
+  "rows": [
+   {
+    "batch": 1,
+    "e34_U": 5.558258056640625,
+    "e28_all": 5.558258056640625,
+    "abs_diff": 0.0,
+    "rel_diff": 0.0,
+    "bit_equal": true,
+    "within_1e6_rel": true
+   },
+   {
+    "batch": 2,
+    "e34_U": 5.282480716705322,
+    "e28_all": 5.2824811935424805,
+    "abs_diff": 4.76837158203125e-07,
+    "rel_diff": 9.026764899533009e-08,
+    "bit_equal": false,
+    "within_1e6_rel": true
+   },
+   {
+    "batch": 3,
+    "e34_U": 4.9883928298950195,
+    "e28_all": 4.988393306732178,
+    "abs_diff": 4.76837158203125e-07,
+    "rel_diff": 9.558932683988664e-08,
+    "bit_equal": false,
+    "within_1e6_rel": true
+   }
+  ],
+  "passed": true
+ },
+ "check1_first_batch_gradients": {
+  "rows": [
+   {
+    "tensor": "logits",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0010245763696730137,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "book.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0012175804004073143,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l1.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.002171218628063798,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l1.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0047622621059417725,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.weight_ih_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.002302841516211629,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.weight_hh_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0009005335159599781,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.bias_ih_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0056045763194561005,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.bias_hh_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.003045689780265093,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "lm.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.003361128969117999,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "lm.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.010368035174906254,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l2.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.004373924341052771,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l2.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.010368035174906254,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l3.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.027580296620726585,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l3.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.06211131066083908,
+    "bit_equal": true,
+    "agrees": true
+   }
+  ],
+  "passed": true,
+  "all_bit_equal": true
+ },
+ "check2_gain_is_what_the_code_says": {
+  "arms": {
+   "T050": {
+    "tau": 0.5,
+    "max_abs_diff": 4.3706375818866605e-09,
+    "max_abs_entry": 0.001038797867161311,
+    "agrees_at_real": true,
+    "zero_at_non_real": true,
+    "non_real_positions": 434,
+    "real_positions": 974,
+    "passed": true
+   },
+   "T100": {
+    "tau": 1.0,
+    "max_abs_diff": 2.1002471615148843e-09,
+    "max_abs_entry": 0.0010313622461706714,
+    "agrees_at_real": true,
+    "zero_at_non_real": true,
+    "non_real_positions": 434,
+    "real_positions": 974,
+    "passed": true
+   },
+   "T200": {
+    "tau": 2.0,
+    "max_abs_diff": 1.1716196517738003e-09,
+    "max_abs_entry": 0.0010279634426141914,
+    "agrees_at_real": true,
+    "zero_at_non_real": true,
+    "non_real_positions": 434,
+    "real_positions": 974,
+    "passed": true
+   }
+  },
+  "passed": true,
+  "independent_w": "float64 softmax of the detached logits, H = -sum p log p, w = exp(-H / tau)"
+ },
+ "check3_no_gradient_through_gain": {
+  "rows": [
+   {
+    "tensor": "book.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0012137368321418762,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l1.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0021765539422631264,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l1.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.004749754443764687,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.weight_ih_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.00230429507791996,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.weight_hh_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.0009010634967125952,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.bias_ih_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.005607429891824722,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "rnn.bias_hh_l0",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.003047139151021838,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "lm.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.003364844713360071,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "lm.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.010359937325119972,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l2.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.004372138995677233,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l2.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.010359937325119972,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l3.weight",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.027619989588856697,
+    "bit_equal": true,
+    "agrees": true
+   },
+   {
+    "tensor": "l3.bias",
+    "max_abs_diff": 0.0,
+    "max_abs_entry": 0.062208689749240875,
+    "bit_equal": true,
+    "agrees": true
+   }
+  ],
+  "passed": true,
+  "all_bit_equal": true
+ }
+}

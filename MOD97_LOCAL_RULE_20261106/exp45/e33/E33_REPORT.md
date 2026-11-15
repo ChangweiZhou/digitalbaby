@@ -87,3 +87,57 @@ Rows are checked in the brief's order:
 - **Interrupted births.** The first A+DS and A+OS births were killed at about row 12,288 by the 2-hour limit on the background shell that launched them, not by the runner. Their partial receipts (`complete: false`, rows to 12,288) and logs are kept in `killed_partial/`. Both births were rerun from scratch; the reported A+DS and A+OS are the reruns. The killed rows 4,096, 8,192 and 12,288 have the same `tensors_sha256` as the reruns' rows (checked). The killed receipts are kept for the record only, and nothing was read from them.
 - **Committed files (24 weight files).** For each arm: the final `.pt` and rows 16,384 and 20,480. Rows 4,096–12,288 were measured, and their sha256 values are in the receipts; they are not committed.
 - **NOT_RUN.** Stage 2. The brief releases it only after stage 1 is read, and for outcome 4 the arms are to be named from the table before any run.
+
+---
+
+# Addendum 1: reduced stage 2 (A+D and A+OS on seeds 93683 and 116089)
+
+Brief: addendum 1 of `OPUS_TASK_E33_WHICH_TARGETS_BREAK_EXTRAPOLATION_20261115.md`, with its note on row order, at 95d57fd1 on `codex/minifly-consolidated-20261023`. Same host and environment as stage 1. The runner `exp33_targets.py` is unchanged.
+
+## Checks
+
+| # | Check | Result | Receipt |
+|---|---|---|---|
+| — | `e33_read.py` gets an optional seed argument (default 73129) | `python3 e33_read.py tables` rewrites a byte-identical `E33_READ_TABLES.md` (sha256 829f2216…) and `E33_READ.json` for seed 73129 | commit 285ace55 |
+| 1 | The reader reproduces `e28_dev_S-all_93683.pt` | 79.67 / 2.33 at 12 / 40 letters, exact. As references: `e28_dev_S-bal_93683.pt` 90.67 / 82.0 / 16.33 and `e28_dev_S-bal_116089.pt` 87.0 / 61.33 / 2.0 at 12 / 20 / 40 letters | `E33_READ_REPRO_STAGE2.json` |
+| 2 | `data_digest` equals S-bal's of the same seed at every saved row | asserted by the runner at all six rows of all four births, and rechecked from the receipts | birth receipts |
+
+## Per-seed table
+
+Endpoint = mean of rows 16,384, 20,480, 24,576; the final row is in brackets.
+
+| Seed | Arm | Acc 12 | Acc 20 | Acc 40 | Keepers 12 / 20 / 40 | Keeps-and-writes 12 / 20 / 40 | Mark |
+|---|---|---|---|---|---|---|---|
+| 93683 | A+D | 86.00 (86.33) | 76.67 (70.33) | 29.11 (15.33) | 2.0 / 1.0 / 0.0 (1 / 1 / 0) | 2.0 / 1.0 / 0.0 (1 / 1 / 0) | intermediate |
+| 93683 | A+OS | 97.44 (97.33) | 97.11 (97.00) | 94.89 (93.67) | 103.3 / 98.7 / 82.0 (104 / 98 / 73) | 99.0 / 95.0 / 79.3 (100 / 94 / 72) | extrapolates |
+| 116089 | A+D | 87.89 (82.33) | 75.67 (62.00) | 31.56 (10.00) | 19.0 / 3.0 / 0.0 (11 / 0 / 0) | 16.3 / 2.7 / 0.0 (10 / 0 / 0) | intermediate |
+| 116089 | A+OS | 93.11 (95.00) | 91.78 (92.67) | 86.89 (88.33) | 102.7 / 95.3 / 82.3 (103 / 96 / 82) | 100.3 / 93.0 / 80.0 (100 / 93 / 79) | extrapolates |
+
+A+OS minus A+D at 40 letters (endpoints): 65.78 points on 93683, 55.33 on 116089. Every saved row is in `E33_READ_TABLES_93683.md` and `E33_READ_TABLES_116089.md`.
+
+## Rows R1 to R4 (checked in the order R4, R2, R3, R1)
+
+| Seed | R4 (an arm did not learn in range) | R2 (A+OS does not extrapolate) | R3 (A+D extrapolates, or within 40 points of A+OS) | Row that applies |
+|---|---|---|---|---|
+| 93683 | no (86.00, 97.44) | no (94.89) | no (29.11; 65.78 points below) | **R1**: the contrast replicates on this seed |
+| 116089 | no (87.89, 93.11) | no (86.89) | no (31.56; 55.33 points below) | **R1**: the contrast replicates on this seed |
+
+R1 holds on both new seeds, so the addendum's sentence applies: "On three seeds, a sweep birth with answer and distractor targets does not extrapolate to 40 letters, and one with answer, operand and task-code targets does."
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P33.8 | A+OS extrapolates on both new seeds | 75% | **true** (94.89, 86.89) |
+| P33.9 | A+D does not extrapolate on either new seed | 85% | **true** (29.11, 31.56) |
+| P33.10 | A+D fails (at most 20) on both new seeds | 35% | **false**: intermediate on both (final rows 15.33 and 10.00; the mark is on the endpoint) |
+| P33.11 | R1 holds on both new seeds | 65% | **true** |
+
+## Run record
+
+- **Births.** Four births of 24,576 updates each: 2,842–2,948 CPU-seconds per birth, 3.19 CPU-hours in all. Source commits were c8be47ef (93683), 654d6c4c (A+D 116089) and f90a03b2 (A+OS 116089). These differ only in result files, and every receipt records its sources as unmodified.
+- **Launch.** All four ran under the resumable queue `queue_e33a1_e34.sh`, started with `setsid nohup` and outside any tool wrapper, so no wrapper time limit applied. They shared at most three process slots with E34. Each birth's rows were read in its own slot right after the birth, then committed and pushed.
+- **One slip.** I ran the read-only `tables 93683` command for a few seconds while three births were running, so four processes ran at once for that time.
+- **No interruptions.** No birth was interrupted or rerun, and nothing was moved to `killed_partial/` in this stage.
+- **Committed weights.** For each birth, the final `.pt` and rows 16,384 and 20,480 (12 files). Rows 4,096–12,288 were measured and their sha256 recorded, but are not committed.
+- **NOT_RUN.** The control `A+D-light`, which is not part of this stage.
