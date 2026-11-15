@@ -10,6 +10,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 5.** The audit of the E39 brief is in `AUDIT_E39_SMALL_WORLD_PROTOCOL_20261115.md`, with the second implementation in `e39_world.py`. It changes three things in this memo's Part II; section 17.11 lists them. Where 17.11 and an earlier section differ, 17.11 holds.
 
+**Revision 6.** E36 and E37 have reported, E38 and the long E34 births in part, and E35-B's first stage. Section 19 gives my recomputation, what the results say, what they change in Part II, and one new job (item 8 of section 1). Section 3.6's explanation by weight decay is refuted by E38 and is marked so.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -32,6 +34,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 6. **Apply the audit's six required changes to E36, E37 and E38 as written and release them** (`AUDIT_E36_E37_E38_BRIEFS_20261115.md`). No re-audit is needed after them.
 7. **Brief the long-life programme of Part II**: one protocol brief (job L0, section 17.7), audited once, and the two long births of E34 (section 18), which need no new code.
+
+8. **Brief one more full-scale job, E37 at a tenth of the pairs** (section 19.4): lived and fresh learners on a new family with a tenth of its pairs taught. About 4 CPU-hours by my estimate. It comes to me before any worker starts.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -151,6 +155,8 @@ python3 -I $R/acquisition_from_receipts.py
 ### 3.6 A likely cause in our own settings (arithmetic, not a measurement)
 
 AdamW at learning rate 0.001 with decay 0.25 multiplies every weight outside the embedding table by 0.99975 per update (`git show $D:$M/exp16_integrated.py | sed -n '176,187p'`). A component of the weights that the current stream does not push on is left with 21% of its size after one block of 6,144 updates and 0.01% after a six-block life. The embedding rows of the old code bytes have no decay and no gradient, so they stay; everything they feed is shared and decays or is rewritten. Job B separates decay from rewriting.
+
+**Refuted (revision 6).** E38 shows the same loss with no decay at all: the wrap pairs fall from 97% to 18% within 64 updates and to 3% within 256, with decay toward zero, without decay, and with either anchor (section 19.2). The new family's own updates erase the old modulus, about fifty times faster than decay could.
 
 ## 4. Reading
 
@@ -495,4 +501,52 @@ E34's passing arm is the one case on file of the pattern Mr. Xu describes: behin
 - **Reading, at 40 letters, over the 13 rows from 49,152 to 98,304.** "Overtakes and stays": T050's mean is at least 10 points above backpropagation's and it is above in at least 10 of the 13 rows. "Does not": its mean is not above. Otherwise mixed. The rows at 12 and 20 letters are reported beside them.
 - **Then.** If "overtakes and stays", the same two runs on seeds 93683 and 116089. The backpropagation birth with the gain (addendum 1) is run at this length only if its present-length endpoint differs from plain backpropagation's by 15 points or more at 40 letters.
 - **What it cannot show.** This is a stationary stream, so it bears on the pattern and not on continual learning as such. One seed.
+
+## 19. E36, E37, E38 so far, E35-B and the long E34 births (revision 6)
+
+Read on the workers' branches at 22:16 UTC on 15 November: `claude/vibrant-allen-8hziln` (E36), `claude/magical-pascal-sflem4` (E37), `claude/peaceful-hopper-8ofq4i` (E38, in progress), `claude/busy-darwin-dlrwtm` (E35-B), `claude/vibrant-curie-ivmrt1` (E34, in progress). None is on the default branch yet.
+
+### 19.1 The check
+
+From the committed weights, with my reader: `python3 -I $R/e36_e37_check.py`.
+
+| Figure | Mine | The report's |
+|---|---|---|
+| E36, wrap score at row 1,024, nine reminders | S 93.2, 88.1, 96.0; B 97.4, 99.2, 95.0; K 94.6, 99.0, 91.9 | the same |
+| E36, the same for six fresh references | S 1.1, 1.3, 1.1; B 1.1, 1.4, 2.5 | the same |
+| E37, fresh F3 at row 4,096 | S 36.5, 47.1, 53.5; B 64.2, 59.6, 73.5 | the same |
+| E37, fresh F1 at row 6,144 | S 67.0, 81.4, 67.6; B 80.4, 83.5, 78.9 | the same |
+
+E38's rows are not committed and E35-B's weights were not recomputed; their figures below are the workers'.
+
+### 19.2 What they say
+
+- **E36: what a life removes comes back in about a hundred updates.** In all nine reminders the birth family's held-out score is back above 85 at row 64 or 128, and the wrap pairs go from under 1% to 79–93% by row 128. A fresh network taught the same batches is at about 1% after 1,024 updates. Table row 1 for all three rules.
+- **E36, the other direction.** Sixteen updates on the birth family alone take 40 to 60 points off the life's families, and the compositions go to zero within 256. The modulus in force follows whatever the stream last taught.
+- **E37: a learner that has lived needs far fewer items for a new family.** At 131,000 items of family F3 the lived learners are at 77–94 and fresh ones at 7–19, under all three rules; at 262,000 the difference is 17 to 47 points. For F1, learned straight after birth, the difference is 17 to 28 under the sweep and 8 to 16 under backpropagation. Section 3.5 is a saving.
+- **E38 so far (seed 73129; sweep arms and the backpropagation `zero`).** The wrap pairs fall from 97% to 18% by row 64, 3% by 256 and 0% by 1,024 in `zero`, `none`, `anchor` and `anchor10` alike, while the new family reaches 90–97. So decay is not needed for the loss, and a uniform pull toward the birth weights does not prevent it at either strength. `rehearse` is at row 64 with the wrap pairs at 65%. The backpropagation arms and the rest of `rehearse` are still running.
+- **E35-B, first stage (seed 73129).** With parsing supplied the modulus-free circuit generalises from a tenth of the pairs (99% against 9–34% scrambled). From the byte stream a GRU under backpropagation does not come to use it, forced or not: held-out add and sub 19.9 with the module, 18.0 forced, 19.6 for the GRU alone, which has memorised (98% on taught pairs). Outcome row 3; the stop rule waits for the forced arm on two more seeds.
+- **E34, long births, to row 32,768 of 98,304.** Both runs have the short runs' hashes at row 24,576. At 40 letters the passing arm reads 99, 95, 88 at rows 24,576 to 32,768 and plain backpropagation 85, 89, 90. Plain backpropagation is still improving past its old endpoint. Nothing is read until row 49,152.
+
+### 19.3 What this changes
+
+1. **A family is two things with very different lifetimes.** The shared arithmetic lasts and accumulates: it is why a reminder takes a hundred updates and why a new family takes a fraction of the items. The family's own modulus is rewritten by a few dozen updates on anything else. Sweep, Kolen–Pollack feedback and backpropagation agree on both.
+2. **Among Part II's controls, rehearsal moves ahead of anchors.** A uniform anchor failed at full scale on one seed under the sweep. What E36 measured, that restoring costs about a hundred updates, makes short, well-timed reminders the first candidate. A pull weighted by each weight's use for the old family remains a candidate; a uniform one does not.
+3. **The rate laws of section 17.10 now have first values at full scale:** loss within 64 to 256 updates of another family; restoration within 64 to 128 updates; a new family at 77–94 after 131,000 items for a lived learner against 7–19 for a fresh one. L1 should report the same three quantities in the small world, so that the two scales can be set side by side.
+4. **Learned structure has now done what the innate circuit did not.** The comparison is not like for like (a quarter of the pairs after a life, against a tenth at birth), which is what the job below is for.
+
+### 19.4 One new job: E37 at a tenth of the pairs
+
+**Question.** A fresh GRU taught a tenth of the pairs memorises: 98% on taught pairs and about 20% on held-out add and sub after a full birth (E35's arm `G`). Does a learner with a life behind it generalise from the same tenth?
+
+- **Start.** The nine life-end files of E36 (S, B, K), and fresh networks under the sweep and under backpropagation; three seeds. Fifteen runs.
+- **Family.** One the lives never met: add, sub, max and min at a new modulus (83 is free), with code bytes no family uses. A tenth of the pairs taught.
+- **Stream.** `X16.entry_stream` on that family's entries, with a generator seed no other stream has used; the same batches for every run of a seed.
+- **Dose and rows.** 8,192 updates; weights at 512, 1,024, 2,048, 4,096 and 8,192.
+- **Scores at every row.** Held-out add and sub at 12 letters; the same on taught pairs, to see memorising; all pairs without letters split by wrap; the earlier families at 12 letters, reported and not read.
+- **Reading.** As E37: a saving if lived minus fresh is at least 15 points at equal items in two of three seeds, per rule. Beside it, as a fact and not a mark: each run's held-out score at the row where its taught-pair score first passes 90.
+- **Checks.** As E36: row 0 has the life-end file's hash; batch digests equal across the runs of a seed; the update path against E26's dry births; the K step as E36 wrote it.
+- **What it cannot show.** One new family; lives made for another purpose; a fresh optimizer in every run.
+
+My expectations, on record: fresh runs at or below 30 on held-out add and sub at every row, 85%; lived sweep runs at or above 60 at row 8,192 in two of three seeds, 50%; a saving under each rule, 75%.
 
