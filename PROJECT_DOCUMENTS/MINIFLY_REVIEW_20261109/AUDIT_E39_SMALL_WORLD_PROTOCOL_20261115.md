@@ -172,6 +172,8 @@ The brief was written against revision 3. Revision 4 (ef2c03a3) needs four thing
 
 **Required, R8.** In addendum 2, after "asserts at line 181 that every saved row is in the reference", add: "and `e28_reference` (lines 126 to 131) must return the full-dose reference `exp45/e28/e28_dev_S-all_<seed>.json` when the dose is above 24,576, since `DEVTAG` is set for any non-standard dose and the dry path it builds does not exist."
 
+**Added after the audit was written.** The worker's branch already carries this fix: `exp34_entropy.py` on `claude/vibrant-curie-ivmrt1` (commit be01b07c) takes the dry path only when the dose is below the full dose, and the full-dose reference otherwise (`git show origin/claude/vibrant-curie-ivmrt1:$M/exp34_entropy.py | sed -n '130,136p'`). R8 therefore asks only that the addendum's text say so.
+
 ## 11. Can E39 be released?
 
 Not as it stands. After R1 to R7 as written, yes, without a re-audit; R8 is for E34's addendum. The check that stands in for a re-audit is check 1 with the digests of R1: if the corrected file gives them, the generator is the one audited here.
