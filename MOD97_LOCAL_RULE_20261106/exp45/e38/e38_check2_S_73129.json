@@ -1,0 +1,81 @@
+{
+ "experiment": "E38",
+ "check": "2",
+ "rule": "S",
+ "seed": 73129,
+ "command": "python3 exp38_erase.py check 2 S 73129",
+ "provenance": {
+  "command": "python3 exp38_erase.py check 2 S 73129",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "7946c68f53a8d77d5c7d503a86d22494a47b8a0e",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c"
+  }
+ },
+ "cpu_seconds": 32.059936717,
+ "result": {
+  "kappa_0_25_vs_torch_decay_0_25": {
+   "book.weight": 1.0657517179879505e-07,
+   "l1.weight": 8.73538083396852e-05,
+   "l1.bias": 0.0005157692357897758,
+   "rnn.weight_ih_l0": 2.2576903575100005e-05,
+   "rnn.weight_hh_l0": 1.0154152505492675e-06,
+   "rnn.bias_ih_l0": 1.8060329693980748e-06,
+   "rnn.bias_hh_l0": 1.8079158508044202e-06,
+   "lm.weight": 1.427559709554771e-06,
+   "lm.bias": 1.2294286761971307e-06,
+   "l2.weight": 7.071797881508246e-05,
+   "l2.bias": 1.141385610026191e-06,
+   "l3.weight": 1.3665079450220219e-06,
+   "l3.bias": 1.33088235543255e-06
+  },
+  "kappa_2_5_vs_torch_decay_2_5": {
+   "book.weight": 9.104818587957197e-08,
+   "l1.weight": 4.168474333710037e-05,
+   "l1.bias": 0.0004027113027404994,
+   "rnn.weight_ih_l0": 1.1265393368375953e-05,
+   "rnn.weight_hh_l0": 2.3130344573019102e-07,
+   "rnn.bias_ih_l0": 4.219230902435811e-07,
+   "rnn.bias_hh_l0": 3.4317386621296464e-07,
+   "lm.weight": 4.4480108840616595e-07,
+   "lm.bias": 2.988292635563994e-07,
+   "l2.weight": 4.4837684981757775e-05,
+   "l2.bias": 2.9877099905206705e-07,
+   "l3.weight": 3.0532891059920075e-07,
+   "l3.bias": 5.15258079758496e-07
+  },
+  "tolerance": 1e-05,
+  "embedding_table_equal": {
+   "k025": false,
+   "k25": false
+  },
+  "pass": false
+ }
+}
