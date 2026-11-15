@@ -103,3 +103,78 @@ Stage 2 has not been run. The brief releases it after stage 1 is read; under out
 - **Launch.** All ran under `queue_e33a1_e34.sh`, started with `setsid nohup` and outside any tool wrapper, so no wrapper time limit applied. It ran at most three jobs at once, shared with E33 addendum 1. Each birth's rows were read in its own slot right after the birth, then committed and pushed. The launcher is safe to rerun after a container reset: it recreates the venv, skips births that are complete and read, and moves partial outputs to `killed_partial/` before a rerun. No reset happened, and no birth was interrupted or rerun.
 - **Committed weights.** For each full arm, the final `.pt` and rows 16,384 and 20,480 (9 files). Rows 4,096–12,288 were measured and their sha256 recorded, but are not committed.
 - **NOT_RUN.** Stage 2 (seeds 93683 and 116089), which awaits the brief author's release.
+
+---
+
+# Addendum 1: stage 2 (T050 on seeds 93683 and 116089) and B050 on seed 73129
+
+Brief: addendum 1 of `OPUS_TASK_E34_ENTROPY_WEIGHTED_ERROR_20261115.md` at 4dd0b9f7 on `codex/minifly-consolidated-20261023`. Same host and environment as stage 1.
+
+## Code and checks
+
+- **The B arms.** `exp34_entropy.py` gets two arms, `BU` (tau infinite) and `B050` (tau 0.5). Their only difference is `local = False` in the forward. They use B-all's receipts as the reference (commit 238b75bf). The existing arms' path is unchanged: `step` takes `local` with default `True`, and `dev` sets it from the arm.
+- **Reader.** `e34_read.py` gets an optional seed argument and a `tables_a1` command. `python3 e34_read.py tables` still rewrites a byte-identical `E34_READ_TABLES.md` (sha256 23a99351…) and `E34_READ.json`.
+- **Check before B050 runs.** The `BU` dry birth at 2,048 updates has `tensors_sha256` 39a50be3…, equal to `exp45/e28_qual/dry/e28_dev_B-all_dry2048_73129.json`. Its data digest is equal and its losses are finite. Receipts: `dry_a1/e34_dev_BU_dry2048_73129.json` and `dry_a1/GATE_B050.json`. B050 ran only after this gate opened.
+- **Regression of the unchanged path.** A U dry birth on the edited runner (`dry_a1/e34_dev_U_dry2048_73129.json`) again gives S-all's dry hash, b49561cf….
+- **Same data.** Each birth's `data_digest` equals its reference's at every saved row: S-all of the same seed for T050, B-all for B050.
+
+## Per-seed table
+
+Endpoint = mean of rows 16,384, 20,480, 24,576; the final row is in brackets. Marks as in stage 1.
+
+| Seed | Arm | Acc 12 | Acc 20 | Acc 40 | Keepers 12 / 20 / 40 | Keeps-and-writes 12 / 20 / 40 | Mark |
+|---|---|---|---|---|---|---|---|
+| 73129 | T050 (stage 1) | 83.66 (99.33) | 82.56 (99.33) | 79.78 (99.33) | 76.7 / 70.3 / 65.7 (78 / 69 / 63) | 76.7 / 70.3 / 65.7 (78 / 69 / 63) | extrapolates |
+| 93683 | T050 | 69.89 (98.00) | 69.33 (98.00) | 67.22 (96.33) | 96.3 / 90.0 / 78.3 (105 / 98 / 85) | 94.3 / 88.0 / 76.7 (103 / 96 / 83) | not learned in range |
+| 116089 | T050 | 92.22 (96.33) | 91.56 (95.67) | 88.89 (93.00) | 90.3 / 86.3 / 79.7 (94 / 89 / 84) | 86.3 / 82.7 / 76.0 (91 / 86 / 81) | extrapolates |
+| 73129 | B050 | 65.67 (100.00) | 65.11 (100.00) | 64.11 (100.00) | 91.3 / 88.3 / 83.0 (91 / 88 / 81) | 91.3 / 88.3 / 83.0 (91 / 88 / 81) | not learned in range |
+
+T050 on 93683 is 0.11 below the "learned in range" mark of 70, so, as the marks fix, it is not read for extrapolation.
+
+T050 does not learn in range and extrapolate on both new seeds. The condition for the brief's sentence is therefore not met, and the sentence is not stated.
+
+## The two added facts
+
+**Fact 1: the first saved row at which accuracy at 12 letters reaches 70.** "Plain backpropagation" is E28 B-all and "plain sweep" is E28 S-all, from `E32_READ.json`.
+
+| Seed | Arm | Arm's first row | Plain backpropagation | Plain sweep |
+|---|---|---|---|---|
+| 73129 | T050 | 16,384 | 4,096 | 24,576 |
+| 93683 | T050 | 20,480 | 4,096 | 24,576 |
+| 116089 | T050 | 16,384 | 4,096 | 16,384 |
+| 73129 | B050 | 20,480 | 4,096 | 24,576 |
+
+**Fact 2: the three rows at 40 letters, beside their mean.**
+
+| Seed | Arm | 16,384 | 20,480 | 24,576 | Mean |
+|---|---|---|---|---|---|
+| 73129 | T050 | 78.00 | 62.00 | 99.33 | 79.78 |
+| 93683 | T050 | 33.00 | 72.33 | 96.33 | 67.22 |
+| 116089 | T050 | 87.33 | 86.33 | 93.00 | 88.89 |
+| 73129 | B050 | 17.33 | 75.00 | 100.00 | 64.11 |
+
+Every saved row is in `E34_ADDENDUM1_TABLES.md`; the machine-readable form is `E34_ADDENDUM1.json`.
+
+## B050's reading
+
+B050 reaches 65.67 at 12 letters, below 70. The case is **"does not learn in range"**, and the reading is: "Under backpropagation the gain at this temperature prevents in-range learning on this seed."
+
+For reference, B050's endpoint at 40 letters is 64.11 against plain backpropagation's 82.0 (17.89 below) and T050's 79.78. These are not read, because B050 did not learn in range.
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P34.9 | T050 learns in range and extrapolates on both new seeds | 40% | **false** (93683: not learned in range, 69.89) |
+| P34.10 | T050 does so on at least one new seed | 75% | **true** (116089) |
+| P34.11 | T050 first reaches 70 at 12 letters at row 12,288 or later on both new seeds | 65% | **true** (20,480 and 16,384) |
+| P34.12 | B050 is below 70 at 12 letters at row 8,192 | 60% | **true** (8.33) |
+| P34.13 | B050 learns in range and is within 15 of 82.0 at 40 letters | 50% | **false** (not learned in range) |
+
+## Run record
+
+- **Births.** Three births of 24,576 updates: T050 on 93683 took 2,866 CPU-seconds, T050 on 116089 2,867, and B050 2,699. All losses were finite.
+- **Source commits.** 238b75bf for both T050 births, and 2eade79b for B050, which differs from 238b75bf only in result files. Every receipt records its sources as unmodified.
+- **Dry births.** BU and U, 2,048 updates each.
+- **Launch.** All ran under `queue_e34a1.sh`, started with `setsid nohup` with at most three processes. Each birth's rows were read in its slot right after it, then committed and pushed. Nothing was interrupted or moved aside.
+- **Committed weights.** For each birth, the final `.pt` and rows 16,384 and 20,480 (9 files). Rows 4,096–12,288 were measured and their sha256 recorded, but are not committed.
