@@ -2918,3 +2918,18 @@ Both are the memo's step 1, the reference stage: backpropagation is allowed and 
 **Not decided here.** The held-out task family for the breadth step is not chosen; it is needed only if step 1 passes. The memo's side line (a sparse key store on saved states against a nearest-neighbour index) and its preliminary measurement (whether the generalising GRU already holds a ring code) are the reviewer's to run and need no worker. The literature search is the user's to launch; its prompt is in the memo.
 
 **Standing rule applied.** I asked no admissibility question: these are backpropagation references, and under the user's rule of 15 November only full-scale backpropagation is outside the line for a candidate.
+
+## 9.133 The E35 briefs audited once and released as revision 2 (15 November 2026)
+
+The reviewer found both briefs faithful to its programme, recomputed the fixed operations independently (numpy) and agreed with mine, and named four required changes and five recommendations; revision 2 makes all nine, and the reviewer said it need not see the briefs again. I checked one of its facts: E10's development ran 32,768 updates after an 8,192-update run failed to converge (`E45_REPORT.md`, lines 207 to 209). The rest is adopted, not rerun by me.
+
+**What my revision 1 had wrong.**
+
+- **The stop rule confused two failures.** The GRU's direct read-out can memorise the taught items; the loss then vanishes and the module path gets no gradient. "Did not use the module" could mean memorising was faster, not that the interface cannot be learned, and my rule would have closed the line on it. Now a forced arm, with the direct read-out's digit logits removed by byte class, runs after row 3, and the stop rule is applied to it alone.
+- **No functional check of the wiring.** My checks showed the module leaves the controller alone and that ablation is exact, not that register, operation and result are connected rightly. A wiring fault would have read as row 3. Check 2b now drives the whole path with ideal interfaces on every pair, operation and three gap lengths.
+- **Row 3 took in a case it should not.** A module arm well above both controls but not falling under ablation was read as "did not learn to use the circuit". It is now row 4, unread.
+- **Stage 0 for 甲 was too short.** I wrote 16,384 updates without opening E10's record of how long its interfaces took. This is the error of the E32 brief again: a setting carried without reading the file that records it.
+
+**Recommendations taken:** the GRU alone runs first and module arms only where there is room; add/sub and max/min are read as separate families; 乙's stage 0 runs both optimizers and three code parameterisations (angle, complex, digit tables), the last as the easiest possible interface so that a stop is well founded; the pass-through and the thin coverage at fraction 0.10 are stated as limits.
+
+**Unverified, as the reviewer says:** that 乙's scrambled control cannot be learned around is its reasoning, not a numerical result; the competition between the direct and module paths is its inference, which the forced arm tests.
