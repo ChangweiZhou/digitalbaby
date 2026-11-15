@@ -1,0 +1,313 @@
+{
+ "experiment": "E37",
+ "kind": "F1",
+ "rule": "S",
+ "local": true,
+ "net": "G1",
+ "seed": 116089,
+ "updates": 6144,
+ "rows": [
+  2048,
+  4096,
+  6144
+ ],
+ "batch": 64,
+ "stream": "X16.entry_stream(X16.family_entries('F1', 116089), 116089 + 101)",
+ "panel": "X16.panels(116089)[0][op97][12], X16.score",
+ "model": {
+  "cls": "arch20.NetRNN",
+  "kind": "gru",
+  "params": 1124113,
+  "params_by_tensor": {
+   "book.weight": 2064,
+   "l1.weight": 4096,
+   "l1.bias": 512,
+   "rnn.weight_ih_l0": 393216,
+   "rnn.weight_hh_l0": 196608,
+   "rnn.bias_ih_l0": 768,
+   "rnn.bias_hh_l0": 768,
+   "lm.weight": 131072,
+   "lm.bias": 512,
+   "l2.weight": 262144,
+   "l2.bias": 512,
+   "l3.weight": 131584,
+   "l3.bias": 257
+  },
+  "forward": "arch26.forward (written-out GRU step, exp3_state.lin at every map)"
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "exp26_candidate.step (forward(local), answer-masked cross entropy, zero_grad, backward, AdamW step)",
+ "installed": {
+  "E_forward": "arch26.forward"
+ },
+ "provenance": {
+  "command": "python3 exp37_fresh_family.py run F1 S 116089",
+  "environment_at_start": {
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "1ab8a67557156233c234e8a1d6a81ade5be7687d",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp37_fresh_family.py": "1c07cdf8460d61fe9bbada9a2df246e4400496108bb6fcf715a90bdf60e28082"
+  }
+ },
+ "complete": true,
+ "curve": [
+  {
+   "step": 2048,
+   "items": 131072,
+   "loss_last512": 0.6989516660105437,
+   "finite_losses": true,
+   "scores_k12": {
+    "add97": {
+     "n": 400,
+     "exact": 23,
+     "final": 23
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 21,
+     "final": 21
+    },
+    "max97": {
+     "n": 400,
+     "exact": 378,
+     "final": 378
+    },
+    "min97": {
+     "n": 400,
+     "exact": 379,
+     "final": 379
+    }
+   },
+   "mean_add_sub": 5.5,
+   "cpu": 301.382218771,
+   "cpu_scoring_so_far": 3.070406817999981,
+   "optimizer_steps": [
+    2048
+   ],
+   "data_digest": {
+    "batches": 2048,
+    "sha256": "053ed6a7a54a8a5972ac8b681e2a525fa7610eff702031b4b9a58529fe0d3954"
+   },
+   "weights": "e37_F1_S_116089_row2048.pt",
+   "weights_sha256": "5c08635a1dc145e903d900a99fce247410fbcaa515a0f398af9d689628f89a5a",
+   "tensors_sha256": "a5db3cd470949d0914e7c29bb6c5bcbf9a6355427c1c1d0029fa17bf6ba12a25"
+  },
+  {
+   "step": 4096,
+   "items": 262144,
+   "loss_last512": 0.2602433808206115,
+   "finite_losses": true,
+   "scores_k12": {
+    "add97": {
+     "n": 400,
+     "exact": 210,
+     "final": 210
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 132,
+     "final": 132
+    },
+    "max97": {
+     "n": 400,
+     "exact": 381,
+     "final": 381
+    },
+    "min97": {
+     "n": 400,
+     "exact": 379,
+     "final": 379
+    }
+   },
+   "mean_add_sub": 42.75,
+   "cpu": 596.8741567220001,
+   "cpu_scoring_so_far": 5.765185328999962,
+   "optimizer_steps": [
+    4096
+   ],
+   "data_digest": {
+    "batches": 4096,
+    "sha256": "f9815285aafa40ffd14a43cfcdf121cb3822ce4cba3dd14f2e21825f26117eee"
+   },
+   "weights": "e37_F1_S_116089_row4096.pt",
+   "weights_sha256": "4fce7d6b90f8d44fa59308c03dd6a52d34ff824d97002c58b10705ffe690b146",
+   "tensors_sha256": "40231d6f011c74c7712ac9268eb573e9f6ef09950d1e47009d192fc81ee76a81"
+  },
+  {
+   "step": 6144,
+   "items": 393216,
+   "loss_last512": 0.07803895465985988,
+   "finite_losses": true,
+   "scores_k12": {
+    "add97": {
+     "n": 400,
+     "exact": 289,
+     "final": 289
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 252,
+     "final": 252
+    },
+    "max97": {
+     "n": 400,
+     "exact": 375,
+     "final": 375
+    },
+    "min97": {
+     "n": 400,
+     "exact": 384,
+     "final": 384
+    }
+   },
+   "mean_add_sub": 67.625,
+   "cpu": 889.2813653750001,
+   "cpu_scoring_so_far": 8.388612701,
+   "optimizer_steps": [
+    6144
+   ],
+   "data_digest": {
+    "batches": 6144,
+    "sha256": "d424a8d3eb85ac21ccd14d5993fffd86cbd2e45fa94140c55268f1d094f76876"
+   },
+   "weights": "e37_F1_S_116089_row6144.pt",
+   "weights_sha256": "db78f5520a8b121d7c92e9deafcf7f20e7d99ad1888d2be6155e6f24e46afbc0",
+   "tensors_sha256": "cad0bd805afdc67def5ba9faa4308ad281d5976e64dfd258cdea06fbda9b7646"
+  }
+ ],
+ "data_digest": {
+  "batches": 6144,
+  "sha256": "d424a8d3eb85ac21ccd14d5993fffd86cbd2e45fa94140c55268f1d094f76876"
+ },
+ "cpu_total": 889.2862623240001,
+ "cpu_scoring": 8.388612701,
+ "cpu_updates": 880.897651303,
+ "optimizer_read_back": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "check1_life_block1_digest": {
+  "life": {
+   "batches": 6144,
+   "sha256": "d424a8d3eb85ac21ccd14d5993fffd86cbd2e45fa94140c55268f1d094f76876"
+  },
+  "run": {
+   "batches": 6144,
+   "sha256": "d424a8d3eb85ac21ccd14d5993fffd86cbd2e45fa94140c55268f1d094f76876"
+  },
+  "equal": true
+ }
+}
