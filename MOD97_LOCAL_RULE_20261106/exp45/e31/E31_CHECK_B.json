@@ -1,0 +1,200 @@
+{
+ "experiment": "E31",
+ "kind": "check",
+ "worker": "B",
+ "seed": 73129,
+ "birth_sha256": "85ed1de2e1fd9cbd9bfda36e1564266f5029f4f7e0da298a230d40f7b998332e",
+ "batch_digest": "0395bdbe2cbdc72cb429ac6a11587ac3281a61709848a6613277bcd16192bceb",
+ "host": {
+  "hostname": "vm",
+  "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "cores": 4,
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu",
+  "torch_threads": 1
+ },
+ "runner_sources_sha256": {
+  "arch31.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+  "exp31_switch.py": "6a897078be2c04626dab508e671929909e44a9feb0fd20d837f53004c800261e",
+  "e29_gates.py": "1142bddd5ef57e9a8dcf84e5117918a96ae267744f53afe9d6abd639505423d3"
+ },
+ "e26_sources_sha256": {
+  "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+  "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+  "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+  "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+  "exp16_integrated.py": "f4559971a6c1770523d641431fe5d4bd56def3f5ee3cafc87a5b869509be50ae",
+  "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+  "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+  "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+  "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+  "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+ },
+ "git": {
+  "commit": "",
+  "sources_modified_vs_commit": []
+ },
+ "no_switch": {
+  "logits_max_rel": 0.0,
+  "grads_max_rel": {
+   "book.weight": 0.0,
+   "l1.weight": 0.0,
+   "l1.bias": 0.0,
+   "rnn.weight_ih_l0": 0.0,
+   "rnn.weight_hh_l0": 0.0,
+   "rnn.bias_ih_l0": 0.0,
+   "rnn.bias_hh_l0": 0.0,
+   "lm.weight": 0.0,
+   "lm.bias": 0.0,
+   "l2.weight": 0.0,
+   "l2.bias": 0.0,
+   "l3.weight": 0.0,
+   "l3.bias": 0.0
+  },
+  "worst": 0.0,
+  "ok": true
+ },
+ "G_H_crossing": {
+  "G": {
+   "steps": [
+    {
+     "t": 1,
+     "max_rel": 5.993841796225752e-07,
+     "max_rel_vs_sweep": 0.32287663221359253
+    },
+    {
+     "t": 11,
+     "max_rel": 4.441222074547113e-07,
+     "max_rel_vs_sweep": 0.5843905806541443
+    },
+    {
+     "t": 21,
+     "max_rel": 3.6885913345940935e-07,
+     "max_rel_vs_sweep": 0.300266295671463
+    }
+   ],
+   "worst": 5.993841796225752e-07,
+   "ok": true
+  },
+  "H": {
+   "steps": [
+    {
+     "t": 1,
+     "max_rel": 0.0,
+     "max_rel_vs_sweep": 0.8877171874046326
+    },
+    {
+     "t": 11,
+     "max_rel": 0.0,
+     "max_rel_vs_sweep": 1.3392114639282227
+    },
+    {
+     "t": 21,
+     "max_rel": 0.0,
+     "max_rel_vs_sweep": 0.8718515634536743
+    }
+   ],
+   "worst": 0.0,
+   "ok": true
+  },
+  "G_input_map": {
+   "max_rel": 7.200719096545072e-07,
+   "note": "random g, real z1"
+  }
+ },
+ "K": {
+  "start_independent_of_birth_W": {
+   "equal": true,
+   "Bhh0_tensors_sha256": "1ee69e2124eabb32324e8800acf43bd121a2c1dee24df767ab0e65c7525b176c",
+   "note": "Feedback(seed) is built twice, the second time after the loaded birth's weight_hh_l0 was changed in place"
+  },
+  "update_identity": {
+   "rows": [
+    {
+     "update": 1,
+     "identity_max_abs": 0.0,
+     "contraction_max_abs": 2.9802322387695312e-08,
+     "cos_Bhh_W": 0.004554475254641252,
+     "rel_diff_Bhh_W": 1.1452428032173714,
+     "feedback_updates": 1
+    },
+    {
+     "update": 10,
+     "identity_max_abs": 0.0,
+     "contraction_max_abs": 2.9802322387695312e-08,
+     "cos_Bhh_W": 0.008088303713354445,
+     "rel_diff_Bhh_W": 1.145213804700919,
+     "feedback_updates": 10
+    },
+    {
+     "update": 100,
+     "identity_max_abs": 0.0,
+     "contraction_max_abs": 5.960464477539063e-08,
+     "cos_Bhh_W": 0.06117583674330656,
+     "rel_diff_Bhh_W": 1.1248683782453166,
+     "feedback_updates": 100
+    }
+   ],
+   "ok": true
+  },
+  "K_equals_H_when_Bhh_is_W": {
+   "grads_max_rel": {
+    "book.weight": 0.0,
+    "l1.weight": 0.0,
+    "l1.bias": 0.0,
+    "rnn.weight_ih_l0": 0.0,
+    "rnn.weight_hh_l0": 0.0,
+    "rnn.bias_ih_l0": 0.0,
+    "rnn.bias_hh_l0": 0.0,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "worst": 0.0,
+   "ok": true
+  }
+ },
+ "P": {
+  "term_grad_outside_update_gate_rows": {
+   "max_abs": {
+    "book.weight": 0.0,
+    "l1.weight": 0.0,
+    "l1.bias": 0.0,
+    "rnn.weight_ih_l0": 0.0,
+    "rnn.weight_hh_l0": 0.0,
+    "rnn.bias_ih_l0": 0.0,
+    "rnn.bias_hh_l0": 0.0,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "ok": true
+  },
+  "term_grad_equals_two_factor_product": {
+   "max_rel": {
+    "rnn.weight_ih_l0": 3.4831808934373406e-07,
+    "rnn.weight_hh_l0": 4.396975142772082e-07,
+    "rnn.bias_ih_l0": 8.650057562889456e-08,
+    "rnn.bias_hh_l0": 8.650057562889456e-08
+   },
+   "ok": true,
+   "note": "d/dW[j,k] of mean((z-.5)^2) = sum over items and positions of input_k * 2 (z_j - .5) z_j (1 - z_j) / N"
+  },
+  "lambda_on_first_batch": {
+   "lam": 10.889478944666433,
+   "task_grad_norm_gate_rows": 0.42528060250723776,
+   "term_grad_norm_gate_rows_at_lam1": 0.009763566389821074,
+   "term_grad_norm_gate_rows_at_lam": 0.10632015062680944,
+   "ratio": 0.25
+  }
+ },
+ "pass": true,
+ "note": "The dry-life checks (no switch against exp26_candidate.py life S; P at lam = 0 against no switch) are in E31_DRY_B.json."
+}
