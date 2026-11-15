@@ -191,3 +191,7 @@ Made as the audit wrote them. I reran the corrected generator: it gives all six 
 | R6 | The event file's layout; `seen` counted the same for every arm; first-visit level and cost; the trend of learning replaces the trend of the cost as the compared quantity, which was biased by construction; kept at return read on the visit's first update. |
 | R7 | Probe tasks; complete state at powers of two; resume, branch and ask; check 9; prefixes; the learner's time constants. |
 | — | Recommended: pace lines, the supply of tasks, what is committed, the symbols' meanings. |
+
+## Note (15 November 2026, after release; no change to L0 or L1)
+
+The sentence under "Arms the runner must offer" that lists later candidates (an anchor, a slow copy, a step size per weight, reminders, the confidence gain) is superseded by the reviewer's memo, revision 7, section 20, following the user's statement that earlier slow-learner and long-term-storage schemes gave at best mixed results. Retention is not a research question in this programme for now: the only store is the plain bounded buffer of the `replay` arms. A mechanism is added only if the deficit it addresses has been measured on a learner that generalises, the plain baseline is in the same experiment at equal budget, and its expected effect is stated beforehand from measured rates. The headline of every report is generalisation and its trend with experience (first-visit level and the trend of learning); what is kept at return is reported beside it as a constraint. Nothing the worker builds changes.
