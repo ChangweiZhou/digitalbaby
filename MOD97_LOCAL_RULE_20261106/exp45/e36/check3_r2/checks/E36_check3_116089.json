@@ -1,0 +1,123 @@
+{
+ "check": "check3_116089",
+ "command": "python3 e36_reminder.py check 3 116089 --out exp45/e36/check3_r2",
+ "provenance": {
+  "command": "python3 e36_reminder.py check 3 116089 --out exp45/e36/check3_r2",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "18751457a044b01f44d691933880cec1e4312599",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "e36_sources_sha256": {
+   "e36_reminder.py": "910e79fa4720174720775aaf6c59f5a4d9064284c2c50022231085d92484dea4",
+   "arch31_workerB.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+   "exp31_switch_workerB.py": "1a3fa17979808b14c22893e8b2a3b67eea6c7d6cc240a6ab522d16956a971466"
+  }
+ },
+ "cpu_seconds": 12.647839728,
+ "result": {
+  "Bhh_sha": {
+   "loaded": "3e67744f43cbc581d87f8fcbc5e8919e2539a2172e3a2dd751e0e649df3d2c2c",
+   "receipt": "3e67744f43cbc581d87f8fcbc5e8919e2539a2172e3a2dd751e0e649df3d2c2c",
+   "ok": true
+  },
+  "K_equals_H_when_Bhh_is_W": {
+   "grads_max_rel": {
+    "book.weight": 0.0,
+    "l1.weight": 0.0,
+    "l1.bias": 0.0,
+    "rnn.weight_ih_l0": 0.0,
+    "rnn.weight_hh_l0": 0.0,
+    "rnn.bias_ih_l0": 0.0,
+    "rnn.bias_hh_l0": 0.0,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "worst": 0.0,
+   "ok": true
+  },
+  "K_loaded_differs_from_None": {
+   "grads_max_rel": {
+    "book.weight": 1.0054194927215576,
+    "l1.weight": 2.4827895164489746,
+    "l1.bias": 1.3121143579483032,
+    "rnn.weight_ih_l0": 3.386432647705078,
+    "rnn.weight_hh_l0": 0.7010351419448853,
+    "rnn.bias_ih_l0": 0.9738327264785767,
+    "rnn.bias_hh_l0": 0.7314203381538391,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "worst": 3.386432647705078,
+   "ok": true
+  },
+  "contraction": {
+   "rows": [
+    {
+     "update": 1,
+     "contraction_max_abs": 5.628226062981412e-08,
+     "norm_ratio": 0.9997519850730896,
+     "expected_ratio": 0.99975,
+     "Bhh_tensors_sha256": "f31f219ee059a99f9a6c6c6b93342b70bf952c361db4a765b6b18e4cb46fa6ca",
+     "cos_Bhh_W": 0.9999999943349913,
+     "rel_diff_Bhh_W": 0.00010807970273227097
+    },
+    {
+     "update": 10,
+     "contraction_max_abs": 2.8588146960828453e-08,
+     "norm_ratio": 0.9997501373291016,
+     "expected_ratio": 0.99975,
+     "Bhh_tensors_sha256": "f0f80d2fc73559418f107deb2d0a0ec954c0e93d36f845da99995b621bd1914b",
+     "cos_Bhh_W": 0.9999999943239375,
+     "rel_diff_Bhh_W": 0.00010818688524226846
+    },
+    {
+     "update": 100,
+     "contraction_max_abs": 5.786114343209192e-08,
+     "norm_ratio": 0.999750018119812,
+     "expected_ratio": 0.99975,
+     "Bhh_tensors_sha256": "378dd74e30b4a5b0ec85182982e82fe8775da06495f3f2293810ef7a370fe2ff",
+     "cos_Bhh_W": 0.9999999944375317,
+     "rel_diff_Bhh_W": 0.00010711561281448718
+    }
+   ],
+   "ok": true,
+   "norm_ratio_within_1e_5": true
+  },
+  "ok": true
+ }
+}
