@@ -123,7 +123,7 @@ No marks in points are fixed in this brief. The reviewer's two withdrawn marks c
 3. **Asking does not teach.** The `tensors_sha256` of the weights and of the optimizer state is unchanged across the answering of a batch's asked items.
 4. **Same stream for every arm.** The batch digest of a 4-visit life is equal across the four arms.
 5. **The forward and the two rules.** On the first batch, the network's logits equal those of `torch.nn.GRU` run on the same parameters to 1e-6; under `local=False` the parameter gradients equal autograd's through that reference to 1e-5 of each tensor's largest entry; under `local=True` they differ from them.
-6. **Replay.** With ρ = 0, `replay` gives the same weights as `naive` after 64 updates. The buffer never exceeds its capacity in bytes. With ρ = 0.5, 24 items of each batch come from the buffer once it holds that many.
+6. **Replay.** With ρ = 0, `replay` gives the same weights as `naive` after 64 updates. The buffer never exceeds its capacity in items (14,033 at the default size). With ρ = 0.5, 24 items of each batch come from the buffer once it holds that many.
 7. **The scorer.** On a hand-made event file of two tasks with known answers, every quantity in the table equals its hand-computed value. The reviewer's numpy scorer and this one agree on the event file of one 16-visit life, and that event file equals the reviewer's rebuild from the generator in every column but `correct` (`e39_world.py spec events <file.npz> <world>`).
 8. **Cost.** CPU-seconds per visit at the default size, for `naive` and `sweep`, and a forecast for a life of 1,024 visits.
 

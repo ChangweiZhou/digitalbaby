@@ -3031,3 +3031,15 @@ Sources: the workers' branches merged here (`claude/vibrant-allen-8hziln`, `clau
 - **Why the earlier schemes gave mixed results** (the memo's reading of this review's sections 2, 9.12 and 9.17, which I accept): they were tested on learners that memorised, and a store or slow path can only keep what the learner has. The new result is E37's, which is about acquisition and not retention.
 
 Consequences for briefs already out: E38 finishes as released and its stage 2 (anchors on more seeds) is not released whatever stage 1 shows, since a uniform anchor is not a candidate. E36 stands as a measurement. E39's line on later candidates is amended by a note in that brief.
+
+## 9.137 E40 audited once and released as revision 2 (15 November 2026)
+
+The audit (`AUDIT_E40_NEW_FAMILY_FROM_A_TENTH_20261115.md`, 089409fe) found the family, its code bytes, its modulus, the stream seed, the panels and the split sound, and required two changes, both made as written; it needs no re-audit, and check 8 (the worker's row 0 against the reviewer's table) stands in for one.
+
+**The fault.** The verdict could be met with nothing learned. Before any update the nine lived networks already score 15 to 52 on held-out add and sub of the new family, where a fresh network scores 0: the operation symbol is in the prompt, so a network that has the shared arithmetic answers many pairs that need no reduction under a code it has never seen. On pairs that need the reduction at 83 they score 0 to 12. The figure read is now each run's gain on those pairs from its own row 0.
+
+**Whose fault.** The reviewer calls it a flaw in its own design. It is mine as well: this is the third mark this week undone by the same thing, I wrote row 0 into the brief as a scored row, and I did not ask what row 0 would be. The lesson I recorded after E36 to E38 (compute a mark on the baseline figures before adopting it) I did not apply here, because the baseline needed a forward pass on saved files and not a read of receipts. That is not a reason.
+
+**A consequence to keep in view.** The revised verdict is strict: a lived network that only applies the arithmetic it already had, without learning the new modulus, shows no saving by it, though its level is far above a fresh network's. Both are reported.
+
+Also: the wording of E39's check 6 corrected (the buffer's capacity is in items). The reviewer confirms that E39 revision 2 carries its eight changes and that my record of memo revision 7 needs no correction, and agrees that E38's second stage should not be released; E38's rehearsal arm is still worth finishing as the full-scale reference for the plain store.
