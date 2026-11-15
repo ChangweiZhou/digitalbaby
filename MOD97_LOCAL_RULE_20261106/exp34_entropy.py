@@ -21,6 +21,8 @@ The loss (the brief's code):
 
 Weight diagnostics per 512-update block and per fine role, from the same detached Hh, w and ce: sum of Hh, sum of w, sum of w * ce, count.
 Dose: E11_DEV_UPDATES (full dose when unset). Every output path must not exist.
+Addendum 2: a dose above the full dose uses the full-dose reference; the digest and hash comparisons apply at rows the reference has and are
+skipped, and recorded as skipped, beyond it.
 """
 import json
 import math
@@ -126,7 +128,7 @@ def row_path(out, arm, seed, stop):
 
 
 def e28_reference(seed, ref_arm="S-all"):
-    if E.DEVTAG:
+    if E.DEVTAG and E.DEV_DOSE < E.DEV_UPDATES:
         p = X.OUT / "e28_qual" / "dry" / f"e28_dev_{ref_arm}_dry{E.DEV_DOSE}_{seed}.json"
     else:
         p = E28_DIR / f"e28_dev_{ref_arm}_{seed}.json"
@@ -180,8 +182,10 @@ def dev(arm, seed, out, cmd):
             sealed = {n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()}
             cpu_score += time.process_time() - cb
             d_now = dg.value()
-            assert stop in ref, f"the reference {ref_file} has no row at {stop}"
-            assert d_now == ref[stop]["data_digest"], f"data digest at row {stop} is not E28 S-all's: {d_now} vs {ref[stop]['data_digest']}"
+            in_ref = stop in ref
+            assert in_ref or stop > max(ref), f"the reference {ref_file} has no row at {stop}"
+            if in_ref:
+                assert d_now == ref[stop]["data_digest"], f"data digest at row {stop} is not the reference's: {d_now} vs {ref[stop]['data_digest']}"
             cs = time.process_time()
             if stop == E.DEV_DOSE:
                 wf, wsha = path, None
@@ -189,16 +193,16 @@ def dev(arm, seed, out, cmd):
                 wf = row_path(out, arm, seed, stop); wsha = R.save_weights(m, wf)
             cpu_save += time.process_time() - cs
             tsha = R.tensors_sha(m.state_dict())
-            same = tsha == ref[stop]["tensors_sha256"]
+            same = (tsha == ref[stop]["tensors_sha256"]) if in_ref else None
             hard = {n: v[12]["exact"] for n, v in sealed.items()}
             row = dict(step=stop, loss=sum(losses) / len(losses), finite_losses=all(math.isfinite(v) for v in losses),
                        finite_cumulative=dict(rec["finite"]), cpu=time.process_time() - t0, cpu_scoring_so_far=cpu_score,
                        cpu_updates_so_far=time.process_time() - t0 - cpu_score - cpu_save, sealed=sealed,
                        hard_mean_add89_sub89_k12=(hard["add89"] + hard["sub89"]) / 2 / 300 * 100,
                        book_shift_by_role=X16.book_shift(m, book0), data_digest=d_now,
-                       data_digest_check=f"equal to {ref_file} at this row: asserted",
+                       data_digest_check=(f"equal to {ref_file} at this row: asserted" if in_ref else f"skipped: {ref_file} has no row at {stop} (beyond its last row)"),
                        weights=wf.name, weights_sha256=wsha, tensors_sha256=tsha,
-                       tensors_sha256_reference=ref[stop]["tensors_sha256"], tensors_equal_to_reference=same)
+                       tensors_sha256_reference=(ref[stop]["tensors_sha256"] if in_ref else None), tensors_equal_to_reference=same)
             curve.append(row)
             print("e34 dev", arm, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()},
                   f"hard {row['hard_mean_add89_sub89_k12']:.1f} cpu {row['cpu']:.0f}s tensors {'=' if same else '!='} {ref_file.split("/")[-1]}", flush=True)
