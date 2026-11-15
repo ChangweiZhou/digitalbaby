@@ -2992,3 +2992,33 @@ Source: the reviewer's audit `AUDIT_E36_E37_E38_BRIEFS_20261115.md` and its memo
 **One disagreement with the memo, stated in the brief.** Its calibration gate asks that the first group be 90% right by the end of its first visit. At full scale a birth takes about 8,000 updates to get held-out pairs mostly right, so I expect that gate to fail at any visit length a 1,024-visit life can afford. The protocol does not depend on it, since a task's cost is counted across its visits. L1 reports the figures and a ladder of sizes; the gate is for the reviewer to keep or change in its audit.
 
 **Standing change of method (the memo's section 17.8, under the user's delegation of pace to the reviewer).** Inside the small world: one audit of the protocol, then rosters by one-page note with predictions on file and no audit; at least eight worlds per setting; paired differences with intervals in place of marks on three seeds. Full-scale work keeps the present discipline.
+
+## 9.136 E36 and E37 complete; E35-B's first stages; E39 audited and released; E40 drafted (15 November 2026)
+
+Sources: the workers' branches merged here (`claude/vibrant-allen-8hziln`, `claude/magical-pascal-sflem4`, `claude/busy-darwin-dlrwtm`); the reviewer's memo, revision 6 (e41d41f3), and its audit of E39. Evidence level E2. E38, E35-A and E34's later stages are still running and are not merged.
+
+**E36: what a life removes comes back in about a hundred updates.** I recomputed every row from the fifteen receipts' raw counts; the reviewer recomputed the row-1,024 figures from the weights.
+
+- All nine reminders are back at 85 or more on held-out add and sub mod 89 by row 64 or 128 (first restored row: sweep 128, 128, 128; backpropagation 64, 64, 64; Kolen–Pollack 128, 64, 64). Wrap pairs go from under 1% to 88 to 99% at row 1,024. Fresh networks taught the same batches are at 1 to 2.5%.
+- Table row 1 for all three rules. P36.1, P36.2, P36.3 and P36.5 hold; P36.4 misses (no difference between rules). I gave "restored by row 256" 30%; it happened in every arm.
+- The other direction: sixteen updates on the birth family take add and sub mod 97 from 91 to 99 down to 35 to 64, and the within-family compositions from about 500 of 600 right to under 75 by row 256 in eight of nine runs. The modulus in force follows whatever the stream last taught.
+
+**E37: a lived learner needs far fewer items for a new family.** The table is the worker's; the reviewer recomputed the fresh rows from the weights.
+
+- Family F3 at about 131,000 items: lived 77 to 94, fresh 7 to 19; the difference is 66 to 80 points under all three rules. At 262,000 items: 17 to 47. Saving in both, under every rule.
+- Family F1, the same 6,144 batches as a life's first block: born networks are 17 to 28 points above unborn ones under the sweep (saving) and 8 to 16 under backpropagation (none by the 15-point rule).
+- P37.1, P37.2, P37.3 and P37.5 hold; P37.4 misses.
+
+**E35-B, stages 0 and 1a (seed 73129).** With parsing supplied the modulus-free circuit generalises from a tenth of the pairs (99% against 9 to 34 scrambled). From the byte stream the GRU does not come to use it: 19.9 with the module, 18.0 forced through it, 19.6 alone, with taught pairs at 98%. Outcome row 3; the forced arm shows the obstacle on this seed is the interface, not competition from the direct read-out. Stage 1b (the forced arm on two more seeds) is released as addendum 1 of the brief. My count of 132 stage-0 runs in the brief was wrong; the grid is 48.
+
+**E38 so far (not merged; the reviewer's read of the worker's branch, one seed).** Wrap pairs of the birth family fall from 97% to 18% within 64 updates of the new family and to 3% by 256, alike with decay, without it, and with the anchor at both strengths. If the complete report confirms it: decay is not the cause, and a uniform pull toward the birth weights does not protect. I judge P38.2 to P38.6 when the report is in.
+
+**What the three results say together** (the reviewer's reading, which the figures I recomputed support): a family is two things with different lifetimes. The shared arithmetic persists and accumulates, which is why a reminder takes a hundred updates and a new family a fraction of the items. The family's own modulus is rewritten by tens of updates on anything else. The three rules agree on both. So among the controls of the long-life programme, short reminders move ahead of anchors.
+
+**E39 released as revision 2.** The audit required eight changes, all made. The first is an error of mine that would have stopped the first update: my generator file had the start and end symbols the other way round from the harness, because I wrote the two constants from memory and did not open `mod97_local.py`. The reviewer's second implementation found it. Others: the text did not suffice to rebuild the generator (ten points open); the compared trend was biased by construction (late tasks reach the criterion only if cheap) and is replaced by a first-visit level every task has; "kept at return" included up to three updates of relearning; the replay buffer was not deterministic as written; a ladder rung of mine would have run out of tasks. On the gate the audit agrees with my objection and replaces it. After the corrections my file gives all six of the audit's digests, which is the check that stands in for a re-audit. P39.1 is false as I stated it.
+
+**E34 addendum 2** gains one sentence: a second obstacle to a longer dose in the E34 runner, which the worker had already fixed.
+
+**Drafted, awaiting audit: E40** (`OPUS_TASK_E40_NEW_FAMILY_FROM_A_TENTH_OF_PAIRS_20261115.md`), the reviewer's request: lived and fresh learners on a family none has met (mod 83, new code bytes), a tenth of its pairs taught. It puts E37's saving and E35's memorising under one condition.
+
+**Another agent's commit on the default branch.** 035f8755 adds `LICENSE.md` and a notice in `README.md`, made at the user's instruction in another session. I rebased onto it and changed nothing in it.

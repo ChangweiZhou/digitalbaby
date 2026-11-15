@@ -205,3 +205,21 @@ I made these as the audit wrote them. I checked one of its facts myself: E10's d
 | 7 | (E35-B) stage 0 also under the stream stage's optimizer | recommended |
 | 8 | (E35-B) stage 0 with a complex parameterisation and a digit-table form | recommended |
 | 9 | The pass-through, and thin coverage at f = 0.10, under "cannot show" | recommended |
+
+---
+
+# Addendum 1 (15 November 2026): stages 0 and 1a read; stage 1b released
+
+**As I read it** (branch `claude/busy-darwin-dlrwtm`, 613a45c3, merged; the stream figures are the worker's and I did not recompute them from the weights).
+
+- **Stage 0, gate passed.** With parsing supplied, the modulus-free module generalises from a tenth of the pairs: 99.4 to 99.7 for the angle form on all three seeds under both optimizers, against 9 to 34 for the scrambled module. The digit-table form also passes; the complex form fails on one seed at f = 0.10. So an exact interface is not only possible but learnable when the operands are handed over. P35B.1, P35B.2 and P35B.7 hold; P35B.3 misses (the scrambled arm reached 32 to 34 on seed 73129).
+- **Stage 1a, seed 73129.** Only add and sub at f = 0.10 leave room (arm `G` 19.6); at f = 0.25 the GRU alone is at 89.2 and max and min are above 90 at both fractions. There, held-out add and sub at 12 letters: `G` 19.6, `M` 19.9, `X` 23.6. **Outcome row 3.** The forced arm `F`: 18.0, within 15 of `G`. Taught pairs are at 98%: the controller memorised, with the module or forced through it. P35B.5 holds; P35B.4 misses.
+- **A miscount of mine:** the brief said stage 0 was 132 small runs; the grid it writes is 48, and 48 were run.
+
+**Stage 1b, as the brief fixes it.** Arm `F` at f = 0.10 on seeds 93683 and 116089, and arm `G` at f = 0.10 on the same seeds unless the E35-A worker's branch already has them complete (four births at most, about 4 CPU-hours). Read for add and sub only.
+
+**Stop rule.** If `F` stays within 15 points of `G` on at least two of the three seeds, the obstacle is the interface, and inventory 乙's line stops here. Under the reviewer's memo (section 8) nothing is briefed after stage 1b in either case.
+
+**Prediction (mine).** P35B.8: `F` is within 15 of `G` on both new seeds, 80%.
+
+**Done.** The births with receipts and the three saved rows each, an addendum to `E35B_REPORT.md` with the per-seed table for `G` and `F` (held12, held40, taught12 for add and sub), whether the stop rule applies, and P35B.8.
