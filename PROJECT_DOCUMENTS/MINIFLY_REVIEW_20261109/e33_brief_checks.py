@@ -57,3 +57,36 @@ for r in range(1, 4):
         seen[fails] = (mins, outcome(set(fails)))
 for fails, (mins, o) in sorted(seen.items(), key=lambda kv: (kv[1][1], len(kv[0]))):
     print(f"   fails as soon as the targets include {' or '.join('+'.join(m) for m in mins):22s} -> outcome {o} | failing arms: {', '.join('A+' + a for a in subsets if a in fails)}")
+
+
+def e34_checks():
+    """For the audit of the E34 brief (commit 9291d23b): the weight exp(-H/tau) by target class on the saved baseline rows (numpy reader, 16
+    batches after update 4,096), and, from the baseline's own loss record, how the answer digits' loss falls over the first 4,096 updates."""
+    import sys
+    from pathlib import Path
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from np_gru import load_weights, forward, BOS
+    from e32_r3_checks import batches_after
+    s = 73129; bs, ok = batches_after(s, 4096, 16)
+    print('f. weight of a distractor position over an answer position (digits and EOS), and shares of the weighted error; stream digest ok', ok)
+    for row in (4096, 24576):
+        W, _ = load_weights(P + (f'e28/e28_dev_S-all_{s}.pt' if row == 24576 else f'e28/e28_dev_S-all_{s}_row{row}.pt'), ref=D)
+        H, L, R = [], [], []
+        for x, y, m in bs:
+            lg = forward(W, x)[3].astype(np.float64); lg -= lg.max(-1, keepdims=True); p = np.exp(lg); p /= p.sum(-1, keepdims=True)
+            h = -(p * np.log(np.maximum(p, 1e-300))).sum(-1); l = -np.log(np.maximum(np.take_along_axis(p, np.where(y == BOS, 0, y)[..., None], -1)[..., 0], 1e-300))
+            r = np.full(y.shape, 'other', dtype=object); r[(y >= 65) & (y <= 90)] = 'distractor'; r[m] = 'answer'; r[(y >= 48) & (y <= 57) & ~m] = 'operand'; r[:, 0] = 'code'; r[y == BOS] = ''
+            H.append(h.ravel()); L.append(l.ravel()); R.append(r.ravel())
+        H, L, R = np.concatenate(H), np.concatenate(L), np.concatenate(R)
+        for tau in (0.5, 1.0, 2.0):
+            w = np.exp(-H / tau); tot = (w * L)[R != ''].sum()
+            print(f"   row {row:5d} tau {tau}: ratio {w[R == 'distractor'].mean() / w[R == 'answer'].mean():.4f} | shares: distractor {100 * (w * L)[R == 'distractor'].sum() / tot:4.1f}% operand {100 * (w * L)[R == 'operand'].sum() / tot:4.1f}% code {100 * (w * L)[R == 'code'].sum() / tot:4.1f}% answer {100 * (w * L)[R == 'answer'].sum() / tot:4.1f}%")
+    d = load(f'e28/e28_dev_S-all_{s}.json')
+    print('g. the baseline\'s answer-digit loss by block of 512 updates, and the weight ratio it implies if entropy equals loss (distractor entropy 3.45)')
+    for i in (0, 1, 2, 3, 5, 7):
+        b = d['role_curve'][i]; a = b['by_fine_role']['answer_digit']['mean']
+        print(f"   updates to {b['block_end']:5d}: answer-digit loss {a:.2f} | distractor / answer-digit weight at tau 0.5, 1, 2: " + ', '.join(f"{np.exp(-(3.45 - a) / t):.3f}" for t in (0.5, 1.0, 2.0)))
+
+
+if __name__ == '__main__' and 'e34' in __import__('sys').argv[1:]:
+    e34_checks()
