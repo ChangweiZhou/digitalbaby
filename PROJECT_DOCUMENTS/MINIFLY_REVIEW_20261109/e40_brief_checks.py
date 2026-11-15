@@ -12,8 +12,11 @@ C. The embedding rows of the four new code bytes in the birth and life-end files
 D. Row 0 of the nine lived runs on the new family, before any update: the brief's scores 1 to 3, and what the answers on
    the pairs that need the reduction equal.
 E. What the brief's reading does on the row-0 figures.
+F. A fresh network that has memorised a tenth of the pairs (E35-A's arm G at f = 0.10, mod 89, seed 73129, end of a full
+   birth, on the worker's branch): its held-out pairs without letters split by the reduction, as a scale for the fresh
+   runs of E40.
 
-Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e40_brief_checks.py [A B C D E]
+Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e40_brief_checks.py [A B C D E F]
 """
 import os, sys
 from random import Random
@@ -25,7 +28,7 @@ REF = '3aa9dbf3'; SEEDS = (73129, 93683, 116089)
 F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]
 F4 = [("add", 83, b"e"), ("sub", 83, b"f"), ("max", 83, b"g"), ("min", 83, b"h")]
 LIVES = {"S": "e26/e26_life_S_{s}.pt", "B": "e26/e26_life_B_{s}.pt", "K": "e31/e31_life_K_{s}.pt"}
-want = set(sys.argv[1:]) or set("ABCDE")
+want = set(sys.argv[1:]) or set("ABCDEF")
 split_seed = lambda t, f, s: s * 1000 + round(f * 100) + t[1] * 7 + t[2][0]
 
 def run_items(W, items):
@@ -111,3 +114,20 @@ if "D" in want or "E" in want:
             m = [(rows[(arm, s)]['add_held12'] + rows[(arm, s)]['sub_held12']) / 2 for s in SEEDS]
             w = [(rows[(arm, s)]['add_wrap'] + rows[(arm, s)]['sub_wrap']) / 2 for s in SEEDS]
             print(f"   lived {arm}: held-out mean at row 0 = " + ", ".join(f"{v:.1f}" for v in m) + f" -> seeds already 15 or more above a fresh network at row 0: {sum(v >= 15 for v in m)} of 3 | reduction score at row 0 = " + ", ".join(f"{v:.1f}" for v in w))
+
+if "F" in want:
+    print("F. E35-A arm G at f = 0.10 (fresh, backpropagation, mod 89, seed 73129), held-out and taught pairs without letters, whole answers %")
+    s = 73129
+    for tag, suffix in (("row 16,384", "_row16384.pt"), ("row 20,480", "_row20480.pt"), ("end", ".pt")):
+        try:
+            W = load_weights(P + f"e35a/e35a_dev_G_f10_{s}{suffix}", "origin/claude/nice-rubin-y5de8k")[0]
+        except AssertionError:
+            print("   ", tag, "not on the branch"); continue
+        out = []
+        for t in DEV[:2]:
+            taught, held = split(t, .10, s)
+            ok, _ = run_items(W, plain(t, held)); a = np.array(held)[:, 0]; b = np.array(held)[:, 1]
+            wrap = (a + b >= 89) if t[0] == "add" else (a - b < 0)
+            okt, _ = run_items(W, plain(t, taught))
+            out.append(f"{t[0]}: held-out no reduction {100 * ok[~wrap].mean():.1f}, reduction {100 * ok[wrap].mean():.1f}; taught {100 * okt.mean():.1f}")
+        print(f"   {tag}: " + " | ".join(out), flush=True)
