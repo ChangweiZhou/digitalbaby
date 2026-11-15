@@ -2893,3 +2893,28 @@ What I measured before writing it (`PROJECT_DOCUMENTS/COORD_CHECKS_20261115/`, r
 The reviewer found the specification to be its rule and my measurements to agree with its own (weight ratios equal to the fourth decimal at rows 4,096 and 24,576). It accepted the division by the sum of the weights as the better form. One change was required: my stage 2 rule chose the passing arm with the highest accuracy at 40 letters, which would select on differences under the 15 points single births are read to, on a seed that then counts towards three. Revision 2 runs every passing arm on the two new seeds, states the sentence per temperature, and says that seed 73129 selected it. Four recommendations are also made: an assert on the weight sum; the qualification that the gain is weaker before row 4,096 (the reviewer's estimate, not rerun by me: at tau 1 the rule starts above `A+D`'s dose and falls below it within about 1,000 updates), with the realised ratio reported for the first eight blocks; the like-for-like reference cited as a last-three-row mean (B-all, 92.8 and 82.0, which I confirmed in `E32_READ.json`); and a report of whether a passing arm is within 15 points of it. The reviewer ran no torch code; its figures on later gradient scale are estimates.
 
 E33 addendum 1 gains a note fixing the order in which R1 to R4 are checked, since R2 and R3 can both apply. No stage 2 birth had started.
+
+## 9.132 A new line drafted: innate circuits, two inventories, one brief each (15 November 2026)
+
+The reviewer's memo of 15 November proposes testing whether fixed circuits taken as given, with learning confined to interfaces, can serve as a base. It narrows the roughly 220 earlier versions to two open questions: whether the interface from the byte stream to a fixed circuit can be learned without parsing supplied, and how wide a task range a small set of circuits covers. It offered two inventories and asked the user to choose; the user asked for a brief for each.
+
+**Drafted, not released (they wait for the reviewer's audit):**
+
+- `OPUS_TASK_E35A_INNATE_CIRCUITS_INVENTORY_JIA_20261115.md`: inventory 甲, E10's four operations wired at modulus 89.
+- `OPUS_TASK_E35B_INNATE_CIRCUITS_INVENTORY_YI_20261115.md`: inventory 乙, modulus-free primitives. I specified them as phase addition (a product of eight unit phasors) and a comparator that routes a whole code by a learned scalar; the number code, and so the modulus, is learned.
+
+Both are the memo's step 1, the reference stage: backpropagation is allowed and nothing in them is a candidate. Evidence level E2.
+
+**What is mine in them, and so what the audit should test.**
+
+- One apparatus for both: E26's GRU as controller; two registers written through gates computed from the GRU's state; four operation weights; a gated read-out added to the logits. No mask, role or position reaches the module. The GRU-alone arm is E26's arm B bit for bit, checked against its dry hash, which also checks the two workers' loops against each other.
+- A scrambled control with no learned parameters and no structure to learn around: random operation tables for 甲, random bilinear maps for 乙. A relabelled ring would not do, since learned interfaces absorb any relabelling.
+- The taught fraction, 0.10 and 0.25, as the place where a gain could show: at 0.5 the GRU alone already answers 98% of held-out pairs. Whether the GRU alone leaves room at these fractions is not known and is outcome row 0.
+- Stage 0 for each inventory: the upper bound with parsing supplied, as a gate. For 甲 it repeats E10 at modulus 89; for 乙 it is the first test of whether a modulus-free code can be learned at all.
+- Marks, the outcome table per fraction, the reviewer's stop rule made operational ("uses the module" is a fall of at least 15 points with the module's read-out removed), and predictions P35A.1 to P35A.8 and P35B.1 to P35B.6.
+
+**What I checked before writing** (`PROJECT_DOCUMENTS/COORD_CHECKS_20261115/innate_ops_check.py`, no training): 甲's four operations are exact on all 7,921 pairs at modulus 89; the table form with the true addition table equals the ring's addition; a random table agrees with addition on 1.4% of pairs; 乙's primitives decode to the four operations on all pairs under an exact phasor code, so an exact interface exists.
+
+**Not decided here.** The held-out task family for the breadth step is not chosen; it is needed only if step 1 passes. The memo's side line (a sparse key store on saved states against a nearest-neighbour index) and its preliminary measurement (whether the generalising GRU already holds a ring code) are the reviewer's to run and need no worker. The literature search is the user's to launch; its prompt is in the memo.
+
+**Standing rule applied.** I asked no admissibility question: these are backpropagation references, and under the user's rule of 15 November only full-scale backpropagation is outside the line for a candidate.
