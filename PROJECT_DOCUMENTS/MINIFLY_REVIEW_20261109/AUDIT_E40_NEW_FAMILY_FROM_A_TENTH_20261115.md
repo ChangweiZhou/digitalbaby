@@ -132,6 +132,8 @@ Confirmed, not re-audited.
 - **Review 9.136 was written against memo revision 6** (e41d41f3) and carries one sentence that revision 7 withdrew: "So among the controls of the long-life programme, short reminders move ahead of anchors." Replace it by: "The reviewer first read this as putting short reminders ahead of anchors among the long-life programme's controls, and withdrew that in its memo's revision 7 (section 20): where a store is used it is the plain bounded store of raw items, and no retention mechanism is a candidate until L2 shows a deficit that the plain store does not cover."
 - Revision 7 also marks item 2 of the memo's section 19.3 as withdrawn and adds a rule for any added mechanism; the review does not yet record either.
 
+**Added after the audit was written.** The coordinator's commit 2b65392f, made while this audit was running, already records memo revision 7: the E39 brief carries a note that its sentence on later candidates is superseded, and review 9.136 has an addendum withdrawing the sentence on short reminders. Of the points in sections 7 and 8, only the wording of E39's check 6 (capacity "in bytes", to read "in items") remains, and it is a recommendation.
+
 ## 9. What I did not check
 
 - Anything that needs torch: the fresh networks themselves, the update paths, the cost.
