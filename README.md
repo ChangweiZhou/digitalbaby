@@ -1,3 +1,5 @@
+> **Terms of use.** Strictly non-commercial. Any use by others, teaching and research included, requires the prior written permission of the owner, Changwei Zhou. See [LICENSE.md](LICENSE.md).
+
 # MiniFly current research navigation — 2 November 2026
 
 **V181 is the latest allocated experiment (DESIGN ONLY).** [V181 compact learning design](minifly_v181_mini_local_plasticity_design_20261102/DESIGN.md) | [Parameter and resource census](minifly_v181_mini_local_plasticity_design_20261102/PARAMETER_AND_RESOURCE_CENSUS.json) | [Machine-readable spec](minifly_v181_mini_local_plasticity_design_20261102/SPEC.json) | [Scale-correction memo](PROJECT_DOCUMENTS/MINIFLY_V181_MINI_SCALE_CORRECTION_20261102.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
@@ -98,4 +100,4 @@ python genesis_v66.py --batch_size 4 --group_size 4
 I am Changwei Zhou, focusing on **Liquid Intelligence**. This repository is an exploration of how we can shrink the "reasoning" capabilities of models like DeepSeek-R1 into compact, efficient architectures that can run on edge devices while maintaining a high logical fidelity.
 
 ---
-*Note: This is an active research repo. Level 4 training (Multi-object persistence) is currently in progress.* This is protected by Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0).
+*Note: This is an active research repo. Level 4 training (Multi-object persistence) is currently in progress.* Use is governed by [LICENSE.md](LICENSE.md): strictly non-commercial, and any use by others requires the owner's prior written permission.
