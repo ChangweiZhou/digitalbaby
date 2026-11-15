@@ -14,6 +14,9 @@ Run from the repository root:
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py text alloc      # taught items per task over a life
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py text blind      # the blind predictor's score, no network
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py text scorer     # the scorer on a hand-made event file
+  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec-file stats # the coordinator's rules with the file's end symbol (257)
+  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec stats      # the same rules with the harness's end symbol (256)
+  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec alloc      # taught items per task under the coordinator's schedule
 """
 import hashlib, math, sys
 from random import Random
@@ -117,6 +120,99 @@ class World:
         return h.hexdigest()
 
 
+# ---------------------------------------------------------------- the coordinator's rules, re-implemented
+class SpecWorld(World):
+    """The rules of PROJECT_DOCUMENTS/COORD_CHECKS_20261115/sw_world_spec.py (18751457), written again here from a reading of
+    that file, not by importing or running it.  Each rule below is one the brief's text does not state.
+
+      tasks     (operation index, modulus), operation outer and modulus inner, shuffled by Random("world|S|tasks");
+                a task's id is its place after the shuffle
+      codes     the 676 two-lower-case-letter codes in order (first letter outer), shuffled by the SAME generator after the
+                tasks; task i takes code i
+      symbols   the bytes of "+-*/%&|^~!?:;<>@$#" for the operations in order: the 16 linear ones with c1 outer and c2 inner
+                over (1, 2, -1, -2), then max, then min
+      split     pairs in order (a outer, b inner) shuffled by Random("world|S|split|<id>"); the first round(p*p/2) are taught
+      groups    tasks 2g and 2g+1 form group g; groups are met in this order
+      schedule  one generator Random("world|S|schedule").  At every visit after the first one random() is drawn; the visit is
+                new if it is below 0.2 and an unmet group remains.  Otherwise randrange(3) draws the absence class (1-4, 5-32,
+                33 or more visits since the group's last visit); if that class is empty the first non-empty of short, medium,
+                long is used; the group is sorted(class)[randrange(len(class))]
+      items     a fresh generator Random("world|S|visit|<v>") for each visit.  Per update, 64 items in order, the first 48
+                taught: task = group[randrange(2)], pair = pool[randrange(len(pool))], k = randint(0, 4), then k letters by
+                choice
+      digest    SHA-256 over every item in order (taught then asked): the bytes [id // 256, id % 256, a, b, len(prompt)],
+                the prompt, and each answer value mod 256
+    The file sets BOS, EOS = 256, 257; the harness has EOS = 256 and BOS = 257.  `eos` is a parameter here so that both the
+    file's digests and the corrected ones can be computed.
+    """
+
+    def __init__(self, seed, eos=EOS, moduli=MODULI, p_new=P_NEW, visit_updates=VISIT_UPDATES, reserve=0):
+        self.seed, self.p_new, self.visit_updates, self.eos, self.reserve = seed, p_new, visit_updates, eos, reserve
+        r = Random(f"world|{seed}|tasks")
+        idx = [(oi, p) for oi in range(len(OPS)) for p in moduli]
+        r.shuffle(idx)
+        codes = [(x, y) for x in range(97, 123) for y in range(97, 123)]
+        r.shuffle(codes)
+        self.tasks = [(OPS[oi], p) for oi, p in idx]
+        self.tid = {t: i for i, t in enumerate(self.tasks)}
+        self.code = {t: codes[i] for i, t in enumerate(self.tasks)}
+        self.symbol = dict(zip(OPS, b"+-*/%&|^~!?:;<>@$#"))
+        self.taught, self.asked = {}, {}
+        for i, t in enumerate(self.tasks):
+            pairs = [(a, b) for a in range(t[1]) for b in range(t[1])]
+            Random(f"world|{seed}|split|{i}").shuffle(pairs)
+            k = round(0.5 * len(pairs))
+            self.taught[t], self.asked[t] = pairs[:k], pairs[k:]
+        self.groups = [self.tasks[i:i + GROUP] for i in range(0, len(self.tasks), GROUP)]
+
+    def schedule(self, visits):
+        r = Random(f"world|{self.seed}|schedule")
+        sched, last, met = [], {}, 0
+        for v in range(visits):
+            new = v == 0
+            if v > 0:
+                new = r.random() < self.p_new and met < len(self.groups) - self.reserve
+            if new:
+                g = met; met += 1
+            else:
+                c = r.randrange(3)
+                bins = ([], [], [])
+                for h, lv in last.items():
+                    d = v - lv
+                    bins[0 if d <= 4 else 1 if d <= 32 else 2].append(h)
+                pick = bins[c] or next(b for b in bins if b)
+                g = sorted(pick)[r.randrange(len(pick))]
+            sched.append(g); last[g] = v
+        return sched
+
+    def batches(self, visits):
+        u = 0
+        for v, g in enumerate(self.schedule(visits)):
+            r = Random(f"world|{self.seed}|visit|{v}")
+            grp = self.groups[g]
+            for _ in range(self.visit_updates):
+                taught, asked = [], []
+                for i in range(TAUGHT + ASKED):
+                    t = grp[r.randrange(len(grp))]
+                    pool = self.taught[t] if i < TAUGHT else self.asked[t]
+                    a, b = pool[r.randrange(len(pool))]
+                    k = r.randint(0, KMAX)
+                    letters = [r.choice(LETTERS) for _ in range(k)]
+                    prompt = list(self.code[t]) + list(f"{a:02d}".encode()) + [self.symbol[t[0]]] + letters + list(f"{b:02d}".encode()) + [ord("=")]
+                    target = list(f"{answer(t[0], t[1], a, b):02d}".encode()) + [self.eos]
+                    (taught if i < TAUGHT else asked).append((t, (a, b), prompt, target))
+                yield v, u, taught, asked
+                u += 1
+
+    def digest(self, visits):
+        h = hashlib.sha256()
+        for v, u, taught, asked in self.batches(visits):
+            for t, (a, b), prompt, target in taught + asked:
+                i = self.tid[t]
+                h.update(bytes([i // 256, i % 256, a, b, len(prompt)]) + bytes(prompt) + bytes(x % 256 for x in target))
+        return h.hexdigest()
+
+
 # ---------------------------------------------------------------- the scorer, from the brief's table
 def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
     """ev: dict of equal-length arrays in stream order: update, visit, task, correct, blind, wrap, learned.
@@ -192,7 +288,7 @@ def stats(mk):
             met.add(g); last[g] = v
         print(f"   world {s}: {len(met)} groups met of {len(w.groups)}; returns {cls[0]}/{cls[1]}/{cls[2]}; longest absence {longest}")
     for s in (1, 2, 3):
-        print(f"   world {s}: digest of the first 16 visits {mk(s).digest(16)[:16]}...")
+        print(f"   world {s}: digest of the first 16 visits {mk(s).digest(16)}")
 
 
 def tasks_report():
@@ -235,7 +331,10 @@ def alloc(mk):
 
 if __name__ == "__main__":
     mode, what = sys.argv[1], sys.argv[2]
-    mk = (lambda s: World(s))
+    kw = {}
+    if mode == "spec-file":
+        kw = dict(eos=257)                                   # the file as it stands: BOS, EOS = 256, 257
+    mk = (lambda s: World(s)) if mode == "text" else (lambda s: SpecWorld(s, **kw))
     if what == "stats":
         stats(mk)
     elif what == "tasks":
