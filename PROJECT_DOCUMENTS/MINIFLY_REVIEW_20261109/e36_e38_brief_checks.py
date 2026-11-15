@@ -14,6 +14,8 @@ D. The rehearsal stream of E38: its entries, its random-generator seed beside ev
 E. The number of weights outside the embedding table (what an anchor stores), and the reminder stream of E36 beside the birth's.
 F. What the proposed marks do on figures already on file.
 G. Scoring cost per item from the life receipts, and what scoring all 7,921 pairs at every row adds.
+H. Score 2 of the briefs as a second implementation: whole answers (two digits and the end symbol) on every pair of add and sub
+   mod 89 without letters, split by whether the pair needs the wrap.  Usage: ... H <file under exp45/> [<file> ...] [--ref <git ref>]
 
 Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e36_e38_brief_checks.py [A B C D E F G]
 """
@@ -27,7 +29,7 @@ from e32_r3_checks import batch_tensor
 
 REF = '4dd0b9f7'; SEEDS = (73129, 93683, 116089); BATCH = 64; KMAX = 12; BLOCK = 6144
 F1 = LIFE; F3 = [("add", 73, b"s"), ("sub", 73, b"u"), ("max", 73, b"y"), ("min", 73, b"z")]
-want = set(sys.argv[1:]) or set("ABCDEFG")
+want = {a for a in sys.argv[1:] if len(a) == 1} or set("ABCDEFG")
 rec = lambda arm, s: json.loads(git_bytes(P + (f'e31/e31_life_K_{s}.json' if arm == 'K' else f'e26/e26_life_{arm}_{s}.json'), REF))
 pc = lambda d: 100 * d['exact'] / d['n']
 hard = lambda sc, m: (pc(sc[f'add{m}']['12']) + pc(sc[f'sub{m}']['12'])) / 2
@@ -147,3 +149,32 @@ if "G" in want:
         upd = (st[2]['cpu_updates_so_far'] - st[1]['cpu_updates_so_far']) / BLOCK
         print(f"   life {arm} 73129: one evaluate() scores {items:,} items in {np.mean(per):.0f} CPU-s ({1000 * np.mean(per) / items:.2f} ms per item, lengths mixed up to 40 letters); one update {upd:.3f} CPU-s")
     print("   scoring 2 x 7,921 pairs at one row costs about as much as", f"{2 * 7921 * 0.003 / 0.13:.0f}", "updates at 3 ms per item and 0.13 s per update (short items cost less than the mixed average)")
+
+def wrap_split(W, task):
+    """Teacher-forced exactness of all three target bytes equals greedy whole-answer exactness (the brief's exp16_integrated.score)."""
+    from np_gru import sigmoid, apply, SYM
+    op, m, code = task
+    ab = np.array([(a, b) for a in range(m) for b in range(m)]); a, b = ab[:, 0], ab[:, 1]
+    c = np.array([apply(op, m, int(u), int(v)) for u, v in ab])
+    x = np.array([[BOS] + list(code) + list(f"{u:02d}".encode()) + [ord(SYM[op])] + list(f"{v:02d}".encode()) + [ord("=")] + list(f"{r:02d}".encode()) for (u, v), r in zip(ab, c)], dtype=np.int64)
+    tgt = np.array([list(f"{r:02d}".encode()) + [EOS] for r in c], dtype=np.int64)
+    z1 = np.tanh(W['book.weight'] @ W['l1.weight'].T + W['l1.bias'])
+    gi_tok = z1 @ W['rnn.weight_ih_l0'].T + W['rnn.bias_ih_l0']; l2_tok = z1 @ W['l2.weight'].T + W['l2.bias']
+    Whh, bhh = W['rnn.weight_hh_l0'], W['rnn.bias_hh_l0']; U = Whh.shape[1]
+    h = np.zeros((len(x), U), np.float32); ok = np.ones(len(x), bool); L = x.shape[1]
+    for t in range(L):
+        gi = gi_tok[x[:, t]]; gh = h @ Whh.T + bhh
+        r = sigmoid(gi[:, :U] + gh[:, :U]); z = sigmoid(gi[:, U:2 * U] + gh[:, U:2 * U]); n = np.tanh(gi[:, 2 * U:] + r * gh[:, 2 * U:]); h = (1 - z) * n + z * h
+        if t >= L - 3:
+            ok &= (np.tanh(l2_tok[x[:, t]] + h @ W['lm.weight'].T + W['lm.bias']) @ W['l3.weight'].T + W['l3.bias']).argmax(1) == tgt[:, t - (L - 3)]
+    wrap = (a + b >= m) if op == "add" else (a - b < 0)
+    return 100 * ok[~wrap].mean(), 100 * ok[wrap].mean(), int(wrap.sum())
+
+if "H" in want:
+    args = sys.argv[1:]; ref = args[args.index("--ref") + 1] if "--ref" in args else REF
+    files = [a for a in args if a.endswith(".pt")]
+    print("H. score 2 (whole answers, all pairs, no letters): no wrap / wrap, add then sub")
+    for f in files:
+        W = load_weights(P + f, ref)[0]
+        (an, aw, na), (sn, sw, ns) = wrap_split(W, DEV[0]), wrap_split(W, DEV[1])
+        print(f"   {f}: add {an:.1f} / {aw:.1f} ({na} wrap pairs); sub {sn:.1f} / {sw:.1f} ({ns} wrap pairs); wrap mean {(aw + sw) / 2:.1f}")
