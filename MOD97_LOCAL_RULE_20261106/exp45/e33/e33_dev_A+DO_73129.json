@@ -164,7 +164,7 @@
    "exp33_targets.py": "85f06048fdad2b965f9c6d51d5b429571f2ae8a7b99257a8e37f94022d93f648"
   }
  },
- "complete": false,
+ "complete": true,
  "curve": [
   {
    "step": 4096,
@@ -1013,10 +1013,32 @@
    },
    "data_digest_check": "equal to exp45/e28/e28_dev_S-bal_73129.json at this row: asserted",
    "weights": "e33_dev_A+DO_73129.pt",
-   "weights_sha256": null,
+   "weights_sha256": "27e606b8eb9a1553ba204170d736fdff028fa1794a840e08e136063f9f895740",
    "tensors_sha256": "2298055640482dd4970d5fbfad2bd42a15364b197b6c32927da1987b2ae31e44",
    "tensors_sha256_reference": "8f9ba2a58160f3558d25b5001811137f0559ebe39e2009b9aa125fa0dc041e3f",
-   "tensors_equal_to_reference": false
+   "tensors_equal_to_reference": false,
+   "silenced_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "max89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "min89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    }
+   }
   }
  ],
  "role_curve": [
@@ -3556,5 +3578,90 @@
     "with_gradient": 0
    }
   }
- }
+ },
+ "optimizer_steps": [
+  24576
+ ],
+ "optimizer_read_back": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "data_digest": {
+  "batches": 24576,
+  "sha256": "eb49a8e47bfc43685e77932e9f351e0646cd278109e4c753f38a55a578d6d981"
+ },
+ "weights": "e33_dev_A+DO_73129.pt",
+ "weights_sha256": "27e606b8eb9a1553ba204170d736fdff028fa1794a840e08e136063f9f895740",
+ "tensors_sha256": "2298055640482dd4970d5fbfad2bd42a15364b197b6c32927da1987b2ae31e44",
+ "row_weights": {
+  "4096": {
+   "file": "e33_dev_A+DO_73129_row4096.pt",
+   "sha256": "c8533e7980cc423f806e6d8b663a72b1785c69550d32182ddb2077aeaaa2d8e4"
+  },
+  "8192": {
+   "file": "e33_dev_A+DO_73129_row8192.pt",
+   "sha256": "5bdd0e019bb1a4fd99e26c6b77007a382a0a06463a800afd287686c6dce02ae4"
+  },
+  "12288": {
+   "file": "e33_dev_A+DO_73129_row12288.pt",
+   "sha256": "7b91c963aabf21e26ac36a771616c0a1578a9816c44ebf7bbe548b701a76a49e"
+  },
+  "16384": {
+   "file": "e33_dev_A+DO_73129_row16384.pt",
+   "sha256": "5ba7ea8dd6c378a6f5a3d2c3e82fdef09d44eaa616365de872e3e97f906d7a83"
+  },
+  "20480": {
+   "file": "e33_dev_A+DO_73129_row20480.pt",
+   "sha256": "b3aaab0dc5724256c9662c7ad723a52910c7711613a1d8448b6f04e6cc053b68"
+  },
+  "24576": {
+   "file": "e33_dev_A+DO_73129.pt",
+   "sha256": "27e606b8eb9a1553ba204170d736fdff028fa1794a840e08e136063f9f895740"
+  }
+ },
+ "cpu_total": 2867.446483016,
+ "cpu_scoring": 47.608029905000194,
+ "cpu_saving_rows": 0.038907665000124325,
+ "cpu_updates": 2819.7995473889996,
+ "cpu_per_update": 0.11473793731237791
 }
