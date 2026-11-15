@@ -12,6 +12,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 6.** E36 and E37 have reported, E38 and the long E34 births in part, and E35-B's first stage. Section 19 gives my recomputation, what the results say, what they change in Part II, and one new job (item 8 of section 1). Section 3.6's explanation by weight decay is refuted by E38 and is marked so.
 
+**Revision 7.** Section 20 is added after Mr. Xu pointed out that the plan was returning to the retention schemes of the earlier period. It withdraws item 2 of section 19.3 and sets a rule for adding any mechanism.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -531,7 +533,7 @@ E38's rows are not committed and E35-B's weights were not recomputed; their figu
 ### 19.3 What this changes
 
 1. **A family is two things with very different lifetimes.** The shared arithmetic lasts and accumulates: it is why a reminder takes a hundred updates and why a new family takes a fraction of the items. The family's own modulus is rewritten by a few dozen updates on anything else. Sweep, Kolen–Pollack feedback and backpropagation agree on both.
-2. **Among Part II's controls, rehearsal moves ahead of anchors.** A uniform anchor failed at full scale on one seed under the sweep. What E36 measured, that restoring costs about a hundred updates, makes short, well-timed reminders the first candidate. A pull weighted by each weight's use for the old family remains a candidate; a uniform one does not.
+2. *(Withdrawn in revision 7; see section 20.)* **Among Part II's controls, rehearsal moves ahead of anchors.** A uniform anchor failed at full scale on one seed under the sweep. What E36 measured, that restoring costs about a hundred updates, makes short, well-timed reminders the first candidate. A pull weighted by each weight's use for the old family remains a candidate; a uniform one does not.
 3. **The rate laws of section 17.10 now have first values at full scale:** loss within 64 to 256 updates of another family; restoration within 64 to 128 updates; a new family at 77–94 after 131,000 items for a lived learner against 7–19 for a fresh one. L1 should report the same three quantities in the small world, so that the two scales can be set side by side.
 4. **Learned structure has now done what the innate circuit did not.** The comparison is not like for like (a quarter of the pairs after a life, against a tenth at birth), which is what the job below is for.
 
@@ -549,4 +551,32 @@ E38's rows are not committed and E35-B's weights were not recomputed; their figu
 - **What it cannot show.** One new family; lives made for another purpose; a fresh optimizer in every run.
 
 My expectations, on record: fresh runs at or below 30 on held-out add and sub at every row, 85%; lived sweep runs at or above 60 at row 8,192 in two of three seeds, 50%; a saving under each rule, 75%.
+
+## 20. On returning to retention schemes (revision 7)
+
+Mr. Xu, 15 November: "Earlier many minifly period attempts tried to use slow learner, long term storage, and other fancy schemes, but these yield at best mixed results. So we are revisiting the issue to some extent."
+
+He is right, and item 2 of section 19.3 was a step in that direction. The record on such schemes:
+
+| Scheme | Result | Where |
+|---|---|---|
+| Connectome learner with fast, slow and adaptation state (V66–V78) | 62.6% against 93.3% for a simple reference; nothing promoted | review, section 2 |
+| Eight-store persistent core | taught items 97.1%; effect on held-out items −8.2 points | section 2 |
+| Complementary-learning-systems replay (v3–v6) | best held-out 13%; 0% in v6-R1 | section 2 |
+| Fast and slow two-store | no gain over a single store | 9.12 |
+| Sleep replay; sleep order and scaling | +3 to +6 points; no effect | 9.12, 9.17 |
+| Plain replay from a bounded store of raw bytes, on a learner that generalises | 0.81 to 0.98 of the joint-training reference | 9.38, 9.42 |
+| Uniform pull toward earlier weights (E38's anchors) | no protection at either strength | section 19.2 |
+
+Three things follow.
+
+1. **The earlier schemes were tested on learners that memorised.** A store or a slow path keeps what the learner has; those learners had nothing that generalised (held-out 0 to 13%). The one audit of that period that named the problem (26 September) found that the goal had shrunk to retention.
+2. **On a learner that generalises, the plain store has been enough and nothing more elaborate has added to it.** E38's anchors are one more negative of the same kind.
+3. **The new result is not about retention.** It is E37: a learner with a life behind it reaches 77–94% on a new family where a fresh one reaches 7–19%. Whether that ability keeps growing over a long life is what job L2 measures, and it is the quantity the earlier period never had a learner to measure.
+
+So:
+
+- **Retention is not a research question in Part II for now.** Where a store is used it is the plain bounded store of raw items, already qualified in this project. No reminder schedule, slow copy, weighted anchor or second store is a candidate until L2 shows a deficit that the plain store does not cover.
+- **A rule for any added mechanism.** It is tested only if (a) the deficit it addresses has been measured on a learner that generalises, (b) the plain baseline is in the same experiment at equal budget, and (c) its expected effect is stated beforehand from the measured rate laws.
+- **The headline of every report stays generalisation and its trend with experience**; what is kept at a task's return is reported beside it as a constraint.
 
