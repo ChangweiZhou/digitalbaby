@@ -2823,3 +2823,37 @@ What the third audit still found in my text: a check ("bit for bit") that correc
 Useful numbers from that audit (reviewer's reader, unregistered): the floor's keepers slide from a gate of about 0.98 at update 4,096 to about 0.78 at the end while the gate rows' weight norm rises, so the loss is not weight decay; and the top push strength is by rough estimate 27 to 48 times what erodes them.
 
 E32 is released to two workers under revision 4.
+
+## 9.128 E31 and E32 read and merged; E33 drafted (15 November 2026)
+
+Both result branches are merged. E31's end-of-life scores I recomputed from the fifteen receipts. E32's I read from the worker's report and tables and did not recompute. Evidence level E2.
+
+**A. E31: lives under the sweep with one switch (plus-minus composition, end of life; seeds 73129 / 93683 / 116089).**
+
+| Arm | Plus-minus | Against the floor |
+|---|---|---|
+| floor (sweep) | 54.2 / 44.5 / 37.2 | |
+| ceiling (backprop) | 72.3 / 82.8 / 73.9 | +18.1 / +38.3 / +36.7 |
+| H, exact recurrent map (bound) | 72.9 / 74.5 / 71.4 | +18.7 / +30.0 / +34.2 |
+| **K, Kolen–Pollack feedback (candidate)** | 74.4 / 78.2 / 63.9 | +20.2 / +33.7 / +26.7 |
+| G, exact gate rows (bound) | 56.7 / 55.6 / 65.6 | +2.5 / +11.1 / +28.4 |
+| P2a, gate push 0.25 | 48.2 / 33.2 / 34.7 | −6.0 / −11.3 / −2.5 |
+| P2b, gate push 0.05 | 50.0 / 73.6 / 45.1 | −4.2 / +29.1 / +7.9 |
+
+- P31.1 misses (G is 15 above the floor in one seed of three). P31.2 holds (H within 10 of the ceiling in all three). P31.3 misses by 2.5 points in one seed (K minus H: +1.5 / +3.7 / −7.5). P31.4, P31.7 and P31.9 are not judged here; P31.8 misses on the two strengths that ran.
+- By the fixed reading, H closes at least half the gap in all three seeds and G in one: **the recurrent pathway as a whole is where the sweep loses composition**, not the gates. K is within 15 points of H in every seed, so it is read as matching its bound.
+- **Kolen–Pollack feedback on the recurrent map is a candidate: a rule inside the line that recovers most of the composition gap on three seeds.** It is not replicated on fresh seeds, and on taught-pair instances its gain is small (within: 88.7 / 92.7 / 85.8).
+- **Not run, by my decision:** P2c and Ks. The gate push hurt at one strength and was mixed at the other, and K already matches its bound, so neither would change what is done next. Worker B's share is closed as amended.
+- The two workers' files of the same name are both on the branch (`E31_TWO_IMPLEMENTATIONS.md`).
+
+**B. E32: every-byte births with one switch, scored past the trained range.** Four of twelve predictions hold (P32.4, P32.6a, P32.9, P32.10).
+
+- No arm moves accuracy at 40 letters; the best is 12%. H and K are partial at 20 letters (+47 / +12 / +24 and +36 / +12 / +16).
+- The strongest gate push kept the holding units (66 / 80 / 55 against bars of 25 / 30 / 31) and accuracy did not follow. So the account I registered, that losing those units is what breaks extrapolation, is not supported: these units, held from update 4,096, do not give accuracy at 20 or 40 letters.
+- The backprop births keep 59 or more such units throughout (P32.10).
+
+**C. Where this leaves the two problems.** Composition during a life has a candidate remedy. Extrapolation under every-byte targets has none, and it is the condition the target test imposes.
+
+**D. E33.** `OPUS_TASK_E33_WHICH_TARGETS_BREAK_EXTRAPOLATION_20261115.md`, from the reviewer's design: the sweep with the balanced loss, varying only which classes of non-answer byte are targets (distractor letters, operand digits, structural bytes), all eight subsets on one seed, about 6.5 CPU-hours. I added the two end arms so both references come from the same runner, fixed the weighting as "S-bal's terms, some removed", and wrote the outcome table before the predictions. It is not yet audited.
+
+**Held:** the target test, E29 part B, any further gate push, and a replication of K, which belongs in the confirmatory run of whichever rule first passes the every-byte condition.
