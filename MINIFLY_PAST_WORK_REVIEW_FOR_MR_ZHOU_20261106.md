@@ -3274,3 +3274,19 @@ What I did: wrote the terms and the forward as runnable code and ran them on E26
 **Two further additions to E43** (addendum 2 of its brief): the unrelated arm with the first family rehearsed, with and without decay, as the conventional reference any remedy is measured against; and the unrelated arm from E42's `F10` and `P8` of seed 73129, to replace an expectation of *lost* by a figure.
 
 **Not staffed, still:** E41's seeds 93683 and 116089.
+
+## 9.152 E47 audited once and released as revision 2; a correction to 9.150 (16 November 2026)
+
+**Correction to 9.150.** I wrote there that "the far cells' weights all receive gradient under both rules". The output I committed says 0.90: nine in ten of the far cells' recurrent weights receive a gradient under both rules at 1,024 cells with periods by place. The "all" was from a run made before I changed the rule for periods. This is the second time in two days that I quoted a figure from an earlier run beside a committed output that says otherwise (9.142 was the first), after writing the lesson down.
+
+**The audit** (`AUDIT_E47_LOCAL_INTERFACE_BRIEF_20261116.md`, 58ac93d8) wrote an independent reader of the layer, which agrees with the E42 reader at 256 cells under both rules, reproduced the draws and the counts, and required twelve changes, none to the layer or its draws; all made as written.
+
+- **Its main finding, from the structure alone:** many far cells cannot take part in an answer, because a byte of the question must reach a cell and the cell's response must return before the answer is due. At 1,024 cells every far cell can under period 1, and 63 to 96% under periods by place, by number of letters; at 4,096 cells 32 to 100% under period 1 and 24 to 61% under periods by place, where only 2% of the slowest cells can take part even at 12 letters. With items this short the largest network cannot be tested fairly without extra steps before the answer. I had noted the round trip of 16 steps and not computed what it leaves; the two runs with periods by place at 4,096 cells are dropped from the plan.
+- **A check of mine could not pass** (equal hashes after 2,048 updates between two programs that add in a different order); it is a first-batch comparison now.
+- **A diagnostic of mine confounded two things:** holding the far cells at zero also removes a constant the interface has learned with. They are also held at their mean, and "used" is defined on that.
+- **A count of mine was short:** with periods a cell must add up its sources' values with the step weights at every step; sixteen times the cells cost 8% more with periods, not 3%.
+- **The trial is four runs,** period 1 beside periods by place, since the latter alone cannot separate the boundary's effect from the periods'.
+
+**What the user's requirement still lacks here.** Inside the patch each of the 256 cells reads all 512 input values and each readout unit reads all 256 cells. The reviewer measured that E42's trained network rests on that dense interface. A limited interface is named in the brief as the next job; I have not drafted it.
+
+**Names.** The reviewer has renamed its section 27 job to E48 (memo revision 20), matching the brief I pushed at bd9f18fe; its two open requests, that brief and the two further additions to E43, were both answered there.
