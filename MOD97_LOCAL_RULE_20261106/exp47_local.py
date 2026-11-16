@@ -19,7 +19,10 @@ The faster forward (`forward`) computes what e47_local.forward computes, arrange
     (SweepCross) returns: to the weights W and biases b the exact gradient; to the step weights c the exact gradient g . (W h_k + b); to
     the sources' states c[k] times the error crossed by sign(W) * scale, the scale being the specification's (mean |W| over all cells).
     That is IndexSign followed by the specification's sum over steps;
-  * the input side of a far cell is its bias times the sum of its step weights over the steps that exist; an interface cell has period 1.
+  * the input side of a far cell is its bias times the sum of its step weights over the steps that exist; an interface cell has period 1;
+  * cells of period 1 (c[0] = 1, no step weights) go through the specification's IndexSign on their group; when every cell is updated and
+    all are of period 1 (the arm `one`, and 16 a side) the position is computed as the specification computes it, without its sums over
+    earlier steps, which are then sums of one term.
 """
 import hashlib
 import json
@@ -104,9 +107,13 @@ def plan(L, Lx):
             sel = upd & (L.p == q)
             if not bool(sel.any()):
                 continue
+            if q == 1 and bool(sel.all()):                                  # every cell, all of period 1: the specification's arrangement
+                groups.append(dict(q=1, P=1, every=True, cells=T.arange(L.C)))
+                continue
             ci = T.nonzero(sel & isif).flatten(); cf = T.nonzero(sel & ~isif).flatten()
             cells = T.cat([ci, cf])
-            groups.append(dict(P=min(q, t + 1), cells=cells, ifpos=ifpos_of[ci], farpos=farpos_of[cf], n_if=len(ci), idx=L.idx[cells]))
+            groups.append(dict(q=q, P=min(q, t + 1), every=False, cells=cells, ifpos=ifpos_of[ci], farpos=farpos_of[cf], n_if=len(ci),
+                               idx=L.idx[cells]))
         allc = T.cat([g_["cells"] for g_ in groups])
         out.append((groups, allc))
     return out
@@ -122,8 +129,9 @@ def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=No
     B, Lx = x.shape
     gi_if = L47.lin(z1, arch26.Mat(m.rnn.weight_ih_l0, m.rnn.bias_ih_l0), local).reshape(B, Lx, 3, L47.PATCH * L47.PATCH)
     c = L.coef()                                                             # (K, C), with the graph to a
+    scale = L.Wc.detach().abs().mean() if local else None                  # the specification's scale: mean |W| over every cell
     if local:
-        Sfull = L.Wc.detach().sign() * L.Wc.detach().abs().mean()
+        Sfull = L.Wc.detach().sign() * scale
     t0 = 0 if state is None else state["t"]
     hist = [T.zeros(B, L.C)] if state is None else list(state["hist"])      # hist[s + 1] = h(s); hist[0] = h(-1) = 0
     h = hist[-1]
@@ -133,27 +141,46 @@ def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=No
         groups, allc = pl[t]
         tl = t - t0                                                          # the position within x
         hn_parts = []
-        for g_ in groups:
+        if groups[0]["every"]:
+            # every cell updated, all of period 1 (c = 1): as the specification computes it, without the sums over earlier steps
+            G = T.zeros(B, 3, L.C).index_copy(2, L.ifx, gi_if[:, tl])
+            if len(L.farx):
+                G = G.index_copy(2, L.farx, L.bfar[None].expand(B, -1, -1))
+            H = L47.IndexSign.apply(h, L.Wc, L.bc, L.idx, scale) if local else T.einsum("bik,gik->bgi", h[:, L.idx], L.Wc) + L.bc
+            r = T.sigmoid(G[:, 0] + H[:, 0]); z = T.sigmoid(G[:, 1] + H[:, 1]); n = T.tanh(G[:, 2] + r * H[:, 2])
+            groups_rest, hn_parts = [], [(1 - z) * n + z * h]
+        else:
+            groups_rest = groups
+        for g_ in groups_rest:
             P, cells, idx = g_["P"], g_["cells"], g_["idx"]
-            cg = c[:P, cells]                                                # (P, n)
             Wg, bg = L.Wc[:, cells], L.bc[:, cells]
-            hk = T.stack([hist[t - k][:, idx] for k in range(P)])           # (P, B, n, N + 1): h(t-1-k) at the sources
-            if local:
-                H = SweepCross.apply(hk, Wg, bg, cg, Sfull[:, cells])
+            if g_["q"] == 1:
+                # period 1: c[0] = 1 exactly and carries no gradient; the specification's IndexSign on this group's cells
+                cg = None
+                H = L47.IndexSign.apply(h, Wg, bg, idx, scale) if local else T.einsum("bik,gik->bgi", h[:, idx], Wg) + bg
             else:
-                hbar = T.einsum("pbik,pi->bik", hk, cg)
-                H = T.einsum("bik,gik->bgi", hbar, Wg) + (bg * cg.sum(0)[None])[None]
+                cg = c[:P, cells]                                            # (P, n)
+                hk = T.stack([hist[t - k][:, idx] for k in range(P)])       # (P, B, n, N + 1): h(t-1-k) at the sources
+                if local:
+                    H = SweepCross.apply(hk, Wg, bg, cg, Sfull[:, cells])
+                else:
+                    hbar = T.einsum("pbik,pi->bik", hk, cg)
+                    H = T.einsum("bik,gik->bgi", hbar, Wg) + (bg * cg.sum(0)[None])[None]
             parts = []
             if g_["n_if"]:
                 parts.append(gi_if[:, tl][:, :, g_["ifpos"]])                # period 1: c[0] = 1
             if len(g_["farpos"]):
                 nf = g_["n_if"]
-                parts.append((L.bfar[:, g_["farpos"]] * cg[:, nf:].sum(0)[None])[None].expand(B, -1, -1))
+                bf = L.bfar[:, g_["farpos"]]
+                parts.append((bf if cg is None else bf * cg[:, nf:].sum(0)[None])[None].expand(B, -1, -1))
             Gs = parts[0] if len(parts) == 1 else T.cat(parts, 2)
             r = T.sigmoid(Gs[:, 0] + H[:, 0]); z = T.sigmoid(Gs[:, 1] + H[:, 1]); n = T.tanh(Gs[:, 2] + r * H[:, 2])
             hn_parts.append((1 - z) * n + z * h[:, cells])
-        hn = hn_parts[0] if len(hn_parts) == 1 else T.cat(hn_parts, 1)
-        h = h.index_copy(1, allc, hn)
+        if groups[0]["every"]:
+            h = hn_parts[0]
+        else:
+            hn = hn_parts[0] if len(hn_parts) == 1 else T.cat(hn_parts, 1)
+            h = h.index_copy(1, allc, hn)
         if far_off and len(L.farx):
             h = h.index_fill(1, L.farx, 0.0)
         if far_mean is not None and len(L.farx):
