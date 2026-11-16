@@ -1,0 +1,20 @@
+1. F10 local=False: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.1e-07, the others 2.3e-07, a 0.0e+00
+1. F10 local=True: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.8e-07, the others 3.5e-07, a 0.0e+00
+1. P8 local=False: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.5e-07, the others 2.3e-07, a 9.8e-08
+1. P8 local=True: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.2e-07, the others 3.0e-07, a 1.3e-07
+2. connections at 16 x 16 equal E42's: True
+3. 256 cells, periods one: weights 935,953; multiply-adds 930,560 (with periods 930,560); cells by period {1: 256}; mean difference in log2 period across a connection 0.00; farthest cell 0 grid steps = 0 connections
+3. 1024 cells, periods one: weights 965,905; multiply-adds 955,904 (with periods 955,904); cells by period {1: 1024}; mean difference in log2 period across a connection 0.00; farthest cell 8 grid steps = 3 connections
+3. 1024 cells, periods place: weights 971,665; multiply-adds 955,904 (with periods 936,500); cells by period {1: 256, 2: 192, 4: 192, 8: 192, 16: 192}; mean difference in log2 period across a connection 0.59; farthest cell 8 grid steps = 3 connections
+3. 1024 cells, periods scatter: weights 971,665; multiply-adds 955,904 (with periods 936,500); cells by period {1: 256, 2: 192, 4: 192, 8: 192, 16: 192}; mean difference in log2 period across a connection 1.13; farthest cell 8 grid steps = 3 connections
+3. 4096 cells, periods one: weights 1,085,713; multiply-adds 1,057,280 (with periods 1,057,280); cells by period {1: 4096}; mean difference in log2 period across a connection 0.00; farthest cell 24 grid steps = 8 connections
+3. 4096 cells, periods place: weights 1,114,513; multiply-adds 1,057,280 (with periods 960,260); cells by period {1: 256, 2: 960, 4: 960, 8: 960, 16: 960}; mean difference in log2 period across a connection 0.26; farthest cell 24 grid steps = 8 connections
+3. 4096 cells, periods scatter: weights 1,114,513; multiply-adds 1,057,280 (with periods 960,260); cells by period {1: 256, 2: 960, 4: 960, 8: 960, 16: 960}; mean difference in log2 period across a connection 1.22; farthest cell 24 grid steps = 8 connections
+4. a changed byte reaches a cell no sooner than its distance allows: True | changes only at update positions: True | with far cells off they are zero: True | logits finite: True
+   local=False: every parameter has a finite gradient: True; share of far cells' recurrent weights with a non-zero gradient 0.90
+   local=True: every parameter has a finite gradient: True; share of far cells' recurrent weights with a non-zero gradient 0.90
+5. 256 cells, periods one: 0.085 CPU-seconds per forward and backward (sweep)
+5. 1024 cells, periods one: 0.271 CPU-seconds per forward and backward (sweep)
+5. 1024 cells, periods place: 0.391 CPU-seconds per forward and backward (sweep)
+5. 4096 cells, periods one: 1.206 CPU-seconds per forward and backward (sweep)
+5. 4096 cells, periods place: 1.576 CPU-seconds per forward and backward (sweep)

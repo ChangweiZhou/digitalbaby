@@ -1,14 +1,15 @@
 """The long-life world in the full-scale format: the specification, as runnable pure Python (no torch in the generator). Coordinator's file,
 16 Nov 2026 (the proposal is the reviewer's memo, revision 16, section 25.4). It replaces the task set of sw_world_spec.py and keeps its
 schedule rule, item rule and digest rule. Everything follows from the world's seed through random.Random objects seeded with strings.
-    python3 -I lw_world_spec.py [world_seed] [visits]         prints a world; with torch and the harness present, also the row-0 check"""
+    python3 -I lw_world_spec.py [world_seed] [visits]         prints a world"""
 import hashlib
 import sys
 from random import Random
 
 EOS, BOS = 256, 257                        # mod97_local.py lines 34-35
 USED_MODULI = (73, 83, 89, 97)             # F3, E40's family, the birth family, F1
-MODULI = [m for m in range(41, 101) if m not in USED_MODULI]        # 56 families, one modulus each
+LOWEST = 41
+MODULI = [m for m in range(LOWEST, 101) if m not in USED_MODULI]    # 56 families, one modulus each
 OPS = ("add", "sub", "max", "min")         # exp11_cell.DEV's four, with exp11_cell.SYM's symbols
 SYM = {"add": ord("+"), "sub": ord("-"), "max": ord(">"), "min": ord("<")}
 CODE_BYTES = list(range(128, 256))         # a task's code is two of these: bytes no family and no birth has used
@@ -30,10 +31,10 @@ def needs_wrap(op, p, a, b):               # a reduction pair
 
 
 class World:
-    def __init__(self, seed, visit_updates=VISIT_UPDATES, p_new=P_NEW, taught_fraction=TAUGHT_FRACTION):
+    def __init__(self, seed, visit_updates=VISIT_UPDATES, p_new=P_NEW, taught_fraction=TAUGHT_FRACTION, lowest=LOWEST):
         self.seed, self.visit_updates, self.p_new = seed, visit_updates, p_new
         r = Random(f"lw|{seed}|families")
-        mods = list(MODULI); r.shuffle(mods)                                   # family g has modulus mods[g]
+        mods = [m for m in MODULI if m >= lowest]; r.shuffle(mods)             # family g has modulus mods[g]; lowest = 41 gives all 56
         codes = r.sample(range(len(CODE_BYTES) ** 2), 4 * len(mods))           # distinct two-byte codes, after the moduli, same generator
         self.tasks = []
         for g, p in enumerate(mods):

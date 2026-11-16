@@ -3191,3 +3191,86 @@ Sources: the workers' branches merged here (`claude/peaceful-hopper-8ofq4i` for 
 **E34, stage 2 and the long births (merged; not yet read by me beyond the prediction tables).** The passing temperature learns in range and extrapolates on one of the two new seeds and does not learn in range on the other (69.9 at 12 letters), so the three-seed sentence is not licensed. Backpropagation with the same gain does not learn in range. Over four times the dose, the reading is *mixed*: the gain's mean at 40 letters over the last 13 rows is 4.4 points above plain backpropagation's and above it in 10 rows, short of the 10 points the reading required; plain backpropagation itself keeps improving to 92.6. P34.10, P34.11, P34.12 and P34.14 hold; P34.9, P34.13 and P34.15 to P34.17 miss. I will read those tables properly before saying more.
 
 **E41, first seed (merged; not yet read by me).** Its half-width births are the learners E44 uses.
+
+## 9.147 The one-page close, and the reviewer's proposed plan (16 November 2026)
+
+**The one-page close** is `MINIFLY_ARITHMETIC_CLOSE_ONE_PAGE_20261116.md`: six things established, four not, the open items, and the proposed direction. It was due on the 16th and is written against today's results.
+
+**The reviewer's plan, put to the user and not yet decided.** It names six issues (the learner keeps nothing unused; that undermines the benefit of experience; the sweep shows no advantage; no instrument for long lives; whole-answer scores hide what happens; defects in designs found after runs) and five steps: locate the loss in E43; finish E41's and E42's seeds; one retention experiment chosen by that outcome; the long-life instrument (E44); confirmation of the two strongest positive findings on sealed tasks. It proposes restating the question around retention under fixed memory.
+
+**My position.** I agree with the issues and the order. Three additions of my own:
+
+- **Weight decay can be checked now.** Whether learning the first family needs decay at all is one birth without it per rule, about an hour each, and every branch of the retention step needs the answer. E38's arm without decay already shows a second family is acquired without it (96%).
+- **The comparison must keep the user's first form:** against naive backpropagation and against backpropagation with a plain replay store, at equal stored numbers and equal updates.
+- **The defects of process are mine as much as the reviewer's.** In two days I set four marks without computing what a baseline or chance alone would give, built a task set without comparing its size with the record, and wrote a reading that a whole-answer score could not support. The six working rules the reviewer proposes would have caught each; I adopt them for my briefs whatever is decided about the question.
+
+**Not staffed:** E41's seeds 93683 and 116089 have no worker.
+
+## 9.148 The restated question adopted; the first check drafted (16 November 2026)
+
+**The user's decision, 16 November.** Asked whether to adopt the reviewer's restated question with retention at the centre, the user answered: "Yes, adopt it". The question the programme now asks:
+
+> Under fixed memory and continued learning, can a learner whose changes are confined to the connections in use keep what it has learned while learning new things, at no greater computation to threshold than back-propagation?
+
+The original form, that a local rule generalises better, is not supported by the evidence (9.147 and the one-page close) and is no longer what experiments are designed to test. The user's premises of 15 November stand unchanged: persistent learning, fixed memory and computation, no full backpropagation in the candidate, and a slow start does not count against a learner.
+
+**What I take to be adopted with it, and what not.** Adopted: the plan's five steps and its order; retention as the centre; the six working rules for briefs and reports (a comparison with the record in every brief; one full-length trial on one seed for any mechanism with a threshold or rate; retention experiments score what wrong answers are; reports list weight files as the repository shows them; at most three lines at once; no design built on an explanation before the result that would refute it). Not decided by this answer: the arms of the long-life comparison, which the plan fixes only after the retention step, and my condition that backpropagation with a plain replay store at equal memory stays among them, which I hold to as the user's first form of the question.
+
+**Drafted, awaiting audit: E46** (`OPUS_TASK_E46_DOES_LEARNING_THE_FIRST_FAMILY_NEED_WEIGHT_DECAY_20261116.md`), the plan's first check. E41's present-width cell at half of the pairs, with decay 0 and 0.05 beside the standing 0.25, both rules, three seeds; E41's measures and forms of statement, with the 40-letter test and the weight norms added. It is the first brief written under the working rules: it states the comparison with the record (the 80% threshold is reached at 5,120 to 6,656 updates at the standing decay, so a dose of 12,288 leaves a factor of about two) before its design. The number E45 is skipped, since `exp45` is the harness's module.
+
+## 9.149 E46 audited once and released as revision 2 (16 November 2026)
+
+The audit (`AUDIT_E46_WEIGHT_DECAY_BRIEF_20261116.md`, 6a208456) required six changes, all made as written; no re-audit.
+
+- **A check of mine was wrong.** I wrote that after one update a run without decay equals the run with decay divided by (1 − rate × decay). AdamW shrinks a weight and then takes its step, so the two differ by rate × decay × the weight, added. The check would have failed on a correct runner. It now estimates the decay from the difference of two one-update runs.
+- **The reference is run by E46's own runner**, as a third arm at the standing decay, and is tied bit for bit to E26's six births. As I had it, the reference came from E41's runs, was scored differently from the new runs, and depended on two seeds E41 has not run.
+- **The dose is a full birth.** At half a birth the standing network is still rising on the 40-letter test (82 to 86 against 95 to 96 at the end) and single rows there swing by 6 to 11 points. With the full dose the runs without decay are also births that the retention step can start from.
+- **Two citations of mine to this review were wrong** (the decay of 0.25 was chosen in 9.24, 9.25 and 9.27, not 9.20 to 9.21), and I had not cited what the review already says about decay at birth: on the window network a weak decay cost nothing at half of the pairs within 16,384 updates and did cost at 15% of the pairs and late (9.2, 9.3). I wrote a "comparison with the record" and did not search the record for the variable under test.
+- The sentence now names the cell it speaks of, and the receipt records the run's own decay, which the harness's recording function would have overwritten with the constant.
+
+The reviewer agrees that backpropagation with a plain replay store at equal memory is among the arms of the long-life comparison.
+
+**On a graphics processor** (the reviewer's answer to the user, which I share): a single run would gain little, since the network is small and steps byte by byte; the gain is in training many networks as one batch, which needs a rewritten runner, a new audit, and checks by tolerance in place of equal hashes. Not worth doing before E44 is calibrated and many long lives are to be run at once. The time of the last two days went to rounds of design, audit and reading, not to computation.
+
+## 9.150 E44 audited and released; the user's requirement of locality at the input and the output; E47 drafted (16 November 2026)
+
+**E44 released as revision 2.** The audit (`AUDIT_E44_LONG_LIFE_WORLD_BRIEF_20261116.md`, dc05d575) reproduced the generator's digests with a second implementation and required nine changes, all made as written. Those that correct me: the level my gate read (a fixed window of 64 updates) meant something different at each visit length and could not pass the upper limit at the shortest; my floor of 0.10 could be passed by storing pairs without the rule (a fresh network that has stored a tenth of a family is at 6 to 17% on reduction pairs), so it is 0.20; I had stated how many families a life meets from three worlds, and over 200 worlds a life of 1,024 visits meets all 52 in only half; I named an optimizer constructor that takes no rate or decay; and I committed a compiled cache file. Added on the audit's word: what is kept is read on a fixed list at the end of every visit with decay alone beside it; one second lap over the eight families; the event file records the bytes of each answer given, after E43. From its recommendations: a set without decay and a third arm (the sweep's life from backpropagation's birth), both outside the gate. The generator file changed in two places that leave every digest as it was.
+
+**The user's statements of 16 November on the input and the output, verbatim, as the reviewer records them.**
+
+- "It seems the byte level translation / output is the fixed cost head that in the long term can be ignored. What is the problem?"
+- "No, biological cells obviously cannot see the whole input, so locality is essential and our current set up does not scale. Also it makes no sense for a cell to see one million tokens in a future NLP task."
+
+So locality is a requirement of the design, at the input and the output as well as between cells. E42 met it only between cells: each of its cells read all 512 input values and each readout unit read every cell, 2,048 of a cell's 2,081 multiply-adds.
+
+**Drafted, awaiting audit: E47** (`OPUS_TASK_E47_LOCALITY_AT_THE_INPUT_AND_THE_OUTPUT_20261116.md`), to run after E42's other seeds and E43's additions. A grid of 256, 1,024 or 4,096 cells in which only one patch of 256 reads the byte and is read by the readout; every cell reads 10 neighbours and itself; the arithmetic is by index, so no matrix over all pairs of cells exists; periods either all 1, or growing with distance from the interface, or the same periods scattered.
+
+What I did, as for E42: wrote the layer as runnable code (`PROJECT_DOCUMENTS/COORD_CHECKS_20261116/e47_local_spec.py`) and ran it without training.
+
+- At 256 cells it gives E42's logits to 2.4e-7 and E42's gradients to 3.5e-7 under both rules, for `F10` and for `P8`; so E42's `F10` is this job's first row and is not rerun.
+- Sixteen times the cells cost 14% more multiply-adds, 3% with periods, and every size is below the present network: a cell costs 33 multiply-adds.
+- A changed byte reaches a cell no sooner than its distance allows, and the far cells' weights all receive gradient under both rules.
+- **Counted computation is not measured time:** by index on a CPU the largest size takes 1.2 to 1.6 CPU-seconds an update on my Mac against 0.09 at 256 cells. The comparison is in multiply-adds, with time reported beside it.
+- **One thing found by writing it:** my first rule for periods by place (groups of 256, doubling, capped at 16) put three quarters of the largest network's cells at period 16, where a cell is updated once or twice in an item. The file uses four equal groups at periods 2 to 16.
+
+Under the working rules adopted today the brief states its comparison with the record before the design (among it, that at 4,096 cells a round trip to the farthest cell takes 16 steps, as long as an item, which may leave those cells unused), and it has one full-length trial on one seed, read before any roster.
+
+## 9.151 E43's additions as the reviewer reads them; E48 drafted; two further additions to E43 (16 November 2026)
+
+Source: the reviewer's memo, revision 19 (4f8aed6f), sections 24.8 and 27. E43's branch is not yet complete (its plain-step runs under the sweep are being continued), so nothing of it is merged here; the figures below are the reviewer's read and its own measurement on the weight files, not mine.
+
+**After unrelated learning the first family is overwritten, not merely unexpressed.**
+
+- The reminder does not bring it back within a hundred updates in any of the six networks (0.0 to 1.4% on reduction pairs after 64 updates; 1.0 to 5.8% after 256). At 1,024 updates two of six are above 90% and the others at 11 to 69%, where a fresh network is near 2%: something is saved. After a whole life of contradicting families E36 had found the family back within 64 to 128 updates, so unrelated learning for 4,096 updates removes more than a life did. I gave "back at row 128" 50%.
+- Plain gradient steps do not spare it: under backpropagation at rate 0.03 it is at zero from 256 updates on. AdamW's equal-sized steps are not the cause.
+- With the readout alone put back to the birth's the family stays at 0.7 to 3.7%; the birth with only its recurrent matrix changed is at about 1% after 1,024 updates.
+
+So of the three explanations in the addendum of 9.146, the third holds. The remedy to test is separation: a change that cannot reach the connections an earlier family uses. That is the adopted question in its plainest form.
+
+**Drafted, awaiting audit: E48** (`OPUS_TASK_E48_A_NEW_FAMILY_IN_CONNECTIONS_GATED_BY_ITS_CODE_20261116.md`). The memo calls this job E47; I had already given that number to the locality job, so it is E48. On E40's setting, everything of the lived network is frozen and the new family is learned only in two added terms of rank 4, 16 or 64 on the recurrent layer's two matrices, on for items of that family, and in the four new code rows. The earlier families are kept by construction; the job measures the price in learning. The gate is supplied by the harness, so it is an upper bound, as E35's first stage was.
+
+What I did: wrote the terms and the forward as runnable code and ran them on E26's lives of seed 73129 without training. With the gate off the network is bit-equal to the lived one; with the gate on at the start it is too; after an update only the four code rows of the network have changed; after three gated updates an earlier family's logits are bit-equal to the lived network's. Under both rules the second factor of a term receives no error at the first update, since the first is zero, and does from the second. I specified the sweep's path through a term as two linear maps each crossed back by weight signs, which the memo leaves open.
+
+**Two further additions to E43** (addendum 2 of its brief): the unrelated arm with the first family rehearsed, with and without decay, as the conventional reference any remedy is measured against; and the unrelated arm from E42's `F10` and `P8` of seed 73129, to replace an expectation of *lost* by a figure.
+
+**Not staffed, still:** E41's seeds 93683 and 116089.
