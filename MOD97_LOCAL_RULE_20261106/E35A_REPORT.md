@@ -185,7 +185,7 @@ One seed in stage 1a. Single births; differences under 15 points are not read. T
 
 ## Addendum 1: stage 1b (arm F, f = 0.10, seeds 93683 and 116089)
 
-Two births of arm `F` were launched at 02:39 UTC on 16 November 2026 from HEAD cdbe5daa. Each ran `python3 exp35a_stream.py dev F 10 <seed>` as its own detached process with one thread. Both exited with code 0: seed 93683 at 05:39 and seed 116089 at 05:43. Each receipt is complete and has three saved rows (16,384, 20,480 and 24,576). CPU: 10,693 s for seed 93683 and 10,951 s for seed 116089.
+Two births of arm `F` were launched at 02:39 UTC on 16 November 2026. Both receipts record source commit 29c792f6 with no sources modified. Each ran `python3 exp35a_stream.py dev F 10 <seed>` as its own detached process with one thread. Both exited with code 0: seed 93683 at 05:39 and seed 116089 at 05:43. Each receipt is complete and has three saved rows (16,384, 20,480 and 24,576). CPU: 10,693 s for seed 93683 and 10,951 s for seed 116089.
 
 - Receipts: `exp45/e35a/e35a_dev_F_f10_{93683,116089}.json`.
 - Weights: `_row{16384,20480,24576}.pt`.
