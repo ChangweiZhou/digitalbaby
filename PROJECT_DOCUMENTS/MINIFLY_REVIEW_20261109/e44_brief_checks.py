@@ -81,6 +81,16 @@ if "A" in want:
         first8 = sorted({a.task[i][2] for i in changed if a.task[i][0] < 8})
         print(f"      world {s}: {len(changed)} tasks get one more taught pair (moduli {sorted({a.task[i][2] for i in changed})}); among the first eight families: {first8};"
               f" in-turn digest {b.digest(8, in_turn=True)[:16]} ({'equal' if a.digest(8, in_turn=True) == b.digest(8, in_turn=True) else 'different'})")
+    print("   a second lap by the runner's `branch` command from the state after 8 visits (families 0 to 7 again), and the probe list of 100 reduction pairs a task:")
+    print("   world | second lap at 64 updates | at 128 | at 256 | probe list, families 0 to 7 (1,600 items)")
+    for s in range(1, 9):
+        d = []
+        for u in (64, 128, 256):
+            w = LW.World(s, visit_updates=u); d.append(w.stream_digest(w.branch(8, range(8)))[:16])
+        w = LW.World(s); pl = w.probe_list(range(8)); h = hashlib.sha256()
+        for i, a, b, prompt, target in pl:
+            h.update(bytes([i // 256, i % 256, a, b]))
+        print(f"   {s}     | {d[0]} | {d[1]} | {d[2]} | {h.hexdigest()[:16]} ({len(pl)} items)")
     # what the committed digests do and do not exercise
     for s in (1, 2, 3):
         w = LW.World(s)

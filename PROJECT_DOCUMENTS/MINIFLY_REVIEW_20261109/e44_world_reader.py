@@ -94,9 +94,10 @@ class World:
         prompt = list(code) + [ord(ch) for ch in f"{a:02d}"] + [SYMBOL[op]] + list(letters) + [ord(ch) for ch in f"{b:02d}"] + [ord("=")]
         return prompt, [ord(ch) for ch in f"{answer(op, p, a, b):02d}"] + [EOS]
 
-    def visit(self, v, family):
-        """One visit: visit_updates updates, each (taught, asked) with 48 and 16 entries (task id, a, b, prompt, answer)."""
-        r = Random(f"lw|{self.seed}|visit|{v}")
+    def visit(self, v, family, r=None):
+        """One visit: visit_updates updates, each (taught, asked) with 48 and 16 entries (task id, a, b, prompt, answer).
+        r: another generator in place of the visit's own (the runner's `branch` command draws by the same rule from its own)."""
+        r = r or Random(f"lw|{self.seed}|visit|{v}")
         ids = [4 * family + j for j in range(4)]
         for _ in range(self.visit_updates):
             taught, asked = [], []
@@ -115,11 +116,33 @@ class World:
                 yield v, f, taught, asked
 
     def digest(self, visits, in_turn=False):
+        return self.stream_digest(self.stream(visits, in_turn))
+
+    @staticmethod
+    def stream_digest(stream):
         h = hashlib.sha256()
-        for v, f, taught, asked in self.stream(visits, in_turn):
+        for v, f, taught, asked in stream:
             for i, a, b, prompt, target in taught + asked:
                 h.update(bytes([i // 256, i % 256, a, b, len(prompt)]) + bytes(prompt) + bytes(x % 256 for x in target))
         return h.hexdigest()
+
+    def branch(self, n0, families):
+        """The stream of `sw_run.py branch` from a state after n0 visits over the named families: its k-th visit draws, by the
+        visit's item rule, from Random(f"world|{seed}|branch|{n0}|{k}") (the runner's string at 436d9677, which says "world")."""
+        for k, f in enumerate(families):
+            for taught, asked in self.visit(n0 + k, f, Random(f"world|{self.seed}|branch|{n0}|{k}")):
+                yield n0 + k, f, taught, asked
+
+    def probe_list(self, families, per_task=100):
+        """A list for the question "what is kept": for add and for sub of each family, the first per_task asked pairs, in the
+        split's order, that need the reduction; no letters.  Entries (task id, a, b, prompt, answer)."""
+        out = []
+        for f in families:
+            for j in (0, 1):
+                i = 4 * f + j
+                red = [(a, b) for a, b in self.asked[i] if self.wrap(i, a, b)][:per_task]
+                out += [(i, a, b, *self.item(i, a, b, [])) for a, b in red]
+        return out
 
     # ------------------------------------------------------------------------------------------------ marks on an item
     def mirror(self, i, a, b):
