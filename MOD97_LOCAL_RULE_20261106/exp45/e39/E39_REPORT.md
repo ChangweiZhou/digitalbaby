@@ -162,3 +162,138 @@ Under `naive` at 512 updates a visit, a short absence (0.13–0.51 time constant
 - **Result.** The gate fails at all three rungs, always low. The floor is the linear operations', not the instrument's: max and min are learned at once, linear operations near chance at R0 and rarely past 0.8 at the higher rungs. The sweep learns less than backpropagation at every rung. Cost is 1.0 to 2.6 CPU-hours a long life.
 - **Disposition.** STOP as the brief says: no rung adopted; L2 not started; nothing changed in the generator, runner or scorer.
 - **Next action.** None by me. A new rung, task set or learner setting is a change the brief does not authorise, and a generator change needs an audit. For whoever decides: the cost bound leaves about 2.3 times the updates of h96vu512 within 6 CPU-hours.
+
+---
+
+# Addendum (16 November 2026): jobs L1a and L1b, revision 5
+
+Brief: `OPUS_TASK_E39_SMALL_WORLD_PROTOCOL_L0_L1_20261115.md`, revision 5, on `codex/minifly-consolidated-20261023` at 8183db86 (the brief is unchanged at that branch's head 517a05a8 when this was written). Work on `claude/gallant-edison-p0qa68`: the check-10 digests at 1d217996 (committed before any comparison); the solo and birth streams, the third arm and the scorer with birth groups at b260bbb0; a fix to the solo progress line at 63145a05; L1a's 72 runs, its table and check 13's record at 0c985f3c; this addendum in the commit that adds it. Owner's instruction for this session: do jobs L1a and L1b of revision 5. Commit the check-10 digests first and make them equal the reviewer's nine. Run L1a's 72 solo runs at 64, 96 and 192 units and table them. Apply the size rule, and if no size qualifies, stop and report. Report the gate, the listed figures and P39.10 to P39.21, with no readings beyond the brief's.
+
+Evidence level: L1a is a calibration measurement in the small world (E2-type readings, claims about nothing at full scale). **The size rule fails at all three sizes**, so the brief's stop applies. **L1b is NOT_RUN**: none of its 24 lives, and none of checks 11, 12 or 15 or the births' half of check 14. **Nothing is adopted.**
+
+## Summary
+
+1. **Check 10 passes**: the runner's nine stream digests (six solo streams of world 1, births of worlds 1 to 3) equal the reviewer's in full (`L1b/E39_CHECK10.json`). They were committed at 1d217996 before the reviewer's code or full digests were read.
+2. **L1a: all 72 runs complete.** They cover 12 tasks by the brief's rule, worlds 1 and 2, sizes 64, 96 and 192, arms `naive` and `sweep`, 16,384 updates each, all on one source.
+3. **No run of the 72 reaches the criterion** (share right ≥ 0.8 over the task's asked items of the last 64 updates) within 16,384 updates. That holds at any size, under either arm, in either world, in any band.
+4. **The size rule: no size qualifies.** Under `naive`, 0 of the 8 upper-band tasks reach the criterion within 8,192 updates at 64, at 96 and at 192 units (six needed). Per the brief: **stop and report**. "The task space or the learner's settings are the next thing to change, which is a decision for the reviewer and me and not a rung."
+5. **192 units is not the size**, so the brief's forecast for a 1,024-visit life at 192 units before L1b does not apply and was not made.
+6. **Cost:** 7.35 CPU-hours for the 72 runs. Peak resident memory per process: 379 MiB at 64 and 96 units, 388 MiB at 192.
+
+## L1a: the tasks and the runs
+
+The rule's tasks (`python3 sw_l1a.py tasks`). World 1's match the brief's list. World 2's are 6, 24, 0, 13, 7 and 4, all among the six the brief names.
+
+| World | Band | c1 ≠ c2 | c1 = c2 |
+|---|---|---|---|
+| 1 | 8 to 13 | task 20, −a + 2b mod 9, 40 taught pairs | task 2, a + b mod 8, 32 |
+| 1 | 18 to 24 | task 5, a − b mod 23, 264 | task 1, 2a + 2b mod 19, 180 |
+| 1 | 30 to 37 | task 3, −a − 2b mod 33, 544 | task 12, −a − b mod 37, 684 |
+| 2 | 8 to 13 | task 6, −a + b mod 12, 72 | task 24, −a − b mod 11, 60 |
+| 2 | 18 to 24 | task 0, −2a + 2b mod 21, 220 | task 13, −2a − 2b mod 18, 162 |
+| 2 | 30 to 37 | task 7, a − 2b mod 35, 612 | task 4, 2a + 2b mod 37, 684 |
+
+**Runs.** Each run is `sw_run.py solo <arm> <world> <task> --H <H> --updates 16384`. It starts from the network's initial values (`T.manual_seed(S)`, then the constructor; 52,625, 102,353 and 349,841 parameters at 64, 96 and 192) and uses the solo stream `Random("world|S|solo|<task>")` with no draw for the task. The rate and decay are the defaults (lr 0.001, decay 0.25, betas 0.9/0.98, embedding table without decay). Each update teaches 48 items and asks 16, and the asked items are answered before the update. A run has 786,432 taught presentations and 262,144 answered asked items; `visit` is 0 throughout. At most three processes ran at a time, one thread each, the largest size first.
+
+**Source.** Every receipt records the same sources: `sw_run.py` 664551bd…, `sw_score.py` df79c0d9…, and `sw_world.py` 355e15e6… (the specification file, byte-identical), with no file modified against the commit. In all 36 world-1 receipts the first-256-update stream digest equals check 10's digest for that task. Each of the 12 streams has one full-stream digest across its six runs.
+
+**A first launch was aborted.** The first three runs (192 units, world 1, tasks 20 and 2) failed at update 2048. The cause was a `BufferError` in the solo progress line: a numpy view of the growing event array was kept alive. Nothing but their logs was written (`L1a/aborted/`, with `NOTE.txt`). The fix (63145a05) changed only that line. All 72 runs were then launched from the start, and no output of the aborted launch is used. Its CPU, about 0.06 CPU-hours by the runs' rate, is not measured and not in the totals.
+
+## L1a: updates to criterion, by size and arm
+
+The table the brief asks for, per size and arm, gives each task's updates to criterion with its count of taught pairs. It is in `L1a/E39_L1A_TABLE.md` (machine record `L1a/E39_L1A.json`), with every listed quantity per run. **Every one of the 72 entries for updates to criterion is "not reached in 16,384 updates."**
+
+The other recorded quantities:
+
+- **Updates to a share of 0.5:** reached in 4 of 72 runs:
+  - world 1, task 12 (−a − b mod 37): `naive` at 96 units 10,624; `naive` at 192 units 13,248; `sweep` at 64 units 6,784;
+  - world 2, task 4 (2a + 2b mod 37): `naive` at 96 units 5,888.
+
+  The other 68 never reach 0.5.
+- **32-item window ≥ 0.8** (the second column, which decides nothing): met in the same 4 runs, at updates 11,237, 15,614, 7,266 and 5,975 (seen 539,376, 749,472, 348,768 and 286,800). Not met in the other 68.
+- **Mean training loss over the last 64 updates:** at most 0.033 in every run, and below 0.0001 in all 24 runs of the band 8 to 13.
+- **Share right over the last 256 asked items** (wrap and no-wrap separately in `E39_L1A_TABLE.md`):
+
+| World | Band | Task | Taught pairs | 64 `naive` | 64 `sweep` | 96 `naive` | 96 `sweep` | 192 `naive` | 192 `sweep` |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 8–13 | 20 (−a+2b mod 9) | 40 | 0.004 | 0.000 | 0.000 | 0.000 | 0.012 | 0.000 |
+| 1 | 8–13 | 2 (a+b mod 8) | 32 | 0.023 | 0.000 | 0.000 | 0.000 | 0.000 | 0.000 |
+| 1 | 18–24 | 5 (a−b mod 23) | 264 | 0.242 | 0.043 | 0.062 | 0.047 | 0.102 | 0.094 |
+| 1 | 18–24 | 1 (2a+2b mod 19) | 180 | 0.039 | 0.047 | 0.164 | 0.016 | 0.004 | 0.016 |
+| 1 | 30–37 | 3 (−a−2b mod 33) | 544 | 0.109 | 0.102 | 0.168 | 0.062 | 0.090 | 0.078 |
+| 1 | 30–37 | 12 (−a−b mod 37) | 684 | 0.277 | 0.691 | 0.590 | 0.367 | 0.426 | 0.473 |
+| 2 | 8–13 | 6 (−a+b mod 12) | 72 | 0.004 | 0.000 | 0.000 | 0.008 | 0.023 | 0.000 |
+| 2 | 8–13 | 24 (−a−b mod 11) | 60 | 0.020 | 0.008 | 0.000 | 0.000 | 0.023 | 0.000 |
+| 2 | 18–24 | 0 (−2a+2b mod 21) | 220 | 0.031 | 0.031 | 0.020 | 0.047 | 0.035 | 0.047 |
+| 2 | 18–24 | 13 (−2a−2b mod 18) | 162 | 0.184 | 0.359 | 0.223 | 0.297 | 0.250 | 0.312 |
+| 2 | 30–37 | 7 (a−2b mod 35) | 612 | 0.137 | 0.023 | 0.117 | 0.141 | 0.391 | 0.242 |
+| 2 | 30–37 | 4 (2a+2b mod 37) | 684 | 0.324 | 0.094 | 0.562 | 0.273 | 0.398 | 0.367 |
+
+## The size rule
+
+A size qualifies if, under `naive`, at least six of the eight upper-band tasks (world 1's tasks 1, 3, 5 and 12; world 2's tasks 0, 13, 7 and 4) reach the criterion within 8,192 updates.
+
+| Size | Parameters | Upper-band tasks within 8,192 updates (`naive`) | Qualifies |
+|---|---|---|---|
+| H = U = 64 | 52,625 | 0 of 8 | no |
+| H = U = 96 | 102,353 | 0 of 8 | no |
+| H = U = 192 | 349,841 | 0 of 8 | no |
+
+**No size qualifies. L1b is not run** (24 lives, three arms: NOT_RUN). The brief names the next thing to change as the task space or the learner's settings, and the choice is the reviewer's and the coordinator's, not a rung. The forecast for a 1,024-visit life at 192 units is asked for only if 192 is the size, so it is not reported.
+
+## Checks 10 to 15
+
+| Check | Status | Record |
+|---|---|---|
+| 10. Solo and birth streams | **Passes**: 9 of 9 digests equal the reviewer's in full (`e39_world.py spec streams`). The worker's nine were committed first (1d217996), from the brief's text. | `L1b/E39_CHECK10_DIGESTS_WORKER.json`, `L1b/E39_CHECK10.json` |
+| 11. The life after a birth is the life | NOT_RUN (no L1b lives) | — |
+| 12. Birth and resume | NOT_RUN (no L1b lives) | — |
+| 13. The scorer with birth groups | **Passes**, run on its own because it needs no life. The hand-made event file (two birth tasks, two later tasks, four visits) gives every hand-computed value. The reviewer's fixture (`e39_world.py` at ae61164e, rebuilt with a zero mirror column) passes its own assertions on this scorer. The reviewer's `spec scorer` self-test exits 0. Without birth groups, the 48 L1 score tables are reproduced exactly (0 differ). | `L1b/E39_CHECK13.json` |
+| 14. The new quantities, by a second implementation | **Half in place, not passed.** The event files of all 72 solo runs are committed (`L1a/sw_solo_*.npz`, worlds 1 and 2). World 1's births are NOT_RUN. The recomputation is the reviewer's and has not been done. As a same-author consistency check only, updates to 0.8 and to 0.5 and the last-256 share were recomputed from the 72 event files and agree with every receipt. | `L1a/` |
+| 15. The third arm's start | NOT_RUN (no L1b lives) | — |
+
+## Predictions (revision 4 and 5)
+
+| | Prediction (the brief's) | Chance | Outcome |
+|---|---|---|---|
+| P39.10 | L1a: 96 units qualifies | 45% | **False**: 0 of 8 upper-band tasks within 8,192 updates (six needed). |
+| P39.11 | L1a: 64 units qualifies | 25% | **False**: 0 of 8. |
+| P39.20 | L1a: 192 units qualifies | 60% | **False**: 0 of 8. |
+| P39.21 | If 192 units is the size used, a life of 1,024 visits with its birth is forecast within 6 CPU-hours | 40% | **Not judged**: its condition is not met (192 is not the size used), and no forecast was made. |
+| P39.12 | L1a: under the sweep at 96 units, at least four of the eight upper-band tasks reach the criterion within 16,384 updates | 25% | **False**: 0 of 8. |
+| P39.13 | L1a, world 1, `naive`, 96 units: the c1 = c2 task reaches the criterion in fewer updates than the c1 ≠ c2 task of the same band in at least two of three bands (a band where neither reaches does not count) | 50% | **False**: in all three bands neither task reaches it, so no band counts. |
+| P39.18 | L1a: no task of the band 8 to 13 reaches the criterion under `naive` at either size, in either world | 55% | **True** as written (64 and 96 units): 0 of 4 at each. At 192 units also 0 of 4. |
+| P39.14 | L1b: the birth is complete in at least six of eight worlds under `naive` | 60% | Not judged: L1b NOT_RUN. |
+| P39.15 | L1b: the gate passes | 35% | Not judged: L1b NOT_RUN (the brief stops before it). |
+| P39.16 | L1b: the mean first-visit level of linear tasks after the birth is at least twice L1's under `naive` | 55% | Not judged: L1b NOT_RUN. |
+| P39.17 | L1b: the sweep's own birth is complete in at least six of eight worlds | 15% | Not judged: L1b NOT_RUN. |
+| P39.19 | L1b: `sweep-after-naive`'s mean first-visit level of later tasks is within 0.10 of `naive`'s in six of eight worlds | 40% | Not judged: L1b NOT_RUN. |
+
+## Cost
+
+| Size | `naive`: CPU-hours (mean CPU-seconds a run) | `sweep` | Peak resident memory, one process |
+|---|---|---|---|
+| 64 | 0.66 (197) | 0.73 (218) | 379 MiB |
+| 96 | 0.89 (267) | 0.99 (298) | 379 MiB |
+| 192 | 1.95 (584) | 2.13 (640) | 388 MiB |
+
+The total is 7.35 CPU-hours: 3.27 for the 48 runs at 64 and 96 units, 4.08 for the 24 at 192. The brief estimated about 3.5 and 3. Check 13 took under a minute. The L1b driver (`smallworld/sw_l1b.py`) and the assembly of checks 11 to 15 (`smallworld/sw_checks_l1b.py assemble`) are committed and have not been run.
+
+**What is committed:** all 72 receipts and event files, the run logs, the driver log, `E39_L1A.json` and `E39_L1A_TABLE.md`. The 72 end states (`*_state_end.pt`, 155 MB) are kept by their hashes in each receipt (`states[].file_sha256`, weights and optimizer hashes), not as files.
+
+## What this does not show
+
+- Nothing at full scale.
+- No claim that these tasks cannot be learned alone by this network. They are not learned to the criterion within 16,384 updates at the default rate and decay, from one draw of initial values per world; nothing else was tried.
+- Nothing about births or lives with a birth; L1b is not run.
+- No independent recomputation: check 14's is the reviewer's. No formal checker or seal exists; none is claimed.
+
+## Decision record (L1a and L1b)
+
+- **Anchor.** `claude/gallant-edison-p0qa68`; brief E39 revision 5 (8183db86); learner `sw_net.SWNet` at H = U = 64, 96 and 192; arms `naive` and `sweep`; generator unchanged (355e15e6…).
+- **Question.** Does one linear task alone reach the criterion within 8,192 updates at some size, so that L1b's birth has a size?
+- **Falsifier.** The size rule: six of eight upper-band tasks under `naive`, at the smallest qualifying size.
+- **What ran.** Check 10, 72 L1a runs (7.35 CPU-hours, all complete) and check 13. Nothing else.
+- **Result.** No run reaches the criterion; 0 of 8 upper-band tasks at each size. No size qualifies.
+- **Disposition.** STOP, as the brief says. L1b NOT_RUN. No size adopted. The generator, the adopted core and the learner's settings are unchanged.
+- **Next action.** None by me. Per the brief, the task space or the learner's settings are next, a decision for the reviewer and the coordinator.
