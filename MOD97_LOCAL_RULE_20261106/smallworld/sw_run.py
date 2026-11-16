@@ -184,6 +184,50 @@ def batches_with(world, rng, group):
         yield taught, asked
 
 
+def solo_batches(world, tid, updates):
+    """E39 revision 4, job L1a: one task alone. One generator for all the run's updates, Random("world|S|solo|<task id>"); each update
+    draws 64 items in order, the first 48 taught: pair pool[randrange(len(pool))], then (world.render) randint(0, 4) for k and k letters
+    by choice. No draw is made for the task."""
+    t = world.tasks[tid]
+    r = Random(f"world|{world.seed}|solo|{tid}")
+    for _ in range(updates):
+        taught, asked = [], []
+        for i in range(W.BATCH):
+            pool = t["taught"] if i < W.TAUGHT_PER_BATCH else t["asked"]
+            a, b = pool[r.randrange(len(pool))]
+            (taught if i < W.TAUGHT_PER_BATCH else asked).append((t["id"], a, b, *world.render(t, a, b, r)))
+        yield taught, asked
+
+
+def birth_tasks(world, groups):
+    return sorted(t["id"] for g in groups for t in world.groups[g])
+
+
+def birth_batches(world, groups):
+    """E39 revision 4, job L1b: the birth's stream, without end. One generator for the whole birth, Random("world|S|birth"); each update
+    draws 64 items in order, the first 48 taught: task tasks[randrange(len(tasks))] with tasks the birth groups' tasks in id order, then
+    pair, k and letters as in a visit."""
+    ts = [world.tasks[i] for i in birth_tasks(world, groups)]
+    r = Random(f"world|{world.seed}|birth")
+    while True:
+        taught, asked = [], []
+        for i in range(W.BATCH):
+            t = ts[r.randrange(len(ts))]
+            pool = t["taught"] if i < W.TAUGHT_PER_BATCH else t["asked"]
+            a, b = pool[r.randrange(len(pool))]
+            (taught if i < W.TAUGHT_PER_BATCH else asked).append((t["id"], a, b, *world.render(t, a, b, r)))
+        yield taught, asked
+
+
+def stream_digest(batches, updates):
+    """Check 10: the world digest's rule over each update's taught then asked items, for the first `updates` updates."""
+    h = hashlib.sha256()
+    for _, (taught, asked) in zip(range(updates), batches):
+        for it in taught + asked:
+            h.update(stream_bytes(*it))
+    return h.hexdigest()
+
+
 def stream_bytes(tid, a, b, p, y):
     """One item as sw_world.digest hashes it."""
     return bytes([tid // 256, tid % 256, a, b, len(p)]) + bytes(p) + bytes(v % 256 for v in y)
