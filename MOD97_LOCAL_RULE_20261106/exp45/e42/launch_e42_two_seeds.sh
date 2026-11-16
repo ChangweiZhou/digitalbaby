@@ -20,7 +20,15 @@ for line in sys.stdin:
         ok = d.get("complete") is True and hashlib.sha256(w.read_bytes()).hexdigest() == d["weights_sha256"]
     except Exception:
         ok = False
-    if not ok: print(c, r, s)
+    if not ok:
+        # an interrupted run leaves a partial receipt the runner refuses to overwrite: move its outputs and log aside, kept as evidence
+        import time
+        ts = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()); keep = pathlib.Path("exp45/e42/interrupted"); stem = p.stem
+        for q in [p, p.with_suffix(".pt"), pathlib.Path(str(p.with_suffix(".pt")) + ".tmp"), p.with_name(stem + "_recurrent.pt"),
+                  p.with_name(stem + "_structure.json"), p.with_name(stem + "_answers.json"), pathlib.Path(f"exp45/e42/logs/{stem}.log")]:
+            if q.exists():
+                keep.mkdir(exist_ok=True); q.rename(keep / f"{q.name}.{ts}")
+        print(c, r, s)
 '
 }
 runq() {
