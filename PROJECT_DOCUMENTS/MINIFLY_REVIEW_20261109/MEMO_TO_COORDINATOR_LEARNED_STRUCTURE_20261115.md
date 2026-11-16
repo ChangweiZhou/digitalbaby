@@ -34,6 +34,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 17.** E42's first seed is read and checked with my reader (`E42_SEED_73129_VERIFICATION_20261116.md`). Section 22.12 gives the reading, one defect of my own replacement rule that it exposes, and what follows. Nothing is asked for until the other two seeds report.
 
+**Revision 18.** The audits of the E46 and E44 briefs are in `AUDIT_E46_WEIGHT_DECAY_BRIEF_20261116.md` and `AUDIT_E44_LONG_LIFE_WORLD_BRIEF_20261116.md`. Section 26 is added after Mr. Xu's statement that locality must hold at the input and the output as well: it gives the arithmetic and the requirements for the job that follows E42 (item 15 of section 1).
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -70,6 +72,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 13. **Three additions to E43** (section 24.7): push the weight files its report lists, which are not on the remote; a reminder test from the networks at update 4,096; one arm under plain gradient steps. About 2 CPU-hours.
 
 14. **Brief the replacement of the small world's task set** (section 25): families in the full-scale format, a learner born on one of them, and a calibration first. It comes to me before any worker starts.
+
+15. **Write the specification of the job with a local interface** (section 26), as runnable code, for audit. It runs after E42's other two seeds and E43's additions.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -1101,3 +1105,37 @@ Keep the instrument (schedule, event files, scorer, the measures of 17.3 and the
 - **What it gives up:** the eighteen operations with coefficients, and lives of more than about 240 tasks.
 
 The generator is new and is audited before any run.
+
+## 26. Locality at the input and the output (revision 18)
+
+### 26.1 Mr. Xu's statements
+
+- 16 November: "It seems the byte level translation / output is the fixed cost head that in the long term can be ignored. What is the problem?"
+- 16 November: "No, biological cells obviously cannot see the whole input, so locality is essential and our current set up does not scale. Also it makes no sense for a cell to see one million tokens in a future NLP task."
+
+So locality is a requirement of the design, not an option under test. E42 met it between cells and left it unmet in two places.
+
+### 26.2 The arithmetic (mine; multiply-adds per item and position, forward)
+
+| Part of the present network | Now | How it grows |
+|---|---|---|
+| The byte table, `l1`, and the readout's own layers `l2` and `l3` | 397,824 | not with the number of cells |
+| The input map into the cells and `lm` out of them: every cell reads all 512 input values and every readout unit reads every cell | 2,048 a cell | with the number of cells |
+| Connections between cells at N = 10 | 33 a cell | with the number of cells |
+
+In E42's wiring a cell costs 2,081 and limiting its connections to other cells saves 17% at most. With the input read by a fixed number of cells and the readout reading a fixed number, a cell costs 33, or 22 with E42's periods. At the present network's 1.12 million multiply-adds and 1.12 million weights, such a network could have about 16,000 to 20,000 cells in place of 256.
+
+### 26.3 Requirements for the job (the specification is yours)
+
+1. **The interface is a boundary.** A fixed number of cells read the current byte and a fixed number are read by the readout; no other cell touches either. The byte stays the unit at both ends, so the interface does not grow with the task.
+2. **Every cell reads at most N cells of its neighbourhood** and its own previous value, as in E42, with fixed connections (E42's replacement rule is not used; 22.12).
+3. **Time.** A local connection passes a value one cell a step, and the answer is due at the step of the `=` sign. The cells that read the byte and the cells the readout reads are therefore the same cells or neighbours. A variant that allows a stated number of steps between the `=` sign and the answer may be added, for every learner alike.
+4. **Periods by place, as one variant.** E42 scattered the periods. Here one arm gives period 1 to the cells at the interface and longer periods to cells further from it, so that neighbours have neighbouring periods; the other arm scatters them as E42 did. With equal numbers of cells at periods 1, 2, 4, and so on, the computation a step stays below twice that of the fastest group however many groups there are, while the longest period doubles with each group.
+5. **Sizes.** At least three numbers of cells (for example 256, 1,024 and 4,096) at one interface, and the comparison is made at equal computation a update and at equal number of weights, beside E42's `G` and `P8`.
+6. **Arithmetic by index, not by masked matrix,** since a matrix of all pairs of cells cannot be held at these sizes. At 256 cells the new forward and both rules' gradients must equal E42's to its tolerances.
+7. **Measures.** E42's (updates and weight-items to threshold on A and R, the length test), the multiply-adds a update, and one diagnostic for whether the cells away from the interface are used: the scores with those cells held at zero.
+8. **A full-length run on one seed before the roster,** with its diagnostics read, as the working rules now require.
+
+### 26.4 What I expect, and what it cannot show
+
+On one family, a few hundred cells are enough, so I do not expect more cells to lower the updates to threshold; the job shows whether a network wired in this way learns at all and what a cell costs. Where more cells should pay is in holding many families and in keeping them apart, which is the long-life world of E44 and the question of section 24. The error has further to travel to cells away from the interface, and E42's first seed already shows the sweep's gradient less well aligned in a sparse matrix (0.60 to 0.64 against 0.74), so the sweep may fall behind backpropagation here by more than it did in E42.
