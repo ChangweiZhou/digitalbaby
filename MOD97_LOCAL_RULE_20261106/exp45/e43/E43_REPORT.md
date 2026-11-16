@@ -231,3 +231,119 @@ The addendum states the consequence in advance: if the family is lost here too, 
 
 - **Running the sweep's plain arm to 16,384** follows the brief's condition, which the addendum keeps unchanged. Read at 8,192, that arm had twice the dose of the backpropagation arm read at 4,096.
 - **Not independently reviewed.** No result here has been independently reviewed.
+
+---
+
+# Addendum 2 (16 November 2026): a rehearsed unrelated arm, and E42's networks
+
+Brief: addendum 2 of `OPUS_TASK_E43_IS_A_FAMILY_LOST_TO_UNRELATED_LEARNING_20261116.md`, at bd9f18fe on `codex/minifly-consolidated-20261023` (merged into this branch first).
+
+New code:
+- `e43_addendum2.py` (runner) and `e43_addendum2_read.py` (reader).
+- `exp42_cells.py` and `e42_cells.py`: byte-identical copies from `claude/gallant-dijkstra-i9zgsr` at 534df8f0. Their sha256 (340f9cc5…, 985814d0…) are the ones recorded in E42's four receipts of seed 73129.
+
+Nothing existing was edited. Outputs are in `exp45/e43/addendum2/`: receipts, `E43_ADDENDUM2_TABLES.md` and `E43_ADDENDUM2_READ.json`. CPU was 2.4 CPU-h for the sixteen runs (receipts summed); the brief estimated 2.5.
+
+## 4. `unrelated-rehearse` and `unrelated-rehearse-decay`
+
+**Set-up.** The `unrelated` arm, on the six births, without decay and with 0.25.
+- **Stream:** each item comes from one of two streams with equal chance, chosen by `Random(f"e43|{seed}|joint").randrange(2)`. Value 0 takes the next item of `e43_task.stream(seed)`; value 1 takes the next of E38's rehearsal stream `X16.entry_stream(first family's taught half, seed + 100)`. The order (0 = unrelated, 1 = first family) is my choice; the brief did not fix it.
+- **Batches:** 64 consecutive items.
+- **Item counts at 4,096:** 131,138 to 131,384 unrelated items and 130,760 to 131,006 first-family items, recorded per row.
+- **Assertion on every item:** unrelated prompts are all at byte 128 or above; first-family prompts all below 128.
+
+### Curves (reduction score · unrelated task taught; the full score-1 columns and item counts are in the tables file)
+
+| run | 0 | 64 | 256 | 1,024 | 2,048 | 4,096 |
+|---|---|---|---|---|---|---|
+| rehearse S 73129 | 96.6 · 0 | 79.6 · 0 | 78.1 · 0 | 92.6 · 100 | 90.7 · 100 | 97.1 · 100 |
+| rehearse S 93683 | 98.7 · 0 | 97.9 · 0 | 89.0 · 3.3 | 96.5 · 99.3 | 98.7 · 100 | 98.9 · 100 |
+| rehearse S 116089 | 99.6 · 0 | 92.6 · 0 | 82.7 · 5.0 | 95.6 · 99.7 | 95.0 · 100 | 96.1 · 100 |
+| rehearse B 73129 | 98.1 · 0 | 94.2 · 0 | 83.9 · 74.3 | 91.9 · 100 | 90.6 · 99.7 | 96.7 · 100 |
+| rehearse B 93683 | 97.8 · 0 | 95.8 · 0 | 91.9 · 50.0 | 96.8 · 100 | 95.4 · 100 | 98.3 · 100 |
+| rehearse B 116089 | 94.0 · 0 | 94.4 · 0 | 90.4 · 88.0 | 92.6 · 100 | 95.1 · 100 | 98.7 · 100 |
+| rehearse-decay S 73129 | 96.6 · 0 | 78.1 · 0 | 78.0 · 0 | 88.0 · 98.3 | 90.5 · 99.7 | 93.5 · 100 |
+| rehearse-decay S 93683 | 98.7 · 0 | 97.7 · 0 | 87.6 · 2.3 | 95.2 · 100 | 97.7 · 100 | 98.3 · 100 |
+| rehearse-decay S 116089 | 99.6 · 0 | 91.4 · 0 | 85.4 · 5.0 | 95.7 · 99.7 | 96.5 · 100 | 97.4 · 100 |
+| rehearse-decay B 73129 | 98.1 · 0 | 94.1 · 0 | 81.4 · 75.3 | 87.8 · 100 | 89.1 · 100 | 93.1 · 100 |
+| rehearse-decay B 93683 | 97.8 · 0 | 95.7 · 0 | 93.6 · 50.7 | 95.4 · 100 | 96.2 · 100 | 96.9 · 100 |
+| rehearse-decay B 116089 | 94.0 · 0 | 94.2 · 0 | 87.8 · 88.7 | 93.2 · 99.3 | 95.4 · 100 | 91.3 · 100 |
+
+### Reading (the addendum's table only)
+
+| Arm, rule | Share of the reduction score at 4,096 (73129, 93683, 116089) | Taught panel at 4,096 | Reading |
+|---|---|---|---|
+| `unrelated-rehearse`, sweep | 100.5, 100.3, 96.5 | 100, 100, 100 | **kept at no cost** |
+| `unrelated-rehearse`, backpropagation | 98.6, 100.5, 105.0 | 100, 100, 100 | **kept at no cost** |
+| `unrelated-rehearse-decay`, sweep | 96.8, 99.6, 97.8 | 100, 100, 100 | **kept at no cost** |
+| `unrelated-rehearse-decay`, backpropagation | 94.8, 99.0, 97.2 | 100, 100, 100 | **kept at no cost** |
+
+**Beside the reading: the first row at which the taught panel reaches 80%** (rows are 0, 64, 256, 1,024, …). Each cell gives the update, then the unrelated items seen by then.
+- Comparison arms: `unrelated` for the rehearse arm and `unrelated-decay` for the rehearse-decay arm.
+- Every comparison arm has 64 unrelated items per update.
+
+| Arm, rule | 73129 | 93683 | 116089 | Without rehearsal (all three) |
+|---|---|---|---|---|
+| rehearse, sweep | 1,024 / 32,755 | 1,024 / 32,833 | 1,024 / 32,911 | 1,024 / 65,536 |
+| rehearse, backpropagation | 1,024 / 32,755 | 1,024 / 32,833 | 256 / 8,333 | 256 / 16,384 |
+| rehearse-decay, sweep | 1,024 / 32,755 | 1,024 / 32,833 | 1,024 / 32,911 | 1,024 / 65,536 |
+| rehearse-decay, backpropagation | 1,024 / 32,755 | 1,024 / 32,833 | 256 / 8,333 | 256 / 16,384 |
+
+- **Under the sweep** both arms reach 80% at the same row with and without rehearsal, on half the unrelated items.
+- **Under backpropagation** two seeds reach it one row later with rehearsal: 1,024 against 256, and 32,755 to 32,833 unrelated items against 16,384. Their taught panels at row 256 were 74.3 and 50.0.
+- The rows are coarse: nothing is measured between 256 and 1,024.
+
+## 5. E42's networks: the `unrelated` arm from `F10` and `P8`, seed 73129
+
+**Set-up.**
+- **Start:** E42's final weights and structure of each run: the mask, the periods and phases, `made`, and for P8 the learned period coefficients `a`. Each start file's sha256 equals its E42 receipt's `weights_sha256`. The loaded network's `tensors_sha256`, mask, `made` and `a` digests equal the receipt's, and E42's limit check passes.
+- **Training:** `exp42_cells.step` with E42's forward; a fresh `exp42_cells.make_opt` with the decayed group's `weight_decay` set to 0; no replacement event; 4,096 updates.
+- **Row-0 check: pass.** E42's own scorer (`exp42_cells.score_all`) at row 0 gives the A, R, taught and length counts of the receipt's final row, in all four.
+
+| Run | 0 | 64 | 256 | 1,024 | 2,048 | 4,096 | Reading (share at 4,096) |
+|---|---|---|---|---|---|---|---|
+| F10 S | 91.2/93.6/98.7/96.7 · 0 | 1.0/0.1/9.5/2.7 · 0 | 0.3/0.0/3.2/0.1 · 0 | 0/0/0/0 · 88.7 | 0/0/0/0 · 97.3 | 0/0/0/0 · 99.3 | **Lost** (0.0) |
+| F10 B | 95.1/94.3/97.6/96.8 · 0 | 0/0/0/0 · 0 | 0/0/0.1/0 · 7.7 | 0/0/0/0 · 100 | 0/0/0/0 · 100 | 0/0/0/0 · 100 | **Lost** (0.0) |
+| P8 S | 94.3/95.7/98.5/98.1 · 0 | 0.3/0.3/28.8/11.1 · 0 | 0/0/0.9/0.7 · 3.3 | 0/0/0/0 · 100 | 0/0/0/0 · 100 | 0/0/0/0 · 100 | **Lost** (0.0) |
+| P8 B | 97.7/97.7/98.1/98.4 · 0 | 0/0/6.9/3.2 · 0 | 0/0/0/0.1 · 27.7 | 0/0/0/0 · 100 | 0/0/0/0 · 100 | 0/0/0/0 · 100 | **Lost** (0.0) |
+
+Cells: reduction / pairs without reduction / max / min · unrelated task taught. The condition (taught panel at 80% or more at 4,096) holds in all four runs. Held-out panel of the unrelated task at 4,096: 96.3, 97.7, 100 and 100.
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P43.15 | `unrelated-rehearse`, sweep: *kept at no cost* | 60% | **yes** |
+| P43.16 | `unrelated-rehearse-decay`, sweep: *kept at no cost* | 65% | **yes** |
+| P43.17 | With rehearsal the taught panel reaches 80% no more than twice as many updates later than without, two of three seeds, under each rule | 60% | **no**: the sweep holds (3 of 3: same row), but under backpropagation only 116089 does (73129 and 93683: 1,024 against 256, four times) |
+| P43.18 | E42's `F10` and `P8`: *lost* in all four runs | 85% | **yes** |
+
+## Committed weights (from `git ls-tree -r -l origin/claude/peaceful-hopper-8ofq4i`, after the push)
+
+Each file was checked against its receipt's `weights_sha256` before `git add -f`. Columns: blob, bytes, path.
+
+```
+    6ac273d785e9e008be870ea12d11e0b5f1fefda1  4502044  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-e42F10_B_73129_row4096.pt
+    f7dcabf1b7e9e717c701642799066fd7d6b9f426  4502044  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-e42F10_S_73129_row4096.pt
+    9bf01f3ec6d17d4036bdf4f5f7d73ac4f458b781  4502025  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-e42P8_B_73129_row4096.pt
+    c4406da5ba66f94140039e3d4a46e019b0dd8cb6  4502025  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-e42P8_S_73129_row4096.pt
+    722a2f1a0deaa1420ae23c80d59e02d5903afc95  4502215  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse-decay_B_116089_row4096.pt
+    6774cced0ee48ca365bfaba988fb8b352fbcb8c5  4502196  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse-decay_B_73129_row4096.pt
+    578955e920d2279a5ce6b1a0028c6beb42c13634  4502196  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse-decay_B_93683_row4096.pt
+    a435d12e3bd8b90a586ecb0ad28a0da7272e304d  4502215  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse-decay_S_116089_row4096.pt
+    6d0504b573dc6e83033992940be86e24a1a4e24c  4502196  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse-decay_S_73129_row4096.pt
+    5390097a78eab10560c0ca4a01d1ec624f8db543  4502196  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse-decay_S_93683_row4096.pt
+    fdc1d54a3043af705d2b356373f192c1d81efd19  4502101  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse_B_116089_row4096.pt
+    9b9c9d04c15f516c3045e0cc732f822d59716cb4  4502082  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse_B_73129_row4096.pt
+    f70f411e388fae3cf71f3040e0242c02f9d26644  4502082  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse_B_93683_row4096.pt
+    014b726b8a7ead1c055247d347580b7700467b96  4502101  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse_S_116089_row4096.pt
+    0d62543ec1dd7bbc01c96b78f0eeed408c7aa065  4502082  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse_S_73129_row4096.pt
+    0573a68be43d51d64878185352b87b7ab9327558  4502082  MOD97_LOCAL_RULE_20261106/exp45/e43/addendum2/e43_unrelated-rehearse_S_93683_row4096.pt
+```
+
+Including the earlier additions, the remote now holds 101 weight files under `exp45/e38/` and `exp45/e43/`: 20 for E38, 28 for E43, 37 for addendum 1 and 16 here.
+
+## Limits
+
+- **The P8 row files hold the network's `state_dict` only.** They omit the learned period coefficients `a` (8 × 256), which change in training. The mask, periods and phases are E42's, unchanged, since no replacement event was run. So the P8 networks at 4,096 cannot be rebuilt from the committed files alone; the receipts record only `a`'s relative change, not its values. F10 has no added parameters and is complete. Rerunning the two P8 runs with `a` saved would take about 1.3 CPU-hours.
+- **Not independently reviewed.** No result here has been independently reviewed.
