@@ -31,6 +31,25 @@ Outputs, in --out (default exp45/e39/), named sw_<arm>_w<world>_v<visits>[_<sett
     python3 sw_run.py solo <naive|sweep> <world> <task> [--H 64] [--updates 16384]   # revision 4, L1a: one task alone
     python3 sw_run.py life <arm> <world> <visits> ... --birth-groups 0,1 [--birth-cap 32768] [--birth-need 3]   # revision 4, L1b
     python3 sw_run.py life --birth-from <naive ..._state_v0.pt>                     # revision 4: sweep-after-naive
+
+E44 (brief OPUS_TASK_E44_LONG_LIFE_WORLD_IN_THE_FULL_SCALE_FORMAT_20261116.md, revision 2): the long-life world in the full-scale format.
+    python3 sw_run.py life <naive|sweep|sweep-after-naive> <world> <visits> --world lw --learner <E41 birth .pt> --H 256 --U 128
+                           [--in-turn] [--visit-updates 256] [--wd 0.25] [--taught-share 0.10] [--lowest 41] [--save-states 8]
+  --world lw      the world is lw_world.World (byte-identical to COORD_CHECKS_20261116/lw_world_spec.py); --world sw (default) is E39's
+  --learner F     the life starts from E41's saved birth F (weights only), loaded into sw_net.SWNet(H, U): arch20's parameter names in
+                  arch20's order, as exp41_scale.NetW, run by arch26.forward (exp41_scale itself cannot be imported beside this runner:
+                  its environment gate asserts on an exp11_cell already imported). Its tensors hash and file hash are asserted equal to
+                  F's receipt (F with .json), and the arm to the birth's rule (naive and sweep-after-naive: B; sweep: S). One fresh
+                  sw_net.make_opt(m, lr, wd) for the life.
+  --in-turn       calibration only: visit v is family v
+  every file      the event file gains g1, g2, g3 (uint16): the bytes generated for the asked item, 65535 once generation has ended
+  the list        (lw) at the end of every visit, answered without learning and written to <stem>_list.npz: for add and for sub of every
+                  family taken so far, the first 100 asked pairs in the split's order that need the reduction, no letters; and the birth
+                  family's R items (E41's two samples, 1,000 each). Before visit 0 the birth family's items once. "Decay alone": at the end
+                  of each family's first visit its weights, every parameter but the byte table multiplied by (1 - lr * wd)^u, answer its
+                  items for every later visit of the life (u the updates from the end of its visit to the end of that visit); the born
+                  weights so answer the birth family's items for every visit. Nothing is learned from the list.
+  --save-states   which visit counts get a state (default: 1, 2, 4, 8, ... and the end, E39's rule); e.g. 8 or 4,8
 """
 import argparse
 import hashlib
@@ -53,8 +72,10 @@ HERE = Path(__file__).resolve().parent
 MDIR = HERE.parent
 sys.path.insert(0, str(HERE))
 import sw_world as W                  # noqa: E402  (the audited generator, byte-identical to COORD_CHECKS_20261115/sw_world_spec.py)
+import lw_world as LW                 # noqa: E402  (E44: byte-identical to COORD_CHECKS_20261116/lw_world_spec.py)
 import sw_net as N                    # noqa: E402
 import sw_score as S                  # noqa: E402  (revision 4: the criterion of L1a, from the event file)
+import arch26                         # noqa: E402  (already imported by sw_net; its exp11_cell gives E41's split and render)
 
 T.set_num_threads(1)
 OUT = MDIR / "exp45" / "e39"
@@ -62,15 +83,25 @@ ARMS = {"naive": (False, False), "sweep": (True, False), "replay": (False, True)
         "sweep-after-naive": (True, False)}   # arm -> (local, replay); sweep-after-naive: the sweep's life from naive's state at the end of its birth
 BIRTH_VISIT = 65535                   # E39 revision 4: the `visit` value of a birth's asked items in the event file
 DEFAULTS = dict(H=64, U=64, visit_updates=W.VISIT_UPDATES, p_new=W.P_NEW, lr=0.001, wd=0.25)
-TAGS = dict(H="h", U="u", visit_updates="vu", p_new="pn", lr="lr", wd="wd")
+LW_DEFAULTS = dict(H=256, U=128, visit_updates=LW.VISIT_UPDATES, p_new=LW.P_NEW, lr=0.001, wd=0.25, taught_share=LW.TAUGHT_FRACTION, lowest=LW.LOWEST)
+TAGS = dict(H="h", U="u", visit_updates="vu", p_new="pn", lr="lr", wd="wd", taught_share="ts", lowest="lo")
 ITEM_MAX = 15                         # bytes of the longest item: 12 of prompt, 2 digits and the end symbol
-SOURCES = {"smallworld/" + s: HERE / s for s in ("sw_world.py", "sw_net.py", "sw_run.py", "sw_score.py")}
+ITEM_MAX_LW = 23                      # E44: code 2, a 2, symbol, 12 letters, b 2, '=', 2 digits and the end symbol
+GEN_END = 65535                       # E44: g1..g3 once generation has ended (after the end symbol)
+BIRTH_FAMILY = -1                     # E44: the list's family number for the birth family (E26's, mod 89)
+BIRTH_LIST_TASKS = (65534, 65535)     # E44: the list's task numbers for add89 and sub89
+BEFORE_LIFE = 65535                   # E44: the list's at_visit for the answers before visit 0
+SOURCES = {"smallworld/" + s: HERE / s for s in ("sw_world.py", "lw_world.py", "sw_net.py", "sw_run.py", "sw_score.py")}
 SOURCES.update({s: MDIR / s for s in ("arch26.py", "arch20.py", "arch17.py", "exp11_cell.py", "exp45.py", "exp3_state.py", "mod97_local.py")})
 EVENT_COLUMNS = (("update", "I", np.uint32), ("visit", "H", np.uint16), ("task", "H", np.uint16), ("correct", "B", np.uint8),
                  ("blind", "B", np.uint8), ("wrap", "B", np.uint8), ("mirror", "B", np.uint8), ("seen", "I", np.uint32),
-                 ("replayed", "I", np.uint32))
-STATE_FORMAT = "E39 small-world life state, format 1"
-assert all(array(c).itemsize == np.dtype(d).itemsize for _, c, d in EVENT_COLUMNS)
+                 ("replayed", "I", np.uint32), ("g1", "H", np.uint16), ("g2", "H", np.uint16), ("g3", "H", np.uint16))
+LIST_COLUMNS = (("at_visit", "H", np.uint16), ("source", "B", np.uint8), ("family", "h", np.int16), ("task", "H", np.uint16),
+                ("a", "B", np.uint8), ("b", "B", np.uint8), ("g1", "H", np.uint16), ("g2", "H", np.uint16), ("g3", "H", np.uint16),
+                ("correct", "B", np.uint8), ("decay_updates", "I", np.uint32), ("weights_from_visit", "H", np.uint16))
+STATE_FORMAT = "E39 small-world life state, format 2"      # format 2 (E44): g1..g3, the world's kind, the learner, the list
+assert all(array(c).itemsize == np.dtype(d).itemsize for _, c, d in EVENT_COLUMNS + LIST_COLUMNS)
+assert (LW.BATCH, LW.TAUGHT_PER_BATCH, LW.EOS, LW.BOS) == (W.BATCH, W.TAUGHT_PER_BATCH, W.EOS, W.BOS)
 
 
 # ---------------------------------------------------------------- hashes and provenance
@@ -150,11 +181,17 @@ def symmetric(op):
 
 
 class Facts:
+    """The task facts the runner needs, for either world: E39's small world (sw_world) or E44's long-life world (lw_world, whose
+    operations are named by strings and whose `mirror` and `needs_wrap` are its own)."""
+
     def __init__(self, world):
+        self.lw = isinstance(world, LW.World)
+        self.M = LW if self.lw else W
+        self.world = world
         self.tasks = world.tasks
         self.taught = [set(t["taught"]) for t in world.tasks]
         self.asked = [set(t["asked"]) for t in world.tasks]
-        self.sym = [symmetric(t["op"]) for t in world.tasks]
+        self.sym = [(t["op"] != "sub") if self.lw else symmetric(t["op"]) for t in world.tasks]
         self.by_code = {bytes(t["code"]): t["id"] for t in world.tasks}
 
     def parse(self, prompt):
@@ -165,15 +202,100 @@ class Facts:
         return tid, int(bytes(prompt[2:4])), int(bytes(prompt[-3:-1]))
 
     def mirror(self, tid, a, b):
+        if self.lw:
+            return self.world.mirror(self.tasks[tid], a, b)
         return int(self.sym[tid] and a != b and (b, a) in self.taught[tid])
 
     def wrap(self, tid, a, b):
         t = self.tasks[tid]
-        return int(W.needs_wrap(t["op"], t["p"], a, b))
+        return int(self.M.needs_wrap(t["op"], t["p"], a, b))
 
     def target(self, tid, a, b):
         t = self.tasks[tid]
-        return list(f"{W.apply(t['op'], t['p'], a, b):02d}".encode()) + [W.EOS]
+        return list(f"{self.M.apply(t['op'], t['p'], a, b):02d}".encode()) + [W.EOS]
+
+
+def gen_columns(g):
+    """E44: the generated bytes of one asked item, in order; GEN_END for every position after the end symbol."""
+    out, ended = [], False
+    for x in g:
+        out.append(GEN_END if ended else int(x))
+        ended = ended or x == W.EOS
+    assert len(out) == N.ANSWER_BYTES
+    return out
+
+
+# ---------------------------------------------------------------- E44: the learner and the list
+def load_learner(path, H, U, arm):
+    """E41's saved birth (weights only) into sw_net.SWNet(H, U); its hashes asserted equal to its receipt (path with .json)."""
+    p = Path(path).resolve(); rp = p.with_suffix(".json")
+    rec = json.loads(rp.read_text())
+    want = {"naive": "B", "sweep": "S", "sweep-after-naive": "B"}[arm]
+    assert rec["experiment"] == "E41" and rec["complete"] and rec["H"] == H and rec["U"] == U, "not a complete E41 birth at this width"
+    assert rec["rule"] == want, f"arm {arm} lives from E41's rule {want}, not {rec['rule']}"
+    m = N.SWNet(H, U); m.load_state_dict(T.load(p, weights_only=True))
+    ts, fs = tensors_sha(m.state_dict()), sha_file(p)
+    assert ts == rec["tensors_sha256"] and fs == rec["weights_sha256"], "the birth file's hashes differ from its receipt's"
+    last = rec["curve"][-1]
+    info = dict(file=str(p.relative_to(MDIR)), file_sha256=fs, tensors_sha256=ts, receipt=str(rp.relative_to(MDIR)), receipt_sha256=sha_file(rp),
+                made_by="E41 (exp41_scale.py run)", rule=rec["rule"], local_in_birth=rec["local"], H=H, U=U, parameters=N.n_params(m),
+                fraction=rec["fraction"], seed=rec["seed"], updates=rec["dose"], items_per_update=rec["batch"], taught_items=rec["dose"] * rec["batch"],
+                final_row=dict(step=last["step"], A=last["A"], R=last["R"], R_counts=last["R_counts"]),
+                reduction_sample_sha256=rec["reduction_sample_sha256"],
+                loaded_into="sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward")
+    return m, info
+
+
+def e41_r_items(fraction, seed, want_sha):
+    """The birth family's accuracy R items: E41's two samples (exp41_scale.reduction_sample, 1,000 held-out reduction pairs each of add89
+    and sub89, rendered by exp11_cell.render with no letters), rebuilt here and asserted equal to the birth receipt's sample digests."""
+    E = arch26.E
+    out = []
+    for j, t in enumerate(E.DEV[:2]):
+        held = E.split(t, fraction, seed)[1]
+        pairs = [(a, b) for a, b in held if (a + b >= 89 if t[0] == "add" else a - b < 0)]
+        smp = Random(f"e41|{seed}|{round(fraction * 100)}|{t[0]}").sample(sorted(pairs), 1000)
+        assert hashlib.sha256(json.dumps([list(q) for q in smp]).encode()).hexdigest() == want_sha[E.NAME(*t)], "E41's R sample differs"
+        for a, b in smp:
+            prompt, y = E.render(t, a, b, 0, Random(0))
+            out.append((BIRTH_LIST_TASKS[j], a, b, prompt, y))
+    return out
+
+
+def probe_items(world, family, per=100):
+    """E44's list for one family: for add and then sub, the first `per` asked pairs in the split's order that need the reduction, no
+    letters. Entries (task id, a, b, prompt, answer)."""
+    out = []
+    for t in world.groups[family][:2]:
+        assert t["op"] in ("add", "sub")
+        red = [(a, b) for a, b in t["asked"] if LW.needs_wrap(t["op"], t["p"], a, b)][:per]
+        for a, b in red:
+            prompt = list(t["code"] + f"{a:02d}".encode() + bytes([t["symbol"]]) + f"{b:02d}".encode() + b"=")
+            out.append((t["id"], a, b, prompt, list(f"{LW.apply(t['op'], t['p'], a, b):02d}".encode()) + [LW.EOS]))
+    return out
+
+
+def list_digest(items):
+    """The audit's digest of the list: SHA-256 over [id // 256, id % 256, a, b] of every entry in order."""
+    h = hashlib.sha256()
+    for tid, a, b, _, _ in items:
+        h.update(bytes([tid // 256, tid % 256, a, b]))
+    return h.hexdigest()
+
+
+def answer_all(m, items, chunk=256):
+    gens = []
+    for i in range(0, len(items), chunk):
+        gens += N.answer(m, [it[3] for it in items[i:i + chunk]])
+    return gens
+
+
+def decayed(m, factor):
+    """A copy of m with every parameter but the byte table multiplied by `factor` (decay alone; no run)."""
+    c = N.SWNet(m.l1.out_features, m.units)
+    sd = {k: (v.clone() if k.startswith("book.") else v * T.tensor(factor, dtype=v.dtype)) for k, v in m.state_dict().items()}
+    c.load_state_dict(sd)
+    return c
 
 
 def batches_with(world, rng, group):
@@ -243,9 +365,14 @@ def setting_tag(cfg, extra=None):
     parts = []
     if cfg["rho"] is not None:
         parts.append(f"rho{cfg['rho']:g}")
+    lw = cfg.get("world_kind") == "lw"
     for k, short in TAGS.items():
-        if cfg[k] != DEFAULTS[k]:
+        if k not in cfg:
+            continue
+        if cfg[k] != (LW_DEFAULTS if lw else DEFAULTS)[k]:
             parts.append(f"{short}{cfg[k]:g}")
+    if cfg.get("in_turn"):
+        parts.append("turn")
     if cfg.get("birth"):
         parts.append("birth" + "".join(str(g) for g in cfg["birth"]["groups"]))
     if extra:
@@ -255,27 +382,44 @@ def setting_tag(cfg, extra=None):
 
 def life_stem(cfg):
     tag = setting_tag(cfg, cfg.get("tag"))
-    return f"sw_{cfg['arm']}_w{cfg['world']}_v{cfg['visits']}" + (f"_{tag}" if tag else "")
+    pre = "lw" if cfg.get("world_kind") == "lw" else "sw"
+    return f"{pre}_{cfg['arm']}_w{cfg['world']}_v{cfg['visits']}" + (f"_{tag}" if tag else "")
 
 
 # ---------------------------------------------------------------- one life
 class Life:
     def __init__(self, arm, world, visits, rho=None, H=64, U=64, visit_updates=W.VISIT_UPDATES, p_new=W.P_NEW, lr=0.001, wd=0.25, tag=None,
-                 birth_groups=None, birth_cap=32768, birth_need=None):
-        assert arm in ARMS and arm != "sweep-after-naive", arm      # sweep-after-naive starts from a naive birth (Life.from_birth)
+                 birth_groups=None, birth_cap=32768, birth_need=None, world_kind="sw", learner=None, in_turn=False, taught_share=None,
+                 lowest=None, save_states=None):
+        # sweep-after-naive: in E39 from a naive birth inside the world (Life.from_birth); in E44 from E41's backpropagation birth (--learner)
+        assert arm in ARMS and (arm != "sweep-after-naive" or learner), arm
+        assert world_kind in ("sw", "lw") and (world_kind == "lw") == (learner is not None), "--learner goes with --world lw"
         self.local, self.uses_replay = ARMS[arm]
         if self.uses_replay:
             assert rho is not None and 0 <= rho < 1 and float(rho * W.TAUGHT_PER_BATCH).is_integer(), "replay arms need rho with rho*48 whole"
         else:
             assert rho is None, "rho is for the replay arms"
         self.cfg = dict(arm=arm, world=world, visits=visits, rho=rho, H=H, U=U, visit_updates=visit_updates, p_new=p_new, lr=lr, wd=wd, tag=tag)
+        if world_kind == "lw":
+            assert not birth_groups, "E44's learner is born by E41, not inside the world"
+            self.cfg.update(world_kind="lw", in_turn=bool(in_turn), taught_share=LW.TAUGHT_FRACTION if taught_share is None else taught_share,
+                            lowest=LW.LOWEST if lowest is None else lowest)
+        else:
+            assert not in_turn and taught_share is None and lowest is None, "--in-turn, --taught-share and --lowest are the lw world's"
+        if save_states is not None:
+            self.cfg["save_states"] = sorted(set(save_states))
         if birth_groups:
             nb = 2 * len(birth_groups)
             self.cfg["birth"] = dict(groups=sorted(birth_groups), cap=birth_cap, need=birth_need if birth_need is not None else nb - 1, level=0.8, every=64)
         self.birth, self.birth_from = None, None
         self._build()
-        self.m = N.new_net(world, H, U)
+        if learner is not None:
+            self.m, self.cfg["learner"] = load_learner(learner, H, U, arm)
+        else:
+            self.m = N.new_net(world, H, U)
         self.opt = N.make_opt(self.m, lr, wd)
+        self.lv = {k: array(c) for k, c, _ in LIST_COLUMNS}
+        self.families_taken, self.list_summary, self.list_cpu = [], [], 0.0
         self.buf, self.buf_bytes, self.offered = [], 0, 0
         self.rrng = Random(f"world|{world}|replay") if self.uses_replay else None
         nt = len(self.world.tasks)
@@ -291,14 +435,87 @@ class Life:
 
     def _build(self):
         c = self.cfg
-        self.world = W.World(c["world"], c["visit_updates"], c["p_new"])
+        if c.get("world_kind") == "lw":
+            self.world = LW.World(c["world"], c["visit_updates"], c["p_new"], c["taught_share"], c["lowest"])
+        else:
+            self.world = W.World(c["world"], c["visit_updates"], c["p_new"])
         self.facts = Facts(self.world)
         self.k_rep = int(round(c["rho"] * W.TAUGHT_PER_BATCH)) if self.uses_replay else 0
+
+    def is_lw(self):
+        return self.cfg.get("world_kind") == "lw"
+
+    def schedule(self, visits):
+        return self.world.schedule(visits, in_turn=True) if self.cfg.get("in_turn") else self.world.schedule(visits)
+
+    def wants_state(self, n):
+        ss = self.cfg.get("save_states")
+        return (is_pow2(n) or n == self.cfg["visits"]) if ss is None else n in ss
+
+    # -------------------------------------------------- E44: the list
+    def r_items(self):
+        if not hasattr(self, "_r_items"):
+            L = self.cfg["learner"]
+            self._r_items = e41_r_items(L["fraction"], L["seed"], L["reduction_sample_sha256"])
+        return self._r_items
+
+    def _list_rows(self, m, items, at_visit, source, family, decay_updates, from_visit):
+        gens = answer_all(m, items)
+        right = 0
+        for (tid, a, b, _, y), g in zip(items, gens):
+            c = int(g == y); right += c
+            for k, v in (("at_visit", at_visit), ("source", source), ("family", family), ("task", tid), ("a", a), ("b", b), ("correct", c),
+                         ("decay_updates", decay_updates), ("weights_from_visit", from_visit)):
+                self.lv[k].append(v)
+            for k, v in zip(("g1", "g2", "g3"), gen_columns(g)):
+                self.lv[k].append(v)
+        self.list_summary.append(dict(at_visit=at_visit, source=source, family=family, n=len(items), right=right,
+                                      share=right / len(items) if items else None, decay_updates=decay_updates, weights_from_visit=from_visit))
+
+    def answer_list_before(self):
+        """Before visit 0: the birth family's items, answered by the born network; and decay alone of the born weights for every visit."""
+        c0 = time.process_time()
+        before = (tensors_sha(self.m.state_dict()), opt_sha(self.opt))
+        self._list_rows(self.m, self.r_items(), BEFORE_LIFE, 0, BIRTH_FAMILY, 0, BEFORE_LIFE)
+        f = 1.0 - self.cfg["lr"] * self.cfg["wd"]; vu = self.cfg["visit_updates"]
+        for k in range(self.cfg["visits"]):
+            u = (k + 1) * vu
+            self._list_rows(decayed(self.m, f ** u), self.r_items(), k, 1, BIRTH_FAMILY, u, BEFORE_LIFE)
+        assert (tensors_sha(self.m.state_dict()), opt_sha(self.opt)) == before, "answering the list changed the weights or the optimizer"
+        self.list_cpu += time.process_time() - c0
+
+    def answer_list(self, s, decay=True):
+        """At the end of visit s["visit"]: every family taken so far, the family just visited included, and the birth family, answered by
+        the network as it stands. If this was the family's first visit and decay is on: decay alone from these weights for every later
+        visit of the life (all visits are visit_updates long)."""
+        c0 = time.process_time()
+        v, g = s["visit"], s["group"]
+        if g not in self.families_taken:
+            self.families_taken.append(g)
+            first = True
+        else:
+            first = False
+        before = (tensors_sha(self.m.state_dict()), opt_sha(self.opt))
+        for f in self.families_taken:
+            self._list_rows(self.m, probe_items(self.world, f), v, 0, f, 0, v)
+        self._list_rows(self.m, self.r_items(), v, 0, BIRTH_FAMILY, 0, v)
+        if decay and first:
+            fac = 1.0 - self.cfg["lr"] * self.cfg["wd"]; vu = self.cfg["visit_updates"]
+            items = probe_items(self.world, g)
+            for k in range(v + 1, self.cfg["visits"]):
+                u = (k - v) * vu
+                self._list_rows(decayed(self.m, fac ** u), items, k, 1, g, u, v)
+        assert (tensors_sha(self.m.state_dict()), opt_sha(self.opt)) == before, "answering the list changed the weights or the optimizer"
+        self.list_cpu += time.process_time() - c0
+
+    def list_arrays(self):
+        return {k: np.frombuffer(self.lv[k], dtype=d).copy() if len(self.lv[k]) else np.zeros(0, d) for k, _, d in LIST_COLUMNS}
 
     # -------------------------------------------------- state
     def capacity(self):
         P = N.n_params(self.m)
-        return P, (4 * P) // ITEM_MAX, 4 * P
+        im = ITEM_MAX_LW if self.is_lw() else ITEM_MAX
+        return P, (4 * P) // im, 4 * P
 
     def events_arrays(self):
         return {k: np.frombuffer(self.ev[k], dtype=d).copy() if len(self.ev[k]) else np.zeros(0, d) for k, _, d in EVENT_COLUMNS}
@@ -311,7 +528,11 @@ class Life:
                     last_answer=self.last_answer, events_npz=bio.getvalue(), by_visit=self.by_visit, counters=self.counters,
                     cpu=self.cpu_before + time.process_time() - self.cpu0, resumes=self.resumes, states=self.states, initial=self.initial,
                     sources_sha256=source_hashes(), weights_tensors_sha256=tensors_sha(self.m.state_dict()), optimizer_sha256=opt_sha(self.opt),
-                    birth=self.birth, birth_from=self.birth_from)
+                    birth=self.birth, birth_from=self.birth_from, list_npz=self._list_npz(), families_taken=self.families_taken,
+                    list_summary=self.list_summary, list_cpu=self.list_cpu)
+
+    def _list_npz(self):
+        bio = io.BytesIO(); np.savez_compressed(bio, **self.list_arrays()); return bio.getvalue()
 
     @classmethod
     def load(cls, path):
@@ -338,6 +559,9 @@ class Life:
         self.by_visit, self.counters, self.cpu_before = s["by_visit"], s["counters"], s["cpu"]
         self.resumes, self.states, self.initial = s["resumes"], s["states"], s["initial"]
         self.birth, self.birth_from = s.get("birth"), s.get("birth_from")
+        g = np.load(io.BytesIO(s["list_npz"]))
+        self.lv = {k: array(c, g[k].astype(d).tobytes()) for k, c, d in LIST_COLUMNS}
+        self.families_taken, self.list_summary, self.list_cpu = s["families_taken"], s["list_summary"], s["list_cpu"]
         self.loaded_from = dict(path=str(path), file_sha256=sha_file(path), done_visits=self.done_visits)
         self.cpu0 = time.process_time()
         return self
@@ -411,6 +635,8 @@ class Life:
             ev["update"].append(u); ev["visit"].append(v); ev["task"].append(tid); ev["correct"].append(int(g == y))
             ev["blind"].append(int(self.last_answer[tid] == y)); ev["wrap"].append(F.wrap(tid, a, b)); ev["mirror"].append(F.mirror(tid, a, b))
             ev["seen"].append(self.seen[tid]); ev["replayed"].append(self.replayed[tid])
+            for k, x in zip(("g1", "g2", "g3"), gen_columns(g)):
+                ev[k].append(x)
         new = [(p, y) for _, _, _, p, y in taught]
         rep = []
         if self.uses_replay:
@@ -489,11 +715,24 @@ class Life:
                     birth=None if not self.birth else dict(updates=self.birth["updates"], taught_items=self.birth["taught_items"],
                                                            asked_items=self.birth["asked_items"], cpu=self.birth["cpu"],
                                                            inherited_from_naive=self.birth_from is not None),
-                    life_updates=self.done_updates - (self.birth["updates"] if self.birth else 0))
+                    life_updates=self.done_updates - (self.birth["updates"] if self.birth else 0),
+                    learner=None if "learner" not in self.cfg else dict(made_by=self.cfg["learner"]["made_by"], file=self.cfg["learner"]["file"],
+                                                                        file_sha256=self.cfg["learner"]["file_sha256"], rule=self.cfg["learner"]["rule"],
+                                                                        updates=self.cfg["learner"]["updates"], items_per_update=self.cfg["learner"]["items_per_update"],
+                                                                        taught_items=self.cfg["learner"]["taught_items"],
+                                                                        note="E41's birth on E26's first family (mod 89, half its pairs), before this life"))
 
     def receipt(self, kind, cmd, events_path, ev_arrays, extra):
         m = self.m
-        return dict(experiment="E39", job="L0/L1 small world", kind=kind, settings=self.cfg, local=self.local, replay=self.uses_replay,
+        if self.is_lw():
+            wd_ = dict(kind="lw", file="smallworld/lw_world.py", seed=self.cfg["world"], visit_updates=self.cfg["visit_updates"], p_new=self.cfg["p_new"],
+                       taught_share=self.cfg["taught_share"], lowest=self.cfg["lowest"], in_turn=self.cfg["in_turn"], probe_families=LW.PROBE_FAMILIES,
+                       tasks=len(self.world.tasks), families=len(self.world.groups))
+        else:
+            wd_ = dict(seed=self.cfg["world"], visit_updates=self.cfg["visit_updates"], p_new=self.cfg["p_new"],
+                       probe_groups=W.PROBE_GROUPS, tasks=len(self.world.tasks), groups=len(self.world.groups))
+        return dict(experiment="E44" if self.is_lw() else "E39", job="F1 long-life world" if self.is_lw() else "L0/L1 small world", kind=kind,
+                    settings=self.cfg, local=self.local, replay=self.uses_replay,
                     replay_items_per_update=self.k_rep,
                     model=dict(cls=f"{type(m).__module__}.{type(m).__name__}", H=self.cfg["H"], U=self.cfg["U"], parameters=N.n_params(m),
                                shapes={k: list(v.shape) for k, v in m.state_dict().items()}, initial=self.initial),
@@ -501,8 +740,7 @@ class Life:
                     update="sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked "
                            "cross entropy, zero_grad, backward, one AdamW step",
                     answering="sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
-                    world=dict(seed=self.cfg["world"], visit_updates=self.cfg["visit_updates"], p_new=self.cfg["p_new"],
-                               probe_groups=W.PROBE_GROUPS, tasks=len(self.world.tasks), groups=len(self.world.groups)),
+                    world=wd_, learner=self.cfg.get("learner"),
                     provenance=dict(command=cmd, host=host(), git=git_state(), sources_sha256=source_hashes(),
                                     env={k: v for k, v in os.environ.items() if k.startswith(("OMP_", "MKL_", "OPENBLAS_", "E16_", "E11_", "EXP45_", "PYTHONHASHSEED"))}),
                     ledger=self.ledger(), counters=self.counters,
@@ -511,6 +749,7 @@ class Life:
                     final=dict(visits=self.done_visits, updates=self.done_updates, weights_tensors_sha256=tensors_sha(m.state_dict()),
                                optimizer_sha256=opt_sha(self.opt)),
                     cpu=dict(total=self.cpu_before + time.process_time() - self.cpu0, per_visit=[r["cpu"] for r in self.by_visit],
+                             list_total=self.list_cpu, list_per_visit=[r.get("list_cpu") for r in self.by_visit],
                              mean_per_visit=float(np.mean([r["cpu"] for r in self.by_visit])) if self.by_visit else None,
                              birth=self.birth["cpu"] if self.birth else None,
                              peak_rss_kib=__import__("resource").getrusage(__import__("resource").RUSAGE_SELF).ru_maxrss,
@@ -521,13 +760,28 @@ class Life:
 
 
 # ---------------------------------------------------------------- commands
+def list_record(life, lpath):
+    """Writes the list's answers (<stem>_list.npz) and returns the receipt's entries for it."""
+    la = life.list_arrays()
+    np.savez_compressed(lpath, **la)
+    fams = list(life.families_taken)
+    return dict(list=dict(file=Path(lpath).name, file_sha256=sha_file(lpath), arrays_sha256=arrays_sha(la), entries=int(len(la["task"])),
+                          columns=[k for k, _, _ in LIST_COLUMNS], families_taken=fams,
+                          items_sha256=list_digest([it for f in fams for it in probe_items(life.world, f)]),
+                          r_items=len(life.r_items()), decay_factor_per_update=1.0 - life.cfg["lr"] * life.cfg["wd"],
+                          note="source 0: the network at the end of at_visit (65535: before visit 0); source 1: decay alone, the weights at the end "
+                               "of weights_from_visit (65535: the born weights) with every parameter but the byte table multiplied by "
+                               "decay_factor_per_update ** decay_updates; family -1 is the birth family (tasks 65534 add89, 65535 sub89)"),
+                list_summary=life.list_summary)
+
+
 def run_life(life, out, cmd, stop_after=None):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     stem = life_stem(life.cfg); V = life.cfg["visits"]
-    rpath, epath = out / f"{stem}.json", out / f"{stem}.npz"
-    refuse_existing(rpath, epath)
+    rpath, epath, lpath = out / f"{stem}.json", out / f"{stem}.npz", out / f"{stem}_list.npz"
+    refuse_existing(rpath, epath, lpath)
     life.cpu0 = time.process_time()
-    sched = life.world.schedule(V)
+    sched = life.schedule(V)
     lh = hashlib.sha256()                                       # the stream as sw_world.digest hashes it, over the whole life
     f0 = time.process_time()
     for s in sched[:life.done_visits]:                          # a resumed life: the earlier visits' stream, regenerated (no network)
@@ -547,21 +801,30 @@ def run_life(life, out, cmd, stop_after=None):
         life.save_state(out / f"{stem}_state_v0.pt")             # the state at visit 0: the end of the birth
         if stop_after == 0:
             return None
+    if life.is_lw() and life.done_visits == 0 and not life.list_summary:
+        life.answer_list_before()
     for s in sched[life.done_visits:]:
         rec = life.visit(s, life.world.visit_batches(s["visit"], s["group"]), life_hash=lh)
         n = life.done_visits
+        if life.is_lw():
+            c0 = life.list_cpu; life.answer_list(s); rec["list_cpu"] = life.list_cpu - c0
+        right = float(np.frombuffer(life.ev['correct'], dtype=np.uint8)[-16 * rec['updates']:].mean())     # no view may outlive the line
         print(f"{stem} visit {s['visit']} group {s['group']} new {s['new']} absence {s['absence']} loss {rec['loss_mean']:.4f} "
-              f"right {np.frombuffer(life.ev['correct'], dtype=np.uint8)[-16 * rec['updates']:].mean():.3f} cpu {rec['cpu']:.1f}s", flush=True)
-        if is_pow2(n) or n == V:
+              f"right {right:.3f} cpu {rec['cpu']:.1f}s", flush=True)
+        if life.wants_state(n) or (stop_after is not None and n == stop_after):
             life.save_state(out / f"{stem}_state_v{n}.pt")
         if stop_after is not None and n == stop_after:
             print(f"{stem}: stopped after visit {n - 1} (state {stem}_state_v{n}.pt)", flush=True)
             return None
     arrs = life.events_arrays()
     np.savez_compressed(epath, **arrs)
-    rec = life.receipt("life", cmd, epath, arrs, dict(schedule=sched, stream_sha256=lh.hexdigest(),
-                                                      stream_note="sha256 over every stream item in order, as sw_world.digest; equals "
-                                                                  "sw_world.digest(World(world, visit_updates, p_new), visits)"))
+    extra = dict(schedule=sched, stream_sha256=lh.hexdigest(),
+                 stream_note="sha256 over every stream item in order, as sw_world.digest; equals "
+                             "sw_world.digest(World(world, visit_updates, p_new), visits)")
+    if life.is_lw():
+        extra.update(stream_note="sha256 over every stream item in order, as lw_world.digest; equals lw_world.digest(World(world, visit_updates, "
+                                 "p_new, taught_share, lowest), visits, in_turn)", **list_record(life, lpath))
+    rec = life.receipt("life", cmd, epath, arrs, extra)
     write_json(rpath, rec)
     print(f"{stem}: complete; receipt {rpath.name}", flush=True)
     return rec
@@ -572,27 +835,33 @@ def run_branch(state_path, groups, out, cmd):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     n0, S = life.done_visits, life.cfg["world"]
     stem = life_stem(life.cfg) + f"_br{n0}_g" + "-".join(str(g) for g in groups)
-    rpath, epath = out / f"{stem}.json", out / f"{stem}.npz"
-    refuse_existing(rpath, epath, out / f"{stem}_state_end.pt")
+    rpath, epath, lpath = out / f"{stem}.json", out / f"{stem}.npz", out / f"{stem}_list.npz"
+    refuse_existing(rpath, epath, lpath, out / f"{stem}_state_end.pt")
     life.cpu0 = time.process_time(); life.cpu_before = 0.0
-    trunk = dict(by_visit=len(life.by_visit), states=life.states)
-    life.ev = {k: array(c) for k, c, _ in EVENT_COLUMNS}; life.by_visit = []; life.states = []
+    trunk = dict(by_visit=len(life.by_visit), states=life.states, families_taken=list(life.families_taken))
     last = {}
-    for s in life.world.schedule(n0):
-        last[s["group"]] = s["visit"]
+    for r in life.by_visit:                                     # the trunk's visits (E44: an in-turn life's schedule is not world.schedule)
+        last[r["group"]] = r["visit"]
+    life.ev = {k: array(c) for k, c, _ in EVENT_COLUMNS}; life.by_visit = []; life.states = []
+    life.lv = {k: array(c) for k, c, _ in LIST_COLUMNS}; life.list_summary = []; life.list_cpu = 0.0
+    n_probe = LW.PROBE_FAMILIES if life.is_lw() else W.PROBE_GROUPS
     lh = hashlib.sha256()
     for k, g in enumerate(groups):
         assert 0 <= g < len(life.world.groups)
         v = n0 + k
         s = dict(visit=v, group=g, new=g not in last, absence=None if g not in last else v - last[g], branch_k=k,
-                 generator=f"world|{S}|branch|{n0}|{k}", probe=g >= len(life.world.groups) - W.PROBE_GROUPS)
-        life.visit(s, batches_with(life.world, Random(f"world|{S}|branch|{n0}|{k}"), g), life_hash=lh)
+                 generator=f"world|{S}|branch|{n0}|{k}", probe=g >= len(life.world.groups) - n_probe)
+        rec = life.visit(s, batches_with(life.world, Random(f"world|{S}|branch|{n0}|{k}"), g), life_hash=lh)
+        if life.is_lw():
+            c0 = life.list_cpu; life.answer_list(s, decay=False); rec["list_cpu"] = life.list_cpu - c0
         last[g] = v
     arrs = life.events_arrays()
     np.savez_compressed(epath, **arrs)
     life.save_state(out / f"{stem}_state_end.pt")
-    rec = life.receipt("branch", cmd, epath, arrs, dict(branch=dict(from_state=life.loaded_from, groups=groups, trunk=trunk),
-                                                        stream_sha256=lh.hexdigest()))
+    extra = dict(branch=dict(from_state=life.loaded_from, groups=groups, trunk=trunk), stream_sha256=lh.hexdigest())
+    if life.is_lw():
+        extra.update(list_record(life, lpath))
+    rec = life.receipt("branch", cmd, epath, arrs, extra)
     write_json(rpath, rec)
     print(f"{stem}: complete", flush=True)
     return rec
@@ -671,13 +940,21 @@ def main(argv):
     ap.add_argument("--birth-groups"); ap.add_argument("--birth-cap", type=int, default=32768); ap.add_argument("--birth-need", type=int)
     ap.add_argument("--birth-from"); ap.add_argument("--updates", type=int, default=16384)
     ap.add_argument("pos", nargs="*")
-    ap.add_argument("--rho", type=float); ap.add_argument("--H", type=int, default=64); ap.add_argument("--U", type=int, default=None)
-    ap.add_argument("--visit-updates", type=int, default=W.VISIT_UPDATES); ap.add_argument("--p-new", type=float, default=W.P_NEW)
+    ap.add_argument("--rho", type=float); ap.add_argument("--H", type=int, default=None); ap.add_argument("--U", type=int, default=None)
+    ap.add_argument("--visit-updates", type=int, default=None); ap.add_argument("--p-new", type=float, default=None)
+    ap.add_argument("--world", choices=("sw", "lw"), default="sw"); ap.add_argument("--learner"); ap.add_argument("--in-turn", action="store_true")
+    ap.add_argument("--taught-share", type=float); ap.add_argument("--lowest", type=int); ap.add_argument("--save-states")
     ap.add_argument("--lr", type=float, default=0.001); ap.add_argument("--wd", type=float, default=0.25); ap.add_argument("--tag")
     ap.add_argument("--out", default=str(OUT)); ap.add_argument("--stop-after", type=int); ap.add_argument("--resume")
     ap.add_argument("--groups"); ap.add_argument("--items"); ap.add_argument("--to")
     a = ap.parse_args(argv)
     cmd = " ".join(["python3", "sw_run.py", *argv])
+    dflt = LW_DEFAULTS if a.world == "lw" else DEFAULTS
+    a.H = dflt["H"] if a.H is None else a.H
+    a.U = (dflt["U"] if a.world == "lw" else a.H) if a.U is None else a.U
+    a.visit_updates = dflt["visit_updates"] if a.visit_updates is None else a.visit_updates
+    a.p_new = dflt["p_new"] if a.p_new is None else a.p_new
+    ss = None if a.save_states is None else [int(x) for x in a.save_states.split(",")]
     if a.cmd == "life":
         if a.resume:
             assert not a.pos and not a.birth_from, "--resume takes the life's settings from the state"
@@ -688,10 +965,11 @@ def main(argv):
         else:
             arm, world, visits = a.pos[0], int(a.pos[1]), int(a.pos[2])
             bg = [int(g) for g in a.birth_groups.split(",")] if a.birth_groups else None
-            life = Life(arm, world, visits, a.rho, a.H, a.U if a.U is not None else a.H, a.visit_updates, a.p_new, a.lr, a.wd, a.tag,
-                        bg, a.birth_cap, a.birth_need)
+            life = Life(arm, world, visits, a.rho, a.H, a.U, a.visit_updates, a.p_new, a.lr, a.wd, a.tag,
+                        bg, a.birth_cap, a.birth_need, a.world, a.learner, a.in_turn, a.taught_share, a.lowest, ss)
         run_life(life, a.out, cmd, a.stop_after)
     elif a.cmd == "solo":
+        assert a.world == "sw", "solo runs are E39's (the small world)"
         run_solo(a.pos[0], int(a.pos[1]), int(a.pos[2]), a.H, a.updates, a.out, cmd)
     elif a.cmd == "branch":
         run_branch(a.pos[0], [int(g) for g in a.groups.split(",")], a.out, cmd)

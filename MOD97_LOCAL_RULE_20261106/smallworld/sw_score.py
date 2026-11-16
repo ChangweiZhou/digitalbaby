@@ -211,6 +211,128 @@ def solo_quantities(ev, tid, losses=None):
                 loss_last64=float(np.mean(losses[-64:])) if losses is not None else None)
 
 
+# ---------------------------------------------------------------- E44: the long-life world (lw_world), from the event file and the list
+LW_OPS = ("add", "sub", "max", "min")           # task 4 g + j is operation j of family g
+LW_FIRST = 16                                   # "over its first 16 updates"
+BEFORE_LIFE, BIRTH_FAMILY = 65535, -1           # the list's at_visit before visit 0; the list's family number of the birth family
+
+
+def share(cor, sel):
+    n = int(sel.sum()); r = int(cor[sel].sum())
+    return dict(right=r, n=n, share=(r / n) if n else None)
+
+
+def mean2(a, b):
+    return None if a is None or b is None else (a + b) / 2
+
+
+def visit_range(ev, v):
+    """(first update, last update + 1) of visit v: every update of a visit asks items of the visit's family."""
+    u = np.asarray(ev["update"])[np.asarray(ev["visit"]) == v]
+    return int(u.min()), int(u.max()) + 1
+
+
+def lw_levels(ev, v, g, lo, hi):
+    """Shares right of family g's asked items of visit v in updates lo .. hi - 1: add and sub on reduction pairs (`wrap`) and on pairs
+    without, max and min; the family's figure is the mean of add and sub on reduction pairs (none_figure: the same without reduction)."""
+    u, vis, task = np.asarray(ev["update"]), np.asarray(ev["visit"]), np.asarray(ev["task"])
+    cor, wrap = np.asarray(ev["correct"]).astype(np.int64), np.asarray(ev["wrap"])
+    w = (vis == v) & (u >= lo) & (u < hi)
+    d = {}
+    for j, op in enumerate(LW_OPS):
+        t = w & (task == 4 * g + j)
+        if op in ("add", "sub"):
+            d[f"{op}_reduction"] = share(cor, t & (wrap == 1)); d[f"{op}_none"] = share(cor, t & (wrap == 0))
+        else:
+            d[op] = share(cor, t)
+    d["figure"] = mean2(d["add_reduction"]["share"], d["sub_reduction"]["share"])
+    d["none_figure"] = mean2(d["add_none"]["share"], d["sub_none"]["share"])
+    red = (w & (wrap == 1) & ((task == 4 * g) | (task == 4 * g + 1)))
+    d["reduction_pooled"] = share(cor, red)
+    return d
+
+
+def lw_first_visits(ev, world, visit_updates, visits):
+    """E44's scorer item 3, per family in the order first met (n = 1, 2, ...): the first-visit level on reduction pairs over the last
+    quarter of its first visit (the last 16, 32, 64, 8 and 128 updates at visits of 64, 128, 256, 32 and 512), with the same over the whole
+    first visit and over its first 16 updates. `visits`: [(visit, family)] in order."""
+    out, q = [], visit_updates // 4
+    assert q * 4 == visit_updates
+    for v, g in visits:
+        if any(r["family"] == g for r in out):
+            continue
+        u0, u1 = visit_range(ev, v)
+        assert u1 - u0 == visit_updates, (v, u0, u1)
+        t = world.groups[g][0]
+        out.append(dict(n=len(out) + 1, family=g, visit=v, p=t["p"], taught_pairs=len(t["taught"]),
+                        last_quarter=lw_levels(ev, v, g, u1 - q, u1), whole=lw_levels(ev, v, g, u0, u1),
+                        first16=lw_levels(ev, v, g, u0, u0 + LW_FIRST), window=dict(last_quarter_updates=q, first_updates=LW_FIRST)))
+    return out
+
+
+def lw_gate_median(first, ns=range(2, 9)):
+    """The median over the second to the eighth family taken (n = 2 .. 8) of the first-visit level on reduction pairs (last quarter)."""
+    xs = [r["last_quarter"]["figure"] for r in first if r["n"] in ns]
+    return float(np.median(xs)) if xs and all(x is not None for x in xs) else None
+
+
+def lw_trend(first, ns=range(2, 9)):
+    """The least-squares slope of the family's figure (last quarter) against ln n over n = 2 .. 8, the first family taken being n = 1."""
+    rs = [r for r in first if r["n"] in ns]
+    return slope([math.log(r["n"]) for r in rs], [r["last_quarter"]["figure"] for r in rs])
+
+
+def lw_by_visit(ev, visits):
+    """Score by age (share right over all asked items of each visit) and the blind predictor's."""
+    vis = np.asarray(ev["visit"]); cor = np.asarray(ev["correct"]).astype(np.int64); bl = np.asarray(ev["blind"]).astype(np.int64)
+    return [dict(visit=v, family=g, score=share(cor, vis == v)["share"], blind=share(bl, vis == v)["share"]) for v, g in visits]
+
+
+def lw_kept(la):
+    """What is kept, from the list: for each family (and the birth family, -1) its share right on its list items at the end of its own
+    first visit (the birth family: before visit 0), and at the end of every later visit: the share, the share divided by its own, and
+    decay alone beside it (source 1: the weights at the end of its own visit decayed by the updates since)."""
+    at, src, fam, cor = (np.asarray(la[k]) for k in ("at_visit", "source", "family", "correct"))
+    du = np.asarray(la["decay_updates"])
+    cor = cor.astype(np.int64)
+    out = {}
+    for f in sorted(set(int(x) for x in fam)):
+        m0 = (fam == f) & (src == 0)
+        own_v = BEFORE_LIFE if f == BIRTH_FAMILY else int(min(at[m0]))
+        own = share(cor, m0 & (at == own_v))["share"]
+        rows = []
+        for k in sorted(set(int(x) for x in at[m0 & (at != own_v)])):
+            if f != BIRTH_FAMILY and k <= own_v:
+                continue
+            s0 = share(cor, m0 & (at == k))["share"]
+            md = (fam == f) & (src == 1) & (at == k)
+            sd = share(cor, md)["share"] if md.any() else None
+            rows.append(dict(at_visit=k, visits_since=(k + 1) if f == BIRTH_FAMILY else k - own_v, share=s0,
+                             kept=(s0 / own) if own else None, decay_alone_share=sd, decay_alone_kept=(sd / own) if (own and sd is not None) else None,
+                             decay_updates=int(du[md][0]) if md.any() else None))
+        out[f] = dict(own_visit=own_v, own_share=own, later=rows)
+    return out
+
+
+def lw_second_lap(ev, la, world, visit_updates, first, visits):
+    """The second lap (a branch over families taken before): per return, the family's share right on its reduction items (add and sub
+    pooled) in the return's first update and its first 16 updates; the family's figure over the last quarter of the return beside that of
+    its first visit; and its list share at the end of the return beside that at the end of its own first visit (from the trunk's list)."""
+    q = visit_updates // 4
+    own = {r["family"]: r for r in first}
+    at, src, fam, cor = (np.asarray(la[k]) for k in ("at_visit", "source", "family", "correct"))
+    cor = cor.astype(np.int64)
+    out = []
+    for v, g in visits:
+        u0, u1 = visit_range(ev, v)
+        m = (fam == g) & (src == 0) & (at == v)
+        out.append(dict(visit=v, family=g, p=world.groups[g][0]["p"], first_update=lw_levels(ev, v, g, u0, u0 + 1)["reduction_pooled"],
+                        first16=lw_levels(ev, v, g, u0, u0 + LW_FIRST)["reduction_pooled"], last_quarter=lw_levels(ev, v, g, u1 - q, u1),
+                        first_visit_last_quarter_figure=own[g]["last_quarter"]["figure"] if g in own else None,
+                        list_share_end_of_return=share(cor, m)["share"]))
+    return out
+
+
 def load(path):
     f = np.load(path)
     return {k: f[k] for k in f.files}

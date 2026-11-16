@@ -1,0 +1,1301 @@
+{
+ "experiment": "E44",
+ "job": "F1 long-life world",
+ "kind": "branch",
+ "settings": {
+  "arm": "naive",
+  "world": 8,
+  "visits": 8,
+  "rho": null,
+  "H": 256,
+  "U": 128,
+  "visit_updates": 256,
+  "p_new": 0.05,
+  "lr": 0.001,
+  "wd": 0.25,
+  "tag": null,
+  "world_kind": "lw",
+  "in_turn": true,
+  "taught_share": 0.1,
+  "lowest": 41,
+  "save_states": [
+   8
+  ],
+  "learner": {
+   "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+   "file_sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0",
+   "tensors_sha256": "9be17d70f686b75124d991bbabdf32bb4280941b4aad9ad02d35bf2745e269f9",
+   "receipt": "exp45/e41/e41_B_h256_f50_73129.json",
+   "receipt_sha256": "0d607351ae9776d8d08cd98d2d61d94a8f6d8aa163ef122b3c939b43e9f44262",
+   "made_by": "E41 (exp41_scale.py run)",
+   "rule": "B",
+   "local_in_birth": false,
+   "H": 256,
+   "U": 128,
+   "parameters": 317457,
+   "fraction": 0.5,
+   "seed": 73129,
+   "updates": 40960,
+   "items_per_update": 64,
+   "taught_items": 2621440,
+   "final_row": {
+    "step": 40960,
+    "A": 94.5,
+    "R": 94.65,
+    "R_counts": {
+     "add89": 951,
+     "sub89": 942
+    }
+   },
+   "reduction_sample_sha256": {
+    "add89": "f433a55ca52ae34d9d6c1262c4a000ccc8db0e258c5c8a189a90e82980e47e52",
+    "sub89": "18ac75b5013b6d4717c803a8e4643fb81b92673c625e985212f1940936300663"
+   },
+   "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+  }
+ },
+ "local": false,
+ "replay": false,
+ "replay_items_per_update": 0,
+ "model": {
+  "cls": "sw_net.SWNet",
+  "H": 256,
+  "U": 128,
+  "parameters": 317457,
+  "shapes": {
+   "book.weight": [
+    258,
+    8
+   ],
+   "l1.weight": [
+    256,
+    8
+   ],
+   "l1.bias": [
+    256
+   ],
+   "rnn.weight_ih_l0": [
+    384,
+    256
+   ],
+   "rnn.weight_hh_l0": [
+    384,
+    128
+   ],
+   "rnn.bias_ih_l0": [
+    384
+   ],
+   "rnn.bias_hh_l0": [
+    384
+   ],
+   "lm.weight": [
+    256,
+    128
+   ],
+   "lm.bias": [
+    256
+   ],
+   "l2.weight": [
+    256,
+    256
+   ],
+   "l2.bias": [
+    256
+   ],
+   "l3.weight": [
+    257,
+    256
+   ],
+   "l3.bias": [
+    257
+   ]
+  },
+  "initial": {
+   "weights_tensors_sha256": "9be17d70f686b75124d991bbabdf32bb4280941b4aad9ad02d35bf2745e269f9"
+  }
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked cross entropy, zero_grad, backward, one AdamW step",
+ "answering": "sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
+ "world": {
+  "kind": "lw",
+  "file": "smallworld/lw_world.py",
+  "seed": 8,
+  "visit_updates": 256,
+  "p_new": 0.05,
+  "taught_share": 0.1,
+  "lowest": 41,
+  "in_turn": true,
+  "probe_families": 4,
+  "tasks": 224,
+  "families": 56
+ },
+ "learner": {
+  "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+  "file_sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0",
+  "tensors_sha256": "9be17d70f686b75124d991bbabdf32bb4280941b4aad9ad02d35bf2745e269f9",
+  "receipt": "exp45/e41/e41_B_h256_f50_73129.json",
+  "receipt_sha256": "0d607351ae9776d8d08cd98d2d61d94a8f6d8aa163ef122b3c939b43e9f44262",
+  "made_by": "E41 (exp41_scale.py run)",
+  "rule": "B",
+  "local_in_birth": false,
+  "H": 256,
+  "U": 128,
+  "parameters": 317457,
+  "fraction": 0.5,
+  "seed": 73129,
+  "updates": 40960,
+  "items_per_update": 64,
+  "taught_items": 2621440,
+  "final_row": {
+   "step": 40960,
+   "A": 94.5,
+   "R": 94.65,
+   "R_counts": {
+    "add89": 951,
+    "sub89": 942
+   }
+  },
+  "reduction_sample_sha256": {
+   "add89": "f433a55ca52ae34d9d6c1262c4a000ccc8db0e258c5c8a189a90e82980e47e52",
+   "sub89": "18ac75b5013b6d4717c803a8e4643fb81b92673c625e985212f1940936300663"
+  },
+  "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+ },
+ "provenance": {
+  "command": "python3 sw_run.py branch /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/F1/lw_naive_w8_v8_turn_state_v8.pt --groups 0,1,2,3,4,5,6,7 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/F1/lap2",
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.3",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "d7ddf82c5f73dae606b5a2462fed0c30573a6566",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+   "smallworld/lw_world.py": "83b7df79d4d8c9851ec264dca0b0f4197b6321c74af3eb884e5ff4a7c953656e",
+   "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+   "smallworld/sw_run.py": "5d643e2d714489b85906460ec4c5d50d4433c8736c7d35e8921c280b20da8835",
+   "smallworld/sw_score.py": "0f60f462a749cb18c6a733dfb7a2ffac393fa26a110e18dee0206f2a71e4672b",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "env": {
+   "EXP45_WINDOW": "10",
+   "EXP45_HIDDEN": "512",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "ledger": {
+  "stored_numbers": {
+   "weights": 317457,
+   "optimizer_moments": 634914,
+   "optimizer_step_counters": 13,
+   "anchor": 0
+  },
+  "buffer": {
+   "used": false,
+   "capacity_items": 0,
+   "capacity_bytes": 0,
+   "items_at_end": 0,
+   "bytes_at_end": 0,
+   "max_items": 0,
+   "max_bytes": 0,
+   "offered": 0
+  },
+  "updates": 4096,
+  "stream_items_per_update": 64,
+  "taught_per_update": 48,
+  "asked_per_update": 16,
+  "learned_per_update": 48,
+  "replayed_per_update": 0,
+  "new_learned_per_update_once_replaying": 48,
+  "birth": null,
+  "life_updates": 4096,
+  "learner": {
+   "made_by": "E41 (exp41_scale.py run)",
+   "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+   "file_sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0",
+   "rule": "B",
+   "updates": 40960,
+   "items_per_update": 64,
+   "taught_items": 2621440,
+   "note": "E41's birth on E26's first family (mod 89, half its pairs), before this life"
+  }
+ },
+ "counters": {
+  "learned_items_verified": 196608,
+  "asking_checks": 16,
+  "replayed_items": 0,
+  "max_buffer_items": 0,
+  "max_buffer_bytes": 0,
+  "first_replay_update": null
+ },
+ "events": {
+  "file": "lw_naive_w8_v8_turn_br8_g0-1-2-3-4-5-6-7.npz",
+  "file_sha256": "5a33fe668c43a9869ebbadb584b2a968bef3ff71096d088133aa7a969537da40",
+  "arrays_sha256": "5009ed7bdaa57b7663641abdcb52cc87dee8e250931071a4ba648e82cb979c2f",
+  "entries": 32768,
+  "columns": [
+   "update",
+   "visit",
+   "task",
+   "correct",
+   "blind",
+   "wrap",
+   "mirror",
+   "seen",
+   "replayed",
+   "g1",
+   "g2",
+   "g3"
+  ]
+ },
+ "final": {
+  "visits": 16,
+  "updates": 4096,
+  "weights_tensors_sha256": "5114f9d564750ac10803e8c1a554c8ffa852d6c0732519260df6e5dd829446a3",
+  "optimizer_sha256": "a58d2eda9c61b5e0697c9bd3eb133bafbff7846e0821d02beecbba5f8a2fad85"
+ },
+ "cpu": {
+  "total": 113.412250896,
+  "per_visit": [
+   13.93380216,
+   13.593232619999998,
+   13.342084861000004,
+   13.361113898000006,
+   12.899423087000002,
+   13.014319891,
+   12.528766286000007,
+   13.001169327
+  ],
+  "list_total": 7.612773802999985,
+  "list_per_visit": [
+   0.9900223179999976,
+   0.9656508919999993,
+   1.0229925219999956,
+   0.8978354269999969,
+   0.9011690680000015,
+   0.9878267189999974,
+   0.9290880379999891,
+   0.918188819000008
+  ],
+  "mean_per_visit": 13.209239016250002,
+  "birth": null,
+  "peak_rss_kib": 521468,
+  "note": null
+ },
+ "birth": null,
+ "birth_from": null,
+ "learned_sha256": "e0beb80f63e9078fa1b856a598154ec63f778654006e99b255ea2ceacf3b00a9",
+ "by_visit": [
+  {
+   "visit": 8,
+   "group": 0,
+   "new": false,
+   "absence": 8,
+   "branch_k": 0,
+   "generator": "world|8|branch|8|0",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "0d669b0408e40f4645a3ce801e1dd355a21e831055d60ec59c962fa1d3bd334b",
+   "learned_sha256": "e572a3758062c21bc13f34b0630feda5e5af62ff3600a91b5ba85bd0447c732e",
+   "loss_mean": 0.19944227398082148,
+   "loss_first": 0.6672264933586121,
+   "loss_last": 0.0832211971282959,
+   "replayed_items": 0,
+   "cpu": 13.93380216,
+   "wall": 14.144423484802246,
+   "list_cpu": 0.9900223179999976
+  },
+  {
+   "visit": 9,
+   "group": 1,
+   "new": false,
+   "absence": 8,
+   "branch_k": 1,
+   "generator": "world|8|branch|8|1",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "f739a1ede4f3caf80c3623741425487934f1a32d3171abe440c1ce6facc380f1",
+   "learned_sha256": "7b403115cfdf57468fde8881b265abde3ce71a4b9f9331de17ea54b5a5fcedb0",
+   "loss_mean": 0.16252755315508693,
+   "loss_first": 1.522810935974121,
+   "loss_last": 0.05418849736452103,
+   "replayed_items": 0,
+   "cpu": 13.593232619999998,
+   "wall": 13.644407510757446,
+   "list_cpu": 0.9656508919999993
+  },
+  {
+   "visit": 10,
+   "group": 2,
+   "new": false,
+   "absence": 8,
+   "branch_k": 2,
+   "generator": "world|8|branch|8|2",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "e0689cc152ce5c88d3918fb4c0f3e8130760f2bda896ee973dbdb9df8ee02526",
+   "learned_sha256": "eecbcb9af049dcc91ee1ca609854ed73801ac0b7555848be773edd114552ca04",
+   "loss_mean": 0.06965160359322908,
+   "loss_first": 0.5913363695144653,
+   "loss_last": 0.02472689002752304,
+   "replayed_items": 0,
+   "cpu": 13.342084861000004,
+   "wall": 13.477701425552368,
+   "list_cpu": 1.0229925219999956
+  },
+  {
+   "visit": 11,
+   "group": 3,
+   "new": false,
+   "absence": 8,
+   "branch_k": 3,
+   "generator": "world|8|branch|8|3",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "df10b5014d48f2202d3677a8a3e50d0cbfa4bb45a1913f27ff1afedb6d74a3d5",
+   "learned_sha256": "2fd8f8bccbd083b0a2c3c90a142db8c9206b58615cf668513fb97def0550ea67",
+   "loss_mean": 0.10221882036421448,
+   "loss_first": 1.0974838733673096,
+   "loss_last": 0.04153219982981682,
+   "replayed_items": 0,
+   "cpu": 13.361113898000006,
+   "wall": 13.506527185440063,
+   "list_cpu": 0.8978354269999969
+  },
+  {
+   "visit": 12,
+   "group": 4,
+   "new": false,
+   "absence": 8,
+   "branch_k": 4,
+   "generator": "world|8|branch|8|4",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "2013b4162eaf058f6e0b3132c83dc4a2f0542c870405ea490b82ba2f8b80b124",
+   "learned_sha256": "0470896064895dc95a827334c2cc884163a62e31e5b2aca5863dd026b29273ee",
+   "loss_mean": 0.34763182990718633,
+   "loss_first": 1.7745877504348755,
+   "loss_last": 0.18411697447299957,
+   "replayed_items": 0,
+   "cpu": 12.899423087000002,
+   "wall": 12.994449615478516,
+   "list_cpu": 0.9011690680000015
+  },
+  {
+   "visit": 13,
+   "group": 5,
+   "new": false,
+   "absence": 8,
+   "branch_k": 5,
+   "generator": "world|8|branch|8|5",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "6a36603b736fb5a905008896273befefab7645ea218754a86c86f1ef470388ee",
+   "learned_sha256": "addff15dfdab06e21a5fdc76c4d0bd4c977ff7354f458616171d04822bfa4e92",
+   "loss_mean": 0.08067500774632208,
+   "loss_first": 0.558219850063324,
+   "loss_last": 0.024606145918369293,
+   "replayed_items": 0,
+   "cpu": 13.014319891,
+   "wall": 13.135335683822632,
+   "list_cpu": 0.9878267189999974
+  },
+  {
+   "visit": 14,
+   "group": 6,
+   "new": false,
+   "absence": 8,
+   "branch_k": 6,
+   "generator": "world|8|branch|8|6",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "af3f3a62609211ef8dc709c97cf5bde24521381f88849684615809dac9c6f884",
+   "learned_sha256": "f54ae96cf85816bd7262059c9a0ebd166fd3527215fe8b099ce349edecd6914b",
+   "loss_mean": 0.1879574197519105,
+   "loss_first": 1.9421675205230713,
+   "loss_last": 0.08743951469659805,
+   "replayed_items": 0,
+   "cpu": 12.528766286000007,
+   "wall": 12.588738441467285,
+   "list_cpu": 0.9290880379999891
+  },
+  {
+   "visit": 15,
+   "group": 7,
+   "new": false,
+   "absence": 8,
+   "branch_k": 7,
+   "generator": "world|8|branch|8|7",
+   "probe": false,
+   "updates": 256,
+   "stream_sha256": "93aa463dd462dd825540ad32c259f592e94d26e96e11cecfde244cf56228bc75",
+   "learned_sha256": "15ab96f41ce93939637b2b9e4b5451465628dab313ad4ae604a3be6906ad0ce8",
+   "loss_mean": 0.36514634027844295,
+   "loss_first": 2.2845938205718994,
+   "loss_last": 0.10233207792043686,
+   "replayed_items": 0,
+   "cpu": 13.001169327,
+   "wall": 13.106052160263062,
+   "list_cpu": 0.918188819000008
+  }
+ ],
+ "resumes": [],
+ "states": [
+  {
+   "visits": 16,
+   "path": "lw_naive_w8_v8_turn_br8_g0-1-2-3-4-5-6-7_state_end.pt",
+   "file_sha256": "91861cae97a1063ff498c7cf5d1f7ccadf95fe14907ea30118f99d50ba621a42",
+   "weights_tensors_sha256": "5114f9d564750ac10803e8c1a554c8ffa852d6c0732519260df6e5dd829446a3",
+   "optimizer_sha256": "a58d2eda9c61b5e0697c9bd3eb133bafbff7846e0821d02beecbba5f8a2fad85"
+  }
+ ],
+ "complete": true,
+ "branch": {
+  "from_state": {
+   "path": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/F1/lw_naive_w8_v8_turn_state_v8.pt",
+   "file_sha256": "3bfef66eec8d046f808a7ceae3357faa8ce022229695179d8f2647b5810f7e63",
+   "done_visits": 8
+  },
+  "groups": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "trunk": {
+   "by_visit": 8,
+   "states": [],
+   "families_taken": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  }
+ },
+ "stream_sha256": "840a056f53dc8bd40f40939cec668461a99d80eadc93d0a73e7f2364d1a8ec24",
+ "list": {
+  "file": "lw_naive_w8_v8_turn_br8_g0-1-2-3-4-5-6-7_list.npz",
+  "file_sha256": "7635f34760abb073575bc99363ba4dba7c4ff51576dcc1de47d82d3ce1010665",
+  "arrays_sha256": "91b12e52b90be70d17e477dd6c4fb67a0b3f1ccad3ab1d40a761d40f32865a07",
+  "entries": 28800,
+  "columns": [
+   "at_visit",
+   "source",
+   "family",
+   "task",
+   "a",
+   "b",
+   "g1",
+   "g2",
+   "g3",
+   "correct",
+   "decay_updates",
+   "weights_from_visit"
+  ],
+  "families_taken": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7
+  ],
+  "items_sha256": "8b6daf6e67d8060d19d7727e2603a0bc12a98f9da5b98b2ee0188794d6c3c5c9",
+  "r_items": 2000,
+  "decay_factor_per_update": 0.99975,
+  "note": "source 0: the network at the end of at_visit (65535: before visit 0); source 1: decay alone, the weights at the end of weights_from_visit (65535: the born weights) with every parameter but the byte table multiplied by decay_factor_per_update ** decay_updates; family -1 is the birth family (tasks 65534 add89, 65535 sub89)"
+ },
+ "list_summary": [
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 53,
+   "share": 0.265,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 7,
+   "share": 0.035,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 7,
+   "share": 0.035,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 27,
+   "share": 0.135,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 10,
+   "share": 0.05,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 15,
+   "share": 0.075,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 3,
+   "share": 0.015,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 8,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 9,
+   "share": 0.0045,
+   "decay_updates": 0,
+   "weights_from_visit": 8
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 142,
+   "share": 0.71,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 20,
+   "share": 0.1,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 8,
+   "share": 0.04,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 58,
+   "share": 0.29,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 1,
+   "share": 0.005,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 9,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 9,
+   "share": 0.0045,
+   "decay_updates": 0,
+   "weights_from_visit": 9
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 40,
+   "share": 0.2,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 149,
+   "share": 0.745,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 5,
+   "share": 0.025,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 53,
+   "share": 0.265,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 2,
+   "share": 0.01,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 10,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 14,
+   "share": 0.007,
+   "decay_updates": 0,
+   "weights_from_visit": 10
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 16,
+   "share": 0.08,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 3,
+   "share": 0.015,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 136,
+   "share": 0.68,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 24,
+   "share": 0.12,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 15,
+   "share": 0.075,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 11,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 4,
+   "share": 0.002,
+   "decay_updates": 0,
+   "weights_from_visit": 11
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 11,
+   "share": 0.055,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 1,
+   "share": 0.005,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 3,
+   "share": 0.015,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 43,
+   "share": 0.215,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 12,
+   "share": 0.06,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 1,
+   "share": 0.005,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 12,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 62,
+   "share": 0.031,
+   "decay_updates": 0,
+   "weights_from_visit": 12
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 58,
+   "share": 0.29,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 30,
+   "share": 0.15,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 5,
+   "share": 0.025,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 157,
+   "share": 0.785,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 2,
+   "share": 0.01,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 13,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 24,
+   "share": 0.012,
+   "decay_updates": 0,
+   "weights_from_visit": 13
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 6,
+   "share": 0.03,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 3,
+   "share": 0.015,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 1,
+   "share": 0.005,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 138,
+   "share": 0.69,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 14,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 0,
+   "share": 0.0,
+   "decay_updates": 0,
+   "weights_from_visit": 14
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 5,
+   "share": 0.025,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 1,
+   "n": 200,
+   "right": 10,
+   "share": 0.05,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 2,
+   "n": 200,
+   "right": 12,
+   "share": 0.06,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 3,
+   "n": 200,
+   "right": 12,
+   "share": 0.06,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 4,
+   "n": 200,
+   "right": 3,
+   "share": 0.015,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 5,
+   "n": 200,
+   "right": 23,
+   "share": 0.115,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 6,
+   "n": 200,
+   "right": 9,
+   "share": 0.045,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": 7,
+   "n": 200,
+   "right": 30,
+   "share": 0.15,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  },
+  {
+   "at_visit": 15,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 11,
+   "share": 0.0055,
+   "decay_updates": 0,
+   "weights_from_visit": 15
+  }
+ ]
+}
