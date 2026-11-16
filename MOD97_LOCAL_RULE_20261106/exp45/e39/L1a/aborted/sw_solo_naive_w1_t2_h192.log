@@ -1,0 +1,15 @@
+sw_solo_naive_w1_t2_h192 update 2048 loss 0.0000 right(last 64 updates) 0.000
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 703, in <module>
+    main(sys.argv[1:])
+    ~~~~^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 695, in main
+    run_solo(a.pos[0], int(a.pos[1]), int(a.pos[2]), a.H, a.updates, a.out, cmd)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 617, in run_solo
+    lo, _ = life.update(0, taught, asked, i % 1024 == 0, hs, hl)
+            ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 411, in update
+    ev["update"].append(u); ev["visit"].append(v); ev["task"].append(tid); ev["correct"].append(int(g == y))
+                                                                           ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+BufferError: cannot resize an array that is exporting buffers

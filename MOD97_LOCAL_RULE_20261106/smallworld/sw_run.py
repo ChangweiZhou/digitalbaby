@@ -28,6 +28,9 @@ Outputs, in --out (default exp45/e39/), named sw_<arm>_w<world>_v<visits>[_<sett
     python3 sw_run.py branch <state> --groups g1,g2,... [--out DIR]                # the named groups in place of the schedule; k-th visit's
                                                                                   #   items from Random("world|S|branch|<n>|<k>"), k from 0
     python3 sw_run.py ask <state> --items FILE.json --to OUT.json                  # [[task, a, b(, letters)], ...], asked pairs only
+    python3 sw_run.py solo <naive|sweep> <world> <task> [--H 64] [--updates 16384]   # revision 4, L1a: one task alone
+    python3 sw_run.py life <arm> <world> <visits> ... --birth-groups 0,1 [--birth-cap 32768] [--birth-need 3]   # revision 4, L1b
+    python3 sw_run.py life --birth-from <naive ..._state_v0.pt>                     # revision 4: sweep-after-naive
 """
 import argparse
 import hashlib
@@ -51,10 +54,13 @@ MDIR = HERE.parent
 sys.path.insert(0, str(HERE))
 import sw_world as W                  # noqa: E402  (the audited generator, byte-identical to COORD_CHECKS_20261115/sw_world_spec.py)
 import sw_net as N                    # noqa: E402
+import sw_score as S                  # noqa: E402  (revision 4: the criterion of L1a, from the event file)
 
 T.set_num_threads(1)
 OUT = MDIR / "exp45" / "e39"
-ARMS = {"naive": (False, False), "sweep": (True, False), "replay": (False, True), "sweep+replay": (True, True)}   # arm -> (local, replay)
+ARMS = {"naive": (False, False), "sweep": (True, False), "replay": (False, True), "sweep+replay": (True, True),
+        "sweep-after-naive": (True, False)}   # arm -> (local, replay); sweep-after-naive: the sweep's life from naive's state at the end of its birth
+BIRTH_VISIT = 65535                   # E39 revision 4: the `visit` value of a birth's asked items in the event file
 DEFAULTS = dict(H=64, U=64, visit_updates=W.VISIT_UPDATES, p_new=W.P_NEW, lr=0.001, wd=0.25)
 TAGS = dict(H="h", U="u", visit_updates="vu", p_new="pn", lr="lr", wd="wd")
 ITEM_MAX = 15                         # bytes of the longest item: 12 of prompt, 2 digits and the end symbol
@@ -184,6 +190,50 @@ def batches_with(world, rng, group):
         yield taught, asked
 
 
+def solo_batches(world, tid, updates):
+    """E39 revision 4, job L1a: one task alone. One generator for all the run's updates, Random("world|S|solo|<task id>"); each update
+    draws 64 items in order, the first 48 taught: pair pool[randrange(len(pool))], then (world.render) randint(0, 4) for k and k letters
+    by choice. No draw is made for the task."""
+    t = world.tasks[tid]
+    r = Random(f"world|{world.seed}|solo|{tid}")
+    for _ in range(updates):
+        taught, asked = [], []
+        for i in range(W.BATCH):
+            pool = t["taught"] if i < W.TAUGHT_PER_BATCH else t["asked"]
+            a, b = pool[r.randrange(len(pool))]
+            (taught if i < W.TAUGHT_PER_BATCH else asked).append((t["id"], a, b, *world.render(t, a, b, r)))
+        yield taught, asked
+
+
+def birth_tasks(world, groups):
+    return sorted(t["id"] for g in groups for t in world.groups[g])
+
+
+def birth_batches(world, groups):
+    """E39 revision 4, job L1b: the birth's stream, without end. One generator for the whole birth, Random("world|S|birth"); each update
+    draws 64 items in order, the first 48 taught: task tasks[randrange(len(tasks))] with tasks the birth groups' tasks in id order, then
+    pair, k and letters as in a visit."""
+    ts = [world.tasks[i] for i in birth_tasks(world, groups)]
+    r = Random(f"world|{world.seed}|birth")
+    while True:
+        taught, asked = [], []
+        for i in range(W.BATCH):
+            t = ts[r.randrange(len(ts))]
+            pool = t["taught"] if i < W.TAUGHT_PER_BATCH else t["asked"]
+            a, b = pool[r.randrange(len(pool))]
+            (taught if i < W.TAUGHT_PER_BATCH else asked).append((t["id"], a, b, *world.render(t, a, b, r)))
+        yield taught, asked
+
+
+def stream_digest(batches, updates):
+    """Check 10: the world digest's rule over each update's taught then asked items, for the first `updates` updates."""
+    h = hashlib.sha256()
+    for _, (taught, asked) in zip(range(updates), batches):
+        for it in taught + asked:
+            h.update(stream_bytes(*it))
+    return h.hexdigest()
+
+
 def stream_bytes(tid, a, b, p, y):
     """One item as sw_world.digest hashes it."""
     return bytes([tid // 256, tid % 256, a, b, len(p)]) + bytes(p) + bytes(v % 256 for v in y)
@@ -196,6 +246,8 @@ def setting_tag(cfg, extra=None):
     for k, short in TAGS.items():
         if cfg[k] != DEFAULTS[k]:
             parts.append(f"{short}{cfg[k]:g}")
+    if cfg.get("birth"):
+        parts.append("birth" + "".join(str(g) for g in cfg["birth"]["groups"]))
     if extra:
         parts.append(extra)
     return "_".join(parts)
@@ -208,14 +260,19 @@ def life_stem(cfg):
 
 # ---------------------------------------------------------------- one life
 class Life:
-    def __init__(self, arm, world, visits, rho=None, H=64, U=64, visit_updates=W.VISIT_UPDATES, p_new=W.P_NEW, lr=0.001, wd=0.25, tag=None):
-        assert arm in ARMS, arm
+    def __init__(self, arm, world, visits, rho=None, H=64, U=64, visit_updates=W.VISIT_UPDATES, p_new=W.P_NEW, lr=0.001, wd=0.25, tag=None,
+                 birth_groups=None, birth_cap=32768, birth_need=None):
+        assert arm in ARMS and arm != "sweep-after-naive", arm      # sweep-after-naive starts from a naive birth (Life.from_birth)
         self.local, self.uses_replay = ARMS[arm]
         if self.uses_replay:
             assert rho is not None and 0 <= rho < 1 and float(rho * W.TAUGHT_PER_BATCH).is_integer(), "replay arms need rho with rho*48 whole"
         else:
             assert rho is None, "rho is for the replay arms"
         self.cfg = dict(arm=arm, world=world, visits=visits, rho=rho, H=H, U=U, visit_updates=visit_updates, p_new=p_new, lr=lr, wd=wd, tag=tag)
+        if birth_groups:
+            nb = 2 * len(birth_groups)
+            self.cfg["birth"] = dict(groups=sorted(birth_groups), cap=birth_cap, need=birth_need if birth_need is not None else nb - 1, level=0.8, every=64)
+        self.birth, self.birth_from = None, None
         self._build()
         self.m = N.new_net(world, H, U)
         self.opt = N.make_opt(self.m, lr, wd)
@@ -253,7 +310,8 @@ class Life:
                     replay_rng=self.rrng.getstate() if self.rrng else None, seen=self.seen, replayed=self.replayed,
                     last_answer=self.last_answer, events_npz=bio.getvalue(), by_visit=self.by_visit, counters=self.counters,
                     cpu=self.cpu_before + time.process_time() - self.cpu0, resumes=self.resumes, states=self.states, initial=self.initial,
-                    sources_sha256=source_hashes(), weights_tensors_sha256=tensors_sha(self.m.state_dict()), optimizer_sha256=opt_sha(self.opt))
+                    sources_sha256=source_hashes(), weights_tensors_sha256=tensors_sha(self.m.state_dict()), optimizer_sha256=opt_sha(self.opt),
+                    birth=self.birth, birth_from=self.birth_from)
 
     @classmethod
     def load(cls, path):
@@ -279,9 +337,59 @@ class Life:
         self.done_visits, self.done_updates = s["done_visits"], s["done_updates"]
         self.by_visit, self.counters, self.cpu_before = s["by_visit"], s["counters"], s["cpu"]
         self.resumes, self.states, self.initial = s["resumes"], s["states"], s["initial"]
+        self.birth, self.birth_from = s.get("birth"), s.get("birth_from")
         self.loaded_from = dict(path=str(path), file_sha256=sha_file(path), done_visits=self.done_visits)
         self.cpu0 = time.process_time()
         return self
+
+    @classmethod
+    def from_birth(cls, path):
+        """sweep-after-naive: the naive arm's complete state at the end of its birth (weights, optimizer state, counts, the birth's events),
+        continued under the sweep."""
+        self = cls.load(path)
+        assert self.cfg["arm"] == "naive" and self.done_visits == 0 and self.birth is not None, "needs a naive life's state at the end of its birth"
+        self.birth_from = dict(self.loaded_from, arm="naive", weights_tensors_sha256=tensors_sha(self.m.state_dict()), optimizer_sha256=opt_sha(self.opt))
+        self.cfg = dict(self.cfg, arm="sweep-after-naive")
+        self.local, self.uses_replay = ARMS["sweep-after-naive"]
+        self.states, self.resumes = [], []
+        return self
+
+    def run_birth(self):
+        """Before visit 0: joint training on the birth groups' tasks, one generator for the whole birth (birth_batches). Checked after every
+        64 updates; complete at the first check at which at least `need` of its tasks are at the criterion (share right over each task's
+        asked items of the last 64 updates at least 0.8); at most `cap` updates. Asked items have visit = BIRTH_VISIT."""
+        c = self.cfg["birth"]; tasks = birth_tasks(self.world, c["groups"])
+        gen = birth_batches(self.world, c["groups"])
+        hs, hl, h256 = hashlib.sha256(), hashlib.sha256(), hashlib.sha256()
+        c0, u0 = time.process_time(), self.done_updates
+        right, n = {t: 0 for t in tasks}, {t: 0 for t in tasks}
+        checks, losses, complete = [], [], False
+        while self.done_updates - u0 < c["cap"]:
+            taught, asked = next(gen)
+            i = self.done_updates - u0
+            if i < 256:
+                for it in taught + asked:
+                    h256.update(stream_bytes(*it))
+            k0 = len(self.ev["correct"])
+            lo, _ = self.update(BIRTH_VISIT, taught, asked, i % 1024 == 0, hs, hl)
+            losses.append(lo)
+            for j in range(k0, len(self.ev["correct"])):
+                t = self.ev["task"][j]; right[t] += self.ev["correct"][j]; n[t] += 1
+            if (i + 1) % c["every"] == 0:
+                at = [t for t in tasks if n[t] and 5 * right[t] >= 4 * n[t]]      # share >= 0.8, exactly
+                checks.append(dict(updates=i + 1, right=dict(right), n=dict(n), at_criterion=at))
+                right, n = {t: 0 for t in tasks}, {t: 0 for t in tasks}
+                if len(at) >= c["need"]:
+                    complete = True
+                    break
+        B = self.done_updates - u0
+        self.birth = dict(groups=c["groups"], tasks=tasks, cap=c["cap"], need=c["need"], updates=B, complete=complete, checks=checks,
+                          end_shares={t: checks[-1]["right"][t] / checks[-1]["n"][t] if checks and checks[-1]["n"][t] else None for t in tasks},
+                          stream_sha256=hs.hexdigest(), stream_first256_sha256=h256.hexdigest(), learned_sha256=hl.hexdigest(),
+                          taught_items=W.TAUGHT_PER_BATCH * B, asked_items=(W.BATCH - W.TAUGHT_PER_BATCH) * B,
+                          loss_per64=[float(np.mean(losses[k:k + 64])) for k in range(0, B, 64)], cpu=time.process_time() - c0,
+                          generator=f"world|{self.cfg['world']}|birth")
+        return self.birth
 
     def save_state(self, path):
         refuse_existing(path, str(path) + ".tmp")
@@ -377,7 +485,11 @@ class Life:
                                 max_items=self.counters["max_buffer_items"], max_bytes=self.counters["max_buffer_bytes"], offered=self.offered),
                     updates=self.done_updates, stream_items_per_update=W.BATCH, taught_per_update=W.TAUGHT_PER_BATCH,
                     asked_per_update=W.BATCH - W.TAUGHT_PER_BATCH, learned_per_update=W.TAUGHT_PER_BATCH, replayed_per_update=self.k_rep,
-                    new_learned_per_update_once_replaying=W.TAUGHT_PER_BATCH - self.k_rep)
+                    new_learned_per_update_once_replaying=W.TAUGHT_PER_BATCH - self.k_rep,
+                    birth=None if not self.birth else dict(updates=self.birth["updates"], taught_items=self.birth["taught_items"],
+                                                           asked_items=self.birth["asked_items"], cpu=self.birth["cpu"],
+                                                           inherited_from_naive=self.birth_from is not None),
+                    life_updates=self.done_updates - (self.birth["updates"] if self.birth else 0))
 
     def receipt(self, kind, cmd, events_path, ev_arrays, extra):
         m = self.m
@@ -399,7 +511,11 @@ class Life:
                     final=dict(visits=self.done_visits, updates=self.done_updates, weights_tensors_sha256=tensors_sha(m.state_dict()),
                                optimizer_sha256=opt_sha(self.opt)),
                     cpu=dict(total=self.cpu_before + time.process_time() - self.cpu0, per_visit=[r["cpu"] for r in self.by_visit],
-                             mean_per_visit=float(np.mean([r["cpu"] for r in self.by_visit]))),
+                             mean_per_visit=float(np.mean([r["cpu"] for r in self.by_visit])) if self.by_visit else None,
+                             birth=self.birth["cpu"] if self.birth else None,
+                             peak_rss_kib=__import__("resource").getrusage(__import__("resource").RUSAGE_SELF).ru_maxrss,
+                             note=None if not self.birth_from else "total includes the naive arm's birth CPU, inherited with its state"),
+                    birth=self.birth, birth_from=self.birth_from,
                     learned_sha256=hashlib.sha256("".join(r["learned_sha256"] for r in self.by_visit).encode()).hexdigest(),
                     by_visit=self.by_visit, resumes=self.resumes, states=self.states, complete=True, **extra)
 
@@ -423,6 +539,14 @@ def run_life(life, out, cmd, stop_after=None):
     if life.done_visits:
         life.resumes.append(dict(life.loaded_from, wall_utc=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), command=cmd,
                                  stream_regeneration_cpu=time.process_time() - f0))
+    if life.cfg.get("birth") and life.done_visits == 0:
+        if life.birth is None:
+            b = life.run_birth()
+            print(f"{stem} birth: {b['updates']} updates, complete {b['complete']}, end shares "
+                  f"{ {t: round(x, 3) if x is not None else None for t, x in b['end_shares'].items()} } cpu {b['cpu']:.1f}s", flush=True)
+        life.save_state(out / f"{stem}_state_v0.pt")             # the state at visit 0: the end of the birth
+        if stop_after == 0:
+            return None
     for s in sched[life.done_visits:]:
         rec = life.visit(s, life.world.visit_batches(s["visit"], s["group"]), life_hash=lh)
         n = life.done_visits
@@ -474,6 +598,43 @@ def run_branch(state_path, groups, out, cmd):
     return rec
 
 
+def run_solo(arm, world, tid, H, updates, out, cmd):
+    """E39 revision 4, job L1a: one task alone from the network's initial values (T.manual_seed(world) then the constructor), `updates`
+    updates of the solo stream; asked items answered before each update; `visit` = 0 throughout."""
+    assert arm in ("naive", "sweep")
+    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+    stem = f"sw_solo_{arm}_w{world}_t{tid}_h{H}"
+    rpath, epath, spath = out / f"{stem}.json", out / f"{stem}.npz", out / f"{stem}_state_end.pt"
+    refuse_existing(rpath, epath, spath)
+    life = Life(arm, world, 0, H=H, U=H)
+    t = life.world.tasks[tid]
+    hs, hl, h256 = hashlib.sha256(), hashlib.sha256(), hashlib.sha256()
+    losses, life.cpu0 = [], time.process_time()
+    for i, (taught, asked) in enumerate(solo_batches(life.world, tid, updates)):
+        if i < 256:
+            for it in taught + asked:
+                h256.update(stream_bytes(*it))
+        lo, _ = life.update(0, taught, asked, i % 1024 == 0, hs, hl)
+        losses.append(lo)
+        if (i + 1) % 2048 == 0:
+            c = float(np.frombuffer(life.ev["correct"], dtype=np.uint8)[-16 * 64:].mean())     # no view may outlive the line (the array grows)
+            print(f"{stem} update {i + 1} loss {np.mean(losses[-64:]):.4f} right(last 64 updates) {c:.3f}", flush=True)
+    arrs = life.events_arrays()
+    np.savez_compressed(epath, **arrs)
+    q = S.solo_quantities(arrs, tid, losses)
+    life.save_state(spath)
+    rec = life.receipt("solo", cmd, epath, arrs, dict(
+        solo=dict(task=tid, op=t["op"][0] if t["op"][0] != "lin" else list(t["op"][1]), p=t["p"], symbol=chr(t["symbol"]), code=bytes(t["code"]).decode(),
+                  taught_pairs=len(t["taught"]), asked_pairs=len(t["asked"]), updates=updates, generator=f"world|{world}|solo|{tid}"),
+        stream_sha256=hs.hexdigest(), stream_first256_sha256=h256.hexdigest(), solo_learned_sha256=hl.hexdigest(),
+        loss_per64=[float(np.mean(losses[k:k + 64])) for k in range(0, len(losses), 64)], quantities=q))
+    rec["job"] = "L1a solo"
+    write_json(rpath, rec)
+    print(f"{stem}: complete; to criterion {q['updates_to_criterion']}, to 0.5 {q['updates_to_half']}, last 256 {q['last256']['all']['share']:.3f}, "
+          f"loss {q['loss_last64']:.4f}", flush=True)
+    return rec
+
+
 def render(world, tid, a, b, letters=""):
     t = world.tasks[tid]
     return list(t["code"] + f"{a:02d}".encode() + bytes([t["symbol"]]) + letters.encode() + f"{b:02d}".encode() + b"=")
@@ -506,7 +667,9 @@ def run_ask(state_path, items, to, cmd):
 
 def main(argv):
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("life", "branch", "ask"))
+    ap.add_argument("cmd", choices=("life", "branch", "ask", "solo"))
+    ap.add_argument("--birth-groups"); ap.add_argument("--birth-cap", type=int, default=32768); ap.add_argument("--birth-need", type=int)
+    ap.add_argument("--birth-from"); ap.add_argument("--updates", type=int, default=16384)
     ap.add_argument("pos", nargs="*")
     ap.add_argument("--rho", type=float); ap.add_argument("--H", type=int, default=64); ap.add_argument("--U", type=int, default=None)
     ap.add_argument("--visit-updates", type=int, default=W.VISIT_UPDATES); ap.add_argument("--p-new", type=float, default=W.P_NEW)
@@ -517,12 +680,19 @@ def main(argv):
     cmd = " ".join(["python3", "sw_run.py", *argv])
     if a.cmd == "life":
         if a.resume:
-            assert not a.pos, "--resume takes the life's settings from the state"
+            assert not a.pos and not a.birth_from, "--resume takes the life's settings from the state"
             life = Life.load(a.resume)
+        elif a.birth_from:
+            assert not a.pos, "--birth-from takes the life's settings from the naive state at the end of its birth"
+            life = Life.from_birth(a.birth_from)
         else:
             arm, world, visits = a.pos[0], int(a.pos[1]), int(a.pos[2])
-            life = Life(arm, world, visits, a.rho, a.H, a.U if a.U is not None else a.H, a.visit_updates, a.p_new, a.lr, a.wd, a.tag)
+            bg = [int(g) for g in a.birth_groups.split(",")] if a.birth_groups else None
+            life = Life(arm, world, visits, a.rho, a.H, a.U if a.U is not None else a.H, a.visit_updates, a.p_new, a.lr, a.wd, a.tag,
+                        bg, a.birth_cap, a.birth_need)
         run_life(life, a.out, cmd, a.stop_after)
+    elif a.cmd == "solo":
+        run_solo(a.pos[0], int(a.pos[1]), int(a.pos[2]), a.H, a.updates, a.out, cmd)
     elif a.cmd == "branch":
         run_branch(a.pos[0], [int(g) for g in a.groups.split(",")], a.out, cmd)
     else:
