@@ -139,3 +139,70 @@ Made as the audit wrote them. I reran its main finding on two births (decay alon
 | 4 | Score 4 gains the cosine and is described as a description, not a guard | yes |
 | 5 | Cost 3.5 to 4 CPU-hours; check 2 limited to what E38 holds; check 4's wording on the end symbol | yes |
 | — | The second explanation of *kept*; the next step named; a functional measure; four more committed files; the optimizer under "cannot show"; P43.2 reworded and P43.9 added | recommended |
+
+---
+
+# Addendum 1 (16 November 2026): E43 read; three additions (the reviewer's memo, revision 16, section 24.7)
+
+## As I read it
+
+Branch `claude/peaceful-hopper-8ofq4i` (ac56179d), merged. The figures are the worker's; the reviewer recomputed them from the 24 receipts. I recomputed none.
+
+- **The registered reading is *lost*, under both rules.** After 4,096 updates on the unrelated task without decay the first family's reduction pairs are at 0.0% of their starting level in all six networks, and so are pairs without reduction, max and min. The condition holds: the new task is at 100% on taught and held-out pairs.
+- **The loss is complete after 64 updates**, before the new task scores anything (shares 0.0 to 0.1, one network at 5.0). Under `conflict` at the same point pairs without reduction, max and min are still at 49 to 98%.
+- **`unrelated-decay` is below decay alone** at 256, 1,024 and 2,048 updates in all six (by 17 to 51 points at 1,024): the new learning removes more than decay does. Neither of the brief's two readings for that arm applies, so the differences stand as given.
+- **Decay alone** reproduces the audit's table within 3 points in all six births.
+- P43.1, P43.2, P43.6, P43.8 and P43.9 hold; P43.4, P43.5 and P43.7 miss; P43.3's outcome is *lost*, to which I gave 30%.
+
+## What the reading does not settle
+
+The brief's sentence for *lost* says that updating every weight removes even unrelated knowledge. The figures do not show that the knowledge is removed. The answers become the end symbol alone, which the unrelated task rewards as its third answer byte and which no first-family prompt had needed before its two digits. Three explanations remain (the reviewer's):
+
+1. the knowledge is still in the network and is not expressed, the shared readout having been driven away from digits for every input;
+2. the optimizer's first steps: a fresh AdamW moves every weight by about the learning rate whatever the size of its gradient, from a loss of 18;
+3. the function is overwritten, as it would be under any update that learns the new task in this network.
+
+I should have asked what the first family's *answers* would turn into, not only how often they would be right. The brief scored whole answers and had no measure that separates a lost computation from a redirected readout.
+
+## The three additions
+
+**1. Push the weight files.** The report lists update 4,096 of every run and updates 64 and 1,024 of seed 73129's `unrelated` runs as committed. They are not on the remote: `exp45/e43/.gitignore` ignores `*.pt`. Add them with `git add -f`, after checking each against the `weights_sha256` in its receipt, and push. The reviewer will read them only.
+
+**2. A reminder, as E36's.** From the six `unrelated` networks at update 4,096 (no decay), 1,024 updates on the first family.
+
+- **Runner:** `e36_reminder.py`'s reminder path with the start file replaced; the rule of the run that made the file; a fresh `exp26_candidate.make_opt(m)`.
+- **Data:** E36's, the same batches as its runs of that seed: `exp11_cell.batches([(t, exp11_cell.split(t, .5, seed)[0]) for t in exp11_cell.DEV], seed + 36, 12)`. So E36's fresh references (`exp45/e36/e36_reference_<S|B>_<seed>.json`) are the references here and are not rerun.
+- **Rows and scores:** 0, 16, 32, 64, 128, 256 and 1,024 updates; E36's three scores. Commit the weights at 128 and 1,024.
+- **Checks:** row 0 has the start file's `tensors_sha256` and E43's row-4,096 first-family scores; the batch digest at row 1,024 equals E36's for that seed.
+- **Reading, fixed now, per rule, in at least two of three seeds:**
+
+  | Result | Reading |
+  |---|---|
+  | The mean of held-out add and sub at 12 letters is at least 85 at row 128 | **Back within about a hundred updates.** What the birth learned was not destroyed by the unrelated task; explanation 1 or 2 holds. E36's lived networks did the same after a life (row 64 to 128). |
+  | Not that, and at row 1,024 the wrap score is at least 30 points above the fresh reference's | **Partly back.** |
+  | At row 1,024 the wrap score is less than 15 points from the fresh reference's (1.1 to 2.5) | **Not back:** the function was overwritten (explanation 3). |
+  | Anything else | Mixed; the curves are given. |
+
+  The networks start at zero on every first-family score and so do the fresh references, so no starting level has to be subtracted.
+
+**3. One arm under plain gradient steps, `unrelated-plain`.** As `unrelated` (no decay), with `torch.optim.SGD(m.parameters(), lr=LR)` and no momentum in place of AdamW, so that each weight moves in proportion to its own gradient.
+
+- **The rate.** Three runs on seed 73129 under backpropagation at LR = 0.01, 0.03 and 0.1, to 4,096 updates. The rate used for all six runs is the smallest at which the taught panel is at 80% or more at row 4,096. If none reaches it, or a loss is not finite, report and stop this addition; nothing about retention is read from it.
+- **Runs:** the six births at that rate, each under its own rule (the sweep's gradients with a plain step, or backpropagation's), rows and scores as the `unrelated` arm. Commit the weights at 64 and 4,096.
+- **Reading:** the brief's condition and table, unchanged (kept at 80% or more of the starting level, lost at 20% or less), and beside it the share at rows 64, 256 and 1,024. If the first family is kept here and lost under AdamW, the equal-sized step on every weight is the cause. If it is lost here too, it is not.
+
+About 2 CPU-hours for the three additions.
+
+## Predictions (mine)
+
+| | Prediction | Chance |
+|---|---|---|
+| P43.10 | Reminder: back at row 128 (held-out mean at least 85), two of three seeds, under the sweep | 50% |
+| P43.11 | Reminder: at row 1,024 the wrap score is at least 30 above the fresh reference's, two of three seeds, under each rule | 85% |
+| P43.12 | Some rate of 0.01, 0.03, 0.1 meets the condition on seed 73129 under backpropagation | 70% |
+| P43.13 | `unrelated-plain`, backpropagation: kept 15%, partly kept 30%, lost 55% | |
+| P43.14 | Under `unrelated-plain` the share at row 64 is above 50% in two of three seeds, under backpropagation (the loss is slower than under AdamW, whatever its end) | 55% |
+
+## Done
+
+The pushed weight files; the six reminder runs and the plain-step runs with receipts; an addendum to `E43_REPORT.md` with the reminder's curves and reading, the rate chosen, the plain arm's curves and reading, and P43.10 to P43.14. No readings beyond the tables above.
