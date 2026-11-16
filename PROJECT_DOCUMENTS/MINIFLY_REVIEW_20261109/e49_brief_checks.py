@@ -195,60 +195,83 @@ if "D" in want:
 
 # ------------------------------------------------------------------------------------------------ E
 if "E" in want:
-    print(f"E. what the K_IN values a cell reads say about the byte; the {len(USED)} bytes the task puts in: the start symbol, p q v w, ten digits, + - > <, 26 letters, =")
-    iu = np.triu_indices(len(USED), 1)
-    du = np.triu_indices(10, 1)
+    NONLET = [i for i, b in enumerate(USED) if not 65 <= b <= 90]          # the 20 bytes the task tells apart
+    LET = [i for i, b in enumerate(USED) if 65 <= b <= 90]                 # the 26 letters, which stand between the operands and carry nothing
+    LABEL = np.array([NONLET.index(i) if i in NONLET else len(NONLET) for i in range(len(USED))])      # 21 classes: 'a letter' is one
+    NAME = lambda i: "start" if USED[i] == BOS else chr(USED[i])
+    print(f"E. what the K_IN values a cell reads say about the byte.  The task puts in {len(USED)} bytes: {len(NONLET)} it must tell apart (the start symbol, p q v w, ten digits, + - > <, =) and 26 letters")
 
-    def stats(Z, idx):
-        """Z (bytes, 512); idx (256, K).  For every cell: smallest distance between two bytes on its values over the mean distance
-        (all used bytes; the ten digits); bytes named by a least-squares linear rule on its values; the digits' smallest
-        singular value over the largest, after centring (nine are non-zero when the ten vectors are affinely independent)."""
-        X = Z[:, idx].transpose(1, 0, 2)                                                  # (256, bytes, K)
-        d = np.sqrt(((X[:, :, None] - X[:, None]) ** 2).sum(-1))
-        dp = d[:, iu[0], iu[1]]
-        dd = d[:, DIGITS][:, :, DIGITS][:, du[0], du[1]]
-        lin = []
-        for c in range(len(X)):
-            A = np.concatenate([X[c], np.ones((len(USED), 1))], 1)
-            Bm = np.linalg.lstsq(A, np.eye(len(USED)), rcond=None)[0]
-            lin.append(int(((A @ Bm).argmax(1) == np.arange(len(USED))).sum()))
-        Xd = X[:, DIGITS]
-        sv = np.linalg.svd(Xd - Xd.mean(1, keepdims=True), compute_uv=False)              # (256, min(10, K))
-        nearest = int((d + np.eye(len(USED)) * 1e9 > 1e-6).all())                         # no two bytes coincide on any cell's values
-        return dp.min(1) / dp.mean(1), dd.min(1) / dd.mean(1), np.array(lin), sv[:, 8] / sv[:, 0], nearest
+    def among(d, rows):
+        iu = np.triu_indices(len(rows), 1)
+        return d[..., rows, :][..., :, rows][..., iu[0], iu[1]]
+
+    def dist(X):                                                            # X (sets, bytes, K) -> (sets, bytes, bytes)
+        return np.sqrt(((X[:, :, None] - X[:, None]) ** 2).sum(-1))
+
+    def measures(d):
+        """Per set of values: the smallest distance between two of the 20 bytes over the mean distance between two of them;
+        the same among the ten digits; the smallest distance from a letter to one of the 20, over the first mean."""
+        nn, dg = among(d, NONLET), among(d, DIGITS)
+        cross = d[:, LET][:, :, NONLET].reshape(len(d), -1)
+        return nn.min(1) / nn.mean(1), dg.min(1) / dg.mean(1), cross.min(1) / nn.mean(1)
+
+    def linear_rule(X, steps=8000):
+        """One linear rule on a set of values (with a constant), 21 classes, fitted by gradient descent on the cross-entropy.
+        Returns for every set how many of the 46 bytes the rule puts in their class."""
+        n = X.shape[1]
+        A = np.concatenate([X, np.ones((len(X), n, 1))], 2)
+        Y = np.eye(21)[LABEL]
+        Wt = np.zeros((len(X), A.shape[2], 21)); m = np.zeros_like(Wt); v = np.zeros_like(Wt)
+        for t in range(1, steps + 1):
+            lg = A @ Wt
+            lg -= lg.max(2, keepdims=True)
+            p = np.exp(lg); p /= p.sum(2, keepdims=True)
+            g = A.transpose(0, 2, 1) @ (p - Y) / n
+            m = .9 * m + .1 * g; v = .999 * v + .001 * g * g
+            Wt -= 0.05 * (m / (1 - .9 ** t)) / (np.sqrt(v / (1 - .999 ** t)) + 1e-8)
+            if t % 200 == 0 and ((A @ Wt).argmax(2) == LABEL).all():
+                break
+        return ((A @ Wt).argmax(2) == LABEL).sum(1)
 
     def report(tag, Z):
-        dfull = np.sqrt(((Z[:, None] - Z[None]) ** 2).sum(-1))
-        print(f"   {tag}: all 512 values: smallest distance between two used bytes {dfull[iu].min() / dfull[iu].mean():.3f} of the mean distance; between two digits {dfull[DIGITS][:, DIGITS][du].min() / dfull[DIGITS][:, DIGITS][du].mean():.3f};"
-              f" values within 0.01 of +1 or -1: {100 * (np.abs(Z) > 0.99).mean():.0f}%")
+        dfull = dist(Z[None])
+        a, b, c = measures(dfull)
+        dn = dfull[0][np.ix_(NONLET, NONLET)] + np.eye(len(NONLET)) * 1e9
+        i, j = np.unravel_index(dn.argmin(), dn.shape)
+        ll = among(dfull, LET)
+        print(f"   {tag}, all 512 values: closest two of the 20 bytes ({NAME(NONLET[i])} and {NAME(NONLET[j])}) at {a[0]:.3f} of the mean distance between two of them; closest two digits at {b[0]:.3f} of the digits' mean; "
+              f"closest letter to one of the 20 at {c[0]:.3f}; two letters are on average {ll.mean() / among(dfull, NONLET).mean():.3f} apart on the same scale")
         for k_in in (64, 16):
             F = R49.Interface(SEED, k_in, U)
-            r, rd, lin, cond, nearest = stats(Z, F.in_idx)
-            print(f"      the {k_in} values of each cell (seed 73129's draw): smallest over mean distance, used bytes: least over the 256 cells {r.min():.3f}, median {np.median(r):.3f}; digits: least {rd.min():.3f}, median {np.median(rd):.3f};"
-                  f" no two used bytes coincide on any cell {bool(nearest)}; bytes named by a linear rule on the cell's values: least {lin.min()}/{len(USED)}, median {int(np.median(lin))}, cells naming all {int((lin == len(USED)).sum())}/256;"
-                  f" digits affinely independent on every cell {bool((cond > 1e-6).all())} (ninth singular value over the first: least {cond.min():.3f}, median {np.median(cond):.3f})")
+            X = Z[:, F.in_idx].transpose(1, 0, 2)
+            dX = dist(X)
+            a, b, c = measures(dX)
+            distinct = bool((among(dX, list(range(len(USED)))) > 1e-6).all())
+            lin = linear_rule(X)
+            print(f"      the {k_in} values each cell reads (seed 73129's draw; least over the 256 cells, median): closest two of the 20 at {a.min():.3f}, {np.median(a):.3f}; closest two digits at {b.min():.3f}, {np.median(b):.3f}; "
+                  f"closest letter to one of the 20 at {c.min():.3f}, {np.median(c):.3f}; no two of the 46 bytes coincide on any cell {distinct}; a linear rule on the cell's values puts all 46 bytes in their class on {int((lin == len(USED)).sum())} of 256 cells (least {lin.min()} of 46)", flush=True)
         g = np.random.default_rng(49)
-        for k_in in (16, 8, 4, 2):
-            rr = []
-            for _ in range(4):
-                idx = np.array([g.choice(D, k_in, replace=False) for _ in range(U)])
-                X = Z[:, idx].transpose(1, 0, 2)
-                d = np.sqrt(((X[:, :, None] - X[:, None]) ** 2).sum(-1))[:, iu[0], iu[1]]
-                rr.append(d.min(1) / d.mean(1))
-            rr = np.concatenate(rr)
-            print(f"      1,024 other random subsets of {k_in:2d} values: smallest over mean distance, least {rr.min():.3f}, median {np.median(rr):.3f}; subsets on which two used bytes are closer than 0.05 of the mean: {int((rr < 0.05).sum())}")
+        for k_in in (16, 8, 4, 2, 1):
+            idx = np.array([g.choice(D, k_in, replace=False) for _ in range(1024)])
+            a, b, c = measures(dist(Z[:, idx].transpose(1, 0, 2)))
+            print(f"      1,024 other random sets of {k_in:2d} values: closest two of the 20 at least {a.min():.3f}, median {np.median(a):.3f}; closest two digits at least {b.min():.3f}, median {np.median(b):.3f}; "
+                  f"sets on which two of the 20 are closer than 0.05 of the mean: {int((a < 0.05).sum())}")
 
     for rule in ("S", "B"):
         report(f"E42's F10 {rule}, trained", code(load(f"{P}e42/e42_F10_{rule}_{SEED}.pt")))
-    report("a stand-in start (draw 0)", code(standin(0)))
-    print("   a code in which a value stands for few bytes, for comparison: each used byte turns on 11 values of its own and no other (46 x 11 = 506 of 512)")
+    for s in range(2):
+        report(f"a stand-in start (draw {s})", code(standin(s)))
+    print("   for comparison, a code in which a value stands for one byte: each used byte turns on 11 values of its own (46 x 11 = 506 of 512) and no other value")
     Zs = np.zeros((len(USED), D)); own = np.arange(506).reshape(len(USED), 11)
     for b in range(len(USED)):
         Zs[b, own[b]] = 1
     for k_in in (64, 16):
-        F = R49.Interface(SEED, k_in, U)
-        seen = np.array([[bool(Zs[b, F.in_idx[c]].any()) for b in range(len(USED))] for c in range(U)])
-        print(f"      a cell reading {k_in} values receives a non-zero input for {seen.sum(1).min()} to {seen.sum(1).max()} of the {len(USED)} bytes (median {int(np.median(seen.sum(1)))}); of the ten digits, {seen[:, DIGITS].sum(1).min()} to {seen[:, DIGITS].sum(1).max()} (median {int(np.median(seen[:, DIGITS].sum(1)))})")
+        for seed in SEEDS:
+            F = R49.Interface(seed, k_in, U)
+            seen = np.array([[bool(Zs[b, F.in_idx[c]].any()) for b in range(len(USED))] for c in range(U)])
+            s20, s10 = seen[:, NONLET].sum(1), seen[:, DIGITS].sum(1)
+            print(f"      seed {seed}: a cell reading {k_in} values receives a non-zero input for {s20.min()} to {s20.max()} of the 20 bytes (median {int(np.median(s20))}) and for {s10.min()} to {s10.max()} of the ten digits (median {int(np.median(s10))}); "
+                  f"cells that receive something for every digit: {int((s10 == 10).sum())} of 256")
 
 # ------------------------------------------------------------------------------------------------ F
 if "F" in want:
