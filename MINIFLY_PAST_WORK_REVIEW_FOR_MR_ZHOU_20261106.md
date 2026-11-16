@@ -3064,3 +3064,13 @@ What I checked before writing it:
 - **No starting level to subtract.** Every run starts from random weights and scores 0, unlike E40.
 
 What I added to the memo's design: a second version of each threshold (held for three consecutive scored rows), because single rows swing by ten points; a fixed sample of 1,000 reduction pairs per task, to bound scoring; a check of the forward and gradients at the two new widths; and the description (falls, stays within a factor of 1.5, rises) fixed beforehand for updates and for computation separately.
+
+## 9.139 E41 audited once and released as revision 2 (16 November 2026)
+
+The audit (`AUDIT_E41_COMPUTATION_TO_THRESHOLD_20261116.md`, 43a89440) confirmed the three widths, the parameter counts, the network class by reading, the two accuracies, my table of figures on file and the cost estimate, and required five changes, all made as written; no re-audit. Memo revision 9 carries the corrected doses.
+
+- **Two corrections are to the memo's own design, which I carried without testing:** the doses (now 8,192, 12,288 and 40,960 at the double, present and half widths, so that the three-row threshold can be recorded and a comparison can still be decided when the narrower run does not reach it), and the rule for a run that does not reach a threshold.
+- **Three are mine.** "Not reached counted as above the dose" gave no ratio, and I had not said which of my two threshold versions the description uses. Check 2 named a row at which only one of the three seeds has a digest on file. The sample's generator string depended on how a fraction is printed.
+- **One addition:** the new scoring code is checked against the reviewer's reader, on sample digests and on the six E26 births.
+
+Also taken from its recommendations: the optimizer is built by `exp26_candidate.make_opt` after importing that module first, since the embedding's exemption from decay depends on an environment variable set on import; one runner for the three workers; CPU-seconds per update taken from dry runs on an idle host.
