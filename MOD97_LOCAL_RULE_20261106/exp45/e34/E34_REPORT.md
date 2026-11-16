@@ -178,3 +178,76 @@ For reference, B050's endpoint at 40 letters is 64.11 against plain backpropagat
 - **Dry births.** BU and U, 2,048 updates each.
 - **Launch.** All ran under `queue_e34a1.sh`, started with `setsid nohup` with at most three processes. Each birth's rows were read in its slot right after it, then committed and pushed. Nothing was interrupted or moved aside.
 - **Committed weights.** For each birth, the final `.pt` and rows 16,384 and 20,480 (9 files). Rows 4,096–12,288 were measured and their sha256 recorded, but are not committed.
+
+---
+
+# Addendum 2: two long births (T050 and B-all, seed 73129, 98,304 updates)
+
+Brief: addendum 2 of `OPUS_TASK_E34_ENTROPY_WEIGHTED_ERROR_20261115.md` at 18751457 on `codex/minifly-consolidated-20261023`. Same host and environment. Every statement here carries its horizon: 98,304 updates, one seed.
+
+## Code and checks
+
+- **Code change (commit be01b07c).** `exp34_entropy.py` makes the smallest change the addendum names. For a dose above the full dose it uses the full-dose reference, and it compares the data digest and hash only at rows the reference has. Rows beyond the reference are recorded as skipped (`data_digest_check: "skipped: …"`, `tensors_equal_to_reference: null`).
+- **Regression after the change.** A T050 dry birth at 2,048 updates gives `tensors_sha256` 9da02e11…, equal to `exp45/e34/dry/e34_dev_T050_dry2048_73129.json` (`dry_a2/REGRESSION.json`).
+- **`exp28_everybyte.py` is unchanged.** It ran as it is with `E11_DEV_UPDATES=98304`. Its digest check against E26's receipts applies at rows 4,096–24,576 and is marked "not asserted" beyond them.
+- **Row-24,576 hash check: passed for both.** T050's row 24,576 is dd95a2e8…, equal to `exp45/e34/e34_dev_T050_73129.json`. B-all's is 62a33eb1…, equal to `exp45/e28/e28_dev_B-all_73129.json`. The check was made live during the births, and they would have been stopped on a mismatch.
+- **File names.** Both runners tag a non-default dose as `_dry98304`. The files are full births of 98,304 updates despite the tag.
+
+## Rows (accuracy at 12 / 20 / 40 letters)
+
+| Row | T050 | B-all | T050 above at 40 |
+|---|---|---|---|
+| 4,096 | 2.33 / 1.67 / 1.33 | 73.67 / 70.67 / 57.67 | |
+| 8,192 | 6.33 / 6.33 / 6.67 | 89.33 / 87.67 / 78.00 | |
+| 12,288 | 17.00 / 17.33 / 16.00 | 95.00 / 93.67 / 87.00 | |
+| 16,384 | 78.33 / 78.67 / 78.00 | 91.33 / 90.33 / 83.67 | |
+| 20,480 | 73.33 / 69.67 / 62.00 | 93.33 / 91.00 / 77.67 | |
+| 24,576 | 99.33 / 99.33 / 99.33 | 93.67 / 94.00 / 84.67 | |
+| 28,672 | 98.67 / 98.33 / 95.33 | 96.00 / 96.33 / 89.33 | |
+| 32,768 | 91.67 / 90.33 / 87.67 | 97.00 / 97.00 / 90.33 | |
+| 36,864 | 98.00 / 98.33 / 95.67 | 95.67 / 93.33 / 88.67 | |
+| 40,960 | 96.67 / 97.33 / 96.33 | 99.00 / 99.00 / 96.67 | |
+| 45,056 | 94.67 / 94.00 / 91.00 | 95.00 / 95.00 / 92.67 | |
+| 49,152 | 98.67 / 98.33 / 98.00 | 97.00 / 97.00 / 94.67 | yes |
+| 53,248 | 100.00 / 99.67 / 98.67 | 98.33 / 98.00 / 95.00 | yes |
+| 57,344 | 96.00 / 96.33 / 96.67 | 98.00 / 97.00 / 91.33 | yes |
+| 61,440 | 95.33 / 95.00 / 91.33 | 97.67 / 97.67 / 95.67 | no |
+| 65,536 | 99.67 / 99.67 / 98.00 | 98.00 / 98.67 / 98.67 | no |
+| 69,632 | 98.00 / 97.67 / 96.67 | 97.33 / 96.33 / 91.00 | yes |
+| 73,728 | 98.67 / 99.00 / 97.67 | 98.67 / 98.33 / 92.33 | yes |
+| 77,824 | 99.33 / 99.67 / 99.67 | 99.00 / 97.67 / 93.00 | yes |
+| 81,920 | 100.00 / 100.00 / 100.00 | 97.67 / 96.67 / 88.00 | yes |
+| 86,016 | 99.67 / 99.67 / 99.33 | 98.33 / 98.33 / 92.67 | yes |
+| 90,112 | 99.33 / 99.00 / 98.33 | 98.33 / 97.67 / 90.67 | yes |
+| 94,208 | 99.00 / 98.00 / 95.67 | 98.00 / 97.67 / 89.67 | yes |
+| 98,304 | 94.67 / 94.00 / 91.33 | 99.00 / 99.00 / 91.67 | no |
+
+Keepers and keeps-and-writes for every row are in `exp45/e34_long/E34_LONG_TABLES.md` and `E34_LONG_READ.json`.
+
+## Reading (addendum 2's rule, at 40 letters over the 13 rows 49,152–98,304)
+
+| Run | Mean acc 40 | Mean acc 20 | Mean acc 12 |
+|---|---|---|---|
+| T050 | 97.03 | 98.15 | 98.33 |
+| B-all | 92.64 | 97.69 | 98.10 |
+
+T050 minus B-all is **+4.38 points**, and T050 is above B-all in **10 of 13 rows**.
+
+The rule's first row needs both a mean at least 10 points above and at least 10 of 13 rows above. Only the second condition holds. The second row ("not above") does not apply either, so the result is **mixed**. As the addendum fixes it: "Mixed; the rows are reported."
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P34.14 | The row-24,576 hash check passes for both runs | 85% | **true** |
+| P34.15 | Overtakes and stays | 30% | **false** (mixed: +4.38, 10 of 13) |
+| P34.16 | Does not overtake | 35% | **false** (T050's mean is above B-all's) |
+| P34.17 | B-all's mean at 40 letters over the 13 rows is at least 10 below its present endpoint of 82.0 | 20% | **false** (92.64) |
+
+## Run record
+
+- **Cost.** T050 took 10,875 CPU-seconds and B-all 10,083: 5.82 CPU-hours.
+- **Provenance.** Both started from commit 062bb820, with sources recorded as unmodified. All losses were finite.
+- **Launch.** Both ran under `queue_e34a2.sh`, started with `setsid nohup` once addendum 1's queue had ended. The two births ran together, with one reader loop as the third process; it read every row as it appeared, committed the reader file and made the live hash check. Nothing was interrupted or moved aside.
+- **Committed weights.** For each run, rows 49,152 and 73,728 and the final row 98,304 (6 files). The other rows were measured, and their sha256 are in the receipts.
+- **Next.** B050 at 98,304 updates (the user's request) is running under `queue_e34a3.sh`; its section follows.
