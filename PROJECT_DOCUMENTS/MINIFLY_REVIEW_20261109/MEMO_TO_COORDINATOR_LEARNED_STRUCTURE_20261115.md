@@ -32,6 +32,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 16.** E43, E39's job L1a, E35-A's last stage and E41's first seed have reported. Section 24.7 reads E43 and asks for three additions to it (item 13 of section 1). Section 25 reads L1a, withdraws my explanation of the failed calibration, and proposes what replaces the small world's task set (item 14).
 
+**Revision 17.** E42's first seed is read and checked with my reader (`E42_SEED_73129_VERIFICATION_20261116.md`). Section 22.12 gives the reading, one defect of my own replacement rule that it exposes, and what follows. Nothing is asked for until the other two seeds report.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -861,6 +863,47 @@ Mr. Xu left these to me; each can be overturned.
 6. **Replacement by a strength threshold with a target rate of 5% per event** (22.6, check 10), and **the limit used in full**: Mr. Xu's limit is "at most N"; here a cell always has N.
 
 Next, depending on the result: a cell whose update is a learned sum of its inputs and of products of pairs of them, with no gate equations given; limited input and readout connections with more cells at the same computation; and the cell layer as an arm of the small world once L1 has reported.
+
+### 22.12 The first seed read (revision 17)
+
+Seed 73129, fifteen runs, on `claude/gallant-dijkstra-i9zgsr` at 7fbdbdc2. The check is in `E42_SEED_73129_VERIFICATION_20261116.md` (script `e42_seed73129_verify.py`): my reader reproduces the worker's recorded answers of the three dry runs byte for byte and the final scores of all fifteen runs with no item different; the thresholds below are recomputed from the receipts, by the checking agent and again by me. One seed: nothing here is a result of E42 yet.
+
+| Run | Updates to 80 on A | to 90 on A | At 12 letters | At 40 letters | Weight-items to 80 on A |
+|---|---|---|---|---|---|
+| `G`, sweep | 5,632 | 12,800 | 98.4 | 96.4 | 4.05e11 |
+| `G`, backpropagation | 5,120 | 10,240 | 96.9 | 94.6 | 3.68e11 |
+| `F10`, sweep | 13,312 | 20,480 | 90.1 | 89.1 | 7.97e11 |
+| `F10`, backpropagation | 8,704 | 15,360 | 92.9 | 92.6 | 5.21e11 |
+| `A10`, sweep | 13,824 | 22,528 | 92.7 | 91.8 | 8.28e11 |
+| `A10`, backpropagation | 9,472 | 20,992 | 92.8 | 92.2 | 5.67e11 |
+| `P8`, sweep | 7,680 | 10,496 | 96.3 | 96.0 | 4.60e11 |
+| `P8`, backpropagation | 6,400 | 8,192 | 97.0 | 96.6 | 3.84e11 |
+| `N5`, sweep | 17,152 | not reached | 88.2 | 86.9 | 1.02e12 |
+| `N20`, sweep | 14,336 | not reached | 89.4 | 87.9 | 8.66e11 |
+| `W10`, sweep | 17,408 | not reached | 88.6 | 88.0 | 1.04e12 |
+| `P4`, sweep | 8,192 | 10,496 | 95.7 | 94.4 | 4.91e11 |
+| `P16`, sweep | 7,936 | 11,776 | 94.6 | 82.8 | 4.76e11 |
+| `P8-last`, sweep | 11,520 | 20,224 | 92.0 | 91.3 | 6.90e11 |
+| `P8-source`, sweep | 7,680 | 11,008 | 94.2 | 93.7 | 4.67e11 |
+
+The letter columns are means of the last three scored rows.
+
+**What the seed shows, by the brief's descriptions.**
+
+1. **Ten local connections a cell are enough to learn the task and to answer at 40 letters,** at 1.7 times the dense network's updates under backpropagation and 2.4 times under the sweep (`F10` against `G`: *more*).
+2. **Periods take most of that cost away.** `P8` against `A10` is *fewer* under the sweep (7,680 against 13,824) and `P8` against `G` is *about the same* on every measure under both rules. `P8` reaches 90 before the dense network does, under both rules, and equals it at 40 letters. I gave "fewer" 20%.
+3. **Taking in what arrives during the period is the part that matters:** `P8-last` needs half as many updates again as `P8` (11,520 against 7,680). A separate strength for every step adds nothing (`P8-source`).
+4. **Period 16 costs at 40 letters in the direction the arithmetic of 22.8 gave,** 82.8 against 96.0 for `P8`, in every one of the last six rows, but under the mark of 15 points. Periods 4 and 8 do not.
+5. **The number of connections and the neighbourhood change little** (`N5`, `N20`, `W10` against `A10`: *about the same*).
+6. **The rules differ only where the cells are sparse and have no periods:** `F10` and `A10` need about one and a half times the updates under the sweep that they need under backpropagation; `G` and `P8` need the same. The cosine between the sweep's gradient and the exact one for the recurrent matrix ends at 0.60 to 0.64 in `F10` and `A10`, against 0.74 in `G` and 0.67 in `P8` (the receipts' figures).
+
+**A defect of my replacement rule.** `A10` against `F10` is *about the same*, but the comparison does not test changing connections. A new connection starts at zero and is judged after 512 updates against half the mean strength of connections that have been trained from the start; it reaches about a tenth of that mean in 256 updates. So nearly every new connection is given up at its first judgement: 35 to 41% of the connections at the end were made at the last two events and carry no weight, 6 to 13% are replaced connections that lasted, and a cell works with about six of its ten (3.2 of 5 in `N5`, 12.4 of 20 in `N20`). The share replaced per event rises from 9% in the first quarter of a run to 18 to 20% in the last, where the calibration of check 10 read only the first 4,096 updates. The rule and the calibration window were mine. Readings 2 to 4 are between runs that share the defect and are not touched by it; reading 5 is, since the three runs differ in connections that mostly carry no weight.
+
+**What follows, after the other two seeds.**
+
+- If they agree, the finding of E42 is reading 2: a network with a twenty-fifth of the recurrent connections and cells of several pre-set periods does what the dense network does on this task. It is not an advantage, and E42 cannot show one (22.10).
+- Changing connections need one corrected run before anything is said of them: a new connection judged against its own age, or kept for at least 2,048 updates.
+- The test this structure was argued for is retention (section 24.4, item 1). E43's question put to `F10` and `P8` is the next job there, once E43's three additions say where the loss sits.
 
 ## 23. What 64 updates change when a network that has lived learns a new family (revision 12)
 
