@@ -98,7 +98,7 @@ def table():
                           tasks=[(x["world"], x["task"], x["updates_to_criterion"]) for x in up])
     q = [H for H in SIZES if verdict[H]["qualifies"]]
     adopted = min(q) if q else None
-    out = dict(experiment="E39", job="L1a", brief="revision 4 (2c33645a)", tasks=tasks, rows=rows, size_rule=verdict,
+    out = dict(experiment="E39", job="L1a", brief="revision 5 (8183db86)", tasks=tasks, rows=rows, size_rule=verdict,
                adopted_size=adopted, decision=(f"H = U = {adopted} with visits of 512 updates for L1b" if adopted else
                                                "no size qualifies: stop and report (the brief: the task space or the learner's settings are next, "
                                                "a decision for the reviewer and the coordinator)"),
