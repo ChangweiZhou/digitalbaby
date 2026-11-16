@@ -3205,3 +3205,15 @@ Sources: the workers' branches merged here (`claude/peaceful-hopper-8ofq4i` for 
 - **The defects of process are mine as much as the reviewer's.** In two days I set four marks without computing what a baseline or chance alone would give, built a task set without comparing its size with the record, and wrote a reading that a whole-answer score could not support. The six working rules the reviewer proposes would have caught each; I adopt them for my briefs whatever is decided about the question.
 
 **Not staffed:** E41's seeds 93683 and 116089 have no worker.
+
+## 9.148 The restated question adopted; the first check drafted (16 November 2026)
+
+**The user's decision, 16 November.** Asked whether to adopt the reviewer's restated question with retention at the centre, the user answered: "Yes, adopt it". The question the programme now asks:
+
+> Under fixed memory and continued learning, can a learner whose changes are confined to the connections in use keep what it has learned while learning new things, at no greater computation to threshold than back-propagation?
+
+The original form, that a local rule generalises better, is not supported by the evidence (9.147 and the one-page close) and is no longer what experiments are designed to test. The user's premises of 15 November stand unchanged: persistent learning, fixed memory and computation, no full backpropagation in the candidate, and a slow start does not count against a learner.
+
+**What I take to be adopted with it, and what not.** Adopted: the plan's five steps and its order; retention as the centre; the six working rules for briefs and reports (a comparison with the record in every brief; one full-length trial on one seed for any mechanism with a threshold or rate; retention experiments score what wrong answers are; reports list weight files as the repository shows them; at most three lines at once; no design built on an explanation before the result that would refute it). Not decided by this answer: the arms of the long-life comparison, which the plan fixes only after the retention step, and my condition that backpropagation with a plain replay store at equal memory stays among them, which I hold to as the user's first form of the question.
+
+**Drafted, awaiting audit: E46** (`OPUS_TASK_E46_DOES_LEARNING_THE_FIRST_FAMILY_NEED_WEIGHT_DECAY_20261116.md`), the plan's first check. E41's present-width cell at half of the pairs, with decay 0 and 0.05 beside the standing 0.25, both rules, three seeds; E41's measures and forms of statement, with the 40-letter test and the weight norms added. It is the first brief written under the working rules: it states the comparison with the record (the 80% threshold is reached at 5,120 to 6,656 updates at the standing decay, so a dose of 12,288 leaves a factor of about two) before its design. The number E45 is skipped, since `exp45` is the harness's module.

@@ -29,6 +29,6 @@ For Mr. Xu. Written by the coordinator from the review (`MINIFLY_PAST_WORK_REVIE
 | Kolen–Pollack result | a candidate on three seeds, unreplicated |
 | E34's later tables and E41's first seed | merged; not yet read by me in detail |
 
-## Proposed direction (the reviewer's; the decision is yours)
+## Direction (adopted by Mr. Xu, 16 November)
 
-Put retention at the centre, and restate the question as: under fixed memory and continued learning, can a learner whose changes are confined to the connections in use keep what it has learned while learning new things, at no greater computation to threshold than backpropagation? I agree with this, with two conditions: the comparison includes backpropagation with a plain replay store at equal memory, as you first put it; and weight decay is dealt with first, since it alone removes unused knowledge.
+Retention is at the centre, and the question is restated: under fixed memory and continued learning, can a learner whose changes are confined to the connections in use keep what it has learned while learning new things, at no greater computation to threshold than backpropagation? Two conditions of mine stand with it: the comparison includes backpropagation with a plain replay store at equal memory; and weight decay is dealt with first, since it alone removes unused knowledge (E46, drafted).
