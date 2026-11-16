@@ -1,0 +1,107 @@
+"""A numpy reader for E48's gated terms, written from the text of the brief (revision 1, on the default branch at 7da5c453)
+and of memo section 27.  A second implementation: no torch, nothing trained, and no line of the coordinator's
+specification file is run or copied.
+
+    the lived network     every tensor as saved (np_gru.load_weights); frozen in E48
+    the term              for a gated item the input map (768 x 512) and the recurrent matrix (768 x 256) each gain
+                          up . down, with down (r, inputs) and up (768, r); no bias; up is zero at the start
+    the gate              on for an item whose code byte (the byte after the start symbol) is one of e f g h (101..104),
+                          off for every other; one batch holds items of one kind
+    the code rows         rows 101..104 of the byte table, the only rows of the network that may change
+
+forward(W, term, x, gate)   states and logits; with gate False it is np_gru.forward's arithmetic on W
+generate(W, term, prompts)  the bytes the harness's `respond` would generate (largest output, byte by byte, to the end symbol)
+load_term(path, ref)        a term file as required change 4 of the audit asks it to be saved
+"""
+import numpy as np
+from np_gru import sigmoid, BOS, EOS, git_bytes
+
+CODES = (101, 102, 103, 104)
+
+
+def count(r):
+    """Numbers that may change: the two terms and the four code rows."""
+    return r * 512 + 768 * r + r * 256 + 768 * r + 8 * len(CODES)
+
+
+def new_term(r, rng, up_scale=0.0):
+    """A term with the brief's shapes.  down is drawn uniformly in +-1/sqrt(inputs) from a numpy generator (the brief draws it
+    from torch's, which cannot be reproduced here); up is zero unless up_scale is given (used to show what a trained term does)."""
+    t = dict(down_i=rng.uniform(-512 ** -0.5, 512 ** -0.5, (r, 512)).astype(np.float32),
+             down_h=rng.uniform(-1 / 16, 1 / 16, (r, 256)).astype(np.float32),
+             up_i=np.zeros((768, r), np.float32), up_h=np.zeros((768, r), np.float32))
+    if up_scale:
+        t["up_i"] = rng.uniform(-up_scale, up_scale, (768, r)).astype(np.float32)
+        t["up_h"] = rng.uniform(-up_scale, up_scale, (768, r)).astype(np.float32)
+    return t
+
+
+def gate_of(x):
+    """The gate from the code byte of every row; a batch of mixed kinds is refused."""
+    g = np.isin(x[:, 1], CODES)
+    assert g.all() or not g.any(), "a batch holds items of the new family and of others"
+    return bool(g.all())
+
+
+def forward(W, term, x, gate=None):
+    """np_gru.forward with the two terms added when the gate is on.  Returns (states, logits)."""
+    if gate is None:
+        gate = gate_of(x)
+    u = W['book.weight'][x]
+    z1 = np.tanh(u @ W['l1.weight'].T + W['l1.bias'])
+    gi = z1 @ W['rnn.weight_ih_l0'].T + W['rnn.bias_ih_l0']
+    if gate:
+        gi = gi + (z1 @ term["down_i"].T) @ term["up_i"].T
+    Whh, bhh = W['rnn.weight_hh_l0'], W['rnn.bias_hh_l0']
+    U = Whh.shape[1]
+    N, L = x.shape
+    h = np.zeros((N, U), dtype=np.float32)
+    Hs = np.empty((N, L, U), dtype=np.float32)
+    for t in range(L):
+        gh = h @ Whh.T + bhh
+        if gate:
+            gh = gh + (h @ term["down_h"].T) @ term["up_h"].T
+        r = sigmoid(gi[:, t, :U] + gh[:, :U])
+        z = sigmoid(gi[:, t, U:2 * U] + gh[:, U:2 * U])
+        n = np.tanh(gi[:, t, 2 * U:] + r * gh[:, 2 * U:])
+        h = (1 - z) * n + z * h
+        Hs[:, t] = h
+    z2 = np.tanh(z1 @ W['l2.weight'].T + W['l2.bias'] + Hs @ W['lm.weight'].T + W['lm.bias'])
+    return Hs, z2 @ W['l3.weight'].T + W['l3.bias']
+
+
+def generate(W, term, prompts, cap=6):
+    """exp11_cell.respond: prompts grouped by length, the largest output appended until the end symbol or `cap` bytes."""
+    out = [None] * len(prompts)
+    groups = {}
+    for i, p in enumerate(prompts):
+        groups.setdefault(len(p), []).append(i)
+    for _, idx in groups.items():
+        x = np.array([[BOS] + list(prompts[i]) for i in idx], dtype=np.int64)
+        gen = [[] for _ in idx]; done = [False] * len(idx)
+        gate = gate_of(x)
+        for _ in range(cap):
+            y = forward(W, term, x, gate)[1][:, -1].argmax(1)
+            for q in range(len(idx)):
+                if not done[q]:
+                    gen[q].append(int(y[q])); done[q] = int(y[q]) == EOS
+            x = np.concatenate([x, y[:, None]], 1)
+            if all(done):
+                break
+        for q, i in enumerate(idx):
+            out[i] = gen[q]
+    return out
+
+
+def with_code_rows(W, rows):
+    """The lived network with its four code rows replaced (rows: 4 x 8)."""
+    V = dict(W); V['book.weight'] = W['book.weight'].copy(); V['book.weight'][list(CODES)] = rows
+    return V
+
+
+def load_term(path, ref):
+    """A term file: a dict saved by torch.save with the five tensors up_i, down_i, up_h, down_h and code_rows (4 x 8)."""
+    from np_gru import tensors
+    t = {k.lstrip('/'): np.frombuffer(raw, dtype='<f4').reshape(shape).copy() for k, (stype, shape, raw) in tensors(git_bytes(path, ref)).items()}
+    assert set(t) == {"up_i", "down_i", "up_h", "down_h", "code_rows"}, sorted(t)
+    return t
