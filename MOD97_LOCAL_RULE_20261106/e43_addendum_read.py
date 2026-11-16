@@ -36,23 +36,34 @@ def main():
             "Not back" if n("not_back") >= 2 else "Mixed"
         rreading[r] = dict(per_seed=per, reading=reading)
     plain, pread = {}, {}
+    pc = lambda d: 100 * d["exact"] / d["n"]
     for r in RULES:
         for s in SEEDS:
             x = json.loads((D / f"e43_unrelated-plain_lr{LR:g}_{r}_{s}.json").read_text()); assert x["complete"]
             plain[r, s] = {v["updates"]: v for v in x["rows"]}
-        sh = lambda s, u, key="reduction_score": None
+            ext = D / f"e43_unrelated-plain_lr{LR:g}_{r}_{s}_to16384.json"
+            if ext.exists():
+                y = json.loads(ext.read_text()); assert y["complete"]
+                plain[r, s].update({v["updates"]: v for v in y["rows"] if v["updates"] > 4096})
+        tried, row = {}, None
+        for u in (4096, 8192, 16384):
+            if all(u in plain[r, s] for s in SEEDS):
+                t = [pc(plain[r, s][u]["score3_new_task"]["taught"]) for s in SEEDS]
+                tried[u] = dict(taught=t, held=[pc(plain[r, s][u]["score3_new_task"]["held"]) for s in SEEDS], holds=sum(v >= 80 for v in t) >= 2)
+                if tried[u]["holds"] and row is None:
+                    row = u
         per = {}
         for s in SEEDS:
-            rows = plain[r, s]; base = rows[0]["score1_first_family_all_pairs_k0"]
-            def share(u, base=base, rows=rows):
-                return 100 * rows[u]["score1_first_family_all_pairs_k0"]["reduction_score"] / base["reduction_score"]
-            pc = lambda d: 100 * d["exact"] / d["n"]
-            per[s] = dict(taught_4096=pc(rows[4096]["score3_new_task"]["taught"]), held_4096=pc(rows[4096]["score3_new_task"]["held"]),
-                          share={u: share(u) for u in (64, 256, 1024, 4096)}, finite=all(v["finite_losses"] for v in rows.values()))
-        cond = sum(per[s]["taught_4096"] >= 80 for s in SEEDS) >= 2
-        kept = sum(per[s]["share"][4096] >= 80 for s in SEEDS); lost = sum(per[s]["share"][4096] <= 20 for s in SEEDS)
-        pread[r] = dict(per_seed=per, condition=cond,
-                        reading=("Kept" if kept >= 2 else "Lost" if lost >= 2 else "Partly kept") if cond else "condition not met: nothing drawn")
+            rows = plain[r, s]; base = rows[0]["score1_first_family_all_pairs_k0"]["reduction_score"]
+            share = lambda u, key="reduction_score", rows=rows: 100 * rows[u]["score1_first_family_all_pairs_k0"][key] / rows[0]["score1_first_family_all_pairs_k0"][key]
+            per[s] = dict(share={u: share(u) for u in (64, 256, 1024, 4096, 8192, 16384) if u in rows},
+                          finite=all(v["finite_losses"] for v in rows.values()))
+        if row is None:
+            reading = "condition not met: nothing drawn"
+        else:
+            kept = sum(per[s]["share"][row] >= 80 for s in SEEDS); lost = sum(per[s]["share"][row] <= 20 for s in SEEDS)
+            reading = "Kept" if kept >= 2 else "Lost" if lost >= 2 else "Partly kept"
+        pread[r] = dict(per_seed=per, condition=tried, reading_row=row, reading=reading)
     rates = {}
     for lr in (0.01, 0.03, 0.1):
         x = json.loads((D / f"e43_unrelated-plain_lr{lr:g}_B_73129.json").read_text())
@@ -78,12 +89,13 @@ def main():
             for nm, c in (("reminder", rem[r, s]), ("E36 reference", ref[r, s])):
                 L.append(f"| {r} {s} | {nm} | " + " | ".join(f"{f(c[u]['held_add_sub_mean'])}/{f(c[u]['wrap_score'])}/{f(c[u]['nowrap_score'])}" for u in (0, 16, 32, 64, 128, 256, 1024)) + " |")
     L += ["", f"## unrelated-plain, lr {LR} (reduction / other / max / min · taught / held-out new task · state change)", "",
-          "| rule, seed | " + " | ".join(str(u) for u in (0, 64, 256, 1024, 2048, 4096)) + " |", "|---|" + "---|" * 6]
-    pc = lambda d: 100 * d["exact"] / d["n"]
+          "| rule, seed | " + " | ".join(str(u) for u in (0, 64, 256, 1024, 2048, 4096, 8192, 16384)) + " |", "|---|" + "---|" * 8]
     for r in RULES:
         for s in SEEDS:
             cells = []
-            for u in (0, 64, 256, 1024, 2048, 4096):
+            for u in (0, 64, 256, 1024, 2048, 4096, 8192, 16384):
+                if u not in plain[r, s]:
+                    cells.append("–"); continue
                 v = plain[r, s][u]; s1 = v["score1_first_family_all_pairs_k0"]
                 cells.append(f"{f(s1['reduction_score'])}/{f((s1['add89']['other']['pct'] + s1['sub89']['other']['pct']) / 2)}/{f(s1['max89']['all']['pct'])}/"
                              f"{f(s1['min89']['all']['pct'])} · {f(pc(v['score3_new_task']['taught']))}/{f(pc(v['score3_new_task']['held']))} · {v['score6_state_change']['ratio']:.2f}")

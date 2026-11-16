@@ -118,3 +118,116 @@ P43.8 is read on the relative norm of the difference because neither arm has dec
 - **The brief's own limits apply.** These are a dose of 4,096 updates, one simple unrelated task, a rule computed by a shared circuit rather than a stored fact, and a fresh AdamW whose first steps move every weight by about the learning rate.
 - **Speed of the loss.** It was complete by row 64 in every `unrelated` run, before the new task scored anything (0 to 2 at row 64). The brief lists the optimizer under what it cannot show. Nothing here separates the new task's content from that first-step effect.
 - **No independent review** has taken place. Nothing is confirmed, sealed or adopted.
+
+---
+
+# Addendum 1 (16 November 2026): the weight files, a reminder, a plain-step arm
+
+Brief: addendum 1 of `OPUS_TASK_E43_IS_A_FAMILY_LOST_TO_UNRELATED_LEARNING_20261116.md`, at 436d9677 on `codex/minifly-consolidated-20261023`. New code:
+- `e43_addendum.py` (runner), committed at ca524807. The run-to-16,384 option was added at 09064135, before those runs started.
+- `e43_addendum_read.py` (reader).
+
+Outputs are in `exp45/e43/addendum1/`: the receipts, `E43_ADDENDUM1_TABLES.md` and `E43_ADDENDUM1_READ.json`. Nothing existing was edited. The CPU for the addendum was 4.3 CPU-h; the brief estimated about 2. The excess is the three reruns to 16,384 below, which the condition required.
+
+## 1. The weight files (an erratum to both reports)
+
+The report above says the weights at update 4,096 of every run, and at 64 and 1,024 of seed 73129's `unrelated` runs, were committed. They were not: the repository's root `.gitignore` excludes `*.pt`, and I did not check what reached the remote. The same is true of E38's 20 files at rows 6,144 and 12,288.
+
+I checked each of the 48 files (28 for E43, 20 for E38) against the `weights_sha256` in its receipt: all 48 match. I added them with `git add -f` in commit 6bde76ad and pushed. On the remote branch, `git ls-tree` lists all 48, and each remote blob's sha256 equals the local file's.
+
+The addendum's own committed rows are added the same way: 37 files, each checked against its receipt. They are the reminders at 128 and 1,024, and the plain runs at 64 and 4,096, plus 16,384 for the reruns.
+
+## 2. The reminder
+
+From the six `unrelated` networks at update 4,096 (no decay), 1,024 updates on the first family. The start files were checked against their receipts. Each run uses the rule that made its file, a fresh `exp26_candidate.make_opt(m)`, E36's batches and E36's scorer (`e36_reminder.Scorer`, `e36_reminder.batches`, imported and not edited).
+
+**Checks: pass** (`addendum1/e43_addendum_reminder_checks.json`):
+- row 0 has the start file's `tensors_sha256`;
+- row 0's held-out panels and the add/sub wrap and no-wrap counts equal E43's row-4,096 scores;
+- the batch digest at row 1,024 equals E36's fresh reference of the same rule and seed, in all six.
+
+### Curves (held-out add/sub mean at k = 12 / wrap score / no-wrap score), with E36's fresh reference
+
+| rule, seed | run | 0 | 16 | 32 | 64 | 128 | 256 | 1,024 |
+|---|---|---|---|---|---|---|---|---|
+| S 73129 | reminder | 0.0/0.0/0.0 | 1.0/0.5/0.3 | 0.5/0.5/0.7 | 1.8/1.2/0.9 | 0.8/1.7/1.0 | 6.7/5.8/7.3 | **95.2/91.3/94.9** |
+| | reference | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.8/1.1/1.1 | 1.2/1.0/1.2 | 0.2/1.2/0.9 | 0.8/1.1/1.8 |
+| S 93683 | reminder | 0.0/0.0/0.0 | 0.0/0.2/0.3 | 1.3/1.0/0.9 | 1.8/1.0/1.3 | 0.7/0.9/0.8 | 1.3/1.1/1.3 | **9.7/10.7/10.8** |
+| | reference | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 1.2/1.1/1.1 | 0.5/1.1/1.5 | 1.3/1.1/1.4 | 0.8/1.3/1.2 |
+| S 116089 | reminder | 0.0/0.0/0.0 | 0.3/0.1/0.2 | 0.0/0.0/0.0 | 2.0/0.9/0.7 | 0.8/0.8/0.7 | 1.2/1.2/1.3 | **74.2/69.3/72.2** |
+| | reference | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 1.7/1.2/1.0 | 1.5/1.1/1.0 | 0.7/0.7/1.2 | 2.0/1.1/4.4 |
+| B 73129 | reminder | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.8/1.0/0.8 | 0.8/1.4/0.8 | 1.2/0.9/1.2 | 1.0/1.7/0.8 | **88.3/91.3/88.9** |
+| | reference | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.8/1.2/1.1 | 0.8/0.9/1.3 | 1.2/1.6/1.1 | 1.0/1.1/1.5 |
+| B 93683 | reminder | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.5/1.5/0.7 | 1.0/1.0/1.3 | **14.2/14.4/15.4** |
+| | reference | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 1.2/1.1/1.1 | 0.3/1.0/1.3 | 0.7/1.2/1.0 | 0.8/1.4/1.5 |
+| B 116089 | reminder | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.2/0.0/0.0 | 1.2/1.4/0.8 | 2.0/1.5/2.1 | **45.8/42.0/49.1** |
+| | reference | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 0.0/0.0/0.0 | 1.5/1.1/1.0 | 1.7/1.1/1.0 | 1.5/0.9/1.6 | 3.7/2.5/4.5 |
+
+### Reading (the addendum's table only)
+
+| Rule | Held-out mean at 128 (≥ 85?) | Wrap at 1,024 minus the reference's | Reading |
+|---|---|---|---|
+| Sweep | 0.8, 0.7, 0.8 (no) | +90.2, +9.4, +68.2 | **Partly back** (73129 and 116089 at +30 or more; 93683 within 15) |
+| Backpropagation | 1.2, 0.5, 1.2 (no) | +90.2, +12.9, +39.6 | **Partly back** (73129 and 116089; 93683 within 15) |
+
+No network is back within a hundred updates: every one is at 0 to 7 on every score up to row 256. After that they part, and two of three per rule end above the reference by 40 to 90 points.
+
+## 3. The plain-step arm, `unrelated-plain`
+
+`unrelated` (no decay) with `torch.optim.SGD(m.parameters(), lr)`, no momentum, in place of AdamW. The step is `exp26_candidate.step`'s text. The stream, rows and scores are the `unrelated` arm's.
+
+**The rate.** Three runs on seed 73129 under backpropagation, to 4,096 updates:
+
+| lr | Taught at 4,096 | Held-out | Losses finite |
+|---|---|---|---|
+| 0.01 | 68.0 | 63.3 | yes |
+| 0.03 | **100.0** | 100.0 | yes |
+| 0.1 | 100.0 | 100.0 | yes |
+
+**Rate chosen: 0.03**, the smallest at which the taught panel is at 80 or more. The run of seed 73129 under backpropagation at 0.03 is the rate run itself (same code, birth, stream and rate), so it was not repeated. The 0.01 and 0.1 runs are kept as receipts.
+
+**The condition.**
+- **Backpropagation:** holds at 4,096 (taught 100, 100, 100).
+- **Sweep:** fails at 4,096 (taught 0.3, 36.3, 95.3). As the brief's condition requires, the three sweep runs were continued to 16,384. My runner keeps no checkpoint, so each was rerun from its birth to 16,384. Its rows 0 to 4,096 have the same `tensors_sha256` and batch digests as the 4,096 runs (`addendum1/e43_addendum_plain16384_checks.json`, pass). The condition holds at **8,192** (taught 68.0, 99.3, 100), and the reading is taken there.
+
+### Curves (score 1: reduction / pairs without reduction / max / min · new task taught / held-out · state change at `=`)
+
+| rule, seed | 0 | 64 | 256 | 1,024 | 4,096 | 8,192 | 16,384 |
+|---|---|---|---|---|---|---|---|
+| S 73129 | 96.6/96.0/99.1/99.1 · 0/0 | 16.7/3.5/18.3/16.0 · 0/0 · 0.35 | 6.6/1.3/3.5/0.5 · 0/0 | 3.8/0.8/0.7/0.0 · 0/0 | 0.7/0.4/0.8/0.0 · 0.3/0.3 | 0/0/0/0 · 68.0/55.3 | 0/0/0/0 · 99.3/93.0 |
+| S 93683 | 98.7/98.6/98.7/98.5 · 0/0 | 45.2/49.7/60.4/73.7 · 0/0 · 0.32 | 25.7/27.7/10.1/33.2 · 0/0 | 4.9/6.6/0.1/5.6 · 0/0 | 0/0/0/0 · 36.3/20.7 | 0/0/0/0 · 99.3/97.3 | 0/0/0/0 · 100/100 |
+| S 116089 | 99.6/99.1/99.4/97.8 · 0/0 | 19.7/11.9/76.0/66.2 · 0/0 · 0.33 | 6.4/4.4/27.0/8.0 · 0/0 | 0.1/0.0/2.8/0.0 · 0.3/0.7 | 0/0/0/0 · 95.3/95.0 | 0/0/0/0 · 100/100 | 0/0/0/0 · 100/100 |
+| B 73129 | 98.1/98.8/98.5/97.1 · 0/0 | 0.4/0.5/0.7/0.9 · 0/0 · 0.66 | 0/0/0/0 · 0/0 | 0/0/0/0 · 35.7/21.7 | 0/0/0/0 · 100/100 | – | – |
+| B 93683 | 97.8/98.7/98.9/98.5 · 0/0 | 2.8/2.7/0.1/0.2 · 0/0 · 0.50 | 1.1/0.8/0.0/0.0 · 0/0 | 0/0/0/0 · 21.0/10.3 | 0/0/0/0 · 100/100 | – | – |
+| B 116089 | 94.0/94.6/98.6/99.1 · 0/0 | 2.1/0.3/0.4/0.8 · 0/0 · 0.52 | 0.1/0/0/0 · 1.0/0.7 | 0/0/0/0 · 70.3/68.0 | 0/0/0/0 · 100/100 | – | – |
+
+Row 2,048 is in the tables file.
+
+### Reading (the brief's table, unchanged)
+
+| Rule | Row | Share of the reduction score (73129, 93683, 116089) | Reading |
+|---|---|---|---|
+| Sweep | 8,192 | 0.0, 0.0, 0.0 | **Lost** |
+| Backpropagation | 4,096 | 0.0, 0.0, 0.0 | **Lost** |
+
+The addendum states the consequence in advance: if the family is lost here too, the equal-sized step on every weight is not the cause.
+
+**Share at rows 64, 256 and 1,024** (reduction score; reported beside the reading):
+- Sweep: 17.3 / 6.8 / 4.0; 45.8 / 26.1 / 5.0; 19.8 / 6.5 / 0.1.
+- Backpropagation: 0.4 / 0.0 / 0.0; 2.8 / 1.1 / 0.0; 2.3 / 0.1 / 0.0.
+- For comparison, under AdamW at row 64: sweep 0.1, 0.1, 0.0; backpropagation 0.1, 5.0, 0.0.
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P43.10 | Reminder: back at row 128 (held-out mean ≥ 85), two of three seeds, sweep | 50% | no (0.7 to 0.8) |
+| P43.11 | Reminder: at row 1,024 the wrap score is ≥ 30 above the fresh reference's, two of three seeds, under each rule | 85% | **yes** (73129 and 116089 under each rule) |
+| P43.12 | Some rate of 0.01, 0.03, 0.1 meets the condition on seed 73129 under backpropagation | 70% | **yes** (0.03 and 0.1) |
+| P43.13 | `unrelated-plain`, backpropagation: kept 15%, partly kept 30%, lost 55% | | **lost** |
+| P43.14 | Under `unrelated-plain` the share at row 64 is above 50% in two of three seeds, backpropagation | 55% | no (0.4, 2.8, 2.3) |
+
+## Limits
+
+- **Running the sweep's plain arm to 16,384** follows the brief's condition, which the addendum keeps unchanged. Read at 8,192, that arm had twice the dose of the backpropagation arm read at 4,096.
+- **Not independently reviewed.** No result here has been independently reviewed.
