@@ -1,0 +1,145 @@
+A. the draws, from the brief's text
+   16 a side: 256 cells; neighbourhood sizes [48]; interface 256 cells; far cells 0; farthest 0 grid steps = 0 connections
+   32 a side: 1024 cells; neighbourhood sizes [48]; interface 256 cells; far cells 768; farthest 8 grid steps = 3 connections
+   64 a side: 4096 cells; neighbourhood sizes [48]; interface 256 cells; far cells 3840; farthest 24 grid steps = 8 connections
+   connections at 16 a side equal E42's (seed 73129): True
+   connections at 16 a side equal E42's (seed 93683): True
+   connections at 16 a side equal E42's (seed 116089): True
+   size, arm | cells by period | mean of 1/period | mean difference in log2 period across a connection (the output: 0.59, 1.13 at 1,024; 0.26, 1.22 at 4,096)
+    1024 one      seed 73129 | {1: 1024} | 1.000 | 0.00
+    1024 place    seed 73129 | {1: 256, 2: 192, 4: 192, 8: 192, 16: 192} | 0.426 | 0.59
+    1024 scatter  seed 73129 | {1: 256, 2: 192, 4: 192, 8: 192, 16: 192} | 0.426 | 1.13
+    1024 scatter  seed 93683 | {1: 256, 2: 192, 4: 192, 8: 192, 16: 192} | 0.426 | 1.13
+    1024 scatter  seed 116089 | {1: 256, 2: 192, 4: 192, 8: 192, 16: 192} | 0.426 | 1.11
+    4096 one      seed 73129 | {1: 4096} | 1.000 | 0.00
+    4096 place    seed 73129 | {1: 256, 2: 960, 4: 960, 8: 960, 16: 960} | 0.282 | 0.26
+    4096 scatter  seed 73129 | {1: 256, 2: 960, 4: 960, 8: 960, 16: 960} | 0.282 | 1.22
+    4096 scatter  seed 93683 | {1: 256, 2: 960, 4: 960, 8: 960, 16: 960} | 0.282 | 1.21
+    4096 scatter  seed 116089 | {1: 256, 2: 960, 4: 960, 8: 960, 16: 960} | 0.282 | 1.22
+   by distance from the interface under `place` (seed 73129): grid steps -> periods present
+    1024: 1: [2] (68 cells); 2: [2] (76 cells); 3: [2, 4] (84 cells); 4: [4] (92 cells); 5: [4, 8] (100 cells); 6: [8] (108 cells); 7: [8, 16] (116 cells); 8: [16] (124 cells)
+    4096: 1: [2] (68 cells); 2: [2] (76 cells); 3: [2] (84 cells); 4: [2] (92 cells); 5: [2] (100 cells); 6: [2] (108 cells); 7: [2] (116 cells); 8: [2] (124 cells); 9: [2] (132 cells); 10: [2, 4] (140 cells); 11: [4] (148 cells); 12: [4] (156 cells); 13: [4] (164 cells); 14: [4] (172 cells); 15: [4] (180 cells); 16: [4, 8] (188 cells); 17: [8] (196 cells); 18: [8] (204 cells); 19: [8] (212 cells); 20: [8] (220 cells); 21: [16] (228 cells); 22: [16] (236 cells); 23: [16] (244 cells); 24: [16] (252 cells)
+   digests of the draws (sha256 of json.dumps of the list, first 16 digits): connections | periods `place` | periods `scatter` | phases under `place`
+   seed 73129 side 16: fde78220c57da3d4 | 0cc7c65a16f482a9 | 0cc7c65a16f482a9 | ba1a044f61b89809
+   seed 73129 side 32: f3361f3823d86f9d | 8394011ba0130f32 | 1f2074a6ca43ab00 | 624270ab87410e73
+   seed 73129 side 64: a70f0c440580f1bb | 10ef2ba7a17c347c | 772686e61a77fb83 | 80295a954d239c28
+   seed 93683 side 16: 35b553967b0c40ee | 0cc7c65a16f482a9 | 0cc7c65a16f482a9 | ba1a044f61b89809
+   seed 93683 side 32: 4be4745482e6e111 | 8394011ba0130f32 | eae54a2bb46696fb | 87144d9a68684a8b
+   seed 93683 side 64: a5bcfea45ba752b7 | 10ef2ba7a17c347c | 99049e8788620725 | 8e63a0973f113f74
+   seed 116089 side 16: 70afb39ae3b47296 | 0cc7c65a16f482a9 | 0cc7c65a16f482a9 | ba1a044f61b89809
+   seed 116089 side 32: 9efec154dba35002 | 8394011ba0130f32 | c132eed4585b7218 | de59ae7f723b23a9
+   seed 116089 side 64: fb4e94f064f1808c | 10ef2ba7a17c347c | 479df10c5f6f6111 | f0d50fdfaa985bb5
+   one string for every size: cell 0 takes places [3, 4, 6, 17, 23, 24, 28, 32, 43, 44] of its sorted neighbourhood at 16 a side and [3, 4, 6, 17, 23, 24, 28, 32, 43, 44] at 32
+   a cell of period 1 draws its phase with randrange(1): the generator's state changes: True
+B. at 256 cells: the reader by index against the E42 reader, on E42's saved networks of seed 73129
+   F10 S (periods [1]): 12 letters: states differ by at most 5.1e-07, logits by 7.6e-06, same largest output at every position True | 40 letters: states differ by at most 8.0e-07, logits by 7.6e-06, same largest output at every position True
+   F10 B (periods [1]): 12 letters: states differ by at most 5.1e-07, logits by 3.8e-06, same largest output at every position True | 40 letters: states differ by at most 7.7e-07, logits by 3.8e-06, same largest output at every position True
+   P8 S (periods [1, 2, 4, 8]): 12 letters: states differ by at most 3.6e-07, logits by 7.6e-06, same largest output at every position True | 40 letters: states differ by at most 3.0e-07, logits by 7.6e-06, same largest output at every position True
+   P8 B (periods [1, 2, 4, 8]): 12 letters: states differ by at most 2.4e-07, logits by 3.8e-06, same largest output at every position True | 40 letters: states differ by at most 3.0e-07, logits by 3.8e-06, same largest output at every position True
+C. weights and multiply-adds (one item, one position, forward)
+     256 one      weights 935,953  multiply-adds 930,560  with periods 930,560   equal to the brief's: True
+    1024 one      weights 965,905  multiply-adds 955,904  with periods 955,904   equal to the brief's: True
+    1024 place    weights 971,665  multiply-adds 955,904  with periods 936,500   equal to the brief's: True
+    1024 scatter  weights 971,665  multiply-adds 955,904  with periods 936,500   equal to the brief's: True
+    4096 one      weights 1,085,713  multiply-adds 1,057,280  with periods 1,057,280   equal to the brief's: True
+    4096 place    weights 1,114,513  multiply-adds 1,057,280  with periods 960,260   equal to the brief's: True
+    4096 scatter  weights 1,114,513  multiply-adds 1,057,280  with periods 960,260   equal to the brief's: True
+   the present network on the same basis (products only, as the rows above): 1,118,720; the brief's row says 1,122,048, which is 3,328 more (the network's 3,329 biases less one); weights 1,124,113
+   the `step` variant gives every step of a period its own learned weight, so a cell of period p must add up its 11 sources' values with those weights at every step
+   (11 multiply-adds a step) before its 33 products at the update; the brief's column counts the 33 / p alone:
+       1024 cells: the brief's 936,500; with the sums 944,948 (+1.5% against 256 cells; every cell every step +2.7%)
+       4096 cells: the brief's 960,260; with the sums 1,002,500 (+7.7% against 256 cells; every cell every step +13.6%)
+   a cell: 33 multiply-adds; sixteen times the cells: +13.6% every step, +3.2% with periods; against the present network -5.5%
+   the interface: 3 x 256 x 512 + 512 x 256 = 524,288 multiply-adds, 2048 a cell of the patch, at every size; share of a position's multiply-adds: 0.56 at 256 cells, 0.50 at 4,096
+D. time
+   1024 cells: far cells by connections from the interface: 1: 228, 2: 300, 3: 240; a round trip takes twice that many positions at period 1
+      from b2 to the first answer byte (1 positions): 0.00 of the far cells are near enough for a round trip
+      from a1 to the first answer byte, no letters (5 positions): 0.69 of the far cells are near enough for a round trip
+      the same, 6 letters (11 positions): 1.00 of the far cells are near enough for a round trip
+      the same, 12 letters (17 positions): 1.00 of the far cells are near enough for a round trip
+      from the start symbol, no letters (7 positions): 1.00 of the far cells are near enough for a round trip
+      from the start symbol, 12 letters (19 positions): 1.00 of the far cells are near enough for a round trip
+   4096 cells: far cells by connections from the interface: 1: 228, 2: 300, 3: 372, 4: 444, 5: 516, 6: 588, 7: 660, 8: 732; a round trip takes twice that many positions at period 1
+      from b2 to the first answer byte (1 positions): 0.00 of the far cells are near enough for a round trip
+      from a1 to the first answer byte, no letters (5 positions): 0.14 of the far cells are near enough for a round trip
+      the same, 6 letters (11 positions): 0.48 of the far cells are near enough for a round trip
+      the same, 12 letters (17 positions): 1.00 of the far cells are near enough for a round trip
+      from the start symbol, no letters (7 positions): 0.23 of the far cells are near enough for a round trip
+      from the start symbol, 12 letters (19 positions): 1.00 of the far cells are near enough for a round trip
+   from the structure alone (connections, periods, phases): the share of far cells some state of which depends on the byte and can still change the logits
+   size arm seed | a1 -> first answer byte, by letters 0, 4, 8, 12 | any prompt byte -> any answer byte, by letters 0, 4, 8, 12 | at 40 letters: a1 -> first answer byte; any -> any
+    1024 one      73129 | 0.65 1.00 1.00 1.00 | 1.00 1.00 1.00 1.00 | 1.00; 1.00
+    1024 one      93683 | 0.65 1.00 1.00 1.00 | 1.00 1.00 1.00 1.00 | 1.00; 1.00
+    1024 one      116089 | 0.64 1.00 1.00 1.00 | 1.00 1.00 1.00 1.00 | 1.00; 1.00
+    1024 place    73129 | 0.38 0.64 0.80 0.89 | 0.63 0.80 0.88 0.96 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 1.00, 16: 0.82; without letters: 2: 1.00, 4: 0.99, 8: 0.41, 16: 0.11
+    1024 place    93683 | 0.38 0.63 0.80 0.88 | 0.61 0.79 0.88 0.94 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 1.00, 16: 0.76; without letters: 2: 1.00, 4: 0.98, 8: 0.40, 16: 0.08
+    1024 place    116089 | 0.35 0.63 0.79 0.86 | 0.63 0.82 0.90 0.95 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 1.00, 16: 0.80; without letters: 2: 1.00, 4: 0.98, 8: 0.44, 16: 0.11
+    1024 scatter  73129 | 0.22 0.62 0.83 0.93 | 0.63 0.83 0.93 0.98 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 1.00, 16: 0.92; without letters: 2: 0.92, 4: 0.73, 8: 0.57, 16: 0.28
+    1024 scatter  93683 | 0.24 0.58 0.84 0.92 | 0.62 0.85 0.94 0.99 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 1.00, 16: 0.94; without letters: 2: 0.91, 4: 0.76, 8: 0.52, 16: 0.29
+    1024 scatter  116089 | 0.24 0.58 0.83 0.94 | 0.56 0.85 0.93 0.98 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 1.00, 16: 0.93; without letters: 2: 0.79, 4: 0.71, 8: 0.46, 16: 0.28
+    4096 one      73129 | 0.13 0.32 0.59 0.92 | 0.32 0.59 0.92 1.00 | 1.00; 1.00
+    4096 place    73129 | 0.10 0.24 0.37 0.51 | 0.24 0.37 0.50 0.61 | 0.99; 1.00
+        at 12 letters, any -> any, by period: 2: 1.00, 4: 1.00, 8: 0.41, 16: 0.02; without letters: 2: 0.92, 4: 0.06, 8: 0.00, 16: 0.00
+    4096 scatter  73129 | 0.04 0.12 0.22 0.33 | 0.12 0.23 0.37 0.54 | 1.00; 1.00
+        at 12 letters, any -> any, by period: 2: 0.66, 4: 0.64, 8: 0.52, 16: 0.36; without letters: 2: 0.17, 4: 0.14, 8: 0.12, 16: 0.05
+   updates of a cell in one training item (10 + k positions, k = 0..12 with equal chance; every phase with equal chance): share with none, one, two or more
+      period  8: none 0.00, one 0.20, two or more 0.80; none in an item without letters 0.00
+      period 16: none 0.10, one 0.80, two or more 0.10; none in an item without letters 0.38
+   b2 -> the first answer byte (one position later), 1,024 cells: far cells that can take part 0; interface cells 256
+E. the reader's forward with drawn recurrent weights (shared parts from E26's birth of seed 73129), 1,024 cells
+   one     : a changed byte reaches a cell no sooner than its distance allows True; states that differ lie inside the structural reach True and fill 1.000 of it; changes only at update positions True; far cells zero when held True
+             far cells' states at the last position: mean size 0.037, of which varying between items (standard deviation) 0.008; logits move by at most 0.205 with the far cells at zero and 0.116 with them at their mean over the items
+   place   : a changed byte reaches a cell no sooner than its distance allows True; states that differ lie inside the structural reach True and fill 0.992 of it; changes only at update positions True; far cells zero when held True
+             far cells' states at the last position: mean size 0.030, of which varying between items (standard deviation) 0.006; logits move by at most 0.272 with the far cells at zero and 0.109 with them at their mean over the items
+   scatter : a changed byte reaches a cell no sooner than its distance allows True; states that differ lie inside the structural reach True and fill 0.997 of it; changes only at update positions True; far cells zero when held True
+             far cells' states at the last position: mean size 0.033, of which varying between items (standard deviation) 0.004; logits move by at most 0.187 with the far cells at zero and 0.068 with them at their mean over the items
+F. far cells' recurrent weights that can receive a gradient from items of 0 to 12 letters (the output: 0.90 at 1,024 cells, `place`)
+    1024 place   : 0.90 of the far cells' weights; far cells with none 6 of 768; by period 2: 1.00, 4: 1.00, 8: 0.96, 16: 0.64
+    1024 scatter : 0.94 of the far cells' weights; far cells with none 1 of 768; by period 2: 1.00, 4: 0.99, 8: 0.97, 16: 0.81
+    1024 one     : 1.00 of the far cells' weights; far cells with none 0 of 768
+    4096 place   : 0.73 of the far cells' weights; far cells with none 571 of 3840; by period 2: 1.00, 4: 1.00, 8: 0.77, 16: 0.15
+    4096 one     : 1.00 of the far cells' weights; far cells with none 0 of 3840
+G. cost, from the brief's CPU-seconds for a forward and backward on the coordinator's machine (scoring not included)
+   CPU-hours of updates for one run of 24,576 updates: 256 one 0.6, 1024 one 1.9, 1024 place 2.7, 4096 one 8.2, 4096 place 10.8, 1024 scatter 2.7
+   the trial (two runs at 1,024 cells, `place`): 5.3; with `one` beside it: 9.0
+   the roster's eight further runs: 47.0, of which the four at 4,096 cells 38.0; at 1,024 cells alone 9.0
+   the cloud host against the coordinator's machine, on E42's files (CPU-seconds an update in the receipt over CPU-seconds a forward and backward in OUTPUT_E42_SPEC_MAC.txt):
+      G   : cloud 0.103 an update and 5.7 a scored row; the coordinator's machine 0.031; ratio 3.3
+      F10 : cloud 0.105 an update and 5.9 a scored row; the coordinator's machine 0.035; ratio 3.0
+      P8  : cloud 0.138 an update and 9.4 a scored row; the coordinator's machine 0.076; ratio 1.8
+   at 1.8 to 3.3 times the coordinator's figures: the trial 10 to 18 CPU-hours of updates; one run at 4,096 cells 15 to 36; the roster's eight 85 to 156, its four at 1,024 cells 16 to 30
+   scoring: E42's F10 took 5.9 CPU-seconds a scored row on the cloud host, 96 rows a run; if a scored row grows as the update does (0.391 / 0.085 at 1,024 cells, `place`) and is computed twice (with and without the far cells), a trial run adds 1.5 CPU-hours of scoring
+H. what is on file for the brief's check 2, and E42's first seed on period 16
+   E42's dry runs of F10 on its branch: ['e42_F10_S_dry2048_73129.json']
+   E42 P8   S, seed 73129: at 40 letters, mean of the last three rows 96.0; at 12 letters 96.3; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 8448
+   E42 P8   B, seed 73129: at 40 letters, mean of the last three rows 96.6; at 12 letters 97.0; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 7168
+   E42 P16  S, seed 73129: at 40 letters, mean of the last three rows 82.8; at 12 letters 94.6; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 9216
+   E42 P16  B, seed 73129: no receipt on the branch
+   E42 F10  S, seed 73129: at 40 letters, mean of the last three rows 89.1; at 12 letters 90.1; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 15104
+   E42 F10  B, seed 73129: at 40 letters, mean of the last three rows 92.6; at 12 letters 92.9; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 9472
+   E42 G    S, seed 73129: at 40 letters, mean of the last three rows 96.4; at 12 letters 98.4; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 6656
+   E42 G    B, seed 73129: at 40 letters, mean of the last three rows 94.6; at 12 letters 96.9; first of three scored rows in a row at 80 or more on R (a plain count, not E41's table): 6400
+I. the sweep's backward by index against the masked matrix form (random values; float64)
+     256 cells: entries inside the mask 8,448 = 3 x cells x 11 True; scale equal True; forward differs by 4.4e-16; error sent back differs by 1.3e-15; weight gradient differs by 0.0e+00
+    1024 cells: entries inside the mask 33,792 = 3 x cells x 11 True; scale equal True; forward differs by 4.4e-16; error sent back differs by 1.3e-15; weight gradient differs by 0.0e+00
+J. the interface of E42's trained F10 (seed 73129, 256 cells): length-test items of 12 letters, whole answers, 300 items
+   S: as trained 91.7; input values that hold 90% of a cell's squared input weight: median 237 of 512 (range 168 to 294); cells that hold 90% of a readout unit's squared weight: median 110 of 256 (range 65 to 125)
+      largest kept, the rest set to zero, nothing retrained: 256 input values a cell: 83.0; 128 cells a readout unit: 84.3; both: 74.7 | 128 input values a cell: 15.3; 64 cells a readout unit: 41.0; both: 9.3 | 64 input values a cell: 1.3; 32 cells a readout unit: 5.3; both: 1.0 | 32 input values a cell: 0.0; 16 cells a readout unit: 1.3; both: 0.0 | 16 input values a cell: 0.0; 8 cells a readout unit: 1.0; both: 0.3
+   B: as trained 91.3; input values that hold 90% of a cell's squared input weight: median 279 of 512 (range 191 to 353); cells that hold 90% of a readout unit's squared weight: median 97 of 256 (range 43 to 121)
+      largest kept, the rest set to zero, nothing retrained: 256 input values a cell: 72.3; 128 cells a readout unit: 88.0; both: 69.7 | 128 input values a cell: 10.0; 64 cells a readout unit: 41.7; both: 5.0 | 64 input values a cell: 1.7; 32 cells a readout unit: 10.3; both: 0.7 | 32 input values a cell: 1.0; 16 cells a readout unit: 5.3; both: 0.7 | 16 input values a cell: 0.0; 8 cells a readout unit: 1.3; both: 0.0
+K. periods by place with a shorter longest period (equal groups of far cells, nearest first; seed 73129): share of far cells that can take part, any prompt byte -> any answer byte
+   size, periods | by letters 0, 4, 8, 12 | lowest share among the groups at 12 letters | multiply-adds a position with the sums of the `step` variant
+    1024 (2, 4, 8, 16)  | 0.63 0.80 0.88 0.96 | 0.82 | 944,948
+    1024 (2, 4, 8)      | 0.76 0.93 0.99 1.00 | 1.00 | 946,400
+    1024 (2, 4)         | 0.89 1.00 1.00 1.00 | 1.00 | 948,512
+    1024 (2,)           | 1.00 1.00 1.00 1.00 | 1.00 | 951,680
+    4096 (2, 4, 8, 16)  | 0.24 0.37 0.50 0.61 | 0.02 | 1,002,500
+    4096 (2, 4, 8)      | 0.25 0.40 0.56 0.71 | 0.17 | 1,009,760
+    4096 (2, 4)         | 0.25 0.45 0.62 0.83 | 0.67 | 1,020,320
+    4096 (2,)           | 0.25 0.46 0.73 0.96 | 0.96 | 1,036,160
