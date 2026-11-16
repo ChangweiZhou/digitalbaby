@@ -1,0 +1,356 @@
+{
+ "experiment": "E39",
+ "job": "L0/L1 small world",
+ "kind": "life",
+ "settings": {
+  "arm": "replay",
+  "world": 1,
+  "visits": 4,
+  "rho": 0.5,
+  "H": 64,
+  "U": 64,
+  "visit_updates": 256,
+  "p_new": 0.2,
+  "lr": 0.001,
+  "wd": 0.25,
+  "tag": null
+ },
+ "local": false,
+ "replay": true,
+ "replay_items_per_update": 24,
+ "model": {
+  "cls": "sw_net.SWNet",
+  "H": 64,
+  "U": 64,
+  "parameters": 52625,
+  "shapes": {
+   "book.weight": [
+    258,
+    8
+   ],
+   "l1.weight": [
+    64,
+    8
+   ],
+   "l1.bias": [
+    64
+   ],
+   "rnn.weight_ih_l0": [
+    192,
+    64
+   ],
+   "rnn.weight_hh_l0": [
+    192,
+    64
+   ],
+   "rnn.bias_ih_l0": [
+    192
+   ],
+   "rnn.bias_hh_l0": [
+    192
+   ],
+   "lm.weight": [
+    64,
+    64
+   ],
+   "lm.bias": [
+    64
+   ],
+   "l2.weight": [
+    64,
+    64
+   ],
+   "l2.bias": [
+    64
+   ],
+   "l3.weight": [
+    257,
+    64
+   ],
+   "l3.bias": [
+    257
+   ]
+  },
+  "initial": {
+   "weights_tensors_sha256": "6c19a392949ee2865f01ab8f3ad9f5b6e3a2ce180001bec34f96d801dc93e122"
+  }
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked cross entropy, zero_grad, backward, one AdamW step",
+ "answering": "sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
+ "world": {
+  "seed": 1,
+  "visit_updates": 256,
+  "p_new": 0.2,
+  "probe_groups": 20,
+  "tasks": 540,
+  "groups": 270
+ },
+ "provenance": {
+  "command": "python3 sw_run.py life replay 1 4 --rho 0.5 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e39/L0/lives/c4",
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.3",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "2b65392f0c549627b289feea6caa7fe3b3bc3437",
+   "sources_modified_vs_commit": [
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_net.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_score.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_world.py"
+   ]
+  },
+  "sources_sha256": {
+   "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+   "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+   "smallworld/sw_run.py": "4e1d17c378fbbc0e668d0c41bb56ce44106450a851c7fd4f3d79d3fd573284d7",
+   "smallworld/sw_score.py": "d68a4d344f2c9ec9e8e357c5918d3316a9d56c62e19fe9358cbbfe983451b0eb",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "env": {
+   "EXP45_WINDOW": "10",
+   "EXP45_HIDDEN": "512",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "ledger": {
+  "stored_numbers": {
+   "weights": 52625,
+   "optimizer_moments": 105250,
+   "optimizer_step_counters": 13,
+   "anchor": 0
+  },
+  "buffer": {
+   "used": true,
+   "capacity_items": 14033,
+   "capacity_bytes": 210500,
+   "items_at_end": 14033,
+   "bytes_at_end": 182377,
+   "max_items": 14033,
+   "max_bytes": 182693,
+   "offered": 49152
+  },
+  "updates": 1024,
+  "stream_items_per_update": 64,
+  "taught_per_update": 48,
+  "asked_per_update": 16,
+  "learned_per_update": 48,
+  "replayed_per_update": 24,
+  "new_learned_per_update_once_replaying": 24
+ },
+ "counters": {
+  "learned_items_verified": 49152,
+  "asking_checks": 4,
+  "replayed_items": 24552,
+  "max_buffer_items": 14033,
+  "max_buffer_bytes": 182693,
+  "first_replay_update": 1
+ },
+ "events": {
+  "file": "sw_replay_w1_v4_rho0.5.npz",
+  "file_sha256": "6407988bc3db232ad7afc7ac2cd7b03f89b7d5adc48fc36eef5c97199e0e74fa",
+  "arrays_sha256": "073c40715b72270815167aef388e061887fd359ffa6872898e19158e70df122f",
+  "entries": 16384,
+  "columns": [
+   "update",
+   "visit",
+   "task",
+   "correct",
+   "blind",
+   "wrap",
+   "mirror",
+   "seen",
+   "replayed"
+  ]
+ },
+ "final": {
+  "visits": 4,
+  "updates": 1024,
+  "weights_tensors_sha256": "032c3690032a4c3ab679edd7e57c4646caba24e77fd9b981a3fa9e25df65c954",
+  "optimizer_sha256": "f143f91d7aadf95558925a05335b4170405151633ce02a55226d5701c2d287d5"
+ },
+ "cpu": {
+  "total": 13.698695866,
+  "per_visit": [
+   3.3723297760000004,
+   3.494550493,
+   3.4764411089999996,
+   3.172627918
+  ],
+  "mean_per_visit": 3.378987324
+ },
+ "learned_sha256": "06444b552867b92e324979892564bd63df03e2636e40210af88afa3057506e40",
+ "by_visit": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "e3148f2c92204c030ea29a97520a95deffea242190c0ca8d897e1f9dc9c22b00",
+   "learned_sha256": "57de963a04f8e5bbeda66d32c22e3eb96f2400fba2316a41a2dacc2315b2350f",
+   "loss_mean": 1.6442225240170956,
+   "loss_first": 5.435756206512451,
+   "loss_last": 1.0042624473571777,
+   "replayed_items": 6120,
+   "cpu": 3.3723297760000004,
+   "wall": 3.3991003036499023
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "78290b182735bc28db5cc20f352643588fa91469f1f840206dad6ad3d6c9fb2f",
+   "learned_sha256": "421e40c9bdf0a91019b5bd7591320e257839bf440859935df16a4cf814396359",
+   "loss_mean": 0.8885077554732561,
+   "loss_first": 0.9869279861450195,
+   "loss_last": 0.7541906833648682,
+   "replayed_items": 6144,
+   "cpu": 3.494550493,
+   "wall": 3.533172607421875
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "3b920222d9db9b12823559aa1a1f851ae7ce77912bc239fbd38c36d45fa7d253",
+   "learned_sha256": "5959d1e056484bb4c28965af11fd45eeb9261a6200080c485e5ba818f3824057",
+   "loss_mean": 0.7699248939752579,
+   "loss_first": 0.8905164003372192,
+   "loss_last": 0.6919708251953125,
+   "replayed_items": 6144,
+   "cpu": 3.4764411089999996,
+   "wall": 3.4868156909942627
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "72b49ac55b591694b834d7002b253b9ef3e4b3b8513bfb6f4f4935a4201aef6f",
+   "learned_sha256": "7c94def555e99a8afd05c788059161e2b2583bfb834da6d4d894ad7acf696a5d",
+   "loss_mean": 0.6818192687351257,
+   "loss_first": 0.7499680519104004,
+   "loss_last": 0.6261399984359741,
+   "replayed_items": 6144,
+   "cpu": 3.172627918,
+   "wall": 3.191257953643799
+  }
+ ],
+ "resumes": [],
+ "states": [
+  {
+   "visits": 1,
+   "path": "sw_replay_w1_v4_rho0.5_state_v1.pt",
+   "file_sha256": "73eb4a33875610e1866431800da88a20f92567d74dca9b8a7c346d84e2112cb7",
+   "weights_tensors_sha256": "104e87e88e39ab74a257999446c5bba7ecea916bc58568061b7d43c854600d6c",
+   "optimizer_sha256": "6d95e535689dd6d128e5bb8a3c608224ba6bdbecfeb65bf39920b476b0608d9e"
+  },
+  {
+   "visits": 2,
+   "path": "sw_replay_w1_v4_rho0.5_state_v2.pt",
+   "file_sha256": "944c04034ee0d8d19a0b1033b9ba8a5895baecea2e9b870e809d8539dec81c15",
+   "weights_tensors_sha256": "50a7a931700024e13bf9b147cc8ec0d6a3fb906b7567cf084f743a6a44c97048",
+   "optimizer_sha256": "11654418fd9dbcf5131875a48cf9808fb35159d9669743580e5ac6d7eff17ddb"
+  },
+  {
+   "visits": 4,
+   "path": "sw_replay_w1_v4_rho0.5_state_v4.pt",
+   "file_sha256": "b86beaabdc10fe1343826492896653d8e77c60cc78fe60a957f718b019a52e5b",
+   "weights_tensors_sha256": "032c3690032a4c3ab679edd7e57c4646caba24e77fd9b981a3fa9e25df65c954",
+   "optimizer_sha256": "f143f91d7aadf95558925a05335b4170405151633ce02a55226d5701c2d287d5"
+  }
+ ],
+ "complete": true,
+ "schedule": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  }
+ ],
+ "stream_sha256": "7ba33cb308ee2331654d1c6bc18a8c01403b0908b40764288273ca40a456f042",
+ "stream_note": "sha256 over every stream item in order, as sw_world.digest; equals sw_world.digest(World(world, visit_updates, p_new), visits)"
+}

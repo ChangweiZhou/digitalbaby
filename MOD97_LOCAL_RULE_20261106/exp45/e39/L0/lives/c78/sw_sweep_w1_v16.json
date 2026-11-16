@@ -1,0 +1,634 @@
+{
+ "experiment": "E39",
+ "job": "L0/L1 small world",
+ "kind": "life",
+ "settings": {
+  "arm": "sweep",
+  "world": 1,
+  "visits": 16,
+  "rho": null,
+  "H": 64,
+  "U": 64,
+  "visit_updates": 256,
+  "p_new": 0.2,
+  "lr": 0.001,
+  "wd": 0.25,
+  "tag": null
+ },
+ "local": true,
+ "replay": false,
+ "replay_items_per_update": 0,
+ "model": {
+  "cls": "sw_net.SWNet",
+  "H": 64,
+  "U": 64,
+  "parameters": 52625,
+  "shapes": {
+   "book.weight": [
+    258,
+    8
+   ],
+   "l1.weight": [
+    64,
+    8
+   ],
+   "l1.bias": [
+    64
+   ],
+   "rnn.weight_ih_l0": [
+    192,
+    64
+   ],
+   "rnn.weight_hh_l0": [
+    192,
+    64
+   ],
+   "rnn.bias_ih_l0": [
+    192
+   ],
+   "rnn.bias_hh_l0": [
+    192
+   ],
+   "lm.weight": [
+    64,
+    64
+   ],
+   "lm.bias": [
+    64
+   ],
+   "l2.weight": [
+    64,
+    64
+   ],
+   "l2.bias": [
+    64
+   ],
+   "l3.weight": [
+    257,
+    64
+   ],
+   "l3.bias": [
+    257
+   ]
+  },
+  "initial": {
+   "weights_tensors_sha256": "6c19a392949ee2865f01ab8f3ad9f5b6e3a2ce180001bec34f96d801dc93e122"
+  }
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked cross entropy, zero_grad, backward, one AdamW step",
+ "answering": "sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
+ "world": {
+  "seed": 1,
+  "visit_updates": 256,
+  "p_new": 0.2,
+  "probe_groups": 20,
+  "tasks": 540,
+  "groups": 270
+ },
+ "provenance": {
+  "command": "python3 sw_run.py life sweep 1 16 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e39/L0/lives/c78",
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.3",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "2b65392f0c549627b289feea6caa7fe3b3bc3437",
+   "sources_modified_vs_commit": [
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_net.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_score.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_world.py"
+   ]
+  },
+  "sources_sha256": {
+   "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+   "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+   "smallworld/sw_run.py": "4e1d17c378fbbc0e668d0c41bb56ce44106450a851c7fd4f3d79d3fd573284d7",
+   "smallworld/sw_score.py": "d68a4d344f2c9ec9e8e357c5918d3316a9d56c62e19fe9358cbbfe983451b0eb",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "env": {
+   "EXP45_WINDOW": "10",
+   "EXP45_HIDDEN": "512",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "ledger": {
+  "stored_numbers": {
+   "weights": 52625,
+   "optimizer_moments": 105250,
+   "optimizer_step_counters": 13,
+   "anchor": 0
+  },
+  "buffer": {
+   "used": false,
+   "capacity_items": 0,
+   "capacity_bytes": 0,
+   "items_at_end": 0,
+   "bytes_at_end": 0,
+   "max_items": 0,
+   "max_bytes": 0,
+   "offered": 0
+  },
+  "updates": 4096,
+  "stream_items_per_update": 64,
+  "taught_per_update": 48,
+  "asked_per_update": 16,
+  "learned_per_update": 48,
+  "replayed_per_update": 0,
+  "new_learned_per_update_once_replaying": 48
+ },
+ "counters": {
+  "learned_items_verified": 196608,
+  "asking_checks": 16,
+  "replayed_items": 0,
+  "max_buffer_items": 0,
+  "max_buffer_bytes": 0,
+  "first_replay_update": null
+ },
+ "events": {
+  "file": "sw_sweep_w1_v16.npz",
+  "file_sha256": "5268e7146d4e6ceac973b9f3aa1ac07868f9662a732ce8d283fb1d0372c2cb86",
+  "arrays_sha256": "dd127b1f37b459d5ca95ac1b853b9aad8d10745083e612e8aca9a5e6b00b44d9",
+  "entries": 65536,
+  "columns": [
+   "update",
+   "visit",
+   "task",
+   "correct",
+   "blind",
+   "wrap",
+   "mirror",
+   "seen",
+   "replayed"
+  ]
+ },
+ "final": {
+  "visits": 16,
+  "updates": 4096,
+  "weights_tensors_sha256": "ef5451f9ebcd6f0c3c3a3fca7fbec165f745a427cfc2f00e7525753ab075e312",
+  "optimizer_sha256": "68ffbfb55caed9eef6ff076e0415c6804899c8e48885e940750fbdf9eed56024"
+ },
+ "cpu": {
+  "total": 61.255259435,
+  "per_visit": [
+   3.6938973730000004,
+   3.6994913819999997,
+   3.858545875000001,
+   3.827665863,
+   3.5987543990000006,
+   3.751189669000002,
+   3.9117669160000013,
+   4.075534163000004,
+   3.6786195960000043,
+   3.584054240999997,
+   3.653995340999998,
+   3.7238545809999977,
+   4.335986262999995,
+   4.080697516999997,
+   4.069614850000001,
+   3.5585839040000025
+  ],
+  "mean_per_visit": 3.8188907458125003
+ },
+ "learned_sha256": "2adf3269f47bd0ea04d710398208be3980f00c4e85ed0e29e7b6e93448ed05b1",
+ "by_visit": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "e3148f2c92204c030ea29a97520a95deffea242190c0ca8d897e1f9dc9c22b00",
+   "learned_sha256": "f6057be012571716cbccf88ee0eae51310cfeecad128780d32978fe317e082a4",
+   "loss_mean": 1.6360672833397985,
+   "loss_first": 5.435756206512451,
+   "loss_last": 1.0095916986465454,
+   "replayed_items": 0,
+   "cpu": 3.6938973730000004,
+   "wall": 3.716782331466675
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "78290b182735bc28db5cc20f352643588fa91469f1f840206dad6ad3d6c9fb2f",
+   "learned_sha256": "0bc612594a8023fb4fadab1729194ce1de0459c9834f15bcc5e1535a725724ff",
+   "loss_mean": 0.8949053620453924,
+   "loss_first": 1.0028403997421265,
+   "loss_last": 0.7147998213768005,
+   "replayed_items": 0,
+   "cpu": 3.6994913819999997,
+   "wall": 3.777397394180298
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "3b920222d9db9b12823559aa1a1f851ae7ce77912bc239fbd38c36d45fa7d253",
+   "learned_sha256": "cac03b402b896545c82ad74ec280667b8c0e6adec35c82b2442bb37bb1fe586e",
+   "loss_mean": 0.7373021554667503,
+   "loss_first": 0.7839715480804443,
+   "loss_last": 0.6723509430885315,
+   "replayed_items": 0,
+   "cpu": 3.858545875000001,
+   "wall": 3.8808939456939697
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "72b49ac55b591694b834d7002b253b9ef3e4b3b8513bfb6f4f4935a4201aef6f",
+   "learned_sha256": "9b57aca4c413005baa746cb6dccc56c26b02814dc27d6130cb95144b6ee0eb71",
+   "loss_mean": 0.615897462121211,
+   "loss_first": 0.6893641948699951,
+   "loss_last": 0.5369298458099365,
+   "replayed_items": 0,
+   "cpu": 3.827665863,
+   "wall": 3.876469850540161
+  },
+  {
+   "visit": 4,
+   "group": 1,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "6702f38f26539f7278f75824b8fc432bab66a562549d2bcef24f1a386473a9d1",
+   "learned_sha256": "53d88f31b90360bb91ededf7baf4e3a0fb79ba3b5a3b54227a05a32cc296d0e1",
+   "loss_mean": 0.9396580727770925,
+   "loss_first": 1.5845454931259155,
+   "loss_last": 0.7453334331512451,
+   "replayed_items": 0,
+   "cpu": 3.5987543990000006,
+   "wall": 3.6077511310577393
+  },
+  {
+   "visit": 5,
+   "group": 0,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "e7fad773e2023940aba6416403f00e8bc516df06a21d6b621911e560034b56d0",
+   "learned_sha256": "1566b906e6f4d9044b56910c8d33c307a3937c1c55a799964902a97a23ee54a4",
+   "loss_mean": 0.6118833380751312,
+   "loss_first": 1.4402810335159302,
+   "loss_last": 0.5188865065574646,
+   "replayed_items": 0,
+   "cpu": 3.751189669000002,
+   "wall": 3.795506238937378
+  },
+  {
+   "visit": 6,
+   "group": 1,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "e3ab709e6069eb7d59c3e7e86f1d96965ee0186ed6804a76e000a539d4f3c351",
+   "learned_sha256": "e353201d4f7ef97deea9b0ecaf468e22d4198fc056acf7291b578276747b3ff6",
+   "loss_mean": 0.7608798480359837,
+   "loss_first": 1.7814666032791138,
+   "loss_last": 0.6105830669403076,
+   "replayed_items": 0,
+   "cpu": 3.9117669160000013,
+   "wall": 3.946841239929199
+  },
+  {
+   "visit": 7,
+   "group": 0,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "da9085abd9ab2a6b2a82f4f1906c02ea4494ef627028b0e32667596b363da934",
+   "learned_sha256": "546f4b523ee3d06313cbca72871597508adbd73aabd1a1b97c39780001c7c051",
+   "loss_mean": 0.5461347361560911,
+   "loss_first": 1.1968191862106323,
+   "loss_last": 0.46700912714004517,
+   "replayed_items": 0,
+   "cpu": 4.075534163000004,
+   "wall": 4.113495588302612
+  },
+  {
+   "visit": 8,
+   "group": 2,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "1c091a17c672b0d55314066000f89f3bbaa4d4566de5e837df3d6c91b674f1ec",
+   "learned_sha256": "e591b30aeca0aa17c7df4a0403f09a19dc99a0725d3be8db999a1dfe2dc78c0f",
+   "loss_mean": 1.1396927321329713,
+   "loss_first": 2.1274633407592773,
+   "loss_last": 1.0225919485092163,
+   "replayed_items": 0,
+   "cpu": 3.6786195960000043,
+   "wall": 3.68886399269104
+  },
+  {
+   "visit": 9,
+   "group": 3,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "8cbb7ca88bf91a9526f3355852566bd14873ffd28e6dac5e44a75ea98bda5df5",
+   "learned_sha256": "834dab73250a6f2d94de5b79915024271b759b6a32491a969da4362225543cc9",
+   "loss_mean": 1.2012156154960394,
+   "loss_first": 1.4174890518188477,
+   "loss_last": 1.157954454421997,
+   "replayed_items": 0,
+   "cpu": 3.584054240999997,
+   "wall": 3.606058359146118
+  },
+  {
+   "visit": 10,
+   "group": 0,
+   "new": false,
+   "absence": 3,
+   "updates": 256,
+   "stream_sha256": "c4d81a34576278e3022dab1d9c47abdaeac2b713040396e681fb6085d1ca43f4",
+   "learned_sha256": "fbfa412c77ebe2159dee743f77052903f5a5e448c352c0f504c84f91cad59aa2",
+   "loss_mean": 0.6009620010154322,
+   "loss_first": 1.1596566438674927,
+   "loss_last": 0.4024042785167694,
+   "replayed_items": 0,
+   "cpu": 3.653995340999998,
+   "wall": 3.6687862873077393
+  },
+  {
+   "visit": 11,
+   "group": 4,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "41e64691cc0eacc70c141120e44277da927773db7b53216f4bc916109b4ea888",
+   "learned_sha256": "15603e23bdde3acb5fbd699701a1156e5f6fb22c68b0a25c54b5cdbd4d70fdeb",
+   "loss_mean": 1.1305954037234187,
+   "loss_first": 2.2311697006225586,
+   "loss_last": 1.058021068572998,
+   "replayed_items": 0,
+   "cpu": 3.7238545809999977,
+   "wall": 3.7783279418945312
+  },
+  {
+   "visit": 12,
+   "group": 1,
+   "new": false,
+   "absence": 6,
+   "updates": 256,
+   "stream_sha256": "3fe0b7e8580a539c0563c0118ec293abdff9d42c24159c58a9d9dffee8578107",
+   "learned_sha256": "591ebfd072ff1a79b87fb4ab3fe760addeb1f9fc4f91f1cb6b7b0ef969195b85",
+   "loss_mean": 0.8646003748290241,
+   "loss_first": 1.375152349472046,
+   "loss_last": 0.8142179846763611,
+   "replayed_items": 0,
+   "cpu": 4.335986262999995,
+   "wall": 4.394077777862549
+  },
+  {
+   "visit": 13,
+   "group": 4,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "66062ca9f5ca7f38f71d0b9a3f79cd412e874d77837c240d65b99778cb25783e",
+   "learned_sha256": "a2e52a11f6e745f55151ab581ca4822b464f55f61bef5eae794879984fc475c7",
+   "loss_mean": 1.0575772693846375,
+   "loss_first": 1.3081550598144531,
+   "loss_last": 1.0268701314926147,
+   "replayed_items": 0,
+   "cpu": 4.080697516999997,
+   "wall": 4.129659175872803
+  },
+  {
+   "visit": 14,
+   "group": 2,
+   "new": false,
+   "absence": 6,
+   "updates": 256,
+   "stream_sha256": "91dfe47452f914f1147da40f3371fed8b8fdf66d26f734e098222607efcccb8c",
+   "learned_sha256": "59fecccebabf5feb1e7f7ab82541f52d9ff720859db9fe3552c655d14145e3f5",
+   "loss_mean": 1.0810962850227952,
+   "loss_first": 1.165898084640503,
+   "loss_last": 1.0507112741470337,
+   "replayed_items": 0,
+   "cpu": 4.069614850000001,
+   "wall": 4.142792701721191
+  },
+  {
+   "visit": 15,
+   "group": 2,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "91da0a44742f2b26b2b5691e05016db37657f3e03576019860abb95c5078eab4",
+   "learned_sha256": "2295798b77d5b7b8bea8726d9af862b79a73dad53882a92ff4146e7c7fafa17a",
+   "loss_mean": 1.0285109137184918,
+   "loss_first": 1.058495283126831,
+   "loss_last": 1.0094910860061646,
+   "replayed_items": 0,
+   "cpu": 3.5585839040000025,
+   "wall": 3.620785713195801
+  }
+ ],
+ "resumes": [],
+ "states": [
+  {
+   "visits": 1,
+   "path": "sw_sweep_w1_v16_state_v1.pt",
+   "file_sha256": "4a6195c662bd9ceba57fe4a67d0f1de3ec702960156ba264cbd1463f99577e15",
+   "weights_tensors_sha256": "e7d173b2c316496a7bb8452d40c784ca0cca457ab0884ee88eef93b7d861e9e3",
+   "optimizer_sha256": "cfee335ffb5a6d055d569e60171c5c1854c7cbec69b10a44776ed6408919cbd8"
+  },
+  {
+   "visits": 2,
+   "path": "sw_sweep_w1_v16_state_v2.pt",
+   "file_sha256": "ca75fc1125854ffd994314fc53a2fcb4e9e22875ae0360784fbae9efa68a6606",
+   "weights_tensors_sha256": "d8d4eab0de61c721e847fb74872dc947a21cd78578ab3536a4f452e40c68da51",
+   "optimizer_sha256": "d5e63cea956c7acff6d9dcf4f59744413c64445aa16a625663a5db2cb6f32535"
+  },
+  {
+   "visits": 4,
+   "path": "sw_sweep_w1_v16_state_v4.pt",
+   "file_sha256": "d7649e4f69b45080ed2905d1c719cb5f4e6961a5bd83a588852ce4f6924fd521",
+   "weights_tensors_sha256": "9a2c1cca803afd977243c8dee880baa532c1531d420c0edbdf33de6e679d3b32",
+   "optimizer_sha256": "4fc123527c9eb79b202bb1974b85fd10927d79ce15ab65952b699b9d3804b492"
+  },
+  {
+   "visits": 8,
+   "path": "sw_sweep_w1_v16_state_v8.pt",
+   "file_sha256": "c72d3cd20ebf0b9cce236bf1dff91bd54265c6dbc32b2792cad317a643c85430",
+   "weights_tensors_sha256": "0aaef5bbbf2ed16a04d3f5be1e9ad4a68d3d1698cde29ab392469877ac5ac9a9",
+   "optimizer_sha256": "2c88749f1d027955df7d62a095f62fafa0e69cf1e7d1f54b42ceb32a1fa1d96f"
+  },
+  {
+   "visits": 16,
+   "path": "sw_sweep_w1_v16_state_v16.pt",
+   "file_sha256": "5909e2a52963b076f38605365fb7d817a3def3c0f85496053e09f42d3468fcae",
+   "weights_tensors_sha256": "ef5451f9ebcd6f0c3c3a3fca7fbec165f745a427cfc2f00e7525753ab075e312",
+   "optimizer_sha256": "68ffbfb55caed9eef6ff076e0415c6804899c8e48885e940750fbdf9eed56024"
+  }
+ ],
+ "complete": true,
+ "schedule": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 4,
+   "group": 1,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 5,
+   "group": 0,
+   "new": false,
+   "absence": 2
+  },
+  {
+   "visit": 6,
+   "group": 1,
+   "new": false,
+   "absence": 2
+  },
+  {
+   "visit": 7,
+   "group": 0,
+   "new": false,
+   "absence": 2
+  },
+  {
+   "visit": 8,
+   "group": 2,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 9,
+   "group": 3,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 10,
+   "group": 0,
+   "new": false,
+   "absence": 3
+  },
+  {
+   "visit": 11,
+   "group": 4,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 12,
+   "group": 1,
+   "new": false,
+   "absence": 6
+  },
+  {
+   "visit": 13,
+   "group": 4,
+   "new": false,
+   "absence": 2
+  },
+  {
+   "visit": 14,
+   "group": 2,
+   "new": false,
+   "absence": 6
+  },
+  {
+   "visit": 15,
+   "group": 2,
+   "new": false,
+   "absence": 1
+  }
+ ],
+ "stream_sha256": "05e4888194e7b2fcbe83d7aba98a9e31cb2ca0c7d327c977daa12490e3c898b3",
+ "stream_note": "sha256 over every stream item in order, as sw_world.digest; equals sw_world.digest(World(world, visit_updates, p_new), visits)"
+}

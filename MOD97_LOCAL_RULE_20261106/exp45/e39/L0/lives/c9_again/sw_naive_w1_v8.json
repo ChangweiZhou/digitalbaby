@@ -1,0 +1,451 @@
+{
+ "experiment": "E39",
+ "job": "L0/L1 small world",
+ "kind": "life",
+ "settings": {
+  "arm": "naive",
+  "world": 1,
+  "visits": 8,
+  "rho": null,
+  "H": 64,
+  "U": 64,
+  "visit_updates": 256,
+  "p_new": 0.2,
+  "lr": 0.001,
+  "wd": 0.25,
+  "tag": null
+ },
+ "local": false,
+ "replay": false,
+ "replay_items_per_update": 0,
+ "model": {
+  "cls": "sw_net.SWNet",
+  "H": 64,
+  "U": 64,
+  "parameters": 52625,
+  "shapes": {
+   "book.weight": [
+    258,
+    8
+   ],
+   "l1.weight": [
+    64,
+    8
+   ],
+   "l1.bias": [
+    64
+   ],
+   "rnn.weight_ih_l0": [
+    192,
+    64
+   ],
+   "rnn.weight_hh_l0": [
+    192,
+    64
+   ],
+   "rnn.bias_ih_l0": [
+    192
+   ],
+   "rnn.bias_hh_l0": [
+    192
+   ],
+   "lm.weight": [
+    64,
+    64
+   ],
+   "lm.bias": [
+    64
+   ],
+   "l2.weight": [
+    64,
+    64
+   ],
+   "l2.bias": [
+    64
+   ],
+   "l3.weight": [
+    257,
+    64
+   ],
+   "l3.bias": [
+    257
+   ]
+  },
+  "initial": {
+   "weights_tensors_sha256": "6c19a392949ee2865f01ab8f3ad9f5b6e3a2ce180001bec34f96d801dc93e122"
+  }
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked cross entropy, zero_grad, backward, one AdamW step",
+ "answering": "sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
+ "world": {
+  "seed": 1,
+  "visit_updates": 256,
+  "p_new": 0.2,
+  "probe_groups": 20,
+  "tasks": 540,
+  "groups": 270
+ },
+ "provenance": {
+  "command": "python3 sw_run.py life naive 1 8 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e39/L0/lives/c9_again",
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.3",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "2b65392f0c549627b289feea6caa7fe3b3bc3437",
+   "sources_modified_vs_commit": [
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_net.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_score.py",
+    "?? MOD97_LOCAL_RULE_20261106/smallworld/sw_world.py"
+   ]
+  },
+  "sources_sha256": {
+   "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+   "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+   "smallworld/sw_run.py": "4e1d17c378fbbc0e668d0c41bb56ce44106450a851c7fd4f3d79d3fd573284d7",
+   "smallworld/sw_score.py": "d68a4d344f2c9ec9e8e357c5918d3316a9d56c62e19fe9358cbbfe983451b0eb",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "env": {
+   "EXP45_WINDOW": "10",
+   "EXP45_HIDDEN": "512",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "ledger": {
+  "stored_numbers": {
+   "weights": 52625,
+   "optimizer_moments": 105250,
+   "optimizer_step_counters": 13,
+   "anchor": 0
+  },
+  "buffer": {
+   "used": false,
+   "capacity_items": 0,
+   "capacity_bytes": 0,
+   "items_at_end": 0,
+   "bytes_at_end": 0,
+   "max_items": 0,
+   "max_bytes": 0,
+   "offered": 0
+  },
+  "updates": 2048,
+  "stream_items_per_update": 64,
+  "taught_per_update": 48,
+  "asked_per_update": 16,
+  "learned_per_update": 48,
+  "replayed_per_update": 0,
+  "new_learned_per_update_once_replaying": 48
+ },
+ "counters": {
+  "learned_items_verified": 98304,
+  "asking_checks": 8,
+  "replayed_items": 0,
+  "max_buffer_items": 0,
+  "max_buffer_bytes": 0,
+  "first_replay_update": null
+ },
+ "events": {
+  "file": "sw_naive_w1_v8.npz",
+  "file_sha256": "14837bb8e8550f25994c0e5c86c63b7fc6912367823af2e88b0cf5f1da98f679",
+  "arrays_sha256": "f2e1667cee7769c8e2e3501265b48a2ab91d3172f3064bef4a5346dc8702ada8",
+  "entries": 32768,
+  "columns": [
+   "update",
+   "visit",
+   "task",
+   "correct",
+   "blind",
+   "wrap",
+   "mirror",
+   "seen",
+   "replayed"
+  ]
+ },
+ "final": {
+  "visits": 8,
+  "updates": 2048,
+  "weights_tensors_sha256": "1d324409470aee2728c79f860f8591144ea955bbf64d26ab5954e6b7c456f942",
+  "optimizer_sha256": "d71694b94539b66a41b66cd67dd548df8e8510d6f31bed74c421be4727e6d750"
+ },
+ "cpu": {
+  "total": 26.88519418,
+  "per_visit": [
+   3.2971279310000003,
+   3.25809093,
+   3.2366309500000003,
+   3.343919829999999,
+   3.473465095999998,
+   3.5475890510000028,
+   3.190079234999999,
+   3.4520308850000028
+  ],
+  "mean_per_visit": 3.3498667385000003
+ },
+ "learned_sha256": "7d8c2392c078644fa19c94693da70a9ac7b003a100b3cdfa59e0fe2329b627e3",
+ "by_visit": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "e3148f2c92204c030ea29a97520a95deffea242190c0ca8d897e1f9dc9c22b00",
+   "learned_sha256": "f6057be012571716cbccf88ee0eae51310cfeecad128780d32978fe317e082a4",
+   "loss_mean": 1.6444379144813865,
+   "loss_first": 5.435756206512451,
+   "loss_last": 0.9864699244499207,
+   "replayed_items": 0,
+   "cpu": 3.2971279310000003,
+   "wall": 3.324237823486328
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "78290b182735bc28db5cc20f352643588fa91469f1f840206dad6ad3d6c9fb2f",
+   "learned_sha256": "0bc612594a8023fb4fadab1729194ce1de0459c9834f15bcc5e1535a725724ff",
+   "loss_mean": 0.8860008821357042,
+   "loss_first": 0.9806053638458252,
+   "loss_last": 0.7267399430274963,
+   "replayed_items": 0,
+   "cpu": 3.25809093,
+   "wall": 3.276604175567627
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "3b920222d9db9b12823559aa1a1f851ae7ce77912bc239fbd38c36d45fa7d253",
+   "learned_sha256": "cac03b402b896545c82ad74ec280667b8c0e6adec35c82b2442bb37bb1fe586e",
+   "loss_mean": 0.7544697164557874,
+   "loss_first": 0.8012546896934509,
+   "loss_last": 0.694190263748169,
+   "replayed_items": 0,
+   "cpu": 3.2366309500000003,
+   "wall": 3.2384979724884033
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "72b49ac55b591694b834d7002b253b9ef3e4b3b8513bfb6f4f4935a4201aef6f",
+   "learned_sha256": "9b57aca4c413005baa746cb6dccc56c26b02814dc27d6130cb95144b6ee0eb71",
+   "loss_mean": 0.6563397060381249,
+   "loss_first": 0.6933875679969788,
+   "loss_last": 0.5676294565200806,
+   "replayed_items": 0,
+   "cpu": 3.343919829999999,
+   "wall": 3.3885128498077393
+  },
+  {
+   "visit": 4,
+   "group": 1,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "6702f38f26539f7278f75824b8fc432bab66a562549d2bcef24f1a386473a9d1",
+   "learned_sha256": "53d88f31b90360bb91ededf7baf4e3a0fb79ba3b5a3b54227a05a32cc296d0e1",
+   "loss_mean": 0.9569680837448686,
+   "loss_first": 1.5130016803741455,
+   "loss_last": 0.8360527157783508,
+   "replayed_items": 0,
+   "cpu": 3.473465095999998,
+   "wall": 3.5702342987060547
+  },
+  {
+   "visit": 5,
+   "group": 0,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "e7fad773e2023940aba6416403f00e8bc516df06a21d6b621911e560034b56d0",
+   "learned_sha256": "1566b906e6f4d9044b56910c8d33c307a3937c1c55a799964902a97a23ee54a4",
+   "loss_mean": 0.6267209551297128,
+   "loss_first": 1.4082176685333252,
+   "loss_last": 0.5356485247612,
+   "replayed_items": 0,
+   "cpu": 3.5475890510000028,
+   "wall": 3.5719306468963623
+  },
+  {
+   "visit": 6,
+   "group": 1,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "e3ab709e6069eb7d59c3e7e86f1d96965ee0186ed6804a76e000a539d4f3c351",
+   "learned_sha256": "e353201d4f7ef97deea9b0ecaf468e22d4198fc056acf7291b578276747b3ff6",
+   "loss_mean": 0.7936628670431674,
+   "loss_first": 1.6458029747009277,
+   "loss_last": 0.6518178582191467,
+   "replayed_items": 0,
+   "cpu": 3.190079234999999,
+   "wall": 3.216353178024292
+  },
+  {
+   "visit": 7,
+   "group": 0,
+   "new": false,
+   "absence": 2,
+   "updates": 256,
+   "stream_sha256": "da9085abd9ab2a6b2a82f4f1906c02ea4494ef627028b0e32667596b363da934",
+   "learned_sha256": "546f4b523ee3d06313cbca72871597508adbd73aabd1a1b97c39780001c7c051",
+   "loss_mean": 0.5375354974530637,
+   "loss_first": 1.1147360801696777,
+   "loss_last": 0.5257922410964966,
+   "replayed_items": 0,
+   "cpu": 3.4520308850000028,
+   "wall": 3.4839327335357666
+  }
+ ],
+ "resumes": [],
+ "states": [
+  {
+   "visits": 1,
+   "path": "sw_naive_w1_v8_state_v1.pt",
+   "file_sha256": "350a141eab2888d4068b06aaec4072a115b6bc97114205c3ef8661755a8a43ef",
+   "weights_tensors_sha256": "0fdc8f77979cd48f956183722d4e23de702db486720fa8c69f0ee78e77c1f53b",
+   "optimizer_sha256": "bae3246ec84fb0abe6b0e0948f9267ee762e1ae9817757d359949a35322f3fb5"
+  },
+  {
+   "visits": 2,
+   "path": "sw_naive_w1_v8_state_v2.pt",
+   "file_sha256": "43945d62eb90709c2c2384ccc5d010b8fbe0e27d44bb44da40e030788e1c682d",
+   "weights_tensors_sha256": "671be47988a39557175c06ac7d651c69eb6c0bd31c6843184974119c73f71b60",
+   "optimizer_sha256": "7c6c690300314f1e3300519cbac187176046a169104db5860ed76808809daac2"
+  },
+  {
+   "visits": 4,
+   "path": "sw_naive_w1_v8_state_v4.pt",
+   "file_sha256": "cf871eca0a8bbbd45083a5bceebda2038ae2e3ebb86aab812fbb57a4074579b9",
+   "weights_tensors_sha256": "f6f2930c3493c895ee524977a2db99739026e644e0a0109fd8b01d6ce5bd6fd2",
+   "optimizer_sha256": "f1525f9e1b3f2bdf6d7c0a1e2cf8693437e74587c7827f2076d1871ec295bfa1"
+  },
+  {
+   "visits": 8,
+   "path": "sw_naive_w1_v8_state_v8.pt",
+   "file_sha256": "32f95d1bb07a92a1fd17248a173ed4f23b2476b574a7b1ceb0e5f32f5f61d94d",
+   "weights_tensors_sha256": "1d324409470aee2728c79f860f8591144ea955bbf64d26ab5954e6b7c456f942",
+   "optimizer_sha256": "d71694b94539b66a41b66cd67dd548df8e8510d6f31bed74c421be4727e6d750"
+  }
+ ],
+ "complete": true,
+ "schedule": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 4,
+   "group": 1,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 5,
+   "group": 0,
+   "new": false,
+   "absence": 2
+  },
+  {
+   "visit": 6,
+   "group": 1,
+   "new": false,
+   "absence": 2
+  },
+  {
+   "visit": 7,
+   "group": 0,
+   "new": false,
+   "absence": 2
+  }
+ ],
+ "stream_sha256": "b68d091b23c09a517a29e90ea71496b47f6ae80c950fb3b51aaa286a0ab6439f",
+ "stream_note": "sha256 over every stream item in order, as sw_world.digest; equals sw_world.digest(World(world, visit_updates, p_new), visits)"
+}
