@@ -28,6 +28,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 14.** Section 24 is added after Mr. Xu's objection that long-term memory exists without rehearsal. It restricts what section 20 established, gives a measurement of what survives a life without rehearsal, and asks for one small job (item 12 of section 1).
 
+**Revision 15.** The audit of the E43 brief is in `AUDIT_E43_UNRELATED_LEARNING_BRIEF_20261116.md`. Its main finding bears on section 24 itself: under the standing weight decay, a family that receives no gradient is removed by the decay alone within about 2,000 updates. Section 24.6 gives the figures and what they change; the cost in 24.5 is corrected.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -965,6 +967,26 @@ I recall the account of memory that combines the second and third (a fast store 
 - **Scores.** The first family: add and sub split by the reduction, max and min. The new task itself, to show that it is being learned.
 - **Reading, fixed beforehand.** *Kept* if under `unrelated` the first family's reduction pairs are at 80% or more of their level at row 0 at row 4,096, in two of three seeds; *lost* if at 20% or less; otherwise *partly kept*. `conflict` is the reference and is expected at zero by row 1,024.
 - **What each outcome means.** *Kept*: the fast loss measured so far is loss by contradiction, and the learner holds what is not contradicted. *Lost*: updating every weight removes even unrelated knowledge, and separation (24.4, item 1) becomes the first thing to test.
-- **Cost.** Twenty-four runs of 4,096 updates, about 2 CPU-hours with scoring.
+- **Cost.** Corrected in revision 15: two arms are twelve runs, and the brief's four arms are twenty-four, about 3.5 to 4 CPU-hours with scoring by the audit's estimate. My "twenty-four runs, about 2 CPU-hours" was a slip.
 
 My expectation, on record: under `unrelated` the reduction pairs fall below half their starting level by row 1,024 in two of three seeds, 60%.
+
+### 24.6 What weight decay alone does (found by the audit of E43; recomputed by me)
+
+Every life so far runs with a decay of 0.25 at a learning rate of 0.001: each update multiplies every weight outside the byte table by 0.99975, a time constant of 4,000 updates. The audit computed what that does with no learning at all, on the six births: every parameter but the byte table multiplied by 0.99975^t, nothing else changed, and the first family scored (`e43_brief_checks.py`, part C; I reran it). The reduction pairs of add and sub, as a share of their level at birth, seeds 73129, 93683, 116089:
+
+| Updates | Factor on the weights | Sweep births | Backpropagation births |
+|---|---|---|---|
+| 256 | 0.938 | 95.2, 97.8, 98.1 | 97.3, 96.7, 96.8 |
+| 1,024 | 0.774 | 17.8, 35.3, 26.1 | 39.3, 49.0, 46.0 |
+| 2,048 | 0.599 | 0.4, 1.3, 0.3 | 0.4, 3.1, 1.3 |
+| 4,096 | 0.359 | 0, 0, 0 | 0, 0, 0 |
+
+Max and min go the same way, a little later: 4 to 35% at 2,048 and zero at 4,096.
+
+What it changes.
+
+1. **Under the standing decay nothing is kept passively.** A family whose weights no gradient re-creates is gone after about 2,000 updates, whatever else is learned and whether or not anything contradicts it. This is a second cause of loss beside the one E38 measured: E38's loss by a contradicting family takes 64 to 256 updates and happens without decay too.
+2. **What survives a life in 24.2 is being re-created, not stored.** A life is 36,864 updates, nine time constants. The max or min that stands at 98% at its end is held there by the life's own max and min tasks, which use the same machinery under other codes. It is rehearsal by shared use, and the table of 24.2 should be read so.
+3. **For Mr. Xu's objection:** this learner, as it is set, has a forgetting time of a few thousand updates built into its optimizer. The decay was chosen for births, where it is commonly held to favour rules over tables; whether the births here need it is not on file as far as I have found. A learner that is to keep what it does not use cannot have every weight decay at one rate.
+4. **For E43:** the reading stays on the arm without decay, as the coordinator wrote it. The arm under decay is read against the table above, not against the other arm: it asks whether unrelated learning holds anything up against a decay that would otherwise remove everything.
