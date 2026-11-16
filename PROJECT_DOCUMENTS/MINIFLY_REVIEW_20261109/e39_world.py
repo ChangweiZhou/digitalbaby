@@ -19,6 +19,7 @@ Run from the repository root:
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec alloc      # taught items per task under the coordinator's schedule
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec events <events.npz> <world>   # a runner's event file against the generator
   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec score <events.npz> [visits]   # the scorer on a runner's event file
+  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec streams [task ids]            # revision 3: digests of the solo and birth streams
 """
 import hashlib, math, sys
 from random import Random
@@ -30,6 +31,7 @@ COEF = (1, 2, -1, -2)
 OPS = [("lin", c1, c2) for c1 in COEF for c2 in COEF] + [("max",), ("min",)]      # 18 operations
 GROUP, VISIT_UPDATES, TAUGHT, ASKED, P_NEW, KMAX = 2, 256, 48, 16, 0.2, 4
 LETTERS = list(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+BIRTH_VISIT = 65535                                           # revision 3: the `visit` value of a birth's asked items in an event file
 
 
 def answer(op, p, a, b):
@@ -207,12 +209,45 @@ class SpecWorld(World):
                 u += 1
 
     def digest(self, visits):
+        return self.stream_digest(self.batches(visits))
+
+    def stream_digest(self, batches):
+        """The world digest's rule applied to any stream of (visit, update, taught, asked) batches."""
         h = hashlib.sha256()
-        for v, u, taught, asked in self.batches(visits):
+        for v, u, taught, asked in batches:
             for t, (a, b), prompt, target in taught + asked:
                 i = self.tid[t]
                 h.update(bytes([i // 256, i % 256, a, b, len(prompt)]) + bytes(prompt) + bytes(x % 256 for x in target))
         return h.hexdigest()
+
+    # ------------------------------------------------------------ revision 3 of the brief (a3275395): jobs L1a and L1b
+    def _draw(self, r, t, taught_slot):
+        pool = self.taught[t] if taught_slot else self.asked[t]
+        a, b = pool[r.randrange(len(pool))]
+        k = r.randint(0, KMAX)
+        letters = [r.choice(LETTERS) for _ in range(k)]
+        prompt = list(self.code[t]) + list(f"{a:02d}".encode()) + [self.symbol[t[0]]] + letters + list(f"{b:02d}".encode()) + [ord("=")]
+        return (t, (a, b), prompt, list(f"{answer(t[0], t[1], a, b):02d}".encode()) + [self.eos])
+
+    def solo_batches(self, task_id, updates):
+        """Job L1a, from the brief's text: one task alone.  ONE generator Random("world|S|solo|<task id>") for the whole run;
+        per update 64 items in order, the first 48 taught; NO draw for the task (a randrange(1) would consume generator state
+        and give other items); then pair, k and letters as in a visit."""
+        r = Random(f"world|{self.seed}|solo|{task_id}")
+        t = self.tasks[task_id]
+        for u in range(updates):
+            items = [self._draw(r, t, i < TAUGHT) for i in range(TAUGHT + ASKED)]
+            yield 0, u, items[:TAUGHT], items[TAUGHT:]
+
+    def birth_batches(self, updates, groups=(0, 1)):
+        """Job L1b's birth, from the brief's text: ONE generator Random("world|S|birth") for the whole birth; per update 64
+        items in order, the first 48 taught: task = tasks[randrange(4)] with the birth tasks in id order, then pair, k and
+        letters as in a visit."""
+        r = Random(f"world|{self.seed}|birth")
+        tasks = [t for g in sorted(groups) for t in self.groups[g]]
+        for u in range(updates):
+            items = [self._draw(r, tasks[r.randrange(len(tasks))], i < TAUGHT) for i in range(TAUGHT + ASKED)]
+            yield BIRTH_VISIT, u, items[:TAUGHT], items[TAUGHT:]
 
 
 # ---------------------------------------------------------------- the scorer
@@ -220,7 +255,7 @@ def symmetric(op):
     return op[0] != "lin" or op[1] == op[2]
 
 
-def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
+def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8, birth_tasks=()):
     """The brief's quantities, with the definitions the audit asks for where the table was not explicit or not sound.
 
     ev: equal-length arrays in stream order, one record per asked item:
@@ -241,7 +276,17 @@ def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
       learning_trend               least-squares slope of the first-visit level on ln(n), n from 3 (after the first group)
       cost_trend                   the brief's slope of ln(cost) on ln(n) over tasks that reached, n from 2 (biased; see above)
     A running mean exists only once `window` items are there; a shorter window is never used.
+
+    Revision 3 of the brief (a birth before visit 0).  `birth_tasks` are the task ids trained in the birth.  Rows whose
+    `visit` is BIRTH_VISIT are the birth's asked items; they are not part of any visit.  With birth tasks:
+      first_visit, cost, learning_trend   leave the birth tasks out; n counts from the first task that is not a birth task,
+                                          and the trend uses every such task (n from 1): the reason for starting at 3, a
+                                          first group that starts from nothing, no longer applies
+      kept, relearn                       every visit of a birth task in the life is a return; the birth counts as visit -1,
+                                          so visit v of a birth task that has not been visited since the birth has absence v + 1
+    The brief's text leaves the last two points open (the audit of revision 3, changes 4 and 5).
     """
+    birth_tasks = set(birth_tasks)
     keep = np.asarray(ev["visit"]) < visits
     upd, vis, task, cor, blind, wrap, seen = (np.asarray(ev[k])[keep] for k in ("update", "visit", "task", "correct", "blind", "wrap", "seen"))
     out = {}
@@ -250,7 +295,8 @@ def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
     firstv = {}
     for t, v in zip(task.tolist(), vis.tolist()):
         firstv.setdefault(t, v)
-    order = sorted(firstv, key=lambda t: (firstv[t], t))
+    order = sorted((t for t in firstv if t not in birth_tasks), key=lambda t: (firstv[t], t))
+    born = sorted(t for t in firstv if t in birth_tasks)
 
     def reach(c, sn):
         """Taught items seen at the first asked item where the mean of the last `window` items is at least `level`."""
@@ -261,14 +307,17 @@ def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
         return int(sn[hit[0] + window - 1]) if len(hit) else None
 
     first_visit, cost, kept, relearn = [], [], [], []
-    for n, t in enumerate(order, 1):
+    for n, t in [(None, t) for t in born] + list(enumerate(order, 1)):
         m = task == t
         c, sn, v_t, w_t, u_t = cor[m].astype(float), seen[m], vis[m], wrap[m], upd[m]
-        f = v_t == firstv[t]
-        first_visit.append(dict(n=n, task=t, level=float(c[f][-window:].mean()), cost=reach(c[f], sn[f])))
-        r = reach(c, sn)
-        cost.append(dict(n=n, task=t, cost=r, level=None if r is not None else float(c[-window:].mean())))
         vs = sorted(set(v_t.tolist()))
+        if n is None:
+            vs = [-1] + vs                                                  # the birth, as a visit before visit 0
+        else:
+            f = v_t == firstv[t]
+            first_visit.append(dict(n=n, task=t, level=float(c[f][-window:].mean()), cost=reach(c[f], sn[f])))
+            r = reach(c, sn)
+            cost.append(dict(n=n, task=t, cost=r, level=None if r is not None else float(c[-window:].mean())))
         for prev, v in zip(vs, vs[1:]):
             mv = v_t == v
             cv, sv, wv, uv = c[mv], sn[mv], w_t[mv], u_t[mv]
@@ -286,7 +335,7 @@ def score(ev, visits, visit_updates=VISIT_UPDATES, window=32, level=0.8):
     out["late_level"] = float(np.nanmean(out["score_by_age"][q:]))
     half = np.arange(visits // 2, visits)
     out["score_trend"] = float(np.polyfit(np.log(half + 1), out["score_by_age"][half], 1)[0]) if len(half) > 1 else float("nan")
-    fv = [(d["n"], d["level"]) for d in first_visit if d["n"] >= 3]
+    fv = [(d["n"], d["level"]) for d in first_visit if d["n"] >= (1 if birth_tasks else 3)]
     out["learning_trend"] = float(np.polyfit(np.log([n for n, _ in fv]), [l for _, l in fv], 1)[0]) if len(fv) > 1 else float("nan")
     rc = [(d["n"], d["cost"]) for d in cost if d["cost"] and d["n"] >= 2]
     out["cost_trend"] = float(np.polyfit(np.log([n for n, _ in rc]), np.log([c for _, c in rc]), 1)[0]) if len(rc) > 1 else float("nan")
@@ -333,6 +382,45 @@ def hand_made():
     assert abs(r["score_by_age"][0] - 40 / 128) < 1e-12 and abs(r["score_by_age"][1] - 60 / 128) < 1e-12
     assert abs(r["late_level"] - 60 / 128) < 1e-12
     print("hand-made event file: every quantity equals its hand-computed value")
+
+
+def hand_made_birth():
+    """Check 13's fixture, hand-computed: two birth tasks (0, 1) and two later tasks (2, 3); visits of 16 updates, 4 asked
+    items per task per update.  Birth: 8 updates on tasks 0 and 1 (rows with visit 65,535).  Life: visit 0 on tasks 0, 1;
+    visit 1 on tasks 2, 3; visit 2 on tasks 0, 1.  Task 0 is right except in the first update of visits 0 and 2; task 1 is
+    never right; task 2 is right from update 6 of its visit; task 3 is right in the last 4 updates of its visit only."""
+    ev = dict(update=[], visit=[], task=[], correct=[], blind=[], wrap=[], seen=[])
+    def add(u, v, t, right, seen):
+        for j in range(4):
+            ev["update"].append(u); ev["visit"].append(v); ev["task"].append(t); ev["correct"].append(int(right))
+            ev["blind"].append(0); ev["wrap"].append(j % 2); ev["seen"].append(seen)
+    for u in range(8):
+        for t in (0, 1):
+            add(u, BIRTH_VISIT, t, t == 0, u * 24)
+    for u in range(48):
+        v, k = u // 16, u % 16
+        if v in (0, 2):
+            add(8 + u, v, 0, k != 0, (8 + (u if v == 0 else u - 16)) * 24)
+            add(8 + u, v, 1, False, (8 + (u if v == 0 else u - 16)) * 24)
+        else:
+            add(8 + u, v, 2, k >= 6, k * 24)
+            add(8 + u, v, 3, k >= 12, k * 24)
+    r = score({k: np.array(x) for k, x in ev.items()}, visits=3, visit_updates=16, birth_tasks=(0, 1))
+    # first-visit quantities: tasks 2 and 3 only, numbered 1 and 2
+    assert [(d["n"], d["task"]) for d in r["first_visit"]] == [(1, 2), (2, 3)], r["first_visit"]
+    assert r["first_visit"][0]["level"] == 1.0 and r["first_visit"][0]["cost"] == 288           # as task 0 of the first fixture
+    assert r["first_visit"][1]["level"] == 16 / 32 and r["first_visit"][1]["cost"] is None       # last 32 items: 4 updates wrong, 4 right
+    assert abs(r["learning_trend"] - (0.5 - 1.0) / math.log(2)) < 1e-12                          # two points, n = 1 and 2
+    # returns of the birth tasks: visit 0 (absence 1, counted from the birth) and visit 2 (absence 2)
+    k0 = [(k["visit"], k["absence"], k["kept"]) for k in r["kept"] if k["task"] == 0]
+    assert k0 == [(0, 1, 0.0), (2, 2, 0.0)], k0
+    assert [(k["visit"], k["absence"]) for k in r["kept"] if k["task"] == 1] == [(0, 1), (2, 2)]
+    assert not [k for k in r["kept"] if k["task"] in (2, 3)]                                    # one visit each: no return
+    assert abs(r["score_by_age"][0] - 60 / 128) < 1e-12                                          # the birth's rows are in no visit
+    # without birth tasks the same file is scored as before: task 0 is then a first-visit task
+    r0 = score({k: np.array(x) for k, x in ev.items()}, visits=3, visit_updates=16)
+    assert [d["task"] for d in r0["first_visit"]] == [0, 1, 2, 3]
+    print("hand-made event file with a birth: every quantity equals its hand-computed value")
 
 
 # ---------------------------------------------------------------- command line
@@ -405,6 +493,15 @@ if __name__ == "__main__":
             print(f"world {sd}, 16 visits: blind predictor right on {100 * ev['blind'].mean():.1f}% of {len(ev['blind']):,} asked items; needs-wrap share {ev['wrap'].mean():.2f}; asked items whose mirrored pair is taught {100 * ev['mirror'].mean():.1f}%")
     elif what == "scorer":
         hand_made()
+        hand_made_birth()
+    elif what == "streams":
+        # revision 3: digests of the first 256 updates of the solo streams named on the command line (world 1) and of the births
+        w = mk(1)
+        for tid in [int(x) for x in sys.argv[3:]] or [1, 2, 3, 5, 12, 20]:
+            print(f"   solo stream, world 1, task {tid:3d}, first 256 updates: {w.stream_digest(w.solo_batches(tid, 256))}")
+        for sd in (1, 2, 3):
+            w = mk(sd)
+            print(f"   birth stream, world {sd}, groups 0 and 1, first 256 updates: {w.stream_digest(w.birth_batches(256))}")
     elif what == "events":
         # compare a runner's event file (.npz with arrays update, visit, task, correct, blind, wrap, seen[, mirror]) with the generator
         f = np.load(sys.argv[3]); seed = int(sys.argv[4]); visits = int(f["visit"].max()) + 1
