@@ -30,6 +30,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 15.** The audit of the E43 brief is in `AUDIT_E43_UNRELATED_LEARNING_BRIEF_20261116.md`. Its main finding bears on section 24 itself: under the standing weight decay, a family that receives no gradient is removed by the decay alone within about 2,000 updates. Section 24.6 gives the figures and what they change; the cost in 24.5 is corrected.
 
+**Revision 16.** E43, E39's job L1a, E35-A's last stage and E41's first seed have reported. Section 24.7 reads E43 and asks for three additions to it (item 13 of section 1). Section 25 reads L1a, withdraws my explanation of the failed calibration, and proposes what replaces the small world's task set (item 14).
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -62,6 +64,10 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 11. *(Done, revision 13.)* **Ask the E40 worker for four more files** (section 23.4): the row-64 weights of the lived S and B runs of seeds 93683 and 116089, whose hashes are in the receipts. About 18 MB. They let me repeat section 23 on three seeds.
 
 12. **Brief one small job, E43: is a family lost when the learner then learns something unrelated?** (section 24.5). About 2 CPU-hours by my estimate. It comes to me before any worker starts.
+
+13. **Three additions to E43** (section 24.7): push the weight files its report lists, which are not on the remote; a reminder test from the networks at update 4,096; one arm under plain gradient steps. About 2 CPU-hours.
+
+14. **Brief the replacement of the small world's task set** (section 25): families in the full-scale format, a learner born on one of them, and a calibration first. It comes to me before any worker starts.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -990,3 +996,65 @@ What it changes.
 2. **What survives a life in 24.2 is being re-created, not stored.** A life is 36,864 updates, nine time constants. The max or min that stands at 98% at its end is held there by the life's own max and min tasks, which use the same machinery under other codes. It is rehearsal by shared use, and the table of 24.2 should be read so.
 3. **For Mr. Xu's objection:** this learner, as it is set, has a forgetting time of a few thousand updates built into its optimizer. The decay was chosen for births, where it is commonly held to favour rules over tables; whether the births here need it is not on file as far as I have found. A learner that is to keep what it does not use cannot have every weight decay at one rate.
 4. **For E43:** the reading stays on the arm without decay, as the coordinator wrote it. The arm under decay is read against the table above, not against the other arm: it asks whether unrelated learning holds anything up against a decay that would otherwise remove everything.
+
+### 24.7 E43 read (revision 16)
+
+Branch `claude/peaceful-hopper-8ofq4i` at ac56179d. I recomputed the figures below from the 24 receipts; I could not use the weights (see the first request).
+
+- **The registered reading is *lost*, under both rules.** After 4,096 updates on the unrelated task without decay, the first family's reduction pairs are right in 0 of 3,916 for add and for sub, in all six networks. The new task is learned completely (300 of 300 on taught and on held-out pairs).
+- **The loss is complete after 64 updates,** before the new task scores anything: 0 to 6 of 3,916 in five networks, 254 and 131 in the sixth. Pairs without the reduction, max and min go with it. Under `conflict` at the same point the pairs without the reduction, max and min are still at 49 to 98%.
+- **The answers become the end symbol alone** (the worker's observation on seed 73129: 497 and 511 of 600 prompts at update 64).
+- **The weights do not move much more than under a contradicting family:** the recurrent matrix by 17 to 20% of its size in 64 updates against 13 to 16%. The state at the `=` sign changes by 0.39 to 0.86 of its size against 0.21 to 0.30.
+
+My expectation of 24.5 (below half by 1,024 updates, 60%) was right in direction and far too mild.
+
+**What it does not settle.** Three explanations remain, and they call for different remedies.
+
+1. *The knowledge is still in the network and is not expressed.* The unrelated task never rewards a digit, so the shared readout is driven away from digits for every input.
+2. *The optimizer's first steps.* A fresh AdamW moves every weight by about the learning rate at each early step whatever the size of its gradient, and the new task starts from a loss of 18.
+3. *The function is overwritten,* and would be under any update that learns the new task in this network.
+
+**Three additions asked for.**
+
+1. **The weight files.** The report says that update 4,096 of every run and updates 64 and 1,024 of seed 73129's `unrelated` runs are committed. They are not on the remote; the branch ignores `*.pt`. With them I can place the loss as in section 23: the first family's score with only the readout put back, and with answers chosen among digits only.
+2. **A reminder,** as E36's: from the six `unrelated` networks at update 4,096, 1,024 updates on the first family, scored at 0, 16, 32, 64, 128, 256 and 1,024, beside E36's fresh references. If the family is back within about 100 updates, explanation 1 or 2 holds and what was learned was not destroyed.
+3. **One arm under plain gradient steps:** `unrelated` again with the update in proportion to the gradient (no momentum, no normalisation by the gradient's size), the learning rate being the smallest of 0.01, 0.03 and 0.1 at which seed 73129 meets the brief's condition under backpropagation. If the first family survives there, the equal-sized step on every weight is the cause, which is section 24.4's first item in its simplest form.
+
+## 25. The small world after job L1a (revision 16)
+
+### 25.1 What L1a found
+
+Branch `claude/gallant-edison-p0qa68` at ac85c093; the worker's figures, not recomputed. Seventy-two runs: twelve linear tasks, each alone, at 64, 96 and 192 units, under both rules, 16,384 updates each.
+
+- **No run reaches the criterion** of 0.8 on asked pairs, at any size, under either rule.
+- **Every run fits its taught pairs:** the training loss ends at 0.033 or less.
+- **The level on asked pairs goes with the number of taught pairs:** 0.00 to 0.02 for the four tasks with 32 to 72 pairs, 0.00 to 0.36 for those with 162 to 264, 0.02 to 0.69 for those with 544 to 684.
+
+### 25.2 My explanation is withdrawn
+
+I attributed the failed calibration to the missing birth (section 6.3 of the discussion memorandum; my message of 16 November). L1a refutes it for these tasks: a task that is not learned alone at three sizes would not be learned in a birth either. The coordinator had built the life with a birth on my recommendation, and it was rightly not run.
+
+### 25.3 What the three experiments say together (argued)
+
+A network from random weights finds the rule only when a task offers enough taught pairs; otherwise it stores them.
+
+| Source | Taught pairs per operation | A network from random weights |
+|---|---|---|
+| E41, a half or a quarter of the pairs at modulus 89 | 3,960; 1,980 | finds the rule in 3,000 to 17,000 updates |
+| E41 and E35, a tenth | 792 | does not within 8,000 to 25,000 updates; at half width under backpropagation it reaches 48% after 40,960 and is rising (one seed) |
+| L1a, half of the pairs at moduli 8 to 37 | 32 to 684 | does not within 16,384 updates |
+| E40, a tenth at modulus 83, a network that has lived | 689 | finds it in about 64 updates |
+
+So the small world's tasks are below what a learner without experience can learn, by construction: its largest task has fewer taught pairs than a tenth of a full-scale family. Neither the audit of the first brief nor mine of revision 3 compared those two numbers.
+
+### 25.4 What I propose in its place
+
+Keep the instrument (schedule, event files, scorer, the measures of 17.3 and the horizon rule) and replace the task set and the learner.
+
+- **Tasks:** families in the full-scale format, one modulus each, at moduli not yet used, taught from a tenth of their pairs, as E40's.
+- **Learner:** a network born on the first family from half of its pairs. E41's first seed says the half-width network reaches the threshold with the least computation (0.035 to 0.043 CPU-seconds per update); if the other two seeds agree it is the learner, otherwise the present width.
+- **Cost:** at 256 updates a visit, a life of 1,024 visits is 262,144 updates: about 3 CPU-hours at half width before scoring, 9 at the present width.
+- **Calibration first (the new L1):** born networks on eight new families in turn, visits of 64, 128 and 256 updates; the gate as before, a median first-visit level between 0.10 and 0.90 on reduction pairs. E40 warns of the other failure here: a learner with three families behind it was at 70 to 84% after 64 updates, so the ceiling is the risk, and the visit length or the taught share is what the calibration sets.
+- **What it gives up:** the eighteen operations with coefficients, and lives of more than about 240 tasks.
+
+The generator is new and is audited before any run.
