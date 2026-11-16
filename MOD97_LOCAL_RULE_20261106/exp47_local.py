@@ -406,13 +406,30 @@ def receipt_path(out, side, arm, rule, seed, dose):
     return Path(out) / f"e47_{side}_{arm}_{rule}{tag}_{seed}.json"
 
 
-def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True):
+CKPT_EVERY = 1024
+
+
+def save_ckpt(path, m, L, opt, u, rec, cpu_up, cpu_sc, first):
+    """Everything the loop needs to continue after update u (the data stream is replayed, not saved)."""
+    st = dict(u=u, module=m.state_dict(), layer={k: getattr(L, k).detach().clone() for k in ("Wc", "bc", "bfar") },
+              a=None if L.a is None else L.a.detach().clone(), opt=opt.state_dict(), rec=rec, cpu_up=cpu_up, cpu_sc=cpu_sc, first=first)
+    tmp = Path(str(path) + ".tmp"); T.save(st, tmp); os.replace(tmp, path)
+
+
+def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True, resume=False, stop_at=None):
+    """resume=True continues from the run's checkpoint (written every CKPT_EVERY updates, after the row's scoring); stop_at ends the
+    process after that update's checkpoint (used only by check 8, the resume check)."""
     local = RULES[rule]
     dose = dose or DOSE
     assert dose % ROW == 0
     rp = receipt_path(out, side, arm, rule, seed, dose)
     paths = dict(receipt=rp, start=rp.with_name(rp.stem + "_start.pt"), weights=rp.with_suffix(".pt"), answers=rp.with_name(rp.stem + "_answers.json"))
-    R_.refuse_existing(*paths.values(), str(paths["weights"]) + ".tmp", str(paths["start"]) + ".tmp")
+    ckpt = rp.with_name(rp.stem + "_ckpt.pt")
+    resume = resume and ckpt.exists()
+    if not resume:
+        R_.refuse_existing(*paths.values(), str(paths["weights"]) + ".tmp", str(paths["start"]) + ".tmp", ckpt)
+    else:
+        R_.refuse_existing(paths["weights"], paths["answers"])
     Path(out).mkdir(parents=True, exist_ok=True)
     m, L = build(side, arm, seed)
     install(L)
@@ -422,7 +439,10 @@ def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True):
     A, Rs, TA, LP = R42.panels(seed)
     tp = [(t, E.split(t, .5, seed)[0]) for t in E.DEV]
     bt = E.batches(tp, seed, E.KMAX["M"]); dg = C26.Digest()
-    start_sha = save_weights(m, L, paths["start"])
+    if resume:
+        start_sha = R_.tensors_sha({k: v for k, v in T.load(paths["start"]).items() if k not in ("sources", "periods", "phases", "interface", "far")})
+    else:
+        start_sha = save_weights(m, L, paths["start"])
     rec = dict(experiment="E47", kind="birth", side=side, cells=L.C, arm=arm, rule=rule, local=local, seed=seed, dose=dose, row_every=ROW, N=N,
                interface_cells=len(L.ifx), far_cells=len(L.farx), cells_by_period={str(q): int((L.p == q).sum()) for q in sorted(set(L.p.tolist()))},
                start="E42's F10 layer of the seed (from_e42, Local(..., structure=...))" if side == 16 else
@@ -436,7 +456,26 @@ def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True):
                structure_sha256=dict(sources=tsha(L.idx), periods=tsha(L.p), phases=tsha(L.f)),
                start_weights=paths["start"].name, start_tensors_sha256=start_sha, start_file_sha256=X16.sha_file(paths["start"]),
                provenance=provenance(cmd), complete=False, curve=[])
-    curve = rec["curve"]; cpu_up = cpu_sc = 0.0; w0 = time.time(); losses = []; first = None
+    curve = rec["curve"]; cpu_up = cpu_sc = 0.0; w0 = time.time(); losses = []; first = None; u0 = 0
+    if resume:
+        st = T.load(ckpt, weights_only=False)
+        u0 = st["u"]
+        m.load_state_dict(st["module"])
+        with T.no_grad():
+            for k, v in st["layer"].items():
+                getattr(L, k).copy_(v)
+            if L.a is not None:
+                L.a.copy_(st["a"])
+        opt.load_state_dict(st["opt"])
+        prev = st["rec"]
+        assert prev["start_tensors_sha256"] == start_sha and prev["structure_sha256"] == rec["structure_sha256"]
+        resumes = prev.get("resumes", []) + [dict(at_update=u0, provenance=rec["provenance"])]
+        rec = prev; rec["resumes"] = resumes; curve = rec["curve"]
+        cpu_up, cpu_sc, first = st["cpu_up"], st["cpu_sc"], st["first"]
+        for _ in range(u0):                                                  # the data stream replayed to the same point, into the digest
+            dg.add(next(bt))
+        assert curve[-1]["step"] == u0 and curve[-1]["data_digest"] == dg.value(), "replayed stream differs from the receipt"
+        print(f"e47 resumed {rp.name} at update {u0}", flush=True)
 
     def score_row(u, last=False):
         nonlocal cpu_sc
@@ -456,8 +495,9 @@ def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True):
                   f"len40 {row['len40']:.1f}{d} cpu {cpu_up:.0f}+{cpu_sc:.0f}s", flush=True)
         return ans
 
-    score_row(0)
-    for u in range(1, dose + 1):
+    if not resume:
+        score_row(0)
+    for u in range(u0 + 1, dose + 1):
         items = next(bt)
         if first is None:
             first = items
@@ -468,6 +508,10 @@ def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True):
             ans = score_row(u, last=(u == dose)); losses = []
             if u % 4096 == 0 or u == dose:
                 rp.write_text(json.dumps(rec, indent=1))
+            if u % CKPT_EVERY == 0 and u < dose:
+                save_ckpt(ckpt, m, L, opt, u, rec, cpu_up, cpu_sc, first)
+                if stop_at == u:
+                    return None
     rec["cosine_first_batch_end"] = cosines(m, L, first)
     sha = save_weights(m, L, paths["weights"])
     paths["answers"].write_text(json.dumps(dict(update=dose, panel="length test (add89, code p), 300 items at 12 and 40 letters",
@@ -480,6 +524,8 @@ def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True):
                cpu_updates=cpu_up, cpu_scoring=cpu_sc, cpu_per_update=cpu_up / dose, wall=time.time() - w0,
                processes_beside=os.environ.get("E47_BESIDE", "not recorded"))
     rp.write_text(json.dumps(rec, indent=1))
+    if ckpt.exists():
+        ckpt.unlink()
     print("e47 complete", rp.name, sha[:16], flush=True)
     return rec
 
@@ -822,7 +868,22 @@ def check7(qual, cmd):
     return out
 
 
-CHECKS = {"1": check1, "2": check2, "3": check3, "4": check4, "5": check5, "6": check6, "7": check7}
+def check8(qual, cmd):
+    """Resume: a run of 2,048 updates at 1,024 cells under place and the sweep, stopped after its checkpoint at 1,024 and resumed in the same
+    process from the files, ends with the tensors, curve and data digest of the same run made without a stop."""
+    seed = 73129; out = {}
+    a = run(32, "place", "S", seed, Path(qual) / "plain", cmd, dose=2048, verbose=False)
+    assert run(32, "place", "S", seed, Path(qual) / "stopped", cmd, dose=2048, verbose=False, stop_at=1024) is None
+    b = run(32, "place", "S", seed, Path(qual) / "stopped", cmd, dose=2048, verbose=False, resume=True)
+    strip = lambda c: [{k: v for k, v in r.items() if not k.startswith(("cpu", "wall"))} for r in c]
+    out.update(tensors_plain=a["tensors_sha256"], tensors_resumed=b["tensors_sha256"], tensors_equal=a["tensors_sha256"] == b["tensors_sha256"],
+               curve_equal=strip(a["curve"]) == strip(b["curve"]), digest_equal=a["data_digest"] == b["data_digest"],
+               cosine_end_equal=a["cosine_first_batch_end"] == b["cosine_first_batch_end"], resumes=b.get("resumes"))
+    out["pass"] = out["tensors_equal"] and out["curve_equal"] and out["digest_equal"] and out["cosine_end_equal"]
+    return out
+
+
+CHECKS = {"8": check8, "1": check1, "2": check2, "3": check3, "4": check4, "5": check5, "6": check6, "7": check7}
 
 
 # ---------------------------------------------------------------- main
@@ -834,7 +895,7 @@ def main(argv):
         side, arm, rule, seed = int(a[1]), a[2], a[3], int(a[4])
         assert side in SIDES and arm in ARMS and rule in RULES and seed in SEEDS and (side > 16 or arm == "one")
         d = opt("--dose", None)
-        run(side, arm, rule, seed, Path(opt("--out", str(OUT))), cmd, dose=int(d) if d else None)
+        run(side, arm, rule, seed, Path(opt("--out", str(OUT))), cmd, dose=int(d) if d else None, resume="--resume" in a)
     elif a[0] == "check":
         n = a[1]
         qual = Path(opt("--qual", str(QUAL))); qual.mkdir(parents=True, exist_ok=True)
