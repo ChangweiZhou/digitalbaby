@@ -1,0 +1,110 @@
+{
+ "experiment": "E43",
+ "check": "3_spec",
+ "command": "python3 e43_checks.py spec",
+ "provenance": {
+  "command": "python3 e43_checks.py spec",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "a2b0a863e560c0ef5a8c0e81bac81a926cde5fb5",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+   "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c",
+   "exp43_unrelated.py": "fac9acf56e1db0ace1bc02cd791a42b3517d8fc0fb060bbd8b26e8a98483725a",
+   "e43_task.py": "70eef23073197b2e4cd4d28ad90876221f416e503a546203179d8299ec7ad552"
+  }
+ },
+ "cpu_seconds": 2.196003256,
+ "result": {
+  "file_identical": true,
+  "returncode": 0,
+  "stderr": "/home/user/digitalbaby/PROJECT_DOCUMENTS/COORD_CHECKS_20261116/e43_unrelated_task_spec.py:75: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)\n  print(f\"embedding rows of the task's bytes: largest difference between the birth and the initial network {float((m.book.weight[rows] - m0.book.weight[rows]).abs().max()):.1e}\")\n",
+  "lines": {
+   "0": {
+    "here": "seed 73129: taught 2048, held 2048, disjoint True; digest of the first 64 updates 34eefb4442b48399; held panel digest a6be6e03484bd159",
+    "mac": "seed 73129: taught 2048, held 2048, disjoint True; digest of the first 64 updates 34eefb4442b48399; held panel digest a6be6e03484bd159",
+    "equal": true
+   },
+   "1": {
+    "here": "seed 93683: taught 2048, held 2048, disjoint True; digest of the first 64 updates 153cafdcda7379d0; held panel digest c5415a5026a50524",
+    "mac": "seed 93683: taught 2048, held 2048, disjoint True; digest of the first 64 updates 153cafdcda7379d0; held panel digest c5415a5026a50524",
+    "equal": true
+   },
+   "2": {
+    "here": "seed 116089: taught 2048, held 2048, disjoint True; digest of the first 64 updates 821bcb2a9ca6dd54; held panel digest 7cd7ba49fa49cd4e",
+    "mac": "seed 116089: taught 2048, held 2048, disjoint True; digest of the first 64 updates 821bcb2a9ca6dd54; held panel digest 7cd7ba49fa49cd4e",
+    "equal": true
+   },
+   "3": {
+    "here": "no byte shared with any family's prompts or answers (the end symbol aside): True | every byte below 256: True",
+    "mac": "no byte shared with any family's prompts or answers (the end symbol aside): True | every byte below 256: True",
+    "equal": true
+   },
+   "4": {
+    "here": "batch tensor: (64, 19) answer positions: 192 (64 items x 3)",
+    "mac": "batch tensor: (64, 19) answer positions: 192 (64 items x 3)",
+    "equal": true
+   },
+   "6": {
+    "here": "score of the born network on the held panel before any update: {'n': 300, 'exact': 0, 'final': 0}",
+    "mac": "score of the born network on the held panel before any update: {'n': 300, 'exact': 0, 'final': 0}",
+    "equal": true
+   }
+  },
+  "byte_table_line": {
+   "here": "embedding rows of the task's bytes: largest difference between the birth and the initial network 0.0e+00",
+   "mac": "embedding rows of the task's bytes: largest difference between the birth and the initial network 1.4e-06"
+  },
+  "first_batch_loss": {
+   "here": 18.155,
+   "mac": 18.155,
+   "equal_two_decimals": true
+  },
+  "digests": {
+   "73129": {
+    "taught_panel": "3583cd943452ff066f9db2e1b3f280e24123d66d3e9f51efa7e023b923134ff5",
+    "stream_4096": "d3410fc2a8850bc1837b3268105c1dfea699d97c4e3c6d80e5874b38ea985127",
+    "taught_equal": true,
+    "stream_equal": true
+   },
+   "93683": {
+    "taught_panel": "348392b8f40175126a0e2bf7d3ad122b23eff83ce798a4fd3f63f4f4ff0d0bbb",
+    "stream_4096": "edbbcc1f0dc94926551e4a016dc8590d6528a2c36fb996478bc2924188d7a925",
+    "taught_equal": true,
+    "stream_equal": true
+   },
+   "116089": {
+    "taught_panel": "301fd99ddfa152f8aed2106101eeadb7892f5977da221e7996326db36f7356b8",
+    "stream_4096": "fe35d695eace801dee7ce730fbb7d8349c4b767ca872de027faaa329149ec772",
+    "taught_equal": true,
+    "stream_equal": true
+   }
+  },
+  "pass": true
+ }
+}
