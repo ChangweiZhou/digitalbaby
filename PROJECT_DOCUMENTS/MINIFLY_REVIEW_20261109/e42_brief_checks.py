@@ -223,6 +223,17 @@ if "H" in want:
               f"without P8-mean {s1 + s2 - 3 * per['P8-mean']:.0f}; without P8-mean and P8-last {s1 + s2 - 6 * per['P8-mean']:.0f}; "
               f"without those and N5, N20 {s1 + s2 - 6 * per['P8-mean'] - 6 * per['N5']:.0f}")
     print("   (a ratio of forward-and-backward times overstates the ratio per update, which also holds the optimizer's step; check 9 measures it)")
+    B = 64
+    parts = dict(input_map=B * 768 * 512, recurrent=B * 768 * 256, l2=B * 512 * 512, lm=B * 512 * 256, l3=B * 257 * 512)
+    base = sum(parts.values())
+    print(f"   multiply-adds per position in the forward, batch 64: {parts}; sum {base / 1e6:.1f} million")
+    print(f"      added by the sums over a period of 8 (two sums of 8 terms over 64 x 768 values): {2 * 8 * B * 768 / 1e6:.2f} million, {100 * 2 * 8 * B * 768 / base:.1f}% of the sum")
+    print(f"      added by `source` at K = 8 (seven more crossings of the recurrent map): {7 * parts['recurrent'] / 1e6:.1f} million, {100 * 7 * parts['recurrent'] / base:.0f}% of the sum")
+    r_fast = dict(G=1, lim=t["A10"] / t["G"], P4=1.05 * t["A10"] / t["G"], P8=1.05 * t["A10"] / t["G"], P16=1.1 * t["A10"] / t["G"], src=(t["A10"] / t["G"]) * (1 + 7 * parts["recurrent"] / base))
+    hours = lambda kind, rule: (24576 * g[rule] + 96 * row) * r_fast[kind] / 3600
+    s1 = 3 * sum(hours(k, "S") + hours(k, "B") for _, k in stage1); s2 = 3 * sum(hours(k, "S") for _, k in stage2)
+    print(f"   if the loop cost what its arithmetic costs (periods 5 to 10% above A10, `source` {r_fast['src'] / r_fast['lim']:.2f} times A10): stage 1 {s1:.0f}, stage 2 {s2:.0f}, "
+          f"all 48 runs {s1 + s2:.0f} CPU-hours; without P8-mean {s1 + s2 - 3 * hours('P8', 'S'):.0f}")
 
 if "I" in want:
     print("I. the path the specification file inserts, by where the file stands")
@@ -245,4 +256,6 @@ if "J" in want:
     print(f"   E30's accuracy at 40 letters for the E26 births: sweep {[got[('S', s)] for s in SEEDS]}, backpropagation {[got[('B', s)] for s in SEEDS]}")
     for d in ("PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e42_design_checks.py",):
         r = subprocess.run([sys.executable, "-I", d], capture_output=True, text=True).stdout
-        print("   the reviewer's count of carrying cases (e42_design_checks.py, part D):", [ln.split()[-2] for ln in r.splitlines() if ln.strip()[:2] in ("4 ", "8 ", "16")])
+        import re
+        got = {ln.split()[0]: re.search(r"\]\s+(\d\.\d\d)\s+\[", ln).group(1) for ln in r.splitlines() if re.match(r"\s+(2|4|8|16)\s+\[", ln)}
+        print("   the reviewer's count of carrying cases, share of training cases by period (e42_design_checks.py, part D):", got)
