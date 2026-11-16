@@ -16,6 +16,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 8.** Section 21 is added after Mr. Xu's statements on scale: the quantity to compare is the total computation needed to reach a threshold, and which axis to scale is to be found by experiment. It asks for one new full-scale job (item 9 of section 1) and adds width as an axis in the small world.
 
+**Revision 9.** The audit of the E41 brief is in `AUDIT_E41_COMPUTATION_TO_THRESHOLD_20261116.md`. It corrects two things in section 21.4 that were mine, the doses and the treatment of a run that does not reach a threshold; section 21.4 now carries the corrected doses.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -619,11 +621,11 @@ A learner or a setting is better, in Mr. Xu's sense, if it reaches the same thre
 - **Task.** The birth family (add, sub, max, min mod 89), E26's stream and panels, 0 to 12 letters.
 - **Grid.** Width at one half, one and two times the present sizes (every hidden size scaled together; the embedding left at 8). Taught fraction 0.10, 0.25 and 0.50. Sweep and backpropagation. Three seeds. Fifty-four runs, all from random weights.
 - **Settings.** Learning rate, decay and batch as E26 at every width.
-- **Dose and rows.** 8,192 updates, and 16,384 at the narrowest width. Scored every 256 updates.
+- **Dose and rows (corrected in revision 9).** 8,192 updates at the widest network, 12,288 at the present width and 40,960 at the narrowest. Scored every 256 updates. My first doses (8,192, and 16,384 at the narrowest) were too short in two ways: a threshold that must hold for three scored rows could not be recorded after 7,680 at the present width, and a narrow run that failed to reach a threshold would have left the comparison of total computation undecided. A run that does not reach a threshold is known only to need more than its dose; the audit gives the rule for when a comparison can still be decided.
 - **What is tabled.** For each cell: the row at which each threshold is first reached on each of the two accuracies, the computation to that row in both units, the highest accuracy, and the accuracy on taught pairs at that row.
 - **Reading.** None is fixed beforehand; this is a first measurement. The report states, for each rule and fraction, whether computation to the 80% threshold falls, stays within a factor of 1.5, or rises from each width to the next, with the range over seeds.
 - **Checks.** At the present width and fraction 0.50 the run has the hash of E26's dry birth at 2,048 updates, under both rules. Batch digests are equal across widths and rules for a seed and fraction. Each width's parameter count is recorded.
-- **Cost.** By my estimate about 24 CPU-hours of updates and 4 of scoring; three quarters of it is the widest network. One seed per worker divides it evenly.
+- **Cost.** With the corrected doses, about 30 CPU-hours of updates and 5 of scoring by the audit's estimate, a little over half of it at the widest network. One seed per worker divides it evenly.
 - **What it cannot show.** Settings tuned at one width are used at all three, so a width may be handicapped by them. Networks with a life behind them exist at one width only, so the crossing of width with experience is left to the small world.
 
 My expectations, on record: at fraction 0.50 the widest network reaches 80% in fewer updates than the present one, 70%; it does so with less total computation, 25%; at fraction 0.10 the widest network reaches 80% on held-out reduction pairs within its dose, 20%; the reading differs between the rules in some cell, 25%.
