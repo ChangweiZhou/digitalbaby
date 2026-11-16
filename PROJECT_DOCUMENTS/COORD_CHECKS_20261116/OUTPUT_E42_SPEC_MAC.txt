@@ -9,14 +9,22 @@
    periods 16: learned weights a_i (cells of period above 1) 640
 3. P8 variant mean: largest difference from `mean` 0.00e+00
 3. P8 variant step: largest difference from `mean` 0.00e+00
-3. P8 variant source: largest difference from `mean` 2.09e-07
+3. P8 variant source: largest difference from `mean` 0.00e+00
 3. P8 variant last: largest difference from `mean` 1.54e-01
-4. no change before the changed byte: True | changes only at update positions: True | zero before the phase: True
+4. P16 last: no change before the changed byte: True | changes only at update positions: True | zero before the phase: True
+4. P16 mean: no change before the changed byte: True | changes only at update positions: True | zero before the phase: True
+4. P16 step: no change before the changed byte: True | changes only at update positions: True | zero before the phase: True
+4. P16 source: no change before the changed byte: True | changes only at update positions: True | zero before the phase: True
 5. F10: recurrent gradient zero outside the mask B True S True; rules differ on l1 True; cosine of the recurrent gradients 0.744
 5. P8: recurrent gradient zero outside the mask B True S True; rules differ on l1 True; cosine of the recurrent gradients 0.727
-5. P8-source: recurrent gradient zero outside the mask B True S True; rules differ on l1 True; cosine of the recurrent gradients 0.719
+5. P8-source: recurrent gradient zero outside the mask B True S True; rules differ on l1 True; cosine of the recurrent gradients 0.688
+6. optimizer's running averages zero outside the mask after the event: True
 6. replaced 395 connections; new connections' weights zero: True; all inside the neighbourhood: True; weights outside the mask zero: True
-7. G: 0.039 CPU-seconds per forward and backward (sweep)
-7. A10: 0.060 CPU-seconds per forward and backward (sweep)
-7. P8: 0.180 CPU-seconds per forward and backward (sweep)
-7. P8-source: 0.307 CPU-seconds per forward and backward (sweep)
+8. MaskedSign with a full mask against SignLinear, largest relative difference of the three gradients: 0.0e+00 0.0e+00 0.0e+00
+9. seed 73129: periods True, phases True, connections True
+9. seed 93683: periods True, phases True, connections True
+9. seed 116089: periods True, phases True, connections True
+7. G: 0.031 CPU-seconds per forward and backward (sweep)
+7. A10: 0.035 CPU-seconds per forward and backward (sweep)
+7. P8: 0.076 CPU-seconds per forward and backward (sweep)
+7. P8-source: 0.193 CPU-seconds per forward and backward (sweep)

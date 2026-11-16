@@ -1,6 +1,6 @@
-# E42: cells with a limited number of local connections and their own periods (16 November 2026, revision 1)
+# E42: cells with a limited number of local connections and their own periods (16 November 2026, revision 2)
 
-Evidence level E2; a first measurement. The design is the outside reviewer's (its memo, revision 10, section 22, on `claude/vibrant-cerf-sje726` at f68f2b7d), written from the user's statements of 16 November. This specification, the specification file and the predictions are mine. **Not released: it waits for the reviewer's audit.** Three workers, one seed each. It does not wait for the small world and displaces nothing released.
+Evidence level E2; a first measurement. The design is the outside reviewer's (its memo, revision 10, section 22, on `claude/vibrant-cerf-sje726` at f68f2b7d), written from the user's statements of 16 November. This specification, the specification file and the predictions are mine. Revision 1 (95f2d80f) was audited by the reviewer (`AUDIT_E42_CELLS_BRIEF_20261116.md` on `claude/vibrant-cerf-sje726` at 634a606a), which required seven changes and stated that after them no re-audit is needed. Revision 2 makes them, in this brief and in the specification file, with the recommendations; the last section lists them. **Released.** Three workers, one seed each. It does not wait for the small world and displaces nothing released.
 
 Shell names: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; K=PROJECT_DOCUMENTS/COORD_CHECKS_20261116`. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each; launch outside any wrapper with a time limit. Edit nothing existing.
 
@@ -54,14 +54,15 @@ For a cell of period p updated at position t, the steps of its period are t − 
 | `last` | gi(t) | gh(t) | none |
 | `mean` | (1/p) Σ_k gi(t − k) | (1/p) Σ_k gh(t − k) | none |
 | `step` (the default) | Σ_k a_i[k] gi(t − k) | Σ_k a_i[k] gh(t − k) | a_i[k] for cells of period above 1, starting at 1/p |
-| `source` | as `step` | Σ_k [ (Wh[k] * mask) h(t − k − 1) + a_i[k] bh ] | Wh[k] for k = 1 … p_i − 1, and a_i as in `step` |
+| `source` | as `step` | Σ_k a_i[k] · [ (Wh[k] * mask) h(t − k − 1) + bh ] | Wh[k] for k = 1 … p_i − 1, each starting as a copy of the masked, scaled Wh; a_i as in `step` |
 
 **Points the memo left open, which I fixed in the file; the audit should test each.**
 
 1. **`mean` divides by p always**, also when some steps fall before the start symbol. Otherwise `mean` and `step` would differ at the first positions.
-2. **In `source` the bias enters as a_i[k] · bh at each step that exists.** With the bias added once, as the memo writes it, `source` differs from `step` at the first positions of an item, where part of a period lies before the start symbol. With this form the three variants agree at the start to 2e-7 (self-check 3).
+2. **In `source` each step's crossing, bias included, is multiplied by the step's coefficient a_i[k].** With the bias added once, as the memo first wrote it, `source` differs from `step` at the first positions of an item, where part of a period lies before the start symbol. In this form the three variants give identical logits at the start (self-check 3).
 3. **A cell of period 1 has no learned weight a.** Its coefficient is fixed at 1, so it is the same cell in all four variants. The learned weights a number 384, 512 and 640 in the three period sets, as the memo counts.
-4. **In `source`, Wh[0] is the existing tensor** `rnn.weight_hh_l0`, with each cell's rows divided by its period at the start, and Wh[1 …] are one new tensor of shape (K − 1, 768, 256), zero for steps outside a cell's period. So the thirteen tensors of the present network keep their names in every configuration.
+4. **In `source`, Wh[0] is the existing tensor** `rnn.weight_hh_l0`, unchanged by the variant, and Wh[1 …] are one new tensor of shape (K − 1, 768, 256), a copy of it at the steps inside a cell's period and zero outside. So the thirteen tensors of the present network keep their names in every configuration, and `rnn.weight_hh_l0` has the same values at the start in `P8` and `P8-source`. **The recurrent weights are not divided by the period** (the memo's first form, withdrawn in its revision 11): the factor 1/p is in the weights a, as in `step`. Divided, the weights of a cell of period 8 would be one eighth the size of a period-1 cell's, and the sweep's single scale would send back 0.40 of the right size through fast cells and 3.19 through the slowest (the audit's table), so that `P8-source` against `P8` would mix two things.
+5. **The tensor `a` holds an entry for every cell and step.** Those of cells of period 1 and those outside a cell's period take no part in the forward; they decay during a run and are not to be read as learned.
 
 ### The start
 
@@ -73,7 +74,7 @@ For a cell of period p updated at position t, the steps of its period are t − 
 - **The sweep (`local=True`):** every linear map sends its error back through the signs of its weights times one scale per stacked matrix, as now (`git show $D:$M/exp3_state.py | sed -n '91,108p'`). For the masked recurrent map the file's `MaskedSign` does the same with two differences: the scale is the mean magnitude of the weights inside the mask (in `source`, over all steps stacked), and the weight gradient is zero outside the mask. When every entry is inside the mask (`G`), `exp3_state.lin` is called unchanged.
 - The gates, the products, the weights a and the holding of a value between updates are differentiated exactly under both rules, as the gates are now. Credit runs through the whole item.
 
-At the start, the cosine between the sweep's and the exact gradient of the recurrent matrix on the first batch is 0.74 for `F10`, 0.73 for `P8` and 0.72 for `P8-source` (self-check 5, seed 73129).
+At the start, the cosine between the sweep's and the exact gradient of the recurrent matrix on the first batch is 0.74 for `F10`, 0.73 for `P8` and 0.69 for `P8-source` (self-check 5, seed 73129).
 
 ### Changing connections
 
@@ -97,14 +98,16 @@ A cell has no information about a cell it is not connected to, so the new partne
 | `A10` | changing | 10 | 48 | all 1 | connections may change |
 | `P8` | changing | 10 | 48 | 1, 2, 4, 8; variant `step` | periods |
 
-**Stage 2**, under the sweep only, three seeds: 24 runs. Each differs from its reference in one thing.
+**Stage 2**, under the sweep only, three seeds: 21 runs, in this order: the configurations of period 1 first, then `P4`, `P16`, `P8-last`, and `P8-source` last, so that a worker stopped by cost has the cheaper questions answered. Each differs from its reference in one thing.
 
 | Name | Differs from | In |
 |---|---|---|
 | `N5`, `N20` | `A10` | N = 5; N = 20 |
 | `W10` | `A10` | the neighbourhood is all 255 other cells: the limit without the locality |
 | `P4`, `P16` | `P8` | periods 1, 2, 4; periods 1, 2, 4, 8, 16 |
-| `P8-last`, `P8-mean`, `P8-source` | `P8` | the variant |
+| `P8-last`, `P8-source` | `P8` | the variant |
+
+`P8-mean` is deferred (the audit): it starts as the same function as `P8` and differs only in whether the 512 weights a move, which `P8`'s saved weights a will show. `N5` and `N20` draw their connections afresh, so at the start they differ from `A10` in which cells are read as well as in how many; the report says so where it compares them.
 
 ## Data, dose, optimizer
 
@@ -116,17 +119,30 @@ A cell has no information about a cell it is not connected to, so the new partne
 
 ## Scores, every 256 updates
 
-1. **E41's three accuracies, unchanged** (E41 brief, revision 2): **A**, held-out add and sub at 12 letters on `exp11_cell.panel(t, held, seed, ks=(12,), n=300)`; **R**, the fixed sample of 1,000 held-out reduction pairs per task without letters, drawn by `Random(f"e41|{seed}|50|{t[0]}")`; and the taught panel.
+1. **E41's three accuracies, unchanged** (E41 brief, revision 2; their code is `panels`, `reduction_sample` and `score_all` of `exp41_scale.py` at 88b8b7b3 on `claude/wonderful-edison-8hx6i6`, which is not yet on the default branch, or a rewrite from the E41 brief; check 12 decides either way): **A**, held-out add and sub at 12 letters on `exp11_cell.panel(t, held, seed, ks=(12,), n=300)`; **R**, the fixed sample of 1,000 held-out reduction pairs per task without letters, drawn by `Random(f"e41|{seed}|50|{t[0]}")`; and the taught panel.
 2. **The length test**, E30's: `exp11_cell.panel(t, exp11_cell.split(t, .5, seed)[1], seed, ks=(12, 40), n=300)` with `t = ("add", 89, b"p")`; accuracy at 12 and at 40 letters. On file for E26's final weights at 40 letters: 96.0, 97.0, 99.67 under the sweep and 97.67, 98.67, 92.33 under backpropagation (`exp45/e30/E30_UNSEEN.json`).
 3. The number of connections replaced since the previous row.
 
-**Per run:** updates to the 50, 80 and 90 thresholds on A and on R in E41's two versions, the three-row version carrying the description; computation in weight-items with the count of weights inside the mask; CPU-seconds, reported and not used, since a masked dense matrix costs as much as a full one.
+**Per run:** updates to the 50, 80 and 90 thresholds on A and on R in E41's two versions, the three-row version carrying the description; computation in weight-items with the count of weights given in the table below; CPU-seconds, reported and not used, since a masked dense matrix costs as much as a full one.
+
+**The count of weights for weight-items.** The network's 1,124,113 less the 196,608 recurrent weights, plus the recurrent weights inside the mask, plus the weights a of cells of period above 1, plus in `source` the entries of Wh[1 …] inside the mask and inside the reader's period.
+
+| Configuration | Count |
+|---|---|
+| `G` | 1,124,113 |
+| `N5` | 932,113 |
+| `F10`, `A10`, `W10`, `P8-last` | 935,953 |
+| `N20` | 943,633 |
+| `P4` | 936,337 |
+| `P8` | 936,465 |
+| `P16` | 936,593 |
+| `P8-source` | 949,137 |
 
 **At the first batch and at the end:** the cosine between the sweep's gradient and the exact gradient of the recurrent matrix on one batch.
 
-**At the end, in the weights file:** the mask, periods, phases, the update at which each connection was made, and all added parameters. The report gives the share of connections never replaced, and the share of connections by the reader's period and the source's period, at the start and at the end.
+**At the end, in the weights file:** entries named `mask`, `periods`, `phases`, `made` (the update at which each connection was made), `a` and `Wx` (Wh[1 …]), beside the thirteen tensors. The structure is also written as a small JSON file beside each weights file: periods, phases, each cell's connections and the update at which each was made. The report gives the share of connections never replaced, and the share of connections by the reader's period and the source's period, at the start and at the end.
 
-**Committed:** the full weights for seed 73129 (sixteen files). For the other two seeds, a small file per run with the mask, periods, phases, the update at which each connection was made, the recurrent weights and the added parameters. Receipts in `exp45/e42/e42_<configuration>_<S|B>_<seed>.json`, in E26's format; the runner refuses an existing path.
+**Committed:** the full weights for seed 73129 (fifteen files). For the other two seeds, the JSON structure file and a small file per run with the recurrent weights and `a`. Receipts in `exp45/e42/e42_<configuration>_<S|B>_<seed>.json`, in E26's format; the runner refuses an existing path.
 
 ## Checks before the runs (stage 0)
 
@@ -134,14 +150,16 @@ Done by the worker of seed 73129, who writes the runner `exp42_cells.py` and pus
 
 1. **`G` is E26.** The thirteen tensors are bit-equal to `arch26.new_net(seed)`'s at the start. After 2,048 updates their `tensors_sha256` is that of E26's dry births: 79618ab2… under the sweep and adf933d7… under backpropagation (seed 73129; every worker runs this).
 2. **Same data in every configuration.** The batch digest at row 4,096 is E26's: bbd71ab7…, 65b1c7e0…, 1df203fb… for the three seeds.
-3. **The specification file.** `e42_cells.py` is byte-identical to `$K/e42_cells_spec.py`, and its self-checks print what `$K/OUTPUT_E42_SPEC_MAC.txt` has for checks 1 to 6 (the logit differences in check 3 below 1e-6; the cosines in check 5 to two decimals).
+3. **The specification file.** `$M/e42_cells.py` is byte-identical to `$K/e42_cells_spec.py` and is only imported by the runner. The self-checks are run on `$K/e42_cells_spec.py` (the file finds the harness from either place) and print what `$K/OUTPUT_E42_SPEC_MAC.txt` has for checks 1 to 6, 8 and 9: `G` bit-equal to E26; the counts; `mean`, `step` and `source` within 1e-6; the time properties for all four variants with periods 1 to 16; the cosines to two decimals; replacement, with the optimizer's averages zero outside the mask; `MaskedSign` with a full mask equal to `exp3_state.SignLinear` to 1e-6; and the digests of the draws for the three seeds, which are the audit's tables (my Python 3.11 gives them; this tests the worker's 3.13).
 4. **The limit, at every scored row:** every cell has exactly N connections, all inside its neighbourhood, none to itself beyond its own reading; every weight outside the mask is exactly zero.
 5. **Time.** On random weights: changing the byte at position t changes no cell's value at an earlier position; a cell's value changes only at its own update positions; a cell with phase f is zero before position f (self-check 4).
 6. **Gradients against a second form.** Under backpropagation the parameter gradients equal those of a reference written cell by cell, without masks or buffers, to 1e-5 of each tensor's largest entry, for `P8`, `P8-source` and `F10`. Under the sweep they differ. Gradients outside the mask are zero under both.
-7. **Replacement.** At an event, adding the new connections changes no logit; the same command run twice gives the same `tensors_sha256`, with changing connections.
+7. **Replacement.** At an event, adding the new connections changes no logit. The same command run twice gives the same `tensors_sha256` and the same digests of the mask, of `made` and of the added parameters, with changing connections. After every event the runner asserts that the optimizer's two running averages are zero at every entry outside the mask.
 8. **The reviewer's reader.** For seed 73129, commit dry runs of 2,048 updates of `F10`, `P8` and `P8-source` with their weights files and their answers on the length-test panel. The reviewer writes a numpy reader from this brief and reproduces the answers. This does not hold stage 1.
-9. **Cost.** CPU-seconds per update and per scored row for each configuration, on an idle host, and a forecast for the worker's sixteen runs. On my Mac the unoptimised file takes 2.6 times `G`'s time per update for `P8` and 5.4 times for `P8-source`, which would put the 48 runs near 85 CPU-hours where the reviewer estimates 50 to 70. The worker may speed up the loop over a period's steps in the runner's own copy of `forward`, provided check 6 and the self-checks still pass on it. If a worker's forecast exceeds 30 CPU-hours, report before starting.
+9. **Cost and the speed-up.** The file's loop over a period's steps is slow for reasons of overhead, not arithmetic: the sums over a period of 8 add about 1% to a position's multiply-adds, and `source` adds seven crossings of the recurrent map. **The worker speeds up that loop in the runner's forward.** For every configuration it is used in, on the first batch of seed 73129, its logits equal the specification's to 1e-6 and every parameter gradient, the added parameters included, equals the specification's to 1e-5 of the tensor's largest entry, under backpropagation and under the sweep; check 5's time properties are shown on it for all four variants. Then: CPU-seconds per update and per scored row for each configuration on an idle host, and a forecast for the worker's fifteen runs. The reviewer's estimates: about 150 CPU-hours for the 48 runs with the file as it stands, 75 to 80 if the loop costs what its arithmetic costs, about 73 after the speed-up and without `P8-mean`. (My own timings of the file on a Mac varied between runs, from 2.5 to 4.6 times `G` for `P8` and 5.4 to 7.9 for `P8-source`, and are no basis for a forecast.) If a worker's forecast after the speed-up exceeds 30 CPU-hours, `P8-last` is deferred next, and the worker reports before starting.
 10. **theta.** Three dry runs of `A10` under the sweep, 4,096 updates, with theta = 0.1, 0.25 and 0.5. The value used everywhere is the one whose mean share of connections replaced per event, over the events at updates 768 to 4,096, is nearest 5%. If all three are below 1% or above 30%, stop and report. The choice uses no accuracy.
+11. **`G`'s final hash (reported, not a failure).** At 24,576 updates `G` is E26's birth, so its `tensors_sha256` is set beside E26's receipt for each rule and seed.
+12. **The scorer.** With configuration `G`'s layer and the six E26 births `exp45/e26/e26_dev_<S|B>_<seed>.pt`, the runner's scoring gives the counts of E41's check 7(b) for A, R and the taught panel (E41 brief, revision 2), and E30's accuracies at 12 and 40 letters (`exp45/e30/E30_UNSEEN.json`). A count that differs by one or two items is reported; a larger difference is a failure.
 
 ## How the result is stated (fixed beforehand, as in E41)
 
@@ -153,7 +171,7 @@ For each comparison, rule and seed:
 
 **Comparisons:** `F10`, `A10` and `P8` each against `G`; `A10` against `F10`; `P8` against `A10`; every stage 2 configuration against its reference; and, in stage 1, the sweep against backpropagation within each configuration.
 
-**One stop.** After seed 73129's stage 1 runs: if none of `F10`, `A10` and `P8` reaches 50 on A within the dose under either rule, stop and report. Otherwise stage 2 runs without a further release.
+**One stop.** After seed 73129's stage 1 runs: if none of `F10`, `A10` and `P8` reaches 50 on A (three-row version) within the dose under either rule, stop and report. Otherwise stage 2 runs without a further release.
 
 ## What the record and arithmetic say beforehand
 
@@ -186,7 +204,7 @@ For each comparison, rule and seed:
 | P42.2 | `A10` reaches 80 on A within the dose, two of three seeds, under the sweep | 60% |
 | P42.3 | `F10` reaches 80 on A within the dose, two of three seeds, under backpropagation | 70% |
 | P42.4 | `A10` against `G`, updates to 80 on A under the sweep: *rises* (more updates), two of three seeds | 65% |
-| P42.5 | `A10` against `F10`, updates to 80 on A under the sweep: not *rises*, two of three seeds | 60% |
+| P42.5 | `A10` against `F10`, updates to 80 on A under the sweep: *falls* or *stays* (not *rises*, *not decided* or *neither reaches*), two of three seeds | 55% |
 | P42.6 | `P8` against `A10`, updates to 80 on A under the sweep: fewer 20%, about the same 35%, more 45% | |
 | P42.7 | `P16` is *lower* than `A10` at 40 letters, two of three seeds | 55% |
 | P42.8 | `F10` is *lower* than `G` at 40 letters under the sweep, two of three seeds | 45% |
@@ -196,4 +214,19 @@ For each comparison, rule and seed:
 
 ## Done
 
-Stage 0: the runner, the check receipts, the chosen theta. Stages 1 and 2: the worker's sixteen runs with receipts and committed files, and `E42_REPORT_<seed>.md` with the worker's tables. The three-seed tables, the descriptions for every comparison, the structure tables and the predictions are assembled by the worker of seed 73129 once all three branches are complete. No readings beyond the description above.
+Stage 0: the runner, the check receipts, the chosen theta. Stages 1 and 2: the worker's fifteen runs with receipts and committed files, and `E42_REPORT_<seed>.md` with the worker's tables. The three-seed tables, the descriptions for every comparison, the structure tables and the predictions are assembled by the worker of seed 73129 once all three branches are complete. No readings beyond the description above.
+
+## What changed from revision 1 (the audit)
+
+Made as the audit wrote them, in this brief and in the file. I reran the file's self-checks after the changes; all pass, and the output beside it is the new one.
+
+| | Change | Required? |
+|---|---|---|
+| 1 | `source`: the recurrent weights are not divided by the period; each step's crossing, bias included, is multiplied by the step's coefficient. This corrects the memo's own design, which I had implemented as written. | yes |
+| 2 | Check 3 says where the self-checks are run; the file now finds the harness from either place. As I wrote it, the check could not be run on the copy. | yes |
+| 3 | Three self-checks added: `MaskedSign` against the existing sign rule with a full mask; digests of the draws; the time properties for all four variants with periods 1 to 16 | yes |
+| 4 | Check 12: the scorer against figures on file, and where the three accuracies' code comes from | yes |
+| 5 | Check 9: the speed-up is expected of the worker and is tied to the specification under both rules | yes |
+| 6 | Cost. **My error:** the brief and review 9.140 stated ratios of 2.6 and 5.4, from an earlier run, beside a committed output that showed 4.6 and 7.9. The figures are replaced by the audit's; `P8-mean` is deferred. | yes |
+| 7 | The count of weights for weight-items, with a table | yes |
+| — | Self-check 6 now runs after an optimizer step, so the clearing of the averages is exercised; digests of structure in check 7; the assertion after every event; `G`'s final hash; the stop on the three-row version; P42.5 reworded; names in the weights file and a JSON structure file; the entries of `a` that take no part; the order of stage 2; `N5` and `N20` drawn afresh | recommended |

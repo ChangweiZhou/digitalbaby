@@ -9,7 +9,9 @@ from pathlib import Path
 from random import Random
 
 HERE = Path(__file__).resolve()
-sys.path.insert(0, str(HERE.parents[2] / "MOD97_LOCAL_RULE_20261106"))
+for _cand in (HERE.parent, HERE.parents[2] / "MOD97_LOCAL_RULE_20261106"):      # the harness: beside this file (the runner's copy) or from the specification's place
+    if (_cand / "exp26_candidate.py").exists():
+        sys.path.insert(0, str(_cand)); break
 import exp26_candidate as C26        # noqa: E402  first: sets the harness environment (E16_BOOKDECAY=off and the rest)
 import arch26                        # noqa: E402
 import torch as T                    # noqa: E402
@@ -87,9 +89,9 @@ class Layer:
         if variant in ("step", "source") and self.K > 1:
             self.a = T.nn.Parameter(self.kmask / self.p[None, :].float())        # a[k, i], 1 / p_i inside the period
         if variant == "source" and self.K > 1:
-            with T.no_grad():
-                W.div_(self.p.repeat(3)[:, None].float())                       # Wh[0] = masked Wh / p_i
-                self.Wx = T.nn.Parameter(W.detach()[None].repeat(self.K - 1, 1, 1) * self.kmask[1:].repeat(1, 3)[:, :, None])   # Wh[1..K-1]
+            # Wh[0] is the existing tensor, unchanged by the variant; Wh[1..K-1] are a copy of it at the steps inside a cell's period, zero outside.
+            # The factor 1 / p is in the coefficients a, as in `step`, so the sign rule sees weights of one size for every period.
+            self.Wx = T.nn.Parameter(W.detach()[None].repeat(self.K - 1, 1, 1) * self.kmask[1:].repeat(1, 3)[:, :, None])
 
     def mask3(self):
         return self.mask.repeat(3, 1)                               # (768, U)
@@ -142,7 +144,6 @@ def forward(m, layer, x, local, silence=False):
     Wh, bh = m.rnn.weight_hh_l0, m.rnn.bias_hh_l0
     scale = layer.sign_scale(m) if (local and not layer.full) else None
     c = layer.coef().repeat(1, 3)                                             # (K, 768)
-    zero_b = T.zeros_like(bh)
     h = T.zeros(B, U); hs, gh_hist, hprev_hist = [], [], []
     for t in range(L):
         hprev_hist.append(h)                                                  # h(t-1)
@@ -153,7 +154,7 @@ def forward(m, layer, x, local, silence=False):
             H = 0
             for k in range(min(layer.K, t + 1)):                              # a separate strength for every connection at every step
                 Wk = Wh if k == 0 else layer.Wx[k - 1]
-                H = H + rec(layer, m, hprev_hist[t - k], Wk, zero_b, local, scale, kstep=k) + c[k] * bh
+                H = H + c[k] * rec(layer, m, hprev_hist[t - k], Wk, bh, local, scale, kstep=k)        # a_i[k] * [(Wh[k] * mask) h(t-k-1) + bh]
         else:
             H = sum(c[k] * gh_hist[t - k] for k in range(min(layer.K, t + 1)))
         i_r, i_z, i_n = G.chunk(3, 1); h_r, h_z, h_n = H.chunk(3, 1)
@@ -235,16 +236,18 @@ if __name__ == "__main__":
         with T.no_grad(): lg = forward(m, lay, x, False)[0]
         if ref is None: ref = lg
         print(f"3. P8 variant {v}: largest difference from `mean` {float((lg - ref).abs().max()):.2e}")
-    # 4. time: a later byte changes no earlier state; a cell changes only at its own update positions; zero before its phase
-    m, lay = net_and_layer(N=10, period_set="8", variant="step")
-    with T.no_grad():
-        hs = T.stack(forward(m, lay, x, False)[1], 1)
-        x2 = x.clone(); t0 = 9; x2[:, t0] = (x2[:, t0] + 1) % 256
-        hs2 = T.stack(forward(m, lay, x2, False)[1], 1)
-    upd = T.stack([(t >= lay.f) & ((t - lay.f) % lay.p == 0) for t in range(x.shape[1])])        # (L, U)
-    changed = (hs[:, 1:] != hs[:, :-1]).any(0)                                                   # (L-1, U)
-    print("4. no change before the changed byte:", bool(T.equal(hs[:, :t0], hs2[:, :t0])), "| changes only at update positions:", bool((~changed | upd[1:]).all()),
-          "| zero before the phase:", bool(all((hs[:, :int(lay.f[i]), i] == 0).all() for i in range(U))))
+    # 4. time, for each variant with periods 1 to 16: a later byte changes no earlier state; a cell changes only at its own update
+    #    positions; zero before its phase
+    for v in VARIANTS:
+        m, lay = net_and_layer(N=10, period_set="16", variant=v)
+        with T.no_grad():
+            hs = T.stack(forward(m, lay, x, False)[1], 1)
+            x2 = x.clone(); t0 = 9; x2[:, t0] = (x2[:, t0] + 1) % 256
+            hs2 = T.stack(forward(m, lay, x2, False)[1], 1)
+        upd = T.stack([(t >= lay.f) & ((t - lay.f) % lay.p == 0) for t in range(x.shape[1])])        # (L, U)
+        changed = (hs[:, 1:] != hs[:, :-1]).any(0)                                                   # (L-1, U)
+        print(f"4. P16 {v}: no change before the changed byte:", bool(T.equal(hs[:, :t0], hs2[:, :t0])), "| changes only at update positions:", bool((~changed | upd[1:]).all()),
+              "| zero before the phase:", bool(all((hs[:, :int(lay.f[i]), i] == 0).all() for i in range(U))))
     # 5. gradients: zero outside the mask under both rules; the two rules differ
     for name, kw in (("F10", dict(N=10)), ("P8", dict(N=10, period_set="8", variant="step")), ("P8-source", dict(N=10, period_set="8", variant="source"))):
         m, lay = net_and_layer(**kw)
@@ -253,6 +256,7 @@ if __name__ == "__main__":
               f" rules differ on l1 {not T.allclose(gB['l1.weight'], gS['l1.weight'])}; cosine of the recurrent gradients {float(T.nn.functional.cosine_similarity(gB['rnn.weight_hh_l0'].flatten(), gS['rnn.weight_hh_l0'].flatten(), 0)):.3f}")
     # 6. replacement: the limit holds, added connections change no logit, replaced connections lie in the neighbourhood
     m, lay = net_and_layer(N=10); opt = C26.make_opt(m); rr = Random(f"e42|replace|{seed}")
+    lg = forward(m, lay, x, True)[0]; opt.zero_grad(); E.cross_entropy(lg[mask], y[mask]).backward(); opt.step()     # so the optimizer has running averages
     before = lay.mask.clone()
     with T.no_grad(): m.rnn.weight_hh_l0[:, ::7] *= 0.01                     # make some connections weak
     n = replace(lay, m, opt, 512, 0.25, rr)
@@ -260,8 +264,29 @@ if __name__ == "__main__":
     with T.no_grad():
         lg1 = forward(m, lay, x, False)[0]
         w = m.rnn.weight_hh_l0.clone(); w[new.repeat(3, 1)] = 0; same_w = bool(T.equal(w, m.rnn.weight_hh_l0))
+    st = opt.state[m.rnn.weight_hh_l0]; outm = ~lay.mask3()
+    print("6. optimizer's running averages zero outside the mask after the event:", bool((st["exp_avg"][outm] == 0).all() and (st["exp_avg_sq"][outm] == 0).all()))
     print(f"6. replaced {n} connections; new connections' weights zero: {same_w}; all inside the neighbourhood: {all(j in neighbourhood(i) for i, j in new.nonzero().tolist())};"
           f" weights outside the mask zero: {bool((m.rnn.weight_hh_l0[~lay.mask3()] == 0).all())}")
+    # 8. MaskedSign with a mask of ones and the scale weight.abs().mean() is exp3_state.SignLinear
+    from exp3_state import SignLinear
+    g_ = T.Generator().manual_seed(42); xin = T.randn(5, 7, 12, generator=g_); Wt = T.randn(9, 12, generator=g_); bt = T.randn(9, generator=g_); gout = T.randn(5, 7, 9, generator=g_)
+    res = []
+    for fn in (lambda a, w, b: SignLinear.apply(a, w, b), lambda a, w, b: MaskedSign.apply(a, w, b, T.ones(9, 12), w.detach().abs().mean())):
+        a_, w_, b_ = xin.clone().requires_grad_(), Wt.clone().requires_grad_(), bt.clone().requires_grad_()
+        (fn(a_, w_, b_) * gout).sum().backward(); res.append((a_.grad, w_.grad, b_.grad))
+    print("8. MaskedSign with a full mask against SignLinear, largest relative difference of the three gradients:",
+          " ".join(f"{float((p_ - q_).abs().max() / q_.abs().max()):.1e}" for p_, q_ in zip(res[1], res[0])))
+    # 9. the draws' digests (hashlib.sha256(json.dumps(x).encode()).hexdigest()[:16]); the audit's tables
+    import hashlib, json
+    dg = lambda v: hashlib.sha256(json.dumps(v).encode()).hexdigest()[:16]
+    WANT = {73129: ("cdc419757fea4346 d5d8c69f0af22702 f8eb80a8bfd8e68c", "868ece46952abfb3 40f16c7455e0044e 4c59a7af5f14339f", "ecf98006edb8ad9b fde78220c57da3d4 dbe99af8352f428c 4a9feeeb77ff57d2"),
+            93683: ("751146dbc2b41c71 5fe0fd0e1a9b6965 8b2f574ec8e87baa", "6f6c3432f96493de f42f73cdb29e14d1 0f4a27cf78ed1cb7", "cc36f3f00a8da08a 35b553967b0c40ee 27ec6683c6bef9a1 e6c342ea94907a45"),
+            116089: ("b4f4dae8defa25dd 007709688248573e 1ba63ec1b4fabfde", "487c224b1f4cb59e e9a53451f04f7cd7 8d400c4a2d682efe", "dc9097fe8fbead59 70afb39ae3b47296 a10f50b4bb550930 6c1147c9bfab9d16")}
+    for sd, (wp, wf, wc) in WANT.items():
+        per = " ".join(dg(draws(sd, 10, ps)[0]) for ps in ("4", "8", "16")); ph = " ".join(dg(draws(sd, 10, ps)[1]) for ps in ("4", "8", "16"))
+        con = " ".join([dg(draws(sd, n_, "1")[2]) for n_ in (5, 10, 20)] + [dg(draws(sd, 10, "1", wide=True)[2])])
+        print(f"9. seed {sd}: periods {per == wp}, phases {ph == wf}, connections {con == wc}")
     # 7. cost per update (this host; indicative)
     for name, kw in (("G", dict(N=255)), ("A10", dict(N=10)), ("P8", dict(N=10, period_set="8", variant="step")), ("P8-source", dict(N=10, period_set="8", variant="source"))):
         m, lay = net_and_layer(**kw); t = time.process_time()
