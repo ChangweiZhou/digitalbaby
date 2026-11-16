@@ -22,6 +22,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 11.** The audit of the E42 brief is in `AUDIT_E42_CELLS_BRIEF_20261116.md`, with a numpy reader of the cell layer in `e42_cells_reader.py`. It corrects one thing in section 22.3 that was mine, the start of the variant `source`; the table there now carries the corrected form. It also defers `P8-mean` and replaces my cost estimate (sections 22.4 and 22.9).
 
+**Revision 12.** Section 23 is added: a read-only measurement of what the first 64 updates change when a network that has lived learns a new family, on E40's files of seed 73129. It asks for four more files (item 11 of section 1).
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -50,6 +52,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 9. **Brief one more full-scale job, E41: computation to threshold by width and by taught fraction** (section 21.3). About 28 CPU-hours by my estimate, to be divided among the three workers that E36, E37 and E38 have freed. It comes to me before any worker starts.
 
 10. **Brief one more full-scale job, E42: cells with a limited number of local connections and their own periods** (section 22). Forty-eight births in two stages after a stage of checks, 50 to 70 CPU-hours by my estimate. It comes to me before any worker starts. It does not wait for the small world and displaces nothing released.
+
+11. **Ask the E40 worker for four more files** (section 23.4): the row-64 weights of the lived S and B runs of seeds 93683 and 116089, whose hashes are in the receipts. About 18 MB. They let me repeat section 23 on three seeds.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -843,3 +847,53 @@ Mr. Xu left these to me; each can be overturned.
 6. **Replacement by a strength threshold with a target rate of 5% per event** (22.6, check 10), and **the limit used in full**: Mr. Xu's limit is "at most N"; here a cell always has N.
 
 Next, depending on the result: a cell whose update is a learned sum of its inputs and of products of pairs of them, with no gate equations given; limited input and readout connections with more cells at the same computation; and the cell layer as an arm of the small world once L1 has reported.
+
+## 23. What 64 updates change when a network that has lived learns a new family (revision 12)
+
+A read-only measurement of mine on E40's files, seed 73129: the life-end weights (row 0 of E40's lived runs), and rows 64 and 8,192 of the three lived runs. The row-64 files were committed by the E40 worker at my request (45b6fd79 on `claude/vibrant-allen-8hziln`). Nothing was trained; every figure is a forward pass of the numpy reader on saved or recombined weights. Script: `e40_row64_changes.py` beside this memo, parts A to E.
+
+Probes, fixed once: for add and for sub of the new family (mod 83, a tenth taught), 1,500 never-taught pairs that need the reduction and 1,000 that do not, no letters; for the two earlier families of the life, 600 pairs each of add and sub mod 97 and mod 73. Whole answers; each figure is the mean of add and sub.
+
+### 23.1 Figures
+
+Never-taught pairs of the new family that need the reduction, percent right:
+
+| Network | Lived under the sweep | Under backpropagation | Under K |
+|---|---|---|---|
+| Life end | 6.2 | 4.2 | 8.8 |
+| After 64 updates | 75.6 | 84.1 | 80.3 |
+| After 8,192 updates | 76.8 | 84.8 | 79.4 |
+| Life end, with only the input map and the recurrent matrix taken from row 64 | 57.1 | 68.0 | 70.9 |
+| Life end, with only the recurrent matrix from row 64 | 33.8 | 44.1 | 61.0 |
+| Life end, with only the input map from row 64 | 16.5 | 9.4 | 27.1 |
+| Life end, with only the readout (`lm`, `l2`, `l3`) from row 64 | 7.3 | 7.2 | 12.0 |
+| Life end, with only the byte table and `l1` from row 64 | 8.3 | 5.1 | 12.8 |
+| Row 64, with the recurrent matrix put back to the life's end | 24.0 | 24.3 | 38.8 |
+| Life end plus the largest 1% of the changes | 7.9 | 3.8 | 10.6 |
+| Life end plus the largest 5% | 15.6 | 4.7 | 17.8 |
+| Life end plus the largest 20% | 38.4 | 29.7 | 52.7 |
+| Life end plus the largest 50% | 66.2 | 76.9 | 78.1 |
+| Every matrix's change replaced by its best approximation of rank 4 | 41.0 | 53.1 | 60.5 |
+| Of rank 8 | 62.3 | 74.4 | 75.1 |
+| Of rank 16 | 71.0 | 81.2 | 79.2 |
+
+The earlier family mod 97: 92.8, 94.5, 93.7 at the life's end; 77.0, 64.6, 80.4 after 64 updates; 89.6, 89.8, 91.2 after 64 updates with the recurrent matrix put back.
+
+How far the weights moved in 64 updates: each weight matrix by 4 to 12% of its size at the life's end (`l2` by 31%), the byte table by 0.3%. The rows of the four new code bytes moved by 0.02 to 0.06 against sizes of 2.2 to 3.3; the rows of the earlier families' codes did not move at all.
+
+### 23.2 Readings
+
+1. **What is learned in 64 updates lies in the recurrent layer.** The changes to its input map and its recurrent matrix, placed alone on the life-end network, give 57 to 71 of the 76 to 84 points. The changes to the readout give nothing by themselves, and neither do those to the byte table and `l1`.
+2. **The new codes' rows of the byte table are used as they stood.** They were never trained before E40 and moved by about one percent of their size. The network reads four random vectors it had never seen and adjusts what follows them.
+3. **The change is spread over many weights and is low in rank.** The largest 5% of the changed weights give almost nothing; half of them are needed for most of the effect. But an approximation of rank 8 of each matrix's change recovers 62 to 75 points, and of rank 16 nearly all.
+4. **The gain and the loss are in the same matrix.** Putting the recurrent matrix back removes most of the new family and restores most of the earlier one.
+
+### 23.3 What it does not show
+
+- **One seed.** The three rules agree; other seeds are asked for below.
+- **That few weights could not do it.** A change spread over many weights is what this optimizer produces: it moves every weight whose gradient keeps its sign by about the same amount. Whether a learner allowed few connections reaches the same result is E42's question. The low rank says only that the change needed has few directions.
+- **Anything after row 64 but before row 8,192,** and anything about pairs with letters.
+
+### 23.4 One request
+
+The row-64 weights of the lived S and B runs of seeds 93683 and 116089 (four files, about 18 MB; their hashes are in the receipts), to repeat this on three seeds.
