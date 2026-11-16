@@ -79,12 +79,13 @@ def reminder(rule, seed, cmd):
     print(name, "complete", flush=True)
 
 
-def plain(rule, seed, lr, cmd):
-    """exp43_unrelated.run's unrelated arm, copied, with SGD(lr) in place of AdamW."""
+def plain(rule, seed, lr, cmd, updates=4096):
+    """exp43_unrelated.run's unrelated arm, copied, with SGD(lr) in place of AdamW. updates = 16384: the brief's condition failed at 4,096, so the
+    run is repeated from the birth to 16,384 (rows 8,192 and 16,384 added); its rows to 4,096 must equal the 4,096 run's hashes (checked by `check16`)."""
     local = C.ARMS[rule]
     arch26.install()
     OUT.mkdir(parents=True, exist_ok=True); (OUT / "rows_uncommitted").mkdir(exist_ok=True)
-    tag = f"e43_unrelated-plain_lr{lr:g}_{rule}_{seed}"; path = OUT / f"{tag}.json"; R.refuse_existing(path)
+    tag = f"e43_unrelated-plain_lr{lr:g}_{rule}_{seed}" + ("" if updates == 4096 else f"_to{updates}"); path = OUT / f"{tag}.json"; R.refuse_existing(path)
     bfile = C.birth_path(E38.E26DIR, rule, seed); m, birth_sha, admission = E38.admit(bfile, rule, seed)
     bsd = T.load(bfile); m.load_state_dict(bsd); birth_tsha = R.tensors_sha(m.state_dict())
     opt = T.optim.SGD(m.parameters(), lr=lr)
@@ -110,7 +111,7 @@ def plain(rule, seed, lr, cmd):
         r["score6_state_change"] = dict(mean_abs_change=float((h - h0).abs().mean()), mean_abs_state_row0=h0_mean, ratio=float((h - h0).abs().mean()) / h0_mean)
         cpu_score[0] += time.process_time() - cb
         r["tensors_sha256"] = R.tensors_sha(m.state_dict())
-        wp = (OUT if g in PCOMMIT else OUT / "rows_uncommitted") / f"{tag}_row{g}.pt"
+        wp = (OUT if g in PCOMMIT or g == 16384 else OUT / "rows_uncommitted") / f"{tag}_row{g}.pt"
         r["weights"] = str(wp.relative_to(OUT)); r["weights_sha256"] = R.save_weights(m, wp)
         r["cpu"] = time.process_time() - t0
         rows.append(r); losses.clear()
@@ -121,7 +122,7 @@ def plain(rule, seed, lr, cmd):
 
     settings = dict(experiment="E43 addendum 1", arm="unrelated-plain", rule=rule, local=local, seed=seed, lr=lr, optimizer="torch.optim.SGD, no momentum",
                     optimizer_groups_read_back=groups, decay=0.0, birth=str(bfile.relative_to(HERE)), birth_sha256=birth_sha,
-                    birth_tensors_sha256=birth_tsha, birth_admission=admission, rows=list(U.ROWS), committed_rows=list(PCOMMIT),
+                    birth_tensors_sha256=birth_tsha, birth_admission=admission, rows=list(U.ROWS) + ([8192, 16384] if updates == 16384 else []), committed_rows=list(PCOMMIT) + ([16384] if updates == 16384 else []),
                     task_file_sha256=X16.sha_file(HERE / "e43_task.py"), provenance=provenance(cmd))
 
     def write(complete=None):
@@ -129,13 +130,13 @@ def plain(rule, seed, lr, cmd):
                                         rows=rows, complete=complete), indent=1))
 
     score_row(0); g = 0
-    while g < U.DOSE:
+    while g < updates:
         batch = next(bt)
         assert all(b >= 128 for p, _ in batch for b in p)
         dg.add(batch)
         losses.append(E38.step(m, opt, batch, local))
         g += 1
-        if g in U.ROWS:
+        if g in U.ROWS or g in (8192, 16384):
             score_row(g); write()
     write(dict(updates=g, tensors_sha256=R.tensors_sha(m.state_dict()), data_digest=dg.value(), cpu_total=time.process_time() - t0, cpu_scoring=cpu_score[0]))
     print(tag, "complete", flush=True)
@@ -162,6 +163,19 @@ def check(cmd):
     print("reminder checks", "pass" if res["pass"] else "FAIL", res, flush=True)
 
 
+def check16(cmd):
+    """The 16,384 reruns: rows 0 to 4,096 have the same tensors_sha256 and batch digests as the 4,096 runs."""
+    res = {}
+    for f in sorted(OUT.glob("e43_unrelated-plain_lr*_to16384.json")):
+        long = {r["updates"]: r for r in json.loads(f.read_text())["rows"]}
+        short = {r["updates"]: r for r in json.loads((OUT / f.name.replace("_to16384", "")).read_text())["rows"]}
+        res[f.stem] = {u: short[u]["tensors_sha256"] == long[u]["tensors_sha256"] and short[u]["data_digest"] == long[u]["data_digest"] for u in short}
+    res["pass"] = bool(res) and all(all(v.values()) for v in res.values())
+    p = OUT / "e43_addendum_plain16384_checks.json"; R.refuse_existing(p)
+    p.write_text(json.dumps(dict(command=cmd, provenance=provenance(cmd), result=res), indent=1))
+    print("check16", "pass" if res["pass"] else "FAIL", res, flush=True)
+
+
 if __name__ == "__main__":
     T.set_num_threads(1)
     a = sys.argv[1:]
@@ -169,8 +183,10 @@ if __name__ == "__main__":
     if a[0] == "reminder":
         reminder(a[1], int(a[2]), cmd)
     elif a[0] == "plain":
-        plain(a[1], int(a[2]), float(a[3]), cmd)
+        plain(a[1], int(a[2]), float(a[3]), cmd, int(a[4]) if len(a) > 4 else 4096)
     elif a[0] == "check":
         check(cmd)
+    elif a[0] == "check16":
+        check16(cmd)
     else:
         raise SystemExit(__doc__)
