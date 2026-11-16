@@ -345,5 +345,5 @@ Including the earlier additions, the remote now holds 101 weight files under `ex
 
 ## Limits
 
-- **The P8 row files hold the network's `state_dict` only.** They omit the learned period coefficients `a` (8 × 256), which change in training. The mask, periods and phases are E42's, unchanged, since no replacement event was run. So the P8 networks at 4,096 cannot be rebuilt from the committed files alone; the receipts record only `a`'s relative change, not its values. F10 has no added parameters and is complete. Rerunning the two P8 runs with `a` saved would take about 1.3 CPU-hours.
+- **The P8 row files hold the network's `state_dict` only.** They omit the learned period coefficients `a` (8 × 256), which change in training. The mask, periods and phases are E42's, unchanged, since no replacement event was run. So the P8 networks at 4,096 cannot be rebuilt from the committed files alone; the receipts record only `a`'s relative change, not its values. F10 has no added parameters and is complete. Rerunning the two P8 runs with `a` saved would take about 0.4 CPU-hours (703 and 621 CPU-s here). Its relative change at 4,096 is 0.44 (sweep) and 0.40 (backpropagation).
 - **Not independently reviewed.** No result here has been independently reviewed.
