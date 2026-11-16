@@ -1,6 +1,6 @@
-# E39 (jobs L0 and L1): the small world — a protocol for long lives, and its calibration (15 November 2026, revision 3 of 16 November)
+# E39 (jobs L0 and L1): the small world — a protocol for long lives, and its calibration (15 November 2026, revision 4 of 16 November)
 
-Evidence level: none for L0 (it is an instrument); E2 for anything L1 measures, and a result in the small world is a claim only after it is repeated at full scale. The programme is the outside reviewer's (its memo, revision 3, sections 17 and 18, on `claude/vibrant-cerf-sje726` at 823a3884), written after the user's statements of 15 November. The specification below is mine. Revision 1 (18751457) had its one audit (`AUDIT_E39_SMALL_WORLD_PROTOCOL_20261115.md` on `claude/vibrant-cerf-sje726`), which required eight changes and stated that after them no re-audit is needed; check 1 with the audited digests stands in for one. Revision 2 makes them; the last section lists them. **Released.** **Revision 3 adds jobs L1a and L1b at the end, after L1's gate failed at every rung; that addition is not released and waits for the reviewer's audit. Nothing above it changes.** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each; launch outside any wrapper with a time limit.
+Evidence level: none for L0 (it is an instrument); E2 for anything L1 measures, and a result in the small world is a claim only after it is repeated at full scale. The programme is the outside reviewer's (its memo, revision 3, sections 17 and 18, on `claude/vibrant-cerf-sje726` at 823a3884), written after the user's statements of 15 November. The specification below is mine. Revision 1 (18751457) had its one audit (`AUDIT_E39_SMALL_WORLD_PROTOCOL_20261115.md` on `claude/vibrant-cerf-sje726`), which required eight changes and stated that after them no re-audit is needed; check 1 with the audited digests stands in for one. Revision 2 makes them; the last section lists them. **Released.** **Revisions 3 and 4 add jobs L1a and L1b at the end, after L1's gate failed at every rung. Revision 3 was audited (`AUDIT_E39_REVISION3_BIRTH_PHASE_20261116.md` on `claude/vibrant-cerf-sje726` at 7b59ae8b): six required changes, then release without a re-audit. Revision 4 makes them. L1a and L1b are released. Nothing above them changes.** One worker. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each; launch outside any wrapper with a time limit.
 
 Shell names: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; K=PROJECT_DOCUMENTS/COORD_CHECKS_20261115`.
 
@@ -198,9 +198,9 @@ The sentence under "Arms the runner must offer" that lists later candidates (an 
 
 ---
 
-# Revision 3 (16 November 2026): L1 read; a measurement and a birth phase (jobs L1a and L1b)
+# Revisions 3 and 4 (16 November 2026): L1 read; a measurement and a birth phase (jobs L1a and L1b)
 
-**Not released: this section waits for the reviewer's audit.** The recommendation is the reviewer's (16 November): before any other change, a birth phase in the small world (joint training on the first few tasks until they reach the criterion, then the life as specified), preceded by a measurement of how many updates the small network needs to learn one linear task alone. The generator does not change. The specification is mine. The same worker, whose branch `claude/gallant-edison-p0qa68` (42fe1a24) is merged.
+**Released as revision 4.** The recommendation is the reviewer's (16 November): before any other change, a birth phase in the small world (joint training on the first few tasks until they reach the criterion, then the life as specified), preceded by a measurement of how many updates the small network needs to learn one linear task alone. The generator does not change. The specification is mine. The same worker, whose branch `claude/gallant-edison-p0qa68` (42fe1a24) is merged.
 
 ## L0 and L1 as I read them
 
@@ -213,45 +213,81 @@ The sentence under "Arms the runner must offer" that lists later candidates (an 
 
 At full scale the same shape is on file: a fresh network needs thousands of updates for its first family, and a lived one takes a new modulus within 64 to 128 updates (E36, E40). So the small world as run asks every task to be a first task. The addition below gives the learner a birth, and first measures what a birth costs here.
 
+## The criterion, in both jobs (the audit's change 1)
+
+A task is **at the criterion** at a check, made every 64 updates, if the share right over all of its asked items in the last 64 updates is at least 0.8 (1,024 items for a task alone, about 256 a task in a birth). L1a's updates to criterion and the end of a birth both use it.
+
+The 32-item window I wrote in revision 3 is met by chance well below 0.8: examined at every asked item of a solo run it is passed at a true level of about 0.55 to 0.6, and at a birth's checks at about 0.65 to 0.7 (the audit's table). It stays in L1a's table as a second column, for comparison with L1, and decides nothing.
+
 ## Job L1a: how many updates does the small network need for one linear task alone?
 
-**Runs.** One task alone, from the network's initial values, 16,384 updates. Six tasks of world 1, chosen by rule so that nothing is picked by eye: in each of three bands of modulus (8 to 13, 18 to 24, 30 to 37), the task of lowest id whose operation is linear with c1 ≠ c2, and the task of lowest id whose operation is linear with c1 = c2. Sizes H = U = 64 and 96. Arms `naive` and `sweep`. Default learning rate and decay. 24 runs.
+**Runs.** One task alone, from the network's initial values, 16,384 updates. Six tasks of world 1 and six of world 2, chosen by rule so that nothing is picked by eye: in each of three bands of modulus (8 to 13, 18 to 24, 30 to 37), the task of lowest id whose operation is linear with c1 ≠ c2, and the task of lowest id whose operation is linear with c1 = c2. Sizes H = U = 64 and 96. Arms `naive` and `sweep`. Default learning rate and decay. 48 runs.
 
-**The solo stream, in the runner (the generator file does not change).** Each update draws 64 items in order, the first 48 taught, by the item rules of `visit_batches` with the single task in place of the group and the generator `Random(f"world|{S}|solo|{task id}")`: pair `pool[randrange(len(pool))]`, then `randint(0, 4)` for k, then k letters by `choice`. (No draw is made for the task, since there is one.) Asked items are answered before the update, as in a life. Initial values: `T.manual_seed(S)` then the constructor, as a life's.
+The rule gives (the audit's list for world 1; the worker prints both worlds'):
 
-**Recorded**, from an event file of the life's layout: `seen` and the update at the first asked item at which the mean of the task's last 32 asked items is at least 0.8 (**updates to criterion**), or "not reached" with the mean of the last 256 asked items; the same for 0.5; the share right on wrap and on no-wrap asked items over the last 256.
+| Band | World 1, c1 ≠ c2 | World 1, c1 = c2 | World 2 |
+|---|---|---|---|
+| 8 to 13 | task 20, −a + 2b mod 9, 40 taught pairs | task 2, a + b mod 8, 32 taught pairs | among tasks 0, 4, 6, 7, 13, 24 |
+| 18 to 24 | task 5, a − b mod 23, 264 | task 1, 2a + 2b mod 19, 180 | |
+| 30 to 37 | task 3, −a − 2b mod 33, 544 | task 12, −a − b mod 37, 684 | |
 
-**What is tabled:** per size and arm, the six tasks' updates to criterion and their median, counting "not reached" as above 16,384.
+All runs of a world at a size start from the same initial values (`T.manual_seed(S)`), so they differ in the task only. World 2 is a second set of initial values (the audit's recommendation): with one world the choice of size would rest on four tasks and one draw of the weights.
 
-**Cost:** from L1's measured 3.5 to 9.9 CPU-seconds per 256 or 512 updates, each run is 4 to 6 CPU-minutes; about 2 CPU-hours in all.
+**The solo stream, in the runner (the generator file does not change).** Each update draws 64 items in order, the first 48 taught, by the item rules of `visit_batches` with the single task in place of the group and **one generator for all the run's updates**, `Random(f"world|{S}|solo|{task id}")`: pair `pool[randrange(len(pool))]`, then `randint(0, 4)` for k, then k letters by `choice`. **No draw is made for the task**, since there is one; a runner that calls `visit_batches` with a one-task group draws `randrange(1)` and produces other items. In a solo event file the `visit` column is 0 throughout. Asked items are answered before the update, as in a life. Initial values: `T.manual_seed(S)` then the constructor, as a life's.
+
+**Recorded**, from an event file of the life's layout: the update of the first check at which the task is at the criterion (**updates to criterion**), or "not reached"; the same for a share of 0.5; in a second column, `seen` and the update at the first asked item at which the mean of the last 32 asked items is at least 0.8; and, for every run whether it reached or not, the share right over the last 256 asked items, on wrap and no-wrap items separately, and the mean training loss over the last 64 updates, which separates a network that has memorised the taught pairs from one that has learned nothing.
+
+**What is tabled:** per size and arm, each task's updates to criterion with its count of taught pairs.
+
+**Cost:** from L1's measured 3.5 to 9.9 CPU-seconds per 256 or 512 updates, each run is 4 to 6 CPU-minutes; about 3.5 CPU-hours for the 48.
 
 ## Job L1b: the life with a birth
 
-**The setting is chosen from L1a by a rule fixed now.** Use the smaller of the two sizes at which the median updates to criterion under `naive` is at most 8,192; visits of 512 updates. If neither size meets it, stop and report: the small network does not learn one linear task alone in affordable updates, and the task space or the learner's settings are the next thing to change, which is a decision for the reviewer and me and not a rung.
+**The setting is chosen from L1a by a rule fixed now** (the audit's change 2). A size qualifies if, under `naive`, at least six of the eight tasks of the two upper bands (world 1's tasks 1, 3, 5 and 12 and world 2's four) reach the criterion within 8,192 updates. Use the smaller qualifying size, with visits of 512 updates. If neither qualifies, stop and report: the task space or the learner's settings are the next thing to change, which is a decision for the reviewer and me and not a rung.
+
+The tasks of the band 8 to 13 (32 and 40 taught pairs in world 1) are run and tabled and are not counted. It is likely, though not shown, that a fresh network cannot learn a linear task of small modulus alone to the criterion on untaught pairs, for want of examples: in L1 2 of 38 such tasks reached it, and at full scale a fresh network given a tenth of the pairs memorises them. A median over all six, which revision 3 used, would also have let a size qualify with half its tasks beyond what a birth allows.
 
 **The birth.** Before visit 0, the learner is trained jointly on the tasks of groups 0 and 1 (four tasks).
 
-- **Stream, in the runner:** each update draws 64 items in order, the first 48 taught, with the generator `Random(f"world|{S}|birth")`: task `tasks[randrange(4)]` with `tasks` the four in id order, then pair, k and letters as in a visit. Asked items are answered before the update.
-- **End of the birth:** checked after every 64 updates; the birth ends at the first check at which each of the four tasks has at least 32 asked items and the mean of its last 32 is at least 0.8. **Cap: 32,768 updates.** A birth that reaches the cap is recorded as not complete and its life still runs.
-- **Each arm is born by its own rule:** `naive` by backpropagation, `sweep` by the sweep, with the optimizer that then serves the life.
+- **Stream, in the runner:** each update draws 64 items in order, the first 48 taught, with **one generator for the whole birth**, `Random(f"world|{S}|birth")`: task `tasks[randrange(4)]` with `tasks` the four in id order, then pair, k and letters as in a visit. Asked items are answered before the update.
+- **End of the birth** (the audit's change 3): checked after every 64 updates; the birth is complete at the first check at which at least three of its four tasks are at the criterion. The share right of all four is recorded at every check and at the end. **Cap: 32,768 updates.** A birth that reaches the cap is recorded as not complete and its life still runs. (Four of the eight worlds have a birth task of modulus 13 or less, which may never be learned; with all four required those births would run to the cap whatever else happened.)
+- **Three arms.** `naive`: born by backpropagation, lives by it. `sweep`: born by the sweep, lives by it. **`sweep-after-naive` (the reviewer's request):** the sweep's life starting from the `naive` arm's state at the end of its birth, optimizer state included. The project's constraint allows any optimizer before life, and the brief expects the sweep's own birth often not to complete; without this arm the sweep would then have no life that can be read.
 - **Then the life as specified,** from visit 0 with the unchanged schedule and items. The schedule's visits to groups 0 and 1 are returns for the scorer.
 
-**The scorer** takes `--birth-groups 0,1`. The four birth tasks are left out of the first-visit quantities and of the trend of learning; tasks are numbered from the first task that is not a birth task. Their visits are tabled under "kept at return" with the absence counted from the end of the birth. Every `seen` count includes the birth's items for those tasks. The event file gains the birth's asked items with `visit` = 65,535.
+**The scorer** takes `--birth-groups 0,1` (the audit's change 4). The four birth tasks are left out of the first-visit quantities and of the trend of learning. **The trend of learning is fitted over every task that is not a birth task, from n = 1**, with tasks numbered from the first that is not a birth task. **The birth counts as a visit before visit 0**: a birth task's first visit in the life has an absence of its visit number plus one, so visit 0 of group 0 has absence 1. Every `seen` count includes the birth's items for those tasks. The event file gains the birth's asked items with `visit` = 65,535. The reviewer's scorer implements both definitions (`score(..., birth_tasks=...)` in `e39_world.py`) with a hand-computed fixture of two birth tasks and two later ones (`e39_world.py spec scorer`), which may be used for check 13.
 
 **The ledger** gives the birth's updates and items beside the life's; computation to any threshold includes them.
 
-**Lives.** Worlds 1 to 8, 64 visits, arms `naive` and `sweep`: sixteen lives with their births. With births at the cap this is at most about 4 CPU-hours.
+**Lives.** Worlds 1 to 8, 64 visits, three arms: 24 lives, sixteen of them with a birth of their own. With births at the cap the sixteen are at most about 4.0 CPU-hours at 64 units and 5.4 at 96 (the audit's figures from L1's measured rates); the third arm adds 1 to 1.3.
 
-**The gate (this rung's).** Under `naive`, in at least six of eight worlds: (1) the birth completes within the cap; (2) the median first-visit level of the tasks met after the birth groups is between 0.10 and 0.90; and a life of 1,024 visits with its birth is forecast within 6 CPU-hours. If it passes, this setting with its birth is the protocol's size and L2 follows by roster note. If it fails, stop and report; nothing further is tried without a new decision.
+**The gate (this rung's).** Under `naive`, in at least six of eight worlds: (1) the birth is complete within the cap, by the definition above; (2) the median first-visit level of the tasks met after the birth groups is between 0.10 and 0.90; and a life of 1,024 visits with its birth is forecast within 6 CPU-hours. If it passes, this setting with its birth is the protocol's size and L2 follows by roster note.
 
-**Reported beside the gate:** everything L1 reports, with first-visit level by kind of operation (linear with c1 ≠ c2, linear with c1 = c2, max, min) as the worker's report already gives; the birth's updates per world and arm; and the first-visit level of linear tasks here beside L1's at the same size and visit length (0.12 at both higher rungs under `naive`).
+**One further step for each way it can fail, named now so that neither ends in a new round** (the audit's recommendation). If the median of (2) is above 0.90: the same lives with visits of 256 updates. If it is below 0.10 with births complete: a birth on groups 0 to 3, complete when six of its eight tasks are at the criterion, with a cap of 65,536 updates. If births are not complete in six worlds: stop and report. After the one further step, stop and report whatever it gives.
+
+Comparisons between the arms in L1b are descriptions; the gate is `naive`'s alone.
+
+**Reported beside the gate:** per world, the visit at which the first later group is met (visit 6 to 29; the birth groups take 14 to 43 of the 64 visits, and the later tasks number 12 to 32 a world) and the birth tasks' levels at their last visit before it; everything L1 reports, with first-visit level by kind of operation (linear with c1 ≠ c2, linear with c1 = c2, max, min) as the worker's report already gives; the birth's updates per world and arm; and the first-visit level of linear tasks here beside L1's at the same size and visit length (0.12 at both higher rungs under `naive`).
 
 ## Checks added
 
-10. **Solo and birth streams.** The reviewer's implementation gives the same digest as the runner's for the first 256 updates of one solo stream and of the birth stream of worlds 1, 2 and 3. The worker commits its digests first.
+10. **Solo and birth streams.** The digest is the world digest's rule (the bytes `[id // 256, id % 256, a, b, len(prompt)]`, the prompt, each answer value mod 256) over each update's taught then asked items, for the first 256 updates. The runner's digests equal the reviewer's for all six solo streams of world 1 and the births of worlds 1, 2 and 3 (`python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e39_world.py spec streams` on `claude/vibrant-cerf-sje726`):
+
+    | Stream | SHA-256 |
+    |---|---|
+    | solo, world 1, task 1 | 1fd661d4df3adec6… |
+    | solo, world 1, task 2 | 84af069bc95624b1… |
+    | solo, world 1, task 3 | 435f5c4638f01a12… |
+    | solo, world 1, task 5 | 81271cee73bc7a2e… |
+    | solo, world 1, task 12 | 69fc5bf96bedb841… |
+    | solo, world 1, task 20 | 3de3b1eda53ced30… |
+    | birth, world 1 | 8ac9eb07e8e1beb2… |
+    | birth, world 2 | db31da0c84814890… |
+    | birth, world 3 | 1e012e3c01a63ec1… |
 11. **The life after a birth is the life.** The stream digest of the 64 visits after a birth equals `sw_world.digest` of that world at that visit length, as in L1.
 12. **Birth and resume.** A life with a birth, stopped at the state of visit 4 and resumed, gives the hashes and event file of the uninterrupted one.
 13. **The scorer with birth groups.** On a hand-made event file with two birth tasks and two later tasks, every quantity equals its hand-computed value; without `--birth-groups` the scorer's output on an L1 event file is unchanged.
+14. **The new quantities, by a second implementation.** The worker commits the event files of the 48 solo runs and of world 1's births; the reviewer recomputes the updates to criterion and the update at which each birth ends. This check does not hold the runs.
+15. **The third arm's start.** The `sweep-after-naive` life's state at visit 0 has the weights hash and optimizer-state hash of the `naive` arm's state at the end of its birth.
 
 ## What this cannot show
 
@@ -263,15 +299,29 @@ At full scale the same shape is on file: a fresh network needs thousands of upda
 
 | | Prediction | Chance |
 |---|---|---|
-| P39.10 | L1a: at 96 units the median updates to criterion under `naive` is at most 8,192 | 60% |
-| P39.11 | L1a: at 64 units the same | 40% |
-| P39.12 | L1a: under the sweep at 96 units, at least four of the six tasks reach the criterion within 16,384 updates | 25% |
-| P39.13 | L1a: tasks with c1 = c2 reach the criterion in fewer updates than those with c1 ≠ c2 in the same band, in at least two of three bands (`naive`, 96 units) | 60% |
-| P39.14 | L1b: the birth completes within the cap in at least six of eight worlds under `naive` | 55% |
+| P39.10 | L1a: 96 units qualifies (six of the eight upper-band tasks at the criterion within 8,192 updates under `naive`); restated on the audit's rule | 45% |
+| P39.11 | L1a: 64 units qualifies | 25% |
+| P39.12 | L1a: under the sweep at 96 units, at least four of the eight upper-band tasks reach the criterion within 16,384 updates | 25% |
+| P39.13 | L1a, world 1, `naive`, 96 units: the task with c1 = c2 reaches the criterion in fewer updates than the one with c1 ≠ c2 in the same band, in at least two of three bands; a band in which neither reaches does not count as fewer | 50% |
+| P39.18 | L1a: no task of the band 8 to 13 reaches the criterion under `naive` at either size, in either world | 55% |
+| P39.14 | L1b: the birth is complete (three of four tasks) within the cap in at least six of eight worlds under `naive` | 60% |
 | P39.15 | L1b: the gate passes | 35% |
 | P39.16 | L1b: the mean first-visit level of linear tasks met after the birth is at least twice L1's figure at the same size and visit length, under `naive` | 55% |
-| P39.17 | L1b: the sweep's birth completes within the cap in at least six of eight worlds | 15% |
+| P39.17 | L1b: the sweep's own birth is complete within the cap in at least six of eight worlds | 15% |
+| P39.19 | L1b: `sweep-after-naive`'s mean first-visit level of later tasks is within 0.10 of `naive`'s, in six of eight worlds | 40% |
 
 ## Done
 
-L1a: the 24 runs with receipts and the table. L1b: checks 10 to 13, sixteen lives with births, and an addendum to `E39_REPORT.md` with the gate, the listed figures and the outcome of P39.10 to P39.17. No readings beyond these.
+L1a: the 48 runs with receipts and the table. L1b: checks 10 to 15, 24 lives, and an addendum to `E39_REPORT.md` with the gate, the listed figures and the outcome of P39.10 to P39.19. No readings beyond these.
+
+## What changed from revision 3 (the audit)
+
+| | Change | Required? |
+|---|---|---|
+| 1 | One criterion in both jobs: the share right over all of a task's asked items in the last 64 updates, checked every 64 updates. My 32-item window was passed by chance at a true level of 0.55 to 0.7, differently in the two jobs. | yes |
+| 2 | The size is set by "six of the eight upper-band tasks within 8,192 updates", not by a median over six; the small-modulus tasks are tabled and not counted | yes |
+| 3 | A birth is complete when three of its four tasks are at the criterion | yes |
+| 4 | Two scorer definitions: the birth is a visit before visit 0; the trend of learning is fitted from n = 1 over tasks that are not birth tasks | yes |
+| 5 | The two streams: one generator each; what the digest hashes; all six solo streams and three births against the reviewer's digests; the `visit` column of a solo file; check 14 | yes |
+| 6 | L1b's cost at 96 units is 5.4 CPU-hours, not 4 | yes |
+| — | The third arm, `sweep-after-naive`, as the reviewer asked; a second world for L1a; one named further step per failure of the gate; the added report items; P39.13's wording | recommended |
