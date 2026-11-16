@@ -24,6 +24,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 12.** Section 23 is added: a read-only measurement of what the first 64 updates change when a network that has lived learns a new family, on E40's files of seed 73129. It asks for four more files (item 11 of section 1).
 
+**Revision 13.** Section 23 is repeated on seeds 93683 and 116089 with the four files the E40 worker committed (6922a3a4). The four readings hold on all three seeds under the sweep and under backpropagation; the tables of 23.1 now give the three seeds. Item 11 of section 1 is done.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -53,7 +55,7 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 10. **Brief one more full-scale job, E42: cells with a limited number of local connections and their own periods** (section 22). Forty-eight births in two stages after a stage of checks, 50 to 70 CPU-hours by my estimate. It comes to me before any worker starts. It does not wait for the small world and displaces nothing released.
 
-11. **Ask the E40 worker for four more files** (section 23.4): the row-64 weights of the lived S and B runs of seeds 93683 and 116089, whose hashes are in the receipts. About 18 MB. They let me repeat section 23 on three seeds.
+11. *(Done, revision 13.)* **Ask the E40 worker for four more files** (section 23.4): the row-64 weights of the lived S and B runs of seeds 93683 and 116089, whose hashes are in the receipts. About 18 MB. They let me repeat section 23 on three seeds.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -856,44 +858,50 @@ Probes, fixed once: for add and for sub of the new family (mod 83, a tenth taugh
 
 ### 23.1 Figures
 
-Never-taught pairs of the new family that need the reduction, percent right:
+Never-taught pairs of the new family that need the reduction, percent right. Seeds 73129, 93683, 116089 in that order; K has row-64 weights for seed 73129 only.
 
-| Network | Lived under the sweep | Under backpropagation | Under K |
+| Network | Lived under the sweep | Under backpropagation | Under K (73129) |
 |---|---|---|---|
-| Life end | 6.2 | 4.2 | 8.8 |
-| After 64 updates | 75.6 | 84.1 | 80.3 |
-| After 8,192 updates | 76.8 | 84.8 | 79.4 |
-| Life end, with only the input map and the recurrent matrix taken from row 64 | 57.1 | 68.0 | 70.9 |
-| Life end, with only the recurrent matrix from row 64 | 33.8 | 44.1 | 61.0 |
-| Life end, with only the input map from row 64 | 16.5 | 9.4 | 27.1 |
-| Life end, with only the readout (`lm`, `l2`, `l3`) from row 64 | 7.3 | 7.2 | 12.0 |
-| Life end, with only the byte table and `l1` from row 64 | 8.3 | 5.1 | 12.8 |
-| Row 64, with the recurrent matrix put back to the life's end | 24.0 | 24.3 | 38.8 |
-| Life end plus the largest 1% of the changes | 7.9 | 3.8 | 10.6 |
-| Life end plus the largest 5% | 15.6 | 4.7 | 17.8 |
-| Life end plus the largest 20% | 38.4 | 29.7 | 52.7 |
-| Life end plus the largest 50% | 66.2 | 76.9 | 78.1 |
-| Every matrix's change replaced by its best approximation of rank 4 | 41.0 | 53.1 | 60.5 |
-| Of rank 8 | 62.3 | 74.4 | 75.1 |
-| Of rank 16 | 71.0 | 81.2 | 79.2 |
+| Life end | 6.2, 2.3, 0.1 | 4.2, 0.4, 11.6 | 8.8 |
+| After 64 updates | 75.6, 69.8, 75.5 | 84.1, 92.3, 95.7 | 80.3 |
+| After 8,192 updates | 76.8, 82.5, 82.9 | 84.8, 94.1, 89.1 | 79.4 |
+| Life end, with only the input map and the recurrent matrix taken from row 64 | 57.1, 63.0, 64.6 | 68.0, 85.2, 87.5 | 70.9 |
+| Life end, with only the recurrent matrix from row 64 | 33.8, 39.8, 44.0 | 44.1, 70.5, 71.5 | 61.0 |
+| Life end, with only the input map from row 64 | 16.5, 13.4, 7.0 | 9.4, 29.3, 44.0 | 27.1 |
+| Life end, with only the readout (`lm`, `l2`, `l3`) from row 64 | 7.3, 5.3, 0.8 | 7.2, 2.1, 13.7 | 12.0 |
+| Life end, with only the byte table and `l1` from row 64 | 8.3, 4.2, 1.0 | 5.1, 7.3, 17.4 | 12.8 |
+| Row 64, with the recurrent matrix put back to the life's end | 24.0, 16.4, 14.3 | 24.3, 28.8, 62.6 | 38.8 |
+| Life end plus the largest 1% of the changes | 7.9, 4.0, 0.8 | 3.8, 0.8, 12.4 | 10.6 |
+| Life end plus the largest 5% | 15.6, 11.0, 2.1 | 4.7, 14.9, 17.0 | 17.8 |
+| Life end plus the largest 20% | 38.4, 27.7, 32.3 | 29.7, 65.0, 72.3 | 52.7 |
+| Life end plus the largest 50% | 66.2, 68.1, 72.8 | 76.9, 92.9, 95.2 | 78.1 |
+| Every matrix's change replaced by its best approximation of rank 4 | 41.0, 25.1, 24.0 | 53.1, 49.4, 80.0 | 60.5 |
+| Of rank 8 | 62.3, 47.0, 45.4 | 74.4, 81.2, 90.1 | 75.1 |
+| Of rank 16 | 71.0, 61.8, 67.0 | 81.2, 90.5, 95.4 | 79.2 |
 
-The earlier family mod 97: 92.8, 94.5, 93.7 at the life's end; 77.0, 64.6, 80.4 after 64 updates; 89.6, 89.8, 91.2 after 64 updates with the recurrent matrix put back.
+The earlier family mod 97, percent right:
 
-How far the weights moved in 64 updates: each weight matrix by 4 to 12% of its size at the life's end (`l2` by 31%), the byte table by 0.3%. The rows of the four new code bytes moved by 0.02 to 0.06 against sizes of 2.2 to 3.3; the rows of the earlier families' codes did not move at all.
+| | Lived under the sweep | Under backpropagation |
+|---|---|---|
+| Life end | 92.8, 90.2, 95.2 | 94.5, 98.8, 94.0 |
+| After 64 updates | 77.0, 54.0, 47.5 | 64.6, 56.4, 57.2 |
+| After 64 updates, with the recurrent matrix put back | 89.6, 83.7, 93.3 | 89.8, 95.9, 93.0 |
+
+How far the weights moved in 64 updates (seed 73129): each weight matrix by 4 to 12% of its size at the life's end (`l2` by 31%), the byte table by 0.3%. The rows of the four new code bytes moved by 0.02 to 0.06 against sizes of 2.2 to 3.3; the rows of the earlier families' codes did not move at all.
 
 ### 23.2 Readings
 
-1. **What is learned in 64 updates lies in the recurrent layer.** The changes to its input map and its recurrent matrix, placed alone on the life-end network, give 57 to 71 of the 76 to 84 points. The changes to the readout give nothing by themselves, and neither do those to the byte table and `l1`.
+1. **What is learned in 64 updates lies in the recurrent layer.** The changes to its input map and its recurrent matrix, placed alone on the life-end network, give 57 to 65 of the 70 to 76 points under the sweep and 68 to 88 of the 84 to 96 under backpropagation. The changes to the readout give nothing by themselves, and neither do those to the byte table and `l1`.
 2. **The new codes' rows of the byte table are used as they stood.** They were never trained before E40 and moved by about one percent of their size. The network reads four random vectors it had never seen and adjusts what follows them.
-3. **The change is spread over many weights and is low in rank.** The largest 5% of the changed weights give almost nothing; half of them are needed for most of the effect. But an approximation of rank 8 of each matrix's change recovers 62 to 75 points, and of rank 16 nearly all.
-4. **The gain and the loss are in the same matrix.** Putting the recurrent matrix back removes most of the new family and restores most of the earlier one.
+3. **The change is spread over many weights and is low in rank.** The largest 5% of the changed weights add at most 15 points; half of them are needed for most of the effect. But an approximation of rank 16 of each matrix's change recovers 62 to 71 of the 70 to 76 points under the sweep and 81 to 95 of the 84 to 96 under backpropagation. At rank 8 the sweep's change recovers less of its total (45 to 62) than backpropagation's (74 to 90): the sweep's change has somewhat more directions. I note it and do not read it further.
+4. **The gain and the loss are in the same matrix.** Putting the recurrent matrix back removes most of the new family and restores the earlier one to 84 to 96%, in all six networks.
 
 ### 23.3 What it does not show
 
-- **One seed.** The three rules agree; other seeds are asked for below.
+- **More than three seeds, or K beyond one.** The readings hold in all six networks of the sweep and backpropagation and in the one of K.
 - **That few weights could not do it.** A change spread over many weights is what this optimizer produces: it moves every weight whose gradient keeps its sign by about the same amount. Whether a learner allowed few connections reaches the same result is E42's question. The low rank says only that the change needed has few directions.
 - **Anything after row 64 but before row 8,192,** and anything about pairs with letters.
 
-### 23.4 One request
+### 23.4 The request, met
 
-The row-64 weights of the lived S and B runs of seeds 93683 and 116089 (four files, about 18 MB; their hashes are in the receipts), to repeat this on three seeds.
+The row-64 weights of the lived S and B runs of seeds 93683 and 116089 were committed by the E40 worker at 6922a3a4, and the tables above include them.

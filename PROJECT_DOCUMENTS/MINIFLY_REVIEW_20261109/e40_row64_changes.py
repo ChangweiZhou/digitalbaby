@@ -1,7 +1,7 @@
-"""What 64 updates change when a network that has lived learns a new family (E40, seed 73129).  Read-only.
+"""What 64 updates change when a network that has lived learns a new family (E40).  Read-only.
 
 Files: the life-end weights (row 0 of E40's lived runs) on the default branch, and rows 64 and 8,192 of the same runs on
-claude/vibrant-allen-8hziln at 45b6fd79.  Nothing is trained; every figure is a forward pass of the numpy reader on saved
+claude/vibrant-allen-8hziln at 6922a3a4 (lived S and B for three seeds, lived K for seed 73129).  Nothing is trained; every figure is a forward pass of the numpy reader on saved
 or recombined weights.  Whole answers (two digits and the end symbol), no letters.
 
   A  scores at rows 0, 64 and 8,192: the new family (mod 83, a tenth taught) on never-taught pairs, with and without the
@@ -12,7 +12,7 @@ or recombined weights.  Whole answers (two digits and the end symbol), no letter
      number chosen at random
   E  how many directions are needed: every matrix's change replaced by its best approximation of rank k
 
-Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e40_row64_changes.py [A B C D E] [armS armB armK]
+Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e40_row64_changes.py [A B C D E] [armS armB armK] [seed93683]
 """
 import os, sys
 from random import Random
@@ -21,10 +21,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from np_gru import load_weights, split, sigmoid, apply, SYM, BOS, EOS, P
 
 DREF = 'origin/codex/minifly-consolidated-20261023'
-WREF = '45b6fd79'
-SEED = 73129
+WREF = '6922a3a4'
+SEED = next((int(a[4:]) for a in sys.argv[1:] if a.startswith('seed')), 73129)
 E40 = 'MOD97_LOCAL_RULE_20261106/exp45/e40/'
-LIFE = {"S": P + "e26/e26_life_S_73129.pt", "B": P + "e26/e26_life_B_73129.pt", "K": P + "e31/e31_life_K_73129.pt"}
+LIFE = {"S": P + f"e26/e26_life_S_{SEED}.pt", "B": P + f"e26/e26_life_B_{SEED}.pt", "K": P + f"e31/e31_life_K_{SEED}.pt"}
 F4 = [("add", 83, b"e"), ("sub", 83, b"f")]
 OLD = [("add", 97, b"r"), ("sub", 97, b"t"), ("add", 73, b"s"), ("sub", 73, b"u")]
 GROUPS = {
@@ -40,7 +40,7 @@ GROUPS = {
 CODES = [ord(c) for c in "efgh"]
 args = sys.argv[1:]
 want = {a for a in args if a in ("A", "B", "C", "D", "E")} or set("ABCDE")
-arms = [a[3:] for a in args if a in ("armS", "armB", "armK")] or ["S", "B", "K"]
+arms = [a[3:] for a in args if a in ("armS", "armB", "armK")] or (["S", "B", "K"] if SEED == 73129 else ["S", "B"])   # K at row 64: seed 73129 only
 
 
 def run_items(W, items):
