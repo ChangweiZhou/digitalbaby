@@ -254,11 +254,62 @@ def write(out_dir, tag, f10_dir):
         L.append(f"- {rule}: " + ("I16 not complete" if c is None else ("**stage 2 runs**: " + "; ".join(c["reasons"]) if c["run_stage2"] else "stage 2 does not run")))
     L.append("")
     L.append("### What a seed alone changes\n")
+    seedcmp = {}
     if F:
-        L.append("| F10 rule | seed | A80 | R80 | levels A, R, length at 40 |\n|---|---|---|---|---|")
-        for (rule, sd), v in sorted(F.items()):
+        allF = dict(F); allF.update({(r, SEED): S[("F10", r)] for r in "SB"})
+        L.append("E42's `F10` beside E49's (three-row version; levels are the means of the last three rows):\n")
+        L.append("| F10 rule | seed | A80 | R80 | level of A | level of R | length at 40 |\n|---|---|---|---|---|---|---|")
+        for (rule, sd), v in sorted(allF.items()):
             L.append(f"| {rule} | {sd} | {fmt_u(v['thresholds']['A80_three'])} | {fmt_u(v['thresholds']['R80_three'])} | "
-                     f"{v['levels']['A']:.2f}, {v['levels']['R']:.2f}, {v['levels']['len40']:.2f} |")
+                     f"{v['levels']['A']:.2f} | {v['levels']['R']:.2f} | {v['levels']['len40']:.2f} |")
+        L.append("")
+        L.append("The spread between seeds of `F10` under a rule: for updates the ratio of the most to the fewest, for a level the most "
+                 "minus the least. A difference of an E49 run from `F10` of seed 73129 that is smaller than this spread is marked "
+                 "**within the seeds' spread**. A run that does not reach a threshold differs from `F10` by a ratio of at least "
+                 "24,064 / `F10`'s updates.\n")
+        L.append("| Rule | seeds of F10 | A80 ratio | R80 ratio | A points | R points | length at 40 points |\n|---|---|---|---|---|---|---|")
+        spread = {}
+        for rule in "SB":
+            vs = [v for (r, _), v in allF.items() if r == rule]
+            sp = {}
+            for key in ("A80", "R80"):
+                us = [v["thresholds"][f"{key}_three"]["updates"] for v in vs if v["thresholds"][f"{key}_three"]]
+                sp[key] = max(us) / min(us) if len(us) == len(vs) and len(us) > 1 else None
+            for k in ("A", "R", "len40"):
+                ls = [v["levels"][k] for v in vs]
+                sp[k] = max(ls) - min(ls) if len(ls) > 1 else None
+            spread[rule] = sp
+            sds = sorted(sd for (r, sd) in allF if r == rule)
+            f = lambda z, fmt: "-" if z is None else fmt.format(z)
+            L.append(f"| {rule} | {', '.join(map(str, sds))} | {f(sp['A80'], '{:.3f}')} | {f(sp['R80'], '{:.3f}')} | {f(sp['A'], '{:.2f}')} | "
+                     f"{f(sp['R'], '{:.2f}')} | {f(sp['len40'], '{:.2f}')} |")
+        L.append("")
+        L.append("| Setting | Rule | measure | E49 against F10 of 73129 | spread of F10's seeds | mark |\n|---|---|---|---|---|---|")
+        for s_ in SETTINGS:
+            for rule in "SB":
+                if (s_, rule) not in S:
+                    continue
+                sr, sc = S[("F10", rule)], S[(s_, rule)]; sp = spread[rule]
+                for key in ("A80", "R80"):
+                    xr = sr["thresholds"][f"{key}_three"]["updates"]; c = sc["thresholds"][f"{key}_three"]
+                    if sp[key] is None:
+                        d, mark = (f"ratio {c['updates'] / xr:.3f}" if c else f"ratio at least {(DOSE - 512) / xr:.3f}"), "no spread on file"
+                    elif c:
+                        q = c["updates"] / xr; d = f"ratio {q:.3f}"
+                        mark = "**within the seeds' spread**" if max(q, 1 / q) < sp[key] else "beyond the seeds' spread"
+                    else:
+                        q = (DOSE - 512) / xr; d = f"ratio at least {q:.3f}"
+                        mark = "beyond the seeds' spread" if q >= sp[key] else "cannot be compared"
+                    seedcmp[f"{s_} {rule} {key}"] = dict(difference=d, spread=sp[key], mark=mark)
+                    L.append(f"| {s_} | {rule} | {key} updates | {d} | {'-' if sp[key] is None else f'{sp[key]:.3f}'} | {mark} |")
+                for k in ("A", "R", "len40"):
+                    dd = sc["levels"][k] - sr["levels"][k]
+                    if sp[k] is None:
+                        mark = "no spread on file"
+                    else:
+                        mark = "**within the seeds' spread**" if abs(dd) < sp[k] else "beyond the seeds' spread"
+                    seedcmp[f"{s_} {rule} level {k}"] = dict(difference=dd, spread=sp[k], mark=mark)
+                    L.append(f"| {s_} | {rule} | level of {k} | {dd:+.2f} | {'-' if sp[k] is None else f'{sp[k]:.2f}'} | {mark} |")
     else:
         L.append("E42's `F10` of seeds 93683 and 116089 is not on file complete. The nearest figure (the brief's) is `G` under the sweep, whose "
                  "three seeds reach 80 on R at 4,864 to 6,656 updates (a ratio of 1.37).")
@@ -266,7 +317,7 @@ def write(out_dir, tag, f10_dir):
     out_md = Path(out_dir) / f"E49_TABLES_{tag}.md"
     out_md.write_text("\n".join(L) + "\n")
     js = dict(runs={f"{k[0]} {k[1]}": v for k, v in S.items()}, descriptions=desc, stage2=st2,
-              f10_other_seeds={f"{k[0]} {k[1]}": v for k, v in F.items()})
+              f10_other_seeds={f"{k[0]} {k[1]}": v for k, v in F.items()}, seed_comparison=seedcmp)
     (Path(out_dir) / f"E49_SUMMARY_{tag}.json").write_text(json.dumps(js, indent=1))
     print("\n".join(L))
 
