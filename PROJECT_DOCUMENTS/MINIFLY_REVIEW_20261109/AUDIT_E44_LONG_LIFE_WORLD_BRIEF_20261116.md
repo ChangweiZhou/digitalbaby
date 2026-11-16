@@ -231,7 +231,7 @@ The script prints each family's figure for add and for sub with the number of it
 5. **Two more predictions:** the level is above 0.90 at 64 updates in six worlds, and below 0.20 at 256 in six worlds. These are the outcomes that call a further step.
 6. **In "what this cannot show":** "Whether a family of 168 to 264 taught pairs can be learned by a born network. No result on file bears on it."
 
-**For the roster note of L2** (not part of this release): an arm without decay, since a quarter to a half of all returns come after more than 2,048 updates; absences of one visit tabled apart from absences of 2 to 4; the replay buffer's capacity computed with 23 bytes an item; and the lives of 64 visits not used for any quantity over families.
+**For the roster note of L2** (not part of this release): an arm without decay, since a quarter to a half of all returns come after more than 2,048 updates; the absence classes restated in updates and in the decay's constant of 4,000 updates at the adopted length (62, 31 and 16 visits at 64, 128 and 256 updates a visit), as the E39 brief asks of any roster that changes the visit length; absences of one visit tabled apart from absences of 2 to 4; the replay buffer's capacity computed with 23 bytes an item; and the lives of 64 visits not used for any quantity over families.
 
 ## 10. Can E44 be released?
 
