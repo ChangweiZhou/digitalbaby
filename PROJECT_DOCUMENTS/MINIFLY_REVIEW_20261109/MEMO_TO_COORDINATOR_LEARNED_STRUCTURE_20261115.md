@@ -18,6 +18,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 9.** The audit of the E41 brief is in `AUDIT_E41_COMPUTATION_TO_THRESHOLD_20261116.md`. It corrects two things in section 21.4 that were mine, the doses and the treatment of a run that does not reach a threshold; section 21.4 now carries the corrected doses.
 
+**Revision 10.** Section 22 is added after Mr. Xu's statements of 16 November: each cell is connected to a limited number of cells inside a neighbourhood fixed in advance, the connections may change during learning, and each cell has its own pre-set period. It asks for one new full-scale job (item 10 of section 1). The arithmetic behind it is in `e42_design_checks.py` beside this memo.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -44,6 +46,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 8. **Brief one more full-scale job, E37 at a tenth of the pairs** (section 19.4): lived and fresh learners on a new family with a tenth of its pairs taught. About 4 CPU-hours by my estimate. It comes to me before any worker starts.
 
 9. **Brief one more full-scale job, E41: computation to threshold by width and by taught fraction** (section 21.3). About 28 CPU-hours by my estimate, to be divided among the three workers that E36, E37 and E38 have freed. It comes to me before any worker starts.
+
+10. **Brief one more full-scale job, E42: cells with a limited number of local connections and their own periods** (section 22). Forty-eight births in two stages after a stage of checks, 50 to 70 CPU-hours by my estimate. It comes to me before any worker starts. It does not wait for the small world and displaces nothing released.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -641,3 +645,195 @@ My expectations, on record: at fraction 0.50 the widest network reaches 80% in f
 
 In discussion I had proposed adding fresh networks at other widths to E40. Job E41 replaces that: it uses the same task at every point of the grid, which is what "the same task" in Mr. Xu's statement requires, and E40 stays as released.
 
+
+## 22. Job E42: cells with a limited number of local connections and their own periods (revision 10)
+
+### 22.1 Mr. Xu's statements of 16 November
+
+Verbatim.
+
+- "If a cell A and B has no hyper-connection at all - not in the past, not now, then the weights logically cannot connect A with a cell B that remembers distant history. In other words A does not know this part of the history even if the weight is high. So to some extent the apparent overfitting of weights and hyper-connections during the learning process is the same thing. Can we utilize this?"
+- "In theory due to the local learning hypothesis, the neuron S_i can only interact with a pre-specified (perhaps high) number of neurons. So in our setting depending on the update frequency, S_i can add 100 connections in T=10, and add zero at T=11, drop 50 at T=12 etc. Nowhere did we dictate that S_i have to adjust by one connection at a time."
+- "Let us presume for simplicity that each cell can connect at most N=10 neurons (after all addition is simple), but we can adjust N and the cell can learn the connection strengths".
+- In answer to three questions of mine: "1) both is fine, but ideally the connections can adjust. however a neuron is only allowed to adjust within a pre-defined neighborhood, say via some pre-specified embedding coordinates to mimic biological situation. This is to impose locality. 2) The cell's previous value would be available, and each cell has its own pre-set delays or info processing frequencies. During the period it absorbs info from all other cells that emits to it. So cell at T=0 and T=5 may get inputs from the connections. How to process this will not be pre-determined and will be part of local learning, and you can try some variants. 3) Yes, the encoder and decoder parts can stay."
+
+My three questions were: (1) whether a cell's connections are fixed in advance or change during learning; (2) what counts against the limit, and whether a cell's own previous value is available to it; (3) whether the limit applies only to the cells that replace the GRU, with the input and output parts of the network left as they are.
+
+**For the record of P5.** The clarification of 7 November says that "local" does not mean a fixed small neighbourhood and that which neurons a synapse takes its signals from can be adjusted dynamically. Today's statement keeps the dynamic adjustment and adds that it happens inside a neighbourhood defined in advance. Please enter it beside the clarification.
+
+### 22.2 What the record has
+
+- **Units with pre-set time constants have been tried once, without connections among them.** The two-bank network (`arch17`) had fixed retention rates of 0.5 to 0.999 and no learned recurrence. It did not compose from memory: untaught plus-minus pairs 1.5 / 0.5 / 7.5, against 73.6 / 78.8 / 75.1 for the GRU; one added feedback matrix gave 20.2 / 1.1 / 1.0 (review 9.101).
+- **The variants asked for on 13 November were never run.** E29 part B (slow units and delays at birth) was withdrawn after its audit and not rewritten (9.118). This job takes its place.
+- **The trained GRU makes its own holding units:** 41 to 46% of units after a birth, none before (9.120 C).
+- **I found no experiment that limits the number of connections of a unit, places units in a space, or lets connections change.** I searched the review for the words sparse, prune, rewire and neighbour; the hits are the mushroom-body store and the fly circuits of October, not this learner.
+
+The present job differs from the two-bank network in three ways: the cells are connected to each other with learned strengths, the gates read the state, and a period is an interval between updates, not a rate of decay. Because the earlier design failed, the periods enter as one separate step (22.4), so that their effect is read apart from that of limiting the connections.
+
+### 22.3 The learner
+
+Everything outside the recurrent layer is the present network, unchanged: the byte table, `l1`, the input map into the layer, and the readout `l2`, `lm`, `l3`. The layer keeps 256 units, now called cells, and the GRU's own equations. Three things change: which cells a cell reads, when a cell is updated, and how it combines what arrived since its last update.
+
+```
+positions      cell i (0..255) stands at row i // 16, column i % 16 of a 16 x 16 grid with wrap-around
+neighbourhood  B_i: the 48 cells j != i whose row and whose column each differ from i's by at most 3, with wrap-around
+connections    A_i: N cells of B_i; the limit is used in full (a connection given up is always replaced); cell i also reads its
+               own previous value, which is not counted in N
+period, phase  p_i from the configuration's set, f_i in 0 .. p_i - 1; cell i is updated at positions t = f_i, f_i + p_i, f_i + 2 p_i, ...
+               (t counts from the start symbol at position 0); at every other position its value does not change
+
+at every position t, as arch26.forward does, with the recurrent matrix masked:
+    gi(t) = Wi z1(t) + bi                       the input map, unchanged: every cell reads the whole current byte
+    gh(t) = (Wh * mask) h(t-1) + bh             mask[i, j] is true for j in A_i and for j = i, the same for the three gates
+at a position where cell i is updated, with G and H made from gi and gh over its period (table below):
+    r = s(G_r + H_r),  z = s(G_z + H_z),  n = tanh(G_n + r * H_n),  h_i(t) = (1 - z) n + z h_i(t-1)
+elsewhere h_i(t) = h_i(t-1);  h(-1) = 0 for every item
+readout, unchanged:  z2 = tanh(l2 z1 + lm h),  logits = l3 z2
+```
+
+**How a cell combines what arrived during its period.** For a cell of period p updated at position t, the steps of its period are t, t-1, ..., t-p+1. Positions before the start symbol contribute nothing. Four variants; a cell of period 1 is the same cell in all four.
+
+| Variant | G | H | Added parameters |
+|---|---|---|---|
+| `last` | gi(t) | gh(t) | none |
+| `mean` | the mean of gi over the period | the mean of gh over the period | none |
+| `step` (the default) | sum over k of a_i[k] gi(t-k) | sum over k of a_i[k] gh(t-k) | a_i: one weight for each step of the period, starting at 1/p |
+| `source` | as `step` | sum over k of (Wh[k] * mask) h(t-k-1), plus bh: a separate strength for every connection at every step of the period | Wh[k] for k = 0 .. p_i - 1, each starting at the masked Wh divided by p_i; a_i as in `step` |
+
+`mean`, `step` and `source` compute the same function at the start. `source` is the variant in which a cell can read each of its sources at its own distances in time, up to its period.
+
+**Start.** `arch26.new_net(seed)` unchanged; then periods, phases and connections are drawn; then the recurrent weights outside the mask are set to zero and those inside are multiplied by sqrt(256 / (N + 1)), so that a cell's recurrent input has the variance it has in the present network (4.82 at N = 10; exactly 1 when every cell is connected to every other).
+
+**Draws.** None uses torch's generator, so the initial weights and the data are those of E26.
+- Periods: `order = list(range(256)); Random(f"e42|periods|{seed}").shuffle(order)`; the first cells of `order` take period 1, the next period 2, and so on, in the counts of 22.4.
+- Phases: `rp = Random(f"e42|phases|{seed}")`; for i in index order, `f_i = rp.randrange(p_i)`.
+- Connections: `rc = Random(f"e42|connections|{seed}")`; for i in index order, `A_i = sorted(rc.sample(sorted(B_i), N))`.
+
+**The rules.** Arm B: exact gradients. Arm S: every linear map sends its error back through the signs of its weights times one scale per stacked matrix, as now. For a masked matrix the scale is the mean magnitude of the weights inside the mask, so that the error sent back through an existing connection has the size of an existing weight. In `source` the matrices Wh[k] are stacked into one for this purpose. When every entry is inside the mask, `exp3_state.lin` is called unchanged. The gates' nonlinearities, the products, the weights a_i and the holding of a value between updates are differentiated exactly in both arms, as the gates are now. Credit runs through the whole item.
+
+**Changing connections** (the configurations marked "changing"). Every 256 updates, after the update and before scoring:
+1. The strength of a connection is the sum of the magnitudes of its weights, over the three gates and, in `source`, over the steps.
+2. A connection of cell i is given up if it has existed for at least 512 updates and its strength is below theta times the mean strength of cell i's N connections. A cell may give up none, or several.
+3. Each connection given up is replaced by one to a cell of B_i that is not connected to i at that moment and was not given up at this event. Cells in index order, connections given up in increasing order of source: `rr.choice(sorted(candidates))`, with `rr = Random(f"e42|replace|{seed}")` created once per run.
+4. The new connection's weights are zero, so the network's output is unchanged by the addition. The weights of a connection given up are set to zero. The optimizer's two running averages are set to zero for every entry that changed.
+
+A cell that satisfies the locality hypothesis has no information about a cell it is not connected to, so the new partner is drawn at random and is kept or given up later by its strength. theta is set once in stage 0 (22.6, check 10).
+
+### 22.4 Configurations
+
+Stage 1, under the sweep and under backpropagation, three seeds: 24 runs.
+
+| Name | Connections | N | Neighbourhood | Periods | What the step changes |
+|---|---|---|---|---|---|
+| `G` | every cell to every other | 255 | all | all 1 | nothing: the present GRU, run by the new code |
+| `F10` | fixed | 10 | 48 | all 1 | the limit and the neighbourhood |
+| `A10` | changing | 10 | 48 | all 1 | connections may change |
+| `P8` | changing | 10 | 48 | 1, 2, 4, 8; variant `step` | periods |
+
+Stage 2, under the sweep only, three seeds: 24 runs. Each differs from its reference in one thing.
+
+| Name | Differs from | In |
+|---|---|---|
+| `N5`, `N20` | `A10` | N = 5; N = 20 |
+| `W10` | `A10` | the neighbourhood is all 255 other cells: the limit without the locality |
+| `P4`, `P16` | `P8` | periods 1, 2, 4; periods 1, 2, 4, 8, 16 |
+| `P8-last`, `P8-mean`, `P8-source` | `P8` | the variant |
+
+Cells by period: half of the cells have period 1 in every set with periods, so the number of cells that follow every byte is the same across them.
+
+| Set | Period 1 | 2 | 4 | 8 | 16 |
+|---|---|---|---|---|---|
+| 1, 2, 4 | 128 | 64 | 64 | | |
+| 1, 2, 4, 8 | 128 | 64 | 32 | 32 | |
+| 1, 2, 4, 8, 16 | 128 | 64 | 32 | 16 | 16 |
+
+Parameters: 1,124,113 for `G`. With N = 10 the recurrent matrix keeps 8,448 of its 196,608 weights and the network has 935,953 (932,113 at N = 5, 943,633 at N = 20), plus 384, 512 or 640 weights a_i in the three sets (`e42_design_checks.py`, part C).
+
+### 22.5 Data, dose, scores
+
+- **Data and settings:** E26's birth exactly, as E41's present width at taught fraction 0.50: the four operations mod 89, 0 to 12 letters, answer bytes as targets, batch 64, `exp26_candidate.make_opt` with the new parameters in the decayed group, learning rate 0.001, decay 0.25.
+- **Dose:** 24,576 updates, E26's own, for every run.
+- **Scored every 256 updates:**
+  1. E41's three accuracies with E41's panels and its sample of 1,000, unchanged: **A** (held-out add and sub at 12 letters), **R** (held-out pairs that need the reduction, no letters) and the taught panel.
+  2. **The length test**, E30's: `exp11_cell.panel(t, exp11_cell.split(t, .5, seed)[1], seed, ks=(12, 40), n=300)` with `t = ("add", 89, b"p")`; accuracy at 12 and at 40 letters. On file for E26's final weights at 40 letters: 96.0, 97.0, 99.67 under the sweep and 97.67, 98.67, 92.33 under backpropagation (`exp45/e30/E30_UNSEEN.json`).
+  3. The number of connections replaced since the previous row.
+- **Per run:** updates to the 50, 80 and 90 thresholds on A and on R in E41's two versions, the three-row version carrying the description; computation in weight-items, with the count of weights inside the mask; CPU-seconds, reported but not used, since a masked dense matrix costs as much as a full one.
+- **At the first batch and at the end:** the cosine between the sweep's gradient and the exact gradient for the recurrent matrix, on one batch. It says whether the sign rule is a better or a worse approximation on a matrix with few entries.
+- **At the end, in the weights file:** the mask, periods, phases, the update at which each connection was made, and all added parameters. From them the report gives the share of connections never replaced, and a table of the share of connections by the reader's period and the source's period, at the start and at the end.
+- **Committed:** the full weights for seed 73129, sixteen files. For the other two seeds a small file per run with the mask, periods, phases, the update at which each connection was made, the recurrent weights and the added parameters; the structure tables need no more.
+
+### 22.6 Checks before the runs
+
+Stage 0 is done by the worker of seed 73129; the other workers take the runner at that commit and repeat checks 1 and 2.
+
+1. **`G` is E26.** The thirteen tensors of the present network are bit-equal to `arch26.new_net(seed)`'s at the start, and after 2,048 updates their `tensors_sha256`, computed over those thirteen only, is that of E26's dry births: 79618ab2… under the sweep and adf933d7… under backpropagation.
+2. **Same data in every configuration.** The batch digest at row 4,096 is E26's: bbd71ab7…, 65b1c7e0…, 1df203fb… for the three seeds.
+3. **The limit.** At every scored row: every cell has exactly N connections, all inside its neighbourhood, none to itself; every weight outside the mask is exactly zero.
+4. **Time.** On random weights: changing the byte at position t changes no cell's value at an earlier position; a cell's value changes only at its own update positions; a cell with phase f is zero before position f.
+5. **The variants agree where they must.** On the first batch `mean`, `step` and `source` give the same logits to 1e-6.
+6. **Gradients.** Under backpropagation the parameter gradients equal those of a reference written cell by cell, without masks or buffers, to 1e-5 of each tensor's largest entry, for `P8`, `P8-source` and `F10`. Under the sweep they differ. Gradients outside the mask are zero.
+7. **Replacement.** At an event, adding the new connections changes no logit; the same command run twice gives the same `tensors_sha256`, with changing connections.
+8. **The reviewer's reader.** For seed 73129 the worker commits dry runs of 2,048 updates of `F10`, `P8` and `P8-source` with their weights files and their answers on the length-test panel. I write a numpy reader from this section and reproduce the answers. This does not hold stage 1.
+9. **Cost.** CPU-seconds per update and per scored row for each configuration, on an idle host, and a forecast.
+10. **theta.** Three dry runs of `A10` under the sweep, 4,096 updates, with theta = 0.1, 0.25 and 0.5. The value used everywhere is the one whose mean share of connections replaced per event, over the events at updates 768 to 4,096, is nearest 5%. If all three are below 1% or above 30%, stop and report. The choice uses no accuracy.
+
+### 22.7 How the result is stated
+
+Fixed beforehand, as in E41. For each comparison, rule and seed:
+
+- **Updates to the 80 threshold**, on A and on R: E41's table of four cases (*falls* below 2/3, *rises* above 1.5, otherwise *stays*, with its rules for a run that does not reach the threshold), read here as fewer, more or about the same. The same in weight-items.
+- **The length test:** the mean accuracy at 40 letters over the last three scored rows; *lower* or *higher* if the difference is 15 points or more, otherwise *about the same*.
+- A cell of the table carries the description that two of its three seeds share; otherwise *mixed*. All three values are given.
+
+Comparisons: `F10`, `A10` and `P8` each against `G`; `A10` against `F10`; `P8` against `A10`; every stage 2 configuration against its reference; and, in stage 1, the sweep against backpropagation within each configuration.
+
+**One stop.** After seed 73129's stage 1 runs: if none of `F10`, `A10` and `P8` reaches 50 on A within the dose under either rule, stop and report. Otherwise stage 2 runs without a further release.
+
+### 22.8 What arithmetic says beforehand, and my expectations
+
+A cell with a long period can carry the first operand to the `=` sign without learning to keep anything: it is updated once while the operand's two digits are inside its period and is not updated again until after the `=`. Whether that is possible depends on the period, the phase and the number of letters (`e42_design_checks.py`, part D):
+
+| Period | Share of (phase, number of letters) combinations in training for which it is possible | Numbers of letters for which no phase allows it | At 40 letters |
+|---|---|---|---|
+| 2 | 0 | all | never |
+| 4 | 0.06 | 2 to 12 | never |
+| 8 | 0.44 | 10, 11, 12 | never |
+| 16 | 0.67 | none | never |
+
+So with periods up to 4 the operand must be kept across updates in nearly every training item, as in the GRU; with periods up to 16 it need never be; and at 40 letters it must be kept across updates in every case. The argument predicts that longer periods make training easier and the length test harder. `P4`, `P8` and `P16` test it.
+
+| | Expectation | Chance |
+|---|---|---|
+| X1 | Check 1 passes under both rules | 85% |
+| X2 | `A10` reaches 80 on A within the dose, two of three seeds, under the sweep | 65% |
+| X3 | `A10` needs more updates than `G` to reach 80 on A (*rises*), two of three seeds, under the sweep | 60% |
+| X4 | `A10` reaches 80 on A in no more updates than `F10`, two of three seeds, under the sweep | 55% |
+| X5 | `P8` against `A10`, updates to 80 on A under the sweep: fewer 20%, about the same 40%, more 40% | |
+| X6 | `P16` is lower than `A10` at 40 letters, two of three seeds | 55% |
+| X7 | `P4` is lower than `A10` at 40 letters, two of three seeds | 25% |
+| X8 | Some stage 1 configuration's description against `G` differs between the sweep and backpropagation | 40% |
+
+### 22.9 Cost and order
+
+E26's birth took 3,276 CPU-seconds with its own scoring, 0.133 per update. The new layer does the same matrix work plus buffers; `source` does more. My estimate is 50 to 70 CPU-hours for the 48 runs and about 2 for stage 0, to be replaced by check 9's forecast. One worker per seed. The job does not wait for the small world and does not displace E39, E40 or E41.
+
+### 22.10 What it cannot show
+
+- **A saving in computation.** The input map and the readout stay dense and hold most of the weights, so limiting the recurrent connections removes 17% of the network. The job measures updates to threshold and generalisation. Whether many more cells can be afforded at the same computation needs the input and the readout limited too, which is a later job.
+- **Settings.** Learning rate and decay were chosen for the dense GRU.
+- **The form of a cell.** The GRU's equations are kept. A cell whose way of combining its inputs is itself learned is the next step if this one works (22.11).
+- **One task family, answer targets, one grid.** The arrangement of cells is arbitrary; `W10` says whether the neighbourhood matters at all.
+- **Distances longer than an item.** The state is reset at every item, so no period or connection can reach further back.
+
+### 22.11 Choices that are mine, and what comes next
+
+Mr. Xu left these to me; each can be overturned.
+
+1. **The limit N counts connections between cells only.** Every cell still reads the whole current byte through the input map, as every GRU unit does. Everything a cell knows about the past then comes through its N connections and its own previous value.
+2. **The GRU's equations are kept in this job.** What is learned is the strengths, which cells are connected, and how what arrived during a period is weighted. A cell that holds a graded value for a variable time needs the form `(1 - z) n + z h` in some guise, so the equations cost less generality than it may seem.
+3. **A grid of 16 by 16 with wrap-around and a neighbourhood of 48.** The simplest arrangement with no edges.
+4. **Half the cells at period 1**, the rest divided as in 22.4.
+5. **The scale of the kept weights at the start**, and **the scale of the sign rule on a masked matrix** (22.3).
+6. **Replacement by a strength threshold with a target rate of 5% per event** (22.6, check 10), and **the limit used in full**: Mr. Xu's limit is "at most N"; here a cell always has N.
+
+Next, depending on the result: a cell whose update is a learned sum of its inputs and of products of pairs of them, with no gate equations given; limited input and readout connections with more cells at the same computation; and the cell layer as an arm of the small world once L1 has reported.
