@@ -617,8 +617,8 @@ def run_solo(arm, world, tid, H, updates, out, cmd):
         lo, _ = life.update(0, taught, asked, i % 1024 == 0, hs, hl)
         losses.append(lo)
         if (i + 1) % 2048 == 0:
-            c = np.frombuffer(life.ev["correct"], dtype=np.uint8)[-16 * 64:]
-            print(f"{stem} update {i + 1} loss {np.mean(losses[-64:]):.4f} right(last 64 updates) {c.mean():.3f}", flush=True)
+            c = float(np.frombuffer(life.ev["correct"], dtype=np.uint8)[-16 * 64:].mean())     # no view may outlive the line (the array grows)
+            print(f"{stem} update {i + 1} loss {np.mean(losses[-64:]):.4f} right(last 64 updates) {c:.3f}", flush=True)
     arrs = life.events_arrays()
     np.savez_compressed(epath, **arrs)
     q = S.solo_quantities(arrs, tid, losses)
