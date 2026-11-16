@@ -251,3 +251,43 @@ The rule's first row needs both a mean at least 10 points above and at least 10 
 - **Launch.** Both ran under `queue_e34a2.sh`, started with `setsid nohup` once addendum 1's queue had ended. The two births ran together, with one reader loop as the third process; it read every row as it appeared, committed the reader file and made the live hash check. Nothing was interrupted or moved aside.
 - **Committed weights.** For each run, rows 49,152 and 73,728 and the final row 98,304 (6 files). The other rows were measured, and their sha256 are in the receipts.
 - **Next.** B050 at 98,304 updates (the user's request) is running under `queue_e34a3.sh`; its section follows.
+
+## Addendum 2, extension: B050 at 98,304 updates (seed 73129; the user's request)
+
+Addendum 2 runs B050 at this length only if its endpoint at the present length differs from plain backpropagation's by 15 points or more at 40 letters. It does: 64.11 against 82.0, a difference of 17.89. The user asked for B050 to be queued after the two long births. It is read against B-all by addendum 2's rule for T050, and T050 against B050 is reported beside it with no reading.
+
+- **Code.** It ran under `queue_e34a3.sh` from commit 1233b3f4, with sources unmodified. The reader is `e34_long_b050.py`, a separate file, so that the reader used by the running addendum-2 driver was not changed.
+- **Cost.** 10,384 CPU-seconds; all losses finite.
+- **Row-24,576 hash check: passed.** It is 24be117c…, equal to `exp45/e34/e34_dev_B050_73129.json`, and was checked live during the birth.
+- **Committed weights.** Rows 49,152 and 73,728 and the final row.
+- **All rows.** `exp45/e34_long/E34_LONG_B050_TABLES.md`.
+
+Rows at 40 letters, 49,152–98,304:
+
+| Row | B050 | B-all | T050 |
+|---|---|---|---|
+| 49,152 | 99.00 | 94.67 | 98.00 |
+| 53,248 | 99.33 | 95.00 | 98.67 |
+| 57,344 | 100.00 | 91.33 | 96.67 |
+| 61,440 | 97.00 | 95.67 | 91.33 |
+| 65,536 | 100.00 | 98.67 | 98.00 |
+| 69,632 | 97.00 | 91.00 | 96.67 |
+| 73,728 | 97.00 | 92.33 | 97.67 |
+| 77,824 | 99.33 | 93.00 | 99.67 |
+| 81,920 | 98.33 | 88.00 | 100.00 |
+| 86,016 | 98.33 | 92.67 | 99.33 |
+| 90,112 | 100.00 | 90.67 | 98.33 |
+| 94,208 | 100.00 | 89.67 | 95.67 |
+| 98,304 | 99.67 | 91.67 | 91.33 |
+
+| Run | Mean acc 40 | Mean acc 20 | Mean acc 12 |
+|---|---|---|---|
+| B050 | 98.85 | 99.00 | 99.10 |
+| B-all | 92.64 | 97.69 | 98.10 |
+| T050 | 97.03 | 98.15 | 98.33 |
+
+**B050 against B-all (addendum 2's rule):** B050 minus B-all is **+6.20 points**, and B050 is above B-all in **13 of 13 rows**. "Overtakes and stays" needs both a mean at least 10 points above and at least 10 of 13 rows above. Only the second condition holds. B050's mean is above B-all's, so "does not overtake" does not apply either. The result is **mixed**: "Mixed; the rows are reported."
+
+**T050 against B050 (reported beside; no reading):** T050 minus B050 is **−1.82 points** at 40 letters, and T050 is above B050 in **4 of 13 rows**.
+
+Early rows: B050 is at 2.67, 8.33, 12.67 and 17.67 at 12 letters at rows 4,096–16,384, and first reaches 70 at row 20,480. These are the same rows as in its 24,576-update birth, as the hash check requires.
