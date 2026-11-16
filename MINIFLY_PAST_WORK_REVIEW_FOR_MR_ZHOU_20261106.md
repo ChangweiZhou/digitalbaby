@@ -3254,3 +3254,23 @@ What I did, as for E42: wrote the layer as runnable code (`PROJECT_DOCUMENTS/COO
 - **One thing found by writing it:** my first rule for periods by place (groups of 256, doubling, capped at 16) put three quarters of the largest network's cells at period 16, where a cell is updated once or twice in an item. The file uses four equal groups at periods 2 to 16.
 
 Under the working rules adopted today the brief states its comparison with the record before the design (among it, that at 4,096 cells a round trip to the farthest cell takes 16 steps, as long as an item, which may leave those cells unused), and it has one full-length trial on one seed, read before any roster.
+
+## 9.151 E43's additions as the reviewer reads them; E48 drafted; two further additions to E43 (16 November 2026)
+
+Source: the reviewer's memo, revision 19 (4f8aed6f), sections 24.8 and 27. E43's branch is not yet complete (its plain-step runs under the sweep are being continued), so nothing of it is merged here; the figures below are the reviewer's read and its own measurement on the weight files, not mine.
+
+**After unrelated learning the first family is overwritten, not merely unexpressed.**
+
+- The reminder does not bring it back within a hundred updates in any of the six networks (0.0 to 1.4% on reduction pairs after 64 updates; 1.0 to 5.8% after 256). At 1,024 updates two of six are above 90% and the others at 11 to 69%, where a fresh network is near 2%: something is saved. After a whole life of contradicting families E36 had found the family back within 64 to 128 updates, so unrelated learning for 4,096 updates removes more than a life did. I gave "back at row 128" 50%.
+- Plain gradient steps do not spare it: under backpropagation at rate 0.03 it is at zero from 256 updates on. AdamW's equal-sized steps are not the cause.
+- With the readout alone put back to the birth's the family stays at 0.7 to 3.7%; the birth with only its recurrent matrix changed is at about 1% after 1,024 updates.
+
+So of the three explanations in the addendum of 9.146, the third holds. The remedy to test is separation: a change that cannot reach the connections an earlier family uses. That is the adopted question in its plainest form.
+
+**Drafted, awaiting audit: E48** (`OPUS_TASK_E48_A_NEW_FAMILY_IN_CONNECTIONS_GATED_BY_ITS_CODE_20261116.md`). The memo calls this job E47; I had already given that number to the locality job, so it is E48. On E40's setting, everything of the lived network is frozen and the new family is learned only in two added terms of rank 4, 16 or 64 on the recurrent layer's two matrices, on for items of that family, and in the four new code rows. The earlier families are kept by construction; the job measures the price in learning. The gate is supplied by the harness, so it is an upper bound, as E35's first stage was.
+
+What I did: wrote the terms and the forward as runnable code and ran them on E26's lives of seed 73129 without training. With the gate off the network is bit-equal to the lived one; with the gate on at the start it is too; after an update only the four code rows of the network have changed; after three gated updates an earlier family's logits are bit-equal to the lived network's. Under both rules the second factor of a term receives no error at the first update, since the first is zero, and does from the second. I specified the sweep's path through a term as two linear maps each crossed back by weight signs, which the memo leaves open.
+
+**Two further additions to E43** (addendum 2 of its brief): the unrelated arm with the first family rehearsed, with and without decay, as the conventional reference any remedy is measured against; and the unrelated arm from E42's `F10` and `P8` of seed 73129, to replace an expectation of *lost* by a figure.
+
+**Not staffed, still:** E41's seeds 93683 and 116089.

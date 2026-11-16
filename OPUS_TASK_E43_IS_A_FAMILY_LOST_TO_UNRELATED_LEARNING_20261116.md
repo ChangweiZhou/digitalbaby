@@ -206,3 +206,42 @@ About 2 CPU-hours for the three additions.
 ## Done
 
 The pushed weight files; the six reminder runs and the plain-step runs with receipts; an addendum to `E43_REPORT.md` with the reminder's curves and reading, the rate chosen, the plain arm's curves and reading, and P43.10 to P43.14. No readings beyond the tables above.
+
+---
+
+# Addendum 2 (16 November 2026): the three additions read; two further additions (the reviewer's memo, revision 19, section 24.8)
+
+## As read so far
+
+Branch `claude/peaceful-hopper-8ofq4i` (722cb621), **not yet merged**: the plain-step runs under the sweep are being continued to 16,384 updates. The figures are the reviewer's read of the receipts and its own measurement on the weight files; I have recomputed none and will read the report when the branch is complete.
+
+- **The reminder.** After 4,096 unrelated updates the first family is not back within a hundred updates of reminding in any of the six networks: reduction pairs at 0.0 to 1.4% after 64 updates and 1.0 to 5.8% after 256. At 1,024 updates they are at 91.3, 10.7 and 69.3% under the sweep and 91.3, 14.4 and 42.0% under backpropagation, where a fresh network is at 1.1 to 2.5%. So something is saved, and the family was not merely unexpressed. Neither of my readings "back within about a hundred updates" (P43.10) holds.
+- **Plain gradient steps** at rate 0.03. Under backpropagation the family is at 0.4 to 2.8% after 64 updates and at zero from 256 on. So AdamW's equal-sized steps are not the cause.
+- **Where the loss sits** (the reviewer's measurement, seed 73129): with the readout put back to the birth's, 3.7 and 0.7%; the birth with only its recurrent matrix changed is at 34.8 and 30.6% after 64 updates and about 1% after 1,024. The function is overwritten throughout the network, most of all in the recurrent matrix.
+
+Of the three explanations in addendum 1, the third holds.
+
+## Two further additions
+
+**4. The conventional reference: `unrelated-rehearse` and `unrelated-rehearse-decay`.** The `unrelated` arm with items of the first family mixed into the stream, on the six births, without decay and with the standing 0.25: 12 runs of 4,096 updates.
+
+- **Stream.** Each item is drawn from one of two streams with equal chance, by `Random(f"e43|{seed}|joint")`: the unrelated stream of the brief, and the first family's taught half as E38's rehearsal stream, `X16.entry_stream([("op", t, a, b) for t in exp11_cell.DEV for a, b in exp11_cell.split(t, .5, seed)[0]], seed + 100)`. Batches of 64. Record the count of items of each kind.
+- **Rows and scores:** as the `unrelated` arm, with row 2,048.
+- **Reading, fixed now, per rule and decay, in two of three seeds:** *kept at no cost* if at row 4,096 the first family's reduction score is at 80% or more of its starting level and the unrelated task's taught panel is at 80% or more; *kept at a cost* if the first holds and the second does not; *not kept* if the reduction score is at 20% or less; otherwise the figures are given. Beside it: the row at which the unrelated task's taught panel first reaches 80%, against the `unrelated` arm's, per update and per item of the unrelated task.
+
+**5. E42's networks: the `unrelated` arm from `F10` and `P8` of seed 73129**, under each rule, with E42's forward: 4 runs of 4,096 updates, no decay, from E42's final weights and structure of that seed on `claude/gallant-dijkstra-i9zgsr`. Connections stay as they are at the end of E42's run; no replacement event is made. Rows, scores and reading are the `unrelated` arm's. In these networks every cell still reads the whole byte and the readout is shared, so the expectation is *lost*; the run replaces it by a figure. Row 0's first-family scores must equal the E42 receipt's final row where it has them.
+
+About 2.5 CPU-hours for the sixteen runs.
+
+## Predictions (mine)
+
+| | Prediction | Chance |
+|---|---|---|
+| P43.15 | `unrelated-rehearse`, sweep: *kept at no cost* | 60% |
+| P43.16 | `unrelated-rehearse-decay`, sweep: *kept at no cost* | 65% |
+| P43.17 | With rehearsal the unrelated task's taught panel reaches 80% no more than twice as many updates later than without, two of three seeds, under each rule | 60% |
+| P43.18 | E42's `F10` and `P8`: *lost* in all four runs | 85% |
+
+## Done
+
+The sixteen runs with receipts and weights at 4,096 on the remote (`git add -f`, listed from `git ls-tree`); an addendum to `E43_REPORT.md` with the curves, the readings, and P43.15 to P43.18. No readings beyond the tables above.
