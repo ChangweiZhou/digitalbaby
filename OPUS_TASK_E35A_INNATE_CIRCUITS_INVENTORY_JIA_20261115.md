@@ -209,3 +209,20 @@ I made these as the audit wrote them. I checked one of its facts myself: E10's d
 | 7 | (E35-B) stage 0 also under the stream stage's optimizer | recommended |
 | 8 | (E35-B) stage 0 with a complex parameterisation and a digit-table form | recommended |
 | 9 | The pass-through, and thin coverage at f = 0.10, under "cannot show" | recommended |
+
+---
+
+# Addendum 1 (16 November 2026): stages 0 and 1a read; stage 1b released
+
+**As I read it** (branch `claude/nice-rubin-y5de8k`, b988f1b8, merged; the figures are the worker's, and the reviewer checked the final rows of `G`, `M` and `X` against the receipts; I recomputed none).
+
+- **Stage 0, gate passed.** With operands supplied in separated form, the ring generalises: 92.7, 91.4 and 49.1 at f = 0.25 (two of three seeds at 90 or more), and 97.3, 86.8 and 92.1 at f = 0.10, against at most 13.6 for the random table. P35A.1, P35A.2 and P35A.3 hold.
+- **Stage 1a, seed 73129.** Only add and sub at f = 0.10 leave room (the GRU alone at 19.6; 89.2 at f = 0.25, so P35A.4 holds and P35A.5 misses). There, held-out add and sub at 12 letters: `G` 19.6, `M` 21.1, `X` 19.4. **Outcome row 3.** Turning the module off changes `M` by 0.1 points: it is not used. The forced arm `F`: 6.6, within 15 of `G` (13.0 below it). All four have 95 to 98% on taught pairs. P35A.7 holds; P35A.6 and P35A.9 miss. I had given the forced arm 60% to succeed.
+
+**Stage 1b, as the brief fixes it.** Arm `F` at f = 0.10 on seeds 93683 and 116089: two births, about 6 CPU-hours by the reviewer's estimate. Arm `G` at f = 0.10 on those seeds is already on file from the E35-B worker (`exp45/e35b/`, the same network and data under the runner whose arm `G` reproduced E26's hash): held-out add and sub 32.1 and 27.8. Use those; do not rerun them.
+
+**Stop rule.** If `F` stays within 15 points of `G` on at least two of the three seeds, the obstacle is the interface and inventory 甲's line stops here. Nothing is briefed after stage 1b in either case (the reviewer's memo, section 8).
+
+**Prediction (mine).** P35A.10: `F` is within 15 of `G`, or below it by more, on both new seeds, so that the stop rule applies: 85%.
+
+**Done.** The two births with receipts and the three saved rows each, an addendum to `E35A_REPORT.md` with the per-seed table for `G` and `F` (held12, held40, taught12 for add and sub), whether the stop rule applies, and P35A.10.
