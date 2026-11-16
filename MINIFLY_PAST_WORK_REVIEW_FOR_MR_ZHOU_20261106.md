@@ -3321,3 +3321,25 @@ I had checked that every input value is read by some cell and had not asked what
 **Drafted, awaiting audit: E50** (`OPUS_TASK_E50_AN_INPUT_CODE_IN_WHICH_A_VALUE_STANDS_FOR_ONE_BYTE_20261116.md`), the job the audit of E49 names as next, drafted at the user's word ("Yes, draft it"). The byte's code is replaced by a fixed one in which each of the 46 used bytes turns on 11 values of its own; on it, E49's two masks. A cell that reads 16 values then has input for 1 to 10 of the 20 symbols the task must tell apart (median 6) and for 0 to 7 of the ten digits (median 3), which are the reviewer's figures and what my file gives. What such a cell needs of the other bytes can reach it only through its neighbours. This is the test of the user's statement in the sense E49 does not reach.
 
 The code and the forward are runnable (`PROJECT_DOCUMENTS/COORD_CHECKS_20261116/e50_sparse_code_spec.py`). What the self-checks show: 46 symbols with 11 values each and no value with two owners; no cell without any input and every needed byte reaching at least 67 cells at the smallest setting; the byte table and `l1` without gradient; gradients zero outside the masks. One thing found by running it: the end symbol stands in the input after an answer, where nothing is scored; it has the zero code. The brief states before the run where a failure is expected: the second operand's last digit stands one step before the answer's first byte, so a cell without input for it cannot use it there; the two answer bytes are scored apart for that reason.
+
+## 9.156 E44's calibration and E43's additions merged; a correction on E41 (16 November 2026)
+
+**Correction.** In 9.147, 9.151 and in my messages I said that E41's seeds 93683 and 116089 had no worker. The user corrected me: they have. The remote shows it: `claude/e41-seed-93683` and `claude/e41-seed-116089`, both started on 16 November, the second with its checks passed. I repeated a statement without looking at the list of branches, which takes one command.
+
+Merged: `claude/gallant-edison-p0qa68` (E44's calibration) and `claude/peaceful-hopper-8ofq4i` (E43's additions, complete). Evidence level E2. The tables are the workers'; I recomputed none.
+
+**E44: the long-life instrument is calibrated.** All eight checks pass, every digest of the audit among them. Under `naive` the gate passes at 256 updates a visit and only there: the median first-visit level on reduction pairs is 0.05 to 0.13 at 64 updates (all eight worlds below the floor), 0.10 to 0.43 at 128 (four worlds), and 0.30 to 0.64 at 256 (all eight). A life of 1,024 visits is forecast at 3.85 CPU-hours. **The adopted visit length is 256.** P44.1, P44.2, P44.3, P44.6 and P44.9 hold; P44.4, P44.5, P44.7, P44.8, P44.10 and P44.11 do not.
+
+What the calibration shows beside the gate:
+
+- **Nothing is kept from one visit to the next.** One visit after a family's own, its share right on the fixed list is 0.007 to 0.076 of what it was, in all eight worlds, where decay alone over the same 256 updates would leave 0.89. The birth family's reduction score falls from 0.947 to 0.084 after the first visit. At a return, the first update scores 0.016 and the first 16 updates 0.08.
+- **Returning is not faster than first meeting within the visit's first updates, but ends higher:** over the last quarter of a return the level is 0.58 (`naive`) and 0.67 (`sweep`) against 0.49 and 0.60 at first visits.
+- **No rise with experience over eight families:** under `naive` at 128 updates the later families are above the earlier ones in 2 of 8 worlds (I gave 60%).
+- **Without decay in the life** the first-visit level at 256 updates is 0.47 against the gate arm's; **the sweep's life from backpropagation's birth** is at 0.20, well below either arm born by its own rule.
+
+**E43's additions, complete.** The reminder and the plain-step arm are as the reviewer read them (9.151). The two further additions:
+
+- **Rehearsal keeps the first family at no cost under unrelated learning,** with and without decay, under both rules: 95 to 105% of the starting reduction score with the unrelated task at 100%. Under backpropagation the unrelated task is learned later with rehearsal on two of three seeds (1,024 updates against 256). P43.15 and P43.16 hold; P43.17 misses under backpropagation.
+- **E42's sparse networks lose the family as the dense one does:** `F10` and `P8` of seed 73129, both rules, 0.0% after 4,096 unrelated updates. P43.18 holds. Limiting connections between cells alone does not separate what is learned.
+
+**Where the plan's steps stand.** Step 1 (where the loss in E43 sits) is done: the function is overwritten throughout the network; plain rehearsal is the conventional remedy and works. Step 4 (the long-life instrument) is calibrated. Step 3's first form, a change confined to gated connections, is E48, released. Running: E41's two seeds, E42's other seeds, E46, E47's trial. Awaiting audit: E50.
