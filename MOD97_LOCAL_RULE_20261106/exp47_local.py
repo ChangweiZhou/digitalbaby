@@ -86,19 +86,18 @@ class SweepCross(T.autograd.Function):
 
 
 def plan(L, Lx):
-    """For each position: groups (P, cells, ifpos, farpos) of the cells updated there, one group per period; P = steps that exist."""
-    key = Lx
-    cache = L.__dict__.setdefault("_e47_plans", {})
-    if key in cache:
-        return cache[key]
+    """For each position t < Lx: groups (P, cells, ifpos, farpos) of the cells updated there, one group per period; P = steps that exist.
+    The list is cached on the layer and grown as longer inputs come."""
+    out = L.__dict__.setdefault("_e47_plan", [])
+    if len(out) >= Lx:
+        return out
     assert bool((L.p[L.ifx] == 1).all()), "the faster forward assumes period 1 at the interface"
     isif = T.zeros(L.C, dtype=T.bool); isif[L.ifx] = True
     ifpos_of = T.full((L.C,), -1, dtype=T.long); ifpos_of[L.ifx] = T.arange(len(L.ifx))
     farpos_of = T.full((L.C,), -1, dtype=T.long)
     if len(L.farx):
         farpos_of[L.farx] = T.arange(len(L.farx))
-    out = []
-    for t in range(Lx):
+    for t in range(len(out), Lx):
         upd = (t >= L.f) & ((t - L.f) % L.p == 0)
         groups = []
         for q in sorted(set(L.p.tolist())):
@@ -110,13 +109,14 @@ def plan(L, Lx):
             groups.append(dict(P=min(q, t + 1), cells=cells, ifpos=ifpos_of[ci], farpos=farpos_of[cf], n_if=len(ci), idx=L.idx[cells]))
         allc = T.cat([g_["cells"] for g_ in groups])
         out.append((groups, allc))
-    cache[key] = out
     return out
 
 
-def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=None):
+def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=None, state=None):
     """Same values as e47_local.forward (check 3). Returns logits and the list of states after each position.
-    poke=(t, values (B, far cells)): after position t the far cells' states are set by hand to these values (check 4 only)."""
+    poke=(t, values (B, far cells)): after position t the far cells' states are set by hand to these values (check 4 only).
+    state: the dict returned in L._e47_state by a previous call on the preceding positions of the same sequences (greedy decoding without
+    recomputing the prefix; scoring only). x then holds the following positions, and t counts from the start of the sequence."""
     u = m.book(x)
     z1 = T.tanh(L47.lin(u, m.l1, local))
     B, Lx = x.shape
@@ -124,10 +124,14 @@ def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=No
     c = L.coef()                                                             # (K, C), with the graph to a
     if local:
         Sfull = L.Wc.detach().sign() * L.Wc.detach().abs().mean()
-    h = T.zeros(B, L.C)
-    hist = [h]                                                               # hist[s + 1] = h(s); hist[0] = h(-1) = 0
+    t0 = 0 if state is None else state["t"]
+    hist = [T.zeros(B, L.C)] if state is None else list(state["hist"])      # hist[s + 1] = h(s); hist[0] = h(-1) = 0
+    h = hist[-1]
     hs = []
-    for t, (groups, allc) in enumerate(plan(L, Lx)):
+    pl = plan(L, t0 + Lx)
+    for t in range(t0, t0 + Lx):
+        groups, allc = pl[t]
+        tl = t - t0                                                          # the position within x
         hn_parts = []
         for g_ in groups:
             P, cells, idx = g_["P"], g_["cells"], g_["idx"]
@@ -141,7 +145,7 @@ def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=No
                 H = T.einsum("bik,gik->bgi", hbar, Wg) + (bg * cg.sum(0)[None])[None]
             parts = []
             if g_["n_if"]:
-                parts.append(gi_if[:, t][:, :, g_["ifpos"]])                 # period 1: c[0] = 1
+                parts.append(gi_if[:, tl][:, :, g_["ifpos"]])                # period 1: c[0] = 1
             if len(g_["farpos"]):
                 nf = g_["n_if"]
                 parts.append((L.bfar[:, g_["farpos"]] * cg[:, nf:].sum(0)[None])[None].expand(B, -1, -1))
@@ -157,6 +161,8 @@ def forward(m, L, x, local, silence=False, far_off=False, far_mean=None, poke=No
         if poke is not None and poke[0] == t:
             h = h.index_copy(1, L.farx, poke[1])
         hist.append(h); hs.append(h)
+    if not T.is_grad_enabled():
+        L._e47_state = dict(t=t0 + Lx, hist=hist)                           # the whole history: hist[t - k] stays an absolute index
     Hs = T.stack(hs, 1)[:, :, L.ifx]
     if silence:
         Hs = T.zeros_like(Hs)
@@ -205,13 +211,23 @@ def opt_record(m, L, opt):
                         for g in opt.param_groups])
 
 
-def install(L):
+E_RESPOND = E.respond                    # exp11_cell.respond as imported (whole sequence again for every answer byte)
+
+
+def install(L, incremental=True):
+    """arch26.install(), then exp11_cell.forward replaced by a function of the harness's signature that runs this layer, and
+    exp11_cell.respond (used by exp11_cell.score, hence by E42's score_all) by this file's greedy decoding, incremental unless told not."""
     arch26.install()
 
     def fwd(m, x, local, through_time, keep=False, silence=False):
         lg, hs = forward(m, L, x, local, silence=silence)
         return lg, dict(h=hs)
     E.forward = fwd
+
+    def respond(m, prompts, store=None, cap=4, silence=False):
+        assert store is None and not silence
+        return generate(m, L, prompts, cap)[0]
+    E.respond = respond if incremental else E_RESPOND
 
 
 def step(m, L, opt, items, local):
@@ -243,8 +259,10 @@ def save_weights(m, L, path):
 
 # ---------------------------------------------------------------- scoring with the two diagnostics
 @T.no_grad()
-def generate(m, L, prompts, cap=4, far_off=False, far_mean=None, full=False):
+def generate(m, L, prompts, cap=4, far_off=False, far_mean=None, full=False, incremental=True):
     """exp11_cell.respond's greedy decoding (same grouping, chunks of 256, stop at EOS) with the diagnostics passed to this file's forward.
+    incremental=True: the prompt is run once and each answer byte adds one position to the carried state, instead of running the whole
+    sequence again for every byte as exp11_cell.respond does (the same values by causality; check 3 compares the answers given).
     full=True runs all cap steps (for the means) and also returns the final sequences."""
     out = [None] * len(prompts); seqs = [None] * len(prompts)
     groups = {}
@@ -255,8 +273,14 @@ def generate(m, L, prompts, cap=4, far_off=False, far_mean=None, full=False):
             ids = idx[j:j + 256]
             p = T.tensor([[E.BOS, *prompts[i]] for i in ids])
             gen = [[] for _ in ids]; done = [False] * len(ids)
+            st = None
             for _ in range(cap):
-                lg = forward(m, L, p, False, far_off=far_off, far_mean=far_mean)[0][:, -1]
+                if not incremental:
+                    lg = forward(m, L, p, False, far_off=far_off, far_mean=far_mean)[0][:, -1]
+                elif st is None:
+                    lg = forward(m, L, p, False, far_off=far_off, far_mean=far_mean)[0][:, -1]; st = L._e47_state
+                else:
+                    lg = forward(m, L, p[:, -1:], False, far_off=far_off, far_mean=far_mean, state=st)[0][:, -1]; st = L._e47_state
                 yy = lg.argmax(1)
                 for q in range(len(ids)):
                     if not done[q]:
@@ -612,6 +636,43 @@ def check3(qual, cmd):
             tp_ = time_props(m, L, x)
             out["time"][f"{side} {arm}"] = tp_
             ok = ok and all(v for k, v in tp_.items() if k != "cells_reached")
+    out["decoding"] = decoding_equal()
+    ok = ok and out["decoding"]["pass"]
+    out["pass"] = ok
+    return out
+
+
+def decoding_equal():
+    """Scoring arrangement: the answers given by the incremental greedy decoding equal those of exp11_cell.respond (the whole sequence
+    again for every answer byte) through the same forward, and those of this file's decoding without the carried state, plain and under
+    both diagnostics. On E26's birth S 73129 loaded by index (as in check 6) and on 1,024-cell networks moved off their start."""
+    seed = 73129
+    A, Rs, TA, LP = R42.panels(seed)
+    sets = dict(A_add=A["add89"], len12=LP[12], len40=LP[40])
+    out = {}; ok = True
+    nets = []
+    m = arch26.new_net(seed); m.load_state_dict(T.load(X.OUT / "e26" / f"e26_dev_S_{seed}.pt"))
+    W = m.rnn.weight_hh_l0.detach(); b = m.rnn.bias_hh_l0.detach()
+    Al = [[j for j in range(256) if j != i] for i in range(256)]; idx = T.tensor([[i] + Al[i] for i in range(256)])
+    Wc = T.stack([W[g * 256:(g + 1) * 256].gather(1, idx) for g in range(3)])
+    nets.append(("e26_dev_S_73129 by index", m, L47.Local(m, seed, 16, 255, structure=(Al, [1] * 256, [0] * 256, Wc, b.reshape(3, 256), None))))
+    for arm in ("one", "place"):
+        m2, L2 = build(32, arm, seed); perturb(m2, L2, T.Generator().manual_seed(3)); nets.append((f"32 {arm} perturbed", m2, L2))
+    for name, m_, L_ in nets:
+        for sname, items in sets.items():
+            prompts = [p for p, _ in items]
+            install(L_, incremental=False); ref = E.respond(m_, prompts)
+            inc = generate(m_, L_, prompts)[0]
+            r = dict(plain_equal=inc == ref, exact_incremental=sum(o == t for o, (_, t) in zip(inc, items)),
+                     exact_respond=sum(o == t for o, (_, t) in zip(ref, items)))
+            if len(L_.farx):
+                fm = far_means(m_, L_, items)
+                r["far_off_equal"] = generate(m_, L_, prompts, far_off=True)[0] == generate(m_, L_, prompts, far_off=True, incremental=False)[0]
+                r["far_mean_equal"] = generate(m_, L_, prompts, far_mean=fm)[0] == generate(m_, L_, prompts, far_mean=fm, incremental=False)[0]
+            out[f"{name} {sname}"] = r
+            ok = ok and all(v for k, v in r.items() if k.endswith("_equal"))
+            print("decoding", name, sname, r, flush=True)
+            install(L_)
     out["pass"] = ok
     return out
 
