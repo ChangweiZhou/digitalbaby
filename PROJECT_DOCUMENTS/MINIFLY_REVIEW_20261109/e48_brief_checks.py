@@ -119,14 +119,24 @@ if "B" in want:
             eq_off = eq_on0 = True; n_items = 0
             groups = [it for it in held.values()] + [it for it in taught.values()] + [it for v in plain.values() for it in v.values()]
             for it in groups:
-                x, _ = batch(it); ref = plain_forward(W, x)[3]; n_items += len(it)
-                eq_off &= np.array_equal(G.forward(W, zero, x, gate=False)[1], ref)
-                eq_on0 &= np.array_equal(G.forward(W, zero, x, gate=True)[1], ref)
+                for j in range(0, len(it), 1024):
+                    x, _ = batch(it[j:j + 1024]); ref = plain_forward(W, x)[3]; n_items += len(x)
+                    eq_off &= np.array_equal(G.forward(W, zero, x, gate=False)[1], ref)
+                    eq_on0 &= np.array_equal(G.forward(W, zero, x, gate=True)[1], ref)
             for n in EARLIER6:
                 x, _ = batch(earlier[n][12]); ref = plain_forward(W, x)[3]; n_items += len(x)
                 eq_off &= np.array_equal(G.forward(W, zero, x, gate=False)[1], ref)
                 eq_on0 &= np.array_equal(G.forward(W, zero, x, gate=True)[1], ref)
             print(f"      on the {n_items:,} items of E40's panels: gate off equals the plain reader value for value: {eq_off}; gate on with `up` at zero equals it: {eq_on0}")
+            # the quick generator against the word-for-word one, with a term that holds something
+            tt = G.new_term(16, rng, up_scale=0.05)
+            trio = [[p for p, _ in earlier["add97"][12]], [p for p, _ in held["add83"]], [p for p, _ in plain["sub83"]["reduction"][:300]]]
+            print(f"      the quick generator gives the word-for-word generator's bytes on {sum(map(len, trio))} items of three panels: {all(G.generate(W, tt, pr) == G.generate_slow(W, tt, pr) for pr in trio)}")
+            try:
+                G.generate(W, tt, trio[0] + trio[1]); refused = False
+            except AssertionError:
+                refused = True
+            print(f"      a call that holds items of an earlier task and of the new family at one length is refused by the reader: {refused}")
             # a term that holds something, and code rows that have moved: what they reach
             for r in RANKS:
                 term = G.new_term(r, rng, up_scale=0.05)
@@ -140,9 +150,9 @@ if "B" in want:
                     same_answers &= exact(V, term, earlier[n][12])[1] == base_out[n]
                 moved = 0.0; red_now = []
                 for n in ("add83", "sub83"):
-                    x, _ = batch(plain[n]["reduction"]); assert G.gate_of(x)
+                    x, _ = batch(plain[n]["reduction"][:512]); assert G.gate_of(x)
                     moved = max(moved, float(np.abs(G.forward(V, term, x)[1] - plain_forward(W, x)[3]).max()))
-                    red_now.append(100 * exact(V, term, plain[n]["reduction"])[0] / len(x))
+                    red_now.append(100 * exact(V, term, plain[n]["reduction"])[0] / len(plain[n]["reduction"]))
                 print(f"      rank {r:2d}, a term with `up` drawn in +-0.05 and the four code rows moved by a standard normal: the earlier tasks' logits with the gate read from the code byte"
                       f" equal the lived network's value for value: {same_logits}; their generated answers item for item: {same_answers}; forced on, their logits move by up to {forced:.1f};"
                       f" the new family's logits move by up to {moved:.1f} (reduction score {np.mean(red_now):.1f})", flush=True)
