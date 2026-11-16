@@ -3191,3 +3191,17 @@ Sources: the workers' branches merged here (`claude/peaceful-hopper-8ofq4i` for 
 **E34, stage 2 and the long births (merged; not yet read by me beyond the prediction tables).** The passing temperature learns in range and extrapolates on one of the two new seeds and does not learn in range on the other (69.9 at 12 letters), so the three-seed sentence is not licensed. Backpropagation with the same gain does not learn in range. Over four times the dose, the reading is *mixed*: the gain's mean at 40 letters over the last 13 rows is 4.4 points above plain backpropagation's and above it in 10 rows, short of the 10 points the reading required; plain backpropagation itself keeps improving to 92.6. P34.10, P34.11, P34.12 and P34.14 hold; P34.9, P34.13 and P34.15 to P34.17 miss. I will read those tables properly before saying more.
 
 **E41, first seed (merged; not yet read by me).** Its half-width births are the learners E44 uses.
+
+## 9.147 The one-page close, and the reviewer's proposed plan (16 November 2026)
+
+**The one-page close** is `MINIFLY_ARITHMETIC_CLOSE_ONE_PAGE_20261116.md`: six things established, four not, the open items, and the proposed direction. It was due on the 16th and is written against today's results.
+
+**The reviewer's plan, put to the user and not yet decided.** It names six issues (the learner keeps nothing unused; that undermines the benefit of experience; the sweep shows no advantage; no instrument for long lives; whole-answer scores hide what happens; defects in designs found after runs) and five steps: locate the loss in E43; finish E41's and E42's seeds; one retention experiment chosen by that outcome; the long-life instrument (E44); confirmation of the two strongest positive findings on sealed tasks. It proposes restating the question around retention under fixed memory.
+
+**My position.** I agree with the issues and the order. Three additions of my own:
+
+- **Weight decay can be checked now.** Whether learning the first family needs decay at all is one birth without it per rule, about an hour each, and every branch of the retention step needs the answer. E38's arm without decay already shows a second family is acquired without it (96%).
+- **The comparison must keep the user's first form:** against naive backpropagation and against backpropagation with a plain replay store, at equal stored numbers and equal updates.
+- **The defects of process are mine as much as the reviewer's.** In two days I set four marks without computing what a baseline or chance alone would give, built a task set without comparing its size with the record, and wrote a reading that a whole-answer score could not support. The six working rules the reviewer proposes would have caught each; I adopt them for my briefs whatever is decided about the question.
+
+**Not staffed:** E41's seeds 93683 and 116089 have no worker.
