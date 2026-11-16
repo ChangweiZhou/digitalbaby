@@ -118,3 +118,20 @@ if __name__ == "__main__":
               f" every input value is read by {int(readers_in.min())} to {int(readers_in.max())} cells, every cell by {int(readers_out.min())} to {int(readers_out.max())} readout units;"
               f" first-batch loss B {res[False][0]:.3f} S {res[True][0]:.3f}; gradients zero outside the masks {res[False][1] and res[True][1]}; finite {res[False][2] and res[True][2]};"
               f" digests of the draws {dg(draws(seed, k_in, k_out)[0])} {dg(draws(seed, k_in, k_out)[1])}")
+    # 3. the masked branches against E42's dense forward on the same network: weights outside a mask are zero, so the function is the same
+    for k_in, k_out in ((64, 32), (16, 8), (16, U), (D, 8)):
+        out = []
+        for local in (False, True):
+            m = arch26.new_net(seed); lay = E42.Layer(m, seed, N=10); f = Interface(m, seed, k_in, k_out)
+            lgM, _ = run(m, lambda: forward(m, lay, f, x, local)[0]); gM = {n: q.grad.clone() for n, q in m.named_parameters()}
+            lgD, _ = run(m, lambda: E42.forward(m, lay, x, local)[0]); gD = {n: q.grad.clone() for n, q in m.named_parameters()}
+            same_logits = bool(T.equal(lgM, lgD)); worst = float((lgM - lgD).abs().max())
+            if not local:
+                mi, mo = f.mask_in.repeat(3, 1), f.mask_out
+                inside = bool(T.equal(gM["rnn.weight_ih_l0"][mi], gD["rnn.weight_ih_l0"][mi])) and bool(T.equal(gM["lm.weight"][mo], gD["lm.weight"][mo]))
+                others = all(T.equal(gM[n], gD[n]) for n in gM if n not in ("rnn.weight_ih_l0", "lm.weight"))
+                dmax = max(float((gM[n] - gD[n]).abs().max()) for n in gM if n not in ("rnn.weight_ih_l0", "lm.weight"))
+                out.append(f"B: logits equal {same_logits} (largest difference {worst:.1e}); gradients inside the masks equal {inside}; every other gradient equal {others} (largest difference {dmax:.1e})")
+            else:
+                out.append(f"S: logits equal {same_logits} (largest difference {worst:.1e})")
+        print(f"3. K_IN {k_in}, K_OUT {k_out}: " + "; ".join(out))
