@@ -65,7 +65,7 @@ def describe_step(xn, xw, Dn, Dw):
 def step_description(sn, sw, key, ver, unit):
     t = f"{key}_{ver}"
     cn, cw = sn["thresholds"][t], sw["thresholds"][t]
-    mul_n, mul_w = (1, 1) if unit == "updates" else (sn["params"], sw["params"])
+    mul_n, mul_w = (1, 1) if unit == "updates" else (sn["params"] * 64, sw["params"] * 64)   # weight-items: params x batch 64 x updates
     Dn = (sn["dose"] - (512 if ver == "three" else 0)) * mul_n
     Dw = (sw["dose"] - (512 if ver == "three" else 0)) * mul_w
     xn = cn["updates"] * mul_n if cn else None
