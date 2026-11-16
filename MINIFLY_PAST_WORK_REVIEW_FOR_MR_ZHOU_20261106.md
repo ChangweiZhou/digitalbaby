@@ -3290,3 +3290,11 @@ What I did: wrote the terms and the forward as runnable code and ran them on E26
 **What the user's requirement still lacks here.** Inside the patch each of the 256 cells reads all 512 input values and each readout unit reads all 256 cells. The reviewer measured that E42's trained network rests on that dense interface. A limited interface is named in the brief as the next job; I have not drafted it.
 
 **Names.** The reviewer has renamed its section 27 job to E48 (memo revision 20), matching the brief I pushed at bd9f18fe; its two open requests, that brief and the two further additions to E43, were both answered there.
+
+## 9.153 E49 drafted: a limited interface (16 November 2026)
+
+The user asked for the limited-interface job to be drafted ("Yes, draft it"). It is `OPUS_TASK_E49_A_LIMITED_INTERFACE_20261116.md`, awaiting audit. It is the direct test of the user's statement that a cell cannot see the whole input: E42's `F10` at 256 cells, with each cell reading 64 or 16 of the 512 values of the byte's code and each readout unit reading 32 or 8 of the 256 cells, by two fixed masks, under both rules on seed 73129. If the smaller setting falls short, two further settings limit one side at a time, to say which side costs.
+
+As for the last four briefs, the layer is written as runnable code (`PROJECT_DOCUMENTS/COORD_CHECKS_20261116/e49_interface_spec.py`) and run without training: with both masks full it is E42's `F10` bit for bit, in logits and in gradients under both rules; gradients outside the masks are zero; no input value and no cell is left unread at any setting, though at 16 values a cell some input values are read by a single cell. With the interface limited the interface falls from 524,288 multiply-adds a position to 65,536 or 16,384, and a cell with its share of the interface costs 289 or 97 against 2,081; what stays dense, the byte's code and the readout's two layers, is then most of the network.
+
+The brief states that the input's values have no geometry here, so a random subset is not a neighbourhood; that is a limit of this network and not of the requirement.
