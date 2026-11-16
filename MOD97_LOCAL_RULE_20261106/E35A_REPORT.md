@@ -182,3 +182,31 @@ Stage 1b is not run: the coordinator releases it after reading stage 1a. Under t
 ## Limits
 
 One seed in stage 1a. Single births; differences under 15 points are not read. The gate diagnostics describe; they do not explain. All the brief's "cannot show" items apply (no rule inside the line; no composition, few-shot or retention; breadth not tested; pass-through; thin coverage at f = 0.10; inventory 甲 wires the answer's structure).
+
+## Addendum 1: stage 1b (arm F, f = 0.10, seeds 93683 and 116089)
+
+Two births of arm `F` were launched at 02:39 UTC on 16 November 2026 from HEAD cdbe5daa. Each ran `python3 exp35a_stream.py dev F 10 <seed>` as its own detached process with one thread. Both exited with code 0: seed 93683 at 05:39 and seed 116089 at 05:43. Each receipt is complete and has three saved rows (16,384, 20,480 and 24,576). CPU: 10,693 s for seed 93683 and 10,951 s for seed 116089.
+
+- Receipts: `exp45/e35a/e35a_dev_F_f10_{93683,116089}.json`.
+- Weights: `_row{16384,20480,24576}.pt`.
+- Log: `exp45/e35a/logs/LAUNCHES.txt`.
+
+Arm `G` was not rerun on these seeds. Its figures come from the E35-B worker's receipts, `exp45/e35b/e35b_dev_G_f10_{93683,116089}.json` (complete). The data digest of `F` equals E35-B `G`'s at all six scored rows on both seeds.
+
+Each figure is the mean of rows 16,384, 20,480 and 24,576 for add and sub.
+
+| Seed | G held12 | F held12 | F − G | G held40 | F held40 | G taught12 | F taught12 | F within 15 of G |
+|---|---|---|---|---|---|---|---|---|
+| 73129 | 19.6 | 6.6 | −13.0 | 19.8 | 5.9 | 97.5 | 94.8 | yes |
+| 93683 | 32.1 | 11.8 | −20.3 | 31.6 | 11.8 | 96.7 | 97.2 | no (below by more) |
+| 116089 | 27.8 | 21.3 | −6.5 | 26.2 | 20.8 | 98.2 | 97.7 | yes |
+
+**Stop rule:** it applies. `F` is within 15 points of `G` (held12) on two of the three seeds, 73129 and 116089. Under the brief, the obstacle is the interface and inventory 甲's line stops here. Nothing is briefed after stage 1b.
+
+**P35A.10** ("`F` is within 15 of `G`, or below it by more, on both new seeds, so that the stop rule applies"): **yes**.
+
+- Seed 93683: 20.3 below, so "below it by more".
+- Seed 116089: 6.5 below, so within 15.
+- The stop rule applies.
+
+Limits: single births per seed, and the stage 1a limits apply.
