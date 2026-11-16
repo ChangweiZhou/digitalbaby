@@ -26,6 +26,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 13.** Section 23 is repeated on seeds 93683 and 116089 with the four files the E40 worker committed (6922a3a4). The four readings hold on all three seeds under the sweep and under backpropagation; the tables of 23.1 now give the three seeds. Item 11 of section 1 is done.
 
+**Revision 14.** Section 24 is added after Mr. Xu's objection that long-term memory exists without rehearsal. It restricts what section 20 established, gives a measurement of what survives a life without rehearsal, and asks for one small job (item 12 of section 1).
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -56,6 +58,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 10. **Brief one more full-scale job, E42: cells with a limited number of local connections and their own periods** (section 22). Forty-eight births in two stages after a stage of checks, 50 to 70 CPU-hours by my estimate. It comes to me before any worker starts. It does not wait for the small world and displaces nothing released.
 
 11. *(Done, revision 13.)* **Ask the E40 worker for four more files** (section 23.4): the row-64 weights of the lived S and B runs of seeds 93683 and 116089, whose hashes are in the receipts. About 18 MB. They let me repeat section 23 on three seeds.
+
+12. **Brief one small job, E43: is a family lost when the learner then learns something unrelated?** (section 24.5). About 2 CPU-hours by my estimate. It comes to me before any worker starts.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -905,3 +909,62 @@ How far the weights moved in 64 updates (seed 73129): each weight matrix by 4 to
 ### 23.4 The request, met
 
 The row-64 weights of the lived S and B runs of seeds 93683 and 116089 were committed by the E40 worker at 6922a3a4, and the tables above include them.
+
+## 24. Long-term memory: Mr. Xu's objection, and what section 20 does and does not establish (revision 14)
+
+### 24.1 The objection
+
+Mr. Xu, 16 November: "按照你的三项发现，爱因斯坦势必需要每隔一段时间重新复习世界地理，才能回忆起德国的生活。现实生活中长期记忆是客观存在的，我们遗漏了什么？"
+
+*Translation:* by your three findings, Einstein would have to review world geography at intervals in order to recall his life in Germany. In real life long-term memory exists as a matter of fact; what have we left out?
+
+The objection is right, and section 20 is restricted below.
+
+### 24.2 What survives a life without rehearsal (my measurement)
+
+`kept_after_life.py` beside this memo; read-only. The first family (mod 89) at the end of the nine lives, which never rehearse it: whole answers on 1,500 pairs of each operation, no letters, percent. Seeds 73129, 93683, 116089 in that order. At birth every figure is between 88 and 100.
+
+| | Lived under the sweep | Under backpropagation | Under K |
+|---|---|---|---|
+| Add, pairs that need the reduction | 0.7, 0.1, 1.4 | 1.7, 0.0, 0.1 | 1.0, 0.6, 0.7 |
+| Add, pairs that do not | 44.7, 55.5, 25.9 | 38.1, 26.9, 49.4 | 57.9, 41.8, 62.9 |
+| Sub, pairs that need the reduction | 0.4, 0.1, 0.1 | 0.1, 0.0, 0.0 | 0.0, 0.1, 0.4 |
+| Sub, pairs that do not | 79.4, 11.9, 1.7 | 91.6, 39.6, 92.5 | 73.8, 73.0, 3.7 |
+| Max | 98.5, 3.2, 25.7 | 98.3, 14.1, 0.0 | 98.7, 51.9, 0.0 |
+| Min | 0.0, 96.4, 95.1 | 33.5, 65.5, 92.7 | 0.0, 92.3, 99.1 |
+
+1. **What needs the modulus is lost in every network:** 0 to 1.7%.
+2. **Some knowledge survives a whole life of 36,864 updates without one rehearsal.** Max or min is at 92% or more in 8 of the 18 cases.
+3. **Survival is not reliable.** The other 10 cases are at 66% or less, 8 of them below 35%. Which of the two operations survives goes with the seed, not with the rule: max in seed 73129, min in the other two, under all three rules.
+
+So the learner is not without long-term retention, but nothing in it guarantees retention, and what later learning contradicts is always lost.
+
+### 24.3 What section 20 established, and what it did not
+
+- **Established:** for families that contradict one another (the same operands and operator, another modulus), what is lost returns within about 100 updates, and items of the old family mixed into the stream keep it. For that case no mechanism beyond a store of items is needed.
+- **Not established, and stated too widely by me:** that retention is not a research question. Three reasons.
+  1. **Fixed memory.** A store of items cannot hold examples of everything a long life has taught. Under Mr. Xu's premise of fixed memory, retention without rehearsal is necessary, not optional.
+  2. **Only the most adverse case has been measured.** Every life here consists of families that contradict the earlier ones. Mr. Xu's example is the other case: later learning that neither repeats nor contradicts the memory. It has never been measured.
+  3. **Only one kind of memory is present.** The tasks are rules computed by one shared circuit. Nothing here is a fact stored once and recalled by a cue.
+
+### 24.4 What the learner lacks beside a memory that lasts (argued, not measured)
+
+1. **Separation.** In this learner every update changes nearly every weight, and the gain of a new family and the loss of an old one are in the same matrix (section 23). A memory held in connections that later learning does not touch could not be lost to it. This is the principle of Mr. Xu's statement of 16 November on cells with no connection, and the reason E42's networks should later be given a retention test.
+2. **A second store.** A fast store of particular events in separate codes, with replay produced by the learner itself. The replay store of E38 is the experimenter's device, and it holds raw items.
+3. **Consolidation at the single connection.** A connection that has been stable for long becoming harder to change. E38 tested only a pull of equal strength on every weight, which failed.
+
+I recall the account of memory that combines the second and third (a fast store beside a slow learner, and replay during rest) from the literature and did not check it in this session. No mechanism is proposed here.
+
+### 24.5 Job E43: is a family lost when the learner then learns something unrelated?
+
+**Question.** After a birth, does training on a task that shares no input with the first family remove that family, as training on a contradicting family does?
+
+- **Starts.** The six E26 births.
+- **Arms.** `conflict`: the second family alone (mod 97), as E38's arm `none`. `unrelated`: a task on bytes that no family uses, with its own codes, with answers of two bytes and the end symbol so that the harness is unchanged; for example, returning two symbols shown before a run of fillers. The specification is yours.
+- **Dose and rows.** 4,096 updates; scored at 0, 64, 256, 1,024 and 4,096.
+- **Scores.** The first family: add and sub split by the reduction, max and min. The new task itself, to show that it is being learned.
+- **Reading, fixed beforehand.** *Kept* if under `unrelated` the first family's reduction pairs are at 80% or more of their level at row 0 at row 4,096, in two of three seeds; *lost* if at 20% or less; otherwise *partly kept*. `conflict` is the reference and is expected at zero by row 1,024.
+- **What each outcome means.** *Kept*: the fast loss measured so far is loss by contradiction, and the learner holds what is not contradicted. *Lost*: updating every weight removes even unrelated knowledge, and separation (24.4, item 1) becomes the first thing to test.
+- **Cost.** Twenty-four runs of 4,096 updates, about 2 CPU-hours with scoring.
+
+My expectation, on record: under `unrelated` the reduction pairs fall below half their starting level by row 1,024 in two of three seeds, 60%.
