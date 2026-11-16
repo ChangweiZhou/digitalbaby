@@ -62,7 +62,7 @@ def summarize(rec, setting):
         out["magnitude_start"] = curve[0]["kept_mean_magnitude"]; out["magnitude_end"] = curve[-1]["kept_mean_magnitude"]
         out["masks_every_row"] = all(all(all(v.values()) for v in r["masks"].values()) for r in curve)
     out["limit_every_row"] = all(all(r["limit"].values()) for r in curve)
-    out["curve"] = [dict(step=r["step"], A=r["A"], R=r["R"]) for r in curve]
+    out["curve"] = [dict(step=r["step"], A=r["A"], R=r["R"], loss=r["loss"]) for r in curve]
     return out
 
 
@@ -204,6 +204,15 @@ def write(out_dir, tag, f10_dir):
             continue
         rows = {r["step"]: r for r in S[k]["curve"]}
         L.append(f"| {k[0]} | {k[1]} | " + " | ".join(f"{rows[u]['A']:.1f}, {rows[u]['R']:.1f}" if u in rows else "" for u in steps) + " |")
+    L.append("")
+    L.append("### Per run: mean training loss of the 256 updates before the row (data from the receipts)\n")
+    lsteps = (256, 2048, 4096, 8192, 12288, 16384, 20480, 24576)
+    L.append("| Setting | Rule | " + " | ".join(f"{u:,}" for u in lsteps) + " |\n|---|---|" + "---|" * len(lsteps))
+    for k in order:
+        if k not in S:
+            continue
+        rows = {r["step"]: r for r in S[k]["curve"]}
+        L.append(f"| {k[0]} | {k[1]} | " + " | ".join(f"{rows[u]['loss']:.3f}" if u in rows else "" for u in lsteps) + " |")
     L.append("")
     L.append("### Per run: cosine between the sweep's and the exact gradient of each masked map (first batch; at the start and at the end), "
              "and the mean magnitude of the kept weights (start, end)\n")
