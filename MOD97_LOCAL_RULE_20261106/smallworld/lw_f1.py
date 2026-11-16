@@ -240,7 +240,7 @@ def md():
             L.append(f"| {st} | {arm} | {vu} | {wname.replace('_', ' ')} | {P(mean('figure'))} | {P(mean('none_figure'))} | {P(mean('max', 1))} | {P(mean('min', 1))} |")
     # against size and place
     L += ["", "## The family's figure (first-visit level, last quarter) against its taught pairs and its place in turn, pooled over worlds", "",
-          "Families 1 to 7 of every world (56 a cell row); the joint fit is the least-squares fit of the figure on ln n and ln(taught pairs) "
+          "Families 1 to 7 of every world (56 a row; the count of each cell in brackets); the joint fit is the least-squares fit of the figure on ln n and ln(taught pairs) "
           "together, over n = 2 to 8.", "",
           "| Set | Arm | Visit length | " + " | ".join(f"{b[0]} pairs" for b in SIZE_BINS) + " | Joint fit: per ln n | per ln(taught pairs) |",
           "|---|---|---|" + "---|" * 3 + "---|---|"]

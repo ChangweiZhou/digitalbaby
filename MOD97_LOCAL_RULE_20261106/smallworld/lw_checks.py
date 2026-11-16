@@ -184,6 +184,19 @@ def check1_post(receipts):
     return dict(passed=bool(ok and len(rows) == 48), lives=len(rows), rows=rows)
 
 
+def check1_lap2():
+    """The second lap's receipts: stream digests and list digests against the audit's section 7 at the adopted length."""
+    _, t2, _, _ = audit_tables()
+    rows, ok = [], True
+    for p in sorted((F1 / "lap2").glob("*_br8_*.json")):
+        r = json.loads(p.read_text()); w, vu = r["settings"]["world"], r["settings"]["visit_updates"]
+        e = r["stream_sha256"][:16] == t2[w][f"lap2_{vu}"] and r["list"]["items_sha256"][:16] == t2[w]["list_0_7"]
+        rows.append(dict(branch=p.name, world=w, visit_updates=vu, stream_sha256=r["stream_sha256"], audit=t2[w][f"lap2_{vu}"],
+                         list_items_sha256=r["list"]["items_sha256"], audit_list=t2[w]["list_0_7"], equal=e))
+        ok &= e
+    return dict(passed=bool(ok and len(rows) == 16), branches=len(rows), rows=rows)
+
+
 # ---------------------------------------------------------------- check 2
 def check2():
     out, ok = {}, True
@@ -536,7 +549,7 @@ def gate_receipts():
 def post():
     pre_ = json.loads((CHK / "E44_CHECKS_PRE.json").read_text())
     rs = gate_receipts()
-    res = dict(check1_receipts=check1_post(rs), check6_same_stream=check6_post(rs),
+    res = dict(check1_receipts=check1_post(rs), check1_second_lap=check1_lap2(), check6_same_stream=check6_post(rs),
                check7_calibration_life=check7_post(F1 / "lw_naive_w1_v8_vu128_turn.npz", 128), check8=check8(rs))
     for k, v in res.items():
         print(k, "PASS" if v["passed"] else "FAIL", flush=True)
