@@ -3231,3 +3231,26 @@ The audit (`AUDIT_E46_WEIGHT_DECAY_BRIEF_20261116.md`, 6a208456) required six ch
 The reviewer agrees that backpropagation with a plain replay store at equal memory is among the arms of the long-life comparison.
 
 **On a graphics processor** (the reviewer's answer to the user, which I share): a single run would gain little, since the network is small and steps byte by byte; the gain is in training many networks as one batch, which needs a rewritten runner, a new audit, and checks by tolerance in place of equal hashes. Not worth doing before E44 is calibrated and many long lives are to be run at once. The time of the last two days went to rounds of design, audit and reading, not to computation.
+
+## 9.150 E44 audited and released; the user's requirement of locality at the input and the output; E47 drafted (16 November 2026)
+
+**E44 released as revision 2.** The audit (`AUDIT_E44_LONG_LIFE_WORLD_BRIEF_20261116.md`, dc05d575) reproduced the generator's digests with a second implementation and required nine changes, all made as written. Those that correct me: the level my gate read (a fixed window of 64 updates) meant something different at each visit length and could not pass the upper limit at the shortest; my floor of 0.10 could be passed by storing pairs without the rule (a fresh network that has stored a tenth of a family is at 6 to 17% on reduction pairs), so it is 0.20; I had stated how many families a life meets from three worlds, and over 200 worlds a life of 1,024 visits meets all 52 in only half; I named an optimizer constructor that takes no rate or decay; and I committed a compiled cache file. Added on the audit's word: what is kept is read on a fixed list at the end of every visit with decay alone beside it; one second lap over the eight families; the event file records the bytes of each answer given, after E43. From its recommendations: a set without decay and a third arm (the sweep's life from backpropagation's birth), both outside the gate. The generator file changed in two places that leave every digest as it was.
+
+**The user's statements of 16 November on the input and the output, verbatim, as the reviewer records them.**
+
+- "It seems the byte level translation / output is the fixed cost head that in the long term can be ignored. What is the problem?"
+- "No, biological cells obviously cannot see the whole input, so locality is essential and our current set up does not scale. Also it makes no sense for a cell to see one million tokens in a future NLP task."
+
+So locality is a requirement of the design, at the input and the output as well as between cells. E42 met it only between cells: each of its cells read all 512 input values and each readout unit read every cell, 2,048 of a cell's 2,081 multiply-adds.
+
+**Drafted, awaiting audit: E47** (`OPUS_TASK_E47_LOCALITY_AT_THE_INPUT_AND_THE_OUTPUT_20261116.md`), to run after E42's other seeds and E43's additions. A grid of 256, 1,024 or 4,096 cells in which only one patch of 256 reads the byte and is read by the readout; every cell reads 10 neighbours and itself; the arithmetic is by index, so no matrix over all pairs of cells exists; periods either all 1, or growing with distance from the interface, or the same periods scattered.
+
+What I did, as for E42: wrote the layer as runnable code (`PROJECT_DOCUMENTS/COORD_CHECKS_20261116/e47_local_spec.py`) and ran it without training.
+
+- At 256 cells it gives E42's logits to 2.4e-7 and E42's gradients to 3.5e-7 under both rules, for `F10` and for `P8`; so E42's `F10` is this job's first row and is not rerun.
+- Sixteen times the cells cost 14% more multiply-adds, 3% with periods, and every size is below the present network: a cell costs 33 multiply-adds.
+- A changed byte reaches a cell no sooner than its distance allows, and the far cells' weights all receive gradient under both rules.
+- **Counted computation is not measured time:** by index on a CPU the largest size takes 1.2 to 1.6 CPU-seconds an update on my Mac against 0.09 at 256 cells. The comparison is in multiply-adds, with time reported beside it.
+- **One thing found by writing it:** my first rule for periods by place (groups of 256, doubling, capped at 16) put three quarters of the largest network's cells at period 16, where a cell is updated once or twice in an item. The file uses four equal groups at periods 2 to 16.
+
+Under the working rules adopted today the brief states its comparison with the record before the design (among it, that at 4,096 cells a round trip to the farthest cell takes 16 steps, as long as an item, which may leave those cells unused), and it has one full-length trial on one seed, read before any roster.
