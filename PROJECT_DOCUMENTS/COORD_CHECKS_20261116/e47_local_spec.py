@@ -118,8 +118,9 @@ class Local:
         return dict(weights=nw, multiply_adds=fixed + iface + cells, multiply_adds_with_periods=fixed + iface + per_step)
 
 
-def forward(m, L, x, local, silence=False, far_off=False):
-    """Returns logits and the list of states. far_off: cells away from the interface are held at zero (the diagnostic)."""
+def forward(m, L, x, local, silence=False, far_off=False, far_mean=None):
+    """Returns logits and the list of states. Two diagnostics: far_off holds the cells away from the interface at zero after every position;
+    far_mean, a tensor (positions, far cells), holds them at the given values (their means over the scored items at each position)."""
     u = m.book(x)
     z1 = T.tanh(lin(u, m.l1, local))
     B, Lx = x.shape
@@ -142,6 +143,8 @@ def forward(m, L, x, local, silence=False, far_off=False):
         h = T.where(upd[None, :], hn, h)
         if far_off and len(L.farx):
             h = h.index_fill(1, L.farx, 0.0)
+        if far_mean is not None and len(L.farx):
+            h = h.index_copy(1, L.farx, far_mean[t][None].expand(B, -1))
         hs.append(h)
     Hs = T.stack(hs, 1)[:, :, L.ifx]                                         # only the interface is read
     if silence:
@@ -210,6 +213,17 @@ if __name__ == "__main__":
         lg_off = forward(m, L, x, False, far_off=True)[0]; hs_off = T.stack(forward(m, L, x, False, far_off=True)[1], 1)
     print("4. a changed byte reaches a cell no sooner than its distance allows:", ok_time, "| changes only at update positions:", bool((~changed | upd[1:]).all()),
           "| with far cells off they are zero:", bool((hs_off[:, :, L.farx] == 0).all()), "| logits finite:", bool(T.isfinite(lg_off).all()))
+    with T.no_grad():
+        mean = hs[:, :, L.farx].mean(0)                                      # (positions, far cells): the batch's mean state at each position
+        hs_mean = T.stack(forward(m, L, x, False, far_mean=mean)[1], 1)
+    print("   with far cells held at their mean they equal it:", bool(T.equal(hs_mean[:, :, L.farx], mean[None].expand(x.shape[0], -1, -1))))
+    import hashlib, json
+    dg = lambda v: hashlib.sha256(json.dumps(v).encode()).hexdigest()[:16]
+    WANT = {16: ("fde78220c57da3d4", "0cc7c65a16f482a9", "0cc7c65a16f482a9", "ba1a044f61b89809"), 32: ("f3361f3823d86f9d", "8394011ba0130f32", "1f2074a6ca43ab00", "624270ab87410e73"),
+            64: ("a70f0c440580f1bb", "10ef2ba7a17c347c", "772686e61a77fb83", "80295a954d239c28")}
+    for side, want in WANT.items():
+        Ap, pp, fp = draws(seed, side, 10, "place"); _, ps_, _ = draws(seed, side, 10, "scatter")
+        print(f"   draws at {side} a side equal the audit's digests (connections, periods place, periods scatter, phases):", (dg(Ap), dg(pp), dg(ps_), dg(fp)) == want)
     for local in (False, True):
         loss_grads(lambda: forward(m, L, x, local)[0], list(m.parameters()) + L.parameters())
         print(f"   local={local}: every parameter has a finite gradient: {all(bool(T.isfinite(q.grad).all()) for q in list(m.parameters()) + L.parameters() if q.grad is not None)};"
