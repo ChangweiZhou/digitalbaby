@@ -127,7 +127,7 @@ Brief: addendum 1 of `OPUS_TASK_E43_IS_A_FAMILY_LOST_TO_UNRELATED_LEARNING_20261
 - `e43_addendum.py` (runner), committed at ca524807. The run-to-16,384 option was added at 09064135, before those runs started.
 - `e43_addendum_read.py` (reader).
 
-Outputs are in `exp45/e43/addendum1/`: the receipts, `E43_ADDENDUM1_TABLES.md` and `E43_ADDENDUM1_READ.json`. Nothing existing was edited. The CPU for the addendum was 4.3 CPU-h; the brief estimated about 2. The excess is the three reruns to 16,384 below, which the condition required.
+Outputs are in `exp45/e43/addendum1/`: the receipts, `E43_ADDENDUM1_TABLES.md` and `E43_ADDENDUM1_READ.json`. Nothing existing was edited. The CPU for the addendum was 2.8 CPU-h (receipts summed); the brief estimated about 2. The excess is the three reruns to 16,384 below, which the condition required.
 
 ## 1. The weight files (an erratum to both reports)
 
