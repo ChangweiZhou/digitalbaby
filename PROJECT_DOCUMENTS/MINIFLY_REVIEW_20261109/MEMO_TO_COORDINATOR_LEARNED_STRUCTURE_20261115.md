@@ -20,6 +20,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 10.** Section 22 is added after Mr. Xu's statements of 16 November: each cell is connected to a limited number of cells inside a neighbourhood fixed in advance, the connections may change during learning, and each cell has its own pre-set period. It asks for one new full-scale job (item 10 of section 1). The arithmetic behind it is in `e42_design_checks.py` beside this memo.
 
+**Revision 11.** The audit of the E42 brief is in `AUDIT_E42_CELLS_BRIEF_20261116.md`, with a numpy reader of the cell layer in `e42_cells_reader.py`. It corrects one thing in section 22.3 that was mine, the start of the variant `source`; the table there now carries the corrected form. It also defers `P8-mean` and replaces my cost estimate (sections 22.4 and 22.9).
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -698,9 +700,11 @@ readout, unchanged:  z2 = tanh(l2 z1 + lm h),  logits = l3 z2
 | `last` | gi(t) | gh(t) | none |
 | `mean` | the mean of gi over the period | the mean of gh over the period | none |
 | `step` (the default) | sum over k of a_i[k] gi(t-k) | sum over k of a_i[k] gh(t-k) | a_i: one weight for each step of the period, starting at 1/p |
-| `source` | as `step` | sum over k of (Wh[k] * mask) h(t-k-1), plus bh: a separate strength for every connection at every step of the period | Wh[k] for k = 0 .. p_i - 1, each starting at the masked Wh divided by p_i; a_i as in `step` |
+| `source` | as `step` | sum over k of a_i[k] times [(Wh[k] * mask) h(t-k-1) + bh]: a separate strength for every connection at every step of the period | Wh[k] for k = 0 .. p_i - 1, each starting as a copy of the masked, scaled Wh; a_i as in `step` |
 
 `mean`, `step` and `source` compute the same function at the start. `source` is the variant in which a cell can read each of its sources at its own distances in time, up to its period.
+
+*Corrected in revision 11.* I first wrote that each Wh[k] starts at the masked Wh divided by the period. That put the factor 1/p inside the weights, where the sign rule's single scale cannot see it: under the sweep the error sent back would have been 0.40 of the right size for cells of period 1 and 3.2 times it for cells of period 8 (`e42_brief_checks.py`, part F). With the factor carried by a_i, as in `step`, the ratio is 1 for every period.
 
 **Start.** `arch26.new_net(seed)` unchanged; then periods, phases and connections are drawn; then the recurrent weights outside the mask are set to zero and those inside are multiplied by sqrt(256 / (N + 1)), so that a cell's recurrent input has the variance it has in the present network (4.82 at N = 10; exactly 1 when every cell is connected to every other).
 
@@ -737,7 +741,9 @@ Stage 2, under the sweep only, three seeds: 24 runs. Each differs from its refer
 | `N5`, `N20` | `A10` | N = 5; N = 20 |
 | `W10` | `A10` | the neighbourhood is all 255 other cells: the limit without the locality |
 | `P4`, `P16` | `P8` | periods 1, 2, 4; periods 1, 2, 4, 8, 16 |
-| `P8-last`, `P8-mean`, `P8-source` | `P8` | the variant |
+| `P8-last`, `P8-source` | `P8` | the variant |
+
+`P8-mean` is deferred (revision 11): it is `step` with its weights held fixed, the least informative of the variants, and the cost is higher than I estimated. Stage 2 is then 21 runs.
 
 Cells by period: half of the cells have period 1 in every set with periods, so the number of cells that follow every byte is the same across them.
 
@@ -815,7 +821,7 @@ So with periods up to 4 the operand must be kept across updates in nearly every 
 
 ### 22.9 Cost and order
 
-E26's birth took 3,276 CPU-seconds with its own scoring, 0.133 per update. The new layer does the same matrix work plus buffers; `source` does more. My estimate is 50 to 70 CPU-hours for the 48 runs and about 2 for stage 0, to be replaced by check 9's forecast. One worker per seed. The job does not wait for the small world and does not displace E39, E40 or E41.
+E26's birth took 3,276 CPU-seconds with its own scoring, 0.133 per update. The new layer does the same matrix work plus buffers; `source` does more. My estimate was 50 to 70 CPU-hours for the 48 runs and about 2 for stage 0. The audit replaces it: the coordinator's own timings give about 150 CPU-hours for the specification file as it stands, and about 75 to 80 if the loop over a period's steps is written to cost what its arithmetic costs, which the worker is asked to do and to check against the specification. Check 9's forecast decides. One worker per seed. The job does not wait for the small world and does not displace E39, E40 or E41.
 
 ### 22.10 What it cannot show
 
