@@ -130,3 +130,26 @@ Training batch at update 24,576, by the role of the byte just read (`exp28_every
 - Stage 1a M and X at f = 0.25: no family has room there.
 - Stage 1b (seeds 93683, 116089): awaits the coordinator's release.
 - Arm G: run by the E35-A worker; this worker ran only its dry hash (check 1).
+
+---
+
+# Addendum 1: stage 1b (arms G and F at f = 0.10, seeds 93683 and 116089)
+
+Released by the brief's addendum 1 (3aa9dbf3 on `codex/minifly-consolidated-20261023`). The E35-A branch (`claude/nice-rubin-y5de8k`) has no arm G at f = 0.10 on these seeds, so this worker ran G with `exp35b_stream.py` (the runner whose arm G reproduced E26's arm B hash, check 1). Four births, launched by `exp45/e35b/run_1b.sh`; receipts `exp45/e35b/e35b_dev_{G,F}_f10_{93683,116089}.json`, weights at rows 16,384, 20,480 and 24,576 committed beside them. All losses finite. Within each seed, G and F were fed the same batches (data digests equal: 93683 be43710f…, 116089 d6cbd87a…). CPU: G 2,699 s and 2,708 s; F 3,584 s and 3,552 s. Seed 73129 is from stage 1a (G from E35-A, d5b89442).
+
+Add and sub only; % exact on the 300-item panels; mean of rows 16,384, 20,480, 24,576 / final row.
+
+| seed | arm | held12 add/sub | held12 add | held12 sub | held40 add/sub | held40 add | held40 sub | taught12 add/sub | taught12 add | taught12 sub |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 73129 | G (E35-A) | 19.6 / 20.5 | 21.8 / 22.0 | 17.4 / 19.0 | 19.8 / 21.5 | 21.7 / 23.7 | 18.0 / 19.3 | 97.5 / 97.7 | 97.8 / 98.0 | 97.2 / 97.3 |
+| 73129 | F | 18.0 / 20.2 | 20.1 / 23.0 | 15.9 / 17.3 | 17.8 / 20.5 | 20.0 / 24.3 | 15.7 / 16.7 | 99.5 / 99.7 | 99.8 / 99.7 | 99.2 / 99.7 |
+| 93683 | G | 32.1 / 32.3 | 36.7 / 36.0 | 27.6 / 28.7 | 31.6 / 32.0 | 35.9 / 36.0 | 27.3 / 28.0 | 96.7 / 96.7 | 97.4 / 97.3 | 96.0 / 96.0 |
+| 93683 | F | 32.6 / 34.3 | 34.7 / 35.7 | 30.4 / 33.0 | 32.2 / 33.3 | 33.3 / 34.0 | 31.0 / 32.7 | 98.0 / 97.8 | 98.6 / 98.7 | 97.4 / 97.0 |
+| 116089 | G | 27.8 / 30.8 | 27.3 / 28.7 | 28.3 / 33.0 | 26.2 / 28.7 | 25.9 / 28.0 | 26.6 / 29.3 | 98.2 / 99.7 | 97.3 / 99.3 | 99.0 / 100.0 |
+| 116089 | F | 19.1 / 21.5 | 21.9 / 23.7 | 16.3 / 19.3 | 18.0 / 20.0 | 20.8 / 22.3 | 15.2 / 17.7 | 96.4 / 97.8 | 96.6 / 97.0 | 96.2 / 98.7 |
+
+F minus G, held12 add/sub (last three): 73129 −1.6; 93683 +0.5; 116089 −8.7.
+
+**Stop rule:** F is within 15 points of G on three of three seeds (at least two required). **The stop rule applies:** by the brief, the obstacle is the interface, and inventory 乙's line stops here.
+
+**P35B.8** (F within 15 of G on both new seeds, 80%): **occurred** (93683: +0.5; 116089: −8.7).
