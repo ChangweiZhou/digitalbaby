@@ -80,6 +80,9 @@ if "A" in want:
         n = G.count(r); assert n == 2304 * r + 32
         b = 4 * n
         print(f"   {r:4d} | {n:7,} | {100 * n / total:5.2f}% | {b:7,} | {b // 19:6,} | {b // 16:6,} | {b // 3:7,} | {b / (3 * taught_items):5.1f}")
+    life = {"mod 89 (a half taught)": round(.5 * 89 * 89) * 4, "mod 97 (a quarter)": round(.25 * 97 * 97) * 4, "mod 73 (a quarter)": round(.25 * 73 * 73) * 4}
+    print(f"   the earlier families' taught single-operation pairs, as entries: {life}; together {sum(life.values()):,} entries = {3 * sum(life.values()):,} bytes"
+          f" (the term at rank 4 is {4 * G.count(4) / (3 * sum(life.values())):.2f} of that, at rank 16 {4 * G.count(16) / (3 * sum(life.values())):.2f}, at rank 64 {4 * G.count(64) / (3 * sum(life.values())):.2f})")
     print("   a term file (four matrices and the four code rows, float32) is the bytes column plus a header of about 2 KB;"
           f" over the 18 runs one scored row is {sum(4 * G.count(r) for r in RANKS) * 6 / 1e6:.1f} MB, eight rows {8 * sum(4 * G.count(r) for r in RANKS) * 6 / 1e6:.0f} MB")
 
