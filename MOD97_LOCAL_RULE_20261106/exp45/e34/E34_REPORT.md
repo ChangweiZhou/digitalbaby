@@ -103,3 +103,191 @@ Stage 2 has not been run. The brief releases it after stage 1 is read; under out
 - **Launch.** All ran under `queue_e33a1_e34.sh`, started with `setsid nohup` and outside any tool wrapper, so no wrapper time limit applied. It ran at most three jobs at once, shared with E33 addendum 1. Each birth's rows were read in its own slot right after the birth, then committed and pushed. The launcher is safe to rerun after a container reset: it recreates the venv, skips births that are complete and read, and moves partial outputs to `killed_partial/` before a rerun. No reset happened, and no birth was interrupted or rerun.
 - **Committed weights.** For each full arm, the final `.pt` and rows 16,384 and 20,480 (9 files). Rows 4,096–12,288 were measured and their sha256 recorded, but are not committed.
 - **NOT_RUN.** Stage 2 (seeds 93683 and 116089), which awaits the brief author's release.
+
+---
+
+# Addendum 1: stage 2 (T050 on seeds 93683 and 116089) and B050 on seed 73129
+
+Brief: addendum 1 of `OPUS_TASK_E34_ENTROPY_WEIGHTED_ERROR_20261115.md` at 4dd0b9f7 on `codex/minifly-consolidated-20261023`. Same host and environment as stage 1.
+
+## Code and checks
+
+- **The B arms.** `exp34_entropy.py` gets two arms, `BU` (tau infinite) and `B050` (tau 0.5). Their only difference is `local = False` in the forward. They use B-all's receipts as the reference (commit 238b75bf). The existing arms' path is unchanged: `step` takes `local` with default `True`, and `dev` sets it from the arm.
+- **Reader.** `e34_read.py` gets an optional seed argument and a `tables_a1` command. `python3 e34_read.py tables` still rewrites a byte-identical `E34_READ_TABLES.md` (sha256 23a99351…) and `E34_READ.json`.
+- **Check before B050 runs.** The `BU` dry birth at 2,048 updates has `tensors_sha256` 39a50be3…, equal to `exp45/e28_qual/dry/e28_dev_B-all_dry2048_73129.json`. Its data digest is equal and its losses are finite. Receipts: `dry_a1/e34_dev_BU_dry2048_73129.json` and `dry_a1/GATE_B050.json`. B050 ran only after this gate opened.
+- **Regression of the unchanged path.** A U dry birth on the edited runner (`dry_a1/e34_dev_U_dry2048_73129.json`) again gives S-all's dry hash, b49561cf….
+- **Same data.** Each birth's `data_digest` equals its reference's at every saved row: S-all of the same seed for T050, B-all for B050.
+
+## Per-seed table
+
+Endpoint = mean of rows 16,384, 20,480, 24,576; the final row is in brackets. Marks as in stage 1.
+
+| Seed | Arm | Acc 12 | Acc 20 | Acc 40 | Keepers 12 / 20 / 40 | Keeps-and-writes 12 / 20 / 40 | Mark |
+|---|---|---|---|---|---|---|---|
+| 73129 | T050 (stage 1) | 83.66 (99.33) | 82.56 (99.33) | 79.78 (99.33) | 76.7 / 70.3 / 65.7 (78 / 69 / 63) | 76.7 / 70.3 / 65.7 (78 / 69 / 63) | extrapolates |
+| 93683 | T050 | 69.89 (98.00) | 69.33 (98.00) | 67.22 (96.33) | 96.3 / 90.0 / 78.3 (105 / 98 / 85) | 94.3 / 88.0 / 76.7 (103 / 96 / 83) | not learned in range |
+| 116089 | T050 | 92.22 (96.33) | 91.56 (95.67) | 88.89 (93.00) | 90.3 / 86.3 / 79.7 (94 / 89 / 84) | 86.3 / 82.7 / 76.0 (91 / 86 / 81) | extrapolates |
+| 73129 | B050 | 65.67 (100.00) | 65.11 (100.00) | 64.11 (100.00) | 91.3 / 88.3 / 83.0 (91 / 88 / 81) | 91.3 / 88.3 / 83.0 (91 / 88 / 81) | not learned in range |
+
+T050 on 93683 is 0.11 below the "learned in range" mark of 70, so, as the marks fix, it is not read for extrapolation.
+
+T050 does not learn in range and extrapolate on both new seeds. The condition for the brief's sentence is therefore not met, and the sentence is not stated.
+
+## The two added facts
+
+**Fact 1: the first saved row at which accuracy at 12 letters reaches 70.** "Plain backpropagation" is E28 B-all and "plain sweep" is E28 S-all, from `E32_READ.json`.
+
+| Seed | Arm | Arm's first row | Plain backpropagation | Plain sweep |
+|---|---|---|---|---|
+| 73129 | T050 | 16,384 | 4,096 | 24,576 |
+| 93683 | T050 | 20,480 | 4,096 | 24,576 |
+| 116089 | T050 | 16,384 | 4,096 | 16,384 |
+| 73129 | B050 | 20,480 | 4,096 | 24,576 |
+
+**Fact 2: the three rows at 40 letters, beside their mean.**
+
+| Seed | Arm | 16,384 | 20,480 | 24,576 | Mean |
+|---|---|---|---|---|---|
+| 73129 | T050 | 78.00 | 62.00 | 99.33 | 79.78 |
+| 93683 | T050 | 33.00 | 72.33 | 96.33 | 67.22 |
+| 116089 | T050 | 87.33 | 86.33 | 93.00 | 88.89 |
+| 73129 | B050 | 17.33 | 75.00 | 100.00 | 64.11 |
+
+Every saved row is in `E34_ADDENDUM1_TABLES.md`; the machine-readable form is `E34_ADDENDUM1.json`.
+
+## B050's reading
+
+B050 reaches 65.67 at 12 letters, below 70. The case is **"does not learn in range"**, and the reading is: "Under backpropagation the gain at this temperature prevents in-range learning on this seed."
+
+For reference, B050's endpoint at 40 letters is 64.11 against plain backpropagation's 82.0 (17.89 below) and T050's 79.78. These are not read, because B050 did not learn in range.
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P34.9 | T050 learns in range and extrapolates on both new seeds | 40% | **false** (93683: not learned in range, 69.89) |
+| P34.10 | T050 does so on at least one new seed | 75% | **true** (116089) |
+| P34.11 | T050 first reaches 70 at 12 letters at row 12,288 or later on both new seeds | 65% | **true** (20,480 and 16,384) |
+| P34.12 | B050 is below 70 at 12 letters at row 8,192 | 60% | **true** (8.33) |
+| P34.13 | B050 learns in range and is within 15 of 82.0 at 40 letters | 50% | **false** (not learned in range) |
+
+## Run record
+
+- **Births.** Three births of 24,576 updates: T050 on 93683 took 2,866 CPU-seconds, T050 on 116089 2,867, and B050 2,699. All losses were finite.
+- **Source commits.** 238b75bf for both T050 births, and 2eade79b for B050, which differs from 238b75bf only in result files. Every receipt records its sources as unmodified.
+- **Dry births.** BU and U, 2,048 updates each.
+- **Launch.** All ran under `queue_e34a1.sh`, started with `setsid nohup` with at most three processes. Each birth's rows were read in its slot right after it, then committed and pushed. Nothing was interrupted or moved aside.
+- **Committed weights.** For each birth, the final `.pt` and rows 16,384 and 20,480 (9 files). Rows 4,096–12,288 were measured and their sha256 recorded, but are not committed.
+
+---
+
+# Addendum 2: two long births (T050 and B-all, seed 73129, 98,304 updates)
+
+Brief: addendum 2 of `OPUS_TASK_E34_ENTROPY_WEIGHTED_ERROR_20261115.md` at 18751457 on `codex/minifly-consolidated-20261023`. Same host and environment. Every statement here carries its horizon: 98,304 updates, one seed.
+
+## Code and checks
+
+- **Code change (commit be01b07c).** `exp34_entropy.py` makes the smallest change the addendum names. For a dose above the full dose it uses the full-dose reference, and it compares the data digest and hash only at rows the reference has. Rows beyond the reference are recorded as skipped (`data_digest_check: "skipped: …"`, `tensors_equal_to_reference: null`).
+- **Regression after the change.** A T050 dry birth at 2,048 updates gives `tensors_sha256` 9da02e11…, equal to `exp45/e34/dry/e34_dev_T050_dry2048_73129.json` (`dry_a2/REGRESSION.json`).
+- **`exp28_everybyte.py` is unchanged.** It ran as it is with `E11_DEV_UPDATES=98304`. Its digest check against E26's receipts applies at rows 4,096–24,576 and is marked "not asserted" beyond them.
+- **Row-24,576 hash check: passed for both.** T050's row 24,576 is dd95a2e8…, equal to `exp45/e34/e34_dev_T050_73129.json`. B-all's is 62a33eb1…, equal to `exp45/e28/e28_dev_B-all_73129.json`. The check was made live during the births, and they would have been stopped on a mismatch.
+- **File names.** Both runners tag a non-default dose as `_dry98304`. The files are full births of 98,304 updates despite the tag.
+
+## Rows (accuracy at 12 / 20 / 40 letters)
+
+| Row | T050 | B-all | T050 above at 40 |
+|---|---|---|---|
+| 4,096 | 2.33 / 1.67 / 1.33 | 73.67 / 70.67 / 57.67 | |
+| 8,192 | 6.33 / 6.33 / 6.67 | 89.33 / 87.67 / 78.00 | |
+| 12,288 | 17.00 / 17.33 / 16.00 | 95.00 / 93.67 / 87.00 | |
+| 16,384 | 78.33 / 78.67 / 78.00 | 91.33 / 90.33 / 83.67 | |
+| 20,480 | 73.33 / 69.67 / 62.00 | 93.33 / 91.00 / 77.67 | |
+| 24,576 | 99.33 / 99.33 / 99.33 | 93.67 / 94.00 / 84.67 | |
+| 28,672 | 98.67 / 98.33 / 95.33 | 96.00 / 96.33 / 89.33 | |
+| 32,768 | 91.67 / 90.33 / 87.67 | 97.00 / 97.00 / 90.33 | |
+| 36,864 | 98.00 / 98.33 / 95.67 | 95.67 / 93.33 / 88.67 | |
+| 40,960 | 96.67 / 97.33 / 96.33 | 99.00 / 99.00 / 96.67 | |
+| 45,056 | 94.67 / 94.00 / 91.00 | 95.00 / 95.00 / 92.67 | |
+| 49,152 | 98.67 / 98.33 / 98.00 | 97.00 / 97.00 / 94.67 | yes |
+| 53,248 | 100.00 / 99.67 / 98.67 | 98.33 / 98.00 / 95.00 | yes |
+| 57,344 | 96.00 / 96.33 / 96.67 | 98.00 / 97.00 / 91.33 | yes |
+| 61,440 | 95.33 / 95.00 / 91.33 | 97.67 / 97.67 / 95.67 | no |
+| 65,536 | 99.67 / 99.67 / 98.00 | 98.00 / 98.67 / 98.67 | no |
+| 69,632 | 98.00 / 97.67 / 96.67 | 97.33 / 96.33 / 91.00 | yes |
+| 73,728 | 98.67 / 99.00 / 97.67 | 98.67 / 98.33 / 92.33 | yes |
+| 77,824 | 99.33 / 99.67 / 99.67 | 99.00 / 97.67 / 93.00 | yes |
+| 81,920 | 100.00 / 100.00 / 100.00 | 97.67 / 96.67 / 88.00 | yes |
+| 86,016 | 99.67 / 99.67 / 99.33 | 98.33 / 98.33 / 92.67 | yes |
+| 90,112 | 99.33 / 99.00 / 98.33 | 98.33 / 97.67 / 90.67 | yes |
+| 94,208 | 99.00 / 98.00 / 95.67 | 98.00 / 97.67 / 89.67 | yes |
+| 98,304 | 94.67 / 94.00 / 91.33 | 99.00 / 99.00 / 91.67 | no |
+
+Keepers and keeps-and-writes for every row are in `exp45/e34_long/E34_LONG_TABLES.md` and `E34_LONG_READ.json`.
+
+## Reading (addendum 2's rule, at 40 letters over the 13 rows 49,152–98,304)
+
+| Run | Mean acc 40 | Mean acc 20 | Mean acc 12 |
+|---|---|---|---|
+| T050 | 97.03 | 98.15 | 98.33 |
+| B-all | 92.64 | 97.69 | 98.10 |
+
+T050 minus B-all is **+4.38 points**, and T050 is above B-all in **10 of 13 rows**.
+
+The rule's first row needs both a mean at least 10 points above and at least 10 of 13 rows above. Only the second condition holds. The second row ("not above") does not apply either, so the result is **mixed**. As the addendum fixes it: "Mixed; the rows are reported."
+
+## Predictions
+
+| | Prediction | Chance | Outcome |
+|---|---|---|---|
+| P34.14 | The row-24,576 hash check passes for both runs | 85% | **true** |
+| P34.15 | Overtakes and stays | 30% | **false** (mixed: +4.38, 10 of 13) |
+| P34.16 | Does not overtake | 35% | **false** (T050's mean is above B-all's) |
+| P34.17 | B-all's mean at 40 letters over the 13 rows is at least 10 below its present endpoint of 82.0 | 20% | **false** (92.64) |
+
+## Run record
+
+- **Cost.** T050 took 10,875 CPU-seconds and B-all 10,083: 5.82 CPU-hours.
+- **Provenance.** Both started from commit 062bb820, with sources recorded as unmodified. All losses were finite.
+- **Launch.** Both ran under `queue_e34a2.sh`, started with `setsid nohup` once addendum 1's queue had ended. The two births ran together, with one reader loop as the third process; it read every row as it appeared, committed the reader file and made the live hash check. Nothing was interrupted or moved aside.
+- **Committed weights.** For each run, rows 49,152 and 73,728 and the final row 98,304 (6 files). The other rows were measured, and their sha256 are in the receipts.
+- **Next.** B050 at 98,304 updates (the user's request) is running under `queue_e34a3.sh`; its section follows.
+
+## Addendum 2, extension: B050 at 98,304 updates (seed 73129; the user's request)
+
+Addendum 2 runs B050 at this length only if its endpoint at the present length differs from plain backpropagation's by 15 points or more at 40 letters. It does: 64.11 against 82.0, a difference of 17.89. The user asked for B050 to be queued after the two long births. It is read against B-all by addendum 2's rule for T050, and T050 against B050 is reported beside it with no reading.
+
+- **Code.** It ran under `queue_e34a3.sh` from commit 1233b3f4, with sources unmodified. The reader is `e34_long_b050.py`, a separate file, so that the reader used by the running addendum-2 driver was not changed.
+- **Cost.** 10,384 CPU-seconds; all losses finite.
+- **Row-24,576 hash check: passed.** It is 24be117c…, equal to `exp45/e34/e34_dev_B050_73129.json`, and was checked live during the birth.
+- **Committed weights.** Rows 49,152 and 73,728 and the final row.
+- **All rows.** `exp45/e34_long/E34_LONG_B050_TABLES.md`.
+
+Rows at 40 letters, 49,152–98,304:
+
+| Row | B050 | B-all | T050 |
+|---|---|---|---|
+| 49,152 | 99.00 | 94.67 | 98.00 |
+| 53,248 | 99.33 | 95.00 | 98.67 |
+| 57,344 | 100.00 | 91.33 | 96.67 |
+| 61,440 | 97.00 | 95.67 | 91.33 |
+| 65,536 | 100.00 | 98.67 | 98.00 |
+| 69,632 | 97.00 | 91.00 | 96.67 |
+| 73,728 | 97.00 | 92.33 | 97.67 |
+| 77,824 | 99.33 | 93.00 | 99.67 |
+| 81,920 | 98.33 | 88.00 | 100.00 |
+| 86,016 | 98.33 | 92.67 | 99.33 |
+| 90,112 | 100.00 | 90.67 | 98.33 |
+| 94,208 | 100.00 | 89.67 | 95.67 |
+| 98,304 | 99.67 | 91.67 | 91.33 |
+
+| Run | Mean acc 40 | Mean acc 20 | Mean acc 12 |
+|---|---|---|---|
+| B050 | 98.85 | 99.00 | 99.10 |
+| B-all | 92.64 | 97.69 | 98.10 |
+| T050 | 97.03 | 98.15 | 98.33 |
+
+**B050 against B-all (addendum 2's rule):** B050 minus B-all is **+6.20 points**, and B050 is above B-all in **13 of 13 rows**. "Overtakes and stays" needs both a mean at least 10 points above and at least 10 of 13 rows above. Only the second condition holds. B050's mean is above B-all's, so "does not overtake" does not apply either. The result is **mixed**: "Mixed; the rows are reported."
+
+**T050 against B050 (reported beside; no reading):** T050 minus B050 is **−1.82 points** at 40 letters, and T050 is above B050 in **4 of 13 rows**.
+
+Early rows: B050 is at 2.67, 8.33, 12.67 and 17.67 at 12 letters at rows 4,096–16,384, and first reaches 70 at row 20,480. These are the same rows as in its 24,576-update birth, as the hash check requires.

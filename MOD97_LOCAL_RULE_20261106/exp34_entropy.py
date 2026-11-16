@@ -6,6 +6,7 @@ diagnostics are imported from exp28_everybyte unchanged; no existing dev, step o
 by the checks, as the reference the brief names).
 
     python3 exp34_entropy.py dev <arm> <seed> [--out DIR]     arm: U (tau inf) T050 (0.5) T100 (1.0) T200 (2.0)
+                                                              addendum 1: BU (tau inf, local False: dry check against B-all), B050 (0.5, local False)
     python3 exp34_entropy.py checks <seed>                    checks 1 (loss, first-batch gradients), 2 and 3 -> exp45/e34/E34_CHECKS.json
 
 The loss (the brief's code):
@@ -20,6 +21,8 @@ The loss (the brief's code):
 
 Weight diagnostics per 512-update block and per fine role, from the same detached Hh, w and ce: sum of Hh, sum of w, sum of w * ce, count.
 Dose: E11_DEV_UPDATES (full dose when unset). Every output path must not exist.
+Addendum 2: a dose above the full dose uses the full-dose reference; the digest and hash comparisons apply at rows the reference has and are
+skipped, and recorded as skipped, beyond it.
 """
 import json
 import math
@@ -36,7 +39,8 @@ from torch.nn.functional import cross_entropy, log_softmax  # noqa: E402
 
 C, R, X16, E, X, arch26 = E28.C, E28.R, E28.X16, E28.E, E28.X, E28.arch26
 masks, FINE = E28.masks, E28.FINE
-ARMS = {"U": float("inf"), "T050": 0.5, "T100": 1.0, "T200": 2.0}
+ARMS = {"U": float("inf"), "T050": 0.5, "T100": 1.0, "T200": 2.0, "BU": float("inf"), "B050": 0.5}
+BACKPROP_ARMS = ("BU", "B050")       # addendum 1: the only difference is local = False in the forward (full backpropagation through the item)
 SOURCES = E28.SOURCES + ("exp34_entropy.py",)
 E28_DIR = X.OUT / "e28"
 OUT_DEFAULT = X16.OUT / "e34"
@@ -82,9 +86,9 @@ def new_wdiag():
     return {n: [0.0, 0.0, 0.0, 0] for n in FINE}       # sum Hh, sum w, sum w*ce, count
 
 
-def step(m, opt, items, tau, roles_acc, wdiag):
+def step(m, opt, items, tau, roles_acc, wdiag, local=True):
     x, y, amask, real, fine = masks(items)
-    logits = arch26.forward(m, x, True, True)[0]
+    logits = arch26.forward(m, x, local, True)[0]
     loss, ce, Hh, w = loss34(logits, y, real, tau)
     with T.no_grad():                    # diagnostics on the same logits, detached: cannot reach the update
         ce_d = cross_entropy(logits.detach()[real], y[real], reduction="none").double()
@@ -123,11 +127,11 @@ def row_path(out, arm, seed, stop):
     return Path(out) / f"e34_dev_{arm}{E.DEVTAG}_{seed}_row{stop}.pt"
 
 
-def e28_reference(seed):
-    if E.DEVTAG:
-        p = X.OUT / "e28_qual" / "dry" / f"e28_dev_S-all_dry{E.DEV_DOSE}_{seed}.json"
+def e28_reference(seed, ref_arm="S-all"):
+    if E.DEVTAG and E.DEV_DOSE < E.DEV_UPDATES:
+        p = X.OUT / "e28_qual" / "dry" / f"e28_dev_{ref_arm}_dry{E.DEV_DOSE}_{seed}.json"
     else:
-        p = E28_DIR / f"e28_dev_S-all_{seed}.json"
+        p = E28_DIR / f"e28_dev_{ref_arm}_{seed}.json"
     d = json.loads(p.read_text())
     return {r["step"]: dict(data_digest=r["data_digest"], tensors_sha256=r["tensors_sha256"]) for r in d["curve"]}, str(p.relative_to(HERE))
 
@@ -135,12 +139,12 @@ def e28_reference(seed):
 # ---------------------------------------------------------------- birth
 def dev(arm, seed, out, cmd):
     tau = ARMS[arm]
-    local = True
+    local = arm not in BACKPROP_ARMS
     arch26.install()
     path = birth_path(out, arm, seed); rec_path = path.with_suffix(".json")
     R.refuse_existing(path, rec_path, str(path) + ".tmp", *[row_path(out, arm, seed, s) for s in range(4096, E.DEV_DOSE, 4096)])
     Path(out).mkdir(parents=True, exist_ok=True)
-    ref, ref_file = e28_reference(seed)
+    ref, ref_file = e28_reference(seed, "S-all" if local else "B-all")
     m = E.new_net(seed)
     desc = arch26.describe(m)
     book0 = m.book.weight.detach().clone()
@@ -152,7 +156,7 @@ def dev(arm, seed, out, cmd):
     dg = C.Digest()
     rec = dict(experiment="E34", kind="birth", arm=arm, tau=("inf" if math.isinf(tau) else tau), local=local, net="G1", seed=seed, kmax=E.KMAX["M"],
                dev_updates=E.DEV_DOSE, block=X.BLOCK, batch=X.BATCH, optimizer=C.opt_record(m, opt),
-               update="exp34_entropy.step: forward(local=True), entropy-weighted CE over every real byte, zero_grad, backward, AdamW step",
+               update=f"exp34_entropy.step: forward(local={local}), entropy-weighted CE over every real byte, zero_grad, backward, AdamW step",
                loss_definition=("sum over real positions of w * CE / sum of w, w = exp(-H / tau) with H the predictive entropy in nats, computed under "
                                 "no_grad (no gradient through w); no answer mask or role label enters the loss"),
                roles=dict(fine=list(FINE), fine_to_coarse=E28.FINE_TO_ROLE, identification="exp28_everybyte.masks / roles_of, imported unchanged; diagnostics only"),
@@ -165,7 +169,7 @@ def dev(arm, seed, out, cmd):
         losses = []; acc = E28.new_roles(); wacc = new_wdiag()
         for _ in range(X.BLOCK):
             items = next(bt); dg.add(items)
-            v = step(m, opt, items, tau, acc, wacc); losses.append(v); nupd += 1
+            v = step(m, opt, items, tau, acc, wacc, local); losses.append(v); nupd += 1
             if not math.isfinite(v) and rec["finite"]["all_finite"]:
                 rec["finite"].update(all_finite=False, first_nonfinite_update=nupd)
             rec["finite"]["updates_covered"] = nupd
@@ -178,8 +182,10 @@ def dev(arm, seed, out, cmd):
             sealed = {n: {k: E.score(m, it) for k, it in pk.items()} for n, pk in pan.items()}
             cpu_score += time.process_time() - cb
             d_now = dg.value()
-            assert stop in ref, f"the reference {ref_file} has no row at {stop}"
-            assert d_now == ref[stop]["data_digest"], f"data digest at row {stop} is not E28 S-all's: {d_now} vs {ref[stop]['data_digest']}"
+            in_ref = stop in ref
+            assert in_ref or stop > max(ref), f"the reference {ref_file} has no row at {stop}"
+            if in_ref:
+                assert d_now == ref[stop]["data_digest"], f"data digest at row {stop} is not the reference's: {d_now} vs {ref[stop]['data_digest']}"
             cs = time.process_time()
             if stop == E.DEV_DOSE:
                 wf, wsha = path, None
@@ -187,19 +193,19 @@ def dev(arm, seed, out, cmd):
                 wf = row_path(out, arm, seed, stop); wsha = R.save_weights(m, wf)
             cpu_save += time.process_time() - cs
             tsha = R.tensors_sha(m.state_dict())
-            same = tsha == ref[stop]["tensors_sha256"]
+            same = (tsha == ref[stop]["tensors_sha256"]) if in_ref else None
             hard = {n: v[12]["exact"] for n, v in sealed.items()}
             row = dict(step=stop, loss=sum(losses) / len(losses), finite_losses=all(math.isfinite(v) for v in losses),
                        finite_cumulative=dict(rec["finite"]), cpu=time.process_time() - t0, cpu_scoring_so_far=cpu_score,
                        cpu_updates_so_far=time.process_time() - t0 - cpu_score - cpu_save, sealed=sealed,
                        hard_mean_add89_sub89_k12=(hard["add89"] + hard["sub89"]) / 2 / 300 * 100,
                        book_shift_by_role=X16.book_shift(m, book0), data_digest=d_now,
-                       data_digest_check=f"equal to {ref_file} at this row: asserted",
+                       data_digest_check=(f"equal to {ref_file} at this row: asserted" if in_ref else f"skipped: {ref_file} has no row at {stop} (beyond its last row)"),
                        weights=wf.name, weights_sha256=wsha, tensors_sha256=tsha,
-                       tensors_sha256_reference=ref[stop]["tensors_sha256"], tensors_equal_to_reference=same)
+                       tensors_sha256_reference=(ref[stop]["tensors_sha256"] if in_ref else None), tensors_equal_to_reference=same)
             curve.append(row)
             print("e34 dev", arm, seed, stop, {n: [v[k]["exact"] for k in (0, 4, 8, 12, 20)] for n, v in row["sealed"].items()},
-                  f"hard {row['hard_mean_add89_sub89_k12']:.1f} cpu {row['cpu']:.0f}s tensors {'=' if same else '!='} S-all", flush=True)
+                  f"hard {row['hard_mean_add89_sub89_k12']:.1f} cpu {row['cpu']:.0f}s tensors {'=' if same else '!='} {ref_file.split("/")[-1]}", flush=True)
             X16.write_json(rec_path, dict(rec, credit_census_first_update=census))
     assert row is not None, "E11_DEV_UPDATES must be a positive multiple of 512"
     cb = time.process_time()

@@ -1,0 +1,145 @@
+"""E34 addendum 2 reader: the two long births (T050 and B-all, seed 73129, 98,304 updates, rows every 4,096). Read-only; trains nothing.
+
+    python3 e34_long_read.py read      every saved row present on disk and not yet read (incremental; safe to repeat)  -> exp45/e34_long/E34_LONG_READ.json
+    python3 e34_long_read.py tables    the row-24,576 hash check, all rows, the 13 rows 49,152-98,304 and the reading -> exp45/e34_long/E34_LONG_TABLES.md
+
+panels, measure and load_net are imported from e32_read unchanged (row_files is not used: it asserts the six rows of a 24,576-update birth).
+A row is read when its weights file exists and its sha256 is known from the receipt (rows before the last: the curve; the last: the
+completed receipt). Accuracy at 12, 20 and 40 letters, keepers and keeps-and-writes as measure returns them.
+"""
+import json
+import sys
+import time
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import e32_read as R32               # noqa: E402  (imports e29_gates -> exp20_reference: environment gate)
+from e32_read import panels, measure, load_net  # noqa: E402
+
+T, X16, E, arch26 = R32.T, R32.X16, R32.E, R32.arch26
+OUT = HERE / "exp45" / "e34_long"
+SEED = 73129
+DOSE = 98304
+RUNS = {"T050": OUT / f"e34_dev_T050_dry{DOSE}_{SEED}.json", "B-all": OUT / f"e28_dev_B-all_dry{DOSE}_{SEED}.json"}
+SHORT = {"T050": HERE / "exp45" / "e34" / "e34_dev_T050_73129.json", "B-all": HERE / "exp45" / "e28" / "e28_dev_B-all_73129.json"}
+ROWS = tuple(range(4096, DOSE + 1, 4096))
+LATE = tuple(r for r in ROWS if r >= 49152)
+assert len(LATE) == 13
+KEYS = ("acc12", "acc20", "acc40", "keepers12", "keepers20", "keepers40", "kw12", "kw20", "kw40")
+
+
+def known_rows(rp):
+    if not rp.exists():
+        return {}, None
+    rec = json.loads(rp.read_text())
+    out = {}
+    for c in rec["curve"]:
+        sha = c.get("weights_sha256")
+        if sha is None and c["step"] == DOSE and rec.get("complete"):
+            sha = rec["weights_sha256"]
+        f = rp.parent / c["weights"]
+        if sha and f.exists():
+            out[c["step"]] = (f, sha)
+    return out, rec
+
+
+def read():
+    arch26.install()
+    path = OUT / "E34_LONG_READ.json"
+    done = json.loads(path.read_text()) if path.exists() else dict(rows=[])
+    have = {(r["run"], r["row"], r["sha256"]) for r in done["rows"]}
+    pk = None
+    for run, rp in RUNS.items():
+        files, _ = known_rows(rp)
+        for row in sorted(files):
+            f, want = files[row]
+            if (run, row, want) in have:
+                continue
+            pk = pk or panels(SEED)
+            t0 = time.process_time()
+            m, sha = load_net(f, want, SEED)
+            r = dict(run=run, seed=SEED, row=row, file=str(f.relative_to(HERE)), sha256=sha, **measure(m, SEED, pk))
+            r["cpu_s"] = round(time.process_time() - t0, 2)
+            done["rows"].append(r)
+            path.write_text(json.dumps(done, indent=1))
+            print(f"{run} {row}: acc {r['acc12']:.1f} {r['acc20']:.1f} {r['acc40']:.1f} | keepers {r['keepers12']} {r['keepers20']} {r['keepers40']}", flush=True)
+    done.update(python=sys.version.split()[0], torch=T.__version__)
+    path.write_text(json.dumps(done, indent=1))
+
+
+def hash_check():
+    out = {}
+    for run, rp in RUNS.items():
+        short = json.loads(SHORT[run].read_text())
+        if not rp.exists():
+            out[run] = dict(status="not yet"); continue
+        rec = json.loads(rp.read_text())
+        c = {x["step"]: x for x in rec["curve"]}
+        if 24576 not in c:
+            out[run] = dict(status="not yet"); continue
+        out[run] = dict(long_row24576=c[24576]["tensors_sha256"], short_final=short["tensors_sha256"],
+                        equal=c[24576]["tensors_sha256"] == short["tensors_sha256"], short_receipt=str(SHORT[run].relative_to(HERE)))
+    return out
+
+
+def reading(rows):
+    t = {r["row"]: r["acc40"] for r in rows if r["run"] == "T050" and r["row"] in LATE}
+    b = {r["row"]: r["acc40"] for r in rows if r["run"] == "B-all" and r["row"] in LATE}
+    assert set(t) == set(b) == set(LATE), "the 13 late rows of both runs are not all read"
+    mt, mb = sum(t.values()) / 13, sum(b.values()) / 13
+    above = sum(t[r] > b[r] for r in LATE)
+    if mt - mb >= 10 and above >= 10:
+        res = ("overtakes and stays", "Overtakes and stays, on this seed up to 98,304 updates. The same two runs then go to seeds 93683 and 116089.")
+    elif not mt > mb:
+        res = ("does not overtake", "Does not overtake up to 98,304 updates on this seed.")
+    else:
+        res = ("mixed", "Mixed; the rows are reported.")
+    return dict(mean_T050=mt, mean_B_all=mb, difference=mt - mb, rows_T050_above=above, result=res[0], reading=res[1])
+
+
+def tables():
+    rows = json.loads((OUT / "E34_LONG_READ.json").read_text())["rows"]
+    hc = hash_check()
+    by = {(r["run"], r["row"]): r for r in rows}
+    L = ["# E34 addendum 2: two long births, seed 73129, 98,304 updates (generated by `e34_long_read.py tables`)", "",
+         "## Row-24,576 hash check", "", "| Run | Long run, row 24,576 | Existing final receipt | Equal |", "|---|---|---|---|"]
+    for run, v in hc.items():
+        L.append(f"| {run} | {v.get('long_row24576', '-')} | {v.get('short_final', '-')} ({v.get('short_receipt', '')}) | {v.get('equal', v.get('status'))} |")
+    L += ["", "## Every row (accuracy at 12 / 20 / 40 letters; keepers at 12 / 20 / 40)", "",
+          "| Row | T050 acc 12 / 20 / 40 | B-all acc 12 / 20 / 40 | T050 keepers | B-all keepers | T050 above B-all at 40 |", "|---|---|---|---|---|---|"]
+    for r in ROWS:
+        t, b = by.get(("T050", r)), by.get(("B-all", r))
+        f = lambda x: f"{x['acc12']:.2f} / {x['acc20']:.2f} / {x['acc40']:.2f}" if x else "-"  # noqa: E731
+        k = lambda x: f"{x['keepers12']} / {x['keepers20']} / {x['keepers40']}" if x else "-"  # noqa: E731
+        ab = ("yes" if t["acc40"] > b["acc40"] else "no") if (t and b) else "-"
+        L.append(f"| {r} | {f(t)} | {f(b)} | {k(t)} | {k(b)} | {ab if r in LATE else ''} |")
+    rec = json.loads((OUT / "E34_LONG_READ.json").read_text())
+    rec["hash_check_row24576"] = hc
+    try:
+        rd = reading(rows)
+        mean = lambda run, k: sum(by[(run, r)][k] for r in LATE) / 13  # noqa: E731
+        L += ["", "## The 13 rows 49,152-98,304 at 40 letters (means; 12 and 20 letters beside)", "",
+              "| Run | Mean acc 40 | Mean acc 20 | Mean acc 12 |", "|---|---|---|---|"]
+        for run in RUNS:
+            L.append(f"| {run} | {mean(run, 'acc40'):.2f} | {mean(run, 'acc20'):.2f} | {mean(run, 'acc12'):.2f} |")
+        L += ["", f"T050 minus B-all (mean at 40 letters): {rd['difference']:+.2f} points; T050 above B-all in {rd['rows_T050_above']} of 13 rows.", "",
+              f"**Result: {rd['result']}.** Reading: {rd['reading']}"]
+        rec["reading"] = rd
+        rec["late_means"] = {run: {k: mean(run, k) for k in ("acc12", "acc20", "acc40")} for run in RUNS}
+    except AssertionError as e:
+        L += ["", f"Reading not yet available: {e}"]
+    (OUT / "E34_LONG_TABLES.md").write_text("\n".join(L) + "\n")
+    (OUT / "E34_LONG_READ.json").write_text(json.dumps(rec, indent=1))
+    print("\n".join(L))
+
+
+if __name__ == "__main__":
+    cmd = sys.argv[1] if len(sys.argv) > 1 else ""
+    if cmd == "read":
+        read(); sys.exit(0)
+    if cmd == "tables":
+        tables(); sys.exit(0)
+    if cmd == "hashcheck":
+        print(json.dumps(hash_check())); sys.exit(0)
+    raise SystemExit(__doc__)
