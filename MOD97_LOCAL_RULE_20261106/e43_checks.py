@@ -41,7 +41,9 @@ def spec(cmd):
     t0 = time.process_time()
     mine, src = HERE / "e43_task.py", K / "e43_unrelated_task_spec.py"
     identical = mine.read_bytes() == src.read_bytes()
-    run = subprocess.run([sys.executable, "-I", str(src)], capture_output=True, text=True)
+    import os
+    clean = {k: v for k, v in os.environ.items() if not k.startswith(("E16_", "E11_"))}     # the harness's own variables, set at import, removed
+    run = subprocess.run([sys.executable, "-I", str(src)], capture_output=True, text=True, env=clean)
     here = run.stdout.strip().splitlines(); mac = (K / "OUTPUT_E43_SPEC_MAC.txt").read_text().strip().splitlines()
     exact_lines = [0, 1, 2, 3, 4, 6]          # three seed lines, shared bytes, batch tensor, score
     lines = {i: dict(here=here[i], mac=mac[i], equal=here[i] == mac[i]) for i in exact_lines}
