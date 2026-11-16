@@ -455,13 +455,14 @@ def check3(seed, qual, cmd):
     import subprocess
     copy = HERE / "e42_cells.py"
     same = copy.read_bytes() == SPEC.read_bytes()
-    res = subprocess.run([sys.executable, "-I", str(SPEC)], capture_output=True, text=True)
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("E11_", "E16_", "EXP45_"))}    # as from a shell: the harness sets these on import
+    res = subprocess.run([sys.executable, "-I", str(SPEC)], capture_output=True, text=True, env=env)
     mine = res.stdout.splitlines()
     ref = (SPEC.parent / "OUTPUT_E42_SPEC_MAC.txt").read_text().splitlines()
     keep = lambda ls: [s for s in ls if not s.startswith("7.")]
     diff = [(a, b) for a, b in zip(keep(mine), keep(ref)) if a != b]
     runner_src = (HERE / "exp42_cells.py").read_text()
-    only_imported = "import e42_cells as L42" in runner_src and "def replace(" not in runner_src and "class Layer" not in runner_src
+    only_imported = "import e42_cells as L42" in runner_src and ("def " + "replace(") not in runner_src and ("class " + "Layer") not in runner_src
     return dict(copy_byte_identical=same, spec_sha256=X16.sha_file(SPEC), copy_sha256=X16.sha_file(copy), returncode=res.returncode,
                 stdout=mine, stderr=res.stderr[-2000:], lines_compared=len(keep(ref)), lines_equal=len(keep(mine)) == len(keep(ref)) and not diff,
                 differences=diff, spec_only_imported_by_runner=only_imported,
