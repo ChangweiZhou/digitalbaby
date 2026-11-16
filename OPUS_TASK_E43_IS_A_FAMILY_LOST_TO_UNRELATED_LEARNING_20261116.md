@@ -1,6 +1,6 @@
-# E43: is a family lost when the learner then learns something unrelated? (16 November 2026, revision 1)
+# E43: is a family lost when the learner then learns something unrelated? (16 November 2026, revision 2)
 
-Evidence level E2. The question, the arms' outline and the reading are the outside reviewer's (its memo, revision 14, section 24.5, on `claude/vibrant-cerf-sje726` at 57497920), written after the user's objection of 16 November. This specification, the unrelated task and the predictions are mine. **Not released: it waits for the reviewer's audit.** One worker, best the E38 worker, whose runner already does the `conflict` arms.
+Evidence level E2. The question, the arms' outline and the reading are the outside reviewer's (its memo, revision 14, section 24.5, on `claude/vibrant-cerf-sje726` at 57497920), written after the user's objection of 16 November. This specification, the unrelated task and the predictions are mine. Revision 1 (75613729) was audited by the reviewer (`AUDIT_E43_UNRELATED_LEARNING_BRIEF_20261116.md` on `claude/vibrant-cerf-sje726` at 599ab3b2), which required five changes and stated that after them no re-audit is needed. Revision 2 makes them and the recommendations; the last section lists them. **Released.** One worker, best the E38 worker, whose runner already does the `conflict` arms.
 
 Shell names: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; K=PROJECT_DOCUMENTS/COORD_CHECKS_20261116`. Host: Linux x86-64, Python 3.13.18, torch 2.15.0+cpu; at most three processes, one thread each; launch outside any wrapper with a time limit. Edit nothing existing.
 
@@ -26,7 +26,11 @@ Starts: `exp45/e26/e26_dev_S_<seed>.pt` continued under the sweep and `e26_dev_B
 | `unrelated` | the task below | none |
 | `unrelated-decay` | the same | 0.25 |
 
-The memo names the two arms without decay. I add the two with decay because 0.25 is the standing setting of every life, and because in the unrelated case decay is the one thing that could act on weights the new task does not use: at rate 0.001 and decay 0.25 a weight nothing pushes on keeps 36% of its size after 4,096 updates. In E38 decay made no difference, but there the conflict removed the family first.
+The memo names the two arms without decay. I add the two with decay because 0.25 is the standing setting of every life.
+
+**Decay alone, with no learning, removes the first family** (the audit's main finding). Its reduction score is at 95 to 98% of its starting level after 256 updates, 18 to 49% after 1,024, 0 to 3% after 2,048 and zero after 4,096, in all six births (the reviewer's computation, audit section 3). I reran it on two births with all reduction pairs: 95.2, 17.9, 0.5 and 0.0% for the sweep's birth of seed 73129, and 97.4, 51.9, 4.2 and 0.0% for backpropagation's of seed 93683 (`$K/decay_alone_check.py`, output beside it). So under the standing decay a family that receives no gradient is gone within about 2,000 updates whatever else is or is not learned, and the arm under decay asks whether the new learning holds anything up against that.
+
+A sentence of revision 1 is withdrawn: that decay is the one thing acting on weights the new task does not use. The only weights the new task leaves exactly alone are the byte table's rows of other bytes, and those have no decay; every other weight takes part in every item.
 
 ## The unrelated task, as code
 
@@ -38,38 +42,53 @@ The memo names the two arms without decay. I add the two with decay because 0.25
 - **Stream.** `Random(f"e43|{seed}|stream")`: the taught pairs in a fresh shuffled order each pass; for each item `randint(0, 12)` for k, then k fillers by `choice`. Batches of 64 consecutive items.
 - **Panels.** `Random(f"e43|{seed}|panel|held")` samples 300 held-out pairs and renders each at k = 12; the same with `taught`.
 
-**What it shares with the first family, stated plainly.** No input byte. It does share: the whole network, since every weight but the embedding rows of other bytes takes part; the start symbol; the end symbol as the third answer byte; the length of items and the format of two answer bytes. It asks for memory across fillers, as the families do across letters. So it is unrelated in content and not in machinery, which is the user's case.
+**What it shares with the first family, stated plainly.** No input byte. It does share: the whole network, since every weight but the embedding rows of other bytes takes part; the start symbol; the end symbol as the third answer byte; the length of items and the format of two answer bytes. It asks for memory across fillers, as the families do across letters. So it is unrelated in content and not in machinery, which is the user's case. **A reading of *kept* would have two explanations** (audit section 1): updating does not disturb what is not contradicted, or the new task holds the old machinery up by using it, since it asks for the same skill of carrying two items across irrelevant bytes.
 
-**What I checked without training** (`$K/OUTPUT_E43_SPEC_MAC.txt`, on E26's sweep birth of seed 73129): the taught and held-out pairs are disjoint; the items pass through `exp45.batch_tensor` and `exp11_cell.score` unchanged; the born network scores 0 of 300 on the held-out panel before any update, so there is no starting level to subtract for the new task; the first-batch loss is 18.2 with finite gradients. The embedding rows of the task's bytes differ from the initial network's by at most 1.4e-6 in the birth files, and are bit-equal between a birth and its life: no training has shaped them.
+**What I checked without training** (`$K/OUTPUT_E43_SPEC_MAC.txt`, on E26's sweep birth of seed 73129): the taught and held-out pairs are disjoint; the items pass through `exp45.batch_tensor` and `exp11_cell.score` unchanged; the born network scores 0 of 300 on the held-out panel before any update, so there is no starting level to subtract for the new task; the first-batch loss is 18.2 with finite gradients. The embedding rows of the task's bytes are bit-equal between the sweep's and backpropagation's births of a seed and between each birth and its lives (the audit's check), so no training has moved them. The difference of 1.4e-6 that my Mac output shows against the initial network is a difference between hosts in the initial values, not a movement in training.
 
 ## Rows and scores
 
-Score at updates 0, 64, 256, 1,024 and 4,096. Save weights at each; commit those at 4,096 (24 files) and record the sha256 of the rest.
+Score at updates 0, 64, 256, 1,024, 2,048 and 4,096. Save weights at each; commit those at 4,096 (24 files) and, for the reviewer's analysis, rows 64 and 1,024 of seed 73129's `unrelated` arm under each rule; record the sha256 of the rest.
 
 1. **First family, all pairs without letters, split by reduction** (as E36's score 2): add and sub, pairs with a + b ≥ 89 or a − b < 0 against the rest; and max and min on all pairs. **The reduction score** is the mean of the add and sub reduction-pair shares.
 2. **First family, held out at 12 letters:** `exp16_integrated.panels(seed)[0]` entries `add89`, `sub89`, `max89`, `min89`.
 3. **The new task:** for the `unrelated` arms, the held-out and taught panels above; for the `conflict` arms, `add97` and `sub97` at 12 letters from the same `panels` call.
-4. **How much the weights moved:** for each of the groups (embedding, `l1`, input map, recurrent matrix, `lm`, `l2`, `l3`), the norm of the difference from the birth divided by the norm at birth.
+4. **How much the weights moved:** for each of the groups (embedding, `l1`, input map, recurrent matrix, `lm`, `l2`, `l3`), the norm of the difference from the birth divided by the norm at birth, and the cosine between its weights and the birth's. Under decay the norm of the difference is at least 0.64 of the birth's norm from shrinking alone, so there the cosine is the figure to read.
+5. **Decay alone**, no run: the birth file with every parameter but the byte table multiplied by (1 − 0.00025)^t, scored by score 1 at t = 64, 256, 1,024, 2,048 and 4,096. Its reduction scores should be within 3 points of the audit's table.
+6. **A functional measure (recommended by the audit):** the mean absolute change of the first family's state at the `=` position between row 0 and each row, on the panel of score 2, divided by the mean absolute state at row 0.
 
-Score 4 is there because "kept" would mean little if the unrelated task were learned with a small fraction of the change that the second family causes. It is reported beside the reading for both pairs of arms.
+Score 4 describes how much each arm changed the weights. It is not a guard: a change of a few percent of a matrix's size has been enough to teach a family and remove another (memo, section 23). The guard is the condition below.
 
 ## Checks before the full runs
 
-1. **The `conflict` arms are E38's.** On seed 73129, `conflict-decay` has E38's `zero` row hashes and `conflict` has E38's `none` row hashes at updates 64, 256, 1,024 and 4,096, under each rule (`tensors_sha256` in `exp45/e38/e38_<zero|none>_<S|B>_73129.json`; for the sweep, `zero`: f3819049…, 95f5de74…, e2d170be… at 64, 256 and 1,024).
-2. **Row 0** of every run has the birth file's `tensors_sha256`, and its first-family scores equal E38's row 0 for seed 73129.
-3. **The specification file.** `$M/e43_task.py` is byte-identical to `$K/e43_unrelated_task_spec.py`; run on `$K`, its self-checks print what `$K/OUTPUT_E43_SPEC_MAC.txt` has, the stream and panel digests of the three seeds included.
-4. **No shared input.** Asserted on every batch of the `unrelated` arms: every prompt byte is 128 or above. And on every first-family panel item: every byte is below 128.
+1. **The `conflict` arms are E38's.** On seed 73129, `conflict-decay` has E38's `zero` row hashes and `conflict` has E38's `none` row hashes at updates 64, 256, 1,024 and 4,096, under each rule (`tensors_sha256` in `exp45/e38/e38_<zero|none>_<S|B>_73129.json`). They begin:
+
+   | | 64 | 256 | 1,024 | 4,096 |
+   |---|---|---|---|---|
+   | `zero`, sweep | f3819049 | 95f5de74 | e2d170be | ef1ac53c |
+   | `none`, sweep | 5afe5e0a | 166dd91e | 08e44428 | 23f6ddaa |
+   | `zero`, backpropagation | 35f0d6c9 | a5cad080 | 676c2fa0 | ce901c57 |
+   | `none`, backpropagation | 5abf61c9 | 7789d013 | 8b9c6649 | a423a30b |
+2. **Row 0** of every run has the birth file's `tensors_sha256`, and its first-family scores equal E38's row 0 for seed 73129 where E38 has them: add and sub on all pairs, and the four held-out panels.
+3. **The specification file.** `$M/e43_task.py` is byte-identical to `$K/e43_unrelated_task_spec.py`. Run on `$K`, the self-checks print the Mac output's three seed lines, its line on shared bytes, its batch-tensor line and its score line exactly. The line on the byte table's rows should read 0.0e+00 on the worker's host: the 1.4e-06 of the Mac output is a difference between hosts in the initial values (audit section 2); report what it reads. The first-batch loss should agree to two decimals. The runner also prints, for the three seeds, `sha256(repr(panel(seed, 'taught')))` and `digest(seed, 4096)`; their first sixteen digits equal the audit's:
+
+   | Seed | Taught panel | Stream, 4,096 updates |
+   |---|---|---|
+   | 73129 | 3583cd943452ff06 | d3410fc2a8850bc1 |
+   | 93683 | 348392b8f4017512 | edbbcc1f0dc94926 |
+   | 116089 | 301fd99ddfa152f8 | fe35d695eace801d |
+4. **No shared input.** Asserted on every batch of the `unrelated` arms: every prompt byte is 128 or above. And on every first-family panel item: every prompt byte, and every answer byte but the end symbol, is below 128.
 5. **The same batches** for the four runs of a seed that share a stream: the batch digest is equal at every row.
 6. **`unrelated` has no decay:** the optimizer's groups read back with `weight_decay` 0.0 in both; each arm's decay is recorded in a field of its own.
-7. One dry run of 64 updates per arm under the sweep, with CPU time and a forecast (the reviewer's estimate: about 2 CPU-hours with scoring).
+7. One dry run of 64 updates per arm under the sweep, with CPU time and a forecast (the reviewer's estimate: about 3.5 to 4 CPU-hours with scoring).
 
 Outputs go to `exp45/e43/`, named `e43_<arm>_<S|B>_<seed>` with `_row<updates>`; the runner calls `arch26.install()` first and refuses an existing path.
 
 ## Reading (fixed beforehand; the reviewer's, with one condition added)
 
-**The condition.** The reading is taken for a rule only if the unrelated task was learned: in at least two of three seeds the `unrelated` arm's held-out panel is at 80% or more at row 4,096. If not, the report says that the new task was not learned in the dose, gives the curves and score 4, and draws nothing about retention.
+**The condition.** The reading is taken for a rule only if the unrelated task was learned: in at least two of three seeds the `unrelated` arm's **taught** panel is at 80% or more. The held-out panel is reported beside it. If the condition does not hold at row 4,096, the two `unrelated` arms of that rule continue to 16,384 updates, scored at 8,192 and 16,384, and the reading is taken at the first of those rows at which it holds, with the row stated. If it holds at neither, the report says that the new task was not learned and draws nothing about retention.
 
-**Per rule, on the `unrelated` arm**, with each run's reduction score at row 4,096 as a share of its own at row 0, in at least two of three seeds:
+**Per rule, on the `unrelated` arm**, with each run's reduction score at row 4,096 (or the later row the condition names) as a share of its own at row 0, in at least two of three seeds:
 
 | Share kept | Reading |
 |---|---|
@@ -78,7 +97,8 @@ Outputs go to `exp45/e43/`, named `e43_<arm>_<S|B>_<seed>` with `_row<updates>`;
 | Otherwise, or the seeds disagree | **Partly kept.** The shares are given per seed. |
 
 - `conflict` is the reference and is expected at zero by row 1,024.
-- `unrelated-decay` is read by the same table and reported beside it as "under the standing decay". If it differs from `unrelated`, decay alone erodes what nothing contradicts, at the life's standing setting.
+- `unrelated-decay` is read against decay alone at rows 256, 1,024 and 2,048, per rule, in at least two of three seeds: *held up* if its reduction score is 15 points or more above decay alone's at row 1,024; *not held up* if within 15 points at all three rows; otherwise the differences are given. It is reported as "under the standing decay". Above decay alone means the new learning holds part of the family up; below it, that the new learning removes more than decay does.
+- **The next step, named now:** if the reading is *kept* or *partly kept*, a second unrelated task without carrying across a gap follows, to separate "not disturbed" from "held up by use": for example one symbol and the query byte, answered by two symbols fixed by a table drawn once.
 - Reported beside the reading, as facts: the same share for pairs without reduction, for max and for min; the share at rows 64, 256 and 1,024; score 4 for all four arms.
 
 ## What it cannot show
@@ -86,6 +106,7 @@ Outputs go to `exp45/e43/`, named `e43_<arm>_<S|B>_<seed>` with `_row<updates>`;
 - **A dose of 4,096 updates.** A life is 36,864. "Kept" here is kept over a ninth of a life.
 - **One unrelated task**, a simple one. A harder unrelated task would move the weights more.
 - **Long-term memory as the user means it.** Nothing here is a fact stored once and recalled by a cue; the first family is a rule computed by a shared circuit. This job separates loss by contradiction from loss by any further learning, and no more.
+- **The optimizer.** Every run starts a fresh AdamW, whose first steps move every weight by about the learning rate whatever the size of its gradient. A loss here may owe as much to that as to the new task.
 - **Why.** If the family is kept, the job does not say what protects it; if lost, not which weights carried the loss.
 
 ## Predictions (mine)
@@ -93,10 +114,11 @@ Outputs go to `exp45/e43/`, named `e43_<arm>_<S|B>_<seed>` with `_row<updates>`;
 | | Prediction | Chance |
 |---|---|---|
 | P43.1 | Check 1 passes under both rules | 85% |
-| P43.2 | The unrelated task is learned (held-out panel at 80 or more at row 4,096, two of three seeds) under each rule | 70% |
+| P43.2 | The unrelated task generalises (held-out panel at 80 or more at row 4,096, two of three seeds) under each rule | 60% |
 | P43.3 | `unrelated`, sweep: kept 25%, partly kept 45%, lost 30% | |
 | P43.4 | Under `unrelated` the reduction score is above `conflict`'s by at least 30 points at row 1,024, two of three seeds, under each rule | 75% |
-| P43.5 | `unrelated-decay`'s share kept is at least 15 points below `unrelated`'s at row 4,096, two of three seeds, under the sweep | 45% |
+| P43.5 | `unrelated-decay`'s reduction score is 15 points or more above decay alone's at row 1,024, two of three seeds, under the sweep (restated after the audit: the old form was settled beforehand by decay alone) | 30% |
+| P43.9 | The condition holds at row 4,096 on the taught panel under each rule | 75% |
 | P43.6 | The reading is the same under the sweep and under backpropagation | 75% |
 | P43.7 | Under `unrelated`, max and min keep a larger share than the reduction pairs, two of three seeds, under the sweep | 60% |
 | P43.8 | The recurrent matrix moves less under `unrelated` than under `conflict` at row 4,096 (score 4), two of three seeds, under each rule | 60% |
@@ -104,3 +126,16 @@ Outputs go to `exp45/e43/`, named `e43_<arm>_<S|B>_<seed>` with `_row<updates>`;
 ## Done
 
 Runner, check receipts, 24 runs with receipts and the committed weights, and `E43_REPORT.md` with the curves (run × row: the four scores), whether the condition holds, the reading per rule, the facts listed, and the outcome of each prediction. No readings beyond the table above.
+
+## What changed from revision 1 (the audit)
+
+Made as the audit wrote them. I reran its main finding on two births (decay alone), and it holds.
+
+| | Change | Required? |
+|---|---|---|
+| 1 | **Decay alone removes the family within about 2,000 updates.** I had written that decay "could" act on unused weights and that E38 could not say because the conflict removed the family first, and I had not computed what decay alone does, which needs no training. The arm under decay is now read against decay alone at rows 256, 1,024 and 2,048; decay alone is scored; row 2,048 is added; P43.5 is restated. | yes |
+| 2 | The condition is on the taught panel, and a failed condition continues the `unrelated` arms to 16,384 updates before anything is given up | yes |
+| 3 | Check 3 says what the worker's host should print, and adds digests of the taught panel and of the stream to 4,096 updates | yes |
+| 4 | Score 4 gains the cosine and is described as a description, not a guard | yes |
+| 5 | Cost 3.5 to 4 CPU-hours; check 2 limited to what E38 holds; check 4's wording on the end symbol | yes |
+| — | The second explanation of *kept*; the next step named; a functional measure; four more committed files; the optimizer under "cannot show"; P43.2 reworded and P43.9 added | recommended |
