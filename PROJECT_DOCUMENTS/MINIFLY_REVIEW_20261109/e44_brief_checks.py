@@ -309,14 +309,15 @@ if "I" in want:
                 ev["wrap"].append(int(w.wrap(i, a, b))); ev["mirror"].append(w.mirror(i, a, b))
             u += 1
         return {k: np.array(x) for k, x in ev.items()}
-    def first_visit_levels(ev, w, sched, window=64):
-        """family -> (level on asked reduction items of add, of sub, their mean, items counted): the family's first visit,
-        its last `window` updates (the whole visit when it is shorter)."""
+    def first_visit_levels(ev, w, sched, window):
+        """family -> (level on asked reduction items of add, of sub, their mean, items counted), over the last `window` updates
+        of the family's first visit (the whole visit when `window` is None or longer than the visit)."""
         out = {}
         for v, f in enumerate(sched):
             if f in out:
                 continue
-            lo = (v + 1) * w.visit_updates - min(window, w.visit_updates); hi = (v + 1) * w.visit_updates
+            n = w.visit_updates if window is None else min(window, w.visit_updates)
+            lo = (v + 1) * w.visit_updates - n; hi = (v + 1) * w.visit_updates
             sel = (ev["update"] >= lo) & (ev["update"] < hi) & (ev["wrap"] == 1)
             lv = [], []
             for j in (0, 1):
@@ -328,10 +329,10 @@ if "I" in want:
     for vu in (64, 256):
         w = LW.World(1, visit_updates=vu); sched = w.schedule(8, in_turn=True)
         ev = events(w, 8, True, rule)
-        lv = first_visit_levels(ev, w, sched)
         print(f"   world 1, eight families in turn, visits of {vu} updates, an item right when (7a + 3b + update + task id) % 4 == 0: {len(ev['update'])} asked items")
-        print("      family: level on add, on sub, the family's figure, items counted -> " + "; ".join(f"{f}: {a:.4f}, {b:.4f}, {m:.4f}, {n}" for f, (a, b, m, n) in lv.items()))
-        fig = [lv[f][2] for f in range(1, 8)]
-        print(f"      median of the family's figure over the second to the eighth family: {statistics.median(fig):.4f}")
+        for name, window in (("the brief's window, the last 64 updates", 64), ("the last quarter of the visit", vu // 4), ("the whole first visit", None)):
+            lv = first_visit_levels(ev, w, sched, window)
+            print(f"      {name}: family: add, sub, the family's figure, items -> " + "; ".join(f"{f}: {a:.4f}, {b:.4f}, {m:.4f}, {n}" for f, (a, b, m, n) in lv.items()))
+            print(f"         median of the family's figure over the second to the eighth family (families 1 to 7): {statistics.median([lv[f][2] for f in range(1, 8)]):.4f}")
         h = hashlib.sha256(); [h.update(bytes([int(c)])) for c in ev["correct"]]
         print(f"      sha256 of the `correct` column: {h.hexdigest()[:16]}; of `wrap`: {hashlib.sha256(bytes(int(x) for x in ev['wrap'])).hexdigest()[:16]}; of `mirror`: {hashlib.sha256(bytes(int(x) for x in ev['mirror'])).hexdigest()[:16]}")
