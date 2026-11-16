@@ -1,0 +1,124 @@
+{
+ "check": "check4_73129",
+ "command": "python3 e40_new_family.py check 4 73129",
+ "provenance": {
+  "command": "python3 e40_new_family.py check 4 73129",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "887d00781e805c7efd0985a3fdb86c0d43abe45e",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "e40_sources_sha256": {
+   "e40_new_family.py": "aa11c27f1588abbac6659afc124980b88994f6fbae375ffc742f0d31dbdda9cf",
+   "e36_reminder.py": "910e79fa4720174720775aaf6c59f5a4d9064284c2c50022231085d92484dea4",
+   "arch31_workerB.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+   "exp31_switch_workerB.py": "1a3fa17979808b14c22893e8b2a3b67eea6c7d6cc240a6ab522d16956a971466"
+  }
+ },
+ "cpu_seconds": 14.143757184,
+ "result": {
+  "Bhh_sha": {
+   "loaded": "225bdd60f3a373c02219376939455997a0fcc7a64cbc0ac1e72c1e33f4de2e1e",
+   "receipt": "225bdd60f3a373c02219376939455997a0fcc7a64cbc0ac1e72c1e33f4de2e1e",
+   "ok": true
+  },
+  "K_equals_H_when_Bhh_is_W": {
+   "grads_max_rel": {
+    "book.weight": 0.0,
+    "l1.weight": 0.0,
+    "l1.bias": 0.0,
+    "rnn.weight_ih_l0": 0.0,
+    "rnn.weight_hh_l0": 0.0,
+    "rnn.bias_ih_l0": 0.0,
+    "rnn.bias_hh_l0": 0.0,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "worst": 0.0,
+   "ok": true
+  },
+  "K_loaded_differs_from_None": {
+   "grads_max_rel": {
+    "book.weight": 1.2715424299240112,
+    "l1.weight": 3.4903547763824463,
+    "l1.bias": 0.8941940069198608,
+    "rnn.weight_ih_l0": 1.3976632356643677,
+    "rnn.weight_hh_l0": 1.0603234767913818,
+    "rnn.bias_ih_l0": 0.7928482890129089,
+    "rnn.bias_hh_l0": 0.8665526509284973,
+    "lm.weight": 0.0,
+    "lm.bias": 0.0,
+    "l2.weight": 0.0,
+    "l2.bias": 0.0,
+    "l3.weight": 0.0,
+    "l3.bias": 0.0
+   },
+   "worst": 3.4903547763824463,
+   "ok": true
+  },
+  "contraction": {
+   "rows": [
+    {
+     "update": 1,
+     "contraction_max_abs": 2.9414877644740045e-08,
+     "norm_ratio": 0.9997498989105225,
+     "expected_ratio": 0.99975,
+     "Bhh_tensors_sha256": "6cbd94b89c9e70eb734218341a09ba253f1b3da4306f3fa850f005dae51a88b7",
+     "cos_Bhh_W": 0.9999999942404592,
+     "rel_diff_Bhh_W": 0.00011007606401643405
+    },
+    {
+     "update": 10,
+     "contraction_max_abs": 5.647598300129175e-08,
+     "norm_ratio": 0.9997507333755493,
+     "expected_ratio": 0.99975,
+     "Bhh_tensors_sha256": "ff3aee7eab6cf8876d285bfc975ae3037b194498c4a0d45db030471f6fdd5097",
+     "cos_Bhh_W": 0.9999999942603419,
+     "rel_diff_Bhh_W": 0.00010987799911181525
+    },
+    {
+     "update": 100,
+     "contraction_max_abs": 2.9377702048805077e-08,
+     "norm_ratio": 0.9997498989105225,
+     "expected_ratio": 0.99975,
+     "Bhh_tensors_sha256": "3c43b5c39819a00c8d0ac5abf6219e6139c5b49efe3f189e1d8c0ee14c0e1ca8",
+     "cos_Bhh_W": 0.9999999944152986,
+     "rel_diff_Bhh_W": 0.00010838058056282433
+    }
+   ],
+   "ok": true,
+   "norm_ratio_within_1e_5": true
+  },
+  "ok": true
+ }
+}
