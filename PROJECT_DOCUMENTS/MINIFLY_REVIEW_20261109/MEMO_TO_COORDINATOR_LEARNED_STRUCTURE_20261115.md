@@ -36,6 +36,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 18.** The audits of the E46 and E44 briefs are in `AUDIT_E46_WEIGHT_DECAY_BRIEF_20261116.md` and `AUDIT_E44_LONG_LIFE_WORLD_BRIEF_20261116.md`. Section 26 is added after Mr. Xu's statement that locality must hold at the input and the output as well: it gives the arithmetic and the requirements for the job that follows E42 (item 15 of section 1).
 
+**Revision 19.** E43's additions have reported in part (reminders complete; plain steps complete under backpropagation). Section 24.8 reads them with a measurement of my own on the weight files (`e43_where_the_loss_sits.py`): the first family is overwritten throughout the network, and neither the readout alone nor the optimizer's equal steps explain it. Section 27 asks for one small job that follows from it, E47, and item 17 for two additions to E43.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -74,6 +76,10 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 14. **Brief the replacement of the small world's task set** (section 25): families in the full-scale format, a learner born on one of them, and a calibration first. It comes to me before any worker starts.
 
 15. **Write the specification of the job with a local interface** (section 26), as runnable code, for audit. It runs after E42's other two seeds and E43's additions.
+
+16. **Brief one small job, E47: a new family learned only in connections gated by its own code** (section 27). About 1.5 CPU-hours. It comes to me before any worker starts.
+
+17. **Two further additions to E43** (section 24.8, end): the `unrelated` arm with the first family rehearsed, as the conventional reference; and the `unrelated` arm started from E42's `F10` and `P8` networks of seed 73129. About 2.5 CPU-hours together.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -1067,6 +1073,43 @@ My expectation of 24.5 (below half by 1,024 updates, 60%) was right in direction
 2. **A reminder,** as E36's: from the six `unrelated` networks at update 4,096, 1,024 updates on the first family, scored at 0, 16, 32, 64, 128, 256 and 1,024, beside E36's fresh references. If the family is back within about 100 updates, explanation 1 or 2 holds and what was learned was not destroyed.
 3. **One arm under plain gradient steps:** `unrelated` again with the update in proportion to the gradient (no momentum, no normalisation by the gradient's size), the learning rate being the smallest of 0.01, 0.03 and 0.1 at which seed 73129 meets the brief's condition under backpropagation. If the first family survives there, the equal-sized step on every weight is the cause, which is section 24.4's first item in its simplest form.
 
+### 24.8 E43's additions read (revision 19)
+
+Branch `claude/peaceful-hopper-8ofq4i` at 722cb621. Figures from the receipts, read by me; the plain runs under the sweep are being continued to 16,384 updates and are not final.
+
+**The reminder.** From the six `unrelated` networks at update 4,096, training on the first family as E36 did. Reduction pairs of add and sub, percent:
+
+| Updates of reminder | Sweep (73129, 93683, 116089) | Backpropagation |
+|---|---|---|
+| 64 | 1.2, 1.0, 0.9 | 1.4, 0.0, 0.0 |
+| 256 | 5.8, 1.1, 1.2 | 1.7, 1.0, 1.5 |
+| 1,024 | 91.3, 10.7, 69.3 | 91.3, 14.4, 42.0 |
+
+After a whole life E36 found the family back at 85% or more within 64 to 128 updates, and a fresh network at 1.1 to 2.5% after 1,024. So after unrelated learning the family is not back in a hundred updates in any network; something is saved, since two of six are above 90% at 1,024 where a fresh network is near zero, but the family was not merely unexpressed.
+
+**Plain gradient steps** (no momentum, no normalisation, learning rate 0.03 by the brief's rule). Under backpropagation the first family's reduction pairs are at 0.4, 2.8 and 2.1% after 64 updates and at zero from 256 on, and the new task is learned by update 2,048 to 4,096. Under the sweep they are at 16.7, 45.2 and 19.7% after 64 updates, 6.6, 25.7 and 6.4% after 256 and at most 4.9% after 1,024, before the new task has scored. So the equal-sized steps of AdamW are not the cause.
+
+**Where the loss sits** (`e43_where_the_loss_sits.py`, my measurement on the weight files of seed 73129; 1,500 reduction pairs each of add and sub).
+
+| After 64 unrelated updates | Sweep | Backpropagation |
+|---|---|---|
+| Whole answers | 0.1 | 0.0 |
+| Both digits right when chosen among the ten digit outputs only | 3.9 | 2.0 |
+| The readout put back to the birth's | 3.7 | 0.7 |
+| The input map and the recurrent matrix put back | 8.1 (digits only 84.5) | 27.6 (digits only 47.4) |
+| The birth with only its recurrent matrix changed | 34.8 | 30.6 |
+| The birth with only its input map changed | 68.5 | 59.0 |
+| The birth with only its readout changed | 5.3 (digits only 91.5) | 78.4 (digits only 92.1) |
+
+After 1,024 and 4,096 updates the birth with only its recurrent matrix changed is at about 1%.
+
+**Reading.** Of the three explanations of 24.7, the third holds. The first family's function is overwritten throughout the network within 64 updates, most of all in the recurrent matrix. The readout is also driven away from digits, under the sweep enough to remove the answers by itself, but putting the readout back restores nothing. The remedy to test is therefore separation: a change that cannot reach the connections the earlier family uses. Section 27 gives its simplest test.
+
+**Two further additions to E43** (item 17).
+
+1. *The conventional reference.* The `unrelated` arm with items of the first family mixed into the stream in E38's share, with and without decay, on the six births. If rehearsal keeps the family at no cost here as it did in E38, it is the reference any other remedy is measured against.
+2. *E42's networks.* The `unrelated` arm from `F10` and `P8` of seed 73129 under each rule, with E42's forward. Every cell there still reads the whole byte and the readout is shared, so I expect *lost* (90%); the run replaces the expectation by a figure.
+
 ## 25. The small world after job L1a (revision 16)
 
 ### 25.1 What L1a found
@@ -1139,3 +1182,31 @@ In E42's wiring a cell costs 2,081 and limiting its connections to other cells s
 ### 26.4 What I expect, and what it cannot show
 
 On one family, a few hundred cells are enough, so I do not expect more cells to lower the updates to threshold; the job shows whether a network wired in this way learns at all and what a cell costs. Where more cells should pay is in holding many families and in keeping them apart, which is the long-life world of E44 and the question of section 24. The error has further to travel to cells away from the interface, and E42's first seed already shows the sweep's gradient less well aligned in a sparse matrix (0.60 to 0.64 against 0.74), so the sweep may fall behind backpropagation here by more than it did in E42.
+
+## 27. Job E47: a new family learned only in connections gated by its own code (revision 19)
+
+### 27.1 Why
+
+Three measurements point the same way. What 64 updates learn of a new family is a change of low rank in the recurrent layer (section 23). The loss of the earlier family is in the same matrices (section 23). Under unrelated learning the function is overwritten throughout the network, with plain steps as with AdamW (24.8). The programme's question is whether changes can be confined to the connections in use. This job puts it in its simplest form: the change for a new family is made only in connections that take part when that family's code is present. The earlier families are then untouched by construction, and what is measured is the price in learning.
+
+### 27.2 Requirements (the specification is yours)
+
+- **Starts, family, stream, panels and scores: E40's,** on the networks that lived under the sweep and under backpropagation, three seeds, so that E40's own runs are the reference.
+- **What may change.** The four new code rows of the byte table, and for each of the two matrices of the recurrent layer (the input map, 768 by 512, and the recurrent matrix, 768 by 256) one added term of rank r, the product of two matrices, applied only on items of the new family. One term a family, shared by its four operations. It starts at zero. Every other parameter is frozen.
+- **The gate is supplied by the harness** from the item's code byte. This is a first stage in the sense of E35's: an upper bound. Whether the learner can produce the gate itself is a later question, and the report says so.
+- **Ranks** 4, 16 and 64. **Rules:** each network under the rule it lived under.
+- **Dose** 1,024 updates; scored at 0, 16, 32, 64, 128, 256, 512 and 1,024.
+- **Checks.** Row 0 equals E40's row 0 on every score. With the term off, every earlier family's answers are the same item for item at every row, and the frozen tensors keep their hash: the keeping is by construction and is checked, not reported as a result. The batch digest is E40's.
+- **Reading, fixed beforehand,** for each rule and rank, on the new family's reduction score at row 256 against E40's run of the same seed at row 256: *no price* if within 10 points in two of three seeds; *a price* if 30 or more below; otherwise *some price*. The same at rows 64 and 1,024 is tabled.
+- **Tabled beside it:** the count of numbers changed for the family (2,304 times r, and 32 for the code rows: 9,216, 36,864 and 147,456), against the network's 1,124,113 and against the number of items a replay store of that size would hold.
+- **Cost.** Eighteen runs of 1,024 updates: about 1.5 CPU-hours with scoring.
+
+### 27.3 What it cannot show
+
+- That a learner can find the gate, or decide when a new term is needed.
+- Fixed memory: the terms grow by one a family, and the comparison with a replay store of equal size is the fair one; it belongs to the long-life world.
+- Unrelated tasks, whose answers need output units of their own.
+
+### 27.4 My expectation, on record
+
+Rank 16 gives *no price* under backpropagation, 60%, and under the sweep, 50%. Rank 4 gives *some price* or *a price* under both, 60%.
