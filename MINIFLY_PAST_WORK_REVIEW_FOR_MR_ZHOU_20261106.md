@@ -3074,3 +3074,27 @@ The audit (`AUDIT_E41_COMPUTATION_TO_THRESHOLD_20261116.md`, 43a89440) confirmed
 - **One addition:** the new scoring code is checked against the reviewer's reader, on sample digests and on the six E26 births.
 
 Also taken from its recommendations: the optimizer is built by `exp26_candidate.make_opt` after importing that module first, since the embedding's exemption from decay depends on an environment variable set on import; one runner for the three workers; CPU-seconds per update taken from dry runs on an idle host.
+
+## 9.140 The user's statements of 16 November on connections, neighbourhoods and periods; E42 drafted (16 November 2026)
+
+Source: the reviewer's memo, revision 10 (f68f2b7d), section 22.
+
+**The user's statements of 16 November, verbatim, as the reviewer records them.**
+
+- "If a cell A and B has no hyper-connection at all - not in the past, not now, then the weights logically cannot connect A with a cell B that remembers distant history. In other words A does not know this part of the history even if the weight is high. So to some extent the apparent overfitting of weights and hyper-connections during the learning process is the same thing. Can we utilize this?"
+- "In theory due to the local learning hypothesis, the neuron S_i can only interact with a pre-specified (perhaps high) number of neurons. So in our setting depending on the update frequency, S_i can add 100 connections in T=10, and add zero at T=11, drop 50 at T=12 etc. Nowhere did we dictate that S_i have to adjust by one connection at a time."
+- "Let us presume for simplicity that each cell can connect at most N=10 neurons (after all addition is simple), but we can adjust N and the cell can learn the connection strengths".
+- "1) both is fine, but ideally the connections can adjust. however a neuron is only allowed to adjust within a pre-defined neighborhood, say via some pre-specified embedding coordinates to mimic biological situation. This is to impose locality. 2) The cell's previous value would be available, and each cell has its own pre-set delays or info processing frequencies. During the period it absorbs info from all other cells that emits to it. So cell at T=0 and T=5 may get inputs from the connections. How to process this will not be pre-determined and will be part of local learning, and you can try some variants. 3) Yes, the encoder and decoder parts can stay."
+
+**For the record of property P5 (locality).** The clarification of 7 November says that "local" does not mean a fixed small neighbourhood and that which neurons a synapse takes its signals from can be adjusted dynamically. The statement of 16 November keeps the dynamic adjustment and places it inside a neighbourhood defined in advance by coordinates. Both stand: connections may change, within a pre-defined neighbourhood. E42's configuration without a neighbourhood measures whether the neighbourhood matters.
+
+**Drafted, awaiting audit: E42** (`OPUS_TASK_E42_CELLS_WITH_LIMITED_LOCAL_CONNECTIONS_AND_PERIODS_20261116.md`). The present network with its recurrent layer changed in three ways: each of the 256 cells reads N = 10 others inside a neighbourhood of 48 on a 16 by 16 grid; connections may be replaced every 256 updates when their strength is small; each cell has a pre-set period of 1 to 16 steps, with four variants of how it combines what arrived during the period. Stage 1 is four configurations under both rules on three seeds; stage 2 is eight more under the sweep. 48 runs on E26's birth data.
+
+**What I did beyond the memo.** I wrote the layer as runnable code (`PROJECT_DOCUMENTS/COORD_CHECKS_20261116/e42_cells_spec.py`) and ran it without training, as I did for the small world, since writing a design out as code is where its gaps show.
+
+- The unrestricted configuration reproduces the present network's logits and gradients bit for bit under both rules, and the parameter counts are the memo's.
+- **Four points the memo left open or got wrong, fixed in the file and listed in the brief for the audit:** in the `source` variant the bias has to be weighted per step, or it differs from the other variants at the first positions of an item, where part of a period lies before the start symbol (with the fix they agree to 2e-7); `mean` must divide by the period always, for the same reason; a cell of period 1 must have no learned weight if it is to be the same cell in every variant; and the extra matrices of `source` go in a new tensor so that the present network's thirteen tensors keep their names.
+- At the start the sweep's gradient of the recurrent matrix has a cosine of 0.72 to 0.74 with the exact one in the limited configurations.
+- **Cost.** My unoptimised loop takes 2.6 times the present network's time per update with periods and 5.4 times in the `source` variant, which would put the 48 runs near 85 CPU-hours against the memo's 50 to 70. The brief lets the worker speed the loop up under the same checks and asks for a forecast first.
+
+I did not rerun the memo's count of when a long-period cell can carry an operand without learning to keep it.
