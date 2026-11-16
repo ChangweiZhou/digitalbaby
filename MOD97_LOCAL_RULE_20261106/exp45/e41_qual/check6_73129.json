@@ -1,0 +1,140 @@
+{
+ "runs": {
+  "B h256 rep0": {
+   "cpu_per_update": 0.0353987546601562,
+   "cpu_per_scored_row": 1.7776628784999997,
+   "tensors_sha256": "c859bd84f8b752c407b783167be09caa9ef0888197af36a2e9078eee351289b5",
+   "A": 1.3333333333333333,
+   "R": 1.15
+  },
+  "B h256 rep1": {
+   "cpu_per_update": 0.03572001194140624,
+   "cpu_per_scored_row": 1.7776612015,
+   "tensors_sha256": "c859bd84f8b752c407b783167be09caa9ef0888197af36a2e9078eee351289b5",
+   "A": 1.3333333333333333,
+   "R": 1.15
+  },
+  "S h256 rep0": {
+   "cpu_per_update": 0.04306037915624984,
+   "cpu_per_scored_row": 1.8366743415000002,
+   "tensors_sha256": "9367973de26aa2cdb28285069cefd93dce4485dc9d84d6174ac4ae877111329d",
+   "A": 1.5,
+   "R": 1.0
+  },
+  "B h512 rep0": {
+   "cpu_per_update": 0.11139901899218696,
+   "cpu_per_scored_row": 5.162944891500004,
+   "tensors_sha256": "7100c143269564bd776d9272ba3022b9740928af7d7f1349569280b3b4eac40c",
+   "A": 0.8333333333333334,
+   "R": 0.65
+  },
+  "S h512 rep0": {
+   "cpu_per_update": 0.1196701378789064,
+   "cpu_per_scored_row": 5.080092087499999,
+   "tensors_sha256": "6ae5b9e62a454b90f5c0ddf4ed3230920e7cb90f93be601b0a0ce2c9bb5f897e",
+   "A": 0.8333333333333334,
+   "R": 0.65
+  },
+  "B h1024 rep0": {
+   "cpu_per_update": 0.32575107547265647,
+   "cpu_per_scored_row": 16.597248458500005,
+   "tensors_sha256": "2713886145f488179e4d2ddd63cab7a6306471f2abd231a5ae4afb78e797755b",
+   "A": 0.6666666666666666,
+   "R": 1.15
+  },
+  "B h1024 rep1": {
+   "cpu_per_update": 0.3225369962187512,
+   "cpu_per_scored_row": 15.783660860999987,
+   "tensors_sha256": "2713886145f488179e4d2ddd63cab7a6306471f2abd231a5ae4afb78e797755b",
+   "A": 0.6666666666666666,
+   "R": 1.15
+  },
+  "S h1024 rep0": {
+   "cpu_per_update": 0.3505915474218759,
+   "cpu_per_scored_row": 16.09544110500002,
+   "tensors_sha256": "61838f4c1ecaf18b0923863109f80bb204f8971bcef240352fc5b4d21fee8551",
+   "A": 0.8333333333333334,
+   "R": 1.35
+  }
+ },
+ "note": "serial dry runs on an otherwise idle host; dose 256, rows 0 and 256 scored",
+ "repeat_equal": {
+  "h256": true,
+  "h1024": true
+ },
+ "forecast_18_runs": {
+  "by_rule_width_three_fractions": {
+   "B h256": {
+    "updates_cpu_h": 1.2082774923999982,
+    "scoring_cpu_h": 0.23850310286541662
+   },
+   "S h256": {
+    "updates_cpu_h": 1.4697942751999946,
+    "scoring_cpu_h": 0.24642047415125004
+   },
+   "B h512": {
+    "updates_cpu_h": 1.1407259544799944,
+    "scoring_cpu_h": 0.21082024973625016
+   },
+   "S h512": {
+    "updates_cpu_h": 1.2254222118800016,
+    "scoring_cpu_h": 0.20743709357291662
+   },
+   "B h1024": {
+    "updates_cpu_h": 2.2237940085600014,
+    "scoring_cpu_h": 0.45642433260875015
+   },
+   "S h1024": {
+    "updates_cpu_h": 2.393371630400006,
+    "scoring_cpu_h": 0.44262463038750055
+   }
+  },
+  "updates_cpu_h": 9.661385572919995,
+  "scoring_cpu_h": 1.8022298833220842,
+  "total_cpu_h": 11.46361545624208,
+  "limit_cpu_h": 15
+ },
+ "pass": true,
+ "check": 6,
+ "seed": 73129,
+ "cpu": 476.144865653,
+ "wall": 478.2233953475952,
+ "provenance": {
+  "command": "python3 exp41_scale.py check 6 73129",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "dfc591bd702532c1a7ddbd2573e246b20bfae3ef",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "exp41_scale.py": "559a7ee9978639d7f5a21769778add9804d64dcfbf5f2438464d32f296597d9e",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "runner_sha256": "559a7ee9978639d7f5a21769778add9804d64dcfbf5f2438464d32f296597d9e"
+ }
+}
