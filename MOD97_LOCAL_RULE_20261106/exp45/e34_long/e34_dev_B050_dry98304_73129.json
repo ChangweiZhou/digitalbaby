@@ -1716,6 +1716,148 @@
    "tensors_sha256": "214b008cf224e71bf26b5e835b8721b38977864481cc3acc4722fc21dd659e25",
    "tensors_sha256_reference": null,
    "tensors_equal_to_reference": null
+  },
+  {
+   "step": 49152,
+   "loss": 0.041046431397262495,
+   "finite_losses": true,
+   "finite_cumulative": {
+    "all_finite": true,
+    "updates_covered": 49152,
+    "first_nonfinite_update": null
+   },
+   "cpu": 5187.314456424,
+   "cpu_scoring_so_far": 80.32107661400022,
+   "cpu_updates_so_far": 5106.900711848001,
+   "sealed": {
+    "add89": {
+     "0": {
+      "n": 300,
+      "exact": 298,
+      "final": 298
+     },
+     "4": {
+      "n": 300,
+      "exact": 297,
+      "final": 297
+     },
+     "8": {
+      "n": 300,
+      "exact": 296,
+      "final": 296
+     },
+     "12": {
+      "n": 300,
+      "exact": 298,
+      "final": 298
+     },
+     "20": {
+      "n": 300,
+      "exact": 299,
+      "final": 299
+     }
+    },
+    "sub89": {
+     "0": {
+      "n": 300,
+      "exact": 299,
+      "final": 299
+     },
+     "4": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "8": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "12": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "20": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     }
+    },
+    "max89": {
+     "0": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "4": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "8": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "12": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     },
+     "20": {
+      "n": 300,
+      "exact": 300,
+      "final": 300
+     }
+    },
+    "min89": {
+     "0": {
+      "n": 300,
+      "exact": 296,
+      "final": 296
+     },
+     "4": {
+      "n": 300,
+      "exact": 296,
+      "final": 296
+     },
+     "8": {
+      "n": 300,
+      "exact": 295,
+      "final": 295
+     },
+     "12": {
+      "n": 300,
+      "exact": 294,
+      "final": 294
+     },
+     "20": {
+      "n": 300,
+      "exact": 294,
+      "final": 294
+     }
+    }
+   },
+   "hard_mean_add89_sub89_k12": 99.66666666666667,
+   "book_shift_by_role": {
+    "operator": 1.319,
+    "digit": 0.6066,
+    "separator": 0.0,
+    "equals": 0.2397,
+    "distractor letter": 1.3227,
+    "task code": 0.3333
+   },
+   "data_digest": {
+    "batches": 49152,
+    "sha256": "6bd4882681a2e149247b87661bdaa13e7a524fc63854bb245597d7f49ea17661"
+   },
+   "data_digest_check": "skipped: exp45/e28/e28_dev_B-all_73129.json has no row at 49152 (beyond its last row)",
+   "weights": "e34_dev_B050_dry98304_73129_row49152.pt",
+   "weights_sha256": "a442d68e99e6ae805507e69cc52eaca1c289088f59e0af282fbbb44536aad104",
+   "tensors_sha256": "2e92adc11b66f6b64e6d50ac7c14f972995cb1a7c772dccae025cc347df972c7",
+   "tensors_sha256_reference": null,
+   "tensors_equal_to_reference": null
   }
  ],
  "role_curve": [
@@ -12454,11 +12596,987 @@
     "distractor_to_answer_weight_ratio": 0.001000010407313438,
     "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
    }
+  },
+  {
+   "block_end": 45568,
+   "train_loss": 0.04057786706107436,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.4346757134277555,
+     "positions": 196270
+    },
+    "operand": {
+     "mean": 2.7365465623772707,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.46544767757674804,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.010064649842489668,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.4346757134277555,
+     "positions": 196270
+    },
+    "operand": {
+     "mean": 2.7365465623772707,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.396333464588679,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 3.7994354866808643e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 5.768706078679428e-06,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.015089111349018018,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 1.5726829432971285e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4631980460964487,
+      "mean_weight": 0.000985785642162607,
+      "share_weighted_error": 0.09914406398396461,
+      "sum_entropy": 679721.88050735,
+      "sum_weight": 193.4801479872549,
+      "sum_weighted_ce": 663.9298955689693,
+      "positions": 196270
+     },
+     "operand": {
+      "mean_entropy": 2.54441389682961,
+      "mean_weight": 0.008902556462753175,
+      "share_weighted_error": 0.40760475786959477,
+      "sum_entropy": 333501.41828525066,
+      "sum_weight": 1166.8758806859842,
+      "sum_weighted_ce": 2729.573243734944,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.3982340784277767,
+      "mean_weight": 0.06103299939422868,
+      "share_weighted_error": 0.4170335545942321,
+      "sum_entropy": 45817.33428192139,
+      "sum_weight": 1999.9293241500854,
+      "sum_weighted_ce": 2792.714290946222,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 4.5934748731091095e-05,
+      "mean_weight": 0.9999082481917867,
+      "share_weighted_error": 1.8520931048354267e-05,
+      "sum_entropy": 1.505189846420393,
+      "sum_weight": 32764.993476748466,
+      "sum_weighted_ce": 0.12402759502336681,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 5.889599867122872e-05,
+      "mean_weight": 0.9998828839543421,
+      "share_weighted_error": 2.7770040143045165e-05,
+      "sum_entropy": 1.9299040844588227,
+      "sum_weight": 32764.162341415882,
+      "sum_weighted_ce": 0.18596534286813268,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.01980156372926637,
+      "mean_weight": 0.9701987479893717,
+      "share_weighted_error": 0.07612000757596579,
+      "sum_entropy": 1297.7152805612009,
+      "sum_weight": 63582.94514823146,
+      "sum_weighted_ce": 509.7465914731326,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 8.334641192715939e-05,
+      "mean_weight": 0.9998494588680842,
+      "share_weighted_error": 5.132500505137571e-05,
+      "sum_entropy": 2.7310952260291588,
+      "sum_weight": 32763.067068189383,
+      "sum_weighted_ce": 0.3437039382342459,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.0010058192294401626,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 46080,
+   "train_loss": 0.04017260939872358,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.43372605716417,
+     "positions": 197475
+    },
+    "operand": {
+     "mean": 2.7331078407346467,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.46450783227168513,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.009076840035995747,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.43372605716417,
+     "positions": 197475
+    },
+    "operand": {
+     "mean": 2.7331078407346467,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.39351646391151,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 2.239769128996403e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 4.793134416388074e-06,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.01360266847870698,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 2.5183150573279776e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4621189135976316,
+      "mean_weight": 0.0009870951961067338,
+      "share_weighted_error": 0.10079194580202311,
+      "sum_entropy": 683681.9324626923,
+      "sum_weight": 194.92662385117728,
+      "sum_weighted_ce": 668.391092335687,
+      "positions": 197475
+     },
+     "operand": {
+      "mean_entropy": 2.5466708965441285,
+      "mean_weight": 0.00884996412475303,
+      "share_weighted_error": 0.4087524594185341,
+      "sum_entropy": 333797.247751832,
+      "sum_weight": 1159.982497759629,
+      "sum_weighted_ce": 2710.598556974864,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.3970489560160786,
+      "mean_weight": 0.061174338014097884,
+      "share_weighted_error": 0.42125044987904137,
+      "sum_entropy": 45778.50019073486,
+      "sum_weight": 2004.5607080459595,
+      "sum_weighted_ce": 2793.4776544010374,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 3.0103921816155817e-05,
+      "mean_weight": 0.9999398059098894,
+      "share_weighted_error": 1.1059962622156872e-05,
+      "sum_entropy": 0.9864453100717938,
+      "sum_weight": 32766.027560055256,
+      "sum_weighted_ce": 0.07334296842265069,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 4.827584137553387e-05,
+      "mean_weight": 0.999904155254626,
+      "share_weighted_error": 2.3130321737890382e-05,
+      "sum_entropy": 1.5819027701934938,
+      "sum_weight": 32764.859359383583,
+      "sum_weighted_ce": 0.1533862739670824,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.019269371215030785,
+      "mean_weight": 0.9704729965239949,
+      "share_weighted_error": 0.06911265949192535,
+      "sum_entropy": 1262.8375119482575,
+      "sum_weight": 63600.91830019653,
+      "sum_weighted_ce": 458.31326704187063,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 8.959992476170183e-05,
+      "mean_weight": 0.9998481997927229,
+      "share_weighted_error": 5.829512411605634e-05,
+      "sum_entropy": 2.9360103345914457,
+      "sum_weight": 32763.025810807943,
+      "sum_weighted_ce": 0.38657792917609546,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.0010069679801222998,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 46592,
+   "train_loss": 0.04139361868146807,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.435482827790372,
+     "positions": 196973
+    },
+    "operand": {
+     "mean": 2.7359834896988104,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.4658314791882745,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.01241106335106173,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.435482827790372,
+     "positions": 196973
+    },
+    "operand": {
+     "mean": 2.7359834896988104,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.3974870389774878,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 2.5330010415441136e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 4.865586294232295e-06,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.01860865918329376,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 1.5871686597669545e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4601773129449866,
+      "mean_weight": 0.0009913569239035612,
+      "share_weighted_error": 0.09821690312729697,
+      "sum_entropy": 681561.5058627129,
+      "sum_weight": 195.27054737205617,
+      "sum_weighted_ce": 669.9647281381423,
+      "positions": 196973
+     },
+     "operand": {
+      "mean_entropy": 2.5441770812940376,
+      "mean_weight": 0.008894684326336222,
+      "share_weighted_error": 0.3998888041873986,
+      "sum_entropy": 333470.3783993721,
+      "sum_weight": 1165.8440640215413,
+      "sum_weighted_ce": 2727.7524077058574,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.399895652430132,
+      "mean_weight": 0.06083431736624334,
+      "share_weighted_error": 0.4084233884684986,
+      "sum_entropy": 45871.78073883057,
+      "sum_weight": 1993.4189114570618,
+      "sum_weighted_ce": 2785.9691734111298,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 3.4257353745266146e-05,
+      "mean_weight": 0.999931496082354,
+      "share_weighted_error": 1.2162454749934525e-05,
+      "sum_entropy": 1.122544967524881,
+      "sum_weight": 32765.755263626575,
+      "sum_weighted_ce": 0.08296347604720687,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 4.788121330462456e-05,
+      "mean_weight": 0.9999051494323794,
+      "share_weighted_error": 2.268093605955045e-05,
+      "sum_entropy": 1.5689715975659375,
+      "sum_weight": 32764.89193660021,
+      "sum_weighted_ce": 0.1547129534450991,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.021875672796536245,
+      "mean_weight": 0.9665243524885341,
+      "share_weighted_error": 0.09337198472566338,
+      "sum_entropy": 1433.6440923937994,
+      "sum_weight": 63342.13996468857,
+      "sum_weighted_ce": 636.9161964043026,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 0.00010469689515122469,
+      "mean_weight": 0.9998018520982441,
+      "share_weighted_error": 6.407610033292558e-05,
+      "sum_entropy": 3.4307078603153305,
+      "sum_weight": 32761.507089555264,
+      "sum_weighted_ce": 0.43708084629854127,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.0010140546590537763,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 47104,
+   "train_loss": 0.0413028740149457,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.43471934644605,
+     "positions": 196507
+    },
+    "operand": {
+     "mean": 2.7409324163613746,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.4657275294769179,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.01152749005461394,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.43471934644605,
+     "positions": 196507
+    },
+    "operand": {
+     "mean": 2.7409324163613746,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.3971686713339295,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 3.0973417755584577e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 1.0819755048710423e-05,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.01727088297414328,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 4.070421555525563e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.459387471344683,
+      "mean_weight": 0.0009926285443540228,
+      "share_weighted_error": 0.09834688604727491,
+      "sum_entropy": 679793.8538315296,
+      "sum_weight": 195.05845736537594,
+      "sum_weighted_ce": 669.1030666157139,
+      "positions": 196507
+     },
+     "operand": {
+      "mean_entropy": 2.54301343899715,
+      "mean_weight": 0.00891718981755929,
+      "share_weighted_error": 0.40227008819108817,
+      "sum_entropy": 333317.85747623444,
+      "sum_weight": 1168.7939037671313,
+      "sum_weighted_ce": 2736.8446570544866,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.4004733425099403,
+      "mean_weight": 0.06076216052315431,
+      "share_weighted_error": 0.4089046515140839,
+      "sum_entropy": 45890.71048736572,
+      "sum_weight": 1991.0544760227203,
+      "sum_weighted_ce": 2781.982910470448,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 3.9987435312763926e-05,
+      "mean_weight": 0.9999200582824415,
+      "share_weighted_error": 1.4900381645671859e-05,
+      "sum_entropy": 1.3103082803286483,
+      "sum_weight": 32765.38046979904,
+      "sum_weighted_ce": 0.10137475067661071,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 9.2084635630721e-05,
+      "mean_weight": 0.9998197096829244,
+      "share_weighted_error": 4.8795755646049554e-05,
+      "sum_entropy": 3.0174293403474657,
+      "sum_weight": 32762.092246890068,
+      "sum_weighted_ce": 0.3319819371292384,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.02279075620976626,
+      "mean_weight": 0.9651215577812025,
+      "share_weighted_error": 0.09030361477025117,
+      "sum_entropy": 1493.6149989632415,
+      "sum_weight": 63250.206410748884,
+      "sum_weighted_ce": 614.380668242148,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 0.00016544865902658326,
+      "mean_weight": 0.9997202491258577,
+      "share_weighted_error": 0.00011106334001013633,
+      "sum_entropy": 5.42142165898308,
+      "sum_weight": 32758.833123356104,
+      "sum_weighted_ce": 0.7556194646940229,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.001016355927501129,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 47616,
+   "train_loss": 0.03989308438031003,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.4335413376439976,
+     "positions": 197509
+    },
+    "operand": {
+     "mean": 2.731771097103774,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.464793277353581,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.008061770153027592,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.4335413376439976,
+     "positions": 197509
+    },
+    "operand": {
+     "mean": 2.731771097103774,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.394372935363208,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 2.450936015385187e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 4.445761519739902e-06,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.012090690915066116,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 3.928628950543604e-06,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4626768125741076,
+      "mean_weight": 0.0009862010111250565,
+      "share_weighted_error": 0.10133481561961488,
+      "sum_entropy": 683909.8345746994,
+      "sum_weight": 194.7835755062988,
+      "sum_weighted_ce": 667.8093347370506,
+      "positions": 197509
+     },
+     "operand": {
+      "mean_entropy": 2.5470627535296444,
+      "mean_weight": 0.008847036425150723,
+      "share_weighted_error": 0.4110697453598015,
+      "sum_entropy": 333848.60923063755,
+      "sum_weight": 1159.5987583173555,
+      "sum_weighted_ce": 2709.00195062003,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.3969571655616164,
+      "mean_weight": 0.061186929044197313,
+      "share_weighted_error": 0.42423726378312865,
+      "sum_entropy": 45775.49240112305,
+      "sum_weight": 2004.9732909202576,
+      "sum_weighted_ce": 2795.777573239487,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 3.217044907869186e-05,
+      "mean_weight": 0.9999356914740929,
+      "share_weighted_error": 1.2167240993861078e-05,
+      "sum_entropy": 1.054161275410575,
+      "sum_weight": 32765.892738223076,
+      "sum_weighted_ce": 0.08018366702512598,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 4.8004357619958335e-05,
+      "mean_weight": 0.9999043144471216,
+      "share_weighted_error": 2.190199884619878e-05,
+      "sum_entropy": 1.5730067904907947,
+      "sum_weight": 32764.86457580328,
+      "sum_weighted_ce": 0.1443369604953473,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.01769127702075836,
+      "mean_weight": 0.9722391562513621,
+      "share_weighted_error": 0.06330506835318828,
+      "sum_entropy": 1159.4155308324198,
+      "sum_weight": 63716.66534408927,
+      "sum_weighted_ce": 417.1884591088462,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 3.793342290298556e-05,
+      "mean_weight": 0.9999247811756504,
+      "share_weighted_error": 1.9037644426646883e-05,
+      "sum_entropy": 1.2430024016850307,
+      "sum_weight": 32765.535229563713,
+      "sum_weighted_ce": 0.12546050024152489,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.0010048226887572841,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 48128,
+   "train_loss": 0.040328826689801645,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.4338445967477953,
+     "positions": 196710
+    },
+    "operand": {
+     "mean": 2.735047617713917,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.4648532206242649,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.00971532891740934,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.4338445967477953,
+     "positions": 196710
+    },
+    "operand": {
+     "mean": 2.735047617713917,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.3945414558256743,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 5.133462354586305e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 1.3072584765768617e-05,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.014536432061788774,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 7.312262865047077e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4623213217610065,
+      "mean_weight": 0.0009869603292582422,
+      "share_weighted_error": 0.09994556737614506,
+      "sum_entropy": 681073.2272036076,
+      "sum_weight": 194.14496636838885,
+      "sum_weighted_ce": 665.6675522019165,
+      "positions": 196710
+     },
+     "operand": {
+      "mean_entropy": 2.5453121291420757,
+      "mean_weight": 0.008893196369565981,
+      "share_weighted_error": 0.4091866145166581,
+      "sum_entropy": 333619.15139091015,
+      "sum_weight": 1165.6490345517523,
+      "sum_weighted_ce": 2725.3059763419283,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.398159887874499,
+      "mean_weight": 0.06104086679988541,
+      "share_weighted_error": 0.4188103742897535,
+      "sum_entropy": 45814.90320587158,
+      "sum_weight": 2000.187123298645,
+      "sum_weighted_ce": 2789.4031122061515,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 4.816315767992873e-05,
+      "mean_weight": 0.9999067645640025,
+      "share_weighted_error": 2.1633677687855768e-05,
+      "sum_entropy": 1.5782103508559047,
+      "sum_weight": 32764.944861233234,
+      "sum_weighted_ce": 0.14408680294347248,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 8.988584749594374e-05,
+      "mean_weight": 0.9998288404931372,
+      "share_weighted_error": 5.517252569519518e-05,
+      "sum_entropy": 2.9453794507470845,
+      "sum_weight": 32762.39144527912,
+      "sum_weighted_ce": 0.36746562246325076,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.018896357598235988,
+      "mean_weight": 0.9708855336272109,
+      "share_weighted_error": 0.07183474463536169,
+      "sum_entropy": 1238.3916915579937,
+      "sum_weight": 63627.95433179289,
+      "sum_weighted_ce": 478.44101424236,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 0.00023943600336592908,
+      "mean_weight": 0.9996360910342901,
+      "share_weighted_error": 0.00014589297869856832,
+      "sum_entropy": 7.845838958294764,
+      "sum_weight": 32756.075431011617,
+      "sum_weighted_ce": 0.9716911371189229,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.0010066205827476617,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 48640,
+   "train_loss": 0.040486915058863815,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.434339733467012,
+     "positions": 196246
+    },
+    "operand": {
+     "mean": 2.737785145397993,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.46512301043978294,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.010054044891498767,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.434339733467012,
+     "positions": 196246
+    },
+    "operand": {
+     "mean": 2.737785145397993,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.395353947475087,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 3.32210798780928e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 1.1761736273959442e-05,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.015072344007342756,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 1.7446659810787125e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4609997925121707,
+      "mean_weight": 0.0009894642228734142,
+      "share_weighted_error": 0.09965973010603414,
+      "sum_entropy": 679207.3652813435,
+      "sum_weight": 194.17839588201605,
+      "sum_weighted_ce": 665.9148322047433,
+      "positions": 196246
+     },
+     "operand": {
+      "mean_entropy": 2.5436753520461934,
+      "mean_weight": 0.00891435671109031,
+      "share_weighted_error": 0.4090555308814577,
+      "sum_entropy": 333404.61574339867,
+      "sum_weight": 1168.422562836029,
+      "sum_weighted_ce": 2733.261919528871,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.3987979080993682,
+      "mean_weight": 0.06096266918757465,
+      "share_weighted_error": 0.41717510241239364,
+      "sum_entropy": 45835.8098526001,
+      "sum_weight": 1997.624743938446,
+      "sum_weighted_ce": 2787.5159608336676,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 4.310350485650584e-05,
+      "mean_weight": 0.999913820738584,
+      "share_weighted_error": 1.6277941364878352e-05,
+      "sum_entropy": 1.4124156471379834,
+      "sum_weight": 32765.17607796192,
+      "sum_weighted_ce": 0.1087673283993301,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 7.611775970478656e-05,
+      "mean_weight": 0.999857973167309,
+      "share_weighted_error": 4.4586256767442245e-05,
+      "sum_entropy": 2.494226750006446,
+      "sum_weight": 32763.34606474638,
+      "sum_weighted_ce": 0.29792022978929594,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.020398565677785623,
+      "mean_weight": 0.9693225152317524,
+      "share_weighted_error": 0.07397968901733513,
+      "sum_entropy": 1336.8404002593586,
+      "sum_weight": 63525.520358228125,
+      "sum_weighted_ce": 494.32375690886005,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 0.00010820327512661358,
+      "mean_weight": 0.9997982839522592,
+      "share_weighted_error": 6.908338464699011e-05,
+      "sum_entropy": 3.545604919348874,
+      "sum_weight": 32761.39016854763,
+      "sum_weighted_ce": 0.46160721533552257,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.001010192251814949,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
+  },
+  {
+   "block_end": 49152,
+   "train_loss": 0.041046431397262495,
+   "finite_losses": true,
+   "by_role": {
+    "distractor": {
+     "mean": 3.4363766003887943,
+     "positions": 196163
+    },
+    "operand": {
+     "mean": 2.7392363733374623,
+     "positions": 131072
+    },
+    "structural": {
+     "mean": 0.465589743298924,
+     "positions": 98304
+    },
+    "answer": {
+     "mean": 0.01092114660004976,
+     "positions": 98304
+    }
+   },
+   "by_fine_role": {
+    "distractor": {
+     "mean": 3.4363766003887943,
+     "positions": 196163
+    },
+    "operand": {
+     "mean": 2.7392363733374623,
+     "positions": 131072
+    },
+    "code": {
+     "mean": 1.3967621341435006,
+     "positions": 32768
+    },
+    "operator": {
+     "mean": 2.3394586536544092e-06,
+     "positions": 32768
+    },
+    "equals": {
+     "mean": 4.756294617800283e-06,
+     "positions": 32768
+    },
+    "answer_digit": {
+     "mean": 0.01637523663493374,
+     "positions": 65536
+    },
+    "eos": {
+     "mean": 1.2966530281802733e-05,
+     "positions": 32768
+    }
+   },
+   "weights": {
+    "by_fine_role": {
+     "distractor": {
+      "mean_entropy": 3.4593647973720474,
+      "mean_weight": 0.0009924808439059336,
+      "share_weighted_error": 0.09863950138749498,
+      "sum_entropy": 678599.3767468929,
+      "sum_weight": 194.68801978311967,
+      "sum_weighted_ce": 668.1247584462884,
+      "positions": 196163
+     },
+     "operand": {
+      "mean_entropy": 2.5414447006933187,
+      "mean_weight": 0.008948014967382623,
+      "share_weighted_error": 0.4053787230171166,
+      "sum_entropy": 333112.2398092747,
+      "sum_weight": 1172.834217804775,
+      "sum_weighted_ce": 2745.7920770614523,
+      "positions": 131072
+     },
+     "code": {
+      "mean_entropy": 1.3991363833192736,
+      "mean_weight": 0.060923272954823915,
+      "share_weighted_error": 0.41168441369911296,
+      "sum_entropy": 45846.90100860596,
+      "sum_weight": 1996.33380818367,
+      "sum_weighted_ce": 2788.5030397537266,
+      "positions": 32768
+     },
+     "operator": {
+      "mean_entropy": 3.084244972928604e-05,
+      "mean_weight": 0.9999383389531431,
+      "share_weighted_error": 1.1304691467258914e-05,
+      "sum_entropy": 1.010645392729245,
+      "sum_weight": 32765.979490816593,
+      "sum_weighted_ce": 0.07657119257123195,
+      "positions": 32768
+     },
+     "equals": {
+      "mean_entropy": 4.9056481569376355e-05,
+      "mean_weight": 0.9999024264034233,
+      "share_weighted_error": 2.2615500603194558e-05,
+      "sum_entropy": 1.6074827880653244,
+      "sum_weight": 32764.802708387375,
+      "sum_weighted_ce": 0.15318382255698243,
+      "positions": 32768
+     },
+     "answer_digit": {
+      "mean_entropy": 0.020540073433610705,
+      "mean_weight": 0.9686259475143117,
+      "share_weighted_error": 0.08421058315542815,
+      "sum_entropy": 1346.1142525451112,
+      "sum_weight": 63479.870096297935,
+      "sum_weighted_ce": 570.391929581208,
+      "positions": 65536
+     },
+     "eos": {
+      "mean_entropy": 8.81437583595002e-05,
+      "mean_weight": 0.9998329498939711,
+      "share_weighted_error": 5.285854877682645e-05,
+      "sum_entropy": 2.8882946739241024,
+      "sum_weight": 32762.526102125645,
+      "sum_weighted_ce": 0.3580320727149957,
+      "positions": 32768
+     }
+    },
+    "distractor_to_answer_weight_ratio": 0.0010137407289629286,
+    "ratio_definition": "mean weight of distractor positions / mean weight of answer positions (answer digits and EOS)"
+   }
   }
  ],
  "finite": {
   "all_finite": true,
-  "updates_covered": 45056,
+  "updates_covered": 49152,
   "first_nonfinite_update": null
  },
  "credit_census_first_update": {
