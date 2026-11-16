@@ -36,7 +36,9 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 18.** The audits of the E46 and E44 briefs are in `AUDIT_E46_WEIGHT_DECAY_BRIEF_20261116.md` and `AUDIT_E44_LONG_LIFE_WORLD_BRIEF_20261116.md`. Section 26 is added after Mr. Xu's statement that locality must hold at the input and the output as well: it gives the arithmetic and the requirements for the job that follows E42 (item 15 of section 1).
 
-**Revision 19.** E43's additions have reported in part (reminders complete; plain steps complete under backpropagation). Section 24.8 reads them with a measurement of my own on the weight files (`e43_where_the_loss_sits.py`): the first family is overwritten throughout the network, and neither the readout alone nor the optimizer's equal steps explain it. Section 27 asks for one small job that follows from it, E47, and item 17 for two additions to E43.
+**Revision 19.** E43's additions have reported in part (reminders complete; plain steps complete under backpropagation). Section 24.8 reads them with a measurement of my own on the weight files (`e43_where_the_loss_sits.py`): the first family is overwritten throughout the network, and neither the readout alone nor the optimizer's equal steps explain it. Section 27 asks for one small job that follows from it, E48, and item 17 for two additions to E43.
+
+**Revision 20.** A change of name only. The coordinator has given the number E47 to the job of section 26 (locality at the input and the output; brief at 7247682a). The job of section 27, which I had called E47 in revision 19, is E48 from here on. Item 15 is done: the specification exists and is being audited.
 
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
@@ -75,9 +77,9 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 14. **Brief the replacement of the small world's task set** (section 25): families in the full-scale format, a learner born on one of them, and a calibration first. It comes to me before any worker starts.
 
-15. **Write the specification of the job with a local interface** (section 26), as runnable code, for audit. It runs after E42's other two seeds and E43's additions.
+15. *(Done; it is the coordinator's E47.)* **Write the specification of the job with a local interface** (section 26), as runnable code, for audit. It runs after E42's other two seeds and E43's additions.
 
-16. **Brief one small job, E47: a new family learned only in connections gated by its own code** (section 27). About 1.5 CPU-hours. It comes to me before any worker starts.
+16. **Brief one small job, E48: a new family learned only in connections gated by its own code** (section 27; called E47 in revision 19). About 1.5 CPU-hours. It comes to me before any worker starts.
 
 17. **Two further additions to E43** (section 24.8, end): the `unrelated` arm with the first family rehearsed, as the conventional reference; and the `unrelated` arm started from E42's `F10` and `P8` networks of seed 73129. About 2.5 CPU-hours together.
 
@@ -1183,7 +1185,7 @@ In E42's wiring a cell costs 2,081 and limiting its connections to other cells s
 
 On one family, a few hundred cells are enough, so I do not expect more cells to lower the updates to threshold; the job shows whether a network wired in this way learns at all and what a cell costs. Where more cells should pay is in holding many families and in keeping them apart, which is the long-life world of E44 and the question of section 24. The error has further to travel to cells away from the interface, and E42's first seed already shows the sweep's gradient less well aligned in a sparse matrix (0.60 to 0.64 against 0.74), so the sweep may fall behind backpropagation here by more than it did in E42.
 
-## 27. Job E47: a new family learned only in connections gated by its own code (revision 19)
+## 27. Job E48: a new family learned only in connections gated by its own code (revision 19; renamed in revision 20)
 
 ### 27.1 Why
 
