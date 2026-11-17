@@ -174,6 +174,93 @@
    "cpu_per_update": 0.39833830063794023,
    "cpu_per_row": 33.58278765347426
   },
+  "place S": {
+   "dose": 24576,
+   "macs": 936500.0,
+   "thresholds": {
+    "A50_single": 8192,
+    "A50_three": 8704,
+    "A80_single": 15360,
+    "A80_three": 15360,
+    "A90_single": 23808,
+    "A90_three": null,
+    "R50_single": 9984,
+    "R50_three": 10496,
+    "R80_single": 19200,
+    "R80_three": 19200,
+    "R90_single": null,
+    "R90_three": null
+   },
+   "final": {
+    "A": 89.16666666666667,
+    "R": 81.95,
+    "taught": 97.5,
+    "len12": 89.0,
+    "len40": 87.33333333333333
+   },
+   "len40_last3": 87.0,
+   "len12_last3": 88.55555555555554,
+   "max_R": 85.75,
+   "max_A": 90.0,
+   "cpu_updates": 12107.673195627009,
+   "cpu_scoring": 4056.4878697490085,
+   "digest_4096": "bbd71ab7ca27b72ed3c777861fe5175d2bbb5768cd79109ef507b98bf7f6e2c6",
+   "cosine_start": {
+    "all": 0.7577066421508789,
+    "interface": 0.7582295536994934,
+    "far": 0.6260911226272583,
+    "far_nonzero_share_B": 0.8995028138160706,
+    "far_nonzero_share_S": 0.8995028138160706
+   },
+   "cosine_end": {
+    "all": 0.6000176668167114,
+    "interface": 0.6032435894012451,
+    "far": 0.5370891094207764,
+    "far_nonzero_share_B": 0.8990293741226196,
+    "far_nonzero_share_S": 0.8995028138160706
+   },
+   "tensors_sha256": "1e4973f30523a6d11cc9fa0a8626cb24ca04e7a92e2e5af9b3bfe843d3701daa",
+   "complete": true,
+   "fall_far_off": {
+    "A": 11.666666666666671,
+    "R": 8.900000000000006,
+    "len12": 7.333333333333329,
+    "len40": 12.666666666666657
+   },
+   "fall_far_mean": {
+    "A": 8.166666666666671,
+    "R": 3.6500000000000057,
+    "len12": 4.666666666666671,
+    "len40": 10.0
+   },
+   "use": "partly",
+   "diag_final": {
+    "off": {
+     "A": 77.5,
+     "R": 73.05,
+     "len12": 81.66666666666667,
+     "len40": 74.66666666666667
+    },
+    "mean": {
+     "A": 81.0,
+     "R": 78.3,
+     "len12": 84.33333333333333,
+     "len40": 77.33333333333333
+    }
+   },
+   "magnitudes_start": {
+    "interface": 0.15150603652000427,
+    "far": 0.15025456249713898,
+    "scale": 0.1505674421787262
+   },
+   "magnitudes_end": {
+    "interface": 0.20134811103343964,
+    "far": 0.0413089394569397,
+    "scale": 0.08131873607635498
+   },
+   "cpu_per_update": 0.4926624835460209,
+   "cpu_per_row": 41.81946257473204
+  },
   "place B": {
    "dose": 24576,
    "macs": 936500.0,
@@ -569,6 +656,54 @@
    "len40_diff": 0.6666666666666572,
    "length_test": "within 15 points"
   },
+  "place S vs E42 F10 S: A80_three": {
+   "reference": 13312,
+   "candidate": 15360,
+   "updates": "about the same",
+   "multiply_adds": "about the same",
+   "len40_diff": -2.1111111111111,
+   "length_test": "within 15 points"
+  },
+  "place S vs E42 F10 S: R80_three": {
+   "reference": 15104,
+   "candidate": 19200,
+   "updates": "about the same",
+   "multiply_adds": "about the same",
+   "len40_diff": -2.1111111111111,
+   "length_test": "within 15 points"
+  },
+  "place S vs E42 G S: A80_three": {
+   "reference": 5632,
+   "candidate": 15360,
+   "updates": "more",
+   "multiply_adds": "more",
+   "len40_diff": -9.444444444444443,
+   "length_test": "within 15 points"
+  },
+  "place S vs E42 G S: R80_three": {
+   "reference": 6656,
+   "candidate": 19200,
+   "updates": "more",
+   "multiply_adds": "more",
+   "len40_diff": -9.444444444444443,
+   "length_test": "within 15 points"
+  },
+  "place S vs E42 P8 S: A80_three": {
+   "reference": 7680,
+   "candidate": 15360,
+   "updates": "more",
+   "multiply_adds": null,
+   "len40_diff": -9.0,
+   "length_test": "within 15 points"
+  },
+  "place S vs E42 P8 S: R80_three": {
+   "reference": 8448,
+   "candidate": 19200,
+   "updates": "more",
+   "multiply_adds": null,
+   "len40_diff": -9.0,
+   "length_test": "within 15 points"
+  },
   "place B vs E42 F10 B: A80_three": {
    "reference": 8704,
    "candidate": 10496,
@@ -617,6 +752,22 @@
    "len40_diff": 1.4210854715202004e-14,
    "length_test": "within 15 points"
   },
+  "place S vs one S: A80_three": {
+   "reference": 13568,
+   "candidate": 15360,
+   "updates": "about the same",
+   "multiply_adds": "about the same",
+   "len40_diff": -3.7777777777777857,
+   "length_test": "within 15 points"
+  },
+  "place S vs one S: R80_three": {
+   "reference": 17664,
+   "candidate": 19200,
+   "updates": "about the same",
+   "multiply_adds": "about the same",
+   "len40_diff": -3.7777777777777857,
+   "length_test": "within 15 points"
+  },
   "place B vs one B: A80_three": {
    "reference": 10496,
    "candidate": 10496,
@@ -644,6 +795,11 @@
    "outcome": true,
    "single": 10752
   },
+  "P47.3": {
+   "text": "S place reaches 80 on R (three rows)",
+   "outcome": true,
+   "single": 19200
+  },
   "P47.4": {
    "text": "B one: far cells used",
    "outcome": false,
@@ -654,9 +810,37 @@
    "outcome": false,
    "form": "partly"
   },
+  "P47.10": {
+   "text": "in at least one run: a constant is used",
+   "outcome": false,
+   "forms": {
+    "one S": "partly",
+    "one B": "partly",
+    "place S": "partly",
+    "place B": "partly"
+   }
+  },
+  "P47.11": {
+   "text": "B: place reaches 80 on R in about the same updates as one",
+   "outcome": true,
+   "description": {
+    "reference": 11008,
+    "candidate": 11264,
+    "updates": "about the same",
+    "multiply_adds": "about the same",
+    "len40_diff": 1.3333333333333428,
+    "length_test": "within 15 points"
+   }
+  },
   "P47.6": {
    "text": "place: cosine at the end lower for far cells than for interface cells by 0.1 or more",
    "runs": {
+    "place S": {
+     "interface": 0.6032435894012451,
+     "far": 0.5370891094207764,
+     "difference": 0.06615447998046875,
+     "holds": false
+    },
     "place B": {
      "interface": 0.6172515749931335,
      "far": 0.44328969717025757,
@@ -664,7 +848,7 @@
      "holds": true
     }
    },
-   "outcome": true
+   "outcome": false
   },
   "P47.7": {
    "text": "B one: updates to 80 on R about the same as or more than E42's F10 (not fewer)",

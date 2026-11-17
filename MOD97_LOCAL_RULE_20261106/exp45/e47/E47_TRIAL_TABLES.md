@@ -4,6 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | one S | 13568 | 9728 | 17664 | None | 93.3 | 86.3 | 93.0 | 90.8 | partly | 0.397 |
 | one B | 10496 | 6400 | 11008 | 17152 | 96.2 | 94.7 | 94.7 | 95.2 | partly | 0.398 |
+| place S | 15360 | 10496 | 19200 | None | 89.2 | 82.0 | 89.0 | 87.0 | partly | 0.493 |
 | place B | 10496 | 6400 | 11264 | 15360 | 95.8 | 95.2 | 97.0 | 96.6 | partly | 0.440 |
 | E42 F10 S | 13312 | 9472 | 15104 | 23296 | 92.2 | 88.5 | 91.7 | 89.1 | — | 0.105 |
 | E42 F10 B | 8704 | 6400 | 9472 | 19200 | 91.8 | 93.3 | 91.3 | 92.6 | — | 0.102 |
@@ -18,6 +19,7 @@
 |---|---|---|---|---|---|
 | one S | 93.3 / 77.5 / 84.8 | 86.3 / 77.7 / 80.6 | 93.0 / 84.7 / 86.3 | 90.0 / 79.0 / 80.3 | partly |
 | one B | 96.2 / 78.8 / 90.2 | 94.7 / 78.9 / 88.7 | 94.7 / 81.3 / 89.7 | 95.3 / 81.0 / 89.0 | partly |
+| place S | 89.2 / 77.5 / 81.0 | 82.0 / 73.0 / 78.3 | 89.0 / 81.7 / 84.3 | 87.3 / 74.7 / 77.3 | partly |
 | place B | 95.8 / 88.8 / 93.3 | 95.2 / 89.8 / 93.2 | 97.0 / 88.7 / 94.7 | 96.7 / 88.3 / 94.3 | partly |
 
 ## Comparisons (E41's four cases on updates; lengths: mean of the last three rows at 40 letters)
@@ -32,12 +34,20 @@
 | one B vs E42 F10 B: R80_three | 9472 | 11008 | about the same | about the same | +2.7 (within 15 points) |
 | one B vs E42 G B: A80_three | 5120 | 10496 | more | more | +0.7 (within 15 points) |
 | one B vs E42 G B: R80_three | 6400 | 11008 | more | about the same | +0.7 (within 15 points) |
+| place S vs E42 F10 S: A80_three | 13312 | 15360 | about the same | about the same | -2.1 (within 15 points) |
+| place S vs E42 F10 S: R80_three | 15104 | 19200 | about the same | about the same | -2.1 (within 15 points) |
+| place S vs E42 G S: A80_three | 5632 | 15360 | more | more | -9.4 (within 15 points) |
+| place S vs E42 G S: R80_three | 6656 | 19200 | more | more | -9.4 (within 15 points) |
+| place S vs E42 P8 S: A80_three | 7680 | 15360 | more | — | -9.0 (within 15 points) |
+| place S vs E42 P8 S: R80_three | 8448 | 19200 | more | — | -9.0 (within 15 points) |
 | place B vs E42 F10 B: A80_three | 8704 | 10496 | about the same | about the same | +4.0 (within 15 points) |
 | place B vs E42 F10 B: R80_three | 9472 | 11264 | about the same | about the same | +4.0 (within 15 points) |
 | place B vs E42 G B: A80_three | 5120 | 10496 | more | more | +2.0 (within 15 points) |
 | place B vs E42 G B: R80_three | 6400 | 11264 | more | about the same | +2.0 (within 15 points) |
 | place B vs E42 P8 B: A80_three | 6400 | 10496 | more | — | +0.0 (within 15 points) |
 | place B vs E42 P8 B: R80_three | 7168 | 11264 | more | — | +0.0 (within 15 points) |
+| place S vs one S: A80_three | 13568 | 15360 | about the same | about the same | -3.8 (within 15 points) |
+| place S vs one S: R80_three | 17664 | 19200 | about the same | about the same | -3.8 (within 15 points) |
 | place B vs one B: A80_three | 10496 | 10496 | about the same | about the same | +1.3 (within 15 points) |
 | place B vs one B: R80_three | 11008 | 11264 | about the same | about the same | +1.3 (within 15 points) |
 
@@ -47,6 +57,7 @@
 |---|---|---|---|---|
 | one S | 0.758 / 0.621 / 0.757 | 0.611 / 0.527 / 0.597 | 1.000 / 1.000 | 1.000 / 1.000 |
 | one B | 0.758 / 0.621 / 0.757 | 0.658 / 0.473 / 0.643 | 1.000 / 1.000 | 1.000 / 1.000 |
+| place S | 0.758 / 0.626 / 0.758 | 0.603 / 0.537 / 0.600 | 0.900 / 0.900 | 0.899 / 0.900 |
 | place B | 0.758 / 0.626 / 0.758 | 0.617 / 0.443 / 0.614 | 0.900 / 0.900 | 0.900 / 0.900 |
 
 ## Mean magnitude of the recurrent weights
@@ -55,13 +66,17 @@
 |---|---|---|
 | one S | 0.1515 / 0.1503 / 0.1506 | 0.1985 / 0.1497 / 0.1619 |
 | one B | 0.1515 / 0.1503 / 0.1506 | 0.1789 / 0.2426 / 0.2266 |
+| place S | 0.1515 / 0.1503 / 0.1506 | 0.2013 / 0.0413 / 0.0813 |
 | place B | 0.1515 / 0.1503 / 0.1506 | 0.1757 / 0.1226 / 0.1359 |
 
 ## Predictions
 
 - **P47.1** Stage 0, checks 1 and 2 pass under both rules: **yes**
 - **P47.2** B place reaches 80 on R (three rows): **yes**
+- **P47.3** S place reaches 80 on R (three rows): **yes**
 - **P47.4** B one: far cells used: **no**
 - **P47.5** S one: far cells used: **no**
-- **P47.6** place: cosine at the end lower for far cells than for interface cells by 0.1 or more: **yes**
+- **P47.10** in at least one run: a constant is used: **no**
+- **P47.11** B: place reaches 80 on R in about the same updates as one: **yes**
+- **P47.6** place: cosine at the end lower for far cells than for interface cells by 0.1 or more: **no**
 - **P47.7** B one: updates to 80 on R about the same as or more than E42's F10 (not fewer): **yes**
