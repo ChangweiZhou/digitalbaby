@@ -57,8 +57,8 @@ Parts.
      interface, then the far cells 1 to 3, 4 to 6, 7 or 8 grid steps from it, as e47_trial_verify.py); whether unrelated
      items change them (their variation on the unrelated items, and the difference between their mean state at a
      position on the unrelated items and on the family, averaged over positions 1 to 18); of their 10 sources, how many
-     are cells that do vary, and how many cells that do vary read them; how many are "silent" (state size on the family
-     below 0.05) and how many "closed" (change factor below 0.05 on both sets)
+     are cells that do vary, and how many cells that do vary read them; how many have a state size on the family below
+     0.05, and how many a change factor below 0.05 on both sets
   6  E49 in16, the input side: of the 16 input values a cell reads (and the constant), the directions the family's bytes
      occupy, and the share of the unrelated bytes' codes inside them
 
@@ -451,14 +451,14 @@ for cfg, rule in NETS:
                       f" 4 or more in {int((n_src_used[idle] >= 4).sum())}; cells that vary with the item and read them: mean {readers[idle].mean():.2f}, none for {int((readers[idle] == 0).sum())} cells;"
                       f" neither a source nor a reader that varies: {int(((n_src_used[idle] == 0) & (readers[idle] == 0)).sum())} cells")
                 print(f"         read by at least one interface cell: {int((idle & read_by_if).sum())}; reading at least one interface cell: {int((idle & if_reads).sum())};"
-                      f" state size below 0.05 on the family (silent): {int(silent.sum())}; change factor below 0.05 on both sets (closed): {int(closed.sum())}; both: {int((silent & closed).sum())};"
-                      f" neither (a state that is not near zero and gates that are not shut): {int((idle & ~silent & ~closed).sum())}")
+                      f" state size below 0.05 on the family: {int(silent.sum())}; change factor below 0.05 on both sets: {int(closed.sum())}; both: {int((silent & closed).sum())};"
+                      f" neither: {int((idle & ~silent & ~closed).sum())}")
                 for r in (1, 2, 3):
                     g = idle & (ring == r)
                     if g.any():
                         print(f"            ring {r} ({int(g.sum())}): sources that vary: mean {n_src_used[g].mean():.2f}, none in {int((n_src_used[g] == 0).sum())}; readers that vary: mean {readers[g].mean():.2f}, none for {int((readers[g] == 0).sum())};"
                               f" neither: {int(((n_src_used[g] == 0) & (readers[g] == 0)).sum())}; change factor on the family, median {np.median(fam['cf'][g]):.3f}; state size, median {np.median(fam['st'][g]):.3f};"
-                              f" silent {int((silent & g).sum())}, closed {int((closed & g).sum())}; mean size of a recurrent weight of these cells {float(wsize[g].mean()):.3f}")
+                              f" state size below 0.05: {int((silent & g).sum())}, change factor below 0.05 on both sets: {int((closed & g).sum())}; mean size of a recurrent weight of these cells {float(wsize[g].mean()):.3f}")
             row["five"][thr] = dict(n=int(idle.sum()), byring=byring, unr_sd=int((unr["sd"][idle] < thr).sum()), unr_shift=int((shift[idle] < thr).sum()),
                                     unr_both=int(((unr["sd"][idle] < thr) & (shift[idle] < thr)).sum()),
                                     src_mean=float(n_src_used[idle].mean()) if idle.any() else float("nan"), src_none=int((n_src_used[idle] == 0).sum()),
@@ -514,7 +514,7 @@ for r in ROWS:
         for g, d in r["groups"].items():
             pc = d["pc"]
             print(f"| {r['name']} | {g} | {d['n']} | {d['sd_f']} | {d['sd_u']} | {d['st_f']} | {d['cf_f']} | {d['cf_u']} | {d['k'][2]}, {d['k'][3]}, {d['n'] + 1} | {d['k'][4]}; {d['k'][5]} | {pc[:, 2].min()} / {int(np.median(pc[:, 2]))} / {pc[:, 2].max()} |")
-print("\n| Network | Below | Cells that do not vary | Interface, ring 1, ring 2, ring 3 | Of these, on unrelated items: variation below the same mark; mean state within the mark of the family's | Sources that vary, of 10: mean; cells with none | Cells that vary and read them: mean; cells with none | Neither | Read by an interface cell | Silent; closed; neither |")
+print("\n| Network | Below | Cells that do not vary | Interface, ring 1, ring 2, ring 3 | Of these, on unrelated items: variation below the same mark; mean state within the mark of the family's | Sources that vary, of 10: mean; cells with none | Cells that vary and read them: mean; cells with none | Neither | Read by an interface cell | State size below 0.05; change factor below 0.05 on both sets; neither |")
 print("|---|---|---|---|---|---|---|---|---|---|")
 for r in ROWS:
     for thr, d in r.get("five", {}).items():
