@@ -14,19 +14,23 @@ those that describe a tensor) is the only code imported.
   2  the construction, from the weights: the embedded start against the half-width birth on the first family's items
      (largest difference of a logit, answers), with and without the two added lines; which entries of the start are the
      birth's, which are zero and which are new, and what the new ones hold
-  3  the keeping, from the weights at rows 64 and 4,096 of the four `keyed` runs: the tensors that the rule does not
-     change, bit for bit; the change of every constrained matrix projected on the directions in use (the saved ones and
-     the reader's own); the first family's answers and logits against the start's, item for item
-  4  the new task, from the weights at row 4,096 of the four `keyed` runs: its panels with the reserve open and shut,
+  3  the keeping, from the weights at rows 64 and 4,096 of the four `keyed` runs: the directions in use (the saved ones, the
+     reader's own, and the span they must have); the tensors that the rule does not change, bit for bit; the change of every
+     constrained matrix projected on the directions in use; the first family's answers and logits against the start's, item
+     for item; the lead of every right or wrong answer over the next output; the same weights with the remaining component
+     along the directions removed in double precision
+  4  the new task, from the weights at rows 0 and 4,096 of the four `keyed` runs: its panels with the reserve open and shut,
      and the reserve's gates, beside the receipts
-  5  `keyed-free`, `open`, `rehearse`: the first family at every row from the receipts; the first family's scores from
-     the weights at row 4,096 of all twelve runs; `open` beside E43's receipts
-  6  the seven checks before the runs: what each receipt records, and the reader's figures where it computes the same
-     thing (the directions, the embedding, the batches of check 3(c), the data digests of all sixteen runs, check 6's
-     hash from E43's saved weights, the cost)
+  5  `keyed-free`, `open`, `rehearse`: the first family at every row from the receipts; the first family's and the new task's
+     scores from the weights at row 4,096 of all twelve runs; `open` beside E43's receipts
+  6  the seven checks before the runs: what each receipt records, and the reader's figures where it computes the same thing
+     (the embedding, the directions, the batches of check 3(c), the data digests of all sixteen runs from the reader's own
+     streams, check 6's hash from E43's saved weights, the cost); the runner's hash in every receipt
   7  the nine predictions scored against the brief's wording
   8  what the trial does and does not show: the same weights without the two added lines; where the new task sits (the
-     reserve cells shut, the added units of z2 off, the old rows put back to the start, and combinations)
+     reserve cells shut, the added units of z2 at zero, parts of the weights put back to the start); the conflicting family's
+     panel by whether the first family's operation gives the same answer; the size of the change by block; the code of the
+     new task's bytes against the directions in use
 
 Run from the repository root:
     OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e51_trial_verify.py [1 2 3 4 5 6 7 8]
@@ -810,14 +814,31 @@ def part3():
                 # (c) the first family through the reader's forward
                 r, gg = score_first_family(net, S1, HELD, in_use=in_use)
                 ndiff = sum(a != b for n in g0 for a, b in zip(gg[n], g0[n]))
-                d = {k: np.abs(answer_logits(net, its, in_use=in_use) - base[k]).max() for k, its in (("held", held), ("every", every), ("taught", taught))}
+                lg = {k: answer_logits(net, its, in_use=in_use) for k, its in (("held", held), ("every", every), ("taught", taught))}
                 n32 = Net(W, np.float32); d32 = {k: np.abs(answer_logits(n32, its, in_use=in_use) - base32[k]).max() for k, its in (("held", held), ("samp", samp))}
                 print(f"3.c generated answers: {fmt_ff(r)}; counts equal to the receipt's row {g}: {same_counts(r, receipt_first_family(row(rec, g)))}; answers differing from the start's, "
                       f"item for item: {ndiff} of 32,884 (31,684 without letters and 1,200 held-out pairs at 12 letters)")
+                d = {k: np.abs(lg[k] - base[k]).max() for k in lg}
                 print(f"    largest change of a logit at an answer position from the start's (double precision): {d['every']:.1e} on the 31,684 items, {d['held']:.1e} on the held-out panel, "
                       f"{d['taught']:.1e} on the 2,080 taught items; in single precision {d32['held']:.1e} on the held-out panel and {d32['samp']:.1e} on check 1's 2,000 items "
                       f"(check 3's receipt after 8 updates: {c3['heldout_k12']:.1e} and {c3['sample_2000_k0']:.1e}); largest change of an old cell's state on the held-out panel, every position: "
                       f"{np.abs(hold(net) - h0).max():.1e}")
+                for k, label in (("every", "the 31,684 items"), ("held", "the held-out panel")):
+                    top = base[k].argmax(-1)[..., None]; a0 = np.take_along_axis(base[k], top, -1)[..., 0]; a1 = np.take_along_axis(lg[k], top, -1)[..., 0]
+                    o0 = base[k].copy(); np.put_along_axis(o0, top, -np.inf, -1); o1 = lg[k].copy(); np.put_along_axis(o1, top, -np.inf, -1)
+                    m0, m1 = a0 - o0.max(-1), a1 - o1.max(-1)                     # the lead of the start's largest output over the next one, at the start and now
+                    print(f"    {label}: the lead of the start's largest output over the next largest: smallest at the start {m0.min():.2e}, smallest now {m1.min():.2e}, "
+                          f"largest change of a lead {np.abs(m1 - m0).max():.1e}, largest change among the leads below 0.01 at the start ({int((m0 < .01).sum())}) "
+                          f"{np.abs(m1 - m0)[m0 < .01].max() if (m0 < .01).any() else 0:.1e}; positions at which another output is now the largest: {int((m1 < 0).sum())}")
+                if g == 4096:                                                   # is the component along the directions the only path? Remove it in double precision and look again
+                    Wc = {k: v.astype(np.float64) for k, v in W.items()}
+                    for m in ("ih", "l2"):
+                        D = delta(W, Ws, m); D[ROWSETS[m]] -= (D[ROWSETS[m]] @ Vm[m]) @ Vm[m].T
+                        Wc[MATS[m][0]] = Ws[MATS[m][0]] + D[:, :-1]; Wc[MATS[m][1]] = Ws[MATS[m][1]] + D[:, -1]
+                    nc = Net(Wc)
+                    print(f"    the same weights with the component of the change of the input map's and l2's projected rows along the reader's directions removed in double precision "
+                          f"(nothing else altered): largest change of a logit from the start's {np.abs(answer_logits(nc, every, in_use=in_use) - base['every']).max():.1e} on the 31,684 items, "
+                          f"{np.abs(answer_logits(nc, held, in_use=in_use) - base['held']).max():.1e} on the held-out panel")
     clock(3, t0)
 
 
@@ -910,6 +931,242 @@ def part5():
 
 
 PARTS["5"] = part5
+
+# ================================================================ part 6: the checks before the runs
+class Digest:
+    """exp26_candidate.Digest as read: a running SHA-256 over every batch as the tensors the loop builds (x, y, answer mask)."""
+
+    def __init__(self):
+        self.h, self.n = hashlib.sha256(), 0
+
+    def add(self, items):
+        for t in batch_tensor(items):
+            self.h.update(str(tuple(t.shape)).encode()); self.h.update(np.ascontiguousarray(t).tobytes())
+        self.n += 1
+
+    def value(self):
+        return dict(batches=self.n, sha256=self.h.copy().hexdigest())
+
+
+def source(task, rehearse):
+    """The items of a run in the order the brief gives: the new task's stream alone, or each item drawn with equal chance from it or
+    from the first family's taught half (the second addendum's generator for `unrelated`, the brief's for `conflict`)."""
+    new = conflict_stream() if task == "conflict" else u_stream()
+    if not rehearse:
+        return lambda: (task, next(new))
+    fam = family_stream(); rj = Random(f"e43|{SEED}|joint" if task == "unrelated" else f"e51|{SEED}|joint|conflict")
+    return lambda: (task, next(new)) if rj.randrange(2) == 0 else ("first_family", next(fam))
+
+
+def part6():
+    t0 = time.time(); print("===== PART 6. The checks before the runs =====")
+    ck = {i: json.loads(show(E51 + f"checks/e51_check_{i}_{n}_{SEED}.json")) for i, n in ((1, "embedding"), (2, "directions"), (3, "rule"), (4, "scorer"), (5, "data"), (6, "open_is_e43"))}
+    ck[7] = json.loads(show(E51 + "checks/e51_check_7_cost.json"))
+    print("6.0 the seven receipts: ok flags " + ", ".join(f"check {i}: {ck[i].get('ok')}" for i in range(1, 7)) + "; check 7 has no flag (a forecast); commits recorded: "
+          + ", ".join(f"{i}: {ck[i]['provenance']['git']['commit'][:8]}" for i in range(1, 8)))
+    runner = hashlib.sha256(show("MOD97_LOCAL_RULE_20261106/exp51_reserve.py")).hexdigest()
+    used = [ck[i]["provenance"]["e51_sources_sha256"]["exp51_reserve.py"] for i in range(1, 8)]
+    used += [receipt(t, a, r)["settings"]["provenance"]["e51_sources_sha256"]["exp51_reserve.py"] for t in TASKS for a in ARMS for r in RULES]
+    used += [json.loads(show(f"{E51}e51_start_{f}_{r}_{SEED}.json"))["provenance"]["e51_sources_sha256"]["exp51_reserve.py"] for f in ("keyed", "bias") for r in RULES]
+    print(f"    the runner exp51_reserve.py at the worker's head has SHA-256 {runner[:16]}; the runner's hash recorded in the 7 check receipts, the 4 start receipts and the 16 run receipts: "
+          f"{sum(u == runner for u in used)} of {len(used)} equal to it; checks 1 to 6 and the starts were made while the runner was not yet committed: "
+          f"{sorted({str(ck[i]['provenance']['git']['e51_sources_modified_vs_commit']) for i in range(1, 7)})}")
+    S1 = first_family_items(); HELD = held12(); held = [it for n in HELD for it in HELD[n]]; samp = check1_sample(S1); items, dig, in_use = items2080()
+    # check 1
+    for rule in RULES:
+        nb = Net(birth(rule)[0], np.float32)
+        for form in ("keyed", "bias"):
+            net = Net(start(form, rule), np.float32); key = dict(in_use=in_use) if form == "keyed" else {}; r = ck[1]["runs"][f"{form}_{rule}"]
+            d = [np.abs(answer_logits(net, its, **key) - answer_logits(nb, its)).max() for its in (held, samp)]
+            extra = f"; row 0's scores equal to the half-width birth's in the receipt: {r['row0'] == r['half_width_birth']} (flag {r['row0_scores_equal_half_width_birth']})" if form == "keyed" else ""
+            print(f"6.1 check 1, {form} start, rule {rule}: largest difference of an output from the birth's on the held-out panel and on the 2,000 items: receipt "
+                  f"{r['largest_difference']['heldout_k12']:.6f}, {r['largest_difference']['sample_2000_k0']:.6f} (limit {r['limit']}); reader, single precision {d[0]:.6f}, {d[1]:.6f}{extra}")
+    print("    (the generated answers of row 0 against the birth's, item for item, are recomputed in part 2)")
+    # check 2
+    for rule in RULES:
+        r = ck[2]["rules"][rule]; _, info = directions(collect(Net(start("keyed", rule)), items, in_use))
+        print(f"6.2 check 2, rule {rule}: receipt: digest {r['items_digest'][:16]}, bytes in use {r['bytes_in_use']}, directions {r['directions']}; reader: digest {dig[:16]}, bytes in use "
+              f"{int(in_use.sum())}, directions " + str({m: info[m][2] for m in MATS}) + f"; the brief: d22b5733778491b1, 46, 46 / 129 / 129 / 11")
+    # check 3
+    for rule in RULES:
+        for task in TASKS:
+            for variant in ("keyed", "keyed, byte table not restored", "keyed-free"):
+                r = ck[3]["runs"][f"{rule} {task} {variant}"]; d = r["largest_change_of_an_output"]
+                print(f"6.3 check 3 (receipt only: no weights after 8 updates are saved), rule {rule}, {task}, {variant}: largest change of an output {d['heldout_k12']:.2e}, {d['sample_2000_k0']:.2e}; "
+                      f"bit-equal: {sum(r['not_changed_bit_equal'].values())} of 5 ({', '.join(k for k, v in r['not_changed_bit_equal'].items() if not v) or 'all'}{' not' if not all(r['not_changed_bit_equal'].values()) else ''}); "
+                      f"rows of the byte table in use changed {r['rows_of_the_byte_table_in_use_changed']}; ok {r['ok']}")
+        net = Net(start("keyed", rule), np.float32); fam, un, co = family_stream(), u_stream(), conflict_stream()
+        for label, st in (("first_family", fam), ("unrelated", un), ("conflict", co)):
+            x = batch_tensor([next(st) for _ in range(64)])[0]; k = net.run(x, n_out=x.shape[1], keep=True, in_use=in_use)[1]; r = ck[3]["runs"][f"{rule} (c)"]["batches"][label]
+            print(f"6.3 check 3(c), rule {rule}, the first batch of the {label} stream ({x.shape[0]} rows of {x.shape[1]}, shorter rows filled as the update fills them): largest reserve state "
+                  f"{np.abs(k['h'][:, :, U0:]).max():.7f} (receipt {r['largest_reserve_state']:.7f}), largest added unit of z2 {np.abs(k['z2'][:, :, H0:]).max():.7f} (receipt {r['largest_added_z2']:.7f})")
+    # check 4
+    for rule in RULES:
+        r = ck[4]["rules"][rule]
+        print(f"6.4 check 4 (receipt), rule {rule}: answers differing from the half-width birth's {sum(r['answers_differing_from_half_width_birth'].values())} of {sum(r['items'].values())}; "
+              f"without the two added lines {list(r['the_same_without_the_added_lines'].values())} (both recomputed in part 2)")
+    # check 5: the data of all sixteen runs
+    e43 = {("unrelated", False): P + "e43/e43_unrelated_{}_73129.json", ("conflict", False): P + "e43/e43_conflict_{}_73129.json", ("unrelated", True): P + "e43/addendum2/e43_unrelated-rehearse_{}_73129.json"}
+    for task in TASKS:
+        for reh in (False, True):
+            nxt = source(task, reh); dg = Digest(); counts = {task: 0, "first_family": 0}; at = {}
+            for g in range(1, 4097):
+                batch = []
+                for _ in range(64):
+                    kind, it = nxt(); counts[kind] += 1; batch.append(it)
+                dg.add(batch)
+                if g in ROWS:
+                    at[g] = (dg.value(), dict(counts))
+            bad = 0; runs = [(a, r) for a in (("rehearse",) if reh else ("open", "keyed-free", "keyed")) for r in RULES]
+            for a, r in runs:
+                rec = receipt(task, a, r)
+                bad += sum(x["data_digest"] != at[x["updates"]][0] or x["items_so_far"] != at[x["updates"]][1] for x in rec["rows"][1:]) + (rec["complete"]["data_digest"] != at[4096][0])
+            ref = ""
+            if (task, reh) in e43:
+                w = [json.loads(show(e43[(task, reh)].format(r), DREF))["complete"]["data_digest"] for r in RULES]
+                ref = f"; E43's receipts of the two rules at 4,096: equal {all(v == at[4096][0] for v in w)}; check 5's receipt: equal {ck[5]['streams'][task + (' rehearse' if reh else ' open')]['here'] == at[4096][0]}"
+            print(f"6.5 check 5, {task}{', rehearse' if reh else ''}: the reader's stream, digest at 4,096 {at[4096][0]['sha256'][:16]}, items {at[4096][1]}; against the digests and item counts of "
+                  f"rows 16 to 4,096 of {len(runs)} runs ({', '.join(a + ' ' + r for a, r in runs)}): {bad} disagreements{ref}")
+    # check 6
+    for rule in RULES:
+        mine = json.loads(show(f"{E51}check6/e51_unrelated_open_{rule}_{SEED}_e26birth_dry64.json")); e = json.loads(show(P + f"e43/e43_unrelated_{rule}_{SEED}.json", DREF)); a, b = row(mine, 64), row(e, 64)
+        r = ck[6]["rules"][rule]
+        print(f"6.6 check 6, rule {rule}: receipt flags: counts equal {r['first_family_counts_equal']}, hashes {r['tensors_sha256_here'][:16]} and {r['tensors_sha256_e43'][:16]}; the reader, from the dry receipt "
+              f"and E43's receipt at row 64: scores 1 and 2 equal {a['score1_first_family_all_pairs_k0'] == b['score1_first_family_all_pairs_k0'] and a['score2_first_family_heldout_k12'] == b['score2_first_family_heldout_k12']}, "
+              f"hash of the tensors equal {a['tensors_sha256'] == b['tensors_sha256']}, and equal to the hash of E43's saved weights of row 64 "
+              f"{tensors_sha(load(P + f'e43/e43_unrelated_{rule}_{SEED}_row64.pt', DREF)[0]) == a['tensors_sha256']}; E43's reduction score at row 64: {b['score1_first_family_all_pairs_k0']['reduction_score']:.2f}")
+    # check 7
+    actual = sum(receipt(t, a, r)["complete"]["cpu_total"] for t in TASKS for a in ARMS for r in RULES) / 3600
+    upd = [receipt(t, a, r)["complete"]["cpu_updates"] / 4096 for t in TASKS for a in ARMS for r in RULES]
+    print(f"6.7 check 7: {ck[7]['runs']} dry runs of 64 updates, CPU-seconds an update {min(v['cpu_seconds_an_update'] for v in ck[7]['dry_runs'].values()):.3f} to "
+          f"{max(v['cpu_seconds_an_update'] for v in ck[7]['dry_runs'].values()):.3f} and a scored row {min(v['cpu_seconds_a_scored_row'] for v in ck[7]['dry_runs'].values()):.1f} to "
+          f"{max(v['cpu_seconds_a_scored_row'] for v in ck[7]['dry_runs'].values()):.1f}; forecast {ck[7]['forecast_cpu_hours_sixteen_runs']:.2f} CPU-hours for the sixteen runs; the sixteen receipts: "
+          f"{actual:.2f} CPU-hours, {min(upd):.3f} to {max(upd):.3f} CPU-seconds an update")
+    clock(6, t0)
+
+
+PARTS["6"] = part6
+
+
+# ================================================================ part 7: the predictions
+def part7():
+    t0 = time.time(); print("===== PART 7. The nine predictions against the brief's wording (from the receipts) =====")
+    red = lambda t, a, r, g: row(receipt(t, a, r), g)["score1_first_family_all_pairs_k0"]["reduction_score"]
+    def learned(t, a, r):
+        rec = receipt(t, a, r); return first_learned([(x["updates"], 100 * x["score3_never_taught"]["exact"] / x["score3_never_taught"]["n"]) for x in rec["rows"]])
+    shut = lambda t, a, r: 100 * row(receipt(t, a, r), 4096)["score3_never_taught_reserve_shut"]["exact"] / row(receipt(t, a, r), 4096)["score3_never_taught_reserve_shut"]["n"]
+    v = [red("unrelated", "open", r, g) for r in RULES for g in (16, 32, 64)]
+    print(f"P51.1 `open` on unrelated, reduction score at rows 16, 32, 64 (S; B): {v[:3]}; {v[3:]}; all below 5%: {all(x < 5 for x in v)} -> {'held' if max(v[2], v[5]) < 5 else 'failed'}")
+    v = [(red("conflict", "open", r, 4096), red("conflict", "open", r, 0) / 2) for r in RULES]
+    print(f"P51.2 `open` on conflict, reduction score at 4,096 against half of row 0 (S; B): " + "; ".join(f"{a:.2f} against {b:.2f}" for a, b in v) + f" -> {'held' if all(a < b for a, b in v) else 'failed'}")
+    v = [(t, r, red(t, "keyed", r, 4096) - red(t, "keyed", r, 0)) for t in TASKS for r in RULES]
+    print(f"P51.3 `keyed`, reduction score at 4,096 minus row 0: " + "; ".join(f"{t} {r} {d:+.3f}" for t, r, d in v) + f" -> {'held' if all(abs(d) <= 2 for _, _, d in v) else 'failed'} (within 2 points on both tasks, both rules)")
+    v = {r: learned("unrelated", "keyed", r) for r in RULES}
+    print(f"P51.4 `keyed` learns unrelated: first row learned {v} -> " + ", ".join(f"{'held' if v[r] else 'failed'} under {r}" for r in ("B", "S")))
+    w = {r: learned("conflict", "keyed", r) for r in RULES}
+    print(f"P51.5 `keyed` learns conflict: first row learned {w} -> " + ", ".join(f"{'held' if w[r] else 'failed'} under {r}" for r in ("B", "S")))
+    c = {r: (v[r], learned("unrelated", "keyed-free", r)) for r in RULES if v[r]}
+    print(f"P51.6 the cost of the rule on unrelated (first row learned, keyed over keyed-free): " + "; ".join(f"{r}: {a}/{b} = {a / b:g}" for r, (a, b) in c.items())
+          + f" -> {'held' if all(a / b <= 4 for a, b in c.values()) else 'failed'} (at most four)")
+    d = [(t, r, red(t, "rehearse", r, 4096) - red(t, "rehearse", r, 0)) for t in TASKS for r in RULES]
+    print(f"P51.7 `rehearse`, reduction score at 4,096 minus row 0: " + "; ".join(f"{t} {r} {x:+.2f}" for t, r, x in d) + f" -> {'held' if all(abs(x) <= 5 for _, _, x in d) else 'failed'} (within 5 points);"
+          f" within the 2 points of the brief's *kept*: {sum(abs(x) <= 2 for _, _, x in d)} of 4")
+    k = [(r, red("unrelated", "keyed-free", r, 4096), red("unrelated", "keyed-free", r, 0)) for r in RULES]
+    print(f"P51.8 `keyed-free` on unrelated, reduction score at 4,096 against row 0: " + "; ".join(f"{r}: {a:.2f} against {b:.2f}" for r, a, b in k) + f" -> {'held' if all(abs(a - b) > 2 for _, a, b in k) else 'failed'} (not kept under either rule)")
+    sh = {r: shut("unrelated", "keyed", r) for r in RULES if v[r]}
+    print(f"P51.9 `keyed` on unrelated, the never-taught score at 4,096 with the reserve cells shut: {sh} -> {'held' if all(x < 20 for x in sh.values()) else 'failed'} (below 20%)")
+    print(f"      beside it, conflict: {dict((r, round(shut('conflict', 'keyed', r), 2)) for r in RULES)} (not below 20%: learned, and not *learned in the reserve* by the brief's reading; no prediction was made for it)")
+    clock(7, t0)
+
+
+PARTS["7"] = part7
+
+
+# ================================================================ part 8: what the trial does and does not show
+def with_start(W, Ws, what):
+    """A copy of the weights W with some entries put back to the start's.  'old rows': the rows that the rule projects, of the four
+    constrained matrices (every incoming connection of an old cell and of an old unit of z2); its three parts: 'input rows of the
+    old cells' (their rows of the input map), 'from the reserve into old units' (the old cells' rows of the recurrent matrix and
+    rows 0..255 of lm, in which only the columns of the reserve cells differ from the start), 'old rows of l2'.  'bytes': the byte
+    table.  'reserve rows': the reserve cells' rows of the two GRU matrices.  'added readout': rows 256.. of lm and l2 and columns
+    256.. of l3."""
+    V = {k: v.copy() for k, v in W.items()}
+    sets = {"old rows": ("ih", "hh", "lm", "l2"), "input rows of the old cells": ("ih",), "from the reserve into old units": ("hh", "lm"), "old rows of l2": ("l2",)}
+    for w in what.split(" + "):
+        if w in sets:
+            for m in sets[w]:
+                wk, bk = MATS[m]; V[wk][ROWSETS[m]] = Ws[wk][ROWSETS[m]]; V[bk][ROWSETS[m]] = Ws[bk][ROWSETS[m]]
+        elif w == "bytes":
+            V["book.weight"] = Ws["book.weight"].copy()
+        elif w == "reserve rows":
+            for k in ("rnn.weight_ih_l0", "rnn.weight_hh_l0", "rnn.bias_ih_l0", "rnn.bias_hh_l0"):
+                V[k][RES] = Ws[k][RES]
+        elif w == "added readout":
+            for k in ("lm.weight", "lm.bias", "l2.weight", "l2.bias"):
+                V[k][H0:] = Ws[k][H0:]
+            V["l3.weight"][:, H0:] = Ws["l3.weight"][:, H0:]
+        else:
+            raise ValueError(w)
+    return V
+
+
+def part8():
+    t0 = time.time(); print("===== PART 8. What the trial does and does not show =====")
+    S1 = first_family_items(); HELD = held12(); _, _, in_use = items2080()
+    for rule in RULES:
+        Ws = start("keyed", rule); ns = Net(Ws); r0, g0 = score_first_family(ns, S1, HELD, in_use=in_use)
+        same = lambda gg: 100 * sum(a == b for n in g0 if n.startswith("k0_") for a, b in zip(gg[n], g0[n])) / 31684
+        for task in TASKS:
+            W = weights(task, "keyed", rule, 4096)[0]; net = Net(W); pan = new_panels(task); never = ("add97", "sub97") if task == "conflict" else ("held",)
+            print(f"--- rule {rule}, {task}, keyed, row 4,096")
+            # 8.1 the same weights without the added lines
+            for label, key in (("with the two added lines (as run)", dict(in_use=in_use)), ("without the two added lines", {}), ("line 1 only, on every item (reserve cells shut)", dict(shut_all=True)),
+                               ("line 2 only, on every item (added units of z2 at zero)", dict(off_all=True)), ("both lines on every item, whatever the first byte", dict(shut_all=True, off_all=True))):
+                r, gg = score_first_family(net, S1, HELD, **key)
+                print(f"8.1 the first family, {label}: {fmt_ff(r)}; answers without letters equal to the start's {same(gg):.2f}%")
+            # 8.2 where the new task sits
+            pc = lambda s3: 100 * sum(s3[n]["exact"] for n in never) / sum(s3[n]["n"] for n in never)
+            conds = (("as run", {}), ("reserve cells shut", dict(shut_all=True)), ("added units of z2 at zero", dict(off_all=True)), ("both: only the old cells and the old units of z2 act", dict(shut_all=True, off_all=True)))
+            print("8.2 the new task's never-taught score (%), by what is allowed to act (columns) and by which weights are those of row 4,096 (rows):")
+            print("      weights".ljust(74) + " | ".join(c for c, _ in conds))
+            variants = [("the start (row 0)", Ws), ("row 4,096", W)] + [(f"row 4,096, put back to the start: {w}", with_start(W, Ws, w)) for w in (
+                "old rows", "input rows of the old cells", "from the reserve into old units", "old rows of l2", "bytes", "old rows + bytes", "reserve rows", "added readout", "reserve rows + added readout")]
+            for label, V in variants:
+                nv = Net(V)
+                print("      " + label.ljust(68) + " | ".join(f"{pc(score_new(nv, pan, in_use=in_use, **key)):6.1f}".ljust(len(c)) for c, key in conds))
+            if task == "conflict":                                          # 8.2b the conflicting family's panel by whether the answer depends on the modulus
+                its = [it for n in never for it in pan[n]]; ops = [n[:3] for n in never for _ in pan[n]]
+                ab = [(int(bytes(p[1:3])), int(bytes(p[-3:-1]))) for p, _ in its]
+                same = np.array([apply(o, 97, a, b) == apply(o, 89, a, b) for o, (a, b) in zip(ops, ab)])
+                small = np.array([a < 89 and b < 89 for a, b in ab])
+                cls = (("the answer is the same under 89 and 97, both operands below 89", same & small), ("the same answer, an operand of 89 or more", same & ~small),
+                       ("the answer differs between 89 and 97", ~same))
+                print("8.2b the 800 never-taught items of the conflicting family by whether the first family's operation (the same operation under modulus 89) gives the same answer; right answers of each class:")
+                print("      weights and what acts".ljust(74) + " | ".join(f"{c} ({int(m.sum())})" for c, m in cls))
+                for label, V, key in (("the start, reserve cells shut", Ws, dict(shut_all=True)), ("row 4,096, as run", W, {}), ("row 4,096, reserve cells shut", W, dict(shut_all=True)),
+                                      ("row 4,096, only the old cells and the old units of z2", W, dict(shut_all=True, off_all=True)),
+                                      ("row 4,096, input rows of the old cells put back, reserve cells shut", with_start(W, Ws, "input rows of the old cells"), dict(shut_all=True))):
+                    ok = np.array([o == t for o, (_, t) in zip(generate(Net(V), its, in_use=in_use, **key), its)])
+                    print("      " + label.ljust(68) + " | ".join(f"{int(ok[m].sum())} ({100 * ok[m].mean():.1f}%)".ljust(len(c) + len(str(int(m.sum()))) + 3) for c, m in cls))
+            # 8.3 where the weights changed
+            parts = []
+            for k, what, mask, refv in blocks(W, birth(rule)[0]):
+                dlt = (W[k].astype(np.float64) - Ws[k])[mask]
+                if k == "book.weight":
+                    ch = np.nonzero((W[k] != Ws[k]).any(1))[0]; parts.append(f"byte table: {len(ch)} rows changed (symbols {ch.min()}..{ch.max()}" + (": " + "".join(chr(b) for b in ch) if ch.max() < 128 else "") + f"), 2-norm of the change {np.linalg.norm(dlt):.2f}")
+                else:
+                    parts.append(f"{k} {what}: {np.linalg.norm(dlt):.2f}" + ("" if dlt.any() else " (unchanged)"))
+            print("8.3 the 2-norm of the change from the start, by block: " + "; ".join(parts))
+            # 8.4 the code of the new task's bytes against the directions in use at the input map
+            Vs = saved_directions(rule)[0]["ih"]; newb = [ord(c) for c in "rtxn"] if task == "conflict" else list(range(128, 226))
+            for label, nn in (("start", ns), ("row 4,096", net)):
+                c = np.concatenate([nn.code[newb], np.ones((len(newb), 1))], 1); out = c - (c @ Vs) @ Vs.T
+                print(f"8.4 the code (z1 and the constant) of the new task's {len(newb)} bytes, {label}: 2-norm median {np.median(np.linalg.norm(c, axis=1)):.2f}; its part outside the directions in use at the "
+                      f"input map: 2-norm median {np.median(np.linalg.norm(out, axis=1)):.2f}, share of the squared norm median {np.median((np.linalg.norm(out, axis=1) / np.linalg.norm(c, axis=1)) ** 2):.4f}")
+    clock(8, t0)
+
+
+PARTS["8"] = part8
 
 if __name__ == "__main__":
     for p in want:
