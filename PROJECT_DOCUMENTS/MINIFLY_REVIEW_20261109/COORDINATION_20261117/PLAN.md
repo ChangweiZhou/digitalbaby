@@ -40,7 +40,7 @@ Status words: *running*, *waiting* (for the named item), *next* (brief to be wri
 | 3 | An inventory of every setting of E26 to E50 that has only one value in the whole record | all | – | reviewer, record | running |
 | 4 | E51: a new task learned in cells held in reserve; with arms of less rehearsal and of rehearsal at intervals | A | check of its brief | worker | next |
 | 5 | The first long lives, release 1 (conventional learner; store; no decay), with a table of what is kept at a return by the number of earlier visits | A, B1 | – | worker | running |
-| 6 | The sweep's long lives beside release 1 (with and without the store; 1,024 visits; four worlds) | B1 | item 5's runner checks | helper | waiting |
+| 6 | The sweep's long lives beside release 1 (with and without the store; 1,024 visits; four worlds) | B1 | – | helper | running |
 | 7 | E50: a fixed input code in which a value stands for one byte; stages 1 to 3 | C | – | worker | running |
 | 8 | E52: the sweep under its own learning rate and decay (and back-propagation under the same values), at half and at a quarter of the pairs | B1, B2, every comparison of the two rules | – | worker | next |
 | 9 | E53: the local networks from a start at which differences pass | C | item 1 | worker | waiting |
@@ -62,4 +62,5 @@ The numbers E52 to E56 are the reviewer's; the coordinator may renumber them.
 | 20:22 | Items 5 and 7 started in worker sessions (`LOG.md`). |
 | 20:47 | Item 7: checks passed; stage 1 running. |
 | 21:05 | Items 1, 2 and 3 started (agents of the reviewer, saved weights and the record only). Item 4's brief is in check. |
-| 21:15 | Item 8: the brief of E52 written and given to a check. Items 1, 2, 3 running. |
+| 21:07 | Item 8: the brief of E52 written and given to a check. Items 1, 2, 3 running. |
+| 21:10 | Item 5: the runner's checks passed and the runner change was read and accepted; the trial runs since 21:04. Item 6: the helper session for the sweep's long lives started. |
