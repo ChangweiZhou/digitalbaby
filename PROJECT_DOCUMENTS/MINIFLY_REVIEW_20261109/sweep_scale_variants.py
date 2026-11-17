@@ -7,10 +7,12 @@ The document is SWEEP_SCALE_VARIANTS_ALIGNMENT_20261117.md (same folder); this s
     parts   stream      the batches rebuilt here are the recorded ones (digest against the receipts)
             forward     this script's forward against the reviewer's readers and against the recorded first-batch loss
             test1       the exact gradient against finite differences of the loss
-            test2       V0 on the first batch against the cosines recorded in the receipts of E42, E49 and E50
+            test2       V0 on the first batch against the cosines recorded in the receipts of E42, E49 and E50, in float64 and in
+                        float32 with the norms accumulated as the recording library appears to accumulate them
             test3       V5 (signs times exact magnitudes) against the exact gradient
             magnitudes  how unequal the magnitudes are that a scale replaces
             tables      the cosines, norm ratios and gate blocks of every variant, 16 further batches
+            summary     V0 against the best variant, and every variant against V0 on the same batches
             all         every part (the default)
     a part may be followed by network names (for example `tables G_S F10_B`) to restrict it; the names are printed by `stream`.
 
@@ -413,14 +415,11 @@ def label(text):
 
 
 def decimals(a, b):
-    """The number of leading decimals in which a and b agree, written to nine decimals."""
-    sa, sb = f"{a:.9f}", f"{b:.9f}"
+    """The largest n (at most 9) for which a and b differ by less than half a unit of the n-th decimal."""
     n = 0
-    for p, q in zip(sa, sb):
-        if p != q:
-            break
+    while n < 9 and abs(a - b) < 0.5 * 10.0 ** -(n + 1):
         n += 1
-    return max(0, n - sa.index(".") - 1) if sa.split(".")[0] == sb.split(".")[0] else 0
+    return n
 
 
 # ---------------------------------------------------------------- part: stream
@@ -538,15 +537,39 @@ def part_test1(names):
 
 
 # ---------------------------------------------------------------- part: test 2
-RECORDED = {"recurrent_matrix": "rnn.weight_hh_l0", "rnn.weight_ih_l0": "rnn.weight_ih_l0", "lm.weight": "lm.weight", "rnn.weight_hh_l0": "rnn.weight_hh_l0"}
+RECORDED = {"recurrent_matrix": "hh", "rnn.weight_ih_l0": "ih", "lm.weight": "lm", "rnn.weight_hh_l0": "hh"}
+
+
+def lane_norm(v, lanes=8):
+    """The Euclidean norm of a float32 vector with the squares accumulated in single precision in `lanes` running sums (elements
+    i, i + lanes, i + 2 lanes, ... in turn), the running sums then added: a vectorised loop of eight single-precision accumulators."""
+    n = len(v) // lanes * lanes
+    acc = np.cumsum((v[:n] * v[:n]).reshape(-1, lanes), axis=0, dtype=np.float32)[-1]
+    tot = np.float32(0)
+    for q in list(acc) + [e * e for e in v[n:]]:
+        tot = np.float32(tot + q)
+    return np.sqrt(tot)
+
+
+def cosine_single(a, b):
+    """sum((a / |a|) * (b / |b|)) in single precision, the norms by lane_norm: the form in which the receipts' cosines agree."""
+    a, b = a.astype(np.float32).ravel(), b.astype(np.float32).ravel()
+    return float(((a / lane_norm(a)) * (b / lane_norm(b))).sum(dtype=np.float32))
 
 
 def part_test2(names):
+    """V0 on the first batch against the receipts.  Two figures of this script for each recorded cosine: in float64 (the figure of
+    the document's tables), and with the whole computation in float32 and the cosine formed as cosine_single forms it.  E42's receipts
+    take the cosine over the whole recurrent matrix (zeros outside the mask included), E49's and E50's over the kept entries."""
     label("test 2: V0 on the first batch against the cosines the receipts record (torch, float32)")
+    x, y, mask = stream_batches(1)[0]
     lines = []
     for name in names:
         desc, rows = measure(name)
         r0 = rows[0][("V0", "all")]
+        n32 = Net(name, np.float32)
+        c32 = forward(n32, x, y, mask)
+        ge, gs = backward(n32, c32, exact_feedback(n32)), backward(n32, c32, feedback(n32, "V0"))
         recs = [(NETS[name][2], "cosine_first_batch_" + desc["when"])]
         if name == "F10_start":
             recs += [("e42/e42_F10_S_73129.json", "cosine_first_batch_start"), ("e42/e42_F10_B_73129.json", "cosine_first_batch_start")]
@@ -557,11 +580,28 @@ def part_test2(names):
         for rp, key in recs:
             for rk, v in receipt(rp)[key].items():
                 if rk in RECORDED:
-                    mine = r0["cos " + RECORDED[rk]]
-                    lines.append((name, SHORT[RECORDED[rk]], rp.split("/")[-1], key[19:], f"{v:.7f}", f"{mine:.7f}", f"{mine - v:+.1e}", decimals(mine, v)))
-    table(("network", "tensor", "receipt", "at", "recorded", "here (V0)", "difference", "decimals that agree"), lines)
-    d = [abs(float(ln[6])) for ln in lines]
-    print(f"{len(lines)} recorded cosines compared; largest difference {max(d):.1e}; decimals that agree: least {min(ln[7] for ln in lines)}, most {max(ln[7] for ln in lines)}")
+                    m = RECORDED[rk]; w = WNAME[m]
+                    mine = r0["cos " + w]
+                    sel = np.ones(n32.M[m].shape, dtype=bool) if rp.startswith("e42/") else n32.M[m]
+                    single = cosine_single(gs[w][sel], ge[w][sel])
+                    lines.append((name, SHORT[w], rp.split("/")[-1], key[19:], f"{v:.7f}", f"{mine:.7f}", f"{mine - v:+.1e}", decimals(mine, v),
+                                  f"{single:.7f}", f"{single - v:+.1e}", decimals(single, v)))
+    table(("network", "tensor", "receipt", "at", "recorded", "here, float64", "difference", "decimals",
+           "here, float32 and the norms in eight running sums", "difference", "decimals"), lines)
+    print("decimals: the largest n for which the two figures differ by less than half a unit of the n-th decimal (9 at most).")
+    d, d1 = [abs(float(ln[6])) for ln in lines], [abs(float(ln[9])) for ln in lines]
+    print(f"{len(lines)} recorded cosines compared. float64: largest difference {max(d):.1e}; decimals: least {min(ln[7] for ln in lines)}, most {max(ln[7] for ln in lines)};"
+          f" recorded above this script's figure in {sum(float(ln[6]) < 0 for ln in lines)} of {len(lines)}.")
+    print(f"float32 with the norms in eight running sums: largest difference {max(d1):.1e} (the spacing of float32 numbers between 0.5 and 1 is 6.0e-08);"
+          f" decimals: least {min(ln[10] for ln in lines)}, most {max(ln[10] for ln in lines)}.")
+    if "C-dense_start" in names:
+        n32 = Net("C-dense_start", np.float32); c32 = forward(n32, x, y, mask)
+        ge, gs = backward(n32, c32, exact_feedback(n32)), backward(n32, c32, feedback(n32, "V0"))
+        a_, b_ = gs["rnn.weight_ih_l0"].ravel(), ge["rnn.weight_ih_l0"].ravel()
+        v = receipt("e50/e50_C-dense_S_73129.json")["cosine_first_batch_start"]["rnn.weight_ih_l0"]
+        print(f"C-dense_start, input map (393,216 entries), recorded {v:.7f}; the float32 gradients of this script with the cosine in float64 {cos(a_.astype(np.float64), b_.astype(np.float64)):.7f};"
+              " with the norms in single precision in 1, 4, 8, 16 running sums: "
+              + ", ".join(f"{float(((a_ / lane_norm(a_, k)) * (b_ / lane_norm(b_, k))).sum(dtype=np.float32)):.7f}" for k in (1, 4, 8, 16)))
     a, b = load("e49/e49_in16_S_73129_start.pt", REF49), load("e49/e49_in16_B_73129_start.pt", REF49)
     print("start files of the two rules hold the same tensors: E49 in16", all(np.array_equal(a[k], b[k]) for k in a), end="; ")
     a, b = load("e50/e50_C-dense_S_73129_start.pt", REF50), load("e50/e50_C-dense_B_73129_start.pt", REF50)
@@ -593,10 +633,11 @@ def part_magnitudes(names):
         lines = []
         for k, d in desc["maps"].items():
             bl = " / ".join(f"{v:.4f}" for v in d["blocks"]) if "blocks" in d else "–"
-            lines.append((MAPNAME[k], f"{d['kept']:,} of {d['size']:,}", f"{d['mean']:.4f}", bl, f"{d['cv_rows']:.2f}", f"{d['cv_cols']:.2f}", f"{d['cv_entries']:.2f}",
+            wb = " / ".join(f"{v:.2f}" for v in d["cv_rows_in_block"]) if "blocks" in d else "–"
+            lines.append((MAPNAME[k], f"{d['kept']:,} of {d['size']:,}", f"{d['mean']:.4f}", bl, f"{d['cv_rows']:.2f}", wb, f"{d['cv_cols']:.2f}", f"{d['cv_entries']:.2f}",
                           *(f"{d['align'][v]:.3f}" for v in VARIANTS[:5])))
-        table(("map", "kept entries", "mean magnitude", "by gate block r / z / n", "CV of row means", "CV of column means", "CV of magnitudes",
-               "V0", "V1", "V2", "V3", "V4"), lines)
+        table(("map", "kept entries", "mean magnitude", "mean by gate block r / z / n", "CV of row means", "the same within block r / z / n", "CV of column means",
+               "CV of magnitudes", "V0", "V1", "V2", "V3", "V4"), lines)
 
 
 # ---------------------------------------------------------------- part: tables
@@ -652,6 +693,19 @@ def part_summary(names):
             lines.append((name, short, f"{v0.mean():.3f}", f"{best} {alt[best].mean():.3f}", f"{alt[best].mean() - v0.mean():+.3f} [{int((alt[best] > v0).sum())}]",
                           f"{bg} {gru[bg].mean():.3f}", f"{gru[bg].mean() - v0.mean():+.3f} [{int((gru[bg] > v0).sum())}]", f"{ceil.mean():.3f}"))
     table(("network", "tensor", "V0", "best at every map", "gain", "best at the GRU maps only", "gain", "exact magnitudes at the GRU maps only"), lines)
+    print(f"Every variant against V0 on the same batches: mean difference of the cosine [number of the {N_FURTHER} batches on which the variant is above V0]\n")
+    keys = ROWS_ALL[1:] + ROWS_GRU[1:4]
+    lines = []
+    for name in names:
+        desc, rows = measure(name)
+        fur = rows[1:]
+        for f, short in COLS:
+            if f not in fur[0][("V0", "all")] or f == "cos l3.weight":
+                continue
+            v0 = np.array([r[("V0", "all")][f] for r in fur])
+            d = [np.array([r[key][f] for r in fur]) - v0 for key in keys]
+            lines.append((name, short, f"{v0.mean():.3f}") + tuple(f"{q.mean():+.3f} [{int((q > 0).sum())}]" for q in d))
+    table(("network", "tensor", "V0") + tuple(f"{k[0]}, {'every map' if k[1] == 'all' else 'GRU maps'}" for k in keys), lines)
 
 
 # ---------------------------------------------------------------- main
