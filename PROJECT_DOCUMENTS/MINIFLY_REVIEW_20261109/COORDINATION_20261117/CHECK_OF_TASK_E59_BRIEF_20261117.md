@@ -1,8 +1,8 @@
 # Check of the brief of E59 before its release (17 November 2026)
 
-Written for the outside reviewer by an agent that has not seen the reviewer's reasoning. The brief is `TASK_E59_A_TASK_OF_ANOTHER_KIND_FROM_A_FRESH_A_BORN_AND_A_LIVED_NETWORK_20261117.md` beside this file, revision 1, as committed at 1ed3d41c (its SHA-256 begins `0111e02f`; it was unchanged when this check ended). The work was read-only. Nothing was trained, torch is not installed, no code of another branch was executed, and the files of other branches were read with `git show`. The check began at 22:22 UTC and ended at @@END@@ UTC. It is the check that rule 4 of section 4 of `PLAN.md` asks for. It is not the independent audit that the programme's rules ask for.
+Written for the outside reviewer by an agent that has not seen the reviewer's reasoning. The brief is `TASK_E59_A_TASK_OF_ANOTHER_KIND_FROM_A_FRESH_A_BORN_AND_A_LIVED_NETWORK_20261117.md` beside this file, revision 1, as committed at 1ed3d41c (its SHA-256 begins `0111e02f`; it was unchanged when this check ended). The work was read-only. Nothing was trained, torch is not installed, no code of another branch was executed, and the files of other branches were read with `git show`. The check began at 22:22 UTC and ended at 22:59 UTC. It is the check that rule 4 of section 4 of `PLAN.md` asks for. It is not the independent audit that the programme's rules ask for.
 
-**Shell names.** `D=origin/codex/minifly-consolidated-20261023` (at 7cabb13a); `M=MOD97_LOCAL_RULE_20261106`. A line of the brief is cited as "brief, line n". `APP <part>` is the script of the appendix, run as `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I <the script> <part>`; it reads every file with `git show`, and uses the standard library and, for three parts, numpy.
+**Shell names.** `D=origin/codex/minifly-consolidated-20261023` (at 7cabb13a); `M=MOD97_LOCAL_RULE_20261106`. A line of the brief is cited as "brief, line n". `APP <part>` is the script of the appendix, run as `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I <the script> <part>`; it reads every file with `git show`, and uses the standard library and, for four parts, numpy.
 
 **Terms.** As in the brief: `fresh`, `born` and `lived` are its three starts; the two rules are the sweep (S) and back-propagation (B); the held panel is 300 held-out pairs at 12 fillers. The seeds are given in the order 73129, 93683, 116089. A *receipt* is the JSON file that a run writes.
 
@@ -75,11 +75,11 @@ Replace the last sentence of the paragraph on the explanation (brief, line 73) b
 
 Over the three seeds and both rules, against torch's initial values, `l1.weight` is 0.21 to 0.48 of its initial size, the recurrent matrix 1.64 to 1.98 times, the output matrix 2.4 to 4.6 times and the output bias 8 to 41 times. A fresh network is therefore another network in the scale of every map, and under AdamW at a fixed rate a step of 0.001 is a different share of a weight in each start (2% of the root mean square of `l1.weight` in `born`, 0.5% in `fresh`). All three starts get a new optimizer, whose first steps move every weight by about the rate whatever the gradient (E43's report says so of its own runs, `$D:$M/exp45/e43/E43_REPORT.md`, line 118): the same optimizer is not the same disturbance for the three.
 
-(b) *The slow start of any fresh network.* On a family, fresh networks of this size stay below 10% on the taught panel for the first 1,024 updates under both rules (E40; in E41 at a half of the pairs the rise begins between 1,500 and 2,300 updates; `APP flat`). A trained network may pass this stage at once whatever it was trained on. A ratio far below 2/3 would then say little about holding two items.
+(b) *The slow start of any fresh network.* On a family, fresh networks of this size stay below 10% on the taught panel for the first 1,024 updates under both rules (E40: 5.7 to 9.3% at update 1,024; `APP flat`). A trained network may pass this stage at once whatever it was trained on. A ratio far below 2/3 would then say little about holding two items.
 
-(c) *The form of the answer.* Before any update the born and the lived networks do not answer in the task's form: on the held panel they mostly give the end symbol alone, or digits and other bytes of the families before it, and they give three bytes with the end symbol third on 0 to 36 of 300 items (`APP format`, a numpy forward pass that reproduces E43's count of 0 of 300 at row 64 and its first-batch loss of 18.155). After 64 updates E43's networks of seed 73129 (the arm without decay, whose weights at row 64 are on file) give the form "symbol, symbol, end symbol" on 300 (S) and 283 (B) of 300 held items while the first symbol is right on 3 and 15. The form is learned first and fast by a born network. How long a fresh network needs for it is not on record, and the brief's scores would not show it.
+(c) *The form of the answer.* Before any update the born and the lived networks do not answer in the task's form: on the held panel they mostly give the end symbol alone, or digits and other bytes of the families before it, and they give three bytes with the end symbol third on 0 to 36 of 300 items (`APP format`, a numpy forward pass that reproduces E43's count of 0 of 300 at row 64 and, in `APP weights`, its first-batch loss of 18.155). After 64 updates E43's networks of seed 73129 (the arm without decay, whose weights at row 64 are on file) give the form "symbol, symbol, end symbol" on 300 (S) and 283 (B) of 300 held items while the first symbol is right on 3 and 15. The form is learned first and fast by a born network. How long a fresh network needs for it is not on record, and the brief's scores would not show it.
 
-(d) *The name.* The brief calls the task "a task of another kind" (title; line 13; line 20). E43's brief, which defined it, says that it shares with the first family "the whole network", "the start symbol; the end symbol as the third answer byte; the length of items and the format of two answer bytes", that "it asks for memory across fillers, as the families do across letters", and concludes "unrelated in content and not in machinery" (`$D:OPUS_TASK_E43_IS_A_FAMILY_LOST_TO_UNRELATED_LEARNING_20261116.md`, line 45). The brief concedes it under "What it cannot show" (line 77) and keeps the name.
+(d) *The name.* The brief calls the task "a task of another kind" (title; line 13; line 20). E43's brief, which defined it, says that it shares with the first family "the whole network", "the start symbol; the end symbol as the third answer byte; the length of items and the format of two answer bytes", that "it asks for memory across fillers, as the families do across letters", and concludes "unrelated in content and not in machinery" (line 45 of the file at the root of the default branch whose name ends in `E43_IS_A_FAMILY_LOST_TO_UNRELATED_LEARNING_20261116.md`). The brief concedes it under "What it cannot show" (line 77) and keeps the name.
 
 A cheap control exists for (a), and two scores that cost almost nothing address (b) and (c). I do not recommend the graft that the question suggests (the recurrent weights of the born network in a fresh network, or the reverse) as part of this job: the parts were trained together, the fresh `l1` gives the born recurrent map inputs about four times larger than those it was trained on (0.20 against 0.05), and a graft that fails to save can therefore not be read. A graft that saves could be read, so it may follow as a job of its own.
 
@@ -115,13 +115,13 @@ A cheap control exists for (a), and two scores that cost almost nothing address 
 
 (c) *The last rows.* A run that first reaches 80% at row 8,064 or 8,192 cannot show three rows and "does not reach 80"; the brief does not say so.
 
-**Repair.** Replace line 15 by the text below. By E40's and E43's scoring costs a row of 600 items at 12 fillers costs about 1.2 CPU-seconds (an estimate from two receipts with different mixes of items; check 4 measures it), so 273 rows cost about 5.5 CPU-minutes a run against about 1.8 for the brief's 89.
+**Repair.** Replace line 15 by the text below. By E40's and E43's scoring costs a row of 600 items at 12 fillers costs about 1.2 CPU-seconds (an estimate from two receipts with different mixes of items; the check of cost measures it), so 273 rows cost about 5.5 CPU-minutes a run against about 1.8 for the brief's 89.
 
 > - The network is scored at update 0, after every 16 updates up to update 512, and after every 32 updates from there to update 8,192. Each scoring is called a row; a run has 273 rows. *Updates to 80* is the first row r at which the share of right answers on the held panel is at or above 80% (240 of 300) and is so at every row up to r + 64. A run with no such row up to update 8,128 *does not reach 80*. A *level* at the end is the mean over the nine rows from update 7,936 to 8,192.
 
 In line 16 write "over the rows from update 7,296 to 8,192" and "over the rows from update 5,248 to 6,144" (29 rows each) for "the eight rows". Replace the paragraph on cost (line 40) by:
 
-> Cost: E43's own runs took 0.100 to 0.110 CPU-seconds an update on this task and E40's 0.104 to 0.119 at this size; a row scores 900 items (the two held panels and the taught panel) and a run has 273 rows. About 0.35 CPU-hours a run, 21 CPU-hours for the 60 runs. Check 4 measures both costs before the runs.
+> Cost: E43's own runs took 0.100 to 0.110 CPU-seconds an update on this task and E40's 0.104 to 0.119 at this size; a row scores 900 items (the two held panels and the taught panel) and a run has 273 rows. About 0.35 CPU-hours a run, 21 CPU-hours for the 60 runs. The check of cost measures both before the runs.
 
 If the reviewer keeps the brief's rows to save about 4 CPU-hours, the least that is needed is: the definition "at r and at every row up to r + 256", the sentence of (c) with 7,936, and a statement in the report that under back-propagation with 2,048 pairs the rows do not resolve `lived` against `born`.
 
@@ -161,6 +161,8 @@ In line 44 write "the held panel" for "the panels".
 
 (f) Rule 4 of the plan asks that a result be "verified from receipts and weights before it is read". With final weights committed for seed 73129 only (line 44), two of the three seeds can be verified from receipts alone.
 
+(g) The brief gives the cost in CPU-hours and not the time during which the worker's turn must stay open, which at three processes is about seven hours.
+
 **Repair.** Add to "Rules for the worker":
 
 > - Start a branch of your own from `$D` at 7cabb13a. This brief and the reviewer's documents are on `$V`; read them with `git show`.
@@ -168,6 +170,7 @@ In line 44 write "the held panel" for "the panels".
 > - `.gitignore` at the root excludes `*.pt`. Add the weights that this brief asks for with `git add -f` and confirm with `git ls-tree` that the commit holds them. The final weights of the other runs go to `$M/exp45/e59/rows_uncommitted/`, with their SHA-256 in the receipt, and stay on the disk until the reviewer has verified the result; the reviewer may name runs whose weights are then committed.
 > - The runner refuses an output path that exists. Before a run is started again, move its partial receipt to `$M/exp45/e59/interrupted/` and commit it; do not delete it. The run started again must give, at every row that the partial receipt holds, the same `data_digest` and `tensors_sha256`, and the report says for each such run that it did.
 > - The report is `$M/exp45/e59/E59_REPORT.md`.
+> - At three processes the runs take about seven hours by the clock; the turn stays open for all of that time, and finished receipts are pushed as the runs end.
 
 In line 20 write `$V:$R/E40_SAVING_IN_WHOLE_EXPERIENCE_20261117.md`. In line 44 write "the `tensors_sha256` at every row" for "the `tensors_sha256` at rows 64, 256, 1,024, 2,048, 4,096 and 8,192" (the hash costs a few hundredths of a second, and the rule on runs started again needs it).
 
@@ -181,7 +184,7 @@ In line 20 write `$V:$R/E40_SAVING_IN_WHOLE_EXPERIENCE_20261117.md`. In line 44 
 - *Check 4* cannot fail: it names no run on which the cost is measured and no forecast at which the job stops.
 - No check covers a run that was started again.
 
-**Repair.** Replace the section "Checks before the runs" by:
+**Repair.** Replace the section "Checks before the runs" by the text below. It numbers the checks in the order in which they are carried out, so the brief's check 1 becomes check 4.
 
 > ## Checks (a receipt for each)
 >
@@ -216,7 +219,7 @@ In "Reporting" write "checks 1 to 3 passed (or which failed); check 4 passed at 
 
 ### 9. What requirement B2 needs and the brief leaves out, at no cost
 
-**What is wrong.** Requirement B2 (`PLAN.md`, section 2) compares our learner with the conventional one: "the end result may be about the same while our learner needs far fewer samples". The brief's three comparisons are all within a rule. The two rules are set against each other only in P59.6, for `fresh` with 2,048 pairs, and "What it cannot show" (line 80) declines the comparison. The runs hold it at no cost: every start, number of pairs and seed is run under both rules on the same batches. The case that B2 describes, our learner with experience against the conventional learner without, is the pair `lived` under the sweep against `fresh` under back-propagation, and it too is in the runs.
+**What is wrong.** Requirement B2 (`PLAN.md`, section 2) compares our learner with the conventional one: "The end result may be about the same while our learner needs far fewer samples". The brief's three comparisons are all within a rule. The two rules are set against each other only in P59.6, for `fresh` with 2,048 pairs, and "What it cannot show" (line 80) declines the comparison. The runs hold it at no cost: every start, number of pairs and seed is run under both rules on the same batches. The case that B2 describes, our learner with experience against the conventional learner without, is the pair `lived` under the sweep against `fresh` under back-propagation, and it too is in the runs.
 
 The brief also does not say in which account a saving is counted. The reviewer's document on E40 found that E40's saving exists when the new family alone is counted and not when the experience before it is counted (`E40_SAVING_IN_WHOLE_EXPERIENCE_20261117.md`, section 8). A born network has 24,576 updates behind it and a lived network 61,440, against the tens or hundreds of updates that a saving here can amount to.
 
@@ -268,7 +271,7 @@ With 512 pairs no symbol is absent from a place (each occurs at least twice). Wi
 2. Line 44 says the two extra scores are taken "so that the report can say what the new learning cost"; line 60 gives them "without a reading" and line 78 says the job cannot show what a learner keeps. Write in line 44: "so that the report can give, without a reading, what remained of the earlier families".
 3. The two extra scores come from one call, `X16.panels(seed)`: E43's score 2 is `P[n][12]` for the four operations of the first family (4 × 300 items) and E40's six earlier panels are `P[n][12]` for `add89`, `sub89`, `add97`, `sub97`, `add73`, `sub73` (2 × 300 and 4 × 400). `add89` and `sub89` are in both; the receipt should hold them once. The six panels leave out max and min of the life's families and the compositions; the brief's "the life's families' panels" (line 60) should read "add and sub of the life's two families of single operations".
 4. The receipts should record the SHA-256 of the new runner and of the files it takes from (`exp43_unrelated.py`, `e43_task.py`, `e40_new_family.py`, `exp38_erase.py`, `arch31_workerB.py`), as E43's `provenance` does.
-5. "No name of any language model in any committed file or commit message" (line 87) contradicts the trailers that the same line prescribes: `AGENTS_POINTER.md` asks for `Acting-Agent: claude:<session>`, and the commits of the workers on file carry it. Add "apart from the trailers".
+5. "No name of any language model in any committed file or commit message" (line 87) contradicts the trailers that the same line prescribes: `AGENTS_POINTER.md` asks for an `Acting-Agent` trailer whose value begins with the name of the agent's family, and the commits of the workers on file carry it. Add "apart from the trailers".
 6. The brief compares `lived` against `born` as "having learned more families". The lived network has also had 36,864 more updates under decay and has lost most of the first family. Add to "What it cannot show": "Whether a difference between `lived` and `born` comes from the further families or from the further updates."
 
 ### 14. Language
@@ -329,6 +332,7 @@ The brief asks the worker for standard academic English with every term defined 
 - The rule "has flattened", applied at update 8,192 to the 23 curves of fresh networks on record that go on beyond it and are below 80 there, is wrong by 5 points or more once in the 9 cases that it calls flattened, and by 10 points never (defect 1 a). It is sound where the taught pairs have been learned.
 - 256 is a sensible smallest number: the held panel's ceiling stays above the bar (289 to 298 of 300).
 - "No run of the unrelated task from a fresh network or from a lived network exists, and none with another number of taught pairs": I found none. On the default branch `e43_task` is used by E43's runner and its two addenda (a reminder, plain gradient steps, rehearsal, and E42's networks), all from births or from networks made from them; on `origin/claude/e51-reserve-017dSEpW` E51 uses it from births.
+- Two of the outcomes that the request names are handled rightly by the brief as it stands. A fresh network that reaches 80 late gives a ratio and the word *fewer*. A fresh network that rises throughout and does not reach 80 has not flattened, and the brief's sentence "whether the fresh network would arrive is not decided" applies.
 - The brief's own limits (lines 77 to 80) are stated fairly, apart from the points of defects 3, 9 and 13.
 
 **The checks (D).** `start.tensors_sha256` exists in E40's six fresh receipts; `tensors_sha256`, `data_digest` and `score3_new_task` exist in every row of E43's receipts; `describe` stands at lines 63 to 72 of `e42_tables.py` on `origin/claude/gallant-dijkstra-i9zgsr`; every path of the brief that I looked up exists.
@@ -347,7 +351,7 @@ The brief asks the worker for standard academic English with every term defined 
 
 ## Appendix: the script
 
-Saved as `check_e59.py` anywhere and run with the working directory inside the repository; every part ran to its end at 22:54 UTC. The output of the parts is quoted in the defects above.
+Saved as `check_e59.py` anywhere and run with the working directory inside the repository; every part ran to its end at 22:58 UTC. The output of the parts is quoted in the defects above.
 
 ```python
 """Check of the E59 brief (17 November 2026). Read-only: every file is read with `git show`; no code of another branch is executed; nothing
@@ -631,7 +635,7 @@ def weights_part():
             for p, t in items:
                 lg = gru(W[(k, r, seed)], np.array([[BOS] + p + t[:-1]]), all_steps=True)[0, -3:].astype(np.float64)
                 lg -= lg.max(1, keepdims=True); lp = lg - np.log(np.exp(lg).sum(1, keepdims=True)); ls.append(-mean([lp[j, t[j]] for j in range(3)]))
-            line.append(f"{k} {r} {mean(ls):.2f}")
+            line.append(f"{k} {r} {mean(ls):.3f}")
         print(f"  seed {seed}: " + "; ".join(line))
 
 
