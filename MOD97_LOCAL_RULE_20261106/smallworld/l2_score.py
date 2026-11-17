@@ -29,6 +29,8 @@ world (lw_world.World.visit_batches) and checked against the event file's task a
        tried last;) another two-digit number; not two digits and the end symbol. The chance line: the never-met modulus tried in the place
        of the family taught last. The family taught last: for a stream item of visit v, the family of visit v - 1; for a list row at
        the end of visit v, the family of visit v. The never-met modulus: family 55's, a probe family that no life is scheduled to visit.
+  D15  (the reviewer's addition) kept at return (D8) and the level over the first 16 updates of the visit (D10), by the number of earlier
+       visits to the family (1; 2; 3 to 4; 5 to 8; 9 to 16; 17 or more) within each class of absence
 """
 import argparse
 import json
@@ -49,6 +51,7 @@ ANSWER_CLASSES = ("right", "the sum or difference without the reduction", "the a
                   "the answer under the modulus of an earlier family", "the answer under 89, the birth family's modulus", "one of the operands",
                   "the answer under a modulus the life never meets (control)", "another two-digit number", "not two digits and the end symbol")
 CONTROL_FAMILY = 55
+EARLIER = (("1", 1, 1), ("2", 2, 2), ("3 to 4", 3, 4), ("5 to 8", 5, 8), ("9 to 16", 9, 16), ("17 or more", 17, 10 ** 9))
 T95 = {1: 6.3138, 2: 2.9200, 3: 2.3534, 4: 2.1318, 5: 2.0150, 6: 1.9432, 7: 1.8946, 8: 1.8595, 9: 1.8331, 10: 1.8125, 11: 1.7959, 12: 1.7823,
        13: 1.7709, 14: 1.7613, 15: 1.7531}      # the 0.95 quantile of Student's t: a two-sided 90% interval
 
@@ -170,7 +173,7 @@ def quantities(ev, la, world_seed, V, visit_updates=256):
                median_first_visit_level_families_2_on=float(np.median(lev[1:])) if len(lev) > 1 else None,
                trend_of_learning=slope(ln_n, lev), trend_of_learning_joint_fit=joint)
     # D8, D10 and the stream part of D14
-    later, last = [], {}
+    later, last, times = [], {}, {}
     control = mod[CONTROL_FAMILY]
     for s in sched:
         v, g = s["visit"], s["group"]
@@ -189,23 +192,29 @@ def quantities(ev, la, world_seed, V, visit_updates=256):
                     assert (c == 0) == bool(cor[sl(v, 0, 1)][i]), "an answer's class disagrees with the event file's `correct`"
                     cc[c] += 1
                     ctrl += answer_class(t["op"], t["p"], it[1], it[2], gg, None, others, control, control_first=True) == 6
-            later.append(dict(visit=v, family=g, absence=s["absence"], right=int(cor[sl(v, 0, 1)][m1].sum()), n=int(m1.sum()),
+            later.append(dict(visit=v, family=g, absence=s["absence"], earlier_visits=times[g], right=int(cor[sl(v, 0, 1)][m1].sum()), n=int(m1.sum()),
                               first16=figure(v, 0, 16), last_quarter=figure(v, visit_updates - visit_updates // 4, visit_updates),
                               previous_last_quarter=figure(last[g], visit_updates - visit_updates // 4, visit_updates), classes=cc, control=ctrl))
-        last[g] = v
+        last[g] = v; times[g] = times.get(g, 0) + 1
     mean_ = lambda xs: (lambda ys: float(np.mean(ys)) if ys else None)([x for x in xs if x is not None])
-    kept, wrong = {}, {}
+    kept, wrong, by_earlier = {}, {}, {}
     for name, lo, hi in CLASSES:
         rs = [r for r in later if lo <= r["absence"] <= hi]
+        by_earlier[name] = {}
+        for en, elo, ehi in EARLIER:                                                               # D15
+            es = [r for r in rs if elo <= r["earlier_visits"] <= ehi]
+            en_, ek_ = sum(r["n"] for r in es), sum(r["right"] for r in es)
+            by_earlier[name][en] = dict(visits=len(es), items=en_, right=ek_, share=(ek_ / en_) if en_ else None, first16=mean_([r["first16"] for r in es]),
+                                        last_quarter=mean_([r["last_quarter"] for r in es]))
         n, k = sum(r["n"] for r in rs), sum(r["right"] for r in rs)
         kept[name] = dict(visits=len(rs), items=n, right=k, share=(k / n) if n else None, first16=mean_([r["first16"] for r in rs]),
                           last_quarter=mean_([r["last_quarter"] for r in rs]), previous_last_quarter=mean_([r["previous_last_quarter"] for r in rs]))
         wrong[name] = class_table([sum(r["classes"][i] for r in rs) for i in range(len(ANSWER_CLASSES))], sum(r["control"] for r in rs))
-    out.update(kept_at_return=kept, wrong_answers_stream=wrong,
+    out.update(kept_at_return=kept, kept_at_return_by_earlier_visits=by_earlier, wrong_answers_stream=wrong,
                absence_classes_restated={name: dict(visits=[lo, None if hi > 10 ** 6 else hi], updates=[lo * visit_updates, None if hi > 10 ** 6 else hi * visit_updates],
                                                     decay_constants=[lo * visit_updates / 4000, None if hi > 10 ** 6 else hi * visit_updates / 4000])
                                          for name, lo, hi in CLASSES},
-               later_visits=[{k: r[k] for k in ("visit", "family", "absence", "right", "n", "first16", "last_quarter", "previous_last_quarter")} for r in later])
+               later_visits=[{k: r[k] for k in ("visit", "family", "absence", "earlier_visits", "right", "n", "first16", "last_quarter", "previous_last_quarter")} for r in later])
     if la is not None:
         out.update(list_quantities(la, w, sched, V, mod, control))
     return out

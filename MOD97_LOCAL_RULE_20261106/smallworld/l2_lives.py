@@ -94,6 +94,7 @@ def norms():
             b = T.load(MDIR / s["cfg"]["learner"]["file"], weights_only=True)
             d["visits"]["0"] = dict(norms={k: float(v.double().norm()) for k, v in b.items()}, weights_tensors_sha256=s["cfg"]["learner"]["tensors_sha256"])
         d["visits"][m.group(2)] = dict(norms={k: float(v.double().norm()) for k, v in s["model"].items()}, weights_tensors_sha256=s["weights_tensors_sha256"],
+                                       store=dict(items=len(s["buffer"]), bytes=s["buffer_bytes"], offered=s["offered"]), done_updates=s["done_updates"],
                                        state_file_sha256=subprocess.run(["sha256sum", str(p)], capture_output=True, text=True).stdout.split()[0])
         tmp = Path(str(out) + ".tmp"); tmp.write_text(json.dumps(d, indent=1)); tmp.replace(out)
 
