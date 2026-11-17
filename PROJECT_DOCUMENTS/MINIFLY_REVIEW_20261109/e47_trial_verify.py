@@ -23,9 +23,10 @@ E42_SEED_73129_VERIFICATION_20261116.md.
   G  the nine predictions scored from the receipts
   H  the measured cost of the trial and the roster's forecast
 
+  I  on the starting weights: how much a cell's state varies with the item, by ring
   V  the arrangement of the reader's forward used for decoding (one position at a time) against the reader's forward itself
 
-Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e47_trial_verify.py [A B C D E F G H V] [one_S one_B place_S place_B]
+Run from the repository root:  python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e47_trial_verify.py [A B C D E F G H I V] [one_S one_B place_S place_B]
 (the run names restrict part F to those runs)
 """
 import copy, hashlib, json, os, subprocess, sys, time
@@ -44,7 +45,7 @@ P = M + "exp45/"
 SEED, SIDE = 73129, 32
 RUNS = [("one", "S"), ("one", "B"), ("place", "S"), ("place", "B")]
 DTYPE = {"FloatStorage": "<f4", "LongStorage": "<i8", "BoolStorage": "?"}
-want = {a for a in sys.argv[1:] if len(a) == 1} or set("ABCDEFGHV")
+want = {a for a in sys.argv[1:] if len(a) == 1} or set("ABCDEFGHIV")
 FARMS = {tuple(a.split("_")) for a in sys.argv[1:] if "_" in a}      # part F on some runs only, e.g. one_S place_B
 T0 = time.time()
 
@@ -466,6 +467,9 @@ if "E" in want:
             comp = t[key] * t["madds"]
             print(f"   {name:10s} updates {t[key]:6d}  x {t['madds']:>11,.0f} = {comp:.3e}; against G of the rule: updates x{t[key] / g[key]:.2f}, computation x{comp / (g[key] * g['madds']):.2f};"
                   f" against G under back-propagation: computation x{comp / (GB[key] * GB['madds']):.2f}")
+    alt = HEAD + IFACE + 128 * 33 + 64 * (16.5 + 11) + 32 * (8.25 + 11) + 32 * (4.125 + 11)      # P8 with every cell's input products made at every position
+    print(f"   P8 counted with the input products of every cell made at every position, as E42's program makes them: {alt:,.0f} multiply-adds a position;"
+          f" computation against G under back-propagation: " + ", ".join(f"{key.upper()} {rule} x{e42('P8', rule)[key] * alt / (GB[key] * GB['madds']):.2f}" for key in ("a80", "r80") for rule in ("S", "B")))
     print("   the brief's descriptions (candidate against reference: updates to 80 on R, on A, the same in multiply-adds; 40 letters, mean of last three rows)")
     def line(new, ref, label):
         out = []
@@ -580,6 +584,23 @@ if "F" in want:
                 c = a[:q, S.p == q]                                                    # (q, cells of this period): step k = 0 is the newest
                 print(f"      step weights of the cells of period {q} at the end (start {1 / q:.4f} each): mean over cells by step, newest first: {[round(float(v), 3) for v in c.mean(1)]}")
         del W, W0, net
+
+# ================================================================ I
+if "I" in want:
+    print("I. at the start, before any update: how much a cell's state varies with the item, by ring (standard deviation over the items of a panel")
+    print("   of the state at '='; then the mean size of a state).  The two rules of an arm share one start.")
+    for arm in ("one", "place"):
+        S = grid(arm); W = weights(arm, "S", start=True); net = Net(W, S)
+        ring = -(-S.dist // 3)
+        for label, items in (("A, addition (12 letters)", AP["add89"]), ("R, addition (no letters; 300 items)", RP["add89"][:300]), ("40 letters", LP[40])):
+            prompts = [p for p, _ in items]
+            st = decode(net, prompts, record=True)[1]
+            eq = len(prompts[0]); sd = st[eq].std(0)
+            print(f"   {arm:5s} {label:36s}: interface {float(sd[ring == 0].mean()):.3f}, ring 1 {float(sd[ring == 1].mean()):.4f}, ring 2 {float(sd[ring == 2].mean()):.5f}, ring 3 {float(sd[ring == 3].mean()):.6f}"
+                  f" | mean size of a state: " + ", ".join(f"{float(np.abs(st[eq][:, ring == r]).mean()):.3f}" for r in (0, 1, 2, 3)), flush=True)
+        Wc = W["Wc"]
+        print(f"   {arm:5s} starting recurrent weights: mean size {float(np.abs(Wc).mean()):.3f}, root mean square {float(np.sqrt((Wc ** 2).mean())):.3f}, largest {float(np.abs(Wc).max()):.3f} (drawn uniformly within 1 / sqrt(11) = {11 ** -0.5:.3f})")
+        del W, net
 
 # ================================================================ G
 if "G" in want:

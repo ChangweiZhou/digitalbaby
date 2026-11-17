@@ -156,6 +156,47 @@ class Saved:
         return np.tile(self.mask, (3, 1))
 
 
+def fast_cells(W, S, items, chunk=4000):
+    """e42_cells_reader.forward's arithmetic for cells with periods (its `step` variant; a cell of period 1 has no coefficients),
+    with the input map evaluated once per byte and the readout only at the answer positions.  Returns, per item, whether the
+    whole answer is right under teacher forcing.  Part C checks it against e42_cells_reader.forward itself on two samples."""
+    x = np.array([[BOS] + p + a[:-1] for p, a in items], dtype=np.int64); tgt = np.array([a for _, a in items], dtype=np.int64)
+    z1 = np.tanh(W["book.weight"] @ W["l1.weight"].T + W["l1.bias"])
+    gi_tok = z1 @ W["rnn.weight_ih_l0"].T + W["rnn.bias_ih_l0"]; l2_tok = z1 @ W["l2.weight"].T + W["l2.bias"]
+    Whm = W["rnn.weight_hh_l0"] * S.mask3(); bh = W["rnn.bias_hh_l0"]; n = Whm.shape[1]; L = x.shape[1]; na = tgt.shape[1]
+    periods = sorted(set(int(q) for q in S.p)); out = []
+    for s in range(0, len(x), chunk):
+        xs, ts = x[s:s + chunk], tgt[s:s + chunk]
+        h = np.zeros((len(xs), n), np.float32); ok = np.ones(len(xs), bool); gis, ghs = [], []
+        for t in range(L):
+            gis.append(gi_tok[xs[:, t]]); ghs.append(h @ Whm.T + bh)
+            nxt = h.copy()
+            for per in periods:
+                idx = np.nonzero((S.p == per) & (t >= S.f) & ((t - S.f) % per == 0))[0]
+                if not len(idx):
+                    continue
+                rows = np.concatenate([idx, n + idx, 2 * n + idx]); m = len(idx)
+                if per == 1:
+                    G, Hc = gis[t][:, rows], ghs[t][:, rows]
+                else:
+                    steps = [k for k in range(per) if t - k >= 0]
+                    c3 = {k: np.tile(S.a[k, idx], 3) for k in steps}
+                    G = sum(c3[k] * gis[t - k][:, rows] for k in steps); Hc = sum(c3[k] * ghs[t - k][:, rows] for k in steps)
+                r = sigmoid(G[:, :m] + Hc[:, :m]); z = sigmoid(G[:, m:2 * m] + Hc[:, m:2 * m]); c = np.tanh(G[:, 2 * m:] + r * Hc[:, 2 * m:])
+                nxt[:, idx] = (1 - z) * c + z * h[:, idx]
+            h = nxt
+            if t >= L - na:
+                ok &= (np.tanh(l2_tok[xs[:, t]] + h @ W["lm.weight"].T + W["lm.bias"]) @ W["l3.weight"].T + W["l3.bias"]).argmax(1) == ts[:, t - (L - na)]
+        out.append(ok)
+    return np.concatenate(out)
+
+
+def cells_each(W, S, items):
+    """e42_cells_reader.forward itself: per item, whether the whole answer is right."""
+    x = np.array([[BOS] + p + a[:-1] for p, a in items], dtype=np.int64); tgt = np.array([a for _, a in items], dtype=np.int64); na = tgt.shape[1]
+    return (R42.forward(W, S, x, form="afactor")[1][:, -na:].argmax(-1) == tgt).all(1)
+
+
 def cells(W, S, items, chunk=4000):
     x = np.array([[BOS] + p + a[:-1] for p, a in items], dtype=np.int64); tgt = np.array([a for _, a in items], dtype=np.int64); na = tgt.shape[1]
     ok = [(R42.forward(W, S, x[s:s + chunk], form="afactor")[1][:, -na:].argmax(-1) == tgt[s:s + chunk]).all(1) for s in range(0, len(x), chunk)]
@@ -226,13 +267,18 @@ if "C" in want:
         S = Saved(T); W = {n: v for n, v in T.items() if v.dtype == np.float32 and n not in ("a",)}
         # F10 has period 1 and zeros outside its mask, so the plain forward is its forward; P8 needs the cell reader
         zero0 = float(np.abs(W["rnn.weight_hh_l0"][~S.mask3()]).max())
-        m1 = [fast(W, it) for it in S1.values()] if k[0] == "F10" else [cells(W, S, it) for it in S1.values()]
+        m1 = [fast(W, it) for it in S1.values()] if k[0] == "F10" else [int(fast_cells(W, S, it).sum()) for it in S1.values()]
         if k[0] == "F10":
             sample = S1["add red"][:200]
             assert fast(W, sample) == cells(W, S, sample) and zero0 == 0.0 and int(S.p.max()) == 1, "the plain forward is not F10's"
+            agree = "the plain forward equals the cell reader on 200 items"
+        else:
+            sm = S1["sub red"][:150] + S1["max"][:150]
+            same = bool((fast_cells(W, S, sm) == cells_each(W, S, sm)).all() and (fast_cells(W, S, held["add89"]) == cells_each(W, S, held["add89"])).all())
+            agree = f"the per-byte evaluation equals e42_cells_reader.forward item by item on 300 items without letters and 300 at 12 letters: {same}"
         wd = [g["weight_decay"] for g in st["optimizer"]["groups"]]
         print(f"   E42 {k[0]:3s} {k[1]}  E42's final file's sha256 equals the start recorded {sha == st['start']['weights_sha256']}; row 0 equals E42's final row on A, R, taught, length {all(chk.values())}; decay {wd};"
-              f" replacement events {st['replacement_events']} | score 1 at row 0 {m1} / {s1_receipt(d['rows'][0])} equal {m1 == s1_receipt(d['rows'][0])}   [{time.time() - t0:.0f} s]", flush=True)
+              f" replacement events {st['replacement_events']} | score 1 at row 0 {m1} / {s1_receipt(d['rows'][0])} equal {m1 == s1_receipt(d['rows'][0])} ({agree})   [{time.time() - t0:.0f} s]", flush=True)
         # the file at 4,096
         row = d["rows"][-1]
         W4, sha4 = load(f"{E43}addendum2/e43_unrelated-e42{k[0]}_{k[1]}_73129_row4096.pt")
@@ -245,14 +291,15 @@ if "C" in want:
                   f" score 1 {m1} / {s1_receipt(row)} equal {m1 == s1_receipt(row)} | score 3 {m3} / {t3} equal {m3 == t3}")
         else:
             a_end = T["a"]
-            m3 = [cells(W4, Saved(T, a=a_end), unrel[w]) for w in ("held", "taught")]
+            m3 = [int(fast_cells(W4, Saved(T, a=a_end), unrel[w]).sum()) for w in ("held", "taught")]
+            m1b = [int(fast_cells(W4, Saved(T, a=a_end), it).sum()) for it in S1.values()]
             a0 = (np.arange(S.K)[:, None] < S.p[None, :]) / S.p[None, :]
-            m3b = [cells(W4, Saved(T, a=a0.astype(np.float32)), unrel[w]) for w in ("held", "taught")]
+            m3b = [int(fast_cells(W4, Saved(T, a=a0.astype(np.float32)), unrel[w]).sum()) for w in ("held", "taught")]
             print(f"            file at 4,096: sha256 equals the receipt's {sha4 == row['weights_sha256']}; tensors in the file: {len(names)}, the coefficients `a` among them: {'a' in W4};"
                   f" largest recurrent weight outside E42's final mask {zero_outside:.1e}")
             print(f"            `a` in E42's final file: shape {a_end.shape}, cells of period above 1: {int((S.p > 1).sum())}; the receipt's relative change of `a` by 4,096: {row['score4_added_parameters']['a']['rel_diff']:.3f}")
             print(f"            the reader on the file at 4,096 with E42's final `a` in place of the missing one: score 3 (unrelated held out, taught, of 300) {m3} / receipt {t3};"
-                  f" with the starting `a` (1 / period): {m3b}   [{time.time() - t0:.0f} s]", flush=True)
+                  f" with the starting `a` (1 / period): {m3b}; score 1 with E42's final `a` {m1b} / receipt {s1_receipt(row)}   [{time.time() - t0:.0f} s]", flush=True)
         del T, W4
 
 # ---------------------------------------------------------------- D: the predictions

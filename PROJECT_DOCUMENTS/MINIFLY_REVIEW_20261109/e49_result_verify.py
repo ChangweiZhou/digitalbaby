@@ -489,10 +489,10 @@ if "H" in want:
         else:
             T = load(f"{P}e49/e49_{setting}_{rule}_{SEED}.pt"); S0 = load(f"{P}e49/e49_{setting}_{rule}_{SEED}_start.pt"); F = R49.Interface(SEED, *ks)
         W = {k: v for k, v in T.items() if v.dtype == np.float32}
-        c1 = code(W); sp = spread(W, F)
+        c1 = code(W); sp = spread(W, F); sp0 = spread({k: v for k, v in S0.items() if v.dtype == np.float32}, F)
         sizes = "; ".join(f"{nm} {nrm(W, k) / nrm(S0, k):.2f}" for k, nm in MAPS)
         drive = (nrm(W, "rnn.weight_ih_l0") / nrm(S0, "rnn.weight_ih_l0")) * (c1[0] / c0[0])
-        print(f"   {setting:5s} {rule}  sizes: {sizes} | code {c1[0]:.2f}, digits {c1[1]:.2f} / {c1[2]:.2f} | input map's size x code's magnitude, against the start: {drive:.2f} | states differ by {sp[0]:.3f} (mean magnitude {sp[1]:.2f})", flush=True)
+        print(f"   {setting:5s} {rule}  sizes: {sizes} | code {c1[0]:.2f}, digits {c1[1]:.2f} / {c1[2]:.2f} | input map's size x code's magnitude, against the start: {drive:.2f} | states differ by {sp[0]:.3f} (mean magnitude {sp[1]:.2f}); at this setting's own start {sp0[0]:.3f} ({sp0[1]:.2f})", flush=True)
         del T, W
 
     # what the values a cell reads say about the byte (the audit's recommendation g: its section 4 repeated on each run's files)
