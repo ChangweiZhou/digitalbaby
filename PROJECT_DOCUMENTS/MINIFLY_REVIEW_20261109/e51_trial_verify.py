@@ -565,6 +565,352 @@ def part1():
 
 PARTS = {"1": part1}
 
+# ================================================================ part 2: the construction, from the weights
+MATS = {"ih": ("rnn.weight_ih_l0", "rnn.bias_ih_l0"), "hh": ("rnn.weight_hh_l0", "rnn.bias_hh_l0"), "lm": ("lm.weight", "lm.bias"), "l2": ("l2.weight", "l2.bias")}
+OLD = np.array([g * U1 + i for g in range(3) for i in range(U0)])           # the old cells' rows of the two GRU matrices
+RES = np.array([g * U1 + i for g in range(3) for i in range(U0, U1)])       # the reserve cells' rows
+ROWSETS = {"ih": OLD, "hh": OLD, "lm": np.arange(H0), "l2": np.arange(H0)}  # the rows that the rule projects
+
+
+def birth(rule):
+    W, sha = load(P + f"e41/e41_{rule}_h256_f50_{SEED}.pt", DREF)
+    rec = json.loads(show(P + f"e41/e41_{rule}_h256_f50_{SEED}.json", DREF))
+    assert sha == rec["weights_sha256"] and tensors_sha(W) == rec["tensors_sha256"] and rec["complete"] is True and (rec["H"], rec["U"], rec["fraction"]) == (H0, U0, 0.5)
+    return W, sha
+
+
+def start(form, rule):
+    return load(f"{E51}e51_start_{form}_{rule}_{SEED}.pt")[0]
+
+
+def check1_sample(S1):
+    allitems = [it for n in S1 for it in S1[n][0]]; assert len(allitems) == 31684
+    return Random(f"e51|{SEED}|check1").sample(allitems, 2000)
+
+
+def blocks(Ws, W0):
+    """The entries of the embedded start by origin: (tensor, description, mask of entries, the birth's values or None)."""
+    out = []
+    def add(k, what, mask, ref=None):
+        out.append((k, what, mask, ref))
+    m = lambda k: np.zeros(Ws[k].shape, bool)
+    add("book.weight", "the whole byte table", ~m("book.weight"), W0["book.weight"])
+    a = m("l1.weight"); a[:H0] = True; add("l1.weight", "rows 0..255", a, W0["l1.weight"]); add("l1.weight", "rows 256..511", ~a)
+    a = m("l1.bias"); a[:H0] = True; add("l1.bias", "0..255", a, W0["l1.bias"]); add("l1.bias", "256..511", ~a)
+    a = m("rnn.weight_ih_l0"); a[np.ix_(OLD, np.arange(H0))] = True; z = m("rnn.weight_ih_l0"); z[np.ix_(OLD, np.arange(H0, H1))] = True
+    add("rnn.weight_ih_l0", "old cells' rows, columns 0..255", a, W0["rnn.weight_ih_l0"]); add("rnn.weight_ih_l0", "old cells' rows, columns 256..511", z, 0.0)
+    add("rnn.weight_ih_l0", "reserve cells' rows, all columns", ~(a | z))
+    a = m("rnn.weight_hh_l0"); a[np.ix_(OLD, np.arange(U0))] = True; b = m("rnn.weight_hh_l0"); b[np.ix_(OLD, np.arange(U0, U1))] = True
+    add("rnn.weight_hh_l0", "old cells' rows, columns 0..127", a, W0["rnn.weight_hh_l0"]); add("rnn.weight_hh_l0", "old cells' rows, columns 128..255 (from reserve cells into old cells)", b)
+    add("rnn.weight_hh_l0", "reserve cells' rows, all columns", ~(a | b))
+    for k in ("rnn.bias_ih_l0", "rnn.bias_hh_l0"):
+        a = m(k); a[OLD] = True; add(k, "old cells' rows", a, W0[k]); add(k, "reserve cells' rows", ~a)
+    a = m("lm.weight"); a[:H0, :U0] = True; b = m("lm.weight"); b[:H0, U0:] = True
+    add("lm.weight", "rows 0..255, columns 0..127", a, W0["lm.weight"]); add("lm.weight", "rows 0..255, columns 128..255 (from reserve cells into old units of z2)", b); add("lm.weight", "rows 256..511", ~(a | b))
+    a = m("lm.bias"); a[:H0] = True; add("lm.bias", "0..255", a, W0["lm.bias"]); add("lm.bias", "256..511", ~a)
+    a = m("l2.weight"); a[:H0, :H0] = True; z = m("l2.weight"); z[:H0, H0:] = True
+    add("l2.weight", "rows 0..255, columns 0..255", a, W0["l2.weight"]); add("l2.weight", "rows 0..255, columns 256..511", z, 0.0); add("l2.weight", "rows 256..511", ~(a | z))
+    a = m("l2.bias"); a[:H0] = True; add("l2.bias", "0..255", a, W0["l2.bias"]); add("l2.bias", "256..511", ~a)
+    a = m("l3.weight"); a[:, :H0] = True; add("l3.weight", "columns 0..255", a, W0["l3.weight"]); add("l3.weight", "columns 256..511", ~a, 0.0)
+    add("l3.bias", "all", ~m("l3.bias"), W0["l3.bias"])
+    return out
+
+
+BOUND = {"l1.weight": 8 ** -.5, "l1.bias": 8 ** -.5, "rnn.weight_ih_l0": U1 ** -.5, "rnn.weight_hh_l0": U1 ** -.5, "rnn.bias_ih_l0": U1 ** -.5, "rnn.bias_hh_l0": U1 ** -.5,
+         "lm.weight": U1 ** -.5, "lm.bias": U1 ** -.5, "l2.weight": H1 ** -.5, "l2.bias": H1 ** -.5}      # torch's constructors: uniform within 1/sqrt(inputs), for the GRU 1/sqrt(cells)
+
+
+def part2():
+    t0 = time.time(); print("===== PART 2. The construction, from the weights =====")
+    S1 = first_family_items(); HELD = held12(); held = [it for n in HELD for it in HELD[n]]; samp = check1_sample(S1)
+    items, dig, in_use = items2080(); taught = [it for k in range(13) for it in items[k]]; every = [it for n in S1 for it in S1[n][0]]
+    print(f"2.0 the 2,080 taught items: digest {dig[:16]} (the brief: d22b5733778491b1); bytes in use {int(in_use.sum())}: the start symbol and "
+          + "".join(chr(b) for b in np.nonzero(in_use)[0] if b < 256))
+    ck1 = json.loads(show(E51 + f"checks/e51_check_1_embedding_{SEED}.json")); ck4 = json.loads(show(E51 + f"checks/e51_check_4_scorer_{SEED}.json"))
+    X50 = load(P + f"e50/e50_C-dense_S_{SEED}_start.pt", XREF)[0]
+    starts = {}
+    for rule in RULES:
+        W0, sha0 = birth(rule); Wk = start("keyed", rule); Wb = start("bias", rule); starts[rule] = Wk
+        print(f"--- rule {rule}: the half-width birth e41_{rule}_h256_f50_{SEED}.pt (file hash {sha0[:16]}, file and tensors hashes equal to E41's receipt)")
+        # (a) outputs and answers
+        nb, nk, nbias = Net(W0), Net(Wk), Net(Wb)
+        sets = (("held-out pairs at 12 letters (1,200)", held), ("check 1's 2,000 items without letters", samp), ("all 31,684 items without letters", every), ("the 2,080 taught items", taught))
+        ref = {}
+        for label, its in sets:
+            ref[label] = answer_logits(nb, its); k = answer_logits(nk, its, in_use=in_use); o = answer_logits(nbias, its); nokey = answer_logits(nk, its)
+            print(f"2.a {label}: largest difference of a logit at an answer position from the birth's: keyed start with the two lines {np.abs(k - ref[label]).max():.1e}"
+                  f" (largest answers of the three positions equal on {int((k.argmax(-1) == ref[label].argmax(-1)).all(1).sum())} of {len(its)} items); "
+                  f"start with a bias {np.abs(o - ref[label]).max():.2e}; keyed start without the two lines {np.abs(nokey - ref[label]).max():.2f}")
+        nb32, nk32, nbias32 = Net(W0, np.float32), Net(Wk, np.float32), Net(Wb, np.float32)
+        for label, its, key in (sets[0] + ("heldout_k12",), sets[1] + ("sample_2000_k0",)):
+            r32 = answer_logits(nb32, its)
+            print(f"2.a the same in single precision, {label}: keyed {np.abs(answer_logits(nk32, its, in_use=in_use) - r32).max():.1e} (check 1's receipt: "
+                  f"{ck1['runs']['keyed_' + rule]['largest_difference'][key]:.1e}); with a bias {np.abs(answer_logits(nbias32, its) - r32).max():.5f} "
+                  f"(receipt: {ck1['runs']['bias_' + rule]['largest_difference'][key]:.5f})")
+        rb, gb = score_first_family(nb, S1, HELD); rk, gk = score_first_family(nk, S1, HELD, in_use=in_use)
+        rn, gn = score_first_family(nk, S1, HELD); ro, go = score_first_family(nbias, S1, HELD)
+        r0 = receipt_first_family(row(receipt("unrelated", "keyed", rule), 0)); r0o = receipt_first_family(row(receipt("unrelated", "open", rule), 0))
+        print(f"2.a generated answers, the birth:                    {fmt_ff(rb)}")
+        print(f"    the keyed start with the two lines:              {fmt_ff(rk)}; answers differing from the birth's: {sum(a != b for n in gb for a, b in zip(gk[n], gb[n]))} of 32,884;"
+              f" counts equal to row 0 of the keyed receipts: {same_counts(rk, r0)}")
+        dn = {n: sum(a != b for a, b in zip(gn[n], gb[n])) for n in gb}; w = ck4["rules"][rule]["the_same_without_the_added_lines"]
+        print(f"    the keyed start without the two lines:           {fmt_ff(rn)}; answers differing from the birth's: {list(dn.values())} (check 4's receipt: {list(w.values())})")
+        print(f"    the start with a bias:                           {fmt_ff(ro)}; answers differing from the birth's: {sum(a != b for n in gb for a, b in zip(go[n], gb[n]))} of 32,884;"
+              f" counts equal to row 0 of the `open` receipts: {same_counts(ro, r0o)}")
+        forms = {tuple(g[-1:] == [EOS] and len(g) == 3 and all(48 <= v <= 57 for v in g[:2]) for g in gk[n]) for n in gk}
+        print(f"    every one of the 32,884 answers of the keyed start is two digits and the end symbol: {all(all(f) for f in forms)}")
+        big = max(np.abs(nbias.run(np.array([[BOS] + held[i][0] + held[i][1][:-1] for i in idx]), keep=True)[1]["h"][:, :, U0:]).max() for idx in groups_of(held))
+        bigk = max(np.abs(nk.run(np.array([[BOS] + held[i][0] + held[i][1][:-1] for i in idx]), keep=True, in_use=in_use)[1]["h"][:, :, U0:]).max() for idx in groups_of(held))
+        rr = lambda arm: row(receipt("unrelated", arm, rule), 0)["reserve"]["largest_reserve_state_on_first_family_panel"]
+        print(f"    largest size of a reserve cell's state on the held-out panel: start with a bias {big:.5f} (receipt, row 0 of `open`: {rr('open'):.5f}); keyed start {bigk:.1e}"
+              f" (receipt, row 0 of `keyed`: {rr('keyed'):.1e})")
+        # (b) the entries of the start by origin
+        tot = dict(birth=0, zero=0, new=0); nbirth_bad = nzero_bad = 0
+        print("2.b the entries of the keyed start by origin (tensor; entries; count; what they hold):")
+        for k, what, mask, refv in blocks(Wk, W0):
+            v = Wk[k][mask]
+            if refv is None:
+                tot["new"] += v.size
+                same50 = "all equal" if np.array_equal(v, X50[k][mask]) else None
+                if same50 is None and k == "rnn.weight_hh_l0":                                    # E50's recurrent start is the draws on a mask of 2,816 entries a gate, times one scale
+                    m50 = np.tile(X50["mask"], (3, 1)) & mask; ratio = X50[k][m50] / Wk[k][m50]
+                    same50 = f"{int(m50.sum())} entries inside E50's mask comparable: E50's value over this one {ratio.min():.5f} to {ratio.max():.5f} (sqrt(256/11) = {(256 / 11) ** .5:.5f})"
+                print(f"      new    {k:18s} {what:72s} {v.size:7d}  range {v.min():+.4f} to {v.max():+.4f} (bound of the constructor {BOUND[k]:.4f}), mean {v.mean():+.5f}, "
+                      f"standard deviation {v.std():.4f} (uniform: {BOUND[k] / 3 ** .5:.4f}); against E50's saved network before any update: {same50}")
+            elif isinstance(refv, float):
+                tot["zero"] += v.size; nzero_bad += int((v != 0).sum())
+                print(f"      zero   {k:18s} {what:72s} {v.size:7d}  entries that are not zero: {int((v != 0).sum())}")
+            else:
+                src = refv if refv.shape == Wk[k].shape else None
+                if src is None:                                                                   # the birth's tensor laid on the masked entries, in order
+                    eq = np.array_equal(v, refv.reshape(-1))
+                else:
+                    eq = np.array_equal(v, src[mask])
+                tot["birth"] += v.size; nbirth_bad += not eq
+                print(f"      birth  {k:18s} {what:72s} {v.size:7d}  bit-equal to the birth's tensor: {eq}")
+        print(f"    totals: the birth's {tot['birth']:,} (the half-width network has {sum(v.size for v in W0.values()):,} parameters), zeros {tot['zero']:,}, new {tot['new']:,};"
+              f" sum {sum(tot.values()):,} of {sum(v.size for v in Wk.values()):,}; blocks of the birth not bit-equal: {nbirth_bad}; zero entries not zero: {nzero_bad}")
+        d = {k: int((Wk[k] != Wb[k]).sum()) for k in Wk if not np.array_equal(Wk[k], Wb[k])}
+        print(f"    the start with a bias against the keyed start: entries that differ {d}; bias_ih[384:512] all 10: {bool((Wb['rnn.bias_ih_l0'][384:512] == 10).all())}, "
+              f"bias_hh[384:512] all 0: {bool((Wb['rnn.bias_hh_l0'][384:512] == 0).all())}; with them a reserve gate is open by 1 - z of about {1 - 1 / (1 + np.exp(-10)):.1e}")
+        rows45 = [b for b in range(258) if in_use[b] and b != BOS]
+        print(f"    the byte table (the birth's): rows equal to E50's network before any update {int((Wk['book.weight'] == X50['book.weight']).all(1).sum())} of 258; "
+              f"the rows that differ are the 45 bytes in use other than the start symbol: {sorted(np.nonzero(~(Wk['book.weight'] == X50['book.weight']).all(1))[0].tolist()) == rows45}; "
+              f"the start symbol's row is zero: {bool((Wk['book.weight'][BOS] == 0).all())}")
+    new_equal = all(np.array_equal(starts["S"][k][mask], starts["B"][k][mask]) for k, what, mask, refv in blocks(starts["S"], birth("S")[0]) if refv is None)
+    print(f"2.b the new entries are the same in the starts of the two rules (they depend on the seed alone): {new_equal}")
+    clock(2, t0)
+
+
+PARTS["2"] = part2
+
+# ================================================================ part 3: the keeping, from the weights
+def collect(net, items, in_use):
+    """The input vectors that the 2,080 items present to the four matrices under teacher forcing with the keyed forward, one
+    number of letters at a time (no row is padded), a constant 1 appended: the brief's table."""
+    col = {m: [] for m in MATS}
+    for k in sorted(items):
+        x = np.array([[BOS] + p + a[:-1] for p, a in items[k]]); assert len({len(p) + len(a) for p, a in items[k]}) == 1
+        h = net.run(x, keep=True, in_use=in_use)[1]["h"]; z1 = net.code[x]
+        prev = np.concatenate([np.zeros_like(h[:, :1]), h[:, :-1]], 1)
+        col["ih"].append(z1.reshape(-1, net.H)); col["hh"].append(prev.reshape(-1, net.U))
+        col["lm"].append(h[:, -3:].reshape(-1, net.U)); col["l2"].append(z1[:, -3:].reshape(-1, net.H))
+    return {m: np.concatenate([np.concatenate(v), np.ones((sum(len(a) for a in v), 1))], 1) for m, v in col.items()}
+
+
+def directions(X):
+    out, info = {}, {}
+    for m, Xm in X.items():
+        w, V = np.linalg.eigh(Xm.T @ Xm / len(Xm)); keep = w > 1e-12 * w.max(); out[m] = V[:, keep]
+        ws = w[::-1]; k = int(keep.sum()); info[m] = (len(Xm), Xm.shape[1], k, ws[0], ws[k - 1], ws[k] if k < len(ws) else None)
+    return out, info
+
+
+def orth(A):
+    """An orthonormal basis of the span of the rows of A."""
+    u, sv, vt = np.linalg.svd(A, full_matrices=False)
+    return vt[sv > 1e-10 * sv[0]].T
+
+
+def ideal(net, in_use):
+    """What the directions in use must be if the 2,080 items exhaust what the first family can present: at the input map the codes
+    of the 46 bytes in use; at the recurrent matrix and at lm the 128 coordinates of the old cells; at l2 the codes of `=` and of the
+    ten digits; a constant 1 appended in each case."""
+    one = lambda A: np.concatenate([A, np.ones((len(A), 1))], 1)
+    coords = np.zeros((U0 + 1, U1 + 1)); coords[np.arange(U0), np.arange(U0)] = 1; coords[U0, U1] = 1
+    answer_bytes = [ord("=")] + list(range(48, 58))
+    return {"ih": orth(one(net.code[in_use])), "hh": coords.T, "lm": coords.T, "l2": orth(one(net.code[answer_bytes]))}
+
+
+def saved_directions(rule):
+    D, sha = load(f"{E51}e51_start_keyed_{rule}_{SEED}_directions.pt")
+    V = {m: D[f"directions/{m}"] for m in MATS}
+    return V, D["in_use"], sha, tensors_sha(V)
+
+
+def delta(W, Ws, m):
+    """The change of a matrix and its bias from the start, [rows, inputs + 1], in double precision."""
+    wk, bk = MATS[m]
+    return np.concatenate([W[wk].astype(np.float64) - Ws[wk], (W[bk].astype(np.float64) - Ws[bk])[:, None]], 1)
+
+
+def part3():
+    t0 = time.time(); print("===== PART 3. The keeping, from the weights at rows 64 and 4,096 of the four keyed runs =====")
+    S1 = first_family_items(); HELD = held12(); held = [it for n in HELD for it in HELD[n]]; samp = check1_sample(S1)
+    items, dig, in_use = items2080(); taught = [it for k in range(13) for it in items[k]]; every = [it for n in S1 for it in S1[n][0]]
+    ck2 = json.loads(show(E51 + f"checks/e51_check_2_directions_{SEED}.json")); ck3 = json.loads(show(E51 + f"checks/e51_check_3_rule_{SEED}.json"))
+    for rule in RULES:
+        Ws = start("keyed", rule); ns = Net(Ws); sj = json.loads(show(f"{E51}e51_start_keyed_{rule}_{SEED}.json"))
+        Vs, in_use_saved, dsha, dtsha = saved_directions(rule)
+        X = collect(ns, items, in_use); Vm, info = directions(X); Vi = ideal(ns, in_use)
+        print(f"--- rule {rule}: the directions in use. Saved file: hash equal to the start's receipt {dsha == sj['directions_file_sha256']}, hash of its tensors equal "
+              f"{dtsha == sj['directions_tensors_sha256']}, its bytes in use equal to the reader's {np.array_equal(in_use_saved, in_use)}")
+        for m in MATS:
+            n, dim, k, w0, wl, wd = info[m]; r = ck2["rules"][rule]["spectrum"][m]
+            P_s, P_m, P_i = Vs[m] @ Vs[m].T, Vm[m] @ Vm[m].T, Vi[m] @ Vi[m].T
+            res = X[m] - (X[m] @ Vs[m]) @ Vs[m].T
+            print(f"3.0 {m}: reader: {n} vectors of {dim}, {k} directions, eigenvalues largest {w0:.4f}, last kept {wl:.2e}, first dropped {wd:.1e} | receipt: {r['vectors']} of "
+                  f"{r['dimension']}, {r['directions']}, {r['largest_eigenvalue']:.4f}, {r['last_kept']:.2e}, {r['first_dropped']:.1e} | saved: {Vs[m].shape[1]} columns, "
+                  f"orthonormal to {np.abs(Vs[m].T @ Vs[m] - np.eye(Vs[m].shape[1])).max():.0e}; largest entry of the difference of the projectors: saved against the reader's "
+                  f"{np.abs(P_s - P_m).max():.1e}, saved against the expected span {np.abs(P_s - P_i).max():.1e} ({Vi[m].shape[1]} directions); "
+                  f"largest part of one of the reader's {n} vectors outside the saved directions (2-norm) {np.linalg.norm(res, axis=1).max():.1e}")
+        base = {"held": answer_logits(ns, held, in_use=in_use), "every": answer_logits(ns, every, in_use=in_use), "taught": answer_logits(ns, taught, in_use=in_use)}
+        srt = np.sort(base["every"], -1); gap = (srt[..., -1] - srt[..., -2]); srt = np.sort(base["held"], -1); gaph = (srt[..., -1] - srt[..., -2])
+        print(f"    the start's own outputs: smallest gap between the two largest outputs at an answer position: {gap.min():.2e} over the 31,684 items without letters, "
+              f"{gaph.min():.2e} over the held-out panel; items with a gap below 1e-3: {int((gap.min(1) < 1e-3).sum())} and {int((gaph.min(1) < 1e-3).sum())}")
+        ns32 = Net(Ws, np.float32); base32 = {"held": answer_logits(ns32, held, in_use=in_use), "samp": answer_logits(ns32, samp, in_use=in_use)}
+        r0, g0 = score_first_family(ns, S1, HELD, in_use=in_use)
+        hold = lambda net: np.concatenate([net.run(np.array([[BOS] + held[i][0] + held[i][1][:-1] for i in idx]), keep=True, in_use=in_use)[1]["h"][:, :, :U0].reshape(len(idx), -1) for idx in groups_of(held)], 1)
+        h0 = hold(ns)
+        for task in TASKS:
+            rec = receipt(task, "keyed", rule)
+            c3 = ck3["runs"][f"{rule} {task} keyed"]["largest_change_of_an_output"]
+            for g in (64, 4096):
+                W, sha = weights(task, "keyed", rule, g); net = Net(W)
+                print(f"--- rule {rule}, {task}, keyed, row {g} (file hash {sha[:16]})")
+                # (a) what the rule does not change
+                eq = {"l3.weight[:, :256]": np.array_equal(W["l3.weight"][:, :H0], Ws["l3.weight"][:, :H0]), "l3.bias": np.array_equal(W["l3.bias"], Ws["l3.bias"]),
+                      "l1.weight": np.array_equal(W["l1.weight"], Ws["l1.weight"]), "l1.bias": np.array_equal(W["l1.bias"], Ws["l1.bias"]),
+                      "the 46 rows of the byte table in use": np.array_equal(W["book.weight"][in_use], Ws["book.weight"][in_use])}
+                moved = {"byte table, rows of the 212 other symbols (rows changed)": int((W["book.weight"][~in_use] != Ws["book.weight"][~in_use]).any(1).sum()),
+                         "l3.weight[:, 256:] (entries changed)": int((W["l3.weight"][:, H0:] != Ws["l3.weight"][:, H0:]).sum())}
+                print("3.a bit-equal to the start: " + "; ".join(f"{k} {v}" for k, v in eq.items()) + " | changed: " + "; ".join(f"{k} {v}" for k, v in moved.items()))
+                # (b) the change of the constrained rows, projected on the directions in use
+                for m in MATS:
+                    D = delta(W, Ws, m); Dr = D[ROWSETS[m]]; free = np.setdiff1d(np.arange(len(D)), ROWSETS[m]); Df = D[free]
+                    ps, pm = Dr @ Vs[m], Dr @ Vm[m]; eff = Dr @ X[m].T
+                    extra = ""
+                    if m in ("hh", "lm"):
+                        extra = (f"; the same rows by column: columns of the old cells and the bias, largest entry {np.abs(np.concatenate([Dr[:, :U0], Dr[:, -1:]], 1)).max():.1e}, "
+                                 f"entries changed {int((np.concatenate([Dr[:, :U0], Dr[:, -1:]], 1) != 0).sum())} of {Dr[:, :U0].size + len(Dr)}; columns of the reserve cells, largest entry {np.abs(Dr[:, U0:U1]).max():.3f}")
+                    print(f"3.b {m}: projected rows ({len(Dr)}): change of 2-norm {np.linalg.norm(Dr):.3f}, largest entry {np.abs(Dr).max():.4f}; its component along the saved directions: "
+                          f"largest entry {np.abs(ps).max():.1e}, 2-norm {np.linalg.norm(ps):.1e} ({np.linalg.norm(ps) / np.linalg.norm(Dr):.1e} of the change); along the reader's directions: "
+                          f"largest entry {np.abs(pm).max():.1e}; largest change of a unit's summed input on the {len(X[m])} vectors of the 2,080 items {np.abs(eff).max():.1e}{extra}"
+                          f" | free rows ({len(Df)}): change of 2-norm {np.linalg.norm(Df):.3f}, largest entry {np.abs(Df).max():.4f}")
+                # (c) the first family through the reader's forward
+                r, gg = score_first_family(net, S1, HELD, in_use=in_use)
+                ndiff = sum(a != b for n in g0 for a, b in zip(gg[n], g0[n]))
+                d = {k: np.abs(answer_logits(net, its, in_use=in_use) - base[k]).max() for k, its in (("held", held), ("every", every), ("taught", taught))}
+                n32 = Net(W, np.float32); d32 = {k: np.abs(answer_logits(n32, its, in_use=in_use) - base32[k]).max() for k, its in (("held", held), ("samp", samp))}
+                print(f"3.c generated answers: {fmt_ff(r)}; counts equal to the receipt's row {g}: {same_counts(r, receipt_first_family(row(rec, g)))}; answers differing from the start's, "
+                      f"item for item: {ndiff} of 32,884 (31,684 without letters and 1,200 held-out pairs at 12 letters)")
+                print(f"    largest change of a logit at an answer position from the start's (double precision): {d['every']:.1e} on the 31,684 items, {d['held']:.1e} on the held-out panel, "
+                      f"{d['taught']:.1e} on the 2,080 taught items; in single precision {d32['held']:.1e} on the held-out panel and {d32['samp']:.1e} on check 1's 2,000 items "
+                      f"(check 3's receipt after 8 updates: {c3['heldout_k12']:.1e} and {c3['sample_2000_k0']:.1e}); largest change of an old cell's state on the held-out panel, every position: "
+                      f"{np.abs(hold(net) - h0).max():.1e}")
+    clock(3, t0)
+
+
+PARTS["3"] = part3
+
+# ================================================================ part 4: the new task, from the weights at row 4,096
+def new_panels(task):
+    return conflict_panels() if task == "conflict" else {"held": u_panel("held"), "taught": u_panel("taught")}
+
+
+def score_new(net, panels, **key):
+    """E43's score 3: for each panel, (n, whole answers right, last three bytes right)."""
+    out = {}
+    for n, its in panels.items():
+        outs = generate(net, its, **key)
+        out[n] = dict(n=len(its), exact=exact(outs, its), final=sum(o[-3:] == t[-3:] for o, (_, t) in zip(outs, its)))
+    return out
+
+
+def reserve_opening(net, its, **key):
+    """Mean of 1 - z of each reserve cell over the positions and items of a panel under teacher forcing."""
+    tot, n = np.zeros(U1 - U0), 0
+    for idx in groups_of(its):
+        z = net.run(np.array([[BOS] + its[i][0] + its[i][1][:-1] for i in idx]), keep=True, **key)[1]["z"][:, :, U0:]
+        tot += (1 - z).sum((0, 1)); n += z.shape[0] * z.shape[1]
+    return tot / n
+
+
+def fmt_new(s3):
+    return ", ".join(f"{n} {v['exact']} of {v['n']}" for n, v in s3.items())
+
+
+def part4():
+    t0 = time.time(); print("===== PART 4. The new task, from the weights at row 4,096 of the four keyed runs =====")
+    _, _, in_use = items2080()
+    for task in TASKS:
+        pan = new_panels(task); never = ("add97", "sub97") if task == "conflict" else ("held",)
+        print(f"--- {task}: panels " + ", ".join(f"{n} ({len(v)} items at 12 letters; first bytes {sorted({chr(p[0]) if p[0] < 128 else p[0] for p, _ in v})}, in use: {bool(in_use[[p[0] for p, _ in v]].any())})" for n, v in pan.items()))
+        for rule in RULES:
+            rec = receipt(task, "keyed", rule)
+            for g, W in ((0, start("keyed", rule)), (4096, weights(task, "keyed", rule, 4096)[0])):
+                net = Net(W); x = row(rec, g)
+                a = score_new(net, pan, in_use=in_use); b = score_new(net, pan, in_use=in_use, shut_all=True)
+                pc = lambda s3: 100 * sum(s3[n]["exact"] for n in never) / sum(s3[n]["n"] for n in never)
+                op = reserve_opening(net, [it for n in never for it in pan[n]], in_use=in_use); rv = x["reserve"]
+                print(f"4. {task}, keyed, rule {rule}, row {g}: reserve open: {fmt_new(a)} (never-taught {pc(a):.1f}%); equal to the receipt (counts of whole answers and of last three bytes): "
+                      f"{a == x['score3_new_task']} | reserve cells shut on every item: {fmt_new(b)} ({pc(b):.1f}%); equal to the receipt: {b == x['score3_new_task_reserve_shut']}")
+                print(f"     reserve cells open by more than 0.1: {int((op > 0.1).sum())} (receipt {rv['reserve_cells_open_by_more_than_0p1']}); mean opening {op.mean():.4f} (receipt "
+                      f"{rv['mean_opening']:.4f}); largest {op.max():.4f} (receipt {rv['largest_opening']:.4f})")
+    clock(4, t0)
+
+
+PARTS["4"] = part4
+
+
+# ================================================================ part 5: keyed-free, open, rehearse
+def part5():
+    t0 = time.time(); print("===== PART 5. keyed-free, open, rehearse =====")
+    S1 = first_family_items(); HELD = held12(); _, _, in_use = items2080()
+    print("5.1 from the receipts: the first family's reduction score (%) and, in brackets, the share of the 31,684 answers equal to row 0's (%), at the ten rows")
+    for task in TASKS:
+        for arm in ("keyed-free", "open", "rehearse"):
+            for rule in RULES:
+                rec = receipt(task, arm, rule)
+                print(f"    {task:9s} {arm:10s} {rule}: " + "  ".join(f"{x['updates']}: {x['score1_first_family_all_pairs_k0']['reduction_score']:.1f} ({100 * x['share_of_answers_equal_to_row0']['all_pairs_k0']:.1f})" for x in rec["rows"]))
+    print("5.2 from the weights at row 4,096 of the twelve runs, the reader's forward (the two added lines in keyed-free, none in open and rehearse):")
+    for task in TASKS:
+        pan = new_panels(task)
+        for arm in ("keyed-free", "open", "rehearse"):
+            for rule in RULES:
+                rec = receipt(task, arm, rule); x = row(rec, 4096); net = Net(weights(task, arm, rule, 4096)[0]); key = dict(in_use=in_use) if arm == "keyed-free" else {}
+                r, _ = score_first_family(net, S1, HELD, **key); a = score_new(net, pan, **key); b = score_new(net, pan, shut_all=True, **key)
+                print(f"    {task:9s} {arm:10s} {rule}: {fmt_ff(r)}; equal to the receipt: {same_counts(r, receipt_first_family(x))} | new task: {fmt_new(a)}; equal: {a == x['score3_new_task']}"
+                      f" | reserve shut: {fmt_new(b)}; equal: {b == x['score3_new_task_reserve_shut']}")
+    print("5.3 `open` on the unrelated task beside E43. The brief's check 6 does not compare the embedded network with E43's: it starts the runner of `open` from E26's birth of the present"
+          " size as it is, without embedding, and requires E43's receipt at row 64 (the first family's counts and the hash of the tensors).")
+    for rule in RULES:
+        mine = json.loads(show(f"{E51}check6/e51_unrelated_open_{rule}_{SEED}_e26birth_dry64.json")); e43 = json.loads(show(P + f"e43/e43_unrelated_{rule}_{SEED}.json", DREF))
+        a, b = row(mine, 64), row(e43, 64); W43, sha43 = load(P + f"e43/e43_unrelated_{rule}_{SEED}_row64.pt", DREF)
+        print(f"    rule {rule}: check 6's run from E26's birth, row 64, against E43's receipt: score 1 equal {a['score1_first_family_all_pairs_k0'] == b['score1_first_family_all_pairs_k0']}, score 2 equal "
+              f"{a['score2_first_family_heldout_k12'] == b['score2_first_family_heldout_k12']}, score 3 equal {a['score3_new_task'] == b['score3_new_task']}, data digest equal {a['data_digest'] == b['data_digest']}, "
+              f"hash of the tensors equal {a['tensors_sha256'] == b['tensors_sha256']}; the same hash recomputed by the reader from E43's saved weights of row 64: {tensors_sha(W43) == a['tensors_sha256']}; "
+              f"start: {mine['settings']['start_form']}, {mine['settings']['start'].get('birth')}, keyed forward {mine['settings']['keyed_forward']}")
+        emb = receipt("unrelated", "open", rule)
+        print(f"    rule {rule}, two different networks side by side (reduction score %, held-out score of the unrelated task %): "
+              + "; ".join(f"row {g}: E43 (E26's birth, 256 cells born) {row(e43, g)['score1_first_family_all_pairs_k0']['reduction_score']:.2f}, {100 * row(e43, g)['score3_new_task']['held']['exact'] / 300:.1f}"
+                          f" | E51 `open` (the embedded half-width birth) {row(emb, g)['score1_first_family_all_pairs_k0']['reduction_score']:.2f}, {100 * row(emb, g)['score3_new_task']['held']['exact'] / 300:.1f}"
+                          for g in (0, 64, 256, 1024, 2048, 4096)))
+    clock(5, t0)
+
+
+PARTS["5"] = part5
+
 if __name__ == "__main__":
     for p in want:
         PARTS[p]()
