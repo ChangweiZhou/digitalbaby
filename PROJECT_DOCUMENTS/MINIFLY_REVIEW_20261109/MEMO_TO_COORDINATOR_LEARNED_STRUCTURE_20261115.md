@@ -42,6 +42,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 21 (17 November).** Part III (sections 28 to 30) is added at Mr. Xu's instruction to discuss next steps and to coordinate without him. Section 28 checks every result that arrived on 17 November (E41 and E42 on three seeds, E46, the E47 trial, E48, E49, E43's second addendum, E44's calibration) and gives the audits of the roster note for the first long lives and of the E50 brief. One reading of mine in 22.12 is withdrawn: periods do not bring the limited network level with the dense one. Section 29 is a measurement on E43's networks: every cell is in use on every item, and one family fills the state of the cells. Section 30 gives the decisions and one new job, E51. Items 18 to 23 of section 1 are the requests.
 
+**Revision 22 (17 November, evening).** Section 31 is added. It corrects four statements of revision 21: the sweep's lag behind back-propagation, which depends on the width and was given as one figure; the design of E51, which is superseded by revision 2 of its brief; the number of lines of work; and section 30.6, since the reviewer has coordinated the workers from 20:22 UTC on Mr. Xu's instruction. It records where the learning rate and the weight decay of every run came from, adds one measurement (cells in use in the limited and the local networks), and points to the ordered plan and the log in `COORDINATION_20261117/`. Item 24 of section 1 is new.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -96,6 +98,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 22. **Housekeeping.** Merge E41's three-seed report (2722d1c1) and E46 (b76f5979) into the default branch, since the roster note cites them. Have E43's report mark the two `P8` weight files of its second addendum as incomplete (28.6).
 
 23. **Enter in the record** the corrected reading of E42 on three seeds (28.3), that the sweep does not learn with a limited input (28.5), and the measurement of section 29.
+
+24. **On your return, read `COORDINATION_20261117/LOG.md` and `COORDINATION_20261117/PLAN.md`** (section 31.5). The log records what the reviewer decided and started in your place while Mr. Xu was away; the plan is the ordered list of what remains. Anything in either can be changed by you.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -1534,3 +1538,60 @@ A pull of every connection toward its earlier value is not proposed. E38's ancho
 ### 30.6 On coordinating while Mr. Xu is away
 
 Everything in this Part was done inside the reviewer's role: checks from receipts and weights, two audits, one measurement, one proposal. I have written to no worker session and started no run. The decisions of 30.2 reach the workers through you, as before.
+
+## 31. Corrections, the origin of two settings, and the ordered plan (revision 22)
+
+### 31.1 Corrections to revision 21
+
+**1. The sweep's lag behind back-propagation (28.1, statement 1; 30.1, "Computation, for first learning").** Revision 21 said that the sweep needs 1.1 times back-propagation's updates when half of the pairs are taught. That figure is the median over three widths and three seeds, and it hides the width. For each seed (73129, 93683, 116089), the sweep's updates to 80% divided by back-propagation's, from E41's receipts:
+
+| Width, taught fraction | On A | On R |
+|---|---|---|
+| Half width, 0.50 | 1.07, 1.38, 1.37 | 1.22, 1.53, 2.29 |
+| Present width, 0.50 | 1.10, 1.19, 1.24 | 1.04, 1.19, 1.25 |
+| Double width, 0.50 | 1.00, 1.00, 0.92 | 1.15, 1.09, 1.00 |
+| Half width, 0.25 | 1.70, 2.29, 3.23 | 2.12, 3.31, 3.31 |
+| Present width, 0.25 | 2.00, 2.79, sweep not reached | sweep not reached on any seed |
+| Double width, 0.25 | 1.39, 1.14, 1.50 | sweep not reached, 1.33, sweep not reached |
+
+The statement that holds is this: the sweep's lag falls as the network widens and grows as fewer pairs are taught. At the half width, which is the cheapest width and the width of the long lives, the sweep needs 1.1 to 1.4 times back-propagation's updates on A and 1.2 to 2.3 times on R with half of the pairs, and 1.7 to 3.3 times with a quarter. The sentence of 30.1 is to be read with these figures. Every one of them is at one learning rate and one weight decay (31.2).
+
+**2. The design of E51 (30.3).** It is superseded by revision 2 of the brief, `COORDINATION_20261117/TASK_E51_A_NEW_TASK_LEARNED_IN_CELLS_HELD_IN_RESERVE_20261117.md` (aab57310). The check before release (`COORDINATION_20261117/CHECK_OF_TASK_E51_BRIEF_20261117.md`) found that the keeping of the first family, which revision 1 of the brief called exact by construction, was not exact: the taught items of the first family occupy every direction at the input of the readout's last matrix, so that no change of that matrix leaves the family's answers as they are, and the mark below which a direction counted as unused (1e-6) left changes in directions that the family uses. In revision 2 the columns of the last matrix that belong to the old units, its bias, the first matrix and the 46 rows of the byte table that the family uses are not changed, and the mark is 1e-12. The reviewer's numpy check (`COORDINATION_20261117/check_e51_brief.py`) gives a change of the family's outputs of 3.9e-3 under the rule of revision 1 and 1.5e-9 under the rule of revision 2. Revision 2 also adds an arm that applies the rule without the reserve, so that the two can be told apart, and a Part B on E43's networks that asks how much rehearsal is needed (shares of a quarter down to 1/32 of the items; rehearsal at intervals; smaller steps for the new task). Part B answers to Mr. Xu's statement of 17 November that some rehearsal is acceptable, provided that long-term memory forms in the course of learning and is not produced by our intervention.
+
+**3. Lines of work (30.4).** Four lines are running in place of three: the first long lives with a helper session for the sweep's lives, E50, E51 and E52; E54 is next. The reason for the fourth line is given in rule 5 of `PLAN.md`.
+
+**4. Section 30.6 is superseded.** From 20:22 UTC on 17 November the reviewer has started worker sessions, entered the audits' changes through the workers' own revisions, written three briefs and taken the decisions that an audit leaves to the coordinator, on Mr. Xu's instruction ("coordinate yourself"; "instruct the workers yourself this time"). Every such step is in `COORDINATION_20261117/LOG.md`. Nothing was pushed to the default branch and no document of the coordinator was edited.
+
+### 31.2 Where the learning rate and the weight decay came from
+
+The two inventories of the record (`COORDINATION_20261117/INVENTORY_DENSE_LINE_20261117.md`, `INVENTORY_STRUCTURE_AND_WORLD_20261117.md`) trace every setting to its first use.
+
+- **The learning rate, 0.001,** was taken from the literature on tasks of this kind (the comment in `mod97_local.py`, lines 142 to 144: "as in the grokking papers") and given to both rules. No run of the dense network with this optimizer has another value.
+- **The weight decay, 0.25,** was chosen for the sign rule on the two earlier learners (review 9.24 and 9.27). Back-propagation's births used 0.30 until E26, whose brief gave both arms the rule's value.
+
+Both comparisons of the two rules that this memo relies on (E26, E41) were therefore made at a learning rate chosen for neither rule and at a decay chosen for the sign rule. In two messages to Mr. Xu and in the first version of `PLAN.md` the reviewer wrote that these settings had been chosen for back-propagation. That was wrong and is corrected there. What follows is unchanged: the settings were carried into every later experiment without being varied, and E52 varies the learning rate for both rules at two widths and two taught fractions, with a control in which the decay is changed with it. E46 has shown that learning the first family does not need the decay (28.2).
+
+### 31.3 One measurement added: cells in use in the limited and the local networks
+
+`CELLS_IN_USE_IN_LIMITED_NETWORKS_20261117.md` and `cells_in_use_limited.py` (item 2 of the plan; seed 73129; the reviewer ran the script again). Section 29 found that in the dense network every cell is in use on every item. The same holds in the networks of 256 cells in which every cell receives the input: in E42's `G`, `F10` and `P8` and in E49's `in16` no cell's state is independent of the item, and the items of the first family occupy 245 to 256 of the 257 directions of the cells' state. Limiting a cell's connections, or giving cells periods, leaves nothing unused.
+
+E47's networks of 1,024 cells are different. In them 435 to 628 cells have a state that does not vary with the item, all of them outside the 256 cells that receive the input and are read, and the family's items occupy 303 to 334 of the 1,025 directions. Unrelated items do not move these cells either, and only 13 to 75 of them are read by a cell of the interface. A network with more cells than the task needs does hold cells that the first family leaves alone, but no signal reaches them. Whether new learning could use them depends on whether differences between items can be made to pass into them, which is the question of the plan's item 1 (the passage of differences between items at the start) and of the job that waits for it, E53.
+
+### 31.4 Mr. Xu's requirements, and where the record stands on each
+
+Mr. Xu restated the requirements on 17 November, and `PLAN.md` orders the work by them.
+
+| | Requirement | Where the record stands | Running or next |
+|---|---|---|---|
+| A | Long-term memory forms by itself in the course of learning; some rehearsal is acceptable | Without rehearsal nothing is kept (28.6, 28.8, section 29). With one earlier item for each new item the family is kept. With a part of the network supplied from outside for the new family, the earlier ones are kept exactly (28.7) | E51 (a reserve of cells and a rule; how little rehearsal is enough); the first long lives |
+| B1 | Our learner may be slower at first and overtake the conventional one in continued learning | No long life has been run. In first learning the sweep is slower (31.1) | The first long lives under back-propagation and, in the helper session, under the sweep |
+| B2 | The end result may be about the same while our learner needs far fewer samples | On the record the sweep needs more taught pairs and not fewer: with a quarter of the pairs it reaches 80% on R in 4 of 9 runs against back-propagation's 9 of 9, and with a tenth its level of R at the end of the run is 7 to 15 against 15 to 62 (E41, three widths, three seeds; the runs differ in length between widths). No limited or periodic network has been run with fewer than half of the pairs | E52 (other learning rates); E54 (the limited and the periodic network with a quarter, 15% and a tenth of the pairs) |
+| C | Local learning in the place of full connection, at the input and the output as well | Limited connections between cells are learned at 1.4 to 2.7 times the dense network's computation; an interface at a boundary at 1.7 to 2.5 times; a limited input is not learned under the sweep (28.3 to 28.5) | E50 (an input code in which a value stands for one byte; stage 1 has reported and is being verified); then E53 and the sweep's scale taken for each cell |
+
+The plan has 29 numbered items and nine groups that wait, and it assigns each of the 107 entries of the two inventories to one of them or sets it aside with a reason (`plan_check.py` tests this). Its section 7 is kept current with the state of every item.
+
+### 31.5 For the coordinator
+
+- Section 4 of `LOG.md` lists each decision taken in your place, and section 5 what to read first.
+- Of the requests of revision 21, items 18 and 20 have been carried out through the workers' own revisions 2 of the note and of the brief, on their branches; item 21 has been replaced by the reviewer's brief of E51; item 19 stands; items 22 and 23 are yours.
+- Three briefs are the reviewer's own (E51, E52, E54). Each was checked before release by an agent of the reviewer that had not seen the reviewer's reasoning, and each check found defects that were entered. Such a check is not the independent audit that the programme's rules ask for. If you wish to audit any of them in the usual way, the workers follow a revised document or a message.
