@@ -52,7 +52,7 @@ Status words: *running*; *next* (its brief is written or in check and it starts 
 
 | No. | Item | Answers | Waits for | Status |
 |---|---|---|---|---|
-| 4 | E51: a new task learned in cells held in reserve. Part B on E43's networks: shares of rehearsal below a half; rehearsal at intervals; a smaller learning rate for the new task | A | check of its brief | next |
+| 4 | E51: a new task learned in cells held in reserve. Part B on E43's networks: shares of rehearsal below a half; rehearsal at intervals; a smaller learning rate for the new task | A | – | running (21:42) |
 | 8 | E52: the two rules at other learning rates, at the half and the present width, with a half and a quarter of the pairs | B1, B2, every comparison of the two rules | – | running (21:37) |
 | 10 | E54: the limited and the periodic network with a quarter and a tenth of the pairs taught; the dense network at the half width with a tenth of the pairs at three times the dose | B2 | check of its brief; a free line | next |
 | 9 | E53: the local networks from a start at which differences pass, with and without decay | C | item 1 | waiting |
