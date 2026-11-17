@@ -743,12 +743,19 @@ if "arith" in want:
             print(f"      what the interface keeps from the changed byte to the next position: expected sqrt(z^2 + c^2 (1 + {n_if:.2f})) = {keep:.3f} with root mean square z {zi:.3f} and c {ki * w:.4f};"
                   f" measured {float(np.sqrt(m['ms'][1, 0] / m['ms'][0, 0])):.3f}")
             sd = m["sd"]
-            line = []
+            line, prod = [], 1.0
             for g in (1, 2, 3):
                 mg = float((ring[src[ring == g]] == g - 1).sum(1).mean())
+                prod *= st.mean('r', others) * w * np.sqrt(mg)
                 line.append(f"ring {g}: {st.mean('r', others):.3f} x {w:.4f} x sqrt({mg:.2f}) = {st.mean('r', others) * w * np.sqrt(mg):.3f}, measured {float(sd[ring == g].mean() / sd[ring == g - 1].mean()):.3f}")
             print("      a difference that lasts (as between two different items): a cell settles at its candidate, so the expected factor from one ring to the next is r (1 - n^2) w sqrt(sources in the ring before);"
                   " measured: the standard deviation over 300 items of a state at '=', a ring's mean over the mean of the ring before:\n         " + "\n         ".join(line))
+            mumax, zb, kb = float(np.abs(candidate_spectrum(net)).max()), st.mean("z"), st.mean("k")
+            gstar, gthird = (1 - zb) / (kb * mumax), (THIRD / prod) ** (1.0 / 3.0)
+            print(f"      the three factors multiplied, interface to ring 3: {prod:.4f} at the unchanged start (measured {float(sd[ring == 3].mean() / sd[ring == 0].mean()):.4f}); with the recurrent weights times g it is {prod:.4f} g^3,"
+                  f" so a third needs g = {gthird:.2f}.")
+            print(f"      the multiple at which the expected factor per position, z + k g x (largest eigenvalue of the candidate rows), reaches 1 with the mean gates of the unchanged start:"
+                  f" (1 - {zb:.3f}) / ({kb:.3f} x {mumax:.3f}) = {gstar:.2f}; at that multiple the three factors multiplied are {prod * gstar ** 3:.3f}.")
         else:
             lab = m["lab"]                                               # (pairs, C): 1 for cells that read neither byte
             xa, xb, s, eq, a, b = pairs(12, "first", 75)
