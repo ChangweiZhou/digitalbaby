@@ -50,7 +50,7 @@ def first_row(curve, key, th, version):
 
 
 def mean_rows(curve, key, end_step, n=3):
-    rows = [r for r in curve if r["step"] <= end_step][-n:]
+    rows = [r for r in curve if r["step"] <= end_step][-n:] or curve[:1]      # a run in progress shorter than the look-back
     return sum(r[key] for r in rows) / len(rows)
 
 
