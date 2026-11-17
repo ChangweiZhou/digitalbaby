@@ -185,7 +185,7 @@ def strict_counts(seed):
     return out, sub
 
 
-# ---------------------------------------------------------------- 1. before the new family: the birth and the life
+# ---------------------------------------------------------------- section 4.1: before the new family, the birth and the life
 def before_the_new_family():
     print("## 4. What a lived network was given before the new family\n")
     print("### 4.1 Updates and presented items\n")
@@ -243,7 +243,7 @@ def before_the_new_family():
     return births, lives, tot, (DEV_UPDATES + life_u) * BATCH
 
 
-# ---------------------------------------------------------------- 2. distinct taught samples
+# ---------------------------------------------------------------- section 4.2: distinct taught samples
 def distinct_samples(lives, tot):
     print("### 4.2 Distinct taught samples\n")
     fams = [("First family (birth)", DEV, .50, 89), ("F1 (life)", F1, .25, 97), ("F3 (life)", F3, .25, 73), ("New family (E40)", F4, .10, 83)]
@@ -350,7 +350,7 @@ def cell(u):
     return "not reached" if u is None else f"{u:,} ({u * BATCH:,})"
 
 
-# ---------------------------------------------------------------- 3. the new family (E40)
+# ---------------------------------------------------------------- section 5: the new family (E40)
 def new_family(lives):
     print("## 5. The new family (E40): updates and items to a level\n")
     runs = {}
@@ -432,7 +432,7 @@ def new_family(lives):
     return out
 
 
-# ---------------------------------------------------------------- 4. a fresh network on one family
+# ---------------------------------------------------------------- section 6: a fresh network on one family
 def fresh_references(births):
     print("## 6. A fresh network that learns one family\n")
     print("### 6.1 The first family at three taught fractions (E41, present width)\n")
@@ -496,6 +496,25 @@ def fresh_references(births):
     print("These runs have the panel at 12 letters only (300 or 400 never-taught pairs of add and of sub, reduction and "
           "no-reduction pairs together), not the reduction pairs apart. Receipts: `exp45/e37/e37_<F3|F1>_<S|B>_<seed>.json`, "
           "`exp45/e35a/e35a_dev_G_f<25|10>_73129.json`.\n")
+    rows, over50 = [], 0
+    for H, U in ((256, 128), (1024, 512)):       # E41's other two widths at a tenth
+        for a in "SB":
+            hi, last, dose = [], [], set()
+            for s in SEEDS:
+                r = J(f"{M}/exp45/e41/e41_{a}_h{H}_f10_{s}.json")
+                assert r["complete"] and r["H"] == H and r["U"] == U and r["fraction"] == .10
+                R = [c["R"] for c in r["curve"]]
+                hi.append(f"{max(R):.1f}"); last.append(f"{R[-1]:.1f}"); dose.add(r["dose"])
+                assert max(R) < 80
+                over50 += (H, a) == (256, "B") and max(R) >= 50
+                assert max(R) < 50 or (H, a) == (256, "B")
+            d = dose.pop(); assert not dose
+            rows.append((f"{H} and {U}", a, f"{d:,} ({d * BATCH:,})", ", ".join(hi), ", ".join(last)))
+    print("A tenth of the first family at E41's other two widths (`exp45/e41/e41_<S|B>_h<256|1024>_f10_<seed>.json`; the "
+          "lived networks are all at the present width). No run reaches 80% on R. Under back-propagation at the half "
+          f"width, which has E41's longest dose, {over50} of 3 seeds pass 50%; no other run does:\n")
+    table(("Feedforward width and recurrent units", "Rule", "Dose in updates (items)", "Highest R, seeds 73129, 93683, 116089",
+           "R at the last row"), rows)
     rows = []
     for a in "SB":
         for s in SEEDS:
@@ -511,7 +530,7 @@ def fresh_references(births):
     return out
 
 
-# ---------------------------------------------------------------- 5. the accounts
+# ---------------------------------------------------------------- section 7: the accounts
 def breakeven(P0, c, F):
     """Smallest whole number n of new families with P0 + n * c < n * F."""
     if F <= c:

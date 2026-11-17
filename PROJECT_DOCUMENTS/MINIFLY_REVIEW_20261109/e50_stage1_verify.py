@@ -206,8 +206,8 @@ if "0" in want:
         print(f"      receipt of C-dense {r}: command `{pv['command']}`; commit {pv['git']['commit'][:8]}, sources modified against it: {pv['git']['sources_modified_vs_commit']};"
               f" recorded SHA-256 of the runner equals that of exp50_code.py at {REF}: {yes(pv['runner_sha256'] == sha(show(M + 'exp50_code.py', REF)))};"
               f" of e50_sparse_code.py: {yes(pv['sources_sha256']['e50_sparse_code.py'] == sha(show(M + 'e50_sparse_code.py', REF)))}")
-    for (s, r), t in TAB.items() if TAB else ():
-        pass
+    for f in ("E50_STAGE1_REPORT_73129.md", "E50_TABLES_73129_stage1.md", "E50_SUMMARY_73129_stage1.json"):
+        print(f"      {f} at {REF}: SHA-256 {sha(show(P + 'e50/' + f, REF))[:16]}")
     for s in ("C-dense", "F10"):
         for r in "BS":
             rc = receipt(s, r); c, same = rows_of(rc)
@@ -455,6 +455,17 @@ if "7" in want:
         t = TAB[k]; s = k[0]
         print(f"   {s:7s} {k[1]}  first count: A {MA[s] * BATCH * t['A80']:.3g}, R {MA[s] * BATCH * t['R80']:.3g}" + (f" | second count: A {MA2[s] * BATCH * t['A80']:.3g}, R {MA2[s] * BATCH * t['R80']:.3g}" if s in MA2 else ""))
     print("   (the report: by the second count C-dense reaches 80 on R after 1.26e+11 products under backpropagation and 2.34e+11 under the sweep)")
+    print("   F10's code is tanh(l1(byte table)); if none of its values is zero, the products with a value that is not zero are all of F10's 930,560. From E42's final weight files:")
+    used = R50.Code(SEED).used
+    for r in "BS":
+        Tf = load(show(f"{P}e42/e42_F10_{r}_{SEED}.pt", E42REF))
+        z = np.tanh(Tf["book.weight"][used] @ Tf["l1.weight"].T + Tf["l1.bias"])
+        print(f"   F10 {r}: values of the codes of the 46 used bytes that are exactly zero: {int((z == 0).sum())} of {z.size:,}; smallest magnitude {float(np.abs(z).min()):.1e}; of magnitude below 0.01: {int((np.abs(z) < 0.01).sum()):,}")
+        del Tf
+    print("   C-dense's second count against F10's 930,560:")
+    for r in "BS":
+        c, f = TAB[("C-dense", r)], TAB[("F10", r)]
+        print(f"   {r}: a position {MA2['C-dense'] / MA['F10']:.3f} of F10's; to 80 on A {MA2['C-dense'] * c['A80'] / (MA['F10'] * f['A80']):.2f} of F10's products, to 80 on R {MA2['C-dense'] * c['R80'] / (MA['F10'] * f['R80']):.2f}")
 
 
 # ---------------------------------------------------------------- 8: the stream of training items
@@ -627,8 +638,13 @@ if "12" in want:
             kn.append((float(Wh[rows_][nb].mean()), float(Wh[rows_][ws].mean())))
         return dict(rms=float(np.sqrt((gi ** 2).mean())), ih=float(np.abs(Wi).mean()), lm=float(np.abs(T["lm.weight"].astype(np.float64)).mean()), hh=float(Wh[m3].mean()), kn=kn)
 
+    wrows = []                                             # two rows of the tables file written from the weight files
     for r in "BS":
         a, b = figures(WF[r]["S0"]), figures(WF[r]["T"]); rc = TAB[("C-dense", r)]["rc"]; c0, c1 = rc["curve"][0], rc["curve"][-1]
+        cs_, ce_ = rc["cosine_first_batch_start"], rc["cosine_first_batch_end"]
+        wrows.append(("sizes from the weight files (cosines from the receipt)", f"| C-dense | {r} | " + " | ".join(f"{cs_[m]:.3f}, {ce_[m]:.3f}" for m in ("rnn.weight_ih_l0", "lm.weight", "rnn.weight_hh_l0"))
+                      + " | " + " | ".join(f"{a[k]:.4f}, {b[k]:.4f}" for k in ("ih", "lm", "hh")) + f" | {a['rms']:.3f}, {b['rms']:.3f} |"))
+        wrows.append(("by what a cell knows, from the weight files", f"| C-dense | {r} | " + " | ".join(f"{a['kn'][i][0]:.4f}, {b['kn'][i][0]:.4f} [{a['kn'][i][1]:.4f}, {b['kn'][i][1]:.4f}]" for i in range(3)) + " |"))
         print(f"   C-dense {r}, from the start and the final weight file / the receipt's first and last row:")
         print(f"      a cell's input for a needed byte, root mean square without the bias: {a['rms']:.3f} -> {b['rms']:.3f} / {c0['input_size']['needed_rms']:.3f} -> {c1['input_size']['needed_rms']:.3f} (reported 0.389 -> {'5.14' if r == 'B' else '4.77'})")
         print(f"      mean magnitude of a kept weight: input map {a['ih']:.4f} -> {b['ih']:.4f} / {c0['kept_mean_magnitude']['rnn.weight_ih_l0']:.4f} -> {c1['kept_mean_magnitude']['rnn.weight_ih_l0']:.4f} (reported 0.031 -> {'0.094' if r == 'B' else '0.086'});"
@@ -640,6 +656,9 @@ if "12" in want:
         print(f"      cosine between the sweep's and the exact gradient on the first batch (the receipt only; not recomputed): input map {cs['rnn.weight_ih_l0']:.3f} -> {ce['rnn.weight_ih_l0']:.3f}; lm {cs['lm.weight']:.3f} -> {ce['lm.weight']:.3f}; recurrent {cs['rnn.weight_hh_l0']:.3f} -> {ce['rnn.weight_hh_l0']:.3f};"
               f" first-batch loss at the start {rc['first_batch_loss_start']}")
         print(f"      cost: {rc['cpu_updates'] / 3600:.2f} CPU-hours of updates + {rc['cpu_scoring'] / 3600:.2f} of scoring = {(rc['cpu_updates'] + rc['cpu_scoring']) / 3600:.2f} (reported {'0.87' if r == 'B' else '1.00'}); wall {rc['wall'] / 60:.1f} minutes; processes beside: {rc['processes_beside']}")
+        lg = show(f"{P}e50/logs/e50_C-dense_{r}_{SEED}.log", REF).decode().splitlines()
+        steps = [int(l.split()[4].rstrip(":")) for l in lg if re.match(rf"e50 C-dense {r} {SEED} \d+:", l)]
+        print(f"      the run's log: {len(lg)} lines; scored rows in it {len(steps)}, in order from 0 to {steps[-1]:,} without a repeat: {yes(steps == list(range(0, DOSE + 1, 256)))}; last line: {lg[-1]}")
 
     # the tables file, row by row, in the worker's formats, from the figures recomputed here
     md = show(f"{P}e50/E50_TABLES_{SEED}_stage1.md", REF).decode()
@@ -677,6 +696,7 @@ if "12" in want:
             for key, nm in (("A", "A"), ("R", "R"), ("len40", "the length test at 40")):
                 d = c["lv_" + key] - f["lv_" + key]
                 exp.append(("descriptions", pre + f"level of {nm} | {'lower' if d <= -15 else 'higher' if d >= 15 else 'about the same'} | {f['lv_' + key]:.2f} | {c['lv_' + key]:.2f} | |"))
+    exp += wrows
     lines = set(md.splitlines())
     missing = [(w, l) for w, l in exp if l not in lines]
     kinds = sorted({w for w, _ in exp}, key=[w for w, _ in exp].index)

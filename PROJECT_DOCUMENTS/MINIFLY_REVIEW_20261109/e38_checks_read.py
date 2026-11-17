@@ -172,6 +172,19 @@ if 'B' in want:
             c = table[(arm, rule, 12288)]
             cells.append(f"{rule}: {100 * (c[4] + c[5]) / 600:.2f} / {100 * (c[0] + c[1]) / 7832:.2f} / {100 * (c[8] + c[9]) / 800:.2f}")
         print(f"      {arm:9s} " + '   '.join(cells))
+    # the report's table of curves (11 rows of updates for each of the ten lives) against the receipts; rows other than 6,144 and 12,288 have no committed weights
+    rep = git_bytes(E38 + 'E38_REPORT.md', REF).decode(); cols = (0, 64, 128, 256, 512, 1024, 2048, 4096, 6144, 8192, 12288); n_cell = n_off = 0; worst = 0.0
+    for line in rep.splitlines():
+        f = [c.strip() for c in line.strip().strip('|').split('|')]
+        if len(f) == 12 and f[0].split()[0] in ARMS and f[0].split()[-1] in RULES:
+            arm, rule = f[0].split(); rows = {r['updates']: r for r in js(E38 + f'e38_{arm}_{rule}_{SEED}.json')['rows']}
+            for g, cell in zip(cols, f[1:]):
+                r = rows[g]; pc = lambda d: 100 * d['exact'] / d['n']
+                mine = [(pc(r['birth_heldout_k12']['add89']) + pc(r['birth_heldout_k12']['sub89'])) / 2,
+                        (r['birth_allpairs_k0']['add89']['wrap']['pct'] + r['birth_allpairs_k0']['sub89']['wrap']['pct']) / 2,
+                        (pc(r['new_heldout_k12']['add97']) + pc(r['new_heldout_k12']['sub97'])) / 2]
+                dif = max(abs(a - float(b)) for a, b in zip(mine, cell.split('/'))); n_cell += 1; n_off += dif > 0.0501; worst = max(worst, dif)
+    print(f"   the report's table of curves against the receipts: {n_cell} cells of three figures; cells off by more than rounding to one decimal: {n_off}; largest difference {worst:.3f}")
 
 
 # ================================================================ C. distance from the birth
@@ -180,6 +193,7 @@ if 'C' in want:
     print('   a pull of strength k bounds it near 1/k once the pull has acted for several times 1/(rate * k) updates (0.4 for anchor10, 4 for anchor);')
     print('   without a pull the bound is rate * updates (6.1 and 12.3)')
     names = PULLED + ('book.weight',)
+    rms = {}
     for rule in RULES:
         W0 = birth[rule][0]
         print(f'   rule {rule}:  ' + ' '.join(f'{short(n):>11s}' for n in names) + '   | all pulled tensors: largest, root mean square, share of weights with another sign than at birth')
@@ -189,9 +203,23 @@ if 'C' in want:
                 d = {n: W[n].astype(np.float64) - W0[n] for n in names}
                 allp = np.concatenate([d[n].ravel() for n in PULLED])
                 flips = np.concatenate([(np.sign(W[n]) != np.sign(W0[n])).ravel() for n in PULLED]).mean()
+                rms[(rule, arm, row)] = {n: float(np.sqrt((d[n] ** 2).mean())) for n in names}; rms[(rule, arm, row)]['all'] = float(np.sqrt((allp ** 2).mean()))
                 print(f'      {arm:9s} {row:6d} ' + ' '.join(f'{np.abs(d[n]).max():11.4f}' for n in names)
                       + f'   | {np.abs(allp).max():.4f}  {np.sqrt((allp ** 2).mean()):.5f}  {100 * flips:.2f}%')
                 del W
+    print('   root-mean-square distance from the birth as a share of the arm without decay and without pull (`none`), same rule and row;')
+    print('   beside it the share for weights that take steps of one size without direction and are pulled back by rate * k of their distance each update:')
+    print('   sqrt((1 - exp(-2 a)) / (2 a)) with a = rate * k * updates.  `none` itself grows as the square root of the updates (last column)')
+    for rule in RULES:
+        g = rms[(rule, 'none', 12288)]['all'] / rms[(rule, 'none', 6144)]['all']
+        for arm, k in (('anchor', 0.25), ('anchor10', 2.5)):
+            cells = []
+            for row in ROWS:
+                a = LR * k * row; model = np.sqrt((1 - np.exp(-2 * a)) / (2 * a))
+                r = rms[(rule, arm, row)]; r0 = rms[(rule, 'none', row)]
+                per = [r[n] / r0[n] for n in PULLED]
+                cells.append(f"row {row}: {r['all'] / r0['all']:.3f} (model {model:.3f}; the 12 tensors one by one {min(per):.2f} to {max(per):.2f}; byte table, not pulled, {r['book.weight'] / r0['book.weight']:.2f})")
+            print(f"      rule {rule} {arm:9s} " + '; '.join(cells) + f"; `none` row 12,288 over row 6,144: {g:.3f} (sqrt 2 = 1.414)")
 
 
 # ================================================================ D. the gradient under both rules, in numpy
@@ -372,9 +400,14 @@ if 'D' in want:
             gn = loss_and_grad(n1, b2, rule, np.float32)[1]
             f1, _ = adam_step(n1, gn, sn, 2, kappa, 1, W0=W); f2, _ = adam_step(n1, gn, sn, 2, kappa, 2, W0=W)
             d3 = max(rel(f1[n], f2[n]) for n in PULLED)
-            wn = max(d2, key=d2.get)
-            print(f"       rule {rule}, strength {kappa}: the optimizer's decay against the pull to zero: after update 1 {d1:.1e}, after update 2 {d2[wn]:.1e} ({short(wn)}); "
-                  f"weights of the six maps with unequal signs in the two after update 1: {disc}; the two forms of the pull to the birth after update 2: {d3:.1e}")
+            wn = max(d2, key=d2.get); d1n = max(PULLED, key=lambda n: rel(a1[n], p1[n]))
+            print(f"       rule {rule}, strength {kappa}: the optimizer's decay against the pull to zero: after update 1 {d1:.2e} ({short(d1n)}), after update 2 {d2[wn]:.2e} ({short(wn)}); "
+                  f"weights of the six maps with unequal signs in the two after update 1: {disc}; the two forms of the pull to the birth after update 2: {d3:.2e}")
+            if rule == 'S':                                      # the worker's diagnostic in torch, float32, at the same two updates
+                dg = js(E38 + f'e38_check2_diag_S_{SEED}_float32.json')['max_rel']
+                tv, bf = dg[f'torch_vs_pull_{kappa}'], dg[f'birth1_vs_birth2_{kappa}']
+                w1 = max(tv['1'], key=tv['1'].get); w2 = max(tv['2'], key=tv['2'].get)
+                print(f"          the worker's receipt (torch): after update 1 {tv['1'][w1]:.2e} ({short(w1)}), after update 2 {tv['2'][w2]:.2e} ({short(w2)}); the two forms after update 2: {max(bf['2'].values()):.2e}")
             if rule == 'S' and kappa == 0.25:
                 keep = dict(a1=a1, p1=p1, sa=sa, sp=sp, a2=a2, p2=p2)
     a1, p1, a2, p2 = keep['a1'], keep['p1'], keep['a2'], keep['p2']
@@ -390,6 +423,9 @@ if 'D' in want:
         print(f"          {lab}: |difference between the two runs| per weight: mean {dd.mean():.2e}, median {np.median(dd):.2e}, largest {dd.max():.2e}; "
               f"among weights within 1e-3 of zero: mean {dd[small].mean():.2e}, largest {dd[small].max():.2e}; "
               f"weights with unequal signs {disc}; expected number from density at zero ({dens:.2e} per unit) times that mean: {dens * dd[small].mean():.1e}")
+    m2 = float(dd[small].mean())
+    print(f"          an estimate, not a measurement: if that mean grew from update 2 on as the square root of the number of updates, the expected number of weights with "
+          f"unequal signs summed over updates 2 to 64 would be {sum(dens * m2 * np.sqrt(t / 2) for t in range(2, 65)):.2f}; if it stayed as after update 2, {dens * m2 * 63:.2f}")
 
     # ---- D6. one weight with unequal signs in the two runs at update 2: what the weights look like after that update
     print('   D6. update 2 from the weights after update 1 (strength 0.25, the optimizer\'s own decay), with one weight next to zero given the other sign in a copy')

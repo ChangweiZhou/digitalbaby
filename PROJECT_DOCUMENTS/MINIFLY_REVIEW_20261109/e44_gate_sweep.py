@@ -226,6 +226,8 @@ def part_q():
         e = np.array([[[C.figure(L[arm, 256, w]["me"], f, 32 * k, 32 * k + 32)[0] for k in range(8)] for f in FAMILIES] for w in WORLDS])
         eighth[arm] = e
         print(f"      {arm:17s} {' '.join(f'{x:.3f}' for x in e.reshape(-1, 8).mean(0))} | rise from the seventh to the last eighth, mean over worlds {fmt_iv((e[:, :, 7] - e[:, :, 6]).mean(1))}")
+    print("      sweep minus naive, by eighth:              "
+          + " ".join(f"{x:+.3f}" for x in (eighth["sweep"] - eighth["naive"]).reshape(-1, 8).mean(0)))
     print("   the end of the visit, per first visit and then the mean over families 1 to 7 in each world: the rise from the seventh to the last eighth,")
     print("   and the least-squares slope of the level over the last four eighths (per eighth, that is per 32 updates):")
     end = {}
@@ -347,7 +349,8 @@ def part_b():
         me = C.marked_events(C.World(w), 256, ev, list(range(8)))             # the same stream as the calibration's life (asserted item by item)
         fig, cal = [C.figure(me, v, 192, 256)[0] for v in range(8)], L["naive", 256, w]["fig"]
         d = [a - b for a, b in zip(fig, cal)]
-        print(f"      world {w}, birth {st['learner']['file'].split('/')[-1]}: median over families 1 to 7 {np.median(fig[1:]):.3f} (the calibration's, seed 73129: {np.median(cal[1:]):.3f});"
+        print(f"      world {w}, birth {st['learner']['file'].split('/')[-1]}: median over families 1 to 7 {np.median(fig[1:]):.3f} (the calibration's, seed 73129: {np.median(cal[1:]):.3f};"
+              f" difference {np.median(fig[1:]) - np.median(cal[1:]):+.3f});"
               f" family by family, this birth minus the calibration's: {' '.join(f'{x:+.3f}' for x in d)}")
     print(f"   part B: {time.time() - t0:.0f} s")
 

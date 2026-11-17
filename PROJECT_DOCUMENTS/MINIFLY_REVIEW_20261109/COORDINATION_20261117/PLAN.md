@@ -57,7 +57,7 @@ Status words: *running*; *next* (its brief is written or in check and it starts 
 | 10 | E54: the limited and the periodic network with a quarter, 15% and a tenth of the pairs taught (49,152 updates each; revision 2 of the brief); the dense network at the half width with a tenth of the pairs at three times the dose | B2 | second check of its brief; a free line | next |
 | 9 | E53: the local networks from a start at which differences pass, with and without decay | C | item 1 | waiting |
 | 18 | E57: the sweep's scale taken for each cell, or each gate, in place of one for a whole matrix; in the dense network, in the limited one, and with a limited input | C, B1 | a free line | queued |
-| 19 | E48 again with its two differences from E40 separated (where the change is made; whether the lived weights decay), since E48's higher end level is the one hint in the record for B2 | B2, A | a free line | queued |
+| 19 | E58: E48 again with its two differences from E40 separated (where the change is made; whether the lived weights decay), run to 8,192 updates, and both ways of learning at taught fractions of 0.05, 0.10 and 0.20, since E48's higher end level is the one hint in the record for B2 | B2, A | check of its brief; a free line | brief written (22:15) |
 
 **Tier 2: after the tier 1 results that they depend on.**
 
@@ -97,7 +97,7 @@ Status words: *running*; *next* (its brief is written or in check and it starts 
 |---|---|---|
 | 17 | Confirmations on sealed tasks (E40, E43, E48) | The sealed data are held by the coordinator |
 
-The numbers E51 to E57 are the reviewer's; the coordinator may renumber them.
+The numbers E51 to E58 are the reviewer's; the coordinator may renumber them.
 
 ## 6. Where each entry of the two inventories goes
 
@@ -163,3 +163,4 @@ D is the inventory of the dense line (57 entries), S that of structure and the l
 | 22:01 | Item 10: revision 2 of E54's brief (a1da70da) enters the eight findings of the check, adds a taught fraction of 0.15, gives every run 49,152 updates, and takes in the second half of the item. It is with a second check; the worker is started when the check is entered and a line is free. |
 | 22:06 | Item 18: before its brief is written, an agent of the reviewer measures on saved weights how close the sweep's gradient is to the exact one when the scale is taken for a whole matrix (the present rule), for each gate, for each row or for each column (`SWEEP_SCALE_VARIANTS_ALIGNMENT_20261117.md`, to come). The memo to the coordinator is at revision 22 (75b1b940). |
 | 22:11 | Items 5, 6, 7, 4, 8: on the workers' hosts a machine is stopped about five minutes after its session's turn ends, and detached runs die with it. The long lives lost 51 minutes and were restarted at 22:07; the other four sessions were warned at 22:11 and asked to check their runs and to hold their turns open. Item 4: E51's checks 1 to 7 passed; its sixteen trial runs are running. The reviewer's container was restarted again at 22:09; its seven agents were resumed. |
+| 22:16 | Item 19: the brief of E58 is written (54901576) and is with a check. The record behind it, recomputed by the reviewer: at 1,024 updates the gated term of rank 16 is above free learning by 1.1 to 8.6 points on the reduction score in all six runs and above the highest row of the free run in all six; free learning does not rise after 256 updates; a network without a life reaches 6 to 12. Part A separates the decay of the lived weights from the place of the change; Part B gives each way of learning a twentieth, a tenth and a fifth of the pairs. |
