@@ -30,7 +30,7 @@ world (lw_world.World.visit_batches) and checked against the event file's task a
        of the family taught last. The family taught last: for a stream item of visit v, the family of visit v - 1; for a list row at
        the end of visit v, the family of visit v. The never-met modulus: family 55's, a probe family that no life is scheduled to visit.
   D15  (the reviewer's addition) kept at return (D8) and the level over the first 16 updates of the visit (D10), by the number of earlier
-       visits to the family (1; 2; 3 to 4; 5 to 8; 9 to 16; 17 or more) within each class of absence
+       visits to the family (1; 2 to 3; 4 to 7; 8 to 15; 16 or more) within each class of absence
 """
 import argparse
 import json
@@ -51,7 +51,7 @@ ANSWER_CLASSES = ("right", "the sum or difference without the reduction", "the a
                   "the answer under the modulus of an earlier family", "the answer under 89, the birth family's modulus", "one of the operands",
                   "the answer under a modulus the life never meets (control)", "another two-digit number", "not two digits and the end symbol")
 CONTROL_FAMILY = 55
-EARLIER = (("1", 1, 1), ("2", 2, 2), ("3 to 4", 3, 4), ("5 to 8", 5, 8), ("9 to 16", 9, 16), ("17 or more", 17, 10 ** 9))
+EARLIER = (("1", 1, 1), ("2 to 3", 2, 3), ("4 to 7", 4, 7), ("8 to 15", 8, 15), ("16 or more", 16, 10 ** 9))      # the reviewer's bins
 T95 = {1: 6.3138, 2: 2.9200, 3: 2.3534, 4: 2.1318, 5: 2.0150, 6: 1.9432, 7: 1.8946, 8: 1.8595, 9: 1.8331, 10: 1.8125, 11: 1.7959, 12: 1.7823,
        13: 1.7709, 14: 1.7613, 15: 1.7531}      # the 0.95 quantile of Student's t: a two-sided 90% interval
 
