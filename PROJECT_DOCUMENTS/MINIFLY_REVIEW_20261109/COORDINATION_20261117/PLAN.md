@@ -44,7 +44,7 @@ Status words: *running*; *next* (its brief is written or in check and it starts 
 | 5 | The first long lives, release 1 (conventional learner; store; no decay), with a table of what is kept at a return by the number of earlier visits | A, B1 | worker | running |
 | 6 | The sweep's long lives beside release 1 (with and without the store; 1,024 visits; four worlds) | B1 | helper | running |
 | 7 | E50: a fixed input code in which a value stands for one byte; stages 1 to 3 | C | worker | running |
-| 26 | E40's saving counted in the learner's whole experience, not only in items of the new family | B2 | reviewer, receipts | done (22:19) |
+| 26 | E40's saving counted in the learner's whole experience, not only in items of the new family | B2 | reviewer, receipts | done (22:17) |
 | 27 | E38's two checks that failed under the sweep and have no ruling on file | record | reviewer, record | running (21:46) |
 | 28 | The first-visit level of the sweep and of the store arm at 256 updates a visit, for which the visit length was never calibrated | B1 | reviewer, receipts; the trial's report | running (21:46) |
 
