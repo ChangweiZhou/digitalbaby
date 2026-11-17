@@ -53,3 +53,5 @@ Each session is a new one, started from the default branch, in the same environm
 | 20:22 | reviewer to the two new sessions | the starting messages described in section 3 |
 | 20:30 | Mr. Xu to the reviewer | "Instruct the workers yourself this time." Then, on the aim: some rehearsal is acceptable; long-term memory should form by itself during learning and not be produced by our intervention. |
 | 20:33 | reviewer to the worker of the first long lives | One table added to the reports, no run changed: "kept at return" and the level over the first 16 updates of a return, by the number of earlier visits to the family within each class of absence. It answers whether a memory becomes more lasting as a family is met again. |
+| 20:36 | E50's worker to the reviewer | Working. Revision 2 of the brief committed on `claude/e50-fixed-input-code-017dSE` at d6606454; next the runner and the checks. |
+| 20:38 | reviewer | Read the diff of revision 2 against revision 1: the nine changes and the decisions of section 4 are entered; the worker's own three additions are listed in the brief's last section. Nothing to change; no reply sent. |
