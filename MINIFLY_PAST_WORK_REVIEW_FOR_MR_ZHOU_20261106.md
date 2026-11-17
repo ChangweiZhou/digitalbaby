@@ -3343,3 +3343,11 @@ What the calibration shows beside the gate:
 - **E42's sparse networks lose the family as the dense one does:** `F10` and `P8` of seed 73129, both rules, 0.0% after 4,096 unrelated updates. P43.18 holds. Limiting connections between cells alone does not separate what is learned.
 
 **Where the plan's steps stand.** Step 1 (where the loss in E43 sits) is done: the function is overwritten throughout the network; plain rehearsal is the conventional remedy and works. Step 4 (the long-life instrument) is calibrated. Step 3's first form, a change confined to gated connections, is E48, released. Running: E41's two seeds, E42's other seeds, E46, E47's trial. Awaiting audit: E50.
+
+## 9.157 The roster note for the first long lives (17 November 2026)
+
+At the user's word ("We are fine to have you write the E44 long lives roster note"), `OPUS_TASK_E44_L2_ROSTER_FIRST_LONG_LIVES_20261117.md`. Release 1 asks L2's part of the adopted question with no candidate: does the conventional learner get stuck over a life of 1,024 visits, and what do a plain replay store and no weight decay change? Four arms under backpropagation (`naive`, `replay`, `naive-wd0`, `replay-wd0`), learners from E41's half-width births of the three seeds, 32 lives, about 59 CPU-hours, with world 1's two long lives as the trial. The sweep comes in release 2.
+
+What I read for it, not audited: E46 (learning the first family does not need decay, under both rules, three seeds), E41's two later seeds (the half width is cheapest to threshold at f = 0.50 under backpropagation on all three, so the E44 width rule gives the half width), E48 (a change confined to gated connections costs nothing at rank 16 or more under either rule, with the gate supplied; at rank 4 some price under the sweep). These branches and E42, E47's trial and E49 are finished and not yet read in full by me.
+
+**One runner change is needed, and so the reviewer's check.** E44's runner answers its retention list after every visit and computes decay alone for every later visit of the life; at 1,024 visits that is millions of answered items per family. Two arguments with defaults that keep E44's behaviour limit it; the lives start when the change passes. The rest of the note is released under the pace rules.
