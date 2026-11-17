@@ -1,0 +1,190 @@
+{
+ "P42.1": {
+  "text": "Check 1 passes under both rules",
+  "values": {
+   "S": [
+    true,
+    true
+   ],
+   "B": [
+    true,
+    true
+   ]
+  },
+  "outcome": true
+ },
+ "P42.2": {
+  "text": "A10 reaches 80 on A within the dose, two of three seeds, sweep",
+  "values": [
+   13824,
+   14336,
+   13824
+  ],
+  "outcome": true
+ },
+ "P42.3": {
+  "text": "F10 reaches 80 on A within the dose, two of three seeds, backpropagation",
+  "values": [
+   8704,
+   6912,
+   9216
+  ],
+  "outcome": true
+ },
+ "P42.4": {
+  "text": "A10 against G, updates to A80, sweep: rises (more), two of three",
+  "values": [
+   "more",
+   "more",
+   "more"
+  ],
+  "counts": [
+   [
+    5632,
+    13824
+   ],
+   [
+    4864,
+    14336
+   ],
+   [
+    5376,
+    13824
+   ]
+  ],
+  "outcome": true
+ },
+ "P42.5": {
+  "text": "A10 against F10, updates to A80, sweep: falls or stays (fewer or about the same), two of three",
+  "values": [
+   "about the same",
+   "about the same",
+   "about the same"
+  ],
+  "counts": [
+   [
+    13312,
+    13824
+   ],
+   [
+    13056,
+    14336
+   ],
+   [
+    12544,
+    13824
+   ]
+  ],
+  "outcome": true
+ },
+ "P42.6": {
+  "text": "P8 against A10, updates to A80, sweep: fewer 20%, about the same 35%, more 45%",
+  "values": [
+   "fewer",
+   "fewer",
+   "fewer"
+  ],
+  "counts": [
+   [
+    13824,
+    7680
+   ],
+   [
+    14336,
+    8448
+   ],
+   [
+    13824,
+    7424
+   ]
+  ],
+  "outcome": "cell: fewer"
+ },
+ "P42.7": {
+  "text": "P16 lower than A10 at 40 letters, two of three",
+  "values": [
+   "about the same",
+   "about the same",
+   "lower"
+  ],
+  "len40": [
+   [
+    91.78,
+    82.78
+   ],
+   [
+    92.56,
+    94.11
+   ],
+   [
+    86.67,
+    67.33
+   ]
+  ],
+  "outcome": false
+ },
+ "P42.8": {
+  "text": "F10 lower than G at 40 letters, sweep, two of three",
+  "values": [
+   "about the same",
+   "about the same",
+   "about the same"
+  ],
+  "len40": [
+   [
+    96.44,
+    89.11
+   ],
+   [
+    96.44,
+    95.22
+   ],
+   [
+    97.11,
+    88.22
+   ]
+  ],
+  "outcome": false
+ },
+ "P42.9": {
+  "text": "W10 against A10: about the same on both updates to A80 and the length test",
+  "updates": [
+   "about the same",
+   "about the same",
+   "about the same"
+  ],
+  "length": [
+   "about the same",
+   "about the same",
+   "about the same"
+  ],
+  "outcome": true
+ },
+ "P42.10": {
+  "text": "Some stage-1 configuration's description against G differs between the sweep and backpropagation (three-seed cells)",
+  "differing_cells": {
+   "F10 A80 weight-items": {
+    "sweep": "more",
+    "backprop": "about the same"
+   },
+   "P8 A80 updates": {
+    "sweep": "about the same",
+    "backprop": "more"
+   },
+   "P8 R80 updates": {
+    "sweep": "about the same",
+    "backprop": "more"
+   }
+  },
+  "outcome": true
+ },
+ "P42.11": {
+  "text": "The stop applies (no limited configuration reaches 50 on A on seed 73129)",
+  "stop_check_reached_A50": {
+   "73129": true,
+   "93683": true,
+   "116089": true
+  },
+  "outcome": false
+ }
+}
