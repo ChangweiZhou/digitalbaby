@@ -44,6 +44,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 22 (17 November, evening).** Section 31 is added. It corrects four statements of revision 21: the sweep's lag behind back-propagation, which depends on the width and was given as one figure; the design of E51, which is superseded by revision 2 of its brief; the number of lines of work; and section 30.6, since the reviewer has coordinated the workers from 20:22 UTC on Mr. Xu's instruction. It records where the learning rate and the weight decay of every run came from, adds one measurement (cells in use in the limited and the local networks), and points to the ordered plan and the log in `COORDINATION_20261117/`. Item 24 of section 1 is new.
 
+**Revision 23 (17 November, late evening).** Section 32 is added: the first result of the evening (E50, stage 1, verified), four measurements and readings made from the record and from saved weights (the passage of a difference at the starting weights of the local networks; E40's saving counted in the learner's whole experience; E38's two failed checks under the sweep; the gate of the long-life world applied to the sweep), an incident on the workers' host, and the briefs written since revision 22. Item 25 of section 1 is new.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -100,6 +102,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 23. **Enter in the record** the corrected reading of E42 on three seeds (28.3), that the sweep does not learn with a limited input (28.5), and the measurement of section 29.
 
 24. **On your return, read `COORDINATION_20261117/LOG.md` and `COORDINATION_20261117/PLAN.md`** (section 31.5). The log records what the reviewer decided and started in your place while Mr. Xu was away; the plan is the ordered list of what remains. Anything in either can be changed by you.
+
+25. **Rule on E38's checks 2 and 3 under the sweep** (section 32.4). They failed and no ruling is on file. The reviewer's reading is that the checks were specified for a rule that is continuous in the weights, that the results under the sweep stand, and that no life needs to be run again.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -1595,3 +1599,63 @@ The plan has 29 numbered items and nine groups that wait, and it assigns each of
 - Section 4 of `LOG.md` lists each decision taken in your place, and section 5 what to read first.
 - Of the requests of revision 21, items 18 and 20 have been carried out through the workers' own revisions 2 of the note and of the brief, on their branches; item 21 has been replaced by the reviewer's brief of E51; item 19 stands; items 22 and 23 are yours.
 - Three briefs are the reviewer's own (E51, E52, E54). Each was checked before release by an agent of the reviewer that had not seen the reviewer's reasoning, and each check found defects that were entered. Such a check is not the independent audit that the programme's rules ask for. If you wish to audit any of them in the usual way, the workers follow a revised document or a message.
+
+## 32. The evening of 17 November: one result, four readings of the record, and the briefs written (revision 23)
+
+Every document named here is beside this memo on `claude/vibrant-cerf-sje726`; the briefs and the log are in `COORDINATION_20261117/`. Each measurement was made by an agent of the reviewer on saved weights or receipts, without training, and the reviewer ran each script again before reading the result.
+
+### 32.1 E50, stage 1: a fixed code in which a value stands for one byte is learned under both rules
+
+`E50_STAGE1_VERIFICATION_20261117.md`, `e50_stage1_verify.py`; the worker's report is on `claude/e50-fixed-input-code-017dSE`. E42's network with ten local connections a cell (`F10`) was given, in place of the learned byte table and the first layer, a fixed code in which each of the 46 bytes turns on eleven values of its own; every cell still reads all 512 values (setting `C-dense`). Seed 73129.
+
+| | `C-dense`, back-propagation | `F10`, back-propagation | `C-dense`, sweep | `F10`, sweep |
+|---|---|---|---|---|
+| Updates to 80 on A | 7,680 | 8,704 | 13,056 | 13,312 |
+| Updates to 80 on R | 6,912 | 9,472 | 12,800 | 15,104 |
+| Level of A, of R at the end | 97.7, 97.1 | 93.2, 94.1 | 93.5, 94.1 | 91.2, 89.3 |
+
+By the bands fixed beforehand every comparison is *about the same*. On R the network with the fixed code reaches 80 earlier than each of `F10`'s three seeds under both rules (6,912 against 7,936 to 9,728; 12,800 against 14,336 to 15,104); with one seed of `C-dense` this is not read as a gain. The verification reproduces every figure of the report from the receipts, and the final weights give the recorded answers on 600 of 600 items in each run. The learned code is therefore not needed for learning the first family: a code that a cell could read part of, value by value, does as well with every cell reading all of it. Stage 2, in which a cell reads 16 of the 512 values, is running; it is the case that E49 found not learned under the sweep with the learned code.
+
+### 32.2 The passage of a difference between items at the starting weights of the local networks
+
+`SIGNAL_PASSAGE_AT_THE_START_20261117.md`, `signal_passage.py` (item 1 of the plan; seed 73129). Two items that differ in one byte are run through a network at its starting weights, and the difference of the cells' states is followed from the cells that read the byte to the others.
+
+- **E47** (1,024 cells, input and output at a boundary of 256 cells). Of the difference at the interface, the first ring of far cells holds 0.19, the second 0.02 and the third 0.003. No uniform change of the start brings the third ring to a third without the difference growing along the item; the recurrent weights times 3 give 0.14 outward and 0.15 back and are the largest multiple without growth. The reason is the wiring: only 2.4 to 4.0 of a far cell's ten connections come from the ring nearer the interface. Training raised the passage into the first two rings and not into the third.
+- **E49** (a cell reads 16 of the 512 input values, learned code). Every cell reads values that differ, and the cells carry a difference as evenly as in `F10`. The start has nothing to repair, so the sweep's failure in E49 is not a matter of the start.
+- **E50, `C16-in`** (a cell reads 16 values of the fixed code). The cells that read neither of the two bytes hold 0.27 of the reading cells' difference; the recurrent weights times 1.5 to 2 raise this to 0.39 to 0.51.
+- In every form in which all cells are updated at every position, `F10` included, a difference of one byte shrinks at the start by a factor of 0.63 to 0.66 a position. In E47's two trained networks of the arm `one` it no longer shrinks.
+
+Consequences. E53 (32.6) is written for E47 alone. E49's case goes to the question of the sweep's scale (item 18 of the plan). A larger start for `C16-in` is decided when E50's stage 2 is read.
+
+### 32.3 E40's saving, counted in everything the learner was given
+
+`E40_SAVING_IN_WHOLE_EXPERIENCE_20261117.md`, `e40_whole_experience.py` (item 26 of the plan). The record states the saving of a lived network on a new family in items of that family only. Three accounts side by side:
+
+- **The new family alone.** A lived network generalises the new family from 2,756 taught pairs (a tenth); a fresh network needs 7,920 to 15,840 pairs of a family of this kind (a quarter to a half), and given the same tenth it reaches 6 to 12%. The lived network needs 2.9 to 5.7 times fewer pairs and 19 to 88 times fewer items. This holds under both rules.
+- **With everything before.** Before the new family the lived network was given 30,576 distinct pairs and 24,000 compositions in 3.9 million items. Counted so, it has used 2.1 to 4.2 times the pairs and 5.5 to 17.2 times the items of one fresh network.
+- **Over further families.** If each further family cost what E40's did, the lived learner's total would fall below that of fresh networks after 3 to 14 further families in pairs and 6 to 18 in items. No run supports this: no lived network has been taught a second new family, and the earlier families fall while the new one is learned (the family of modulus 97 from 91 to 99% to 18 to 40%).
+
+On Mr. Xu's question of 17 November this gives a first, limited answer. The record does show a learner that needs far fewer samples, in the first account, and the saving comes from what the network learned before; it is found under back-propagation as much as under the sweep, and between the two rules the sweep shows no saving anywhere. Whether the saving outweighs the experience that produced it depends on many families being learned in turn while the earlier ones are kept, which is what the long lives measure and what E51 and E58 work on.
+
+### 32.4 E38's two checks that failed under the sweep
+
+`E38_FAILED_CHECKS_UNDER_THE_SWEEP_20261117.md`, `e38_checks_read.py` (item 27 of the plan). E38's checks 2 and 3 compare, after 64 updates, two runs that should be equal. Under back-propagation they pass (largest difference 2.8e-6 and 6.0e-7). Under the sweep they failed (up to 5.2e-4 and 7.8e-3); the worker reported it, and an agent of the reviewer that searched the fetched branches found no ruling (review 9.141, which reports E38, does not mention the failures). The cause is the check: the sweep passes the error through the signs of the weights, so that one weight near zero whose sign differs between two runs changes the next update by 1e-5 to 2e-3, where back-propagation gives at most 4e-7. Before such a point the two runs agree to 1.5e-6 in single precision, and in double precision to 5.9e-15 over all 64 updates. All twenty weight files of E38 give the receipts' counts. The reviewer's reading, for your ruling (item 25 of section 1): the results under the sweep stand; checks 2 and 3 remain failed as specified; and a check of this kind on a rule that uses signs should compare in double precision, or before the first sign that differs.
+
+### 32.5 The gate of the long-life world applied to the sweep
+
+`E44_GATE_FOR_THE_SWEEP_20261117.md`, `e44_gate_sweep.py` (item 28 of the plan). The visit length of 256 updates was chosen by the gate for the conventional learner. From the calibration's receipts, the sweep meets both conditions of the gate at 256 updates in all eight worlds (figure 0.54 to 0.74, against 0.30 to 0.64 for the conventional learner) and would meet them at 128 as well. Two things follow for the reading of the sweep's long lives. First, before any life the arm `sweep` is above `naive` by 0.161 in the gate's figure (seven of eight worlds), while the sweep continued from back-propagation's birth is 0.257 below: the difference belongs to the rule together with its birth. Second, a late level of the sweep that is ahead by such an amount therefore shows nothing that a long life adds. The helper was asked to report the level of the first 64 visits beside the late level, and the change of the difference with its interval; "ahead in late level" alone is not read as overtaking.
+
+### 32.6 The host, and the briefs written since revision 22
+
+**The host.** A worker's machine is stopped about five minutes after its session's turn ends, with the disk kept, and detached runs die with it. The first long lives lost 51 minutes in this way and were started again; the other sessions were warned, checked their runs, and now hold their turns open while runs proceed. Every brief written since carries this as a rule for the worker. The reviewer's own container was restarted twice; nothing committed was lost.
+
+**Briefs.** Each is checked by an agent that has not seen the reviewer's reasoning before it is released.
+
+| Job | Plan item | What it asks | State |
+|---|---|---|---|
+| E54 | 10 | The limited and the periodic network with a quarter, 15% and a tenth of the pairs taught, and the dense network at the half width with a tenth for three times the length | Revision 3 after two checks (eight and ten defects entered); the worker runs since 22:40 |
+| E58 | 19 | E48's gated term against free learning, with the decay of the lived weights separated from the place of the change, run to 8,192 updates, and both at taught fractions of 0.05, 0.10 and 0.20 | Revision 1, in check |
+| E59 | 15 | A task of another kind (E43's) learned by a fresh, a born and a lived network from 2,048, 512 and 256 taught pairs | Revision 1, in check |
+| E53 | 9 | E47's network without weight decay, and without decay from a start with the recurrent weights times 3: do the cells beyond the first ring come into use? | Revision 1, in check |
+
+Rule 5 of the plan now allows six lines of work, of which at most four in their first hours; its reason is given there.
