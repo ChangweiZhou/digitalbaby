@@ -18,7 +18,7 @@ Mr. Xu, 17 November: "复盘一下，把这种所有能做的但没有做的都�
 
 ## 3. What went wrong before, stated once
 
-Several comparisons were made under settings chosen at the start for the dense network under back-propagation and carried unchanged into every later experiment: the starting size of the weights, the learning rate and decay, the taught fraction, the share of rehearsal. A method tested under settings chosen for another method can look worse than it is. Questions that needed such a setting to be varied were therefore never asked. The reviewer designed or audited those experiments and did not see it.
+Several comparisons were made under settings fixed early and carried unchanged into every later experiment. The inventory of the record (item 3) gives their origins: the learning rate, 0.001, was taken from the literature on such tasks and given to both rules, and no run has another value; the weight decay, 0.25, was chosen for the sign rule on earlier learners and back-propagation took it over in E26; the starting size of the weights is the dense network's, rescaled where connections are removed so that a cell's input keeps the dense network's variance; the taught fraction is a half; the share of rehearsal is a half. A method tested under settings fixed for another network or another method can look worse, or better, than it is, and questions that needed such a setting to be varied were never asked. The reviewer designed or audited those experiments and did not see it. (In its first version this paragraph, and the reviewer's messages of 17 November, said that the learning rate and the decay had been chosen for back-propagation. The record does not say that; the sentence above replaces it.)
 
 ## 4. Rules of order
 
@@ -65,3 +65,4 @@ The numbers E52 to E56 are the reviewer's; the coordinator may renumber them.
 | 21:07 | Item 8: the brief of E52 written and given to a check. Items 1, 2, 3 running. |
 | 21:10 | Item 5: the runner's checks passed and the runner change was read and accepted; the trial runs since 21:04. Item 6: the helper session for the sweep's long lives started. |
 | 21:25 | Item 10: the brief of E54 written and given to a check. |
+| 21:29 | Item 3, second half (structure and the long-life world): the inventory is in `INVENTORY_STRUCTURE_AND_WORLD_20261117.md`: 17 comparisons made under a setting fixed for one side, 50 things not tested. The reviewer checked its statements on the origin of the learning rate and the decay against the code and the review; section 3 above is corrected by it. The entries are merged into the list when the other half is in. |

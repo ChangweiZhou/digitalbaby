@@ -29,7 +29,7 @@ Your checkout is the main worker's branch `claude/e44-l2-first-long-lives` as it
 
 Eight lives. Every setting is release 1's: `--world lw --H 256 --U 128`, visits of 256 updates, weight decay 0.25, learning rate 0.001, `--list-every 8 --decay-distances none`, `--save-states 64,128,256,384,512,640,768,896,1024`. Order: world 1's two lives and world 2's `sweep` first; then the rest. At the main worker's measured 3.45 CPU-hours a life and the sweep's 7 to 11% more a update (E41), about 30 CPU-hours.
 
-The learning rate 0.001 is the one every experiment has used and was chosen for back-propagation. Job E52 is testing other rates for both rules. If it finds that the sweep gains from another rate at this width, the reviewer will ask for these lives again at that rate; say so in your report.
+The learning rate 0.001 is the one every experiment has used; it was taken from the literature on such tasks and given to both rules, and it has never been varied for either. Job E52 is testing other rates for both rules. If it finds that the sweep gains from another rate at this width, the reviewer will ask for these lives again at that rate; say so in your report.
 
 ## 5. Checks before the lives (a receipt for each)
 
