@@ -40,8 +40,10 @@ Terms (for a cell at one position of one item, with update gate z, candidate n, 
                   1), over all pairs (item, position) of the set: these are the vectors that the items present to the
                   connections between cells, as directions_in_use.py takes them for its "recurrent" row.  The count at a
                   share s is the least number of leading eigenvectors that hold the share s of the trace; "above 1e-6" is
-                  the number of eigenvalues above 1e-6 of the largest.  "after": the same with the states after each
-                  position in place of the states before it.
+                  the number of eigenvalues above 1e-6 of the largest.  Both are relative to the size of the whole vector,
+                  which grows with the number of cells; "root-mean-square size above 0.01 (0.05)" is the number of
+                  eigenvalues above 1e-4 (2.5e-3), an absolute mark on the same scale as the marks for single cells.
+                  "after": the same with the states after each position in place of the states before it.
   restricted to the cells a cell reads   the same counts for the principal submatrix of the cell's own sources, itself
                   and the constant (12 directions where a cell reads 10 cells).
 
@@ -294,11 +296,12 @@ def measure(net, groups):
 
 
 def counts(M):
-    """Leading eigenvectors holding 99%, 99.9%, 99.99% of the trace; eigenvalues above 1e-6 of the largest; eigenvalues, vectors."""
+    """Leading eigenvectors holding 99%, 99.9%, 99.99% of the trace; eigenvalues above 1e-6 of the largest; eigenvalues above
+    1e-4 and above 2.5e-3 (a root-mean-square size of the vectors along the direction of 0.01 and of 0.05); eigenvalues, vectors."""
     w, V = np.linalg.eigh(M)
     w, V = w[::-1].clip(min=0), V[:, ::-1]
     c = np.cumsum(w) / w.sum()
-    return [int(np.searchsorted(c, s)) + 1 for s in SHARES] + [int((w > 1e-6 * w[0]).sum())], w, V
+    return [int(np.searchsorted(c, s)) + 1 for s in SHARES] + [int((w > 1e-6 * w[0]).sum()), int((w > 1e-4).sum()), int((w > 2.5e-3).sum())], w, V
 
 
 def sub(M, cells):
@@ -348,16 +351,17 @@ for cfg, rule in NETS:
             print(f"      {gname:10s} ({int(sel.sum()):4d}) {sname:9s} {q3(r['sd'][sel])}; below: {below(r['sd'], sel)} | within lengths: below {below(r['sd_within'], sel)}"
                   f" | largest over positions: below {below(r['sd_max'], sel)}")
     # ---- 3
-    kf, _, Vf = counts(fam["Mb"])
+    kf, wf, Vf = counts(fam["Mb"])
     ka = counts(fam["Ma"])[0]
     ku = counts(unr["Mb"])[0]
-    print(f"   3. directions the family's items occupy, of {C + 1}: 99% {kf[0]}, 99.9% {kf[1]}, 99.99% {kf[2]}, eigenvalues above 1e-6 of the largest {kf[3]}"
-          f"   (states after each position: {ka[0]}, {ka[1]}, {ka[2]}, {ka[3]}; the unrelated items' own: {ku[0]}, {ku[1]}, {ku[2]}, {ku[3]})")
+    print(f"   3. directions the family's items occupy, of {C + 1}: 99% {kf[0]}, 99.9% {kf[1]}, 99.99% {kf[2]}, eigenvalues above 1e-6 of the largest {kf[3]};"
+          f" root-mean-square size along the direction above 0.01: {kf[4]}, above 0.05: {kf[5]}; largest eigenvalue {wf[0]:.1f}, trace {wf.sum():.1f}")
+    print(f"      the same six counts with the states after each position: {', '.join(map(str, ka))}; for the unrelated items' own vectors: {', '.join(map(str, ku))}")
     bygroup = {}
     for gname, sel in list(net.groups.items())[1:] + ([("rings 2 and 3", net.ring >= 2), ("far cells", net.ring >= 1)] if isinstance(net, Net47) else []):
         kg = counts(sub(fam["Mb"], np.nonzero(sel)[0]))[0]
         bygroup[gname] = (int(sel.sum()) + 1, kg)
-        print(f"      restricted to {gname} and the constant, of {int(sel.sum()) + 1}: 99% {kg[0]}, 99.9% {kg[1]}, 99.99% {kg[2]}, above 1e-6 {kg[3]}")
+        print(f"      restricted to {gname} and the constant, of {int(sel.sum()) + 1}: 99% {kg[0]}, 99.9% {kg[1]}, 99.99% {kg[2]}, above 1e-6 {kg[3]}; root-mean-square size above 0.01: {kg[4]}, above 0.05: {kg[5]}")
     percell = None
     if not net.dense:
         percell = np.array([counts(sub(fam["Mb"], net.sources[i]))[0] for i in range(C)])            # (C, 4)
@@ -457,19 +461,19 @@ print("| Network | Cells | Family right, % | Change factor, family | Change fact
 print("|---|---|---|---|---|---|---|---|---|")
 for r in ROWS:
     print(f"| {r['name']} | {r['C']} | {r['right']:.1f} | {r['cf_f']} | {r['cf_u']} | {r['st_f']} | {r['st_u']} | {r['sd_f']} | {r['sd_u']} |")
-print("\n| Network | Directions, of | 99% | 99.9% | 99.99% | Above 1e-6 | Not among the 99.99%; not above 1e-6 | Of the 12 of a cell's sources, 99.99%: least / median / most | Cells with all 12 | Correlation of the change factor | Unrelated inside the family's directions (a random direction) |")
-print("|---|---|---|---|---|---|---|---|---|---|---|")
+print("\n| Network | Directions, of | 99% | 99.9% | 99.99% | Above 1e-6 | Not among the 99.99%; not above 1e-6 | Root-mean-square size above 0.01; above 0.05 | Of the 12 of a cell's sources, 99.99%: least / median / most | Cells with all 12 | Correlation of the change factor | Unrelated inside the family's directions (a random direction) |")
+print("|---|---|---|---|---|---|---|---|---|---|---|---|")
 for r in ROWS:
     pc = r["percell"]
     cellpart = "not applicable | not applicable" if pc is None else f"{pc[:, 2].min()} / {int(np.median(pc[:, 2]))} / {pc[:, 2].max()} | {int((pc[:, 2] == 12).sum())}"
-    print(f"| {r['name']} | {r['C'] + 1} | {r['k'][0]} | {r['k'][1]} | {r['k'][2]} | {r['k'][3]} | {r['C'] + 1 - r['k'][2]}; {r['C'] + 1 - r['k'][3]} | {cellpart} | {r['corr']:+.2f} | {r['inside']:.4f} ({r['k'][2] / (r['C'] + 1):.3f}) |")
-print("\n| Network | Group | Cells | Variation with the item, family | Variation, unrelated | State size, family | Change factor, family | Change factor, unrelated | Directions of the group and the constant: 99.99%, above 1e-6, of | Of the 12 of a cell's sources, 99.99%: least / median / most |")
-print("|---|---|---|---|---|---|---|---|---|---|")
+    print(f"| {r['name']} | {r['C'] + 1} | {r['k'][0]} | {r['k'][1]} | {r['k'][2]} | {r['k'][3]} | {r['C'] + 1 - r['k'][2]}; {r['C'] + 1 - r['k'][3]} | {r['k'][4]}; {r['k'][5]} | {cellpart} | {r['corr']:+.2f} | {r['inside']:.4f} ({r['k'][2] / (r['C'] + 1):.3f}) |")
+print("\n| Network | Group | Cells | Variation with the item, family | Variation, unrelated | State size, family | Change factor, family | Change factor, unrelated | Directions of the group and the constant: 99.99%, above 1e-6, of | Root-mean-square size above 0.01; above 0.05 | Of the 12 of a cell's sources, 99.99%: least / median / most |")
+print("|---|---|---|---|---|---|---|---|---|---|---|")
 for r in ROWS:
     if len(r["groups"]) > 1:
         for g, d in r["groups"].items():
             pc = d["pc"]
-            print(f"| {r['name']} | {g} | {d['n']} | {d['sd_f']} | {d['sd_u']} | {d['st_f']} | {d['cf_f']} | {d['cf_u']} | {d['k'][2]}, {d['k'][3]}, {d['n'] + 1} | {pc[:, 2].min()} / {int(np.median(pc[:, 2]))} / {pc[:, 2].max()} |")
+            print(f"| {r['name']} | {g} | {d['n']} | {d['sd_f']} | {d['sd_u']} | {d['st_f']} | {d['cf_f']} | {d['cf_u']} | {d['k'][2]}, {d['k'][3]}, {d['n'] + 1} | {d['k'][4]}; {d['k'][5]} | {pc[:, 2].min()} / {int(np.median(pc[:, 2]))} / {pc[:, 2].max()} |")
 print("\n| Network | Below | Cells that do not vary | Interface, ring 1, ring 2, ring 3 | Of these, on unrelated items: variation below the same mark; mean state within the mark of the family's | Sources that vary, of 10: mean; cells with none | Cells that vary and read them: mean; cells with none | Neither | Read by an interface cell | Silent; closed; neither |")
 print("|---|---|---|---|---|---|---|---|---|---|")
 for r in ROWS:
