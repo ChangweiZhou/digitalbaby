@@ -1,4 +1,4 @@
-"""Checks behind AUDIT_E50_SPARSE_INPUT_CODE_BRIEF_20261116.md (the E50 brief and e50_sparse_code_spec.py at f8f62df6).
+"""Checks behind AUDIT_E50_SPARSE_INPUT_CODE_BRIEF_20261117.md (the E50 brief and e50_sparse_code_spec.py at f8f62df6).
 
 Read-only.  Nothing is trained, torch is not used, and no code of another branch is run: files are read with `git show`.
 The code and the forward are e50_code_reader.py (written from the brief's text) beside the E42 and E49 readers.
@@ -11,10 +11,19 @@ The code and the forward are e50_code_reader.py (written from the brief's text) 
   D  the start, on the starting network of seed 73129: the first-batch losses beside the coordinator's; sizes of the
      drives per setting beside E42's F10; how far one update can move a cell's input; the two forms of the forward
   E  multiply-adds a position per setting under two ways of counting
-  F  the readings: E42's F10 of seed 73129; what can be recorded against `C-dense`; E49's partial receipts; cost
+  F  the readings: E42's F10 of seed 73129; what can be recorded against `C-dense`; cost
   G  the test of whether cells use what arrives through neighbours (the mechanics, on the starting network)
+  H  the record that arrived after the brief: E49's eight runs (a36de661) and E47's trial (578a877b), recomputed from the
+     receipts; what they leave of the brief's settings, dose and predictions
+  I  the same eight runs of E49 from their final weights: the masks are the reader's draws, nothing outside them, and
+     the counts of A, R and the length test recomputed by a decoder that shares no structure with the runner's forward
+  J  the codes E49's networks learned: their size, whether the values a cell reads still tell the needed bytes apart, and
+     the size of a cell's input for a needed byte (add the word `linear` for the fitted linear rule, about 7 minutes)
+  K  the settings the audit asks for: `C16-in` and the setting in which every cell reads one value of every used byte
+     (the draw's digest for three seeds, the reader's first-batch loss, sizes at the start, multiply-adds)
 
-Run from the repository root:  PYTHONDONTWRITEBYTECODE=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e50_brief_checks.py [A B C D E F G]
+Run from the repository root:
+    PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e50_brief_checks.py [A B C D E F G H I J K]
 """
 import hashlib, json, os, subprocess, sys
 from random import Random
@@ -29,7 +38,8 @@ import e50_code_reader as R50
 WREF = "ed4431f2"                                   # claude/gallant-dijkstra-i9zgsr, E42's worker: F10's records
 SREF = "8b48f76b"                                   # claude/e47-worker-stage-0-3d0ya6: a starting network of seed 73129
 SPATH = "MOD97_LOCAL_RULE_20261106/exp45/e47_qual/check2_runs/dry/e47_16_one_S_dry2048_73129_start.pt"
-EREF = "d9ec911a"                                   # claude/peaceful-noether-vcvrmf, E49's worker: the runner, its checks, partial receipts
+EREF = "a36de661"                                   # claude/peaceful-noether-vcvrmf, E49's worker: the runner, its checks, the eight complete runs
+E47REF = "578a877b"                                 # claude/e47-worker-stage-0-3d0ya6: E47's trial complete (four runs at 1,024 cells)
 EPATH = "MOD97_LOCAL_RULE_20261106/exp45/e49_qual/check2_73129_runs/e49_F10_S_dry2048_73129_start.pt"
 P = "MOD97_LOCAL_RULE_20261106/exp45/"
 SEED, SEEDS = 73129, (73129, 93683, 116089)
@@ -38,7 +48,7 @@ DOSE, DREC = 24576, 24576 - 512                    # the last update at which a 
 DTYPE = {"FloatStorage": "<f4", "LongStorage": "<i8", "BoolStorage": "?"}
 COMMITTED = "12111044f0f8bc70"                     # OUTPUT_E50_SPEC_MAC.txt, seed 73129
 BRIEF_LOSS = {"C-dense": 5.597, "C64": 5.556, "C16": 5.609}
-want = set(sys.argv[1:]) or set("ABCDEFG")
+want = (set(sys.argv[1:]) & set("ABCDEFGHIJK")) or set("ABCDEFGHIJK")
 med = lambda v: (int(np.sort(v)[len(v) // 2 - 1]), int(np.sort(v)[len(v) // 2]))     # the two middle values of an even count
 rms = lambda a: float(np.sqrt((np.asarray(a, np.float64) ** 2).mean()))
 
@@ -358,19 +368,7 @@ if "F" in want:
             print(f"      {rule} on {m}: if `C-dense` needs what F10 needed ({x0:,}), the largest factor that can be recorded is {DREC / x0:.2f}; `C-dense` may be slower than F10 by at most {DREC / 1.5 / x0:.2f} for *more* to remain possible;"
                   f" for the 50 threshold F10 needed {ref[rule][(m, 50)]:,} (factor {DREC / ref[rule][(m, 50)]:.2f})")
     print("   the two answer bytes: with 1,000 items of each of two operations a share has a standard error of at most 1.1 points, and a difference of two shares on the same items less than 1.6")
-    print(f"   E49's runs of the same masks on the learned code, as far as E49's worker has committed them ({EREF}; runs not complete), beside F10 at the same update:")
-    for nm in ("I64_S", "I64_B", "I16_S", "I16_B"):
-        try:
-            J = json.loads(show(f"{P}e49/e49_{nm}_{SEED}.json", EREF))
-        except subprocess.CalledProcessError:
-            print(f"      {nm}: no receipt on file"); continue
-        r = J["curve"][-1]
-        Jf = json.loads(show(f"{P}e42/e42_F10_{nm[-1]}_{SEED}.json", WREF))
-        rf = next(q for q in Jf["curve"] if q["step"] == r["step"])
-        cpu = (r["cpu_updates"] + r["cpu_scoring"]) / 3600 * DOSE / r["step"]
-        print(f"      {nm}: at update {r['step']:,} of {DOSE:,}: A {r['A']:.1f}, R {r['R']:.1f}, taught {r['taught']:.1f}, loss {r['loss']:.3f} (complete: {J.get('complete')}); F10 at that update: A {rf['A']:.1f}, R {rf['R']:.1f};"
-              f" at this rate a run takes {cpu:.2f} CPU-hours")
-    print(f"   cost: at the rate E49's worker measured for the specification's forward (1.11 to 1.22 CPU-hours a run), two runs are about 2.3 CPU-hours, six about 7 and eight about 9.3; with three processes six runs take two rounds")
+    print("   cost: E42's F10 took 0.87 and 0.86 CPU-hours; E49's eight runs with the specification's masked forward took 0.90 to 1.02 CPU-hours each, scoring included (part H); two runs of the dose are about 2 CPU-hours")
 
 # ------------------------------------------------------------------------------------------------ G
 if "G" in want:
@@ -400,3 +398,261 @@ if "G" in want:
     sh_read = np.abs(Lread - L0).max(1) / gap
     print(f"   at the start, before any learning, the largest change of a logit at `=` when only the cells that read neither digit take the other run's states is {np.median(sh_non):.2f} of the change between the two runs (median over items),"
           f" and {np.median(sh_read):.2f} when only the cells that read one of the two digits do.  On a trained network the same two figures, and the share of items whose first answer byte follows the patched cells, say which cells carry the digit")
+
+# ------------------------------------------------------------------------------------------------ the record after the brief
+E49P, E47P = P + "e49/", P + "e47/"
+RUNS49 = [(s, r) for r in ("B", "S") for s in ("I64", "I16", "in16", "out8")]
+# E49_REPORT.md at a36de661, the summary table: updates to 80 on R (three rows), the level of R, R's rise over the last 2,048 updates
+REPORT49 = {("I64", "B"): (None, 65.17, 7.88), ("I16", "B"): (None, 16.87, 3.37), ("in16", "B"): (20480, 82.53, 0.65), ("out8", "B"): (None, 70.77, 8.60),
+            ("I64", "S"): (None, 0.93, -0.25), ("I16", "S"): (None, 0.90, -0.02), ("in16", "S"): (None, 1.37, -0.35), ("out8", "S"): (None, 7.75, 2.37)}
+rising = lambda cv: float(np.mean([r["R"] for r in cv[-3:]]) - np.mean([r["R"] for r in cv[-11:-8]]))    # against the three rows ending 2,048 updates earlier
+num = lambda v: "not reached" if v is None else f"{v:,}"
+
+
+def receipt49(s, r):
+    J = json.loads(show(f"{E49P}e49_{s}_{r}_{SEED}.json", EREF))
+    assert J["complete"] and J["setting"] == s and J["rule"] == r and len(J["curve"]) == 97 and J["curve"][-1]["step"] == DOSE
+    return J
+
+
+if "H" in want:
+    print(f"H. the record that arrived after the brief, recomputed from the receipts: E49's eight runs ({EREF}) and E47's trial ({E47REF}); seed {SEED}, 24,576 updates, thresholds in the three-row version")
+    f10 = {}
+    for rule in ("B", "S"):
+        cv = json.loads(show(f"{P}e42/e42_F10_{rule}_{SEED}.json", WREF))["curve"]
+        f10[rule] = {k: reach(cv, k[0], int(k[1:])) for k in ("A50", "A80", "R50", "R80")}
+        f10[rule].update(A=level(cv, "A"), R=level(cv, "R"), len40=level(cv, "len40"))
+        print(f"   E42's F10 {rule} (dense interface, learned code): 80 on A at {num(f10[rule]['A80'])}, 80 on R at {num(f10[rule]['R80'])}, 50 on R at {num(f10[rule]['R50'])}; levels A {f10[rule]['A']:.1f}, R {f10[rule]['R']:.1f}, 40 letters {f10[rule]['len40']:.1f}")
+    rec, same = {}, True
+    for s, r in RUNS49:
+        J = receipt49(s, r); cv = J["curve"]
+        d = {k: reach(cv, k[0], int(k[1:])) for k in ("A50", "A80", "R50", "R80")}
+        d.update(A=level(cv, "A"), R=level(cv, "R"), len40=level(cv, "len40"), rise=rising(cv), loss=cv[-1]["loss"], cpu=(J["cpu_updates"] + J["cpu_scoring"]) / 3600,
+                 top=max(max(q["A"], q["R"], q["taught"], q["len12"], q["len40"]) for q in cv), ma=J["multiply_adds_per_position"])
+        rec[(s, r)] = d
+        rep = REPORT49[(s, r)]
+        same &= d["R80"] == rep[0] and abs(d["R"] - rep[1]) < 0.006 and abs(d["rise"] - rep[2]) < 0.006
+        print(f"   E49 {s:5s} {r} (K_IN {J['k_in']:3d}, K_OUT {J['k_out']:3d}; {d['ma']:,} multiply-adds a position): 80 on A at {num(d['A80'])}, 80 on R at {num(d['R80'])}, 50 on R at {num(d['R50'])};"
+              f" levels A {d['A']:.1f}, R {d['R']:.1f}, 40 letters {d['len40']:.1f}; R over the last three rows against 2,048 updates earlier {d['rise']:+.2f}; the largest score on any panel at any row {d['top']:.1f};"
+              f" loss at the end {d['loss']:.3f}; {d['cpu']:.2f} CPU-hours")
+    print(f"   the eight rows agree with the summary table of E49_REPORT.md (updates to 80 on R, the level of R, the rise): {same}")
+    print("   the four operations apart, on untaught pairs at 12 letters (300 items each; the score A is the mean of add and sub): share right at the last row, and updates to 80 in the three-row version")
+    def ops(cv):
+        cur = lambda op: [dict(step=q["step"], v=100 * q["A_counts"][op + "89"] / 300) for q in cv]
+        return {op: (cv[-1]["A_counts"][op + "89"] / 3, reach(cur(op), "v", 80)) for op in ("add", "sub", "max", "min")}
+    for rule in ("B", "S"):
+        o = ops(json.loads(show(f"{P}e42/e42_F10_{rule}_{SEED}.json", WREF))["curve"])
+        print(f"      F10   {rule}: " + "; ".join(f"{op} {o[op][0]:.0f} ({num(o[op][1])})" for op in o))
+    for s_, r in RUNS49:
+        o = ops(receipt49(s_, r)["curve"])
+        print(f"      {s_:5s} {r}: " + "; ".join(f"{op} {o[op][0]:.0f} ({num(o[op][1])})" for op in o))
+    b, f = rec[("in16", "B")], f10["B"]
+    print(f"   under backpropagation the one limited setting that reaches 80 on R is `in16` (16 values a cell, dense readout): {b['R80']:,} against F10's {f['R80']:,}, a factor of {b['R80'] / f['R80']:.2f}"
+          f" (on A {b['A80']:,} against {f['A80']:,}, {b['A80'] / f['A80']:.2f}); `out8` (dense input, 8 cells a readout unit) does not reach it; under the sweep no setting passes {max(rec[(s, 'S')]['top'] for s in ('I64', 'I16', 'in16')):.1f}"
+          f" on any panel with a limited input, and `out8` ends at {rec[('out8', 'S')]['R']:.1f} on R")
+    fac = b["R80"] / f["R80"]
+    print(f"   what this leaves of E50's dose: a setting that costs against `C-dense` what `in16` costs against F10 (a factor of {fac:.2f} on R) is recorded within 24,064 updates only if `C-dense` reaches 80 on R by update {DREC / fac:,.0f},"
+          f" that is at most {DREC / fac / f['R80']:.2f} times F10's {f['R80']:,}; with a dose of 49,152 updates (the last recordable update 48,640) `C-dense` may need up to {48640 / fac:,.0f}, and a factor of up to {48640 / f['R80']:.1f} can be recorded if it needs what F10 needed")
+    print("   the brief's predictions beside E49's outcomes on the same masks (the coordinator's chance; what the same masks did on the learned code, where every cell can know every byte):")
+    for name, chance, key in (("P50.4 `C64`, backpropagation, reaches 80 on R", 65, ("I64", "B")), ("P50.5 `C16`, backpropagation, reaches 80 on R", 35, ("I16", "B")), ("P50.6 `C16`, sweep, reaches 80 on R", 15, ("I16", "S"))):
+        d = rec[key]
+        print(f"      {name}: {chance}%; E49's `{key[0]}` under the same rule: 80 on R {num(d['R80'])}, level of R {d['R']:.1f}, rise {d['rise']:+.2f}")
+    print("   E47's trial (1,024 cells, of which 256 read the byte's whole code and are read by the readout; the other 768 have no input and are not read):")
+    for arm in ("one", "place"):
+        for r in ("B", "S"):
+            J = json.loads(show(f"{E47P}e47_32_{arm}_{r}_{SEED}.json", E47REF)); cv = J["curve"]
+            assert J["complete"] and len(cv) == 97 and J["interface_cells"] == 256 and J["far_cells"] == 768
+            R80, A80 = reach(cv, "R", 80), reach(cv, "A", 80)
+            last = cv[-1]
+            print(f"      `{arm}` {r}: 80 on A at {num(A80)}, 80 on R at {num(R80)} (F10: {num(f10[r]['A80'])}, {num(f10[r]['R80'])}; a factor of {R80 / f10[r]['R80']:.2f} on R); R at the last row {last['R']:.1f},"
+                  f" with the cells without input held at zero {last['far_off']['R']:.1f}, held at their mean {last['far_mean']['R']:.1f}; 40 letters, last three rows {level(cv, 'len40'):.1f}")
+
+# ------------------------------------------------------------------------------------------------ I
+if "I" in want or "J" in want:
+    from np_gru import panel
+    NEED = [R50.USED.index(b) for b in R50.NEEDED]
+    LETS = [R50.USED.index(b) for b in R50.LETTERS]
+    DIGS = [R50.USED.index(b) for b in R50.DIGITS]
+
+    def tables49(W, F):
+        """For every byte: each cell's three input sums over the values the cell reads, and each readout unit's sum over the
+        byte's code, the biases included.  With a code that depends on the byte alone, this is all the input map and `l2` do."""
+        code = np.tanh(W["book.weight"].astype(np.float64) @ W["l1.weight"].T + W["l1.bias"])            # (258, 512)
+        Wi, bi = W["rnn.weight_ih_l0"].astype(np.float64), W["rnn.bias_ih_l0"]
+        cells = np.arange(U)
+        GI = np.empty((258, 3 * U))
+        for g in range(3):
+            if F.k_in == D:
+                GI[:, g * U:(g + 1) * U] = code @ Wi[g * U:(g + 1) * U].T + bi[g * U:(g + 1) * U]
+            else:
+                GI[:, g * U:(g + 1) * U] = np.einsum("vuk,uk->vu", code[:, F.in_idx], Wi[g * U + cells[:, None], F.in_idx]) + bi[g * U:(g + 1) * U]
+        L2 = code @ W["l2.weight"].T + W["l2.bias"]
+        return code, GI.astype(np.float32), L2.astype(np.float32)
+
+    def decode49(W, mask_cells, F, GI, L2, prompts, chunk=500):
+        """Greedy decoding of three bytes.  The prompt is run once; every sum runs over a cell's own sources and a readout
+        unit's own cells; the input is looked up in the two tables.  It shares no structure with the specification's forward."""
+        Wh, bh = W["rnn.weight_hh_l0"], W["rnn.bias_hh_l0"]
+        cells = np.arange(U)
+        src = np.array([np.nonzero(mask_cells[i])[0] for i in range(U)])
+        Wh_g = [Wh[g * U + cells[:, None], src] for g in range(3)]
+        Wo = None if F.k_out == U else W["lm.weight"][np.arange(D)[:, None], F.out_idx]
+
+        def step(tok, h):
+            gi, hin = GI[tok], h[:, src]
+            gh = [np.einsum("buk,uk->bu", hin, Wh_g[g]) + bh[g * U:(g + 1) * U] for g in range(3)]
+            r = R42.sigmoid(gi[:, :U] + gh[0]); z = R42.sigmoid(gi[:, U:2 * U] + gh[1]); n = np.tanh(gi[:, 2 * U:] + r * gh[2])
+            return ((1 - z) * n + z * h).astype(np.float32)
+
+        out = []
+        for a in range(0, len(prompts), chunk):
+            x = np.array([[BOS] + p for p in prompts[a:a + chunk]], dtype=np.int64)
+            h = np.zeros((len(x), U), np.float32)
+            for t in range(x.shape[1]):
+                h = step(x[:, t], h)
+            tok, gen = x[:, -1], []
+            for k in range(3):
+                o = (h @ W["lm.weight"].T if Wo is None else np.einsum("bjk,jk->bj", h[:, F.out_idx], Wo)) + W["lm.bias"]
+                tok = (np.tanh(L2[tok] + o) @ W["l3.weight"].T + W["l3.bias"]).argmax(1)
+                gen.append(tok)
+                if k < 2:
+                    h = step(tok, h)
+            out.extend(np.array(gen).T.tolist())
+        return out
+
+if "I" in want:
+    print(f"I. E49's eight runs from their final weights ({EREF}): the reader's decoder beside the receipt's last row (reader / receipt)")
+    AP = {f"{t[0]}{t[1]}": panel(t, split(t, .5, SEED)[1], SEED, ks=(12,), n=300)[12] for t in DEV}
+    RP = {}
+    for t in DEV[:2]:
+        held = split(t, .5, SEED)[1]
+        red = [(a, b) for a, b in held if (a + b >= 89 if t[0] == "add" else a - b < 0)]
+        RP[f"{t[0]}{t[1]}"] = [render(t, a, b, 0, None) for a, b in Random(f"e41|{SEED}|50|{t[0]}").sample(sorted(red), 1000)]
+    LEN_TASK = ("add", 89, b"p")
+    LP = panel(LEN_TASK, split(LEN_TASK, .5, SEED)[1], SEED, ks=(12, 40), n=300)
+    conn = R42.draw_connections(SEED, 10)
+    all_equal = True
+    for s, r in RUNS49:
+        J = receipt49(s, r); last = J["curve"][-1]
+        T = load(f"{E49P}e49_{s}_{r}_{SEED}.pt", EREF)
+        F = R49.Interface(SEED, int(T["k_in"]), int(T["k_out"]))
+        mask = T["mask"].astype(bool)
+        draws = bool((T["mask_in"].astype(bool) == F.mask_in).all() and (T["mask_out"].astype(bool) == F.mask_out).all()) and all(sorted(np.nonzero(mask[i])[0].tolist()) == sorted(conn[i] + [i]) for i in range(U))
+        zero = bool((T["rnn.weight_ih_l0"][~np.tile(F.mask_in, (3, 1))] == 0).all() and (T["lm.weight"][~F.mask_out] == 0).all() and (T["rnn.weight_hh_l0"][~np.tile(mask, (3, 1))] == 0).all())
+        _, GI, L2 = tables49(T, F)
+        count = lambda items: sum(g == list(a) for g, (_, a) in zip(decode49(T, mask, F, GI, L2, [p for p, _ in items]), items))
+        mA = {n: count(it) for n, it in AP.items()}; mR = {n: count(it) for n, it in RP.items()}; mL = {str(k): count(LP[k]) for k in (12, 40)}
+        eq = all(mA[n] == last["A_counts"][n] for n in mA) and all(mR[n] == last["R_counts"][n] for n in mR) and all(mL[k] == last["length_counts"][k] for k in mL)
+        all_equal &= eq and draws and zero
+        print(f"   {s:5s} {r}: the file's three masks are the reader's draws {draws}; every weight outside them is zero {zero}; A add, sub, max, min {[mA[n] for n in AP]} / {[last['A_counts'][n] for n in AP]};"
+              f" R add, sub {[mR[n] for n in RP]} / {[last['R_counts'][n] for n in RP]}; 12 and 40 letters {[mL[k] for k in mL]} / {[last['length_counts'][k] for k in mL]}; equal {eq}", flush=True)
+        del T
+    print(f"   all eight runs: masks, zeros and every count equal to the receipt's: {all_equal}")
+
+# ------------------------------------------------------------------------------------------------ J
+if "J" in want:
+    print("J. the codes E49's networks learned (tanh(l1(byte table)) of the 46 used bytes at the end of the run), on the values each cell reads")
+
+    def closest(X):
+        """X (cells, 46, K).  Per cell: the smallest distance between two of the 20 needed bytes over the mean such distance; the
+        same among the ten digits; whether two of the 46 used bytes coincide (closer than 1e-6)."""
+        d = np.sqrt(((X[:, :, None] - X[:, None]) ** 2).sum(-1))
+        iu = np.triu_indices(len(NEED), 1); dn = d[:, NEED][:, :, NEED][:, iu[0], iu[1]]
+        i10 = np.triu_indices(10, 1); dd = d[:, DIGS][:, :, DIGS][:, i10[0], i10[1]]
+        i46 = np.triu_indices(46, 1)
+        return dn.min(1) / dn.mean(1), dd.min(1) / dd.mean(1), (d[:, i46[0], i46[1]] < 1e-6).any(1)
+
+    LABEL = np.array([NEED.index(i) if i in NEED else len(NEED) for i in range(46)])                     # 21 classes: a letter is one class
+
+    def linear_rule(X, steps=8000):
+        """One linear rule on a cell's values (with a constant), 21 classes, fitted by gradient descent on the cross-entropy.
+        Returns for every cell how many of the 46 bytes the rule puts in their class."""
+        n = X.shape[1]
+        A = np.concatenate([X, np.ones((len(X), n, 1))], 2)
+        Y = np.eye(21)[LABEL]
+        Wt = np.zeros((len(X), A.shape[2], 21)); m = np.zeros_like(Wt); v = np.zeros_like(Wt)
+        for t in range(1, steps + 1):
+            lg = A @ Wt
+            lg -= lg.max(2, keepdims=True)
+            p = np.exp(lg); p /= p.sum(2, keepdims=True)
+            g = A.transpose(0, 2, 1) @ (p - Y) / n
+            m = .9 * m + .1 * g; v = .999 * v + .001 * g * g
+            Wt -= 0.05 * (m / (1 - .9 ** t)) / (np.sqrt(v / (1 - .999 ** t)) + 1e-8)
+            if t % 200 == 0 and ((A @ Wt).argmax(2) == LABEL).all():
+                break
+        return ((A @ Wt).argmax(2) == LABEL).sum(1)
+
+    def describe(tag, W, F, k_show):
+        code, GI, _ = tables49(W, F)
+        Z = code[R50.USED]                                                                               # (46, 512)
+        Zn = code[R50.NEEDED]
+        dall = np.sqrt(((Zn[:, None] - Zn[None]) ** 2).sum(-1)); iu = np.triu_indices(len(NEED), 1)
+        k0 = int(np.argmin(dall[iu])); pair = f"{R50.name(R50.NEEDED[iu[0][k0]])} and {R50.name(R50.NEEDED[iu[1][k0]])}"
+        drive = (GI[R50.NEEDED] - W["rnn.bias_ih_l0"]).astype(np.float64)                               # (20, 768): a cell's input for a needed byte
+        part = drive - drive.mean(0)                                                                    # what differs from the mean over the 20 needed bytes
+        line = (f"   {tag}: mean size of a weight of `l1` {np.abs(W['l1.weight']).mean():.3f}; of a value of the code {np.abs(Z).mean():.3f}; mean distance between the codes of two needed bytes {dall[iu].mean():.2f},"
+                f" the closest two ({pair}) at {dall[iu].min() / dall[iu].mean():.2f} of it; mean size of a kept weight of the input map {np.abs(W['rnn.weight_ih_l0'][np.tile(F.mask_in, (3, 1))]).mean():.3f};"
+                f" a cell's input for a needed byte, root mean square {rms(drive):.2f}, of which what differs between bytes {rms(part):.2f}")
+        if k_show:
+            Fm = R49.Interface(SEED, k_show, U)                                                         # the values a cell reads at K_IN = k_show
+            X = Z[:, Fm.in_idx].transpose(1, 0, 2)                                                      # (256, 46, K)
+            a, b, same = closest(X)
+            line += (f".  On the {k_show} values each cell reads: the closest two needed bytes at {a.min():.3f} of their mean distance on the worst cell, {np.median(a):.3f} on the median cell ({int((a < 0.10).sum())} cells below 0.10);"
+                     f" the closest two digits at {b.min():.3f}, {np.median(b):.3f}; cells on which two of the 46 used bytes coincide {int(same.sum())}")
+            if "linear" in sys.argv:
+                lin = linear_rule(X)
+                line += f"; a linear rule on the cell's values puts all 46 bytes in their class on {int((lin == 46).sum())} of 256 cells (least {lin.min()} of 46)"
+        print(line, flush=True)
+
+    W0, _ = start_network()
+    describe("the start of seed 73129 (dense interface; the values are those `I16` reads)", W0, R49.Interface(SEED, D, U), 16)
+    for rule in ("B", "S"):
+        T = load(f"{P}e42/e42_F10_{rule}_{SEED}.pt", WREF)
+        describe(f"E42's F10 {rule}, trained (dense interface; the values are those `I16` reads)", T, R49.Interface(SEED, D, U), 16)
+        del T
+    for s, r in RUNS49:
+        T = load(f"{E49P}e49_{s}_{r}_{SEED}.pt", EREF)
+        F = R49.Interface(SEED, int(T["k_in"]), int(T["k_out"]))
+        describe(f"E49 {s:5s} {r}, trained", T, F, F.k_in if F.k_in < D else 0)
+        del T
+    print(f"   E50's fixed code, for comparison: every two used bytes are {np.sqrt(2 * ON) * 3.2387:.2f} apart, and the code cannot change")
+
+# ------------------------------------------------------------------------------------------------ K
+if "K" in want:
+    print("K. the settings the audit asks for: a limited input with the dense readout (`C16-in`, the brief's conditional setting), and a setting in which every cell reads one value of every used byte")
+
+    OneOfEach = R50.OneOfEach
+
+    for seed in SEEDS:
+        F = OneOfEach(seed)
+        c = R50.Code(seed, amplitude=1.0)
+        m = c.reads(F)
+        per_value = F.mask_in.sum(0)
+        owned = np.array([o >= 0 for o in c.owner])
+        print(f"   seed {seed}, one value of every used byte: digest of the 256 lists {R49.digest16(F.in_src)}; every cell reads exactly one value of each of the 46 used bytes {bool((m == 1).all())};"
+              f" cells that read a value: {per_value[owned].min()} to {per_value[owned].max()} (mean {per_value[owned].mean():.1f}); the six values without an owner are read by no cell {bool((per_value[~owned] == 0).all())}")
+    W0, mask = start_network()
+    code = R50.Code(SEED)
+    items = stream_items(SEED, 64)
+    x, y, ymask = batch_tensor(items)
+    real = np.zeros(x.shape, bool)
+    for i, (p_, t_) in enumerate(items):
+        real[i, :len(p_) + len(t_)] = True
+    n_rec = 3 * U * 11
+    for nm, F in (("`C-dense`", R49.Interface(SEED, D, U)), ("`C16-in` (16 values a cell, dense readout)", R49.Interface(SEED, 16, U)), ("one value of every used byte (46 values a cell, dense readout)", OneOfEach(SEED))):
+        W = F.start(W0)
+        Hs, lg = R50.forward(W, mask, F, code, x)
+        GI, _ = R50.drives(W, F, code)
+        gi = GI[x] - W["rnn.bias_ih_l0"]
+        mr = code.reads(F)
+        need = [code.used.index(b) for b in R50.NEEDED]
+        drive = (GI[R50.NEEDED] - W["rnn.bias_ih_l0"]).reshape(len(R50.NEEDED), 3, U)
+        mm = np.broadcast_to(mr[:, need].T[:, None, :], drive.shape)
+        by = "; ".join(f"{k} value{'s' if k != 1 else ''} {rms(drive[mm == k]):.3f}" for k in (1, 2, 3, 11) if (mm == k).any())
+        weights = 3 * U * F.k_in + n_rec + D * F.k_out + D * D + 257 * D
+        nz = 3 * float(mr.sum(0).mean()) + n_rec + D * F.k_out + ON * D + 257 * D
+        scale = (D / F.k_in) ** .5
+        print(f"   {nm}: the kept weights of the input map are scaled by {scale:.3f}; first-batch loss by the reader {loss_of(lg, y, ymask):.3f}; root mean square of the input drive {rms(gi[real]):.3f} ({100 * (gi[real] == 0).mean():.0f}% of the entries exactly zero);"
+              f" a cell's input for a needed byte by the number of the byte's values it reads: {by}; one update of 0.001 a weight moves that input by {0.001 * code.amplitude:.4f} for each value read, "
+              + (f"that is by {100 * 0.001 * ON * code.amplitude / (code.amplitude * (ON / 3) ** .5 / 16):.1f}% of its size for the 11 values of a byte;" if F.k_in == D else f"{100 * 0.001 * code.amplitude / (code.amplitude * scale / (16 * 3 ** .5)):.2f}% of the size of an input that rests on one value;") +
+              f" multiply-adds a position {weights:,} by the weights that take part, about {nz:,.0f} by the products with a turned-on value")

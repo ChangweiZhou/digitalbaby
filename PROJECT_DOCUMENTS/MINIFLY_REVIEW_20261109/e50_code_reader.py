@@ -7,6 +7,7 @@ of that byte which the cell reads, and uses the sum as that cell's input for tha
 
     draw_code        the values each used byte turns on (random.Random, the brief's string)
     Code             one seed's code: owners, the digest, the table, and for a setting how many of a byte's values a cell reads
+    draw_one, OneOfEach   the audit's control setting: every cell reads one value of every used byte (46 values a cell)
     drives           for every byte, each cell's input and each readout unit's input from the byte (the whole of what the
                      input map and `l2` do in this job)
     forward          E42's F10 cells with E49's two masks, read by index, on those drives; a hook can replace states
@@ -84,6 +85,30 @@ def knows(code, F, group):
     m = code.reads(F)
     cols = [code.used.index(b) for b in group]
     return (m[:, cols] > 0).sum(1)
+
+
+# ---------------------------------------------------------------- a setting in which every cell has input for every used byte
+def draw_one(seed):
+    """in_src[i]: one value of every used byte, 46 values a cell.  For cells 0 to 255 in turn, and within a cell for the 46 used
+    symbols in the code's order, one of the symbol's 11 values (in the order in which the code's shuffled list gives them) is
+    taken by `randrange(11)` of one generator.  The audit's control: such a cell has input for every byte, each through one weight."""
+    own = draw_code(seed)
+    rng = Random(f"e50|one|{seed}")
+    return [sorted(own[b][rng.randrange(ON)] for b in USED) for _ in range(U)]
+
+
+class OneOfEach(R49.Interface):
+    """E49's interface object with the input lists of `draw_one` (46 values a cell) and the dense readout.  Its `start` scales
+    the kept weights of the input map by sqrt(512 / 46)."""
+
+    def __init__(self, seed):
+        super().__init__(seed, D, U)
+        self.k_in = len(USED)
+        self.in_src = draw_one(seed)
+        self.in_idx = np.array(self.in_src)
+        self.mask_in = np.zeros((U, D), bool)
+        for i, s in enumerate(self.in_src):
+            self.mask_in[i, s] = True
 
 
 # ---------------------------------------------------------------- what the input map and l2 amount to
