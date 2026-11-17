@@ -1,0 +1,1445 @@
+{
+ "experiment": "E44",
+ "job": "L2, release 1: the checks before the lives",
+ "note_revision": 2,
+ "reviewer": {
+  "ref": "origin/claude/vibrant-cerf-sje726",
+  "commit": "d1c9caaa2f2c017d64d0468b4a9d6cf7dc7ab1b4",
+  "audit": "PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/AUDIT_E44_L2_ROSTER_NOTE_20261117.md",
+  "audit_sha256": "f4ac72688ec98b5ba957dcb08ecde56b0bfc540489dd23ca377b66f6e20bb64d",
+  "files_sha256": {
+   "compare_pt_tensors.py": "f607b1f24efde1250f90103441a2883d0a552a7a7042864fb3a8016e6295c8d6",
+   "e44_l2_checks.py": "18671e242b5a5ab48db2fd8cbc78b93c929e51a021d1fe8737ecb7da4d4751b6",
+   "e44_world_reader.py": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+   "np_gru.py": "aa806ecf301bd8332ee3041781b57b7b981e3ac32c0974252db44b14dc328848"
+  }
+ },
+ "host": {
+  "hostname": "vm",
+  "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+  "machine": "x86_64",
+  "cores": 4,
+  "python": "3.13.18",
+  "torch": "2.15.0+cpu",
+  "numpy": "2.5.3",
+  "torch_threads": 1
+ },
+ "git": {
+  "commit": "f249b419a707af3d42270fbd96713157fb724602",
+  "sources_modified_vs_commit": []
+ },
+ "sources_sha256": {
+  "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+  "smallworld/lw_world.py": "83b7df79d4d8c9851ec264dca0b0f4197b6321c74af3eb884e5ff4a7c953656e",
+  "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+  "smallworld/sw_run.py": "41714c5bb90966b857c0b68373e527004b9ecebfff53c116c0d1083da09e6d60",
+  "smallworld/sw_score.py": "0f60f462a749cb18c6a733dfb7a2ffac393fa26a110e18dee0206f2a71e4672b",
+  "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+  "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+  "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+  "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+  "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+  "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+  "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+ },
+ "change": {
+  "a": {
+   "passed": true,
+   "this_host_reproduces_E44s_committed_receipt": true,
+   "equal_to_committed": true,
+   "runner_at_39e4e594": {
+    "sw_run_sha256": "5d643e2d714489b85906460ec4c5d50d4433c8736c7d35e8921c280b20da8835",
+    "hashes": {
+     "list_arrays": "3c83ce294fc89f2eb527a0746c3ba6dc1303fc8d3a8da6b96d3220f00fbccd40",
+     "events_arrays": "ab876df898b4b45536ca909fd871eb4d4a3b9e8ff36713c0cb1f26894934ef5f",
+     "weights": "2899e62a0312813bdfed134913b6cf7b48c033726d4ac24a2081d7913ea84700",
+     "optimizer": "14b0d23a95c631b74cfa973778f423feb2ef2f91ee7fccc81924113d39dfd3a1",
+     "learned": "0b761380c72db2e0ad9eb93f0a24e60ca8f29ffce870977d213f019b0152c858",
+     "stream": "eb7652f02be6e59c9f036bdd9104211e51cf5bdccf09ed7851668a9846b2a907"
+    },
+    "equals_E44_receipts_runner": true
+   },
+   "changed_runner": {
+    "sw_run_sha256": "41714c5bb90966b857c0b68373e527004b9ecebfff53c116c0d1083da09e6d60",
+    "hashes": {
+     "list_arrays": "3c83ce294fc89f2eb527a0746c3ba6dc1303fc8d3a8da6b96d3220f00fbccd40",
+     "events_arrays": "ab876df898b4b45536ca909fd871eb4d4a3b9e8ff36713c0cb1f26894934ef5f",
+     "weights": "2899e62a0312813bdfed134913b6cf7b48c033726d4ac24a2081d7913ea84700",
+     "optimizer": "14b0d23a95c631b74cfa973778f423feb2ef2f91ee7fccc81924113d39dfd3a1",
+     "learned": "0b761380c72db2e0ad9eb93f0a24e60ca8f29ffce870977d213f019b0152c858",
+     "stream": "eb7652f02be6e59c9f036bdd9104211e51cf5bdccf09ed7851668a9846b2a907"
+    },
+    "settings": {
+     "arm": "naive",
+     "world": 1,
+     "visits": 8,
+     "rho": null,
+     "H": 256,
+     "U": 128,
+     "visit_updates": 256,
+     "p_new": 0.05,
+     "lr": 0.001,
+     "wd": 0.25,
+     "tag": null,
+     "world_kind": "lw",
+     "in_turn": true,
+     "taught_share": 0.1,
+     "lowest": 41,
+     "list_every": 1,
+     "decay_distances": null,
+     "save_states": [
+      8
+     ],
+     "learner": {
+      "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+      "file_sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0",
+      "tensors_sha256": "9be17d70f686b75124d991bbabdf32bb4280941b4aad9ad02d35bf2745e269f9",
+      "receipt": "exp45/e41/e41_B_h256_f50_73129.json",
+      "receipt_sha256": "0d607351ae9776d8d08cd98d2d61d94a8f6d8aa163ef122b3c939b43e9f44262",
+      "made_by": "E41 (exp41_scale.py run)",
+      "rule": "B",
+      "local_in_birth": false,
+      "H": 256,
+      "U": 128,
+      "parameters": 317457,
+      "fraction": 0.5,
+      "seed": 73129,
+      "updates": 40960,
+      "items_per_update": 64,
+      "taught_items": 2621440,
+      "final_row": {
+       "step": 40960,
+       "A": 94.5,
+       "R": 94.65,
+       "R_counts": {
+        "add89": 951,
+        "sub89": 942
+       }
+      },
+      "reduction_sample_sha256": {
+       "add89": "f433a55ca52ae34d9d6c1262c4a000ccc8db0e258c5c8a189a90e82980e47e52",
+       "sub89": "18ac75b5013b6d4717c803a8e4643fb81b92673c625e985212f1940936300663"
+      },
+      "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+     }
+    }
+   },
+   "E44_committed": {
+    "receipt": "exp45/e44/F1/lw_naive_w1_v8_turn.json",
+    "hashes": {
+     "list_arrays": "3c83ce294fc89f2eb527a0746c3ba6dc1303fc8d3a8da6b96d3220f00fbccd40",
+     "events_arrays": "ab876df898b4b45536ca909fd871eb4d4a3b9e8ff36713c0cb1f26894934ef5f",
+     "weights": "2899e62a0312813bdfed134913b6cf7b48c033726d4ac24a2081d7913ea84700",
+     "optimizer": "14b0d23a95c631b74cfa973778f423feb2ef2f91ee7fccc81924113d39dfd3a1",
+     "learned": "0b761380c72db2e0ad9eb93f0a24e60ca8f29ffce870977d213f019b0152c858",
+     "stream": "eb7652f02be6e59c9f036bdd9104211e51cf5bdccf09ed7851668a9846b2a907"
+    }
+   },
+   "list_file_bytes_equal": true,
+   "reviewers_part_K": {
+    "command": "python3 -I e44_l2_checks.py K /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/a_new/lw_naive_w1_v8_turn_list.npz 1 8 1 all in-turn",
+    "output": [
+     "K. /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/a_new/lw_naive_w1_v8_turn_list.npz: 81 keys, 46,800 items; the reference: 81 keys, 46,800 items",
+     "   keys equal as sets: True; digest of the file's keys 138031253dfc3cb6fa3149a21285e008209a2d619da5122d28d4d012de9dfd02; of the reference 138031253dfc3cb6fa3149a21285e008209a2d619da5122d28d4d012de9dfd02",
+     "   every family row holds the family's list items in the reviewer's order: True"
+    ],
+    "keys_equal_as_sets": true,
+    "items_in_reviewers_order": true
+   },
+   "keys_digest": "138031253dfc3cb6fa3149a21285e008209a2d619da5122d28d4d012de9dfd02",
+   "keys_digest_equal_to_audit": true
+  },
+  "b": {
+   "passed": true,
+   "runs": {
+    "b_default": {
+     "command": "python3 sw_run.py life naive 5 32 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt --save-states 32 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_default",
+     "settings": {
+      "list_every": 1,
+      "decay_distances": null
+     },
+     "keys": 241,
+     "items": 165200,
+     "keys_digest": "7808f56e968445359a2acf6e16ee209999f947b60427ca96f467b4c0b4459476",
+     "audit": {
+      "keys": 241,
+      "items": 165200,
+      "digest": "7808f56e968445359a2acf6e16ee209999f947b60427ca96f467b4c0b4459476"
+     },
+     "equal_to_audit": true,
+     "reviewers_part_K": {
+      "command": "python3 -I e44_l2_checks.py K /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_default/lw_naive_w5_v32_list.npz 5 32 1 all",
+      "output": [
+       "K. /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_default/lw_naive_w5_v32_list.npz: 241 keys, 165,200 items; the reference: 241 keys, 165,200 items",
+       "   keys equal as sets: True; digest of the file's keys 7808f56e968445359a2acf6e16ee209999f947b60427ca96f467b4c0b4459476; of the reference 7808f56e968445359a2acf6e16ee209999f947b60427ca96f467b4c0b4459476",
+       "   every family row holds the family's list items in the reviewer's order: True"
+      ],
+      "keys_equal_as_sets": true,
+      "items_in_reviewers_order": true
+     },
+     "hashes": {
+      "list_arrays": "a525da85b3a63d9ce67c5e2692e97b4033f1f2bfcf5f785179f08e9916c8b8fb",
+      "events_arrays": "34316dae8e2b2932c709c77ade46fbc7836695e65ba86c9e364f4d2e565ef105",
+      "weights": "ee659bca1c5ab50a84da481a26ebc83b7759b76019feb7a652047448975f1c04",
+      "optimizer": "dbbcefa518efc8b8eff90dd5e15bb15a867334b9b542bc6cb72cb05a4caa95f0",
+      "learned": "2b27defde7d8444910e968da87f3c2c58cfe8ebd60d88782718b3c52e6ff93b8",
+      "stream": "6e7f6da45f1eaef02a46f9a4aab4d89928bd8528d320a878b0e98c7fb9a767c0"
+     },
+     "birth_file_sha256": "813cebfa0f6727090194908e7e713ba5e73131d1a38c219d9c698a845438a511",
+     "birth_seed": 93683,
+     "list_cpu": 41.26496112100004,
+     "cpu_total": 436.44798273099997
+    },
+    "b_k4_d1248": {
+     "command": "python3 sw_run.py life naive 5 32 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt --save-states 32 --list-every 4 --decay-distances 1,2,4,8 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_d1248",
+     "settings": {
+      "list_every": 4,
+      "decay_distances": [
+       1,
+       2,
+       4,
+       8
+      ]
+     },
+     "keys": 77,
+     "items": 38800,
+     "keys_digest": "58490377353a33d8d7c818cba2335eaba4f0cb2738574ef86981a7bbd9ff0303",
+     "audit": {
+      "keys": 77,
+      "items": 38800,
+      "digest": "58490377353a33d8d7c818cba2335eaba4f0cb2738574ef86981a7bbd9ff0303"
+     },
+     "equal_to_audit": true,
+     "reviewers_part_K": {
+      "command": "python3 -I e44_l2_checks.py K /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_d1248/lw_naive_w5_v32_list.npz 5 32 4 1,2,4,8",
+      "output": [
+       "K. /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_d1248/lw_naive_w5_v32_list.npz: 77 keys, 38,800 items; the reference: 77 keys, 38,800 items",
+       "   keys equal as sets: True; digest of the file's keys 58490377353a33d8d7c818cba2335eaba4f0cb2738574ef86981a7bbd9ff0303; of the reference 58490377353a33d8d7c818cba2335eaba4f0cb2738574ef86981a7bbd9ff0303",
+       "   every family row holds the family's list items in the reviewer's order: True"
+      ],
+      "keys_equal_as_sets": true,
+      "items_in_reviewers_order": true
+     },
+     "hashes": {
+      "list_arrays": "2293dff4eb5368a7b5e057c3f752f86de0af21a33fd1886aaae7167686de8adb",
+      "events_arrays": "34316dae8e2b2932c709c77ade46fbc7836695e65ba86c9e364f4d2e565ef105",
+      "weights": "ee659bca1c5ab50a84da481a26ebc83b7759b76019feb7a652047448975f1c04",
+      "optimizer": "dbbcefa518efc8b8eff90dd5e15bb15a867334b9b542bc6cb72cb05a4caa95f0",
+      "learned": "2b27defde7d8444910e968da87f3c2c58cfe8ebd60d88782718b3c52e6ff93b8",
+      "stream": "6e7f6da45f1eaef02a46f9a4aab4d89928bd8528d320a878b0e98c7fb9a767c0"
+     },
+     "birth_file_sha256": "813cebfa0f6727090194908e7e713ba5e73131d1a38c219d9c698a845438a511",
+     "birth_seed": 93683,
+     "list_cpu": 10.081128141000221,
+     "cpu_total": 408.630962194
+    },
+    "b_k4_none": {
+     "command": "python3 sw_run.py life naive 5 32 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt --save-states 32 --list-every 4 --decay-distances none --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_none",
+     "settings": {
+      "list_every": 4,
+      "decay_distances": []
+     },
+     "keys": 57,
+     "items": 27600,
+     "keys_digest": "b53f105db373e2030e1579154e5b4e2b3fc3e12a0c7dafb197a5c859af07f13d",
+     "audit": {
+      "keys": 57,
+      "items": 27600,
+      "digest": "b53f105db373e2030e1579154e5b4e2b3fc3e12a0c7dafb197a5c859af07f13d"
+     },
+     "equal_to_audit": true,
+     "reviewers_part_K": {
+      "command": "python3 -I e44_l2_checks.py K /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_none/lw_naive_w5_v32_list.npz 5 32 4 none",
+      "output": [
+       "K. /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_none/lw_naive_w5_v32_list.npz: 57 keys, 27,600 items; the reference: 57 keys, 27,600 items",
+       "   keys equal as sets: True; digest of the file's keys b53f105db373e2030e1579154e5b4e2b3fc3e12a0c7dafb197a5c859af07f13d; of the reference b53f105db373e2030e1579154e5b4e2b3fc3e12a0c7dafb197a5c859af07f13d",
+       "   every family row holds the family's list items in the reviewer's order: True"
+      ],
+      "keys_equal_as_sets": true,
+      "items_in_reviewers_order": true
+     },
+     "hashes": {
+      "list_arrays": "23d564b39b0f063a462f5989d03b7bbde58406845adee99dcfa8ab4a22961422",
+      "events_arrays": "34316dae8e2b2932c709c77ade46fbc7836695e65ba86c9e364f4d2e565ef105",
+      "weights": "ee659bca1c5ab50a84da481a26ebc83b7759b76019feb7a652047448975f1c04",
+      "optimizer": "dbbcefa518efc8b8eff90dd5e15bb15a867334b9b542bc6cb72cb05a4caa95f0",
+      "learned": "2b27defde7d8444910e968da87f3c2c58cfe8ebd60d88782718b3c52e6ff93b8",
+      "stream": "6e7f6da45f1eaef02a46f9a4aab4d89928bd8528d320a878b0e98c7fb9a767c0"
+     },
+     "birth_file_sha256": "813cebfa0f6727090194908e7e713ba5e73131d1a38c219d9c698a845438a511",
+     "birth_seed": 93683,
+     "list_cpu": 6.91963921400003,
+     "cpu_total": 397.43632157900004
+    }
+   },
+   "rows_in_two_runs": {
+    "b_default and b_k4_d1248": {
+     "rows_in_both": 77,
+     "rows_equal_item_by_item": 77,
+     "items_compared": 38800,
+     "all_equal": true,
+     "second_is_subset_of_first": true
+    },
+    "b_default and b_k4_none": {
+     "rows_in_both": 57,
+     "rows_equal_item_by_item": 57,
+     "items_compared": 27600,
+     "all_equal": true,
+     "second_is_subset_of_first": true
+    },
+    "b_k4_d1248 and b_k4_none": {
+     "rows_in_both": 57,
+     "rows_equal_item_by_item": 57,
+     "items_compared": 27600,
+     "all_equal": true,
+     "second_is_subset_of_first": true
+    }
+   },
+   "network_family_rows": {
+    "defaults": 90,
+    "list_every_4": 48
+   }
+  },
+  "c": {
+   "passed": true,
+   "compared": [
+    "events_arrays",
+    "weights",
+    "optimizer",
+    "learned",
+    "stream"
+   ],
+   "hashes": {
+    "b_default": {
+     "list_arrays": "a525da85b3a63d9ce67c5e2692e97b4033f1f2bfcf5f785179f08e9916c8b8fb",
+     "events_arrays": "34316dae8e2b2932c709c77ade46fbc7836695e65ba86c9e364f4d2e565ef105",
+     "weights": "ee659bca1c5ab50a84da481a26ebc83b7759b76019feb7a652047448975f1c04",
+     "optimizer": "dbbcefa518efc8b8eff90dd5e15bb15a867334b9b542bc6cb72cb05a4caa95f0",
+     "learned": "2b27defde7d8444910e968da87f3c2c58cfe8ebd60d88782718b3c52e6ff93b8",
+     "stream": "6e7f6da45f1eaef02a46f9a4aab4d89928bd8528d320a878b0e98c7fb9a767c0"
+    },
+    "b_k4_d1248": {
+     "list_arrays": "2293dff4eb5368a7b5e057c3f752f86de0af21a33fd1886aaae7167686de8adb",
+     "events_arrays": "34316dae8e2b2932c709c77ade46fbc7836695e65ba86c9e364f4d2e565ef105",
+     "weights": "ee659bca1c5ab50a84da481a26ebc83b7759b76019feb7a652047448975f1c04",
+     "optimizer": "dbbcefa518efc8b8eff90dd5e15bb15a867334b9b542bc6cb72cb05a4caa95f0",
+     "learned": "2b27defde7d8444910e968da87f3c2c58cfe8ebd60d88782718b3c52e6ff93b8",
+     "stream": "6e7f6da45f1eaef02a46f9a4aab4d89928bd8528d320a878b0e98c7fb9a767c0"
+    },
+    "b_k4_none": {
+     "list_arrays": "23d564b39b0f063a462f5989d03b7bbde58406845adee99dcfa8ab4a22961422",
+     "events_arrays": "34316dae8e2b2932c709c77ade46fbc7836695e65ba86c9e364f4d2e565ef105",
+     "weights": "ee659bca1c5ab50a84da481a26ebc83b7759b76019feb7a652047448975f1c04",
+     "optimizer": "dbbcefa518efc8b8eff90dd5e15bb15a867334b9b542bc6cb72cb05a4caa95f0",
+     "learned": "2b27defde7d8444910e968da87f3c2c58cfe8ebd60d88782718b3c52e6ff93b8",
+     "stream": "6e7f6da45f1eaef02a46f9a4aab4d89928bd8528d320a878b0e98c7fb9a767c0"
+    }
+   },
+   "event_files_bytes_equal": true,
+   "note": "The three runs of (b) differ only in which list rows they answer; the event file, the final weights, the optimizer state and the learned batches are the same in all three."
+  },
+  "d": {
+   "passed": true,
+   "lives": {
+    "b_default": {
+     "receipt_settings": [
+      1,
+      null
+     ],
+     "states": {
+      "lw_naive_w5_v32_state_v32.pt": [
+       1,
+       null
+      ]
+     },
+     "resumes": 0,
+     "passed": true
+    },
+    "b_k4_d1248": {
+     "receipt_settings": [
+      4,
+      [
+       1,
+       2,
+       4,
+       8
+      ]
+     ],
+     "states": {
+      "lw_naive_w5_v32_state_v32.pt": [
+       4,
+       [
+        1,
+        2,
+        4,
+        8
+       ]
+      ]
+     },
+     "resumes": 0,
+     "passed": true
+    },
+    "b_k4_none": {
+     "receipt_settings": [
+      4,
+      []
+     ],
+     "states": {
+      "lw_naive_w5_v32_state_v32.pt": [
+       4,
+       []
+      ]
+     },
+     "resumes": 0,
+     "passed": true
+    },
+    "c5_whole": {
+     "receipt_settings": [
+      2,
+      [
+       1,
+       2,
+       4
+      ]
+     ],
+     "states": {
+      "lw_replay_w1_v8_rho0.5_wd0_state_v1.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ],
+      "lw_replay_w1_v8_rho0.5_wd0_state_v2.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ],
+      "lw_replay_w1_v8_rho0.5_wd0_state_v4.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ],
+      "lw_replay_w1_v8_rho0.5_wd0_state_v8.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ]
+     },
+     "resumes": 0,
+     "passed": true
+    },
+    "c5_cut": {
+     "receipt_settings": [
+      2,
+      [
+       1,
+       2,
+       4
+      ]
+     ],
+     "states": {
+      "lw_replay_w1_v8_rho0.5_wd0_state_v1.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ],
+      "lw_replay_w1_v8_rho0.5_wd0_state_v2.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ],
+      "lw_replay_w1_v8_rho0.5_wd0_state_v4.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ],
+      "lw_replay_w1_v8_rho0.5_wd0_state_v8.pt": [
+       2,
+       [
+        1,
+        2,
+        4
+       ]
+      ]
+     },
+     "resumes": 1,
+     "passed": true
+    }
+   },
+   "note": "c5_cut was stopped after 4 visits and continued with `life --resume`, which takes no --list-every or --decay-distances: its receipt and its states after the resume carry the settings of the state; its list file equals the whole life's (check 5)."
+  }
+ },
+ "checks": {
+  "1": {
+   "passed": true,
+   "e44_check1_pre": {
+    "spec_identical": true,
+    "lw_world_sha256": "83b7df79d4d8c9851ec264dca0b0f4197b6321c74af3eb884e5ff4a7c953656e",
+    "spec_sha256": "83b7df79d4d8c9851ec264dca0b0f4197b6321c74af3eb884e5ff4a7c953656e",
+    "output_equals_OUTPUT_LW_WORLD_MAC": true,
+    "reviewer_reader": {
+     "commit": "dc05d575",
+     "path": "PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e44_world_reader.py",
+     "sha256": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+     "output_equals_OUTPUT_LW_WORLD_MAC": true
+    },
+    "passed": true,
+    "worlds": {
+     "1": {
+      "in_turn_64": "a6832371bb578e2591734a58735765a692d5ddc23ba67f2ca86b433113f41d0a",
+      "lap2_64": "fe57803b545231c8479e212062c03ffdb8c3df90084efd859c23ddae81a514bd",
+      "in_turn_128": "66fac5d10c8e7e3f5bf771b164e4672365a021e87d6d835b88c2caa91ef62da8",
+      "lap2_128": "8767dfef71110f56f30be6612c1f2a6ea6e72794b1e2333d26a7cf5dfae3d649",
+      "in_turn_256": "eb7652f02be6e59c9f036bdd9104211e51cf5bdccf09ed7851668a9846b2a907",
+      "lap2_256": "1fca17d80fb6dc5314146982559501d14cc730225af2e59f54bc28a5716f381c",
+      "schedule_1024": "536b65c6f741acd6a6b45bd310dce744ba426298ac14a6cf45f9e169ba50a274",
+      "tasks": "d92e5208663e54f7671752e35db7e98033f2a2b80d303850dfaf9bba1ed0fd16",
+      "list_0_7": "30ff746fca187dfc3f55ca6d489fd480ac71cc1f7b4e3a3c9d9c48634cc37256",
+      "first4": "4cccf332914883a7c9f0fc8ad5b58eb7ee84cc162dee754fdd6ffde88ebb5cb8",
+      "full_digests_equal_output": true,
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "2": {
+      "in_turn_64": "6a655c90f09d3f96c1b090935e11d9c10a92639448e1d0e4dd06d6747eed9390",
+      "lap2_64": "99b3b098fa55b872e3eaf8e80a9783b5cad204e44d3fccbbee544c76eb03e007",
+      "in_turn_128": "bfe7923d52793b94b307617909f729203f300249b06ca7be4cb92f48a21a1432",
+      "lap2_128": "e81c60b4fffab05ca9a7196799dd5031b73e5a9d5bd736e10cbd301772268545",
+      "in_turn_256": "9b018b82e282e5eb28b134d2c3c0e21ce199580fc46e8e75bea237819bfb948c",
+      "lap2_256": "f0938bafb395cb2d39bd9bf591b1adf0491d62d59c1da8860c64636f61635ed3",
+      "schedule_1024": "c76e6f3dc61f60085d0b8a36552ac5144915b6ef920c205e91b41bdcd786b7e3",
+      "tasks": "bc34eedf690ad84a095604300dd94dceae68182771af13489d54f346f8f55d6d",
+      "list_0_7": "1595e706a290dc75d718bdfaa217e9884d4ca11988ec8c059bee32f9f69d2e23",
+      "first4": "f379e816207a83ed912175f487afabdf426c33e40b51dcce6d0d61fe0c004533",
+      "full_digests_equal_output": true,
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "3": {
+      "in_turn_64": "51ad093c04e2ceeeca2123933df9185b83b87390aeb428ef2e8ab7bf8b055810",
+      "lap2_64": "9744af6bf53e10565c1352111a734f6aa6f7fc302f4d47840d44f7328a524e86",
+      "in_turn_128": "c4000b185954587e89d10a9d6d8007926b91af9b523bee4b1468798e4adfe5d9",
+      "lap2_128": "2b72ba9ce738e865bd6aef23d7e46df5f359e916d4f0e9e9b64a2f7850508aa8",
+      "in_turn_256": "9df1279deb75a60716f690c5916491f53fb970f657063dbb821b3abdb80f07cd",
+      "lap2_256": "24fc7f10b3b3160bab92804e96004ab91f1f368b7ac4c386d0f1c5634961a5cc",
+      "schedule_1024": "a55de8c310fb6b6f30677c7b80c281396b57e25f3d23d1decbe9fb8b6aa39b2a",
+      "tasks": "556d1c0358fc3b0fb32c5b38f4ac74448c025a1186447f41fbc8039247fd6753",
+      "list_0_7": "01570d69b34e3939030224012943eb076355e6eab59ba74ad878ff86ae34f426",
+      "first4": "8b83d67e8e9f5033404efd36b32e1e5b81a4b11f051286e6715cf5612bdb11d8",
+      "full_digests_equal_output": true,
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "4": {
+      "in_turn_64": "429f1f2e7259b16d59e63f00146e48ead4cabbcefc5d6f81cde663f80536b6c8",
+      "lap2_64": "547c7777c21e0313da4d46be74a8feb06e1496dda99152f080687d1acb5896b0",
+      "in_turn_128": "352db682c6aa352eb0ce1d829fb0aad837a7b3a94610f6741a1666710b2f58e0",
+      "lap2_128": "8cafde91d52e15be91de6be865c7139754bc25d1ec0d9cbea231439758be1faa",
+      "in_turn_256": "322a7cf9b19ddc33ee07393949a137589acd980050566bb264d734800b406afd",
+      "lap2_256": "304f8b2aa1843d629ee5d2ade168bdd830fe10aa4051edb8891f3455b0ce8f71",
+      "schedule_1024": "be38d42cba646c8240a3af0d3dd7428b6d8dcc6ef1d489a2a3f124ced63d32e5",
+      "tasks": "4bfb89d4f736e93064d980e90d454934e025fc7ddbdbca21d29f9b72bf670f2c",
+      "list_0_7": "ffe731cb779ae080bfa99b4ae2823a0c187102f40b80cf58fbbf8b017f11fd08",
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "5": {
+      "in_turn_64": "9ba7e2068abd0293b8bbf19d5fe8efd4cf676141f98c224cec07b24229df7c1e",
+      "lap2_64": "347e952e0de7cc0301a42864873cd0ae2ba9aabcd9b496e7bae0d306960e51ca",
+      "in_turn_128": "af5914c14a03f1d78c875d22a443947393842433a15f0952ba7ceed53271f4c0",
+      "lap2_128": "19e1e2587603d44683919f86d352a24916ce658d76d78d44b1d5ef3dd8d43ceb",
+      "in_turn_256": "a1b0df5bd052fe7f66ce0865af7ea0e866fd2db690132f64bdfcb9b696458d0b",
+      "lap2_256": "cc2e3f19671f24c0167ae7f610f8a1d5c512e84a212daf92547ffd1a207e53f8",
+      "schedule_1024": "96cf5f8888c9a72bdf5c87108f24b6dd94029e641ff2752d16171825670e23fc",
+      "tasks": "0325a29d6d4c68ea865f59da8260680251a5abaef1adfa17e29a12c247e08ce6",
+      "list_0_7": "d4a34cbdd1e2f9b45094df625339d9618d3461da9978b5941a56d8633cea4188",
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "6": {
+      "in_turn_64": "ae8dc5fabfd624f8fbc9a1117138d79f41123ea9868686079c7de9c77ad3c15e",
+      "lap2_64": "34e5d891bd52718f0c9961d0b86931a8f7bb1a7829863aba2fadad1c30a98785",
+      "in_turn_128": "f6898122baec099c633840ef616010af921dbc62429cccd245b0e25cf4d4c716",
+      "lap2_128": "eed1945b1002cc51e904593bcfc0ce15ac163aae4765d1ed70c766c717d8a15e",
+      "in_turn_256": "efeb69b3eb1b11108f1bb215a7a099a9359eda7b95c361706c399b9ef1d8a01d",
+      "lap2_256": "65221c59e43c6f76a1a1027efb25f79ba3870c87dbbb05121f47902640fff607",
+      "schedule_1024": "6156fdf0d08e1d0142fdd2f3cae7bb8bbccc83dd21d2b72871583e40aeeb74af",
+      "tasks": "f1dbfc7588f243a08d5aff2d908df44140690eb03a0ae53f8b08bf62434eab18",
+      "list_0_7": "405abaeb3d76fed834b0477dd5352caf7f40eb0b1daacb6255bcbdc8acc4471c",
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "7": {
+      "in_turn_64": "c6c604cc5e0f4a26add1c6842d34aef653a78bb3008e06cbb4ae352c576b7cf6",
+      "lap2_64": "4b9c94ec7b07aa8f5c70b0f511c49a3316f7d26162f8e7dda8de15b99e8dcbbc",
+      "in_turn_128": "1c70119bd3a09479b4f223ec3f113d7548ac153bc824aa3f5b536b9e36678942",
+      "lap2_128": "0885180cc1967f804415f7cde33971db2f2eb57fffa5ad038c77a2b481d1f1c8",
+      "in_turn_256": "b5d17a901c4a68d1b2248cb5af30daceb65bd38e90caa1528023c3ecad221892",
+      "lap2_256": "7b7a58436c12a05ca56e0af9f4f05293454376af5ab45786f7b3553dd5b173d3",
+      "schedule_1024": "b2e47a8776a34b7a8ad1ec2f683d9f27425b55fcacac3639c524d918d8c7cdd7",
+      "tasks": "0d2a50b56b83672eb35b7bd6ceef0b34e27ba3334632a1f1b6523bf5a5519be6",
+      "list_0_7": "e6c0e03a3eed132e6c6dc08d05a37bfe208258416b4a4062f5296d39b38fb077",
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     },
+     "8": {
+      "in_turn_64": "c5b00a855784be08e1faec2186be9d288457afc0108d48a7ef158508928cbf80",
+      "lap2_64": "78095c63df0bf937b026018eceea79448f164120f6ba5989837eae929bda1054",
+      "in_turn_128": "d4396f7c1fc6ea8fadcba9047cda1cd02e5556db237e36036dcc8b194ba64c0b",
+      "lap2_128": "6d99da6cc4ef419db963d35051dde44ffe7714ed86fcc4bf9b37b114e55b5886",
+      "in_turn_256": "878bf9f7ae483272b07d495e3bb1f0e4373d4d505d03b8af0c29e7bb7344c5a3",
+      "lap2_256": "840a056f53dc8bd40f40939cec668461a99d80eadc93d0a73e7f2364d1a8ec24",
+      "schedule_1024": "1f3d18490052875c8ce67074fa0a481786fa4da7973bd1a410168e5a42ef3037",
+      "tasks": "89213030751632a3bb9686faa8edb2feaa913aa2205c7f41daeb0eb76dc78e71",
+      "list_0_7": "8b6daf6e67d8060d19d7727e2603a0bc12a98f9da5b98b2ee0188794d6c3c5c9",
+      "equal_to_audit": {
+       "in_turn_64": true,
+       "in_turn_128": true,
+       "in_turn_256": true,
+       "schedule_1024": true,
+       "tasks": true,
+       "lap2_64": true,
+       "lap2_128": true,
+       "lap2_256": true,
+       "list_0_7": true
+      }
+     }
+    },
+    "audit": {
+     "commit": "dc05d575",
+     "path": "PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/AUDIT_E44_LONG_LIFE_WORLD_BRIEF_20261116.md",
+     "sha256": "d9cda3890d0a5f1e80501c72443292fd58ad977f2c86f3e0b80dda2199c4124f"
+    },
+    "note": "The 48 receipts' stream digests are compared after the calibration (check 1, post)."
+   },
+   "equal_to_E44_CHECKS_json": true,
+   "list_items_of_the_roster": {
+    "world 1, 256 visits": {
+     "families": 17,
+     "items_sha256": "964db73fd4743388c1560010c78de52b1300eb98d7c4ea8b0c29254b54bc45eb",
+     "audit": {
+      "families": 17,
+      "digest": "964db73fd4743388c1560010c78de52b1300eb98d7c4ea8b0c29254b54bc45eb"
+     },
+     "equal": true
+    },
+    "world 1, 1024 visits": {
+     "families": 52,
+     "items_sha256": "48e6d710e93cbe6777cc2c0cb51c611949fbf1309e17c66c911c04487b7282fc",
+     "audit": {
+      "families": 52,
+      "digest": "48e6d710e93cbe6777cc2c0cb51c611949fbf1309e17c66c911c04487b7282fc"
+     },
+     "equal": true
+    },
+    "world 2, 256 visits": {
+     "families": 13,
+     "items_sha256": "6543da12b3bf1aea6f395eaa58b986c4357706260900d51dcbc25ce456f2eb7d",
+     "audit": {
+      "families": 13,
+      "digest": "6543da12b3bf1aea6f395eaa58b986c4357706260900d51dcbc25ce456f2eb7d"
+     },
+     "equal": true
+    },
+    "world 2, 1024 visits": {
+     "families": 52,
+     "items_sha256": "af05e03d09dd9dfc856a53d02482a318ac909254407074e70a1932de78648001",
+     "audit": {
+      "families": 52,
+      "digest": "af05e03d09dd9dfc856a53d02482a318ac909254407074e70a1932de78648001"
+     },
+     "equal": true
+    },
+    "world 3, 256 visits": {
+     "families": 9,
+     "items_sha256": "1119b530753f8c58f3a4ae1196bd50218707f1b0f24f9c53ad19f98783b3b038",
+     "audit": {
+      "families": 9,
+      "digest": "1119b530753f8c58f3a4ae1196bd50218707f1b0f24f9c53ad19f98783b3b038"
+     },
+     "equal": true
+    },
+    "world 3, 1024 visits": {
+     "families": 52,
+     "items_sha256": "83ce5344ae3802969a9a4cc5b866bff19fc90b27eea38e81d216feebc926c60a",
+     "audit": {
+      "families": 52,
+      "digest": "83ce5344ae3802969a9a4cc5b866bff19fc90b27eea38e81d216feebc926c60a"
+     },
+     "equal": true
+    },
+    "world 4, 256 visits": {
+     "families": 17,
+     "items_sha256": "22efa38c62ff0b0a3c6a5450cba73e75814b97b496f86d068081f85318259907",
+     "audit": {
+      "families": 17,
+      "digest": "22efa38c62ff0b0a3c6a5450cba73e75814b97b496f86d068081f85318259907"
+     },
+     "equal": true
+    },
+    "world 4, 1024 visits": {
+     "families": 47,
+     "items_sha256": "dc1954983fdba82be32cc497c9691c8e0833cf26c974cd3aef404eafd3b53719",
+     "audit": {
+      "families": 47,
+      "digest": "dc1954983fdba82be32cc497c9691c8e0833cf26c974cd3aef404eafd3b53719"
+     },
+     "equal": true
+    },
+    "world 5, 256 visits": {
+     "families": 13,
+     "items_sha256": "8014b5612fedd3025334a44606692193af32f58e05c8cd8a3fa71305ca4dc1e6",
+     "audit": {
+      "families": 13,
+      "digest": "8014b5612fedd3025334a44606692193af32f58e05c8cd8a3fa71305ca4dc1e6"
+     },
+     "equal": true
+    },
+    "world 6, 256 visits": {
+     "families": 13,
+     "items_sha256": "54ebf072c9fd9392c3eb67dcadf39c6caca1e132332dbe9db7947f0df5518e2f",
+     "audit": {
+      "families": 13,
+      "digest": "54ebf072c9fd9392c3eb67dcadf39c6caca1e132332dbe9db7947f0df5518e2f"
+     },
+     "equal": true
+    },
+    "world 7, 256 visits": {
+     "families": 13,
+     "items_sha256": "5c72f286d83b9c9e76e07b213c4977700c5622615771115a27c60d177b22341e",
+     "audit": {
+      "families": 13,
+      "digest": "5c72f286d83b9c9e76e07b213c4977700c5622615771115a27c60d177b22341e"
+     },
+     "equal": true
+    },
+    "world 8, 256 visits": {
+     "families": 10,
+     "items_sha256": "1d09bf5b4a63007f0ceb6d6ee0b45b2c0b60fa60a86fd3753d0e4f1a6a8955e5",
+     "audit": {
+      "families": 10,
+      "digest": "1d09bf5b4a63007f0ceb6d6ee0b45b2c0b60fa60a86fd3753d0e4f1a6a8955e5"
+     },
+     "equal": true
+    }
+   },
+   "sources_changed_since_the_calibration": [
+    "smallworld/sw_run.py"
+   ],
+   "note": "E44's check 1 (lw_checks.check1_pre) run again with the changed runner: the generator against its specification, the reviewer's reader, and the earlier audit's digests of the schedules of 1,024 visits and of the tasks of worlds 1 to 8. Added: the digest of the list's items of each roster life (families in the order first met) against the audit's section 7."
+  },
+  "2": {
+   "passed": true,
+   "births": {
+    "e41_B_h256_f50_93683.pt": {
+     "rule": "B",
+     "seed": 93683,
+     "tensors_sha256": "ea2dcea0bf57843631373db926fe7d69438bcc4a131fdd0ada3978277dcc84d5",
+     "receipt_tensors_sha256": "ea2dcea0bf57843631373db926fe7d69438bcc4a131fdd0ada3978277dcc84d5",
+     "A": 96.16666666666667,
+     "R": 94.25,
+     "A_counts": {
+      "add89": 289,
+      "sub89": 288,
+      "max89": 297,
+      "min89": 296
+     },
+     "R_counts": {
+      "add89": 945,
+      "sub89": 940
+     },
+     "receipt_A": 96.16666666666667,
+     "receipt_R": 94.25,
+     "receipt_A_counts": {
+      "add89": 289,
+      "sub89": 288,
+      "max89": 297,
+      "min89": 296
+     },
+     "receipt_R_counts": {
+      "add89": 945,
+      "sub89": 940
+     },
+     "cls": "exp41_scale.NetW",
+     "file_sha256": "813cebfa0f6727090194908e7e713ba5e73131d1a38c219d9c698a845438a511",
+     "receipt_weights_sha256": "813cebfa0f6727090194908e7e713ba5e73131d1a38c219d9c698a845438a511",
+     "e41_side_equal": true,
+     "runner": {
+      "cls": "sw_net.SWNet",
+      "tensors_sha256": "ea2dcea0bf57843631373db926fe7d69438bcc4a131fdd0ada3978277dcc84d5",
+      "R_counts": {
+       "add89": 945,
+       "sub89": 940
+      },
+      "A_counts": {
+       "add89": 289,
+       "sub89": 288,
+       "max89": 297,
+       "min89": 296
+      },
+      "R": 94.25,
+      "A": 96.16666666666667
+     },
+     "runner_equal": true,
+     "file_hash_equal": true,
+     "replay_arm_loads_it": true
+    },
+    "e41_S_h256_f50_93683.pt": {
+     "rule": "S",
+     "seed": 93683,
+     "tensors_sha256": "31eaf8e42c34d85067edb49036d33bac77036b93c6349e9d87170f632c916bdf",
+     "receipt_tensors_sha256": "31eaf8e42c34d85067edb49036d33bac77036b93c6349e9d87170f632c916bdf",
+     "A": 93.5,
+     "R": 92.55,
+     "A_counts": {
+      "add89": 278,
+      "sub89": 283,
+      "max89": 294,
+      "min89": 290
+     },
+     "R_counts": {
+      "add89": 918,
+      "sub89": 933
+     },
+     "receipt_A": 93.5,
+     "receipt_R": 92.55,
+     "receipt_A_counts": {
+      "add89": 278,
+      "sub89": 283,
+      "max89": 294,
+      "min89": 290
+     },
+     "receipt_R_counts": {
+      "add89": 918,
+      "sub89": 933
+     },
+     "cls": "exp41_scale.NetW",
+     "file_sha256": "f89bdbc5370c414a8a6cb6fb66bc0ef34d22ab50eac71f5a27035b8962e1b012",
+     "receipt_weights_sha256": "f89bdbc5370c414a8a6cb6fb66bc0ef34d22ab50eac71f5a27035b8962e1b012",
+     "e41_side_equal": true,
+     "runner": {
+      "cls": "sw_net.SWNet",
+      "tensors_sha256": "31eaf8e42c34d85067edb49036d33bac77036b93c6349e9d87170f632c916bdf",
+      "R_counts": {
+       "add89": 918,
+       "sub89": 933
+      },
+      "A_counts": {
+       "add89": 278,
+       "sub89": 283,
+       "max89": 294,
+       "min89": 290
+      },
+      "R": 92.55,
+      "A": 93.5
+     },
+     "runner_equal": true,
+     "file_hash_equal": true
+    },
+    "e41_B_h256_f50_116089.pt": {
+     "rule": "B",
+     "seed": 116089,
+     "tensors_sha256": "043d03b53a34cda834919868080a84a634603275d8b9ed7b7ec21ce85e67ddfd",
+     "receipt_tensors_sha256": "043d03b53a34cda834919868080a84a634603275d8b9ed7b7ec21ce85e67ddfd",
+     "A": 96.16666666666667,
+     "R": 93.0,
+     "A_counts": {
+      "add89": 288,
+      "sub89": 289,
+      "max89": 297,
+      "min89": 298
+     },
+     "R_counts": {
+      "add89": 917,
+      "sub89": 943
+     },
+     "receipt_A": 96.16666666666667,
+     "receipt_R": 93.0,
+     "receipt_A_counts": {
+      "add89": 288,
+      "sub89": 289,
+      "max89": 297,
+      "min89": 298
+     },
+     "receipt_R_counts": {
+      "add89": 917,
+      "sub89": 943
+     },
+     "cls": "exp41_scale.NetW",
+     "file_sha256": "5f538798706bc1f97b358b93cbe6a0350ae8295d71a45088441bc1d08fe6f709",
+     "receipt_weights_sha256": "5f538798706bc1f97b358b93cbe6a0350ae8295d71a45088441bc1d08fe6f709",
+     "e41_side_equal": true,
+     "runner": {
+      "cls": "sw_net.SWNet",
+      "tensors_sha256": "043d03b53a34cda834919868080a84a634603275d8b9ed7b7ec21ce85e67ddfd",
+      "R_counts": {
+       "add89": 917,
+       "sub89": 943
+      },
+      "A_counts": {
+       "add89": 288,
+       "sub89": 289,
+       "max89": 297,
+       "min89": 298
+      },
+      "R": 93.0,
+      "A": 96.16666666666667
+     },
+     "runner_equal": true,
+     "file_hash_equal": true,
+     "replay_arm_loads_it": true
+    },
+    "e41_S_h256_f50_116089.pt": {
+     "rule": "S",
+     "seed": 116089,
+     "tensors_sha256": "719c019d31636a68ede985ebca4fd738f945b907259f8fcdda91f7ec702b13e7",
+     "receipt_tensors_sha256": "719c019d31636a68ede985ebca4fd738f945b907259f8fcdda91f7ec702b13e7",
+     "A": 92.83333333333333,
+     "R": 90.9,
+     "A_counts": {
+      "add89": 273,
+      "sub89": 284,
+      "max89": 290,
+      "min89": 294
+     },
+     "R_counts": {
+      "add89": 907,
+      "sub89": 911
+     },
+     "receipt_A": 92.83333333333333,
+     "receipt_R": 90.9,
+     "receipt_A_counts": {
+      "add89": 273,
+      "sub89": 284,
+      "max89": 290,
+      "min89": 294
+     },
+     "receipt_R_counts": {
+      "add89": 907,
+      "sub89": 911
+     },
+     "cls": "exp41_scale.NetW",
+     "file_sha256": "990fe0746f76c751f62a47f87776405a85d617c79ad6100abaeff02e4d0e2f81",
+     "receipt_weights_sha256": "990fe0746f76c751f62a47f87776405a85d617c79ad6100abaeff02e4d0e2f81",
+     "e41_side_equal": true,
+     "runner": {
+      "cls": "sw_net.SWNet",
+      "tensors_sha256": "719c019d31636a68ede985ebca4fd738f945b907259f8fcdda91f7ec702b13e7",
+      "R_counts": {
+       "add89": 907,
+       "sub89": 911
+      },
+      "A_counts": {
+       "add89": 273,
+       "sub89": 284,
+       "max89": 290,
+       "min89": 294
+      },
+      "R": 90.9,
+      "A": 92.83333333333333
+     },
+     "runner_equal": true,
+     "file_hash_equal": true
+    }
+   },
+   "note": "As E44's check 3, for the half-width births of seeds 93683 and 116089 (rules B and S; the roster uses B). E41's side: exp41_scale.NetW(256, 128) with the file, A and R by E41's own panels and scorer. The runner's side: sw_net.SWNet(256, 128) through sw_run.load_learner, answered by sw_net.answer on the same items."
+  },
+  "3": {
+   "passed": true,
+   "naive": {
+    "command": "python3 sw_run.py life naive 1 1 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c3_naive",
+    "hashes": {
+     "list_arrays": "15e3782191237de6fc0bc86b48e7c7af15f9e4647cffa9f3a21acde678ce4472",
+     "events_arrays": "bc47ec3ce9225bb91450cb445e76f3724953692b6ec40c8a142ad5a41d83e657",
+     "weights": "0811aa071c7235c4599b84b7d8fd2f74396486a7c6c19a8c06ce8967bae45712",
+     "optimizer": "882e3ee690d17982c7dff57ee070af770f54ba9e3ec1093b4f96e073e022f287",
+     "learned": "3c429de266c05ddae7aa85ff6661388a0673bac6f920bc37ca1fa1c180bd12e7",
+     "stream": "d72786510430f2098a550ae38a977fa76696836a0c7089826d19e1f03ad749f4"
+    }
+   },
+   "replay_rho0": {
+    "command": "python3 sw_run.py life replay 1 1 --rho 0 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c3_replay_rho0",
+    "hashes": {
+     "list_arrays": "15e3782191237de6fc0bc86b48e7c7af15f9e4647cffa9f3a21acde678ce4472",
+     "events_arrays": "bc47ec3ce9225bb91450cb445e76f3724953692b6ec40c8a142ad5a41d83e657",
+     "weights": "0811aa071c7235c4599b84b7d8fd2f74396486a7c6c19a8c06ce8967bae45712",
+     "optimizer": "882e3ee690d17982c7dff57ee070af770f54ba9e3ec1093b4f96e073e022f287",
+     "learned": "3c429de266c05ddae7aa85ff6661388a0673bac6f920bc37ca1fa1c180bd12e7",
+     "stream": "d72786510430f2098a550ae38a977fa76696836a0c7089826d19e1f03ad749f4"
+    },
+    "replay_items_per_update": 0,
+    "learner_rule": "B",
+    "ledger_buffer": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 12288,
+     "bytes_at_end": 209266,
+     "max_items": 12288,
+     "max_bytes": 209266,
+     "offered": 12288
+    }
+   },
+   "event_columns_equal": true,
+   "note": "`replay` with rho = 0 loads backpropagation's birth (the second runner change) and learns from the 48 new items of every update: the weights, the optimizer state, the event file's arrays, the learned batches and the list are those of `naive`."
+  },
+  "4": {
+   "passed": true,
+   "at_the_start": {
+    "parameters": 317457,
+    "capacity_items": 55209,
+    "capacity_bytes": 1269828
+   },
+   "check_lives": {
+    "c5_whole": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 55209,
+     "bytes_at_end": 938049,
+     "max_items": 55209,
+     "max_bytes": 938765,
+     "offered": 98304
+    },
+    "c5_cut": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 55209,
+     "bytes_at_end": 938049,
+     "max_items": 55209,
+     "max_bytes": 938765,
+     "offered": 98304
+    },
+    "c7_replay": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 49152,
+     "bytes_at_end": 834843,
+     "max_items": 49152,
+     "max_bytes": 834843,
+     "offered": 49152
+    },
+    "c7_replay_wd0": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 49152,
+     "bytes_at_end": 834843,
+     "max_items": 49152,
+     "max_bytes": 834843,
+     "offered": 49152
+    }
+   },
+   "note": "The runner does not print the capacity; it is read here from Life.capacity() of a `replay` life at its start, and from every replay receipt's ledger (capacity_items, max_items). The runner asserts at every update that neither the count nor the bytes exceed the capacity. The roster's replay lives are read the same way in the report."
+  },
+  "5": {
+   "passed": true,
+   "whole": {
+    "command": "python3 sw_run.py life replay 1 8 --rho 0.5 --wd 0 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt --list-every 2 --decay-distances 1,2,4 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_whole",
+    "hashes": {
+     "list_arrays": "dbd73c166474802b314c41733437acac04042e0f07d793ad26757c8f7a42d843",
+     "events_arrays": "0b52588a94e4e7bdb9d8058fe6f1be2f25b5469b6d3f9e7a5cc06fc508961700",
+     "weights": "049adb882690b6b84bdc576e4c9d1bf5daa9edd8405cd4d5448a66f71b8824f9",
+     "optimizer": "2beb3da1526ead020df34c1ff5d7a655d0e19aab635abfa0c10548256762b9a9",
+     "learned": "b142bf408a9a7e353e36832281ff325d2e8bf3036662f7780f5f71211bcb23d0",
+     "stream": "2bb2c6fc9d86b3955ab51ffa5a04fbc22e439515973effb034859ec3b9a48137"
+    },
+    "ledger_buffer": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 55209,
+     "bytes_at_end": 938049,
+     "max_items": 55209,
+     "max_bytes": 938765,
+     "offered": 98304
+    },
+    "counters": {
+     "learned_items_verified": 98304,
+     "asking_checks": 8,
+     "replayed_items": 49128,
+     "max_buffer_items": 55209,
+     "max_buffer_bytes": 938765,
+     "first_replay_update": 1
+    }
+   },
+   "stopped_and_resumed": {
+    "command": "python3 sw_run.py life --resume /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut/lw_replay_w1_v8_rho0.5_wd0_state_v4.pt --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut",
+    "resumes": [
+     {
+      "path": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut/lw_replay_w1_v8_rho0.5_wd0_state_v4.pt",
+      "file_sha256": "371c8a0781fc3fa376f000030f3a20bd3f2fa11a61856384629c2dc34d470877",
+      "done_visits": 4,
+      "wall_utc": "2026-11-17T20:53:42Z",
+      "command": "python3 sw_run.py life --resume /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut/lw_replay_w1_v8_rho0.5_wd0_state_v4.pt --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut",
+      "stream_regeneration_cpu": 0.2946825679999998
+     }
+    ],
+    "hashes": {
+     "list_arrays": "dbd73c166474802b314c41733437acac04042e0f07d793ad26757c8f7a42d843",
+     "events_arrays": "0b52588a94e4e7bdb9d8058fe6f1be2f25b5469b6d3f9e7a5cc06fc508961700",
+     "weights": "049adb882690b6b84bdc576e4c9d1bf5daa9edd8405cd4d5448a66f71b8824f9",
+     "optimizer": "2beb3da1526ead020df34c1ff5d7a655d0e19aab635abfa0c10548256762b9a9",
+     "learned": "b142bf408a9a7e353e36832281ff325d2e8bf3036662f7780f5f71211bcb23d0",
+     "stream": "2bb2c6fc9d86b3955ab51ffa5a04fbc22e439515973effb034859ec3b9a48137"
+    },
+    "ledger_buffer": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 55209,
+     "bytes_at_end": 938049,
+     "max_items": 55209,
+     "max_bytes": 938765,
+     "offered": 98304
+    },
+    "counters": {
+     "learned_items_verified": 98304,
+     "asking_checks": 8,
+     "replayed_items": 49128,
+     "max_buffer_items": 55209,
+     "max_buffer_bytes": 938765,
+     "first_replay_update": 1
+    }
+   },
+   "list_columns_equal": true,
+   "event_columns_equal": true,
+   "list_keys": 19,
+   "note": "A `replay` life without decay of world 1, 8 visits, --list-every 2 --decay-distances 1,2,4: whole, and stopped after visit 4 (--stop-after 4) then continued from its state. Equal: the final weights, the optimizer state, the event file's arrays, the learned batches, the stream and the list file's arrays (change 4 d)."
+  },
+  "6": {
+   "passed": true,
+   "arms": {
+    "c7_naive_wd0": {
+     "first_group_at_start": 0.0,
+     "first_group_at_end": 0.0,
+     "receipt_optimizer_weight_decay": 0.0,
+     "receipt_settings_wd": 0.0,
+     "byte_table_group": 0.0,
+     "stem": "lw_naive_w5_v4_wd0",
+     "passed": true
+    },
+    "c7_replay_wd0": {
+     "first_group_at_start": 0.0,
+     "first_group_at_end": 0.0,
+     "receipt_optimizer_weight_decay": 0.0,
+     "receipt_settings_wd": 0.0,
+     "byte_table_group": 0.0,
+     "stem": "lw_replay_w5_v4_rho0.5_wd0",
+     "passed": true
+    },
+    "c7_naive": {
+     "first_group_at_start": 0.25,
+     "first_group_at_end": 0.25,
+     "receipt_optimizer_weight_decay": 0.25,
+     "receipt_settings_wd": 0.25,
+     "byte_table_group": 0.0,
+     "stem": "lw_naive_w5_v4",
+     "passed": true
+    },
+    "c7_replay": {
+     "first_group_at_start": 0.25,
+     "first_group_at_end": 0.25,
+     "receipt_optimizer_weight_decay": 0.25,
+     "receipt_settings_wd": 0.25,
+     "byte_table_group": 0.0,
+     "stem": "lw_replay_w5_v4_rho0.5",
+     "passed": true
+    }
+   },
+   "note": "At the start: the first parameter group of a fresh optimizer of the arm (sw_net.make_opt through Life). At the end: the receipt's optimizer.groups, read from the optimizer after the last update. The receipt's fields optimizer.weight_decay and settings.wd record the arm's decay."
+  },
+  "7": {
+   "passed": true,
+   "arms": {
+    "naive": {
+     "cpu_seconds_per_visit": [
+      11.709484190000001,
+      12.195509359,
+      12.000929862999996,
+      11.635858122000002
+     ],
+     "mean": 11.8854453835,
+     "per_update": 0.04642752102929688,
+     "list_cpu": 1.2931176729999971,
+     "list_entries": 5000,
+     "host": {
+      "hostname": "vm",
+      "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "cores": 4,
+      "python": "3.13.18",
+      "torch": "2.15.0+cpu",
+      "numpy": "2.5.3",
+      "torch_threads": 1
+     }
+    },
+    "replay": {
+     "cpu_seconds_per_visit": [
+      11.62349648,
+      11.417508729999998,
+      11.953819372000002,
+      12.255074725
+     ],
+     "mean": 11.81247482675,
+     "per_update": 0.04614247979199219,
+     "list_cpu": 1.1400150640000009,
+     "list_entries": 5000,
+     "host": {
+      "hostname": "vm",
+      "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "cores": 4,
+      "python": "3.13.18",
+      "torch": "2.15.0+cpu",
+      "numpy": "2.5.3",
+      "torch_threads": 1
+     }
+    },
+    "naive-wd0": {
+     "cpu_seconds_per_visit": [
+      11.724097262,
+      12.039291662,
+      11.887562971999998,
+      11.207197019000006
+     ],
+     "mean": 11.71453722875,
+     "per_update": 0.04575991104980469,
+     "list_cpu": 1.1951405379999938,
+     "list_entries": 5000,
+     "host": {
+      "hostname": "vm",
+      "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "cores": 4,
+      "python": "3.13.18",
+      "torch": "2.15.0+cpu",
+      "numpy": "2.5.3",
+      "torch_threads": 1
+     }
+    },
+    "replay-wd0": {
+     "cpu_seconds_per_visit": [
+      12.036765174,
+      12.072716889999999,
+      12.115818478999998,
+      12.287012671
+     ],
+     "mean": 12.128078303499999,
+     "per_update": 0.04737530587304687,
+     "list_cpu": 1.2463946229999894,
+     "list_entries": 5000,
+     "host": {
+      "hostname": "vm",
+      "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+      "machine": "x86_64",
+      "cores": 4,
+      "python": "3.13.18",
+      "torch": "2.15.0+cpu",
+      "numpy": "2.5.3",
+      "torch_threads": 1
+     }
+    }
+   },
+   "list_cpu_seconds_per_item": 0.0002497879002481843,
+   "forecast": [
+    {
+     "run": "the trial",
+     "arm": "naive",
+     "visits": 1024,
+     "lives": 1,
+     "cpu_hours": 3.3807489090844447
+    },
+    {
+     "run": "the trial",
+     "arm": "replay",
+     "visits": 1024,
+     "lives": 1,
+     "cpu_hours": 3.3599928396088887
+    },
+    {
+     "run": "long",
+     "arm": "naive",
+     "visits": 1024,
+     "lives": 3,
+     "cpu_hours": 10.142246727253335
+    },
+    {
+     "run": "long",
+     "arm": "replay",
+     "visits": 1024,
+     "lives": 3,
+     "cpu_hours": 10.079978518826668
+    },
+    {
+     "run": "short",
+     "arm": "naive",
+     "visits": 256,
+     "lives": 4,
+     "cpu_hours": 3.3807489090844447
+    },
+    {
+     "run": "short",
+     "arm": "replay",
+     "visits": 256,
+     "lives": 4,
+     "cpu_hours": 3.3599928396088887
+    },
+    {
+     "run": "decay",
+     "arm": "naive-wd0",
+     "visits": 256,
+     "lives": 8,
+     "cpu_hours": 6.6642700679111115
+    },
+    {
+     "run": "decay",
+     "arm": "replay-wd0",
+     "visits": 256,
+     "lives": 8,
+     "cpu_hours": 6.899528990435555
+    }
+   ],
+   "list_cpu_hours": 0.9688440024292908,
+   "forecast_release_1_cpu_hours": 48.23635180424263,
+   "stop_condition_cpu_hours": 75,
+   "life_of_1024_visits_cpu_hours": {
+    "naive": 3.4666759467698203,
+    "replay": 3.4459198772942643
+   },
+   "note": "Each arm: world 5, 4 visits (families 0, 1, 0, 1), one process alone on the host. The list's cost is forecast from the seconds an item of check (b)'s default run and the item counts of world 1 in the audit's section 7 (worlds differ a little). The store is not full in 4 visits; a draw from it and an insertion cost the same when it is."
+  }
+ },
+ "other_births": {
+  "passed": true,
+  "lives": {
+   "world 2": {
+    "birth_seed": 93683,
+    "birth_file_sha256": "813cebfa0f6727090194908e7e713ba5e73131d1a38c219d9c698a845438a511",
+    "command": "python3 sw_run.py life naive 2 8 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt --in-turn --visit-updates 256 --save-states 8 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/births",
+    "first_visit_levels": [
+     0.6853647853835565,
+     0.5859554244509997,
+     0.7693593156970486,
+     0.26404563675609005,
+     0.09127237851662404,
+     0.6883269720101781,
+     0.5734908136482939,
+     0.09198770016245068
+    ],
+    "median_families_2_to_8": 0.5734908136482939,
+    "calibration_median_with_seed_73129": 0.566,
+    "at_or_above_0_20": true,
+    "events_arrays_sha256": "83ec6d8e1640767b00e63a1b0e587d58bf3cdbb6d9442c57dd5e163fddc5b285",
+    "cpu_total": 102.31405853700001
+   },
+   "world 3": {
+    "birth_seed": 116089,
+    "birth_file_sha256": "5f538798706bc1f97b358b93cbe6a0350ae8295d71a45088441bc1d08fe6f709",
+    "command": "python3 sw_run.py life naive 3 8 --world lw --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_116089.pt --in-turn --visit-updates 256 --save-states 8 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/births",
+    "first_visit_levels": [
+     0.80540370058873,
+     0.1814759965444897,
+     0.5770931603773585,
+     0.3128460686600222,
+     0.25571428571428567,
+     0.2868520859671302,
+     0.4248015873015873,
+     0.6206596101716794
+    ],
+    "median_families_2_to_8": 0.3128460686600222,
+    "calibration_median_with_seed_73129": 0.301,
+    "at_or_above_0_20": true,
+    "events_arrays_sha256": "80aea948b9f781b062b83bbf05bbabcdfc6e4de1cb8c86bd8c4eb7f6c4ea0a26",
+    "cpu_total": 105.989775532
+   }
+  },
+  "note": "The audit's recommendation 3: one 8-visit life in turn at 256 updates under `naive` in worlds 2 and 3 with the births of seeds 93683 and 116089. The median is the gate's: over the second to the eighth family taken, of the first-visit level on reduction pairs (sw_score.lw_first_visits, lw_gate_median). Below 0.20 the worker stops and reports."
+ },
+ "all_passed": true
+}
