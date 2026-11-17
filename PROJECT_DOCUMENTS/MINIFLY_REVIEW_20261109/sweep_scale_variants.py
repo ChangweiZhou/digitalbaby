@@ -25,7 +25,9 @@ Rules of the sweep, as the code read with `git show` has them (no line of anothe
 
 The task and the stream (render, split, batches) are copied from COORDINATION_20261117/check_e54_brief.py, which copied them from
 exp11_cell.py (random.Random only).  Weight files are read with `git show` into memory, one at a time, by compare_pt_tensors.tensors
-(an unpickler that refuses every class but those that describe a tensor).  Standard library and numpy only; float64 throughout.
+(an unpickler that refuses every class but those that describe a tensor).  The reviewer's readers of this folder (e42_cells_reader,
+e49_interface_reader, e50_code_reader) are imported by the part `forward` only, for the comparison.  Standard library and numpy only;
+float64 throughout, except the second figure of test 2, which repeats the first batch in float32.
 """
 import sys
 sys.dont_write_bytecode = True                      # nothing is written beside this script
@@ -148,6 +150,11 @@ def stream_batches(n):
         for _ in range(max(n, 1 + N_FURTHER)):
             _BATCHES.append(batch_arrays(next(bt)))
     return _BATCHES[:n]
+
+
+def target_classes():
+    """The classes that occur as targets at the answer's positions of the 17 batches used (the ten digits and the end symbol)."""
+    return sorted({int(v) for x, y, mask in stream_batches(1 + N_FURTHER) for v in y[mask]})
 
 
 def stream_digest(n):
@@ -363,7 +370,8 @@ def measure(name):
         for x, y, mask in stream_batches(1 + N_FURTHER):
             c = forward(net, x, y, mask)
             ge = backward(net, c, Fx)
-            row = {"loss": c["loss"], "norm": float(np.sqrt((flat(net, ge) ** 2).sum()))}
+            row = {"loss": c["loss"], "norm": float(np.sqrt((flat(net, ge) ** 2).sum())),
+                   "share": float((c["d3"][:, target_classes()] ** 2).sum() / (c["d3"] ** 2).sum())}
             for key, F in Fs.items():
                 row[key] = compare(net, backward(net, c, F), ge)
             rows.append(row)
@@ -386,6 +394,10 @@ def describe(net):
         if k in GRU_MAPS:
             d["blocks"] = [float(A[g * U:(g + 1) * U].sum() / M[g * U:(g + 1) * U].sum()) for g in range(3)]
             d["cv_rows_in_block"] = [cv(row[g * U:(g + 1) * U]) for g in range(3)]
+        if k == "l3":                                               # the rows of l3 that carry the output error
+            tg = target_classes(); rest = [i for i in range(257) if i not in tg]
+            d["target_rows"] = dict(n=len(tg), mean=float(A[tg].mean()), mean_rest=float(A[rest].mean()),
+                                    align={v: cos((np.sign(W) * scale(W, M, v, False))[tg], W[tg]) for v in VARIANTS[:5]})
         out["maps"][k] = d
     return out
 
@@ -627,6 +639,8 @@ MAPNAME = {"l1": "l1", "ih": "input map", "hh": "recurrent map", "l2": "l2", "lm
 
 def part_magnitudes(names):
     label("magnitudes: how unequal the magnitudes are that a scale replaces (means over the kept entries)")
+    print("CV: coefficient of variation, the standard deviation over the mean.  cos(F, W): the cosine between the matrix a variant sends the error back through"
+          " (the signs times the variant's magnitudes) and the weight matrix, over the kept entries.\n")
     for name in names:
         desc, _ = measure(name)
         print(f"**{name}** ({desc['what']})\n")
@@ -637,7 +651,11 @@ def part_magnitudes(names):
             lines.append((MAPNAME[k], f"{d['kept']:,} of {d['size']:,}", f"{d['mean']:.4f}", bl, f"{d['cv_rows']:.2f}", wb, f"{d['cv_cols']:.2f}", f"{d['cv_entries']:.2f}",
                           *(f"{d['align'][v]:.3f}" for v in VARIANTS[:5])))
         table(("map", "kept entries", "mean magnitude", "mean by gate block r / z / n", "CV of row means", "the same within block r / z / n", "CV of column means",
-               "CV of magnitudes", "V0", "V1", "V2", "V3", "V4"), lines)
+               "CV of magnitudes", "cos(F, W) V0", "V1", "V2", "V3", "V4"), lines)
+        t = desc["maps"]["l3"]["target_rows"]
+        print(f"l3 of {name}: {t['n']} of its 257 rows belong to classes that occur as targets; share of the squared output error on these rows, least over the 17 batches:"
+              f" {min(r['share'] for r in _):.6f}; mean magnitude on these rows {t['mean']:.4f}, on the other rows {t['mean_rest']:.4f}; cos(F, W) on these rows only: "
+              + ", ".join(f"{v} {t['align'][v]:.3f}" for v in VARIANTS[:5]) + "\n")
 
 
 # ---------------------------------------------------------------- part: tables
