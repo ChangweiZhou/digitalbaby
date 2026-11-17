@@ -64,4 +64,4 @@ The numbers E52 to E56 are the reviewer's; the coordinator may renumber them.
 | 21:05 | Items 1, 2 and 3 started (agents of the reviewer, saved weights and the record only). Item 4's brief is in check. |
 | 21:07 | Item 8: the brief of E52 written and given to a check. Items 1, 2, 3 running. |
 | 21:10 | Item 5: the runner's checks passed and the runner change was read and accepted; the trial runs since 21:04. Item 6: the helper session for the sweep's long lives started. |
-| 21:33 | Item 10: the brief of E54 written and given to a check. |
+| 21:25 | Item 10: the brief of E54 written and given to a check. |
