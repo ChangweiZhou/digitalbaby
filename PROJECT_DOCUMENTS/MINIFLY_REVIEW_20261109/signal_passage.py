@@ -20,15 +20,19 @@ on unchanged and on changed weights.
             the update gate shifted; mean size of the states; share of gate values beyond 0.05 / 0.95; the size of a
             difference 10, 20 and 40 positions after the changed byte in items of 40 letters; the factor by which a difference
             changes per position, measured, beside the factor expected from the arithmetic
-  more      further starts, added after the first results: the recurrent weights times g together with a shifted update-gate
-            bias, and the ten connections scaled without the cell's weight on its own state
-  trained   item 3: the measurements of `start` on the final weights (E47's four runs; E49's in16 under B and under S)
+  more      further starts, added after the first results: values of g between those of `variants`, the recurrent weights
+            times g together with a shifted update-gate bias, and the ten connections scaled without the cell's weight on
+            its own state
+  directed  a further start for E47, suggested by the arithmetic: only the weights on connections whose source lies nearer
+            the interface than the cell that reads it are multiplied
+  trained   item 3: the same measurements on the final weights (E47's four runs; E49's in16 under B and under S)
   arith     item 4: the factor per connection crossed, from the equations and the starting distributions, beside the measured
             first arrival of a difference in each ring (E47) and in the cells that do not read the changed byte (E50)
 
 Run from anywhere inside the repository:
     OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/signal_passage.py [parts] [networks]
-parts: check start variants more trained arith (default: all); networks: e47_one e47_place e49_in16 e50_C16in f10 (default: all).
+parts: check start variants more directed trained arith (default: all); networks: e47_one e47_place e49_in16 e50_C16in f10
+(default: all).  The tables of the document SIGNAL_PASSAGE_AT_THE_START_20261117.md are printed in its form.
 """
 import sys
 sys.dont_write_bytecode = True
@@ -54,7 +58,7 @@ from np_gru import split, panel, DEV, BOS
 SEED, U, D = 73129, 256, 512
 P = "MOD97_LOCAL_RULE_20261106/exp45/"
 E47REF, E49REF, E50REF = V47.REF, V49.REF, "c61b1067"     # 578a877b, a36de661, and E50's worker's branch on 17 November
-PARTS = ("check", "start", "variants", "more", "trained", "arith")
+PARTS = ("check", "start", "variants", "more", "directed", "trained", "arith")
 NETNAMES = ("e47_one", "e47_place", "e49_in16", "e50_C16in", "f10")
 want = [a for a in ARGS if a in PARTS] or list(PARTS)
 nets_wanted = [a for a in ARGS if a in NETNAMES] or list(NETNAMES)
@@ -96,14 +100,17 @@ class Layer:
         assert not (self.reads & (self.p > 1)).any()        # a cell that reads the input is updated at every position
         self.plans = {}
 
-    def changed(self, g_all=1.0, g_cand=1.0, z_shift=0.0, g_ten=1.0):
+    def changed(self, g_all=1.0, g_cand=1.0, z_shift=0.0, g_ten=1.0, g_out=1.0):
         """A copy with the recurrent weights of all three gates times g_all (the eleven kept entries of a cell, its weight on
         its own state among them), the candidate rows times g_cand in addition, the ten connections to other cells times g_ten
-        (the cell's weight on itself untouched), and the bias of the update gate shifted by z_shift."""
+        (the cell's weight on itself untouched), the bias of the update gate shifted by z_shift, and (E47) the weights on the
+        connections that come from a cell nearer the interface times g_out."""
         new = copy.copy(self)
         new.Wc = self.Wc * g_all
         new.Wc[2] *= g_cand
         new.Wc[:, :, 1:] *= g_ten
+        if g_out != 1.0:
+            new.Wc[:, self.outward] *= g_out
         new.bc = self.bc.copy()
         new.bc[1] += z_shift
         new.plans = {}
@@ -217,6 +224,8 @@ def e47_layer(arm, rule="S", start=True):
                 ("interface", "ring 1", "ring 2", "ring 3"), S.p, S.f, W64.get("a"))
     ring = -(-S.dist // 3)                                   # e47_trial_verify's rings: connections from the interface
     net.ring, net.S, net.W = ring, S, W
+    net.outward = np.zeros(S.idx.shape, bool)                # connections whose source is nearer the interface than the cell
+    net.outward[:, 1:] = S.dist[S.idx[:, 1:]] < S.dist[:, None]
     net.labels = lambda a, b: ring
     return net
 
@@ -530,6 +539,10 @@ def more_variants():
     return v
 
 
+def directed_variants():
+    return [("unchanged", dict(), None)] + [(f"connections from nearer the interface x {g:g}", dict(g_out=g), None) for g in (2.0, 3.0, 4.0, 6.0, 8.0, 12.0)]
+
+
 def run_variants(names, variants):
     for name in names:
         net = start_net(name)
@@ -642,6 +655,16 @@ if "variants" in want:
 if "more" in want:
     print("more. Further starts, tried after the first results")
     run_variants([n for n in nets_wanted if n != "f10"], more_variants())
+
+if "directed" in want:
+    print("directed. A start changed in one direction only (E47): the weights, in all three gates, on the connections whose source cell lies nearer the interface than the cell that reads it")
+    for name in [n for n in nets_wanted if n in ("e47_one", "e47_place")]:
+        net = start_net(name)
+        if name == "e47_one":
+            n_out = net.outward.sum(1)
+            print("   of a cell's ten connections, the mean number that come from a cell nearer the interface (by grid distance): "
+                  + ", ".join(f"{nm} {float(n_out[net.ring == g].mean()):.2f}" for g, nm in enumerate(net.names)) + f"; far cells without one: {int((n_out[net.ring > 0] == 0).sum())} of {int((net.ring > 0).sum())}")
+    run_variants([n for n in nets_wanted if n in ("e47_one", "e47_place")], directed_variants())
 
 # ================================================================ trained
 if "trained" in want:
