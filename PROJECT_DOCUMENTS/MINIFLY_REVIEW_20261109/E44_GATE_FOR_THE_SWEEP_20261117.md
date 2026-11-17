@@ -56,7 +56,7 @@ No world is above the band in any row. World 6 under `sweep-after-naive` at 256 
 
 **The shortest length at which both conditions are met** is 256 for `naive`, 128 for `sweep`, and none of the three for `sweep-after-naive`.
 
-**How the figures were checked.** The script reads 1,376,256 answers of the 72 lives. For `naive` and `sweep` the figures are the audit's own table (`gate_table` of `e44_l2_checks.py`), in which every asked item is marked again from the reviewer's own stream and asserted equal to the event file in task, reduction mark and right or wrong; the third arm goes through the same two functions. The `naive` rows equal the report's table and the audit's section 2.1 to the third decimal (asserted), and the audit's own command `e44_l2_checks.py C` prints the same six rows for `naive` and `sweep`. Two further routes give the same 576 family figures with a largest difference of zero: the event file's own columns alone (the audit's `l2_quantities`), and the worker's committed table `$F1/E44_F1_first_visit.csv`. The worker's table also agrees on the 384 figures of the whole visit and of its first 16 updates at 256, which tests the window bounds used in section 5.
+**How the figures were checked.** The script reads 1,376,256 answers of the 72 lives. Each of the 72 event files has the SHA-256 that its receipt records, and every receipt is complete. For `naive` and `sweep` the figures are the audit's own table (`gate_table` of `e44_l2_checks.py`), in which every asked item is marked again from the reviewer's own stream and asserted equal to the event file in task, reduction mark and right or wrong; the third arm goes through the same two functions. The `naive` rows equal the report's table and the audit's section 2.1 to the third decimal (asserted), and the audit's own command `e44_l2_checks.py C` prints the same six rows for `naive` and `sweep`. Two further routes give the same 576 family figures with a largest difference of zero: the event file's own columns alone (the audit's `l2_quantities`), and the worker's committed table `$F1/E44_F1_first_visit.csv`. The worker's table also agrees on the 384 figures of the whole visit and of its first 16 updates at 256, which tests the window bounds used in section 5.
 
 **How fine a figure is.** The last quarter of a first visit of 256 updates holds 221 to 284 asked reduction items of add and sub (median 250). One family's figure there is the mean of two shares of about 125 items each, so its sampling error is about 0.03 (at a share of one half, 0.045 a share and 0.032 for the mean of the two).
 
@@ -146,7 +146,7 @@ Source: `e44_gate_sweep.py S`.
 
 **The nearest figures the calibration holds are those at 128 updates a visit, and they are not the same thing.** An arm with a store learns 24 new items an update, so a visit of 256 updates teaches 256 × 24 = 6,144 new items, the number that a visit of 128 updates teaches without a store (128 × 48). At 128 updates the gate's figure is inside the band in 4 of 8 worlds under `naive` and in 8 of 8 under `sweep` (section 4). A life with a store differs from those lives in two ways that these figures do not contain: it makes twice as many updates, and half of each update is made of stored items of other families. The figures at 128 updates are therefore no estimate of the gate under `replay` or `sweep+replay`.
 
-**Outside the calibration**, among the 40 fetched refs only `$L` (at 9519302d) holds event files of an arm with a store: five check lives of `replay`. There is no event file of `sweep+replay` on any fetched ref. One of the five contains a first visit of a second family: world 5, four visits by the schedule (families 0, 1, 0, 1), `replay` at ρ = 0.5 (`exp45/e44/L2/checks/c7_replay/lw_replay_w5_v4_rho0.5.npz`), with its partner under `naive` (`…/c7_naive/lw_naive_w5_v4.npz`), both from the birth `e41_B_h256_f50_93683.pt`:
+**Outside the calibration**, among the 40 fetched refs only `$L` (at 9519302d) holds event files of an arm with a store: five check lives of `replay`. There is no event file of `sweep+replay` on any fetched ref. Two of the five contain a first visit of a second family: they are lives of world 5 over four visits by the schedule (families 0, 1, 0, 1), `replay` at ρ = 0.5 with decay 0.25 and the same with decay 0. I read the first, which has the settings of the long lives (`exp45/e44/L2/checks/c7_replay/lw_replay_w5_v4_rho0.5.npz`), with its partner under `naive` (`…/c7_naive/lw_naive_w5_v4.npz`), both from the birth `e41_B_h256_f50_93683.pt`:
 
 | Arm | Family 1's figure by quarter of its first visit | Family 0's last quarter |
 |---|---|---|
@@ -179,14 +179,14 @@ All from the repository root, on `claude/vibrant-cerf-sje726`, with `python3 -I`
 
 | Command | Content | Run time |
 |---|---|---|
-| `python3 -I $R/e44_gate_sweep.py` | all four parts | 75 s |
-| `python3 -I $R/e44_gate_sweep.py G` | section 4 | 71 s |
+| `python3 -I $R/e44_gate_sweep.py` | all four parts | 79 s |
+| `python3 -I $R/e44_gate_sweep.py G` | section 4 | 73 s |
 | `python3 -I $R/e44_gate_sweep.py Q` | section 5 | 70 s |
 | `python3 -I $R/e44_gate_sweep.py S` | section 6 | 67 s |
 | `python3 -I $R/e44_gate_sweep.py B` | section 7 | 70 s |
 | `python3 -I -B $R/e44_l2_checks.py C` | the audit's own part C: the six rows of `naive` and `sweep` | 44 s |
 
-Every command is prefixed with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1`. Every part first reads and marks the 72 event files, which takes about 65 seconds; the parts themselves take about 3 seconds each. Each part was run alone and the four together with the script as it now is (SHA-256 in section 11), and the single runs print what the joint run prints. The printed output is not kept in the repository; the commands regenerate it.
+Every command is prefixed with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1`. Every part first reads and marks the 72 event files, which takes about 65 seconds; the parts themselves take about 3 seconds each. The four parts together and part G alone were run with the script as it now is (SHA-256 in section 11). Parts Q, S and B were run alone before one check was added to part G (the event files' hashes against their receipts); their code did not change after that, and each printed what the joint run prints. The printed output is not kept in the repository; the commands regenerate it.
 
 The files read:
 
@@ -204,15 +204,15 @@ The words of the gate are those of `OPUS_TASK_E44_LONG_LIFE_WORLD_IN_THE_FULL_SC
 
 ## 10. What I could not check
 
-- **No life was run.** Every figure is recomputed from committed event files. That the files are what the runner wrote is taken from their receipts; the marking of each answer against the reviewer's own stream shows that the items and the reduction marks are the stream's, and it does not show that the recorded answers are the network's.
-- **The sweep's gate with the births of the long lives.** The calibration has one birth file an arm. For `naive` two further lives exist and the gate's figure moved by 0.007 and 0.011 (section 7); for `sweep` none exists. The difference of 0.161 between the arms is a difference between two birth files and the lives grown from them. How much it would vary over births of other seeds is not measured.
+- **No life was run.** Every figure is recomputed from committed event files. Each event file has the hash that its receipt records; that the receipt is the runner's own is taken as given. The marking of each answer against the reviewer's own stream shows that the items and the reduction marks are the stream's, and it does not show that the recorded answers are the network's.
+- **The sweep's gate with the births of the long lives.** The calibration has one birth file an arm. For `naive` two further lives exist and the gate's figure moved by 0.007 and 0.011 (section 7); for `sweep` none exists. The difference of 0.161 between the arms is a difference between two birth files and the lives that start from them. How much it would vary over births of other seeds is not measured.
 - **The intervals** take the eight worlds as the repeated unit. The worlds differ in families and stream and share the birth file, so the intervals describe the spread over worlds and not over births.
 - **An arm with a store.** The gate's figure under `replay` or `sweep+replay` is in no committed file. The one first visit under `replay` in section 6 is a single family from a check life, on a ref that its worker is still pushing to; I read it at 9519302d.
-- **First visits later in a life.** The calibration's first visits are the first eight visits of a life. In a life by the schedule a new family arrives among returns, hundreds of visits in. Whether the first-visit level of either arm stays inside the band there is what the long lives measure.
+- **First visits later in a life.** The calibration's first visits are the first eight visits of a life. In a life by the schedule new families arrive throughout the life, between returns to earlier families. Whether the first-visit level of either arm stays inside the band there is what the long lives measure.
 - **The forecast** uses the CPU-seconds recorded in the receipts, which I cannot measure, and leaves out the time of the list, as the brief's and the audit's forecast do.
 - **The lives on `$L`.** They were run with the changed runner. That the changed runner reproduces the calibration life of world 1 is the worker's check; I did not repeat it.
 - **Independence of the routes.** Routes 1 and 2 of section 4 are both the reviewer's functions. Route 3 is the worker's scorer. The three agree exactly, which leaves open only an error common to the reviewer's reading of the brief and the worker's.
 
 ## 11. A note on what was written
 
-Two files were written: this document and `e44_gate_sweep.py` (SHA-256 `6c85640770865d96be9c70fadd443cb2c0019602da21cde450247423c3026424`). The script sets `sys.dont_write_bytecode` and writes nothing. One thing beyond the two files happened and is recorded here: a trial import of the audit's script, made before the script set that flag, caused Python to write its compiled copy `__pycache__/e44_l2_checks.cpython-313.pyc` in this folder. That file is a cache of the unedited audit script, the folder `__pycache__/` is ignored by git, and I left it as it is.
+Two files were written: this document and `e44_gate_sweep.py` (SHA-256 `22f69345a30cd41a26b95ec25eb635009b484fbfa83c070946e92fca9879cea0`). The script sets `sys.dont_write_bytecode` and writes nothing. One thing beyond the two files happened and is recorded here: a trial import of the audit's script, made before the script set that flag, caused Python to write its compiled copy `__pycache__/e44_l2_checks.cpython-313.pyc` in this folder. That file is a cache of the unedited audit script, the folder `__pycache__/` is ignored by git, and I left it as it is.

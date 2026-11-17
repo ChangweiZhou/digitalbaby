@@ -4,13 +4,13 @@ This note examines one open point of the record: item 27 of `COORDINATION_202611
 
 ## 0. The question and the answer
 
-**The question.** Experiment E38 specified two checks of its one new piece of code, a step that pulls each weight toward an earlier value. Under one of the two learning rules both checks failed. Was the code wrong, was the check wrong, and do the results of E38 under that rule stand?
+**The question.** The programme trains a small recurrent network on families of arithmetic tasks under two learning rules. Rule B is exact back-propagation. Rule S, called the sweep, passes the error backward through each linear map by the signs of the map's weights times one scale, in place of the weights themselves. Experiment E38 asked what erases a family that is no longer taught. Its runs, called lives, start from the saved weights of a network that has learned a first family (the birth) and continue for 12,288 updates on a second family; each variant of the run is called an arm. Two arms add a step that pulls every weight toward its value at the birth. The brief (the task as written for the worker) calls this step the anchor; this note calls it the pull. The brief specified two checks of the pull, numbered 2 and 3. Under the sweep both failed. Was the code wrong, was the check wrong, and do the results of E38 under the sweep stand? Section 1 lists every term again with its place in the code.
 
 **The answer.**
 
-1. The step is not shown wrong by anything on file, and several things on file exclude the errors the checks were written to catch. The checks failed because they were specified in a way that cannot be expected to pass under that rule. They ask two computations that are equal up to rounding to stay equal to within 1e-5 and 1e-6 after 64 updates. Under exact back-propagation that holds. Under the sweep the update depends on the sign of every weight, so it changes by a finite amount as soon as one weight that lies next to zero has one sign in one computation and the other sign in the other. This is possibility (b) of the task.
-2. The parts of the E38 report that would be unsafe if the step were wrong under the sweep are the two arms with a pull under the sweep and what is read from them: their curves, their marks, reading 5 under the sweep, and predictions P38.3 to P38.6 and P38.8. Everything under back-propagation and the three sweep arms without a pull are safe either way.
-3. All 20 committed weight files of E38 reproduce the receipts exactly: 200 counts, largest difference 0. The weights of the two pulled arms lie nearer the birth than the unpulled arm by the same factors under the sweep as under back-propagation (0.59 and 0.44 at strength 0.25; 0.24 and 0.17 at strength 2.5), on every pulled tensor.
+1. The pull is not shown wrong by anything on file, and several things on file exclude the errors the checks were written to catch. The checks failed because they were specified in a way that cannot be expected to pass under the sweep. They ask two computations that are equal up to rounding to stay equal to within 1e-5 and 1e-6 after 64 updates. Under exact back-propagation that holds. Under the sweep the update depends on the sign of every weight, so it changes by a finite amount as soon as one weight that lies next to zero has one sign in one computation and the other sign in the other. This is possibility (b) of the task that asked for this note: a check specified wrongly for the sweep.
+2. The parts of the E38 report that would be unsafe if the pull were wrong under the sweep are the two arms with a pull under the sweep and what is read from them: their curves, their marks, the brief's reading 5 under the sweep ("Neither anchor keeps": "A uniform pull is not enough on this seed"), and the brief's predictions P38.3 to P38.6 and P38.8. Everything under back-propagation and the three sweep arms without a pull are safe either way.
+3. All 20 committed weight files of E38 reproduce the scores that the worker's result files (receipts) record: 200 counts, largest difference 0. The weights of the two pulled arms lie nearer the birth than those of the arm without pull and without decay, on every pulled array of weights, by nearly the same factors under the sweep as under back-propagation (at strength 0.25: 0.590 and 0.443 under the sweep, 0.598 and 0.447 under back-propagation; at strength 2.5: 0.243 and 0.169 against 0.235 and 0.164).
 4. Proposed ruling: the results under the sweep stand, with the qualification stated in section 6. No life has to be run again.
 
 ## 1. Terms and names
@@ -18,7 +18,7 @@ This note examines one open point of the record: item 27 of `COORDINATION_202611
 | Term | Meaning here |
 |---|---|
 | D | `origin/codex/minifly-consolidated-20261023` at 7cabb13a, the default branch. Every file of D was read with `git show 7cabb13a:<path>` |
-| V | the working tree of `claude/vibrant-cerf-sje726`, folder `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/`, on 17 November 2026 (HEAD 92f82b3b when this note was written) |
+| V | the working tree of `claude/vibrant-cerf-sje726`, folder `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/`, on 17 November 2026. The files of V quoted here were last committed at: the audit 823a3884, the memo 75b1b940 (revision 22), the discussion memo of 16 November a350e9ad, that of 15 November 5fa271c9, the inventory b2a2374d, the plan 92f82b3b |
 | M | the folder `MOD97_LOCAL_RULE_20261106` of D |
 | the network | a recurrent network of gated units (GRU) that reads an item byte by byte: a byte table (`book`, 258 rows of 8 numbers) and six linear maps, `l1` (8 to 512), `rnn.weight_ih_l0` (512 to 768), `rnn.weight_hh_l0` (256 to 768), `lm` (256 to 512), `l2` (512 to 512), `l3` (512 to 257). 1,124,113 numbers, of which 1,122,049 are outside the byte table |
 | update | one step of the optimizer on one batch of 64 items |
@@ -32,6 +32,8 @@ This note examines one open point of the record: item 27 of `COORDINATION_202611
 | arms | `zero` (decay 0.25 toward zero, as E26), `none` (no decay), `anchor`, `anchor10`, `rehearse` (decay as `zero`; items of the first family make up about half of the stream) |
 | row | the number of updates at which a life was scored and its weights saved |
 | receipt | a JSON file written by the runner with settings, hashes and scores |
+| tensor | one named array of weights, for example `l1.weight`; the network has 13 |
+| brief, report, review, audit, memo | the task as the coordinator wrote it for the worker; the worker's account of the run; the coordinator's running record of the programme; the reviewer's examination of the brief before the run; the reviewer's memorandum to the coordinator |
 | relative difference | of two tensors of the same name: the largest absolute difference over the largest absolute entry (`exp38_erase.max_rel`, lines 311 to 313). It is the quantity both checks compare with their tolerance |
 | float32, float64 | numbers of 32 and of 64 bits. One rounding changes a float32 by a relative 6e-8 at most and a float64 by 1e-16. The runner computes in float32 |
 
@@ -111,7 +113,7 @@ The reviewer's documents in V read E38's figures as the worker's and do not ment
 
 ### 2.6 Whether any later document rules on it
 
-None was found. The search: `git grep -l -i -E "check2_diag|float64 diagnostic|checks 2 and 3|check 2 and 3|checks 2, 3"` over the `.md` files of every local and remote ref (42 refs), and for the two local refs and the refs under `origin/claude/` up to `vibrant-gauss-tops5f` also over `.py`, `.json`, `.txt`, `.log` and `.out`. The matches are the E38 brief, the E38 report, the diagnostic and its two receipts (the same files on the branches that contain D's history), the E48 brief and report (their own checks 2 and 3), and in V the audit of the brief, a prompt quoted in `DISCUSSION_MEMO_20261115.md` (line 1659: "do checks 2 and 3 suffice in place of a second implementation"), `AUDIT_E39_SMALL_WORLD_PROTOCOL_20261115.md`, `E48_RESULT_VERIFICATION_20261117.md` and `e48_result_verify.py` (other experiments' checks), and the inventory. A second search of D's `.md` files for "E38" within 300 characters of "rounding", "failed", "fails", "diagnos", "second implementation" or "second worker" gives review line 2959 and report lines 5 and 21 only. The inventory states the same (V:`COORDINATION_20261117/INVENTORY_DENSE_LINE_20261117.md`, lines 472, 473, 607 and 634: "not found: no ruling in the review or in the memo").
+None was found. The search: `git grep -l -i -E "check2_diag|float64 diagnostic|checks 2 and 3|check 2 and 3|checks 2, 3"` over the `.md` files of every local and remote ref (42 refs), and also over `.py`, `.json`, `.txt`, `.log` and `.out` for D, for the two local refs and for the refs under `origin/claude/` up to `vibrant-gauss-tops5f`. The matches are the E38 brief, the E38 report, the diagnostic and its two receipts (the same files on the branches that contain D's history), the E48 brief and report (their own checks 2 and 3), and in V the audit of the brief, a prompt quoted in `DISCUSSION_MEMO_20261115.md` (line 1659: "do checks 2 and 3 suffice in place of a second implementation"), `AUDIT_E39_SMALL_WORLD_PROTOCOL_20261115.md`, `E48_RESULT_VERIFICATION_20261117.md` and `e48_result_verify.py` (other experiments' checks), and the inventory. A second search of D's `.md` files for "E38" within 300 characters of "rounding", "failed", "fails", "diagnos", "second implementation" or "second worker" gives review line 2959 and report lines 5 and 21 only. The inventory states the same (V:`COORDINATION_20261117/INVENTORY_DENSE_LINE_20261117.md`, lines 472, 473, 607 and 634: "not found: no ruling in the review or in the memo").
 
 **A ruling on a like case exists, for another experiment.** D:`OPUS_TASK_E31_ONE_SWITCH_LIVES_20261113.md`, addendum 2 of 14 November, line 92: "1. **G: accepted as agreeing.** Both evaluate the rule the brief wrote; one uses two matrix products and one a stacked matrix, and float32 rounding (about 7e-7 per crossing) compounds into a different hash. From here on, agreement between the two implementations means equal hashes, **or** gradients on one common batch within 1e-6 relative when each worker runs the other's function." The review records it at line 2732 (9.123). The E38 brief was written the next day and compares weights after 64 updates.
 
@@ -165,7 +167,7 @@ D:M/`arch26.py`, lines 50 to 75, sends every one of the six linear maps through 
 
 ### 3.2 The three possibilities and what each predicts
 
-(a) A defect of the pull under the sweep. The errors the audit lists act on every pulled tensor from the first update, in proportion to the strength and to the number of updates. In check 2's statistic after one update they give 2.5e-4 or more at strength 0.25 and 2.5e-3 or more at 2.5 (computed in part D5 from the birth file; table in 3.4). They would also fail under rule B, since the code is the same.
+(a) A defect of the pull under the sweep. The errors the audit lists act from the first update, on every pulled tensor or on a whole group of tensors (the biases, the byte table), in proportion to the strength and to the number of updates. In check 2's statistic after one update they give 2.5e-4 or more at strength 0.25 and 2.5e-3 or more at 2.5 (computed in part D5 from the birth file; table in 3.4). They would also fail under rule B, since the code is the same.
 
 (b) A check that assumes what holds only for the exact gradient. Then: the pair agrees at the rounding level for some updates and parts at one update; the size of the parting does not grow with the strength; it appears first in the tensors that lie behind the map whose weight differs in sign; in float64, where rounding is a thousand million times smaller, no parting occurs in 64 updates; under rule B the same code passes.
 
@@ -298,19 +300,34 @@ E38's results under the sweep stand, with one qualification to be entered in the
 
 ## 7. Commands
 
-All from the repository root, with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1`. `R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`, `D=7cabb13adc38753483d34dd5472fc3c84c4de675`.
+All from the repository root.
 
-| Command | What it prints | CPU |
-|---|---|---|
-| `python3 -I $R/e38_checks_read.py A` | section 2.3: the check receipts, the diagnostic by update, the hash of the runner in every receipt | under 1 s |
-| `python3 -I $R/e38_checks_read.py B` | section 5.1: the 20 files against the receipts, the table of marks, the report's table of curves against the receipts | 103 s |
-| `python3 -I $R/e38_checks_read.py C` | section 5.2: distance from the birth per tensor, arm, rule and row | 1 s |
-| `python3 -I $R/e38_checks_read.py D` | section 3.4: D1 the stream, D2 the backward pass against differences, D3 and D4 the gradient under changed weights, D5 the forms, the faulty pulls and the weights near zero, D6 one weight with unequal signs | 28 s |
-| `git show $D:<path> \| cat -n` | every quotation, with the line numbers given | |
-| `for r in $(git for-each-ref --format='%(refname:short)' refs/remotes refs/heads); do git grep -l -i -E "check2_diag\|float64 diagnostic\|checks 2 and 3\|check 2 and 3\|checks 2, 3" $r -- '*.md'; done` | section 2.6 | |
-| `git ls-tree -r --name-only $D \| grep -i -E "e38\|exp38"` | the files of E38 on D | |
+```
+export OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109
+D=7cabb13adc38753483d34dd5472fc3c84c4de675
 
-The script imports `np_gru.py` and `compare_pt_tensors.py` of this folder, reads D through `git show` at the commit above, sets `sys.dont_write_bytecode`, and writes nothing. Part D carries out the arithmetic of the first two updates of a life in memory, on copies of the birth weights, and keeps nothing; I do not count that as training, and say it here so that the coordinator can judge.
+python3 -I $R/e38_checks_read.py A      # the receipts
+python3 -I $R/e38_checks_read.py B      # the 20 weight files against the receipts
+python3 -I $R/e38_checks_read.py C      # distance from the birth
+python3 -I $R/e38_checks_read.py D      # the first two batches under both rules
+
+git show $D:<path> | cat -n             # every quotation of a file of D, with the line numbers given
+cat -n $R/<file>                        # every quotation of a file of V
+git ls-tree -r --name-only $D | grep -i -E "e38|exp38"
+for r in $(git for-each-ref --format='%(refname:short)' refs/remotes refs/heads); do
+  git grep -l -i -E "check2_diag|float64 diagnostic|checks 2 and 3|check 2 and 3|checks 2, 3" $r -- '*.md'; done
+git grep -l -i -E "check2_diag|float64 diagnostic|checks 2 and 3|check 2 and 3|checks 2, 3" $D -- '*.md' '*.py' '*.json' '*.txt' '*.log' '*.out'
+```
+
+| Part of the script | Section | What it prints | CPU |
+|---|---|---|---|
+| A | 2.2, 2.3 | the check receipts under both rules, the diagnostic by update, the hash of the runner in 22 receipts | under 1 s |
+| B | 5.1 | the 20 files against the receipts, the table of marks, the report's table of curves against the receipts | 103 s |
+| C | 5.2 | distance from the birth per tensor, arm, rule and row, and the shares | 1 s |
+| D | 3.3, 3.4 | D1 the stream; D2 the backward pass against differences; D3, D4 the gradient under changed weights; D5 the forms, the faulty pulls, the weights near zero; D6 one weight with unequal signs | 28 s |
+
+The script imports `np_gru.py` and `compare_pt_tensors.py` of this folder, reads D through `git show` at the commit above, sets `sys.dont_write_bytecode`, and writes nothing. The search over all refs can exhaust the container's memory if every file type is included; it was run one ref at a time. Part D carries out the arithmetic of the first two updates of a life in memory, on copies of the birth weights, and keeps nothing; I do not count that as training, and say it here so that the coordinator can judge.
 
 ## 8. What I could not check
 
@@ -322,4 +339,5 @@ The script imports `np_gru.py` and `compare_pt_tensors.py` of this folder, reads
 - **The diagnostic under rule B.** The worker ran it under the sweep only.
 - **How much a sweep life's scores vary with rounding.** E38 has one run per arm and rule.
 - **Other seeds.** E38 is seed 73129 only, as its brief says.
-- **The files under `.py`, `.json` and `.log` of the refs after `origin/claude/vibrant-gauss-tops5f` in the first search of section 2.6** (the two last `origin/claude/` refs and the `codex` refs): for these only the `.md` files were searched, because the first search was cut off by a restart of the container.
+- **Files other than `.md` on ten refs.** For `origin/claude/wizardly-franklin-sr2l6q`, `origin/claude/wonderful-edison-8hx6i6` and the eight `origin/codex/` refs other than D, only the `.md` files were searched for a ruling, because the first search was cut off when the container restarted. D itself was searched over all the file types named.
+- **Documents that are not in the repository.** A ruling given in conversation and not written to a file would not be found by this search.

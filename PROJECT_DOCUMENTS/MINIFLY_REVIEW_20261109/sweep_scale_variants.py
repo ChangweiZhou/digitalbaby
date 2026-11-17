@@ -165,19 +165,19 @@ def sigmoid(v):
 class Net:
     """The parameters (float64), the masks of the three maps that can be masked, and the fixed code where there is one."""
 
-    def __init__(self, name):
+    def __init__(self, name, dt=np.float64):
         ref, path, rpath, self.when, self.what = NETS[name]
         T = load(path, ref)
-        self.name, self.receipt_path = name, rpath
+        self.name, self.receipt_path, self.dt = name, rpath, dt   # dt = float32 only for the comparison of precisions in test 2
         self.coded = name.startswith("C-dense")
-        self.code = T["code_table"].astype(np.float64) if self.coded else None
+        self.code = T["code_table"].astype(dt) if self.coded else None
         ones = lambda s: np.ones(s, dtype=bool)
         self.M = {"l1": ones((D, 8)), "l2": ones((D, D)), "l3": ones((257, D)),
                   "hh": np.tile(T["mask"].astype(bool), (3, 1)),
                   "ih": np.tile(T["mask_in"].astype(bool), (3, 1)) if "mask_in" in T and not name.startswith("F10") else ones((3 * U, D)),
                   "lm": T["mask_out"].astype(bool) if "mask_out" in T else ones((D, U))}
         names = TENSORS + BIASES
-        self.P = {k: T[k].astype(np.float64) for k in names}
+        self.P = {k: T[k].astype(dt) for k in names}
         self.outside_zero = {k: bool((self.P[WNAME[k]][~self.M[k]] == 0).all()) for k in MAPS}
         self.trained = [k for k in names if not (self.coded and k in ("book.weight", "l1.weight", "l1.bias"))]
         self.maps = [k for k in MAPS if not (self.coded and k == "l1")]
@@ -201,8 +201,8 @@ def forward(net, x, y, mask):
     WhT, bh = net.Wm("hh").T, Pm["rnn.bias_hh_l0"]
     c = dict(x=x, xf=xf, idx=idx, Z1=Z1)
     for k in ("hp", "r", "z", "n", "ghn"):
-        c[k] = np.empty((L, B, U))
-    h = np.zeros((B, U)); Hs = np.empty((B, L, U))
+        c[k] = np.empty((L, B, U), dtype=net.dt)
+    h = np.zeros((B, U), dtype=net.dt); Hs = np.empty((B, L, U), dtype=net.dt)
     for t in range(L):
         gh = h @ WhT + bh
         r = sigmoid(gi[:, t, :U] + gh[:, :U])
@@ -221,13 +221,13 @@ def forward(net, x, y, mask):
     d3 = np.exp(logp); d3[np.arange(len(tgt)), tgt] -= 1.0
     order = np.argsort(xf, kind="stable"); xs = xf[order]
     starts = np.flatnonzero(np.r_[True, xs[1:] != xs[:-1]])
-    c.update(z1a=z1a, Hsa=Hsa, Hs=Hs, z2=z2, logits=logits, d3=d3 / len(tgt), order=order, starts=starts, present=xs[starts])
+    c.update(z1a=z1a, Hsa=Hsa, Hs=Hs, z2=z2, logits=logits, d3=(d3 / len(tgt)).astype(net.dt), order=order, starts=starts, present=xs[starts])
     return c
 
 
 def by_byte(c, rows):
     """(258, K): the rows (one for each position of the batch) summed over the positions that hold the same byte."""
-    out = np.zeros((258, rows.shape[1]))
+    out = np.zeros((258, rows.shape[1]), dtype=rows.dtype)
     out[c["present"]] = np.add.reduceat(rows[c["order"]], c["starts"], axis=0)
     return out
 
@@ -245,9 +245,10 @@ def backward(net, c, F):
     da2 = (d3 @ F["l3"]) * (1 - z2 * z2)                            # the error after crossing l3, at the sum inside z2's tanh
     g["l2.weight"], g["l2.bias"] = da2.T @ z1a, da2.sum(0)
     g["lm.weight"], g["lm.bias"] = (da2.T @ Hsa) * net.M["lm"], da2.sum(0)
-    dHs = np.zeros((B * L, U)); dHs[idx] = da2 @ F["lm"]; dHs = dHs.reshape(B, L, U)
-    dgi = np.empty((B, L, 3 * U)); gWh = np.zeros((3 * U, U)); gbh = np.zeros(3 * U)
-    carry = np.zeros((B, U)); Fh = F["hh"]
+    dt = net.dt
+    dHs = np.zeros((B * L, U), dtype=dt); dHs[idx] = da2 @ F["lm"]; dHs = dHs.reshape(B, L, U)
+    dgi = np.empty((B, L, 3 * U), dtype=dt); gWh = np.zeros((3 * U, U), dtype=dt); gbh = np.zeros(3 * U, dtype=dt)
+    carry = np.zeros((B, U), dtype=dt); Fh = F["hh"]
     for t in range(L - 1, -1, -1):
         dh = dHs[:, t] + carry
         r, z, n, ghn, hp = c["r"][t], c["z"][t], c["n"][t], c["ghn"][t], c["hp"][t]
@@ -262,7 +263,7 @@ def backward(net, c, F):
     Dg = by_byte(c, dgi.reshape(-1, 3 * U))                         # (258, 768): the error at the input map's output, by byte
     g["rnn.weight_ih_l0"], g["rnn.bias_ih_l0"] = (Dg.T @ Z1) * net.M["ih"], Dg.sum(0)
     if not net.coded:
-        Da2 = np.zeros((258, D)); np.add.at(Da2, c["xf"][idx], da2)
+        Da2 = np.zeros((258, D), dtype=dt); np.add.at(Da2, c["xf"][idx], da2)
         DA1 = (Da2 @ F["l2"] + Dg @ F["ih"]) * (1 - Z1 * Z1)        # the error at the sum inside z1's tanh, by byte
         g["l1.weight"], g["l1.bias"] = DA1.T @ net.P["book.weight"], DA1.sum(0)
         gb = DA1 @ F["l1"]
@@ -280,12 +281,12 @@ def scale(W, M, variant, gates):
     mean = A.sum() / M.sum()
     row = A.sum(1) / np.maximum(M.sum(1), 1)
     col = A.sum(0) / np.maximum(M.sum(0), 1)
-    one = np.ones(W.shape)
+    one = np.ones(W.shape, dtype=W.dtype)
     if variant == "V0" or (variant == "V1" and not gates):
         return one * mean
     if variant == "V1":
         blocks = [A[g * U:(g + 1) * U].sum() / M[g * U:(g + 1) * U].sum() for g in range(3)]
-        return one * np.repeat(blocks, U)[:, None]
+        return one * np.repeat(blocks, U).astype(W.dtype)[:, None]
     if variant == "V2":
         return one * row[:, None]
     if variant == "V3":
@@ -302,7 +303,7 @@ def feedback(net, variant, where="all"):
     for k in net.maps:
         v = variant if (where == "all" or k in GRU_MAPS) else "V0"
         Wk = net.Wm(k)
-        F[k] = np.sign(Wk) * scale(net.P[WNAME[k]], net.M[k], v, k in GRU_MAPS)
+        F[k] = (np.sign(Wk) * scale(net.P[WNAME[k]], net.M[k], v, k in GRU_MAPS)).astype(net.dt)
     return F
 
 
@@ -620,7 +621,7 @@ def part_tables(names):
         print(f"{name}, cosine with the exact gradient, variant at every map:\n")
         table(("variant",) + tuple(c[1] for c in cols), [("V0, first batch",) + tuple(f"{rows[0][('V0', 'all')][c[0]]:.3f}" for c in cols)]
               + [(key[0],) + tuple(cell(fur, key, c[0]) for c in cols) for key in ROWS_ALL])
-        print(f"{name}, cosine with the exact gradient, variant at the two GRU maps only (V0 at the other maps; V5 here is the ceiling for a scale at the GRU maps):\n")
+        print(f"{name}, cosine with the exact gradient, variant at the two GRU maps only (V0 at the other maps; V5 here is the upper limit for a scale at the GRU maps):\n")
         table(("variant",) + tuple(c[1] for c in cols), [(key[0],) + tuple(cell(fur, key, c[0]) for c in cols) for key in ROWS_GRU])
         print(f"{name}, norm of the sweep's gradient over the norm of the exact gradient:\n")
         table(("variant", "where") + tuple(c[1] for c in rcols),
