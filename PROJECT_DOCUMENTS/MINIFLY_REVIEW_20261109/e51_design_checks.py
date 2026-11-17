@@ -1,5 +1,11 @@
-"""Design check for the job proposed in section 30 of the memo (reserve cells, and changes kept out of the directions that the
-first family uses).  Read-only and without training: forward passes of a numpy reader on E41's half-width births.
+"""Design check for the job proposed in section 30.3 of the memo (E51: reserve cells, and changes kept out of the directions
+that the first family uses).  Read-only and without training: forward passes of a numpy reader on E41's half-width births.
+
+Note on the two forms of the reserve's gates.  The check below uses the form in which the update-gate rows of the reserve
+cells are projected and the gates start shut (a bias b0).  In the arm `keyed` of section 30.3 those rows are free and the
+gates are held shut on the first family's items by the item's first byte; the family is then kept for the same reason
+(the reserve cells' states are zero on its items), and exactly.  The projected form is the arm that section 30.3 leaves
+out for the present code and keeps for a birth with E50's code.
 
 The construction checked.  A half-width birth (feedforward width 256, 128 cells; E41, taught fraction 0.5) is placed inside a
 network of the present size (512, 256).  The 128 added cells are the reserve: their update gates carry a bias b0 that keeps

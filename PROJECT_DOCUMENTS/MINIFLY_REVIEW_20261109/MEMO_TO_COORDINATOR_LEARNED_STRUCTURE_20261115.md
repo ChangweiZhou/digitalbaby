@@ -40,6 +40,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 20.** A change of name only. The coordinator has given the number E47 to the job of section 26 (locality at the input and the output; brief at 7247682a). The job of section 27, which I had called E47 in revision 19, is E48 from here on. Item 15 is done: the specification exists and is being audited.
 
+**Revision 21 (17 November).** Part III (sections 28 to 30) is added at Mr. Xu's instruction to discuss next steps and to coordinate without him. Section 28 checks every result that arrived on 17 November (E41 and E42 on three seeds, E46, the E47 trial, E48, E49, E43's second addendum, E44's calibration) and gives the audits of the roster note for the first long lives and of the E50 brief. One reading of mine in 22.12 is withdrawn: periods do not bring the limited network level with the dense one. Section 29 is a measurement on E43's networks: every cell is in use on every item, and one family fills the state of the cells. Section 30 gives the decisions and one new job, E51. Items 18 to 23 of section 1 are the requests.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -82,6 +84,18 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 16. **Brief one small job, E48: a new family learned only in connections gated by its own code** (section 27; called E47 in revision 19). About 1.5 CPU-hours. It comes to me before any worker starts.
 
 17. **Two further additions to E43** (section 24.8, end): the `unrelated` arm with the first family rehearsed, as the conventional reference; and the `unrelated` arm started from E42's `F10` and `P8` networks of seed 73129. About 2.5 CPU-hours together.
+
+18. **Enter the nine changes of the audit of the roster note for the first long lives and let the lives start** (28.8; `AUDIT_E44_L2_ROSTER_NOTE_20261117.md`, section 8). No second audit of the note. I read the changed runner and its check receipts when they are committed; that need not hold the trial.
+
+19. **Do not release E47's roster, and do not continue E49** (28.4, 28.5, 30.2).
+
+20. **Enter the nine changes of the audit of the E50 brief and release its stage 1** (30.2; `AUDIT_E50_SPARSE_INPUT_CODE_BRIEF_20261117.md`, section 9). No second audit.
+
+21. **Brief one job, E51: a new task learned in cells held in reserve, with what the first family uses left unchanged** (30.3). Twelve runs on one seed first, about 2.5 CPU-hours. It comes to me before any worker starts. `e51_design_checks.py` holds the construction and the rule in numpy, for your specification to be compared with.
+
+22. **Housekeeping.** Merge E41's three-seed report (2722d1c1) and E46 (b76f5979) into the default branch, since the roster note cites them. Have E43's report mark the two `P8` weight files of its second addendum as incomplete (28.6).
+
+23. **Enter in the record** the corrected reading of E42 on three seeds (28.3), that the sweep does not learn with a limited input (28.5), and the measurement of section 29.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -903,8 +917,8 @@ The letter columns are means of the last three scored rows.
 **What the seed shows, by the brief's descriptions.**
 
 1. **Ten local connections a cell are enough to learn the task and to answer at 40 letters,** at 1.7 times the dense network's updates under backpropagation and 2.4 times under the sweep (`F10` against `G`: *more*).
-2. **Periods take most of that cost away.** `P8` against `A10` is *fewer* under the sweep (7,680 against 13,824) and `P8` against `G` is *about the same* on every measure under both rules. `P8` reaches 90 before the dense network does, under both rules, and equals it at 40 letters. I gave "fewer" 20%.
-3. **Taking in what arrives during the period is the part that matters:** `P8-last` needs half as many updates again as `P8` (11,520 against 7,680). A separate strength for every step adds nothing (`P8-source`).
+2. **Periods take most of that cost away.** `P8` against `A10` is *fewer* under the sweep (7,680 against 13,824) and `P8` against `G` is *about the same* on every measure under both rules. `P8` reaches 90 before the dense network does, under both rules, and equals it at 40 letters. I gave "fewer" 20%. *(Revision 21: on three seeds `P8` is not level with `G`; it needs 1.25 to 1.75 times its updates, and it reaches 90 first on one seed of three. What holds is the comparison with `A10` under the sweep and the equality at 40 letters. See 28.3.)*
+3. **Taking in what arrives during the period is the part that matters:** `P8-last` needs half as many updates again as `P8` (11,520 against 7,680). *(Revision 21: slower on all three seeds, by 1.50, 1.09 and 1.31 times.)* A separate strength for every step adds nothing (`P8-source`).
 4. **Period 16 costs at 40 letters in the direction the arithmetic of 22.8 gave,** 82.8 against 96.0 for `P8`, in every one of the last six rows, but under the mark of 15 points. Periods 4 and 8 do not.
 5. **The number of connections and the neighbourhood change little** (`N5`, `N20`, `W10` against `A10`: *about the same*).
 6. **The rules differ only where the cells are sparse and have no periods:** `F10` and `A10` need about one and a half times the updates under the sweep that they need under backpropagation; `G` and `P8` need the same. The cosine between the sweep's gradient and the exact one for the recurrent matrix ends at 0.60 to 0.64 in `F10` and `A10`, against 0.74 in `G` and 0.67 in `P8` (the receipts' figures).
@@ -1212,3 +1226,311 @@ Three measurements point the same way. What 64 updates learn of a new family is 
 ### 27.4 My expectation, on record
 
 Rank 16 gives *no price* under backpropagation, 60%, and under the sweep, 50%. Rank 4 gives *some price* or *a price* under both, 60%.
+
+# Part III. The results of 17 November and what follows from them
+
+## 28. The results of 17 November, checked (revision 21)
+
+Mr. Xu's instruction of 17 November: "Most works are done or waiting for your audit. Discuss next steps. As I am outside, coordinate yourself." This Part is the answer. Section 28 gives what was checked, section 29 a measurement of my own, section 30 the decisions and the plan.
+
+Every result that arrived was checked from its receipts and weight files with the numpy reader, by an agent of mine whose main figures I then ran again myself. Each document below ends with its commands. Nothing was trained.
+
+| Job | Document beside this memo | What was reproduced |
+|---|---|---|
+| E41 on three seeds; E46 | `E41_E46_VERIFICATION_20261117.md` | 54 and 18 receipts; every threshold; the last-row counts of all 42 and 18 weight files |
+| E42 on three seeds | `E42_THREE_SEEDS_VERIFICATION_20261117.md` | 45 runs: every final count; 720 of 720 thresholds and means; 105 of 105 descriptions |
+| E47, the trial | `E47_TRIAL_VERIFICATION_20261117.md` | 4 runs: all 7,200 recorded answers byte for byte; every threshold |
+| E48 | `E48_RESULT_VERIFICATION_20261117.md` | 18 runs (section 28.7) |
+| E49; E43's second addendum | `E49_E43ADD2_VERIFICATION_20261117.md` | 8 and 16 runs: every last-row count |
+| E44's calibration and the roster note | `AUDIT_E44_L2_ROSTER_NOTE_20261117.md` | section 28.8 |
+| The E50 brief | `AUDIT_E50_SPARSE_INPUT_CODE_BRIEF_20261117.md` | section 30.2 |
+
+No tabled figure of any worker's report was found wrong. What changes below is what the figures are taken to show.
+
+### 28.1 E41 on three seeds: computation to threshold by width
+
+Updates until three scored rows in a row are at or above 80% on score A (held-out add and sub at 12 letters); median of the three seeds and range; "n.r." is not reached within the dose.
+
+| Rule, taught fraction | Half width (128 cells) | Present width (256 cells) | Double width (512 cells) |
+|---|---|---|---|
+| Sweep, 0.50 | 10,496 (10,240 to 12,288) | 5,376 (4,864 to 5,632) | 2,816 (2,816 to 3,328) |
+| Back-propagation, 0.50 | 7,680 (7,424 to 11,520) | 4,352 (4,096 to 5,120) | 3,072 (2,816 to 3,328) |
+| Sweep, 0.25 | 17,408 (14,080 to 24,832) | 8,704; 9,984; n.r. | 6,400 (4,096 to 6,912) |
+| Back-propagation, 0.25 | 7,680 (6,144 to 10,240) | 4,352 (3,584 to 4,864) | 4,608 (3,584 to 4,608) |
+| Either rule, 0.10 | n.r. on every seed | n.r. | n.r. |
+
+Four statements hold on three seeds.
+
+1. **The sweep against back-propagation.** With half of the pairs taught the sweep needs 1.10 times back-propagation's updates to 80% on A (median; range 0.92 to 1.38) and 1.19 times on the reduction score R (1.00 to 2.29). The ratio is nearest one at the double width (0.92 to 1.15) and largest at the half width (1.07 to 2.29). With a quarter of the pairs taught the sweep reaches 80% on R in 4 of 9 runs.
+2. **Width.** Updates to threshold fall as the network widens, and computation to threshold rises at every step (by 1.1 to 2.5 times from half to present, by 1.5 to 4.0 from present to double). The half width is the cheapest in 24 of 24 cases. It is also the narrowest width that was run, so the cheapest width is not located.
+3. **A tenth of the pairs** is not learned at any width under either rule. At the half width under back-propagation, score A is still rising at 40,960 updates (48, 68 and 58%).
+4. **The learners of the long lives.** E44's rule for choosing a width gives the half width on all three seeds. The six half-width births at fraction 0.50 are on the default branch and score 92.8 to 96.2 on A and 90.9 to 94.7 on R.
+
+One consequence for the long lives: the half width is where the sweep is furthest behind back-propagation, so a comparison of the two rules over a life at that width starts from a handicap that the present width does not show.
+
+### 28.2 E46: learning the first family without weight decay
+
+The sentence of the worker's report is reproduced: at the present width, with half of the pairs taught, the first family is learned without decay as fast as with it under both rules (updates to 80% on R at decay 0 against decay 0.25: sweep 0.96, 1.05 and 0.88 times; back-propagation 1.28, 1.50 and 0.80 times), and the length test at 40 letters is within 3 points. Three qualifications belong beside the sentence. Under the sweep the final level of R is lower without decay on all three seeds (by 3.5, 1.6 and 5.2 points). Without decay the size of the recurrent matrix has not settled at the end of the run (70 to 72 against 26 to 29, and still growing by about 1 a thousand updates). And there is no birth without decay at the half width, which is the width of the long lives. The lives without decay should therefore record the sizes of the weights at every scored row.
+
+### 28.3 E42 on three seeds: what holds and what does not
+
+Updates to 80% on A, seeds 73129, 93683, 116089.
+
+| Configuration | Sweep | Back-propagation |
+|---|---|---|
+| `G`, the dense network | 5,632, 4,864, 5,376 | 5,120, 4,096, 4,352 |
+| `F10`, ten fixed connections a cell | 13,312, 13,056, 12,544 | 8,704, 6,912, 9,216 |
+| `A10`, ten connections, replaced during learning | 13,824, 14,336, 13,824 | 9,472, 7,680, 7,936 |
+| `P8`, as `A10` with periods 1, 2, 4, 8 | 7,680, 8,448, 7,424 | 6,400, 7,168, 7,168 |
+
+- **Holds on three seeds.** Limiting a cell to ten connections raises the updates to threshold by 2.3 to 2.7 times under the sweep and 1.7 to 2.1 times under back-propagation. Restricting the connections to a neighbourhood adds nothing consistent to that (`W10` against `A10`: 1.26, 0.84, 1.02). Replacing connections during learning is about the same as keeping them fixed (1.04 to 1.10), and the defect of my replacement rule (22.12) repeats on every seed. Five connections are slower than twenty by 1.10 to 1.20 times.
+- **Holds under the sweep only.** Periods remove 62 to 76% of the extra updates that the limit costs (`P8` against `A10`: 0.54 to 0.59). Under back-propagation they remove 71, 14 and 21%.
+- **Does not hold.** In 22.12 I read the first seed as showing `P8` level with the dense network. On three seeds `P8` needs 1.36, 1.74 and 1.38 times the dense network's updates under the sweep and 1.25, 1.75 and 1.65 times under back-propagation. That sentence of 22.12 is withdrawn.
+- **Holds, and was not read before.** With periods the sweep is level with back-propagation (1.04 to 1.20 times its updates), as in the dense network (1.10 to 1.24), where without periods the limited network puts the sweep behind (1.36 to 1.89).
+- **Computation.** Counted in multiply-adds to 80% on A against the dense network under back-propagation, no configuration is below one: `P8` under back-propagation 1.04 to 1.46, `P8` under the sweep 1.25 to 1.72, `F10` under the sweep 2.2 to 2.7. The limit saves 17% of the multiply-adds a position (section 26) and costs more than that in updates.
+- **Length.** `P16` is low at 40 letters on two of three seeds (82.8 and 67.3 against 94.1).
+
+### 28.4 E47, the trial: input and output at a boundary
+
+The four runs (1,024 cells of which 256 read the byte and are read by the readout; seed 73129) learn the task: 80% on A after 10,496 updates under back-propagation in both arms, and after 13,568 (`one`) and 15,360 (`place`) under the sweep. Two findings decide what follows.
+
+- **No saving.** Computation to 80% on A is 1.7 times the dense network's under back-propagation and 2.3 to 2.5 times under the sweep, and 1.05 to 1.29 times that of E42's `F10`, which has a quarter of the cells.
+- **Cells beyond the first ring take no part.** With the 540 cells of the second and third rings held at their mean, or given the states of another item, no score changes by more than 0.7 points. Their states hardly differ between items (standard deviation at the `=` sign at most 0.018 in the second ring and 0.002 in the third, against 0.37 to 0.46 at the interface). This is so before any training: on the starting weights the differences between items fall six- to tenfold from one ring to the next. The first ring does take part.
+
+So the trial shows that a network with the interface at a boundary learns, and it shows that this wiring does not use cells away from the boundary. That the weak passage of differences at the start is the cause of the later non-use is an explanation and has not been tested; it would be refuted if a start at which the differences reach the third ring still left those cells unused after training.
+
+### 28.5 E49: an interface in which each cell reads part of the input values
+
+On 256 cells, seed 73129, with E42's `F10` as the reference (levels are means of the last three scored rows, A / R).
+
+| Setting (input values a cell reads / cells a readout unit reads; multiply-adds a position against `F10`) | Back-propagation | Sweep |
+|---|---|---|
+| `F10` (512 / 256; 1.00) | 93 / 94; 80% on R at 9,472 | 91 / 89; at 15,104 |
+| `in16` (16 / 256; 0.59) | 85 / 83; at 20,480 | 1.9 / 1.4 |
+| `I64` (64 / 32; 0.51) | 74 / 65; not reached, rising | 1.3 / 0.9 |
+| `out8` (512 / 8; 0.86) | 74 / 71; not reached, rising | 10.6 / 7.8 |
+| `I16` (16 / 8; 0.45) | 24 / 17; not reached | 1.2 / 0.9 |
+
+- Under back-propagation a limited interface is learned slowly: the one setting that reaches 80% on R does so at 1.28 times `F10`'s computation, so nothing is saved.
+- **Under the sweep a limited input is not learned at all.** The training loss has not fallen since update 4,096 in `I64`, `I16` and `in16`. The sweep's gradient at the start is as well aligned with the exact one as in `F10` (cosine 0.73 to 0.77 at the input map), so the alignment at the start does not explain it. What is seen at the end is another state of the network: the byte's code has shrunk from 0.41 to 0.05 to 0.07, the cells' states at the `=` sign differ between items by 0.03 to 0.04 (0.40 in `F10`), and `l3` has grown 9 to 21 times. The cause is not established.
+- A continuation would at best show 80% on R under back-propagation at about 3.4 times `F10`'s updates. It is not worth its cost.
+
+### 28.6 E43's second addendum: rehearsal, and E42's networks
+
+- **Rehearsal keeps the first family** while the unrelated task is learned, under both rules, with and without decay: the reduction score at update 4,096 is 95 to 105% of its start in all twelve runs. The price is in computation and in speed. Half of the items of every update are rehearsal (one old item for each new one), and at update 256 the unrelated task is behind the unrehearsed run in all twelve comparisons.
+- **E42's networks lose the family as the dense one does**: `F10` and `P8` are at or below 1% on reduction pairs by update 64. Limiting the connections between cells does not separate what is learned.
+- The two `P8` weight files at update 4,096 lack the coefficients over the steps of a period, so those two networks cannot be rebuilt. No reported figure depends on them. The report's list of committed weights should mark the two files as incomplete.
+
+### 28.7 E48: a new family learned in connections that are present only with its code
+
+The 18 runs are reproduced from the life-end weights and the term files. The figure is the reading fixed in the brief: the mean of the reduction score on never-taught pairs at rows 128, 256 and 512, E48 minus E40's run of the same seed and rule (seeds 73129, 93683, 116089).
+
+| Rule | Rank 4 | Rank 16 | Rank 64 |
+|---|---|---|---|
+| Sweep | -15.8, -31.2, -27.4 (*some price*) | -2.4, -8.7, -8.2 (*no price*) | +1.2, +5.0, -1.0 (*no price*) |
+| Back-propagation | -4.8, -8.5, +0.2 (*no price*) | +3.9, -1.9, +4.5 (*no price*) | +9.3, +1.4, +6.3 (*no price*) |
+
+- **The earlier families are kept item for item,** as the construction requires. About 37,500 earlier items a network (every earlier task at five lengths, the compositions, every held-out reduction pair) are answered as by the life-end network, in all six networks. With the gate forced open on those items, the same term lowers the life's reduction pairs under modulus 97 from 87 to 98% down to 1 to 52%. The separation is the gate's and nothing else's.
+- **The new family is learned later, and to a higher level.** At row 64 every run is below E40, by 6 to 59 points. At row 1,024 the mean reduction score at ranks 16 and 64 is 91% under the sweep and 97% under back-propagation, against E40's 86 and 90%, and it is above the highest value that E40 reaches in 8,192 updates in all six networks. This second comparison was not fixed beforehand, and E48 differs from E40 in one more thing: the lived weights do not decay.
+- **E40's loss was not needed.** In E40, with every weight free, the life's four panels fell by 38 to 43 points within 256 updates of learning the new family. E48 learns the same family with those panels untouched.
+- **The gate also withholds.** Forced open on items of the birth family, the term raises that family's `max` or `min` in some networks (for example from 4 to 52% and from 14 to 94%). What a family learns behind its gate is not available to another family.
+- **Memory.** A term of rank 16 is 36,896 numbers; thirty such terms equal the network.
+
+The brief's reading used the words "as fast as". They were my requirement, and the result does not support them for the first 64 updates. The reading by the three-row mean stands as tabled.
+
+### 28.8 E44: the calibration, and the roster note for the first long lives
+
+**The calibration is reproduced.** With every one of its 917,504 answers marked again against my own stream, the gate's medians equal the report's. Under the conventional learner at 256 updates a visit the median level on reduction pairs at a family's first visit is 0.30 to 0.64 in the eight worlds, all inside the gate; at 128 updates four of the eight worlds pass and at 64 none. 256 is the shortest length that passes.
+
+Two things the calibration shows beside the gate.
+
+- **Nothing is kept from one visit to the next** (review 9.156; I recomputed the second lap). One visit after a family's own, its share right on the fixed list is 0.007 to 0.076 of what it was. At a return the first update scores 0.011; the last quarter of a return visit reaches 0.58 against 0.49 at first visits.
+- **What the wrong answers are** (my count on the calibration's lists). One visit later, 15% of the conventional learner's answers on a family's reduction items, and 21% of the sweep's, are the right answer under the modulus of the family taught last, where chance is about 1%. The network answers every family with the modulus it learned last. This is section 29's finding seen from another side: the modulus is held in connections that every family uses.
+
+**The roster note** (release 1: four arms under back-propagation, `naive`, `replay` and both without decay; the learners are E41's half-width births; 32 lives; 59 CPU-hours; world 1's two long lives are the trial). The check is in `AUDIT_E44_L2_ROSTER_NOTE_20261117.md`.
+
+- **The change to the runner is sound, with conditions.** It is not code yet: the runner on the default branch is the one the calibration ran. As the note describes it, the two new arguments select which rows of the list are written, and cannot change what a life learns. A second change is needed that the note does not name, because the present runner refuses the `replay` arm.
+- **Nine changes are required,** given as text to apply in the audit's section 8. Those that bear on what the lives can show: the quantities the note says it records are not the ones the scorer computes, and "kept" is not defined for a life with returns (definitions D1 to D14 are proposed); the trend of the score at 256 visits partly reads the schedule and should be read on returns only (the defective definition was mine, section 17.4); the wrong answers are to be classified as above; `replay` with half of each update taken from the store teaches 6,144 new items a visit, the dose at which the gate failed in four of eight worlds; and decay alone cannot be read in a life with returns.
+- **In order as written.** The store is 1,269,828 bytes, the size of the network, and holds 55,209 items, against 80,000 to 108,000 distinct taught pairs in a life of 1,024 visits, so the store cannot hold everything it is offered. Such a life meets 41 to 52 families and has 972 to 983 returns. The closing rule is that of section 17.5. The six births are committed.
+- **After the nine changes the lives may start, and the note needs no second audit.** I read the changed runner and its check receipts when they are committed. That reading need not hold the trial, because a defect in the code of the list cannot change the weights or the event file of a life.
+
+## 29. Cells in use and directions in use: why the first family is overwritten, and what would leave it intact (revision 21)
+
+### 29.1 The question, and two definitions
+
+The programme's question speaks of changes "confined to the connections in use". E43 showed that the first family is overwritten within 64 updates of unrelated learning, and its second addendum that limited connections between cells do not prevent it. This section measures on E43's saved networks how much of the network an item uses, and whether the change made by the unrelated task can be kept apart from what the first family uses. The scripts are `cells_in_use.py` and `directions_in_use.py`; the files are the six E26 births, E43's `unrelated` networks at updates 64 (seed 73129 only) and 4,096, and its rehearsed networks at 4,096. Forward passes only.
+
+*A cell in use.* For a cell at one position of an item, with update gate z, candidate n and previous state h (so that the new state is (1 - z) n + z h), every change made at that position to the cell's incoming connections is a product that contains the factor (1 - z)(1 - n²) + z(1 - z)|h - n|, under back-propagation and under the sweep alike. I call it the change factor. Where it is zero the cell's incoming connections cannot change, whatever the error. Every change to a connection that leaves a cell is a product that contains the cell's state.
+
+*Directions in use.* A matrix of connections receives input vectors. The directions in use by a set of items are those spanned by the input vectors that the items present to the matrix, with a constant appended for the bias. A change of the matrix that is zero on those directions leaves the matrix's output on those items as it was; if this holds at every matrix, the whole forward pass on those items is as it was.
+
+### 29.2 Figures
+
+**In the born network, before any unrelated learning, every cell is in use on unrelated items.** The unrelated task's bytes (128 to 225) occur in no item of the first family.
+
+| Seed, rule | Change factor on unrelated items: median over the 256 cells; cells below 0.05 | State size on unrelated items: median; cells below 0.05 | Correlation over cells between the change factor on family items and on unrelated items |
+|---|---|---|---|
+| 73129, sweep | 0.39; 0 | 0.45; 0 | +0.73 |
+| 73129, back-propagation | 0.37; 0 | 0.53; 0 | +0.76 |
+| 93683, sweep | 0.33; 0 | 0.40; 0 | +0.80 |
+| 93683, back-propagation | 0.28; 0 | 0.49; 0 | +0.72 |
+| 116089, sweep | 0.36; 0 | 0.45; 0 | +0.81 |
+| 116089, back-propagation | 0.24; 2 | 0.58; 0 | +0.78 |
+
+**The change is spread over all cells, and the loss comes before the gain.** After 64 unrelated updates (seed 73129) each cell's incoming connections have changed by 12 to 26% of their size (5th to 95th percentile of cells, both rules), and half of the squared change lies in 90 to 99 of the 256 cells, where an even spread would give 128. At that point the first family is at 0.1% and the unrelated task at 0.0% under both rules: the family is destroyed before anything of the new task has been learned.
+
+**With rehearsal the weights move as far, in another direction, and the family is intact along the whole way.** d1 is the change made by 4,096 unrelated updates without rehearsal, d2 with it.
+
+| Seed, rule | Size of d1, of d2, against the size of the birth's weights | Cosine between d1 and d2 | First family on the straight line from the birth to the unrehearsed network, at 0.1, 0.2, 0.3 of the way | Lowest value of the first family on the straight line from the birth to the rehearsed network |
+|---|---|---|---|---|
+| 73129, sweep | 0.66, 0.71 | +0.28 | 92.8, 71.9, 35.1 | 98.3 |
+| 73129, back-propagation | 0.57, 0.65 | +0.39 | 86.4, 53.3, 23.6 | 98.8 |
+| 93683, sweep | 0.59, 0.65 | +0.37 | 97.8, 89.7, 52.2 | 99.4 |
+| 93683, back-propagation | 0.53, 0.61 | +0.47 | 92.0, 67.4, 24.8 | 98.8 |
+| 116089, sweep | 0.62, 0.70 | +0.30 | 97.8, 81.0, 31.5 | 97.6 |
+| 116089, back-propagation | 0.54, 0.62 | +0.43 | 90.7, 56.0, 9.3 | 97.9 |
+
+On the line to the unrehearsed network the unrelated task is at 0.0 to 3.7% half-way and at 61 to 90% at 0.7 of the way, so no point of that line holds both. On the line to the rehearsed network the unrelated task rises from 0 at the half-way point to 60 to 89% at three quarters and 97 to 100% at nine tenths, with the family at 97.6% or above throughout.
+
+**Directions in use by the first family's taught items** (four operations, 0 to 12 letters, 2,080 items; the number of directions that hold the stated share of the trace of the inputs' second-moment matrix; ranges over the six births).
+
+| Matrix (input dimensions with the bias) | 99.9% | 99.99% | Not zero |
+|---|---|---|---|
+| Input map (513) | 9 | 12 to 15 | 46, the number of bytes in use |
+| Recurrent matrix (257) | 239 to 244 | 255 to 256 | 257 |
+| `lm`, at the answer positions (257) | 243 to 248 | 255 to 256 | 257 |
+| `l2`, at the answer positions (513) | 9 | 9 | 11 |
+| `l3`, at the answer positions (513) | 249 to 361 | 361 to 452 | 513 |
+
+**The code of a byte has nine directions, and every byte shares them.** The code of a byte is its row of the byte table, 8 numbers, passed through `l1`. Of the squared size of the code of a byte of the unrelated task, none of which has occurred before, 99.9% lies inside nine directions of the codes of the family's bytes, and 99.98 to 99.99% inside the span of the 46 bytes in use (six births; a random direction would have 9%).
+
+**A change projected away from those directions.** For each matrix the change d1 (or d2) is multiplied on the input side by the projector on the complement of the family's directions; `l1` and the byte table's rows of bytes in use are put back to the birth's. With the directions that hold 99.99% of the trace removed, the first family is as at birth to within 0.2 points in every case, on reduction pairs and on held-out pairs at 12 letters alike (for example 95.9 and 97.5 against the birth's 95.9 and 97.5); removing as many directions chosen at random leaves it destroyed or damaged (4 to 83% on reduction pairs). The unrelated task is at 0.0% in every projected network.
+
+**Where the change lies.** Of the squared change of the input map made by the unrelated task, 51 to 61% under the sweep and 80 to 85% under back-propagation lies in the nine leading directions of the family's inputs, where a change in random directions would have 1.8%; the figures with rehearsal are the same (54 to 66% and 82 to 84%). (The optimizer scales its steps entry by entry, so a change need not lie wholly in the directions of the inputs that caused it.)
+
+### 29.3 Readings
+
+1. **Nothing is left unused, so nothing can be left unchanged.** In the present cells every item drives every cell, including an item made of bytes the network has never met. A rule that changes only the connections in use therefore changes all of them. This is what E43 and its addendum found from outside, and it is why limiting the connections between cells did not help: the limit removes connections, it does not make any cell idle.
+2. **One family fills the state of the cells.** At the recurrent matrix the family's own items use 255 or 256 of the 257 directions. A rule that leaves the family's directions untouched would be exact (the projected networks show it, also on pairs never taught) and would leave no room at all for anything else at that matrix.
+3. **The input code gives a new byte no direction of its own.** At the input map the family's bytes use 46 of 513 directions, which looks like room. It is not: the code of any byte, met or not, lies in the same nine directions, because it is the image of 8 numbers. A byte that has never occurred therefore drives the input map along directions that the family's bytes already use, and a rule that leaves those directions untouched leaves the new byte nothing. With a code in which a value stands for one byte, as in E50, a new byte would drive only connections that no earlier byte drives. This is an argument for E50's code from the side of keeping; it was drafted for the side of computation.
+4. **Rehearsal does not work by holding the weights near their old values**, nor by keeping each matrix's action on old inputs unchanged. Its change is as large as the unrehearsed one and lies as much in the family's input directions. What it finds is a distant set of weights with the same function for the family, reached along a line on which that function never fails. A mechanism that pulls every connection back toward its old value is therefore not a substitute for rehearsal: on the line to the unrehearsed network the family is already below 90% at a fifth of the way.
+5. **The family is lost before the new task is learned.** The loss is not the price of the new solution. It is made by the first few dozen updates, in which the connections of every cell are moved by an eighth to a quarter of their size for a task of which nothing has yet been learned.
+
+The rule "change a matrix only along input directions that earlier tasks do not use" is in the literature: Zeng, Chen, Cui and Yu (arXiv 1810.01256) for feed-forward networks; Saha, Garg and Roy (ICLR 2021); and for recurrent networks Duncker, Driscoll, Shenoy, Sahani and Sussillo (NeurIPS 2020), who report that it removes interference between tasks learned in sequence and that the networks reuse structure across similar tasks. I have read their abstracts, not the papers. What the measurement adds for our network is the count of reading 2: after one family there is no room left where the rule would need it.
+
+### 29.4 What follows (argued; the test is the job of section 30.3)
+
+Keeping what has been learned without rehearsing it needs two things together: a part of the network that earlier learning has left unused, and a rule that confines new learning to that part. The record now has each of the two separately.
+
+- E48 supplies the unused part from outside: a term that is present only when the new family's code is present. In the terms of this section the gate multiplies the number of input directions by the number of codes, which is why it finds room where a plain change finds none.
+- E41 shows that the first family does not need the whole network: a birth with 128 cells reaches the threshold, at less computation than one with 256.
+
+So a network of the present size can be born using half of its cells, with the other half held in reserve, at no loss. `e51_design_checks.py` checks the arithmetic of this on E41's six half-width births, without training. The half-width birth is placed inside a network of the present size; the 128 added cells have update gates that start shut, so that they are silent on every item of the first family. The embedded network answers the family as the half-width birth does (largest difference of an output 0.004 with the gates' bias at 10). The family then uses 129 of the 257 directions at the recurrent matrix, and 128 are free. A random change of every connection that the rule of section 30.3 allows to change, a sixth to a quarter of the whole network's size, leaves the family's scores as they were on all six births; the same change made without the rule halves them (39 to 58%). One limit follows from reading 3. In the present code the reserve cannot be reached through directions that are free, because a new byte has none; it can be reached only through connections that are free, which are the reserve cells' own.
+
+## 30. Decisions, and the plan from here (revision 21)
+
+### 30.1 Where the adopted question stands
+
+The question (review 9.148): under fixed memory and continued learning, can a learner whose changes are confined to the connections in use keep what it has learned while learning new things, at no greater computation to threshold than back-propagation?
+
+**Computation, for first learning.** In the dense network the sweep needs 1.1 times back-propagation's updates when half of the pairs are taught (28.1). Every structure tried so far costs more computation to threshold than the dense network under back-propagation: a limit of ten connections a cell 1.4 to 2.7 times; the same with periods 1.0 to 1.7 times; the interface at a boundary 1.7 to 2.5 times; an interface in which a cell reads part of the input about 1.6 times at best under back-propagation (1.3 times `F10`'s), and under the sweep it is not learned. What lowers the computation is a smaller network: the half width reaches the threshold at about half the computation of the present width under both rules. On this task, then, sparsity and locality have been costs. Their case rests on networks with many more cells, and the task does not need more cells: E47's cells away from the boundary are not used. More cells can pay only where there is more to hold, which is many families. The computation line and the keeping line therefore meet in one experiment, in which cells that the first family does not need are the room for what comes later.
+
+**Keeping.** Without rehearsal nothing is kept: not through 64 updates of an unrelated task (E43), not from one visit to the next in the long-life world (28.8). Section 29 gives the reason: every cell is in use on every item. With rehearsal the family is kept, at twice the items an update (28.6). With a part of the network that only the new family uses, supplied from outside, the earlier families are kept exactly and the new one is learned (28.7).
+
+**Fixed memory and continued learning.** The instrument is calibrated and audited. No life has been run.
+
+### 30.2 Decisions on what waited for me
+
+| Item | Decision | What it needs |
+|---|---|---|
+| The runner change and the roster note of the first long lives | Sound with conditions; nine changes as text (audit, section 8); the lives start after them without a second audit | You enter the changes; the worker makes the two runner changes, runs the checks and starts the trial |
+| E47's roster (4,096 cells; scattered periods) | Not released | Nothing. A larger sheet would add cells of the kind the trial shows unused, at 37 CPU-hours. The line rests until a start is found at which differences between items reach the far cells; that can be studied on starting weights without training |
+| E49, continuation | None | Nothing |
+| The E50 brief | Run, changed: nine changes (audit, section 9). The settings `C64` and `C16` are E49's masks, which failed on the learned code, so their failure here would say nothing. Stage 1 is the fixed code on a dense interface (`C-dense`), both rules; stage 2 a limited input with the dense readout, where stage 1 reaches 80% on R; stage 3 a control in which every cell reads one value of every used byte, only if stage 2 fails | You enter the changes; stage 1 can start at once |
+| E48 | Closed as read in 28.7 | Nothing |
+| E41, E42, E46 | Closed as read in 28.1 to 28.3 | The three-seed report of E41 (2722d1c1) and E46 (b76f5979) are cited by the roster note and are not merged into the default branch |
+| E43's second addendum | Closed as read in 28.6 | The report's list of committed weights marks the two `P8` files as incomplete |
+
+On E50, one finding of the audit matters beyond the brief. Under the sweep with a limited input, the code of a byte shrinks until two bytes that must be told apart are 3 to 6 apart, where they are 14 to 16 apart under back-propagation and 14 at the start. E50's code is fixed and cannot shrink. Stage 2 under the sweep therefore tests one explanation of E49's failure: if the sweep learns with a limited input once the code is fixed, the shrinking code was the cause; if it still does not learn, it was not.
+
+### 30.3 Job E51: a new task learned in cells held in reserve, with what the first family uses left unchanged
+
+**Why.** Section 29.4. E48 kept the earlier families by a part supplied from outside. This job gives the network such a part of its own, cells that the first family does not use, and a rule that confines new learning to it, and asks two things: is the first family kept, and what does the new task cost to learn? The arithmetic of the construction is checked in `e51_design_checks.py` (three seeds, both rules, no training).
+
+**The rule of section 20** for any added mechanism is met as follows. (a) The deficit is measured on a learner that generalises: E43. (b) The plain baseline is in the same experiment at equal updates: the arm `rehearse`. (c) The expected effect is stated beforehand, below.
+
+**The learner.** E41's half-width birth with half of the pairs taught (`e41_<rule>_h256_f50_<seed>.pt`, on the default branch), placed inside a network of the present size (feed-forward width 512, 256 cells) as the function `embed` of my script does it. The old weights keep their places. Weights from the 256 added feed-forward units into old units are zero. Every other added weight is drawn at the scale of a fresh network, those from the added cells into old cells included, since without them no error would reach the added cells. The 128 added cells are the reserve.
+
+**Directions in use.** After the embedding, 2,080 taught items of the first family (40 for each operation and each number of letters from 0 to 12) give, for each of the five matrices (input map, recurrent matrix, `lm`, `l2`, `l3`), the second-moment matrix of the inputs it receives, a constant appended; the directions in use are its eigenvectors whose eigenvalue exceeds one millionth of the largest. My script finds on the six births: 129 of 257 at the recurrent matrix and at `lm`, 36 to 41 of 513 at the input map, 11 at `l2`, 329 to 437 at `l3`. They are computed once, before the new task, and stored (0.23 to 0.28 of the network's parameters; 0.08 without `l3`'s).
+
+**The rule.** "Projected" means: the gradient of the matrix is multiplied on the input side by the projector on the complement of the directions in use before it enters the optimizer, and the optimizer's step is multiplied by it again before it is applied. The second multiplication is what makes the keeping exact.
+
+- Rows of the input map and of the recurrent matrix that belong to old cells, and every row of `lm`, `l2` and `l3`: projected.
+- `l1`, and the byte table's rows of the 46 bytes in use: not changed. The byte table's other rows: free.
+- Candidate and reset rows of the reserve cells: free.
+- Update-gate rows of the reserve cells: free. On the first family's items the gates are held shut by the condition of the arm `keyed`.
+- No weight decay in any arm (decay would have to be confined as well, which is a later question). AdamW otherwise as in E43.
+
+**Arms,** each from the same embedded network.
+
+| Arm | What may change | What it shows |
+|---|---|---|
+| `open` | Everything, as in E43. The reserve cells' update gates start shut (a bias of 10) and are free | The loss without any rule, and the speed of the new task without any limit |
+| `rehearse` | As `open`, with one item of the first family for each new item, as in E43's second addendum | The plain baseline |
+| `keyed` | The rule. The reserve cells' update gates are held shut on every item whose first byte is one of the bytes in use; on every other item they are those of a fresh network, and free | Whether the first family is kept, and whether the new task can be learned in the reserve |
+
+In `keyed` the condition is computed from the item (has its first byte occurred before?) and is not supplied for a family. It is still a device of the harness, and the report says so.
+
+**An arm that is left out, and why.** The arm one would want beside `keyed` has no device. In it the reserve cells' gates start shut, their update-gate rows are projected like the old cells' rows, so that they stay shut on the first family's items whatever is learned, and only the optimizer can open them, through directions that the first family does not use. In the present code this arm cannot work, by reading 3 of 29.3: a new byte has no direction of its own (0.1% of its code), so nothing can open the gates. It becomes possible with E50's code, in which a new byte has eleven values of its own. It is a job for after E50's stage 1, on a birth with that code, and its question is the one that matters for a learner without any device: does the optimizer bring unused cells into use for a new input?
+
+**Tasks.** `unrelated`: E43's task, stream and panels, 4,096 updates. `family`: the first block of E26's life (the family of modulus 97, with E26's taught fraction, stream and scores), its first 4,096 updates. For a born network of the present size the record has the conventional outcome of that block: the new family is learned and the birth family's reduction is lost (sections 3.3 and 3.4). Scored at updates 0, 16, 32, 64, 128, 256, 512, 1,024, 2,048 and 4,096. Each network under the rule of its birth.
+
+**Checks before the runs.**
+1. The embedded network answers the first family's panels as the half-width birth does, item for item (my script: largest difference of an output 0.004).
+2. The numbers of directions in use equal those my script prints for the birth.
+3. A random step that obeys the rule changes no output on the first family's panels by more than 0.05, and the same step without the projection changes the scores (my script: 39 to 58% left).
+4. In `keyed`, at every scored row, the first family's answers are those of row 0 on at least 99.9% of items. This is by construction, and a failure is an error of implementation.
+5. The batch digests of the two tasks equal E43's and E26's.
+6. A dry run with the cost a update of each arm.
+
+**Recorded at every scored row.** For the first family: the reduction score, the four operations on taught pairs, the held-out panel at 12 letters, and what the wrong answers are, in the classes of E43's addendum. For the new task: E43's two panels, or E26's scores of the new family (never-taught reduction pairs, and taught pairs). For the reserve: the number of reserve cells whose update gate is open by more than 0.1 on average over the new task's items, and the largest state of a reserve cell on the first family's items. The sizes of the weights. The weight files at updates 64 and 4,096, listed in the report from `git ls-tree`.
+
+**Reading, fixed beforehand,** for each rule, task and arm. *Kept*: the first family's reduction score at update 4,096 is within 2 points of row 0. *Learned*: the new task's score on its never-taught items reaches 80% within the dose; its cost is the first scored row at 80% against that of `open`.
+
+**Trial first.** Seed 73129: twelve runs. I estimate 2.5 CPU-hours with scoring, from E46's 0.11 CPU-seconds an update at this size and a fifth more for the projection. The other two seeds are released after the trial is read.
+
+**What I expect, on record.**
+
+| | Statement | My chance |
+|---|---|---|
+| P51.1 | `open` loses the first family on `unrelated`: below 5% on reduction pairs by update 64, both rules. Refuted if the reserve takes the new task and the family survives | 90% |
+| P51.2 | `open` loses the first family's reduction pairs on `family` (below half of row 0 at update 4,096), as E26's lives did | 80% |
+| P51.3 | `keyed` keeps the first family on both tasks, both rules. By construction | 97% |
+| P51.4 | `keyed` learns `unrelated` to 80% within the dose | 60% under back-propagation, 45% under the sweep |
+| P51.5 | `keyed` learns `family` to 80% on never-taught reduction pairs within the dose | 50% and 35% |
+| P51.6 | Where `keyed` learns `unrelated`, its first row at 80% is at most four times that of `open` | 60% |
+| P51.7 | `rehearse` keeps the first family within 5 points on both tasks, both rules | 85% |
+
+If P51.4 fails under both rules, cells in reserve that read the old cells but may not change them are not enough to learn a new task, and the candidate for the long lives is E48's term, chosen by the item's first byte. If P51.4 and P51.5 hold, the reserve learner is the candidate, and the question that remains for it is that of the arm left out.
+
+**What it cannot show.** That a learner can do without the device of `keyed`. How a reserve is shared among many tasks: here the first new task may take all of it. A life. Whether a network can be born with a reserve by itself: here the reserve is made by taking a narrower birth. A comparison with a store at equal memory, which belongs to the long-life world.
+
+### 30.4 Order and pace
+
+Three lines of work, which is the limit of the working rules.
+
+1. **The first long lives** (release 1 of L2): the trial, then the roster.
+2. **E51**, the trial seed. The brief comes to me before any worker starts.
+3. **E50**, stage 1.
+
+Release 2 of the long lives (the sweep, and a learner that keeps without a store) is specified when the trials of lines 1 and 2 have been read. Its candidate is the reserve learner if E51 shows that it keeps and learns, and E48's term chosen by the first byte otherwise. E50's stage 1 has a second use beside its own question: it gives the births on which the arm left out of E51 can be run.
+
+Resting: E47 at larger sizes; a fourth, narrower width for E41, which would locate the cheapest width (six births, about 2 CPU-hours); a corrected rule for replacing connections (22.12). After release 1, step 5 of the adopted plan: confirmations on sealed tasks of E40's result, E48's and E43's.
+
+### 30.5 What is not proposed
+
+A pull of every connection toward its earlier value is not proposed. E38's anchors gave no protection (section 20), and section 29 shows why: the family is lost a fifth of the way along the straight line to the unrelated task's solution, and the solution that rehearsal finds is as far from the birth as the unrehearsed one. Schemes that weight the pull by an estimate of each connection's importance are in the literature; they are a different mechanism from the one above, and by the rule of section 20 they are not candidates until a deficit remains that the store and the reserve do not cover.
+
+### 30.6 On coordinating while Mr. Xu is away
+
+Everything in this Part was done inside the reviewer's role: checks from receipts and weights, two audits, one measurement, one proposal. I have written to no worker session and started no run. The decisions of 30.2 reach the workers through you, as before.

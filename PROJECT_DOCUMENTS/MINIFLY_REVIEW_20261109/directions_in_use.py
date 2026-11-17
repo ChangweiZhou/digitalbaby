@@ -13,6 +13,7 @@ trace.  Projecting a change away from them, dW (I - P), is a rule local to the m
 matrix's own inputs.
 
   F1  how many directions the first family's taught items use at each matrix (of 513, 257 or 9 with the bias)
+  F1b how much of the code of a byte that never occurred lies in the directions of the bytes in use
   F2  what share of the change made by unrelated learning lies in those directions, without rehearsal and with it
   F3  the birth plus the change projected away from those directions: first family and unrelated task
       (the byte table's rows of bytes the family uses, and l1, are put back to the birth's: the family uses all 8 of l1's
@@ -122,6 +123,15 @@ for rule in RULES:
         w, V, _ = eig[m]; c = np.cumsum(w) / w.sum()
         kk[m] = {s: (int(np.searchsorted(c, s)) + 1 if s < 1 else int((w > 1e-10 * w[0]).sum())) for s in SHARES}
         print(f"   {m:10s} of {len(w):3d}: " + ", ".join(f"{100 * s:g}% of the trace in {kk[m][s]}" for s in SHARES[:-1]) + f"; eigenvalues above 1e-10 of the largest: {kk[m][1.0]}")
+    # F1b: how much of the code of a byte that never occurred lies in the directions of the bytes in use
+    z1all = np.tanh(Wb['book.weight'].astype(np.float64) @ Wb['l1.weight'].T.astype(np.float64) + Wb['l1.bias'])
+    Xall = np.concatenate([z1all, np.ones((len(z1all), 1))], 1)
+    _, _, Vt = np.linalg.svd(Xall[used_bytes], full_matrices=False)
+    Xn = Xall[list(range(128, 226))]
+    sh_all = np.linalg.norm(Xn @ Vt.T, axis=1) ** 2 / np.linalg.norm(Xn, axis=1) ** 2
+    sh_9 = np.linalg.norm(Xn @ Vt[:9].T, axis=1) ** 2 / np.linalg.norm(Xn, axis=1) ** 2
+    print(f"F1b. the code (tanh(l1(byte table)), constant appended) of the 98 bytes of the unrelated task, none of which has occurred: share of its squared size inside the span of the "
+          f"{len(used_bytes)} bytes in use: mean {sh_all.mean():.4f}, least {sh_all.min():.4f}; inside nine leading directions of those bytes' codes: mean {sh_9.mean():.4f} (a random direction: {len(used_bytes) / 513:.3f})")
     print("F2. share of the squared change that lies in the family's directions (99.9% of the trace); a change in random directions would give the share in brackets")
     for nm, W in ends.items():
         row = []
