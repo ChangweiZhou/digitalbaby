@@ -68,7 +68,7 @@ Each defect below has a replacement text. The replacements of the sections "Runs
 
 **What is wrong.** Brief, line 77: "It is refuted, for this seed, if rings 2 and 3 are not used in `x3-wd0` under either rule. If they are used in some run, the report says in which".
 
-1. *A run that has not learned the family counts as "not used".* Brief, line 74, defines *used* by a fall of 5 points or more. If a run of `x3-wd0` ends with A and R near zero, no fall of 5 points can occur, rings 2 and 3 are "not used", and the explanation is "refuted". The brief's own predictions give this run a chance of 40% (back-propagation) and 55% (sweep) of not reaching 80 on A (P53.4, P53.5). The most likely outcome under the sweep is thus read as a refutation, although it shows only that the network did not learn from this start.
+1. *A run that has not learned the family counts as "not used".* Brief, line 74, defines *used* by a fall of 5 points or more. If a run of `x3-wd0` ends with A and R near zero, no fall of 5 points can occur, rings 2 and 3 are "not used", and the explanation is "refuted", although the run shows only that the network did not learn from this start. The case is not remote: the brief's own predictions give this arm a chance of 40% (back-propagation) and 55% (sweep) of not reaching 80 on A (P53.4, P53.5), and the rule has no condition on what the run has learned.
 2. *"Under either rule"* can mean under one of the two or under both. The sentence is read here as "under neither rule are they used"; a worker may read it the other way.
 3. *Outcomes that the wording does not cover.* (a) Used in `x3-wd0` and not in `wd0`: the brief cannot say whether the start alone would do, because the arm with the changed start and the decay is missing (defect 1). (b) Used in `wd0`: removing the decay is enough, and the start is not shown to be needed; if at the same time `x3-wd0` is not used, the rule calls the explanation refuted although one of its two causes was just shown to act. (c) Used under one rule and not under the other.
 4. *The word "refuted" contradicts the brief's own section "What it cannot show"* (line 95: "a run in which they stay unused shows that learning does not draw them in by itself, and not that they could not be used") and the result that the verification names as the refuting one (`$R/E47_TRIAL_VERIFICATION_20261117.md`, section 6: "a network started so that differences between items do reach rings 2 and 3 which still leaves them unused on a task that the interface alone cannot hold"). The first family can be held by the interface alone.
@@ -124,7 +124,7 @@ What does work as the brief describes it was verified and is listed under "Verif
 > 3. **The decay.** Directly after `make_opt` the one group whose `weight_decay` equals `C26.WD` is selected (the run asserts that there is exactly one) and its `weight_decay` is set to the arm's decay. The run then asserts that the two groups read back have the arm's decay and 0.0, and repeats the assertion after `opt.load_state_dict` on a resume. `opt_record` of the new file is that of `exp47_local` with the top-level entry `weight_decay` set to the arm's decay.
 > 4. **Names.** `receipt_path` gives `e53_32_<arm>_<rule>_73129.json`, with `_dry<N>` before the seed for a run of N updates other than 24,576. The folder of the runs is `$M/exp45/e53/`, that of the checks `$M/exp45/e53_qual/`. Printed lines begin with `e53`. `processes_beside` is read from the environment variable `E53_BESIDE`.
 > 5. **The receipt** has `experiment="E53"`, the arm's name, `network_arm="one"`, the multiple, the entries multiplied (as text and as a count), the decay, and for `start` the text "E47's start (Local(m, seed, 32, 10, 'one')) with the named entries of Wc multiplied in single precision". `provenance` adds the hash of `exp53_local_start.py`.
-> 6. **Measures at every row,** beside `magnitudes`. (a) `ring_magnitudes`: the mean absolute value of `Wc[:, cells]`, as `magnitudes` computes it, for the interface cells and for each of the three rings. The ring of cell i is `-(-e47_local.distance(i, 32) // e47_local.RADIUS)`: the grid distance to the patch, divided by 3 and rounded up. The run asserts the counts 256, 228, 300 and 240 for rings 0 to 3. (b) `gates`: on the batch `R42.first_batch(73129)` (64 items; every position of `x`, the padding at the end of shorter items included), for the interface cells and for each ring, the share of the values of the reset gate and of the update gate that lie below 0.05 or above 0.95, and the mean absolute state. The gates are recomputed from the states that `forward(m, L, x, False)` returns: with h the state before a position (zero before the first), G the input sum of the position as lines 127 to 148 of `exp47_local.forward` build it, and H = `einsum("bik,gik->bgi", h[:, L.idx], L.Wc) + L.bc`, the gates are r = sigmoid(G[:, 0] + H[:, 0]), z = sigmoid(G[:, 1] + H[:, 1]) and n = tanh(G[:, 2] + r H[:, 2]). The function asserts that (1 − z) n + z h equals the state that `forward` returned, at every position, to 1e-5.
+> 6. **Measures at every row,** beside `magnitudes`. (a) `ring_magnitudes`: the mean absolute value of `Wc[:, cells]`, as `magnitudes` computes it, for the interface cells and for each of the three rings. The ring of cell i is `-(-e47_local.distance(i, 32) // e47_local.RADIUS)`: the grid distance to the patch, divided by 3 and rounded up. The run asserts the counts 256, 228, 300 and 240 for rings 0 to 3. (b) `gates`: on the batch `R42.first_batch(73129)` (64 items; every position of `x`, the padding at the end of shorter items included), for the interface cells and for each ring, the share of the values of the reset gate and of the update gate that lie below 0.05 or above 0.95, and the mean absolute state. The gates are recomputed from the states that `forward(m, L, x, False)` returns: with h the state before a position (zero before the first), G the input sum of the position as lines 127 to 130 and 146 to 148 of `exp47_local.py` build it, and H = `einsum("bik,gik->bgi", h[:, L.idx], L.Wc) + L.bc`, the gates are r = sigmoid(G[:, 0] + H[:, 0]), z = sigmoid(G[:, 1] + H[:, 1]) and n = tanh(G[:, 2] + r H[:, 2]). The function asserts that (1 − z) n + z h equals the state that `forward` returned, at every position, to 1e-5.
 > 7. **The weights of the last three rows.** After the scoring of updates 24,064 and 24,320 the weights are saved with `save_weights` as `<receipt's stem>_u24064.pt` and `<receipt's stem>_u24320.pt`; the receipt lists their names and hashes.
 > 8. **`main`.** `python3 exp53_local_start.py run <arm> <S or B> 73129 [--dose N] [--out DIR] [--resume]` and `python3 exp53_local_start.py check <1 to 6>`, from the folder `$M`, with the interpreter of the virtual environment.
 >
@@ -194,7 +194,7 @@ No sentence says that the runs wait for the checks or what the worker does when 
 > 2. **The starts.** One run of 256 updates of each of the arms `x3`, `wd0`, `x3-wd0` and `xf3` under the sweep. For `wd0` every tensor of the starting file is bit-equal (`torch.equal`) to the one in `$W7:$M/exp45/e47/e47_32_one_S_73129_start.pt`, the five tensors of whole numbers (`sources`, `periods`, `phases`, `interface`, `far`) included. For `x3` and `x3-wd0` every tensor but `Wc` is bit-equal, and `Wc` is bit-equal to the trial's `Wc` multiplied by 3 in single precision. For `xf3` every tensor but `Wc` is bit-equal; 26,925 entries of `Wc` equal the trial's multiplied by 3 and 6,867 equal the trial's, and the 6,867 are exactly the entries [g, i, k] in which cell i and cell `sources[i, k]` are both interface cells. The assertion of change 1 repeats the comparison of the unmultiplied start in every run of the roster.
 > 3. **The decay.** (a) In the runs of check 2 the groups read back from the optimizer at the start and at the end have the decays 0.25 and 0 in `x3` and `xf3`, and 0 and 0 in `wd0` and `x3-wd0`. (b) From E47's start, one update on the batch `R42.first_batch(73129)`, once with decay 0.25 and once with decay 0, under each rule: `book.weight` is bit-equal between the two, and for each of the thirteen tensors of the first group the largest absolute value of p(decay 0) − p(decay 0.25) − 0.00025 p(start) is below 1e-6. (If the decay were not removed, this value would lie between 1.1e-5 and 8.8e-5 in every one of the thirteen; E46's check 2 found 2.6e-8 or less.)
 > 4. **A resumed run equals an uninterrupted one** (the trial's check 8), for the arm `x3-wd0` under the sweep with `--dose 2048`: once without interruption, and once stopped after the saved state of update 1,024 (`stop_at=1024`) and resumed by a second call. The two receipts are equal in every row and in every field whose name does not begin with `cpu` or `wall`, in `tensors_sha256`, `start_tensors_sha256`, `data_digest` and `cosine_first_batch_end`; the groups read back after the resume have the decay 0.
-> 5. **The start of the arms with the multiple on the first batch,** for `x3` and `xf3` under each rule: the loss and the gradient of every tensor are finite, and the share of gate values below 0.05 or above 0.95 (change 6) is below 1% in each of the four groups of cells. (The reviewer's measurement in double precision on other items finds 0.00% at both starts.) The mean absolute state of each group is recorded.
+> 5. **The start of the arms with the multiple on the first batch,** for `x3` and `xf3` under each rule: the loss and the gradient of every tensor are finite, and the share of gate values below 0.05 or above 0.95 (change 6) is below 1% in each of the four groups of cells. (Measured in double precision on other items, the share is 0.00% at both starts: `$R/signal_passage.py`, and the appendix of the check of this brief.) The mean absolute state of each group is recorded.
 > 6. **Cost** (no criterion): CPU-seconds an update and a scored row from the runs of check 2, and a forecast for the six runs. If the forecast exceeds 30 CPU-hours, the worker asks before starting.
 
 ### 7. The measures added at every row are not defined: the rings, the gates, the first batch
@@ -213,14 +213,14 @@ No sentence says that the runs wait for the checks or what the worker does when 
 
 **What is wrong.** Brief, line 74: rings 2 and 3 "*are used* in a run if A or R falls by 5 points or more when they are held at their mean", measured on the committed weights, which are those of the last row only.
 
-1. The measurement is defined from the committed files alone: the final weights hold the structure, the panels are rebuilt from the seed by the reader, and part F of `$R/e47_trial_verify.py` makes it (rerun here for the trial: with rings 2 and 3 at their mean A and R are 93.0 and 86.3 against 93.3 and 86.3 under the sweep, and unchanged under back-propagation; `F_RERUN_NOTE`). The script's loader has the trial's path fixed (`weights(arm, rule, start)`); the brief should say that the reviewer adapts the path and nothing else.
+1. The measurement is defined from the committed files alone: the final weights hold the structure, the panels are rebuilt from the seed by the reader, and part F of `$R/e47_trial_verify.py` makes it (rerun here for the two runs of the trial, `python3 -I $R/e47_trial_verify.py F one_S one_B`, 173 seconds: with rings 2 and 3 at their mean A and R are 93.0 and 86.3 against 93.3 and 86.3 under the sweep, and unchanged at 96.2 and 94.7 under back-propagation). The script's loader has the trial's path fixed (`weights(arm, rule, start)`); the brief should say that the reviewer adapts the path and nothing else.
 2. Against zero the threshold is defensible. In the trial the fall for rings 2 and 3 is 0.0 to 0.3 of a point on A and R. Five points are 30 items of A's 600 and 100 of R's 2,000.
 3. Against the scatter between rows it is not safe near the line. `APP receipts`, last nine rows of the trial: A changes by up to 1.8 points between neighbouring rows and R by up to 3.9; the fall under the diagnostic that holds all far cells at their mean has a standard deviation of 0.8 to 1.8 points over those rows and, for R under the sweep, lies between 2.35 and 5.95, on both sides of 5. A fall of rings 2 and 3 between about 2 and 8 points would be called *used* or not according to the row at which the run happens to end.
 4. A run that has not learned the family gives "not used" by construction (defect 2).
 
 **Repair.** Change 7 of the replacement of "The runner" (the weights of updates 24,064 and 24,320 are saved). Replace the bullet "Rings 2 and 3" (brief, line 74) by:
 
-> - **Rings 2 and 3.** The reviewer measures this from the committed weights of the last three rows (updates 24,064, 24,320 and 24,576), with the reader and part F of `$R/e47_trial_verify.py`, in which only the path of the weight files is changed. On the panel of A (600 items) and on that of R (2,000 items) the network is scored with the cells of rings 2 and 3 held, after every position, at their mean over the items of the scored set at that position, while all other cells run freely. The fall is the plain score minus this score, averaged over the three rows. In a run that is read, rings 2 and 3 are *used* if the fall of A or of R is 5 points or more, *not used* if both falls are below 2 points, and *not decided* otherwise. (In the trial the falls are between 0.0 and 0.3 of a point. Between neighbouring rows at the end of the trial's runs R changes by up to 3.9 points, and the fall of R with all far cells at their mean lay between 2.3 and 6.0 points over the last nine rows of the sweep's run; this is why three rows are averaged and why a fall between 2 and 5 points is not read.) The reviewer also reports the share of a difference that reaches each ring on the starting and on the final weights (`$R/signal_passage.py`), and confirms on the committed starting file of the arm `x3` the 0.141 of his measurement. The worker's report gives the tables of the first two points and leaves this one to the reviewer.
+> - **Rings 2 and 3.** The reviewer measures this from the committed weights of the last three rows (updates 24,064, 24,320 and 24,576), with the reader and part F of `$R/e47_trial_verify.py`, in which only the path of the weight files is changed. On the panel of A (600 items) and on that of R (2,000 items) the network is scored with the cells of rings 2 and 3 held, after every position, at their mean over the items of the scored set at that position, while all other cells run freely. The fall is the plain score minus this score, averaged over the three rows. In a run that is read, rings 2 and 3 are *used* if the fall of A or of R is 5 points or more, *not used* if both falls are below 2 points, and *not decided* otherwise. (In the trial the falls are between 0.0 and 0.3 of a point. Between neighbouring rows at the end of the trial's runs R changes by up to 3.9 points, and the fall of R with all far cells at their mean lay between 2.35 and 5.95 points over the last nine rows of the sweep's run; this is why three rows are averaged and why a fall between 2 and 5 points is not read.) The reviewer also reports the share of a difference that reaches each ring on the starting and on the final weights (`$R/signal_passage.py`), and confirms on the committed starting file of the arm `x3` the 0.141 of his measurement. The worker's report gives the tables of the first two points and leaves this one to the reviewer.
 
 ### 9. Nothing cheaper is asked for first, although the first rows of a run show whether it can be read
 
@@ -286,7 +286,7 @@ and in "Done" (brief, line 114) replace "the outcome of predictions P53.1 to P53
 **What is wrong.**
 
 1. *Weight files are ignored by git.* `$D:.gitignore` has the line `*.pt`. The brief asks for starting and final weights to be committed (line 57) and does not say that they have to be added with `git add -f`, nor that the saved state (`…_ckpt.pt`, also ignored) is not to be committed.
-2. *An interruption before the first saved state.* The first state is saved after 1,024 updates, about seven minutes of CPU. If the machine stops earlier, the starting file exists and no state does; the run then refuses to start (runner, lines 428 to 430: `resume` is false without a state, and `refuse_existing` finds the starting file). The brief's line 102 says only "a run is resumed from its saved state".
+2. *An interruption before the first saved state.* The first state is saved after 1,024 updates and five scored rows, about ten minutes of CPU. If the machine stops earlier, the starting file exists and no state does; the run then refuses to start (runner, lines 428 to 430: `resume` is false without a state, and `refuse_existing` finds the starting file). The brief's line 102 says only "a run is resumed from its saved state".
 3. *The flag `--resume` from the first start.* The trial's launch script passes `--resume` at every start (`$W7:$M/exp45/e47/launch_trial.sh`); without it a restarted command refuses the existing files. The brief does not say so.
 4. *The folder.* The trial's commands were run from `$M` (the same script). The brief names no folder.
 5. *"Commit and push the running receipts between the pieces"* (line 102): the receipt is written every 4,096 updates only (runner, lines 509 and 510); between these the log is the only file that changes. The logs and their folder are not named.
@@ -360,7 +360,7 @@ Recomputed from `$W7:$M/exp45/e47/e47_32_one_{S,B}_73129.json` by `APP receipts`
 | Trained: ring 1 0.59 and 0.50; ring 2 0.11 and 0.08; ring 3 0.015 and 0.0006; no longer shrinks | 0.587, 0.499; 0.113, 0.0752; 0.0152, 5.8e-04; 1.002 and 1.000 a position | right |
 | Directed start times 5: 0.64 to ring 3, way back 0.0025 | 0.639; 0.0025 (the reviewer's document, section 4.1; not rerun) | as documented |
 | "0.37 over 4,000 updates" | 0.99975^4000 = 0.3678 | the arithmetic is right; the inference is not (defect 1) |
-| "changes no score by more than 0.7 of a point" | F_RERUN_FIGURES | F_RERUN_VERDICT |
+| "changes no score by more than 0.7 of a point" | part F of `e47_trial_verify.py` rerun for the arm `one`: the largest change is 0.7 of a point (40 letters, sweep: 90.7 against 90.0, a rise); A and R change by 0.3 and 0.0 under the sweep and by 0.0 under back-propagation | right for the arm `one`; the arm `place` was not rerun |
 
 `magnitudes` is `L.Wc.detach().abs()[:, cells].mean()` (runner, lines 370 to 372): the mean absolute value of the weights *into* the cells of the group, over the three gates and the eleven sources, the cell's weight on its own state included. Weights that leave a group for another group count with the group that receives them.
 
@@ -398,4 +398,195 @@ Recomputed from `$W7:$M/exp45/e47/e47_32_one_{S,B}_73129.json` by `APP receipts`
 
 ## Appendix: the script behind the figures
 
-APPENDIX_SCRIPT
+The script was run in this form from the repository root; its parts and what each prints are in its first lines. It uses the standard library and numpy, reads the files of other branches with `git show`, and imports the reviewer's `signal_passage.py` and, through it, `e47_trial_verify.py` from the current branch without editing them. Run times on a host of four cores shared with other jobs: `receipts`, `lost` and `e46` under one second together; `tensors` and `scale` 6 seconds; `starts` 107 seconds.
+
+```python
+"""Check of the brief of E53: the figures behind the check document. Read-only; standard library and numpy; no torch; nothing trained.
+Files of other branches are read with `git show` as data. The reviewer's scripts signal_passage.py and e47_trial_verify.py are imported
+from the current branch (parts tensors, starts, scale) and are not edited.
+
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I <this file> <part> [...]      from the repository root
+    receipts   the trial's figures: updates to 80, levels, diagnostics, magnitudes, cost; E42's references; the scatter at the end
+    lost       the rows of the trial's lost runs against those of its completed runs
+    e46        the dense network of seed 73129 with decay 0.25, 0.05 and 0 (E46's receipts)
+    tensors    what a starting file of E47 holds; what check 3 can detect; rings by grid distance and by drawn connections
+    starts     starts that change the far cells and not the interface cells (about two minutes)
+    scale      the sweep's way back at the start and at three times the start; one scale under a start changed for some cells only
+"""
+import contextlib, io, json, os, statistics as st, subprocess, sys
+
+ROOT = os.getcwd()
+REVIEW = os.path.join(ROOT, "PROJECT_DOCUMENTS", "MINIFLY_REVIEW_20261109")
+M = "MOD97_LOCAL_RULE_20261106"
+W7 = "origin/claude/e47-worker-stage-0-3d0ya6"
+W46 = "origin/claude/wonderful-edison-8hx6i6"
+parts = sys.argv[1:]
+
+
+def show(ref, path):
+    return json.loads(subprocess.run(["git", "show", f"{ref}:{path}"], capture_output=True, check=True).stdout)
+
+
+def to80(curve, key):
+    for i in range(len(curve) - 2):
+        if all(curve[j][key] >= 80 for j in (i, i + 1, i + 2)):
+            return curve[i]["step"]
+    return None
+
+
+def level(curve, key):
+    return sum(r[key] for r in curve[-3:]) / 3
+
+
+def trial(rule):
+    return show(W7, f"{M}/exp45/e47/e47_32_one_{rule}_73129.json")
+
+
+if "receipts" in parts:
+    print("decay alone: 0.99975^4000 = %.4f; ^24576 = %.5f" % (0.99975 ** 4000, 0.99975 ** 24576))
+    for rule in "SB":
+        rec = trial(rule); c = rec["curve"]; last = c[-1]
+        print(f"trial one {rule}: rows {len(c)}, complete {rec['complete']}, torch {rec['provenance']['torch']}, python {rec['provenance']['python']}, resumed at {[r['at_update'] for r in rec.get('resumes', [])]}")
+        print("   updates to 80: A", to80(c, "A"), "R", to80(c, "R"), "| levels A %.2f R %.2f 40 letters %.2f" % (level(c, "A"), level(c, "R"), level(c, "len40")))
+        print("   last row: plain A %.2f R %.2f | far cells at zero %.2f %.2f | at their mean %.2f %.2f" % (
+            last["A"], last["R"], last["far_off"]["A"], last["far_off"]["R"], last["far_mean"]["A"], last["far_mean"]["R"]))
+        print("   magnitudes: row 0", {k: round(v, 6) for k, v in c[0]["magnitudes"].items()}, "| last row", {k: round(v, 6) for k, v in last["magnitudes"].items()})
+        rows = (0, 1024, 2048, 4096, 8192, 12288, 16384, 24576)
+        print("   mean absolute weight into a far cell at rows", rows, ["%.4f" % r["magnitudes"]["far"] for r in c if r["step"] in rows],
+              "| least %.4f at %d" % min((r["magnitudes"]["far"], r["step"]) for r in c))
+        print("   loss, A, R at rows 4,096 and 8,192:", [(r["step"], round(r["loss"], 4), round(r["A"], 2), round(r["R"], 2)) for r in c if r["step"] in (4096, 8192)])
+        print("   CPU-hours: updates %.3f, scoring %.3f, all %.3f; %.4f s an update, %.1f s a scored row" % (
+            rec["cpu_updates"] / 3600, rec["cpu_scoring"] / 3600, (rec["cpu_updates"] + rec["cpu_scoring"]) / 3600, rec["cpu_per_update"], rec["cpu_scoring"] / len(c)))
+        print("   optimizer: top-level weight_decay", rec["optimizer"]["weight_decay"], "| groups", [(g["weight_decay"], g["params"]) for g in rec["optimizer"]["groups"]])
+        print("   start_tensors_sha256", rec["start_tensors_sha256"], "| structure", {k: v[:16] for k, v in rec["structure_sha256"].items()})
+        print("   cosine between the two rules' gradients, first batch: start", {k: round(v, 3) for k, v in rec["cosine_first_batch_start"].items()},
+              "end", {k: round(v, 3) for k, v in rec["cosine_first_batch_end"].items()})
+        tail = c[-9:]
+        for k in ("A", "R", "len40"):
+            v = [r[k] for r in tail]; d = [v[i + 1] - v[i] for i in range(8)]
+            print(f"   last nine rows, plain {k}: standard deviation %.2f, largest change between neighbouring rows %.2f" % (st.stdev(v), max(abs(x) for x in d)))
+        for mode in ("far_off", "far_mean"):
+            for k in ("A", "R"):
+                f = [r[k] - r[mode][k] for r in tail]
+                print(f"   last nine rows, fall of {k} under {mode}: mean %.2f, standard deviation %.2f, least %.2f, largest %.2f" % (st.mean(f), st.stdev(f), min(f), max(f)))
+    for cfg in ("G", "F10"):
+        for rule in "SB":
+            c = show(W7, f"{M}/exp45/e47_qual/e42_reference/e42_{cfg}_{rule}_73129.json")["curve"]
+            print(f"E42 {cfg} {rule}: updates to 80 on A {to80(c, 'A')}, on R {to80(c, 'R')}")
+    c8 = show(W7, f"{M}/exp45/e47_qual/check8.json")
+    print("E47's resume check (two runs of 2,048 updates): %.2f CPU-hours" % (c8["cpu"] / 3600))
+    up, row = 0.3975, 34.6
+    c1 = 2 * (1024 * up + 5 * row); c2 = 3 * (256 * up + 2 * row); c4 = 2 * (2048 * up + 9 * row)
+    print("forecast of the checks at %.4f s an update and %.1f s a row: two runs of 1,024 updates %.2f h; three of 256 %.2f h; two of 2,048 %.2f h; sum %.2f h" % (
+        up, row, c1 / 3600, c2 / 3600, c4 / 3600, (c1 + c2 + c4) / 3600))
+
+if "lost" in parts:
+    for rule in "SB":
+        a = trial(rule); b = show(W7, f"{M}/exp45/e47/lost_at_restart/e47_32_one_{rule}_73129.json")
+        keys = [k for k in a["curve"][0] if not k.startswith(("cpu", "wall"))]
+        n = sum(any(ra[k] != rb[k] for k in keys) for ra, rb in zip(a["curve"], b["curve"]))
+        print(f"lost run one {rule}: {len(b['curve'])} rows to update {b['curve'][-1]['step']} on {b['provenance']['host']['platform']}; completed run on {a['provenance']['host']['platform']},"
+              f" resumed on {[r['provenance']['host']['platform'] for r in a.get('resumes', [])]}; rows that differ in a field other than the times: {n}; start hash equal {a['start_tensors_sha256'] == b['start_tensors_sha256']}")
+
+if "e46" in parts:
+    for rule in "SB":
+        for d in ("025", "005", "000"):
+            rec = show(W46, f"{M}/exp45/e46/e46_{rule}_wd{d}_73129.json"); c = rec["curve"]
+            n0, n1 = c[0]["norms"], c[-1]["norms"]
+            print(f"E46 dense network, seed 73129, {rule}, decay {rec['decay']}: updates to 80 on A {to80(c, 'A')}, on R {to80(c, 'R')}; levels A %.1f R %.1f; norms at the end: " % (level(c, "A"), level(c, "R"))
+                  + ", ".join(f"{k} {n1[k]:.1f}" for k in ("input_map", "recurrent", "lm", "l2", "l3")) + f" (recurrent at the start {n0['recurrent']:.1f})")
+
+if {"tensors", "starts", "scale"} & set(parts):
+    import numpy as np
+    sys.path.insert(0, REVIEW)
+    argv = sys.argv
+    sys.argv = [os.path.join(REVIEW, "signal_passage.py"), "arith", "e47_one"]      # its cheapest part; the output is discarded
+    with contextlib.redirect_stdout(io.StringIO()):
+        import signal_passage as SP
+    sys.argv = argv
+    V = SP.V47
+    net = SP.start_net("e47_one")
+    ring, idx = net.ring, net.idx
+    far = ring > 0
+    src_far = far[idx].copy(); src_far[:, 0] = far            # (cells, 11): the source of this weight is a far cell (column 0 is the cell itself)
+    not_internal = src_far.copy(); not_internal[far] = True   # every weight of a far cell; of an interface cell, its weights on far cells
+
+if "tensors" in parts:
+    W, WB = V.weights("one", "S", True), V.weights("one", "B", True)
+    print("starting file of the arm one: the same tensors under both rules:", sorted(W) == sorted(WB) and all(np.array_equal(W[k], WB[k]) for k in W))
+    for k, v in W.items():
+        line = f"   {k:18s} {str(v.dtype):8s} {str(v.shape):16s}"
+        if v.dtype == np.float32:
+            a = np.abs(v.astype(np.float64))
+            line += f" largest |p0| {a.max():.4f}; 0.00025 x largest {0.00025 * a.max():.2e}; spacing of single precision at the largest {float(np.spacing(np.float32(a.max()))):.1e}"
+        print(line)
+    Wc = W["Wc"]
+    x3 = (Wc * np.float32(3.0)).astype(np.float32)
+    print("Wc: shape", Wc.shape, "entries", Wc.size, "largest %.6f (1/sqrt(11) = %.6f)" % (float(np.abs(Wc).max()), 11 ** -0.5),
+          "| Wc x 3 in single precision equals the product in double precision rounded to single:", bool(np.array_equal(x3, (Wc.astype(np.float64) * 3.0).astype(np.float32))))
+    a = np.abs(Wc.astype(np.float64))
+    print("mean |Wc| into a cell: " + ", ".join(f"ring {r} ({int((ring == r).sum())} cells) {a[:, ring == r].mean():.6f}" for r in range(4)) + f"; far cells {a[:, far].mean():.6f}; all {a.mean():.6f}")
+    C = idx.shape[0]
+    readers = {}
+    for i in range(C):
+        for j in idx[i, 1:]:
+            readers.setdefault(int(j), []).append(i)
+    d = np.full(C, -1); d[~far] = 0; frontier = set(np.nonzero(~far)[0].tolist()); step = 0
+    while frontier:
+        step += 1; nxt = set()
+        for j in frontier:
+            for i in readers.get(j, []):
+                if d[i] < 0:
+                    d[i] = step; nxt.add(i)
+        frontier = nxt
+    for r in (1, 2, 3):
+        vals, cnt = np.unique(d[ring == r], return_counts=True)
+        print(f"   ring {r} by grid distance: least number of drawn connections from an interface cell", dict(zip(vals.tolist(), cnt.tolist())))
+    print("weights of interface cells on far cells:", int(src_far[~far].sum()), "of", int((~far).sum()) * 11, "| entries of one gate outside the interface's own weights:", int(not_internal.sum()), "of", C * 11)
+
+if "starts" in parts:
+    def make(label, fn):
+        new = net.changed(); fn(new.Wc); new.plans = {}
+        return label, new
+
+    def uniform(g):
+        def fn(Wc): Wc *= g
+        return fn
+
+    def far_rows(g, ten=False):
+        def fn(Wc):
+            if ten:
+                Wc[:, far, 1:] *= g
+            else:
+                Wc[:, far] *= g
+        return fn
+
+    def outside_interface(g):
+        def fn(Wc): Wc[:, not_internal] *= g
+        return fn
+
+    sets = [make("unchanged", uniform(1.0)), make("recurrent weights x 3 (the brief's start)", uniform(3.0)),
+            make("the far cells' 33 weights x 3", far_rows(3.0)), make("the far cells' 33 weights x 3.5", far_rows(3.5)),
+            make("the far cells' ten connections x 3, own weight x 1", far_rows(3.0, True)),
+            make("every weight x 3 except an interface cell's on itself and on interface cells", outside_interface(3.0)),
+            make("every weight x 3.5 except an interface cell's on itself and on interface cells", outside_interface(3.5))]
+    SP.tables(net, [SP.row(n, label) for label, n in sets])
+    for label, n in sets:
+        stt = SP.Stats(n.C); m = SP.measure(n, 12, "first", 75, stt)
+        v = [float(np.sqrt(m["ms"][dd, 0])) for dd in (0, 1, 5, 10, 17)]
+        print(f"   {label}: the interface's own difference 0, 1, 5, 10, 17 positions after the changed byte (12 letters): " + ", ".join(SP.sg(x) for x in v)
+              + f" | gate values below 0.05 or above 0.95: interface {100 * stt.sat(~far)[0]:.3f}%, far {100 * stt.sat(far)[0]:.3f}% | mean |h|: interface {stt.size(~far):.3f}, far {stt.size(far):.3f}")
+
+if "scale" in parts:
+    C = net.C
+    Wn = np.zeros((C, C)); Wn[np.arange(C)[:, None], idx] = net.Wc[2]
+    scale = np.abs(net.Wc).mean()
+    mu_w = np.abs(np.linalg.eigvals(Wn)).max(); mu_s = np.abs(np.linalg.eigvals(np.sign(Wn) * scale)).max()
+    print(f"the sweep's scale (mean |Wc|) {scale:.4f}; largest eigenvalue of the candidate rows {mu_w:.3f}, of their signs times the scale {mu_s:.3f}")
+    z, k = 0.500, 0.243                                       # the mean gates of the unchanged start (signal_passage.py, part arith)
+    for g in (1.0, 3.0):
+        print(f"   multiple {g:g}: scale {g * scale:.4f}; factor a position on the way back, z + k g mu: exact rule {z + k * g * mu_w:.3f}, the sweep {z + k * g * mu_s:.3f}")
+    for label, mask in (("the far cells' 33 weights x 3", np.broadcast_to(far[:, None], idx.shape)), ("every weight x 3 except an interface cell's on itself and on interface cells", not_internal)):
+        X = net.Wc.copy(); X[:, mask] *= 3.0; a = np.abs(X)
+        print(f"   {label}: one scale {a.mean():.4f}; mean |Wc| into an interface cell {a[:, ~far].mean():.4f}, into a far cell {a[:, far].mean():.4f}; the scale is {a.mean() / a[:, ~far].mean():.2f} and {a.mean() / a[:, far].mean():.2f} times these")
+```
