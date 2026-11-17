@@ -44,7 +44,7 @@ Status words: *running*, *waiting* (for the named item), *next* (brief to be wri
 | 7 | E50: a fixed input code in which a value stands for one byte; stages 1 to 3 | C | – | worker | running |
 | 8 | E52: the sweep under its own learning rate and decay (and back-propagation under the same values), at half and at a quarter of the pairs | B1, B2, every comparison of the two rules | – | worker | next |
 | 9 | E53: the local networks from a start at which differences pass | C | item 1 | worker | waiting |
-| 10 | E54: the limited and the periodic network with a quarter and a tenth of the pairs taught | B2 | – | worker | queued |
+| 10 | E54: the limited and the periodic network with a quarter and a tenth of the pairs taught | B2 | check of its brief; a free line | worker | next |
 | 11 | E55: cells in reserve that only learning brings into use, on a birth with E50's code (no device) | A | items 4 and 7 | worker | waiting |
 | 12 | E56: an unrelated task learned in E47's network, whose cells away from the boundary are not in use | A, C | item 2 | worker | waiting |
 | 13 | Cells that learn at different speeds: does earlier knowledge stay in the slow ones? | A | items 4 and 5 | design | queued |
@@ -64,3 +64,4 @@ The numbers E52 to E56 are the reviewer's; the coordinator may renumber them.
 | 21:05 | Items 1, 2 and 3 started (agents of the reviewer, saved weights and the record only). Item 4's brief is in check. |
 | 21:07 | Item 8: the brief of E52 written and given to a check. Items 1, 2, 3 running. |
 | 21:10 | Item 5: the runner's checks passed and the runner change was read and accepted; the trial runs since 21:04. Item 6: the helper session for the sweep's long lives started. |
+| 21:33 | Item 10: the brief of E54 written and given to a check. |
