@@ -30,14 +30,14 @@ The starting sizes of all weights in these networks were taken over from the den
 
 ## 1. Summary
 
-1. **At the unchanged start a difference barely leaves the cells that read it in E47, and does leave them in E50.** Over the later positions of items of 12 letters, ring 1 of E47's arm `one` holds 0.187 of the interface's difference, ring 2 0.0207 and ring 3 0.0028; in the arm `place` the three are 0.148, 0.0115 and 0.00033. In E50 the cells that read neither byte hold 0.266 of the reading cells' difference. In E49 there are no cells that do not read the difference: every cell reads 16 values that differ, and the cells carry it about as evenly as in E42's `F10` (participation 0.734 against 0.746).
-2. **In every form, and in `F10`, a difference of one byte fades at the start by a factor of 0.64 to 0.66 per position.** Seventeen positions after the first digit, at `=` of an item of 12 letters, the interface of E47 holds 6.0e-05 of an initial 0.246. The share at `=` (ring 3: 0.165) is therefore a ratio of two quantities that have both nearly vanished, and the figure "farthest group at its largest" shows what arrives in absolute terms: ring 3 never holds more than 0.00077 of the size the difference had at the interface.
+1. **At the unchanged start a difference barely leaves the cells that read it in E47, and does leave them in E50.** Over the later positions of items of 12 letters, ring 1 of E47's arm `one` holds 0.187 of the interface's difference, ring 2 0.0207 and ring 3 0.0028; in the arm `place` the three are 0.148, 0.0115 and 3.3e-04. In E50 the cells that read neither byte hold 0.266 of the reading cells' difference. In E49 there are no cells that do not read the difference: every cell reads 16 values that differ, and the cells carry it about as evenly as in E42's `F10` (participation 0.734 against 0.746).
+2. **Wherever every cell is updated at every position (E47 `one`, E49, E50, and `F10`), a difference of one byte fades at the start by a factor of 0.63 to 0.66 per position.** Seventeen positions after the first digit, at `=` of an item of 12 letters, the interface of E47 holds 6.0e-05 of an initial 0.246. The share at `=` (ring 3: 0.165) is therefore a ratio of two quantities that have both nearly vanished, and the figure "farthest group at its largest" shows what arrives in absolute terms: ring 3 never holds more than 7.7e-04 of the size the difference had at the interface.
 3. **The arithmetic agrees with the measurement.** One connection crossed in one position multiplies a difference by (1 - z) r (1 - n^2) w, expected 0.0434 at the start and measured 0.0420 to 0.0428 in the three rings of E47 and 0.0436 in E50. For a difference that lasts, the factor from ring to ring is expected at 0.134 to 0.174 and measured at 0.103 to 0.162, the sixfold to tenfold fall of E47's verification.
 4. **E50: the smallest change tried that meets the three conditions is the recurrent weights times 1.5** (share 0.390 at 12 letters, 0.388 at 0 letters). The candidate rows alone times 1.5 (0.385) and the update-gate bias lowered by 1 (0.463) also meet them. Every multiple up to 4 meets them; at 6 a difference grows.
 5. **E47, arm `one`: none of the uniform changes meets the three conditions.** The share of ring 3 reaches a third only at multiples at which a difference grows: 0.202 at 3.25 (no growth), 0.274 at 3.5 (grows), 0.349 at 3.75 (grows). The largest share without growth is 0.264 (candidate rows times 3.5). Shifting the update-gate bias, alone or together with a multiple, does not change this. The reason is in the wiring and not in the scale: of a far cell's ten connections only 2.4 to 4.0 come from the ring nearer the interface, while growth is decided by all eleven sources (section 6).
 6. **E47, arm `one`: a change in one direction meets them.** With only the weights on connections that come from a cell nearer the interface multiplied by 5, ring 3 holds 0.639 of the interface's difference at 12 letters and 0.372 at 0 letters, no gate value lies beyond 0.05 / 0.95, and a difference shrinks by 0.84 per position. This start was not in the task's list; it was tried because the arithmetic pointed to it. It leaves the way back as it is: 0.0025 against 0.0026 at the unchanged start. A uniform multiple raises both ways together (times 3: 0.141 out, 0.149 back).
 7. **E47, arm `place`: none of the changes tried meets them,** the directed one included. The far cells' rare updates hold the passage back: without growth ring 3 reaches 0.0300 at most under the uniform changes and 0.202 under the directed change times 8.
-8. **Training raised the passage into rings 1 and 2 and not into ring 3.** In the four trained networks of E47 ring 1 holds 0.475 to 0.587 of the interface's difference and ring 2 0.0365 to 0.113; ring 3 holds 0.0152 (`one`, sweep), 0.00058 (`one`, back-propagation), 0.00012 and 0.00040 (`place`). The way back from ring 3 is 0.00046 to 0.0097.
+8. **Training raised the passage into rings 1 and 2 and not into ring 3.** In the four trained networks of E47 ring 1 holds 0.475 to 0.587 of the interface's difference and ring 2 0.0365 to 0.113; ring 3 holds 0.0152 (`one`, sweep), 5.8e-04 (`one`, back-propagation), 1.2e-04 and 4.0e-04 (`place`). The way back from ring 3 is 4.6e-04 to 0.0097.
 9. **The measurement says nothing about learning.** It shows which starts let a difference of one byte arrive, at the first forward computation. Whether a network started so learns the family, faster or slower, or comes to use its far cells, is not shown (section 8).
 
 The main table. Shares are for items of 12 letters with the first digit changed, over every later position.
@@ -45,9 +45,9 @@ The main table. Shares are for items of 12 letters with the first digit changed,
 | Network form | Farthest group | Share at the unchanged start | Smallest change tried that meets the three conditions | Largest share without growth among the uniform changes tried |
 |---|---|---|---|---|
 | E47 `one` | ring 3 | 0.0028 | none of the uniform changes; of all tried, connections from nearer the interface times 5 (0.639), with the way back unchanged at 0.0025 | 0.264 (candidate rows times 3.5); 0.202 (recurrent weights times 3.25) |
-| E47 `place` | ring 3 | 0.00033 | none | 0.0300 (recurrent weights times 3.5 with the update-gate bias lowered by 2) |
+| E47 `place` | ring 3 | 3.3e-04 | none | 0.0300 (recurrent weights times 3.5 with the update-gate bias lowered by 2) |
 | E49 `in16`, `I16` | none: every cell reads 16 differing values | not applicable | not applicable | not applicable |
-| E50 `C16-in` | cells that read neither byte | 0.266 | recurrent weights times 1.5 (0.390); candidate rows times 1.5 (0.385); update-gate bias lowered by 1 (0.463) | 0.892 (recurrent weights times 4) |
+| E50 `C16-in` | cells that read neither byte | 0.266 | recurrent weights times 1.5 (0.390); candidate rows times 1.5 (0.385); update-gate bias lowered by 1 (0.463) | 0.950 (recurrent weights times 3.5 with the update-gate bias lowered by 2) |
 
 ## 2. What was measured, and how
 
@@ -55,11 +55,11 @@ The main table. Shares are for items of 12 letters with the first digit changed,
 
 **The forward** [class `Layer`, function `forward`]. The three forms are computed by one function written for this measurement: cells with eleven sources each, three rows of weights on them, and for every byte an input sum for each gate. It works in double precision, so that a difference far below the resolution of single precision can be followed; in single precision, in which the networks ran, a difference below about 1e-8 is no difference at all. The structures (connections, rings, periods, masks, the code of E50) come from the reviewer's readers. The loaders are those of `e47_trial_verify.py` and `e49_result_verify.py`, imported and not edited.
 
-**The check of the forward** [part `check`]. On 24 rows of 12 letters, the states of this forward differ from the states of the readers' own forwards by at most 5.7e-07 (E47 `one`, start), 5.6e-07 (E47 `place`, start), 1.1e-06 and 1.7e-06 (two trained networks of E47), 1.8e-07 (E49 `in16`, start), 5.0e-07 (`F10`), 5.5e-07 and 1.0e-07 (the two trained networks of `in16`), and 1.4e-07 (E50, against both forms of its reader). With the weights changed in the same way on both sides (recurrent weights times 3 and the update-gate bias lowered by 1 in E47; candidate rows times 4 in E49; recurrent weights times 2 and the bias lowered by 2 in E50) the largest difference is 1.1e-06 on the starting weights and 6.6e-05 on a trained network. The changes of the start therefore mean in this forward what they would mean in the readers.
+**The check of the forward** [part `check`]. On 24 rows of 12 letters, the states of this forward differ from the states of the readers' own forwards by at most 5.7e-07 (E47 `one`, start), 5.6e-07 (E47 `place`, start), 1.1e-06 and 1.7e-06 (two trained networks of E47), 1.8e-07 (E49 `in16`, start), 5.0e-07 (`F10`), 5.5e-07 and 1.0e-07 (the two trained networks of `in16`), and 1.4e-07 (E50, against both forms of its reader). With the weights changed in the same way on both sides (recurrent weights times 3 and the update-gate bias lowered by 1 in E47; candidate rows times 4 in E49; recurrent weights times 2 and the bias lowered by 2 in E50) the largest difference is 1.3e-06 on starting weights and 6.6e-05 on a trained network. The changes of the start therefore mean in this forward what they would mean in the readers.
 
 **Which starting files hold the same tensors** [part `check`]. The two rules of an arm or setting start from the same tensors in E47, E49 `in16` and E50 `C16-in`. The arms `one` and `place` of E47 differ in the periods, phases and step weights only. `in16` and `I16` differ in the readout's map only, so that their cells compute the same states at the start; one measurement serves both. E50 `C16-in` and E49 `in16` hold the same recurrent weights, biases, input map and input mask; they differ in the code. E49 and E42's `F10` hold the same recurrent weights and biases. The kept recurrent weights have a root mean square of 0.1740 (E47) and 0.1743 (E49, E50) and a largest size of 0.3015, as a uniform draw within 1 / sqrt(11) has; the kept weights of the input map have a root mean square of 0.0361 where a cell reads 512 values and 0.2039 where it reads 16.
 
-**The changes of the start** [method `Layer.changed`]. "Recurrent weights times g" multiplies the 33 kept recurrent weights of every cell, the cell's weight on its own state among them. "Candidate rows only" multiplies the eleven of n. "Update-gate bias -1" subtracts 1 from the bias of z in every cell, so that z falls from about 0.50 to about 0.27 and a cell takes more of the candidate. "Ten connections" multiplies the weights on the ten other cells and leaves the cell's weight on itself. "Connections from nearer the interface" (E47 only) multiplies, in all three gates, the weights on those connections whose source cell is nearer the interface, by grid distance, than the cell that reads it. Nothing else is changed: not the input map, not the biases other than the one named, not the periods.
+**The changes of the start** [method `Layer.changed`]. "Recurrent weights times g" multiplies the 33 kept recurrent weights of every cell, the cell's weight on its own state among them. "Candidate rows only" multiplies the eleven of n. "Update-gate bias -1" subtracts 1 from the bias of z in every cell, so that z, which is near s(0) = 0.50 at the unchanged start, comes near s(-1) = 0.27 (s(-2) = 0.12 with the bias lowered by 2) and a cell takes more of the candidate. "Ten connections" multiplies the weights on the ten other cells and leaves the cell's weight on itself. "Connections from nearer the interface" (E47 only) multiplies, in all three gates, the weights on those connections whose source cell is nearer the interface, by grid distance, than the cell that reads it. Nothing else is changed: not the input map, not the biases other than the one named, not the periods.
 
 ## 3. The passage at the starting weights (item 1)
 
@@ -89,9 +89,9 @@ Three things are to be read from this table. First, the difference at the interf
 
 - The share does not depend on the number of letters in the arm `one` (ring 3: 0.0023, 0.0027, 0.0028), for the reason just given.
 - With the last digit of the second operand changed there are three later positions: `=` and the two answer digits. Ring 2 first differs at the first answer digit and ring 3 at the second. Whatever the weights, the last digit of the second operand cannot reach ring 2 before the first answer digit is given, and cannot come back from it before the answer ends.
-- In the arm `place` the far cells are updated rarely and keep what they received in between, while the interface loses about half at each position. At `=` of an item of 12 letters ring 1 therefore holds 4.3 times and ring 2 2.9 times the interface's difference. The share over the later positions is nevertheless lower than in the arm `one` (ring 3: 0.00033 against 0.0028), because little arrives in the first positions.
+- In the arm `place` the far cells are updated rarely and keep what they received in between, while the interface loses about half at each position. At `=` of an item of 12 letters ring 1 therefore holds 4.3 times and ring 2 2.9 times the interface's difference. The share over the later positions is nevertheless lower than in the arm `one` (ring 3: 3.3e-04 against 0.0028), because little arrives in the first positions.
 - The way back is as weak as the way out: a difference put into ring 3 arrives at the interface at 0.0026 of its size in ring 3 (`one`).
-- The variation between items (0.162, 0.0167, 0.0024 in `one`) reproduces the figures of E47's verification on its own panel (0.099, 0.016, 0.0017, 0.0002 as standard deviations): a fall of six- to tenfold from ring to ring.
+- The variation between items (0.162, 0.0167, 0.0024 in `one`) agrees with E47's verification, which reports a fall of six- to tenfold from ring to ring on its own panel.
 
 **E50, `C16-in`** [part `start`]. Of the 256 cells, 67 to 82 read a value of a given digit and 113 to 137 (mean 128.4) a value of either of two digits; a cell has input for 11 to 16 of the 46 bytes (median 14). Of the cells that read neither of two digits, at most one has no connection from a cell that reads one. First digit changed, items of 12 letters:
 
@@ -176,7 +176,7 @@ The task's list [part `variants`]. Entries of the first table: ring 1, ring 2, r
 
 - **The share of ring 3 rises with the multiple and passes a third only where a difference grows.** At 12 letters it is 0.0028 unchanged, 0.0100 at 1.5, 0.0267 at 2, 0.141 at 3 and 0.418 at 4. At 4 the difference over all cells is 0.0962, 0.129 and 0.200 at 10, 20 and 40 positions after the changed byte: it grows, by 1.02 to 1.03 per position. At 3 it still shrinks (0.951 and 0.959 per position).
 - **The candidate rows carry the passage.** Multiplying them alone gives the same shares within 0.02 (0.0100, 0.0268, 0.138, 0.405) and the same boundary of growth. The gates' rows matter only for the gate values beyond 0.05 / 0.95, which stay at 0.00% when the candidate rows alone are multiplied and reach 12.80% at 8 when all three are. The limit of 20% is not reached by any start tried; growth is reached first.
-- **A lower update gate does not help in E47.** With the bias lowered by 1 or by 2 the share of ring 3 is 0.0046 and 0.0072. A cell then takes more of its candidate, but the difference also fades faster (0.50 and 0.40 per position against 0.65), and what is gained per connection is lost in time.
+- **A lower update gate does not help in E47.** With the bias lowered by 1 or by 2 the share of ring 3 is 0.0046 and 0.0072. A cell then takes more of its candidate, but the difference also fades faster (0.50 and 0.40 per position against 0.65), and the gain per connection is offset by the faster fading.
 - **The far cells' states grow with the multiple:** their mean size is 0.0334 unchanged, 0.0611 at 3, 0.115 at 4 and 0.292 at 8, against 0.178 to 0.391 in the interface.
 
 Further starts, tried after these results [part `more`]: multiples between 2 and 4, a multiple together with a lowered update-gate bias, and the ten connections multiplied without the cell's weight on its own state.
@@ -255,7 +255,7 @@ A change in one direction [part `directed`]. Of a far cell's ten connections, 3.
 
 - **At a multiple of 5 the three conditions are met at every length:** ring 3 holds 0.372, 0.562 and 0.639 of the interface's difference at 0, 4 and 12 letters, no gate value lies beyond 0.05 / 0.95, and a difference shrinks by 0.84 per position. At 4 the share is 0.273 at 12 letters and 0.175 at 0 letters, which does not meet the first condition.
 - **No multiple up to 12 makes a difference grow,** because the multiplied connections all lead away from the interface and a difference cannot return along them. At 6 and above ring 3 holds a larger difference than the interface (1.276 at 6); the far cells then amplify what they receive, and at 12 a far cell's state (0.247) is larger than an interface cell's (0.180).
-- **The way back is not changed:** 0.0025 or 0.0026 at every multiple up to 6, against 0.0026 unchanged. A difference arrives in ring 3 and stays there.
+- **The way back is not changed:** 0.0025 or 0.0026 at every multiple up to 6, against 0.0026 unchanged. A difference arrives in ring 3 and does not come back to the interface any more than at the unchanged start.
 
 ### 4.2 E47, arm `place`
 
@@ -406,3 +406,166 @@ Every cell reads the difference, so the first table gives the distribution over 
 - **The distribution over the cells does not depend on the start** (cell at the 5th percentile 0.477 to 0.539, participation 0.616 to 0.734 over the fifteen starts). There is nothing here for a change of the start to do.
 - **In the networks of 256 cells growth begins between multiples of 4 and 6,** later than in E47 (between 3.25 and 3.5). At 4 a difference shrinks by 0.963 and 0.978 per position in `in16` and by 0.976 and 0.992 in `F10`; at 6 it grows in both. The further starts [part `more`] do not grow up to 3.75, with or without a lowered update-gate bias.
 
+## 5. What training did (item 3)
+
+The same measurements on the final weights of the committed runs, beside the start [part `trained`]. The last columns of the first tables are as in section 4.
+
+**E47, arm `one`.** Entries of the first table: ring 1, ring 2, ring 3, each over the interface.
+
+| Start | First digit changed, 0 letters | 4 letters | 12 letters | Last digit changed | At `=`, 12 letters | Farthest group at its largest | Between items at `=` | Way back: interface over ring 3; interface at its largest |
+|---|---|---|---|---|---|---|---|---|
+| `one`, start | 0.186, 0.0198, 0.0023 | 0.186, 0.0206, 0.0027 | 0.187, 0.0207, 0.0028 | 0.169, 0.0116, 4.5e-04 | 0.631, 0.334, 0.165 | 7.7e-04 | 0.162, 0.0167, 0.0024 | 0.0026; 7.1e-04 |
+| `one`, trained by the sweep | 0.476, 0.0816, 0.0086 | 0.527, 0.0955, 0.0117 | 0.587, 0.113, 0.0152 | 0.285, 0.0313, 0.0012 | 0.635, 0.125, 0.0183 | 0.0144 | 0.391, 0.0510, 0.0067 | 0.0046; 6.7e-04 |
+| `one`, trained by back-propagation | 0.457, 0.0549, 5.0e-04 | 0.466, 0.0662, 5.4e-04 | 0.499, 0.0752, 5.8e-04 | 0.354, 0.0321, 2.8e-04 | 0.537, 0.0997, 7.9e-04 | 4.2e-04 | 0.401, 0.0230, 3.1e-04 | 0.0097; 0.0010 |
+
+| Start | Mean size of a state: interface, other cells | Gate values beyond (reset, update) | 40 letters, all cells: 0, 10, 20, 40 after | Farthest group: 10, 20, 40 after | Factor per position: 10 to 20, 20 to 40 |
+|---|---|---|---|---|---|
+| `one`, start | 0.178, 0.0334 | 0.00% (0.00, 0.00) | 0.122, 7.9e-04, 1.1e-05, 2.6e-09 | 9.6e-05, 3.2e-06, 1.2e-09 | 0.651, 0.660 |
+| `one`, trained by the sweep | 0.529, 0.479 | 14.44% (15.93, 12.94) | 0.218, 0.199, 0.203, 0.204 | 0.0056, 0.0062, 0.0061 | 1.002, 1.000 |
+| `one`, trained by back-propagation | 0.621, 0.775 | 33.70% (33.57, 33.82) | 0.331, 0.246, 0.245, 0.242 | 2.6e-04, 2.6e-04, 2.6e-04 | 1.000, 1.000 |
+
+Root mean square of the kept recurrent weights, by group:
+
+| Network | Three gates: interface | Ring 1 | Ring 2 | Ring 3 | Candidate rows: interface | Ring 1 | Ring 2 | Ring 3 |
+|---|---|---|---|---|---|---|---|---|
+| `one`, start | 0.175 | 0.173 | 0.174 | 0.173 | 0.176 | 0.172 | 0.175 | 0.173 |
+| `one`, trained by the sweep | 0.267 | 0.233 | 0.162 | 0.168 | 0.299 | 0.192 | 0.154 | 0.191 |
+| `one`, trained by back-propagation | 0.247 | 0.291 | 0.285 | 0.263 | 0.282 | 0.254 | 0.284 | 0.295 |
+
+**E47, arm `place`.**
+
+| Start | First digit changed, 0 letters | 4 letters | 12 letters | Last digit changed | At `=`, 12 letters | Farthest group at its largest | Between items at `=` | Way back: interface over ring 3; interface at its largest |
+|---|---|---|---|---|---|---|---|---|
+| `place`, start | 0.141, 0.0047, 1.9e-05 | 0.146, 0.0085, 7.0e-05 | 0.148, 0.0115, 3.3e-04 | 0.101, 7.4e-04, 3.7e-07 | 4.343, 2.904, 0.163 | 9.5e-05 | 0.127, 0.0088, 1.7e-04 | 9.7e-04; 0.0011 |
+| `place`, trained by the sweep | 0.365, 0.0108, 1.2e-06 | 0.427, 0.0204, 3.0e-05 | 0.475, 0.0365, 1.2e-04 | 0.119, 7.5e-04, 5.8e-10 | 0.502, 0.0480, 1.8e-04 | 2.4e-04 | 0.183, 0.0080, 1.8e-05 | 8.2e-04; 0.0015 |
+| `place`, trained by back-propagation | 0.402, 0.0165, 6.1e-05 | 0.451, 0.0303, 1.5e-04 | 0.515, 0.0468, 4.0e-04 | 0.197, 0.0015, 1.3e-07 | 0.653, 0.0773, 7.6e-04 | 5.5e-04 | 0.325, 0.0164, 1.9e-04 | 4.6e-04; 0.0011 |
+
+| Start | Mean size of a state: interface, other cells | Gate values beyond (reset, update) | 40 letters, all cells: 0, 10, 20, 40 after | Farthest group: 10, 20, 40 after | Factor per position: 10 to 20, 20 to 40 |
+|---|---|---|---|---|---|
+| `place`, start | 0.178, 0.0168 | 0.00% (0.00, 0.00) | 0.122, 0.0014, 2.1e-04, 2.9e-05 | 5.2e-06, 2.4e-05, 2.4e-05 | 0.825, 0.907 |
+| `place`, trained by the sweep | 0.535, 0.0701 | 30.74% (34.08, 27.41) | 0.195, 0.159, 0.162, 0.164 | 1.8e-05, 9.5e-05, 1.6e-04 | 1.002, 1.000 |
+| `place`, trained by back-propagation | 0.623, 0.319 | 45.02% (45.99, 44.05) | 0.326, 0.244, 0.247, 0.247 | 9.7e-05, 3.3e-04, 5.5e-04 | 1.001, 1.000 |
+
+| Network | Three gates: interface | Ring 1 | Ring 2 | Ring 3 | Candidate rows: interface | Ring 1 | Ring 2 | Ring 3 |
+|---|---|---|---|---|---|---|---|---|
+| `place`, start | 0.175 | 0.173 | 0.174 | 0.173 | 0.176 | 0.172 | 0.175 | 0.173 |
+| `place`, trained by the sweep | 0.277 | 0.174 | 0.054 | 0.006 | 0.297 | 0.156 | 0.068 | 0.009 |
+| `place`, trained by back-propagation | 0.246 | 0.321 | 0.176 | 0.028 | 0.278 | 0.277 | 0.188 | 0.036 |
+
+**E49, `in16`.** The distribution over the cells, as in section 4.4.
+
+| Start | Cell at 5% | Median cell | Cell at 95% | Participation, later positions | Participation at the changed byte | All cells at their largest |
+|---|---|---|---|---|---|---|
+| `in16`, start | 0.494 | 0.942 | 1.475 | 0.734 | 0.747 | 0.525 |
+| `in16`, trained by back-propagation | 0.296 | 0.890 | 1.621 | 0.581 | 0.229 | 1.026 |
+| `in16`, trained by the sweep | 0.235 | 0.808 | 1.712 | 0.359 | 0.099 | 0.875 |
+
+| Start | Mean size of a state | Gate values beyond (reset, update) | 40 letters, all cells: 0, 10, 20, 40 after | Factor per position: 10 to 20, 20 to 40 |
+|---|---|---|---|---|
+| `in16`, start | 0.177 | 0.00% (0.00, 0.00) | 0.241, 0.0014, 1.5e-05, 2.1e-09 | 0.635, 0.641 |
+| `in16`, trained by back-propagation | 0.436 | 15.02% (15.98, 14.07) | 0.364, 0.378, 0.373, 0.330 | 0.999, 0.994 |
+| `in16`, trained by the sweep | 0.050 | 0.25% (0.38, 0.13) | 0.0330, 0.0239, 0.0246, 0.0261 | 1.003, 1.003 |
+
+| Network | Kept recurrent weights, three gates | Candidate rows |
+|---|---|---|
+| `in16`, start | 0.174 | 0.175 |
+| `in16`, trained by back-propagation | 0.281 | 0.297 |
+| `in16`, trained by the sweep | 0.268 | 0.223 |
+
+- **Training raised the passage into ring 1 about threefold and into ring 2 three- to fivefold.** In the arm `one` ring 1 holds 0.587 (sweep) and 0.499 (back-propagation) of the interface's difference at 12 letters, from 0.187; ring 2 holds 0.113 and 0.0752, from 0.0207. In the arm `place` ring 1 holds 0.475 and 0.515, from 0.148, and ring 2 0.0365 and 0.0468, from 0.0115.
+- **Training did not bring ring 3 in.** In the arm `one` its share rose to 0.0152 under the sweep and fell to 5.8e-04 under back-propagation; in the arm `place` it is 1.2e-04 and 4.0e-04, from 3.3e-04. This agrees with E47's verification, which found that holding rings 2 and 3 at their mean changes no score by more than 0.7 of a point.
+- **Under back-propagation in the arm `one` the far cells pass less although their weights grew.** The recurrent weights of ring 3 rose from 0.173 to 0.263, and its share fell fivefold. The far cells' states have a mean size of 0.775 and 33.70% of the gate values lie beyond 0.05 / 0.95: these cells stand near the ends of their range, where a candidate hardly moves with its sources.
+- **In the arm `place` the weights of ring 3 are gone:** 0.006 under the sweep and 0.028 under back-propagation, from 0.173. A start that lets a difference arrive in ring 3 is undone if the weights that carry it receive no gradient and decay.
+- **The way back from ring 3 stayed small:** 0.0046 and 0.0097 in the arm `one`, from 0.0026.
+- **The trained networks hold a difference in the first operand across 40 letters** (0.199, 0.203, 0.204 at 10, 20 and 40 positions after the changed byte under the sweep; a factor of 1.000 per position), as the family requires: the first operand must be kept across the letters. At the start nothing is held (0.65 per position). Holding was learned; it did not need a start at which differences last.
+- **Three of the four trained networks of E47 have more than 20% of their gate values beyond 0.05 / 0.95** (14.44%, 33.70%, 30.74%, 45.02%). The limit of 20% is a condition on a start, where no gate should be fixed before anything is learned; trained networks hold many gates near 0 or 1.
+- **E49, `in16`: training made the reading of a digit uneven.** At the start a changed digit is carried about equally by all cells (participation 0.747 at the changed byte). After training it stands at 0.229 under back-propagation and 0.099 under the sweep: a changed digit is taken up by a part of the cells, and the connections spread it afterwards (0.581 and 0.359 over the later positions). Under the sweep, in the run that did not learn the family within the dose (E49's verification), the states are small (mean size 0.050 against 0.177 at the start and 0.436 under back-propagation).
+
+## 6. The arithmetic (item 4)
+
+**One connection, one position** [part `arith`]. From new h = (1 - z) n + z h and n = tanh(a_n + r c_n), where c_n is the candidate's sum over the sources, a difference d in one source with the weights w_n, w_r and w_z changes the cell's next state by
+
+- (1 - z) (1 - n^2) r w_n d through the candidate,
+- (1 - z) (1 - n^2) c_n r (1 - r) w_r d through the reset gate,
+- (h - n) z (1 - z) w_z d through the update gate.
+
+At the start z and r are near 1/2 and n, c_n and h are small, so the first term carries nearly everything, and its factor is a quarter of the weight. A weight drawn uniformly within 1 / sqrt(11) has a root mean square of 0.1741, which gives 0.0435 for one connection crossed in one position. With the gates as measured in E47's far cells (mean update gate 0.501, mean reset gate 0.499, root mean square of (1 - z) r (1 - n^2) 0.2492) the expected factor is 0.0434.
+
+**Measured: the first arrival** [part `arith`]. A ring of E47 first differs as many positions after the changed byte as it has connections to the interface, and at that position its difference has crossed exactly that many connections, one per position. Its expected size, over the interface's at the changed byte, is the factor per connection raised to the number of connections, times the square root of the mean number of paths that lead to a cell of the ring.
+
+| Ring | Positions after the changed byte | Mean number of paths from the interface | Cells of the ring without a path | Expected | Measured | Measured, per connection |
+|---|---|---|---|---|---|---|
+| ring 1 | 1 | 2.38 | 28 of 228 | 6.70e-02 | 6.47e-02 | 0.0420 |
+| ring 2 | 2 | 4.78 | 57 of 300 | 4.12e-03 | 4.00e-03 | 0.0428 |
+| ring 3 | 3 | 14.43 | 18 of 240 | 3.11e-04 | 2.87e-04 | 0.0422 |
+
+In E50 a cell that reads neither byte has 4.98 reading cells among its ten connections. One position after the changed byte its expected difference, over the reading cells' at the changed byte, is 0.0923 (factor per connection 0.0414 with E50's gates); measured 0.0972, that is 0.0436 per connection. The arithmetic and the measurement agree in both networks to within 8%.
+
+**What a cell keeps.** An interface cell keeps the share z of its own difference and receives from 7.94 other interface cells. The expected ratio of the interface's difference one position after the changed byte to that at the changed byte is 0.521; measured 0.520. This is why a difference fades by about a half at the first position.
+
+**A difference that lasts.** Between two different items the interface cells differ at every position. A far cell then settles at its candidate, and the factor from one ring to the next is r (1 - n^2) w times the square root of the number of the cell's connections that come from the ring before: of ten, 2.38 for ring 1, 2.46 for ring 2 and 3.98 for ring 3.
+
+| From ring to ring | Expected | Measured (variation between items at `=`) |
+|---|---|---|
+| interface to ring 1 | 0.134 | 0.162 |
+| ring 1 to ring 2 | 0.137 | 0.103 |
+| ring 2 to ring 3 | 0.174 | 0.146 |
+
+The three multiplied give 0.0032 from the interface to ring 3; measured 0.0024. This is the fall of six- to tenfold per ring that E47's verification reports.
+
+**Why a uniform multiple cannot meet the conditions in E47.** With the recurrent weights times g the product over the three rings is 0.0032 g^3, so that a third needs g = 4.71. The factor per position, with the gates held at their means, is the largest size of an eigenvalue of z + k g W_n, where W_n is the candidate rows as a matrix of cells by cells and k is the mean of (1 - z) r (1 - n^2). The largest eigenvalue of W_n has the size 0.705 in E47 and 0.655 in the networks of 256 cells. With the gates of the unchanged start (z 0.500, k 0.243) the factor reaches 1 at g = 2.92, and at that multiple the product over the three rings is 0.079. The passage from ring to ring uses the two to four connections that come from the ring before; growth is decided by all eleven sources. A uniform multiple therefore reaches growth before it reaches a third. The measurement shows the same order: growth between 3.25 and 3.5, a third between 3.5 and 3.75. Near the boundary the measured shares are larger than the product (0.191 between items at 3.25), because a difference that hardly fades also arrives by longer paths.
+
+**The expected factor per position against the measured** (the columns of section 4). In the networks of 256 cells the two agree within 0.02 up to a multiple of 4: E49 0.635 expected against 0.635 and 0.641 measured (unchanged), 0.886 against 0.885 and 0.900 (times 3), 0.981 against 0.963 and 0.978 (times 4); E50 0.637 against 0.637 and 0.645, 0.900 against 0.901 and 0.915, 1.006 against 0.997 and 0.998. In E47 the expected factor is 0.01 to 0.06 too high (0.671 against 0.651 and 0.660 unchanged, 1.007 against 0.951 and 0.959 at times 3), so that the boundary of growth lies at a somewhat larger multiple than expected. Above the boundary the expected factor is too high everywhere (E49 at times 6: 1.091 against 1.011 and 1.010): the differences are then no longer small, and the candidate's limit holds them.
+
+**Why one direction is enough to let a difference arrive, and why E50 needs little.** Connections that all lead away from the interface cannot carry a difference back to where it was, so their weights can be raised without raising the factor per position; this is the change of section 4.1 that meets the conditions. In E50 a cell that reads neither byte is one connection from five cells that read one, so a single crossing suffices, and a multiple of 1.5 lifts the share from 0.266 to 0.390.
+
+## 7. Conclusions for each network form
+
+**E47, arm `one`.**
+- Of the changes in the task's list (recurrent weights times 1.5 to 8, candidate rows times 1.5 to 8, update-gate bias lowered by 1 and by 2), and of the uniform changes added to them, none meets the three conditions. A difference arrives at ring 3 with a third of its size at the interface only at multiples at which it grows along 40 letters.
+- The only start tried that meets them is the change in one direction: the weights on connections that come from a cell nearer the interface times 5 (share of ring 3 0.639 at 12 letters, 0.372 at 0 letters). It was not in the task's list. It lets a difference arrive and does nothing for the way back (0.0025).
+- If a uniform start is wanted, the recurrent weights times 3 is the largest of the task's list without growth: ring 3 holds 0.141 of the interface's difference at 12 letters (0.0525 at 0 letters), the way back is 0.149, the variation between items in ring 3 is 0.132 of the interface's, and a difference shrinks by 0.95 to 0.96 per position. Growth begins between 3.25 and 3.5, so the margin is small.
+- These two starts answer different questions, and neither gives a third in both directions. A later experiment that wants to know whether far cells come into use once differences reach them would have to say which of the two it means: arrival (the directed start) or exchange in both directions (the uniform start, with 0.141 out and 0.149 back).
+
+**E47, arm `place`.** No start tried meets the three conditions. The far cells are updated every 2 to 16 positions, and within an item of the family ring 3 receives little at any start tried (0.0300 at most without growth among the uniform changes, 0.202 under the directed change times 8).
+
+**E49, `in16` and `I16`.** The question does not arise in the form asked. Every cell reads 16 values that differ between two bytes, and at the unchanged start the cells carry a difference as evenly as in `F10`. No change of the starting weights is called for by this measurement. If one multiple is wanted for all forms, the recurrent weights times 3 do not make a difference grow in E49 (0.885 and 0.900 per position).
+
+**E50, `C16-in`.** The smallest change tried that meets the three conditions is the recurrent weights times 1.5 (0.390), or the candidate rows alone times 1.5 (0.385), or the update-gate bias lowered by 1 (0.463). A multiple of 2 gives 0.505 (0.452 with the last digit changed) and leaves a margin; every multiple up to 4 is without growth.
+
+**One multiple for all forms.** The recurrent weights times 3 is the largest multiple of the task's list at which a difference grows in none of the forms (per position: E47 `one` 0.951 and 0.959, `place` 0.946 and 0.966, E49 0.885 and 0.900, E50 0.901 and 0.915, `F10` 0.899 and 0.898). It meets the three conditions in E50 (0.720) and does not in E47.
+
+## 8. What the measurement cannot show, and what was not checked
+
+**It says nothing about learning.** The measurement is of the forward computation on the starting weights, before the first update, and of nothing after it. Whether a network started with any of these changes learns the family, in fewer or more updates, with either rule, or comes to use its far cells, is not shown and cannot be inferred. `F10` learns from a start at which a difference fades as fast as in the networks that learn badly.
+
+**It is a statement about the start only.** The weights move from the first update, and the runs decay them. In the arm `place` the recurrent weights of ring 3, 0.173 at the start, ended at 0.006 under the sweep and at 0.028 under back-propagation. A changed start does not persist by itself.
+
+**Further limits.**
+- One seed (73129), and with it one draw of the connections, of the input lists and of E50's code. Nothing was measured on the other two seeds.
+- One family, and two kinds of pair: a digit of the first operand and a digit of the second. A changed operation sign or task code was not measured.
+- The difference is of cells' states. Nothing was measured at the readout, and no answer was decoded.
+- The pairs differ by one byte, and the way back was measured with a small difference (standard deviation 0.01) put into ring 3 at one position of items of 12 letters. Where a difference grows, the figures depend on its size and on the length of the item.
+- The way back was measured for ring 3 of E47 only. For E50 and E49 `in16` the readout reads every cell, and no way back is needed; for `I16`, in which a readout unit reads 8 cells, the passage to the readout was not measured.
+- The sweep carries the error backward by the signs of the weights and one scale. How far the error passes backward under either rule, at any of these starts, was not measured; torch is not installed.
+- The three conditions are the task's. The rule for growth (the size at 40 positions after the changed byte against the sizes at 10 and at 20) is the reviewer's. It calls a difference that is held at a constant size "growing" when it rises by any amount, which is why the trained networks are given without that column.
+- The changed starts exist only in the forward of `signal_passage.py`. Whether the runners' code can produce them, and what a change of the recurrent scale does to the runners' other settings (for instance the decay, or the scale of the sweep), was not examined.
+- Between the multiples tried the boundaries are known only to the nearest step: growth in E47 `one` between 3.25 and 3.5, in the networks of 256 cells between 4 and 6; the directed change meets the conditions at 5 and not at 4.
+- The dense network of E42 (`G`) was not measured; `F10` stands as the reference that learns. E50's settings other than `C16-in`, the trained networks of `I16`, and E50's weights after its checks' 256 updates were not measured.
+- The computation is in double precision. In single precision the figures below about 1e-8 would be zero.
+
+## 9. Commands
+
+From the repository root, with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1` set; `V="python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/signal_passage.py"`. The script reads the three branches named at the head of this document with `git show`; they must be present in the local repository. A network name after the part (`e47_one`, `e47_place`, `e49_in16`, `e50_C16in`, `f10`) restricts a part to that network. The tables of sections 4 and 5 are printed in the form in which they stand here. The times are wall-clock times on a host of four cores shared with other jobs, one thread.
+
+| Command | What it prints | Time |
+|---|---|---|
+| `$V check` | the forward used here against the three readers; which starting files hold the same tensors; the sizes of the kept weights | 4 seconds |
+| `$V start` | section 3: the difference by position for both changes at 0, 4 and 12 letters, in every network and in `F10`; items of 40 letters | 24 seconds |
+| `$V variants` | section 4: the task's list of changes in the four network forms, and four starts of `F10` | 5.7 minutes (343 seconds) |
+| `$V more` | section 4: the further uniform starts | about 7 minutes; run here in two pieces because a restart of the container cut the first: `$V more` had printed the tables of E47 `one` after 194 seconds and of E47 `place` after 359 seconds, and `$V more e49_in16 e50_C16in` took 43 seconds |
+| `$V directed` | section 4: the change in one direction, both arms of E47 | 2.7 minutes (164 seconds) |
+| `$V trained` | section 5: the six trained networks beside their starts | 71 seconds |
+| `$V arith` | section 6: the factor per connection, the first arrival, the factors from ring to ring | 6 seconds |
+
+Every part can be run alone, and the longest single network of a part takes under four minutes, so that an interrupted run loses little. The outputs from which this document was written are those of these commands.

@@ -352,6 +352,13 @@ def part_b():
         print(f"      world {w}, birth {st['learner']['file'].split('/')[-1]}: median over families 1 to 7 {np.median(fig[1:]):.3f} (the calibration's, seed 73129: {np.median(cal[1:]):.3f};"
               f" difference {np.median(fig[1:]) - np.median(cal[1:]):+.3f});"
               f" family by family, this birth minus the calibration's: {' '.join(f'{x:+.3f}' for x in d)}")
+    # is there a calibration life of `sweep` anywhere but in the calibration's own folder?
+    refs = git_lines("for-each-ref", "--format=%(refname:short)", "refs/remotes/origin")
+    births = [p[len(E44):] for p in tree(L2_REF, E44 + "L2/births/") if p.endswith(".npz") and not p.endswith("_list.npz")]
+    other = sorted({p[len(E44):] for ref in refs for p in tree(ref, E44)
+                    if p.split("/")[-1].startswith("lw_sweep") and p.endswith("_turn.npz") and not p.startswith(F1)})
+    print(f"   event files under L2/births/ on {L2_REF}: {births}")
+    print(f"   event files of an in-turn life of a sweep arm outside {F1} on any of the {len(refs)} fetched refs: {other or 'none'}")
     print(f"   part B: {time.time() - t0:.0f} s")
 
 

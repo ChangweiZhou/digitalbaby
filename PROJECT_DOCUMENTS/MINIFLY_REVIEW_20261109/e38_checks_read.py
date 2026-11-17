@@ -410,6 +410,28 @@ if 'D' in want:
                 print(f"          the worker's receipt (torch): after update 1 {tv['1'][w1]:.2e} ({short(w1)}), after update 2 {tv['2'][w2]:.2e} ({short(w2)}); the two forms after update 2: {max(bf['2'].values()):.2e}")
             if rule == 'S' and kappa == 0.25:
                 keep = dict(a1=a1, p1=p1, sa=sa, sp=sp, a2=a2, p2=p2)
+    # what each error in the audit's table (AUDIT_E36_E37_E38_BRIEFS_20261115.md, section 3.2) would give in the same statistic, rule S
+    print("       what a faulty pull would give in check 2's statistic after ONE update (largest over the 13 tensors), rule S, strengths 0.25 and 2.5:")
+    f = np.float32
+    def faulty(kind, k):
+        Wf = {}
+        for n, p in WS.items():
+            p = p.astype(f); lk = f(LR * k)
+            q = {'as specified': p - lk * p, 'wrong sign': p + lk * p, 'the optimizer\'s own decay left on': (p * f(1 - LR * k)) - lk * (p * f(1 - LR * k)),
+                 'no pull at all (applied to copies)': p, 'the factor of the rate missing': p - f(k) * p, 'biases left out': p - lk * p if n.endswith('weight') else p,
+                 'byte table included': p - lk * p}[kind]
+            Wf[n] = p if (n == 'book.weight' and kind != 'byte table included') else q
+        return adam_step(Wf, G1['S'], {}, 1, k, None)[0]
+    ref = {k: adam_step(WS, G1['S'], {}, 1, k, 'torch')[0] for k in (0.25, 2.5)}
+    for kind in ('as specified', 'wrong sign', "the optimizer's own decay left on", 'no pull at all (applied to copies)', 'the factor of the rate missing', 'biases left out', 'byte table included'):
+        print(f"          {kind:36s} " + '   '.join(f"{max(rel(ref[k][n], faulty(kind, k)[n]) for n in WS):.2e}" for k in (0.25, 2.5)))
+    print("       what a wrong sign in the second form of the pull would give in check 3's statistic after update 2 (the first at which the two forms can differ), rule S:")
+    for k in (0.25, 2.5):
+        n1, sn = adam_step(WS, G1['S'], {}, 1, k, 1, W0=WS); gn = loss_and_grad(n1, b2, 'S', np.float32)[1]
+        f1 = adam_step(n1, gn, sn, 2, k, 1, W0=WS)[0]
+        Wf = {n: (n1[n] if n == 'book.weight' else WS[n] + f(1 + LR * k) * (n1[n] - WS[n])) for n in WS}
+        fw = adam_step(Wf, gn, sn, 2, k, None)[0]
+        print(f"          strength {k}: {max(rel(f1[n], fw[n]) for n in WS):.2e}")
     a1, p1, a2, p2 = keep['a1'], keep['p1'], keep['a2'], keep['p2']
     print('       rule S, strength 0.25, the six maps the error crosses (1,118,720 weights): how near zero they lie, and how far apart the two runs are')
     cross = sum(int((np.sign(a1[n]) != np.sign(WS[n])).sum()) for n in BACK)
@@ -424,8 +446,9 @@ if 'D' in want:
               f"among weights within 1e-3 of zero: mean {dd[small].mean():.2e}, largest {dd[small].max():.2e}; "
               f"weights with unequal signs {disc}; expected number from density at zero ({dens:.2e} per unit) times that mean: {dens * dd[small].mean():.1e}")
     m2 = float(dd[small].mean())
-    print(f"          an estimate, not a measurement: if that mean grew from update 2 on as the square root of the number of updates, the expected number of weights with "
-          f"unequal signs summed over updates 2 to 64 would be {sum(dens * m2 * np.sqrt(t / 2) for t in range(2, 65)):.2f}; if it stayed as after update 2, {dens * m2 * 63:.2f}")
+    print(f"          an estimate, not a measurement: the expected number of weights with unequal signs, summed over updates 2 to 64, if that mean stayed as after update 2: "
+          f"{dens * m2 * 63:.2f}; if it grew as the square root of the number of updates: {sum(dens * m2 * np.sqrt(t / 2) for t in range(2, 65)):.2f}; "
+          f"if in proportion to the number of updates: {sum(dens * m2 * t / 2 for t in range(2, 65)):.2f}")
 
     # ---- D6. one weight with unequal signs in the two runs at update 2: what the weights look like after that update
     print('   D6. update 2 from the weights after update 1 (strength 0.25, the optimizer\'s own decay), with one weight next to zero given the other sign in a copy')

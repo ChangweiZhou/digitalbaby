@@ -47,7 +47,8 @@ N_FURTHER = 16                                      # batches 2 to 17 of the str
 NETS = {
     "G_S":           (REF42, "e42/e42_G_S_73129.pt", "e42/e42_G_S_73129.json", "end", "E42 G (dense), trained under the sweep"),
     "G_B":           (REF42, "e42/e42_G_B_73129.pt", "e42/e42_G_B_73129.json", "end", "E42 G (dense), trained under back-propagation"),
-    "F10_start":     (REF50, "e50/e50_C-dense_S_73129_start.pt", "e42/e42_F10_S_73129.json", "start", "E42 F10 at its start (tensors of the E50 start file, byte table and l1 in use)"),
+    "F10_start":     (REF49, "e49_qual/check2_73129_runs/e49_F10_S_dry2048_73129_start.pt", "e49_qual/check2_73129_runs/e49_F10_S_dry2048_73129.json", "start",
+                      "E42 F10 at its start (the start file of E49's check 2, a run of F10 by E49's runner)"),
     "F10_S":         (REF42, "e42/e42_F10_S_73129.pt", "e42/e42_F10_S_73129.json", "end", "E42 F10 (10 neighbours and itself), trained under the sweep"),
     "F10_B":         (REF42, "e42/e42_F10_B_73129.pt", "e42/e42_F10_B_73129.json", "end", "E42 F10, trained under back-propagation"),
     "in16_start":    (REF49, "e49/e49_in16_S_73129_start.pt", "e49/e49_in16_S_73129.json", "start", "E49 in16 at its start"),
@@ -342,3 +343,320 @@ def compare(net, gs, ge):
         for gi_, gate in enumerate("rzn"):
             out[f"cos {m} {gate}"] = cos(gs[WNAME[m]][gi_ * U:(gi_ + 1) * U], ge[WNAME[m]][gi_ * U:(gi_ + 1) * U])
     return out
+
+
+# ---------------------------------------------------------------- the measurement of one network (kept in memory for the parts that follow)
+SETS = [(v, "all") for v in VARIANTS] + [(v, "gru") for v in ("V2", "V3", "V4", "V5")]      # V1 is the same in both tables by definition
+_MEASURED = {}
+
+
+def measure(name):
+    """For the first batch and the 16 further ones: the loss, and for every variant the comparison with the exact gradient.
+    Also what describes the magnitudes of each map.  Returns (description, rows); rows[0] is the first batch."""
+    if name not in _MEASURED:
+        net = Net(name)
+        Fx, Fs = exact_feedback(net), {key: feedback(net, *key) for key in SETS}
+        rows = []
+        for x, y, mask in stream_batches(1 + N_FURTHER):
+            c = forward(net, x, y, mask)
+            ge = backward(net, c, Fx)
+            row = {"loss": c["loss"], "norm": float(np.sqrt((flat(net, ge) ** 2).sum()))}
+            for key, F in Fs.items():
+                row[key] = compare(net, backward(net, c, F), ge)
+            rows.append(row)
+        _MEASURED[name] = (describe(net), rows)
+    return _MEASURED[name]
+
+
+def describe(net):
+    """For every map: the kept entries, the mean magnitude, the mean of each gate's block, the coefficient of variation (standard
+    deviation over mean) of the row means, of the column means and of the magnitudes themselves, and for each variant the cosine
+    between the matrix that carries the error back and the weight matrix (1 for V5)."""
+    out = dict(name=net.name, what=net.what, when=net.when, coded=net.coded, maps={}, outside_zero=net.outside_zero)
+    cv = lambda v: float(v.std() / v.mean())
+    for k in net.maps:
+        W, M = net.P[WNAME[k]], net.M[k]
+        A = np.abs(W) * M
+        row, col = A.sum(1) / M.sum(1), A.sum(0)[M.sum(0) > 0] / M.sum(0)[M.sum(0) > 0]
+        d = dict(kept=int(M.sum()), size=int(M.size), mean=float(A.sum() / M.sum()), cv_rows=cv(row), cv_cols=cv(col), cv_entries=cv(A[M]),
+                 align={v: cos(np.sign(W * M) * scale(W, M, v, k in GRU_MAPS), W * M) for v in VARIANTS})
+        if k in GRU_MAPS:
+            d["blocks"] = [float(A[g * U:(g + 1) * U].sum() / M[g * U:(g + 1) * U].sum()) for g in range(3)]
+            d["cv_rows_in_block"] = [cv(row[g * U:(g + 1) * U]) for g in range(3)]
+        out["maps"][k] = d
+    return out
+
+
+def stat(rows, key, field):
+    v = np.array([r[key][field] for r in rows])
+    return float(v.mean()), float(v.min()), float(v.max())
+
+
+def cell(rows, key, field, digits=3):
+    if field not in rows[0][key]:
+        return "–"
+    m, lo, hi = stat(rows, key, field)
+    return f"{m:.{digits}f} ({lo:.{digits}f} to {hi:.{digits}f})"
+
+
+def table(head, lines):
+    print("| " + " | ".join(head) + " |")
+    print("|" + "|".join(["---"] * len(head)) + "|")
+    for ln in lines:
+        print("| " + " | ".join(str(v) for v in ln) + " |")
+    print()
+
+
+def label(text):
+    print(f"\n===== {text} =====", flush=True)
+
+
+def decimals(a, b):
+    """The number of leading decimals in which a and b agree, written to nine decimals."""
+    sa, sb = f"{a:.9f}", f"{b:.9f}"
+    n = 0
+    for p, q in zip(sa, sb):
+        if p != q:
+            break
+        n += 1
+    return max(0, n - sa.index(".") - 1) if sa.split(".")[0] == sb.split(".")[0] else 0
+
+
+# ---------------------------------------------------------------- part: stream
+def part_stream(names):
+    label("stream: the batches rebuilt here against the receipts' digest of the first 256 batches")
+    mine = stream_digest(256)
+    for rp in ("e42/e42_G_S_73129.json", "e42/e42_F10_S_73129.json", "e49/e49_in16_S_73129.json", "e50/e50_C-dense_S_73129.json"):
+        row = next(r for r in receipt(rp)["curve"] if r["step"] == 256)
+        print(f"{rp}: recorded {row['data_digest']['sha256'][:16]} over {row['data_digest']['batches']} batches; rebuilt {mine[:16]}; equal {row['data_digest']['sha256'] == mine}")
+    bs = stream_batches(1 + N_FURTHER)
+    print(f"batches used: the first (the receipts' batch) and the next {N_FURTHER}; items a batch {bs[0][0].shape[0]}; positions a batch {sorted({b[0].shape[1] for b in bs})};"
+          f" answer positions a batch {sorted({int(b[2].sum()) for b in bs})}")
+    print("networks:")
+    for n, v in NETS.items():
+        print(f"  {n:14s} {v[4]}  [{v[0]}:{P}{v[1]}]")
+
+
+# ---------------------------------------------------------------- part: forward
+def part_forward(names):
+    """This script's forward (float64) against the reviewer's readers (float32, written from the briefs), on the first batch: the
+    logits at the answer's positions.  And E50's recorded loss on the first batch at the start."""
+    import e42_cells_reader as R42
+    import e49_interface_reader as R49
+    import e50_code_reader as R50
+    label("forward: this script's logits at the answer's positions against the reviewer's readers, first batch")
+    x, y, mask = stream_batches(1)[0]
+    for name in names:
+        net = Net(name); T = net.raw
+        c = forward(net, x, y, mask)
+        cells = T["mask"].astype(bool)
+        if name.startswith("C-dense"):
+            F = R49.Interface(SEED, D, U); code = R50.Code(SEED, amplitude=float(T["code_amplitude"]))
+            assert np.array_equal(code.table(), T["code_table"]), "the reader's code table is not the file's"
+            lg = R50.forward(T, cells, F, code, x)[1]; rd = "e50_code_reader.forward"
+        elif name.startswith("in16"):
+            F = R49.Interface(SEED, 16, U)
+            assert np.array_equal(F.mask_in, T["mask_in"].astype(bool)) and np.array_equal(F.mask_out, T["mask_out"].astype(bool))
+            lg = R49.forward(T, cells, F, x)[1]; rd = "e49_interface_reader.forward"
+        else:
+            lg = R42.forward(T, R49.Period1(cells), x)[1]; rd = "e42_cells_reader.forward"
+        diff = float(np.abs(lg[mask].astype(np.float64) - c["logits"]).max())
+        print(f"{name:14s} {rd}: largest difference of a logit {diff:.1e} (largest logit magnitude {float(np.abs(c['logits']).max()):.2f}); loss here {c['loss']:.9f};"
+              f" weights outside the masks all zero {all(net.outside_zero.values())}")
+        if name == "C-dense_start":
+            rec = receipt(net.receipt_path)["first_batch_loss_start"]
+            print(f"               E50's receipt, loss on the first batch at the start: {rec['B']:.9f} (B) {rec['S']:.9f} (S); here {c['loss']:.9f}")
+
+
+# ---------------------------------------------------------------- part: test 1
+T1_NETS = ("G_S", "F10_B", "in16_start", "in16_S", "C-dense_B")
+
+
+def part_test1(names):
+    """The exact gradient against a five-point finite difference of the loss (step 1e-4, float64), for single weights drawn at random
+    among the kept entries of every tensor: 6 of each weight tensor, 3 of each bias.  The byte table's weights are drawn among the
+    rows of the bytes that occur in the batch, the start symbol's row excepted (training gives that row no gradient)."""
+    label("test 1: the exact gradient against finite differences of the loss, first batch")
+    x, y, mask = stream_batches(1)[0]
+    h = 1e-4
+    for name in names:
+        net = Net(name)
+        c = forward(net, x, y, mask)
+        g = backward(net, c, exact_feedback(net))
+        rng = np.random.default_rng(20261117)
+        worst, zero, n, small, per = 0.0, 0, 0, np.inf, {}
+        for k in net.trained:
+            W = net.P[k]
+            if k == "book.weight":
+                rows_ = np.array(sorted(set(x.ravel().tolist()) - {BOS}))
+                pool = [(int(r), j) for r in rows_ for j in range(8)]
+            elif W.ndim == 2:
+                M = net.M[next(m for m in MAPS if WNAME[m] == k)]
+                pool = list(zip(*np.nonzero(M)))
+            else:
+                pool = [(i,) for i in range(len(W))]
+            take = [pool[i] for i in rng.choice(len(pool), 6 if W.ndim == 2 else 3, replace=False)]
+            w_k = 0.0
+            for ix in take:
+                w0 = W[ix]
+                f = []
+                for s in (2, 1, -1, -2):
+                    W[ix] = w0 + s * h
+                    f.append(forward(net, x, y, mask)["loss"])
+                W[ix] = w0
+                fd = (8 * (f[1] - f[2]) - (f[0] - f[3])) / (12 * h)
+                ga = float(g[k][ix]); n += 1
+                if fd == 0.0 and ga == 0.0:
+                    zero += 1
+                    continue
+                e = abs(fd - ga) / max(abs(fd), abs(ga))
+                w_k = max(w_k, e); small = min(small, abs(ga))
+            per[k] = w_k; worst = max(worst, w_k)
+        print(f"{name:14s} {n} weights over {len(net.trained)} tensors; both exactly zero in {zero}; largest relative error {worst:.1e}; smallest gradient entry compared {small:.1e};"
+              f" loss {c['loss']:.6f}")
+        print("               largest relative error by tensor: " + ", ".join(f"{k} {v:.0e}" for k, v in per.items()))
+        if not net.coded:
+            W = net.P["book.weight"]; f = []
+            for s in (2, 1, -1, -2):
+                W[BOS, 0] = s * h
+                f.append(forward(net, x, y, mask)["loss"])
+            W[BOS, 0] = 0.0
+            print(f"               the start symbol's row of the byte table: derivative of the loss by finite difference {(8 * (f[1] - f[2]) - (f[0] - f[3])) / (12 * h):.3e};"
+                  f" gradient used in training (padding row) {float(g['book.weight'][BOS, 0]):.1f}")
+
+
+# ---------------------------------------------------------------- part: test 2
+RECORDED = {"recurrent_matrix": "rnn.weight_hh_l0", "rnn.weight_ih_l0": "rnn.weight_ih_l0", "lm.weight": "lm.weight", "rnn.weight_hh_l0": "rnn.weight_hh_l0"}
+
+
+def part_test2(names):
+    label("test 2: V0 on the first batch against the cosines the receipts record (torch, float32)")
+    lines = []
+    for name in names:
+        desc, rows = measure(name)
+        r0 = rows[0][("V0", "all")]
+        recs = [(NETS[name][2], "cosine_first_batch_" + desc["when"])]
+        if name == "F10_start":
+            recs += [("e42/e42_F10_S_73129.json", "cosine_first_batch_start"), ("e42/e42_F10_B_73129.json", "cosine_first_batch_start")]
+        if name == "in16_start":
+            recs.append(("e49/e49_in16_B_73129.json", "cosine_first_batch_start"))
+        if name == "C-dense_start":
+            recs.append(("e50/e50_C-dense_B_73129.json", "cosine_first_batch_start"))
+        for rp, key in recs:
+            for rk, v in receipt(rp)[key].items():
+                if rk in RECORDED:
+                    mine = r0["cos " + RECORDED[rk]]
+                    lines.append((name, SHORT[RECORDED[rk]], rp.split("/")[-1], key[19:], f"{v:.7f}", f"{mine:.7f}", f"{mine - v:+.1e}", decimals(mine, v)))
+    table(("network", "tensor", "receipt", "at", "recorded", "here (V0)", "difference", "decimals that agree"), lines)
+    d = [abs(float(ln[6])) for ln in lines]
+    print(f"{len(lines)} recorded cosines compared; largest difference {max(d):.1e}; decimals that agree: least {min(ln[7] for ln in lines)}, most {max(ln[7] for ln in lines)}")
+    a, b = load("e49/e49_in16_S_73129_start.pt", REF49), load("e49/e49_in16_B_73129_start.pt", REF49)
+    print("start files of the two rules hold the same tensors: E49 in16", all(np.array_equal(a[k], b[k]) for k in a), end="; ")
+    a, b = load("e50/e50_C-dense_S_73129_start.pt", REF50), load("e50/e50_C-dense_B_73129_start.pt", REF50)
+    print("E50 C-dense", all(np.array_equal(a[k], b[k]) for k in a))
+    f = load(NETS["F10_start"][1], REF49)
+    print("the start file of E49's check 2 (F10) and E50's C-dense start file hold the same tensors:", all(np.array_equal(f[k], a[k]) for k in f))
+
+
+# ---------------------------------------------------------------- part: test 3
+def part_test3(names):
+    label("test 3: V5 (signs times the exact magnitudes) against the exact gradient, 17 batches")
+    for name in names:
+        desc, rows = measure(name)
+        dev = max(abs(1 - v) for r in rows for k, v in r[("V5", "all")].items() if k.startswith("cos "))
+        rat = max(abs(1 - v) for r in rows for k, v in r[("V5", "all")].items() if k.startswith("ratio "))
+        nt = sum(1 for k in rows[0][("V5", "all")] if k.startswith("cos "))
+        print(f"{name:14s} largest |1 - cosine| over {nt} cosines (weights, biases, all parameters, gate blocks) and {len(rows)} batches {dev:.1e}; largest |1 - norm ratio| {rat:.1e}")
+
+
+# ---------------------------------------------------------------- part: magnitudes
+MAPNAME = {"l1": "l1", "ih": "input map", "hh": "recurrent map", "l2": "l2", "lm": "lm", "l3": "l3"}
+
+
+def part_magnitudes(names):
+    label("magnitudes: how unequal the magnitudes are that a scale replaces (means over the kept entries)")
+    for name in names:
+        desc, _ = measure(name)
+        print(f"**{name}** ({desc['what']})\n")
+        lines = []
+        for k, d in desc["maps"].items():
+            bl = " / ".join(f"{v:.4f}" for v in d["blocks"]) if "blocks" in d else "–"
+            lines.append((MAPNAME[k], f"{d['kept']:,} of {d['size']:,}", f"{d['mean']:.4f}", bl, f"{d['cv_rows']:.2f}", f"{d['cv_cols']:.2f}", f"{d['cv_entries']:.2f}",
+                          *(f"{d['align'][v]:.3f}" for v in VARIANTS[:5])))
+        table(("map", "kept entries", "mean magnitude", "by gate block r / z / n", "CV of row means", "CV of column means", "CV of magnitudes",
+               "V0", "V1", "V2", "V3", "V4"), lines)
+
+
+# ---------------------------------------------------------------- part: tables
+COLS = [("cos " + k, SHORT[k]) for k in TENSORS] + [("cos all", "all parameters"), ("cos all but l3", "all but l3")]
+RCOLS = [("ratio " + k, SHORT[k]) for k in TENSORS] + [("ratio all", "all parameters")]
+GCOLS = [(f"cos {m} {g}", f"{MAPNAME[m]}, {g}") for m in GRU_MAPS for g in "rzn"]
+BCOLS = [("cos " + k, k) for k in BIASES]
+ROWS_ALL = [("V0", "all"), ("V1", "all"), ("V2", "all"), ("V3", "all"), ("V4", "all")]
+ROWS_GRU = [("V1", "all"), ("V2", "gru"), ("V3", "gru"), ("V4", "gru"), ("V5", "gru")]
+
+
+def part_tables(names):
+    label(f"tables: every variant against the exact gradient, batches 2 to {1 + N_FURTHER} of the stream: mean (least to greatest)")
+    for name in names:
+        desc, rows = measure(name)
+        fur = rows[1:]
+        cols = [c for c in COLS if c[0] in fur[0][("V0", "all")]]
+        rcols = [c for c in RCOLS if c[0] in fur[0][("V0", "all")]]
+        ls = [r["loss"] for r in fur]; ns = [r["norm"] for r in fur]
+        print(f"**{name}** ({desc['what']}). Loss on the {len(fur)} batches: mean {np.mean(ls):.4f} (least {min(ls):.4f}, greatest {max(ls):.4f});"
+              f" first batch {rows[0]['loss']:.4f}. Norm of the exact gradient: mean {np.mean(ns):.3f} ({min(ns):.3f} to {max(ns):.3f}).\n")
+        print(f"{name}, cosine with the exact gradient, variant at every map:\n")
+        table(("variant",) + tuple(c[1] for c in cols), [("V0, first batch",) + tuple(f"{rows[0][('V0', 'all')][c[0]]:.3f}" for c in cols)]
+              + [(key[0],) + tuple(cell(fur, key, c[0]) for c in cols) for key in ROWS_ALL])
+        print(f"{name}, cosine with the exact gradient, variant at the two GRU maps only (V0 at the other maps; V5 here is the ceiling for a scale at the GRU maps):\n")
+        table(("variant",) + tuple(c[1] for c in cols), [(key[0],) + tuple(cell(fur, key, c[0]) for c in cols) for key in ROWS_GRU])
+        print(f"{name}, norm of the sweep's gradient over the norm of the exact gradient:\n")
+        table(("variant", "where") + tuple(c[1] for c in rcols),
+              [(key[0], "every map" if key[1] == "all" else "GRU maps") + tuple(cell(fur, key, c[0], 2) for c in rcols) for key in ROWS_ALL + ROWS_GRU[1:]])
+        print(f"{name}, cosine for each gate's block of the two GRU maps:\n")
+        table(("variant", "where") + tuple(c[1] for c in GCOLS),
+              [(key[0], "every map" if key[1] == "all" else "GRU maps") + tuple(cell(fur, key, c[0]) for c in GCOLS) for key in ROWS_ALL + ROWS_GRU[1:]])
+        bcols = [c for c in BCOLS if c[0] in fur[0][("V0", "all")]]
+        print(f"{name}, cosine for the biases, variant at every map (means):\n")
+        table(("variant",) + tuple(c[1] for c in bcols), [(key[0],) + tuple(f"{stat(fur, key, c[0])[0]:.3f}" for c in bcols) for key in ROWS_ALL])
+
+
+def part_summary(names):
+    label(f"summary: V0 against the best of V1 to V4 at every map, mean cosine over batches 2 to {1 + N_FURTHER}; in brackets the number of the {N_FURTHER} batches on which the variant is above V0")
+    lines = []
+    for name in names:
+        desc, rows = measure(name)
+        fur = rows[1:]
+        for f, short in COLS:
+            if f not in fur[0][("V0", "all")] or f == "cos l3.weight":
+                continue
+            v0 = np.array([r[("V0", "all")][f] for r in fur])
+            alt = {key[0]: np.array([r[key][f] for r in fur]) for key in ROWS_ALL[1:]}
+            best = max(alt, key=lambda k: alt[k].mean())
+            gru = {key[0]: np.array([r[key][f] for r in fur]) for key in ROWS_GRU[:4]}
+            bg = max(gru, key=lambda k: gru[k].mean())
+            ceil = np.array([r[("V5", "gru")][f] for r in fur])
+            lines.append((name, short, f"{v0.mean():.3f}", f"{best} {alt[best].mean():.3f}", f"{alt[best].mean() - v0.mean():+.3f} [{int((alt[best] > v0).sum())}]",
+                          f"{bg} {gru[bg].mean():.3f}", f"{gru[bg].mean() - v0.mean():+.3f} [{int((gru[bg] > v0).sum())}]", f"{ceil.mean():.3f}"))
+    table(("network", "tensor", "V0", "best at every map", "gain", "best at the GRU maps only", "gain", "exact magnitudes at the GRU maps only"), lines)
+
+
+# ---------------------------------------------------------------- main
+PARTS = {"stream": part_stream, "forward": part_forward, "test1": part_test1, "test2": part_test2, "test3": part_test3,
+         "magnitudes": part_magnitudes, "tables": part_tables, "summary": part_summary}
+
+if __name__ == "__main__":
+    args = sys.argv[1:] or ["all"]
+    unknown = [a for a in args if a not in PARTS and a not in NETS and a != "all"]
+    assert not unknown, f"unknown part or network: {unknown}; parts {list(PARTS)}; networks {list(NETS)}"
+    parts = [a for a in args if a in PARTS] or list(PARTS)
+    if "all" in args:
+        parts = list(PARTS)
+    chosen = [a for a in args if a in NETS]
+    print(f"sweep_scale_variants.py; parts {parts}; networks {chosen or 'every one'}; numpy {np.__version__}; threads OPENBLAS {os.environ.get('OPENBLAS_NUM_THREADS')} OMP {os.environ.get('OMP_NUM_THREADS')}")
+    for p_ in parts:
+        t = time.time()
+        PARTS[p_](chosen or (list(T1_NETS) if p_ == "test1" else list(NETS)))
+        print(f"[{p_}: {time.time() - t:.0f} s]", flush=True)
+    print(f"\ntotal {time.time() - T0:.0f} s")

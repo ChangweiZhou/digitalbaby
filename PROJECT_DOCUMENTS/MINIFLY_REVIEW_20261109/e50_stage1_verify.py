@@ -283,6 +283,7 @@ if "4" in want:
         firstle = next((q["step"] for q in c if q["b1"] <= q["b2"]), None)
         print(f"   C-dense {r}  rows (of {len(c)}) in which the first byte is right more often than the second: {more}; equally often: {eq}; less often: {len(c) - more - eq};"
               f" first row in which it is not more often: {fu(firstle)}; whole answer right never exceeds either byte: {yes(all(q['R'] <= min(q['b1'], q['b2']) for q in c))}")
+        print(f"      the rows in which it is not more often, with second minus first in points: " + ", ".join(f"{q['step']:,} ({q['b2'] - q['b1']:+.2f}; first {q['b1']:.2f})" for q in c if q["b1"] <= q["b2"]))
 
 
 # ---------------------------------------------------------------- the weights: sections 5, 6, 7, 12
