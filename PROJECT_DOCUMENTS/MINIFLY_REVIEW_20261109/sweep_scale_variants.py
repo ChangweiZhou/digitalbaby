@@ -444,9 +444,12 @@ def part_stream(names):
     bs = stream_batches(1 + N_FURTHER)
     print(f"batches used: the first (the receipts' batch) and the next {N_FURTHER}; items a batch {bs[0][0].shape[0]}; positions a batch {sorted({b[0].shape[1] for b in bs})};"
           f" answer positions a batch {sorted({int(b[2].sum()) for b in bs})}")
-    print("networks:")
+    print("networks (for a trained network, the last row of its receipt: A, the per cent of exact answers on 600 pairs that were not taught, addition and subtraction"
+          " with 12 filler letters; R, the same on 2,000 untaught pairs whose answer needs the reduction modulo 89, without filler letters):")
     for n, v in NETS.items():
-        print(f"  {n:14s} {v[4]}  [{v[0]}:{P}{v[1]}]")
+        last = receipt(v[2])["curve"][-1]
+        end = f"  after {last['step']:,} updates A {last['A']:.2f} R {last['R']:.2f}" if v[3] == "end" else ""
+        print(f"  {n:14s} {v[4]}{end}  [{v[0]}:{P}{v[1]}]")
 
 
 # ---------------------------------------------------------------- part: forward
@@ -614,6 +617,8 @@ def part_test2(names):
         print(f"C-dense_start, input map (393,216 entries), recorded {v:.7f}; the float32 gradients of this script with the cosine in float64 {cos(a_.astype(np.float64), b_.astype(np.float64)):.7f};"
               " with the norms in single precision in 1, 4, 8, 16 running sums: "
               + ", ".join(f"{float(((a_ / lane_norm(a_, k)) * (b_ / lane_norm(b_, k))).sum(dtype=np.float32)):.7f}" for k in (1, 4, 8, 16)))
+    g = [receipt(f"e42/e42_G_{r}_73129.json")["cosine_first_batch_start"]["recurrent_matrix"] for r in "SB"]
+    print(f"not reproduced: E42's receipts of G record at the start {g[0]:.7f} (S) and {g[1]:.7f} (B) for the recurrent map; no saved file holds G's recurrent matrix before training.")
     a, b = load("e49/e49_in16_S_73129_start.pt", REF49), load("e49/e49_in16_B_73129_start.pt", REF49)
     print("start files of the two rules hold the same tensors: E49 in16", all(np.array_equal(a[k], b[k]) for k in a), end="; ")
     a, b = load("e50/e50_C-dense_S_73129_start.pt", REF50), load("e50/e50_C-dense_B_73129_start.pt", REF50)
