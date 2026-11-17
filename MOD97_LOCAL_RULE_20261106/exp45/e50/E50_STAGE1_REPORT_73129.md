@@ -53,4 +53,4 @@ By the brief's rule stage 2 runs under both rules: `C16-in` (16 values a cell, E
 
 ## What this stage does not show
 
-One seed. A difference from `F10` of this size (ratios 0.73 to 0.98) is not read as a gain: it is inside the form's *about the same*, and the spread between seeds of `F10` under the sweep on file is of that order. `C-dense` differs from `F10` in four things at once (the code is not learned; a value stands for one byte; every byte has the same length; how far one update moves a cell's input), which the job does not separate. Nothing is said here about a limited input.
+One seed. A difference from `F10` of this size (ratios 0.73 to 0.98) is not read as a gain: it is inside the form's *about the same*; the spread between seeds of `F10` was not read for this stage. `C-dense` differs from `F10` in four things at once (the code is not learned; a value stands for one byte; every byte has the same length; how far one update moves a cell's input), which the job does not separate. Nothing is said here about a limited input.
