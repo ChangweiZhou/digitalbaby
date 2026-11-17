@@ -472,56 +472,67 @@ def part_forward(names):
 T1_NETS = ("G_S", "F10_B", "in16_start", "in16_S", "C-dense_B")
 
 
+def five_point(net, W, ix, x, y, mask, h):
+    """The derivative of the loss with respect to the single weight W[ix] by the five-point central difference."""
+    w0 = W[ix]; f = []
+    for s in (2, 1, -1, -2):
+        W[ix] = w0 + s * h
+        f.append(forward(net, x, y, mask)["loss"])
+    W[ix] = w0
+    return (8 * (f[1] - f[2]) - (f[0] - f[3])) / (12 * h)
+
+
 def part_test1(names):
-    """The exact gradient against a five-point finite difference of the loss (step 1e-4, float64), for single weights drawn at random
-    among the kept entries of every tensor: 6 of each weight tensor, 3 of each bias.  The byte table's weights are drawn among the
-    rows of the bytes that occur in the batch, the start symbol's row excepted (training gives that row no gradient)."""
+    """The exact gradient against a five-point central difference of the loss (step 1e-3, float64), for single weights of every tensor.
+    Group A: drawn at random among all kept entries (3 of each weight tensor, 2 of each bias).  Group B: drawn at random among the kept
+    entries whose exact gradient is at least a tenth of the tensor's largest in magnitude (3 and 2), where a relative error has a meaning:
+    the difference itself carries a rounding error of about 1.5 * 2.2e-16 * loss / step, so a weight whose gradient is near that size
+    cannot be compared in relative terms.  The byte table's weights are drawn among the rows of the bytes that occur in the batch, the
+    start symbol's row excepted (training gives that row no gradient)."""
     label("test 1: the exact gradient against finite differences of the loss, first batch")
     x, y, mask = stream_batches(1)[0]
-    h = 1e-4
+    h = 1e-3
     for name in names:
         net = Net(name)
         c = forward(net, x, y, mask)
         g = backward(net, c, exact_feedback(net))
         rng = np.random.default_rng(20261117)
-        worst, zero, n, small, per = 0.0, 0, 0, np.inf, {}
+        A = dict(n=0, zero=0, rel=0.0, at=0.0, err=0.0); Bg = dict(n=0, rel=0.0, least=np.inf); per = {}
         for k in net.trained:
             W = net.P[k]
+            ok = np.ones(W.shape, dtype=bool)                       # the entries a weight may be drawn from
             if k == "book.weight":
-                rows_ = np.array(sorted(set(x.ravel().tolist()) - {BOS}))
-                pool = [(int(r), j) for r in rows_ for j in range(8)]
+                ok[:] = False; ok[sorted(set(x.ravel().tolist()) - {BOS})] = True
             elif W.ndim == 2:
-                M = net.M[next(m for m in MAPS if WNAME[m] == k)]
-                pool = list(zip(*np.nonzero(M)))
-            else:
-                pool = [(i,) for i in range(len(W))]
-            take = [pool[i] for i in rng.choice(len(pool), 6 if W.ndim == 2 else 3, replace=False)]
-            w_k = 0.0
-            for ix in take:
-                w0 = W[ix]
-                f = []
-                for s in (2, 1, -1, -2):
-                    W[ix] = w0 + s * h
-                    f.append(forward(net, x, y, mask)["loss"])
-                W[ix] = w0
-                fd = (8 * (f[1] - f[2]) - (f[0] - f[3])) / (12 * h)
-                ga = float(g[k][ix]); n += 1
+                ok = net.M[next(m for m in MAPS if WNAME[m] == k)]
+            na = 3 if W.ndim == 2 else 2
+            pool = np.flatnonzero(ok)
+            big = np.flatnonzero(ok & (np.abs(g[k]) >= 0.1 * np.abs(g[k]).max()))
+            index = lambda flat_: tuple(int(v) for v in np.unravel_index(int(flat_), W.shape))
+            ta = [index(i) for i in rng.choice(pool, na, replace=False)]
+            tb = [index(i) for i in rng.choice(big, min(na, len(big)), replace=False)]
+            per[k] = 0.0
+            for ix in ta:
+                fd, ga = five_point(net, W, ix, x, y, mask, h), float(g[k][ix])
+                A["n"] += 1
                 if fd == 0.0 and ga == 0.0:
-                    zero += 1
+                    A["zero"] += 1
                     continue
                 e = abs(fd - ga) / max(abs(fd), abs(ga))
-                w_k = max(w_k, e); small = min(small, abs(ga))
-            per[k] = w_k; worst = max(worst, w_k)
-        print(f"{name:14s} {n} weights over {len(net.trained)} tensors; both exactly zero in {zero}; largest relative error {worst:.1e}; smallest gradient entry compared {small:.1e};"
-              f" loss {c['loss']:.6f}")
-        print("               largest relative error by tensor: " + ", ".join(f"{k} {v:.0e}" for k, v in per.items()))
+                if e > A["rel"]:
+                    A.update(rel=e, at=abs(ga), err=abs(fd - ga))
+            for ix in tb:
+                fd, ga = five_point(net, W, ix, x, y, mask, h), float(g[k][ix])
+                e = abs(fd - ga) / max(abs(fd), abs(ga))
+                Bg["n"] += 1; Bg["rel"] = max(Bg["rel"], e); Bg["least"] = min(Bg["least"], abs(ga)); per[k] = max(per[k], e)
+        print(f"{name:14s} loss {c['loss']:.6f}; rounding error of the difference at least about {1.5 * 2.2e-16 * c['loss'] / h:.0e}; {A['n'] + Bg['n']} weights over {len(net.trained)} tensors")
+        print(f"               group A ({A['n']} weights among all kept entries): both exactly zero in {A['zero']}; largest relative error {A['rel']:.1e}, at a weight whose gradient is"
+              f" {A['at']:.1e} in magnitude (absolute error there {A['err']:.1e})")
+        print(f"               group B ({Bg['n']} weights with a gradient of at least a tenth of the tensor's largest; the least of them {Bg['least']:.1e}): largest relative error {Bg['rel']:.1e}")
+        print("               group B, largest relative error by tensor: " + ", ".join(f"{k} {v:.0e}" for k, v in per.items()))
         if not net.coded:
-            W = net.P["book.weight"]; f = []
-            for s in (2, 1, -1, -2):
-                W[BOS, 0] = s * h
-                f.append(forward(net, x, y, mask)["loss"])
-            W[BOS, 0] = 0.0
-            print(f"               the start symbol's row of the byte table: derivative of the loss by finite difference {(8 * (f[1] - f[2]) - (f[0] - f[3])) / (12 * h):.3e};"
+            fd = five_point(net, net.P["book.weight"], (BOS, 0), x, y, mask, h)
+            print(f"               the start symbol's row of the byte table: derivative of the loss by finite difference {fd:.3e};"
                   f" gradient used in training (padding row) {float(g['book.weight'][BOS, 0]):.1f}")
 
 

@@ -23,6 +23,7 @@ audit's script, e44_l2_checks.py (beside this file), reused by import; that file
 Every part reads the 72 event files of the three arms first (about 65 s); the whole takes about 75 s.
 """
 import csv
+import hashlib
 import io
 import json
 import subprocess
@@ -116,6 +117,16 @@ def part_g():
     print("G. The gate's figure, from the calibration's event files on", D, "at", git_lines("rev-parse", "--short", D)[0])
     print(f"   {sum(v['answers'] for v in L.values()):,} answers of {len(L)} lives read; for every one the task, the reduction mark and right or wrong"
           " equal the reviewer's own stream (asserted in marked_events)")
+    n_hash = 0
+    for arm in ARMS:                                                          # each event file is the one its receipt names
+        for vu in LENGTHS:
+            for w in WORLDS:
+                st = F1 + C.stem(arm, w, vu)
+                rec = C.git_json(st + ".json")
+                assert rec["complete"] and rec["settings"]["arm"] == arm and rec["settings"]["visit_updates"] == vu and rec["settings"]["in_turn"]
+                assert hashlib.sha256(C.git_bytes(st + ".npz")).hexdigest() == rec["events"]["file_sha256"]
+                n_hash += 1
+    print(f"   {n_hash} event files have the SHA-256 that their receipts record; every receipt is complete, of 8 visits in turn")
     # route 2: the event file alone; route 3: the worker's committed table
     d2 = max(abs(a - b) for v in L.values() for a, b in zip(v["fig"], v["alone"]))
     rows = list(csv.DictReader(io.StringIO(C.git_bytes(F1 + "E44_F1_first_visit.csv").decode())))

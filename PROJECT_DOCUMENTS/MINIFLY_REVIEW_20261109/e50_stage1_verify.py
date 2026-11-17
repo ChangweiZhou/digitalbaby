@@ -29,7 +29,8 @@ The sections carry the numbers of the claims that were to be checked:
 
 Run from the repository root:
     OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e50_stage1_verify.py [0 1 ... 12]
-Without arguments every section is printed (about two minutes on one core).
+Without arguments every section is printed (about a minute and a half on one core: section 6 takes about 80 seconds,
+section 8 about 8, every other section a second or less).  The script writes no file.
 """
 import sys
 sys.dont_write_bytecode = True

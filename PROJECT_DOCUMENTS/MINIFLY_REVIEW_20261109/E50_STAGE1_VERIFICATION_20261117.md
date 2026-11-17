@@ -187,7 +187,7 @@ From the repository root:
 
     OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e50_stage1_verify.py
 
-With one or more numbers from 0 to 12 as arguments, only those parts are printed. The whole script ran in 89 seconds on one core of the reviewer's container, which other processes share (started at 22:14:18 UTC on 17 November 2026). Part 6 takes about 80 seconds, part 8 about 8, and every other part about one second or less. The script writes no file and no bytecode.
+With one or more numbers from 0 to 12 as arguments, only those parts are printed. The whole script, in its final form, ran in 88 seconds on one core of the reviewer's container, which other processes share (started at 22:20:20 UTC on 17 November 2026; an earlier complete run took 89 seconds). Part 6 takes about 80 seconds, part 8 about 8, and every other part about one second or less. The script writes no file and no bytecode.
 
 Part 12 also compares the tables file and the summary file with the recomputed figures. Of the rows of `C-dense`, `F10` and E49's `in16` in the tables file, 80 were written again here in the tables' own formats and each is found in the file character for character: the thresholds, the four operations, the multiply-adds, the levels, A and R every 2,048 updates, the operations every 4,096 updates, the training loss, the checks inside the runs, the 28 rows of descriptions, and for `C-dense` the two tables of sizes, written from the weight files. In the summary file 184 of 184 thresholds, levels and changes of R equal the recomputed figures.
 

@@ -79,6 +79,12 @@ if 'A' in want:
         for rule in RULES:
             st = js(E38 + f'e38_{arm}_{rule}_{SEED}.json')['stages'][0]['settings']
             shas[(arm, rule)] = (st['provenance']['sources_sha256']['exp38_erase.py'][:12], st['provenance']['git']['commit'][:8], st['pull_form'], st['decay_target'], st['decay_strength'])
+    runner = {}
+    for name in [f'e38_check{c}_{r}_{SEED}.json' for c in '12345' for r in RULES] + [f'e38_check2_diag_S_{SEED}_{dt}.json' for dt in ('float32', 'float64')] \
+            + [f'e38_{arm}_{r}_{SEED}.json' for arm in ARMS for r in RULES]:
+        d = js(E38 + name); pr = d['provenance'] if 'provenance' in d else d['stages'][0]['settings']['provenance']
+        runner.setdefault(pr['sources_sha256']['exp38_erase.py'], []).append(name)
+    print('   sha256 of exp38_erase.py recorded in the receipts: ' + '; '.join(f'{k[:12]} in {len(v)} receipts (10 of checks 1 to 5, 2 of the diagnostic, 10 lives)' for k, v in runner.items()))
     print('   the ten lives: exp38_erase.py sha, commit, pull form, decay target, strength')
     for k, v in shas.items():
         print(f'      {k[0]:9s} {k[1]}: {v}')
@@ -434,6 +440,9 @@ if 'D' in want:
         print(f"          strength {k}: {max(rel(f1[n], fw[n]) for n in WS):.2e}")
     a1, p1, a2, p2 = keep['a1'], keep['p1'], keep['a2'], keep['p2']
     print('       rule S, strength 0.25, the six maps the error crosses (1,118,720 weights): how near zero they lie, and how far apart the two runs are')
+    near = {n: int((np.abs(WS[n]) < 1e-3).sum()) for n in BACK}
+    print('          at the birth, weights within 1e-3 of zero: ' + ', '.join(f'{short(n)} {v}' for n, v in near.items()) + f'; together {sum(near.values())}, '
+          f"of which l2.w and w_ih {near['l2.weight'] + near['rnn.weight_ih_l0']}")
     cross = sum(int((np.sign(a1[n]) != np.sign(WS[n])).sum()) for n in BACK)
     absw = np.concatenate([np.abs(a1[n]).ravel() for n in BACK]); tot = absw.size
     print(f"          weights that changed sign in update 1: {cross}; weights within 1e-3 / 1e-4 / 1e-5 / 1e-6 / 1e-7 / 1e-8 of zero after it: "
