@@ -24,7 +24,8 @@ default branch at 7cabb13a (E40's receipts, the life-end weights, the brief), an
 
 Run from the repository root:
     python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e48_result_verify.py [A B C D E F G] [quick]
-(`quick`: part B reads rows 256 and 1,024 of the rank-16 runs only, part C one network.)
+(`quick`: part B reads rows 256 and 1,024 of the rank-16 runs only, part C two networks at rank 16, part G rank 16.
+ `file=<text>`: part B reads only the term files whose name contains the text, for example file=e48_S_73129_r16_row16.)
 """
 import hashlib, json, os, re, subprocess, sys, time
 from random import Random
@@ -52,6 +53,7 @@ KS_LIFE = (0, 8, 12, 20, 40)         # exp16_integrated.panels under E16_ARCH=ba
 RULE_NAME = {"S": "sweep", "B": "backpropagation"}
 want = {a for a in sys.argv[1:] if a in set("ABCDEFG")} or set("ABCDEFG")
 quick = "quick" in sys.argv[1:]
+only = next((a[5:] for a in sys.argv[1:] if a.startswith("file=")), None)
 T0 = time.time()
 
 show = lambda path, ref: subprocess.run(["git", "show", f"{ref}:{path}"], capture_output=True, text=True, check=True).stdout
@@ -340,7 +342,7 @@ if "B" in want:
         d = receipt(rule, seed, rank); W, _ = life_end(rule, seed)
         ans = jload(E48 + run_name(rule, seed, rank) + "_reduction_answers.json", WB)
         for row in d["rows"]:
-            if "term_file" not in row or (quick and row["updates"] not in (256, 1024)):
+            if "term_file" not in row or (quick and row["updates"] not in (256, 1024)) or (only and only not in row["term_file"]["file"]):
                 continue
             u = row["updates"]; path = E48 + row["term_file"]["file"]
             raw = git_bytes(path, WB)
@@ -373,13 +375,24 @@ if "B" in want:
             n_ok += good
             if not good:
                 bad.append((row["term_file"]["file"], dict(shapes=shapes, hashes=hashes, norms=norms, counts=counts, digest=digest, items=items, forced=fo)))
+            if not counts:                                            # which count, by how much, and how close the two largest outputs are there
+                held, taught, plain, _ = e40_panels(seed)
+                for kind, mine, theirs, panels_ in (("held_k12", s["held_k12"], row["scores"]["held_k12"], held), ("taught_k12", s["taught_k12"], row["scores"]["taught_k12"], taught)) + tuple(
+                        (f"held_plain_k0 {n}", s["held_plain_k0"][n], row["scores"]["held_plain_k0"][n], plain[n]) for n in plain):
+                    for n in mine:
+                        if mine[n] != theirs[n]:
+                            x, tgt = batch(panels_[n])
+                            lg = G.forward(V, term, x)[1][:, -3:, :].astype(np.float64); srt = np.sort(lg, axis=-1); margin = (srt[..., -1] - srt[..., -2]).min(1)
+                            i = int(margin.argmin())
+                            print(f"      {row['term_file']['file']}: {kind} {n}: the reader counts {mine[n]['exact']} of {mine[n]['n']}, the receipt {theirs[n]['exact']};"
+                                  f" on the item `{bytes(panels_[n][i][0]).decode()}` the two largest outputs differ by {margin[i]:.1e} (single-precision rounding); the next smallest difference on the panel is {np.sort(margin)[1]:.1e}")
         print(f"   {run_name(rule, seed, rank)}: term files read so far {n_files}, in full agreement {n_ok}  [{time.time() - T0:.0f} s]", flush=True)
     print(f"   term files read: {n_files}; for each: the five tensors' shapes, the file's SHA-256 and size, the tensors hash and the code rows' hash as in the receipt, the four norms,"
           f" the 18 counts and the four summary scores of the row from the reader, and the digests of the six earlier panels' answers: in full agreement {n_ok} of {n_files}")
     print(f"   reduction answers, reader against the worker's answer files: {n_same:,} of {n_items:,} items the same bytes, over {n_rows_ans} rows of answers")
     print(f"   the scores with the gate forced off (rows 256 and 1,024), reader against receipt: {forced_ok} of {forced_n} rows equal on all 12 counts")
     for b in bad:
-        print("   DISAGREES:", b)
+        print("   not in full agreement:", b)
     print(f"   [{time.time() - T0:.0f} s]", flush=True)
 
 # =========================================================================================================== C
@@ -426,7 +439,7 @@ if "C" in want:
                     same = (answers(V, term, [p for p, _ in it]) == G.generate(V, term, [p for p, _ in it]) and answers(V, term, [p for p, _ in new]) == G.generate(V, term, [p for p, _ in new])
                             and answers(V, term, [p for p, _ in new[:64]]) == G.generate_slow(V, term, [p for p, _ in new[:64]]))
                     print(f"   the generator of this script (explicit gate) gives the audit reader's bytes on an earlier panel and on a new-family panel: {same}"); checked = True
-                tot = {}
+                tot = {}; per = {}
                 equal = True; gen_codes = 0; same_answers = True; biggest = 0.0; n_logit = 0
                 for g, it in groups.items():
                     pr = [p for p, _ in it]
@@ -440,12 +453,15 @@ if "C" in want:
                     biggest = max(biggest, float(np.abs(G.forward(V, term, x, gate=True)[1] - ref).max()))
                     f = fam(g) + (", reduction pairs without letters" if "reduction" in g else "")
                     a = tot.setdefault(f, [0, 0, 0, 0]); a[0] += len(it); a[1] += right(o0, it); a[2] += right(o1, it); a[3] += right(o2, it)
+                    per[g] = (100 * right(o0, it) / len(it), 100 * right(o2, it) / len(it))
                 print(f"   lived {rule} {seed}, the rank-{rank} term of row 1,024 and its code rows (largest change of a code-row entry {moved:.2f}); {sum(len(v) for v in groups.values()):,} earlier items in {len(groups)} groups;"
                       f" their bytes: {len(used)} values, any of 101 to 104: {bool(set(used) & set(G.CODES))}; bytes after the start symbol: {bytes(pos1).decode()}")
                 print(f"      answers with the term loaded and the gate read from the code byte equal the life-end network's item for item: {same_answers}; bytes e f g h among the generated bytes: {gen_codes};"
                       f" logits equal value for value on {n_logit:,} sampled items: {equal}; with the gate forced on the sampled logits move by up to {biggest:.1f}")
                 for f, (n, b, g_, fo) in tot.items():
                     print(f"      {f:58s} {n:6,} items | life-end {100 * b / n:5.1f}% | term loaded, gate from the code {100 * g_ / n:5.1f}% | gate forced on {100 * fo / n:5.1f}%")
+                up = sorted(((v[1] - v[0], g) for g, v in per.items() if v[1] - v[0] >= 5), reverse=True)
+                print(f"      groups that are answered better with the gate forced on, by 5 points or more ({len(up)} of {len(per)}): " + "; ".join(f"{g} {per[g][0]:.0f} to {per[g][1]:.0f}" for _, g in up[:10]))
                 print(f"      [{time.time() - T0:.0f} s]", flush=True)
     print("   E40's side, from its receipts: the six earlier panels (2,200 items at 12 letters), percent right at rows 0, 64, 128, 256, 512, 1,024, 8,192; E48 is row 0 at every row")
     for rule in RULES:
@@ -582,6 +598,21 @@ if "F" in want:
                     t = G.load_term(E48 + f"{run_name(rule, seed, rank)}_row{u}.pt", WB)
                     cells.append(f"row {u:,}: {np.linalg.norm(t['up_i'] @ t['down_i']) / ni:.2f} / {np.linalg.norm(t['up_h'] @ t['down_h']) / nh:.2f}")
                 print(f"         E48 rank {rank:2d}: " + "; ".join(cells))
+
+    n_cos = ok_cos = 0; lo, hi = 1.0, 0.0
+    for rule, seed, rank in RUNS:
+        if rule != "S":
+            continue
+        for row in receipt(rule, seed, rank)["rows"]:
+            if "term_file" in row:
+                t = G.load_term(E48 + row["term_file"]["file"], WB)
+                for k in ("down_i", "up_i", "down_h", "up_h"):
+                    F = t[k].astype(np.float64).ravel(); c = float(np.abs(F).sum() / (np.linalg.norm(F) * np.sqrt(F.size)))      # cosine of F with sign(F) x mean|F|
+                    n_cos += 1; ok_cos += abs(c - row["sweep_cosines"][k]) < 1e-6
+                    if row["updates"] >= 64:
+                        lo, hi = min(lo, c), max(hi, c)
+    print(f"   under the sweep, the cosine of each factor with what the sweep uses in its place (the signs times the mean size), recomputed from the term files: {ok_cos} of {n_cos} equal the receipts' to six decimals;"
+          f" from row 64 on they lie between {lo:.2f} and {hi:.2f}")
 
     def classify(prompt, target, out):
         """What a wrong answer to a reduction pair is.  prompt: code, a a, symbol, b b, '='."""
