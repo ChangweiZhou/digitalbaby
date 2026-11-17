@@ -187,21 +187,21 @@ class Net:
 
 
 def forward(net, x, y, mask):
-    """The forward pass and the loss; everything the backward pass needs is kept."""
+    """The forward pass and the loss; everything the backward pass needs is kept.
+    Two arrangements that change no value: the byte's code z1 = tanh(l1(book)) (or the fixed code) depends on the byte alone, so it and
+    the input map's output are formed once for each of the 258 bytes and looked up; and the readout (z2, logits) is formed at the
+    answer's positions only, the only positions that enter the loss."""
     Pm = net.P
     B, L = x.shape
-    c = dict(x=x)
-    if net.coded:
-        z1 = net.code[x]
-    else:
-        c["u"] = Pm["book.weight"][x]
-        z1 = np.tanh(c["u"] @ Pm["l1.weight"].T + Pm["l1.bias"])
-    gi = z1 @ net.Wm("ih").T + Pm["rnn.bias_ih_l0"]
+    xf = x.reshape(-1)
+    idx = np.flatnonzero(mask.reshape(-1))                          # the answer's positions, in the order of logits[mask]
+    Z1 = net.code if net.coded else np.tanh(Pm["book.weight"] @ Pm["l1.weight"].T + Pm["l1.bias"])     # (258, 512)
+    gi = (Z1 @ net.Wm("ih").T + Pm["rnn.bias_ih_l0"])[x]            # (B, L, 768)
     WhT, bh = net.Wm("hh").T, Pm["rnn.bias_hh_l0"]
-    h = np.zeros((B, U))
+    c = dict(x=x, xf=xf, idx=idx, Z1=Z1)
     for k in ("hp", "r", "z", "n", "ghn"):
         c[k] = np.empty((L, B, U))
-    Hs = np.empty((B, L, U))
+    h = np.zeros((B, U)); Hs = np.empty((B, L, U))
     for t in range(L):
         gh = h @ WhT + bh
         r = sigmoid(gi[:, t, :U] + gh[:, :U])
@@ -210,36 +210,41 @@ def forward(net, x, y, mask):
         c["hp"][t], c["r"][t], c["z"][t], c["n"][t], c["ghn"][t] = h, r, z, n, gh[:, 2 * U:]
         h = (1 - z) * n + z * h
         Hs[:, t] = h
-    z2 = np.tanh(z1 @ Pm["l2.weight"].T + Pm["l2.bias"] + Hs @ net.Wm("lm").T + Pm["lm.bias"])
-    logits = z2 @ Pm["l3.weight"].T + Pm["l3.bias"]
-    lg = logits[mask]                                               # (answer positions, 257)
-    lg = lg - lg.max(1, keepdims=True)
+    z1a, Hsa = Z1[xf[idx]], Hs.reshape(-1, U)[idx]
+    z2 = np.tanh(z1a @ Pm["l2.weight"].T + Pm["l2.bias"] + Hsa @ net.Wm("lm").T + Pm["lm.bias"])
+    logits = z2 @ Pm["l3.weight"].T + Pm["l3.bias"]                 # (answer positions, 257)
+    lg = logits - logits.max(1, keepdims=True)
     logp = lg - np.log(np.exp(lg).sum(1, keepdims=True))
-    tgt = y[mask]
-    c["loss"] = float(-logp[np.arange(len(tgt)), tgt].mean())
-    d = np.exp(logp); d[np.arange(len(tgt)), tgt] -= 1.0
-    dlog = np.zeros((B, L, 257)); dlog[mask] = d / len(tgt)
-    c.update(z1=z1, Hs=Hs, z2=z2, logits=logits, dlog=dlog)
+    tgt = y.reshape(-1)[idx]
+    c["loss"] = float(-logp[np.arange(len(tgt)), tgt].mean())       # the mean over the answer's positions of the whole batch
+    d3 = np.exp(logp); d3[np.arange(len(tgt)), tgt] -= 1.0
+    order = np.argsort(xf, kind="stable"); xs = xf[order]
+    starts = np.flatnonzero(np.r_[True, xs[1:] != xs[:-1]])
+    c.update(z1a=z1a, Hsa=Hsa, Hs=Hs, z2=z2, logits=logits, d3=d3 / len(tgt), order=order, starts=starts, present=xs[starts])
     return c
 
 
-def loss_only(net, x, y, mask):
-    return forward(net, x, y, mask)["loss"]
+def by_byte(c, rows):
+    """(258, K): the rows (one for each position of the batch) summed over the positions that hold the same byte."""
+    out = np.zeros((258, rows.shape[1]))
+    out[c["present"]] = np.add.reduceat(rows[c["order"]], c["starts"], axis=0)
+    return out
 
 
 def backward(net, c, F):
     """The gradient of every trained parameter when the error crosses map k backward through the transpose of F[k].
     F[k] = the (masked) weight matrix itself gives the exact gradient.  A map's own gradient is always the outer product of the
-    arriving error and the map's input, inside the mask.  The gates' nonlinearities and products are differentiated exactly."""
+    arriving error and the map's input, inside the mask.  The gates' nonlinearities and products are differentiated exactly.
+    The error at the readout is zero outside the answer's positions, so the readout's part is written on those positions only; on the
+    input side the sums over positions are taken byte by byte first (z1 depends on the byte alone)."""
     B, L = c["x"].shape
-    z1, z2, Hs = c["z1"].reshape(-1, D), c["z2"].reshape(-1, D), c["Hs"].reshape(-1, U)
+    idx, Z1, z1a, z2, Hsa, d3 = c["idx"], c["Z1"], c["z1a"], c["z2"], c["Hsa"], c["d3"]
     g = {}
-    d3 = c["dlog"].reshape(-1, 257)
     g["l3.weight"], g["l3.bias"] = d3.T @ z2, d3.sum(0)
-    da2 = (d3 @ F["l3"]) * (1 - z2 * z2)
-    g["l2.weight"], g["l2.bias"] = da2.T @ z1, da2.sum(0)
-    g["lm.weight"], g["lm.bias"] = (da2.T @ Hs) * net.M["lm"], da2.sum(0)
-    dHs = (da2 @ F["lm"]).reshape(B, L, U)
+    da2 = (d3 @ F["l3"]) * (1 - z2 * z2)                            # the error after crossing l3, at the sum inside z2's tanh
+    g["l2.weight"], g["l2.bias"] = da2.T @ z1a, da2.sum(0)
+    g["lm.weight"], g["lm.bias"] = (da2.T @ Hsa) * net.M["lm"], da2.sum(0)
+    dHs = np.zeros((B * L, U)); dHs[idx] = da2 @ F["lm"]; dHs = dHs.reshape(B, L, U)
     dgi = np.empty((B, L, 3 * U)); gWh = np.zeros((3 * U, U)); gbh = np.zeros(3 * U)
     carry = np.zeros((B, U)); Fh = F["hh"]
     for t in range(L - 1, -1, -1):
@@ -253,13 +258,13 @@ def backward(net, c, F):
         gWh += dgh.T @ hp; gbh += dgh.sum(0)
         carry = dh * z + dgh @ Fh                                   # the recurrent map is crossed again at every step back
     g["rnn.weight_hh_l0"], g["rnn.bias_hh_l0"] = gWh * net.M["hh"], gbh
-    dgi = dgi.reshape(-1, 3 * U)
-    g["rnn.weight_ih_l0"], g["rnn.bias_ih_l0"] = (dgi.T @ z1) * net.M["ih"], dgi.sum(0)
+    Dg = by_byte(c, dgi.reshape(-1, 3 * U))                         # (258, 768): the error at the input map's output, by byte
+    g["rnn.weight_ih_l0"], g["rnn.bias_ih_l0"] = (Dg.T @ Z1) * net.M["ih"], Dg.sum(0)
     if not net.coded:
-        da1 = (da2 @ F["l2"] + dgi @ F["ih"]) * (1 - z1 * z1)
-        u = c["u"].reshape(-1, 8)
-        g["l1.weight"], g["l1.bias"] = da1.T @ u, da1.sum(0)
-        gb = np.zeros((258, 8)); np.add.at(gb, c["x"].reshape(-1), da1 @ F["l1"])
+        Da2 = np.zeros((258, D)); np.add.at(Da2, c["xf"][idx], da2)
+        DA1 = (Da2 @ F["l2"] + Dg @ F["ih"]) * (1 - Z1 * Z1)        # the error at the sum inside z1's tanh, by byte
+        g["l1.weight"], g["l1.bias"] = DA1.T @ net.P["book.weight"], DA1.sum(0)
+        gb = DA1 @ F["l1"]
         gb[BOS] = 0.0                                               # padding_idx: the start symbol's row receives no gradient
         g["book.weight"] = gb
     return g
