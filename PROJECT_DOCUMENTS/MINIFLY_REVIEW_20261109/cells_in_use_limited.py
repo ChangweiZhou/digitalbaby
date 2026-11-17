@@ -62,8 +62,18 @@ Parts.
   6  E49 in16, the input side: of the 16 input values a cell reads (and the constant), the directions the family's bytes
      occupy, and the share of the unrelated bytes' codes inside them
 
+Two further modes, which check the method and print no measure:
+  X                 E47 only: the standard deviation over the items of the A panel (300 held-out additions and 300 held-out
+                    subtractions at 12 letters) of a cell's state at `=`, averaged over the cells of a ring, from the reader's
+                    forward; the same quantity is in the table of section 6 of E47_TRIAL_VERIFICATION_20261117.md
+  mutate:<kind>     the check of the gates with one deliberate error in this script's computation, to show that the check
+                    would find it (the largest difference is printed, on the family's items):
+                    steps  equal step weights 1/p in place of the saved ones (cells of period above 1)
+                    phase  cells of period above 1 taken as updated one position early
+                    gate   the candidate computed without the reset gate
+
 Run from the repository root:
-    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/cells_in_use_limited.py [names]
+    OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/cells_in_use_limited.py [names] [X | mutate:<kind>]
 names restrict the run: G_S G_B F10_S F10_B P8_S P8_B one_S one_B place_S place_B in16_B (default: all eleven).
 """
 import sys
@@ -74,7 +84,7 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from compare_pt_tensors import tensors
-from np_gru import split, apply, SYM, DEV, BOS
+from np_gru import split, panel, apply, SYM, DEV, BOS
 import e42_cells_reader as R42
 import e47_local_reader as R47
 import e49_interface_reader as R49
@@ -88,8 +98,10 @@ NETS = [("G", "S"), ("G", "B"), ("F10", "S"), ("F10", "B"), ("P8", "S"), ("P8", 
 DTYPE = {"FloatStorage": "<f4", "LongStorage": "<i8", "BoolStorage": "?"}
 SHARES = (0.99, 0.999, 0.9999)
 LETTERS = list(b"ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-only = set(sys.argv[1:])
-assert only <= {f"{a}_{b}" for a, b in NETS}, sys.argv[1:]
+MUT = next((a[7:] for a in sys.argv[1:] if a.startswith("mutate:")), None)
+CROSS = "X" in sys.argv[1:]
+only = {a for a in sys.argv[1:] if a != "X" and not a.startswith("mutate:")}
+assert only <= {f"{a}_{b}" for a, b in NETS} and MUT in (None, "steps", "phase", "gate"), sys.argv[1:]
 T0 = time.time()
 sigmoid = R42.sigmoid
 
@@ -147,6 +159,8 @@ def step_weights(a, p):
     if K > 1:
         inside = (np.arange(K)[:, None] < p[None, :]) & (p[None, :] > 1)
         A[inside] = a[:K][inside]
+        if MUT == "steps":                                                    # a deliberate error, for the check of the check
+            A[inside] = (np.ones((K, len(p)), np.float32) / p[None, :])[inside]
     return A
 
 
@@ -252,6 +266,10 @@ def gates(net, x, Hs):
             G = G + A[k] * Gs[t - k]; H = H + A[k] * Hh[t - k]
         r = sigmoid(G[:, 0] + H[:, 0]); z = sigmoid(G[:, 1] + H[:, 1]); n = np.tanh(G[:, 2] + r * H[:, 2])
         u = (t >= net.f) & ((t - net.f) % net.p == 0)
+        if MUT == "gate":                                                     # deliberate errors, for the check of the check
+            n = np.tanh(G[:, 2] + H[:, 2])
+        if MUT == "phase":
+            u = (t >= net.f) & ((t - net.f + (net.p > 1)) % net.p == 0)
         worst = max(worst, float(np.abs(np.where(u, (1 - z) * n + z * h, h) - Hs[:, t]).max()))
         Z[:, t], N[:, t], upd[t] = z, n, u
         h = Hs[:, t]
@@ -326,9 +344,27 @@ ROWS = []
 for cfg, rule in NETS:
     if only and f"{cfg}_{rule}" not in only:
         continue
+    if CROSS and cfg not in ("one", "place"):
+        continue
     t0 = time.time()
     net = Net47(cfg, rule) if cfg in ("one", "place") else Net256(cfg, rule)
     C = net.C
+    if CROSS:
+        sds = []
+        for t in DEV[:2]:
+            x = np.array([[BOS] + pr for pr, _ in panel(t, split(t, .5, SEED)[1], SEED, ks=(12,), n=300)[12]], dtype=np.int64)
+            sds.append(net.reader(x)[0][:, -1].std(0))                       # the last position of the prompt is `=`
+        sd = np.mean(sds, 0)
+        print(f"X. {cfg} {rule}: standard deviation over the items of the A panel of a state at `=`, mean over the cells of a group: "
+              + ", ".join(f"{g} {float(sd[sel].mean()):.3f}" for g, sel in list(net.groups.items())[1:]) + f"   [{time.time() - t0:.0f} s]", flush=True)
+        continue
+    if MUT:
+        worst = 0.0
+        for items in FAMILY:
+            x = arrays(items)[0]
+            worst = max(worst, gates(net, x, net.reader(x)[0])[3])
+        print(f"mutate:{MUT}. {cfg} {rule}: largest difference between the state computed here with the deliberate error and the reader's: {worst:.1e}   [{time.time() - t0:.0f} s]", flush=True)
+        continue
     fam, unr = measure(net, FAMILY), measure(net, UNRELATED)
     last = net.receipt["curve"][-1]
     print(f"\n===== {cfg} {rule}: {C} cells; receipt's last row (update {last['step']}): taught {last['taught']:.1f}, A {last['A']:.1f}, R {last['R']:.1f}")
@@ -454,6 +490,10 @@ for cfg, rule in NETS:
     ROWS.append(row)
     print(f"   [{time.time() - t0:.0f} s; {time.time() - T0:.0f} s since the start]", flush=True)
     del net, fam, unr
+
+if CROSS or MUT:
+    print(f"done in {time.time() - T0:.0f} s")
+    sys.exit(0)
 
 # ---------------------------------------------------------------- the tables
 print("\n===== tables (cells below 0.01, below 0.05)")

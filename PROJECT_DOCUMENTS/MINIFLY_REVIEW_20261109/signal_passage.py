@@ -363,6 +363,11 @@ def at_eq(m):
     return [float(np.sqrt(m["ms"][d, g] / m["ms"][d, 0])) for g in range(m["ms"].shape[1])]
 
 
+def peak(m):
+    """Each group's largest root mean square at any single later position, over the first group's at the changed byte."""
+    return [float(np.sqrt(m["ms"][1:, g].max() / m["ms"][0, 0])) for g in range(m["ms"].shape[1])]
+
+
 def distribution(v):
     """Of a per-cell mean square: the cells' root mean squares at the given percentiles over the root mean square of all
     cells, and the share of the cells that would carry the whole if all carried equally (participation)."""
@@ -389,12 +394,13 @@ def show_passage(net, changes=("first", "last"), per_task=75, by_delay=True):
                 print("      positions after the changed byte (the byte read there) | root mean square of the difference: " + " | ".join(net.names)
                       + (" | each group over the first" if net.G > 1 else " | all cells"))
                 for d in range(T):
-                    row = [float(np.sqrt(v)) for v in m["ms"][d]]
-                    tail = " | ".join(f"{v / row[0]:.4f}" if row[0] > 0 else "-" for v in row[1:]) if net.G > 1 else fmt(float(np.sqrt(m["all"][d])))
-                    print(f"      {d:2d} ({role(m['s'] + d, k):24s}) | " + " | ".join(fmt(v) for v in row) + " | " + tail)
+                    vals = [float(np.sqrt(v)) for v in m["ms"][d]]
+                    tail = " | ".join(f"{v / vals[0]:.4f}" if vals[0] > 0 else "-" for v in vals[1:]) if net.G > 1 else fmt(float(np.sqrt(m["all"][d])))
+                    print(f"      {d:2d} ({role(m['s'] + d, k):24s}) | " + " | ".join(fmt(v) for v in vals) + " | " + tail)
             sh, eq = shares(m), at_eq(m)
             print(f"      every later position: " + ", ".join(f"{nm} {fmt(later(m, g))}" for g, nm in enumerate(net.names))
                   + (f"; over the first group: " + ", ".join(f"{v:.4f}" for v in sh[1:]) + f"; at '=': " + ", ".join(f"{v:.4f}" for v in eq[1:]) if net.G > 1 else ""))
+            print(f"      each group's largest root mean square at any later position, over the first group's at the changed byte: " + ", ".join(f"{nm} {v:.4f}" for nm, v in zip(net.names, peak(m))))
             pc, part = distribution(m["cell"]); pc0, part0 = distribution(m["cell0"])
             print(f"      a cell's own root mean square over that of all cells, least / 5% / 25% / median / 75% / 95% / largest of the {net.C} cells:"
                   f" later positions " + " / ".join(f"{v:.3f}" for v in pc) + f" (participation {part:.3f});"
@@ -432,60 +438,84 @@ def expected_factor(mu, zbar, kbar, g_n):
     return float(np.abs(zbar + kbar * g_n * mu).max())
 
 
-# ---------------------------------------------------------------- the variants of the start
-def variant_row(net, label, mu, g_n, per_task=75, long_per_task=25):
+# ---------------------------------------------------------------- one start, measured: a row of the tables
+def sg(v):
+    if v != v:
+        return "-"
+    if v == 0:
+        return "0"
+    return f"{v:.3f}" if abs(v) >= 0.1 else f"{v:.4f}" if abs(v) >= 0.001 else f"{v:.1e}"
+
+
+def row(net, label, mu=None, g_n=None, per_task=75, long_per_task=25):
+    """One start (or one trained network) measured: the first digit of the first operand changed at 0, 4 and 12 letters and
+    in items of 40 letters, the last digit of the second operand changed at 0 letters."""
     st = Stats(net.C)
     ms = {k: measure(net, k, "first", per_task, st) for k in LETTERS}
+    last = measure(net, 0, "last", per_task)
     lm, sz = long_item(net, long_per_task)
     far = net.G - 1
-    sat = st.sat()
-    res = dict(label=label, sat=sat[0], size=st.size(), sz=sz, grows=sz[40] > sz[10],
-               share={k: shares(ms[k]) for k in LETTERS}, eq={k: at_eq(ms[k]) for k in LETTERS})
-    f1 = (sz[20] / sz[10]) ** 0.1 if sz[10] > 0 else float("nan")
-    f2 = (sz[40] / sz[20]) ** 0.05 if sz[20] > 0 else float("nan")
-    res["factor"] = (f1, f2)
-    line = f"   {label:34s}"
+    res = dict(label=label, sat=st.sat(), size=(st.size(), st.size(net.reads), st.size(~net.reads) if not net.reads.all() else float("nan")),
+               sz=sz, grows=sz[40] > min(sz[10], sz[20]), share={k: shares(ms[k]) for k in LETTERS}, eq=at_eq(ms[12]), last=shares(last),
+               peak=peak(ms[12]), far40=[float(np.sqrt(lm["ms"][d, far])) for d in (10, 20, 40)],
+               factor=((sz[20] / sz[10]) ** 0.1 if sz[10] > 0 else float("nan"), (sz[40] / sz[20]) ** 0.05 if sz[20] > 0 else float("nan")))
+    if net.G > 1 and ms[12]["lab"].ndim == 1:
+        sd, lab = ms[12]["sd"], ms[12]["lab"]
+        res["between"] = [float(sd[lab == g].mean() / sd[lab == 0].mean()) for g in range(1, net.G)]
     if net.G > 1:
-        for k in LETTERS:
-            line += f" | {k:2d}: " + " ".join(f"{v:.4f}" for v in res["share"][k][1:])
-        line += " | '=' at 12: " + " ".join(f"{v:.4f}" for v in res["eq"][12][1:])
-        if ms[12]["lab"].ndim == 1:
-            sd, lab = ms[12]["sd"], ms[12]["lab"]
-            res["between"] = [float(sd[lab == g].mean() / sd[lab == 0].mean()) for g in range(1, net.G)]
-            line += " | between items: " + " ".join(f"{v:.4f}" for v in res["between"])
-        res["ok"] = res["share"][12][far] >= THIRD and sat[0] < SAT_LIMIT and not res["grows"]
+        res["ok"] = res["share"][12][far] >= THIRD and res["sat"][0] < SAT_LIMIT and not res["grows"]
         res["ok_all"] = res["ok"] and all(res["share"][k][far] >= THIRD for k in LETTERS)
-    else:
-        pc, part = distribution(ms[12]["cell"])
-        res["dist"], res["part"] = pc, part
-        line += f" | 12: 5% {pc[1]:.3f} median {pc[3]:.3f} 95% {pc[5]:.3f} participation {part:.3f}"
-    line += f" | state {st.size():.3f}" + (f" ({st.size(net.reads):.3f}, {st.size(~net.reads):.3f})" if not net.reads.all() else "")
-    line += f" | gates {100 * sat[0]:5.2f}% (r {100 * sat[1]:.2f}, z {100 * sat[2]:.2f})"
-    line += f" | 40 letters: {fmt(sz[0])} {fmt(sz[10])} {fmt(sz[20])} {fmt(sz[40])}"
-    if net.G > 1:
-        line += " ; far group " + " ".join(fmt(float(np.sqrt(lm["ms"][d, far]))) for d in (10, 20, 40))
-    line += f" | per position {f1:.3f}, {f2:.3f}"
+    res["dist"], res["part"] = distribution(ms[12]["cell"])
+    res["part0"] = distribution(ms[12]["cell0"])[1]
     if mu is not None:
-        zbar, kbar = st.mean("z"), st.mean("k")
-        res["expected"] = expected_factor(mu, zbar, kbar, g_n)
-        line += f"; expected {res['expected']:.3f} (z {zbar:.3f}, k {kbar:.3f})"
-    line += f" | {'grows' if res['grows'] else 'does not grow'}"
-    if net.G > 1:
-        line += f" | {'MEETS the three conditions at 12 letters' + (' and at 0 and 4' if res['ok_all'] else '') if res['ok'] else 'no'}"
-    print(line + f"   {clock()}", flush=True)
+        res["zk"] = (st.mean("z"), st.mean("k"))
+        res["expected"] = expected_factor(mu, res["zk"][0], res["zk"][1], g_n)
+    print(f"      measured: {label}   {clock()}", flush=True)
     return res
 
 
-LEGEND = ("   columns: the start | for 0, 4 and 12 letters, each further group's root-mean-square difference over that of the first group, every later position"
-          " | the same at '=' in items of 12 letters | between different items at '=' (standard deviation over 300 items, group over first group)"
-          " | mean size of a state (cells that read the input, the others) | share of gate values below 0.05 or above 0.95"
-          " | items of 40 letters: root-mean-square difference over all cells 0, 10, 20 and 40 positions after the changed byte; the farthest group at 10, 20, 40"
-          " | factor per position from 10 to 20 and from 20 to 40; the factor expected from the mean gates | growth: the size at 40 exceeds the size at 10"
-          " | the three conditions: the farthest group at a third or more of the first group, under 20% of gate values beyond, no growth")
+def tables(net, rows, judge=True, title=None):
+    """The rows as two tables in the form of the document."""
+    grouped = net.G > 1
+    title = title or net.name
+    lst = lambda v: ", ".join(sg(x) for x in v[1:])
+    print(f"   {title}: passage. Later positions: every position after the changed byte to the second answer digit.")
+    if grouped:
+        between = "between" in rows[0]
+        print(f"   Entries: {', '.join(net.names[1:])}, each over the group `{net.names[0]}`.")
+        print("   | Start | First digit changed, 0 letters | 4 letters | 12 letters | Last digit changed | At `=`, 12 letters | Farthest group at its largest |"
+              + (" Between items at `=` |" if between else ""))
+        print("   |---|---|---|---|---|---|---|" + ("---|" if between else ""))
+        for r in rows:
+            print(f"   | {r['label']} | {lst(r['share'][0])} | {lst(r['share'][4])} | {lst(r['share'][12])} | {lst(r['last'])} | {lst(r['eq'])} | {sg(r['peak'][-1])} |"
+                  + (f" {', '.join(sg(x) for x in r['between'])} |" if between else ""))
+    else:
+        print("   Entries, items of 12 letters, first digit changed: a cell's root-mean-square difference over the later positions, over that of all cells, at three percentiles of the cells; participation.")
+        print("   | Start | Cell at 5% | Median cell | Cell at 95% | Participation, later positions | Participation at the changed byte | All cells at their largest |")
+        print("   |---|---|---|---|---|---|---|")
+        for r in rows:
+            print(f"   | {r['label']} | {r['dist'][1]:.3f} | {r['dist'][3]:.3f} | {r['dist'][5]:.3f} | {r['part']:.3f} | {r['part0']:.3f} | {sg(r['peak'][0])} |")
+    print(f"   {title}: states, gates, and items of 40 letters")
+    exp = any("expected" in r for r in rows)
+    both = not net.reads.all()
+    print("   | Start | Mean size of a state" + (": interface, other cells" if both else "") + " | Gate values beyond (reset, update) | 40 letters, all cells: 0, 10, 20, 40 after |"
+          + (" Farthest group: 10, 20, 40 after |" if grouped else "") + " Factor per position: 10 to 20, 20 to 40 |" + (" Expected factor |" if exp else "") + (" Grows |" if judge else "")
+          + (" Three conditions |" if grouped and judge else ""))
+    print("   |---|---|---|---|" + ("---|" if grouped else "") + "---|" + ("---|" if exp else "") + ("---|" if judge else "") + ("---|" if grouped and judge else ""))
+    for r in rows:
+        sat, sz = r["sat"], r["sz"]
+        cond = ""
+        if grouped and judge:
+            cond = (" met at 0, 4 and 12 letters |" if r["ok_all"] else " met at 12 letters |" if r["ok"] else " not met |")
+        print(f"   | {r['label']} | {r['size'][1]:.3f}" + (f", {sg(r['size'][2])}" if both else "") + f" | {100 * sat[0]:.2f}% ({100 * sat[1]:.2f}, {100 * sat[2]:.2f}) |"
+              f" {sg(sz[0])}, {sg(sz[10])}, {sg(sz[20])}, {sg(sz[40])} |" + (f" {', '.join(sg(x) for x in r['far40'])} |" if grouped else "")
+              + f" {r['factor'][0]:.3f}, {r['factor'][1]:.3f} |" + ((f" {r['expected']:.3f} |" if "expected" in r else " - |") if exp else "")
+              + (f" {'yes' if r['grows'] else 'no'} |" if judge else "") + cond)
+    sys.stdout.flush()
 
 
 def base_variants():
-    v = [(f"recurrent weights x {g:g}", dict(g_all=g), g) for g in GS]
+    v = [("unchanged" if g == 1 else f"recurrent weights x {g:g}", dict(g_all=g), g) for g in GS]
     v += [(f"candidate rows only x {g:g}", dict(g_cand=g), g) for g in GS[1:]]
     v += [(f"update-gate bias {b:+g}", dict(z_shift=b), 1.0) for b in (-1.0, -2.0)]
     return v
@@ -494,8 +524,8 @@ def base_variants():
 def more_variants():
     v = [(f"recurrent weights x {g:g}", dict(g_all=g), g) for g in (2.5, 3.25, 3.5, 3.75)]
     v += [(f"candidate rows only x {g:g}", dict(g_cand=g), g) for g in (3.5,)]
-    v += [(f"recurrent x {g:g}, update-gate bias {b:+g}", dict(g_all=g, z_shift=b), g) for b in (-1.0, -2.0) for g in (2.0, 2.5, 3.0, 3.5)]
-    v += [(f"candidate x {g:g}, update-gate bias {b:+g}", dict(g_cand=g, z_shift=b), g) for b in (-1.0, -2.0) for g in (3.0,)]
+    v += [(f"recurrent weights x {g:g}, update-gate bias {b:+g}", dict(g_all=g, z_shift=b), g) for b in (-1.0, -2.0) for g in (2.0, 2.5, 3.0, 3.5)]
+    v += [(f"candidate rows x {g:g}, update-gate bias {b:+g}", dict(g_cand=g, z_shift=b), g) for b in (-1.0, -2.0) for g in (3.0,)]
     v += [(f"ten connections x {g:g}, own weight x 1", dict(g_ten=g), None) for g in (3.0, 3.5, 4.0)]
     return v
 
@@ -504,10 +534,8 @@ def run_variants(names, variants):
     for name in names:
         net = start_net(name)
         mu = candidate_spectrum(net) if net.K == 1 else None
-        print(f"{net.name}: the start changed" + (f"; largest size of an eigenvalue of the candidate rows {float(np.abs(mu).max()):.3f}, largest real part {float(mu.real.max()):.3f}" if mu is not None else ""))
-        print(LEGEND)
-        for label, kw, g_n in variants:
-            variant_row(net.changed(**kw), label, mu if g_n is not None else None, g_n)
+        print(f"{net.name}: the start changed" + (f" (eigenvalues of the candidate rows: largest size {float(np.abs(mu).max()):.3f}, largest real part {float(mu.real.max()):.3f})" if mu is not None else ""))
+        tables(net, [row(net.changed(**kw), label, mu if g_n is not None else None, g_n) for label, kw, g_n in variants])
 
 
 # ================================================================ check
@@ -609,7 +637,7 @@ if "variants" in want:
     print("variants. Item 2: the starting weights changed (the first digit of the first operand changed; 300 pairs at each of 0, 4, 12 letters; 100 pairs of 40 letters)")
     run_variants([n for n in nets_wanted if n != "f10"], base_variants())
     if "f10" in nets_wanted:
-        run_variants(["f10"], [v for v in base_variants() if v[0] in ("recurrent weights x 1", "recurrent weights x 3", "recurrent weights x 4")])
+        run_variants(["f10"], [v for v in base_variants() if v[0] in ("unchanged", "recurrent weights x 3", "recurrent weights x 4", "recurrent weights x 6")])
 
 if "more" in want:
     print("more. Further starts, tried after the first results")
@@ -618,20 +646,24 @@ if "more" in want:
 # ================================================================ trained
 if "trained" in want:
     print("trained. Item 3: the same measurements on the final weights")
-    todo = [("e47", arm, rule) for arm, rule in V47.RUNS] + [("e49", "in16", "B"), ("e49", "in16", "S")]
-    for kind, a, rule in todo:
-        net = e47_layer(a, rule, start=False) if kind == "e47" else e49_layer(a, rule, start=False)
-        show_passage(net, by_delay=False)
-        lm, sz = long_item(net)
-        print(f"   {net.name}: items of 40 letters, root-mean-square difference over all cells at 0, 1, 10, 20, 40 positions after the changed byte: "
-              + ", ".join(fmt(sz[d]) for d in (0, 1, 10, 20, 40)) + "; by group at 10, 20, 40: "
-              + "; ".join(f"{nm} " + " ".join(fmt(float(np.sqrt(lm['ms'][d, g]))) for d in (10, 20, 40)) for g, nm in enumerate(net.names)) + f"   {clock()}", flush=True)
-        Wc = net.Wc
-        if kind == "e47":
-            print("      root mean square of a cell's recurrent weights, by group: " + ", ".join(f"{nm} {float(np.sqrt((Wc[:, net.ring == g] ** 2).mean())):.3f}" for g, nm in enumerate(net.names))
-                  + "; candidate rows alone: " + ", ".join(f"{float(np.sqrt((Wc[2][net.ring == g] ** 2).mean())):.3f}" for g in range(net.G)))
-        else:
-            print(f"      root mean square of the kept recurrent weights {float(np.sqrt((Wc ** 2).mean())):.3f}; candidate rows alone {float(np.sqrt((Wc[2] ** 2).mean())):.3f}")
+    RULE = {"S": "the sweep", "B": "back-propagation"}
+    sets = [(f"E47 {arm}", [(f"`{arm}`, start", lambda arm=arm: e47_layer(arm))] + [(f"`{arm}`, trained by {RULE[r]}", lambda arm=arm, r=r: e47_layer(arm, r, False)) for r in "SB"])
+            for arm in ("one", "place")]
+    sets.append(("E49 in16", [("`in16`, start", lambda: e49_layer("in16"))] + [(f"`in16`, trained by {RULE[r]}", lambda r=r: e49_layer("in16", r, False)) for r in "BS"]))
+    for title, members in sets:
+        rows, sizes = [], []
+        for label, make in members:
+            net = make()
+            rows.append(row(net, label))
+            Wc = net.Wc
+            if net.G > 1:
+                sizes.append(f"   | {label} | " + " | ".join(f"{float(np.sqrt((Wc[:, net.ring == g] ** 2).mean())):.3f}" for g in range(net.G)) + " | "
+                             + " | ".join(f"{float(np.sqrt((Wc[2][net.ring == g] ** 2).mean())):.3f}" for g in range(net.G)) + " |")
+            else:
+                sizes.append(f"   | {label} | {float(np.sqrt((Wc ** 2).mean())):.3f} | {float(np.sqrt((Wc[2] ** 2).mean())):.3f} |")
+        tables(net, rows, judge=False, title=title)
+        print(f"   {title}: root mean square of the kept recurrent weights" + (" (three gates: interface, ring 1, ring 2, ring 3; candidate rows alone: the same four)" if net.G > 1 else " (three gates; candidate rows alone)"))
+        print("\n".join(sizes), flush=True)
 
 # ================================================================ arith
 if "arith" in want:
@@ -669,9 +701,13 @@ if "arith" in want:
             keep = float(np.sqrt(zi ** 2 + (ki * w) ** 2 * (1 + n_if)))
             print(f"      what the interface keeps from the changed byte to the next position: expected sqrt(z^2 + c^2 (1 + {n_if:.2f})) = {keep:.3f} with root mean square z {zi:.3f} and c {ki * w:.4f};"
                   f" measured {float(np.sqrt(m['ms'][1, 0] / m['ms'][0, 0])):.3f}")
-            mfar = float((ring[src[ring == 1]] == 0).sum(1).mean())
-            print(f"      a difference that lasts (as between two different items): a cell settles at its candidate, so the factor per ring is r (1 - n^2) w sqrt(sources from the ring before)"
-                  f" = {st.mean('r', others):.3f} x {w:.4f} x sqrt({mfar:.2f}) = {st.mean('r', others) * w * np.sqrt(mfar):.3f} for ring 1")
+            sd = m["sd"]
+            line = []
+            for g in (1, 2, 3):
+                mg = float((ring[src[ring == g]] == g - 1).sum(1).mean())
+                line.append(f"ring {g}: {st.mean('r', others):.3f} x {w:.4f} x sqrt({mg:.2f}) = {st.mean('r', others) * w * np.sqrt(mg):.3f}, measured {float(sd[ring == g].mean() / sd[ring == g - 1].mean()):.3f}")
+            print("      a difference that lasts (as between two different items): a cell settles at its candidate, so the expected factor from one ring to the next is r (1 - n^2) w sqrt(sources in the ring before);"
+                  " measured: the standard deviation over 300 items of a state at '=', a ring's mean over the mean of the ring before:\n         " + "\n         ".join(line))
         else:
             lab = m["lab"]                                               # (pairs, C): 1 for cells that read neither byte
             xa, xb, s, eq, a, b = pairs(12, "first", 75)
