@@ -167,10 +167,10 @@ class Stats:
         return self.abs_h[m].mean() / self.n_h
 
 
-def forward(net, x, stats=None):
+def forward(net, x, stats=None, kick=None):
     """Every cell's state after every position, (L, B, C), in double precision.  A cell of period q above 1 is updated at the
     positions of its phase from the sum of its sources' states over the last q positions, weighted by its step weights, as in
-    e47_local_reader.forward."""
+    e47_local_reader.forward.  kick = (t, d): the array d (B, C) is added to the states after position t."""
     B, L = x.shape
     C = net.C
     Hs = np.empty((L, B, C))
@@ -203,6 +203,8 @@ def forward(net, x, stats=None):
             if stats is not None:
                 stats.add(cells, r, z, n)
         Hs[t] = h if new is None else new
+        if kick is not None and kick[0] == t:
+            Hs[t] += kick[1]
     if stats is not None:
         stats.states(Hs)
     return Hs
@@ -426,6 +428,20 @@ def show_passage(net, changes=("first", "last"), per_task=75, by_delay=True):
     return out
 
 
+def way_back(net, per_task=75, size=0.01):
+    """E47: a difference put into the cells of ring 3, and what arrives at the interface.  In the 300 first items of 12
+    letters, independent normal numbers of standard deviation `size` are added to the states of the ring-3 cells after the
+    first digit of the first operand; the run is compared with the unchanged run.  Returns the interface's root-mean-square
+    difference over every later position over ring 3's, and the interface's largest at any later position over the size put in."""
+    xa, _, s, eq, _, _ = pairs(12, "first", per_task)
+    far = net.ring == 3
+    d = np.zeros((len(xa), net.C))
+    d[:, far] = np.random.default_rng(20261117).normal(0.0, size, (len(xa), int(far.sum())))
+    Dq = (forward(net, xa, kick=(s, d))[s:] - forward(net, xa)[s:]) ** 2
+    inner, outer = Dq[:, :, net.ring == 0].mean((1, 2)), Dq[:, :, far].mean((1, 2))
+    return float(np.sqrt(inner[1:].mean() / outer[1:].mean())), float(np.sqrt(inner[1:].max() / outer[0]))
+
+
 def long_item(net, per_task=25):
     """Items of 40 letters, the first digit of the first operand changed: the root mean square of the difference at 0, 10,
     20 and 40 positions after it, over all cells and by group."""
@@ -476,6 +492,8 @@ def row(net, label, mu=None, g_n=None, per_task=75, long_per_task=25):
         res["ok_all"] = res["ok"] and all(res["share"][k][far] >= THIRD for k in LETTERS)
     res["dist"], res["part"] = distribution(ms[12]["cell"])
     res["part0"] = distribution(ms[12]["cell0"])[1]
+    if hasattr(net, "ring"):
+        res["back"] = way_back(net, per_task)
     if mu is not None:
         res["zk"] = (st.mean("z"), st.mean("k"))
         res["expected"] = expected_factor(mu, res["zk"][0], res["zk"][1], g_n)
@@ -490,14 +508,14 @@ def tables(net, rows, judge=True, title=None):
     lst = lambda v: ", ".join(sg(x) for x in v[1:])
     print(f"   {title}: passage. Later positions: every position after the changed byte to the second answer digit.")
     if grouped:
-        between = "between" in rows[0]
+        between, back = "between" in rows[0], "back" in rows[0]
         print(f"   Entries: {', '.join(net.names[1:])}, each over the group `{net.names[0]}`.")
         print("   | Start | First digit changed, 0 letters | 4 letters | 12 letters | Last digit changed | At `=`, 12 letters | Farthest group at its largest |"
-              + (" Between items at `=` |" if between else ""))
-        print("   |---|---|---|---|---|---|---|" + ("---|" if between else ""))
+              + (" Between items at `=` |" if between else "") + (" Way back: interface over ring 3; interface at its largest |" if back else ""))
+        print("   |---|---|---|---|---|---|---|" + ("---|" if between else "") + ("---|" if back else ""))
         for r in rows:
             print(f"   | {r['label']} | {lst(r['share'][0])} | {lst(r['share'][4])} | {lst(r['share'][12])} | {lst(r['last'])} | {lst(r['eq'])} | {sg(r['peak'][-1])} |"
-                  + (f" {', '.join(sg(x) for x in r['between'])} |" if between else ""))
+                  + (f" {', '.join(sg(x) for x in r['between'])} |" if between else "") + (f" {sg(r['back'][0])}; {sg(r['back'][1])} |" if back else ""))
     else:
         print("   Entries, items of 12 letters, first digit changed: a cell's root-mean-square difference over the later positions, over that of all cells, at three percentiles of the cells; participation.")
         print("   | Start | Cell at 5% | Median cell | Cell at 95% | Participation, later positions | Participation at the changed byte | All cells at their largest |")
@@ -540,7 +558,7 @@ def more_variants():
 
 
 def directed_variants():
-    return [("unchanged", dict(), None)] + [(f"connections from nearer the interface x {g:g}", dict(g_out=g), None) for g in (2.0, 3.0, 4.0, 6.0, 8.0, 12.0)]
+    return [("unchanged", dict(), None)] + [(f"connections from nearer the interface x {g:g}", dict(g_out=g), None) for g in (2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 12.0)]
 
 
 def run_variants(names, variants):

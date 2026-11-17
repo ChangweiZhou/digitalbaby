@@ -39,14 +39,14 @@ Status words: *running*; *next* (its brief is written or in check and it starts 
 | No. | Item | Answers | By | Status |
 |---|---|---|---|---|
 | 1 | Do differences between items pass from cell to cell at the starting weights of the local networks (E47, E49, E50 forms), and at what starting size would they? | C | reviewer, saved weights | running |
-| 2 | Which cells and how many directions of the cells' state are in use in the limited and local networks (E42, E47, E49)? | A, C | reviewer, saved weights | running |
+| 2 | Which cells and how many directions of the cells' state are in use in the limited and local networks (E42, E47, E49)? | A, C | reviewer, saved weights | done (21:50) |
 | 3 | The inventory of every setting of E26 to E50 that has only one value in the record | all | reviewer, record | done (21:31) |
 | 5 | The first long lives, release 1 (conventional learner; store; no decay), with a table of what is kept at a return by the number of earlier visits | A, B1 | worker | running |
 | 6 | The sweep's long lives beside release 1 (with and without the store; 1,024 visits; four worlds) | B1 | helper | running |
 | 7 | E50: a fixed input code in which a value stands for one byte; stages 1 to 3 | C | worker | running |
-| 26 | E40's saving counted in the learner's whole experience, not only in items of the new family | B2 | reviewer, receipts | queued |
-| 27 | E38's two checks that failed under the sweep and have no ruling on file | record | reviewer, record | queued |
-| 28 | The first-visit level of the sweep and of the store arm at 256 updates a visit, for which the visit length was never calibrated | B1 | reviewer, receipts; the trial's report | queued |
+| 26 | E40's saving counted in the learner's whole experience, not only in items of the new family | B2 | reviewer, receipts | running (21:46) |
+| 27 | E38's two checks that failed under the sweep and have no ruling on file | record | reviewer, record | running (21:46) |
+| 28 | The first-visit level of the sweep and of the store arm at 256 updates a visit, for which the visit length was never calibrated | B1 | reviewer, receipts; the trial's report | running (21:46) |
 
 **Tier 1: next. Each either varies a setting on which standing conclusions rest, or answers a requirement directly.**
 
@@ -158,3 +158,4 @@ D is the inventory of the dense line (57 entries), S that of structure and the l
 | 21:37 | Item 8: the check of E52's brief found ten defects (the main ones: holding rate times decay fixed changes the size of the weights with the rate; the readings lay inside one seed's scatter; the lower rate could not be read at E41's dose; the length test held taught pairs at a quarter of the pairs). Revision 2 enters all ten; its worker is started. |
 | 21:42 | Item 4: the check of E51's brief found seven defects (the main one: the keeping in `keyed` was not exact, because the first family uses every direction at the readout's last matrix; a correct implementation would have failed the brief's own check). The reviewer ran the check's script (`check_e51_brief.py`): 3.9e-3 of drift after 8 updates under revision 1's rule, 1.5e-9 under the repair. Revision 2 enters all seven and adds Part B (shares of rehearsal, rehearsal at intervals, smaller steps); its worker is started. |
 | 21:43 | Item 6: the helper's checks passed; the sweep's long lives run since 21:31 (about 30 CPU-hours, 11 to 12 hours of wall time). |
+| 21:47 | Item 2 done (`CELLS_IN_USE_IN_LIMITED_NETWORKS_20261117.md`; the reviewer ran its script again). In the dense network, in E42's limited and periodic networks and in E49's network with a limited input, nothing is unused: no cell's state is independent of the item, and the first family occupies 245 to 256 of the 257 directions of the cells' state. In E47's networks of 1,024 cells, 435 to 628 cells do not vary with the item, none of them at the boundary, and the first family occupies 303 to 334 of 1,025 directions; unrelated items do not move those cells either, and only 13 to 75 of them are read by a boundary cell. So a local network leaves a large part unused, and that part is at present out of reach. Item 12 keeps its place behind items 1 and 9. |

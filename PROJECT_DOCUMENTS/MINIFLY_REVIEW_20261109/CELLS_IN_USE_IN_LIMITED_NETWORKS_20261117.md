@@ -1,14 +1,12 @@
 # Cells in use and directions in use in the networks with limited or local connections (17 November 2026)
 
-Reviewer's document, item 2 of `COORDINATION_20261117/PLAN.md`. It is a measurement on saved weights. Nothing was trained, torch was not used, and no code of another branch was run: the weight files were read with `git show`, one at a time. Every figure below is printed by `cells_in_use_limited.py` in this folder; section 7 gives the commands. Every statement is for seed 73129 only.
+Reviewer's document, item 2 of `COORDINATION_20261117/PLAN.md`. It is a measurement on saved weights. Nothing was trained, torch was not used, and no code of another branch was run: the weight files were read with `git show`, one at a time. Every figure below is printed by `cells_in_use_limited.py` in this folder unless another source is named with it; a few sums, differences and percentages are formed from printed figures. Section 8 gives the commands. Every statement is for seed 73129 only.
 
 ## 1. The question
 
-In the dense network every cell is in use on every item, including items of an unrelated task made of bytes that the network has never met, and the items of the first family occupy 255 or 256 of the 257 directions of the cells' state (`cells_in_use.py`, `directions_in_use.py`; memo `MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md`, section 29). The memo concluded that new learning changes every connection, so that nothing learned earlier is left untouched.
+In the dense network every cell is in use on every item, including items of an unrelated task made of bytes that the network has never met, and the items of the first family occupy 255 or 256 of the 257 directions of the cells' state (`cells_in_use.py`, `directions_in_use.py`; memo `MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md`, section 29; the terms are defined in section 2 below). The memo concluded that new learning changes every connection, so that nothing learned earlier is left untouched.
 
 Is the same true in the networks whose connections were limited or made local (E42, E47, E49), or do those networks leave cells, or directions of the cells' state, unused by the first family?
-
-**The answer in three sentences.** In the seven networks of 256 cells in which every cell receives the input (E42's `G`, `F10`, `P8`; E49's `in16`) nothing is left unused: every cell's state varies with the item and the family's items occupy 245 to 256 of the 257 directions. In E47's four networks of 1,024 cells, 435 to 628 cells have a state that does not vary with the item (below 0.01; 567 to 697 below 0.05), all of them outside the interface and 419 to 526 of them two or more connections away from it, and the family's items occupy 303 to 334 of the 1,025 directions. These cells are not changed by unrelated items either, and whether new learning would use them cannot be shown by a measurement on fixed weights.
 
 ## 2. Terms
 
@@ -26,7 +24,11 @@ Is the same true in the networks whose connections were limited or made local (E
 - **Inside the family's directions**: the share of the squared size of a set's vectors that lies in the span of the leading eigenvectors of the family's matrix that hold 99.99% of its trace.
 - **The networks.** E42 (256 cells, every cell receives the whole input and is read by the readout): `G`, every cell reads every cell (its tensors are bit-equal to the birth of E26, `E42_THREE_SEEDS_VERIFICATION_20261117.md`, part A); `F10`, each cell reads itself and 10 fixed cells within three rows and columns of it on a 16 x 16 grid; `P8`, as `F10` with connections replaced during training and with 128, 64, 32 and 32 cells updated every 1, 2, 4 and 8 positions. E49 `in16`: `F10` in which each cell reads 16 of the 512 values of the code of a byte. E47 (1,024 cells on a 32 x 32 grid, each reading itself and 10 cells within three rows and columns): the 256 **interface cells** of one 16 x 16 patch receive the input and are read by the readout; the 768 **far cells** receive no input and are not read. A far cell's **ring** is the number of connections between it and the interface: ring 1 holds the 228 far cells within three grid steps of the patch, ring 2 the 300 cells four to six steps away, ring 3 the 240 cells seven or eight steps away (as in `E47_TRIAL_VERIFICATION_20261117.md`). In the arm `one` every cell is updated at every position; in the arm `place` the far cells are updated every 2, 4, 8 or 16 positions, the more rarely the farther from the interface.
 
-## 3. Files, items and method
+## 3. The answer in short
+
+In the seven networks of 256 cells in which every cell receives the input (E42's `G`, `F10`, `P8`; E49's `in16`) nothing is left unused: every cell's state varies with the item and the family's items occupy 245 to 256 of the 257 directions at the 99.99% level. In E47's four networks of 1,024 cells, 435 to 628 cells have a state that does not vary with the item (below 0.01; 567 to 697 below 0.05), all of them outside the interface and 419 to 526 of them two or more connections away from it, and the family's items occupy 303 to 334 of the 1,025 directions at the same level. These cells are not changed by unrelated items either, and whether new learning would use them cannot be shown by a measurement on fixed weights.
+
+## 4. Files, items and method
 
 **Files** (final weights after 24,576 updates, seed 73129):
 
@@ -40,7 +42,7 @@ Is the same true in the networks whose connections were limited or made local (E
 
 **Method.** The states of the cells after every position come from the reader's own forward computation. The readers do not return the gates, so the script computes z and n of every cell at every position from the reader's state of the position before and the weights. It does this in another arrangement than the readers (dense matrices built from the saved masks or source lists, every cell computed at every position and the updated ones selected afterwards). At every position of every item it checks that (1 - z) n + z h gives the reader's next state for the cells updated there and that the other cells keep their state.
 
-**Checks of the method** (commands in section 7).
+**Checks of the method** (commands in section 8).
 
 1. *The gates.* The largest difference between the state computed from the script's gates and the reader's next state is 0 in the six networks of E42 and between 2.9e-7 and 5.9e-7 in the four of E47 and in `in16`. With one deliberate error put into the script's computation the difference is large: equal step weights in place of the saved ones give 2.0 in `P8` and 0.70 to 0.71 in `place`; an update taken one position early gives 2.0 in `P8` and 1.5 to 1.8 in `place`; the candidate computed without the reset gate gives 1.4 to 2.0 in all eleven networks.
 2. *The dense figures of section 29 are reproduced on `G`.* On `G` the script gives 179, 244, 256 (S) and 165, 239, 255 (B) directions at 99%, 99.9% and 99.99%; `directions_in_use.py` prints the same six numbers for the births of seed 73129 in its row "recurrent". On the unrelated panel the script gives a change factor of 0.235 / 0.392 / 0.498 (S) and 0.150 / 0.367 / 0.556 (B) at the 5th, 50th and 95th percentile of cells, and a state size of 0.352 / 0.445 / 0.547 and 0.396 / 0.533 / 0.690; `cells_in_use.py A` prints the same twelve numbers for the births in its row "unrelated, 12 fillers".
@@ -49,7 +51,7 @@ Is the same true in the networks whose connections were limited or made local (E
 5. *The answers.* Through the reader, the networks answer 95.7% to 99.5% of the 2,080 family items with the whole answer right (table 1) and none of the 300 unrelated items.
 6. *Repetition.* Six full runs of the script printed the same figures.
 
-## 4. Tables
+## 5. Tables
 
 In every table "S" and "B" are the two rules, "family" is the set of 2,080 taught items and "unrelated" the panel of 300 items. A pair of numbers "a, b" in a column of cells is the number of cells below 0.01 and the number below 0.05.
 
@@ -184,7 +186,7 @@ The mean size of a recurrent weight over all cells of the interface and of rings
 What table 4 shows, in sentences.
 
 - *Where.* No interface cell is among them. At the mark 0.01 they are 7 to 45% of ring 1 (16 to 102 of 228), 62 to 95% of ring 2 (187 to 286 of 300) and 97 to 100% of ring 3 (232 to 240 of 240). Of the 540 cells of rings 2 and 3, 419 (`one` S), 500 (`one` B), 526 (`place` S) and 507 (`place` B) do not vary at the mark 0.01, and 507, 528, 539 and 536 at the mark 0.05.
-- *Unrelated items do not change them.* Of the cells that do not vary on the family, all but at most one do not vary on the unrelated items either, and 428 of 435, 539 of 539, 625 of 628 and 553 of 555 hold, at each position, the same mean state on unrelated items as on the family's to within 0.01.
+- *Unrelated items do not change them.* Of the cells that do not vary on the family, all but at most one do not vary on the unrelated items either, and 428 of 435, 539 of 539, 625 of 628 and 553 of 555 hold on unrelated items the same mean state as on the family's items to within 0.01 (the difference at a position, averaged over positions 1 to 18).
 - *They are connected to cells that vary.* At the mark 0.01 such a cell has on average 1.28 to 2.12 sources that vary and is read by 1.25 to 2.18 cells that vary; 75, 160, 260 and 183 of them (`one` S, `one` B, `place` S, `place` B) have neither, of which 68, 135, 205 and 151 lie in ring 3. Only 13 to 75 of them are read by an interface cell; an interface cell can read no far cell outside ring 1.
 - *What kind of cells they are differs between the four networks.* In `one` S they hold a constant state that is not near zero (median 0.65 in ring 2 and 0.79 in ring 3) and their change factor is not small (median 0.24 to 0.37); 66 of the 435 have a state size below 0.05. In `one` B they hold a constant state near 1 in size (median 0.91 to 0.96), and 177 of the 539 have a change factor below 0.05 on both sets. In `place` S 494 of the 628 have a state size below 0.05: the recurrent weights of the cells of ring 3 have a mean size of 0.001 against 0.201 at the interface, and their median change factor is 0.500, which is the value of the formula for a cell whose weights and state are zero (z = 0.5, n = 0, h = 0). In `place` B the 240 cells of ring 3 are of this last kind (weights 0.006, median state size 0.000, median change factor 0.500), and the cells of rings 1 and 2 that do not vary hold constant states that are not near zero (median 0.79 and 0.48).
 
@@ -197,9 +199,9 @@ The limit of `in16` is at the input, so the same count was made there. The vecto
 | The whole code, of 513 | 9 | 17 | 22 | 28 | 0.9891 |
 | One cell's 16 values and the constant, of 17: least / median / most over the 256 cells | 6 / 8 / 9 | 9 / 11 / 12 | 12 / 14 / 16 | 16 / 17 / 17 | 0.9977 / 0.9995 / 0.9999 |
 
-The family's bytes occupy 12 to 16 of the 17 input directions of a cell at 99.99% and 16 or 17 above 1e-6, and the codes of the unrelated task's bytes, which the network has never met, lie inside those directions to 99.77% or more for every cell. Reading only 16 input values does not give a new byte an input direction that the family's bytes leave unoccupied. This is the finding of the memo's section 29 for the dense input map (reading 3), found again for each cell's 16 values.
+The family's bytes occupy 12 to 16 of the 17 input directions of a cell at 99.99% and 16 or 17 above 1e-6, and the input vectors of the unrelated items, whose bytes the network has never met, lie inside those directions to 99.77% or more of their squared size for every cell. Reading only 16 input values does not give a new byte an input direction that the family's bytes leave unoccupied. This is the finding of the memo's section 29 for the dense input map (reading 3), found again for each cell's 16 values.
 
-## 5. Conclusions
+## 6. Conclusions
 
 One sentence for each network: is there a part that the first family leaves unused, how large, and where.
 
@@ -211,7 +213,7 @@ One sentence for each network: is there a part that the first family leaves unus
 | `F10` B | There is none: every cell varies with the item, the family occupies 252 of 257 directions at 99.99% and 255 at the mark 0.05, and for every cell all 12 directions of the cells it reads are occupied. |
 | `P8` S | There is none: every cell of every period varies with the item, the family occupies 253 of 257 directions at 99.99% and 256 at the mark 0.05, and for every cell all 12 directions of the cells it reads are occupied. |
 | `P8` B | There is none: every cell of every period varies with the item (5 cells have a change factor below 0.01 on the family and above it on unrelated items), the family occupies 254 of 257 directions at 99.99% and all 257 at the mark 0.05, and for every cell all 12 directions of the cells it reads are occupied. |
-| `in16` B | There is none among the cells and none at the input: every cell varies with the item, all 257 directions are occupied at the mark 0.01 (245 at 99.99%, 197 at the mark 0.05, so 60 directions are occupied with a root-mean-square size between 0.01 and 0.05), and of the 17 input directions of a cell the family's bytes occupy 12 to 16 at 99.99%, with the unrelated bytes' codes inside them to 99.77% or more. |
+| `in16` B | There is none among the cells and none at the input: every cell varies with the item, all 257 directions are occupied at the mark 0.01 (245 at 99.99%, 197 at the mark 0.05, so 60 directions are occupied with a root-mean-square size between 0.01 and 0.05), and of the 17 input directions of a cell the family's bytes occupy 12 to 16 at 99.99%, with the unrelated items' input vectors inside them to 99.77% or more. |
 | `one` S | There is one: 435 of the 1,024 cells (567 at the mark 0.05) have a state that does not vary with the item, none at the interface, 16 in ring 1, 187 in ring 2 and 232 in ring 3, and the family occupies 320 of 1,025 directions at 99.99% (392 at the mark 0.01); restricted to the 540 cells of rings 2 and 3 and the constant it occupies 19 of 541. |
 | `one` B | There is one: 539 cells (609 at the mark 0.05) do not vary with the item, none at the interface, 39 in ring 1, 260 in ring 2 and all 240 of ring 3, and the family occupies 322 of 1,025 directions at 99.99% (407 at the mark 0.01); restricted to rings 2 and 3 and the constant it occupies 10 of 541. |
 | `place` S | There is one: 628 cells (697 at the mark 0.05) do not vary with the item, none at the interface, 102 in ring 1, 286 in ring 2 and all 240 of ring 3, 494 of them with a state size below 0.05, and the family occupies 303 of 1,025 directions at 99.99% (334 at the mark 0.01); restricted to rings 2 and 3 and the constant it occupies 26 of 541. |
@@ -220,8 +222,8 @@ One sentence for each network: is there a part that the first family leaves unus
 Three readings that the tables support.
 
 1. **Limiting which cells a cell reads, how often it is updated, or which input values it reads does not leave anything unused.** `F10`, `P8` and `in16` have the figures of the dense network: no cell below 0.05 in variation or state size, and 245 to 254 of 257 directions at 99.99% against 255 or 256 in `G`. This agrees with reading 1 of the memo's section 29, which was drawn from the dense network alone.
-2. **A part without activity that depends on the item exists only where cells receive no input, and it is the part two or more connections away from the interface.** The 256 interface cells of E47 have the figures of a network of 256 cells (table 1, lower part; table 3: 251 to 253 of 257 directions at 99.99%). Ring 1 lies between. Rings 2 and 3 are the cells that `E47_TRIAL_VERIFICATION_20261117.md` found to take no part in the answers; the present measurement adds the count per cell, the count of directions, and that unrelated items leave them as they are.
-3. **By the two quantities of section 29 (change factor and state size) most of these cells are not out of use.** In `one` S 364 of the 435 cells have a state size of 0.05 or more and a change factor of 0.05 or more on at least one of the two sets, and in `one` B 362 of the 539. A rule that changes the connections of every cell whose change factor and state are not zero would change the connections of these cells and the connections that leave them. What distinguishes them is only that their state carries nothing about the item. In `place` 494 (S) and 242 (B) of them have a state size below 0.05.
+2. **Among the networks measured, a part without activity that depends on the item exists only where cells receive no input, and it is the part two or more connections away from the interface.** The 256 interface cells of E47 have the figures of a network of 256 cells (table 1, lower part; table 3: 251 to 253 of 257 directions at 99.99%). Ring 1 lies between. Rings 2 and 3 are the cells that `E47_TRIAL_VERIFICATION_20261117.md` found to take no part in the answers; the present measurement adds the count per cell, the count of directions, and that unrelated items leave them as they are.
+3. **By the two quantities of section 29 (change factor and state size) the cells that do not vary are not all out of use.** At the mark 0.01, 364 of the 435 such cells of `one` S have a state size of 0.05 or more and a change factor of 0.05 or more on at least one of the two sets; so have 362 of the 539 of `one` B, 131 of the 628 of `place` S and 271 of the 555 of `place` B. A rule that changes the connections of every cell whose change factor and state are not zero would change the connections into these cells and the connections that leave them. What distinguishes them is that their state carries nothing about the item. The others are the cells with a state size below 0.05 (66, 0, 494, 242 in the four networks) and the cells with a change factor below 0.05 on both sets (5, 177, 3, 42).
 
 **What this cannot show.**
 
@@ -229,10 +231,10 @@ Three readings that the tables support.
 - **Whether new learning in that part would leave the first family as it is.** The cells that do not vary are read by cells that vary (table 4), and in `one` those of rings 2 and 3 hold constant states with a median size of 0.65 to 0.96. If learning changed those states, the cells that read them would receive a changed input. `E47_TRIAL_VERIFICATION_20261117.md` found that holding rings 2 and 3 at their mean leaves the family's scores within 0.7 of a point; that test did not move them to other values.
 - **Whether an error reaches those cells under either rule,** which decides whether their connections change at all. This needs the gradients, which need torch.
 - **Whether the cells with weights near zero in `place` can be brought back by learning.**
-- **Whether a change kept out of the family's directions leaves the family intact in these networks.** The test of `directions_in_use.py` (its part F3: the change projected away from the family's directions) was not made here, because these networks have no saved weights after unrelated learning in the files used.
+- **Whether a change kept out of the family's directions leaves the family intact in these networks.** The test of `directions_in_use.py` (its part F3: the change made by unrelated learning projected away from the family's directions) was not made here. It needs weights after unrelated learning. E43's second addendum holds them for `F10` (its two `P8` files are incomplete, memo section 28.6), so the test could be made for `F10`; I know of no such weights for E47 or `in16`.
 - **Anything about another seed.**
 
-## 6. For the plan
+## 7. For the plan
 
 Item 12 of the plan (E56: an unrelated task learned in E47's network) waits for this item. Three facts of the tables bear on its brief; they are observations, and the design is the coordinator's.
 
@@ -240,22 +242,22 @@ Item 12 of the plan (E56: an unrelated task learned in E47's network) waits for 
 2. In the four networks that part is of different kinds: constant states with gates that are not shut (`one` S), constant states near 1 with 177 cells whose change factor is below 0.05 (`one` B), and states near zero with weights near zero (`place`, ring 3 under both rules and rings 1 and 2 under S).
 3. Unrelated items presented to the trained network do not reach that part, so a measurement of whether learning brings it into use has to be made during the learning.
 
-## 7. Commands and run times
+## 8. Commands and run times
 
 From the repository root, with `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1` set; `V=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/cells_in_use_limited.py`. Times are wall-clock times on a host of four cores that other jobs were using (load average between 1.5 and 6).
 
 | Command | What it prints | Time |
 |---|---|---|
-| `python3 -I $V` | every figure of sections 3 (checks 1, 4, 5), 4 and 5 for the eleven networks; the tables in the form used here are at the end of its output | 96 to 117 seconds (six runs) |
+| `python3 -I $V` | every figure of sections 4 (checks 1, 4, 5), 5 and 6 for the eleven networks; the tables in the form used here are at the end of its output | 96 to 117 seconds (six runs) |
 | `python3 -I $V G_S F10_S` | the same for the named networks only (names: `G_S G_B F10_S F10_B P8_S P8_B one_S one_B place_S place_B in16_B`) | 8 to 9 seconds |
 | `python3 -I $V X` | check 3: the variation of a state at `=` on the A panel, by ring, in E47's four networks | 8 seconds |
 | `python3 -I $V mutate:steps`, `mutate:phase`, `mutate:gate` | check 1: the largest difference with one deliberate error in the script's gates | 70 to 73 seconds each |
 | `python3 -I -B PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/directions_in_use.py` | check 2: the dense network's directions (its part F1, row "recurrent", seed 73129) | 35 seconds |
 | `python3 -I -B PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/cells_in_use.py A` | check 2: the dense network's change factor and state size on the unrelated panel, and the memo's correlations | 7 seconds |
 
-The script writes no file and holds one weight file in memory at a time. It reads the three branches at the commits of section 3, which must be present in the local repository. The two earlier scripts of the last two rows read the births of E26 on the default branch and E43's files on `origin/claude/peaceful-hopper-8ofq4i`.
+The script writes no file and holds one weight file in memory at a time. It reads the three branches at the commits of section 4, which must be present in the local repository. The two earlier scripts of the last two rows read the births of E26 on the default branch and E43's files on `origin/claude/peaceful-hopper-8ofq4i`.
 
-## 8. What was not checked
+## 9. What was not checked
 
 - **Other seeds, other configurations.** Seeds 93683 and 116089 of E42 exist and were not measured. E49's other settings (`I64`, `I16`, `out8`) and `in16` under the sweep were not measured; the request named `in16` under B. E47 has seed 73129 only.
 - **The vectors that a cell of period above 1 receives.** Such a cell reads a weighted mean of its sources' states over the positions of its period. The count "restricted to the cells a cell reads" uses the states themselves at every position. The weighted means are sums of those states, so they lie in the same directions, and the count given is an upper limit for the cells of `P8` and of the far cells of `place`. The count for the weighted means was not computed.
