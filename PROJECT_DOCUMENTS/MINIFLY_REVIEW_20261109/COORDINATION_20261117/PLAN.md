@@ -39,7 +39,7 @@ Status words: *running*; *next* (its brief is written or in check and it starts 
 | No. | Item | Answers | By | Status |
 |---|---|---|---|---|
 | 1 | Do differences between items pass from cell to cell at the starting weights of the local networks (E47, E49, E50 forms), and at what starting size would they? | C | reviewer, saved weights | running |
-| 2 | Which cells and how many directions of the cells' state are in use in the limited and local networks (E42, E47, E49)? | A, C | reviewer, saved weights | done (21:50) |
+| 2 | Which cells and how many directions of the cells' state are in use in the limited and local networks (E42, E47, E49)? | A, C | reviewer, saved weights | done (21:47) |
 | 3 | The inventory of every setting of E26 to E50 that has only one value in the record | all | reviewer, record | done (21:31) |
 | 5 | The first long lives, release 1 (conventional learner; store; no decay), with a table of what is kept at a return by the number of earlier visits | A, B1 | worker | running |
 | 6 | The sweep's long lives beside release 1 (with and without the store; 1,024 visits; four worlds) | B1 | helper | running |
