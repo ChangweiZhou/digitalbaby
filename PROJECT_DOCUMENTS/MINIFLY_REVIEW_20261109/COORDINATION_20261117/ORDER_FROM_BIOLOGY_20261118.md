@@ -1,5 +1,7 @@
 # What is to be done, derived from what a cell does (18 November 2026, draft 2, for Mr. Xu)
 
+**Superseded (18 November 2026, about 22:35 UTC).** Mr. Xu: this list does not show how it leads to end-to-end persistent learning with generalisation; what was asked for is a step-by-step route with the dependencies and overlaps of the goals. The route is `ROADMAP_TO_END_TO_END_PERSISTENT_LEARNING_20261118.md`. The reading by surprise proposed below is not the route's reading: from its step 2 on, the tissue is read by the bytes it emits itself.
+
 By the outside reviewer. Derived from Mr. Xu's statement of 18 November of what a cell does (`WHAT_A_NEURON_HAS_20261118.md`, section 8, his words), which is called *the statement* below, and not from the existing network. It starts nothing. Draft 1 is withdrawn: its items 1 to 3 had a cell that receives the answer, which no cell can.
 
 ## The statement, in short

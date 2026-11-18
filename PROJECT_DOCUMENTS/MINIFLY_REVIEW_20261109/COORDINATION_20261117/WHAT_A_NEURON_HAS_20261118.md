@@ -72,3 +72,13 @@ What follows at once, in the reviewer's words: there is no cell that is the outp
 ## 9. A further correction by Mr. Xu (22:18 UTC): the chemical signal is local
 
 Section 7, point 2, as the reviewer wrote it ("reaches many cells alike") and the reviewer's use of it ("a signal to all cells") are wrong. Mr. Xu: a cell may be able to release a chemical substance, a signal, into a region near it; the signal is local. This had been discussed before (his statement of 16 November that a neuron acts and adjusts only within its own neighbourhood), and the reviewer had forgotten it. Corrected: a cell's chemical signal reaches the cells of a region near the releasing cell, alike; it never reaches the whole tissue; how each receiving cell reads it is that cell's own matter. No signal of any kind reaches every cell.
+
+## 10. Mr. Xu's ruling of about 22:25 UTC: the two ends, and what was asked for
+
+The reviewer had written that "end to end" implies a byte-level output end beside the encoder, and had marked this as its own inference. Mr. Xu:
+
+> 我让你做的是为了达到这个目标，如何将它变成一步一步的路线图，因为各个目标之间势必有依赖性，有重叠。对有一个输出端和输入端不是问题，这两个也需要通过学习来学会如何输入/输出。为什么项目到了现在你还是有这么多迷惑的地方？我们这个项目一开始就是这个方向，从来没有变过！
+
+Translation (the reviewer's). What I asked of you is how, in order to reach this goal, to turn it into a step-by-step roadmap, because the goals necessarily depend on one another and overlap. That there is an output end and an input end is not a problem; these two also have to learn, through learning, how to take in and how to give out. Why, at this point in the project, are you still confused about so many things? This project has had this direction from the beginning; it has never changed.
+
+What follows: there is an input end and an output end; the cells at both ends learn as the other cells do; the tissue therefore acts, by emitting bytes. The direction is the one the project's objective contract of 26 September 2026 states. The roadmap asked for is `ROADMAP_TO_END_TO_END_PERSISTENT_LEARNING_20261118.md`.
