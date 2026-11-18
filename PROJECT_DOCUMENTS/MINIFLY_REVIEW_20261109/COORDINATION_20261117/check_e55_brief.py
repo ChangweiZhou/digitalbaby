@@ -159,8 +159,9 @@ def shut_start(rule, exact_zero=False):
 def forward(W, x):
     """The plain forward in double precision with everything kept (the brief's network; no added line). x: rows of equal length."""
     P = {k: np.asarray(v, np.float64) for k, v in W.items()}; B, L = x.shape; U = P["rnn.weight_hh_l0"].shape[1]
-    u = P["book.weight"][x]; z1 = np.tanh(u @ P["l1.weight"].T + P["l1.bias"])
-    gi = z1 @ P["rnn.weight_ih_l0"].T + P["rnn.bias_ih_l0"]
+    mm = lambda a, Wm: (a.reshape(-1, a.shape[-1]) @ Wm).reshape(a.shape[:-1] + (Wm.shape[1],))      # one product for all rows and positions
+    u = P["book.weight"][x]; z1 = np.tanh(mm(u, P["l1.weight"].T) + P["l1.bias"])
+    gi = mm(z1, P["rnn.weight_ih_l0"].T) + P["rnn.bias_ih_l0"]
     h = np.zeros((B, U)); c = dict(P=P, x=x, u=u, z1=z1, hp=[], r=[], z=[], n=[], ghn=[], h=[])
     for t in range(L):
         gh = h @ P["rnn.weight_hh_l0"].T + P["rnn.bias_hh_l0"]
@@ -168,8 +169,8 @@ def forward(W, x):
         c["hp"].append(h); c["r"].append(r); c["z"].append(z); c["n"].append(n); c["ghn"].append(gh[:, 2 * U:])
         h = (1 - z) * n + z * h; c["h"].append(h)
     Hs = np.stack(c["h"], 1)
-    z2 = np.tanh(z1 @ P["l2.weight"].T + P["l2.bias"] + Hs @ P["lm.weight"].T + P["lm.bias"])
-    c.update(Hs=Hs, z2=z2, logits=z2 @ P["l3.weight"].T + P["l3.bias"], az=gi[:, :, U:2 * U])
+    z2 = np.tanh(mm(z1, P["l2.weight"].T) + P["l2.bias"] + mm(Hs, P["lm.weight"].T) + P["lm.bias"])
+    c.update(Hs=Hs, z2=z2, logits=mm(z2, P["l3.weight"].T) + P["l3.bias"], az=gi[:, :, U:2 * U], mm=mm)
     return c
 
 
@@ -247,6 +248,209 @@ def start():
 
 
 PARTS["start"] = start
+
+
+# ================================================================ the gradient, by a backward pass written here
+def loss_and_grad(W, x, y, mask, local, want_grad=True):
+    """The loss of the runner's `step` (mean cross-entropy over the answer positions, credit through the whole item) and its gradient.
+    local=False: the exact gradient (rule B). local=True: the sweep (rule S): through each linear map the error goes back by the signs
+    of the map's weights times the mean magnitude of those weights (exp3_state.SignLinear), everything else as in rule B."""
+    c = forward(W, x); P = c["P"]; B, L = x.shape; U = P["rnn.weight_hh_l0"].shape[1]
+    lg = c["logits"][mask]; lg = lg - lg.max(1, keepdims=True); p = np.exp(lg); p /= p.sum(1, keepdims=True)
+    N = int(mask.sum()); loss = float(-np.log(p[np.arange(N), y[mask]]).mean())
+    if not want_grad:
+        return loss, None, c
+    Sg = (lambda Wm: np.sign(Wm) * np.abs(Wm).mean()) if local else (lambda Wm: Wm)
+    d = p.copy(); d[np.arange(N), y[mask]] -= 1; d /= N
+    dlog = np.zeros_like(c["logits"]); dlog[mask] = d
+    G = {}; z1, z2, Hs = c["z1"], c["z2"], c["Hs"]; fl = lambda a: a.reshape(-1, a.shape[-1]); mm = c["mm"]
+    G["l3.weight"] = fl(dlog).T @ fl(z2); G["l3.bias"] = fl(dlog).sum(0)
+    da2 = mm(dlog, Sg(P["l3.weight"])) * (1 - z2 ** 2)
+    G["l2.weight"] = fl(da2).T @ fl(z1); G["l2.bias"] = fl(da2).sum(0); G["lm.weight"] = fl(da2).T @ fl(Hs); G["lm.bias"] = fl(da2).sum(0)
+    dz1 = mm(da2, Sg(P["l2.weight"])); dHs = mm(da2, Sg(P["lm.weight"]))
+    Shh = Sg(P["rnn.weight_hh_l0"]); Ghh = np.zeros_like(P["rnn.weight_hh_l0"]); Gbhh = np.zeros(3 * U); dgi = np.zeros((B, L, 3 * U)); nxt = np.zeros((B, U))
+    daz_all = np.zeros((B, L, U)); dh_all = np.zeros((B, L, U))
+    for t in range(L - 1, -1, -1):
+        dh = dHs[:, t] + nxt; z, n, r, hp, ghn = c["z"][t], c["n"][t], c["r"][t], c["hp"][t], c["ghn"][t]
+        dan = dh * (1 - z) * (1 - n ** 2); dar = dan * ghn * r * (1 - r); daz = dh * (hp - n) * z * (1 - z)
+        dgi[:, t] = np.concatenate([dar, daz, dan], 1); dgh = np.concatenate([dar, daz, dan * r], 1)
+        Ghh += dgh.T @ hp; Gbhh += dgh.sum(0); nxt = dh * z + dgh @ Shh
+        daz_all[:, t] = daz; dh_all[:, t] = dh
+    G["rnn.weight_hh_l0"], G["rnn.bias_hh_l0"] = Ghh, Gbhh
+    G["rnn.weight_ih_l0"] = fl(dgi).T @ fl(z1); G["rnn.bias_ih_l0"] = fl(dgi).sum(0)
+    da1 = (dz1 + mm(dgi, Sg(P["rnn.weight_ih_l0"]))) * (1 - z1 ** 2)
+    G["l1.weight"] = fl(da1).T @ fl(c["u"]); G["l1.bias"] = fl(da1).sum(0)
+    Gb = np.zeros_like(P["book.weight"]); np.add.at(Gb, x.reshape(-1), fl(mm(da1, Sg(P["l1.weight"])))); G["book.weight"] = Gb
+    c.update(daz=daz_all, dh=dh_all)
+    return loss, G, c
+
+
+def stream_of(task):
+    return V.u_stream() if task == "unrelated" else V.conflict_stream()
+
+
+def batches(task):
+    st = stream_of(task)
+    while True:
+        yield V.batch_tensor([next(st) for _ in range(64)])
+
+
+MATSETS = {"keyed": {"ih": V.OLD, "hh": V.OLD, "lm": np.arange(H0), "l2": np.arange(H0)},
+           "shut": {"ih": np.concatenate([V.OLD, Z_RES]), "hh": np.concatenate([V.OLD, Z_RES]), "lm": np.arange(H1), "l2": np.arange(H1)},
+           "shut-gates-free": {"ih": V.OLD, "hh": V.OLD, "lm": np.arange(H1), "l2": np.arange(H1)}}
+
+
+def grad():
+    print("== grad: the gradient at the start `shut` on the first batch of 64 items of each new task's stream")
+    for rule in V.RULES:
+        W, Wk, dirs, in_use = shut_start(rule); local = rule == "S"
+        for task in V.TASKS:
+            x, y, mask = next(batches(task)); loss, G, c = loss_and_grad(W, x, y, mask, local)
+            if rule == "B" and task == "unrelated":                      # the backward pass against finite differences (double precision)
+                rng = np.random.RandomState(0); worst = 0.0
+                for k, pick in (("rnn.weight_ih_l0", Z_RES), ("rnn.weight_ih_l0", V.RES[-128:]), ("rnn.weight_hh_l0", V.OLD[:128]), ("lm.weight", ADDED), ("l2.weight", np.arange(H0)), ("l3.weight", np.arange(128, 192)), ("book.weight", np.arange(128, 226)), ("rnn.bias_ih_l0", Z_RES)):
+                    for _ in range(3):
+                        i = int(rng.choice(pick)); idx = (i,) if W[k].ndim == 1 else (i, int(rng.randint(W[k].shape[1])))
+                        e = 1e-4 * max(1.0, abs(float(W[k][idx]))); Wp = {n: v.astype(np.float64) for n, v in W.items()}; Wm_ = {n: v.astype(np.float64) for n, v in W.items()}
+                        Wp[k][idx] += e; Wm_[k][idx] -= e
+                        fd = (loss_and_grad(Wp, x, y, mask, False, False)[0] - loss_and_grad(Wm_, x, y, mask, False, False)[0]) / (2 * e)
+                        worst = max(worst, abs(fd - G[k][idx]) / max(abs(fd), abs(G[k][idx]), 1e-12))
+                print(f" the backward pass against central finite differences of the loss, 24 entries of eight tensors (the gate rows of the reserve among them): largest relative difference {worst:.1e}")
+            print(f"--- rule {rule}, {task}: loss {loss:.3f}; items of {x.shape[1]} positions")
+            q = lambda a: f"median {np.median(np.abs(a)):.1e}, largest {np.abs(a).max():.1e}, share above 1e-8 {100 * (np.abs(a) > 1e-8).mean():.0f}%, median of |g| / (|g| + 1e-8) {np.median(np.abs(a) / (np.abs(a) + 1e-8)):.2f}"
+            for m, wk, bk, _ in BLOCKS[:2]:
+                Gm = np.concatenate([G[wk], G[bk][:, None]], 1)
+                for label, rows, proj in (("gate rows of the reserve, as computed", Z_RES, False), ("gate rows of the reserve, projected away from the directions in use (the rule's first addition)", Z_RES, True),
+                                          ("candidate rows of the cells in reserve", np.arange(2 * U1 + U0, 3 * U1), False), ("reset rows of the cells in reserve", np.arange(U0, U1), False),
+                                          ("old rows, projected", V.OLD, True)):
+                    g = away(Gm[rows], dirs[m]) if proj else Gm[rows]
+                    print(f"   {wk} {label}: magnitude of an entry of the gradient: {q(g)}")
+            for k, sl, label in (("lm.weight", (slice(None), slice(U0, U1)), "lm, columns of the cells in reserve"), ("rnn.weight_hh_l0", (V.OLD, slice(U0, U1)), "recurrent matrix, old rows, columns of the cells in reserve"),
+                                 ("l3.weight", (slice(None), slice(H0, H1)), "l3, columns 256 to 511"), ("book.weight", (slice(128, 226) if task == "unrelated" else [ord(ch) for ch in "rtxn"], slice(None)), "byte table, rows of the new task's bytes")):
+                print(f"   {label}: {q(G[k][sl])}")
+            # the error at the gate itself, and the first step of the optimizer at the gate rows of the input map, as a change of the gate's summed input on the new task's bytes
+            print(f"   error arriving at the state of a cell in reserve (dL/dh): median magnitude {np.median(np.abs(c['dh'][:, :, U0:])):.1e}; at its gate's summed input: {np.median(np.abs(c['daz'][:, :, U0:])):.1e} (the same for an old cell: {np.median(np.abs(c['dh'][:, :, :U0])):.1e} and {np.median(np.abs(c['daz'][:, :, :U0])):.1e})")
+            Gm = away(np.concatenate([G["rnn.weight_ih_l0"], G["rnn.bias_ih_l0"][:, None]], 1)[Z_RES], dirs["ih"])
+            stepm = away(-1e-3 * Gm / (np.abs(Gm) + 1e-8), dirs["ih"])                                 # the first step of AdamW (m = g, v = g * g after the correction), then the rule's second addition
+            net = V.Net(W); newb = list(range(128, 226)) if task == "unrelated" else [ord(ch) for ch in "rtxn"]
+            sh = stepm @ np.concatenate([net.code[newb], np.ones((len(newb), 1))], 1).T               # cells x bytes: the change of the summed input of the gate
+            l1n = np.abs(away(np.concatenate([net.code[newb], np.ones((len(newb), 1))], 1), dirs["ih"])).sum(1)
+            print(f"   first step of the optimizer at the gate rows of the input map, after the rule: change of a gate's summed input on a byte of the new task: mean {sh.mean():+.1e}, mean magnitude {np.abs(sh).mean():.1e}, "
+                  f"largest magnitude {np.abs(sh).max():.1e} (the bound for steps of 0.001 a weight is {1e-3 * l1n.max():.1e}); on the bytes in use: {np.abs(stepm @ np.concatenate([net.code[in_use], np.ones((int(in_use.sum()), 1))], 1).T).max():.1e}")
+
+
+PARTS["grad"] = grad
+
+
+# ================================================================ an emulation of the first updates (the checker's own arithmetic; not the runner)
+MATNAMES = {"ih": ("rnn.weight_ih_l0", "rnn.bias_ih_l0"), "hh": ("rnn.weight_hh_l0", "rnn.bias_hh_l0"), "lm": ("lm.weight", "lm.bias"), "l2": ("l2.weight", "l2.bias")}
+
+
+def emulate_updates(W, task, rule, rowsets, dirs, in_use, updates, at=(), measure=None, scale_gate_rows=1.0, zero_blocks=False):
+    """The runner's update as read from exp51_reserve.step and Rule (and the brief's Rule55): the gradient (rule B exact, rule S the sweep),
+    the projection of the gradient of the chosen rows, AdamW (rate 0.001, betas 0.9 and 0.98, eps 1e-8, no decay), the projection of the
+    step, the restoring of l1, of the old columns and the bias of l3 and of the rows of the byte table of the bytes in use. The weights are
+    stored in single precision after every step; the arithmetic between is double precision (torch's is single: the two differ in rounding).
+    scale_gate_rows multiplies the gradient of the gate rows of the reserve before the optimizer (1.0: the brief). zero_blocks sets the
+    entries that the projection brings to zero (weights from old cells into the gates of the reserve and into rows 256 to 511 of lm) to
+    exactly zero after each step."""
+    W = {k: v.copy() for k, v in W.items()}; m = {k: np.zeros(v.shape) for k, v in W.items()}; v_ = {k: np.zeros(v.shape) for k, v in W.items()}
+    bt = batches(task); local = rule == "S"; out = []
+    if measure and 0 in at:
+        out.append(measure(0, W, None))
+    for g in range(1, updates + 1):
+        x, y, mask = next(bt); loss, G, _ = loss_and_grad(W, x, y, mask, local)
+        G = {k: a.astype(np.float32) for k, a in G.items()}; G["book.weight"][BOS] = 0          # the byte table's row of the start symbol takes no gradient (padding_idx)
+        for mn, rows in rowsets.items():
+            wk, bk = MATNAMES[mn]; Gm = np.concatenate([G[wk], G[bk][:, None]], 1).astype(np.float64); Gm[rows] = away(Gm[rows], dirs[mn])
+            if mn in ("ih", "hh") and scale_gate_rows != 1.0:
+                Gm[Z_RES] *= scale_gate_rows
+            G[wk] = Gm[:, :-1].astype(np.float32); G[bk] = Gm[:, -1].astype(np.float32)
+        snap = {k: W[k].copy() for k in W}
+        for k in W:
+            gk = G[k].astype(np.float64); m[k] = 0.9 * m[k] + 0.1 * gk; v_[k] = 0.98 * v_[k] + 0.02 * gk * gk
+            W[k] = (W[k] - 1e-3 * (m[k] / (1 - 0.9 ** g)) / (np.sqrt(v_[k] / (1 - 0.98 ** g)) + 1e-8)).astype(np.float32)
+        for mn, rows in rowsets.items():
+            wk, bk = MATNAMES[mn]; S = np.concatenate([W[wk].astype(np.float64) - snap[wk], (W[bk].astype(np.float64) - snap[bk])[:, None]], 1); Sr = away(S[rows], dirs[mn])
+            W[wk][rows] = (snap[wk][rows].astype(np.float64) + Sr[:, :-1]).astype(np.float32); W[bk][rows] = (snap[bk][rows].astype(np.float64) + Sr[:, -1]).astype(np.float32)
+        if rowsets:
+            for k in ("l1.weight", "l1.bias", "l3.bias"):
+                W[k] = snap[k]
+            W["l3.weight"][:, :H0] = snap["l3.weight"][:, :H0]; W["book.weight"][in_use] = snap["book.weight"][in_use]
+        if zero_blocks:
+            W["rnn.weight_hh_l0"][np.ix_(Z_RES, np.arange(U0))] = 0.0; W["lm.weight"][np.ix_(ADDED, np.arange(U0))] = 0.0
+        if measure and g in at:
+            out.append(measure(g, W, loss))
+    return W, out
+
+
+def emulate():
+    print("== emulate: the first updates, in the checker's own arithmetic")
+    HELD = V.held12(); held = [it for n in HELD for it in HELD[n]]
+    # 1. is the emulation the runner's update? E51's arm `keyed`, 64 updates on `unrelated`, against the saved weights of row 64
+    for rule in V.RULES:
+        Wk = V.start("keyed", rule); dirs, in_use, _, _ = V.saved_directions(rule); in_use = in_use.astype(bool)
+        We, _ = emulate_updates(Wk, "unrelated", rule, MATSETS["keyed"], dirs, in_use, 64)
+        Ws, _ = V.weights("unrelated", "keyed", rule, 64)
+        print(f" validation, E51 `keyed` on `unrelated`, rule {rule}, 64 updates: largest difference of a weight from the saved weights of row 64: "
+              + "; ".join(f"{k} {np.abs(We[k].astype(np.float64) - Ws[k]).max():.1e} (change from the start {np.abs(Ws[k].astype(np.float64) - Wk[k]).max():.1e})" for k in sorted(We)))
+    # 2. the arm `shut`
+    n_up = int(os.environ.get("E55_CHECK_UPDATES", "512")); at = [r for r in ROWS if r <= n_up]
+    variants = os.environ.get("E55_CHECK_VARIANTS", "brief").split(",")
+    for rule in V.RULES:
+        W0, Wk, dirs, in_use = shut_start(rule); gk = None
+        for task in V.TASKS:
+            pan = reserve_panel(task); panels = V.new_panels(task)
+            for variant in variants:
+                def measure(g, W, loss):
+                    net = V.Net(W); f = gate_figures(net, pan); ff = gate_figures(net, held)
+                    peak = np.zeros(U1 - U0); n = 0
+                    for idx, x in rows_of(pan):
+                        op = 1 - net.run(x, keep=True)[1]["z"][:, :, U0:]; peak += op.max(1).sum(0); n += len(idx)
+                    s3 = V.score_new(net, panels); s3s = V.score_new(net, panels, shut_all=True)
+                    nt = lambda s: 100 * sum(s[k]["exact"] for k in s if k != "taught") / sum(s[k]["n"] for k in s if k != "taught")
+                    gh = V.generate(net, held)
+                    nonlocal_ref.setdefault("g0", gh)
+                    return (f" row {g:5d}: loss {'-' if loss is None else format(loss, '.3f')}; never-taught {nt(s3):5.1f}, with the cells in reserve shut {nt(s3s):5.1f}; on the new task's items: cells with mean opening above 0.1: "
+                            f"{int((f['mean'] > 0.1).sum())}, cells whose mean over items of the largest 1 - z of an item exceeds 0.5: {int((peak / n > 0.5).sum())}, largest 1 - z {f['largest_opening']:.2e}, largest state {f['largest_state']:.2e}; "
+                            f"on the first family's held-out items: largest 1 - z {ff['largest_opening']:.2e}, largest state {ff['largest_state']:.2e}, largest added unit {ff['largest_added_unit']:.2e}, "
+                            f"answers that differ from row 0's {sum(a != b for a, b in zip(gh, nonlocal_ref['g0']))} of 1,200")
+                nonlocal_ref = {}
+                arm = "shut-gates-free" if variant == "gates-free" else "shut"
+                t0 = time.time()
+                _, out = emulate_updates(W0, task, rule, MATSETS[arm], dirs, in_use, n_up, at, measure, scale_gate_rows=1e4 if variant == "scaled" else 1.0, zero_blocks=variant == "zeroed")
+                print(f"--- emulation, {task}, rule {rule}, arm `{arm}`" + ("" if variant in ("brief", "gates-free") else f", variant {variant}") + f", {n_up} updates ({time.time() - t0:.0f} s)"); print("\n".join(out), flush=True)
+
+
+PARTS["emulate"] = emulate
+
+
+def check2():
+    print("== check2: the brief's check 2 in the emulation: eight updates from the start `shut`")
+    S1 = V.first_family_items(); HELD = V.held12(); held = [it for n in HELD for it in HELD[n]]; samp = V.check1_sample(S1)
+    for rule in V.RULES:
+        W0, Wk, dirs, in_use = shut_start(rule); n0 = V.Net(W0); a0 = {n: V.answer_logits(n0, its) for n, its in (("held", held), ("sample", samp))}
+        for task in V.TASKS:
+            newb = list(range(128, 226)) if task == "unrelated" else [ord(ch) for ch in "rtxn"]
+            for arm in ("shut", "shut-gates-free"):
+                W, _ = emulate_updates(W0, task, rule, MATSETS[arm], dirs, in_use, 8); net = V.Net(W)
+                dv = {}
+                for mn, (wk, bk) in MATNAMES.items():
+                    Dd = np.concatenate([W[wk].astype(np.float64) - W0[wk], (W[bk].astype(np.float64) - W0[bk])[:, None]], 1)
+                    dv[mn] = (np.abs(Dd[MATSETS[arm][mn]] @ dirs[mn]).max(), np.abs(Dd[Z_RES] @ dirs[mn]).max() if mn in ("ih", "hh") else None, bool(np.abs(Dd).max() > 0))
+                f = {n: gate_figures(net, its) for n, its in (("held", held), ("sample", samp))}
+                d = {n: np.abs(V.answer_logits(net, its) - a0[n]).max() for n, its in (("held", held), ("sample", samp))}
+                code1 = np.concatenate([net.code[newb], np.ones((len(newb), 1))], 1); code0 = np.concatenate([n0.code[newb], np.ones((len(newb), 1))], 1)
+                gate = lambda Wx, cd: np.concatenate([Wx["rnn.weight_ih_l0"][Z_RES].astype(np.float64), Wx["rnn.bias_ih_l0"][Z_RES][:, None].astype(np.float64)], 1) @ cd.T
+                mv = gate(W, code1) - gate(W0, code0)
+                print(f" rule {rule}, {task}, arm `{arm}`: (a) largest entry of (D_after - D_start) @ Vm at the projected rows: " + ", ".join(f"{mn} {dv[mn][0]:.1e}" for mn in dv) + f" (limit 1e-5); every matrix changed: {all(dv[mn][2] for mn in dv)}; "
+                      f"(b) largest 1 - z of a cell in reserve on the two panels {max(f[n]['largest_opening'] for n in f):.3e} (limit 1e-4); largest change of an output at an answer position: held-out {d['held']:.2e}, 2,000 items {d['sample']:.2e} (limit 1e-3); "
+                      f"largest state of a cell in reserve {max(f[n]['largest_state'] for n in f):.2e}; largest added unit at the answer positions {max(f[n]['largest_added_unit'] for n in f):.2e}; "
+                      f"(c) largest entry of (D_after - D_start) @ Vm at the gate rows of the reserve: input map {dv['ih'][1]:.1e}, recurrent matrix {dv['hh'][1]:.1e} (must exceed 1e-4 in `shut-gates-free`); "
+                      f"change of a gate's summed input on a byte of the new task after the eight updates: mean {mv.mean():+.4f}, most negative {mv.min():+.4f}, most positive {mv.max():+.4f}")
+
+
+PARTS["check2"] = check2
 
 if __name__ == "__main__":
     for p in sys.argv[1:]:
