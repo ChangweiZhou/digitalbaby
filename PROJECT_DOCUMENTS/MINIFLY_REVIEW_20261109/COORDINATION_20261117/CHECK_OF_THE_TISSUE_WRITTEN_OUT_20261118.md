@@ -1,5 +1,7 @@
 # Check of "The tissue written out" by a second reader (18 November 2026, written from 22:38 UTC by the clock of this machine)
 
+**Note by the reviewer (22:49 UTC, 18 November 2026), not part of the agent's text.** Its "gap 5" (nothing tells a cell at the output end whether the emitted byte was right) and sentences 116 and 119 to 121 rest on the reviewer's wording in the brief, "no cell is given an answer or an error computed for it", which went beyond Mr. Xu's words. By Mr. Xu's statement of 22:46 UTC (`WHAT_A_NEURON_HAS_20261118.md`, section 11) the system is given a continuous signal when the information at its output end does not match what was expected, and corrects itself. The rest of this document is not affected by that statement.
+
 ## Summary
 
 1. All 100 numbered sentences of `THE_TISSUE_WRITTEN_OUT_20261118.md` were checked: 8 fail, 21 are doubtful, 71 pass. By mark: of 25 [S] sentences, 16 pass, 1 fails, 8 are doubtful; of 39 [F] sentences, 28 pass, 3 fail, 8 are doubtful; of 36 [C] sentences, 27 pass, 4 fail, 5 are doubtful.

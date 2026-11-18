@@ -1,5 +1,7 @@
 # The earlier record placed on the steps of the roadmap (18 November 2026)
 
+**Note by the reviewer (22:49 UTC, 18 November 2026), not part of the agent's text.** Its criterion "each output unit was given the right answer, or an error computed from it" as a violation rests on the reviewer's wording in the brief, which went beyond Mr. Xu's words; the rows in which output units were taught by an error at the output end (rows 1 to 4 and 7 to 12) are to be read again. By Mr. Xu's statement of 22:46 UTC (`WHAT_A_NEURON_HAS_20261118.md`, section 11) the system is given a continuous signal when the information at its output end does not match what was expected, and corrects itself. The rest of this document is not affected by that statement.
+
 Written on 18 November 2026; the clock read 22:37:39 UTC (`date -u`) before writing. Read-only: no program of the project was run, nothing was trained, and no file other than this one was changed. Every statement below names the file it was read from (paths relative to the repository root; "line" means the line of that file on branch `claude/vibrant-cerf-sje726` as checked out at commit 414754fd). Files that exist only on the default branch or on workers' branches were not read; where a statement rests on them, it is taken from a document on this branch that quotes them, and that document is named.
 
 ## Summary

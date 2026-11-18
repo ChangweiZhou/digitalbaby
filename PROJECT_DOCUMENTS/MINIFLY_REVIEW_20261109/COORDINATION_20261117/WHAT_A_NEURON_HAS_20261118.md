@@ -88,3 +88,13 @@ The reviewer had written that "end to end" implies a byte-level output end besid
 Translation (the reviewer's). What I asked of you is how, in order to reach this goal, to turn it into a step-by-step roadmap, because the goals necessarily depend on one another and overlap. That there is an output end and an input end is not a problem; these two also have to learn, through learning, how to take in and how to give out. Why, at this point in the project, are you still confused about so many things? This project has had this direction from the beginning; it has never changed.
 
 What follows: there is an input end and an output end; the cells at both ends learn as the other cells do; the tissue therefore acts, by emitting bytes. The direction is the one the project's objective contract of 26 September 2026 states. The roadmap asked for is `ROADMAP_TO_END_TO_END_PERSISTENT_LEARNING_20261118.md`.
+
+## 11. Mr. Xu's statement of 22:46 UTC: the system is told when it is wrong and corrects itself
+
+The reviewer had reported, as the largest open point of its roadmap, that nothing tells a cell at the output end whether what the tissue gave out was right. Mr. Xu:
+
+> 所以你可以给整个系统连续的信号，如果输出端的信息和预期不符合（例如预测next byte出现错误），告诉系统它错了让它自己去纠正。这本来就是我们persistent learning的目标，为何你到现在才提起？我感觉非常怪异。
+
+Translation (the reviewer's). So you can give the whole system a continuous signal: if the information at the output end does not match what was expected (for example, the next byte was predicted wrongly), tell the system that it was wrong and let it correct itself. This has been the aim of our persistent learning all along; why do you bring it up only now? I find this very strange.
+
+What follows. The point was not open. The system receives a continuous signal of being wrong, formed from the mismatch at its output end, and corrects itself; that loop is what persistent learning means in this project. It agrees with his earlier words: information may be relayed from neuron to neuron so that a few passes cover the network, while a single backward pass over the whole network is not allowed; and a single nerve cell cannot see the answer. The reviewer's sentences that go beyond his words and are withdrawn: "no error sent back" and "no objective of the whole" (`ORDER_FROM_BIOLOGY_20261118.md`, draft 2), "there is no cell that is the output" (section 8 above, last paragraph), and the wording "no cell is given an answer or an error computed for it" in the briefs of the three readers of 22:31 UTC, in so far as it excludes a signal of being wrong given to the system. What stays excluded: handing a cell the answer, and computing a cell's correction outside the cell.
