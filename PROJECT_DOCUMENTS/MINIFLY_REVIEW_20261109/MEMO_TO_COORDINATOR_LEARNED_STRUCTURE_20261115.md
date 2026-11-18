@@ -137,6 +137,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 39. **E52 is verified on three seeds** (section 33.29; your decision 19). At each rule's better rate of 0.001 and 0.003 the sweep's lag is nowhere larger; at the present width with a quarter of the pairs it is gone on two seeds and smaller on the third, on margins of one to four scored rows; at the half width with a quarter of the pairs the seeds differ and no statement over them is drawn. The rate of E61 and E62 is the record's 0.001 under both rules; a pair of runs at 0.003 on that network (about 4 CPU-hours) would say whether the sweep's lag there is partly the rate, and is in neither brief.
 
+40. **E55 is verified whole** (sections 33.26 and 33.30). In the arm `shut` the first family is partly kept in all four runs, so that decision 14's statement is met by none; the gates of the reserve stay shut on the first family and open on the new task; back-propagation learns the task on the first family's own bytes (92.9 against 34.4 with the reserve held shut) with 7 of 31,684 answers changed at the end; under the sweep neither task is learned. Requirement A is not met. The three figures of the note of decision 15 are in section 33.30; the note's advice stands. The message priority that joins a running turn did not deliver into a running turn (decision 29: observed, negative).
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2284,3 +2286,31 @@ Limits: the classes pool worlds that share births; a return's absence and its pl
 **Limits.** Two rates on the new seeds; the better of two is not a best rate; a faster rate does not end higher (in 6 of 18 pairs of runs the final R at 0.003 is below that at 0.001); 18 of the 108 readings rest on one or two rows. The worker has been sent six corrections of wording; no figure changes.
 
 **What it bears on.** Decision 20 (no long lives at 0.003) is yours and is not reopened by this. For the two briefs now put to you (E61, E62) the rate is the record's 0.001 under both rules; if the sweep is slower there, part of that may again be the rate, which this section's result makes more likely than not on the dense network and which has not been measured on a network with limited connections. A pair of runs at 0.003 on the record's network would settle it at a cost of about 4 CPU-hours; it is not in either brief.
+
+### 33.30 E55, the arm `shut` and the final report, verified on seed 73129: with the gates of the reserve held shut by a bias, back-propagation learns the task on the first family's own bytes while fewer than 1% of the first family's answers change; under the sweep neither new task is learned; the first family is partly kept in all four runs
+
+(`E55_SHUT_AND_REPORT_VERIFICATION_20261118.md`, `e55_shut_verify.py`; written by an agent that had seen no opinion of the result; the reviewer ran the script again, 398 seconds, with the same output. The runs, receipts and weights at 340a0009; the report, tables and readings at the head 05d223ff, between which no file of a run or of a check changed. The dense network; the reading stays within decision 14. With this, E55 is closed for the reviewer but for the corrections below.)
+
+**What was verified.** Of 2,102 figures and words of the worker's tables, readings, report and message, one differs (a forecast of the cost). All twelve saved networks of the arm reproduce, in numpy in double precision, every count of the receipts. The nine corrections of the arm `blind` (33.26) are entered in the final report.
+
+**The result, in the brief's words** (rows 0 to 16,384; the first family's 31,684 scored answers at up to 22 positions, and 300 answers at 50 positions).
+
+| Run | New task | Never-taught at 16,384: as run; with the reserve held shut | Cells of the reserve whose gate opens on the new task (of 128) | First family at 22 positions: most answers that differ at a row; at 16,384 | First family at 50 positions: right answers at row 0; lowest; at 16,384 |
+|---|---|---|---|---|---|
+| `unrelated`, sweep | not learned | 72.7; 0.0 | 126 | 135; 49 | 282; 273; 283 |
+| `unrelated`, back-propagation | learned from row 4,096 | 99.7; 0.0 | 128 | 34; 14 | 274; 268; 272 |
+| `conflict`, sweep | not learned | 19.8; 21.9 | 0 | 925; 726 | 282; 36; 65 |
+| `conflict`, back-propagation | learned from row 8,192 | 92.9; 34.4 | 58 | 244; 7 | 274; 268; 276 |
+
+- **The first family is partly kept in all four runs,** and decision 14's statement (kept while a task on other bytes is learned) is met by none of them.
+- **The gates did what the construction intends.** On every item of the first family that was measured, at 22 and at 50 positions, no gate of the reserve opened (largest opening 6.5e-5 and 1.4e-4); on the new task's items learning opened them in three runs, at 57% to 87% of positions.
+- **The gate is not the route by which the first family's answers change.** With the cells in reserve held shut, none of its answers differs from the start's in any of the twelve networks. The changes pass through the small state that a cell in reserve still takes behind a gate that is almost shut (about 1e-3, growing with the position), read by weights that the construction leaves free. In `conflict` under the sweep this loses most of the first family on items of 50 positions (36 to 65 of 300 right, against 282), with the gates shut throughout; the report did not say so.
+- **A task on the first family's own bytes was learned, under back-propagation,** by cells whose candidate reads everything and whose gate is opened by learning: 92.9 against 34.4 with the reserve held shut, while 7 of the first family's 31,684 answers differ at the end (244 at the worst row). Under the sweep no gate opened on that task, and on the other task 126 gates opened without the task being learned within 16,384 updates.
+
+**For the note of decision 15** (its three figures): the first family's answers are those of the table; `conflict` reaches 19.8 and 92.9 as run against 21.9 and 34.4 with the reserve held shut; the gates open on the new task's items and at no position of the first family's. The note's second condition is therefore met on this seed under back-propagation, with two qualifications: the gate's staying shut on the first family is enforced by the program (the gate rows are projected at the start and after every update) and not learned, and under the sweep the condition is not met. The note's third condition (protection of the old rows) is still supplied by the program. The note's advice stands; where it says "if the gate opens on the new task only", the case holds under back-propagation, so that the experiment it describes (gated cells present from birth, rehearsal in place of projection, on the network that E61 and E62 leave standing) is the one to brief if you want this line continued, and under the sweep it has no ground yet.
+
+**For requirement A.** Not met (decision 14): the four acts of the program remain, with the record of the bytes in use and the one use of the keyed forward pass as parts of them, and in this arm also the bias of 10 on the gates. The report did not state the sentence; the worker has been asked to.
+
+**Findings** (nine, of which eight ask a correction of the report; one error of a figure, one of definition): the loss at 50 positions in `conflict` under the sweep; decision 14's sentence; the forecast of the cost (2,736 seconds a run, not 1,370, so that there was no excess); one more commit in the provenance; the arm's definition, which left out the rows of `lm` and `l2`; the gate figures at every row for the runs that do not learn; the evidence for the route of the change; the title.
+
+**The message priority.** The corrections of the arm `blind`, sent at 16:33 with the priority that joins a running turn, reached the worker only when its turn ended, after the arm `shut` had run. This is the observation that decision 29 asks for, and it is negative.
