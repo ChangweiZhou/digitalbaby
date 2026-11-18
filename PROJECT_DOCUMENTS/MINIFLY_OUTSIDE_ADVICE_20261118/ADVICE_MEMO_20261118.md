@@ -1,6 +1,6 @@
 # Advice memo: persistent learning as a question of where an experience is written
 
-**Date:** 18 November 2026. **Revision 2 (draft).** Part I is revision 1, unchanged; Part II (sections 9 to 12) says what the unmerged branches add, corrects five statements of Part I, and revises the recommendations. For Mr. Zhou and Mr. Xu, and for the coordinator. Written by an outside session at Mr. Xu's request to look at the project and offer advice on the larger picture.
+**Date:** 18 November 2026. **Revision 3 (draft).** Part I is revision 1, unchanged; Part II (sections 9 to 13) says what the unmerged branches add, corrects five statements of Part I, and revises the recommendations; Part III (sections 14 to 17) records the goal as Mr. Xu restated it to this session and the results verified since revision 2, which supersede section 10.1. For Mr. Zhou and Mr. Xu, and for the coordinator. Written by an outside session at Mr. Xu's request to look at the project and offer advice on the larger picture.
 
 **Status:** proposed. This memo decides nothing, authorises no run and reports no new result. Nothing was trained and no figure was recomputed.
 
@@ -343,3 +343,69 @@ Unchanged: the reading of section 3, the answers of 4.2 to 4.4 as corrected, the
 - The older Codex branches were read by agents from the reports. I checked the figures quoted in section 11 against the files and nothing else of those readings. Several of the folders are reruns of another session's learners, and several notes cite code that is not on the branch.
 - The header of V36 and the notes of 3 November are statements in a source file and in memos. The branch holds no result file for V36.
 - Nothing here was run.
+
+---
+
+# Part III. The goal as restated, and the results verified since revision 2 (revision 3, 18 November 2026)
+
+## 14. The goal, in Mr. Xu's words to this session (18 November, verbatim)
+
+1. "He meant a local learner with no back-propagation, and while some structural enhancements are possible, he prefers to let the model figure out where / how to store / update the memory as new information / feedback coming up. Also beating backpropagation has to be understood in epistiemological sense, namely for fixed computation power and accuracy demand, local learning can achieve at least the same generalization as back-propagation, perhaps with even less samples needed but may be with more time for digestion etc."
+2. "Local in the sense that each neuron only gets info from its (sparse) connections, not the whole network, and each neuron adjusts the connection strength etc on its own."
+3. "Local backward pass is fine, what prohibited is global backward pass."
+
+**An error of mine, corrected by statement 3.** After statements 1 and 2 I answered as if no backward pass at all were allowed. That was my wording and not Mr. Xu's, and what I built on it is withdrawn: that the backward pass over an item puts the present candidate outside the definition, and that delays in place of that pass are the first test to run.
+
+**My working reading, which is mine and open to correction.** A backward pass in which a neuron receives its error over its own connections is local. What makes a pass global is a network in which every cell is connected to every other, so that each neuron receives from the whole network. On this reading the sweep on the networks with limited connections (E42, E47, E49, E50, E54) is the candidate, and the dense network is the reference. Nothing below depends on more than this.
+
+## 15. Results verified since revision 2
+
+Source: the default branch at 392b3eca (review 9.159 to 9.161) and the reviewer's memo, sections 33.13 to 33.19, at `claude/vibrant-cerf-sje726@fffb1ec6`. All are verified by the reviewer from receipts and weights unless marked. I reran nothing.
+
+**The long lives, four worlds** (memo, 33.16). Late level at 1,024 visits:
+
+| World | `naive` | `sweep` | `replay` | `sweep+replay` |
+|---|---|---|---|---|
+| 1 | 0.669 | 0.650 | 0.730 | 0.784 |
+| 2 | 0.756 | 0.628 | 0.812 | 0.574 |
+| 3 | 0.742 | 0.683 | 0.835 | 0.789 |
+| 4 | 0.732 | 0.672 | 0.709 | 0.769 |
+
+- Without the store the learner under the sweep ends lower in every world: −0.066 (interval −0.120 to −0.013). Worlds 1 and 4 share their births; with the two counted as one the interval includes zero.
+- With the store nothing is distinguished: −0.042 (−0.206 to +0.121). The sweep is ahead in worlds 1 and 4 and behind in worlds 2 and 3.
+- No overtaking is seen up to 1,024 visits, and every arm is still learning. The two arms of a pair differ in their births as well as in the rule; E60 (the sweep's life from back-propagation's birth, four worlds) is running to separate the two.
+
+**This supersedes section 10.1, readings 2 and 3, and the correction that follows them.** That correction rested on two worlds without the store and one with it. Over four worlds none of the three figures in the sweep's favour is distinguished, and the lead with the store holds only in the two worlds that share a birth. Section 4.1's sentence, that on the record the sweep ties or loses, is what the four worlds show; "can only", as a statement of principle, stays withdrawn.
+
+**The other verified results.**
+
+| Job | What it shows | Seeds |
+|---|---|---|
+| E52 (33.17) | 0.003 is the best of four rates in seven of eight cases. At each rule's best rate the sweep still needs 1.33 to 2.05 times back-propagation's updates. The control of section 10.2 in which the two were level is one observation and "not a result" | 1 |
+| E54 (33.19) | Neither the limited nor the periodic network generalises from fewer pairs than the dense one. With 15% of the pairs, at 49,152 updates: dense 46.6 under the sweep and 73.0 under back-propagation, neither curve flat. With a tenth at the half width, after 122,880 updates: back-propagation 75.0 and rising, the sweep 13.4 | 1 |
+| E58 (33.14) | A lived network learns a new family from 5% of its pairs through the gated term: 74 to 86 under the sweep, 89 to 94 under back-propagation, with the earlier families unchanged. Free learning from 5% falls during the run, largely through the decay. The gate is the program's | 3 |
+| E59 (33.15) | For a task of other content, under the sweep a network that has learned before never needs fewer presentations than a fresh one. Updates to 80 with 2,048 pairs: fresh 192 to 224, born 320 to 400, lived 448 to 608. Under back-propagation the three are about the same, and with 256 pairs the born network needs about a third of the fresh one's | 3 |
+| E51, Part B (33.13) | Rehearsal of half the stream keeps the first family within 5 points on all three seeds; a quarter on one. Reviews at intervals lengthen what a gap leaves, on all six pairs of seed and rule | 3 |
+
+**The first long lives** (reported by the worker in `E44_L2_REPORT.md` on `claude/e44-l2-first-long-lives@45e9ba16`; in verification, so provisional):
+
+- With the store against without, at 1,024 visits over four worlds: late level +0.047 (−0.011 to +0.105), not distinguished; kept at a return +0.53. This is section 4.4's point on four worlds: the world's level hardly registers keeping.
+- **Without weight decay the conventional learner with no store begins to keep.** At 256 visits over eight worlds, what is kept at a return rises with the number of earlier visits to the family: from 0.03 after one to 0.22 after sixteen or more at absences of 2 to 4 visits, and from 0.03 to 0.17 at absences of 5 to 32. With the decay it stays between 0.00 and 0.03.
+- **The price:** without decay the late level is lower by 0.095 (−0.166 to −0.024), the trend of the first-visit level is lower by 0.119, the arm is classed as stuck, and the size of the weights rises throughout (from 53 at birth to 126 after 256 visits).
+- **The learning probe:** the first-visit level of a family never met rises with the learner's age: 0.43, 0.67 and 0.83 after 64, 256 and 1,024 visits without the store.
+
+## 16. What these say against the goal as restated
+
+1. **"At least the same generalisation."** Where half of the pairs are taught the sweep comes within a few points of back-propagation's level, on the dense network and, at 1.4 to 2.7 times the dense network's updates, on the networks with limited connections (E42, three seeds). Where fewer are taught it falls behind, and the deficit grows as the pairs get fewer (E41; E54).
+2. **"Perhaps with fewer samples, with more time for digestion."** The record runs the other way so far. At a tenth of the pairs a long run helped back-propagation and not the sweep (E54, one seed). Experience lowers the samples a new family needs under both rules (E40; the probe above; E58 at 5%), which is not a property of the rule.
+3. **Experience and the sweep.** E59 is a new difficulty for persistence under this rule: a network that has lived learns a task of other content more slowly than a fresh one under the sweep, by two to three times, and not under back-propagation.
+4. **"Let the model figure out where and how to store."** The arms without decay are the first sign of memory forming with no store and no act of the program, and they show what it costs. Everything else on keeping is still rehearsal or the program's doing (E51, E58; E55 is running).
+
+These are statements about one local rule, the sweep with signs and one scale for each matrix. They do not show that a local backward pass in general falls short.
+
+## 17. What changes in the recommendations (*proposed*)
+
+1. **Find where the sweep's shortfall lies before reading it as the local learner's.** Two candidates are already in the record: the scale taken for a whole matrix (E57, running), and the feedback by signs, where learned feedback recovered most of a loss on three seeds and was not replicated (E31; ruled inside the line on 13 November). The two cells in which to test them are those where the sweep is furthest behind: a tenth of the pairs at length (E54, part 4) and the lived start of E59. If one of them closes both, a local backward pass equals back-propagation wherever back-propagation generalises, which is the claim in its first form.
+2. **Follow the arms without decay.** The question they raise is local to a neuron: how its weights are kept from growing without the shrinking that erases what is not refreshed. One arm in which each cell holds the size of its own incoming weights, beside `naive` and `naive-wd0` at 256 visits, would say whether keeping can be had without the price. The same arms under the sweep have not been run (plan, item 23).
+3. **Section 12, item 7 is withdrawn.** The lives cannot be continued to 4,096 visits in the present world, which has 52 families; the roster's report says a longer life needs a larger task space. E60 is the right job for the comparison of the rules, and the larger world of 5.4 is what a longer horizon waits for.
+4. **Section 5.2 stands, with its premise now seen in the lives.** The probe shows that experience of many families makes a new one learnable within a visit, and E58 that a small private change suffices from 5% of the pairs. Neither says whether the change can be as small as the family's own code rows.
