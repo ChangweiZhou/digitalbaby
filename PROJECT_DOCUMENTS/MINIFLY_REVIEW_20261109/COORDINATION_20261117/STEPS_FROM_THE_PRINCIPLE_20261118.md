@@ -35,11 +35,11 @@ Each step gives: the question; why the principle puts it there; what the record 
 - **Read.** Updates to 80 and the level at the end against N, for each rule; the sweep against back-propagation at each N.
 - **Outcomes.** If the curve is flat from a small N on, the later steps take that N. If it falls steadily to the dense network, the slowness of step 1 is a matter of the number of connections, and the cost of locality is read from the curve. If the sweep's lag behind back-propagation changes with N, the working rule's shortfall depends on sparsity, which bears on step 4.
 
-### Step 3. Over how many steps must the error be relayed? — briefed as E61 (the coordinator's decision 33; in check)
+### Step 3. Over how many steps must the error be relayed? — briefed as E61 (the coordinator's decision 33; revision 2, checked; awaits the coordinator's release)
 
 - **Why here.** The principle allows relay and prohibits one global pass. The working rule passes the error back over every position of the item. How many steps are needed has never been measured (the old plan's item 20).
 - **Experiment, as briefed.** In the network of E50's stage 3 (N = 10 from the neighbourhood), the error is relayed over K positions, K = 0, 1, 2, 4, 8 and 16, with the record's whole-item runs as the last value; K = 0 is the form that exists in the code (credit cut at every position). The same at the N that step 2 picks follows when both are read.
-- **Read.** Updates to 80 and the end level against k, for each rule and N; beside it the smallest k with N to the power k at or above 256, at which relay can first reach every cell.
+- **Read.** Updates to 80 and the end level against K, for each rule; beside it the number of steps after which an error at one cell has reached every cell (four or five in this network, by the check of the brief). The scored items have fixed numbers of letters (R none, A and T twelve), so that K = 5 reaches the first operand in every item of R and only K of 17 or more in those of A and T; the brief states this beside every reading.
 - **Outcomes.** If a small k suffices, the rule can be made local in time at little cost, and the later steps take that k. If only the whole item suffices, the working rule depends on the long pass, and that dependence is stated as a limit of every later result.
 
 ### Step 4. Does it learn when the input, too, is sparse, and with quantities a unit has? — running (E57), then a brief
