@@ -1,4 +1,4 @@
-# Roadmap to end-to-end persistent learning with generalisation (18 November 2026, draft 2, for Mr. Xu)
+# Roadmap to end-to-end persistent learning with generalisation (18 November 2026, draft 3, for Mr. Xu)
 
 By the outside reviewer. Draft 1 is replaced. It had faults found by three readers, and it left out the centre of the matter, which Mr. Xu stated at 22:46 UTC: the system is told, continuously, when what its output end gives does not match what was expected, and it corrects itself. This file starts nothing; releases and runs are the coordinator's.
 
@@ -36,9 +36,9 @@ What grows along the route is therefore not the number of properties but two thi
 | | Capability | Depends on | Serves |
 |---|---|---|---|
 | a | Cells away from the input lines stay informative: not silent, not constant | the input lines are driven by the bytes | everything |
-| b | The output end corrects itself from the signal: its cells come to give the coming byte from what the cells they listen to carry | a | end to end |
-| c | The correction is relayed inward: cells one, two, four connections from the output end receive what is relayed and correct themselves | b; return connections | everything past b |
-| d | The input end is reached by the relay and corrects what it takes in | c | end to end; generalisation |
+| b | The two ends correct themselves from the feedback: the cells of the output end come to give the coming byte from what the cells they listen to carry, and the cells of the input end, which receive the feedback of the output end's information, correct what they take in | a | end to end |
+| c | The correction is relayed inward from both ends: cells one, two, four connections from either end receive what is relayed and correct themselves | b; connections in both directions | everything past b |
+| d | What the input end carries serves the cells farther in: the parts of an input reach them separately | b, c | generalisation |
 | e | A byte's information is held in cells' states across later bytes | a; improved by c | delay |
 | f | A taught answer is given at the first attempt once taught | b, c, e | E1 |
 | g | A taught answer is kept under later correction | f | persistence; requirement A |
@@ -53,7 +53,7 @@ What grows along the route is therefore not the number of properties but two thi
 ## 4. Overlaps and conflicts, and what they mean for the order
 
 1. **One loop gives all three properties** (section 2). None of them is a late stage; from step 2 on, every step is end to end, on an unbroken stream, and scored on first attempts.
-2. **Correction spreads from the output end inward.** The cells at the output end are nearest to the signal and can correct themselves first; the input end is farthest and is reached last. The order of steps 2 and 3 follows from this.
+2. **Correction spreads from the two ends inward.** By Mr. Xu's ruling the input end receives the feedback of the output end's information, so the cells at both ends have the feedback at first hand and can correct themselves first; the cells between them are reached by relay from either side, and those in the middle last. The order of steps 2 and 3 follows from this.
 3. **The steps are phases of one life.** A tissue at step k has lived through the streams of the earlier steps, and their material returns. Every later step is thereby also a test of keeping.
 4. **Keeping and generalising use the same connections.** Shared codes of parts are what lets a never-taught instance be answered, and they let a new family reuse what exists instead of overwriting it; but a later correction to a shared cell changes every instance at once. The two are read together from step 5, and no form of the cell is accepted on one alone.
 5. **Generalisation and B2 rest on one measurement:** the share of never-taught instances right at the first attempt, against the number of examples taught. B2 is the comparison of that curve with the comparator's on the same stream in the same units.
@@ -79,18 +79,18 @@ What grows along the route is therefore not the number of properties but two thi
 
 ## 6. The steps
 
-**Step 0. The tissue defined, with its signal.** The description (`THE_TISSUE_WRITTEN_OUT_20261118.md`) is revised from its check (`CHECK_OF_THE_TISSUE_WRITTEN_OUT_20261118.md`: 8 sentences fail, 21 are doubtful) and from statement 5: the two ends; the signal, where it enters and how it is relayed; return connections; one first form, each choice in the simplest form a living cell can do that the conditions above allow; and the order in which choices are opened when a step fails.
-*Reached when* a third reading finds no sentence that a living cell cannot do, and every sentence is marked as Mr. Xu's words, as following from them, or as our choice.
+**Step 0. The tissue defined, with its signal.** The description (`THE_TISSUE_WRITTEN_OUT_20261118.md`) has been revised twice (`THE_TISSUE_DEFINED_REVISION_3_20261118.md`; revision 2 did not pass its third reading) from its checks, from statement 5 and from Mr. Xu's later rulings (sections 13 to 15 of `WHAT_A_NEURON_HAS_20261118.md`): the two ends; the signal, where it enters and how it is relayed; return connections; one first form, each choice in the simplest form a living cell can do that the conditions above allow; and the order in which choices are opened when a step fails.
+*Reached when* a further reading finds no sentence that a living cell cannot do, and every sentence is marked as Mr. Xu's words, as following from them, or as our choice.
 
 **Step 1. The tissue reads the stream and stays informative (E0).** New: capability a. Stream: the items of the first family one after another. No correction yet.
 *Reached when*, late in a long stream, cells one, two and four connections from the input lines are neither silent nor constant, and the present byte and the bytes one, two, four and eight positions back can be told from their recorded outputs better than at the start of life.
 *What it buys:* the material every later correction works on. *On failure:* the order of opening in section 4 of the check.
 
-**Step 2. The output end corrects itself (E0 to E1).** New: capabilities b and l. The signal acts on the cells at the output end only; the rest of the tissue is as in step 1. The feedback is yes or no (decision D3).
+**Step 2. The two ends correct themselves (E0 to E1).** New: capabilities b and l. The feedback reaches the cells of the output end and of the input end; the cells between them are as in step 1. The feedback is yes or no (decision D3). A second tissue in which only the output end receives it shows what the input end's share is.
 *Reached when* the byte the tissue gives is right, at the first attempt, wherever the coming byte can be known from the last few bytes, above what the frequencies of bytes give; in a control tissue that is never told, it is not.
 *What it buys:* the tissue is end to end from here on, and its level is the floor against which step 3 is measured.
 
-**Step 3. The correction is relayed inward (E1).** New: capabilities c, d, e and f. Cells one, two and four connections from the output end receive what is relayed and correct themselves; at the largest reach the input end is included. Stream: places that the output end alone cannot get right: a byte shown, then one, two, four or eight other bytes, then due again; and a small fixed table of taught answers.
+**Step 3. The correction is relayed inward (E1).** New: capabilities c, d, e and f. Cells one, two and four connections from either end receive what is relayed and correct themselves. Stream: places that the output end alone cannot get right: a byte shown, then one, two, four or eight other bytes, then due again; and a small fixed table of taught answers.
 *Reached when* these are answered rightly at the first attempt, and are still answered after a long stretch of other bytes, while the control tissue without relay stays at the level of step 2. Read: how the result depends on the number of relays allowed and on the number of return connections of a cell (2 to 128). The comparison with the comparator (section 5, condition 5) begins here.
 *What it buys:* this is the relay Mr. Xu described, shown or not shown in the tissue; every later step needs it. *On failure:* the form by which a cell combines its own prediction with what is relayed (conflict 10); cells with two parts.
 
@@ -140,6 +140,8 @@ They are listed so that he can strike any of them.
 3. When step 0 is reached: the briefs of steps 1 and 2, written by an agent, checked by another, and put to the coordinator.
 
 ## History
+
+Draft 3 (23:26 UTC): by Mr. Xu's ruling that the input end receives the feedback of the output end's information, the two ends are corrected together at step 2 and the relay of step 3 runs inward from both; capabilities b, c and d and overlap 2 are rewritten. The definition of the tissue is at revision 3 (`THE_TISSUE_DEFINED_REVISION_3_20261118.md`), awaiting a fourth reading.
 
 Change of 23:18 UTC: Mr. Xu's rulings on random coordinates and on the feedback of the output end's information to the input end entered in section 9; the dependency "the input end is reached last" (overlap 2, capability d) is to be reconsidered in draft 3, since the input end now receives that feedback directly.
 
