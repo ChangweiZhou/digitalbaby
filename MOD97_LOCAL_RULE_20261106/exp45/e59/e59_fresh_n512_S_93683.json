@@ -1,0 +1,1013 @@
+{
+ "experiment": "E59",
+ "kind": "run",
+ "start": "fresh",
+ "n_taught": 512,
+ "rule": "S",
+ "local": true,
+ "seed": 93683,
+ "updates": 8192,
+ "settings": {
+  "start_record": {
+   "start": "arch26.new_net(seed), untrained",
+   "tensors_sha256": "3e9cf087a6df986cafe13d310feda715920c1af91d584cb23a70afd594cccfc2",
+   "e40_receipt_start_tensors_sha256": "3e9cf087a6df986cafe13d310feda715920c1af91d584cb23a70afd594cccfc2",
+   "equals_e40": true
+  },
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "optimizer": "exp26_candidate.make_opt (AdamW, lr 0.001, weight decay 0.25 on every tensor but the byte table)",
+  "update": "exp26_candidate.step(m, opt, batch, local)",
+  "batch": 64,
+  "rows": [
+   0,
+   16,
+   32,
+   48,
+   64,
+   80,
+   96,
+   112,
+   128,
+   144,
+   160,
+   176,
+   192,
+   208,
+   224,
+   240,
+   256,
+   272,
+   288,
+   304,
+   320,
+   336,
+   352,
+   368,
+   384,
+   400,
+   416,
+   432,
+   448,
+   464,
+   480,
+   496,
+   512,
+   544,
+   576,
+   608,
+   640,
+   672,
+   704,
+   736,
+   768,
+   800,
+   832,
+   864,
+   896,
+   928,
+   960,
+   992,
+   1024,
+   1056,
+   1088,
+   1120,
+   1152,
+   1184,
+   1216,
+   1248,
+   1280,
+   1312,
+   1344,
+   1376,
+   1408,
+   1440,
+   1472,
+   1504,
+   1536,
+   1568,
+   1600,
+   1632,
+   1664,
+   1696,
+   1728,
+   1760,
+   1792,
+   1824,
+   1856,
+   1888,
+   1920,
+   1952,
+   1984,
+   2016,
+   2048,
+   2080,
+   2112,
+   2144,
+   2176,
+   2208,
+   2240,
+   2272,
+   2304,
+   2336,
+   2368,
+   2400,
+   2432,
+   2464,
+   2496,
+   2528,
+   2560,
+   2592,
+   2624,
+   2656,
+   2688,
+   2720,
+   2752,
+   2784,
+   2816,
+   2848,
+   2880,
+   2912,
+   2944,
+   2976,
+   3008,
+   3040,
+   3072,
+   3104,
+   3136,
+   3168,
+   3200,
+   3232,
+   3264,
+   3296,
+   3328,
+   3360,
+   3392,
+   3424,
+   3456,
+   3488,
+   3520,
+   3552,
+   3584,
+   3616,
+   3648,
+   3680,
+   3712,
+   3744,
+   3776,
+   3808,
+   3840,
+   3872,
+   3904,
+   3936,
+   3968,
+   4000,
+   4032,
+   4064,
+   4096,
+   4128,
+   4160,
+   4192,
+   4224,
+   4256,
+   4288,
+   4320,
+   4352,
+   4384,
+   4416,
+   4448,
+   4480,
+   4512,
+   4544,
+   4576,
+   4608,
+   4640,
+   4672,
+   4704,
+   4736,
+   4768,
+   4800,
+   4832,
+   4864,
+   4896,
+   4928,
+   4960,
+   4992,
+   5024,
+   5056,
+   5088,
+   5120,
+   5152,
+   5184,
+   5216,
+   5248,
+   5280,
+   5312,
+   5344,
+   5376,
+   5408,
+   5440,
+   5472,
+   5504,
+   5536,
+   5568,
+   5600,
+   5632,
+   5664,
+   5696,
+   5728,
+   5760,
+   5792,
+   5824,
+   5856,
+   5888,
+   5920,
+   5952,
+   5984,
+   6016,
+   6048,
+   6080,
+   6112,
+   6144,
+   6176,
+   6208,
+   6240,
+   6272,
+   6304,
+   6336,
+   6368,
+   6400,
+   6432,
+   6464,
+   6496,
+   6528,
+   6560,
+   6592,
+   6624,
+   6656,
+   6688,
+   6720,
+   6752,
+   6784,
+   6816,
+   6848,
+   6880,
+   6912,
+   6944,
+   6976,
+   7008,
+   7040,
+   7072,
+   7104,
+   7136,
+   7168,
+   7200,
+   7232,
+   7264,
+   7296,
+   7328,
+   7360,
+   7392,
+   7424,
+   7456,
+   7488,
+   7520,
+   7552,
+   7584,
+   7616,
+   7648,
+   7680,
+   7712,
+   7744,
+   7776,
+   7808,
+   7840,
+   7872,
+   7904,
+   7936,
+   7968,
+   8000,
+   8032,
+   8064,
+   8096,
+   8128,
+   8160,
+   8192
+  ],
+  "stream": "the text of e43_task.stream with taught[:n] in place of taught; generator Random(f'e43|{seed}|stream')",
+  "panels": {
+   "held12": "e43_task.panel(seed, 'held')",
+   "held0": "e43_task.panel(seed, 'held', k=0)",
+   "taught": "Random(f'e43|{seed}|panel|taught').sample(taught[:n], min(300, n)), rendered at 12 fillers",
+   "held12_unseen_items": 0
+  },
+  "check4_against": null,
+  "earlier_training_items": 0,
+  "weights_file": "rows_uncommitted/e59_fresh_n512_S_93683_final.pt"
+ },
+ "provenance": {
+  "command": "python exp59_unrelated_starts.py run fresh 512 S 93683",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "611bee5851f671f8e965dc69fc6b69e2e23f47c2",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch31_workerB.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+   "e40_new_family.py": "aa11c27f1588abbac6659afc124980b88994f6fbae375ffc742f0d31dbdda9cf",
+   "e43_task.py": "70eef23073197b2e4cd4d28ad90876221f416e503a546203179d8299ec7ad552",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "exp43_unrelated.py": "fac9acf56e1db0ace1bc02cd791a42b3517d8fc0fb060bbd8b26e8a98483725a",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp59_unrelated_starts.py": "c07e2cfae5f731ddf0edd015a415e4cbf57f6b37577e9a3837d792088b854ba9",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "versions": {
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.5",
+   "torch_threads": 1,
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "rows": [
+  {
+   "updates": 0,
+   "data_digest": {
+    "batches": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "tensors_sha256": "3e9cf087a6df986cafe13d310feda715920c1af91d584cb23a70afd594cccfc2",
+   "loss": null,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 3,
+    "second_byte": 1,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "earlier_panels_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "max89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "min89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "add97": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "add73": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "sub73": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    }
+   },
+   "cpu": 10.64612375
+  },
+  {
+   "updates": 16,
+   "data_digest": {
+    "batches": 16,
+    "sha256": "59c0ff07b99323ed7c0f404993f7ec9c2838f03fb1560d58cef146f613a79991"
+   },
+   "tensors_sha256": "0f8edcd8b6908bedf27d0e076e9474f6af16594a5d7dcbceb40ea2f3e3e2db66",
+   "loss": 3.8660076409578323,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 10,
+    "second_byte": 0,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 13.032601079
+  },
+  {
+   "updates": 32,
+   "data_digest": {
+    "batches": 32,
+    "sha256": "b3597fdff2b2744c17e4c5d93044655b7337e9160f8d4b9a6a6cc1bcc797c3ad"
+   },
+   "tensors_sha256": "293df61e84f300c71e28029af691b8993fea9a0e7d794c7c0e77196ebbdb4593",
+   "loss": 3.0611372739076614,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 4,
+    "second_byte": 0,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 15.472311405000001
+  },
+  {
+   "updates": 48,
+   "data_digest": {
+    "batches": 48,
+    "sha256": "dcabb444cb728c1a1f737d39d1f312284eb4d86d3ea797138f68be066cc79435"
+   },
+   "tensors_sha256": "a2fd725d899dd7719f2973387b8b131def7ad90d408d18815eb12b8f41ec46ca",
+   "loss": 2.7633237540721893,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 5,
+    "second_byte": 6,
+    "third_is_end": 285,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 18.166404932
+  },
+  {
+   "updates": 64,
+   "data_digest": {
+    "batches": 64,
+    "sha256": "05d69b502bca7e4dc268ba38599609bbf3605e15cff549a7324b28eec2e58e98"
+   },
+   "tensors_sha256": "461dc88590badf592095324444976902d9653549653475e150dd90dc10ed069d",
+   "loss": 2.6663918495178223,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 5,
+    "second_byte": 6,
+    "third_is_end": 294,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 20.719370740000002
+  },
+  {
+   "updates": 80,
+   "data_digest": {
+    "batches": 80,
+    "sha256": "0eca7d232bbb8495d47352011d93d0c126f35b62d756eee04c5e99a9d65ca054"
+   },
+   "tensors_sha256": "ec897e34a4d5a2998f10074d1b6ef47140c5490f6fd4db544d71cad88f216d0f",
+   "loss": 2.624373957514763,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 7,
+    "second_byte": 7,
+    "third_is_end": 299,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 23.327833693000002
+  },
+  {
+   "updates": 96,
+   "data_digest": {
+    "batches": 96,
+    "sha256": "5b1a0a8387b766a1ead0ca1513acd1108834c4179e93c4f40a39624a0966abaf"
+   },
+   "tensors_sha256": "e255f69dd8c20aed436800b15d6a7c5b99eceb8034d34842309a2180e444b0bc",
+   "loss": 2.5828201323747635,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 7,
+    "second_byte": 5,
+    "third_is_end": 299,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 26.126035496
+  },
+  {
+   "updates": 112,
+   "data_digest": {
+    "batches": 112,
+    "sha256": "bc4538f68522a7e23ff5bcdc52313da6b2ac57c6f166baa0dd659a54b0e88f6d"
+   },
+   "tensors_sha256": "fec30c9c41a9a85af805e191adfdb6054ba21adaa186b53c50f02a81e1945e81",
+   "loss": 2.5263504832983017,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 1,
+    "first_byte": 8,
+    "second_byte": 7,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 1
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 28.621595006
+  },
+  {
+   "updates": 128,
+   "data_digest": {
+    "batches": 128,
+    "sha256": "2bc3d80f88b983823431835a3d95fbc7b5c19e6069f4679fd5def6c0728b226a"
+   },
+   "tensors_sha256": "7b29962170388c70963b0903b93751873ff83ccabad15863eb5e53d9681efe8a",
+   "loss": 2.4235690981149673,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 1,
+    "first_byte": 20,
+    "second_byte": 7,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 1
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 1,
+    "final": 1
+   },
+   "taught": {
+    "n": 300,
+    "exact": 2,
+    "final": 2
+   },
+   "cpu": 31.253133868999996
+  },
+  {
+   "updates": 144,
+   "data_digest": {
+    "batches": 144,
+    "sha256": "3f707af9f050221eb1293b7660783e7fa5d14061ad4036e5df44f9b0b0f286df"
+   },
+   "tensors_sha256": "09af04a0433d98402d978a0bacb6b53983ca9dd597ee03832a5be1f5f0a2c7cf",
+   "loss": 2.2340030819177628,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 63,
+    "second_byte": 12,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 15,
+    "final": 15
+   },
+   "cpu": 33.784688425
+  },
+  {
+   "updates": 160,
+   "data_digest": {
+    "batches": 160,
+    "sha256": "38938a2e10dff4a816a49dd8ec28f82bdaa9010de61e2059beeb4ddb04ececa8"
+   },
+   "tensors_sha256": "48584538ddd6952cf44e6076fdce83c407e44ef35fe9bb969045db0cc5ca362c",
+   "loss": 1.9236244708299637,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 2,
+    "first_byte": 107,
+    "second_byte": 15,
+    "third_is_end": 299,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 2
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 1,
+    "final": 1
+   },
+   "taught": {
+    "n": 300,
+    "exact": 44,
+    "final": 44
+   },
+   "cpu": 36.547846199999995
+  },
+  {
+   "updates": 176,
+   "data_digest": {
+    "batches": 176,
+    "sha256": "8b9877722286150806971840bd18274e960939018ad6c5a547dd10be86f904c0"
+   },
+   "tensors_sha256": "a48d6766b451c526567bedc125a9b886e3fbb7dbc86703c0295786b1befe78ad",
+   "loss": 1.5491481721401215,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 8,
+    "first_byte": 162,
+    "second_byte": 23,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 8
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 12,
+    "final": 12
+   },
+   "taught": {
+    "n": 300,
+    "exact": 101,
+    "final": 101
+   },
+   "cpu": 38.901507177999996
+  },
+  {
+   "updates": 192,
+   "data_digest": {
+    "batches": 192,
+    "sha256": "4170cf7537a2721d4a4aa2dcc32ad4a43998dc32cc09341d6af6793ebbbc7407"
+   },
+   "tensors_sha256": "4261dfa266a74c8ffdb73bd2c601362aceb52b6e1c64213d0ed7240089b60ea6",
+   "loss": 1.1494855619966984,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 27,
+    "first_byte": 196,
+    "second_byte": 37,
+    "third_is_end": 298,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 27
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 28,
+    "final": 28
+   },
+   "taught": {
+    "n": 300,
+    "exact": 167,
+    "final": 167
+   },
+   "cpu": 41.475419663
+  },
+  {
+   "updates": 208,
+   "data_digest": {
+    "batches": 208,
+    "sha256": "a489820dd51b07202dec9df3843b4a0953f0e44d779bc21a1dade75c0cee731e"
+   },
+   "tensors_sha256": "e628b7d7f062f7e2935bd3618eb219318ceadeb394db577fbb0615272b962eb1",
+   "loss": 0.7817252948880196,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 58,
+    "first_byte": 232,
+    "second_byte": 68,
+    "third_is_end": 296,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 58
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 63,
+    "final": 63
+   },
+   "taught": {
+    "n": 300,
+    "exact": 244,
+    "final": 244
+   },
+   "cpu": 44.200337779
+  },
+  {
+   "updates": 224,
+   "data_digest": {
+    "batches": 224,
+    "sha256": "b1d21910998b2edc5f795d43225a12673599735a4e2f859b6a2011efe015eaf7"
+   },
+   "tensors_sha256": "37157df9141bdfc3f4ef9aec378bd2fa6a417a08cff950199c906a6886455943",
+   "loss": 0.48819199204444885,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 108,
+    "first_byte": 255,
+    "second_byte": 110,
+    "third_is_end": 299,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 108
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 110,
+    "final": 110
+   },
+   "taught": {
+    "n": 300,
+    "exact": 286,
+    "final": 286
+   },
+   "cpu": 46.87458872
+  },
+  {
+   "updates": 240,
+   "data_digest": {
+    "batches": 240,
+    "sha256": "fa8384b9ba417c363461b8df61bddcb2132825be1e37b8b16e078b9a54a7bdd3"
+   },
+   "tensors_sha256": "e396750e52bd260a724b0eed49163021f755371f5cc0d455f46b8f26b707916b",
+   "loss": 0.2833023006096482,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 133,
+    "first_byte": 270,
+    "second_byte": 136,
+    "third_is_end": 297,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 133
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 140,
+    "final": 140
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 49.547042347
+  }
+ ],
+ "complete": null
+}
