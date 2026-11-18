@@ -3400,3 +3400,13 @@ The reviewer wrote and had checked the brief I asked for in decision 21 (E60: li
 E54 (the limited and the periodic network from fewer pairs, one seed) is merged as verified by the reviewer: on this seed neither network generalises better than the dense one at any fraction under either rule, five of twelve readings are decided, and seven are not because curves had not flattened. I read the reviewer's summary only. No further seed is run.
 
 Reported and not verified: the first long lives are finished (32 lives, 24 probes); the worker reports that the conventional learner's first-visit level on a new family rises with its age (0.43, 0.67, 0.83 at 64, 256 and 1,024 visits without the store). Nothing is read from this until the reviewer has verified it. E55's checks passed and its four runs of the arm `blind` are running.
+
+## 9.162 Mr. Xu's statements on the learner's own code and on relay; what they change; decisions 30 to 37 (18 November 2026)
+
+Mr. Xu answered two questions of the reviewer on 18 November (memo 33.22, verbatim there): a code that the learner has learned by itself is not information given by us; a single global backward pass is prohibited, and information may be relayed between neurons over their own connections (his example: 1 → 50 → 50² → 50³), so that a few passes cover the network.
+
+What this changes. The dense network is outside the definition of locality under either rule, because one pass reaches every unit. The long lives, E60, E52 and E55 are on the dense network; they run to the end and are read as a comparison of two rules, and no statement on requirement B1 or C for the local learner is drawn from them. The networks inside the definition are those with limited connections (E42, E47, E49, E50, E53, E54, E57); none has been run for a life, and in none has the number of steps of relay been varied.
+
+Decided (decisions 30 to 37 in the coordinator's file). The next brief is the plan's item 20 on E50's stage-3 network: the number of steps that the error is relayed as the variable, under the sweep and under the exact gradient, each named as an arm; it takes one free line. A life on a network with limited connections follows it. The outside advice memo's job on births with several families is worth running on Mr. Xu's first statement and is not written now. The head of `README.md` now points to the live state; `AGENTS.md` is unchanged and waits for the owner's word.
+
+Nothing was run for this section. E57's first rows and E53's checks are workers' reports and nothing is read from them.

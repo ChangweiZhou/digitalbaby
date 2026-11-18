@@ -1,5 +1,18 @@
 > **Terms of use.** Strictly non-commercial. Any use by others, teaching and research included, requires the prior written permission of the owner, Changwei Zhou. See [LICENSE.md](LICENSE.md).
 
+## Where the project stands (updated 18 November 2026)
+
+The text below this section describes the state of 2 November 2026 (V181 and earlier) and is kept as history. The live state is in four places, in this order:
+
+1. **The review for Mr. Zhou**, [MINIFLY_PAST_WORK_REVIEW_FOR_MR_ZHOU_20261106.md](MINIFLY_PAST_WORK_REVIEW_FOR_MR_ZHOU_20261106.md): sections 1 to 8 give the programme, and section 9 is its running record; the newest entry is at the end.
+2. **The coordinator's decisions**, [COORDINATOR_DECISIONS_20261118.md](PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/COORDINATOR_DECISIONS_20261118.md): every decision is complete in that file, which is the channel by which it reaches the reviewer and the workers.
+3. **The reviewer's memo to the coordinator**, [MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md](PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md): section 1 lists what is asked of the coordinator; section 33 holds the results verified from receipts and weights since 17 November, each with what it does and does not show.
+4. **The plan and the log**, `PLAN.md` and `LOG.md` in `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/`: the ordered list of work, and every message, decision and correction with its time.
+
+The requirements that the present experiments serve are Mr. Xu's (15 to 18 November): long-term memory that forms in the course of learning and not by an act of the program; a learner that may be slower at first and is to reach at least the generalisation of back-propagation at equal computation, perhaps from fewer samples; and learning that is local, each unit receiving only over its own sparse connections, so that information crosses the network by relay over several passes and never in one global backward pass. The experiments of this line are in `MOD97_LOCAL_RULE_20261106/`; each has a brief, receipts, a report and, where it is verified, a verification document with a script in `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/`. Results are first measurements on one to three seeds unless a document says otherwise; nothing has been confirmed on tasks sealed in advance.
+
+---
+
 # MiniFly current research navigation — 2 November 2026
 
 **V181 is the latest allocated experiment (DESIGN ONLY).** [V181 compact learning design](minifly_v181_mini_local_plasticity_design_20261102/DESIGN.md) | [Parameter and resource census](minifly_v181_mini_local_plasticity_design_20261102/PARAMETER_AND_RESOURCE_CENSUS.json) | [Machine-readable spec](minifly_v181_mini_local_plasticity_design_20261102/SPEC.json) | [Scale-correction memo](PROJECT_DOCUMENTS/MINIFLY_V181_MINI_SCALE_CORRECTION_20261102.md) | [Version index](PROJECT_DOCUMENTS/MINIFLY_VERSION_INDEX.json).
