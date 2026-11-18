@@ -52,3 +52,9 @@ Each of these is in the present network or its training.
 ## 6. How the list will be derived from this page
 
 Not by changing the present network one part at a time. The first question is: a population of cells as in section 1, with synapses as in section 2, taught as in section 3 and with nothing of section 4: what is the simplest form of the present task that it learns at all, and what does it keep of it? The present network enters only as the reference that the record already holds.
+
+## 7. Mr. Xu's corrections of draft 1 (18 November 2026, 22:03 UTC), which override the text above
+
+1. On the three points of section 5: all three are accepted. The gated cell may stay; separate parts of a cell that treat inputs from different sources differently may be used; the right answer shown as input after the learner's own attempt is the form of teaching.
+2. **A cell can send a uniform chemical signal to large numbers of other cells; how each receiving cell reads that signal is another matter.** Statement 1.1 (one output, nothing else) is therefore too narrow, and so are statement 2.4 and item 4.2. Corrected: beside its electrical output to the cells it contacts, a cell can release a chemical signal that reaches many cells alike, and each receiving cell reads it in its own way, so that one signal can act differently in different cells. What does not exist is an instruction computed separately for each cell and delivered to it, and the use by one cell of another cell's weights; a signal that is the same for many cells is not excluded.
+3. The verification runs and re-runs are the coordinator's work and not the reviewer's; the reviewer reviews and arranges the tasks of other agents.

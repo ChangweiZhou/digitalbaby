@@ -1,0 +1,24 @@
+# What is to be done, derived from what a neuron has (18 November 2026, draft 1, for discussion with Mr. Xu)
+
+By the outside reviewer. Derived from `WHAT_A_NEURON_HAS_20261118.md` as corrected by Mr. Xu (its section 7), not from the existing network. It replaces the reviewer's nine jobs of the same evening and the chain of steps as the reviewer's proposal; the chain remains the coordinator's adopted order until the coordinator and Mr. Xu say otherwise. It starts nothing.
+
+**Rule of measurement.** A learner is read by what it answers, by what it still answers after it has learned something else, and by what it answers when cells or connections are taken away. An experimenter may record activity. Nothing is read from an operation that has no meaning for a living learner.
+
+## The order
+
+0. **The tissue, before any learning.** Cells as the page describes them: gated cells with a non-negative output; a fixed kind for each cell (exciting or inhibiting); a limited number of connections; several exchanges between cells for each byte; input on lines that reach only some cells; an answer read from only some cells (output cells); no reset between items and one item after another; a channel for a chemical signal to many cells. *Question:* does activity stay within a working range, and is what was read still present in the activity when the answer is due, across the letters? Without this nothing can be learned. Numbers on a grid of powers of two: connections of a cell, exchanges for each byte, the share of inhibiting cells.
+1. **Teaching by showing the answer; only the output cells learn.** After the learner's own attempt the right byte arrives as input on a separate part of the output cells. An output cell changes its own incoming synapses from what is present in it: its drive from the network and the shown answer. No other cell learns. *Question:* which is the simplest form of the task that is learned so (one digit recalled; the larger of two; one-digit addition; the first family without letters; with letters)? This is the floor that the learning of other cells must exceed.
+2. **The other cells learn from a signal to all.** When the shown answer differs from the attempt, a chemical signal is released to all cells alike. Each synapse keeps a trace of its recent activity on both sides; the signal turns traces into changes; each cell reads the signal in its own way. *Question:* how far up the ladder of item 1 this reaches, and how the number of items needed grows with the number of cells.
+3. **The other cells learn from the answer relayed over connections that exist.** The shown answer changes the activity of the output cells; over the next exchanges that activity reaches the cells that receive connections from them, on a separate part of each cell; a cell compares what arrives there with its own drive and changes its own synapses. With more exchanges the answer reaches cells one, two and three connections away, which is Mr. Xu's picture of 1 → 50 → 50². *Question:* how many exchanges are needed; whether it exceeds item 2; the two together.
+4. **Memory that forms by itself** (requirement A). A synapse's own slow process (a change is at first easily undone and becomes lasting with repetition), and the learner's own repetition at rest (the tissue runs without input between visits and what it re-activates changes synapses by the same rule). A second family after the first, with no store and no act of the program. Arms: neither; the slow process; repetition at rest; both. *Read:* what is still answered of the first family.
+5. **Connections formed and removed by activity,** so that a cell's number of connections is an outcome.
+6. **Against the reference** (requirement B): at equal accuracy and computation, the share right on never-taught pairs, the items needed and the time, beside back-propagation on the dense network as the record holds it. No new run of the reference.
+7. **The numbers we fixed** at each stage are listed with the stage, varied on powers of two, and then given to the cell where a cell can set them.
+
+## What becomes of the present work
+
+Nothing further is run with the sweep or the exact gradient, and E61 is not run in any form. E53 and E62 finish, since they are paid for, and are filed with the earlier line. Of the reviewer's nine jobs only what appears above remains: several exchanges for each byte (items 0 and 3), an answer read from some cells only (items 0 and 1), one item after another without reset (item 0), a synapse's own stability (item 4).
+
+## What the reviewer would arrange first, on Mr. Xu's word
+
+An agent writes the exact description of item 0 from the page, with every number listed; a second agent, which has not seen the first one's reasoning, goes through that description line by line with one question, whether a cell can do this; only then is anything programmed, and the coordinator releases and assigns it.
