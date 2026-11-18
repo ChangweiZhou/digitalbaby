@@ -1,6 +1,6 @@
 # Advice memo: persistent learning as a question of where an experience is written
 
-**Date:** 18 November 2026. **Revision 1 (draft).** For Mr. Zhou and Mr. Xu, and for the coordinator. Written by an outside session at Mr. Xu's request to look at the project and offer advice on the larger picture.
+**Date:** 18 November 2026. **Revision 2, in progress (draft).** Part I is revision 1 unchanged; Part II, sections 9 and 10, is added, and its sections on the older Codex branches are to follow. For Mr. Zhou and Mr. Xu, and for the coordinator. Written by an outside session at Mr. Xu's request to look at the project and offer advice on the larger picture.
 
 **Status:** proposed. This memo decides nothing, authorises no run and reports no new result. Nothing was trained and no figure was recomputed.
 
@@ -12,7 +12,7 @@
 - the reviewer's memo to the coordinator (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md`, revision 24), sections 24 and 28 to 33; its plan and log (`COORDINATION_20261117/`); the two discussion memos of 15 and 16 November; the coordinator's decisions of 18 November;
 - for section 5.2 only, the sources `arch26.py`, `exp11_cell.py` (tasks and item format), `e40_new_family.py`, `e48_gated.py` and `smallworld/lw_world.py` in `MOD97_LOCAL_RULE_20261106/`.
 
-**Not read at this revision:** the branches that are not merged into the default branch (the long lives, E52, E54, E58, E59, and the older Codex lines of 3 to 6 November). Part II of this memo will say what they add or change.
+**Not read for Part I:** the branches that are not merged into the default branch (the long lives, E52, E54, E58, E59, and the older Codex lines of 3 to 6 November). Part II says what they add or change, and corrects sections 4.1 and 4.4.
 
 **How statements are marked.** *Measured*: a figure in the record, as the workers reported it and the reviewer verified it. *Argued*: my reasoning, not tested. *Proposed*: a recommendation. Every measured figure is a development result on one to three seeds and is not confirmed on tasks sealed in advance. Pointers to the literature are from memory and are listed in section 7 for checking.
 
@@ -201,4 +201,74 @@ From memory. The papers of Dohare, Bricken and Shen are cited in the repository'
 - It rests on reading. No run, no recomputation, no check of a worker's figure.
 - Sections 3.1, 4 (the items marked *argued*) and 5 are untested. In particular, the claim that sparse activity and plasticity that falls with use would keep a family while preserving the transfer of E40 is the hypothesis, not a finding. The mushroom-body learner is the evidence that sparse codes can remove generalisation altogether.
 - The reading of the long-life world in 4.4 rests on one world and one seed.
-- The unmerged branches were not read at this revision.
+- The unmerged branches were not read at revision 1. Part II below covers them, and corrects sections 4.1 and 4.4.
+
+---
+
+# Part II. What the unmerged branches add (revision 2, 18 November 2026)
+
+## 9. What was read, and how
+
+| Branch (head) | Content | How it was read |
+|---|---|---|
+| `claude/e44-l2-first-long-lives` (c48498f8) | The first long lives: the trial's report; worlds 2 and 3 running | By me: the trial's report |
+| `claude/e44-l2-sweep-long-lives` (3e9f4f2b) | The sweep's long lives: interim tables, worlds 1 and 2 | By me: the tables |
+| `claude/e52-learning-rates-sdga8c` (75da7e28) | E52: 18 runs on seed 93683 | By me: the tables |
+| `claude/e54-fewer-pairs-ELsQP` (2a6af8b7) | E54: first part, seed 73129 | By me: the tables |
+| `claude/e58-gated-term-kqasnme` (b45dca24) | E58, Part A: receipts of seeds 73129 and 93683; no report yet | By me: a tabulation of the 24 receipts |
+| `claude/e50-fixed-input-code-017dSE` (9f38483f), `claude/e51-reserve-017dSEpW` (5fdac298) | E59, and E51's Part B on two more seeds, both in progress | Not read |
+| `claude/vibrant-cerf-sje726` (3456d5f3) | The reviewer: memo section 33.10 (E50, stage 3); the check of E55, revision 3, in progress | By me |
+| `codex/minifly-three-experiments-20261106` (501ca0c0), which contains `codex/minifly-v39-v40-source`, `-ordered-front-end-` and `-recurrent-worked-examples-` | V191 to V223 and the unnumbered folders of 3 to 6 November | By three reading agents working from the reports, each asked for figures with their file paths. Their findings are not yet in this memo (section 11, to follow) |
+| `codex/minifly-whole-brain-learning-scope-20261106`, `codex/minifly-recursive-runtime-20261103`, `codex/minifly-governance-routing-repair-20261103`, `codex/gemini-human-neuronal-mechanisms-audit-20261025` | One to seven files each that the default branch lacks | By a reading agent; to follow |
+
+Nine further `claude/*` branches (the target test, E21, E28, E30, E16-M4, the storage audit) hold no file that the default branch lacks, and `claude/charming-clarke-u9g850` is merged. Of the older work that is already on the default branch I read the opening sections of the reports of V158, V161, V185, V192 and V196, which bear on Part I.
+
+Every figure of a running job below is the worker's own, is not yet verified by the reviewer, and is provisional by the worker's own statement.
+
+## 10. The newest results, and what they change in Part I
+
+### 10.1 The long lives (*measured, provisional*)
+
+Lives of 1,024 visits from E41's half-width births, each rule from its own birth. `naive` and `replay` are back-propagation without and with the store; `sweep` and `sweep+replay` the same under the sweep.
+
+| Quantity | World 1: `naive` / `sweep` | World 2: `naive` / `sweep` | World 1 with the store: `replay` / `sweep+replay` |
+|---|---|---|---|
+| Late level | 0.669 / 0.650 | 0.756 / 0.628 | 0.730 / 0.784 |
+| Kept at a return after five or more absences | 0.015 / 0.015 | 0.009 / 0.020 | 0.472 / 0.503 |
+| First 16 updates of such a return | 0.095 / 0.078 | 0.111 / 0.085 | 0.538 / 0.602 |
+| Last 64 updates of such a return | 0.747 / 0.760 | 0.834 / 0.696 | 0.706 / 0.773 |
+| Trend of the first-visit level | +0.106 / +0.082 | +0.111 / +0.070 | +0.104 / +0.113 |
+| Score trend over the returns of the second half | −0.009 / +0.063 | +0.042 / +0.098 | +0.079 / +0.046 |
+
+My readings (*argued*):
+
+1. **Keeping does not depend on the rule.** Without a store nothing is kept under either rule in either world (0.009 to 0.020). The argument of 4.1 stands for requirement A.
+2. **Between the rules the comparison is open, and three figures now point the sweep's way.** Without a store the late levels are not distinguished (differences of −0.019 and −0.128), while the sweep's score trend over the second half is steeper in both worlds (mean difference +0.064, 90% interval +0.012 to +0.117). With the store, in world 1, `sweep+replay` is above `replay` by 0.054 in late level and in every block of 64 visits after the first. With the calibration's figure (4.1) these are the first results in the direction of requirement B1.
+3. **They are not yet an overtaking.** In world 2 the sweep's steeper trend follows a dip (0.49 at visits 320 to 383) and its last block is 0.675 against 0.777; in world 1 the two curves cross back and forth. A learner returning to a level from below has the same shape. By the horizon rule (memo, 17.5) the way to decide is to continue these same lives from their saved states to 4,096 visits, with no new arm.
+4. **This world rewards keeping a little more than 4.4 said, and still little.** Under back-propagation a returning family is relearned within its visit to 0.75 without a store against 0.71 with it, the store taking half of every update (under the sweep, 0.76 and 0.77). In late level the store is worth +0.06 under back-propagation and +0.13 under the sweep (world 1).
+5. **Under replay a memory lasts longer the more often its family has been met:** kept at a return rises from 0.13 after one earlier visit to 0.65 after sixteen or more under back-propagation, and from 0.20 to 0.71 under the sweep (absences of 2 to 4 visits). Without the store it stays between 0.00 and 0.04. The report notes that a family met more often has also put more items into the store.
+6. **Under replay the wrong answers are confusions between families.** At a return after five or more absences, 24 to 29% of the answers are right under an earlier family's modulus and 1 to 2% under the modulus taught last; without the store the modulus taught last accounts for 41 to 52%. The network with a store holds several moduli at once and assigns the wrong one to the code. That is the binding of a code to its family, which is what 5.2 and the note on codes in 5.4 are about.
+7. **The conventional learner is not stuck** at 1,024 visits under either rule, by the roster's own definition; both are classed as stuck at 256.
+
+**Correction to section 4.1 and to my message of 18 November.** I wrote that the sweep can only tie or lose. On first learning that is what the record shows. In the long-life world it is not: the three figures of reading 2 are in its favour, on one or two worlds. What I should have written is that the rule does not bear on keeping, and that for overtaking the comparison is open.
+
+### 10.2 E52, E54, E50 and E58 (*measured; one or two seeds*)
+
+- **E52** (seed 93683). At a rate of 0.003 both rules are faster and no run diverges. The sweep's lag at each rule's own best rate is 1.3 to 2.1 times, against 1.2 to 3.3 times at 0.001. In the one control in which the decay is lowered in proportion (0.083), at the half width with half of the pairs, the two rules are level (5,632 and 6,912 updates to 80 on R) and both end at 97 to 98 on R, against 91 and 94 at the standing settings. The settings carried over from earlier learners therefore cost both rules several points at the width of the long lives.
+- **E54** (seed 73129). With a quarter of the pairs the dense network under the sweep ends level with back-propagation at 49,152 updates (96.0 and 95.7 on R) after needing 1.6 to 2.0 times the updates to 80. Under the sweep the limited network needs 3.4 to 3.7 times the dense network's updates and is at 82.8 and rising.
+- **E50, stage 3** (verified by the reviewer; memo, 33.10). A limited input in which each cell still has an input for every byte is learned at 2.2 and 2.7 times the updates of the dense input. When a cell has an input for only some bytes, neither rule reaches 80 on R within 49,152 updates. Stage 1 had shown that the fixed code read densely costs nothing.
+- **E58, Part A** (my tabulation of the receipts; reduction score of the new family, and the panels of the earlier families' addition and subtraction):
+
+| Arm | New family after 64 updates | New family at 8,192 | Earlier families, from 69 to 78 at the start, at 8,192 |
+|---|---|---|---|
+| Free learning (three arms: as in E40, its repeat, and without decay) | 70 to 92 | 68 to 95 | 16 to 39 |
+| Free learning with a pull of every weight toward the lived weights | 71 to 92 | 87 to 98 | 38 to 48 |
+| The gated term, with or without decay | 29 to 69 | 90 to 98 | unchanged |
+
+A pull of equal strength on every weight gives a little and does not keep, as in E38. Where the change is made decides.
+
+**What these change.** They narrow the difference between the rules further, with settings and with time, and leave 4.2 to 4.5 as they were. For the job of 5.2, the births should use settings that E52 supports once its other seeds are in. And E50's stage 1 offers a second form of the arm `rows`: with the fixed code read densely, a new code byte has eleven input lines of its own, which is a larger private change than a byte-table row and still needs no gate.
+
+## 11. The older Codex branches
+
+To follow in this revision: the reading is in progress.
