@@ -125,6 +125,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 33. **A review at Mr. Xu's request: the experiments set against the principle** (section 33.23). On the line of the local learner as Mr. Xu defines it, the first step is taken, the second is not passed, and the steps on memory and on a life have not been begun on a network inside the definition; most of the computation of 17 and 18 November went to the dense network. The section gives the steps, where each stands, and the order the reviewer proposes. It is a proposal; the order of work is yours.
 
+34. **Mr. Xu states that he never defined the sweep, and asks where it came from and why it is the rule under test** (section 33.24). The record's answer is that it was introduced on 6 November as a variant that the constraint as then read permitted, was proposed as the working rule by the reviewer on 10 November, and was adopted by you and confirmed by Mr. Xu in one sentence. Its standing against the principle of 33.22 is now open and is his and yours to rule; every running job uses it as the candidate.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2140,3 +2142,20 @@ Mr. Xu, 18 November: he had asked for the experiments to be arranged step by ste
 3. Pass step 2. If the scale does not do it, the next candidate cause is the feedback (by signs against learned feedback; E31, not replicated).
 4. Take step 3 on the sparse network: the plan's item 20.
 5. Only when steps 2 to 4 hold: memory on the sparse network (cells not in use; the learner's own code, the outside memo's 5.2), and last the life of step 6.
+
+### 33.24 Where the sweep came from, at Mr. Xu's question (16:03 UTC)
+
+Mr. Xu, 18 November: "I never defined the sweep rule. Where did it come from? Why was this experiment done?" The reviewer answers from the record; every quotation below was read again for this section in the review for Mr. Zhou on the default branch at 392b3eca and in the reviewer's own note of 10 November.
+
+**The record.**
+
+1. **6 November** (review, sections 9.1 and 9.2). At Mr. Xu's request the project's own local rule of that time, V181's direct random feedback, was run beside back-propagation on modular addition in a feed-forward network: 70 to 84% of never-seen sums at its peak against 95 to 99%. The review then tried "sign-symmetric feedback, which the clarified constraint permits": each layer receives the error through the signs of its own forward weights. It reached 95 to 98% at backprop's speed, and the review wrote: "under the clarified constraint this is a local rule, and it is the one to carry forward." The constraint as read then was that anything is allowed except exact back-propagation and attention.
+2. **Early November, the recurrent networks.** When the learner read an item byte by byte without a window, the same idea was applied backward over the positions of the item (the review calls it "the Phase 4 rule"). It was the only rule on file that trained such a learner (0.92 to 0.95 of the reference); a forward-only form reached 0.63 to 0.79 at about twice the cost (E19).
+3. **10 November, the reviewer's proposal** (`NEXT_STEPS_NOTE_20261110.md`, section 3.1). The reviewer suggested: "A backward sweep over the item with weight-sign feedback (the Phase 4 rule): accept it as the working life rule, with the sweep length a declared budget." It wrote beside it: "The life rule is then backprop through time with weight signs in place of weights. What stays outside the line is exact weight transport," and "The rule can no longer be the project's novelty."
+4. **10 November, the adoption** (review, section 9.82 and its addendum). The coordinator adopted this as a working rule "on my reading of Mr. Xu's instruction" (his instruction had been: "We received the next step note. Now implement the steps"), asked Mr. Xu whether the three working rulings were his, and recorded the answer: "Mine, they stand." A later section of the review says that the backward sweep "rests on Mr. Xu's working ruling (addendum to 9.82) and on nothing else."
+
+**What this amounts to.** Mr. Xu did not define the rule. It was chosen because it worked under a loose reading of his constraint; the reviewer proposed it as the working rule; and it was put to him for confirmation as one of three items in one question. From that day "the sweep" stood for "our learner" in every brief, and the name hid what the reviewer had itself written of it: that it is back-propagation through time with the signs of the weights in place of the weights. The reviewer recommended it and bears that part of the fault.
+
+**Its standing against the principle of 33.22.** Three things in it are not what a neuron has: the error returns over the forward connection with that connection's sign; one scale is taken for a whole matrix; and the pass runs backward over the positions of the item after the item has ended, which needs the past states of every unit. On the dense network it is, besides, a pass that reaches every unit. The record holds rules that are nearer to the principle and weaker so far: direct random feedback (item 1), the forward-only form (item 2), and learned feedback (E31, not replicated).
+
+**What is open.** Whether the sweep remains the candidate, in which form and on which network, is Mr. Xu's and yours to rule. The reviewer changes no running job on this account. E57 (the scale for each receiving unit) is the one running job that tests a part of the rule itself.
