@@ -1,0 +1,29 @@
+2026-11-16T16:26:39Z start (resume-aware)
+2026-11-16T18:04:55Z done P8 B 93683 rc=0
+2026-11-16T18:06:57Z done P8 S 116089 rc=0
+2026-11-16T18:07:13Z done P8 S 93683 rc=0
+2026-11-16T19:21:19Z done G S 93683 rc=0
+2026-11-16T19:21:37Z done G S 116089 rc=0
+2026-11-16T19:45:28Z done P8 B 116089 rc=0
+2026-11-16T20:27:55Z done G B 93683 rc=0
+2026-11-16T20:28:05Z done G B 116089 rc=0
+2026-11-16T20:36:12Z container restart detected; F10 S 93683 (at 16128), F10 B 93683, F10 S 116089 interrupted and rerun from scratch
+2026-11-16T20:36:14Z start (resume-aware)
+2026-11-16T20:36:17Z done F10 S 93683 rc=1
+2026-11-16T20:37:17Z restart attempt at 20:36:14 stopped: runner refused F10 S 93683's partial receipt (rc=1); launcher fixed to move interrupted outputs to exp45/e42/interrupted/ before rerunning
+2026-11-16T20:37:20Z start (resume-aware)
+2026-11-16T20:46:05Z start (resume-aware)
+2026-11-16T20:46:23Z second container restart (~20:45Z); runs restarted 20:46:05 by resume_e42.sh; auto-resume now via a SessionStart hook (container-level ~/.claude/settings.json, not in the repo) and a per-minute watchdog
+2026-11-16T20:53:57Z paused runs (SIGSTOP) 551 554 555  for the checkpoint self-test (3-process limit)
+2026-11-16T21:05:22Z resumed (SIGCONT) 551 554
+2026-11-16T21:11:12Z resumed (SIGCONT) 555; checkpoint self-test finished
+2026-11-16T21:11:34Z switch to checkpointing launcher (self-test PASS); old launcher dispatch stopped, its 3 running F10 runs continue and the new launcher waits for them
+2026-11-16T21:11:36Z start (checkpointing launcher)
+2026-11-16T21:12:07Z stopping the 3 old-runner F10 runs (at 4608/4608/2816) so they rerun under the checkpointing runner
+2026-11-16T21:12:07Z done F10 S 116089 rc=143
+2026-11-16T21:12:07Z done F10 S 93683 rc=143
+2026-11-16T21:12:07Z done F10 B 93683 rc=143
+2026-11-16T21:16:08Z RESTART DRILL: kill -9 of launcher, queue, runs and backup loop (as a container restart)
+2026-11-16T21:16:48Z start (checkpointing launcher)
+2026-11-16T21:17:04Z restart drill result: watchdog relaunched at 21:16:48 (40 s), all three runs resumed from their checkpoints at update 1024, backup loop restarted
+2026-11-16T21:22:32Z split across two hosts: this host runs exp45/e42/lists/host_a.txt (launch_list_host_a.log); seed-116089 runs in host_b.txt go to a second session on its own branch. Two-seed launcher stopped; its 3 running runs continue.
