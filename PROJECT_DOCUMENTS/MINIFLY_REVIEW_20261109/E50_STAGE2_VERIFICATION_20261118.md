@@ -176,4 +176,4 @@ From the repository root:
 
 With one or more of the names `0 1 2a 2b 2c 2d 3a 3b 4` as arguments, only those parts are printed. With the environment variable `E50S2V_SCRATCH` set to a folder, each weight file is written into that folder, read and deleted before the next; without it the weight files are read into memory and the script writes no file. The two ways give the same output. The script writes no bytecode.
 
-RUNNING_TIME_PARAGRAPH
+The whole script, in its final form, ran in 369 seconds on one core of the reviewer's container, which other processes share (started at 00:29:33 UTC on 18 November 2026, with the scratch folder). By part: part 0, 1 second; part 1, under 1 second; part 2a, 180 seconds (42 to 49 seconds for each of the four weight files); parts 2b, 2c and 2d, under 1 second each; part 3a, 7 seconds; part 3b, 163 seconds; part 4, 17 seconds. An earlier run of the parts gave the same output, with 191 seconds for part 2a and 170 for part 3b.
