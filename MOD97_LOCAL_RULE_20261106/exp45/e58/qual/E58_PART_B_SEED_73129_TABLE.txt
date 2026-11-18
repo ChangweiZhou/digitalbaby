@@ -1,0 +1,93 @@
+
+== f = 0.05: per run. R-mid (rows 512, 1024), R-late (rows 4096..8192), highest row from 64 (row), row 8192 - row 4096; R-late on the common pairs; taught panel at 8192
+S free          73129  R-mid  75.6  R-late  42.2  highest  82.4 ( 128)  8192-4096 -16.4  common R-late  42.8  taught@8192  97.7
+S free-wd0      73129  R-mid  66.9  R-late  75.8  highest  81.1 (  64)  8192-4096  -1.9  common R-late  75.9  taught@8192 100.0
+S term          73129  R-mid  85.2  R-late  85.2  highest  86.9 (1024)  8192-4096  -2.3  common R-late  85.7  taught@8192 100.0
+B free          73129  R-mid  72.3  R-late  55.0  highest  82.0 ( 128)  8192-4096 -10.5  common R-late  55.6  taught@8192  98.0
+B free-wd0      73129  R-mid  68.0  R-late  68.9  highest  82.7 ( 128)  8192-4096 -10.7  common R-late  69.7  taught@8192 100.0
+B term          73129  R-mid  89.3  R-late  88.5  highest  90.9 (1024)  8192-4096  -1.9  common R-late  88.6  taught@8192 100.0
+
+== f = 0.10: per run. R-mid (rows 512, 1024), R-late (rows 4096..8192), highest row from 64 (row), row 8192 - row 4096; R-late on the common pairs; taught panel at 8192
+S free          73129  R-mid  83.1  R-late  79.0  highest  85.3 ( 128)  8192-4096  -4.4  common R-late  79.3  taught@8192  99.0
+S free-wd0      73129  R-mid  83.3  R-late  76.7  highest  85.9 ( 256)  8192-4096  +3.6  common R-late  76.9  taught@8192  99.8
+S term          73129  R-mid  90.9  R-late  92.0  highest  93.3 (3072)  8192-4096  -2.5  common R-late  92.1  taught@8192 100.0
+B free          73129  R-mid  83.3  R-late  83.0  highest  87.2 ( 128)  8192-4096  +2.7  common R-late  83.2  taught@8192  98.5
+B free-wd0      73129  R-mid  75.5  R-late  83.5  highest  87.7 (2048)  8192-4096  -1.8  common R-late  83.9  taught@8192  99.5
+B term          73129  R-mid  91.9  R-late  94.2  highest  95.6 (2048)  8192-4096  +2.0  common R-late  94.3  taught@8192  99.8
+
+== f = 0.20: per run. R-mid (rows 512, 1024), R-late (rows 4096..8192), highest row from 64 (row), row 8192 - row 4096; R-late on the common pairs; taught panel at 8192
+S free          73129  R-mid  89.1  R-late  91.2  highest  93.5 (5120)  8192-4096  +2.5  common R-late  91.3  taught@8192  96.8
+S free-wd0      73129  R-mid  88.6  R-late  92.3  highest  93.8 (2048)  8192-4096  -0.3  common R-late  92.4  taught@8192  99.2
+S term          73129  R-mid  92.4  R-late  96.3  highest  97.4 (8192)  8192-4096  +1.8  common R-late  96.4  taught@8192 100.0
+B free          73129  R-mid  85.4  R-late  92.3  highest  94.8 (5120)  8192-4096  +2.2  common R-late  92.5  taught@8192  98.7
+B free-wd0      73129  R-mid  77.3  R-late  94.1  highest  95.5 (2048)  8192-4096  +1.2  common R-late  94.2  taught@8192  99.8
+B term          73129  R-mid  92.4  R-late  97.7  highest  98.2 (8192)  8192-4096  +0.1  common R-late  97.8  taught@8192 100.0
+
+== f = 0.05: reduction score at every row
+S free          73129 0:6.1 16:58.6 32:69.3 64:80.3 128:82.4 256:76.9 512:73.2 1024:78.1 2048:70.0 3072:54.9 4096:53.1 5120:42.6 6144:39.1 7168:39.6 8192:36.6
+S free-wd0      73129 0:6.1 16:59.1 32:69.6 64:81.1 128:81.1 256:77.5 512:63.2 1024:70.7 2048:75.4 3072:70.4 4096:76.7 5120:76.5 6144:75.7 7168:75.1 8192:74.8
+S term          73129 0:6.1 16:9.4 32:20.4 64:46.9 128:67.1 256:81.7 512:83.4 1024:86.9 2048:86.4 3072:86.7 4096:86.8 5120:85.4 6144:85.3 7168:84.0 8192:84.5
+B free          73129 0:4.4 16:52.0 32:65.3 64:79.8 128:82.0 256:73.8 512:72.8 1024:71.8 2048:71.1 3072:46.2 4096:56.0 5120:56.5 6144:69.5 7168:47.5 8192:45.5
+B free-wd0      73129 0:4.4 16:52.5 32:65.7 64:80.8 128:82.7 256:77.1 512:65.8 1024:70.1 2048:69.1 3072:62.0 4096:71.0 5120:75.7 6144:76.3 7168:61.2 8192:60.3
+B term          73129 0:4.4 16:15.4 32:45.8 64:55.8 128:72.5 256:84.4 512:87.6 1024:90.9 2048:90.5 3072:87.5 4096:90.6 5120:89.0 6144:90.5 7168:84.0 8192:88.7
+
+== f = 0.20: reduction score at every row
+S free          73129 0:6.2 16:55.2 32:74.7 64:78.7 128:81.5 256:85.6 512:88.5 1024:89.7 2048:91.7 3072:93.5 4096:88.0 5120:93.5 6144:91.8 7168:92.2 8192:90.4
+S free-wd0      73129 0:6.2 16:55.9 32:75.6 64:78.8 128:81.6 256:83.6 512:89.0 1024:88.1 2048:93.8 3072:89.3 4096:93.0 5120:91.3 6144:90.8 7168:93.7 8192:92.7
+S term          73129 0:6.2 16:8.5 32:19.6 64:47.8 128:68.6 256:84.7 512:90.9 1024:93.9 2048:95.5 3072:95.9 4096:95.6 5120:96.6 6144:96.1 7168:95.7 8192:97.4
+B free          73129 0:4.5 16:56.5 32:71.5 64:84.5 128:82.4 256:79.8 512:90.7 1024:80.0 2048:90.5 3072:92.2 4096:91.8 5120:94.8 6144:87.3 7168:93.5 8192:94.0
+B free-wd0      73129 0:4.5 16:56.8 32:72.0 64:84.9 128:84.9 256:83.8 512:73.0 1024:81.6 2048:95.5 3072:93.4 4096:93.9 5120:95.2 6144:93.5 7168:92.8 8192:95.1
+B term          73129 0:4.5 16:16.2 32:46.7 64:59.9 128:76.0 256:88.9 512:91.0 1024:93.9 2048:97.2 3072:97.4 4096:98.2 5120:96.4 6144:98.2 7168:97.5 8192:98.2
+
+== first row at which the reduction score is 80 or more / 90 or more, and presentations of each taught pair by then (64 items a batch over 4 x taught pairs)
+S f0.05 free       73129  80: row 64 (3.0 each)  90: row None (- each)
+S f0.05 free-wd0   73129  80: row 64 (3.0 each)  90: row None (- each)
+S f0.05 term       73129  80: row 256 (11.9 each)  90: row None (- each)
+S f0.10 free       73129  80: row 128 (3.0 each)  90: row None (- each)
+S f0.10 free-wd0   73129  80: row 128 (3.0 each)  90: row None (- each)
+S f0.10 term       73129  80: row 256 (5.9 each)  90: row 1024 (23.8 each)
+S f0.20 free       73129  80: row 128 (1.5 each)  90: row 2048 (23.8 each)
+S f0.20 free-wd0   73129  80: row 128 (1.5 each)  90: row 2048 (23.8 each)
+S f0.20 term       73129  80: row 256 (3.0 each)  90: row 512 (5.9 each)
+B f0.05 free       73129  80: row 128 (6.0 each)  90: row None (- each)
+B f0.05 free-wd0   73129  80: row 64 (3.0 each)  90: row None (- each)
+B f0.05 term       73129  80: row 256 (11.9 each)  90: row 1024 (47.6 each)
+B f0.10 free       73129  80: row 64 (1.5 each)  90: row None (- each)
+B f0.10 free-wd0   73129  80: row 64 (1.5 each)  90: row None (- each)
+B f0.10 term       73129  80: row 256 (5.9 each)  90: row 512 (11.9 each)
+B f0.20 free       73129  80: row 64 (0.7 each)  90: row 512 (5.9 each)
+B f0.20 free-wd0   73129  80: row 64 (0.7 each)  90: row 2048 (23.8 each)
+B f0.20 term       73129  80: row 256 (3.0 each)  90: row 512 (5.9 each)
+
+== Part B readings
+
+-- rule S
+f 0.05: term against free: incomplete; differences +43.0, -, -
+f 0.05: term against free-wd0: incomplete; differences +9.5, -, -
+f 0.10: term against free: above; differences +13.0, +9.3, +3.7
+f 0.10: term against free-wd0: above; differences +15.3, +9.9, +3.7
+f 0.20: term against free: incomplete; differences +5.1, -, -
+f 0.20: term against free-wd0: incomplete; differences +4.0, -, -
+
+-- rule B
+f 0.05: term against free: incomplete; differences +33.5, -, -
+f 0.05: term against free-wd0: incomplete; differences +19.6, -, -
+f 0.10: term against free: above; differences +11.3, +6.6, +9.8
+f 0.10: term against free-wd0: above; differences +10.8, +6.9, +5.3
+f 0.20: term against free: incomplete; differences +5.4, -, -
+f 0.20: term against free-wd0: incomplete; differences +3.6, -, -
+
+-- term under S at f against free / free-wd0 under S at g, on R-late of the common pairs
+(05, 10): incomplete
+(10, 20): incomplete
+(05, 20): incomplete
+
+-- term under B at f against free / free-wd0 under B at g, on R-late of the common pairs
+(05, 10): incomplete
+(10, 20): incomplete
+(05, 20): incomplete
+
+-- term under S at f against free / free-wd0 under B at g, on R-late of the common pairs
+(05, 10): incomplete
+(10, 20): incomplete
+(05, 20): incomplete
