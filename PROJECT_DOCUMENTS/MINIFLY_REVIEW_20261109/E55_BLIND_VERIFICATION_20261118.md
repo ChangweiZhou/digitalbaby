@@ -14,6 +14,8 @@ The terms of the brief hold. In addition: a *receipt* is the JSON file that a ru
 
 **Running time.** The final run of the script, from a clean start after its last edit, took 243 seconds (single thread), at 16:23 to 16:27 UTC.
 
+**The reviewer's own run.** The reviewer ran the script again (250 seconds, ended 16:32 UTC on 18 November) with no error: 1,227 figures compared, none differing. The reviewer set beside that output the figures of findings 1, 2, 3, 5 and 7, the table of section 5 and the outcome of P55.11, and found them as printed.
+
 ## 2. Recomputed figures against reported figures
 
 The script recomputed, from the raw counts in the receipts and with its own code (not the worker's reader), every figure of the worker's table and reading and every figure of the worker's message (3.1 to 3.4):
