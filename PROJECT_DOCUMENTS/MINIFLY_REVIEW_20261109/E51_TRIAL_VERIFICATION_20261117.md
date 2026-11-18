@@ -85,3 +85,143 @@ The counts of row 0 are those of the birth: 3,682 + 3,555 of 3,916 + 3,916 reduc
 *What the new entries hold.* They are the draws of a network of the present size made from the seed before any update. Three observations support this. They are identical in the starts of the two rules. Each block lies within the bound of torch's constructor for a layer of that size and has the standard deviation of a uniform draw (for example the reserve cells' rows of the input map: range −0.0625 to +0.0625, standard deviation 0.0361, where a uniform draw gives 0.0361). And they are bit-equal to the corresponding entries of a network of the same seed that another job saved before any update (`e50_C-dense_S_73129_start.pt`): all new entries of `l1`, of the input map, of the two bias vectors, of `lm` and of `l2`. For the recurrent matrix that file holds the draws on 2,816 entries a gate only, multiplied by one scale; on the 5,085 new entries that can be compared the ratio is 4.82418 throughout, which is the square root of 256/11. The byte table is the birth's: 213 of its rows equal that fresh network's, and the 45 that differ are the bytes in use other than the start symbol, whose row is zero.
 
 The start with a bias differs from the keyed start in 256 numbers only: the bias of the input map is 10 and the bias of the recurrent matrix is 0 at the reserve cells' update-gate rows (384 to 511), which leaves a reserve gate open by about 4.5e-5.
+
+## 3. The keeping, from the weights at rows 64 and 4,096 of the four `keyed` runs (part 3)
+
+**The directions in use.** The saved files of directions have the hashes that the start receipts record, and their list of bytes in use is the reader's. The reader computes the directions again from its own forward pass on the keyed start and finds the same numbers and the same eigenvalues as the receipts: 46 at the input map, 129 at the recurrent matrix, 129 at `lm`, 11 at `l2` (33,280, 33,280, 6,240 and 6,240 vectors; under the sweep the largest eigenvalues are 42.5851, 13.4625, 8.8614 and 17.5122 and the last kept 4.42e-7, 6.20e-3, 4.36e-3 and 3.64e-2; under back-propagation 53.4372, 18.0738, 11.9744, 32.0238 and 2.82e-6, 2.23e-3, 2.83e-3, 1.09e-1; the first eigenvalue dropped is at most 1.1e-14). The saved directions are orthonormal to 3e-15. The projector on them differs from the projector on the reader's directions by at most 4.5e-6 in an entry at the input map, 3.9e-8 at `l2` and 3e-15 at the other two.
+
+The reader also compares the saved directions with the span they must have if the 2,080 items exhaust what the first family can present: at the input map the codes of the 46 bytes in use; at the recurrent matrix and at `lm` the 128 coordinates of the old cells; at `l2` the codes of `=` and of the ten digits; a constant in each case. The projectors agree to the same figures (4.5e-6, 3.9e-8, 3e-15). Two things follow. At the recurrent matrix and at `lm` the rule is the same as leaving the old units' weights from old cells, and their biases, unchanged, and allowing only the weights from reserve cells to change. And the protection does not rest on the sample of 2,080 items: any item whose first byte is in use and whose bytes are all in use presents nothing outside these spans, whatever its pair and its number of letters.
+
+**(a) What the rule does not change.** In all eight files, `l3.weight[:, :256]`, `l3.bias`, `l1.weight`, `l1.bias` and the 46 rows of the byte table in use are bit-equal to the start. So are, although the brief does not ask it, the old-cell columns and the bias of the old cells' rows of the recurrent matrix (49,536 numbers) and of rows 0 to 255 of `lm` (33,024 numbers). What changed beside the projected rows: the byte table's rows of the new task's bytes (98 rows in the unrelated runs, the four rows of `n r t x` in the conflict runs) and all 65,792 entries of `l3.weight[:, 256:]`.
+
+**(b) The change of the constrained rows, projected on the directions in use.** The change is the difference from the start of a matrix with its bias appended, in double precision.
+
+| Run, row | Input map, old cells' rows: 2-norm of the change | Its component along the saved directions: 2-norm; largest entry; share of the change | Largest change of an old cell's summed input on the 33,280 vectors of the 2,080 items | `l2`, rows 0 to 255: 2-norm of the change | Component: 2-norm; largest entry | Largest change of a summed input on the 6,240 vectors |
+|---|---|---|---|---|---|---|
+| unrelated, sweep, 64 | 6.02 | 6.5e-7; 4.2e-8; 1.1e-7 | 6.0e-7 | 5.06 | 1.7e-7; 1.6e-8 | 1.5e-7 |
+| unrelated, sweep, 4,096 | 34.54 | 3.3e-5; 2.0e-6; 9.6e-7 | 2.4e-5 | 10.72 | 3.3e-5; 4.8e-6 | 3.2e-5 |
+| conflict, sweep, 64 | 7.31 | 6.6e-7; 4.0e-8; 9.1e-8 | 5.6e-7 | 0.02 | 4.2e-7; 6.3e-8 | 4.2e-7 |
+| conflict, sweep, 4,096 | 42.22 | 1.8e-5; 1.0e-6; 4.3e-7 | 1.4e-5 | 0.06 | 1.8e-6; 4.2e-7 | 2.8e-6 |
+| unrelated, back-propagation, 64 | 4.77 | 5.9e-7; 3.7e-8; 1.2e-7 | 6.2e-7 | 3.72 | 1.2e-7; 1.0e-8 | 9.6e-8 |
+| unrelated, back-propagation, 4,096 | 20.95 | 8.2e-5; 8.0e-6; 3.9e-6 | 1.3e-4 | 4.26 | 3.3e-5; 4.2e-6 | 3.7e-5 |
+| conflict, back-propagation, 64 | 9.98 | 6.8e-7; 3.8e-8; 6.8e-8 | 6.0e-7 | 0.09 | 1.5e-7; 2.3e-8 | 3.6e-7 |
+| conflict, back-propagation, 4,096 | 47.83 | 2.0e-5; 9.8e-7; 4.2e-7 | 9.7e-6 | 0.26 | 5.2e-6; 6.6e-7 | 7.4e-6 |
+
+At the recurrent matrix and at `lm` the component along the directions is exactly zero in all eight files (the change of the projected rows has a 2-norm of 2.3 to 17.1 and of 1.8 to 10.3, all of it in the columns of the reserve cells). The largest projected change in any file is therefore 8.0e-6 in an entry and 8.2e-5 in 2-norm, at the input map, against a change of 20.9; the rule's requirement is met to a few millionths.
+
+It is not met exactly, and the remainder grows: from 6e-7 at row 64 to 2e-5 to 8e-5 at row 4,096. The runner computes each projected step in double precision and then stores the weights in single precision, so each update leaves a rounding error in every stored weight, and these errors are not confined to the complement of the directions. An estimate shows that rounding alone gives this size: if each of the 384 × 46 components took an independent error of standard deviation s at every update, a 2-norm of 3.3e-5 after 4,096 updates gives s = 3.9e-9, and the rounding of a single-precision number between 0.03 and 0.5 has a standard deviation of 1.1e-9 to 8.6e-9. The estimate does not prove that rounding is the only source.
+
+**(c) The first family through the reader's forward.** In all eight files the generated answers give the receipt's counts (3,682 + 3,555 reduction pairs and 292, 283, 290, 290 held-out answers under the sweep; 3,712 + 3,748 and 283, 284, 299, 295 under back-propagation), and no answer of the 32,884 (all 31,684 items without letters and the 1,200 held-out pairs at 12 letters) differs from the start's.
+
+The outputs are close to the start's and not equal to them:
+
+| Run | Largest change of an output at an answer position, row 64 (31,684 items; held-out panel) | Row 4,096 | Row 4,096, in single precision (held-out panel; check 1's 2,000 items) | Check 3's receipt, after 8 updates, single precision |
+|---|---|---|---|---|
+| unrelated, sweep | 2.2e-6; 1.7e-6 | 3.8e-4; 3.9e-4 | 3.9e-4; 3.6e-4 | 1.5e-5; 1.7e-5 |
+| conflict, sweep | 3.0e-6; 2.6e-6 | 5.5e-5; 5.4e-5 | 5.8e-5; 5.4e-5 | 1.5e-5; 1.9e-5 |
+| unrelated, back-propagation | 1.8e-6; 1.4e-6 | 5.3e-4; 4.5e-4 | 4.4e-4; 3.8e-4 | 1.6e-5; 1.7e-5 |
+| conflict, back-propagation | 2.5e-6; 2.1e-6 | 7.3e-5; 5.6e-5 | 6.5e-5; 5.7e-5 | 2.0e-5; 2.1e-5 |
+
+In single precision the reader finds 1.4e-5 to 1.9e-5 at row 64, where the change in double precision is 2e-6 to 3e-6. Check 3's figure after eight updates is therefore the arithmetic of single precision and not a movement of the weights; the movement becomes visible above it by row 4,096, where in the two unrelated runs it is four to five times the 1e-4 that check 3(a) allowed after eight updates. The brief set no limit for row 4,096.
+
+How near this came to changing an answer is read from the leads. Under the sweep the smallest lead at the start is 4.06e-4 over the 31,684 items and 1.78e-4 over the held-out panel (32 and 2 leads are below 0.01); under back-propagation 7.75e-4 and 2.33e-2 (10 and none below 0.01). At row 4,096 of the unrelated runs the largest change of any lead is 4.3e-4 (sweep) and 8.5e-4 (back-propagation), which is more than the smallest lead; the leads below 0.01 happened to move less (at most 1.0e-4 and 2.0e-4), and the smallest lead is now 3.83e-4 and 1.62e-4 under the sweep and 5.90e-4 under back-propagation. In the conflict runs the largest change of a lead is 8.1e-5 and 1.0e-4. At no position of any file has another output become the largest.
+
+*Is the remainder along the directions the only path to the first family?* The reader takes the weights of row 4,096, removes in double precision the component of the change of the input map's and of `l2`'s projected rows along its own directions, alters nothing else, and compares again. The largest change of an output from the start's is then 3.6e-13 to 1.1e-12 on the 31,684 items and 1.0e-11 to 2.2e-11 on the held-out panel, in all four runs. Everything else that changed (the reserve cells' rows, the weights from reserve cells into old units, the added rows of `lm` and `l2`, the added columns of `l3`, the byte table's other rows, and the whole of the change of the old rows outside the directions) does not reach a first-family item at all.
+
+**(d) What is guaranteed by the construction and what is found.**
+
+*Guaranteed*, for every item whose first byte is a byte in use and whose other bytes are bytes in use, taught or not, with any number of letters, provided the program does what the brief writes:
+
+- The reserve cells' states are exactly zero at every position and the added units of z2 are exactly zero. This is done by the two added lines of the forward pass, which read the item's first byte; it does not depend on any weight and is not learned.
+- The codes of the bytes in use are those of the start, because `l1` and the 46 rows of the byte table are restored after every step.
+- Every old cell and every old unit of z2 receives what it received at the start: the change of its weights from the codes is confined to the complement of the codes of the bytes in use, the change of its weights from cells is confined to the reserve cells, whose state is zero, and the old columns and the bias of `l3` are restored; the added columns of `l3` multiply zeros.
+
+The outputs on those items are then the start's, up to the rounding described above. That held-out pairs are kept as well as taught ones is part of this arithmetic and is not a finding about generalisation. Prediction P51.3 says so itself ("by construction: a failure is an error of implementation").
+
+*Not guaranteed, and found here:* that the implementation is right (the bit-equal tensors, the projected change of a few millionths, and the removal test above show it for rows 64 and 4,096); the size of the rounding remainder, and that it changed no answer in 4,096 updates; and everything about the new task, which is the subject of sections 4 and 8. *Not covered at all:* an item whose first byte is not one of the 46, an item that contains a byte not in use, and a first-family answer in which a byte not in use is generated; none occurs in the scored items, in which every answer of the start is two digits and the end symbol.
+
+## 4. The new task, from the weights (part 4)
+
+The items of both tasks begin with a byte that is not in use (224 for `unrelated`; `r` and `t` on the conflict panels), so the two added lines never act on them. The reader's forward gives, for the keyed start and for row 4,096 of each `keyed` run, the receipt's counts of whole answers and of last three bytes on every panel, with the reserve cells open and with them held shut on every item, and the receipt's figures for the reserve's gates.
+
+| Run, row | Reserve open (whole answers right) | Reserve cells shut on every item | Equal to the receipt | Reserve cells open by more than 0.1; mean of 1 − z; largest (reader and receipt agree) |
+|---|---|---|---|---|
+| unrelated, sweep, 0 | held 0 of 300, taught 0 of 300 | 0, 0 | yes, yes | 128; 0.4986; 0.5948 |
+| unrelated, sweep, 4,096 | held 300, taught 300 | 0, 0 | yes, yes | 119; 0.5941; 0.9616 |
+| unrelated, back-propagation, 0 | 0, 0 | 0, 0 | yes, yes | 128; 0.4975; 0.5876 |
+| unrelated, back-propagation, 4,096 | 300, 300 | 0, 0 | yes, yes | 125; 0.6667; 0.9960 |
+| conflict, sweep, 0 | add97 48 of 400, sub97 96 of 400 (18.0%) | 57, 95 (19.0%) | yes, yes | 128; 0.5057; 0.6503 |
+| conflict, sweep, 4,096 | 374, 384 (94.8%) | 168, 160 (41.0%) | yes, yes | 112; 0.3476; 0.8798 |
+| conflict, back-propagation, 0 | 15, 53 (8.5%) | 9, 57 (8.2%) | yes, yes | 128; 0.5063; 0.6875 |
+| conflict, back-propagation, 4,096 | 381, 394 (96.9%) | 161, 162 (40.4%) | yes, yes | 83; 0.2198; 0.8227 |
+
+The second scoring shuts the reserve cells only. The added units of z2, which the brief's terms also count as units in reserve, stay active in it; section 8 separates the two.
+
+## 5. `keyed-free`, `open`, `rehearse` (part 5)
+
+**From the receipts.** The first family's reduction score (%) at the ten rows; in brackets the share of the 31,684 answers equal to row 0's at rows 64 and 4,096.
+
+| Task, arm, rule | 0 | 16 | 32 | 64 | 128 | 256 | 512 | 1,024 | 2,048 | 4,096 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| unrelated, `keyed-free`, sweep | 92.4 | 0.0 | 0.0 | 0.0 (0.0) | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 (0.0) |
+| unrelated, `keyed-free`, back-propagation | 95.3 | 2.0 | 0.0 | 0.0 (0.1) | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 (0.0) |
+| unrelated, `open`, sweep | 92.4 | 0.0 | 0.0 | 0.0 (0.0) | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 (0.0) |
+| unrelated, `open`, back-propagation | 95.3 | 0.0 | 0.0 | 0.0 (0.0) | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 (0.0) |
+| unrelated, `rehearse`, sweep | 92.4 | 11.5 | 20.3 | 35.3 (59.0) | 47.8 | 20.5 | 32.2 | 58.9 | 85.5 | 90.0 (90.4) |
+| unrelated, `rehearse`, back-propagation | 95.3 | 38.4 | 61.8 | 72.8 (81.5) | 81.4 | 76.0 | 80.4 | 89.8 | 92.8 | 92.8 (93.3) |
+| conflict, `keyed-free`, sweep | 92.4 | 45.1 | 36.4 | 16.1 (56.6) | 16.9 | 9.9 | 4.2 | 3.4 | 2.6 | 1.0 (56.0) |
+| conflict, `keyed-free`, back-propagation | 95.3 | 26.2 | 20.3 | 17.4 (59.0) | 10.0 | 1.7 | 1.6 | 0.4 | 0.1 | 0.2 (57.5) |
+| conflict, `open`, sweep | 92.4 | 25.7 | 19.1 | 12.4 (50.3) | 14.1 | 5.4 | 4.9 | 3.0 | 0.8 | 1.3 (58.1) |
+| conflict, `open`, back-propagation | 95.3 | 25.8 | 19.5 | 12.7 (56.0) | 4.5 | 1.2 | 0.5 | 0.0 | 0.0 | 0.0 (60.4) |
+| conflict, `rehearse`, sweep | 92.4 | 59.6 | 44.6 | 54.8 (78.0) | 49.4 | 61.7 | 72.8 | 70.3 | 87.4 | 88.3 (90.2) |
+| conflict, `rehearse`, back-propagation | 95.3 | 46.6 | 51.6 | 65.5 (81.5) | 70.9 | 72.2 | 78.2 | 89.1 | 94.5 | 97.8 (95.9) |
+
+Three things are read from the table and are in the worker's tables as well. With rehearsal the first family is not held along the way: under the sweep it falls to 11.5 and 59.6 at row 16 and returns to within 2.5 and 4.1 points of its start by row 4,096, and even then 9.6% and 9.8% of the answers are not those of row 0. On the conflicting family the arms without rehearsal lose nearly all reduction pairs while more than half of all answers remain those of row 0; in `open`, max and min, whose answers do not depend on the modulus, are still at 91.4 and 81.1% (sweep) and 97.5 and 80.4% (back-propagation) at row 4,096. And `keyed-free` loses the first family about as `open` does, so holding the reserve shut on the first family's items does not keep it by itself.
+
+**From the weights at row 4,096 of all twelve runs.** The reader's forward (with the two added lines in `keyed-free`, without them in `open` and `rehearse`) gives the receipt's counts in every run: the first family's eight counts (reduction pairs and other pairs of add and sub, max, min, and the four held-out panels), the new task's panels, and the new task's panels with the reserve cells shut. For example `rehearse` on `unrelated` under the sweep: 3,697 + 3,348 reduction pairs (89.95), 281, 292, 283, 296 on the held-out panel, 292 of 300 on the new task; `open` on `conflict` under the sweep: 10 + 93 reduction pairs (1.32), 341 and 339 of 400 on the new task and 331 and 333 with the reserve cells shut.
+
+**`open` on the unrelated task and E43.** The brief's check 6 does not compare the embedded network with E43's network. It starts the runner of `open` from E26's birth of the present size as it is, with no embedding and no change of a bias, for 64 updates, and requires E43's receipt at row 64. The two dry receipts under `check6/` record that start, and at row 64 they have E43's first-family counts, E43's new-task counts, E43's data digest and E43's hash of the tensors, under both rules. The reader computed the same hash again from E43's saved weights of row 64 and finds it equal. This shows that the runner's update and scoring, without the two added lines and without the rule, are E43's.
+
+The trial's own `open` runs are another network, the embedded half-width birth with 128 cells in reserve, and are not expected to equal E43's. Side by side (reduction score; never-taught score of the unrelated task):
+
+| Row | E43, sweep (E26's birth, 256 cells born) | E51 `open`, sweep | E43, back-propagation | E51 `open`, back-propagation |
+|---|---|---|---|---|
+| 0 | 96.57; 0.0 | 92.40; 0.0 | 98.14; 0.0 | 95.25; 0.0 |
+| 64 | 0.10; 0.0 | 0.00; 0.0 | 0.05; 0.0 | 0.00; 0.0 |
+| 256 | 0.00; 6.0 | 0.00; 15.3 | 0.00; 98.0 | 0.00; 28.3 |
+| 1,024 | 0.00; 100.0 | 0.00; 100.0 | 0.00; 100.0 | 0.00; 100.0 |
+| 4,096 | 0.00; 100.0 | 0.00; 100.0 | 0.00; 100.0 | 0.00; 100.0 |
+
+A reserve whose gates start shut by a bias and are free does not protect the first family: it is lost by row 16 (E43's first scored row is 64, where it is lost as well), before the unrelated task has begun to be learned.
+
+## 6. The checks before the runs (part 6)
+
+The runner `exp51_reserve.py` at the worker's head has the SHA-256 `84d0dad7f6e5eeb1…`, and that hash is the one recorded in all seven check receipts, all four start receipts and all sixteen run receipts. Checks 1 to 6 and the starts were made before the runner was committed (the receipts record the file as not yet tracked), with the file that was then committed unchanged.
+
+| Check | What the receipt records | Recomputed here |
+|---|---|---|
+| 1. The embedding | Largest difference of an output from the birth's on the held-out panel and on the 2,000 items: 0 and 0 for the keyed start under both rules (limit 1e-5); 0.002949 and 0.000974 (sweep), 0.003405 and 0.001085 (back-propagation) for the start with a bias (limit 0.02); row 0's scores equal to the birth's on every panel in the keyed start | 0 and 0; 0.002947 and 0.000971; 0.003399 and 0.001083 in the reader's single precision (the last digits differ because the arithmetic is another library's); the birth's scores and answers in section 2 |
+| 2. The directions | The digest of the 2,080 items, 46 bytes in use, 46, 129, 129, 11 directions, with the spectra | The same digest, 46, and 46, 129, 129, 11 (section 3) |
+| 3. The rule | (a) After 8 updates of `keyed`: largest change of an output 1.5e-5 to 2.1e-5 on both streams and both rules (limit 1e-4); the five tensors or rows that are not changed bit-equal; (a) with the byte table not restored, on the conflict stream: 41 of the 46 rows changed and the outputs moved by 0.22 to 0.31. (b) After 8 updates of `keyed-free`: outputs moved by 20 to 39. (c) Largest reserve state and largest added unit of z2: 0 and 0 on a batch of the first family; 0.7587 and 0.8764 (unrelated), 0.7652 and 0.9272 (conflict) under the sweep; 0.7274 and 0.9063, 0.9134 and 0.9348 under back-propagation | (a) and (b) cannot be recomputed, because no weights after 8 updates are saved; the corresponding figures at rows 64 and 4,096 are in section 3. (c) recomputed on the first batch of the reader's own three streams, filled as the update fills shorter rows: 0 and 0; 0.7586981 and 0.8763809; 0.7651762 and 0.9271622; 0.7273827 and 0.9062994; 0.9134029 and 0.9347987, equal to the receipt's to six decimal places |
+| 4. The scorer | 0 of 32,884 generated answers of row 0 differ from the birth's; without the two added lines 409, 768, 77, 94, 9, 9, 2, 4 (sweep) and 200, 389, 72, 61, 21, 17, 2, 5 (back-propagation) differ | The same 0 and the same sixteen numbers (section 2) |
+| 5. The data | The batch digests at update 4,096 of the unrelated stream, the conflict stream and the rehearsed unrelated stream equal E43's receipts and the second addendum's | The reader builds the four streams itself (the fourth is the rehearsed conflict stream, for which no earlier receipt exists) and its own digest. Digests at 4,096: `f60110540a0c32e7`, `60870058e0435e12`, `11fcebdb0e7a36fd`, `e4d6455f4bfbfb2b`. They equal the digests of rows 16 to 4,096 of all sixteen run receipts, with the receipts' counts of items (131,138 unrelated and 131,006 first-family items in `rehearse` on `unrelated`; 130,934 and 131,210 on `conflict`), and E43's and the second addendum's receipts |
+| 6. `open` is E43 in another network | First-family counts and the hash of the tensors at row 64 equal E43's, under both rules | Equal; the hash also equals the one the reader computes from E43's saved weights (section 5) |
+| 7. Cost | Sixteen dry runs of 64 updates: 0.086 to 0.121 CPU-seconds an update, 10.9 to 23.7 a scored row; forecast 2.76 CPU-hours | The sixteen receipts sum to 2.74 CPU-hours, 0.088 to 0.123 CPU-seconds an update |
+
+The seven receipts record what the brief asks. Two remarks. Check 3(a)'s clause on the byte table was tested as revision 2 requires, on the conflict stream with the restoring switched off. Check 3(a)'s tolerance is met after eight updates, but, as section 3 shows, its figure is the arithmetic of single precision; the quantity it was meant to bound is 2e-6 at row 64 and 5e-5 to 5e-4 at row 4,096.
+
+## 7. The predictions (part 7)
+
+| | Statement of the brief | Figures from the receipts (sweep; back-propagation) | Outcome |
+|---|---|---|---|
+| P51.1 | `open` loses the first family on `unrelated`: below 5% on reduction pairs by update 64, both rules | 0.00, 0.00, 0.00 at rows 16, 32, 64; 0.01, 0.00, 0.00 | held |
+| P51.2 | `open` loses the reduction pairs on `conflict`: below half of row 0 at update 4,096, both rules | 1.32 against 46.20; 0.00 against 47.63 | held |
+| P51.3 | `keyed` keeps the first family on both tasks, both rules | change of the reduction score from row 0 to row 4,096: 0.000 in all four runs | held |
+| P51.4 | `keyed` learns `unrelated` | learned from row 1,024; from row 512 | held under both rules |
+| P51.5 | `keyed` learns `conflict` | learned from row 1,024; from row 512 | held under both rules |
+| P51.6 | Where `keyed` learns `unrelated`, the cost of the rule is at most four | 1,024/512 = 2; 512/512 = 1 | held |
+| P51.7 | `rehearse` keeps the first family within 5 points on both tasks, both rules | unrelated −2.45; −2.44; conflict −4.07; +2.54 | held; none of the four is within the 2 points of the brief's *kept* |
+| P51.8 | `keyed-free` does not keep the first family on `unrelated` under either rule | 0.00 against 92.40; 0.00 against 95.25 | held |
+| P51.9 | Where `keyed` learns `unrelated`, it is *learned in the reserve* | 0.0; 0.0 with the reserve cells shut | held, in the brief's reading; see section 8 |
+
+All nine held, as the worker reports. P51.3 was a test of the implementation by its own wording. P51.9 holds by the criterion fixed beforehand; section 8 shows that the criterion establishes less than its name says.
