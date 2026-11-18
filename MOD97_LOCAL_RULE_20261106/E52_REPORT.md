@@ -28,6 +28,11 @@ The terms below are those of the brief.
   - A run that never reaches 80 has no count. Its last recordable count is its dose less 512.
 - **A case** is one rule at one width and one taught fraction; there are eight.
 - **The lag** is the sweep's updates to 80 divided by back-propagation's, at one width and fraction.
+- **A birth** is a learner's first training from its random initial weights on the first family. Each run of E52 is one birth.
+- **A life** is the programme's longer course of learning that continues from a birth; `exp26_candidate.admit_e26` admits a birth to one.
+- **Long lives**, and **plan item 6**: item 6 of the reviewer's `PLAN.md` (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/` on the reviewer's branch). It asks for the sweep's long lives at half width, which put Mr. Xu's question of 15 November: whether the sweep, slower at first, overtakes later.
+- **The harness** is the set of shared modules in `MOD97_LOCAL_RULE_20261106/` that every runner imports: `exp26_candidate`, `exp20_reference`, `exp11_cell`, `arch20`, `arch26` and the others listed in `exp26_candidate.SOURCES`.
+- **The environment gate** is the check that `exp20_reference.py` makes when it is imported. It refuses to run if any environment variable whose name begins with `E11_` or `E16_` is set, other than the few it allows. These variables steer older harness modules, and the harness sets some of them itself at import.
 - **The optimizer** is AdamW with betas (0.9, 0.98) and weight decay 0.25 on every parameter except the byte table, which has no decay. The run's learning rate is the only setting that changes.
 - **The product control** holds rate × decay at 0.00025: its decay is `0.25 * 0.001 / rate`.
 - **The length test** is add under modulus 89 at 12 and 40 letters, 300 items each, drawn from pairs that the run's own stream never teaches.
@@ -81,8 +86,9 @@ No existing source file was edited.
 Table 1 is produced by `exp52_tables.py` from the receipts.
 - "–" means the score did not reach 80 within the dose.
 - Final levels are means of the last three rows.
-- The length test at 40 letters is given at the last row, as the mean of the last three rows, and as its range over the last twelve rows. One row of the length test is a weak figure: in E46 it moved by 15 to 30 points over the last twelve rows of a run, and here its range over the last twelve rows reaches 30 points (sweep, half width, f = 0.50, rate 0.01).
+- The length test at 40 letters is given at the last row, as the mean of the last three rows, and as its range over the last twelve rows. One row of the length test is a weak figure: in E46 it moved by 15 to 30 points over the last twelve rows of a run, and here its range over the last twelve rows is as large as 37.3 points (24.7 to 62.0: the sweep, half width, f = 0.50, rate 0.01). That is the only run with a range of 30 points or more; 11 of the 35 runs have a range of 15 points or more.
 - "RMS of R" is the root mean square change of R from row to row over the last 16 rows.
+- The seven norms of every run are not in this table. They are in `exp45/e52/E52_TABLES.md`, Table 3: at 80 on A, at 80 on R, at the end, and at E41's dose for the runs at 0.0003. The product control's norms at the end are also in Section 4.5.
 
 | Width, f | Rule | Rate | Decay | Dose | Updates to 80, A | Updates to 80, R | Final A | Final R | Final taught | Length 40: last, mean of 3 (range of 12) | RMS of R |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -162,12 +168,17 @@ The lag is formed on each score separately, from each rule's count at its best r
 | half, 0.25 | A | 2.29 | 0.003 | 0.003 | 1.93 | the same within the scatter of one seed |
 | present, 0.50 | R | 1.19 (4,864 / 4,096) | 0.001 (tie with 0.003) | 0.003 | 1.73 (4,864 / 2,816) | the same within the scatter of one seed |
 | present, 0.50 | A | 1.19 | 0.001 (tie with 0.003) | 0.003 | 1.73 | the same within the scatter of one seed |
-| present, 0.25 | R | above 2.71 (the sweep is not reached; bound 11,776 / 4,352) | 0.003 | 0.003 | 1.75 (5,376 / 3,072) | **smaller** |
+| present, 0.25 | R | above 2.70 (the sweep is not reached; bound 11,776 / 4,352 = 2.706) | 0.003 | 0.003 | 1.75 (5,376 / 3,072) | **smaller** |
 | present, 0.25 | A | 2.79 (9,984 / 3,584) | 0.003 | 0.003 | 1.33 (4,096 / 3,072) | **smaller** |
 
-Two of these readings sit close to the band's edge.
-- At present width with f = 0.25, R at 0.001 gives only a lower bound, and 1.75 lies just below two thirds of 2.71 (1.81). On A at the same width and fraction, where both counts exist, the lag falls from 2.79 to 1.33.
-- At present width with f = 0.50, the lag rises from 1.19 to 1.73, a ratio of 1.45, inside the band. It rises because back-propagation is faster at 0.003 while the sweep is not.
+**How firm these readings are.** The reviewer's verification (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/E52_VERIFICATION_20261118.md`, finding 1) moved each count to 80 by whole scored rows of 256 updates. It reports the fewest rows by which a single count would have to move to change each reading that carries a conclusion:
+- *Smaller* on R at present width, f = 0.25: one row. If back-propagation at 0.001 reached 80 at 4,608 instead of 4,352, the reading would be *not decided*. At 0.001 R gives only a lower bound, and 1.75 lies just below two thirds of 2.70 (1.80). On A at the same width and fraction, where both counts exist, the lag falls from 2.79 to 1.33.
+- *The same* at present width, f = 0.50: one row from *larger*, on R and on A. The lag rises from 1.19 to 1.73, a ratio of 1.45, because back-propagation is faster at 0.003 while the sweep is not. If back-propagation at 0.001 reached 80 at 4,352, the reading would be *larger*.
+- *Smaller* on R at half width, f = 0.25: two rows. If back-propagation at 0.003 reached 80 at 5,120 instead of 5,632, the reading would be *the same*. This reading carries prediction P52.4 and the statement on the explanation under test (Section 4.4).
+- *Back-propagation does not gain* from its own rate: one row at present width, at each fraction (at 0.001 at 4,352 instead of 4,096, or at 0.003 at 2,816 instead of 3,072, it would gain); three rows at half width, f = 0.25 (at 0.003 at 4,864 instead of 5,632).
+- *The sweep gains* from its own rate: 6 rows at half width, f = 0.50; 19 rows at half width, f = 0.25; 10 rows at present width, f = 0.25.
+
+Every one of these readings rests on one seed. On E41's three seeds at 0.001 (73129, 93683, 116089), the lag on R at half width with f = 0.25 is already 2.12, 3.31 and 3.31. The spread between seeds at one rate is thus as large as the change measured here between rates.
 
 ### 4.4 The sentences the job can license, for seed 93683 only
 
@@ -207,7 +218,7 @@ The brief asks for one sentence for each rule and rate on whether the count to 8
 - **Back-propagation at 0.0003:** the same class (slower on R and on A) under both.
 - **Back-propagation at 0.003:** different classes. It is faster on R and A with decay 0.25, and the same on R and A with decay 0.0833 (6,912 and 5,376 against 8,704 and 7,424 at 0.001).
 
-Holding the product fixed moves the size of the weights with the rate, as the brief expected. At 0.003 the control's input and recurrent norms at the end are 50.7 and 36.4 under the sweep, against 33.5 and 22.9 with decay 0.25. At 0.0003 they are 11.9 and 13.2, against 17.1 and 17.3. The control does not change the main readings, which are made at decay 0.25. It does show that at half width with f = 0.50, the sweep's count to R80 at 0.003 depends on the decay (5,632 against 7,424). That difference lies within the band.
+Holding the product fixed moves the size of the weights with the rate, as the brief expected. At 0.003 the control's input and recurrent norms at the end are 50.7 and 36.4 under the sweep, against 33.5 and 22.9 with decay 0.25. At 0.0003 they are 11.9 and 13.2, against 17.1 and 17.3. The control does not change the main readings, which are made at decay 0.25. At half width with f = 0.50, the sweep's counts to 80 on R at 0.003 under the two decays (5,632 and 7,424) are, by the brief's band, *the same*.
 
 ## 5. Interruptions, departures from the brief, and cost
 
@@ -224,10 +235,15 @@ Holding the product fixed moves the size of the weights with the rate, as the br
   
   They were **resumed** from their checkpoints at updates 69,632, 73,728 and 61,440; the resumption is recorded in each receipt's `resumed` field.
 
-**Departure 1: saving and resuming.** After the first restart, the reviewer asked for saving and resuming to be added if it could be shown to reproduce an uninterrupted run (message of 17 November, 22:11 UTC). The worker wrote `exp52_resume.py`.
+**Departure 1: saving and resuming.** At 22:11 UTC on 17 November, before the first restart of this worker's machine (00:44 on 18 November), the reviewer warned that another worker's machine was stopped when its turn ended. The reviewer asked for saving and resuming to be added if a resumed run could be shown to equal an uninterrupted one. The message is reproduced in the appendix of the reviewer's verification (`E52_VERIFICATION_20261118.md`). The worker wrote `exp52_resume.py` after the first restart.
 - It is `exp52_rate.run` with two additions: a checkpoint of the model, the optimizer, the receipt so far and the CPU counters every 4,096 updates, and `--resume`.
 - On resume it rebuilds the stream and the batch digest by drawing and digesting the same batches again, about 45–55 seconds per resumption. It asserts that the rebuilt digest equals the checkpoint's before it loads the states.
 - Check 4 (Section 3) showed that a killed and resumed run equals an uninterrupted one in `tensors_sha256`, in every row, and in the batch digest. It also showed that `exp52_resume.py` equals `exp52_rate.py` uninterrupted.
+- Check 4 covers only its own settings: rate 0.003, a checkpoint every 1,024 updates, 3,072 updates in all, decay 0.25. It does not cover the settings of the three runs that were resumed: rate 0.0003, a checkpoint every 4,096 updates, two of them with the product decay, resumed after 61,440 to 73,728 updates.
+- For those three runs the evidence is in the committed files:
+  - the batch digests of every row after the resumption equal those of an uninterrupted run of the same fraction;
+  - the rows between the checkpoint and the restart were printed twice in the run's log, once before the restart and once after the resumption: 10 rows (69,888 to 72,192), 12 rows (73,984 to 76,800) and 9 rows (61,696 to 63,744). They are identical at the printed precision.
+- This is not a bitwise proof. No hash of the saved state is recorded: the digest that the runner asserts on resumption is that of the batches drawn, not of the model or the optimizer, and the checkpoint is loaded without any check of its tensors.
 - All runs at 0.0003 and at 0.01 used `exp52_resume.py`. All runs at 0.001 and 0.003 used `exp52_rate.py`.
 - The receipt records the runner in `provenance.runner` and `runner_sha256`.
 
@@ -243,11 +259,11 @@ Holding the product fixed moves the size of the weights with the rate, as the br
 - It uses `exp52_resume.py` at 0.0003 only if check 4 passed.
 - The launch log `exp45/e52/logs/LAUNCHES.txt` records every start, exit, move to `interrupted/`, restart and resumption.
 
-**Departure 4: the timing of the further runs.** The runs at 0.01 of back-propagation and of the sweep at present width with f = 0.25 were started at 09:43. The sweep's run at 0.0003 in that case was still running at the time.
-- That run was already past 36,000 updates without reaching 80 on either score, so it could no longer become the best rate against 0.003's 5,376 and 4,096.
+**Departure 4: the timing of the further runs.** The runs at 0.01 of back-propagation and of the sweep at present width with f = 0.25 were decided at 09:42:59, while the sweep's run at 0.0003 in that case was still running. Back-propagation's run started then. The sweep's run at 0.01 started at 09:53:17, after the sweep's run at 0.0003 had ended (about 09:53:08).
+- When the decision was taken, the run at 0.0003 had passed update 36,608 without reaching 80 on either score. Its count, if any, could then be no lower than 36,096, so it could no longer become the best rate against 0.003's 5,376 and 4,096.
 - It finished without reaching 80, as Table 1 shows.
 
-**Departure 5: commit trailers.** `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` asks for `Acting-Agent: claude:<session>`. Commits carry only that trailer, so that no language model is named, as the standing rules require.
+**Departure 5: commit trailers.** `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` asks for `Acting-Agent: claude:<session>`. Commits carry only that trailer.
 
 **Cost** (CPU-hours, from the receipts).
 
@@ -255,11 +271,14 @@ Holding the product fixed moves the size of the weights with the rate, as the br
 |---|---|
 | The 28 runs of the brief | 27.88 (updates 23.25, scoring 4.63) |
 | The 7 further runs at 0.01 | 3.73 (updates 3.09, scoring 0.63) |
-| Partial runs killed by the restarts (`interrupted/`) | 1.45 |
-| Checks 1a, 2, 3 and 4 | 0.40 |
+| Partial runs killed by the restarts (`interrupted/`) | 1.66 by the six logs. The five partial receipts give 1.45, but miss the run of back-propagation at present width, f = 0.25, rate 0.003, which left no partial receipt, and the rows after each receipt's last write |
+| Checks 1a, 2, 3 and 4 (parent processes, as in their receipts) | 0.40 |
+| Check 4's child processes (killed and resumed runs), not in `check4.json` | 1,106 CPU-seconds in its six run receipts against 753 in `check4.json`, a difference of about 0.10 |
+| The failed first attempt of check 4 | 265 CPU-seconds (0.07) |
+| The three resumed runs: updates repeated between the checkpoint and the restart, and the replay of the stream | about 147 + 54, 130 + 49 and 116 + 44 CPU-seconds (0.15 in all); counted nowhere in the receipts |
 
-- The cost of the 28 runs is within the brief's limit of 32.5.
-- The CPU counters of a resumed run carry over its checkpoint's counters. The updates between a checkpoint and the restart, at most 4,096 per run, were done twice; the repeats are counted only once.
+- The forecast before the runs (27.1 CPU-hours) was within the brief's condition of a quarter above 26 CPU-hours (32.5). That figure is a condition on the forecast, not a limit on the cost. The 28 runs used 27.88 CPU-hours.
+- The CPU counters of a resumed run carry over its checkpoint's counters. The updates between a checkpoint and the restart were done twice, but are counted only once, and the replay of the stream on resumption is not counted. The last row of the table gives both.
 - Each run records in its receipt how many other runs were alive when it started (`processes_beside`).
 
 ## 6. The predictions (the reviewer's, on file before any run)
@@ -271,7 +290,7 @@ Holding the product fixed moves the size of the weights with the rate, as the br
 | P52.3 | At the present width with a quarter of the pairs taught, the sweep's mean of R over the last three rows is at least 85 at some rate tried | 35% | **Occurred.** 95.05 at 0.003; 72.53 at 0.0003, 78.78 at 0.001 and 21.13 at 0.01 |
 | P52.4 | At the half width with a quarter of the pairs, the lag on R at the rules' own rates is *smaller* than at 0.001 (3.31 on this seed) | 25% | **Occurred.** 2.05, below two thirds of 3.31 (2.21) |
 | P52.5 | Back-propagation gains from its own rate at none of the four widths and fractions | 75% | **Did not occur.** Back-propagation gains at half width with f = 0.50 (R 4,864 against 8,704; A 4,864 against 7,424, at 0.003) |
-| P52.6 | At the half width with a quarter of the pairs, the sweep's R is steadier at 0.0003 than at 0.001 (a smaller root mean square change over the last 16 rows) | 65% | **Occurred.** 1.77 against 2.45 |
+| P52.6 | At the half width with a quarter of the pairs, the sweep's R is steadier at 0.0003 than at 0.001 (a smaller root mean square change over the last 16 rows) | 65% | **Occurred as worded.** 1.77 against 2.45 over each run's last 16 rows. These rows lie at 132,864 to 136,704 updates in the run at 0.0003 and at 37,120 to 40,960 in the run at 0.001. Over the 16 rows ending at 40,960 updates (E41's dose), the run at 0.0003 has an RMS change of 2.84, against 2.45: at equal updates it is not steadier |
 
 ## 7. What the trial cannot show
 
@@ -282,8 +301,8 @@ The brief's limits apply.
 - It says nothing about a life. A birth made at a rate other than 0.001 is not admitted to a life by `exp26_candidate.admit_e26`.
 
 Two further limits come from what was seen.
-- The best rate is 0.003 in seven of eight cases, and every run at 0.01 is slower. The best rate therefore lies between 0.001 and 0.01, but the trial cannot place it more finely than the three-fold grid.
-- A rate that is faster to 80 is not shown to be better at the end of the dose. For example, back-propagation at half width with f = 0.50 reaches 80 on R in 4,864 updates at 0.003, against 8,704 at 0.001, but ends lower after the same dose: final R 91.25 against 93.97. The difference is about one row-to-row RMS change (3.97), so one seed cannot settle it. The runs at 0.0003 end highest in several cases, but their dose is 10/3 as long.
+- The best rate is 0.003 in seven of eight cases, and every run at 0.01 is slower. This shows only that 0.003 has the fewest updates to 80 among the four rates tried, on one seed. It does not show where the best rate lies between the grid points, which are three-fold apart.
+- A rate that is faster to 80 is not shown to be better at the end of the dose. For example, back-propagation at half width with f = 0.50 reaches 80 on R in 4,864 updates at 0.003, against 8,704 at 0.001, but ends lower after the same dose: final R 91.25 against 93.97. The difference, 2.72 points, is 0.68 of that run's row-to-row RMS change (3.97), so one seed cannot settle it. The runs at 0.0003 end highest in several cases, but their dose is 10/3 as long.
 
 ## 8. After the trial (for the reviewer)
 
