@@ -392,7 +392,8 @@ def check4(qual, cmd):
     a = run("x3-wd0", "S", SEED, plain_dir, cmd, dose=2048, verbose=False)
     killed_dir.mkdir(parents=True, exist_ok=True)
     log = killed_dir / "child.log"
-    env = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("E11_", "E16_"))}   # as from a shell: the parent's import set these
+    env.update(OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
     args = [sys.executable, str(HERE / "exp53_local_start.py"), "run", "x3-wd0", "S", str(SEED), "--dose", "2048", "--out", str(killed_dir), "--resume"]
     with open(log, "w") as f:
         p = subprocess.Popen(args, cwd=HERE, stdout=f, stderr=subprocess.STDOUT, env=env)
