@@ -12,6 +12,8 @@
 
 **The disk.** Free disk was 1.40 GB at the start of that run and 1.40 GB at its end; it was 1.50 GB before the first run of the verification, which brought the event and list files of the 24 lives of 256 visits, the 24 probe branches and the five resumed-from states into the object store. The limit of 0.9 GB was never approached. **No large file was left unread**, and no figure rests on the committed score files alone.
 
+**The reviewer's own run.** The reviewer ran the script again (593 seconds, ended 16:03 UTC on 18 November): 212,218 figures of the committed files compared, none differing; 410 figures of the report's text, the same three differing. The reviewer set the figures of finding 1, finding 4 and section 6 that it quotes in its memo beside that output and found them as printed.
+
 ## 2. Recomputed against reported figures
 
 | Compared | Number | Agree | Differ |
