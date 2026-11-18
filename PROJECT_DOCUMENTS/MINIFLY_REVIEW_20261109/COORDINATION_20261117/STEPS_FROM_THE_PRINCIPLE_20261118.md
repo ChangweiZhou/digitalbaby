@@ -1,4 +1,4 @@
-# The experiments in order, from the biological principle (18 November 2026, revision 1)
+# The experiments in order, from the biological principle (18 November 2026, revision 2)
 
 **What this is.** Mr. Xu asked on 17 November for a list of everything that can be done, in order, to be done one item after another, and on 18 November repeated that the list is to be made step by step from the biological principle ("尊重事实不是说之前让你列出来的一步一步做的清单就不要做。把那个做出来。"). The reviewer's plan of 17 November (`PLAN.md` beside this file) was an inventory ordered by requirement and not a chain of steps; this file is the chain. It is written by the outside reviewer for Mr. Xu, Mr. Zhou and the coordinator. It starts no job: a step is run when its brief has been checked and the coordinator has released it. Mr. Xu's rulings of 18 November that it rests on are quoted in section 1; where the list goes beyond them, it is the reviewer's proposal.
 
@@ -25,20 +25,20 @@ Each step gives: the question; why the principle puts it there; what the record 
 
 ### Step 1. Does a network with sparse recurrent connections learn and generalise under the working rule? — done
 
-- **Record.** E42, three seeds, half the pairs: with 10 connections a cell, updates to 80 on A are 2.36 times the dense network's under the sweep and 1.70 times under back-propagation. E54, one seed: with a quarter of the pairs, 3.65 and 4.29 times; with 15% and a tenth nothing is decided or nothing generalises under either network. E42 also ran N = 5 and N = 20 with changing connections under the sweep.
+- **Record.** E42, half the pairs: with 10 connections a cell, updates to 80 on A are 2.36 times the dense network's under the sweep and 1.70 times under back-propagation on seed 73129 (2.33 to 2.68 and 1.69 to 2.12 on three seeds). E54, one seed: with a quarter of the pairs, 3.65 and 4.29 times; with 15% and a tenth nothing is decided or nothing generalises under either network. E42 also ran N = 5 and N = 20 with changing connections under the sweep.
 - **Outcome.** It learns, more slowly. The step is passed for half and a quarter of the pairs.
 
-### Step 2. How many connections does a cell need? — to be briefed now (job E61, with step 3)
+### Step 2. How many connections does a cell need? — briefed as E62 (revision 2, checked; awaits the coordinator's release)
 
 - **Why here.** The number of connections is the first number that the principle leaves open and that we fixed (10). Mr. Xu's example has about fifty.
-- **Experiment.** The network with limited connections, N = 2, 4, 8, 16, 32, 64, 128, and the dense network as reference; connections fixed for the run and drawn from all cells, so that no geometry is given; both rules; half the pairs; seed 73129 first. The run with N = 10 from the neighbourhood is repeated once as the bridge to E42.
+- **Experiment, as briefed.** The network of E50's stage 3 (a limited input that both rules learn; the coordinator's decision 33 names this network for step 3, and step 2 takes the same so that the two can be set side by side), with N = 2, 4, 8, 16, 32, 64, 128 and 255 connections a cell, fixed for the run and drawn from all cells, so that no geometry is given; both rules; half the pairs; seed 73129. The bridge to the record is one run with N = 10 from all cells beside the record's N = 10 from the neighbourhood, which is not repeated. At N = 2 and N = 4 some cells are read by no other cell and the network is not one connected whole; the brief says so.
 - **Read.** Updates to 80 and the level at the end against N, for each rule; the sweep against back-propagation at each N.
 - **Outcomes.** If the curve is flat from a small N on, the later steps take that N. If it falls steadily to the dense network, the slowness of step 1 is a matter of the number of connections, and the cost of locality is read from the curve. If the sweep's lag behind back-propagation changes with N, the working rule's shortfall depends on sparsity, which bears on step 4.
 
-### Step 3. Over how many steps must the error be relayed? — to be briefed now (job E61, with step 2)
+### Step 3. Over how many steps must the error be relayed? — briefed as E61 (the coordinator's decision 33; in check)
 
 - **Why here.** The principle allows relay and prohibits one global pass. The working rule passes the error back over every position of the item. How many steps are needed has never been measured (the old plan's item 20).
-- **Experiment.** In the same runs' network, the error is cut after k positions, k = 1, 2, 4, 8, 16 and the whole item, at N = 8 and N = 32 first (and at the N that step 2 picks). k = 1 is the form that exists in the code (credit cut at every position).
+- **Experiment, as briefed.** In the network of E50's stage 3 (N = 10 from the neighbourhood), the error is relayed over K positions, K = 0, 1, 2, 4, 8 and 16, with the record's whole-item runs as the last value; K = 0 is the form that exists in the code (credit cut at every position). The same at the N that step 2 picks follows when both are read.
 - **Read.** Updates to 80 and the end level against k, for each rule and N; beside it the smallest k with N to the power k at or above 256, at which relay can first reach every cell.
 - **Outcomes.** If a small k suffices, the rule can be made local in time at little cost, and the later steps take that k. If only the whole item suffices, the working rule depends on the long pass, and that dependence is stated as a limit of every later result.
 
@@ -107,3 +107,5 @@ E60 (the sweep's life from back-propagation's birth), E55 (the first family kept
 ## 6. History
 
 Revision 1 (18 November 2026): written at Mr. Xu's instruction of that day.
+
+Revision 2 (18 November 2026): steps 2 and 3 as they are briefed (E62 and E61), on the network that the coordinator's decision 33 names; E42's figures in step 1 given by seed (revision 1 gave the figures of seed 73129 as those of three seeds).

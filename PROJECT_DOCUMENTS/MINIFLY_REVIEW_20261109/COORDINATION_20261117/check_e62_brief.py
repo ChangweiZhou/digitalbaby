@@ -3,7 +3,7 @@ CHECK_OF_TASK_E62_BRIEF_20261118.md.
 
 Run from the repository's root:   OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_e62_brief.py
 Standard library and numpy only; writes no file. It reads, with `git show`, the record's two receipts and e42_cells.py from the default
-branch (origin/codex/minifly-consolidated-20261023); no code of the repository is executed.
+branch (the remote branch whose name ends in minifly-consolidated-20261023, at e647e7d7); no code of the repository is executed.
 
 Section A re-implements e42_cells.neighbourhood and e42_cells.draws (connections only; the periods and phases use generators of their
 own and do not touch the generator of the connections) and checks the re-implementation against the digests that e42_cells.py itself
@@ -17,7 +17,8 @@ from random import Random
 
 import numpy as np
 
-D = "origin/codex/minifly-consolidated-20261023"
+D = [r for r in subprocess.run(["git", "for-each-ref", "--format=%(refname:short)", "refs/remotes/origin/"], capture_output=True, text=True,
+                               check=True).stdout.split() if r.endswith("/minifly-consolidated-20261023")][0]       # the default branch
 M = "MOD97_LOCAL_RULE_20261106"
 SEED = 73129
 U, SIDE, RADIUS = 256, 16, 3
