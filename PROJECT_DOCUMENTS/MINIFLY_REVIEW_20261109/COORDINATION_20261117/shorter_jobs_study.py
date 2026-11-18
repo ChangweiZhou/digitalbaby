@@ -816,12 +816,11 @@ def section9(cm, s2, runs):
     for r in pool:
         fu = full[r["key"]]
         if fu["R"] is not None and fu["A"] is not None:
-            sav.append(1 - (max(fu["R"], fu["A"]) + 10 * ROW) / r["steps"][-1])
-        else:
-            sav.append(0.0)
+            sav.append(max(0.0, 1 - max(max(fu["R"], fu["A"]) + 10 * ROW, 24576) / r["steps"][-1]))
     es = float(np.mean(sav))
-    P("9.0", f"early stop (settled + 8 rows) on the record's 256-cell runs of 49,152 updates: mean share of updates saved {es:.3f} over {len(pool)} runs "
-             f"({sum(1 for s in sav if s > 0)} of them reach both); scoring work after the scorer's changes {sc_factor:.3f} of now")
+    es_all = float(np.sum(sav) / len(pool))
+    P("9.0", f"early stop (settled + 8 rows, not before 24,576) on the record's 256-cell runs of 49,152 updates: {len(sav)} of {len(pool)} reach both; "
+             f"share of updates saved: {es:.3f} in a run that reaches, {es_all:.3f} over all {len(pool)}; scoring work after the scorer's changes {sc_factor:.3f} of now")
     # item-specific per-run costs (present code, from section 1's model) and the protocol's
     def run_h(fw, rule, updates=49152, rows=193, scf=1.0, rowfrac=1.0):
         t = (aa + bb * fw / 1e6) * (srat if rule == "S" else 1.0)
@@ -867,7 +866,7 @@ def section9(cm, s2, runs):
             per_new = [h / n * (1 - sc_share + sc_share * sc_factor * ROWS_KEPT)] * n
         scale = h / sum(per_now)     # keep the order's count as the present figure; apply the protocol's ratios to it
         new_none = sum(per_new) * scale
-        new_all = new_none * (1 - es) if item not in (6,) else new_none
+        new_all = new_none * (1 - es) if item not in (4, 6) else new_none     # item 4 runs 24,576 updates and item 6 4,096: the stop never comes earlier
         P("9.2", f"item {item} ({name}) | {n} | {h:.0f} | {new_none:.1f} | {new_all:.1f} | {lpt([c * scale for c in per_now]):.1f} -> {lpt([c * scale for c in per_new]):.1f}")
 
 
