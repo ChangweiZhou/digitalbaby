@@ -147,7 +147,7 @@ The tables are in `exp45/e51/partB/E51_TABLES_B.md`, the readings in `E51_READ_B
 | B | 1/32 | 98.1 | 34.6 | 35.3 | no | 18.0 | 256 | 100.0 |
 | B | 0 (E43 `unrelated`) | 98.1 | 0.0 | 0.0 | no | – | – | 100.0 |
 
-**The least share that keeps is 1/2 under both rules.** A share of 1/4 leaves the reduction score 7.6 (S) and 9.2 (B) points below row 0. What is left falls steadily as the share falls; every share leaves far more than none. The unrelated task is learned at every share, as fast as or faster than with a share of 1/2 (the second addendum's rows are 0, 64, 256, 1,024, so its first row at 80% is not on the probe's grid and is not given).
+**The least share that keeps is 1/2 under both rules.** A share of 1/4 leaves the reduction score 7.5 (S) and 9.2 (B) points below row 0 (96.565 less 89.019 is 7.546; 98.1 less 88.9 is 9.206 unrounded). What is left falls steadily as the share falls; every share leaves far more than none. The unrelated task is learned at every share, as fast as or faster than with a share of 1/2 (the second addendum's rows are 0, 64, 256, 1,024, 2,048 and 4,096, so its first row at 80% is not on the probe's grid and is not given).
 
 ### B2. Rehearsal at intervals
 
@@ -164,12 +164,12 @@ One optimizer for the whole run; eight cycles of a gap of 256 unrelated updates 
 | 7 | 54.25 | 48 | 77.75 | 48 |
 | 8 | 58.25 | 32 | 72.50 | 48 |
 
-The unrelated task's held score at the end of each gap is 98 to 100% from cycle 2 on (S, cycle 1: 6.0%; B, cycle 1: 98.0%). The reviews cost it as well: at the end of the reviews of cycles 1 to 3 it is 0 to 35% (S) and 0.3 to 70% (B), and from cycle 4 on 88 to 100%. At the end of the run (4,616 updates under S, 4,448 under B) the reduction score is 87.9 (S) and 91.9 (B) and the unrelated held score 299/300 and 294/300. Each cycle's probes are in the receipts `e51_B2_intervals_<rule>_73129.json`.
+The unrelated task's held score at the end of each gap is 98 to 100% from cycle 2 on (S, cycle 1: 6.0%; B, cycle 1: 98.0%). The reviews cost it as well: at the end of the reviews of cycles 1 to 3 it is 0 to 35% (S) and 0.3 to 70% (B), and from cycle 4 on 88 to 100%. At the end of the run (2,640 updates under S, 2,496 under B: 2,048 gap updates and 592 and 448 review updates) the reduction score is 87.9 (S) and 91.9 (B) and the unrelated held score 299/300 and 294/300. Each cycle's probes are in the receipts `e51_B2_intervals_<rule>_73129.json`.
 
 - **S.** The review shortens (cycle 8: 32 updates, at most half of cycle 1's 80). More is left (58.25 against 0.00 points at the end of the gap). *With rehearsal at intervals the first family becomes cheaper to restore, and more of it survives a gap.*
-- **B.** The review does not shorten (48 updates against 80; half is 40). More is left (72.50 against 0.00). *With rehearsal at intervals the first family does not become cheaper to restore, and more of it survives a gap.*
+- **B.** The review does not shorten (48 updates against 80; half is 40). More is left (72.50 against 0.00). *With rehearsal at intervals the first family does not become cheaper to restore, and more of it survives a gap.* By the brief's criterion only: every review after the first is shorter than the first (32 to 64 updates against 80), and the criterion of a half (40 updates) is missed by one probe interval of 16 updates.
 
-The explanation under test ("in the present network a memory does not become more lasting by being rehearsed; each gap removes it as the first did") is refuted under both rules by its own criterion. What is left after a gap is not monotone in the cycle (S: 74.5, 65.0, 54.3, 58.3 in cycles 5 to 8), and this is one seed.
+The explanation under test ("in the present network a memory does not become more lasting by being rehearsed; each gap removes it as the first did") is refuted under both rules by its own criterion. The first gap is also where the new task is first learned, so the first cycle and the eighth do not differ in the earlier reviews alone. What is left after a gap is not monotone in the cycle (S: 74.5, 65.0, 54.3, 58.3 in cycles 5 to 8), and this is one seed.
 
 ### B3. Smaller steps on the new task
 
@@ -188,7 +188,7 @@ The explanation under test ("in the present network a memory does not become mor
 
 | | Statement | Chance | Outcome |
 |---|---|---|---|
-| PB.1 | A share of a quarter keeps the first family, both rules | 70% | Failed (7.6 and 9.2 points below row 0) |
+| PB.1 | A share of a quarter keeps the first family, both rules | 70% | Failed (7.5 and 9.2 points below row 0) |
 | PB.2 | A share of 1/32 does not keep it, either rule | 65% | Held |
 | PB.3 | The review shortens, under back-propagation | 60% | Failed (80 to 48 updates; half would be 40). It shortens under the sweep |
 | PB.4 | More is left after a gap at cycle 8, under back-propagation | 30% | Held (72.5 against 0.0); also under the sweep |
