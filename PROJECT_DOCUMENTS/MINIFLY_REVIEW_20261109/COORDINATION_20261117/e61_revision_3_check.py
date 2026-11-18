@@ -19,6 +19,7 @@ Part 2  the record's network read from its weight files: the weights in use and 
 Part 3  updates to 80 and the ratios of E50's receipts; the limits of 1.25 times the record
 Part 4  the distances of the first operand from the first answer position in the panels R, A and T
 Part 5  the quotations of the reviewer's memo in the audit's sections 3.6 and 5.2, and E49's readout `out8`
+Part 6  a count of the cost of the fourteen runs of revision 3
 """
 import hashlib
 import io
@@ -611,11 +612,66 @@ def part5():
           f"cells read by no readout unit {int((per_cell == 0).sum())}")
 
 
+# =====================================================================================================================
+# Part 6. A count of the cost of the fourteen runs (an estimate; torch is not run here)
+# =====================================================================================================================
+def part6():
+    line()
+    print("PART 6. The cost of the fourteen runs: a count of multiply-adds a row (item, position), calibrated on the record's CPU-seconds")
+    print("        (the model of check_e61_brief.py's part 6 for form (a); written here for form (b) and the whole item)")
+    Dn, U, H, V = 512, 256, 512, 257
+    inp, rec_, l2, lm, l3 = Dn * 3 * U, U * 3 * U, Dn * H, U * H, H * V
+    fwd = inp + rec_ + l2 + lm + l3
+    bwd = {"B": inp + 2 * rec_ + l2 + 2 * lm + 2 * l3}
+    bwd["S"] = bwd["B"] + inp + l2                                   # SignLinear and MaskedSign also form the unneeded input errors
+    upd = {r: fwd + bwd[r] for r in "BS"}
+    # form (a), the brief's relayed_grads: (a) and (b) beside the record, then K rounds over every position (check_e61_brief.py)
+    per_round = {"B": rec_, "S": 2 * rec_}
+    extra_a = {"B": 0, "S": rec_}
+    L = 22
+    factor = {}
+    for r in "BS":
+        for K in (0, 8):
+            factor[("K", K, r, "reference")] = 1 + (extra_a[r] + K * per_round[r]) / upd[r]
+            factor[("K", K, r, "second economy")] = 1 + (extra_a[r] + K * per_round[r] * 3 / L) / upd[r]
+        for X in (0, 1, 2, 4):
+            # the copies form: each copy beyond copy 0 repeats the recurrent map's forward, the error at its input and its weights'
+            # gradient (three passes) at every row
+            factor[("X", X, r, "copies")] = 1 + 3 * X * rec_ / upd[r]
+            # the one-pass form: the states without credit and the step with credit (two forward passes, as in relayed_grads), then for
+            # each of the X + 1 levels a forward pass and the error at the input (and, under the sweep, MaskedSign's unneeded weight
+            # gradient), then the weights' gradient; against the record's three passes
+            per_level = 2 if r == "B" else 3
+            factor[("X", X, r, "one pass")] = 1 + ((2 + per_level * (X + 1) + (1 if r == "B" else 2)) - 3) * rec_ / upd[r]
+        factor[("whole", 0, r, "record")] = 1.0
+    hours = {}
+    for r in "BS":
+        d = json.loads(show(f"{E50}/e50_C46-one_{r}_73129.json"))
+        pu, pr, rows = d["cpu_updates"] / 49152, d["cpu_scoring"] / len(d["curve"]), len(d["curve"])
+        print(f"6.1 rule {r}: the record's CPU-seconds an update {pu:.4f}, a scored row {pr:.2f} ({rows} rows); multiply-adds a row of an "
+              f"update {upd[r]:,}; a pass of the recurrent map over a row {rec_:,} ({rec_ / upd[r]:.4f} of an update)")
+        for key, f in factor.items():
+            if key[2] == r:
+                hours[key] = (49152 * pu * f + rows * pr) / 3600
+                print(f"    {key[0]}{'' if key[0] == 'whole' else ' = ' + str(key[1])}, {key[3]}: factor {f:.2f}, {hours[key]:.2f} CPU-hours")
+    pick = lambda form, lims, how: sum(hours[(form, v, r, how)] for v in lims for r in "BS")
+    b_c, b_o = pick("X", (0, 1, 2, 4), "copies"), pick("X", (0, 1, 2, 4), "one pass")
+    a_r, a_e = pick("K", (0, 8), "reference"), pick("K", (0, 8), "second economy")
+    w = pick("whole", (0,), "record")
+    print(f"6.2 form (b), eight runs: {b_c:.1f} CPU-hours in the copies form, {b_o:.1f} in the one-pass form; form (a), four runs: {a_r:.1f} in "
+          f"the reference form, {a_e:.1f} with the second economy; the two runs of the whole item at 0.003: {w:.1f}")
+    print(f"6.3 the fourteen runs: {b_c + a_r + w:.1f} CPU-hours with the reference forms; {min(b_c, b_o) + a_e + w:.1f} with the cheaper form of "
+          f"(b) and the second economy of (a); the limit of check 5 is 40 (decision 39 (ii)); the checks' own cost is not included")
+    s_ = {r: json.loads(show(f"{E50}/e50_C46-one_{r}_73129_start.pt".replace(".pt", ".json").replace("_start", ""))) for r in "BS"}
+    print(f"6.4 the two rules' runs of the record start from the same tensors: {s_['B']['start_tensors_sha256'] == s_['S']['start_tensors_sha256']}")
+
+
 def main():
     part1()
     part3()
     part4()
     part5()
+    part6()
     part2()
     line()
     print(f"done in {time.time() - T0:.0f} s")
