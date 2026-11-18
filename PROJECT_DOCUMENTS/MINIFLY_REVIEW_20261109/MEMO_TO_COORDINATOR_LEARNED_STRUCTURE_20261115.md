@@ -1828,3 +1828,21 @@ What this indicates before any run: without a line of the program that reads the
 **E57 and E53** (decision 5). E57 is at revision 5 and E53 at revision 4. E57 has saving and resuming as in E52's runner, with a check in which a run killed after update 7,000 and resumed from the state of update 4,096 must equal an uninterrupted run; E53 had saving and resuming from its first revision, and its check now kills the run between its saved state and its end. The same agent checked both clauses (six findings for E57, one for E53; all entered).
 
 **Lines** (decision 8, your request 4). At 03:52 on 18 November six lines run: the two long lives with their helper, E52, E54, E58, E59 (on E50's line) and Part B of E51 on two more seeds. None is free for E53. Reported and not yet verified by the reviewer: E58's Part A on one seed, E52's runs at two rates, E54's part 1, the helper's interim figures, E51's Part B on seed 93683; none of these is a finished job.
+
+### 33.13 E51's Part B on three seeds, verified (the coordinator's decision 3)
+
+(`E51_PARTB_SEEDS_VERIFICATION_20261118.md`, `e51_partb_seeds_verify.py`; the reviewer ran the script again, 55 seconds, without error. Worker's branch at 2abb0c3f.) Between the verified state of seed 73129 and this commit no file of that seed and no line of the report's earlier sections changed. All 28 receipts of seeds 93683 and 116089 are complete and record their settings; the streams were built again and the batch digests agree at every scored row; the worker's three-seed tables (312 cells) and readings (660 values) and every figure of the report's section 9 are reproduced; two weight files, taken as a sample, reproduce their counts. Six runs of seed 93683 were started twice by a fault of the queue; no file of an aborted start is among those that the tables read.
+
+Reduction score of the first family after 4,096 updates, as a percentage of that before, with the share of the stream given to the first family (sweep; back-propagation):
+
+| Seed | 1/2 | 1/4 | 1/8 | 1/16 | 1/32 | Least share that keeps it within 5 points |
+|---|---|---|---|---|---|---|
+| 73129 | 100.5; 98.6 | 92.2; 90.6 | 89.8; 79.9 | 65.4; 58.6 | 45.8; 35.3 | 1/2; 1/2 |
+| 93683 | 100.3; 100.5 | 96.2; 94.9 | 94.5; 88.1 | 75.0; 85.3 | 68.4; 62.6 | 1/4; 1/4 |
+| 116089 | 96.5; 105.0 | 92.7; 89.8 | 85.6; 87.9 | 71.0; 66.6 | 2.6; 44.2 | 1/2; 1/2 |
+
+- **The share.** A half of the stream keeps the first family within 5 points on all three seeds and under both rules; 1/32 never does. A quarter keeps it on one seed, and there under back-propagation by 0.02 points (390 of 7,832 reduction pairs lost, where 391.6 is the limit), so that two more wrong answers would reverse the verdict; read as a percentage of the score before, a quarter keeps it on no seed under back-propagation. The prediction that a quarter keeps (PB.1) held on one seed of three.
+- **Rehearsal at intervals.** On all six pairs of seed and rule more of the probe is right at the end of the eighth gap than at the end of the first, where nothing is left; the smallest gain is 57.5 points. The review needed is halved under the sweep on all three seeds and under back-propagation on one.
+- **What it does not show.** One network, one birth for each seed and rule, one rate; no share between a half and a quarter; and the comparison of the first gap with the eighth does not separate the earlier reviews from the new task being learned by then.
+
+For requirement A, with what the three seeds support: without an act of the program this network keeps the first family only with rehearsal, of between a quarter and a half of the stream; repeated reviews lengthen what a gap leaves, under both rules.
