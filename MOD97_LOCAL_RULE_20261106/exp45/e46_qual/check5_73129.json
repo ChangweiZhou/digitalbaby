@@ -1,0 +1,85 @@
+{
+ "runs": {
+  "B wd000": {
+   "cpu_per_update": 0.1146852844609376,
+   "cpu_per_scored_row": 8.083433213500001,
+   "tensors_sha256": "751740a2042f4bbd9e72edf97ba2a8c4cbf6831c32f27b59fa6284b37b5243b8"
+  },
+  "S wd000": {
+   "cpu_per_update": 0.11904840232812522,
+   "cpu_per_scored_row": 7.578505376499997,
+   "tensors_sha256": "3eb837f95732545d92bec7378496f3c944651fde8365e6e0e5eca2e637dd21ad"
+  },
+  "B wd005": {
+   "cpu_per_update": 0.11493460196484367,
+   "cpu_per_scored_row": 7.5317868085000015,
+   "tensors_sha256": "b291ec8e7a9e5ce510d12476622bcf547be9a9f8dcf9620780afc557e6d82dcf"
+  },
+  "S wd005": {
+   "cpu_per_update": 0.12197210871093755,
+   "cpu_per_scored_row": 8.337463303000007,
+   "tensors_sha256": "12069988bcf7bc49e882235840622f453fbc87d4a72a5da150d706851a077fcb"
+  },
+  "B wd025": {
+   "cpu_per_update": 0.11738228984765575,
+   "cpu_per_scored_row": 8.3424744605,
+   "tensors_sha256": "7100c143269564bd776d9272ba3022b9740928af7d7f1349569280b3b4eac40c"
+  },
+  "S wd025": {
+   "cpu_per_update": 0.11756580046094067,
+   "cpu_per_scored_row": 8.428515364500015,
+   "tensors_sha256": "6ae5b9e62a454b90f5c0ddf4ed3230920e7cb90f93be601b0a0ce2c9bb5f897e"
+  }
+ },
+ "note": "serial dry runs of 256 updates (rows 0 and 256 scored) on an otherwise idle host, seed 73129",
+ "forecast_18_runs": {
+  "updates_cpu_h": 14.450452229600058,
+  "scoring_cpu_h": 3.9044260975587517,
+  "total_cpu_h": 18.35487832715881,
+  "brief_estimate_cpu_h": 16.2
+ },
+ "pass": true,
+ "check": "5",
+ "seed": 73129,
+ "cpu": 281.827271062,
+ "wall": 284.4167492389679,
+ "provenance": {
+  "command": "python3 exp46_decay.py check 5 73129",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "7554c63e9deeb024a800d9bac74244c3d85e7707",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "exp46_decay.py": "d7e98b3001629589409fb7b8a94cda399dd4684a6212c043d2415f1382d6cd4b",
+   "exp41_scale.py": "559a7ee9978639d7f5a21769778add9804d64dcfbf5f2438464d32f296597d9e",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "runner_sha256": "d7e98b3001629589409fb7b8a94cda399dd4684a6212c043d2415f1382d6cd4b"
+ }
+}
