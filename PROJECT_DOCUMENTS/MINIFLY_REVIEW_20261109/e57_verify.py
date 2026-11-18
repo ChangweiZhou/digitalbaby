@@ -202,8 +202,11 @@ def section1():
         print(f"    the runner at {c}: SHA-256 {sha(versions[c])[:16]}")
     a, b = versions["c55aaa1b"].decode().splitlines(), versions[WREF].decode().splitlines()
     dl = [ln for ln in difflib.unified_diff(a, b, lineterm="", n=0) if ln[:1] in "+-" and not ln.startswith(("+++", "---"))]
-    print(f"    lines that differ between the runner at c55aaa1b (checks 2 and 3) and at {WREF} (the runs): {len(dl)}; inside the function check8 only: "
-          f"{all(('check8' in x) or ('env' in x.lower()) or x.strip() in ('+', '-') for x in dl)}")
+    sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
+    changed = [j for tag, i1, i2, j1, j2 in sm.get_opcodes() if tag != "equal" for j in range(j1, max(j2, j1 + 1))]
+    c8a = next(k for k, ln in enumerate(b) if ln.startswith("def check8")); c8b = next(k for k, ln in enumerate(b) if ln.startswith("CHECKS ="))
+    print(f"    lines that differ between the runner at c55aaa1b (checks 2 and 3) and at {WREF} (the runs): {len(dl)}; all of them inside the function check8"
+          f" (lines {c8a + 1} to {c8b}): {all(c8a <= j < c8b for j in changed)}")
     for x in dl:
         print("      " + x[:150])
     for f, h in (("exp49_interface.py", "cdf93ce167d562c8a3765c1ea4f98f74623469492324a85aa1eb34216b7ccbf3"),
@@ -250,7 +253,9 @@ def section1():
           f" read back, finite losses, masks and E42's limit at every row, rows every 256 updates, readings every 2,048, no resumption, runner, threads): {ok_all}")
     starts = {lab: REC[lab]["start_tensors_sha256"][:16] for lab in LABELS}
     print(f"    start_tensors_sha256: " + "; ".join(f"{k} {v}" for k, v in starts.items()))
-    print(f"    E49's in16 start {REF['E49 in16 S']['start_tensors_sha256'][:16]}; E42's G start {REF['E42 G S'].get('start_tensors_sha256', '?')[:16]}, F10 start {REF['E42 F10 S'].get('start_tensors_sha256', '?')[:16]}")
+    g0 = js(P + "e57_qual/check1_73129_runs/e57_G_matrix_S_u2048_73129.json")["start_tensors_sha256"]
+    print(f"    E49's in16 start {REF['E49 in16 S']['start_tensors_sha256'][:16]}; the brief's F10 start dede71d76cb8a9e6; the start of check 1's dry run of G {g0[:16]}"
+          f" (whose end equals E42's DRY2048 hash): G row S starts there {REC['G row S']['start_tensors_sha256'] == g0}")
     print(f"    the logs: one start line in each run's log: " + ", ".join(
         f"{lab} {show(P + 'e57/logs/' + stem(lab) + '.log').decode().count('least cells reading')}" for lab in LABELS))
     q = show(P + "e57/logs/queue.log").decode()
@@ -353,7 +358,7 @@ def section1():
     lost = (sum(cu) - (r4096["cpu_updates"] + r4096["cpu_scoring"] + r4096["cpu_cosines"])) / 3600
     print(f"    the nine runs: {run_h:.2f} CPU-hours (updates, scoring and readings), of which the readings {cos_h:.2f}")
     print(f"    the check receipts' own 'cpu' entries: {chk_h:.2f} CPU-hours; check 8's two dry runs (subprocesses, not in check 8's entry): {d8:.2f};"
-          f" the killed process's updates after its saved state of 4,096 (to its last row {last.split()[5]}): at least {lost:.2f}; together at least {chk_h + d8 + lost:.2f}")
+          f" the killed process's updates after its saved state of 4,096 (to its last row {last.split()[6]}): at least {lost:.2f}; together at least {chk_h + d8 + lost:.2f}")
     print(f"    wall time of the queue: {q.splitlines()[0][:20]} to {q.splitlines()[-1][:20]}")
     clock("section 1")
     return run_h, cos_h, chk_h
@@ -864,6 +869,10 @@ def section5():
     print(f"    kept entries a row in in16 (entries a receiving unit receives): {kept['in16']}")
     for lab in ("in16 matrix S", "in16 row S", "in16 rowcells S", "in16 none B", "F10 row S", "G row S"):
         print(f"    {lab:18s} " + ", ".join(f"{k} {SPREAD[lab][k]:.3f}" for k in V.MAPS))
+    print("5.4 each run of in16 under the sweep, the cosine under its own scale at selected readings (byte table, l1, input map, recurrent map)")
+    for lab in ("in16 matrix S", "in16 row S", "in16 rowcells S", "in16 rowcol S", "in16 matrix S cd0"):
+        sc = SPEC[lab][2]; byu = {e["update"]: e["cosines"][sc] for e in REC[lab]["cosines"]}
+        print(f"    {lab:18s} ({sc:8s}) " + " | ".join(f"{u:,}: " + ", ".join(f"{byu[u][t]:.3f}" for t in COS_T[:4]) for u in (2048, 8192, 24576, 49152)))
     clock("section 5")
 
 
@@ -890,6 +899,15 @@ def section6():
             per[p.split("/")[-1]] = (nm, nn)
     print(f"6.1 text files searched: {len(files)} (exp45/e57 without weight files, and the runner); unfilled marks {tot_m}; names of language models outside branch names {tot_n}")
     print(f"    files with a hit (marks, names): {per}")
+    more = [p for p in subprocess.run(["git", "ls-tree", "-r", "--name-only", WREF, "--", P + "e57_qual", M + "e57_tables.py", M + "E49_COPIES_FOR_E57.txt"],
+                                      capture_output=True, text=True, check=True).stdout.split() if not p.endswith(".pt")]
+    m2 = n2 = 0
+    for p in more:
+        t = show(p).decode(errors="replace")
+        m2 += sum(t.count(m) for m in marks)
+        n2 += sum(1 for n in names for mo in re.finditer(r"(?i)(?<![a-z])" + n + r"(?![a-z])", t)
+                  if not (t[mo.end():mo.end() + 1] == "/" or "origin/" in t[max(0, mo.start() - 8):mo.end() + 1]))
+    print(f"    beyond the task's scope, the {len(more)} text files of exp45/e57_qual, e57_tables.py and E49_COPIES_FOR_E57.txt: unfilled marks {m2}, names {n2}")
     all_e57 = subprocess.run(["git", "ls-tree", "-r", "--name-only", WREF, "--", P + "e57", P + "e57_qual", M + "exp57_scale.py", M + "e57_tables.py", M + "E49_COPIES_FOR_E57.txt"],
                              capture_output=True, text=True, check=True).stdout.split()
     print(f"6.2 E57's committed files at {WREF}: {len(all_e57)} (the report lists 109 and itself)")
