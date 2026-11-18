@@ -288,17 +288,19 @@ What these tables say about "learned in the reserve":
 
 ### 8.3 What the old cells answer of the conflicting family
 
+(The last column of the table and the sentence that cites it were left unfilled when the agent that wrote this document was interrupted. The reviewer filled them on 18 November from its own run of part 8 of the script, lines "8.2b" of its output.)
+
 The 800 never-taught items of the conflicting family fall into three classes by what the first family's operation (the same operation under modulus 89) would answer for the same operands.
 
-| Weights and what acts | Same answer under 89 and 97, both operands below 89 (344 items) | Same answer, an operand of 89 or more (29) | The answer differs (427) | Of the 392 that differ with operands below 89: the answer given is the answer under 89 |
+| Weights and what acts | Same answer under 89 and 97, both operands below 89 (344 items) | Same answer, an operand of 89 or more (29) | The answer differs (427) | Of the 340 whose answer differs and whose operands are both below 89: the answer given is the answer under modulus 89 |
 |---|---|---|---|---|
-| The start, reserve cells shut | 148 (43.0%); 64 (18.6%) | 2; 0 | 2; 2 | @@A@@ |
-| Row 4,096, as run | 333 (96.8%); 342 (99.4%) | 27; 28 | 398 (93.2%); 405 (94.8%) | @@B@@ |
-| Row 4,096, reserve cells shut | 326 (94.8%); 318 (92.4%) | 2; 3 | 0; 2 | @@C@@ |
-| Row 4,096, only the old cells and the old units of z2 | 332 (96.5%); 308 (89.5%) | 2; 3 | 0; 0 | @@D@@ |
-| Row 4,096, the old cells' rows of the input map put back, reserve cells shut | 151 (43.9%); 90 (26.2%) | 3; 0 | 1; 2 | @@E@@ |
+| The start, reserve cells shut | 148 (43.0%); 64 (18.6%) | 2; 0 | 2; 2 | 141 (41.5%); 61 (17.9%) |
+| Row 4,096, as run | 333 (96.8%); 342 (99.4%) | 27; 28 | 398 (93.2%); 405 (94.8%) | 0 (0.0%); 0 (0.0%) |
+| Row 4,096, reserve cells shut | 326 (94.8%); 318 (92.4%) | 2; 3 | 0; 2 | 291 (85.6%); 314 (92.4%) |
+| Row 4,096, only the old cells and the old units of z2 | 332 (96.5%); 308 (89.5%) | 2; 3 | 0; 0 | 323 (95.0%); 310 (91.2%) |
+| Row 4,096, the old cells' rows of the input map put back, reserve cells shut | 151 (43.9%); 90 (26.2%) | 3; 0 | 1; 2 | 162 (47.6%); 87 (25.6%) |
 
-With the reserve cells shut the network answers the conflicting family where the first family's operation already gives the right answer, and nowhere else: 94.8% and 92.4% of the 344 items of the first class, 2 and 3 of the 29 items with an operand that the first family never had, and 0 and 2 of the 427 items whose answer differs. @@F@@ The only bytes of a conflicting item that are not in use are its code bytes, and the rule lets the old cells' input rows change only along the part of a code that lies outside the directions in use, so what the old cells learned can only be a response to the new code bytes; the table shows that with this response they apply the first family's operation to the new family's items. Everything that distinguishes the conflicting family from the first (the reduction at 97 and the operands from 89 to 96) is answered only when the reserve cells are open.
+With the reserve cells shut the network answers the conflicting family where the first family's operation already gives the right answer, and nowhere else: 94.8% and 92.4% of the 344 items of the first class, 2 and 3 of the 29 items with an operand that the first family never had, and 0 and 2 of the 427 items whose answer differs. Of the 340 items whose answer differs and whose operands are both below 89, the answer given with the reserve cells shut is the answer under modulus 89 in 291 and 314 cases (85.6%; 92.4%). The only bytes of a conflicting item that are not in use are its code bytes, and the rule lets the old cells' input rows change only along the part of a code that lies outside the directions in use, so what the old cells learned can only be a response to the new code bytes; the table shows that with this response they apply the first family's operation to the new family's items. Everything that distinguishes the conflicting family from the first (the reduction at 97 and the operands from 89 to 96) is answered only when the reserve cells are open.
 
 This changes how the worker's "no" should be read. By the brief's criterion the conflicting family is not learned in the reserve. The 41% answered without the reserve cells is the part of the family that needs nothing new, and it is answered by the first family's own computation, reached through a direction that the first family does not use; the part that conflicts with the first family is in the reserve by the same test that the brief applies (0.0% and 0.5% with the reserve cells shut).
 

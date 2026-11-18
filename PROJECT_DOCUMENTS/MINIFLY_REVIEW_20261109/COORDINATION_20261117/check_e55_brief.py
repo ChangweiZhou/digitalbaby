@@ -26,6 +26,8 @@ Parts:
              projection brings to zero to exactly zero after every step; "gates-free" is the arm `shut-gates-free`; "scaled"
              multiplies the gradient of the gate rows of the reserve by 1e4), E55_CHECK_SAVE (a folder outside the repository in which
              the emulated weights after the last update are written; nothing is written if absent)
+    positions  the emulated run of `conflict` under rule B at row 4,096, read from the folder E55_CHECK_SAVE: the positions at which the
+             gates of the cells in reserve open
 """
 import importlib.util, json, os, sys, time
 import numpy as np
@@ -36,7 +38,7 @@ _spec = importlib.util.spec_from_file_location("e51_trial_verify", os.path.join(
 sys.path.insert(0, os.path.dirname(HERE))
 V = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(V)
 sys.argv = _argv
-V.WREF = "origin/claude/e51-reserve-017dSEpW"          # the worker's branch as it stands (the verification pins an earlier commit)
+V.WREF = "0ab99a377aec3808359ae7054ea29cfd88354ab0"   # the head of the branch of E51's worker on 18 November (the verification pins an earlier commit)
 
 SEED, BOS, EOS = V.SEED, V.BOS, V.EOS
 H0, U0, H1, U1 = V.H0, V.U0, V.H1, V.U1
@@ -491,6 +493,20 @@ def residue():
 
 
 PARTS["residue"] = residue
+
+def positions():
+    print("== positions: the emulated run of `conflict` under rule B at row 4,096 (weights written by the part `emulate` with E55_CHECK_SAVE): where the gates open")
+    W = dict(np.load(os.path.join(os.environ["E55_CHECK_SAVE"], "emulated_conflict_B_shut_brief_4096.npz"))); net = V.Net(W); pan = reserve_panel("conflict")
+    for idx, x in rows_of(pan):
+        op = 1 - net.run(x, keep=True)[1]["z"][:, :, U0:]; cells = np.nonzero(op.max(1).mean(0) > 0.1)[0]
+        print(f" cells for which the mean over the {len(idx)} items of the largest 1 - z over the positions exceeds 0.1: {len(cells)}")
+        print(f" mean over the items and these cells of 1 - z, position by position: {np.round(op[:, :, cells].mean((0, 2)), 3).tolist()}")
+        print(f" pairs of an item and a cell in reserve with 1 - z above 0.5, position by position: {(op > 0.5).sum((0, 2)).tolist()}")
+        print(f" the bytes of the first item: {[chr(b) if b < 128 else int(b) for b in x[0]]}")
+
+
+PARTS["positions"] = positions
+
 
 if __name__ == "__main__":
     for p in sys.argv[1:]:
