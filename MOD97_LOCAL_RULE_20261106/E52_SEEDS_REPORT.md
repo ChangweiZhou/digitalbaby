@@ -6,7 +6,7 @@
 
 All 12 runs are complete; none diverged and none was interrupted. The report is the worker's and has not been reviewed. It does not stand in for the programme's independent audit, and it claims no checker gate. The first seed, 93683, is reported in `E52_REPORT.md`, at commit `2d36fcfa` after the reviewer's verification. That report defines the terms used here: the network, the two rules, the scores A and R, updates to 80, a case, the lag, birth and life. Its rules for the readings are applied here unchanged.
 
-- **Worker branch:** `claude/e52-learning-rates-sdga8c`. The runs were made at commit `3abe1674`.
+- **Worker branch:** `claude/e52-learning-rates-sdga8c`. The driver began at commit `3abe1674`. Each receipt records the commit checked out when its run started. Receipts in progress were committed during the runs, so the 12 receipts name five commits: `3abe1674` (3 runs), `25402e3f` (3), `109793f4` (3), `c23c02b4` (2) and `05655042` (1). Every receipt records no source modified against its commit, and the sources are identical in all five.
 - **Host:** Linux x86-64 with 4 cores, Python 3.13.18 and torch 2.15.0+cpu. Each process ran one thread, with at most three processes at once.
 - **Runner:** `exp52_resume.py` (sha256 `6531525f8bffec5f…`, unchanged since the first seed), with a checkpoint every 4,096 updates.
 - **Driver:** `exp52_drive3.py` (new file, `1401ba576d687ab1…`).
@@ -63,7 +63,7 @@ For seed 93683 these margins reproduce the verification's figures: 1, 1, 2 and 3
 
 ## 3. Every run
 
-The receipt of each run is named in the last column; the final weights of each run at 0.003 are in the `.pt` file of the same name. Final levels are means of the last three rows. One row of the length test is a weak figure: its range over the last twelve rows of a run here is 8.7 to 21.7 points, the largest being seed 73129, the sweep at half width with f = 0.25 (69.3 to 91.0). The norms are book / l1 / input map / recurrent / lm / l2 / l3, at the last row. E41's receipts (rate 0.001) record neither.
+The receipt of each run is named in the last column; the final weights of each run at 0.003 are in the `.pt` file of the same name. Final levels are means of the last three rows. One row of the length test is a weak figure: its range over the last twelve rows is 8.7 to 21.7 points in the 12 new runs, and 5.3 to 21.7 points over all 24 runs of this table that have a length test. The largest is seed 73129, the sweep at half width with f = 0.25 (69.3 to 91.0); the smallest is back-propagation at half width with f = 0.50, at 0.001, on seed 93683. The norms are book / l1 / input map / recurrent / lm / l2 / l3, at the last row. E41's receipts (rate 0.001) record neither.
 
 
 | Seed | Width, f | Rule | Rate | Dose | Updates to 80, A | Updates to 80, R | Final A | Final R | Final taught | Length 40: last, mean of 3 (range of 12) | Norms at the end (book / l1 / input / recurrent / lm / l2 / l3) | Resumed at | Receipt |
@@ -146,6 +146,12 @@ Seed 93683 is read here at the rates 0.001 and 0.003 only, so that all three see
 - On seed 116089 both rules reach 80 at 0.003 at the same row on both scores (4,608 on R, 4,096 on A).
 - In both seeds the sweep does not reach 80 on R at 0.001 within E41's 12,288 updates, so the lag at 0.001 is only a lower bound.
 
+**Gains, in the brief's sense of a case** (a rule at a width and fraction), seed by seed:
+- Back-propagation gains at half width with f = 0.50 on all three seeds; on seed 73129 by one row.
+- It gains at half width with f = 0.25 on seed 73129 only (14 rows).
+- It does not gain at present width with f = 0.25 on any seed; on seed 93683 this rests on one row.
+- The sweep gains in both of its cases at a quarter of the pairs on all three seeds, and in its case at half width with f = 0.50 on two seeds (not on seed 73129, four rows).
+
 The "gone" on seed 116089 is one row from "smaller". The "gone" on seed 73129 is four rows from "not decided" on R and two rows from "smaller" on A.
 
 **The brief's sentence, for each seed and each width and fraction** ("at this width and fraction the sweep's lag behind back-propagation is [the same within the scatter of one seed / smaller / gone / larger] when each rule is run at its own best learning rate among those tried"), with "those tried" here meaning 0.001 and 0.003:
@@ -162,10 +168,11 @@ The brief fixes no rule for combining seeds, so the counts in the last column ar
 
 The brief states the explanation as follows: the sweep's lag at the half width and at a quarter of the pairs is in part a matter of the learning rate. It is refuted for a seed if the sweep gains at no width and fraction, or if, wherever the sweep gains, back-propagation gains too and the lag is not smaller.
 - **Seed 73129:** the sweep gains at half width with f = 0.25 and at present width with f = 0.25.
-  - At present width back-propagation does not gain and the lag is gone, so the explanation is not refuted by the brief's test.
-  - At the width and fraction that the explanation names (half width, f = 0.25), back-propagation also gains, and the lag is the same on R and on A.
-- **Seed 116089:** the sweep gains at all three widths and fractions. At half width with f = 0.25 and at present width with f = 0.25, back-propagation does not gain and the lag is smaller or gone. Not refuted.
-- **Seed 93683** (from `E52_REPORT.md`): not refuted. At half width with f = 0.25 the lag on R is smaller, two rows from "the same".
+  - The explanation is not refuted on this seed, but that rests on the present width with f = 0.25 alone, where back-propagation does not gain and the lag is gone.
+  - That verdict has a margin of five rows. If the sweep's count on R at 0.003 at present width moved from 6,656 to 7,936, its gain there would end, and the explanation would be refuted on this seed.
+  - At the case the explanation names (half width, f = 0.25), back-propagation gains too, and the lag is not smaller. It is the same on R and on A: on R it rises from 2.12 to 2.90, three rows from "larger".
+- **Seed 116089:** the sweep gains at all three widths and fractions. At half width with f = 0.25 and at present width with f = 0.25, back-propagation does not gain and the lag is smaller or gone. Not refuted, and no move of a single count changes this verdict.
+- **Seed 93683** (from `E52_REPORT.md`): not refuted, and no move of a single count changes this verdict. At half width with f = 0.25 the lag on R is smaller, two rows from "the same".
 
 At the width and fraction that the explanation names, the lag on R is smaller on two seeds (93683 and 116089) and the same on one (73129). E41's three seeds at 0.001 already give lags on R there of 2.12, 3.31 and 3.31.
 
@@ -174,7 +181,14 @@ At the width and fraction that the explanation names, the lag on R is smaller on
 - These seeds were run at two rates, 0.001 and 0.003, so "best rate" here means only the better of those two. The first seed's runs at 0.0003 and 0.01 were not repeated.
 - The product control was not repeated.
 - The runs at 0.001 are E41's, made with `exp41_scale.py`. E52's runner reproduced them exactly on seed 93683, but on these two seeds the two runners were not compared. E41's receipts carry no length test and no norms.
-- Every reading near its band's edge (margin of one to three rows) could change with one row on one seed. The margins are in Table 2 and in Section 5.
+- Of the 108 readings in Section 4, 18 have a margin of one or two rows. Seven of these are gains or lags:
+  - back-propagation's gain at half width with f = 0.50 on seed 73129 (1 row);
+  - the lag on A at present width on seed 73129 (2);
+  - the lags on R and on A at present width on seed 116089 (1 and 1);
+  - the lag on R at half width with f = 0.25 on seed 93683 (2);
+  - back-propagation's gain and the lag on R at present width on seed 93683 (1 and 1).
+
+  Every margin is in Table 2 of `exp45/e52_seeds/E52_SEEDS_TABLES.md` (Section 4 here) and in Section 5.
 - A rate that is faster to 80 is not shown to end higher. On seed 73129, the sweep at half width with f = 0.50 ends at R 85.05 at 0.003 against 93.82 at 0.001. Back-propagation at present width with f = 0.25 ends at R 81.57 at 0.003 against 83.68 at 0.001.
 - The brief's predictions were made for seed 93683 and are scored in `E52_REPORT.md`. They are not scored again here.
 - Nothing is said about lives. The coordinator's decision 20 leaves the long lives at the rate 0.003 not started.
