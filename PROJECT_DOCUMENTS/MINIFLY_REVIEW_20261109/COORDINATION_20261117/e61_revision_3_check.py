@@ -547,7 +547,7 @@ def part3():
           f"on A, exact gradient {1.25 * q('C46-one', 'B', 'A'):,.0f}, sweep {1.25 * q('C46-one', 'S', 'A'):,.0f}")
     for r in "BS":
         d = json.loads(show(f"{M}/exp45/e42/e42_G_{r}_73129.json"))
-        print(f"3.4 decision 31's reference, E42's G under rule {r}: R {reached(d['curve'], 'R')}; A {reached(d['curve'], 'A')}")
+        print(f"3.4 the dense reference (decision 31), E42's G under rule {r}: R {reached(d['curve'], 'R')}; A {reached(d['curve'], 'A')}")
 
 
 # =====================================================================================================================
