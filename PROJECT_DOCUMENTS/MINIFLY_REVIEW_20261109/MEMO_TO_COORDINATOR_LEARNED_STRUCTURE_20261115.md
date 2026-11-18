@@ -1846,3 +1846,42 @@ Reduction score of the first family after 4,096 updates, as a percentage of that
 - **What it does not show.** One network, one birth for each seed and rule, one rate; no share between a half and a quarter; and the comparison of the first gap with the eighth does not separate the earlier reviews from the new task being learned by then.
 
 For requirement A, with what the three seeds support: without an act of the program this network keeps the first family only with rehearsal, of between a quarter and a half of the stream; repeated reviews lengthen what a gap leaves, under both rules.
+
+### 33.14 E58, verified: the gated term ends above free learning; the reason is not attributed; it reaches the same level from half the pairs under back-propagation only
+
+(`E58_VERIFICATION_20261118.md`, `e58_verify.py`; written by an agent that had not seen the reviewer's reasoning; the reviewer ran the script again, 116.9 seconds, with the same output, and corrected three sentences of the agent's document, which are marked there. Worker's branch `claude/e58-gated-term-kqasnme` at e4c9bc0b; report `exp45/e58/E58_REPORT.md`.)
+
+**The terms.** A lived network is one of the six networks at the end of E26's lives. The new family is add, sub, max and min under modulus 83, taught from a fraction f of its pairs of operands. *Free learning* (`free`) lets every weight change under the standing optimizer (decay 0.25); `free-wd0` has no decay; `free-anchor` decays the change toward the lived weights instead of the weights toward zero; `free-again` is `free` with the items in another order and measures the scatter of one arm. *The gated term* (`term`) freezes the lived network and learns a product of two matrices of rank 16 added to the two matrices of the recurrent layer, used only for items of the new family; the program decides this from the item's first byte. The *reduction score* is the percentage of untaught pairs of add and sub that need the reduction by the modulus and are answered right in every byte; *R-late* is its mean over rows 4,096 to 8,192; *the common pairs* are reduction pairs untaught at every fraction. A reading *above* needs 5 points on at least two seeds and no contrary margin on the third.
+
+**What was verified.** All 72 receipts are complete and record the brief's settings; the streams were built again and their digests agree at every scored row of every run; the six runs that were started again after two restarts of the machine are whole runs and equal their interrupted receipts at every shared row. Of 483 figures and statements of the report, 475 are reproduced; the eight that are not are small (three bounds rounded the wrong way, one difference of 0.1, two phrases, and the sentence of finding 1 below) and change no reading. All 42 weight files and 48 term files match their receipts; the lived weights are unchanged in the term arms at every row; the network with the term was written again in numpy and reproduces the receipts' counts exactly on eight saved states.
+
+**Part A, f = 0.10: R-late by arm** (seeds 73129, 93683, 116089).
+
+| Arm | Sweep | Back-propagation |
+|---|---|---|
+| `free` | 79.0, 85.1, 83.5 | 83.0, 91.9, 89.1 |
+| `free-again` | 74.7, 82.5, 83.55 | 83.4, 90.7, 91.8 |
+| `free-wd0` | 76.7, 84.5, 83.5 | 83.5, 91.6, 93.7 |
+| `free-anchor` | 84.7, 86.0, 85.8 | 85.4, 95.5, 94.6 |
+| `term` | 92.0, 94.4, 87.2 | 94.2, 98.5, 99.0 |
+| `term-wd0` | 91.6, 92.7, 86.9 | 94.6, 97.6, 98.75 |
+
+- The gated term is above free learning at 8,192 updates under both rules (sweep +13.0, +9.3, +3.7; back-propagation +11.3, +6.6, +9.8), where the scatter of one arm is 4.2, 2.6, 0.0 and 0.4, 1.2, 2.6. The lead that E48 showed at 1,024 updates therefore persists.
+- The lead is not attributed. The brief split it into a part that the absence of decay on the lived weights explains (`free-anchor` minus `free`: 5.7, 0.9, 2.2; 2.4, 3.6, 5.4) and the rest. The share of the first part is 0.44 and 0.10 under the sweep and 0.21, 0.55, 0.55 under back-propagation on the seeds where the lead is 5 points or more; the seeds disagree, and none of the brief's three sentences is stated. `free-anchor` and `free-wd0` are each not distinguished from `free` under either rule.
+- In the term arms the earlier families are answered identically, item for item, at every row; in the three free arms the four panels of the life's families fall within 16 updates (seed 73129: from 86.6 to 60.9 under the sweep and from 90.5 to 56.6 under back-propagation).
+
+**Part B: R-late on the common pairs** (sweep; back-propagation; three seeds each).
+
+| f | `free` | `free-wd0` | `term` |
+|---|---|---|---|
+| 0.05 | 42.85, 50.48, 57.31; 55.58, 70.21, 75.27 | 75.88, 79.42, 76.39; 69.66, 89.57, 85.37 | 85.67, 83.83, 74.11; 88.56, 91.69, 93.90 |
+| 0.10 | 79.32, 85.07, 83.69; 83.24, 91.76, 89.16 | 76.85, 84.60, 83.62; 83.86, 91.43, 93.72 | 92.07, 94.62, 87.16; 94.33, 98.50, 98.98 |
+| 0.20 | 91.32, 92.42, 93.05; 92.46, 97.12, 95.27 | 92.44, 94.46, 93.59; 94.19, 96.68, 96.75 | 96.39, 95.63, 94.36; 97.80, 99.55, 99.82 |
+
+- **From fewer pairs.** The brief licenses "the gated term reaches from f the level that free learning reaches from g" only if free learning gains from the additional pairs, the term at f is at most 2 points below the higher of `free` and `free-wd0` at g on two seeds and less than 5 below on the third, and the comparison is not at the ceiling. Under back-propagation this holds for (0.05, 0.10): the deficits are −4.7, +0.1, −0.2. On the second and third seed the condition is met by 1.9 and 2.2 points, which is the size of the scatter of one arm on that score (1.1 and 2.5 points); the scatter was measured at f = 0.10 only. For (0.10, 0.20) the comparison is at the ceiling, and for (0.05, 0.20) the condition fails (+5.6, +5.4, +2.9). Under the sweep no pair of fractions qualifies ((0.05, 0.10): −6.3, +1.2, +9.6), and neither does the sweep's term against back-propagation's free learning (−1.8, +7.9, +19.6).
+- **At f = 0.05 free learning falls during the run** (reduction score at rows 1,024 and 8,192: 78.1 and 36.6, 70.95 and 44.2, 73.1 and 49.6 under the sweep; 71.8 and 45.5, 91.1 and 60.6, 87.3 and 78.4 under back-propagation). The term is above `free` there by 16 to 43 points under both rules, but under the sweep it is not distinguished from `free-wd0` (+9.45, +4.2, −2.5): much of that lead is the effect of the standing decay on free learning from few pairs.
+- **In presented items the term is not faster.** Every run sees the same number of items (524,288); a smaller fraction means more presentations of each pair (381, 190 and 95). The term reaches 80 later than the free arm in 33 of 36 comparisons; it reaches 90 earlier, or the free arm never reaches it, in 16 of 36.
+
+**Findings on the report** (eleven, sent to the worker for correction; none is an error in a table or a verdict). (1) "slower in presented items at every fraction" is stronger than the figures (33 of 36 at the level of 80; the reverse in 16 of 36 at 90). (2) Where the condition between fractions fails across the rules, the report states the contrary as a result; the brief allows only the deficits. (3) The limits do not set the scatter beside the margins that decide the one licensed sentence, nor say where the scatter was not measured. (4) Tables that the brief requires in the report are in committed text files instead. (5) One reading of Part B in support of the explanation was not fixed beforehand and is not marked so. (6) to (11) are matters of form and rounding.
+
+**What it means for the requirements.** For B2 (a similar result from far fewer samples) E58 gives one licensed statement: under back-propagation, at an equal number of presented items, the gated term learns the new family from half the pairs to the level of free learning, on margins that two of three seeds do not separate from the scatter. It is not shown under the sweep, it concerns the number of distinct pairs and not the number of presentations, and it compares two ways of adding knowledge to one lived network, not our learner with a conventional one. For B1 (slower at first, ahead later) the same qualification holds: at f = 0.10 the term reaches 80 later than free learning on all six pairs of seed and rule (rows 256 to 512 against 128 to 256 under the sweep; 64 to 256 against 32 to 64 under back-propagation) and has the higher R-late on all six. For A the job says nothing: the gate is supplied by the program. The level of evidence is E2, on three seeds; there has been no independent audit.
