@@ -121,6 +121,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 31. **The lines after the forwarding of 14:15 UTC:** the first long lives, E55 (E51's worker), E53 (E58's worker) and E57 (E59's worker) are running or starting; the helper's, E52's and E54's lines are free; E54's report is in verification. Your decision 15 (a note of at most one page after the arm `blind` is reported) and the verification of `blind` before `shut` is read are the reviewer's next duties on E55.
 
+32. **Mr. Xu answered the two questions of section 33.21 on 18 November** (section 33.22). A code that the learner has learned by itself is not information given by us. A single global backward pass is prohibited; information may be relayed between neurons over their own connections, so that a few passes can cover the network. Section 33.22 gives his words, the reviewer's reading, and what follows for the running jobs and for the plan's items 20 and 23; nothing is started on it.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2080,3 +2082,23 @@ For requirement A, with what the three seeds support: without an act of the prog
 **Two remarks on the outside memo's use of the verified results.** (1) Its table gives E54's part 4 under back-propagation as "75.0 and rising". By the brief's rule that curve has flattened (rises of +2.46 and −0.74 over the last two spans), and the verification's finding 1 is that such a verdict is not evidence of a final level; the last span does not rise. (2) Its figures of the first long lives are the worker's and are in verification, as it says.
 
 **What the reviewer did not do:** it wrote no brief and started no job on the outside memo's proposals, and it changed no file outside its own folder.
+
+### 33.22 Mr. Xu's answers of 18 November to the two questions of 33.21 (15:44 UTC)
+
+**His words**, to the reviewer, in answer to the two questions (the original is Chinese; the English is the reviewer's):
+
+1. "所有它自己学到的编码都不算是我们给它的信息。" Every code that it has learned by itself does not count as information that we have given it.
+2. "对single pass global backpropagation是不可以的，但是可以通过neuron之间的relay传递信息。换句话说1->50->50^2->50^3等等，可能几个pass下来就能够覆盖整个网络。" A single-pass global back-propagation is not allowed, but information may be passed by relay between neurons. In other words 1 → 50 → 50² → 50³ and so on: after a few passes the whole network may be covered.
+
+**The reviewer's reading, which is the reviewer's and open to correction.**
+
+- *On the code.* The line between the learner's information and ours runs between what the learner has formed and what the program does. The rows of the byte table and any code in the cells that learning has formed are the learner's own, also when they stand for the byte that names a family. A line of the program that reads a byte of the item and switches something (E48's gate; the two lines of E51's arm `keyed`) is ours, and so is anything the program computes at a change of task (E55's directions and named rows). The readings of E48, E51, E55 and E58 against requirement A therefore stand as they are. What changes is the outside memo's proposal 5.2: a new family held in the rows of its own code bytes, reached through the ordinary forward pass, would be kept by the learner's own means. Its limit, which the outside memo states, remains: the item marks the family with a byte of its own, and a positive result would not show that a learner finds its cue in a stream that does not mark it.
+- *On locality.* What is prohibited is that one pass brings to a unit information from the whole network. What is allowed is that each pass moves information one step along a unit's own connections, of which the example has about fifty, so that a few passes reach every unit. The definition is one of connections and of passes, and it does not by itself say whether the signal that is relayed must be an approximation: the reviewer does not read into it either that the exact gradient relayed along sparse connections is allowed or that it is not, and has said so to Mr. Xu.
+
+**What follows, for your weighing; no decision is changed and nothing is started.**
+
+1. The dense network is outside the definition under either rule, because in it one pass reaches every unit. The long lives and E60 are on the dense network of the half width; they compare two rules and remain worth reading as that, and they are not a test of the local learner as now defined. The outside memo's working reading (33.21) agrees with this.
+2. The networks inside the definition are those with limited connections: 10 connections a cell in a neighbourhood (E42, E54), 16 inputs a cell (E49, E50, E57), the network with an interface at a boundary (E47, E53). None has about fifty connections a unit, and in none has the number of steps that the error is relayed been varied.
+3. The plan's item 20 (the error passed back over a limited number of positions instead of the whole item, under both rules) is the experiment that measures how many steps of relay are needed. It has had no priority; Mr. Xu's second statement makes it the direct test of his picture, on a network with limited connections.
+4. Item 23 and E60 keep their place for the comparison of the rules; a statement on requirement B1 for the local learner needs a life on a network with limited connections, which does not exist yet.
+5. The outside memo's 5.2 is worth its cost on Mr. Xu's first answer; its brief is the reviewer's to write on your word.
