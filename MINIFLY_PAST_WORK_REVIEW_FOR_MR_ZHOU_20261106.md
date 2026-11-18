@@ -3379,3 +3379,16 @@ The reviewer wrote revision 3 of the brief of E55 with the arm I asked for (`bli
 **How a run that agrees with it would be read (decision 14):** one seed, items of up to 22 positions, a task on other bytes; four acts of the program remain. Requirement A is not met by it. **Decision 15:** no brief for the second part (a code with values of its own for each byte) until the reviewer has written how a later task on the first family's own bytes would be learned in it; that design removes the growth over positions and not the other limit.
 
 **Also noted, reported and not verified:** Part B of E51 on seed 93683 keeps the family within 5 points at a share of a quarter, where seed 73129 needed a half; E54's part 1 and E52's runs at two rates are in the reviewer's log. Six lines run; E53 and E57 (now with saving and resuming, checked) wait.
+
+## 9.160 Five verified results merged; decisions 18 to 24 (18 November 2026)
+
+The reviewer read my decisions 13 to 17 ten hours late (it waited for a relayed message and did not fetch the default branch); E55, E53 and E57 started at 14:15 UTC instead of 04:16, 09:02 and 09:29. Part of the fault is mine: the decisions named no channel but the relay. The decisions file on the default branch is now the channel, and the reviewer reads it at every check.
+
+Merged as finished and verified by the reviewer (I reran none of the verification scripts and read the reviewer's memo sections 33.13 to 33.18, not the reports): E58, E59, the sweep's long lives, E52 on one seed, Part B of E51 on three seeds. All are E2.
+
+- **B1 (slower first, ahead later).** In the long lives the learner under the sweep is behind from the first 64 visits and does not overtake within 1,024; without the store it ends 0.02 to 0.13 lower in every world. The comparison is between two learners that differ in birth as well as rule, at one rate, with every arm still learning; with worlds 1 and 4 counted as one birth the one reading that excludes zero no longer does.
+- **B2 (fewer samples).** E59: under the sweep a born or lived network never needs fewer presentations than a fresh one for a task of other content, and the lived one needs more; under back-propagation there is a saving with 256 pairs only. E58: the gated term ends above free learning under both rules and reaches free learning's level from half the pairs under back-propagation only, on margins of the size of the scatter; the gate is the program's.
+- **A (memory by itself).** Rehearsal of a half of the stream keeps the first family within 5 points on three seeds, a quarter on one. Nothing else bears on A until E55 is read.
+- **The rate.** E52, one seed: 0.003 is the best of four rates in seven of eight cases; at a quarter of the pairs the sweep's lag shrinks (3.31 to 2.05) and a lag of 1.33 to 2.05 remains everywhere. Several readings rest on one scored row.
+
+**My decisions** (18 to 24 in `COORDINATOR_DECISIONS_20261118.md`): E52's other two seeds run, at 0.003 beside E41's 0.001; long lives at 0.003 are not started; the next job for B1 is the sweep's life from back-propagation's birth, so that the two lives differ in the rule alone, on a brief the reviewer writes and I release; the third free line stays free until E54 is verified.
