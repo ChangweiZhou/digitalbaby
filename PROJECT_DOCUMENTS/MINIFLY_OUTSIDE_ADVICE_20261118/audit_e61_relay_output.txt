@@ -1,0 +1,102 @@
+====================================================================================================
+PART 1. The network of the brief (E50's stage 3, `C46-one`), rebuilt from the text of the source
+1.1 digest of the code 12111044f0f8bc70; the receipt's 12111044f0f8bc70; equal: True
+1.2 values a cell reads: 46 to 46; every cell reads exactly one value of every used byte: True
+1.3 cells a cell reads, itself not counted: 10 to 10; largest stored recurrent weight outside the mask in the start file 0.0e+00, in the sweep's final file 0.0e+00
+1.4 weights in use: input map 35,328; recurrent map 8,448; the cells' biases 1,536; readout (lm, l2, l3 with biases) 526,081; the readout's share 0.921
+1.5 every readout unit reads 256 cells and 512 values of the byte's code; every cell is read by 512 readout units; `l2` takes the byte's code to the readout without passing a cell
+====================================================================================================
+PART 2. This file's forward and backward passes against the record
+2.1 digest of the first 256 batches of the stream written here a921d91607c6421b; the receipt's at update 256 a921d91607c6421b; equal: True
+2.2 loss of the first batch at the start 5.590670; the receipt's 5.590670
+2.3 cosine between the sweep's and the exact gradient on the first batch, start weights: rnn.weight_ih_l0 0.7554 (receipt 0.7554); lm.weight 0.8658 (receipt 0.8658); rnn.weight_hh_l0 0.7453 (receipt 0.7453)
+2.3 cosine between the sweep's and the exact gradient on the first batch, S weights: rnn.weight_ih_l0 0.5152 (receipt 0.5152); lm.weight 0.7950 (receipt 0.7950); rnn.weight_hh_l0 0.6899 (receipt 0.6899)
+2.4 the exact whole-item gradient of the two maps against central differences of the loss, six random directions: largest relative difference 1.5e-07
+2.5 form (b) with no limit on the crossings against the whole-item error at the states: largest difference 1.7e-18 (largest entry 9.8e-03)
+2.6 form (b) with at most 0 crossings against central differences of its direct definition (copies of the states), four random directions: largest relative difference 2.3e-09; from the whole-item gradient it differs by up to 1.0e+00
+2.6 form (b) with at most 1 crossings against central differences of its direct definition (copies of the states), four random directions: largest relative difference 1.8e-08; from the whole-item gradient it differs by up to 1.9e+00
+2.6 form (b) with at most 2 crossings against central differences of its direct definition (copies of the states), four random directions: largest relative difference 2.6e-08; from the whole-item gradient it differs by up to 6.1e-01
+2.6 form (b) with at most 3 crossings against central differences of its direct definition (copies of the states), four random directions: largest relative difference 3.4e-08; from the whole-item gradient it differs by up to 3.1e-01
+2.7 rule B: form (a) with K = 0 equals the readout's error alone: True
+2.7 rule S: form (a) with K = 0 equals the readout's error alone: True
+====================================================================================================
+PART 3. How far an error travels
+3.1 rule B: before any relay (K = 0) the readout's error is not zero at 256 of 256 cells; share of (item, answer position, cell) entries that are not zero 1.000
+3.1 rule S: before any relay (K = 0) the readout's error is not zero at 256 of 256 cells; share of (item, answer position, cell) entries that are not zero 1.000
+3.2 by relay alone over the recurrent connections, an error that starts at one cell has reached every cell after 4 to 5 steps (median 4)
+3.3 if only one cell were read by the readout: cells that have received an error after 0, 1, 2, ... steps of relay: [1, 11, 80, 220, 256, 256, 256, 256, 256]
+3.3 if only a patch of 16 (4 by 4) were read by the readout: cells that have received an error after 0, 1, 2, ... steps of relay: [16, 79, 212, 256, 256, 256, 256, 256, 256]
+3.3 if only a patch of 64 (8 by 8) were read by the readout: cells that have received an error after 0, 1, 2, ... steps of relay: [64, 166, 254, 256, 256, 256, 256, 256, 256]
+3.4 one step of relay is one position back: an error relayed s steps reaches a cell at the position s before the answer's;
+    the second operand stands 1 and 2 positions before the first answer position, the first operand 4 + k and 5 + k (k letters)
+====================================================================================================
+PART 5. Do the record's trained networks use the connections between cells? (forward passes only, on the saved weights)
+5.1 the exact gradient's final weights: exact answers computed here {'A_counts': {'add89': 279, 'sub89': 289, 'max89': 297, 'min89': 293}, 'R_counts': {'add89': 953, 'sub89': 950}, 'taught_counts': {'add89': 298, 'sub89': 297, 'max89': 299, 'min89': 295}}
+    equal to the last scored row of the record's receipt (update 49152) in all ten counts: True
+5.2 the exact gradient's network, R (2,000 items, no letters): intact 95.15; a cell receives nothing from the other cells 0.00; it receives only the mean over the items 0.70
+5.2 the exact gradient's network, A (600 items of addition and subtraction, 12 letters): intact 94.67; a cell receives nothing from the other cells 0.00; it receives only the mean over the items 0.83
+5.2 the exact gradient's network, T (600 taught items of addition and subtraction, 12 letters): intact 99.17; a cell receives nothing from the other cells 0.00; it receives only the mean over the items 0.83
+5.1 the sweep's final weights: exact answers computed here {'A_counts': {'add89': 239, 'sub89': 260, 'max89': 296, 'min89': 293}, 'R_counts': {'add89': 854, 'sub89': 861}, 'taught_counts': {'add89': 274, 'sub89': 284, 'max89': 296, 'min89': 297}}
+    equal to the last scored row of the record's receipt (update 49152) in all ten counts: True
+5.2 the sweep's network, R (2,000 items, no letters): intact 85.75; a cell receives nothing from the other cells 0.00; it receives only the mean over the items 0.75
+5.2 the sweep's network, A (600 items of addition and subtraction, 12 letters): intact 83.17; a cell receives nothing from the other cells 0.00; it receives only the mean over the items 0.67
+5.2 the sweep's network, T (600 taught items of addition and subtraction, 12 letters): intact 93.00; a cell receives nothing from the other cells 0.00; it receives only the mean over the items 0.83
+====================================================================================================
+PART 6. Updates to 80 from the receipts (first of three consecutive scored rows [first single row]; None: not reached)
+6.1 e50_C-dense_B_73129: on R 6912 [6912]; on A 7680 [6912]
+6.1 e50_C-dense_S_73129: on R 12800 [12032]; on A 13056 [13056]
+6.1 e50_C16-in_B_73129: on R None [47616]; on A 40704 [28928]
+6.1 e50_C16-in_S_73129: on R None [None]; on A None [None]
+6.1 e50_C46-one_B_73129: on R 15360 [13824]; on A 14080 [12288]
+6.1 e50_C46-one_S_73129: on R 34304 [34304]; on A 35584 [33536]
+6.1 e42_G_B_73129: on R 6400 [5120]; on A 5120 [5120]
+6.1 e42_G_S_73129: on R 6656 [6656]; on A 5632 [5632]
+6.1 e42_F10_B_73129: on R 9472 [8960]; on A 8704 [8192]
+6.1 e42_F10_S_73129: on R 15104 [13824]; on A 13312 [12800]
+6.2 the sweep with 46 values a cell against the sweep with every value: 34304 / 12800 = 2.6800; the exact gradient likewise: 15360 / 6912 = 2.2222; the sweep against the exact gradient, both with 46 values a cell: 34304 / 15360 = 2.2333
+====================================================================================================
+PART 4. What a limit removes from the whole-item gradient of the cells' own weights (cosine with the whole-item
+        gradient of the same rule; mean over batches of 64; recurrent map / input map), and in square brackets the
+        share of the whole-item error at the states of the first operand's two positions (2 and 3) that the form
+        delivers (its projection on the whole-item error there, as a share of that error's squared length)
+-- the sweep's trained network, under the sweep
+   training items (0 to 12 letters) (16 batches)
+      (a) every path cut K positions back:        K=0: 0.71/0.67 [0.00]  K=1: 0.85/0.81 [0.00]  K=2: 0.92/0.89 [0.00]  K=4: 0.97/0.94 [0.04]  K=8: 0.99/0.98 [0.57]  K=16: 1.00/1.00 [0.98]
+      (b) own path kept, at most X crossings:     X=0: 0.80/0.79 [0.06]  X=1: 0.94/0.93 [0.20]  X=2: 0.98/0.97 [0.41]  X=4: 1.00/1.00 [0.79]
+   items with no letters, as R's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.74/0.66 [0.00]  K=1: 0.87/0.80 [0.00]  K=2: 0.94/0.87 [0.00]  K=4: 0.99/0.95 [0.29]  K=8: 1.00/1.00 [1.00]  K=16: 1.00/1.00 [1.00]
+      (b) own path kept, at most X crossings:     X=0: 0.83/0.78 [0.07]  X=1: 0.96/0.92 [0.27]  X=2: 0.99/0.97 [0.58]  X=4: 1.00/1.00 [0.97]
+   items with 12 letters, as A's and T's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.68/0.67 [0.00]  K=1: 0.83/0.80 [0.00]  K=2: 0.91/0.88 [0.00]  K=4: 0.96/0.93 [0.00]  K=8: 0.99/0.98 [0.00]  K=16: 1.00/1.00 [0.33]
+      (b) own path kept, at most X crossings:     X=0: 0.77/0.79 [0.04]  X=1: 0.93/0.92 [0.12]  X=2: 0.98/0.96 [0.22]  X=4: 1.00/0.99 [0.47]
+-- the exact gradient's trained network, under the exact gradient
+   training items (0 to 12 letters) (16 batches)
+      (a) every path cut K positions back:        K=0: 0.46/0.35 [0.00]  K=1: 0.64/0.47 [0.00]  K=2: 0.77/0.57 [0.00]  K=4: 0.88/0.68 [0.01]  K=8: 0.95/0.81 [0.29]  K=16: 1.00/0.98 [0.87]
+      (b) own path kept, at most X crossings:     X=0: 0.60/0.47 [0.03]  X=1: 0.82/0.69 [0.12]  X=2: 0.92/0.82 [0.29]  X=4: 0.98/0.95 [0.63]
+   items with no letters, as R's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.57/0.44 [0.00]  K=1: 0.73/0.55 [0.00]  K=2: 0.83/0.66 [0.00]  K=4: 0.92/0.79 [0.13]  K=8: 1.00/1.00 [1.00]  K=16: 1.00/1.00 [1.00]
+      (b) own path kept, at most X crossings:     X=0: 0.68/0.56 [0.04]  X=1: 0.88/0.78 [0.20]  X=2: 0.96/0.90 [0.49]  X=4: 1.00/0.99 [0.93]
+   items with 12 letters, as A's and T's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.41/0.33 [0.00]  K=1: 0.58/0.46 [0.00]  K=2: 0.71/0.55 [0.00]  K=4: 0.85/0.66 [0.00]  K=8: 0.94/0.75 [0.00]  K=16: 0.98/0.87 [0.16]
+      (b) own path kept, at most X crossings:     X=0: 0.56/0.47 [0.02]  X=1: 0.78/0.67 [0.09]  X=2: 0.90/0.79 [0.20]  X=4: 0.97/0.92 [0.46]
+-- the start, under the sweep
+   training items (0 to 12 letters) (16 batches)
+      (a) every path cut K positions back:        K=0: 0.95/0.91 [0.00]  K=1: 0.98/0.94 [0.00]  K=2: 0.99/0.99 [0.00]  K=4: 1.00/1.00 [0.31]  K=8: 1.00/1.00 [0.98]  K=16: 1.00/1.00 [1.00]
+      (b) own path kept, at most X crossings:     X=0: 0.99/0.98 [0.49]  X=1: 1.00/1.00 [0.92]  X=2: 1.00/1.00 [1.00]  X=4: 1.00/1.00 [1.00]
+   items with no letters, as R's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.94/0.90 [0.00]  K=1: 0.98/0.93 [0.00]  K=2: 0.99/0.99 [0.00]  K=4: 1.00/1.00 [0.51]  K=8: 1.00/1.00 [1.00]  K=16: 1.00/1.00 [1.00]
+      (b) own path kept, at most X crossings:     X=0: 0.99/0.98 [0.54]  X=1: 1.00/1.00 [0.95]  X=2: 1.00/1.00 [1.00]  X=4: 1.00/1.00 [1.00]
+   items with 12 letters, as A's and T's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.94/0.91 [0.00]  K=1: 0.98/0.94 [0.00]  K=2: 0.99/0.99 [0.00]  K=4: 1.00/1.00 [0.00]  K=8: 1.00/1.00 [0.00]  K=16: 1.00/1.00 [0.49]
+      (b) own path kept, at most X crossings:     X=0: 0.99/0.98 [0.05]  X=1: 1.00/1.00 [0.29]  X=2: 1.00/1.00 [0.65]  X=4: 1.00/1.00 [0.97]
+-- the start, under the exact gradient
+   training items (0 to 12 letters) (16 batches)
+      (a) every path cut K positions back:        K=0: 0.95/0.91 [0.00]  K=1: 0.98/0.94 [0.00]  K=2: 0.99/0.99 [0.00]  K=4: 1.00/1.00 [0.28]  K=8: 1.00/1.00 [0.98]  K=16: 1.00/1.00 [1.00]
+      (b) own path kept, at most X crossings:     X=0: 0.98/0.98 [0.38]  X=1: 1.00/1.00 [0.87]  X=2: 1.00/1.00 [0.99]  X=4: 1.00/1.00 [1.00]
+   items with no letters, as R's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.94/0.90 [0.00]  K=1: 0.97/0.93 [0.00]  K=2: 0.99/0.99 [0.00]  K=4: 1.00/1.00 [0.47]  K=8: 1.00/1.00 [1.00]  K=16: 1.00/1.00 [1.00]
+      (b) own path kept, at most X crossings:     X=0: 0.98/0.97 [0.44]  X=1: 1.00/1.00 [0.91]  X=2: 1.00/1.00 [1.00]  X=4: 1.00/1.00 [1.00]
+   items with 12 letters, as A's and T's (4 batches)
+      (a) every path cut K positions back:        K=0: 0.94/0.91 [0.00]  K=1: 0.98/0.94 [0.00]  K=2: 0.99/0.99 [0.00]  K=4: 1.00/1.00 [0.00]  K=8: 1.00/1.00 [0.00]  K=16: 1.00/1.00 [0.45]
+      (b) own path kept, at most X crossings:     X=0: 0.98/0.98 [0.03]  X=1: 1.00/1.00 [0.18]  X=2: 1.00/1.00 [0.49]  X=4: 1.00/1.00 [0.95]
+====================================================================================================
