@@ -987,6 +987,8 @@ def part6():
         r = ck[2]["rules"][rule]; _, info = directions(collect(Net(start("keyed", rule)), items, in_use))
         print(f"6.2 check 2, rule {rule}: receipt: digest {r['items_digest'][:16]}, bytes in use {r['bytes_in_use']}, directions {r['directions']}; reader: digest {dig[:16]}, bytes in use "
               f"{int(in_use.sum())}, directions " + str({m: info[m][2] for m in MATS}) + f"; the brief: d22b5733778491b1, 46, 46 / 129 / 129 / 11")
+        nv = sum(v.size for v in saved_directions(rule)[0].values()); npar = sum(v.size for v in start("keyed", rule).values())
+        print(f"    numbers held in the saved file of directions: {nv:,}, which is {100 * nv / npar:.1f}% of the network's {npar:,} parameters")
     # check 3
     for rule in RULES:
         for task in TASKS:
@@ -1042,6 +1044,9 @@ def part6():
           f"{max(v['cpu_seconds_an_update'] for v in ck[7]['dry_runs'].values()):.3f} and a scored row {min(v['cpu_seconds_a_scored_row'] for v in ck[7]['dry_runs'].values()):.1f} to "
           f"{max(v['cpu_seconds_a_scored_row'] for v in ck[7]['dry_runs'].values()):.1f}; forecast {ck[7]['forecast_cpu_hours_sixteen_runs']:.2f} CPU-hours for the sixteen runs; the sixteen receipts: "
           f"{actual:.2f} CPU-hours, {min(upd):.3f} to {max(upd):.3f} CPU-seconds an update")
+    per = {a: [receipt(t, a, r)["complete"]["cpu_updates"] / 4096 for t in TASKS for r in RULES] for a in ARMS}
+    print("    CPU-seconds an update by arm in the sixteen receipts (mean of four runs; lowest to highest): " + "; ".join(f"{a} {np.mean(v):.3f} ({min(v):.3f} to {max(v):.3f})" for a, v in per.items())
+          + f"; keyed over keyed-free {np.mean(per['keyed']) / np.mean(per['keyed-free']):.2f}, keyed over open {np.mean(per['keyed']) / np.mean(per['open']):.2f} (runs shared four cores with other processes)")
     clock(6, t0)
 
 
@@ -1155,7 +1160,7 @@ def part8():
                 if k == "book.weight":
                     ch = np.nonzero((W[k] != Ws[k]).any(1))[0]; parts.append(f"byte table: {len(ch)} rows changed (symbols {ch.min()}..{ch.max()}" + (": " + "".join(chr(b) for b in ch) if ch.max() < 128 else "") + f"), 2-norm of the change {np.linalg.norm(dlt):.2f}")
                 else:
-                    parts.append(f"{k} {what}: {np.linalg.norm(dlt):.2f}" + ("" if dlt.any() else " (unchanged)"))
+                    parts.append(f"{k} {what}: {np.linalg.norm(dlt):.2f}" + (f" (the start's block has 2-norm {np.linalg.norm(Ws[k][mask].astype(np.float64)):.2f})" if dlt.any() else " (unchanged)"))
             print("8.3 the 2-norm of the change from the start, by block: " + "; ".join(parts))
             # 8.4 the code of the new task's bytes against the directions in use at the input map
             Vs = saved_directions(rule)[0]["ih"]; newb = [ord(c) for c in "rtxn"] if task == "conflict" else list(range(128, 226))
