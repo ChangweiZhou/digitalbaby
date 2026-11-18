@@ -22,6 +22,6 @@ if ! pgrep -f "l2_driver.py ../exp45/e44/L2/roster_jobs.json" > /dev/null; then
   fi
 else echo "driver is running"; fi
 if ! pgrep -f "l2_lives.py saveloop" > /dev/null; then
-  (setsid nohup "$PY" l2_lives.py saveloop 90 >> "$L2/logs/saver.log" 2>&1 &)
+  (setsid nohup "$PY" l2_lives.py saveloop 30 >> "$L2/logs/saver.log" 2>&1 &)
   echo "saver started"
 else echo "saver is running"; fi
