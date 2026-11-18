@@ -160,6 +160,21 @@ def part_a(seeds):
                     e = rows(r)[1024]["scores"]["earlier_k12"]
                     out.append(f"{arm} {mean([pct(e[n]) for n in LIFE4]):.1f}")
             print(f"  {s}: life's four panels at row 1024: " + "; ".join(out))
+        print("  point 5: for each seed, the three free arms ordered by the mean of the life's four panels over rows 4096..8192, with R-late beside")
+        agree = 0; n = 0
+        for s in SEEDS:
+            v = []
+            for arm in ("free", "free-wd0", "free-anchor"):
+                r = load(arm, rule, "10", s)
+                if r:
+                    rw = rows(r)
+                    v.append((mean([mean([pct(rw[u]["scores"]["earlier_k12"][q]) for q in LIFE4]) for u in LATE]), figures(r)["rlate"], arm))
+            if len(v) == 3:
+                v.sort(reverse=True)
+                top_keeps_most = v[0][1] == max(x[1] for x in v)
+                agree += top_keeps_most; n += 1
+                print(f"  {s}: " + "; ".join(f"{a} life4-late {l:.1f} R-late {rl:.1f}" for l, rl, a in v) + f"  | the arm keeping most has the highest R-late: {top_keeps_most}")
+        print(f"  seeds on which the arm keeping most of the life's families has the highest R-late: {agree} of {n}")
 
 
 def first_row(r, level):
