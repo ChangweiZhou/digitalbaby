@@ -257,7 +257,7 @@ The rows with decay are read from the long lives' saved states. Without decay, b
 
 ## 8. Committed files
 
-The list below is `git ls-tree -r --name-only HEAD` for the files this job added or changed. It was taken at the commit before this report; this report is added in the next commit.
+The list below is `git ls-tree -r --name-only HEAD` for the files this job added or changed. It was taken at the commit that first added this report (without this list); the list was then appended in the next commit, which changes no other file.
 
 At commit 1e4eceae (`git ls-tree -r --name-only 1e4eceae`, restricted to this job's paths):
 
