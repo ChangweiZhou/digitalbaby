@@ -2203,3 +2203,30 @@ A task on bytes that the first family does not use is learned, under both rules,
 4. The wording the brief fixes for `unrelated` under back-propagation is "kept on items of up to 22 positions and not on items of 50" alone; outputs move by more than the smallest lead without a changed answer on the scored panels; two comparisons the brief asks for were missing; matters of provenance.
 
 **For requirement A.** By decision 14 the result does not meet it, and the verification agrees: the four acts of the program remain (directions computed at the change of task, rows named, the reserve added at that moment, the change of task known). Two parts of them should be named where the acts are listed: the record of the bytes in use, by which the program restores rows of the byte table after every update, and the single use of the keyed forward pass at the change of task to compute the directions. What the arm adds to E51 is narrow and exact: the line that read the item at every position is not needed for a task on other bytes, if the reserve is made blind to the first family's directions by the program; the price is a slower new task, no learning on shared bytes, and no bound on long items. The note that decision 15 asks for (how a later task on the first family's bytes is to be learned when the reserve receives nothing from those bytes) follows from this section and is owed next.
+
+### 33.27 What is answered at a return against the length of the absence (read-only; decision 35, the outside memo's 5.4)
+
+(`absence_curve.py`, 2 seconds; it reads the score files of the lives, whose every figure the two verifications recomputed from the event files: the first long lives at 45e9ba16, the sweep's at 738e2d61. Nothing was run. The dense network; four worlds from three births at 1,024 visits, eight worlds from three births at 256 visits; shares pooled over worlds, with the smallest and largest world in the script's output.)
+
+*Kept* is the share of a family's items answered right at the first update of a return, before anything of the visit is learned; *first 16* is the mean share right over the first 16 updates of the return; the *absence* is the number of visits since the family's previous visit, so that 1 means that nothing came between.
+
+| Absence (visits) | Returns | back-propagation: kept; first 16 | the same with the store | the sweep: kept; first 16 | the same with the store | back-propagation without decay, 256 visits: returns; kept; first 16 |
+|---|---|---|---|---|---|---|
+| 1 | 627 | 0.801; 0.801 | 0.751; 0.755 | 0.759; 0.753 | 0.692; 0.711 | 568; 0.662; 0.652 |
+| 2 | 444 | 0.023; 0.187 | 0.581; 0.657 | 0.021; 0.139 | 0.545; 0.607 | 357; 0.186; 0.367 |
+| 3 to 4 | 613 | 0.011; 0.132 | 0.576; 0.639 | 0.017; 0.103 | 0.526; 0.576 | 381; 0.140; 0.304 |
+| 5 to 8 | 306 | 0.016; 0.117 | 0.561; 0.635 | 0.011; 0.091 | 0.500; 0.561 | 207; 0.115; 0.260 |
+| 9 to 16 | 394 | 0.015; 0.112 | 0.517; 0.598 | 0.017; 0.089 | 0.406; 0.529 | 163; 0.098; 0.217 |
+| 17 to 32 | 510 | 0.008; 0.105 | 0.550; 0.610 | 0.011; 0.090 | 0.467; 0.547 | 146; 0.066; 0.188 |
+| 33 to 64 | 599 | 0.010; 0.100 | 0.510; 0.590 | 0.014; 0.085 | 0.442; 0.525 | 121; 0.038; 0.157 |
+| 65 to 128 | 269 | 0.012; 0.111 | 0.554; 0.624 | 0.016; 0.086 | 0.456; 0.560 | |
+| 129 to 256 | 113 | 0.009; 0.091 | 0.533; 0.623 | 0.014; 0.077 | 0.449; 0.551 | |
+| 257 or more | 18 | 0.018; 0.115 | 0.596; 0.692 | 0.000; 0.091 | 0.491; 0.603 | |
+
+Three statements, each for these lives and no further.
+
+1. **Without a store and with weight decay, forgetting is a step and not a curve.** One visit to another family (256 updates) takes what is answered from about 0.8 to about 0.02, under both rules, and no longer absence takes more: the slope of kept on the logarithm of the absence, from 2 visits on, is −0.001 a doubling under both rules. What a longer absence still changes is the speed of relearning: the first 16 updates fall from 0.187 to about 0.10 under back-propagation and from 0.139 to about 0.08 under the sweep.
+2. **With the store, what is kept hardly depends on the absence.** It falls from 0.58 after 2 visits to between 0.51 and 0.60 after 33 or more under back-propagation (−0.009 a doubling) and from 0.55 to between 0.44 and 0.49 under the sweep (−0.017 a doubling). A store of the network's size therefore keeps a fixed part, about half, whatever the absence up to 256 visits.
+3. **Without weight decay the conventional learner shows a graded curve.** Kept falls from 0.186 after 2 visits to 0.038 after 33 to 64 (−0.034 a doubling), and the first 16 updates from 0.367 to 0.157. This is the only arm on file in which something of a family outlasts the next family's visit without a store, and it lasts some tens of visits. It is read to 256 visits only, on eight worlds from three births, and it comes with the lower level and the growing weights of section 33.25.
+
+Limits: the classes pool worlds that share births; a return's absence and its place in the life are not separated (long absences come late); the number of items in the last class is 57. No run is proposed here. For the chain of steps the curve fixes what steps 8 and 10 are to be measured against: on the dense network with decay there is nothing to keep after one intervening visit, so that any amount kept by a local learner without a store at an absence of 2 would be new.
