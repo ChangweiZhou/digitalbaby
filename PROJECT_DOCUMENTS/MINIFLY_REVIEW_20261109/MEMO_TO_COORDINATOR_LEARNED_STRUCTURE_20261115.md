@@ -123,6 +123,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 32. **Mr. Xu answered the two questions of section 33.21 on 18 November** (section 33.22). A code that the learner has learned by itself is not information given by us. A single global backward pass is prohibited; information may be relayed between neurons over their own connections, so that a few passes can cover the network. Section 33.22 gives his words, the reviewer's reading, and what follows for the running jobs and for the plan's items 20 and 23; nothing is started on it.
 
+33. **A review at Mr. Xu's request: the experiments set against the principle** (section 33.23). On the line of the local learner as Mr. Xu defines it, the first step is taken, the second is not passed, and the steps on memory and on a life have not been begun on a network inside the definition; most of the computation of 17 and 18 November went to the dense network. The section gives the steps, where each stands, and the order the reviewer proposes. It is a proposal; the order of work is yours.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2104,3 +2106,37 @@ For requirement A, with what the three seeds support: without an act of the prog
 3. The plan's item 20 (the error passed back over a limited number of positions instead of the whole item, under both rules) is the experiment that measures how many steps of relay are needed. It has had no priority; Mr. Xu's second statement makes it the direct test of his picture, on a network with limited connections.
 4. Item 23 and E60 keep their place for the comparison of the rules; a statement on requirement B1 for the local learner needs a life on a network with limited connections, which does not exist yet.
 5. The outside memo's 5.2 is worth its cost on Mr. Xu's first answer; its brief is the reviewer's to write on your word.
+
+### 33.23 A review at Mr. Xu's request: the experiments set against the principle (15:59 UTC)
+
+Mr. Xu, 18 November: he had asked for the experiments to be arranged step by step from the biological principle; there now seem to be problems; where do we stand? This section is the reviewer's answer. It is a proposal and decides nothing.
+
+**The principle** (33.22). A neuron has what arrives over its own sparse connections and its own state, and changes its own connections from these; nothing delivers to it a quantity computed from the whole network; a signal is relayed step by step. Long-term memory is to form in the course of learning and not by an act of the program. The learner so defined is to reach, at equal computation and accuracy, at least the generalisation of back-propagation, perhaps from fewer samples and with more time.
+
+**What went wrong, and whose fault.**
+
+1. The candidate was never defined once from the principle. In practice "our learner" meant the sweep, and it was run mostly on the dense network, in which one pass reaches every unit and which is therefore outside the definition.
+2. The reviewer's plan of 17 November is a list: an inventory of 107 untested entries in 29 items, ordered by requirement. It is not a chain in which a step is taken only when the step before it holds and in which an outcome decides what comes next. That is the reviewer's fault. The outside memo says the same of it (33.21).
+3. The three requirements were taken apart and each was tested on the dense network: memory in a network in which every item changes every connection; overtaking between two rules on that network.
+4. Parts of the sweep itself do not meet the principle and were not treated as a question until E57: one scale for a whole matrix is a quantity that no single unit has.
+
+**The steps that the principle gives, and where each stands.**
+
+| Step | Question | Where it stands |
+|---|---|---|
+| 1 | Does a network with sparse recurrent connections learn and generalise under a local rule? | **Yes, more slowly.** With 10 connections a cell and half the pairs taught, updates to 80 on A are 2.36 times the dense network's under the sweep and 1.70 times under back-propagation (E42; quoted in 33.19's verification). With a quarter of the pairs, 3.65 and 4.29 times (E54, one seed) |
+| 2 | Does it learn when the input is sparse as well? | **Not passed.** With 16 inputs a cell the sweep does not learn (E49). With a fixed code it learns only when each cell has an input for every byte, 2.68 times slower than back-propagation (E50). E57, running, asks whether the scale is the cause; at update 8,192 all three scales are still low, and the worker makes no reading |
+| 3 | Over how many steps must the error be relayed? | **Never run.** The plan's item 20, without priority until 33.22 |
+| 4 | What changes at about fifty connections a unit? | **Never run.** The networks have 10 or 16 |
+| 5 | Where is an experience written in a sparse network; are there cells not in use that a new task can take? | **One read-only measurement:** in the network with an interface at a boundary, the cells away from the boundary are not in use (plan, item 2). No second task has been learned in such a network (E56, not briefed) |
+| 6 | A life on a sparse network, beside back-propagation with a store on the dense one at equal memory | **Never run** |
+
+**What the dense network has given, as reference** (verified; these are statements about the rule and about the conventional learner): without a store almost nothing is kept at a return, and a store of the network's size keeps about half; the sweep on the dense network ends lower without a store and does not overtake up to 1,024 visits; under the sweep a network that has learned before is not faster on a task of other content (E59); the conventional learner learns new families faster as it ages (in verification; the agent's document confirms it and the reviewer's own run is not finished).
+
+**The order the reviewer proposes.**
+
+1. Let the running jobs finish, and add no job on the dense network. E60 and E55 are read as reference.
+2. Define the candidate once: sparse connections, and only quantities that a unit has. E57 decides how the scale is taken.
+3. Pass step 2. If the scale does not do it, the next candidate cause is the feedback (by signs against learned feedback; E31, not replicated).
+4. Take step 3 on the sparse network: the plan's item 20.
+5. Only when steps 2 to 4 hold: memory on the sparse network (cells not in use; the learner's own code, the outside memo's 5.2), and last the life of step 6.
