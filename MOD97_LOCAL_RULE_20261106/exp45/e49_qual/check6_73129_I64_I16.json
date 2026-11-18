@@ -1,0 +1,150 @@
+{
+ "runs": {
+  "I64 S": {
+   "receipt": "e49_I64_S_dry256_73129.json",
+   "cpu_per_update": 0.1360762678515625,
+   "cpu_per_scored_row": 8.307906083499999,
+   "forecast_cpu_h": 1.1527992357831944,
+   "readers": {
+    "input_value_min": 16,
+    "input_value_max": 52,
+    "cell_min": 45,
+    "cell_max": 84
+   },
+   "draw_digests": {
+    "input": "eb1dd9417ca1a282",
+    "readout": "e9c8783e0efa8d13"
+   },
+   "masks_every_row": true,
+   "finite": true,
+   "len12": 1.3333333333333333,
+   "cosine_start": {
+    "rnn.weight_ih_l0": 0.7322394251823425,
+    "lm.weight": 0.8671700358390808,
+    "rnn.weight_hh_l0": 0.744098424911499
+   },
+   "processes_beside": "E42 runner F10 B dry2048; check6 in16,out8"
+  },
+  "I64 B": {
+   "receipt": "e49_I64_B_dry256_73129.json",
+   "cpu_per_update": 0.13091123459374981,
+   "cpu_per_scored_row": 8.930807087000002,
+   "forecast_cpu_h": 1.1343229968930544,
+   "readers": {
+    "input_value_min": 16,
+    "input_value_max": 52,
+    "cell_min": 45,
+    "cell_max": 84
+   },
+   "draw_digests": {
+    "input": "eb1dd9417ca1a282",
+    "readout": "e9c8783e0efa8d13"
+   },
+   "masks_every_row": true,
+   "finite": true,
+   "len12": 1.3333333333333333,
+   "cosine_start": {
+    "rnn.weight_ih_l0": 0.7322394251823425,
+    "lm.weight": 0.8671700358390808,
+    "rnn.weight_hh_l0": 0.744098424911499
+   },
+   "processes_beside": "E42 runner F10 B dry2048; check6 in16,out8"
+  },
+  "I16 S": {
+   "receipt": "e49_I16_S_dry256_73129.json",
+   "cpu_per_update": 0.1444499560507812,
+   "cpu_per_scored_row": 8.66036923850001,
+   "forecast_cpu_h": 1.2194605377884722,
+   "readers": {
+    "input_value_min": 1,
+    "input_value_max": 18,
+    "cell_min": 6,
+    "cell_max": 27
+   },
+   "draw_digests": {
+    "input": "0e09b9ff0545e68d",
+    "readout": "3d8ba41006917f42"
+   },
+   "masks_every_row": true,
+   "finite": true,
+   "len12": 1.6666666666666667,
+   "cosine_start": {
+    "rnn.weight_ih_l0": 0.7710331678390503,
+    "lm.weight": 0.8696156740188599,
+    "rnn.weight_hh_l0": 0.7770639657974243
+   },
+   "processes_beside": "E42 runner F10 B dry2048; check6 in16,out8"
+  },
+  "I16 B": {
+   "receipt": "e49_I16_B_dry256_73129.json",
+   "cpu_per_update": 0.1348128397812498,
+   "cpu_per_scored_row": 8.96776079300001,
+   "forecast_cpu_h": 1.161953652051388,
+   "readers": {
+    "input_value_min": 1,
+    "input_value_max": 18,
+    "cell_min": 6,
+    "cell_max": 27
+   },
+   "draw_digests": {
+    "input": "0e09b9ff0545e68d",
+    "readout": "3d8ba41006917f42"
+   },
+   "masks_every_row": true,
+   "finite": true,
+   "len12": 1.6666666666666667,
+   "cosine_start": {
+    "rnn.weight_ih_l0": 0.7710331678390503,
+    "lm.weight": 0.8696156740188599,
+    "rnn.weight_hh_l0": 0.7770639657974243
+   },
+   "processes_beside": "E42 runner F10 B dry2048; check6 in16,out8"
+  }
+ },
+ "pass": true,
+ "check": 6,
+ "seed": 73129,
+ "cpu": 223.35939280399998,
+ "wall": 225.9226701259613,
+ "provenance": {
+  "command": "python3 MOD97_LOCAL_RULE_20261106/exp49_interface.py check 6 --settings I64,I16 --tag I64_I16",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "71e81a0ebce1f511b31ce79281ba698b611e7e5a",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "exp49_interface.py": "cdf93ce167d562c8a3765c1ea4f98f74623469492324a85aa1eb34216b7ccbf3",
+   "e49_interface.py": "92f968e092f2d27eaff4ee7e93ecbbb82b053cc88b6a2d3f967adadf7e3791f1",
+   "exp42_cells.py": "340f9cc5dc876a24996b75263e3022e9529590ceca0a6e07f2ec829c93a7c7b5",
+   "e42_cells.py": "985814d02496c847cc4814644513cb5d711b0e6c381e3361f280b4034c44e89e",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "runner_sha256": "cdf93ce167d562c8a3765c1ea4f98f74623469492324a85aa1eb34216b7ccbf3",
+  "spec_sha256": "e12fb2a3c67b355f574fa9a8fd35c81a87824709c765712a8ccc69dd0f3a0339",
+  "e42_runner_sha256": "340f9cc5dc876a24996b75263e3022e9529590ceca0a6e07f2ec829c93a7c7b5"
+ }
+}
