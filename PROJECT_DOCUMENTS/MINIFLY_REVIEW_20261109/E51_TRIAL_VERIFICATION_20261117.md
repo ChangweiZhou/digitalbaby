@@ -339,3 +339,30 @@ For the size of the room that the rule leaves at the input map: of the squared s
 - That a network can be born with a reserve. The reserve was made by placing a narrower birth inside a wider network.
 - How much of the reserve a new task takes. In the keyed arms all 128 reserve cells are open by more than 0.1 on the new task's items at row 0, because their gates are fresh draws, and 119 and 125 (unrelated) and 112 and 83 (conflict) still are at row 4,096; the recorded figure falls during learning and does not measure what would be left for a third task.
 - Anything about a second seed, a life, a third task, a new task that begins with a byte already in use, or a comparison at equal memory; the saved directions alone are 95,547 numbers, 8.5% of the network's parameters.
+
+## What the report should change
+
+No figure of the worker's message or tables needs to be corrected. The report, which was not yet committed when this note was written, and any statement of the result made from it, should take up the following.
+
+1. *"Unchanged" should be said of the answers.* The sentence that the first family is kept should give the count (32,884 of 32,884 answers at every row) and, beside it, the largest change of an output from row 0 at rows 64 and 4,096, which the runner's own function for check 1 can produce. The reader finds 2e-6 to 3e-6 at row 64 and 5.5e-5 to 5.3e-4 at row 4,096, against a smallest lead of 1.8e-4. Check 3(a)'s 1.5e-5 to 2.1e-5 after eight updates should be described as the arithmetic of single precision.
+2. *The keeping should be stated as built in, with its condition.* The brief already asks the report to say that the condition is a device of the harness. The report should add what the device does to the result: without the two lines the weights of row 4,096 answer none of the first family after the unrelated task (section 8.1); the worker can reproduce this with one scoring of each saved file.
+3. *"Learned in the reserve" should be given with what it establishes.* For the unrelated task: the reserve cells are necessary; connections of the old units changed and are necessary too (section 8.2). For the conflicting family: beside the two scores that the brief asks for (94.8 and 41.0; 96.9 and 40.4), the split of section 8.3, which shows that the 41% is the part that the first family's operation already answers.
+4. *The reserve's gates.* The figure "reserve cells open by more than 0.1" is 128 of 128 at row 0 of the keyed arms. The report should give row 0 beside row 4,096, so that 119, 125, 112 and 83 are not read as cells that the new task brought into use.
+5. *The weights of the old units.* The report should not say that the first family's weights are untouched. The old cells' rows of the input map change more than the reserve cells' rows (section 8.4); what does not change is their action on the first family's inputs.
+6. *The earlier record.* If the report or the plan calls this the first run in which a new task is learned while every earlier answer stays as it was, E48 should be named beside it (section 8.1).
+
+One point concerns later runs and not the report. If the rule is used for many more than 4,096 updates, the remainder of section 3 will grow further. Removing at each step the component of the whole change from the start, instead of the component of the step, would keep it at the size of one rounding; the reader's removal test (section 3) is that operation applied once at row 4,096, and it brings the outputs back to within 2e-11 of the start's. This was not run in torch here. For the two other seeds of the trial the runner should stay as it is, so that the three seeds are comparable.
+
+## What could not be checked
+
+- *The updates.* No update was repeated. That the rule was applied at every step as the brief writes it is inferred from its result in the saved weights at rows 64 and 4,096 (the bit-equal tensors, the projected change, the removal test) and from a reading of the runner's text, in which the forward is `arch26.forward` with the two lines and the step is `exp26_candidate.step` with the two additions of the rule. Rows 16, 32 and 128 to 2,048 have no saved weights; their figures are the receipts'.
+- *Check 3(a) and 3(b).* No weights after eight updates exist, so the figures are the receipt's.
+- *The sweep.* The two rules differ only in the update. Nothing in this verification exercises the sweep's own arithmetic.
+- *The new entries of the recurrent matrix.* They agree with another saved network of the seed on the 5,085 entries that can be compared, of 147,456; for the rest there is their range, their standard deviation and their equality between the two rules.
+- *The origin of the remainder in section 3.* Its size is what rounding to single precision gives by an estimate; the updates were not repeated in double precision to prove it.
+- *E48's record,* which section 8.1 cites from its verification note.
+- *Part B,* which is not part of this request, and everything that needs a second seed.
+
+## Running the script
+
+`OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e51_trial_verify.py [1 2 3 4 5 6 7 8]`, from the repository root, with numpy and the standard library; the worker's branch and the two other branches named above must have been fetched. Without an argument it runs all eight parts. It reads each file through `git show` into memory, one at a time, and writes nothing. Running times of the last full run, on one thread of a machine shared with other processes: @@TIMES@@.

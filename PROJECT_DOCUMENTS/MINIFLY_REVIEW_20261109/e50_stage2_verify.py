@@ -415,5 +415,379 @@ if "1" in want:
                 bad.append((nm, r, "change of R"))
     print(f"   the summary file E50_SUMMARY_{SEED}_stage2.json: thresholds (A and R at 50, 80, 90; the four operations at 80; both versions), levels and the change of R of the ten readings equal to the figures recomputed here: {n_ok} of {n_all}" + (f"; differing: {bad}" if bad else ""))
 
+# ---------------------------------------------------------------- the networks: the reader's draws, the panels, the forward
+FIXED = ("code_table", "code_owner", "code_amplitude", "book.weight", "l1.weight", "l1.bias")
+STRUCT = ("mask", "made", "periods", "phases", "mask_in", "mask_out", "k_in", "k_out")
+TRAINED = ("rnn.weight_ih_l0", "rnn.weight_hh_l0", "rnn.bias_ih_l0", "rnn.bias_hh_l0", "lm.weight", "lm.bias", "l2.weight", "l2.bias", "l3.weight", "l3.bias")
+if want & {"2a", "2b", "2c", "2d", "3a", "3b"}:
+    CELLS = R42.Cells(SEED, N=10, pset="1")                       # E42's F10: the reader's own draw of the ten connections
+    F = {"C16-in": R49.Interface(SEED, 16, U), "C-dense": R49.Interface(SEED, D, U)}   # the reader's own draw of E49's lists
+    CODE0 = R50.Code(SEED)
+
+
+def panels():
+    """The panels of exp42_cells.panels for the seed, rebuilt from np_gru.py (e50_stage1_verify.panels): the panel behind A
+    (300 untaught pairs of each operation at 12 letters), R (1,000 untaught pairs each of add and sub that need the reduction,
+    no letters), the taught panel (300 taught pairs of each operation at 12 letters), the length test (300 untaught pairs of
+    add at 12 and at 40 letters)."""
+    held = {t: split(t, .5, SEED) for t in DEV}
+    name = lambda t: f"{t[0]}{t[1]}"
+    AP = {name(t): panel(t, held[t][1], SEED, ks=(12,), n=300)[12] for t in DEV}
+    TA = {name(t): panel(t, held[t][0], SEED + 1, ks=(12,), n=300)[12] for t in DEV}
+    RP = {}
+    for t in DEV[:2]:
+        red = [(a, b) for a, b in held[t][1] if (a + b >= 89 if t[0] == "add" else a - b < 0)]
+        RP[name(t)] = [render(t, a, b, 0, None) for a, b in Random(f"e41|{SEED}|50|{t[0]}").sample(sorted(red), 1000)]
+    LEN_TASK = ("add", 89, b"p")
+    LP = panel(LEN_TASK, split(LEN_TASK, .5, SEED)[1], SEED, ks=(12, 40), n=300)
+    return AP, RP, TA, LP
+
+
+def forward_file(T, x):
+    """A second form of the forward, from the tensors of the weight file alone: the code of a byte is its row of the file's
+    `code_table`, and the three maps are full matrices times the file's masks.  It uses none of the reader's draws."""
+    z1 = T["code_table"][x]
+    Wi = T["rnn.weight_ih_l0"] * np.tile(T["mask_in"], (3, 1))
+    Wh = T["rnn.weight_hh_l0"] * np.tile(T["mask"], (3, 1))
+    Wo = T["lm.weight"] * T["mask_out"]
+    B, L = x.shape
+    h = np.zeros((B, U), np.float32); Hs = np.empty((B, L, U), np.float32)
+    for t in range(L):
+        gi = z1[:, t] @ Wi.T + T["rnn.bias_ih_l0"]; gh = h @ Wh.T + T["rnn.bias_hh_l0"]
+        r = R42.sigmoid(gi[:, :U] + gh[:, :U]); z = R42.sigmoid(gi[:, U:2 * U] + gh[:, U:2 * U]); n = np.tanh(gi[:, 2 * U:] + r * gh[:, 2 * U:])
+        h = ((1 - z) * n + z * h).astype(np.float32); Hs[:, t] = h
+    z2 = np.tanh(z1 @ T["l2.weight"].T + T["l2.bias"] + Hs @ Wo.T + T["lm.bias"])
+    return Hs, z2 @ T["l3.weight"].T + T["l3.bias"]
+
+
+class Net:
+    """One saved network, evaluated by e50_code_reader.forward with the reader's own draws: the code (the file gives only the
+    value of a turned-on entry), the values each cell reads (E49's lists for the setting) and the cells each cell reads."""
+
+    def __init__(self, T, setting):
+        self.T = T
+        self.W = {k: v for k, v in T.items() if v.dtype == np.float32 and v.ndim > 0 and k != "code_table"}
+        self.code = R50.Code(SEED, amplitude=float(T["code_amplitude"]))
+        self.F, self.mask = F[setting], CELLS.mask
+        self.draws_equal_file = bool(np.array_equal(T["mask"], self.mask) and np.array_equal(T["mask_in"], self.F.mask_in) and np.array_equal(T["mask_out"], self.F.mask_out))
+
+    def run(self, x, chunk=100):
+        """States (B, L, 256) and logits (B, L, 257)."""
+        parts = [R50.forward(self.W, self.mask, self.F, self.code, x[s:s + chunk]) for s in range(0, len(x), chunk)]
+        return np.concatenate([p[0] for p in parts]), np.concatenate([p[1] for p in parts])
+
+    def last(self, x, n_last, chunk=100):
+        """Logits at the last n_last positions, (B, n_last, 257)."""
+        return np.concatenate([R50.forward(self.W, self.mask, self.F, self.code, x[s:s + chunk])[1][:, -n_last:] for s in range(0, len(x), chunk)])
+
+    def teacher(self, items):
+        """Per item: the largest output at each answer position, given the prompt and the right bytes before it.  A whole
+        answer is right under greedy generation exactly when all of them are the right bytes."""
+        x = np.array([[BOS] + p + a[:-1] for p, a in items], dtype=np.int64)
+        return self.last(x, len(items[0][1])).argmax(-1), np.array([a for _, a in items], dtype=np.int64)
+
+    def exact(self, items):
+        got, tgt = self.teacher(items)
+        return int((got == tgt).all(1).sum())
+
+    def bytes_apart(self, items):
+        """exp50_code.score_all's two counts on R's items under greedy generation: the first byte given is the right one;
+        a second byte is given (the first is not the end symbol) and is the right one.  Where the first byte given is
+        wrong, the second is generated after the byte that was given, in a pass of its own."""
+        got, tgt = self.teacher(items)
+        o0 = got[:, 0]; first = o0 == tgt[:, 0]
+        o1 = got[:, 1].copy()
+        wrong = np.nonzero(~first & (o0 != EOS))[0]
+        if len(wrong):
+            x = np.array([[BOS] + items[i][0] + [int(o0[i])] for i in wrong], dtype=np.int64)
+            o1[wrong] = self.last(x, 1)[:, 0].argmax(-1)
+        second = (o0 != EOS) & (o1 == tgt[:, 1])
+        return int(first.sum()), int(second.sum()), int((got == tgt).all(1).sum()), int(len(wrong))
+
+    def respond(self, prompts, cap=4):
+        """Greedy generation (exp11_cell.respond as the receipts and answers files show it): after the prompt the largest
+        output is appended and fed back, until the end symbol or four bytes.  The prompts of one call have one length."""
+        outs = [[] for _ in prompts]; active = list(range(len(prompts)))
+        for _ in range(cap):
+            if not active:
+                break
+            x = np.array([[BOS] + prompts[i] + outs[i] for i in active], dtype=np.int64)
+            nxt = self.last(x, 1)[:, 0].argmax(-1)
+            for i, b in zip(active, nxt):
+                outs[i].append(int(b))
+            active = [i for i, b in zip(active, nxt) if b != EOS]
+        return outs
+
+
+# ---------------------------------------------------------------- 2a: the recorded answers and counts from the saved weights
+if "2a" in want:
+    head("2a", "the recorded answers and the recorded counts from the saved weights, by the reviewer's forward pass (e50_code_reader.forward with the reader's draws); reader / receipt")
+    AP, RP, TA, LP = panels()
+    grand = [0, 0]
+    for r in "SB":
+        rc = receipt("C16-in", r)
+        for suffix, row, what, sha_rec in (("", rc["curve"][-1], "the final file", rc["weights_sha256"]), (f"_at{FIRST}", next(q for q in rc["curve"] if q["step"] == FIRST), "the file at update 24,576", rc["first_dose"]["weights_sha256"])):
+            t1 = time.time()
+            w = weights(wname("C16-in", r, suffix)); net = Net(w["T"], "C16-in")
+            print(f"   C16-in {r}, {what} ({wname('C16-in', r, suffix)}, {w['size']:,} bytes; its SHA-256 equals the receipt's: {yes(w['sha'] == sha_rec)}); against the receipt's row {row['step']:,}; the reader's draws equal the file's three masks: {yes(net.draws_equal_file)}")
+            x = np.array([[BOS] + p + a[:-1] for p, a in AP["add89"][:6] + AP["sub89"][:6] + AP["max89"][:6] + AP["min89"][:6]], dtype=np.int64)
+            la = R50.forward(net.W, net.mask, net.F, net.code, x)[1]; lb = forward_file(w["T"], x)[1]
+            print(f"      two forms of the forward on 24 items of the panel behind A (the reader's, by index lists and its own draws; a table form from the file's tensors alone): largest difference of a logit {float(np.abs(la - lb).max()):.1e}"
+                  f" (largest logit {float(np.abs(la).max()):.1f}); the same largest output at every position: {yes(bool((la.argmax(-1) == lb.argmax(-1)).all()))}")
+            mine = dict(A={n: net.exact(it) for n, it in AP.items()}, R={n: net.exact(it) for n, it in RP.items()}, taught={n: net.exact(it) for n, it in TA.items()})
+            theirs = dict(A=row["A_counts"], R=row["R_counts"], taught=row["taught_counts"])
+            for k, nm in (("A", "the panel behind A (add, sub, max, min; 300 each)"), ("R", "R (add, sub; 1,000 each)"), ("taught", "the taught panel (add, sub, max, min; 300 each)")):
+                print(f"      {nm}: {list(mine[k].values())} / {list(theirs[k].values())}: {yes(mine[k] == theirs[k])}")
+            b = {n: net.bytes_apart(it) for n, it in RP.items()}
+            b1 = {n: v[0] for n, v in b.items()}; b2 = {n: v[1] for n, v in b.items()}
+            print(f"      R's items, first byte right {list(b1.values())} / {list(row['R_first_byte_counts'].values())}: {yes(b1 == row['R_first_byte_counts'])};"
+                  f" second byte right {list(b2.values())} / {list(row['R_second_byte_counts'].values())}: {yes(b2 == row['R_second_byte_counts'])}"
+                  f" (items whose first byte is wrong and whose second byte was generated after the byte given: {sum(v[3] for v in b.values())})")
+            ans = json.loads(show(f"{P}e50/e50_C16-in_{r}_{SEED}{suffix}_answers.json"))
+            tot = 0
+            for k in (12, 40):
+                rec = ans[str(k)]; got = net.respond([p for p, _ in LP[k]])
+                same = sum(a == g for a, g in zip(rec, got)); tot += same
+                right = sum(a == t for a, (_, t) in zip(rec, LP[k])); mine_right = sum(g == t for g, (_, t) in zip(got, LP[k]))
+                print(f"      the answers file, {k} letters: {len(rec)} recorded answers; greedy generation by the reader's forward gives the recorded answer, byte for byte, in {same} of {len(LP[k])};"
+                      f" right answers: the reader's {mine_right}, the recorded answers' {right}, the receipt's count {row['length_counts'][str(k)]}: {yes(mine_right == right == row['length_counts'][str(k)])}")
+            grand[0] += tot; grand[1] += 600
+            print(f"      recorded answers reproduced: {tot} of 600   [{time.time() - t1:.0f} s]", flush=True)
+            del net
+    print(f"   recorded answers reproduced over the four files: {grand[0]} of {grand[1]}")
+
+
+# ---------------------------------------------------------------- 2b, 2c, 2d: the three files of each run
+if want & {"2b", "2c", "2d"}:
+    FILES = {r: {k: weights(wname("C16-in", r, sfx)) for k, sfx in (("start", "_start"), ("at 24,576", f"_at{FIRST}"), ("final", ""))} for r in "SB"}
+
+if "2b" in want:
+    head("2b", "the code is fixed: the start file, the file at update 24,576 and the final file of each run")
+    print(f"   the digest of the code by the reviewer's reader: {CODE0.digest()} (the receipts' 12111044f0f8bc70: {yes(CODE0.digest() == '12111044f0f8bc70')})")
+    dense0 = weights(wname("C-dense", "S", "_start"))["T"]
+    for r in "SB":
+        f = FILES[r]; S0, T1, T2 = f["start"]["T"], f["at 24,576"]["T"], f["final"]["T"]; rc = receipt("C16-in", r)
+        print(f"   C16-in {r}: SHA-256 of the start file {f['start']['sha'][:16]} (receipt's start_sha256: {yes(f['start']['sha'] == rc['start_sha256'])}), of the file at 24,576 {f['at 24,576']['sha'][:16]} (receipt: {yes(f['at 24,576']['sha'] == rc['first_dose']['weights_sha256'])}),"
+              f" of the final file {f['final']['sha']} (receipt's weights_sha256: {yes(f['final']['sha'] == rc['weights_sha256'])}; the report's first 16: {yes(f['final']['sha'][:16] == REPORTED_SHA16[r])})")
+        print(f"      tensors in each file: {len(S0)}, {len(T1)}, {len(T2)}; the same names: {yes(set(S0) == set(T1) == set(T2))}")
+        print("      bit for bit in the three files (start = at 24,576 = final): " + "; ".join(f"{k} {yes(bit(S0[k], T1[k]) and bit(S0[k], T2[k]))}" for k in FIXED))
+        print("      the structure, bit for bit in the three files: " + "; ".join(f"{k} {yes(bit(S0[k], T1[k]) and bit(S0[k], T2[k]))}" for k in STRUCT))
+        print("      the trained tensors, entries that differ, start to 24,576 | 24,576 to final: " + "; ".join(f"{k} {int((T1[k] != S0[k]).sum()):,} | {int((T2[k] != T1[k]).sum()):,} of {S0[k].size:,}" for k in TRAINED))
+        amp = float(S0["code_amplitude"]); code = R50.Code(SEED, amplitude=amp); tb = S0["code_table"]
+        z1 = np.tanh(S0["book.weight"][code.used].astype(np.float64) @ S0["l1.weight"].T.astype(np.float64) + S0["l1.bias"]); msl = float((z1 ** 2).sum(1).mean())
+        print(f"      code_table {tb.shape}: equal bit for bit to the reader's table with the file's value of a turned-on entry: {yes(bit(tb, code.table()))}; entries that are not zero {int((tb != 0).sum())} (46 x 11 = 506), all equal to {amp:.6f}: {yes(bool((tb[tb != 0] == np.float32(amp)).all()))};"
+              f" rows with a code {int((tb != 0).any(1).sum())}, each with {sorted(set((tb != 0).sum(1)[(tb != 0).any(1)].tolist()))} values; values with two owners: {int(((tb != 0).sum(0) > 1).sum())}; values without an owner: {int(((tb != 0).sum(0) == 0).sum())}")
+        print(f"      code_owner equals the reader's list of owners: {yes(S0['code_owner'].tolist() == code.owner)}; its digest {R49.digest16(S0['code_owner'].tolist())} (the receipt's {rc['code']['digest']});"
+              f" the value of a turned-on entry from the start file's byte table and l1: mean squared length {msl:.4f}, value {np.sqrt(msl / ON):.6f}; in the file {amp:.6f}, in the receipt {rc['code']['amplitude']:.6f}")
+        m3 = np.tile(S0["mask_in"], (3, 1)); exp_ih = (dense0["rnn.weight_ih_l0"] * m3 * np.float32((D / 16) ** 0.5)).astype(np.float32)
+        rest = [k for k in dense0 if k not in ("rnn.weight_ih_l0", "mask_in", "k_in")]
+        print(f"      the start file against the start file of C-dense: the code table, its owners and its value, the byte table and l1 bit for bit: {yes(all(bit(S0[k], dense0[k]) for k in FIXED))}; every tensor but the input map, its mask and k_in bit for bit: {yes(all(bit(S0[k], dense0[k]) for k in rest))};"
+              f" the input map is C-dense's start times the mask times the square root of 32, largest difference {float(np.abs(S0['rnn.weight_ih_l0'] - exp_ih).max()):.1e}")
+        print(f"      the receipt: byte_table_and_l1_bit_equal_to_start {rc['byte_table_and_l1_bit_equal_to_start']}; code_table_sha256_equal_at_every_row {rc['code_table_sha256_equal_at_every_row']}; the optimizer holds state for: {', '.join(rc['optimizer_state_for'])}")
+    print(f"   the two start files hold the same tensors bit for bit: {yes(all(bit(FILES['S']['start']['T'][k], FILES['B']['start']['T'][k]) for k in FILES['S']['start']['T']))}")
+
+
+if "2c" in want:
+    head("2c", "the masks in the three files of each run: what each cell reads, and every weight outside a mask")
+    Fr = F["C16-in"]
+    print(f"   the reader's draw of E49's lists for 16 values a cell: digest {R49.digest16(Fr.in_src)}; the reader's draw of E42's ten connections: {int(CELLS.mask.sum(1).min())} to {int(CELLS.mask.sum(1).max())} cells a cell, the cell itself included")
+    for r in "SB":
+        rc = receipt("C16-in", r)
+        for k in ("start", "at 24,576", "final"):
+            T = FILES[r][k]["T"]; m_in, m_out, m_rec = T["mask_in"], T["mask_out"], T["mask"]
+            per = m_in.sum(1); o_in = ~np.tile(m_in, (3, 1)); o_rec = ~np.tile(m_rec, (3, 1))
+            wi, wh, wo = T["rnn.weight_ih_l0"], T["rnn.weight_hh_l0"], T["lm.weight"]
+            print(f"   C16-in {r}, {k}: values a cell reads (the input map's mask, 256 x 512): {int(per.min())} to {int(per.max())}, cells with exactly 16: {int((per == 16).sum())} of {U}; k_in {int(T['k_in'])}, k_out {int(T['k_out'])};"
+                  f" the mask equals the reader's draw: {yes(np.array_equal(m_in, Fr.mask_in))} (the receipt's digest of the lists {rc['draw_digests']['input']}); the three gates of a cell have weights on the same values: {yes(bool(((wi != 0).reshape(3, U, D) <= m_in[None]).all()))}")
+            print(f"      weights outside a mask: input map {int(o_in.sum()):,} entries outside, not zero {int((wi[o_in] != 0).sum())}; recurrent map {int(o_rec.sum()):,} outside, not zero {int((wh[o_rec] != 0).sum())}; lm's mask is full ({int(m_out.sum()):,} of {m_out.size:,}): {yes(bool(m_out.all()))}"
+                  f" | inside a mask and exactly zero: input map {int((wi[~o_in] == 0).sum())} of {int((~o_in).sum()):,}, recurrent map {int((wh[~o_rec] == 0).sum())} of {int((~o_rec).sum()):,}"
+                  f" | the recurrent mask equals the reader's draw: {yes(np.array_equal(m_rec, CELLS.mask))}; periods all 1: {yes(bool((T['periods'] == 1).all()))}")
+        T = FILES[r]["final"]["T"]; code = R50.Code(SEED, amplitude=float(T["code_amplitude"]))
+        own = np.zeros((len(code.used), D), bool)
+        for i, b in enumerate(code.used):
+            own[i, np.nonzero(T["code_owner"] == b)[0]] = True                                       # from the file's owners
+        reads = (T["mask_in"][:, None, :] & own[None]).sum(2)                                           # (256, 46) from the file's mask
+        col = lambda group: [code.used.index(b) for b in group]
+        k46, k20, k10 = (reads > 0).sum(1), (reads[:, col(R50.NEEDED)] > 0).sum(1), (reads[:, col(R50.DIGITS)] > 0).sum(1)
+        reach_ = (reads[:, col(R50.NEEDED)] > 0).sum(0); med = lambda v: int(sorted(v.tolist())[len(v) // 2])
+        behind = np.bincount(reads[:, col(R50.NEEDED)].ravel(), minlength=4)
+        print(f"   C16-in {r}, from the final file's mask and owners: a cell has input for {int(k46.min())} to {int(k46.max())} of the 46 used bytes (median {med(k46)}), for {int(k20.min())} to {int(k20.max())} of the 20 needed bytes (median {med(k20)}; the report: 1 to 10, median 6),"
+              f" for {int(k10.min())} to {int(k10.max())} of the ten digits (median {med(k10)}; the report: 0 to 7, median 3); a needed byte reaches {int(reach_.min())} to {int(reach_.max())} cells; cells without input {int((k46 == 0).sum())}")
+        print(f"      of the 5,120 pairs of a cell and a needed byte, the cell reads 0, 1, 2, 3 values of the byte in {behind.tolist()} (the receipt: {[rc['coverage']['weights_behind_a_cell_and_needed_byte'][str(i)] for i in range(4)]});"
+              f" of a cell's 16 values, those of the 20 needed bytes: mean {reads[:, col(R50.NEEDED)].sum(1).mean():.2f}, of the 26 letters {reads[:, col(R50.LETTERS)].sum(1).mean():.2f}, without an owner {(16 - reads.sum(1)).mean():.2f}")
+        n_in, n_out, n_rec = 3 * int(T["mask_in"].sum()), int(T["mask_out"].sum()), 3 * int(T["mask"].sum()); l2, l3 = T["l2.weight"].size, T["l3.weight"].size
+        per_byte = [3 * int(reads[:, i].sum()) for i in range(len(code.used))]
+        print(f"      multiply-adds a position, first count: input map {n_in:,} + lm {n_out:,} + cells {n_rec:,} + l2 {l2:,} + l3 {l3:,} = {n_in + n_out + n_rec + l2 + l3:,} (the brief's 545,536; the receipt {rc['multiply_adds_per_position']:,});"
+              f" second count: input map {min(per_byte)} to {max(per_byte)} for a used byte, mean {sum(per_byte) / len(per_byte):.2f}, + l2 {ON * T['l2.weight'].shape[0]:,} + lm + cells + l3 = {sum(per_byte) / len(per_byte) + ON * T['l2.weight'].shape[0] + n_out + n_rec + l3:,.2f} (the receipt {rc['multiply_adds_per_position_second_count']:,.2f})")
+
+
+if "2d" in want:
+    head("2d", "the figures `by what a cell knows` and `other measures`, from the weight files; start, update 24,576, end / the receipt's rows 0, 24,576 and 49,152 / the report")
+    kd = R50.knows(CODE0, F["C16-in"], R50.DIGITS)
+    groups = [np.nonzero(kd <= 2)[0], np.nonzero((kd >= 3) & (kd <= 4))[0], np.nonzero(kd >= 5)[0]]
+    print(f"   cells with input for 0 to 2, 3 or 4, 5 or more of the ten digits under 16 values a cell (the reader's draw): {[len(g) for g in groups]} (reported 95, 131, 30)")
+    eye = np.eye(U, dtype=bool); NAMES = ("digits_0_to_2", "digits_3_to_4", "digits_5_or_more")
+
+    def figures(T):
+        """exp50_code.knows_figure, input_size and exp49_interface.magnitudes, in double precision from the file's tensors."""
+        code = R50.Code(SEED, amplitude=float(T["code_amplitude"])); amp = np.float64(T["code_amplitude"])
+        m3i = np.tile(T["mask_in"], (3, 1)); Wi = T["rnn.weight_ih_l0"].astype(np.float64) * m3i
+        gi = np.stack([amp * Wi[:, code.own[b]].sum(1) for b in R50.NEEDED])                 # (20, 768): a cell's input for a needed byte, without the bias
+        gd = np.stack([amp * Wi[:, code.own[b]].sum(1) for b in R50.DIGITS])
+        has = np.stack([m3i[:, code.own[b]].any(1) for b in R50.NEEDED])                       # the cell reads at least one value of the byte
+        m3 = np.tile(T["mask"], (3, 1)); Wh = np.abs(T["rnn.weight_hh_l0"].astype(np.float64))
+        kn = []
+        for g in groups:
+            rows_ = np.concatenate([g, g + U, g + 2 * U]); nb = np.tile((T["mask"] & ~eye)[g], (3, 1)); ws = np.tile(T["mask"][g], (3, 1))
+            kn.append((float(Wh[rows_][nb].mean()), float(Wh[rows_][ws].mean())))
+        return dict(rms=float(np.sqrt((gi ** 2).mean())), rms_d=float(np.sqrt((gd ** 2).mean())), rms_has=float(np.sqrt((gi[has] ** 2).mean())), share_has=float(has.mean()),
+                    ih=float(np.abs(T["rnn.weight_ih_l0"].astype(np.float64))[m3i].mean()), lm=float(np.abs(T["lm.weight"].astype(np.float64))[T["mask_out"]].mean()), hh=float(Wh[m3].mean()), kn=kn)
+
+    REP_KN = {("C16-in", "B"): (0.265, 0.240, 0.233), ("C16-in", "S"): (0.226, 0.219, 0.213), ("C-dense", "B"): (0.147, 0.144, 0.145), ("C-dense", "S"): (0.150, 0.152, 0.149)}
+    REP_OTHER = {"B": dict(rms=0.765, ih=0.140), "S": dict(rms=0.629, ih=0.117)}
+    md = show(f"{P}e50/E50_TABLES_{SEED}_stage2.md").decode(); lines = set(md.splitlines()); wrows = []
+    f3 = lambda a, b: f"{a:.3f}" == f"{b:.3f}"
+    for r in "BS":
+        rc = receipt("C16-in", r); by = {q["step"]: q for q in rc["curve"]}
+        fg = {k: figures(FILES[r][k]["T"]) for k in ("start", "at 24,576", "final")}; rw = {"start": by[0], "at 24,576": by[FIRST], "final": by[DOSE]}
+        print(f"   C16-in {r}:")
+        for i, n in enumerate(NAMES):
+            print(f"      kept recurrent weights from neighbours into the cells of group {i + 1} ({len(groups[i])} cells) [with the cell's reading of itself]: " + ", ".join(f"{fg[k]['kn'][i][0]:.4f} [{fg[k]['kn'][i][1]:.4f}]" for k in fg)
+                  + " / " + ", ".join(f"{rw[k]['by_what_a_cell_knows'][n]['neighbours_only']:.4f} [{rw[k]['by_what_a_cell_knows'][n]['with_self']:.4f}]" for k in fg)
+                  + f": {yes(all(abs(fg[k]['kn'][i][j] - rw[k]['by_what_a_cell_knows'][n][w]) < 5e-7 for k in fg for j, w in ((0, 'neighbours_only'), (1, 'with_self'))))}"
+                  + f" / reported {(0.150, 0.152, 0.150)[i]:.3f} at the start, {REP_KN[('C16-in', r)][i]:.3f} at the end: {yes(f3(fg['start']['kn'][i][0], (0.150, 0.152, 0.150)[i]) and f3(fg['final']['kn'][i][0], REP_KN[('C16-in', r)][i]))}")
+        print(f"      the group with input for the fewest digits minus the group with the most, at the end: {fg['final']['kn'][0][0] - fg['final']['kn'][2][0]:+.4f} (reported {'0.03' if r == 'B' else '0.01'}); at 24,576: {fg['at 24,576']['kn'][0][0] - fg['at 24,576']['kn'][2][0]:+.4f}; at the start: {fg['start']['kn'][0][0] - fg['start']['kn'][2][0]:+.4f}")
+        print("      a cell's input for a needed byte, root mean square over all 256 cells, three gates and 20 bytes, without the bias: " + ", ".join(f"{fg[k]['rms']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['input_size']['needed_rms']:.4f}" for k in fg)
+              + f": {yes(all(abs(fg[k]['rms'] - rw[k]['input_size']['needed_rms']) < 5e-6 for k in fg))} / reported 0.381 at the start, {REP_OTHER[r]['rms']:.3f} at the end: {yes(f3(fg['start']['rms'], 0.381) and f3(fg['final']['rms'], REP_OTHER[r]['rms']))}"
+              + f" | for the ten digits: " + ", ".join(f"{fg[k]['rms_d']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['input_size']['digits_rms']:.4f}" for k in fg))
+        print(f"         the same over the pairs of a cell and a needed byte for which the cell reads a value of the byte ({100 * fg['start']['share_has']:.1f}% of the pairs; elsewhere the input is zero by the mask): " + ", ".join(f"{fg[k]['rms_has']:.4f}" for k in fg))
+        print("      mean magnitude of a kept weight: input map " + ", ".join(f"{fg[k]['ih']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['rnn.weight_ih_l0']:.4f}" for k in fg)
+              + f": {yes(all(abs(fg[k]['ih'] - rw[k]['kept_mean_magnitude']['rnn.weight_ih_l0']) < 5e-7 for k in fg))} / reported 0.177 at the start, {REP_OTHER[r]['ih']:.3f} at the end: {yes(f3(fg['start']['ih'], 0.177) and f3(fg['final']['ih'], REP_OTHER[r]['ih']))}"
+              + " | lm " + ", ".join(f"{fg[k]['lm']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['lm.weight']:.4f}" for k in fg)
+              + " | recurrent " + ", ".join(f"{fg[k]['hh']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['rnn.weight_hh_l0']:.4f}" for k in fg))
+        cs, cm, ce = rc["cosine_first_batch_start"], rc["first_dose"]["cosine_first_batch"], rc["cosine_first_batch_end"]
+        for nm, k, cend in (("C16-in @24,576", "at 24,576", cm), ("C16-in @end", "final", ce)):
+            a, b = fg["start"], fg[k]
+            wrows.append(("sizes", f"| {nm} | {r} | " + " | ".join(f"{cs[m]:.3f}, {cend[m]:.3f}" for m in ("rnn.weight_ih_l0", "lm.weight", "rnn.weight_hh_l0")) + " | " + " | ".join(f"{a[x]:.4f}, {b[x]:.4f}" for x in ("ih", "lm", "hh")) + f" | {a['rms']:.3f}, {b['rms']:.3f} |"))
+            wrows.append(("by what a cell knows", f"| {nm} | {r} | " + " | ".join(f"{a['kn'][i][0]:.4f}, {b['kn'][i][0]:.4f} [{a['kn'][i][1]:.4f}, {b['kn'][i][1]:.4f}]" for i in range(3)) + " |"))
+    for r in "BS":
+        a, b = figures(weights(wname("C-dense", r, "_start"))["T"]), figures(weights(wname("C-dense", r))["T"])
+        print(f"   C-dense {r}, from its start and final files: recurrent weights from neighbours by the same three groups {', '.join(f'{a['kn'][i][0]:.4f}' for i in range(3))} -> {', '.join(f'{b['kn'][i][0]:.4f}' for i in range(3))} (reported at the end {', '.join(f'{v:.3f}' for v in REP_KN[('C-dense', r)])}:"
+              f" {yes(all(f3(b['kn'][i][0], REP_KN[('C-dense', r)][i]) for i in range(3)))}); a cell's input for a needed byte {a['rms']:.3f} -> {b['rms']:.3f} (reported {'5.14' if r == 'B' else '4.77'}); mean magnitude of a kept weight of the input map {a['ih']:.4f} -> {b['ih']:.4f}, recurrent {a['hh']:.4f} -> {b['hh']:.4f}")
+    missing = [(w, l) for w, l in wrows if l not in lines]
+    print(f"   the tables file: the rows of C16-in of the two tables of sizes, written here from the weight files (the cosines from the receipts), found character for character: {len(wrows) - len(missing)} of {len(wrows)}")
+    for w, l in missing:
+        print(f"      NOT FOUND ({w}): {l}")
+
+# ---------------------------------------------------------------- 3a: the use of the cells
+NETS = [("C16-in", "S"), ("C16-in", "B"), ("C-dense", "S"), ("C-dense", "B")]
+if "3a" in want:
+    head("3a", "the use of the cells: the standard deviation of each cell's state between the 300 items of the length-test panel at 12 letters (untaught pairs of add), at the position of `=`; final weights")
+    LP12 = panels()[3][12]
+    x = np.array([[BOS] + p for p, _ in LP12], dtype=np.int64)
+    assert bool((x[:, -1] == ord("=")).all())
+    kd = R50.knows(CODE0, F["C16-in"], R50.DIGITS)
+    groups = [np.nonzero(kd <= 2)[0], np.nonzero((kd >= 3) & (kd <= 4))[0], np.nonzero(kd >= 5)[0]]
+    print(f"   items {x.shape[0]}, positions {x.shape[1]} (the start symbol, the task code, two digits, the operation sign, 12 letters, two digits, `=`); the state is read after the last position, where the answer's first byte is read."
+          " The standard deviation is taken over the items (divisor 300) for each cell; the magnitude is the absolute value of the state, averaged over items and cells.")
+    print("   | Network | Rule | Cells above 0.05 | Cells above 0.10 | Cells at or below 0.01 | Mean over cells | Least, median, largest over cells | Mean magnitude of the state | Cells with mean magnitude below 0.05 | By group of cells (0 to 2, 3 or 4, 5 or more digits): mean; cells above 0.10 |")
+    print("   |---|---|---|---|---|---|---|---|---|---|")
+    for setting, r in NETS:
+        net = Net(weights(wname(setting, r))["T"], setting)
+        h = net.run(x)[0][:, -1].astype(np.float64)                 # (300, 256): the state after `=`
+        sd = h.std(0); mag = np.abs(h)
+        print(f"   | {setting} | {r} | {int((sd > 0.05).sum())} | {int((sd > 0.10).sum())} | {int((sd <= 0.01).sum())} | {sd.mean():.4f} | {sd.min():.4f}, {np.median(sd):.4f}, {sd.max():.4f} | {mag.mean():.4f} | {int((mag.mean(0) < 0.05).sum())} | "
+              + "; ".join(f"{sd[g].mean():.4f}, {int((sd[g] > 0.10).sum())} of {len(g)}" for g in groups) + " |", flush=True)
+        del net
+
+
+# ---------------------------------------------------------------- 3b: the answers given
+if "3b" in want:
+    head("3b", "the answers given under greedy generation, final weights: first and second byte right, whole answer right, and the number of different answers")
+    AP, RP, TA, LP = panels()
+    SETS = [("R: add and sub, untaught pairs that need the reduction, no letters", RP["add89"] + RP["sub89"], (RP["add89"], RP["sub89"])),
+            ("the panel behind A: add and sub, untaught pairs, 12 letters", AP["add89"] + AP["sub89"], (AP["add89"], AP["sub89"])),
+            ("the panel behind A: max and min, untaught pairs, 12 letters", AP["max89"] + AP["min89"], (AP["max89"], AP["min89"]))]
+    digit = lambda b: 48 <= b <= 57
+
+    def answers(net, items):
+        """Greedy answers of one set of items (the prompts of a set have one length) and what is counted on them."""
+        got = net.respond([p for p, _ in items]); tgt = [t for _, t in items]
+        f = [len(o) > 0 and o[0] == t[0] for o, t in zip(got, tgt)]; s = [len(o) > 1 and o[1] == t[1] for o, t in zip(got, tgt)]
+        cnt = {}
+        for o in got:
+            cnt[tuple(o)] = cnt.get(tuple(o), 0) + 1
+        top = max(cnt.items(), key=lambda kv: kv[1])
+        return dict(n=len(items), first=sum(f), second=sum(s), whole=sum(o == t for o, t in zip(got, tgt)), both=sum(a and b for a, b in zip(f, s)), only1=sum(a and not b for a, b in zip(f, s)),
+                    only2=sum(b and not a for a, b in zip(f, s)), neither=sum(not a and not b for a, b in zip(f, s)), given=len(cnt), right=len({tuple(t) for t in tgt}),
+                    formed=sum(len(o) == 3 and digit(o[0]) and digit(o[1]) and o[2] == EOS for o in got), top=("".join(chr(b) if b < 256 else "|" for b in top[0]), top[1]),
+                    firsts=len({o[0] for o in got}), seconds=len({o[1] for o in got if len(o) > 1}), given_right=len({tuple(o) for o, t in zip(got, tgt) if o == t}))
+
+    print("   An answer is the bytes generated after `=`, up to the end symbol or four bytes; a right answer is two digits and the end symbol. `Different answers given` counts the distinct answers over the items of the set; `different right answers` counts the distinct answers that the set asks for.")
+    print("   | Network | Rule | Set of items | Items | First byte right | Second byte right | Whole answer right | Both bytes right; first only; second only; neither | Different answers given | Different right answers in the set | Different first bytes; second bytes given | Answers of two digits and the end symbol | The most frequent answer given: items |")
+    print("   |---|---|---|---|---|---|---|---|---|---|---|---|---|")
+    for setting, r in NETS:
+        net = Net(weights(wname(setting, r))["T"], setting); last = receipt(setting, r)["curve"][-1]
+        for nm, items, halves in SETS:
+            a = answers(net, items); h2 = [answers(net, it) for it in halves]
+            pc = lambda v: f"{v:,} ({100 * v / a['n']:.1f}%)"
+            print(f"   | {setting} | {r} | {nm} | {a['n']:,} | {pc(a['first'])} | {pc(a['second'])} | {pc(a['whole'])} | {a['both']:,}; {a['only1']:,}; {a['only2']:,}; {a['neither']:,} | {a['given']} | {a['right']} | {a['firsts']}; {a['seconds']} | {a['formed']:,} | `{a['top'][0][:2]}`: {a['top'][1]} |", flush=True)
+            if nm.startswith("R"):
+                ok = [h2[i]["whole"] for i in range(2)] == list(last["R_counts"].values()) and [h2[i]["first"] for i in range(2)] == list(last["R_first_byte_counts"].values()) and [h2[i]["second"] for i in range(2)] == list(last["R_second_byte_counts"].values())
+                note = f"the counts of add and of sub apart equal the receipt's last row (whole answer, first byte, second byte): {yes(ok)}"
+            else:
+                key = [("add89", "sub89"), ("max89", "min89")]["max" in nm]
+                note = f"the whole answers right of the two operations apart equal the receipt's last row: {yes([h2[i]['whole'] for i in range(2)] == [last['A_counts'][k] for k in key])}"
+            print(f"      ({note}; the two operations apart: first byte right {h2[0]['first']}, {h2[1]['first']}; second {h2[0]['second']}, {h2[1]['second']}; whole {h2[0]['whole']}, {h2[1]['whole']}; different answers given {h2[0]['given']}, {h2[1]['given']}; different right answers {h2[0]['right']}, {h2[1]['right']}; different answers among the right ones given {h2[0]['given_right']}, {h2[1]['given_right']})")
+        del net
+
+
+# ---------------------------------------------------------------- 4: the stream of training items
+def stream_digests(seed, n_batches, every=256):
+    """exp26_candidate.Digest rebuilt (e50_stage1_verify.stream_digests): a running SHA-256 over every batch of 64 items of
+    exp11_cell.stream (Random(seed + 77), the taught halves of the four tasks, 0 to 12 letters), as the three arrays of
+    exp45.batch_tensor (x, y and the answer mask), each preceded by the text of its shape."""
+    tp = [(t, split(t, .5, seed)[0]) for t in DEV]
+    rng = Random(seed + 77)
+    flat = [(t, pr) for t, pairs in tp for pr in pairs]
+
+    def stream():
+        while True:
+            order = list(range(len(flat)))
+            rng.shuffle(order)
+            for i in order:
+                t, (a, b) = flat[i]
+                yield render(t, a, b, rng.randint(0, 12), rng)
+
+    st = stream(); h = hashlib.sha256(); out = {0: h.copy().hexdigest()}
+    for n in range(1, n_batches + 1):
+        items = [next(st) for _ in range(BATCH)]
+        rows = [p + t for p, t in items]
+        L = max(len(q) for q in rows) + 1
+        data = np.full((BATCH, L), BOS, np.int64)
+        for i, q in enumerate(rows):
+            data[i, 1:len(q) + 1] = q
+        x, y = data[:, :-1], data[:, 1:]
+        mask = np.zeros(y.shape, bool)
+        for i, (p, t) in enumerate(items):
+            mask[i, len(p):len(p) + len(t)] = True
+        for a in (x, y, mask):
+            h.update(str(tuple(a.shape)).encode()); h.update(np.ascontiguousarray(a).tobytes())
+        if n % every == 0:
+            out[n] = h.copy().hexdigest()
+    return out
+
+
+if "4" in want:
+    head("4", "the stream of training items: the running digest of the batches, rebuilt here from np_gru.py for seed 73129, beside the receipts")
+    mine = stream_digests(SEED, DOSE)
+    print(f"   rebuilt: {DOSE:,} batches of {BATCH} items; digest after 4,096 batches {mine[4096][:16]} (reported bbd71ab7ca27b72e: {yes(mine[4096][:16] == 'bbd71ab7ca27b72e')}); after 24,576 {mine[FIRST][:16]}; after {DOSE:,} {mine[DOSE][:16]}")
+    for r in "BS":
+        rc = TAB[("C16-in @end", r)]["rc"]; rows = {q["step"]: q["data_digest"] for q in rc["curve"]}
+        dn = {q["step"]: q["data_digest"] for q in TAB[("C-dense", r)]["rc"]["curve"]}
+        print(f"   C16-in {r}: rows whose recorded digest equals the rebuilt one: {sum(rows[u]['sha256'] == mine[u] for u in rows)} of {len(rows)} (the number of batches recorded in each row equals its update: {yes(all(rows[u]['batches'] == u for u in rows))});"
+              f" the receipt's final digest equals the rebuilt one: {yes(rc['data_digest']['sha256'] == mine[DOSE])}; the first 97 rows equal the 97 rows of C-dense under the same rule: {yes(all(rows[u] == dn[u] for u in dn))};"
+              f" the same optimizer record as C-dense: {yes(rc['optimizer'] == TAB[('C-dense', r)]['rc']['optimizer'])}; the same text for the data: {yes(rc['data'] == TAB[('C-dense', r)]['rc']['data'])}; batch {rc['batch']}, letters up to {rc['kmax']}")
+
 head(None, "")
 print(f"\nrunning time {time.time() - T0:.0f} s")
