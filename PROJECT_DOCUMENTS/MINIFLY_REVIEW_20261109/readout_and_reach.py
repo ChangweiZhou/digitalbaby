@@ -17,8 +17,8 @@ diagonal); a GRU step; z2 = tanh(l2 z1 + lm h); output l3 z2.
 Sections:
   0  what is read; the check against the receipts (greedy generation, and the same counts from the answer positions fed the
      right bytes)
-  1  the direct path l2 z1: intact, replaced by its mean over items at each position, removed
-  2  the cells silenced: lm h replaced by its mean over items at each position, removed
+  1  the direct path l2 z1: intact, removed (the measurement), and beside it replaced by its mean over items at each position
+  2  the cells silenced: lm h removed (the measurement), and beside it replaced by its mean over items at each position
   3  linear readability of the answer digits (and of b2, b1, a2, a1 and the operation) from h and from z2
   4  share of each cell's variance at `=` explained by b2, b1, a2, a1
 """
@@ -390,22 +390,22 @@ def main():
             print(f"     [{time.time() - t1:.0f} s]", flush=True)
             del n, cache
 
-    head("1", "the direct path l2 z1 at the readout: exact answers (greedy) with l2 z1 intact; replaced at each position by its mean over "
-              "the items of the same operation of the panel; removed (the product set to zero, the bias of l2 kept). Per cent exact (in brackets: per cent right at the three answer outputs, first digit, second digit, end symbol, each fed the right bytes) [items]")
+    head("1", "the direct path l2 z1 at the readout: exact answers (greedy) with l2 z1 intact; removed (the product set to zero, the bias of l2 kept: the "
+              "measurement); and, as a second figure, replaced at each position by its mean over the items of the same operation of the panel. Per cent exact (in brackets: per cent right at the three answer outputs, first digit, second digit, end symbol, each fed the right bytes) [items]")
     for p in "ART":
         print(f"   panel {PNAME[p]}")
         for key in S1:
             r = S1[key][p]
             f3 = lambda v: f"{100 * v[0][0] / v[1]:6.2f} ({', '.join(f'{100 * w / v[1]:.1f}' for w in v[0][1:])})"
-            print(f"      1.{p} {key:10s}: intact {f3(r['intact'])}  mean {f3(r['l2_mean'])}  removed {f3(r['l2_zero'])}   [{r['intact'][1]} items]")
-    head("2", "the cells silenced at the readout: exact answers (greedy) with lm h replaced at each position by its mean over the items of "
-              "the same operation of the panel; removed (the product set to zero, the bias of lm kept; the same as the source's `silence`). Per cent exact (in brackets: per cent right at the first digit, second digit, end symbol, fed the right bytes) [items]")
+            print(f"      1.{p} {key:10s}: intact {f3(r['intact'])}  removed {f3(r['l2_zero'])}  mean {f3(r['l2_mean'])}   [{r['intact'][1]} items]")
+    head("2", "the cells silenced at the readout: exact answers (greedy) with lm h removed (the product set to zero, the bias of lm kept; the same as "
+              "the source's `silence`: the measurement); and, as a second figure, replaced at each position by its mean over the items of the same operation of the panel. Per cent exact (in brackets: per cent right at the first digit, second digit, end symbol, fed the right bytes) [items]")
     for p in "ART":
         print(f"   panel {PNAME[p]}")
         for key in S1:
             r = S1[key][p]
             f3 = lambda v: f"{100 * v[0][0] / v[1]:6.2f} ({', '.join(f'{100 * w / v[1]:.1f}' for w in v[0][1:])})"
-            print(f"      2.{p} {key:10s}: intact {f3(r['intact'])}  mean {f3(r['lm_mean'])}  removed {f3(r['lm_zero'])}   [{r['intact'][1]} items]")
+            print(f"      2.{p} {key:10s}: intact {f3(r['intact'])}  removed {f3(r['lm_zero'])}  mean {f3(r['lm_mean'])}   [{r['intact'][1]} items]")
     head("3", "share of test items classified right (per cent) by a least-squares classifier (ridge, lambda by 5-fold cross-validation in the "
               "training half) fitted on one half of the panel's items and tested on the other; [share of the most frequent training class "
               "in the test half]; `=` is the position where the first answer digit is read out, `next` the following position (input: the right first digit)")

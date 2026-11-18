@@ -18,6 +18,7 @@ MAIN = "origin/codex/minifly-consolidated-20261023"
 E57REF = "origin/claude/e50-fixed-input-code-017dSE"
 BASE = "MOD97_LOCAL_RULE_20261106/exp45/"
 ROW = 256
+ROWS_KEPT = 0.76    # share of scored rows kept by the adaptive schedule at theta = 40 (section 3.2)
 RNG = np.random.default_rng(20261118)
 # E61's revision 3 (decision 39 (i)): limits of "sufficient" (1.25 times the record's updates to 80 on E50's C46-one), per rule
 LIM = {"R": {"B": 19200, "S": 42880}, "A": {"B": 17600, "S": 44480}}
@@ -327,6 +328,19 @@ def section2(runs, cm):
     res = {}
     for n in (0, 4, 8, 16, 32):
         res[("settled", n)] = apply(settled(n), f"2.1 stop when R and A have each held 80 for three rows, then {n} further rows")
+
+    def settled24(n):
+        def f(r):
+            s = settled(n)(r)
+            return None if s is None else (max(s[0], 24576), "reached")
+        return f
+    for n in (8,):
+        res[("settled24", n)] = apply(settled24(n), f"2.1 the same with {n} further rows, but never before update 24,576 (the level at 24,576 kept)")
+    sub = [r for r in cur if r["cells"] == 256 and r["dose"] == 49152]
+    tot = sum(r["steps"][-1] for r in sub)
+    for n in (0, 8):
+        sv = sum(max(0, r["steps"][-1] - settled24(n)(r)[0]) for r in sub if settled24(n)(r))
+        P("2.1", f"  on the {len(sub)} 256-cell runs of 49,152 updates (E50, E54, E57), {n} further rows, not before 24,576: saves {int(sv):,} of {int(tot):,} updates ({sv / tot:.3f})")
     # what such a stop loses
     lost24 = lostend = drop2 = drop5 = relapse = len_lost = 0; nst = 0; d_end = []
     for r in cur:
@@ -344,7 +358,9 @@ def section2(runs, cm):
         d_end.append(at_end - at_stop)
         drop2 += abs(at_end - at_stop) > 2; drop5 += abs(at_end - at_stop) > 5
         after = r["R"][i + 1:]
-        relapse += any(after[j] < 80 and after[j + 1] < 80 and after[j + 2] < 80 for j in range(len(after) - 2))
+        if any(after[j] < 80 and after[j + 1] < 80 and after[j + 2] < 80 for j in range(len(after) - 2)):
+            relapse += 1
+            P("2.2", f"  R fell below 80 for three rows after reaching it: {r['key']} ({r['rule']}); reached {fu['R']:,}; lowest later row {after.min():.1f}; level at the end {np.mean(r['R'][-3:]):.1f}")
         if not np.isnan(r["L40"][-1]):
             len_lost += 1
     d_end = np.array(d_end)
@@ -392,11 +408,12 @@ def section2(runs, cm):
     if zbest:
         P("2.3", f"  largest saving with no changed reading: {zbest[2]} below {zbest[4]} at {zbest[3]:,}: {int(zbest[5]):,} updates, {zbest[6] / 3600:.1f} CPU-h")
         # margin: the lowest level at u among runs that later reached
-        lv = [(level(r["steps"], r[zbest[2]], zbest[3]), r["key"], full[r["key"]]["R"]) for r in cur
-              if r["steps"][-1] > zbest[3] and (full[r["key"]]["R"] or 10**9) > zbest[3] and (full[r["key"]]["R"] is not None or full[r["key"]]["A"] is not None)]
+        lv = [(level(r["steps"], r[zbest[2]], zbest[3]), r["key"], full[r["key"]]["R"], full[r["key"]]["A"]) for r in cur
+              if r["steps"][-1] > zbest[3] and not (full[r["key"]]["R"] and full[r["key"]]["A"] and max(full[r["key"]]["R"], full[r["key"]]["A"]) <= zbest[3])
+              and (full[r["key"]]["R"] is not None or full[r["key"]]["A"] is not None)]
         lv = sorted([v for v in lv if v[0] is not None])[:5]
-        P("2.3", f"  margin: the lowest levels of {zbest[2]} at {zbest[3]:,} among runs that later reached 80: " + "; ".join(f"{v[1]} {v[0]:.1f} (reached R at {fmt(v[2])})" for v in lv))
-        stopped_end = [(r["key"], np.mean(r["R"][-3:])) for r in cur if r["key"] in set()]
+        P("2.3", f"  margin: the lowest levels of {zbest[2]} at {zbest[3]:,} among runs not settled by then that later reached 80 on R or A: "
+                 + "; ".join(f"{v[1]} {v[0]:.1f} (80 on R at {fmt(v[2])}, on A at {fmt(v[3])})" for v in lv))
     # which runs a moderate rule stops and what end level they had
     for (panel, u, x) in (("R", 16384, 20), ("R", 24576, 40), ("T", 16384, 50)):
         hit = [r for r in cur if r["steps"][-1] > u and (level(r["steps"], r[panel], u) or 999) < x]
@@ -731,9 +748,39 @@ def section6(runs, s2, cm):
     e50 = [r for r in cur if r["key"] == "e50/e50_C16-in_B_73129"]
     e49 = [r for r in cur if r["key"] == "e49/e49_in16_B_73129"]
     if e57:
-        P("6.2", f"across arms: E57 in16 row (sweep with a scale for each receiving unit) reaches 80 on R at {fmt(full[e57[0]['key']]['R'])}; "
-                 f"E49 in16 under the exact gradient {fmt(full[e49[0]['key']]['R']) if e49 else '-'} within 24,576 (R at end {np.mean(e49[0]['R'][-3:]):.1f}); "
-                 f"E50 C16-in under the exact gradient {fmt(full[e50[0]['key']]['R']) if e50 else '-'} (R at end {np.mean(e50[0]['R'][-3:]):.1f})")
+        P("6.2", f"for comparison (a learned input code with 16 values a cell, not E50's fixed code): E57 in16 row, sweep, 80 on R at {fmt(full[e57[0]['key']]['R'])}; "
+                 f"E49 in16, exact gradient, {fmt(full[e49[0]['key']]['R']) if e49 else '-'} within 24,576; "
+                 f"E50 C16-in (fixed code), exact gradient, {fmt(full[e50[0]['key']]['R']) if e50 else '-'} (R at end {np.mean(e50[0]['R'][-3:]):.1f})")
+    # screening of items 2 to 4: a two-value first stage of the grid, and the stop rules; CPU-h a run from section 1's model and E47's receipts
+    f, aa, bb, F, srat = cm["f"], cm["aa"], cm["bb"], cm["F"], cm["srat"]
+    rowc = cm["rowc"]
+    h = lambda fw, rule, upd=49152, rows=193: ((aa + bb * fw / 1e6) * (srat if rule == "S" else 1.0) * upd + rowc * fw / F * rows) / 3600
+    r2 = {Rx: sum(h(F + (Rx - 1) * f["cells"], k) for k in "SB") for Rx in (2, 4, 8)}
+    P("6.3", f"item 2, CPU-h for both rules: R = 2 {r2[2]:.1f}, R = 4 {r2[4]:.1f}, R = 8 {r2[8]:.1f}; R = 4 run only when R = 8 reaches and R = 2 does not: "
+             f"saves {r2[4]:.1f} CPU-h ({r2[4] / (r2[2] + 2 * r2[4] + r2[8] + sum(h(F * 26 / 22, k) for k in 'SB')):.2f} of the job with its two controls) in the other outcomes")
+    r3 = {"i": sum(h(F - f["l2"], k) for k in "SB"), "iv": sum(h(f["input"] + f["cells"] + 256 * 257, k) for k in "SB")}
+    P("6.3", f"item 3, CPU-h for both rules: an arm without l2 {r3['i']:.1f} (arms i, ii, iii alike as now computed), arm iv {r3['iv']:.1f}; arm ii (32 cells) run only when arm i reaches "
+             f"and arm iii does not: saves {r3['i']:.1f} CPU-h in the other outcomes")
+    e47 = [r for r in runs if r["group"] == "E47" and r["arm"] == "one" and r["complete"]]
+    if e47:
+        cu = np.mean([r["cpu_up"] / r["steps"][-1] for r in e47]); cs = np.mean([r["cpu_sc"] / len(r["steps"]) for r in e47])
+        bu = np.median([r["cpu_up"] / r["steps"][-1] for r in runs if r["group"] == "E42" and r["arm"] == "F10" and r["complete"]])
+        bs = np.median([r["cpu_sc"] / len(r["steps"]) for r in runs if r["group"] == "E42" and r["arm"] == "F10" and r["complete"]])
+        c4 = {Rx: 2 * ((bu + Rx * (cu - bu)) * 24576 + (bs + Rx * (cs - bs)) * 97) / 3600 for Rx in (4, 8)}
+        P("6.3", f"item 4, CPU-h for both rules at 24,576 updates (if the cells' part grows with R): R = 4 {c4[4]:.1f}, R = 8 {c4[8]:.1f}; "
+                 f"R = 4 first and R = 8 only if R = 4 leaves the outer rings unused: saves {c4[8]:.1f} CPU-h when R = 4 already uses them; "
+                 f"R = 8 first and R = 4 only if R = 8 uses them: saves {c4[4]:.1f} when R = 8 does not")
+
+
+def section8(runs, s2):
+    full = s2["full"]
+    for key in ("e50/e50_C46-one_S_73129", "e50/e50_C46-one_B_73129", "e50/e50_C16-in_S_73129", "e50/e50_C16-in_B_73129",
+                "e42/e42_G_S_73129", "e42/e42_G_B_73129", "e47/e47_32_one_S_73129", "e47/e47_32_one_B_73129"):
+        r = [x for x in s2["cur"] if x["key"] == key]
+        if r:
+            r = r[0]
+            P("8.1", f"reference {key}: 80 on R at {fmt(full[key]['R'])}, on A at {fmt(full[key]['A'])}; R at 24,576 {fmt(level(r['steps'], r['R'], 24576), 1)}, "
+                     f"at the end ({int(r['steps'][-1]):,}) {np.mean(r['R'][-3:]):.1f}; A at the end {np.mean(r['A'][-3:]):.1f}")
 
 
 # ------------------------------------------------------------------------------------------------ section 9: the nine jobs
@@ -786,11 +833,11 @@ def section9(cm, s2, runs):
             fw = F  # control 2 has four neutral bytes: about 26 positions in place of 22
             fw = F * 26 / 22
         for rule in "SB":
-            item2.append((run_h(fw, rule), run_h(fw, rule, scf=sc_factor, rowfrac=0.6)))
+            item2.append((run_h(fw, rule), run_h(fw, rule, scf=sc_factor, rowfrac=ROWS_KEPT)))
     item3 = []
     for fw in (F - f["l2"], F - f["l2"], F - f["l2"], f["input"] + f["cells"] + 256 * 257):
         for rule in "SB":
-            item3.append((run_h(fw, rule), run_h(fw, rule, scf=sc_factor, rowfrac=0.6)))
+            item3.append((run_h(fw, rule), run_h(fw, rule, scf=sc_factor, rowfrac=ROWS_KEPT)))
     P("9.1", f"item 2 by the model, present protocol: {sum(c[0] for c in item2):.1f} CPU-h (order: 26); with the scorer's changes and adaptive rows: {sum(c[1] for c in item2):.1f}")
     P("9.1", f"item 3 by the model, present protocol: {sum(c[0] for c in item3):.1f} CPU-h (order: 10); with the scorer's changes and adaptive rows: {sum(c[1] for c in item3):.1f}")
     e47 = [r for r in runs if r["group"] == "E47" and r["arm"] == "one" and r["complete"]]
@@ -802,7 +849,7 @@ def section9(cm, s2, runs):
         for rule in "SB":
             u = bu + Rx * (cu - bu); s = bs + Rx * (cs - bs)
             now = (u * 24576 + s * 97) / 3600
-            new = (u * 24576 + s * sc_factor * 97 * 0.6) / 3600
+            new = (u * 24576 + s * sc_factor * 97 * ROWS_KEPT) / 3600
             item4.append((now, new))
     P("9.1", f"item 4 by E47's receipts, 24,576 updates, if the cells' part grows with R: present protocol {sum(c[0] for c in item4):.1f} CPU-h (order: 26); "
              f"with the scorer's changes and adaptive rows {sum(c[1] for c in item4):.1f}; at 49,152 updates about twice")
@@ -817,7 +864,7 @@ def section9(cm, s2, runs):
         else:
             per_now = [h / n] * n
             sc_share = 0.16
-            per_new = [h / n * (1 - sc_share + sc_share * sc_factor * 0.6)] * n
+            per_new = [h / n * (1 - sc_share + sc_share * sc_factor * ROWS_KEPT)] * n
         scale = h / sum(per_now)     # keep the order's count as the present figure; apply the protocol's ratios to it
         new_none = sum(per_new) * scale
         new_all = new_none * (1 - es) if item not in (6,) else new_none
@@ -833,6 +880,7 @@ def main():
     section5(runs, s2)
     section6(runs, s2, cm)
     section7(cm, runs)
+    section8(runs, s2)
     section9(cm, s2, runs)
 
 
