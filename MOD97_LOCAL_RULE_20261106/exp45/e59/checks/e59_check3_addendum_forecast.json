@@ -1,0 +1,23 @@
+{
+ "check": "3, addendum",
+ "reason": "The receipt e59_check3.json forecasts 29.6 CPU-hours by the formula 60 x (8,192 x CPU an update + 273 x mean CPU a row), with the mean taken over the five rows of a 64-update run. Two of those five rows (update 0 and the last) also score the eight panels of the earlier families, and row 0 builds them (X16.panels), which a full run does at 2 of its 273 rows only. So that formula overstates the cost. This addendum forecasts from a dry run of 256 updates (same start, pairs, rule and seed), separating the 271 ordinary rows from the two special ones.",
+ "command": "python3 exp59_unrelated_starts.py run fresh 256 S 73129 --out exp45/e59/dry --updates 256",
+ "receipt": "exp45/e59/dry/e59_fresh_n256_S_73129_dry256.json",
+ "cpu_per_update": 0.10660341250781247,
+ "ordinary_row_cpu": {
+  "min": 0.5245240728750016,
+  "max": 1.016509401875,
+  "mean": 0.8060656500750005,
+  "n": 15
+ },
+ "special_rows_cpu": {
+  "row0": 10.546749064,
+  "last": 3.1679256028749965
+ },
+ "forecast_per_run_cpu_h": 0.30707045030588886,
+ "forecast_60_runs_cpu_h": 18.42422701835333,
+ "forecast_60_runs_every_ordinary_row_at_its_dearest_cpu_h": 19.37473129731666,
+ "limit_cpu_h": 28,
+ "measured_with": "one other process (check 2) running beside it",
+ "pass": true
+}
