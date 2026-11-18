@@ -86,7 +86,7 @@ What grows along the route is therefore not the number of properties but two thi
 *Reached when*, late in a long stream, cells one, two and four connections from the input lines are neither silent nor constant, and the present byte and the bytes one, two, four and eight positions back can be told from their recorded outputs better than at the start of life.
 *What it buys:* the material every later correction works on. *On failure:* the order of opening in section 4 of the check.
 
-**Step 2. The output end corrects itself (E0 to E1).** New: capabilities b and l. The signal acts on the cells at the output end only; the rest of the tissue is as in step 1. Two forms of the signal are run side by side (decision D3).
+**Step 2. The output end corrects itself (E0 to E1).** New: capabilities b and l. The signal acts on the cells at the output end only; the rest of the tissue is as in step 1. The feedback is yes or no (decision D3).
 *Reached when* the byte the tissue gives is right, at the first attempt, wherever the coming byte can be known from the last few bytes, above what the frequencies of bytes give; in a control tissue that is never told, it is not.
 *What it buys:* the tissue is end to end from here on, and its level is the floor against which step 3 is measured.
 
@@ -125,8 +125,8 @@ An agent has placed eighteen lines of work on the steps (`THE_EARLIER_RECORD_PLA
 They are listed so that he can strike any of them.
 
 - D1. Input lines and output lines are fixed, one for each byte value, and say nothing about digits; the cells on them learn.
-- D2. The signal enters at the output end and reaches other cells by relay over return connections and by local chemical release. This is the narrower reading of "the whole system"; the wider reading, that every cell senses the signal directly, is not assumed.
-- D3. Two forms of the signal are run side by side from step 2: the system is told how wrong it was, as one quantity for each byte; or each output line is told whether it was wrong. The less informative form that reaches the step is kept.
+- D2. (Changed at 23:03 UTC by Mr. Xu's ruling, section 13 of `WHAT_A_NEURON_HAS_20261118.md`.) Cells can receive the feedback of the error. How far it must be passed on from cell to cell before a cell that needs it has it is read at step 3; no restriction is placed on a cell receiving it.
+- D3. (Changed at 23:03 UTC by the same ruling.) For the present task, the prediction of the next byte, the feedback is yes or no. The definition of the tissue keeps a place for richer feedback, which more complex tasks may bring later; no form is excluded in principle, and none richer than yes or no is used on the route unless a step is not reached with it.
 - D4. Controls are second tissues. Recording from cells is the measure at step 1 only, where there is no behaviour yet.
 - D5. The steps are phases of one life.
 - D6. Step 5 begins with the two operations whose answer is one of the two numbers.
@@ -139,5 +139,7 @@ They are listed so that he can strike any of them.
 3. When step 0 is reached: the briefs of steps 1 and 2, written by an agent, checked by another, and put to the coordinator.
 
 ## History
+
+Change of 23:03 UTC to draft 2: decisions D2 and D3 and step 2, after Mr. Xu's ruling that cells can receive the feedback of the error, that yes or no is the form for the present task, and that richer forms are not excluded later.
 
 Draft 1 (18 November 2026, about 22:30 UTC). Read by three agents: `INDEPENDENT_READING_OF_THE_ROADMAP_20261118.md` (fourteen findings), `CHECK_OF_THE_TISSUE_WRITTEN_OUT_20261118.md`, `THE_EARLIER_RECORD_PLACED_ON_THE_ROADMAP_20261118.md`. Draft 2 (22:49 UTC), after Mr. Xu's statement of 22:46 UTC on the continuous signal: the signal and its relay are made the centre; the output end is corrected first and the input end last; controls are second tissues; the reserve of never-taught instances is divided beforehand; the steps are phases of one life; a rule for stopping; the places where the route may stop; and the decisions that are not Mr. Xu's words are listed.

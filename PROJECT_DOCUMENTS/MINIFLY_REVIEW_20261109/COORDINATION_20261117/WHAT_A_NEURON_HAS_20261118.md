@@ -106,3 +106,13 @@ What follows. The point was not open. The system receives a continuous signal of
 Translation (the reviewer's). (1) Is there a way to let each cell decide for itself how many connections to make, so that this too becomes part of learning? The fewer parameters we fix in advance, the better in the long run. (2) If that is not possible for the moment, a log₂ form can be used: take some numbers from 2, 4, 8, 16, 32, 64, 128 and so on, and see what the effect is.
 
 The requirement that long-term memory form by itself in the course of learning, with some rehearsal acceptable (called requirement A in the record), and the description of the stream as bytes with nothing that marks an item, are Mr. Xu's by the record of 17 and 18 November, but their words are not quoted here; the definition marks them as choices until they are.
+
+## 13. Mr. Xu's ruling of 23:03 UTC on the feedback of the error
+
+The reviewer had reported two points of the revised definition: that telling an output line which did not fire that it should have fired is excluded as handing the answer to a cell, and that it is not assumed that cells receive the signal directly. Mr. Xu:
+
+> 不，细胞应该可以得到误差的回馈，只是"yes/no”的形式也可以接受，但是应该可以容纳其他形式的回答。具体到byte level input reading，预测下一个字节的任务，yes/no的形式是可以接受的。但我们不排除未来会有更复杂的任务和更复杂的误差回馈存在。
+
+Translation (the reviewer's). No. Cells should be able to receive the feedback of the error. The form "yes/no" alone is also acceptable, but other forms of answer should be able to be accommodated. For byte-level input reading, the task of predicting the next byte, the yes/no form is acceptable. But we do not exclude that there will be more complex tasks and more complex feedback of the error in the future.
+
+What follows. Cells can receive the feedback of the error. For the present task, the prediction of the next byte, the feedback is yes or no. The tissue is to be defined so that it can take richer feedback later; no richer form is excluded in principle. The reviewer's two restrictions are withdrawn: the exclusion of every form richer than yes or no for the cells that gave nothing (sentence 90 of the revised definition), and the wording that a cell's direct receipt of the feedback "is not assumed" (decision D2 of the roadmap).
