@@ -169,10 +169,11 @@ def check4(qual, cmd):
         r2 = run(rule, 256, 25, 93683, 0.003, False, base / "ii", cmd, dose=3072, ckpt_every=1024)
         args = [sys.executable, str(HERE / "exp52_resume.py"), "run", rule, "256", "25", "93683", "0.003", "--dose", "3072",
                 "--out", str(base / "iii"), "--ckpt", "1024"]
-        k = subprocess.run(args + ["--die-after", "2000"], cwd=HERE, capture_output=True, text=True)
+        env = {k_: v for k_, v in os.environ.items() if not k_.startswith(("E16_", "E11_"))}   # as a fresh launch: the harness sets E16_/E11_ at import
+        k = subprocess.run(args + ["--die-after", "2000"], cwd=HERE, env=env, capture_output=True, text=True)
         rp3 = P.receipt_path(base / "iii", rule, 256, 25, 93683, 0.003, False, 3072)
         partial = json.loads(rp3.read_text()) if rp3.exists() else None
-        k2 = subprocess.run(args + ["--resume"], cwd=HERE, capture_output=True, text=True)
+        k2 = subprocess.run(args + ["--resume"], cwd=HERE, env=env, capture_output=True, text=True)
         r3 = json.loads(rp3.read_text())
         rows = lambda r: [{k_: x[k_] for k_ in ROWKEYS} | dict(step=x["step"]) for x in r["curve"]]
         res = dict(killed_exit_code=k.returncode, partial_rows=None if partial is None else len(partial["curve"]),
