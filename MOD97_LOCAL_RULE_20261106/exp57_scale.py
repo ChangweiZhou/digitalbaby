@@ -577,7 +577,8 @@ def check7(qual, cmd):
 def check8(qual, cmd):
     import subprocess
     q = Path(qual); base = [sys.executable, str(HERE / "exp57_scale.py"), "run", "in16", "matrix", "S", str(SEED), "--dose", "8192", "--code-decay", "0"]
-    env = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("E11_", "E16_", "EXP45_"))}    # as from a shell: the harness sets these on import
+    env.update(OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
     d1, d2 = q / "uninterrupted", q / "killed_and_resumed"
     p1 = subprocess.Popen(base + ["--out", str(d1), "--ckpt", "0"], cwd=HERE, env=env, stdout=open(q.parent / "check8_uninterrupted.log", "w"), stderr=subprocess.STDOUT)
     r2 = subprocess.run(base + ["--out", str(d2), "--ckpt", "4096", "--die-after", "7000"], cwd=HERE, env=env,
