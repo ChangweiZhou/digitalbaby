@@ -11,6 +11,7 @@ Brief: `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/TASK_E59
 
 ## Terms
 
+- A *presentation* is one item given to the network in an update; an update presents a batch of 64 items. A *receipt* is the JSON file a run writes: its settings, the hashes of its start and its sources, and one record for each scored row. A start is *admitted* when its weights file and its receipt pass the checks of `exp26_candidate.admit_e26` (as called by `exp38_erase.admit`) or, for the lived networks, of `e40_new_family.start`: the right experiment, rule, seed and dose, the same optimizer and sources, and a weights hash equal to the receipt's. The *data digest* is a running SHA-256 over every batch fed to the network, in order (`exp26_candidate.Digest`); equal digests mean equal batches. `tensors_sha256` is a SHA-256 over every tensor of the network (names, types, shapes and values); equal values mean bit-equal networks.
 - *Back-propagation* (B) is the exact gradient; *the sweep* (S) passes the error backward through each linear map by the signs of its weights times their mean size.
 - A *fresh* network is `arch26.new_net(seed)` before any update. A *born* network is the fresh network after E26's birth: 24,576 updates (1,572,864 presented items) on the first family (add, sub, max and min under modulus 89). A *lived* network is the born network after E26's life: a further 36,864 updates, 61,440 in all (3,932,160 items), on three further families. A *born-shuffled* network is the born network with the values of every tensor except the byte table put into a seeded random order within the tensor, so that it has the born network's sizes of weights and nothing of what it computes.
 - *The unrelated task* is E43's: an item is a code byte, two symbols out of 64, 0 to 12 filler bytes and a query byte; the answer is the two symbols and the end symbol. Of the 4,096 ordered pairs of symbols 2,048 can be taught and 2,048 are held out. With n taught pairs, the runner teaches the first n of E43's taught list, so the sets are nested.
@@ -24,9 +25,9 @@ Sixty runs of 8,192 updates were made: `fresh`, `born` and `lived` with 2,048, 5
 
 - **Check 1, the stream and the panels** (`checks/e59_check1.json`): passes for all three seeds. The digest of the first 64 batches equals `e43_task.digest` (beginning `34eefb44`, `153cafdc`, `821bcb2a`); the held panel and the taught panel with 2,048 pairs equal E43's item for item; the data digest after 64 and after 8,192 batches equals every value that the brief lists, for each n and seed; and the pairs presented in 8,192 batches are exactly the n taught pairs. With 256 pairs the held panel has 11, 6 and 2 items with a symbol in a place where no taught pair has it, with the symbols that the brief names.
 - **Check 2, the starts** (`checks/e59_check2.json`): passes. `fresh` equals E40's fresh start, `born` is admitted and equals E43's birth, `lived` matches its receipt, and `born-shuffled` has the born network's sorted values in every tensor and its byte table unchanged (12 tensors reordered). The byte table's rows 128 to 225 are equal in all eight starts of each seed, and `born` and `lived` score 0 on every panel at row 0.
-- **Check 3, the cost** (`checks/e59_check3.json` and `checks/e59_check3_addendum_forecast.json`). The receipt's own formula gave 29.6 CPU-hours, above the brief's limit of 28. That formula averaged over the five rows of a 64-update dry run, two of which also score the earlier families' panels, which a full run does at 2 of its 273 rows only. A dry run of 256 updates, separating ordinary from special rows, gave 18.4 CPU-hours (19.4 if every ordinary row cost as much as the dearest). The worker took the corrected forecast as passing, told the reviewer, and went on. The measured cost, 18.53, agrees with it.
+- **Check 3, the cost** (`checks/e59_check3.json` and `checks/e59_check3_addendum_forecast.json`). The receipt's own formula gave 29.6 CPU-hours, above the brief's limit of 28. That formula averaged over the five rows of a 64-update dry run, two of which also score the earlier families' panels, which a full run does at 2 of its 273 rows only. A dry run of 256 updates, separating ordinary from special rows, gave 18.4 CPU-hours (19.4 if every ordinary row cost as much as the dearest). The worker took the corrected forecast as passing, told the reviewer, and went on; the measured cost, 18.53, agrees with it. This departed from the brief's instruction, not only from its wording: at 29.6 the brief says to stop and ask, and the 60 runs were finished (09:25Z) before the reviewer's answer reached the worker (09:29Z). The 29.6 comes from the runner's own formula (lines 352 and 353 of `exp59_unrelated_starts.py`) applied to the brief's 64-update dry run, in which two of five rows score the earlier panels; the reviewer's position is that the purpose of check 3 is met by the corrected forecast and by the measured cost.
 - **Check 4, `born` with 2,048 pairs is E43's run** (field `check4` of the six receipts): at updates 64, 256, 1,024, 2,048 and 4,096 the data digest, the counts of held at 12 and of the taught panel, and the `tensors_sha256` equal those of E43's `unrelated-decay` receipts, **bit for bit, on all three seeds under both rules**. The first two runs of seed 73129 were compared at update 64 before any other run started.
-- **Check 5, the same batches**: at every row the data digest is equal across all runs of a seed and a number of pairs.
+- **Check 5, the same batches** (`checks/e59_check5.json`, written from the 60 run receipts after the runs): at every one of the 273 rows the data digest is equal across all runs of a seed and a number of pairs (nine groups: 6, 6 and 8 runs for 256, 512 and 2,048 pairs on each seed).
 
 ## Every run
 
@@ -118,7 +119,7 @@ Sixty runs of 8,192 updates were made: `fresh`, `born` and `lived` with 2,048, 5
 
 ## Presentations (updates to 80 on held at 12; the brief's words)
 
-In each cell, the first start's updates to 80 against the second's, and the seed's word.
+In each cell, the first start's updates to 80 against the second's, and the seed's word. Every reading of `born` (and `born-shuffled`) stands beside 24,576 updates of earlier training, and every reading of `lived` beside 61,440; `fresh` had none.
 
 | Rule | n | Comparison | 73129 | 93683 | 116089 | Word |
 |---|---|---|---|---|---|---|
@@ -180,7 +181,7 @@ Under the sweep `born` against `fresh` is *more* and under back-propagation *abo
 | born-shuffled | B | 93683 | 208 | 192 | 48 |
 | born-shuffled | B | 116089 | 208 | 176 | 48 |
 
-The one saving of presentations that the job finds is at 256 pairs under back-propagation, where the brief names no source (its control, `born-shuffled`, was run at 2,048 pairs only). Updates to 80 at 12 and at 0 fillers with 256 pairs, given without a reading:
+The one saving of presentations that the job finds is at 256 pairs under back-propagation: `born` reaches 80 in 1,568 to 3,488 fewer updates than `fresh` (before the task: 24,576 updates of the birth), and `lived` in 32 to 2,368 fewer (before the task: 61,440 updates of the birth and the life). It lies where the brief names no source (its control, `born-shuffled`, was run at 2,048 pairs only). Updates to 80 at 12 and at 0 fillers with 256 pairs, given without a reading:
 
 | Start | Rule | Seed | to 80 at 12 | to 80 at 0 |
 |---|---|---|---|---|
@@ -205,7 +206,7 @@ The one saving of presentations that the job finds is at 256 pairs under back-pr
 
 ## Pairs
 
-The five conditions of "a trained start saves pairs against `fresh`" (the brief, "Pairs") are met on no seed at any n under either rule, so **the sentence on pairs is licensed neither for `born` nor for `lived`**. In every case condition (ii) fails: `fresh` reaches 80 within the run (all three seeds, both rules, every n). Each case is listed in `E59_TABLES_all.md`, section "Pairs". The reverse case (`fresh` in the place of a trained start) is not licensed either: it comes nearest for `lived` under the sweep with 256 pairs, where `lived` does not reach 80 on seeds 73129 and 116089 while `fresh` does, but `lived`'s curve has not flattened on any seed.
+Beside every reading here, `born` had 24,576 and `lived` 61,440 updates of earlier training. The five conditions of "a trained start saves pairs against `fresh`" (the brief, "Pairs") are met on no seed at any n under either rule, so **the sentence on pairs is licensed neither for `born` nor for `lived`**. In every case condition (ii) fails: `fresh` reaches 80 within the run (all three seeds, both rules, every n). Each case is listed in `E59_TABLES_all.md`, section "Pairs". The reverse case (`fresh` in the place of a trained start) is not licensed either: it comes nearest for `lived` under the sweep with 256 pairs, where `lived` does not reach 80 on seeds 73129 and 116089 while `fresh` does, but `lived`'s curve has not flattened on any seed.
 
 - **Under back-propagation**, every start (`fresh`, `born`, `lived`) reaches 80 from 256 pairs on all three seeds, so the brief's sentence for that case applies: **every start generalises from the smallest number of pairs tested; no difference in the number of pairs is shown, and none is excluded below 256.**
 - **Under the sweep**, `fresh` and `born` reach 80 from 256 pairs on all three seeds and `lived` on one (93683), so that sentence does not apply; none of the brief's sentences on pairs applies under the sweep.
@@ -227,7 +228,7 @@ The sweep against back-propagation, same start and number of pairs (first the sw
 | lived | 256 | – vs 2,656: more | 7,680 vs 3,360: more | – vs 992: more | **more** |
 | born-shuffled | 2048 | 256 vs 192: about the same | 240 vs 208: about the same | 240 vs 208: about the same | **about the same** |
 
-**Requirement B2's case** (`born` and `lived` under the sweep against `fresh` under back-propagation):
+**Requirement B2's case** (`born` and `lived` under the sweep against `fresh` under back-propagation; `born` after 24,576 updates of earlier training, `lived` after 61,440):
 
 | Start | n | 73129 | 93683 | 116089 | Word |
 |---|---|---|---|---|---|
@@ -319,7 +320,7 @@ Right answers at 12 letters, of 300 on each panel of the first family (add, sub,
 
 | | Statement | Chance | Outcome |
 |---|---|---|---|
-| P59.1 | Checks 1 to 4 pass | 85% | true for checks 1, 2 and 4; check 3 passes by the corrected forecast (18.4 CPU-hours, measured 18.53), while its receipt's first formula gave 29.6, above the limit of 28 |
+| P59.1 | Checks 1 to 4 pass | 85% | true, with a note: checks 1, 2 and 4 pass as written; check 3 passes by the corrected forecast (18.4 CPU-hours; measured 18.53), while the dry run that the brief prescribes gave 29.6 by the runner's formula, above the limit of 28 at which the brief says to stop and ask (see "Runs and checks") |
 | P59.2 | With 2,048 pairs, `born` against `fresh` is *fewer*, under both rules | 70% | false (*more* under the sweep, *about the same* under back-propagation) |
 | P59.3 | With 2,048 pairs, `lived` against `born` is *about the same*, under both rules | 50% | false (*more* under the sweep; *about the same* under back-propagation) |
 | P59.4 | With 256 pairs, `fresh` reaches 80 on at most one seed under each rule | 45% | false (on all three seeds under each rule) |
@@ -331,7 +332,7 @@ Right answers at 12 letters, of 300 on each panel of the first family (add, sub,
 
 ## Beside the record
 
-E43's coarser rows put `born`'s 80% between updates 64 and 256 under back-propagation and between 256 and 1,024 under the sweep. Here, with rows every 16 or 32 updates, `born` with 2,048 pairs reaches 80 at 208 to 240 updates under back-propagation and at 320 to 400 under the sweep, inside those intervals. The brief records that after 64 updates E43's born networks of seed 73129 give the answer's form on 300 (sweep) and 283 (back-propagation) held items. This job counts a different quantity, the items whose third answer byte is the end symbol, and finds 300 and 282 at update 64 (`e59_born_n2048_<rule>_73129.json`, row 64). The two counts are not the same measure.
+E43's coarser rows put `born`'s 80% between updates 64 and 256 under back-propagation and between 256 and 1,024 under the sweep. Here, with rows every 16 or 32 updates, `born` with 2,048 pairs reaches 80 at 208 to 240 updates under back-propagation and at 320 to 400 under the sweep, inside those intervals. The brief records that after 64 updates E43's born networks of seed 73129 give the answer's form on 300 (sweep) and 283 (back-propagation) held items; this job's runs give 300 and 282 items whose third answer byte is the end symbol at update 64 (`e59_born_n2048_<rule>_73129.json`, row 64). The difference is not one of measure but of network: the brief's figures come from E43's arm without weight decay, while this job's `born` runs reproduce E43's arm with decay (check 4). On the weights of the arm without decay at row 64 both counts give 300 and 283 (the reviewer's verification, `E59_VERIFICATION_20261118.md`).
 
 ## What this job cannot show
 
@@ -339,17 +340,22 @@ The brief's list stands: a task that shares nothing with the families (this one 
 
 - **The source of the saving at 256 pairs under back-propagation.** The control that separates the sizes of the weights from what the first family taught was run at 2,048 pairs only, where no saving was found.
 - **Fewer than 256 pairs.** Under back-propagation every start generalises from the smallest number tested, so no difference in pairs is excluded below 256.
+- **Three seeds, and the scatter between them.** With 256 pairs one start's updates to 80 differ between seeds by a factor of 1.93 (`fresh`, sweep), 2.72 (`born`, sweep), 2.31 (`fresh`, back-propagation), 2.53 (`born`, back-propagation) and 3.39 (`lived`, back-propagation). Under the sweep with 256 pairs the ratio of `born` to `fresh` is 1.39, 0.68 and 0.76 on the three seeds.
+- **Two words rest on two seeds, with a third that shows no difference:** `lived` against `fresh` under back-propagation with 256 pairs (ratios 0.53, 0.99, 0.46) and `born` against `fresh` under the sweep with 2,048 pairs (2.08, 1.43, 1.54).
+- **A missing value replaced by the length of the run.** `lived` under the sweep with 256 pairs does not reach 80 on seeds 73129 and 116089; its word *more* there uses L = 8,128 in place of the missing value (8,128 / 5,152 = 1.58 on seed 73129).
+- **Levels that are not final.** With 256 pairs the curve of held at 12 has not flattened in 5 of 6 `fresh` runs, 4 of 6 `born` and 4 of 6 `lived`, so their levels at the end are not final.
+- **"About the same" is not equality.** Under back-propagation with 2,048 and 512 pairs every value lies between 192 and 320 updates, within a few rows of 16 updates; *about the same* there says that the brief's thresholds are not crossed, not that the starts are equal.
 
 ## Rules, and what departed from them
 
 - All work is on the worker's own branch (E50's, as the reviewer allowed); nothing was pushed elsewhere and no pull request was opened. No existing source was edited.
-- The final weights of seed 73129's 20 runs are committed (`exp45/e59/*_73129_final.pt`). Those of the other 40 runs are on the disk in `exp45/e59/rows_uncommitted/`, with their SHA-256 in each receipt; at the reviewer's request all 40 were committed in that folder at f7314f4e1, each file's SHA-256 equal to its receipt's. The two dry runs' final weights (`exp45/e59/dry/rows_uncommitted/`) were committed by mistake with the checks at 349aacb0f; they are not weights of the 60 runs.
-- **Check 3, a departure from the brief's wording.** The brief says to stop and ask above 28 CPU-hours, and the receipt `checks/e59_check3.json` gives 29.6. The forecast taken is that of `checks/e59_check3_addendum_forecast.json`, 18.4, because the 64-update dry run counts the earlier families' panels at two rows of five, where a full run scores them at two rows of 273. The worker reported this and went on. The reviewer, as the brief's author, read check 3 in the same way in its message of 02:49Z on 18 November (delivered to the worker only at 09:29Z): the 29.6 is not a forecast of the job, and the job is under the limit. The measured cost, 18.53 CPU-hours, agrees with the corrected forecast.
-- Commit trailers follow `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` (`Acting-Agent`) with the session link, and name no language model.
+- The final weights of seed 73129's 20 runs are committed (`exp45/e59/*_73129_final.pt`). Those of the other 40 runs are on the disk in `exp45/e59/rows_uncommitted/`, with their SHA-256 in each receipt; at the reviewer's request all 40 were committed in that folder at f7314f4e1, each file's SHA-256 equal to its receipt's, so the folders named `rows_uncommitted` now hold committed files; they keep their names. The two dry runs' final weights (`exp45/e59/dry/rows_uncommitted/`) were committed by mistake with the checks at 349aacb0f; they are not weights of the 60 runs.
+- **Check 3, a departure from the brief's instruction.** The brief says to stop and ask above 28 CPU-hours, and the receipt `checks/e59_check3.json` gives 29.6. The forecast taken is that of `checks/e59_check3_addendum_forecast.json`, 18.4, because the 64-update dry run counts the earlier families' panels at two rows of five, where a full run scores them at two rows of 273. The worker reported this and went on without waiting, and the 60 runs ended at 09:25Z, before the reviewer's answer reached it at 09:29Z. The reviewer, as the brief's author, read check 3 in the same way in its message of 02:49Z on 18 November (delivered to the worker only at 09:29Z): the 29.6 is not a forecast of the job, and the job is under the limit. The measured cost, 18.53 CPU-hours, agrees with the corrected forecast.
+- Commit trailers follow `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` (`Acting-Agent`) with the session link.
 
 ## Committed files of E59
 
-Listed by `git ls-tree -r --name-only d9e785d96` and filtered to E59's paths; this report and its commit come after them. Final weights of seed 73129 are marked (w).
+Listed by `git ls-tree -r --name-only d9e785d96`, restricted to E59's paths (`MOD97_LOCAL_RULE_20261106/exp59_unrelated_starts.py`, `MOD97_LOCAL_RULE_20261106/e59_tables.py` and `MOD97_LOCAL_RULE_20261106/exp45/e59/`). The first version of this list also held 18 files of other projects whose paths contain "e59"; they are removed. Committed after d9e785d96: this report and its amendments, `checks/e59_check5.json` (73892fec3), and the 40 weight files of seeds 93683 and 116089 (f7314f4e1). Final weights of seed 73129 are marked (w).
 
 - `MOD97_LOCAL_RULE_20261106/e59_tables.py`
 - `MOD97_LOCAL_RULE_20261106/exp45/e59/E59_SUMMARY_73129.json`
@@ -512,23 +518,9 @@ Listed by `git ls-tree -r --name-only d9e785d96` and filtered to E59's paths; th
 - `MOD97_LOCAL_RULE_20261106/exp45/e59/logs/queue_73129.out`
 - `MOD97_LOCAL_RULE_20261106/exp45/e59/logs/queue_93683.out`
 - `MOD97_LOCAL_RULE_20261106/exp59_unrelated_starts.py`
-- `PROJECT_DOCUMENTS/PRE_FULL151_DESIGNS_RESULTS_20261023/designs/4fdb82e59b268728_DESIGN.md`
-- `PROJECT_DOCUMENTS/PRE_FULL151_DESIGNS_RESULTS_20261023/designs/a3e59805f1515e8d_DESIGN.md`
-- `PROJECT_DOCUMENTS/PRE_FULL151_DESIGNS_RESULTS_20261023/results/bf31ac71de591391_LAUNCH_GATE_REPORT.md`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle2/assets/133db263bd7b6b7a1ba477731381ce599c3fa8e8b1a5234f91fbf9c528c36f76.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle2/assets/751fb39415d0ec973ef82363530f24e9aa5ace59d7d23d13c596cacf674cf046.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle2/assets/e2b21ebc1553fc8b3380c6e764be14a82c69259428bcf074c1c8bf7f421e590f.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle2/assets/ec03de9d5de8c8e593aeabda30a0fe2ca7682fff8537c6267f7986f562570afa.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle3/RESTORED/checkpoints/assets/400f9843b0a2b201b59d37296e59c5304a8e085b07ecefeff5b311b752ccca03.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle3/RESTORED/checkpoints/assets/a6d0224b4ab2a34ef92fe34d42010e27bc6c82cbbcfe59786843b2fdf275df46.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle3/ROLLING-C16/checkpoints/assets/6f4880c3c724241b95b9bfdbdae93f5a2dbe2d1e47065132b4a8ea124cade59a.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle3/UNINTERRUPTED/checkpoints/assets/400f9843b0a2b201b59d37296e59c5304a8e085b07ecefeff5b311b752ccca03.npz`
-- `addition_schedule_context_dev_v1_20261015/cycles/cycle3/UNINTERRUPTED/checkpoints/assets/a6d0224b4ab2a34ef92fe34d42010e27bc6c82cbbcfe59786843b2fdf275df46.npz`
-- `minifly_a_v3/results/recovery/science_replay/P1/190003.2350e7bbc885bee76341e70aa03b1d6f0c89dde59bf0bf14a1d94089efe32067.json`
-- `minifly_a_v3/results/recovery/science_replay/P1/190004.63cef65a67afa284067fbb6e6a87f397e65d709daa950d3e4e599f2b0e23fd17.json`
-- `minifly_a_v3/results/recovery/science_replay/R3/190002.06ab59211fa868d6580ef15ba829c5431e59a2844b9eb0fdd9d1af11dca709aa.json`
-- `minifly_a_v3/results/recovery/science_replay/R3/190003.2e3abc4abd34cb3ad209af60e91fed3772af42afb020e598edcdde0ed4e579d9.json`
-- `response_mechanisms/results/final/operations/300025-H-attempt-1790900961609547515-8ac7de59.stderr.txt`
-- `response_mechanisms/results/final/operations/300025-H-attempt-1790900961609547515-8ac7de59.stdout.txt`
 
-(179 files.)
+(161 files.)
+
+## Amendments, 18 November 2026
+
+After the reviewer's verification (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/E59_VERIFICATION_20261118.md` and `e59_verify.py` on `claude/vibrant-cerf-sje726` at 310bdfcc, which reproduces 1,313 of 1,314 figures and statements, every table cell, word, prediction outcome and check figure, and all 60 weight files): five limits added to "What this job cannot show"; the list of committed files restricted to E59's 161 files; the sentence on 283 against 282 corrected (two networks, not two measures); check 3 stated as a departure from the brief's instruction and P59.1 given one outcome; check 5's receipt written and named; the earlier training stated beside the readings of `born` and `lived`; a clause on commit trailers removed; five terms defined at first use; and a clause on the folders named `rows_uncommitted`. No run was made and no run receipt changed.
