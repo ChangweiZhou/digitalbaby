@@ -1,4 +1,4 @@
-# What the program fixes, set against what a neuron has: a second review from the principle (18 November 2026, revision 1)
+# What the program fixes, set against what a neuron has: a second review from the principle (18 November 2026, revision 2)
 
 By the outside reviewer, at Mr. Xu's instruction of 18 November (about 20:50 UTC): the places that we fixed and never examined against the principle are all to be examined. It is written for Mr. Xu, Mr. Zhou and the coordinator. It starts no job and takes no decision.
 
@@ -36,6 +36,7 @@ The network of E50's stage 3 and of E62 (`e50_sparse_code.forward`, with `e42_ce
 | A1 | **One exchange between cells for each byte.** At each position the new state of a cell is computed once from the current byte and from the states of the cells it reads at the position before (`e50_sparse_code.py`, lines 56 to 60; the same in `arch26.py` and `e42_cells.py`). What a cell does not read itself can reach it only one cell further at each byte. | No. Between two inputs a neuron and its neighbours exchange signals many times; P3 presupposes it. | **Never,** until Mr. Xu's question of 18 November. |
 | A2 | **The answer is due one position after the last digit.** The first answer byte is read out at the position of `=`, directly after the second digit of the second operand (`exp11_cell.py`, line 231; `exp45.py`, line 168). With A1, that digit has made one crossing between cells when the first answer byte is read. | It is the task's format, chosen by us; nothing in the principle sets it. | **Never.** |
 | A3 | The error is formed after the item has ended and is passed back over its positions (the sweep's third part). | No. | Yes: named in the chain of steps; E61. |
+| A5 | The cell is a gated unit of a fixed form (three gates, fixed equations), and every cell is updated at every byte. | The form is ours (P6). | Named as a limit (memo, 22.10). |
 | A4 | The state of every cell is set to zero by the program at the start of every item (`e50_sparse_code.py`, line 55), and the 64 items of an update are 64 separate copies of the network run side by side. Nothing is carried from one item to the next but the weights. | No. A neuron's state is not reset from outside, and it meets one item after another. | Named once as a limit (memo, section 22); **never varied.** |
 
 ### B. What a cell reads, and what reads a cell
@@ -50,6 +51,7 @@ Weights in use in E50's stage 3: input map 35,328; connections between cells 8,4
 | B4 | Every cell reads one value of every used byte (stage 3; E61; E62), or the whole code (E42, E54). A byte reaches every cell without any crossing. | No (Mr. Xu, 16 November: a cell cannot see the whole input). | Yes: E49, E50, E57. With 16 of 512 values a cell, a given byte reaches 30% of the cells directly and 98% after one crossing, which by A1 and A2 is the only crossing available for the last digit. |
 | B5 | Each cell reads N cells, fixed at the start, from a neighbourhood or from all cells; N = 10. | The form yes; the number is ours (P6). | Yes: E42, E54; E62 is running. |
 | B6 | The code and the wiring of stage 3 are drawn for the 46 symbols of the first family (`e50_sparse_code.py`, line 24; `exp50_code.draw_one`). The network has no input for any other byte. | The program's knowledge of the items, built into the wiring (P4). | Found by the outside audit; **never** by the reviewer. |
+| B8 | A run is refused if a byte that the program lists as needed by the task reaches no cell (`exp50_code.run`), and the size of a turned-on value of the code is computed from the dense network's starting code. | The program's knowledge of the task (P4). | **Never.** |
 | B7 | The 257 output units are normalised together: the error of an output unit contains the sum over all of them (softmax with cross-entropy). | A quantity of the whole output layer (P2), though of one layer only. | **Never.** |
 
 ### C. The error
@@ -58,7 +60,7 @@ Weights in use in E50's stage 3: input map 35,328; connections between cells 8,4
 |---|---|---|---|
 | C1 | The right answer byte is given to the output at the three answer positions, and to no other position (`exp3_state.py`, line 162). | It is the task's teaching signal. | A choice of 3 November, not revisited. It fixes the distances that A3 must cover. |
 | C2 | While learning, the right previous answer byte is fed as the next input, whatever the network answered (teacher forcing; `exp45.batch_tensor`). | Supplied by us. | **Never** named. |
-| C3 | The error returns over the forward connection with the sign of its weight. | No. | Yes: named; E31; step 4. |
+| C3 | The error returns over the forward connection with the sign of its weight: from a cell to each cell that it reads. | No. Of the 2,560 connections between cells in the record's network, 520 (20%) have a connection in the reverse direction; over the other 80% the error travels where no connection exists. | Named; E31; step 4. **The count never.** |
 | C4 | One scale for a whole matrix: the mean magnitude of all its weights (`exp3_state.py`, line 100; `e42_cells.sign_scale`). | No (P2). | Yes: E57 is running. |
 | C5 | Through the dense readout the error reaches every cell directly at every answer position, before any relay. | No. | Stated in E61's brief; weighed by the outside audit. |
 
@@ -69,6 +71,7 @@ Weights in use in E50's stage 3: input map 35,328; connections between cells 8,4
 | D1 | **Each update averages the errors of 64 items** (192 answer positions; 48 items in a life). A weight never changes from one item alone. | No. | **Never varied.** |
 | D2 | AdamW: for each weight two running averages; a step of about the rate whatever the size of the gradient. | The averages are a weight's own. The equal step is ours. | Once, on the dense network: plain steps lose the first family as fast (memo, section 24). Not on a network that leaves connections idle. E55 showed the cost: states of 0.001 behind a shut gate changed answers. |
 | D3 | Every weight shrinks by the same factor at every update, used or not (0.25 times the rate). | A leak is local; that it is equal for all and blind to use is ours. | Yes: E46, the lives without decay; with it, forgetting is a step (memo, 33.27). A decay that depends on a connection's use: **never.** |
+| D5 | The optimizer's correction of its running averages uses one count of updates shared by all weights, and its averages are carried through a whole life (a new optimizer only at the start of a life). | The count is a clock of the whole network. | **Never.** |
 | D4 | One rate (0.001) for every weight of every map. | Ours (P6). | The rate: E52. Different rates for different cells or maps: planned (old item 13), **never run.** |
 
 ### E. The items and the life
@@ -79,6 +82,7 @@ Weights in use in E50's stage 3: input map 35,328; connections between cells 8,4
 | E2 | The store: the program keeps old items as they were presented and presents them again (half of each batch). | Rehearsal by the program; accepted in measure (P5). | Yes. |
 | E3 | Births: a learner starts its life after 24,576 or more updates on the first family, shuffled. | Ours. | Yes (E59, E60). |
 | E4 | Cells added, rows named, directions computed and projected at a change of task (E51, E55). | Acts of the program (P4). | Yes: decision 14. |
+| E5 | A birth inside a world ends when the program finds a score of 0.8 reached; the rule may be changed between birth and life. | Ours. | E60 for the second; the first **never.** |
 
 ### F. Numbers fixed by us (P6)
 
@@ -101,6 +105,8 @@ These are deductions from the source and the format, not measurements. The test 
 **4. What the outside audit found and the reviewer had not (B6; the audit's 5.2 and 5.3).** The stage-3 network has no input for a byte outside the first family's 46, so that steps 8 to 10 of the chain cannot be run on it. And the reviewer's own memo (section 28.6) already records that the network with 10 connections loses the first family within 64 updates, as the dense one does; step 8 of the chain nevertheless asks "whether sparse connections alone change what is kept" as if it were open. The audit is right on both.
 
 **5. Smaller, and stated for completeness.** The output's normalisation (B7) and teacher forcing (C2) were never named. A decay that depends on use (D3) and rates that differ between cells (D4) were named and never run. The equal step of AdamW (D2) was examined on the dense network only.
+
+**6. The working rule itself, which the record names and Mr. Xu keeps for now.** The independent inventory (section 8) puts first what the record treats as settled: under the sweep as under the exact gradient, the error is one pass backward over all maps and all positions of an item, which P3 prohibits; the sweep differs in the sign and the scale at each crossing. One fact is new: four fifths of that pass's crossings between cells go where no connection exists (C3). Finding 1 bears on this. If the cells exchange several times for each byte, an error could be relayed while the item is read, over connections that exist, and no pass after the item would be needed; that is the form P3 describes. The record holds only an early rule that carried its quantities forward (E19: 0.63 to 0.79), given up on 6 to 10 November for the pass backward (memo, section 33.24). No such rule has been tried on a network with limited connections.
 
 **What was examined and stands as examined:** the sweep's three parts (A3, C3, C4), the number and the choice of connections between cells (B5), the rate, the decay, the share of pairs, the store, the births, and the program's acts at a change of task.
 
@@ -126,6 +132,7 @@ For the coordinator and Mr. Xu to decide. In order.
 4. **Let E62 finish.** It is bounded and running; its curve is quoted with the limit of finding 2.
 5. **For requirement A,** take the audit's three changes to the chain (its section 5.2): read step 4 also by what an item of another family leaves idle; let step 8 cite E43's second addendum; do not expect steps 2, 3 and 6 to bear on memory. Step 7 (where an experience is written) is read-only and can be made now on the saved networks.
 6. **One arm each, when the candidate network exists,** for one item an update with the state carried over, and for plain steps (findings 3 and 5).
+7. **Two measurements that need no new code,** named by the independent inventory: the score with the cells silenced (`silence=True` exists in the forward pass), which gives what the direct path alone answers; and, as a second form of item 1 that leaves the network unchanged, m neutral bytes between `=` and the answer (m = 0, 1, 2, 4, 8), with the readout restricted.
 
 ## 7. How such an omission is prevented
 
@@ -133,4 +140,18 @@ From now on every brief that the reviewer writes or checks carries a section "Wh
 
 ## 8. Limits, and the comparison with the independent inventory
 
-The rows were read from the source by the reviewer; nothing was run. Findings 1 and 2 are deductions and a count; whether either explains a result of the record is not known until the runs and measurements of section 6 exist. The life runner was read in its update and its store, not whole. The comparison with the fresh agent's inventory is added below when the agent returns; until then the list has been made by one reader, who has missed a structure of this kind before.
+**Limits.** The rows were read from the source by the reviewer; nothing was run but two counts (the shares of B4 and the reciprocal connections of C3). Findings 1 and 2 are deductions and a count; whether either explains a result of the record is not known until the runs and measurements of section 6 exist. The life runner was read in its update and its store, not whole.
+
+**The independent inventory** (`INDEPENDENT_INVENTORY_OF_WHAT_THE_PROGRAM_FIXES_20261118.md` beside this file; made from the source alone by a fresh agent that had seen neither this review nor any document of the project; 80 entries in seven groups).
+
+- *Agreement.* Each of the reviewer's rows of revision 1 is among its entries. Its ten weightiest entries include, independently, the three that this review ranks first: the dense readout with the direct path from the input (its entry 2), one crossing before the answer is due (its entry 3), and the reset state with batches of 64 (its entry 6).
+- *What the reviewer had not listed,* now entered above: the count of reciprocal connections (C3: 520 of 2,560, which the reviewer recomputed); the shared count of updates and the optimizer carried through a life (D5); the refusal of a run by the program's list of needed bytes, and the size of the code taken from the dense network (B8); the end of a birth by a score (E5); the fixed form of the cell (A5).
+- *Where it ranks otherwise.* It puts first that both rules are one global backward pass (finding 6 above), which the record treats as named and kept. It also ranks the schedule of experience (one family for 256 updates) and the placing of the error by the program (targets only where the program knows an answer to be) among its ten; this review lists them (E1, C1) and does not rank them, since they are the world's and the task's.
+- *What it adds as tests:* those of section 6, item 7; a loss at every position and an error for each output unit without the normalisation (for C1 and B7); families interleaved within a visit (for E1); a store filled with the network's own answers in place of the program's copies (for E2).
+- *What it could not determine* is listed in its section 3; none of it bears on the rows above.
+
+After the comparison the list has been made by two readers. A structure that both missed is still possible; the rule of section 7 stands for every new brief.
+
+## History
+
+Revision 1 (18 November 2026, 21:05 UTC): the reviewer's inventory of 27 rows and its findings. Revision 2 (18 November 2026): five rows and finding 6 added from the comparison with the independent inventory; section 8 written.
