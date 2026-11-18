@@ -1151,8 +1151,12 @@ def part8():
                 for label, V, key in (("the start, reserve cells shut", Ws, dict(shut_all=True)), ("row 4,096, as run", W, {}), ("row 4,096, reserve cells shut", W, dict(shut_all=True)),
                                       ("row 4,096, only the old cells and the old units of z2", W, dict(shut_all=True, off_all=True)),
                                       ("row 4,096, input rows of the old cells put back, reserve cells shut", with_start(W, Ws, "input rows of the old cells"), dict(shut_all=True))):
-                    ok = np.array([o == t for o, (_, t) in zip(generate(Net(V), its, in_use=in_use, **key), its)])
-                    print("      " + label.ljust(68) + " | ".join(f"{int(ok[m].sum())} ({100 * ok[m].mean():.1f}%)".ljust(len(c) + len(str(int(m.sum()))) + 3) for c, m in cls))
+                    outs = generate(Net(V), its, in_use=in_use, **key)
+                    ok = np.array([o == t for o, (_, t) in zip(outs, its)])
+                    as89 = np.array([o == list(f"{apply(op, 89, a, b):02d}".encode()) + [EOS] for o, op, (a, b) in zip(outs, ops, ab)])   # the first family's answer to the same operands
+                    d = ~same & small
+                    print("      " + label.ljust(68) + " | ".join(f"{int(ok[m].sum())} ({100 * ok[m].mean():.1f}%)".ljust(len(c) + len(str(int(m.sum()))) + 3) for c, m in cls)
+                          + f" | of the {int(d.sum())} whose answer differs and whose operands are below 89, answers that are the answer under modulus 89: {int(as89[d].sum())} ({100 * as89[d].mean():.1f}%)")
             # 8.3 where the weights changed
             parts = []
             for k, what, mask, refv in blocks(W, birth(rule)[0]):

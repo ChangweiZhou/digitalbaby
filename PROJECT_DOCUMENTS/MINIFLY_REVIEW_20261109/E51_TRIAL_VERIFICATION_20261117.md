@@ -225,3 +225,117 @@ The seven receipts record what the brief asks. Two remarks. Check 3(a)'s clause 
 | P51.9 | Where `keyed` learns `unrelated`, it is *learned in the reserve* | 0.0; 0.0 with the reserve cells shut | held, in the brief's reading; see section 8 |
 
 All nine held, as the worker reports. P51.3 was a test of the implementation by its own wording. P51.9 holds by the criterion fixed beforehand; section 8 shows that the criterion establishes less than its name says.
+
+## 8. What the trial does and does not show (part 8)
+
+The figures of this section are the reader's own, from the saved weights of row 4,096 of the four `keyed` runs. They go beyond the readings that the brief fixed for the worker's report, and they are for one seed.
+
+### 8.1 The separation of the two tasks is supplied by the program
+
+The two added lines act when the item's first byte, `x[:, 1]`, is in a table of 46 bytes. The table is made before the first update from the first family's items and is not changed during the run; no weight enters the condition. The same weights of row 4,096, scored on the first family with the lines applied in other ways (reduction score; share of the 31,684 answers without letters that equal the start's, both in %):
+
+| Run | As run | Without the two lines | The first line only, on every item (reserve cells shut) | The second line only, on every item (added units of z2 at zero) |
+|---|---|---|---|---|
+| unrelated, sweep | 92.40; 100.00 | 0.00; 0.00 | 26.19; 44.05 | 0.03; 0.01 |
+| unrelated, back-propagation | 95.25; 100.00 | 0.00; 0.00 | 0.00; 6.70 | 0.00; 0.00 |
+| conflict, sweep | 92.40; 100.00 | 0.40; 66.24 | 87.23; 93.51 | 2.64; 67.02 |
+| conflict, back-propagation | 95.25; 100.00 | 0.00; 70.32 | 96.59; 97.74 | 0.00; 70.41 |
+
+Without the two lines the weights of row 4,096 do not hold the first family: after the unrelated task not one of its 32,884 answers is right, and after the conflicting family the reduction pairs are at 0.40% and 0.00%. The first family is therefore not kept in the weights as a network that answers it when left to itself; it is kept in the weights together with a program that silences 128 cells and 256 readout units whenever the first byte is a listed one. Both lines are needed. (In one run, conflict under back-propagation, the first line alone gives 96.59, above the start's 95.25: the added readout units change 2.3% of the answers and more of the changed ones become right than wrong. This is one run and is not read further.)
+
+The arm `keyed-free` is the complement: with the two lines and without the rule the first family is lost (section 5). Neither the lines nor the rule alone keeps it, and neither is formed by learning. Three consequences should be stated with the result.
+
+- The device needs the new task to announce itself by a first byte that the first family never used. Both tasks of the trial do (224; `r t x n`). A new task written with the first family's code bytes would have the reserve shut on its own items; this case was not run.
+- The table and the directions are computed once, from the first family. After the run the new task's bytes are not in the table, so nothing protects the new task from a third one. The brief lists this among the things the job cannot show.
+- The brief's own record has a result of the same kind: in E48 every earlier answer was kept, item for item, while a new family was learned in a part supplied from outside and switched on by the first byte (`E48_RESULT_VERIFICATION_20261117.md` in this folder; not checked again here). E51 is therefore not the first run of the programme in which a new task was learned while every earlier answer stayed as it was. What is new in E51 is that the part that learns consists of the network's own cells and readout units that the first family does not use, and of directions that the first family leaves unused at its own cells, and that the switch asks whether the first byte has occurred before and is not a list of the new family's codes.
+
+### 8.2 Where the new task is learned
+
+The new task's never-taught score (%) is computed with the weights of row 4,096 and, in turn, with one part of them put back to its starting values.
+
+*The unrelated task* (sweep; back-propagation). With the reserve cells shut, or with the added units of z2 at zero, the score is 0.0 in every line of this table.
+
+| Weights | Score as run |
+|---|---|
+| The start | 0.0; 0.0 |
+| Row 4,096 | 100.0; 100.0 |
+| Row 4,096 with every incoming connection of the old cells and of the old units of z2 put back (the rows that the rule projects) | 0.0; 0.3 |
+| of these, only the old cells' rows of the input map put back | 94.3; 77.7 |
+| only the weights from reserve cells into old cells and into old units of z2 put back | 0.3; 1.3 |
+| only rows 0 to 255 of `l2` put back | 100.0; 100.0 |
+| Row 4,096 with the byte table put back | 100.0; 99.3 |
+| Row 4,096 with the reserve cells' rows put back | 0.0; 0.0 |
+| Row 4,096 with the added readout put back (rows 256 to 511 of `lm` and `l2`, columns 256 to 511 of `l3`) | 0.0; 0.0 |
+
+*The conflicting family* (sweep; back-propagation in each cell).
+
+| Weights | As run | Reserve cells shut | Added units of z2 at zero | Both: only the old cells and the old units of z2 act |
+|---|---|---|---|---|
+| The start | 18.0; 8.5 | 19.0; 8.2 | 18.0; 8.5 | 19.0; 8.2 |
+| Row 4,096 | 94.8; 96.9 | 41.0; 40.4 | 86.2; 88.2 | 41.8; 38.9 |
+| Row 4,096 with every incoming connection of the old units put back | 25.9; 14.9 | 19.4; 11.5 | 28.2; 14.1 | 22.9; 11.2 |
+| only the old cells' rows of the input map put back | 75.8; 40.6 | 19.4; 11.5 | 70.8; 37.4 | 22.9; 11.2 |
+| only the weights from reserve cells into old units put back | 39.0; 41.4 | 41.0; 40.4 | 40.1; 38.8 | 41.8; 38.9 |
+| only rows 0 to 255 of `l2` put back | 94.8; 96.9 | 41.0; 40.4 | 86.2; 88.2 | 41.8; 38.9 |
+| Row 4,096 with the byte table put back | 93.2; 96.5 | 41.1; 39.1 | 85.1; 88.0 | 42.0; 38.1 |
+| Row 4,096 with the reserve cells' rows put back | 39.8; 38.2 | 41.0; 40.4 | 39.4; 36.6 | 41.8; 38.9 |
+| Row 4,096 with the added readout put back | 86.2; 88.2 | 41.8; 38.9 | 86.2; 88.2 | 41.8; 38.9 |
+
+What these tables say about "learned in the reserve":
+
+- *The unrelated task.* The brief's reading holds: the score is 0 with the reserve cells shut. The reserve cells are needed, and so is the added readout. But the change that carries the task is not confined to the reserve's own connections. The weights from reserve cells into old cells and into old units of z2, which are rows of old units, are needed as well (0.3 and 1.3 without them), and the old cells' own input rows contribute (94.3 and 77.7 without their change). The reserve cells act on the answer through the old units. "Learned in the reserve" is true in the sense that the reserve cells are necessary and false in the sense that only the reserve was changed. The same reading gives "yes" for `open` and `rehearse` on the unrelated task (0.7 and 5.7; 0.0 and 0.0 with the reserve cells shut), where the first family is destroyed or rehearsed; the reading says which cells the new task needs and nothing about the first family.
+- *The conflicting family.* The brief's reading fails, as the worker reports (41.0 and 40.4 with the reserve cells shut). The old cells and the old units of z2 alone answer 41.8% and 38.9% of the never-taught items, against 19.0% and 8.2% at the start, and this gain rests on the change of the old cells' rows of the input map: with those rows put back it is 19.4% and 11.5%. The reserve supplies the remainder through its weights into the old units (39.0 and 41.4 without them; 39.8 and 38.2 with the reserve cells' rows put back).
+
+### 8.3 What the old cells answer of the conflicting family
+
+The 800 never-taught items of the conflicting family fall into three classes by what the first family's operation (the same operation under modulus 89) would answer for the same operands.
+
+| Weights and what acts | Same answer under 89 and 97, both operands below 89 (344 items) | Same answer, an operand of 89 or more (29) | The answer differs (427) | Of the 392 that differ with operands below 89: the answer given is the answer under 89 |
+|---|---|---|---|---|
+| The start, reserve cells shut | 148 (43.0%); 64 (18.6%) | 2; 0 | 2; 2 | @@A@@ |
+| Row 4,096, as run | 333 (96.8%); 342 (99.4%) | 27; 28 | 398 (93.2%); 405 (94.8%) | @@B@@ |
+| Row 4,096, reserve cells shut | 326 (94.8%); 318 (92.4%) | 2; 3 | 0; 2 | @@C@@ |
+| Row 4,096, only the old cells and the old units of z2 | 332 (96.5%); 308 (89.5%) | 2; 3 | 0; 0 | @@D@@ |
+| Row 4,096, the old cells' rows of the input map put back, reserve cells shut | 151 (43.9%); 90 (26.2%) | 3; 0 | 1; 2 | @@E@@ |
+
+With the reserve cells shut the network answers the conflicting family where the first family's operation already gives the right answer, and nowhere else: 94.8% and 92.4% of the 344 items of the first class, 2 and 3 of the 29 items with an operand that the first family never had, and 0 and 2 of the 427 items whose answer differs. @@F@@ The only bytes of a conflicting item that are not in use are its code bytes, and the rule lets the old cells' input rows change only along the part of a code that lies outside the directions in use, so what the old cells learned can only be a response to the new code bytes; the table shows that with this response they apply the first family's operation to the new family's items. Everything that distinguishes the conflicting family from the first (the reduction at 97 and the operands from 89 to 96) is answered only when the reserve cells are open.
+
+This changes how the worker's "no" should be read. By the brief's criterion the conflicting family is not learned in the reserve. The 41% answered without the reserve cells is the part of the family that needs nothing new, and it is answered by the first family's own computation, reached through a direction that the first family does not use; the part that conflicts with the first family is in the reserve by the same test that the brief applies (0.0% and 0.5% with the reserve cells shut).
+
+*Does the first family stay exact there for the reason the brief gives?* Yes. The brief's reason is that on a first-family item the reserve cells and the added units of z2 are zero, every old unit receives what it received at the start, and every matrix acts on those inputs as it did. None of this requires the new task to stay out of the old cells. Section 3 shows it for the conflict runs as for the unrelated ones: the old-cell columns and biases of the recurrent matrix and of `lm` are bit-equal, the change of the input map's old rows has 4e-7 of itself along the directions in use, the outputs move by 5.5e-5 and 7.3e-5, and by at most 2e-11 once that remainder is removed. The old cells take part in the conflicting family and the first family does not see it, because the first family's items never present the direction through which they were changed.
+
+### 8.4 The birth's weights are not left as they were
+
+The rule leaves unchanged what the old units do on the first family's inputs. It does not leave their weights unchanged. The 2-norm of the change from the start at row 4,096, with the 2-norm of the same block at the start in brackets (sweep unrelated; sweep conflict; back-propagation unrelated; back-propagation conflict):
+
+| Block | Change (size at the start) |
+|---|---|
+| Input map, old cells' rows, columns of the old units of `l1` (the birth's weights) | 21.7; 24.7 (22.0); 12.4; 29.7 (20.8) |
+| Input map, old cells' rows, columns of the added units of `l1` (zero at the start) | 26.8; 34.2; 16.9; 37.4 |
+| Input map, reserve cells' rows | 18.5; 20.6 (16.0); 13.4; 19.6 (16.0) |
+| Recurrent matrix, old cells' rows, columns of the old cells | 0 in all four |
+| Recurrent matrix, old cells' rows, columns of the reserve cells | 17.1; 13.7 (8.0); 11.9; 11.2 (8.0) |
+| Recurrent matrix, reserve cells' rows | 20.5; 25.3 (11.3); 17.0; 22.7 (11.3) |
+| `lm`, rows 0 to 255, columns of the reserve cells | 7.5; 10.3 (6.5); 6.6; 9.0 (6.5) |
+| `lm`, rows 256 to 511 | 25.3; 19.2 (9.2); 29.3; 22.2 (9.2) |
+| `l2`, rows 0 to 255, columns of the old units of `l1` (the birth's weights) | 6.6; 0.02 (5.7); 2.7; 0.11 (3.2) |
+| `l3`, columns 256 to 511 (zero at the start) | 27.1; 17.1; 30.7; 12.9 |
+
+The birth's own input weights of the old cells have changed by about as much as their own size (21.7 and 24.7 against 22.0 under the sweep), and the old cells now read the added units of `l1`, from which they read nothing at the start. On the 46 codes of the bytes in use the two changes cancel to within the remainder of section 3. The old cells' rows of the input map changed more than the reserve cells' rows in all four runs. A statement that the first family's weights were protected would be wrong; what is protected is their action on the inputs that the first family presents.
+
+For the size of the room that the rule leaves at the input map: of the squared size of the code of a byte of the new task, 1.45% (sweep) and 1.98% (back-propagation), in the median, lies outside the directions in use for the 98 bytes of the unrelated task at the start (2-norm 0.95 and 1.14 of 8.07 and 8.14), and 1.34% and 2.09% for the four code bytes of the conflicting family. The brief's figure of about 2%, a 2-norm of about 1 in 8, is confirmed on the worker's starts.
+
+### 8.5 The result and its limits, in plain sentences
+
+*Shown, on one seed and one birth under each rule.* A network of 256 cells that contains a first family learned in 128 of them was taught a second task for 4,096 updates without rehearsal, and afterwards gave the same answer as before to every one of 32,884 first-family items, taught and held out, while it answered the second task: an unrelated task on 300 of 300 never-taught items under both rules, and a conflicting family on 94.8% and 96.9% of 800. The second task was learned in no more than twice the number of updates of the arms without the rule on the unrelated task (rows 1,024 and 512 against 512 and 512), and one row earlier than `keyed-free` on the conflicting family, where `keyed` also ends higher than `keyed-free` and `open` (94.8 and 96.9 against 89.6 and 92.6, and 85.0 and 94.9). An update of `keyed` cost 1.13 times the CPU time of an update of `keyed-free` and 1.18 times that of `open` in the receipts. Rehearsal at one first-family item for each new item ended 2.4 to 4.1 points below its start in three runs and 2.5 above in one, and changed 4 to 10% of the first family's answers.
+
+*Built in, and not a finding.* That the first family's answers do not change. It follows from the two added lines and the rule, for every item made of bytes in use whose first byte is in use, and the trial confirms that the implementation does what the construction says. The prediction that tested it was labelled as a test of the implementation.
+
+*Not shown.*
+
+- That the network separates the tasks. The program does, from the first byte, with a table fixed beforehand. Without the two lines the same weights have lost the first family.
+- That the new task is confined to the reserve. The unrelated task needs the reserve cells and also changed connections of the old units; of the conflicting family the old cells answer the part that the first family's operation already answers.
+- That the keeping is exact beyond the answers, or stays exact in a longer run. The outputs moved by up to 5.3e-4 in 4,096 updates, as much as the smallest lead of an answer, through rounding that accumulates.
+- That a network can be born with a reserve. The reserve was made by placing a narrower birth inside a wider network.
+- How much of the reserve a new task takes. In the keyed arms all 128 reserve cells are open by more than 0.1 on the new task's items at row 0, because their gates are fresh draws, and 119 and 125 (unrelated) and 112 and 83 (conflict) still are at row 4,096; the recorded figure falls during learning and does not measure what would be left for a third task.
+- Anything about a second seed, a life, a third task, a new task that begins with a byte already in use, or a comparison at equal memory; the saved directions alone are 95,547 numbers, 8.5% of the network's parameters.
