@@ -269,6 +269,50 @@ A pull of equal strength on every weight gives a little and does not keep, as in
 
 **What these change.** They narrow the difference between the rules further, with settings and with time, and leave 4.2 to 4.5 as they were. For the job of 5.2, the births should use settings that E52 supports once its other seeds are in. And E50's stage 1 offers a second form of the arm `rows`: with the fixed code read densely, a new code byte has eleven input lines of its own, which is a larger private change than a byte-table row and still needs no gate.
 
-## 11. The older Codex branches
+## 11. The older Codex branches (*measured, as their own reports give it; development level*)
 
-To follow in this revision: the reading is in progress.
+Ref `codex/minifly-three-experiments-20261106@501ca0c0`. Two of the three readings are in; the third (the recurrent reference V223 and the three experiments of 6 November) is to follow as section 11.4. The figures quoted here I checked against the files named.
+
+### 11.1 What this work is
+
+- Nearly every learner in the 24 folders read so far is at the store end of the scale of section 3: a fixed hashed or random sparse code with a delta-rule, overwrite or count update; a small transition map learned by a local rule; a table over tokens. The exceptions are small: a recurrent network of 256 binary units with 16 active, whose local rules came from an evolutionary search (Rounds 28 and 29); a hidden Markov model trained by counting (Round 31); a stochastic recurrent state of 372 weights with a local rule (V212); and V181's feed-forward learner with fixed feedback, in a scaling design that was not run. None trains by back-propagation, and none pairs a store with a learned recurrent computation.
+- Almost every positive result rests on structure that the harness supplied: a flag on the bytes to be written, frames that route bytes to a component, operand positions, the call to read. The reports say so themselves.
+- Several folders are reruns by Codex of learners from the other agent's review series of 3 to 5 November, whose own code is not on that branch.
+
+### 11.2 What it adds to Part I
+
+1. **The argument of section 3.1 was already in the project, twice.**
+   - The header of `minifly_v39_v40_archive/elm_fly_separation_v36.py` (September) asks "does input separation, not the write rule, decide persistence?". It records that the write rules of V20 to V35, among them learning-rate cascades, novelty gating and metaplasticity, "failed, traded retention against transfer, or was matched by its own control". It gives a measurement on the real connections from projection neurons to Kenyon cells: two different odours share 3% of their active cells and two renderings of one odour 42%, where the project's byte code of that time gave 60% and 85%. The branch holds the source and no result file.
+   - `minifly_capacity_experiment/notes/MINIFLY_WHY_STUCK_20261103.md`: in a sparse superposed store interference follows the overlap of the active sets, about K/N, and the "capacity wall" of V39 to V44 moved with the number of units (512 facts: old recall 50.2% at 16,384 units and 91.6% at 65,536, four seeds, `RESULTS.md`).
+2. **A step that falls with use has been run, on the store** (V197; `run.py`, `RESULTS.json`). Each row of the store keeps one number, the sum of its activations at taught writes, and a write to the row is divided by (1 + that number / 5). Recall of the oldest wave of 1,024 facts, four seeds:
+
+   | | Without the rule | With it |
+   |---|---|---|
+   | Addresses of 2 and 3 bytes | 44.8% | 84.1% |
+   | With 4-byte addresses added | 69.3% | 94.5% |
+
+   The rule is worth +25.3 points with the longer addresses (95% interval 16.0 to 34.5). There is no arm with the counters shuffled and none matched for the total reduction of the step; the authors' memo of 5 November names that comparison as owed. At 4,096 facts recall is 64.6%, which is the store's size and not the rule.
+3. **A cue in the item has kept one relation while a second was learned, in a learner that also generalised** (`minifly_two_step_parity/notes/MINIFLY_MEMO_REP_GEN_ROUND2_20261103.md`; six seeds). The learner is a successor map learned from the stream, a fixed sparse expansion of it (2,000 cells, 100 active) and a readout written on flagged bytes; the operator byte sends writes to a population of cells of its own. After the second relation was taught the first stood at 96.2% on taught pairs and 97.2% on distances never taught. The second relation did not transfer (2.1% on held-out distances), because the map did not hold its structure.
+4. **Gates learned from answers attached themselves to the surface of the cue** (V202 to V204, `minifly_qa1_frozen_generalization`). The write gate ended as the literal prefix "the ": it fired at all 2,000 such positions and at none of 58,104 others. With the prefix changed it wrote at none of 2,400 positions and the score fell to 15.5%; a gate that decided three bytes later did the same.
+5. **The learner's own signals for when to write have a mixed record.** A gate on prediction error was "no better than random writes at the same rate" (note of 3 November); writes on surprise gave 0.07 to 0.23 at the answer's first byte (Round 29). On the default branch, V161's count of familiarity at the cell-to-output connection separated new from familiar contexts with an area under the curve of 0.92 to 0.93.
+6. **Experience paid where new content came on symbols of its own** (V217, `REPORT.md`; ten seeds). After 24 earlier worlds, answers on objects rose from 60.4% to 98.1% when the new world's vocabulary was disjoint (+37.7 points, 32.3 to 43.4). With vocabulary reused they went from 60.4% to 54.6% (interval −17.6 to +5.6).
+7. **An automatic outer loop has been run** (Rounds 28 and 29; `minifly_round28_small_replication/REPORT.md`, `minifly_research_memos/MINIFLY_MEMO_ROUND29_20261105.md`). A search over 15 or 16 parameters of the local rules took the loss on a fresh world from 4.07 to 1.28 bits a byte. When a memory of recent byte sequences was added, the search set its weight to about 4% ("evolution turned the memory off"), and the fast weights were slightly harmful (1.283 against 1.230 without them). My reading: the objective was the loss on the next byte, and neither memory lowered it.
+8. **Two speeds of one weight did not help** in the two places tried: a slowly following copy of the maps (V191: −0.7 points, interval −1.8 to +0.5) and the fast weights of Round 28.
+
+### 11.3 Corrections that follow for Part I
+
+- **Sections 2 and 3.3.** I wrote that the only learners between the two ends were placed there by a line of the program. The learner of item 3 is a third, in miniature and at the store end: it kept and it generalised, by a cue in the item which, as the note describes it, acts through the learner's own wiring. Its limit is the one section 3 predicts: it generalised only the relation whose structure its map already held.
+- **Section 4.2, third row.** I wrote that, as far as I could find, plasticity that depends on a connection's history was never run. It was, on the store (item 2), with a large effect and an owed control; and, by the September header, as one of the write rules that failed on a code in which everything overlapped. It has not been run on a learner that generalises.
+- **Section 4.5.** The outer loop was run by hand in the November line. It was automatic once before (item 7), and what that search did is the caution for 5.5.
+
+## 12. What changes in the recommendations
+
+1. **The code comes before the rule.** This is the September header's conclusion and it fits the present network exactly: where every item uses every connection, a rule of plasticity has nothing to prefer. Section 5.3 is therefore to be run only on a start in which some cells are unused and are silent on the old items (E51's embedding with E50's code read densely), and 5.2 stays first.
+2. **Two controls are added to 5.3,** the ones V197 lacked: the same rule with the counters shuffled among connections, and a step reduced by the same total amount without regard to use.
+3. **The world should hold both kinds of code** (5.4): families whose code bytes are their own, and families whose codes reuse bytes. V217 and the wrong answers under replay (10.1, reading 6) both say that the second kind is where experience stops paying. The present long-life world has only the second.
+4. **A limit on 5.2, stated beforehand.** A family code is a designated byte. A positive result would not show that a learner can find its cue in a stream that does not mark it; item 4 is the record of what happened when a gate had to.
+5. **If a signal of the learner's own is to replace E51's line of the program,** the record favours a count of familiarity over prediction error (item 5).
+6. **The objective before the search** (5.5). An automatic search removes what its objective does not reward (item 7). The headline of 5.4, old families answered before any teaching, has to be in the objective before a search over the learner's settings is worth running.
+7. **The long lives** (10.1). Continue the existing lives without a store to 4,096 visits from their saved states before anything is concluded on requirement B1.
+
+Unchanged: the reading of section 3, the answers of 4.2 to 4.4 as corrected, the job of 5.2 and the question of section 6. On that question, the note of 3 November used such a cue under the owner's ruling of that time ("anything is allowed except backpropagation and attention") without raising it.
