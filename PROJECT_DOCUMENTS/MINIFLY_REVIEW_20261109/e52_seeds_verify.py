@@ -74,8 +74,9 @@ def jshow(path, ref=WREF):
 
 
 def names(d, ref=WREF):
-    out = subprocess.run(["git", "ls-tree", "-r", "--name-only", ref, "--", d], capture_output=True, check=True, text=True).stdout
-    return [x for x in out.split("\n") if x]
+    args = ["git", "ls-tree", "-r", "--name-only", "-z", ref] + (["--", d] if d else [])
+    out = subprocess.run(args, capture_output=True, check=True).stdout.decode("utf-8", "surrogateescape")
+    return [x for x in out.split("\0") if x]
 
 
 def oids(ref, paths):
@@ -329,8 +330,8 @@ def vs(C, D, rule, key, rate=0.003):
 
 
 def gains(C, D, rule, rates=RATES2):
-    others = [r for r in rates if r != 0.001]
-    if any(C[(rule, r, "R")] is not None for r in rates):
+    others = [r for r in rates if r != 0.001 and (rule, r, "R") in C]
+    if any(C.get((rule, r, "R")) is not None for r in rates):
         return any(vs(C, D, rule, "R", r) == "faster" and vs(C, D, rule, "A", r) != "slower" for r in others)
     return any(vs(C, D, rule, "A", r) == "faster" for r in others)
 
@@ -441,7 +442,7 @@ def nums(s):
 def section1(ctx):
     print("================ 1  inventory, completeness, settings, identities, logs, cost, files changed")
     allf = names(NEW)
-    rec = sorted(n for n in allf if n.endswith(".json") and "/e52_" in n)
+    rec = sorted(n for n in allf if n.endswith(".json") and n.split("/")[-1].startswith("e52_"))
     pts = sorted(n for n in allf if n.endswith(".pt"))
     logs = sorted(n for n in allf if "/logs/" in n)
     other = sorted(set(allf) - set(rec) - set(pts) - set(logs))
@@ -607,6 +608,17 @@ def section1(ctx):
     print(f"  launch log: {len(starts)} starts, {len(exits)} exits with codes {collections.Counter(e[1] for e in exits)}, resumptions or moves to interrupted/: {len(resumes)}; "
           f"first line {hms(utc(ll[0].split()[0]))}, last line {hms(utc(ll[-1].split()[0]))}; driver HEAD {head[:8]}")
     print(f"  the exit lines carry the times at which the driver waited on each process in launch order ({sorted(set(hms(e[2]) for e in exits))}), not the times at which the runs ended")
+    ctx["first_start"] = min(starts.values())
+    det = []
+    for seed in NEWSEEDS:
+        for H, fp in SETTINGS:
+            for rule in "SB":
+                n = f"e52_{rule}_h{H}_f{fp}_lr0.003_{seed}"; s = RUNS[(seed, rule, H, fp, 0.003)]
+                for key in "AR":
+                    if s[key + "80"] is not None:
+                        x = next(x for x in s["r"]["curve"] if x["step"] == s[key + "80"] + 512)
+                        det.append((starts[n] + x["wall"], f"{n} on {key}"))
+    ctx["det"] = min(det)
     iv = []
     for seed in NEWSEEDS:
         for H, fp in SETTINGS:
@@ -634,8 +646,7 @@ def section1(ctx):
     ctx["cpu"] = tot
 
     # files changed between the worker's commit before decision 19 and the report's commit
-    allb = git_text(["ls-tree", "-r", "--name-only", BASE]).split("\n"); allb = [x for x in allb if x]
-    allw = git_text(["ls-tree", "-r", "--name-only", WREF]).split("\n"); allw = [x for x in allw if x]
+    allb, allw = names("", BASE), names("", WREF)
     common = sorted(set(allb) & set(allw))
     ib, iw = oids(BASE, common), oids(WREF, common)
     changed = [p for p in common if ib[p] != iw[p]]
@@ -805,7 +816,8 @@ def sentences(ctx):
     c("1 sha256 of exp52_drive3.py (prefix)", "1401ba576d687ab1", sha(show(M + "exp52_drive3.py"))[:16])
     c("1 sha256 of exp52_seeds_tables.py (prefix)", "115e1fda949da2d7", sha(show(M + "exp52_seeds_tables.py"))[:16])
     c("1 no existing file was modified (files changed since 2d36fcfa)", "0", str(len(ctx["files"]["changed"]) + ctx["files"]["removed"]))
-    c("1 dose at half width / present width", "40,960 / 12,288", " / ".join(sorted({f"{RAW[k]['dose']:,}" for k in new}, key=len, reverse=True)))
+    doses = {H: sorted({RAW[k]["dose"] for k in new if k[2] == H}) for H in (256, 512)}
+    c("1 dose at half width / present width (every run)", "40,960 / 12,288", " / ".join(", ".join(f"{d:,}" for d in doses[H]) for H in (256, 512)))
     c("1 number of runs", "12", str(len(new)))
     c("1 E41's receipts record neither the length test nor the norms", "true", str(ctx["e41_no"]).lower())
     c("1 on seed 93683 exp52_rate.py reproduced E41's runs (of the three settings, both rules)", "6 of 6", f"{ctx['e93_eq'][0]} of {ctx['e93_eq'][1]}")
@@ -815,6 +827,11 @@ def sentences(ctx):
     q = ctx["q93"]
     c("1 settings that qualify on seed 93683 by the brief's rule (four rates)", "half f50, half f25, present f25", ", ".join(q))
     m93 = ctx["m93"]
+    r4 = ctx["r4"]
+    c("1 seed 93683 at four rates: half f50 (S gains, B gains); half f25 (S gains, lag R); present f25 (S gains, lag R, lag A)",
+      "yes yes; yes smaller; yes smaller smaller", f"{r4[(256, 50)]['gains S']} {r4[(256, 50)]['gains B']}; {r4[(256, 25)]['gains S']} {r4[(256, 25)]['lag R']}; "
+      f"{r4[(512, 25)]['gains S']} {r4[(512, 25)]['lag R']} {r4[(512, 25)]['lag A']}")
+    c("5 seed 93683: readings at two rates equal those at four rates (differences)", "0", str(len(ctx["diff4"])))
     c("2 seed 93683 margins of the readings the verification names (lag R present f25, B gains present f25, lag R half f25, B gains half f25)",
       "1 1 2 3", " ".join(str(x) for x in m93[:4]))
     c("2 seed 93683 margins of the sweep's gains (half f50, half f25, present f25)", "6 19 10", " ".join(str(x) for x in m93[4:]))
@@ -956,6 +973,49 @@ def section3(ctx):
               f"{ {f'{WIDTH[H]} f{fp}': v for (H, fp), v in cond.items()} }; refuted with the lag read on R: {ref_R}, on A: {ref_A}; "
               f"settings that keep it unrefuted on R, with the margins of the sweep's gain, of back-propagation's reading and of the lag on R: {sav_m}")
     ctx["expl"] = expl
+
+    # the margin of the test itself: the fewest rows by which one count, in one setting, must move for the verdict to change
+    def refuted(per, score):
+        sg = [st for st, r in per.items() if r["gains S"] == "yes"]
+        small = ("smaller", "gone")
+        ok = lambda r: r["gains B"] == "yes" and all(r["lag " + k] not in small for k in score)
+        return (not sg) or all(ok(per[st]) for st in sg)
+    EM = {}
+    for sd in SEEDS:
+        for score in ("R", "RA"):
+            per = {st: RD[(sd,) + st]["base"] for st in SETTINGS}
+            base = refuted(per, score); found = None
+            for k in range(1, KMAX + 1):
+                for st in SETTINGS:
+                    C, D = RD[(sd,) + st]["C"], RD[(sd,) + st]["D"]
+                    for var, cnt in C.items():
+                        cand = ([D - ROW * (k - 1)] if D - ROW * (k - 1) >= ROW else []) if cnt is None else \
+                               [None if v > D else v for v in (cnt + ROW * k, cnt - ROW * k) if v >= ROW]
+                        for v in cand:
+                            C2 = dict(C); C2[var] = v
+                            per2 = dict(per); per2[st] = readings(C2, D)
+                            if refuted(per2, score) != base and found is None:
+                                found = (k, f"{WIDTH[st[0]]} f{st[1]} {var[0]} {var[1]:g} {var[2]} {fu(cnt)} -> {fu(v)}")
+                if found:
+                    break
+            EM[(sd, score)] = (base, found)
+            print(f"  the test of the explanation, seed {sd}, lag read on {'R' if score == 'R' else 'R and A (refuted only if neither is smaller)'}: "
+                  f"{'refuted' if base else 'not refuted'}; margin: {'none within 200 (no single count changes it)' if found is None else f'{found[0]} rows ({found[1]})'}")
+    ctx["EM"] = EM
+    cls = collections.Counter(RD[(sd, H, fp)]["lag" + k]["cls"] for sd in SEEDS for H, fp in SETTINGS for k in "RA")
+    print(f"  the 18 lag readings (three seeds, three settings, R and A): {dict(cls)}")
+    ctx["cls18"] = cls
+    own = {f"{WIDTH[H]} f{fp} {k}": [f"{RD[(sd, H, fp)]['lag' + k]['own'][0]:.2f}" for sd in SEEDS] for H, fp in SETTINGS for k in "RA"}
+    print(f"  the lag at the rules' own rates, seeds 73129, 116089, 93683: {own}")
+    lower = []
+    for sd in SEEDS:
+        for H, fp in SETTINGS:
+            for ru in "SB":
+                a, b = RUNS[(sd, ru, H, fp, 0.003)], RUNS[(sd, ru, H, fp, 0.001)]
+                if a["R_final"] < b["R_final"]:
+                    lower.append(f"{sd} {ru} {WIDTH[H]} f{fp}: {a['R_final']:.2f} < {b['R_final']:.2f}")
+    print(f"  runs at 0.003 whose final R (mean of the last three rows) is below the run at 0.001 of the same rule, setting and seed: {len(lower)} of 18: {lower}")
+    ctx["lower"] = lower
     hl = {sd: (RD[(sd, 256, 25)]["base"]["gains S"], RD[(sd, 256, 25)]["base"]["gains B"], RD[(sd, 256, 25)]["lagR"]["cls"], RD[(sd, 256, 25)]["lagA"]["cls"]) for sd in SEEDS}
     print(f"  at the case the explanation names (half width, f = 0.25), (S gains, B gains, lag on R, lag on A): {hl}")
     # seed 93683 at four rates against two
@@ -969,6 +1029,7 @@ def section3(ctx):
             r4.update({f"best {k} {ru}": best(C4, D, ru, k, R4)["word"] for k in "RA" for ru in "SB"})
             if r4["gains S"] == "yes" or r4["gains B"] == "yes" or r4["lag R"] != SAME or r4["lag A"] != SAME:
                 q93.append(f"{WIDTH[H]} f{fp}")
+            ctx.setdefault("r4", {})[(H, fp)] = r4
             if (H, fp) in SETTINGS:
                 r2 = RD[(93683, H, fp)]["base"]
                 for n in r4:
@@ -1058,7 +1119,9 @@ def section5(ctx):
     # the readings script fixed before the runs
     same = oids(TABS_COMMIT, [M + "exp52_seeds_tables.py"])[M + "exp52_seeds_tables.py"] == oids(WREF, [M + "exp52_seeds_tables.py"])[M + "exp52_seeds_tables.py"]
     t_tabs = int(git_text(["log", "-1", "--format=%ct", TABS_COMMIT]).strip())
-    print(f"  exp52_seeds_tables.py committed at {hms(t_tabs)} ({TABS_COMMIT[:8]}), before the first run's start at {ctx['launch']['first']}, and unchanged since: {same}")
+    det = ctx["det"]
+    print(f"  exp52_seeds_tables.py committed at {hms(t_tabs)} ({TABS_COMMIT[:8]}), {t_tabs - utc_first(ctx):.0f} s after the first run's start at {ctx['launch']['first']}; "
+          f"the earliest count to 80 of any new run was settled (its third row at or above 80 written) at about {hms(det[0])} ({det[1]}); unchanged since: {same}")
     ctx["tabs_fixed"] = same
     # decision 19 as quoted
     dec = show(DEC_FILE, DEC).decode()
@@ -1066,6 +1129,10 @@ def section5(ctx):
     print(f"  the report's quotation of decision 19 is a verbatim part of the coordinator's message at {DEC[:8]}: {q in dec}")
     ctx["quote_ok"] = q in dec
     clock("section 5")
+
+
+def utc_first(ctx):
+    return ctx["first_start"]
 
 
 # ================================================================ 6
