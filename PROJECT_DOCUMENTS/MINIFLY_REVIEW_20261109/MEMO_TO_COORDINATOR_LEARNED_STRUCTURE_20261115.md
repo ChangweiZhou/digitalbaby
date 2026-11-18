@@ -141,6 +141,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 41. **Your decisions 38 to 47 are carried out but for E61** (section 33.31). E62 went to E54's worker at 20:21 UTC. With the relay of your decisions Mr. Xu told the reviewer to handle the matters other than E61, so that revision 3 of E61 is not written and E52's worker has been sent nothing; decision 39 is carried out when he says so. The chain of steps is at revision 3 with decisions 38, 40, 42, 43 and 44 entered.
 
+42. **A second review found structures that every experiment shares and that were never held against the principle** (section 33.32; `REVIEW_OF_WHAT_THE_PROGRAM_FIXES_AGAINST_THE_PRINCIPLE_20261118.md`). The heaviest: the cells exchange what they hold once for each byte and the answer is due one byte after the last digit, so that relay has no time; and nine tenths of the weights of the network called sparse are a dense readout that reads every cell and the current byte directly. The outside audit, which arrived at 20:50, finds E61 not a test of relay between cells. The reviewer proposes a job that gives relay time before E61 in either form, and asks you to weigh decisions 39, 40 and 44 against it.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2141,7 +2143,7 @@ Mr. Xu, 18 November: he had asked for the experiments to be arranged step by ste
 | Step | Question | Where it stands |
 |---|---|---|
 | 1 | Does a network with sparse recurrent connections learn and generalise under a local rule? | **Yes, more slowly.** With 10 connections a cell and half the pairs taught, updates to 80 on A are 2.36 times the dense network's under the sweep and 1.70 times under back-propagation (E42; quoted in 33.19's verification). With a quarter of the pairs, 3.65 and 4.29 times (E54, one seed) |
-| 2 | Does it learn when the input is sparse as well? | **Not passed.** With 16 inputs a cell the sweep does not learn (E49). With a fixed code it learns only when each cell has an input for every byte, 2.68 times slower than back-propagation (E50). E57, running, asks whether the scale is the cause; at update 8,192 all three scales are still low, and the worker makes no reading |
+| 2 | Does it learn when the input is sparse as well? | **Not passed.** With 16 inputs a cell the sweep does not learn (E49). With a fixed code it learns only when each cell has an input for every byte, and then needs 2.68 times the updates that it needs with the whole code and 2.23 times the exact gradient's in the same network (E50; corrected on 18 November after the outside audit, which found that 2.68 had been given as the lag behind back-propagation). E57, running, asks whether the scale is the cause; at update 8,192 all three scales are still low, and the worker makes no reading |
 | 3 | Over how many steps must the error be relayed? | **Never run.** The plan's item 20, without priority until 33.22 |
 | 4 | What changes at about fifty connections a unit? | **Never run.** The networks have 10 or 16 |
 | 5 | Where is an experience written in a sparse network; are there cells not in use that a new task can take? | **One read-only measurement:** in the network with an interface at a boundary, the cells away from the boundary are not in use (plan, item 2). No second task has been learned in such a network (E56, not briefed) |
@@ -2332,3 +2334,22 @@ Limits: the classes pool worlds that share births; a return's absence and its pl
 **For decision 46.** The reviewer's disk stands at 1.2 GB; no verification has been limited by it so far. Three verifications are ahead (E57, E60, E53), of which E60's reads the largest files; the reviewer says in the log if one cannot be made in full.
 
 **The lines.** Running: E53, E57, E60 (world 4), E62 (starting). Free: E52's (kept for E61), the main worker's and E55's (decision 46: one for the second part of step 3, one for the readings of E57 and E53).
+
+### 33.32 A second review, at Mr. Xu's instruction: what the program fixes, set against what a neuron has; the outside audit; E61 (21:00 UTC)
+
+**What happened.** At about 20:40 UTC Mr. Xu asked why a sparse input is not learned although the cells are connected. The reviewer found in the forward pass what it had never examined: between two bytes of an item the cells exchange what they hold once, and the answer is due one byte after the last digit. Mr. Xu's judgement was that finding such things is what the reviewer is engaged for, and he instructed that every place of this kind be examined. The result is `REVIEW_OF_WHAT_THE_PROGRAM_FIXES_AGAINST_THE_PRINCIPLE_20261118.md` (revision 1): an inventory of 27 structures that the program fixes, each with its source line, whether a neuron has it, and whether the record examined it. A fresh agent that has seen neither the list nor any document of the project is making its own inventory from the source; the comparison is added to the review when it returns.
+
+**The findings that were never examined, by weight** (the review's section 4).
+
+1. *Relay has no time.* One exchange between cells for each byte, forward and backward, and an answer due at once. The record's reading of the sparse input (E49, E50), of the unused cells beyond the first ring (E47, and E53's design) and of E61 each took this as given. A deduction from the source, not a measurement; the test is a run with several exchanges for each byte.
+2. *The network called sparse is a small sparse part inside a large dense one.* The readout is a dense network of two layers with 92.1% of the weights in use; it reads every cell and, through its largest map, the current byte directly, past the cells. What the cells compute and what the readout computes has not been separated.
+3. *The learner never meets one item after another:* its state is reset by the program, and each change of a weight averages 64 items.
+4. *From the outside audit, which the reviewer had missed:* the stage-3 network has no input for a byte outside the first family's 46; and the reviewer's own section 28.6 already answers the question that step 8 of the chain asks as open.
+
+No verified figure changes; the review's section 5 says what each conclusion of the record may now be quoted for.
+
+**The outside audit** (`origin/claude/friendly-darwin-8mmhfm` at ae1816b8) finds E61 as written not a test of relay between cells and proposes the form in which a cell keeps its own path and only the crossings between cells are limited; lets E62 stand; and asks for six changes to the chain of steps. A fresh agent of the reviewer is verifying its computation independently and drafting revision 3 of E61 in that form with your three amendments of decision 39. The draft is not released; it comes back to you.
+
+**What the reviewer proposes to you and to Mr. Xu** (the review's section 6): first a job that gives relay time (R = 1, 2, 4, 8 exchanges for each byte, on the input with 16 values a cell and on E47's network); read-only measurements of the readout on the saved networks now; E61 held in either form until the first is read, because with several exchanges a position and a crossing are no longer one step; E62 to finish, quoted with its limit; the audit's changes for requirement A. This bears on your decisions 39, 40 and 44: decision 40 places the test of relay between cells on E53's network, where by the review's finding 1 the cells beyond the first ring could not serve the last operand at any start.
+
+**One correction of fact,** made in the chain of steps and in section 33.23: 2.68 is the sweep with 46 values a cell against the sweep with the whole code, not its lag behind back-propagation, which is 2.23 in the same network.

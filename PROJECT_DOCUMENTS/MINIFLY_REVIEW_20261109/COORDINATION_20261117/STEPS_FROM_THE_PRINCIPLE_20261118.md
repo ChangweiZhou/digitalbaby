@@ -46,7 +46,7 @@ Each step gives: the question; why the principle puts it there; what the record 
 
 ### Step 4. Does it learn when the input, too, is sparse, and with quantities a unit has? — running (E57), then a brief
 
-- **Record.** With 16 inputs a cell the sweep does not learn (E49); with a fixed code it learns only when each cell has an input for every byte, 2.68 times slower than back-propagation (E50). E57, running, takes the sweep's scale for each receiving unit instead of for a whole matrix; E53, running, concerns the network with an interface at a boundary.
+- **Record.** With 16 inputs a cell the sweep does not learn (E49); with a fixed code it learns only when each cell has an input for every byte, and then needs 2.68 times the updates that it needs with the whole code (the exact gradient 2.22 times) and 2.23 times the exact gradient's in the same network (E50; earlier revisions gave 2.68 as the lag behind back-propagation, which the outside audit corrected). E57, running, takes the sweep's scale for each receiving unit instead of for a whole matrix; E53, running, concerns the network with an interface at a boundary.
 - **First part.** Read E57. If the scale for each unit lets the sweep learn the sparse input, that form of the rule is taken from here on.
 - **Second part, if it does not.** The return of the error: by the signs of the forward weights against feedback that is learned (E31, three seeds, not replicated) in the network with a sparse input.
 - **Outcome.** A form of the rule in which a sparse input is learned, or the statement that no form on file learns it.
@@ -109,6 +109,8 @@ E60 (the sweep's life from back-propagation's birth), E55 (the first family kept
 ## 6. History
 
 Revision 1 (18 November 2026): written at Mr. Xu's instruction of that day.
+
+Correction of 18 November, after the outside audit (its section 5.1): in step 4 the figure 2.68 was given the wrong comparison; it is the sweep with 46 values a cell against the sweep with the whole code. The chain itself is not otherwise changed here; the reviewer's second review (`REVIEW_OF_WHAT_THE_PROGRAM_FIXES_AGAINST_THE_PRINCIPLE_20261118.md`) and the outside audit propose changes to it, which are the coordinator's to adopt.
 
 Revision 3 (18 November 2026): the coordinator's decisions 38 to 47 entered: the chain is the order of work; the reading of the exact gradient's arm; E62 released and sent; E61 released with amendments and held at Mr. Xu's instruction; the second part of step 3 on E53's network; the arm without decay in step 8; the outside memo's 5.2 confirmed as step 9; E40 in step 11.
 
