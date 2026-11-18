@@ -3369,3 +3369,13 @@ While I was away on 17 November the user told the reviewer to arrange the work i
 **Merged to the default branch at 4455c683:** the reviewer's 153 new files as a copy (a full merge conflicts in seven shared files), and the finished E42 (three seeds), E46, E47's trial, E48, E49, E50 and E51. Running and not merged: E52, E54, E58, the two branches of the long lives.
 
 **What I had left undone:** the audit's nine changes to my roster note of the first long lives were mine to enter; the reviewer's worker brief carried them and the lives ran on that. And review 9.141 reported E38 without the two checks that failed under the sweep.
+
+## 9.159 E55 released at revision 4; decisions 13 to 17 (18 November 2026)
+
+The reviewer wrote revision 3 of the brief of E55 with the arm I asked for (`blind`: the cells in reserve receive nothing, in any row, from an item of the first family), had it checked by an agent that had not seen its reasoning, and entered the eight findings as revision 4. I read revision 4 and the check's verdicts, reran the check's part on the start (no training; the figures agree, output committed), and released the brief to E51's line. My decisions 13 to 17 are appended to `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/COORDINATOR_DECISIONS_20261118.md`.
+
+**What exists before any run is an emulation by the checker, not a result** (E2 would apply to the run; the emulation has no evidence level). It indicates that the first family's scored answers are kept and a task on other bytes is learned under both rules, with two limits: the reserve, which cannot read an operand, does not bring the family modulo 97 to 80 (63 to 67); and the keeping holds for the scored lengths only, since in one emulated run of four 1,055 of 1,200 first-family answers at 40 letters changed. I did not rerun the emulation.
+
+**How a run that agrees with it would be read (decision 14):** one seed, items of up to 22 positions, a task on other bytes; four acts of the program remain. Requirement A is not met by it. **Decision 15:** no brief for the second part (a code with values of its own for each byte) until the reviewer has written how a later task on the first family's own bytes would be learned in it; that design removes the growth over positions and not the other limit.
+
+**Also noted, reported and not verified:** Part B of E51 on seed 93683 keeps the family within 5 points at a share of a quarter, where seed 73129 needed a half; E54's part 1 and E52's runs at two rates are in the reviewer's log. Six lines run; E53 and E57 (now with saving and resuming, checked) wait.
