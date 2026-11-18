@@ -139,6 +139,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 40. **E55 is verified whole** (sections 33.26 and 33.30). In the arm `shut` the first family is partly kept in all four runs, so that decision 14's statement is met by none; the gates of the reserve stay shut on the first family and open on the new task; back-propagation learns the task on the first family's own bytes (92.9 against 34.4 with the reserve held shut) with 7 of 31,684 answers changed at the end; under the sweep neither task is learned. Requirement A is not met. The three figures of the note of decision 15 are in section 33.30; the note's advice stands. The message priority that joins a running turn did not deliver into a running turn (decision 29: observed, negative).
 
+41. **Your decisions 38 to 47 are carried out but for E61** (section 33.31). E62 went to E54's worker at 20:21 UTC. With the relay of your decisions Mr. Xu told the reviewer to handle the matters other than E61, so that revision 3 of E61 is not written and E52's worker has been sent nothing; decision 39 is carried out when he says so. The chain of steps is at revision 3 with decisions 38, 40, 42, 43 and 44 entered.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2314,3 +2316,19 @@ Limits: the classes pool worlds that share births; a return's absence and its pl
 **Findings** (nine, of which eight ask a correction of the report; one error of a figure, one of definition): the loss at 50 positions in `conflict` under the sweep; decision 14's sentence; the forecast of the cost (2,736 seconds a run, not 1,370, so that there was no excess); one more commit in the provenance; the arm's definition, which left out the rows of `lm` and `l2`; the gate figures at every row for the runs that do not learn; the evidence for the route of the change; the title.
 
 **The message priority.** The corrections of the arm `blind`, sent at 16:33 with the priority that joins a running turn, reached the worker only when its turn ended, after the arm `shut` had run. This is the observation that decision 29 asks for, and it is negative.
+
+### 33.31 For the coordinator: decisions 38 to 47 carried out but for E61, which Mr. Xu has told the reviewer to leave (20:22 UTC)
+
+**Read.** Decisions 38 to 47 (5a27108e, committed 20:06 UTC) were read whole at 20:19, on Mr. Xu's relay.
+
+**E62 is with its worker.** Your message of decision 41 was sent to E54's worker at 20:21 UTC, its text committed first (`MESSAGES_TO_WORKERS_20261118.md`, message 12). Beside your sentence it says three things that the released brief could not: that the worker may work on its present branch after merging the default branch, if its session cannot push to a new one; decision 38's reading of the exact gradient's arm and its rule that a report names the sweep's three parts, since the brief's terms were written under decision 31; and that a message reaches the worker only when its turn ends (decision 45). The brief itself is unchanged.
+
+**E61 is held.** With the relay of your decisions Mr. Xu instructed the reviewer to handle the matters other than E61. Revision 3 with your three amendments (the reading on A as well as on R; two runs of the whole item at the rate 0.003; the report's first paragraph on what the job does not test) is therefore not written, and nothing has been sent to E52's worker, whose line stays free for it. The reviewer does not know his reason and has not asked. Decision 39 stands as yours; it is carried out when he says so.
+
+**Entered in the chain of steps** (revision 3): decision 44 (the chain is the order of work; no new job on the dense network), decision 38 (the reading of the exact gradient's arm; the three parts named in every report), decision 40 (the second part of step 3, on E53's network, when E53 is verified), decision 42 (an arm without decay in step 8), decision 43 (the outside memo's 5.2 as step 9; the experiment of the note of decision 15 not written until the sweep's failure to open a gate is understood or the rule's form has changed; E40 in step 11).
+
+**For decision 45,** in briefs from now on: where a later stage depends on the reading of an earlier one, the brief names the point at which the worker sends its message and ends its turn with no process running. The brief of the second part of step 3 will have such a point after its checks, if its design needs the reading of E53.
+
+**For decision 46.** The reviewer's disk stands at 1.2 GB; no verification has been limited by it so far. Three verifications are ahead (E57, E60, E53), of which E60's reads the largest files; the reviewer says in the log if one cannot be made in full.
+
+**The lines.** Running: E53, E57, E60 (world 4), E62 (starting). Free: E52's (kept for E61), the main worker's and E55's (decision 46: one for the second part of step 3, one for the readings of E57 and E53).
