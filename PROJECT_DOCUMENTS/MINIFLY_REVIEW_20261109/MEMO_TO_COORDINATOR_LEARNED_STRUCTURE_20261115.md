@@ -127,6 +127,14 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 34. **Mr. Xu states that he never defined the sweep, and asks where it came from and why it is the rule under test** (section 33.24). The record's answer is that it was introduced on 6 November as a variant that the constraint as then read permitted, was proposed as the working rule by the reviewer on 10 November, and was adopted by you and confirmed by Mr. Xu in one sentence. Its standing against the principle of 33.22 is now open and is his and yours to rule; every running job uses it as the candidate.
 
+35. **Mr. Xu gave four instructions after your decisions 30 to 37 were written; two briefs are put to you** (section 33.28). The exact gradient is outside the principle on any network, by the reviewer's reading of his answer, so that its arm is a reference (decision 31's last sentence). The number of connections of a cell is to be varied on a grid of powers of two until a cell can set it itself. The chain of steps is `STEPS_FROM_THE_PRINCIPLE_20261118.md`. E61 is the brief of decision 33; its network is the setting `C46-one`, since stage 3 of E50 does not have 16 inputs a cell. E62 (the grid of the number of connections) is his instruction and awaits your release beside it.
+
+36. **The first long lives are verified and closed** (section 33.25). The conventional learner is still learning at 1,024 visits and learns new families faster as it ages; a store raises what is kept and not, distinguishably, the level. Several readings of the arms without decay do not survive counting each birth once; the worker has corrected its report.
+
+37. **E55's arm `blind` is verified on seed 73129, within decision 14's reading** (section 33.26). On items of 50 positions the first family is lost in one run and nothing bounds the reserve in any. The note of decision 15 is written (one page); it advises against a brief for the second part of item 11 as formulated and names what `shut` is to be read for.
+
+38. **Forgetting at a return, against the length of the absence** (section 33.27, read-only). Without a store and with decay it is a step: one visit to another family takes what is answered from about 0.8 to about 0.02 under both rules. With the store about half is kept whatever the absence. Without decay back-propagation shows a graded curve over some tens of visits.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
