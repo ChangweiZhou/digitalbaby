@@ -1,5 +1,7 @@
 # E55, first part: the first family kept without a line of the forward pass that reads the item (seed 73129)
 
+*The title repeats the brief's. In the arm `blind` the first family's scored answers were kept; in the arm `shut` the first family was partly kept in all four runs.*
+
 Evidence level E2: a first measurement on one seed, which confirms nothing. Carried out from the brief `TASK_E55_THE_FIRST_FAMILY_KEPT_WITHOUT_A_LINE_OF_THE_PROGRAM_THAT_LOOKS_AT_THE_ITEM_20261118.md`, revision 4, on the reviewer's branch (at commit `2b85dd8b`). The coordinator released it by decision 13 of 18 November 2026 (`COORDINATOR_DECISIONS_20261118.md` on the default branch, `39eacc33`). The work is on E51's worker's branch, and no file of E51 was changed. No formal checker gate, official seal or external review is claimed. The results are to be verified from the receipts and weights by the reviewer's agent before they are read.
 
 Paths are relative to `MOD97_LOCAL_RULE_20261106/`. Host: Linux x86-64, 4 cores, Python 3.13.18, torch 2.15.0+cpu, at most three processes with one thread each. Every receipt records its host, the hashes of its sources and the git state.
@@ -17,7 +19,7 @@ The terms of the brief hold; those used most are repeated here.
 - The *never-taught score* is the percentage of right answers on a new task's never-taught items. A task is *learned from row g* if this score is at 80 or more at row g and at every later scored row.
 - *The cells in reserve* are cells 128 to 255 of the embedded network of E51. *The plain forward pass* is `exp51_reserve.fwd` without its two added lines, which read the item's first byte.
 - *The arm `blind`*: all three rows of every cell in reserve, and rows 256 to 511 of `lm` and `l2`, are kept away from the directions in use of the first family, so that these cells receive nothing from the first family's items.
-- *The arm `shut`*: only the update-gate rows of the reserve are kept so, and their bias is raised by 10, so that the update gates of the reserve are shut on the first family's items.
+- *The arm `shut`*: of the rows of the reserve, only the update-gate rows are kept so, together with rows 256 to 511 of `lm` and `l2`. The bias of the update-gate rows is raised by 10, so that the update gates of the reserve are shut on the first family's items.
 - *1 − z* is how far an update gate is open.
 
 ## 2. Code
@@ -119,7 +121,7 @@ The eigenvalue is above 1 at row 16,384 in all four runs (1.098, 1.434, 1.058, 1
 - `conflict`, back-propagation: **kept exactly**. *The task was not learned within 16,384 updates*: 63.2 at row 16,384.
 - For both runs of `conflict`, the largest 1 − z on the never-taught items at rows 1,024 to 16,384 is 0.93 to 1.00, with 128 cells open at some position at every row. In this arm the gates stand near one half on every item, so these figures carry no information about the use of the reserve.
 
-**Arm `shut`.** In all four runs the largest 1 − z of a cell in reserve on the first family's held-out items stays between 4.5e-5 and 6.5e-5 at every row, and no cell opens there. The gates stayed shut on the first family's items, while the free weights from the cells in reserve, acting on states of about 1e-3, changed answers.
+**Arm `shut`.** In all four runs the largest 1 − z of a cell in reserve on the first family's held-out items stays between 4.5e-5 and 6.5e-5 at every row, and no cell opens there. The gates stayed shut on the first family's items, while the free weights from the cells in reserve, acting on states of about 1e-3, changed answers. The evidence for this route is in the reviewer's verification (`E55_SHUT_AND_REPORT_VERIFICATION_20261118.md`, commit `e4c58ece`, its section 4): with the cells in reserve held shut, none of the 31,684 answers and none of the 1,200 held-out answers differs from the start's in any of the twelve saved networks.
 
 - `unrelated`, sweep: **partly kept**. *The task was not learned within 16,384 updates*: 72.7 at row 16,384.
   - Cells opened on the new task's items: 126 open at some position at row 16,384, 125 at row 8,192 and 16 at row 4,096. The task was not learned although they opened. The largest 1 − z there was 0.002 at row 256, 0.34 at row 1,024 and 1.0 from row 4,096.
@@ -134,6 +136,23 @@ The eigenvalue is above 1 at row 16,384 in all four runs (1.098, 1.434, 1.058, 1
 - `conflict`, back-propagation: **partly kept**; the task is **learned from row 8,192** (92.9). *The first family was kept except for 0.77% of its answers* (largest d(g) 244; at most 30 held-out answers differ; reduction score 95.26 against 95.25).
   - *Kept* first fails at row 32, where 3 held-out answers differ. There the largest 1 − z on the first family's items is 4.5e-5, the largest state 9.7e-4 and the largest added unit 0.0040.
   - 58 cells are open at some position on the new task's items at row 16,384. With the cells in reserve held shut, the never-taught score is 34.4.
+
+**Arm `shut`, items of 50 positions.** In `conflict` under the sweep, the right answers on the 40-letter panel fall from 282 of 300 at row 0 to 64 at row 2,048, 36 at row 4,096 and 65 at row 16,384; between 236 and 267 answers differ from row 0's from row 2,048 on. Yet no gate of the reserve opens on those items: the largest 1 − z there is 1.37e-4. In the other three runs of the arm `shut` the right answers at 40 letters stay between 268 and 283 at every row.
+
+**The runs that do not learn their task.** The largest 1 − z on the new task's never-taught items, and the number of cells in reserve open at some position there, at every scored row (0, 16, 32, 64, 128, 256, 512, 1,024, 2,048, 4,096, 8,192, 16,384):
+
+| run | quantity | values by row |
+|---|---|---|
+| `shut`, `unrelated`, S | largest 1 − z | 5.5e-5, 6.3e-5, 7.6e-5, 1.1e-4, 2.9e-4, 1.5e-3, 6.0e-3, 0.34, 0.998, 1, 1, 1 |
+| `shut`, `unrelated`, S | cells open at some position | 0, 0, 0, 0, 0, 0, 0, 1, 4, 16, 125, 126 |
+| `shut`, `conflict`, S | largest 1 − z | 4.9e-5, 4.9e-5, 5.2e-5, 6.0e-5, 8.0e-5, 1.1e-4, 8.7e-5, 6.3e-5, 9.3e-5, 1.2e-4, 1.1e-4, 3.0e-4 |
+| `shut`, `conflict`, S | cells open at some position | 0 at every row |
+| `blind`, `conflict`, S | largest 1 − z | 0.52, 0.52, 0.53, 0.56, 0.62, 0.98, 0.97, 0.93, 0.94, 0.98, 0.995, 0.997 |
+| `blind`, `conflict`, S | cells open at some position | 128 at every row |
+| `blind`, `conflict`, B | largest 1 − z | 0.52, 0.56, 0.61, 0.69, 0.80, 0.86, 0.98, 0.998, 0.998, 0.997, 0.999, 0.999 |
+| `blind`, `conflict`, B | cells open at some position | 128 at every row |
+
+The same figures, with the other columns, are in the run tables of `E55_TABLES_all.md`. In the arm `blind` the gates stand near one half on every item, so these figures carry no information about the use of the reserve there.
 
 ## 6. The two arms side by side
 
@@ -180,6 +199,8 @@ As the brief states, this job removes only the reading of the item by the forwar
 - The cells in reserve and the added units are put in by the program at the change of task. In the arm `shut` the program also shuts the gates with a bias of 10.
 - The change of task is known to the program: the directions are fixed, and a new optimizer is made, at that moment.
 
+As the coordinator's decision 14 fixes: **requirement A is not met by this result.** The four acts of the program above remain, and in the arm `shut` also the bias of 10 on the gates.
+
 Two parts of these acts are named here, at the reviewer's request:
 - **The record of the bytes in use.** The 46 bytes of the first family's items are recorded by the program, and the rows of the byte table for these bytes are restored after every update.
 - **One use of the keyed forward pass.** It is used once, at the change of task, to compute the directions in use. These were computed for E51 and saved with its keyed start, and E55 reads the saved directions. No forward pass of E55's updates or scoring reads the item.
@@ -211,13 +232,13 @@ Two parts of these acts are named here, at the reviewer's request:
   - the state of the reserve on long items is not bounded, and is measured on one panel of 40 letters;
   - no arm has both a reserve that reads the first family's content and an exact keeping.
 - **The order of the arms.** The four runs of `blind` were reported to the reviewer before the four runs of `shut` were started, as the coordinator's ruling asks.
-- **Costs.** The eight runs took 6.15 CPU-hours, 2,536 to 2,992 seconds each, against a forecast of about 1,370 seconds a run. The forecast came from 64-update dry runs; at 16,384 updates the scoring of twelve rows with longer items, and the slower generation once the network answers more, cost more.
+- **Costs.** Check 3 forecast 6.08 CPU-hours for the eight runs, 2,736 seconds a run. The runs took 6.148 CPU-hours, 2,536 to 2,992 seconds each.
 - **Interruptions.** No machine restart occurred and no run was interrupted. The folder `exp45/e55/interrupted/` is empty and not committed.
 - **Commit messages.** Every commit of this job carries the trailers of `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` and no name of a language model.
 - **Provenance.**
   - The four starts and checks 1 to 3 were made at commit `2abb0c3f`, while `exp55_reserve.py` was not yet committed. Their receipts record the runner's hash, which equals that of the committed file.
   - The receipts of the four dry runs of check 3 record a description in place of a command, because a helper called `exp55_reserve.run` directly. The helpers and the command behind each dry run are now committed in `helpers/`, with `helpers/README_HELPERS.md`, which also names the aborted launcher's logs.
-  - The run of `conflict` under back-propagation in the arm `blind` records commit `4e2a72c2`, and the other three record `d974f048`; the runner is the same file in both.
+  - In the arm `blind`, the run of `conflict` under back-propagation records commit `4e2a72c2` and the other three record `d974f048`. In the arm `shut`, the run of `conflict` under back-propagation records commit `77d92a72` and the other three record `fb0ec89a`. The runner is the same file in all eight.
 - **The limits of the arm `blind`.** The weights among the cells in reserve are free, so nothing bounds the state of the reserve on longer items or after more updates (section 4.1).
 
 ## 10. The difference between `exp51_reserve.run` and `exp55_reserve.run`
