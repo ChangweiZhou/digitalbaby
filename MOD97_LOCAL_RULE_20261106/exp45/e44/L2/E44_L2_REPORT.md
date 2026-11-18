@@ -63,11 +63,11 @@ The forecast was 48.2 before the trial and 48.0 after it.
 | When (UTC) | What happened | Lives affected | What was done |
 |---|---|---|---|
 | 17 Nov, 21:15 | The machine was stopped after the session went idle | The trial's two lives and world 2's `naive` long life, at visit 57, before any state was saved | Started again from the beginning at 22:07 |
-| 18 Nov, 00:57 | Container restart | World 1's `naive` and `replay` and world 2's `naive`, at visits 790 to 797 | Continued at 00:59 with `life --resume` from their states after 768 visits |
-| 18 Nov, about 05:20 | Container restart | World 4's two long lives, at visits 309 and 315 | Resumed from their states after 256 visits |
+| 18 Nov, 00:57 | Container restart | World 1's `naive` and `replay` and world 2's `naive`, at visits 790 to 797 | Continued at 00:59 with `life --resume` from their states after 768 visits: `lives/lw_naive_w1_v1024_state_v768.pt` (sha256 17b8f9254d18b3958509d1bc86a5406e94111c9002cb8c0ea5d7e62d6b205246), `lives/lw_replay_w1_v1024_rho0.5_state_v768.pt` (sha256 48596256a5b7f2257941cfd30908cd734b74d2c156347aea099fb26511a6982e), `lives/lw_naive_w2_v1024_state_v768.pt` (sha256 71919f4b8812a1dccbaad4692d37472cc8ac0853668b8d1030c7ac37bed81672) |
+| 18 Nov, about 05:20 | Container restart | World 4's two long lives, at visits 309 and 315 | Resumed from their states after 256 visits: `lives/lw_naive_w4_v1024_state_v256.pt` (sha256 47339b8d931b1809ef9e3a5cdd550360013e0f45e384bb03ec6a5f9336f94bd4), `lives/lw_replay_w4_v1024_rho0.5_state_v256.pt` (sha256 2ccdfafc445a9f5c1a01f4f9e4dd69dc33cec4fdbbce6e6147540cdff13f586f) |
 | 18 Nov, about 05:20 | Container restart | World 5's `replay` life, at visit 37, with no state | Started again from the beginning |
 
-The note's check 5 showed that a resumed life equals an uninterrupted one in weights, optimizer state, events, learned batches and list. No figure depends on an interruption.
+Each receipt records its resume under `resumes`, with the path and file hash of the state it was resumed from; that state is not in the receipt's list `states`, because a resumed life's list is the one held in the state it was resumed from. The states were removed from the tree afterwards and remain in the branch's history. The note's check 5 showed that a resumed life equals an uninterrupted one in weights, optimizer state, events, learned batches and list. No figure depends on an interruption.
 
 ## 2. Checks
 
@@ -195,7 +195,7 @@ On the list at 1,024 visits (2,685,000 answers), `naive` gives the last family's
 
 One sentence for each arm, with the figures it rests on:
 
-- **`naive`.** At 1,024 visits neither quantity rises with the number of earlier visits in any class of absence: kept stays between 0.000 and 0.027, and the first 16 updates between 0.086 and 0.173. At 256 visits kept does not rise either: it stays between 0.000 and 0.115, and the 0.115 rests on 26 items. The first 16 updates at 256 visits rise from 0.099 to 0.202 after absences of 2 to 4 visits, and not in the other two classes (0.102, 0.086, 0.101, 0.097, 0.151 and 0.076, 0.071, 0.061, 0.073, 0.099).
+- **`naive`.** Kept does not rise with the number of earlier visits in any class of absence: it stays between 0.000 and 0.027 at 1,024 visits, and between 0.000 and 0.115 at 256 visits, the 0.115 resting on 26 items. The figure after the first 16 updates is higher after 16 or more earlier visits than after one in every class and at both lengths, though not at every step between them: at 1,024 visits 0.173 against 0.123, 0.116 against 0.097, 0.111 against 0.086; at 256 visits 0.202 against 0.099, 0.151 against 0.102, 0.099 against 0.076.
 - **`replay`.** Both quantities rise with the number of earlier visits in every class of absence and at both lengths. At 1,024 visits kept rises from 0.093, 0.094 and 0.115 to 0.714, 0.693 and 0.658, and the first 16 updates from 0.331, 0.320 and 0.337 to 0.754, 0.720 and 0.696.
 - **`naive-wd0`.** Both quantities rise with the number of earlier visits in every class at 256 visits. Kept rises from 0.031, 0.028 and 0.000 to 0.219, 0.166 and 0.060, and the first 16 updates from 0.119, 0.105 and 0.059 to 0.414, 0.334 and 0.213.
 - **`replay-wd0`.** Both quantities rise with the number of earlier visits in every class at 256 visits. Kept rises from 0.113, 0.156 and 0.000 to 0.630, 0.630 and 0.592, and the first 16 updates from 0.150, 0.244 and 0.188 to 0.626, 0.637 and 0.618.
@@ -253,7 +253,7 @@ The rows with decay are read from the long lives' saved states. Without decay, b
 - Anything about the sweep; release 2 covers that, and a helper session runs the sweep's long lives.
 - A tuned replay share, a tuned store or the best decay: one value each was run.
 - Anything beyond 1,024 visits or 52 families, or at full scale.
-- Whether the rise of D15 under `replay` and `naive-wd0` comes from the family's earlier visits themselves or from what accompanies them. A family met more often has more of its items in the store, and its weights have grown with it.
+- Whether the rise of D15 under `replay` and `naive-wd0` comes from the family's earlier visits themselves or from what accompanies them. A family met more often has more of its items in the store, and its returns come later in the life: in the long lives the median visit of the returns after one earlier visit and after 16 or more is 355 and 451 (absences of 2 to 4 visits), 479 and 563 (5 to 32), 639 and 650 (33 or more); in the lives of 256 visits 114 and 122, 113 and 152, 180 and 211. The table separates neither the store nor the age of the life from the number of earlier visits.
 
 ## 8. Committed files
 
