@@ -121,7 +121,7 @@ def open_():
                 f = gate_figures(net, its)
                 print(f" {task}, rule {rule}, on {label}: cells with mean of 1 - z over positions and items above 0.1: {int((f['mean'] > 0.1).sum())}"
                       + (f" (receipt {rec['reserve']['reserve_cells_open_by_more_than_0p1']})" if its is pan else "")
-                      + f"; cells whose mean over items of 1 - z exceeds 0.1 at some position: {int((f['by_pos'] > 0.1).sum())}, exceeds 0.5 at some position: {int((f['by_pos'] > 0.5).sum())}; cells whose mean over items of the largest 1 - z over the positions of the item exceeds 0.5: {int((f['peak'] > 0.5).sum())}; "
+                      + f"; cells whose mean over items of 1 - z exceeds 0.1 at some position: {int((f['by_pos'] > 0.1).sum())}, exceeds 0.5 at some position: {int((f['by_pos'] > 0.5).sum())}; cells whose mean over items of the largest 1 - z over the positions of the item exceeds 0.5: {int((f['peak'] > 0.5).sum())}, exceeds 0.1: {int((f['peak'] > 0.1).sum())}; "
                       f"largest 1 - z of a cell at a position of an item {f['largest_opening']:.4f}; largest magnitude of a state of a cell in reserve {f['largest_state']:.4f}")
             # which positions: the mean over items and cells of 1 - z at each position of the panel's items (all of one length)
             for idx, x in rows_of(pan):
@@ -418,14 +418,16 @@ def emulate():
                         res, gens = V.score_first_family(net, S1, HELD); nonlocal_ref.setdefault("gens0", gens); g0 = nonlocal_ref["gens0"]
                         every = (f"; reduction score {res['reduction_score']:.2f}; of the 31,684 answers without letters {sum(a != b for n in gens if n.startswith('k0_') for a, b in zip(gens[n], g0[n]))} differ from row 0's")
                     return (f" row {g:5d}: loss {'-' if loss is None else format(loss, '.3f')}; never-taught {nt(s3):5.1f}, with the cells in reserve shut {nt(s3s):5.1f}; on the new task's items: cells with mean opening above 0.1: "
-                            f"{int((f['mean'] > 0.1).sum())}, cells whose mean over items of the largest 1 - z of an item exceeds 0.5: {int((peak / n > 0.5).sum())}, largest 1 - z {f['largest_opening']:.2e}, largest state {f['largest_state']:.2e}; "
+                            f"{int((f['mean'] > 0.1).sum())}, cells whose mean over items of the largest 1 - z of an item exceeds 0.5: {int((peak / n > 0.5).sum())} (exceeds 0.1: {int((peak / n > 0.1).sum())}), largest 1 - z {f['largest_opening']:.2e}, largest state {f['largest_state']:.2e}; "
                             f"on the first family's held-out items: largest 1 - z {ff['largest_opening']:.2e}, largest state {ff['largest_state']:.2e}, largest added unit {ff['largest_added_unit']:.2e}, "
                             f"answers that differ from row 0's {sum(a != b for a, b in zip(gh, nonlocal_ref['g0']))} of 1,200" + every)
                 nonlocal_ref = {}
                 arm = "shut-gates-free" if variant == "gates-free" else "shut"
                 t0 = time.time()
                 print(f"--- emulation, {task}, rule {rule}, arm `{arm}`" + ("" if variant in ("brief", "gates-free") else f", variant {variant}") + f", {n_up} updates", flush=True)
-                _, out = emulate_updates(W0, task, rule, MATSETS[arm], dirs, in_use, n_up, at, measure, scale_gate_rows=1e4 if variant == "scaled" else 1.0, zero_blocks=variant == "zeroed")
+                Wend, out = emulate_updates(W0, task, rule, MATSETS[arm], dirs, in_use, n_up, at, measure, scale_gate_rows=1e4 if variant == "scaled" else 1.0, zero_blocks=variant == "zeroed")
+                if os.environ.get("E55_CHECK_SAVE"):             # the emulated weights after the last update, for further figures (a scratch folder)
+                    np.savez(os.path.join(os.environ["E55_CHECK_SAVE"], f"emulated_{task}_{rule}_{arm}_{variant}_{n_up}.npz"), **Wend)
                 print(f"    ({time.time() - t0:.0f} s)", flush=True)
 
 
