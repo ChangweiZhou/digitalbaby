@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp50_code.py", line 637, in <module>
+    main(sys.argv)
+    ~~~~^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp50_code.py", line 616, in main
+    run(setting, rule, seed, Path(opt("--out", str(OUT))), cmd, dose=int(d) if d else None, verify_scorer="--verify-scorer" in a)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp50_code.py", line 330, in run
+    R_.refuse_existing(*paths.values(), *(str(p) + ".tmp" for p in paths.values()))
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp20_reference.py", line 127, in refuse_existing
+    assert not Path(p).exists(), f"output path exists, refused: {p}"
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: output path exists, refused: /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e50/e50_C46-one_S_73129.json
