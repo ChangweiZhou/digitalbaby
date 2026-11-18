@@ -59,7 +59,7 @@ def summarize(rec, upto=None):
     word = "learns the family" if learns else ("partly" if lv["taught"] >= 50 else "not learned")
     rise = lv["R"] - sum(x["R"] for x in [y for y in c if y["step"] <= c[-1]["step"] - 2048][-3:]) / 3
     return dict(updates=c[-1]["step"], A80=a, R80=r, T80=to80(c, "taught"), levels=lv, word=word, R_rise_2048=rise,
-                loss_last=c[-1]["loss"], masks_every_row=all(all(all(v.values()) for v in x["masks"].values()) for x in c))
+                loss_last=c[-1]["loss"], masks_every_row=(all(all(all(v.values()) for v in x["masks"].values()) for x in c) if "masks" in c[0] else None))
 
 
 def name_of(rec):
