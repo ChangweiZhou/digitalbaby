@@ -85,6 +85,7 @@ Share of the connections of `P8` replaced at an event: rule S: 7.2% over the fir
 | Rule | Updates to 80, R | Updates to 80, A | A at 12,288 / 24,576 / 49,152 / 122,880 | R at 12,288 / 24,576 / 49,152 / 122,880 | Rise before, last rise of R | Curve of R | CPU-hours |
 |---|---|---|---|---|---|---|---|
 | S | — | — | 7.0 / 8.0 / 12.9 / 17.7 | 7.0 / 8.1 / 10.1 / 13.4 | +1.4, -0.5 | flattened | 1.77 |
+| B | — | 112,384 | 28.6 / 35.6 / 52.7 / 79.8 | 26.8 / 32.9 / 49.9 / 75.0 | +2.5, -0.7 | flattened | 1.65 |
 
 ## Predictions
 
@@ -98,4 +99,5 @@ Share of the connections of `P8` replaced at an event: rule S: 7.2% over the fir
 | P54.6 | no | {"updates_to_80_R": null} |
 | P54.7 | yes | {"updates_to_80_R": null} |
 | P54.8 | yes | {"generalises_better": []} |
+| P54.9 | no | {"updates_to_80_R": null} |
 | P54.10 | yes | {"level_R": 13.433333333333332} |
