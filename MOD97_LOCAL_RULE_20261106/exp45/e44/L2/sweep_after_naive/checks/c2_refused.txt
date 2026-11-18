@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 1017, in <module>
+    main(sys.argv[1:])
+    ~~~~^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 1004, in main
+    life = Life(arm, world, visits, a.rho, a.H, a.U, a.visit_updates, a.p_new, a.lr, a.wd, a.tag,
+                bg, a.birth_cap, a.birth_need, a.world, a.learner, a.in_turn, a.taught_share, a.lowest, ss, a.list_every, dd)
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 434, in __init__
+    self.m, self.cfg["learner"] = load_learner(learner, H, U, arm)
+                                  ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/smallworld/sw_run.py", line 247, in load_learner
+    assert rec["rule"] == want, f"arm {arm} lives from E41's rule {want}, not {rec['rule']}"
+           ^^^^^^^^^^^^^^^^^^^
+AssertionError: arm sweep-after-naive lives from E41's rule B, not S
+exit 1
