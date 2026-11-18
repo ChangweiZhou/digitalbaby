@@ -6,4 +6,14 @@
 
 ## Findings so far
 
-None is established yet.
+Figures are given as sweep; back-propagation. The script is `check_e55_brief_r3.py` beside this file; its parts are named with the figures.
+
+**A1, the start `blind`** (part `blind_start`; the start written in numpy as the brief's `make_blind` and `load_start55` write it).
+
+- The directions in use of the recurrent matrix and of `lm` contain the constant: the part of the constant outside them has a 2-norm of 1.4e-15; 1.6e-15 and 1.8e-15; 1.5e-15. The projection therefore brings the bias of the rows of the reserve in the recurrent matrix and of rows 256 to 511 of `lm` to zero (at most 2.7e-16 before `zero_blocks`), as the brief says. At the input map and at `l2` the constant is not among the directions (0.77; 0.79 and 0.94; 0.93 of it lie outside), and the biases there are not brought to zero (up to 0.08 and 0.06); the brief does not say that they are.
+- Every limit of check 1 for the start `blind` can be met. (b): 3.1e-9; 3.7e-9 at the input map and 2.3e-9; 2.9e-9 at `l2`, exactly 0 at the two other blocks, against 1e-5. (c), on the 1,200 held-out pairs and on the 2,000 items: the largest state of a cell in reserve is 6.6e-8; 7.6e-8 in double precision and 2.6e-7; 3.5e-7 in single precision, against 1e-5; the largest added readout unit at an answer position is 4.9e-8; 6.6e-8 and 2.3e-7; 4.0e-7, against 1e-5; the largest difference of an output from the keyed start under the keyed forward is 1.7e-7; 1.9e-7 in double precision and 1.1e-5; 7.6e-6 in single precision, against 1e-4. On the first batch of each new task the largest state of a cell in reserve is 0.15; 0.15 (`unrelated`) and 0.07; 0.09 (`conflict`), against a lower limit of 1e-3. (d): 0; 0 of the 32,884 answers differ.
+- Each limit can fail when the start is wrong. With no projection, with the gate rows of the reserve alone made blind, or with the rows of the reserve made blind in the input map and not in the recurrent matrix, the largest state of a cell in reserve on the held-out pairs is 0.59 to 0.93, the largest difference of an output 2.4 to 3.2, and 12 to 45 of the 1,200 held-out answers differ.
+
+**A1, the rule of the arm `blind` after eight updates** (part `blind_check2`). The limits of check 2 (a) and (d) can be met: at the rows kept blind the largest entry of `D_after @ Vm` is 3.1e-9 to 3.8e-9 (limit 1e-5); the largest state of a cell in reserve on the two panels is 6.3e-8 to 6.9e-8 in double precision and 2.7e-7 to 3.9e-7 in single precision (limit 1e-5); the largest change of an output is 4.0e-7 to 6.7e-7 (limit 1e-4); what a row of the reserve receives from the input map on a byte of the new task has changed by 0.14 to 0.20 in its largest magnitude (lower limit 0.01); at the old rows the largest entry of `(D_after − D_start) @ Vm` is 1.3e-8 to 1.5e-8 (limit 1e-5).
+
+The emulation of the arm `blind` to 16,384 updates is running; its table is entered when rows exist.
