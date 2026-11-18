@@ -242,6 +242,38 @@ def ridge_classifier(Xtr, ytr, Xte, yte, ncls):
     return 100.0 * float((pred == yte).mean()), lam
 
 
+def softmax_classifier(Xtr, ytr, Xte, yte, ncls, iters=300):
+    """Multinomial logistic regression (a linear map and a softmax): features standardized as above; the mean cross-entropy
+    plus mu * |W|^2 / 2 (bias not penalized) minimized by 300 steps of Nesterov's accelerated gradient with step 1 / L, L the
+    bound 0.5 * (largest eigenvalue of X'X / n) + mu; mu chosen from {1e-4, 1e-3, 1e-2} by 5-fold cross-validation inside the
+    training half; the class is the largest output."""
+    mu_, sd = Xtr.mean(0), Xtr.std(0)
+    sd[sd < 1e-8] = 1.0
+    A, Bm = (Xtr - mu_) / sd, (Xte - mu_) / sd
+    folds = np.arange(len(A)) % 5
+
+    def fit(X, y, mu):
+        X1 = np.concatenate([X, np.ones((len(X), 1))], 1)
+        Y = np.eye(ncls)[y]
+        L = 0.5 * np.linalg.eigvalsh(X1.T @ X1 / len(X1))[-1] + mu
+        W = np.zeros((X1.shape[1], ncls)); V = W.copy(); tk = 1.0
+        pen = np.ones((X1.shape[1], 1)); pen[-1] = 0.0
+        for _ in range(iters):
+            S = X1 @ V
+            S -= S.max(1, keepdims=True)
+            P = np.exp(S); P /= P.sum(1, keepdims=True)
+            Wn = V - (X1.T @ (P - Y) / len(X1) + mu * pen * V) / L
+            tn = (1 + (1 + 4 * tk * tk) ** 0.5) / 2
+            V = Wn + (tk - 1) / tn * (Wn - W)
+            W, tk = Wn, tn
+        return lambda Z: np.concatenate([Z, np.ones((len(Z), 1))], 1) @ W
+
+    mus = [1e-4, 1e-3, 1e-2]
+    cv = [sum(int((fit(A[folds != k], ytr[folds != k], mu)(A[folds == k]).argmax(1) == ytr[folds == k]).sum()) for k in range(5)) for mu in mus]
+    mu = mus[int(np.argmax(cv))]
+    return 100.0 * float((fit(A, ytr, mu)(Bm).argmax(1) == yte).mean()), mu
+
+
 def majority(ytr, yte):
     return 100.0 * float((yte == np.bincount(ytr).argmax()).mean())
 
@@ -261,7 +293,7 @@ def main():
              "T": "T (taught pairs, 12 letters; add, sub, max, min, 300 items each)"}
     head("0", f"what is read: {REF} at {commit[:12]}, folder {E50}; the panels rebuilt for seed {SEED}: "
               + "; ".join(f"{k} {sum(len(v) for v in PAN[k].values())} items" for k in "ART"))
-    S1, S2, S3, S4 = {}, {}, {}, {}
+    S1, S3, S4 = {}, {}, {}
     for s in SETTINGS:
         for r in "SB":
             key = f"{s} {r}"
@@ -295,7 +327,7 @@ def main():
             # ---- 1 and 2: the readout's two inputs
             res = {}
             for p in "ART":
-                cnt = dict(intact=0, l2_mean=0, l2_zero=0, lm_mean=0, lm_zero=0)
+                cnt = {c: np.zeros(4, int) for c in ("intact", "l2_mean", "l2_zero", "lm_mean", "lm_zero")}
                 for task in PAN[p]:
                     items, x, y, mask, z1, Hs = cache[(p, task)]
                     a2 = z1 @ n.W2.T                     # the direct path, without its bias
@@ -305,7 +337,9 @@ def main():
                     for c, (u, v) in dict(intact=(a2, mh), l2_mean=(a2m, mh), l2_zero=(0.0, mh),
                                           lm_mean=(a2, mhm), lm_zero=(a2, 0.0)).items():
                         pred = (np.tanh(u + n.b2 + v + n.bm) @ n.W3.T + n.b3).argmax(-1)
-                        cnt[c] += exact_from(pred, y, mask)
+                        q = len(items[0][0])
+                        right = pred[:, q:q + 3] == y[:, q:q + 3]       # the three answer outputs, fed the right bytes
+                        cnt[c] += np.array([exact_from(pred, y, mask), *right.sum(0)])
                 tot = sum(len(v) for v in PAN[p].values())
                 res[p] = {c: (v, tot) for c, v in cnt.items()}
             S1[key] = res
@@ -336,14 +370,16 @@ def main():
                                  ("h at = -> a1", Hq, "a1"), ("h at = -> operation", Hq, "op")):
                     nc = int(lab[k].max()) + 1 if k == "op" else 10
                     acc, lam = ridge_classifier(X[tr], lab[k][tr], X[te], lab[k][te], nc)
-                    out3[nm] = (acc, majority(lab[k][tr], lab[k][te]), lam, len(tr), len(te))
+                    sm = softmax_classifier(X[tr], lab[k][tr], X[te], lab[k][te], nc)[0] if k in ("d1", "d2") else None
+                    out3[nm] = (acc, majority(lab[k][tr], lab[k][te]), lam, len(tr), len(te), sm)
                 S3[key][p] = out3
                 # 4: eta squared per cell at `=`
                 var = Hq.var(0)
                 out4 = {}
+                S4[key].setdefault("groups", {})[p] = {k: int(len(set(lab[k].tolist()))) for k in ("b2", "b1", "a2", "a1")}
                 for k in ("b2", "b1", "a2", "a1"):
                     g = lab[k]
-                    between = sum((g == v).sum() * (Hq[g == v].mean(0) - Hq.mean(0)) ** 2 for v in range(10)) / N
+                    between = sum((g == v).sum() * (Hq[g == v].mean(0) - Hq.mean(0)) ** 2 for v in range(10) if (g == v).any()) / N
                     eta = np.where(var > 1e-12, between / np.maximum(var, 1e-300), 0.0)
                     out4[k] = eta
                 S4[key][p] = (out4, N, int((var <= 1e-12).sum()))
@@ -351,26 +387,25 @@ def main():
             own = n.owner
             ndig = np.array([len({int(own[v]) for v in np.nonzero(n.mask_in[i])[0] if own[v] in DIGITS}) for i in range(U)])
             S4[key]["ndig"] = ndig
-            S2[key] = None
             print(f"     [{time.time() - t1:.0f} s]", flush=True)
             del n, cache
 
     head("1", "the direct path l2 z1 at the readout: exact answers (greedy) with l2 z1 intact; replaced at each position by its mean over "
-              "the items of the same operation of the panel; removed (the product set to zero, the bias of l2 kept). Per cent [items]")
+              "the items of the same operation of the panel; removed (the product set to zero, the bias of l2 kept). Per cent exact (in brackets: per cent right at the three answer outputs, first digit, second digit, end symbol, each fed the right bytes) [items]")
     for p in "ART":
         print(f"   panel {PNAME[p]}")
         for key in S1:
             r = S1[key][p]
-            print(f"      1.{p} {key:10s}: intact {100 * r['intact'][0] / r['intact'][1]:6.2f}  mean {100 * r['l2_mean'][0] / r['l2_mean'][1]:6.2f}  "
-                  f"removed {100 * r['l2_zero'][0] / r['l2_zero'][1]:6.2f}   [{r['intact'][1]} items]")
+            f3 = lambda v: f"{100 * v[0][0] / v[1]:6.2f} ({', '.join(f'{100 * w / v[1]:.1f}' for w in v[0][1:])})"
+            print(f"      1.{p} {key:10s}: intact {f3(r['intact'])}  mean {f3(r['l2_mean'])}  removed {f3(r['l2_zero'])}   [{r['intact'][1]} items]")
     head("2", "the cells silenced at the readout: exact answers (greedy) with lm h replaced at each position by its mean over the items of "
-              "the same operation of the panel; removed (the product set to zero, the bias of lm kept; the same as the source's `silence`). Per cent [items]")
+              "the same operation of the panel; removed (the product set to zero, the bias of lm kept; the same as the source's `silence`). Per cent exact (in brackets: per cent right at the first digit, second digit, end symbol, fed the right bytes) [items]")
     for p in "ART":
         print(f"   panel {PNAME[p]}")
         for key in S1:
             r = S1[key][p]
-            print(f"      2.{p} {key:10s}: intact {100 * r['intact'][0] / r['intact'][1]:6.2f}  mean {100 * r['lm_mean'][0] / r['lm_mean'][1]:6.2f}  "
-                  f"removed {100 * r['lm_zero'][0] / r['lm_zero'][1]:6.2f}   [{r['intact'][1]} items]")
+            f3 = lambda v: f"{100 * v[0][0] / v[1]:6.2f} ({', '.join(f'{100 * w / v[1]:.1f}' for w in v[0][1:])})"
+            print(f"      2.{p} {key:10s}: intact {f3(r['intact'])}  mean {f3(r['lm_mean'])}  removed {f3(r['lm_zero'])}   [{r['intact'][1]} items]")
     head("3", "share of test items classified right (per cent) by a least-squares classifier (ridge, lambda by 5-fold cross-validation in the "
               "training half) fitted on one half of the panel's items and tested on the other; [share of the most frequent training class "
               "in the test half]; `=` is the position where the first answer digit is read out, `next` the following position (input: the right first digit)")
@@ -380,12 +415,13 @@ def main():
         print(f"   panel {p}: {ntr} training items, {nte} test items")
         for key in S3:
             o = S3[key][p]
-            print(f"      3.{p} {key:10s}: " + "; ".join(f"{nm} {v[0]:.1f} [{v[1]:.1f}]" for nm, v in o.items()))
+            print(f"      3.{p} {key:10s}: " + "; ".join(f"{nm} {v[0]:.1f}" + (f" (softmax {v[5]:.1f})" if v[5] is not None else "") + f" [{v[1]:.1f}]" for nm, v in o.items()))
     head("4", "for each cell, eta squared = (variance between the ten groups of a digit's value) / (total variance) of its state at `=`, over "
-              "the panel's items; number of cells with eta squared above 0.05 and above 0.20 (of 256)")
+              "the panel's items (groups with no item left out); number of cells with eta squared above 0.05 and above 0.20 (of 256)")
     for p in "RA":
         any_key = next(iter(S4))
-        print(f"   panel {p}: {S4[any_key][p][1]} items")
+        print(f"   panel {p}: {S4[any_key][p][1]} items; values present: " + ", ".join(f"{k} {v}" for k, v in S4[any_key]['groups'][p].items())
+              + f"; with g groups and N items the expected eta squared of a variable unrelated to the digit is (g - 1) / (N - 1)")
         for key in S4:
             out4, N, zero = S4[key][p]
             print(f"      4.{p} {key:10s}: " + "; ".join(f"{k} {int((e > .05).sum())} / {int((e > .20).sum())}" for k, e in out4.items())

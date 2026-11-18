@@ -1,6 +1,6 @@
 """Verification of E57 (the sweep with a scale for each receiving unit, and with a code that is not decayed; seed 73129).
 
-The worker's branch is claude/e50-fixed-input-code-017dSE; the report is read at commit 85417d06. The document is
+The worker's branch is read at commit 85417d06; the report is that commit's. The document is
 E57_VERIFICATION_20261118.md (same folder); every figure of it is printed here with the number of its section.
 
     python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e57_verify.py          (from the repository's root; about four minutes)
@@ -358,7 +358,8 @@ def section1():
     lost = (sum(cu) - (r4096["cpu_updates"] + r4096["cpu_scoring"] + r4096["cpu_cosines"])) / 3600
     print(f"    the nine runs: {run_h:.2f} CPU-hours (updates, scoring and readings), of which the readings {cos_h:.2f}")
     print(f"    the check receipts' own 'cpu' entries: {chk_h:.2f} CPU-hours; check 8's two dry runs (subprocesses, not in check 8's entry): {d8:.2f};"
-          f" the killed process's updates after its saved state of 4,096 (to its last row {last.split()[6]}): at least {lost:.2f}; together at least {chk_h + d8 + lost:.2f}")
+          f" the killed process's updates after its saved state of 4,096 (to its last row {last.split()[6].strip(":")}): at least {lost:.2f}; together at least {chk_h + d8 + lost:.2f}")
+    print(f"    the whole job (runs and checks): at least {run_h + chk_h + d8 + lost:.2f} CPU-hours, against the report's {run_h:.2f} + {chk_h:.2f}; the brief's estimate 13.1 + 1.5")
     print(f"    wall time of the queue: {q.splitlines()[0][:20]} to {q.splitlines()[-1][:20]}")
     clock("section 1")
     return run_h, cos_h, chk_h
@@ -811,6 +812,7 @@ def section4():
     print(f"    in16 row S, R from 44,032: {tailR}")
     print(f"    in16 row S, A around its 80: {tailA}; windows of three rows at or above 80 on R in the whole run: {windows};"
           f" rows at or above 80 on R: {sum(x['R'] >= 80 for x in c)} of 193, after 44,800: {sum(x['R'] >= 80 for x in c if x['step'] >= 44800)} of {sum(1 for x in c if x['step'] >= 44800)}")
+    print(f"    in16 row S: updates from R's 80 (three rows) to the end of the run: {c[-1]['step'] - reach(c, 'R'):,}; from A's 80: {c[-1]['step'] - reach(c, 'A'):,}")
     single = next((x["step"] for x in c if x["step"] > 0 and x["R"] >= 80), None)
     print(f"    in16 row S, first single row at or above 80 on R: {single:,}; on A: {next(x['step'] for x in c if x['step'] > 0 and x['A'] >= 80):,}")
     print("4.2 the words of describe and the number of scored rows by which the candidate's updates to 80 would have to move to change them")
@@ -826,6 +828,12 @@ def section4():
                 xc = FIG[L_][sc]
                 print(f"    {L_:33s} {sc} against E49 B ({xr:,}): {fmt(xc):>11s} -> {describe(xr, xc, 24064, FIG[L_]['updates'] - 512)}"
                       + (f" (recordable {FIG[L_]['updates'] - 512:,} = x{(FIG[L_]['updates'] - 512) / xr:.2f})" if xc is None else f" (x{xc / xr:.2f})"))
+    fb = first_below()
+    print("    the first reading at which the cosine of l1 under matrix is below 0.5, and the mean training loss of that scored row: "
+          + "; ".join(f"{k} {v[0]:,} ({v[1]:.3f})" for k, v in fb.items() if v[0] is not None))
+    for cand, ref in (("F10 row S", "E42 F10 S"), ("F10 rowcol S", "E42 F10 S"), ("G row S", "E42 G S")):
+        print(f"    {cand} minus {ref} in updates to 80: A {FIG[cand]['A80'] - FIG[ref]['A80']:+,}, R {FIG[cand]['R80'] - FIG[ref]['R80']:+,}"
+              f" (the range of E42's three seeds under the sweep, by the brief: 768)")
     print("4.3 the predictions")
     pr = predictions()
     for k, (v, why) in pr.items():
@@ -891,7 +899,7 @@ def section6():
         for n in names:
             for mo in re.finditer(r"(?i)(?<![a-z])" + n + r"(?![a-z])", t):
                 s = t[max(0, mo.start() - 8):mo.end() + 1]
-                if t[mo.end():mo.end() + 1] == "/" or "origin/" in s:          # a branch name (claude/..., codex/...)
+                if t[mo.end():mo.end() + 1] == "/" or "origin/" in s:          # a branch name: the name followed by a slash
                     continue
                 nn += 1
         tot_m += nm; tot_n += nn
