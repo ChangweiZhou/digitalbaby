@@ -124,3 +124,13 @@ What follows. Cells can receive the feedback of the error. For the present task,
 Translation (the reviewer's). For example, in the addition used before, the program should be able to obtain the right answer; we can give it the right answer, together with the absolute value of how far off it was, as an additional piece of feedback.
 
 What follows. For the arithmetic of the first family the feedback may consist of yes or no, the right answer, and the absolute difference between the answer the tissue gave and the right one. The definition of the tissue must have a place where such feedback enters.
+
+## 15. Mr. Xu's rulings of 23:18 UTC: a random coordinate for each cell; the output end's information fed back to the input end
+
+The reviewer had reported that the third reader proposed an ordered ring of cells so that distances between cells exist. Mr. Xu:
+
+> 为什么一开始不能给每个细胞一个随机生成的坐标呢？我还是无法理解。我们可以假设输入端可以得到输出端信息的反馈。在NLP任务中这是next byte prediction的结果，但在其他任务中可以是其他的。
+
+Translation (the reviewer's). Why can each cell not be given a randomly generated coordinate at the start? I still cannot understand. We can assume that the input end can receive the feedback of the output end's information. In language tasks this is the result of the prediction of the next byte, but in other tasks it can be something else.
+
+What follows. (1) Each cell has a coordinate drawn at random at the start; near and far are distances between coordinates. No ordered arrangement is laid down. (2) The input end receives the feedback of the output end's information. In the present task that information is the result of the prediction of the next byte; the definition leaves open what it is in other tasks.
