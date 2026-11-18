@@ -1,0 +1,103 @@
+{
+ "copy_byte_identical": true,
+ "spec_sha256": "031adf6592a13bffd4dfe88ded12b4109a12d8bb9e891db61da865e21176acd0",
+ "copy_sha256": "031adf6592a13bffd4dfe88ded12b4109a12d8bb9e891db61da865e21176acd0",
+ "returncode": 0,
+ "stdout": [
+  "1. F10 local=False: logits differ by 1.8e-07; gradients (largest relative): recurrent 1.4e-07, the others 1.8e-07, a 0.0e+00",
+  "1. F10 local=True: logits differ by 1.8e-07; gradients (largest relative): recurrent 1.2e-07, the others 2.6e-07, a 0.0e+00",
+  "1. P8 local=False: logits differ by 1.8e-07; gradients (largest relative): recurrent 7.6e-08, the others 1.8e-07, a 1.5e-07",
+  "1. P8 local=True: logits differ by 1.8e-07; gradients (largest relative): recurrent 1.2e-07, the others 2.5e-07, a 1.7e-07",
+  "2. connections at 16 x 16 equal E42's: True",
+  "3. 256 cells, periods one: weights 935,953; multiply-adds 930,560 (with periods 930,560); cells by period {1: 256}; mean difference in log2 period across a connection 0.00; farthest cell 0 grid steps = 0 connections",
+  "3. 1024 cells, periods one: weights 965,905; multiply-adds 955,904 (with periods 955,904); cells by period {1: 1024}; mean difference in log2 period across a connection 0.00; farthest cell 8 grid steps = 3 connections",
+  "3. 1024 cells, periods place: weights 971,665; multiply-adds 955,904 (with periods 936,500); cells by period {1: 256, 2: 192, 4: 192, 8: 192, 16: 192}; mean difference in log2 period across a connection 0.59; farthest cell 8 grid steps = 3 connections",
+  "3. 1024 cells, periods scatter: weights 971,665; multiply-adds 955,904 (with periods 936,500); cells by period {1: 256, 2: 192, 4: 192, 8: 192, 16: 192}; mean difference in log2 period across a connection 1.13; farthest cell 8 grid steps = 3 connections",
+  "3. 4096 cells, periods one: weights 1,085,713; multiply-adds 1,057,280 (with periods 1,057,280); cells by period {1: 4096}; mean difference in log2 period across a connection 0.00; farthest cell 24 grid steps = 8 connections",
+  "3. 4096 cells, periods place: weights 1,114,513; multiply-adds 1,057,280 (with periods 960,260); cells by period {1: 256, 2: 960, 4: 960, 8: 960, 16: 960}; mean difference in log2 period across a connection 0.26; farthest cell 24 grid steps = 8 connections",
+  "3. 4096 cells, periods scatter: weights 1,114,513; multiply-adds 1,057,280 (with periods 960,260); cells by period {1: 256, 2: 960, 4: 960, 8: 960, 16: 960}; mean difference in log2 period across a connection 1.22; farthest cell 24 grid steps = 8 connections",
+  "4. a changed byte reaches a cell no sooner than its distance allows: True | changes only at update positions: True | with far cells off they are zero: True | logits finite: True",
+  "   with far cells held at their mean they equal it: True",
+  "   draws at 16 a side equal the audit's digests (connections, periods place, periods scatter, phases): True",
+  "   draws at 32 a side equal the audit's digests (connections, periods place, periods scatter, phases): True",
+  "   draws at 64 a side equal the audit's digests (connections, periods place, periods scatter, phases): True",
+  "   local=False: every parameter has a finite gradient: True; share of far cells' recurrent weights with a non-zero gradient 0.90",
+  "   local=True: every parameter has a finite gradient: True; share of far cells' recurrent weights with a non-zero gradient 0.90",
+  "5. 256 cells, periods one: 0.255 CPU-seconds per forward and backward (sweep)",
+  "5. 1024 cells, periods one: 0.523 CPU-seconds per forward and backward (sweep)",
+  "5. 1024 cells, periods place: 0.989 CPU-seconds per forward and backward (sweep)",
+  "5. 4096 cells, periods one: 2.348 CPU-seconds per forward and backward (sweep)",
+  "5. 4096 cells, periods place: 3.831 CPU-seconds per forward and backward (sweep)"
+ ],
+ "stderr": "",
+ "lines_compared": 19,
+ "lines_identical": false,
+ "differences": [
+  [
+   "1. F10 local=False: logits differ by 1.8e-07; gradients (largest relative): recurrent 1.4e-07, the others 1.8e-07, a 0.0e+00",
+   "1. F10 local=False: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.1e-07, the others 2.3e-07, a 0.0e+00"
+  ],
+  [
+   "1. F10 local=True: logits differ by 1.8e-07; gradients (largest relative): recurrent 1.2e-07, the others 2.6e-07, a 0.0e+00",
+   "1. F10 local=True: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.8e-07, the others 3.5e-07, a 0.0e+00"
+  ],
+  [
+   "1. P8 local=False: logits differ by 1.8e-07; gradients (largest relative): recurrent 7.6e-08, the others 1.8e-07, a 1.5e-07",
+   "1. P8 local=False: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.5e-07, the others 2.3e-07, a 9.8e-08"
+  ],
+  [
+   "1. P8 local=True: logits differ by 1.8e-07; gradients (largest relative): recurrent 1.2e-07, the others 2.5e-07, a 1.7e-07",
+   "1. P8 local=True: logits differ by 2.4e-07; gradients (largest relative): recurrent 1.2e-07, the others 3.0e-07, a 1.3e-07"
+  ]
+ ],
+ "differences_only_rounding_residues_within_tolerance": true,
+ "unexplained_differences": [],
+ "spec_only_imported_by_runner": true,
+ "pass": true,
+ "check": 1,
+ "cpu": 0.0015979200000000304,
+ "wall": 24.908535957336426,
+ "provenance": {
+  "command": "python3 exp47_local.py check 1",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "7da5c453b31205607e31fa8e6249379dae5fe3e5",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "exp47_local.py": "85981fbeb496c3e447187628193f4b9b05efd81905839cea8602a1f0bcb22b48",
+   "e47_local.py": "031adf6592a13bffd4dfe88ded12b4109a12d8bb9e891db61da865e21176acd0",
+   "exp42_cells.py": "340f9cc5dc876a24996b75263e3022e9529590ceca0a6e07f2ec829c93a7c7b5",
+   "e42_cells.py": "985814d02496c847cc4814644513cb5d711b0e6c381e3361f280b4034c44e89e",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "runner_sha256": "85981fbeb496c3e447187628193f4b9b05efd81905839cea8602a1f0bcb22b48",
+  "spec_sha256": "031adf6592a13bffd4dfe88ded12b4109a12d8bb9e891db61da865e21176acd0",
+  "e42_runner_source": "origin/claude/gallant-dijkstra-i9zgsr at 0de93296 (exp42_cells.py, e42_cells.py: the blobs of 534df8f0)",
+  "torch": "2.15.0+cpu",
+  "python": "3.13.18"
+ }
+}
