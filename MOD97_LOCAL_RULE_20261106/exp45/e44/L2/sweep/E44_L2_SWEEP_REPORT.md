@@ -114,6 +114,8 @@ Each entry is the sweep's figure minus back-propagation's: the mean over the fou
 - **Without the store:** over 1,024 visits, the sweep is **behind** back-propagation in late level, and its score trend over the second half is **the same as** back-propagation's. The difference in the trend is +0.036, with an interval that includes zero. In all four worlds the sweep's late level is below `naive`'s at 1,024 visits, by 0.019 to 0.128. At 256 visits the sweep is **level**: −0.086, with an interval reaching +0.007.
 - **With the store:** over 1,024 visits, the sweep is **level** in late level, and its score trend over the second half is **the same as** back-propagation's. Both differences change sign across the worlds. World 2 (seed 93683) carries most of the negative mean: −0.238 in late level at 1,024 visits. In worlds 1 and 4 the sweep with the store is ahead, by +0.054 and +0.061.
 
+**Third clause** (the reviewer's addition, section 5.7): with and without the store, the difference has **not changed** from the first 64 visits to the late window.
+
 **Overtaking in time.** This would show as a steeper score trend together with a late level that is behind or level. It is **not seen** up to 1,024 visits, with or without the store. The pattern holds in three of the four worlds without the store: the sweep's score trend in the second half exceeds `naive`'s by +0.073 (world 1), +0.056 (world 2) and +0.073 (world 4). In world 3 it is −0.059. Over the four worlds the difference is not distinguished. The sweep's trend of learning is lower than back-propagation's at 256 visits without the store. At 1,024 visits it is not distinguished.
 
 **Closed (D12).** Neither comparison is closed at 1,024 visits. Without the store, the late-level difference is *not distinguished* at 256 visits and *lower* at 1,024. With the store, it is *not distinguished* at both lengths.
@@ -182,6 +184,19 @@ The `sweep+replay` cells hold 56 to 534 returns each.
 
 **`sweep+replay`:** both quantities rise with the number of earlier visits in every class of absence. For absences of 33 or more, kept at return goes from 0.070 to 0.598, and the share over the first 16 updates from 0.262 to 0.642. The same rise is seen under `replay`, from 0.117 to 0.696. A family met more often has more of its items in the store, so this table cannot tell a memory that lasts longer by itself from more rehearsal.
 
+### 5.7 Early level and the change of the difference (the reviewer's addition)
+
+The reviewer added this reading on 17 November at 22:35 UTC, after the lives had started; no run changed for it. The **early level** of a life is the mean of D2 over its first 64 visits (visits 0 to 63). For each pair, the **change** in each world is the late difference minus the early difference. Its mean and 90% interval over the four worlds are formed as in D11. The change is called *grown*, *not changed* or *shrunk* by that interval. The figures are in `final/E44_L2_SWEEP_EARLY.md` and `final/E44_L2_SWEEP_EARLY.json`, written by `python3 smallworld/l2_sweep_early.py` from the same score files.
+
+| Pair | Early difference | Late difference at 1,024 visits | Change |
+|---|---|---|---|
+| `sweep` − `naive` | −0.037 [−0.091, +0.017] | −0.066 [−0.120, −0.013] | −0.029 [−0.060, +0.001]: **not changed** |
+| `sweep+replay` − `replay` | −0.043 [−0.100, +0.015] | −0.042 [−0.206, +0.121] | +0.000 [−0.138, +0.139]: **not changed** |
+
+With the late window at 256 visits, the change is −0.049 [−0.107, +0.010] without the store and −0.020 [−0.168, +0.127] with it; both are *not changed*. **Third clause of the fixed sentences:** the difference has **not changed** from the first 64 visits to the late window of 1,024 visits, with or without the store. Without the store its interval lies almost wholly on the side of shrinking, which is the opposite of overtaking.
+
+In these lives the sweep's early level is not above back-propagation's: the early difference is −0.037. The reviewer's figure from the calibration, by which the arm `sweep` is ahead of `naive` by +0.161 before any life, is a different quantity measured in different lives (E44_GATE_FOR_THE_SWEEP_20261117.md). The two are not compared here.
+
 ## 6. Predictions (the reviewer's, on file before any life)
 
 | | Statement | Chance | Outcome |
@@ -203,7 +218,7 @@ The `sweep+replay` cells hold 56 to 534 returns each.
 
 ## 8. Committed files
 
-The list below is from `git ls-tree -r --name-only HEAD MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep*` at commit `184298f7`, which adds this report; the list was appended in the next commit, `87db9681`, which changes only this file.
+The list below is from `git ls-tree -r --name-only HEAD MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep*` at commit `184298f7`, which adds this report; the list was appended in the next commit, `87db9681`, which changes only this file. The three files of section 5.7 were added later, and the list was updated by hand to include them.
 
 ```
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/E44_L2_SWEEP_REPORT.md
@@ -255,6 +270,8 @@ MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c6_sweep_replay/lw_sweep+rep
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c6_sweep_replay/lw_sweep+replay_w1_v4_rho0.5_list.npz
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/check_jobs.json
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/final/E44_L2_SWEEP.json
+MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/final/E44_L2_SWEEP_EARLY.json
+MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/final/E44_L2_SWEEP_EARLY.md
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/final/E44_L2_SWEEP_TABLES.md
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/final/curves_w1.csv
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/final/curves_w2.csv
@@ -359,6 +376,7 @@ MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/scores/lw_sweep_w4_v1024_V256.json
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/sweep_jobs.json
 MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep.py
 MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep_checks.py
+MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep_early.py
 MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep_report.py
 MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep_restart.sh
 ```
