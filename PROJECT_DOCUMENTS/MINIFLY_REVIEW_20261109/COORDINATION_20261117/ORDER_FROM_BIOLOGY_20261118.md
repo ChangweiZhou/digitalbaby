@@ -22,3 +22,9 @@ Nothing further is run with the sweep or the exact gradient, and E61 is not run 
 ## What the reviewer would arrange first, on Mr. Xu's word
 
 An agent writes the exact description of item 0 from the page, with every number listed; a second agent, which has not seen the first one's reasoning, goes through that description line by line with one question, whether a cell can do this; only then is anything programmed, and the coordinator releases and assigns it.
+
+## Correction of 22:06 UTC: items 1 to 3 as written above are wrong, and are withdrawn
+
+Mr. Xu asked how a single nerve cell could see the answer. It cannot. Item 1 has the right byte "arrive on a separate part of the output cells". For that the program must know which cell stands for the right answer and carry the answer to that cell. That is the labelled target of supervised training in other words; it is an act of the program that reads the item, and nothing in living tissue does it. Items 2 and 3 start from the same device ("when the shown answer differs from the attempt", "the shown answer changes the activity of the output cells") and fall with it.
+
+What biology gives is only this: the answer reaches the learner as it reaches an animal, through the senses, as the next input on the same input lines as every other byte, and to the cells that receive input. No cell is told that it is an answer. What a cell that receives input has at that moment is what arrives over its input synapses and what arrives over its synapses from other cells. How a change of the right synapses follows from that is not something the reviewer can state from established biology; it is the question of the project, and the reviewer should not have written a mechanism as if biology supplied it. Items 1 to 3 are to be written again from this point, after discussion with Mr. Xu, and not before.
