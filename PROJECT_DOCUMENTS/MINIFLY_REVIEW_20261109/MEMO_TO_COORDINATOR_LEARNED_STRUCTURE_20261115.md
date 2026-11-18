@@ -135,6 +135,8 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 
 38. **Forgetting at a return, against the length of the absence** (section 33.27, read-only). Without a store and with decay it is a step: one visit to another family takes what is answered from about 0.8 to about 0.02 under both rules. With the store about half is kept whatever the absence. Without decay back-propagation shows a graded curve over some tens of visits.
 
+39. **E52 is verified on three seeds** (section 33.29; your decision 19). At each rule's better rate of 0.001 and 0.003 the sweep's lag is nowhere larger; at the present width with a quarter of the pairs it is gone on two seeds and smaller on the third, on margins of one to four scored rows; at the half width with a quarter of the pairs the seeds differ and no statement over them is drawn. The rate of E61 and E62 is the record's 0.001 under both rules; a pair of runs at 0.003 on that network (about 4 CPU-hours) would say whether the sweep's lag there is partly the rate, and is in neither brief.
+
 E35 continues as released. E33 is complete and needs nothing further.
 
 ## 2. Mr. Xu's statements of 15 November
@@ -2259,3 +2261,26 @@ Limits: the classes pool worlds that share births; a return's absence and its pl
 **The note of decision 15** is `NOTE_FOR_DECISION_15_A_LATER_TASK_ON_THE_FIRST_FAMILYS_BYTES_20261118.md` (one page). Its position: cells that receive nothing from the first family's bytes cannot learn a task on those bytes; of the three conditions under which such a task could be learned, the one that a design could add (a gate of the cell's own, opened by what the first family does not present) is what E55's arm `shut` tests, and the protection of the old rows has on record only the program's projection and rehearsal; the reviewer advises against a brief for the second part of item 11 as formulated.
 
 **The lines.** Free: the main worker's (its report is corrected and confirmed, 33.25) and E54's. Running: E55's arm `shut`; E53 (six runs); E57 (nine runs, the first three past update 24,576); E60 (four lives). Reported and in verification: E52's other two seeds (5cb22315). Verified since your last decisions: the first long lives (33.25), E55's arm `blind` (33.26); computed: the curve against the length of the absence (33.27).
+
+### 33.29 E52 on three seeds, verified (decision 19): at each rule's better rate the sweep's lag is nowhere larger; at the present width with a quarter of the pairs it is gone on two seeds and smaller on the third; no statement over the seeds is licensed where they differ
+
+(`E52_SEEDS_VERIFICATION_20261118.md`, `e52_seeds_verify.py`; written by an agent that had seen no opinion of the result; the reviewer ran the script again, 25 seconds, with the same output. Worker's branch at 5cb22315. The dense network: by decision 32 a comparison of two rules on a network outside the definition of locality, from which nothing on requirement B1 or C for the local learner is drawn.)
+
+**What was verified.** The twelve runs at the rate 0.003 on seeds 73129 and 116089 are complete with the prescribed settings; their batch digests equal E41's at every row; none was resumed; 5.94 CPU-hours. All 2,101 figures of the worker's tables, report and message are recomputed from the receipts' counts, none differing, and every word the worker gives is the one the brief's definitions give. Two weight files, taken as a sample, reproduce their final counts.
+
+**The lag** (the sweep's updates to 80 divided by back-propagation's) at the rate 0.001 and at each rule's better rate of 0.001 and 0.003, on R, with the brief's word and its margin in scored rows:
+
+| Setting | 73129 | 116089 | 93683 |
+|---|---|---|---|
+| half width, half the pairs | 1.22 → 1.36, the same (9) | 2.29 → 2.53, the same (5) | 1.53 → 1.53, the same (7) |
+| half width, a quarter | 2.12 → 2.90, the same (3) | 3.31 → 1.43, smaller (10) | 3.31 → 2.05, smaller (2) |
+| present width, a quarter | above 1.53 → 0.87, gone (4) | above 2.00 → 1.00, gone (1) | above 2.70 → 1.75, smaller (1) |
+
+- Over the 18 readings (three seeds, three settings, R and A) the lag at the better rates is nowhere larger: 9 are the same, 5 smaller, 4 gone. The sweep gains from the rate 0.003 in 8 of the 9 settings by seed; back-propagation gains at the half width with half the pairs on all three seeds, with a quarter on one, and at the present width on none.
+- At the present width with a quarter of the pairs, the setting of the long lives' births, the sweep at 0.003 reaches 80 on R about as soon as back-propagation at its better rate on two seeds. Each of these readings has a lower bound at 0.001 on one side and a margin of one to four rows.
+- At the case the explanation names (the half width with a quarter of the pairs) the seeds differ: smaller on two, the same on the third, where back-propagation gains as well and the lag rises. The brief fixes no rule for combining seeds, and the verification draws no single statement there.
+- The brief's test does not refute the explanation (that part of the sweep's lag belongs to a rate chosen for back-propagation) on any seed; on seed 73129 this rests on one setting with a margin of five rows.
+
+**Limits.** Two rates on the new seeds; the better of two is not a best rate; a faster rate does not end higher (in 6 of 18 pairs of runs the final R at 0.003 is below that at 0.001); 18 of the 108 readings rest on one or two rows. The worker has been sent six corrections of wording; no figure changes.
+
+**What it bears on.** Decision 20 (no long lives at 0.003) is yours and is not reopened by this. For the two briefs now put to you (E61, E62) the rate is the record's 0.001 under both rules; if the sweep is slower there, part of that may again be the rate, which this section's result makes more likely than not on the dense network and which has not been measured on a network with limited connections. A pair of runs at 0.003 on the record's network would settle it at a cost of about 4 CPU-hours; it is not in either brief.

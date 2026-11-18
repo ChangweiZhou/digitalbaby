@@ -1086,7 +1086,9 @@ def section5(ctx):
     files = [n for n in names(NEW) if not n.endswith(".pt")] + [REPORT, M + "exp52_drive3.py", M + "exp52_seeds_tables.py"]
     trailer = git_text(["log", "-1", "--format=%B", WREF])
     word = re.search(r"Acting-Agent:\s*([A-Za-z]+):", trailer).group(1)
-    marks = {"@@": re.compile(r"@@"), "TODO": re.compile(r"TODO"), "TBD": re.compile(r"TBD"), "XX": re.compile(r"XX")}
+    # the four marks, built from parts so that this file does not itself contain them
+    mk = ["@" * 2, "TO" + "DO", "T" + "BD", "X" * 2]
+    marks = {m: re.compile(re.escape(m)) for m in mk}
     found = collections.Counter(); where = collections.defaultdict(list); mname = {}
     for f in files:
         t = show(f).decode("utf-8", "replace")
