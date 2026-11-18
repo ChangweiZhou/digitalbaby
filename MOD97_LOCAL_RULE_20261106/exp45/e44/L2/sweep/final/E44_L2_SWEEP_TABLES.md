@@ -390,7 +390,7 @@ Per world: the sweep's figure, back-propagation's, and the difference. Over the 
 | 1024 | score trend (D5) | 0.0633 − -0.0094 = +0.0727 | 0.0979 − 0.0418 = +0.0561 | -0.0262 − 0.0328 = -0.0590 | 0.0667 − -0.0062 = +0.0730 | +0.0357 | [-0.0391, +0.1105] | not distinguished |
 | 1024 | trend of learning (D7) | 0.0822 − 0.1064 = -0.0242 | 0.0696 − 0.1108 = -0.0412 | 0.1102 − 0.0942 = +0.0160 | 0.0614 − 0.0822 = -0.0209 | -0.0176 | [-0.0459, +0.0108] | not distinguished |
 
-Closed (D12): **open at 1,024 visits** (late-level difference: not distinguished at 256 visits, lower at 1,024). The fixed sentence: over 1,024 visits, with no store, the sweep is **behind** in late level, and its score trend over the second half is **the same** than back-propagation's (as back-propagation's). At 256 visits the sweep is level in late level. 
+Closed (D12): **open at 1,024 visits** (late-level difference: not distinguished at 256 visits, lower at 1,024). The fixed sentence: over 1,024 visits, with no store, the sweep is **behind** in late level, and its score trend over the second half is **the same as** back-propagation's. At 256 visits the sweep is level in late level. 
 
 **`sweep+replay` against `replay`** (worlds 1, 2, 3, 4).
 
@@ -407,7 +407,7 @@ Closed (D12): **open at 1,024 visits** (late-level difference: not distinguished
 | 1024 | score trend (D5) | 0.0459 − 0.0790 = -0.0331 | 0.0462 − -0.0200 = +0.0662 | 0.0632 − 0.0846 = -0.0214 | 0.0377 − 0.0637 = -0.0260 | -0.0036 | [-0.0586, +0.0514] | not distinguished |
 | 1024 | trend of learning (D7) | 0.1126 − 0.1035 = +0.0091 | 0.0589 − 0.1446 = -0.0857 | 0.1408 − 0.0911 = +0.0496 | 0.1187 − 0.0914 = +0.0272 | +0.0001 | [-0.0700, +0.0701] | not distinguished |
 
-Closed (D12): **open at 1,024 visits** (late-level difference: not distinguished at 256 visits, not distinguished at 1,024). The fixed sentence: over 1,024 visits, with the store, the sweep is **level** in late level, and its score trend over the second half is **the same** than back-propagation's (as back-propagation's). At 256 visits the sweep is level in late level. 
+Closed (D12): **open at 1,024 visits** (late-level difference: not distinguished at 256 visits, not distinguished at 1,024). The fixed sentence: over 1,024 visits, with the store, the sweep is **level** in late level, and its score trend over the second half is **the same as** back-propagation's. At 256 visits the sweep is level in late level. 
 
 **`sweep+replay` against `sweep`** (worlds 1, 2, 3, 4).
 

@@ -363,11 +363,11 @@ def tables(name):
         if (x, y) in PAIRS:
             cl, se = closed(cs[256], cs[1024]), sentence(cs[1024])
             between[key].update(closed=cl, sentence=se, sentence_256=sentence(cs[256]))
+            trend = "the same as" if se["trend"] == "the same" else f"{se['trend']} than"
             md += [f"Closed (D12): **{'closed' if cl['closed'] else 'open'} at 1,024 visits** ({cl['why']}). The fixed sentence: over 1,024 visits, "
                    f"with {'the store' if 'replay' in x else 'no store'}, the sweep is **{se['late_level']}** in late level, and its score trend over the "
-                   f"second half is **{se['trend']}** than back-propagation's" + (" (as back-propagation's)" if se["trend"] == "the same" else "") + ". "
-                   f"At 256 visits the sweep is {sentence(cs[256])['late_level']} in late level. " + ("" if len(ws) == 4 else f"**Only {len(ws)} of the four worlds "
-                   "are scored; the sentence is provisional.**"), ""]
+                   f"second half is **{trend}** back-propagation's. At 256 visits the sweep is {sentence(cs[256])['late_level']} in late level. "
+                   + ("" if len(ws) == 4 else f"**Only {len(ws)} of the four worlds are scored; the sentence is provisional.**"), ""]
     J["between"] = between
 
     # curves
