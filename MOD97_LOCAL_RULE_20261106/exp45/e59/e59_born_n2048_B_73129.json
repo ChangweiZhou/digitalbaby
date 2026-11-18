@@ -1,0 +1,5943 @@
+{
+ "experiment": "E59",
+ "kind": "run",
+ "start": "born",
+ "n_taught": 2048,
+ "rule": "B",
+ "local": false,
+ "seed": 73129,
+ "updates": 8192,
+ "settings": {
+  "start_record": {
+   "start": "exp45/e26/e26_dev_B_73129.pt",
+   "weights_sha256": "24f2d7e19fae905f3d5fbcc35300c024efa8c841e2ce6ae796295ed94d323374",
+   "admission": "E26 receipt: arm, seed (receipt, file name, life), dose, optimizer, sources and weights hash checked; exception: exp16_integrated.py a301ae8e (f4559971) -> deea398c (c9fcedcf), E21b resume machinery only, as exp31_switch.admit_s",
+   "tensors_sha256": "efbdf87a6e1e2aeb8298a39f0c8968a331966e7e65a1286c2ec45f70ac441144",
+   "e43_birth_tensors_sha256": "efbdf87a6e1e2aeb8298a39f0c8968a331966e7e65a1286c2ec45f70ac441144",
+   "equals_e43_birth": true
+  },
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "optimizer": "exp26_candidate.make_opt (AdamW, lr 0.001, weight decay 0.25 on every tensor but the byte table)",
+  "update": "exp26_candidate.step(m, opt, batch, local)",
+  "batch": 64,
+  "rows": [
+   0,
+   16,
+   32,
+   48,
+   64,
+   80,
+   96,
+   112,
+   128,
+   144,
+   160,
+   176,
+   192,
+   208,
+   224,
+   240,
+   256,
+   272,
+   288,
+   304,
+   320,
+   336,
+   352,
+   368,
+   384,
+   400,
+   416,
+   432,
+   448,
+   464,
+   480,
+   496,
+   512,
+   544,
+   576,
+   608,
+   640,
+   672,
+   704,
+   736,
+   768,
+   800,
+   832,
+   864,
+   896,
+   928,
+   960,
+   992,
+   1024,
+   1056,
+   1088,
+   1120,
+   1152,
+   1184,
+   1216,
+   1248,
+   1280,
+   1312,
+   1344,
+   1376,
+   1408,
+   1440,
+   1472,
+   1504,
+   1536,
+   1568,
+   1600,
+   1632,
+   1664,
+   1696,
+   1728,
+   1760,
+   1792,
+   1824,
+   1856,
+   1888,
+   1920,
+   1952,
+   1984,
+   2016,
+   2048,
+   2080,
+   2112,
+   2144,
+   2176,
+   2208,
+   2240,
+   2272,
+   2304,
+   2336,
+   2368,
+   2400,
+   2432,
+   2464,
+   2496,
+   2528,
+   2560,
+   2592,
+   2624,
+   2656,
+   2688,
+   2720,
+   2752,
+   2784,
+   2816,
+   2848,
+   2880,
+   2912,
+   2944,
+   2976,
+   3008,
+   3040,
+   3072,
+   3104,
+   3136,
+   3168,
+   3200,
+   3232,
+   3264,
+   3296,
+   3328,
+   3360,
+   3392,
+   3424,
+   3456,
+   3488,
+   3520,
+   3552,
+   3584,
+   3616,
+   3648,
+   3680,
+   3712,
+   3744,
+   3776,
+   3808,
+   3840,
+   3872,
+   3904,
+   3936,
+   3968,
+   4000,
+   4032,
+   4064,
+   4096,
+   4128,
+   4160,
+   4192,
+   4224,
+   4256,
+   4288,
+   4320,
+   4352,
+   4384,
+   4416,
+   4448,
+   4480,
+   4512,
+   4544,
+   4576,
+   4608,
+   4640,
+   4672,
+   4704,
+   4736,
+   4768,
+   4800,
+   4832,
+   4864,
+   4896,
+   4928,
+   4960,
+   4992,
+   5024,
+   5056,
+   5088,
+   5120,
+   5152,
+   5184,
+   5216,
+   5248,
+   5280,
+   5312,
+   5344,
+   5376,
+   5408,
+   5440,
+   5472,
+   5504,
+   5536,
+   5568,
+   5600,
+   5632,
+   5664,
+   5696,
+   5728,
+   5760,
+   5792,
+   5824,
+   5856,
+   5888,
+   5920,
+   5952,
+   5984,
+   6016,
+   6048,
+   6080,
+   6112,
+   6144,
+   6176,
+   6208,
+   6240,
+   6272,
+   6304,
+   6336,
+   6368,
+   6400,
+   6432,
+   6464,
+   6496,
+   6528,
+   6560,
+   6592,
+   6624,
+   6656,
+   6688,
+   6720,
+   6752,
+   6784,
+   6816,
+   6848,
+   6880,
+   6912,
+   6944,
+   6976,
+   7008,
+   7040,
+   7072,
+   7104,
+   7136,
+   7168,
+   7200,
+   7232,
+   7264,
+   7296,
+   7328,
+   7360,
+   7392,
+   7424,
+   7456,
+   7488,
+   7520,
+   7552,
+   7584,
+   7616,
+   7648,
+   7680,
+   7712,
+   7744,
+   7776,
+   7808,
+   7840,
+   7872,
+   7904,
+   7936,
+   7968,
+   8000,
+   8032,
+   8064,
+   8096,
+   8128,
+   8160,
+   8192
+  ],
+  "stream": "the text of e43_task.stream with taught[:n] in place of taught; generator Random(f'e43|{seed}|stream')",
+  "panels": {
+   "held12": "e43_task.panel(seed, 'held')",
+   "held0": "e43_task.panel(seed, 'held', k=0)",
+   "taught": "Random(f'e43|{seed}|panel|taught').sample(taught[:n], min(300, n)), rendered at 12 fillers",
+   "held12_unseen_items": 0
+  },
+  "check4_against": "exp45/e43/e43_unrelated-decay_B_73129.json",
+  "earlier_training_items": 1572864,
+  "weights_file": "e59_born_n2048_B_73129_final.pt"
+ },
+ "provenance": {
+  "command": "python exp59_unrelated_starts.py run born 2048 B 73129",
+  "environment_at_start": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "349aacb0fb87536e6189784ad1c7f2d22e979e46",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch31_workerB.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+   "e40_new_family.py": "aa11c27f1588abbac6659afc124980b88994f6fbae375ffc742f0d31dbdda9cf",
+   "e43_task.py": "70eef23073197b2e4cd4d28ad90876221f416e503a546203179d8299ec7ad552",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "exp43_unrelated.py": "fac9acf56e1db0ace1bc02cd791a42b3517d8fc0fb060bbd8b26e8a98483725a",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp59_unrelated_starts.py": "c07e2cfae5f731ddf0edd015a415e4cbf57f6b37577e9a3837d792088b854ba9",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "versions": {
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.5",
+   "torch_threads": 1,
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "rows": [
+  {
+   "updates": 0,
+   "data_digest": {
+    "batches": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "tensors_sha256": "efbdf87a6e1e2aeb8298a39f0c8968a331966e7e65a1286c2ec45f70ac441144",
+   "loss": null,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 0,
+    "second_byte": 0,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "earlier_panels_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 295,
+     "final": 295
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 296,
+     "final": 296
+    },
+    "max89": {
+     "n": 300,
+     "exact": 300,
+     "final": 300
+    },
+    "min89": {
+     "n": 300,
+     "exact": 292,
+     "final": 292
+    },
+    "add97": {
+     "n": 400,
+     "exact": 21,
+     "final": 21
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 29,
+     "final": 29
+    },
+    "add73": {
+     "n": 400,
+     "exact": 29,
+     "final": 29
+    },
+    "sub73": {
+     "n": 400,
+     "exact": 11,
+     "final": 11
+    }
+   },
+   "cpu": 4.887353989999999
+  },
+  {
+   "updates": 16,
+   "data_digest": {
+    "batches": 16,
+    "sha256": "e1f960a29f57ea181f46d63f56927164a9750074c1ed417bafaeb5db48e180ff"
+   },
+   "tensors_sha256": "e1de223b4a2d7d5ed3f9d87a2fd1bf9845362bbe1786220c4dab923781cf7118",
+   "loss": 7.114472568035126,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 2,
+    "second_byte": 0,
+    "third_is_end": 2,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 7.152217114000001
+  },
+  {
+   "updates": 32,
+   "data_digest": {
+    "batches": 32,
+    "sha256": "3118151e73c652990f2dbed8d2b61953f9ecbf70a987e9abee24d84aef463749"
+   },
+   "tensors_sha256": "0898e3bffee2fd3b5f741dcc4ee2f625cd29bd0a3351f55fbb720c5b54c88fe4",
+   "loss": 3.077574908733368,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 1,
+    "second_byte": 0,
+    "third_is_end": 6,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 9.652633687
+  },
+  {
+   "updates": 48,
+   "data_digest": {
+    "batches": 48,
+    "sha256": "c21156ac4689aab16e1898ccf29fba0b2095a15723cfa719ffe4cd41b1dbb19f"
+   },
+   "tensors_sha256": "b5711e1b9df46effcc9adef4eb6b0ba9f25cdf761f8af7b4fd5a8dd135bc0c89",
+   "loss": 2.846270129084587,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 11,
+    "second_byte": 9,
+    "third_is_end": 282,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 12.433791426
+  },
+  {
+   "updates": 64,
+   "data_digest": {
+    "batches": 64,
+    "sha256": "9afa1550f51fbce702e808af37dd78e2a1d528e1963ba5c838dadb6edf7e9a67"
+   },
+   "tensors_sha256": "68b47626f95a17ca742e9e62659b362c128f8b9cce99f3ff204f341fdd67c17d",
+   "loss": 2.7379944920539856,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 13,
+    "second_byte": 3,
+    "third_is_end": 282,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 14.838541385000001
+  },
+  {
+   "updates": 80,
+   "data_digest": {
+    "batches": 80,
+    "sha256": "34079e0a1fcd69c505138d3b565531966ae7758ed8165a725581c7d3d44e87c7"
+   },
+   "tensors_sha256": "7d41a03744ed3a039df362f0c7c76af35442c12a734f371acf3b1dda97d4493a",
+   "loss": 2.621272087097168,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 26,
+    "second_byte": 10,
+    "third_is_end": 297,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 300,
+    "exact": 1,
+    "final": 1
+   },
+   "cpu": 17.186717935999997
+  },
+  {
+   "updates": 96,
+   "data_digest": {
+    "batches": 96,
+    "sha256": "923cebe7393ecbed6bb314a05d4cc174fcca5ed33ca5b382a28fa42d001906ac"
+   },
+   "tensors_sha256": "310e53fecf599fa8e926a688fe8c21ec5c182684a27657f48f91822746ead8dc",
+   "loss": 2.454244151711464,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 28,
+    "second_byte": 15,
+    "third_is_end": 293,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 2,
+    "final": 2
+   },
+   "taught": {
+    "n": 300,
+    "exact": 3,
+    "final": 3
+   },
+   "cpu": 19.768899627
+  },
+  {
+   "updates": 112,
+   "data_digest": {
+    "batches": 112,
+    "sha256": "28bd54c2cc7ca297fdde8d9c51204ee08ea9bff282c025b005a1cc220e1f31e9"
+   },
+   "tensors_sha256": "f0260747c289a51ad5255f3be33922ef11b38aa7783c1988b94ee4621f19cff3",
+   "loss": 2.2035517543554306,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 5,
+    "first_byte": 35,
+    "second_byte": 25,
+    "third_is_end": 294,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 5
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 11,
+    "final": 11
+   },
+   "taught": {
+    "n": 300,
+    "exact": 6,
+    "final": 6
+   },
+   "cpu": 22.284498896
+  },
+  {
+   "updates": 128,
+   "data_digest": {
+    "batches": 128,
+    "sha256": "8d8a5136c3ddc95a59d402cfa4b3778b0f342e1873a8f724bb446676aa3d7f1f"
+   },
+   "tensors_sha256": "0eb40a60a3c29315de37d034bb1d0d13e011328b66d6bd026ab411977f108f38",
+   "loss": 1.94757641851902,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 15,
+    "first_byte": 78,
+    "second_byte": 30,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 15
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 24,
+    "final": 24
+   },
+   "taught": {
+    "n": 300,
+    "exact": 34,
+    "final": 34
+   },
+   "cpu": 24.765566881999998
+  },
+  {
+   "updates": 144,
+   "data_digest": {
+    "batches": 144,
+    "sha256": "7bdcdc163f185718b97cfd09f5522e12b44eabc828ad125d16054bb44b1c311c"
+   },
+   "tensors_sha256": "2c5bde3ae4e7cb9b0220209422094db8d44c9d2bd94b73e0f3f266bf4a8e298e",
+   "loss": 1.6325317397713661,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 35,
+    "first_byte": 113,
+    "second_byte": 46,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 35
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 52,
+    "final": 52
+   },
+   "taught": {
+    "n": 300,
+    "exact": 62,
+    "final": 62
+   },
+   "cpu": 27.088182583
+  },
+  {
+   "updates": 160,
+   "data_digest": {
+    "batches": 160,
+    "sha256": "5ceb0188bc2812bcf4207bc2d3e8e9f2965b1eaf31472f01d73c5502de6168cf"
+   },
+   "tensors_sha256": "6b773910c97466a8958124e46b47cc364bdd415c0be4e38f5433bc83f7ca5c58",
+   "loss": 1.3427558094263077,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 74,
+    "first_byte": 137,
+    "second_byte": 92,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 74
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 87,
+    "final": 87
+   },
+   "taught": {
+    "n": 300,
+    "exact": 97,
+    "final": 97
+   },
+   "cpu": 29.552378335
+  },
+  {
+   "updates": 176,
+   "data_digest": {
+    "batches": 176,
+    "sha256": "15a3a0cc1d1fe61fce8cd284e0d76aaf5aa0ccc79aa4d497b6fc5bedb212c35a"
+   },
+   "tensors_sha256": "2bab265a2d71988465303f78066dad3e9a76c76a88cdc3593a3c29d156f7f7a9",
+   "loss": 1.0430924408137798,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 130,
+    "first_byte": 197,
+    "second_byte": 137,
+    "third_is_end": 298,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 130
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 149,
+    "final": 149
+   },
+   "taught": {
+    "n": 300,
+    "exact": 174,
+    "final": 174
+   },
+   "cpu": 31.952578786
+  },
+  {
+   "updates": 192,
+   "data_digest": {
+    "batches": 192,
+    "sha256": "69665bbebf48e7d254695a218d5bcec42b63c6bebb29f554e0de57f86065a952"
+   },
+   "tensors_sha256": "f33c1cd9dc39b36e74c7ec4fafac07a3d2ae00eaac32f62c00f280b94fd9a11d",
+   "loss": 0.8084363304078579,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 189,
+    "first_byte": 228,
+    "second_byte": 196,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 189
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 203,
+    "final": 203
+   },
+   "taught": {
+    "n": 300,
+    "exact": 222,
+    "final": 222
+   },
+   "cpu": 34.548882563
+  },
+  {
+   "updates": 208,
+   "data_digest": {
+    "batches": 208,
+    "sha256": "03fab2365d4c450c46866f03823db22d4e4d3846ca15e9c45643a7fb000bdf58"
+   },
+   "tensors_sha256": "1dcc9754cee00aa31562643c883f8e46faccc3a7f56d0e8f9e16735a31e2f234",
+   "loss": 0.585505198687315,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 229,
+    "first_byte": 252,
+    "second_byte": 231,
+    "third_is_end": 299,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 229
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 256,
+    "final": 256
+   },
+   "taught": {
+    "n": 300,
+    "exact": 256,
+    "final": 256
+   },
+   "cpu": 37.131469602
+  },
+  {
+   "updates": 224,
+   "data_digest": {
+    "batches": 224,
+    "sha256": "c244437eef333d6f01b36e6f22e6ac8ca0d05d277b30591b8965c4b4f116f2ef"
+   },
+   "tensors_sha256": "b32043412e0bc6030c8b8961364fd2f829f398a226e1fc4b430602828499e248",
+   "loss": 0.4289470426738262,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 261,
+    "first_byte": 279,
+    "second_byte": 263,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 261
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 269,
+    "final": 269
+   },
+   "taught": {
+    "n": 300,
+    "exact": 283,
+    "final": 283
+   },
+   "cpu": 39.836355279
+  },
+  {
+   "updates": 240,
+   "data_digest": {
+    "batches": 240,
+    "sha256": "efa787f07e2e75ebb717f3f7d137f1ead573bb4406313b03704d59b98b8ebe83"
+   },
+   "tensors_sha256": "3d3f6dea4c2ba4bed1d37ad384513fad67339cd9175e475fed4d69ecfee03105",
+   "loss": 0.29107058327645063,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 280,
+    "first_byte": 287,
+    "second_byte": 281,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 280
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 288,
+    "final": 288
+   },
+   "taught": {
+    "n": 300,
+    "exact": 286,
+    "final": 286
+   },
+   "cpu": 42.204780963000005
+  },
+  {
+   "updates": 256,
+   "data_digest": {
+    "batches": 256,
+    "sha256": "36f20b24c74eac6f759ec25482cfab32c5ed243927a6e9f02001a5b443f39cde"
+   },
+   "tensors_sha256": "54b0e6b349d447e040873919cd60177364cc7dd6badba48c6c9106a0657c0caf",
+   "loss": 0.20908823795616627,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 294,
+    "first_byte": 296,
+    "second_byte": 294,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 294
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 294,
+    "final": 294
+   },
+   "taught": {
+    "n": 300,
+    "exact": 294,
+    "final": 294
+   },
+   "cpu": 44.547457029
+  },
+  {
+   "updates": 272,
+   "data_digest": {
+    "batches": 272,
+    "sha256": "31fc87055038b36176d85186428bd29a3a506aba13b82883bff7841f7ddbdd02"
+   },
+   "tensors_sha256": "69c734c7bf9ea640e8bae2bfd987a46e803a9d2d25d187506d32d838588a4899",
+   "loss": 0.13855127338320017,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 298,
+    "first_byte": 298,
+    "second_byte": 298,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 298
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 298,
+    "final": 298
+   },
+   "cpu": 46.769302247
+  },
+  {
+   "updates": 288,
+   "data_digest": {
+    "batches": 288,
+    "sha256": "e4e4740899318b57c4b424129a2384bb2983558c43c3c5801ead8f3fe85a732a"
+   },
+   "tensors_sha256": "9f44c744d9168dcaf85127c78175333933c855a94bcbc04278a73fdc7ed0746d",
+   "loss": 0.10076650185510516,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 299,
+    "first_byte": 300,
+    "second_byte": 299,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 299
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 299,
+    "final": 299
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 49.199106939
+  },
+  {
+   "updates": 304,
+   "data_digest": {
+    "batches": 304,
+    "sha256": "a81e4d2c3f1c7245f06fbe4ea0b7af9c6252dfd3f88f9bd5eb6545afee8c7717"
+   },
+   "tensors_sha256": "195c80e294584d5017b8ac1e52ed3ecfc5bb4a059dc44f418b119f8b282850da",
+   "loss": 0.06761036347597837,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 297,
+    "first_byte": 297,
+    "second_byte": 297,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 297
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 299,
+    "final": 299
+   },
+   "taught": {
+    "n": 300,
+    "exact": 299,
+    "final": 299
+   },
+   "cpu": 51.7801034
+  },
+  {
+   "updates": 320,
+   "data_digest": {
+    "batches": 320,
+    "sha256": "5ca65d0686abf8531a97d57ac422bd43f7bf363dfb80ca24dbe0a2fc7a6f45a2"
+   },
+   "tensors_sha256": "6b25d3aefedf3ebfbed9255faf5d102f55d25c722b726124e03b17aa02fc2c0a",
+   "loss": 0.05332147376611829,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 54.391249272
+  },
+  {
+   "updates": 336,
+   "data_digest": {
+    "batches": 336,
+    "sha256": "387f3831d0033998e2083248ef5f4243c6d3f42277216a2c211d357d271a2300"
+   },
+   "tensors_sha256": "a48ea13f0578175a3e7824dfe7b379353a13bfa3927a3f153f568ddbb16b0a29",
+   "loss": 0.036397762363776565,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 299,
+    "first_byte": 299,
+    "second_byte": 299,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 299
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 57.015743089000004
+  },
+  {
+   "updates": 352,
+   "data_digest": {
+    "batches": 352,
+    "sha256": "3e5e90d703ca7afb2a01aba89049a71cf87fe52518bc7fdada6e78b6001c10ea"
+   },
+   "tensors_sha256": "b795d267e08faf2faa87313e844155e8cd23eda0e7b8432ed2f3c9859f7848f2",
+   "loss": 0.029105532565154135,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 59.361845302
+  },
+  {
+   "updates": 368,
+   "data_digest": {
+    "batches": 368,
+    "sha256": "d6fe82b218cfff66f15c6131695a04f59499cb18d4b31bb0ac708761a618696e"
+   },
+   "tensors_sha256": "4b608cacd4241d6b5a2199b88fbd5ab1238c784fa9a8521979a2e06ccfe5e649",
+   "loss": 0.021335963858291507,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 299,
+    "first_byte": 299,
+    "second_byte": 299,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 299
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 61.565494201
+  },
+  {
+   "updates": 384,
+   "data_digest": {
+    "batches": 384,
+    "sha256": "9c83783d3749e1773ac0f5d4a336150caa46f01a0d92ee614c2824a362734cc6"
+   },
+   "tensors_sha256": "fc4f3a8e3b508e2f881fe15aacc4566c7ee38f19d93a6492ab9a22c1f56210e9",
+   "loss": 0.017417909984942526,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 64.122350008
+  },
+  {
+   "updates": 400,
+   "data_digest": {
+    "batches": 400,
+    "sha256": "c9e3e5a668314f18926b35614ea4d42c73d1bdb53f88c0e8ca79a772b02d3014"
+   },
+   "tensors_sha256": "7d15a4ecac0510f5c2a70d745d64526684fbb454d93ea36e212f92e6867509c7",
+   "loss": 0.01343569898745045,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 66.63329296100001
+  },
+  {
+   "updates": 416,
+   "data_digest": {
+    "batches": 416,
+    "sha256": "7fce4d1ffa051e8b395e46eee34abb72b78260037a28147306f8f3f486085a82"
+   },
+   "tensors_sha256": "780ad6acf6758d2c5e641a2f36f1808c25f014c7aadd98cd10266a8759c9dd5e",
+   "loss": 0.011113483109511435,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 69.130525934
+  },
+  {
+   "updates": 432,
+   "data_digest": {
+    "batches": 432,
+    "sha256": "f79139c21abcb002dc1b0ff36d02c5543b6839e3354ba08ef58c05832fd34460"
+   },
+   "tensors_sha256": "bc5fa311b45dbced06e39cacc0925fb320007500359c81af92dce4b0c4a34c1c",
+   "loss": 0.008717295189853758,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 71.72912600800001
+  },
+  {
+   "updates": 448,
+   "data_digest": {
+    "batches": 448,
+    "sha256": "b188094823301fc4eaf472a2cdc628c83fb78fbfa1ed9af6d5a950d01b1b57aa"
+   },
+   "tensors_sha256": "982ac4c6b8e4fbc0780ddf9822b7f6379df1ae03ff3d7e8046605b65fb2fe157",
+   "loss": 0.00736981158843264,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 74.145735063
+  },
+  {
+   "updates": 464,
+   "data_digest": {
+    "batches": 464,
+    "sha256": "2e533ae78cac6be5a58571968441cca794279b5f27b0a2d6d617e0f06ed81bbd"
+   },
+   "tensors_sha256": "e57b8a922c27a2e76d6670ede11a03c0ca29bc366c01a43ee15e27e4a477b60b",
+   "loss": 0.005719970242353156,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 76.55911267
+  },
+  {
+   "updates": 480,
+   "data_digest": {
+    "batches": 480,
+    "sha256": "6b72795ad5913c64dc61c58dfe4fd53e17c18063d897aa6c02da78578aa6a7a2"
+   },
+   "tensors_sha256": "c375308cc5196d182ed53e27636b8b9b9665555d2204cb65ffe1e081a94adfb5",
+   "loss": 0.005019776115659624,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 78.810335014
+  },
+  {
+   "updates": 496,
+   "data_digest": {
+    "batches": 496,
+    "sha256": "990b08c16c99977f2ba94967ec79ae616ed415bc642047882b1e951e51bbea75"
+   },
+   "tensors_sha256": "af2d9fc861e9c6a484d02281e73de4868573defe849f269f99c08c23c91318fd",
+   "loss": 0.003962009082897566,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 81.167829084
+  },
+  {
+   "updates": 512,
+   "data_digest": {
+    "batches": 512,
+    "sha256": "c1a2a9ffaa4dfbca09af661448bc4bcf116854e2386f901e17316a760a6995d9"
+   },
+   "tensors_sha256": "d041bc0b6c1ce69899e96e50e4ed6115271de8b993475a4a0b2779b5a1367ff4",
+   "loss": 0.003305289486888796,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 83.307499096
+  },
+  {
+   "updates": 544,
+   "data_digest": {
+    "batches": 544,
+    "sha256": "c4a2c2ff3a0b59638a34fe9fb4a570f69a85a5ec6170aec0e70a05a98968d0ba"
+   },
+   "tensors_sha256": "b1111aec532a96560223d348e3fc24a35917d9c1dc90f7eabb6f1bb0f6721cdb",
+   "loss": 0.002499278911272995,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 87.290647737
+  },
+  {
+   "updates": 576,
+   "data_digest": {
+    "batches": 576,
+    "sha256": "e2dc33008b5c1a2010bc8a017290aee1185856aa38910777dfaed93cfdd58351"
+   },
+   "tensors_sha256": "f2892c001fea4746ef5fb7a871a18d70310b92f1e50389785bdbc02a62f5c772",
+   "loss": 0.0017371039066347294,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 91.029108509
+  },
+  {
+   "updates": 608,
+   "data_digest": {
+    "batches": 608,
+    "sha256": "a0c532ea33e254ad653b0f013fb70a05924be1b92438974ddf218829b4de89b0"
+   },
+   "tensors_sha256": "2d93e0fa7526415767895cfdc4e24ba9cf757e3af5465222cac4ec1f894bf15d",
+   "loss": 0.0012030366669932846,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 94.728683125
+  },
+  {
+   "updates": 640,
+   "data_digest": {
+    "batches": 640,
+    "sha256": "279900831f1b1508028df7dcb04aac1b4c191b649388a5305922539bd6afb970"
+   },
+   "tensors_sha256": "0c07e79750cbca956138510bb92dd9a11505f8233cba4d01724c73f0508c53b1",
+   "loss": 0.0008510335374012357,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 98.435438831
+  },
+  {
+   "updates": 672,
+   "data_digest": {
+    "batches": 672,
+    "sha256": "b1263637c2f5c0d18647d70cfd5b1360dd5a3c61919734ff148fce30a3da0f40"
+   },
+   "tensors_sha256": "3d38fa57c316184b0cd3df63062ddd081696dc134cb9bf9b2e9899acd2117c4f",
+   "loss": 0.0005899030711589148,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 102.490802443
+  },
+  {
+   "updates": 704,
+   "data_digest": {
+    "batches": 704,
+    "sha256": "47d3cdb9dc1f069d31d9d4a86f07c0adf8da14f5ad35cdc4c709f7e05e98ad36"
+   },
+   "tensors_sha256": "97c15d47341b1c9582dc9f1720493f6f0fa845efb945184d192928d5654c8128",
+   "loss": 0.0004176568727416452,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 106.566509644
+  },
+  {
+   "updates": 736,
+   "data_digest": {
+    "batches": 736,
+    "sha256": "44a00ee1a9d7939fdd8ce8dbe89252d6a060bb78c20de8c29a16ba06948a2883"
+   },
+   "tensors_sha256": "eb9894036b109e7a55fd76c4b9cf59f7e25b4d6510afcf82116d13218d698f92",
+   "loss": 0.00029273718791955616,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 110.50954702
+  },
+  {
+   "updates": 768,
+   "data_digest": {
+    "batches": 768,
+    "sha256": "2bcb99e510ed3ae8542fef4bb031a9e639811c4ed28f60d5c43a4378fdd0007d"
+   },
+   "tensors_sha256": "b4d6fd72ddb69cad168d2f8c36dc79632a2aae7781d38b86890958f879970a5c",
+   "loss": 0.000208644291433302,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 114.15060965400001
+  },
+  {
+   "updates": 800,
+   "data_digest": {
+    "batches": 800,
+    "sha256": "56d690d1897d295f431f15c15de66f4b1275bffb5c4b2488636974e9ef80a0ba"
+   },
+   "tensors_sha256": "b83dc573add4fb0faebf4e0d4d348dedf852eddea3e50a256c362ad1c93c7d82",
+   "loss": 0.00014674390990876418,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 118.313221889
+  },
+  {
+   "updates": 832,
+   "data_digest": {
+    "batches": 832,
+    "sha256": "cb94d38cc28c6beb28fd8494fdb324958c960d1b12d70f4f90b8d25046d745f7"
+   },
+   "tensors_sha256": "ad985a51b71ee75a0345a68e21ce4f2a1f9ac2f16dbaa56fc666fe1ed95956b9",
+   "loss": 0.00010496286927264009,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 122.202995412
+  },
+  {
+   "updates": 864,
+   "data_digest": {
+    "batches": 864,
+    "sha256": "dad917e00b77cad1581a031c909d9ddf0b0cae2cebbcffe747addb17583f9b21"
+   },
+   "tensors_sha256": "65dc26efafb37c71be8e529d987b5d75bddf007e0741b9e7a560b7f2613c32d8",
+   "loss": 7.557767946764216e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 126.105893763
+  },
+  {
+   "updates": 896,
+   "data_digest": {
+    "batches": 896,
+    "sha256": "52ce460fad38a7998724464a7b5b4b878ebddc0576eb7b70dd574af08486551d"
+   },
+   "tensors_sha256": "109295350bf2e565f27691310a64fe9e5499a7f87c6f03c63d1f8dfa1d1e72c0",
+   "loss": 5.2882880140714406e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 130.295554579
+  },
+  {
+   "updates": 928,
+   "data_digest": {
+    "batches": 928,
+    "sha256": "e78245ab2701a75e7ec0f1605f6bf8647a2e960f395f121625a40a1c33b35242"
+   },
+   "tensors_sha256": "f6fbd9bb52c1ed5d3269dd280a570b0df0ccd43bfb01ea504275d5941d6c2e81",
+   "loss": 3.765108408515516e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 134.56099913699998
+  },
+  {
+   "updates": 960,
+   "data_digest": {
+    "batches": 960,
+    "sha256": "db4d897c472c5d3578e1bc307817e616c9c964a5861d661d400f62d37c0b555e"
+   },
+   "tensors_sha256": "21d5a9b7fe1701b042a41717d57eb869e7ea87431b798a1ee35790263930a26d",
+   "loss": 2.7167838425157242e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 138.43182912499998
+  },
+  {
+   "updates": 992,
+   "data_digest": {
+    "batches": 992,
+    "sha256": "cbef8b78b56d0e66b44332fed587944b7f9c9614b23ccb660aaf4ecbe8d6a366"
+   },
+   "tensors_sha256": "0bddc0b3e71b3f0e0ad0e8cb296352f35501b82438180099f4bcb2a5c4e2bba1",
+   "loss": 1.929872195205462e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 142.64624465199998
+  },
+  {
+   "updates": 1024,
+   "data_digest": {
+    "batches": 1024,
+    "sha256": "cc0aa29cf15d30fc6ce2a358b04f8df02924c0d601fc4a7a3e3ccc80099cc3ab"
+   },
+   "tensors_sha256": "59806b93497d7877d5c604297caf6486009982a4b60e0778fa072a24498b613f",
+   "loss": 1.3914277474214032e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 146.742299611
+  },
+  {
+   "updates": 1056,
+   "data_digest": {
+    "batches": 1056,
+    "sha256": "bb78e20aeab718837fab03e7470df705bd37b8cec25e3b7ef2ba0ac75ce3e969"
+   },
+   "tensors_sha256": "85af8b73c061ddbc2820c1d3963946c7f5518c9ba047e34c4d438fc114954bd7",
+   "loss": 1.0111483277341904e-05,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 150.587702536
+  },
+  {
+   "updates": 1088,
+   "data_digest": {
+    "batches": 1088,
+    "sha256": "1f01b01b376836ff213243114d91fff83c1d44abc32efc7264627cf8e500a90b"
+   },
+   "tensors_sha256": "c7d13cdfa04f956c08848d355267a8566b950294f8737cf7dcc9de7b04d3d9c4",
+   "loss": 7.278874747385089e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 154.76850401899998
+  },
+  {
+   "updates": 1120,
+   "data_digest": {
+    "batches": 1120,
+    "sha256": "dc96eda62bfe9ad0bf0c1f28b714b7e598b46f3f67f8ed5da847790c69d956b7"
+   },
+   "tensors_sha256": "0f7502ab1cce21d9a310726c414cd59d79927a8cca603a8b76aaed021ad7df74",
+   "loss": 5.262353354851257e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 158.83871054
+  },
+  {
+   "updates": 1152,
+   "data_digest": {
+    "batches": 1152,
+    "sha256": "bacfb683c070382607490523927613a34fc2b867feb3669149db5125de8d60bb"
+   },
+   "tensors_sha256": "8d712cb4b54ae24d04917536d8ba7da7c87f73a91a5deac052a84c6eafb68fe3",
+   "loss": 3.790992984420427e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 162.64531413799997
+  },
+  {
+   "updates": 1184,
+   "data_digest": {
+    "batches": 1184,
+    "sha256": "f1adecc2d72f09906ab5e550e565d6dd1bc085dc1ae9b1cf3c1c73624635da4f"
+   },
+   "tensors_sha256": "0997f38927853a024684682891102845b38e1a2272ad17e5ae9e086d60b1bf7d",
+   "loss": 2.777254806574092e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 166.653929157
+  },
+  {
+   "updates": 1216,
+   "data_digest": {
+    "batches": 1216,
+    "sha256": "2e94ddea80ba8d55912e19b9d6ca00a0febdae5193effa7e4be4e07caaea619e"
+   },
+   "tensors_sha256": "36cb9e2e1c05c942584249b47e4b17d9213190401e3a42aeb3f460e380ab7cfa",
+   "loss": 2.0093829142808772e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 170.64340165099998
+  },
+  {
+   "updates": 1248,
+   "data_digest": {
+    "batches": 1248,
+    "sha256": "b1b9a2762b7270e9b5d7c2c9974fc603449a561853f007ea5f2c04e835a08ea0"
+   },
+   "tensors_sha256": "600087d32bdd0f872bbbb173a4057f509d79616095c71ff1c946f9f23ff98b18",
+   "loss": 1.4791128144509003e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 174.196320899
+  },
+  {
+   "updates": 1280,
+   "data_digest": {
+    "batches": 1280,
+    "sha256": "665fd3189ae5e064d874f8833d152f85ab0444ec73136120c9b67309d9e1beb6"
+   },
+   "tensors_sha256": "529cd6209852b9428026c59c66c36c53882745a95e9bb45926ffbd3b2387948a",
+   "loss": 1.1004340958464809e-06,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 178.02166063599998
+  },
+  {
+   "updates": 1312,
+   "data_digest": {
+    "batches": 1312,
+    "sha256": "dded19398b06ac8707c306cca672dbe6bd5537aa100de8259271bb89bfddb2b2"
+   },
+   "tensors_sha256": "c67348698f2c487bc028a1f877362dd82aad39c64af278a31e88a579277db6a0",
+   "loss": 8.19873667623483e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 182.100308247
+  },
+  {
+   "updates": 1344,
+   "data_digest": {
+    "batches": 1344,
+    "sha256": "b823433f39ae92d46e5a6ec86937edf3681bb4ac0bc6ffa8bc56b90945625858"
+   },
+   "tensors_sha256": "6355b43317ef3c17023ced20e1c5db920483a568255a1bbba8927d1e98d175e8",
+   "loss": 6.177769638071595e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 186.27107546099998
+  },
+  {
+   "updates": 1376,
+   "data_digest": {
+    "batches": 1376,
+    "sha256": "014327a2932ed4478fb4b23f2c862331850746dec389fd6b2d1eea40f81078a0"
+   },
+   "tensors_sha256": "a462cb9094660be72dc116659fff6e264f49ead1e47a757c93d748abf2d32a96",
+   "loss": 4.6048064650250353e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 189.95483160499998
+  },
+  {
+   "updates": 1408,
+   "data_digest": {
+    "batches": 1408,
+    "sha256": "e7537a9df312b99d3aa876ccfaa1143cad7b74b10e447a99480841b2d4566e5c"
+   },
+   "tensors_sha256": "9c679d5fcae4907b6c27ebfeaad7a81d76ee089e3661e98f2800c12339242ac6",
+   "loss": 3.510891239955072e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 194.144973164
+  },
+  {
+   "updates": 1440,
+   "data_digest": {
+    "batches": 1440,
+    "sha256": "60c5cbea13be8528b5f48582d2aa74bbb431ecf70752cd5eb402eca4000bed29"
+   },
+   "tensors_sha256": "ffd1161a9134ae908a9abbfa82d69eb9531b7cf2843e3bc6ad5172aad38b7f0b",
+   "loss": 2.7115064771265907e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 198.20388363799998
+  },
+  {
+   "updates": 1472,
+   "data_digest": {
+    "batches": 1472,
+    "sha256": "3234a9b1acbd98a162b0d57eb1af551a165528aecf9f71453a167cf552ff37e0"
+   },
+   "tensors_sha256": "e07d758aea3bc6eb076b30575e34679d651a6c04462cacb75ea366f8067ce9f0",
+   "loss": 2.148638582610829e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 202.19987555499998
+  },
+  {
+   "updates": 1504,
+   "data_digest": {
+    "batches": 1504,
+    "sha256": "7682f762ab88322271a50528d5ae30ee36438a616628713df3f4d2bd887b8996"
+   },
+   "tensors_sha256": "1699eb3959096db54214232fdeae55eb358e327ce391991475156ae22abf9015",
+   "loss": 1.720812301542196e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 206.302013246
+  },
+  {
+   "updates": 1536,
+   "data_digest": {
+    "batches": 1536,
+    "sha256": "b5c802ba6c972c7ae10643285e3c59d02cae37799d25d38f6539eab52a42a3e4"
+   },
+   "tensors_sha256": "0bfd5ba2bf4549d25f5ed8538397575d7c29f1722847a70646cae06ba5615605",
+   "loss": 1.4262816128152167e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 210.34158924
+  },
+  {
+   "updates": 1568,
+   "data_digest": {
+    "batches": 1568,
+    "sha256": "f8ec1c606ec0d8cdfba4b8690ea72213e125c8dba27661674e42192a65ce987b"
+   },
+   "tensors_sha256": "b9ea5beb9a5515f867b81c41dff46be6b087dbefdb89bb49c7745d795a955f81",
+   "loss": 1.2041223773628928e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 214.20637514199998
+  },
+  {
+   "updates": 1600,
+   "data_digest": {
+    "batches": 1600,
+    "sha256": "81aac3ffa9328d001e7791cdda616dcf50c0a33b5d8e0899bfc00f041c2db367"
+   },
+   "tensors_sha256": "c5c817e8c59e24fd1a95792380ede730780f9d8080ab23006adc80d5dbe9e2f6",
+   "loss": 1.0795579896694107e-07,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 218.47657959999998
+  },
+  {
+   "updates": 1632,
+   "data_digest": {
+    "batches": 1632,
+    "sha256": "3ee28450384e9ef800b9dfc9f6996d0782962c5c9fe0ed35879caeb0fcf090c9"
+   },
+   "tensors_sha256": "e04125a2828b30fedd5ffae6bdabaabd9b8c4d864df6028b6c1af6436f41ed2c",
+   "loss": 9.784706800353149e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 222.20172410799998
+  },
+  {
+   "updates": 1664,
+   "data_digest": {
+    "batches": 1664,
+    "sha256": "bbe7b1fd027d9a519bc2ee6d1edf68ec921ceed67649574738bd8fcedce2ac47"
+   },
+   "tensors_sha256": "13a4331acd290f88a15cda30cfd2ad6defb4da4a4011635f3434d65c5d9d4f50",
+   "loss": 9.09591622022532e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 225.932727003
+  },
+  {
+   "updates": 1696,
+   "data_digest": {
+    "batches": 1696,
+    "sha256": "c51287a15eed6f3a1d7f96db1b5f0b06b37222845e6379f6d5de6166e1c73d1f"
+   },
+   "tensors_sha256": "f5d180e977f1707a93e4f8b574da3074d93e5283558eb1e97c1a8f98af549a02",
+   "loss": 8.358619285608881e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 229.99617254199998
+  },
+  {
+   "updates": 1728,
+   "data_digest": {
+    "batches": 1728,
+    "sha256": "85bc2c0506a7bf0ecea4f75dc14631e6d852e7917b3206bf393d0300b60f02df"
+   },
+   "tensors_sha256": "bd1b6b136880dcdb831f0d2865dcac27ceacd799540dfdb4d12fe5a5b04931d0",
+   "loss": 8.032656495515766e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 234.01597085
+  },
+  {
+   "updates": 1760,
+   "data_digest": {
+    "batches": 1760,
+    "sha256": "1adb760a4d49151870964f1d31246fa26361f9d4c118d0e05648558817d38b4a"
+   },
+   "tensors_sha256": "29642267f005f084ebed80f71261a3da2bdb2b839016aff67e5ca6717702e098",
+   "loss": 7.704753390846975e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 238.10899671299998
+  },
+  {
+   "updates": 1792,
+   "data_digest": {
+    "batches": 1792,
+    "sha256": "412c56455840b383ce4858bc73f61e31bbb5d0e040f816205fc456cd3fdf69a0"
+   },
+   "tensors_sha256": "dc6f43b63e5e1dd709bc04821b24cda200aca6a8c916eb7d9dd80af5c69fa2d0",
+   "loss": 7.57087581515492e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 242.089074023
+  },
+  {
+   "updates": 1824,
+   "data_digest": {
+    "batches": 1824,
+    "sha256": "9e196d617a41113485e04c5b61f920589aa87eb8459362adc1feefe63391bb98"
+   },
+   "tensors_sha256": "2ef35eda8b60c3b39bc30fdc11f703dd134120ab605866072d9721f53e5a1cde",
+   "loss": 7.363268528237654e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 245.91058027999998
+  },
+  {
+   "updates": 1856,
+   "data_digest": {
+    "batches": 1856,
+    "sha256": "20ac7e7f074cab4e0707d0c9a15a4a28331693a13abfa86e21b00ec1ae733b9f"
+   },
+   "tensors_sha256": "0e012543968c9da616ffc77daf6f66782869256308ceec3f5086ed80fba37b6b",
+   "loss": 7.291479064974737e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 249.55448811099998
+  },
+  {
+   "updates": 1888,
+   "data_digest": {
+    "batches": 1888,
+    "sha256": "728b6a73735782c6ae273788bc48b54e1ac25c8f443eebb919691a3b7a8bd011"
+   },
+   "tensors_sha256": "8a55ae34c03877709349e9ea8f6c294558e628fe1ce9f37435192019e1dbe8d3",
+   "loss": 7.04118625627359e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 253.32752211899998
+  },
+  {
+   "updates": 1920,
+   "data_digest": {
+    "batches": 1920,
+    "sha256": "912a3260d855a5585ad8cc0f747bfdb860e0a6460e0c485d093287c50f437d40"
+   },
+   "tensors_sha256": "e9fe7a966f48f7af0cdb5b8cfc2ef89b1cc15f942414608a779491643bfdac99",
+   "loss": 7.180884598056991e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 257.27962788
+  },
+  {
+   "updates": 1952,
+   "data_digest": {
+    "batches": 1952,
+    "sha256": "3373b8c3f35101543f10769265987928e887f4fde80f7006c964def8c19c7745"
+   },
+   "tensors_sha256": "9ba54f5511187e50202fffa6dddcc6acb05c40c32f7ff8ffa0f72d8d023d5e42",
+   "loss": 7.047006955751556e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 261.352463006
+  },
+  {
+   "updates": 1984,
+   "data_digest": {
+    "batches": 1984,
+    "sha256": "a691f2c4ef2bf8a638050741f3f44189d154f2d414e7bed99e47d5ef21a74b6b"
+   },
+   "tensors_sha256": "78586639fec8c924f081655dcb0d8ecdbc4e273f38075592b1c05c953baa6e54",
+   "loss": 6.9752175146931e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 265.128969444
+  },
+  {
+   "updates": 2016,
+   "data_digest": {
+    "batches": 2016,
+    "sha256": "c5cac78f50d3d6691ccbd2ee39eb04cc908cdb6eefaa12897544ba29d69077eb"
+   },
+   "tensors_sha256": "e9554ba0f6e449ea037c03da7be1f6b180a43814c1ae136d43894d27a2b64cfe",
+   "loss": 6.918950168355309e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 269.029867927
+  },
+  {
+   "updates": 2048,
+   "data_digest": {
+    "batches": 2048,
+    "sha256": "0f9bde6d71e1b0c66beefd7cc6ec5f47760a0619bb034efca685da0f6fe2a181"
+   },
+   "tensors_sha256": "9292c6e4d463d497fbc043938f748fd0b465cb2e269fa141a531a349136c7748",
+   "loss": 6.829698373511661e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 272.843235744
+  },
+  {
+   "updates": 2080,
+   "data_digest": {
+    "batches": 2080,
+    "sha256": "089b9b2a92f79aeb6884a0751383b35e9ef34bf21bfe9be4dd9cf3b5d4265754"
+   },
+   "tensors_sha256": "753fa3fbb23bbaac797f651e000ebfd425077911788ddd89ed97371f38490a97",
+   "loss": 6.849100897543536e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 276.549482647
+  },
+  {
+   "updates": 2112,
+   "data_digest": {
+    "batches": 2112,
+    "sha256": "9f0ef8897b2eff0561e9f268a195d85865c438bb717c5b5f9ea7f8f53aceba29"
+   },
+   "tensors_sha256": "47b78395b5ccb00caf72e05afb4a0da0f67845db21c759099af105e31ea9b3c3",
+   "loss": 6.829698406818352e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 280.430746203
+  },
+  {
+   "updates": 2144,
+   "data_digest": {
+    "batches": 2144,
+    "sha256": "b92bf4f3f27ca4e00b36c36fc7d6451ce4044f31bcbeec9088b7e236e13bbb44"
+   },
+   "tensors_sha256": "55d12e83983860630d00030759fa82408f537aa5fad7cf9da41e9f51d6b8dd73",
+   "loss": 6.765669946506847e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 284.25123685200003
+  },
+  {
+   "updates": 2176,
+   "data_digest": {
+    "batches": 2176,
+    "sha256": "3f7c6bbb520b90cbdc17a2c7417f748a9ee368d1f5b95ac49ace951f7b47765b"
+   },
+   "tensors_sha256": "61e279fd289dda960151a199c37902fdf69a4a333c8221c638dabe2b20c673cb",
+   "loss": 6.843280209167801e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 288.499737539
+  },
+  {
+   "updates": 2208,
+   "data_digest": {
+    "batches": 2208,
+    "sha256": "3eca90ff26a5c220a736fd573fefe7bf43d1cbf844512e72bfd2b6d91c080a55"
+   },
+   "tensors_sha256": "9915f1f3e26ea83214375c73758ce9f5bc01f139ff0c622fdc0f7389e7a17fda",
+   "loss": 6.800594509748237e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 292.28028253400004
+  },
+  {
+   "updates": 2240,
+   "data_digest": {
+    "batches": 2240,
+    "sha256": "90e9dbe766807fb3bd4d7b14622c5cac1a67bd332526a56812436e992f7417a1"
+   },
+   "tensors_sha256": "c2a43bfe1b33f34f42751bbbde3c3995b2bbbb83d4353eaa3b26a498f317300e",
+   "loss": 6.682239017674618e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 296.081702629
+  },
+  {
+   "updates": 2272,
+   "data_digest": {
+    "batches": 2272,
+    "sha256": "b40291cbc1fe369969efa742780d1ffff80d15e44d011bb0db065e13cfba848a"
+   },
+   "tensors_sha256": "9e3b50c26c33cd88e3b9928bf0ef7969817195d4f8fc38909bcab925d5164ad9",
+   "loss": 6.781192041227513e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 300.07166544700004
+  },
+  {
+   "updates": 2304,
+   "data_digest": {
+    "batches": 2304,
+    "sha256": "e6d1cea0bccf7982d73f9dedb14091781792cf563577007a743ef0928ffe74cc"
+   },
+   "tensors_sha256": "a92ff0edfb3138ed727c484cc9fc6271b217c4fbc567b3c5134d83552a972d86",
+   "loss": 6.690000087239412e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 303.871613986
+  },
+  {
+   "updates": 2336,
+   "data_digest": {
+    "batches": 2336,
+    "sha256": "331c172ed37b13ceed9516f3a7b99f7e3d914bcbc21b42b037b93a646edc7d47"
+   },
+   "tensors_sha256": "c15c4554b2c1212ee46ffb98f62757977ca8ba5502c7631d59a2d47fb164e95e",
+   "loss": 6.649254657986603e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 307.91982638
+  },
+  {
+   "updates": 2368,
+   "data_digest": {
+    "batches": 2368,
+    "sha256": "b9659d8a4cd5614e04c92273ec96cb24f52efcf95ad987a7e08aa7da0615b151"
+   },
+   "tensors_sha256": "0ad95d9acaaf4920c4b495a8e4015c3a95863a2e7268e9d3b7ac7cd1dd87512d",
+   "loss": 6.546421171815808e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 311.65810549
+  },
+  {
+   "updates": 2400,
+   "data_digest": {
+    "batches": 2400,
+    "sha256": "b214b285103b6c4f29f714146c2775082d14d103f3a79da4340ad099c68c1abd"
+   },
+   "tensors_sha256": "9bceaadb1a4088bafc5b9945444abc20843219767167452065c606065738dc76",
+   "loss": 6.682239039879079e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 315.70867432200004
+  },
+  {
+   "updates": 2432,
+   "data_digest": {
+    "batches": 2432,
+    "sha256": "8472a2d003654437d152a5d60d032b7a923fb380dc0ed799651506e334e714df"
+   },
+   "tensors_sha256": "0efc643dd7de9b8c0a86456d0a2ee17dffa8457feeed4f8be45262b771c4beeb",
+   "loss": 6.688059728254814e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 319.683335128
+  },
+  {
+   "updates": 2464,
+   "data_digest": {
+    "batches": 2464,
+    "sha256": "1e16309045e50157196d9c2411d2c5cecced7a5bfade2879bb1d32164b286f21"
+   },
+   "tensors_sha256": "998d5b5715154e581475d587e74a0fc1262382d8bd6036e03e5df9839ccfe353",
+   "loss": 6.598807966717857e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 323.598354769
+  },
+  {
+   "updates": 2496,
+   "data_digest": {
+    "batches": 2496,
+    "sha256": "9b83c882af8824595813e1fbd60ea3cbd8452cc73b57c4ac6d4a592e2baf4474"
+   },
+   "tensors_sha256": "3709dd125143701fd723bd80f5d2b860c4f4097d43160fab742937a750bda142",
+   "loss": 6.550301601127018e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 327.654993591
+  },
+  {
+   "updates": 2528,
+   "data_digest": {
+    "batches": 2528,
+    "sha256": "026f40f9cc9703a11d022f15ea0e7af2dd3844ecbce5887418968581fd7a07d9"
+   },
+   "tensors_sha256": "d5aa18af2e0a454e5175072ae73e205e7cb82c23a062fd5d02edd3629291f54c",
+   "loss": 6.730745405469918e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 331.362142603
+  },
+  {
+   "updates": 2560,
+   "data_digest": {
+    "batches": 2560,
+    "sha256": "b4a200afba3179420ffc0da7a0035fa697d1c2e848435e865af3d60366bb95f0"
+   },
+   "tensors_sha256": "f602c1f810da4ea26008752f1b18c0cedaa2a4f37be11784dea11b3259b17eec",
+   "loss": 6.563883370169776e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 335.460921911
+  },
+  {
+   "updates": 2592,
+   "data_digest": {
+    "batches": 2592,
+    "sha256": "39b8aa1e6837a2e1c8462308232b45cca0adb22149e55a28e6dcc3d846563a2f"
+   },
+   "tensors_sha256": "9628c57231fcf0619c096f6e0cb025889bd65fe54f0b8cc8dc84ebcf08faf0d0",
+   "loss": 6.571644384223418e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 339.37255494600004
+  },
+  {
+   "updates": 2624,
+   "data_digest": {
+    "batches": 2624,
+    "sha256": "fa070b5eb630efb1e7ca878dd60405f48e3b6fd1779f3dcef0378ccfc5845f39"
+   },
+   "tensors_sha256": "94d12cb45dd53474ba198d593fce797ddbd1ab7f2aca4efb7f75285ab2c36cf3",
+   "loss": 6.594927548508878e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 343.228603559
+  },
+  {
+   "updates": 2656,
+   "data_digest": {
+    "batches": 2656,
+    "sha256": "8c484b598fde53d917e6dd996609cd1194db1f28682fb10ca59fba8550b26fb2"
+   },
+   "tensors_sha256": "6bb03bf14c9d5bf278bc19a07014973e43c9812d90d407b975e874fe51091322",
+   "loss": 6.433886334811234e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 347.20956639
+  },
+  {
+   "updates": 2688,
+   "data_digest": {
+    "batches": 2688,
+    "sha256": "a54a5011e0dcdffd089c451b42505b1fa595d5dbef19d3bd4e2f268ecfd1c237"
+   },
+   "tensors_sha256": "3fb3de4ecb5775727f766bea21de4c8a5d894a1abada6a1527c56b573f265163",
+   "loss": 6.53671985428872e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 351.26072016300003
+  },
+  {
+   "updates": 2720,
+   "data_digest": {
+    "batches": 2720,
+    "sha256": "df4274003b2184b24667bf4a7e2355a8366712cd66f956e3f01cc3ceb362e791"
+   },
+   "tensors_sha256": "3f5ba3951d9bbe7fd30480711e77609131829c599971114416e62574f572498d",
+   "loss": 6.507616001627525e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 355.174164495
+  },
+  {
+   "updates": 2752,
+   "data_digest": {
+    "batches": 2752,
+    "sha256": "472cde93c030f1f776d60f406f998a8e54c651f127e394d79dd36d35b8317709"
+   },
+   "tensors_sha256": "6f00c6a475cb06463a0c250b5d707ef284ac7c60017c17e46d79339e69a73ec4",
+   "loss": 6.62791179717459e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 359.069073542
+  },
+  {
+   "updates": 2784,
+   "data_digest": {
+    "batches": 2784,
+    "sha256": "e3f75be832190b8d9ff389ed034551baf96ae147248616582f053c697b56afdf"
+   },
+   "tensors_sha256": "e8d1bc5a4ad232e57583c96c64fad9d96da4739dbb48f9fbdc8cd90665ac695e",
+   "loss": 6.495974436138141e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 362.936867689
+  },
+  {
+   "updates": 2816,
+   "data_digest": {
+    "batches": 2816,
+    "sha256": "4ec6a614315336e6a606e3f9f262585c228898c1977b28cc07a3406ada2982a1"
+   },
+   "tensors_sha256": "6cc93c18dc296cc47c0c07c0728f4011c32af877abbf9fe22d8ba7944e7a7dbf",
+   "loss": 6.426125331859822e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 366.846070739
+  },
+  {
+   "updates": 2848,
+   "data_digest": {
+    "batches": 2848,
+    "sha256": "8fe7079bb1504e8edd56d61affe12ef07982393afea4476b81df99027f1b99d2"
+   },
+   "tensors_sha256": "69b4c4b8d49cfb7becc8e779063f89e60d199371434fe725677456d037d58b69",
+   "loss": 6.342694336414212e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 370.962515241
+  },
+  {
+   "updates": 2880,
+   "data_digest": {
+    "batches": 2880,
+    "sha256": "af577a7399250eeb50d79442f591475fbafc19092bcb26807ce54b385741e9ea"
+   },
+   "tensors_sha256": "bf9c9be7c162b2e9ba5276c8d5d7238f600c839d7471a89fcf733b2adf5065cf",
+   "loss": 6.408662989176861e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 374.94559417100004
+  },
+  {
+   "updates": 2912,
+   "data_digest": {
+    "batches": 2912,
+    "sha256": "d29e11d880b5c83ccd3091a2a6170ee56abaa88177be248c9bcbf388e59be723"
+   },
+   "tensors_sha256": "9e412a44a38d443385c0823d76fc9ea4d1f31d1413b2c98e14154c2809aa32a3",
+   "loss": 6.426125320757592e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 378.84873173200003
+  },
+  {
+   "updates": 2944,
+   "data_digest": {
+    "batches": 2944,
+    "sha256": "bd1891d92f14553e7511eee4ffc890669203c7378e76e789560bc768be88cef7"
+   },
+   "tensors_sha256": "7b0538d9826f2ffa90581ae145eb3bc290a177b31ee87775c8a974601cc900ab",
+   "loss": 6.36985790780642e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 382.466718872
+  },
+  {
+   "updates": 2976,
+   "data_digest": {
+    "batches": 2976,
+    "sha256": "10a24fcc427210602853b0fcaeb53fea5bfc5353f50142f8a00f7559f7d72ed2"
+   },
+   "tensors_sha256": "d3002cefba23c9b745d004e106ec0a94e4b12d34c26fdb9dea432ec7fa26a1dc",
+   "loss": 6.332993007784893e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 386.632251366
+  },
+  {
+   "updates": 3008,
+   "data_digest": {
+    "batches": 3008,
+    "sha256": "0275929c45f19160c2ae75046027e1aa5116b5d5ab420c0217807e71805a5e6a"
+   },
+   "tensors_sha256": "24fbb4ecc1e8dcb7a61257fae03bb61add9c0dd70c0bdacb7a91ea6023acf04c",
+   "loss": 6.375678707204457e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 390.659931511
+  },
+  {
+   "updates": 3040,
+   "data_digest": {
+    "batches": 3040,
+    "sha256": "8724e515f04f82730e7f8d9a52388b0e467bcf76994d8158e03bd0bcc381f9d8"
+   },
+   "tensors_sha256": "93c2a0d92149d48df9e1210ceeca39fde556e58dbf0810d10f396d4d21dcbd07",
+   "loss": 6.424185117204217e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 394.54438868
+  },
+  {
+   "updates": 3072,
+   "data_digest": {
+    "batches": 3072,
+    "sha256": "591a1d773406117a78386e6b15811286020dc7c1a61411bf7e98a229c6e8fea2"
+   },
+   "tensors_sha256": "abe2048d4b422afb09d831c31066479278744f2b3bd931aedd51848c7982ecdc",
+   "loss": 6.24180100938787e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 398.550773002
+  },
+  {
+   "updates": 3104,
+   "data_digest": {
+    "batches": 3104,
+    "sha256": "a137295ba1cd2099df6fbee24acabd0b5343f20e995b9bb5d396523ca8391566"
+   },
+   "tensors_sha256": "bb8db48716a820765c791254c9fc2a1f845257545347c62d283d5aeddca89927",
+   "loss": 6.265084129264409e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 402.356943393
+  },
+  {
+   "updates": 3136,
+   "data_digest": {
+    "batches": 3136,
+    "sha256": "f4e1bf1d4c0d327d817c8e19f939818e51885c02bc8a192820a4db0b212d3b06"
+   },
+   "tensors_sha256": "d5a62d0d97061874d0e51562813827baa1155b7050933419c1d287916862cdff",
+   "loss": 6.160310317415707e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 406.481458932
+  },
+  {
+   "updates": 3168,
+   "data_digest": {
+    "batches": 3168,
+    "sha256": "5bbcc8dfd441079438115ea335e0804773625141432d0370850c88e46169399b"
+   },
+   "tensors_sha256": "66c3008e33148a57af96f7f7da6739f63aa88a900996e2f6c4c530c2a5be211b",
+   "loss": 6.235980254398754e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 410.401391153
+  },
+  {
+   "updates": 3200,
+   "data_digest": {
+    "batches": 3200,
+    "sha256": "7204050ac59a6a70f6f75c53bfd31e59c16b625b75ac63aeb786fcff13d85bb7"
+   },
+   "tensors_sha256": "15b400ad34262b79378c63e2115f7c358146fa640fe5af2bcdf65e7dd1c78e38",
+   "loss": 6.208816694108776e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 414.450179156
+  },
+  {
+   "updates": 3232,
+   "data_digest": {
+    "batches": 3232,
+    "sha256": "d2b118b0761de02b271cfa86a3d4044459ef1a67856e62afebe773137ec923f3"
+   },
+   "tensors_sha256": "aa934371d701c4b4823ddf47f901d6a0775a41f858d679773d866d6c39f4fe47",
+   "loss": 6.210756930968842e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 418.515547084
+  },
+  {
+   "updates": 3264,
+   "data_digest": {
+    "batches": 3264,
+    "sha256": "bfa4c57291978264d477f3fa4eb19623ae43cc50e5e5f76b2243adde1c5dbdd3"
+   },
+   "tensors_sha256": "19370e99374e53e937fe2badba6066fca8b162b5175fe4eb6340623efbc31620",
+   "loss": 6.098222105066498e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 422.09089224
+  },
+  {
+   "updates": 3296,
+   "data_digest": {
+    "batches": 3296,
+    "sha256": "1e48590d7912f57ba91fc6885b391c95f2bc32fd7264ad5bc642acff43bc4557"
+   },
+   "tensors_sha256": "98e6038762c46743ac2880518e05c8779e6f8668619b56d298a1ab2514f2fccb",
+   "loss": 6.179712863652043e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 425.947030691
+  },
+  {
+   "updates": 3328,
+   "data_digest": {
+    "batches": 3328,
+    "sha256": "cd3e2c4f1a248ac50052f3b4977d0cff1ccae3e2fae592879727dc682ce2eedd"
+   },
+   "tensors_sha256": "11f44793cede184366ad9cb90e87131236f6bd8068d33b665051803a8273ec09",
+   "loss": 6.072998826045506e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 430.05831652300003
+  },
+  {
+   "updates": 3360,
+   "data_digest": {
+    "batches": 3360,
+    "sha256": "3c1eeb41c00305096b83dc3cca3d756a766b3df9cf65fe95ae95ba3613be3c4a"
+   },
+   "tensors_sha256": "195e46ca96ace393fb4225837864c6c64724974207d25199a2d30f23ae6f858e",
+   "loss": 5.958523729976406e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 433.859447552
+  },
+  {
+   "updates": 3392,
+   "data_digest": {
+    "batches": 3392,
+    "sha256": "1386a5c8b44bd88ff47a7130e161ad54a4ee469c83d6b9e84c9c81d9484d9aeb"
+   },
+   "tensors_sha256": "336bd9a5fb4c5e01f3dddf8e7bd3c76a626022918d606e8d25495d0f3bff705b",
+   "loss": 6.047775580331205e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 437.76847656300004
+  },
+  {
+   "updates": 3424,
+   "data_digest": {
+    "batches": 3424,
+    "sha256": "d5e939dd706a12857b3989a8115eef292de0a8fa4baf24a269498879661eb3c1"
+   },
+   "tensors_sha256": "d367167414694d09632561e1ed9e3efacf0dde2ad7c8d6b4bf3c8f59d1e59ac0",
+   "loss": 6.072998826045506e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 441.95496029000003
+  },
+  {
+   "updates": 3456,
+   "data_digest": {
+    "batches": 3456,
+    "sha256": "aad34e854ab54c25e6dc2f8627511d9e5d4db58436c017d78d22ae1c947fcca8"
+   },
+   "tensors_sha256": "b9cba361d5d5629e72134b7ee990e087af5f2d72f286851babf2e87f106e1ee4",
+   "loss": 5.95270300829398e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 446.102087587
+  },
+  {
+   "updates": 3488,
+   "data_digest": {
+    "batches": 3488,
+    "sha256": "b861673e35aac3f8c8bc75919954774100b5440cf71132eb5750e61e6bea15a6"
+   },
+   "tensors_sha256": "a6b7089bd538621887bec597642308aab67cecbb3be31ce235169fb9f781c936",
+   "loss": 5.958523718874176e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 450.15110761200003
+  },
+  {
+   "updates": 3520,
+   "data_digest": {
+    "batches": 3520,
+    "sha256": "e53c0937c0d84b7f874df7b9545c6c182ce0415886b282791b2581ecdb2a4625"
+   },
+   "tensors_sha256": "764e845ff59945bd3ffee9187b7787887c7396f9f2679c0f16df5d0bdd51c8c6",
+   "loss": 5.884794018751194e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 454.120509915
+  },
+  {
+   "updates": 3552,
+   "data_digest": {
+    "batches": 3552,
+    "sha256": "bf9d1cd4d7f6551f30c4ca2e056b382bf8cecc749c0f34e0e9ee875abe6242cb"
+   },
+   "tensors_sha256": "1e9eae5b5ae3498ca595cdd568ea247754c1b9c49b9ddf062740e9dee5c47b80",
+   "loss": 5.90031612457409e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 458.12564606200004
+  },
+  {
+   "updates": 3584,
+   "data_digest": {
+    "batches": 3584,
+    "sha256": "75c3b7cf6bc1a59a1a77f50127b5b225f207fb5d04cf8e2d179d777ee7dd2b3d"
+   },
+   "tensors_sha256": "74eaacef0d549fc7e4f1bfbf54cb648fea8eba183858ad05b69c2455b3627253",
+   "loss": 5.929419932826363e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 462.10701829000004
+  },
+  {
+   "updates": 3616,
+   "data_digest": {
+    "batches": 3616,
+    "sha256": "a06deeb718f76cbb477d8c3cde200d8f16e1e88a25ddfecf3fb0658fc0d8cbc7"
+   },
+   "tensors_sha256": "6fc76c7c78d9b555f190b814b7f26e4dd5a28d15b63ef2f5faaf02ac74997986",
+   "loss": 5.8498694777142646e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 466.418786731
+  },
+  {
+   "updates": 3648,
+   "data_digest": {
+    "batches": 3648,
+    "sha256": "4b098b7ccda5abd13e1a72e5cc233dbe15a7651501c02b62ba3910fb73302b6d"
+   },
+   "tensors_sha256": "87e922e8ad4861b33cc9290bd07ffb1a0e75f000730ce52597a727012a7c1a69",
+   "loss": 5.714051565242073e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 470.085395209
+  },
+  {
+   "updates": 3680,
+   "data_digest": {
+    "batches": 3680,
+    "sha256": "eeb7b90aa5e35553eadc4254a94808c589e4abf4b949a7f5266ed52b3728b523"
+   },
+   "tensors_sha256": "2c9a05c16c44cacdc20c8f91a195a4c4a0c305915bf9b0a9babd0bee76d3a70e",
+   "loss": 5.822705884117596e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 473.97980001900004
+  },
+  {
+   "updates": 3712,
+   "data_digest": {
+    "batches": 3712,
+    "sha256": "dd6efed0ee0c2804d0d161aa9d308897477d233483d2a7cb543dcdc9d76b0333"
+   },
+   "tensors_sha256": "a1b16fddd2572f89c31fdf987cc7c99837960a96de50f7ec2a7be4cfb2f21bf2",
+   "loss": 5.884794074262345e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 478.041929603
+  },
+  {
+   "updates": 3744,
+   "data_digest": {
+    "batches": 3744,
+    "sha256": "53d200b929482caa846a79c8f424616a20b4fe336359ff9f59107d795f72f90b"
+   },
+   "tensors_sha256": "3e1b47c290ae82814c007afd3a0a42e6d5857daad231eac8d98b51d3d339b389",
+   "loss": 5.756737186946026e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 482.20246673900004
+  },
+  {
+   "updates": 3776,
+   "data_digest": {
+    "batches": 3776,
+    "sha256": "7eac525c59b47b1cd826479f90e06ffb6893205c65665512ece2edb62bb4a944"
+   },
+   "tensors_sha256": "c5d002788f0d7af17f48fb21a2fa7b282f738f1548aecd146f6dcc4ae4d74e37",
+   "loss": 5.760617705075077e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 486.30056036400003
+  },
+  {
+   "updates": 3808,
+   "data_digest": {
+    "batches": 3808,
+    "sha256": "1b89c5155842466944715339dff4a3029114ae68ced9b85c2e2818c52e8a00fe"
+   },
+   "tensors_sha256": "c7c894d9e96a90991a9b0bb4b791e5203c895f1e1ccea5f374bfb14c44b8c6e9",
+   "loss": 5.8246461764888124e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 490.254680697
+  },
+  {
+   "updates": 3840,
+   "data_digest": {
+    "batches": 3840,
+    "sha256": "7e3803a07ea39488be6338b5a8c274faac7bf7f16fe7a100206f935b82ed1772"
+   },
+   "tensors_sha256": "db895a4eb187b7d065c98d9b875ae45205c2bef5c0df6184791f5f03b626b922",
+   "loss": 5.6364413247855794e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 494.376450504
+  },
+  {
+   "updates": 3872,
+   "data_digest": {
+    "batches": 3872,
+    "sha256": "52c341ea4e3f80b8f663179f5df84f44f70e69a5d7e2fa26e7cabdcb9d753453"
+   },
+   "tensors_sha256": "258b7a6c0aa29abe0c8cf4fc0964193cd6216d78eb8877d060e9fb314525caae",
+   "loss": 5.6810672943719e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 498.164501647
+  },
+  {
+   "updates": 3904,
+   "data_digest": {
+    "batches": 3904,
+    "sha256": "4b1f2ef20dabfa5cdc02054a69e06df401bb0c5861a8e4bec03d78368988e886"
+   },
+   "tensors_sha256": "d2665d30421153316176a14648c228a067afe667006629d7c1bc37320e41ea43",
+   "loss": 5.7664384489619636e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 502.162760681
+  },
+  {
+   "updates": 3936,
+   "data_digest": {
+    "batches": 3936,
+    "sha256": "ca61c5c635e167bd485d5979ada3256f2b6891a2c033bbb3ddf58666d968dbcb"
+   },
+   "tensors_sha256": "f7a268c7254d8ca9959f93b8b7c55d92006b1b62a9e45d8fb233bf1f8f97a2b5",
+   "loss": 5.7024100663660704e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 506.187673231
+  },
+  {
+   "updates": 3968,
+   "data_digest": {
+    "batches": 3968,
+    "sha256": "8dfad0ba8fec3a121b5ffb20a0edcc09a0509907d4e005e73e961ab36afc0433"
+   },
+   "tensors_sha256": "adb03c7aa3a42f1d7d4a7c1af9bb365332faa4261b2a92f186f274546255482d",
+   "loss": 5.6442024276570635e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 509.87413962200003
+  },
+  {
+   "updates": 4000,
+   "data_digest": {
+    "batches": 4000,
+    "sha256": "9d6a33e01cbd635fd0feefe475028f442f5f6fea4dda0bd2ca373c8c9ee20895"
+   },
+   "tensors_sha256": "3de5b28d478cb409e130f159e14eda7f2672b99a39e000d50cd7c5567c930c18",
+   "loss": 5.6597244002531966e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 513.968968911
+  },
+  {
+   "updates": 4032,
+   "data_digest": {
+    "batches": 4032,
+    "sha256": "ffd640f234f5a02f132ac8634cacf9fb25cd14067da95c490773f7340a5c7580"
+   },
+   "tensors_sha256": "e57f3604b1d719f775b5b0e7d9ce5f3bc3ef8df7fc6f494d97278dd700a7f88e",
+   "loss": 5.690768545285607e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 517.8110151340001
+  },
+  {
+   "updates": 4064,
+   "data_digest": {
+    "batches": 4064,
+    "sha256": "ab7ca9e6f50320c52ff7fa38d57f63f170719734e30b23f77c95e615ab9643f7"
+   },
+   "tensors_sha256": "5664b72d1465e0745615c7c3fe06ead3feaa77fa536e226311f02981df7b4318",
+   "loss": 5.55301038485112e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 521.899322952
+  },
+  {
+   "updates": 4096,
+   "data_digest": {
+    "batches": 4096,
+    "sha256": "f60110540a0c32e739856592432a6580ec66ec1781d4a9b54d15f273a8be881f"
+   },
+   "tensors_sha256": "600374346c1960580330434038b5909a3368b5020feff8c7ea2d63e67c2ecce6",
+   "loss": 5.6267400516674115e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 525.631634788
+  },
+  {
+   "updates": 4128,
+   "data_digest": {
+    "batches": 4128,
+    "sha256": "b4152281c250080339e6ef82f7167451a9679c3c582165f7dc7bfa0450f2a14e"
+   },
+   "tensors_sha256": "e55f269165e2590d265b075a09d85dc8de8cc090a710f8c74ee807e908ccdc84",
+   "loss": 5.650023149339489e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 529.818373163
+  },
+  {
+   "updates": 4160,
+   "data_digest": {
+    "batches": 4160,
+    "sha256": "5d40f07df247f34e51a58609a7a580ae507ea51c3aace58baceccffcde31b4e6"
+   },
+   "tensors_sha256": "6b3bb2afaf53065ed3b16d432b89ac67cd5a73d21cd9d8ceadebb7fef360c801",
+   "loss": 5.632560862167679e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 533.710560536
+  },
+  {
+   "updates": 4192,
+   "data_digest": {
+    "batches": 4192,
+    "sha256": "e8ef0f50b57f9c1e726d8f7593a710d543743ad3f11629e12514bd55044f998f"
+   },
+   "tensors_sha256": "147e458c78ac8cc5e1a8424d7aae47912931ae0eba15616b0f2bb44db23b86b1",
+   "loss": 5.591815499528252e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 537.46492643
+  },
+  {
+   "updates": 4224,
+   "data_digest": {
+    "batches": 4224,
+    "sha256": "d8d45dfaccd39f1a332b6ff88c348f9c27c3e1ce6683a76bb2169d71969221b6"
+   },
+   "tensors_sha256": "98c7622f724d7db26ac7f5dee8df96e997a979ace5c94d0fad7e9316a2432e69",
+   "loss": 5.4948027461421134e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 541.646603346
+  },
+  {
+   "updates": 4256,
+   "data_digest": {
+    "batches": 4256,
+    "sha256": "0b8e4b0fb56ca521c1e0429a1e19ff0445ba6c72c0da58b467cb86fb562b16b3"
+   },
+   "tensors_sha256": "8eb3eff0f2880d6cd7a5ec4b3b55cc6aa5da89690077e226438e3c2a6512525c",
+   "loss": 5.644202416554833e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 545.595647221
+  },
+  {
+   "updates": 4288,
+   "data_digest": {
+    "batches": 4288,
+    "sha256": "e643284b2d797db288783a7b6540e363260f3e1f45f440fcd723e2f0ad9d8f6a"
+   },
+   "tensors_sha256": "ad67aae70e534b10a22114f03ab29f8fade76969ebd105a7a6660789f278a2a4",
+   "loss": 5.5859947445391356e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 549.430122851
+  },
+  {
+   "updates": 4320,
+   "data_digest": {
+    "batches": 4320,
+    "sha256": "a7fb4739804f3a27067b5ed0bd98151bbffa75d449066dc95394cdeaef637b8e"
+   },
+   "tensors_sha256": "39265c076eabc34f0e32906756c300e9fdc016f0fa32cd085a574fb9a0476cb4",
+   "loss": 5.5219663175343214e-08,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 300,
+    "first_byte": 300,
+    "second_byte": 300,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 0,
+     "exact": 0
+    },
+    "seen": {
+     "n": 300,
+     "exact": 300
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "taught": {
+    "n": 300,
+    "exact": 300,
+    "final": 300
+   },
+   "cpu": 553.1525573050001
+  }
+ ],
+ "complete": null,
+ "check4": {
+  "64": {
+   "data_digest": true,
+   "held": true,
+   "taught": true,
+   "tensors_sha256": true
+  },
+  "256": {
+   "data_digest": true,
+   "held": true,
+   "taught": true,
+   "tensors_sha256": true
+  },
+  "1024": {
+   "data_digest": true,
+   "held": true,
+   "taught": true,
+   "tensors_sha256": true
+  },
+  "2048": {
+   "data_digest": true,
+   "held": true,
+   "taught": true,
+   "tensors_sha256": true
+  },
+  "4096": {
+   "data_digest": true,
+   "held": true,
+   "taught": true,
+   "tensors_sha256": true
+  }
+ }
+}
