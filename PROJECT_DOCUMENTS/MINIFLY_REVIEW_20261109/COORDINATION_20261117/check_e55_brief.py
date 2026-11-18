@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Check of the brief of E55, first part (revision 1): the figures of the document CHECK_OF_TASK_E55_BRIEF_20261118.md.
 
-Read-only: every file of another branch is read with `git show` into memory; nothing is written, nothing is trained, torch is not used and
-no code of another branch is run. The forward pass, the items, the panels and the reader of weight files are those of the reviewer's
+Every file of another branch is read with `git show` into memory; torch is not used and no code of another branch is run. Nothing is
+written unless the part `emulate` is given a folder for its emulated weights (E55_CHECK_SAVE). The forward pass, the items, the panels and the reader of weight files are those of the reviewer's
 verification of E51's trial (PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e51_trial_verify.py), imported as `V`.
 
 Run from the repository root:
@@ -12,9 +12,20 @@ Parts:
     record   the figures of the brief's section "What the record says", from the sixteen receipts of E51 on the worker's branch
     open     E51's arm `open`, from its weights of row 4,096: the update gates of the cells in reserve position by position
     start    the start `shut` written in numpy from the saved keyed start and the saved directions: the figures of the brief's check 1
-             (b), (c) and (d); what the reset and candidate rows of the cells in reserve receive; the room that the rule leaves
-    grad     the exact gradient of the loss at the start `shut` on one batch of each new task, by a hand-written backward pass in
-             numpy (double precision, verified against finite differences): the size of the gradient at the gate rows and elsewhere
+             (b), (c) and (d); what the gates, the reset gates and the candidates of the cells in reserve receive; the part of the code
+             of each byte of the new tasks outside the directions in use
+    grad     the gradient of the loss at the start `shut` on one batch of each new task, by a backward pass written here (rule B: the
+             exact gradient, verified against central finite differences; rule S: the sweep): its size at the gate rows and elsewhere
+    check2   the brief's check 2 after eight emulated updates of the arms `shut` and `shut-gates-free`
+    residue  rule S after eight emulated updates: the error that the sweep sends back through the entries that the projection brought
+             to zero, with these entries as stored and set to exactly zero
+    emulate  an emulation of the runner's update (the checker's own arithmetic, not the runner): first 64 updates of E51's arm `keyed`
+             against the saved weights of row 64, then the arm `shut`. Environment variables: E55_CHECK_UPDATES (number of updates,
+             512 if absent), E55_CHECK_RUNS (for example "unrelated:B,conflict:S"; all four if absent), E55_CHECK_VALIDATE (0 leaves
+             out the comparison with E51's saved weights), E55_CHECK_VARIANTS ("brief" if absent; "zeroed" sets the entries that the
+             projection brings to zero to exactly zero after every step; "gates-free" is the arm `shut-gates-free`; "scaled"
+             multiplies the gradient of the gate rows of the reserve by 1e4), E55_CHECK_SAVE (a folder outside the repository in which
+             the emulated weights after the last update are written; nothing is written if absent)
 """
 import importlib.util, json, os, sys, time
 import numpy as np
@@ -55,7 +66,6 @@ def record():
                 cpu += rec["complete"]["cpu_total"]
                 red = {r["updates"]: r["score1_first_family_all_pairs_k0"]["reduction_score"] for r in rows}
                 sh = {r["updates"]: r["share_of_answers_equal_to_row0"] for r in rows}
-                nk0 = sum(r_["n"] if "n" in r_ else 0 for r_ in [])  # not used
                 changed_k0 = max(31684 - sum(v for n, v in sh[g]["per_panel"].items() if n.startswith("k0_")) for g in ROWS)
                 changed_k12 = max(1200 - sum(v for n, v in sh[g]["per_panel"].items() if n.startswith("k12_")) for g in ROWS)
                 first_below5 = next((g for g in ROWS if red[g] < 5), None)

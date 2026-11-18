@@ -8,7 +8,7 @@
 
 The terms are the brief's. *The start `shut`*, *the gate rows of the reserve*, *the directions in use* and *the two added lines* are defined there. *The keyed start* is E51's embedded network as saved before any update, and *the keyed forward* is the forward pass with the two added lines. An update gate is called *shut* when its z is close to 1, and *open by x* when 1 − z is x. *The summed input* of a gate, a reset gate or a candidate is the number to which the sigmoid or the hyperbolic tangent is applied. A cell whose gate is shut still takes a small state on an item, at most the number of positions times 1 − z; this note calls it *the state of a shut cell*.
 
-The script is `check_e55_brief.py` in this folder. It imports the reviewer's verification script of E51's trial (`e51_trial_verify.py`, one folder above) and uses that script's reader of weight files, its items, panels and streams, and its forward pass and generation of answers (`Net`, `answer_logits`, `generate`, `score_first_family`, `score_new`). It reads every file with `git show` and writes nothing. Its parts are named where a figure is given:
+The script is `check_e55_brief.py` in this folder. It imports the reviewer's verification script of E51's trial (`e51_trial_verify.py`, one folder above) and uses that script's reader of weight files, its items, panels and streams, and its forward pass and generation of answers (`Net`, `answer_logits`, `generate`, `score_first_family`, `score_new`). It reads every file with `git show` and writes nothing, unless the part `emulate` is given a folder outside the repository for its emulated weights. Its parts are named where a figure is given:
 
 | Part | What it computes |
 |---|---|
@@ -22,7 +22,7 @@ The script is `check_e55_brief.py` in this folder. It imports the reviewer's ver
 
 *The emulation* is the checker's own arithmetic and is not the runner. It computes in double precision and stores the weights in single precision after every step; torch computes in single precision. It was validated against the record: 64 emulated updates of E51's arm `keyed` on `unrelated` give the saved weights of row 64 to within 4.7e-5 in every entry under both rules, where the weights changed by up to 5.9e-2 (part `emulate`, first lines). Its figures after many updates show sizes and the order of events; they are not the figures that the worker's runs will give, because small differences of rounding grow over thousands of updates.
 
-Commands: `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_e55_brief.py <part>`, from the repository root. The part `emulate` reads three environment variables: `E55_CHECK_UPDATES` (number of updates, 512 if absent), `E55_CHECK_RUNS` (for example `unrelated:B,conflict:S`) and `E55_CHECK_VALIDATE` (0 leaves out the validation).
+Commands: `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_e55_brief.py <part>`, from the repository root. The part `emulate` reads five environment variables, which the first lines of the script describe: `E55_CHECK_UPDATES` (number of updates, 512 if absent), `E55_CHECK_RUNS` (for example `unrelated:B,conflict:S`), `E55_CHECK_VALIDATE` (0 leaves out the validation), `E55_CHECK_VARIANTS` and `E55_CHECK_SAVE`. The table of the emulation below was made with `E55_CHECK_UPDATES=4096`, one run a process; a run of 4,096 updates takes about 21 minutes on one thread.
 
 ## The arithmetic of the construction, with the measured figures
 
