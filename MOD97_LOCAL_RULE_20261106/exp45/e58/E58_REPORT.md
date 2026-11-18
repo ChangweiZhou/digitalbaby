@@ -4,10 +4,18 @@
 
 The work is on branch `claude/e58-gated-term-kqasnme`, created from the default branch `codex/minifly-consolidated-20261023` at 7cabb13a. All paths below are relative to `MOD97_LOCAL_RULE_20261106/`, and every receipt is under `exp45/e58/`.
 
-Every figure in this report is printed from the receipts by one of three commands, run from `MOD97_LOCAL_RULE_20261106/`:
+The figures of this report come from four kinds of source. The first is the run receipts, which these four commands print, run from `MOD97_LOCAL_RULE_20261106/`:
 - `python3 exp45/e58/e58_tables.py A` prints the Part A tables. Their saved output is `exp45/e58/qual/E58_PART_A_TABLE.txt`.
 - `python3 exp45/e58/e58_tables.py B` prints the Part B tables. Their saved output is `exp45/e58/qual/E58_PART_B_TABLE.txt`.
 - `python3 exp45/e58/e58_norms.py` prints the norms. Its saved output is `exp45/e58/qual/E58_NORMS_PART_A.txt`.
+- `python3 exp45/e58/e58_report_appendix.py` prints the tables of the appendix.
+
+The other three sources are:
+- the receipts of the checks in `exp45/e58/qual/E58_check<n>….json`, which section 3 cites;
+- the incomplete receipts and logs of the interrupted runs in `exp45/e58/interrupted/`, which give the rows at which those runs stopped (section 2);
+- the receipts of E40 and E48, to which checks 1, 2 and 5 compare.
+
+The report was corrected after the reviewer's verification (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/E58_VERIFICATION_20261118.md` on `origin/claude/vibrant-cerf-sje726` at e16ffd88). The corrections concern the text only; no receipt was changed and no run was added.
 
 ## 1. Terms
 
@@ -110,7 +118,7 @@ N is below 5 points on every seed under both rules, so verdicts are stated under
 The figure is R-late. Differences are given for seeds 73129, 93683 and 116089, in that order.
 
 **Point 1.**
-- Under the sweep, `term` is above `free` (+13.0, +9.3, +3.7), so the lead of the gated term persists to 8,192 updates. The lead on R-late is larger than the lead on R-mid (+7.8, +6.4, +3.7) on two seeds and equal on the third. Between R-mid and R-late, `free` fell on seeds 73129 and 116089 and rose on 93683. `term` rose on 73129 and 93683 and fell by 0.5 on 116089. Neither "free fell" nor "term rose" holds on all three seeds.
+- Under the sweep, `term` is above `free` (+13.0, +9.3, +3.7), so the lead of the gated term persists to 8,192 updates. The lead on R-late is larger than the lead on R-mid (+7.8, +6.4, +3.7) on two seeds and smaller by 0.02 on the third (3.68 on R-mid, 3.66 on R-late). Between R-mid and R-late, `free` fell on seeds 73129 and 116089 and rose on 93683. `term` rose on 73129 and 93683 and fell by 0.5 on 116089. Neither "free fell" nor "term rose" holds on all three seeds.
 - Under back-propagation, `term` is above `free` (+11.3, +6.6, +9.8), so the lead persists. It is larger on R-late than on R-mid (+8.6, +6.1, +7.9) on all three seeds. `term` rose on all three seeds (91.9 → 94.2, 97.4 → 98.5, 98.6 → 99.0). `free` fell on 73129 and 116089 and rose on 93683.
 
 **Point 2.** The lead is split into L = R-late(`term`) − R-late(`free`), A = R-late(`free-anchor`) − R-late(`free`) and P = R-late(`term`) − R-late(`free-anchor`).
@@ -137,9 +145,9 @@ These readings enter no sentence of point 2.
 
 **Point 4.** `free-wd0` against `free`, the effect of removing the weight decay altogether, is not distinguished under the sweep (−2.2, −0.5, −0.0) or under back-propagation (+0.5, −0.3, +4.5).
 
-**Point 5.** The table file gives, at every row of the three free arms, the mean of the life's four panels, the mean of the first family's two panels, the norm of the tensors outside the byte table, and the norm of their change.
+**Point 5.** Appendix A.3 (and the table file) gives, at every row of the three free arms, the mean of the life's four panels, the mean of the first family's two panels, the norm of the tensors outside the byte table, and the norm of their change.
 
-- **Loss of the life's families.** At row 0 the mean of the life's four panels is 86.6 (S) and 90.5 (B) on seed 73129. At row 16 it has fallen to 60.9 and 56.6 in `free`, while the norm of the weights is unchanged to within 0.2%. At row 1,024 it is:
+- **Loss of the life's families.** At row 0 the mean of the life's four panels is 86.6 (S) and 90.5 (B) on seed 73129. At row 16 it has fallen to 60.9 and 56.6 in `free`, while the norm of the weights is larger by 0.21% (S) and 0.23% (B). At row 1,024 it is:
 
   | Rule | free | free-wd0 | free-anchor |
   |---|---|---|---|
@@ -151,16 +159,16 @@ These readings enter no sentence of point 2.
 
   | Arm | S | B |
   |---|---|---|
-  | `free` | 0.84 to 0.95 | 0.92 to 0.97 |
-  | `free-wd0` | 1.48 to 1.58 | 1.53 to 1.61 |
+  | `free` | 0.84 to 0.95 | 0.91 to 0.97 |
+  | `free-wd0` | 1.47 to 1.58 | 1.53 to 1.61 |
   | `free-anchor` | 1.20 to 1.21 | 1.18 to 1.26 |
 
-  The change relative to the lived norm at row 8,192 is 0.61 to 0.76 in `free`, 0.82 to 0.96 in `free-wd0` and 0.36 to 0.52 in `free-anchor`.
+  The change relative to the lived norm at row 8,192 is 0.61 to 0.75 in `free`, 0.82 to 0.96 in `free-wd0` and 0.36 to 0.52 in `free-anchor`.
 - **Does the arm that keeps more also score higher?** Within each seed and rule, the three free arms were ordered by the mean of the life's four panels over the five late rows (this ordering is descriptive and was not fixed beforehand). `free-anchor` keeps the most on all six seed-rule combinations: 42.4 to 52.5, against 22.2 to 41.9 in `free`. It also has the highest R-late on all six. The R-late differences behind this ordering are mostly below the 5-point margin (section 4.3, `free-anchor` against `free`), so it is a direction consistent with the explanation under test, not a verdict.
 
 ## 5. Part B (f = 0.05, 0.10, 0.20)
 
-All figures in this section are from `E58_PART_B_TABLE.txt`, which also gives every run's R-mid, highest row, score at row 8,192 minus score at row 4,096, curve and taught panel. The taught panel at row 8,192 is 95.8 to 100.0 in every run of Part B.
+All figures in this section are from `E58_PART_B_TABLE.txt`. Appendix A.1 gives R-late of every run on its own untaught pairs and the taught panel at row 8,192 by run; appendix A.2 gives the first rows at 80 and 90. The table file also gives every run's R-mid, highest row, score at row 8,192 minus score at row 4,096, curve and taught panel. The taught panel at row 8,192 is 95.8 to 100.0 in every run of Part B.
 
 ### 5.1 R-late on the common pairs
 
@@ -228,19 +236,23 @@ For a rule and a pair of fractions (f, g), "deficit" means the higher of `free` 
 - (0.10, 0.20): deficit +2.1, +2.5, +9.6.
 - (0.05, 0.20): deficit +8.5, +13.3, +22.6.
 
-Condition (a) holds in all three, and (b) fails in all three. No sentence is stated: under the sweep, the gated term does not reach from fewer pairs the level that conventional free learning by back-propagation reaches from more.
+Condition (a) was read under back-propagation, the rule of the free arms in this comparison; it also holds under the sweep (section 5.3, within the sweep). Condition (b) fails in all three pairs. As the brief prescribes when (b) fails, only the deficits by seed are given; no sentence is stated.
 
 ### 5.4 Number of presented items
 
-The section on the first row at which the reduction score reaches 80 and 90 in `E58_PART_B_TABLE.txt` gives every run, with the number of presentations of each taught pair at that row (64 items a batch, divided by four times the number of taught pairs).
+Appendix A.2 gives, for every run of Part B, the first row at which the reduction score is 80 or more and 90 or more, with the number of presentations of each taught pair by that row (the row times 64 items, divided by four times the number of taught pairs).
 - Under the sweep, `term` first reaches 80 at rows 256 to 512, and `free` and `free-wd0` at rows 64 to 512. The exception is `free` at f = 0.05 on seed 116089, which never reaches 80.
 - Under back-propagation, `term` reaches 80 at rows 64 to 256, and the free arms at rows 32 to 128.
 
-The gated term is therefore slower in presented items at every fraction, as in E48. The statements of section 5.3 concern the number of different taught pairs at an equal number of presented items (524,288 at row 8,192), not the number of items a learner needs.
+The two levels give different pictures. Appendix A.2 compares `term` with `free` and with `free-wd0` in 36 pairs of runs (2 rules × 3 fractions × 3 seeds × 2 free arms).
+- **At the level of 80**, `term` is later in 33 of 36 pairs. The three exceptions are all under the sweep: two are equal (f = 0.05 on seed 93683 and f = 0.20 on seed 116089, both against `free`), and in one `free` never reaches 80 (f = 0.05 on seed 116089).
+- **At the level of 90**, `term` is earlier in 6 pairs, and in 10 more `term` reaches 90 while the free arm never does: 16 of 36 in all. `term` is later in 11 pairs, the two are equal in 3, and neither reaches 90 in 6.
+
+So the gated term is slower to reach a moderate level in presented items, as in E48, but it reaches the higher level earlier, or alone, in 16 of the 36 pairs. The statements of section 5.3 concern the number of different taught pairs at an equal number of presented items (524,288 at row 8,192), not the number of items a learner needs.
 
 ### 5.5 What Part B says about the explanation under test
 
-The explanation's first part says that free learning lowers the level it reaches by changing the weights that hold the earlier knowledge. Part B is consistent with that part: the gap between `term` and `free` is largest at the smallest fraction, where `free` loses most over the run. But `free-wd0`, which also changes every weight, is not distinguished from `term` at f = 0.05 under the sweep.
+The following reading was not fixed beforehand, and it is not offered as support for the explanation under test. The gap between `term` and `free` is largest at f = 0.05, where `free` loses most over the run. But at f = 0.05 under the sweep, most of that gap closes in `free-wd0`, which also changes every weight. `term` against `free-wd0` is not distinguished there (+9.5, +4.2, −2.5), where `term` against `free` differs by +43.0, +33.1 and +16.4. The gap therefore cannot be attributed to the place of the change on this evidence.
 
 The explanation's second part says that a change confined to the new family's connections reaches the same level from fewer pairs. Under back-propagation this holds for (0.05, 0.10). It does not hold under the sweep, or across the rules, by the brief's criteria.
 
@@ -252,9 +264,9 @@ The explanation's second part says that a change confined to the new family's co
 | P58.2 | `term` is above `free` at f = 0.10 under the sweep | 65% | True (+13.0, +9.3, +3.7) |
 | P58.3 | `term` is above `free` at f = 0.10 under back-propagation | 70% | True (+11.3, +6.6, +9.8) |
 | P58.4 | `free-wd0` is above `free` at f = 0.10 under at least one rule | 25% | False: not distinguished under both rules |
-| P58.5 | `term-wd0` is not distinguished from `term` under both rules | 60% | Not decided: not distinguished under the sweep; at the ceiling under back-propagation, where no verdict is stated |
+| P58.5 | `term-wd0` is not distinguished from `term` under both rules | 60% | Not decided. It is not distinguished under the sweep and at the ceiling under back-propagation, where no verdict is stated. Recording it as not decided is my choice: the brief has no rule for a prediction whose comparison is at the ceiling. |
 | P58.6 | `free-anchor` is above `free` at f = 0.10 under at least one rule | 25% | False: not distinguished under both rules |
-| P58.7 | The mean of the life's four panels at row 1,024 is higher in `free-anchor` than in `free` by 10 points or more on two of three seeds, under at least one rule | 15% | False: differences +2.2, +5.6, +3.5 (S) and −0.8, +1.2, +0.4 (B) |
+| P58.7 | The mean of the life's four panels at row 1,024 is higher in `free-anchor` than in `free` by 10 points or more on two of three seeds, under at least one rule | 15% | False: differences +2.2, +5.6, +3.5 (S) and −0.8, +1.2, +0.5 (B) |
 | P58.8 | At f = 0.05, `term` is above `free` under both rules | 50% | True (S +43.0, +33.1, +16.4; B +33.5, +21.4, +18.5) |
 | P58.9 | For (0.05, 0.10) the report says "the gated term reaches from f the level that free learning reaches from g" under at least one rule | 30% | True: under back-propagation |
 | P58.10 | At f = 0.20 under back-propagation, `term` against `free` is at the ceiling or not distinguished | 60% | True: at the ceiling |
@@ -273,15 +285,95 @@ The limits listed in the brief apply unchanged:
 - The fourth cell of the design, the decay of the lived weights with the change confined to the term, cannot be realised.
 - Part B compares numbers of different taught pairs at an equal number of presented items. It does not compare the number of items a learner needs.
 - Pairs vary by no more than a factor of four.
-- There is one new family, rank 16 only, and one learning rate.
+- There is one new family, rank 16 only, a term on the two recurrent matrices only (no term on other matrices), and one learning rate.
+- The job has no families in sequence, and memory is not fixed: each family would add a term.
+- The job says nothing about Mr. Xu's requirement that long-term memory form in the course of learning without intervention. The separation is supplied from outside.
 
-Two further limits concern this report:
-- Levels still moving at 8,192 updates may not have reached their end. In particular, `free` at f = 0.05 is still falling at row 8,192 (section 5).
-- Every verdict rests on three seeds and a 5-point margin. The scatter of one arm, N, reaches 4.2 points on one seed under the sweep.
+Further limits concern this report:
+- **The one licensed sentence is close to its threshold.** That sentence is section 5.3, back-propagation, (0.05, 0.10), with deficits −4.7, +0.1 and −0.2. On two seeds it meets the 2-point condition by only 1.9 and 2.2 points. The scatter of one arm on the same score (R-late on the common pairs, `free-again` against `free` at f = 0.10 under back-propagation) is 1.1 and 2.5 points on those two seeds.
+- **The scatter was measured for one arm only.** N comes from `free` at f = 0.10 alone. It was not measured for the term arms, nor at f = 0.05. At f = 0.05, `free` changes by −4.2 to −19.1 points between rows 4,096 and 8,192, and `free-wd0` by up to −12.2.
+- **R-mid scatters more than R-late.** On R-mid, the scatter of one arm under back-propagation is 5.1 and 5.3 points on two seeds (73129 and 93683), so comparisons on R-mid under that rule are less secure than those on R-late.
+- **The ceiling hides differences.** Several comparisons under back-propagation (point 3, section 5.2 at f = 0.20, and section 5.3 for (0.10, 0.20)) are at the ceiling of the score. Above 95 a difference of 5 points cannot occur, so these comparisons cannot show a difference that may exist.
+- **Some levels may not have settled.** Levels still moving at 8,192 updates may not have reached their end. In particular, `free` at f = 0.05 is still falling at row 8,192 (section 5).
+- **Verdicts are thin.** Every verdict rests on three seeds and a 5-point margin. The scatter of one arm, N, reaches 4.2 points on one seed under the sweep.
+
+## Appendix (printed by `python3 exp45/e58/e58_report_appendix.py`)
+
+### A.1 Part B: R-late of the reduction score on each run's own untaught pairs, and the taught panel at row 8,192
+
+| Rule | Arm | f | R-late 73129 | R-late 93683 | R-late 116089 | taught 73129 | taught 93683 | taught 116089 |
+|---|---|---|---|---|---|---|---|---|
+| S | free | 0.05 | 42.2 | 50.2 | 57.6 | 97.7 | 98.5 | 99.0 |
+| S | free-wd0 | 0.05 | 75.8 | 79.1 | 76.5 | 100.0 | 100.0 | 100.0 |
+| S | term | 0.05 | 85.2 | 83.3 | 74.0 | 100.0 | 100.0 | 98.3 |
+| S | free | 0.10 | 79.0 | 85.1 | 83.5 | 99.0 | 99.5 | 99.7 |
+| S | free-wd0 | 0.10 | 76.7 | 84.5 | 83.5 | 99.8 | 99.8 | 99.7 |
+| S | term | 0.10 | 92.0 | 94.4 | 87.2 | 100.0 | 100.0 | 99.2 |
+| S | free | 0.20 | 91.2 | 92.4 | 93.1 | 96.8 | 95.8 | 99.8 |
+| S | free-wd0 | 0.20 | 92.3 | 94.4 | 93.6 | 99.2 | 98.8 | 99.7 |
+| S | term | 0.20 | 96.3 | 95.6 | 94.4 | 100.0 | 99.8 | 99.8 |
+| B | free | 0.05 | 55.0 | 70.1 | 75.4 | 98.0 | 99.2 | 100.0 |
+| B | free-wd0 | 0.05 | 68.9 | 89.5 | 85.4 | 100.0 | 100.0 | 99.3 |
+| B | term | 0.05 | 88.5 | 91.5 | 93.8 | 100.0 | 100.0 | 99.8 |
+| B | free | 0.10 | 83.0 | 91.9 | 89.1 | 98.5 | 100.0 | 99.0 |
+| B | free-wd0 | 0.10 | 83.5 | 91.6 | 93.7 | 99.5 | 98.5 | 100.0 |
+| B | term | 0.10 | 94.2 | 98.5 | 99.0 | 99.8 | 100.0 | 100.0 |
+| B | free | 0.20 | 92.3 | 97.1 | 95.3 | 98.7 | 98.7 | 99.3 |
+| B | free-wd0 | 0.20 | 94.1 | 96.6 | 96.7 | 99.8 | 99.8 | 99.8 |
+| B | term | 0.20 | 97.7 | 99.5 | 99.8 | 100.0 | 100.0 | 100.0 |
+
+### A.2 First row at which the reduction score is 80 or more and 90 or more (in parentheses: presentations of each taught pair by that row)
+
+| Rule | f | Arm | 80: 73129 | 80: 93683 | 80: 116089 | 90: 73129 | 90: 93683 | 90: 116089 |
+|---|---|---|---|---|---|---|---|---|
+| S | 0.05 | free | 64 (3.0) | 512 (23.8) | never | never | never | never |
+| S | 0.05 | free-wd0 | 64 (3.0) | 128 (6.0) | 128 (6.0) | never | never | never |
+| S | 0.05 | term | 256 (11.9) | 512 (23.8) | 512 (23.8) | never | never | never |
+| S | 0.10 | free | 128 (3.0) | 256 (5.9) | 128 (3.0) | never | never | never |
+| S | 0.10 | free-wd0 | 128 (3.0) | 256 (5.9) | 128 (3.0) | never | 2048 (47.6) | never |
+| S | 0.10 | term | 256 (5.9) | 512 (11.9) | 512 (11.9) | 1024 (23.8) | 1024 (23.8) | 4096 (95.1) |
+| S | 0.20 | free | 128 (1.5) | 128 (1.5) | 512 (5.9) | 2048 (23.8) | 512 (5.9) | 2048 (23.8) |
+| S | 0.20 | free-wd0 | 128 (1.5) | 128 (1.5) | 128 (1.5) | 2048 (23.8) | 1024 (11.9) | 1024 (11.9) |
+| S | 0.20 | term | 256 (3.0) | 512 (5.9) | 512 (5.9) | 512 (5.9) | 1024 (11.9) | 1024 (11.9) |
+| B | 0.05 | free | 128 (6.0) | 32 (1.5) | 32 (1.5) | never | 1024 (47.6) | 64 (3.0) |
+| B | 0.05 | free-wd0 | 64 (3.0) | 32 (1.5) | 32 (1.5) | never | never | 64 (3.0) |
+| B | 0.05 | term | 256 (11.9) | 256 (11.9) | 64 (3.0) | 1024 (47.6) | 256 (11.9) | 128 (6.0) |
+| B | 0.10 | free | 64 (1.5) | 32 (0.7) | 32 (0.7) | never | 64 (1.5) | 64 (1.5) |
+| B | 0.10 | free-wd0 | 64 (1.5) | 32 (0.7) | 32 (0.7) | never | 64 (1.5) | 64 (1.5) |
+| B | 0.10 | term | 256 (5.9) | 128 (3.0) | 64 (1.5) | 512 (11.9) | 256 (5.9) | 128 (3.0) |
+| B | 0.20 | free | 64 (0.7) | 32 (0.4) | 32 (0.4) | 512 (5.9) | 64 (0.7) | 64 (0.7) |
+| B | 0.20 | free-wd0 | 64 (0.7) | 32 (0.4) | 32 (0.4) | 2048 (23.8) | 64 (0.7) | 128 (1.5) |
+| B | 0.20 | term | 256 (3.0) | 128 (1.5) | 64 (0.7) | 512 (5.9) | 256 (3.0) | 256 (3.0) |
+
+Comparisons of `term` with `free` and with `free-wd0` (2 rules x 3 fractions x 3 seeds x 2 arms = 36 at each level):
+
+- level 80: term later 33; equal 2; term earlier 0; free never term reaches 1; term never free reaches 0; neither 0
+- level 90: term later 11; equal 3; term earlier 6; free never term reaches 10; term never free reaches 0; neither 6
+
+### A.3 Part A, point 5, every row of the three free arms: mean of the life's four panels / mean of the first family's two panels / norm of the tensors outside the byte table relative to the lived network / norm of their change relative to the lived norm
+
+- **S free 73129**: 0: 86.6 / 33.0 / 1.000 / 0.000; 16: 60.9 / 31.7 / 1.002 / 0.065; 32: 66.0 / 36.5 / 1.002 / 0.078; 64: 69.4 / 37.3 / 1.000 / 0.088; 128: 66.1 / 40.5 / 0.993 / 0.100; 256: 45.2 / 30.0 / 0.990 / 0.142; 512: 46.3 / 35.8 / 0.984 / 0.202; 1024: 45.7 / 39.2 / 0.970 / 0.283; 2048: 43.6 / 38.3 / 0.941 / 0.381; 3072: 40.2 / 34.7 / 0.933 / 0.453; 4096: 37.7 / 32.5 / 0.939 / 0.509; 5120: 39.7 / 31.5 / 0.947 / 0.560; 6144: 39.2 / 32.8 / 0.923 / 0.588; 7168: 37.9 / 29.7 / 0.928 / 0.621; 8192: 32.5 / 25.5 / 0.950 / 0.661
+- **S free 93683**: 0: 88.2 / 17.7 / 1.000 / 0.000; 16: 41.6 / 16.8 / 1.003 / 0.068; 32: 39.5 / 15.8 / 1.002 / 0.085; 64: 42.4 / 17.7 / 0.998 / 0.096; 128: 42.4 / 11.7 / 0.990 / 0.108; 256: 49.0 / 14.7 / 0.982 / 0.144; 512: 43.8 / 16.2 / 0.968 / 0.199; 1024: 38.0 / 9.7 / 0.938 / 0.284; 2048: 29.2 / 14.2 / 0.905 / 0.408; 3072: 26.3 / 8.5 / 0.880 / 0.497; 4096: 21.4 / 9.0 / 0.873 / 0.568; 5120: 25.3 / 12.3 / 0.870 / 0.629; 6144: 21.9 / 12.0 / 0.875 / 0.678; 7168: 24.7 / 16.2 / 0.853 / 0.707; 8192: 17.5 / 10.8 / 0.889 / 0.755
+- **S free 116089**: 0: 92.8 / 13.5 / 1.000 / 0.000; 16: 46.7 / 14.5 / 1.001 / 0.062; 32: 52.7 / 18.2 / 1.001 / 0.078; 64: 55.9 / 12.3 / 0.999 / 0.091; 128: 57.1 / 18.8 / 0.990 / 0.105; 256: 49.7 / 14.2 / 0.980 / 0.144; 512: 49.3 / 21.7 / 0.961 / 0.203; 1024: 43.5 / 26.0 / 0.926 / 0.289; 2048: 40.6 / 26.3 / 0.883 / 0.409; 3072: 39.2 / 24.5 / 0.862 / 0.495; 4096: 36.4 / 25.8 / 0.845 / 0.562; 5120: 39.9 / 32.2 / 0.817 / 0.605; 6144: 37.9 / 28.5 / 0.831 / 0.649; 7168: 36.4 / 28.5 / 0.839 / 0.684; 8192: 37.8 / 32.2 / 0.836 / 0.710
+- **S free-wd0 73129**: 0: 86.6 / 33.0 / 1.000 / 0.000; 16: 61.0 / 32.0 / 1.006 / 0.066; 32: 66.6 / 37.0 / 1.010 / 0.079; 64: 70.3 / 37.8 / 1.015 / 0.090; 128: 66.8 / 40.3 / 1.022 / 0.102; 256: 48.3 / 30.7 / 1.040 / 0.143; 512: 44.3 / 37.0 / 1.073 / 0.209; 1024: 42.2 / 35.3 / 1.126 / 0.299; 2048: 43.9 / 37.2 / 1.213 / 0.433; 3072: 43.1 / 38.2 / 1.289 / 0.539; 4096: 41.9 / 38.7 / 1.357 / 0.631; 5120: 38.8 / 34.8 / 1.416 / 0.708; 6144: 40.8 / 37.7 / 1.473 / 0.782; 7168: 41.4 / 37.2 / 1.525 / 0.848; 8192: 40.4 / 32.7 / 1.576 / 0.911
+- **S free-wd0 93683**: 0: 88.2 / 17.7 / 1.000 / 0.000; 16: 42.1 / 16.8 / 1.007 / 0.069; 32: 40.4 / 16.7 / 1.010 / 0.086; 64: 45.1 / 18.2 / 1.014 / 0.097; 128: 45.1 / 12.3 / 1.020 / 0.109; 256: 48.5 / 11.7 / 1.034 / 0.141; 512: 42.1 / 9.0 / 1.064 / 0.203; 1024: 41.9 / 20.5 / 1.109 / 0.288; 2048: 41.6 / 17.8 / 1.183 / 0.407; 3072: 41.6 / 23.5 / 1.251 / 0.509; 4096: 38.7 / 20.7 / 1.309 / 0.593; 5120: 39.4 / 22.5 / 1.366 / 0.670; 6144: 37.9 / 28.5 / 1.415 / 0.739; 7168: 30.0 / 21.3 / 1.462 / 0.797; 8192: 27.1 / 24.7 / 1.509 / 0.857
+- **S free-wd0 116089**: 0: 92.8 / 13.5 / 1.000 / 0.000; 16: 46.8 / 14.5 / 1.005 / 0.062; 32: 54.1 / 19.0 / 1.009 / 0.078; 64: 57.4 / 13.0 / 1.014 / 0.091; 128: 56.4 / 18.7 / 1.019 / 0.104; 256: 43.4 / 13.0 / 1.035 / 0.144; 512: 48.4 / 22.3 / 1.061 / 0.203; 1024: 44.8 / 29.8 / 1.104 / 0.287; 2048: 45.2 / 32.5 / 1.174 / 0.401; 3072: 42.0 / 34.2 / 1.234 / 0.496; 4096: 40.8 / 29.0 / 1.290 / 0.578; 5120: 39.4 / 31.8 / 1.341 / 0.648; 6144: 37.6 / 33.3 / 1.390 / 0.712; 7168: 37.3 / 30.8 / 1.431 / 0.766; 8192: 36.7 / 33.0 / 1.475 / 0.823
+- **S free-anchor 73129**: 0: 86.6 / 33.0 / 1.000 / 0.000; 16: 61.1 / 32.0 / 1.006 / 0.065; 32: 66.7 / 36.8 / 1.010 / 0.078; 64: 70.8 / 38.0 / 1.014 / 0.089; 128: 66.9 / 40.5 / 1.021 / 0.100; 256: 50.4 / 33.2 / 1.039 / 0.139; 512: 47.4 / 37.2 / 1.068 / 0.199; 1024: 47.9 / 37.2 / 1.110 / 0.267; 2048: 45.1 / 36.7 / 1.165 / 0.357; 3072: 46.7 / 37.0 / 1.195 / 0.405; 4096: 45.3 / 40.0 / 1.215 / 0.436; 5120: 44.5 / 41.8 / 1.220 / 0.442; 6144: 39.1 / 33.7 / 1.231 / 0.461; 7168: 45.4 / 37.3 / 1.241 / 0.475; 8192: 45.5 / 41.5 / 1.212 / 0.421
+- **S free-anchor 93683**: 0: 88.2 / 17.7 / 1.000 / 0.000; 16: 42.1 / 17.0 / 1.007 / 0.068; 32: 40.4 / 16.8 / 1.010 / 0.085; 64: 44.7 / 18.2 / 1.013 / 0.096; 128: 45.3 / 12.2 / 1.019 / 0.107; 256: 47.1 / 12.8 / 1.033 / 0.136; 512: 48.9 / 13.2 / 1.057 / 0.189; 1024: 43.6 / 20.0 / 1.091 / 0.254; 2048: 43.2 / 25.8 / 1.138 / 0.331; 3072: 44.1 / 17.7 / 1.171 / 0.385; 4096: 45.9 / 25.5 / 1.185 / 0.407; 5120: 42.8 / 29.0 / 1.199 / 0.427; 6144: 40.6 / 23.8 / 1.207 / 0.441; 7168: 45.2 / 18.7 / 1.212 / 0.448; 8192: 41.7 / 30.0 / 1.200 / 0.427
+- **S free-anchor 116089**: 0: 92.8 / 13.5 / 1.000 / 0.000; 16: 46.9 / 14.5 / 1.005 / 0.062; 32: 54.4 / 18.8 / 1.009 / 0.078; 64: 57.5 / 12.8 / 1.013 / 0.090; 128: 57.4 / 19.0 / 1.019 / 0.102; 256: 49.0 / 14.8 / 1.033 / 0.138; 512: 48.4 / 19.2 / 1.056 / 0.192; 1024: 47.0 / 22.7 / 1.088 / 0.255; 2048: 43.8 / 28.2 / 1.131 / 0.332; 3072: 43.4 / 30.8 / 1.158 / 0.375; 4096: 43.6 / 28.5 / 1.176 / 0.403; 5120: 42.3 / 29.0 / 1.186 / 0.421; 6144: 40.2 / 28.7 / 1.190 / 0.423; 7168: 42.4 / 31.5 / 1.198 / 0.438; 8192: 43.6 / 32.2 / 1.202 / 0.441
+- **B free 73129**: 0: 90.5 / 37.3 / 1.000 / 0.000; 16: 56.6 / 38.3 / 1.002 / 0.073; 32: 60.4 / 41.3 / 1.003 / 0.089; 64: 61.4 / 41.5 / 1.001 / 0.100; 128: 60.6 / 43.0 / 0.994 / 0.113; 256: 48.9 / 39.7 / 0.992 / 0.156; 512: 44.4 / 38.5 / 0.982 / 0.208; 1024: 47.1 / 33.8 / 0.970 / 0.291; 2048: 40.8 / 37.2 / 0.957 / 0.404; 3072: 40.7 / 32.3 / 0.959 / 0.487; 4096: 39.7 / 33.5 / 0.946 / 0.540; 5120: 39.9 / 35.3 / 0.955 / 0.586; 6144: 40.4 / 36.5 / 0.953 / 0.622; 7168: 38.0 / 33.2 / 0.959 / 0.662; 8192: 33.4 / 31.0 / 0.970 / 0.691
+- **B free 93683**: 0: 96.8 / 26.7 / 1.000 / 0.000; 16: 65.6 / 29.8 / 1.000 / 0.080; 32: 67.7 / 34.5 / 0.999 / 0.095; 64: 68.9 / 36.3 / 0.996 / 0.104; 128: 68.3 / 28.7 / 0.988 / 0.114; 256: 58.4 / 28.3 / 0.984 / 0.148; 512: 51.8 / 28.5 / 0.973 / 0.201; 1024: 49.2 / 31.5 / 0.963 / 0.274; 2048: 44.1 / 20.7 / 0.945 / 0.363; 3072: 39.6 / 17.3 / 0.946 / 0.432; 4096: 41.2 / 12.3 / 0.939 / 0.481; 5120: 37.6 / 10.8 / 0.939 / 0.524; 6144: 31.9 / 9.7 / 0.946 / 0.563; 7168: 36.9 / 9.2 / 0.941 / 0.586; 8192: 38.8 / 15.0 / 0.932 / 0.607
+- **B free 116089**: 0: 90.8 / 36.3 / 1.000 / 0.000; 16: 54.3 / 41.2 / 0.999 / 0.072; 32: 54.2 / 44.3 / 1.000 / 0.089; 64: 57.7 / 45.8 / 0.999 / 0.098; 128: 57.7 / 46.0 / 0.990 / 0.106; 256: 51.3 / 44.5 / 0.988 / 0.145; 512: 48.6 / 42.7 / 0.982 / 0.198; 1024: 47.8 / 43.2 / 0.967 / 0.267; 2048: 45.0 / 40.7 / 0.946 / 0.365; 3072: 43.8 / 41.8 / 0.944 / 0.435; 4096: 40.7 / 40.3 / 0.949 / 0.491; 5120: 43.2 / 41.0 / 0.953 / 0.540; 6144: 41.1 / 40.3 / 0.952 / 0.579; 7168: 42.6 / 39.2 / 0.944 / 0.607; 8192: 41.6 / 38.2 / 0.915 / 0.621
+- **B free-wd0 73129**: 0: 90.5 / 37.3 / 1.000 / 0.000; 16: 56.9 / 38.2 / 1.006 / 0.073; 32: 60.5 / 41.2 / 1.010 / 0.089; 64: 61.2 / 42.0 / 1.016 / 0.102; 128: 59.9 / 42.8 / 1.023 / 0.115; 256: 51.7 / 44.3 / 1.046 / 0.161; 512: 47.9 / 37.3 / 1.079 / 0.221; 1024: 45.8 / 39.8 / 1.139 / 0.319; 2048: 42.4 / 38.2 / 1.236 / 0.464; 3072: 42.1 / 33.5 / 1.317 / 0.578; 4096: 41.8 / 39.7 / 1.383 / 0.666; 5120: 38.6 / 33.3 / 1.450 / 0.753; 6144: 42.2 / 35.3 / 1.505 / 0.826; 7168: 39.1 / 34.5 / 1.557 / 0.892; 8192: 40.6 / 35.7 / 1.609 / 0.956
+- **B free-wd0 93683**: 0: 96.8 / 26.7 / 1.000 / 0.000; 16: 65.7 / 29.8 / 1.004 / 0.080; 32: 67.9 / 34.8 / 1.007 / 0.095; 64: 69.9 / 36.3 / 1.011 / 0.105; 128: 68.7 / 31.8 / 1.018 / 0.115; 256: 58.1 / 33.5 / 1.038 / 0.152; 512: 61.4 / 36.0 / 1.072 / 0.214; 1024: 44.8 / 30.7 / 1.125 / 0.296; 2048: 49.6 / 33.7 / 1.212 / 0.425; 3072: 45.9 / 34.7 / 1.276 / 0.513; 4096: 46.4 / 16.3 / 1.334 / 0.592; 5120: 46.0 / 18.7 / 1.395 / 0.672; 6144: 44.8 / 3.8 / 1.446 / 0.739; 7168: 45.4 / 17.0 / 1.495 / 0.801; 8192: 43.1 / 5.0 / 1.532 / 0.849
+- **B free-wd0 116089**: 0: 90.8 / 36.3 / 1.000 / 0.000; 16: 54.4 / 41.0 / 1.003 / 0.072; 32: 54.6 / 44.5 / 1.008 / 0.089; 64: 58.1 / 45.5 / 1.014 / 0.099; 128: 58.1 / 44.7 / 1.020 / 0.108; 256: 52.9 / 44.2 / 1.042 / 0.155; 512: 50.5 / 41.5 / 1.075 / 0.210; 1024: 44.6 / 41.8 / 1.138 / 0.307; 2048: 42.7 / 42.5 / 1.238 / 0.447; 3072: 42.4 / 41.2 / 1.319 / 0.557; 4096: 43.4 / 42.8 / 1.383 / 0.641; 5120: 44.2 / 42.3 / 1.435 / 0.708; 6144: 42.2 / 38.3 / 1.497 / 0.789; 7168: 43.4 / 40.7 / 1.553 / 0.859; 8192: 43.9 / 43.8 / 1.569 / 0.876
+- **B free-anchor 73129**: 0: 90.5 / 37.3 / 1.000 / 0.000; 16: 57.1 / 38.2 / 1.006 / 0.073; 32: 60.8 / 41.2 / 1.010 / 0.089; 64: 61.8 / 42.0 / 1.015 / 0.101; 128: 59.8 / 42.7 / 1.022 / 0.113; 256: 49.6 / 43.3 / 1.045 / 0.158; 512: 48.6 / 38.5 / 1.074 / 0.210; 1024: 46.3 / 38.2 / 1.120 / 0.289; 2048: 39.1 / 33.8 / 1.177 / 0.378; 3072: 46.8 / 39.0 / 1.211 / 0.431; 4096: 42.7 / 36.8 / 1.232 / 0.462; 5120: 42.2 / 39.5 / 1.241 / 0.479; 6144: 43.6 / 35.0 / 1.251 / 0.498; 7168: 44.4 / 34.2 / 1.255 / 0.508; 8192: 41.7 / 34.7 / 1.259 / 0.515
+- **B free-anchor 93683**: 0: 96.8 / 26.7 / 1.000 / 0.000; 16: 65.8 / 30.0 / 1.004 / 0.080; 32: 67.9 / 35.0 / 1.007 / 0.095; 64: 70.2 / 36.3 / 1.011 / 0.104; 128: 68.7 / 30.8 / 1.017 / 0.113; 256: 59.6 / 31.2 / 1.036 / 0.148; 512: 58.2 / 30.2 / 1.065 / 0.200; 1024: 50.4 / 30.2 / 1.109 / 0.270; 2048: 49.2 / 35.5 / 1.160 / 0.347; 3072: 50.6 / 22.8 / 1.189 / 0.391; 4096: 50.1 / 21.7 / 1.210 / 0.419; 5120: 51.8 / 16.5 / 1.224 / 0.443; 6144: 51.6 / 22.8 / 1.228 / 0.450; 7168: 53.4 / 24.8 / 1.214 / 0.426; 8192: 55.9 / 26.3 / 1.180 / 0.360
+- **B free-anchor 116089**: 0: 90.8 / 36.3 / 1.000 / 0.000; 16: 54.6 / 41.2 / 1.003 / 0.072; 32: 54.9 / 44.5 / 1.008 / 0.089; 64: 58.4 / 45.5 / 1.014 / 0.098; 128: 59.7 / 45.0 / 1.019 / 0.106; 256: 48.8 / 44.7 / 1.040 / 0.150; 512: 48.6 / 44.8 / 1.071 / 0.197; 1024: 48.2 / 45.3 / 1.119 / 0.274; 2048: 49.1 / 45.5 / 1.173 / 0.350; 3072: 46.8 / 43.7 / 1.215 / 0.413; 4096: 45.8 / 44.7 / 1.237 / 0.446; 5120: 46.6 / 44.8 / 1.253 / 0.466; 6144: 44.4 / 42.8 / 1.256 / 0.475; 7168: 47.2 / 46.0 / 1.231 / 0.436; 8192: 43.8 / 43.2 / 1.235 / 0.448
 
 ## 8. Committed files
 
-This list is every file the branch adds, from `git diff --name-only --diff-filter=A 7cabb13a HEAD`, with sizes from `git ls-tree -r -l HEAD`. The commit that adds this report adds the report itself. No existing file of the default branch is changed (`git diff --name-only --diff-filter=M 7cabb13a HEAD` is empty).
+This list is every file the branch adds, from `git diff --name-only --diff-filter=A 7cabb13a HEAD`, with sizes from `git ls-tree -r -l HEAD`. The commit that adds this report adds the report itself; the commit of the corrections adds `e58_report_appendix.py`. No existing file of the default branch is changed (`git diff --name-only --diff-filter=M 7cabb13a HEAD` is empty).
 
 The committed files under `exp45/e58/` total 202.0 MB, not counting this report.
 
@@ -576,9 +668,10 @@ The committed files under `exp45/e58/` total 202.0 MB, not counting this report.
 - `exp45/e58/interrupted/e58_term-wd0_S_f10_73129.log.20261118T001933` (1,136 bytes)
 - `exp45/e58/interrupted/e58_term-wd0_S_f10_73129_row1024.pt.20261118T001933` (150,605 bytes)
 
-**Queues, scheduler, report** — 8 files
+**Queues, scheduler, report** — 9 files
 
 - `exp45/e58/E58_REPORT.md`
+- `exp45/e58/e58_report_appendix.py` (3,935 bytes; added by the commit of the corrections)
 - `exp45/e58/e58_norms.py` (875 bytes)
 - `exp45/e58/e58_tables.py` (11,676 bytes)
 - `exp45/e58/queues/a1_73129_first.txt` (104 bytes)
