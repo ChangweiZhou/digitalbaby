@@ -1,0 +1,54 @@
+# What a neuron has: the page from which the list of experiments is to be derived (18 November 2026, draft 1, for Mr. Xu's correction)
+
+By the outside reviewer. Mr. Xu has asked several times for a list of experiments made from the biological principle. The three lists the reviewer delivered (17 November; 18 November afternoon; 18 November evening) each started from the existing network and used his statements to test it. None started from the neuron. This page is the missing start. It states, positively, what a living neuron and a living synapse have, and what does not exist in living tissue. It contains no experiment. The list of experiments is derived from it only after Mr. Xu has corrected it.
+
+The statements are textbook neuroscience as the reviewer knows it, not Mr. Xu's words, unless marked. Where the science is unsettled, the statement is marked *unsettled*. Where the reviewer is unsure, it says so.
+
+## 1. A cell
+
+1. **One output.** A neuron's output is its own activity (its firing over time). The same output goes to every cell it contacts. It cannot send one signal to one target and another to a second target, and it cannot send a second signal backward along the same connection. Its output is not negative: a cell fires more or less, or not at all.
+2. **Inputs over its own synapses.** It receives the outputs of a limited number of other cells, a small share of all cells. It receives nothing else from them: not their weights, not their inputs, not their errors.
+3. **A fixed kind.** A cell is excitatory or inhibitory. The sign of its effect on others belongs to the cell and does not change with learning; only the strength of a synapse changes. (Dale's principle; it has known exceptions, which do not make the sign learnable.)
+4. **Its own state.** Its present level of excitation, its recent activity over seconds, and slower changes over minutes to days. *Unsettled, and possibly important:* a cell of the cortex has separate parts (dendritic branches) on which inputs from different sources arrive, and it may treat them differently.
+5. **Time is continuous.** A signal crosses a synapse in milliseconds. While one stimulus lasts, cells exchange signals many times. Nothing tells a cell where an item begins or ends, nothing sets its state to zero, and it meets one thing after another, never many at once.
+
+## 2. A synapse
+
+A synapse changes its strength from what is present at the synapse:
+
+1. the activity that arrives from the sending cell;
+2. the state and activity of the receiving cell;
+3. its own recent past: a trace of 1 and 2 that lasts seconds;
+4. a diffuse signal released over a wide region and received by many cells alike (for example on reward, punishment or surprise). It is one signal for all, not a separate instruction for each cell;
+5. slower processes of its own: a change that is at first easily undone and later becomes lasting, depending on the synapse's history; and synapses are formed and removed, so that the number of a cell's connections is itself changed by activity.
+
+## 3. What the world gives the learner
+
+1. Input, over lines that each respond to something particular.
+2. The consequences of what it does, later in time.
+3. Where it is taught, the right answer arrives as further input after its own attempt (it sees or hears the answer), as activity on input lines. It does not arrive as a computed error for each cell.
+4. *The organism's own repetition:* during rest, recent activity is replayed by the brain itself. This is the biological form of rehearsal; it is the learner's act, not a store kept by an outside program.
+
+## 4. What does not exist
+
+Each of these is in the present network or its training.
+
+1. An error passed backward through the connections that carry the forward signal, whether exactly or by the signs of the weights; any use by one cell of another cell's weights.
+2. A quantity computed over a whole population of cells or over all the weights of a map (a scale for a matrix; a normalisation over all outputs computed exactly).
+3. A pass over an item after it has ended, in reverse order.
+4. Many items at once in separate copies of the network, and a change of a weight from their average.
+5. A reset of every cell's state by an outside agent; a marked beginning and end of an item.
+6. A count of updates shared by all weights.
+7. A synapse whose effect changes sign in learning; a cell with a negative output.
+8. Cells added, weights frozen or projected, or directions computed, by an agent that knows when the task changes.
+9. On the side of measurement: a quantity that requires recording every cell over hundreds of items and imposing an average on the tissue. Removing or silencing cells exists as an experimenter's act and has a meaning for a living learner (can it still do the task without them); a clamp at a mean over items has none.
+
+## 5. What the reviewer is unsure of, and puts to Mr. Xu
+
+1. Whether the gated cell of the present network (three internal gates, each a weighted sum of the cell's inputs) has a counterpart, or whether the cell should be a simpler unit.
+2. Whether statement 1.4 on separate parts of a cell is to be used. Several proposals for local learning rest on it.
+3. Whether the right answer shown as input after the attempt (3.3) is the form of teaching he intends.
+
+## 6. How the list will be derived from this page
+
+Not by changing the present network one part at a time. The first question is: a population of cells as in section 1, with synapses as in section 2, taught as in section 3 and with nothing of section 4: what is the simplest form of the present task that it learns at all, and what does it keep of it? The present network enters only as the reference that the record already holds.
