@@ -54,11 +54,48 @@ Share of the connections of `P8` replaced at an event: rule S: 7.9% over the fir
 | `F10` | 29.7, 56.8, -27.1 | 20 | +3.7, +3.0 (not flattened); +5.5, +7.8 (not flattened) | not decided within the run |
 | `P8` | 56.6, 72.9, -16.4 | 20 | +5.6, +2.1 (not flattened); +8.0, +5.5 (not flattened) | not decided within the run |
 
+## Taught fraction 0.10
+
+| Network | Rule | Updates to 80, A | Updates to 80, R | A at 12,288 / 24,576 / 49,152 | R at 12,288 / 24,576 / 49,152 | Length test (40 letters) | max | min | Rise before, last rise of R | Curve of R | CPU-hours | Resumed at |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| `G` | S | — | — | 9.0 / 11.8 / 15.2 | 6.9 / 10.1 / 15.1 | 9.8 / 12.8 / 18.6 | 87.8 / 87.3 / 88.3 | 87.1 / 88.0 / 90.6 | +2.0, +1.6 | flattened | 1.86 | never |
+| `F10` | S | — | — | 5.3 / 8.7 / 8.5 | 5.3 / 7.3 / 9.3 | 6.4 / 10.8 / 10.7 | 69.2 / 72.4 / 79.1 | 68.7 / 71.4 / 73.6 | +1.1, -0.1 | flattened | 1.95 | never |
+| `P8` | S | — | — | 11.8 / 13.8 / 17.4 | 10.1 / 13.2 / 19.1 | 13.7 / 15.0 / 20.9 | 82.8 / 87.0 / 91.3 | 86.2 / 87.9 / 89.2 | +2.2, +1.8 | flattened | 2.77 | never |
+| `G` | B | — | — | 16.8 / 21.4 / 26.5 | 14.8 / 19.5 / 24.6 | 18.0 / 24.0 / 28.4 | 90.2 / 89.9 / 90.2 | 92.4 / 91.2 / 92.7 | +2.5, +1.7 | flattened | 1.82 | never |
+| `F10` | B | — | — | 9.2 / 11.9 / 17.1 | 8.3 / 10.7 / 17.3 | 13.3 / 17.2 / 23.2 | 77.4 / 78.3 / 84.3 | 81.6 / 79.4 / 85.1 | +2.1, +2.0 | flattened | 1.90 | never |
+| `P8` | B | — | — | 19.1 / 24.6 / 33.3 | 15.5 / 21.2 / 29.1 | 23.9 / 28.9 / 37.7 | 83.7 / 86.2 / 89.0 | 87.2 / 88.8 / 87.6 | +2.8, +2.8 | flattened | 2.73 | never |
+
+Share of the connections of `P8` replaced at an event: rule S: 7.2% over the first sixteen events and 19.4% over the last sixteen; rule B: 8.1% over the first sixteen events and 19.5% over the last sixteen.
+
+| Rule | Network against `G` | Updates to 80 on A: word (ratio; ratio at a half) | Updates to 80 on R: word (ratio; ratio at a half) | R at 49,152: network, `G`, difference | Margin | Rises of the network; of `G` | End result |
+|---|---|---|---|---|---|---|---|
+| S | `F10` | neither reaches (—; 2.36) | neither reaches (—; 2.27) | 9.3, 15.1, -5.7 | 10 | +1.1, -0.1 (flattened); +2.0, +1.6 (flattened) | neither generalises from this fraction; not distinguished |
+| S | `P8` | neither reaches (—; 1.36) | neither reaches (—; 1.27) | 19.1, 15.1, +4.0 | 10 | +2.2, +1.8 (flattened); +2.0, +1.6 (flattened) | neither generalises from this fraction; not distinguished |
+| B | `F10` | neither reaches (—; 1.70) | neither reaches (—; 1.48) | 17.3, 24.6, -7.3 | 20 | +2.1, +2.0 (flattened); +2.5, +1.7 (flattened) | neither generalises from this fraction; not distinguished |
+| B | `P8` | neither reaches (—; 1.25) | neither reaches (—; 1.12) | 29.1, 24.6, +4.5 | 20 | +2.8, +2.8 (flattened); +2.5, +1.7 (flattened) | neither generalises from this fraction; not distinguished |
+
+| Network | R at 49,152: sweep, back-propagation, difference | Margin | Rises under the sweep; under back-propagation | The sweep against back-propagation |
+|---|---|---|---|---|
+| `G` | 15.1, 24.6, -9.5 | 20 | +2.0, +1.6 (flattened); +2.5, +1.7 (flattened) | not distinguished |
+| `F10` | 9.3, 17.3, -8.0 | 20 | +1.1, -0.1 (flattened); +2.1, +2.0 (flattened) | not distinguished |
+| `P8` | 19.1, 29.1, -10.0 | 20 | +2.2, +1.8 (flattened); +2.8, +2.8 (flattened) | not distinguished |
+
+## Part 4: the dense network at the half width, taught fraction 0.10, 122,880 updates
+
+| Rule | Updates to 80, R | Updates to 80, A | A at 12,288 / 24,576 / 49,152 / 122,880 | R at 12,288 / 24,576 / 49,152 / 122,880 | Rise before, last rise of R | Curve of R | CPU-hours |
+|---|---|---|---|---|---|---|---|
+| S | — | — | 7.0 / 8.0 / 12.9 / 17.7 | 7.0 / 8.1 / 10.1 / 13.4 | +1.4, -0.5 | flattened | 1.77 |
+
 ## Predictions
 
 | | Holds | Figures |
 |---|---|---|
 | P54.1 | yes | {"words": {"S": "more", "B": "more"}} |
 | P54.2 | yes | {"updates_to_80_R": 13568} |
+| P54.3 | yes | {"differences_and_margins": {"F10 S": [-5.733333333333334, 10], "F10 B": [-7.316666666666663, 20], "P8 S": [3.9833333333333325, 10], "P8 B": [4.466666666666669, 20]}} |
+| P54.4 | no | {"gains": {"G": 5.116666666666664, "F10": 6.633333333333335, "P8": 7.916666666666664}} |
+| P54.5 | yes | {"levels_A": {"G": 15.166666666666666, "F10": 8.5, "P8": 17.38888888888889}} |
 | P54.6 | no | {"updates_to_80_R": null} |
 | P54.7 | yes | {"updates_to_80_R": null} |
+| P54.8 | yes | {"generalises_better": []} |
+| P54.10 | yes | {"level_R": 13.433333333333332} |
