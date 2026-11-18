@@ -1,4 +1,4 @@
-Receipts read: 8 complete runs in `exp45/e52`. Seed 93683. Written by `exp52_tables.py`.
+Receipts read: 18 complete runs in `exp45/e52`. Seed 93683. Written by `exp52_tables.py`.
 
 ## Table 1. Every run
 
@@ -7,13 +7,23 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | Width, f | Rule | Rate | Decay | Dose | Updates to 80, A | Updates to 80, R | Final A | Final R | Final taught | Length 40: last, mean of 3 (range of 12) | RMS of R | Diverged | Receipt |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | half, 0.50 | S | 0.001 | 0.25 | 40,960 | 10,240 | 13,312 | 91.89 | 91.22 | 93.72 | 85.3, 83.2 (75.7–90.7) | 4.24 | no | `e52_S_h256_f50_lr0.001_93683.json` |
+| half, 0.50 | S | 0.003 | 0.25 | 40,960 | 6,912 | 7,424 | 91.72 | 90.65 | 93.72 | 88.7, 91.4 (80.7–95.7) | 3.35 | no | `e52_S_h256_f50_lr0.003_93683.json` |
+| half, 0.50 | S | 0.003 (product control) | 0.08333 | 40,960 | 5,376 | 5,632 | 97.56 | 97.78 | 98.56 | 98.0, 96.7 (93.0–98.3) | 1.68 | no | `e52_S_h256_f50_lr0.003_product_93683.json` |
 | half, 0.50 | B | 0.001 | 0.25 | 40,960 | 7,424 | 8,704 | 96.56 | 93.97 | 97.11 | 95.7, 95.6 (93.0–98.3) | 2.35 | no | `e52_B_h256_f50_lr0.001_93683.json` |
+| half, 0.50 | B | 0.003 | 0.25 | 40,960 | 4,864 | 4,864 | 92.50 | 91.25 | 92.89 | 90.3, 89.9 (87.7–98.3) | 3.97 | no | `e52_B_h256_f50_lr0.003_93683.json` |
+| half, 0.50 | B | 0.003 (product control) | 0.08333 | 40,960 | 5,376 | 6,912 | 97.61 | 97.13 | 97.11 | 98.7, 97.7 (95.7–99.3) | 1.45 | no | `e52_B_h256_f50_lr0.003_product_93683.json` |
 | half, 0.25 | S | 0.001 | 0.25 | 40,960 | 14,080 | 24,576 | 88.56 | 84.33 | 97.39 | 78.7, 82.3 (74.3–87.7) | 2.45 | no | `e52_S_h256_f25_lr0.001_93683.json` |
+| half, 0.25 | S | 0.003 | 0.25 | 40,960 | 7,424 | 11,520 | 94.72 | 94.58 | 96.67 | 94.7, 91.9 (88.3–98.3) | 3.14 | no | `e52_S_h256_f25_lr0.003_93683.json` |
 | half, 0.25 | B | 0.001 | 0.25 | 40,960 | 6,144 | 7,424 | 97.72 | 96.23 | 98.78 | 98.0, 97.0 (87.0–98.0) | 1.96 | no | `e52_B_h256_f25_lr0.001_93683.json` |
+| half, 0.25 | B | 0.003 | 0.25 | 40,960 | 3,840 | 5,632 | 96.61 | 96.30 | 97.56 | 90.7, 96.3 (90.7–99.7) | 2.15 | no | `e52_B_h256_f25_lr0.003_93683.json` |
 | present, 0.50 | S | 0.001 | 0.25 | 12,288 | 4,864 | 4,864 | 94.56 | 94.18 | 98.44 | 95.7, 91.1 (82.3–95.7) | 3.17 | no | `e52_S_h512_f50_lr0.001_93683.json` |
+| present, 0.50 | S | 0.003 | 0.25 | 12,288 | 4,864 | 4,864 | 94.83 | 94.72 | 96.72 | 91.0, 92.4 (91.0–98.7) | 3.44 | no | `e52_S_h512_f50_lr0.003_93683.json` |
 | present, 0.50 | B | 0.001 | 0.25 | 12,288 | 4,096 | 4,096 | 93.11 | 94.27 | 95.89 | 91.3, 92.0 (91.3–97.7) | 1.77 | no | `e52_B_h512_f50_lr0.001_93683.json` |
+| present, 0.50 | B | 0.003 | 0.25 | 12,288 | 2,816 | 2,816 | 95.89 | 93.77 | 95.22 | 91.3, 95.0 (88.0–97.3) | 3.51 | no | `e52_B_h512_f50_lr0.003_93683.json` |
 | present, 0.25 | S | 0.001 | 0.25 | 12,288 | 9,984 | – | 83.06 | 78.78 | 96.33 | 70.3, 73.2 (68.0–79.7) | 3.14 | no | `e52_S_h512_f25_lr0.001_93683.json` |
+| present, 0.25 | S | 0.003 | 0.25 | 12,288 | 4,096 | 5,376 | 96.56 | 95.05 | 97.89 | 92.3, 95.4 (89.7–97.7) | 3.66 | no | `e52_S_h512_f25_lr0.003_93683.json` |
 | present, 0.25 | B | 0.001 | 0.25 | 12,288 | 3,584 | 4,352 | 92.44 | 90.62 | 97.33 | 88.3, 90.9 (83.7–95.0) | 4.64 | no | `e52_B_h512_f25_lr0.001_93683.json` |
+| present, 0.25 | B | 0.003 | 0.25 | 12,288 | 3,072 | 3,072 | 95.17 | 95.08 | 96.06 | 94.0, 94.9 (83.0–95.3) | 5.25 | no | `e52_B_h512_f25_lr0.003_93683.json` |
 
 ## Table 2. Runs at 0.0003 at E41's dose (their dose is 10/3 of E41's)
 
@@ -25,44 +35,58 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | Width, f | Rule | Rate | At 80 on A | At 80 on R | At the end | At E41's dose (0.0003 only) |
 |---|---|---|---|---|---|---|
 | half, 0.50 | S | 0.001 | 45.5 / 3.5 / 25.2 / 22.0 / 22.2 / 6.8 / 41.6 | 45.9 / 3.3 / 24.7 / 21.5 / 21.1 / 6.2 / 38.9 | 49.5 / 3.3 / 22.9 / 20.0 / 18.0 / 5.0 / 37.4 |  |
+| half, 0.50 | S | 0.003 | 46.4 / 4.0 / 31.2 / 24.7 / 22.2 / 9.1 / 47.8 | 46.5 / 4.1 / 31.2 / 24.6 / 22.2 / 8.7 / 46.9 | 60.8 / 4.2 / 33.5 / 22.9 / 20.2 / 8.6 / 69.7 |  |
+| half, 0.50 | S | 0.003 (product control) | 44.2 / 4.0 / 46.8 / 34.4 / 32.8 / 18.0 / 39.0 | 44.1 / 4.0 / 47.1 / 34.5 / 32.8 / 17.9 / 38.4 | 42.7 / 9.1 / 50.7 / 36.4 / 32.1 / 17.5 / 53.7 |  |
 | half, 0.50 | B | 0.001 | 45.5 / 4.5 / 23.4 / 20.9 / 21.7 / 6.1 / 44.0 | 45.6 / 4.3 / 23.2 / 20.5 / 21.4 / 5.7 / 39.5 | 51.5 / 3.5 / 22.9 / 19.0 / 17.9 / 4.2 / 40.7 |  |
+| half, 0.50 | B | 0.003 | 46.7 / 3.8 / 29.9 / 23.5 / 21.3 / 7.9 / 32.6 | 46.7 / 3.8 / 29.9 / 23.5 / 21.3 / 7.9 / 32.6 | 114.7 / 3.6 / 31.1 / 21.7 / 19.6 / 7.4 / 63.6 |  |
+| half, 0.50 | B | 0.003 (product control) | 45.2 / 4.2 / 40.8 / 33.4 / 32.7 / 16.5 / 39.6 | 45.4 / 4.1 / 40.8 / 33.1 / 32.1 / 16.1 / 34.4 | 57.9 / 5.0 / 38.6 / 32.6 / 29.5 / 16.8 / 43.1 |  |
 | half, 0.25 | S | 0.001 | 46.0 / 3.4 / 24.8 / 21.8 / 21.2 / 6.4 / 36.6 | 47.8 / 3.4 / 23.6 / 21.0 / 19.8 / 5.6 / 35.0 | 50.6 / 3.4 / 22.9 / 20.3 / 19.0 / 5.5 / 36.7 |  |
+| half, 0.25 | S | 0.003 | 46.6 / 4.0 / 32.5 / 25.0 / 23.1 / 9.6 / 46.3 | 46.7 / 5.8 / 33.4 / 24.8 / 22.7 / 9.4 / 44.7 | 53.5 / 4.9 / 33.6 / 23.8 / 22.1 / 8.7 / 55.2 |  |
 | half, 0.25 | B | 0.001 | 45.3 / 4.7 / 21.3 / 20.4 / 22.8 / 6.1 / 46.0 | 45.3 / 4.4 / 21.4 / 19.9 / 22.0 / 5.8 / 40.7 | 50.4 / 3.5 / 22.1 / 17.8 / 17.9 / 4.0 / 46.0 |  |
+| half, 0.25 | B | 0.003 | 45.9 / 3.8 / 31.0 / 23.9 / 23.8 / 8.4 / 45.0 | 46.9 / 3.7 / 31.0 / 23.7 / 22.9 / 7.9 / 44.4 | 70.3 / 3.7 / 30.0 / 23.5 / 21.8 / 7.8 / 49.9 |  |
 | present, 0.50 | S | 0.001 | 45.0 / 4.5 / 39.5 / 30.0 / 29.2 / 11.3 / 34.8 | 45.0 / 4.5 / 39.5 / 30.0 / 29.2 / 11.3 / 34.8 | 45.4 / 3.4 / 42.1 / 29.0 / 27.5 / 10.0 / 34.4 |  |
+| present, 0.50 | S | 0.003 | 44.7 / 3.9 / 52.6 / 38.5 / 33.6 / 20.1 / 41.2 | 44.7 / 3.9 / 52.6 / 38.5 / 33.6 / 20.1 / 41.2 | 44.7 / 6.6 / 56.2 / 40.3 / 33.7 / 20.1 / 49.3 |  |
 | present, 0.50 | B | 0.001 | 45.2 / 6.0 / 34.5 / 28.5 / 28.9 / 10.8 / 40.5 | 45.2 / 6.0 / 34.5 / 28.5 / 28.9 / 10.8 / 40.5 | 45.8 / 4.3 / 38.3 / 27.3 / 26.1 / 9.1 / 30.9 |  |
+| present, 0.50 | B | 0.003 | 45.1 / 4.2 / 50.9 / 36.8 / 33.7 / 18.2 / 31.2 | 45.1 / 4.2 / 50.9 / 36.8 / 33.7 / 18.2 / 31.2 | 48.5 / 4.5 / 48.4 / 37.4 / 32.2 / 19.4 / 35.4 |  |
 | present, 0.25 | S | 0.001 | 45.3 / 3.6 / 39.8 / 29.2 / 25.7 / 10.0 / 27.9 | – | 45.4 / 3.5 / 39.8 / 29.0 / 25.5 / 9.8 / 28.1 |  |
+| present, 0.25 | S | 0.003 | 44.7 / 3.7 / 54.3 / 39.1 / 34.2 / 20.6 / 43.9 | 44.7 / 4.1 / 53.5 / 39.1 / 34.2 / 20.4 / 44.3 | 44.4 / 6.5 / 56.1 / 40.4 / 34.5 / 20.9 / 50.9 |  |
 | present, 0.25 | B | 0.001 | 45.1 / 6.5 / 33.6 / 28.3 / 29.2 / 10.6 / 39.0 | 45.1 / 5.8 / 34.0 / 27.6 / 29.1 / 10.5 / 35.2 | 45.6 / 4.2 / 38.3 / 26.2 / 26.0 / 9.6 / 28.7 |  |
+| present, 0.25 | B | 0.003 | 45.3 / 4.4 / 51.1 / 36.7 / 33.6 / 19.1 / 31.8 | 45.3 / 4.4 / 51.1 / 36.7 / 33.6 / 19.1 / 31.8 | 50.6 / 4.5 / 48.8 / 36.6 / 32.0 / 18.9 / 44.4 |  |
 
 ## Table 4. Readings for each case (a rule, a width and a taught fraction)
 
 | Width, f | Rule | Best rate on R | Best rate on A | 0.0003 against 0.001: R, A | 0.003 against 0.001: R, A | 0.01 against 0.001: R, A | Gains from its own rate |
 |---|---|---|---|---|---|---|---|
-| half, 0.50 | S | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
-| half, 0.50 | B | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
-| half, 0.25 | S | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
-| half, 0.25 | B | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
-| present, 0.50 | S | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
-| present, 0.50 | B | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
-| present, 0.25 | S | not reached | 0.001 | not run | not run | not run | no (read on A (no rate reaches 80 on R)) |
-| present, 0.25 | B | 0.001 | 0.001 | not run | not run | not run | no (read on R and A) |
+| half, 0.50 | S | 0.003 | 0.003 | not run | faster, the same | not run | yes, at 0.003 (read on R and A) |
+| half, 0.50 | B | 0.003 | 0.003 | not run | faster, faster | not run | yes, at 0.003 (read on R and A) |
+| half, 0.25 | S | 0.003 | 0.003 | not run | faster, faster | not run | yes, at 0.003 (read on R and A) |
+| half, 0.25 | B | 0.003 | 0.003 | not run | the same, faster | not run | no (read on R and A) |
+| present, 0.50 | S | 0.001 (tied with 0.003) | 0.001 (tied with 0.003) | not run | the same, the same | not run | no (read on R and A) |
+| present, 0.50 | B | 0.003 | 0.003 | not run | the same, the same | not run | no (read on R and A) |
+| present, 0.25 | S | 0.003 | 0.003 | not run | faster, faster | not run | yes, at 0.003 (read on R and A) |
+| present, 0.25 | B | 0.003 | 0.003 | not run | the same, the same | not run | no (read on R and A) |
 
 ## Table 5. The lag (the sweep's updates to 80 over back-propagation's) at each width and fraction
 
 | Width, f | Score | Lag at 0.001 | Sweep's best rate | Back-propagation's best rate | Lag at the rules' own best rates | Reading |
 |---|---|---|---|---|---|---|
-| half, 0.50 | R | 1.53 | 0.001 | 0.001 | 1.53 | the same within the scatter of one seed |
-| half, 0.50 | A | 1.38 | 0.001 | 0.001 | 1.38 | the same within the scatter of one seed |
-| half, 0.25 | R | 3.31 | 0.001 | 0.001 | 3.31 | the same within the scatter of one seed |
-| half, 0.25 | A | 2.29 | 0.001 | 0.001 | 2.29 | the same within the scatter of one seed |
-| present, 0.50 | R | 1.19 | 0.001 | 0.001 | 1.19 | the same within the scatter of one seed |
-| present, 0.50 | A | 1.19 | 0.001 | 0.001 | 1.19 | the same within the scatter of one seed |
-| present, 0.25 | R | above 2.71 (the sweep not reached) | none | 0.001 | above 2.71 (the sweep reached at no rate; bound from its longest run) | not decided |
-| present, 0.25 | A | 2.79 | 0.001 | 0.001 | 2.79 | the same within the scatter of one seed |
+| half, 0.50 | R | 1.53 | 0.003 | 0.003 | 1.53 | the same within the scatter of one seed |
+| half, 0.50 | A | 1.38 | 0.003 | 0.003 | 1.42 | the same within the scatter of one seed |
+| half, 0.25 | R | 3.31 | 0.003 | 0.003 | 2.05 | smaller |
+| half, 0.25 | A | 2.29 | 0.003 | 0.003 | 1.93 | the same within the scatter of one seed |
+| present, 0.50 | R | 1.19 | 0.001 | 0.003 | 1.73 | the same within the scatter of one seed |
+| present, 0.50 | A | 1.19 | 0.001 | 0.003 | 1.73 | the same within the scatter of one seed |
+| present, 0.25 | R | above 2.71 (the sweep not reached) | 0.003 | 0.003 | 1.75 | smaller |
+| present, 0.25 | A | 2.79 | 0.003 | 0.003 | 1.33 | smaller |
 
 ## Table 6. The control (rate × decay held at 0.00025) beside the main runs: half width, half of the pairs
 
 | Rule | Rate | Decay | Updates to 80, A | Updates to 80, R | Class against 0.001: R, A | Final A | Final R | Length 40: last, mean of 3 | Norms at the end |
 |---|---|---|---|---|---|---|---|---|---|
+| S | 0.003 | 0.25 (main) | 6,912 | 7,424 | faster, the same | 91.72 | 90.65 | 88.7, 91.4 | 60.8 / 4.2 / 33.5 / 22.9 / 20.2 / 8.6 / 69.7 |
+| S | 0.003 | 0.08333 (control) | 5,376 | 5,632 | faster, faster | 97.56 | 97.78 | 98.0, 96.7 | 42.7 / 9.1 / 50.7 / 36.4 / 32.1 / 17.5 / 53.7 |
+| B | 0.003 | 0.25 (main) | 4,864 | 4,864 | faster, faster | 92.50 | 91.25 | 90.3, 89.9 | 114.7 / 3.6 / 31.1 / 21.7 / 19.6 / 7.4 / 63.6 |
+| B | 0.003 | 0.08333 (control) | 5,376 | 6,912 | the same, the same | 97.61 | 97.13 | 98.7, 97.7 | 57.9 / 5.0 / 38.6 / 32.6 / 29.5 / 16.8 / 43.1 |
 
-Further runs at 0.01 called for by the rule (best rate 0.003 on R, or on A where the case is not reached on R; a tie is not a best rate): none.
+Further runs at 0.01 called for by the rule (best rate 0.003 on R, or on A where the case is not reached on R; a tie is not a best rate): S 256 50, B 256 50, S 256 25, B 256 25, B 512 50, S 512 25, B 512 25.
 
