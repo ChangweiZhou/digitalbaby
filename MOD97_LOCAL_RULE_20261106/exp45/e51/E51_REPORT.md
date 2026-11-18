@@ -208,3 +208,79 @@ The explanation under test ("in the present network a memory does not become mor
 ## 8. Committed files
 
 The list is produced by `git ls-tree -r --name-only HEAD MOD97_LOCAL_RULE_20261106/exp45/e51 MOD97_LOCAL_RULE_20261106/exp51_reserve.py MOD97_LOCAL_RULE_20261106/exp51_partb.py MOD97_LOCAL_RULE_20261106/e51_read.py` at the commit that adds this report, and is in `E51_COMMITTED_FILES.txt` beside it.
+
+## 9. Part B, B1 and B2 on seeds 93683 and 116089 (added 18 November 2026)
+
+**Status and scope.** Run at the coordinator's decision 3 of 18 November 2026 (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/COORDINATOR_DECISIONS_20261118.md` on the default branch, commit `16b0e494`): parts B1 and B2 only, on seeds 93683 and 116089, with the runner and its checks as they are. B3 is not repeated. The sections above on seed 73129 are left as they were verified, and nothing here alters them. The results are stated by the brief's readings only, with no reading beyond them. Seed 73129's figures are repeated in the tables for comparison; they are read from its receipts by the same code.
+
+**Code.** The runner is `exp51_partb.py`, unchanged. One new file, `e51_partb_seeds.py`, does two things that exp51_partb.py does not cover for the new seeds, and it needs no torch. `forecast <seed>` is check 11 for a new seed: exp51_partb.py's check 11 reads Part A's `open` receipt of the seed, which exists only for 73129, so the CPU-seconds an update are read from the seed's own check-9 runs. `read <seeds>` is the reader of B1 and B2 for any seeds. Its output for the three seeds is in `partB/E51_TABLES_B_SEEDS.md` and `partB/E51_READ_B_SEEDS.json`; for seed 73129 it reproduces the verified figures of section 6.
+
+### 9.1 The checks for the new seeds
+
+All passed for both rules on both seeds. Receipts are in `partB/checks/`; the runs of checks 8 and 9 are in `partB/check8/` and `partB/`.
+
+| check | 93683 | 116089 |
+|---|---|---|
+| 10, the probe equals the same 400 items in score 1 | 394/400 (S), 391/400 (B) | 397/400 (S), 375/400 (B) |
+| 8, B1's runner at k = 2 reproduces the second addendum (row-64 counts, tensors hash at 4,096, data digest) | S `7e028f27...`, B `d0de1e98...` | S `e0f6899a...`, B `1b31b980...` |
+| 9, B3 at 0.001 reproduces E43 `unrelated` (counts at rows 64 and 4,096, tensors hash at 4,096) | S `2b7d8eee...`, B `9d508ba3...` | S `7df4d37d...`, B `4fd2ed1f...` |
+| 11, forecast for B1 and B2 (B2 at its upper limit), by `e51_partb_seeds.py forecast` | 2.29 CPU-hours | 2.30 CPU-hours |
+
+The runs of B1 and B2 took 1.47 CPU-hours a seed; the runs of checks 8 and 9 took 0.61 a seed. The two B3 runs at 0.001 of each seed exist only for check 9.
+
+### 9.2 B1. The share of rehearsal
+
+The reduction score at update 4,096 is given with its percentage of row 0. A share is *kept* if the score is within 5 points of row 0. The first column after row 0 is the second addendum's receipt; the last share column is E43's `unrelated` arm.
+
+| seed | rule | row 0 | 1/2 (addendum) | 1/4 | 1/8 | 1/16 | 1/32 | none (E43) | least share that keeps | PB.1 (1/4 keeps) | PB.2 (1/32 does not keep) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 73129 | S | 96.6 | 97.1 (100.5%, kept) | 89.0 (92.2%) | 86.8 (89.8%) | 63.2 (65.4%) | 44.2 (45.8%) | 0.0 (0.0%) | 1/2 | failed | held |
+| 73129 | B | 98.1 | 96.7 (98.6%, kept) | 88.9 (90.6%) | 78.4 (79.9%) | 57.5 (58.6%) | 34.6 (35.3%) | 0.0 (0.0%) | 1/2 | failed | held |
+| 93683 | S | 98.7 | 98.9 (100.3%, kept) | 94.9 (96.2%, kept) | 93.3 (94.5%) | 74.0 (75.0%) | 67.5 (68.4%) | 0.0 (0.0%) | 1/4 | held | held |
+| 93683 | B | 97.8 | 98.3 (100.5%, kept) | 92.9 (94.9%, kept) | 86.2 (88.1%) | 83.4 (85.3%) | 61.2 (62.6%) | 0.0 (0.0%) | 1/4 | held | held |
+| 116089 | S | 99.6 | 96.1 (96.5%, kept) | 92.4 (92.7%) | 85.2 (85.6%) | 70.7 (71.0%) | 2.6 (2.6%) | 0.0 (0.0%) | 1/2 | failed | held |
+| 116089 | B | 94.0 | 98.7 (105.0%, kept) | 84.4 (89.8%) | 82.6 (87.9%) | 62.6 (66.6%) | 41.5 (44.2%) | 0.0 (0.0%) | 1/2 | failed | held |
+
+The exact distances from row 0 that decide *kept*, in points:
+- At a share of 1/4: 3.728 (93683, S), 4.980 (93683, B), 7.240 (116089, S), 9.551 (116089, B).
+- At a share of 1/2: 116089 is 3.498 below row 0 under S and 4.699 above it under B.
+
+The lowest probe over each run, and the first probe row at which the unrelated task's held score is at 80%, are in `partB/E51_TABLES_B_SEEDS.md`. At update 4,096 the unrelated task's held score is between 98.7% and 100% in every run of the three seeds.
+
+**PB.1** (a share of 1/4 keeps the first family, under both rules) held on seed 93683 and failed on seeds 73129 and 116089, under both rules in each case. **PB.2** (a share of 1/32 does not keep it, under either rule) held on all three seeds.
+
+### 9.3 B2. Rehearsal at intervals
+
+Each cell gives the probe's first-family share at the end of the gap (%), then the review's updates. Every review of every seed and rule reached its goal within 1,024 updates.
+
+| seed | rule | probe at 0 | cycle 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | review shortens | more is left | updates | reduction at 0 / end | unrelated held at end (%) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 73129 | S | 95.25 | 0.00 / 80 | 0.00 / 128 | 3.75 / 96 | 52.50 / 96 | 74.50 / 64 | 65.00 / 48 | 54.25 / 48 | 58.25 / 32 | yes | yes | 2,640 | 96.6 / 87.9 | 99.7 |
+| 73129 | B | 98.25 | 0.00 / 80 | 0.25 / 64 | 11.75 / 64 | 46.75 / 64 | 70.00 / 32 | 46.50 / 48 | 77.75 / 48 | 72.50 / 48 | no | yes | 2,496 | 98.1 / 91.9 | 98.0 |
+| 93683 | S | 98.50 | 0.00 / 96 | 0.25 / 112 | 2.00 / 80 | 54.25 / 48 | 56.25 / 32 | 48.50 / 32 | 66.25 / 32 | 71.00 / 32 | yes | yes | 2,512 | 98.7 / 90.5 | 99.3 |
+| 93683 | B | 97.75 | 0.00 / 64 | 0.25 / 64 | 15.75 / 48 | 60.75 / 48 | 60.75 / 32 | 75.00 / 16 | 46.50 / 16 | 57.50 / 48 | no | yes | 2,384 | 97.8 / 93.6 | 99.7 |
+| 116089 | S | 99.25 | 0.00 / 128 | 0.50 / 112 | 21.00 / 80 | 70.50 / 48 | 50.50 / 48 | 53.00 / 32 | 68.25 / 32 | 64.00 / 16 | yes | yes | 2,544 | 99.6 / 91.7 | 99.3 |
+| 116089 | B | 93.75 | 0.00 / 96 | 0.00 / 112 | 0.00 / 64 | 56.75 / 48 | 61.00 / 48 | 39.25 / 32 | 39.25 / 32 | 64.75 / 32 | yes | yes | 2,512 | 94.0 / 87.4 | 100.0 |
+
+The brief's sentence for each new seed and rule:
+- Seed 93683, S: with rehearsal at intervals the first family becomes cheaper to restore, and more of it survives a gap.
+- Seed 93683, B: with rehearsal at intervals the first family does not become cheaper to restore, and more of it survives a gap.
+- Seed 116089, S: with rehearsal at intervals the first family becomes cheaper to restore, and more of it survives a gap.
+- Seed 116089, B: with rehearsal at intervals the first family becomes cheaper to restore, and more of it survives a gap.
+
+Predictions PB.3 and PB.4 are not scored for the new seeds, since the coordinator asked for PB.1 and PB.2 only. Their criteria can be read from the table above.
+
+### 9.4 Events and deviations on the new seeds
+
+- **Check 10 ran beside three runs.** It ran for both seeds while the three runs of checks 8 and 9 were in progress, so for a few minutes there were four processes.
+- **Six runs were started too early and stopped.** When seed 93683's B1 and B2 were first started, the runs of checks 8 and 9 of seed 116089 were still going, and six processes ran for about a minute. The six runs of seed 93683 that had started were stopped at once, before any had written a receipt. Their logs are kept in `partB/logs/`:
+  - `e51_B2_intervals_S_93683.1794971004.log`
+  - `e51_B2_intervals_B_93683.1794971004.log`
+  - `e51_B1_share_4_S_93683.1794971004.log`
+  - `e51_B1_share_4_B_93683.1794971020.log`
+  - `e51_B1_share_8_S_93683.1794971020.log`
+  - `e51_B1_share_8_B_93683.1794971020.log`
+
+  All six runs were run again from the beginning, after seed 116089's checks had passed, in a queue of three processes. The receipts are those of the second start.
+- **No machine restart** occurred during these runs.
+- **Check 11** for the new seeds is made by the new file, as described above, and not by exp51_partb.py's check 11.
