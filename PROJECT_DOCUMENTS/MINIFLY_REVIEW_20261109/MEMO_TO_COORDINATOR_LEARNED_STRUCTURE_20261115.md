@@ -46,6 +46,8 @@ From the outside reviewer, at Mr. Xu's request: "Write an appropriate memo for t
 
 **Revision 23 (17 November, late evening).** Section 32 is added: the first result of the evening (E50, stage 1, verified), four measurements and readings made from the record and from saved weights (the passage of a difference at the starting weights of the local networks; E40's saving counted in the learner's whole experience; E38's two failed checks under the sweep; the gate of the long-life world applied to the sweep), an incident on the workers' host, and the briefs written since revision 22. Item 25 of section 1 is new.
 
+**Revision 24 (18 November, 00:56 UTC).** Section 33 is added: two results verified from receipts and weights (E51's trial, with three statements that limit it; E50's stage 2), what has been reported and is not yet verified, the briefs written and checked since revision 23, two corrections of the reviewer's own statements, the restarts of the workers' machines, and, in section 33.7, the handover of the coordination to you, which Mr. Xu announced at 00:44 UTC on 18 November. Items 26 and 27 of section 1 are new.
+
 Everything measured here is read-only: forward passes on saved weights with the numpy reader, and a read of receipts. Nothing was trained. The files are the six E26 births and nine lives (E26 arms S and B, E31 arm K) on seeds 73129, 93683 and 116089. The lives were not designed for these questions, so sections 3.1 to 3.5 are readings, not outcomes of a registered test.
 
 Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_LOCAL_RULE_20261106; R=PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109`. The scripts are on `claude/vibrant-cerf-sje726` at `b983f74a`; file arguments are paths under `$M/exp45/` on the default branch.
@@ -104,6 +106,10 @@ Shell names used below: `D=origin/codex/minifly-consolidated-20261023; M=MOD97_L
 24. **On your return, read `COORDINATION_20261117/LOG.md` and `COORDINATION_20261117/PLAN.md`** (section 31.5). The log records what the reviewer decided and started in your place while Mr. Xu was away; the plan is the ordered list of what remains. Anything in either can be changed by you.
 
 25. **Rule on E38's checks 2 and 3 under the sweep** (section 32.4). They failed and no ruling is on file. The reviewer's reading is that the checks were specified for a rule that is continuous in the weights, that the results under the sweep stand, and that no life needs to be run again.
+
+26. **Take over from section 33.7.** It lists the seven worker sessions and what each is doing, every decision that the reviewer took in your place since revision 23, and what waits for your decision, in the order the reviewer recommends. From the handover on the reviewer takes no decision in your place; it goes on verifying results from receipts and weights and logging the workers' messages unless you arrange otherwise.
+
+27. **Requirement A is not met by E51's trial** (section 33.1). The first family's answers were kept exactly while a new task was learned, but by two lines of the program that read the item. E55's first part, whose brief is in its check, asks whether weights can carry that separation; the reviewer recommends it as the next job on E51's line.
 
 E35 continues as released. E33 is complete and needs nothing further.
 
@@ -1659,3 +1665,100 @@ On Mr. Xu's question of 17 November this gives a first, limited answer. The reco
 | E53 | 9 | E47's network without weight decay, and without decay from a start with the recurrent weights times 3: do the cells beyond the first ring come into use? | Revision 1, in check |
 
 Rule 5 of the plan now allows six lines of work, of which at most four in their first hours; its reason is given there.
+
+## 33. The night of 17 to 18 November: two verified results, the briefs, and the handover (revision 24)
+
+All times are UTC. "Sweep; back-propagation" is the order of every pair of figures. Everything is for seed 73129.
+
+### 33.1 E51's trial: the first family is kept exactly while a new task is learned, by an act of the program
+
+**What was run** (`origin/claude/e51-reserve-017dSEpW` at 2aa469c1; brief `COORDINATION_20261117/TASK_E51_A_NEW_TASK_LEARNED_IN_CELLS_HELD_IN_RESERVE_20261117.md`, revision 2). E41's birth of half the width is placed inside a network of the present size, so that 128 cells and 256 readout units are in reserve. A new task (E43's unrelated task, or the family modulo 97) is then learned for 4,096 updates without weight decay, in four arms: `open` (nothing protected; the gates of the reserve start shut by a bias), `rehearse` (as `open`, every second item from the first family), `keyed-free` (two lines of the forward pass hold the reserve at zero on every item whose first byte the first family uses) and `keyed` (those two lines, and a rule that projects every update of the old units' rows away from the directions that the first family's items present).
+
+**Verified** (`E51_TRIAL_VERIFICATION_20261117.md`, `e51_trial_verify.py`; the reviewer ran the eight parts of the script again, 683 seconds). Every cell of the worker's tables is reproduced from the receipts (2,428 cells, 228 values), and a forward pass written for the verification reproduces the counts from the saved weights. The nine predictions held.
+
+| Arm | Reduction score of the first family at update 4,096 (92.4; 95.3 before) | New task learned from update |
+|---|---|---|
+| `keyed` | 92.4; 95.3 on both tasks; none of the 32,884 scored answers changed at any scored row | `unrelated` 1,024; 512. `conflict` 1,024; 512 |
+| `keyed-free` | `unrelated` 0.0; 0.0. `conflict` 1.0; 0.2 | 512; 512 and 2,048; 1,024 |
+| `open` | `unrelated` 0.0; 0.0, lost by update 16. `conflict` 1.3; 0.0 | 512; 512 and 1,024; 1,024 |
+| `rehearse` | `unrelated` 90.0; 92.8. `conflict` 88.3; 97.8; 4 to 10% of the answers differ from those before | (the task is learned in every run) |
+
+**Three statements go with the result.**
+
+1. The answers are unchanged; the outputs are not. By update 4,096 they have moved by up to 5.3e-4, because the weights are stored in single precision after each projected step, and the smallest difference between the largest and the second largest output of a first-family answer is 1.8e-4. Nothing bounds this movement over a longer run.
+2. The separation is made by the program. With the two lines removed, the same weights of update 4,096 answer 0.00% of the first family's reduction pairs after `unrelated` and 0.40%; 0.00% after `conflict`. The trial therefore does not meet Mr. Xu's requirement that long-term memory form by itself (requirement A); it shows that such a separation, once it exists, is enough.
+3. The new task is not learned in the cells in reserve alone. The brief's criterion of that name (a score below 20% with the reserve held shut) is met for `unrelated`, but the task is also lost when the weights from the reserve into the old units are put back to their starting values; for `conflict` the network answers 41.0%; 40.4% of the never-taught items with the cells in reserve held shut, namely most of those whose answer is the same under both moduli.
+
+**Decision taken in your place.** The other two seeds of Part A are not run now: the keeping in `keyed` follows from the construction, and the open question is the one of statement 2. The worker has been told the three statements for its report.
+
+### 33.2 E50, stage 2: with a fixed code and 16 values a cell, neither rule reaches 80 on R
+
+**What was run** (`origin/claude/e50-fixed-input-code-017dSE` at c6c24d9c). E50's network `C16-in` is E49's network with a limited input (the same 16 of 512 values of the code for each cell, the same limited connections, a dense readout) with E50's fixed code in place of the learned one; 49,152 updates under each rule.
+
+**Verified** (`E50_STAGE2_VERIFICATION_20261118.md`, `e50_stage2_verify.py`; the reviewer ran the script again, with the same output). All 88 figures of the worker's result table are confirmed; the saved weights reproduce 2,400 of 2,400 recorded answers; the code, the byte table and `l1` are bit-equal at the start, at update 24,576 and at the end; the masks hold. Two figures of the report's text differ in the third decimal.
+
+| Rule | A, R, T at update 24,576 | A, R, T at update 49,152 | Updates to 80 |
+|---|---|---|---|
+| back-propagation | 67.9, 62.1, 85.3 | 83.8, 79.4, 96.3 | A 40,704; R not reached |
+| the sweep | 32.7, 29.0, 54.6 | 49.5, 43.6, 74.8 | neither reached |
+
+T is the score on taught pairs. Max and min reach 80 under both rules (5,376 and 5,632; 7,424 and 7,680 updates, back-propagation first).
+
+**What it shows, for this seed.** A limited input alone does not prevent the sweep from learning part of the family: E49's network with the learned code stayed below 5 on every score under the sweep. E50's report does not assign the difference to the size of the code, because the fixed code differs from the learned one in its form as well, and by the criterion of E50's brief a code that cannot shrink is refuted as a sufficient condition. Under the sweep the network remains at about half of back-propagation's levels although no error has to reach the code. Measured in addition: all 256 cells are in use under both rules, and the sweep's answers to the reduction pairs do not fall onto a few values (first byte right in 72.0% of the items, second in 55.0%; back-propagation 82.9% and 90.9%). Stage 3 (one value of every used byte for each cell) is running; it was started again at 00:00 after a restart of the machine.
+
+### 33.3 Reported by the workers and not yet verified
+
+- **E51, Part B** (rehearsal). B1: the first family is kept within 5 points only when every second item is rehearsed (reduction score at update 4,096 over that before: 100.5%; 98.6% at 1/2, 92.2%; 90.6% at 1/4, 89.8%; 79.9% at 1/8, 65.4%; 58.6% at 1/16, 45.8%; 35.3% at 1/32). B2 (the new task with reviews of the first family at intervals): at the end of the eighth gap 58.25%; 72.5% of the probe is still right, against 0.0 at the end of the first; the review needed becomes shorter under the sweep and not under back-propagation. B3 is running.
+- **E58** (checks 1 to 5 and 8 passed; its free runs repeat E40's lived runs at all eight rows and its runs with the term repeat E48's to row 1,024). Part A runs on seed 73129. The worker corrected two figures of its message of 00:02, which it had not read from the receipt.
+- **E52**: the eight runs at rate 0.001 on seed 93683 end on E41's hashes; the ten runs at 0.003 started at 23:45.
+- **E54**: checks 1 to 4 and 6 passed; part 1 is expected to end about 05:00.
+- **The long lives**: the helper's three lives of the sweep were at visits 715 to 720 of 1,024 at 00:37 and resumed from visit 640 after a restart. The branch of the first long lives had no commit between 23:37 and 00:45; its worker was asked at 00:45 to check its lives.
+
+### 33.4 The briefs since revision 23
+
+| Job | Plan item | What it asks | State |
+|---|---|---|---|
+| E57 | 18 | In E49's network with a limited input: the sweep with a scale for each receiving unit (at every map; at the cells only; a product form), and with the scale as before but without weight decay on `l1`; the scale in the network with limited connections and in the dense one. Nine runs, about 15 CPU-hours | Revision 3 after two checks (thirteen and six findings entered). Ready; no line |
+| E53 | 9 | E47's network from a start with the recurrent weights times 3, with and without weight decay | Revision 2 after its check (fourteen findings). Ready; no line |
+| E59 | 15 | E43's unrelated task from a fresh, a born and a lived network and from a born network with shuffled weights, from 2,048, 512 and 256 taught pairs | Revision 2 after its check (fourteen findings). Ready; no line |
+| E55, first part | 11 | E51's arm `keyed` without the two lines of the program: the update gates of the reserve shut by a bias, and the rule extended to their rows. Eight runs, about 2 CPU-hours, by E51's worker with E51's runner | Revision 1, in its check; see 33.5 |
+| E58 | 19 | E48's gated term against free learning, with decay and the place of the change separated, at three taught fractions | Revision 2 after its check; running since 23:26 |
+| E54 | 10 | The limited and the periodic network with fewer pairs taught | Revision 3 after two checks; running since 22:40 |
+
+### 33.5 Two corrections of the reviewer's own statements
+
+- **E50's network.** Revision 2 of the brief of E57 said that `C16-in` has a dense recurrent map and that in E50 "a code that cannot shrink lets the sweep learn the taught pairs". Both are wrong: the network has E49's limited connections, the score on taught pairs is 74.8 and never reaches 80, and E50's report declines to assign the gain to the size of the code. The second check found this; revision 3 is corrected.
+- **E51's arm `open`.** Revision 1 of the brief of E55 says that in that arm "the gates did not open" and that the new task was learned in the old cells. The check in progress finds this wrong for the unrelated task: 62; 53 of the 128 cells in reserve open by more than a half at some position of an item, although only 1; 8 are open by more than 0.1 on the average over positions, and with the reserve held shut the never-taught score is 0.7; 5.7 against 100. The sentence holds for the family modulo 97. The count "open by more than 0.1" that E51 records is an average over positions and does not show a cell that opens at one position. The brief of E55 is revised when its check is complete; it is not released before.
+
+### 33.6 The workers' machines
+
+Besides the stop of a machine about five minutes after a session's turn ends (section 32.6), the host has restarted machines while a turn was held open: E50's at 23:59 (two runs of stage 3 lost and started again), E54's at about 00:24 (three runs resumed from saved states) and the helper's at about 00:37 (75 to 80 visits of each life lost). The reviewer's four agents were stopped at about 00:19 by a limit of use of their model and were resumed on another model on Mr. Xu's word; their unfinished files had been committed, and nothing was lost.
+
+### 33.7 Handover
+
+Mr. Xu wrote at 00:44 on 18 November that you have returned and take over the coordination once the reviewer's present work is done. That work is: the two verifications recorded above (done), revision 3 of the brief of E57 (done), the check and the revision of the brief of E55 (in progress), and this memo. The reviewer started no job after 00:44.
+
+**The seven worker sessions.** Each was started by the reviewer from the default branch at 7cabb13a, pushes to its own branch only, and reports with `send_message` to the reviewer's session `session_01YBMaMvtGtQvDFcgppgThrZ`. The reviewer logs each message in `COORDINATION_20261117/LOG.md`.
+
+| Line | Session | Branch | State at 00:45 |
+|---|---|---|---|
+| The first long lives (E44 L2) | `session_017dSEpXu6oc38q4xQZ5sPv3` | `claude/e44-l2-first-long-lives` | three lives; last commit 23:37; asked at 00:45 to check that they run |
+| The sweep's long lives (helper) | `session_017dSEpTpaat6RxRKpJXsZWQ` | `claude/e44-l2-sweep-long-lives` | three lives, resumed from visit 640 at 00:38 |
+| E50 | `session_017dSEpTbexj8Rn8nQ4eXUjq` | `claude/e50-fixed-input-code-017dSE` | stage 3, expected to end about 02:00; then its final report; the line is then free |
+| E51 | `session_017dSEpWQ9yfbN8dyC2VsWjy` | `claude/e51-reserve-017dSEpW` | Part B: B1 and B2 finished, B3 running; told to start nothing after Part B before a further message |
+| E52 | `session_017dSEpVsT2w6DQAJDRGDa8c` | `claude/e52-learning-rates-sdga8c` | ten runs at rate 0.003; the runs at 0.0003 follow; forecast 27 CPU-hours in all |
+| E54 | `session_017dSEpX6GyjE567qTkELsQP` | `claude/e54-fewer-pairs-ELsQP` | part 1 of four; forecast 49 CPU-hours in all |
+| E58 | `session_017dSEpVVK1y6oaJUKQasnme` | `claude/e58-gated-term-kqasnme` | Part A on seed 73129; two more seeds and Part B follow |
+
+**Decisions taken in your place since revision 23,** each with its reason in the log (the earlier ones are in sections 31 and 32): E58 started after its check; E50's worker allowed 10.2 CPU-hours where its brief has 10, because of the lost runs; the other two seeds of E51's Part A not run now; no run of E50's `C16-in` from a start times 2; one run added to E57 (without weight decay on `l1`); item 11 of the plan begun with a first part that keeps E51's births, in place of a birth with E50's code.
+
+**What waits for your decision,** in the order the reviewer recommends.
+
+1. **E55, first part, on E51's line** when Part B has been reported, as soon as the brief has been revised after its check. It is the direct test of requirement A that the record now allows, and it costs about 2 CPU-hours. E51's worker waits for a message.
+2. **E59 on the line that E50 frees** at about 02:00 (21 CPU-hours): whether having learned the families saves samples on a task of other content (requirement B2).
+3. **E53, then E57,** on the next lines that become free (requirement C).
+4. **The other two seeds of E51's Part A,** together with those of E55 if its first seed is positive.
+5. **Your ruling on E38's checks 2 and 3 under the sweep** (item 25) and on the limit of six lines.
+6. **Whether the workers go on reporting to the reviewer's session.** If you prefer another arrangement, a message to each session is enough; their briefs name the reviewer's session.
+
+**What the reviewer does from the handover on,** unless you arrange otherwise: it verifies each reported result from receipts and weights before the result is read (rule 4 of the plan), logs the workers' messages, answers a worker only where a run would otherwise be lost, and takes no decision in your place. Everything in `COORDINATION_20261117/` (the plan, the log, the briefs and their checks) can be changed by you.

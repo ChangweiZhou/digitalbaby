@@ -94,13 +94,13 @@ def gate_figures(net, items, **key):
     for each cell the largest over positions of the mean over items of 1 - z (items of one length); the largest 1 - z anywhere; the largest
     magnitude of a state; the largest magnitude of an added readout unit at the answer positions."""
     tot, n, big_open, big_h, big_z2 = np.zeros(U1 - U0), 0, 0.0, 0.0, 0.0
-    by_pos = np.zeros(U1 - U0)
+    by_pos = np.zeros(U1 - U0); peak, items_n = np.zeros(U1 - U0), 0
     for idx, x in rows_of(items):
         k = net.run(x, keep=True, **key)[1]; op = 1 - k["z"][:, :, U0:]
         tot += op.sum((0, 1)); n += op.shape[0] * op.shape[1]
-        by_pos = np.maximum(by_pos, op.mean(0).max(0)); big_open = max(big_open, float(op.max()))
+        by_pos = np.maximum(by_pos, op.mean(0).max(0)); big_open = max(big_open, float(op.max())); peak += op.max(1).sum(0); items_n += op.shape[0]
         big_h = max(big_h, float(np.abs(k["h"][:, :, U0:]).max())); big_z2 = max(big_z2, float(np.abs(k["z2"][:, :, H0:]).max()))
-    return dict(mean=tot / n, by_pos=by_pos, largest_opening=big_open, largest_state=big_h, largest_added_unit=big_z2)
+    return dict(mean=tot / n, by_pos=by_pos, peak=peak / items_n, largest_opening=big_open, largest_state=big_h, largest_added_unit=big_z2)
 
 
 def reserve_panel(task):
@@ -121,7 +121,7 @@ def open_():
                 f = gate_figures(net, its)
                 print(f" {task}, rule {rule}, on {label}: cells with mean of 1 - z over positions and items above 0.1: {int((f['mean'] > 0.1).sum())}"
                       + (f" (receipt {rec['reserve']['reserve_cells_open_by_more_than_0p1']})" if its is pan else "")
-                      + f"; cells whose mean over items of 1 - z exceeds 0.1 at some position: {int((f['by_pos'] > 0.1).sum())}, exceeds 0.5 at some position: {int((f['by_pos'] > 0.5).sum())}; "
+                      + f"; cells whose mean over items of 1 - z exceeds 0.1 at some position: {int((f['by_pos'] > 0.1).sum())}, exceeds 0.5 at some position: {int((f['by_pos'] > 0.5).sum())}; cells whose mean over items of the largest 1 - z over the positions of the item exceeds 0.5: {int((f['peak'] > 0.5).sum())}; "
                       f"largest 1 - z of a cell at a position of an item {f['largest_opening']:.4f}; largest magnitude of a state of a cell in reserve {f['largest_state']:.4f}")
             # which positions: the mean over items and cells of 1 - z at each position of the panel's items (all of one length)
             for idx, x in rows_of(pan):
@@ -357,7 +357,7 @@ def emulate_updates(W, task, rule, rowsets, dirs, in_use, updates, at=(), measur
     W = {k: v.copy() for k, v in W.items()}; m = {k: np.zeros(v.shape) for k, v in W.items()}; v_ = {k: np.zeros(v.shape) for k, v in W.items()}
     bt = batches(task); local = rule == "S"; out = []
     if measure and 0 in at:
-        out.append(measure(0, W, None))
+        out.append(measure(0, W, None)); print(out[-1], flush=True)
     for g in range(1, updates + 1):
         x, y, mask = next(bt); loss, G, _ = loss_and_grad(W, x, y, mask, local)
         G = {k: a.astype(np.float32) for k, a in G.items()}; G["book.weight"][BOS] = 0          # the byte table's row of the start symbol takes no gradient (padding_idx)
@@ -380,15 +380,16 @@ def emulate_updates(W, task, rule, rowsets, dirs, in_use, updates, at=(), measur
         if zero_blocks:
             W["rnn.weight_hh_l0"][np.ix_(Z_RES, np.arange(U0))] = 0.0; W["lm.weight"][np.ix_(ADDED, np.arange(U0))] = 0.0
         if measure and g in at:
-            out.append(measure(g, W, loss))
+            out.append(measure(g, W, loss)); print(out[-1], flush=True)
     return W, out
 
 
 def emulate():
     print("== emulate: the first updates, in the checker's own arithmetic")
-    HELD = V.held12(); held = [it for n in HELD for it in HELD[n]]
+    S1 = V.first_family_items(); HELD = V.held12(); held = [it for n in HELD for it in HELD[n]]
+    runs = [tuple(r.split(":")) for r in os.environ.get("E55_CHECK_RUNS", "unrelated:S,conflict:S,unrelated:B,conflict:B").split(",")]
     # 1. is the emulation the runner's update? E51's arm `keyed`, 64 updates on `unrelated`, against the saved weights of row 64
-    for rule in V.RULES:
+    for rule in (V.RULES if os.environ.get("E55_CHECK_VALIDATE", "1") == "1" else ()):
         Wk = V.start("keyed", rule); dirs, in_use, _, _ = V.saved_directions(rule); in_use = in_use.astype(bool)
         We, _ = emulate_updates(Wk, "unrelated", rule, MATSETS["keyed"], dirs, in_use, 64)
         Ws, _ = V.weights("unrelated", "keyed", rule, 64)
@@ -400,6 +401,8 @@ def emulate():
     for rule in V.RULES:
         W0, Wk, dirs, in_use = shut_start(rule); gk = None
         for task in V.TASKS:
+            if (task, rule) not in runs:
+                continue
             pan = reserve_panel(task); panels = V.new_panels(task)
             for variant in variants:
                 def measure(g, W, loss):
@@ -410,16 +413,20 @@ def emulate():
                     s3 = V.score_new(net, panels); s3s = V.score_new(net, panels, shut_all=True)
                     nt = lambda s: 100 * sum(s[k]["exact"] for k in s if k != "taught") / sum(s[k]["n"] for k in s if k != "taught")
                     gh = V.generate(net, held)
-                    nonlocal_ref.setdefault("g0", gh)
+                    nonlocal_ref.setdefault("g0", gh); every = ""
+                    if g == 0 or g >= 256:                       # all 32,884 answers: the reduction score and the answers that differ from row 0's
+                        res, gens = V.score_first_family(net, S1, HELD); nonlocal_ref.setdefault("gens0", gens); g0 = nonlocal_ref["gens0"]
+                        every = (f"; reduction score {res['reduction_score']:.2f}; of the 31,684 answers without letters {sum(a != b for n in gens if n.startswith('k0_') for a, b in zip(gens[n], g0[n]))} differ from row 0's")
                     return (f" row {g:5d}: loss {'-' if loss is None else format(loss, '.3f')}; never-taught {nt(s3):5.1f}, with the cells in reserve shut {nt(s3s):5.1f}; on the new task's items: cells with mean opening above 0.1: "
                             f"{int((f['mean'] > 0.1).sum())}, cells whose mean over items of the largest 1 - z of an item exceeds 0.5: {int((peak / n > 0.5).sum())}, largest 1 - z {f['largest_opening']:.2e}, largest state {f['largest_state']:.2e}; "
                             f"on the first family's held-out items: largest 1 - z {ff['largest_opening']:.2e}, largest state {ff['largest_state']:.2e}, largest added unit {ff['largest_added_unit']:.2e}, "
-                            f"answers that differ from row 0's {sum(a != b for a, b in zip(gh, nonlocal_ref['g0']))} of 1,200")
+                            f"answers that differ from row 0's {sum(a != b for a, b in zip(gh, nonlocal_ref['g0']))} of 1,200" + every)
                 nonlocal_ref = {}
                 arm = "shut-gates-free" if variant == "gates-free" else "shut"
                 t0 = time.time()
+                print(f"--- emulation, {task}, rule {rule}, arm `{arm}`" + ("" if variant in ("brief", "gates-free") else f", variant {variant}") + f", {n_up} updates", flush=True)
                 _, out = emulate_updates(W0, task, rule, MATSETS[arm], dirs, in_use, n_up, at, measure, scale_gate_rows=1e4 if variant == "scaled" else 1.0, zero_blocks=variant == "zeroed")
-                print(f"--- emulation, {task}, rule {rule}, arm `{arm}`" + ("" if variant in ("brief", "gates-free") else f", variant {variant}") + f", {n_up} updates ({time.time() - t0:.0f} s)"); print("\n".join(out), flush=True)
+                print(f"    ({time.time() - t0:.0f} s)", flush=True)
 
 
 PARTS["emulate"] = emulate
@@ -451,6 +458,27 @@ def check2():
 
 
 PARTS["check2"] = check2
+
+
+def residue():
+    print("== residue: rule S after eight updates of the arm `shut`: the error that the sweep sends back through the entries that the projection brought to zero")
+    for task in V.TASKS:
+        W0, Wk, dirs, in_use = shut_start("S"); W, _ = emulate_updates(W0, task, "S", MATSETS["shut"], dirs, in_use, 8)
+        bt = batches(task)
+        for _ in range(9):
+            x, y, mask = next(bt)
+        Wz = {k: v.copy() for k, v in W.items()}; Wz["rnn.weight_hh_l0"][np.ix_(Z_RES, np.arange(U0))] = 0.0; Wz["lm.weight"][np.ix_(ADDED, np.arange(U0))] = 0.0
+        l1_, G1, c1 = loss_and_grad(W, x, y, mask, True); l0_, G0, c0 = loss_and_grad(Wz, x, y, mask, True)
+        blk = W["lm.weight"][ADDED][:, :U0]
+        old = lambda G: away(np.concatenate([G["rnn.weight_ih_l0"], G["rnn.bias_ih_l0"][:, None]], 1)[V.OLD], dirs["ih"])
+        e1, e0 = c1["dh"][:, :, :U0], c0["dh"][:, :, :U0]
+        print(f" {task}: lm, rows 256 to 511, columns of the old cells after the eight updates: largest magnitude {np.abs(blk).max():.1e}, non-zero {int((blk != 0).sum())} of {blk.size}; loss with these entries as stored {l1_:.6f} and set to zero {l0_:.6f}; "
+              f"error arriving at the states of the old cells: 2-norm {np.linalg.norm(e0):.3e} with the entries at zero, 2-norm of the difference made by the signs of the remainders {np.linalg.norm(e1 - e0):.3e} "
+              f"({100 * np.linalg.norm(e1 - e0) / np.linalg.norm(e0):.0f}% of it); the gradient of the old rows of the input map after the rule's projection: 2-norm {np.linalg.norm(old(G0)):.3e}, difference {np.linalg.norm(old(G1) - old(G0)):.3e} "
+              f"({100 * np.linalg.norm(old(G1) - old(G0)) / np.linalg.norm(old(G0)):.0f}%), cosine between the two {float((old(G1) * old(G0)).sum() / (np.linalg.norm(old(G1)) * np.linalg.norm(old(G0)))):.3f}")
+
+
+PARTS["residue"] = residue
 
 if __name__ == "__main__":
     for p in sys.argv[1:]:
