@@ -1,0 +1,1335 @@
+{
+ "experiment": "E51",
+ "kind": "run",
+ "tag": "e51_conflict_open_B_73129_dry64",
+ "settings": {
+  "experiment": "E51",
+  "part": "A",
+  "task": "conflict",
+  "arm": "open",
+  "rule": "B",
+  "local": false,
+  "seed": 73129,
+  "updates": 64,
+  "start": {
+   "start_file": "e51_start_bias_B_73129.pt",
+   "start_sha256": "7c64a9d41011bfa70cd029599084a60057879badeb056a4ac2c39cfafa4156dd",
+   "start_tensors_sha256": "7c414f3294f2f1241263160c396c9022dee49762de612b4a8132ad27dcee8b8c",
+   "half_width_birth": {
+    "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+    "sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0",
+    "tensors_sha256": "9be17d70f686b75124d991bbabdf32bb4280941b4aad9ad02d35bf2745e269f9"
+   },
+   "items_digest": "d22b5733778491b1d4e465bee1927e6b5e8b72d04dbb5b15d6a13fc7abb70054",
+   "directions": null
+  },
+  "start_form": "bias",
+  "start_tensors_sha256": "7c414f3294f2f1241263160c396c9022dee49762de612b4a8132ad27dcee8b8c",
+  "keyed_forward": false,
+  "rule_applied": false,
+  "restore_book": null,
+  "stream": "the new task's stream alone",
+  "decay": 0.0,
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "model": {
+   "cls": "exp41_scale.NetW",
+   "H": 512,
+   "U": 256,
+   "params": 1124113,
+   "params_by_tensor": {
+    "book.weight": 2064,
+    "l1.weight": 4096,
+    "l1.bias": 512,
+    "rnn.weight_ih_l0": 393216,
+    "rnn.weight_hh_l0": 196608,
+    "rnn.bias_ih_l0": 768,
+    "rnn.bias_hh_l0": 768,
+    "lm.weight": 131072,
+    "lm.bias": 512,
+    "l2.weight": 262144,
+    "l2.bias": 512,
+    "l3.weight": 131584,
+    "l3.bias": 257
+   },
+   "forward": "arch26.forward"
+  },
+  "batch": 64,
+  "rows": [
+   0,
+   16,
+   32,
+   64
+  ],
+  "committed_rows": [
+   64,
+   4096
+  ],
+  "update": "exp51_reserve.step (exp26_candidate.step's text; forward exp51_reserve.fwd; the rule's two additions in arm keyed)",
+  "forward": "exp51_reserve.fwd (arch26.forward's text; z and z2 held on items whose first byte is in use, in the keyed arms)",
+  "provenance": {
+   "command": "python exp51_reserve.py run conflict open B 73129 --updates 64 --out exp45/e51/dry",
+   "environment_at_start": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1"
+   },
+   "environment_set_by_runner": {
+    "E16_ARCH": "bank2",
+    "E16_BOOKDECAY": "off",
+    "E16_COMPGAP": "0"
+   },
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "torch_threads": 1
+   },
+   "git": {
+    "commit": "42374d4281efd1841d068073f3ada9771e58f574",
+    "sources_modified_vs_commit": [],
+    "e51_sources_modified_vs_commit": []
+   },
+   "sources_sha256": {
+    "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+    "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+    "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+    "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+    "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+    "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+    "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+    "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+    "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+    "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525",
+    "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c",
+    "exp43_unrelated.py": "fac9acf56e1db0ace1bc02cd791a42b3517d8fc0fb060bbd8b26e8a98483725a",
+    "e43_task.py": "70eef23073197b2e4cd4d28ad90876221f416e503a546203179d8299ec7ad552"
+   },
+   "e51_sources_sha256": {
+    "exp51_reserve.py": "84d0dad7f6e5eeb15c4518a8c591eb5fc043d72b17926913a3b3fde690d1f34a",
+    "exp43_unrelated.py": "fac9acf56e1db0ace1bc02cd791a42b3517d8fc0fb060bbd8b26e8a98483725a",
+    "e43_addendum2.py": "ab1854bcd9b0a1b650dddf8a2aa7e27290b3fc78d13a4b12061395fe38d18e19",
+    "e43_task.py": "70eef23073197b2e4cd4d28ad90876221f416e503a546203179d8299ec7ad552",
+    "exp41_scale.py": "559a7ee9978639d7f5a21769778add9804d64dcfbf5f2438464d32f296597d9e",
+    "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c",
+    "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24"
+   }
+  }
+ },
+ "rows": [
+  {
+   "updates": 0,
+   "data_digest": {
+    "batches": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "items_so_far": {
+    "conflict": 0,
+    "first_family": 0
+   },
+   "loss_since_last_row": null,
+   "score1_first_family_all_pairs_k0": {
+    "add89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 3712,
+      "pct": 94.7906026557712
+     },
+     "other": {
+      "n": 4005,
+      "exact": 3872,
+      "pct": 96.67915106117353
+     }
+    },
+    "sub89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 3748,
+      "pct": 95.70990806945863
+     },
+     "other": {
+      "n": 4005,
+      "exact": 3868,
+      "pct": 96.5792759051186
+     }
+    },
+    "max89": {
+     "all": {
+      "n": 7921,
+      "exact": 7820,
+      "pct": 98.72490847115263
+     }
+    },
+    "min89": {
+     "all": {
+      "n": 7921,
+      "exact": 7825,
+      "pct": 98.78803181416488
+     }
+    },
+    "reduction_score": 95.25025536261492
+   },
+   "score2_first_family_heldout_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 283,
+     "final": 283
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 284,
+     "final": 284
+    },
+    "max89": {
+     "n": 300,
+     "exact": 299,
+     "final": 299
+    },
+    "min89": {
+     "n": 300,
+     "exact": 295,
+     "final": 295
+    }
+   },
+   "share_of_answers_equal_to_row0": {
+    "per_panel": {
+     "k0_add89": 7921,
+     "k0_sub89": 7921,
+     "k0_max89": 7921,
+     "k0_min89": 7921,
+     "k12_add89": 300,
+     "k12_sub89": 300,
+     "k12_max89": 300,
+     "k12_min89": 300
+    },
+    "all_pairs_k0": 1.0,
+    "heldout_k12": 1.0
+   },
+   "wrong_answers_on_reduction_pairs": {
+    "add89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 0,
+     "4 differs by exactly 1 or 10": 197,
+     "5 other two digits": 7,
+     "6 anything else": 0
+    },
+    "sub89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 0,
+     "4 differs by exactly 1 or 10": 150,
+     "5 other two digits": 18,
+     "6 anything else": 0
+    }
+   },
+   "reduction_bytes": "e51_conflict_open_B_73129_dry64_reduction_bytes_row0.json",
+   "reduction_bytes_sha256": "00975c1d3277a241f0b8ff948fee58c878b40da22a7f9d6a6f9d1817eb746e19",
+   "score3_new_task": {
+    "add97": {
+     "n": 400,
+     "exact": 9,
+     "final": 9
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 57,
+     "final": 57
+    }
+   },
+   "score3_never_taught": {
+    "n": 800,
+    "exact": 66,
+    "pct": 8.25
+   },
+   "score3_new_task_reserve_shut": {
+    "add97": {
+     "n": 400,
+     "exact": 9,
+     "final": 9
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 57,
+     "final": 57
+    }
+   },
+   "score3_never_taught_reserve_shut": {
+    "n": 800,
+    "exact": 66,
+    "pct": 8.25
+   },
+   "reserve": {
+    "reserve_cells_open_by_more_than_0p1": 0,
+    "mean_opening": 5.24603663044135e-05,
+    "largest_opening": 0.0001412680372595787,
+    "largest_reserve_state_on_first_family_panel": 0.0024044557940214872
+   },
+   "score4_movement": {
+    "groups": {
+     "embedding": {
+      "rel_diff": 0.0,
+      "cosine": 1.0000000000000009
+     },
+     "l1": {
+      "rel_diff": 0.0,
+      "cosine": 1.0000000000000009
+     },
+     "input map": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999951
+     },
+     "recurrent matrix": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999198
+     },
+     "lm": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999409
+     },
+     "l2": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999636
+     },
+     "l3": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999855
+     }
+    },
+    "tensors": {
+     "book.weight": {
+      "rel_diff": 0.0,
+      "cosine": 1.0000000000000009
+     },
+     "l1.weight": {
+      "rel_diff": 0.0,
+      "cosine": 1.000000000000001
+     },
+     "l1.bias": {
+      "rel_diff": 0.0,
+      "cosine": 1.0000000000000004
+     },
+     "rnn.weight_ih_l0": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999096
+     },
+     "rnn.weight_hh_l0": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999194
+     },
+     "rnn.bias_ih_l0": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999999
+     },
+     "rnn.bias_hh_l0": {
+      "rel_diff": 0.0,
+      "cosine": 1.0
+     },
+     "lm.weight": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999413
+     },
+     "lm.bias": {
+      "rel_diff": 0.0,
+      "cosine": 1.0000000000000002
+     },
+     "l2.weight": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999641
+     },
+     "l2.bias": {
+      "rel_diff": 0.0,
+      "cosine": 1.0000000000000007
+     },
+     "l3.weight": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999842
+     },
+     "l3.bias": {
+      "rel_diff": 0.0,
+      "cosine": 1.0
+     }
+    }
+   },
+   "tensor_norms": {
+    "book.weight": 51.05348095812792,
+    "l1.weight": 9.734859692453856,
+    "l1.bias": 3.322585509518483,
+    "rnn.weight_ih_l0": 26.255892295506055,
+    "rnn.weight_hh_l0": 22.664271437993435,
+    "rnn.bias_ih_l0": 113.14352074835972,
+    "rnn.bias_hh_l0": 1.211731498814651,
+    "lm.weight": 21.487557476887496,
+    "lm.bias": 0.7551515118910499,
+    "l2.weight": 9.774612185964315,
+    "l2.bias": 0.6187017812859454,
+    "l3.weight": 35.476722117272246,
+    "l3.bias": 9.410971761168947
+   },
+   "score4_movement_old_and_reserve_rows": {
+    "input map": {
+     "old_cells_rows": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999707,
+      "norm": 20.84192651629201,
+      "norm_start": 20.84192651629201
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999986,
+      "norm": 114.26479014402099,
+      "norm_start": 114.26479014402099
+     }
+    },
+    "recurrent matrix": {
+     "old_cells_rows": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999631,
+      "norm": 19.671017609060996,
+      "norm_start": 19.671017609060996
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.0,
+      "cosine": 0.9999999999999162,
+      "norm": 11.322038653186738,
+      "norm_start": 11.322038653186738
+     }
+    }
+   },
+   "tensors_sha256": "7c414f3294f2f1241263160c396c9022dee49762de612b4a8132ad27dcee8b8c",
+   "cpu": 21.850270289
+  },
+  {
+   "updates": 16,
+   "data_digest": {
+    "batches": 16,
+    "sha256": "3bd03acefb412a27701bc74736aa6cf33cc70ccc3ab7c64320a8035c1fb0cb37"
+   },
+   "items_so_far": {
+    "conflict": 1024,
+    "first_family": 0
+   },
+   "loss_since_last_row": 2.029167987406254,
+   "score1_first_family_all_pairs_k0": {
+    "add89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 1154,
+      "pct": 29.468845760980592
+     },
+     "other": {
+      "n": 4005,
+      "exact": 1049,
+      "pct": 26.192259675405744
+     }
+    },
+    "sub89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 863,
+      "pct": 22.03779366700715
+     },
+     "other": {
+      "n": 4005,
+      "exact": 1073,
+      "pct": 26.79151061173533
+     }
+    },
+    "max89": {
+     "all": {
+      "n": 7921,
+      "exact": 6013,
+      "pct": 75.91213230652696
+     }
+    },
+    "min89": {
+     "all": {
+      "n": 7921,
+      "exact": 6331,
+      "pct": 79.9267769221058
+     }
+    },
+    "reduction_score": 25.75331971399387
+   },
+   "score2_first_family_heldout_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 82,
+     "final": 82
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 68,
+     "final": 68
+    },
+    "max89": {
+     "n": 300,
+     "exact": 230,
+     "final": 230
+    },
+    "min89": {
+     "n": 300,
+     "exact": 238,
+     "final": 238
+    }
+   },
+   "share_of_answers_equal_to_row0": {
+    "per_panel": {
+     "k0_add89": 2159,
+     "k0_sub89": 1952,
+     "k0_max89": 6009,
+     "k0_min89": 6300,
+     "k12_add89": 82,
+     "k12_sub89": 69,
+     "k12_max89": 230,
+     "k12_min89": 237
+    },
+    "all_pairs_k0": 0.518242646130539,
+    "heldout_k12": 0.515
+   },
+   "wrong_answers_on_reduction_pairs": {
+    "add89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 121,
+     "4 differs by exactly 1 or 10": 1612,
+     "5 other two digits": 1029,
+     "6 anything else": 0
+    },
+    "sub89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 42,
+     "4 differs by exactly 1 or 10": 1460,
+     "5 other two digits": 1551,
+     "6 anything else": 0
+    }
+   },
+   "score3_new_task": {
+    "add97": {
+     "n": 400,
+     "exact": 52,
+     "final": 52
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 40,
+     "final": 40
+    }
+   },
+   "score3_never_taught": {
+    "n": 800,
+    "exact": 92,
+    "pct": 11.5
+   },
+   "score3_new_task_reserve_shut": {
+    "add97": {
+     "n": 400,
+     "exact": 52,
+     "final": 52
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 40,
+     "final": 40
+    }
+   },
+   "score3_never_taught_reserve_shut": {
+    "n": 800,
+    "exact": 92,
+    "pct": 11.5
+   },
+   "reserve": {
+    "reserve_cells_open_by_more_than_0p1": 0,
+    "mean_opening": 4.110252717509866e-05,
+    "largest_opening": 0.00023903277109969747,
+    "largest_reserve_state_on_first_family_panel": 0.0067037297412753105
+   },
+   "score4_movement": {
+    "groups": {
+     "embedding": {
+      "rel_diff": 0.002212323031180821,
+      "cosine": 0.9999975528556816
+     },
+     "l1": {
+      "rel_diff": 0.03898344775816108,
+      "cosine": 0.9993125014903295
+     },
+     "input map": {
+      "rel_diff": 0.022977549516087603,
+      "cosine": 0.999736309340714
+     },
+     "recurrent matrix": {
+      "rel_diff": 0.07803417294579067,
+      "cosine": 0.996956206390106
+     },
+     "lm": {
+      "rel_diff": 0.07524714810925939,
+      "cosine": 0.9971727174466776
+     },
+     "l2": {
+      "rel_diff": 0.21468981993427635,
+      "cosine": 0.9775845693579449
+     },
+     "l3": {
+      "rel_diff": 0.07279912069109286,
+      "cosine": 0.998192799835844
+     }
+    },
+    "tensors": {
+     "book.weight": {
+      "rel_diff": 0.002212323031180821,
+      "cosine": 0.9999975528556816
+     },
+     "l1.weight": {
+      "rel_diff": 0.03954064476610458,
+      "cosine": 0.9992842856126034
+     },
+     "l1.bias": {
+      "rel_diff": 0.03382477049919163,
+      "cosine": 0.9995669086008866
+     },
+     "rnn.weight_ih_l0": {
+      "rel_diff": 0.10156056478632844,
+      "cosine": 0.994887190309648
+     },
+     "rnn.weight_hh_l0": {
+      "rel_diff": 0.07799543151732699,
+      "cosine": 0.996959333390365
+     },
+     "rnn.bias_ih_l0": {
+      "rel_diff": 0.0009747463295915067,
+      "cosine": 0.9999995622093082
+     },
+     "rnn.bias_hh_l0": {
+      "rel_diff": 0.09057623617882114,
+      "cosine": 0.9959125798815373
+     },
+     "lm.weight": {
+      "rel_diff": 0.075147041981274,
+      "cosine": 0.997180457418674
+     },
+     "lm.bias": {
+      "rel_diff": 0.1336112377553198,
+      "cosine": 0.9916061451766952
+     },
+     "l2.weight": {
+      "rel_diff": 0.21487166917212472,
+      "cosine": 0.9775426134137678
+     },
+     "l2.bias": {
+      "rel_diff": 0.16307813360536952,
+      "cosine": 0.9880568949686744
+     },
+     "l3.weight": {
+      "rel_diff": 0.07508218047156023,
+      "cosine": 0.9980778203294901
+     },
+     "l3.bias": {
+      "rel_diff": 0.02240180452940732,
+      "cosine": 0.9999993334878636
+     }
+    }
+   },
+   "tensor_norms": {
+    "book.weight": 51.05384182200013,
+    "l1.weight": 9.615816187753202,
+    "l1.bias": 3.265736012799193,
+    "rnn.weight_ih_l0": 26.403299380695568,
+    "rnn.weight_hh_l0": 22.67120533186651,
+    "rnn.bias_ih_l0": 113.17436358509651,
+    "rnn.bias_hh_l0": 1.1985673111352637,
+    "lm.weight": 21.341176539092256,
+    "lm.bias": 0.7742505034388841,
+    "l2.weight": 9.965097474249614,
+    "l2.bias": 0.6443474434179898,
+    "l3.weight": 36.91228611163569,
+    "l3.bias": 9.621508051408753
+   },
+   "score4_movement_old_and_reserve_rows": {
+    "input map": {
+     "old_cells_rows": {
+      "rel_diff": 0.0904842749072034,
+      "cosine": 0.9959407288353112,
+      "norm": 20.949859752070463,
+      "norm_start": 20.84192651629201
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.016526931740453173,
+      "cosine": 0.9998635604513753,
+      "norm": 114.30955413895563,
+      "norm_start": 114.26479014402099
+     }
+    },
+    "recurrent matrix": {
+     "old_cells_rows": {
+      "rel_diff": 0.07292221286913259,
+      "cosine": 0.9973393421242569,
+      "norm": 19.65501782616059,
+      "norm_start": 19.671017609060996
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.09175362759058671,
+      "cosine": 0.9958118075166696,
+      "norm": 11.36223521373659,
+      "norm_start": 11.322038653186738
+     }
+    }
+   },
+   "tensors_sha256": "9e785e229dc461d951a17ce66e93ddc88c8c55e9b673d5897e789e694c959af5",
+   "cpu": 44.616297359
+  },
+  {
+   "updates": 32,
+   "data_digest": {
+    "batches": 32,
+    "sha256": "7f69adec1a8acee8b7e605a5f7cfbc8f32586ee487e0180064cc1197c769e513"
+   },
+   "items_so_far": {
+    "conflict": 2048,
+    "first_family": 0
+   },
+   "loss_since_last_row": 0.8454153537750244,
+   "score1_first_family_all_pairs_k0": {
+    "add89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 734,
+      "pct": 18.743615934627172
+     },
+     "other": {
+      "n": 4005,
+      "exact": 1133,
+      "pct": 28.2896379525593
+     }
+    },
+    "sub89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 795,
+      "pct": 20.301327885597548
+     },
+     "other": {
+      "n": 4005,
+      "exact": 1283,
+      "pct": 32.03495630461923
+     }
+    },
+    "max89": {
+     "all": {
+      "n": 7921,
+      "exact": 6911,
+      "pct": 87.24908471152632
+     }
+    },
+    "min89": {
+     "all": {
+      "n": 7921,
+      "exact": 7178,
+      "pct": 90.61987122838026
+     }
+    },
+    "reduction_score": 19.52247191011236
+   },
+   "score2_first_family_heldout_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 68,
+     "final": 68
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 86,
+     "final": 86
+    },
+    "max89": {
+     "n": 300,
+     "exact": 272,
+     "final": 272
+    },
+    "min89": {
+     "n": 300,
+     "exact": 286,
+     "final": 286
+    }
+   },
+   "share_of_answers_equal_to_row0": {
+    "per_panel": {
+     "k0_add89": 1826,
+     "k0_sub89": 2055,
+     "k0_max89": 6880,
+     "k0_min89": 7148,
+     "k12_add89": 65,
+     "k12_sub89": 86,
+     "k12_max89": 271,
+     "k12_min89": 284
+    },
+    "all_pairs_k0": 0.5652379750031562,
+    "heldout_k12": 0.5883333333333334
+   },
+   "wrong_answers_on_reduction_pairs": {
+    "add89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 329,
+     "4 differs by exactly 1 or 10": 1485,
+     "5 other two digits": 1368,
+     "6 anything else": 0
+    },
+    "sub89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 205,
+     "4 differs by exactly 1 or 10": 1388,
+     "5 other two digits": 1528,
+     "6 anything else": 0
+    }
+   },
+   "score3_new_task": {
+    "add97": {
+     "n": 400,
+     "exact": 64,
+     "final": 64
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 76,
+     "final": 76
+    }
+   },
+   "score3_never_taught": {
+    "n": 800,
+    "exact": 140,
+    "pct": 17.5
+   },
+   "score3_new_task_reserve_shut": {
+    "add97": {
+     "n": 400,
+     "exact": 64,
+     "final": 64
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 76,
+     "final": 76
+    }
+   },
+   "score3_never_taught_reserve_shut": {
+    "n": 800,
+    "exact": 140,
+    "pct": 17.5
+   },
+   "reserve": {
+    "reserve_cells_open_by_more_than_0p1": 0,
+    "mean_opening": 3.5544128913898013e-05,
+    "largest_opening": 0.00028939159417694263,
+    "largest_reserve_state_on_first_family_panel": 0.012005455791950226
+   },
+   "score4_movement": {
+    "groups": {
+     "embedding": {
+      "rel_diff": 0.003235121738197585,
+      "cosine": 0.9999947669825038
+     },
+     "l1": {
+      "rel_diff": 0.057296952446354195,
+      "cosine": 0.9985907495237005
+     },
+     "input map": {
+      "rel_diff": 0.02991746411791663,
+      "cosine": 0.9995534212707434
+     },
+     "recurrent matrix": {
+      "rel_diff": 0.1024745471206631,
+      "cosine": 0.9947714077145925
+     },
+     "lm": {
+      "rel_diff": 0.1055459103981006,
+      "cosine": 0.9944170813807702
+     },
+     "l2": {
+      "rel_diff": 0.29500588275423395,
+      "cosine": 0.9588947985189428
+     },
+     "l3": {
+      "rel_diff": 0.13413210833268832,
+      "cosine": 0.9942780108628317
+     }
+    },
+    "tensors": {
+     "book.weight": {
+      "rel_diff": 0.003235121738197585,
+      "cosine": 0.9999947669825038
+     },
+     "l1.weight": {
+      "rel_diff": 0.05844641733838942,
+      "cosine": 0.9985261369188265
+     },
+     "l1.bias": {
+      "rel_diff": 0.046269369300175174,
+      "cosine": 0.9991456125928367
+     },
+     "rnn.weight_ih_l0": {
+      "rel_diff": 0.13223340626645974,
+      "cosine": 0.9913990552359966
+     },
+     "rnn.weight_hh_l0": {
+      "rel_diff": 0.10242425187808989,
+      "cosine": 0.9947768971864966
+     },
+     "rnn.bias_ih_l0": {
+      "rel_diff": 0.0012776459346942098,
+      "cosine": 0.9999993078903787
+     },
+     "rnn.bias_hh_l0": {
+      "rel_diff": 0.11876993150958592,
+      "cosine": 0.9929319945411738
+     },
+     "lm.weight": {
+      "rel_diff": 0.10540479068886478,
+      "cosine": 0.9944322493275664
+     },
+     "lm.bias": {
+      "rel_diff": 0.18773153966503217,
+      "cosine": 0.984231878543345
+     },
+     "l2.weight": {
+      "rel_diff": 0.2952402389495513,
+      "cosine": 0.9588144299622289
+     },
+     "l2.bias": {
+      "rel_diff": 0.22913423674263755,
+      "cosine": 0.9789563112076088
+     },
+     "l3.weight": {
+      "rel_diff": 0.1382533768978427,
+      "cosine": 0.9939170870233272
+     },
+     "l3.bias": {
+      "rel_diff": 0.04515273864585489,
+      "cosine": 0.9999988421002685
+     }
+    }
+   },
+   "tensor_norms": {
+    "book.weight": 51.053328542162355,
+    "l1.weight": 9.509368635278573,
+    "l1.bias": 3.2506234032020482,
+    "rnn.weight_ih_l0": 26.526685380146244,
+    "rnn.weight_hh_l0": 22.73794246041237,
+    "rnn.bias_ih_l0": 113.19980567456575,
+    "rnn.bias_hh_l0": 1.1977152036313299,
+    "lm.weight": 21.316761660630824,
+    "lm.bias": 0.7907378888057633,
+    "l2.weight": 10.159603062294375,
+    "l2.bias": 0.6701516823444973,
+    "l3.weight": 38.22597044239968,
+    "l3.bias": 9.835650608546969
+   },
+   "score4_movement_old_and_reserve_rows": {
+    "input map": {
+     "old_cells_rows": {
+      "rel_diff": 0.11784109946634456,
+      "cosine": 0.993175638174615,
+      "norm": 21.051158625860793,
+      "norm_start": 20.84192651629201
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.02151349283337738,
+      "cosine": 0.9997689908811777,
+      "norm": 114.34469713338498,
+      "norm_start": 114.26479014402099
+     }
+    },
+    "recurrent matrix": {
+     "old_cells_rows": {
+      "rel_diff": 0.09595776170744584,
+      "cosine": 0.9954090102630202,
+      "norm": 19.715551157940176,
+      "norm_start": 19.671017609060996
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.12001873582307411,
+      "cosine": 0.992859318284271,
+      "norm": 11.39059224011951,
+      "norm_start": 11.322038653186738
+     }
+    }
+   },
+   "tensors_sha256": "4232dc17d7a297ebb6f3c7cc0a751aa89055f69e5267fd1a4e2e75af5e8e99e9",
+   "cpu": 67.545308166
+  },
+  {
+   "updates": 64,
+   "data_digest": {
+    "batches": 64,
+    "sha256": "3e853f5331e2d81f9a05917e79a727198f32121278beae698c7ed6fe81ed4a58"
+   },
+   "items_so_far": {
+    "conflict": 4096,
+    "first_family": 0
+   },
+   "loss_since_last_row": 0.5169049585238099,
+   "score1_first_family_all_pairs_k0": {
+    "add89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 428,
+      "pct": 10.929519918283964
+     },
+     "other": {
+      "n": 4005,
+      "exact": 1448,
+      "pct": 36.15480649188515
+     }
+    },
+    "sub89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 568,
+      "pct": 14.504596527068438
+     },
+     "other": {
+      "n": 4005,
+      "exact": 644,
+      "pct": 16.079900124843945
+     }
+    },
+    "max89": {
+     "all": {
+      "n": 7921,
+      "exact": 7421,
+      "pct": 93.6876656987754
+     }
+    },
+    "min89": {
+     "all": {
+      "n": 7921,
+      "exact": 7389,
+      "pct": 93.28367630349703
+     }
+    },
+    "reduction_score": 12.7170582226762
+   },
+   "score2_first_family_heldout_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 68,
+     "final": 68
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 48,
+     "final": 48
+    },
+    "max89": {
+     "n": 300,
+     "exact": 291,
+     "final": 291
+    },
+    "min89": {
+     "n": 300,
+     "exact": 289,
+     "final": 289
+    }
+   },
+   "share_of_answers_equal_to_row0": {
+    "per_panel": {
+     "k0_add89": 1831,
+     "k0_sub89": 1200,
+     "k0_max89": 7365,
+     "k0_min89": 7347,
+     "k12_add89": 64,
+     "k12_sub89": 45,
+     "k12_max89": 290,
+     "k12_min89": 285
+    },
+    "all_pairs_k0": 0.5599987375331398,
+    "heldout_k12": 0.57
+   },
+   "wrong_answers_on_reduction_pairs": {
+    "add89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 698,
+     "4 differs by exactly 1 or 10": 1217,
+     "5 other two digits": 1573,
+     "6 anything else": 0
+    },
+    "sub89": {
+     "1 end symbol alone": 0,
+     "2 contains a byte of 128 or above": 0,
+     "3 right under modulus 97": 296,
+     "4 differs by exactly 1 or 10": 1538,
+     "5 other two digits": 1514,
+     "6 anything else": 0
+    }
+   },
+   "reduction_bytes": "e51_conflict_open_B_73129_dry64_reduction_bytes_row64.json",
+   "reduction_bytes_sha256": "694b4b9bb6c01d62f01158c60d0885b2f598aae21d3639a982b2fa1598725a0f",
+   "score3_new_task": {
+    "add97": {
+     "n": 400,
+     "exact": 113,
+     "final": 113
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 114,
+     "final": 114
+    }
+   },
+   "score3_never_taught": {
+    "n": 800,
+    "exact": 227,
+    "pct": 28.375
+   },
+   "score3_new_task_reserve_shut": {
+    "add97": {
+     "n": 400,
+     "exact": 113,
+     "final": 113
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 114,
+     "final": 114
+    }
+   },
+   "score3_never_taught_reserve_shut": {
+    "n": 800,
+    "exact": 227,
+    "pct": 28.375
+   },
+   "reserve": {
+    "reserve_cells_open_by_more_than_0p1": 0,
+    "mean_opening": 2.927536896260625e-05,
+    "largest_opening": 0.0001026292314583605,
+    "largest_reserve_state_on_first_family_panel": 0.00366618181578815
+   },
+   "score4_movement": {
+    "groups": {
+     "embedding": {
+      "rel_diff": 0.004454169328746996,
+      "cosine": 0.9999900801944199
+     },
+     "l1": {
+      "rel_diff": 0.08199814438355173,
+      "cosine": 0.9971507465571444
+     },
+     "input map": {
+      "rel_diff": 0.03480888950683581,
+      "cosine": 0.99939623861947
+     },
+     "recurrent matrix": {
+      "rel_diff": 0.12377430506265279,
+      "cosine": 0.9924699039190235
+     },
+     "lm": {
+      "rel_diff": 0.12432941856420346,
+      "cosine": 0.9922437309610896
+     },
+     "l2": {
+      "rel_diff": 0.3160719607855044,
+      "cosine": 0.9533477986143699
+     },
+     "l3": {
+      "rel_diff": 0.18830081908959534,
+      "cosine": 0.9891881541230966
+     }
+    },
+    "tensors": {
+     "book.weight": {
+      "rel_diff": 0.004454169328746996,
+      "cosine": 0.9999900801944199
+     },
+     "l1.weight": {
+      "rel_diff": 0.0837243322570496,
+      "cosine": 0.9970341248326686
+     },
+     "l1.bias": {
+      "rel_diff": 0.06532984579737723,
+      "cosine": 0.9981807992855888
+     },
+     "rnn.weight_ih_l0": {
+      "rel_diff": 0.15385491918719946,
+      "cosine": 0.9885020090475717
+     },
+     "rnn.weight_hh_l0": {
+      "rel_diff": 0.1237350315580844,
+      "cosine": 0.9924755606556505
+     },
+     "rnn.bias_ih_l0": {
+      "rel_diff": 0.001477006690049766,
+      "cosine": 0.9999991420693682
+     },
+     "rnn.bias_hh_l0": {
+      "rel_diff": 0.13682371465780055,
+      "cosine": 0.990599195031444
+     },
+     "lm.weight": {
+      "rel_diff": 0.12420537755155607,
+      "cosine": 0.9922590202442898
+     },
+     "lm.bias": {
+      "rel_diff": 0.20104377472693377,
+      "cosine": 0.9831019484259805
+     },
+     "l2.weight": {
+      "rel_diff": 0.31632340686194255,
+      "cosine": 0.9532511103683513
+     },
+     "l2.bias": {
+      "rel_diff": 0.245382374129097,
+      "cosine": 0.9775597457223151
+     },
+     "l3.weight": {
+      "rel_diff": 0.19403647218523457,
+      "cosine": 0.9885109772375581
+     },
+     "l3.bias": {
+      "rel_diff": 0.06552558539899833,
+      "cosine": 0.9999975507408614
+     }
+    }
+   },
+   "tensor_norms": {
+    "book.weight": 51.053513972113045,
+    "l1.weight": 9.385060142729332,
+    "l1.bias": 3.2329533122041982,
+    "rnn.weight_ih_l0": 26.70013083194065,
+    "rnn.weight_hh_l0": 22.897958697867235,
+    "rnn.bias_ih_l0": 113.22063434922035,
+    "rnn.bias_hh_l0": 1.2036574028999518,
+    "lm.weight": 21.368976712068807,
+    "lm.bias": 0.8051550550024225,
+    "l2.weight": 10.231895922446698,
+    "l2.bias": 0.6826750449463647,
+    "l3.weight": 39.3856572213278,
+    "l3.bias": 10.027256275531473
+   },
+   "score4_movement_old_and_reserve_rows": {
+    "input map": {
+     "old_cells_rows": {
+      "rel_diff": 0.1382997862876428,
+      "cosine": 0.9907762678045093,
+      "norm": 21.225935748300916,
+      "norm_start": 20.84192651629201
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.024811764663714538,
+      "cosine": 0.9996929314876813,
+      "norm": 114.37337400152006,
+      "norm_start": 114.26479014402099
+     }
+    },
+    "recurrent matrix": {
+     "old_cells_rows": {
+      "rel_diff": 0.11814331255956743,
+      "cosine": 0.9931550433747827,
+      "norm": 19.885375713923175,
+      "norm_start": 19.671017609060996
+     },
+     "reserve_cells_rows": {
+      "rel_diff": 0.13939911725412724,
+      "cosine": 0.9903988964896685,
+      "norm": 11.416529086762566,
+      "norm_start": 11.322038653186738
+     }
+    }
+   },
+   "tensors_sha256": "b37a8d8d84b481a5febebeafe7443e0a3e7735ed16154fb62e0b8f65c2099471",
+   "weights": "rows_uncommitted/e51_conflict_open_B_73129_dry64_row64.pt",
+   "weights_sha256": "b33a1797bf0d21f8dc1a0449c802235203ffffb06f7d188ffb1cd9bbba3591f1",
+   "cpu": 92.235692157
+  }
+ ],
+ "complete": {
+  "updates": 64,
+  "items": {
+   "conflict": 4096,
+   "first_family": 0
+  },
+  "optimizer_steps": [
+   64
+  ],
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "data_digest": {
+   "batches": 64,
+   "sha256": "3e853f5331e2d81f9a05917e79a727198f32121278beae698c7ed6fe81ed4a58"
+  },
+  "tensors_sha256": "b37a8d8d84b481a5febebeafe7443e0a3e7735ed16154fb62e0b8f65c2099471",
+  "cpu_total": 92.241251202,
+  "cpu_scoring": 85.917550394,
+  "cpu_updates": 6.323703546999994
+ }
+}
