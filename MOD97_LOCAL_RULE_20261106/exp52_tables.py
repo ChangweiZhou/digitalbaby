@@ -256,6 +256,34 @@ def write(out):
     J["further_runs_called_for"] = need
     L.append(f"Further runs at 0.01 called for by the rule (best rate 0.003 on R, or on A where the case is not reached on R; a tie is not a best rate): "
              f"{', '.join(need) if need else 'none'}.\n")
+    # predictions (the reviewer's, on file before any run)
+    P = {}
+    cases_hf = [(H, fp) for H in (256, 512) for fp in (50, 25)]
+    have = lambda rule, H, fp, rate: (rule, H, fp, rate, False) in S
+    if all(have("B", H, fp, r) for H, fp in cases_hf for r in (0.0003, 0.001, 0.003)):
+        ok = all((lambda b: bool(b[1]) and any(r in (0.001, 0.003) for r in b[1]))(best_rate(S, "B", H, fp, "R")) for H, fp in cases_hf)
+        P["P52.1"] = dict(statement="back-propagation's best rate on R is 0.001 or 0.003, or a tie that includes one of them, at all four", outcome=ok,
+                          detail={f"h{H} f{fp}": best_rate(S, "B", H, fp, "R")[1] for H, fp in cases_hf})
+        g = {f"h{H} f{fp}": gains(S, "B", H, fp)["gains"] for H, fp in cases_hf}
+        P["P52.5"] = dict(statement="back-propagation gains from its own rate at none of the four", outcome=not any(g.values()), detail=g)
+    if all(have("S", H, fp, r) for H, fp in cases_hf for r in (0.0003, 0.001, 0.003)):
+        g = {f"h{H} f{fp}": gains(S, "S", H, fp)["gains"] for H, fp in cases_hf}
+        P["P52.2"] = dict(statement="the sweep gains from its own rate at one or more of the four", outcome=any(g.values()), detail=g)
+        fin = {f"{k[3]:g}": S[k]["R_final"] for k in S if k[:3] == ("S", 512, 25) and not k[4]}
+        P["P52.3"] = dict(statement="present width, f 0.25: the sweep's mean R over the last three rows is at least 85 at some rate", outcome=max(fin.values()) >= 85, detail=fin)
+        lg = lag(S, 256, 25, "R")
+        P["P52.4"] = dict(statement="half width, f 0.25: the lag on R at the rules' own rates is smaller than at 0.001", outcome=lg["class"] in ("smaller", "gone"),
+                          detail=dict(at_0001=lg["at_0.001"]["text"], own=lg["own"]["text"], reading=lg["class"]))
+        a, b = S[("S", 256, 25, 0.0003, False)]["R_rms16"], S[("S", 256, 25, 0.001, False)]["R_rms16"]
+        P["P52.6"] = dict(statement="half width, f 0.25: the sweep's R is steadier at 0.0003 than at 0.001 (RMS change over the last 16 rows)", outcome=a < b,
+                          detail={"0.0003": a, "0.001": b})
+    J["predictions"] = P
+    if P:
+        L.append("## Table 7. The predictions\n")
+        L.append("| | Statement | Outcome | Figures |\n|---|---|---|---|")
+        for k in sorted(P):
+            L.append(f"| {k} | {P[k]['statement']} | {'true' if P[k]['outcome'] else 'false'} | {json.dumps(P[k]['detail'])} |")
+        L.append("")
     J["runs"] = {f"{k[0]} h{k[1]} f{k[2]} lr{k[3]:g}{' product' if k[4] else ''}": v for k, v in S.items()}
     (Path(out) / "E52_TABLES.md").write_text("\n".join(L) + "\n")
     (Path(out) / "E52_SUMMARY.json").write_text(json.dumps(J, indent=1))
