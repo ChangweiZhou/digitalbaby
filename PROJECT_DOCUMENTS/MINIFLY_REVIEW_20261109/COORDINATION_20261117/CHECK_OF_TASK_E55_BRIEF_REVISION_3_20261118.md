@@ -4,7 +4,7 @@
 
 **Verdicts.**
 
-- **A, the brief of E55, revision 3:** the verdict is not yet given. The reading of the text is complete and its defects are listed below; the emulation of the arm `blind`, on which the first defect rests, has reached row 2,048 of 16,384 and is running.
+- **A, the brief of E55, revision 3:** the verdict is not yet given. The reading of the text is complete and its defects are listed below; the emulation of the arm `blind`, on which the first defect rests, has reached row 8,192 of 16,384 and is running.
 - **B1, the brief of E57, revision 4 (point 7 of the runner, check 8, the rule for an interrupted run): release after the listed changes.** What is saved is enough for a resumed run to equal an uninterrupted one. Six things in the wording and in check 8 should be changed; none touches a run.
 - **B2, the brief of E53, revision 3 (check 4): release as it stands, with one sentence corrected.** The check can be carried out and compared as it says, and no file that the killed process leaves can make the resumed run differ.
 
@@ -43,7 +43,7 @@ The script is `check_e55_brief_r3.py` beside this file; it imports the script of
 
 The limit of 1e-4 on the change of an output is that of E51's check 3, which gave 1.5e-5 to 2.1e-5 in single precision; in torch the figure will be of that size, because it is the arithmetic of single precision and not a movement of the weights.
 
-**The emulation of the arm `blind`** (part `blind_emulate`) is the checker's own arithmetic and is not the runner. The gradient is computed in single precision, as torch computes it, the projections in double precision, and the weights are stored in single precision after every step. Sixty-four emulated updates of E51's arm `keyed` give the saved weights of row 64 to within 2.4e-5; 2.7e-5 in every entry, where the weights changed by up to 5.9e-2. Its later rows show sizes and the order of events and are not the figures that the runner will give. It was started for 16,384 updates of each task under each rule; the table has the rows reached so far (4,096) and is completed when the runs have ended. The answers are generated in double precision; the states are given in double and in single precision, because the remainder that a cell in reserve receives on a byte in use is of the size of the rounding of single-precision arithmetic.
+**The emulation of the arm `blind`** (part `blind_emulate`) is the checker's own arithmetic and is not the runner. The gradient is computed in single precision, as torch computes it, the projections in double precision, and the weights are stored in single precision after every step. Sixty-four emulated updates of E51's arm `keyed` give the saved weights of row 64 to within 2.4e-5; 2.7e-5 in every entry, where the weights changed by up to 5.9e-2. Its later rows show sizes and the order of events and are not the figures that the runner will give. It was started for 16,384 updates of each task under each rule; the table has the rows reached so far (8,192) and is completed when the runs have ended. The answers are generated in double precision; the states are given in double and in single precision, because the remainder that a cell in reserve receives on a byte in use is of the size of the rounding of single-precision arithmetic.
 
 | Run | Row | Never-taught score; with the cells in reserve held shut | First family: answers that differ from row 0's, of 1,200 held-out; of 31,684 without letters | Reduction score | Largest state of a cell in reserve on the held-out pairs, double precision; single precision | The same at positions 1; 11; 21 | Largest eigenvalue of the map of a small state | Largest change of an output on the held-out pairs | Largest entry of `D @ Vm` at the rows kept blind |
 |---|---|---|---|---|---|---|---|---|---|
@@ -53,31 +53,35 @@ The limit of 1e-4 on the change of an output is that of E51's check 3, which gav
 | `unrelated`, back-propagation | 1,024 | 25.3; 0.0 | 0; 0 | 95.25 | 3.1e-05; 7.1e-05 | 1.5e-07; 3.4e-06; 3.2e-05 | 1.193 | 9.1e-04 | 2.1e-08 |
 | `unrelated`, back-propagation | 2,048 | 99.0; 0.0 | 0; 0 | 95.25 | 1.1e-04; 3.1e-04 | 1.4e-07; 6.2e-06; 1.1e-04 | 1.316 | 6.0e-03 | 1.8e-08 |
 | `unrelated`, back-propagation | 4,096 | 100.0; 0.0 | 0; 0 | 95.25 | 1.7e-04; 8.1e-04 | 1.5e-07; 6.6e-06; 1.7e-04 | 1.366 | 1.3e-02 | 1.9e-08 |
+| `unrelated`, back-propagation | 8,192 | 100.0; 0.0 | 0; 0 | 95.25 | 2.7e-04; 1.7e-03 | 1.6e-07; 8.6e-06; 2.7e-04 | 1.408 | 2.8e-02 | 2.0e-08 |
 | `unrelated`, sweep | 0 | 0.0; 0.0 | 0; 0 | 92.40 | 6.6e-08; 2.6e-07 | 4.2e-08; 5.5e-08; 5.5e-08 | 0.605 | 0.0e+00 | 3.1e-09 |
 | `unrelated`, sweep | 64 | 0.0; 0.0 | 0; 0 | 92.40 | 1.2e-07; 5.8e-07 | 4.5e-08; 1.2e-07; 9.7e-08 | 0.689 | 5.2e-06 | 5.4e-09 |
 | `unrelated`, sweep | 256 | 0.0; 0.0 | 0; 0 | 92.40 | 1.2e-07; 5.3e-07 | 5.8e-08; 1.1e-07; 1.0e-07 | 0.684 | 7.4e-06 | 6.4e-09 |
 | `unrelated`, sweep | 1,024 | 0.0; 0.0 | 0; 0 | 92.40 | 2.0e-06; 4.3e-06 | 7.1e-08; 1.0e-06; 2.0e-06 | 1.048 | 2.6e-05 | 1.3e-08 |
 | `unrelated`, sweep | 2,048 | 6.0; 0.0 | 0; 0 | 92.40 | 2.0e-06; 2.8e-06 | 1.1e-07; 9.1e-07; 2.0e-06 | 1.047 | 9.1e-05 | 2.4e-08 |
 | `unrelated`, sweep | 4,096 | 65.3; 0.0 | 0; 0 | 92.40 | 3.1e-06; 6.4e-06 | 1.9e-07; 1.5e-06; 3.1e-06 | 1.086 | 2.3e-04 | 1.9e-08 |
+| `unrelated`, sweep | 8,192 | 97.3; 0.0 | 1; 0 | 92.40 | 4.0e-06; 7.5e-06 | 1.5e-07; 1.8e-06; 4.0e-06 | 1.097 | 2.8e-04 | 2.0e-08 |
 | `conflict`, back-propagation | 0 | 8.2; 8.2 | 0; 0 | 95.25 | 7.6e-08; 3.5e-07 | 3.3e-08; 6.9e-08; 5.3e-08 | 0.605 | 0.0e+00 | 3.7e-09 |
 | `conflict`, back-propagation | 64 | 21.2; 15.1 | 0; 0 | 95.25 | 2.1e-07; 7.8e-07 | 4.5e-08; 1.3e-07; 2.1e-07 | 0.969 | 3.0e-06 | 5.3e-09 |
 | `conflict`, back-propagation | 256 | 24.6; 20.2 | 0; 0 | 95.25 | 9.8e-07; 2.0e-06 | 6.2e-08; 3.4e-07; 9.8e-07 | 1.043 | 1.4e-05 | 7.6e-09 |
 | `conflict`, back-propagation | 1,024 | 46.6; 28.8 | 0; 0 | 95.25 | 9.3e-07; 3.3e-06 | 1.2e-07; 2.7e-07; 9.3e-07 | 1.103 | 2.0e-05 | 1.6e-08 |
 | `conflict`, back-propagation | 2,048 | 52.6; 31.0 | 0; 0 | 95.25 | 2.3e-06; 8.7e-06 | 1.2e-07; 5.4e-07; 2.3e-06 | 1.161 | 3.3e-05 | 1.8e-08 |
 | `conflict`, back-propagation | 4,096 | 61.1; 31.6 | 0; 0 | 95.25 | 3.8e-06; 1.4e-05 | 1.3e-07; 7.3e-07; 3.8e-06 | 1.170 | 7.3e-05 | 2.1e-08 |
+| `conflict`, back-propagation | 8,192 | 61.5; 31.9 | 0; 0 | 95.25 | 5.1e-06; 2.4e-05 | 1.9e-07; 9.8e-07; 5.1e-06 | 1.180 | 1.3e-04 | 3.2e-08 |
 | `conflict`, sweep | 0 | 19.0; 19.0 | 0; 0 | 92.40 | 6.6e-08; 2.6e-07 | 4.2e-08; 5.5e-08; 5.5e-08 | 0.605 | 0.0e+00 | 3.1e-09 |
 | `conflict`, sweep | 64 | 24.6; 23.8 | 0; 0 | 92.40 | 8.0e-08; 4.8e-07 | 4.5e-08; 7.8e-08; 7.8e-08 | 0.930 | 2.7e-06 | 4.3e-09 |
 | `conflict`, sweep | 256 | 20.9; 31.4 | 0; 0 | 92.40 | 6.5e-07; 9.5e-07 | 7.4e-08; 2.6e-07; 6.5e-07 | 1.064 | 1.3e-05 | 7.4e-09 |
 | `conflict`, sweep | 1,024 | 45.9; 35.4 | 0; 0 | 92.40 | 8.1e-07; 1.8e-06 | 7.7e-08; 3.6e-07; 8.1e-07 | 0.991 | 3.2e-05 | 1.0e-08 |
 | `conflict`, sweep | 2,048 | 51.9; 37.0 | 0; 0 | 92.40 | 7.9e-07; 2.6e-06 | 1.2e-07; 5.8e-07; 6.8e-07 | 0.959 | 5.8e-05 | 1.6e-08 |
 | `conflict`, sweep | 4,096 | 57.2; 37.0 | 0; 0 | 92.40 | 1.0e-06; 2.6e-06 | 1.4e-07; 5.2e-07; 1.0e-06 | 1.038 | 1.1e-04 | 2.3e-08 |
+| `conflict`, sweep | 8,192 | 64.1; 35.0 | 0; 0 | 92.40 | 1.1e-06; 3.3e-06 | 1.8e-07; 7.5e-07; 1.1e-06 | 1.045 | 2.3e-04 | 2.2e-08 |
 
-What the rows to 4,096 show:
+What the rows to 8,192 show:
 
-- *The remainder of the projection does not grow when the whole row is projected.* The largest entry of `D @ Vm` at the rows kept blind is between 3.1e-9 and 2.4e-8 at every row of every run. The brief's statement holds.
-- *The state of the reserve on the first family's items grows over the positions of an item, and this growth appears over the updates.* At the start the largest eigenvalue of the map that takes a small state of the reserve from one position to the next is 0.605. It passes 1 between rows 64 and 1,024 in all four runs and is 1.37; 1.09 (`unrelated`) and 1.17; 1.04 (`conflict`) at row 4,096 under back-propagation; the sweep. The state at position 1 of a held-out pair stays at 1e-7; the state at position 21 is larger by the factor that the eigenvalue gives. On `unrelated` under back-propagation at row 4,096 it is 1.5e-7 at position 1, 6.6e-6 at position 11 and 1.7e-4 at position 21 (8.1e-4 in single precision), and the first family's outputs have moved by 1.3e-2.
-- *No answer of the first family has changed* in any run to row 4,096 (0 of 1,200 and 0 of 31,684, in double precision).
-- *`unrelated` is learned under back-propagation* from row 2,048 (99.0; 100.0 at row 4,096; 0.0 with the cells in reserve held shut). Under the sweep it is at 65.3 at row 4,096. `conflict` is at 57.2; 61.1 at row 4,096, against 37.0; 31.6 with the cells held shut.
+- *The remainder of the projection does not grow when the whole row is projected.* The largest entry of `D @ Vm` at the rows kept blind is between 3.1e-9 and 3.2e-8 at every row of every run. The brief's statement holds.
+- *The state of the reserve on the first family's items grows over the positions of an item, and this growth appears over the updates.* At the start the largest eigenvalue of the map that takes a small state of the reserve from one position to the next is 0.605. It passes 1 between rows 64 and 1,024 in all four runs and is 1.41; 1.10 (`unrelated`) and 1.18; 1.05 (`conflict`) at row 8,192 under back-propagation; the sweep. The state at position 1 of a held-out pair stays below 2e-7; the state at position 21 is larger by the factor that the eigenvalue gives. On `unrelated` under back-propagation at row 8,192 it is 1.6e-7 at position 1, 8.6e-6 at position 11 and 2.7e-4 at position 21 (1.7e-3 in single precision), and the first family's outputs have moved by 2.8e-2.
+- *One answer of the first family has changed,* on `unrelated` under the sweep at row 8,192 (1 of the 1,200 held-out answers; 0 of the 31,684). The state of the reserve is 4.0e-6 there and the outputs have moved by 2.8e-4, which is the size of the movement that the verification of E51 found in the arm `keyed` and attributed to the rounding of the stored weights of the old rows; the smallest difference between the two largest outputs of a held-out answer is 1.8e-4 under the sweep. In the other three runs no answer has changed to row 8,192.
+- *`unrelated` is learned under both rules,* from row 2,048 under back-propagation and at row 8,192 under the sweep (100.0; 97.3, and 0.0 with the cells in reserve held shut). `conflict` is at 64.1; 61.5 at row 8,192, against 35.0; 31.9 with the cells held shut.
 
 ### A2. `Rule55`
 

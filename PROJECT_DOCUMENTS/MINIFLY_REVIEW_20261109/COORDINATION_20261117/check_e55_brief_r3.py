@@ -328,6 +328,20 @@ def blind_states():
             p40 = reserve_states(net, held40); g40, g40s = V.generate(net, held40), V.generate(n0, held40)
             out.append(f"   {label} precision, the same held-out pairs of the first family written with 40 letters ({len(held40[0][0]) + 3} positions; not a panel of the brief): largest state of a cell in reserve at positions 1, 11, 21, 31, 41, {len(p40) - 1}: "
                        + ", ".join(f"{p40[t]:.1e}" for t in (1, 11, 21, 31, 41, len(p40) - 1)) + f"; answers that differ from the start's {sum(x != y for x, y in zip(g40, g40s))} of {len(held40)}; right answers {V.exact(g40, held40)} (start {V.exact(g40s, held40)})")
+        # two paths to the first family, taken away one at a time: (1) the part of the change of the old rows that lies along the directions in use
+        # (the rounding of the stored weights, which E51's rule does not remove because it projects each step and not the whole change);
+        # (2) the states of the cells in reserve (their update gates held at 1 on every item)
+        Wf = {k: v.astype(np.float64) for k, v in W.items()}
+        rem_old = {}
+        for mn, rows in K.MATSETS["keyed"].items():
+            wk, bk = NAMES[mn]; D = block(W, mn, rows) - block(W0, mn, rows); rem_old[mn] = float(np.abs(D @ dirs[mn]).max()); Dp = away(D, dirs[mn])
+            Wf[wk][rows] = W0[wk][rows].astype(np.float64) + Dp[:, :-1]; Wf[bk][rows] = W0[bk][rows].astype(np.float64) + Dp[:, -1]
+        n0 = V.Net(W0); a0 = V.answer_logits(n0, held); g0 = V.score_first_family(n0, S1, HELD)[1]
+        for label, net, key in (("as emulated", V.Net(W), {}), ("the change of the old rows along the directions in use taken away", V.Net(Wf), {}), ("the cells in reserve held shut", V.Net(W), dict(shut_all=True)),
+                                ("both", V.Net(Wf), dict(shut_all=True))):
+            gens = V.score_first_family(net, S1, HELD, **key)[1]
+            out.append(f"   double precision, {label}: answers that differ from the start's {sum(x != y for n in gens for x, y in zip(gens[n], g0[n]))} of 32,884; largest change of an output on the held-out pairs {np.abs(V.answer_logits(net, held, **key) - a0).max():.2e}")
+        out.append("   old rows, largest entry of (D_end - D_start) @ Vm: " + ", ".join(f"{mn} {v:.1e}" for mn, v in rem_old.items()))
         ev = np.linalg.eigvals(0.5 * np.eye(U1 - U0) + 0.25 * W["rnn.weight_hh_l0"][2 * U1 + U0:3 * U1, U0:U1].astype(np.float64))
         out.append(f"   the map of a small state of the reserve at a byte in use: eigenvalues of magnitude above 1: {int((np.abs(ev) > 1).sum())} of 128; the largest magnitude {np.abs(ev).max():.3f}, to the power 21: {np.abs(ev).max() ** 21:.1e}")
         print("\n".join(out), flush=True)
