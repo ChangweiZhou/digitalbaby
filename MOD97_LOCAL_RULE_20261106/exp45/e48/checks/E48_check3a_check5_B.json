@@ -1,0 +1,85 @@
+{
+ "check": "check3a_check5_B",
+ "command": "python3 exp48_gated_run.py check 3a5 B",
+ "provenance": {
+  "command": "python3 exp48_gated_run.py check 3a5 B",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "f8f62df60483c424715cd2bfb9900bc91788e3f3",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "e48_sources_sha256": {
+   "exp48_gated_run.py": "7a7b1cf2c6aa649f24951727c447bbf5823abae2c602d24412bceb609bd6bb9d",
+   "e48_gated.py": "ab324e9ce4f55b01fa8d8f802b4a1622990c73a70d974727a1f19916e2ccb1a0",
+   "e40_new_family.py": "aa11c27f1588abbac6659afc124980b88994f6fbae375ffc742f0d31dbdda9cf"
+  },
+  "e48_spec_sha256": "ab324e9ce4f55b01fa8d8f802b4a1622990c73a70d974727a1f19916e2ccb1a0",
+  "e48_gated_is_spec": true
+ },
+ "cpu_seconds": 7.510242191,
+ "result": {
+  "check5": {
+   "update1": {
+    "up_i": 0.021305540576577187,
+    "down_i": 0.0,
+    "up_h": 0.07640661299228668,
+    "down_h": 0.0
+   },
+   "update2": {
+    "up_i": 0.017342567443847656,
+    "down_i": 0.0019020403269678354,
+    "up_h": 0.07043695449829102,
+    "down_h": 0.006327108480036259
+   },
+   "ok": true
+  },
+  "check3a": {
+   "row": 64,
+   "comparisons": {
+    "earlier_dev_batch": {
+     "gate": false,
+     "bit_equal": true,
+     "max_abs_diff": 0.0
+    },
+    "earlier_add97_k12": {
+     "gate": false,
+     "bit_equal": true,
+     "max_abs_diff": 0.0
+    },
+    "new_family_batch": {
+     "gate": true,
+     "bit_equal": false,
+     "max_abs_diff": 24.63483428955078
+    }
+   },
+   "ok": true
+  },
+  "ok": true
+ }
+}

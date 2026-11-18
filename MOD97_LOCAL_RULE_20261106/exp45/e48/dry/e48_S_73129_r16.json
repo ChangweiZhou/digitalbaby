@@ -1,0 +1,830 @@
+{
+ "experiment": "E48",
+ "rule": "S",
+ "seed": 73129,
+ "rank": 16,
+ "updates": 64,
+ "rows_planned": [
+  0,
+  16,
+  32,
+  64
+ ],
+ "start": {
+  "start": "exp45/e26/e26_life_S_73129.pt",
+  "weights_sha256": "54fbb46407b79afa126fe25042327ec8e453bc3e90295773a76a0545b02ff25c",
+  "tensors_sha256": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+  "receipt_tensors_sha256": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+  "tensors_sha_matches_receipt": true
+ },
+ "numbers_that_may_change": 36896,
+ "network_parameters": 1124113,
+ "trainable": [
+  "book.weight",
+  "term.down_i",
+  "term.up_i",
+  "term.down_h",
+  "term.up_h"
+ ],
+ "optimizer": {
+  "kind": "AdamW",
+  "lr": 0.001,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "params": "term (4 factors)",
+    "weight_decay": 0.25
+   },
+   {
+    "params": "book.weight",
+    "weight_decay": 0.0
+   }
+  ]
+ },
+ "data": "E40: 64 consecutive items of X16.entry_stream(F4 taught tenth, seed + 140) (e40_new_family.batches)",
+ "update": "exp48_gated_run.step (exp26_candidate.step's text; e48_gated.forward with the gate; keep_code_rows; local=True)",
+ "gate": "on iff x[:, 1] in 101..104, asserted equal for all rows of a call",
+ "provenance": {
+  "command": "python3 exp48_gated_run.py run S 73129 16 --updates 64 --out exp45/e48/dry",
+  "environment_at_start": {},
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "f8f62df60483c424715cd2bfb9900bc91788e3f3",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "e48_sources_sha256": {
+   "exp48_gated_run.py": "f4f03b01ad5dba650f1d8304ad8547baeacf8279126332cc466e2c66d8d131ac",
+   "e48_gated.py": "ab324e9ce4f55b01fa8d8f802b4a1622990c73a70d974727a1f19916e2ccb1a0",
+   "e40_new_family.py": "aa11c27f1588abbac6659afc124980b88994f6fbae375ffc742f0d31dbdda9cf"
+  },
+  "e48_spec_sha256": "ab324e9ce4f55b01fa8d8f802b4a1622990c73a70d974727a1f19916e2ccb1a0",
+  "e48_gated_is_spec": true
+ },
+ "rows": [
+  {
+   "updates": 0,
+   "scores": {
+    "held_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 51,
+      "final": 51
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 89,
+      "final": 89
+     },
+     "max83": {
+      "n": 300,
+      "exact": 157,
+      "final": 157
+     },
+     "min83": {
+      "n": 300,
+      "exact": 102,
+      "final": 102
+     }
+    },
+    "taught_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 58,
+      "final": 58
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 87,
+      "final": 87
+     },
+     "max83": {
+      "n": 300,
+      "exact": 146,
+      "final": 146
+     },
+     "min83": {
+      "n": 300,
+      "exact": 108,
+      "final": 108
+     }
+    },
+    "held_plain_k0": {
+     "add83": {
+      "reduction": {
+       "n": 3069,
+       "exact": 374,
+       "final": 374
+      },
+      "no_reduction": {
+       "n": 3131,
+       "exact": 524,
+       "final": 524
+      }
+     },
+     "sub83": {
+      "reduction": {
+       "n": 3074,
+       "exact": 0,
+       "final": 0
+      },
+      "no_reduction": {
+       "n": 3126,
+       "exact": 1,
+       "final": 1974
+      }
+     }
+    },
+    "earlier_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 65,
+      "final": 65
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 133,
+      "final": 133
+     },
+     "add97": {
+      "n": 400,
+      "exact": 380,
+      "final": 380
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 362,
+      "final": 362
+     },
+     "add73": {
+      "n": 400,
+      "exact": 341,
+      "final": 341
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 302,
+      "final": 302
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 23.333333333333336,
+     "taught_add_sub_mean": 24.166666666666664,
+     "reduction_score": 6.093189964157706,
+     "no_reduction_score": 8.38392844918818
+    }
+   },
+   "scores_gate_forced_off": null,
+   "loss_since_last_row": null,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "presented": {
+    "items": 0,
+    "held_out_presented": 0,
+    "not_taught_presented": 0,
+    "earlier_code_items": 0
+   },
+   "earlier_answers_sha256": {
+    "per_panel": {
+     "add89": "c3a322371fb1f66d1e5f942408d6e0dd5e33c18f4d6b847f387746e6ff400faf",
+     "sub89": "6d1a48a52910b6d77c619bca5a607874275e0de3cc1fff5cd2c8c87325edc2e7",
+     "add97": "f465bce22101b4e3849b95b13aa91ea2c80a7a7a370b233b9632c8233a5ac24d",
+     "sub97": "78cc3279471d9d4f5402b401116d1cebbb04d94f2fe55a28d61d85677ade29eb",
+     "add73": "d8f1e0314d6b835f450ec83f1941c50f693fa260d461d9cd70a530e54b4c16da",
+     "sub73": "7b67ab655b1c1b71d4dcf769ded8bf2f35f892bc1f75e4951a9247301c3ecdde"
+    },
+    "all": "10ffa11b716dadbfbae84fb5e2d5f9ae84d6c70da8a9988a47a04a0c8bed0e62"
+   },
+   "check3": {
+    "earlier_digest_equals_row0": true,
+    "earlier_counts": {
+     "add89": 65,
+     "sub89": 133,
+     "add97": 380,
+     "sub97": 362,
+     "add73": 341,
+     "sub73": 302
+    },
+    "earlier_counts_equal_e40_row0": true,
+    "lived_tensors_sha256_codes_reset": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+    "equals_life_end": true
+   },
+   "check4": {
+    "e40_data_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "equal": true
+   },
+   "code_rows_tensors_sha256": "491fd3849ec309ffafc7900eb8ef7ea8f4d806db101757fa0fe4e9d61a8499fd",
+   "term_norms": {
+    "down_i": 2.3167357444763184,
+    "up_i": 0.0,
+    "down_h": 2.288515090942383,
+    "up_h": 0.0
+   },
+   "sweep_cosines": {
+    "down_i": 0.868125506798207,
+    "up_i": null,
+    "down_h": 0.8655389991285765,
+    "up_h": null
+   },
+   "optimizer_steps": [],
+   "cpu": 26.013539934,
+   "cpu_scoring_so_far": 25.831797299999998,
+   "check2": {
+    "scores_equal_e40_row0": true
+   }
+  },
+  {
+   "updates": 16,
+   "scores": {
+    "held_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 106,
+      "final": 106
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 94,
+      "final": 94
+     },
+     "max83": {
+      "n": 300,
+      "exact": 256,
+      "final": 256
+     },
+     "min83": {
+      "n": 300,
+      "exact": 194,
+      "final": 194
+     }
+    },
+    "taught_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 113,
+      "final": 113
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 97,
+      "final": 97
+     },
+     "max83": {
+      "n": 300,
+      "exact": 239,
+      "final": 239
+     },
+     "min83": {
+      "n": 300,
+      "exact": 196,
+      "final": 196
+     }
+    },
+    "held_plain_k0": {
+     "add83": {
+      "reduction": {
+       "n": 3069,
+       "exact": 518,
+       "final": 518
+      },
+      "no_reduction": {
+       "n": 3131,
+       "exact": 862,
+       "final": 862
+      }
+     },
+     "sub83": {
+      "reduction": {
+       "n": 3074,
+       "exact": 14,
+       "final": 14
+      },
+      "no_reduction": {
+       "n": 3126,
+       "exact": 18,
+       "final": 1297
+      }
+     }
+    },
+    "earlier_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 65,
+      "final": 65
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 133,
+      "final": 133
+     },
+     "add97": {
+      "n": 400,
+      "exact": 380,
+      "final": 380
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 362,
+      "final": 362
+     },
+     "add73": {
+      "n": 400,
+      "exact": 341,
+      "final": 341
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 302,
+      "final": 302
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 33.333333333333336,
+     "taught_add_sub_mean": 35.0,
+     "reduction_score": 8.66694735039017,
+     "no_reduction_score": 14.053477974879401
+    }
+   },
+   "scores_gate_forced_off": null,
+   "loss_since_last_row": 1.4960141777992249,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 16,
+    "sha256": "3d60f3a0a844ecccc09bd905fbd7a6865f25c1fbc16a7a926d8900eca49cc0ad"
+   },
+   "presented": {
+    "items": 1024,
+    "held_out_presented": 0,
+    "not_taught_presented": 0,
+    "earlier_code_items": 0
+   },
+   "earlier_answers_sha256": {
+    "per_panel": {
+     "add89": "c3a322371fb1f66d1e5f942408d6e0dd5e33c18f4d6b847f387746e6ff400faf",
+     "sub89": "6d1a48a52910b6d77c619bca5a607874275e0de3cc1fff5cd2c8c87325edc2e7",
+     "add97": "f465bce22101b4e3849b95b13aa91ea2c80a7a7a370b233b9632c8233a5ac24d",
+     "sub97": "78cc3279471d9d4f5402b401116d1cebbb04d94f2fe55a28d61d85677ade29eb",
+     "add73": "d8f1e0314d6b835f450ec83f1941c50f693fa260d461d9cd70a530e54b4c16da",
+     "sub73": "7b67ab655b1c1b71d4dcf769ded8bf2f35f892bc1f75e4951a9247301c3ecdde"
+    },
+    "all": "10ffa11b716dadbfbae84fb5e2d5f9ae84d6c70da8a9988a47a04a0c8bed0e62"
+   },
+   "check3": {
+    "earlier_digest_equals_row0": true,
+    "earlier_counts": {
+     "add89": 65,
+     "sub89": 133,
+     "add97": 380,
+     "sub97": 362,
+     "add73": 341,
+     "sub73": 302
+    },
+    "earlier_counts_equal_e40_row0": true,
+    "lived_tensors_sha256_codes_reset": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+    "equals_life_end": true
+   },
+   "check4": {
+    "e40_data_digest": null,
+    "equal": null
+   },
+   "code_rows_tensors_sha256": "79842479bb736b6125058da279598d4e129e8c74bdb4a03adac9518ca712be66",
+   "term_norms": {
+    "down_i": 2.6362178325653076,
+    "up_i": 1.1185519695281982,
+    "down_h": 2.4718387126922607,
+    "up_h": 1.0921281576156616
+   },
+   "sweep_cosines": {
+    "down_i": 0.8447509718710519,
+    "up_i": 0.8943353471587981,
+    "down_h": 0.8557559726924797,
+    "up_h": 0.8931153337601517
+   },
+   "optimizer_steps": [
+    16
+   ],
+   "cpu": 52.491890228,
+   "cpu_scoring_so_far": 50.121586736,
+   "term_file": {
+    "file": "e48_S_73129_r16_row16.pt",
+    "sha256": "df9495412b3fd88939b463511ba84de21d71614886af6f167287f2290ee0c2b9",
+    "tensors_sha256": "8af1c48e4199e0ea636e03381ebcf1aab93fb69f04ead5e157dffb0abfced2d6",
+    "bytes": 150484
+   }
+  },
+  {
+   "updates": 32,
+   "scores": {
+    "held_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 196,
+      "final": 196
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 172,
+      "final": 172
+     },
+     "max83": {
+      "n": 300,
+      "exact": 275,
+      "final": 275
+     },
+     "min83": {
+      "n": 300,
+      "exact": 244,
+      "final": 244
+     }
+    },
+    "taught_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 188,
+      "final": 188
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 190,
+      "final": 190
+     },
+     "max83": {
+      "n": 300,
+      "exact": 271,
+      "final": 271
+     },
+     "min83": {
+      "n": 300,
+      "exact": 242,
+      "final": 242
+     }
+    },
+    "held_plain_k0": {
+     "add83": {
+      "reduction": {
+       "n": 3069,
+       "exact": 1010,
+       "final": 1010
+      },
+      "no_reduction": {
+       "n": 3131,
+       "exact": 1950,
+       "final": 1950
+      }
+     },
+     "sub83": {
+      "reduction": {
+       "n": 3074,
+       "exact": 164,
+       "final": 164
+      },
+      "no_reduction": {
+       "n": 3126,
+       "exact": 406,
+       "final": 514
+      }
+     }
+    },
+    "earlier_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 65,
+      "final": 65
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 133,
+      "final": 133
+     },
+     "add97": {
+      "n": 400,
+      "exact": 380,
+      "final": 380
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 362,
+      "final": 362
+     },
+     "add73": {
+      "n": 400,
+      "exact": 341,
+      "final": 341
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 302,
+      "final": 302
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 61.33333333333333,
+     "taught_add_sub_mean": 63.0,
+     "reduction_score": 19.12240545103055,
+     "no_reduction_score": 37.634132740250685
+    }
+   },
+   "scores_gate_forced_off": null,
+   "loss_since_last_row": 0.6301282178610563,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 32,
+    "sha256": "2ec19bac432335026477e9b9914b24483cf88706bf7a968bf0563c7da07c4d9c"
+   },
+   "presented": {
+    "items": 2048,
+    "held_out_presented": 0,
+    "not_taught_presented": 0,
+    "earlier_code_items": 0
+   },
+   "earlier_answers_sha256": {
+    "per_panel": {
+     "add89": "c3a322371fb1f66d1e5f942408d6e0dd5e33c18f4d6b847f387746e6ff400faf",
+     "sub89": "6d1a48a52910b6d77c619bca5a607874275e0de3cc1fff5cd2c8c87325edc2e7",
+     "add97": "f465bce22101b4e3849b95b13aa91ea2c80a7a7a370b233b9632c8233a5ac24d",
+     "sub97": "78cc3279471d9d4f5402b401116d1cebbb04d94f2fe55a28d61d85677ade29eb",
+     "add73": "d8f1e0314d6b835f450ec83f1941c50f693fa260d461d9cd70a530e54b4c16da",
+     "sub73": "7b67ab655b1c1b71d4dcf769ded8bf2f35f892bc1f75e4951a9247301c3ecdde"
+    },
+    "all": "10ffa11b716dadbfbae84fb5e2d5f9ae84d6c70da8a9988a47a04a0c8bed0e62"
+   },
+   "check3": {
+    "earlier_digest_equals_row0": true,
+    "earlier_counts": {
+     "add89": 65,
+     "sub89": 133,
+     "add97": 380,
+     "sub97": 362,
+     "add73": 341,
+     "sub73": 302
+    },
+    "earlier_counts_equal_e40_row0": true,
+    "lived_tensors_sha256_codes_reset": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+    "equals_life_end": true
+   },
+   "check4": {
+    "e40_data_digest": null,
+    "equal": null
+   },
+   "code_rows_tensors_sha256": "7020da5c2e1e934a3fd418de6fac84fd0c2255b0f63f2840fc1a8af9925656ad",
+   "term_norms": {
+    "down_i": 2.92337703704834,
+    "up_i": 1.6339471340179443,
+    "down_h": 2.5936543941497803,
+    "up_h": 1.580757975578308
+   },
+   "sweep_cosines": {
+    "down_i": 0.8316287484193563,
+    "up_i": 0.8549807814384578,
+    "down_h": 0.8509322444579326,
+    "up_h": 0.8613288867209916
+   },
+   "optimizer_steps": [
+    32
+   ],
+   "cpu": 76.017733505,
+   "cpu_scoring_so_far": 71.69085474399999,
+   "term_file": {
+    "file": "e48_S_73129_r16_row32.pt",
+    "sha256": "a084595cf80d6678eabae7c4366b1f8c5fac33b74acc9ff91ab03fd355dff0a9",
+    "tensors_sha256": "b0c5de07a962e1d8987f125cdeb44ef4272be7d1e409ffe0e5b8acb58819f437",
+    "bytes": 150484
+   }
+  },
+  {
+   "updates": 64,
+   "scores": {
+    "held_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 234,
+      "final": 234
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 233,
+      "final": 233
+     },
+     "max83": {
+      "n": 300,
+      "exact": 290,
+      "final": 290
+     },
+     "min83": {
+      "n": 300,
+      "exact": 288,
+      "final": 288
+     }
+    },
+    "taught_k12": {
+     "add83": {
+      "n": 300,
+      "exact": 236,
+      "final": 236
+     },
+     "sub83": {
+      "n": 300,
+      "exact": 247,
+      "final": 247
+     },
+     "max83": {
+      "n": 300,
+      "exact": 297,
+      "final": 297
+     },
+     "min83": {
+      "n": 300,
+      "exact": 285,
+      "final": 285
+     }
+    },
+    "held_plain_k0": {
+     "add83": {
+      "reduction": {
+       "n": 3069,
+       "exact": 1834,
+       "final": 1834
+      },
+      "no_reduction": {
+       "n": 3131,
+       "exact": 2603,
+       "final": 2603
+      }
+     },
+     "sub83": {
+      "reduction": {
+       "n": 3074,
+       "exact": 1245,
+       "final": 1245
+      },
+      "no_reduction": {
+       "n": 3126,
+       "exact": 1829,
+       "final": 1830
+      }
+     }
+    },
+    "earlier_k12": {
+     "add89": {
+      "n": 300,
+      "exact": 65,
+      "final": 65
+     },
+     "sub89": {
+      "n": 300,
+      "exact": 133,
+      "final": 133
+     },
+     "add97": {
+      "n": 400,
+      "exact": 380,
+      "final": 380
+     },
+     "sub97": {
+      "n": 400,
+      "exact": 362,
+      "final": 362
+     },
+     "add73": {
+      "n": 400,
+      "exact": 341,
+      "final": 341
+     },
+     "sub73": {
+      "n": 400,
+      "exact": 302,
+      "final": 302
+     }
+    },
+    "summary": {
+     "held_add_sub_mean": 77.83333333333334,
+     "taught_add_sub_mean": 80.5,
+     "reduction_score": 50.1299275204243,
+     "no_reduction_score": 70.8228275926472
+    }
+   },
+   "scores_gate_forced_off": null,
+   "loss_since_last_row": 0.21084961644373834,
+   "finite_losses": true,
+   "data_digest": {
+    "batches": 64,
+    "sha256": "99b9e8ffcce2e5eefb446e1ce58b8ff64523f4e99486fed6a0e0a6a7345c92ea"
+   },
+   "presented": {
+    "items": 4096,
+    "held_out_presented": 0,
+    "not_taught_presented": 0,
+    "earlier_code_items": 0
+   },
+   "earlier_answers_sha256": {
+    "per_panel": {
+     "add89": "c3a322371fb1f66d1e5f942408d6e0dd5e33c18f4d6b847f387746e6ff400faf",
+     "sub89": "6d1a48a52910b6d77c619bca5a607874275e0de3cc1fff5cd2c8c87325edc2e7",
+     "add97": "f465bce22101b4e3849b95b13aa91ea2c80a7a7a370b233b9632c8233a5ac24d",
+     "sub97": "78cc3279471d9d4f5402b401116d1cebbb04d94f2fe55a28d61d85677ade29eb",
+     "add73": "d8f1e0314d6b835f450ec83f1941c50f693fa260d461d9cd70a530e54b4c16da",
+     "sub73": "7b67ab655b1c1b71d4dcf769ded8bf2f35f892bc1f75e4951a9247301c3ecdde"
+    },
+    "all": "10ffa11b716dadbfbae84fb5e2d5f9ae84d6c70da8a9988a47a04a0c8bed0e62"
+   },
+   "check3": {
+    "earlier_digest_equals_row0": true,
+    "earlier_counts": {
+     "add89": 65,
+     "sub89": 133,
+     "add97": 380,
+     "sub97": 362,
+     "add73": 341,
+     "sub73": 302
+    },
+    "earlier_counts_equal_e40_row0": true,
+    "lived_tensors_sha256_codes_reset": "6817da3369206b40c77c0147e9e453b59726d3ca3ce328d3418a01c455a0f93e",
+    "equals_life_end": true
+   },
+   "check4": {
+    "e40_data_digest": "99b9e8ffcce2e5eefb446e1ce58b8ff64523f4e99486fed6a0e0a6a7345c92ea",
+    "equal": true
+   },
+   "code_rows_tensors_sha256": "ef081c6cb168fa33b6b2359b96a571ddf6a7ece64ec12daa449ae9447a8c2612",
+   "term_norms": {
+    "down_i": 3.3180243968963623,
+    "up_i": 2.1870710849761963,
+    "down_h": 2.7070138454437256,
+    "up_h": 2.021794319152832
+   },
+   "sweep_cosines": {
+    "down_i": 0.8226229650677098,
+    "up_i": 0.8282828456345239,
+    "down_h": 0.8468864651437493,
+    "up_h": 0.8353017516561908
+   },
+   "optimizer_steps": [
+    64
+   ],
+   "cpu": 98.311907991,
+   "cpu_scoring_so_far": 89.53827733199999,
+   "term_file": {
+    "file": "e48_S_73129_r16_row64.pt",
+    "sha256": "a8a38582e69f82ff6af93ceeffc6f18005a101669e2a968c0248276c392ecfc4",
+    "tensors_sha256": "39d736c71a836731d159c5dc8cfdedbbef98982e45d6eb85e382d15289dda26f",
+    "bytes": 150484
+   }
+  }
+ ],
+ "complete": true,
+ "grads_updates_1_2": [
+  {
+   "up_i": 0.004574507940560579,
+   "down_i": 0.0,
+   "up_h": 0.035959433764219284,
+   "down_h": 0.0
+  },
+  {
+   "up_i": 0.00516488729044795,
+   "down_i": 0.00047583371633663774,
+   "up_h": 0.02873280644416809,
+   "down_h": 0.003168162191286683
+  }
+ ],
+ "gate_calls": {
+  "calls": 1345,
+  "gate_on": 1201
+ },
+ "cpu_total": 98.314398836,
+ "cpu_scoring": 89.53827733199999,
+ "cpu_updates": 8.776124080000002,
+ "reduction_answers_file": {
+  "file": "e48_S_73129_r16_reduction_answers.json",
+  "sha256": "b7ee223899672346c33d12209c5deea70378f918ab220af0519792fcd3711a46"
+ }
+}
