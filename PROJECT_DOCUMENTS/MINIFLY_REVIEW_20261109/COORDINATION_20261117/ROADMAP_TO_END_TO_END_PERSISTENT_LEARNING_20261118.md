@@ -141,6 +141,8 @@ They are listed so that he can strike any of them.
 
 ## History
 
+State at 23:52 UTC: step 0 is reached with errata. Revision 4 of the definition (`THE_TISSUE_DEFINED_REVISION_4_20261118.md`) passed its fifth reading after nine listed changes (`FIFTH_READING_OF_THE_TISSUE_DEFINED_20261118.md`, errata E1 to E9), which the briefs carry. The reading names two risks that are for the runs and not for the definition: the first form of the strength rule may erase what the cells between the ends carry (step 1), and the feedback reaches few cells of the output end at the start (step 2).
+
 Change of 23:37 UTC to draft 3: by Mr. Xu's ruling (section 16), the feedback is received by dedicated cells and passed on over learned connections, not given alike to all cells of an end; and a connection's strength is set by its two ends together. Step 2 reworded.
 
 Draft 3 (23:26 UTC): by Mr. Xu's ruling that the input end receives the feedback of the output end's information, the two ends are corrected together at step 2 and the relay of step 3 runs inward from both; capabilities b, c and d and overlap 2 are rewritten. The definition of the tissue is at revision 3 (`THE_TISSUE_DEFINED_REVISION_3_20261118.md`), awaiting a fourth reading.
