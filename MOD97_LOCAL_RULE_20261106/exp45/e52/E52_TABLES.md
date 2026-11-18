@@ -1,4 +1,4 @@
-Receipts read: 24 complete runs in `exp45/e52`. Seed 93683. Written by `exp52_tables.py`.
+Receipts read: 25 complete runs in `exp45/e52`. Seed 93683. Written by `exp52_tables.py`.
 
 ## Table 1. Every run
 
@@ -24,6 +24,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | half, 0.25 | B | 0.003 | 0.25 | 40,960 | 3,840 | 5,632 | 96.61 | 96.30 | 97.56 | 90.7, 96.3 (90.7–99.7) | 2.15 | no | `e52_B_h256_f25_lr0.003_93683.json` |
 | present, 0.50 | S | 0.001 | 0.25 | 12,288 | 4,864 | 4,864 | 94.56 | 94.18 | 98.44 | 95.7, 91.1 (82.3–95.7) | 3.17 | no | `e52_S_h512_f50_lr0.001_93683.json` |
 | present, 0.50 | S | 0.003 | 0.25 | 12,288 | 4,864 | 4,864 | 94.83 | 94.72 | 96.72 | 91.0, 92.4 (91.0–98.7) | 3.44 | no | `e52_S_h512_f50_lr0.003_93683.json` |
+| present, 0.50 | B | 0.0003 | 0.25 | 40,960 | 12,544 | 12,800 | 98.83 | 96.82 | 99.39 | 96.7, 97.1 (87.0–99.0) | 1.73 | no | `e52_B_h512_f50_lr0.0003_93683.json` |
 | present, 0.50 | B | 0.001 | 0.25 | 12,288 | 4,096 | 4,096 | 93.11 | 94.27 | 95.89 | 91.3, 92.0 (91.3–97.7) | 1.77 | no | `e52_B_h512_f50_lr0.001_93683.json` |
 | present, 0.50 | B | 0.003 | 0.25 | 12,288 | 2,816 | 2,816 | 95.89 | 93.77 | 95.22 | 91.3, 95.0 (88.0–97.3) | 3.51 | no | `e52_B_h512_f50_lr0.003_93683.json` |
 | present, 0.25 | S | 0.001 | 0.25 | 12,288 | 9,984 | – | 83.06 | 78.78 | 96.33 | 70.3, 73.2 (68.0–79.7) | 3.14 | no | `e52_S_h512_f25_lr0.001_93683.json` |
@@ -41,6 +42,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | half, 0.50 | B | product | 89.83 | 80.50 | 60.7, 57.2 | 93.39, 90.17 |
 | half, 0.25 | S | no | 85.17 | 79.87 | 62.7, 65.0 | 88.72, 84.17 |
 | half, 0.25 | B | no | 90.28 | 84.62 | 87.3, 85.8 | 96.89, 94.53 |
+| present, 0.50 | B | no | 70.50 | 66.47 | 67.0, 67.2 | 98.83, 96.82 |
 
 ## Table 3. The seven norms (book / l1 / input map / recurrent / lm / l2 / l3)
 
@@ -64,6 +66,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | half, 0.25 | B | 0.003 | 45.9 / 3.8 / 31.0 / 23.9 / 23.8 / 8.4 / 45.0 | 46.9 / 3.7 / 31.0 / 23.7 / 22.9 / 7.9 / 44.4 | 70.3 / 3.7 / 30.0 / 23.5 / 21.8 / 7.8 / 49.9 |  |
 | present, 0.50 | S | 0.001 | 45.0 / 4.5 / 39.5 / 30.0 / 29.2 / 11.3 / 34.8 | 45.0 / 4.5 / 39.5 / 30.0 / 29.2 / 11.3 / 34.8 | 45.4 / 3.4 / 42.1 / 29.0 / 27.5 / 10.0 / 34.4 |  |
 | present, 0.50 | S | 0.003 | 44.7 / 3.9 / 52.6 / 38.5 / 33.6 / 20.1 / 41.2 | 44.7 / 3.9 / 52.6 / 38.5 / 33.6 / 20.1 / 41.2 | 44.7 / 6.6 / 56.2 / 40.3 / 33.7 / 20.1 / 49.3 |  |
+| present, 0.50 | B | 0.0003 | 45.2 / 7.4 / 26.1 / 24.2 / 25.1 / 8.3 / 39.8 | 45.2 / 7.3 / 26.0 / 24.2 / 25.1 / 8.2 / 39.2 | 45.6 / 4.6 / 25.8 / 21.1 / 20.2 / 4.8 / 20.0 | 45.2 / 7.5 / 26.1 / 24.2 / 25.0 / 8.4 / 40.2 |
 | present, 0.50 | B | 0.001 | 45.2 / 6.0 / 34.5 / 28.5 / 28.9 / 10.8 / 40.5 | 45.2 / 6.0 / 34.5 / 28.5 / 28.9 / 10.8 / 40.5 | 45.8 / 4.3 / 38.3 / 27.3 / 26.1 / 9.1 / 30.9 |  |
 | present, 0.50 | B | 0.003 | 45.1 / 4.2 / 50.9 / 36.8 / 33.7 / 18.2 / 31.2 | 45.1 / 4.2 / 50.9 / 36.8 / 33.7 / 18.2 / 31.2 | 48.5 / 4.5 / 48.4 / 37.4 / 32.2 / 19.4 / 35.4 |  |
 | present, 0.25 | S | 0.001 | 45.3 / 3.6 / 39.8 / 29.2 / 25.7 / 10.0 / 27.9 | – | 45.4 / 3.5 / 39.8 / 29.0 / 25.5 / 9.8 / 28.1 |  |
@@ -80,7 +83,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | half, 0.25 | S | 0.003 | 0.003 | slower, slower | faster, faster | not run | yes, at 0.003 (read on R and A) |
 | half, 0.25 | B | 0.003 | 0.003 | slower, slower | the same, faster | not run | no (read on R and A) |
 | present, 0.50 | S | 0.001 (tied with 0.003) | 0.001 (tied with 0.003) | not run | the same, the same | not run | no (read on R and A) |
-| present, 0.50 | B | 0.003 | 0.003 | not run | the same, the same | not run | no (read on R and A) |
+| present, 0.50 | B | 0.003 | 0.003 | slower, slower | the same, the same | not run | no (read on R and A) |
 | present, 0.25 | S | 0.003 | 0.003 | not run | faster, faster | not run | yes, at 0.003 (read on R and A) |
 | present, 0.25 | B | 0.003 | 0.003 | not run | the same, the same | not run | no (read on R and A) |
 
