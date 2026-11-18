@@ -294,5 +294,263 @@ def trial():
     print("trial tables written; any stop condition holds:", any_stop, "; replay median first-visit level", med["replay"]["all_families"], "naive", med["naive"]["all_families"])
 
 
+# ---------------------------------------------------------------- the final report's tables
+PREDICTIONS = (("PL2.1", "`naive` at 1,024 visits is *stuck*", 0.45), ("PL2.2", "`replay` is *higher* than `naive` in late level at 1,024 visits", 0.75),
+               ("PL2.3", "`replay` is *higher* than `naive` in kept at return after long absences, at 256 visits", 0.85),
+               ("PL2.4", "`naive-wd0` against `naive` at 256 visits: *not distinguished* in late level", 0.60),
+               ("PL2.5", "`naive-wd0` is *higher* than `naive` in kept at return after long absences, at 256 visits", 0.30),
+               ("PL2.6", "`replay` at 1,024 visits is *still learning*", 0.55),
+               ("PL2.7", "The trend of learning under `naive` at 1,024 visits has an interval above zero", 0.25),
+               ("PL2.8", "The comparison of `naive` and `replay` closes at 1,024 visits", 0.70),
+               ("PL2.9", "`replay-wd0` against `replay` at 256 visits is *not distinguished* in late level (the reviewer's)", 0.60))
+
+
+def q_of(arm, w, V):
+    s = life_of(arm, w)
+    return score(s, V) if finished(s) else None
+
+
+def worlds_of(V):
+    return range(1, 5) if V == 1024 else range(1, 9)
+
+
+def per_world(arm, V, f):
+    return {w: f(q) for w in worlds_of(V) for q in [q_of(arm, w, V)] if q is not None}
+
+
+def diff(a, b, V, f):
+    """D11: per world the difference f(a) - f(b), its mean and 90% interval over worlds, and the word."""
+    xa, xb = per_world(a, V, f), per_world(b, V, f)
+    ws = [w for w in xa if w in xb and xa[w] is not None and xb[w] is not None]
+    iv = L.interval90([xa[w] - xb[w] for w in ws])
+    return dict(worlds=ws, per_world={w: xa[w] - xb[w] for w in ws}, interval=iv, word=verdict(iv))
+
+
+def verdict(iv):
+    return L.verdict(iv)
+
+
+def trend_state(arm, V):
+    """D13: stuck, still learning (and declining) from D5 and D7 over worlds."""
+    i5 = L.interval90(list(per_world(arm, V, lambda q: q["score_trend"]).values()))
+    i7 = L.interval90(list(per_world(arm, V, lambda q: q["trend_of_learning"]).values()))
+    up = lambda iv: iv["low"] is not None and iv["low"] > 0
+    dn = lambda iv: iv["high"] is not None and iv["high"] < 0
+    if i5["low"] is None or i7["low"] is None:
+        word = "not read"
+    else:
+        word = "still learning" if (up(i5) or up(i7)) else "stuck"
+    return dict(score_trend=i5, trend_of_learning=i7, word=word, score_trend_declining=dn(i5), trend_of_learning_declining=dn(i7))
+
+
+KEPT = lambda name: (lambda q: q["kept_at_return"][name]["share"])
+
+
+def pooled_d15(arm, V):
+    """D15 pooled over the worlds of a life length: kept (right / items) and the mean first-16 figure over the returns of each cell."""
+    out = {}
+    for name, lo, hi in L.CLASSES[1:4]:
+        out[name] = {}
+        for en, elo, ehi in L.EARLIER:
+            n = k = 0; f16 = []; visits = 0
+            for w in worlds_of(V):
+                q = q_of(arm, w, V)
+                if q is None:
+                    continue
+                for r in q["later_visits"]:
+                    if lo <= r["absence"] <= hi and elo <= r["earlier_visits"] <= ehi:
+                        n += r["n"]; k += r["right"]; visits += 1
+                        if r["first16"] is not None:
+                            f16.append(r["first16"])
+            out[name][en] = dict(returns=visits, items=n, right=k, kept=(k / n) if n else None, first16=float(np.mean(f16)) if f16 else None)
+    return out
+
+
+def pooled_wrong(arm, V, key, names=("2 to 4", "5 to 32", "33 or more")):
+    c = np.zeros(len(L.ANSWER_CLASSES)); ctrl = 0.0; n = 0
+    for w in worlds_of(V):
+        q = q_of(arm, w, V)
+        if q is None:
+            continue
+        for name in names:
+            t = q[key][name]
+            if t["answers"]:
+                c += np.array([t["shares"][x] * t["answers"] for x in L.ANSWER_CLASSES]); n += t["answers"]
+                ctrl += t["chance_never_met_modulus_in_place_of_the_last"] * t["answers"]
+    return dict(answers=int(n), shares={x: (float(c[i] / n) if n else None) for i, x in enumerate(L.ANSWER_CLASSES)}, chance=(ctrl / n if n else None))
+
+
+def probe_table():
+    rows = []
+    for j in LV.roster():
+        if "needs" not in j:
+            continue
+        p = PROBE / f"{j['id']}.npz"
+        if not p.exists():
+            continue
+        s, rest = j["id"].split("_br")
+        age = int(rest.split("_")[0]); w = int(s.split("_w")[1].split("_")[0]); arm = s.split("_")[1]
+        r = L.probe(L.load(p), w)
+        rows.append(dict(life=s, arm=arm, world=w, age=age, families=[x["family"] for x in r], levels=[x["level"] for x in r],
+                         mean=float(np.mean([x["level"] for x in r]))))
+    return rows
+
+
+def norms_table():
+    out = {}
+    for p in sorted(NORMS.glob("*_norms.json")):
+        d = json.loads(p.read_text())
+        out[d["life"]] = {int(v): dict(total=float(np.sqrt(sum(x * x for k, x in r["norms"].items() if not k.startswith("book.")))),
+                                       rnn_hh=r["norms"]["rnn.weight_hh_l0"], rnn_ih=r["norms"]["rnn.weight_ih_l0"], l3=r["norms"]["l3.weight"])
+                          for v, r in d["visits"].items()}
+    return out
+
+
+def final():
+    jp, mp = L2 / "E44_L2.json", L2 / "E44_L2_TABLES.md"
+    assert not jp.exists() and not mp.exists(), "refusing existing final files"
+    lives = [j["stem"] for j in LV.roster() if "stem" in j]
+    missing = [s for s in lives if not finished(s)]
+    facts = {s: life_facts(s) for s in lives if finished(s)}
+    scores()
+    with tempfile.TemporaryDirectory() as td:
+        rv = reviewer_dir(td)
+        keys = {s: keys_check(td, s, int(s.split("_w")[1].split("_")[0]), 1024 if "_v1024" in s else 256) for s in facts}
+    res = dict(missing=missing, lives=facts, part_K=keys, reviewer_files_sha256=rv)
+    # per-life quantities
+    perlife = {}
+    for arm in ARMS:
+        for V in (256, 1024):
+            if V == 1024 and arm.endswith("wd0"):
+                continue
+            for w in worlds_of(V):
+                q = q_of(arm, w, V)
+                if q is not None:
+                    perlife[f"{arm}|{w}|{V}"] = {k: v for k, v in q.items() if k not in ("score_by_age", "blind_by_age", "kind", "later_visits")}
+    res["per_life"] = perlife
+    # statements
+    st = {}
+    for arm, V in (("naive", 1024), ("replay", 1024)) + tuple((a, 256) for a in ARMS):
+        st[f"{arm} at {V}"] = trend_state(arm, V)
+    res["stuck_or_still_learning"] = st
+    comps = {}
+    for a, b in (("replay", "naive"), ("naive-wd0", "naive"), ("replay-wd0", "replay")):
+        for V in (256, 1024):
+            if V == 1024 and (a.endswith("wd0") or b.endswith("wd0")):
+                continue
+            comps[f"{a} - {b} at {V}"] = {"late level (D4)": diff(a, b, V, lambda q: q["late_level"]),
+                                          "kept at return, 5 to 32 (D8)": diff(a, b, V, KEPT("5 to 32")),
+                                          "kept at return, 33 or more (D8)": diff(a, b, V, KEPT("33 or more")),
+                                          "kept at return, 5 or more (D8)": diff(a, b, V, KEPT("5 or more")),
+                                          "score trend (D5)": diff(a, b, V, lambda q: q["score_trend"]),
+                                          "trend of learning (D7)": diff(a, b, V, lambda q: q["trend_of_learning"])}
+    res["between_arms"] = comps
+    c256, c1024 = comps.get("replay - naive at 256"), comps.get("replay - naive at 1024")
+    closed = None
+    if c256 and c1024:
+        s256, s1024 = c256["late level (D4)"]["word"], c1024["late level (D4)"]["word"]
+        opp = {"higher": "lower", "lower": "higher"}
+        closed = (s256 == s1024 and s256 in ("higher", "lower") and c1024["score trend (D5)"]["word"] != opp[s256]
+                  and c1024["trend of learning (D7)"]["word"] != opp[s256])
+    res["closed_D12"] = closed
+    res["d15"] = {f"{a} at {V}": pooled_d15(a, V) for a in ARMS for V in (256, 1024) if not (V == 1024 and a.endswith("wd0"))}
+    res["d14_pooled_returns_2_or_more"] = {f"{a} at {V}, {k}": pooled_wrong(a, V, k) for a in ("naive", "replay") for V in (256, 1024)
+                                           for k in ("wrong_answers_stream", "wrong_answers_list")}
+    res["probe"] = probe_table()
+    res["norms"] = norms_table()
+    # predictions
+    out = {}
+    out["PL2.1"] = st["naive at 1024"]["word"] == "stuck"
+    out["PL2.2"] = c1024 is not None and c1024["late level (D4)"]["word"] == "higher"
+    out["PL2.3"] = c256 is not None and c256["kept at return, 33 or more (D8)"]["word"] == "higher"
+    out["PL2.4"] = comps["naive-wd0 - naive at 256"]["late level (D4)"]["word"] == "not distinguished"
+    out["PL2.5"] = comps["naive-wd0 - naive at 256"]["kept at return, 33 or more (D8)"]["word"] == "higher"
+    out["PL2.6"] = st["replay at 1024"]["word"] == "still learning"
+    iv = st["naive at 1024"]["trend_of_learning"]
+    out["PL2.7"] = iv["low"] is not None and iv["low"] > 0
+    out["PL2.8"] = bool(closed)
+    out["PL2.9"] = comps["replay-wd0 - replay at 256"]["late level (D4)"]["word"] == "not distinguished"
+    unread = {"PL2.1": st["naive at 1024"]["word"], "PL2.6": st["replay at 1024"]["word"],
+              "PL2.2": c1024["late level (D4)"]["word"] if c1024 else "not read",
+              "PL2.3": c256["kept at return, 33 or more (D8)"]["word"] if c256 else "not read",
+              "PL2.4": comps["naive-wd0 - naive at 256"]["late level (D4)"]["word"], "PL2.5": comps["naive-wd0 - naive at 256"]["kept at return, 33 or more (D8)"]["word"],
+              "PL2.9": comps["replay-wd0 - replay at 256"]["late level (D4)"]["word"], "PL2.7": "read" if iv["low"] is not None else "not read",
+              "PL2.8": "read" if closed is not None else "not read"}
+    res["predictions"] = {k: dict(statement=t, chance=c, holds=None if unread[k] == "not read" else out[k], read_as=unread[k]) for k, t, c in PREDICTIONS}
+    nl = per_world("naive", 1024, lambda q: q["late_level"])
+    rm = per_world("replay", 256, lambda q: q["median_first_visit_level"])
+    w3 = res["d14_pooled_returns_2_or_more"]["naive at 1024, wrong_answers_stream"]
+    res["reviewer_expectations"] = {
+        "(i) naive's late level at 1,024 visits between 0.40 and 0.55 (55%)": dict(per_world=nl, mean=float(np.mean(list(nl.values()))) if nl else None,
+                                                                                   holds=bool(nl) and 0.40 <= float(np.mean(list(nl.values()))) <= 0.55),
+        "(ii) replay's median first-visit level below 0.20 in at least three of eight worlds at 256 visits (50%)": dict(per_world=rm, below=sum(x < 0.20 for x in rm.values()),
+                                                                                                                        holds=sum(x < 0.20 for x in rm.values()) >= 3),
+        "(iii) under naive at returns after two or more visits, more than a tenth of answers are the right answer under the modulus of the family taught last (75%)":
+            dict(share=w3["shares"][L.ANSWER_CLASSES[2]], answers=w3["answers"], holds=(w3["shares"][L.ANSWER_CLASSES[2]] or 0) > 0.10)}
+    jp.write_text(json.dumps(res, indent=1))
+    # curves
+    with open(L2 / "E44_L2_score_by_age_blocks.csv", "w", newline="") as f:
+        wr = csv.writer(f); wr.writerow(["arm", "world", "visits", "block", "all", "returns", "continuations", "first", "blind", "n_return", "n_cont", "n_first"])
+        for arm in ARMS:
+            for w in range(1, 9):
+                s = life_of(arm, w)
+                if not finished(s):
+                    continue
+                V = 1024 if "_v1024" in s else 256
+                for b in blocks(score(s, V), 32):
+                    wr.writerow([arm, w, V, b["visits"], b["all"], b["returns"], b["continuations"], b["first"], b["blind"], b["n_return"], b["n_cont"], b["n_first"]])
+    with open(L2 / "E44_L2_norms.csv", "w", newline="") as f:
+        wr = csv.writer(f); wr.writerow(["life", "visits", "norm_all_but_byte_table", "rnn_weight_hh", "rnn_weight_ih", "l3_weight"])
+        for life, d in res["norms"].items():
+            for v in sorted(d):
+                wr.writerow([life, v, d[v]["total"], d[v]["rnn_hh"], d[v]["rnn_ih"], d[v]["l3"]])
+    # markdown
+    o = ["# E44, job L2, release 1: the tables of the final report", "",
+         "Written by `smallworld/l2_report.py final`; every figure is in `E44_L2.json` beside this file. Lives missing: " + (", ".join(missing) or "none") + ".", ""]
+    o += ["## The lives", "", table(["Life", "Learner seed", "CPU-hours", "Resumes (from visit)", "Store at end", "Decay", "List keys equal the reviewer's (part K)"],
+            [[f"`{s}`", f["learner"]["seed"], f3(f["cpu_hours"], 2), ", ".join(str(r["done_visits"]) for r in f["resumes"]) or "—",
+              f"{f['ledger']['buffer']['items_at_end']:,}", f["optimizer_weight_decay"], keys[s]["keys_equal_as_sets"] and keys[s]["items_in_reviewers_order"]] for s, f in facts.items()]), ""]
+    o += ["## Stuck or still learning (D13)", "", table(["Arm", "Visits", "Worlds", "Score trend D5: mean [90% interval]", "Trend of learning D7: mean [90% interval]", "Statement", "Declining"],
+            [[k.split(" at ")[0], k.split(" at ")[1], v["score_trend"]["n"], f"{sgn(v['score_trend']['mean'])} [{sgn(v['score_trend']['low'])}, {sgn(v['score_trend']['high'])}]",
+              f"{sgn(v['trend_of_learning']['mean'])} [{sgn(v['trend_of_learning']['low'])}, {sgn(v['trend_of_learning']['high'])}]", v["word"],
+              ", ".join(x for x, y in (("D5", v["score_trend_declining"]), ("D7", v["trend_of_learning_declining"])) if y) or "—"] for k, v in st.items()]), ""]
+    o += ["## Between arms (D11)", "", table(["Comparison", "Quantity", "Worlds", "Per world", "Mean [90% interval]", "Statement"],
+            [[k, qn, len(d["worlds"]), " ".join(f"{d['per_world'][w]:+.3f}" for w in d["worlds"]), f"{sgn(d['interval']['mean'], 3)} [{sgn(d['interval']['low'], 3)}, {sgn(d['interval']['high'], 3)}]", d["word"]]
+             for k, c in comps.items() for qn, d in c.items()]), "", f"**Closed (D12):** {closed}.", ""]
+    o += ["## Predictions", "", table(["", "Prediction", "Chance", "Holds"], [[k, v["statement"], f"{v['chance']:.0%}", v["holds"]] for k, v in res["predictions"].items()]), ""]
+    o += ["**The reviewer's expectations.**", ""] + [f"- {k}: {json.dumps({a: b for a, b in v.items() if a != 'per_world'})}; per world {json.dumps(v.get('per_world', {}))}" for k, v in res["reviewer_expectations"].items()] + [""]
+    o += ["## Per world", "", table(["Arm", "World", "Visits", "Families", "Late level D4", "returns", "continuations", "first", "D5", "D7", "Median D6", "Kept 5 to 32", "Kept 33+", "Kept 5+", "List kept 5+ (D9)"],
+            [[k.split("|")[0], k.split("|")[1], k.split("|")[2], q["families_met"], f3(q["late_level"]), f3(q["late_level_by_kind"]["return"]), f3(q["late_level_by_kind"]["continuation"]),
+              f3(q["late_level_by_kind"]["first"]), sgn(q["score_trend"]), sgn(q["trend_of_learning"]), f3(q["median_first_visit_level"]),
+              f3(q["kept_at_return"]["5 to 32"]["share"]), f3(q["kept_at_return"]["33 or more"]["share"]), f3(q["kept_at_return"]["5 or more"]["share"]),
+              f3(q["kept_on_list"]["5 or more"]["mean"])] for k, q in perlife.items()]), ""]
+    o += ["## D15, pooled over worlds", "", "Each cell: kept at return (items) / mean share right over the first 16 updates of the return (returns).", "",
+          table(["Arm", "Visits", "Absence"] + [f"{e[0]} earlier" for e in L.EARLIER],
+                [[k.split(" at ")[0], k.split(" at ")[1], a] + [(lambda c: "—" if not c["returns"] else f"{f3(c['kept'])} ({c['items']}) / {f3(c['first16'])} ({c['returns']})")(cells[e[0]]) for e in L.EARLIER]
+                 for k, d in res["d15"].items() for a, cells in d.items()]), ""]
+    short = ["right", "no reduction", "last family's modulus", "an earlier family's", "89", "an operand", "never-met modulus", "another two-digit number", "not two digits and end"]
+    o += ["## D14, pooled over worlds and over absences of 2 visits or more", "", table(["Arm, visits, part", "Answers"] + short + ["Chance"],
+            [[k, t["answers"]] + [f3(t["shares"][c]) for c in L.ANSWER_CLASSES] + [f3(t["chance"])] for k, t in res["d14_pooled_returns_2_or_more"].items()]), ""]
+    o += ["## The learning probe", "", "Each probe family's first-visit level (D6), the branch visiting families 52, 53, 54 and 55 in that order.", "",
+          table(["Arm", "World", "Age (visits)", "Levels of 52, 53, 54, 55", "Mean"], [[r["arm"], r["world"], r["age"], " ".join(f"{x:.3f}" for x in r["levels"]), f3(r["mean"])]
+                                                                                for r in sorted(res["probe"], key=lambda r: (r["arm"], r["age"], r["world"]))]), ""]
+    ages = {}
+    for r in res["probe"]:
+        ages.setdefault((r["arm"], r["age"]), []).append(r["mean"])
+    o += [table(["Arm", "Age", "Worlds", "Mean over worlds of the mean over the four families"], [[a, g, len(v), f3(float(np.mean(v)))] for (a, g), v in sorted(ages.items())]), ""]
+    o += ["## The sizes of the weights", "", "Euclidean norm of all weights but the byte table, and of the GRU's recurrent matrix, at the visits named (0: the born weights), mean over the worlds.", ""]
+    rows = []
+    for arm, tag, vs in (("naive", "_v256_wd0", (0, 64, 128, 192, 256)), ("replay", "_v256_rho0.5_wd0", (0, 64, 128, 192, 256)),
+                         ("naive", "_v1024", (0, 64, 256, 512, 1024)), ("replay", "_v1024_rho0.5", (0, 64, 256, 512, 1024)),
+                         ("naive", "_v256", (0, 64, 128, 192, 256)), ("replay", "_v256_rho0.5", (0, 64, 128, 192, 256))):
+        ls = [d for life, d in res["norms"].items() if life.startswith(f"lw_{arm}_w") and life.endswith(tag)]
+        if ls:
+            rows.append([arm + tag.replace("_rho0.5", ""), len(ls)] + [(lambda xs: f"{np.mean([x[0] for x in xs]):.1f} / {np.mean([x[1] for x in xs]):.1f}" if xs else "—")(
+                [(d[v]["total"], d[v]["rnn_hh"]) for d in ls if v in d]) for v in vs] + [", ".join(map(str, vs))])
+    o += [table(["Lives", "Worlds", "1st", "2nd", "3rd", "4th", "5th", "Visits of the columns"], rows), ""]
+    mp.write_text("\n".join(o) + "\n")
+    print("final tables written; missing:", missing)
+
+
 if __name__ == "__main__":
-    {"scores": scores, "trial": trial}[sys.argv[1]]()
+    {"scores": scores, "trial": trial, "final": final}[sys.argv[1]]()
