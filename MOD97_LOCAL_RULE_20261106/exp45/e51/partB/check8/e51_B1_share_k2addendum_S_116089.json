@@ -1425,6 +1425,181 @@
    },
    "tensors_sha256": "1849d4d37c0edd047877a72aa4bdfbb8811d21d1010821cce0e9b3b0d2695f46",
    "cpu": 354.603730925
+  },
+  {
+   "updates": 4096,
+   "data_digest": {
+    "batches": 4096,
+    "sha256": "6153e1a18eeb013b81d6a2080487ed4a572df6ce1f21e5367183590e86014707"
+   },
+   "score1_first_family_all_pairs_k0": {
+    "add89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 3745,
+      "pct": 95.63329928498467
+     },
+     "other": {
+      "n": 4005,
+      "exact": 3819,
+      "pct": 95.35580524344569
+     }
+    },
+    "sub89": {
+     "reduction": {
+      "n": 3916,
+      "exact": 3781,
+      "pct": 96.55260469867211
+     },
+     "other": {
+      "n": 4005,
+      "exact": 3803,
+      "pct": 94.95630461922596
+     }
+    },
+    "max89": {
+     "all": {
+      "n": 7921,
+      "exact": 7860,
+      "pct": 99.2298952152506
+     }
+    },
+    "min89": {
+     "all": {
+      "n": 7921,
+      "exact": 7780,
+      "pct": 98.21992172705467
+     }
+    },
+    "reduction_score": 96.09295199182839
+   },
+   "score2_first_family_heldout_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 283,
+     "final": 283
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 284,
+     "final": 284
+    },
+    "max89": {
+     "n": 300,
+     "exact": 297,
+     "final": 297
+    },
+    "min89": {
+     "n": 300,
+     "exact": 291,
+     "final": 291
+    }
+   },
+   "score3_new_task": {
+    "held": {
+     "n": 300,
+     "exact": 299,
+     "final": 299
+    },
+    "taught": {
+     "n": 300,
+     "exact": 300,
+     "final": 300
+    }
+   },
+   "score4_movement": {
+    "groups": {
+     "embedding": {
+      "rel_diff": 0.14541253677055624,
+      "cosine": 0.9894202807832734
+     },
+     "l1": {
+      "rel_diff": 0.4004903971018033,
+      "cosine": 0.9316653479655631
+     },
+     "input map": {
+      "rel_diff": 0.8079018090555131,
+      "cosine": 0.8473877744228275
+     },
+     "recurrent matrix": {
+      "rel_diff": 0.8931277229215805,
+      "cosine": 0.8515574972138804
+     },
+     "lm": {
+      "rel_diff": 0.8387264916221185,
+      "cosine": 0.8846213745928605
+     },
+     "l2": {
+      "rel_diff": 1.756330026022681,
+      "cosine": 0.4722767871933043
+     },
+     "l3": {
+      "rel_diff": 0.8729846270928363,
+      "cosine": 0.7278120529557546
+     }
+    },
+    "tensors": {
+     "book.weight": {
+      "rel_diff": 0.14541253677055624,
+      "cosine": 0.9894202807832734
+     },
+     "l1.weight": {
+      "rel_diff": 0.3989560531119634,
+      "cosine": 0.9328879976122194
+     },
+     "l1.bias": {
+      "rel_diff": 0.4175513457919151,
+      "cosine": 0.918138850559506
+     },
+     "rnn.weight_ih_l0": {
+      "rel_diff": 0.807752003697702,
+      "cosine": 0.8473055998618216
+     },
+     "rnn.weight_hh_l0": {
+      "rel_diff": 0.8930870281000565,
+      "cosine": 0.8514166198712845
+     },
+     "rnn.bias_ih_l0": {
+      "rel_diff": 0.9211023064033076,
+      "cosine": 0.9168589321282663
+     },
+     "rnn.bias_hh_l0": {
+      "rel_diff": 0.9121187016317636,
+      "cosine": 0.9158616467788857
+     },
+     "lm.weight": {
+      "rel_diff": 0.8385723996633957,
+      "cosine": 0.8846371911779383
+     },
+     "lm.bias": {
+      "rel_diff": 0.9465100385505869,
+      "cosine": 0.8755177010521363
+     },
+     "l2.weight": {
+      "rel_diff": 1.762388554670319,
+      "cosine": 0.4690033824947796
+     },
+     "l2.bias": {
+      "rel_diff": 0.9464246615646141,
+      "cosine": 0.8755062438719434
+     },
+     "l3.weight": {
+      "rel_diff": 0.8912099243376576,
+      "cosine": 0.7159518715757553
+     },
+     "l3.bias": {
+      "rel_diff": 0.2386017571867778,
+      "cosine": 0.9976370023817634
+     }
+    }
+   },
+   "score6_state_change": {
+    "mean_abs_change": 0.23489181697368622,
+    "mean_abs_state_row0": 0.5275662541389465,
+    "ratio": 0.4452366221889206
+   },
+   "tensors_sha256": "e0f6899a7b501ab5be1d4a8c2ea8a30fa5a93b9c223a21671b98f4bc96d04eab",
+   "cpu": 623.699435071
   }
  ],
  "probe": [
@@ -1763,7 +1938,74 @@
     "unrelated": 123154,
     "first_family": 122606
    }
+  },
+  {
+   "updates": 4096,
+   "first_family_exact": 384,
+   "first_family_pct": 96.0,
+   "unrelated_held_exact": 299,
+   "unrelated_held_pct": 99.66666666666667,
+   "loss_since_last_probe": 0.006192509340792185,
+   "items_so_far": {
+    "unrelated": 131384,
+    "first_family": 130760
+   }
   }
  ],
- "complete": null
+ "complete": {
+  "updates": 4096,
+  "items": {
+   "unrelated": 131384,
+   "first_family": 130760
+  },
+  "data_digest": {
+   "batches": 4096,
+   "sha256": "6153e1a18eeb013b81d6a2080487ed4a572df6ce1f21e5367183590e86014707"
+  },
+  "weights": "e51_B1_share_k2addendum_S_116089_row4096.pt",
+  "weights_sha256": "81f25016e8fe88e25f60d36eb778be1c03f2ab6348e19a0628262bf834711806",
+  "optimizer_steps": [
+   4096
+  ],
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "tensors_sha256": "e0f6899a7b501ab5be1d4a8c2ea8a30fa5a93b9c223a21671b98f4bc96d04eab",
+  "cpu_total": 623.7154219390001,
+  "cpu_scoring": 126.61555068100009,
+  "cpu_probe": 17.74607372199994,
+  "cpu_updates": 479.35379753600006
+ }
 }
