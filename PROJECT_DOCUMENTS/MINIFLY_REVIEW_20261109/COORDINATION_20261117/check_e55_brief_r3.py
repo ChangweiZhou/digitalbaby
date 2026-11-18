@@ -217,7 +217,9 @@ def blind_start():
             print(f" 1(c) first batch of `{task}`: largest magnitude of a state of a cell in reserve {a:.3f} (limit: above 1e-3); at the item's first byte {b:.3f}")
         # (d)
         gs = V.score_first_family(ns, S1, HELD)[1]; gk = V.score_first_family(nk, S1, HELD, in_use=in_use)[1]
-        print(f" 1(d) generated answers that differ from the keyed start's under the keyed forward: {sum(a != b for n in gs for a, b in zip(gs[n], gk[n]))} of {sum(len(v) for v in gs.values())} (limit 0)")
+        gs32 = V.score_first_family(ns32, S1, HELD)[1]; gk32 = V.score_first_family(nk32, S1, HELD, in_use=in_use)[1]
+        print(f" 1(d) generated answers that differ from the keyed start's under the keyed forward: {sum(a != b for n in gs for a, b in zip(gs[n], gk[n]))} of {sum(len(v) for v in gs.values())} "
+              f"(in single precision {sum(a != b for n in gs32 for a, b in zip(gs32[n], gk32[n]))}; limit 0)")
         # two starts that are wrong
         Wg = {k: v.copy() for k, v in Wk.items()}; make_blind(Wg, dirs, Z_RES)                   # only the gate rows made blind (the start `shut` without its bias)
         Wi = {k: v.copy() for k, v in Wk.items()}                                               # the rows of the reserve made blind in the input map only
@@ -305,6 +307,33 @@ def blind_emulate():
 
 
 PARTS["blind_emulate"] = blind_emulate
+
+
+# ================================================================ part `blind_states`
+def blind_states():
+    print("== blind_states: the emulated networks of the arm `blind` after their last update (read from the folder E55R3_SAVE)")
+    import glob
+    S1 = V.first_family_items(); HELD = V.held12(); held = [it for n in HELD for it in HELD[n]]
+    held40 = [it for t in V.DEV for it in V.panel(t, V.split(t, .5, V.SEED)[1], V.SEED, (40,), 300)[40]]     # 1,200 held-out pairs at 40 letters
+    for f in sorted(glob.glob(os.path.join(os.environ["E55R3_SAVE"], "emulated_r3_*_blind_*.npz"))):
+        name = os.path.basename(f)[len("emulated_r3_"):-4]; task, rule = name.split("_")[:2]
+        W = dict(np.load(f)); W0, Wk, dirs, in_use = start55("blind", rule); out = [f" {name}:"]
+        for label, dt in (("double", np.float64), ("single", np.float32)):
+            net, n0 = V.Net(W, dt), V.Net(W0, dt); prof = reserve_states(net, held)
+            res, gens = V.score_first_family(net, S1, HELD); res0, g0 = V.score_first_family(n0, S1, HELD)
+            dk0 = sum(a != b for n in gens if n.startswith("k0_") for a, b in zip(gens[n], g0[n])); dk12 = sum(a != b for n in gens if n.startswith("k12_") for a, b in zip(gens[n], g0[n]))
+            d = float(np.abs(V.answer_logits(net, held) - V.answer_logits(n0, held)).max())
+            out.append(f"   {label} precision: largest state of a cell in reserve on the held-out pairs at positions 1, 6, 11, 16, 21: " + ", ".join(f"{prof[t]:.1e}" for t in (1, 6, 11, 16, 21))
+                       + f"; answers that differ from the start's: {dk12} of 1,200 held-out and {dk0} of 31,684 without letters; reduction score {res['reduction_score']:.2f} (start {res0['reduction_score']:.2f}); largest change of an output on the held-out pairs {d:.2e}")
+            p40 = reserve_states(net, held40); g40, g40s = V.generate(net, held40), V.generate(n0, held40)
+            out.append(f"   {label} precision, the same held-out pairs of the first family written with 40 letters ({len(held40[0][0]) + 3} positions; not a panel of the brief): largest state of a cell in reserve at positions 1, 11, 21, 31, 41, {len(p40) - 1}: "
+                       + ", ".join(f"{p40[t]:.1e}" for t in (1, 11, 21, 31, 41, len(p40) - 1)) + f"; answers that differ from the start's {sum(x != y for x, y in zip(g40, g40s))} of {len(held40)}; right answers {V.exact(g40, held40)} (start {V.exact(g40s, held40)})")
+        ev = np.linalg.eigvals(0.5 * np.eye(U1 - U0) + 0.25 * W["rnn.weight_hh_l0"][2 * U1 + U0:3 * U1, U0:U1].astype(np.float64))
+        out.append(f"   the map of a small state of the reserve at a byte in use: eigenvalues of magnitude above 1: {int((np.abs(ev) > 1).sum())} of 128; the largest magnitude {np.abs(ev).max():.3f}, to the power 21: {np.abs(ev).max() ** 21:.1e}")
+        print("\n".join(out), flush=True)
+
+
+PARTS["blind_states"] = blind_states
 
 
 if __name__ == "__main__":

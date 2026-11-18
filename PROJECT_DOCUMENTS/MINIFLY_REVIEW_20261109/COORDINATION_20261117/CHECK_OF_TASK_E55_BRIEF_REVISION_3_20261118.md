@@ -26,7 +26,7 @@ The script is `check_e55_brief_r3.py` beside this file; it imports the script of
 | (c) largest added readout unit at an answer position | 4.9e-8; 6.6e-8 | 2.3e-7; 4.0e-7 | at most 1e-5 |
 | (c) largest difference of an output from the keyed start under the keyed forward | 1.7e-7; 1.9e-7 | 1.1e-5; 7.6e-6 | at most 1e-4 |
 | (c) largest state of a cell in reserve on the first batch of `unrelated`; of `conflict` | 0.15; 0.15 and 0.07; 0.09 | | above 1e-3 |
-| (d) answers of the 32,884 that differ | 0; 0 | | 0 |
+| (d) answers of the 32,884 that differ | 0; 0 | 0; 0 | 0 |
 
 - *Each limit can fail when the start is wrong.* With no projection, with the gate rows of the reserve alone made blind, or with the rows of the reserve made blind in the input map and not in the recurrent matrix, the largest state of a cell in reserve on the held-out pairs is 0.59 to 0.93, the largest difference of an output 2.4 to 3.2, and 12 to 45 of the 1,200 held-out answers differ; (b) gives 0.14 to 0.15 at the block that was left out. A start in which the rows of the reserve were set to zero would pass the upper limits and fail the lower limit of the first batch, which is there for that case.
 - *At the start the state zero of the reserve is stable.* On a byte in use the gates of a cell in reserve stand at one half (1 − z between 0.500000 and 0.500000), and a small state h of the reserve is taken to (0.5 I + 0.25 Wn) h from one position to the next, with Wn the weights of the candidate rows from the cells in reserve. The largest magnitude of an eigenvalue of that map is 0.605 under both rules, and the largest state does not grow over the 22 positions of a held-out pair (4e-8 at position 1, 6e-8 at position 21).
@@ -43,11 +43,41 @@ The script is `check_e55_brief_r3.py` beside this file; it imports the script of
 
 The limit of 1e-4 on the change of an output is that of E51's check 3, which gave 1.5e-5 to 2.1e-5 in single precision; in torch the figure will be of that size, because it is the arithmetic of single precision and not a movement of the weights.
 
-**The emulation of the arm `blind`** (part `blind_emulate`) is the checker's own arithmetic and is not the runner; its later rows show sizes and the order of events. It was started for 16,384 updates of each task under each rule. At row 2,048 it shows the following, and the table is entered here when the runs have ended.
+**The emulation of the arm `blind`** (part `blind_emulate`) is the checker's own arithmetic and is not the runner. The gradient is computed in single precision, as torch computes it, the projections in double precision, and the weights are stored in single precision after every step. Sixty-four emulated updates of E51's arm `keyed` give the saved weights of row 64 to within 2.4e-5; 2.7e-5 in every entry, where the weights changed by up to 5.9e-2. Its later rows show sizes and the order of events and are not the figures that the runner will give. It was started for 16,384 updates of each task under each rule; the table has the rows reached so far (4,096) and is completed when the runs have ended. The answers are generated in double precision; the states are given in double and in single precision, because the remainder that a cell in reserve receives on a byte in use is of the size of the rounding of single-precision arithmetic.
 
-- The remainder of the projection at the rows kept blind does not grow: the largest entry of `D @ Vm` is 1e-8 to 2.4e-8 at every row so far. The brief's statement on this point holds.
-- The state of the reserve on the first family's items grows over the positions of an item, and the growth sets in over the updates. The largest eigenvalue of the map above passes 1 between rows 64 and 1,024 in all four runs (1.32 on `unrelated` under back-propagation at row 2,048, 1.16 on `conflict`; 1.05 and 0.96 under the sweep). On `unrelated` under back-propagation at row 2,048 the largest state of a cell in reserve on a held-out pair is 1.4e-7 at position 1, 6.2e-6 at position 11 and 1.1e-4 at position 21 (3.1e-4 in single precision), and the first family's outputs have moved by 6.0e-3. No answer of the 32,884 has changed in any run so far.
-- `unrelated` under back-propagation is learned at row 2,048 (99.0; 0.0 with the cells in reserve held shut).
+| Run | Row | Never-taught score; with the cells in reserve held shut | First family: answers that differ from row 0's, of 1,200 held-out; of 31,684 without letters | Reduction score | Largest state of a cell in reserve on the held-out pairs, double precision; single precision | The same at positions 1; 11; 21 | Largest eigenvalue of the map of a small state | Largest change of an output on the held-out pairs | Largest entry of `D @ Vm` at the rows kept blind |
+|---|---|---|---|---|---|---|---|---|---|
+| `unrelated`, back-propagation | 0 | 0.0; 0.0 | 0; 0 | 95.25 | 7.6e-08; 3.5e-07 | 3.3e-08; 6.9e-08; 5.3e-08 | 0.605 | 0.0e+00 | 3.7e-09 |
+| `unrelated`, back-propagation | 64 | 0.0; 0.0 | 0; 0 | 95.25 | 1.9e-07; 1.3e-06 | 4.5e-08; 1.5e-07; 1.9e-07 | 0.907 | 4.1e-06 | 4.8e-09 |
+| `unrelated`, back-propagation | 256 | 0.0; 0.0 | 0; 0 | 95.25 | 2.0e-07; 1.3e-06 | 5.6e-08; 1.6e-07; 1.5e-07 | 0.837 | 3.4e-06 | 4.8e-09 |
+| `unrelated`, back-propagation | 1,024 | 25.3; 0.0 | 0; 0 | 95.25 | 3.1e-05; 7.1e-05 | 1.5e-07; 3.4e-06; 3.2e-05 | 1.193 | 9.1e-04 | 2.1e-08 |
+| `unrelated`, back-propagation | 2,048 | 99.0; 0.0 | 0; 0 | 95.25 | 1.1e-04; 3.1e-04 | 1.4e-07; 6.2e-06; 1.1e-04 | 1.316 | 6.0e-03 | 1.8e-08 |
+| `unrelated`, back-propagation | 4,096 | 100.0; 0.0 | 0; 0 | 95.25 | 1.7e-04; 8.1e-04 | 1.5e-07; 6.6e-06; 1.7e-04 | 1.366 | 1.3e-02 | 1.9e-08 |
+| `unrelated`, sweep | 0 | 0.0; 0.0 | 0; 0 | 92.40 | 6.6e-08; 2.6e-07 | 4.2e-08; 5.5e-08; 5.5e-08 | 0.605 | 0.0e+00 | 3.1e-09 |
+| `unrelated`, sweep | 64 | 0.0; 0.0 | 0; 0 | 92.40 | 1.2e-07; 5.8e-07 | 4.5e-08; 1.2e-07; 9.7e-08 | 0.689 | 5.2e-06 | 5.4e-09 |
+| `unrelated`, sweep | 256 | 0.0; 0.0 | 0; 0 | 92.40 | 1.2e-07; 5.3e-07 | 5.8e-08; 1.1e-07; 1.0e-07 | 0.684 | 7.4e-06 | 6.4e-09 |
+| `unrelated`, sweep | 1,024 | 0.0; 0.0 | 0; 0 | 92.40 | 2.0e-06; 4.3e-06 | 7.1e-08; 1.0e-06; 2.0e-06 | 1.048 | 2.6e-05 | 1.3e-08 |
+| `unrelated`, sweep | 2,048 | 6.0; 0.0 | 0; 0 | 92.40 | 2.0e-06; 2.8e-06 | 1.1e-07; 9.1e-07; 2.0e-06 | 1.047 | 9.1e-05 | 2.4e-08 |
+| `unrelated`, sweep | 4,096 | 65.3; 0.0 | 0; 0 | 92.40 | 3.1e-06; 6.4e-06 | 1.9e-07; 1.5e-06; 3.1e-06 | 1.086 | 2.3e-04 | 1.9e-08 |
+| `conflict`, back-propagation | 0 | 8.2; 8.2 | 0; 0 | 95.25 | 7.6e-08; 3.5e-07 | 3.3e-08; 6.9e-08; 5.3e-08 | 0.605 | 0.0e+00 | 3.7e-09 |
+| `conflict`, back-propagation | 64 | 21.2; 15.1 | 0; 0 | 95.25 | 2.1e-07; 7.8e-07 | 4.5e-08; 1.3e-07; 2.1e-07 | 0.969 | 3.0e-06 | 5.3e-09 |
+| `conflict`, back-propagation | 256 | 24.6; 20.2 | 0; 0 | 95.25 | 9.8e-07; 2.0e-06 | 6.2e-08; 3.4e-07; 9.8e-07 | 1.043 | 1.4e-05 | 7.6e-09 |
+| `conflict`, back-propagation | 1,024 | 46.6; 28.8 | 0; 0 | 95.25 | 9.3e-07; 3.3e-06 | 1.2e-07; 2.7e-07; 9.3e-07 | 1.103 | 2.0e-05 | 1.6e-08 |
+| `conflict`, back-propagation | 2,048 | 52.6; 31.0 | 0; 0 | 95.25 | 2.3e-06; 8.7e-06 | 1.2e-07; 5.4e-07; 2.3e-06 | 1.161 | 3.3e-05 | 1.8e-08 |
+| `conflict`, back-propagation | 4,096 | 61.1; 31.6 | 0; 0 | 95.25 | 3.8e-06; 1.4e-05 | 1.3e-07; 7.3e-07; 3.8e-06 | 1.170 | 7.3e-05 | 2.1e-08 |
+| `conflict`, sweep | 0 | 19.0; 19.0 | 0; 0 | 92.40 | 6.6e-08; 2.6e-07 | 4.2e-08; 5.5e-08; 5.5e-08 | 0.605 | 0.0e+00 | 3.1e-09 |
+| `conflict`, sweep | 64 | 24.6; 23.8 | 0; 0 | 92.40 | 8.0e-08; 4.8e-07 | 4.5e-08; 7.8e-08; 7.8e-08 | 0.930 | 2.7e-06 | 4.3e-09 |
+| `conflict`, sweep | 256 | 20.9; 31.4 | 0; 0 | 92.40 | 6.5e-07; 9.5e-07 | 7.4e-08; 2.6e-07; 6.5e-07 | 1.064 | 1.3e-05 | 7.4e-09 |
+| `conflict`, sweep | 1,024 | 45.9; 35.4 | 0; 0 | 92.40 | 8.1e-07; 1.8e-06 | 7.7e-08; 3.6e-07; 8.1e-07 | 0.991 | 3.2e-05 | 1.0e-08 |
+| `conflict`, sweep | 2,048 | 51.9; 37.0 | 0; 0 | 92.40 | 7.9e-07; 2.6e-06 | 1.2e-07; 5.8e-07; 6.8e-07 | 0.959 | 5.8e-05 | 1.6e-08 |
+| `conflict`, sweep | 4,096 | 57.2; 37.0 | 0; 0 | 92.40 | 1.0e-06; 2.6e-06 | 1.4e-07; 5.2e-07; 1.0e-06 | 1.038 | 1.1e-04 | 2.3e-08 |
+
+What the rows to 4,096 show:
+
+- *The remainder of the projection does not grow when the whole row is projected.* The largest entry of `D @ Vm` at the rows kept blind is between 3.1e-9 and 2.4e-8 at every row of every run. The brief's statement holds.
+- *The state of the reserve on the first family's items grows over the positions of an item, and this growth appears over the updates.* At the start the largest eigenvalue of the map that takes a small state of the reserve from one position to the next is 0.605. It passes 1 between rows 64 and 1,024 in all four runs and is 1.37; 1.09 (`unrelated`) and 1.17; 1.04 (`conflict`) at row 4,096 under back-propagation; the sweep. The state at position 1 of a held-out pair stays at 1e-7; the state at position 21 is larger by the factor that the eigenvalue gives. On `unrelated` under back-propagation at row 4,096 it is 1.5e-7 at position 1, 6.6e-6 at position 11 and 1.7e-4 at position 21 (8.1e-4 in single precision), and the first family's outputs have moved by 1.3e-2.
+- *No answer of the first family has changed* in any run to row 4,096 (0 of 1,200 and 0 of 31,684, in double precision).
+- *`unrelated` is learned under back-propagation* from row 2,048 (99.0; 100.0 at row 4,096; 0.0 with the cells in reserve held shut). Under the sweep it is at 65.3 at row 4,096. `conflict` is at 57.2; 61.1 at row 4,096, against 37.0; 31.6 with the cells held shut.
 
 ### A2. `Rule55`
 
@@ -135,7 +165,7 @@ The model saves the wall time so far, so that `wall` of a resumed receipt counts
 The check was read against `run`, `save_ckpt` and `check8` of `exp47_local.py` at 578a877b (lines 409 to 532 and 871 to 884).
 
 - *The check can be carried out as it says.* The runner writes a state at every multiple of 1,024 updates below the run's number of updates, so that a run of 2,048 updates has one saved state, at update 1,024. The scored row of update 1,536 is printed and flushed when it is made; a process killed after that line has made between 1,536 and 2,047 updates, and the second call with `--resume` finds the state of update 1,024, loads the module, the layer's three tensors, the optimizer, the receipt, the counters and the first batch from it, draws the first 1,024 batches again into a new digest and asserts it against the last row. The two receipts can then be compared in their rows, in `tensors_sha256`, `start_tensors_sha256`, `data_digest` and `cosine_first_batch_end`, as the trial's check 8 compares them.
-- *What the killed process leaves cannot make the resumed run differ.* The receipt is written at multiples of 4,096 updates and at the end (line 509), so that a run of 2,048 updates that is killed at update 1,536 leaves no receipt at all; it leaves the starting file, the saved state and its log. On a resume the runner never reads the receipt file: it takes the receipt from the saved state (lines 470 to 473) and the starting hash from the starting file. In the long runs the receipt on disk is never ahead of the last saved state, because the states are 1,024 apart and the receipt 4,096. The kill therefore tests what the stop of the trial's check did not: a death at a point where the losses since the last row and 512 or more updates are thrown away.
+- *What the killed process leaves cannot make the resumed run differ.* The receipt is written at multiples of 4,096 updates and at the end (line 509), so that a run of 2,048 updates that is killed at update 1,536 leaves no receipt at all; it leaves the starting file, the saved state and its log. On a resume the runner never reads the receipt file: it takes the receipt from the saved state (lines 470 to 473) and the starting hash from the starting file. In the long runs the receipt on disk is ahead of the last saved state only if the process dies between the writing of the receipt and the writing of the state at the same update (lines 510 and 512), because the states are 1,024 apart and the receipt 4,096; and the receipt file is not read in that case either. The kill therefore tests what the stop of the trial's check did not: a death at a point where the losses since the last row and 512 or more updates are thrown away.
 - *What the check does not reach.* The weights of updates 24,064 and 24,320 (change 7 of the brief) are written only in a run of 24,576 updates. A run that dies after update 24,064 resumes from the state of update 23,552 and writes them again; `save_weights` replaces a file and does not refuse one, so that this is safe by the text of the runner, and no check exercises it.
 
 **Defect B2-1. There is no saved state of update 2,048 in a run of 2,048 updates.**
