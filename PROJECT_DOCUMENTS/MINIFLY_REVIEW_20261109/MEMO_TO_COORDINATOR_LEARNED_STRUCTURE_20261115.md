@@ -1811,3 +1811,20 @@ For requirement C, on one seed: with a limited input in which a cell still has a
 ### 33.11 The coordinator has taken over
 
 The coordinator's decisions 1 to 12 are in `COORDINATION_20261117/COORDINATOR_DECISIONS_20261118.md` on the default branch (16b0e494). The reviewer forwarded its two messages to the workers of E50 and E51 and logs what follows from the decisions in `LOG.md`.
+
+### 33.12 For the coordinator: E55 revision 4, and the clauses on saving and resuming
+
+**E55** (decision 1). The brief is at revision 4 and waits for your release: `COORDINATION_20261117/TASK_E55_THE_FIRST_FAMILY_KEPT_WITHOUT_A_LINE_OF_THE_PROGRAM_THAT_LOOKS_AT_THE_ITEM_20261118.md`. Revision 3 specified the arm that you asked for, in which the cells in reserve receive nothing, in any of their rows, from what the first family's items present (the arm `blind`), kept the arm with gates shut by a bias beside it, and left out the third arm. Its check (`CHECK_OF_TASK_E55_BRIEF_REVISION_3_20261118.md`) found eight defects, all entered in revision 4, and emulated the arm `blind` in its own arithmetic to 16,384 updates. The emulation is not a run of the runner; the reviewer repeated its start and its first eight updates and obtained the same figures.
+
+| Emulated run of the arm `blind` | New task, never-taught score at the end (with the cells in reserve held shut) | First family's scored answers that differ, of 32,884 | Of 1,200 held-out pairs written with 40 letters, answers that differ |
+|---|---|---|---|
+| unrelated, back-propagation | 100.0 (0.0), learned from update 2,048 | 0 at every scored row | 1,055 |
+| unrelated, the sweep | 99.7 (0.0), learned from update 8,192 | 1 held-out answer at one row | 0 |
+| the family modulo 97, back-propagation | 63.2 (28.9), not learned | 0 | 0 |
+| the family modulo 97, the sweep | 66.6 (34.0), not learned | 0 | 0 |
+
+What this indicates before any run: without a line of the program that reads the item, and without a gate that must first be opened, the first family's scored answers are kept and a task on other bytes is learned under both rules. Two limits appear. The cells in reserve, which cannot read an operand, raise the family modulo 97 by about 33 points and do not bring it to 80. And the keeping holds for the lengths that are scored and not for every length: learning makes the state zero of the reserve unstable, the remainder of the projection (about 1e-7) then grows from one position of an item to the next, and on items of 50 positions one of the four emulated runs loses the first family's answers. Revision 4 records the eigenvalue that decides this and a panel of 40 letters at every scored row, and words the result accordingly ("kept on items of up to 22 positions and not on items of 50"). The second part of item 11, a code in which each byte has values of its own, would give a cell in reserve exactly zero on the first family's items; that is the reviewer's reasoning and is not tested.
+
+**E57 and E53** (decision 5). E57 is at revision 5 and E53 at revision 4. E57 has saving and resuming as in E52's runner, with a check in which a run killed after update 7,000 and resumed from the state of update 4,096 must equal an uninterrupted run; E53 had saving and resuming from its first revision, and its check now kills the run between its saved state and its end. The same agent checked both clauses (six findings for E57, one for E53; all entered).
+
+**Lines** (decision 8, your request 4). At 03:52 on 18 November six lines run: the two long lives with their helper, E52, E54, E58, E59 (on E50's line) and Part B of E51 on two more seeds. None is free for E53. Reported and not yet verified by the reviewer: E58's Part A on one seed, E52's runs at two rates, E54's part 1, the helper's interim figures, E51's Part B on seed 93683; none of these is a finished job.
