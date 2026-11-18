@@ -126,7 +126,7 @@ They are listed so that he can strike any of them.
 
 - D1. Input lines and output lines are fixed, one for each byte value, and say nothing about digits; the cells on them learn.
 - D2. (Changed at 23:03 UTC by Mr. Xu's ruling, section 13 of `WHAT_A_NEURON_HAS_20261118.md`.) Cells can receive the feedback of the error. How far it must be passed on from cell to cell before a cell that needs it has it is read at step 3; no restriction is placed on a cell receiving it.
-- D3. (Changed at 23:03 UTC by the same ruling.) For the present task, the prediction of the next byte, the feedback is yes or no. The definition of the tissue keeps a place for richer feedback, which more complex tasks may bring later; no form is excluded in principle, and none richer than yes or no is used on the route unless a step is not reached with it.
+- D3. (Changed at 23:03 UTC by the same ruling.) For the present task, the prediction of the next byte, the feedback is yes or no. The definition of the tissue keeps a place for richer feedback, which more complex tasks may bring later; no form is excluded in principle, and where a step has an arithmetic answer (steps 5 to 7), the feedback may also carry the right answer and the absolute difference between the answer given and the right one, as Mr. Xu's example of 23:04 UTC states (section 14 of the same file). Which of these a step uses is fixed in its brief, and the result is reported with the form of feedback named.
 - D4. Controls are second tissues. Recording from cells is the measure at step 1 only, where there is no behaviour yet.
 - D5. The steps are phases of one life.
 - D6. Step 5 begins with the two operations whose answer is one of the two numbers.
@@ -139,6 +139,8 @@ They are listed so that he can strike any of them.
 3. When step 0 is reached: the briefs of steps 1 and 2, written by an agent, checked by another, and put to the coordinator.
 
 ## History
+
+Change of 23:04 UTC: decision D3 takes in Mr. Xu's example of richer feedback for addition (the right answer and the absolute difference).
 
 Change of 23:03 UTC to draft 2: decisions D2 and D3 and step 2, after Mr. Xu's ruling that cells can receive the feedback of the error, that yes or no is the form for the present task, and that richer forms are not excluded later.
 

@@ -116,3 +116,11 @@ The reviewer had reported two points of the revised definition: that telling an 
 Translation (the reviewer's). No. Cells should be able to receive the feedback of the error. The form "yes/no" alone is also acceptable, but other forms of answer should be able to be accommodated. For byte-level input reading, the task of predicting the next byte, the yes/no form is acceptable. But we do not exclude that there will be more complex tasks and more complex feedback of the error in the future.
 
 What follows. Cells can receive the feedback of the error. For the present task, the prediction of the next byte, the feedback is yes or no. The tissue is to be defined so that it can take richer feedback later; no richer form is excluded in principle. The reviewer's two restrictions are withdrawn: the exclusion of every form richer than yes or no for the cells that gave nothing (sentence 90 of the revised definition), and the wording that a cell's direct receipt of the feedback "is not assumed" (decision D2 of the roadmap).
+
+## 14. Mr. Xu's example of richer feedback (23:04 UTC)
+
+> 例如之前的addition,程序应该能够得到正确答案，我们可以把正确答案加上差多少的绝对值作为一个额外的反馈信息给它。
+
+Translation (the reviewer's). For example, in the addition used before, the program should be able to obtain the right answer; we can give it the right answer, together with the absolute value of how far off it was, as an additional piece of feedback.
+
+What follows. For the arithmetic of the first family the feedback may consist of yes or no, the right answer, and the absolute difference between the answer the tissue gave and the right one. The definition of the tissue must have a place where such feedback enters.
