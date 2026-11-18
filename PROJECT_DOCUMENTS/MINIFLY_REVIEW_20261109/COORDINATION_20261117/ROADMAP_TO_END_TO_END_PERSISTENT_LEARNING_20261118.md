@@ -86,7 +86,7 @@ What grows along the route is therefore not the number of properties but two thi
 *Reached when*, late in a long stream, cells one, two and four connections from the input lines are neither silent nor constant, and the present byte and the bytes one, two, four and eight positions back can be told from their recorded outputs better than at the start of life.
 *What it buys:* the material every later correction works on. *On failure:* the order of opening in section 4 of the check.
 
-**Step 2. The two ends correct themselves (E0 to E1).** New: capabilities b and l. The feedback reaches the cells of the output end and of the input end; the cells between them are as in step 1. The feedback is yes or no (decision D3). A second tissue in which only the output end receives it shows what the input end's share is.
+**Step 2. The two ends correct themselves (E0 to E1).** New: capabilities b and l. Dedicated cells receive the feedback and pass it on over connections; how it is passed on to the cells of the two ends is itself learned (Mr. Xu's ruling, section 16 of `WHAT_A_NEURON_HAS_20261118.md`). The cells between the ends are as in step 1. The feedback is yes or no (decision D3). A second tissue in which only the output end receives it shows what the input end's share is.
 *Reached when* the byte the tissue gives is right, at the first attempt, wherever the coming byte can be known from the last few bytes, above what the frequencies of bytes give; in a control tissue that is never told, it is not.
 *What it buys:* the tissue is end to end from here on, and its level is the floor against which step 3 is measured.
 
@@ -140,6 +140,8 @@ They are listed so that he can strike any of them.
 3. When step 0 is reached: the briefs of steps 1 and 2, written by an agent, checked by another, and put to the coordinator.
 
 ## History
+
+Change of 23:37 UTC to draft 3: by Mr. Xu's ruling (section 16), the feedback is received by dedicated cells and passed on over learned connections, not given alike to all cells of an end; and a connection's strength is set by its two ends together. Step 2 reworded.
 
 Draft 3 (23:26 UTC): by Mr. Xu's ruling that the input end receives the feedback of the output end's information, the two ends are corrected together at step 2 and the relay of step 3 runs inward from both; capabilities b, c and d and overlap 2 are rewritten. The definition of the tissue is at revision 3 (`THE_TISSUE_DEFINED_REVISION_3_20261118.md`), awaiting a fourth reading.
 

@@ -134,3 +134,13 @@ The reviewer had reported that the third reader proposed an ordered ring of cell
 Translation (the reviewer's). Why can each cell not be given a randomly generated coordinate at the start? I still cannot understand. We can assume that the input end can receive the feedback of the output end's information. In language tasks this is the result of the prediction of the next byte, but in other tasks it can be something else.
 
 What follows. (1) Each cell has a coordinate drawn at random at the start; near and far are distances between coordinates. No ordered arrangement is laid down. (2) The input end receives the feedback of the output end's information. In the present task that information is the result of the prediction of the next byte; the definition leaves open what it is in other tasks.
+
+## 16. Mr. Xu's rulings of 23:37 UTC: a connection's strength belongs to both its ends; only some cells receive the feedback
+
+The reviewer had reported, from the fourth reading of the definition, that a yes or no given alike to all cells of an end points the right way only for the cell that emitted, and that two rules at the output-end cells undo each other. Mr. Xu:
+
+> 不，细胞之间连接的强度是连接的两端共同决定的，是局部的量。另外我们的输入端不是所有的细胞都收到yes/no，只有某些收到。可以认为有专门的细胞收到反馈信息之后再传送给输入端，具体如何传送需要学习。
+
+Translation (the reviewer's). No. The strength of a connection between cells is determined jointly by the two ends of the connection; it is a local quantity. Also, at our input end not all cells receive the yes or no; only some do. It can be taken that there are dedicated cells which receive the feedback information and then pass it on to the input end; how exactly it is passed on has to be learned.
+
+What follows. (1) The strength of a connection is set by the sending cell and the receiving cell together, from what is present at that connection; it is not a quantity that the receiving cell alone adjusts. (2) The yes or no is not given alike to all cells of an end. Dedicated cells receive the feedback and pass it on to the input end over connections, and the way it is passed on is learned by the tissue. The definition's first forms "all cells of an end receive the same yes or no" and "only incoming connections are adjusted, by the receiving cell" are withdrawn.
