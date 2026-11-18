@@ -1,0 +1,295 @@
+[
+ {
+  "id": "a_new",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/a_new",
+  "args": [
+   "life",
+   "naive",
+   "1",
+   "8",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt",
+   "--in-turn",
+   "--visit-updates",
+   "256",
+   "--save-states",
+   "8"
+  ]
+ },
+ {
+  "id": "b_default",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_default",
+  "args": [
+   "life",
+   "naive",
+   "5",
+   "32",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--save-states",
+   "32"
+  ]
+ },
+ {
+  "id": "b_k4_d1248",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_d1248",
+  "args": [
+   "life",
+   "naive",
+   "5",
+   "32",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--save-states",
+   "32",
+   "--list-every",
+   "4",
+   "--decay-distances",
+   "1,2,4,8"
+  ]
+ },
+ {
+  "id": "b_k4_none",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/b_k4_none",
+  "args": [
+   "life",
+   "naive",
+   "5",
+   "32",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--save-states",
+   "32",
+   "--list-every",
+   "4",
+   "--decay-distances",
+   "none"
+  ]
+ },
+ {
+  "id": "c3_naive",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c3_naive",
+  "args": [
+   "life",
+   "naive",
+   "1",
+   "1",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt"
+  ]
+ },
+ {
+  "id": "c3_replay_rho0",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c3_replay_rho0",
+  "args": [
+   "life",
+   "replay",
+   "1",
+   "1",
+   "--rho",
+   "0",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt"
+  ]
+ },
+ {
+  "id": "c5_whole",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_whole",
+  "args": [
+   "life",
+   "replay",
+   "1",
+   "8",
+   "--rho",
+   "0.5",
+   "--wd",
+   "0",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt",
+   "--list-every",
+   "2",
+   "--decay-distances",
+   "1,2,4"
+  ]
+ },
+ {
+  "id": "c5_cut",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut",
+  "args": [
+   "life",
+   "replay",
+   "1",
+   "8",
+   "--rho",
+   "0.5",
+   "--wd",
+   "0",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_73129.pt",
+   "--list-every",
+   "2",
+   "--decay-distances",
+   "1,2,4",
+   "--stop-after",
+   "4"
+  ]
+ },
+ {
+  "id": "c5_resumed",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut",
+  "after": [
+   "c5_cut"
+  ],
+  "args": [
+   "life",
+   "--resume",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c5_cut/lw_replay_w1_v8_rho0.5_wd0_state_v4.pt"
+  ]
+ },
+ {
+  "id": "birth_w2_93683",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/births",
+  "args": [
+   "life",
+   "naive",
+   "2",
+   "8",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--in-turn",
+   "--visit-updates",
+   "256",
+   "--save-states",
+   "8"
+  ]
+ },
+ {
+  "id": "birth_w3_116089",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/births",
+  "args": [
+   "life",
+   "naive",
+   "3",
+   "8",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_116089.pt",
+   "--in-turn",
+   "--visit-updates",
+   "256",
+   "--save-states",
+   "8"
+  ]
+ },
+ {
+  "id": "c7_naive",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c7_naive",
+  "alone": true,
+  "args": [
+   "life",
+   "naive",
+   "5",
+   "4",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--list-every",
+   "8",
+   "--decay-distances",
+   "none",
+   "--save-states",
+   "4"
+  ]
+ },
+ {
+  "id": "c7_replay",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c7_replay",
+  "alone": true,
+  "args": [
+   "life",
+   "replay",
+   "5",
+   "4",
+   "--rho",
+   "0.5",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--list-every",
+   "8",
+   "--decay-distances",
+   "none",
+   "--save-states",
+   "4"
+  ]
+ },
+ {
+  "id": "c7_naive_wd0",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c7_naive_wd0",
+  "alone": true,
+  "args": [
+   "life",
+   "naive",
+   "5",
+   "4",
+   "--wd",
+   "0",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--list-every",
+   "8",
+   "--decay-distances",
+   "none",
+   "--save-states",
+   "4"
+  ]
+ },
+ {
+  "id": "c7_replay_wd0",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/checks/c7_replay_wd0",
+  "alone": true,
+  "args": [
+   "life",
+   "replay",
+   "5",
+   "4",
+   "--rho",
+   "0.5",
+   "--wd",
+   "0",
+   "--world",
+   "lw",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_B_h256_f50_93683.pt",
+   "--list-every",
+   "8",
+   "--decay-distances",
+   "none",
+   "--save-states",
+   "4"
+  ]
+ }
+]

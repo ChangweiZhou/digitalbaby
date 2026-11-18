@@ -1,0 +1,536 @@
+{
+ "experiment": "E44",
+ "job": "F1 long-life world",
+ "kind": "life",
+ "settings": {
+  "arm": "sweep+replay",
+  "world": 1,
+  "visits": 4,
+  "rho": 0.5,
+  "H": 256,
+  "U": 128,
+  "visit_updates": 256,
+  "p_new": 0.05,
+  "lr": 0.001,
+  "wd": 0.25,
+  "tag": null,
+  "world_kind": "lw",
+  "in_turn": false,
+  "taught_share": 0.1,
+  "lowest": 41,
+  "list_every": 8,
+  "decay_distances": [],
+  "save_states": [
+   4
+  ],
+  "learner": {
+   "file": "exp45/e41/e41_S_h256_f50_73129.pt",
+   "file_sha256": "da14a18be3025728248ce01ce00fe868b344c2f9ada80a57f05fde5cf79938d0",
+   "tensors_sha256": "59c5ea4095978bad5b39f4a55c38e8baf87136339573285c448c575ab8578b5f",
+   "receipt": "exp45/e41/e41_S_h256_f50_73129.json",
+   "receipt_sha256": "a5a5569c3db87947df898e610a8aaa8beae0018464dbbb4749f1ab0c8f8b091f",
+   "made_by": "E41 (exp41_scale.py run)",
+   "rule": "S",
+   "local_in_birth": true,
+   "H": 256,
+   "U": 128,
+   "parameters": 317457,
+   "fraction": 0.5,
+   "seed": 73129,
+   "updates": 40960,
+   "items_per_update": 64,
+   "taught_items": 2621440,
+   "final_row": {
+    "step": 40960,
+    "A": 95.83333333333333,
+    "R": 91.95,
+    "R_counts": {
+     "add89": 938,
+     "sub89": 901
+    }
+   },
+   "reduction_sample_sha256": {
+    "add89": "f433a55ca52ae34d9d6c1262c4a000ccc8db0e258c5c8a189a90e82980e47e52",
+    "sub89": "18ac75b5013b6d4717c803a8e4643fb81b92673c625e985212f1940936300663"
+   },
+   "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+  }
+ },
+ "local": true,
+ "replay": true,
+ "replay_items_per_update": 24,
+ "model": {
+  "cls": "sw_net.SWNet",
+  "H": 256,
+  "U": 128,
+  "parameters": 317457,
+  "shapes": {
+   "book.weight": [
+    258,
+    8
+   ],
+   "l1.weight": [
+    256,
+    8
+   ],
+   "l1.bias": [
+    256
+   ],
+   "rnn.weight_ih_l0": [
+    384,
+    256
+   ],
+   "rnn.weight_hh_l0": [
+    384,
+    128
+   ],
+   "rnn.bias_ih_l0": [
+    384
+   ],
+   "rnn.bias_hh_l0": [
+    384
+   ],
+   "lm.weight": [
+    256,
+    128
+   ],
+   "lm.bias": [
+    256
+   ],
+   "l2.weight": [
+    256,
+    256
+   ],
+   "l2.bias": [
+    256
+   ],
+   "l3.weight": [
+    257,
+    256
+   ],
+   "l3.bias": [
+    257
+   ]
+  },
+  "initial": {
+   "weights_tensors_sha256": "59c5ea4095978bad5b39f4a55c38e8baf87136339573285c448c575ab8578b5f"
+  }
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked cross entropy, zero_grad, backward, one AdamW step",
+ "answering": "sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
+ "world": {
+  "kind": "lw",
+  "file": "smallworld/lw_world.py",
+  "seed": 1,
+  "visit_updates": 256,
+  "p_new": 0.05,
+  "taught_share": 0.1,
+  "lowest": 41,
+  "in_turn": false,
+  "probe_families": 4,
+  "tasks": 224,
+  "families": 56
+ },
+ "learner": {
+  "file": "exp45/e41/e41_S_h256_f50_73129.pt",
+  "file_sha256": "da14a18be3025728248ce01ce00fe868b344c2f9ada80a57f05fde5cf79938d0",
+  "tensors_sha256": "59c5ea4095978bad5b39f4a55c38e8baf87136339573285c448c575ab8578b5f",
+  "receipt": "exp45/e41/e41_S_h256_f50_73129.json",
+  "receipt_sha256": "a5a5569c3db87947df898e610a8aaa8beae0018464dbbb4749f1ab0c8f8b091f",
+  "made_by": "E41 (exp41_scale.py run)",
+  "rule": "S",
+  "local_in_birth": true,
+  "H": 256,
+  "U": 128,
+  "parameters": 317457,
+  "fraction": 0.5,
+  "seed": 73129,
+  "updates": 40960,
+  "items_per_update": 64,
+  "taught_items": 2621440,
+  "final_row": {
+   "step": 40960,
+   "A": 95.83333333333333,
+   "R": 91.95,
+   "R_counts": {
+    "add89": 938,
+    "sub89": 901
+   }
+  },
+  "reduction_sample_sha256": {
+   "add89": "f433a55ca52ae34d9d6c1262c4a000ccc8db0e258c5c8a189a90e82980e47e52",
+   "sub89": "18ac75b5013b6d4717c803a8e4643fb81b92673c625e985212f1940936300663"
+  },
+  "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+ },
+ "provenance": {
+  "command": "python3 sw_run.py life sweep+replay 1 4 --rho 0.5 --world lw --H 256 --U 128 --learner /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt --list-every 8 --decay-distances none --save-states 4 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c6_sweep_replay",
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v553-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.3",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "b218f351aa8a23714aa45615d4dac170a58da3ab",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+   "smallworld/lw_world.py": "83b7df79d4d8c9851ec264dca0b0f4197b6321c74af3eb884e5ff4a7c953656e",
+   "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+   "smallworld/sw_run.py": "41714c5bb90966b857c0b68373e527004b9ecebfff53c116c0d1083da09e6d60",
+   "smallworld/sw_score.py": "0f60f462a749cb18c6a733dfb7a2ffac393fa26a110e18dee0206f2a71e4672b",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "env": {
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "EXP45_WINDOW": "10",
+   "EXP45_HIDDEN": "512",
+   "OPENBLAS_NUM_THREADS": "1"
+  }
+ },
+ "ledger": {
+  "stored_numbers": {
+   "weights": 317457,
+   "optimizer_moments": 634914,
+   "optimizer_step_counters": 13,
+   "anchor": 0
+  },
+  "buffer": {
+   "used": true,
+   "capacity_items": 55209,
+   "capacity_bytes": 1269828,
+   "items_at_end": 49152,
+   "bytes_at_end": 835092,
+   "max_items": 49152,
+   "max_bytes": 835092,
+   "offered": 49152
+  },
+  "updates": 1024,
+  "stream_items_per_update": 64,
+  "taught_per_update": 48,
+  "asked_per_update": 16,
+  "learned_per_update": 48,
+  "replayed_per_update": 24,
+  "new_learned_per_update_once_replaying": 24,
+  "birth": null,
+  "life_updates": 1024,
+  "learner": {
+   "made_by": "E41 (exp41_scale.py run)",
+   "file": "exp45/e41/e41_S_h256_f50_73129.pt",
+   "file_sha256": "da14a18be3025728248ce01ce00fe868b344c2f9ada80a57f05fde5cf79938d0",
+   "rule": "S",
+   "updates": 40960,
+   "items_per_update": 64,
+   "taught_items": 2621440,
+   "note": "E41's birth on E26's first family (mod 89, half its pairs), before this life"
+  }
+ },
+ "counters": {
+  "learned_items_verified": 49152,
+  "asking_checks": 4,
+  "replayed_items": 24552,
+  "max_buffer_items": 49152,
+  "max_buffer_bytes": 835092,
+  "first_replay_update": 1
+ },
+ "events": {
+  "file": "lw_sweep+replay_w1_v4_rho0.5.npz",
+  "file_sha256": "4309e4763f0a8c8274b7628fca59a1d9f8dedcadb5e13c27f6b3834ce37cda06",
+  "arrays_sha256": "8c4f30edbeda34b731ba1282341ceedcf0e4be65a1185421e0f2b06cad3cd629",
+  "entries": 16384,
+  "columns": [
+   "update",
+   "visit",
+   "task",
+   "correct",
+   "blind",
+   "wrap",
+   "mirror",
+   "seen",
+   "replayed",
+   "g1",
+   "g2",
+   "g3"
+  ]
+ },
+ "final": {
+  "visits": 4,
+  "updates": 1024,
+  "weights_tensors_sha256": "5a01f54d5ca19ab55d2d6993561966543c2f601c51f7fd99fc0aedf8bd65bf98",
+  "optimizer_sha256": "a8d8166b4746917c35c6f78edc47e227960fdeab4c2bb091d5eb7654d1c2f5d0"
+ },
+ "cpu": {
+  "total": 53.05038857,
+  "per_visit": [
+   12.801074545999999,
+   13.435583425,
+   11.930940789000001,
+   13.521915966000002
+  ],
+  "list_total": 1.1106777359999964,
+  "list_per_visit": [
+   0.06675840000000122,
+   0.06310792300000045,
+   0.05993941599999886,
+   0.47297076799999616
+  ],
+  "mean_per_visit": 12.922378681500001,
+  "birth": null,
+  "peak_rss_kib": 572272,
+  "note": null
+ },
+ "birth": null,
+ "birth_from": null,
+ "learned_sha256": "6661063af00a2b505b848da88d3fdf1587185341efee2f561ef2d96a4fa05de7",
+ "by_visit": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null,
+   "updates": 256,
+   "stream_sha256": "d72786510430f2098a550ae38a977fa76696836a0c7089826d19e1f03ad749f4",
+   "learned_sha256": "c6e71ddeb31db9d635f136f4a95899a7d1ed387ae2017e451f14b2caa1b3d63f",
+   "loss_mean": 0.1630673574982211,
+   "loss_first": 3.6630282402038574,
+   "loss_last": 0.04571487754583359,
+   "replayed_items": 6120,
+   "cpu": 12.801074545999999,
+   "wall": 12.904425859451294,
+   "list_cpu": 0.06675840000000122
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "150498a311af5aca7810de98fb51bb5bbeb00cd41f0ee5f164f6ac6f8eac4940",
+   "learned_sha256": "5e42a6fba405b07a2720c11b790953f0e6ca7e4451d6961e3987bc9b727fbb08",
+   "loss_mean": 0.03924434032160207,
+   "loss_first": 0.05457368120551109,
+   "loss_last": 0.10438639670610428,
+   "replayed_items": 6144,
+   "cpu": 13.435583425,
+   "wall": 13.547090530395508,
+   "list_cpu": 0.06310792300000045
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "65a8419a596c8148e6a31ebca83d6da198907d6b26082e1b54f59ddb6379f6e9",
+   "learned_sha256": "4310839d3be66c381ce07f187b88ed408615e11c17767d43547fd50c503b77b7",
+   "loss_mean": 0.030051463309064275,
+   "loss_first": 0.05937686935067177,
+   "loss_last": 0.014196006581187248,
+   "replayed_items": 6144,
+   "cpu": 11.930940789000001,
+   "wall": 12.069936990737915,
+   "list_cpu": 0.05993941599999886
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1,
+   "updates": 256,
+   "stream_sha256": "77d90d7cb0253ebd5b46feeee9e4f4388b7ddbcb64fb40f3c125f963a248f7ec",
+   "learned_sha256": "f54afae65f80770437b36d2b23e82dd26d18a0da7fcfde4821dd50d75de78de7",
+   "loss_mean": 0.027150391761097126,
+   "loss_first": 0.029743410646915436,
+   "loss_last": 0.010914286598563194,
+   "replayed_items": 6144,
+   "cpu": 13.521915966000002,
+   "wall": 13.673812866210938,
+   "list_cpu": 0.47297076799999616
+  }
+ ],
+ "resumes": [],
+ "states": [
+  {
+   "visits": 4,
+   "path": "lw_sweep+replay_w1_v4_rho0.5_state_v4.pt",
+   "file_sha256": "d77d7242ff05698a9e42eff9fe9ba5ba6b9ca91962ae59b036dad0ee77071bf9",
+   "weights_tensors_sha256": "5a01f54d5ca19ab55d2d6993561966543c2f601c51f7fd99fc0aedf8bd65bf98",
+   "optimizer_sha256": "a8d8166b4746917c35c6f78edc47e227960fdeab4c2bb091d5eb7654d1c2f5d0"
+  }
+ ],
+ "complete": true,
+ "schedule": [
+  {
+   "visit": 0,
+   "group": 0,
+   "new": true,
+   "absence": null
+  },
+  {
+   "visit": 1,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 2,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  },
+  {
+   "visit": 3,
+   "group": 0,
+   "new": false,
+   "absence": 1
+  }
+ ],
+ "stream_sha256": "4cccf332914883a7c9f0fc8ad5b58eb7ee84cc162dee754fdd6ffde88ebb5cb8",
+ "stream_note": "sha256 over every stream item in order, as lw_world.digest; equals lw_world.digest(World(world, visit_updates, p_new, taught_share, lowest), visits, in_turn)",
+ "list": {
+  "file": "lw_sweep+replay_w1_v4_rho0.5_list.npz",
+  "file_sha256": "8cab292355720a57502b393d28e62b0377dc1488f927ab845b3f7efa16d6f40c",
+  "arrays_sha256": "9c2d2d81676207f91b3a60d3acc9e978c3cadbce45c975154604ee256d91e2ba",
+  "entries": 4800,
+  "columns": [
+   "at_visit",
+   "source",
+   "family",
+   "task",
+   "a",
+   "b",
+   "g1",
+   "g2",
+   "g3",
+   "correct",
+   "decay_updates",
+   "weights_from_visit"
+  ],
+  "families_taken": [
+   0
+  ],
+  "items_sha256": "4e05a756bdaf3d1e3b5d22d86012942b5558e37fb026e363c432bfa5ed7ebdbd",
+  "r_items": 2000,
+  "decay_factor_per_update": 0.99975,
+  "note": "source 0: the network at the end of at_visit (65535: before visit 0); source 1: decay alone, the weights at the end of weights_from_visit (65535: the born weights) with every parameter but the byte table multiplied by decay_factor_per_update ** decay_updates; family -1 is the birth family (tasks 65534 add89, 65535 sub89)"
+ },
+ "list_summary": [
+  {
+   "at_visit": 65535,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 1839,
+   "share": 0.9195,
+   "decay_updates": 0,
+   "weights_from_visit": 65535
+  },
+  {
+   "at_visit": 0,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 141,
+   "share": 0.705,
+   "decay_updates": 0,
+   "weights_from_visit": 0
+  },
+  {
+   "at_visit": 1,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 159,
+   "share": 0.795,
+   "decay_updates": 0,
+   "weights_from_visit": 1
+  },
+  {
+   "at_visit": 2,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 160,
+   "share": 0.8,
+   "decay_updates": 0,
+   "weights_from_visit": 2
+  },
+  {
+   "at_visit": 3,
+   "source": 0,
+   "family": 0,
+   "n": 200,
+   "right": 180,
+   "share": 0.9,
+   "decay_updates": 0,
+   "weights_from_visit": 3
+  },
+  {
+   "at_visit": 3,
+   "source": 0,
+   "family": -1,
+   "n": 2000,
+   "right": 379,
+   "share": 0.1895,
+   "decay_updates": 0,
+   "weights_from_visit": 3
+  }
+ ]
+}

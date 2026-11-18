@@ -50,6 +50,18 @@ E44 (brief OPUS_TASK_E44_LONG_LIFE_WORLD_IN_THE_FULL_SCALE_FORMAT_20261116.md, r
                   items for every later visit of the life (u the updates from the end of its visit to the end of that visit); the born
                   weights so answer the birth family's items for every visit. Nothing is learned from the list.
   --save-states   which visit counts get a state (default: 1, 2, 4, 8, ... and the end, E39's rule); e.g. 8 or 4,8
+
+E44, job L2 (roster note OPUS_TASK_E44_L2_ROSTER_FIRST_LONG_LIVES_20261117.md, revision 2; the reviewer's audit, section 8, changes 1 to 3):
+    python3 sw_run.py life <naive|replay> <world> <visits> --world lw --learner <E41 birth .pt> [--rho 0.5] [--wd 0]
+                           [--list-every K] [--decay-distances none|d1,d2,...]
+  --list-every K          (lw) every family taken so far, and the birth family, are answered at the end of the visits after which K, 2K, ...
+                          visits are done and of the life's last visit; the family just visited is answered at the end of every visit.
+                          Default 1: E44's behaviour.
+  --decay-distances D     (lw) decay alone is computed only at these distances in visits: for a family, from its first visit; for the born
+                          weights (the birth family's items), from the start of the life (distance d: the end of visit d - 1). `none`: no
+                          decay alone. Default: every later visit, E44's behaviour.
+  Both are entries of the life's settings: the receipt and every state carry them, and a resumed life keeps them.
+  --learner F             also for the replay arms: `replay` lives from E41's backpropagation birth, `sweep+replay` from the sweep's.
 """
 import argparse
 import hashlib
@@ -230,7 +242,7 @@ def load_learner(path, H, U, arm):
     """E41's saved birth (weights only) into sw_net.SWNet(H, U); its hashes asserted equal to its receipt (path with .json)."""
     p = Path(path).resolve(); rp = p.with_suffix(".json")
     rec = json.loads(rp.read_text())
-    want = {"naive": "B", "sweep": "S", "sweep-after-naive": "B"}[arm]
+    want = {"naive": "B", "sweep": "S", "sweep-after-naive": "B", "replay": "B", "sweep+replay": "S"}[arm]      # L2: the replay arms
     assert rec["experiment"] == "E41" and rec["complete"] and rec["H"] == H and rec["U"] == U, "not a complete E41 birth at this width"
     assert rec["rule"] == want, f"arm {arm} lives from E41's rule {want}, not {rec['rule']}"
     m = N.SWNet(H, U); m.load_state_dict(T.load(p, weights_only=True))
@@ -390,7 +402,7 @@ def life_stem(cfg):
 class Life:
     def __init__(self, arm, world, visits, rho=None, H=64, U=64, visit_updates=W.VISIT_UPDATES, p_new=W.P_NEW, lr=0.001, wd=0.25, tag=None,
                  birth_groups=None, birth_cap=32768, birth_need=None, world_kind="sw", learner=None, in_turn=False, taught_share=None,
-                 lowest=None, save_states=None):
+                 lowest=None, save_states=None, list_every=1, decay_distances=None):
         # sweep-after-naive: in E39 from a naive birth inside the world (Life.from_birth); in E44 from E41's backpropagation birth (--learner)
         assert arm in ARMS and (arm != "sweep-after-naive" or learner), arm
         assert world_kind in ("sw", "lw") and (world_kind == "lw") == (learner is not None), "--learner goes with --world lw"
@@ -404,8 +416,13 @@ class Life:
             assert not birth_groups, "E44's learner is born by E41, not inside the world"
             self.cfg.update(world_kind="lw", in_turn=bool(in_turn), taught_share=LW.TAUGHT_FRACTION if taught_share is None else taught_share,
                             lowest=LW.LOWEST if lowest is None else lowest)
+            # L2: which rows of the list are written (None for the distances: every later visit; []: no decay alone)
+            assert isinstance(list_every, int) and list_every >= 1, "--list-every is a whole number of visits, at least 1"
+            assert decay_distances is None or all(isinstance(d, int) and d >= 1 for d in decay_distances), "--decay-distances are whole visits, at least 1"
+            self.cfg.update(list_every=list_every, decay_distances=None if decay_distances is None else sorted(set(decay_distances)))
         else:
             assert not in_turn and taught_share is None and lowest is None, "--in-turn, --taught-share and --lowest are the lw world's"
+            assert list_every == 1 and decay_distances is None, "--list-every and --decay-distances are the lw world's"
         if save_states is not None:
             self.cfg["save_states"] = sorted(set(save_states))
         if birth_groups:
@@ -472,13 +489,25 @@ class Life:
         self.list_summary.append(dict(at_visit=at_visit, source=source, family=family, n=len(items), right=right,
                                       share=right / len(items) if items else None, decay_updates=decay_updates, weights_from_visit=from_visit))
 
+    def list_whole_at(self, n):
+        """L2 (--list-every K): is the whole list (every family taken so far, and the birth family) answered when n visits are done?
+        After K, 2K, ... visits and after the life's last visit; K = 1 (the default): after every visit."""
+        return n % self.cfg.get("list_every", 1) == 0 or n == self.cfg["visits"]
+
+    def decay_visits(self, v0):
+        """L2 (--decay-distances): the visits at whose end decay alone is computed from the weights at the end of visit v0 (v0 = -1: the
+        born weights, before visit 0). None (the default): every later visit of the life; otherwise v0 + d for the distances d."""
+        d, V = self.cfg.get("decay_distances"), self.cfg["visits"]
+        return list(range(v0 + 1, V)) if d is None else [v0 + x for x in d if v0 + x < V]
+
     def answer_list_before(self):
-        """Before visit 0: the birth family's items, answered by the born network; and decay alone of the born weights for every visit."""
+        """Before visit 0: the birth family's items, answered by the born network; and decay alone of the born weights for every visit
+        (L2: at the distances of --decay-distances, counted in visits from the start of the life)."""
         c0 = time.process_time()
         before = (tensors_sha(self.m.state_dict()), opt_sha(self.opt))
         self._list_rows(self.m, self.r_items(), BEFORE_LIFE, 0, BIRTH_FAMILY, 0, BEFORE_LIFE)
         f = 1.0 - self.cfg["lr"] * self.cfg["wd"]; vu = self.cfg["visit_updates"]
-        for k in range(self.cfg["visits"]):
+        for k in self.decay_visits(-1):
             u = (k + 1) * vu
             self._list_rows(decayed(self.m, f ** u), self.r_items(), k, 1, BIRTH_FAMILY, u, BEFORE_LIFE)
         assert (tensors_sha(self.m.state_dict()), opt_sha(self.opt)) == before, "answering the list changed the weights or the optimizer"
@@ -487,7 +516,9 @@ class Life:
     def answer_list(self, s, decay=True):
         """At the end of visit s["visit"]: every family taken so far, the family just visited included, and the birth family, answered by
         the network as it stands. If this was the family's first visit and decay is on: decay alone from these weights for every later
-        visit of the life (all visits are visit_updates long)."""
+        visit of the life (all visits are visit_updates long).
+        L2: with --list-every K the whole list is answered only when K, 2K, ... visits are done and after the last visit (list_whole_at);
+        at the end of any other visit only the family just visited is answered. Decay alone at the distances of --decay-distances."""
         c0 = time.process_time()
         v, g = s["visit"], s["group"]
         if g not in self.families_taken:
@@ -496,13 +527,16 @@ class Life:
         else:
             first = False
         before = (tensors_sha(self.m.state_dict()), opt_sha(self.opt))
+        whole = self.list_whole_at(v + 1)
         for f in self.families_taken:
-            self._list_rows(self.m, probe_items(self.world, f), v, 0, f, 0, v)
-        self._list_rows(self.m, self.r_items(), v, 0, BIRTH_FAMILY, 0, v)
+            if whole or f == g:
+                self._list_rows(self.m, probe_items(self.world, f), v, 0, f, 0, v)
+        if whole:
+            self._list_rows(self.m, self.r_items(), v, 0, BIRTH_FAMILY, 0, v)
         if decay and first:
             fac = 1.0 - self.cfg["lr"] * self.cfg["wd"]; vu = self.cfg["visit_updates"]
             items = probe_items(self.world, g)
-            for k in range(v + 1, self.cfg["visits"]):
+            for k in self.decay_visits(v):
                 u = (k - v) * vu
                 self._list_rows(decayed(self.m, fac ** u), items, k, 1, g, u, v)
         assert (tensors_sha(self.m.state_dict()), opt_sha(self.opt)) == before, "answering the list changed the weights or the optimizer"
@@ -947,6 +981,7 @@ def main(argv):
     ap.add_argument("--lr", type=float, default=0.001); ap.add_argument("--wd", type=float, default=0.25); ap.add_argument("--tag")
     ap.add_argument("--out", default=str(OUT)); ap.add_argument("--stop-after", type=int); ap.add_argument("--resume")
     ap.add_argument("--groups"); ap.add_argument("--items"); ap.add_argument("--to")
+    ap.add_argument("--list-every", type=int, default=1); ap.add_argument("--decay-distances")          # L2 (the lw world's list)
     a = ap.parse_args(argv)
     cmd = " ".join(["python3", "sw_run.py", *argv])
     dflt = LW_DEFAULTS if a.world == "lw" else DEFAULTS
@@ -955,6 +990,7 @@ def main(argv):
     a.visit_updates = dflt["visit_updates"] if a.visit_updates is None else a.visit_updates
     a.p_new = dflt["p_new"] if a.p_new is None else a.p_new
     ss = None if a.save_states is None else [int(x) for x in a.save_states.split(",")]
+    dd = None if a.decay_distances is None else [] if a.decay_distances == "none" else [int(x) for x in a.decay_distances.split(",")]
     if a.cmd == "life":
         if a.resume:
             assert not a.pos and not a.birth_from, "--resume takes the life's settings from the state"
@@ -966,7 +1002,7 @@ def main(argv):
             arm, world, visits = a.pos[0], int(a.pos[1]), int(a.pos[2])
             bg = [int(g) for g in a.birth_groups.split(",")] if a.birth_groups else None
             life = Life(arm, world, visits, a.rho, a.H, a.U, a.visit_updates, a.p_new, a.lr, a.wd, a.tag,
-                        bg, a.birth_cap, a.birth_need, a.world, a.learner, a.in_turn, a.taught_share, a.lowest, ss)
+                        bg, a.birth_cap, a.birth_need, a.world, a.learner, a.in_turn, a.taught_share, a.lowest, ss, a.list_every, dd)
         run_life(life, a.out, cmd, a.stop_after)
     elif a.cmd == "solo":
         assert a.world == "sw", "solo runs are E39's (the small world)"

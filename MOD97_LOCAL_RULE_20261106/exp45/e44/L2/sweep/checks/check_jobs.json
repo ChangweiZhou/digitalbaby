@@ -1,0 +1,177 @@
+[
+ {
+  "id": "c2_calib",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c2_calib",
+  "args": [
+   "life",
+   "sweep",
+   "1",
+   "8",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt",
+   "--in-turn",
+   "--visit-updates",
+   "256",
+   "--save-states",
+   "8"
+  ]
+ },
+ {
+  "id": "c3_sweep",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c3_sweep",
+  "args": [
+   "life",
+   "sweep",
+   "1",
+   "1",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt"
+  ]
+ },
+ {
+  "id": "c3_sweep_replay_rho0",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c3_sweep_replay_rho0",
+  "args": [
+   "life",
+   "sweep+replay",
+   "1",
+   "1",
+   "--rho",
+   "0",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt"
+  ]
+ },
+ {
+  "id": "c4_whole",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c4_whole",
+  "args": [
+   "life",
+   "sweep+replay",
+   "1",
+   "8",
+   "--rho",
+   "0.5",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt",
+   "--list-every",
+   "2",
+   "--decay-distances",
+   "1,2,4"
+  ]
+ },
+ {
+  "id": "c4_cut",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c4_cut",
+  "args": [
+   "life",
+   "sweep+replay",
+   "1",
+   "8",
+   "--rho",
+   "0.5",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt",
+   "--list-every",
+   "2",
+   "--decay-distances",
+   "1,2,4",
+   "--stop-after",
+   "4"
+  ]
+ },
+ {
+  "id": "c4_resumed",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c4_cut",
+  "after": [
+   "c4_cut"
+  ],
+  "args": [
+   "life",
+   "--resume",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c4_cut/lw_sweep+replay_w1_v8_rho0.5_state_v4.pt"
+  ]
+ },
+ {
+  "id": "c6_sweep",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c6_sweep",
+  "alone": true,
+  "args": [
+   "life",
+   "sweep",
+   "1",
+   "4",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt",
+   "--list-every",
+   "8",
+   "--decay-distances",
+   "none",
+   "--save-states",
+   "4"
+  ]
+ },
+ {
+  "id": "c6_sweep_replay",
+  "out": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/checks/c6_sweep_replay",
+  "alone": true,
+  "args": [
+   "life",
+   "sweep+replay",
+   "1",
+   "4",
+   "--rho",
+   "0.5",
+   "--world",
+   "lw",
+   "--H",
+   "256",
+   "--U",
+   "128",
+   "--learner",
+   "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e41/e41_S_h256_f50_73129.pt",
+   "--list-every",
+   "8",
+   "--decay-distances",
+   "none",
+   "--save-states",
+   "4"
+  ]
+ }
+]
