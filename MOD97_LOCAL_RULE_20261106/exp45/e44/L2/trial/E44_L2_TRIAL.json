@@ -1,0 +1,4600 @@
+{
+ "experiment": "E44",
+ "job": "L2, release 1: the trial (world 1, 1,024 visits, naive and replay)",
+ "lives": {
+  "naive": {
+   "life": "lw_naive_w1_v1024",
+   "command": "python3 sw_run.py life --resume /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w1_v1024_state_v768.pt --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives",
+   "commit": "c0657575372ab9a36a3df68e68bd40fc57ee9ce9",
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.3",
+    "torch_threads": 1
+   },
+   "env": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "EXP45_WINDOW": "10",
+    "EXP45_HIDDEN": "512",
+    "OPENBLAS_NUM_THREADS": "1"
+   },
+   "sw_run_sha256": "41714c5bb90966b857c0b68373e527004b9ecebfff53c116c0d1083da09e6d60",
+   "settings": {
+    "arm": "naive",
+    "world": 1,
+    "visits": 1024,
+    "rho": null,
+    "wd": 0.25,
+    "list_every": 8,
+    "decay_distances": [],
+    "visit_updates": 256
+   },
+   "learner": {
+    "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+    "seed": 73129,
+    "file_sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0"
+   },
+   "optimizer_weight_decay": 0.25,
+   "first_group_weight_decay_at_end": 0.25,
+   "cpu_hours": 3.417247405866389,
+   "cpu_seconds_per_visit": 11.652404803378925,
+   "list_cpu_hours": 0.07932416992833967,
+   "peak_rss_mib": 770.02734375,
+   "losses_finite": true,
+   "loss_first_visit": 0.29260820081981365,
+   "loss_last_visit": 0.031214070551868645,
+   "loss_max": 0.47412440209882334,
+   "resumes": [
+    {
+     "done_visits": 768,
+     "wall_utc": "2026-11-18T01:00:50Z"
+    }
+   ],
+   "ledger": {
+    "stored_numbers": {
+     "weights": 317457,
+     "optimizer_moments": 634914,
+     "optimizer_step_counters": 13,
+     "anchor": 0
+    },
+    "buffer": {
+     "used": false,
+     "capacity_items": 0,
+     "capacity_bytes": 0,
+     "items_at_end": 0,
+     "bytes_at_end": 0,
+     "max_items": 0,
+     "max_bytes": 0,
+     "offered": 0
+    },
+    "replayed_per_update": 0,
+    "new_learned_per_update": 48,
+    "updates": 262144
+   },
+   "counters": {
+    "learned_items_verified": 12582912,
+    "asking_checks": 1024,
+    "replayed_items": 0,
+    "max_buffer_items": 0,
+    "max_buffer_bytes": 0,
+    "first_replay_update": null
+   },
+   "events": {
+    "file": "lw_naive_w1_v1024.npz",
+    "entries": 4194304,
+    "arrays_sha256": "902beff76fa51dff1ad7ba29aafada95669a2372148ea2d7e01d6b8e412eb155",
+    "file_sha256": "037548e8a9c1cd0a901916b09f04f93fe9f7c28f9314b36db390155bd65b4e1c"
+   },
+   "list": {
+    "file": "lw_naive_w1_v1024_list.npz",
+    "entries": 1238400,
+    "arrays_sha256": "b2046ef72ef38b4a901dd9eab4159cce0ed11d3afc15ca0d92057466f53de9ad",
+    "file_sha256": "8c9673212ec735f8671209113f3e326cd182360a185e8fe215dbe6e8dd9461b7",
+    "items_sha256": "48e6d710e93cbe6777cc2c0cb51c611949fbf1309e17c66c911c04487b7282fc",
+    "families_taken": 52
+   },
+   "final": {
+    "visits": 1024,
+    "updates": 262144,
+    "weights_tensors_sha256": "6f64a9a15df6da38bfe779f70bb55ebd5ca6747b166da9300add555dd03c367b",
+    "optimizer_sha256": "b6b4d92c6bcbc0d5ca9ea035a45328a4b20c911a4a48e4bddb347f5c135ea035"
+   },
+   "stream_sha256": "ec26f1e90533d7f491b0fa58fe33ad258eaadcb418f86553c75090dc1f910c84",
+   "learned_sha256": "11c46fa228a5e3cca4b7ec3fc00069c2f91a6c4e02fafff7236f1d4a196928de",
+   "states": [
+    {
+     "visits": 64,
+     "file_sha256": "217c4a9dd2d76176c73e2b7bf5b3923fe21c89a927aa3171bf9fe53d186cbd61",
+     "weights_tensors_sha256": "9bec31c62d8e9ffb6ec4489974d57eeb3deaf39b9543b59dd0a9c21f79f31ae1"
+    },
+    {
+     "visits": 128,
+     "file_sha256": "58cfee7b189c0f860a98ba54a4d31fcd125eba2a5b613b471d827a7593d5d819",
+     "weights_tensors_sha256": "cdd198952c93e3ee3ce99cca29a1152d95b86b701711054d3cf8f08fb13597c6"
+    },
+    {
+     "visits": 256,
+     "file_sha256": "4e5d905d8e001adb5b946dcc4295177dc27be805bea1caf9531b11e89d17d704",
+     "weights_tensors_sha256": "0f9bd839fd46d5c643f605dd8399a4d7feb588b65566755172f5776811e450a0"
+    },
+    {
+     "visits": 384,
+     "file_sha256": "3407888adf91b619214ccf80d929637b9d8c1903c423e20546b4c436d4827c57",
+     "weights_tensors_sha256": "f6c62145c62887fd99af894b921f68b1980578ececc1329481b22418d1936eb0"
+    },
+    {
+     "visits": 512,
+     "file_sha256": "49e52e0516b41ff840f28ef8bcec00344d61c7985c0ab35835266adc8eba14a6",
+     "weights_tensors_sha256": "bb0b5fc8f60f846dbe185c16d91b9ded6e920fe91d6fde76f73c786f68eccee4"
+    },
+    {
+     "visits": 640,
+     "file_sha256": "415a7a5acea21bb639592078b4229fbe18872f527ba4527a3f4e4afb53fbe302",
+     "weights_tensors_sha256": "fd921ff892f4849a4d4f054675d3892e495d9fceb3ab98bd89f0abfa63ec9116"
+    },
+    {
+     "visits": 896,
+     "file_sha256": "393874857af2a1fb1b0ea08c9dab86f46ff0e5c94718397b611197479f291b3c",
+     "weights_tensors_sha256": "c1d06664c877caa032fe64e0ad9d20bfee8e2e988a96df25d1462c106f54d9fd"
+    },
+    {
+     "visits": 1024,
+     "file_sha256": "9d81fd7ce2e51c3dcbf66dc14c2a44b76c86aa96e423508ab518ef4ab99feaf2",
+     "weights_tensors_sha256": "6f64a9a15df6da38bfe779f70bb55ebd5ca6747b166da9300add555dd03c367b"
+    }
+   ]
+  },
+  "replay": {
+   "life": "lw_replay_w1_v1024_rho0.5",
+   "command": "python3 sw_run.py life --resume /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_replay_w1_v1024_rho0.5_state_v768.pt --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives",
+   "commit": "c0657575372ab9a36a3df68e68bd40fc57ee9ce9",
+   "host": {
+    "hostname": "vm",
+    "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+    "machine": "x86_64",
+    "cores": 4,
+    "python": "3.13.18",
+    "torch": "2.15.0+cpu",
+    "numpy": "2.5.3",
+    "torch_threads": 1
+   },
+   "env": {
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "EXP45_WINDOW": "10",
+    "EXP45_HIDDEN": "512",
+    "OPENBLAS_NUM_THREADS": "1"
+   },
+   "sw_run_sha256": "41714c5bb90966b857c0b68373e527004b9ecebfff53c116c0d1083da09e6d60",
+   "settings": {
+    "arm": "replay",
+    "world": 1,
+    "visits": 1024,
+    "rho": 0.5,
+    "wd": 0.25,
+    "list_every": 8,
+    "decay_distances": [],
+    "visit_updates": 256
+   },
+   "learner": {
+    "file": "exp45/e41/e41_B_h256_f50_73129.pt",
+    "seed": 73129,
+    "file_sha256": "4c6d4302b51f695863754ecaba63de29f9e5f01d8d7b80dd4c62c4259bd68cf0"
+   },
+   "optimizer_weight_decay": 0.25,
+   "first_group_weight_decay_at_end": 0.25,
+   "cpu_hours": 3.443131632716667,
+   "cpu_seconds_per_visit": 11.73207261468065,
+   "list_cpu_hours": 0.08037920383722011,
+   "peak_rss_mib": 817.328125,
+   "losses_finite": true,
+   "loss_first_visit": 0.30968037098500645,
+   "loss_last_visit": 0.10441151176928543,
+   "loss_max": 0.3849260444403626,
+   "resumes": [
+    {
+     "done_visits": 768,
+     "wall_utc": "2026-11-18T01:00:54Z"
+    }
+   ],
+   "ledger": {
+    "stored_numbers": {
+     "weights": 317457,
+     "optimizer_moments": 634914,
+     "optimizer_step_counters": 13,
+     "anchor": 0
+    },
+    "buffer": {
+     "used": true,
+     "capacity_items": 55209,
+     "capacity_bytes": 1269828,
+     "items_at_end": 55209,
+     "bytes_at_end": 939508,
+     "max_items": 55209,
+     "max_bytes": 940416,
+     "offered": 12582912
+    },
+    "replayed_per_update": 24,
+    "new_learned_per_update": 24,
+    "updates": 262144
+   },
+   "counters": {
+    "learned_items_verified": 12582912,
+    "asking_checks": 1024,
+    "replayed_items": 6291432,
+    "max_buffer_items": 55209,
+    "max_buffer_bytes": 940416,
+    "first_replay_update": 1
+   },
+   "events": {
+    "file": "lw_replay_w1_v1024_rho0.5.npz",
+    "entries": 4194304,
+    "arrays_sha256": "d81dfb325f321c6b11ce81f2397a1603b8185fe75180bb71829ee01b4ecb5ce0",
+    "file_sha256": "49f4c947be84cc6d8de10207a279e9be5f688a9af2438c2572eeed1f1ebf93c3"
+   },
+   "list": {
+    "file": "lw_replay_w1_v1024_rho0.5_list.npz",
+    "entries": 1238400,
+    "arrays_sha256": "5c1433f83b82e0e98e5316d3fd3b6c5592ac99192c17ec2b24658bc9d7699061",
+    "file_sha256": "062ada869a397ea43d0df7773f32fffc749d722bd323bbb95aa1ea6c13f241da",
+    "items_sha256": "48e6d710e93cbe6777cc2c0cb51c611949fbf1309e17c66c911c04487b7282fc",
+    "families_taken": 52
+   },
+   "final": {
+    "visits": 1024,
+    "updates": 262144,
+    "weights_tensors_sha256": "64b5ab28cbf131457af1cde25cfd32187059231d8d368ce534799938b142e62b",
+    "optimizer_sha256": "1e909e139696462d36dcff87bedac107e6ff1a68653de03023ca6ed6810ba031"
+   },
+   "stream_sha256": "ec26f1e90533d7f491b0fa58fe33ad258eaadcb418f86553c75090dc1f910c84",
+   "learned_sha256": "f496e0a87b76df4a17a70b7e1d66ea15e1506f6caf28935e85aa7cce7b38eadb",
+   "states": [
+    {
+     "visits": 64,
+     "file_sha256": "41d2806b9dc404b467b82b6e66c49f25e857f80e9839a2e5974edb5232dd2caf",
+     "weights_tensors_sha256": "8aa1633fbcd64859c528c40078263968cdbe17fb88872b6913d0f5e84e118fc9"
+    },
+    {
+     "visits": 128,
+     "file_sha256": "6ea461f82948408fe17f6433afce0ae72c5a5b0491bf512cf56fdb28b2731a74",
+     "weights_tensors_sha256": "f7097f1e142f8502ba11c365f1ec18bede1bbebc89b92b503d5c93f3e724ec5f"
+    },
+    {
+     "visits": 256,
+     "file_sha256": "ff060e87d352441e91fca3f6bd036ffe8ad6d251335ea3c352b323d9f734843a",
+     "weights_tensors_sha256": "8bbde9e3a9e9fe158317753dbbdc9a7f869200595f8d00cab65c92e108729044"
+    },
+    {
+     "visits": 384,
+     "file_sha256": "441ec64d1c2a264b439c523c089996123b12432ca5f70a456755b3f1887fbe25",
+     "weights_tensors_sha256": "9cfda1d04839da369ea3451b7a0d8a9892cc8e1dd960e325ec3cf535d411cf74"
+    },
+    {
+     "visits": 512,
+     "file_sha256": "24a9b6dec5763ec54dd31657b03dc57c432ba22548a9f80817bc44addec4274e",
+     "weights_tensors_sha256": "3a3a5dbde90972745eba74b8005adfdee660026580eede581e24c4c4bc6bbc2e"
+    },
+    {
+     "visits": 640,
+     "file_sha256": "6b7d854845848c76c20d628c188b277fa5daab0e4bdd43c5c0ecaef9c435e034",
+     "weights_tensors_sha256": "59aa935b0a3c643557d80f2b652f3421a0ffea394de255d64d538b374cb2a972"
+    },
+    {
+     "visits": 896,
+     "file_sha256": "20f4870fcdb9fcf690fdfa6c5dac8cacc2f4c5d9568caaac63215355179abff5",
+     "weights_tensors_sha256": "04d90975e9a02b7aa1f7546772c119f260f50f9b696c12b1fab3f1bba93eef2f"
+    },
+    {
+     "visits": 1024,
+     "file_sha256": "2615060d52a117e948a96fdcfb016a9c30fcb045f8c86aa11559772236763bcb",
+     "weights_tensors_sha256": "64b5ab28cbf131457af1cde25cfd32187059231d8d368ce534799938b142e62b"
+    }
+   ]
+  }
+ },
+ "checks": {
+  "naive": {
+   "list_items_sha256_equal_to_audit": true,
+   "families_taken": 52,
+   "keys_digest_equal_to_audit": true,
+   "reviewers_part_K": {
+    "command": "python3 -I e44_l2_checks.py K <lw_naive_w1_v1024_list.npz> 1 1024 8 none",
+    "output": [
+     "K. /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w1_v1024_list.npz: 5031 keys, 1,238,400 items; the reference: 5031 keys, 1,238,400 items",
+     "   keys equal as sets: True; digest of the file's keys e7cdf44f0f9485ff9a64824d3544e11361d5b451309651ba3ad2c927b089bfe7; of the reference e7cdf44f0f9485ff9a64824d3544e11361d5b451309651ba3ad2c927b089bfe7",
+     "   every family row holds the family's list items in the reviewer's order: True"
+    ],
+    "keys_equal_as_sets": true,
+    "items_in_reviewers_order": true
+   }
+  },
+  "replay": {
+   "list_items_sha256_equal_to_audit": true,
+   "families_taken": 52,
+   "keys_digest_equal_to_audit": true,
+   "reviewers_part_K": {
+    "command": "python3 -I e44_l2_checks.py K <lw_replay_w1_v1024_rho0.5_list.npz> 1 1024 8 none",
+    "output": [
+     "K. /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_replay_w1_v1024_rho0.5_list.npz: 5031 keys, 1,238,400 items; the reference: 5031 keys, 1,238,400 items",
+     "   keys equal as sets: True; digest of the file's keys e7cdf44f0f9485ff9a64824d3544e11361d5b451309651ba3ad2c927b089bfe7; of the reference e7cdf44f0f9485ff9a64824d3544e11361d5b451309651ba3ad2c927b089bfe7",
+     "   every family row holds the family's list items in the reviewer's order: True"
+    ],
+    "keys_equal_as_sets": true,
+    "items_in_reviewers_order": true
+   }
+  }
+ },
+ "reviewer": {
+  "ref": "origin/claude/vibrant-cerf-sje726",
+  "commit": "80e419aa78081d1abbbfa0af9e04605a87f5c454",
+  "files_sha256": {
+   "e44_l2_checks.py": "18671e242b5a5ab48db2fd8cbc78b93c929e51a021d1fe8737ecb7da4d4751b6",
+   "e44_world_reader.py": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+   "np_gru.py": "aa806ecf301bd8332ee3041781b57b7b981e3ac32c0974252db44b14dc328848"
+  }
+ },
+ "scorer_against_part_J": {
+  "naive, 256 visits": {
+   "events": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w1_v1024.npz",
+   "list": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w1_v1024_list.npz",
+   "world": 1,
+   "visits": 256,
+   "reviewer": {
+    "ref": "origin/claude/vibrant-cerf-sje726",
+    "commit": "80e419aa78081d1abbbfa0af9e04605a87f5c454",
+    "files_sha256": {
+     "e44_l2_checks.py": "18671e242b5a5ab48db2fd8cbc78b93c929e51a021d1fe8737ecb7da4d4751b6",
+     "e44_world_reader.py": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+     "np_gru.py": "aa806ecf301bd8332ee3041781b57b7b981e3ac32c0974252db44b14dc328848"
+    }
+   },
+   "equal": {
+    "D2 score by age, every visit": true,
+    "D2 the blind predictor's, every visit": true,
+    "D3 kinds of visit": true,
+    "D4 late level": true,
+    "D4 late level by kind": true,
+    "D5 score trend (returns)": true,
+    "D5 score trend (all visits of the half)": true,
+    "D6 first-visit levels, every family": true,
+    "D7 trend of learning": true,
+    "D8 kept at return (visits, items, share), four classes": true,
+    "D10 relearning at return (three figures), four classes": true,
+    "D9 kept on the list (points, left out, mean, median), four classes": true
+   },
+   "all_equal": true,
+   "figures": {
+    "late_level": 0.5815904503858537,
+    "score_trend": -0.02805353354668304,
+    "trend_of_learning": -0.006193858125983159,
+    "families": 17,
+    "kept_at_return": {
+     "1 visit": 0.7846715328467153,
+     "2 to 4": 0.028901734104046242,
+     "5 to 32": 0.01639344262295082,
+     "33 or more": 0.0379746835443038,
+     "5 or more": 0.021671826625386997
+    },
+    "kept_on_list": {
+     "1 visit": 0.03667725013939666,
+     "2 to 4": 0.03296543600345085,
+     "5 to 32": 0.02441052310582265,
+     "33 or more": 0.0022583088393682295,
+     "5 or more": 0.023078969242811727
+    }
+   }
+  },
+  "naive, 1024 visits": {
+   "events": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w1_v1024.npz",
+   "list": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w1_v1024_list.npz",
+   "world": 1,
+   "visits": 1024,
+   "reviewer": {
+    "ref": "origin/claude/vibrant-cerf-sje726",
+    "commit": "80e419aa78081d1abbbfa0af9e04605a87f5c454",
+    "files_sha256": {
+     "e44_l2_checks.py": "18671e242b5a5ab48db2fd8cbc78b93c929e51a021d1fe8737ecb7da4d4751b6",
+     "e44_world_reader.py": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+     "np_gru.py": "aa806ecf301bd8332ee3041781b57b7b981e3ac32c0974252db44b14dc328848"
+    }
+   },
+   "equal": {
+    "D2 score by age, every visit": true,
+    "D2 the blind predictor's, every visit": true,
+    "D3 kinds of visit": true,
+    "D4 late level": true,
+    "D4 late level by kind": true,
+    "D5 score trend (returns)": true,
+    "D5 score trend (all visits of the half)": true,
+    "D6 first-visit levels, every family": true,
+    "D7 trend of learning": true,
+    "D8 kept at return (visits, items, share), four classes": true,
+    "D10 relearning at return (three figures), four classes": true,
+    "D9 kept on the list (points, left out, mean, median), four classes": true
+   },
+   "all_equal": true,
+   "figures": {
+    "late_level": 0.668969473031305,
+    "score_trend": -0.00942544351162154,
+    "trend_of_learning": 0.1064324132158357,
+    "families": 52,
+    "kept_at_return": {
+     "1 visit": 0.8070175438596491,
+     "2 to 4": 0.026449643947100712,
+     "5 to 32": 0.015693112467306015,
+     "33 or more": 0.014691478942213516,
+     "5 or more": 0.01522140221402214
+    },
+    "kept_on_list": {
+     "1 visit": 0.02213148815725081,
+     "2 to 4": 0.017441827124957697,
+     "5 to 32": 0.014481931384815294,
+     "33 or more": 0.012037742616861831,
+     "5 or more": 0.013071392978180815
+    }
+   }
+  },
+  "replay, 256 visits": {
+   "events": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_replay_w1_v1024_rho0.5.npz",
+   "list": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_replay_w1_v1024_rho0.5_list.npz",
+   "world": 1,
+   "visits": 256,
+   "reviewer": {
+    "ref": "origin/claude/vibrant-cerf-sje726",
+    "commit": "80e419aa78081d1abbbfa0af9e04605a87f5c454",
+    "files_sha256": {
+     "e44_l2_checks.py": "18671e242b5a5ab48db2fd8cbc78b93c929e51a021d1fe8737ecb7da4d4751b6",
+     "e44_world_reader.py": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+     "np_gru.py": "aa806ecf301bd8332ee3041781b57b7b981e3ac32c0974252db44b14dc328848"
+    }
+   },
+   "equal": {
+    "D2 score by age, every visit": true,
+    "D2 the blind predictor's, every visit": true,
+    "D3 kinds of visit": true,
+    "D4 late level": true,
+    "D4 late level by kind": true,
+    "D5 score trend (returns)": true,
+    "D5 score trend (all visits of the half)": true,
+    "D6 first-visit levels, every family": true,
+    "D7 trend of learning": true,
+    "D8 kept at return (visits, items, share), four classes": true,
+    "D10 relearning at return (three figures), four classes": true,
+    "D9 kept on the list (points, left out, mean, median), four classes": true
+   },
+   "all_equal": true,
+   "figures": {
+    "late_level": 0.5773486902326801,
+    "score_trend": -0.06752501983245031,
+    "trend_of_learning": -0.022977399406195195,
+    "families": 17,
+    "kept_at_return": {
+     "1 visit": 0.7627737226277372,
+     "2 to 4": 0.48265895953757226,
+     "5 to 32": 0.4262295081967213,
+     "33 or more": 0.45569620253164556,
+     "5 or more": 0.43343653250773995
+    },
+    "kept_on_list": {
+     "1 visit": 0.7501235718123861,
+     "2 to 4": 0.6784533676535145,
+     "5 to 32": 0.6388827904756529,
+     "33 or more": 0.6192385473561158,
+     "5 or more": 0.6377019889766642
+    }
+   }
+  },
+  "replay, 1024 visits": {
+   "events": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_replay_w1_v1024_rho0.5.npz",
+   "list": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_replay_w1_v1024_rho0.5_list.npz",
+   "world": 1,
+   "visits": 1024,
+   "reviewer": {
+    "ref": "origin/claude/vibrant-cerf-sje726",
+    "commit": "80e419aa78081d1abbbfa0af9e04605a87f5c454",
+    "files_sha256": {
+     "e44_l2_checks.py": "18671e242b5a5ab48db2fd8cbc78b93c929e51a021d1fe8737ecb7da4d4751b6",
+     "e44_world_reader.py": "860a52fd5ac0d3e8d485f1c6c94faba18ce625a75c10109f8189dc04f4c08143",
+     "np_gru.py": "aa806ecf301bd8332ee3041781b57b7b981e3ac32c0974252db44b14dc328848"
+    }
+   },
+   "equal": {
+    "D2 score by age, every visit": true,
+    "D2 the blind predictor's, every visit": true,
+    "D3 kinds of visit": true,
+    "D4 late level": true,
+    "D4 late level by kind": true,
+    "D5 score trend (returns)": true,
+    "D5 score trend (all visits of the half)": true,
+    "D6 first-visit levels, every family": true,
+    "D7 trend of learning": true,
+    "D8 kept at return (visits, items, share), four classes": true,
+    "D10 relearning at return (three figures), four classes": true,
+    "D9 kept on the list (points, left out, mean, median), four classes": true
+   },
+   "all_equal": true,
+   "figures": {
+    "late_level": 0.7304083974058202,
+    "score_trend": 0.07898463674025773,
+    "trend_of_learning": 0.10349967105146513,
+    "families": 52,
+    "kept_at_return": {
+     "1 visit": 0.7385964912280701,
+     "2 to 4": 0.5269582909460834,
+     "5 to 32": 0.46469049694856146,
+     "33 or more": 0.48090107737512244,
+     "5 or more": 0.47232472324723246
+    },
+    "kept_on_list": {
+     "1 visit": 0.7593178468359395,
+     "2 to 4": 0.6876195590028189,
+     "5 to 32": 0.6422229973495729,
+     "33 or more": 0.6417230418251728,
+     "5 or more": 0.6419344736160455
+    }
+   }
+  }
+ },
+ "stop_conditions": {
+  "loss_not_finite": {
+   "holds": false,
+   "losses": {
+    "naive": {
+     "first": 0.29260820081981365,
+     "last": 0.031214070551868645,
+     "largest": 0.47412440209882334
+    },
+    "replay": {
+     "first": 0.30968037098500645,
+     "last": 0.10441151176928543,
+     "largest": 0.3849260444403626
+    }
+   }
+  },
+  "buffer_below_capacity_after_visit_64": {
+   "holds": false,
+   "store_in_the_state_after_64_visits": {
+    "items": 55209,
+    "bytes": 938638,
+    "offered": 786432
+   },
+   "at_end": {
+    "used": true,
+    "capacity_items": 55209,
+    "capacity_bytes": 1269828,
+    "items_at_end": 55209,
+    "bytes_at_end": 939508,
+    "max_items": 55209,
+    "max_bytes": 940416,
+    "offered": 12582912
+   },
+   "first_replay_update": 1
+  },
+  "score_below_0_05_over_visits_512_to_1023_in_both_arms": {
+   "holds": false,
+   "mean_score_by_age_512_to_1023": {
+    "naive": 0.6727297748497512,
+    "replay": 0.7146904474451985
+   }
+  },
+  "forecast_above_75_cpu_hours": {
+   "holds": false,
+   "forecast_cpu_hours": 48.02265327008139,
+   "cpu_hours_per_life_of_1024": {
+    "naive": 3.417247405866389,
+    "replay": 3.443131632716667
+   },
+   "forecast_before_the_trial": 48.23635180424263,
+   "note": "32 lives at each arm's measured CPU-hours a visit in the trial, the list included; the decay-0 arms at their partners' cost"
+  }
+ },
+ "any_stop_condition_holds": false,
+ "median_first_visit_level": {
+  "naive": {
+   "all_families": 0.7572645998033155,
+   "without_the_first": 0.7554497544616121,
+   "at_256_visits": 0.6526862026862027,
+   "families": 52
+  },
+  "replay": {
+   "all_families": 0.5949469531711995,
+   "without_the_first": 0.5921804023361453,
+   "at_256_visits": 0.3931013431013431,
+   "families": 52
+  }
+ },
+ "replay_median_below_0_20": false,
+ "quantities": {
+  "naive, 256 visits": {
+   "world": 1,
+   "visits": 256,
+   "visit_updates": 256,
+   "entries": 1048576,
+   "reduction_items": 257708,
+   "families_met": 17,
+   "kinds": {
+    "first": 17,
+    "continuation": 68,
+    "return": 171
+   },
+   "late_level": 0.5815904503858537,
+   "blind_late_level": 0.013577672479236278,
+   "late_level_by_kind": {
+    "first": 0.5866794380233405,
+    "continuation": 0.7381770367058591,
+    "return": 0.5535583871029125
+   },
+   "late_visits_by_kind": {
+    "first": 4,
+    "continuation": 9,
+    "return": 51
+   },
+   "score_trend": -0.02805353354668304,
+   "score_trend_returns": 103,
+   "score_trend_all_visits": 0.06725116627418837,
+   "first_visits": [
+    {
+     "n": 1,
+     "family": 0,
+     "visit": 0,
+     "p": 69,
+     "taught_pairs": 476,
+     "level": 0.8858234295415959,
+     "whole": 0.6679181096570534,
+     "first16": 0.0748663101604278
+    },
+    {
+     "n": 2,
+     "family": 1,
+     "visit": 31,
+     "p": 100,
+     "taught_pairs": 1000,
+     "level": 0.7182066346210907,
+     "whole": 0.4982643203280318,
+     "first16": 0.11706349206349206
+    },
+    {
+     "n": 3,
+     "family": 2,
+     "visit": 54,
+     "p": 62,
+     "taught_pairs": 384,
+     "level": 0.2522826766729206,
+     "whole": 0.1557557723039621,
+     "first16": 0.0
+    },
+    {
+     "n": 4,
+     "family": 3,
+     "visit": 60,
+     "p": 54,
+     "taught_pairs": 292,
+     "level": 0.3251253217721176,
+     "whole": 0.23053515640848785,
+     "first16": 0.015151515151515152
+    },
+    {
+     "n": 5,
+     "family": 4,
+     "visit": 62,
+     "p": 45,
+     "taught_pairs": 202,
+     "level": 0.13339552238805968,
+     "whole": 0.07323656073656074,
+     "first16": 0.015151515151515152
+    },
+    {
+     "n": 6,
+     "family": 5,
+     "visit": 63,
+     "p": 91,
+     "taught_pairs": 828,
+     "level": 0.7213170787284949,
+     "whole": 0.5915278924671988,
+     "first16": 0.0748663101604278
+    },
+    {
+     "n": 7,
+     "family": 6,
+     "visit": 89,
+     "p": 80,
+     "taught_pairs": 640,
+     "level": 0.8791193181818182,
+     "whole": 0.7468407699742268,
+     "first16": 0.07019704433497537
+    },
+    {
+     "n": 8,
+     "family": 7,
+     "visit": 112,
+     "p": 66,
+     "taught_pairs": 436,
+     "level": 0.13608240847046818,
+     "whole": 0.08580722479027564,
+     "first16": 0.0
+    },
+    {
+     "n": 9,
+     "family": 8,
+     "visit": 120,
+     "p": 48,
+     "taught_pairs": 230,
+     "level": 0.36813186813186816,
+     "whole": 0.20402195345659252,
+     "first16": 0.0
+    },
+    {
+     "n": 10,
+     "family": 9,
+     "visit": 141,
+     "p": 64,
+     "taught_pairs": 410,
+     "level": 0.41399358460304725,
+     "whole": 0.2832794790825194,
+     "first16": 0.017857142857142856
+    },
+    {
+     "n": 11,
+     "family": 10,
+     "visit": 142,
+     "p": 72,
+     "taught_pairs": 518,
+     "level": 0.7554497544616121,
+     "whole": 0.5801980198019803,
+     "first16": 0.1566213921901528
+    },
+    {
+     "n": 12,
+     "family": 11,
+     "visit": 147,
+     "p": 44,
+     "taught_pairs": 194,
+     "level": 0.4488421052631579,
+     "whole": 0.32256020278833963,
+     "first16": 0.017241379310344827
+    },
+    {
+     "n": 13,
+     "family": 12,
+     "visit": 184,
+     "p": 95,
+     "taught_pairs": 902,
+     "level": 0.2821493982208268,
+     "whole": 0.15288391394300338,
+     "first16": 0.016129032258064516
+    },
+    {
+     "n": 14,
+     "family": 13,
+     "visit": 207,
+     "p": 90,
+     "taught_pairs": 810,
+     "level": 0.916030534351145,
+     "whole": 0.8727625743893752,
+     "first16": 0.43836405529953915
+    },
+    {
+     "n": 15,
+     "family": 14,
+     "visit": 213,
+     "p": 92,
+     "taught_pairs": 846,
+     "level": 0.7500520869504826,
+     "whole": 0.545471480829156,
+     "first16": 0.09090909090909091
+    },
+    {
+     "n": 16,
+     "family": 15,
+     "visit": 224,
+     "p": 65,
+     "taught_pairs": 422,
+     "level": 0.656301824212272,
+     "whole": 0.4633483558175622,
+     "first16": 0.019230769230769232
+    },
+    {
+     "n": 17,
+     "family": 16,
+     "visit": 239,
+     "p": 76,
+     "taught_pairs": 578,
+     "level": 0.6526862026862027,
+     "whole": 0.4682529821073559,
+     "first16": 0.03101503759398496
+    }
+   ],
+   "median_first_visit_level": 0.6526862026862027,
+   "median_first_visit_level_families_2_on": 0.5507641539746803,
+   "trend_of_learning": -0.006193858125983159,
+   "trend_of_learning_joint_fit": {
+    "ln_n": -0.015141816483265208,
+    "ln_taught_pairs": 0.293766521986311,
+    "intercept": -1.2358595746136323
+   },
+   "kept_at_return": {
+    "1 visit": {
+     "visits": 68,
+     "items": 274,
+     "right": 215,
+     "share": 0.7846715328467153,
+     "first16": 0.7815371424272735,
+     "last_quarter": 0.7985764126008743,
+     "previous_last_quarter": 0.7806280950457252
+    },
+    "2 to 4": {
+     "visits": 86,
+     "items": 346,
+     "right": 10,
+     "share": 0.028901734104046242,
+     "first16": 0.13288853419441465,
+     "last_quarter": 0.7072931902699168,
+     "previous_last_quarter": 0.6923459526645211
+    },
+    "5 to 32": {
+     "visits": 66,
+     "items": 244,
+     "right": 4,
+     "share": 0.01639344262295082,
+     "first16": 0.09036499044354068,
+     "last_quarter": 0.6500845779148604,
+     "previous_last_quarter": 0.6608176781783417
+    },
+    "33 or more": {
+     "visits": 19,
+     "items": 79,
+     "right": 3,
+     "share": 0.0379746835443038,
+     "first16": 0.0549869797116729,
+     "last_quarter": 0.6032636327869515,
+     "previous_last_quarter": 0.5715472400688584
+    },
+    "5 or more": {
+     "visits": 85,
+     "items": 323,
+     "right": 7,
+     "share": 0.021671826625386997,
+     "first16": 0.0824569645152408,
+     "last_quarter": 0.6396187195921512,
+     "previous_last_quarter": 0.6408631096597512
+    }
+   },
+   "kept_at_return_by_earlier_visits": {
+    "1 visit": {
+     "1": {
+      "visits": 4,
+      "items": 11,
+      "right": 6,
+      "share": 0.5454545454545454,
+      "first16": 0.6254756817256817,
+      "last_quarter": 0.7567295011351439
+     },
+     "2 to 3": {
+      "visits": 6,
+      "items": 20,
+      "right": 15,
+      "share": 0.75,
+      "first16": 0.7653109700653736,
+      "last_quarter": 0.7976898607042678
+     },
+     "4 to 7": {
+      "visits": 8,
+      "items": 38,
+      "right": 36,
+      "share": 0.9473684210526315,
+      "first16": 0.8703361795912365,
+      "last_quarter": 0.8545790913298474
+     },
+     "8 to 15": {
+      "visits": 20,
+      "items": 83,
+      "right": 68,
+      "share": 0.8192771084337349,
+      "first16": 0.795698594198776,
+      "last_quarter": 0.8031366400341412
+     },
+     "16 or more": {
+      "visits": 30,
+      "items": 122,
+      "right": 90,
+      "share": 0.7377049180327869,
+      "first16": 0.7724698605684741,
+      "last_quarter": 0.7863591118923893
+     }
+    },
+    "2 to 4": {
+     "1": {
+      "visits": 6,
+      "items": 23,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.09731427960972729,
+      "last_quarter": 0.5795247396161809
+     },
+     "2 to 3": {
+      "visits": 16,
+      "items": 72,
+      "right": 1,
+      "share": 0.013888888888888888,
+      "first16": 0.10681508122745559,
+      "last_quarter": 0.6091566168168283
+     },
+     "4 to 7": {
+      "visits": 16,
+      "items": 53,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.09698476416625751,
+      "last_quarter": 0.6786184241969706
+     },
+     "8 to 15": {
+      "visits": 18,
+      "items": 76,
+      "right": 4,
+      "share": 0.05263157894736842,
+      "first16": 0.14439009935021513,
+      "last_quarter": 0.697417837667309
+     },
+     "16 or more": {
+      "visits": 30,
+      "items": 122,
+      "right": 5,
+      "share": 0.040983606557377046,
+      "first16": 0.1661569649486005,
+      "last_quarter": 0.8064048063761139
+     }
+    },
+    "5 to 32": {
+     "1": {
+      "visits": 4,
+      "items": 11,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.10603119523911404,
+      "last_quarter": 0.6310827830873104
+     },
+     "2 to 3": {
+      "visits": 8,
+      "items": 29,
+      "right": 1,
+      "share": 0.034482758620689655,
+      "first16": 0.06793450165425971,
+      "last_quarter": 0.5003635587766684
+     },
+     "4 to 7": {
+      "visits": 17,
+      "items": 78,
+      "right": 1,
+      "share": 0.01282051282051282,
+      "first16": 0.07879210184119755,
+      "last_quarter": 0.5917836282600316
+     },
+     "8 to 15": {
+      "visits": 22,
+      "items": 75,
+      "right": 1,
+      "share": 0.013333333333333334,
+      "first16": 0.09441476559367629,
+      "last_quarter": 0.6700321260665681
+     },
+     "16 or more": {
+      "visits": 15,
+      "items": 51,
+      "right": 1,
+      "share": 0.0196078431372549,
+      "first16": 0.10532653338146097,
+      "last_quarter": 0.7718209390622106
+     }
+    },
+    "33 or more": {
+     "1": {
+      "visits": 2,
+      "items": 3,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.007352941176470588,
+      "last_quarter": 0.36351036892434785
+     },
+     "2 to 3": {
+      "visits": 2,
+      "items": 7,
+      "right": 3,
+      "share": 0.42857142857142855,
+      "first16": 0.10650122903412376,
+      "last_quarter": 0.6630571883817261
+     },
+     "4 to 7": {
+      "visits": 5,
+      "items": 22,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.009375,
+      "last_quarter": 0.5709171893360201
+     },
+     "8 to 15": {
+      "visits": 2,
+      "items": 11,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.020833333333333332,
+      "last_quarter": 0.4898056018448383
+     },
+     "16 or more": {
+      "visits": 8,
+      "items": 36,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.0910628259292412,
+      "last_quarter": 0.6968345947462689
+     }
+    },
+    "5 or more": {
+     "1": {
+      "visits": 6,
+      "items": 14,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.07313844388489955,
+      "last_quarter": 0.5418919783663229
+     },
+     "2 to 3": {
+      "visits": 10,
+      "items": 36,
+      "right": 4,
+      "share": 0.1111111111111111,
+      "first16": 0.07564784713023251,
+      "last_quarter": 0.5329022846976799
+     },
+     "4 to 7": {
+      "visits": 22,
+      "items": 100,
+      "right": 1,
+      "share": 0.01,
+      "first16": 0.0630154877863799,
+      "last_quarter": 0.5870412557773017
+     },
+     "8 to 15": {
+      "visits": 24,
+      "items": 86,
+      "right": 1,
+      "share": 0.011627906976744186,
+      "first16": 0.08828297957198106,
+      "last_quarter": 0.6550132490480908
+     },
+     "16 or more": {
+      "visits": 23,
+      "items": 87,
+      "right": 1,
+      "share": 0.011494252873563218,
+      "first16": 0.10036524383286281,
+      "last_quarter": 0.7457387323436223
+     }
+    }
+   },
+   "wrong_answers_stream": {
+    "1 visit": {
+     "answers": 274,
+     "shares": {
+      "right": 0.7846715328467153,
+      "the sum or difference without the reduction": 0.0,
+      "the answer under the modulus of the family taught last": 0.0,
+      "the answer under the modulus of an earlier family": 0.025547445255474453,
+      "the answer under 89, the birth family's modulus": 0.0,
+      "one of the operands": 0.0036496350364963502,
+      "the answer under a modulus the life never meets (control)": 0.0036496350364963502,
+      "another two-digit number": 0.18248175182481752,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0036496350364963502
+    },
+    "2 to 4": {
+     "answers": 346,
+     "shares": {
+      "right": 0.028901734104046242,
+      "the sum or difference without the reduction": 0.05202312138728324,
+      "the answer under the modulus of the family taught last": 0.20809248554913296,
+      "the answer under the modulus of an earlier family": 0.05491329479768786,
+      "the answer under 89, the birth family's modulus": 0.049132947976878616,
+      "one of the operands": 0.017341040462427744,
+      "the answer under a modulus the life never meets (control)": 0.0,
+      "another two-digit number": 0.5895953757225434,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0
+    },
+    "5 to 32": {
+     "answers": 244,
+     "shares": {
+      "right": 0.01639344262295082,
+      "the sum or difference without the reduction": 0.07377049180327869,
+      "the answer under the modulus of the family taught last": 0.3114754098360656,
+      "the answer under the modulus of an earlier family": 0.10245901639344263,
+      "the answer under 89, the birth family's modulus": 0.004098360655737705,
+      "one of the operands": 0.03278688524590164,
+      "the answer under a modulus the life never meets (control)": 0.0,
+      "another two-digit number": 0.45901639344262296,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0
+    },
+    "33 or more": {
+     "answers": 79,
+     "shares": {
+      "right": 0.0379746835443038,
+      "the sum or difference without the reduction": 0.189873417721519,
+      "the answer under the modulus of the family taught last": 0.2911392405063291,
+      "the answer under the modulus of an earlier family": 0.08860759493670886,
+      "the answer under 89, the birth family's modulus": 0.0379746835443038,
+      "one of the operands": 0.05063291139240506,
+      "the answer under a modulus the life never meets (control)": 0.02531645569620253,
+      "another two-digit number": 0.27848101265822783,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.02531645569620253
+    },
+    "5 or more": {
+     "answers": 323,
+     "shares": {
+      "right": 0.021671826625386997,
+      "the sum or difference without the reduction": 0.1021671826625387,
+      "the answer under the modulus of the family taught last": 0.3065015479876161,
+      "the answer under the modulus of an earlier family": 0.09907120743034056,
+      "the answer under 89, the birth family's modulus": 0.01238390092879257,
+      "one of the operands": 0.03715170278637771,
+      "the answer under a modulus the life never meets (control)": 0.006191950464396285,
+      "another two-digit number": 0.4148606811145511,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006191950464396285
+    }
+   },
+   "absence_classes_restated": {
+    "1 visit": {
+     "visits": [
+      1,
+      1
+     ],
+     "updates": [
+      256,
+      256
+     ],
+     "decay_constants": [
+      0.064,
+      0.064
+     ]
+    },
+    "2 to 4": {
+     "visits": [
+      2,
+      4
+     ],
+     "updates": [
+      512,
+      1024
+     ],
+     "decay_constants": [
+      0.128,
+      0.256
+     ]
+    },
+    "5 to 32": {
+     "visits": [
+      5,
+      32
+     ],
+     "updates": [
+      1280,
+      8192
+     ],
+     "decay_constants": [
+      0.32,
+      2.048
+     ]
+    },
+    "33 or more": {
+     "visits": [
+      33,
+      null
+     ],
+     "updates": [
+      8448,
+      null
+     ],
+     "decay_constants": [
+      2.112,
+      null
+     ]
+    },
+    "5 or more": {
+     "visits": [
+      5,
+      null
+     ],
+     "updates": [
+      1280,
+      null
+     ],
+     "decay_constants": [
+      0.32,
+      null
+     ]
+    }
+   },
+   "kept_on_list": {
+    "1 visit": {
+     "points": 25,
+     "left_out": 0,
+     "mean": 0.03667725013939666,
+     "median": 0.010869565217391304,
+     "mean_share_right": 0.027999999999999997
+    },
+    "2 to 4": {
+     "points": 51,
+     "left_out": 0,
+     "mean": 0.03296543600345085,
+     "median": 0.011235955056179775,
+     "mean_share_right": 0.023823529411764702
+    },
+    "5 to 32": {
+     "points": 172,
+     "left_out": 0,
+     "mean": 0.02441052310582265,
+     "median": 0.0,
+     "mean_share_right": 0.01581395348837209
+    },
+    "33 or more": {
+     "points": 11,
+     "left_out": 0,
+     "mean": 0.0022583088393682295,
+     "median": 0.0,
+     "mean_share_right": 0.0013636363636363635
+    },
+    "5 or more": {
+     "points": 183,
+     "left_out": 0,
+     "mean": 0.023078969242811727,
+     "median": 0.0,
+     "mean_share_right": 0.014945355191256832
+    }
+   },
+   "wrong_answers_list": {
+    "1 visit": {
+     "answers": 5000,
+     "shares": {
+      "right": 0.028,
+      "the sum or difference without the reduction": 0.0602,
+      "the answer under the modulus of the family taught last": 0.2974,
+      "the answer under the modulus of an earlier family": 0.063,
+      "the answer under 89, the birth family's modulus": 0.0208,
+      "one of the operands": 0.0162,
+      "the answer under a modulus the life never meets (control)": 0.0038,
+      "another two-digit number": 0.5104,
+      "not two digits and the end symbol": 0.0002
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0038
+    },
+    "2 to 4": {
+     "answers": 10200,
+     "shares": {
+      "right": 0.023823529411764705,
+      "the sum or difference without the reduction": 0.08196078431372548,
+      "the answer under the modulus of the family taught last": 0.29215686274509806,
+      "the answer under the modulus of an earlier family": 0.07754901960784313,
+      "the answer under 89, the birth family's modulus": 0.01784313725490196,
+      "one of the operands": 0.016666666666666666,
+      "the answer under a modulus the life never meets (control)": 0.005784313725490196,
+      "another two-digit number": 0.48401960784313725,
+      "not two digits and the end symbol": 0.000196078431372549
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.005784313725490196
+    },
+    "5 to 32": {
+     "answers": 34400,
+     "shares": {
+      "right": 0.01581395348837209,
+      "the sum or difference without the reduction": 0.09584302325581395,
+      "the answer under the modulus of the family taught last": 0.3675581395348837,
+      "the answer under the modulus of an earlier family": 0.06616279069767442,
+      "the answer under 89, the birth family's modulus": 0.0065697674418604655,
+      "one of the operands": 0.015348837209302326,
+      "the answer under a modulus the life never meets (control)": 0.005988372093023255,
+      "another two-digit number": 0.42665697674418607,
+      "not two digits and the end symbol": 5.8139534883720933e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006133720930232558
+    },
+    "33 or more": {
+     "answers": 2200,
+     "shares": {
+      "right": 0.0013636363636363637,
+      "the sum or difference without the reduction": 0.24136363636363636,
+      "the answer under the modulus of the family taught last": 0.5209090909090909,
+      "the answer under the modulus of an earlier family": 0.04363636363636364,
+      "the answer under 89, the birth family's modulus": 0.004545454545454545,
+      "one of the operands": 0.0009090909090909091,
+      "the answer under a modulus the life never meets (control)": 0.006363636363636364,
+      "another two-digit number": 0.1809090909090909,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006363636363636364
+    },
+    "5 or more": {
+     "answers": 36600,
+     "shares": {
+      "right": 0.01494535519125683,
+      "the sum or difference without the reduction": 0.10459016393442623,
+      "the answer under the modulus of the family taught last": 0.376775956284153,
+      "the answer under the modulus of an earlier family": 0.06480874316939891,
+      "the answer under 89, the birth family's modulus": 0.0064480874316939895,
+      "one of the operands": 0.01448087431693989,
+      "the answer under a modulus the life never meets (control)": 0.006010928961748634,
+      "another two-digit number": 0.41188524590163933,
+      "not two digits and the end symbol": 5.46448087431694e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006147540983606557
+    }
+   },
+   "list_rows_read": 515,
+   "life": "lw_naive_w1_v1024"
+  },
+  "naive, 1024 visits": {
+   "world": 1,
+   "visits": 1024,
+   "visit_updates": 256,
+   "entries": 4194304,
+   "reduction_items": 1031054,
+   "families_met": 52,
+   "kinds": {
+    "first": 52,
+    "continuation": 151,
+    "return": 821
+   },
+   "late_level": 0.668969473031305,
+   "blind_late_level": 0.014660401396382318,
+   "late_level_by_kind": {
+    "first": 0.6763080000355094,
+    "continuation": 0.813837685677702,
+    "return": 0.6518486514266604
+   },
+   "late_visits_by_kind": {
+    "first": 7,
+    "continuation": 26,
+    "return": 223
+   },
+   "score_trend": -0.00942544351162154,
+   "score_trend_returns": 436,
+   "score_trend_all_visits": -0.0075101529801087615,
+   "first_visits": [
+    {
+     "n": 1,
+     "family": 0,
+     "visit": 0,
+     "p": 69,
+     "taught_pairs": 476,
+     "level": 0.8858234295415959,
+     "whole": 0.6679181096570534,
+     "first16": 0.0748663101604278
+    },
+    {
+     "n": 2,
+     "family": 1,
+     "visit": 31,
+     "p": 100,
+     "taught_pairs": 1000,
+     "level": 0.7182066346210907,
+     "whole": 0.4982643203280318,
+     "first16": 0.11706349206349206
+    },
+    {
+     "n": 3,
+     "family": 2,
+     "visit": 54,
+     "p": 62,
+     "taught_pairs": 384,
+     "level": 0.2522826766729206,
+     "whole": 0.1557557723039621,
+     "first16": 0.0
+    },
+    {
+     "n": 4,
+     "family": 3,
+     "visit": 60,
+     "p": 54,
+     "taught_pairs": 292,
+     "level": 0.3251253217721176,
+     "whole": 0.23053515640848785,
+     "first16": 0.015151515151515152
+    },
+    {
+     "n": 5,
+     "family": 4,
+     "visit": 62,
+     "p": 45,
+     "taught_pairs": 202,
+     "level": 0.13339552238805968,
+     "whole": 0.07323656073656074,
+     "first16": 0.015151515151515152
+    },
+    {
+     "n": 6,
+     "family": 5,
+     "visit": 63,
+     "p": 91,
+     "taught_pairs": 828,
+     "level": 0.7213170787284949,
+     "whole": 0.5915278924671988,
+     "first16": 0.0748663101604278
+    },
+    {
+     "n": 7,
+     "family": 6,
+     "visit": 89,
+     "p": 80,
+     "taught_pairs": 640,
+     "level": 0.8791193181818182,
+     "whole": 0.7468407699742268,
+     "first16": 0.07019704433497537
+    },
+    {
+     "n": 8,
+     "family": 7,
+     "visit": 112,
+     "p": 66,
+     "taught_pairs": 436,
+     "level": 0.13608240847046818,
+     "whole": 0.08580722479027564,
+     "first16": 0.0
+    },
+    {
+     "n": 9,
+     "family": 8,
+     "visit": 120,
+     "p": 48,
+     "taught_pairs": 230,
+     "level": 0.36813186813186816,
+     "whole": 0.20402195345659252,
+     "first16": 0.0
+    },
+    {
+     "n": 10,
+     "family": 9,
+     "visit": 141,
+     "p": 64,
+     "taught_pairs": 410,
+     "level": 0.41399358460304725,
+     "whole": 0.2832794790825194,
+     "first16": 0.017857142857142856
+    },
+    {
+     "n": 11,
+     "family": 10,
+     "visit": 142,
+     "p": 72,
+     "taught_pairs": 518,
+     "level": 0.7554497544616121,
+     "whole": 0.5801980198019803,
+     "first16": 0.1566213921901528
+    },
+    {
+     "n": 12,
+     "family": 11,
+     "visit": 147,
+     "p": 44,
+     "taught_pairs": 194,
+     "level": 0.4488421052631579,
+     "whole": 0.32256020278833963,
+     "first16": 0.017241379310344827
+    },
+    {
+     "n": 13,
+     "family": 12,
+     "visit": 184,
+     "p": 95,
+     "taught_pairs": 902,
+     "level": 0.2821493982208268,
+     "whole": 0.15288391394300338,
+     "first16": 0.016129032258064516
+    },
+    {
+     "n": 14,
+     "family": 13,
+     "visit": 207,
+     "p": 90,
+     "taught_pairs": 810,
+     "level": 0.916030534351145,
+     "whole": 0.8727625743893752,
+     "first16": 0.43836405529953915
+    },
+    {
+     "n": 15,
+     "family": 14,
+     "visit": 213,
+     "p": 92,
+     "taught_pairs": 846,
+     "level": 0.7500520869504826,
+     "whole": 0.545471480829156,
+     "first16": 0.09090909090909091
+    },
+    {
+     "n": 16,
+     "family": 15,
+     "visit": 224,
+     "p": 65,
+     "taught_pairs": 422,
+     "level": 0.656301824212272,
+     "whole": 0.4633483558175622,
+     "first16": 0.019230769230769232
+    },
+    {
+     "n": 17,
+     "family": 16,
+     "visit": 239,
+     "p": 76,
+     "taught_pairs": 578,
+     "level": 0.6526862026862027,
+     "whole": 0.4682529821073559,
+     "first16": 0.03101503759398496
+    },
+    {
+     "n": 18,
+     "family": 17,
+     "visit": 256,
+     "p": 99,
+     "taught_pairs": 980,
+     "level": 0.7222600408441116,
+     "whole": 0.48049526539229054,
+     "first16": 0.015625
+    },
+    {
+     "n": 19,
+     "family": 18,
+     "visit": 265,
+     "p": 52,
+     "taught_pairs": 270,
+     "level": 0.7616071428571429,
+     "whole": 0.6956092112046743,
+     "first16": 0.2841880341880342
+    },
+    {
+     "n": 20,
+     "family": 19,
+     "visit": 280,
+     "p": 85,
+     "taught_pairs": 722,
+     "level": 0.7424070796460177,
+     "whole": 0.6216506246160147,
+     "first16": 0.031746031746031744
+    },
+    {
+     "n": 21,
+     "family": 20,
+     "visit": 293,
+     "p": 53,
+     "taught_pairs": 281,
+     "level": 0.7725095785440613,
+     "whole": 0.6931475479584047,
+     "first16": 0.3496168582375479
+    },
+    {
+     "n": 22,
+     "family": 21,
+     "visit": 310,
+     "p": 96,
+     "taught_pairs": 922,
+     "level": 0.7482546048722519,
+     "whole": 0.6718459784544046,
+     "first16": 0.20202020202020202
+    },
+    {
+     "n": 23,
+     "family": 22,
+     "visit": 312,
+     "p": 43,
+     "taught_pairs": 185,
+     "level": 0.6250391236306729,
+     "whole": 0.43634557909001465,
+     "first16": 0.013157894736842105
+    },
+    {
+     "n": 24,
+     "family": 23,
+     "visit": 326,
+     "p": 84,
+     "taught_pairs": 706,
+     "level": 0.7602564102564102,
+     "whole": 0.6136656875394625,
+     "first16": 0.04740957966764418
+    },
+    {
+     "n": 25,
+     "family": 24,
+     "visit": 337,
+     "p": 93,
+     "taught_pairs": 865,
+     "level": 0.6658469945355191,
+     "whole": 0.5062412711224001,
+     "first16": 0.1229260935143288
+    },
+    {
+     "n": 26,
+     "family": 25,
+     "visit": 361,
+     "p": 55,
+     "taught_pairs": 302,
+     "level": 0.530952380952381,
+     "whole": 0.4291372141372142,
+     "first16": 0.030834914611005692
+    },
+    {
+     "n": 27,
+     "family": 26,
+     "visit": 375,
+     "p": 70,
+     "taught_pairs": 490,
+     "level": 0.9437756147540983,
+     "whole": 0.8061741842459956,
+     "first16": 0.0
+    },
+    {
+     "n": 28,
+     "family": 27,
+     "visit": 397,
+     "p": 88,
+     "taught_pairs": 774,
+     "level": 0.8678876678876679,
+     "whole": 0.7189119322501784,
+     "first16": 0.03125
+    },
+    {
+     "n": 29,
+     "family": 28,
+     "visit": 411,
+     "p": 68,
+     "taught_pairs": 462,
+     "level": 0.8740985576923077,
+     "whole": 0.7871194554566534,
+     "first16": 0.22298136645962732
+    },
+    {
+     "n": 30,
+     "family": 29,
+     "visit": 435,
+     "p": 51,
+     "taught_pairs": 260,
+     "level": 0.8614211550940947,
+     "whole": 0.7305781690089057,
+     "first16": 0.07963709677419355
+    },
+    {
+     "n": 31,
+     "family": 30,
+     "visit": 436,
+     "p": 81,
+     "taught_pairs": 656,
+     "level": 0.8205536675162843,
+     "whole": 0.7632067590905353,
+     "first16": 0.18988095238095237
+    },
+    {
+     "n": 32,
+     "family": 31,
+     "visit": 460,
+     "p": 79,
+     "taught_pairs": 624,
+     "level": 0.8583016562584849,
+     "whole": 0.6997484504548015,
+     "first16": 0.04415954415954416
+    },
+    {
+     "n": 33,
+     "family": 32,
+     "visit": 512,
+     "p": 58,
+     "taught_pairs": 336,
+     "level": 0.8834586466165413,
+     "whole": 0.775609535359386,
+     "first16": 0.11839080459770115
+    },
+    {
+     "n": 34,
+     "family": 33,
+     "visit": 517,
+     "p": 77,
+     "taught_pairs": 593,
+     "level": 0.5322552138564864,
+     "whole": 0.37069389763779526,
+     "first16": 0.0125
+    },
+    {
+     "n": 35,
+     "family": 34,
+     "visit": 567,
+     "p": 67,
+     "taught_pairs": 449,
+     "level": 0.764801297648013,
+     "whole": 0.507449715370019,
+     "first16": 0.0
+    },
+    {
+     "n": 36,
+     "family": 35,
+     "visit": 570,
+     "p": 56,
+     "taught_pairs": 314,
+     "level": 0.47787878787878785,
+     "whole": 0.2734801517534931,
+     "first16": 0.0
+    },
+    {
+     "n": 37,
+     "family": 36,
+     "visit": 578,
+     "p": 87,
+     "taught_pairs": 757,
+     "level": 0.9086247086247086,
+     "whole": 0.7503699815699847,
+     "first16": 0.07621082621082621
+    },
+    {
+     "n": 38,
+     "family": 37,
+     "visit": 585,
+     "p": 46,
+     "taught_pairs": 212,
+     "level": 0.7082600482053287,
+     "whole": 0.5853108144234247,
+     "first16": 0.09661654135338346
+    },
+    {
+     "n": 39,
+     "family": 38,
+     "visit": 626,
+     "p": 59,
+     "taught_pairs": 348,
+     "level": 0.8473615756224452,
+     "whole": 0.7501038675836691,
+     "first16": 0.16880341880341881
+    },
+    {
+     "n": 40,
+     "family": 39,
+     "visit": 636,
+     "p": 78,
+     "taught_pairs": 608,
+     "level": 0.8015836050302747,
+     "whole": 0.690197716513506,
+     "first16": 0.08974358974358974
+    },
+    {
+     "n": 41,
+     "family": 40,
+     "visit": 669,
+     "p": 86,
+     "taught_pairs": 740,
+     "level": 0.7623367198838897,
+     "whole": 0.4553129406235312,
+     "first16": 0.01282051282051282
+    },
+    {
+     "n": 42,
+     "family": 41,
+     "visit": 691,
+     "p": 41,
+     "taught_pairs": 168,
+     "level": 0.6919745608721987,
+     "whole": 0.5101748095024653,
+     "first16": 0.12645687645687648
+    },
+    {
+     "n": 43,
+     "family": 42,
+     "visit": 717,
+     "p": 82,
+     "taught_pairs": 672,
+     "level": 0.897820823244552,
+     "whole": 0.8236356821262482,
+     "first16": 0.19930069930069932
+    },
+    {
+     "n": 44,
+     "family": 43,
+     "visit": 723,
+     "p": 74,
+     "taught_pairs": 548,
+     "level": 0.851764705882353,
+     "whole": 0.8173136456211813,
+     "first16": 0.47419354838709676
+    },
+    {
+     "n": 45,
+     "family": 44,
+     "visit": 733,
+     "p": 94,
+     "taught_pairs": 884,
+     "level": 0.7906624383368569,
+     "whole": 0.6884442246700542,
+     "first16": 0.22272272272272273
+    },
+    {
+     "n": 46,
+     "family": 45,
+     "visit": 789,
+     "p": 60,
+     "taught_pairs": 360,
+     "level": 0.976266416510319,
+     "whole": 0.9008106110513039,
+     "first16": 0.33035714285714285
+    },
+    {
+     "n": 47,
+     "family": 46,
+     "visit": 793,
+     "p": 61,
+     "taught_pairs": 372,
+     "level": 0.8148967551622419,
+     "whole": 0.7351524560146485,
+     "first16": 0.058823529411764705
+    },
+    {
+     "n": 48,
+     "family": 47,
+     "visit": 794,
+     "p": 75,
+     "taught_pairs": 562,
+     "level": 0.6799288310115081,
+     "whole": 0.433275078918987,
+     "first16": 0.012195121951219513
+    },
+    {
+     "n": 49,
+     "family": 48,
+     "visit": 862,
+     "p": 63,
+     "taught_pairs": 397,
+     "level": 0.9140310523289247,
+     "whole": 0.7773184853436623,
+     "first16": 0.08349451966473243
+    },
+    {
+     "n": 50,
+     "family": 49,
+     "visit": 877,
+     "p": 71,
+     "taught_pairs": 504,
+     "level": 0.7347311513734658,
+     "whole": 0.5155492069160492,
+     "first16": 0.018518518518518517
+    },
+    {
+     "n": 51,
+     "family": 50,
+     "visit": 884,
+     "p": 49,
+     "taught_pairs": 240,
+     "level": 0.9006521739130435,
+     "whole": 0.7856405850659667,
+     "first16": 0.08964646464646464
+    },
+    {
+     "n": 52,
+     "family": 51,
+     "visit": 912,
+     "p": 57,
+     "taught_pairs": 325,
+     "level": 0.7590794451450189,
+     "whole": 0.5835859989556488,
+     "first16": 0.05357142857142857
+    }
+   ],
+   "median_first_visit_level": 0.7572645998033155,
+   "median_first_visit_level_families_2_on": 0.7554497544616121,
+   "trend_of_learning": 0.1064324132158357,
+   "trend_of_learning_joint_fit": {
+    "ln_n": 0.11021168083840706,
+    "ln_taught_pairs": 0.12497732238963555,
+    "intercept": -0.396150501412737
+   },
+   "kept_at_return": {
+    "1 visit": {
+     "visits": 151,
+     "items": 570,
+     "right": 460,
+     "share": 0.8070175438596491,
+     "first16": 0.7822816361435937,
+     "last_quarter": 0.8096892049320272,
+     "previous_last_quarter": 0.7791863747168017
+    },
+    "2 to 4": {
+     "visits": 253,
+     "items": 983,
+     "right": 26,
+     "share": 0.026449643947100712,
+     "first16": 0.14166813053950308,
+     "last_quarter": 0.780668674133386,
+     "previous_last_quarter": 0.7539615455473443
+    },
+    "5 to 32": {
+     "visits": 305,
+     "items": 1147,
+     "right": 18,
+     "share": 0.015693112467306015,
+     "first16": 0.09442210250697716,
+     "last_quarter": 0.7499553242916971,
+     "previous_last_quarter": 0.7670388283563975
+    },
+    "33 or more": {
+     "visits": 263,
+     "items": 1021,
+     "right": 15,
+     "share": 0.014691478942213516,
+     "first16": 0.0946724616165566,
+     "last_quarter": 0.743077459722334,
+     "previous_last_quarter": 0.750682062680455
+    },
+    "5 or more": {
+     "visits": 568,
+     "items": 2168,
+     "right": 33,
+     "share": 0.01522140221402214,
+     "first16": 0.09453802582708172,
+     "last_quarter": 0.7467706792534181,
+     "previous_last_quarter": 0.7594651850944734
+    }
+   },
+   "kept_at_return_by_earlier_visits": {
+    "1 visit": {
+     "1": {
+      "visits": 7,
+      "items": 18,
+      "right": 12,
+      "share": 0.6666666666666666,
+      "first16": 0.6382930719251397,
+      "last_quarter": 0.7488305142325967
+     },
+     "2 to 3": {
+      "visits": 12,
+      "items": 41,
+      "right": 31,
+      "share": 0.7560975609756098,
+      "first16": 0.7318123118457636,
+      "last_quarter": 0.7796497679010744
+     },
+     "4 to 7": {
+      "visits": 30,
+      "items": 117,
+      "right": 105,
+      "share": 0.8974358974358975,
+      "first16": 0.8221535161251204,
+      "last_quarter": 0.8422967760800659
+     },
+     "8 to 15": {
+      "visits": 39,
+      "items": 154,
+      "right": 124,
+      "share": 0.8051948051948052,
+      "first16": 0.782154777025201,
+      "last_quarter": 0.7965516092348145
+     },
+     "16 or more": {
+      "visits": 63,
+      "items": 240,
+      "right": 188,
+      "share": 0.7833333333333333,
+      "first16": 0.7889854924495401,
+      "last_quarter": 0.8147784617100842
+     }
+    },
+    "2 to 4": {
+     "1": {
+      "visits": 12,
+      "items": 46,
+      "right": 1,
+      "share": 0.021739130434782608,
+      "first16": 0.13187591631161058,
+      "last_quarter": 0.6977364893818049
+     },
+     "2 to 3": {
+      "visits": 28,
+      "items": 110,
+      "right": 3,
+      "share": 0.02727272727272727,
+      "first16": 0.12840309000254985,
+      "last_quarter": 0.6897674457140381
+     },
+     "4 to 7": {
+      "visits": 40,
+      "items": 141,
+      "right": 1,
+      "share": 0.0070921985815602835,
+      "first16": 0.108462916783586,
+      "last_quarter": 0.7539247411919199
+     },
+     "8 to 15": {
+      "visits": 75,
+      "items": 284,
+      "right": 10,
+      "share": 0.035211267605633804,
+      "first16": 0.14577886993809963,
+      "last_quarter": 0.7763044162696185
+     },
+     "16 or more": {
+      "visits": 98,
+      "items": 402,
+      "right": 11,
+      "share": 0.02736318407960199,
+      "first16": 0.15706436320390457,
+      "last_quarter": 0.8310512993395281
+     }
+    },
+    "5 to 32": {
+     "1": {
+      "visits": 18,
+      "items": 62,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.06804356457340852,
+      "last_quarter": 0.7256577359735161
+     },
+     "2 to 3": {
+      "visits": 31,
+      "items": 111,
+      "right": 1,
+      "share": 0.009009009009009009,
+      "first16": 0.049623702424938035,
+      "last_quarter": 0.68167978199383
+     },
+     "4 to 7": {
+      "visits": 60,
+      "items": 221,
+      "right": 4,
+      "share": 0.01809954751131222,
+      "first16": 0.09777405180990492,
+      "last_quarter": 0.714616433249975
+     },
+     "8 to 15": {
+      "visits": 73,
+      "items": 273,
+      "right": 5,
+      "share": 0.018315018315018316,
+      "first16": 0.10578870071991224,
+      "last_quarter": 0.745955389149104
+     },
+     "16 or more": {
+      "visits": 123,
+      "items": 480,
+      "right": 8,
+      "share": 0.016666666666666666,
+      "first16": 0.1011919029754936,
+      "last_quarter": 0.7903311546077442
+     }
+    },
+    "33 or more": {
+     "1": {
+      "visits": 15,
+      "items": 52,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.05514074463215579,
+      "last_quarter": 0.6525308633523006
+     },
+     "2 to 3": {
+      "visits": 26,
+      "items": 97,
+      "right": 3,
+      "share": 0.030927835051546393,
+      "first16": 0.10877979751120319,
+      "last_quarter": 0.7719745226709385
+     },
+     "4 to 7": {
+      "visits": 48,
+      "items": 192,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.07439236288843208,
+      "last_quarter": 0.7535956262419056
+     },
+     "8 to 15": {
+      "visits": 65,
+      "items": 241,
+      "right": 2,
+      "share": 0.008298755186721992,
+      "first16": 0.08483999476149696,
+      "last_quarter": 0.71349613056455
+     },
+     "16 or more": {
+      "visits": 109,
+      "items": 439,
+      "right": 10,
+      "share": 0.022779043280182234,
+      "first16": 0.11154163690127268,
+      "last_quarter": 0.7616535121186946
+     }
+    },
+    "5 or more": {
+     "1": {
+      "visits": 33,
+      "items": 114,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.06217864641829365,
+      "last_quarter": 0.6924182484184183
+     },
+     "2 to 3": {
+      "visits": 57,
+      "items": 208,
+      "right": 4,
+      "share": 0.019230769230769232,
+      "first16": 0.07660718439411161,
+      "last_quarter": 0.7228668566886514
+     },
+     "4 to 7": {
+      "visits": 108,
+      "items": 413,
+      "right": 4,
+      "share": 0.009685230024213076,
+      "first16": 0.0873821900670281,
+      "last_quarter": 0.7319405190241665
+     },
+     "8 to 15": {
+      "visits": 138,
+      "items": 514,
+      "right": 7,
+      "share": 0.013618677042801557,
+      "first16": 0.09592155660906447,
+      "last_quarter": 0.7306666079317417
+     },
+     "16 or more": {
+      "visits": 232,
+      "items": 919,
+      "right": 18,
+      "share": 0.01958650707290533,
+      "first16": 0.10605449348372602,
+      "last_quarter": 0.7768576070590096
+     }
+    }
+   },
+   "wrong_answers_stream": {
+    "1 visit": {
+     "answers": 570,
+     "shares": {
+      "right": 0.8070175438596491,
+      "the sum or difference without the reduction": 0.0017543859649122807,
+      "the answer under the modulus of the family taught last": 0.0,
+      "the answer under the modulus of an earlier family": 0.056140350877192984,
+      "the answer under 89, the birth family's modulus": 0.0,
+      "one of the operands": 0.007017543859649123,
+      "the answer under a modulus the life never meets (control)": 0.0017543859649122807,
+      "another two-digit number": 0.12631578947368421,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0017543859649122807
+    },
+    "2 to 4": {
+     "answers": 983,
+     "shares": {
+      "right": 0.026449643947100712,
+      "the sum or difference without the reduction": 0.08138351983723296,
+      "the answer under the modulus of the family taught last": 0.4201424211597152,
+      "the answer under the modulus of an earlier family": 0.14547304170905392,
+      "the answer under 89, the birth family's modulus": 0.024415055951169887,
+      "one of the operands": 0.012207527975584944,
+      "the answer under a modulus the life never meets (control)": 0.001017293997965412,
+      "another two-digit number": 0.28891149542217703,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.002034587995930824
+    },
+    "5 to 32": {
+     "answers": 1147,
+     "shares": {
+      "right": 0.015693112467306015,
+      "the sum or difference without the reduction": 0.11421098517872712,
+      "the answer under the modulus of the family taught last": 0.48299912816041846,
+      "the answer under the modulus of an earlier family": 0.17523975588491716,
+      "the answer under 89, the birth family's modulus": 0.0052310374891020054,
+      "one of the operands": 0.012205754141238012,
+      "the answer under a modulus the life never meets (control)": 0.0052310374891020054,
+      "another two-digit number": 0.1891891891891892,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006974716652136007
+    },
+    "33 or more": {
+     "answers": 1021,
+     "shares": {
+      "right": 0.014691478942213516,
+      "the sum or difference without the reduction": 0.13516160626836435,
+      "the answer under the modulus of the family taught last": 0.4789422135161606,
+      "the answer under the modulus of an earlier family": 0.1939275220372184,
+      "the answer under 89, the birth family's modulus": 0.015670910871694418,
+      "one of the operands": 0.014691478942213516,
+      "the answer under a modulus the life never meets (control)": 0.004897159647404506,
+      "another two-digit number": 0.14201762977473065,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.007835455435847209
+    },
+    "5 or more": {
+     "answers": 2168,
+     "shares": {
+      "right": 0.01522140221402214,
+      "the sum or difference without the reduction": 0.12407749077490775,
+      "the answer under the modulus of the family taught last": 0.48108856088560886,
+      "the answer under the modulus of an earlier family": 0.18404059040590406,
+      "the answer under 89, the birth family's modulus": 0.01014760147601476,
+      "one of the operands": 0.013376383763837638,
+      "the answer under a modulus the life never meets (control)": 0.00507380073800738,
+      "another two-digit number": 0.1669741697416974,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.007380073800738007
+    }
+   },
+   "absence_classes_restated": {
+    "1 visit": {
+     "visits": [
+      1,
+      1
+     ],
+     "updates": [
+      256,
+      256
+     ],
+     "decay_constants": [
+      0.064,
+      0.064
+     ]
+    },
+    "2 to 4": {
+     "visits": [
+      2,
+      4
+     ],
+     "updates": [
+      512,
+      1024
+     ],
+     "decay_constants": [
+      0.128,
+      0.256
+     ]
+    },
+    "5 to 32": {
+     "visits": [
+      5,
+      32
+     ],
+     "updates": [
+      1280,
+      8192
+     ],
+     "decay_constants": [
+      0.32,
+      2.048
+     ]
+    },
+    "33 or more": {
+     "visits": [
+      33,
+      null
+     ],
+     "updates": [
+      8448,
+      null
+     ],
+     "decay_constants": [
+      2.112,
+      null
+     ]
+    },
+    "5 or more": {
+     "visits": [
+      5,
+      null
+     ],
+     "updates": [
+      1280,
+      null
+     ],
+     "decay_constants": [
+      0.32,
+      null
+     ]
+    }
+   },
+   "kept_on_list": {
+    "1 visit": {
+     "points": 113,
+     "left_out": 0,
+     "mean": 0.02213148815725081,
+     "median": 0.0,
+     "mean_share_right": 0.017300884955752216
+    },
+    "2 to 4": {
+     "points": 263,
+     "left_out": 0,
+     "mean": 0.017441827124957697,
+     "median": 0.0,
+     "mean_share_right": 0.013840304182509507
+    },
+    "5 to 32": {
+     "points": 1481,
+     "left_out": 0,
+     "mean": 0.014481931384815294,
+     "median": 0.0,
+     "mean_share_right": 0.011110735989196487
+    },
+    "33 or more": {
+     "points": 2021,
+     "left_out": 0,
+     "mean": 0.012037742616861831,
+     "median": 0.0,
+     "mean_share_right": 0.0097105393369619
+    },
+    "5 or more": {
+     "points": 3502,
+     "left_out": 0,
+     "mean": 0.013071392978180815,
+     "median": 0.0,
+     "mean_share_right": 0.010302684180468303
+    }
+   },
+   "wrong_answers_list": {
+    "1 visit": {
+     "answers": 22600,
+     "shares": {
+      "right": 0.017300884955752212,
+      "the sum or difference without the reduction": 0.10039823008849558,
+      "the answer under the modulus of the family taught last": 0.4789380530973451,
+      "the answer under the modulus of an earlier family": 0.1604424778761062,
+      "the answer under 89, the birth family's modulus": 0.01079646017699115,
+      "one of the operands": 0.008938053097345133,
+      "the answer under a modulus the life never meets (control)": 0.0036283185840707967,
+      "another two-digit number": 0.21946902654867256,
+      "not two digits and the end symbol": 8.849557522123894e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006769911504424779
+    },
+    "2 to 4": {
+     "answers": 52600,
+     "shares": {
+      "right": 0.013840304182509505,
+      "the sum or difference without the reduction": 0.1199809885931559,
+      "the answer under the modulus of the family taught last": 0.4926615969581749,
+      "the answer under the modulus of an earlier family": 0.16036121673003803,
+      "the answer under 89, the birth family's modulus": 0.00956273764258555,
+      "one of the operands": 0.0077186311787072245,
+      "the answer under a modulus the life never meets (control)": 0.00376425855513308,
+      "another two-digit number": 0.1920532319391635,
+      "not two digits and the end symbol": 5.703422053231939e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.005665399239543727
+    },
+    "5 to 32": {
+     "answers": 296200,
+     "shares": {
+      "right": 0.011110735989196489,
+      "the sum or difference without the reduction": 0.12795408507765024,
+      "the answer under the modulus of the family taught last": 0.5005908170155301,
+      "the answer under the modulus of an earlier family": 0.17713706954760297,
+      "the answer under 89, the birth family's modulus": 0.008028359216745442,
+      "one of the operands": 0.006303173531397704,
+      "the answer under a modulus the life never meets (control)": 0.0032072923700202567,
+      "another two-digit number": 0.16562120189061444,
+      "not two digits and the end symbol": 4.7265361242403784e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.005668467251856854
+    },
+    "33 or more": {
+     "answers": 404200,
+     "shares": {
+      "right": 0.0097105393369619,
+      "the sum or difference without the reduction": 0.13365165759524988,
+      "the answer under the modulus of the family taught last": 0.5333621969322118,
+      "the answer under the modulus of an earlier family": 0.21071994062345373,
+      "the answer under 89, the birth family's modulus": 0.007652152399802078,
+      "one of the operands": 0.0035898070262246414,
+      "the answer under a modulus the life never meets (control)": 0.0021177634834240477,
+      "another two-digit number": 0.0991316180108857,
+      "not two digits and the end symbol": 6.432459178624443e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.006152894606630381
+    },
+    "5 or more": {
+     "answers": 700400,
+     "shares": {
+      "right": 0.010302684180468305,
+      "the sum or difference without the reduction": 0.13124214734437464,
+      "the answer under the modulus of the family taught last": 0.5195031410622502,
+      "the answer under the modulus of an earlier family": 0.19651770416904626,
+      "the answer under 89, the birth family's modulus": 0.007811250713877784,
+      "one of the operands": 0.004737292975442604,
+      "the answer under a modulus the life never meets (control)": 0.0025785265562535695,
+      "another two-digit number": 0.12725014277555682,
+      "not two digits and the end symbol": 5.711022272986865e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.005948029697315819
+    }
+   },
+   "list_rows_read": 4902,
+   "life": "lw_naive_w1_v1024"
+  },
+  "replay, 256 visits": {
+   "world": 1,
+   "visits": 256,
+   "visit_updates": 256,
+   "entries": 1048576,
+   "reduction_items": 257708,
+   "families_met": 17,
+   "kinds": {
+    "first": 17,
+    "continuation": 68,
+    "return": 171
+   },
+   "late_level": 0.5773486902326801,
+   "blind_late_level": 0.013577672479236278,
+   "late_level_by_kind": {
+    "first": 0.48009235769166436,
+    "continuation": 0.6382200651331844,
+    "return": 0.5742346305475726
+   },
+   "late_visits_by_kind": {
+    "first": 4,
+    "continuation": 9,
+    "return": 51
+   },
+   "score_trend": -0.06752501983245031,
+   "score_trend_returns": 103,
+   "score_trend_all_visits": 0.0012885832608676452,
+   "first_visits": [
+    {
+     "n": 1,
+     "family": 0,
+     "visit": 0,
+     "p": 69,
+     "taught_pairs": 476,
+     "level": 0.8754951895868703,
+     "whole": 0.6396851179713051,
+     "first16": 0.060160427807486636
+    },
+    {
+     "n": 2,
+     "family": 1,
+     "visit": 31,
+     "p": 100,
+     "taught_pairs": 1000,
+     "level": 0.4197377010266453,
+     "whole": 0.2693604000994036,
+     "first16": 0.04563492063492063
+    },
+    {
+     "n": 3,
+     "family": 2,
+     "visit": 54,
+     "p": 62,
+     "taught_pairs": 384,
+     "level": 0.11416510318949344,
+     "whole": 0.0702831636870321,
+     "first16": 0.016666666666666666
+    },
+    {
+     "n": 4,
+     "family": 3,
+     "visit": 60,
+     "p": 54,
+     "taught_pairs": 292,
+     "level": 0.1646795827123696,
+     "whole": 0.1090436970016635,
+     "first16": 0.018518518518518517
+    },
+    {
+     "n": 5,
+     "family": 4,
+     "visit": 62,
+     "p": 45,
+     "taught_pairs": 202,
+     "level": 0.10570195895522388,
+     "whole": 0.08868057618057618,
+     "first16": 0.021739130434782608
+    },
+    {
+     "n": 6,
+     "family": 5,
+     "visit": 63,
+     "p": 91,
+     "taught_pairs": 828,
+     "level": 0.5327845505297938,
+     "whole": 0.4215467015322507,
+     "first16": 0.044563279857397504
+    },
+    {
+     "n": 7,
+     "family": 6,
+     "visit": 89,
+     "p": 80,
+     "taught_pairs": 640,
+     "level": 0.8212357954545455,
+     "whole": 0.6817855992268042,
+     "first16": 0.06958128078817734
+    },
+    {
+     "n": 8,
+     "family": 7,
+     "visit": 112,
+     "p": 66,
+     "taught_pairs": 436,
+     "level": 0.21817196070927414,
+     "whole": 0.15670261941448382,
+     "first16": 0.019230769230769232
+    },
+    {
+     "n": 9,
+     "family": 8,
+     "visit": 120,
+     "p": 48,
+     "taught_pairs": 230,
+     "level": 0.23960542381595012,
+     "whole": 0.15207558940500637,
+     "first16": 0.014285714285714285
+    },
+    {
+     "n": 10,
+     "family": 9,
+     "visit": 141,
+     "p": 64,
+     "taught_pairs": 410,
+     "level": 0.38642742582197276,
+     "whole": 0.29432572030060467,
+     "first16": 0.02857142857142857
+    },
+    {
+     "n": 11,
+     "family": 10,
+     "visit": 142,
+     "p": 72,
+     "taught_pairs": 518,
+     "level": 0.45661157024793386,
+     "whole": 0.3985009715924863,
+     "first16": 0.14049235993208828
+    },
+    {
+     "n": 12,
+     "family": 11,
+     "visit": 147,
+     "p": 44,
+     "taught_pairs": 194,
+     "level": 0.34950877192982455,
+     "whole": 0.2845843308454208,
+     "first16": 0.06896551724137931
+    },
+    {
+     "n": 13,
+     "family": 12,
+     "visit": 184,
+     "p": 95,
+     "taught_pairs": 902,
+     "level": 0.25330324437467294,
+     "whole": 0.15171791100108828,
+     "first16": 0.0
+    },
+    {
+     "n": 14,
+     "family": 13,
+     "visit": 207,
+     "p": 90,
+     "taught_pairs": 810,
+     "level": 0.8244274809160306,
+     "whole": 0.7513786447921693,
+     "first16": 0.326036866359447
+    },
+    {
+     "n": 15,
+     "family": 14,
+     "visit": 213,
+     "p": 92,
+     "taught_pairs": 846,
+     "level": 0.5086464337801235,
+     "whole": 0.4084897032922368,
+     "first16": 0.078125
+    },
+    {
+     "n": 16,
+     "family": 15,
+     "visit": 224,
+     "p": 65,
+     "taught_pairs": 422,
+     "level": 0.4777674129353233,
+     "whole": 0.4071625323899114,
+     "first16": 0.11025641025641025
+    },
+    {
+     "n": 17,
+     "family": 16,
+     "visit": 239,
+     "p": 76,
+     "taught_pairs": 578,
+     "level": 0.3931013431013431,
+     "whole": 0.357416109404181,
+     "first16": 0.17293233082706766
+    }
+   ],
+   "median_first_visit_level": 0.3931013431013431,
+   "median_first_visit_level_families_2_on": 0.38976438446165795,
+   "trend_of_learning": -0.022977399406195195,
+   "trend_of_learning_joint_fit": {
+    "ln_n": -0.030005843708985076,
+    "ln_taught_pairs": 0.23074779244192112,
+    "intercept": -0.9444378100949248
+   },
+   "kept_at_return": {
+    "1 visit": {
+     "visits": 68,
+     "items": 274,
+     "right": 209,
+     "share": 0.7627737226277372,
+     "first16": 0.737989368234222,
+     "last_quarter": 0.7552643723170384,
+     "previous_last_quarter": 0.7399320801948897
+    },
+    "2 to 4": {
+     "visits": 86,
+     "items": 346,
+     "right": 167,
+     "share": 0.48265895953757226,
+     "first16": 0.5233614811164756,
+     "last_quarter": 0.6376916203895676,
+     "previous_last_quarter": 0.6248043049094016
+    },
+    "5 to 32": {
+     "visits": 66,
+     "items": 244,
+     "right": 104,
+     "share": 0.4262295081967213,
+     "first16": 0.4677540596736376,
+     "last_quarter": 0.6012936136804413,
+     "previous_last_quarter": 0.5940396737382916
+    },
+    "33 or more": {
+     "visits": 19,
+     "items": 79,
+     "right": 36,
+     "share": 0.45569620253164556,
+     "first16": 0.40921288507246273,
+     "last_quarter": 0.587446504112611,
+     "previous_last_quarter": 0.5389732801507892
+    },
+    "5 or more": {
+     "visits": 85,
+     "items": 323,
+     "right": 140,
+     "share": 0.43343653250773995,
+     "first16": 0.45466838535102205,
+     "last_quarter": 0.5981983774241028,
+     "previous_last_quarter": 0.5817307151716735
+    }
+   },
+   "kept_at_return_by_earlier_visits": {
+    "1 visit": {
+     "1": {
+      "visits": 4,
+      "items": 11,
+      "right": 5,
+      "share": 0.45454545454545453,
+      "first16": 0.5013303825803825,
+      "last_quarter": 0.594227546344549
+     },
+     "2 to 3": {
+      "visits": 6,
+      "items": 20,
+      "right": 13,
+      "share": 0.65,
+      "first16": 0.6241575599968834,
+      "last_quarter": 0.6815064734406646
+     },
+     "4 to 7": {
+      "visits": 8,
+      "items": 38,
+      "right": 30,
+      "share": 0.7894736842105263,
+      "first16": 0.7604947506413247,
+      "last_quarter": 0.8026085988234193
+     },
+     "8 to 15": {
+      "visits": 20,
+      "items": 83,
+      "right": 63,
+      "share": 0.7590361445783133,
+      "first16": 0.7434130431502075,
+      "last_quarter": 0.7503919943264045
+     },
+     "16 or more": {
+      "visits": 30,
+      "items": 122,
+      "right": 98,
+      "share": 0.8032786885245902,
+      "first16": 0.7826930427163175,
+      "last_quarter": 0.7821106538140324
+     }
+    },
+    "2 to 4": {
+     "1": {
+      "visits": 6,
+      "items": 23,
+      "right": 1,
+      "share": 0.043478260869565216,
+      "first16": 0.15193198959468399,
+      "last_quarter": 0.4140671047925757
+     },
+     "2 to 3": {
+      "visits": 16,
+      "items": 72,
+      "right": 26,
+      "share": 0.3611111111111111,
+      "first16": 0.37861069906916556,
+      "last_quarter": 0.531413406928083
+     },
+     "4 to 7": {
+      "visits": 16,
+      "items": 53,
+      "right": 21,
+      "share": 0.39622641509433965,
+      "first16": 0.4269177073291704,
+      "last_quarter": 0.5678781586884698
+     },
+     "8 to 15": {
+      "visits": 18,
+      "items": 76,
+      "right": 28,
+      "share": 0.3684210526315789,
+      "first16": 0.49841820631017586,
+      "last_quarter": 0.6171794911629978
+     },
+     "16 or more": {
+      "visits": 30,
+      "items": 122,
+      "right": 91,
+      "share": 0.7459016393442623,
+      "first16": 0.7412504407497418,
+      "last_quarter": 0.7886393611316189
+     }
+    },
+    "5 to 32": {
+     "1": {
+      "visits": 4,
+      "items": 11,
+      "right": 1,
+      "share": 0.09090909090909091,
+      "first16": 0.3815557058296147,
+      "last_quarter": 0.5966157262782936
+     },
+     "2 to 3": {
+      "visits": 8,
+      "items": 29,
+      "right": 5,
+      "share": 0.1724137931034483,
+      "first16": 0.25681028201189493,
+      "last_quarter": 0.4528642115911429
+     },
+     "4 to 7": {
+      "visits": 17,
+      "items": 78,
+      "right": 25,
+      "share": 0.32051282051282054,
+      "first16": 0.3522480537801029,
+      "last_quarter": 0.5146203169582788
+     },
+     "8 to 15": {
+      "visits": 22,
+      "items": 75,
+      "right": 38,
+      "share": 0.5066666666666667,
+      "first16": 0.5059091372738802,
+      "last_quarter": 0.6275526679461829
+     },
+     "16 or more": {
+      "visits": 15,
+      "items": 51,
+      "right": 35,
+      "share": 0.6862745098039216,
+      "first16": 0.6781896616506232,
+      "last_quarter": 0.7414198547973361
+     }
+    },
+    "33 or more": {
+     "1": {
+      "visits": 2,
+      "items": 3,
+      "right": 0,
+      "share": 0.0,
+      "first16": 0.09726150075414781,
+      "last_quarter": 0.33172943743711236
+     },
+     "2 to 3": {
+      "visits": 2,
+      "items": 7,
+      "right": 2,
+      "share": 0.2857142857142857,
+      "first16": 0.24810674522845577,
+      "last_quarter": 0.6073825449075835
+     },
+     "4 to 7": {
+      "visits": 5,
+      "items": 22,
+      "right": 8,
+      "share": 0.36363636363636365,
+      "first16": 0.27380997959626996,
+      "last_quarter": 0.4697400317625748
+     },
+     "8 to 15": {
+      "visits": 2,
+      "items": 11,
+      "right": 4,
+      "share": 0.36363636363636365,
+      "first16": 0.30403253355839566,
+      "last_quarter": 0.472603410257705
+     },
+     "16 or more": {
+      "visits": 8,
+      "items": 36,
+      "right": 22,
+      "share": 0.6111111111111112,
+      "first16": 0.6383991699141807,
+      "last_quarter": 0.7486690792652417
+     }
+    },
+    "5 or more": {
+     "1": {
+      "visits": 6,
+      "items": 14,
+      "right": 1,
+      "share": 0.07142857142857142,
+      "first16": 0.28679097080445903,
+      "last_quarter": 0.5083202966645666
+     },
+     "2 to 3": {
+      "visits": 10,
+      "items": 36,
+      "right": 7,
+      "share": 0.19444444444444445,
+      "first16": 0.2550695746552071,
+      "last_quarter": 0.4837678782544309
+     },
+     "4 to 7": {
+      "visits": 22,
+      "items": 100,
+      "right": 33,
+      "share": 0.33,
+      "first16": 0.33442121873832265,
+      "last_quarter": 0.5044202521410734
+     },
+     "8 to 15": {
+      "visits": 24,
+      "items": 86,
+      "right": 42,
+      "share": 0.4883720930232558,
+      "first16": 0.48908608696425654,
+      "last_quarter": 0.6146402298054764
+     },
+     "16 or more": {
+      "visits": 23,
+      "items": 87,
+      "right": 57,
+      "share": 0.6551724137931034,
+      "first16": 0.6643494906118605,
+      "last_quarter": 0.7439413241774773
+     }
+    }
+   },
+   "wrong_answers_stream": {
+    "1 visit": {
+     "answers": 274,
+     "shares": {
+      "right": 0.7627737226277372,
+      "the sum or difference without the reduction": 0.0,
+      "the answer under the modulus of the family taught last": 0.0,
+      "the answer under the modulus of an earlier family": 0.025547445255474453,
+      "the answer under 89, the birth family's modulus": 0.0,
+      "one of the operands": 0.0036496350364963502,
+      "the answer under a modulus the life never meets (control)": 0.0072992700729927005,
+      "another two-digit number": 0.20072992700729927,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0072992700729927005
+    },
+    "2 to 4": {
+     "answers": 346,
+     "shares": {
+      "right": 0.48265895953757226,
+      "the sum or difference without the reduction": 0.005780346820809248,
+      "the answer under the modulus of the family taught last": 0.011560693641618497,
+      "the answer under the modulus of an earlier family": 0.06358381502890173,
+      "the answer under 89, the birth family's modulus": 0.008670520231213872,
+      "one of the operands": 0.008670520231213872,
+      "the answer under a modulus the life never meets (control)": 0.02023121387283237,
+      "another two-digit number": 0.3988439306358382,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.02023121387283237
+    },
+    "5 to 32": {
+     "answers": 244,
+     "shares": {
+      "right": 0.4262295081967213,
+      "the sum or difference without the reduction": 0.020491803278688523,
+      "the answer under the modulus of the family taught last": 0.03278688524590164,
+      "the answer under the modulus of an earlier family": 0.0778688524590164,
+      "the answer under 89, the birth family's modulus": 0.0,
+      "one of the operands": 0.01639344262295082,
+      "the answer under a modulus the life never meets (control)": 0.00819672131147541,
+      "another two-digit number": 0.4180327868852459,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.00819672131147541
+    },
+    "33 or more": {
+     "answers": 79,
+     "shares": {
+      "right": 0.45569620253164556,
+      "the sum or difference without the reduction": 0.012658227848101266,
+      "the answer under the modulus of the family taught last": 0.012658227848101266,
+      "the answer under the modulus of an earlier family": 0.10126582278481013,
+      "the answer under 89, the birth family's modulus": 0.0,
+      "one of the operands": 0.0,
+      "the answer under a modulus the life never meets (control)": 0.0379746835443038,
+      "another two-digit number": 0.379746835443038,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0379746835443038
+    },
+    "5 or more": {
+     "answers": 323,
+     "shares": {
+      "right": 0.43343653250773995,
+      "the sum or difference without the reduction": 0.018575851393188854,
+      "the answer under the modulus of the family taught last": 0.02786377708978328,
+      "the answer under the modulus of an earlier family": 0.08359133126934984,
+      "the answer under 89, the birth family's modulus": 0.0,
+      "one of the operands": 0.01238390092879257,
+      "the answer under a modulus the life never meets (control)": 0.015479876160990712,
+      "another two-digit number": 0.4086687306501548,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.015479876160990712
+    }
+   },
+   "absence_classes_restated": {
+    "1 visit": {
+     "visits": [
+      1,
+      1
+     ],
+     "updates": [
+      256,
+      256
+     ],
+     "decay_constants": [
+      0.064,
+      0.064
+     ]
+    },
+    "2 to 4": {
+     "visits": [
+      2,
+      4
+     ],
+     "updates": [
+      512,
+      1024
+     ],
+     "decay_constants": [
+      0.128,
+      0.256
+     ]
+    },
+    "5 to 32": {
+     "visits": [
+      5,
+      32
+     ],
+     "updates": [
+      1280,
+      8192
+     ],
+     "decay_constants": [
+      0.32,
+      2.048
+     ]
+    },
+    "33 or more": {
+     "visits": [
+      33,
+      null
+     ],
+     "updates": [
+      8448,
+      null
+     ],
+     "decay_constants": [
+      2.112,
+      null
+     ]
+    },
+    "5 or more": {
+     "visits": [
+      5,
+      null
+     ],
+     "updates": [
+      1280,
+      null
+     ],
+     "decay_constants": [
+      0.32,
+      null
+     ]
+    }
+   },
+   "kept_on_list": {
+    "1 visit": {
+     "points": 25,
+     "left_out": 0,
+     "mean": 0.7501235718123861,
+     "median": 0.7651006711409395,
+     "mean_share_right": 0.4706
+    },
+    "2 to 4": {
+     "points": 51,
+     "left_out": 0,
+     "mean": 0.6784533676535145,
+     "median": 0.7245508982035929,
+     "mean_share_right": 0.4375490196078431
+    },
+    "5 to 32": {
+     "points": 172,
+     "left_out": 0,
+     "mean": 0.6388827904756529,
+     "median": 0.6741573033707865,
+     "mean_share_right": 0.3881686046511628
+    },
+    "33 or more": {
+     "points": 11,
+     "left_out": 0,
+     "mean": 0.6192385473561158,
+     "median": 0.6179775280898877,
+     "mean_share_right": 0.3386363636363636
+    },
+    "5 or more": {
+     "points": 183,
+     "left_out": 0,
+     "mean": 0.6377019889766642,
+     "median": 0.671875,
+     "mean_share_right": 0.3851912568306011
+    }
+   },
+   "wrong_answers_list": {
+    "1 visit": {
+     "answers": 5000,
+     "shares": {
+      "right": 0.4706,
+      "the sum or difference without the reduction": 0.0096,
+      "the answer under the modulus of the family taught last": 0.0078,
+      "the answer under the modulus of an earlier family": 0.0868,
+      "the answer under 89, the birth family's modulus": 0.0014,
+      "one of the operands": 0.012,
+      "the answer under a modulus the life never meets (control)": 0.0058,
+      "another two-digit number": 0.406,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.0058
+    },
+    "2 to 4": {
+     "answers": 10200,
+     "shares": {
+      "right": 0.43754901960784315,
+      "the sum or difference without the reduction": 0.015196078431372549,
+      "the answer under the modulus of the family taught last": 0.009607843137254901,
+      "the answer under the modulus of an earlier family": 0.08568627450980393,
+      "the answer under 89, the birth family's modulus": 0.002058823529411765,
+      "one of the operands": 0.017058823529411765,
+      "the answer under a modulus the life never meets (control)": 0.014411764705882353,
+      "another two-digit number": 0.41833333333333333,
+      "not two digits and the end symbol": 9.80392156862745e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.015196078431372549
+    },
+    "5 to 32": {
+     "answers": 34400,
+     "shares": {
+      "right": 0.38816860465116276,
+      "the sum or difference without the reduction": 0.012325581395348837,
+      "the answer under the modulus of the family taught last": 0.018372093023255813,
+      "the answer under the modulus of an earlier family": 0.1051453488372093,
+      "the answer under 89, the birth family's modulus": 0.0021220930232558138,
+      "one of the operands": 0.017732558139534883,
+      "the answer under a modulus the life never meets (control)": 0.014651162790697675,
+      "another two-digit number": 0.44136627906976744,
+      "not two digits and the end symbol": 0.00011627906976744187
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.015319767441860465
+    },
+    "33 or more": {
+     "answers": 2200,
+     "shares": {
+      "right": 0.3386363636363636,
+      "the sum or difference without the reduction": 0.004545454545454545,
+      "the answer under the modulus of the family taught last": 0.004090909090909091,
+      "the answer under the modulus of an earlier family": 0.13272727272727272,
+      "the answer under 89, the birth family's modulus": 0.00045454545454545455,
+      "one of the operands": 0.015454545454545455,
+      "the answer under a modulus the life never meets (control)": 0.014545454545454545,
+      "another two-digit number": 0.48954545454545456,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.015454545454545455
+    },
+    "5 or more": {
+     "answers": 36600,
+     "shares": {
+      "right": 0.38519125683060107,
+      "the sum or difference without the reduction": 0.01185792349726776,
+      "the answer under the modulus of the family taught last": 0.017513661202185792,
+      "the answer under the modulus of an earlier family": 0.10680327868852459,
+      "the answer under 89, the birth family's modulus": 0.002021857923497268,
+      "one of the operands": 0.017595628415300546,
+      "the answer under a modulus the life never meets (control)": 0.0146448087431694,
+      "another two-digit number": 0.44426229508196724,
+      "not two digits and the end symbol": 0.0001092896174863388
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.015327868852459016
+    }
+   },
+   "list_rows_read": 515,
+   "life": "lw_replay_w1_v1024_rho0.5"
+  },
+  "replay, 1024 visits": {
+   "world": 1,
+   "visits": 1024,
+   "visit_updates": 256,
+   "entries": 4194304,
+   "reduction_items": 1031054,
+   "families_met": 52,
+   "kinds": {
+    "first": 52,
+    "continuation": 151,
+    "return": 821
+   },
+   "late_level": 0.7304083974058202,
+   "blind_late_level": 0.014660401396382318,
+   "late_level_by_kind": {
+    "first": 0.6505212329579215,
+    "continuation": 0.7687630651829873,
+    "return": 0.7284442215714207
+   },
+   "late_visits_by_kind": {
+    "first": 7,
+    "continuation": 26,
+    "return": 223
+   },
+   "score_trend": 0.07898463674025773,
+   "score_trend_returns": 436,
+   "score_trend_all_visits": 0.08672343627921196,
+   "first_visits": [
+    {
+     "n": 1,
+     "family": 0,
+     "visit": 0,
+     "p": 69,
+     "taught_pairs": 476,
+     "level": 0.8754951895868703,
+     "whole": 0.6396851179713051,
+     "first16": 0.060160427807486636
+    },
+    {
+     "n": 2,
+     "family": 1,
+     "visit": 31,
+     "p": 100,
+     "taught_pairs": 1000,
+     "level": 0.4197377010266453,
+     "whole": 0.2693604000994036,
+     "first16": 0.04563492063492063
+    },
+    {
+     "n": 3,
+     "family": 2,
+     "visit": 54,
+     "p": 62,
+     "taught_pairs": 384,
+     "level": 0.11416510318949344,
+     "whole": 0.0702831636870321,
+     "first16": 0.016666666666666666
+    },
+    {
+     "n": 4,
+     "family": 3,
+     "visit": 60,
+     "p": 54,
+     "taught_pairs": 292,
+     "level": 0.1646795827123696,
+     "whole": 0.1090436970016635,
+     "first16": 0.018518518518518517
+    },
+    {
+     "n": 5,
+     "family": 4,
+     "visit": 62,
+     "p": 45,
+     "taught_pairs": 202,
+     "level": 0.10570195895522388,
+     "whole": 0.08868057618057618,
+     "first16": 0.021739130434782608
+    },
+    {
+     "n": 6,
+     "family": 5,
+     "visit": 63,
+     "p": 91,
+     "taught_pairs": 828,
+     "level": 0.5327845505297938,
+     "whole": 0.4215467015322507,
+     "first16": 0.044563279857397504
+    },
+    {
+     "n": 7,
+     "family": 6,
+     "visit": 89,
+     "p": 80,
+     "taught_pairs": 640,
+     "level": 0.8212357954545455,
+     "whole": 0.6817855992268042,
+     "first16": 0.06958128078817734
+    },
+    {
+     "n": 8,
+     "family": 7,
+     "visit": 112,
+     "p": 66,
+     "taught_pairs": 436,
+     "level": 0.21817196070927414,
+     "whole": 0.15670261941448382,
+     "first16": 0.019230769230769232
+    },
+    {
+     "n": 9,
+     "family": 8,
+     "visit": 120,
+     "p": 48,
+     "taught_pairs": 230,
+     "level": 0.23960542381595012,
+     "whole": 0.15207558940500637,
+     "first16": 0.014285714285714285
+    },
+    {
+     "n": 10,
+     "family": 9,
+     "visit": 141,
+     "p": 64,
+     "taught_pairs": 410,
+     "level": 0.38642742582197276,
+     "whole": 0.29432572030060467,
+     "first16": 0.02857142857142857
+    },
+    {
+     "n": 11,
+     "family": 10,
+     "visit": 142,
+     "p": 72,
+     "taught_pairs": 518,
+     "level": 0.45661157024793386,
+     "whole": 0.3985009715924863,
+     "first16": 0.14049235993208828
+    },
+    {
+     "n": 12,
+     "family": 11,
+     "visit": 147,
+     "p": 44,
+     "taught_pairs": 194,
+     "level": 0.34950877192982455,
+     "whole": 0.2845843308454208,
+     "first16": 0.06896551724137931
+    },
+    {
+     "n": 13,
+     "family": 12,
+     "visit": 184,
+     "p": 95,
+     "taught_pairs": 902,
+     "level": 0.25330324437467294,
+     "whole": 0.15171791100108828,
+     "first16": 0.0
+    },
+    {
+     "n": 14,
+     "family": 13,
+     "visit": 207,
+     "p": 90,
+     "taught_pairs": 810,
+     "level": 0.8244274809160306,
+     "whole": 0.7513786447921693,
+     "first16": 0.326036866359447
+    },
+    {
+     "n": 15,
+     "family": 14,
+     "visit": 213,
+     "p": 92,
+     "taught_pairs": 846,
+     "level": 0.5086464337801235,
+     "whole": 0.4084897032922368,
+     "first16": 0.078125
+    },
+    {
+     "n": 16,
+     "family": 15,
+     "visit": 224,
+     "p": 65,
+     "taught_pairs": 422,
+     "level": 0.4777674129353233,
+     "whole": 0.4071625323899114,
+     "first16": 0.11025641025641025
+    },
+    {
+     "n": 17,
+     "family": 16,
+     "visit": 239,
+     "p": 76,
+     "taught_pairs": 578,
+     "level": 0.3931013431013431,
+     "whole": 0.357416109404181,
+     "first16": 0.17293233082706766
+    },
+    {
+     "n": 18,
+     "family": 17,
+     "visit": 256,
+     "p": 99,
+     "taught_pairs": 980,
+     "level": 0.7901633764465623,
+     "whole": 0.5788915085253759,
+     "first16": 0.046875
+    },
+    {
+     "n": 19,
+     "family": 18,
+     "visit": 265,
+     "p": 52,
+     "taught_pairs": 270,
+     "level": 0.5819113756613756,
+     "whole": 0.5060577418800482,
+     "first16": 0.1047008547008547
+    },
+    {
+     "n": 20,
+     "family": 19,
+     "visit": 280,
+     "p": 85,
+     "taught_pairs": 722,
+     "level": 0.5073628318584071,
+     "whole": 0.46904157280360437,
+     "first16": 0.20436507936507936
+    },
+    {
+     "n": 21,
+     "family": 20,
+     "visit": 293,
+     "p": 53,
+     "taught_pairs": 281,
+     "level": 0.5295977011494253,
+     "whole": 0.47158368058597055,
+     "first16": 0.2006704980842912
+    },
+    {
+     "n": 22,
+     "family": 21,
+     "visit": 310,
+     "p": 96,
+     "taught_pairs": 922,
+     "level": 0.5544786096256684,
+     "whole": 0.45539301710923524,
+     "first16": 0.07196969696969696
+    },
+    {
+     "n": 23,
+     "family": 22,
+     "visit": 312,
+     "p": 43,
+     "taught_pairs": 185,
+     "level": 0.6042775169535732,
+     "whole": 0.5233826505040005,
+     "first16": 0.20300751879699247
+    },
+    {
+     "n": 24,
+     "family": 23,
+     "visit": 326,
+     "p": 84,
+     "taught_pairs": 706,
+     "level": 0.5419871794871796,
+     "whole": 0.48032464145512155,
+     "first16": 0.14418377321603126
+    },
+    {
+     "n": 25,
+     "family": 24,
+     "visit": 337,
+     "p": 93,
+     "taught_pairs": 865,
+     "level": 0.5242486338797814,
+     "whole": 0.43290287355639695,
+     "first16": 0.05316742081447964
+    },
+    {
+     "n": 26,
+     "family": 25,
+     "visit": 361,
+     "p": 55,
+     "taught_pairs": 302,
+     "level": 0.6891106442577031,
+     "whole": 0.6326528066528067,
+     "first16": 0.41555977229601515
+    },
+    {
+     "n": 27,
+     "family": 26,
+     "visit": 375,
+     "p": 70,
+     "taught_pairs": 490,
+     "level": 0.8516265368852459,
+     "whole": 0.7208667680155472,
+     "first16": 0.15915697674418605
+    },
+    {
+     "n": 28,
+     "family": 27,
+     "visit": 397,
+     "p": 88,
+     "taught_pairs": 774,
+     "level": 0.4990842490842491,
+     "whole": 0.3725421389386017,
+     "first16": 0.046875
+    },
+    {
+     "n": 29,
+     "family": 28,
+     "visit": 411,
+     "p": 68,
+     "taught_pairs": 462,
+     "level": 0.5336538461538461,
+     "whole": 0.43369195734742894,
+     "first16": 0.05714285714285714
+    },
+    {
+     "n": 30,
+     "family": 29,
+     "visit": 435,
+     "p": 51,
+     "taught_pairs": 260,
+     "level": 0.5921804023361453,
+     "whole": 0.4834315088137313,
+     "first16": 0.11088709677419355
+    },
+    {
+     "n": 31,
+     "family": 30,
+     "visit": 436,
+     "p": 81,
+     "taught_pairs": 656,
+     "level": 0.7526196544888133,
+     "whole": 0.6388370693871543,
+     "first16": 0.20416666666666666
+    },
+    {
+     "n": 32,
+     "family": 31,
+     "visit": 460,
+     "p": 79,
+     "taught_pairs": 624,
+     "level": 0.5762286179744773,
+     "whole": 0.47812927634226843,
+     "first16": 0.0698005698005698
+    },
+    {
+     "n": 33,
+     "family": 32,
+     "visit": 512,
+     "p": 58,
+     "taught_pairs": 336,
+     "level": 0.5977443609022557,
+     "whole": 0.4836660814161855,
+     "first16": 0.16896551724137931
+    },
+    {
+     "n": 34,
+     "family": 33,
+     "visit": 517,
+     "p": 77,
+     "taught_pairs": 593,
+     "level": 0.6348533050547897,
+     "whole": 0.49682289254284395,
+     "first16": 0.22042682926829268
+    },
+    {
+     "n": 35,
+     "family": 34,
+     "visit": 567,
+     "p": 67,
+     "taught_pairs": 449,
+     "level": 0.6728429721130451,
+     "whole": 0.5536015180265654,
+     "first16": 0.24101307189542487
+    },
+    {
+     "n": 36,
+     "family": 35,
+     "visit": 570,
+     "p": 56,
+     "taught_pairs": 314,
+     "level": 0.5781818181818181,
+     "whole": 0.5154066808550014,
+     "first16": 0.07573632538569425
+    },
+    {
+     "n": 37,
+     "family": 36,
+     "visit": 578,
+     "p": 87,
+     "taught_pairs": 757,
+     "level": 0.6608391608391608,
+     "whole": 0.5825127964292338,
+     "first16": 0.22863247863247863
+    },
+    {
+     "n": 38,
+     "family": 37,
+     "visit": 585,
+     "p": 46,
+     "taught_pairs": 212,
+     "level": 0.5977135040062537,
+     "whole": 0.5457238445692001,
+     "first16": 0.19548872180451127
+    },
+    {
+     "n": 39,
+     "family": 38,
+     "visit": 626,
+     "p": 59,
+     "taught_pairs": 348,
+     "level": 0.764399851356373,
+     "whole": 0.6322883512504915,
+     "first16": 0.08547008547008547
+    },
+    {
+     "n": 40,
+     "family": 39,
+     "visit": 636,
+     "p": 78,
+     "taught_pairs": 608,
+     "level": 0.6742353671790096,
+     "whole": 0.5848030570252793,
+     "first16": 0.19230769230769232
+    },
+    {
+     "n": 41,
+     "family": 40,
+     "visit": 669,
+     "p": 86,
+     "taught_pairs": 740,
+     "level": 0.5375907111756169,
+     "whole": 0.43172097759674133,
+     "first16": 0.10714285714285714
+    },
+    {
+     "n": 42,
+     "family": 41,
+     "visit": 691,
+     "p": 41,
+     "taught_pairs": 168,
+     "level": 0.6387643852210781,
+     "whole": 0.5046473248848865,
+     "first16": 0.14976689976689977
+    },
+    {
+     "n": 43,
+     "family": 42,
+     "visit": 717,
+     "p": 82,
+     "taught_pairs": 672,
+     "level": 0.6777845036319612,
+     "whole": 0.601053884072752,
+     "first16": 0.24883449883449882
+    },
+    {
+     "n": 44,
+     "family": 43,
+     "visit": 723,
+     "p": 74,
+     "taught_pairs": 548,
+     "level": 0.7791596638655462,
+     "whole": 0.6953971486761711,
+     "first16": 0.48709677419354835
+    },
+    {
+     "n": 45,
+     "family": 44,
+     "visit": 733,
+     "p": 94,
+     "taught_pairs": 884,
+     "level": 0.6156800563777308,
+     "whole": 0.540318180268049,
+     "first16": 0.22622622622622623
+    },
+    {
+     "n": 46,
+     "family": 45,
+     "visit": 789,
+     "p": 60,
+     "taught_pairs": 360,
+     "level": 0.7863977485928706,
+     "whole": 0.6882340890467086,
+     "first16": 0.1607142857142857
+    },
+    {
+     "n": 47,
+     "family": 46,
+     "visit": 793,
+     "p": 61,
+     "taught_pairs": 372,
+     "level": 0.7806925129933979,
+     "whole": 0.750630257675875,
+     "first16": 0.5294117647058824
+    },
+    {
+     "n": 48,
+     "family": 47,
+     "visit": 794,
+     "p": 75,
+     "taught_pairs": 562,
+     "level": 0.7122577225923683,
+     "whole": 0.6397358083587212,
+     "first16": 0.18292682926829268
+    },
+    {
+     "n": 49,
+     "family": 48,
+     "visit": 862,
+     "p": 63,
+     "taught_pairs": 397,
+     "level": 0.6863139735480162,
+     "whole": 0.5855675926486312,
+     "first16": 0.18375241779497098
+    },
+    {
+     "n": 50,
+     "family": 49,
+     "visit": 877,
+     "p": 71,
+     "taught_pairs": 504,
+     "level": 0.7440824079485681,
+     "whole": 0.6357489339812347,
+     "first16": 0.29118773946360155
+    },
+    {
+     "n": 51,
+     "family": 50,
+     "visit": 884,
+     "p": 49,
+     "taught_pairs": 240,
+     "level": 0.7218115942028985,
+     "whole": 0.6551814947848311,
+     "first16": 0.1717171717171717
+    },
+    {
+     "n": 52,
+     "family": 51,
+     "visit": 912,
+     "p": 57,
+     "taught_pairs": 325,
+     "level": 0.6730138713745271,
+     "whole": 0.6028854414068422,
+     "first16": 0.4017857142857143
+    }
+   ],
+   "median_first_visit_level": 0.5949469531711995,
+   "median_first_visit_level_families_2_on": 0.5921804023361453,
+   "trend_of_learning": 0.10349967105146513,
+   "trend_of_learning_joint_fit": {
+    "ln_n": 0.10570161017216907,
+    "ln_taught_pairs": 0.07281634508416442,
+    "intercept": -0.19191528209478056
+   },
+   "kept_at_return": {
+    "1 visit": {
+     "visits": 151,
+     "items": 570,
+     "right": 421,
+     "share": 0.7385964912280701,
+     "first16": 0.7302708486511948,
+     "last_quarter": 0.7584981205273263,
+     "previous_last_quarter": 0.7347713932519717
+    },
+    "2 to 4": {
+     "visits": 253,
+     "items": 983,
+     "right": 518,
+     "share": 0.5269582909460834,
+     "first16": 0.5805306510204794,
+     "last_quarter": 0.7007067590369194,
+     "previous_last_quarter": 0.6876945769299736
+    },
+    "5 to 32": {
+     "visits": 305,
+     "items": 1147,
+     "right": 533,
+     "share": 0.46469049694856146,
+     "first16": 0.5401168335700949,
+     "last_quarter": 0.7028696417292455,
+     "previous_last_quarter": 0.7026357296350947
+    },
+    "33 or more": {
+     "visits": 263,
+     "items": 1021,
+     "right": 491,
+     "share": 0.48090107737512244,
+     "first16": 0.5355780919621186,
+     "last_quarter": 0.7085649631869512,
+     "previous_last_quarter": 0.6997078019786639
+    },
+    "5 or more": {
+     "visits": 568,
+     "items": 2168,
+     "right": 1024,
+     "share": 0.47232472324723246,
+     "first16": 0.5380152683537256,
+     "last_quarter": 0.7055067359957535,
+     "previous_last_quarter": 0.7012800166533318
+    }
+   },
+   "kept_at_return_by_earlier_visits": {
+    "1 visit": {
+     "1": {
+      "visits": 7,
+      "items": 18,
+      "right": 9,
+      "share": 0.5,
+      "first16": 0.5511621296124133,
+      "last_quarter": 0.6447080933875807
+     },
+     "2 to 3": {
+      "visits": 12,
+      "items": 41,
+      "right": 28,
+      "share": 0.6829268292682927,
+      "first16": 0.6773366679125795,
+      "last_quarter": 0.7186492992506466
+     },
+     "4 to 7": {
+      "visits": 30,
+      "items": 117,
+      "right": 85,
+      "share": 0.7264957264957265,
+      "first16": 0.7318887963053566,
+      "last_quarter": 0.7666150581742971
+     },
+     "8 to 15": {
+      "visits": 39,
+      "items": 154,
+      "right": 115,
+      "share": 0.7467532467532467,
+      "first16": 0.7168214889064278,
+      "last_quarter": 0.7413093775397039
+     },
+     "16 or more": {
+      "visits": 63,
+      "items": 240,
+      "right": 184,
+      "share": 0.7666666666666667,
+      "first16": 0.7678098613901777,
+      "last_quarter": 0.7855071505655251
+     }
+    },
+    "2 to 4": {
+     "1": {
+      "visits": 12,
+      "items": 46,
+      "right": 6,
+      "share": 0.13043478260869565,
+      "first16": 0.24707695397953774,
+      "last_quarter": 0.5400615703166998
+     },
+     "2 to 3": {
+      "visits": 28,
+      "items": 110,
+      "right": 41,
+      "share": 0.37272727272727274,
+      "first16": 0.434373793587827,
+      "last_quarter": 0.6105918202218391
+     },
+     "4 to 7": {
+      "visits": 40,
+      "items": 141,
+      "right": 65,
+      "share": 0.46099290780141844,
+      "first16": 0.5040240245340254,
+      "last_quarter": 0.6589566096085969
+     },
+     "8 to 15": {
+      "visits": 75,
+      "items": 284,
+      "right": 143,
+      "share": 0.5035211267605634,
+      "first16": 0.5617711290881304,
+      "last_quarter": 0.683354063109173
+     },
+     "16 or more": {
+      "visits": 98,
+      "items": 402,
+      "right": 263,
+      "share": 0.654228855721393,
+      "first16": 0.7087047895611926,
+      "last_quarter": 0.7764457255999677
+     }
+    },
+    "5 to 32": {
+     "1": {
+      "visits": 18,
+      "items": 62,
+      "right": 5,
+      "share": 0.08064516129032258,
+      "first16": 0.3339050067150672,
+      "last_quarter": 0.6755661849041007
+     },
+     "2 to 3": {
+      "visits": 31,
+      "items": 111,
+      "right": 28,
+      "share": 0.25225225225225223,
+      "first16": 0.34826243319777006,
+      "last_quarter": 0.623837396154815
+     },
+     "4 to 7": {
+      "visits": 60,
+      "items": 221,
+      "right": 71,
+      "share": 0.3212669683257919,
+      "first16": 0.4489178269163256,
+      "last_quarter": 0.6418286608553542
+     },
+     "8 to 15": {
+      "visits": 73,
+      "items": 273,
+      "right": 150,
+      "share": 0.5494505494505495,
+      "first16": 0.5787199324527157,
+      "last_quarter": 0.7048739031141619
+     },
+     "16 or more": {
+      "visits": 123,
+      "items": 480,
+      "right": 279,
+      "share": 0.58125,
+      "first16": 0.6402242602020248,
+      "last_quarter": 0.7553705328430221
+     }
+    },
+    "33 or more": {
+     "1": {
+      "visits": 15,
+      "items": 52,
+      "right": 8,
+      "share": 0.15384615384615385,
+      "first16": 0.28053904044603634,
+      "last_quarter": 0.6333530371787431
+     },
+     "2 to 3": {
+      "visits": 26,
+      "items": 97,
+      "right": 33,
+      "share": 0.3402061855670103,
+      "first16": 0.42644826459835955,
+      "last_quarter": 0.6961547651842567
+     },
+     "4 to 7": {
+      "visits": 48,
+      "items": 192,
+      "right": 67,
+      "share": 0.3489583333333333,
+      "first16": 0.4774822735449494,
+      "last_quarter": 0.6890766326285055
+     },
+     "8 to 15": {
+      "visits": 65,
+      "items": 241,
+      "right": 125,
+      "share": 0.5186721991701245,
+      "first16": 0.5299379995317811,
+      "last_quarter": 0.6868582043418009
+     },
+     "16 or more": {
+      "visits": 109,
+      "items": 439,
+      "right": 258,
+      "share": 0.5876993166287016,
+      "first16": 0.6256530146795038,
+      "last_quarter": 0.7434018735533119
+     }
+    },
+    "5 or more": {
+     "1": {
+      "visits": 33,
+      "items": 114,
+      "right": 13,
+      "share": 0.11403508771929824,
+      "first16": 0.3096477493200532,
+      "last_quarter": 0.6563783904834837
+     },
+     "2 to 3": {
+      "visits": 57,
+      "items": 208,
+      "right": 61,
+      "share": 0.2932692307692308,
+      "first16": 0.38392614576646,
+      "last_quarter": 0.6568242662384199
+     },
+     "4 to 7": {
+      "visits": 108,
+      "items": 413,
+      "right": 138,
+      "share": 0.3341404358353511,
+      "first16": 0.46161313652904734,
+      "last_quarter": 0.6628277594211993
+     },
+     "8 to 15": {
+      "visits": 138,
+      "items": 514,
+      "right": 275,
+      "share": 0.5350194552529183,
+      "first16": 0.5557429350624205,
+      "last_quarter": 0.6963882478952963
+     },
+     "16 or more": {
+      "visits": 232,
+      "items": 919,
+      "right": 537,
+      "share": 0.5843307943416758,
+      "first16": 0.633378287090151,
+      "last_quarter": 0.7497473265388049
+     }
+    }
+   },
+   "wrong_answers_stream": {
+    "1 visit": {
+     "answers": 570,
+     "shares": {
+      "right": 0.7385964912280701,
+      "the sum or difference without the reduction": 0.0017543859649122807,
+      "the answer under the modulus of the family taught last": 0.0,
+      "the answer under the modulus of an earlier family": 0.08947368421052632,
+      "the answer under 89, the birth family's modulus": 0.005263157894736842,
+      "one of the operands": 0.005263157894736842,
+      "the answer under a modulus the life never meets (control)": 0.007017543859649123,
+      "another two-digit number": 0.15263157894736842,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.007017543859649123
+    },
+    "2 to 4": {
+     "answers": 983,
+     "shares": {
+      "right": 0.5269582909460834,
+      "the sum or difference without the reduction": 0.015259409969481181,
+      "the answer under the modulus of the family taught last": 0.012207527975584944,
+      "the answer under the modulus of an earlier family": 0.16378433367243134,
+      "the answer under 89, the birth family's modulus": 0.011190233977619531,
+      "one of the operands": 0.00508646998982706,
+      "the answer under a modulus the life never meets (control)": 0.012207527975584944,
+      "another two-digit number": 0.25228891149542215,
+      "not two digits and the end symbol": 0.001017293997965412
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.012207527975584944
+    },
+    "5 to 32": {
+     "answers": 1147,
+     "shares": {
+      "right": 0.46469049694856146,
+      "the sum or difference without the reduction": 0.02702702702702703,
+      "the answer under the modulus of the family taught last": 0.016564952048823016,
+      "the answer under the modulus of an earlier family": 0.25544899738448124,
+      "the answer under 89, the birth family's modulus": 0.014821272885789015,
+      "one of the operands": 0.0052310374891020054,
+      "the answer under a modulus the life never meets (control)": 0.013077593722755012,
+      "another two-digit number": 0.2031386224934612,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.013077593722755012
+    },
+    "33 or more": {
+     "answers": 1021,
+     "shares": {
+      "right": 0.48090107737512244,
+      "the sum or difference without the reduction": 0.022526934378060724,
+      "the answer under the modulus of the family taught last": 0.012732615083251714,
+      "the answer under the modulus of an earlier family": 0.2850146914789422,
+      "the answer under 89, the birth family's modulus": 0.010773751224289911,
+      "one of the operands": 0.005876591576885406,
+      "the answer under a modulus the life never meets (control)": 0.009794319294809012,
+      "another two-digit number": 0.17238001958863858,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.009794319294809012
+    },
+    "5 or more": {
+     "answers": 2168,
+     "shares": {
+      "right": 0.47232472324723246,
+      "the sum or difference without the reduction": 0.024907749077490774,
+      "the answer under the modulus of the family taught last": 0.014760147601476014,
+      "the answer under the modulus of an earlier family": 0.2693726937269373,
+      "the answer under 89, the birth family's modulus": 0.012915129151291513,
+      "one of the operands": 0.005535055350553505,
+      "the answer under a modulus the life never meets (control)": 0.011531365313653136,
+      "another two-digit number": 0.1886531365313653,
+      "not two digits and the end symbol": 0.0
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.011531365313653136
+    }
+   },
+   "absence_classes_restated": {
+    "1 visit": {
+     "visits": [
+      1,
+      1
+     ],
+     "updates": [
+      256,
+      256
+     ],
+     "decay_constants": [
+      0.064,
+      0.064
+     ]
+    },
+    "2 to 4": {
+     "visits": [
+      2,
+      4
+     ],
+     "updates": [
+      512,
+      1024
+     ],
+     "decay_constants": [
+      0.128,
+      0.256
+     ]
+    },
+    "5 to 32": {
+     "visits": [
+      5,
+      32
+     ],
+     "updates": [
+      1280,
+      8192
+     ],
+     "decay_constants": [
+      0.32,
+      2.048
+     ]
+    },
+    "33 or more": {
+     "visits": [
+      33,
+      null
+     ],
+     "updates": [
+      8448,
+      null
+     ],
+     "decay_constants": [
+      2.112,
+      null
+     ]
+    },
+    "5 or more": {
+     "visits": [
+      5,
+      null
+     ],
+     "updates": [
+      1280,
+      null
+     ],
+     "decay_constants": [
+      0.32,
+      null
+     ]
+    }
+   },
+   "kept_on_list": {
+    "1 visit": {
+     "points": 113,
+     "left_out": 0,
+     "mean": 0.7593178468359395,
+     "median": 0.7828947368421052,
+     "mean_share_right": 0.5299115044247787
+    },
+    "2 to 4": {
+     "points": 263,
+     "left_out": 0,
+     "mean": 0.6876195590028189,
+     "median": 0.7348484848484848,
+     "mean_share_right": 0.4888403041825095
+    },
+    "5 to 32": {
+     "points": 1481,
+     "left_out": 0,
+     "mean": 0.6422229973495729,
+     "median": 0.6704545454545454,
+     "mean_share_right": 0.4532984469952735
+    },
+    "33 or more": {
+     "points": 2021,
+     "left_out": 0,
+     "mean": 0.6417230418251728,
+     "median": 0.6621621621621622,
+     "mean_share_right": 0.4610044532409698
+    },
+    "5 or more": {
+     "points": 3502,
+     "left_out": 0,
+     "mean": 0.6419344736160455,
+     "median": 0.6645365455287873,
+     "mean_share_right": 0.45774557395773846
+    }
+   },
+   "wrong_answers_list": {
+    "1 visit": {
+     "answers": 22600,
+     "shares": {
+      "right": 0.5299115044247787,
+      "the sum or difference without the reduction": 0.015442477876106194,
+      "the answer under the modulus of the family taught last": 0.01079646017699115,
+      "the answer under the modulus of an earlier family": 0.22871681415929204,
+      "the answer under 89, the birth family's modulus": 0.006592920353982301,
+      "one of the operands": 0.006106194690265487,
+      "the answer under a modulus the life never meets (control)": 0.006150442477876106,
+      "another two-digit number": 0.19619469026548672,
+      "not two digits and the end symbol": 8.849557522123894e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.007256637168141593
+    },
+    "2 to 4": {
+     "answers": 52600,
+     "shares": {
+      "right": 0.4888403041825095,
+      "the sum or difference without the reduction": 0.02344106463878327,
+      "the answer under the modulus of the family taught last": 0.011444866920152091,
+      "the answer under the modulus of an earlier family": 0.2584220532319392,
+      "the answer under 89, the birth family's modulus": 0.00844106463878327,
+      "one of the operands": 0.006920152091254753,
+      "the answer under a modulus the life never meets (control)": 0.009258555133079847,
+      "another two-digit number": 0.193212927756654,
+      "not two digits and the end symbol": 1.9011406844106464e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.010171102661596957
+    },
+    "5 to 32": {
+     "answers": 296200,
+     "shares": {
+      "right": 0.45329844699527344,
+      "the sum or difference without the reduction": 0.020982444294395677,
+      "the answer under the modulus of the family taught last": 0.012805536799459824,
+      "the answer under the modulus of an earlier family": 0.29800810263335586,
+      "the answer under 89, the birth family's modulus": 0.008342336259284268,
+      "one of the operands": 0.006326806212018906,
+      "the answer under a modulus the life never meets (control)": 0.008575286968264687,
+      "another two-digit number": 0.19158338960162052,
+      "not two digits and the end symbol": 7.765023632680622e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.009976367319378798
+    },
+    "33 or more": {
+     "answers": 404200,
+     "shares": {
+      "right": 0.46100445324096984,
+      "the sum or difference without the reduction": 0.020969816922315684,
+      "the answer under the modulus of the family taught last": 0.014824344383968333,
+      "the answer under the modulus of an earlier family": 0.3551855517070757,
+      "the answer under 89, the birth family's modulus": 0.010232558139534883,
+      "one of the operands": 0.004156358238495794,
+      "the answer under a modulus the life never meets (control)": 0.010321622958931222,
+      "another two-digit number": 0.1232632360217714,
+      "not two digits and the end symbol": 4.205838693715982e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.012736269173676398
+    },
+    "5 or more": {
+     "answers": 700400,
+     "shares": {
+      "right": 0.45774557395773846,
+      "the sum or difference without the reduction": 0.02097515705311251,
+      "the answer under the modulus of the family taught last": 0.013970588235294118,
+      "the answer under the modulus of an earlier family": 0.3310051399200457,
+      "the answer under 89, the birth family's modulus": 0.009433181039406054,
+      "one of the operands": 0.005074243289548829,
+      "the answer under a modulus the life never meets (control)": 0.009583095374071959,
+      "another two-digit number": 0.15215591090805256,
+      "not two digits and the end symbol": 5.711022272986865e-05
+     },
+     "chance_never_met_modulus_in_place_of_the_last": 0.01156910336950314
+    }
+   },
+   "list_rows_read": 4902,
+   "life": "lw_replay_w1_v1024_rho0.5"
+  }
+ },
+ "blocks": {
+  "naive": [
+   {
+    "visits": "0 to 63",
+    "all": 0.7822082613688033,
+    "blind": 0.013623583461417624,
+    "returns": 0.7541606807089198,
+    "continuations": 0.8473713634480777,
+    "first": 0.3697898676605192,
+    "n_return": 14,
+    "n_cont": 44,
+    "n_first": 6
+   },
+   {
+    "visits": "64 to 127",
+    "all": 0.5439621121229807,
+    "blind": 0.01499735896779919,
+    "returns": 0.5339848119790175,
+    "continuations": 0.7061587289262051,
+    "first": 0.3450947421734644,
+    "n_return": 54,
+    "n_cont": 7,
+    "n_first": 3
+   },
+   {
+    "visits": "128 to 191",
+    "all": 0.5634275523871799,
+    "blind": 0.015091721927696667,
+    "returns": 0.575198217105502,
+    "continuations": 0.6005532033632006,
+    "first": 0.3361576090969498,
+    "n_return": 52,
+    "n_cont": 8,
+    "n_first": 4
+   },
+   {
+    "visits": "192 to 255",
+    "all": 0.5815904503858537,
+    "blind": 0.013577672479236278,
+    "returns": 0.5535583871029125,
+    "continuations": 0.7381770367058591,
+    "first": 0.5866794380233405,
+    "n_return": 51,
+    "n_cont": 9,
+    "n_first": 4
+   },
+   {
+    "visits": "256 to 319",
+    "all": 0.6429223998850195,
+    "blind": 0.016186532191004098,
+    "returns": 0.6376308795563478,
+    "continuations": 0.7180003707109333,
+    "first": 0.6003093567151638,
+    "n_return": 51,
+    "n_cont": 7,
+    "n_first": 6
+   },
+   {
+    "visits": "320 to 383",
+    "all": 0.6221200317916015,
+    "blind": 0.014784741975733581,
+    "returns": 0.6043051129013589,
+    "continuations": 0.8048479843866164,
+    "first": 0.5885295079173526,
+    "n_return": 54,
+    "n_cont": 6,
+    "n_first": 4
+   },
+   {
+    "visits": "384 to 447",
+    "all": 0.6244208536106515,
+    "blind": 0.013708875890647657,
+    "returns": 0.5956291433162467,
+    "continuations": 0.7709607918949617,
+    "first": 0.7494661230139713,
+    "n_return": 53,
+    "n_cont": 7,
+    "n_first": 4
+   },
+   {
+    "visits": "448 to 511",
+    "all": 0.6675567364699838,
+    "blind": 0.013997187470525979,
+    "returns": 0.6369679630210265,
+    "continuations": 0.9076178434283966,
+    "first": 0.7001003009027081,
+    "n_return": 56,
+    "n_cont": 7,
+    "n_first": 1
+   },
+   {
+    "visits": "512 to 575",
+    "all": 0.6618093239667806,
+    "blind": 0.01441528270419215,
+    "returns": 0.6428916625677155,
+    "continuations": 0.7976765267000032,
+    "first": 0.48121965255589577,
+    "n_return": 48,
+    "n_cont": 12,
+    "n_first": 4
+   },
+   {
+    "visits": "576 to 639",
+    "all": 0.6673674291220629,
+    "blind": 0.01479840480938215,
+    "returns": 0.6557676128956255,
+    "continuations": 0.8515900887718272,
+    "first": 0.6944978156114756,
+    "n_return": 57,
+    "n_cont": 3,
+    "n_first": 4
+   },
+   {
+    "visits": "640 to 703",
+    "all": 0.6800116410078785,
+    "blind": 0.0137045348359355,
+    "returns": 0.6743467540098961,
+    "continuations": 0.8238815593571587,
+    "first": 0.4817861245771788,
+    "n_return": 57,
+    "n_cont": 5,
+    "n_first": 2
+   },
+   {
+    "visits": "704 to 767",
+    "all": 0.6967719125760666,
+    "blind": 0.014983787848711582,
+    "returns": 0.6675494742450621,
+    "continuations": 0.8218061713285072,
+    "first": 0.776772501695012,
+    "n_return": 51,
+    "n_cont": 10,
+    "n_first": 3
+   },
+   {
+    "visits": "768 to 831",
+    "all": 0.6845430831481859,
+    "blind": 0.01483534696219728,
+    "returns": 0.655869884309581,
+    "continuations": 0.8003436796664816,
+    "first": 0.6896696114388825,
+    "n_return": 49,
+    "n_cont": 12,
+    "n_first": 3
+   },
+   {
+    "visits": "832 to 895",
+    "all": 0.6954873320294854,
+    "blind": 0.013966737906354065,
+    "returns": 0.6873904969670354,
+    "continuations": 0.9375218732533097,
+    "first": 0.6933687274417872,
+    "n_return": 59,
+    "n_cont": 2,
+    "n_first": 3
+   },
+   {
+    "visits": "896 to 959",
+    "all": 0.6557635631054084,
+    "blind": 0.014981435267852427,
+    "returns": 0.6327173011164978,
+    "continuations": 0.8502368846593862,
+    "first": 0.5850409836065574,
+    "n_return": 56,
+    "n_cont": 7,
+    "n_first": 1
+   },
+   {
+    "visits": "960 to 1023",
+    "all": 0.6400839138421403,
+    "blind": 0.014858085449125497,
+    "returns": 0.6311257076846919,
+    "continuations": 0.7457907465000304,
+    "first": null,
+    "n_return": 59,
+    "n_cont": 5,
+    "n_first": 0
+   }
+  ],
+  "replay": [
+   {
+    "visits": "0 to 63",
+    "all": 0.7477545248515391,
+    "blind": 0.013623583461417624,
+    "returns": 0.7465475896959485,
+    "continuations": 0.8137376779136217,
+    "first": 0.2666942510926453,
+    "n_return": 14,
+    "n_cont": 44,
+    "n_first": 6
+   },
+   {
+    "visits": "64 to 127",
+    "all": 0.5517844133542488,
+    "blind": 0.01499735896779919,
+    "returns": 0.5521849544233569,
+    "continuations": 0.6434352818865791,
+    "first": 0.33072264753486286,
+    "n_return": 54,
+    "n_cont": 7,
+    "n_first": 3
+   },
+   {
+    "visits": "128 to 191",
+    "all": 0.570674529222856,
+    "blind": 0.015091721927696667,
+    "returns": 0.5896457368614896,
+    "continuations": 0.5905288726142798,
+    "first": 0.28434014313777184,
+    "n_return": 52,
+    "n_cont": 8,
+    "n_first": 4
+   },
+   {
+    "visits": "192 to 255",
+    "all": 0.5773486902326801,
+    "blind": 0.013577672479236278,
+    "returns": 0.5742346305475726,
+    "continuations": 0.6382200651331844,
+    "first": 0.48009235769166436,
+    "n_return": 51,
+    "n_cont": 9,
+    "n_first": 4
+   },
+   {
+    "visits": "256 to 319",
+    "all": 0.623328982583494,
+    "blind": 0.016186532191004098,
+    "returns": 0.6364256702520155,
+    "continuations": 0.6319298252119921,
+    "first": 0.5019728210011477,
+    "n_return": 51,
+    "n_cont": 7,
+    "n_first": 6
+   },
+   {
+    "visits": "320 to 383",
+    "all": 0.6342788626451621,
+    "blind": 0.014784741975733581,
+    "returns": 0.6374384471021534,
+    "continuations": 0.6504157526539537,
+    "first": 0.567419137462594,
+    "n_return": 54,
+    "n_cont": 6,
+    "n_first": 4
+   },
+   {
+    "visits": "384 to 447",
+    "all": 0.6414165843626605,
+    "blind": 0.013708875890647657,
+    "returns": 0.6412624189828615,
+    "continuations": 0.7339879360708819,
+    "first": 0.481459410155609,
+    "n_return": 53,
+    "n_cont": 7,
+    "n_first": 4
+   },
+   {
+    "visits": "448 to 511",
+    "all": 0.685018714052644,
+    "blind": 0.013997187470525979,
+    "returns": 0.6725293917690763,
+    "continuations": 0.8141586337612899,
+    "first": 0.48044132397191575,
+    "n_return": 56,
+    "n_cont": 7,
+    "n_first": 1
+   },
+   {
+    "visits": "512 to 575",
+    "all": 0.6940667475032658,
+    "blind": 0.01441528270419215,
+    "returns": 0.6932843327322634,
+    "continuations": 0.7579257464976296,
+    "first": 0.5118787277722038,
+    "n_return": 48,
+    "n_cont": 12,
+    "n_first": 4
+   },
+   {
+    "visits": "576 to 639",
+    "all": 0.684334833464764,
+    "blind": 0.01479840480938215,
+    "returns": 0.6858007695915597,
+    "continuations": 0.7881718856696908,
+    "first": 0.5855674545042294,
+    "n_return": 57,
+    "n_cont": 3,
+    "n_first": 4
+   },
+   {
+    "visits": "640 to 703",
+    "all": 0.7085208045576419,
+    "blind": 0.0137045348359355,
+    "returns": 0.7157226503748573,
+    "continuations": 0.7220672174718349,
+    "first": 0.4694021664815186,
+    "n_return": 57,
+    "n_cont": 5,
+    "n_first": 2
+   },
+   {
+    "visits": "704 to 767",
+    "all": 0.7089676044126356,
+    "blind": 0.014983787848711582,
+    "returns": 0.7053461654883674,
+    "continuations": 0.7562966651421348,
+    "first": 0.6127685303601994,
+    "n_return": 51,
+    "n_cont": 10,
+    "n_first": 3
+   },
+   {
+    "visits": "768 to 831",
+    "all": 0.7205766451590905,
+    "blind": 0.01483534696219728,
+    "returns": 0.7149682464998843,
+    "continuations": 0.750559938419296,
+    "first": 0.6922473168853016,
+    "n_return": 49,
+    "n_cont": 12,
+    "n_first": 3
+   },
+   {
+    "visits": "832 to 895",
+    "all": 0.7417102876400983,
+    "blind": 0.013966737906354065,
+    "returns": 0.7446564934469535,
+    "continuations": 0.8291142258060262,
+    "first": 0.6254989479946572,
+    "n_return": 59,
+    "n_cont": 2,
+    "n_first": 3
+   },
+   {
+    "visits": "896 to 959",
+    "all": 0.7309278746203464,
+    "blind": 0.014981435267852427,
+    "returns": 0.7265305294926941,
+    "continuations": 0.7847520697208169,
+    "first": 0.6004098360655737,
+    "n_return": 56,
+    "n_cont": 7,
+    "n_first": 1
+   },
+   {
+    "visits": "960 to 1023",
+    "all": 0.7284187822037456,
+    "blind": 0.014858085449125497,
+    "returns": 0.7252402468978199,
+    "continuations": 0.7659254988136694,
+    "first": null,
+    "n_return": 59,
+    "n_cont": 5,
+    "n_first": 0
+   }
+  ]
+ }
+}

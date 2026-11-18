@@ -127,8 +127,9 @@ def prune():
             world1 = s in ("lw_naive_w1_v1024", "lw_replay_w1_v1024_rho0.5") and n in (256, 1024)
             if world1 or (n == latest and not finished):
                 keep.append(p)
-            elif probe_pending or (n == latest and finished and long_ and probe_pending):
-                pass                                            # stays on disk for the probe; not committed
+            elif probe_pending:
+                keep.append(p)                                  # committed until its probe branch is done, so that a lost container
+                                                                # does not lose the probe; removed from the tree afterwards
             elif done_norms(s, n) and not (n == latest and not finished):
                 p.unlink()
     return keep
@@ -156,6 +157,16 @@ def save(message=None):
         git("reset", "-q", "--", *[str(p.relative_to(ROOT)) for p in unfinished])
     if keep:
         git("add", "-f", *[str(p.relative_to(ROOT)) for p in keep])
+    # The log of a job is committed once the job is done: a running life appends to its log at every visit, and a tracked file that
+    # changes every few seconds leaves the working tree modified at all times. Logs of running jobs and the saver's own log are
+    # excluded locally (.git/info/exclude); the receipt holds every visit's record in any case.
+    logs = [p for d in (LIVES, PROBE) for p in d.glob("*.log")]
+    done_logs = [str(p.relative_to(ROOT)) for p in logs if p.with_suffix(".done").exists() or p.with_suffix(".failed").exists()]
+    live_logs = [str(p.relative_to(ROOT)) for p in logs if str(p.relative_to(ROOT)) not in done_logs]
+    if done_logs:
+        git("add", "-f", *done_logs)
+    if live_logs:
+        git("rm", "-q", "--cached", "--ignore-unmatch", *live_logs)
     if git("diff", "--cached", "--quiet", check=False).returncode == 0:
         print(time.strftime("%H:%M:%S"), "nothing to save", flush=True); return
     git("commit", "-q", "-m", (message or "E44 L2: receipts, event files, logs and the latest states of the running lives (saved while the lives run)")
