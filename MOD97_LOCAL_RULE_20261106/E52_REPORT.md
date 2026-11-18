@@ -297,3 +297,42 @@ Present width with f = 0.50 does not qualify. The sweep gains at half width, so 
 ## 9. Committed files
 
 The list below is from `git ls-tree -r --name-only HEAD` on the worker's branch, restricted to the files E52 added. It is regenerated after this report is committed, and given in Section 9.1.
+
+### 9.1 The list
+
+The list was produced by the command `git diff --name-only --diff-filter=A origin/codex/minifly-consolidated-20261023 HEAD`, intersected with `git ls-tree -r --name-only HEAD`, at commit 0d2c2351. This commit is the one before this section was added, and the report itself is also committed.
+
+- No file of the default branch is modified: `git diff --name-only --diff-filter=M` against the default branch is empty.
+- All paths are under `MOD97_LOCAL_RULE_20261106/`, and there are 153 files.
+
+**Sources (6).**
+- `exp52_rate.py` (sha256 f633f6f4f3759b36…)
+- `exp52_resume.py` (6531525f8bffec5f…)
+- `exp52_drive.py` (50865187911102cc…)
+- `exp52_drive2.py` (6c0ff96a1d7aa5a8…)
+- `exp52_tables.py` (78b83f736d2a6ba5…)
+- `exp46_decay.py` (the byte-for-byte copy of E46's runner, d7e98b3001629589…)
+
+**The report.** `E52_REPORT.md`.
+
+**Receipts and final weights** (`exp45/e52/`, 70 files): the receipt `e52_<S|B>_h<256|512>_f<25|50>_lr<rate>[_product]_93683.json` and the final weights in the `.pt` file of the same name, for each of the 35 runs:
+- 8 cases at the rates 0.0003, 0.001 and 0.003 (24 runs);
+- 4 product controls (`_product`, half width, f = 0.50, rates 0.0003 and 0.003);
+- 7 runs at 0.01 (every case except the sweep at present width with f = 0.50).
+
+**Tables.** `exp45/e52/E52_TABLES.md` and `exp45/e52/E52_SUMMARY.json`.
+
+**Logs** (`exp45/e52/logs/`, 39 files).
+- One log per run: `e52_<...>_93683.log`.
+- The launch log `LAUNCHES.txt`.
+- The driver outputs `driver.out`, `driver2.out` and `driver2_further.out`.
+
+**Partial receipts and logs of interrupted runs** (`exp45/e52/interrupted/`, 11 files): each carries the time at which it was moved.
+
+**Checks** (`exp45/e52_qual/`).
+- The receipts `check1a.json`, `check1b.json`, `check2.json`, `check3.json` and `check4.json`.
+- The receipts of their dry runs: `check1a_runs/`, `check3_runs/` and `check4_runs/{S,B}/{i,ii,iii}/`.
+- The failed first attempt of check 4: `check4_attempt1_failed_runs_20261118T013037Z/`.
+- The check logs: `logs/`.
+
+The checkpoints (`*.ckpt`) are not committed (`.gitignore`), and are deleted when a run completes. The weights of the checks' dry runs are not committed either.
