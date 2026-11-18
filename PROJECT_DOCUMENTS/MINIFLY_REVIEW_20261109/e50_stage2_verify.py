@@ -1,10 +1,11 @@
 """Verification of the stage-2 report of E50 (the fixed input code with each cell reading 16 of its 512 values, `C16-in`,
-seed 73129, under the sweep and under backpropagation; worker's branch claude/e50-fixed-input-code-017dSE at c6c24d9c).
+seed 73129, under the sweep and under backpropagation; the worker's branch of E50 at c6c24d9c).
 
 Read-only.  Nothing is trained, torch is not used, and no code of another branch is run.  Receipts, answers files, logs and
-the report's files are read with `git show` into memory.  A weight file is written with `git show` into the scratch folder,
-read, and deleted at once, so that at most one weight file is on disk at a time (the folder is the environment variable
-E50S2V_SCRATCH, or the default below; nothing else is written, and no bytecode).  The forward pass is the reviewer's reader
+the report's files are read with `git show` into memory.  A weight file is read in one of two ways.  When the environment
+variable E50S2V_SCRATCH names a folder, the file is written there with `git show`, read, and deleted at once, so that at most
+one weight file is on disk at a time (the way of the first run of this script).  Otherwise the file is read with `git show`
+into memory and nothing is written.  No bytecode is written in either case.  The forward pass is the reviewer's reader
 e50_code_reader.forward (a cell's input for a byte is the value of a turned-on entry times the sum of the cell's weights on
 the values of the byte that the cell reads), with the reader's own draw of the 16 values of each cell
 (e49_interface_reader.Interface(seed, 16, 256)); section 2c compares that draw with the masks in the weight files, and
@@ -33,7 +34,9 @@ The parts:
 
 Run from the repository root:
     OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e50_stage2_verify.py [0 1 2a 2b 2c 2d 3a 3b 4]
-Without arguments every part is printed.  The running time of each part is printed at its end.
+(with E50S2V_SCRATCH=<folder> before it to pass the weight files through that folder, one at a time).
+Without arguments every part is printed (about six and a half minutes on one core: part 2a about 190 seconds, part 3b about
+170, part 4 about 18, part 3a about 8, every other part about one second).  The running time of each part is printed at its end.
 """
 import sys
 sys.dont_write_bytecode = True
@@ -49,16 +52,15 @@ import e42_cells_reader as R42
 import e49_interface_reader as R49
 import e50_code_reader as R50
 
-REF = "c6c24d9c"                       # claude/e50-fixed-input-code-017dSE: the stage-2 report, the receipts, the weights
-BRANCH = "origin/claude/e50-fixed-input-code-017dSE"
+REF = "c6c24d9c"                       # the worker's branch of E50: the stage-2 report, the receipts, the weights
 STAGE1 = "b18e563b"                    # the commit of the stage-1 verification
 BRIEF = "d6606454"                     # the brief, revision 2
 RUNNER = "0f3ec4bc"                    # the commit the report names for the runner
-E49REF = "a36de661"                    # claude/peaceful-noether-vcvrmf: E49's receipts
-E42REF = "44f91edc"                    # claude/gallant-dijkstra-i9zgsr: E42's receipts
+E49REF = "a36de661"                    # the branch of E49's worker: E49's receipts
+E42REF = "44f91edc"                    # E42's own branch: E42's receipts
 M = "MOD97_LOCAL_RULE_20261106/"
 P = M + "exp45/"
-SCRATCH = os.environ.get("E50S2V_SCRATCH", "/tmp/claude-0/-home-user-digitalbaby/42667b5c-b7ff-5d5d-9cfa-8990d6cdcbc6/scratchpad/e50s2v")
+SCRATCH = os.environ.get("E50S2V_SCRATCH")          # a folder for one weight file at a time, or nothing: then no file is written
 SEED = 73129
 U, D, ON, BATCH = 256, 512, 11, 64
 FIRST, DOSE = 24576, 49152
@@ -100,19 +102,22 @@ _W = {}
 
 
 def weights(name, ref=REF):
-    """The tensors of exp45/e50/<name>, with the file's SHA-256 and size.  The file is written into the scratch folder with
-    `git show`, read and deleted; the tensors are kept in memory for the other parts."""
+    """The tensors of exp45/e50/<name>, with the file's SHA-256 and size.  With a scratch folder the file is written there
+    with `git show`, read and deleted; without one it is read into memory.  The tensors are kept for the other parts."""
     if (name, ref) not in _W:
-        os.makedirs(SCRATCH, exist_ok=True)
-        path = os.path.join(SCRATCH, name)
-        try:
-            with open(path, "wb") as f:
-                subprocess.run(["git", "show", f"{ref}:{P}e50/{name}"], stdout=f, check=True, cwd=ROOT)
-            with open(path, "rb") as f:
-                blob = f.read()
-        finally:
-            if os.path.exists(path):
-                os.remove(path)
+        if SCRATCH:
+            os.makedirs(SCRATCH, exist_ok=True)
+            path = os.path.join(SCRATCH, name)
+            try:
+                with open(path, "wb") as f:
+                    subprocess.run(["git", "show", f"{ref}:{P}e50/{name}"], stdout=f, check=True, cwd=ROOT)
+                with open(path, "rb") as f:
+                    blob = f.read()
+            finally:
+                if os.path.exists(path):
+                    os.remove(path)
+        else:
+            blob = show(f"{P}e50/{name}", ref)
         T = {k.lstrip("/"): np.frombuffer(raw, dtype=DTYPE[stype]).reshape(shape).copy() for k, (stype, shape, raw) in tensors(blob).items()}
         _W[(name, ref)] = dict(T=T, sha=sha(blob), size=len(blob))
     return _W[(name, ref)]
@@ -233,8 +238,9 @@ C16 = [(nm, r) for r in "BS" for nm in ("C16-in @24,576", "C16-in @end")]
 # ---------------------------------------------------------------- 0: what is read
 if "0" in want:
     head("0", "what is read")
-    print(f"   the worker's branch {BRANCH} resolves to {git('rev-parse', BRANCH)[:8]}; this script reads {REF} ({git('log', '-1', '--format=%cd', '--date=format:%Y-%m-%d %H:%M:%SZ', REF)})")
-    brief = "OPUS_TASK_E50_AN_INPUT_CODE_IN_WHICH_A_VALUE_STANDS_FOR_ONE_BYTE_20261116.md"
+    heads = [l.split() for l in git("for-each-ref", "--format=%(objectname) %(refname:short)", "refs/remotes/origin").splitlines() if "e50-fixed-input-code" in l]
+    print(f"   remote branches of E50's worker in this clone: {len(heads)}; head {heads[0][0][:8] if heads else 'none'}; this script reads {REF} ({git('log', '-1', '--format=%cd', '--date=format:%Y-%m-%d %H:%M:%SZ', REF)}), which is that head: {yes(bool(heads) and heads[0][0].startswith(REF))}")
+    brief = next(f for f in git("ls-tree", "--name-only", REF).splitlines() if "E50_AN_INPUT_CODE_IN_WHICH_A_VALUE_STANDS_FOR_ONE_BYTE" in f)
     print(f"   the brief's file is the same at {BRIEF} and at {REF}: {yes(git('rev-parse', f'{BRIEF}:{brief}') == git('rev-parse', f'{REF}:{brief}'))}; its first line names revision 2: {yes('revision 2' in show(brief).decode().splitlines()[0])}")
     print("   files that are the same (git blob) at " + REF + " and at the commits named:")
     for f, ref2, what in (("exp50_code.py", RUNNER, f"the runner at {RUNNER}, which the report names"), ("e50_sparse_code.py", RUNNER, f"the same file at {RUNNER}"),
@@ -295,7 +301,7 @@ if "1" in want:
         u = tuple(t[o + "80"] for o in OPS)
         print("      max, min, add, sub to 80: " + ", ".join(f"{fu(t[o + '80'])} [{fu(t[o + '80s'])}]" for o in OPS) + " / " + ", ".join(fu(v) for v in rep["ops80"]) + ": "
               + ", ".join(cmp(k, o + " to 80", a == b) for o, a, b in zip(OPS, u, rep["ops80"])) + " | levels " + ", ".join(f"{t['lv_' + o]:.2f}" for o in OPS))
-    print(f"   figures of the result table compared (eight columns, 13 figures each): {n_fig}; equal to the report: {n_ok}" + (f"; DIFFERENT: {differ}" if differ else "; none differs"))
+    print(f"   figures of the result table compared (eight columns, eleven figures each): {n_fig}; equal to the report: {n_ok}" + (f"; DIFFERENT: {differ}" if differ else "; none differs"))
 
     print("   the taught panel (entry `taught`: 300 taught pairs each of add and sub at 12 letters) and the two answer bytes on R's items; recomputed / the tables file:")
     for k in C16:
@@ -317,9 +323,10 @@ if "1" in want:
         print(f"      {r}, C16-in at the end against C-dense: updates to 80 on A *{dA}*, on R *{dR}*; multiply-adds, first count: A *{ma[0]}*, R *{ma[1]}*; second count: A *{ma[2]}*, R *{ma[3]}*;"
               f" levels A {d[0]:+.2f}, R {d[1]:+.2f}, 40 letters {d[2]:+.2f}: " + ", ".join("about the same" if abs(x) < 15 else ("higher" if x > 0 else "lower") for x in d))
     for r, e in (("B", Be), ("S", Se)):
-        mm = [q[o] for q in e["curve"] for o in ("max", "min") if q["step"] >= max(e["max80"], e["min80"]) + 512]
-        l3 = [round(e["lv_" + o], 2) for o in ("max", "min")]
-        print(f"      {r}: max and min from the row at which both have reached 80 on: least {min(mm):.2f}, largest {max(mm):.2f} in a row; levels at the end {l3}, within the first dose {[round(TAB[('C16-in @24,576', r)]['lv_' + o], 2) for o in ('max', 'min')]} (reported: stay at 96 to 98)")
+        both = max(e["max80"], e["min80"])
+        mm = [q[o] for q in e["curve"] for o in ("max", "min") if q["step"] >= both + 512]; m2 = [q[o] for q in e["curve"] for o in ("max", "min") if q["step"] > FIRST]
+        print(f"      {r}: max and min: levels at the end {e['lv_max']:.2f}, {e['lv_min']:.2f}; within the first dose {TAB[('C16-in @24,576', r)]['lv_max']:.2f}, {TAB[('C16-in @24,576', r)]['lv_min']:.2f} (reported: stay at 96 to 98);"
+              f" single rows from update {both + 512:,} on (the third row after both have reached 80): {min(mm):.2f} to {max(mm):.2f}; single rows after update 24,576: {min(m2):.2f} to {max(m2):.2f}, mean {sum(m2) / len(m2):.2f}; rows below 80 after the threshold: {sum(v < 80 for v in mm)}")
     print(f"      in16 against F10 under B: 80 on R {Ib['R80']:,} / {Fb['R80']:,} = {Ib['R80'] / Fb['R80']:.2f} (reported 2.16); 80 on A {Ib['A80']:,} / {Fb['A80']:,} = {Ib['A80'] / Fb['A80']:.2f} (reported 1.91)")
     print(f"      within the first 24,576 updates, C16-in B minus in16 B: A {B1['lv_A'] - Ib['lv_A']:+.2f}, R {B1['lv_R'] - Ib['lv_R']:+.2f}, 40 letters {B1['lv_len40'] - Ib['lv_len40']:+.2f} (reported: below on every level)")
     print(f"      S: in16 R {Is['lv_R']:.2f}, max {Is['lv_max']:.2f}, min {Is['lv_min']:.2f}; in16's max and min over all rows from 4,096 on: {min(min(q['max'], q['min']) for q in Is['curve'] if q['step'] >= 4096):.1f} to {max(max(q['max'], q['min']) for q in Is['curve'] if q['step'] >= 4096):.1f} (reported 1.4, and 39 to 41);"
@@ -329,7 +336,7 @@ if "1" in want:
         more = [q["step"] for q in c if q["b1"] > q["b2"]]; less = [q["step"] for q in c if q["b1"] < q["b2"]]
         print(f"      {r}: the two answer bytes at the end: first {e['lv_b1']:.2f}, second {e['lv_b2']:.2f} (reported {'84.2 and 92.6' if r == 'B' else '71.5 and 54.0'}); rows (of {len(c)}) with the first byte right more often {len(more)}, less often {len(less)}, equally {len(c) - len(more) - len(less)};"
               f" last row with the first more often {max(more):,}; first row with the second more often {min(less) if less else 'none'}"
-              + (f"; rows up to 20,480 with the first more often {sum(s <= 20480 for s in more)} of 80; rows from 28,672 on with the second more often {sum(s >= 28672 for s in less)} of {sum(q['step'] >= 28672 for q in c)}; between them: first more often {sum(20480 < s < 28672 for s in more)}, second {sum(20480 < s < 28672 for s in less)}" if r == "B" else ""))
+              + (f"; rows up to 20,480 with the first more often {sum(s <= 20480 for s in more)} of 80 (the others: {[s for s in less if s <= 20480] + [q['step'] for q in c if q['b1'] == q['b2'] and q['step'] <= 20480]}); rows from 28,672 on with the second more often {sum(s >= 28672 for s in less)} of {sum(q['step'] >= 28672 for q in c)}; between them: first more often {sum(20480 < s < 28672 for s in more)}, second {sum(20480 < s < 28672 for s in less)}" if r == "B" else f"; the rows with the second more often: {less}"))
     for r in "BS":
         rc = TAB[("C16-in @end", r)]["rc"]; cv = rc["curve"]
         print(f"      {r}: rows (of {len(cv)}) in which the receipt records the code table, the byte table and l1 unchanged: {sum(all(q['fixed'].values()) for q in cv)}; every mask held with the optimizer's averages zero outside: {sum(all(all(v.values()) for v in q['masks'].values()) for q in cv)};"
@@ -644,40 +651,58 @@ if "2d" in want:
                     ih=float(np.abs(T["rnn.weight_ih_l0"].astype(np.float64))[m3i].mean()), lm=float(np.abs(T["lm.weight"].astype(np.float64))[T["mask_out"]].mean()), hh=float(Wh[m3].mean()), kn=kn)
 
     REP_KN = {("C16-in", "B"): (0.265, 0.240, 0.233), ("C16-in", "S"): (0.226, 0.219, 0.213), ("C-dense", "B"): (0.147, 0.144, 0.145), ("C-dense", "S"): (0.150, 0.152, 0.149)}
-    REP_OTHER = {"B": dict(rms=0.765, ih=0.140), "S": dict(rms=0.629, ih=0.117)}
+    REP_START = (0.150, 0.152, 0.150)
+    REP_OTHER = {"B": dict(rms=0.765, ih=0.140, dense=5.14, diff=0.03), "S": dict(rms=0.629, ih=0.117, dense=4.77, diff=0.01)}
     md = show(f"{P}e50/E50_TABLES_{SEED}_stage2.md").decode(); lines = set(md.splitlines()); wrows = []
-    f3 = lambda a, b: f"{a:.3f}" == f"{b:.3f}"
+    rep = []                                               # (what, the figure from the weight file, the report's figure, its decimals)
+
     for r in "BS":
         rc = receipt("C16-in", r); by = {q["step"]: q for q in rc["curve"]}
         fg = {k: figures(FILES[r][k]["T"]) for k in ("start", "at 24,576", "final")}; rw = {"start": by[0], "at 24,576": by[FIRST], "final": by[DOSE]}
-        print(f"   C16-in {r}:")
+        print(f"   C16-in {r}: from the weight files at the start, at 24,576 and at the end / the receipt's rows 0, 24,576 and 49,152")
         for i, n in enumerate(NAMES):
             print(f"      kept recurrent weights from neighbours into the cells of group {i + 1} ({len(groups[i])} cells) [with the cell's reading of itself]: " + ", ".join(f"{fg[k]['kn'][i][0]:.4f} [{fg[k]['kn'][i][1]:.4f}]" for k in fg)
                   + " / " + ", ".join(f"{rw[k]['by_what_a_cell_knows'][n]['neighbours_only']:.4f} [{rw[k]['by_what_a_cell_knows'][n]['with_self']:.4f}]" for k in fg)
-                  + f": {yes(all(abs(fg[k]['kn'][i][j] - rw[k]['by_what_a_cell_knows'][n][w]) < 5e-7 for k in fg for j, w in ((0, 'neighbours_only'), (1, 'with_self'))))}"
-                  + f" / reported {(0.150, 0.152, 0.150)[i]:.3f} at the start, {REP_KN[('C16-in', r)][i]:.3f} at the end: {yes(f3(fg['start']['kn'][i][0], (0.150, 0.152, 0.150)[i]) and f3(fg['final']['kn'][i][0], REP_KN[('C16-in', r)][i]))}")
-        print(f"      the group with input for the fewest digits minus the group with the most, at the end: {fg['final']['kn'][0][0] - fg['final']['kn'][2][0]:+.4f} (reported {'0.03' if r == 'B' else '0.01'}); at 24,576: {fg['at 24,576']['kn'][0][0] - fg['at 24,576']['kn'][2][0]:+.4f}; at the start: {fg['start']['kn'][0][0] - fg['start']['kn'][2][0]:+.4f}")
+                  + f": {yes(all(abs(fg[k]['kn'][i][j] - rw[k]['by_what_a_cell_knows'][n][w]) < 5e-7 for k in fg for j, w in ((0, 'neighbours_only'), (1, 'with_self'))))}")
+            if r == "B":
+                rep.append((f"by what a cell knows, group {i + 1}, at the start", fg["start"]["kn"][i][0], REP_START[i], 3))
+            rep.append((f"by what a cell knows, group {i + 1}, C16-in {r}, at the end", fg["final"]["kn"][i][0], REP_KN[("C16-in", r)][i], 3))
+        rep.append((f"the group with the fewest digits minus the group with the most, C16-in {r}, at the end", fg["final"]["kn"][0][0] - fg["final"]["kn"][2][0], REP_OTHER[r]["diff"], 2))
+        print(f"      the group with input for the fewest digits minus the group with the most: at the start {fg['start']['kn'][0][0] - fg['start']['kn'][2][0]:+.4f}, at 24,576 {fg['at 24,576']['kn'][0][0] - fg['at 24,576']['kn'][2][0]:+.4f}, at the end {fg['final']['kn'][0][0] - fg['final']['kn'][2][0]:+.4f}")
         print("      a cell's input for a needed byte, root mean square over all 256 cells, three gates and 20 bytes, without the bias: " + ", ".join(f"{fg[k]['rms']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['input_size']['needed_rms']:.4f}" for k in fg)
-              + f": {yes(all(abs(fg[k]['rms'] - rw[k]['input_size']['needed_rms']) < 5e-6 for k in fg))} / reported 0.381 at the start, {REP_OTHER[r]['rms']:.3f} at the end: {yes(f3(fg['start']['rms'], 0.381) and f3(fg['final']['rms'], REP_OTHER[r]['rms']))}"
+              + f": {yes(all(abs(fg[k]['rms'] - rw[k]['input_size']['needed_rms']) < 5e-6 for k in fg))}"
               + f" | for the ten digits: " + ", ".join(f"{fg[k]['rms_d']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['input_size']['digits_rms']:.4f}" for k in fg))
-        print(f"         the same over the pairs of a cell and a needed byte for which the cell reads a value of the byte ({100 * fg['start']['share_has']:.1f}% of the pairs; elsewhere the input is zero by the mask): " + ", ".join(f"{fg[k]['rms_has']:.4f}" for k in fg))
+        print(f"         the same over the pairs of a cell and a needed byte for which the cell reads a value of the byte ({100 * fg['start']['share_has']:.1f}% of the pairs; for the others the input is zero by the mask): " + ", ".join(f"{fg[k]['rms_has']:.4f}" for k in fg))
         print("      mean magnitude of a kept weight: input map " + ", ".join(f"{fg[k]['ih']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['rnn.weight_ih_l0']:.4f}" for k in fg)
-              + f": {yes(all(abs(fg[k]['ih'] - rw[k]['kept_mean_magnitude']['rnn.weight_ih_l0']) < 5e-7 for k in fg))} / reported 0.177 at the start, {REP_OTHER[r]['ih']:.3f} at the end: {yes(f3(fg['start']['ih'], 0.177) and f3(fg['final']['ih'], REP_OTHER[r]['ih']))}"
+              + f": {yes(all(abs(fg[k]['ih'] - rw[k]['kept_mean_magnitude']['rnn.weight_ih_l0']) < 5e-7 for k in fg))}"
               + " | lm " + ", ".join(f"{fg[k]['lm']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['lm.weight']:.4f}" for k in fg)
-              + " | recurrent " + ", ".join(f"{fg[k]['hh']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['rnn.weight_hh_l0']:.4f}" for k in fg))
+              + f": {yes(all(abs(fg[k]['lm'] - rw[k]['kept_mean_magnitude']['lm.weight']) < 5e-7 for k in fg))}"
+              + " | recurrent " + ", ".join(f"{fg[k]['hh']:.4f}" for k in fg) + " / " + ", ".join(f"{rw[k]['kept_mean_magnitude']['rnn.weight_hh_l0']:.4f}" for k in fg)
+              + f": {yes(all(abs(fg[k]['hh'] - rw[k]['kept_mean_magnitude']['rnn.weight_hh_l0']) < 5e-7 for k in fg))}")
+        if r == "B":
+            rep.append(("a cell's input for a needed byte, at the start", fg["start"]["rms"], 0.381, 3)); rep.append(("a kept weight of the input map, at the start", fg["start"]["ih"], 0.177, 3))
+        rep.append((f"a cell's input for a needed byte, C16-in {r}, at the end", fg["final"]["rms"], REP_OTHER[r]["rms"], 3)); rep.append((f"a kept weight of the input map, C16-in {r}, at the end", fg["final"]["ih"], REP_OTHER[r]["ih"], 3))
         cs, cm, ce = rc["cosine_first_batch_start"], rc["first_dose"]["cosine_first_batch"], rc["cosine_first_batch_end"]
         for nm, k, cend in (("C16-in @24,576", "at 24,576", cm), ("C16-in @end", "final", ce)):
-            a, b = fg["start"], fg[k]
-            wrows.append(("sizes", f"| {nm} | {r} | " + " | ".join(f"{cs[m]:.3f}, {cend[m]:.3f}" for m in ("rnn.weight_ih_l0", "lm.weight", "rnn.weight_hh_l0")) + " | " + " | ".join(f"{a[x]:.4f}, {b[x]:.4f}" for x in ("ih", "lm", "hh")) + f" | {a['rms']:.3f}, {b['rms']:.3f} |"))
-            wrows.append(("by what a cell knows", f"| {nm} | {r} | " + " | ".join(f"{a['kn'][i][0]:.4f}, {b['kn'][i][0]:.4f} [{a['kn'][i][1]:.4f}, {b['kn'][i][1]:.4f}]" for i in range(3)) + " |"))
+            a_, b_ = fg["start"], fg[k]
+            wrows.append(("sizes", f"| {nm} | {r} | " + " | ".join(f"{cs[m]:.3f}, {cend[m]:.3f}" for m in ("rnn.weight_ih_l0", "lm.weight", "rnn.weight_hh_l0")) + " | " + " | ".join(f"{a_[x]:.4f}, {b_[x]:.4f}" for x in ("ih", "lm", "hh")) + f" | {a_['rms']:.3f}, {b_['rms']:.3f} |"))
+            wrows.append(("by what a cell knows", f"| {nm} | {r} | " + " | ".join(f"{a_['kn'][i][0]:.4f}, {b_['kn'][i][0]:.4f} [{a_['kn'][i][1]:.4f}, {b_['kn'][i][1]:.4f}]" for i in range(3)) + " |"))
     for r in "BS":
-        a, b = figures(weights(wname("C-dense", r, "_start"))["T"]), figures(weights(wname("C-dense", r))["T"])
-        print(f"   C-dense {r}, from its start and final files: recurrent weights from neighbours by the same three groups {', '.join(f'{a['kn'][i][0]:.4f}' for i in range(3))} -> {', '.join(f'{b['kn'][i][0]:.4f}' for i in range(3))} (reported at the end {', '.join(f'{v:.3f}' for v in REP_KN[('C-dense', r)])}:"
-              f" {yes(all(f3(b['kn'][i][0], REP_KN[('C-dense', r)][i]) for i in range(3)))}); a cell's input for a needed byte {a['rms']:.3f} -> {b['rms']:.3f} (reported {'5.14' if r == 'B' else '4.77'}); mean magnitude of a kept weight of the input map {a['ih']:.4f} -> {b['ih']:.4f}, recurrent {a['hh']:.4f} -> {b['hh']:.4f}")
+        a_, b_ = figures(weights(wname("C-dense", r, "_start"))["T"]), figures(weights(wname("C-dense", r))["T"])
+        print(f"   C-dense {r}, from its start and final files: recurrent weights from neighbours by the same three groups {', '.join(f'{a_['kn'][i][0]:.4f}' for i in range(3))} -> {', '.join(f'{b_['kn'][i][0]:.4f}' for i in range(3))};"
+              f" a cell's input for a needed byte {a_['rms']:.3f} -> {b_['rms']:.3f}; mean magnitude of a kept weight of the input map {a_['ih']:.4f} -> {b_['ih']:.4f}, recurrent {a_['hh']:.4f} -> {b_['hh']:.4f}")
+        for i in range(3):
+            rep.append((f"by what a cell knows, group {i + 1}, C-dense {r}, at the end", b_["kn"][i][0], REP_KN[("C-dense", r)][i], 3))
+        rep.append((f"a cell's input for a needed byte, C-dense {r}, at the end", b_["rms"], REP_OTHER[r]["dense"], 2))
+    bad = [(w, v, q, d) for w, v, q, d in rep if f"{v:.{d}f}" != f"{q:.{d}f}"]
+    print(f"   the report's figures of the two paragraphs that can be recomputed from the weight files: {len(rep)}; equal to the figure from the weight file rounded to the report's decimals: {len(rep) - len(bad)}")
+    for w, v, q, d in bad:
+        print(f"      DIFFERENT in the last decimal: {w}: {v:.6f} from the weight file, which is {v:.{d}f} to {d} decimals; the report has {q:.{d}f} (the tables file has {v:.4f})")
     missing = [(w, l) for w, l in wrows if l not in lines]
     print(f"   the tables file: the rows of C16-in of the two tables of sizes, written here from the weight files (the cosines from the receipts), found character for character: {len(wrows) - len(missing)} of {len(wrows)}")
     for w, l in missing:
         print(f"      NOT FOUND ({w}): {l}")
+
 
 # ---------------------------------------------------------------- 3a: the use of the cells
 NETS = [("C16-in", "S"), ("C16-in", "B"), ("C-dense", "S"), ("C-dense", "B")]
@@ -692,13 +717,18 @@ if "3a" in want:
           " The standard deviation is taken over the items (divisor 300) for each cell; the magnitude is the absolute value of the state, averaged over items and cells.")
     print("   | Network | Rule | Cells above 0.05 | Cells above 0.10 | Cells at or below 0.01 | Mean over cells | Least, median, largest over cells | Mean magnitude of the state | Cells with mean magnitude below 0.05 | By group of cells (0 to 2, 3 or 4, 5 or more digits): mean; cells above 0.10 |")
     print("   |---|---|---|---|---|---|---|---|---|---|")
+    notes = []
     for setting, r in NETS:
         net = Net(weights(wname(setting, r))["T"], setting)
         h = net.run(x)[0][:, -1].astype(np.float64)                 # (300, 256): the state after `=`
         sd = h.std(0); mag = np.abs(h)
         print(f"   | {setting} | {r} | {int((sd > 0.05).sum())} | {int((sd > 0.10).sum())} | {int((sd <= 0.01).sum())} | {sd.mean():.4f} | {sd.min():.4f}, {np.median(sd):.4f}, {sd.max():.4f} | {mag.mean():.4f} | {int((mag.mean(0) < 0.05).sum())} | "
               + "; ".join(f"{sd[g].mean():.4f}, {int((sd[g] > 0.10).sum())} of {len(g)}" for g in groups) + " |", flush=True)
+        low = np.nonzero(sd <= 0.10)[0]
+        notes.append(f"   {setting} {r}: the {len(low)} cells at or below 0.10 have a mean magnitude of the state of {mag.mean(0)[low].min():.3f} to {mag.mean(0)[low].max():.3f}" if len(low) else f"   {setting} {r}: no cell at or below 0.10")
         del net
+    print("   the cells that vary least between the items are not silent cells (a silent cell would have a magnitude near zero):")
+    print("\n".join(notes))
 
 
 # ---------------------------------------------------------------- 3b: the answers given
@@ -709,16 +739,16 @@ if "3b" in want:
             ("the panel behind A: add and sub, untaught pairs, 12 letters", AP["add89"] + AP["sub89"], (AP["add89"], AP["sub89"])),
             ("the panel behind A: max and min, untaught pairs, 12 letters", AP["max89"] + AP["min89"], (AP["max89"], AP["min89"]))]
     digit = lambda b: 48 <= b <= 57
+    NOTES3B = []
 
-    def answers(net, items):
-        """Greedy answers of one set of items (the prompts of a set have one length) and what is counted on them."""
-        got = net.respond([p for p, _ in items]); tgt = [t for _, t in items]
+    def counted(got, tgt):
+        """What is counted on the greedy answers `got` of a set of items whose right answers are `tgt`."""
         f = [len(o) > 0 and o[0] == t[0] for o, t in zip(got, tgt)]; s = [len(o) > 1 and o[1] == t[1] for o, t in zip(got, tgt)]
         cnt = {}
         for o in got:
             cnt[tuple(o)] = cnt.get(tuple(o), 0) + 1
         top = max(cnt.items(), key=lambda kv: kv[1])
-        return dict(n=len(items), first=sum(f), second=sum(s), whole=sum(o == t for o, t in zip(got, tgt)), both=sum(a and b for a, b in zip(f, s)), only1=sum(a and not b for a, b in zip(f, s)),
+        return dict(n=len(got), first=sum(f), second=sum(s), whole=sum(o == t for o, t in zip(got, tgt)), both=sum(a and b for a, b in zip(f, s)), only1=sum(a and not b for a, b in zip(f, s)),
                     only2=sum(b and not a for a, b in zip(f, s)), neither=sum(not a and not b for a, b in zip(f, s)), given=len(cnt), right=len({tuple(t) for t in tgt}),
                     formed=sum(len(o) == 3 and digit(o[0]) and digit(o[1]) and o[2] == EOS for o in got), top=("".join(chr(b) if b < 256 else "|" for b in top[0]), top[1]),
                     firsts=len({o[0] for o in got}), seconds=len({o[1] for o in got if len(o) > 1}), given_right=len({tuple(o) for o, t in zip(got, tgt) if o == t}))
@@ -727,9 +757,10 @@ if "3b" in want:
     print("   | Network | Rule | Set of items | Items | First byte right | Second byte right | Whole answer right | Both bytes right; first only; second only; neither | Different answers given | Different right answers in the set | Different first bytes; second bytes given | Answers of two digits and the end symbol | The most frequent answer given: items |")
     print("   |---|---|---|---|---|---|---|---|---|---|---|---|---|")
     for setting, r in NETS:
-        net = Net(weights(wname(setting, r))["T"], setting); last = receipt(setting, r)["curve"][-1]
+        net = Net(weights(wname(setting, r))["T"], setting); last = receipt(setting, r)["curve"][-1]; notes = []
         for nm, items, halves in SETS:
-            a = answers(net, items); h2 = [answers(net, it) for it in halves]
+            got2 = [net.respond([p for p, _ in it]) for it in halves]; tgt2 = [[t for _, t in it] for it in halves]      # the prompts of one operation have one length
+            a = counted(got2[0] + got2[1], tgt2[0] + tgt2[1]); h2 = [counted(g, t) for g, t in zip(got2, tgt2)]
             pc = lambda v: f"{v:,} ({100 * v / a['n']:.1f}%)"
             print(f"   | {setting} | {r} | {nm} | {a['n']:,} | {pc(a['first'])} | {pc(a['second'])} | {pc(a['whole'])} | {a['both']:,}; {a['only1']:,}; {a['only2']:,}; {a['neither']:,} | {a['given']} | {a['right']} | {a['firsts']}; {a['seconds']} | {a['formed']:,} | `{a['top'][0][:2]}`: {a['top'][1]} |", flush=True)
             if nm.startswith("R"):
@@ -738,8 +769,12 @@ if "3b" in want:
             else:
                 key = [("add89", "sub89"), ("max89", "min89")]["max" in nm]
                 note = f"the whole answers right of the two operations apart equal the receipt's last row: {yes([h2[i]['whole'] for i in range(2)] == [last['A_counts'][k] for k in key])}"
-            print(f"      ({note}; the two operations apart: first byte right {h2[0]['first']}, {h2[1]['first']}; second {h2[0]['second']}, {h2[1]['second']}; whole {h2[0]['whole']}, {h2[1]['whole']}; different answers given {h2[0]['given']}, {h2[1]['given']}; different right answers {h2[0]['right']}, {h2[1]['right']}; different answers among the right ones given {h2[0]['given_right']}, {h2[1]['given_right']})")
+            notes.append(f"      {setting} {r}, {nm.split(':')[0]}, {nm.split(':')[1].split(',')[0].strip()}: {note}; the two operations apart: first byte right {h2[0]['first']}, {h2[1]['first']}; second {h2[0]['second']}, {h2[1]['second']}; whole {h2[0]['whole']}, {h2[1]['whole']};"
+                         f" different answers given {h2[0]['given']}, {h2[1]['given']}; different right answers {h2[0]['right']}, {h2[1]['right']}; different answers among the right ones given {h2[0]['given_right']}, {h2[1]['given_right']}")
+        NOTES3B.extend(notes)
         del net
+    print("   the two operations of each set apart, and the counts against the receipts' last rows:")
+    print("\n".join(NOTES3B))
 
 
 # ---------------------------------------------------------------- 4: the stream of training items
