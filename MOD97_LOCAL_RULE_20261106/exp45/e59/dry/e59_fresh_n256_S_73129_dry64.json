@@ -1,0 +1,445 @@
+{
+ "experiment": "E59",
+ "kind": "run",
+ "start": "fresh",
+ "n_taught": 256,
+ "rule": "S",
+ "local": true,
+ "seed": 73129,
+ "updates": 64,
+ "settings": {
+  "start_record": {
+   "start": "arch26.new_net(seed), untrained",
+   "tensors_sha256": "b5ca7d4f232a07bd17e1683a1d4c335b2777f4aeaba2ed945b5e7915e60193a5",
+   "e40_receipt_start_tensors_sha256": "b5ca7d4f232a07bd17e1683a1d4c335b2777f4aeaba2ed945b5e7915e60193a5",
+   "equals_e40": true
+  },
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "optimizer": "exp26_candidate.make_opt (AdamW, lr 0.001, weight decay 0.25 on every tensor but the byte table)",
+  "update": "exp26_candidate.step(m, opt, batch, local)",
+  "batch": 64,
+  "rows": [
+   0,
+   16,
+   32,
+   48,
+   64
+  ],
+  "stream": "the text of e43_task.stream with taught[:n] in place of taught; generator Random(f'e43|{seed}|stream')",
+  "panels": {
+   "held12": "e43_task.panel(seed, 'held')",
+   "held0": "e43_task.panel(seed, 'held', k=0)",
+   "taught": "Random(f'e43|{seed}|panel|taught').sample(taught[:n], min(300, n)), rendered at 12 fillers",
+   "held12_unseen_items": 11
+  },
+  "check4_against": null,
+  "earlier_training_items": 0,
+  "weights_file": "rows_uncommitted/e59_fresh_n256_S_73129_dry64_final.pt"
+ },
+ "provenance": {
+  "command": "python exp59_unrelated_starts.py check 3",
+  "environment_at_start": {
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  },
+  "environment_set_by_runner": {
+   "E16_ARCH": "bank2",
+   "E16_BOOKDECAY": "off",
+   "E16_COMPGAP": "0"
+  },
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "bdd53810473440e4658b80b27ffbca74645f3f01",
+   "sources_modified_vs_commit": [
+    "?? MOD97_LOCAL_RULE_20261106/exp59_unrelated_starts.py"
+   ]
+  },
+  "sources_sha256": {
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch31_workerB.py": "02b364378247a1e7ada04e4ff93b077fbbfa44b96990eb00b7e01932d130b0a9",
+   "e40_new_family.py": "aa11c27f1588abbac6659afc124980b88994f6fbae375ffc742f0d31dbdda9cf",
+   "e43_task.py": "70eef23073197b2e4cd4d28ad90876221f416e503a546203179d8299ec7ad552",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp16_integrated.py": "c9fcedcfe5f53ff7ac480e020caa5de8fc1a5163a1fd3d276b402132d73e6350",
+   "exp20_reference.py": "e5339c6af30187f7554ccea1e70ab88b0516c5158254de1bf1143f870c32d5ea",
+   "exp26_candidate.py": "2ce331d0c87b339da8bd3afc6ad46f0dea3a36595fe93579b6da812ded88b0e9",
+   "exp38_erase.py": "a84b834d02d5af0cd88b38f4056e682768748e2a492d7cefa020c7fa290d626c",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "exp43_unrelated.py": "fac9acf56e1db0ace1bc02cd791a42b3517d8fc0fb060bbd8b26e8a98483725a",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp59_unrelated_starts.py": "c07e2cfae5f731ddf0edd015a415e4cbf57f6b37577e9a3837d792088b854ba9",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "versions": {
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.5",
+   "torch_threads": 1,
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1"
+  }
+ },
+ "rows": [
+  {
+   "updates": 0,
+   "data_digest": {
+    "batches": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "tensors_sha256": "b5ca7d4f232a07bd17e1683a1d4c335b2777f4aeaba2ed945b5e7915e60193a5",
+   "loss": null,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 1,
+    "second_byte": 0,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 11,
+     "exact": 0
+    },
+    "seen": {
+     "n": 289,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 256,
+    "exact": 0,
+    "final": 0
+   },
+   "earlier_panels_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "max89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "min89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "add97": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "add73": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "sub73": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    }
+   },
+   "cpu": 10.72114858
+  },
+  {
+   "updates": 16,
+   "data_digest": {
+    "batches": 16,
+    "sha256": "ebbed10a1d862c90d76959be636f5b6a79760440a7aadb58d1f443a37eab6197"
+   },
+   "tensors_sha256": "f9a86d368598c1edab112137bb5c55693f517078b20a6996cc45d16ab09e91b1",
+   "loss": 3.7727127075195312,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 0,
+    "second_byte": 0,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 11,
+     "exact": 0
+    },
+    "seen": {
+     "n": 289,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 256,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 13.115137503
+  },
+  {
+   "updates": 32,
+   "data_digest": {
+    "batches": 32,
+    "sha256": "103b74f90c2c09aa45eab3104d479f1e4337d1fb9539bafe8f28fc72a6188ca4"
+   },
+   "tensors_sha256": "6687f55aa64024649a897ff3e531b6052cb0195a44e41f9d3060602a948dc0b7",
+   "loss": 2.959112837910652,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 5,
+    "second_byte": 0,
+    "third_is_end": 0,
+    "unseen": {
+     "n": 11,
+     "exact": 0
+    },
+    "seen": {
+     "n": 289,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 256,
+    "exact": 0,
+    "final": 0
+   },
+   "cpu": 15.381442912999999
+  },
+  {
+   "updates": 48,
+   "data_digest": {
+    "batches": 48,
+    "sha256": "f4c1f9d1ab1b63401cb4a2892cb2245e43cd62349e87325128b00325d5d65f65"
+   },
+   "tensors_sha256": "ab78717ab0c46b565d67db20a97d86c192ca9e463139e8e110804005c69a6885",
+   "loss": 2.5962821394205093,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 2,
+    "second_byte": 4,
+    "third_is_end": 295,
+    "unseen": {
+     "n": 11,
+     "exact": 0
+    },
+    "seen": {
+     "n": 289,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 256,
+    "exact": 1,
+    "final": 1
+   },
+   "cpu": 18.153864223
+  },
+  {
+   "updates": 64,
+   "data_digest": {
+    "batches": 64,
+    "sha256": "1ad9aaaf93b0ea7d10bce78230ce810a563dcfe6b456dc205d15afaa32dc6694"
+   },
+   "tensors_sha256": "04590c82becb11fd029a0898d99b761254b8578d18daf8ee559d27c12bad7c26",
+   "loss": 2.4346715807914734,
+   "finite_losses": true,
+   "held12": {
+    "n": 300,
+    "exact": 0,
+    "first_byte": 2,
+    "second_byte": 6,
+    "third_is_end": 300,
+    "unseen": {
+     "n": 11,
+     "exact": 0
+    },
+    "seen": {
+     "n": 289,
+     "exact": 0
+    }
+   },
+   "held0": {
+    "n": 300,
+    "exact": 0,
+    "final": 0
+   },
+   "taught": {
+    "n": 256,
+    "exact": 1,
+    "final": 1
+   },
+   "earlier_panels_k12": {
+    "add89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "sub89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "max89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "min89": {
+     "n": 300,
+     "exact": 0,
+     "final": 0
+    },
+    "add97": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "sub97": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "add73": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    },
+    "sub73": {
+     "n": 400,
+     "exact": 0,
+     "final": 0
+    }
+   },
+   "cpu": 23.164515763999997
+  }
+ ],
+ "complete": {
+  "updates": 64,
+  "optimizer_steps": [
+   64
+  ],
+  "optimizer_groups_read_back": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ],
+  "data_digest": {
+   "batches": 64,
+   "sha256": "1ad9aaaf93b0ea7d10bce78230ce810a563dcfe6b456dc205d15afaa32dc6694"
+  },
+  "tensors_sha256": "04590c82becb11fd029a0898d99b761254b8578d18daf8ee559d27c12bad7c26",
+  "weights": "rows_uncommitted/e59_fresh_n256_S_73129_dry64_final.pt",
+  "weights_sha256": "9b2d35ccf9cc24429fc8c9afb8b6bad0f855b91ecedf82a44830843c196c9b49",
+  "all_losses_finite": true,
+  "cpu_total": 23.180864734,
+  "cpu_scoring": 16.230983289,
+  "cpu_updates": 6.949883570999997,
+  "check4_pass": null
+ }
+}
