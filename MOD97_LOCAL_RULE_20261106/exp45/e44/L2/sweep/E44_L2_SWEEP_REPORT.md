@@ -203,7 +203,7 @@ The `sweep+replay` cells hold 56 to 534 returns each.
 
 ## 8. Committed files
 
-The list below is from `git ls-tree -r --name-only HEAD MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep*` at the commit that adds this report. It is appended to the file by that commit.
+The list below is from `git ls-tree -r --name-only HEAD MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep MOD97_LOCAL_RULE_20261106/smallworld/l2_sweep*` at commit `184298f7`, which adds this report; the list was appended in the next commit, `87db9681`, which changes only this file.
 
 ```
 MOD97_LOCAL_RULE_20261106/exp45/e44/L2/sweep/E44_L2_SWEEP_REPORT.md
