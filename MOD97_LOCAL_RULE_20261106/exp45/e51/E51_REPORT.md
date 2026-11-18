@@ -38,9 +38,9 @@ All seven passed for both rules. Receipts in `exp45/e51/checks/`.
 
 ## 4. Part A: results
 
-Every run at every scored row is in `exp45/e51/E51_TABLES_A.md`; the readings are in `E51_READ_A.json`. The brief's readings: *kept* means the reduction score at update 4,096 is within 2 points of row 0; *learned* means the never-taught score reaches 80% at a scored row and stays there; *learned in the reserve* means learned, and the never-taught score at update 4,096 with the reserve cells held shut on every item is below 20%.
+Every run at every scored row is in `exp45/e51/E51_TABLES_A.md`; the readings are in `E51_READ_A.json`. The brief's readings: *kept* means the reduction score at update 4,096 is within 2 points of row 0; *learned* means the never-taught score reaches 80% at a scored row and stays there. The brief's third reading (called there "learned in the reserve") asks that a learned task's never-taught score at update 4,096 with the reserve cells held shut on every item be below 20%; at the reviewer's request (section 4.1) that name is not used here, and the column gives the criterion and the figures. The reader's files `E51_TABLES_A.md` and `E51_READ_A.json`, written before that request, keep the brief's name for the column and the key (`learned_in_the_reserve`); they record the same criterion.
 
-| task | rule | arm | reduction row 0 | at 64 | at 4,096 | kept | new at 4,096 (%) | first row learned | new, reserve shut (%) | learned in the reserve |
+| task | rule | arm | reduction row 0 | at 64 | at 4,096 | kept | new at 4,096 (%) | first row learned | new, reserve shut (%) | reserve-shut score below 20% |
 |---|---|---|---|---|---|---|---|---|---|---|
 | unrelated | S | `open` | 92.4 | 0.0 | 0.0 | no | 100.0 | 512 | 0.7 | yes |
 | unrelated | S | `rehearse` | 92.4 | 35.3 | 90.0 | no | 97.3 | 512 | 0.0 | yes |
@@ -59,7 +59,7 @@ Every run at every scored row is in `exp45/e51/E51_TABLES_A.md`; the readings ar
 | conflict | B | `keyed-free` | 95.3 | 17.4 | 0.2 | no | 92.6 | 1,024 | 78.1 | no |
 | conflict | B | `keyed` | 95.3 | 95.3 | 95.3 | yes | 96.9 | 512 | 40.4 | no |
 
-**`keyed` keeps the first family exactly.** In all four `keyed` runs every one of the 31,684 generated answers of the first family without letters, and every answer of the held-out panel at 12 letters, equals row 0's at every scored row up to update 4,096 (share of answers equal to row 0: 100.00%). The reduction score therefore stays at 92.4 (S) and 95.3 (B). No other arm keeps it by the 2-point criterion.
+**`keyed` keeps the first family's answers.** In all four `keyed` runs every one of the 31,684 generated answers of the first family without letters, and every answer of the held-out panel at 12 letters, equals row 0's at every scored row up to update 4,096 (share of answers equal to row 0: 100.00%). The reduction score therefore stays at 92.4 (S) and 95.3 (B). No other arm keeps it by the 2-point criterion. The answers are unchanged; the outputs are not exactly unchanged (section 4.1, statement 1).
 
 **`keyed` learns both new tasks.** On `unrelated` it reaches 100% on the never-taught items under both rules (S: 43.0% at update 512, 100% from 1,024; B: 91.3% at 512). On `conflict` it reaches 94.8% (S) and 96.9% (B) at update 4,096, the highest of the four arms under each rule.
 
@@ -74,7 +74,7 @@ Every run at every scored row is in `exp45/e51/E51_TABLES_A.md`; the readings ar
 
 The scored rows are spaced by factors of two, so a ratio of 2 or 0.5 means one row later or earlier.
 
-**Where the new task is learned.** On `unrelated` the reserve carries the task in `keyed` and `keyed-free`: with the reserve cells shut the score is 0.0 to 0.3%. On `conflict` it does not: with the reserve shut `keyed` still scores 41.0% (S) and 40.4% (B), so the old cells' rows, changed only in directions the first family does not use, carry a large part of the second family (whose bytes `r t x n` were never in use, but whose digits and operator signs are). In `keyed-free` and `open` the `conflict` task is carried almost wholly outside the reserve (78 to 88% with the reserve shut).
+**Which connections the new task needs.** On `unrelated`, with the reserve cells held shut, the never-taught score at update 4,096 is 0.0% in `keyed` and 0.0 to 0.3% in `keyed-free`. On `conflict`, with the reserve cells held shut, it is 41.0% (S) and 40.4% (B) in `keyed`, and 78 to 88% in `keyed-free` and `open`. The reviewer's further figures (section 4.1, statement 3) show that the unrelated task also needs the connections from the reserve cells into the old units, and that on `conflict` the part that survives shutting the reserve is the items whose answer is the same under both moduli.
 
 **The reserve's figures at update 4,096** (`E51_READ_A.json`, `reserve_4096`). Reserve cells whose update gate is open by more than 0.1 on the new task's panel: `keyed` 119 (S) and 125 (B) on `unrelated`, 112 and 83 on `conflict`; `keyed-free` 125, 122, 118 and 37. In `open` and `rehearse`, which start with the gates shut by a bias, 0 to 8 cells are open by more than 0.1; yet in `open` on `unrelated` shutting the reserve brings the new task from 100% to 0.7% (S) and 5.7% (B), so the few slightly opened reserve cells (mean opening 0.047 and 0.061) are what carry it. In the keyed arms the largest reserve state on the first family's panel is exactly 0; in `open` and `rehearse` it is 0.71 to 1.0, that is, the reserve is in use on the first family's items there.
 
@@ -93,6 +93,14 @@ The scored rows are spaced by factors of two, so a ratio of 2 or 0.5 means one r
 
 After the unrelated task the network answers a first-family prompt with the end symbol, or with a byte of the unrelated task; after the second family it answers with two digits, most often the answer under modulus 97. The `keyed` runs' wrong answers are those of row 0 (463 and 131 in classes 4 and 5 under S; 347 and 25 under B). The full table, with `rehearse`, is in `E51_TABLES_A.md`.
 
+### 4.1 Three statements on Part A, from the reviewer's verification
+
+The reviewer verified the trial from these receipts and weights (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/E51_TRIAL_VERIFICATION_20261117.md` on branch `claude/vibrant-cerf-sje726`, commit `e6333d0b`) and asked that three statements stand in this report. The figures in them are the reviewer's measurements, not this worker's.
+
+1. **The first family's answers are unchanged; its outputs are not.** By row 4,096 the first family's outputs have moved by up to 5.3e-4 (3.8e-4 and 5.3e-4 in the two `unrelated` runs, 5.5e-5 and 7.3e-5 in the two `conflict` runs). The weights are stored in single precision after each projected step, so a small part of the change remains in the directions the first family uses and grows with the number of updates. The smallest difference between the largest and the second largest output of a first-family answer is 1.8e-4 under the sweep (7.8e-4 under back-propagation). No answer changed in 4,096 updates; nothing in the construction bounds this movement over a longer run.
+2. **The separation is made by the program.** The two added lines of the forward pass read each item's first byte and, when it is one of the 46 bytes in use, shut the reserve cells' gates and zero the added units of the readout. With the two lines removed, the same weights of row 4,096 answer 0.00% of the reduction pairs after `unrelated` and 0.40% and 0.00% after `conflict`. The first family is kept by the weights together with that program, not by the weights alone.
+3. **The new task is not learned in the reserve alone.** For `unrelated` the score with the reserve cells shut is 0%, but it is also 0.0% and 0.3% when the incoming connections of the old cells and old readout units are put back to their starting values; the task needs the connections from the reserve cells into the old units. For `conflict` the never-taught score with the reserve cells shut is 41.0% (S) and 40.4% (B); by the reviewer's count, the items answered then are those whose operands are below 89 and whose answer is the same under both moduli.
+
 ### The predictions of Part A
 
 | | Statement | Chance | Outcome |
@@ -105,7 +113,7 @@ After the unrelated task the network answers a first-family prompt with the end 
 | P51.6 | Where `keyed` learns `unrelated`, the cost of the rule is at most four | 60% | Held (2 under S, 1 under B) |
 | P51.7 | `rehearse` keeps the first family within 5 points, both tasks, both rules | 85% | Held (2.4, 2.5, 4.1 below row 0; 2.5 above) |
 | P51.8 | `keyed-free` does not keep the first family on `unrelated`, either rule | 85% | Held (0.0 and 0.0) |
-| P51.9 | Where `keyed` learns `unrelated`, it is learned in the reserve | 75% | Held (0.0% with the reserve shut, both rules) |
+| P51.9 | Where `keyed` learns `unrelated`, its score with the reserve shut is below 20% (the brief's "learned in the reserve") | 75% | The criterion is met (0.0%, both rules); see section 4.1, statement 3, for what it does not show |
 
 ## 5. Part B: the checks before the runs
 
