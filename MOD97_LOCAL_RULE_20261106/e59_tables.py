@@ -234,10 +234,23 @@ def write(d, tag):
                 q = pr[n]
                 if q.get("sentence") == "incomplete":
                     Lines.append(f"- {st}, {rule}, {n}: incomplete"); continue
-                per = "; ".join(f"{sd}: " + "".join(k if ok else "¬" + k for k, ok in v["conditions"].items()).replace("i", "i").strip() +
-                                f" ({v['trained_level']:.1f} vs {v['fresh_level']:.1f})" for sd, v in q["per_seed"].items())
+                per = "; ".join(f"{sd}: " + " ".join(f"({k}) {'yes' if ok else 'no'}" for k, ok in v["conditions"].items()) +
+                                f" [held level {v['trained_level']:.1f} against fresh {v['fresh_level']:.1f}]" for sd, v in q["per_seed"].items())
                 Lines.append(f"- {st}, {rule}, {n}: {q['sentence'] or 'no sentence of the brief applies'}. Seeds: {per}")
-            Lines.append(f"- {st}, {rule}: every start reaches 80 from 256 pairs on at least two seeds: {pr['every_start_reaches_80_from_256_on_two_seeds']}")
+            Lines.append(f"- {st}, {rule}: every start (fresh, born, lived) reaches 80 from 256 pairs on at least two seeds: {pr['every_start_reaches_80_from_256_on_two_seeds']}"
+                         + ("; the brief's sentence: \"every start generalises from the smallest number of pairs tested; no difference in the number of pairs is shown, and none is excluded below 256\"" if pr['every_start_reaches_80_from_256_on_two_seeds'] else ""))
+            # the reverse case: fresh in the trained start's place
+            for n in NS:
+                per = {sd: saves(S, "fresh", n, rule, sd, other=st) for sd in SEEDS}
+                if any(v is None for v in per.values()):
+                    continue
+                yes = [sd for sd, v in per.items() if v["saves"]]
+                lic = len(yes) >= 2 and all(per[sd]["fresh_level"] <= per[sd]["trained_level"] for sd in SEEDS if sd not in yes)
+                R["pairs"][f"fresh against {st} {rule} {n}"] = dict(per_seed=per, licensed=lic)
+                if any(v["conditions"]["i"] and v["conditions"]["ii"] for v in per.values()):
+                    Lines.append(f"- reverse case, fresh in the place of {st}, {rule}, {n}: licensed {lic}; seeds: " + "; ".join(
+                        f"{sd}: " + " ".join(f"({k}) {'yes' if ok else 'no'}" for k, ok in v["conditions"].items()) +
+                        f" [fresh {v['trained_level']:.1f} against {st} {v['fresh_level']:.1f}]" for sd, v in per.items()))
     Lines.append("")
     # rules
     Lines += ["## The two rules: the sweep against back-propagation, same start and n", "", "| Start | n | 73129 | 93683 | 116089 | Word |", "|---|---|---|---|---|---|"]
@@ -251,6 +264,49 @@ def write(d, tag):
             c = compare(S, lambda sd: (st, n, "S", sd), lambda sd: ("fresh", n, "B", sd)); R["b2"][f"{st} S against fresh B, {n}"] = c
             Lines.append(f"| {st} | {n} | " + " | ".join({p['seed']: cmp_cell(p) for p in c['seeds']}.get(sd, "") for sd in SEEDS) + f" | **{c['word']}** |")
     Lines.append("")
+    # the explanation under test
+    Lines += ["## The explanation under test (the brief's criteria)", ""]
+    ex = {}
+    for rule in RULES:
+        P_ = R["presentations"]
+        any_fewer = any(P_[f"{a} against fresh, {rule}, {n}"]["word"] == "fewer" for a in ("born", "lived") for n in NS)
+        at2048 = [P_[f"{a} against fresh, {rule}, 2048"]["word"] for a in ("born", "lived")]
+        untested = any(w in ("not decided", "neither reaches") for w in at2048)
+        sup_words = P_[f"born against fresh, {rule}, 2048"]["word"] == "fewer" and P_[f"born against born-shuffled, {rule}, 2048"]["word"] == "fewer"
+        ex[rule] = dict(any_fewer_any_n=any_fewer, words_at_2048=at2048, untested=untested, support_words_hold=sup_words,
+                        refutation_conditions_hold=(not any_fewer) and all(w in ("about the same", "more") for w in at2048))
+        Lines.append(f"- {rule}: some comparison of born or lived against fresh is *fewer* at some n: {any_fewer}; the two comparisons at 2,048: {at2048}; "
+                     f"the refutation's conditions hold under this rule: {ex[rule]['refutation_conditions_hold']}; the support's first two conditions hold: {sup_words}.")
+    ref_both = all(ex[r]["refutation_conditions_hold"] for r in RULES)
+    Lines.append(f"- Refuted (the conditions under both rules): {ref_both}. Supported (fewer than fresh and than born-shuffled at 2,048 under both rules, with the filler condition): "
+                 f"{all(ex[r]['support_words_hold'] for r in RULES)}.")
+    R["explanation"] = dict(per_rule=ex, refuted=ref_both, supported=all(ex[r]["support_words_hold"] for r in RULES))
+    Lines.append("")
+    # updates to 80 at 0 and at 12 fillers at 256 pairs (where a saving is found)
+    Lines += ["Updates to 80 at 12 and at 0 fillers, 256 pairs:", "", "| Start | Rule | Seed | to 80 at 12 | to 80 at 0 |", "|---|---|---|---|---|"]
+    for st in ("fresh", "born", "lived"):
+        for rule in RULES:
+            for sd in SEEDS:
+                v = S.get((st, 256, rule, sd))
+                if v:
+                    Lines.append(f"| {st} | {rule} | {sd} | {fmt(v['to80'])} | {fmt(v['to80_held0'])} |")
+    Lines.append("")
+    # earlier panels, given and not interpreted
+    Lines += ["## The earlier families' panels at row 0 and at the last row (right of 300 at 12 letters; given, not interpreted)", "",
+              "| Start | n | Rule | Seed | " + " | ".join(f"{e} (0 → end)" for e in ("add89", "sub89", "max89", "min89", "add97", "sub97", "add73", "sub73")) + " |",
+              "|---|---|---|---|" + "---|" * 8]
+    for st in STARTS:
+        for n in NS:
+            for rule in RULES:
+                for sd in SEEDS:
+                    v = S.get((st, n, rule, sd))
+                    if v and v["earlier_row0"]:
+                        Lines.append(f"| {st} | {n} | {rule} | {sd} | " + " | ".join(f"{v['earlier_row0'][e]['exact']} → {v['earlier_last'][e]['exact']}"
+                                                                             for e in ("add89", "sub89", "max89", "min89", "add97", "sub97", "add73", "sub73")) + " |")
+    Lines.append("")
+    tot = sum(v["cpu"] for v in S.values())
+    R["cpu_total_runs_h"] = tot / 3600
+    Lines += [f"CPU of the {len(S)} runs, scoring included: {tot / 3600:.2f} hours ({min(v['cpu'] for v in S.values()):.0f} to {max(v['cpu'] for v in S.values()):.0f} seconds a run).", ""]
     # check 5
     bad = []
     for sd in SEEDS:
