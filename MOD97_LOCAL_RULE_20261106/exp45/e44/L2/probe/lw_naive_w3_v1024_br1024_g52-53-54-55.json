@@ -1,0 +1,692 @@
+{
+ "experiment": "E44",
+ "job": "F1 long-life world",
+ "kind": "branch",
+ "settings": {
+  "arm": "naive",
+  "world": 3,
+  "visits": 1024,
+  "rho": null,
+  "H": 256,
+  "U": 128,
+  "visit_updates": 256,
+  "p_new": 0.05,
+  "lr": 0.001,
+  "wd": 0.25,
+  "tag": null,
+  "world_kind": "lw",
+  "in_turn": false,
+  "taught_share": 0.1,
+  "lowest": 41,
+  "list_every": 8,
+  "decay_distances": [],
+  "save_states": [
+   64,
+   128,
+   256,
+   384,
+   512,
+   640,
+   768,
+   896,
+   1024
+  ],
+  "learner": {
+   "file": "exp45/e41/e41_B_h256_f50_116089.pt",
+   "file_sha256": "5f538798706bc1f97b358b93cbe6a0350ae8295d71a45088441bc1d08fe6f709",
+   "tensors_sha256": "043d03b53a34cda834919868080a84a634603275d8b9ed7b7ec21ce85e67ddfd",
+   "receipt": "exp45/e41/e41_B_h256_f50_116089.json",
+   "receipt_sha256": "89f1833b4efb955da78c0934b04d5189c5e2e53362d9b6426f1e7d50676e9acf",
+   "made_by": "E41 (exp41_scale.py run)",
+   "rule": "B",
+   "local_in_birth": false,
+   "H": 256,
+   "U": 128,
+   "parameters": 317457,
+   "fraction": 0.5,
+   "seed": 116089,
+   "updates": 40960,
+   "items_per_update": 64,
+   "taught_items": 2621440,
+   "final_row": {
+    "step": 40960,
+    "A": 96.16666666666667,
+    "R": 93.0,
+    "R_counts": {
+     "add89": 917,
+     "sub89": 943
+    }
+   },
+   "reduction_sample_sha256": {
+    "add89": "26b2eff70e51e0336277df8b3d47fda112e032e497ac9f511874c9302e2535fb",
+    "sub89": "8ccb9c3177772cbfb5f422ab01b5c541a48ac3ab318b0424569037d53a995d4b"
+   },
+   "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+  }
+ },
+ "local": false,
+ "replay": false,
+ "replay_items_per_update": 0,
+ "model": {
+  "cls": "sw_net.SWNet",
+  "H": 256,
+  "U": 128,
+  "parameters": 317457,
+  "shapes": {
+   "book.weight": [
+    258,
+    8
+   ],
+   "l1.weight": [
+    256,
+    8
+   ],
+   "l1.bias": [
+    256
+   ],
+   "rnn.weight_ih_l0": [
+    384,
+    256
+   ],
+   "rnn.weight_hh_l0": [
+    384,
+    128
+   ],
+   "rnn.bias_ih_l0": [
+    384
+   ],
+   "rnn.bias_hh_l0": [
+    384
+   ],
+   "lm.weight": [
+    256,
+    128
+   ],
+   "lm.bias": [
+    256
+   ],
+   "l2.weight": [
+    256,
+    256
+   ],
+   "l2.bias": [
+    256
+   ],
+   "l3.weight": [
+    257,
+    256
+   ],
+   "l3.bias": [
+    257
+   ]
+  },
+  "initial": {
+   "weights_tensors_sha256": "043d03b53a34cda834919868080a84a634603275d8b9ed7b7ec21ce85e67ddfd"
+  }
+ },
+ "optimizer": {
+  "name": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.25,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "groups": [
+   {
+    "weight_decay": 0.25,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "l1.weight",
+     "l1.bias",
+     "rnn.weight_ih_l0",
+     "rnn.weight_hh_l0",
+     "rnn.bias_ih_l0",
+     "rnn.bias_hh_l0",
+     "lm.weight",
+     "lm.bias",
+     "l2.weight",
+     "l2.bias",
+     "l3.weight",
+     "l3.bias"
+    ]
+   },
+   {
+    "weight_decay": 0.0,
+    "lr": 0.001,
+    "betas": [
+     0.9,
+     0.98
+    ],
+    "params": [
+     "book.weight"
+    ]
+   }
+  ]
+ },
+ "update": "sw_net.step (exp26_candidate.step's text): exp45.batch_tensor, arch26.forward(m, x, local, True), answer-masked cross entropy, zero_grad, backward, one AdamW step",
+ "answering": "sw_net.answer: greedy, 3 bytes, no_grad, through arch26.forward; right if all three are the answer",
+ "world": {
+  "kind": "lw",
+  "file": "smallworld/lw_world.py",
+  "seed": 3,
+  "visit_updates": 256,
+  "p_new": 0.05,
+  "taught_share": 0.1,
+  "lowest": 41,
+  "in_turn": false,
+  "probe_families": 4,
+  "tasks": 224,
+  "families": 56
+ },
+ "learner": {
+  "file": "exp45/e41/e41_B_h256_f50_116089.pt",
+  "file_sha256": "5f538798706bc1f97b358b93cbe6a0350ae8295d71a45088441bc1d08fe6f709",
+  "tensors_sha256": "043d03b53a34cda834919868080a84a634603275d8b9ed7b7ec21ce85e67ddfd",
+  "receipt": "exp45/e41/e41_B_h256_f50_116089.json",
+  "receipt_sha256": "89f1833b4efb955da78c0934b04d5189c5e2e53362d9b6426f1e7d50676e9acf",
+  "made_by": "E41 (exp41_scale.py run)",
+  "rule": "B",
+  "local_in_birth": false,
+  "H": 256,
+  "U": 128,
+  "parameters": 317457,
+  "fraction": 0.5,
+  "seed": 116089,
+  "updates": 40960,
+  "items_per_update": 64,
+  "taught_items": 2621440,
+  "final_row": {
+   "step": 40960,
+   "A": 96.16666666666667,
+   "R": 93.0,
+   "R_counts": {
+    "add89": 917,
+    "sub89": 943
+   }
+  },
+  "reduction_sample_sha256": {
+   "add89": "26b2eff70e51e0336277df8b3d47fda112e032e497ac9f511874c9302e2535fb",
+   "sub89": "8ccb9c3177772cbfb5f422ab01b5c541a48ac3ab318b0424569037d53a995d4b"
+  },
+  "loaded_into": "sw_net.SWNet(H, U): arch20.NetRNN('gru')'s parameter names in its order, as exp41_scale.NetW; run by arch26.forward"
+ },
+ "provenance": {
+  "command": "python3 sw_run.py branch /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w3_v1024_state_v1024.pt --groups 52,53,54,55 --out /home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/probe",
+  "host": {
+   "hostname": "vm",
+   "platform": "Linux-6.18.44-fc-v595-x86_64-with-glibc2.39",
+   "machine": "x86_64",
+   "cores": 4,
+   "python": "3.13.18",
+   "torch": "2.15.0+cpu",
+   "numpy": "2.5.3",
+   "torch_threads": 1
+  },
+  "git": {
+   "commit": "faefbef0c3f65869dccca03f10a0fceb0d03f125",
+   "sources_modified_vs_commit": []
+  },
+  "sources_sha256": {
+   "smallworld/sw_world.py": "355e15e66137ece5de0ffffbc56874905187800f9ce6a75856fdcbd8a7b0bf77",
+   "smallworld/lw_world.py": "83b7df79d4d8c9851ec264dca0b0f4197b6321c74af3eb884e5ff4a7c953656e",
+   "smallworld/sw_net.py": "4acbc1172d3ca3552073987bfe409dc57f5f1a6d4bbbca7cde18b9d8ec6cf541",
+   "smallworld/sw_run.py": "41714c5bb90966b857c0b68373e527004b9ecebfff53c116c0d1083da09e6d60",
+   "smallworld/sw_score.py": "0f60f462a749cb18c6a733dfb7a2ffac393fa26a110e18dee0206f2a71e4672b",
+   "arch26.py": "05506abfa983cf75370583b3f8bebd4e695e1bf21da2295a9535449799b2670f",
+   "arch20.py": "729ca45a77c7504d5eb41c6934517f151c46d808e5fa30d558e0892b2688a24c",
+   "arch17.py": "54a99916d9448e18247df74a64b57e827118056194c50774f0f5db192c295d91",
+   "exp11_cell.py": "6b94db52edd3f4f2867b6efd1a0a3448de48fd0bed1496e54bef00723a7619bb",
+   "exp45.py": "c95842e4d65b4ffdf40998ee78219bc491773b047a3aa7fc694fceba658d4f9a",
+   "exp3_state.py": "5c284b4afad3cbf81e1818d181ae3b7222ed193b48024a421f8729cc89688d24",
+   "mod97_local.py": "f58c66ed296444cee8519f2be1e75daad1185fd0655586695486dd7e7fb29525"
+  },
+  "env": {
+   "OMP_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "EXP45_WINDOW": "10",
+   "EXP45_HIDDEN": "512",
+   "OPENBLAS_NUM_THREADS": "1"
+  }
+ },
+ "ledger": {
+  "stored_numbers": {
+   "weights": 317457,
+   "optimizer_moments": 634914,
+   "optimizer_step_counters": 13,
+   "anchor": 0
+  },
+  "buffer": {
+   "used": false,
+   "capacity_items": 0,
+   "capacity_bytes": 0,
+   "items_at_end": 0,
+   "bytes_at_end": 0,
+   "max_items": 0,
+   "max_bytes": 0,
+   "offered": 0
+  },
+  "updates": 263168,
+  "stream_items_per_update": 64,
+  "taught_per_update": 48,
+  "asked_per_update": 16,
+  "learned_per_update": 48,
+  "replayed_per_update": 0,
+  "new_learned_per_update_once_replaying": 48,
+  "birth": null,
+  "life_updates": 263168,
+  "learner": {
+   "made_by": "E41 (exp41_scale.py run)",
+   "file": "exp45/e41/e41_B_h256_f50_116089.pt",
+   "file_sha256": "5f538798706bc1f97b358b93cbe6a0350ae8295d71a45088441bc1d08fe6f709",
+   "rule": "B",
+   "updates": 40960,
+   "items_per_update": 64,
+   "taught_items": 2621440,
+   "note": "E41's birth on E26's first family (mod 89, half its pairs), before this life"
+  }
+ },
+ "counters": {
+  "learned_items_verified": 12632064,
+  "asking_checks": 1028,
+  "replayed_items": 0,
+  "max_buffer_items": 0,
+  "max_buffer_bytes": 0,
+  "first_replay_update": null
+ },
+ "events": {
+  "file": "lw_naive_w3_v1024_br1024_g52-53-54-55.npz",
+  "file_sha256": "9dcdfa1304f35e44bb6577a57d08707735c9d6203949daefb44b2bc4d378b3bd",
+  "arrays_sha256": "66bfa8eadc91f0f8c49e9400d5615833987e9bc035b50a1532d4c8820e9a4e0b",
+  "entries": 16384,
+  "columns": [
+   "update",
+   "visit",
+   "task",
+   "correct",
+   "blind",
+   "wrap",
+   "mirror",
+   "seen",
+   "replayed",
+   "g1",
+   "g2",
+   "g3"
+  ]
+ },
+ "final": {
+  "visits": 1028,
+  "updates": 263168,
+  "weights_tensors_sha256": "808f4bf86fb0207c2e496f282574c7a7bc319e47995251ccb45964e20d7bd22c",
+  "optimizer_sha256": "7c3c232d3c739f7a42e93caf9e75bfb8d73f7ed2f1cc6f4adf0dd9f3dcaf607c"
+ },
+ "cpu": {
+  "total": 36.687786099,
+  "per_visit": [
+   9.167508426000001,
+   9.275185894000002,
+   9.029463873999998,
+   8.837483543000005
+  ],
+  "list_total": 0.1877689719999971,
+  "list_per_visit": [
+   0.05445733699999877,
+   0.04639052899999996,
+   0.043267743999997776,
+   0.043653362000000584
+  ],
+  "mean_per_visit": 9.077410434250002,
+  "birth": null,
+  "peak_rss_kib": 656720,
+  "note": null
+ },
+ "birth": null,
+ "birth_from": null,
+ "learned_sha256": "5e7bf61bc0f5916e4b8c1161211813eb6a73a130545ef4f898d5623c4f01d9a1",
+ "by_visit": [
+  {
+   "visit": 1024,
+   "group": 52,
+   "new": true,
+   "absence": null,
+   "branch_k": 0,
+   "generator": "world|3|branch|1024|0",
+   "probe": true,
+   "updates": 256,
+   "stream_sha256": "392f8b96108763f9fead087f7d57fc1c7275484ce93707479cc9ae47760ccf30",
+   "learned_sha256": "5fcaab678dad1d25a6e274f9054edd400a963bfe96b7f9acf05c2ac01bae19a3",
+   "loss_mean": 0.186738687370962,
+   "loss_first": 2.2903876304626465,
+   "loss_last": 0.02353079430758953,
+   "replayed_items": 0,
+   "cpu": 9.167508426000001,
+   "wall": 9.22960615158081,
+   "list_cpu": 0.05445733699999877
+  },
+  {
+   "visit": 1025,
+   "group": 53,
+   "new": true,
+   "absence": null,
+   "branch_k": 1,
+   "generator": "world|3|branch|1024|1",
+   "probe": true,
+   "updates": 256,
+   "stream_sha256": "b451add512a47e764082e3334dc2abad6b8425cf10e5c28446bce72bc461d123",
+   "learned_sha256": "3b630da1fd9a406418b2f8f13b7cd1f7f2d2bc9e87568fc8c3b219c5246dd03b",
+   "loss_mean": 0.2117327909472806,
+   "loss_first": 2.2920265197753906,
+   "loss_last": 0.01901276595890522,
+   "replayed_items": 0,
+   "cpu": 9.275185894000002,
+   "wall": 9.309139966964722,
+   "list_cpu": 0.04639052899999996
+  },
+  {
+   "visit": 1026,
+   "group": 54,
+   "new": true,
+   "absence": null,
+   "branch_k": 2,
+   "generator": "world|3|branch|1024|2",
+   "probe": true,
+   "updates": 256,
+   "stream_sha256": "7eabdf1801ccde24e9d071462c3dd02477c4338972230659bcb8a0c7b8ff638a",
+   "learned_sha256": "087a0a5b7e27329fff221825810cfbf8cdfcbaf72ae1511a66a72082046843cd",
+   "loss_mean": 0.08509044948004885,
+   "loss_first": 0.6206706166267395,
+   "loss_last": 0.04040613770484924,
+   "replayed_items": 0,
+   "cpu": 9.029463873999998,
+   "wall": 9.03217101097107,
+   "list_cpu": 0.043267743999997776
+  },
+  {
+   "visit": 1027,
+   "group": 55,
+   "new": true,
+   "absence": null,
+   "branch_k": 3,
+   "generator": "world|3|branch|1024|3",
+   "probe": true,
+   "updates": 256,
+   "stream_sha256": "a50093f0ebe54bf4752c42801a8cd32eb581d20b226892d1843205ae77ecc31f",
+   "learned_sha256": "701d50c03e4ed0725546a980ff183b24b01b7f9ff03c6bdcd0683bd31ad02b3a",
+   "loss_mean": 0.06806654324464034,
+   "loss_first": 0.6909137964248657,
+   "loss_last": 0.02285587601363659,
+   "replayed_items": 0,
+   "cpu": 8.837483543000005,
+   "wall": 8.84003734588623,
+   "list_cpu": 0.043653362000000584
+  }
+ ],
+ "resumes": [],
+ "states": [
+  {
+   "visits": 1028,
+   "path": "lw_naive_w3_v1024_br1024_g52-53-54-55_state_end.pt",
+   "file_sha256": "86cf914fa75c9467b17610a22d01fab649cc9e37a50271027720be2927165f32",
+   "weights_tensors_sha256": "808f4bf86fb0207c2e496f282574c7a7bc319e47995251ccb45964e20d7bd22c",
+   "optimizer_sha256": "7c3c232d3c739f7a42e93caf9e75bfb8d73f7ed2f1cc6f4adf0dd9f3dcaf607c"
+  }
+ ],
+ "complete": true,
+ "branch": {
+  "from_state": {
+   "path": "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e44/L2/lives/lw_naive_w3_v1024_state_v1024.pt",
+   "file_sha256": "57fa12e73d9a2a9cd4916adfdd7c15dfba934c1debff9691bcffd68281ea4b9d",
+   "done_visits": 1024
+  },
+  "groups": [
+   52,
+   53,
+   54,
+   55
+  ],
+  "trunk": {
+   "by_visit": 1024,
+   "states": [
+    {
+     "visits": 64,
+     "path": "lw_naive_w3_v1024_state_v64.pt",
+     "file_sha256": "1c57c36bf5fa21b1f64c46d2237e6536eaf5bbbfc9fd777e74bfde23b9982e26",
+     "weights_tensors_sha256": "5a420feb9695dfeba7b07ba12c2f4af73d48972e01d25f331cfedcb766d0cec8",
+     "optimizer_sha256": "e3b576b006fedfdb2575a04920774c3127d65c0b163ad745ed530ff1c78a1498"
+    },
+    {
+     "visits": 128,
+     "path": "lw_naive_w3_v1024_state_v128.pt",
+     "file_sha256": "16380a0b946743f3ae062df961fdff0268adb540764d74adf793dbc7cbfa0ef0",
+     "weights_tensors_sha256": "118e9012f151f63d0b64970d8d693cc5fb1cf95463c7dd3be7b2764fc681dfea",
+     "optimizer_sha256": "9871330b89b101cdbcc4cc9af9ed6db0ed5988167ee2b2cf74583946ed60e154"
+    },
+    {
+     "visits": 256,
+     "path": "lw_naive_w3_v1024_state_v256.pt",
+     "file_sha256": "8e944a17ed9d9465a1a1dc48763a5a652d817588171e41732eca4e3854132ebc",
+     "weights_tensors_sha256": "701608fb8dd3b97cef1f1f81e397fedb653c497faaeba288abc22d07c55adbc3",
+     "optimizer_sha256": "34f7c08d3cc966118b880117e149d237eb40f598199f35bc1b7416f57fae021b"
+    },
+    {
+     "visits": 384,
+     "path": "lw_naive_w3_v1024_state_v384.pt",
+     "file_sha256": "8869c64a53f4d1632918805a0aed345ec145896a9078981787f19eade6ca38b2",
+     "weights_tensors_sha256": "7b0fc5d553520c2a820408ea069adf2cba38d18208cd1d9bb5ae6fb8ec657abd",
+     "optimizer_sha256": "cefbbfa3f5a21352fbf1e7489753b40dc1bfabc42f8db7a485556c26726843fa"
+    },
+    {
+     "visits": 512,
+     "path": "lw_naive_w3_v1024_state_v512.pt",
+     "file_sha256": "9a1bb72e1f8d965ca4bbc2d06f6c3f6b2e2cabdc9ba03c076f7de048e1ea5bdb",
+     "weights_tensors_sha256": "a1d5b4bc8e2d2e2b2eca6fc68eaedd16299e35cd3c8772769c51714f4e07bdc0",
+     "optimizer_sha256": "d8700c9a17030b88daa21c074141504716522466c95157ae518f4ace4ba5d1e5"
+    },
+    {
+     "visits": 640,
+     "path": "lw_naive_w3_v1024_state_v640.pt",
+     "file_sha256": "a9358cc6a5cfa6d719f921eb4cbdab3d2a03a43b0aab54c5a8c20dca98dd188f",
+     "weights_tensors_sha256": "2936699c940672093291b045b5a52af752e46e9081865b4cd9195c20af8088f1",
+     "optimizer_sha256": "eb17fcc4acf2c2fe5ec9c47f0693702694273a6c5882b21317c9e7ea2e52d0ca"
+    },
+    {
+     "visits": 768,
+     "path": "lw_naive_w3_v1024_state_v768.pt",
+     "file_sha256": "2294e6253ea1da40c11768b8c7cf58451c7393c1a6c061db042d923edc0ae0ed",
+     "weights_tensors_sha256": "9ba7029a447ce398bda4afc4eb8e1ec900db28fc31019125500b048f035957be",
+     "optimizer_sha256": "df444515512d2d2a6c3ddf4f8c6da52fb9fdea64fb650d81b25988ed54f96dae"
+    },
+    {
+     "visits": 896,
+     "path": "lw_naive_w3_v1024_state_v896.pt",
+     "file_sha256": "cb54d1231c8bfa88f62edb10dc772e6f12217fde21b576abbf23d6da035fc4d6",
+     "weights_tensors_sha256": "4d64f4bf0bab56b38aaa9c76e3e15406ec55a58c81bcf6f0528cd33c4aebce14",
+     "optimizer_sha256": "d8000f72944646c4d0850f658fedfeab03c9117cf0f301c0b03a59b9cda7a117"
+    }
+   ],
+   "families_taken": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51
+   ]
+  }
+ },
+ "stream_sha256": "a3ebf7aa79fb0b0209692f894093a78e00fdcfc9a6bdf10bc35916fabcd72c24",
+ "list": {
+  "file": "lw_naive_w3_v1024_br1024_g52-53-54-55_list.npz",
+  "file_sha256": "072cfff1f9e58edbe45d2105cdc6522f8d6124b8ba524305e102ff308f5e2939",
+  "arrays_sha256": "8bedc4d7f0af14adb59582868c26a1f1d388a30ed4bd376a1874c080140ce5fa",
+  "entries": 800,
+  "columns": [
+   "at_visit",
+   "source",
+   "family",
+   "task",
+   "a",
+   "b",
+   "g1",
+   "g2",
+   "g3",
+   "correct",
+   "decay_updates",
+   "weights_from_visit"
+  ],
+  "families_taken": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16,
+   17,
+   18,
+   19,
+   20,
+   21,
+   22,
+   23,
+   24,
+   25,
+   26,
+   27,
+   28,
+   29,
+   30,
+   31,
+   32,
+   33,
+   34,
+   35,
+   36,
+   37,
+   38,
+   39,
+   40,
+   41,
+   42,
+   43,
+   44,
+   45,
+   46,
+   47,
+   48,
+   49,
+   50,
+   51,
+   52,
+   53,
+   54,
+   55
+  ],
+  "items_sha256": "88b3e33896e925574d4e5062263b7daaf4a2393227dca11d0b50c7dd1361b682",
+  "r_items": 2000,
+  "decay_factor_per_update": 0.99975,
+  "note": "source 0: the network at the end of at_visit (65535: before visit 0); source 1: decay alone, the weights at the end of weights_from_visit (65535: the born weights) with every parameter but the byte table multiplied by decay_factor_per_update ** decay_updates; family -1 is the birth family (tasks 65534 add89, 65535 sub89)"
+ },
+ "list_summary": [
+  {
+   "at_visit": 1024,
+   "source": 0,
+   "family": 52,
+   "n": 200,
+   "right": 173,
+   "share": 0.865,
+   "decay_updates": 0,
+   "weights_from_visit": 1024
+  },
+  {
+   "at_visit": 1025,
+   "source": 0,
+   "family": 53,
+   "n": 200,
+   "right": 152,
+   "share": 0.76,
+   "decay_updates": 0,
+   "weights_from_visit": 1025
+  },
+  {
+   "at_visit": 1026,
+   "source": 0,
+   "family": 54,
+   "n": 200,
+   "right": 174,
+   "share": 0.87,
+   "decay_updates": 0,
+   "weights_from_visit": 1026
+  },
+  {
+   "at_visit": 1027,
+   "source": 0,
+   "family": 55,
+   "n": 200,
+   "right": 176,
+   "share": 0.88,
+   "decay_updates": 0,
+   "weights_from_visit": 1027
+  }
+ ]
+}
