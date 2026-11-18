@@ -57,9 +57,14 @@ def words(arm, rows):
         w40 = "kept on items of up to 22 positions and not on items of 50"
     else:
         w40 = None
+    if w40:                                          # the brief's wording for such a run, alone (the reviewer's verification, finding 4)
+        w = w40
     return dict(word=w, word_40_letters=w40, largest_d=max(a for a, _ in ds), largest_d_pct=100 * max(a for a, _ in ds) / N0,
                 largest_heldout_differ=max(b for _, b in ds), reduction_row0=r0, reduction_last=red(rows[-1]), first_failure_of_kept=first_fail,
-                differ_40_letters_by_row={r["updates"]: x for r, x in zip(rows, d40)})
+                differ_40_letters_by_row={r["updates"]: x for r, x in zip(rows, d40)},
+                right_40_letters_by_row={r["updates"]: r["first_family_40_letters"]["exact"] for r in rows},
+                reserve_state_40_letters_by_row={r["updates"]: r["gates_on_first_family_40_letters"]["largest_reserve_state"] for r in rows},
+                largest_opening_40_letters_by_row={r["updates"]: r["gates_on_first_family_40_letters"]["largest_opening"] for r in rows})
 
 
 def read_run(task, arm, rule):
@@ -83,14 +88,15 @@ def e51_rows(task, arm, rule):
 
 def table(task, arm, rule, rows):
     md = [f"### {task}, rule {rule}, arm `{arm}` (`e55_{task}_{arm}_{rule}_{SEED}.json`)", "",
-          "| updates | reduction | d(g) of 31,684 | held-out differ of 1,200 | 40 letters differ of 300 | never-taught | never-taught, reserve shut | new task: cells open at some position | new task: open by > 0.1 in the mean | new task: largest 1 − z | first family: largest 1 − z | first family: cells open at some position | first family: largest reserve state | first family: largest added unit | largest output change | eigenvalue |",
-          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+          "| updates | reduction | d(g) of 31,684 | held-out differ of 1,200 | 40 letters differ of 300 | never-taught | never-taught, reserve shut | new task: cells open at some position | new task: open by > 0.1 in the mean | new task: largest 1 − z | first family: largest 1 − z | first family: cells open at some position | first family: largest reserve state | first family: largest added unit | largest output change | eigenvalue | 40 letters: right of 300 | 40 letters: largest reserve state | 40 letters: largest 1 − z |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     for r in rows:
         a, b = d_counts(r); gn, gf = r["gates_on_new_task"], r["gates_on_first_family"]
         md.append(f"| {r['updates']} | {red(r):.2f} | {a} | {b} | {r['first_family_40_letters']['differ_from_row0']} | {r['score3_never_taught']['pct']:.1f} | "
                   f"{r['score3_never_taught_reserve_shut']['pct']:.1f} | {gn['cells_open_at_some_position']} | {gn['cells_open_by_more_than_0p1']} | {gn['largest_opening']:.3g} | "
                   f"{gf['largest_opening']:.3g} | {gf['cells_open_at_some_position']} | {gf['largest_reserve_state']:.3g} | {gf['largest_added_unit_at_answer_positions']:.3g} | "
-                  f"{r['first_family_largest_change_of_an_output']:.3g} | {r['reserve_map_largest_eigenvalue']:.3f} |")
+                  f"{r['first_family_largest_change_of_an_output']:.3g} | {r['reserve_map_largest_eigenvalue']:.3f} | {r['first_family_40_letters']['exact']} | "
+                  f"{r['gates_on_first_family_40_letters']['largest_reserve_state']:.3g} | {r['gates_on_first_family_40_letters']['largest_opening']:.3g} |")
     md += ["", f"E51's rows of the same task and rule (reduction; never-taught; never-taught with the reserve shut):", "",
            "| updates | `keyed` | `open` | `rehearse` |", "|---|---|---|---|"]
     ref = {a: {x["updates"]: x for x in e51_rows(task, a, rule)} for a in ("keyed", "open", "rehearse")}
@@ -109,12 +115,16 @@ def main(which):
         for task in TASKS:
             for rule in RULES:
                 v, rows = read_run(task, arm, rule); read[f"{arm} {task} {rule}"] = v
-                summ.append(f"| `{arm}` | {task} | {rule} | {v['word']}{' (' + v['word_40_letters'] + ')' if v['word_40_letters'] else ''} | {v['largest_d']} | {v['largest_heldout_differ']} | "
+                summ.append(f"| `{arm}` | {task} | {rule} | {v['word']} | {v['largest_d']} | {v['largest_heldout_differ']} | "
                             f"{v['reduction_row0']:.2f} / {v['reduction_last']:.2f} | {v['learned_from_row'] if v['learned_from_row'] else 'not learned'} | {v['never_taught_last']:.1f} | "
                             f"{v['never_taught_shut_last']:.1f} | {v['largest_reserve_state_first_family']:.3g} | {v['largest_output_change']:.3g} | {v['differ_40_letters_by_row'][16384]} |")
                 body += table(task, arm, rule, rows) + [""]
+    notes = ["", "Notes (from the reviewer's verification of the arm `blind`, `E55_BLIND_VERIFICATION_20261118.md` at 77e65eba, findings 2, 3 and 5):", "",
+             "- The eigenvalue column is the largest magnitude of an eigenvalue of 0.5 I + 0.25 Wn, Wn the candidate rows of the cells in reserve from the cells in reserve. It is above 1 at row 16,384 in all four runs of the arm `blind`. The construction leaves the weights among the cells in reserve free, so that nothing bounds the state of the reserve on longer items or after more updates; *kept exactly* is an observation on items of up to 22 positions.",
+             "- The 40-letter counts, the small states and the output changes depend on the arithmetic as well as on the weights: at row 4,096 of `unrelated` under back-propagation, 45 answers at 40 letters differ in the receipt, 15 in double precision and 142 in single precision in the reviewer's numpy. The outcomes of the brief's rules are the same in each.",
+             "- The outputs move by more than the smallest lead without a changed answer on the scored panels (largest change 1.69e-3 against a smallest lead of 1.78e-4 under the sweep; 0.200 against 2.33e-2 under back-propagation), so that *kept exactly* is not the consequence of a bound."]
     (D55 / f"E55_READ_{which}.json").write_text(json.dumps(dict(experiment="E55", part="first", seed=SEED, runs=read), indent=1))
-    (D55 / f"E55_TABLES_{which}.md").write_text("\n".join(md + summ + [""] + body) + "\n")
+    (D55 / f"E55_TABLES_{which}.md").write_text("\n".join(md + summ + notes + [""] + body) + "\n")
     print("\n".join(summ))
     for k, v in read.items():
         print(k, "first failure of kept:", v["first_failure_of_kept"] and {kk: vv for kk, vv in v["first_failure_of_kept"].items() if kk != "gates_on_first_family"})

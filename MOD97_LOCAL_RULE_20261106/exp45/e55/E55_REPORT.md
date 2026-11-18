@@ -54,7 +54,7 @@ The full tables of the twelve scored rows of each run, with E51's rows of `keyed
 | arm | task | rule | first family | largest d(g) | largest held-out differ | reduction row 0 / 16,384 | learned from row | never-taught at 16,384 | with the reserve shut | largest reserve state on the first family | largest output change | 40 letters differ at 16,384 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `blind` | unrelated | S | kept exactly | 0 | 0 | 92.40 / 92.40 | 8192 | 99.0 | 0.0 | 1.31e-05 | 0.00169 | 0 |
-| `blind` | unrelated | B | kept exactly (kept on items of up to 22 positions and not on items of 50) | 0 | 0 | 95.25 / 95.25 | 2048 | 100.0 | 0.0 | 0.00121 | 0.2 | 278 |
+| `blind` | unrelated | B | kept on items of up to 22 positions and not on items of 50 | 0 | 0 | 95.25 / 95.25 | 2048 | 100.0 | 0.0 | 0.00121 | 0.2 | 278 |
 | `blind` | conflict | S | kept exactly | 0 | 0 | 92.40 / 92.40 | not learned | 69.4 | 34.9 | 3.33e-06 | 9.87e-05 | 0 |
 | `blind` | conflict | B | kept exactly | 0 | 0 | 95.25 / 95.25 | not learned | 63.2 | 28.9 | 2.95e-05 | 0.000349 | 0 |
 | `shut` | unrelated | S | partly kept | 135 | 17 | 92.40 / 92.56 | not learned | 72.7 | 0.0 | 0.00106 | 2.09 | 5 |
@@ -77,12 +77,44 @@ The largest state of a cell in reserve on the first family's held-out items, at 
 
 The largest eigenvalue of the reserve's map on a byte in use (0.5 I + 0.25 Wn) is 0.605 at row 0 in both arms. At row 16,384 it is 1.098 (blind, `unrelated`, S), 1.434 (blind, `unrelated`, B), 1.058 (blind, `conflict`, S) and 1.197 (blind, `conflict`, B).
 
+### 4.1 The arm `blind` on items of 50 positions, the reserve's map, the arithmetic and the leads
+
+These paragraphs enter findings 1, 2, 3 and 5 of the reviewer's verification of the arm `blind` (`E55_BLIND_VERIFICATION_20261118.md` and `e55_blind_verify.py` on the reviewer's branch, commit `77e65eba`). That verification reproduced all 1,227 figures of the tables, the reading and the message of the four runs from the receipts and the twelve saved networks.
+
+**Items of 50 positions, `unrelated` under back-propagation.** The 40-letter panel holds 300 held-out pairs of addition, each 50 positions long. The number of answers that differ from row 0's does not by itself say what happens to the first family on these items; the right answers do. They fall from 274 of 300 at row 0 to 21 of 300 at row 16,384. On these items the largest state of a cell in reserve reaches 0.9998, and the largest 1 − z of a cell in reserve 0.997, at row 16,384 (`gates_on_first_family_40_letters` in the receipt). The states of the cells in reserve thus reach the limit of the hyperbolic tangent, and some of their update gates open almost fully. On items of 50 positions the first family is lost in this run.
+
+**The reserve's map, by row.** Wn is the block of the candidate rows of the cells in reserve that takes the states of the cells in reserve. The table gives, for all four runs of the arm `blind`, the largest state of a cell in reserve on the 40-letter panel and the largest magnitude of an eigenvalue of 0.5 I + 0.25 Wn; for `unrelated` under back-propagation it also gives the right answers and the largest 1 − z on that panel.
+
+| task | rule | quantity | 0 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048 | 4096 | 8192 | 16384 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| unrelated | S | largest reserve state, 40 letters | 2.4e-07 | 2.9e-07 | 4.3e-07 | 4.7e-07 | 6e-07 | 5.7e-07 | 5.7e-07 | 6e-05 | 7.2e-06 | 4.6e-05 | 0.00015 | 0.00017 |
+| unrelated | S | eigenvalue of 0.5 I + 0.25 Wn | 0.605 | 0.809 | 0.771 | 0.689 | 0.710 | 0.684 | 0.776 | 1.094 | 0.975 | 1.060 | 1.112 | 1.098 |
+| unrelated | B | largest reserve state, 40 letters | 3.2e-07 | 4.5e-07 | 7.6e-07 | 9.6e-07 | 1.1e-06 | 1.2e-06 | 1.8e-06 | 0.0024 | 0.3 | 0.33 | 0.95 | 1 |
+| unrelated | B | eigenvalue of 0.5 I + 0.25 Wn | 0.605 | 0.716 | 0.734 | 0.907 | 0.905 | 0.837 | 0.864 | 1.193 | 1.324 | 1.342 | 1.385 | 1.434 |
+| unrelated | B | right answers of 300, 40 letters | 274 | 274 | 274 | 274 | 274 | 274 | 274 | 274 | 264 | 238 | 101 | 21 |
+| unrelated | B | largest 1 − z, 40 letters | 0.5 | 0.5 | 0.5 | 0.5 | 0.5 | 0.5 | 0.5 | 0.502 | 0.875 | 0.913 | 0.982 | 0.997 |
+| conflict | S | largest reserve state, 40 letters | 2.4e-07 | 3e-07 | 3.6e-07 | 2.9e-07 | 4e-07 | 2.8e-06 | 5.2e-06 | 1.2e-06 | 2e-06 | 2.1e-06 | 8.6e-06 | 1.1e-05 |
+| conflict | S | eigenvalue of 0.5 I + 0.25 Wn | 0.605 | 0.859 | 0.933 | 0.930 | 0.992 | 1.066 | 1.062 | 1.005 | 0.950 | 1.012 | 1.039 | 1.058 |
+| conflict | B | largest reserve state, 40 letters | 3.2e-07 | 4.6e-07 | 5.2e-07 | 1.1e-06 | 6.9e-06 | 4.8e-06 | 1.2e-05 | 2.5e-05 | 0.00026 | 0.00097 | 0.0014 | 0.0034 |
+| conflict | B | eigenvalue of 0.5 I + 0.25 Wn | 0.605 | 0.709 | 0.847 | 0.969 | 1.068 | 1.043 | 1.064 | 1.103 | 1.161 | 1.170 | 1.180 | 1.197 |
+
+The eigenvalue is above 1 at row 16,384 in all four runs (1.098, 1.434, 1.058, 1.197).
+- **A limit of the construction.** The weights among the cells in reserve are left free, so nothing bounds the state of the reserve on longer items or after more updates.
+- **What "kept exactly" means here.** It is an observation on items of up to 22 positions.
+
+**The arithmetic.** The 40-letter counts, the small states of the reserve and the changes of the outputs depend on the arithmetic as well as on the weights. On a first-family item a cell in reserve receives only the remainder of the projection of its rows, which single-precision storage leaves at about 1e-8, and the rounding of the arithmetic. At row 4,096 of `unrelated` under back-propagation, the receipt gives 45 changed answers at 40 letters; the reviewer's numpy gives 15 in double precision and 142 in single precision from the same saved weights. The outcomes of the brief's rules are the same in each arithmetic: more than 3 of the 300 answers differ in that run and none in the other three, and the 32,884 scored answers are identical.
+
+**The outputs and the smallest lead.** The *lead* of an answer position is the difference between the largest and the second largest output there. The outputs move by more than the smallest lead without any answer changing on the scored panels. Under the sweep the largest change is 1.69e-3 against a smallest lead of 1.78e-4; under back-propagation it is 0.200 against 2.33e-2. *Kept exactly* is therefore an observation on these panels, not the consequence of a bound.
+
 ## 5. The words for each run
 
 **Arm `blind`.**
 
 - `unrelated`, sweep: **kept exactly**; no answer at 40 letters differs at any row. The task is **learned from row 8,192** (99.0 at row 16,384). *The first family was kept while the task was learned, with the plain forward pass.* With the cells in reserve held shut, the never-taught score is 0.0.
-- `unrelated`, back-propagation: **kept exactly on the scored panels**, but by the brief's rule this is "**kept on items of up to 22 positions and not on items of 50**". Of the 300 held-out pairs at 40 letters, the answers that differ from row 0's are 21 at row 2,048, 45 at 4,096, 194 at 8,192 and 278 at 16,384. The task is **learned from row 2,048** (100.0). *The first family was kept while the task was learned, with the plain forward pass*, on items of up to 22 positions. With the cells in reserve held shut, the never-taught score is 0.0.
+- `unrelated`, back-propagation: **kept on items of up to 22 positions and not on items of 50**, the brief's wording for this run.
+  - On the scored panels no answer changes at any row.
+  - Of the 300 held-out pairs at 40 letters, the answers that differ from row 0's are 21 at row 2,048, 45 at 4,096, 194 at 8,192 and 278 at 16,384. The right answers fall from 274 at row 0 to 21 at row 16,384 (section 4.1).
+  - The task is **learned from row 2,048** (100.0). With the cells in reserve held shut, the never-taught score is 0.0.
 - `conflict`, sweep: **kept exactly**. *The task was not learned within 16,384 updates*: 69.4 at row 16,384.
 - `conflict`, back-propagation: **kept exactly**. *The task was not learned within 16,384 updates*: 63.2 at row 16,384.
 - For both runs of `conflict`, the largest 1 − z on the never-taught items at rows 1,024 to 16,384 is 0.93 to 1.00, with 128 cells open at some position at every row. In this arm the gates stand near one half on every item, so these figures carry no information about the use of the reserve.
@@ -108,21 +140,22 @@ The largest eigenvalue of the reserve's map on a byte in use (0.5 I + 0.25 Wn) i
 | task | rule | `blind`: first family (largest d(g)) | `blind`: learned from row | `blind`: reserve shut | `shut`: first family (largest d(g)) | `shut`: learned from row | `shut`: reserve shut |
 |---|---|---|---|---|---|---|---|
 | unrelated | S | kept exactly (0) | 8,192 | 0.0 | partly kept (135) | not learned (72.7) | 0.0 |
-| unrelated | B | kept exactly on items of up to 22 positions, not on items of 50 (0) | 2,048 | 0.0 | partly kept (34) | 4,096 | 0.0 |
+| unrelated | B | kept on items of up to 22 positions and not on items of 50 (0) | 2,048 | 0.0 | partly kept (34) | 4,096 | 0.0 |
 | conflict | S | kept exactly (0) | not learned (69.4) | 34.9 | partly kept (925) | not learned (19.8) | 21.9 |
 | conflict | B | kept exactly (0) | not learned (63.2) | 28.9 | partly kept (244) | 8,192 | 34.4 |
 
 **`unrelated`.**
-- The arm `blind` learns `unrelated` under both rules, with a score of 0.0 when the cells in reserve are held shut, and the first family's scored answers are kept exactly.
-- *The task was learned and the first family kept exactly in a network whose cells in reserve receive nothing from the first family's items.* This does not say that these cells sufficed, because the rows of the old cells and of the old readout units change as well.
-- Under back-propagation, the keeping holds on items of up to 22 positions and not on items of 50.
+- The arm `blind` learns `unrelated` under both rules, with a score of 0.0 when the cells in reserve are held shut.
+- **Under the sweep:** *the task was learned and the first family kept exactly in a network whose cells in reserve receive nothing from the first family's items.*
+- **Under back-propagation:** the same holds on items of up to 22 positions only; the first family is not kept on items of 50 positions.
+- Neither sentence says that these cells sufficed, because the rows of the old cells and of the old readout units change as well.
 
 **`conflict`.**
-- In the arm `blind`, the task was not learned within 16,384 updates by a network whose cells in reserve receive only the operation byte and their own states. The cells in reserve raised the never-taught score by 34.5 points under the sweep (69.4 against 34.9 when they are held shut) and by 34.3 points under back-propagation (63.2 against 28.9).
+- In the arm `blind`, the task was not learned within 16,384 updates by a network whose cells in reserve receive only the operation byte and their own states. The cells in reserve raised the never-taught score by 34.5 points under the sweep (69.4 against 34.9 when they are held shut) and by 34.4 points under back-propagation (63.25 against 28.875; 34.375 unrounded).
 - Under back-propagation the arm `shut` learns `conflict` and the arm `blind` does not. *On this seed the task was learned by the arm in which a cell in reserve may read what the first family presents, and not by the arm in which it may not.* The arms also differ in that the gates are shut by a bias in the one and stand at one half in the other. Beside this, the arm `shut` lost 244 of the first family's answers (0.77%) and 30 of the 1,200 held-out answers.
 - Under the sweep neither arm learns `conflict`, and no comparison is made.
 
-**The number of updates.** The scored rows double from one to the next, so a ratio of 2 is one row. Each row where a task is learned, beside E51's `keyed` and `open` for the same task and rule:
+**The number of updates.** The scored rows double from one to the next, so a ratio of 2 is one row. In the arm `blind`, `unrelated` is learned three doublings later than in E51's `keyed` under the sweep (8,192 against 1,024; `open` 512), and two doublings later under back-propagation (2,048 against 512; `open` 512). Each row where a task is learned, beside E51's `keyed` and `open` for the same task and rule:
 
 | run | learned from row | E51 `keyed` | E51 `open` |
 |---|---|---|---|
@@ -147,11 +180,15 @@ As the brief states, this job removes only the reading of the item by the forwar
 - The cells in reserve and the added units are put in by the program at the change of task. In the arm `shut` the program also shuts the gates with a bias of 10.
 - The change of task is known to the program: the directions are fixed, and a new optimizer is made, at that moment.
 
+Two parts of these acts are named here, at the reviewer's request:
+- **The record of the bytes in use.** The 46 bytes of the first family's items are recorded by the program, and the rows of the byte table for these bytes are restored after every update.
+- **One use of the keyed forward pass.** It is used once, at the change of task, to compute the directions in use. These were computed for E51 and saved with its keyed start, and E55 reads the saved directions. No forward pass of E55's updates or scoring reads the item.
+
 ## 8. The predictions
 
 | | Statement | Chance | Outcome |
 |---|---|---|---|
-| P55.1 | Checks 1 to 3 pass at the first attempt | 50% | Held. The first launch of the dry runs failed on a quoting error in my launch script, before any update; no check failed. |
+| P55.1 | Checks 1 to 3 pass at the first attempt | 50% | Held: one receipt for each of checks 1 to 3, each with `ok` true. The first launch of the dry runs failed on a quoting error in my launch script before any update, and no check failed. |
 | P55.2 | In the arm `shut`, `unrelated` is learned under both rules | 45% | Failed: learned under B only (S: 72.7) |
 | P55.2b | In the arm `shut`, `unrelated` is learned under back-propagation | 80% | Held (from row 4,096) |
 | P55.3 | In the arm `shut`, `conflict` is learned under both rules | 5% | Failed: learned under B only (from row 8,192); S 19.8 |
@@ -160,7 +197,7 @@ As the brief states, this job removes only the reading of the item by the forwar
 | P55.5 | In the arm `shut`, the largest 1 − z on the first family's held-out items is below 1e-3 at every scored row of every run | 85% | Held (largest 6.5e-5) |
 | P55.6 | In the arm `shut`, every run in which the task is learned has at least 32 cells open at some position on the new task's items at row 16,384 | 80% | Held (128 for `unrelated`, B; 58 for `conflict`, B) |
 | P55.8 | In the arm `shut`, where `unrelated` is learned, it is learned from row 4,096 or earlier | 55% | Held (B, from row 4,096; not learned under S) |
-| P55.9 | In the arm `blind`, the first family is kept exactly in all four runs | 55% | Held on the scored panels (`unrelated`, B is not kept on items of 50 positions) |
+| P55.9 | In the arm `blind`, the first family is kept exactly in all four runs | 55% | Held by the definition of *kept exactly* on the scored panels. The brief's wording for `unrelated`, B is "kept on items of up to 22 positions and not on items of 50" |
 | P55.10 | In the arm `blind`, d(g) is at most 31 at every scored row of all four runs | 80% | Held (0 throughout) |
 | P55.11 | In the arm `blind`, the largest state of a cell in reserve on the first family's held-out items is below 1e-4 at every scored row of every run | 70% | Failed: `unrelated`, B is 3.4e-4 at row 2,048 and 1.2e-3 at row 16,384 |
 | P55.12 | In the arm `blind`, `unrelated` is learned under both rules | 65% | Held (from rows 8,192 and 2,048) |
@@ -177,6 +214,11 @@ As the brief states, this job removes only the reading of the item by the forwar
 - **Costs.** The eight runs took 6.15 CPU-hours, 2,536 to 2,992 seconds each, against a forecast of about 1,370 seconds a run. The forecast came from 64-update dry runs; at 16,384 updates the scoring of twelve rows with longer items, and the slower generation once the network answers more, cost more.
 - **Interruptions.** No machine restart occurred and no run was interrupted. The folder `exp45/e55/interrupted/` is empty and not committed.
 - **Commit messages.** Every commit of this job carries the trailers of `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` and no name of a language model.
+- **Provenance.**
+  - The four starts and checks 1 to 3 were made at commit `2abb0c3f`, while `exp55_reserve.py` was not yet committed. Their receipts record the runner's hash, which equals that of the committed file.
+  - The receipts of the four dry runs of check 3 record a description in place of a command, because a helper called `exp55_reserve.run` directly. The helpers and the command behind each dry run are now committed in `helpers/`, with `helpers/README_HELPERS.md`, which also names the aborted launcher's logs.
+  - The run of `conflict` under back-propagation in the arm `blind` records commit `4e2a72c2`, and the other three record `d974f048`; the runner is the same file in both.
+- **The limits of the arm `blind`.** The weights among the cells in reserve are free, so nothing bounds the state of the reserve on longer items or after more updates (section 4.1).
 
 ## 10. The difference between `exp51_reserve.run` and `exp55_reserve.run`
 
