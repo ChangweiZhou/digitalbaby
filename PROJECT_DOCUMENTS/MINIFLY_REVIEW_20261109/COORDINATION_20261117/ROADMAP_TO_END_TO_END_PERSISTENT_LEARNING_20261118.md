@@ -1,5 +1,16 @@
 # Roadmap to end-to-end persistent learning with generalisation (18 November 2026, draft 1, for Mr. Xu)
 
+**Note of 22:40 UTC: draft 1 has faults and is being revised.** An independent reader found fourteen (`INDEPENDENT_READING_OF_THE_ROADMAP_20261118.md`). Those the reviewer has checked and accepts already are listed here, so that draft 1 is not read as sound; draft 2 follows when the second reader of step 0 and the reader of the earlier record have reported.
+
+1. Step 7 as written does not meet the contract's test: no step asks a never-taught instance after a delay and after other learning, and the control of step 5 ("the same tissue without the earlier teaching") cannot exist for a tissue that is never reset or copied. The control has to be a second tissue from the same start whose stream lacks the relation.
+2. The roadmap does not say how a cell at the output end can adjust from an answer that arrives later as input. This is the largest open point of the route and draft 1 passes over it.
+3. In step 0 (ii) the answer to gap 2 ("a cell passes on what is new to it") is credited to Mr. Xu's words. It is not in his words; it is one of the open choices (what a cell's output carries). The answer to gap 1 prevents silence and not constant output.
+4. Step 5 says that one-digit addition is the smallest case of the first family. That is wrong: the first family is add, sub, max and min on two numbers below 89, add and sub modulo 89, with a task byte (`CELLS_IN_USE_IN_LIMITED_NETWORKS_20261117.md`, line 13). The reviewer wrote it from memory.
+5. Section 2 lacks capabilities (cells that respond to two bytes together; a code of the parts shared between instances, which is the means of generalising; emitting no byte and the end mark) and has wrong dependencies. Section 3 lacks conflicts (giving up unused connections destroys what an absent family needs; every probe also teaches).
+6. Each never-taught instance can be scored once in a life, because the right answer follows the attempt. The reserve of never-taught instances has to be divided beforehand among the early, the delayed and the after-other-learning probes.
+7. No rule says when a step is given up, and the places where the route is most likely to stop are not named.
+8. The history gives "about 22:35 UTC"; the file was written at about 22:30 UTC. Section 1 cites section 8 of `WHAT_A_NEURON_HAS_20261118.md` for the words of the goal, which were not recorded there (now section 9a).
+
 By the outside reviewer. This file replaces `ORDER_FROM_BIOLOGY_20261118.md` (draft 2), which was a list of measurements and not a route to the goal. It orders what the goal needs by what depends on what. It starts nothing; releases and runs are the coordinator's.
 
 ## 1. The goal, which has not changed since the project began

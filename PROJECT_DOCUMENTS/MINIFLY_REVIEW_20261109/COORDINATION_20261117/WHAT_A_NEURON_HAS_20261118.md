@@ -73,6 +73,12 @@ What follows at once, in the reviewer's words: there is no cell that is the outp
 
 Section 7, point 2, as the reviewer wrote it ("reaches many cells alike") and the reviewer's use of it ("a signal to all cells") are wrong. Mr. Xu: a cell may be able to release a chemical substance, a signal, into a region near it; the signal is local. This had been discussed before (his statement of 16 November that a neuron acts and adjusts only within its own neighbourhood), and the reviewer had forgotten it. Corrected: a cell's chemical signal reaches the cells of a region near the releasing cell, alike; it never reaches the whole tissue; how each receiving cell reads it is that cell's own matter. No signal of any kind reaches every cell.
 
+## 9a. Mr. Xu's statement of the goal (18 November 2026, about 22:22 UTC), on the reviewer's draft 2 of a list
+
+> 但我们要求做到的是有泛化能力的end to end persistent learning，你列出来这些清单有什么帮助呢？我还是无法理解。
+
+Translation (the reviewer's). But what we require is end-to-end persistent learning that is able to generalise; how do the lists you have drawn up help with that? I still cannot understand.
+
 ## 10. Mr. Xu's ruling of about 22:25 UTC: the two ends, and what was asked for
 
 The reviewer had written that "end to end" implies a byte-level output end beside the encoder, and had marked this as its own inference. Mr. Xu:
