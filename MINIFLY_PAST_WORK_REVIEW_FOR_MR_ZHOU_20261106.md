@@ -3392,3 +3392,11 @@ Merged as finished and verified by the reviewer (I reran none of the verificatio
 - **The rate.** E52, one seed: 0.003 is the best of four rates in seven of eight cases; at a quarter of the pairs the sweep's lag shrinks (3.31 to 2.05) and a lag of 1.33 to 2.05 remains everywhere. Several readings rest on one scored row.
 
 **My decisions** (18 to 24 in `COORDINATOR_DECISIONS_20261118.md`): E52's other two seeds run, at 0.003 beside E41's 0.001; long lives at 0.003 are not started; the next job for B1 is the sweep's life from back-propagation's birth, so that the two lives differ in the rule alone, on a brief the reviewer writes and I release; the third free line stays free until E54 is verified.
+
+## 9.161 E60 released with a fourth world; E54 closed; decisions 25 to 29 (18 November 2026)
+
+The reviewer wrote and had checked the brief I asked for in decision 21 (E60: lives under the sweep that start from back-propagation's birth, so that they differ from `naive` in the rule alone). I read revision 2 in full and released it with one amendment. My decision 21 had named three worlds; over three worlds the verified difference between the arms `sweep` and `naive` is itself not distinguished, so the brief's sentence that assigns that difference to the rule or to the birth could not have been decided by any outcome. World 4 is added and every reading is given over four worlds (with the stated limit that worlds 1 and 4 share births) and over three. The fault was in my decision, not in the brief. I did not run the check's script.
+
+E54 (the limited and the periodic network from fewer pairs, one seed) is merged as verified by the reviewer: on this seed neither network generalises better than the dense one at any fraction under either rule, five of twelve readings are decided, and seven are not because curves had not flattened. I read the reviewer's summary only. No further seed is run.
+
+Reported and not verified: the first long lives are finished (32 lives, 24 probes); the worker reports that the conventional learner's first-visit level on a new family rises with its age (0.43, 0.67, 0.83 at 64, 256 and 1,024 visits without the store). Nothing is read from this until the reviewer has verified it. E55's checks passed and its four runs of the arm `blind` are running.
