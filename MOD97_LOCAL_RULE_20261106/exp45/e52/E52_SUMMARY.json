@@ -235,8 +235,8 @@
    },
    "against_0001": {
     "0.0003": [
-     null,
-     null
+     "neither reaches",
+     "slower"
     ],
     "0.003": [
      "faster",
@@ -467,6 +467,42 @@
     "h256 f25": false,
     "h512 f50": false,
     "h512 f25": false
+   }
+  },
+  "P52.2": {
+   "statement": "the sweep gains from its own rate at one or more of the four",
+   "outcome": true,
+   "detail": {
+    "h256 f50": true,
+    "h256 f25": true,
+    "h512 f50": false,
+    "h512 f25": true
+   }
+  },
+  "P52.3": {
+   "statement": "present width, f 0.25: the sweep's mean R over the last three rows is at least 85 at some rate",
+   "outcome": true,
+   "detail": {
+    "0.0003": 72.53333333333333,
+    "0.001": 78.78333333333333,
+    "0.003": 95.05
+   }
+  },
+  "P52.4": {
+   "statement": "half width, f 0.25: the lag on R at the rules' own rates is smaller than at 0.001",
+   "outcome": true,
+   "detail": {
+    "at_0001": "3.31",
+    "own": "2.05",
+    "reading": "smaller"
+   }
+  },
+  "P52.6": {
+   "statement": "half width, f 0.25: the sweep's R is steadier at 0.0003 than at 0.001 (RMS change over the last 16 rows)",
+   "outcome": true,
+   "detail": {
+    "0.0003": 1.7727097901235833,
+    "0.001": 2.4536027931730646
    }
   }
  },
@@ -2060,6 +2096,63 @@
     "l3": 114.07857356841363
    },
    "receipt": "e52_S_h256_f50_lr0.01_93683.json"
+  },
+  "S h512 f25 lr0.0003": {
+   "rule": "S",
+   "H": 512,
+   "fp": 25,
+   "rate": 0.0003,
+   "decay": 0.25,
+   "product": false,
+   "dose": 40960,
+   "diverged": false,
+   "diverged_at_row": null,
+   "rows": 161,
+   "last_recordable": 40448,
+   "tensors_sha256": "af9d54738e7f8e10dc3494bcb200a1761388be6505ab75414efff5e419e5edd4",
+   "cpu_updates": 4741.805534330978,
+   "cpu_scoring": 960.7705571870014,
+   "len12_is_A_add": true,
+   "A80": null,
+   "A80_norms": null,
+   "A_final": 78.3888888888889,
+   "A_rms16": 2.4396417466201554,
+   "R80": null,
+   "R80_norms": null,
+   "R_final": 72.53333333333333,
+   "R_rms16": 1.7953644012660297,
+   "at_e41_dose": {
+    "A": 61.333333333333336,
+    "R": 54.800000000000004,
+    "len40_last": 51.333333333333336,
+    "len40_mean3": 54.44444444444445,
+    "norms": {
+     "book": 45.03647153633488,
+     "l1": 6.7069010309968276,
+     "input_map": 26.90363937011855,
+     "recurrent": 26.61404259956063,
+     "lm": 24.97812829328979,
+     "l2": 8.317752375299522,
+     "l3": 30.958022242393735
+    }
+   },
+   "len40_last": 72.0,
+   "len40_mean3": 68.66666666666667,
+   "len40_range_last12": [
+    64.0,
+    72.0
+   ],
+   "taught_final": 99.33333333333333,
+   "norms_final": {
+    "book": 45.361431586581695,
+    "l1": 3.8994354765769983,
+    "input_map": 27.450227357186385,
+    "recurrent": 23.02819619524644,
+    "lm": 20.037989349253927,
+    "l2": 5.551860280839653,
+    "l3": 24.807780803405958
+   },
+   "receipt": "e52_S_h512_f25_lr0.0003_93683.json"
   },
   "S h512 f25 lr0.001": {
    "rule": "S",

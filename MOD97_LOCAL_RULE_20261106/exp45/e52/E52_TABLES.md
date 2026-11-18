@@ -1,4 +1,4 @@
-Receipts read: 31 complete runs in `exp45/e52`. Seed 93683. Written by `exp52_tables.py`.
+Receipts read: 32 complete runs in `exp45/e52`. Seed 93683. Written by `exp52_tables.py`.
 
 ## Table 1. Every run
 
@@ -32,6 +32,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | present, 0.50 | B | 0.0003 | 0.25 | 40,960 | 12,544 | 12,800 | 98.83 | 96.82 | 99.39 | 96.7, 97.1 (87.0–99.0) | 1.73 | no | `e52_B_h512_f50_lr0.0003_93683.json` |
 | present, 0.50 | B | 0.001 | 0.25 | 12,288 | 4,096 | 4,096 | 93.11 | 94.27 | 95.89 | 91.3, 92.0 (91.3–97.7) | 1.77 | no | `e52_B_h512_f50_lr0.001_93683.json` |
 | present, 0.50 | B | 0.003 | 0.25 | 12,288 | 2,816 | 2,816 | 95.89 | 93.77 | 95.22 | 91.3, 95.0 (88.0–97.3) | 3.51 | no | `e52_B_h512_f50_lr0.003_93683.json` |
+| present, 0.25 | S | 0.0003 | 0.25 | 40,960 | – | – | 78.39 | 72.53 | 99.33 | 72.0, 68.7 (64.0–72.0) | 1.80 | no | `e52_S_h512_f25_lr0.0003_93683.json` |
 | present, 0.25 | S | 0.001 | 0.25 | 12,288 | 9,984 | – | 83.06 | 78.78 | 96.33 | 70.3, 73.2 (68.0–79.7) | 3.14 | no | `e52_S_h512_f25_lr0.001_93683.json` |
 | present, 0.25 | S | 0.003 | 0.25 | 12,288 | 4,096 | 5,376 | 96.56 | 95.05 | 97.89 | 92.3, 95.4 (89.7–97.7) | 3.66 | no | `e52_S_h512_f25_lr0.003_93683.json` |
 | present, 0.25 | B | 0.0003 | 0.25 | 40,960 | 11,008 | 12,288 | 92.00 | 89.80 | 99.44 | 86.3, 89.0 (84.3–92.3) | 2.59 | no | `e52_B_h512_f25_lr0.0003_93683.json` |
@@ -50,6 +51,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | half, 0.25 | B | no | 90.28 | 84.62 | 87.3, 85.8 | 96.89, 94.53 |
 | present, 0.50 | S | no | 76.56 | 70.52 | 70.3, 68.0 | 93.28, 92.33 |
 | present, 0.50 | B | no | 70.50 | 66.47 | 67.0, 67.2 | 98.83, 96.82 |
+| present, 0.25 | S | no | 61.33 | 54.80 | 51.3, 54.4 | 78.39, 72.53 |
 | present, 0.25 | B | no | 83.72 | 80.68 | 82.0, 76.9 | 92.00, 89.80 |
 
 ## Table 3. The seven norms (book / l1 / input map / recurrent / lm / l2 / l3)
@@ -82,6 +84,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | present, 0.50 | B | 0.0003 | 45.2 / 7.4 / 26.1 / 24.2 / 25.1 / 8.3 / 39.8 | 45.2 / 7.3 / 26.0 / 24.2 / 25.1 / 8.2 / 39.2 | 45.6 / 4.6 / 25.8 / 21.1 / 20.2 / 4.8 / 20.0 | 45.2 / 7.5 / 26.1 / 24.2 / 25.0 / 8.4 / 40.2 |
 | present, 0.50 | B | 0.001 | 45.2 / 6.0 / 34.5 / 28.5 / 28.9 / 10.8 / 40.5 | 45.2 / 6.0 / 34.5 / 28.5 / 28.9 / 10.8 / 40.5 | 45.8 / 4.3 / 38.3 / 27.3 / 26.1 / 9.1 / 30.9 |  |
 | present, 0.50 | B | 0.003 | 45.1 / 4.2 / 50.9 / 36.8 / 33.7 / 18.2 / 31.2 | 45.1 / 4.2 / 50.9 / 36.8 / 33.7 / 18.2 / 31.2 | 48.5 / 4.5 / 48.4 / 37.4 / 32.2 / 19.4 / 35.4 |  |
+| present, 0.25 | S | 0.0003 | – | – | 45.4 / 3.9 / 27.5 / 23.0 / 20.0 / 5.6 / 24.8 | 45.0 / 6.7 / 26.9 / 26.6 / 25.0 / 8.3 / 31.0 |
 | present, 0.25 | S | 0.001 | 45.3 / 3.6 / 39.8 / 29.2 / 25.7 / 10.0 / 27.9 | – | 45.4 / 3.5 / 39.8 / 29.0 / 25.5 / 9.8 / 28.1 |  |
 | present, 0.25 | S | 0.003 | 44.7 / 3.7 / 54.3 / 39.1 / 34.2 / 20.6 / 43.9 | 44.7 / 4.1 / 53.5 / 39.1 / 34.2 / 20.4 / 44.3 | 44.4 / 6.5 / 56.1 / 40.4 / 34.5 / 20.9 / 50.9 |  |
 | present, 0.25 | B | 0.0003 | 45.2 / 7.8 / 25.0 / 24.2 / 25.7 / 8.3 / 37.0 | 45.2 / 7.3 / 24.8 / 23.8 / 25.4 / 8.0 / 34.2 | 45.7 / 4.5 / 26.1 / 21.0 / 20.1 / 5.2 / 21.0 | 45.2 / 7.3 / 24.8 / 23.8 / 25.4 / 8.0 / 34.2 |
@@ -98,7 +101,7 @@ Updates to 80 by the three-row rule; “–” is not reached within the dose. F
 | half, 0.25 | B | 0.003 | 0.003 | slower, slower | the same, faster | slower, slower | no (read on R and A) |
 | present, 0.50 | S | 0.001 (tied with 0.003) | 0.001 (tied with 0.003) | slower, slower | the same, the same | not run | no (read on R and A) |
 | present, 0.50 | B | 0.003 | 0.003 | slower, slower | the same, the same | not run | no (read on R and A) |
-| present, 0.25 | S | 0.003 | 0.003 | not run | faster, faster | not run | yes, at 0.003 (read on R and A) |
+| present, 0.25 | S | 0.003 | 0.003 | neither reaches, slower | faster, faster | not run | yes, at 0.003 (read on R and A) |
 | present, 0.25 | B | 0.003 | 0.003 | slower, slower | the same, the same | not run | no (read on R and A) |
 
 ## Table 5. The lag (the sweep's updates to 80 over back-propagation's) at each width and fraction
@@ -134,5 +137,9 @@ Further runs at 0.01 called for by the rule (best rate 0.003 on R, or on A where
 | | Statement | Outcome | Figures |
 |---|---|---|---|
 | P52.1 | back-propagation's best rate on R is 0.001 or 0.003, or a tie that includes one of them, at all four | true | {"h256 f50": [0.003], "h256 f25": [0.003], "h512 f50": [0.003], "h512 f25": [0.003]} |
+| P52.2 | the sweep gains from its own rate at one or more of the four | true | {"h256 f50": true, "h256 f25": true, "h512 f50": false, "h512 f25": true} |
+| P52.3 | present width, f 0.25: the sweep's mean R over the last three rows is at least 85 at some rate | true | {"0.0003": 72.53333333333333, "0.001": 78.78333333333333, "0.003": 95.05} |
+| P52.4 | half width, f 0.25: the lag on R at the rules' own rates is smaller than at 0.001 | true | {"at_0001": "3.31", "own": "2.05", "reading": "smaller"} |
 | P52.5 | back-propagation gains from its own rate at none of the four | false | {"h256 f50": true, "h256 f25": false, "h512 f50": false, "h512 f25": false} |
+| P52.6 | half width, f 0.25: the sweep's R is steadier at 0.0003 than at 0.001 (RMS change over the last 16 rows) | true | {"0.0003": 1.7727097901235833, "0.001": 2.4536027931730646} |
 
