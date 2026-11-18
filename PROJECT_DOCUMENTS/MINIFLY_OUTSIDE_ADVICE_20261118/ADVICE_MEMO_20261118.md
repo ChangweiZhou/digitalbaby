@@ -1,6 +1,6 @@
 # Advice memo: persistent learning as a question of where an experience is written
 
-**Date:** 18 November 2026. **Revision 2, in progress (draft).** Part I is revision 1 unchanged; Part II, sections 9 and 10, is added, and its sections on the older Codex branches are to follow. For Mr. Zhou and Mr. Xu, and for the coordinator. Written by an outside session at Mr. Xu's request to look at the project and offer advice on the larger picture.
+**Date:** 18 November 2026. **Revision 2 (draft).** Part I is revision 1, unchanged; Part II (sections 9 to 12) says what the unmerged branches add, corrects five statements of Part I, and revises the recommendations. For Mr. Zhou and Mr. Xu, and for the coordinator. Written by an outside session at Mr. Xu's request to look at the project and offer advice on the larger picture.
 
 **Status:** proposed. This memo decides nothing, authorises no run and reports no new result. Nothing was trained and no figure was recomputed.
 
@@ -12,7 +12,7 @@
 - the reviewer's memo to the coordinator (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/MEMO_TO_COORDINATOR_LEARNED_STRUCTURE_20261115.md`, revision 24), sections 24 and 28 to 33; its plan and log (`COORDINATION_20261117/`); the two discussion memos of 15 and 16 November; the coordinator's decisions of 18 November;
 - for section 5.2 only, the sources `arch26.py`, `exp11_cell.py` (tasks and item format), `e40_new_family.py`, `e48_gated.py` and `smallworld/lw_world.py` in `MOD97_LOCAL_RULE_20261106/`.
 
-**Not read for Part I:** the branches that are not merged into the default branch (the long lives, E52, E54, E58, E59, and the older Codex lines of 3 to 6 November). Part II says what they add or change, and corrects sections 4.1 and 4.4.
+**Not read for Part I:** the branches that are not merged into the default branch (the long lives, E52, E54, E58, E59, and the older Codex lines of 3 to 6 November). Part II says what they add or change, and corrects statements in sections 2, 3.3, 4.1, 4.2, 4.4 and 4.5.
 
 **How statements are marked.** *Measured*: a figure in the record, as the workers reported it and the reviewer verified it. *Argued*: my reasoning, not tested. *Proposed*: a recommendation. Every measured figure is a development result on one to three seeds and is not confirmed on tasks sealed in advance. Pointers to the literature are from memory and are listed in section 7 for checking.
 
@@ -201,7 +201,7 @@ From memory. The papers of Dohare, Bricken and Shen are cited in the repository'
 - It rests on reading. No run, no recomputation, no check of a worker's figure.
 - Sections 3.1, 4 (the items marked *argued*) and 5 are untested. In particular, the claim that sparse activity and plasticity that falls with use would keep a family while preserving the transfer of E40 is the hypothesis, not a finding. The mushroom-body learner is the evidence that sparse codes can remove generalisation altogether.
 - The reading of the long-life world in 4.4 rests on one world and one seed.
-- The unmerged branches were not read at revision 1. Part II below covers them, and corrects sections 4.1 and 4.4.
+- The unmerged branches were not read at revision 1. Part II below covers them and corrects statements in sections 2, 3.3, 4.1, 4.2, 4.4 and 4.5. Part I is left as it was written, so that the corrections can be seen.
 
 ---
 
@@ -218,8 +218,8 @@ From memory. The papers of Dohare, Bricken and Shen are cited in the repository'
 | `claude/e58-gated-term-kqasnme` (b45dca24) | E58, Part A: receipts of seeds 73129 and 93683; no report yet | By me: a tabulation of the 24 receipts |
 | `claude/e50-fixed-input-code-017dSE` (9f38483f), `claude/e51-reserve-017dSEpW` (5fdac298) | E59, and E51's Part B on two more seeds, both in progress | Not read |
 | `claude/vibrant-cerf-sje726` (3456d5f3) | The reviewer: memo section 33.10 (E50, stage 3); the check of E55, revision 3, in progress | By me |
-| `codex/minifly-three-experiments-20261106` (501ca0c0), which contains `codex/minifly-v39-v40-source`, `-ordered-front-end-` and `-recurrent-worked-examples-` | V191 to V223 and the unnumbered folders of 3 to 6 November | By three reading agents working from the reports, each asked for figures with their file paths. Their findings are not yet in this memo (section 11, to follow) |
-| `codex/minifly-whole-brain-learning-scope-20261106`, `codex/minifly-recursive-runtime-20261103`, `codex/minifly-governance-routing-repair-20261103`, `codex/gemini-human-neuronal-mechanisms-audit-20261025` | One to seven files each that the default branch lacks | By a reading agent; to follow |
+| `codex/minifly-three-experiments-20261106` (501ca0c0), which contains `codex/minifly-v39-v40-source`, `-ordered-front-end-` and `-recurrent-worked-examples-` | V191 to V223 and the unnumbered folders of 3 to 6 November | By three reading agents working from the reports, each asked for figures with their file paths. I checked against the files the figures quoted in section 11 |
+| `codex/minifly-whole-brain-learning-scope-20261106`, `codex/minifly-recursive-runtime-20261103`, `codex/minifly-governance-routing-repair-20261103`, `codex/gemini-human-neuronal-mechanisms-audit-20261025` | One to seven files each that the default branch lacks | By a reading agent |
 
 Nine further `claude/*` branches (the target test, E21, E28, E30, E16-M4, the storage audit) hold no file that the default branch lacks, and `claude/charming-clarke-u9g850` is merged. Of the older work that is already on the default branch I read the opening sections of the reports of V158, V161, V185, V192 and V196, which bear on Part I.
 
@@ -267,15 +267,15 @@ My readings (*argued*):
 
 A pull of equal strength on every weight gives a little and does not keep, as in E38. Where the change is made decides.
 
-**What these change.** They narrow the difference between the rules further, with settings and with time, and leave 4.2 to 4.5 as they were. For the job of 5.2, the births should use settings that E52 supports once its other seeds are in. And E50's stage 1 offers a second form of the arm `rows`: with the fixed code read densely, a new code byte has eleven input lines of its own, which is a larger private change than a byte-table row and still needs no gate.
+**What these change.** They narrow the difference between the rules further, with settings and with time. Beyond the corrections of 10.1 they change nothing in section 4. For the job of 5.2, the births should use settings that E52 supports once its other seeds are in. And E50's stage 1 offers a second form of the arm `rows`: with the fixed code read densely, a new code byte has eleven input lines of its own, which is a larger private change than a byte-table row and still needs no gate.
 
 ## 11. The older Codex branches (*measured, as their own reports give it; development level*)
 
-Ref `codex/minifly-three-experiments-20261106@501ca0c0`. Two of the three readings are in; the third (the recurrent reference V223 and the three experiments of 6 November) is to follow as section 11.4. The figures quoted here I checked against the files named.
+Ref `codex/minifly-three-experiments-20261106@501ca0c0`, 30 folders in all. The figures quoted here I checked against the files named; the rest of each reading I did not check.
 
 ### 11.1 What this work is
 
-- Nearly every learner in the 24 folders read so far is at the store end of the scale of section 3: a fixed hashed or random sparse code with a delta-rule, overwrite or count update; a small transition map learned by a local rule; a table over tokens. The exceptions are small: a recurrent network of 256 binary units with 16 active, whose local rules came from an evolutionary search (Rounds 28 and 29); a hidden Markov model trained by counting (Round 31); a stochastic recurrent state of 372 weights with a local rule (V212); and V181's feed-forward learner with fixed feedback, in a scaling design that was not run. None trains by back-propagation, and none pairs a store with a learned recurrent computation.
+- Nearly every learner in 24 of the 30 folders is at the store end of the scale of section 3: a fixed hashed or random sparse code with a delta-rule, overwrite or count update; a small transition map learned by a local rule; a table over tokens. The exceptions are small: a recurrent network of 256 binary units with 16 active, whose local rules came from an evolutionary search (Rounds 28 and 29); a hidden Markov model trained by counting (Round 31); a stochastic recurrent state of 372 weights with a local rule (V212); and V181's feed-forward learner with fixed feedback, in a scaling design that was not run. None of these 24 trains by back-propagation, and none pairs a store with a learned recurrent computation. The other six folders, of 6 November, are the exception and are taken in 11.4.
 - Almost every positive result rests on structure that the harness supplied: a flag on the bytes to be written, frames that route bytes to a component, operand positions, the call to read. The reports say so themselves.
 - Several folders are reruns by Codex of learners from the other agent's review series of 3 to 5 November, whose own code is not on that branch.
 
@@ -305,6 +305,26 @@ Ref `codex/minifly-three-experiments-20261106@501ca0c0`. Two of the three readin
 - **Section 4.2, third row.** I wrote that, as far as I could find, plasticity that depends on a connection's history was never run. It was, on the store (item 2), with a large effect and an owed control; and, by the September header, as one of the write rules that failed on a code in which everything overlapped. It has not been run on a learner that generalises.
 - **Section 4.5.** The outer loop was run by hand in the November line. It was automatic once before (item 7), and what that search did is the caution for 5.5.
 
+### 11.4 The recurrent reference and the three experiments of 6 November
+
+These six folders hold recurrent or windowed networks, several trained by back-propagation as references. One to three seeds or worlds each.
+
+- **V221 to V223.** V221 is engineering only. V222, the same learner at 65,536 sums in one world, answered 0 of 512 held sums and 0 of 128 taught ones under both of its credit rules. V223, a recurrent network of 32 gated cells trained by two exact gradient methods, ended at 7 and 6 of 1,536 held sums, and at 1 and 2 of 384 taught sums (`OFFICIAL_REPORT.md`). Its own label is that the reference missed its floor, and its later phases were not run. The figure "7 of 1,536 held sums at 65,536 records" in section 1 of the review therefore describes a reference that did not learn the sums it was taught. It bounds nothing about what a recurrent network can learn.
+- **The ordered front end.** A feed-forward learner of 37,313 weights with fixed feedback, given the fly's sensory code, a fixed ordered code, or a code with the order removed. Held quartets are 0 of 32 with every input; taught items 78 to 79 of 128 with the fly's code and 93 to 94 with the ordered one. It is the only one of the six that ran the later phases: of the items of the second phase that were right before the fork, 0 of 8 and 4 of 14 were kept after 10,000 further records.
+- **Worked steps.** A recurrent network of 32 cells on a window, back-propagation within an episode, 24 histories. Taught items 234 to 250 of 256; the same graphs in a new row order 108 to 126 of 256. Worked teaching showed no consistent difference from answer-only or shuffled teaching.
+- **The three remaining experiments** (three seeds each).
+  - A frozen pretrained encoder with a locally trained readout learned nothing: 0 of 384 taught items.
+  - Addition modulo 97 by a window network under back-propagation: 87.6 to 93.5% on the sealed held pairs; the shared path alone 86.3 to 91.6%, the path through the fly's code alone 0.9 to 1.6%. This is the one result of the six on untaught items above 13%, and it agrees with the default branch's first experiments of the same days.
+  - A ring network with counting records: 75 of 75 taught, 0 of 25 held, in all 18 histories.
+- **The four single documents.** The whole-brain note reports no experiment; it records that the learning line kept 302 projection neurons and 5,177 Kenyon cells and no cell of the central complex, and says the negative results do not show that this omission caused them. The meta guard is a small tool for process, which by its own README does not certify science. The note on V185 (status: proposed, not verified) records a session that ran the research skill when it was asked for the process skill. The Gemini audit is a check of a document and has no result for the learner.
+
+What 11.4 adds:
+
+- **Nothing on keeping.** Only the ordered front end reached its later phases, and nothing in these folders uses replay.
+- **The fly's sensory code as the input of a shared computation failed again,** beside a direct input, in two more comparisons (V223's screen: 5 of 12 facts against 12 of 12; modulo 97 above). That is the finding of section 1 of the review. It concerns the code as the input of a computation, and not a sparse code as the place where new things are written, which is its use in 5.3.
+- **A caution for 5.2.** The frozen pretrained encoder with a local readout is the nearest thing in the record to "learn broadly first, then learn the new thing in a small part", and it learned nothing. The job of 5.2 differs in two respects (the births are on families of the same kind, and the private change feeds the recurrent computation instead of reading from it), but P3's chance of 25% should be read with this beside it.
+- **The earlier learners kept renderings, not content.** Both the ordered front end and the worked-steps network lose most of their taught score when only the rendering changes (93 to 94 of 128 down to 10 to 12; 234 to 250 of 256 down to 108 to 126). This is the review's own reading of the period.
+
 ## 12. What changes in the recommendations
 
 1. **The code comes before the rule.** This is the September header's conclusion and it fits the present network exactly: where every item uses every connection, a rule of plasticity has nothing to prefer. Section 5.3 is therefore to be run only on a start in which some cells are unused and are silent on the old items (E51's embedding with E50's code read densely), and 5.2 stays first.
@@ -316,3 +336,10 @@ Ref `codex/minifly-three-experiments-20261106@501ca0c0`. Two of the three readin
 7. **The long lives** (10.1). Continue the existing lives without a store to 4,096 visits from their saved states before anything is concluded on requirement B1.
 
 Unchanged: the reading of section 3, the answers of 4.2 to 4.4 as corrected, the job of 5.2 and the question of section 6. On that question, the note of 3 November used such a cue under the owner's ruling of that time ("anything is allowed except backpropagation and attention") without raising it.
+
+## 13. Limits of Part II
+
+- The figures of the running jobs (10.1 and 10.2, except E50's stage 3) are the workers' own and have not been verified by the reviewer. The long lives are scored on two worlds without a store and on one with it.
+- The older Codex branches were read by agents from the reports. I checked the figures quoted in section 11 against the files and nothing else of those readings. Several of the folders are reruns of another session's learners, and several notes cite code that is not on the branch.
+- The header of V36 and the notes of 3 November are statements in a source file and in memos. The branch holds no result file for V36.
+- Nothing here was run.
