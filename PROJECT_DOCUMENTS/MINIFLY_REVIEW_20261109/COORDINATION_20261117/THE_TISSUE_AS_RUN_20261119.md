@@ -70,6 +70,24 @@ occurs in the window; n if it is not yet numbered and has a connection from a ce
 - N64: τ_i drawn for each cell with equal chance from {2, 4, 8, 16, 32, 64}.
 - N256: from {2, 4, 8, 16, 32, 64, 128, 256}.
 
+## 3a. On trial since 09:44 UTC: long axons (tissues L8-0, L8-64, L8-128, L8-256)
+
+A change of the birth, not of the step. One excitatory cell in 8 that is neither a driver of an output line nor a feedback cell has
+a long axon: it is a member of the neighbourhood of every cell (feedback cells excepted) within 1/2 of its coordinate, where the
+other cells are members only within 1/8. Nothing else distinguishes it; whether it becomes a sender to a given cell is decided as
+for any member, by the starting draw and by making and withdrawal. The 8 starting connections of every cell are drawn from its
+enlarged neighbourhood. L8-0 has τ = 2 for every cell; L8-64, L8-128 and L8-256 draw τ as N64, N128, N256 do.
+
+For an independent program: the long cells are chosen going through the cells in the order of their numbers with numpy
+`default_rng(seed + 20261120)`, a cell being long when it qualifies and the next `.random()` is below 1/8 (a draw is made only for
+cells that qualify); then, for every cell i that is not a feedback cell, in the order of the cells' numbers, the long cells within
+1/2 of i (i itself and cells already members excepted) are added after i's members in the order of their numbers, and i's 8
+starting connections are drawn with the same generator, `.choice(members, size=8, replace=False)`. E57's worker wrote the option
+again from this description and obtained the same long cells, members, starting connections and outputs at every byte.
+
+The numbers 8 and 1/2 are first values; one cell in 4 also serves, one in 32 does not, and a reach of 1/4 does not (STATUS rows
+54, 62). It is a proposal to Mr. Xu, not part of the definition.
+
 ## 4. Numbers, and where each comes from
 
 | Number | Value | Basis |
@@ -126,4 +144,6 @@ program at every byte of 16,384 for every cell (6,638 connections, 3.241 a cell,
 - N0: the present byte above its level at 8 connections on 15 of 15 seeds, at 10 on 12, among the cells near the output lines on 11.
 - Two copies of one tissue differing by 1e-9: no difference after 512 bytes on 43 of 45 tissues; 9e-10 on one; 0.29 on one (N0, seed
   20261211). So the rule does not exclude dependence on the past; it is rare in these runs.
-- What it does not give: the present byte and the bytes before it together among the cells near the output lines.
+- What N0, N64 and N256 do not give: the present byte and the bytes before it together among the cells near the output lines.
+- L8-256 (section 3a) gives them there on three seeds, with the nine entries (STATUS rows 54, 60, 62); 15 seeds, longer lives
+  and the output end are being measured by other lines.
