@@ -72,3 +72,10 @@ Results are in `out/`; the batches run are `batch1.txt` to `batch8.txt`.
   generator, 8 from each cell's members. Batches 39 and 40.
 - `loops.py`: the sets of cells that can each reach the others, counted over all connections and over those from excitatory cells.
 - Batches: 36 (loops), 37 (silent sources), 38 (inhibitory total), 39 and 40 (long axons).
+
+## Added on 19 November after 12:55 UTC: yes-or-no rules on exact inputs
+
+`yesno/yq.py` (head comment states the rules), `yesno/deps/` (the stream and the references, copied unchanged from the main
+worker's branch claude/e63-yesno, YESNO/deps), `yesno/res/*.json` and `yesno/logs/*.log` (labels a*: twelve settings; b*: the
+falling step; c*: the other two seeds), `yesno/old/` (the first run, in which one form ran away; kept for the record).
+Run: `python3 -I yq.py <label> seed=73129 nbytes=65536 inputs=3 rules=Q:eps:1/16:z1:u0:i0`. Each run takes 20 to 90 seconds.

@@ -146,7 +146,10 @@ connections, and the learning of the output end from yes or no.
 | 117 | **A yes-or-no rule that learns more** (exact inputs, no tissue; seed 73129, 65,536 bytes, last quarter, %; 72 settings, each change something a unit told only yes or no can do). The change that matters: on "no", every unit that did NOT emit adds a small step toward the input (the right byte is among them), beside the decrease of the unit that emitted. On three exact bytes: without it 13.0; with it (1/256 of the emitter's step) **20.8**; the rule told the right byte 26.3; the old yes-or-no rule 13.6 to 16.7 from run to run. On two exact bytes: 11.4 (old rule 10.9; told the right byte 12.1). The unit's own running share of yes as its baseline is clearly better than one share for the whole output end (20.8 against 14.6) or none (16.6). Emitting in proportion to the outputs instead of the largest with rare random choices is worse (12.1). Letting the step fall with the number of a unit's own emissions changes little. What a unit holds: its weights, its own running share of yes when it emitted, whether it emitted at this byte; the yes or no is one signal common to all units. | main worker (claude/e63-yesno) | 1 | the two best settings on all four exact inputs, three seeds, two lengths; and on recorded inputs of a real tissue (L8-128, three seeds) |
 | 118 | **The two forms of long axons on 15 other seeds, read linearly: no difference.** (E52's worker's seeds; constants up to 256; the linear reader near the output lines; smallest / median / largest over the seeds.) Share of all values named right, bytes 0 / 1 / 2 / 3 back. Every excitatory cell at reach 1/4: 0.14 / 0.26 / 0.42; 0.17 / 0.31 / 0.45; 0.15 / 0.28 / 0.40; 0.16 / 0.28 / 0.36. One cell in 8 at reach 1/2: 0.13 / 0.29 / 0.36; 0.13 / 0.31 / 0.39; 0.14 / 0.27 / 0.36; 0.15 / 0.27 / 0.33. Digits for the present byte: 0.04 / 0.25 / 0.50 and 0.04 / 0.26 / 0.50. End mark above 0.9 for the present byte on 7 of 15 seeds against 8; equals sign on 5 against 7. Values never named: median 14 against 15. No divergence on 15 in either. **So the advantage of the new form that the reviewer read on two seeds (row 108) is not there on 15.** What both forms share stands: about a quarter to a third of the values for each of the four bytes, with a wide spread over seeds (0.13 to 0.45), and the structure marks arriving whole on about half the seeds. | E52's worker (f6411c67, PREP/tissue10/TABLE_P.md) | 15 | five more settings running |
 
-## 2a. Where things stand (12:46 UTC)
+| 119 | **A simpler yes-or-no rule that comes near the rule told the right byte** (exact inputs, no tissue; rule Q; `reviewer_tissue_20261119/yesno/yq.py`, built on the main worker's program). A unit's output is taken as its own estimate of the chance that its byte value comes next. The unit that emitted moves its output toward 1 on yes and toward 0 on no, by a fraction of the difference; on yes, the units that did not emit move toward 0; on no, they do nothing. A unit needs its own output, whether it emitted, and the yes or no; there is no baseline and no count. For the emitter this is exactly the change of the rule told the right byte: yes or no is the emitter's own target. Share right in the last quarter, %, one emission in 16 being random as in the old rule (which costs about 1.5 at this level). **Three exact bytes, 65,536 bytes:** seeds 73129 / 93683 / 116089: told the right byte 26.4 / 26.8 / 26.5; rule Q with fraction 1/16: 20.3 to 21.2 / 20.4 to 23.0 / 21.4; with 1/4: 23.1 to 23.3 / 22.2 to 23.4 / 20.5; the old yes-or-no rule 12.2 to 16.6 / 13.1 to 16.7 / 16.7 (ranges are over orders of the random choices). **262,144 bytes, seed 73129:** told the right byte 26.5; rule Q 23.7 to 25.7 over six settings; old rule 17.0. **Two exact bytes** (seed 73129): told the right byte 11.9; Q (1/16) 11.3 to 11.7; old 10.8 to 10.9. **One exact byte:** told the right byte (at its fraction 1/16) 8.8 to 9.3; Q (1/16) 9.1 to 10.1; Q (1/4) 5.6 to 6.9; old 7.7 to 9.5; the level 10.6. A fraction falling with the number of the unit's own emissions (from 1/4 to 1/64) gives 9.7 to 9.9 / 11.1 / 16.8 to 23.5 on one / two / three bytes: no better than a constant 1/16 and less even between seeds. What did not help: emitting in proportion to the outputs (2.6 to 9.2 on three bytes); raising the non-emitting units on no in proportion to their own outputs (18.3 to 23.5, no gain; a first form of it ran away to infinity and is removed); starting every unit at output 1/4 (no gain). Not yet measured: on a real tissue's inputs. | reviewer | 3 on three bytes and one byte; 1 on two bytes and at 262,144 | on recorded driver inputs of real tissues: asked of the main worker (its recorded inputs of L8-128) and of E62's worker (written again from the description; three tissues, three seeds) |
+| 120 | The new form of long axons (every excitatory cell, reach 1/4) on four more seeds of the reviewer's draw (146821, 224268, 746958, 754734; 16,384 bytes; the linear reader near the output lines). Without memory: end mark and equals sign of the present byte read on all four (0.99 or 1.00), 2 to 6 digits above 1/2; the bytes one to three back arrive unevenly (end mark of the byte two back 0.12 to 0.81). With constants up to 256: end mark and equals sign arrive at every lag on three seeds (0.57 to 1.00), 0 to 2 digits above 1/2; seed 754734 weak at every lag (0.11 to 0.43), with the most connections made and withdrawn of any tissue so far (4,141 / 15,663). No dependence on the last bit in any of the eight. **Over the twelve seeds of the reviewer's draw, present byte:** constants up to 256: end mark above 1/2 on 9 of 12, equals sign on 6 of 12, digits 0 to 4; without memory: end mark on 11 of 12, equals sign on 10 of 12, digits 2 to 6. | helper | 4 (12 in the count) | the reach a driver needs to hold 15, 18, 20%: running |
+
+## 2a. Where things stand (13:00 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -221,6 +224,10 @@ told the right byte learns and reaches no exact table in 65,536 bytes. So (b) is
 from the tissue; the tissues were measured against a rule that could not have shown more. A first change closes part of the gap
 (row 117, one seed): on "no", the units that did not emit take a small step toward the input; on three exact bytes yes or no
 then learns 20.8% against 13 to 17% before and 26.3% told the right byte. It is being run on real tissues' inputs.
+Since 13:00 (row 119): a simpler rule closes most of the rest. The unit that emitted moves its output toward 1 on yes and toward 0 on
+no, and on yes the others move toward 0. On three exact bytes it learns 20 to 23% in 65,536 bytes on three seeds and 24 to 26% in
+262,144 bytes (told the right byte: 26.5%; the old yes-or-no rule: 12 to 17%); on one and two bytes it is at the level of the rule
+told the right byte. This is on exact inputs only; whether it holds on a real tissue's inputs is being measured by two lines.
 
 ## 3. Against step 1 as the roadmap states it
 
@@ -268,17 +275,17 @@ the list of 07:25 named a change of strength by order in time, which the tissues
    distance, with and without the floor, and to ask the bytes back of the cells near the output lines; and to state every
    one-seed difference against the spread between lives that differ in the last bit (row 48).
 
-## 5. Lines at work (12:36 UTC)
+## 5. Lines at work (13:00 UTC)
 
 | Line | Task |
 |---|---|
-| main worker | is the shortfall of yes-or-no learning in the rule or in the inputs: the output end's rules on exact inputs (one, two, three bytes), no tissue; then faster yes-or-no rules a cell could carry |
-| helper | the new tissue on five seeds in two draws; then how far a driver's reach must go for a fitted reader to hold 15, 18, 20% of the next byte |
-| E52's worker | seven settings on its own 15 seeds, read byte value by byte value (105 tissues) |
-| E55's worker | the output end on the new tissue: three seeds, constants up to 256, up to 128, none |
+| main worker | rule Q (row 119) and its own changed rule (row 117) on recorded driver inputs of a real tissue (L8-128, three seeds), beside the old rule and the rule told the right byte |
+| E62's worker | rule Q and the main worker's rule written again from their descriptions; on exact inputs and on its own recorded inputs of three tissues |
+| helper | the reach a driver needs to hold 15, 18, 20% of next bytes; the new form of long axons on more seeds (row 120) |
+| E55's worker | the output end on the new form of long axons, seeds 73129 and 116089 |
+| E52's worker | five more settings on its 15 seeds |
 | E57's worker | delays as the memory, with both forms of long axons, read byte value by byte value |
-| E62's worker | the spread between lives of the linear reading on the new tissue |
-| reviewer | none running; the status note and the next tasks |
+| reviewer | rule Q on exact inputs (row 119); the status note and the next tasks |
 
 ## 6. Corrections of my own statements of tonight
 
@@ -326,4 +333,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 12:46 UTC, 19 November 2026.
+Last change: 13:00 UTC, 19 November 2026.
