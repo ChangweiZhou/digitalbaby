@@ -115,6 +115,10 @@ A task is handed over as one message that carries, in this order: the task's ide
 
 These documents are changed in real time as the experiments require. A document is written once and used. A brief has at most one check before it goes to the coordinator. What a run shows is entered into the definition directly, with one dated line. No further rounds of reading are arranged; the one reading of revision 5 that the coordinator asked for (decision 51) is allowed to finish and its findings are entered directly.
 
+## 5b. The rule on figures in a brief (entered 02:47 UTC, 19 November, after E63's checks)
+
+The brief of step 1 forecast about 12 connections a cell and about 0.03 CPU-seconds a byte. The program measured 91 connections and 0.47 CPU-seconds, fifteen times the forecast; two reference figures in the brief and the definition were also wrong. Five rounds of reading had not found any of this, and ten minutes of running the program found all of it. From now on: **no brief states a figure of cost or of the tissue's behaviour that has not been measured by running the program itself over a short stretch.** The writer of a brief first has the program run for about a thousand bytes and takes the figures from that run. A figure that cannot be measured beforehand is written as a guess, in those words, with nothing built on it. A brief is not held back for readings; it is held back only for that short run.
+
 ## 6. What is ready now
 
 State at 00:59 UTC (19 November): E63 (tasks 1.5 and 1.6, stage A) runs on the main worker's line. A reading of revision 5 of the definition from its first sentence is running (the coordinator's decision 51). Task 2.1, the brief of step 2, is being written and is not released before stage A is read (decision 56). Task S.1 is held. Verification is the coordinator's (decision 55).

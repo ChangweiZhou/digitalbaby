@@ -195,3 +195,28 @@ What I read: memo sections 33.36 to 33.38; Mr. Xu's words in sections 18 and 19 
 **To the main worker, for forwarding:** "The coordinator's decision 62: after the four tissues of stage A, run a fifth: the first-form tissue with the rule for withdrawing a connection as changed at the head of revision 5 of the definition (19 November, 01:18 UTC), seed 73129, 16,384 bytes, with the readings of section 11.2 and the cost per byte; add it to stage A's report, with any choice you had to make in programming the rule. Then end your turn. Do not start stage B."
 
 **To the reviewer:** "Decisions 60 to 62 are appended. E60 is merged at 19edd9bb. Mr. Xu's way of working is followed: no further readings are asked. Please forward decision 62's message to the main worker: a fifth tissue with the changed rule for withdrawing is added to stage A, so that stage B does not start on a rule no run has seen. Next verifications: E53, E62."
+
+## Decisions 63 to 65 (19 November 2026, after the reviewer's memo sections 33.39 and 33.40, 69468d6d)
+
+What I read: memo sections 33.39 and 33.40, the log's entries from 01:52 to 03:14 UTC, and the receipt of E63's check 10 on the worker's branch. I read no line of E63's program.
+
+| | Matter | Decision |
+|---|---|---|
+| 63 | **Stage A's budget** | Mr. Xu released stage A at the worker's forecast; I record it: up to 5 CPU-hours for the five tissues. The two checks that differed (1(e) and 9(e)) were faults of the documents and are settled there; I take the worker's figures as the reference and verify them with stage A. |
+| 64 | **The program works only on what is active** (Mr. Xu's observation; memo 33.40) | **Released as E64, to E52's line, now,** while stage A runs. This paragraph and the next are its brief. The cost of 0.474 CPU-seconds a byte is the program's and not the tissue's; at that cost stage B cannot run. It also meets a standing requirement of the project (`PERSISTENT_CORE_REQUIREMENTS.md`: bounded work for each event; no pass over all state at every step). |
+| 65 | **Stage B** | Not forecast from stage A's program. Its forecast is E64's measured cost on the rule of the fifth tissue. |
+
+**E64, the task.** On a branch of your own started from `origin/claude/e63-tissue-step1` at its head, write a second program beside E63's (E63's files are not edited) that computes the same tissue and does work only where something is active:
+
+1. An arrival is summed over the senders whose output is not zero. A strength is changed only at a receiving cell whose activity at the previous step was not zero (formula 7 and the coincidence form's excitatory part contain that factor; check each term of each rule and say which terms are exactly zero for a silent cell and which are not: the inhibitory part of the coincidence form, x − a*, is not).
+2. Traces and running averages that only decay while nothing arrives are brought up to date in closed form when they are next read.
+3. **The changed rule for withdrawing** (head of revision 5; the fifth tissue) keeps, for each connection, a running average of a product of two deviations from running averages. That product is not zero for a silent cell. Say whether it can be brought up to date in closed form without visiting every connection at every step; if it cannot, measure what it costs and report it. Do not change the rule.
+4. Per-cell quantities (prediction, threshold, running average of activity) may be updated at every step; 2,048 cells a step is not the cost.
+
+**Accepted when,** for seed 73129 and each of the five tissues of stage A over its first 4,096 bytes: the list of connections at byte 4,096 is identical to E63's program's; the emissions are identical; the recorded outputs (float16) are identical where only exact zeros were skipped; and where step 2 or 3 was used, the largest difference of any strength, trace or state at byte 4,096 is reported and is at most 1e-6. If a making or withdrawing of a connection happens at a different step, report the first such step and stop there. E63's checks 2 to 7 pass on the new program. No figure of behaviour or cost is stated that the program has not measured.
+
+**Report** (`TISSUE_STEP1/E64_REPORT.md`, to the reviewer by message, at most ten lines, then end your turn): for each tissue, CPU-seconds a byte of both programs over bytes 256 to 4,095, the mean number of connections, the share of cells with non-zero output at a step (mean, and at φ = 0, 8, 16, 31), and the share of connections visited a step; the answer to point 3; the forecast of stage B from these. Limit 3 CPU-hours; ask above it. At most three processes, one thread each; start every run so that it can be resumed; push only to your own branch; the trailers of `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md`; a child process started from Python has the variables beginning `E11_`, `E16_`, `EXP45_` removed from its environment.
+
+**To E52's worker, for forwarding:** "E64 is released by the coordinator: the task is decisions 63 to 65 in `COORDINATOR_DECISIONS_20261118.md` on the default branch, the paragraphs headed 'E64, the task', 'Accepted when' and 'Report'. Start from the head of `origin/claude/e63-tissue-step1`."
+
+**To the reviewer:** "Decisions 63 to 65 are appended. E64 (the program that works only on active cells) is released to E52's line; its brief is in the decisions file. Stage B's forecast comes from E64's measured cost on the fifth tissue's rule. One point for the definition, not for the worker: the changed rule for withdrawing uses deviations from running averages, which are not zero for a silent cell, so it may cost a visit to every connection at every step; E64 reports whether it does."
