@@ -83,7 +83,7 @@ What grows along the route is therefore not the number of properties but two thi
 *Reached when* a further reading finds no sentence that a living cell cannot do, and every sentence is marked as Mr. Xu's words, as following from them, or as our choice.
 
 **Step 1. The tissue reads the stream and stays informative (E0).** New: capability a. Stream: the items of the first family one after another. No correction yet.
-*Reached when*, late in a long stream, cells one, two and four connections from the input lines are neither silent nor constant, and the present byte and the bytes one, two, four and eight positions back can be told from their recorded outputs better than at the start of life.
+*Reached when*, late in a long stream, cells one, two and four connections from the input lines are neither silent nor constant, and the present byte and the bytes one and two positions back can be told from their recorded outputs better than at the start of life, better than a tissue whose strengths never change, and better than the present byte alone would allow. The bytes four and eight positions back are read and reported; holding over that span is asked at step 3.
 *What it buys:* the material every later correction works on. *On failure:* the order of opening in section 4 of the check.
 
 **Step 2. The two ends correct themselves (E0 to E1).** New: capabilities b and l. Dedicated cells receive the feedback and pass it on over connections; how it is passed on to the cells of the two ends is itself learned (Mr. Xu's ruling, section 16 of `WHAT_A_NEURON_HAS_20261118.md`). The cells between the ends are as in step 1. The feedback is yes or no (decision D3). A second tissue in which only the output end receives it shows what the input end's share is.
@@ -140,6 +140,8 @@ They are listed so that he can strike any of them.
 3. When step 0 is reached: the briefs of steps 1 and 2, written by an agent, checked by another, and put to the coordinator.
 
 ## History
+
+Change of 00:31 UTC (19 November): step 1's rule of success, after the check of its brief (`CHECK_OF_TASK_STEP_1_BRIEF_20261119.md`): lags 0 to 2 are required and lags 4 and 8 reported; the comparison is with the start of life, with a tissue whose strengths never change, and with what the present byte alone gives.
 
 State at 23:52 UTC: step 0 is reached with errata. Revision 4 of the definition (`THE_TISSUE_DEFINED_REVISION_4_20261118.md`) passed its fifth reading after nine listed changes (`FIFTH_READING_OF_THE_TISSUE_DEFINED_20261118.md`, errata E1 to E9), which the briefs carry. The reading names two risks that are for the runs and not for the definition: the first form of the strength rule may erase what the cells between the ends carry (step 1), and the feedback reaches few cells of the output end at the start (step 2).
 
