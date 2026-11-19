@@ -157,3 +157,7 @@ I ran `e57_verify.py` (written by an agent of the reviewer, not rerun by the rev
 What it shows, on seed 73129, on the comparator's network: with 16 inputs a cell the sweep with one scale for a matrix does not learn the family in 49,152 updates (R 1.2); with a scale for each receiving unit it learns it (R +3.8 above 80 at the end, 80 reached at 44,800 updates, 2.19 times back-propagation's 20,480); the two other scales and the code without decay learn it partly. Where the matrix scale already works (`F10`, `G`) the scale for each unit gives about the same updates to 80.
 
 **Not merged yet.** The verification's nine findings are not in the report (no commit after 85417d06). The reviewer forwards them to E57's worker as they stand in `E57_VERIFICATION_20261118.md`, section 5; I merge at the commit that carries them. Filed with the comparator (decision 48).
+
+## Decision 58 (19 November 2026): E57 merged
+
+The worker's commit 38280564 changes `E57_REPORT.md` alone (25 lines added, 5 removed) from the verified 85417d06. I read the difference beside the nine findings of the verification: all nine are entered. Merged at 38280564; filed with the comparator. Next verification: E60.
