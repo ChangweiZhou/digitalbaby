@@ -48,8 +48,8 @@ def pairs_of(seed, held=20):
 
 
 class System:
-    def __init__(self, arm, H, seed, eta1, eta2, lam, rule="D", fan=0):
-        self.arm, self.H, self.eta1, self.eta2, self.lam, self.rule = arm, H, eta1, eta2, lam, rule
+    def __init__(self, arm, H, seed, eta1, eta2, lam, rule="D", fan=0, lam1=0.0):
+        self.arm, self.H, self.eta1, self.eta2, self.lam, self.rule, self.lam1 = arm, H, eta1, eta2, lam, rule, lam1
         wr = np.random.default_rng([seed, 20261119])                 # the birth
         self.xr = np.random.default_rng([seed, 20261120])            # the random choices of rule Q
         nin = NL if arm == "none" else H
@@ -104,6 +104,8 @@ class System:
             else:
                 self.W1[:, act] += d[:, None] * self.mask[:, act]
             self.b1 += d
+            if self.lam1:                                            # each cell in between lets all its strengths fade a little at every byte
+                self.W1 *= 1.0 - self.lam1
         self.W2 += np.outer(g * m, h); self.b2 += g * m
         if self.arm == "relay-learned":
             self.R += np.outer(h, g * m)                                         # the same product as the forward strength
@@ -152,11 +154,11 @@ def run(kw):
     t0 = time.process_time()
     arm = kw.get("arm", "relay-learned"); seed = int(kw.get("seed", 1)); H = int(kw.get("H", 32)); lines = int(kw.get("lines", 60000))
     eta1 = float(eval(str(kw.get("eta1", "1/4")))); eta2 = float(eval(str(kw.get("eta2", "1/16")))); lam = float(eval(str(kw.get("lam", "1e-5"))))
-    rule = kw.get("rule", "D"); order = int(kw.get("order", 0)); fan = int(kw.get("fan", 0))
+    rule = kw.get("rule", "D"); order = int(kw.get("order", 0)); fan = int(kw.get("fan", 0)); lam1 = float(eval(str(kw.get("lam1", "0"))))
     rng, held, shown = pairs_of(seed)
     if order:
         rng = np.random.default_rng([seed, order])
-    sys_ = System(arm, H, seed, eta1, eta2, lam, rule, fan)
+    sys_ = System(arm, H, seed, eta1, eta2, lam, rule, fan, lam1)
     curve = []; right = n = 0
     for it in range(lines):
         a, b = shown[rng.integers(len(shown))]

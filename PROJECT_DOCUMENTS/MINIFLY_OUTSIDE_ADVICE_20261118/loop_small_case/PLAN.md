@@ -73,4 +73,8 @@ A run is about 330,000 bytes on at most 64 cells; seconds of one core. The whole
 
 ## 8. The setting chosen on the development seed
 
-(Entered after the development runs and before the reported seeds.)
+Entered on 19 November after the development runs and before any reported seed was run.
+
+The grid of section 5 on seed 1, arm `relay-learned` (72 runs; `python3 cells_loop.py dev`): sums shown are learned (100% with 32 or 64 cells in between at most settings), and sums never shown are between 0% and 10% at every one of the 72 settings. By the rule of section 5 the setting is the first of the two best: **H = 32, eta1 = 1/16, eta2 = 1/4, lambda = 0** (shown 100.0, never shown 10.0).
+
+Seen on development seeds 1, 2 and 3 before the reported seeds were run, and stated here so that the report cannot be read as a surprise: the comparator gives the same picture as the local rule (shown 97.5 to 100, never shown 0 to 10 at 60,000 lines; the same at 240,000 lines; a fading of the cells' strengths at 1e-5 a byte changes nothing and at 1e-4 prevents learning). The option for that fading (`lam1`) was added to the runner for these runs; it is off in the reported runs. My expectation for the reported seeds is therefore that the hypothesis is refuted in this form for the local rule and for the comparator alike, and that P2 and P4 fail.
