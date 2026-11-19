@@ -30,7 +30,7 @@
 | u2-256 | reviewer | 9 / 9 / 9 | 9 / 9 / 9 | 0 | 3.76–4.28 |
 | u2-256 | own | 9 / 9 / 9 | 9 / 9 / 9 | 0 | 3.92–4.83 |
 
-- **Far cells (d = 8 to 11).** In every one of these tissues every cell answers, and the largest output is 1.00. The tool reads the present byte at 0.02 to 0.13 there, above 0.1103 only at d = 8 in two of the 18 tissues.
+- **Far cells (d = 8 to 11).** In every one of these tissues every cell answers, and the largest output is 1.00. The tool reads the present byte at 0.02 to 0.13 there. It is above 0.1103 in one of the 18 tissues: d = 8 of the reviewer's draw of u2-64 on seed 73129, at 0.127.
 - **Cells nearest the output lines** (the largest distance with at least 8 cells, d = 13 to 18): 0.02 to 0.06 for lags 0 to 2.
 
 **u2-256 over 65,536 bytes, in four windows.** The reviewer's draw was run on three seeds, and my own draw on seed 73129.
@@ -55,14 +55,14 @@
   | 116089 | 20,470 | 27,158 |
   | 73129, own draw | 17,962 | 25,139 |
 
-- **Far cells, last window.** Every cell answers, and the largest output is 1.00. The tool reads lag 0 at 0.03 to 0.11, above 0.1103 only at d = 8 in seed 116089. Lag 1 reads 0.04 to 0.15 and lag 2 0.05 to 0.16. In the first window (bytes 0 to 4,095) the far cells are at chance (0.02 to 0.04).
-- **Nearest the output (d = 14 or 15), last window:** 0.02 to 0.09.
+- **Far cells, last window.** Every cell answers, and the largest output is 1.00. The tool reads lag 0 at 0.03 to 0.11 and is above 0.1103 nowhere; the largest is 0.109, at d = 8 in seed 116089. Lag 1 reads 0.04 to 0.15 and lag 2 0.05 to 0.16. In the first window (bytes 0 to 4,095) the far cells are at chance (0.02 to 0.04).
+- **Nearest the output (d = 14), last window:** 0.02 to 0.09.
 
 ## Plainly
 
 - **The nine entries.** On all three seeds, u2-128 and u2-256 put all nine entries of step 1 above their levels by the tool as it is, under both levels. One exception is S(1,2) under level B with the reviewer's draw of u2-128 on seed 73129. Two copies do not diverge.
 - **Over the longer life.** Over 65,536 bytes, u2-256 keeps all nine entries above both levels from the second window on, on all three seeds and with both draws.
-- **The far cells and the cells near the output.** They all answer, but the tool does not read the present byte there above 0.1103. The exceptions are single entries at d = 8.
+- **The far cells and the cells near the output.** They all answer, but the tool does not read the present byte there above 0.1103. The one exception is d = 8 in one tissue at 16,384 bytes; in the last window at 65,536 bytes there is none.
 
 ## Limits
 
