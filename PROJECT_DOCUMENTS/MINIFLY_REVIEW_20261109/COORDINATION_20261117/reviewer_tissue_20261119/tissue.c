@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double start_w, make_period;   /* strength of a new connection; least number of steps between two makings by one cell */
     double no_make, lines_learn;   /* no_make 1: no connection is made; lines_learn 1: under TIMING the connections from input lines change too (F has NZ entries) */                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
          /* the largest gain a cell can take */
     /* birth (given) */
@@ -163,13 +164,13 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }
-            if (t->no_make == 0.0 && t->th[i] == 0.0 && t->abar[i] < a && (k - t->klast[i]) >= PS) {
+            if (t->no_make == 0.0 && t->th[i] == 0.0 && t->abar[i] < a && (k - t->klast[i]) >= (int64_t)t->make_period) {
                 const int free_n = t->nmem[i] - t->deg[i];
                 if (free_n > 0) {
                     int pick = (int)(rnd(t) % (uint64_t)free_n), mi = -1;
                     for (int q = 0; q < t->nmem[i]; q++) if (!t->issrc[b + q]) { if (pick == 0) { mi = q; break; } pick--; }
                     int d = t->deg[i]++; int s = t->mem[b + mi];
-                    t->c_src[b + d] = (int16_t)s; t->c_mi[b + d] = (int16_t)mi; t->c_w[b + d] = START_W; t->c_k0[b + d] = (int32_t)k;
+                    t->c_src[b + d] = (int16_t)s; t->c_mi[b + d] = (int16_t)mi; t->c_w[b + d] = t->start_w; t->c_k0[b + d] = (int32_t)k;
                     t->c_e0[b + d] = (s < NCELL) ? t->E[s] : 0.0; t->c_t0[b + d] = (int32_t)(k + 1);
                     t->c_cu[b + d] = 0.0; t->c_nb[b + d] = 0; t->issrc[b + mi] = 1;
                     t->klast[i] = (int32_t)k; t->made++;
