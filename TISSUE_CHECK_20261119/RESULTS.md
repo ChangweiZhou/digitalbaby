@@ -671,3 +671,51 @@ median at birth 2 / 1 / 2, at the end 2 / 1.5 / 2. (2) Cells at distance 1 with 
 9 of 64. Linear reader of the present byte (all values; digits): all distance-1 cells 0.895 / 0.834 / 0.891 (0.90 / 1.00 / 1.00); only
 those with a receiver 0.864 / 0.752 / 0.862 (0.90 / 0.90 / 1.00); those without a receiver alone 0.353 / 0.360 / 0.389 (0.20 / 0.40 /
 0.46).
+
+## 17. An output part of M cells on exact inputs (reviewer's task of 14:42 UTC, after Mr. Xu's ruling that the output lines are withdrawn)
+
+`outpart.py`, written from the reviewer's description alone. Readings of the open places (sent before yq_out.py was read): O1 the
+copies are of the raw one-hot, s_k += (onehot - s_k)/k before use, scaled by sqrt(2k - 1); O2 a cell's best estimate is the maximum
+over all 256 values (ties to the lower value), cells ordered by it (ties to the lower index); O3 in its turn a cell draws, and with
+chance eps speaks a seen value at random whatever its threshold, inhibiting like any speaker; O4 inhibition received = sum of G[k, j]
+over the cells j that already spoke; G grows in both directions for every pair of speakers on no, unclipped; O5 "one cell (th 0)": the
+threshold stays 0 (no change); O6 yes per quarter, byte 0 excluded; one generator default_rng(seed) drawn per cell in the order of the
+pass; O7 (c) each cell a fixed random half of the 768 byte features (default_rng(seed + 1)), the constant kept; O8 (d) a one-hot of
+every byte spoken at the previous byte, 256 more inputs, no copies.
+
+**Against yq_out.py.** One cell: 7.8 / 11.0 / 16.2 / 16.2 by quarter on 73129, equal to the reviewer's. M = 8 and M = 32 differ (mine
+3.2 / 5.1 / 10.0 / 9.9 and 1.7 / 2.7 / 3.1 / 3.3; the reviewer's 2.0 / 9.2 / 12.0 / 14.0 and 4.0 / 5.5 / 5.5 / 9.7). Read afterwards,
+yq_out.py draws the random speakers after the threshold pass, all at once, and they inhibit no one; orders the cells by
+np.argsort(-best); and counts byte 0 in the first quarter. With that order (`draw=after`) my program equals its pushed files o1, o8a,
+o8b, o32 (no threshold change, no inhibition) as floats in all four quarters; the files with threshold change and inhibition behind the
+reviewer's figures were not pushed. M = 8 depends strongly on the generator: on 73129 at 65,536 bytes the last quarter over five
+generators is 4.57 / 8.39 / 9.86 / 13.95 / 14.43, which contains the reviewer's 14.0.
+
+**(a) 262,144 bytes** (`out/op/table.txt`), yes by quarter of 65,536 bytes, seeds 73129 / 93683 / 116089:
+
+| | 73129 | 93683 | 116089 |
+|---|---|---|---|
+| one cell | 12.8 16.5 17.8 19.4 | 11.3 16.5 18.2 19.6 | 13.5 16.9 17.9 18.6 |
+| M = 8 (eps 1/64, r_g 1/64) | 7.0 11.2 12.4 13.3 | 12.0 15.4 17.0 18.0 | 7.6 14.8 15.5 16.8 |
+| M = 32 (eps 1/256) | 2.7 4.8 8.4 10.0 | 1.9 3.2 6.2 10.5 | 2.1 11.0 15.6 16.2 |
+
+M = 8 and M = 32 are still rising at 262,144 bytes but neither reaches the single cell on any seed (last quarter 1.6-6.1 and 2.4-9.4
+points below); 1.11-1.12 cells speak, one voice at 88-90% of the bytes, never silence.
+
+**(b)-(d), M = 8, 65,536 bytes**, last quarter (73129 / 93683 / 116089); the same five generators' spread on 93683 and 116089: 8.15-15.39
+and 6.96-12.26:
+
+| variant | 73129 | 93683 | 116089 | speakers, one voice, silent |
+|---|---|---|---|---|
+| as described | 9.86 | 15.39 | 9.98 | 1.10-1.11, 90%, 0% |
+| no inhibition (G stays 0) | 3.63 | 4.10 | 3.81 | 3.9-4.0, 13-18%, 13-16% |
+| no threshold change (th stays 1/8) | 5.76 | 5.69 | 5.61 | 0.30-0.34, 25-29%, 69-72% |
+| neither | 5.76 | 5.69 | 5.61 | as the line above (with th at 1/8 two cells rarely speak, so G does not matter) |
+| (c) each cell a random half of the inputs | 9.32 | 13.51 | 9.61 | 1.10-1.11, 90%, 0% |
+| (d) spoken bytes fed back | 10.25 | 14.81 | 10.28 | 1.10-1.11, 90%, 0% |
+| one cell | 16.22 | 16.24 | 16.60 | |
+| one cell, spoken byte fed back | 16.54 | 16.59 | 16.74 | |
+
+Both parts are needed: without inhibition about four cells speak at once and the answer is rarely yes; without the threshold change the
+thresholds stay above the estimates and the part is silent at 69-72% of the bytes. The half inputs and the feedback stay within the
+generator spread. The largest weight-row norm at 262,144 bytes is 3.9-5.6 (the single cell 5.3-5.5); G reaches about 38 on 73129.
