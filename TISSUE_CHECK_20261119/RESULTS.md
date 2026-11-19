@@ -762,3 +762,43 @@ Ranges over orders, A3: shown 95-98 / 96-99 / 94-98, never shown 75-85 / 75-95 /
 60-70. A5 is a table of the shown sums: (1), not (2). A2 and A7 are partial tables. Only A3 gets sums never shown, and in A3 the order
 of the digits ('at least k') is laid down at birth; only the answering cell learns from yes or no. The one attempt to learn the code
 (A8) did worse than the fixed random cells and got no sum never shown.
+
+## 20. Addition with the byte's value as input (reviewer's task of 15:25 UTC)
+
+`addval.py` (my own code; same text, held-out pairs, score and answering cell as section 19). The answering cell reads the present
+byte and delay cells d_1..d_D (one-hot: the line's form), a constant, and the system's cells. 120,000 lines, three seeds x five
+orders; median [range]; tables `out/addv/table12.txt`, `table3.txt`, `table_rate.txt`.
+
+**Step 1, V3: A3 with the amount from the byte value.** Holding cells keep the byte value (A before '+', B before '='); counting cells
+have drive A + B (so '7' counts 55) and a threshold at every level 0..510, in the three position sets. Shown 79 / 88 / 82, never shown
+70 [70-80] / 70 [60-85] / 80 [70-85] (73129 / 406364 / 545353); never shown by place: tens 100, units 70-80. It does not equal A3: at
+60,000 lines never shown 35-40 against A3's 80-85. The thresholds below the smallest total of two digits (96) are always on, about 100
+constant inputs a position set, which swell n = |U|^2 and shrink every step. A cell needs: a held byte value (gated by a byte), a sum
+of two held values, a threshold, a position cue.
+
+**Step 2, P: no holding cells and no place cues laid down.** A pool of N cells, each adding the values of the bytes at two random delays
+(0..5), tuned to one total (its own drive at the byte it was made, a level it has seen), gated by one random (delay, byte value) entry;
+every 2,000 lines the answering cell withdraws its connections from the quarter with the weakest connection and those cells are made
+anew. Never shown at 120,000 lines (shown in brackets):
+
+| N | 73129 | 406364 | 545353 |
+|---|---|---|---|
+| 100 | 0 [0-10] (51) | 10 [0-15] (56) | 0 [0-15] (49) |
+| 250 | 5 [0-40] (55) | 20 [0-25] (61) | 0 [0-15] (57) |
+| 500 | 15 [10-20] (76) | 20 [5-40] (74) | 15 [10-25] (78) |
+| 1000 | 15 [10-45] (85) | 20 [15-35] (85) | 15 [5-35] (88) |
+| 2000 | 20 [15-35] (90) | 35 [35-55] (86) | 20 [15-40] (86) |
+| 4000 | 25 [10-40] (91) | 30 [15-35] (92) | 30 [5-45] (90) |
+
+Never shown by place at N 4000: units 25-30, tens 80-89. The strongest kept cells are the right sum cells (delays 1 and 3 gated by '+'
+two back, totals 98-106); the rule keeps cells gated on a digit (a table) beside them. Weighing the keep rule by the square root of the
+cell's firing rate (`keep=rate`; a sum cell fires for several pairs) changed nothing: N 1000 never shown 20 / 20 / 10, N 4000 25 / 30 / 30.
+So with holding and place not laid down, the smallest pool tried that gets a quarter to a third of the never-shown sums is 2,000-4,000
+cells; none reaches V3 or A3. A cell needs: two delayed byte values, a gate byte, its tuned level; the answering cell needs the strength
+of its own connections (and for keep=rate the cell's firing count).
+
+**Step 3, numbers 0 to 99** (2,000 of 10,000 pairs never shown; pool P, delays 0..8; scored on 300 shown and 300 never-shown pairs).
+N 1000: whole answer shown 15 / 15 / 12, never shown 14 / 13 / 14. N 4000: shown 29 / 28 / 29, never shown 24 [23-30] / 25 [24-30] /
+32 [25-40]. Never shown by place (each place named with the right bytes before it), N 4000: units 66 / 61 / 65, tens 40 / 39 / 47,
+hundreds 100 / 100 / 91; shown pairs alike (units 63-64, tens 42-48). There is no table to hold: shown and never shown are about equal
+and both low; the tens is the place that fails most. Whether the carry is the cause was not measured.
