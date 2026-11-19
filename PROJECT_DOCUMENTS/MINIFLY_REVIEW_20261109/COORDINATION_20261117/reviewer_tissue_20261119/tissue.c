@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double rate_norm; double *M;     /* rate_norm 1: under TIMING the change is divided by the sender's own slow mean activity M (rate 1/16384), so that a sender active rarely is not at a disadvantage */
     double a_make;                  /* a cell makes a connection only while its mean activity is below a_make (0: the definition's a*) */
     double start_w, make_period;   /* strength of a new connection; least number of steps between two makings by one cell */
     double no_make, lines_learn;   /* no_make 1: no connection is made; lines_learn 1: under TIMING the connections from input lines change too (F has NZ entries) */                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
@@ -104,7 +105,8 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                 const double Fi = t->F[i];
                 if (xi != 0.0 || Fi != 0.0)
                     for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; if ((s >= NCELL && t->lines_learn == 0.0) || t->sig[s] < 0.0) continue;
-                        double w = t->c_w[b + d] + t->eta_s * (t->F[s] * xi - Fi * z[s]);
+                        double dw = t->eta_s * (t->F[s] * xi - Fi * z[s]); if (t->rate_norm != 0.0) dw /= (t->M[s] + 1.0 / 1024);
+                        double w = t->c_w[b + d] + dw;
                         t->c_w[b + d] = w < 0.0 ? 0.0 : (w > 1.0 ? 1.0 : w); }
             } else if (!inner_coinc) {
                 if (xp != 0.0) {
@@ -153,6 +155,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
     /* traces of the sending cells: z of this step is x(k-1) */
     for (int j = 0; j < NCELL; j++) t->E[j] = (1.0 - 1.0 / TAU) * t->E[j] + (1.0 / TAU) * z[j];
     if (t->rule == TIMING) for (int j = 0; j < NZ; j++) t->F[j] += (z[j] - t->F[j]) / t->tau_f;
+    if (t->rate_norm != 0.0) for (int j = 0; j < NZ; j++) t->M[j] += (z[j] - t->M[j]) / 16384.0;
     /* giving up, then making */
     if (t->rule != FIXED) {
         for (int i = 0; i < NCELL; i++) {
