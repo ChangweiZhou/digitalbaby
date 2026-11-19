@@ -4,13 +4,19 @@ computed without running the tissue.
 Run from the repository's root:   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_step1_brief.py
 Standard library only; it reads no file and writes no file. About one minute.
 
+Revision 2 (19 November 2026), after CHECK_OF_TASK_STEP_1_BRIEF_20261119.md: erratum E10 (formula 11 by strength only), the
+coincidence rule of the check's finding 5, no reversal of the feedback cells' kinds (finding 6), the windows of stage A, the count of
+byte values in every window of every seed, the line connections that formula 11 as written keeps at step 128, the growth under E10,
+and the cost of stages A and B.
+
 Part A: the stream (section 4 of the brief): its lengths, digests, byte frequencies and chance levels.
 Part B: the birth of the tissue (section 5.3 of the brief) for the three seeds: counts of cells by kind and by distance, digests.
-Part C: the worked example of section 13 of revision 4, in three variants (as written; first form with erratum E4; arm K).
+Part C: the worked example of section 13 of revision 4, in three variants (as written; first form with erratum E4; coincidence form).
 Part D: single-step tests of the sign of the two strength rules.
-Part E: the countermodel C0 (the present byte alone) in the windows W0 and W3, with the classifier of section 7 of the brief.
-Part F: time constants, trace shares and the giving-up delay of a connection from a line.
-Part G: the cost arithmetic and the sizes of the files saved.
+Part E: the countermodel C0 (the present byte alone) in the windows A1, A2 (stage A) and W0, W3 (stage B), with the classifier of
+        section 7 of the brief.
+Part F: time constants, trace shares, the giving-up delay of formula 11 as written, and the growth of a cell under E10.
+Part G: the cost arithmetic of stages A and B and the sizes of the files saved.
 """
 import hashlib
 import json
@@ -28,6 +34,8 @@ KMAX = 12
 LENGTH = 262144                            # bytes in the stream of step 1
 WIN = 8192                                 # bytes in a recording window
 WINDOWS = {"W0": 0, "W1": 32768 - WIN, "W2": 131072 - WIN, "W3": LENGTH - WIN}
+LENGTH_A, WIN_A = 16384, 4096                 # stage A: bytes a tissue, bytes a window
+WINDOWS_A = {"A1": 2048, "A2": 12288}
 LAGS = (0, 1, 2, 4, 8)
 
 
@@ -102,14 +110,29 @@ for wn, w0 in WINDOWS.items():
     print(f"A.6 seed {s} window {wn} (bytes {w0} to {w0 + WIN - 1}): distinct values {len(cnt)}; balanced-accuracy chance 1/{len(cnt)} = "
           f"{1 / len(cnt):.4f}; most frequent byte {bytes([mx[0]])!r} share {mx[1] / WIN:.4f} (the majority rate); "
           f"rarest {bytes([mn[0]])!r} count {mn[1]}")
+for s2 in SEEDS:
+    row = []
+    for wn, w0, wl in [(k, v, WIN_A) for k, v in WINDOWS_A.items()] + [(k, v, WIN) for k, v in WINDOWS.items()]:
+        seg = STREAMS[s2][w0:w0 + wl]
+        c2 = {}
+        for b in seg:
+            c2[b] = c2.get(b, 0) + 1
+        row.append(f"{wn} {len(c2)} (smallest class {min(c2.values())})")
+    print(f"A.6b seed {s2}: byte values present by window: " + "; ".join(row))
 cnt = {}
 for b in st:
     cnt[b] = cnt.get(b, 0) + 1
 print("A.7 shares of the byte values over the whole stream (seed 73129), rarest five and commonest five: "
       + ", ".join(f"{bytes([b])!r} {c / LENGTH:.4f}" for b, c in sorted(cnt.items(), key=lambda kv: kv[1])[:5]) + " ... "
       + ", ".join(f"{bytes([b])!r} {c / LENGTH:.4f}" for b, c in sorted(cnt.items(), key=lambda kv: kv[1])[-5:]))
-print(f"A.8 recording windows: " + "; ".join(f"{k} bytes {v} to {v + WIN - 1}" for k, v in WINDOWS.items())
+print(f"A.8 stage B recording windows: " + "; ".join(f"{k} bytes {v} to {v + WIN - 1}" for k, v in WINDOWS.items())
       + f"; steps of the stream {LENGTH * 32:,}")
+print(f"A.9 stage A: {LENGTH_A} bytes ({LENGTH_A * 32:,} steps, {LENGTH_A * 32 // 128:,} periods of P_s); windows "
+      + "; ".join(f"{k} bytes {v} to {v + WIN_A - 1}" for k, v in WINDOWS_A.items()))
+st5 = STREAMS[73129]
+used = sorted(set(st5))
+print(f"A.10 check 5: the byte at position 5 of seed 73129 is {bytes([st5[5]])!r}; it is replaced by the next byte value in use, "
+      f"{bytes([used[used.index(st5[5]) + 1]])!r}")
 
 # =============================================================================================================== B. the birth
 N, NFB, NIN, NOUT, R2 = 2048, 64, 256, 256, (1 / 8) ** 2
@@ -186,6 +209,8 @@ for s in SEEDS:
     for d in dist:
         hist[d] = hist.get(d, 0) + 1
     xo = min(B["P"][i][0] for i in B["driver"])
+    if s == SEEDS[0]:
+        TOTAL_MEMBERS = sum(sizes)
     digest = hashlib.sha256(json.dumps([sorted(B["src"][i]) for i in range(N)]).encode()).hexdigest()[:16]
     kdig = hashlib.sha256(json.dumps([B["FB"], B["driver"], B["inhib"]]).encode()).hexdigest()[:16]
     pdig = hashlib.sha256(json.dumps(B["P"]).encode()).hexdigest()[:16]
@@ -194,6 +219,18 @@ for s in SEEDS:
           f"inner {len(inner)}; inhibitory {sum(B['inhib'])}")
     print(f"    neighbourhood members (cells and lines) smallest {min(sizes)}, mean {sum(sizes) / len(sizes):.1f}, largest {max(sizes)}; "
           f"cells only: mean {sum(cell_sizes) / len(cell_sizes):.1f}; cells with fewer than 8 members: {sum(1 for z in sizes if z < 8)}")
+    ub = {}
+    for v in set(STREAMS[s][:4]):
+        acc = 0.0
+        for k in range(128):
+            acc = (127 / 128) * acc + (1 / 128) * (1.0 if STREAMS[s][k // 32] == v else 0.0)
+        ub[v] = acc
+    kept = sum(1 for i in range(N) for j in B["src"][i] if j >= N and ub.get(j - N, 0.0) >= 1 / 128)
+    print(f"    all neighbourhood members of all cells (the most connections E10 allows): {sum(sizes):,}, "
+          f"{sum(sizes) / N:.1f} a cell on average over the 2,048 cells")
+    print(f"    formula 11 as written, step 128: line connections kept {kept} of {line_src} (only lines of the first four bytes "
+          f"{bytes(STREAMS[s][:4])!r} can be kept; u-bar at step 128 of a line active for one window: "
+          f"{', '.join(f'{bytes([v])!r} {u:.4f}' for v, u in sorted(ub.items()))})")
     print(f"    starting connections {sum(len(v) for v in B['src'].values())}; from lines {line_src}, share of lines in the encoder cells' draws "
           f"{line_src / enc_draws:.3f}; smallest x of an output-end cell {xo:.4f}")
     print(f"    cells by distance from the input lines (d: count): "
@@ -209,16 +246,18 @@ for s in SEEDS:
           f"{sum(1 for i in range(N) for j in B['src'][i] if j in B['fbset'])}")
 
 # =============================================================================================================== C. worked example
-ETA, TAU_V, TAU, ETA_T, ASTAR = 1 / 8, 2, 32, 1 / 128, 1 / 8
+ETA, TAU_V, TAU, ETA_T, ASTAR, TAU_VB = 1 / 8, 2, 32, 1 / 128, 1 / 8, 4096
 
 
 def example(variant):
     """variant 'r4': revision 4 as written. 'E4': first form with erratum E4 (F has its line only, theta 0, formulas 7, 9, 12 off at F).
-    'K': arm K (E4; F inhibitory by E3; the coincidence rule at the inner cell I, theta-bar starting at 0)."""
+    'K': the coincidence tissue (E4; F excitatory, since E3 is not applied; the coincidence rule of section 5.5 at the inner cell I:
+    excitatory sources by e * x(k-1) * (x(k-1) - theta-bar), inhibitory sources by e * (x(k-1) - a*), theta-bar starting at a* with
+    time constant 4,096 steps)."""
     ext = {"s1": lambda k: 0.1, "h": lambda k: 0.25, "c": lambda k: 0.125, "q": lambda k: 0.25, "g": lambda k: 0.125,
            "u": lambda k: 0.5 if k < 16 else 0.125, "f": lambda k: 0.25,
            "L3": lambda k: 1.0, "L5": lambda k: 0.0, "NO": lambda k: 1.0 if k == 0 else 0.0}
-    sign = {"s1": 1, "h": -1, "c": 1, "q": 1, "g": -1, "u": 1, "f": -1, "L3": 1, "L5": 1, "NO": 1, "E": 1, "F": -1 if variant == "K" else 1}
+    sign = {"s1": 1, "h": -1, "c": 1, "q": 1, "g": -1, "u": 1, "f": -1, "L3": 1, "L5": 1, "NO": 1, "E": 1, "F": 1}
     fixed = {"L3", "L5", "NO"}
     cells = {
         "F": dict(src={"NO": [1.0, 0.0], **({} if variant in ("E4", "K") else {"s1": [0.25, 0.10]})}, v=0.02, p=0.02,
@@ -226,7 +265,7 @@ def example(variant):
         "E": dict(src={"L3": [0.125, 0.02], "L5": [0.125, 0.40], "h": [0.25, 0.25], "c": [0.5, 0.125], "F": [0.25, 0.0]},
                   v=0.04, p=0.05, th=0.02, xprev=0.03, plastic=True),
         "I": dict(src={"E": [0.5, 0.06], "q": [0.25, 0.25], "g": [0.25, 0.125]}, v=0.10, p=0.12, th=0.05, xprev=0.06, plastic=True,
-                  rule="K" if variant == "K" else "F", vb=0.0),
+                  rule="K" if variant == "K" else "F", vb=ASTAR),
         "O": dict(src={"u": [0.75, 0.50], "f": [0.25, 0.25], "F": [0.25, 0.0]}, v=0.70, p=0.3125, th=0.10, xprev=0.60, plastic=True),
     }
     rows = {}
@@ -247,7 +286,9 @@ def example(variant):
             for j, we in c["src"].items():
                 if j in fixed:
                     continue
-                if c.get("rule") == "K":
+                if c.get("rule") == "K" and sign[j] < 0:
+                    dw = ETA * we[1] * (c["xprev"] - ASTAR)
+                elif c.get("rule") == "K":
                     dw = ETA * we[1] * c["xprev"] * (c["xprev"] - c["vb"])
                 else:
                     dw = -ETA * sign[j] * m * c["xprev"] * we[1]
@@ -260,7 +301,7 @@ def example(variant):
             if not (n == "F" and variant in ("E4", "K")):
                 c["th"] = max(0.0, c["th"] + ETA_T * (x - ASTAR))
             if c.get("rule") == "K":
-                c["vb"] = (1 - 1 / TAU) * c["vb"] + (1 / TAU) * x * x / ASTAR
+                c["vb"] = (1 - 1 / TAU_VB) * c["vb"] + (1 / TAU_VB) * x * x / ASTAR
             c["v"], c["xprev"] = v, x
         rows[k] = {n: new[n] for n in cells}
     fin = {n: {j: round(we[0], 5) for j, we in c["src"].items() if j not in fixed} for n, c in cells.items()}
@@ -299,8 +340,11 @@ for sig in (1, -1):
     for m in (0.1, -0.1):
         print(f"D.1 formula 7: sigma {sig:+d}, m {m:+.1f}: delta w = {-ETA * sig * m * 0.3 * 0.2:+.6f}")
 for vb in (0.1, 0.5):
-    print(f"D.2 coincidence rule: theta-bar {vb}: delta w = {ETA * 0.2 * 0.3 * (0.3 - vb):+.6f} (the same for both kinds of sending cell)")
-print(f"D.3 with x(k-1) = 0 both rules give 0; with e = 0 both give 0")
+    print(f"D.2 coincidence rule, excitatory sender: theta-bar {vb}: delta w = {ETA * 0.2 * 0.3 * (0.3 - vb):+.6f}")
+for xp in (0.3, 0.05):
+    print(f"D.2b coincidence rule, inhibitory sender: x(k-1) {xp}: delta w = {ETA * 0.2 * (xp - ASTAR):+.6f} (a* = 1/8)")
+print(f"D.3 with e = 0 every rule gives 0; with x(k-1) = 0 formula 7 and the excitatory coincidence rule give 0, and the inhibitory "
+      f"coincidence rule gives {ETA * 0.2 * (0 - ASTAR):+.6f} (inhibition weakened below the target)")
 
 # =============================================================================================================== E. countermodel C0
 print("=" * 110)
@@ -308,10 +352,10 @@ print("E. THE COUNTERMODEL C0: THE CLASSIFIER OF SECTION 7 FITTED TO A ONE-HOT C
 FOLDS, GAP = 4, 16
 
 
-def c0(st, w0, L):
-    idx = [t for t in range(w0, w0 + WIN) if t - L >= 0]
-    stretch = WIN // FOLDS
-    feats = sorted(set(st[w0:w0 + WIN]))
+def c0(st, w0, L, wl=WIN):
+    idx = [t for t in range(w0, w0 + wl) if t - L >= 0]
+    stretch = wl // FOLDS
+    feats = sorted(set(st[w0:w0 + wl]))
     right, tot = {}, {}
     for f in range(FOLDS):
         lo, hi = w0 + f * stretch, w0 + (f + 1) * stretch
@@ -340,6 +384,10 @@ def c0(st, w0, L):
     return sum(right[c] / tot[c] for c in tot) / len(tot), len(tot)
 
 
+for wn, w0 in WINDOWS_A.items():
+    res = [c0(STREAMS[73129], w0, L, WIN_A) for L in LAGS]
+    print(f"E.0 seed 73129 {wn}: C0 by lag " + ", ".join(f"L={L}: {r[0]:.4f}" for L, r in zip(LAGS, res))
+          + f"; classes {res[0][1]}, chance {1 / res[0][1]:.4f}")
 for s in SEEDS:
     st = STREAMS[s]
     for wn in ("W0", "W3"):
@@ -367,38 +415,52 @@ for b in (ord("A"), ord("p"), ord("9"), END):
     gaps = [q - p for p, q in zip(pos, pos[1:])]
     print(f"F.5 byte {bytes([b])!r}: share {len(pos) / LENGTH:.4f}, mean gap {sum(gaps) / len(gaps):.1f} bytes, share of gaps longer than "
           f"{math.ceil(k / 32)} bytes {sum(1 for g in gaps if g > math.ceil(k / 32)) / len(gaps):.3f}")
+grow = (TOTAL_MEMBERS / (N - NFB) - 8) * 128
+print(f"F.5b under E10, a cell that stays below its target adds one connection every 128 steps until its neighbourhood is full: "
+      f"about {TOTAL_MEMBERS / (N - NFB) - 8:.0f} makings (seed 73129, mean), {grow:,.0f} steps, {grow / 32:.0f} bytes")
 print(f"F.6 first possible making and giving up at step P_s = 128 = byte 4 of life; P_s periods in the stream: {LENGTH * 32 // 128:,}")
 
 # =============================================================================================================== G. cost and files
 print("=" * 110)
 print("G. COST AND FILES")
-STEPS = LENGTH * 32
+STEPS_A, STEPS_B = LENGTH_A * 32, LENGTH * 32
 OPS_CONN_PLASTIC, OPS_CONN_FROZEN, OPS_CELL, CALLS, CALL_US, NS_PER_OP = 20, 4, 25, 80, 3.0, 1.5
-for cbar in (8, 12, 32, 90):
-    opsp = N * (cbar * OPS_CONN_PLASTIC + OPS_CELL)
-    opsf = N * (cbar * OPS_CONN_FROZEN + OPS_CELL)
-    tp = CALLS * CALL_US * 1e-6 + opsp * NS_PER_OP * 1e-9
-    tf = (CALLS / 2) * CALL_US * 1e-6 + opsf * NS_PER_OP * 1e-9
-    print(f"G.1 mean connections {cbar:3d}: plastic tissue {opsp:,} operations a step, {opsp * 32:,} a byte, {tp * 1e3:.2f} ms a step, "
-          f"{tp * 32 * 1e3:.1f} ms a byte, {tp * STEPS / 3600:.2f} CPU-hours for the stream; frozen tissue {opsf * 32:,} a byte, "
-          f"{tf * 32 * 1e3:.1f} ms a byte, {tf * STEPS / 3600:.2f} CPU-hours")
-    if cbar == 12:
-        r1_low = 6 * tp * STEPS / 3600 + 3 * tf * STEPS / 3600
-    if cbar == 32:
-        r1_high = 6 * tp * STEPS / 3600 + 3 * tf * STEPS / 3600
-print(f"G.2 round 1 (six plastic and three frozen tissues): {r1_low:.1f} CPU-hours at a mean of 12 connections, {r1_high:.1f} at 32; "
-      f"ceiling 40 CPU-hours")
-print(f"G.3 total operations of round 1 at a mean of 12 connections: "
-      f"{(6 * N * (12 * OPS_CONN_PLASTIC + OPS_CELL) + 3 * N * (12 * OPS_CONN_FROZEN + OPS_CELL)) * STEPS:.3e}")
-rec = max(sum(1 for d in distances(BIRTHS[s]) if d in (1, 2, 4)) for s in SEEDS)
-per_win = WIN * rec * 2
-print(f"G.4 records: {len(WINDOWS)} windows x {WIN} bytes x the cells at d = 1, 2, 4 at the window's start ({rec} at birth in the "
-      f"largest of the three draws) x 2 bytes (float16): {per_win / 1e6:.1f} MB a window, {len(WINDOWS) * per_win / 1e6:.1f} MB a tissue, "
-      f"{9 * len(WINDOWS) * per_win / 1e6:.0f} MB for round 1 before compression, if the counts stay as at birth; "
-      f"upper bound if every cell were at one of these distances {9 * len(WINDOWS) * WIN * N * 2 / 1e6:.0f} MB")
+MAKE_US, MAKES_PER_STEP = 30.0, N / 128
+CMAX = TOTAL_MEMBERS / N
+
+
+def t_step(cbar, plastic, making):
+    ops = N * (cbar * (OPS_CONN_PLASTIC if plastic else OPS_CONN_FROZEN) + OPS_CELL)
+    calls = CALLS if plastic else CALLS / 2
+    return ops, calls * CALL_US * 1e-6 + ops * NS_PER_OP * 1e-9 + (MAKES_PER_STEP * MAKE_US * 1e-6 if making else 0.0)
+
+
+for cbar in (8, 12, 32, round(CMAX, 1)):
+    opsp, tp = t_step(cbar, True, False)
+    _, tpm = t_step(cbar, True, True)
+    opsf, tf = t_step(cbar, False, False)
+    print(f"G.1 mean connections {cbar}: plastic {opsp * 32:,.0f} operations a byte, {tp * 32e3:.1f} ms a byte ({tpm * 32e3:.1f} with "
+          f"16 makings a step); stage B stream {tp * STEPS_B / 3600:.2f} CPU-hours ({tpm * STEPS_B / 3600:.2f}); stage A stream "
+          f"{tp * STEPS_A / 3600:.3f} ({tpm * STEPS_A / 3600:.3f}); fixed tissue {tf * 32e3:.1f} ms a byte")
+_, tf8 = t_step(7.75, False, False)
+for cbar, mk in ((12, True), (round(CMAX, 1), False)):
+    _, tpm = t_step(cbar, True, mk)
+    a = 2 * tpm * STEPS_A / 3600 + tf8 * STEPS_A / 3600 + t_step(8, True, True)[1] * 512 * 32 / 3600
+    chk = (2 * 1024 * 32 * tpm + 1024 * 32 * tf8) / 3600 + 3 * 4096 * 32 * t_step(12, True, True)[1] / 3600
+    print(f"G.2 stage A at a mean of {cbar} connections ({'16 makings a step' if mk else 'every neighbourhood full, so no making'}; "
+          f"two plastic tissues, the fixed tissue, the 512-byte tissue): {a:.2f} CPU-hours; checks 5 to 8 and 10 (about 7,000 bytes "
+          f"of plastic tissue at 12 connections and the 1,024 timed bytes of check 10 at this mean) {chk:.2f}; in all {a + chk:.2f}")
+for cbar, mk in ((12, True), (32, True), (round(CMAX, 1), False)):
+    _, tpm = t_step(cbar, True, mk)
+    b = 6 * tpm * STEPS_B / 3600 + 3 * tf8 * STEPS_B / 3600
+    print(f"G.3 stage B round 1 at a mean of {cbar} connections ({'with 16 makings a step throughout' if mk else 'every neighbourhood full, no making'}): {b:.1f} CPU-hours; "
+          f"ceiling 40")
+print(f"G.4 records of all 2,048 cells in float16: stage A {WIN_A * N * 2 / 1e6:.1f} MB a window, {2 * WIN_A * N * 2 / 1e6:.1f} MB a "
+      f"tissue, {3 * 2 * WIN_A * N * 2 / 1e6:.0f} MB for its three recorded tissues; stage B {WIN * N * 2 / 1e6:.1f} MB a window, W0 and W3 "
+      f"kept: {2 * WIN * N * 2 / 1e6:.1f} MB a tissue, {9 * 2 * WIN * N * 2 / 1e6:.0f} MB for round 1 before compression")
 summ = 9 * len(WINDOWS) * N * 4 * 8 + 9 * LENGTH * 2
 print(f"G.5 per-cell summaries (4 numbers a cell a window, float64) and emissions (int16 a byte): {summ / 1e6:.1f} MB for round 1")
-for cbar in (12, 90):
+for cbar in (12, round(CMAX, 1)):
     nc = N * cbar
     ck = nc * (4 * 8 + 3 * 4) + N * 12 * 8
-    print(f"G.6 saved state at a mean of {cbar} connections: {nc:,} connections, {ck / 1e6:.2f} MB a tissue")
+    print(f"G.6 saved state at a mean of {cbar} connections: {nc:,.0f} connections, {ck / 1e6:.2f} MB a tissue")
