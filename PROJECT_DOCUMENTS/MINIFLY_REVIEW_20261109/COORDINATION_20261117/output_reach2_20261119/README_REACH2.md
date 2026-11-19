@@ -44,7 +44,7 @@ With this `tissue.c`, `reach.py` on U at 16,384 bytes (seed 73129) gives exactly
    - It raises the supervised one-pass rule on U by 0.4 to 1.7 points, changes BAL by −0.2 to +0.5, and lowers B1 slightly.
    - In no case does it reach the fitted own-neighbourhood reader; the closest is U seed 116089, 8.5 against 10.1.
 4. **Section D: the gap is the conditioning of the inputs.**
-   - Neither the running standardisation (fixed standardisation gives the same, within 0.1 point) nor the single pass (8 passes: +0.5 to +1.1) explains it.
+   - Neither the running standardisation (fixed standardisation gives the same, within 0.15 point) nor the single pass (8 passes: +0.4 to +1.2 over one pass) explains it.
    - Each driver's inputs are dominated by one direction: the first principal component holds a median 0.89 / 0.81 (U), 0.69 (BAL) and 0.60 (B1) of their variance, and the largest eigenvalue is 1e5 to 1e7 times the median one.
    - On inputs whitened per driver, one pass of the same rule reaches 11.0 and 10.0 on U and 9.8 on BAL, at or above the fitted reader on the same inputs (10.3, 8.8, 9.6).
    - On B1 it does not (4.3–5.0 against 8.1).
