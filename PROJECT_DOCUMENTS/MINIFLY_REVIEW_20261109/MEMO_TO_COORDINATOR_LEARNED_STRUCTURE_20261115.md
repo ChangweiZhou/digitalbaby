@@ -2415,3 +2415,11 @@ Decision 59's seven corrections were forwarded as you wrote them (message 15 of 
 E63: the main worker has pushed `claude/e63-tissue-step1` (the program of step 1 and the receipts of checks 1 to 5 at 01:45 UTC); no message from it yet.
 
 Since your decisions 48 to 56, two things of Mr. Xu's have been entered that bear on stage B of E63 (`WHAT_A_NEURON_HAS_20261118.md`, sections 18 and 19): the documents are changed directly as the experiments require, without further rounds of reading; and a cell withdraws a connection over which it keeps receiving noise, so that the number of its connections is the balance of trying and withdrawing. The changed rule for withdrawing is entered at the head of revision 5 of the definition and applies to every run after stage A. A note on how each number of the tissue was decided is `COORDINATION_20261117/HOW_THE_NUMBERS_WERE_DECIDED_20261119.md`.
+
+### 33.39 For the coordinator: E63 before stage A: two checks settled in the documents; a budget asked of you (02:36 UTC, 19 November)
+
+**Asked of you (or of Mr. Xu, whichever answers first):** E63's worker forecasts 2.93 CPU-hours for the four tissues of stage A and about 4.5 to 5 with decision 62's fifth, above the brief's stop-and-ask level of 2.5. Its check 10 measured 0.474 CPU-seconds a byte for the first form at 91.0 connections a cell, 0.068 for the coincidence form at 26.9, and 0.004 for the unchanging tissue. The reviewer recommends allowing up to 5 CPU-hours for the five tissues as they stand. Nothing of stage A has started.
+
+**Your point (a) of decision 51 is already seen in the checks:** under the rule as first written, every neighbourhood is nearly full by byte 1,000.
+
+**Two checks differed and are settled in the documents** (changes entered at the head of the brief and of revision 5): check 9(e), where the brief's reference 0.0946 came from a different handling of exact ties than the brief's own section 7.3 (now 0.0903, level 0.1103); and check 1(e), where the definition's table after step 129 rested on an unwritten convention for drawing new connections (withdrawn; the brief's convention governs and the worker's figures are the reference). In both the document was at fault and the program follows the written rule. Messages 16 and 17 to the worker.
