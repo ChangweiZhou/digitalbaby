@@ -26,7 +26,7 @@ Status words: done; running; ready; waiting (for the tasks named).
 |---|---|---|---|---|---|
 | 0.1 | Definition of the tissue, sentence by sentence | B | writer | written | done (revision 4) |
 | 0.2 | Reading of the definition by another agent | 0.1 | checker | verdict "passes" | done (fifth reading: passes with nine errata) |
-| 0.3 | Revision 5: the nine errata folded in, section 17 of B entered as an open choice, and any change that task 1.2 finds necessary | 0.2, 1.2 | writer, then checker | one file that needs no errata table | running (errata E1 to E10) |
+| 0.3 | Revision 5: the nine errata folded in, section 17 of B entered as an open choice, and any change that task 1.2 finds necessary | 0.2, 1.2 | writer, then checker | one file that needs no errata table | done (`THE_TISSUE_DEFINED_REVISION_5_20261119.md`; read against the brief by the checker of 1.2, not yet by a reader of its own) |
 
 ### Group 1: the tissue reads the stream and stays informative (step 1, level E0)
 
@@ -34,8 +34,8 @@ Status words: done; running; ready; waiting (for the tasks named).
 |---|---|---|---|---|---|
 | 1.1 | Brief of step 1 | 0.2 | writer | `TASK_STEP_1_THE_TISSUE_READS_THE_STREAM_20261118.md` | done, unchecked |
 | 1.2 | Check of the brief, with a judgment on what is visible on paper before any run (the writer expects the step not to be reached) and a recommendation: release, change first, or a short trial first | 1.1 | checker | `CHECK_OF_TASK_STEP_1_BRIEF_20261119.md` | done: not to be released as written; a short trial first |
-| 1.3 | Brief revised from its check, in two stages: a trial of about 2 CPU-hours on one seed, and the full runs only after the trial's result | 1.2 | writer, then the checker of 1.2 | no open finding | running |
-| 1.4 | Release | 1.3 | coordinator | decision recorded | waiting |
+| 1.3 | Brief revised from its check, in two stages: a trial of about 2 CPU-hours on one seed, and the full runs only after the trial's result | 1.2 | writer, then the checker of 1.2 | no open finding | done (revision 3; confirmed after nine sentence changes, which are entered) |
+| 1.4 | Release of stage A (the trial); stage B after stage A's report | 1.3 | coordinator | decision recorded | ready: put to the coordinator in memo section 33.35 |
 | 1.5 | The program of the tissue, and the checks before any run (among them the definition's worked example to four decimals) | 1.4 | worker | all checks pass, receipts committed | waiting |
 | 1.6 | The runs of step 1 | 1.5 | worker | report committed | waiting |
 | 1.7 | Verification of the report | 1.6 | coordinator | verified or corrected | waiting |
@@ -113,7 +113,7 @@ A task is handed over as one message that carries, in this order: the task's ide
 
 ## 6. What is ready now
 
-State at 00:31 UTC: tasks 1.3 and 0.3 are running. Task S.1 is ready but is held until the trial of step 1 has shown that cells away from the input lines stay informative, since nothing after step 1 can be used before that. Everything else waits for a result.
+State at 00:49 UTC: tasks 0.3 and 1.3 are done and task 1.4 is with the coordinator. Task S.1 is ready but is held until the trial of step 1 has shown that cells away from the input lines stay informative, since nothing after step 1 can be used before that. Everything else waits for a result.
 
 ## 7. What this graph does not yet contain
 

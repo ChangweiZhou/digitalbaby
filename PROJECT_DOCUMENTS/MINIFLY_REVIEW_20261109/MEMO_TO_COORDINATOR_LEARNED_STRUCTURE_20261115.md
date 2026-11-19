@@ -2372,3 +2372,18 @@ No verified figure changes; the review's section 5 says what each conclusion of 
 ### 33.34 For the coordinator: E53 reported; the reading of its rings is yours (19 November, 00:47 UTC)
 
 E53's worker reports its six runs finished (branch `claude/e58-gated-term-kqasnme`, commit cb9df458; figures in `COORDINATION_20261117/LOG.md`, not verified). Its brief left the reading of rings 2 and 3 from the weights of updates 24,064, 24,320 and 24,576 to the reviewer. By Mr. Xu's word of 18 November verification and re-runs are the coordinator's, and the brief's method of that reading holds cells at a mean over items, which Mr. Xu has ruled has no meaning for a living learner; the reviewer therefore does not make it. Whether it is made at all is yours and his. E53's line is free.
+
+### 33.35 For the coordinator: the first brief of the roadmap is ready for your release (00:49 UTC, 19 November)
+
+**What is asked of you.** A decision on the release of stage A of `COORDINATION_20261117/TASK_STEP_1_THE_TISSUE_READS_THE_STREAM_20261118.md` (revision 3) to a free line, with its experiment number; and, since the route replaces the chain of steps that your decision 44 adopted, a decision on that.
+
+**What it is.** Step 1 of `COORDINATION_20261117/ROADMAP_TO_END_TO_END_PERSISTENT_LEARNING_20261118.md` (draft 3): a tissue of 2,048 cells, defined sentence by sentence in `COORDINATION_20261117/THE_TISSUE_DEFINED_REVISION_5_20261119.md` from Mr. Xu's words (`WHAT_A_NEURON_HAS_20261118.md`, sections 7 to 17), reads the first family's items as one unbroken stream with no reset, and the question is whether cells one, two and four connections from the input lines stay informative. It has no backward pass and no part of the comparator's network. The tasks of the whole route and their dependencies are in `COORDINATION_20261117/TASK_GRAPH_20261119.md`.
+
+**Stage A, the trial.** Seed 73129; three tissues of 16,384 bytes (first form of the strength rule; coincidence form; strengths never changing) and one tissue of 512 bytes that records a loss of connections derived on paper. About 0.7 CPU-hours expected; the worker stops and asks at 2.5. Ten checks before any run, among them the definition's worked examples to four decimals. Three outcomes are written down beforehand with what each leads to. **Stage B,** nine tissues of 262,144 bytes on three seeds, is not to begin before you have read stage A's report; its forecast comes from stage A's measured cost, against a ceiling of 40 CPU-hours.
+
+**How it was made.** Written by one agent, checked by another (`CHECK_OF_TASK_STEP_1_BRIEF_20261119.md`: not to be released as first written; a fault of the definition found on paper, since removed), revised, and confirmed by the checker after nine sentence changes, which are entered (`CONFIRMATION_OF_TASK_STEP_1_BRIEF_REVISION_2_20261119.md`). The definition went through five readings and five revisions. The reviewer has arranged and read the reports; it has not itself recomputed the brief's numbers. Verification of the run is yours.
+
+**What is registered beforehand.** The brief's writer expects that the step is more likely not reached than reached with the first forms; the trial is the cheap test of that. A step not reached is not passed over: the brief names the next choice to open, one at a time.
+
+**Free lines.** The main worker's, E52's, E55's, E57's, the helper's, and now E53's (its report is committed at e271c3e5; see 33.34). E62 runs.
+
