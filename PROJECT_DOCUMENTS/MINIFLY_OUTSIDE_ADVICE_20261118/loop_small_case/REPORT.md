@@ -115,3 +115,22 @@ A run of the first plan is 13 CPU-seconds; of the second about 3 CPU-minutes (3.
 1. Take the loop as the object to build on: the mismatch formed where the byte is named, relayed over learned return connections, each cell changing its own strengths from what reaches it. It is forty lines (`System.attempt_and_learn`).
 2. Measure generalisation only on texts whose unseen items are new combinations of taught parts, with the comparator beside every figure. Single-digit sums are not such a text.
 3. Remove what is not yet as a cell has it one item at a time under the same score: yes or no in place of the arriving byte; sparse reading; strengths of one sign for each cell; several answering cells that come to one voice (the reviewer's rows 137 and 140); cells that hold bytes themselves, with a trace at each connection, in place of the delay chain. Then the first family beside the record's reference, and then a second task, which is where the question of keeping begins.
+
+## 9. Third plan: keeping (added after Mr. Xu's word "feel free to experiment")
+
+`PLAN_3.md` (committed before any run), `keep.py`, `res/keep_*.json`. The system of the second plan reads 400,000 lines of addition and then 200,000 lines of subtraction (`aa-bb=ccc`, larger number first). Whole answer right on 500 never-shown pairs of each task, %, five reported seeds and the median:
+
+| Arm | Addition after its own phase | Addition at the end | Subtraction at the end |
+|---|---|---|---|
+| `plain` | 82, 82, 86, 85, 88 | 2, 2, 2, 1, 2; **1.8** | 82, 90, 91, 86, 86; **86.0** |
+| `stiffen` (each strength divides its step by 1 + the total size of its own past changes / 100) | 80, 80, 85, 85, 84 | 3, 2, 2, 2, 3; **2.2** | 76, 79, 86, 66, 76; **76.0** |
+| `rehearse` (one line in eight of the second phase is an addition line) | as `plain` | 73, 71, 69, 72, 69; **71.2** | 83, 83, 88, 80, 84; **83.2** |
+| `mixed` (both from the start, 600,000 lines) | - | 77, 76, 66, 80, 73; **75.6** | 81, 78, 72, 82, 85; **81.2** |
+
+- **Nothing of addition is kept without rehearsal** (1.8%), as in every line of the record. The cells that learn by the relay forget as the dense network does.
+- **A connection that stiffens with its own use does not help.** On the development seed, constants of 0.1 to 10 (the plan's grid) stopped all learning, and constants of 100 to 100,000 (added when those failed) protected nothing; no value lies between. This agrees with the reviewer's finding on the dense network (memo, 29.3, reading 4) and with the advice memo's thesis: what is kept is decided by where a thing is written, not by how firmly.
+- **One line in eight of rehearsal keeps addition near the level that learning both together reaches** (71 against 76), while subtraction is learned (83).
+- **Two forms of rehearsal made by the system itself failed, on the development seed only** (exploratory): when the system writes lines from its own outputs and learns from them, its lines turn into the new task within a few hundred lines, because its prediction of the operator byte turns; and an answering cell that changes only the branch of the arriving byte and of the byte wrongly named, so that the old operator's branch is left standing, learns far worse (30%) and still keeps nothing.
+- Predictions: K1 held; K2 failed; K3 held (71.2 and 83.2); K4 held (75.6 and 81.2).
+
+What this gives is the first measured part of keeping on cells that learn: the loss is total, stiffening is not the way, and a small share of rehearsal suffices. The open parts are rehearsal that the system makes itself, and writing a new task where the old one left room.
