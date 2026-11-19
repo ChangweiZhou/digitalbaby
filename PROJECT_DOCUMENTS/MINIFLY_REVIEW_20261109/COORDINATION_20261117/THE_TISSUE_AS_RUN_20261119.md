@@ -103,9 +103,22 @@ withdrawn with the program as it stands. (An earlier form of this sentence gave 
 the program before the potential was written as v + (A − v)/τ in place of v/2 + A/2, the same formula rounded otherwise; E62's
 worker found the mismatch.)
 
-First comparison with a program written from this text alone (E62's worker, 09:11 UTC): over 2,048 bytes the outputs of every cell
-at the reading step of every byte are equal to the last bit of a 32-bit float, and both programs hold 7,365 connections; over 16,384
-bytes they part by a few connections (3.241 a cell, 1,240 made, 10,474 withdrawn against the figures above); where they part is being located.
+Comparison with a program written from this text alone (E62's worker, 09:11 and 09:19 UTC). The two programs follow the same rule.
+Over 2,048 bytes the outputs of every cell at the reading step of every byte are equal to the last bit of a 32-bit float, and both
+programs hold 7,365 connections. They first differ at byte 2,376 (one cell, 7.5e-9), and by byte 3,072 the two lives are different
+lives. The cause, tested: the reviewer's program was built with `-march=native`, which lets the compiler join a multiplication and
+an addition into one operation rounded once; built with `-ffp-contract=off` and nothing else changed it equals the independent
+program at every byte of 16,384 for every cell (6,638 connections, 3.241 a cell, 1,240 made, 10,474 withdrawn). So:
+
+- "Double precision" above means: every multiplication and every addition rounded separately. From 09:31 UTC on 19 November the
+  reviewer's drivers build with `-ffp-contract=off`, and a program written from this text should reproduce them exactly. Every
+  figure of the reviewer's program before that time (and the figures 3.234, 1,219, 10,467 above) came from the other rounding and
+  can be reproduced only from tissue.c with that compiler on that machine.
+- A difference in the last bit of one sum, early in the life (while the cells still make and withdraw many connections), grows
+  into a different life. The readings of the two lives agree within a few hundredths: S(d,0) at d = 1, 2, 4, 8, 10 is 0.979 /
+  0.774 / 0.632 / 0.376 / 0.291 with separate rounding and 0.979 / 0.814 / 0.639 / 0.385 / 0.305 with joined rounding. A
+  difference of 0.04 between two settings on one seed is therefore within what rounding alone gives, and the divergence test of
+  section 6 (two copies at the END of a life) does not speak for the early life.
 
 ## 6. What has been measured on it (see STATUS_OF_STEP_1_20261119.md for all rows and who measured each)
 

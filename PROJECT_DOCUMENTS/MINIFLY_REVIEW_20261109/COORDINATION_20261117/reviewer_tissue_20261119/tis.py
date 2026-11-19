@@ -13,7 +13,7 @@ def make(kw):
     so = os.path.join(HERE, 'tissue.so')
     if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(os.path.join(HERE, 'tissue.c')):
         tmp = so + f'.{os.getpid()}'
-        subprocess.run(['gcc', '-O3', '-march=native', '-shared', '-fPIC', os.path.join(HERE, 'tissue.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
+        subprocess.run(['gcc', '-O3', '-march=native', '-ffp-contract=off', '-shared', '-fPIC', os.path.join(HERE, 'tissue.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
     L = ctypes.CDLL(so)
     N = ts.N; B = ts.birth(SEED)
     maxd = max(len(m) for m in B['members'].values()) + 2
