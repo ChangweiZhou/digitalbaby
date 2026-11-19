@@ -1,0 +1,90 @@
+# MERGED/tis.py: the reviewer's tis.py at 75ea0812 set up for MERGED/tissue.c, with the options of the three added parts:
+#   (b) mk_mean=1 mk_tau=.. (16384) mk_init=.. (a*) mk_share=.. mk_take=1   as tis5.py of PREP/tissue5 at 9ff7d03e
+#   (c) tau=2|q16|u2-16|u2-64|u2-64e|u2-256                                  as tis_tau.py of PREP/reviewer_tissue_2b0db54b at eb21cee5
+#   (d) dmax=N: every starting connection between cells delayed by an integer drawn uniformly from 0 to N (numpy default_rng(20261119),
+#       as prev2.py cand=delayrand of TISSUE_PREV2 at d14a3558); new here: every other (cell, neighbourhood member) pair gets its own delay
+#       from default_rng(20261120), drawn in cell and member order, which a connection made later between them takes.
+# Below: the reviewer's text.
+# Set-up of the reviewer's tissue.c as a module (make(kw) gives one tissue). From drive.py: one tissue, seed 73129, 16,384 bytes, the two windows of stage A, the readings of the helper's tool.
+# usage: drive.py <label> rule=first|coincidence|fixed [floor=..] [astar=..] [by_use=1] [gain=1] [eta_g=..] [nbytes=..]
+import sys, os, time, json, ctypes, subprocess, numpy as np
+HERE = os.path.dirname(os.path.abspath(__file__))
+FAST = os.environ.get('FASTDIR') or os.path.join(HERE, 'deps')
+sys.path.insert(0, os.path.join(FAST, 'TISSUE_STEP1')); sys.path.insert(0, os.path.join(FAST, 'TISSUE_EVENT'))
+import tissue_step1 as ts, readings
+
+def tau_of_cells(spec, seed, B):
+    """Copied from tis_tau.py (eb21cee5): the time constant of every cell's potential, drawn at birth by Random(seed + 700000)."""
+    from random import Random
+    N = ts.N; r = Random(seed + 700000); tau = np.full(N, 2.0)
+    if spec == '2':
+        return tau
+    if spec == 'q16':
+        tau[r.sample(range(N), N // 4)] = 16.0
+        return tau
+    choices = {'u2-16': (2, 4, 8, 16), 'u2-64': (2, 4, 8, 16, 32, 64), 'u2-64e': (2, 4, 8, 16, 32, 64), 'u2-256': (2, 4, 8, 16, 32, 64, 128, 256)}[spec]
+    for i in range(N):
+        tau[i] = float(choices[r.randrange(len(choices))])
+    if spec == 'u2-64e':
+        for i in range(N):
+            if any(ts.LINE0 <= m < ts.LINE0 + ts.NIN for m in B['members'][i]):
+                tau[i] = 2.0
+    return tau
+
+
+def make(kw):
+    rule = {'first': 0, 'coincidence': 1, 'fixed': 2, 'timing': 3}[kw.get('rule', 'first')]
+    floor = float(eval(kw.get('floor', '0'))); astar = float(eval(kw.get('astar', '1/8'))); by_use = int(kw.get('by_use', 0))
+    two = int(kw.get('gain', 0)); eta_g = float(eval(kw.get('eta_g', '1/4096'))); NB = int(kw.get('nbytes', 16384)); SEED = int(kw.get('seed', 73129))
+    so = os.path.join(HERE, 'tissue.so')
+    if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(os.path.join(HERE, 'tissue.c')):
+        tmp = so + f'.{os.getpid()}'
+        subprocess.run(['gcc', '-O3', '-march=native', '-shared', '-fPIC', os.path.join(HERE, 'tissue.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
+    L = ctypes.CDLL(so)
+    N = ts.N; B = ts.birth(SEED)
+    maxd = max(len(m) for m in B['members'].values()) + 2
+    P = ctypes.c_void_p
+    class Tis(ctypes.Structure):
+        _fields_ = [('maxd', ctypes.c_int), ('rule', ctypes.c_int), ('floor_x', ctypes.c_double), ('astar', ctypes.c_double), ('by_use', ctypes.c_int),
+                    ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double), ('norm', ctypes.c_double), ('we', ctypes.c_double), ('wi', ctypes.c_double), ('wcap', ctypes.c_double), ('pk', P), ('inh_learn', ctypes.c_double), ('rate_norm', ctypes.c_double), ('M', P), ('a_make', ctypes.c_double), ('start_w', ctypes.c_double), ('make_period', ctypes.c_double), ('no_make', ctypes.c_double), ('lines_learn', ctypes.c_double),
+                    ('kind', P), ('sig', P), ('nmem', P), ('mem', P),
+                    ('deg', P), ('c_src', P), ('c_mi', P), ('c_w', P), ('c_e0', P), ('c_t0', P), ('c_k0', P), ('c_cu', P), ('c_nb', P), ('issrc', P),
+                    ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
+                    ('rng', ctypes.c_uint64), ('made', ctypes.c_int64), ('given', ctypes.c_int64), ('given_by_use', ctypes.c_int64), ('k', ctypes.c_int64),
+                    ('active_sum', ctypes.c_double), ('qpow', ctypes.c_double * 4097),
+                    ('mk_mean', ctypes.c_double), ('mk_tau', ctypes.c_double), ('Lm', P), ('mk_share', ctypes.c_double), ('mk_take', ctypes.c_double),
+                    ('tauv', P), ('c_del', P), ('zh', P), ('hlen', ctypes.c_int), ('m_del', P)]
+    A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray(B['sig'], np.float64), nmem=np.zeros(N, np.int32), mem=np.zeros((N, maxd), np.int16),
+             deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
+             c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
+             v=np.zeros(N), xp=np.zeros(N), p=np.zeros(N), th=np.zeros(N), abar=np.zeros(N), vt=np.full(N, astar), E=np.zeros(N), klast=np.zeros(N, np.int32), z=np.zeros(ts.NZ),
+             gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(ts.NZ), M=np.full(ts.NZ, 1 / 64), pk=np.zeros(N), Lm=np.full(N, float(eval(kw.get('mk_init', str(astar))))))
+    for i in range(N):
+        mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
+        pos = {m: q for q, m in enumerate(mem)}
+        for d, s in enumerate(B['src'][i]):
+            A['c_src'][i, d] = s; A['c_mi'][i, d] = pos[s]; A['c_w'][i, d] = ts.START_W; A['issrc'][i, pos[s]] = 1
+        A['deg'][i] = len(B['src'][i])
+    t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8'))); t.gmax = float(eval(kw.get('gmax', '4096'))); t.tau_f = float(eval(kw.get('tau_f', '4'))); t.eta_s = float(eval(kw.get('eta_s', '1'))); t.no_make = float(kw.get('no_make', 0)); t.lines_learn = float(kw.get('lines_learn', 0)); t.norm = float(kw.get('norm', 0)); t.a_make = float(eval(kw.get('a_make', '0'))); t.rate_norm = float(kw.get('rate_norm', 0)); t.inh_learn = float(kw.get('inh_learn', 0)); t.wcap = float(eval(kw.get('wcap', '0'))); t.start_w = float(eval(kw.get('start_w', '1/8'))); t.make_period = float(eval(kw.get('make_period', '128'))); t.we = float(eval(kw.get('we', '3/4'))); t.wi = float(eval(kw.get('wi', '1/4')))
+    t.rng = 88172645463325252 + SEED
+    t.mk_mean = float(kw.get('mk_mean', 0)); t.mk_tau = float(eval(kw.get('mk_tau', '16384'))); t.mk_share = float(eval(kw.get('mk_share', '0'))); t.mk_take = float(kw.get('mk_take', 0))
+    for k, a in A.items(): setattr(t, k, a.ctypes.data)
+    X = {}
+    if kw.get('tau', '2') != '2':                                   # (c)
+        X['tauv'] = np.ascontiguousarray(tau_of_cells(kw['tau'], SEED, B), np.float64); t.tauv = X['tauv'].ctypes.data
+    if int(kw.get('dmax', 0)) > 0:                                  # (d)
+        dmax = int(kw['dmax']); rng = np.random.default_rng(20261119)
+        valid = np.arange(maxd)[None, :] < A['deg'][:, None]
+        cc = np.argwhere(valid & (A['c_src'] < N))
+        dl = np.zeros((N, maxd), np.int32); dl[cc[:, 0], cc[:, 1]] = rng.integers(0, dmax + 1, len(cc))
+        md = np.zeros((N, maxd), np.int32); rng2 = np.random.default_rng(20261120)
+        md[:, :] = rng2.integers(0, dmax + 1, (N, maxd))
+        md[cc[:, 0], A['c_mi'][cc[:, 0], cc[:, 1]]] = dl[cc[:, 0], cc[:, 1]]      # a starting connection's pair keeps its delay
+        hl = dmax + 2
+        X['c_del'] = dl; X['m_del'] = md; X['zh'] = np.zeros((hl, N))
+        t.c_del = dl.ctypes.data; t.m_del = md.ctypes.data; t.zh = X['zh'].ctypes.data; t.hlen = hl
+    A.update(X)
+    L.tis_init(ctypes.byref(t))
+    
+    b, _ = ts.stream(SEED, NB); b = np.ascontiguousarray(b, np.uint8)
+    return dict(t=t, A=A, B=B, L=L, b=b, N=N, NB=NB, SEED=SEED)

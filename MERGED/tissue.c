@@ -1,5 +1,5 @@
-/* MERGED/tissue.c (branch claude/e63-merged-tissue): the reviewer's tissue.c at 75ea0812 with three parts of other lines as options,
-   each off by default (fields at the end of Tis; all off = the reviewer's program):
+/* MERGED/tissue.c (branch claude/e63-merged-tissue): the reviewer's tissue.c at e7be1222 (which holds part (e): prune_only, the gain
+   two_sided == 3, mk_long) with three parts of other lines as options, each off by default (fields at the end of Tis):
      (b) making by a long mean (E52's worker, PREP/tissue5/tissue_mk.c at 9ff7d03e): mk_mean, mk_tau, Lm; mk_share; mk_take (copied);
      (c) a time constant of the potential for each cell (the helper, PREP/reviewer_tissue_2b0db54b/tissue_tau.c at eb21cee5): tauv;
      (d) a delay of its own for each connection between cells (E57's worker, TISSUE_PREV2/tissue.c at d14a3558): c_del, zh, hlen; and,
@@ -45,6 +45,8 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double mk_long;                 /* mk_long 1: the condition of making uses the cell's long mean M (rate 1/16384 a step) in place of abar (after E52's worker's mk_mean) */
+    double prune_only, prune_ratio;  /* prune_only 1: under TIMING no strength changes by the rule; every connection from an excitatory cell keeps two slow sums, of the times its sender was active before the receiver (c_cu) and after it (c_e0), and is withdrawn when the second exceeds prune_ratio times the first; the strengths stay shared by norm=1 */
     double wcap; double *pk;        /* wcap h: with norm=1 no excitatory connection holds more than h of the excitatory total (the excess goes to the cell's other excitatory connections); pk: slow peak of the cell's own output, for the control two_sided == 3 */
     double inh_learn;               /* inh_learn 1: under TIMING a connection from an inhibitory sender grows with the joint activity of its two ends (dw = eta_s F_j x_i); with norm=1 the inhibitory total is conserved, so a cell's inhibition moves to the senders active when it is */
     double rate_norm; double *M;     /* rate_norm 1: under TIMING the change is divided by the sender's own slow mean activity M (rate 1/16384), so that a sender active rarely is not at a disadvantage */
@@ -129,6 +131,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     for (int d = 0; d < dg; d++) { int s = t->c_src[b + d];
                         if (t->sig[s] < 0.0) { if (t->inh_learn != 0.0 && xi != 0.0) { double w = t->c_w[b + d] + t->eta_s * t->F[s] * xi; t->c_w[b + d] = w > 1.0 ? 1.0 : w; } continue; }
                         if (s >= NCELL && t->lines_learn == 0.0) continue;
+                        if (t->prune_only != 0.0) { t->c_cu[b + d] = t->c_cu[b + d] * (1.0 - 1.0 / 16384.0) + t->F[s] * xi; t->c_e0[b + d] = t->c_e0[b + d] * (1.0 - 1.0 / 16384.0) + Fi * z[s]; continue; }
                         double dw = t->eta_s * (t->F[s] * xi - Fi * z[s]); if (t->rate_norm != 0.0) dw /= (t->M[s] + 1.0 / 1024);
                         double w = t->c_w[b + d] + dw;
                         t->c_w[b + d] = w < 0.0 ? 0.0 : (w > 1.0 ? 1.0 : w); }
@@ -197,7 +200,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
     /* traces of the sending cells: z of this step is x(k-1) */
     for (int j = 0; j < NCELL; j++) t->E[j] = (1.0 - 1.0 / TAU) * t->E[j] + (1.0 / TAU) * z[j];
     if (t->rule == TIMING) for (int j = 0; j < NZ; j++) t->F[j] += (z[j] - t->F[j]) / t->tau_f;
-    if (t->rate_norm != 0.0) for (int j = 0; j < NZ; j++) t->M[j] += (z[j] - t->M[j]) / 16384.0;
+    if (t->rate_norm != 0.0 || t->mk_long != 0.0) for (int j = 0; j < NZ; j++) t->M[j] += (z[j] - t->M[j]) / 16384.0;
     if (t->mk_mean != 0.0) for (int j = 0; j < NCELL; j++) t->Lm[j] += (z[j] - t->Lm[j]) / t->mk_tau;   /* (b) */
     /* giving up, then making */
     if (t->rule != FIXED) {
@@ -208,6 +211,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                 for (int d = t->deg[i] - 1; d >= 0; d--) { int s = t->c_src[b + d]; if (s >= NCELL) continue;
                     if (k - t->c_k0[b + d] < PS) continue;
                     if (t->c_w[b + d] < GIVE_UP) { remove_conn(t, i, d); t->given++; }
+                    else if (t->prune_only != 0.0 && t->sig[s] > 0.0 && (k - t->c_k0[b + d]) >= 4096 && t->c_e0[b + d] > 0.0 && t->c_e0[b + d] > t->prune_ratio * t->c_cu[b + d]) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }
@@ -215,7 +219,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
             if (t->mk_share > 0.0) { double se = 0.0, mx = 0.0;
                 for (int d = 0; d < t->deg[i]; d++) if (t->sig[t->c_src[b + d]] > 0.0) { double w = t->c_w[b + d]; se += w; if (w > mx) mx = w; }
                 held = se > 0.0 && mx > t->mk_share * se; }
-            const double mean_i = t->mk_mean != 0.0 ? t->Lm[i] : t->abar[i];
+            const double mean_i = t->mk_mean != 0.0 ? t->Lm[i] : (t->mk_long != 0.0 ? t->M[i] : t->abar[i]);
             if (t->no_make == 0.0 && !held && t->th[i] == 0.0 && mean_i < (t->a_make > 0.0 ? t->a_make : a) && (k - t->klast[i]) >= (int64_t)t->make_period) {
                 const int free_n = t->nmem[i] - t->deg[i];
                 if (free_n > 0) {
@@ -228,7 +232,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                         if (dw >= 0) { w0 = 0.5 * t->c_w[b + dw]; t->c_w[b + dw] -= w0; } }
                     t->c_src[b + d] = (int16_t)s; t->c_mi[b + d] = (int16_t)mi; t->c_w[b + d] = w0; t->c_k0[b + d] = (int32_t)k;
                     if (t->c_del) t->c_del[b + d] = (s < NCELL && t->m_del) ? t->m_del[b + mi] : 0;   /* (d) */
-                    t->c_e0[b + d] = (s < NCELL) ? t->E[s] : 0.0; t->c_t0[b + d] = (int32_t)(k + 1);
+                    t->c_e0[b + d] = (s < NCELL && t->rule != TIMING) ? t->E[s] : 0.0; t->c_t0[b + d] = (int32_t)(k + 1);
                     t->c_cu[b + d] = 0.0; t->c_nb[b + d] = 0; t->issrc[b + mi] = 1;
                     t->klast[i] = (int32_t)k; t->made++;
                 }
