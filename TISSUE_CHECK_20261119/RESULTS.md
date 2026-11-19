@@ -619,3 +619,46 @@ above every tissue with time constants, with or without traces (at most 12.59). 
 own running mean and deviation for the standardisation, and a weight for each; nothing else changes in D or Q. The largest weight-row
 norm at 65,536 bytes is 0.20-0.72; it is still rising at the end of the life, more slowly than at the start (for example A4-0 73129, Q
 (ii): 0.17, 0.36, 0.47, 0.53, 0.57, 0.62, 0.63, 0.65 every 8,192 bytes); whether it stays bounded beyond 65,536 bytes was not measured.
+
+## 16. A4-0 with copies at the output unit: the long life, where the present byte is lost, the digits (task of 14:07 UTC)
+
+`own_trace2.py` (D 1/64 and Q 1/16 on [x, s_2, s_4], section 15's readings; with the driver's own cells it repeats own_trace.py:
+14.51 / 13.42 on A4-0 73129). Where it and the reviewer's outq.py differ (read after section 15): outq.py takes the copies of the
+standardised input scaled by sqrt(2k - 1), standardises at rate 1/1024 from the start with mean and variance updated after use, gives
+a unit the members of its output cell's neighbourhood (the driver not added), one generator for all rules, last quarter from 3NB/4.
+
+**Part 1. The long life** (A4-0, 262,144 bytes recorded at every byte, `jobs_long.txt`; `out/tr2_L_A40_<seed>_c.json`,
+`out/long_blocks.txt`). Share per block of 32,768 bytes and the largest weight-row norm at each block's end:
+
+| seed, rule | share per block (%) | largest row norm | last quarter |
+|---|---|---|---|
+| 73129 D | 14.03 14.60 14.70 14.51 14.88 14.96 15.15 15.07 | 0.134 0.199 0.256 0.301 0.342 0.380 0.413 0.441 | 15.11 |
+| 73129 Q | 11.65 13.33 13.37 13.45 14.15 14.47 14.38 14.29 | 0.285 0.409 0.510 0.580 0.649 0.713 0.774 0.829 | 14.33 |
+| 93683 D | 16.59 17.79 17.61 17.86 18.09 17.29 17.30 17.53 | 0.244 0.331 0.376 0.418 0.455 0.445 0.455 0.466 | 17.41 |
+| 93683 Q | 11.17 16.58 16.68 17.01 16.97 16.42 16.46 16.62 | 0.439 0.618 0.696 0.753 0.793 0.814 0.872 0.902 | 16.54 |
+
+The share holds (73129 rises slowly; 93683 is flat from the second block); the weights grow more slowly with time; on 93683 D's largest
+row levels at 0.45-0.47 from 131,072 bytes; the others are still rising at 262,144 (by 0.03-0.06 a block).
+
+**Part 2. Which cells a unit sees** (A4-0, 65,536 bytes; distances by breadth-first search over the final connections; reader: the
+linear reader of section 12 on the outputs x of the same cells, last 8,192 bytes, present byte):
+
+| cells | 73129 D / Q | 93683 D / Q | 116089 D / Q | reader, all values (73129 / 93683 / 116089) | reader, digits |
+|---|---|---|---|---|---|
+| (a) distance 1 (74 / 62 / 64 cells) | 19.70 / 14.00 | 19.62 / 17.08 | 20.16 / 17.13 | 0.895 / 0.834 / 0.891 | 0.90 / 1.00 / 1.00 |
+| (b) distance 1-2 (244 / 214 / 216) | 19.84 / 14.12 | 19.76 / 15.87 | 19.88 / 16.99 | 0.895 / 0.834 / 0.891 | 0.90 / 1.00 / 1.00 |
+| (c) driver's own (678 / 708 / 682) | 14.51 / 13.42 | 17.76 / 16.67 | 18.05 / 14.77 | 0.553 / 0.430 / 0.507 (union) | 0.52 / 0.39 / 0.59 |
+| (d) all 1,984 | 18.07 / 13.93 | 19.24 / 17.33 | 20.18 / 15.64 | 0.894 / 0.834 / 0.891 | 0.90 / 1.00 / 1.00 |
+
+The reader stops at 0.83-0.90 in every set because at the end of the life 8 / 11 / 8 of the 46 byte values' input lines have no
+receiving cell (`out/lines_unconnected.txt`: 73129 end mark + 9 E N P R S; 93683 2 < > C J M P R V v w; 116089 8 A G J K V W v); these
+bytes are 17 / 20 / 13% of the read positions, and the reader passes 1 minus that share only by naming one of them by the absence of the
+others. A connected line has a median of 2 receivers. So the present byte is lost first at the input lines (their connections
+withdrawn), then beyond distance 2 (0.83-0.90 to 0.43-0.55 at the drivers' cells). Every unit seeing only the 62-74 cells at distance
+1 gives D 19.6-20.2, 0.87-0.89 of the reviewer's exact-input 22.6, as much as or more than all 1,984 cells.
+
+**Part 3. Values never named; the digits** (`out/never_named.txt`). D at the drivers' own cells never names in the last quarter 18 of
+46 values on 73129 (9 B D E F G I K L M O P S T U V Z v), 12 on 93683 (0 9 C D G H O R S T v w), 4 on 116089 (9 B N U); Q 22 / 22 / 26.
+With an exact one-hot of the present byte's digit added to every driver's inputs, D 14.51 to 14.73, 17.76 to 17.83, 18.05 to 18.24 (Q
+13.42 to 13.46, 16.67 to 16.83, 14.77 to 14.92): 0.07-0.22 of the gap of 4.5-8 points to 22.6. A digit as the next byte is named with
+recall 0-0.11 under D with or without it: the present digit does not tell the next one in this stream.
