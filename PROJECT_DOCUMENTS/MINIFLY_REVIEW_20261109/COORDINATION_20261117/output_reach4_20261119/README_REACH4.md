@@ -81,7 +81,7 @@ References on the last quarter: ref_1 10.5–10.6, ref_2 12.1–12.3, end mark 6
 | A4-256 (same six seeds) | 10.6 / 13.8 / 15.3 / 12.5 / 18.7 / 10.1 | 9.7 / 12.2 / 13.5 / 11.2 / 15.8 / 9.4 | 3 of 6 (73129, 116089, 224268) |
 | A4-128 (93683 / 73129 / 116089) | 13.8 / 11.8 / 13.8 | 12.4 / 11.4 / 12.4 | 3 of 3 |
 
-- Q is above B on every tissue and seed: by 1 to 5 points, and 0.8 to 0.95 of D where D is above ref_2.
+- Q (eta 1/16) is above B on every tissue and seed: by 0.6 to 5.5 points, and 0.8 to 0.95 of D where D is above ref_2.
 - Qe equals Q at eta 1/16 and 1/64, and is worse at 1/4.
 
 **Long run, L8-256 seed 73129, 262,144 bytes.**
