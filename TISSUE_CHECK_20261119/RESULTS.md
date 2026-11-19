@@ -662,3 +662,12 @@ withdrawn), then beyond distance 2 (0.83-0.90 to 0.43-0.55 at the drivers' cells
 With an exact one-hot of the present byte's digit added to every driver's inputs, D 14.51 to 14.73, 17.76 to 17.83, 18.05 to 18.24 (Q
 13.42 to 13.46, 16.67 to 16.83, 14.77 to 14.92): 0.07-0.22 of the gap of 4.5-8 points to 22.6. A digit as the next byte is named with
 recall 0-0.11 under D with or without it: the present digit does not tell the next one in this stream.
+
+**Added (reviewer's questions of 14:21 UTC; `lines_q.py`, `out/lines_q.json`; no new run).** In my program a connection from an input
+line cannot be withdrawn either: the withdrawal loop skips senders that are lines (`my_tissue.c`, step 9, `if (s >= NC) continue;`).
+(1) All 8 / 11 / 8 lines with no receiver at the end (73129 / 93683 / 116089) had none at birth; 9 / 11 / 9 lines had none at birth, so
+one line on 73129 and one on 116089 gained a receiver by making; lines with a made connection at the end: 5 / 4 / 4; receivers of a line,
+median at birth 2 / 1 / 2, at the end 2 / 1.5 / 2. (2) Cells at distance 1 with no receiver of their own at the end: 12 of 74, 9 of 62,
+9 of 64. Linear reader of the present byte (all values; digits): all distance-1 cells 0.895 / 0.834 / 0.891 (0.90 / 1.00 / 1.00); only
+those with a receiver 0.864 / 0.752 / 0.862 (0.90 / 0.90 / 1.00); those without a receiver alone 0.353 / 0.360 / 0.389 (0.20 / 0.40 /
+0.46).
