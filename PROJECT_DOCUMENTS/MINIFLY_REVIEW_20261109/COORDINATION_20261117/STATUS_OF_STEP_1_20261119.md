@@ -139,8 +139,9 @@ connections, and the learning of the output end from yes or no.
 | 110 | Row 108's new tissue (every excitatory cell at reach 1/4) with other spreads of time constants, and on the third seed (the linear reader near the output lines; share of all values named right for the bytes 0 / 1 / 2 / 3 back; 16,384 bytes). Seed 73129: no memory 0.55 / 0.18 / 0.12 / 0.15; up to 64: 0.31 / 0.32 / 0.25 / 0.18; up to 128: 0.39 / 0.41 / 0.35 / 0.30; up to 256: 0.36 / 0.39 / 0.34 / 0.32; up to 512: 0.25 / 0.29 / 0.27 / 0.24. Seed 93683: no memory 0.42 / 0.14 / 0.10 / 0.17; up to 64: 0.34 / 0.38 / 0.31 / 0.23; up to 128: 0.22 / 0.26 / 0.23 / 0.17; up to 256: 0.28 / 0.32 / 0.27 / 0.20; up to 512: 0.23 / 0.29 / 0.23 / 0.18. Seed 116089, up to 256: 0.35 / 0.34 / 0.33 / 0.30. The end mark and equals sign for the present byte: 0.89 to 0.98 on seeds 73129 and 116089 with every spread; on seed 93683 0.99 and 1.00 without memory, 0.34 to 0.76 and 0.31 to 0.86 with it. So with any spread from 64 to 256 the four bytes are each read at about 0.2 to 0.4 on three seeds; no spread is clearly best over the two seeds read with all of them (128 is best on one and worst on the other); 512 is lower; and on seed 93683 the memory still costs the structure marks part of their arrival. How far these figures move between two lives of one tissue has not been measured (asked of E62's worker). | reviewer (batch57, perbyte/A4_*_linear.json) | 2 to 3 | the output end on this tissue: E55's worker, E62's worker; 15 seeds: helper |
 | 111 | **The output end on the new tissue (every excitatory cell at reach 1/4, constants up to 256), seed 93683, the seed that failed** (independent program; 65,536 bytes, last quarter, %; a driver has 56 to 224 inputs, median 152; the present byte alone 10.62, present and previous 12.14, end mark 6.29). Told the right byte: 10.6 (9.3 on the tissue of row 54); it reaches the present byte's level in one window and never present-and-previous. Told only yes or no: rule B 6.6 (4.7), rule A 4.8 to 6.4; clipped at 8 the same; no yes-or-no rule reaches the present byte's level in any window. So on this seed the new tissue gives the output end a little more and does not make it learn: the gain seen by the linear reader over all the cells near the output lines (row 108: 0.28 against 0.17 for the present byte) does not become a gain of that size for a driver reading its own neighbourhood. The tissue and the linear reading themselves were reproduced exactly by this program and by E52's worker (seed 73129: 0.360 / 0.386 / 0.341 / 0.315 in three programs). | E62's worker | 1 | seeds 73129 and 116089; E55's worker measures the same |
 | 112 | Row 111 by E55's worker, with more (seed 93683; 65,536 bytes; last quarter, %). Its figure for the rule told the right byte on the new tissue with constants up to 256 equals E62's worker's (10.64). Fitted reader, whole tissue / all cells near the output lines / a driver's own neighbourhood: constants up to 256: 22.0 / 15.0 / 11.2; up to 128: 21.9 / 16.6 / 13.7; no memory: 12.8 / 10.5 / 9.5 (the tissue of row 54 on this seed: 20.5 / 11.7 / 10.5). By kind of position, the reader on all cells near the output lines now names the equals sign's place 73% and the first answer digit 10% (41 and 0 before); the byte after the end mark is still 0%. Told the right byte: 10.6 with constants up to 256, **13.8 with constants up to 128** (above present-and-previous, 12.1, from 32,768 bytes; the first time on this seed), 7.1 with no memory. Told only yes or no: 6.9, 7.5, 8.3 at best in the three; no window reaches the present byte's level. So on the seed that failed, the new form restores part of what was missing among the cells near the output lines; each driver's own neighbourhood gains little; told the right byte the output end now learns to the two-byte level with constants up to 128; told only yes or no it still does not. | E55's worker (output_reach4_20261119) | 1 | seeds 73129 and 116089 |
+| 113 | Row 111 on seed 73129, the seed that learned best before (independent program; the new tissue with constants up to 256; a driver has 67 to 227 inputs, median 153). Told the right byte 13.8 (17.0 on the tissue of row 54); told only yes or no 10.1 (rule B; 12.0 before), 9.8 (rule A); clipped at 8: 10.0 (13.9 before). The present byte's level (10.55) is reached in windows from 16,384 bytes on and not held in the last quarter. **So on the good seed the new tissue is LOWER for the output end, although the linear reader over all the cells near the output lines is higher (0.36 against 0.29).** With row 111: the new form lifts the weak seed a little (9.3 to 10.6) and lowers the good one (17.0 to 13.8). | E62's worker | 2 | seed 116089; E55's worker on the same |
 
-## 2a. Where things stand (12:30 UTC)
+## 2a. Where things stand (12:32 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -190,12 +191,24 @@ connections, and the learning of the output end from yes or no.
    form is being looked for, and the measure is now the byte values that arrive and what the output end learns, not the
    tool's counts.
 11. With time constants the new form holds the present byte and the three before it at 0.2 to 0.4 each near the output lines
-   by a linear reader, on three seeds, more than the first form (rows 108, 110), reproduced in three programs. But on the seed
-   that failed the output end still does not learn on it (row 111: told the right byte 10.6% against 9.3%, yes or no 6.6%
-   against 4.7%; row 112, a second line with the same figure: with constants up to 128 told the right byte reaches 13.8%,
-   the two-byte level, for the first time on this seed; yes or no stays at 7 to 8%). So the new form is better and not
-   enough; the other two seeds are being measured. This is the measurement the next step rests on; it is better than anything
-   before it (the best yes-or-no figure at the output lines had been 8.3 on one seed, not repeated) and it is not secure.
+   by a linear reader, on three seeds, more than the first form (rows 108, 110), reproduced in three programs. For the output
+   end it evens the seeds and does not raise them (rows 111 to 113): told the right byte 13.8 / 10.6 on seeds 73129 / 93683
+   (17.0 / 9.3 on the first form), yes or no 10.1 / 6.6 (12.0 / 4.7); with constants up to 128 the weak seed reaches 13.8
+   told the right byte. So the new form is not the answer either.
+
+**What all of this comes to (12:32 UTC).** The output end at the output lines, told the right byte, on three seeds
+(73129 / 93683 / 116089; the present byte alone gives 10.6%, present and previous 12.3%, three bytes 25%):
+- no long axons, with or without memory: 5 to 8 (rows 33, 41);
+- first form of long axons (one cell in 8, reach 1/2), constants up to 256: 17.0 / 9.3 / 16.2; up to 128: 15.5 / 12.0 / 13.9; up to 64: 13.4 / 10.2 / 12.4 (rows 95, 105);
+- the same with fast long-axon cells: 13.6 / 11.2 / 8.3 (row 102);
+- new form (every excitatory cell, reach 1/4), constants up to 256: 13.8 / 10.6 / running; up to 128: running / 13.8 / running (rows 111 to 113);
+- no long axons, constants up to 64, the output end read from the middle of the tissue instead: 11.5 to 15.9 on three seeds (row 65).
+Told only yes or no the same tissues give 5 to 12, at or under the present byte's level except on single seeds.
+A fitted reader on the whole tissue finds 22 to 24% in all the tissues with memory; a driver's own neighbourhood holds 10 to 17%.
+So: the tissue as a whole holds nearly what three bytes give; what a driver at the output lines can reach of it is about what
+two bytes give, by any connection scheme tried tonight; and a rule told only yes or no learns about what one byte gives.
+Step 1 as worded is met; what the next step needs is half met. The two things not solved are (a) bringing to a driver's
+reach what the whole tissue holds, and (b) learning from yes or no what a rule told the right byte learns.
 
 ## 3. Against step 1 as the roadmap states it
 
@@ -297,4 +310,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 12:30 UTC, 19 November 2026.
+Last change: 12:32 UTC, 19 November 2026.
