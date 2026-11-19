@@ -29,11 +29,13 @@
 | B, u2-64, tau_f = 16 | 0.92–0.96 / 0.62–0.68 / 0.29–0.36 | ≤ 0.08 at d = 8 | d = 1–9 (b) | d = 2–9 (b) |
 | B, u2-256, tau_f = 16 | 0.89–0.95 / 0.59–0.62 / 0.25–0.29 | ≤ 0.06 at d = 8 | d = 1–6 (b) | d = 1–6 (b) |
 | B, u2-64e, 65,536 bytes | 0.95–0.97 / 0.70–0.84 / 0.42–0.49 | 0.10–0.12 at d = 8; 0.02–0.05 at d = 9 to 11 | d = 2–10 (b); the tool at d = 2–8 | d = 3–10 (b); the tool at d = 3–4 |
+| B, τ = 2, 65,536 bytes | 0.93–0.98 / 0.69–0.79 / 0.37–0.49 | 0.14–0.28 at d = 8; 0.08–0.18 at d = 10–11 | nowhere | nowhere |
 | BG, τ = 2 | 0.93–0.97 / 0.62–0.65 / 0.27–0.36 | 0.13–0.23 at d = 8; 0.09–0.17 at d = 10–11 | in one seed only | nowhere |
 | BG, u2-64e | 0.93–0.97 / 0.68–0.75 / 0.29–0.43 | 0.10–0.15 at d = 8; 0.04–0.12 at d = 10–11 | d = 2–8 (b and the tool alike) | d = 4 |
 
 - **Divergence and connections.** In every run, two copies differ by 0 after 512 bytes. Base B keeps 4.8 connections a cell. BG keeps 2.9 to 3.0, and its distances reach 14 to 19 connections.
 - **What tau_f = 16 changes.** Slower traces of the timing rule change the present byte by at most 0.07 at d = 4, and change lags 1 and 2 little.
+- **What the longer life does to base B.** At τ = 2 over 65,536 bytes the tool sees the present byte at the far cells better than over 16,384 (0.14 to 0.28 at d = 8 against 0.13 to 0.21). It still carries no byte before.
 - **What BG does to amplitude.** In BG the mean output does not fall with distance: 1.4e-2 to 3.2e-2 from d = 1 to 12. That is why (a) and (b) agree there, and why the tool sees the present byte at the far cells.
 
 ## The answer to the question
