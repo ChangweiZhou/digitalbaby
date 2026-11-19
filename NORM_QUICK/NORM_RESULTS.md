@@ -68,7 +68,25 @@ Each life took 5.0 to 5.2 ms a byte.
 
 ## Item 4: connections made (no_make = 0), seed 73129
 
-⟨MAKE⟩
+Two settings were run: eta_s 1 and eta_s 8. Both use we / wi = 3/4 / 1/4 and windows ending at bytes 8,192, 12,288 and 16,384.
+
+| eta_s | End of window | Connections a cell (smallest–largest) | Made / given up so far | S(d,0) tool, d = 1 / 2 / 4 / 8 | Largest output, d = 8 | Cells differing after 1 / 16 / 64 / 256 / 512 bytes | ms a byte |
+|---|---|---|---|---|---|---|---|
+| 1 | 8,192 | 27.4 (8–81) | 4,007,762 / 3,969,297 | 0.290 / 0.157 / 0.075 / 0.022 | 0.000 | 0 / 0 / 1 / 1,755 / 1,776 | 25.8 |
+| 1 | 12,288 | 27.8 (9–80) | 6,262,640 / 6,223,444 | 0.296 / 0.166 / 0.067 / 0.022 | 0.000 | 1 / 0 / 1,349 / 1,814 / 1,757 | |
+| 1 | 16,384 | 27.3 (9–79) | 8,518,548 / 8,480,332 | 0.281 / 0.152 / 0.075 / 0.022 | 0.000 | 1 / 0 / 32 / 1,798 / 1,777 | |
+| 8 | 8,192 | 23.7 (8–79) | 4,005,543 / 3,974,438 | 0.235 / 0.108 / 0.080 / 0.022 | 0.006 | 0 / 0 / 132 / 1,606 / 1,681 | 22.1 |
+| 8 | 12,288 | 23.5 (8–79) | 6,259,078 / 6,228,254 | 0.228 / 0.106 / 0.071 / 0.022 | 0.003 | 0 / 16 / 1,063 / 1,672 / 1,747 | |
+| 8 | 16,384 | 23.4 (8–78) | 8,512,607 / 8,482,026 | 0.227 / 0.112 / 0.075 / 0.022 | 0.004 | 0 / 1 / 32 / 1,638 / 1,725 | |
+
+**Why it is slow.** The number of connections a cell does not grow over the life: it stays at 23 to 28 from byte 8,192 to byte 16,384. Instead, connections turn over. About 520 are made and about 520 given up per byte, which is about one a cell every 128 steps.
+
+- Every cell below its target makes a connection every P_s steps.
+- After the normalisation, a new connection's strength falls below 1/128, and the connection is given up when it reaches age P_s.
+
+The cost is 22 to 26 ms a byte, against 5 to 7 with no makings. It comes from about 5 times as many connections a cell (23 to 28, against 3.3 to 6.6) and from the making and giving up at every period.
+
+**What making connections does.** With connections made, the tissue depends on its own past: 1,600 to 1,800 of 1,984 cells differ after 256 to 512 bytes. The present byte reaches d = 4 at most (S(4,0) 0.07 to 0.08). Beyond that, the largest output at d = 8 is at most 0.006.
 
 ## Answer to the question, as measured
 
@@ -78,5 +96,6 @@ Does conserving a cell's total incoming strength, with the timing rule, carry th
 - **The present byte at d = 8 to 11:** carried weakly. S(d,0) is at most 0.21 by the tool, and 0.11 to 0.17 at eta_s 8 on every seed, against 0.022 chance and C0 = 1.000. The share of a cell's variance that the present byte explains there is high (median 0.54 to 1.00). So the far cells vary with the byte, but each separates few byte values.
 - **Usable amplitude:** with we / wi = 3/4 / 1/4, no. The largest output is 0.07 to 0.08 at d = 8 and 0.03 at d = 11, where emission needs more than 1/2.
   - With we = 1 and wi = 0 (no inhibition), the largest output is 0.57 at d = 8 and 0.42 to 0.46 at d = 11. That is the only setting near the emission level, and it holds 1.6 to 1.8 connections a cell.
-- **Connections a cell:** 3.3 to 6.6 with no connections made, depending on eta_s and we. See item 4 for connections made.
+- **Connections a cell:** 3.3 to 6.6 with no connections made, depending on eta_s and we; 1.6 to 1.8 at we = 1.
+- **With connections made:** 23 to 28 a cell, in constant turnover. The tissue then depends on its past (1,600 to 1,800 cells differ), and the byte does not pass d = 4.
 - **The previous byte:** not carried above C0 + 0.02 anywhere.
