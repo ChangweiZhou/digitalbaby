@@ -2387,3 +2387,31 @@ E53's worker reports its six runs finished (branch `claude/e58-gated-term-kqasnm
 
 **Free lines.** The main worker's, E52's, E55's, E57's, the helper's, and now E53's (its report is committed at e271c3e5; see 33.34). E62 runs.
 
+
+### 33.36 For the coordinator: decisions 48 to 57 carried out; E57's corrected report is at 382805647 (01:00 UTC, 19 November)
+
+**E57 (decision 57).** The nine findings were forwarded as they stand (message 14 of `COORDINATION_20261117/MESSAGES_TO_WORKERS_20261118.md`). The worker reports the corrected report on `claude/e50-fixed-input-code-017dSE` at **382805647**: one file changed, `MOD97_LOCAL_RULE_20261106/exp45/e57/E57_REPORT.md`, 25 lines added and 5 removed, with a dated note naming 85417d062 as the first version. The reviewer has not read the corrected report; the merge and its check are yours.
+
+**E63 (decision 50).** Forwarded to the main worker with your words (message 13), with the commit of the brief (597200c6 or later on the reviewer's branch) and the rule that a failed check stops the work.
+
+**Decision 51.** A reader who has seen no earlier revision is reading revision 5 of the definition from its first sentence, with your two points put as questions to be worked on paper, and with each finding to be marked as changing a formula or not.
+
+**Decisions 54 and 56.** The brief of step 2 is being written by the writer of the brief of step 1; it is to name the comparator it asks for, on which stream and in which units, and to mark the numbers that wait for stage A.
+
+**Decisions 49, 52, 53 and 55** need nothing of the reviewer and are noted. E53's worker has recorded the interpretation as not decided (c9f4b3d3).
+
+### 33.37 For the coordinator: the reading of revision 5 (decision 51) and the brief of step 2 (01:15 UTC, 19 November)
+
+**The reading** is `COORDINATION_20261117/READING_OF_THE_TISSUE_DEFINED_REVISION_5_20261119.md`. No finding changes a formula of the first form; stage B is not stopped by it. On your point (a): by the reader's calculation and a small run of its own, every cell grows, the neighbourhoods fill by about byte 550, and the target 1/32 named as the remedy cannot stop it; stage A's connection counts will show it, and the order of opening should then put the rule for making connections before the target of activity. On your point (b): the unchanging tissue carries the present byte alone and is silent at four connections, so learning has to be shown at lags 1 and 2 against what the present byte alone gives; the reader proposes a further control in which connections grow and strengths do not.
+
+**Mr. Xu's word on the way of working (01:08 UTC; `WHAT_A_NEURON_HAS_20261118.md`, section 18):** these documents are changed in real time as the experiments require, and repeated rounds of checking are not wanted. The reviewer arranges no further readings; findings are entered into the definition directly when stage A's result is in.
+
+**The brief of step 2** is written (`COORDINATION_20261117/TASK_STEP_2_THE_TWO_ENDS_CORRECT_THEMSELVES_20261119.md`, revision 1), not for release before stage A is read and step 1 is reached. The comparator it asks of you (decision 54): a recurrent network of 128 units with byte codes of 32 numbers, trained by back-propagation on the same stream from its first byte, one item at a time, counted in items read and multiply-adds, as the ceiling for each class of position.
+
+### 33.38 For the coordinator: E60's corrected report is at 19edd9bb (01:54 UTC, 19 November)
+
+Decision 59's seven corrections were forwarded as you wrote them (message 15 of `COORDINATION_20261117/MESSAGES_TO_WORKERS_20261118.md`). The worker reports them entered in the report alone, at **19edd9bb** on `claude/e44-l2-sweep-long-lives`. The reviewer has not read the corrected report; the merge and its check are yours.
+
+E63: the main worker has pushed `claude/e63-tissue-step1` (the program of step 1 and the receipts of checks 1 to 5 at 01:45 UTC); no message from it yet.
+
+Since your decisions 48 to 56, two things of Mr. Xu's have been entered that bear on stage B of E63 (`WHAT_A_NEURON_HAS_20261118.md`, sections 18 and 19): the documents are changed directly as the experiments require, without further rounds of reading; and a cell withdraws a connection over which it keeps receiving noise, so that the number of its connections is the balance of trying and withdrawing. The changed rule for withdrawing is entered at the head of revision 5 of the definition and applies to every run after stage A. A note on how each number of the tissue was decided is `COORDINATION_20261117/HOW_THE_NUMBERS_WERE_DECIDED_20261119.md`.
