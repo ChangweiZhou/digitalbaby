@@ -20,13 +20,14 @@ def cell(g, n, L):
             out.append('—'); continue
         out.append(f"{v['S']:.3f}" + ('*' if v['S'] > R[s]['c0'][L] + 0.02 else ''))
     return ' / '.join(out)
-title = {'U': 'U: rule fixed, no control', 'M': 'M: rule fixed, gain=2 rho=1 gmax=4'}[tis_]
-md = [f"## {title}", "", "Window A2 (bytes 12,288 to 16,383) of 16,384 bytes. Each entry: seeds 73129 / 93683 / 116089. (a): the readings tool (floor 0.01). "
+title = {'U': 'U: rule fixed, no control', 'M': 'M: rule fixed, gain=2 rho=1 gmax=4', 'UL': 'U over 262,144 bytes (window: the last 4,096 bytes)', 'ML': 'M over 262,144 bytes (window: the last 4,096 bytes)'}[tis_]
+CLT = 'CLT_262144.json' if tis_.endswith('L') else 'CLT.json'
+md = [f"## {title}", "", ("Window A2 (bytes 12,288 to 16,383) of 16,384 bytes." if not tis_.endswith("L") else "Window: bytes 258,048 to 262,143 of 262,144.") + " Each entry: seeds 73129 / 93683 / 116089. (a): the readings tool (floor 0.01). "
       "(b): no floor, each cell divided by its own standard deviation. `*`: above C0(lag) + 0.02 of that seed. `—`: no cell at that distance in that seed. "
       "pool: 128 sampled from every cell that is not a feedback cell.", "",
       "C0(lag), lags 0..4: " + "; ".join(f"seed {s}: " + ", ".join(f"{R[s]['c0'][L]:.4f}" for L in LAGS) for s in SEEDS), "",
-      ("C<L(lag), lags 1..4 (every nearer byte, `where_clt.py`): " + "; ".join(f"seed {s_}: " + ", ".join(f"{v:.4f}" for v in json.load(open(os.path.join(HERE, 'where', 'CLT.json')))[str(s_)].values()) for s_ in SEEDS)
-       if os.path.exists(os.path.join(HERE, 'where', 'CLT.json')) else ""), "",
+      ("C<L(lag), lags 1..4 (every nearer byte, `where_clt.py`): " + "; ".join(f"seed {s_}: " + ", ".join(f"{v:.4f}" for v in json.load(open(os.path.join(HERE, 'where', CLT)))[str(s_)].values()) for s_ in SEEDS)
+       if os.path.exists(os.path.join(HERE, 'where', CLT)) else ""), "",
       "| d | cells | " + " | ".join(f"lag {L} (a) | lag {L} (b)" for L in LAGS) + " |", "|" + "---|" * (2 + 2 * len(LAGS))]
 for n in names:
     cells = ' / '.join(str(row(s, n)['cells']) if row(s, n) else '0' for s in SEEDS)
