@@ -2,7 +2,7 @@
    Plain and slow on purpose: every cell, every connection, every step, in the order of the text's sections 1 and 2.
    The birth, the stream and the time constants are prepared by my_tissue.py and read from a text file.
 
-   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps]
+   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8]]]]
      rec_lo..rec_hi : the bytes whose outputs at phi = 31 are recorded (float32, all cells) into <out_prefix>.rec
      trace_steps    : the outputs of every cell at every step k < trace_steps are written as float64 into <out_prefix>.trace
      u1             : 1 = step 8 uses x_j of this step for a cell; 0 = it uses z_j, the output of step k - 1 (the literal z)
@@ -51,7 +51,10 @@ int main(int argc, char **argv) {
     if (argc < 9) { fprintf(stderr, "usage\n"); return 2; }
     long nbytes = atol(argv[3]), rec_lo = atol(argv[4]), rec_hi = atol(argv[5]), trace_steps = atol(argv[7]);
     int u1 = atoi(argv[8]), ftz = argc > 9 ? atoi(argv[9]) : 1;
-    int pcell = argc > 10 ? atoi(argv[10]) : -1; double peps = argc > 11 ? atof(argv[11]) : 0.0;   /* a change of one cell's potential before step 0 */
+    int pcell = argc > 10 ? atoi(argv[10]) : -1; double peps = argc > 11 ? atof(argv[11]) : 0.0;   /* a change of one cell's potential ... */
+    long pbyte = argc > 12 ? atol(argv[12]) : 0;                  /* ... before the first step of byte pbyte */
+    long make_off = argc > 13 ? atol(argv[13]) : -1;              /* no making from byte make_off on (-1: never off) */
+    int rec8 = argc > 14 ? atoi(argv[14]) == 8 : 0;               /* 8: the recording in double precision */
     if (ftz) _mm_setcsr(_mm_getcsr() | 0x8040);   /* flush to zero and denormals are zero */
     FILE *fb = fopen(argv[1], "r"); long seed; int n_;
     if (fscanf(fb, "%ld", &seed) != 1) return 3;
@@ -70,7 +73,6 @@ int main(int argc, char **argv) {
     rng = 88172645463325252ULL + (uint64_t)seed;
     for (int i = 0; i < NC; i++) { v[i] = 0; th[i] = 0; g[i] = 1; F[i] = 0; M[i] = 1.0 / 64; P[i] = 0; Q[i] = 0; last_make[i] = 0; xo[i] = 0; }
     for (int j = 0; j < NL; j++) { F[NC + j] = 0; M[NC + j] = 1.0 / 64; zl[j] = 0; }
-    if (pcell >= 0) v[pcell] += peps;
     char path[4096];
     snprintf(path, sizeof path, "%s.rec", argv[6]); FILE *fr = fopen(path, "wb");
     FILE *ft = NULL; if (trace_steps > 0) { snprintf(path, sizeof path, "%s.trace", argv[6]); ft = fopen(path, "wb"); }
@@ -78,8 +80,10 @@ int main(int argc, char **argv) {
     double dec = 1.0 - RATE, Fbefore[NC + NL];
     float recrow[NC];
     long K = nbytes * STEPS_A_BYTE;
+    snprintf(path, sizeof path, "%s.counts", argv[6]); FILE *fk = fopen(path, "wb");   /* made and withdrawn so far, after every byte */
     for (long k = 0; k < K; k++) {
         int phi = (int)(k % STEPS_A_BYTE);
+        if (phi == 0 && pcell >= 0 && k / STEPS_A_BYTE == pbyte) v[pcell] += peps;
         if (phi == 0) { int b = bytes[k / STEPS_A_BYTE]; for (int j = 0; j < NL; j++) zl[j] = (j == b) ? 1.0 : 0.0; }
         memcpy(Fbefore, F, sizeof F);                 /* "F_i and F_j the fast traces before this step" */
 #define Z(s) ((s) < NC ? xo[(s)] : zl[(s) - NC])     /* z_j: a cell's output of step k - 1, a line's value of step k */
@@ -131,7 +135,7 @@ int main(int argc, char **argv) {
                 if (c->w[q] < 1.0 / 128) { withdraw(c, q); withdrawn_n++; continue; }
                 if (sig[s] > 0 && age >= 4096 && c->lag[q] > 0 && c->lag[q] > c->lead[q]) { withdraw(c, q); withdrawn_n++; }
             }
-            if (th[i] == 0 && M[i] < 1.0 / 4096 && k - last_make[i] >= 1024) {
+            if ((make_off < 0 || k / STEPS_A_BYTE < make_off) && th[i] == 0 && M[i] < 1.0 / 4096 && k - last_make[i] >= 1024) {
                 int cand[NC + NL], n = 0;
                 for (int q = 0; q < nmem[i]; q++) {
                     int s = mem[i][q], here = 0;
@@ -147,9 +151,12 @@ int main(int argc, char **argv) {
         memcpy(xo, xn, sizeof xo);                                         /* 10. x_i becomes the output of step k */
         if (ft && k < trace_steps) fwrite(xn, sizeof(double), NC, ft);
         long byte = k / STEPS_A_BYTE;
-        if (phi == STEPS_A_BYTE - 1 && byte >= rec_lo && byte < rec_hi) { for (int i = 0; i < NC; i++) recrow[i] = (float)xn[i]; fwrite(recrow, sizeof(float), NC, fr); }
+        if (phi == STEPS_A_BYTE - 1) { long cw[2] = {made_n, withdrawn_n}; fwrite(cw, sizeof(long), 2, fk); }
+        if (phi == STEPS_A_BYTE - 1 && byte >= rec_lo && byte < rec_hi) {
+            if (rec8) fwrite(xn, sizeof(double), NC, fr);
+            else { for (int i = 0; i < NC; i++) recrow[i] = (float)xn[i]; fwrite(recrow, sizeof(float), NC, fr); } }
     }
-    fclose(fr); if (ft) fclose(ft);
+    fclose(fr); fclose(fk); if (ft) fclose(ft);
     snprintf(path, sizeof path, "%s.conn", argv[6]); FILE *fc = fopen(path, "w");
     long total = 0, nonfb = 0;
     for (int i = 0; i < NC; i++) {

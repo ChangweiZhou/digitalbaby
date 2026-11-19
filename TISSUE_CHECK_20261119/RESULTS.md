@@ -126,3 +126,55 @@ in each of which one cell's potential (cells 100, 600, 1100, 1600 and 2000) is c
 Connections at the end: 6,638 (reference), 6,615, 6,685, 6,757, 6,664 and 6,639. On this seed and tissue, two settings compared on one
 seed by one life each cannot be told apart by S(d, 0) differences smaller than about 0.02 at d = 1, 0.06 at d = 2, 0.07 at d = 4, 0.05 at
 d = 8 and 0.09 at d = 10, since lives that differ only in the last bit differ by that much.
+
+## 7. The reviewer's task of 09:35 UTC: the nine entries under the noise, and when a life stops depending on the last bit
+
+All runs with `my_tissue.c` as now committed (seed 73129 unless named; 16,384 bytes; `-ffp-contract=off`). The added options of the
+program (a change of one cell's potential before the first step of any byte, making switched off from a byte on, per-byte counts of made
+and withdrawn connections, and recording in double precision) leave the unchanged run bit-equal to the earlier one (checked over 512
+bytes and, for the references, over 16,384 bytes).
+
+**Task 1** (`task1.py`, `out/task1.json`): six lives a setting (the reference and five with one cell's potential changed by 1e-12 before
+step 0; cells 100, 197, 294, 391, 488, or the next ones that are not feedback cells). Smallest to largest S over the six lives:
+
+| Setting | d = 1: lags 0, 1, 2 | d = 2 | d = 4 | Every entry of every life above levels (a) and (b) |
+|---|---|---|---|---|
+| N256, 73129 | 0.979-0.985, 0.294-0.315, 0.139-0.165 | 0.709-0.752, 0.419-0.458, 0.196-0.252 | 0.300-0.357, 0.324-0.362, 0.217-0.261 | yes |
+| N256, 93683 | 0.979-0.990, 0.349-0.368, 0.191-0.218 | 0.662-0.749, 0.457-0.510, 0.296-0.335 | 0.245-0.309, 0.357-0.387, 0.303-0.347 | yes |
+| N256, 116089 | 0.981-0.997, 0.343-0.368, 0.176-0.195 | 0.712-0.768, 0.445-0.481, 0.263-0.300 | 0.196-0.311, 0.234-0.365, 0.197-0.292 | yes |
+| N64, 73129 | 0.983-0.992, 0.183-0.213, **0.059-0.067** | 0.752-0.781, 0.331-0.353, 0.103-0.160 | 0.441-0.487, 0.333-0.370, 0.151-0.220 | no: S(1,2) below level (a) 0.076 in all six lives |
+
+**Task 2** (`task2.py`, `out/T2_N0.json`, `out/T2_N256.json`): two copies, one cell's potential changed by 1e-9 before the first step of
+byte B (at B = 0 cell 100; otherwise the first cell, not a feedback cell, whose output at the reading step of byte B - 1 lies between
+0.05 and 0.95; `out/T2_cells.json`). A first try changed cell 100 at every B; it was silent at those bytes, so its change reached no output,
+and those runs were discarded. A first try with float32 records was also discarded, because float32 hides differences below about 3e-8.
+
+| B | N0: difference at +64 / +512 bytes; made / withdrawn in B..B+512 | N0: end | N256: difference at +64 / +512; made / withdrawn | N256: end |
+|---|---|---|---|---|
+| 0 | 3.8e-9 / 1.1e-3; 0 / 8,430 | differ (1.0), connections differ | 1.8e-7 / 4.0e-5; 0 / 7,905 | differ, connections differ |
+| 512 | 7e-35 / 1e-56; 0 / 51 | differ, connections differ | 2e-13 / 2e-13; 0 / 40 | differ, connections differ |
+| 1,024 | 0 / 0; 0 / 14 | equal, same connections | 0 / 5e-12; 0 / 1 | equal, same |
+| 2,048 | 0 / 0; 935 / 1,544 | equal, same | 3e-13 / 1e-12; 1,427 / 2,409 | differ, connections differ |
+| 4,096 | 0 / 0; 16 / 78 | equal, same | 6e-12 / 5e-13; 337 / 169 | differ, connections differ |
+| 8,192 | 0 / 0; 8 / 7 | equal, same | 5e-12 / 3e-13; 306 / 272 | 4.8e-11, same |
+| 12,288 | 0 / 0; 2 / 6 | equal, same | 6e-11 / 4e-12; 205 / 210 | 1e-10, same |
+| 15,872 | 4e-14 / 9e-16; 2 / 5 | 9e-16, same | 1e-16 / 0; 68 / 80 | 0, same |
+
+S(d, 0) at d = 1, 2, 4, 8, 10 of the copies that parted, against the reference (N0: 0.979, 0.774, 0.632, 0.376, 0.291; N256: 0.985,
+0.736, 0.357, 0.091, 0.035): N0 B = 0: 0.978, 0.814, 0.627, 0.387, 0.243; B = 512: 0.979, 0.789, 0.627, 0.376, 0.300. N256 B = 0:
+0.979, 0.712, 0.308, 0.070, 0.033; B = 512: 0.986, 0.727, 0.382, 0.061, 0.046; B = 2,048: 0.984, 0.691, 0.352, 0.045, 0.037; B = 4,096:
+0.986, 0.704, 0.379, 0.064, 0.041. Every difference is within the spread between lives of section 6 except S(8,0) of N256 at B = 2,048
+(0.046 below the reference), which is at the size of that spread.
+
+**Task 3** (`out/T3_N0.json`, `out/T3_N256.json`): the same with no making from byte 4,096 on (in both copies; the reference with making off
+made 1,048 (N0) and 2,149 (N256) connections in all). Perturbed at B = 4,096, 8,192, 12,288, 15,872: in N0 and in N256 the connections at
+the end are the same in every case, and the largest output difference at the end is at most 8e-14. In N256 the perturbation at B = 4,096,
+which gives a different life when making goes on, leaves no trace when making is off. Switching making off changes the life itself:
+S(d, 0) at d = 1, 2, 4, 8, 10 is N0 0.979, 0.809, 0.645, 0.376, 0.321 and N256 0.986, 0.761, 0.358, 0.042, 0.024.
+
+**What these runs show, on one seed.** A difference in the last bit reaches the connections only while connections are being withdrawn
+or made in numbers: in the first ~1,000 bytes in both tissues (the first mass withdrawal) and, in N256, until at least byte 4,096; from
+byte 8,192 on in N256 and from byte 1,024 on in N0, and after making is switched off, it does not change any connection, and the outputs
+differ at the end by at most 1e-10. In between, the outputs may differ by only 1e-12 to 1e-13 while the slow quantities carry the
+difference to a later withdrawal or making. Where two copies part, they hold different connections, and their readings differ by amounts
+within the spread between lives of section 6 (one entry at its size).
