@@ -43,12 +43,12 @@ for dd in range(1, int(dist.max()) + 1):
     c = dist == dd
     if not c.any(): continue
     q = lambda e, p: float(np.nanpercentile(e[c], p)) if np.isfinite(e[c]).any() else None
-    rows.append(dict(d=dd, cells=int(c.sum()), mean_output=float(rec[:, c].mean()), share_above_001=float((rec[:, c] > 0.01).mean()),
+    rows.append(dict(d=dd, cells=int(c.sum()), mean_output=float(rec[:, c].mean()), max_output=float(rec[:, c].max()), share_above_half=float((rec[:, c].max(axis=0) > 0.5).mean()), share_above_001=float((rec[:, c] > 0.01).mean()),
                      present_median=q(e0, 50), present_p90=q(e0, 90), previous_median=q(e1, 50), previous_p90=q(e1, 90)))
 out['by_distance'] = rows; out['unreached'] = int(((dist == 0) & ~isfb).sum())
 os.makedirs('diag', exist_ok=True); json.dump(out, open(f'diag/{label}.json', 'w'), default=float)
 f = lambda v: '  nan' if v is None else f'{v:.3f}'
 print(f"== {label}  divergence after 1/4/16/64/256/512 bytes: " + ' '.join(f"{out['divergence'][str(n)]:.1e}" for n in (1, 4, 16, 64, 256, 512)))
 for r in rows:
-    print(f"   d={r['d']:2d} cells {r['cells']:4d} mean {r['mean_output']:.5f} >0.01 {r['share_above_001']:.3f} | present med {f(r['present_median'])} p90 {f(r['present_p90'])} | previous med {f(r['previous_median'])} p90 {f(r['previous_p90'])}")
+    print(f"   d={r['d']:2d} cells {r['cells']:4d} mean {r['mean_output']:.5f} max {r['max_output']:.3f} cells>1/2 {r['share_above_half']:.2f} >0.01 {r['share_above_001']:.3f} | present med {f(r['present_median'])} p90 {f(r['present_p90'])} | previous med {f(r['previous_median'])} p90 {f(r['previous_p90'])}")
 sys.stdout.flush()
