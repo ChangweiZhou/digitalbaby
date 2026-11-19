@@ -1,13 +1,13 @@
 # Builds TABLE.md from res/*.json (measure.py).
 import json, os
 HERE = os.path.dirname(os.path.abspath(__file__))
-SEEDS = (73129, 93683, 116089); TIS = ('L8-0', 'L8-64', 'L8-128', 'L8-256', 'LF-256')
+SEEDS = (73129, 93683, 116089); TIS = ('L8-0', 'L8-64', 'L8-128', 'L8-256', 'LF-256', 'A4-0', 'A4-128', 'A4-256')
 def J(t, s):
     p = os.path.join(HERE, 'res', f'{t}_s{s}.json'); return json.load(open(p)) if os.path.exists(p) else None
 cols = [(t, s) for t in TIS for s in SEEDS]
 hdr = '| | ' + ' | '.join(f'{t} {s}' for t, s in cols) + ' |'; sep = '|---|' + '---|' * len(cols)
 L = ['# The output end on the long-axon tissues at the drivers of birth (measure.py), 65,536 bytes, share right %', '',
-     'L8-0: rule=timing prune_only=1 norm=1 lines_learn=1 we=3/4 wi=1/4 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/16384 make_period=1024 start_w=1/64 long=8-1/2; L8-64, L8-128, L8-256: with tau=u2-64, u2-128, u2-256; LF-256: L8-256 with longfast=1. Build -ffp-contract=off. A driver sees its own neighbourhood, enlarged by the long-axon cells (median 121 inputs against 93 without). The clip form (inputs clipped at +-8) exists only in the runs started after 11:20 UTC (L8-128, LF-256); empty cells where a form was not run.', '',
+     'L8-0: rule=timing prune_only=1 norm=1 lines_learn=1 we=3/4 wi=1/4 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/16384 make_period=1024 start_w=1/64 long=8-1/2; L8-64, L8-128, L8-256: with tau=u2-64, u2-128, u2-256; LF-256: L8-256 with longfast=1 (seed 73129 only; withdrawn). A4-0, A4-128, A4-256: long=1-1/4 in place of long=8-1/2 (median 152 inputs a driver). Build -ffp-contract=off. A driver sees its own neighbourhood, enlarged by the long-axon cells (median 121 inputs against 93 without). The clip form (inputs clipped at +-8) exists only in the runs started after 11:20 UTC (L8-128, LF-256); empty cells where a form was not run.', '',
      '## A. Fitted ridge readers, last quarter: all / R1 / R2', '', hdr, sep]
 first = max((J(t, s) for t, s in cols if J(t, s)), key=lambda d: len(d['B']), default=None)
 if first:
