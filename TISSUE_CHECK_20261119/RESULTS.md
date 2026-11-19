@@ -719,3 +719,22 @@ and 6.96-12.26:
 Both parts are needed: without inhibition about four cells speak at once and the answer is rarely yes; without the threshold change the
 thresholds stay above the estimates and the part is silent at 69-72% of the bytes. The half inputs and the feedback stay within the
 generator spread. The largest weight-row norm at 262,144 bytes is 3.9-5.6 (the single cell 5.3-5.5); G reaches about 38 on 73129.
+
+## 18. The whole system in a small case (task of 15:08 UTC; stopped at 15:3x UTC by the change of task)
+
+`sysmini.py` (my own code; the reviewer's sysx.py not read): 64 receiving cells (sensitivity to the text byte, with (ii) the last output
+byte, with (iii) also right/wrong; 8 entries of 1/8 at birth among what they receive), 64 cells in between (16 receiving cells each at
+1/16), 8 active in each layer, one output cell (outpart.py's, th 0, eps 1/16) on [h2, sqrt(3) s_2, sqrt(7) s_4, 1]; copying rule
+r = 1/16. Readings S1-S6 sent with the first row. 65,536 bytes, last quarter, median [range] over five orders (`out/sys/table.txt`):
+
+| seed | (i) text | (ii) + last output | (iii) + error | ref_1 / ref_2 / ref_3 |
+|---|---|---|---|---|
+| 73129 | 15.09 [11.63-15.96] | 4.03 [3.80-5.09] | 5.42 [4.22-5.97] | 10.55 / 12.34 / 25.12 |
+| 406364 | 16.53 [13.31-17.46] | 4.18 [3.92-4.82] | 5.26 [3.41-5.28] | 10.72 / 12.16 / 25.34 |
+| 545353 | 15.92 [13.44-16.74] | 4.44 [4.35-4.67] | 5.26 [4.32-5.57] | 10.95 / 12.49 / 25.07 |
+
+The reviewer's finding holds on every seed and order. One rule was tried before the stop: 'tag' (a three-factor rule: an active cell
+tags its present inputs and makes the change at the next byte toward 1 if the error input it receives says right, toward 0 if wrong;
+the cells in between take the error from the right/wrong sensitivity of their active inputs): (i) 5.96 [5.57-6.14] and 6.07
+[5.76-6.13], (iii) 6.26 [6.16-6.34] and 6.56 [4.91-7.24] (n 3) on 73129 and 406364: (iii) slightly above (i), but both far below the
+copying rule's (i); it did not help. The rules 'tagH1', 'errgate', 'novel' and the 262,144-byte grid were not run.
