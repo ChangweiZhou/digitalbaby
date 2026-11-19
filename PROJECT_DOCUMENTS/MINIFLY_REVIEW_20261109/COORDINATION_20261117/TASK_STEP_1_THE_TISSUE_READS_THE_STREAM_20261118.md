@@ -1,4 +1,4 @@
-# Step 1 of the roadmap: the tissue reads the stream and stays informative (brief, revision 2; written from 00:35 UTC on 19 November 2026 by the clock of this machine)
+# Step 1 of the roadmap: the tissue reads the stream and stays informative (brief, revision 3; written from 00:35 UTC on 19 November 2026 by the clock of this machine, revised from 00:47 UTC)
 
 The coordinator gives this brief its experiment number when it releases it. Until then a worker starts nothing. The brief has two stages in this one file. **Stage A** is a trial of under two CPU-hours on one seed (section 11). **Stage B** is the full runs (section 12); they begin only after the coordinator has read stage A's report and released stage B. The brief carries everything the worker needs; where it seems not to, the worker stops that part and asks (section 14). Every number in it that can be computed without running the tissue is computed by `check_step1_brief.py` beside this file (Python standard library only, `python3 -I`, about 25 seconds); its output is section 19.
 
@@ -322,7 +322,7 @@ If the compressed records of stage B round 1 exceed 400 MB, only the measures an
 ## 10. Budget and rule for stopping
 
 - Stage A: checks 1 to 10 and four tissues, expected 0.7 CPU-hours, at most about 2.1; the worker asks if a forecast exceeds 2.5 CPU-hours (check 10, and again at byte 4,096 of each plastic tissue from its own rate).
-- Stage B: round 1, at most 40 CPU-hours (or the ceiling the coordinator sets at its release); opening 2 (section 12.3), if run, at most 20 CPU-hours. Nothing else is run under this brief.
+- Stage B: round 1, at most 40 CPU-hours (or the ceiling the coordinator sets at its release); opening 2 (section 12.3), if run, at most 20 CPU-hours, a limit the coordinator confirms at the release of stage B. Nothing else is run under this brief.
 - Any check fails: stop and ask.
 - A tissue is never stopped early because of its measures; every tissue reads its full stream.
 
@@ -486,7 +486,7 @@ The fifth reading states, for step 1 (its section 5 and risk H1): encoder cells 
 
 ## 19. Output of `check_step1_brief.py`
 
-`python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_step1_brief.py`, run at 00:39 UTC on 19 November 2026 (25 seconds):
+`python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_step1_brief.py`, run at 00:47 UTC on 19 November 2026 (32 seconds):
 
 ```
 ==============================================================================================================
@@ -583,6 +583,16 @@ C.3 variant K: step | F x | E A, m, x | I A, m, x | O A, m, x
     24 | 0.0000 0.1235 0.0300 0.1060 0.0872 -0.0153 0.0520 0.0313 -0.2214 0.0000
     31 | 0.0000 0.1233 0.0238 0.1068 0.0883 -0.0112 0.0570 0.0313 -0.1772 0.0000
     final strengths: {"F": {}, "E": {"h": 0.2554, "c": 0.4973, "F": 0.24957}, "I": {"E": 0.49887, "q": 0.24641, "g": 0.21127}, "O": {"u": 0.75031, "f": 0.24983, "F": 0.25017}}
+C.4 variant r5: step | F x | E A, m, x | I A, m, x | O A, m, x
+     0 | 0.5000 0.1250 0.0750 0.0625 0.0462 -0.0737 0.0231 0.3125 0.0000 0.4062
+     1 | 0.2500 0.2500 0.1976 0.1467 0.0625 -0.0552 0.0186 0.4375 0.1250 0.3697
+     2 | 0.1250 0.1874 0.1288 0.1571 0.1047 -0.0113 0.0379 0.3730 0.0566 0.3183
+     3 | 0.0625 0.1559 0.0934 0.1464 0.1099 -0.0057 0.0504 0.3409 0.0228 0.2761
+     8 | 0.0020 0.1252 0.0518 0.1081 0.0868 -0.0263 0.0449 0.3105 -0.0081 0.2042
+    16 | 0.0000 0.1238 0.0391 0.1051 0.0840 -0.0227 0.0443 0.0302 -0.2864 0.0555
+    24 | 0.0000 0.1235 0.0300 0.1060 0.0845 -0.0172 0.0496 0.0314 -0.2213 0.0000
+    31 | 0.0000 0.1233 0.0239 0.1069 0.0850 -0.0133 0.0541 0.0314 -0.1772 0.0000
+    final strengths: {"F": {}, "E": {"h": 0.25539, "c": 0.49731, "F": 0.24958}, "I": {"E": 0.50031, "q": 0.25102, "g": 0.24949}, "O": {"u": 0.7504, "f": 0.24979, "F": 0.25017}}
 ==============================================================================================================
 D. ONE-STEP TESTS OF THE SIGN OF THE TWO STRENGTH RULES (w = 0.5, e = 0.2, x(k-1) = 0.3)
 D.1 formula 7: sigma +1, m +0.1: delta w = -0.000750
@@ -604,6 +614,8 @@ E.1 seed 93683 W0: C0 by lag L=0: 1.0000, L=1: 0.0778, L=2: 0.0531, L=4: 0.0784,
 E.1 seed 93683 W3: C0 by lag L=0: 1.0000, L=1: 0.0818, L=2: 0.0508, L=4: 0.0803, L=8: 0.0372; classes 46, chance 0.0217
 E.1 seed 116089 W0: C0 by lag L=0: 1.0000, L=1: 0.0807, L=2: 0.0529, L=4: 0.0772, L=8: 0.0342; classes 46, chance 0.0217
 E.1 seed 116089 W3: C0 by lag L=0: 1.0000, L=1: 0.0744, L=2: 0.0515, L=4: 0.0804, L=8: 0.0430; classes 46, chance 0.0217
+E.2 seed 73129 A2, score for the present byte from codes that do not hold it: byte one back 0.0617; position within the item 0.0882; the pair (byte one back, position within the item) 0.0946; (the present byte itself 1.0000)
+E.3 the level of 'stays informative' in stage A: 0.0946 + 0.02 = 0.1146
 ==============================================================================================================
 F. TIME CONSTANTS AND SHARES
 F.1 (31/32)^9 = 0.7515
@@ -632,6 +644,12 @@ G.3 stage B round 1 at a mean of 12 connections (with 16 makings a step througho
 G.3 stage B round 1 at a mean of 32 connections (with 16 makings a step throughout): 40.7 CPU-hours; ceiling 40
 G.3 stage B round 1 at a mean of 93.8 connections (every neighbourhood full, no making): 87.0 CPU-hours; ceiling 40
 G.4 records of all 2,048 cells in float16: stage A 16.8 MB a window, 33.6 MB a tissue, 101 MB for its three recorded tissues; stage B 33.6 MB a window, W0 and W3 kept: 67.1 MB a tissue, 604 MB for round 1 before compression
+G.3b opening 2 (a* = 1/32): three plastic tissues 10.7 CPU-hours at 12 connections to 45.9 with every neighbourhood full (makings included); three fixed tissues with a* = 1/32 2.0 CPU-hours
+G.3c check 10's factor min(2, 93.8 / c) at a mean of c = 8 connections: 2.00
+G.3c check 10's factor min(2, 93.8 / c) at a mean of c = 12 connections: 2.00
+G.3c check 10's factor min(2, 93.8 / c) at a mean of c = 32 connections: 2.00
+G.3c check 10's factor min(2, 93.8 / c) at a mean of c = 46.9 connections: 2.00
+G.3c check 10's factor min(2, 93.8 / c) at a mean of c = 93.8 connections: 1.00
 G.5 per-cell summaries (4 numbers a cell a window, float64) and emissions (int16 a byte): 7.1 MB for round 1
 G.6 saved state at a mean of 12 connections: 24,576 connections, 1.28 MB a tissue
 G.6 saved state at a mean of 93.8 connections: 192,102 connections, 8.65 MB a tissue
@@ -654,7 +672,7 @@ G.6 saved state at a mean of 93.8 connections: 192,102 connections, 8.65 MB a ti
 | 5. The coincidence rule's threshold follows each byte; its inhibitory part is not the cited rule | ϑ with time constant 4,096 steps and ϑ(0) = a*; inhibitory inputs by η · e · (x − a*); both marked as the brief writer's; the departure from sentence 36 stated (section 5.5); check 1(c) and check 4 recomputed |
 | 6. The reversal of the feedback cells' kinds is wrong for the cells that emit | E3 not applied; kinds of sentence 87 in every tissue (sections 5.2, 5.3) |
 | 7. Lags 4 and 8 require capability e of step 3 | The reviewer's decision: lags 0 to 2 required, 4 and 8 read and reported (sections 2, 7.6, 7.7), as the roadmap now states |
-| 8. The fallback cannot address the cause | E10 is adopted before release, so opening 2 is kept (section 12.3); opening 3 restated under E10 |
+| 8. The fallback cannot address the cause | E10 is adopted before release; opening 2 follows revision 5 (a* = 1/32, section 12.3); opening 3 restated under E10 |
 | 9. E4 against E5 | The reviewer's decision: E4 kept, E5 not applied, with the reason from section 16 (section 5.2) |
 | 10. The threshold control and a* make byte-selective cells keep growing | Registered (X3); a* = 1/32 named in outcome 2 of stage A (section 11.3); growth and its cost measured in stage A (sections 9, 11) |
 | 11. Registered expectations | X15 (formerly X14) set to 0.01 with the check's reason; new X0 on starting connections; X1 and X2 rewritten for E10; X14 (coincidence) brought near X13 |
@@ -663,6 +681,8 @@ G.6 saved state at a mean of 93.8 connections: 192,102 connections, 8.65 MB a ti
 | 14. The contract's design block (check, section 7) | C<L computed by check 9 (d); no positive control of the tissue, stated (section 3, item 4); stage A is the cheap preflight (section 3, item 5); matched step-1 exposure for step 5's control tissues (section 3, item 2); the fixed tissue enters the rule through B, and revision 1's separate sentence on it is withdrawn |
 
 ## History
+
+Revision 3 (19 November 2026, from 00:47 UTC): the nine sentence changes of `CONFIRMATION_OF_TASK_STEP_1_BRIEF_REVISION_2_20261119.md` entered (revision 5 of the definition cited; ū kept only in the 512-byte tissue; opening 2 is a* = 1/32; check 1 (d) and (e); the magnitude feedback cell left open; the level 0.1146 with check 9 (e); check 10's factor; expectation X17), with two sentences adjusted to agree, and the check script revised and run again.
 
 Revision 2 (19 November 2026, from 00:35 UTC): from the check of revision 1 (`CHECK_OF_TASK_STEP_1_BRIEF_20261119.md`, findings 1 to 13 and its section 7) and the reviewer's decisions (E10 adopted; lags 0 to 2 required; E4 kept and E5 not applied); restructured into stage A (trial) and stage B (full runs); the check script revised and run again.
 
