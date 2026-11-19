@@ -426,3 +426,52 @@ seeds. The difference lies in the bytes that close and open an item (recall unde
 So what is absent from the neighbourhoods on 93683 is not the present byte or the bytes one and two back but a lasting mark of where the
 stream is within an item: on 73129 the inputs of these two drivers tell for at least three bytes that `=` has passed, on 93683 they
 barely do. This is a fitted reader on the inputs, a measure of what is there, not of what any learning rule finds.
+
+## 12. Tissue A4: every excitatory cell long, reach 1/4 (task of 12:13 UTC)
+
+A4 is the long-axon option of section 8 with K = 1 and R = 1/4 (`my_tissue.prepare(..., long=True, frac=1.0, reach=0.25,
+ltag="_A4")`; the draw `.random() < 1` is still made for each eligible cell, in order), tau = u2-256. Long cells 1,291 / 1,331 / 1,323
+on seeds 93683 / 73129 / 116089; cells near the output lines (drivers and their enlarged members, feedback cells excluded) 708 / 678 /
+682, as in the reviewer's perbyte files (708, 678). Lives of 65,536 bytes recorded at every byte (`jobs_A4.txt`, about 4 minutes each).
+
+**Part 1. The output end** (`python3 own_end.py out/OE_A4_<seed>.rec <seed> 65536 A4_<seed> A4`, `out/own_end_A4_<seed>.json`). Last
+quarter in per cent, A eps 0 / A eps 1/16 / B / D eta 1/64 / D eta 1/16:
+
+| seed | run | raw | clip8 | ref_1 | ref_2 | end mark |
+|---|---|---|---|---|---|---|
+| 93683 | 6.35 / 4.84 / 6.57 / 10.64 / 9.23 | 4.50 / 6.50 / 5.67 / 10.11 / 8.62 | 5.18 / 5.25 / 6.58 / 10.64 / 9.26 | 10.62 | 12.14 | 6.29 |
+| 73129 | 9.81 / 9.83 / 10.07 / 13.80 / 12.82 | 8.82 / 8.04 / 6.81 / 13.78 / 13.00 | 10.07 / 9.29 / 10.01 / 13.81 / 12.82 | 10.55 | 12.34 | 6.21 |
+| 116089 | 9.48 / 7.84 / 9.14 / 15.31 / 13.81 | 7.39 / 6.65 / 8.59 / 15.33 / 13.81 | 7.92 / 8.41 / 9.39 / 15.31 / 13.81 | 10.61 | 12.20 | 6.24 |
+
+First windows reaching the levels are in the json files (`first_window_reaching`). Against L8-256 (section 11) A4 is lower on 73129
+(run B 12.02 to 10.07, D 17.02 to 13.80) and 116089 (run B 9.90 to 9.14, D 16.17 to 15.31) and higher on 93683 (run B 4.71 to 6.57, D 9.26
+to 10.64). No yes/no rule reaches ref_1 in the last quarter on any of the three seeds.
+
+**Part 2. The linear reader byte value by byte value** (`perbyte_own.py`, written from the head comment of the reviewer's perbyte3.py).
+Unclear places sent before reading the code (P1-P6); perbyte3.py takes: inputs centred and divided by their deviation over the fitting
+half, cells of deviation <= 1e-9 dropped, clipped at 8; a constant input under the ridge, ridge 0.01 trace/size including the constant;
+argmax over the values seen in the fitting half; "digits" the mean of the per-digit shares; no floor. Read uncentred without a constant,
+L8-256 seed 93683 gives 0.158 / 0.205 / 0.184 / 0.171 instead of 0.166 / 0.207 / 0.191 / 0.176. With the readings above, my figures at
+16,384 bytes equal the reviewer's `A4_256_s{93683,73129}_linear.json` (near output, linear) as floats in every entry of overall, end, eq
+and digits at the four lags (`out/pb_A4_<seed>_ref_16384.json`).
+
+**Part 3. Six lives a seed** (`pb_lives.py`, `out/pb_A4_lives.json`, `out/pb_A4_ranges.txt`): the reference life and lives with
+1e-12 added to one cell's potential at byte 0 (cells 100, 197, 294, 391, 488). On seed 73129 the life with cell 294 is bit-identical to
+the reference at 8,192-16,384 (largest difference 0), so cell 1024 (the most active cell in the first bytes) replaces it; the lives with
+cells 100 and 488 differ (largest output difference 8e-4 and 0.22 at 8,192-16,384; for cell 100 5e-4 at 57,344-65,536, the same 4,425
+connections) but give readings equal to the reference's at both lengths. On 73129 the six lives therefore give four distinct readings.
+Range over the six lives, near the output lines, bytes 0 / 1 / 2 / 3 back:
+
+| seed, bytes | overall | end mark | equals sign | digits |
+|---|---|---|---|---|
+| 93683, 16,384 | 0.275-0.339 / 0.301-0.374 / 0.268-0.336 / 0.204-0.290 | 0.660-0.873 / 0.726-0.873 / 0.649-0.803 / 0.247-0.761 | 0.442-0.942 / 0.636-0.899 / 0.494-0.842 / 0.633-0.849 | 0.345-0.474 / 0.398-0.498 / 0.316-0.437 / 0.232-0.352 |
+| 93683, 65,536 | 0.310-0.384 / 0.337-0.407 / 0.324-0.371 / 0.280-0.320 | 0.681-0.950 / 0.719-0.938 / 0.731-0.946 / 0.735-0.938 | 0.642-0.973 / 0.746-0.977 / 0.712-0.950 / 0.604-0.908 | 0.374-0.526 / 0.450-0.535 / 0.365-0.493 / 0.311-0.400 |
+| 73129, 16,384 | 0.334-0.365 / 0.370-0.415 / 0.328-0.376 / 0.301-0.326 | 0.938-1.000 / 0.961-1.000 / 0.895-0.996 / 0.785-0.961 | 0.945-1.000 / 0.977-1.000 / 0.965-1.000 / 0.895-0.996 | 0.228-0.290 / 0.238-0.320 / 0.213-0.302 / 0.198-0.282 |
+| 73129, 65,536 | 0.354-0.424 / 0.399-0.473 / 0.356-0.434 / 0.326-0.389 | 0.988-1.000 / 0.957-1.000 / 0.949-1.000 / 0.946-0.984 | 0.957-1.000 / 0.984-1.000 / 0.992-1.000 / 0.961-1.000 | 0.256-0.356 / 0.253-0.358 / 0.235-0.353 / 0.204-0.316 |
+
+Seed 116089, reference life only: 16,384 bytes overall 0.354 / 0.343 / 0.330 / 0.297, end 0.936 / 0.939 / 0.917 / 0.765, eq 0.973 /
+0.955 / 0.928 / 0.909, digits 0.280 / 0.278 / 0.298 / 0.272; 65,536 bytes 0.339 / 0.321 / 0.328 / 0.310.
+
+Between lives of one seed the overall share moves by 0.03-0.09 and the end mark and equals sign on seed 93683 by up to 0.5 at one lag;
+the reviewer's reference life of seed 93683 is the lowest of the six at 16,384 at lags 0, 2 and 3. The ranges of the two seeds overlap
+in the overall share; on 73129 the end mark and equals sign stay at 0.79-1.00 in every life, on 93683 they do not.

@@ -41,10 +41,11 @@ def long_axons(B, seed, frac=1 / 8, reach=0.5):
     return long, members, src
 
 
-def prepare(kind, seed, nbytes, out, long=False, longfast=False):
+def prepare(kind, seed, nbytes, out, long=False, longfast=False, frac=1 / 8, reach=0.5, ltag="_L8"):
+    """A4 (every excitatory non-driver non-feedback cell long, reach 1/4): long=True, frac=1, reach=0.25, ltag='_A4'."""
     B = ts.birth(seed)
     if long:
-        B = dict(B); B["long"], B["members"], B["src"] = long_axons(B, seed)
+        B = dict(B); B["long"], B["members"], B["src"] = long_axons(B, seed, frac, reach)
     tau = np.full(ts.N, 2.0) if kind == "N0" else np.random.default_rng(seed + 20261119).choice(TAUS[kind], size=ts.N).astype(float)
     if longfast:                                         # LF: the long-axon cells' time constant set to 2 after the draw
         tau = tau.copy(); tau[B["long"]] = 2.0
@@ -54,7 +55,7 @@ def prepare(kind, seed, nbytes, out, long=False, longfast=False):
         lines.append(f"{i} {int(i in B['fbset'])} {B['sig'][i]:.1f} {tau[i]:.1f} {len(src)} " + " ".join(map(str, src)))
         mem = B["members"][i]
         lines.append(f"{len(mem)} " + " ".join(map(str, mem)))
-    bp = out / f"birth_{seed}_{kind}{'_L8' if long else ''}{'_LF' if longfast else ''}.txt"; tmp = Path(f"{bp}.{os.getpid()}"); tmp.write_text("\n".join(lines) + "\n"); os.replace(tmp, bp)
+    bp = out / f"birth_{seed}_{kind}{ltag if long else ''}{'_LF' if longfast else ''}.txt"; tmp = Path(f"{bp}.{os.getpid()}"); tmp.write_text("\n".join(lines) + "\n"); os.replace(tmp, bp)
     b, _ = ts.stream(seed, nbytes)
     sp = out / f"stream_{seed}_{nbytes}.bin"; tmp = Path(f"{sp}.{os.getpid()}"); tmp.write_bytes(b.tobytes()); os.replace(tmp, sp)
     return B, b, bp, sp

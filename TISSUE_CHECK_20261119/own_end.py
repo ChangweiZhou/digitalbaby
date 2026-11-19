@@ -16,7 +16,7 @@ so that run and raw keep their draws); raw (the outputs as they are).
 Scores: share right in windows of 4,096 positions, the last quarter (positions from 3(NB-1)/4 + 1 on), and ref_1, ref_2, the end mark's
 share from the scorer (deps/PREP/score_emissions.py).
 
-    python3 own_end.py <rec file (float32, every byte)> <seed> <nbytes> <tag> [long=1] [longfast=0]
+    python3 own_end.py <rec file (float32, every byte)> <seed> <nbytes> <tag> [A4]
 """
 import json, sys, time
 import numpy as np
@@ -25,8 +25,9 @@ import tissue_step1 as ts, my_tissue as mt
 import life_stream as LS, score_emissions as SE
 
 recf, seed, NB, tag = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]), sys.argv[4]
+FR, RE = (1.0, 0.25) if (len(sys.argv) > 5 and sys.argv[5] == "A4") else (1 / 8, 0.5)   # A4: every eligible cell long, reach 1/4
 t0 = time.time()
-Bt = ts.birth(seed); _, members, _ = mt.long_axons(Bt, seed)
+Bt = ts.birth(seed); _, members, _ = mt.long_axons(Bt, seed, FR, RE)
 b, _ = ts.stream(seed, NB); b = b.astype(np.int64)
 L = LS.life(seed); assert np.array_equal(L["bytes"][:NB], b), "the scorer's life stream differs from the tissue's stream"
 isfb = np.asarray(Bt["kind"]) == ts.FBK
