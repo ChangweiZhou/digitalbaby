@@ -1,0 +1,23 @@
+cpu s to byte, live connections: {64: (0.878202, 44671), 256: (6.838887, 106645), 512: (25.446963999999998, 167769), 1024: (96.341985, 185179)}
+counts over 48 bytes (per step means): {'elig': 1635.9, 'elig_exhausted': 1634.1, 'active_cells': 1057.4, 'conn_active_sender': 84820.8, 'conn_active_receiver_prev': 87593.5, 'conn_both': 54728.5, 'conns': 185450.0, 'steps': 1.0, 'by_phi': {0: 1058.9, 1: 1064.8, 2: 1066.3, 4: 1067.3, 8: 1051.7, 16: 1058.4, 31: 1061.3}} given up 3521 made 3971
+{
+ "cells_full_at_1024": 1728,
+ "cpu_s_per_byte_as_is": 0.13183641666666665,
+ "cpu_s_per_byte_skip_full": 0.07686177083333323,
+ "digest_as_is": "37f12b391417c9de",
+ "digest_skip_full": "5d6c06410d7986cb",
+ "equal": false,
+ "given_up_in_window": 3521,
+ "made_as_is": 3971,
+ "made_skip": 3553,
+ "numpy": "2.1.1",
+ "python": "3.12.6"
+}
+   one step, gather z[snd]: 0.121 ms  -> 0.0039 s a byte
+   one step, arrival: 0.485 ms  -> 0.0155 s a byte
+   one step, formula 7 with bound: 0.806 ms  -> 0.0258 s a byte
+   one step, trace: 0.111 ms  -> 0.0035 s a byte
+   one step, give-up test: 0.143 ms  -> 0.0046 s a byte
+   one step, candidate search (python): 1.765 ms  -> 0.0565 s a byte
+eligible cells at this step: 1616 live connections 185179
+exit 0
