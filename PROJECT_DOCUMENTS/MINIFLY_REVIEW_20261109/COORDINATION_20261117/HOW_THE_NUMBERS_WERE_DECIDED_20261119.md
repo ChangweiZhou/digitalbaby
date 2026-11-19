@@ -54,7 +54,7 @@ They were applied in this order.
 
 ## 5. What has already gone wrong with these numbers
 
-1. **The rule for withdrawing a connection** was first written with a test on the sending cell's activity and the level 1/128. On paper this removes about 98 in 100 of all connections at the fourth byte. It was replaced by a test on strength alone, under which almost nothing is ever withdrawn and every cell would come to read its whole neighbourhood. It is now a test of whether what arrives is of use to the receiving cell (Mr. Xu, section 19). Each of the three used the same value, 1/128; the value was never the fault, the rule was.
+1. **The rule for withdrawing a connection** was first written with a test on the sending cell's activity and the level 1/128. On paper this removes about 98 in 100 of all connections at the fourth byte. It was replaced by a test on strength alone; the reviewer wrote here that under it almost nothing is ever withdrawn, which was not measured and is wrong (measured by the coordinator at byte 1,024 of the first form: about 75 withdrawn and 75 made a byte, with most neighbourhoods full; corrected 03:27 UTC). It is now a test of whether what arrives is of use to the receiving cell (Mr. Xu, section 19). Each of the three used the same value, 1/128; the value was never the fault, the rule was.
 2. **The first size** (512 cells with neighbourhoods drawn from all of them) left no cell more than one connection from the output end, so that distance had no meaning.
 3. **The first timing** (4 steps a byte) meant that the tissue's output could not depend on the byte just read.
 
