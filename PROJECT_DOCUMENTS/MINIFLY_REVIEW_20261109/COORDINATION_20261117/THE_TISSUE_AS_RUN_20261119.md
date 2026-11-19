@@ -30,17 +30,22 @@ For every cell i that is not a feedback cell, in the order of the cells' numbers
 4. NEW. Order in time. With F_i and F_j the fast traces before this step: if x_i ≠ 0 or F_i ≠ 0, then for every connection of i from
    an excitatory cell or from an input line:
    lead_ij ← (1 − 1/16384) lead_ij + F_j x_i;  lag_ij ← (1 − 1/16384) lag_ij + F_i z_j.
-   No strength is changed by this.
+   No strength is changed by this. When x_i = 0 and F_i = 0 nothing happens to the two sums, not even the decay.
 5. NEW. Conservation. The strengths of i's connections from excitatory senders (lines included) are multiplied by one factor so that
-   they sum to 3/4; those from inhibitory senders by one factor so that they sum to 1/4; a strength above 1 is set to 1.
+   they sum to 3/4; those from inhibitory senders by one factor so that they sum to 1/4; a strength above 1 is set to 1. This is
+   done at every step, after the arrival of that step (so the arrival of step 0 uses 1/8 each); connections from feedback cells
+   count with their sign; a sign with no senders, or whose strengths sum to 0, is left alone.
 6. Threshold. θ_i ← max(0, θ_i + (x_i − 1/8) / 128).
 7. NEW. Gain. Let m_i be the largest z_j among i's excitatory senders (lines included).
    Q_i ← max(m_i, (1 − 1/16384) Q_i);  P_i ← max(x_i, (1 − 1/16384) P_i);
-   g_i ← g_i (1 + (1/4096) (Q_i − P_i) / (Q_i + P_i + 1e-30)), then held between 1/64 and 8.
+   g_i ← g_i (1 + (1/4096) (Q_i − P_i) / (Q_i + P_i + 1e-30)), then held between 1/64 and 8. (m_i = 0 for a cell with no
+   excitatory sender; the new Q_i and P_i are used; the arrival of step 1 used the gain as it was before this.)
 
 After all cells:
 
-8. NEW. Traces, for every cell and input line j: F_j ← F_j + (z_j − F_j) / 4;  M_j ← M_j + (z_j − M_j) / 16384.
+8. NEW. Traces, for every cell and input line j: F_j ← F_j + (z_j − F_j) / 4;  M_j ← M_j + (z_j − M_j) / 16384, with z_j as
+   defined above (for a cell its output at step k − 1, not the output just computed). So the F used in step 4 of step k holds
+   outputs up to step k − 2.
 9. For every cell i that is not a feedback cell, in the order of the cells' numbers:
    (a) Withdrawal. Its connections from cells (never from lines) are looked at from the last of its list to the first. One that is at
        least 128 steps old is withdrawn if its strength is below 1/128; otherwise, NEW, if its sender is excitatory, it is at least
@@ -48,8 +53,16 @@ After all cells:
        withdrawn one.)
    (b) Making. NEW in its condition: if θ_i = 0, M_i < 1/4096, at least 1,024 steps have passed since i last made a connection (or
        since step 0), and some member of i's neighbourhood is not yet a sender to i, then one such member is chosen with equal chance
-       and a connection from it is made with strength 1/8 and both sums 0.
+       and a connection from it is made with strength 1/8 and both sums 0. (The member may be an input line. θ_i and M_i are the
+       values after steps 6 and 8 of this step. Age is counted from the step of making; the starting connections were made at step 0.)
 10. x_i becomes the output of step k. The reading of a byte is the outputs at its step φ = 31.
+
+No strength changes in any other way: only by conservation (5), withdrawal (9a) and making (9b). (In the program this is the
+option `prune_only` of the rule named `timing`; the name is historical.)
+
+The reading: the window is the last 4,096 bytes of the life; outputs below 0.01 are set to 0 before the readings tool. The distance of
+a cell is counted on the connections as they are at the end of the window: 1 if it has a connection from an input line whose byte
+occurs in the window; n if it is not yet numbered and has a connection from a cell at n − 1; feedback cells have none.
 
 ## 3. The three tissues
 
