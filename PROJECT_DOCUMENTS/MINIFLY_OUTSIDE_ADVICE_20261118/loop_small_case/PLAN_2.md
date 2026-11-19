@@ -58,3 +58,9 @@ Entered on 19 November after the development runs and before any reported seed w
 Development seed 1, arm `relay-learned`, 256 cells, 400,000 lines, the grid of section 4 (12 runs): the best setting is **eta1 = 1/4, eta2 = 1/16, lambda = 1e-5**, with the whole answer right on 88.1% of sums shown and 84.8% of sums never shown (mean of the last three readings; the eight readings on sums never shown: 71, 80, 81, 82, 83, 86, 82, 86; by place: hundreds 99, tens 87, units 100). On development seed 2 the same setting gives 82.5% and 84.2%. The readings no longer swing, so no remedy is added. This setting is used for every arm.
 
 **One arm is added before the reported seeds, in fairness to the comparator.** At the relay's setting the comparator gives 72.5% (seed 1) and 56.1% (seed 2) on sums never shown, which may only mean that the setting was chosen for the relay. The same grid was therefore run for the comparator on seed 1 (12 runs); its own best setting is eta1 = 1, eta2 = 1/16, lambda = 0 (79.3% shown, 77.9% never shown). The report gives the comparator at both settings, and Q1 and the rule of section 5 are read against the better of the two.
+
+## 8. Errata, entered after the runs
+
+- Section 1 says that sums never shown were 0% at the median in every arm of the first plan. In the arm `fixed` (cells in between that do not change) the median is 5%, with 2.5% of sums shown right; in the other five arms it is 0%.
+- Section 5's rule and Q1 say "within 15 points of the comparator". They were written expecting the relay at or below the comparator. The report reads them as "not more than 15 points below" and says so.
+- A third form of the comparator (the answering cell's strengths started at random values) was run after the registered report; it is marked as added in the report's table.

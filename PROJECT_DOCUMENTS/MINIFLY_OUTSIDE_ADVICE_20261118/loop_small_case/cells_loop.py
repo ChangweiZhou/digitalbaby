@@ -65,7 +65,7 @@ def pairs_of(seed, held=20):
 
 
 class System:
-    def __init__(self, arm, H, seed, eta1, eta2, lam, rule="D", fan=0, lam1=0.0):
+    def __init__(self, arm, H, seed, eta1, eta2, lam, rule="D", fan=0, lam1=0.0, w2r=0):
         self.arm, self.H, self.eta1, self.eta2, self.lam, self.rule, self.lam1 = arm, H, eta1, eta2, lam, rule, lam1
         wr = np.random.default_rng([seed, 20261119])                 # the birth
         self.xr = np.random.default_rng([seed, 20261120])            # the random choices of rule Q
@@ -80,6 +80,8 @@ class System:
                 for j in range(H):
                     self.mask[j, wr.choice(NL, fan, replace=False)] = True
                 self.W1 *= self.mask
+        if w2r and arm != "none":                                    # option: the answering cell's strengths start at the return connections' birth values
+            self.W2 = self.R.T.copy()
         self.hist = [END] * D                                        # the present byte and the delay cells
         self.seen = np.zeros(S, bool)
 
@@ -191,7 +193,7 @@ def run(kw):
     rng, held, shown = pairs_of(seed)
     if order:
         rng = np.random.default_rng([seed, order])
-    sys_ = System(arm, H, seed, eta1, eta2, lam, rule, fan, lam1)
+    sys_ = System(arm, H, seed, eta1, eta2, lam, rule, fan, lam1, int(kw.get("w2r", 0)))
     every = int(kw.get("every", 5000))
     if TEXT == "d2":                                                 # scored on 500 pairs of each kind, fixed by the seed
         sr = np.random.default_rng([seed, 500])
@@ -225,6 +227,10 @@ def run(kw):
     if arm != "none":
         if arm == "relay-learned":
             out["cosine_return_forward"] = float((sys_.R * sys_.W2.T).sum() / (np.linalg.norm(sys_.R) * np.linalg.norm(sys_.W2) + 1e-30))
+    if kw.get("label") and kw.get("save") and arm != "none":       # the learned strengths, for look_inside.py
+        os.makedirs(os.path.join(HERE, "res"), exist_ok=True)
+        np.savez_compressed(os.path.join(HERE, "res", kw["label"] + ".npz"), W1=sys_.W1.astype(np.float32), b1=sys_.b1.astype(np.float32),
+                            W2=sys_.W2.astype(np.float32), b2=sys_.b2.astype(np.float32))
     if kw.get("label"):
         os.makedirs(os.path.join(HERE, "res"), exist_ok=True)
         json.dump(out, open(os.path.join(HERE, "res", kw["label"] + ".json"), "w"), indent=1)
@@ -292,6 +298,7 @@ def main():
     elif cmd == "report":
         base = dict(H=kw.get("H", "32"), eta1=kw.get("eta1", "1/4"), eta2=kw.get("eta2", "1/16"), lam=kw.get("lam", "1e-5"), lines=kw.get("lines", "60000"),
                     text=kw.get("text", "d1"), every=kw.get("every", "5000"))
+        base.update({k: kw[k] for k in ("w2r", "fan", "lam1") if k in kw})             # options passed through to every run
         tag = kw.get("tag", "rep")
         arms = [(a, "D") for a in ARMS] + [("relay-learned", "Q")]
         if "only" in kw:
