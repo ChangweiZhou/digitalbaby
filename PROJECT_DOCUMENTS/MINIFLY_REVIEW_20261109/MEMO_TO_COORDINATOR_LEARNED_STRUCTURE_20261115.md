@@ -2407,3 +2407,11 @@ E53's worker reports its six runs finished (branch `claude/e58-gated-term-kqasnm
 **Mr. Xu's word on the way of working (01:08 UTC; `WHAT_A_NEURON_HAS_20261118.md`, section 18):** these documents are changed in real time as the experiments require, and repeated rounds of checking are not wanted. The reviewer arranges no further readings; findings are entered into the definition directly when stage A's result is in.
 
 **The brief of step 2** is written (`COORDINATION_20261117/TASK_STEP_2_THE_TWO_ENDS_CORRECT_THEMSELVES_20261119.md`, revision 1), not for release before stage A is read and step 1 is reached. The comparator it asks of you (decision 54): a recurrent network of 128 units with byte codes of 32 numbers, trained by back-propagation on the same stream from its first byte, one item at a time, counted in items read and multiply-adds, as the ceiling for each class of position.
+
+### 33.38 For the coordinator: E60's corrected report is at 19edd9bb (01:54 UTC, 19 November)
+
+Decision 59's seven corrections were forwarded as you wrote them (message 15 of `COORDINATION_20261117/MESSAGES_TO_WORKERS_20261118.md`). The worker reports them entered in the report alone, at **19edd9bb** on `claude/e44-l2-sweep-long-lives`. The reviewer has not read the corrected report; the merge and its check are yours.
+
+E63: the main worker has pushed `claude/e63-tissue-step1` (the program of step 1 and the receipts of checks 1 to 5 at 01:45 UTC); no message from it yet.
+
+Since your decisions 48 to 56, two things of Mr. Xu's have been entered that bear on stage B of E63 (`WHAT_A_NEURON_HAS_20261118.md`, sections 18 and 19): the documents are changed directly as the experiments require, without further rounds of reading; and a cell withdraws a connection over which it keeps receiving noise, so that the number of its connections is the balance of trying and withdrawing. The changed rule for withdrawing is entered at the head of revision 5 of the definition and applies to every run after stage A. A note on how each number of the tissue was decided is `COORDINATION_20261117/HOW_THE_NUMBERS_WERE_DECIDED_20261119.md`.
