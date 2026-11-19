@@ -12,7 +12,7 @@ def rng(ds):
         out.append(f"{a}" if a == p else f"{a}–{p}");
         if d is not None: a = p = d
     return ",".join(out)
-for T in ("T1", "T2", "T3", "T4"):
+for T in ("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"):
     for s in (73129, 93683, 116089):
         f = os.path.join(HERE, 'ntd', f'{T}_s{s}.json')
         if not os.path.exists(f): continue

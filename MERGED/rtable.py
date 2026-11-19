@@ -4,7 +4,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 R = ('a_near_output', 'b_all_non_feedback', 'onehot_present', 'onehot_present_previous', 'ref_3')
 print("| T | seed | cells near the output lines (distances) | near the output lines | all 1,984 cells | one-hot of the present byte | one-hots of the present and previous byte | table of the last 3 bytes |")
 print("|---|---|---|---|---|---|---|---|")
-for T in ("T1", "T2", "T3", "T4"):
+for T in ("T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"):
     for s in (73129, 93683, 116089):
         f = os.path.join(HERE, 'reach', f'{T}_s{s}.json')
         if not os.path.exists(f): continue

@@ -105,3 +105,99 @@ They differ as follows:
   - It loses amplitude near the output end: the largest output at d = 8 is 0.37 to 0.46.
 
 **What every tissue still lacks near the output lines.** No reader of the cells near the output lines reaches the table of the last three bytes, which scores 0.251 to 0.254. Only T1 and T3 have cells there whose output exceeds 1/2. No tissue gives a byte: the emission was not read in these runs.
+
+## Part (e) and T5 to T8 (the reviewer's message of 07:32 UTC, which reached this session at 08:53)
+
+**The program, rebuilt.** It is rebuilt on the reviewer's tissue.c at e7be1222. That version holds part (e): `prune_only`, the gain `gain=3` (two_sided 3) and making on the long mean `mk_long`. Parts (b), (c) and (d) are re-added unchanged. The first build, on which T1 to T4 ran, is kept in `v1/`.
+
+**The checks, rerun on the rebuilt program** (`equiv_*.log`; the first build's checks are in `equiv_v1/`):
+- **base B1, (d) and (e)** give outputs and connections identical to their authors' programs. Part (e) was run as `rule=timing prune_only=1 norm=1 lines_learn=1 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/4096 make_period=1024`: 3.24 connections a cell, 1,252 made, 10,482 given up.
+- **(b) and (c)** give identical connections and identical counts of made and given up. Their outputs, however, now differ from their authors' programs at rounding level:
+  - (c): largest difference 2.8e-14, in 2 cells;
+  - (b): largest difference 1.4e-5, in 27 cells.
+- On the first build both were exact. The likely cause is that the compiled code of e7be1222 orders its floating-point operations differently; it is not a change of rule, but this was not proved.
+
+**The tissues.** All four use part (e) as above, with totals 3/4 and 1/4 (the defaults):
+
+| Tissue | Parts | Added options |
+|---|---|---|
+| T5 | (e) with making | none |
+| T6 | T5 + (c) | `tau=u2-64e` |
+| T7 | T5 + (d) | `dmax=16` |
+| T8 | T5 + (c) + (d) | `tau=u2-64e dmax=16` |
+
+The readings are as for T1 to T4. Every window of T1 to T8 is in `T_TABLE.md`.
+
+### Last window (bytes 61,440 to 65,535), T5 to T8
+
+| T | seed | window end | S(d,0) tool d = 1 / 2 / 4 | S(d,0) tool d = 8 / 11 | lag 1 above level: distances (best S) | lag 2 above level: distances (best S) | largest output d = 8 / 11 | connections a cell (largest) | made / given up | cells differing after 64 / 512 bytes | ms a byte |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| T5 | 73129 | 65,536 | 0.975 / 0.812 / 0.642 | 0.403 / 0.318 | 7–14 (0.205) | 9–10 (0.093) | 1.00 / 1.00 | 3.34 (21) | 1,471 / 10,718 | 0 / 0 | 8.8 |
+| T5 | 93683 | 65,536 | 0.983 / 0.860 / 0.565 | 0.276 / 0.128 | 9–12 (0.131) | none | 1.00 / 1.00 | 3.62 (16) | 1,741 / 10,427 | 0 / 0 | 9.3 |
+| T5 | 116089 | 65,536 | 0.999 / 0.785 / 0.564 | 0.145 / 0.095 | 6 (0.095) | none | 1.00 / 1.00 | 3.52 (17) | 1,000 / 9,886 | 0 / 0 | 9.0 |
+| T6 | 73129 | 65,536 | 0.977 / 0.813 / 0.591 | 0.102 / 0.056 | 2–11 (0.346) | 3–14 (0.190) | 1.00 / 1.00 | 3.63 (16) | 3,605 / 12,271 | 0 / 0 | 9.7 |
+| T6 | 93683 | 65,536 | 0.991 / 0.869 / 0.407 | 0.113 / 0.084 | 2–11 (0.339) | 2–12 (0.209) | 1.00 / 1.00 | 4.04 (12) | 6,461 / 14,318 | 0 / 0 | 10.1 |
+| T6 | 116089 | 65,536 | 1.000 / 0.855 / 0.537 | 0.137 / 0.055 | 1–10 (0.292) | 2–11 (0.179) | 1.00 / 1.00 | 3.71 (14) | 3,472 / 11,987 | 0 / 0 | 9.6 |
+| T7 | 73129 | 65,536 | 0.922 / 0.698 / 0.320 | 0.083 / 0.045 | 1–9 (0.434) | 1–12 (0.312) | 1.00 / 1.00 | 3.52 (10) | 768 / 9,657 | 0 / 0 | 12.7 |
+| T7 | 93683 | 65,536 | 0.947 / 0.688 / 0.245 | 0.068 / 0.059 | 1–9 (0.363) | 1–11 (0.232) | 1.00 / 1.00 | 3.71 (11) | 1,024 / 9,537 | 0 / 0 | 13.1 |
+| T7 | 116089 | 65,536 | 0.962 / 0.711 / 0.227 | 0.062 / 0.049 | 1–8 (0.361) | 1–10 (0.227) | 1.00 / 1.00 | 3.68 (11) | 1,035 / 9,597 | 0 / 0 | 13.3 |
+| T8 | 73129 | 65,536 | 0.922 / 0.691 / 0.187 | 0.070 / 0.034 | 1–6 (0.484) | 1–8 (0.325) | 1.00 / 1.00 | 3.49 (10) | 1,103 / 10,053 | 0 / 0 | 13.0 |
+| T8 | 93683 | 65,536 | 0.901 / 0.620 / 0.103 | 0.053 / 0.026 | 1–6 (0.384) | 1–8 (0.273) | 1.00 / 1.00 | 3.76 (13) | 986 / 9,397 | 0 / 0 | 13.4 |
+| T8 | 116089 | 65,536 | 0.967 / 0.724 / 0.157 | 0.048 / 0.035 | 1–6 (0.439) | 1–7 (0.267) | 1.00 / 1.00 | 3.67 (11) | 1,066 / 9,654 | 0 / 0 | 13.0 |
+
+### The reader of the next byte, T5 to T8
+
+| T | seed | cells near the output lines (distances) | near the output lines | all 1,984 cells | one-hot of the present byte | one-hots of the present and previous byte | table of the last 3 bytes |
+|---|---|---|---|---|---|---|---|
+| T5 | 73129 | 495 (d 8–16) | 0.1079 | 0.1467 | 0.1059 | 0.1296 | 0.2512 |
+| T5 | 93683 | 519 (d 8–17) | 0.0782 | 0.1465 | 0.1035 | 0.1245 | 0.2533 |
+| T5 | 116089 | 495 (d 8–19) | 0.1124 | 0.1328 | 0.1077 | 0.1268 | 0.2536 |
+| T6 | 73129 | 495 (d 0–16) | 0.0970 | 0.1967 | 0.1059 | 0.1296 | 0.2512 |
+| T6 | 93683 | 519 (d 0–17) | 0.0947 | 0.2020 | 0.1035 | 0.1245 | 0.2533 |
+| T6 | 116089 | 495 (d 8–17) | 0.1346 | 0.2218 | 0.1077 | 0.1268 | 0.2536 |
+| T7 | 73129 | 495 (d 8–17) | 0.1058 | 0.2006 | 0.1059 | 0.1296 | 0.2512 |
+| T7 | 93683 | 519 (d 8–17) | 0.1275 | 0.2166 | 0.1035 | 0.1245 | 0.2533 |
+| T7 | 116089 | 495 (d 8–16) | 0.1063 | 0.2062 | 0.1077 | 0.1268 | 0.2536 |
+| T8 | 73129 | 495 (d 8–17) | 0.0731 | 0.2119 | 0.1059 | 0.1296 | 0.2512 |
+| T8 | 93683 | 519 (d 7–18) | 0.0667 | 0.2025 | 0.1035 | 0.1245 | 0.2533 |
+| T8 | 116089 | 495 (d 8–18) | 0.0749 | 0.2285 | 0.1077 | 0.1268 | 0.2536 |
+
+### Answer for T5 to T8, as measured
+
+All four share these properties, on three seeds:
+- The largest output is 1.00 at d = 8 and d = 11. Every T5 to T8 tissue keeps full amplitude to the farthest cells, unlike T1 to T4.
+- They make and withdraw their own connections, at 3.3 to 4.04 a cell (largest 21).
+- No cell differs between two copies after 64 or 512 bytes, in any window.
+
+They differ as follows:
+
+- **T5** reads the present byte best at every distance:
+  - S(d,0) is 0.98 to 1.00 at d = 1, 0.79 to 0.86 at d = 2, 0.56 to 0.64 at d = 4, and 0.15 to 0.40 at d = 8.
+  - It carries the byte one back above its level only at the far cells, and only on two seeds (d = 7 to 14 on 73129, d = 7 to 13 on 93683; best 0.13 to 0.21). The byte two back is above its level only at d = 9 and 10 in one window.
+- **T6** keeps T5's reading at d = 1 to 4 (S(4,0) 0.40 to 0.59).
+  - It carries both earlier bytes above their levels from d = 1–3 out to d = 9–14 on all three seeds (lag 1 best 0.27 to 0.35; lag 2 best 0.14 to 0.21).
+  - It loses part of T5's present byte at the far cells: d = 8 is 0.10 to 0.14.
+  - On two seeds a few cells near the output lines end with no connection (distance 0 in the reach set).
+- **T7** carries the earlier bytes more strongly and nearer the input lines (lag 1 at d = 1 to 7–9, best 0.35 to 0.44; lag 2 at d = 1 to 10–12, best 0.22 to 0.32).
+  - It gives up the present byte from d = 4 on: S(4,0) 0.23 to 0.35, and d = 8 at most 0.08.
+- **T8** carries the byte one back most strongly (best 0.38 to 0.50), at d = 1 to 6 only.
+  - S(4,0) is 0.10 to 0.19, below the level of 0.1103 on seed 93683.
+
+**Near the output lines, T5 to T8** (reader of the next byte, last quarter):
+- **T5** gives 0.078 to 0.112, about the present byte alone (0.104 to 0.108). It is below the present and previous bytes on every seed.
+- **T6** gives 0.095 to 0.135. It is above the present and previous bytes only on 116089.
+- **T7** gives 0.106 to 0.128. It is above the present and previous bytes only on 93683.
+- **T8** gives 0.067 to 0.075, below the present byte alone on every seed.
+- **All 1,984 cells** give 0.133 to 0.147 for T5 and 0.197 to 0.229 for T6 to T8. No reader reaches the table of the last three bytes (0.251 to 0.254).
+
+So full amplitude near the output lines (T5 to T8), against at most 0.67 in T1 to T4, does not make those cells carry more of what the next byte depends on. The best readers near the output lines remain T4 (0.121 to 0.169) and T2 on one seed (0.192).
+
+## Overall answer (T1 to T8, three seeds)
+
+Every tissue reads the present byte at d = 1, 2 and 4 above the level, except T8 at d = 4 on seed 93683. Every tissue makes and withdraws its own connections at about 3 to 4 a cell, and none depends on its past.
+
+The bytes one and two back are carried above their levels by T2, T3, T4, T6, T7 and T8 on all three seeds. T5 carries them only weakly, and T1 not at all.
+
+Only T5 to T8 keep full amplitude (largest output 1.00) out to the cells near the output lines. Of these, T6 also keeps the present byte at d = 4 (S(4,0) 0.40 to 0.59) and carries both earlier bytes.
+
+What every tissue still lacks near the output lines: a reader of those cells that does better than a table of the last three bytes. The emission itself was not read in these runs.
