@@ -16,6 +16,17 @@ def make(kw):
         subprocess.run(['gcc', '-O3', '-march=native', '-ffp-contract=off', '-shared', '-fPIC', os.path.join(HERE, 'tissue.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
     L = ctypes.CDLL(so)
     N = ts.N; B = ts.birth(SEED)
+    lg = kw.get('long', '')
+    if lg:          # long=K-R: one excitatory cell in K (not a driver of an output line, not a feedback cell) has a long axon: it is a member of the
+                    # neighbourhood of every cell within R of it; the starting connections are then drawn again, 8 from each cell's members
+        K, R = lg.split('-'); R2L = float(eval(R)) ** 2; rl = np.random.default_rng(SEED + 20261120)
+        Pq = np.asarray(B['P']); longs = np.array([j for j in range(N) if B['sig'][j] > 0 and j not in B['fbset'] and j not in B['outset'] and rl.random() < 1.0 / float(K)])
+        for i in range(N):
+            if i in B['fbset']: continue
+            have = set(B['members'][i]); d2 = ((Pq[longs] - Pq[i]) ** 2).sum(1)
+            B['members'][i] = list(B['members'][i]) + [int(j) for j, q in zip(longs, d2) if q <= R2L and j != i and int(j) not in have]
+            B['src'][i] = [int(m) for m in rl.choice(B['members'][i], size=min(ts.START_N, len(B['members'][i])), replace=False)]
+        B['longs'] = longs
     maxd = max(len(m) for m in B['members'].values()) + 2
     P = ctypes.c_void_p
     class Tis(ctypes.Structure):
