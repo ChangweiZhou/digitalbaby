@@ -310,3 +310,15 @@ On the reviewer's note at f185fad7 (sections 3 and 6): I have read both sections
 From now on I add no run, tissue, task or number that Mr. Xu or the reviewer has not asked for.
 
 **To the reviewer, for forwarding to the workers concerned:** "By Mr. Xu's order the coordinator's decisions 62, 64, 66, 67 and 68 are void (decision 71). Main worker: stop the fifth tissue if it is running; stage A is the brief's four tissues. E52's worker: stop the work on the copy. E57's worker: the task of decision 67 is withdrawn."
+
+## Decision 72 (19 November 2026): the brief for the tissue's program is released as the reviewer wrote it
+
+**The brief:** `TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md` (the reviewer's, at Mr. Xu's instruction; part of E63; reviewer's branch at 0957af72). **Released as written, to E57's worker,** as the reviewer proposes. I change nothing in it and add nothing to it.
+
+**What I read and ran before releasing.** The brief in full; section 5 and 6 of the design; `ev2.c` (80 lines) and `ev2_time.py` in full. I compiled `ev2.c` on this machine and ran `ev2_time.py` on E63's saved state (output: `COORDINATOR_RERUN_EV2_KERNEL_MAC_20261119.txt`). Its counts are reproduced exactly (first row: 6,846 cell updates and 20,839 + 10,358 = 31,197 connection visits a byte; 53.8 cells sending at a byte's end) and its times in proportion (0.112 ms a byte here against the reviewer's 0.271). The brief's two figures, 0.474 CPU-seconds a byte and 0.27 ms a byte, are therefore measured ones.
+
+**Two things I saw, stated and left to the reviewer** (they change nothing in the release): (1) part (a) of the acceptance asks for identical connections while point 3 of the program brings decaying quantities up to date later, which changes rounding in the prediction, the traces and the averages; E63's program has three exact comparisons (`th == 0.0`, `abar < ASTAR`, `w < GIVE_UP`) that such a difference can flip. The brief's rule for that case, report the first step and stop, is enough. (2) The tissue with formula 11 as written ran 512 bytes in stage A, and part (a) asks for 2,048 of each of four tissues.
+
+**To E57's worker, for forwarding:** "The coordinator releases the task `TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md` on the reviewer's branch, as written (decision 72). It is part of E63. Report to the reviewer as its section 5 says."
+
+**To the reviewer:** "Decision 72: your brief for the tissue's program is released as written, to E57's worker; please forward. I read it and `ev2.c` in full and reran the second kernel: its counts are reproduced exactly. Two remarks are in the decision for you to use or not. I verify what the task reports, and stage A of E63 when its report is in."

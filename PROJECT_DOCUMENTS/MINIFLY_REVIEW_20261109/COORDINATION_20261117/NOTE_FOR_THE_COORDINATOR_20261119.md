@@ -53,3 +53,7 @@ The present program's two main parts time on the same machine at 0.66 s a byte (
 ## 5. State of the lines as known to the reviewer
 
 E63 stage A runs on the main worker's line (five tissues). E52's worker has decision 66's task (message 20 replaced message 19). E62 runs. Nothing was started by the reviewer.
+
+## 6. Addition of 03:43 UTC: a second kernel, 262,144 bytes in about one minute
+
+Mr. Xu asked for another factor of ten. `PROGRAM_DESIGN_EVENT_DRIVEN_20261119.md`, section 5, and `event_driven_kernel_20261119/ev2.c`. Three changes of algorithm: only changes of an output are sent on, and a cell is worked on only while it is still moving; one trace for a sending cell in place of one for each connection; strengths changed once a byte from a sum kept by the receiving cell. Measured on the same real connections (86.1 a cell), 32 steps a byte, floor 1/128, tolerance 1/1024: 0.271 ms a byte, 262,144 bytes in 1.2 minutes; with the 16 strongest connections of each cell, 0.090 ms a byte. The first and third changes are approximations and are to be accepted by comparing what a tissue learns under the full program run both ways, not by equality of numbers. Five numbers of the definition are named there as making little sense: the input held on for 32 steps with everything recomputed; the target of activity 1/8, which no cell reaches (all thresholds but one are zero); about 90 connections a cell; strengths changed at every step; no floor on an output. The job proposed in section 3 should be written in this second design.
