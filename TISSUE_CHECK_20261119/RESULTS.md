@@ -854,3 +854,9 @@ produce the tuning. A level kept as the raw total at birth, read with the mean s
 2,000 of 10,000 pairs never shown, scored on 300 + 300): N 1000 shown 14-17, never shown 12 / 14 / 17; N 4000 shown 27-29, never
 shown 25 [20-29] / 21 [21-27] / 24 [23-34]; never shown by place at N 4000: units 42-49, tens 49-51, hundreds 100. The tens were not
 split by carry here.
+
+**NOT_RUN** (reviewer's messages of 16:09 and 16:13 UTC, on Mr. Xu's instruction of 16:14 UTC to finish the current work and do
+nothing further): the warm-up loop (W1 under yes or no, W2 told the right byte, W3 settling only; 1, 5, 20 passes over 1,000 shown
+lines, on the combined pool N 300 and 1,000, single digits and 0 to 99) was not started. Also not run, from earlier tasks: section 21
+step 3 (0 to 99 with the tens split by carry; no remedy reached 80); section 18's rules 'tagH1', 'errgate', 'novel' and its
+262,144-byte grid (stopped by the change of task). All runs that were started have finished and are recorded above.
