@@ -120,7 +120,7 @@ static ivec wl, wl2, chg, chg2, gone, learnl, dal;
 static int64_t *tq_t; static int *tq_c, tq_n, tq_h, tq_cap;    /* timers of making: (step, cell) */
 static int64_t *aq_t, *aq_seq; static int *aq_c, aq_n, aq_h, aq_cap;  /* ages: (step, slot, seq) */
 /* events and counters */
-static int64_t *ev_made, *ev_gone; static int nev_made, cap_made, nev_gone, cap_gone;
+static int64_t *ev_made, *ev_gone; static size_t nev_made, cap_made, nev_gone, cap_gone;   /* size_t: these exceed an int near 250,000 bytes */
 static int64_t MADE, GIVEN_UP;
 static double CNT[8];   /* 0 cell updates, 1 senders passing on, 2 connection visits in passing on, 3 visits for strengths,
                            4 visits for making and giving up, 5 steps, 6 cells active (x > 0) after a step, 7 lazy updates */
@@ -295,7 +295,7 @@ static void remove_conn(int c) {
     iv_push(&freeslots, c);
     NLIVE--; GIVEN_UP++;
     CNT[4] += in[i].n;
-    if (nev_gone == cap_gone) { cap_gone = cap_gone ? 2 * cap_gone : 1024; ev_gone = realloc(ev_gone, 8 * 4 * cap_gone); }
+    if (nev_gone == cap_gone) { cap_gone = cap_gone ? 2 * cap_gone : 1024; ev_gone = realloc(ev_gone, sizeof(int64_t) * 4 * cap_gone); }
     ev_gone[4 * nev_gone] = K; ev_gone[4 * nev_gone + 1] = j; ev_gone[4 * nev_gone + 2] = i; ev_gone[4 * nev_gone + 3] = c_seq[c]; nev_gone++;
     if (full[i]) { full[i] = 0; if (K - klast[i] >= PS) due[i] = 1; }
 }
@@ -320,7 +320,7 @@ static void make_for(int i) {
     aq_push(K + PS, c, c_seq[c]);
     klast[i] = K; due[i] = 0; tq_push(K + PS, i);
     MADE++;
-    if (nev_made == cap_made) { cap_made = cap_made ? 2 * cap_made : 4096; ev_made = realloc(ev_made, 8 * 3 * cap_made); }
+    if (nev_made == cap_made) { cap_made = cap_made ? 2 * cap_made : 4096; ev_made = realloc(ev_made, sizeof(int64_t) * 3 * cap_made); }
     ev_made[3 * nev_made] = K; ev_made[3 * nev_made + 1] = j; ev_made[3 * nev_made + 2] = i; nev_made++;
 }
 static int cmp_seq(const void *a, const void *b) { int64_t x1 = c_seq[*(const int *)a], x2 = c_seq[*(const int *)b]; return (x1 > x2) - (x1 < x2); }
@@ -566,8 +566,8 @@ void evt_cells(double *pv, double *pp, double *pth, double *pab, double *pvt, in
     }
     memcpy(pv, v, 8 * NC); memcpy(pth, th, 8 * NC); memcpy(pkl, klast, 8 * NC);
 }
-int evt_events_made(int64_t *o, int cap) { int n = nev_made < cap ? nev_made : cap; memcpy(o, ev_made, 8 * 3 * n); return nev_made; }
-int evt_events_gone(int64_t *o, int cap) { int n = nev_gone < cap ? nev_gone : cap; memcpy(o, ev_gone, 8 * 4 * n); return nev_gone; }
+int evt_events_made(int64_t *o, int cap) { size_t n = nev_made < (size_t)cap ? nev_made : (size_t)cap; memcpy(o, ev_made, sizeof(int64_t) * 3 * n); return (int)nev_made; }
+int evt_events_gone(int64_t *o, int cap) { size_t n = nev_gone < (size_t)cap ? nev_gone : (size_t)cap; memcpy(o, ev_gone, sizeof(int64_t) * 4 * n); return (int)nev_gone; }
 void evt_clear_events(void) { nev_made = nev_gone = 0; }
 /* the use and counter of withdrawal by use (W) of the live connections, in the order of evt_live (call evt_live first) */
 void evt_live_use(double *use, int *cnt) {
