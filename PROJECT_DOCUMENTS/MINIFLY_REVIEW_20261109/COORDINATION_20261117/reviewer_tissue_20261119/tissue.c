@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double a_make;                  /* a cell makes a connection only while its mean activity is below a_make (0: the definition's a*) */
     double start_w, make_period;   /* strength of a new connection; least number of steps between two makings by one cell */
     double no_make, lines_learn;   /* no_make 1: no connection is made; lines_learn 1: under TIMING the connections from input lines change too (F has NZ entries) */                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
          /* the largest gain a cell can take */
@@ -164,7 +165,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }
-            if (t->no_make == 0.0 && t->th[i] == 0.0 && t->abar[i] < a && (k - t->klast[i]) >= (int64_t)t->make_period) {
+            if (t->no_make == 0.0 && t->th[i] == 0.0 && t->abar[i] < (t->a_make > 0.0 ? t->a_make : a) && (k - t->klast[i]) >= (int64_t)t->make_period) {
                 const int free_n = t->nmem[i] - t->deg[i];
                 if (free_n > 0) {
                     int pick = (int)(rnd(t) % (uint64_t)free_n), mi = -1;
