@@ -113,7 +113,7 @@ for E in ends:
         samp = sample(cells); samp_b = [c_ for c_ in samp if sd[c_] > 0]
         med = lambda e: float(np.nanmedian(e[cells])) if np.isfinite(e[cells]).any() else None
         rows.append(dict(d=name, cells=int(len(cells)), mean_output=float(X[:, cells].mean()), max_output=float(X[:, cells].max()),
-                         share_above_001=float((X[:, cells] > 0.01).mean()), present=med(e0), previous=med(e1),
+                         share_above_001=float((X[:, cells] > 0.01).mean()), cells_max_over_half=float((X[:, cells].max(axis=0) > 0.5).mean()), present=med(e0), previous=med(e1),
                          S_tool={str(L_): score(Xa, samp, L_) for L_ in LAGS}, S_nofloor={str(L_): score(Xb, samp_b, L_) for L_ in LAGS}))
     c0 = RD.c0(b[lo:E], b, lo, LAGS)
     out['windows'][str(E)] = dict(window=[lo, E - 1], divergence=div, rows=rows, c0={str(k): v["S"] for k, v in c0.items()}, max_distance=int(dist.max()),

@@ -16,5 +16,5 @@ for lab in args:
         for d in [k for k in rows if k != 'pool']:
             x = rows[d]
             if d in ('1', '2', '4') or int(d) >= 8:
-                print(f"   d{d:>2s} n{x['cells']:4d} max {x['max_output']:.3f} mean {x['mean_output']:.1e} pres {f(x['present'])} prev {f(x['previous'])} | S0 tool {f(x['S_tool']['0'])} nofloor {f(x['S_nofloor']['0'])} | nofloor S1 {f(x['S_nofloor']['1'])} S2 {f(x['S_nofloor']['2'])}")
+                print(f"   d{d:>2s} n{x['cells']:4d} >1/2 {x.get('cells_max_over_half', float('nan')):.2f} max {x['max_output']:.3f} mean {x['mean_output']:.1e} pres {f(x['present'])} prev {f(x['previous'])} | S0 tool {f(x['S_tool']['0'])} nofloor {f(x['S_nofloor']['0'])} | nofloor S1 {f(x['S_nofloor']['1'])} S2 {f(x['S_nofloor']['2'])}")
         print(f"   C0 lag1 {w['c0']['1']:.3f} lag2 {w['c0']['2']:.3f}")
