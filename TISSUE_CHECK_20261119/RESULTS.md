@@ -100,3 +100,29 @@ of step 1.
   Its results are reproducible only with the same source, compiler and machine, not from the text. On this seed rounding alone moves
   S(2, 0) of N0 by 0.04 and S(8, 0) of N256 by 0.05.
 - The text's section 5 quotes figures (3.24, 1,252, 10,482) that none of these runs gives.
+
+## 6. Added after the reviewer's answers of 09:05 and 09:27 UTC
+
+The reviewer confirmed the readings U2 to U10 and, for U1, the literal reading (z_j = output of step k − 1), which is the main run
+above; the reading with x_j of step k parts from it at byte 128 (section 2).
+
+**The nine entries against both levels** (`levels.py`; N256, 16,384 bytes, the last 4,096 bytes; `out/*_levels.json`). Level (a): 0.1103
+at lag 0, c0(L) + 0.02 at lags 1 and 2. Level (b), the stricter one: the upper end of the level's interval plus 0.02 must lie below the
+lower end of the score's interval. I took an interval as the value ± 2 standard errors of the tool, and used 0.1103 at lag 0 with no
+interval; the definition of the interval is my choice and is stated here. Result: 9 of 9 above (a) and 9 of 9 above (b) on each of seeds
+73129, 93683 and 116089. The smallest margin of (b) is at d = 1, lag 2 on seed 73129 (S 0.147 ± 0.008 against c0 0.056).
+
+**The spread between lives that differ only in the last bit** (`spread.py`; N0, seed 73129, 16,384 bytes; the reference run and five runs
+in each of which one cell's potential (cells 100, 600, 1100, 1600 and 2000) is changed by 1e-12 before step 0; `out/spread_*.json`):
+
+| d | Reference | Five changed runs | Smallest to largest over all six | Range |
+|---|---|---|---|---|
+| 1 | 0.979 | 0.978, 0.978, 0.978, 0.999, 0.978 | 0.978 to 0.999 | 0.021 |
+| 2 | 0.774 | 0.814, 0.831, 0.831, 0.834, 0.812 | 0.774 to 0.834 | 0.060 |
+| 4 | 0.632 | 0.606, 0.595, 0.613, 0.600, 0.668 | 0.595 to 0.668 | 0.073 |
+| 8 | 0.376 | 0.421, 0.391, 0.379, 0.375, 0.420 | 0.375 to 0.421 | 0.046 |
+| 10 | 0.291 | 0.256, 0.287, 0.265, 0.240, 0.328 | 0.240 to 0.328 | 0.088 |
+
+Connections at the end: 6,638 (reference), 6,615, 6,685, 6,757, 6,664 and 6,639. On this seed and tissue, two settings compared on one
+seed by one life each cannot be told apart by S(d, 0) differences smaller than about 0.02 at d = 1, 0.06 at d = 2, 0.07 at d = 4, 0.05 at
+d = 8 and 0.09 at d = 10, since lives that differ only in the last bit differ by that much.

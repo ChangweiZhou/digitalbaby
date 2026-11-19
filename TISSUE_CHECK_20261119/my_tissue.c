@@ -2,7 +2,7 @@
    Plain and slow on purpose: every cell, every connection, every step, in the order of the text's sections 1 and 2.
    The birth, the stream and the time constants are prepared by my_tissue.py and read from a text file.
 
-   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz]
+   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps]
      rec_lo..rec_hi : the bytes whose outputs at phi = 31 are recorded (float32, all cells) into <out_prefix>.rec
      trace_steps    : the outputs of every cell at every step k < trace_steps are written as float64 into <out_prefix>.trace
      u1             : 1 = step 8 uses x_j of this step for a cell; 0 = it uses z_j, the output of step k - 1 (the literal z)
@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
     if (argc < 9) { fprintf(stderr, "usage\n"); return 2; }
     long nbytes = atol(argv[3]), rec_lo = atol(argv[4]), rec_hi = atol(argv[5]), trace_steps = atol(argv[7]);
     int u1 = atoi(argv[8]), ftz = argc > 9 ? atoi(argv[9]) : 1;
+    int pcell = argc > 10 ? atoi(argv[10]) : -1; double peps = argc > 11 ? atof(argv[11]) : 0.0;   /* a change of one cell's potential before step 0 */
     if (ftz) _mm_setcsr(_mm_getcsr() | 0x8040);   /* flush to zero and denormals are zero */
     FILE *fb = fopen(argv[1], "r"); long seed; int n_;
     if (fscanf(fb, "%ld", &seed) != 1) return 3;
@@ -69,6 +70,7 @@ int main(int argc, char **argv) {
     rng = 88172645463325252ULL + (uint64_t)seed;
     for (int i = 0; i < NC; i++) { v[i] = 0; th[i] = 0; g[i] = 1; F[i] = 0; M[i] = 1.0 / 64; P[i] = 0; Q[i] = 0; last_make[i] = 0; xo[i] = 0; }
     for (int j = 0; j < NL; j++) { F[NC + j] = 0; M[NC + j] = 1.0 / 64; zl[j] = 0; }
+    if (pcell >= 0) v[pcell] += peps;
     char path[4096];
     snprintf(path, sizeof path, "%s.rec", argv[6]); FILE *fr = fopen(path, "wb");
     FILE *ft = NULL; if (trace_steps > 0) { snprintf(path, sizeof path, "%s.trace", argv[6]); ft = fopen(path, "wb"); }
