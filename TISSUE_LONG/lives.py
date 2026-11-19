@@ -44,6 +44,7 @@ out += ['\nLives with all three above: ' + '; '.join(f"seed {s}: near {c[1]} of 
         '## 65,536 bytes, four windows (the last 4,096 bytes of each quarter)\n',
         '| Seed | Window | near (a) L0/L1/L2 | near8 (a) L0/L1/L2 | levels L1/L2 | all three near / near8 | nine all above | S0 at d = 1/2/4 | near max | connections a cell |',
         '|---|---|---|---|---|---|---|---|---|---|']
+tail = []
 for s in SEEDS:
     p = os.path.join(HERE, 'delay', f'LONG_d8f64_64k_{s}.json')
     if not os.path.exists(p):
@@ -55,6 +56,7 @@ for s in SEEDS:
                    + ' / '.join(f"{g['near8']['a'][L]:.3f}" for L in '012') + f" | {lev['1']:.3f} / {lev['2']:.3f} | "
                    + f"{yn(above['near'])} / {yn(above['near8'])} | {yn(nine)} | " + ' / '.join(f"{g[d]['a']['0']:.3f}" for d in ('1', '2', '4'))
                    + f" | {g['near']['max_output']:.3f} | {w['connections_a_cell']:.1f} |")
-    out.append(f"\nSeed {s}, 65,536 bytes: divergence 64/512 {r['divergence']['64']:.2g} / {r['divergence']['512']:.2g}; CPU {r['cpu_s']:.0f} s.\n")
+    tail.append(f"- Seed {s}, 65,536 bytes: divergence 64/512 {r['divergence']['64']:.2g} / {r['divergence']['512']:.2g}; CPU {r['cpu_s']:.0f} s.")
+out += [''] + tail
 open(os.path.join(HERE, 'LIVES_TABLES.md'), 'w').write('\n'.join(out) + '\n')
 print('\n'.join(out))

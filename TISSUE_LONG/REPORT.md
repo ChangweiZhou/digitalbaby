@@ -8,7 +8,9 @@ What is in this folder:
 - **`tis.py`**: mine, with the option `long=K-R` written from the reviewer's message. It is built with `-ffp-contract=off`, as the reviewer's.
 - **`delay.py`** and **`delay_tables.py`**: the readings, as in `TISSUE_DELAY2`.
 - **`eqcheck.py`**: item 1.
-- **`q.sh`, `q2.sh`**: the runs.
+- **`q.sh`, `q2.sh`**: the runs of sections 2 and 3.
+- **`s15.py`**, **`lives.py`**: the tables of sections 4 and 5 (`S15_TABLES.md`, `LIVES_TABLES.md`); **`q15.sh`**, **`q_lives.sh`**: their runs.
+- **`delay.py`** also has `brief=1` (lags 0 to 2; d = 1, 2, 4 and the two near groups) and `life=k`.
 
 All figures are generated from the receipts by a script. Each is from one run. Nothing is confirmed independently.
 
@@ -99,3 +101,67 @@ Near entries are (a) / (b), with the level in brackets.
 ## Cost
 
 18 runs took 2.13 CPU-hours, plus the two runs of `eqcheck.py`; at most three processes of one thread each.
+
+# Second request: long=8-1/2 on 15 seeds, and the best memory on six lives (reviewer's message of 10:45 UTC, 19 November)
+
+**Goal stated by the reviewer**: a memory that, with long=8-1/2, gives near the output lines the present byte clearly above its level, and the bytes one and two back above theirs, on all 15 seeds.
+
+**Readings**: the tool as it is, over the last 4,096 bytes.
+
+- **near**: as above, the drivers and every member of their neighbourhoods, long-axon members included.
+- **near8**: the cells within 1/8 of a driver by their coordinates, drivers included, feedback cells excluded.
+- **Nine entries**: S at d = 1, 2, 4 for lags 0, 1, 2.
+- **Levels**: as above.
+
+## 4. Five memories on 15 seeds, 16,384 bytes
+
+**Seeds**: 73129 93683 116089 465973 614332 545353 406364 308924 754734 224268 746958 146821 438778 112290 969620.
+
+**Memories**:
+
+- (ii) delays 0–8;
+- (ii') delays 0–16;
+- (iii) time constants up to 64;
+- (vi) delays 0–8 with one cell in 4 at 64 steps (`tau=f4-64`);
+- (vii) delays 0–16 with one cell in 4 at 64 steps.
+
+Every row is in `S15_TABLES.md`.
+
+| Memory | group | lag 0: above / smallest / median | lag 1 | lag 2 | all three above | nine entries all above |
+|---|---|---|---|---|---|---|
+| (ii) | near | 15 / 0.161 / 0.219 | 15 / 0.125 / 0.171 | 6 / 0.027 / 0.073 | 6 | 1 |
+| (ii') | near | 15 / 0.119 / 0.193 | 15 / 0.099 / 0.236 | 14 / 0.067 / 0.154 | 14 | 13 |
+| (iii) | near | 14 / 0.107 / 0.160 | 15 / 0.103 / 0.151 | 15 / 0.078 / 0.103 | 14 | 15 |
+| (vi) | near | 15 / 0.145 / 0.193 | 15 / 0.128 / 0.186 | 15 / 0.097 / 0.118 | **15** | 15 |
+| (vi) | near8 | 15 / 0.133 / 0.184 | 15 / 0.120 / 0.177 | 15 / 0.087 / 0.119 | **15** | 15 |
+| (vii) | near | 13 / 0.085 / 0.142 | 15 / 0.133 / 0.222 | 15 / 0.114 / 0.167 | 13 | 15 |
+
+- **Only (vi) meets the goal on all 15 seeds**, in both near groups. Its smallest present-byte reading near the output lines is 0.145, against the level 0.1103.
+- **The misses of the others**:
+  - (ii): lag 2 on 9 seeds.
+  - (ii'): seed 146821.
+  - (iii): the present byte on seed 308924.
+  - (vii): the present byte on seeds 465973 (0.085) and 438778 (0.109).
+- **The largest output near** is 1.000 and **divergence** is 0 after 64 and 512 bytes in all 75 runs.
+
+## 5. Memory (vi) on six lives, and over 65,536 bytes, on seeds 93683 and 112290
+
+**Lives**: life 0 is the run as it is. Life k (1 to 5) sets the potential of the k-th non-feedback cell to 1e-9 before step 0. A change of the last bit of 0 would be a denormal, which this build flushes to zero; the 1e-9 follows the reviewer's method of row 68. Every row is in `LIVES_TABLES.md`.
+
+- **Lags 0, 1, 2 above their levels on all 12 lives**, in both near groups. The nine entries are all above on all 12.
+  - Smallest near readings over the 12: lag 0 0.173, lag 1 0.173, lag 2 0.114.
+  - Divergence is 0 in every life.
+- **Life 0 equals the 15-seed run** of each seed.
+- **Life 2 of seed 112290 is not bit-identical to life 0**, but in the last window only one group's mean output differs, by about 1.6e-9. Every reading is equal. The 1e-9 on that cell did not grow into a different life. On seed 93683, and with the other cells, the lives differ: near lag 0 ranges from 0.198 to 0.231 on 93683 and from 0.173 to 0.201 on 112290.
+- **65,536 bytes, four windows**: lags 0, 1, 2 are above their levels near the output lines in 8 of 8 windows (near and near8), and the nine entries are all above in 8 of 8.
+  - Near lag 0 is 0.201 to 0.219 on 93683 and 0.170 to 0.174 on 112290.
+  - Connections stay at 2.6–2.7 a cell; the readings show no trend.
+  - Divergence is 0 on both seeds.
+
+## Cost of the second request
+
+- **The 75 runs of section 4**: 7.33 CPU-hours.
+- **The 12 lives**: 1.35 CPU-hours.
+- **The two runs of 65,536 bytes**: 0.94 CPU-hours.
+
+At most three processes of one thread each. All figures are from one run per setting; nothing is confirmed independently.
