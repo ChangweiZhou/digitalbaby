@@ -49,3 +49,19 @@ References on the last quarter: ref_1 10.5–10.6, ref_2 12.1–12.3, ref_3 25.1
 - The long runs below continue the three N64 cases to 262,144 bytes.
 
 **Process note.** At 10:13 UTC the three long runs were started while three batch runs were still going: six processes for a few seconds. They were stopped at once and started again when one batch run was left.
+
+## Long run: N64, seed 73129, 262,144 bytes, online only (`measure_x0b.py ... x0s=1/2,5/8 online_only=1`)
+
+The two other long runs (seeds 93683 and 116089 at x0 = 3/8) were stopped at 10:32 to make room for the long-axon tissues (output_reach4_20261119) and were not run. This run used the build without -ffp-contract=off.
+
+Share right, % on the last quarter (positions 196,608 to 262,143); in brackets the mean of each 32,768 bytes:
+
+| x0 | D (supervised) | B (yes/no) | A eps 0 (yes/no) | A eps 1/16 (yes/no) |
+|---|---|---|---|---|
+| 1/2 | 16.0 (13.9 → 16.0) | 10.3 (9.2, 10.5, 10.3, 10.5, 10.0, 10.2, 10.2, 10.4) | 9.8 (4.7 → 9.7) | 9.3 (2.5 → 9.2) |
+| 5/8 | 16.4 (12.9 → 16.3) | 9.0 (8.5 → 9.2) | 10.5 (4.0 → 10.0; 10.3–11.0 from 65,536 to 229,376) | 9.8 (1.0 → 9.4) |
+
+- ref_1 is 10.3–10.7 and ref_2 11.7–12.5 in the same blocks.
+- First windows reaching ref_1 by yes/no: B at 28,672 (x0 = 1/2) and 32,768 (5/8); A at 65,536 and 143,360. ref_2: none.
+- So from about 32,768 bytes on, yes/no B at x0 = 1/2 holds at the present byte's level (10.0–10.5 against 10.3–10.7) and does not rise further over 262,144 bytes. A at x0 = 5/8 reaches 10.3–11.0 between 65,536 and 229,376 bytes. Neither reaches ref_2.
+- Told the right byte (D), the output end rises to 16.0–16.4, above ref_2.
