@@ -1,7 +1,7 @@
 # Status of roadmap step 1 (the tissue reads the stream and stays informative)
 
 Written by the reviewer for Mr. Xu, 19 November 2026, 06:40 UTC, while he rests. It is changed as results arrive; the last change
-is dated at the foot. Nothing in it has been verified by the coordinator, who on Mr. Xu's word is not brought in until he returns.
+is dated at the foot. **Read section 2a first: it is the state at the last change; section 1 is the state of 06:40.** Nothing in it has been verified by the coordinator, who on Mr. Xu's word is not brought in until he returns.
 Every figure names who measured it and on how many seeds. Scores S(d, lag) are the nearest-centroid scores of the helper's readings
 tool for the cells d connections from the input lines; chance is 0.022; the level for the present byte is 0.1103; "the tool as it
 is" sets outputs below 0.01 to zero.
@@ -80,25 +80,26 @@ connections, and the learning of the output end from yes or no.
 | 51 | The merged program's T7 (base of row 21 with delays of 0 to 16 steps) and T8 (delays and time constants), three seeds, 16,384 and 65,536 bytes: the bytes one and two back most strongly of all (lag 1 best 0.36 to 0.50, at d = 1 to 6 or 9; lag 2 0.22 to 0.33 to d = 8 to 12), full amplitude, 3.5 to 3.8 connections a cell, no divergence; the present byte falls from d = 4 on (S(4,0) 0.23 to 0.35 in T7; 0.10 to 0.19 in T8, below the level on seed 93683; d = 8 at most 0.08). | main worker | 3 | reach readings running |
 | 52 | The output end read at x0 = 3/8 instead of at the output lines (seed 73129, 65,536 bytes; 256 drivers near that line, each seeing its neighbourhood; the tissue not changed by them). Fitted reader on the band: base 12.5%, constants up to 64 20.3%, up to 256 19.4%; on each driver's own inputs 9.0 / 12.7 / 10.9%. One-pass rule told the right byte: 8.0 / 11.5 / 9.9% (passes the present byte's level 10.55 on the tissue with constants up to 64, and the two-byte level 12.34 in one window). Told only yes or no: 7.3 / 8.3 / 6.3%: above the end mark's share (6.2) on all three, below the present byte's level on all. | E55's worker | 1 | other places and seeds running |
 | 53 | Four changes to the making and withdrawing on a good and a weak seed (old rounding; S(8,0) / S(10,0) / near the output lines; base 0.472 / 0.376 / 0.367 on seed 73129 and 0.148 / 0.085 / 0.065 on 20261206). Test of order in time at age 1,024 or 512 steps instead of 4,096: 73129 falls to 0.20 to 0.25 / 0.19 to 0.22 / 0.19 to 0.20; 20261206 rises to 0.26 to 0.34 / 0.20 to 0.23 / 0.18 to 0.21 and loses its loops among excitatory cells. Making less often (4,096 or 16,384 steps apart): 73129 falls, 20261206 does not rise. New connections of strength 1/512: 44,105 made, up to 43 a cell. Withdrawing a connection whose two sums are both zero: 73129 falls to 0.28 / 0.21 / 0.18. Over 65,536 bytes the base on seed 73129 stops making (none in the last quarter, 0.405 / 0.362 / 0.352) and the two weak seeds do not (541 and 173; 0.14 to 0.25 / 0.06 to 0.08 / 0.06 to 0.08). So a shorter test age and half the inhibition (row 50) do the same thing: they even the seeds at about 0.2, lifting the weak and lowering the good. | E52's worker (979979e8) | 2 | inhibitory total on 15 seeds running first |
+| 54 | **Long axons.** One excitatory cell in 8 may send to any cell within 1/2 of its place (the others within 1/8, as before); otherwise the base of row 21, the starting connections drawn again from the larger neighbourhoods; 16,384 bytes, the tool as it is, separate rounding. With time constants up to 256, seeds 73129 / 93683 / 116089, **among the cells near the output lines as the definition places them**: present byte 0.174 / 0.135 / 0.228 (level 0.1103); one back 0.184 / 0.168 / 0.202 (levels 0.090 / 0.096 / 0.100); two back 0.143 / 0.141 / 0.160 (0.076 / 0.074 / 0.075); four back 0.128 / 0.117 / 0.110 (0.093 / 0.099 / 0.107); three back 0.157 / 0.132 / 0.124, below its level (0.182 / 0.173 / 0.180: the stream itself gives 0.16 there). The nine entries of step 1 on the same tissues: d = 1: 0.928 0.339 0.192 / 0.863 0.298 0.175 / 0.940 0.362 0.206; d = 2: 0.537 0.362 0.226 / 0.398 0.270 0.182 / 0.627 0.370 0.218; d = 4: 0.229 0.179 0.152 / 0.152 0.161 0.148 / 0.231 0.232 0.189; all above c0 + 0.02. The farthest cell is 8 to 9 connections from the input lines (16 before). Without time constants the same cells carry the present byte at 0.274 / 0.256 / 0.297 and no earlier byte. With one long-axon cell in 32 the present byte near the output lines is below its level with time constants (0.069, 0.091 on two seeds). Not yet measured: divergence, loops, amplitude and number of connections, longer lives, more seeds, the stricter level, the output end. | reviewer (batch39, far/L*) | 3 | helper: 15 seeds and the missing measurements; E55's worker: the output end on it; reviewer: other shares, reaches and time constants (batch40) |
 
-## 2a. What the table comes to (09:10 UTC)
+## 2a. Where things stand (09:53 UTC)
 
-The parts of a tissue that would meet step 1 have now each been measured, by different lines, and are being put into one program by
-the main worker: (i) conserved total incoming strength with strength change by order in time (rows 7, 15: carries the present byte,
-settles, never diverges); (ii) making of connections on the cell's long mean (row 12: 3 to 5 connections a cell, the byte kept);
-(iii) memory by a spread of time constants (rows 11, 20) or by delays of the connections (rows 10, 19): two to three bytes back;
-(iv) a bounded gain, safe once the tissue is directed (rows 18, 20). Since 08:05 row 25 meets the nine entries that step 1 names, with no dependence on the past: in the reviewer's program on three
-seeds at two lengths of life, and in E52's worker's runs on 15 seeds (row 31: 15 of 15 for N256). Row 26 shows what it lacks: the memory is near the input lines and is paid for at the far cells. The open question has
-therefore moved from "can the tissue read the stream" to "can the cells near the output lines have the present byte and the bytes
-before it together"; delays (which shift a signal without smoothing it) and a small share of slow cells are being tried on row 21.
-
-Since 07:30 row 21 gives, on the seeds read so far, the present byte by the tool as it is at 1, 2, 4, 8 and 10 connections,
-with every far cell answering at an output above 1/2, the cells making and withdrawing their own three to four connections, and no
-dependence on the past; it has no memory yet (time constants and delays are being put into it by three lines). What was missing
-until then, on three seeds, was the present byte
-told apart by the cells near the output lines at an output above 1/2: tissue 7 keeps the amplitude and loses the variety of bytes
-(row 16), the balanced tissue keeps the variety and loses the amplitude (row 17), and row 18 is the first to keep both to about
-nine connections, on one seed. And the output end does not yet learn from yes or no on what the tissue gives it (row 14).
+1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
+   on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
+   another line from the text alone, which equals the reviewer's program at every byte once both round the same way (rows 39, 47).
+   The coordinator has verified none of it.
+2. Two statements I made about that tissue were too strong and are corrected in section 6: it is free of loops only among
+   excitatory connections and only where making has stopped (row 40); and "no dependence on its past" is shown for the end of a
+   life, not for its beginning, where one last bit changes the life (row 39; the readings of two such lives agree within row 48).
+3. The far cells differ by seed. Where they are weak the cells never stop making connections (rows 38, 45). Half the inhibition, or
+   an earlier test of order in time, evens the seeds at about 0.2, lifting the weak and lowering the good (rows 50, 53); 15 seeds
+   are being run. Withdrawing silent sources does not help (row 46).
+4. What the next step needs is the present byte and the bytes before it where the output end reads. Time constants and delays put
+   the earlier bytes near the input lines and cost the present byte far away (rows 42 to 44, 49, 51); the one-pass learning at the
+   output end reported for one seed is not repeated on the others (row 41).
+5. Since 09:44 there is one tissue that has them together near the output lines on three seeds: a share of excitatory cells with
+   long axons, with the time constants (row 54). It shortens the way from the input lines to the output lines instead of moving
+   the lines. It is three seeds of one program, one length of life, measured by me alone; the checks are named in the row.
 
 ## 3. Against step 1 as the roadmap states it
 
@@ -126,29 +127,36 @@ The rule as run is written out in THE_TISSUE_AS_RUN_20261119.md.
 
 ## 4. What I propose to change in the definition (for Mr. Xu to decide)
 
-Each is a quantity of one cell or of the two ends of one connection. None is tuned beyond the values named; the values are first
-trials and are marked so in the workers' tables.
+Each is a quantity of one cell or of the two ends of one connection. The rule as the program runs it, with every number and where
+it came from, is THE_TISSUE_AS_RUN_20261119.md; none of the numbers was fitted over a grid. This list was rewritten at 09:53 UTC;
+the list of 07:25 named a change of strength by order in time, which the tissues of rows 21 to 54 no longer use.
 
-1. A cell conserves the total strength of its incoming connections (excitatory and inhibitory apart). It replaces the starting
-   strength 1/8 as the thing that bounds a cell's input, and it bounds the number of connections a cell can hold at useful strength.
-2. Strength changes by the order in time of the two ends' activity, for the connections from the input lines as well (ruling 10:
-   the input end learns). It replaces the first form and the coincidence rule, both of which lose the byte.
-3. Each cell has its own time constant of the potential, drawn at birth.
-4. The making of connections needs a new condition; the present one is wrong for cells that are rightly active only rarely.
-5. The readings of step 1: the floor at 0.01 and the fixed distances 1, 2, 4 hid what the tissue carried. I propose to read every
-   distance, with and without the floor, and to ask the bytes back of the tissue as a whole and of the cells near the output lines.
+1. A cell conserves the total strength of its incoming connections (excitatory and inhibitory apart; 3/4 and 1/4, with 1/8 for
+   the inhibitory total under test, row 50).
+2. No strength changes otherwise. A connection from an excitatory cell is withdrawn when its sender is active after the receiver
+   more than before it (the order in time is kept by two sums at the connection).
+3. A cell has a gain, which it moves so that the peak of its output matches the peak of what its senders give, bounded at 8.
+4. A cell seeks a new source when its long mean of output is low (not its short mean, which flooded the tissue with connections).
+5. Each cell has its own time constant of the potential, drawn at birth (powers of two up to 256 steps).
+6. Proposed since 09:44, on three seeds only (row 54): a share of the excitatory cells (one in 8) have long axons, reaching
+   cells within 1/2 instead of 1/8. Living tissue has both kinds of cell. It is the first change that brings the present byte
+   and the two before it to the output lines where the definition places them. The alternative that needs no new kind of cell
+   is to place the output lines nearer the input lines (rows 35, 52); which of the two, or neither, is Mr. Xu's to decide.
+7. The readings of step 1: the floor at 0.01 and the fixed distances 1, 2, 4 hid what the tissue carried. I propose to read every
+   distance, with and without the floor, and to ask the bytes back of the cells near the output lines; and to state every
+   one-seed difference against the spread between lives that differ in the last bit (row 48).
 
-## 5. Lines at work at the time of writing (07:25 UTC)
+## 5. Lines at work (09:53 UTC)
 
 | Line | Task |
 |---|---|
-| main worker | one program with the four parts (base with totals 1 and 1/4; making on the long mean; time constants; delays); each checked against its author's figures; lives of 65,536 bytes on three seeds |
-| helper | row 18 on three seeds: ratios of withdrawal, bounds of the gain, totals, then with its time constants |
-| E57's worker | delays in tissue 7: the third seed, then 65,536 bytes for the best |
-| E52's worker | the chosen rule of making on two more seeds and over a life of 65,536 bytes |
-| E55's worker | the reader and the yes/no rules on the balanced tissue and on the tissue with totals 1 and 1/4; a driver that first removes what its inputs share |
-| E62's worker | E62 (the earlier programme), about two hours left |
-| reviewer | milder withdrawal of backward connections; whether making restores the far cells' sources |
+| main worker | the merged program: reach readings of its T5 to T8 (rows 37, 42, 51) |
+| helper | time constants up to 256 over 65,536 bytes; then the long-axon tissue on 15 seeds with its own draws, divergence, loops, amplitude |
+| E52's worker | the inhibitory total 1/8 and 3/16 on 15 seeds (base and time constants); then the rest of its four changes |
+| E55's worker | the output end on the long-axon tissue at the output lines as defined; then the output end at other places |
+| E57's worker | delays of 0 to 8 steps over 65,536 bytes, three seeds |
+| E62's worker | its independent program: five lives a seed for the nine entries; when a life stops depending on the last bit |
+| reviewer | batch40: long axons with other shares, reaches and time constants |
 
 ## 6. Corrections of my own statements of tonight
 
@@ -173,4 +181,4 @@ trials and are marked so in the workers' tables.
 - Log of every task sent and report taken: `COORDINATION_20261117/LOG.md`.
 - Workers' branches and commits: in the table of section 2.
 
-Last change: 09:10 UTC, 19 November 2026.
+Last change: 09:53 UTC, 19 November 2026.
