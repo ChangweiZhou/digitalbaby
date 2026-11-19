@@ -99,3 +99,54 @@ Does conserving a cell's total incoming strength, with the timing rule, carry th
 - **Connections a cell:** 3.3 to 6.6 with no connections made, depending on eta_s and we; 1.6 to 1.8 at we = 1.
 - **With connections made:** 23 to 28 a cell, in constant turnover. The tissue then depends on its past (1,600 to 1,800 cells differ), and the byte does not pass d = 4.
 - **The previous byte:** not carried above C0 + 0.02 anywhere.
+
+## we = 1, wi = 1/4 (the reviewer's request of 06:32 UTC; it arrived after items 3 and 4 above had run)
+
+All rows are no_make = 1 on three seeds, with the range over the seeds. The reviewer's seed-73129 mean outputs are reproduced (0.0216 at d = 1, 0.014 at d = 11). ">1/2" is the share of cells at a distance whose largest output over the window exceeds 1/2.
+
+| eta_s | S(d,0) tool, d = 1 / 2 / 4 | S(d,0) tool, d = 8–11 | Largest output, d = 8 / d = 11 | > 1/2 at d = 1 / 4 / 8 / 11 | Present byte, d = 8 / 11 | Connections a cell |
+|---|---|---|---|---|---|---|
+| 1/4 | 0.92–0.96 / 0.66–0.70 / 0.27–0.38 | 0.107–0.231 | 0.37–0.42 / 0.34–0.39 | 0.96–1.00 / 0 / 0 / 0 | 0.63–0.99 | 3.4–3.6 |
+| 1/2 | 0.93–0.96 / 0.61–0.69 / 0.19–0.38 | 0.094–0.167 | 0.34–0.42 / 0.25–0.44 | 0.99–1.00 / 0.06–0.17 / 0 / 0 | 0.72–0.97 | 3.3–3.5 |
+| 1 | 0.92–0.95 / 0.60–0.66 / 0.32–0.39 | 0.073–0.210 | **0.52–0.57** / 0.35–0.50 | 0.92–0.97 / 0.47–0.60 / **0.02–0.10** / 0 | 0.55–0.95 | 3.1–3.4 |
+| 2 | 0.79–0.85 / 0.41–0.43 / 0.18–0.29 | 0.058–0.148 | 0.45–0.52 / 0.27–0.44 | 0.78–0.83 / 0.20–0.29 / ≤ 0.01 / 0 | 0.66–1.00 | 3.2–3.4 |
+
+In all 12 runs, no cell differs between the two copies after 16 to 512 bytes; in one run, 2 cells differ after 1 byte. The previous byte is not above C0 + 0.02 anywhere.
+
+eta_s 1 gives the only rows with cells above 1/2 at d = 8 on all three seeds, so items 3 and 4 were repeated for it.
+
+### Item 4 for we = 1, wi = 1/4, eta_s 1 (seed 73129, connections made)
+
+| End of window | Connections a cell (range) | Made / given up so far | S(d,0) tool, d = 1 / 2 / 4 / 8 | > 1/2 at d = 1 / 4 / 8 | Largest output, d = 8 | Cells differing after 1 / 16 / 64 / 256 / 512 bytes |
+|---|---|---|---|---|---|---|
+| 8,192 | 25.2 (8–78) | 3,929,324 / 3,895,212 | 0.256 / 0.126 / 0.081 / 0.036 | 1.00 / 0.17 / 0 | 0.150 | 0 / 1 / 26 / 1,739 / 1,711 |
+| 12,288 | 27.5 (8–80) | 6,139,956 / 6,101,216 | 0.256 / 0.126 / 0.077 / 0.037 | 1.00 / 0.35 / 0 | 0.236 | 1 / 1 / 1,671 / 1,774 / 1,679 |
+| 16,384 | 26.3 (8–78) | 8,352,345 / 8,316,027 | 0.252 / 0.123 / 0.086 / 0.035 | 1.00 / 0.20 / 0 | 0.159 | 1 / 0 / 861 / 1,834 / 1,784 |
+
+The cost is 23.7 ms a byte. As with we = 3/4, making connections brings turnover of about 510 connections a byte each way and dependence on the past, and the byte does not pass d = 4.
+
+### Item 3 for we = 1, wi = 1/4, eta_s 1 (life to 262,144 bytes)
+
+| Seed | End of window | S(d,0) tool, d = 1 / 2 / 4 / 8 / 11 | Largest output, d = 8 / 11 | > 1/2 at d = 4 / 8 / 11 | Connections a cell | Given up so far | Cells differing after 512 bytes |
+|---|---|---|---|---|---|---|---|
+| 73129 | 16,384 | 0.915 / 0.617 / 0.346 / 0.208 / 0.188 | 0.57 / 0.50 | 0.47 / 0.10 / 0.00 | 3.07 | 9,777 | 0 |
+| 73129 | 65,536 | 0.884 / 0.602 / 0.328 / 0.209 / 0.182 | 0.57 / 0.48 | 0.37 / 0.10 / 0.00 | 3.06 | 9,806 | 0 |
+| 73129 | 262,144 | 0.876 / 0.585 / 0.273 / 0.209 / 0.159 | 0.57 / 0.49 | 0.44 / 0.08 / 0.00 | 3.04 | 9,839 | 0 |
+| 93683 | 16,384 | 0.928 / 0.604 / 0.394 / 0.210 / 0.140 | 0.52 / 0.48 | 0.48 / 0.04 / 0.00 | 3.26 | 9,407 | 0 |
+| 93683 | 65,536 | 0.858 / 0.562 / 0.389 / 0.204 / 0.165 | 0.52 / 0.48 | 0.38 / 0.04 / 0.00 | 3.24 | 9,438 | 0 |
+| 93683 | 262,144 | 0.870 / 0.542 / 0.325 / 0.187 / 0.144 | 0.53 / 0.47 | 0.35 / 0.04 / 0.00 | 3.24 | 9,450 | 0 |
+| 116089 | 16,384 | 0.949 / 0.655 / 0.321 / 0.118 / 0.073 | 0.54 / 0.35 | 0.60 / 0.02 / 0.00 | 3.40 | 9,132 | 0 |
+| 116089 | 65,536 | 0.906 / 0.631 / 0.324 / 0.111 / 0.080 | 0.54 / 0.34 | 0.61 / 0.02 / 0.00 | 3.38 | 9,160 | 0 |
+| 116089 | 262,144 | 0.914 / 0.643 / 0.311 / 0.091 / 0.071 | 0.54 / 0.34 | 0.61 / 0.02 / 0.00 | 3.37 | 9,181 | 0 |
+
+The tissue settles here too:
+- At every distance, S(d,0) changes by at most 0.07 between bytes 16,384 and 262,144, and it drifts down slightly.
+- The largest outputs and the shares of cells above 1/2 hardly change.
+- Connections a cell fall by at most 0.03, and no cell ever differs between the two copies.
+
+Each life took 4.2 to 4.9 ms a byte.
+
+**Answer, updated for we = 1, wi = 1/4, eta_s = 1.** This is the only setting in which cells at d = 8 exceed 1/2 on all three seeds: 2 to 10 per cent of them, with the largest output at 0.52 to 0.57. It holds over the whole life, at 3.0 to 3.4 connections a cell, and the tissue does not depend on its past.
+- At d = 11 no cell exceeds 1/2; the largest outputs are 0.34 to 0.50.
+- The present byte is carried there at S(d,0) 0.07 to 0.19 by the tool.
+- The previous byte is not carried above C0 + 0.02.
