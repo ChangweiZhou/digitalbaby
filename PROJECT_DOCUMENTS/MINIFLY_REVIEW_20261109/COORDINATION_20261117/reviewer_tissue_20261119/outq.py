@@ -86,4 +86,4 @@ for trs in kw.get('traces', 'none').split('/'):                     # traces=non
         print(f"   inputs '{sname}' ({out['sets'][sname]['inputs']} cells; {time.time() - t0:.0f} s)")
         for k, v in res.items(): print(f"      {k:12s} last quarter {100 * v['last_quarter']:5.2f}   quarters " + ' '.join(f"{100 * q:5.2f}" for q in v['quarters']) + f"   largest weight {v['max_abs_weight']:.2f}")
         sys.stdout.flush()
-    os.makedirs('outq', exist_ok=True); json.dump(out, open(f'outq/{label}.json', 'w'))
+os.makedirs('outq', exist_ok=True); json.dump(out, open(f'outq/{label}.json', 'w'))     # written once, at the end (the log has the rows as they come)
