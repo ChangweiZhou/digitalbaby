@@ -39,7 +39,7 @@ All readings below are under (b), against C<L(lag) + 0.02.
   - S(4, 0) 0.78 to 0.96.
 - **A spread of time constants** brings the earlier bytes nearer the input lines and adds a second byte back on all three seeds.
   - **q16 and u2-16:**
-    - lag 1 at d = 2 to 8;
+    - lag 1 at d = 2 to 8 (2 to 9 on U with q16);
     - lag 2 at d = 5, 6, 8 (q16, M), 4 to 8 (u2-16, M), 8 to 9 (q16, U) and 5 to 9 (u2-16, U).
   - **u2-64:**
     - lag 1 at d = 1 to 4 (M) and 1 to 6 (U);
@@ -62,7 +62,7 @@ All readings below are under (b), against C<L(lag) + 0.02.
     | U | 0.87–0.96 | 0.74–0.79 | 0.59–0.69 | 0.50–0.59 | 0.33–0.39 | 0.18–0.29 |
 
   - The far cells (d ≥ 7) lose the present byte almost entirely once τ reaches 64: S(d, 0) below 0.04 on M (u2-64).
-- **Keeping τ = 2 near the input lines** (u2-64e) does not keep the present byte at d = 4. It shortens the reach of lags 1 and 2 by one distance against u2-64, and raises S(2, 0) a little.
+- **Keeping τ = 2 near the input lines** (u2-64e) raises the present byte against u2-64, but not to its level with τ = 2: S(2, 0) is 0.88 to 0.95 against 0.81 to 0.89, and S(4, 0) 0.29 to 0.42 (M) and 0.50 to 0.59 (U) against 0.17 to 0.25 and 0.33 to 0.39. It moves lags 1 and 2 about one distance further from the lines: lag 1 at d = 2 to 5 (M) and 2 to 7 (U), and lag 2 at d = 3 to 4 (M) and 3 to 7 (U), on all three seeds.
 - **Stability.** No setting makes the tissue depend on its past: the largest output difference of two copies after 512 bytes is 0 in every run, and at most 5e-10 after 1 to 64 bytes.
 
 ## Not explained here
