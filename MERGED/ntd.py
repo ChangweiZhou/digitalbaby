@@ -1,4 +1,6 @@
 # Readings of one tissue of tissue.c at the end of one or more stretches of its life (the reviewer's task of 19 November, 06:16 UTC).
+# Groups "near18" and "nearL" (added for the long-axon tissues): the drivers with every cell within 1/8 of a driver, and the drivers with
+# every member of their (enlarged) neighbourhoods.
 # usage: python3 -I ntd.py <label> ends=16384[,65536,262144] seed=.. rule=.. [options of tis.make]
 # For each end E, window W = bytes E - 4096 .. E - 1 (the output of every cell after each byte), and:
 #  - divergence: at byte E - 4608 a second tissue is made equal to the first in every state (memory copy), one cell's potential is
@@ -107,6 +109,13 @@ for E in ends:
 
     rows = []
     groups = [(str(dd), np.nonzero(dist == dd)[0]) for dd in range(1, int(dist.max()) + 1)] + [("pool", np.nonzero(ordinary)[0])]
+    # the cells near the output lines, two ways: the drivers with every cell within 1/8 of a driver (members at the definition's birth),
+    # and the drivers with every member of their neighbourhoods as the tissue has them (enlarged by long axons, if any)
+    drv = [int(x) for x in B['driver']]; B0 = ts.birth(SEED)
+    n8 = set(drv); nL = set(drv)
+    for i in drv:
+        n8.update(int(m) for m in B0['members'][i] if m < N); nL.update(int(m) for m in B['members'][i] if m < N)
+    groups += [("near18", np.array(sorted(c for c in n8 if not isfb[c]))), ("nearL", np.array(sorted(c for c in nL if not isfb[c])))]
     for name, cells in groups:
         if len(cells) == 0:
             continue

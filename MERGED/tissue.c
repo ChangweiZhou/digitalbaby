@@ -1,9 +1,9 @@
-/* MERGED/tissue.c (branch claude/e63-merged-tissue): the reviewer's tissue.c at e7be1222 (which holds part (e): prune_only, the gain
-   two_sided == 3, mk_long) with three parts of other lines as options, each off by default (fields at the end of Tis):
+/* MERGED/tissue.c (branch claude/e63-merged-tissue), third build: the reviewer's tissue.c at aa0a4341 (which holds part (e) and a time
+   constant of the potential for each cell, tauv) with two parts of other lines as options, each off by default (fields at the end of Tis):
      (b) making by a long mean (E52's worker, PREP/tissue5/tissue_mk.c at 9ff7d03e): mk_mean, mk_tau, Lm; mk_share; mk_take (copied);
-     (c) a time constant of the potential for each cell (the helper, PREP/reviewer_tissue_2b0db54b/tissue_tau.c at eb21cee5): tauv;
      (d) a delay of its own for each connection between cells (E57's worker, TISSUE_PREV2/tissue.c at d14a3558): c_del, zh, hlen; and,
          new here, m_del: the delay of each (cell, neighbourhood member) pair, given to a connection when it is made (NULL: 0).
+   The long axons are a change of the birth only, made in tis.py (option long=K-R) as in the reviewer's tis.py.
    Below: the reviewer's text.
 
    The tissue of step 1, written by the reviewer for quick runs (19 November 2026).
@@ -45,6 +45,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double *tauv;                   /* time constant of the potential of each cell, in steps (2 in the definition); set by the driver (option tau=..) */
     double mk_long;                 /* mk_long 1: the condition of making uses the cell's long mean M (rate 1/16384 a step) in place of abar (after E52's worker's mk_mean) */
     double prune_only, prune_ratio;  /* prune_only 1: under TIMING no strength changes by the rule; every connection from an excitatory cell keeps two slow sums, of the times its sender was active before the receiver (c_cu) and after it (c_e0), and is withdrawn when the second exceeds prune_ratio times the first; the strengths stay shared by norm=1 */
     double wcap; double *pk;        /* wcap h: with norm=1 no excitatory connection holds more than h of the excitatory total (the excess goes to the cell's other excitatory connections); pk: slow peak of the cell's own output, for the control two_sided == 3 */
@@ -70,8 +71,6 @@ typedef struct {
     double qpow[4097];
     /* (b) tissue_mk.c */
     double mk_mean, mk_tau; double *Lm; double mk_share, mk_take;
-    /* (c) tissue_tau.c */
-    const double *tauv;
     /* (d) TISSUE_PREV2 delays, and m_del for connections made */
     int32_t *c_del; double *zh; int hlen; const int32_t *m_del;
 } Tis;
@@ -116,8 +115,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
             A += t->sig[s] * t->c_w[b + d] * zz; zs += zz; if (t->sig[s] > 0.0 && zz > zmx) zmx = zz; }
         A *= t->gain[i];
         const double m = A - t->p[i];
-        const double tv = t->tauv ? t->tauv[i] : 2.0;                 /* (c) */
-        const double v = (tv == 2.0) ? 0.5 * t->v[i] + 0.5 * A : t->v[i] + (A - t->v[i]) / tv;   /* TAU_V = 2 unless tauv */
+        const double v = t->v[i] + (A - t->v[i]) / t->tauv[i];       /* TAU_V = 2 in the definition: v/2 + A/2 */
         double xi = v - t->th[i]; if (xi < 0.0) xi = 0.0; if (xi > 1.0) xi = 1.0; if (xi < t->floor_x) xi = 0.0;
         const double xp = t->xp[i];
         /* strength changes, from the traces before the step and x(k-1) */
@@ -212,6 +210,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     if (k - t->c_k0[b + d] < PS) continue;
                     if (t->c_w[b + d] < GIVE_UP) { remove_conn(t, i, d); t->given++; }
                     else if (t->prune_only != 0.0 && t->sig[s] > 0.0 && (k - t->c_k0[b + d]) >= 4096 && t->c_e0[b + d] > 0.0 && t->c_e0[b + d] > t->prune_ratio * t->c_cu[b + d]) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
+                    else if (t->prune_only >= 2.0 && (t->prune_only < 3.0 || t->sig[s] > 0.0) && (k - t->c_k0[b + d]) >= 4096 && t->M[s] < (t->a_make > 0.0 ? t->a_make : a)) { remove_conn(t, i, d); t->given++; t->given_by_use++; }   /* prune_only 2: a connection from a cell whose long mean of output, as it arrives at the connection, is below the level at which a cell itself seeks a source, is withdrawn (3: only from excitatory cells) */
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }

@@ -1,6 +1,7 @@
-# MERGED/tis.py: the reviewer's tis.py at e7be1222 set up for MERGED/tissue.c, with the options of the three added parts:
+# MERGED/tis.py, third build: the reviewer's tis.py at aa0a4341 (long axons: long=K-R; time constants: tau=u2-N[e], fK-T, q16, by the
+# reviewer's draw) set up for MERGED/tissue.c, with the options of the parts added:
 #   (b) mk_mean=1 mk_tau=.. (16384) mk_init=.. (a*) mk_share=.. mk_take=1   as tis5.py of PREP/tissue5 at 9ff7d03e
-#   (c) tau=2|q16|u2-16|u2-64|u2-64e|u2-256                                  as tis_tau.py of PREP/reviewer_tissue_2b0db54b at eb21cee5
+#   (c') tau=h:SPEC: the helper's draw of tis_tau.py (eb21cee5), SPEC = 2|q16|u2-16|u2-64|u2-64e|u2-256 (used by T2, T4, T6, T8)
 #   (d) dmax=N: every starting connection between cells delayed by an integer drawn uniformly from 0 to N (numpy default_rng(20261119),
 #       as prev2.py cand=delayrand of TISSUE_PREV2 at d14a3558); new here: every other (cell, neighbourhood member) pair gets its own delay
 #       from default_rng(20261120), drawn in cell and member order, which a connection made later between them takes.
@@ -39,26 +40,50 @@ def make(kw):
     so = os.path.join(HERE, 'tissue.so')
     if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(os.path.join(HERE, 'tissue.c')):
         tmp = so + f'.{os.getpid()}'
-        subprocess.run(['gcc', '-O3', '-march=native', '-shared', '-fPIC', os.path.join(HERE, 'tissue.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
+        subprocess.run(['gcc', '-O3', '-march=native', '-ffp-contract=off', '-shared', '-fPIC', os.path.join(HERE, 'tissue.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
     L = ctypes.CDLL(so)
     N = ts.N; B = ts.birth(SEED)
+    lg = kw.get('long', '')
+    if lg:          # long=K-R: one excitatory cell in K (not a driver of an output line, not a feedback cell) has a long axon: it is a member of the
+                    # neighbourhood of every cell within R of it; the starting connections are then drawn again, 8 from each cell's members
+        K, R = lg.split('-'); R2L = float(eval(R)) ** 2; rl = np.random.default_rng(SEED + 20261120)
+        Pq = np.asarray(B['P']); longs = np.array([j for j in range(N) if B['sig'][j] > 0 and j not in B['fbset'] and j not in B['outset'] and rl.random() < 1.0 / float(K)])
+        for i in range(N):
+            if i in B['fbset']: continue
+            have = set(B['members'][i]); d2 = ((Pq[longs] - Pq[i]) ** 2).sum(1)
+            B['members'][i] = list(B['members'][i]) + [int(j) for j, q in zip(longs, d2) if q <= R2L and j != i and int(j) not in have]
+            B['src'][i] = [int(m) for m in rl.choice(B['members'][i], size=min(ts.START_N, len(B['members'][i])), replace=False)]
+        B['longs'] = longs
     maxd = max(len(m) for m in B['members'].values()) + 2
     P = ctypes.c_void_p
     class Tis(ctypes.Structure):
         _fields_ = [('maxd', ctypes.c_int), ('rule', ctypes.c_int), ('floor_x', ctypes.c_double), ('astar', ctypes.c_double), ('by_use', ctypes.c_int),
-                    ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double), ('norm', ctypes.c_double), ('we', ctypes.c_double), ('wi', ctypes.c_double), ('mk_long', ctypes.c_double), ('prune_only', ctypes.c_double), ('prune_ratio', ctypes.c_double), ('wcap', ctypes.c_double), ('pk', P), ('inh_learn', ctypes.c_double), ('rate_norm', ctypes.c_double), ('M', P), ('a_make', ctypes.c_double), ('start_w', ctypes.c_double), ('make_period', ctypes.c_double), ('no_make', ctypes.c_double), ('lines_learn', ctypes.c_double),
+                    ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double), ('norm', ctypes.c_double), ('we', ctypes.c_double), ('wi', ctypes.c_double), ('tauv', P), ('mk_long', ctypes.c_double), ('prune_only', ctypes.c_double), ('prune_ratio', ctypes.c_double), ('wcap', ctypes.c_double), ('pk', P), ('inh_learn', ctypes.c_double), ('rate_norm', ctypes.c_double), ('M', P), ('a_make', ctypes.c_double), ('start_w', ctypes.c_double), ('make_period', ctypes.c_double), ('no_make', ctypes.c_double), ('lines_learn', ctypes.c_double),
                     ('kind', P), ('sig', P), ('nmem', P), ('mem', P),
                     ('deg', P), ('c_src', P), ('c_mi', P), ('c_w', P), ('c_e0', P), ('c_t0', P), ('c_k0', P), ('c_cu', P), ('c_nb', P), ('issrc', P),
                     ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
                     ('rng', ctypes.c_uint64), ('made', ctypes.c_int64), ('given', ctypes.c_int64), ('given_by_use', ctypes.c_int64), ('k', ctypes.c_int64),
                     ('active_sum', ctypes.c_double), ('qpow', ctypes.c_double * 4097),
                     ('mk_mean', ctypes.c_double), ('mk_tau', ctypes.c_double), ('Lm', P), ('mk_share', ctypes.c_double), ('mk_take', ctypes.c_double),
-                    ('tauv', P), ('c_del', P), ('zh', P), ('hlen', ctypes.c_int), ('m_del', P)]
+                    ('c_del', P), ('zh', P), ('hlen', ctypes.c_int), ('m_del', P)]
     A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray(B['sig'], np.float64), nmem=np.zeros(N, np.int32), mem=np.zeros((N, maxd), np.int16),
              deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
              c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
              v=np.zeros(N), xp=np.zeros(N), p=np.zeros(N), th=np.zeros(N), abar=np.zeros(N), vt=np.full(N, astar), E=np.zeros(N), klast=np.zeros(N, np.int32), z=np.zeros(ts.NZ),
-             gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(ts.NZ), M=np.full(ts.NZ, 1 / 64), pk=np.zeros(N), Lm=np.full(N, float(eval(kw.get('mk_init', str(astar))))))
+             gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(ts.NZ), M=np.full(ts.NZ, 1 / 64), pk=np.zeros(N), tauv=np.full(N, 2.0), Lm=np.full(N, float(eval(kw.get('mk_init', str(astar))))))
+    tau_opt = kw.get('tau', '')
+    if tau_opt.startswith('h:'):
+        A['tauv'][:] = tau_of_cells(tau_opt[2:], SEED, B)
+    elif tau_opt:
+        rt = np.random.default_rng(SEED + 20261119)
+        if tau_opt.startswith('u2-'):
+            top = int(tau_opt[3:].rstrip('e')); choices = [2.0 ** k for k in range(1, int(np.log2(top)) + 1)]
+            A['tauv'][:] = rt.choice(choices, size=N)
+            if tau_opt.endswith('e'): A['tauv'][np.asarray(B['kind']) == ts.ENC] = 2.0      # cells that can receive from an input line keep 2
+        elif tau_opt.startswith('f'):                 # fK-T: one cell in K has the time constant T, the others 2
+            K, Tc = tau_opt[1:].split('-'); A['tauv'][rt.random(N) < 1.0 / float(K)] = float(Tc)
+        elif tau_opt == 'q16':
+            A['tauv'][rt.random(N) < 0.25] = 16.0
     for i in range(N):
         mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
         pos = {m: q for q, m in enumerate(mem)}
@@ -70,8 +95,6 @@ def make(kw):
     t.mk_mean = float(kw.get('mk_mean', 0)); t.mk_tau = float(eval(kw.get('mk_tau', '16384'))); t.mk_share = float(eval(kw.get('mk_share', '0'))); t.mk_take = float(kw.get('mk_take', 0))
     for k, a in A.items(): setattr(t, k, a.ctypes.data)
     X = {}
-    if kw.get('tau', '2') != '2':                                   # (c)
-        X['tauv'] = np.ascontiguousarray(tau_of_cells(kw['tau'], SEED, B), np.float64); t.tauv = X['tauv'].ctypes.data
     if int(kw.get('dmax', 0)) > 0:                                  # (d)
         dmax = int(kw['dmax']); rng = np.random.default_rng(20261119)
         valid = np.arange(maxd)[None, :] < A['deg'][:, None]

@@ -8,6 +8,8 @@ OPTS = {'base': ('base', 'tis', "rule=timing norm=1 lines_learn=1 eta_s=1 no_mak
         'mk': ('mk', 'tis5', "rule=timing norm=1 lines_learn=1 eta_s=8 mk_mean=1 a_make=1/4096 start_w=1/8 make_period=1024 by_use=0"),
         'tau': ('tau', 'tis_tau', "rule=timing norm=1 lines_learn=1 eta_s=1 no_make=1 tau=u2-64e"),
         'dly': ('dly', 'tis', "rule=fixed gain=2 rho=1 gmax=4 dmax=32"),
+        'L': ('L', 'tis', "rule=timing prune_only=1 norm=1 lines_learn=1 we=3/4 wi=1/4 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/16384 make_period=1024 start_w=1/64 tau=u2-256 long=8-1/2"),
+        'L5': ('L', 'tis', "rule=timing prune_only=1 norm=1 lines_learn=1 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/4096 make_period=1024 long=8-1/2"),
         'e': ('e', 'tis', "rule=timing prune_only=1 norm=1 lines_learn=1 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/4096 make_period=1024")}
 folder, modname, opts = OPTS[part]
 kw = dict(a.split('=') for a in opts.split()); kw.update(extra); kw.setdefault('nbytes', '16384')
