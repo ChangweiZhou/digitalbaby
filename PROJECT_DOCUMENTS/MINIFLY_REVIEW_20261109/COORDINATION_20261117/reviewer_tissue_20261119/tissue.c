@@ -192,6 +192,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     if (k - t->c_k0[b + d] < PS) continue;
                     if (t->c_w[b + d] < GIVE_UP) { remove_conn(t, i, d); t->given++; }
                     else if (t->prune_only != 0.0 && t->sig[s] > 0.0 && (k - t->c_k0[b + d]) >= 4096 && t->c_e0[b + d] > 0.0 && t->c_e0[b + d] > t->prune_ratio * t->c_cu[b + d]) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
+                    else if (t->prune_only >= 2.0 && (t->prune_only < 3.0 || t->sig[s] > 0.0) && (k - t->c_k0[b + d]) >= 4096 && t->M[s] < (t->a_make > 0.0 ? t->a_make : a)) { remove_conn(t, i, d); t->given++; t->given_by_use++; }   /* prune_only 2: a connection from a cell whose long mean of output, as it arrives at the connection, is below the level at which a cell itself seeks a source, is withdrawn (3: only from excitatory cells) */
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }
