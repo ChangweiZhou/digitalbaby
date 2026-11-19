@@ -62,10 +62,10 @@ References on the same positions: one-hot readers on one, two and three bytes 10
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | N0 | 11.8 | 11.8 | 11.9 | 11.7 | 11.4 | 11.0 | 10.9 | 10.7 | 11.5 | 10.5 | 10.7 |
 | N128 | 17.0 | 20.6 | 18.8 | 17.9 | 16.6 | 16.2 | 15.0 | 14.9 | 9.7 | 8.7 | 6.8 |
-| N256 | 18.3 | 20.7 | 18.7 | 18.1 | see log | see log | 9.6 | 8.8 | 8.3 | 7.1 | 6.7 |
+| N256 | 18.3 | 20.7 | 18.7 | 18.1 | 15.8 | 10.0 | 9.6 | 8.8 | 8.3 | 7.1 | 6.7 |
 
 - Set (a)'s cells lie at d = 8 to 16 (N0) and 8 to 15 (N128, N256); most are at d = 10 to 12.
-- In N128 and N256 the next byte is most readable near the input lines: 20.6–20.7 at d = 2 alone, with R2 up to 16.4 at d = 3. It falls with distance, below the present-byte level (ref_1 10.5) at d ≥ 11 (N128) and d ≥ 9 (N256). That is where the output lines' neighbourhoods are.
+- In N128 and N256 the next byte is most readable near the input lines: 20.6–20.7 at d = 2 alone, with R2 up to 16.4 at d = 3. It falls with distance, below the present-byte level (ref_1 10.5) at d ≥ 11 (N128) and d ≥ 8 (N256). That is where the output lines' neighbourhoods are.
 - In N0 it stays at 10.5–11.9 from d = 1 to 13.
 - So the 23% of the whole tissue in N128 and N256 is held by cells far from the output lines.
 
