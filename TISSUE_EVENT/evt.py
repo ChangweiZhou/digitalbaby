@@ -45,6 +45,9 @@ L.evt_set_life_cells.argtypes = [_u8]
 L.evt_set_line.argtypes = [ctypes.c_int, ctypes.c_double]
 L.evt_set_rng.argtypes = [_u32, ctypes.c_int]
 L.evt_get_rng.argtypes = [_u32, ctypes.POINTER(ctypes.c_int)]
+L.evt_set_astar.argtypes = [ctypes.c_double]
+L.evt_set_withdraw_use.argtypes = [ctypes.c_int, _u8, ctypes.c_int]
+L.evt_withdrawn_by_use.restype = ctypes.c_int64
 L.evt_step.argtypes = [ctypes.c_int]
 L.evt_step.restype = ctypes.c_int
 L.evt_run_bytes.argtypes = [_u8, ctypes.c_int, _i16]
@@ -71,10 +74,12 @@ def view(ptr, n):
 class EvTissue:
     """One tissue of E63 (first-form, coincidence or fixed; formula 11 as written for the 512-byte tissue), computed by evt_core.c."""
 
-    def __init__(self, seed, rule, f11_written=False, floor=0.0, tol=0.0, trace_sender=False, strength_byte=False, B=None):
+    def __init__(self, seed, rule, f11_written=False, floor=0.0, tol=0.0, trace_sender=False, strength_byte=False, B=None,
+                 astar=ts.ASTAR, withdraw_by_use=False, use_exempt_feedback=False):
         assert rule in ("first", "coincidence", "fixed")
         self.seed, self.rule, self.f11w, self.by_use = seed, rule, f11_written, False
-        self.switches = dict(floor=floor, tol=tol, trace_sender=bool(trace_sender), strength_byte=bool(strength_byte))
+        self.switches = dict(floor=floor, tol=tol, trace_sender=bool(trace_sender), strength_byte=bool(strength_byte), astar=float(astar),
+                             withdraw_by_use=bool(withdraw_by_use), use_exempt_feedback=bool(use_exempt_feedback))
         B = B if B is not None else ts.birth(seed)
         self.B = B
         self.kind = B["kind"]; self.sig = B["sig"]
@@ -84,11 +89,14 @@ class EvTissue:
         self.driver = np.array(B["driver"], dtype=np.int64)
         N, NZ = ts.N, ts.NZ
         life = rule != "fixed"
+        L.evt_set_astar(float(astar))                       # (T) a*: before evt_init, which starts the sliding threshold at a*
         L.evt_init(N, NZ, float(floor), float(tol), int(trace_sender), int(strength_byte), int(life), int(f11_written),
                    int(rule == "coincidence"), ts.S, ts.LINE0, ts.NIN)
         lrn = np.zeros(NZ, np.uint8); lrn[:N] = 1
         ex = np.zeros(NZ, np.uint8); ex[ts.YES_LINE:] = 1
         L.evt_set_senders(np.ascontiguousarray(B["sig"], np.float64), lrn, ex)
+        fbs = np.zeros(NZ, np.uint8); fbs[:N] = self.isfb
+        L.evt_set_withdraw_use(int(withdraw_by_use), fbs, int(use_exempt_feedback))   # (W)
         rk = np.zeros(N, np.uint8)
         if rule == "first":
             rk[~self.isfb] = 1
@@ -118,7 +126,6 @@ class EvTissue:
         L.evt_set_rng(np.array(st[1][:624], np.uint32), int(st[1][624]))
         self.x = view(L.evt_ptr_x(), N)
         self.th = view(L.evt_ptr_th(), N)
-        self.withdrawn_by_use = 0
         self.audit = None
 
     # ---------------------------------------------------------------------------------------- the interface of tissue_step1.Tissue
@@ -129,6 +136,10 @@ class EvTissue:
     @property
     def made(self):
         return int(L.evt_made())
+
+    @property
+    def withdrawn_by_use(self):
+        return int(L.evt_withdrawn_by_use())
 
     @property
     def given_up(self):
@@ -216,5 +227,5 @@ def _counts(t, used_values):
     s = Shim()
     s.live, s.isfb, s.kind, s.sig, s.members, s.B = t.live, t.isfb, t.kind, t.sig, t.members, t.B
     s.srcset = t._srcset_cache
-    s.given_up, s.made, s.withdrawn_by_use, s.k = t.given_up, t.made, 0, t.k
+    s.given_up, s.made, s.withdrawn_by_use, s.k = t.given_up, t.made, t.withdrawn_by_use, t.k
     return ts.Tissue.counts(s, used_values)

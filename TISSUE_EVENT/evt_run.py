@@ -47,8 +47,12 @@ def main():
     ap.add_argument("--tol", type=float, default=0.0)
     ap.add_argument("--trace-sender", action="store_true")
     ap.add_argument("--strength-byte", action="store_true")
+    ap.add_argument("--astar", type=float, default=0.125)
+    ap.add_argument("--withdraw-by-use", action="store_true")
+    ap.add_argument("--use-exempt-feedback", action="store_true")
     a = ap.parse_args()
-    sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte)
+    sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte, astar=a.astar,
+              withdraw_by_use=a.withdraw_by_use, use_exempt_feedback=a.use_exempt_feedback)
     out = HERE / "runs" / a.name
     out.mkdir(parents=True, exist_ok=True)
     c0, w0 = time.process_time(), time.time()
@@ -86,7 +90,7 @@ def main():
                mean_cells_sending_a_step=cnt["senders_passing_on"] / steps,
                connection_visits_a_byte=(cnt["visits_passing_on"] + cnt["visits_strengths"] + cnt["visits_life"]) / nb,
                cell_updates_a_byte=cnt["cell_updates"] / nb,
-               connections_a_cell_end=conns / ts.N, made_total=T.made, given_up_total=T.given_up,
+               connections_a_cell_end=conns / ts.N, made_total=T.made, given_up_total=T.given_up, withdrawn_by_use_total=T.withdrawn_by_use,
                emissions=dict(share=float((R.emis >= 0).mean()), commonest=[[int(v), int(c)] for v, c in
                                                                           sorted(zip(*np.unique(R.emis[R.emis >= 0], return_counts=True)),
                                                                                  key=lambda q: -q[1])[:5]] if (R.emis >= 0).any() else []),

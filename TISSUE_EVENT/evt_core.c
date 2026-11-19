@@ -38,7 +38,8 @@
 #define INC4096 (1.0 / 4096)
 #define ETA 0.125
 #define ETA_T 0.0078125
-#define ASTAR 0.125
+static double ASTAR_V = 0.125;   /* a*, the target of activity (a parameter: evt_set_astar before evt_init) */
+#define ASTAR ASTAR_V
 #define PS 128
 #define GIVE_UP 0.0078125
 #define START_W 0.125
@@ -107,7 +108,9 @@ static double *Astep, *mstep;                /* the arrival and mismatch of the 
 /* connections */
 static int CAP, NSLOT;
 static int *c_snd, *c_rcv;
-static double *c_w, *c_e, *c_ub;
+static double *c_w, *c_e, *c_ub, *c_use;
+static int *c_cnt;
+static int USE_W, USE_EXEMPT_FB; static uint8_t *usefb; static int64_t WITHDRAWN_USE;
 static int64_t *c_est, *c_k0, *c_seq, SEQ;
 static uint8_t *c_alive, *c_mark;
 static ivec freeslots;
@@ -150,7 +153,7 @@ static int new_slot(void) {
     if (NSLOT == CAP) {
         CAP = CAP ? 2 * CAP : 4096;
         c_snd = realloc(c_snd, sizeof(int) * CAP); c_rcv = realloc(c_rcv, sizeof(int) * CAP);
-        c_w = realloc(c_w, sizeof(double) * CAP); c_e = realloc(c_e, sizeof(double) * CAP); c_ub = realloc(c_ub, sizeof(double) * CAP);
+        c_w = realloc(c_w, sizeof(double) * CAP); c_e = realloc(c_e, sizeof(double) * CAP); c_ub = realloc(c_ub, sizeof(double) * CAP); c_use = realloc(c_use, sizeof(double) * CAP); c_cnt = realloc(c_cnt, sizeof(int) * CAP);
         c_est = realloc(c_est, sizeof(int64_t) * CAP); c_k0 = realloc(c_k0, sizeof(int64_t) * CAP); c_seq = realloc(c_seq, sizeof(int64_t) * CAP);
         c_alive = realloc(c_alive, CAP); c_mark = realloc(c_mark, CAP);
     }
@@ -178,7 +181,7 @@ static void free_all(void) {
     FREE(A); FREE(v); FREE(x); FREE(p); FREE(th); FREE(abar); FREE(vt); FREE(dA); FREE(sm); FREE(sexc); FREE(sinh_);
     FREE(pst); FREE(ast); FREE(vst); FREE(klast); FREE(ncomp); FREE(rule); FREE(theta_on); FREE(inwl); FREE(due); FREE(full);
     FREE(touched); FREE(inlearn); FREE(ischg); FREE(ninh); FREE(driver); FREE(Astep); FREE(mstep);
-    FREE(c_snd); FREE(c_rcv); FREE(c_w); FREE(c_e); FREE(c_ub); FREE(c_est); FREE(c_k0); FREE(c_seq); FREE(c_alive); FREE(c_mark);
+    FREE(c_snd); FREE(c_rcv); FREE(c_w); FREE(c_e); FREE(c_ub); FREE(c_use); FREE(c_cnt); FREE(usefb); FREE(c_est); FREE(c_k0); FREE(c_seq); FREE(c_alive); FREE(c_mark);
     FREE(freeslots.a); freeslots.n = freeslots.cap = 0;
     ivec *ls[] = {&wl, &wl2, &chg, &chg2, &gone, &learnl, &dal};
     for (int q = 0; q < 7; q++) { FREE(ls[q]->a); ls[q]->n = ls[q]->cap = 0; }
@@ -206,6 +209,13 @@ void evt_init(int nc, int nz, double floor_, double tol, int trace_sender, int s
     if (vt) for (int i = 0; i < nc; i++) vt[i] = ASTAR;
 }
 /* per sender: sigma, learnable, exempt; per cell: rule (0 none, 1 formula 7, 2 coincidence rule), theta_on */
+void evt_set_astar(double a) { ASTAR_V = a; }
+/* withdrawal by use (W): on/off; fbcells marks senders that are feedback cells; exempt_fb: their connections are not withdrawn by use */
+void evt_set_withdraw_use(int on, const uint8_t *fbcells, int exempt_fb) {
+    USE_W = on; USE_EXEMPT_FB = exempt_fb; WITHDRAWN_USE = 0;
+    usefb = realloc(usefb, NZ); if (fbcells) memcpy(usefb, fbcells, NZ); else memset(usefb, 0, NZ);
+}
+int64_t evt_withdrawn_by_use(void) { return WITHDRAWN_USE; }
 void evt_set_senders(const double *s, const uint8_t *lrn, const uint8_t *ex) {
     memcpy(sig, s, 8 * NZ); memcpy(learnable, lrn, NZ); memcpy(exempt, ex, NZ);
 }
@@ -229,7 +239,7 @@ static void link_slot(int c) {
 /* a connection present at birth (or in the example): sender, receiver, strength, trace, step of making */
 int evt_add_connection(int j, int i, double w, double e, int64_t k0) {
     int c = new_slot();
-    c_snd[c] = j; c_rcv[c] = i; c_w[c] = w; c_e[c] = e; c_ub[c] = 0.0; c_est[c] = K; c_k0[c] = k0; c_seq[c] = SEQ++;
+    c_snd[c] = j; c_rcv[c] = i; c_w[c] = w; c_e[c] = e; c_ub[c] = 0.0; c_use[c] = 0.0; c_cnt[c] = 0; c_est[c] = K; c_k0[c] = k0; c_seq[c] = SEQ++;
     c_alive[c] = 1; c_mark[c] = 0;
     link_slot(c);
     if (LIFE) aq_push(k0 + PS, c, c_seq[c]);
@@ -280,6 +290,7 @@ static void remove_conn(int c) {
     A[i] -= sig[j] * c_w[c] * zsent[j];
     iv_remove_ordered(&in[i], c); iv_remove_swap(&out[j], c);
     if (learnable[j] && sig[j] < 0) ninh[i]--;
+    if (USE_W && c_w[c] >= GIVE_UP) WITHDRAWN_USE++;
     c_alive[c] = 0; c_w[c] = 0.0; c_mark[c] = 0;
     iv_push(&freeslots, c);
     NLIVE--; GIVEN_UP++;
@@ -302,7 +313,7 @@ static void make_for(int i) {
     int j = cand[randbelow(nc)];
     if (!inwl[i]) { touch(i, K + 1); wl_add(&wl2, i); }
     int c = new_slot();
-    c_snd[c] = j; c_rcv[c] = i; c_w[c] = START_W; c_e[c] = 0.0; c_ub[c] = 0.0; c_est[c] = K + 1; c_k0[c] = K; c_seq[c] = SEQ++;
+    c_snd[c] = j; c_rcv[c] = i; c_w[c] = START_W; c_e[c] = 0.0; c_ub[c] = 0.0; c_use[c] = 0.0; c_cnt[c] = 0; c_est[c] = K + 1; c_k0[c] = K; c_seq[c] = SEQ++;
     c_alive[c] = 1; c_mark[c] = 0;
     link_slot(c);
     A[i] += sig[j] * START_W * zsent[j];
@@ -354,6 +365,26 @@ static void strengths_byte(int i) {
         strength_change(c, bound(c_w[c] + dw), i);
     }
 }
+static int is_cell_sender(int j) { return j < NC; }
+static void use_step(int i, double xp) {
+    ivec *ip = &in[i];
+    double mx = 0.0;
+    for (int q = 0; q < ip->n; q++) {
+        int c = ip->a[q], j = c_snd[c];
+        if (!is_cell_sender(j)) continue;
+        double e = trace_of(c, K);                       /* the trace held before the step */
+        c_use[c] = DEC128 * c_use[c] + INC128 * e * xp;
+        if (c_use[c] > mx) mx = c_use[c];
+    }
+    double level = INC128 * mx;
+    for (int q = 0; q < ip->n; q++) {
+        int c = ip->a[q], j = c_snd[c];
+        if (!is_cell_sender(j)) continue;
+        if (c_use[c] < level) c_cnt[c]++; else c_cnt[c] = 0;
+        if (c_cnt[c] >= PS && K - c_k0[c] >= PS && !c_mark[c] && !(USE_EXEMPT_FB && usefb[j])) { c_mark[c] = 1; iv_push(&gone, c); }
+    }
+    CNT[3] += 2 * ip->n;
+}
 static int stationary_inh(int i, double xn) {         /* coincidence rule: no connection from an inhibitory cell would change */
     ivec *ip = &in[i];
     for (int q = 0; q < ip->n; q++) {
@@ -399,6 +430,8 @@ int evt_step(int byte) {
                 if (!inlearn[i] && (xp != 0.0 || (rule[i] == 2 && ninh[i] > 0))) { inlearn[i] = 1; iv_push(&learnl, i); }
             }
         }
+        /* W: use of each connection from a cell, only at a step where x(k - 1) of the receiving cell is not zero */
+        if (USE_W && LIFE && xp != 0.0) use_step(i, xp);
         /* 6. prediction, threshold, activity average, sliding threshold (traces are brought up to date when used) */
         p[i] = DEC32 * p[i] + INC32 * Ai; pst[i] = K + 1;
         double thn = theta_on[i] ? fmax(0.0, th[i] + ETA_T * (xn - ASTAR)) : th[i];
@@ -448,7 +481,10 @@ int evt_step(int byte) {
         } else {
             while (aq_h < aq_n && aq_t[aq_h] <= K) {
                 int c = aq_c[aq_h];
-                if (c_alive[c] && c_seq[c] == aq_seq[aq_h] && !exempt[c_snd[c]] && c_w[c] < GIVE_UP && !c_mark[c]) { c_mark[c] = 1; iv_push(&gone, c); }
+                if (c_alive[c] && c_seq[c] == aq_seq[aq_h] && !exempt[c_snd[c]] && !c_mark[c]
+                    && (c_w[c] < GIVE_UP || (USE_W && is_cell_sender(c_snd[c]) && c_cnt[c] >= PS && !(USE_EXEMPT_FB && usefb[c_snd[c]])))) {
+                    c_mark[c] = 1; iv_push(&gone, c);
+                }
                 aq_h++; CNT[4]++;
             }
         }
@@ -533,3 +569,7 @@ void evt_cells(double *pv, double *pp, double *pth, double *pab, double *pvt, in
 int evt_events_made(int64_t *o, int cap) { int n = nev_made < cap ? nev_made : cap; memcpy(o, ev_made, 8 * 3 * n); return nev_made; }
 int evt_events_gone(int64_t *o, int cap) { int n = nev_gone < cap ? nev_gone : cap; memcpy(o, ev_gone, 8 * 4 * n); return nev_gone; }
 void evt_clear_events(void) { nev_made = nev_gone = 0; }
+/* the use and counter of withdrawal by use (W) of the live connections, in the order of evt_live (call evt_live first) */
+void evt_live_use(double *use, int *cnt) {
+    for (int q = 0; q < norder; q++) { int c = order[q]; use[q] = c_use[c]; cnt[q] = c_cnt[c]; }
+}
