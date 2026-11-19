@@ -39,7 +39,7 @@ References on the same positions: one-hot readers on one, two and three bytes 10
 
 **C.**
 - The end mark's share was reached by:
-  - D and B on N0 after 8,192 bytes on seed 73129, and D on seed 116089 after 16,384;
+  - on N0: D and B after 8,192 bytes and A (eps 1/16, run) after 32,768 on seed 73129; D after 16,384 and B (run) after 57,344 on seed 116089; nothing on seed 93683;
   - D on N128 (seed 116089, 24,576–28,672) and on N256 (seed 93683, 24,576–28,672);
   - B on N256 after 45,056 bytes (one seed each preparation);
   - D on U once (seed 116089, 16,384).
@@ -51,7 +51,7 @@ References on the same positions: one-hot readers on one, two and three bytes 10
    - Near the output lines all three new tissues give less than U: set (a) 7.8–13.0 against 12.8–14.7; own neighbourhood 7.1–9.7 against 8.8–10.3. R1 and R2 there fall to 0.0–2.9 on N128 and N256.
 2. **Online rules.**
    - On N0, seed 73129, the one-pass rules learn from the cells near the drivers. The supervised rule reaches 9.5, the fitted own-neighbourhood reader's 9.7; yes/no B reaches 8.3, above the end mark's share from 8,192 bytes on.
-   - On seeds 93683 and 116089 N0 gives 4.7–6.8 to D and 4.1–6.9 to B.
+   - On seeds 93683 and 116089 N0 gives 4.6–5.5 to D (eta 1/64) and 4.1–5.9 to B: the learning of seed 73129 is not repeated on the other two seeds.
    - On N128 and N256 the online rules stay at 4.1–7.3.
    - No rule reaches ref_1.
 3. **Raw inputs.** Raw outputs work about as well as standardised ones on the new tissues (D and B within about 1 point). On U they do not (D 2.8–3.2 raw against 4.5–6.8).
