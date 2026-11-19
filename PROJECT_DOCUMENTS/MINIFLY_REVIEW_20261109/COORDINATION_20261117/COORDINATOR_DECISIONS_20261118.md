@@ -322,3 +322,33 @@ From now on I add no run, tissue, task or number that Mr. Xu or the reviewer has
 **To E57's worker, for forwarding:** "The coordinator releases the task `TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md` on the reviewer's branch, as written (decision 72). It is part of E63. Report to the reviewer as its section 5 says."
 
 **To the reviewer:** "Decision 72: your brief for the tissue's program is released as written, to E57's worker; please forward. I read it and `ev2.c` in full and reran the second kernel: its counts are reproduced exactly. Two remarks are in the decision for you to use or not. I verify what the task reports, and stage A of E63 when its report is in."
+
+## Decision 73 (19 November 2026): stage A of E63 is verified; step 1 is not reached with the first forms
+
+**The object.** The worker's branch `claude/e63-tissue-step1` at 040d3cf0: `TISSUE_STEP1/STAGE_A_REPORT.md`, the receipts and records of the four tissues, the programs.
+
+**What I read.** The report in full; `tissue_step1.py` (833 lines) and `step1_read.py` (190 lines) in full. Not read: `step1_checks.py`, `step1_tables.py`, the receipts of checks 1 to 10.
+
+**What I ran** (this machine; Python 3.12, numpy 2.1; outputs beside this file).
+
+1. *The readings, from the committed records, with code of my own* (`PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e63_stage_a_verify.py`; it imports nothing of the worker's; output `COORDINATOR_E63_STAGE_A_VERIFY_OUTPUT_MAC_20261119.txt`). The stream written again from the brief has the report's digest. For the three tissues and both windows: the distances taken again as the mode of the block distances equal the stored ones; the numbers of cells neither silent nor constant, silent and constant equal the receipts'; every S(d, L) with its standard error, and C0 and C<L, equal the receipts' with a largest difference of zero; the 90 scores of the report's tables equal the recomputed ones. The final states give the receipts' last counts (connections, starting connections remaining) and the emissions' shares. The outcome by section 11.3 at the level 0.1103 is outcome 3. Tissue 4 has 61 starting connections after step 129.
+2. *Two tissues run again with the worker's program* (`COORDINATOR_E63_STAGE_A_RERUN_MAC_20261119.txt`): the tissue whose strengths never change (59 s here) and the coincidence tissue (596 s). Each ends bit-equal to the committed final state in every array, with the same state of the generator, the same emissions, and the same recorded outputs and distances in both windows. The first-form tissue was not run again (1.65 CPU-hours on the worker's host); it is verified from its records only.
+
+**The result, as verified** (seed 73129; 16,384 bytes; no feedback; one seed; nothing confirmed).
+
+| Tissue | Connections a cell at the end | Cells neither silent nor constant in the late window, at 1, 2, 4 connections from the lines | Score for the present byte there (chance 0.0217; level 0.1103) |
+|---|---|---|---|
+| First form | 91.8 | 226 of 237; 0 of 264; 0 of 236 | 0.684; 0.347; 0.026 |
+| Coincidence form | 25.9 | 173 of 237; 249 of 250; 202 of 202 | 0.234; 0.038; 0.026 |
+| Strengths never changing | 7.75 | 102 of 102; 0 of 215; 0 of 220 | 0.978; 0.826; 0.022 |
+
+- **Step 1 is not reached by either first form on this seed.** In the first form the cells beyond one connection are silent or vary by less than 0.01. In the coincidence form the deeper cells are active and their activity does not tell the present byte.
+- At lags of 1 and 2 bytes no tissue at any distance scores above what the present byte alone gives (largest S − C0: −0.0016 and −0.0031).
+- Learning removed from what the wiring gives: at one and at two connections both plastic tissues score below the tissue whose strengths never change (0.684 and 0.234 against 0.978; 0.347 and 0.038 against 0.826).
+- The report's words are within what the records show. I ask no correction of it.
+
+**Stage B** of the brief is not released: step 1 is not reached, and the report's forecast for it on this program is 185.6 CPU-hours against a ceiling of 40.
+
+**Not merged.** E63 is not finished (the program and the further round are in work on other branches); the stage A branch is merged with the rest when E63 closes.
+
+**To the reviewer:** "Decision 73: stage A of E63 is verified. Every reading of the report is recomputed from the records with my own code and agrees; two of the three tissues were run again here and end bit-equal to the committed states. Step 1 is not reached by either first form on seed 73129. Stage B is not released. The first-form tissue was not run again; I verified it from its records."
