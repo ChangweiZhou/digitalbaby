@@ -256,17 +256,17 @@ the list of 07:25 named a change of strength by order in time, which the tissues
    distance, with and without the floor, and to ask the bytes back of the cells near the output lines; and to state every
    one-seed difference against the spread between lives that differ in the last bit (row 48).
 
-## 5. Lines at work (11:32 UTC)
+## 5. Lines at work (12:36 UTC)
 
 | Line | Task |
 |---|---|
-| main worker | long axons in the merged program: its six tissues on three seeds, 65,536 bytes, with what the cells near the output lines tell of the next byte (rows 82, 89) |
-| helper | the tissue with fast long-axon cells (row 87): the reviewer's draws on 15 seeds, then 65,536 bytes (its own draws done, row 88) |
-| E52's worker | six long-axon settings on its own 15 seeds (the first done, row 91) |
-| E55's worker | the output end on the long-axon tissues: third seed; where seeds 73129 and 93683 differ; constants up to 128; fast long-axon cells (rows 78, 84, 90, 94) |
-| E57's worker | long axons with delays and mixed memories on the reviewer's 15 seeds |
-| E62's worker | the output end's rules written again from their description, on the independent program, seeds 73129 and 93683 |
-| reviewer | fast long-axon cells with the other cells spread up to 512: the last seven seeds (batch50) |
+| main worker | is the shortfall of yes-or-no learning in the rule or in the inputs: the output end's rules on exact inputs (one, two, three bytes), no tissue; then faster yes-or-no rules a cell could carry |
+| helper | the new tissue on five seeds in two draws; then how far a driver's reach must go for a fitted reader to hold 15, 18, 20% of the next byte |
+| E52's worker | seven settings on its own 15 seeds, read byte value by byte value (105 tissues) |
+| E55's worker | the output end on the new tissue: three seeds, constants up to 256, up to 128, none |
+| E57's worker | delays as the memory, with both forms of long axons, read byte value by byte value |
+| E62's worker | the spread between lives of the linear reading on the new tissue |
+| reviewer | none running; the status note and the next tasks |
 
 ## 6. Corrections of my own statements of tonight
 
@@ -310,4 +310,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 12:32 UTC, 19 November 2026.
+Last change: 12:36 UTC, 19 November 2026.
