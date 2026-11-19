@@ -161,3 +161,23 @@ What it shows, on seed 73129, on the comparator's network: with 16 inputs a cell
 ## Decision 58 (19 November 2026): E57 merged
 
 The worker's commit 38280564 changes `E57_REPORT.md` alone (25 lines added, 5 removed) from the verified 85417d06. I read the difference beside the nine findings of the verification: all nine are entered. Merged at 38280564; filed with the comparator. Next verification: E60.
+
+## Decision 59 (19 November 2026): E60 verified; not merged until its report carries seven corrections
+
+**How.** An agent of mine, which had seen no opinion of the result, wrote `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/e60_verify.py` (861 lines) on the pattern of the reviewer's `e44_l2_sweep_verify.py`, with the reviewer's second implementation of the world and its part J for the quantities, and ran it on this machine against the worker's branch at aecf7b3b: read-only, numpy, 226 seconds, exit 0. Output: `COORDINATOR_E60_VERIFY_OUTPUT_MAC_20261119.txt` beside this file. I read the agent's report and the output's summary lines; I did not read the script, and I did not rerun it myself. Nothing was trained; check 3 of the job is the only evidence that the runs reproduce.
+
+**What was compared.** 78,672 figures of the committed files at full precision (24 score files recomputed from their event files, the final JSON, 12,288 per-visit values of the curves) and 725 figures and words of the tables and the report: none differs. The four lives are complete with the brief's settings; each started from back-propagation's birth of its world's seed (file and tensor hashes equal the `naive` life's); the regenerated stream matches every visit's digest.
+
+**The result** (the comparator's dense network; decision 32's clause holds; late level; R is `sweep-after-naive` less `naive`, the two lives that differ in the rule alone; B is `sweep` less `sweep-after-naive`, the two that differ in the birth alone):
+
+| | Over worlds 1 to 4 (worlds 1 and 4 share births) | Over worlds 1 to 3 |
+|---|---|---|
+| R, visits 0 to 63 | −0.115 [−0.139, −0.091] lower | −0.116 [−0.158, −0.074] lower |
+| R, 256 visits | −0.116 [−0.172, −0.060] lower | −0.102 [−0.179, −0.024] lower |
+| R, 1,024 visits | −0.068 [−0.116, −0.019] lower | −0.066 [−0.150, +0.019] not distinguished |
+| B, 1,024 visits | +0.001 [−0.021, +0.024] not distinguished | −0.003 [−0.039, +0.033] not distinguished |
+| R, change from the early difference to 1,024 visits | +0.047 [+0.019, +0.076] higher | +0.050 [+0.002, +0.099] higher |
+
+From the same birth, the life under the sweep is lower than the life under back-propagation early and at 256 visits in both readings, and at 1,024 visits over four worlds; over three worlds it is not distinguished there. The deficit becomes smaller in every world; there is no overtaking up to 1,024 visits. The birth makes no distinguishable difference at 1,024 visits. Over four worlds the brief's third sentence therefore assigns the difference between `sweep` and `naive` to the rule; over three worlds it assigns nothing. This answers the question of decision 21 as far as four worlds from three births can.
+
+**Corrections asked of the worker before the merge** (the reviewer forwards them; the report alone changes): (1) section 7 gives the RB figures at 1,024 visits in both readings, as the brief's limit 1 asks; (2) the limit on the shared births stands beside section 5.4's table and D13 over four worlds; (3) the limit to the rate 0.001 stands in 5.4 and 5.6; (4) "pair B is near zero" and "about the size of pair R" (5.5) are replaced by the figures with their intervals and words; (5) "keeps as little as the other two arms" (5.6) is replaced by the D8 values of the arms, with the statement that nothing was tested; (6) "D15 does not rise" (5.6) is replaced by the pooled values, with the same statement; (7) the report says which saved states are not committed (the state check 5 resumed from, the states at 1,024 visits, those of the check lives), so that their hashes cannot be checked. I merge at the commit that carries them.
