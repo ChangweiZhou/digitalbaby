@@ -161,8 +161,9 @@ connections, and the learning of the output end from yes or no.
 | 131 | **How much the slow copies can give, and where the rest is lost** (same tissue and seeds as row 130; last quarter, %). A third copy s_8 adds little: told the right byte 15.1 / 17.6 / 17.4, rule Q 14.3 / 14.8 / 15.1. With every unit seeing all cells of the tissue and the copies: told the right byte 17.8 / 19.1 / 20.1 (three copies 18.7 / 19.7 / 20.4), rule Q 13.9 / 16.4 / 16.8: reach without limit adds 2 to 3 points, the copies had added 8 to 11. **The ceiling** (`yesno/yq_tr.py`; no tissue; the exact present byte as a one-hot, with the same slow copies at the output connections; seed 73129): told the right byte 10.2 with the byte alone, **22.6** with two copies, 23.3 with three (three exact bytes: 26.4; the three-byte table 25.1). So an output end with slow copies needs from the tissue only the present byte, and would learn 23% if the tissue brought it whole; this tissue brings enough for 15 to 17.6 at a driver. The remainder is the present byte's fidelity at the output lines (near them a linear reader names 0.43 of all values and 4 of 10 digits, rows 122, 129), no longer memory. On exact inputs with copies rule Q is slow (10.9 at fraction 1/16, 13.6 to 16.1 at 1/4, still rising in the last quarter): on a real tissue it is at 0.85 to 0.95 of the rule told the right byte, on these exact inputs at 0.5 to 0.7 in 65,536 bytes; not yet understood. E62's worker (13:50): where the tissue already has memory the copies add 0.3 to 1.4 for the rule told the right byte and 0.9 to 2.0 for Q; the helper's rows on the new form with constants up to 256 say the same (0.0 to 1.1). | reviewer; E62's worker; helper | 3 (ceiling: 1) | first long-axon form and no long axons, without constants, with copies: running; the ceiling on the other seeds and at 262,144 bytes |
 | 132 | **The slow copies, by two more programs and on 15 other seeds.** (1) E62's worker's program, two tissues without time constants, seeds 73129 / 93683 / 116089, last quarter, %, told the right byte and rule Q, for the input alone / with s_2 / with s_2 and s_4 / with s_2, s_4, s_8. New long-axon form: told the right byte 6.0 / 7.1 / 8.6 alone; 12.5 / 17.9 / 16.2; 14.5 / 17.8 / 18.1; 15.0 / 18.2 / 18.3; rule Q 7.3 / 8.7 / 8.8 alone; with s_2 and s_4 13.4 / 16.7 / 14.8. First long-axon form: told the right byte 5.5 / 5.2 / 6.5 alone; with s_2 and s_4 16.6 / 12.2 / 16.5; rule Q 15.6 / 10.9 / 13.9. One copy gives most of the gain; a third adds at most 0.5 and lowers rule Q on seed 93683 (16.7 to 11.9). No form reaches the three-byte level (best 18.3, 0.72 of it). Agrees with the reviewer's rows 130 and 131. (2) E52's worker, linear reader near the output lines on its 15 seeds (16,384 bytes; smallest / median / largest of all byte values named right; bytes 0 / 1 / 2 / 3 back), new long-axon form without time constants: input alone 0.43 / 0.15 / 0.10 / 0.16 (medians); with s_2 and s_4 **0.46 / 0.43 / 0.32 / 0.33** (smallest 0.28 / 0.27 / 0.21 / 0.19). The bytes back come up to or above what time constants in the tissue gave (0.36 / 0.29 / 0.23) and the present byte stays. The cost: seeds with the end mark / equals sign of the present byte above 0.9 fall from 12 / 13 to 10 / 10 of 15. Without long axons the copies raise the bytes back less (medians 0.32 / 0.24 / 0.22). | E62's worker (own_trace.py); E52's worker (10bcf44d, TABLE_A.md) | 3; 15 | E62's worker: the forms with one and three copies on tissues with memory; E52's worker: the rule told the right byte and rule Q online on the 15 seeds, about an hour |
 | 133 | **Rule Q over a long life.** E55's worker, first long-axon form with constants up to 256, seed 73129, 262,144 bytes: rule Q holds at 15.0 to 15.6 from the second 32,768 bytes to the end (told the right byte 17.1; two-byte level 11.7 to 12.5); largest weight row 0.39 / 0.40 / 0.43 at 65,536 / 131,072 / 262,144 bytes at fraction 1/64 (told the right byte 0.44), 0.41 / 0.47 / 0.59 at 1/16; the old rule 13 / 28 / 52. Seed 116089 at 65,536 bytes: told the right byte 16.2, Q 14.2 to 14.7, old rule 11.5. The reviewer, first long-axon form with constants up to 128, the weak seed 93683, 262,144 bytes, every unit seeing all cells near the output lines: told the right byte 13.9, **rule Q 12.8** (two-byte level 12.2), quarters 10.3, 12.5, 12.8, 12.8: on that seed yes or no passes both levels given a longer life. | E55's worker (745c5822); reviewer | 1; 1 | E55's worker: the three further seeds of row 127 |
+| 134 | **The slow copies on further seeds: weaker than on the three seeds of row 130** (the helper, the reviewer's program and draw; new long-axon form without time constants; 65,536 bytes; last quarter, %; a driver's own inputs). Seeds 465973 / 614332 / 406364 / 545353: input alone, told the right byte 5.8 / 6.3 / 5.9 / 5.2, rule Q 6.7 / 6.6 / 6.2 / 6.2; with s_2 and s_4: told the right byte **13.7 / 11.3 / 9.7 / 8.6**, rule Q 11.2 / 8.7 / 7.0 / 6.6 (present byte's level 10.7 to 11.0, two bytes 12.0 to 12.5). **Over the seven seeds so far, with the copies: told the right byte 17.2, 17.1, 14.7, 13.7, 11.3, 9.7, 8.6 (above the present byte's level on 5 of 7, above the two-byte level on 4); rule Q 14.9, 14.7, 13.9, 11.2, 8.7, 7.0, 6.6 (4 of 7; 3 of 7).** The copies double what the rule told the right byte finds on every seed, but the three seeds used by all lines are again the best three. The same tissue form with constants up to 256 and the copies, eight seeds: told the right byte 9.5 / 11.2 / 14.8 (smallest / median / largest), above the present byte's level on 4 of 8; rule Q 8.0 / 9.1 / 13.0. | helper (OUTQ_ROWS.txt on claude/prep-step1-full) | 4 (7 with row 130) | the other eight seeds: running |
 
-## 2a. Where things stand (14:06 UTC)
+## 2a. Where things stand (14:10 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -259,6 +260,10 @@ finds 14.7 / 17.2 / 17.1 at a driver and rule Q, told only yes or no, 13.9 / 14.
 seeds, the weak seed 93683 included; two programs agree. Many seeds are being measured. Row 131: with the exact present byte and the same copies the rule told the right byte
 learns 23%; with this tissue 15 to 17.6 at a driver and 18 to 20 with all cells in reach. So what is left is the fidelity of the
 present byte at the output lines (digits above all), not memory and only a little reach.
+Since 14:10 (row 134): on four further seeds the same tissue with the copies gives the rule told the right byte only 8.6 to 13.7 and
+rule Q 6.6 to 11.2. Over seven seeds the copies always double what is found, but yes or no passes the present byte's level on 4 of 7
+and the two-byte level on 3 of 7. The statement of row 130, "on all three seeds", holds for those three seeds and is not the
+general case. What differs between seeds is how much of the present byte reaches the output lines; that is now the open thing.
 
 ## 3. Against step 1 as the roadmap states it
 
@@ -306,12 +311,12 @@ the list of 07:25 named a change of strength by order in time, which the tissues
    distance, with and without the floor, and to ask the bytes back of the cells near the output lines; and to state every
    one-seed difference against the spread between lives that differ in the last bit (row 48).
 
-## 5. Lines at work (13:39 UTC)
+## 5. Lines at work (14:10 UTC)
 
 | Line | Task |
 |---|---|
 | main worker | rule Q (row 119) and its own changed rule (row 117) on recorded driver inputs of a real tissue (L8-128, three seeds), beside the old rule and the rule told the right byte |
-| E62's worker | memory at the output unit's own connections (a slow copy of each input beside the input), tissues without time constants, three seeds |
+| E62's worker | the slow copies over 262,144 bytes; at which distance from the input lines the present byte is lost; which byte values never arrive |
 | helper | the rule told the right byte and rule Q at a driver over 15 seeds, three tissue forms, with and without slow copies at the output unit's connections (the reviewer's outq.py) |
 | E55's worker | rule Q in its output end as defined; then the rule told the right byte and Q on the three further seeds of row 127, two tissues |
 | E52's worker | memory at the output unit's own connections, on its 15 seeds: linear reader, then the rule told the right byte and rule Q online |
@@ -343,6 +348,8 @@ the list of 07:25 named a change of strength by order in time, which the tissues
   I reported. The statement is withdrawn.
 - At 13:16 I wrote that rule Q is above the present byte's level on all three seeds of the first long-axon form. On seed 93683
   that was one order of the random choices (10.9); E62's worker's program gives 8.1 to 9.6 there. It holds on two seeds.
+- At 13:44 I wrote of the slow copies that yes or no passes the two-byte level "on all three seeds". On four further seeds it
+  does so on none (row 134). The three seeds used all night are the best of those tried, for every tissue form.
 
 ## 7. Where the material is, and what the coordinator would verify
 
@@ -366,4 +373,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 14:06 UTC, 19 November 2026.
+Last change: 14:10 UTC, 19 November 2026.
