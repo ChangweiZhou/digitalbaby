@@ -143,6 +143,22 @@ def main(root):
         P(f"| {b[0]}–{b[1]} | " + " | ".join(row) + " |")
     P()
 
+    # X2: the starting connections from feedback cells, from the final saved state (a connection given up never returns with
+    # birth step 0, so alive at the end means alive at every count)
+    import numpy as np
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import tissue_step1 as T
+    FB = np.array(T.birth(73129)["FB"])
+    P("## Starting connections from feedback cells at the end (X2)\n\n| Tissue | starting ones alive | strengths |\n|---|---|---|")
+    for k, d, nm in TISSUES + [("f11", F11, "4. formula 11 as written")]:
+        p = root / d / "final_state.npz"
+        if not p.exists():
+            continue
+        z = np.load(p)
+        a = z["alive"].astype(bool) & np.isin(z["snd"], FB) & (z["k0"] == 0)
+        P(f"| {nm} | {int(a.sum())} of 423 | {', '.join(f'{x:.4f}' for x in np.unique(z['w'][a])) or '—'} |")
+    P()
+
     # last 4096 and forecast
     P("## Cost over the last 4,096 bytes and the forecast for stage B round 1 (section 11.4)\n\n| Tissue | s/byte, bytes 12,288–16,383 | mean connections a cell |\n|---|---|---|")
     last = {}
