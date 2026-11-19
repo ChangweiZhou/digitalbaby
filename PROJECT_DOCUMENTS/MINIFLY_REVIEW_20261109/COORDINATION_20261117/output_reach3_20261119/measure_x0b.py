@@ -16,6 +16,7 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, 'deps', 'PREP'))
 import tis, life_stream as LS, score_emissions as SE
 label = sys.argv[1]; kw = dict(a.split('=') for a in sys.argv[2:]); t0 = time.time()
 X0 = tuple(float(eval(v)) for v in kw.pop('x0s', '3/8,1/2,5/8,3/4,1').split(','))
+ONLINE_ONLY = kw.pop('online_only', '0') == '1'      # skip the fitted readers (parts A and the one-hot readers): for long runs
 T = tis.make(kw); NB = T['NB']; N = T['N']; ts = tis.ts; B = T['B']; b = T['b'].astype(np.int64); isfb = B['kind'] == ts.FBK; SEED = T['SEED']
 L = LS.life(SEED); assert np.array_equal(L['bytes'][:NB], T['b'])
 Pxy = np.array(B['P']); allc = np.flatnonzero(~isfb)
@@ -25,7 +26,8 @@ for lo in range(0, NB, 4096):
     T['L'].tis_run(ctypes.byref(T['t']), ctypes.c_void_p(T['b'].ctypes.data), ctypes.c_int64(lo), ctypes.c_int64(hi), ctypes.c_int64(lo), ctypes.c_int64(hi), ctypes.c_void_p(R[lo:hi].ctypes.data))
 t_tissue = time.time() - t0
 M = NB - 1; y = b[1:]; nf = (3 * M) // 4; nin = (4 * nf) // 5; q0 = nf + 1
-Y = np.zeros((M, 256)); Y[np.arange(M), y] = 1
+Y = np.zeros((M, 256)) if 'online_only=1' not in sys.argv else None
+if Y is not None: Y[np.arange(M), y] = 1
 refs = SE.references(L['bytes'][:NB]); K_ = SE.kinds(L); pos = np.arange(nf, M) + 1
 kmask = {'all': np.ones(len(pos), bool), 'R1': K_['R1 (first family, phase FIRST)'][:NB][pos], 'R2': K_['R2 (first family, phase FIRST)'][:NB][pos]}
 shares = lambda g: {k: float((g[m] == b[pos][m]).mean()) for k, m in kmask.items()}
@@ -43,12 +45,11 @@ def stdz(X):
     sd = X[:nf].std(0); keep = sd > 0; return X[:, keep] / sd[keep]
 common = {}
 tt = np.arange(M)
-for h in (1, 2, 3):
+for h in ((1, 2, 3) if not ONLINE_ONLY else ()):
     OH = np.zeros((M, 256 * h))
     for j in range(h):
         q = tt[tt >= j]; OH[q, 256 * j + b[q - j]] = 1
     g, lam = ridge_all(OH); common[f'{h} one-hot(s) of the last bytes'] = dict(shares=shares(g), ridge=lam)
-del OH
 for k in ('ref_1', 'ref_2', 'ref_3'): common[k] = dict(shares=shares(refs[k][pos].astype(np.int64)))
 common['end mark'] = dict(shares={k: float((b[pos][m] == 10).mean()) for k, m in kmask.items()})
 wins = [(a_, min(a_ + 4096, NB)) for a_ in range(0, NB, 4096)]
@@ -71,17 +72,19 @@ for x0 in X0:
     for v in range(256): IDX[v, :len(ownk[v])] = ownk[v]
     P = np.array([len(o) + 1.0 for o in own])
     A = {}
-    Xb = stdz(R[:M][:, band].astype(np.float64)); g, lam = ridge_all(Xb); A['all cells of the band'] = dict(shares=shares(g), ridge=lam, cells=int(len(band))); del Xb
-    Xa = R[:M][:, near].astype(np.float64); sda = Xa[:nf].std(0); Xs = np.where(sda > 0, Xa / np.where(sda > 0, sda, 1), 0.0)
-    def pred(n, lam):
+    Xa = R[:M][:, near].astype(np.float64)
+    if not ONLINE_ONLY:
+      Xb = stdz(R[:M][:, band].astype(np.float64)); g, lam = ridge_all(Xb); A['all cells of the band'] = dict(shares=shares(g), ridge=lam, cells=int(len(band))); del Xb
+      sda = Xa[:nf].std(0); Xs = np.where(sda > 0, Xa / np.where(sda > 0, sda, 1), 0.0)
+      def pred(n, lam):
         o = np.zeros((M, 256))
         for v in range(256):
             Xv = Xs[:, ownk[v]]; mu = Xv[:n].mean(0); my = Y[:n, v].mean(); Xc = Xv[:n] - mu
             Gm = Xc.T @ Xc; Gm[np.diag_indices_from(Gm)] += lam * n; o[:, v] = (Xv - mu) @ np.linalg.solve(Gm, Xc.T @ (Y[:n, v] - my)) + my
         return o
-    inner = {e: float((pred(nin, 10.0 ** e)[nin:nf].argmax(1) == y[nin:nf]).mean()) for e in range(-6, 3)}
-    be = max(inner, key=lambda e: (inner[e], e)); A["each driver's own inputs"] = dict(shares=shares(pred(nf, 10.0 ** be)[nf:].argmax(1)), ridge=10.0 ** be)
-    del Xs
+      inner = {e: float((pred(nin, 10.0 ** e)[nin:nf].argmax(1) == y[nin:nf]).mean()) for e in range(-6, 3)}
+      be = max(inner, key=lambda e: (inner[e], e)); A["each driver's own inputs"] = dict(shares=shares(pred(nf, 10.0 ** be)[nf:].argmax(1)), ridge=10.0 ** be)
+      del Xs
     C = len(RULES); Wt = np.zeros((C, 256, G_ + 1)); rbar = np.zeros((C, 256)); rng = np.random.default_rng(SEED)
     right = np.zeros((C, NB), bool); seen = np.zeros(256, bool)
     for t in range(M):
