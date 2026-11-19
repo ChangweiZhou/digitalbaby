@@ -164,3 +164,13 @@ The reviewer had reported a first draft of the brief of step 2 with further chec
 Translation (the reviewer's). Why are you still verifying over and over? This thing is by its nature to be modified in real time as the course of the experiments requires. Did I ask you to deliberate over it again and again?
 
 What follows. The definition, the roadmap, the task graph and the briefs are working documents that are changed as the experiments show what is needed. They are not to be put through repeated rounds of reading before anything is run. From now on: a document is written once and used; a brief has at most one check before it goes to the coordinator; what a run shows is entered into the definition directly, with one dated line saying what changed and why.
+
+## 19. Mr. Xu on making and withdrawing connections (01:18 UTC, 19 November 2026)
+
+The reviewer had reported a reader's calculation that under the definition every cell keeps adding connections until it reads its whole neighbourhood. Mr. Xu:
+
+> 但是我们只是说每个细胞会自动决定连接（不妨认为是单向的），也就说它可以产生连接，也可以撤回连接。如果它一直收到噪音，显然它可以切断连接。虽然概率上说，所有附近的细胞都会尝试，为什么你的说法是会不断增加？
+
+Translation (the reviewer's). But all we said is that each cell decides its connections by itself (they may be taken as one-directional); that is, it can make a connection and it can withdraw one. If it keeps receiving noise over a connection, it can obviously cut that connection. Although in terms of probability all nearby cells will be tried, why do you say the number keeps increasing?
+
+What follows. The growth without end is not a consequence of his principle; it is a fault of how the definition wrote the two rules. Revision 5 makes a connection whenever a cell's activity is below a target, and after erratum E10 it withdraws one only when its strength has fallen below 1/128, which almost never happens; an earlier form withdrew by the sender's activity and cut nearly everything. Neither form withdraws a connection because what arrives over it is noise to the receiving cell. Corrected: connections are one-directional; a cell tries the cells near it and withdraws a connection over which it keeps receiving what is of no use to it; the number of a cell's connections is the balance of the two.
