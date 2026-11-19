@@ -3,6 +3,13 @@
 # clipped at 8) fitted on the first half of the last 8,192 bytes and read on the second half, for the present byte and the
 # bytes 1, 2, 3 back. Beside it the nearest-centroid reader of perbyte.py. A slow cell holds a sum of several bytes; a linear
 # reader can take such a sum apart where the nearest-centroid reader cannot.
+# Exactly (asked by E62's worker): the window is the last 8,192 bytes; its first 4,096 fit, its last 4,096 are read. Inputs: the
+# outputs as they are (no floor); mean and deviation over the fitting half; (x - mean)/sd; cells with deviation at most 1e-9 left
+# out; clipped to [-8, 8]; then a constant 1 appended (under the ridge like the rest). G = X'X on the fitting half; ridge = 0.01 *
+# trace(G) / columns on every diagonal entry. One output for each byte value seen in the fitting half as the target (the byte at
+# t - lag for the output read at byte t); reading = the largest output, a tie to the lowest value. "digits", "letters" = the mean
+# of the per-value shares; "end", "eq" = the share of that value; "never" = values with share 0. The nearest-centroid reader
+# beside it sets outputs below 0.01 to zero.
 # usage: perbyte3.py <label> rule=.. [options]
 import sys, os, json, ctypes, numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import tis
