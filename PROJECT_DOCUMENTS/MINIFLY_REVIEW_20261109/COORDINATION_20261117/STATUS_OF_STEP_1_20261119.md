@@ -180,10 +180,26 @@ the list of 07:25 named a change of strength by order in time, which the tissues
 - I reported at 08:50 that the output end told only yes or no reaches 8.3% on the base tissue. That was seed 73129; on the other
   two seeds it is 4.1 to 5.9% (row 41).
 
-## 7. Where the material is
+## 7. Where the material is, and what the coordinator would verify
 
-- Reviewer's program and results: `COORDINATION_20261117/reviewer_tissue_20261119/` on `claude/vibrant-cerf-sje726` (README.md, tissue.c, drive.py, diag.py, out/, diag/).
+- The rule as run, written from the program: `COORDINATION_20261117/THE_TISSUE_AS_RUN_20261119.md`.
+- Reviewer's program and results: `COORDINATION_20261117/reviewer_tissue_20261119/` on `claude/vibrant-cerf-sje726` (README.md,
+  tissue.c, tis.py, drive.py, far.py, band.py, loops.py, variety.py, diag.py, cond.py; one folder of results for each; the batches
+  run are batch1.txt to batch41.txt).
 - Log of every task sent and report taken: `COORDINATION_20261117/LOG.md`.
-- Workers' branches and commits: in the table of section 2.
+- Workers' branches (commits are in the rows of section 2): main worker `claude/e63-merged-tissue`; helper `claude/prep-step1-full`;
+  E52's worker `claude/round2-runner-sdga8c` (PREP/tissue7, PREP/tissue8); E55's worker `claude/e55-output-reach-017dSEpW`
+  (output_reach3_20261119); E57's worker `claude/e63-tissue-event-017dSE` (TISSUE_DELAY2); E62's worker `claude/tissue-check-ELsQP`
+  (TISSUE_CHECK_20261119: the independent program) and `claude/e62-connections-ELsQP` (E62's own report, 376e025b, for the coordinator).
+
+What a verification would take, in the order of what rests on what:
+
+1. That the independent program and the reviewer's give the same outputs at every byte (row 39): one command each, 16,384 bytes,
+   about one minute; RESULTS.md of TISSUE_CHECK_20261119 names them.
+2. The nine entries on time constants up to 256 (rows 31, 47, 55): `drive.py` with the command line of THE_TISSUE_AS_RUN section 5
+   and `tau=u2-256 seed=...`; the levels are computed by the readings tool in the same run.
+3. The long-axon tissue near the output lines (row 54): `far.py L8_256_s73129 <base> long=8-1/2 tau=u2-256 seed=73129`, the line
+   "near the output lines"; the batch is batch39.txt.
+4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
 Last change: 09:53 UTC, 19 November 2026.
