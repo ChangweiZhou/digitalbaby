@@ -15,6 +15,12 @@ default_rng([seed, g]). One answering cell (rule Q, eta 1/16, eps 1/16 while lea
       strength of its own connections.
 Score every `every` lines with learning frozen, no random choice: each pair's line fed byte by byte after an end of line; right if
 every byte after '=' is named; also per answer place counted from the right (units, tens, hundreds) on the never-shown pairs.
+Remedies (rem= a, b, c, or several): (a) inhibition among pool cells: G grows by 1/64 between cells that are candidates together; at
+each byte the candidates are taken in order of their firing count, and one fires unless the inhibition from those already fired reaches
+1 (the cell needs its count and its inhibitory connections); (b) at the judging time a cell is also withdrawn if another cell, active
+whenever it was active since both were made, has a stronger connection to the answering cell (a cell needs its co-activity with others
+and the strengths; with bonly=1 only these are withdrawn); (c) the answering cell's connections from pool cells decay by dec (1/4096)
+a byte, except those from active cells to the value named when the answer is yes.
     python3 addval.py <label> seed=.. gen=.. arch=V3|P lines=.. [N=..] [D=5] [per=2000] [maxn=9] [held=20] [every=5000] [neval=..]
 """
 import json, os, sys, time
@@ -59,12 +65,22 @@ class State:
             cnt = (s.A + s.B >= np.arange(511)).astype(float)
             for pos in (0, 1, 2): f.append(cnt * float(s.d[pos] == EQ))
         if arch == "P":
-            dv = np.array(s.d); f.append(((dv[PI] + dv[PJ] == PT) & (dv[PK] == PV)).astype(float))
+            dv = np.array(s.d); cand = (dv[PI] + dv[PJ] == PT) & (dv[PK] == PV)
+            if GI is not None and cand.any():
+                ci = np.flatnonzero(cand); fired = []
+                for j in ci[np.argsort(-CNT[ci], kind="stable")]:
+                    if not fired or GI[j, fired].sum() < 1.0: fired.append(j)
+                cand = np.zeros(N, bool); cand[fired] = True; s.cand = ci
+            elif GI is not None: s.cand = np.zeros(0, int)
+            f.append(cand.astype(float))
         f.append(np.ones(1))
         return np.concatenate(f)
 
 
 st = State(); base = (D + 1) * NS; FIRED = np.zeros(N)
+REM = kw.get("rem", "")
+CNT = np.zeros(N); GI = np.zeros((N, N)) if "a" in REM else None; CO = np.zeros((N, N)) if "b" in REM else None
+RG = 1 / 64; DEC = float(eval(kw.get("dec", "1/4096")))
 F = len(st.features()); W = np.zeros((NS, F)); seen = np.zeros(NS, bool)
 if arch == "P":
     for j, c in enumerate(pool): c[4] = st.d[c[0]] + st.d[c[1]]; PT[j] = c[4]
@@ -91,16 +107,39 @@ for li in range(1, NL + 1):
         st.step(x); seen[SI[x]] = True
         if nxt is None: break
         u = st.features(); A = W @ u; e = int(A.argmax())
-        if arch == "P": FIRED += u[base:base + N]
+        if arch == "P":
+            FIRED += u[base:base + N]
+            if GI is not None:
+                ci = st.cand; CNT[ci] += 1
+                if len(ci) > 1: GI[np.ix_(ci, ci)] += RG; GI[ci, ci] -= RG
+            else:
+                ai = np.flatnonzero(u[base:base + N]); CNT[ai] += 1
+            if CO is not None:
+                ai = np.flatnonzero(u[base:base + N])
+                if len(ai): CO[np.ix_(ai, ai)] += 1
         if rng.random() < eps: sv = np.flatnonzero(seen); e = int(sv[rng.integers(0, len(sv))])
         ok = SYMS[e] == nxt; W[e] += eta * (float(ok) - A[e]) / float(u @ u) * u
+        if arch == "P" and "c" in REM:
+            keep_row = W[e, base:base + N].copy() if ok else None
+            W[:, base:base + N] *= (1 - DEC)
+            if ok:
+                ai = u[base:base + N] > 0; W[e, base:base + N][ai] = keep_row[ai]
     if arch == "P" and li % per == 0:
         strength = np.linalg.norm(W[:, base:base + N], axis=0)
         if kw.get("keep") == "rate":                                   # weigh by how often the cell fired since it was last judged
             strength = strength * np.sqrt(FIRED / per); FIRED[:] = 0
-        for j in np.argsort(strength, kind="stable")[: N // 4]:
+        drop = list(np.argsort(strength, kind="stable")[: N // 4])
+        if CO is not None:
+            nC = np.diag(CO).copy(); red = []
+            for j in np.flatnonzero(nC > 0):
+                cov = np.flatnonzero((CO[j] >= nC[j]) & (np.arange(N) != j))        # active whenever j was active
+                if len(cov) and strength[cov].max() > strength[j]: red.append(j)
+            drop = sorted(set(red)) if kw.get("bonly") == "1" else sorted(set(drop) | set(red))
+        for j in drop:
             pool[j] = new_cell(); pool[j][4] = st.d[pool[j][0]] + st.d[pool[j][1]]; W[:, base + j] = 0.0
-            PI[j], PJ[j], PK[j], PV[j], PT[j] = pool[j]
+            PI[j], PJ[j], PK[j], PV[j], PT[j] = pool[j]; CNT[j] = 0
+            if GI is not None: GI[j, :] = 0; GI[:, j] = 0
+            if CO is not None: CO[j, :] = 0; CO[:, j] = 0
     if li % every == 0:
         s_, ps = evaluate(ev_shown); h_, ph = evaluate(ev_held)
         curve.append(dict(lines=li, shown=s_, never_shown=h_, never_shown_places=ph, shown_places=ps))
@@ -110,6 +149,8 @@ if arch == "P":
     strength = np.linalg.norm(W[:, base:base + N], axis=0); top = np.argsort(-strength)[:12]
     out["strongest_cells"] = [dict(delays=[pool[j][0], pool[j][1]], gate=[pool[j][2], chr(pool[j][3])], theta=pool[j][4], strength=float(strength[j])) for j in top]
 os.makedirs("/home/user/tissue_check/out/addv", exist_ok=True)
+if arch == "P" and kw.get("save") == "1":
+    np.savez(f"/home/user/tissue_check/out/addv/{lab}.npz", PI=PI, PJ=PJ, PK=PK, PV=PV, PT=PT, W=W, held=np.array(held), D=D, base=base)
 json.dump(out, open(f"/home/user/tissue_check/out/addv/{lab}.json", "w"), indent=0)
 c = curve[-1]
 print(lab, f"at {c['lines']}: shown {100*c['shown']:.0f} never shown {100*c['never_shown']:.0f} places {c['never_shown_places']} | {time.time() - t0:.0f} s", flush=True)

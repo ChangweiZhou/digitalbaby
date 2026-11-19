@@ -802,3 +802,29 @@ N 1000: whole answer shown 15 / 15 / 12, never shown 14 / 13 / 14. N 4000: shown
 32 [25-40]. Never shown by place (each place named with the right bytes before it), N 4000: units 66 / 61 / 65, tens 40 / 39 / 47,
 hundreds 100 / 100 / 91; shown pairs alike (units 63-64, tens 42-48). There is no table to hold: shown and never shown are about equal
 and both low; the tens is the place that fails most. Whether the carry is the cause was not measured.
+
+## 21. Why the pool keeps table cells, and three remedies (reviewer's task of 15:46 UTC)
+
+**Diagnosis** (`diagpool.py`, `out/addv/diagP4000_s73129_g0_diag.json`; pool N 4000, seed 73129, order 0, 120,000 lines: shown 91,
+never shown 25). Each active pool cell is classed by its behaviour over all 100 pairs at that answer place: a sum cell fires for every
+pair of its total and no other, a table cell for some pairs of a total. At the first wrong answer byte of the 15 never-shown sums answered
+wrongly, the answering cell's evidence for the value it named over the right value, by kind (mean): sum cells -0.18 (they point to the
+right value), table cells +0.48, the line-form inputs (delay one-hots, constant) +0.25. The largest wrong evidence came from table cells
+in 9 cases, from the line-form inputs in 6, from sum cells in none; in 4 of the 15 no sum cell for that total and place was in the pool.
+Cells active at some answer place: 275 sum, 978 table; mean connection strength 0.048 (sum) and 0.043 (table). So the sum cells'
+connections are not too weak; table cells for other pairs fire on the unseen pair and outvote them, with the line-form inputs and gaps in
+coverage.
+
+**Remedies** (`addval.py rem=`; pool N 1,000, single digits, 120,000 lines; `out/addv/table_rem.txt`). Never shown, median [range]
+over five orders (shown in brackets), seeds 73129 / 406364 / 545353:
+
+| | what a cell needs | 73129 | 406364 | 545353 |
+|---|---|---|---|---|
+| none (section 20) | | 15 [10-45] (85) | 20 [15-35] (85) | 15 [5-35] (88) |
+| (a) inhibition among pool cells, growing by 1/64 between cells that are candidates together; candidates taken in order of their firing count, a cell fires unless the inhibition from those already fired reaches 1 | its firing count, inhibitory connections | 30 [10-35] (75) | 30 [10-35] (66) | 20 [0-40] (65) |
+| (b) also withdrawn when another cell, active whenever it was active, has a stronger connection to the answering cell | its co-activity with other cells, the strengths | 30 [15-35] (84) | 25 [20-45] (82) | 25 [15-35] (74) |
+| (c) the answering cell's connections from pool cells decay by 1/4096 a byte unless used with yes | which connections were used with yes | 0 [0-5] (48) | 0 [0-5] (46) | 0 [0-0] (46) |
+| (a) and (b) | | 25 [10-25] (65) | 30 [20-40] (65) | see table file |
+
+(a) and (b) raise the never-shown share by 5-15 points; (c) loses it entirely and half the shown. None reaches 80, so step 3 (0-99 with
+the tens split by carry) was not run.
