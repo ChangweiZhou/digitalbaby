@@ -52,3 +52,38 @@ For comparison, the two parts of the present program timed here at 0.66 s a byte
 2. The output floor is entered in the definition (choice C10) as a change of the first form, dated today, with 1/128 as its first value. It has to be run: it changes which cells are active and therefore what is learned.
 3. The program is to be written once in this design, as the program of every later step, and accepted against E63's present program on the first 2,048 bytes of each tissue with the floor set to zero (connections and emissions identical; other quantities within a stated rounding).
 4. The fifth tissue's rule for withdrawing, as the reviewer wrote it, uses deviations from running averages and is not zero for a silent cell. In this design it is changed to a form that is: the product of the input's trace and the receiving cell's activity, brought up to date only when the cell is active. That is entered in the definition when the fifth tissue has reported.
+
+## 5. Second kernel (03:43 UTC): 262,144 bytes in about one minute
+
+Mr. Xu asked for another factor of ten, and asked two questions: is there a number that makes little sense, and is there an improvement of the algorithm. Both have answers, and the second kernel (`ev2.c`, `ev2_time.py`) measures them on the same real connections.
+
+**Numbers that make little sense.**
+
+1. *The input is held on, and everything recomputed, for 32 steps a byte.* Nothing new arrives after the first step of a byte; the tissue settles within a few steps and the remaining steps repeat it.
+2. *A target of activity of 1/8.* No cell reaches it; every threshold but one is zero, so the control does nothing except drive the making of connections until the neighbourhood is full.
+3. *About 90 connections a cell,* the consequence of 2 and of a neighbourhood of 94 members. Every active cell costs 90 visits out and 90 in.
+4. *Strengths changed at every one of the 32 steps,* from a mismatch that changes slowly.
+5. *No floor on an output* (section 1).
+
+**Changes of the algorithm.**
+
+1. *Only changes are sent.* Each cell keeps its arrival from step to step. A sending cell passes on the difference between its output now and the output it last sent, and only when that difference exceeds a tolerance. A cell is worked on only while its arrival or its state is still moving. Once the tissue has settled within a byte, the remaining steps cost nothing; the number of steps a byte stops mattering.
+2. *One trace for a sending cell,* not one for each of its connections: 2,048 numbers in place of 176,000, and nothing to update along connections.
+3. *Strengths are changed once a byte,* from a sum that each receiving cell keeps of its mismatch times its activity; only cells with such a sum visit their incoming connections, and they skip inputs whose trace is zero.
+
+**Data structures used:** connections stored once, sorted by receiving cell, with a second index by sending cell; 16-bit cell numbers and 32-bit strengths (6 bytes a connection); a work list of cells still moving, with a membership flag for each cell; a list of cells that have something to learn this byte; the arrival, state, prediction, threshold, last output sent, learning sum and trace of each cell in arrays addressed by the cell's number.
+
+**Measured** (4,096 bytes, output floor 1/128, tolerance 1/1024, five cells of the input end driven a byte, one thread):
+
+| Setting | Connections a cell | Cell updates a byte | Connection visits a byte | Cost a byte | 262,144 bytes |
+|---|---|---|---|---|---|
+| 32 steps a byte, all connections | 86.1 | 6,846 | 31,197 | 0.271 ms | 1.2 min |
+| 8 steps a byte | 86.1 | 6,193 | 63,981 | 0.444 ms | 1.9 min |
+| 32 steps, the 32 strongest connections of each cell | 30.8 | 10,653 | 36,126 | 0.424 ms | 1.9 min |
+| 32 steps, the 16 strongest | 15.5 | 3,133 | 5,920 | 0.090 ms | 0.4 min |
+| 32 steps, tolerance 1/128 | 86.1 | 4,406 | 27,221 | 0.211 ms | 0.9 min |
+| 32 steps, 20 cells driven a byte | 86.1 | 17,493 | 78,954 | 0.706 ms | 3.1 min |
+
+The first kernel visited about 30,000 connections at every step, 960,000 a byte; this one visits about 31,000 a byte. Against the present program's two main parts on this machine (0.66 s a byte) the first row is about 2,400 times faster.
+
+**What these changes do to the tissue.** Change 2 alters only the trace of a connection in the steps after it is made. Changes 1 and 3 are approximations: an output that moves by less than the tolerance is not passed on, and strengths follow the sum over a byte and not each step. They are to be accepted by running the full program in both ways on one tissue and comparing what is learned, not by equality of numbers. As before, the kernel's cell formulas are shortened and it does not make or give up connections, so these are timings of the design; the level of activity in it (about 54 cells sending at the end of a byte) is lower than in the first kernel and has to be checked in the full program.
