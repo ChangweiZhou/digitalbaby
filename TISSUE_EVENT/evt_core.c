@@ -505,6 +505,10 @@ void evt_sync(void) {
     for (int c = 0; c < NSLOT; c++) if (c_alive[c]) (void)trace_of(c, K);
 }
 static int *order; static int norder;
+static double peek_trace(int c, int64_t upto) {          /* the trace of connection c at the start of step `upto`, not stored */
+    if (TRACE_SENDER) { int j = c_snd[c]; return relax(E[j], zsent[j], DEC32, INC32, upto - Est[j]); }
+    return relax(c_e[c], zsent[c_snd[c]], DEC32, INC32, upto - c_est[c]);
+}
 static int cmp_seq2(const void *a, const void *b) { return cmp_seq(a, b); }
 /* the live connections in the order of making: sender, receiver, strength, trace, step of making, ub */
 void evt_live(int *snd, int *rcv, double *w, double *e, int64_t *k0, double *ub) {
@@ -514,13 +518,17 @@ void evt_live(int *snd, int *rcv, double *w, double *e, int64_t *k0, double *ub)
     for (int q = 0; q < norder; q++) {
         int c = order[q];
         snd[q] = c_snd[c]; rcv[q] = c_rcv[c]; w[q] = c_w[c]; k0[q] = c_k0[c]; ub[q] = c_ub[c];
-        e[q] = TRACE_SENDER ? trace_of(c, K) : (trace_of(c, K));
+        e[q] = peek_trace(c, K);
     }
 }
 void evt_cells(double *pv, double *pp, double *pth, double *pab, double *pvt, int64_t *pkl) {
-    for (int i = 0; i < NC; i++) touch(i, K);
-    memcpy(pv, v, 8 * NC); memcpy(pp, p, 8 * NC); memcpy(pth, th, 8 * NC); memcpy(pab, abar, 8 * NC); memcpy(pkl, klast, 8 * NC);
-    if (vt && pvt) memcpy(pvt, vt, 8 * NC);
+    /* reading does not change the state: lazily held quantities are computed up to step K without being stored */
+    for (int i = 0; i < NC; i++) {
+        pp[i] = relax(p[i], A[i], DEC32, INC32, K - pst[i]);
+        pab[i] = relax(abar[i], x[i], DEC128, INC128, K - ast[i]);
+        if (vt && pvt) pvt[i] = relax_vt(vt[i], x[i], K - vst[i]);
+    }
+    memcpy(pv, v, 8 * NC); memcpy(pth, th, 8 * NC); memcpy(pkl, klast, 8 * NC);
 }
 int evt_events_made(int64_t *o, int cap) { int n = nev_made < cap ? nev_made : cap; memcpy(o, ev_made, 8 * 3 * n); return nev_made; }
 int evt_events_gone(int64_t *o, int cap) { int n = nev_gone < cap ? nev_gone : cap; memcpy(o, ev_gone, 8 * 4 * n); return nev_gone; }
