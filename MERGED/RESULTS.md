@@ -201,3 +201,102 @@ The bytes one and two back are carried above their levels by T2, T3, T4, T6, T7 
 Only T5 to T8 keep full amplitude (largest output 1.00) out to the cells near the output lines. Of these, T6 also keeps the present byte at d = 4 (S(4,0) 0.40 to 0.59) and carries both earlier bytes.
 
 What every tissue still lacks near the output lines: a reader of those cells that does better than a table of the last three bytes. The emission itself was not read in these runs.
+
+## Long axons (the reviewer's message of 10:32 UTC): T5L to T8L
+
+**The program, third build.** It is the reviewer's tissue.c and tis.py at aa0a4341, compiled with `-ffp-contract=off`. That version holds part (e), a time constant for every cell (`tau=u2-N`, by the reviewer's draw) and the long axons (`long=K-R`, as in THE_TISSUE_AS_RUN_20261119.md, section 3a). Parts (b) and (d) are re-added, and the helper's draw of time constants is kept as `tau=h:SPEC`. The second build is kept in `v2/`.
+
+**Checks** (`equiv_*.log`; the second build's checks are in `equiv_v2/`). Each compares the merged program with the reviewer's own on seed 73129, over 16,384 bytes.
+
+| Setting | Outputs of every cell, last 512 bytes | Connections | Made / given up | Connections a cell (over 2,048) |
+|---|---|---|---|---|
+| The reviewer's L8_256 row: `… a_make=1/16384 start_w=1/64 tau=u2-256 long=8-1/2` | identical (difference 0.0) | identical | 898 / 11,657 | 2.50 |
+| T5's options with `long=8-1/2` | identical | identical | 473 / 10,976 | 2.62 |
+
+- Base B1 and the delays (d) are also identical to their authors' programs.
+- Part (b) differs at rounding level (1.4e-5), because its author's build does not use `-ffp-contract=off`.
+
+**The tissues.** All use T5's options with `long=8-1/2`: `rule=timing prune_only=1 norm=1 lines_learn=1 gain=3 rho=1 gmax=8 mk_long=1 a_make=1/4096 make_period=1024`, with totals 3/4 and 1/4.
+
+| Tissue | Added options |
+|---|---|
+| T5L | none |
+| T6L64 | `tau=u2-64` |
+| T6L128 | `tau=u2-128` |
+| T6L256 | `tau=u2-256` |
+| T7L | `dmax=16` |
+| T8L | `tau=u2-64 dmax=16` |
+
+The time constants use the reviewer's draw. Each tissue runs three seeds for 65,536 bytes, read in four windows; the first window ends at 16,384, and all four are in `ntd/*.json`.
+
+**The cells near the output lines, two ways:**
+- **near18:** the drivers, with every cell within 1/8 of a driver (495 to 519 cells).
+- **nearL:** the drivers, with every member of their enlarged neighbourhoods (569 to 595 cells). This set adds the long-axon cells within 1/2 of a driver.
+
+**The next-byte reader.** `reach2.py` is reach.py with the second set added.
+
+### S near the output lines and the whole tissue (last window), `L_TABLE.md`
+
+| tissue | seed | near18 (cells): S lag 0 / 1 / 2 / 3 | nearL (cells): S lag 0 / 1 / 2 / 3 | levels lag 0 / 1 / 2 / 3 | whole tissue S(d,0) d = 1 / 2 / 4 | largest distance | connections a cell (largest) | made / given up | cells differing after 64 / 512 bytes | ms a byte |
+|---|---|---|---|---|---|---|---|---|---|---|
+| T5L | 73129 | (495) 0.259 / 0.042 / 0.038 / 0.070 | (577) 0.288 / 0.047 / 0.039 / 0.072 | 0.110 / 0.102 / 0.073 / 0.181 | 0.972 / 0.723 / 0.324 | 8 | 2.67 (15) | 545 / 11,118 | 0 / 0 | 8.0 |
+| T5L | 93683 | (519) 0.237 / 0.098 / 0.041 / 0.053 | (595) 0.277 / 0.099 / 0.039 / 0.055 | 0.110 / 0.100 / 0.081 / 0.186 | 0.909 / 0.418 / 0.288 | 8 | 2.71 (12) | 643 / 11,131 | 0 / 0 | 8.0 |
+| T5L | 116089 | (495) 0.283 / 0.046 / 0.034 / 0.063 | (569) 0.283 / 0.044 / 0.038 / 0.057 | 0.110 / 0.091 / 0.074 / 0.178 | 0.927 / 0.687 / 0.331 | 7 | 2.69 (11) | 397 / 10,923 | 0 / 0 | 8.2 |
+| T6L64 | 73129 | (495) 0.122 / 0.096 / 0.051 / 0.053 | (577) 0.137 / 0.093 / 0.061 / 0.054 | 0.110 / 0.102 / 0.073 / 0.181 | 0.967 / 0.586 / 0.172 | 9 | 3.30 (12) | 767 / 10,093 | 0 / 0 | 9.1 |
+| T6L64 | 93683 | (519) 0.133 / 0.151 / 0.119 / 0.100 | (595) 0.135 / 0.157 / 0.123 / 0.102 | 0.110 / 0.100 / 0.081 / 0.186 | 0.839 / 0.539 / 0.157 | 8 | 3.06 (13) | 1,412 / 11,221 | 0 / 0 | 8.8 |
+| T6L64 | 116089 | (495) 0.219 / 0.195 / 0.118 / 0.068 | (569) 0.244 / 0.225 / 0.125 / 0.095 | 0.110 / 0.091 / 0.074 / 0.178 | 0.957 / 0.642 / 0.272 | 9 | 2.87 (10) | 1,254 / 11,431 | 0 / 0 | 8.3 |
+| T6L128 | 73129 | (495) 0.166 / 0.156 / 0.110 / 0.099 | (577) 0.187 / 0.163 / 0.115 / 0.095 | 0.110 / 0.102 / 0.073 / 0.181 | 0.981 / 0.641 / 0.195 | 8 | 2.97 (12) | 575 / 10,560 | 0 / 0 | 8.7 |
+| T6L128 | 93683 | (519) 0.180 / 0.238 / 0.214 / 0.167 | (595) 0.185 / 0.249 / 0.217 / 0.156 | 0.110 / 0.100 / 0.081 / 0.186 | 0.824 / 0.501 / 0.283 | 8 | 2.82 (12) | 4,379 / 14,663 | 0 / 0 | 7.9 |
+| T6L128 | 116089 | (495) 0.221 / 0.191 / 0.117 / 0.098 | (569) 0.226 / 0.204 / 0.126 / 0.099 | 0.110 / 0.091 / 0.074 / 0.178 | 0.939 / 0.579 / 0.263 | 10 | 2.67 (12) | 1,226 / 11,795 | 0 / 0 | 8.2 |
+| T6L256 | 73129 | (495) 0.165 / 0.172 / 0.147 / 0.144 | (577) 0.181 / 0.176 / 0.143 / 0.139 | 0.110 / 0.102 / 0.073 / 0.181 | 0.934 / 0.467 / 0.193 | 9 | 2.58 (8) | 723 / 11,480 | 0 / 0 | 7.6 |
+| T6L256 | 93683 | (519) 0.169 / 0.170 / 0.151 / 0.141 | (595) 0.173 / 0.186 / 0.162 / 0.144 | 0.110 / 0.100 / 0.081 / 0.186 | 0.864 / 0.499 / 0.226 | 9 | 2.70 (17) | 4,956 / 15,466 | 0 / 0 | 7.4 |
+| T6L256 | 116089 | (495) 0.180 / 0.173 / 0.140 / 0.112 | (569) 0.233 / 0.218 / 0.153 / 0.126 | 0.110 / 0.091 / 0.074 / 0.178 | 0.969 / 0.621 / 0.250 | 10 | 2.64 (10) | 1,851 / 12,485 | 0 / 0 | 7.5 |
+| T7L | 73129 | (495) 0.180 / 0.215 / 0.130 / 0.094 | (577) 0.191 / 0.227 / 0.124 / 0.094 | 0.110 / 0.102 / 0.073 / 0.181 | 0.852 / 0.530 / 0.202 | 6 | 3.32 (8) | 13 / 9,297 | 0 / 0 | 12.7 |
+| T7L | 93683 | (519) 0.191 / 0.221 / 0.151 / 0.124 | (595) 0.188 / 0.221 / 0.159 / 0.115 | 0.110 / 0.100 / 0.081 / 0.186 | 0.731 / 0.350 / 0.219 | 7 | 2.95 (8) | 105 / 10,118 | 0 / 0 | 12.4 |
+| T7L | 116089 | (495) 0.114 / 0.135 / 0.075 / 0.071 | (569) 0.124 / 0.139 / 0.080 / 0.074 | 0.110 / 0.091 / 0.074 / 0.178 | 0.838 / 0.439 / 0.157 | 7 | 3.16 (8) | 34 / 9,628 | 0 / 0 | 12.7 |
+| T8L | 73129 | (495) 0.119 / 0.135 / 0.143 / 0.125 | (577) 0.129 / 0.149 / 0.155 / 0.128 | 0.110 / 0.102 / 0.073 / 0.181 | 0.902 / 0.418 / 0.151 | 7 | 3.19 (8) | 37 / 9,587 | 0 / 0 | 12.7 |
+| T8L | 93683 | (519) 0.080 / 0.137 / 0.148 / 0.138 | (595) 0.094 / 0.150 / 0.149 / 0.139 | 0.110 / 0.100 / 0.081 / 0.186 | 0.750 / 0.358 / 0.088 | 8 | 3.11 (8) | 113 / 9,820 | 0 / 0 | 12.4 |
+| T8L | 116089 | (495) 0.078 / 0.145 / 0.161 / 0.126 | (569) 0.105 / 0.194 / 0.190 / 0.143 | 0.110 / 0.091 / 0.074 / 0.178 | 0.901 / 0.499 / 0.108 | 8 | 2.91 (9) | 73 / 10,169 | 0 / 0 | 11.6 |
+
+### The reader of the next byte (last quarter), `L_READ.md`
+
+| tissue | seed | near: drivers + enlarged neighbourhoods (cells) | near: drivers + cells within 1/8 (cells) | all 1,984 cells | one-hot present | one-hots present + previous | 3-byte table |
+|---|---|---|---|---|---|---|---|
+| T5L | 73129 | 0.0986 (577) | 0.0954 (495) | 0.1313 | 0.1059 | 0.1296 | 0.2512 |
+| T5L | 93683 | 0.0756 (595) | 0.0771 (519) | 0.1157 | 0.1035 | 0.1245 | 0.2533 |
+| T5L | 116089 | 0.0915 (569) | 0.0867 (495) | 0.1328 | 0.1077 | 0.1268 | 0.2536 |
+| T6L64 | 73129 | 0.1244 (577) | 0.1182 (495) | 0.1966 | 0.1059 | 0.1296 | 0.2512 |
+| T6L64 | 93683 | 0.1205 (595) | 0.1176 (519) | 0.2000 | 0.1035 | 0.1245 | 0.2533 |
+| T6L64 | 116089 | 0.1669 (569) | 0.1610 (495) | 0.2203 | 0.1077 | 0.1268 | 0.2536 |
+| T6L128 | 73129 | 0.1851 (577) | 0.1796 (495) | 0.2205 | 0.1059 | 0.1296 | 0.2512 |
+| T6L128 | 93683 | 0.1456 (595) | 0.1389 (519) | 0.2302 | 0.1035 | 0.1245 | 0.2533 |
+| T6L128 | 116089 | 0.1648 (569) | 0.1602 (495) | 0.2388 | 0.1077 | 0.1268 | 0.2536 |
+| T6L256 | 73129 | 0.1790 (577) | 0.1782 (495) | 0.2208 | 0.1059 | 0.1296 | 0.2512 |
+| T6L256 | 93683 | 0.1224 (595) | 0.1183 (519) | 0.2179 | 0.1035 | 0.1245 | 0.2533 |
+| T6L256 | 116089 | 0.1578 (569) | 0.1585 (495) | 0.2418 | 0.1077 | 0.1268 | 0.2536 |
+| T7L | 73129 | 0.1578 (577) | 0.1570 (495) | 0.1796 | 0.1059 | 0.1296 | 0.2512 |
+| T7L | 93683 | 0.1412 (595) | 0.1388 (519) | 0.1735 | 0.1035 | 0.1245 | 0.2533 |
+| T7L | 116089 | 0.1224 (569) | 0.1198 (495) | 0.1613 | 0.1077 | 0.1268 | 0.2536 |
+| T8L | 73129 | 0.1619 (577) | 0.1559 (495) | 0.2155 | 0.1059 | 0.1296 | 0.2512 |
+| T8L | 93683 | 0.1274 (595) | 0.1251 (519) | 0.2115 | 0.1035 | 0.1245 | 0.2533 |
+| T8L | 116089 | 0.1838 (569) | 0.1769 (495) | 0.2245 | 0.1077 | 0.1268 | 0.2536 |
+
+### Answer (item 4), as measured
+
+Two tissues keep the present byte near the output lines above its level while carrying the bytes one and two back above theirs, on all three seeds and in both near sets:
+
+| Tissue | Present byte near the output lines | Lag 1 | Lag 2 | Next-byte reader near the output lines |
+|---|---|---|---|---|
+| T6L128 | 0.166 to 0.226 | 0.156 to 0.249 | 0.110 to 0.217 | 0.139 to 0.185 |
+| T6L256 | 0.165 to 0.233 | 0.170 to 0.218 | 0.140 to 0.162 | 0.118 to 0.179 |
+
+- **T6L128 is the stronger.** Its near-output reader is above the one-hots of the present and previous bytes on all three seeds. T6L256's reader falls just below them on 93683 (0.122 against 0.125).
+- Lag 3 is below its level near the output lines in every tissue.
+- Neither tissue depends on its past (0 cells differ after 64 and 512 bytes). Each holds 2.6 to 3.0 connections a cell (largest 12 and 17) and makes 575 to 4,956 connections in the life.
+- **The other four:**
+  - T5L carries no earlier byte.
+  - T6L64 misses lags 1 and 2 on 73129.
+  - T7L misses lag 2 on 116089 (0.075, at its level).
+  - T8L loses the present byte near the output lines on 93683 and 116089.
+- **The two near sets differ little.** In every row the reader on the drivers' enlarged neighbourhoods and the reader on the cells within 1/8 differ by at most 0.007, so the long-axon cells that reach the drivers add little to what those drivers' neighbours tell.
+- **What is still lacking:** no near-output reader reaches the table of the last three bytes (0.251 to 0.254). The emission was not read.
