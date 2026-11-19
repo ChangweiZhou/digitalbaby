@@ -1,0 +1,69 @@
+{
+ "kind": "comparator",
+ "seed": 116089,
+ "command": "python3 comparator.py run 116089",
+ "config": {
+  "code": 32,
+  "units": 128,
+  "lr": 0.001,
+  "betas": [
+   0.9,
+   0.98
+  ],
+  "eps": 1e-08,
+  "weight_decay": 0.25,
+  "torch_seed": 0
+ },
+ "life_config": {
+  "first": 262144,
+  "knowable": 131072,
+  "quiet": 4096,
+  "delay": 131072,
+  "table1": 65536,
+  "table2": 65536,
+  "table1_returns": 32768,
+  "keys_per_table": 16,
+  "gaps": [
+   1,
+   2,
+   4,
+   8
+  ]
+ },
+ "counts": {
+  "bytes": 704547,
+  "items": 64820,
+  "longest_item": 4108,
+  "parameters": 103424,
+  "macs_forward_a_byte": 94208,
+  "macs_forward": 66373963776,
+  "macs_backward": 132747927552,
+  "macs_total": 199121891328,
+  "optimiser_steps": 64820,
+  "optimiser_parameter_updates": 6703943680
+ },
+ "right_first_attempt": 305058,
+ "right_share": 0.43298459861442884,
+ "mean_loss_first_100_items": 4.114323616027832,
+ "mean_loss_last_100_items": 0.415874719619751,
+ "cpu_seconds": 144.745828671,
+ "wall_seconds": 145.46343636512756,
+ "cpu_seconds_a_byte": 0.00020544524165314734,
+ "forecast": {
+  "whole life": {
+   "bytes": 704547,
+   "cpu_seconds": 144.745828671,
+   "cpu_hours": 0.040207174630833335,
+   "macs_total": 199121891328
+  },
+  "first 262,144 bytes": {
+   "bytes": 262144,
+   "cpu_seconds": 53.85623742792266,
+   "cpu_hours": 0.014960065952200738,
+   "macs_total": 74088185856
+  }
+ },
+ "torch": "2.15.0+cpu",
+ "threads": 1,
+ "record": "comparator_116089_704547.npz"
+}
