@@ -174,3 +174,22 @@ The reviewer had reported a reader's calculation that under the definition every
 Translation (the reviewer's). But all we said is that each cell decides its connections by itself (they may be taken as one-directional); that is, it can make a connection and it can withdraw one. If it keeps receiving noise over a connection, it can obviously cut that connection. Although in terms of probability all nearby cells will be tried, why do you say the number keeps increasing?
 
 What follows. The growth without end is not a consequence of his principle; it is a fault of how the definition wrote the two rules. Revision 5 makes a connection whenever a cell's activity is below a target, and after erratum E10 it withdraws one only when its strength has fallen below 1/128, which almost never happens; an earlier form withdrew by the sender's activity and cut nearly everything. Neither form withdraws a connection because what arrives over it is noise to the receiving cell. Corrected: connections are one-directional; a cell tries the cells near it and withdraws a connection over which it keeps receiving what is of no use to it; the number of a cell's connections is the balance of the two.
+
+## 20. Mr. Xu's rulings of 19 November, 14:24 to 14:33 UTC: the input part and the output part
+
+Given in English, in answer to the reviewer's summary, which had used "output line" as if it were a given term. Mr. Xu's words:
+
+- "I am confused with 'output line' above. I never defined it."
+- "In theory the output part can be connected towards the input, so that the input knew what the previous output is obviously. But I am confused with the 256 lines construction, which seems quite dumb at best. For our purposes the output part only need to produce one fixed bandwidth output at each time point, and as a result it should be something quite simple. The output across time is what is complicated."
+- "In short we are guided by biological principles as before."
+- "In our setting the cells can take byte level inputs and outputs."
+- "Eight cells constitute one byte sounds bizarre to me."
+- "The input part can be many cells." "The output part can also be many cells."
+- "The output part obviously has to figure out how to send the output on their own, it has to be learned."
+
+What follows.
+1. The 256 input lines and the 256 output lines with their drivers at x = 1 are the definition's construction, not a ruling, and are withdrawn. So is the reviewer's proposal of 14:26 (eight cells as eight bits) and its proposal of 14:31 (one cell in, one cell out); neither was said by Mr. Xu.
+2. A cell can receive a byte as input and can give a byte as output. The input part is many cells; the output part is many cells.
+3. The output part gives one output of fixed width at each time point. How its cells arrive at that one output is not laid down by the program: they learn it.
+4. The output part can be connected toward the input, so that the input knows the previous output (already ruled in section 15).
+5. Every figure of 19 November that is stated "at the output lines" or "at a driver" (status rows up to 136) was measured on the withdrawn construction. The yes-or-no rule (row 119 on) and the slow copies at a cell's connections (row 130 on) do not depend on it.
