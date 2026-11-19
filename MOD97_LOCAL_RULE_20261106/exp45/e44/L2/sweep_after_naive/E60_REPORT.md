@@ -133,13 +133,13 @@ In every world and at every age RB = R + B exactly (`E60.json`, `RB_equals_R_plu
 | Difference of D5 at 1,024 visits | +0.0286 | +0.0265 | −0.0092 | +0.4664 | +0.128 [−0.138, +0.394], not distinguished | +0.015 [−0.020, +0.051], not distinguished |
 | Change: R at 1,024 visits less R over the first 64 visits | +0.0555 | +0.0193 | +0.0760 | +0.0382 | +0.047 [+0.019, +0.076], higher | +0.050 [+0.002, +0.099], higher |
 
-A change above zero means the difference moved in favour of `sweep-after-naive`.
+A change above zero means the difference moved in favour of `sweep-after-naive`. Every figure in this section holds at the learning rate 0.001 only. Beside the column over worlds 1 to 4, and beside D13 over four worlds below: Worlds 1 and 4 start from the same births (seed 73129), so the four values are not those of four independent learners.
 
 In world 4 the score trend of `sweep-after-naive` over the second half is +0.460. Its curve falls from 0.648 (visits 0 to 63) to 0.421 (visits 576 to 639) and then rises to 0.675 (visits 960 to 1,023). The other three worlds have slopes of +0.019 to +0.068. That one world sets the four-world mean of the D5 difference.
 
 **D13 for `sweep-after-naive` at 1,024 visits:**
 
-- Over worlds 1 to 4: score trend +0.143 [−0.107, +0.393], trend of learning +0.137 [+0.115, +0.160]. It is **still learning**, and no trend is declining.
+- Over worlds 1 to 4: score trend +0.143 [−0.107, +0.393], trend of learning +0.137 [+0.115, +0.160]. It is **still learning**, and no trend is declining. Worlds 1 and 4 start from the same births (seed 73129), so the four values are not those of four independent learners.
 - Over worlds 1 to 3: score trend +0.037 [−0.009, +0.083], trend of learning +0.144 [+0.115, +0.173]. It is **still learning**.
 
 ### 5.5 The three fixed sentences
@@ -161,16 +161,16 @@ In world 4 the score trend of `sweep-after-naive` over the second half is +0.460
 - Over worlds 1 to 4, pair R is *lower* and RB is assigned to the rule.
 - Over worlds 1 to 3, pair R is *not distinguished* and nothing is assigned.
 
-In both readings, the gap that the arm `sweep` shows against `naive` at 1,024 visits is about the size of pair R. Pair B (the birth) is near zero at 1,024 visits (+0.001 and −0.003), although it is *higher* over the first 64 visits in both readings.
+At 1,024 visits, over worlds 1 to 4, RB is −0.066 [−0.120, −0.013], *lower*, and R is −0.068 [−0.116, −0.019], *lower*. Over worlds 1 to 3, RB is −0.069 [−0.162, +0.024] and R is −0.066 [−0.150, +0.019], both *not distinguished*. Pair B at 1,024 visits is +0.001 [−0.021, +0.024] over worlds 1 to 4 and −0.003 [−0.039, +0.033] over worlds 1 to 3, *not distinguished* in both. Over the first 64 visits pair B is +0.078 [+0.042, +0.114] over worlds 1 to 4 and +0.082 [+0.021, +0.143] over worlds 1 to 3, *higher* in both.
 
 ### 5.6 Keeping (D8, D9, D10, D15)
 
-The figures below are read from the score files at V = 1,024. Without a store, `sweep-after-naive` keeps as little as the other two arms.
+The figures below are read from the score files at V = 1,024 and hold at the learning rate 0.001 only. No arm has a store. Kept at return after an absence of 33 visits or more (D8) is 0.007 to 0.012 under `sweep-after-naive`, 0.005 to 0.015 under `naive` and 0.009 to 0.020 under `sweep`, over the four worlds. No difference between the arms in these quantities was tested: none of them is a reading of the brief, and no interval is formed for them.
 
 - **Kept at return (D8).** After an absence of 33 visits or more, the share right on the first update of a return is 0.007 to 0.012 in the four worlds, against 0.005 to 0.015 under `naive`.
 - **Kept on the list (D9).** For the same absences, the mean ratio is 0.013 to 0.020, against 0.008 to 0.012 under `naive`.
 - **First 16 updates of such a return (D10).** The share right is 0.071 to 0.093, against 0.093 to 0.115 under `naive`.
-- **D15.** Pooled over the four worlds, kept at return after 33 visits or more does not rise with the number of earlier visits to the family. By the five classes of earlier visits it is 0.005, 0.013, 0.006, 0.012 and 0.011, with 56, 102, 170, 237 and 434 returns.
+- **D15.** Pooled over the four worlds, kept at return after 33 visits or more, by the five classes of earlier visits to the family (1; 2 to 3; 4 to 7; 8 to 15; 16 or more), is 0.005, 0.013, 0.006, 0.012 and 0.011 under `sweep-after-naive`, with 56, 102, 170, 237 and 434 returns. The same cells under `naive` are 0.000, 0.013, 0.005, 0.009 and 0.014, and under `sweep` 0.015, 0.018, 0.009, 0.014 and 0.015. No trend over the classes was tested.
 
 D14 (what the wrong answers are) is in each score file under `wrong_answers_stream` and `wrong_answers_list`.
 
@@ -189,7 +189,7 @@ The predictions are scored over worlds 1 to 3, as decision 25 rules. The outcome
 
 ## 7. Limits
 
-- **Shared births.** There are four worlds on three birth seeds. Worlds 1 and 4 share their births, so the reading over four worlds counts one pair of births twice. Over worlds 1 to 3 the interval is the mean ± 1.686 standard deviations, and with it neither RB nor R is distinguished at 1,024 visits.
+- **Shared births.** There are four worlds on three birth seeds. Worlds 1 and 4 share their births, so the reading over four worlds counts one pair of births twice. Over worlds 1 to 3 the interval is the mean ± 1.686 standard deviations. RB at 1,024 visits is −0.066 [−0.120, −0.013], *lower*, over worlds 1 to 4, and −0.069 [−0.162, +0.024], *not distinguished*, over worlds 1 to 3. R at 1,024 visits is −0.068 [−0.116, −0.019], *lower*, over worlds 1 to 4, and −0.066 [−0.150, +0.019], *not distinguished*, over worlds 1 to 3.
 - **Pair R is not a comparison on equal terms.** The birth was formed by back-propagation, and the sweep starts below `naive` on it: pair R over the first 64 visits is −0.115. The reverse arm, a life by back-propagation from the sweep's birth, is not run, because the runner has no such arm (decision 26). The design has three of the four cells of rule and birth.
 - **One setting each.**
   - Learning rate: 0.001 only.
@@ -198,6 +198,7 @@ The predictions are scored over worlds 1 to 3, as decision 25 rules. The outcome
   - Lives of 1,024 visits; nothing is said beyond them.
 - **Different kinds of visit.** The first 64 visits are mostly continuations (23 to 47 of 64 in worlds 1 to 4), and the late window of 1,024 visits is mostly returns (218 to 223 of 256). So the change in sentence 2 compares a difference measured on continuations with a difference measured on returns.
 - **Fresh optimizer.** The optimizer is fresh at the start of every life, so the first updates of each life are not those of a learner that continues.
+- **States not committed.** Some saved states are not in any commit, so their SHA-256, recorded in the receipts, cannot be checked against a file. These are: the states after 1,024 visits of the four lives (receipts, `states`); the state after 4 visits from which check 5's life was resumed (`checks/c5_cut/…json`, `resumes`); and every state of the check lives (c2_w1 to c2_w4, c3_calib, c5_whole, c5_cut). The states after 64 to 896 visits of the four lives were committed while the lives ran and remain in the branch's history; none is in the tree at the head.
 - **World 4.** World 4's score trend for `sweep-after-naive` (+0.460) comes from a dip and a recovery within its second half. It alone sets the four-world D5 difference.
 
 ## 8. Committed files
