@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double mk_long;                 /* mk_long 1: the condition of making uses the cell's long mean M (rate 1/16384 a step) in place of abar (after E52's worker's mk_mean) */
     double prune_only, prune_ratio;  /* prune_only 1: under TIMING no strength changes by the rule; every connection from an excitatory cell keeps two slow sums, of the times its sender was active before the receiver (c_cu) and after it (c_e0), and is withdrawn when the second exceeds prune_ratio times the first; the strengths stay shared by norm=1 */
     double wcap; double *pk;        /* wcap h: with norm=1 no excitatory connection holds more than h of the excitatory total (the excess goes to the cell's other excitatory connections); pk: slow peak of the cell's own output, for the control two_sided == 3 */
     double inh_learn;               /* inh_learn 1: under TIMING a connection from an inhibitory sender grows with the joint activity of its two ends (dw = eta_s F_j x_i); with norm=1 the inhibitory total is conserved, so a cell's inhibition moves to the senders active when it is */
@@ -179,7 +180,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
     /* traces of the sending cells: z of this step is x(k-1) */
     for (int j = 0; j < NCELL; j++) t->E[j] = (1.0 - 1.0 / TAU) * t->E[j] + (1.0 / TAU) * z[j];
     if (t->rule == TIMING) for (int j = 0; j < NZ; j++) t->F[j] += (z[j] - t->F[j]) / t->tau_f;
-    if (t->rate_norm != 0.0) for (int j = 0; j < NZ; j++) t->M[j] += (z[j] - t->M[j]) / 16384.0;
+    if (t->rate_norm != 0.0 || t->mk_long != 0.0) for (int j = 0; j < NZ; j++) t->M[j] += (z[j] - t->M[j]) / 16384.0;
     /* giving up, then making */
     if (t->rule != FIXED) {
         for (int i = 0; i < NCELL; i++) {
@@ -193,7 +194,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }
-            if (t->no_make == 0.0 && t->th[i] == 0.0 && t->abar[i] < (t->a_make > 0.0 ? t->a_make : a) && (k - t->klast[i]) >= (int64_t)t->make_period) {
+            if (t->no_make == 0.0 && t->th[i] == 0.0 && (t->mk_long != 0.0 ? t->M[i] : t->abar[i]) < (t->a_make > 0.0 ? t->a_make : a) && (k - t->klast[i]) >= (int64_t)t->make_period) {
                 const int free_n = t->nmem[i] - t->deg[i];
                 if (free_n > 0) {
                     int pick = (int)(rnd(t) % (uint64_t)free_n), mi = -1;
