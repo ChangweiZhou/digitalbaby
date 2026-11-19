@@ -144,3 +144,13 @@ The reviewer had reported, from the fourth reading of the definition, that a yes
 Translation (the reviewer's). No. The strength of a connection between cells is determined jointly by the two ends of the connection; it is a local quantity. Also, at our input end not all cells receive the yes or no; only some do. It can be taken that there are dedicated cells which receive the feedback information and then pass it on to the input end; how exactly it is passed on has to be learned.
 
 What follows. (1) The strength of a connection is set by the sending cell and the receiving cell together, from what is present at that connection; it is not a quantity that the receiving cell alone adjusts. (2) The yes or no is not given alike to all cells of an end. Dedicated cells receive the feedback and pass it on to the input end over connections, and the way it is passed on is learned by the tissue. The definition's first forms "all cells of an end receive the same yes or no" and "only incoming connections are adjusted, by the receiving cell" are withdrawn.
+
+## 17. Mr. Xu's statement of 00:10 UTC (19 November 2026): a connection between two cells may run through other cells
+
+The reviewer had written that the strength of a connection is set by its sending and its receiving cell, and had asked to be corrected if "the two ends together" meant something else. Mr. Xu:
+
+> 对，我们不排除细胞A和B之间的连接可能经过细胞C，D， E等等。具体强度在这种情况下如何确定，例如C反馈认为强度应该增高，D反馈应该减小，A和D,E又可能有单独的连接等等，可以进一步讨论。
+
+Translation (the reviewer's). Yes. We do not exclude that the connection between cell A and cell B may run through cells C, D, E and so on. How the strength is determined in that case, for example when C's feedback holds that the strength should rise and D's that it should fall, while A may again have separate connections with D and E, and so on, can be discussed further.
+
+What follows. The influence of one cell on another may pass over other cells as well as over a direct connection. How strengths are determined when the cells on such paths pull in different directions is not settled by Mr. Xu and is open for discussion; the definition of the tissue must not close it.
