@@ -44,4 +44,13 @@ for name, g in [('d=1', dist == 1), ('d=2', dist == 2), ('d=3', dist == 3), ('d=
     out['groups'][name] = res
     f = lambda k: f"{np.mean(by.get(k, [np.nan])):.2f}"
     print(f"   {name:11s}: {res['cells']:4d} | {res['overall']:.3f} | {f('end')} {f('eq')} | {f('digit')} ({sum(r > 0.5 for r in by.get('digit', []))}/10) | {f('letter')} ({sum(r > 0.5 for r in by.get('letter', []))}/{len(by.get('letter', []))}) | {f('sign')} | {res['never']}/{res['values']}")
+# the bytes one and two back among the cells near the output lines: overall share named right, and over the digits
+xg = x[:, near]
+for lag in (1, 2):
+    yl = b[lo - lag:hi - lag].astype(int); vl = sorted(set(yl[:h].tolist()))
+    C = np.stack([xg[:h][yl[:h] == v].mean(0) for v in vl]); xt = xg[h:]; yt = yl[h:]
+    dd = (xt ** 2).sum(1)[:, None] - 2 * xt @ C.T + (C ** 2).sum(1)[None, :]; pred = np.array(vl)[dd.argmin(1)]
+    dig = [float((pred[yt == v] == v).mean()) for v in vl if classes(v) == 'digit' and (yt == v).any()]
+    out['groups'][f'near output, lag {lag}'] = dict(overall=float((pred == yt).mean()), digits=float(np.mean(dig)))
+    print(f"   near output, the byte {lag} back: overall {float((pred == yt).mean()):.3f}, digits {np.mean(dig):.2f} ({sum(r > 0.5 for r in dig)}/10)")
 os.makedirs('perbyte', exist_ok=True); json.dump(out, open(f'perbyte/{label}_by_distance.json', 'w')); sys.stdout.flush()
