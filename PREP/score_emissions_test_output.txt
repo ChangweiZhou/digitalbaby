@@ -1,0 +1,41 @@
+seed 73129: 704,541 positions; kinds: R1 (first family, phase FIRST) 16,361, R2 (first family, phase FIRST) 16,361, SIGN 8,162, EQ 8,162, END 8,162, RECALL gap 1 4,147, RECALL gap 2 4,374, RECALL gap 4 4,296, RECALL gap 8 4,144, ANSWER1 23,408, ANSWER2 23,408, ANSWER1, key first asked 32, ANSWER2, key first asked 32
+
+Emitter 1: always the end mark (byte 10)
+  PASS  given share is 1 in every window and kind
+  PASS  END is right everywhere (share 1); every other kind 0 (their bytes are never 10)
+
+Emitter 2: the stream delayed by one (the byte at t - 1 given for t; none at t = 0)
+  PASS  pooled over windows, each kind's share right equals the share of its positions whose byte repeats the byte before
+       its shares, pooled: R1 (first family, phase FIRST) 0.0000, R2 (first family, phase FIRST) 0.1018, SIGN 0.0000, EQ 0.0000, END 0.0000, RECALL gap 1 0.0000, RECALL gap 2 0.0000, RECALL gap 4 0.0000, RECALL gap 8 0.0000, ANSWER1 0.0000, ANSWER2 0.0500, ANSWER1, key first asked 0.0000, ANSWER2, key first asked 0.0625
+  PASS  RECALL is never right (the byte before the due X is always '='); ANSWER2 is right only where the answer's two digits are equal
+
+Emitter 3: the table of the last three bytes (an independent implementation with collections.Counter)
+  PASS  its guesses equal the scorer's ref_3 at every position
+  PASS  its share right equals ref_3 in every window and kind
+  PASS  its given share is the share of positions whose 3-byte context was seen before
+
+Reference guessers in the last window of each phase (mode 'phase'), seed 73129
+| phase | kind | n | ref_mode | ref_1 | ref_2 | ref_3 | ceiling |
+|---|---|---|---|---|---|---|---|
+| FIRST | R1 (first family, phase FIRST) | 1020 | 0.0000 | 0.1088 | 0.1127 | 0.3353 | — |
+| FIRST | R2 (first family, phase FIRST) | 1021 | 0.0000 | 0.0000 | 0.1097 | 0.3340 | — |
+| KNOWABLE | SIGN | 1021 | 0.0000 | 0.0000 | 0.0000 | 1.0000 | — |
+| KNOWABLE | EQ | 1022 | 0.0000 | 0.4354 | 0.4922 | 1.0000 | — |
+| KNOWABLE | END | 1022 | 0.0000 | 0.5460 | 0.5323 | 1.0000 | — |
+| DELAY | RECALL gap 1 | 491 | 0.0000 | 0.0916 | 1.0000 | 1.0000 | 1.0 |
+| DELAY | RECALL gap 2 | 540 | 0.0000 | 0.0926 | 0.1000 | 1.0000 | 1.0 |
+| DELAY | RECALL gap 4 | 565 | 0.0000 | 0.0938 | 0.0832 | 0.0832 | 1.0 |
+| DELAY | RECALL gap 8 | 514 | 0.0000 | 0.1031 | 0.0992 | 0.1070 | 1.0 |
+| TABLE1 | ANSWER1 | 2341 | 0.0000 | 0.3123 | 0.8338 | 1.0000 | 1.0 |
+| TABLE1 | ANSWER2 | 2341 | 0.0000 | 0.0000 | 0.0000 | 0.9060 | 1.0 |
+| TABLE2 | ANSWER1 | 2341 | 0.0000 | 0.3652 | 0.5626 | 1.0000 | 1.0 |
+| TABLE2 | ANSWER2 | 2341 | 0.0000 | 0.0000 | 0.0624 | 0.7497 | 1.0 |
+| TABLE1_RETURNS | ANSWER1 | 2341 | 0.0000 | 0.3118 | 0.8120 | 1.0000 | 1.0 |
+| TABLE1_RETURNS | ANSWER2 | 2341 | 0.0000 | 0.0000 | 0.2495 | 0.9376 | 1.0 |
+
+Agreement with PREP/comparator_read.py (COMPARATOR_READ.json on claude/e55-comparator-017dSEpW, a77a3a0c)
+  PASS  seed 116089: 136 (window, kind) shares, all equal to comparator_read.py's (exactly)
+  PASS  seed 73129: 136 (window, kind) shares, all equal to comparator_read.py's (exactly)
+  PASS  seed 93683: 134 (window, kind) shares, all equal to comparator_read.py's (exactly)
+
+ALL PASS
