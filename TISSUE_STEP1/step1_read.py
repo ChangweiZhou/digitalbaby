@@ -20,6 +20,17 @@ LAGS = (0, 1, 2, 4, 8)
 DS = (1, 2, 4)
 
 
+TIE = 1e-9
+
+
+def nearest(d2):
+    """Index of the nearest centroid in each row of d2 (classes in increasing byte value). Distances within a relative 1e-9 of
+    the smallest are ties, which go to the smaller byte value (section 7.3); this makes a tie that is exact in arithmetic a tie in
+    the program, whatever the rounding of the sums."""
+    dmin = d2.min(1, keepdims=True)
+    return np.argmax(d2 <= dmin + TIE * (1.0 + np.abs(dmin)), axis=1)
+
+
 def classify(F, labels, pos, w0, wl, L):
     """F: features [n, f] for the positions pos (all with pos - L >= 0); labels: the byte at pos - L. Returns (S, se, n_classes)."""
     stretch = wl // FOLDS
@@ -43,7 +54,7 @@ def classify(F, labels, pos, w0, wl, L):
             for c0_ in range(0, len(yt), 256):
                 blk = Zt[c0_:c0_ + 256]
                 d2 = ((blk[:, None, :] - cen[None, :, :]) ** 2).sum(2)
-                pred[c0_:c0_ + 256] = classes[np.argmin(d2, 1)]
+                pred[c0_:c0_ + 256] = classes[nearest(d2)]
         fr, ft = {}, {}
         for y, pp in zip(yt.tolist(), pred.tolist()):
             tot[y] = tot.get(y, 0) + 1; right[y] = right.get(y, 0) + (pp == y)
@@ -71,7 +82,7 @@ def classify_exact(F, labels, pos, w0, wl, L):
         yt = labels[test]
         # identical feature rows give identical predictions: compute each distinct row once
         rows, inv = np.unique(Zt, axis=0, return_inverse=True)
-        pr = np.array([classes[np.argmin(((cen - r) ** 2).sum(1))] for r in rows])
+        pr = np.array([classes[nearest(((cen - r) ** 2).sum(1)[None, :])[0]] for r in rows])
         pred = pr[inv.ravel()]
         fr, ft = {}, {}
         for y, pp in zip(yt.tolist(), pred.tolist()):
