@@ -38,7 +38,7 @@ Throughout:
 
   | Draw | Seed | Entry | Value | Level |
   |---|---|---|---|---|
-  | reviewer's | 465973 | S(4,2) | 0.100 | 0.110 |
+  | reviewer's | 465973 | S(4,2) | 0.100 | 0.113 |
   | own | 116089 | S(4,2) | 0.111 | 0.115 |
   | own | 112290 | S(1,2) | 0.095 | 0.107 |
 
@@ -80,7 +80,7 @@ Throughout:
 - **First window, seed 93683:**
   - S(4,0) = 0.099 is below both levels;
   - S(4,2) = 0.104 is below level B;
-  - near lags 0–2 are below.
+  - near lags 0 and 1 are below both levels, and near lag 2 (0.083) is below level B.
 - **First window, seed 116089:** S(4,2) and near lag 2 are below level B.
 
 **Own draw**
@@ -101,7 +101,7 @@ Throughout:
 
 ## Plainly
 - **Nine entries.** On fifteen seeds and both draws, L8-256 puts the nine entries above level A in every tissue at 16,384 bytes. Under level B, three tissues fail one lag-2 entry.
-- **Cells near the output lines.** The present byte, one back and two back are above both levels in 22 of 30 tissues:
+- **Cells near the output lines.** The present byte, one back and two back are above both levels in 20 of 30 tissues, and above level A in 23:
   - lag 0 fails in 7 tissues;
   - lag 1 fails in 1 (a tissue where lag 0 also fails);
   - lag 2 fails under level B in 5;
