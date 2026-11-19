@@ -56,3 +56,19 @@ sender was active before the receiver and falls when it was active after it, dw 
 cell's output with time constant tau_f steps (both ends of the connection, nothing else).
 
 Results are in `out/`; the batches run are `batch1.txt` to `batch8.txt`.
+
+## Added on 19 November after 09:20 UTC
+
+- Build: `drive.py` and `tis.py` compile with `-ffp-contract=off` from 09:31 UTC, so that every multiplication and addition is
+  rounded separately and the program equals the independent program of E62's worker at every byte (checked on the reference command:
+  6,638 connections, 1,240 made, 10,474 withdrawn). Results in `out/`, `far/`, `diag/`, `variety/`, `band/`, `cond/` and `loops/`
+  made before that time came from the build that joined a multiplication and an addition in one rounding; a life built one way is
+  another life than the same command built the other way (their readings agree within the yardstick of STATUS row 48).
+- `prune_only=2`: besides the test of order in time, a connection from a cell whose long mean of output is below the level of
+  making (`a_make`) is withdrawn at age 4,096 steps; `prune_only=3`: only from excitatory cells. Tested and not adopted (batch37).
+- `long=K-R` (tis.py only, so `far.py`, `band.py`, `loops.py`, `variety.py`, `diag.py`, `cond.py`; not `drive.py`): one excitatory
+  cell in K, not a driver of an output line and not a feedback cell, drawn with `default_rng(seed + 20261120)`, has a long axon: it
+  is a member of the neighbourhood of every cell within R of it. The starting connections are then drawn again with the same
+  generator, 8 from each cell's members. Batches 39 and 40.
+- `loops.py`: the sets of cells that can each reach the others, counted over all connections and over those from excitatory cells.
+- Batches: 36 (loops), 37 (silent sources), 38 (inhibitory total), 39 and 40 (long axons).
