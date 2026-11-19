@@ -4,7 +4,7 @@
 #   (1) D one pass in order through all positions, step eta (target - activity) u / |u|^2, inputs standardised by a running mean and
 #       deviation (yesno3.py's "run"), eta 1/256, 1/64, 1/16: share on the last quarter while learning.
 #   (2) the same with inputs standardised by the mean and deviation of the fitting part (fixed; not available to a cell in advance).
-#   (3) the same rule with fixed standardisation, several passes over the fitting part (1, 4, 16), then frozen and scored on the last
+#   (3) the same rule with fixed standardisation, several passes over the fitting part (1, 2, 8; eta 1/64), then frozen and scored on the last
 #       quarter.
 #   (4) the fitted ridge on the same inputs (reach_nbhd.py's own-neighbourhood reader) for reference, with the ridge constant chosen
 #       as there.
@@ -27,6 +27,9 @@ for lo in range(0, NB, 4096):
     T['L'].tis_run(ctypes.byref(T['t']), ctypes.c_void_p(T['b'].ctypes.data), ctypes.c_int64(lo), ctypes.c_int64(hi), ctypes.c_int64(lo), ctypes.c_int64(hi), ctypes.c_void_p(rec.ctypes.data))
     X[lo:hi] = rec[:, near]
 X = X[:NB - 1].astype(np.float64); y = b[1:]; M = len(y); nf = (3 * M) // 4
+G_ = int(mc.sum(1).max()); IDX = np.full((256, G_), K, np.int64)              # each driver's own cells, padded with a zero column
+for v in range(256):
+    cs = np.flatnonzero(mc[v]); IDX[v, :len(cs)] = cs
 # running standardisation (as yesno3.py)
 Xr = np.zeros_like(X); m = np.zeros(K); s2 = np.zeros(K)
 for t in range(M):
@@ -34,25 +37,27 @@ for t in range(M):
     Xr[t] = np.where(sd > 0, (X[t] - m) / np.where(sd > 0, sd, 1), 0.0)
 mu = X[:nf].mean(0); sdf = X[:nf].std(0); Xf = np.where(sdf > 0, (X - mu) / np.where(sdf > 0, sdf, 1), 0.0)
 ETAS = (1 / 256, 1 / 64, 1 / 16)
+def inp(z):
+    return np.concatenate([np.append(z, 0.0)[IDX], np.ones((256, 1))], 1)
 def lms(Z, eta, order, W=None, record=True):
-    W = np.zeros((256, K + 1)) if W is None else W; ok = np.zeros(M, bool)
+    W = np.zeros((256, G_ + 1)) if W is None else W; ok = np.zeros(M, bool)
     for t in order:
-        U = np.concatenate([mc * Z[t][None, :], np.ones((256, 1))], 1); a = (W * U).sum(1)
+        U = inp(Z[t]); a = (W * U).sum(1)
         if record: ok[t] = a.argmax() == y[t]
         tg = np.zeros(256); tg[y[t]] = 1; W += (eta * (tg - a) / (U * U).sum(1))[:, None] * U
     return W, ok
 def score(Z, W):
-    ok = [((W * np.concatenate([mc * Z[t][None, :], np.ones((256, 1))], 1)).sum(1).argmax() == y[t]) for t in range(nf, M)]
+    ok = [((W * inp(Z[t])).sum(1).argmax() == y[t]) for t in range(nf, M)]
     return float(np.mean(ok))
 res = {}
 for nm, Z in (('one pass, running standardisation', Xr), ('one pass, fixed standardisation', Xf)):
     for eta in ETAS:
         _, ok = lms(Z, eta, range(M)); res[f'{nm}, eta {eta:g}'] = float(ok[nf:].mean())
-for eta in ETAS:
+for eta in (1 / 64,):
     W = None
-    for p in range(1, 17):
+    for p in range(1, 9):
         W, _ = lms(Xf, eta, range(nf), W, record=False)
-        if p in (1, 4, 16): res[f'{p} passes over the fitting part, fixed standardisation, frozen, eta {eta:g}'] = score(Xf, W)
+        if p in (1, 2, 8): res[f'{p} passes over the fitting part, fixed standardisation, frozen, eta {eta:g}'] = score(Xf, W)
 # fitted ridge, per driver, own neighbourhood (as reach_nbhd.py)
 nin = (4 * nf) // 5; Y = np.zeros((M, 256)); Y[np.arange(M), y] = 1
 def ridge(n, lam):

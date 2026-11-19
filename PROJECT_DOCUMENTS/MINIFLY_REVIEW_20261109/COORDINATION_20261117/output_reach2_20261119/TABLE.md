@@ -34,3 +34,11 @@ U: rule=fixed. BAL: rule=timing eta_s=0 no_make=1 norm=1 we=1/2 wi=1/2. B1: rule
 | ref_3 | 25.6 / 25.1 | 25.7 / 25.3 | 26.0 / 25.4 | 25.6 / 25.1 | 25.7 / 25.3 | 26.0 / 25.4 | 25.6 / 25.1 | 25.7 / 25.3 | 26.0 / 25.4 |
 | end mark (byte 10) | 6.3 / 6.2 | 6.3 / 6.3 | 6.3 / 6.2 | 6.3 / 6.2 | 6.3 / 6.3 | 6.3 / 6.2 | 6.3 / 6.2 | 6.3 / 6.3 | 6.3 / 6.2 |
 
+## D. Why the supervised one-pass rule stays below the fitted reader (lms_diag.py, lms_white.py; last quarter, %)
+
+| Tissue, seed | Fitted ridge, own neighbourhood | One pass, running standardisation (eta 1/64) | One pass, fixed standardisation (eta 1/64) | 8 passes over the fitting part, frozen (eta 1/64) | One pass, inputs whitened per driver (eta 1/64 / 1/16) | First principal component's share of variance (median / p90 over drivers) | Largest / median eigenvalue (median over drivers) |
+|---|---|---|---|---|---|---|---|
+| U 73129 | 10.27 | 4.49 | 4.63 | 5.07 | 11.01 / 10.17 | 0.89 / 0.96 | 1.6e7 |
+| U 93683 | 8.78 | 5.07 | 5.05 | 6.01 | 10.03 / 8.73 | 0.81 / 0.93 | 2.4e6 |
+| BAL 73129 | 9.56 | 7.34 | 7.37 | 7.82 | 9.82 / 8.92 | 0.69 / 0.81 | 1.6e5 |
+| B1 73129 | 8.06 | 3.92 | 3.91 | 5.07 | 4.29 / 4.99 | 0.60 / 0.87 | 8.9e4 |
