@@ -38,6 +38,8 @@ def make(kw):
             top = int(tau_opt[3:].rstrip('e')); choices = [2.0 ** k for k in range(1, int(np.log2(top)) + 1)]
             A['tauv'][:] = rt.choice(choices, size=N)
             if tau_opt.endswith('e'): A['tauv'][np.asarray(B['kind']) == ts.ENC] = 2.0      # cells that can receive from an input line keep 2
+        elif tau_opt.startswith('f'):                 # fK-T: one cell in K has the time constant T, the others 2
+            K, Tc = tau_opt[1:].split('-'); A['tauv'][rt.random(N) < 1.0 / float(K)] = float(Tc)
         elif tau_opt == 'q16':
             A['tauv'][rt.random(N) < 0.25] = 16.0
     for i in range(N):

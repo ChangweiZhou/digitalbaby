@@ -48,13 +48,21 @@ connections, and the learning of the output end from yes or no.
 | 23 | Making on the long mean in tissue 7, final rule (level 1/16384): S(d,0) above 0.1103 at d = 1, 2, 4, 8, 10 on three seeds; 3.8 to 4.3 connections a cell; over 65,536 bytes 3.7 to 3.8 with 250 made after the first quarter. | E52's worker (80401826) | 3 | — |
 | 24 | Delays in tissue 7, all 30 runs, three seeds, divergence 0: with a delay of 0 to 32 steps on every connection the tool reads the present byte at d = 1, 2, 4 and the bytes one to three back are above their levels somewhere in the tissue on every seed; among the cells near the output lines the byte three back is above its level in no setting. | E57's worker (DELAY_TABLES.md, being committed) | 3 | — |
 
-## 2a. What the table comes to (07:55 UTC)
+| 25 | Row 21 with a time constant of the potential for each cell, drawn from 2, 4, …, 128 steps or 2, …, 256 steps (every cell, those near the input lines included). By the tool as it is, on three seeds, ALL NINE entries that roadmap step 1 names are above their levels: S(d,0) = 0.98 to 0.99 / 0.67 to 0.75 / 0.22 to 0.36, S(d,1) = 0.28 to 0.37 / 0.40 to 0.49 / 0.28 to 0.37, S(d,2) = 0.10 to 0.21 / 0.18 to 0.32 / 0.20 to 0.33 at d = 1 / 2 / 4 (levels 0.1103; 0.090 to 0.100; 0.074 to 0.076). With 2 to 64 steps eight of nine on seed 73129 (the byte two back at d = 1 is 0.062) and nine of nine on the other two. 3.5 to 4.3 connections a cell; two copies do not diverge (0 at every checkpoint to 512 bytes; one value of 2.3e-10 at 4 bytes). 16,384 bytes. | reviewer | 3 | the helper has been asked; not yet |
+| 26 | What row 25 carries beyond four connections (seed 73129, every distance, lags 0 to 4, far.py): at d = 2 to 6 all of lags 0 to 4 are above their levels; but the wider the spread, the less the far cells carry: among the 495 cells near the output lines the tool reads 0.238 / 0.140 (lags 0, 1; both above) with no spread, 0.072 / 0.095 / 0.099 with 2 to 64 steps (lags 1 and 2 above, lag 0 not), and nothing above chance with 2 to 128 or 2 to 256. A slow cell passes on a smoothed signal, and nearly every path to the far cells runs through one. The helper found the same without making. So row 25 meets step 1 as written and does not yet give the output end what it needs. | reviewer; helper (row 5 of its task) | 1 | in part |
+
+## 2a. What the table comes to (08:20 UTC)
 
 The parts of a tissue that would meet step 1 have now each been measured, by different lines, and are being put into one program by
 the main worker: (i) conserved total incoming strength with strength change by order in time (rows 7, 15: carries the present byte,
 settles, never diverges); (ii) making of connections on the cell's long mean (row 12: 3 to 5 connections a cell, the byte kept);
 (iii) memory by a spread of time constants (rows 11, 20) or by delays of the connections (rows 10, 19): two to three bytes back;
-(iv) a bounded gain, safe once the tissue is directed (rows 18, 20). Since 07:30 row 21 gives, on the seeds read so far, the present byte by the tool as it is at 1, 2, 4, 8 and 10 connections,
+(iv) a bounded gain, safe once the tissue is directed (rows 18, 20). Since 08:05 row 25 meets, in the reviewer's program on three seeds, the nine entries that step 1 names, with no dependence on the
+past; row 26 shows what it lacks: the memory is near the input lines and is paid for at the far cells. The open question has
+therefore moved from "can the tissue read the stream" to "can the cells near the output lines have the present byte and the bytes
+before it together"; delays (which shift a signal without smoothing it) and a small share of slow cells are being tried on row 21.
+
+Since 07:30 row 21 gives, on the seeds read so far, the present byte by the tool as it is at 1, 2, 4, 8 and 10 connections,
 with every far cell answering at an output above 1/2, the cells making and withdrawing their own three to four connections, and no
 dependence on the past; it has no memory yet (time constants and delays are being put into it by three lines). What was missing
 until then, on three seeds, was the present byte
@@ -64,11 +72,14 @@ nine connections, on one seed. And the output end does not yet learn from yes or
 
 ## 3. Against step 1 as the roadmap states it
 
-Step 1 asks for the present byte and the bytes one and two back at 1, 2 and 4 connections. Row 11 (tissue 7 with a spread of time
-constants) gives, on three seeds and by the tool as it is: the present byte at 1, 2, 4; the byte one back at 1, 2, 4; the byte two
-back at 2 and 4 but not at 1. It is the first tissue to come this near, and it does not depend on its own past. It is not yet a
-result: it comes from one line, from 16,384 bytes, with no connection made, and its far cells (8 to 11 connections, where the output
-lines are) read the present byte at 0.13 to 0.21 at most.
+Step 1 asks for the present byte and the bytes one and two back at 1, 2 and 4 connections, by the readings tool. Row 25 gives all
+nine on three seeds, in a tissue whose cells make and withdraw their own connections (3.5 to 4.3 a cell) and which does not depend
+on its own past. It is not yet a result of the programme: it comes from the reviewer's program only, from lives of 16,384 bytes,
+and has not been repeated by another line (the helper has the request) nor verified by the coordinator. The parts under it have
+been repeated: the base without time constants by E52's worker on three seeds (row 21), the effect of time constants and of delays
+by the helper, E57's worker and the main worker in other bases (rows 11, 19, 20, 22).
+
+What step 1's wording does not ask and the next step needs (row 26): the same bytes among the cells near the output lines.
 
 ## 4. What I propose to change in the definition (for Mr. Xu to decide)
 
@@ -113,4 +124,4 @@ trials and are marked so in the workers' tables.
 - Log of every task sent and report taken: `COORDINATION_20261117/LOG.md`.
 - Workers' branches and commits: in the table of section 2.
 
-Last change: 07:55 UTC, 19 November 2026.
+Last change: 08:20 UTC, 19 November 2026.
