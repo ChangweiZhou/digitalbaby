@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double wcap; double *pk;        /* wcap h: with norm=1 no excitatory connection holds more than h of the excitatory total (the excess goes to the cell's other excitatory connections); pk: slow peak of the cell's own output, for the control two_sided == 3 */
     double inh_learn;               /* inh_learn 1: under TIMING a connection from an inhibitory sender grows with the joint activity of its two ends (dw = eta_s F_j x_i); with norm=1 the inhibitory total is conserved, so a cell's inhibition moves to the senders active when it is */
     double rate_norm; double *M;     /* rate_norm 1: under TIMING the change is divided by the sender's own slow mean activity M (rate 1/16384), so that a sender active rarely is not at a disadvantage */
     double a_make;                  /* a cell makes a connection only while its mean activity is below a_make (0: the definition's a*) */
@@ -90,8 +91,8 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         if (t->kind[i] == FBK) { x[i] = 0.0; continue; }
         const int64_t b = (int64_t)i * md; const int dg = t->deg[i];
         double A = 0.0;
-        double zs = 0.0;
-        for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; A += t->sig[s] * t->c_w[b + d] * z[s]; zs += z[s]; }
+        double zs = 0.0, zmx = 0.0;
+        for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; A += t->sig[s] * t->c_w[b + d] * z[s]; zs += z[s]; if (t->sig[s] > 0.0 && z[s] > zmx) zmx = z[s]; }
         A *= t->gain[i];
         const double m = A - t->p[i];
         const double v = 0.5 * t->v[i] + 0.5 * A;                    /* TAU_V = 2 */
@@ -131,6 +132,17 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                 for (int d = 0; d < dg; d++) { if (t->sig[t->c_src[b + d]] > 0.0) se += t->c_w[b + d]; else si += t->c_w[b + d]; }
                 const double fe = se > 0.0 ? t->we / se : 1.0, fi = si > 0.0 ? t->wi / si : 1.0;
                 for (int d = 0; d < dg; d++) { double w = t->c_w[b + d] * (t->sig[t->c_src[b + d]] > 0.0 ? fe : fi); t->c_w[b + d] = w > 1.0 ? 1.0 : w; }
+                if (t->wcap > 0.0) {
+                    const double cap = t->wcap * t->we;
+                    for (int it = 0; it < 4; it++) {
+                        double exc = 0.0, un = 0.0;
+                        for (int d = 0; d < dg; d++) { if (t->sig[t->c_src[b + d]] <= 0.0) continue;
+                            if (t->c_w[b + d] > cap) { exc += t->c_w[b + d] - cap; t->c_w[b + d] = cap; } else if (t->c_w[b + d] < cap) un += t->c_w[b + d]; }
+                        if (exc <= 0.0 || un <= 0.0) break;
+                        const double f = (un + exc) / un;
+                        for (int d = 0; d < dg; d++) if (t->sig[t->c_src[b + d]] > 0.0 && t->c_w[b + d] < cap) t->c_w[b + d] *= f;
+                    }
+                }
             }
             /* withdrawal by use: only when the cell was active */
             if (t->by_use && xp != 0.0) {
@@ -148,7 +160,14 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         double th = t->th[i] + ETA_T * (xi - a); t->th[i] = th < 0.0 ? 0.0 : th;
         t->abar[i] = (1.0 - 1.0 / PS) * t->abar[i] + (1.0 / PS) * xi;
         if (t->rule == COINC) t->vt[i] = (1.0 - 1.0 / TAU_VT) * t->vt[i] + (1.0 / TAU_VT) * xi * xi / a;
-        if (t->two_sided == 2) {
+        if (t->two_sided == 3) {
+            /* the cell scales its arrival so that its own largest outputs are as large as the largest outputs arriving from its excitatory senders:
+               both peaks decay with rate 1/16384 a step; ibar holds the peak of what arrives, pk the cell's own */
+            const double q = t->ibar[i] * (1.0 - 1.0 / 16384.0), pp = t->pk[i] * (1.0 - 1.0 / 16384.0);
+            t->ibar[i] = zmx > q ? zmx : q; t->pk[i] = xi > pp ? xi : pp;
+            const double Q = t->rho * t->ibar[i], P = t->pk[i];
+            double g = t->gain[i] * (1.0 + t->eta_g * (Q - P) / (Q + P + 1e-30)); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > t->gmax ? t->gmax : g);
+        } else if (t->two_sided == 2) {
             t->ibar[i] = (1.0 - 1.0 / PS) * t->ibar[i] + (1.0 / PS) * (dg ? zs / dg : 0.0);
             const double tg = t->rho * t->ibar[i], ab = t->abar[i];
             double g = t->gain[i] * (1.0 + t->eta_g * (tg - ab) / (tg + ab + 1e-30)); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > t->gmax ? t->gmax : g);
