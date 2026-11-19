@@ -8,6 +8,18 @@ imports nothing from the repository.
     python3 tissue_step1.py run <first|coincidence|fixed> <seed> [--bytes N] [--stage A|B] [--formula11-as-written] [--out DIR]
                                 [--ckpt-bytes N] [--resume] [--die-after-byte N]
     python3 tissue_step1.py check <1..10>
+    python3 tissue_step1.py run first 73129 --withdraw-by-use     # the fifth tissue of stage A (the coordinator's decision 62)
+
+The fifth tissue: formula 11 as changed at the head of revision 5 of the definition (01:18 UTC, 19 November). Each incoming connection
+from a cell carries its use, c_ij(k + 1) = (127/128) c_ij(k) + (1/128) (e_ij(k) - ē_ij(k)) (x_i(k) - ā_i(k)), where ē_ij(k + 1) =
+(127/128) ē_ij(k) + (1/128) e_ij(k) is the trace's running average over 128 steps and ā_i is the cell's own (formula 10). A connection is
+withdrawn when |c_ij| has stayed below (1/128) of the largest |c| among the cell's connections from cells for 128 consecutive steps; and,
+as before, when it is at least P_s steps old and its strength is below 1/128. Choices of the worker where the paragraph leaves one: the
+trace's average has the same 128 steps as the activity's; the product uses the trace held before the step and x(k), computed in operation
+6; the comparison is with the largest |c| among the cell's ordinary connections from cells at that step, and when that largest is 0
+nothing is withdrawn by use; connections from feedback cells are exempt (at step 1 they are silent by construction, so their use cannot
+be judged, and withdrawing them would remove the route of feedback before step 2); connections from lines are not concerned ("from a
+cell"); a new connection starts with c = ē = 0 and a count of 0.
 
 Section numbers below are the brief's unless "definition" is said. Formula numbers are the definition's (formulas 1 to 12).
 """
@@ -113,6 +125,10 @@ def vt_update(vt, x):                            # section 5.5, the sliding thre
     return (1 - 1 / TAU_VT) * vt + (1 / TAU_VT) * x * x / ASTAR
 
 
+def use_update(c, e, ebar, x, abar):            # the fifth tissue of stage A (decision 62): use of an input to the receiving cell
+    return (1 - 1 / PS) * c + (1 / PS) * (e - ebar) * (x - abar)
+
+
 def ubar_update(u, z):                           # revision 4's sending-side average (only the 512-byte tissue of stage A)
     return (1 - 1 / PS) * u + (1 / PS) * z
 
@@ -216,10 +232,11 @@ def birth(seed):
 class Tissue:
     """One tissue (section 1). rule: 'first', 'coincidence' or 'fixed'. f11_written: formula 11 as written (512-byte tissue only)."""
 
-    def __init__(self, seed, rule, f11_written=False, B=None):
+    def __init__(self, seed, rule, f11_written=False, B=None, by_use=False):
         assert rule in ("first", "coincidence", "fixed")
         assert not (f11_written and rule != "first")
-        self.seed, self.rule, self.f11w = seed, rule, f11_written
+        assert not (by_use and (rule != "first" or f11_written))
+        self.seed, self.rule, self.f11w, self.by_use = seed, rule, f11_written, by_use
         B = B if B is not None else birth(seed)
         self.B = B
         self.kind = B["kind"]; self.sig = B["sig"]
@@ -243,6 +260,10 @@ class Tissue:
         self.w = np.zeros(cap, np.float64); self.w[:n] = w
         self.e = np.zeros(cap, np.float64)
         self.ub = np.zeros(cap, np.float64) if f11_written else None
+        if by_use:                                       # the fifth tissue: per connection, the trace's running average, the use, and
+            self.eb = np.zeros(cap, np.float64)          # the number of consecutive steps the use has stayed below its level
+            self.cu = np.zeros(cap, np.float64)
+            self.nb = np.zeros(cap, np.int64)
         self.k0 = np.zeros(cap, np.int64)
         self.alive = np.zeros(cap, bool); self.alive[:n] = True
         self.dead = 0
@@ -258,6 +279,7 @@ class Tissue:
         self._dirty = True
         self.x = np.zeros(N)
         self.audit = None
+        self.withdrawn_by_use = 0
 
     # ---------------------------------------------------------------------------------------- helpers
     def _index(self):
@@ -270,11 +292,14 @@ class Tissue:
             self.ci_ce = self.ci[inner & (self.sig[self.snd[self.ci]] > 0)]
             self.ci_ci = self.ci[inner & (self.sig[self.snd[self.ci]] < 0)]
         self.not_fbline = a & (self.snd[:n] < YES_LINE)
+        if self.by_use:
+            sn = self.snd[:n]
+            self.ci_use = np.nonzero(a & (sn < N) & ~self.isfb[np.minimum(sn, N - 1)])[0]
         self._dirty = False
 
     def _grow(self):
         cap = self.cap * 2
-        for name in ("snd", "rcv", "w", "e", "k0", "alive") + (("ub",) if self.f11w else ()):
+        for name in ("snd", "rcv", "w", "e", "k0", "alive") + (("ub",) if self.f11w else ()) + (("eb", "cu", "nb") if self.by_use else ()):
             old = getattr(self, name)
             new = np.zeros(cap, old.dtype); new[:self.cap] = old[:self.cap]
             setattr(self, name, new)
@@ -284,7 +309,7 @@ class Tissue:
         n = self.n
         keep = np.nonzero(self.alive[:n])[0]
         m = len(keep)
-        for name in ("snd", "rcv", "w", "e", "k0") + (("ub",) if self.f11w else ()):
+        for name in ("snd", "rcv", "w", "e", "k0") + (("ub",) if self.f11w else ()) + (("eb", "cu", "nb") if self.by_use else ()):
             arr = getattr(self, name)
             arr[:m] = arr[keep]; arr[m:n] = 0
         self.alive[:m] = True; self.alive[m:n] = False
@@ -332,6 +357,10 @@ class Tissue:
             r = rcv[ci]
             w[ci] = f8_bound(w[ci] + coin_inh_dw(e[ci], xp[r]))
         # 6. traces, prediction, threshold (not at feedback cells, E4), activity average; ū (512-byte tissue); ϑ (coincidence)
+        if self.by_use:
+            r_ = rcv
+            self.cu[:n] = use_update(self.cu[:n], e, self.eb[:n], x[r_], self.abar[r_])
+            self.eb[:n] = (1 - 1 / PS) * self.eb[:n] + (1 / PS) * e
         self.e[:n] = f6_trace(e, zs)
         if self.f11w:
             self.ub[:n] = ubar_update(self.ub[:n], zs)
@@ -350,6 +379,20 @@ class Tissue:
                 gone = self.not_fbline & old & ((self.w[:n] < GIVE_UP) | (self.ub[:n] < GIVE_UP))
             else:
                 gone = self.not_fbline & old & (self.w[:n] < GIVE_UP)
+            if self.by_use:
+                ci = self.ci_use                                 # alive connections from ordinary cells (not feedback cells)
+                mag = np.abs(self.cu[ci])
+                mx = np.zeros(N)
+                np.maximum.at(mx, self.rcv[ci], mag)
+                low = mag < GIVE_UP * mx[self.rcv[ci]]
+                nbv = self.nb[ci]
+                nbv = np.where(low, nbv + 1, 0)
+                self.nb[ci] = nbv
+                byuse = np.zeros(n, bool)
+                byuse[ci[nbv >= PS]] = True
+                self.gone_by_use = int((byuse & ~gone).sum())
+                self.withdrawn_by_use += self.gone_by_use
+                gone = gone | byuse
             if gone.any():
                 idx = np.nonzero(gone)[0]
                 if self.audit is not None:                   # check 6 only: what is given up (no effect on the tissue)
@@ -374,6 +417,8 @@ class Tissue:
                 self.snd[c] = j; self.rcv[c] = i; self.w[c] = START_W; self.e[c] = 0.0; self.k0[c] = k; self.alive[c] = True
                 if self.f11w:
                     self.ub[c] = 0.0
+                if self.by_use:
+                    self.eb[c] = 0.0; self.cu[c] = 0.0; self.nb[c] = 0
                 self.n += 1
                 ss.add(j)
                 self.klast[i] = k
@@ -460,7 +505,7 @@ class Tissue:
         exc_inner = (rk == INNER) & (sk == SK_EXC)
         return dict(step=self.k - 1, connections=int(ordinary.sum()), by_kind=table,
                     starting_remaining=int(((k0 == 0) & ordinary).sum()),
-                    given_up_total=self.given_up, made_total=self.made,
+                    given_up_total=self.given_up, made_total=self.made, withdrawn_by_use_total=self.withdrawn_by_use,
                     per_cell_mean=float(per.mean()), per_cell_max=int(per.max()), per_cell_min_nonfb=int(per[nonfb].min()),
                     exhausted=exhausted, line_values=len(line_vals), line_values_in_use=len(line_vals & used),
                     from_feedback_cells=dict(n=int((sk == SK_FBC).sum()), w_min=float(w[sk == SK_FBC].min()) if (sk == SK_FBC).any() else None,
@@ -476,6 +521,9 @@ class Tissue:
                  meta=np.array([self.k, self.dead, self.given_up, self.made, self.cap], np.int64))
         if self.f11w:
             d["ub"] = self.ub[:n].copy()
+        if self.by_use:
+            d["eb"] = self.eb[:n].copy(); d["cu"] = self.cu[:n].copy(); d["nb"] = self.nb[:n].copy()
+            d["wbu"] = np.array([self.withdrawn_by_use], np.int64)
         if self.vt is not None:
             d["vt"] = self.vt
         return d
@@ -484,13 +532,15 @@ class Tissue:
         k, dead, gu, made, cap = (int(q) for q in d["meta"])
         n = len(d["snd"])
         self.cap = cap
-        for name in ("snd", "rcv", "w", "e", "k0", "alive") + (("ub",) if self.f11w else ()):
+        for name in ("snd", "rcv", "w", "e", "k0", "alive") + (("ub",) if self.f11w else ()) + (("eb", "cu", "nb") if self.by_use else ()):
             arr = np.zeros(cap, d[name].dtype); arr[:n] = d[name]
             setattr(self, name, arr)
         self.n, self.k, self.dead, self.given_up, self.made = n, k, dead, gu, made
         for name in ("v", "x_prev", "p", "th", "abar", "klast"):
             setattr(self, name, d[name].copy())
         self.x = self.x_prev.copy()
+        if self.by_use:
+            self.withdrawn_by_use = int(d["wbu"][0])
         if self.vt is not None:
             self.vt = d["vt"].copy()
         self.srcset = [set() for _ in range(N)]
@@ -518,12 +568,12 @@ BLOCK = 128
 class Run:
     """A run of one tissue on its stream, with the records of section 7.1 (stage A: and the stretch readings of section 11.2)."""
 
-    def __init__(self, rule, seed, nbytes, stage, f11w, out):
+    def __init__(self, rule, seed, nbytes, stage, f11w, out, by_use=False):
         self.rule, self.seed, self.nbytes, self.stage, self.f11w, self.out = rule, seed, nbytes, stage, f11w, Path(out)
         self.cfg = STAGE[stage]
         self.st, _ = stream(seed, nbytes)
         self.used = sorted(set(self.st.tolist()))
-        self.T = Tissue(seed, rule, f11w)
+        self.T = Tissue(seed, rule, f11w, by_use=by_use)
         self.emis = np.full(nbytes, -1, np.int16)
         self.block_dist = {}                                 # block start position -> distances (first step of the block)
         self.win = {}                                        # window name -> float16 records [wlen, N]
@@ -726,10 +776,10 @@ def git_head():
 
 
 def cmd_run(a, argv):
-    out = Path(a.out) if a.out else HERE / "runs" / f"{a.stage}_{a.rule}{'_f11written' if a.formula11_as_written else ''}_{a.seed}"
+    out = Path(a.out) if a.out else HERE / "runs" / f"{a.stage}_{a.rule}{'_f11written' if a.formula11_as_written else ''}{'_withdrawbyuse' if a.withdraw_by_use else ''}_{a.seed}"
     out.mkdir(parents=True, exist_ok=True)
     nbytes = a.bytes or STAGE[a.stage]["length"]
-    R = Run(a.rule, a.seed, nbytes, a.stage, a.formula11_as_written, out)
+    R = Run(a.rule, a.seed, nbytes, a.stage, a.formula11_as_written, out, by_use=a.withdraw_by_use)
     c0, w0 = time.process_time(), time.time()
     ckpt = STAGE[a.stage]["ckpt"] if a.ckpt_bytes is None else a.ckpt_bytes
     R.run(ckpt, a.die_after_byte, a.resume, log=True)
@@ -743,7 +793,8 @@ def cmd_run(a, argv):
     rec = dict(experiment="E63", brief=BRIEF, brief_ref=REVIEWER_REF, command=" ".join(["python3", "tissue_step1.py"] + argv),
                program_sha256=sha_file(__file__), read_sha256=sha_file(HERE / "step1_read.py") if (HERE / "step1_read.py").exists() else None,
                git_head=git_head(), versions=versions(), stage=a.stage, tissue=a.rule, seed=a.seed,
-               formula11="as written" if a.formula11_as_written else "with E10", opening=None,
+               formula11="as written" if a.formula11_as_written else ("with E10 and withdrawal by use (decision 62)" if a.withdraw_by_use else "with E10"),
+               opening=None,
                stream=dict(sha256=hashlib.sha256(R.st.tobytes()).hexdigest(), length=nbytes, used_values=len(R.used)),
                birth=T.B["digests"], counts=R.counts, stretches=R.stretch, cpu_by_stretch=R.cpu, cpu_total_s=R.cpu_total,
                wall_s=time.time() - w0, beside=a.beside, resumes=R.resumes,
@@ -763,6 +814,7 @@ def main(argv):
     ap.add_argument("pos", nargs="+")
     ap.add_argument("--bytes", type=int); ap.add_argument("--stage", default="A", choices=("A", "B"))
     ap.add_argument("--formula11-as-written", action="store_true"); ap.add_argument("--out")
+    ap.add_argument("--withdraw-by-use", action="store_true")      # the fifth tissue of stage A (decision 62)
     ap.add_argument("--ckpt-bytes", type=int); ap.add_argument("--resume", action="store_true"); ap.add_argument("--die-after-byte", type=int)
     ap.add_argument("--opening", type=int); ap.add_argument("--beside", type=int, default=0)
     a = ap.parse_args(argv)
