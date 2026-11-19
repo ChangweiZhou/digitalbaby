@@ -53,6 +53,7 @@ def make(kw):
             K, Tc = tau_opt[1:].split('-'); A['tauv'][rt.random(N) < 1.0 / float(K)] = float(Tc)
         elif tau_opt == 'q16':
             A['tauv'][rt.random(N) < 0.25] = 16.0
+    if kw.get('longfast', '') and 'longs' in B: A['tauv'][np.asarray(B['longs'], dtype=int)] = 2.0     # longfast=1: the long-axon cells keep the time constant 2
     for i in range(N):
         mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
         pos = {m: q for q, m in enumerate(mem)}

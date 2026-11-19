@@ -10,6 +10,7 @@
 #      D (eta 1/64 and 1/16, step eta (target - activity) u / |u|^2). Two preparations of the inputs:
 #        run  running standardisation (m += r (x - m), s2 += r ((x - m)^2 - s2), r = 1 / min(n, 1024)); lms_diag.py found the fixed
 #             standardisation no better and eta 1/64 the best step of D;
+#        clip the running-standardised inputs clipped at +-8 (added at 11:20 UTC, 19 November, at the reviewer's request);
 #        raw  the outputs as they are (no standardisation).
 #   C. for every online rule, the share right in windows of 4,096 life positions, and the end of the first window whose share reached
 #      the end mark's share, ref_1 and ref_2 of that window.
@@ -84,7 +85,7 @@ A['end mark'] = dict(shares={k: float((b[pos][m] == 10).mean()) for k, m in kmas
 t_fit = time.time() - t0
 # ---- B, C. online rules
 RULES = [('A', 0.0, 1 / 8), ('A', 1 / 16, 1 / 8), ('B', 1 / 16, 0.0), ('D', 0.0, 1 / 64), ('D', 0.0, 1 / 16)]
-CFG = [(p, r) for p in ('run', 'raw') for r in RULES]; C = len(CFG)
+CFG = [(p, r) for p in ('run', 'clip', 'raw') for r in RULES]; C = len(CFG)
 Wt = np.zeros((C, 256, G_ + 1)); rbar = np.zeros((C, 256)); rng = np.random.default_rng(T['SEED'])
 right = np.zeros((C, NB), bool); seen = np.zeros(256, bool)
 m1 = np.zeros(K); s1 = np.zeros(K)
@@ -93,7 +94,7 @@ for t in range(M):
     m1 += r * (x - m1); s1 += r * ((x - m1) ** 2 - s1); sd = np.sqrt(s1)
     u1 = np.where(sd > 0, (x - m1) / np.where(sd > 0, sd, 1), 0.0)
     Um = {}
-    for nm, z in (('run', u1), ('raw', x)):
+    for nm, z in (('run', u1), ('clip', np.clip(u1, -8, 8)), ('raw', x)):
         U = np.ones((256, G_ + 1)); U[:, :-1] = np.append(z, 0.0)[IDX]; Um[nm] = U
     yy = y[t]
     for c, (prep, (rule, eps, par)) in enumerate(CFG):
