@@ -2,7 +2,7 @@
    Plain and slow on purpose: every cell, every connection, every step, in the order of the text's sections 1 and 2.
    The birth, the stream and the time constants are prepared by my_tissue.py and read from a text file.
 
-   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8 [start_w a_make]]]]]
+   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8 [start_w a_make [start_w0]]]]]]
      rec_lo..rec_hi : the bytes whose outputs at phi = 31 are recorded (float32, all cells) into <out_prefix>.rec
      trace_steps    : the outputs of every cell at every step k < trace_steps are written as float64 into <out_prefix>.trace
      u1             : 1 = step 8 uses x_j of this step for a cell; 0 = it uses z_j, the output of step k - 1 (the literal z)
@@ -57,12 +57,13 @@ int main(int argc, char **argv) {
     int rec8 = argc > 14 ? atoi(argv[14]) == 8 : 0;               /* 8: the recording in double precision */
     double start_w = argc > 15 ? atof(argv[15]) : 1.0 / 8;        /* strength of a starting and of a made connection */
     double a_make = argc > 16 ? atof(argv[16]) : 1.0 / 4096;      /* level of the long mean below which a cell makes */
+    double start_w0 = argc > 17 ? atof(argv[17]) : start_w;       /* strength of a starting connection, if other than start_w */
     if (ftz) _mm_setcsr(_mm_getcsr() | 0x8040);   /* flush to zero and denormals are zero */
     FILE *fb = fopen(argv[1], "r"); long seed; int n_;
     if (fscanf(fb, "%ld", &seed) != 1) return 3;
     for (int i = 0; i < NC; i++) {
         int k, ns; if (fscanf(fb, "%d %d %lf %lf %d", &k, &is_fb[i], &sig[i], &tau[i], &ns) != 5 || k != i) return 4;
-        for (int q = 0; q < ns; q++) { int s; if (fscanf(fb, "%d", &s) != 1) return 5; add(&C[i], s, start_w, 0); }
+        for (int q = 0; q < ns; q++) { int s; if (fscanf(fb, "%d", &s) != 1) return 5; add(&C[i], s, start_w0, 0); }
         if (fscanf(fb, "%d", &n_) != 1) return 6;
         nmem[i] = n_; mem[i] = malloc((n_ + 1) * sizeof(int));
         for (int q = 0; q < n_; q++) if (fscanf(fb, "%d", &mem[i][q]) != 1) return 7;

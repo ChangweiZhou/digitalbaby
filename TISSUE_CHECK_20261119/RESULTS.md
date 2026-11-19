@@ -200,14 +200,30 @@ float32 bit over 16,384 bytes (my double record cast to float32 with float32 sub
 lists: 577 cells, S at lags 0 to 4 = 0.174, 0.184, 0.143, 0.157, 0.128, the reviewer's figures. With `birth()`'s lists it would be
 495 cells and 0.167, 0.167, 0.149, 0.151, 0.126.
 
-**Part 3** (`L8agg.py`, `out/L8_part3.json`): six lives a seed (reference + five with one cell's potential changed by 1e-12 before
-step 0). Smallest to largest S:
+**L5 corrected by the reviewer (10:24 UTC):** the 8 starting connections keep 1/8; only made connections take `start_w` = 1/64. On
+seed 73129 this changes nothing (`out/L8_73129_sw0_8th.stats`: every output, connection and strength identical to the run with 1/64,
+and equal to the reviewer's), because the input line of byte 0 is a starting sender of no cell on that seed, so nothing arrives at step
+0, and after step 0 conservation rescales every cell's strengths to 3/4 and 1/4 whatever they started at. On seeds 93683 and 116089 the
+line of byte 0 is a starting sender of 3 and 5 cells, so the starting strength matters there; their six lives were run again with 1/8
+(`jobs_L8b.txt`; the earlier lives with 1/64 are not committed and their figures are withdrawn). Parts 1, 2 and 4 are on seed 73129 and
+stand.
 
-| Seed | d = 1: lags 0, 1, 2 | d = 2 | d = 4 | Near the output lines: lags 0, 1, 2 | Every entry of every life above (a) and (b) |
+**Part 3** (`L8agg.py`, `out/L8_part3.json`, `out/L8_part3.txt`): six lives a seed (reference + five with one cell's potential changed by
+1e-12 before step 0). Smallest to largest S. "Near" is given for both groups: enlarged lists (the reviewer's reading; 577, 595 and 569
+cells on seeds 73129, 93683 and 116089) and `birth()`'s 1/8 lists (495, 519 and 495 cells).
+
+| Seed | d = 1: lags 0, 1, 2 | d = 2 | d = 4 | Near, enlarged: lags 0, 1, 2 | Near, 1/8 lists: lags 0, 1, 2 |
 |---|---|---|---|---|---|
-| 73129 | 0.913-0.937, 0.331-0.366, 0.186-0.207 | 0.495-0.554, 0.329-0.362, 0.208-0.230 | 0.210-0.241, 0.179-0.202, 0.148-0.165 | 0.174-0.216, 0.177-0.211, 0.143-0.173 | yes |
-| 93683 | 0.804-0.869, 0.284-0.322, 0.150-0.191 | 0.383-0.422, 0.250-0.288, 0.157-0.194 | 0.145-0.202, 0.151-0.192, 0.129-0.163 | 0.116-0.154, 0.132-0.162, 0.128-0.144 | (a) yes in every life; (b) fails for the present byte near the output lines in 4 lives of 6 (0.134, 0.116, 0.118, 0.116; se 0.002 to 0.006) and for S(4,0) in 1 life (0.145, se 0.007) |
-| 116089 | 0.933-0.958, 0.332-0.350, 0.188-0.212 | 0.554-0.661, 0.340-0.363, 0.202-0.225 | 0.216-0.251, 0.204-0.250, 0.149-0.189 | 0.196-0.245, 0.177-0.247, 0.125-0.198 | yes |
+| 73129 | 0.913-0.937, 0.331-0.366, 0.186-0.207 | 0.495-0.554, 0.329-0.362, 0.208-0.230 | 0.210-0.241, 0.179-0.202, 0.148-0.165 | 0.174-0.216, 0.177-0.211, 0.143-0.173 | 0.167-0.193, 0.167-0.184, 0.146-0.158 |
+| 93683 | 0.814-0.863, 0.292-0.310, 0.170-0.193 | 0.346-0.398, 0.223-0.271, 0.140-0.187 | 0.152-0.201, 0.161-0.199, 0.141-0.167 | **0.110**-0.147, 0.125-0.168, 0.117-0.144 | **0.106**-0.148, 0.109-0.158, 0.114-0.141 |
+| 116089 | 0.937-0.960, 0.337-0.362, 0.191-0.207 | 0.517-0.627, 0.335-0.389, 0.191-0.221 | 0.230-0.315, 0.226-0.244, 0.160-0.196 | 0.211-0.233, 0.186-0.237, 0.139-0.178 | 0.149-0.210, 0.163-0.216, 0.131-0.162 |
+
+Every one of the nine entries is above levels (a) and (b) in every life on all three seeds. Near the output lines, on seeds 73129 and
+116089 every life is above (a) and (b) at lags 0, 1 and 2 in both groups. On seed 93683 the present byte near the output lines is below
+0.1103 in one life of six in each group (0.110 enlarged, 0.106 with the 1/8 lists) and above (a) but not (b) in most of the other
+lives; per life (reference first): enlarged 0.135, 0.147, 0.113, 0.133, 0.141, 0.110; 1/8 lists 0.127, 0.148, 0.138, 0.135, 0.106,
+0.125. The reference life gives the reviewer's 0.135. Lags 1 and 2 near the output lines on 93683 are above (a) in every life in both
+groups; (b) fails at lag 1 in one life with the 1/8 lists.
 
 **Part 4** (`task2L8.py`, `out/L8T2_L8.json`): two copies, one cell's potential changed by 1e-9 before the first step of byte B, seed
 73129; largest output difference at the reading step 64 and 512 bytes later; made and withdrawn in the reference in B..B+512.
