@@ -125,3 +125,7 @@ Whole answer right, %: smallest / median / largest over 15 runs (seeds 1–3 × 
 ## Cost of the second task
 
 Pool runs took 104–150 CPU-seconds each, fixed-pool runs 9–24 s. At most three processes of one thread each.
+
+## The warm-up (W1–W3, Mr. Xu's request of 16:09 UTC)
+
+**NOT_RUN.** The reviewer's message asking for it reached this worker only after the stop of 16:14 UTC. No warm-up run was started.
