@@ -30,8 +30,8 @@ M = max(len(o) for o in own); idx = np.zeros((len(outl), M), int); msk = np.zero
 for v, o in enumerate(own): idx[v, :len(o)] = o; msk[v, :len(o)] = 1.0
 bb = b.astype(np.int64); V = 256
 assert len(outl) == V
-RULES = [('D', 1 / 16, 1), ('D', 1 / 64, 1), ('B', 0.25, 0), ('Q', 1 / 4, 1), ('Q', 1 / 16, 1), ('Q', 1 / 64, 1), ('Q', 1 / 16, 0), ('Q', 1 / 256, 1)]
-names = ['D eta=1/16', 'D eta=1/64', 'B', 'Q 1/4 z1', 'Q 1/16 z1', 'Q 1/64 z1', 'Q 1/16 z0', 'Q 1/256 z1']
+RULES = [('D', 1 / 64, 1), ('B', 0.25, 0), ('Q', 1 / 4, 1), ('Q', 1 / 16, 1), ('Q', 1 / 64, 1), ('Q', 1 / 16, 0)]     # the first three lives (L8_128, 65,536 bytes) also ran D 1/16 and Q 1/256
+names = ['D eta=1/64', 'B', 'Q 1/4 z1', 'Q 1/16 z1', 'Q 1/64 z1', 'Q 1/16 z0']
 out = dict(label=label, args=kw, bytes=NB, sets={})
 refs = SE.references(b[:NB]); q0 = 3 * NB // 4
 out['last_quarter_refs'] = {k: float((refs[k] == bb)[q0:].mean()) for k in ('ref_1', 'ref_2', 'ref_3')}
