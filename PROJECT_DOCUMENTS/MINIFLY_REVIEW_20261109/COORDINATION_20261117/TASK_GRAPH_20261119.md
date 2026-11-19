@@ -35,8 +35,8 @@ Status words: done; running; ready; waiting (for the tasks named).
 | 1.1 | Brief of step 1 | 0.2 | writer | `TASK_STEP_1_THE_TISSUE_READS_THE_STREAM_20261118.md` | done, unchecked |
 | 1.2 | Check of the brief, with a judgment on what is visible on paper before any run (the writer expects the step not to be reached) and a recommendation: release, change first, or a short trial first | 1.1 | checker | `CHECK_OF_TASK_STEP_1_BRIEF_20261119.md` | done: not to be released as written; a short trial first |
 | 1.3 | Brief revised from its check, in two stages: a trial of about 2 CPU-hours on one seed, and the full runs only after the trial's result | 1.2 | writer, then the checker of 1.2 | no open finding | done (revision 3; confirmed after nine sentence changes, which are entered) |
-| 1.4 | Release of stage A (the trial); stage B after stage A's report | 1.3 | coordinator | decision recorded | ready: put to the coordinator in memo section 33.35 |
-| 1.5 | The program of the tissue, and the checks before any run (among them the definition's worked example to four decimals) | 1.4 | worker | all checks pass, receipts committed | waiting |
+| 1.4 | Release of stage A (the trial); stage B after stage A's report | 1.3 | coordinator | decision recorded | done: stage A released as E63 to the main worker's line (decision 50); stage B after the coordinator has read and verified stage A's report |
+| 1.5 | The program of the tissue, and the checks before any run (among them the definition's worked example to four decimals) | 1.4 | worker | all checks pass, receipts committed | running (E63) |
 | 1.6 | The runs of step 1 | 1.5 | worker | report committed | waiting |
 | 1.7 | Verification of the report | 1.6 | coordinator | verified or corrected | waiting |
 | 1.8 | Decision: reached, or the next choice is opened in the order the brief gives (then 1.3 again for that one change), or reported to Mr. Xu as not reached within the budget | 1.7 | coordinator, Mr. Xu | recorded | waiting |
@@ -73,7 +73,7 @@ Because the steps are phases of one life, the brief of step k starts its tissue 
 |---|---|---|---|
 | D.1 | How strengths are determined when the influence of one cell on another runs through other cells that pull in different directions (B, section 17) | step 3's brief | Mr. Xu and the reviewer |
 | D.2 | Which reading of "the input end receives the feedback of the output end's information" is meant; both are run at step 2 unless Mr. Xu says | step 2's brief | Mr. Xu |
-| D.3 | Whether decision 44 of the coordinator (the earlier chain of steps as the order of work) is replaced by this graph | 1.4 | coordinator |
+| D.3 | Settled by the coordinator's decision 48: the roadmap replaces the chain of steps | | |
 
 ## 4. The graph
 
@@ -113,7 +113,7 @@ A task is handed over as one message that carries, in this order: the task's ide
 
 ## 6. What is ready now
 
-State at 00:49 UTC: tasks 0.3 and 1.3 are done and task 1.4 is with the coordinator. Task S.1 is ready but is held until the trial of step 1 has shown that cells away from the input lines stay informative, since nothing after step 1 can be used before that. Everything else waits for a result.
+State at 00:59 UTC (19 November): E63 (tasks 1.5 and 1.6, stage A) runs on the main worker's line. A reading of revision 5 of the definition from its first sentence is running (the coordinator's decision 51). Task 2.1, the brief of step 2, is being written and is not released before stage A is read (decision 56). Task S.1 is held. Verification is the coordinator's (decision 55).
 
 ## 7. What this graph does not yet contain
 
