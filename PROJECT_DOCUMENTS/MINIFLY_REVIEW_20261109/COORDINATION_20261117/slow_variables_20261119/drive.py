@@ -1,6 +1,6 @@
 # Driver of the reviewer's tissue.c: one tissue, seed 73129, 16,384 bytes, the two windows of stage A, the readings of the helper's tool.
 # usage: drive.py <label> rule=first|coincidence|fixed [floor=..] [astar=..] [by_use=1] [gain=1] [eta_g=..] [nbytes=..] [seed=..]
-#        [tau_h=.. beta=..] (A, adaptation)  [tau_u=.. rho=..] (B, depression of sending)   -- options of this copy
+#        [tau_h=.. beta=..] (A, adaptation)  [tau_u=.. rho_u=..] (B, depression of sending)   -- options of this copy
 import sys, os, time, json, ctypes, subprocess, numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 FAST = os.environ.get('FASTDIR') or os.path.join(HERE, 'deps')
@@ -20,29 +20,29 @@ maxd = max(len(m) for m in B['members'].values()) + 2
 P = ctypes.c_void_p
 class Tis(ctypes.Structure):
     _fields_ = [('maxd', ctypes.c_int), ('rule', ctypes.c_int), ('floor_x', ctypes.c_double), ('astar', ctypes.c_double), ('by_use', ctypes.c_int),
-                ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P),
+                ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P),
                 ('kind', P), ('sig', P), ('nmem', P), ('mem', P),
                 ('deg', P), ('c_src', P), ('c_mi', P), ('c_w', P), ('c_e0', P), ('c_t0', P), ('c_k0', P), ('c_cu', P), ('c_nb', P), ('issrc', P),
                 ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
                 ('rng', ctypes.c_uint64), ('made', ctypes.c_int64), ('given', ctypes.c_int64), ('given_by_use', ctypes.c_int64), ('k', ctypes.c_int64),
                 ('active_sum', ctypes.c_double), ('qpow', ctypes.c_double * 4097),
                 ('adapt', ctypes.c_int), ('tau_h', ctypes.c_double), ('beta', ctypes.c_double), ('h', P),
-                ('depress', ctypes.c_int), ('tau_u', ctypes.c_double), ('rho', ctypes.c_double), ('u', P), ('us', P)]
+                ('depress', ctypes.c_int), ('tau_u', ctypes.c_double), ('rho_u', ctypes.c_double), ('u', P), ('us', P)]
 A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray(B['sig'], np.float64), nmem=np.zeros(N, np.int32), mem=np.zeros((N, maxd), np.int16),
          deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
          c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
          v=np.zeros(N), xp=np.zeros(N), p=np.zeros(N), th=np.zeros(N), abar=np.zeros(N), vt=np.full(N, astar), E=np.zeros(N), klast=np.zeros(N, np.int32), z=np.zeros(ts.NZ),
-         gain=np.ones(N), h=np.zeros(N), u=np.ones(N), us=np.ones(N))
+         gain=np.ones(N), ibar=np.zeros(N), h=np.zeros(N), u=np.ones(N), us=np.ones(N))
 for i in range(N):
     mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
     pos = {m: q for q, m in enumerate(mem)}
     for d, s in enumerate(B['src'][i]):
         A['c_src'][i, d] = s; A['c_mi'][i, d] = pos[s]; A['c_w'][i, d] = ts.START_W; A['issrc'][i, pos[s]] = 1
     A['deg'][i] = len(B['src'][i])
-t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g
+t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8')))
 t.rng = 88172645463325252 + SEED
 t.adapt = int('tau_h' in kw); t.tau_h = float(eval(kw.get('tau_h', '1'))); t.beta = float(eval(kw.get('beta', '0')))
-t.depress = int('tau_u' in kw); t.tau_u = float(eval(kw.get('tau_u', '1'))); t.rho = float(eval(kw.get('rho', '0')))
+t.depress = int('tau_u' in kw); t.tau_u = float(eval(kw.get('tau_u', '1'))); t.rho_u = float(eval(kw.get('rho_u', '0')))
 for k, a in A.items(): setattr(t, k, a.ctypes.data)
 L.tis_init(ctypes.byref(t))
 b, _ = ts.stream(SEED, NB); b = np.ascontiguousarray(b, np.uint8)

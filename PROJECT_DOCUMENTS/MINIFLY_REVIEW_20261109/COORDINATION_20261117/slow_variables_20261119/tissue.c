@@ -11,7 +11,7 @@
    Options: an output floor; the target of activity a*; withdrawal of connections by use (zero for a silent cell).
    Added in this copy (slow variables of one cell, 19 November 2026):
      (A) adaptation: h(k+1) = h(k) + (x(k) - h(k)) / tau_h; the output is computed from v - theta - beta h(k).
-     (B) depression of sending: u(k+1) = u(k) + (1 - u(k)) / tau_u - rho u(k) x(k), held in [0, 1]; what other cells receive from the
+     (B) depression of sending: u(k+1) = u(k) + (1 - u(k)) / tau_u - rho_u u(k) x(k), held in [0, 1]; what other cells receive from the
          cell at step k+1 is u(k) x(k) in place of x(k) (the traces of sending cells follow what is received). */
 #include <stdint.h>
 #include <stdlib.h>
@@ -36,7 +36,8 @@ enum { FIRST = 0, COINC = 1, FIXED = 2 };
 typedef struct {
     int maxd;                       /* capacity of a cell's list of connections */
     int rule; double floor_x, astar; int by_use;
-    int two_sided; double eta_g; double *gain;      /* two-sided control: a gain on the cell's arrival that follows its activity toward a* */
+    int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
+    double rho; double *ibar;
     /* birth (given) */
     const int8_t *kind; const double *sig;          /* sig has NZ entries */
     const int32_t *nmem; const int16_t *mem;        /* members of each cell's neighbourhood: NCELL x maxd */
@@ -53,7 +54,7 @@ typedef struct {
     double qpow[4097];
     /* slow variables of one cell (this copy) */
     int adapt; double tau_h, beta; double *h;
-    int depress; double tau_u, rho; double *u, *us;
+    int depress; double tau_u, rho_u; double *u, *us;
 } Tis;
 
 static inline uint64_t rnd(Tis *t) { uint64_t x = t->rng; x ^= x >> 12; x ^= x << 25; x ^= x >> 27; t->rng = x; return x * 2685821657736338717ULL; }
@@ -88,7 +89,8 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         if (t->kind[i] == FBK) { x[i] = 0.0; continue; }
         const int64_t b = (int64_t)i * md; const int dg = t->deg[i];
         double A = 0.0;
-        for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; A += t->sig[s] * t->c_w[b + d] * z[s]; }
+        double zs = 0.0;
+        for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; A += t->sig[s] * t->c_w[b + d] * z[s]; zs += z[s]; }
         A *= t->gain[i];
         const double m = A - t->p[i];
         const double v = 0.5 * t->v[i] + 0.5 * A;                    /* TAU_V = 2 */
@@ -128,10 +130,14 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         double th = t->th[i] + ETA_T * (xi - a); t->th[i] = th < 0.0 ? 0.0 : th;
         t->abar[i] = (1.0 - 1.0 / PS) * t->abar[i] + (1.0 / PS) * xi;
         if (t->rule == COINC) t->vt[i] = (1.0 - 1.0 / TAU_VT) * t->vt[i] + (1.0 / TAU_VT) * xi * xi / a;
-        if (t->two_sided) { double g = t->gain[i] * (1.0 + t->eta_g * (a - xi) / a); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > 4096.0 ? 4096.0 : g); }
+        if (t->two_sided == 2) {
+            t->ibar[i] = (1.0 - 1.0 / PS) * t->ibar[i] + (1.0 / PS) * (dg ? zs / dg : 0.0);
+            const double tg = t->rho * t->ibar[i], ab = t->abar[i];
+            double g = t->gain[i] * (1.0 + t->eta_g * (tg - ab) / (tg + ab + 1e-30)); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > 4096.0 ? 4096.0 : g);
+        } else if (t->two_sided) { double g = t->gain[i] * (1.0 + t->eta_g * (a - xi) / a); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > 4096.0 ? 4096.0 : g); }
         if (t->adapt) t->h[i] += (xi - t->h[i]) / t->tau_h;                 /* (A) */
         if (t->depress) { double u = t->u[i]; t->us[i] = u;                   /* (B) u(k) goes with x(k) */
-            u = u + (1.0 - u) / t->tau_u - t->rho * u * xi; t->u[i] = u < 0.0 ? 0.0 : (u > 1.0 ? 1.0 : u); }
+            u = u + (1.0 - u) / t->tau_u - t->rho_u * u * xi; t->u[i] = u < 0.0 ? 0.0 : (u > 1.0 ? 1.0 : u); }
         t->v[i] = v; x[i] = xi; if (xi != 0.0) nact++;
     }
     /* traces of the sending cells: z of this step is x(k-1) */
