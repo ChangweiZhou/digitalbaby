@@ -208,17 +208,17 @@ the list of 07:25 named a change of strength by order in time, which the tissues
    distance, with and without the floor, and to ask the bytes back of the cells near the output lines; and to state every
    one-seed difference against the spread between lives that differ in the last bit (row 48).
 
-## 5. Lines at work (09:53 UTC)
+## 5. Lines at work (11:32 UTC)
 
 | Line | Task |
 |---|---|
-| main worker | the merged program: reach readings of its T5 to T8 (rows 37, 42, 51) |
-| helper | time constants up to 256 over 65,536 bytes; then the long-axon tissue on 15 seeds with its own draws, divergence, loops, amplitude |
-| E52's worker | the inhibitory total 1/8 and 3/16 on 15 seeds (base and time constants); then the rest of its four changes |
-| E55's worker | the output end on the long-axon tissue at the output lines as defined; then the output end at other places |
-| E57's worker | delays of 0 to 8 steps over 65,536 bytes, three seeds |
-| E62's worker | its independent program: five lives a seed for the nine entries; when a life stops depending on the last bit |
-| reviewer | batch40: long axons with other shares, reaches and time constants |
+| main worker | long axons in the merged program: its six tissues on three seeds, 65,536 bytes, with what the cells near the output lines tell of the next byte (rows 82, 89) |
+| helper | the tissue with fast long-axon cells (row 87): the reviewer's draws on 15 seeds, then 65,536 bytes (its own draws done, row 88) |
+| E52's worker | six long-axon settings on its own 15 seeds (the first done, row 91) |
+| E55's worker | the output end on the long-axon tissues: third seed; where seeds 73129 and 93683 differ; constants up to 128; fast long-axon cells (rows 78, 84, 90, 94) |
+| E57's worker | long axons with delays and mixed memories on the reviewer's 15 seeds |
+| E62's worker | the output end's rules written again from their description, on the independent program, seeds 73129 and 93683 |
+| reviewer | fast long-axon cells with the other cells spread up to 512: the last seven seeds (batch50) |
 
 ## 6. Corrections of my own statements of tonight
 
@@ -262,4 +262,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 11:20 UTC, 19 November 2026.
+Last change: 11:32 UTC, 19 November 2026.
