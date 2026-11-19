@@ -76,13 +76,13 @@ The reference on the same positions: ref_1 10.6, ref_2 12.1–12.3, end mark 6.2
    - With equal steps, an emitter's expected change in a context is eta(2p − 1), where p is the share of that context after which its byte comes. It gains only where p > 1/2.
 2. **With a smaller step after no (A, kappa 1/8) or an own baseline (B)**, yes/no alone takes the one-hot present byte to 7–9%. That is above the end mark's share (passed after 4,096 to 69,632 bytes) and below ref_1 in the last window.
    - Some windows of B reach ref_1, after 32,768 bytes on two seeds.
-   - On three one-hots, B reaches 17.7–20.4% by 262,144 bytes and is still rising. That is above ref_2 (passed after 12,288 to 28,672 bytes) and below ref_3.
+   - On three one-hots, B reaches 17.7–20.4% by 262,144 bytes and is still rising. That is above ref_2: a window first reaches ref_2 after 32,768 to 49,152 bytes, and ref_1 after 12,288 to 28,672. It stays below ref_3. Every 32,768 bytes it reads 12.4 → 17.7 (73129), 11.7 → 18.5 (93683), 10.6 → 20.4 (116089).
 3. **On the cells near each driver, no rule from yes/no reaches the present-byte level** (ref_1) at 65,536 or 262,144 bytes. Only one last window reaches the end mark's share: A, kappa 1/46, U, seed 116089, 6.5 against 6.2. The supervised delta rule reaches only 4.5–6.6.
    - Yet a ridge reader fitted offline on the same per-driver inputs reaches 8.3–12.3%, around ref_1.
    - So the information is in each driver's neighbourhood. The one-pass rules on these inputs do not extract it in this many bytes; that includes the supervised one, with running standardisation.
 4. **Settings that never learn.**
    - B with eps 0 never changes: the baseline starts at 0, so a no gives a step of 0.
-   - A with kappa 1/46 gives the same windows on oh1, oh2 and oh3 of a seed. That is consistent with the emitter settling on one byte early; I have not checked it.
+   - A with kappa 1/46 gives windows identical across inputs in some cases: on oh1, oh2 and oh3 for both eps on seed 116089, and with eps 1/16 on seed 73129. That is consistent with the emitter settling on one byte early; I have not checked it.
 
 **Not measured.**
 - Rules with exploration other than a fixed eps.
