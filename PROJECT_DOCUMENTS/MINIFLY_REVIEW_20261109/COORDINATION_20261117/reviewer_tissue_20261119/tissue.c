@@ -61,6 +61,9 @@ typedef struct {
     int64_t made, given, given_by_use, k;
     double active_sum;              /* sum over steps of the number of cells with output not zero */
     double qpow[4097];
+    int32_t *outdeg;                /* NZ: number of cells that hold a connection from each sender (cell or line); kept by tis_init, making and withdrawal */
+    double keep_out;                /* keep_out k: a connection is not withdrawn while its sender has k receivers or fewer (the sending end holds its last connections) */
+    double make_lonely;             /* make_lonely 1: a cell that makes a connection takes, among the free members of its neighbourhood, one that no cell receives from, if there is one */
 } Tis;
 
 static inline uint64_t rnd(Tis *t) { uint64_t x = t->rng; x ^= x >> 12; x ^= x << 25; x ^= x >> 27; t->rng = x; return x * 2685821657736338717ULL; }
@@ -68,6 +71,7 @@ static inline uint64_t rnd(Tis *t) { uint64_t x = t->rng; x ^= x >> 12; x ^= x <
 static void remove_conn(Tis *t, int i, int d) {
     int md = t->maxd, last = t->deg[i] - 1; int64_t b = (int64_t)i * md;
     t->issrc[b + t->c_mi[b + d]] = 0;
+    if (t->outdeg) t->outdeg[t->c_src[b + d]]--;
     if (d != last) {
         t->c_src[b + d] = t->c_src[b + last]; t->c_mi[b + d] = t->c_mi[b + last]; t->c_w[b + d] = t->c_w[b + last];
         t->c_e0[b + d] = t->c_e0[b + last]; t->c_t0[b + d] = t->c_t0[b + last]; t->c_k0[b + d] = t->c_k0[b + last];
@@ -190,6 +194,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
             if (t->xp[i] != 0.0 || (k % PS) == 0 || t->rule == TIMING) {                /* a strength can only have fallen at an active cell; ages are looked at once a period */
                 for (int d = t->deg[i] - 1; d >= 0; d--) { int s = t->c_src[b + d]; if (s >= NCELL) continue;
                     if (k - t->c_k0[b + d] < PS) continue;
+                    if (t->keep_out > 0.0 && t->outdeg[s] <= (int)t->keep_out) continue;
                     if (t->c_w[b + d] < GIVE_UP) { remove_conn(t, i, d); t->given++; }
                     else if (t->prune_only != 0.0 && t->sig[s] > 0.0 && (k - t->c_k0[b + d]) >= 4096 && t->c_e0[b + d] > 0.0 && t->c_e0[b + d] > t->prune_ratio * t->c_cu[b + d]) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                     else if (t->prune_only >= 2.0 && (t->prune_only < 3.0 || t->sig[s] > 0.0) && (k - t->c_k0[b + d]) >= 4096 && t->M[s] < (t->a_make > 0.0 ? t->a_make : a)) { remove_conn(t, i, d); t->given++; t->given_by_use++; }   /* prune_only 2: a connection from a cell whose long mean of output, as it arrives at the connection, is below the level at which a cell itself seeks a source, is withdrawn (3: only from excitatory cells) */
@@ -200,11 +205,16 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                 const int free_n = t->nmem[i] - t->deg[i];
                 if (free_n > 0) {
                     int pick = (int)(rnd(t) % (uint64_t)free_n), mi = -1;
-                    for (int q = 0; q < t->nmem[i]; q++) if (!t->issrc[b + q]) { if (pick == 0) { mi = q; break; } pick--; }
+                    if (t->make_lonely != 0.0) {
+                        int nl = 0; for (int q = 0; q < t->nmem[i]; q++) if (!t->issrc[b + q] && t->outdeg[t->mem[b + q]] == 0 && (t->mem[b + q] < NCELL ? t->kind[t->mem[b + q]] != FBK && t->M[t->mem[b + q]] > 0.0 : t->M[t->mem[b + q]] > 1.0 / 65536.0)) nl++;
+                        if (nl > 0) { int pl = pick % nl; for (int q = 0; q < t->nmem[i]; q++) if (!t->issrc[b + q] && t->outdeg[t->mem[b + q]] == 0 && (t->mem[b + q] < NCELL ? t->kind[t->mem[b + q]] != FBK && t->M[t->mem[b + q]] > 0.0 : t->M[t->mem[b + q]] > 1.0 / 65536.0)) { if (pl == 0) { mi = q; break; } pl--; } }
+                    }
+                    if (mi < 0) for (int q = 0; q < t->nmem[i]; q++) if (!t->issrc[b + q]) { if (pick == 0) { mi = q; break; } pick--; }
                     int d = t->deg[i]++; int s = t->mem[b + mi];
                     t->c_src[b + d] = (int16_t)s; t->c_mi[b + d] = (int16_t)mi; t->c_w[b + d] = t->start_w; t->c_k0[b + d] = (int32_t)k;
                     t->c_e0[b + d] = (s < NCELL && t->rule != TIMING) ? t->E[s] : 0.0; t->c_t0[b + d] = (int32_t)(k + 1);
                     t->c_cu[b + d] = 0.0; t->c_nb[b + d] = 0; t->issrc[b + mi] = 1;
+                    if (t->outdeg) t->outdeg[s]++;
                     t->klast[i] = (int32_t)k; t->made++;
                 }
             }
@@ -215,7 +225,8 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
     return nact;
 }
 
-void tis_init(Tis *t) { for (int d = 0; d <= 4096; d++) t->qpow[d] = pow(1.0 - 1.0 / TAU, (double)d); }
+void tis_init(Tis *t) { for (int d = 0; d <= 4096; d++) t->qpow[d] = pow(1.0 - 1.0 / TAU, (double)d);
+    if (t->outdeg) { memset(t->outdeg, 0, NZ * sizeof(int32_t)); for (int i = 0; i < NCELL; i++) for (int d = 0; d < t->deg[i]; d++) t->outdeg[t->c_src[(int64_t)i * t->maxd + d]]++; } }
 
 /* Reads bytes[b0..b1); records the outputs at the reading step of the bytes in [r0, r1) into rec (float32, (r1-r0) x NCELL). */
 void tis_run(Tis *t, const uint8_t *bytes, int64_t b0, int64_t b1, int64_t r0, int64_t r1, float *rec) {

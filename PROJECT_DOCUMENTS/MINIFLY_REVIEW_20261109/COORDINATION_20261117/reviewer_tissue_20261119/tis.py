@@ -36,7 +36,7 @@ def make(kw):
                     ('deg', P), ('c_src', P), ('c_mi', P), ('c_w', P), ('c_e0', P), ('c_t0', P), ('c_k0', P), ('c_cu', P), ('c_nb', P), ('issrc', P),
                     ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
                     ('rng', ctypes.c_uint64), ('made', ctypes.c_int64), ('given', ctypes.c_int64), ('given_by_use', ctypes.c_int64), ('k', ctypes.c_int64),
-                    ('active_sum', ctypes.c_double), ('qpow', ctypes.c_double * 4097)]
+                    ('active_sum', ctypes.c_double), ('qpow', ctypes.c_double * 4097), ('outdeg', P), ('keep_out', ctypes.c_double), ('make_lonely', ctypes.c_double)]
     A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray(B['sig'], np.float64), nmem=np.zeros(N, np.int32), mem=np.zeros((N, maxd), np.int16),
              deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
              c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
@@ -54,13 +54,23 @@ def make(kw):
         elif tau_opt == 'q16':
             A['tauv'][rt.random(N) < 0.25] = 16.0
     if kw.get('longfast', '') and 'longs' in B: A['tauv'][np.asarray(B['longs'], dtype=int)] = 2.0     # longfast=1: the long-axon cells keep the time constant 2
+    lf = int(kw.get('line_fan', 0))                      # line_fan=k: at birth every input line ends on at least k cells among those that have it in their neighbourhood (drawn at random among them)
+    if lf:
+        rf = np.random.default_rng(SEED + 20261121)
+        for v in range(ts.NIN):
+            ln = ts.LINE0 + v; have = [i for i in range(N) if ln in B['src'][i]]
+            cand = [i for i in range(N) if i not in B['fbset'] and ln in B['members'][i] and ln not in B['src'][i]]
+            need = min(lf - len(have), len(cand))
+            if need > 0:
+                for i in rf.choice(cand, size=need, replace=False): B['src'][int(i)] = list(B['src'][int(i)]) + [ln]
+    A['outdeg'] = np.zeros(ts.NZ, np.int32)
     for i in range(N):
         mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
         pos = {m: q for q, m in enumerate(mem)}
         for d, s in enumerate(B['src'][i]):
             A['c_src'][i, d] = s; A['c_mi'][i, d] = pos[s]; A['c_w'][i, d] = ts.START_W; A['issrc'][i, pos[s]] = 1
         A['deg'][i] = len(B['src'][i])
-    t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8'))); t.gmax = float(eval(kw.get('gmax', '4096'))); t.tau_f = float(eval(kw.get('tau_f', '4'))); t.eta_s = float(eval(kw.get('eta_s', '1'))); t.no_make = float(kw.get('no_make', 0)); t.lines_learn = float(kw.get('lines_learn', 0)); t.norm = float(kw.get('norm', 0)); t.a_make = float(eval(kw.get('a_make', '0'))); t.rate_norm = float(kw.get('rate_norm', 0)); t.inh_learn = float(kw.get('inh_learn', 0)); t.wcap = float(eval(kw.get('wcap', '0'))); t.prune_only = float(kw.get('prune_only', 0)); t.mk_long = float(kw.get('mk_long', 0)); t.prune_ratio = float(eval(kw.get('prune_ratio', '1'))); t.start_w = float(eval(kw.get('start_w', '1/8'))); t.make_period = float(eval(kw.get('make_period', '128'))); t.we = float(eval(kw.get('we', '3/4'))); t.wi = float(eval(kw.get('wi', '1/4')))
+    t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8'))); t.gmax = float(eval(kw.get('gmax', '4096'))); t.tau_f = float(eval(kw.get('tau_f', '4'))); t.eta_s = float(eval(kw.get('eta_s', '1'))); t.no_make = float(kw.get('no_make', 0)); t.lines_learn = float(kw.get('lines_learn', 0)); t.norm = float(kw.get('norm', 0)); t.a_make = float(eval(kw.get('a_make', '0'))); t.rate_norm = float(kw.get('rate_norm', 0)); t.inh_learn = float(kw.get('inh_learn', 0)); t.wcap = float(eval(kw.get('wcap', '0'))); t.prune_only = float(kw.get('prune_only', 0)); t.mk_long = float(kw.get('mk_long', 0)); t.prune_ratio = float(eval(kw.get('prune_ratio', '1'))); t.start_w = float(eval(kw.get('start_w', '1/8'))); t.make_period = float(eval(kw.get('make_period', '128'))); t.we = float(eval(kw.get('we', '3/4'))); t.wi = float(eval(kw.get('wi', '1/4'))); t.keep_out = float(kw.get('keep_out', 0)); t.make_lonely = float(kw.get('make_lonely', 0))
     t.rng = 88172645463325252 + SEED
     for k, a in A.items(): setattr(t, k, a.ctypes.data)
     L.tis_init(ctypes.byref(t))
