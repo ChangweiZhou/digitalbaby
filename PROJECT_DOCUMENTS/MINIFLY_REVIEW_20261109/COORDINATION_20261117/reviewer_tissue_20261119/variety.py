@@ -22,13 +22,25 @@ while fr.any():
     d += 1; dist[nxt] = d; fr = nxt
 Mn = np.stack([rec[wb == v].mean(axis=0) for v in vals])          # byte values x cells
 mx = Mn.max(axis=0); pref = Mn.argmax(axis=0); nb = (Mn > 0.5 * mx[None, :]).sum(axis=0)
+def s_std(cells):
+    """Nearest-centroid score of the present byte from the cells given, each divided by its own deviation, no floor:
+    centroids from the first half of the window, score (mean over byte values of the share right) on the second half."""
+    X = rec[:, cells]; h = X.shape[0] // 2
+    sd = X[:h].std(axis=0); keep = sd > 1e-30
+    if keep.sum() < 2: return None
+    X = X[:, keep] / sd[keep]
+    lab1, lab2 = wb[:h], wb[h:]
+    vs = [v for v in vals if (lab1 == v).any() and (lab2 == v).any()]
+    C = np.stack([X[:h][lab1 == v].mean(axis=0) for v in vs])
+    D = ((X[h:, None, :] - C[None, :, :]) ** 2).sum(axis=2); pred = D.argmin(axis=1)
+    return float(np.mean([(pred[lab2 == v] == k).mean() for k, v in enumerate(vs)]))
 rows = []
 for dd in range(1, int(dist.max()) + 1):
     c = (dist == dd); a = c & (mx > 1e-12)
     if not c.any(): continue
     if a.any():
         cnt = np.bincount(pref[a], minlength=len(vals))
-        rows.append(dict(d=dd, cells=int(c.sum()), answering=int(a.sum()), preferred_bytes=int((cnt > 0).sum()), top_share=float(cnt.max() / a.sum()),
+        rows.append(dict(d=dd, cells=int(c.sum()), s_std=s_std(np.where(a)[0]), answering=int(a.sum()), preferred_bytes=int((cnt > 0).sum()), top_share=float(cnt.max() / a.sum()),
                          bytes_a_cell_median=float(np.median(nb[a])), preferred_freq_median=float(np.median(freq[pref[a]])), largest_mean_median=float(np.median(mx[a]))))
     else:
         rows.append(dict(d=dd, cells=int(c.sum()), answering=0))
@@ -37,6 +49,6 @@ os.makedirs('variety', exist_ok=True); json.dump(out, open(f'variety/{label}.jso
 print(f"== {label}: {len(vals)} byte values; frequency of a byte: median {np.median(freq):.4f}, largest {freq.max():.4f}")
 for r in rows:
     if r['answering']:
-        print(f"   d={r['d']:2d} cells {r['cells']:4d} answering {r['answering']:4d} | preferred bytes {r['preferred_bytes']:2d} of {len(vals)}, commonest holds {r['top_share']:.2f} | bytes a cell {r['bytes_a_cell_median']:4.1f} | freq of preferred {r['preferred_freq_median']:.4f} | largest mean {r['largest_mean_median']:.4f}")
+        print(f"   d={r['d']:2d} cells {r['cells']:4d} answering {r['answering']:4d} | preferred bytes {r['preferred_bytes']:2d} of {len(vals)}, commonest holds {r['top_share']:.2f} | bytes a cell {r['bytes_a_cell_median']:4.1f} | freq of preferred {r['preferred_freq_median']:.4f} | largest mean {r['largest_mean_median']:.4f} | S no floor {(r['s_std'] if r['s_std'] is not None else float('nan')):.3f}")
     else: print(f"   d={r['d']:2d} cells {r['cells']:4d} answering 0")
 sys.stdout.flush()
