@@ -4,6 +4,7 @@
 # NEXT byte from the cells' outputs at the present byte. One unit a byte value.
 # Two sets of inputs:   pool : every unit sees all cells near the output lines (the drivers and the members of their neighbourhoods);
 #                       own  : unit v sees only the members of the neighbourhood of the v-th output-line cell (what one driver reaches).
+#                       first: (sets=first) every unit sees the cells that have an input line in their neighbourhood at birth.
 #                       all  : (sets=all) every unit sees every cell of the tissue: what reach without limit would give these rules.
 # Inputs: a cell's output minus its running mean, over its running deviation (both at rate 1/1024, updated after use), clipped to
 # [-8, 8]; a constant 1 appended; n = |U|^2. Rules (as yq.py): D told the right byte, every unit W[v] += eta (target - a_v) U / n;
@@ -43,11 +44,12 @@ refs = SE.references(b[:NB]); q0 = 3 * NB // 4
 out['last_quarter_refs'] = {k: float((refs[k] == bb)[q0:].mean()) for k in ('ref_1', 'ref_2', 'ref_3')}
 print("   refs last quarter " + ' '.join(f"{k} {100 * v:.2f}" for k, v in out['last_quarter_refs'].items()), flush=True)
 allc = np.where(~isfb)[0]
+firstc = np.array([i for i in range(N) if not isfb[i] and any(m >= N for m in B['members'][i])])     # 'first': the cells that have an input line in their neighbourhood at birth
 for trs in kw.get('traces', 'none').split('/'):                     # traces=none/2,4/2,4,8: several settings on one life
     TR = [float(k) for k in trs.split(',') if k and k != 'none']; nT = 1 + len(TR)
     for sname0 in kw.get('sets', 'pool,own').split(','):
         sname = sname0 if not trs or trs == 'none' else f'{sname0} traces {trs}'
-        pin = allc if sname0 == 'all' else pool                                 # 'all': every unit sees every cell of the tissue except the feedback cells
+        pin = allc if sname0 == 'all' else firstc if sname0 == 'first' else pool                                 # 'all': every unit sees every cell of the tissue except the feedback cells
         C = len(RULES); rng = np.random.default_rng(T['SEED']); seen = np.zeros(V, bool); right = np.zeros((C, NB), bool); rbar = np.zeros(V)
         mean = np.zeros(N); var = np.ones(N) * 1e-4
         if sname0 != 'own': W = np.zeros((C, V, nT * len(pin) + 1))
