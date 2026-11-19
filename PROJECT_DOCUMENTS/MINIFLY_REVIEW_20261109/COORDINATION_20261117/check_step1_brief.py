@@ -4,6 +4,9 @@ computed without running the tissue.
 Run from the repository's root:   python3 -I PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/check_step1_brief.py
 Standard library only; it reads no file and writes no file. About one minute.
 
+Revision 3 (19 November 2026), after CONFIRMATION_OF_TASK_STEP_1_BRIEF_REVISION_2_20261119.md: revision 5's worked example,
+part 1 (variant r5), the level 0.1146 of stage A from the code of the pair (byte one back, position within the item), the factor of
+check 10, and the cost of opening 2 with a* = 1/32.
 Revision 2 (19 November 2026), after CHECK_OF_TASK_STEP_1_BRIEF_20261119.md: erratum E10 (formula 11 by strength only), the
 coincidence rule of the check's finding 5, no reversal of the feedback cells' kinds (finding 6), the windows of stage A, the count of
 byte values in every window of every seed, the line connections that formula 11 as written keeps at step 128, the growth under E10,
@@ -251,6 +254,7 @@ ETA, TAU_V, TAU, ETA_T, ASTAR, TAU_VB = 1 / 8, 2, 32, 1 / 128, 1 / 8, 4096
 
 def example(variant):
     """variant 'r4': revision 4 as written. 'E4': first form with erratum E4 (F has its line only, theta 0, formulas 7, 9, 12 off at F).
+    'r5': revision 5, section 13, part 1 (F with its line only, v = 0, theta = 0; otherwise as 'E4').
     'K': the coincidence tissue (E4; F excitatory, since E3 is not applied; the coincidence rule of section 5.5 at the inner cell I:
     excitatory sources by e * x(k-1) * (x(k-1) - theta-bar), inhibitory sources by e * (x(k-1) - a*), theta-bar starting at a* with
     time constant 4,096 steps)."""
@@ -260,8 +264,8 @@ def example(variant):
     sign = {"s1": 1, "h": -1, "c": 1, "q": 1, "g": -1, "u": 1, "f": -1, "L3": 1, "L5": 1, "NO": 1, "E": 1, "F": 1}
     fixed = {"L3", "L5", "NO"}
     cells = {
-        "F": dict(src={"NO": [1.0, 0.0], **({} if variant in ("E4", "K") else {"s1": [0.25, 0.10]})}, v=0.02, p=0.02,
-                  th=0.0 if variant in ("E4", "K") else 0.05, xprev=0.0, plastic=variant == "r4"),
+        "F": dict(src={"NO": [1.0, 0.0], **({} if variant in ("E4", "K", "r5") else {"s1": [0.25, 0.10]})}, v=0.0 if variant == "r5" else 0.02, p=0.02,
+                  th=0.0 if variant in ("E4", "K", "r5") else 0.05, xprev=0.0, plastic=variant == "r4"),
         "E": dict(src={"L3": [0.125, 0.02], "L5": [0.125, 0.40], "h": [0.25, 0.25], "c": [0.5, 0.125], "F": [0.25, 0.0]},
                   v=0.04, p=0.05, th=0.02, xprev=0.03, plastic=True),
         "I": dict(src={"E": [0.5, 0.06], "q": [0.25, 0.25], "g": [0.25, 0.125]}, v=0.10, p=0.12, th=0.05, xprev=0.06, plastic=True,
@@ -298,7 +302,7 @@ def example(variant):
             for j, we in c["src"].items():
                 we[1] = (1 - 1 / TAU) * we[1] + (1 / TAU) * z[j]
             c["p"] = (1 - 1 / TAU) * c["p"] + (1 / TAU) * A
-            if not (n == "F" and variant in ("E4", "K")):
+            if not (n == "F" and variant in ("E4", "K", "r5")):
                 c["th"] = max(0.0, c["th"] + ETA_T * (x - ASTAR))
             if c.get("rule") == "K":
                 c["vb"] = (1 - 1 / TAU_VB) * c["vb"] + (1 / TAU_VB) * x * x / ASTAR
@@ -318,9 +322,9 @@ PUBLISHED = {0: (0.4725, 0.1250, 0.0750, 0.0625, 0.0462, -0.0737, 0.0231, 0.3125
              16: (0.0000, 0.1239, 0.0401, 0.1055, 0.0842, -0.0221, 0.0446, 0.0304, -0.2855, 0.0561),
              24: (0.0000, 0.1236, 0.0308, 0.1064, 0.0847, -0.0167, 0.0499, 0.0315, -0.2205, 0.0000),
              31: (0.0000, 0.1234, 0.0245, 0.1072, 0.0851, -0.0129, 0.0544, 0.0315, -0.1766, 0.0000)}
-for variant in ("r4", "E4", "K"):
+for variant in ("r4", "E4", "K", "r5"):
     rows, fin = example(variant)
-    print(f"C.{['r4', 'E4', 'K'].index(variant) + 1} variant {variant}: step | F x | E A, m, x | I A, m, x | O A, m, x")
+    print(f"C.{['r4', 'E4', 'K', 'r5'].index(variant) + 1} variant {variant}: step | F x | E A, m, x | I A, m, x | O A, m, x")
     worst = 0.0
     for k in PUBLISHED:
         r = rows[k]
@@ -395,6 +399,58 @@ for s in SEEDS:
         print(f"E.1 seed {s} {wn}: C0 by lag " + ", ".join(f"L={L}: {r[0]:.4f}" for L, r in zip(LAGS, res))
               + f"; classes {res[0][1]}, chance {1 / res[0][1]:.4f}")
 
+
+
+def code_score(st, w0, wl, key, L=0):
+    """The classifier of section 7.3 on a one-hot code of key(t), scoring the byte at t - L."""
+    idx = [t for t in range(w0, w0 + wl) if t - L >= 0]
+    stretch = wl // FOLDS
+    feats = sorted(set(key(t) for t in idx))
+    right, tot = {}, {}
+    for f in range(FOLDS):
+        lo, hi = w0 + f * stretch, w0 + (f + 1) * stretch
+        test = [t for t in idx if lo <= t < hi]
+        fit = [t for t in idx if not (lo - GAP <= t < hi + GAP)]
+        n = len(fit)
+        kc = {}
+        for t in fit:
+            kc[key(t)] = kc.get(key(t), 0) + 1
+        mu = {b: kc.get(b, 0) / n for b in feats}
+        use = [b for b in feats if mu[b] * (1 - mu[b]) > 1e-18]
+        sd = {b: math.sqrt(mu[b] * (1 - mu[b])) for b in use}
+        zval = {b: {g: ((1.0 if g == b else 0.0) - mu[g]) / sd[g] for g in use} for b in feats}
+        classes = sorted(set(st[t - L] for t in fit))
+        cen = {}
+        for c in classes:
+            cnt = {}
+            m = 0
+            for t in fit:
+                if st[t - L] == c:
+                    cnt[key(t)] = cnt.get(key(t), 0) + 1; m += 1
+            cen[c] = {g: sum(cnt[b] * zval[b][g] for b in cnt) / m for g in use}
+        pred = {b: min(classes, key=lambda c: (sum((zval[b][g] - cen[c][g]) ** 2 for g in use), c)) for b in feats}
+        for t in test:
+            lab = st[t - L]
+            tot[lab] = tot.get(lab, 0) + 1
+            right[lab] = right.get(lab, 0) + (pred[key(t)] == lab)
+    return sum(right[c] / tot[c] for c in tot) / len(tot)
+
+
+st = STREAMS[73129]
+pos = []
+since = 0
+for t_, b in enumerate(st):
+    pos.append(since)
+    since = 0 if b == END else since + 1
+w0 = WINDOWS_A["A2"]
+s1 = code_score(st, w0, WIN_A, lambda t_: st[t_ - 1])
+s2 = code_score(st, w0, WIN_A, lambda t_: pos[t_])
+s3 = code_score(st, w0, WIN_A, lambda t_: (st[t_ - 1], pos[t_]))
+s0 = code_score(st, w0, WIN_A, lambda t_: st[t_])
+print(f"E.2 seed 73129 A2, score for the present byte from codes that do not hold it: byte one back {s1:.4f}; position within the item "
+      f"{s2:.4f}; the pair (byte one back, position within the item) {s3:.4f}; (the present byte itself {s0:.4f})")
+print(f"E.3 the level of 'stays informative' in stage A: {s3:.4f} + 0.02 = {s3 + 0.02:.4f}")
+
 # =============================================================================================================== F. time constants
 print("=" * 110)
 print("F. TIME CONSTANTS AND SHARES")
@@ -458,6 +514,12 @@ for cbar, mk in ((12, True), (32, True), (round(CMAX, 1), False)):
 print(f"G.4 records of all 2,048 cells in float16: stage A {WIN_A * N * 2 / 1e6:.1f} MB a window, {2 * WIN_A * N * 2 / 1e6:.1f} MB a "
       f"tissue, {3 * 2 * WIN_A * N * 2 / 1e6:.0f} MB for its three recorded tissues; stage B {WIN * N * 2 / 1e6:.1f} MB a window, W0 and W3 "
       f"kept: {2 * WIN * N * 2 / 1e6:.1f} MB a tissue, {9 * 2 * WIN * N * 2 / 1e6:.0f} MB for round 1 before compression")
+o2_low = 3 * t_step(12, True, True)[1] * STEPS_B / 3600
+o2_high = 3 * t_step(round(CMAX, 1), True, True)[1] * STEPS_B / 3600
+print(f"G.3b opening 2 (a* = 1/32): three plastic tissues {o2_low:.1f} CPU-hours at 12 connections to {o2_high:.1f} with every neighbourhood "
+      f"full (makings included); three fixed tissues with a* = 1/32 {3 * tf8 * STEPS_B / 3600:.1f} CPU-hours")
+for c in (8, 12, 32, 46.9, 93.8):
+    print(f"G.3c check 10's factor min(2, 93.8 / c) at a mean of c = {c} connections: {min(2, 93.8 / c):.2f}")
 summ = 9 * len(WINDOWS) * N * 4 * 8 + 9 * LENGTH * 2
 print(f"G.5 per-cell summaries (4 numbers a cell a window, float64) and emissions (int16 a byte): {summ / 1e6:.1f} MB for round 1")
 for cbar in (12, round(CMAX, 1)):
