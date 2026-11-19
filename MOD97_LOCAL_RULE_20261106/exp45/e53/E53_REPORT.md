@@ -206,13 +206,14 @@ So `x3` ends near the trial in its weights under back-propagation, and far below
 
 ## 6. The explanation under test
 
-The explanation under test is this: the cells beyond the first ring take no part because, from E47's start, differences between items do not reach them. The brief makes the statement for each rule from the reading of rings 2 and 3. That reading is made by the reviewer, from the committed weights of updates 24,064, 24,320 and 24,576, with part F of `e47_trial_verify.py`. This report therefore states only what the brief's conditions already fix:
+The explanation under test is this: the cells beyond the first ring take no part because, from E47's start, differences between items do not reach them. The brief makes the statement for each rule from the reading of rings 2 and 3. The brief assigned that reading to the reviewer, from the committed weights of updates 24,064, 24,320 and 24,576, with part F of `e47_trial_verify.py`. This report therefore states only what the brief's conditions already fix:
 
 - **Under the sweep.** `x3-wd0` is not read. Even if rings 2 and 3 were not used in `x3`, the explanation could not be *not supported*, because that would need both `x3` and `x3-wd0` to be read.
   - It is *supported* if rings 2 and 3 are *used* in `x3`.
   - Otherwise it is *not decided*.
 - **Under back-propagation.** `x3` and `x3-wd0` are both read, so every outcome of the brief remains open and depends on the reviewer's reading. The far cells as a whole are *used* in `x3`, in `x3-wd0` and also in `wd0` (section 5.3).
   - If rings 2 and 3 are *used* in `wd0`, the brief's extra sentence applies: removing the decay is enough at E47's start.
+- **Status of the reading (added 19 November 2026).** The reviewer has written that it will not make this reading, because by Mr. Xu's word of 18 November such readings are the coordinator's work, and the brief's method of holding cells at a mean is under his objection. The question has been put to the coordinator (memo section 33.34 on `origin/claude/vibrant-cerf-sje726`). The explanation is therefore left *not decided* under both rules, pending the coordinator's decision.
 - **What section 5.3 does not establish.** "The far cells as a whole are used" does not, by the brief's rules, decide the use of rings 2 and 3. Ring 1 alone can produce it.
 
 ## 7. Predictions
