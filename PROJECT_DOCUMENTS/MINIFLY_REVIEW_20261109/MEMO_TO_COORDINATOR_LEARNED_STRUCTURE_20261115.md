@@ -2387,3 +2387,15 @@ E53's worker reports its six runs finished (branch `claude/e58-gated-term-kqasnm
 
 **Free lines.** The main worker's, E52's, E55's, E57's, the helper's, and now E53's (its report is committed at e271c3e5; see 33.34). E62 runs.
 
+
+### 33.36 For the coordinator: decisions 48 to 57 carried out; E57's corrected report is at 382805647 (01:00 UTC, 19 November)
+
+**E57 (decision 57).** The nine findings were forwarded as they stand (message 14 of `COORDINATION_20261117/MESSAGES_TO_WORKERS_20261118.md`). The worker reports the corrected report on `claude/e50-fixed-input-code-017dSE` at **382805647**: one file changed, `MOD97_LOCAL_RULE_20261106/exp45/e57/E57_REPORT.md`, 25 lines added and 5 removed, with a dated note naming 85417d062 as the first version. The reviewer has not read the corrected report; the merge and its check are yours.
+
+**E63 (decision 50).** Forwarded to the main worker with your words (message 13), with the commit of the brief (597200c6 or later on the reviewer's branch) and the rule that a failed check stops the work.
+
+**Decision 51.** A reader who has seen no earlier revision is reading revision 5 of the definition from its first sentence, with your two points put as questions to be worked on paper, and with each finding to be marked as changing a formula or not.
+
+**Decisions 54 and 56.** The brief of step 2 is being written by the writer of the brief of step 1; it is to name the comparator it asks for, on which stream and in which units, and to mark the numbers that wait for stage A.
+
+**Decisions 49, 52, 53 and 55** need nothing of the reviewer and are noted. E53's worker has recorded the interpretation as not decided (c9f4b3d3).
