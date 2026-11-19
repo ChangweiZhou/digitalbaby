@@ -33,7 +33,8 @@ ts, RD = tis.ts, tis.readings
 label = sys.argv[1]; kw = dict(a.split('=') for a in sys.argv[2:])
 cand = kw.pop('cand', 'none'); dmax = int(kw.pop('dmax', '32')); share = float(eval(kw.pop('share', '1/4')))
 delay = int(kw.pop('delay', '32')); nwin = int(kw.pop('windows', '1'))
-LAGS = (0, 1, 2, 3, 4)
+brief = int(kw.pop('brief', '0')); life = int(kw.pop('life', '0'))
+LAGS = (0, 1, 2) if brief else (0, 1, 2, 3, 4)
 WL = 4096
 
 
@@ -53,6 +54,10 @@ def make():
     else:
         assert cand == 'none'
     T['extra'] = {}
+    if life > 0:                                                    # a life differing from life 0 in one cell's potential before step 0
+        cells = [i for i in range(N) if B['kind'][i] != ts.FBK]
+        A['v'][cells[life - 1]] = 1e-9
+        T['life_cell'] = int(cells[life - 1])
     if dm is not None:
         hl = int(dm.max()) + 2
         zh = np.zeros((hl, N)); Fh = np.zeros((hl, N))
@@ -86,6 +91,7 @@ def distances(T, lo, hi):
 
 
 def read(T, rec, lo, hi, dist, near):
+    global near8
     b, B, N, SEED = T['b'], T['B'], T['N'], T['SEED']
     isfb = B['kind'] == ts.FBK
     X = rec.astype(np.float64); Xa = np.where(X < 0.01, 0.0, X)
@@ -101,7 +107,11 @@ def read(T, rec, lo, hi, dist, near):
     def sample(cells):
         cells = sorted(int(c) for c in cells)
         return Random(SEED + 900000).sample(cells, 128) if len(cells) > 128 else cells
-    groups = [(str(dd), np.nonzero(dist == dd)[0]) for dd in range(1, int(dist.max()) + 1)] + [('pool', np.nonzero(~isfb)[0]), ('near', near)]
+    if brief:
+        groups = [(str(dd), np.nonzero(dist == dd)[0]) for dd in (1, 2, 4)] + [('near', near), ('near8', near8)]
+    else:
+        groups = [(str(dd), np.nonzero(dist == dd)[0]) for dd in range(1, int(dist.max()) + 1)] + [('pool', np.nonzero(~isfb)[0]), ('near', near),
+                                                                                                  ('near8', near8)]
     rows = []
     for name, cells in groups:
         if len(cells) == 0:
@@ -124,9 +134,13 @@ near = set(int(i) for i in B['driver'])
 for i in B['driver']:
     near.update(int(m) for m in B['members'][i] if m < N)
 near = np.array(sorted(i for i in near if not isfb[i]))
+# the cells within 1/8 of a driver of an output line (by the cells' coordinates; drivers included; feedback cells left out)
+Pq = np.asarray(B['P']); drv = np.asarray(B['driver'])
+d2 = ((Pq[:, None, :] - Pq[drv][None, :, :]) ** 2).sum(2).min(1)
+near8 = np.nonzero((d2 <= (1 / 8) ** 2) & ~isfb)[0]
 P0 = NB - WL - 512
 wins = [((q + 1) * NB // nwin - WL, (q + 1) * NB // nwin) for q in range(nwin)]
-out = dict(label=label, args=kw, cand=cand, dmax=dmax if cand == 'rand' else None, share=share if cand == 'share' else None,
+out = dict(label=label, args=kw, cand=cand, life=life, life_cell=T1.get('life_cell'), brief=brief, near8_cells=int(len(near8)), dmax=dmax if cand == 'rand' else None, share=share if cand == 'share' else None,
            delay=delay if cand == 'share' else None, seed=T1['SEED'], nbytes=NB, windows=[], near_cells=int(len(near)))
 pos = 0
 for (lo, hi) in wins:
@@ -156,7 +170,8 @@ json.dump(out, open(os.path.join(HERE, 'delay', f'{label}.json'), 'w'), indent=1
 w = out['windows'][-1]
 g = {r['d']: r for r in w['rows']}
 f = lambda v: '  —  ' if v is None else f'{v:.3f}'
+Lp = ('0', '1', '2')
 print(f"{label:28s} cpu {out['cpu_s']:4.0f}s conns {w['connections_a_cell']:.1f} div64/512 {out['divergence']['64']:.1e}/{out['divergence']['512']:.1e} | "
-      f"(a) S0 d1/2/4 " + ' '.join(f(g[d]['a']['0']) if d in g else '  —  ' for d in ('1', '2', '4'))
-      + ' | (b) best lag1..3 ' + ' '.join(f(max((r['b'][L] or 0) for r in w['rows'] if r['d'] not in ('pool', 'near'))) for L in ('1', '2', '3'))
-      + ' | near (b) lag1..3 ' + ' '.join(f(g['near']['b'][L]) for L in ('1', '2', '3')), flush=True)
+      + 'nine (a) ' + ' '.join(f(g[d]['a'][L]) if d in g else '  —  ' for L in Lp for d in ('1', '2', '4'))
+      + ' | near (a) ' + ' '.join(f(g['near']['a'][L]) for L in Lp) + ' | near8 (a) ' + ' '.join(f(g['near8']['a'][L]) for L in Lp)
+      + f" | near max {g['near']['max_output']:.2f}", flush=True)
