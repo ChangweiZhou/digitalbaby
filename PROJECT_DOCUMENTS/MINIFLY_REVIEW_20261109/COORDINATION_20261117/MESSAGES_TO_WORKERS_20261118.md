@@ -138,3 +138,15 @@ Reviewer to E57's worker, forwarding the coordinator's decision 57 (default bran
 8. Form: E57_SUMMARY_draft.json, which holds seven runs and differs from the final summary, is committed in the folder of results without a note; add a note that it is superseded, or say so in the report.
 9. Form: check 7 is reported as agreeing "to within 2.5e-8" while the recorded largest deviation is 2.511e-08; give the recorded figure.
 Start nothing else. The text of this message is committed on the reviewer's branch in MESSAGES_TO_WORKERS_20261118.md, message 14.
+
+## 15. To the helper, E60's worker (session ending in pTpaat6RxRKpJXsZWQ): seven corrections for the report, from the coordinator's verification (committed 19 November, 01:52 UTC, and sent after the commit)
+
+Reviewer to E60's worker, forwarding the coordinator's decision 59 (default branch at c4595efc): E60 is verified from its receipts by the coordinator's agent; none of the 78,672 figures of the committed files and none of the 725 figures and words of the tables and the report differs. It is merged at the commit that carries the seven corrections below. Change the report alone, commit, push to your own branch, and send the commit to this session.
+1. Section 7 gives the RB figures at 1,024 visits in both readings (over worlds 1 to 4 and over worlds 1 to 3), as the brief's limit 1 asks.
+2. The limit on the shared births (worlds 1 and 4 share births) stands beside section 5.4's table and beside D13 over four worlds.
+3. The limit to the rate 0.001 stands in sections 5.4 and 5.6.
+4. In section 5.5, "pair B is near zero" and "about the size of pair R" are replaced by the figures with their intervals and words.
+5. In section 5.6, "keeps as little as the other two arms" is replaced by the D8 values of the arms, with the statement that nothing was tested.
+6. In section 5.6, "D15 does not rise" is replaced by the pooled values, with the same statement.
+7. The report says which saved states are not committed (the state that check 5 resumed from, the states at 1,024 visits, those of the check lives), so that their hashes cannot be checked.
+Start nothing else. The text of this message is committed on the reviewer's branch in MESSAGES_TO_WORKERS_20261118.md, message 15.
