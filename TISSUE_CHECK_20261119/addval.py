@@ -21,6 +21,15 @@ each byte the candidates are taken in order of their firing count, and one fires
 whenever it was active since both were made, has a stronger connection to the answering cell (a cell needs its co-activity with others
 and the strengths; with bonly=1 only these are withdrawn); (c) the answering cell's connections from pool cells decay by dec (1/4096)
 a byte, except those from active cells to the value named when the answer is yes.
+Arch G (task of 15:58 UTC): a pool of N cells, each adding the byte values at two random delays dmin..dmax with strengths drawn in
+0.5..1.5, which equalise by a local rule (eq=1: each connection keeps a running mean of its drive, rate 1/1024, and
+w_i *= 1 + (1/1024)(mean of the two / its own - 1), the total kept); gated by the present byte only (one random value); tune=exact: it
+fires when its drive is within a quarter of its total strength of its level (its drive at the byte it was made); tune=thr: it fires
+when its drive >= that level (tune=exactR: the level is the total of the two raw byte values at the byte it was made, read with the
+cell's mean strength, so that it stays one total while the strengths equalise), the candidates taken in order of their drive's excess over their level (the nearest first), and one
+fires unless the inhibition from those already fired reaches 1; the inhibition grows by 1/64 between cells that are candidates
+together. Withdrawal and remaking as P. A cell needs: two delayed byte values, its two strengths and their running drives, the present
+byte for its gate, its level (and for thr its inhibitory connections and its own excess).
     python3 addval.py <label> seed=.. gen=.. arch=V3|P lines=.. [N=..] [D=5] [per=2000] [maxn=9] [held=20] [every=5000] [neval=..]
 """
 import json, os, sys, time
@@ -41,6 +50,17 @@ ev_held = held if not neval or neval >= len(held) else [held[i] for i in evr.cho
 line = lambda a, b: list(f"{a}+{b}={a + b}\n".encode())
 EQ, PLUS, NLc = ord("="), ord("+"), ord("\n")
 SYMS = sorted(set(b"0123456789+=\n")); SI = {v: k for k, v in enumerate(SYMS)}; NS = len(SYMS)
+if arch == "G":
+    DMIN, DMAX = int(kw.get("dmin", 1)), int(kw.get("dmax", 4)); TUNE = kw.get("tune", "exact"); EQR = kw.get("eq", "1") == "1"
+    GI = None
+
+    def remake(j, dnow):
+        i_, j_ = sorted(rng.choice(np.arange(DMIN, DMAX + 1), 2, replace=False)); GI_[j], GJ_[j] = i_, j_
+        GV_[j] = SYMS[rng.integers(0, NS)]; W1[j], W2[j] = rng.uniform(0.5, 1.5, 2); M1[j] = M2[j] = 0.0
+        GT_[j] = W1[j] * dnow[i_] + W2[j] * dnow[j_]; GR_[j] = dnow[i_] + dnow[j_]; CNTG[j] = 0
+        if GIN is not None: GIN[j, :] = 0; GIN[:, j] = 0
+    GI_ = np.zeros(N, int); GJ_ = np.zeros(N, int); GV_ = np.zeros(N, int); W1 = np.zeros(N); W2 = np.zeros(N); M1 = np.zeros(N); M2 = np.zeros(N)
+    GT_ = np.zeros(N); GR_ = np.zeros(N); CNTG = np.zeros(N); GIN = np.zeros((N, N)) if TUNE == "thr" else None
 if arch == "P":
     def new_cell():
         i, j = sorted(rng.choice(D + 1, 2, replace=False)); return [int(i), int(j), int(rng.integers(0, D + 1)), int(SYMS[rng.integers(0, NS)]), None]
@@ -64,6 +84,20 @@ class State:
         if arch == "V3":
             cnt = (s.A + s.B >= np.arange(511)).astype(float)
             for pos in (0, 1, 2): f.append(cnt * float(s.d[pos] == EQ))
+        if arch == "G":
+            dv = np.array(s.d, dtype=float); dr = W1 * dv[GI_] + W2 * dv[GJ_]; gate = dv[0] == GV_
+            if TUNE == "exact":
+                act = gate & (np.abs(dr - GT_) < 0.25 * (W1 + W2))
+            elif TUNE == "exactR":                                    # the level kept as a total of the raw values seen at birth, read
+                act = gate & (np.abs(dr - 0.5 * (W1 + W2) * GR_) < 0.25 * (W1 + W2))   # with the cell's mean strength
+
+            else:
+                cand = np.flatnonzero(gate & (dr >= GT_)); act = np.zeros(N, bool); fired = []
+                for j in cand[np.argsort(dr[cand] - GT_[cand], kind="stable")]:   # the cell nearest its threshold first
+                    if not fired or GIN[j, fired].sum() < 1.0: fired.append(j)
+                act[fired] = True; s.cand = cand
+            s.dr = dr
+            f.append(act.astype(float))
         if arch == "P":
             dv = np.array(s.d); cand = (dv[PI] + dv[PJ] == PT) & (dv[PK] == PV)
             if GI is not None and cand.any():
@@ -78,6 +112,8 @@ class State:
 
 
 st = State(); base = (D + 1) * NS; FIRED = np.zeros(N)
+if arch == "G":
+    for j in range(N): remake(j, np.array(st.d, dtype=float))
 REM = kw.get("rem", "")
 CNT = np.zeros(N); GI = np.zeros((N, N)) if "a" in REM else None; CO = np.zeros((N, N)) if "b" in REM else None
 RG = 1 / 64; DEC = float(eval(kw.get("dec", "1/4096")))
@@ -107,6 +143,16 @@ for li in range(1, NL + 1):
         st.step(x); seen[SI[x]] = True
         if nxt is None: break
         u = st.features(); A = W @ u; e = int(A.argmax())
+        if arch == "G":
+            dv = np.array(st.d, dtype=float); c1 = W1 * dv[GI_]; c2 = W2 * dv[GJ_]
+            if EQR:                                                    # (ii): each connection keeps a running mean of its drive
+                M1 += (c1 - M1) / 1024; M2 += (c2 - M2) / 1024; mm = (M1 + M2) / 2; tot = W1 + W2
+                ok1 = (M1 > 0) & (M2 > 0)
+                W1[ok1] *= 1 + (mm[ok1] / M1[ok1] - 1) / 1024; W2[ok1] *= 1 + (mm[ok1] / M2[ok1] - 1) / 1024
+                sc = tot / (W1 + W2); W1 *= sc; W2 *= sc
+            if TUNE == "thr" and len(st.cand) > 1:
+                ci = st.cand; GIN[np.ix_(ci, ci)] += RG; GIN[ci, ci] -= RG
+            FIRED += u[base:base + N]
         if arch == "P":
             FIRED += u[base:base + N]
             if GI is not None:
@@ -124,6 +170,10 @@ for li in range(1, NL + 1):
             W[:, base:base + N] *= (1 - DEC)
             if ok:
                 ai = u[base:base + N] > 0; W[e, base:base + N][ai] = keep_row[ai]
+    if arch == "G" and li % per == 0:
+        strength = np.linalg.norm(W[:, base:base + N], axis=0)
+        for j in np.argsort(strength, kind="stable")[: N // 4]:
+            remake(j, np.array(st.d, dtype=float)); W[:, base + j] = 0.0
     if arch == "P" and li % per == 0:
         strength = np.linalg.norm(W[:, base:base + N], axis=0)
         if kw.get("keep") == "rate":                                   # weigh by how often the cell fired since it was last judged
@@ -143,7 +193,10 @@ for li in range(1, NL + 1):
     if li % every == 0:
         s_, ps = evaluate(ev_shown); h_, ph = evaluate(ev_held)
         curve.append(dict(lines=li, shown=s_, never_shown=h_, never_shown_places=ph, shown_places=ps))
-out = dict(label=lab, args=kw, features=F, cells=dict(V3=D + 2 + 3 * 511, P=D + N).get(arch), held=len(held), curve=curve,
+extra = {}
+if arch == "G":
+    extra = dict(strength_ratio_median=float(np.median(np.maximum(W1, W2) / np.minimum(W1, W2))))
+out = dict(label=lab, args=kw, features=F, cells=dict(V3=D + 2 + 3 * 511, P=D + N, G=D + N).get(arch), **extra, held=len(held), curve=curve,
            max_row_norm=float(np.linalg.norm(W, axis=1).max()), seconds=time.time() - t0)
 if arch == "P":
     strength = np.linalg.norm(W[:, base:base + N], axis=0); top = np.argsort(-strength)[:12]

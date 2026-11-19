@@ -828,3 +828,29 @@ over five orders (shown in brackets), seeds 73129 / 406364 / 545353:
 
 (a) and (b) raise the never-shown share by 5-15 points; (c) loses it entirely and half the shown. None reaches 80, so step 3 (0-99 with
 the tens split by carry) was not run.
+
+## 22. The pool with the three findings combined (reviewer's task of 15:58 UTC)
+
+`addval.py arch=G`: N pool cells, each adding the byte values at two random delays 1-4 with strengths drawn in 0.5-1.5 that equalise
+by E57's worker's local rule (each connection keeps a running mean of its drive, rate 1/1024; w_i *= 1 + (1/1024)(mean of the two /
+its own - 1), total kept); gated by the present byte only (one random value); tuned to its own drive at the byte it was made (it fires
+within a quarter of its total strength of that level); withdrawal and remaking as section 20. My readings: the tolerance, one gate
+value per cell, no second copy gated by the present byte and the byte 1 back. 120,000 lines, three seeds x five orders, median [range];
+`out/addv/table_G.txt`, `table_G99.txt`.
+
+| system | 73129 shown / never shown | 406364 | 545353 | never shown by place |
+|---|---|---|---|---|
+| exact, N 100 | 75 / 35 [25-50] | 71 / 20 [5-30] | 79 / 25 [5-35] | units 20-40 |
+| exact, N 300 | 92 / 50 [30-55] | 90 / 40 [15-50] | 92 / 50 [30-70] | units 40-50 |
+| exact, N 1000 | 98 / 70 [60-80] | 98 / 55 [45-70] | 97 / 55 [40-85] | tens 100, units 55-70 |
+| threshold + inhibition, N 300 | 81 / 35 [0-35] | 84 / 25 [5-45] | 80 / 25 [0-45] | units 25-35 |
+| threshold + inhibition, N 1000 | 79 / 30 [20-30] | 80 / 35 [25-45] | 82 / 25 [5-40] | units 25-35 |
+
+The strengths equalise (median larger / smaller strength 1.015-1.03 at the end). Against section 20's pool at N 1000 (never shown 15 /
+20 / 15) the present-byte gate and the equalising strengths add 40-55 points; it falls short of 80 and of E57's worker's 94.8 (every
+pair of delays present, 4,206 cells). In place of the exact tuning, a threshold with inhibition grown between co-candidates (taken
+nearest-their-level first; a cell needs its excess over its level and its inhibitory connections) gives 25-35: the inhibition does not
+produce the tuning. A level kept as the raw total at birth, read with the mean strength, gave no gain (one run). 0 to 99 (delays 1-8,
+2,000 of 10,000 pairs never shown, scored on 300 + 300): N 1000 shown 14-17, never shown 12 / 14 / 17; N 4000 shown 27-29, never
+shown 25 [20-29] / 21 [21-27] / 24 [23-34]; never shown by place at N 4000: units 42-49, tens 49-51, hundreds 100. The tens were not
+split by carry here.
