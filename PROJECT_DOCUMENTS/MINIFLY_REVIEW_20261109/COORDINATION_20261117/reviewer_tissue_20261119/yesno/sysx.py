@@ -11,13 +11,18 @@
 #        to  : text byte and the last output
 #        tok : text byte, the last output, and whether it was right
 #        tk  : text byte and whether the last output was right
+# use=copy (default): the error is one more stimulus, as above.
+# use=gate : the receiving cells are driven by the text byte only; the error they receive sets HOW MUCH they change: after a
+#            wrong output an active cell changes at rate r, after a right one at r/16 (surprise opens the cell to change).
+# use=gate+: as gate, and after a wrong output a cell that is idle (no sensitivity above 1/4) gains r/4 toward the present
+#            text byte (cells not yet in use are drawn to where the system fails).
 #   python3 -I sysx.py <label> seed=.. what=t|to|tok|tk [H=64 K=8 A=8 r=1/16 nbytes=65536]
 import sys, os, json, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, 'deps'))
 import life_stream as LS, score_emissions as SE
 label = sys.argv[1]; kw = dict(a.split('=') for a in sys.argv[2:]); t0 = time.time()
-SEED = int(kw.get('seed', 73129)); NB = int(kw.get('nbytes', 65536)); WHAT = kw.get('what', 't'); H = int(kw.get('H', 64)); K = int(kw.get('K', 8)); A = int(kw.get('A', 8)); R = float(eval(kw.get('r', '1/16')))
+SEED = int(kw.get('seed', 73129)); NB = int(kw.get('nbytes', 65536)); WHAT = kw.get('what', 't'); USE = kw.get('use', 'copy'); H = int(kw.get('H', 64)); K = int(kw.get('K', 8)); A = int(kw.get('A', 8)); R = float(eval(kw.get('r', '1/16')))
 L = LS.life(SEED); b = L['bytes'][:NB].astype(np.int64); rng = np.random.default_rng(SEED + 7)
 use_o = 'o' in WHAT; use_k = 'k' in WHAT
 pool = list(range(256)) + (list(range(256, 512)) if use_o else []) + ([512, 513] if use_k else [])
@@ -39,10 +44,16 @@ for t in range(NB - 1):
     if ok: d = -a / 16; d[e] = (1.0 - a[e]) / 16
     nz = np.flatnonzero(d); W[nz] += np.outer(d[nz] / n, U)
     on = h > 0
-    for s in stim: S[on, s] += R * (1.0 - S[on, s])
-    S[on] /= S[on].sum(1, keepdims=True)
+    if USE == 'copy':
+        for s in stim: S[on, s] += R * (1.0 - S[on, s])
+        S[on] /= S[on].sum(1, keepdims=True)
+    else:
+        rr = R if last_ok == 0 else R / 16
+        S[on, b[t]] += rr * (1.0 - S[on, b[t]]); S[on] /= S[on].sum(1, keepdims=True)
+        if USE == 'gate+' and last_ok == 0:
+            idle = (~on) & (S.max(1) <= 0.25); S[idle, b[t]] += R / 4; S[idle] /= S[idle].sum(1, keepdims=True)
     last_out = e; last_ok = int(ok)
 q = [slice(i * NB // 4, (i + 1) * NB // 4) for i in range(4)]; refs = SE.references(L['bytes'][:NB])
 out = dict(label=label, args=kw, right=[float(right[s].mean()) for s in q], refs={k: float((refs[k] == b)[q[3]].mean()) for k in ('ref_1', 'ref_2', 'ref_3')})
 json.dump(out, open(os.path.join(HERE, 'res', f'{label}.json'), 'w'))
-print(f"== {label} what={WHAT} seed={SEED} ({time.time() - t0:.0f} s): right by quarter " + ' '.join(f"{100 * v:5.2f}" for v in out['right']) + f" | ref_1 {100 * out['refs']['ref_1']:.1f} ref_2 {100 * out['refs']['ref_2']:.1f} ref_3 {100 * out['refs']['ref_3']:.1f}")
+print(f"== {label} what={WHAT} use={USE} seed={SEED} ({time.time() - t0:.0f} s): right by quarter " + ' '.join(f"{100 * v:5.2f}" for v in out['right']) + f" | ref_1 {100 * out['refs']['ref_1']:.1f} ref_2 {100 * out['refs']['ref_2']:.1f} ref_3 {100 * out['refs']['ref_3']:.1f}")
