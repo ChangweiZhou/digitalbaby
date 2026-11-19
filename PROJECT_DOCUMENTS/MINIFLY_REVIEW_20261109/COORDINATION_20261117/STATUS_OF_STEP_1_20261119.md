@@ -99,8 +99,9 @@ connections, and the learning of the output end from yes or no.
 | 70 | Row 68 on the tissue with time constants up to 256 (seed 73129): a change of 1e-9 at byte 0, 512, 2,048 or 4,096 ends in a different life (different connections; outputs meanwhile differ by only 1e-12 to 1e-13, so the difference is carried by the slow sums); at byte 1,024 it does not; at 8,192, 12,288 and 15,872 the connections stay identical and the outputs differ by at most 1e-10. So with time constants the dependence lasts longer than in the base (to at least byte 4,096) and appears where the change precedes a burst of making and withdrawing (1,427 made in the 512 bytes after byte 2,048). Readings of lives that part differ by up to 0.05, within row 48. | E62's worker | 1 | making switched off after byte 4,096: running |
 | 71 | Rows 68 and 70 with making switched off from byte 4,096 on (both copies; seed 73129; change of 1e-9 at byte 4,096, 8,192, 12,288, 15,872): in the base and with time constants up to 256 the connections at the end are the same in every case and the outputs differ by at most 8e-14. The change at byte 4,096 that gives a different life when making goes on (row 70) leaves no trace. So on this seed the last bit reaches the connections only while connections are made or withdrawn in numbers; withdrawal alone (about 27 in 512 bytes) does not carry it. Without making the tissue with time constants reads less far (S(8,0) 0.042 against 0.091). | E62's worker (f200503f, RESULTS.md section 7) | 1 | the long-axon tissue in the independent program: started |
 | 72 | The long-axon tissue in the independent program, written from THE_TISSUE_AS_RUN section 3a (seed 73129): outputs of every cell at every byte equal to the reviewer's program, 5,113 connections in both. **Which cells "near the output lines" means there:** rows 54 to 69 took the drivers and every member of a driver's enlarged neighbourhood (577 cells; this includes long-axon cells up to 1/2 away): 0.174 0.184 0.143 0.157 0.128. Taking only the cells within 1/8 of a driver (495 cells): 0.167 0.167 0.149 0.151 0.126. On three seeds (reviewer, near2.py), the cells within 1/8 of a driver alone, lags 0 / 1 / 2: 0.167 0.167 0.149 / 0.127 0.144 0.124 / 0.210 0.216 0.162, all above their levels; 0.89 to 0.96 of them with largest output above 1/2; the 74 to 82 long-axon cells that reach the drivers from the middle of the tissue (x median 0.53 to 0.59) read 0.181 to 0.236 / 0.181 to 0.243 / 0.150 to 0.184; about a third of the drivers' connections (149 to 161 of 411 to 471) come from long-axon cells. So the result does not rest on the long-axon cells counted in. E62's worker found the ambiguity. | E62's worker; reviewer (near2.py, near2/) | 3 | six lives a seed on three seeds: running |
+| 73 | **The long-axon tissue of row 54 on 15 seeds** (the reviewer's draws; the three old seeds and the helper's twelve; 16,384 bytes; levels c0 + 0.02). The nine entries of step 1: nine of nine on 15 of 15 (smallest margin +0.028). Near the output lines (enlarged neighbourhoods): the byte one back above its level on 15 of 15 (smallest 0.115, median 0.168), two back on 15 of 15 (smallest 0.095, median 0.140), **the present byte on 12 of 15** (median 0.125 against the level 0.1103; below on seeds 465973, 146821 and 112290 with 0.100, 0.102, 0.071); three back on none; four back on 9. So the long axons bring the earlier bytes to the output lines on every seed, and the present byte there sits at its level, not clearly above it. | reviewer (batch43, far/L8_256_s*) | 15 | the same with time constants up to 128, which gave the present byte 0.19 to 0.21 on the three old seeds: running (batch45); the helper's own draws on the twelve |
 
-## 2a. Where things stand (10:17 UTC)
+## 2a. Where things stand (10:31 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -116,8 +117,11 @@ connections, and the learning of the output end from yes or no.
 4. What the next step needs is the present byte and the bytes before it where the output end reads. Time constants and delays put
    the earlier bytes near the input lines and cost the present byte far away (rows 42 to 44, 49, 51); the one-pass learning at the
    output end reported for one seed is not repeated on the others (row 41).
-5. Since 09:44 there is one tissue that has them together near the output lines on three seeds: a share of excitatory cells with
-   long axons, with the time constants (row 54). It shortens the way from the input lines to the output lines instead of moving
+5. Since 09:44 there is one tissue that has them together near the output lines: a share of excitatory cells with long axons,
+   with the time constants (row 54). On 15 seeds (row 73) the nine entries hold on 15 and the bytes one and two back are above
+   their levels near the output lines on 15; the present byte there is above its level on 12, with a median of 0.125 against
+   0.110: at its level, not clearly above. That is the weak part and it is being worked on (time constants up to 128 or 64,
+   delays). It shortens the way from the input lines to the output lines instead of moving
    the lines. Since then: repeated by the helper on the three seeds with two draws each (row 67), the option written again by
    E57's worker with identical outputs (row 61), no divergence and no loops among excitatory cells (row 60), other shares and
    time constants serve as well and a shorter reach does not (row 62), and delays in place of time constants keep more of the
@@ -223,4 +227,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 10:27 UTC, 19 November 2026.
+Last change: 10:31 UTC, 19 November 2026.
