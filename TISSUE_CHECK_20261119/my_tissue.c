@@ -2,7 +2,7 @@
    Plain and slow on purpose: every cell, every connection, every step, in the order of the text's sections 1 and 2.
    The birth, the stream and the time constants are prepared by my_tissue.py and read from a text file.
 
-   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8 [start_w a_make [start_w0]]]]]]
+   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8 [start_w a_make [start_w0 [window_ends]]]]]]]
      rec_lo..rec_hi : the bytes whose outputs at phi = 31 are recorded (float32, all cells) into <out_prefix>.rec
      trace_steps    : the outputs of every cell at every step k < trace_steps are written as float64 into <out_prefix>.trace
      u1             : 1 = step 8 uses x_j of this step for a cell; 0 = it uses z_j, the output of step k - 1 (the literal z)
@@ -58,6 +58,9 @@ int main(int argc, char **argv) {
     double start_w = argc > 15 ? atof(argv[15]) : 1.0 / 8;        /* strength of a starting and of a made connection */
     double a_make = argc > 16 ? atof(argv[16]) : 1.0 / 4096;      /* level of the long mean below which a cell makes */
     double start_w0 = argc > 17 ? atof(argv[17]) : start_w;       /* strength of a starting connection, if other than start_w */
+    long wend[16]; int nw = 0;                                    /* windows of 4,096 bytes ending at these bytes: recorded, and the
+                                                                     connections written at each end (<prefix>.conn_<end>) */
+    if (argc > 18) { char *q = argv[18]; while (*q && nw < 16) { wend[nw++] = strtol(q, &q, 10); if (*q == ',') q++; } }
     if (ftz) _mm_setcsr(_mm_getcsr() | 0x8040);   /* flush to zero and denormals are zero */
     FILE *fb = fopen(argv[1], "r"); long seed; int n_;
     if (fscanf(fb, "%ld", &seed) != 1) return 3;
@@ -155,7 +158,12 @@ int main(int argc, char **argv) {
         if (ft && k < trace_steps) fwrite(xn, sizeof(double), NC, ft);
         long byte = k / STEPS_A_BYTE;
         if (phi == STEPS_A_BYTE - 1) { long cw[2] = {made_n, withdrawn_n}; fwrite(cw, sizeof(long), 2, fk); }
-        if (phi == STEPS_A_BYTE - 1 && byte >= rec_lo && byte < rec_hi) {
+        for (int w = 0; w < nw; w++) if (phi == STEPS_A_BYTE - 1 && byte == wend[w] - 1) {
+            snprintf(path, sizeof path, "%s.conn_%ld", argv[6], wend[w]); FILE *fw = fopen(path, "w");
+            for (int i = 0; i < NC; i++) for (int q = 0; q < C[i].n; q++) fprintf(fw, "%d %d %.17g %ld\n", i, C[i].s[q], C[i].w[q], C[i].made[q]);
+            fclose(fw); }
+        int inwin = 0; for (int w = 0; w < nw; w++) if (byte >= wend[w] - 4096 && byte < wend[w]) inwin = 1;
+        if (phi == STEPS_A_BYTE - 1 && (nw ? inwin : (byte >= rec_lo && byte < rec_hi))) {
             if (rec8) fwrite(xn, sizeof(double), NC, fr);
             else { for (int i = 0; i < NC; i++) recrow[i] = (float)xn[i]; fwrite(recrow, sizeof(float), NC, fr); } }
     }

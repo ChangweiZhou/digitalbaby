@@ -240,3 +240,75 @@ In this tissue no cell is at distance 10 at the end. On this seed the dependence
 withdrawal (10,784 connections withdrawn in bytes 0 to 512); from byte 1,024 on a change of 1e-9 leaves the connections unchanged.
 (A first evaluation of part 4 took the reference as starting at byte 4,096 and gave differences of 1.0 at +64 and +512; it was an
 indexing error of the analysis script, corrected before any figure was sent.)
+
+## 9. Long lives on the three weak seeds; seed 112290 against 73129; L8-128 under the last-bit noise (task of 10:39 UTC)
+
+All with starting connections at 1/8 and made ones at 1/64 (the reviewer's L5), `a_make` 1/16384, long axons as in section 8; L8-128
+draws τ from {2, ..., 128} with the same rule. A new option of `my_tissue.c` records windows of 4,096 bytes and writes the connections at
+the end of each window (`<prefix>.conn_<end>`), so that each window's distances are those of its own connections; the unchanged run is
+still bit-equal to the earlier one. `LLread.py` reads each window; `out/LL_summary.txt` is the table below in full; `(A)` below level
+(a), `(b)` above (a) but not (b), no mark: above both.
+
+**Part 1: lags 0, 1, 2 near the output lines, enlarged group | `birth()`'s 1/8 group, in windows ending at 16,384, 32,768, 49,152,
+65,536.** The nine entries pass both levels in every window of every life except S(4,0) of L8-256 on 146821 at 65,536 (0.131, (b)).
+
+```
+LL_N256_465973 16384 nine: all pass | near enl 0.100(A) 0.137 0.100 | near 1/8 0.107(A) 0.120 0.105
+LL_N256_465973 32768 nine: all pass | near enl 0.133(b) 0.157 0.129 | near 1/8 0.128(b) 0.163 0.130
+LL_N256_465973 49152 nine: all pass | near enl 0.130(b) 0.168 0.141 | near 1/8 0.136(b) 0.166 0.144
+LL_N256_465973 65536 nine: all pass | near enl 0.134(b) 0.179 0.141 | near 1/8 0.139(b) 0.177 0.150
+LL_N256_146821 16384 nine: all pass | near enl 0.102(A) 0.121 0.120 | near 1/8 0.092(A) 0.128 0.113
+LL_N256_146821 32768 nine: all pass | near enl 0.103(A) 0.113 0.112 | near 1/8 0.099(A) 0.140 0.114
+LL_N256_146821 49152 nine: all pass | near enl 0.113(b) 0.110(b) 0.113 | near 1/8 0.098(A) 0.137 0.104
+LL_N256_146821 65536 nine: fail d4 L0 0.131(b) | near enl 0.100(A) 0.106 0.108 | near 1/8 0.105(A) 0.135 0.096
+LL_N256_112290 16384 nine: all pass | near enl 0.071(A) 0.115 0.136 | near 1/8 0.091(A) 0.112(b) 0.122
+LL_N256_112290 32768 nine: all pass | near enl 0.093(A) 0.161 0.163 | near 1/8 0.110(A) 0.162 0.151
+LL_N256_112290 49152 nine: all pass | near enl 0.110(A) 0.173 0.175 | near 1/8 0.120(b) 0.166 0.155
+LL_N256_112290 65536 nine: all pass | near enl 0.082(A) 0.151 0.166 | near 1/8 0.096(A) 0.152 0.139
+LL_N128_465973 16384 nine: all pass | near enl 0.129(b) 0.160 0.128 | near 1/8 0.128(b) 0.129 0.093
+LL_N128_465973 32768 nine: all pass | near enl 0.134(b) 0.164 0.124 | near 1/8 0.137(b) 0.143 0.105
+LL_N128_465973 49152 nine: all pass | near enl 0.124(b) 0.151 0.125 | near 1/8 0.123(b) 0.133 0.101
+LL_N128_465973 65536 nine: all pass | near enl 0.126(b) 0.156 0.128 | near 1/8 0.135(b) 0.138 0.111
+LL_N128_146821 16384 nine: all pass | near enl 0.136(b) 0.160 0.133 | near 1/8 0.129(b) 0.160 0.142
+LL_N128_146821 32768 nine: all pass | near enl 0.111(b) 0.145 0.135 | near 1/8 0.123(b) 0.168 0.140
+LL_N128_146821 49152 nine: all pass | near enl 0.105(A) 0.141 0.123 | near 1/8 0.117(b) 0.154 0.135
+LL_N128_146821 65536 nine: all pass | near enl 0.107(A) 0.137 0.126 | near 1/8 0.118(b) 0.158 0.135
+LL_N128_112290 16384 nine: all pass | near enl 0.109(A) 0.118 0.111 | near 1/8 0.124(b) 0.145 0.120
+LL_N128_112290 32768 nine: all pass | near enl 0.130(b) 0.160 0.140 | near 1/8 0.119(b) 0.152 0.136
+LL_N128_112290 49152 nine: all pass | near enl 0.138(b) 0.162 0.143 | near 1/8 0.116(b) 0.152 0.140
+LL_N128_112290 65536 nine: all pass | near enl 0.127(b) 0.174 0.140 | near 1/8 0.117(b) 0.154 0.134
+```
+
+At 16,384 bytes my program gives the reviewer's figures for the present byte near the output lines in L8-256 (0.100 on 465973, 0.102 on
+146821, 0.071 on 112290). With a longer life, in L8-256, the present byte near the output lines passes level (a) from 32,768 on and
+stays on 465973, and does not pass on 146821 or 112290 (in the enlarged group). In L8-128 it is above (a) in every window from 32,768 on
+for 465973 and 112290, and on 146821 only in the 1/8 group (the enlarged group falls to 0.105 and 0.107 at 49,152 and 65,536). Level
+(b) is not reached for the present byte near the output lines in any window of any of these six lives.
+
+**Part 2: seed 112290 against 73129** (L8-256, window ending at 16,384; `describe` in `out/LL_N256_*_LL.json`).
+
+| | 73129 | 112290 |
+|---|---|---|
+| Long cells | 156 | 147 |
+| Drivers' connections; share from long-axon cells | 435; 35.6% | 418; 32.1% |
+| Cells near the output lines (enlarged) | 577 | 553 |
+| ... by distance from the input lines (0 = not reached) | 0: 3, 2: 6, 3: 54, 4: 175, 5: 183, 6: 109, 7: 36, 8: 9, 9: 2 | 0: 12, 2: 2, 3: 16, 4: 71, 5: 155, 6: 156, 7: 94, 8: 36, 9: 10, 10: 1 |
+| ... within 4 connections | 235 | 89 |
+| Byte values preferred by at least one near cell that is not silent (preferred: largest mean output) | 23 of 46 | 38 of 46 |
+| Share of near cells with largest output above 1/2 | 0.955 | 0.901 |
+
+The 1/8 group gives the same picture (73129: 176 of 495 within 4 connections; 112290: 62 of 493). On 112290 the cells near the output
+lines lie one to two connections farther from the input lines than on 73129.
+
+**Part 3: L8-128, six lives a seed** (`L128agg.py`, `out/L128_part3.json`, `out/L128_part3.txt`). Smallest to largest S:
+
+| Seed | d = 1: lags 0, 1, 2 | d = 2 | d = 4 | Near, enlarged: lags 0, 1, 2 | Near, 1/8 lists: lags 0, 1, 2 |
+|---|---|---|---|---|---|
+| 73129 | 0.931-0.963, 0.249-0.275, 0.129-0.165 | 0.555-0.651, 0.249-0.303, 0.141-0.170 | 0.160-0.226, 0.154-0.190, 0.102-0.148 | 0.152-0.190, 0.147-0.169, 0.090-0.135 | 0.125-0.178 (b fails in some lives), 0.146-0.162, 0.092-0.128 |
+| 93683 | 0.821-0.859, 0.262-0.312, 0.156-0.179 | 0.446-0.540, 0.278-0.337, 0.178-0.220 | 0.227-0.254, 0.207-0.249, 0.154-0.200 | 0.156-0.196, 0.175-0.225, 0.162-0.199 | 0.128-0.190 (b fails in some lives), 0.169-0.216, 0.129-0.190 |
+| 116089 | 0.933-0.956, 0.321-0.335, 0.141-0.169 | 0.578-0.626, 0.343-0.367, 0.158-0.187 | 0.276-0.313, 0.198-0.246, 0.139-0.168 | 0.193-0.237, 0.198-0.233, 0.139-0.160 | 0.188-0.253, 0.179-0.224, 0.123-0.150 |
+
+Every one of the nine entries and lags 0, 1, 2 near the output lines is above level (a) in every life on all three seeds, in both groups;
+level (b) fails only for the present byte near the output lines in the 1/8 group, in some lives of seeds 73129 and 93683. Compared with
+L8-256 (section 8), the present byte near the output lines on 93683 rises from 0.106-0.148 to 0.128-0.190 (1/8 group) and from
+0.110-0.147 to 0.156-0.196 (enlarged), and no life falls below 0.1103.

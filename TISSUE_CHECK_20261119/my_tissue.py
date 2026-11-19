@@ -20,7 +20,7 @@ sys.path.insert(0, "/home/user/tissue_deps")
 import tissue_step1 as ts        # noqa: E402
 import readings                  # noqa: E402
 
-TAUS = {"N0": (2,), "N64": (2, 4, 8, 16, 32, 64), "N256": (2, 4, 8, 16, 32, 64, 128, 256)}
+TAUS = {"N0": (2,), "N64": (2, 4, 8, 16, 32, 64), "N128": (2, 4, 8, 16, 32, 64, 128), "N256": (2, 4, 8, 16, 32, 64, 128, 256)}
 
 
 def long_axons(B, seed, frac=1 / 8, reach=0.5):
