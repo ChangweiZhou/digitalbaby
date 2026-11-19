@@ -2,7 +2,7 @@
    Plain and slow on purpose: every cell, every connection, every step, in the order of the text's sections 1 and 2.
    The birth, the stream and the time constants are prepared by my_tissue.py and read from a text file.
 
-   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8]]]]
+   usage: my_tissue <birth.txt> <bytes.bin> <nbytes> <rec_lo> <rec_hi> <out_prefix> <trace_steps> <u1> [ftz] [cell eps [pbyte [make_off_byte [rec_bytes 4|8 [start_w a_make]]]]]
      rec_lo..rec_hi : the bytes whose outputs at phi = 31 are recorded (float32, all cells) into <out_prefix>.rec
      trace_steps    : the outputs of every cell at every step k < trace_steps are written as float64 into <out_prefix>.trace
      u1             : 1 = step 8 uses x_j of this step for a cell; 0 = it uses z_j, the output of step k - 1 (the literal z)
@@ -55,12 +55,14 @@ int main(int argc, char **argv) {
     long pbyte = argc > 12 ? atol(argv[12]) : 0;                  /* ... before the first step of byte pbyte */
     long make_off = argc > 13 ? atol(argv[13]) : -1;              /* no making from byte make_off on (-1: never off) */
     int rec8 = argc > 14 ? atoi(argv[14]) == 8 : 0;               /* 8: the recording in double precision */
+    double start_w = argc > 15 ? atof(argv[15]) : 1.0 / 8;        /* strength of a starting and of a made connection */
+    double a_make = argc > 16 ? atof(argv[16]) : 1.0 / 4096;      /* level of the long mean below which a cell makes */
     if (ftz) _mm_setcsr(_mm_getcsr() | 0x8040);   /* flush to zero and denormals are zero */
     FILE *fb = fopen(argv[1], "r"); long seed; int n_;
     if (fscanf(fb, "%ld", &seed) != 1) return 3;
     for (int i = 0; i < NC; i++) {
         int k, ns; if (fscanf(fb, "%d %d %lf %lf %d", &k, &is_fb[i], &sig[i], &tau[i], &ns) != 5 || k != i) return 4;
-        for (int q = 0; q < ns; q++) { int s; if (fscanf(fb, "%d", &s) != 1) return 5; add(&C[i], s, 1.0 / 8.0, 0); }
+        for (int q = 0; q < ns; q++) { int s; if (fscanf(fb, "%d", &s) != 1) return 5; add(&C[i], s, start_w, 0); }
         if (fscanf(fb, "%d", &n_) != 1) return 6;
         nmem[i] = n_; mem[i] = malloc((n_ + 1) * sizeof(int));
         for (int q = 0; q < n_; q++) if (fscanf(fb, "%d", &mem[i][q]) != 1) return 7;
@@ -135,7 +137,7 @@ int main(int argc, char **argv) {
                 if (c->w[q] < 1.0 / 128) { withdraw(c, q); withdrawn_n++; continue; }
                 if (sig[s] > 0 && age >= 4096 && c->lag[q] > 0 && c->lag[q] > c->lead[q]) { withdraw(c, q); withdrawn_n++; }
             }
-            if ((make_off < 0 || k / STEPS_A_BYTE < make_off) && th[i] == 0 && M[i] < 1.0 / 4096 && k - last_make[i] >= 1024) {
+            if ((make_off < 0 || k / STEPS_A_BYTE < make_off) && th[i] == 0 && M[i] < a_make && k - last_make[i] >= 1024) {
                 int cand[NC + NL], n = 0;
                 for (int q = 0; q < nmem[i]; q++) {
                     int s = mem[i][q], here = 0;
@@ -144,7 +146,7 @@ int main(int argc, char **argv) {
                 }
                 if (n > 0) {
                     uint64_t val = draw();
-                    add(c, cand[val % (uint64_t)n], 1.0 / 8, k); last_make[i] = k; made_n++;
+                    add(c, cand[val % (uint64_t)n], start_w, k); last_make[i] = k; made_n++;
                 }
             }
         }

@@ -178,3 +178,49 @@ byte 8,192 on in N256 and from byte 1,024 on in N0, and after making is switched
 differ at the end by at most 1e-10. In between, the outputs may differ by only 1e-12 to 1e-13 while the slow quantities carry the
 difference to a later withdrawal or making. Where two copies part, they hold different connections, and their readings differ by amounts
 within the spread between lives of section 6 (one entry at its size).
+
+## 8. The long-axon tissue L8-256 (section 3a; the reviewer's task of 10:23 UTC)
+
+Command compared: `far.py L8_256_s73129 rule=timing prune_only=1 norm=1 lines_learn=1 we=3/4 wi=1/4 gain=3 rho=1 gmax=8 mk_long=1
+a_make=1/16384 make_period=1024 start_w=1/64 long=8-1/2 tau=u2-256 seed=73129`, on the reviewer's branch at 33c2809e (its build now
+with `-ffp-contract=off`). My option is `my_tissue.long_axons` (front end) and the arguments `start_w` and `a_make` of `my_tissue.c`.
+
+**Unclear places** (sent before any run): L1 "excitatory" read as σ = +1 in `birth()`; L2 "within 1/2" as Euclidean distance squared
+at most 1/4, no wrap; L3 the enlarged list is `birth()`'s list followed by the long cells, and the 8 starting connections replace
+`birth()`'s draw, in `.choice`'s order; L4 one generator, first the long draws, then the lists and draws cell by cell (feedback cells:
+no draw); L5 `start_w` = 1/64 for both starting and made connections, `a_make` = 1/16384 in the making test; L6 making may choose a long
+cell; L7 τ drawn as N256; L8 whether "near the output lines" uses the enlarged lists or `birth()`'s. **Resolved by the comparison:**
+L1 to L7 as I read them; L8 with the enlarged lists.
+
+**Part 1, seed 73129.** 156 long cells. Outputs of every cell at the reading step of every byte equal to the reviewer's to the last
+float32 bit over 16,384 bytes (my double record cast to float32 with float32 subnormals set to zero, as the reviewer's program records);
+5,113 connections in both; mine 898 made, 11,657 withdrawn.
+
+**Part 2.** "Near the output lines" (drivers and the members of a driver's neighbourhood, feedback cells excepted) with the enlarged
+lists: 577 cells, S at lags 0 to 4 = 0.174, 0.184, 0.143, 0.157, 0.128, the reviewer's figures. With `birth()`'s lists it would be
+495 cells and 0.167, 0.167, 0.149, 0.151, 0.126.
+
+**Part 3** (`L8agg.py`, `out/L8_part3.json`): six lives a seed (reference + five with one cell's potential changed by 1e-12 before
+step 0). Smallest to largest S:
+
+| Seed | d = 1: lags 0, 1, 2 | d = 2 | d = 4 | Near the output lines: lags 0, 1, 2 | Every entry of every life above (a) and (b) |
+|---|---|---|---|---|---|
+| 73129 | 0.913-0.937, 0.331-0.366, 0.186-0.207 | 0.495-0.554, 0.329-0.362, 0.208-0.230 | 0.210-0.241, 0.179-0.202, 0.148-0.165 | 0.174-0.216, 0.177-0.211, 0.143-0.173 | yes |
+| 93683 | 0.804-0.869, 0.284-0.322, 0.150-0.191 | 0.383-0.422, 0.250-0.288, 0.157-0.194 | 0.145-0.202, 0.151-0.192, 0.129-0.163 | 0.116-0.154, 0.132-0.162, 0.128-0.144 | (a) yes in every life; (b) fails for the present byte near the output lines in 4 lives of 6 (0.134, 0.116, 0.118, 0.116; se 0.002 to 0.006) and for S(4,0) in 1 life (0.145, se 0.007) |
+| 116089 | 0.933-0.958, 0.332-0.350, 0.188-0.212 | 0.554-0.661, 0.340-0.363, 0.202-0.225 | 0.216-0.251, 0.204-0.250, 0.149-0.189 | 0.196-0.245, 0.177-0.247, 0.125-0.198 | yes |
+
+**Part 4** (`task2L8.py`, `out/L8T2_L8.json`): two copies, one cell's potential changed by 1e-9 before the first step of byte B, seed
+73129; largest output difference at the reading step 64 and 512 bytes later; made and withdrawn in the reference in B..B+512.
+
+| B | Cell | +64 / +512 | Made / withdrawn in B..B+512 | End of the life |
+|---|---|---|---|---|
+| 0 | 100 | 5.2e-6 / 0.54 | 0 / 10,784 | outputs differ by 0.74; connections differ; S(d,0) d = 1, 2, 4, 8: 0.923, 0.523, 0.211, 0.096 (reference 0.928, 0.537, 0.229, 0.076) |
+| 1,024 | 29 | 1.4e-13 / 2.9e-13 | 0 / 7 | 1.2e-13; same connections |
+| 4,096 | 0 | 1.3e-13 / 0 | 22 / 12 | 1.6e-15; same |
+| 8,192 | 10 | 7.2e-14 / 8.0e-15 | 21 / 13 | 3.3e-15; same |
+| 12,288 | 0 | 3.7e-13 / 2.2e-16 | 17 / 20 | 3.7e-68; same |
+
+In this tissue no cell is at distance 10 at the end. On this seed the dependence on the last bit is confined to the first mass
+withdrawal (10,784 connections withdrawn in bytes 0 to 512); from byte 1,024 on a change of 1e-9 leaves the connections unchanged.
+(A first evaluation of part 4 took the reference as starting at byte 4,096 and gave differences of 1.0 at +64 and +512; it was an
+indexing error of the analysis script, corrected before any figure was sent.)

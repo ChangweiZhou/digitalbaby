@@ -23,8 +23,28 @@ import readings                  # noqa: E402
 TAUS = {"N0": (2,), "N64": (2, 4, 8, 16, 32, 64), "N256": (2, 4, 8, 16, 32, 64, 128, 256)}
 
 
-def prepare(kind, seed, nbytes, out):
+def long_axons(B, seed, frac=1 / 8, reach=0.5):
+    """Section 3a: one excitatory cell in 8 that is neither a driver nor a feedback cell is long; it is a member of every non-feedback
+    cell within `reach`; the 8 starting connections are drawn again from the enlarged lists."""
+    rng = np.random.default_rng(seed + 20261120)
+    P = B["P"]
+    long = [i for i in range(ts.N) if B["sig"][i] > 0 and i not in B["fbset"] and i not in B["outset"] and rng.random() < frac]
+    members, src = {}, {}
+    for i in range(ts.N):
+        if i in B["fbset"]:
+            members[i], src[i] = [], []
+            continue
+        xi, yi = P[i]; have = set(B["members"][i])
+        add = [j for j in long if j != i and j not in have and (P[j][0] - xi) ** 2 + (P[j][1] - yi) ** 2 <= reach ** 2]
+        members[i] = list(B["members"][i]) + add
+        src[i] = [int(v) for v in rng.choice(members[i], size=min(8, len(members[i])), replace=False)]
+    return long, members, src
+
+
+def prepare(kind, seed, nbytes, out, long=False):
     B = ts.birth(seed)
+    if long:
+        B = dict(B); B["long"], B["members"], B["src"] = long_axons(B, seed)
     tau = np.full(ts.N, 2.0) if kind == "N0" else np.random.default_rng(seed + 20261119).choice(TAUS[kind], size=ts.N).astype(float)
     lines = [str(seed)]
     for i in range(ts.N):
@@ -32,7 +52,7 @@ def prepare(kind, seed, nbytes, out):
         lines.append(f"{i} {int(i in B['fbset'])} {B['sig'][i]:.1f} {tau[i]:.1f} {len(src)} " + " ".join(map(str, src)))
         mem = B["members"][i]
         lines.append(f"{len(mem)} " + " ".join(map(str, mem)))
-    bp = out / f"birth_{seed}_{kind}.txt"; tmp = Path(f"{bp}.{os.getpid()}"); tmp.write_text("\n".join(lines) + "\n"); os.replace(tmp, bp)
+    bp = out / f"birth_{seed}_{kind}{'_L8' if long else ''}.txt"; tmp = Path(f"{bp}.{os.getpid()}"); tmp.write_text("\n".join(lines) + "\n"); os.replace(tmp, bp)
     b, _ = ts.stream(seed, nbytes)
     sp = out / f"stream_{seed}_{nbytes}.bin"; tmp = Path(f"{sp}.{os.getpid()}"); tmp.write_bytes(b.tobytes()); os.replace(tmp, sp)
     return B, b, bp, sp

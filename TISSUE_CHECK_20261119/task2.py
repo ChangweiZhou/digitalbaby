@@ -21,7 +21,7 @@ def S0(p, rec):
     conns = [(int(a), int(c)) for a, c in conn(p)]
     dist = mt.distances(B0, conns, b[lo:nb]); x = np.where(rec[-4096:] < 0.01, 0.0, rec[-4096:]).astype(np.float64)
     r = readings.read_window(x, b[lo:nb], dist, seed, stream=b, start=lo, distances=(1, 2, 4, 8, 10), lags=(0,))
-    return {d: round(r["scores"][d]["by_lag"][0]["S"], 3) for d in (1, 2, 4, 8, 10)}
+    return {d: (round(r["scores"][d]["by_lag"][0]["S"], 3) if r["scores"][d]["by_lag"][0] else None) for d in (1, 2, 4, 8, 10)}
 out = dict(reference=dict(S0=S0(ref, R), made=int(cnt[-1, 0]), withdrawn=int(cnt[-1, 1])), rows={})
 rc = conn(ref)
 for p in sorted(glob.glob(f"out/{pre}_{kind}_B*.stats"), key=lambda s: int(s.split("_B")[1][:-6])):
