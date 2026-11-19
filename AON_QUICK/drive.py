@@ -25,7 +25,7 @@ class Tis(ctypes.Structure):
                 ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
                 ('rng', ctypes.c_uint64), ('made', ctypes.c_int64), ('given', ctypes.c_int64), ('given_by_use', ctypes.c_int64), ('k', ctypes.c_int64),
                 ('active_sum', ctypes.c_double), ('qpow', ctypes.c_double * 4097),
-                ('allornone', ctypes.c_int), ('eta_t', ctypes.c_double), ('tauv1', ctypes.c_int)]
+                ('allornone', ctypes.c_int), ('eta_t', ctypes.c_double), ('tauv1', ctypes.c_int), ('th_min', ctypes.c_double)]
 A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray(B['sig'], np.float64), nmem=np.zeros(N, np.int32), mem=np.zeros((N, maxd), np.int16),
          deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
          c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
@@ -38,7 +38,7 @@ for i in range(N):
         A['c_src'][i, d] = s; A['c_mi'][i, d] = pos[s]; A['c_w'][i, d] = ts.START_W; A['issrc'][i, pos[s]] = 1
     A['deg'][i] = len(B['src'][i])
 t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8'))); t.gmax = float(eval(kw.get('gmax', '4096'))); t.tau_f = float(eval(kw.get('tau_f', '4'))); t.eta_s = float(eval(kw.get('eta_s', '1')))
-t.rng = 88172645463325252 + SEED; t.allornone = int(kw.get('allornone', 0)); t.eta_t = float(eval(kw.get('eta_t', '1/128'))); t.tauv1 = int(kw.get('tauv1', 0))
+t.rng = 88172645463325252 + SEED; t.allornone = int(kw.get('allornone', 0)); t.eta_t = float(eval(kw.get('eta_t', '1/128'))); t.tauv1 = int(kw.get('tauv1', 0)); t.th_min = float(eval(kw.get('th_min', '0')))
 for k, a in A.items(): setattr(t, k, a.ctypes.data)
 L.tis_init(ctypes.byref(t))
 b, _ = ts.stream(SEED, NB); b = np.ascontiguousarray(b, np.uint8)

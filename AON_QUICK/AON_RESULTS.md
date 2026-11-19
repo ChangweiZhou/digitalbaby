@@ -71,3 +71,35 @@ The question is whether an all-or-none tissue carries the present and the previo
   - At θ = 3/16, which is above one connection's strength of 1/8, nothing is ever active.
   - With every strength at 1/8, the threshold either passes any single input or needs two, and the measured tissue either fills or stays silent.
 - **The coincidence and timing rules** make the all-or-none tissue depend on its own past: 196 to 707 cells and 271 to 386 cells differ. They carry nothing beyond d = 1, where S(1,0) is 0.048 and 0.070.
+
+## th_min: the threshold held at or above a floor (the reviewer's request of 06:00 UTC)
+
+Settings: rule = fixed, all-or-none, θ ← max(th_min, θ + η_θ (x − a*)), with θ starting at th_min. The runs are made by `run_thmin.sh`.
+
+Column key:
+- **Active d1–d11**: the range of the active share over distances 1 to 11.
+- **Present** and **Previous**: the median share of output variance explained by the present byte or the previous byte.
+- **Divergence**: cells differing after 1 / 16 / 64 / 256 / 512 bytes, when one output is set to 0 for one step. The v + 1e-9 change gives 0 in every run.
+
+| th_min | a* | v | Cells a step | Active d1–d11 | Present d = 1 / 2 / 4 / 8 | Previous d = 1 / 8 | S(d,0) d = 1 / 2 / 4 / 9–11 | Divergence |
+|---|---|---|---|---|---|---|---|---|
+| 1/32 | 1/32 | τ 2 | 58 | 0.019–0.030 | 0.032 / 0.040 / 0.037 / 0.017 | 0.013 / 0.016 | 0.033 / 0.032 / 0.028 / 0.024–0.027 | 0 |
+| 1/32 | 1/32 | = A | 60 | 0.014–0.033 | 0.015 / 0.018 / 0.030 / 0.020 | 0.014 / 0.013 | 0.034 / 0.031 / 0.030 / 0.026 | 0 |
+| 1/32 | 1/8 | τ 2 | 229 | 0.089–0.117 | 0.043 / 0.044 / 0.039 / 0.015 | 0.032 / 0.018 | 0.060 / 0.036 / 0.027 / 0.022–0.025 | 160, 257, 268, 0, 0 |
+| 1/32 | 1/8 | = A | 235 | 0.091–0.124 | 0.025 / 0.024 / 0.024 / 0.021 | 0.016 / 0.012 | 0.074 / 0.031 / 0.027 / 0.021–0.022 | 0 |
+| 1/16 | 1/32 | τ 2 | 56 | 0.019–0.031 | 0.031 / 0.038 / 0.032 / 0.013 | 0.015 / 0.017 | 0.039 / 0.034 / 0.029 / 0.025–0.032 | 48, 0, 0, 0, 0 |
+| 1/16 | 1/32 | = A | 59 | 0.013–0.032 | 0.016 / 0.018 / 0.026 / 0.024 | 0.012 / 0.012 | 0.033 / 0.033 / 0.032 / 0.028–0.029 | 0 |
+| 1/16 | 1/8 | τ 2 | 219 | 0.082–0.117 | 0.051 / 0.057 / 0.041 / 0.013 | 0.028 / 0.021 | 0.057 / 0.037 / 0.031 / 0.022–0.027 | 0 |
+| 1/16 | 1/8 | = A | 231 | 0.084–0.124 | 0.024 / 0.021 / 0.022 / 0.018 | 0.015 / 0.014 | 0.054 / 0.032 / 0.028 / 0.023–0.025 | 0 |
+| 3/32 | 1/32 | τ 2 | 51 | 0.016–0.028 | 0.040 / 0.051 / 0.046 / 0.015 | 0.015 / 0.027 | 0.043 / 0.038 / 0.036 / 0.023–0.024 | 0 |
+| 3/32 | 1/32 | = A | 57 | 0.011–0.031 | 0.016 / 0.017 / 0.027 / 0.023 | 0.015 / 0.016 | 0.030 / 0.028 / 0.029 / 0.024–0.025 | 0 |
+| 3/32 | 1/8 | τ 2 | 202 | 0.064–0.111 | 0.068 / 0.065 / 0.053 / 0.020 | 0.030 / 0.034 | 0.048 / 0.032 / 0.029 / 0.021–0.024 | 0 |
+| 3/32 | 1/8 | = A | 224 | 0.077–0.120 | 0.025 / 0.026 / 0.030 / 0.026 | 0.013 / 0.016 | 0.056 / 0.040 / 0.028 / 0.024–0.031 | 0 |
+
+**What these runs measured:**
+
+- In no setting does activity die out before the far cells. Every distance from 1 to 11 is active at roughly a*, and no cell is always active.
+- The floor on θ raises what the present byte explains at d = 1 to 4. The highest is 0.068 at th_min = 3/32, a* = 1/8, τ_v = 2, against 0.014 with no floor.
+- But the byte is still not carried. The best S(1,0) is 0.074, against C0 = 1.000, and at d = 8 the present byte explains at most 0.026.
+- The reviewer's next step (the strength rules with th_min) was conditional on activity dying out, so it was not run.
+- One reading, not tested here: one input line is one of a cell's eight starting sources, each worth 1/8. With 8 to 12 per cent of cells active, the other sources' arrivals are of the same size as the line's, so the line does not decide when the cell fires. Counting a cell's active sources at the step it fires would test this; the program does not yet record it.

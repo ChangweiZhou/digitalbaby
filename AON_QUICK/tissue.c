@@ -54,6 +54,7 @@ typedef struct {
     int allornone;                  /* 1: x = 1 when v - theta > 0, else 0 */
     double eta_t;                   /* eta_theta of formula 9 (1/128 in the definition) */
     int tauv1;                      /* 1: the potential's time constant is 1 step (v = A); 0: tau_v = 2 as in the definition */
+    double th_min;                  /* theta is held at or above th_min (0 in the definition) */
 } Tis;
 
 static inline uint64_t rnd(Tis *t) { uint64_t x = t->rng; x ^= x >> 12; x ^= x << 25; x ^= x >> 27; t->rng = x; return x * 2685821657736338717ULL; }
@@ -135,7 +136,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         }
         /* prediction, threshold, averages */
         t->p[i] += m / TAU;
-        double th = t->th[i] + t->eta_t * (xi - a); t->th[i] = th < 0.0 ? 0.0 : th;
+        double th = t->th[i] + t->eta_t * (xi - a); t->th[i] = th < t->th_min ? t->th_min : th;
         t->abar[i] = (1.0 - 1.0 / PS) * t->abar[i] + (1.0 / PS) * xi;
         if (t->rule == COINC) t->vt[i] = (1.0 - 1.0 / TAU_VT) * t->vt[i] + (1.0 / TAU_VT) * xi * xi / a;
         if (t->two_sided == 2) {
