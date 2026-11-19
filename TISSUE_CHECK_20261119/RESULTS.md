@@ -738,3 +738,27 @@ tags its present inputs and makes the change at the next byte toward 1 if the er
 the cells in between take the error from the right/wrong sensitivity of their active inputs): (i) 5.96 [5.57-6.14] and 6.07
 [5.76-6.13], (iii) 6.26 [6.16-6.34] and 6.56 [4.91-7.24] (n 3) on 73129 and 406364: (iii) slightly above (i), but both far below the
 copying rule's (i); it did not help. The rules 'tagH1', 'errgate', 'novel' and the 262,144-byte grid were not run.
+
+## 19. Learning addition from yes or no (reviewer's task of about 15:35 UTC)
+
+`addsys.py`, my own code from the description (the reviewer's addtext.py not read). Readings: lines "a+b=c\n", a, b in 0..9; the 20
+never-shown pairs fixed per seed (`default_rng(seed)`), line order and every random choice of the cells from `default_rng([seed, g])`,
+g = 0..4; one answering cell (outpart.py's single cell, rule Q, eta 1/16, eps 1/16 while learning). Score every 5,000 lines with
+learning frozen and no random choice: each of the 100 pairs fed byte by byte after an end of line; the line is right if every byte after
+'=' (the answer digits and the end of line) is named. 60,000 lines. Table `out/add/table.txt`; median [range] over the five orders,
+shown | never shown, seeds 73129 / 406364 / 545353:
+
+| system (cells besides the answering cell) | what a cell needs | shown, 60k | never shown, 60k |
+|---|---|---|---|
+| A0 present byte + slow copies s_2, s_4, s_8 (0) | its own slow copies | 18 / 18 / 26 | 5 / 0 / 0 |
+| A1 + delay cells d_1..d_5 (5) | each passes its byte on one step later | 34 / 39 / 40 | 0 / 0 / 0 |
+| A2 + 2,000 random conjunction cells, two (delay, byte) entries, threshold 2 (2,005) | two sensitivities and a threshold | 49 / 56 / 55 | 0 / 0 / 0 |
+| A5 + holding cells A, B and 300 pair cells (A = x and B = y, by position) (307) | a held digit (a cell gated by a byte) | 92 / 94 / 96 | 0 / 0 / 0 |
+| A7 + A, B and additive unordered cells, drive uA[A] + uB[B] random fixed, random threshold, 19 or 100 by position (64 / 307) | | 48 / 51 / 56; 72 / 69 / 76 | 0 / 0 / 0; 5 / 0 / 0 |
+| A8 as A7, uA and uB learned by a three-factor rule (fired at an answer position: +1/64 on yes, -1/64 on no) (64 / 307) | whether it fired, what it holds, the common answer | 35 / 36 / 39; 36 / 34 / 45 | 0 / 0 / 0 |
+| A3 + A, B and 57 counting cells reading A + B through 'at least k' sensitivities (laid down), threshold s = 0..18, by position (82) | a held digit, an ordered code, a threshold, a position cue | 96 / 98 / 95 | 80 / 85 / 80 |
+
+Ranges over orders, A3: shown 95-98 / 96-99 / 94-98, never shown 75-85 / 75-95 / 70-85; at 10,000 lines never shown 35-45, at 30,000
+60-70. A5 is a table of the shown sums: (1), not (2). A2 and A7 are partial tables. Only A3 gets sums never shown, and in A3 the order
+of the digits ('at least k') is laid down at birth; only the answering cell learns from yes or no. The one attempt to learn the code
+(A8) did worse than the fixed random cells and got no sum never shown.
