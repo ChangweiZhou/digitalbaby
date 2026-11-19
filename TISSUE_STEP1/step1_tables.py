@@ -11,8 +11,7 @@ from pathlib import Path
 LEVEL = 0.1103          # section 11.3 as corrected after check 9 (e): 0.0903 + 0.02
 TISSUES = [("first", "A_first_73129", "1. first form, E10"),
            ("coincidence", "A_coincidence_73129", "2. coincidence, E10"),
-           ("fixed", "A_fixed_73129", "3. fixed"),
-           ("withdraw", "A_first_withdrawbyuse_73129", "5. first form, withdrawal by use")]
+           ("fixed", "A_fixed_73129", "3. fixed")]
 F11 = "A_first_f11written_73129"
 DS, LAGS = ("1", "2", "4"), ("0", "1", "2", "4", "8")
 
@@ -85,13 +84,13 @@ def main(root):
     for k, r in recs.items():
         if not r or "counts" not in r:
             continue
-        P(f"### {names[k]}\n\n| Step | byte | connections | mean a cell | starting remaining | given up | made | withdrawn by use | input-line conns | line values in use | from feedback cells (w min–max) | inh → inner | exc → inner mean w |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+        P(f"### {names[k]}\n\n| Step | byte | connections | mean a cell | starting remaining | given up | made | input-line conns | line values in use | from feedback cells (w min–max) | inh → inner | exc → inner mean w |\n|---|---|---|---|---|---|---|---|---|---|---|---|")
         for c in r["counts"]:
             if c["step"] in (127, 129, 1024) or (c["step"] + 1) % (2048 * 32) == 0:
                 lines = sum(v["n"] for kk, v in c["by_kind"].items() if "input line" in kk)
                 fb = c["from_feedback_cells"]
                 P(f"| {c['step']} | {(c['step'] + 1) // 32 - 1 if (c['step'] + 1) % 32 == 0 else '—'} | {c['connections']} | {f(c['per_cell_mean'], 2)} | "
-                  f"{c['starting_remaining']} | {c['given_up_total']} | {c['made_total']} | {c.get('withdrawn_by_use_total', 0)} | {lines} | "
+                  f"{c['starting_remaining']} | {c['given_up_total']} | {c['made_total']} | {lines} | "
                   f"{c['line_values_in_use']} | {fb['n']} ({f(fb['w_min'])}–{f(fb['w_max'])}) | {c['by_kind']['inner <- inhibitory cell']['n']} | {f(c['exc_into_inner_mean_w'])} |")
         P()
 
@@ -172,11 +171,6 @@ def main(root):
         h = (6 * pl + 3 * last["fixed"][0]) * 262144 / 3600
         P(f"\nBrief's rule: plastic cost = max(first, coincidence) × 1.25 = {pl:.4f} s/byte; "
           f"262,144 × (6 × {pl:.4f} + 3 × {last['fixed'][0]:.4f}) = {h:.1f} CPU-hours.")
-        if "withdraw" in last:
-            pw = last["withdraw"][0] * 1.25
-            hw = (6 * pw + 3 * last["fixed"][0]) * 262144 / 3600
-            P(f"\nDecision 62 (forecast from the fifth tissue): plastic cost = {last['withdraw'][0]:.4f} × 1.25 = {pw:.4f} s/byte; "
-              f"262,144 × (6 × {pw:.4f} + 3 × {last['fixed'][0]:.4f}) = {hw:.1f} CPU-hours.")
     P()
 
 
