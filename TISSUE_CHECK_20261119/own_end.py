@@ -16,7 +16,7 @@ so that run and raw keep their draws); raw (the outputs as they are).
 Scores: share right in windows of 4,096 positions, the last quarter (positions from 3(NB-1)/4 + 1 on), and ref_1, ref_2, the end mark's
 share from the scorer (deps/PREP/score_emissions.py).
 
-    python3 own_end.py <rec file (float32, every byte)> <seed> <nbytes> <tag> [A4]
+    python3 own_end.py <rec file (float32, every byte)> <seed> <nbytes> <tag> [A4|L8] [Y]
 """
 import json, sys, time
 import numpy as np
@@ -41,7 +41,11 @@ for v in range(256): IDX[v, :len(own[v])] = own[v]
 R = np.fromfile(recf, dtype=np.float32).reshape(-1, ts.N)[:NB][:, near].astype(np.float64)
 M = NB - 1; y = b[1:]; nf = (3 * M) // 4; q0 = nf + 1
 RULES = [("A", 0.0, 1 / 8), ("A", 1 / 16, 1 / 8), ("B", 1 / 16, 0.0), ("D", 0.0, 1 / 64), ("D", 0.0, 1 / 16)]
-CFG = [(p, r) for p in ("run", "raw", "clip8") for r in RULES]; C = len(CFG)
+PREPS = ("run", "raw", "clip8")
+if len(sys.argv) > 6 and sys.argv[6] == "Y":          # task of 12:52: B, D 1/64, Y1 = Y:eps:1/256:own:s:1, Y2 = Y:eps:1/256:own:c:4
+    RULES = [("B", 1 / 16, 0.0), ("D", 0.0, 1 / 64), ("Y", 1 / 16, (1 / 256, "s", 1.0)), ("Y", 1 / 16, (1 / 256, "c", 4.0))]
+    PREPS = ("run", "clip8")
+CFG = [(p, r) for p in PREPS for r in RULES]; C = len(CFG); nemit = np.zeros((C, 256))
 W = np.zeros((C, 256, G + 1)); rbar = np.zeros((C, 256))
 rng = {"run": np.random.default_rng(seed), "raw": None, "clip8": np.random.default_rng(seed + 1)}; rng["raw"] = rng["run"]
 right = np.zeros((C, NB), bool); seen = np.zeros(256, bool); m = np.zeros(K); s2 = np.zeros(K)
@@ -59,6 +63,14 @@ for t in range(M):
         ok = e == y[t]; right[c, t + 1] = ok
         if rule == "A":
             W[c, e] += (1.0 if ok else -par) * (0.25 / P[e]) * U[e]
+        elif rule == "Y":
+            # rule Y of yn.py with n = P (each unit's inputs + 1): the emitter as B with step s0 (1/4)/P_e [/ sqrt(1 + m_e/16)];
+            # on no, every other unit v adds up s0 (1/4)/P_v times its own input vector
+            up, decay, s0 = par
+            st = s0 * 0.25 / P[e] / (np.sqrt(1.0 + nemit[c, e] / 16.0) if decay == "s" else 1.0); nemit[c, e] += 1
+            W[c, e] += (float(ok) - rbar[c, e]) * st * U[e]; rbar[c, e] += (float(ok) - rbar[c, e]) / 64
+            if not ok:
+                inc = (up * s0 * 0.25 / P)[:, None] * U; inc[e] = 0.0; W[c] += inc
         elif rule == "B":
             W[c, e] += (float(ok) - rbar[c, e]) * (0.25 / P[e]) * U[e]; rbar[c, e] += (float(ok) - rbar[c, e]) / 64
         else:
@@ -70,9 +82,11 @@ lv = {"end mark": [float((b[a_:e_] == 10).mean()) for a_, e_ in wins], "ref_1": 
 lq = {"end mark": float((b[q0:] == 10).mean()), "ref_1": float((refs["ref_1"] == b)[q0:].mean()), "ref_2": float((refs["ref_2"] == b)[q0:].mean())}
 res = {}
 for c, (prep, (rule, eps, par)) in enumerate(CFG):
-    nm = f"{prep} {rule}" + (f" eps={eps:g}" if rule != "D" else "") + (f" kappa={par:g}" if rule == "A" else "") + (f" eta={par:g}" if rule == "D" else "")
+    nm = f"{prep} Y up={par[0]:g} decay={par[1]} s0={par[2]:g}" if rule == "Y" else f"{prep} {rule}" + (f" eps={eps:g}" if rule != "D" else "")
+    if rule != "Y": nm = nm + (f" kappa={par:g}" if rule == "A" else "") + (f" eta={par:g}" if rule == "D" else "")
     w = wsh(right[c])
-    res[nm] = dict(windows=w, last_quarter=float(right[c, q0:].mean()),
+    rn = np.linalg.norm(W[c], axis=1)
+    res[nm] = dict(windows=w, last_quarter=float(right[c, q0:].mean()), weight_row_norm=dict(max=float(rn.max()), median=float(np.median(rn))),
                    first_window_reaching={k: next((wins[i][1] for i in range(len(w)) if w[i] >= l[i]), None) for k, l in lv.items()})
 out = dict(tag=tag, seed=seed, bytes=NB, cells_a=K, inputs_per_driver=dict(min=int(P.min() - 1), median=float(np.median(P) - 1), max=int(P.max() - 1)),
            rules=res, levels=lv, levels_last_quarter=lq, seconds=time.time() - t0)

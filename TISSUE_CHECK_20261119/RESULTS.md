@@ -475,3 +475,63 @@ Seed 116089, reference life only: 16,384 bytes overall 0.354 / 0.343 / 0.330 / 0
 Between lives of one seed the overall share moves by 0.03-0.09 and the end mark and equals sign on seed 93683 by up to 0.5 at one lag;
 the reviewer's reference life of seed 93683 is the lowest of the six at 16,384 at lags 0, 2 and 3. The ranges of the two seeds overlap
 in the overall share; on 73129 the end mark and equals sign stay at 0.79-1.00 in every life, on 93683 they do not.
+
+## 13. Rule Y: the units that did not emit step toward the input on "no" (task of 12:52 UTC)
+
+**Readings.** YESNO/ on claude/e63-yesno has no README; the unclear places Y1-Y8 were sent before yn.py was read. yn.py's head comment
+and code take: the emitter's step st = s0 (1/4)/n, n the number of active inputs (one-hots and the constant), divided by
+sqrt(1 + m_e/16) under decay s (m_e the unit's earlier emissions); the emitter moves by (ok - r_e) st U, r_e its own share of yes
+(rate 1/64, updated after the step, only when it emits); on "no" all 255 other units add up s0 (1/4)/n U, with neither decay nor
+baseline; one generator `default_rng(seed)` for all rules, drawn in the order of the rules at each byte, so that a rule's random choices
+depend on the rules run beside it; missing earlier bytes at t = 0, 1 are left out. Y1 = Y:eps:1/256:own:s:1, Y2 = Y:eps:1/256:own:c:4.
+
+**Part 1: exact inputs** (`own_yn.py`, `out/yn/`). With the same rules in the same order my figures equal the main worker's as floats in
+every window (`cmp_yn.py`, `out/yn/compare_main_worker.txt`): the 18 files x{1,2,3}_s{73129,93683,116089}_{64k,256k} (A, A eps, B, D,
+D) and g2_eps_own, g3_eps_own (B, D and 12 settings of Y). In the main worker's step-2 configuration (B, D 1/64, Y1, Y2), last quarter
+in per cent (`out/yn/table_exact.txt`; seeds 93683 / 73129 / 116089):
+
+| inputs, bytes | B | D 1/64 | Y1 | Y2 | ref_1 / ref_2 / ref_3 (73129) |
+|---|---|---|---|---|---|
+| 1 byte, 65,536 | 10.08 / 9.44 / 8.40 | 10.05 / 10.16 / 10.32 | 2.39 / 2.58 / 2.88 | 5.65 / 6.73 / 7.65 | 10.55 / 12.34 / 25.12 |
+| 2 bytes, 65,536 | 10.89 / 10.80 / 6.86 | 12.24 / 12.13 / 12.49 | 2.57 / 2.64 / 2.64 | 11.42 / 11.38 / 11.47 | |
+| 3 bytes, 65,536 | 17.13 / 12.62 / 13.45 | 26.78 / 26.32 / 26.72 | 20.47 / 20.67 / 20.20 | 18.16 / 14.89 / 14.23 | |
+| 1 byte, 262,144 | 8.91 / 8.35 / 7.95 | 9.79 / 9.83 / 9.73 | 1.39 / 1.28 / 1.14 | 3.25 / 3.36 / 3.15 | 10.44 / 12.42 / 27.44 |
+| 2 bytes, 262,144 | 10.91 / 10.98 / 7.25 | 12.13 / 12.24 / 12.33 | 1.55 / 1.75 / 1.44 | 9.72 / 10.11 / 10.10 | |
+| 3 bytes, 262,144 | 18.76 / 17.59 / 17.38 | 27.25 / 27.29 / 27.46 | 19.14 / 19.54 / 19.90 | 22.07 / 17.09 / 17.02 | |
+
+Five generators of their own (`sep=1 gen=1..5`, B and Y1 only, 65,536 bytes), range of the last quarter: 1 byte B 5.55-10.05, Y1
+2.04-2.86; 2 bytes B 6.68-11.00, Y1 2.09-4.26; 3 bytes B 11.55-17.13, Y1 15.33-22.20 (each seed in the table file). Y1 is above B on
+three exact bytes on every seed and generator; on one and two bytes it is below the end mark's share (about 6%) on every seed and
+generator, and lower at 262,144 than at 65,536 bytes.
+
+**Part 2: recorded driver inputs** (`python3 own_end.py out/OE_<tissue>_<seed>.rec <seed> 65536 Y_<tissue>_<seed> <A4|L8> Y`;
+`out/own_end_Y_*.json`, `out/ytab.txt`). Rule Y as yn.py with n = P, the unit's inputs + 1; on "no" each other unit adds
+up s0 (1/4)/P_v times its own input vector. L8-128 lives of 65,536 bytes were run for this (`jobs_OE128.txt`). The rules run in the
+order B, D, Y1, Y2 with measure.py's generators, so B's random choices, and its figures, differ from section 11's. Last quarter, run |
+clip8:
+
+| seed, tissue | B | D 1/64 | Y1 | Y2 | ref_1 / ref_2 |
+|---|---|---|---|---|---|
+| 93683 L8-256 | 7.52 / 8.23 | 9.26 / 9.27 | 2.46 / 2.51 | 6.22 / 6.09 | 10.62 / 12.14 |
+| 93683 L8-128 | 8.79 / 7.44 | 11.99 / 12.02 | 3.31 / 6.01 | 5.69 / 7.06 | |
+| 93683 A4-256 | 6.07 / 6.45 | 10.64 / 10.64 | 3.17 / 3.42 | 4.46 / 5.19 | |
+| 73129 L8-256 | 12.35 / 13.44 | 17.02 / 17.00 | 8.32 / 8.14 | 9.97 / 11.22 | 10.55 / 12.34 |
+| 73129 L8-128 | 12.13 / 10.83 | 15.54 / 15.53 | 6.92 / 7.74 | 8.62 / 9.14 | |
+| 73129 A4-256 | 9.95 / 9.36 | 13.80 / 13.81 | 7.79 / 6.66 | 9.31 / 9.48 | |
+| 116089 L8-256 | 11.04 / 10.18 | 16.17 / 16.17 | 2.58 / 7.53 | 3.97 / 5.24 | 10.61 / 12.20 |
+| 116089 L8-128 | 5.82 / 8.75 | 13.89 / 13.90 | 6.50 / 6.76 | 8.77 / 8.56 | |
+| 116089 A4-256 | 10.93 / 8.95 | 15.31 / 15.31 | 8.69 / 6.82 | 6.26 / 7.89 | |
+
+Y reaches the present byte's level (ref_1) in the last quarter in one of the 36 cases (73129, L8-256, clip8 Y2, 11.22) and the two-byte
+level in none; on seed 93683 it reaches neither on any tissue, and Y1 is there below the end mark's share on every tissue. Y is above B
+in 3 of the 36 pairs (73129 A4-256 clip8 Y2 9.48 against 9.36; 116089 L8-128 run Y1 6.50 and Y2 8.77 against 5.82), all below ref_1.
+
+**Part 3: is the step for the non-emitting units safe** (exact inputs, 262,144 bytes, weight norms every 4,096 bytes,
+`out/yn/table_norms.txt`). The weights grow without bound: under Y1 the median unit's weight vector grows in proportion to the life
+(1 byte 31 at 65,536 to 127 at 262,144; 2 bytes 21 to 85; 3 bytes 14 to 54), since every "no" adds the same step to 255 units and nothing
+takes it back; under Y2 the largest row reaches 500-940; under B the median unit is never changed (0) and the largest row is 47-337. The
+share right falls late: Y1 in windows of 4,096 ending at 16k / 64k / 128k / 256k, seed 93683, 1 byte 6.4 / 2.3 / 2.3 / 0.8, 2 bytes 8.8 /
+2.4 / 3.0 / 2.1, 3 bytes 19.1 / 21.0 / 22.0 / 19.4; seeds 73129 and 116089 alike; B on three bytes still rises to 256k. On the recorded
+inputs at 65,536 bytes Y1's median row norm is 0.4-0.5 and Y2's largest 12-105, against 0 and 6-26 for B. Under decay s the emitter's own
+step falls with the square root of its emissions while the step of the other units does not; that this causes the fall is not tested
+here.
