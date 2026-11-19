@@ -9,7 +9,9 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 SEEDS = (73129, 93683, 116089)
 CANDS = [('none', 'no delay'), ('rand32', 'random 0–32 on every connection between cells'), ('rand16', 'random 0–16'),
-         ('q4d32', '32 on 1/4'), ('dist32', 'proportional to distance, dmax 32')]
+         ('q4d32', '32 on 1/4'), ('dist32', 'proportional to distance, dmax 32'),
+         ('mix', 'random 0–32 on every connection, then 32 on 1/4 of them (made after step 2)'),
+         ('rand32_64k', 'random 0–32, 65,536 bytes (step 4; summary from its last window)')]
 BASES = [('B', 'B (rule=timing norm=1 lines_learn=1 eta_s=1 no_make=1)'), ('B1', 'B1 (B with we=1 wi=1/4)')]
 
 
@@ -51,7 +53,7 @@ for bl, bn in BASES:
         for s in SEEDS:
             r = load(f'{bl}_{cl}_{s}')
             if r is None:
-                out.append(f'| {bl} | {cn} | {s} | not run |' + ' |' * 7); continue
+                continue
             w = r['windows'][-1]; g = {x['d']: x for x in w['rows']}
             s0, some, near = answer(w)
             s0v = ' / '.join(f"{g[d]['a']['0']:.3f}" if d in g and g[d]['a']['0'] is not None else '—' for d in ('1', '2', '4'))
