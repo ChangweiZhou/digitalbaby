@@ -19,7 +19,7 @@ maxd = max(len(m) for m in B['members'].values()) + 2
 P = ctypes.c_void_p
 class Tis(ctypes.Structure):
     _fields_ = [('maxd', ctypes.c_int), ('rule', ctypes.c_int), ('floor_x', ctypes.c_double), ('astar', ctypes.c_double), ('by_use', ctypes.c_int),
-                ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double),
+                ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double), ('no_make', ctypes.c_double), ('lines_learn', ctypes.c_double),
                 ('kind', P), ('sig', P), ('nmem', P), ('mem', P),
                 ('deg', P), ('c_src', P), ('c_mi', P), ('c_w', P), ('c_e0', P), ('c_t0', P), ('c_k0', P), ('c_cu', P), ('c_nb', P), ('issrc', P),
                 ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
@@ -29,14 +29,14 @@ A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray
          deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
          c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
          v=np.zeros(N), xp=np.zeros(N), p=np.zeros(N), th=np.zeros(N), abar=np.zeros(N), vt=np.full(N, astar), E=np.zeros(N), klast=np.zeros(N, np.int32), z=np.zeros(ts.NZ),
-         gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(N))
+         gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(ts.NZ))
 for i in range(N):
     mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
     pos = {m: q for q, m in enumerate(mem)}
     for d, s in enumerate(B['src'][i]):
         A['c_src'][i, d] = s; A['c_mi'][i, d] = pos[s]; A['c_w'][i, d] = ts.START_W; A['issrc'][i, pos[s]] = 1
     A['deg'][i] = len(B['src'][i])
-t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8'))); t.gmax = float(eval(kw.get('gmax', '4096'))); t.tau_f = float(eval(kw.get('tau_f', '4'))); t.eta_s = float(eval(kw.get('eta_s', '1')))
+t = Tis(); t.maxd = maxd; t.rule = rule; t.floor_x = floor; t.astar = astar; t.by_use = by_use; t.two_sided = two; t.eta_g = eta_g; t.rho = float(eval(kw.get('rho', '7/8'))); t.gmax = float(eval(kw.get('gmax', '4096'))); t.tau_f = float(eval(kw.get('tau_f', '4'))); t.eta_s = float(eval(kw.get('eta_s', '1'))); t.no_make = float(kw.get('no_make', 0)); t.lines_learn = float(kw.get('lines_learn', 0))
 t.rng = 88172645463325252 + SEED
 for k, a in A.items(): setattr(t, k, a.ctypes.data)
 L.tis_init(ctypes.byref(t))

@@ -34,7 +34,7 @@ typedef struct {
     int rule; double floor_x, astar; int by_use;
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
-    double *F; double tau_f, eta_s;                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
+    double *F; double tau_f, eta_s; double no_make, lines_learn;   /* no_make 1: no connection is made; lines_learn 1: under TIMING the connections from input lines change too (F has NZ entries) */                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
          /* the largest gain a cell can take */
     /* birth (given) */
     const int8_t *kind; const double *sig;          /* sig has NZ entries */
@@ -98,7 +98,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                    was active after it: dw = eta_s ( F_j x_i(k) - F_i x_j(k-1) ), F the fast trace of a cell's output before the step */
                 const double Fi = t->F[i];
                 if (xi != 0.0 || Fi != 0.0)
-                    for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; if (s >= NCELL || t->sig[s] < 0.0) continue;
+                    for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; if ((s >= NCELL && t->lines_learn == 0.0) || t->sig[s] < 0.0) continue;
                         double w = t->c_w[b + d] + t->eta_s * (t->F[s] * xi - Fi * z[s]);
                         t->c_w[b + d] = w < 0.0 ? 0.0 : (w > 1.0 ? 1.0 : w); }
             } else if (!inner_coinc) {
@@ -141,7 +141,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
     }
     /* traces of the sending cells: z of this step is x(k-1) */
     for (int j = 0; j < NCELL; j++) t->E[j] = (1.0 - 1.0 / TAU) * t->E[j] + (1.0 / TAU) * z[j];
-    if (t->rule == TIMING) for (int j = 0; j < NCELL; j++) t->F[j] += (z[j] - t->F[j]) / t->tau_f;
+    if (t->rule == TIMING) for (int j = 0; j < NZ; j++) t->F[j] += (z[j] - t->F[j]) / t->tau_f;
     /* giving up, then making */
     if (t->rule != FIXED) {
         for (int i = 0; i < NCELL; i++) {
@@ -154,7 +154,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     else if (t->by_use && t->c_nb[b + d] >= PS) { remove_conn(t, i, d); t->given++; t->given_by_use++; }
                 }
             }
-            if (t->th[i] == 0.0 && t->abar[i] < a && (k - t->klast[i]) >= PS) {
+            if (t->no_make == 0.0 && t->th[i] == 0.0 && t->abar[i] < a && (k - t->klast[i]) >= PS) {
                 const int free_n = t->nmem[i] - t->deg[i];
                 if (free_n > 0) {
                     int pick = (int)(rnd(t) % (uint64_t)free_n), mi = -1;
