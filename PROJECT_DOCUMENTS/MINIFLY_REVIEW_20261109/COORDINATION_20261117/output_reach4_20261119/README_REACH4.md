@@ -58,3 +58,38 @@ References on the last quarter: ref_1 10.5–10.6, ref_2 12.1–12.3, end mark 6
 **Not measured.**
 - A4 and L8 beyond 65,536 bytes (except the one long run).
 - LF-256 on seeds 93683 and 116089 (withdrawn).
+
+## Rule Q (`measure_q.py`, the reviewer's message of 13:05 UTC; `TABLE_Q.md`)
+
+**The rule.**
+- A unit's output a_v = W[v] U is its own estimate of the chance that its byte comes next. Weights start at 0.
+- Emission as in B: the largest output, or with chance 1/16 a value seen so far, at random.
+- The emitter, on yes and on no: W[e] += eta (ok − a_e) U_e / |U_e|^2.
+- On yes, every other unit: W[v] += eta (0 − a_v) U_v / |U_v|^2. On no the others do nothing.
+- Qe is the emitter's change only.
+- Choices taken: n = |U_v|^2 of the unit's own inputs and the constant (as D); the random emitter is treated as any emitter; outputs are not clipped to [0, 1].
+- Inputs in the forms run and clip. B (eps 1/16) and D (eta 1/64) are run beside Q in the same program. B draws from a random-number generator shared with the other rules, so it differs slightly from earlier runs.
+
+**Seeds.** 93683, 73129 and 116089 on L8-256, L8-128, A4-256 and A4-128. 146821, 224268 and 746958 were added at the reviewer's request, on L8-128 and A4-256 only. The fitted readers and `by_class.py` were run for those three seeds.
+
+**Results** (% on the last quarter, run form, Q at eta 1/16 unless stated):
+
+| Tissue | D (1/64), per seed | Q, per seed | Seeds where some form of Q (eta 1/16 or 1/64) reaches ref_2 in a window |
+|---|---|---|---|
+| L8-256 (93683 / 73129 / 116089) | 9.3 / 17.0 / 16.2 | 8.0 / 14.8 / 14.2 | 2 of 3 (73129, 116089) |
+| L8-128 (93683 / 73129 / 116089 / 146821 / 224268 / 746958) | 12.0 / 15.5 / 13.9 / 9.3 / 9.6 / 9.7 | 9.9 / 13.4 / 11.8 / 8.4 / 8.7 / 8.3 | 2 of 6 (73129, 116089) |
+| A4-256 (same six seeds) | 10.6 / 13.8 / 15.3 / 12.5 / 18.7 / 10.1 | 9.7 / 12.2 / 13.5 / 11.2 / 15.8 / 9.4 | 3 of 6 (73129, 116089, 224268) |
+| A4-128 (93683 / 73129 / 116089) | 13.8 / 11.8 / 13.8 | 12.4 / 11.4 / 12.4 | 3 of 3 |
+
+- Q is above B on every tissue and seed: by 1 to 5 points, and 0.8 to 0.95 of D where D is above ref_2.
+- Qe equals Q at eta 1/16 and 1/64, and is worse at 1/4.
+
+**Long run, L8-256 seed 73129, 262,144 bytes.**
+- Q at eta 1/64 holds 15.0–15.6 per 32,768 bytes (last quarter 15.5; D 17.1; ref_2 11.7–12.5).
+- The largest row norm of W from 65,536 bytes to the end: Q 0.386 → 0.428 at eta 1/64, 0.407 → 0.592 at 1/16, 0.591 → 1.21 at 1/4; D 0.373 → 0.439; B 13.2 → 51.8.
+
+**By class on the further seeds.** On L8-128 near the output lines:
+- TASK after the end mark 0–2 (the present byte alone gives 24–26);
+- "=" 46–71 and the end mark 58–65;
+- the answer digits 6–9.
+On A4-256: TASK 23–26, "=" 47–96, the end mark 78–100, the answer digits 1–13.
