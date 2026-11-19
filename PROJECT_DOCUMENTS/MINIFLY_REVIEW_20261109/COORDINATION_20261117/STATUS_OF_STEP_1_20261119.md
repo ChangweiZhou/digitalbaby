@@ -144,8 +144,9 @@ connections, and the learning of the output end from yes or no.
 | 115 | **The yardstick for the linear reading** (independent program; the new tissue with constants up to 256, seed 93683; six lives differing in the last bit of one cell's potential at byte 0; the linear reader near the output lines at 16,384 bytes; bytes 0 / 1 / 2 / 3 back). All values: 0.275 to 0.339 / 0.301 to 0.374 / 0.268 to 0.336 / 0.204 to 0.290 (the reviewer's figures of row 108 are the reference life, the lowest of the six at three of the four lags). Digits: 0.35 to 0.47 / 0.40 to 0.50 / 0.32 to 0.44 / 0.23 to 0.35. End mark: 0.66 to 0.87 / 0.73 to 0.87 / 0.65 to 0.80 / 0.25 to 0.76. Equals sign: 0.44 to 0.94 / 0.64 to 0.90 / 0.49 to 0.84 / 0.63 to 0.85. So between two lives of one tissue the share of all values moves by 0.06 to 0.09, and the share of a single value such as the equals sign by up to 0.5. A difference between two tissues on one seed of less than 0.1 in the overall share is within this, and single values on single seeds prove nothing; the comparisons of rows 108 and 110 stand only where they are larger than that or repeat over seeds. | E62's worker | 1 (six lives) | the same at 65,536 bytes and on seed 73129 |
 | 116 | The new tissue on a fourth seed (the reviewer's draw; the helper's runs equal the reviewer's files exactly where both exist; the linear reader near the output lines; end mark / equals sign for the present byte, and digits named right more than half the time). Constants up to 256: seed 73129 0.98 / 0.95, 2 digits; seed 116089 0.94 / 0.97, 2; seed 93683 0.76 / 0.44, 4; **seed 465973 0.13 / 0.38, 2**. No memory: 1.00 / 1.00, 5; 0.99 / 1.00, 6; 0.99 / 1.00, 4; **0.10 / 0.92, 4**. So the new form too has a seed on which a mark of the item's structure does not arrive at the output lines, even without memory; 195 to 210 cells receive from an input line; no divergence on any. | helper (claude/prep-step1-full) | 4 | the other seeds of the fifteen in the reviewer's draw (running before the change of plan reached it) |
 | 117 | **A yes-or-no rule that learns more** (exact inputs, no tissue; seed 73129, 65,536 bytes, last quarter, %; 72 settings, each change something a unit told only yes or no can do). The change that matters: on "no", every unit that did NOT emit adds a small step toward the input (the right byte is among them), beside the decrease of the unit that emitted. On three exact bytes: without it 13.0; with it (1/256 of the emitter's step) **20.8**; the rule told the right byte 26.3; the old yes-or-no rule 13.6 to 16.7 from run to run. On two exact bytes: 11.4 (old rule 10.9; told the right byte 12.1). The unit's own running share of yes as its baseline is clearly better than one share for the whole output end (20.8 against 14.6) or none (16.6). Emitting in proportion to the outputs instead of the largest with rare random choices is worse (12.1). Letting the step fall with the number of a unit's own emissions changes little. What a unit holds: its weights, its own running share of yes when it emitted, whether it emitted at this byte; the yes or no is one signal common to all units. | main worker (claude/e63-yesno) | 1 | the two best settings on all four exact inputs, three seeds, two lengths; and on recorded inputs of a real tissue (L8-128, three seeds) |
+| 118 | **The two forms of long axons on 15 other seeds, read linearly: no difference.** (E52's worker's seeds; constants up to 256; the linear reader near the output lines; smallest / median / largest over the seeds.) Share of all values named right, bytes 0 / 1 / 2 / 3 back. Every excitatory cell at reach 1/4: 0.14 / 0.26 / 0.42; 0.17 / 0.31 / 0.45; 0.15 / 0.28 / 0.40; 0.16 / 0.28 / 0.36. One cell in 8 at reach 1/2: 0.13 / 0.29 / 0.36; 0.13 / 0.31 / 0.39; 0.14 / 0.27 / 0.36; 0.15 / 0.27 / 0.33. Digits for the present byte: 0.04 / 0.25 / 0.50 and 0.04 / 0.26 / 0.50. End mark above 0.9 for the present byte on 7 of 15 seeds against 8; equals sign on 5 against 7. Values never named: median 14 against 15. No divergence on 15 in either. **So the advantage of the new form that the reviewer read on two seeds (row 108) is not there on 15.** What both forms share stands: about a quarter to a third of the values for each of the four bytes, with a wide spread over seeds (0.13 to 0.45), and the structure marks arriving whole on about half the seeds. | E52's worker (f6411c67, PREP/tissue10/TABLE_P.md) | 15 | five more settings running |
 
-## 2a. Where things stand (12:41 UTC)
+## 2a. Where things stand (12:46 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -195,7 +196,9 @@ connections, and the learning of the output end from yes or no.
    form is being looked for, and the measure is now the byte values that arrive and what the output end learns, not the
    tool's counts.
 11. With time constants the new form holds the present byte and the three before it at 0.2 to 0.4 each near the output lines
-   by a linear reader, on three seeds, more than the first form (rows 108, 110), reproduced in three programs. For the output
+   by a linear reader (rows 108, 110), reproduced in three programs. I read it as more than the first form on two seeds;
+   on 15 other seeds the two forms do not differ (row 118: medians 0.26 to 0.31 for each of the four bytes in both), and
+   both have seeds on which a structure mark does not arrive (rows 116, 118). For the output
    end it evens the seeds and does not raise them (rows 111 to 113): told the right byte 13.8 / 10.6 on seeds 73129 / 93683
    (17.0 / 9.3 on the first form), yes or no 10.1 / 6.6 (12.0 / 4.7); with constants up to 128 the weak seed reaches 13.8
    told the right byte. So the new form is not the answer either.
@@ -296,6 +299,10 @@ the list of 07:25 named a change of strength by order in time, which the tissues
 - At 10:59 I told Mr. Xu that E55's worker's reading on seed 93683 looked faulty (a fitted reader at 0.0% "below the commonest
   byte"). I had mistaken the two answer digits of the stream for the bytes one and two back. The check found no fault (row 84):
   the output end does not learn on the long-axon tissue on that seed.
+- At 12:16 I told Mr. Xu that the new form of long axons (every excitatory cell at reach 1/4) gives a linear reader more than
+  the first form "on both seeds". That was two seeds and one life each. On E52's worker's 15 seeds the two forms do not
+  differ (row 118), and the spread between two lives of one tissue is 0.06 to 0.09 (row 115), as large as the difference
+  I reported. The statement is withdrawn.
 
 ## 7. Where the material is, and what the coordinator would verify
 
@@ -319,4 +326,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 12:41 UTC, 19 November 2026.
+Last change: 12:46 UTC, 19 November 2026.
