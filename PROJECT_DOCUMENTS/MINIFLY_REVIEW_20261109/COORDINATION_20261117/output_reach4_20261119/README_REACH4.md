@@ -93,3 +93,31 @@ References on the last quarter: ref_1 10.5–10.6, ref_2 12.1–12.3, end mark 6
 - "=" 46–71 and the end mark 58–65;
 - the answer digits 6–9.
 On A4-256: TASK 23–26, "=" 47–96, the end mark 78–100, the answer digits 1–13.
+
+## Removals from the addition system (`addcheck3.py`, the reviewer's message of 15:40 UTC; `TABLE_ADD3.md`)
+
+What `addcheck2.py` variant carry still lays down, removed one at a time (the options are described at the head of `addcheck3.py`):
+(a) the carry cell replaced by learned strengths (reward-modulated perturbation); (b) the four chosen holding cells replaced by a pool
+of 39 holding cells and adding cells over pairs of them; (c) the two strengths of each adding cell made unequal (1 and 0.9), without
+and with a local equalising rule; (2) the single answering cell replaced by the output part of M = 8 cells. D = 100, 240,000 lines,
+5 orders a seed, seeds 73129 and 93683. Comparison: `addcheck2.py` variant carry at 240,000 lines, never shown whole 83.7 / 88.2 / 90.5.
+
+Results (never shown whole, smallest / median / largest over 5 orders; full rows in `TABLE_ADD3.md`):
+
+- (2) M = 8: 87.9 / 89.5 / 92.1 (seed 73129) and 89.6 / 90.0 / 92.0 (93683). Shown 90.2 and 90.9 (medians).
+- (c) strength 0.1 without the rule: 28.4 / 31.5 / 31.8 and 27.6 / 29.9 / 32.8.
+- (c) strength 0.1 with the rule: 25.2 / 27.0 / 29.9 and 27.3 / 27.5 / 30.9 at 240,000 lines. The medians were 40.9 and 39.7 at 60,000
+  lines and 70.1 and 68.5 at 120,000, then fell. The strength ratios at the end were 0.94–1.02 (they were 0.9 without the rule). Why
+  it falls after 120,000 lines was not examined.
+- (b) pool, all 741 pairs: 6.5 / 7.1 / 8.5 and 6.2 / 6.8 / 7.1. Never shown tens 32–33, units 21–22.
+- (b) pool with 2,000 carry adding cells added: 5.3 / 6.8 / 9.4 and 5.7 / 6.2 / 7.6. No better than the pool without them.
+- (b) pool at D = 10, 60,000 lines: shown 85.0 and 87.5 (medians), never shown 0.0 on both seeds (largest 5.0).
+- (a) learned carry and base: NOT_RUN at 240,000 lines. The batch file `batch_add3.txt` had a trailing space on the base lines, so
+  `xargs -L1` joined each base line to the next learned line. Base stopped with a ValueError on its arguments
+  (`out/add3_base_*.log`), and learned never started.
+- Seed 116089: NOT_RUN for every variant (not started before the stop instruction of 16:13 UTC).
+
+Earlier trials (one order, seed 73129, 60,000 lines; reported by message, no result file kept): base 42.3, learned carry 17.8
+(never shown tens 35.1), strength 0.1 without the rule 18.0, M = 8 41.3. These are single trials, not the table's runs.
+
+Limits: two seeds of three; one program and one worker; no one else has run or read `addcheck3.py`.
