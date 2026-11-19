@@ -20,15 +20,15 @@
 
 | Run | S(1, 0) / S(2, 0) / S(4, 0), tool as it is | Present byte at d = 8 to 11, tool as it is | Lag 1 above C<L + 0.02, all seeds | Lag 2 above C<L + 0.02, all seeds |
 |---|---|---|---|---|
-| B, τ = 2 | 0.93–0.98 / 0.69–0.78 / 0.38–0.48 | 0.13–0.21 at d = 8; chance from d = 10 | nowhere | nowhere |
+| B, τ = 2 | 0.93–0.98 / 0.69–0.78 / 0.38–0.48 | 0.13–0.21 at d = 8; 0.03–0.07 at d = 10; chance at d = 11 | nowhere | nowhere |
 | B, q16 | 0.93–0.98 / 0.69–0.78 / 0.41–0.53 | ≤ 0.15 at d = 8 | d = 3–11 (b); the tool at d = 4 | in one seed only |
 | B, u2-16 | 0.93–0.98 / 0.73–0.75 / 0.42–0.48 | ≤ 0.08 at d = 8 | d = 3–11 (b); the tool at d = 2–4 | d = 9–10 (b) |
-| B, u2-64 | 0.93–0.96 / 0.63–0.67 / 0.31–0.43 | chance | d = 1–9 (b); the tool at d = 1–6 | d = 2–9 (b); the tool at d = 2–6 |
+| B, u2-64 | 0.93–0.96 / 0.63–0.67 / 0.31–0.43 | ≤ 0.05 at d = 8; chance from d = 9 | d = 1–9 (b); the tool at d = 1–6 | d = 2–9 (b); the tool at d = 2–6 |
 | B, u2-64e | 0.95–0.98 / 0.70–0.83 / 0.40–0.48 | ≤ 0.09 at d = 8 | d = 2–10 (b); the tool at d = 2–4 | d = 3–9 (b); the tool at d = 3–4 |
-| B, u2-256 | 0.89–0.95 / 0.58–0.67 / 0.22–0.29 | chance | d = 1–8 (b); the tool at d = 1–4 | d = 1–6 (b); the tool at d = 1–4 (lag 3 at d = 1) |
+| B, u2-256 | 0.89–0.95 / 0.58–0.67 / 0.22–0.29 | ≤ 0.05 at d = 8; chance from d = 9 | d = 1–8 (b); the tool at d = 1–6 | d = 1–6 (b); the tool at d = 1–5 (lag 3 at d = 1) |
 | B, u2-64, tau_f = 16 | 0.92–0.96 / 0.62–0.68 / 0.29–0.36 | ≤ 0.08 at d = 8 | d = 1–9 (b) | d = 2–9 (b) |
 | B, u2-256, tau_f = 16 | 0.89–0.95 / 0.59–0.62 / 0.25–0.29 | ≤ 0.06 at d = 8 | d = 1–6 (b) | d = 1–6 (b) |
-| B, u2-64e, 65,536 bytes | 0.95–0.97 / 0.70–0.84 / 0.42–0.49 | 0.10–0.12 at d = 8; 0.02–0.05 at d = 9 to 11 | d = 2–10 (b); the tool at d = 2–8 | d = 3–10 (b); the tool at d = 2–4 |
+| B, u2-64e, 65,536 bytes | 0.95–0.97 / 0.70–0.84 / 0.42–0.49 | 0.10–0.12 at d = 8; 0.02–0.05 at d = 9 to 11 | d = 2–10 (b); the tool at d = 2–8 | d = 3–10 (b); the tool at d = 3–4 |
 | BG, τ = 2 | 0.93–0.97 / 0.62–0.65 / 0.27–0.36 | 0.13–0.23 at d = 8; 0.09–0.17 at d = 10–11 | in one seed only | nowhere |
 | BG, u2-64e | 0.93–0.97 / 0.68–0.75 / 0.29–0.43 | 0.10–0.15 at d = 8; 0.04–0.12 at d = 10–11 | d = 2–8 (b and the tool alike) | d = 4 |
 
