@@ -85,6 +85,13 @@ cells that qualify); then, for every cell i that is not a feedback cell, in the 
 starting connections are drawn with the same generator, `.choice(members, size=8, replace=False)`. E57's worker wrote the option
 again from this description and obtained the same long cells, members, starting connections and outputs at every byte.
 
+Read from the program after E62's worker asked (10:24 UTC): "excitatory" means σ = +1 at birth; "within 1/2" means squared
+distance at most 1/4 on the unit square, with no wrap; the long cells are in the lists that making draws from; the runs of STATUS
+rows 54 to 69 use 1/16384 for the level of the long mean and 1/64 for the strength of a MADE connection (the 8 starting connections
+keep 1/8 each); and "the cells near the output lines" in those rows are the drivers and every member of a driver's ENLARGED
+neighbourhood, so the group includes long-axon cells up to 1/2 away from a driver (577 cells on seed 73129, against 495 by the
+neighbourhoods of 1/8). The figures for the group by the neighbourhoods of 1/8 are being measured.
+
 The numbers 8 and 1/2 are first values; one cell in 4 also serves, one in 32 does not, and a reach of 1/4 does not (STATUS rows
 54, 62). It is a proposal to Mr. Xu, not part of the definition.
 
