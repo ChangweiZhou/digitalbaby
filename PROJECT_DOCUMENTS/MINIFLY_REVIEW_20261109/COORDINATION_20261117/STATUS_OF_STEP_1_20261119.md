@@ -110,8 +110,9 @@ connections, and the learning of the output end from yes or no.
 | 81 | Row 76's question on the seeds where the present byte was below its level, over 65,536 bytes (independent program; windows ending at 16,384 / 32,768 / 49,152 / 65,536; present byte near the output lines). Constants up to 256, seed 465973: 0.100 / 0.133 / 0.130 / 0.134 (passes from 32,768 on and stays, never by 0.02); seed 146821: 0.102 / 0.103 / 0.113 / 0.100 (does not pass). Constants up to 128, seed 465973: 0.129 / 0.134 / 0.124 / 0.126. The nine entries hold in every window but one entry in one window. Agrees with row 80: a longer life helps on some seeds and not on others. | E62's worker | 2 | seed 112290 and six lives with constants up to 128: running |
 | 82 | **What the cells near the output lines tell of the NEXT byte with long axons** (merged program, fitted reader, last quarter of 65,536 bytes, seed 73129; enlarged group / within 1/8 of a driver / all cells; the present byte alone gives 0.106, present and previous 0.130, three bytes 0.251). No memory: 0.099 / 0.095 / 0.131. Constants up to 64: 0.124 / 0.118 / 0.197. **Constants up to 256: 0.179 / 0.178 / 0.221**, above present-and-previous by 0.05 and the highest reader near the output lines of any tissue so far (without long axons the best were 0.121 to 0.130). Delays of 0 to 16: 0.158 / 0.157 / 0.180. The two groups differ by at most 0.006: the long-axon cells counted in add little. Agrees with E55's worker's fitted readers on the same tissue (row 78: 18.3 near, 21.8 whole). | main worker | 1 | constants up to 128, delays with constants, two more seeds: running |
 | 83 | Row 65 over 262,144 bytes (time constants up to 64 without long axons, the output end read at the middle of the tissue, seed 73129, earlier build; %, last quarter; the present byte alone 10.3 to 10.7, present and previous 11.7 to 12.5). x0 = 1/2: told yes or no 10.3 (rule B; 9.2 in the first eighth and 10.0 to 10.5 in every eighth after) and 9.3 to 9.8 (rule A); told the right byte 16.0. x0 = 5/8: 9.0 (B), 9.8 to 10.5 (A); 16.4. So there the output end told yes or no reaches the level of the present byte by about 32,768 bytes and stays at it to the end; it does not rise toward the level of two bytes. | E55's worker (5ff50c80, README_X0.md) | 1 | — |
+| 84 | **Row 78 on seed 93683: not repeated.** Constants up to 256: fitted reader whole tissue / near the output lines / own neighbourhood 20.5 / 11.7 / 10.5 (17.2 on seed 73129); told the right byte 9.3; told yes or no 4.7 (rule B; 6.2 with raw inputs) and 2.5 to 6.5 (rule A): neither the present byte's level nor the end mark's share within most of the life. Constants up to 64: 20.3 / 13.5 / 11.0; told the right byte 10.2; yes or no 6.5. No memory: 13.5 / 7.7 / 7.1; 5.2; 5.0. One thing in this row does not fit and is being checked: the fitted reader near the output lines finds the bytes one and two back at 0.5% and 0.0%, below what a reader naming the commonest byte gets, while the readings tool tells them apart among the same cells at 0.181 and 0.156 (rows 74, 76), and raw inputs here do better than standardised ones, the opposite of seed 73129. That pattern is what a standardisation dividing by a very small deviation would give. Until it is checked the row stands as reported: on one seed of two the output end does not learn on this tissue. | E55's worker (output_reach4_20261119) | 1 | the check asked at 10:59; seed 116089; constants up to 128; seed 73129 over 262,144 bytes |
 
-## 2a. Where things stand (10:46 UTC)
+## 2a. Where things stand (11:00 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -141,8 +142,10 @@ connections, and the learning of the output end from yes or no.
 7. The output end told only yes or no reaches the level of the present byte when it reads from the middle of a tissue with time
    constants up to 64, on two of three seeds (row 65); told the right byte it passes the level of two bytes on all three.
 8. On the long-axon tissue with constants up to 256 the output end AT THE OUTPUT LINES, told only yes or no, reaches 12.0% (the
-   present byte alone gives 10.55, present and previous 12.34), and told the right byte 17.0% (row 78). One seed so far; the
-   other two are running. This is the measurement the next step rests on.
+   present byte alone gives 10.55, present and previous 12.34), and told the right byte 17.0% (row 78), and the cells there tell
+   0.179 of the next byte by a fitted reader in another line's program (row 82). **On the second seed it is not repeated (row
+   84): yes or no gives 4.7%.** A possible fault of the reading on that seed is being checked; the third seed is running. This
+   is the measurement the next step rests on, and it is not settled.
 
 ## 3. Against step 1 as the roadmap states it
 
@@ -240,4 +243,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 10:46 UTC, 19 November 2026.
+Last change: 11:00 UTC, 19 November 2026.
