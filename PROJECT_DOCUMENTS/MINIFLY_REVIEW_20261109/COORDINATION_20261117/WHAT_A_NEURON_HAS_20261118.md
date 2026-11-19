@@ -154,3 +154,13 @@ The reviewer had written that the strength of a connection is set by its sending
 Translation (the reviewer's). Yes. We do not exclude that the connection between cell A and cell B may run through cells C, D, E and so on. How the strength is determined in that case, for example when C's feedback holds that the strength should rise and D's that it should fall, while A may again have separate connections with D and E, and so on, can be discussed further.
 
 What follows. The influence of one cell on another may pass over other cells as well as over a direct connection. How strengths are determined when the cells on such paths pull in different directions is not settled by Mr. Xu and is open for discussion; the definition of the tissue must not close it.
+
+## 18. Mr. Xu on the way of working (01:08 UTC, 19 November 2026)
+
+The reviewer had reported a first draft of the brief of step 2 with further checks planned. Mr. Xu:
+
+> 为何你还在反复验证？这个东西本来就是根据实验进程需要实时修改的。我有让你反复推敲吗？
+
+Translation (the reviewer's). Why are you still verifying over and over? This thing is by its nature to be modified in real time as the course of the experiments requires. Did I ask you to deliberate over it again and again?
+
+What follows. The definition, the roadmap, the task graph and the briefs are working documents that are changed as the experiments show what is needed. They are not to be put through repeated rounds of reading before anything is run. From now on: a document is written once and used; a brief has at most one check before it goes to the coordinator; what a run shows is entered into the definition directly, with one dated line saying what changed and why.

@@ -111,6 +111,10 @@ graph TD
 
 A task is handed over as one message that carries, in this order: the task's identifier and one sentence on what the project wants; the files to read, by path (documents A to E, then the task's own inputs); what is to be produced and where it is to be written; the rule of done; and the limits (a writer or checker changes one file, runs no training, commits nothing; a worker runs only what its released brief names). A writer's or checker's message also carries the rules of writing (English, full sentences, defined terms, no metaphor, the clock read before any time is written, no name of a language model in a file). A checker is told that it owes the document no agreement. The messages by which tasks 0.1 to 1.2 were handed over are in the reviewer's session and can serve as models; the reviewer writes each next one when its task becomes ready.
 
+## 5a. The rule on checking (Mr. Xu, 01:08 UTC, 19 November; `WHAT_A_NEURON_HAS_20261118.md`, section 18)
+
+These documents are changed in real time as the experiments require. A document is written once and used. A brief has at most one check before it goes to the coordinator. What a run shows is entered into the definition directly, with one dated line. No further rounds of reading are arranged; the one reading of revision 5 that the coordinator asked for (decision 51) is allowed to finish and its findings are entered directly.
+
 ## 6. What is ready now
 
 State at 00:59 UTC (19 November): E63 (tasks 1.5 and 1.6, stage A) runs on the main worker's line. A reading of revision 5 of the definition from its first sentence is running (the coordinator's decision 51). Task 2.1, the brief of step 2, is being written and is not released before stage A is read (decision 56). Task S.1 is held. Verification is the coordinator's (decision 55).
