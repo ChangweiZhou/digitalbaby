@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp57_scale.py", line 645, in <module>
+    main(sys.argv)
+    ~~~~^^^^^^^^^^
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp57_scale.py", line 636, in main
+    res = CHECKS[n](qual / f"check{n}_{SEED}_runs", cmd)
+  File "/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp57_scale.py", line 586, in check8
+    mid = json.loads(rp2.read_text())
+                     ~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/pathlib/_local.py", line 546, in read_text
+    return PathBase.read_text(self, encoding, errors, newline)
+           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/pathlib/_abc.py", line 632, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/pathlib/_local.py", line 537, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/home/user/digitalbaby/MOD97_LOCAL_RULE_20261106/exp45/e57_qual/check8_73129_runs/killed_and_resumed/e57_in16_matrix_S_cd0_u8192_73129.json'

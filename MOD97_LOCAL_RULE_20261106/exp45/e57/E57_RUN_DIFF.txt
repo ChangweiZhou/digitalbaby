@@ -1,0 +1,173 @@
+--- exp49_interface.py lines 164-243 (run)
++++ exp57_scale.py lines 245-381 (run)
+@@ -1,3 +1,6 @@
+-def run(setting, rule, seed, out, cmd, dose=None):
+-    k_in, k_out = SETTINGS[setting]
++def run(network, scale, rule, seed, out, cmd, dose=None, code_decay=None, ckpt=4096, resume=False, die_after=None):
++    assert (scale == "none") == (rule == "B")
++    assert code_decay is None or (code_decay == 0 and network == "in16" and scale == "matrix" and rule == "S")
++    assert ckpt == 0 or ckpt % 2048 == 0, "--ckpt must be 0 or a multiple of 2,048"
++    k_in, k_out = NETWORKS[network]
+     local = RULES[rule]
+@@ -5,18 +8,25 @@
+     assert dose % ROW == 0
+-    rp = receipt_path(out, setting, rule, seed, dose)
++    rp = receipt_path(out, network, scale, rule, seed, dose, code_decay)
+     paths = dict(receipt=rp, start=rp.with_name(rp.stem + "_start.pt"), weights=rp.with_suffix(".pt"),
+                  answers=rp.with_name(rp.stem + "_answers.json"))
+-    R_.refuse_existing(*paths.values(), str(paths["weights"]) + ".tmp", str(paths["start"]) + ".tmp")
++    cp = rp.with_suffix(".ckpt")
++    saved = T.load(cp, weights_only=False) if (resume and cp.exists()) else None
++    if saved is None:
++        R_.refuse_existing(*paths.values(), str(paths["weights"]) + ".tmp", str(paths["start"]) + ".tmp", cp)
++    else:
++        R_.refuse_existing(paths["weights"], paths["answers"], str(paths["weights"]) + ".tmp")
+     Path(out).mkdir(parents=True, exist_ok=True)
+-    m, layer, iface = build(setting, seed)
+-    rd = readers(iface)
+-    print(f"e49 {setting} {rule} {seed}: least cells reading an input value {rd['input_value_min']}, least readout units reading a cell "
+-          f"{rd['cell_min']}", flush=True)
++    m, layer, iface = build(network, seed)
++    rd = R49.readers(iface)
++    print(f"e57 {network} {scale}{' cd0' if code_decay == 0 else ''} {rule} {seed}: least cells reading an input value {rd['input_value_min']}, "
++          f"least readout units reading a cell {rd['cell_min']}", flush=True)
+     if rd["input_value_min"] == 0 or rd["cell_min"] == 0:
+-        raise SystemExit(f"e49 {setting} {seed}: an input value or a cell is read by nobody; stopped as the brief requires")
++        raise SystemExit(f"e57 {network} {seed}: an input value or a cell is read by nobody; stopped as the brief requires")
+     install(layer, iface)
+     opt = R42.make_opt(m, layer)
++    if code_decay == 0:
++        no_code_decay(m, opt)
+     n_rec = int(layer.mask3().sum())
+     cnt = iface.counts(m, n_rec)
+-    assert cnt["multiply_adds"] == MA_EXPECTED[setting], (setting, cnt)
++    assert cnt["multiply_adds"] == MA_EXPECTED[network], (network, cnt)
+     ma = cnt["multiply_adds"]
+@@ -25,16 +35,34 @@
+     bt = E.batches(tp, seed, E.KMAX["M"]); dg = C26.Digest()
+-    start = weights_blob(m, layer, iface)
+-    save_pt(start, paths["start"])
+-    rec = dict(experiment="E49", kind="birth", setting=setting, config=setting, rule=rule, local=local, seed=seed, dose=dose, row_every=ROW,
+-               k_in=k_in, k_out=k_out, cells=U, N=layer.N, batch=X.BATCH, kmax=E.KMAX["M"], counts=cnt, multiply_adds_per_position=ma,
+-               params_module=sum(q.numel() for q in m.parameters()), readers=rd, draw_digests=draw_digests(seed, k_in, k_out),
+-               start_scale=dict(input=(D / k_in) ** 0.5 if k_in < D else 1.0, lm=(U / k_out) ** 0.5 if k_out < U else 1.0),
+-               optimizer=R42.opt_record(m, layer, opt),
+-               update="exp26_candidate.step's text with e49_interface.forward(m, layer, iface, x, local) in place of arch26.forward",
+-               data="exp11_cell.batches([(t, split(t, .5, seed)[0]) for t in DEV], seed, 12)",
+-               forward="e49_interface.forward (the specification's own forward)",
+-               start_file=paths["start"].name, start_tensors_sha256=R_.tensors_sha(m.state_dict()),
+-               mask_sha256=dict(recurrent=R42.tsha(layer.mask), input=R42.tsha(iface.mask_in), readout=R42.tsha(iface.mask_out)),
+-               provenance=provenance(cmd), complete=False, curve=[])
+-    curve = rec["curve"]; cpu_up = cpu_sc = 0.0; w0 = time.time(); losses = []; first = None
++    cb = cosine_batches(seed)
++    if saved is None:
++        start = R49.weights_blob(m, layer, iface)
++        R49.save_pt(start, paths["start"])
++        rec = dict(experiment="E57", kind="birth", setting=network, config=network, scale=scale,
++                   scale_at=dict(recurrent_layer=SCALE_AT[scale][0], other_maps=SCALE_AT[scale][1]), rule=rule, local=local, seed=seed,
++                   dose=dose, row_every=ROW, code_decay=0 if code_decay == 0 else C26.WD,
++                   k_in=k_in, k_out=k_out, cells=U, N=layer.N, batch=X.BATCH, kmax=E.KMAX["M"], counts=cnt, multiply_adds_per_position=ma,
++                   params_module=sum(q.numel() for q in m.parameters()), readers=rd, draw_digests=R49.draw_digests(seed, k_in, k_out),
++                   start_scale=dict(input=(D / k_in) ** 0.5 if k_in < D else 1.0, lm=(U / k_out) ** 0.5 if k_out < U else 1.0),
++                   optimizer=R42.opt_record(m, layer, opt),
++                   update="exp26_candidate.step's text with exp57_scale.forward(m, layer, iface, x, local, scale) in place of arch26.forward",
++                   data="exp11_cell.batches([(t, split(t, .5, seed)[0]) for t in DEV], seed, 12)",
++                   forward="exp57_scale.forward(m, layer, iface, x, local, scale)",
++                   start_file=paths["start"].name, start_tensors_sha256=R_.tensors_sha(m.state_dict()),
++                   mask_sha256=dict(recurrent=R42.tsha(layer.mask), input=R42.tsha(iface.mask_in), readout=R42.tsha(iface.mask_out)),
++                   ckpt_every=ckpt, provenance=provenance(cmd), complete=False, curve=[], cosines=[], resumes=[])
++        cpu_up = cpu_sc = cpu_cos = 0.0; wall0 = 0.0; u0 = 0
++    else:
++        u0 = saved["updates"]
++        for _ in range(u0):
++            dg.add(next(bt))
++        rec = saved["receipt"]
++        assert dg.value() == rec["curve"][-1]["data_digest"], "the stream drawn again is not the one the run saw"
++        sd0 = {k: v for k, v in T.load(paths["start"], weights_only=False).items() if k in m.state_dict()}
++        assert R_.tensors_sha(sd0) == rec["start_tensors_sha256"], "the starting file is not the run's"
++        m.load_state_dict(saved["model"]); opt.load_state_dict(saved["opt"])
++        assert R42.opt_record(m, layer, opt) == rec["optimizer"], "the optimizer's groups differ from the receipt's"
++        assert not layer.added_parameters()
++        cpu_up, cpu_sc, cpu_cos, wall0 = saved["cpu_updates"], saved["cpu_scoring"], saved["cpu_cosines"], saved["wall"]
++        rec["resumes"].append(dict(update=u0, at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), cmd=cmd))
++    curve = rec["curve"]; w0 = time.time() - wall0; losses = []
+ 
+@@ -47,6 +75,6 @@
+         assert all(lim.values()), f"E42's check 4 failed at row {u}: {lim}"
+-        mk = check_masks(m, layer, iface, opt)
+-        assert all(all(v.values()) for v in mk.values()), f"check 3 failed at row {u}: {mk}"
+-        row.update(limit=lim, masks=mk, kept_mean_magnitude=magnitudes(m, layer, iface), cpu_updates=cpu_up, cpu_scoring=cpu_sc,
+-                   multiply_adds=ma * X.BATCH * u, data_digest=dg.value(),
++        mk = R49.check_masks(m, layer, iface, opt)
++        assert all(all(v.values()) for v in mk.values()), f"check 4 (E49's check 3) failed at row {u}: {mk}"
++        row.update(limit=lim, masks=mk, kept_mean_magnitude=R49.magnitudes(m, layer, iface), cpu_updates=cpu_up, cpu_scoring=cpu_sc,
++                   cpu_cosines=cpu_cos, multiply_adds=ma * X.BATCH * u, data_digest=dg.value(),
+                    loss=(sum(losses) / len(losses)) if losses else None, finite_losses=all(v == v and abs(v) != float("inf") for v in losses),
+@@ -54,20 +82,46 @@
+         curve.append(row)
+-        print(f"e49 {setting} {rule} {seed} {u}: A {row['A']:.2f} R {row['R']:.2f} taught {row['taught']:.2f} len12 {row['len12']:.1f} "
+-              f"len40 {row['len40']:.1f} cpu {cpu_up:.0f}+{cpu_sc:.0f}s", flush=True)
++        print(f"e57 {network} {scale}{' cd0' if code_decay == 0 else ''} {rule} {seed} {u}: A {row['A']:.2f} R {row['R']:.2f} "
++              f"taught {row['taught']:.2f} len12 {row['len12']:.1f} len40 {row['len40']:.1f} cpu {cpu_up:.0f}+{cpu_sc:.0f}+{cpu_cos:.0f}s",
++              flush=True)
+ 
+-    score_row(0)
+-    for u in range(1, dose + 1):
++    def cos_row(u):
++        nonlocal cpu_cos
++        c = time.process_time()
++        check = len(rec["cosines"]) < 2
++        if check:
++            b_sd, b_opt = R_.tensors_sha(m.state_dict()), opt_state_digest(opt)
++        cs = cosine_set(m, layer, iface, cb)
++        sz = sizes(m, cb)
++        if check:
++            assert R_.tensors_sha(m.state_dict()) == b_sd and opt_state_digest(opt) == b_opt, "a set of cosines changed the network"
++        cpu_cos += time.process_time() - c
++        rec["cosines"].append(dict(update=u, cosines=cs, **sz, cpu=time.process_time() - c))
++        curve[-1]["cpu_cosines"] = cpu_cos
++
++    def save_state(u):
++        tmp = Path(str(cp) + ".tmp")
++        T.save(dict(updates=u, model=m.state_dict(), opt=opt.state_dict(), receipt=rec, cpu_updates=cpu_up, cpu_scoring=cpu_sc,
++                    cpu_cosines=cpu_cos, wall=time.time() - w0), tmp)
++        os.replace(tmp, cp)
++
++    if saved is None:
++        score_row(0)
++        cos_row(0)
++        rp.write_text(json.dumps(rec, indent=1))
++    for u in range(u0 + 1, dose + 1):
+         items = next(bt)
+-        if first is None:
+-            first = items
+-            rec["cosine_first_batch_start"] = cosines(m, layer, iface, first)
+         dg.add(items)
+-        c = time.process_time(); losses.append(step(m, layer, iface, opt, items, local)); cpu_up += time.process_time() - c
++        c = time.process_time(); losses.append(step(m, layer, iface, opt, items, local, scale)); cpu_up += time.process_time() - c
+         if u % ROW == 0:
+             score_row(u); losses = []
++            if u % 2048 == 0:
++                cos_row(u)
+             if u % 2048 == 0 or u == dose:
+                 rp.write_text(json.dumps(rec, indent=1))
+-    rec["cosine_first_batch_end"] = cosines(m, layer, iface, first)
++            if ckpt and u % ckpt == 0 and u < dose:
++                save_state(u)
++        if die_after is not None and u == die_after:
++            os._exit(9)
+     sd = m.state_dict()
+-    save_pt(weights_blob(m, layer, iface), paths["weights"])
++    R49.save_pt(R49.weights_blob(m, layer, iface), paths["weights"])
+     paths["answers"].write_text(json.dumps({str(k): E.respond(m, [p for p, _ in it]) for k, it in LP.items()}))
+@@ -76,5 +130,8 @@
+                optimizer_steps=R_.opt_steps(opt), optimizer_read_back=R42.opt_record(m, layer, opt), data_digest=dg.value(),
+-               cpu_updates=cpu_up, cpu_scoring=cpu_sc, wall=time.time() - w0, processes_beside=os.environ.get("E49_BESIDE", "not recorded"))
++               cpu_updates=cpu_up, cpu_scoring=cpu_sc, cpu_cosines=cpu_cos, wall=time.time() - w0,
++               processes_beside=os.environ.get("E57_BESIDE", "not recorded"))
+     rp.write_text(json.dumps(rec, indent=1))
+-    print("e49 complete", rp.name, rec["tensors_sha256"][:16], flush=True)
++    if cp.exists():
++        cp.unlink()
++    print("e57 complete", rp.name, rec["tensors_sha256"][:16], flush=True)
+     return rec
