@@ -134,7 +134,7 @@ connections, and the learning of the output end from yes or no.
 | 105 | The output end on long axons with constants up to 128 (three seeds 73129 / 93683 / 116089; 65,536 bytes, last quarter, %). Fitted reader on a driver's own neighbourhood 16.0 / 13.4 / 14.7 (up to 256: 17.2 / 10.5 / 17.4). Told the right byte 15.5 / 12.0 / 13.9 (17.0 / 9.3 / 16.2): more even over the seeds, and at the level of present-and-previous or just under it on all three, where up to 256 has two seeds well above and one below the present byte. Told yes or no (rule B; running standardisation / clipped at 8): 10.6 / 13.0, 7.0 / 7.9, 9.3 / 9.1: above the present byte's level on seed 73129 only. E55's worker's own measurement of the tissue with fast long-axon cells on seed 73129 agrees with row 102 (told the right byte 13.6). So far, told only yes or no, the level of present-and-previous is reached on seed 73129 alone, on whichever long-axon tissue. | E55's worker (output_reach4_20261119) | 3 | fast long-axon cells on the other two seeds |
 | 106 | **Long axons for more cells and a shorter reach** (seed 73129, no memory; digits named right at 1 / 2 / 3 / 4 / 5 connections and among the cells near the output lines; then the end mark and the equals sign there, and the values never named there). One excitatory cell in 8, reach 1/2 (row 103): 0.99 / 0.60 / 0.34 / 0.20 / 0.11; near the output lines 0.20; 0.94 and 1.00; 29 of 46. **Every excitatory cell, reach 1/4: 0.88 / 0.61 / 0.51 / 0.43 / 0.40; near 0.40 (letters 0.42); 1.00 and 1.00; 17.** One in 2, reach 1/4: 0.99 / 0.67 / 0.67 / 0.54 / 0.34; near 0.31; 0.73 and 0.98; 21. Every excitatory cell with reach 1/2, or one in 2, or reach 1: the digits are already lost at one connection (0.00 to 0.40), because only 12 to 36 cells then receive from an input line at all (79 with one in 8; 111 in the base): the starting connections are drawn from so large a neighbourhood that the input lines are seldom among them. One in 4 with reach 1/2: 0.70 / 0.19 / 0.00. So two things decide how many byte values reach the output lines: enough cells must receive from the input lines, and the way across must go through many cells of moderate reach, not through a few of long reach. Every excitatory cell with reach 1/4 doubles the digits and letters that arrive, on one seed, without memory. | reviewer (batch54, perbyte/W_*_by_distance.json) | 1 | reach 1/4 on three seeds and with time constants: running (batch55) |
 
-## 2a. Where things stand (11:53 UTC)
+## 2a. Where things stand (12:04 UTC)
 
 1. Step 1 as the roadmap words it (nine entries at 1, 2, 4 connections) is met by the base tissue with time constants up to 256:
    on 15 of 15 seeds (row 31), with two draws of the constants under two levels (rows 36, 43, 47), and in a program written by
@@ -174,7 +174,15 @@ connections, and the learning of the output end from yes or no.
 9. Why it is not secure (rows 99, 101): near the output lines the cells tell apart only a handful of the 46 byte values and
    almost none of the digits, and which values arrive differs by seed; on the seed where the output end does not learn, the
    equals sign and the end mark do not arrive. The loss of the variety of bytes with distance, found at 06:20 for the first
-   tissues, is still there; the long axons shorten the way and do not remove it. This is now the thing to solve. This is the measurement the next step rests on; it is better than anything
+   tissues, is still there; the long axons shorten the way and do not remove it. This is now the thing to solve.
+10. What has been found about it since 11:50 (rows 103, 104, 106; one seed, no memory): the base tissue without long axons keeps
+   the byte values better per connection than the long-axon tissue does; inhibition, threshold and gain are not the cause; the
+   cause is that one excitatory cell in 8 with a reach of 1/2 puts a third to a half of all connections through 156 cells. With
+   EVERY excitatory cell given a reach of 1/4, twice as many digits and letters arrive near the output lines (0.40 against
+   0.20) and the equals sign and end mark arrive whole. A reach of 1/2 for all cells fails for another reason: too few cells
+   then receive from the input lines. So proposal 6 of section 4 (one cell in 8, reach 1/2) is NOT the form to adopt; the
+   form is being looked for, and the measure is now the byte values that arrive and what the output end learns, not the
+   tool's counts. This is the measurement the next step rests on; it is better than anything
    before it (the best yes-or-no figure at the output lines had been 8.3 on one seed, not repeated) and it is not secure.
 
 ## 3. Against step 1 as the roadmap states it
@@ -214,7 +222,8 @@ the list of 07:25 named a change of strength by order in time, which the tissues
 3. A cell has a gain, which it moves so that the peak of its output matches the peak of what its senders give, bounded at 8.
 4. A cell seeks a new source when its long mean of output is low (not its short mean, which flooded the tissue with connections).
 5. Each cell has its own time constant of the potential, drawn at birth (powers of two up to 256 steps).
-6. Proposed since 09:44, on three seeds only (row 54): a share of the excitatory cells (one in 8) have long axons, reaching
+6. (Changed at 12:04 UTC: see section 2a items 9 and 10. The form first proposed here is not the one to adopt.) Proposed since
+   09:44 (row 54): a share of the excitatory cells (one in 8) have long axons, reaching
    cells within 1/2 instead of 1/8. Living tissue has both kinds of cell. It is the first change that brings the present byte
    and the two before it to the output lines where the definition places them. The alternative that needs no new kind of cell
    is to place the output lines nearer the input lines (rows 35, 52); which of the two, or neither, is Mr. Xu's to decide.
@@ -276,4 +285,4 @@ What a verification would take, in the order of what rests on what:
    "near the output lines"; the batch is batch39.txt.
 4. The corrections of section 6, which withdraw statements of mine: rows 40, 41, 46.
 
-Last change: 11:53 UTC, 19 November 2026.
+Last change: 12:04 UTC, 19 November 2026.
