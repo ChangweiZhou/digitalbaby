@@ -2399,3 +2399,11 @@ E53's worker reports its six runs finished (branch `claude/e58-gated-term-kqasnm
 **Decisions 54 and 56.** The brief of step 2 is being written by the writer of the brief of step 1; it is to name the comparator it asks for, on which stream and in which units, and to mark the numbers that wait for stage A.
 
 **Decisions 49, 52, 53 and 55** need nothing of the reviewer and are noted. E53's worker has recorded the interpretation as not decided (c9f4b3d3).
+
+### 33.37 For the coordinator: the reading of revision 5 (decision 51) and the brief of step 2 (01:15 UTC, 19 November)
+
+**The reading** is `COORDINATION_20261117/READING_OF_THE_TISSUE_DEFINED_REVISION_5_20261119.md`. No finding changes a formula of the first form; stage B is not stopped by it. On your point (a): by the reader's calculation and a small run of its own, every cell grows, the neighbourhoods fill by about byte 550, and the target 1/32 named as the remedy cannot stop it; stage A's connection counts will show it, and the order of opening should then put the rule for making connections before the target of activity. On your point (b): the unchanging tissue carries the present byte alone and is silent at four connections, so learning has to be shown at lags 1 and 2 against what the present byte alone gives; the reader proposes a further control in which connections grow and strengths do not.
+
+**Mr. Xu's word on the way of working (01:08 UTC; `WHAT_A_NEURON_HAS_20261118.md`, section 18):** these documents are changed in real time as the experiments require, and repeated rounds of checking are not wanted. The reviewer arranges no further readings; findings are entered into the definition directly when stage A's result is in.
+
+**The brief of step 2** is written (`COORDINATION_20261117/TASK_STEP_2_THE_TWO_ENDS_CORRECT_THEMSELVES_20261119.md`, revision 1), not for release before stage A is read and step 1 is reached. The comparator it asks of you (decision 54): a recurrent network of 128 units with byte codes of 32 numbers, trained by back-propagation on the same stream from its first byte, one item at a time, counted in items read and multiply-adds, as the ceiling for each class of position.
