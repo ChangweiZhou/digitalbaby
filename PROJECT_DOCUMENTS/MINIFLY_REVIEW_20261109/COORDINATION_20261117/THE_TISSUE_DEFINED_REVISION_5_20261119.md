@@ -1,5 +1,7 @@
 # The tissue defined, revision 5 (19 November 2026, written from 00:34 UTC by the clock of this machine)
 
+**Note by the reviewer (00:46 UTC, 19 November 2026), not part of the agent's text.** Two points from `CONFIRMATION_OF_TASK_STEP_1_BRIEF_REVISION_2_20261119.md`: sentence 123 has been given one added sentence (the sliding threshold of the coincidence form starts at a*, as sentence 53 says); and the kind of the magnitude feedback cell (sentence 113 and the table of choices) is disputed between this definition and the brief of step 1, is used at neither step 1 nor step 2, and is to be settled in the brief of the step that first uses it.
+
 This file replaces revision 4 (`THE_TISSUE_DEFINED_REVISION_4_20261118.md`), which is not changed. It folds in errata E1 to E10, so no table of errata is needed. E1 to E9 come from the fifth reading (`FIFTH_READING_OF_THE_TISSUE_DEFINED_20261118.md`). E10 and findings 5, 6 and 10 come from the check of the brief of step 1 (`CHECK_OF_TASK_STEP_1_BRIEF_20261119.md`). The file also enters section 17 of `WHAT_A_NEURON_HAS_20261118.md` and takes the changed step 1 of the roadmap. It is task 0.3 of `TASK_GRAPH_20261119.md`. The only programs run were `python3 -I` with the standard library, for sections 12 and 13. They used the stream and birth of the check script `check_step1_brief.py`, copied without change, with seed 73129.
 
 ## Summary
@@ -264,7 +266,7 @@ The order of operations is sentence 120.
      - a cell n connections in receives most of the byte's effect by about φ = 2n;
      - at φ = 31 the emission reflects the byte just read.
 122. [F] (r4 120) Nothing outside the cells resets their states, and there is one tissue meeting one stream.
-123. [C] (r4 121; C25) At birth all states, traces, predictions, thresholds and running averages are 0, once.
+123. [C] (r4 121; C25) At birth all states, traces, predictions, thresholds and running averages are 0, once. The one exception is the sliding threshold ϑ of the coincidence form (sentence 53), which starts at a*. (Sentence added by the reviewer at 00:46 UTC, 19 November 2026, to remove a conflict with sentence 53 that the confirmation of the brief of step 1 found.)
 124. [F] (new) Bytes four and eight back lie 128 and 256 steps back, where traces keep (31/32)^128 ≈ 0.017 and (31/32)^256 ≈ 0.0003 and the state keeps nothing. Holding them needs sustained recurrent activity, which the roadmap asks for at step 3. Step 1 reads them and reports them.
 
 ## 9. Chemical signal, lasting change, reactivation and numbers
