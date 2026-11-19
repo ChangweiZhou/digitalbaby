@@ -32,24 +32,38 @@ X = X[:M]; sd = X[:nf].std(0); X = np.where(sd > 0, X / np.where(sd > 0, sd, 1),
 Y = np.zeros((M, 256)); Y[np.arange(M), y] = 1
 
 def unit_scores(F):
-    """F(v) -> feature matrix for unit v; returns the scored-quarter scores of all 256 units with the constant chosen on the inner split."""
-    def pred(n, lam):
-        out = np.zeros((M, 256))
-        for v in range(256):
-            Xv = F(v); mu = Xv[:n].mean(0); my = Y[:n, v].mean(); Xc = Xv[:n] - mu
-            G = Xc.T @ Xc; G[np.diag_indices_from(G)] += lam * n
-            out[:, v] = (Xv - mu) @ np.linalg.solve(G, Xc.T @ (Y[:n, v] - my)) + my
-        return out
-    inner = {e: float((pred(nin, 10.0 ** e)[nin:nf].argmax(1) == y[nin:nf]).mean()) for e in range(-6, 3)}
-    be = max(inner, key=lambda e: (inner[e], e)); return pred(nf, 10.0 ** be)[nf:], 10.0 ** be
+    """F(v) -> feature matrix for unit v; returns the scored-quarter scores of all 256 units with the constant chosen on the inner split
+    (each unit's Gram matrix built once per fitting length, then solved for every constant)."""
+    lams = [10.0 ** e for e in range(-6, 3)]
+    inner = np.zeros((len(lams), nf - nin, 256))
+    for v in range(256):
+        Xv = F(v); mu = Xv[:nin].mean(0); my = Y[:nin, v].mean(); Xc = Xv[:nin] - mu; G = Xc.T @ Xc; r = Xc.T @ (Y[:nin, v] - my)
+        Xt = Xv[nin:nf] - mu
+        for j, lam in enumerate(lams):
+            Gl = G.copy(); Gl[np.diag_indices_from(Gl)] += lam * nin; inner[j, :, v] = Xt @ np.linalg.solve(Gl, r) + my
+    sc = [float((inner[j].argmax(1) == y[nin:nf]).mean()) for j in range(len(lams))]
+    be = max(range(len(lams)), key=lambda j: (sc[j], j)); lam = lams[be]
+    out = np.zeros((M - nf, 256))
+    for v in range(256):
+        Xv = F(v); mu = Xv[:nf].mean(0); my = Y[:nf, v].mean(); Xc = Xv[:nf] - mu; G = Xc.T @ Xc; G[np.diag_indices_from(G)] += lam * nf
+        out[:, v] = (Xv[nf:] - mu) @ np.linalg.solve(G, Xc.T @ (Y[:nf, v] - my)) + my
+    return out, lam
 
 OH1 = np.zeros((M, 256)); OH1[np.arange(M), b[:M]] = 1
 OH2 = np.zeros((M, 512)); OH2[np.arange(M), b[:M]] = 1; OH2[np.arange(1, M), 256 + b[:M - 1][:M - 1]] = 1
 res = {}
 scores = {}
-for name, F in (("own", lambda v: X[:, own[v]]), ("oh1", lambda v: OH1), ("oh2", lambda v: OH2)):
-    s, lam = unit_scores(F); scores[name] = s.argmax(1)
+def shared_scores(Z):
+    """the same ridge for all 256 units on one shared feature matrix: one solve with 256 targets"""
+    def pred(n, lam):
+        mu = Z[:n].mean(0); my = Y[:n].mean(0); Zc = Z[:n] - mu; G = Zc.T @ Zc; G[np.diag_indices_from(G)] += lam * n
+        return (Z - mu) @ np.linalg.solve(G, Zc.T @ (Y[:n] - my)) + my
+    inner = {e: float((pred(nin, 10.0 ** e)[nin:nf].argmax(1) == y[nin:nf]).mean()) for e in range(-6, 3)}
+    be = max(inner, key=lambda e: (inner[e], e)); return pred(nf, 10.0 ** be)[nf:], 10.0 ** be
+for name, fn in (("own", lambda: unit_scores(lambda v: X[:, own[v]])), ("oh1", lambda: shared_scores(OH1)), ("oh2", lambda: shared_scores(OH2))):
+    s, lam = fn(); scores[name] = s.argmax(1)
     res[name] = dict(share=float((scores[name] == y[nf:]).mean()), ridge=lam)
+    print(tag, name, round(100 * res[name]["share"], 2), flush=True)
 yt = y[nf:]; vals = sorted(set(yt.tolist()))
 per_v = {}
 pt = b[nf:M]                                                  # present byte at the scored positions

@@ -358,3 +358,71 @@ life, window ending at 16,384).
 With the long-axon cells fast, the cells near the output lines lie about one connection closer to the input lines, a larger share of
 their connections comes from long-axon cells, and the present byte rises among both the long cells and the other cells near the output
 lines; the long cells themselves carry the byte one back much less (0.238 to 0.094 over all long cells).
+
+## 11. The output end written again from E55's worker's texts (task of 11:32 UTC)
+
+**Part 1.** `own_end.py` was written from README_YESNO.md and README_REACH3.md alone, on the outputs of `my_tissue.c` (L8-256). The
+places the text leaves unclear were listed before measure.py was read (O1-O8, message of 11:32 UTC); measure.py takes these readings:
+O1 the driver's inputs are the set-(a) cells in its enlarged neighbourhood (members after the long cells), the driver included, input
+lines excluded (577 cells near the output lines on seed 73129; 59-178 inputs a driver, median 121); O2 m is updated first, s2 with the
+new m, and the input is standardised after this byte's update, m = s2 = 0 at the start, r = 1/min(t+1, 1024); O3 measure.py does not
+clip (clipping at 8 is in diag_std.py only; `clip8` here is my addition, with its own generator `default_rng(seed + 1)`); O4 rule D's u
+includes the constant 1, a is computed before the update, all 256 units learn; O5 rules A and B step (1/4)/(inputs + 1), rbar is updated
+after the step at rate 1/64, the eps draws come from `default_rng(seed)` in the order of the configurations; O6-O8 as listed.
+
+**Part 2.** L8-256, 65,536 bytes (`python3 own_end.py out/OE_L8_<seed>.rec <seed> 65536 L8_<seed>`, `out/own_end_L8_<seed>.json`). On
+seeds 73129 and 93683 my figures equal E55's worker's (`e55_L8-256_s<seed>.json`) in every window of 4,096 of every rule (float
+equality), as do the first windows reaching each level and the levels themselves. Last quarter, in per cent (A eps 0 / A eps 1/16 /
+B / D eta 1/64 / D eta 1/16):
+
+| seed | run | raw | clip8 | ref_1 | ref_2 | end mark |
+|---|---|---|---|---|---|---|
+| 73129 | 11.57 / 11.33 / 12.02 / 17.02 / 15.52 | 8.94 / 8.64 / 8.43 / 16.85 / 15.57 | 12.54 / 11.82 / 13.90 / 17.00 / 15.51 | 10.55 | 12.34 | 6.21 |
+| 93683 | 2.47 / 6.54 / 4.71 / 9.26 / 7.20 | 5.05 / 1.78 / 6.16 / 8.96 / 7.38 | 5.94 / 5.65 / 7.20 / 9.27 / 7.25 | 10.62 | 12.14 | 6.29 |
+| 116089 | 9.45 / 9.01 / 9.90 / 16.17 / 15.29 | 7.71 / 7.27 / 6.62 / 16.15 / 15.73 | 9.22 / 8.96 / 11.05 / 16.17 / 15.28 | 10.61 | 12.20 | 6.24 |
+
+**Part 3.** LF-256 (`out/own_end_LF_<seed>.json`), last quarter, same order:
+
+| seed | run | raw | clip8 |
+|---|---|---|---|
+| 73129 | 9.38 / 6.87 / 10.34 / 13.56 / 11.31 | 7.10 / 6.71 / 7.14 / 13.90 / 11.49 | 8.16 / 8.17 / 7.53 / 13.56 / 11.33 |
+| 93683 | 4.08 / 5.17 / 6.96 / 11.17 / 8.48 | 2.98 / 3.56 / 5.90 / 9.64 / 7.67 | 3.02 / 4.25 / 7.09 / 11.16 / 8.48 |
+| 116089 | 3.21 / 4.62 / 5.64 / 8.29 / 6.88 | 3.04 / 2.43 / 5.98 / 7.71 / 6.48 | 3.47 / 3.28 / 3.82 / 8.29 / 6.88 |
+
+On the output end LF-256 is below L8-256 on 73129 and 116089 for every rule; on 93683 D rises (9.26 to 11.17), the yes/no rules stay
+below ref_1.
+
+**Part 4. Why seed 93683 does not learn (L8-256).** `python3 why93683.py out/OE_L8_<seed>.rec <seed> L8_<seed>` (`out/why_L8_<seed>.json`):
+a ridge reader for each byte value on its own driver's inputs, fitted on the first three quarters, scored on the last; against it the
+same reader on a one-hot of the present byte (oh1) and of the present and previous byte (oh2).
+
+| | own inputs | oh1 | oh2 | tool S, present byte, on a driver's inputs (mean) | ... previous byte | predecessors of v covered by the inputs' preferred bytes |
+|---|---|---|---|---|---|---|
+| 73129 | 17.19 | 10.59 | 12.96 | 0.160 | 0.176 | 0.319 |
+| 93683 | 10.52 | 10.35 | 12.45 | 0.147 | 0.157 | 0.198 |
+
+On 93683 the drivers' own inputs give no more than the present byte alone, and less than the present and previous byte; on 73129 they
+give 4.2 points more than two bytes. The tool reads the present and previous byte on the drivers' inputs at about the same level on both
+seeds. The difference lies in the bytes that close and open an item (recall under own / oh2; count in the scored quarter):
+
+| next byte | 73129 | 93683 |
+|---|---|---|
+| `=` | 0.88 / 0.55 (1,017) | 0.48 / 0.52 (1,030) |
+| end mark | 1.00 / 0.48 (1,017) | 0.71 / 0.48 (1,030) |
+| `q` | 0.49 / 0.09 | 0.00 / 0.00 |
+| `>` | 0.38 / 0.00 | 0.00 / 0.00 |
+| `+` | 0.25 / 0.00 | 0.00 / 0.00 |
+| `w` | 0.18 / 0.10 | 0.00 / 0.00 |
+| `p` | 0.09 / 0.00 | 0.00 / 0.66 |
+
+`python3 why_eq.py <seed>` (`out/why_eq_L8_<seed>.json`): a ridge on the inputs of the drivers of the end mark and of `=`, fitted to
+"the byte L back is `=`"; area under the ROC curve on the last quarter, L = 0, 1, 2, 3:
+
+| | driver of the end mark | driver of `=` |
+|---|---|---|
+| 73129 | 1.000, 1.000, 0.997, 1.000 | 0.848, 1.000, 0.994, 1.000 |
+| 93683 | 0.640, 0.673, 0.696, 0.725 | 0.678, 0.683, 0.717, 0.739 |
+
+So what is absent from the neighbourhoods on 93683 is not the present byte or the bytes one and two back but a lasting mark of where the
+stream is within an item: on 73129 the inputs of these two drivers tell for at least three bytes that `=` has passed, on 93683 they
+barely do. This is a fitted reader on the inputs, a measure of what is there, not of what any learning rule finds.
