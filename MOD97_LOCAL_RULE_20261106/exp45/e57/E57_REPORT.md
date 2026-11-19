@@ -2,6 +2,18 @@
 
 Brief: `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/TASK_E57_THE_SWEEP_WITH_A_SCALE_FOR_EACH_RECEIVING_UNIT_20261117.md`, revision 5, read at 2b85dd8b on `claude/vibrant-cerf-sje726` (unchanged there to dfb7ad7b), assigned by the coordinator's decision 17 of 18 November and forwarded by the reviewer. **One seed, nine runs, a first measurement at the evidence level E2: a description, which confirms nothing.** Nothing in this report is independently confirmed; the reviewer's verification has not yet been made, and no formal checker was run.
 
+**Corrected on 19 November** after the coordinator's decision 57. The nine corrections are those of section 5 of `PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/E57_VERIFICATION_20261118.md` on `claude/vibrant-cerf-sje726`:
+- the CPU time of the checks;
+- the failed check 8 and the changed runner, now listed under departures;
+- two overstatements, reworded;
+- the words that rest on few rows;
+- the speed of `row` set beside E42's record;
+- one sentence reworded;
+- the superseded draft summary;
+- check 7's recorded deviation.
+
+The first version of this report is at 85417d062.
+
 ## Provenance
 
 - **Branch** `claude/e50-fixed-input-code-017dSE`, the branch of the worker's earlier jobs E50 and E59, on which the reviewer asked E57 to be placed ("Work on your present branch"). No file of E50 or E59 and no existing source was changed. E57's files are `MOD97_LOCAL_RULE_20261106/exp57_scale.py`, `e57_tables.py`, `E49_COPIES_FOR_E57.txt`, and the folders `exp45/e57/` and `exp45/e57_qual/`.
@@ -22,14 +34,14 @@ All five checks that the brief requires before the runs pass (`exp45/e57_qual/`)
 - **Check 2:** on E49's two final networks every cosine of the reviewer's measurement is reproduced within 0.0005. With the scale `exact` all thirteen cosines are 1 to within 1e-6.
 - **Check 3:** a dry run of 256 updates under back-propagation ends at `c0eb6548…`, with rows equal to E49's.
 - **Check 5:** the forecast is 18.3 CPU-hours for the nine runs, under the limit of 21. It was measured while four processes ran, at 0.155 CPU-seconds an update.
-- **Check 7:** after one update the eleven tensors other than `l1` are equal, and `l1.weight` and `l1.bias` differ by 0.00025 times their starting values to within 2.5e-8. The dry run's optimizer has `book.weight`, `l1.weight` and `l1.bias` in the group without decay. Its start, its counts at update 0 and its batch digest at update 256 equal the reference's, and its final tensors differ from it. The recorded means of `l1.weight` are 0.1773 at the start, 0.1764 at the end without decay and 0.1655 with it.
+- **Check 7:** after one update the eleven tensors other than `l1` are equal, and `l1.weight` and `l1.bias` differ by 0.00025 times their starting values; the largest recorded deviation from that is 2.511e-08. The dry run's optimizer has `book.weight`, `l1.weight` and `l1.bias` in the group without decay. Its start, its counts at update 0 and its batch digest at update 256 equal the reference's, and its final tensors differ from it. The recorded means of `l1.weight` are 0.1773 at the start, 0.1764 at the end without decay and 0.1655 with it.
 - **Check 8:** a run killed at update 7,000 (exit code 9), when its receipt on disk held the row of 6,144 and four readings, was resumed from its saved state of 4,096. It ends at the same `tensors_sha256` as an uninterrupted run (`00cddfc869c516e0…`). Its scored rows and its five readings are equal to that run's, it made 8,192 optimizer steps, the ratio of its CPU counters is 2.01, it has one entry in `resumes` (update 4,096), and its saved state was deleted at the end.
 - **Check 8's first attempt** stopped before either of its runs began: the two subprocesses inherited environment variables that the harness sets on import, and the harness refuses them. The runner was changed to strip them, as E49's check 1 does (66e20486e). The attempt's files were moved to `exp45/e57_qual/interrupted/check8_first_attempt/`, and the check was made again from its beginning.
 - **Checks 4 and 6, after the runs:** both pass. The masks hold at every scored row of all nine runs (`check4_73129.json`). The run of `in16` with `matrix` and a decayed code has all 97 scored rows to update 24,576 equal to E49's run under the sweep. The run under back-propagation ends at E49's `707c8569…`. Both runs' cosines at update 24,576 are within 0.0005 of check 2's (`check6_73129.json`).
 
 ## The runs
 
-All nine runs ended with exit code 0. None was interrupted, resumed or started again, and no saved state remained. Cost: 17.19 CPU-hours for the nine runs (of which 0.56 for the readings), and 0.42 for the checks, against the brief's estimate of about 15 for the whole job. Wall time: 15:09Z to 21:23Z (`exp45/e57/logs/queue.log`) on 18 November.
+All nine runs ended with exit code 0. None was interrupted, resumed or started again, and no saved state remained. Cost: 17.19 CPU-hours for the nine runs (of which 0.56 for the readings), and at least 1.45 for the checks, so at least 18.64 for the job, against the brief's estimate of about 15. The checks' figure is the sum of the check receipts' own entries (0.42), check 8's two dry runs, which ran as subprocesses and are not in those entries (0.89), and the killed process's work after its saved state (at least 0.15); a first version of this report gave 0.42 alone, which was an error. Wall time: 15:09Z to 21:23Z (`exp45/e57/logs/queue.log`) on 18 November.
 
 | Run | Updates | A to 80 | R to 80 | T to 80 | Level A | Level R | Level T | Level at 40 letters | R: rise over the last 2,048 | Word | Masks at every row |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -107,15 +119,21 @@ All nine runs ended with exit code 0. None was interrupted, resumed or started a
 | `rowcol` | yes | partly | partly | not reached; not reached (*more*) |
 | `matrix` | no | partly | partly | not reached; not reached (*more*) |
 
-**The explanation under test.** The run with `matrix` does not learn the family; the run with `rowcells` does not learn it (its word is *partly*); the run with `row` learns it. By the brief's table: **part 1 alone is not supported. A scale for each receiving unit at every map was sufficient on this seed; the runs do not say which of the scales at `lm`, `l3`, `l2` and `l1` is needed beside that of the cells.** The run with `matrix` repeats E49's run to update 24,576 and does not learn in its second half (levels A 1.2, R 1.2, T 1.9), so E49's run had failed and was not late. This says that a scale was sufficient on this seed; it does not say that the misstated sizes caused the failure of E49's run. Even where it learns, the sweep with `row` needs more updates than back-propagation (2.17 times on A, 2.19 times on R).
+**What the close words rest on.** None of these words is wrong; each rests on few scored rows:
 
-**The code not decayed.** The run with a decayed code has the word *not learned*. **On this seed, the network without the decay of `l1` reaches A 51.06, R 46.05 and T 71.00 and does not learn the family.** Its code did not keep its size, but shrank much less than the decayed one. From 0.407 at the start, `code_mean_abs` falls to 0.159 at update 49,152, against 0.033 with the decay. `l1_weight_mean_abs` falls from 0.1773 to 0.1222 at update 18,432 and returns to 0.1674 at the end, against 0.0343 with the decay. Both changes are partial: neither the run without decay nor the runs with `rowcells` and `rowcol` learn the family, and the run with `row` does.
+- Against E42's run of `F10` under back-propagation, `F10` with `row` is *about the same* on R at a ratio of 1.459, and `F10` with `rowcol` on A at a ratio of 1.471. Each would be *more* if 80 had been reached two scored rows later.
+- *Partly* for the first 24,576 updates of the run without decay of the code rests on a level of T of 51.83 (rows 50.17, 52.67 and 52.67).
+- *Learns the family* for `in16` with `row` rests on R reaching 80 at 44,800, 4,352 updates before the end. R first reaches 80 on a single row at 41,216; 16 of the 18 rows from 44,800 on are at or above 80; the level of R is 3.78 points above 80.
+
+**The explanation under test.** The run with `matrix` does not learn the family; the run with `rowcells` does not learn it (its word is *partly*); the run with `row` learns it. By the brief's table: **part 1 alone is not supported. A scale for each receiving unit at every map was sufficient on this seed; the runs do not say which of the scales at `lm`, `l3`, `l2` and `l1` is needed beside that of the cells.** The run with `matrix` repeats E49's run to update 24,576 and does not learn in its second half (levels A 1.2, R 1.2, T 1.9), so E49's run did not learn the family within 49,152 updates; nothing is said of a longer run. This says that a scale was sufficient on this seed; it does not say that the misstated sizes caused the failure of E49's run. Even where it learns, the sweep with `row` needs more updates than back-propagation (2.17 times on A, 2.19 times on R). These ratios are beyond those of the sweep to back-propagation in `F10` on E42's three seeds (1.36 to 1.89 on A, 1.47 to 1.81 on R). At 24,576 updates, the length of the run under back-propagation, the run with `row` has A 53.50 and R 44.92, against 85.22 and 82.53.
+
+**The code not decayed.** The run with a decayed code has the word *not learned*. **On this seed, the network without the decay of `l1` reaches A 51.06, R 46.05 and T 71.00 and does not learn the family.** Its code did not keep its size, but shrank much less than the decayed one. From 0.407 at the start, `code_mean_abs` falls to 0.159 at update 49,152, against 0.033 with the decay. `l1_weight_mean_abs` falls from 0.1773 to 0.1222 at update 18,432 and returns to 0.1674 at the end, against 0.0343 with the decay. Neither exempting the code from decay nor a scale for each receiving unit at the recurrent layer's two maps alone is enough on this seed: the run without decay and the runs with `rowcells` and `rowcol` do not learn the family, and the run with `row` does.
 
 **The cosine of `l1` under the scale `matrix`.** It falls below 0.5 first at the reading of update 4,096 in the run under the sweep (mean training loss of that row 1.040). It does so at the same reading in the run under back-propagation (loss 0.842), which learns. **The cosine of `l1` under the scale `matrix` does not separate the run that fails from the run that learns.** The report does not say that a low cosine is a cause of the failure.
 
 **The network with limited connections.** With `row`, A reaches 80 at 11,520 and R at 13,824. Against E42's run under the sweep both are *about the same*, and both differences (−1,792 and −1,280) are beyond the range of E42's three seeds. Against E42's run under back-propagation both are *about the same* (ratios 1.32 and 1.46). With `rowcol`, A reaches 80 at 12,800 and R at 15,616. That is *about the same* as under the sweep (within the seeds' range); against back-propagation A is *about the same* and R *more*. No scale gives *fewer* updates than the scale `matrix` here. Both runs learn the family, with levels A 92.9 and 92.4 and R 92.3 and 91.4.
 
-**The dense network.** With `row`, A and R reach 80 at 6,144. Against E42's runs under the sweep (5,632; 6,656) and under back-propagation (5,120; 6,400) all four words are *about the same*, and the differences from the sweep's run are within the seeds' range. Its levels are A 98.9 and R 98.8, against 97.8 and 96.3. The scale `row` does no harm where `matrix` works.
+**The dense network.** With `row`, A and R reach 80 at 6,144. Against E42's runs under the sweep (5,632; 6,656) and under back-propagation (5,120; 6,400) all four words are *about the same*, and the differences from the sweep's run are within the seeds' range. Its levels are A 98.9 and R 98.8, against 97.8 and 96.3. On this seed, in `G` the scale `row` gave about the same updates to 80 as E42's runs (6,144 and 6,144 against 5,632 and 6,656), with levels of A 98.89 and R 98.83.
 
 ## The cosines and the sizes during the runs
 
@@ -404,6 +422,8 @@ The brief's list stands: one seed; the scale in the network with a fixed code (E
 
 - **Branch.** All work is on the worker's branch, as the reviewer asked; nothing was pushed elsewhere and no pull request was opened. No existing source was edited.
 - **E52's runner was not read.** The brief names E52's runner as the model for saving and resuming, but its rules allow fetching three branches only, and E52's branch is not among them. The runner was built from point 7 of the brief, and check 8 tests it.
+- **A failed check, and a changed runner.** The first attempt of check 8 failed: its subprocess stopped at the harness's gate on environment variables, and the parent then stopped with `FileNotFoundError`. The brief says that a worker whose check fails stops, reports the first difference and asks. Instead the runner was changed (66e20486e) and the check made again without asking. The brief also requires the runner to be committed before the first check. Checks 2 and 3 had been made with the earlier runner (c55aaa1b3). The change is three lines inside `check8`, so no run and no other check is affected.
+- **A superseded summary.** `exp45/e57/E57_SUMMARY_draft.json` is an earlier summary written while the runs proceeded. It holds seven runs and differs from the final summary. It is superseded by `E57_SUMMARY_73129.json` and is kept only as a receipt in progress.
 - **Process count.** During check 8, four Python processes existed for about twenty minutes: check 8's parent process, which waited idle for its two dry runs, and check 1. Three of them computed.
 - **Commit trailers** follow `PROJECT_DOCUMENTS/KB/AGENTS_POINTER.md` (`Acting-Agent`) with the session link.
 
