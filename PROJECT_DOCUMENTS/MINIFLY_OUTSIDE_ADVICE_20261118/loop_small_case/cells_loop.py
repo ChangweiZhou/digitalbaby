@@ -28,23 +28,40 @@ SYMS = list(b"0123456789+=\n")
 S = len(SYMS)                       # byte values in use; a line for each (the other 243 lines are never active)
 SI = {c: i for i, c in enumerate(SYMS)}
 END = SI[10]
-D = 5                               # the present byte and four delay cells
+D = 5                               # the present byte and four delay cells (text d1); set by configure() for text d2
 NL = D * S
 OFF = np.arange(D) * S
+TEXT = "d1"                         # d1: lines "a+b=c", a and b 0 to 9 (PLAN.md); d2: "aa+bb=ccc", a and b 0 to 99 at fixed width (PLAN_2.md)
+
+
+def configure(text):
+    global D, NL, OFF, TEXT
+    TEXT = text
+    D = 5 if text == "d1" else 10    # d2: a line has ten bytes, so the present byte and nine delay cells
+    NL = D * S
+    OFF = np.arange(D) * S
 SEEDS = (73129, 93683, 116089, 406364, 545353)
 ARMS = ("none", "fixed", "relay-fixed", "relay-learned", "comparator")
 
 
 def text_of(a, b):
-    return [SI[c] for c in f"{a}+{b}={a + b}\n".encode()]
+    if TEXT == "d1":
+        return [SI[c] for c in f"{a}+{b}={a + b}\n".encode()]
+    return [SI[c] for c in f"{a:02d}+{b:02d}={a + b:03d}\n".encode()]
 
 
 def pairs_of(seed, held=20):
-    """The pairs never shown and shown, and the generator of the stream, as addtext.py makes them."""
-    rng = np.random.default_rng(seed)
-    pairs = [(a, b) for a in range(10) for b in range(10)]
-    rng.shuffle(pairs)
-    return rng, pairs[:held], pairs[held:]
+    """The pairs never shown and shown, and the generator of the stream. Text d1: as addtext.py makes them. Text d2: of the
+    10,000 pairs, 2,000 drawn by the seed are never shown."""
+    if TEXT == "d1":
+        rng = np.random.default_rng(seed)
+        pairs = [(a, b) for a in range(10) for b in range(10)]
+        rng.shuffle(pairs)
+        return rng, pairs[:held], pairs[held:]
+    rng = np.random.default_rng([seed, 99])
+    order = rng.permutation(10000)
+    pairs = [(int(q) // 100, int(q) % 100) for q in order]
+    return rng, pairs[:2000], pairs[2000:]
 
 
 class System:
@@ -130,6 +147,21 @@ class System:
         return whole / len(pairs), strict / len(pairs), per
 
 
+def _by_place(self, pairs):
+    """Text d2: the share of pairs with each byte of the answer named right (hundreds, tens, units, the end mark)."""
+    right = np.zeros(4)
+    for a, b in pairs:
+        line = text_of(a, b); eq = line.index(SI[ord("=")]); hist = [END] * D
+        for t in range(len(line) - 1):
+            hist.insert(0, line[t]); hist.pop()
+            if t >= eq:
+                right[t - eq] += int(self.forward(hist)[2].argmax()) == line[t + 1]
+    return [float(x) for x in right / len(pairs)]
+
+
+System.by_place = _by_place
+
+
 def order_of_digits(W1):
     """For each cell in between and each delay: the correlation of its ten strengths from the digit lines with the digits, and
     the slope. A cell is counted as ordered for a pair of delays when both correlations are at least 0.9 in size with one sign."""
@@ -152,6 +184,7 @@ def order_of_digits(W1):
 
 def run(kw):
     t0 = time.process_time()
+    configure(kw.get("text", "d1"))
     arm = kw.get("arm", "relay-learned"); seed = int(kw.get("seed", 1)); H = int(kw.get("H", 32)); lines = int(kw.get("lines", 60000))
     eta1 = float(eval(str(kw.get("eta1", "1/4")))); eta2 = float(eval(str(kw.get("eta2", "1/16")))); lam = float(eval(str(kw.get("lam", "1e-5"))))
     rule = kw.get("rule", "D"); order = int(kw.get("order", 0)); fan = int(kw.get("fan", 0)); lam1 = float(eval(str(kw.get("lam1", "0"))))
@@ -159,6 +192,12 @@ def run(kw):
     if order:
         rng = np.random.default_rng([seed, order])
     sys_ = System(arm, H, seed, eta1, eta2, lam, rule, fan, lam1)
+    every = int(kw.get("every", 5000))
+    if TEXT == "d2":                                                 # scored on 500 pairs of each kind, fixed by the seed
+        sr = np.random.default_rng([seed, 500])
+        shown_s = [shown[i] for i in sr.choice(len(shown), 500, replace=False)]; held_s = [held[i] for i in sr.choice(len(held), 500, replace=False)]
+    else:
+        shown_s, held_s = shown, held
     curve = []; right = n = 0
     for it in range(lines):
         a, b = shown[rng.integers(len(shown))]
@@ -166,19 +205,22 @@ def run(kw):
         for t in range(len(line) - 1):
             sys_.read(line[t]); right += sys_.attempt_and_learn(line[t + 1]); n += 1
         sys_.read(line[-1])                                          # the end mark is followed by the next line's first byte: no attempt
-        if (it + 1) % 5000 == 0:
-            ws, ss, _ = sys_.score(shown); wh, sh, _ = sys_.score(held)
+        if (it + 1) % every == 0:
+            ws, ss, _ = sys_.score(shown_s); wh, sh, _ = sys_.score(held_s)
             curve.append(dict(lines=it + 1, shown=ws, never_shown=wh, shown_with_end=ss, never_shown_with_end=sh, bytes_right_while_learning=right / n))
             right = n = 0
-    ws, ss, _ = sys_.score(shown); wh, sh, per = sys_.score(held)
+    ws, ss, _ = sys_.score(shown_s); wh, sh, per = sys_.score(held_s)
     shown_sums = {a + b for a, b in shown}
+    places = sys_.by_place(held_s) if TEXT == "d2" else None
     out = dict(label=kw.get("label", ""), args={k: v for k, v in kw.items() if k != "label"}, arm=arm, seed=seed, H=H, rule=rule, lines=lines,
                shown=ws, never_shown=wh, shown_with_end=ss, never_shown_with_end=sh, curve=curve,
-               never_shown_pairs={k: dict(right=v, sum_shown=(eval(k) in shown_sums)) for k, v in per.items()},
+               never_shown_pairs=({k: dict(right=v, sum_shown=(eval(k) in shown_sums)) for k, v in per.items()} if TEXT == "d1" else None),
+               never_shown_by_place=places, text=TEXT,
                strengths=(0 if arm == "none" else sys_.W1.size + sys_.b1.size + (sys_.R.size if arm in ("relay-fixed", "relay-learned") else 0)) + sys_.W2.size + sys_.b2.size,
                cpu_seconds=round(time.process_time() - t0, 1))
-    if arm != "none":
+    if arm != "none" and TEXT == "d1":
         out["order_of_digits"] = order_of_digits(sys_.W1)
+    if arm != "none":
         if arm == "relay-learned":
             out["cosine_return_forward"] = float((sys_.R * sys_.W2.T).sum() / (np.linalg.norm(sys_.R) * np.linalg.norm(sys_.W2) + 1e-30))
     if kw.get("label"):
@@ -217,6 +259,8 @@ def table(rows, title):
     for (arm, rule), rs in rows.items():
         sh = [100 * r["shown"] for r in rs]; nv = [100 * r["never_shown"] for r in rs]; ne = [100 * r["never_shown_with_end"] for r in rs]
         od = "; ".join("/".join(str(v["cells_ordered_at_both"]) for v in r["order_of_digits"].values()) for r in rs) if "order_of_digits" in rs[0] else "-"
+        if rs[0].get("never_shown_by_place"):
+            od = "by place, median: " + " ".join(f"{100 * np.median([r['never_shown_by_place'][k] for r in rs]):.0f}" for k in range(4))
         print(f"   {arm + (', yes or no' if rule == 'Q' else ''):32s} | " + " ".join(f"{x:5.1f}" for x in sh) + f"; {np.median(sh):5.1f} | "
               + " ".join(f"{x:5.1f}" for x in nv) + f"; {np.median(nv):5.1f} | {np.median(ne):5.1f} | {od}")
 
@@ -243,7 +287,8 @@ def main():
             a = o["args"]
             print(f"   H={a['H']:>2s} eta1={a['eta1']:>4s} eta2={a['eta2']:>4s} lam={a['lam']:>5s}: {100 * o['shown']:5.1f} {100 * o['never_shown']:5.1f}")
     elif cmd == "report":
-        base = dict(H=kw.get("H", "32"), eta1=kw.get("eta1", "1/4"), eta2=kw.get("eta2", "1/16"), lam=kw.get("lam", "1e-5"), lines=kw.get("lines", "60000"))
+        base = dict(H=kw.get("H", "32"), eta1=kw.get("eta1", "1/4"), eta2=kw.get("eta2", "1/16"), lam=kw.get("lam", "1e-5"), lines=kw.get("lines", "60000"),
+                    text=kw.get("text", "d1"), every=kw.get("every", "5000"))
         tag = kw.get("tag", "rep")
         arms = [(a, "D") for a in ARMS] + [("relay-learned", "Q")]
         jobs = [dict(base, label=f"{tag}_{a}_{r}_{s}", arm=a, rule=r, seed=str(s)) for a, r in arms for s in SEEDS]
@@ -254,6 +299,8 @@ def main():
             rows.setdefault((o["arm"], o["rule"]), []).append(o)
         table(rows, f"setting {base}; seeds {SEEDS}; whole answer right, %")
         ok = [o for o in res if o["arm"] == "relay-learned" and o["rule"] == "D"]
+        if base["text"] != "d1":
+            return
         miss = sorted({k for o in ok for k, v in o["never_shown_pairs"].items() if not v["right"] and not v["sum_shown"]})
         print(f"   relay-learned: never-shown pairs answered wrongly whose sum occurs in no pair shown: {miss or 'none'}; "
               f"never-shown pairs whose sum is shown, right: {sum(v['right'] for o in ok for v in o['never_shown_pairs'].values() if v['sum_shown'])} of "
