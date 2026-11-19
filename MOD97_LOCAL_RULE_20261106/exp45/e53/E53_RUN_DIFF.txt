@@ -1,0 +1,74 @@
+1c1
+< def run(side, arm, rule, seed, out, cmd, dose=None, verbose=True, resume=False, stop_at=None):
+---
+> def run(arm, rule, seed, out, cmd, dose=None, verbose=True, resume=False, stop_at=None):
+3c3,4
+<     process after that update's checkpoint (used only by check 8, the resume check)."""
+---
+>     process after that update's checkpoint."""
+>     mult, which, decay = ARMS[arm]
+7c8
+<     rp = receipt_path(out, side, arm, rule, seed, dose)
+---
+>     rp = receipt_path(out, arm, rule, seed, dose)
+16c17,20
+<     m, L = build(side, arm, seed)
+---
+>     m, L = build(SIDE, NET_ARM, seed)
+>     assert R_.tensors_sha(weights(m, L)) == START_SHA
+>     assert dict(sources=tsha(L.idx), periods=tsha(L.p), phases=tsha(L.f)) == STRUCT_SHA
+>     n_mult = multiply(L, arm)
+18a23,24
+>     set_decay(opt, decay)
+>     assert_decay(opt, decay)
+20c26,28
+<     assert cnt["weights"] == WEIGHT_COUNT[(side, arm)], (side, arm, cnt)
+---
+>     assert cnt["weights"] == X47.WEIGHT_COUNT[(SIDE, NET_ARM)], (SIDE, NET_ARM, cnt)
+>     ring = rings(L)
+>     fb_x = R42.first_batch(seed)[0]
+28c36,37
+<     rec = dict(experiment="E47", kind="birth", side=side, cells=L.C, arm=arm, rule=rule, local=local, seed=seed, dose=dose, row_every=ROW, N=N,
+---
+>     rec = dict(experiment="E53", kind="birth", side=SIDE, cells=L.C, arm=arm, network_arm=NET_ARM, multiple=mult, entries_multiplied=which,
+>                entries_multiplied_count=n_mult, weight_decay=decay, rule=rule, local=local, seed=seed, dose=dose, row_every=ROW, N=N,
+30,31c39
+<                start="E42's F10 layer of the seed (from_e42, Local(..., structure=...))" if side == 16 else
+<                      "Local(m, seed, side, 10, arm): recurrent weights and biases from T.Generator().manual_seed(seed * 1000 + side)",
+---
+>                start="E47's start (Local(m, seed, 32, 10, 'one')) with the named entries of Wc multiplied in single precision",
+33c41
+<                multiply_adds_with_periods=cnt["multiply_adds_with_periods"], optimizer=opt_record(m, L, opt),
+---
+>                multiply_adds_with_periods=cnt["multiply_adds_with_periods"], optimizer=opt_record(m, L, opt, decay),
+51a60
+>         assert_decay(opt, decay)
+60c69
+<         print(f"e47 resumed {rp.name} at update {u0}", flush=True)
+---
+>         print(f"e53 resumed {rp.name} at update {u0}", flush=True)
+67a77
+>                    ring_magnitudes=ring_magnitudes(L, ring), gates=gates(m, L, ring, fb_x),
+76,77c86,87
+<             print(f"e47 {side} {arm} {rule} {seed} {u}: A {row['A']:.2f} R {row['R']:.2f} taught {row['taught']:.2f} len12 {row['len12']:.1f} "
+<                   f"len40 {row['len40']:.1f}{d} cpu {cpu_up:.0f}+{cpu_sc:.0f}s", flush=True)
+---
+>             print(f"e53 {SIDE} {arm} {rule} {seed} {u}: A {row['A']:.2f} R {row['R']:.2f} "
+>                   f"taught {row['taught']:.2f} len12 {row['len12']:.1f} len40 {row['len40']:.1f}{d} cpu {cpu_up:.0f}+{cpu_sc:.0f}s", flush=True)
+90a101,104
+>             if dose == DOSE and u in SAVE_ROWS:
+>                 wp = rp.with_name(f"{rp.stem}_u{u}.pt")
+>                 rec.setdefault("saved_weights", {})[str(u)] = dict(file=wp.name, tensors_sha256=save_weights(m, L, wp), file_sha256=None)
+>                 rec["saved_weights"][str(u)]["file_sha256"] = X16.sha_file(wp)
+105c119
+<                optimizer_steps=R_.opt_steps(opt), optimizer_read_back=opt_record(m, L, opt), data_digest=dg.value(),
+---
+>                optimizer_steps=R_.opt_steps(opt), optimizer_read_back=opt_record(m, L, opt, decay), data_digest=dg.value(),
+107c121
+<                processes_beside=os.environ.get("E47_BESIDE", "not recorded"))
+---
+>                processes_beside=os.environ.get("E53_BESIDE", "not recorded"))
+111c125
+<     print("e47 complete", rp.name, sha[:16], flush=True)
+---
+>     print("e53 complete", rp.name, sha[:16], flush=True)
