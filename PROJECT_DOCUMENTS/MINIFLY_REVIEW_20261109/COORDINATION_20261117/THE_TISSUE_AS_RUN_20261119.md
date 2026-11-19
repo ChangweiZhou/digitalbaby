@@ -98,7 +98,14 @@ x ^= x >> 27, giving x × 2685821657736338717 (mod 2^64); the member chosen is n
 neighbourhood that are not senders, taken in the neighbourhood's order. Arithmetic is in double precision with numbers below the
 smallest normal number treated as zero. A program written from this text should give, on seed 73129 and 16,384 bytes, the same
 connections and the same outputs as `drive.py prm_ref_pk8 rule=timing prune_only=1 norm=1 lines_learn=1 we=3/4 wi=1/4 gain=3 rho=1
-gmax=8 mk_long=1 a_make=1/4096 make_period=1024` up to rounding (3.24 connections a cell, 1,252 made, 10,482 withdrawn).
+gmax=8 mk_long=1 a_make=1/4096 make_period=1024` up to rounding: 3.234 connections a cell over 2,048 cells, 1,219 made, 10,467
+withdrawn with the program as it stands. (An earlier form of this sentence gave 3.24, 1,252 and 10,482: those were the figures of
+the program before the potential was written as v + (A − v)/τ in place of v/2 + A/2, the same formula rounded otherwise; E62's
+worker found the mismatch.)
+
+First comparison with a program written from this text alone (E62's worker, 09:11 UTC): over 2,048 bytes the outputs of every cell
+at the reading step of every byte are equal to the last bit of a 32-bit float, and both programs hold 7,365 connections; over 16,384
+bytes they part by a few connections (3.241 a cell, 1,240 made, 10,474 withdrawn against the figures above); where they part is being located.
 
 ## 6. What has been measured on it (see STATUS_OF_STEP_1_20261119.md for all rows and who measured each)
 
