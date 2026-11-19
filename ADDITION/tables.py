@@ -13,7 +13,9 @@ runs = {}
 for p in sorted(glob.glob(os.path.join(HERE, 'res', '*_s*o*.json'))):
     m = re.match(r'(.+)_s(\d+)o(\d+)\.json$', os.path.basename(p))
     if m:
-        runs.setdefault(m.group(1), []).append(json.load(open(p)))
+        r = json.load(open(p))
+        if not isinstance(r['rows'][0][1], dict):        # addsys.py's format (addpool.py's runs are in TABLES2.md)
+            runs.setdefault(m.group(1), []).append(r)
 f = lambda v: f'{100 * min(v):.1f} / {100 * st.median(v):.1f} / {100 * max(v):.1f}'
 out = ['# Addition: whole answer right, % (written by tables.py from res/*.json)\n',
        'Each entry: smallest / median / largest over the runs (seeds 1-3 x orders 0-4). "held, sum shown": the never-shown pairs whose sum '
