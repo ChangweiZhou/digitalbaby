@@ -16,7 +16,7 @@ so that run and raw keep their draws); raw (the outputs as they are).
 Scores: share right in windows of 4,096 positions, the last quarter (positions from 3(NB-1)/4 + 1 on), and ref_1, ref_2, the end mark's
 share from the scorer (deps/PREP/score_emissions.py).
 
-    python3 own_end.py <rec file (float32, every byte)> <seed> <nbytes> <tag> [A4|L8] [Y]
+    python3 own_end.py <rec file (float32, every byte)> <seed> <nbytes> <tag> [A4|L8] [Y|Q]
 """
 import json, sys, time
 import numpy as np
@@ -45,7 +45,12 @@ PREPS = ("run", "raw", "clip8")
 if len(sys.argv) > 6 and sys.argv[6] == "Y":          # task of 12:52: B, D 1/64, Y1 = Y:eps:1/256:own:s:1, Y2 = Y:eps:1/256:own:c:4
     RULES = [("B", 1 / 16, 0.0), ("D", 0.0, 1 / 64), ("Y", 1 / 16, (1 / 256, "s", 1.0)), ("Y", 1 / 16, (1 / 256, "c", 4.0))]
     PREPS = ("run", "clip8")
+SEPGEN = False
+if len(sys.argv) > 6 and sys.argv[6] == "Q":          # task of 12:58: rule Q beside B and D; each configuration its own generator
+    RULES = [("B", 1 / 16, 0.0), ("D", 0.0, 1 / 64), ("D", 0.0, 1 / 16), ("Q", 1 / 16, 1 / 4), ("Q", 1 / 16, 1 / 16), ("Q", 1 / 16, 1 / 64)]
+    PREPS = ("run", "clip8"); SEPGEN = True
 CFG = [(p, r) for p in PREPS for r in RULES]; C = len(CFG); nemit = np.zeros((C, 256))
+gen = [np.random.default_rng([seed, c]) for c in range(C)]   # used only with SEPGEN
 W = np.zeros((C, 256, G + 1)); rbar = np.zeros((C, 256))
 rng = {"run": np.random.default_rng(seed), "raw": None, "clip8": np.random.default_rng(seed + 1)}; rng["raw"] = rng["run"]
 right = np.zeros((C, NB), bool); seen = np.zeros(256, bool); m = np.zeros(K); s2 = np.zeros(K)
@@ -58,11 +63,20 @@ for t in range(M):
         U = np.ones((256, G + 1)); U[:, :-1] = np.append(z, 0.0)[IDX]; Us[nm] = U
     for c, (prep, (rule, eps, par)) in enumerate(CFG):
         U = Us[prep]; a = (W[c] * U).sum(1); e = int(a.argmax())
-        if eps and rng[prep].random() < eps:
-            sv = np.flatnonzero(seen); e = int(sv[rng[prep].integers(0, len(sv))])
+        gr = gen[c] if SEPGEN else rng[prep]
+        if eps and gr.random() < eps:
+            sv = np.flatnonzero(seen); e = int(sv[gr.integers(0, len(sv))])
         ok = e == y[t]; right[c, t + 1] = ok
         if rule == "A":
             W[c, e] += (1.0 if ok else -par) * (0.25 / P[e]) * U[e]
+        elif rule == "Q":
+            # rule Q: a_v is unit v's estimate of the chance that v comes next; the emitter moves by eta (ok - a_e) U_e / |U_e|^2;
+            # on yes every other unit moves by eta (0 - a_v) U_v / |U_v|^2; on no the others do nothing
+            n2 = (U * U).sum(1)
+            if ok:
+                dq = par * (0.0 - a) / n2; dq[e] = par * (1.0 - a[e]) / n2[e]; W[c] += dq[:, None] * U
+            else:
+                W[c, e] += par * (0.0 - a[e]) / n2[e] * U[e]
         elif rule == "Y":
             # rule Y of yn.py with n = P (each unit's inputs + 1): the emitter as B with step s0 (1/4)/P_e [/ sqrt(1 + m_e/16)];
             # on no, every other unit v adds up s0 (1/4)/P_v times its own input vector
@@ -82,8 +96,9 @@ lv = {"end mark": [float((b[a_:e_] == 10).mean()) for a_, e_ in wins], "ref_1": 
 lq = {"end mark": float((b[q0:] == 10).mean()), "ref_1": float((refs["ref_1"] == b)[q0:].mean()), "ref_2": float((refs["ref_2"] == b)[q0:].mean())}
 res = {}
 for c, (prep, (rule, eps, par)) in enumerate(CFG):
-    nm = f"{prep} Y up={par[0]:g} decay={par[1]} s0={par[2]:g}" if rule == "Y" else f"{prep} {rule}" + (f" eps={eps:g}" if rule != "D" else "")
-    if rule != "Y": nm = nm + (f" kappa={par:g}" if rule == "A" else "") + (f" eta={par:g}" if rule == "D" else "")
+    if rule == "Q": nm = f"{prep} Q eta={par:g}"
+    else: nm = f"{prep} Y up={par[0]:g} decay={par[1]} s0={par[2]:g}" if rule == "Y" else f"{prep} {rule}" + (f" eps={eps:g}" if rule != "D" else "")
+    if rule not in ("Y", "Q"): nm = nm + (f" kappa={par:g}" if rule == "A" else "") + (f" eta={par:g}" if rule == "D" else "")
     w = wsh(right[c])
     rn = np.linalg.norm(W[c], axis=1)
     res[nm] = dict(windows=w, last_quarter=float(right[c, q0:].mean()), weight_row_norm=dict(max=float(rn.max()), median=float(np.median(rn))),

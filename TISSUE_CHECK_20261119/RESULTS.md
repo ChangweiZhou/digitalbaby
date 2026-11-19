@@ -535,3 +535,50 @@ share right falls late: Y1 in windows of 4,096 ending at 16k / 64k / 128k / 256k
 inputs at 65,536 bytes Y1's median row norm is 0.4-0.5 and Y2's largest 12-105, against 0 and 6-26 for B. Under decay s the emitter's own
 step falls with the square root of its emissions while the step of the other units does not; that this causes the fall is not tested
 here.
+
+## 14. Rule Q: the activity as the unit's own estimate of the chance of its byte (reviewer's task of 12:58 UTC)
+
+**Readings.** Written from the reviewer's description alone; the places it leaves open, sent before the reviewer's yq.py was read: Q1 the
+generator (here each rule in a life of its own with `default_rng(seed)`, and five others `default_rng([g, 0])`, g = 1..5); Q2 all
+activities computed once before any change at a byte; Q3 the random emitter (chance 1/16) is the emitter for the step, and on yes all
+255 other units step, values never seen included; Q4 on recorded inputs n = |U_v|^2 of each unit's own input vector; Q5 ties to the
+lower value. Rule: W[e] += eta (ok - a_e) U / n; on yes W[v] += eta (0 - a_v) U / n for every v other than e; on no the others do
+nothing. Afterwards: yq.py takes the same update (its Q with z1); it runs D, B and its Q rules with one generator in that order. With its
+order (`jobs_cq.txt`: D 1/16, B, Q 1/4, Q 1/16, Q without the others' step) my figures equal its files d2_s93683_64k, d2_s116089_64k,
+d3_s93683_256k, d3_s116089_256k as floats in every rule (20 of 20). In those files Q without the others' step is as good as Q (3 bytes,
+262,144: 23.88 and 25.64 against 24.05 and 24.90).
+
+**(a) Exact inputs** (`out/yn/table_q.txt`, `qtab.py`), last quarter in per cent, seeds 93683 / 73129 / 116089, own life a rule;
+five generators in brackets:
+
+| inputs, bytes | Q 1/4 | Q 1/16 | Q 1/64 | D 1/64 | B |
+|---|---|---|---|---|---|
+| 3, 65,536 | 22.24 / 22.91 / 23.39 (19.96-23.63) | 16.89 / 22.50 / 23.58 (13.78-23.90) | 14.42 / 16.74 / 16.91 | 26.78 / 26.32 / 26.72 | 14.16 / 16.90 / 16.74 (11.55-17.13) |
+| 3, 262,144 | 23.68 / 23.73 / 23.81 | 24.65 / 24.17 / 24.27 (24.13-24.66) | 17.79 / 21.00 / 22.56 | 27.25 / 27.29 / 27.46 | 17.59 / 18.99 / 19.55 (17.21-20.55) |
+| 2, 65,536 | 10.00 / 10.13 / 9.92 | 11.27 / 11.54 / 11.29 | 11.48 / 11.13 / 11.11 | 12.24 / 12.13 / 12.49 | 11.01 / 10.96 / 10.69 |
+| 2, 262,144 | 9.90 / 10.04 / 9.97 | 11.64 / 11.52 / 11.65 | 11.85 / 11.77 / 11.80 | 12.13 / 12.24 / 12.33 | 11.01 / 10.87 / 10.89 |
+| 1, 65,536 | 6.77 / 6.90 / 6.84 | 9.81 / 9.01 / 9.35 | 10.24 / 10.01 / 10.10 | 10.05 / 10.16 / 10.32 | 8.81 / 9.30 / 9.03 |
+| 1, 262,144 | 6.45 / 6.26 / 6.53 | 9.93 / 9.74 / 9.84 | 10.13 / 10.04 / 10.18 | 9.79 / 9.83 / 9.73 | 7.75 / 7.61 / 7.68 |
+
+**(c) Bounded.** Largest weight-row norm at 16k / 64k / 128k / 256k: Q on three bytes 1.9-3.3 / 3.4-3.7 / 3.6-3.7 / 3.6-3.7, two bytes
+about 1.2, one byte about 0.5; B on three bytes 15 / 89-135 / 132-227 / 197-297. Q's share does not fall late (Q 1/16, three bytes,
+windows at 64k / 128k / 256k: 23.7 / 23.7 / 24.4 on 73129, 17.5 / 24.0 / 24.1 on 93683).
+
+**(b) Recorded driver inputs** (`python3 own_end.py out/OE_<tissue>_<seed>.rec <seed> 65536 Q_<tissue>_<seed> <A4|L8> Q`,
+`out/own_end_Q_*.json`, `out/qreal_tab.txt`; each configuration its own generator `default_rng([seed, c])`), last quarter, run | clip8:
+
+| seed, tissue | B | D 1/64 | Q 1/4 | Q 1/16 | Q 1/64 | best Q / D | ref_1 / ref_2 |
+|---|---|---|---|---|---|---|---|
+| 93683 L8-256 | 7.61 / 8.52 | 9.26 / 9.27 | 6.08 / 6.68 | 6.34 / 8.32 | 9.40 / 9.00 | 1.02 | 10.62 / 12.14 |
+| 93683 L8-128 | 5.91 / 7.40 | 11.99 / 12.02 | 8.86 / 8.33 | 8.06 / 9.55 | 8.12 / 8.00 | 0.80 | |
+| 93683 A4-256 | 6.65 / 7.23 | 10.64 / 10.64 | 7.72 / 6.68 | 7.76 / 9.08 | 9.00 / 8.62 | 0.85 | |
+| 73129 L8-256 | 11.71 / 10.86 | 17.02 / 17.00 | 13.54 / 13.47 | 15.03 / 14.86 | 14.83 / 11.91 | 0.88 | 10.55 / 12.34 |
+| 73129 L8-128 | 9.78 / 9.55 | 15.54 / 15.53 | 12.15 / 11.80 | 13.49 / 13.59 | 14.06 / 11.22 | 0.90 | |
+| 73129 A4-256 | 10.49 / 8.45 | 13.80 / 13.81 | 10.72 / 10.50 | 12.12 / 12.23 | 12.16 / 12.26 | 0.89 | |
+| 116089 L8-256 | 7.89 / 7.90 | 16.17 / 16.17 | 13.65 / 13.32 | 14.83 / 14.00 | 14.50 / 14.22 | 0.92 | 10.61 / 12.20 |
+| 116089 L8-128 | 7.10 / 6.51 | 13.89 / 13.90 | 11.87 / 12.03 | 12.31 / 12.04 | 12.01 / 11.97 | 0.89 | |
+| 116089 A4-256 | 11.18 / 8.16 | 15.31 / 15.31 | 12.21 / 12.22 | 14.06 / 12.65 | 12.90 / 12.92 | 0.92 | |
+
+On seeds 73129 and 116089 the best Q comes to 0.88-0.92 of D on every tissue and passes ref_2 (B: 0.49-0.76 of D). On seed 93683 Q is
+above B on every tissue but stays below ref_1 on all three; it equals D only on L8-256, where D itself is below ref_1, and is 0.80 and
+0.85 of D on L8-128 and A4-256. The largest weight-row norm of Q 1/16 on recorded inputs is 0.12-0.67 (B 3.4-25).

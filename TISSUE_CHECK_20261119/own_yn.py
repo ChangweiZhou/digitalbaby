@@ -10,7 +10,7 @@ Random choices: one generator for all rules, drawn in the order of the rules at 
 the life seed); 'sep' gives each rule a generator of its own, default_rng([gen_seed, rule index]).
 Scores: windows of 4,096; last quarter from (3 NB)//4; levels from score_emissions.references.
 
-    python3 own_yn.py <label> seed=.. nbytes=.. inputs=1|2|3 rules=B:1/16,D:1/64,Y:eps:1/256:own:s:1 (A:eps:kappa too) [gen=<int>] [sep=1]
+    python3 own_yn.py <label> seed=.. nbytes=.. inputs=1|2|3 rules=B:1/16,D:1/64,Y:eps:1/256:own:s:1 (A:eps:kappa, Q:eta too) [gen=<int>] [sep=1]
            [trace=1: Y and B weight norms every 4,096 bytes]
 """
 import json, os, sys, time
@@ -29,6 +29,8 @@ for r in kw["rules"].split(","):
     if f[0] == "A": rules.append(("A", float(eval(f[1])), float(eval(f[2]))))          # A:eps:kappa, only to keep the draw order
     elif f[0] == "B": rules.append(("B", float(eval(f[1]))))
     elif f[0] == "D": rules.append(("D", float(eval(f[1]))))
+    elif f[0] == "Q": rules.append(("Q", float(eval(f[1]))))
+    elif f[0] == "Q0": rules.append(("Q0", float(eval(f[1]))))        # Q without the others' step on yes (the reviewer's z0)          # rule Q (reviewer, 12:58 UTC): Q:eta
     elif f[0] == "Y":
         assert f[1] == "eps" and f[3] == "own", "only choice eps with base own is written here"
         rules.append(("Y", float(eval(f[2])), f[4], float(eval(f[5]))))
@@ -42,11 +44,19 @@ for t in range(NB - 1):
     for c, rule in enumerate(rules):
         a = W[c][:, idx].sum(1)
         e = int(np.argmax(a))
-        if (rule[0] in ("B", "Y") or (rule[0] == "A" and rule[1] > 0)) and gens[c].random() < (rule[1] if rule[0] == "A" else 1 / 16):
+        if (rule[0] in ("B", "Y", "Q", "Q0") or (rule[0] == "A" and rule[1] > 0)) and gens[c].random() < (rule[1] if rule[0] == "A" else 1 / 16):
             s = np.flatnonzero(seen); e = int(s[gens[c].integers(0, len(s))])
         ok = e == nxt; right[c, t + 1] = ok
         if rule[0] == "A":
             W[c, e, idx] += (1.0 if ok else -rule[2]) * 0.25 / n
+        elif rule[0] == "Q0":
+            W[c, e, idx] += rule[1] * (float(ok) - a[e]) / n
+        elif rule[0] == "Q":
+            # the emitter moves toward ok (1 or 0) by eta (ok - a_e) U / n; on yes every other unit moves toward 0 by eta (0 - a_v) U / n
+            if ok:
+                dq = -rule[1] * a / n; dq[e] = rule[1] * (1.0 - a[e]) / n; W[c][:, idx] += dq[:, None]
+            else:
+                W[c, e, idx] += rule[1] * (0.0 - a[e]) / n
         elif rule[0] == "D":
             tg = np.zeros(256); tg[nxt] = 1.0
             W[c][:, idx] += (rule[1] * (tg - a) / n)[:, None]
@@ -71,7 +81,7 @@ lv = {k: wsh(refs[k] == b) for k in ("ref_1", "ref_2", "ref_3")}; lv["end mark"]
 q0 = (3 * NB) // 4
 res = {}
 for c, rule in enumerate(rules):
-    nm = {"A": lambda: f"A eps={rule[1]:g} kappa={rule[2]:g}", "B": lambda: "B eps=0.0625", "D": lambda: f"D eta={rule[1]:g}", "Y": lambda: f"Y eps up={rule[1]:g} base=own decay={rule[2]} s0={rule[3]:g}"}[rule[0]]()
+    nm = {"Q": lambda: f"Q eta={rule[1]:g}", "Q0": lambda: f"Q0 eta={rule[1]:g}", "A": lambda: f"A eps={rule[1]:g} kappa={rule[2]:g}", "B": lambda: "B eps=0.0625", "D": lambda: f"D eta={rule[1]:g}", "Y": lambda: f"Y eps up={rule[1]:g} base=own decay={rule[2]} s0={rule[3]:g}"}[rule[0]]()
     w = wsh(right[c])
     res[nm] = dict(windows=w, last_window=w[-1], last_quarter=float(right[c, q0:].mean()),
                    first_window_reaching={k: next((wins[i][1] for i in range(len(w)) if w[i] >= l[i]), None) for k, l in lv.items()})
