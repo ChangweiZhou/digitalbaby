@@ -582,3 +582,40 @@ windows at 64k / 128k / 256k: 23.7 / 23.7 / 24.4 on 73129, 17.5 / 24.0 / 24.1 on
 On seeds 73129 and 116089 the best Q comes to 0.88-0.92 of D on every tissue and passes ref_2 (B: 0.49-0.76 of D). On seed 93683 Q is
 above B on every tissue but stays below ref_1 on all three; it equals D only on L8-256, where D itself is below ref_1, and is 0.80 and
 0.85 of D on L8-128 and A4-256. The largest weight-row norm of Q 1/16 on recorded inputs is 0.12-0.67 (B 3.4-25).
+
+## 15. Memory at the output unit's own connections: slow copies of each input (reviewer's task of 13:25 UTC)
+
+**Readings** (sent before running): T1 the traces s_k(t) = s_k(t-1) + (x(t) - s_k(t-1))/k are taken of the raw output x, and each
+component (x, s_2, s_4, s_8) then gets its own running standardisation (measure.py's 'run') and is clipped at +-8; T2 s_k is updated
+with x(t) before the unit reads at byte t, s_k = 0 before byte 0; T3 n = |U|^2 of the whole vector with the constant; T4 Q's random
+choices from `default_rng([seed, form])`; T5 clipped inputs only. Rules D (eta 1/64) and Q (eta 1/16) as in section 14.
+Tissues without time constants: my long-axon options with tau = 2 for every cell (`prepare("N0", ..., long=True)`; A4-0: K = 1,
+R = 1/4; L8-0: K = 8, R = 1/2), 65,536-byte lives recorded at every byte (`jobs_T0.txt`). `python3 own_trace.py out/OE_<t>_<seed>.rec
+<seed> 65536 <t>_<seed> <A4|L8> forms=13|24`, `out/trace_*.json`, table `out/trtab.txt` (`trtab.py`).
+
+Last quarter in per cent, D | Q, forms (i) x, (ii) x s_2, (iii) x s_2 s_4, (iv) x s_2 s_4 s_8:
+
+| tissue, seed | (i) | (ii) | (iii) | (iv) | ref_1 / ref_2 / ref_3 |
+|---|---|---|---|---|---|
+| A4-0 73129 | 6.04 / 7.25 | 12.53 / 12.34 | 14.51 / 13.42 | 15.04 / 13.59 | 10.55 / 12.34 / 25.12 |
+| A4-0 93683 | 7.08 / 8.70 | 17.89 / 12.74 | 17.76 / 16.67 | 18.16 / 11.90 | 10.62 / 12.14 / 25.33 |
+| A4-0 116089 | 8.64 / 8.84 | 16.22 / 12.52 | 18.05 / 14.77 | 18.32 / 15.03 | 10.61 / 12.20 / 25.36 |
+| L8-0 73129 | 5.51 / 7.77 | 15.91 / 13.16 | 16.63 / 15.56 | 16.70 / 15.13 | |
+| L8-0 93683 | 5.22 / 5.77 | 10.63 / 9.56 | 12.24 / 10.88 | 12.40 / 7.37 | |
+| L8-0 116089 | 6.54 / 6.91 | 15.04 / 11.65 | 16.51 / 13.93 | 16.63 / 13.21 | |
+| L8-128 73129 | 15.53 / 13.42 | 16.86 / 15.48 | 16.67 / 15.03 | 16.60 / 15.14 | |
+| L8-128 93683 | 12.02 / 9.51 | 12.59 / 10.08 | 12.49 / 11.23 | 12.43 / 7.77 | |
+| L8-128 116089 | 13.90 / 12.92 | 15.05 / 13.55 | 15.32 / 13.21 | 15.33 / 13.51 | |
+| A4-256 73129 | 13.81 / 12.56 | 14.52 / 12.87 | 14.43 / 13.43 | 14.02 / 13.08 | |
+| A4-256 93683 | 10.64 / 8.65 | 10.91 / 8.73 | 10.96 / 10.10 | 10.69 / 7.28 | |
+| A4-256 116089 | 15.31 / 13.95 | 15.91 / 14.00 | 16.12 / 14.32 | 16.06 / 13.08 | |
+
+On the tissues without time constants x alone gives D 5.2-8.6, at or below the present byte's level; the traces add 7-11 points (D,
+(iii)), to 12.2-18.3, mostly with s_2; s_8 adds at most 0.5 to D and lowers Q on 93683 (A4-0 16.67 to 11.90, L8-0 10.88 to 7.37). On the
+tissues with time constants the traces add 0.3-1.4 points to D and up to 1.8 to Q. On seed 93683, A4-0 with traces (D 17.76-18.16) is
+above every tissue with time constants, with or without traces (at most 12.59). No form reaches ref_3; the best, 18.32, is 0.72 of it.
+
+**What the unit needs, and the weights.** Each input connection holds k - 1 further slow state variables (s_2, s_4, s_8), each with its
+own running mean and deviation for the standardisation, and a weight for each; nothing else changes in D or Q. The largest weight-row
+norm at 65,536 bytes is 0.20-0.72; it is still rising at the end of the life, more slowly than at the start (for example A4-0 73129, Q
+(ii): 0.17, 0.36, 0.47, 0.53, 0.57, 0.62, 0.63, 0.65 every 8,192 bytes); whether it stays bounded beyond 65,536 bytes was not measured.
