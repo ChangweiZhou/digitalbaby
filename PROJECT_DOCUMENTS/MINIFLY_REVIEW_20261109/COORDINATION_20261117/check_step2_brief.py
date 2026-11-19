@@ -135,6 +135,15 @@ for s in SEEDS:
         best = max(best, hits)
     print(f"    a constant emitter (one byte value at every position) reaches 0.5 in at most {best} of the {len(KNOW[s])} classes "
           f"in the last stretch")
+    fe = sum(rows[("frequency emitter", "last stretch")][c] for c in KNOW[s]) / len(KNOW[s])
+    verdict = []
+    for name in ("frequency emitter", "table of the last 1", "table of the last 2", "table of the last 3"):
+        v = rows[(name, "last stretch")]
+        ok = all(v[c] >= 0.5 for c in KNOW[s]) and all(v[c] >= 0.0 + 0.2 for c in KNOW[s]) \
+            and sum(v[c] for c in KNOW[s]) / len(KNOW[s]) >= fe + 0.2
+        verdict.append(f"{name}: {'met' if ok else 'not met'}")
+    print(f"    the rule of section 7.3 in the last stretch, against a never-emitting never-told tissue (frequency emitter's mean over "
+          f"K {fe:.4f}, so condition 3 asks {fe + 0.2:.4f}): " + "; ".join(verdict))
     # what each class's next byte is under the table of the last 3
     if s == SEEDS[0]:
         for c in KNOW[s]:
