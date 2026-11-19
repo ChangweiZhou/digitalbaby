@@ -16,6 +16,10 @@
 #   within R not already members (and not the cell itself) are appended to its members and its starting connections are drawn again,
 #   sample(members, 8) from the same generator. Time constants: Random(seed + 700000), one draw per cell in cell order from {2, 4, ..., top}.
 #   windows=s1,s2,.. (default: the last 4,096 bytes).
+# Added at 11:15 UTC for tissue LF-256 (the reviewer's longfast=1 in tis.py from e38c6514: the long-axon cells keep the time constant 2): in the
+#   helper's own draw the long-axon cells' time constant is set to 2 after the draw of the time constants (the draw itself unchanged); and,
+#   besides far.py's cells near the output lines (group (a), 'near'), near2.py's group (b): cells within the neighbourhood radius (1/8) of a
+#   driver of an output line ('near_b'), and (c) the long-axon cells of (a) not in (b) ('near_c'), each read by the tool as it is, lags 0-4.
 # usage: python3 -I stand.py <label> seed=.. <options of tis.py> [draw=own] [windows=..]
 import sys, os, json, ctypes, time
 from random import Random
@@ -60,6 +64,8 @@ def make():
         finally:
             ts.birth = _birth
         TT['A']['tauv'][:] = own_tau(kw['tau'], TT['SEED'])
+        if kw.get('longfast', ''):
+            TT['A']['tauv'][np.asarray(TT['B']['longs'], dtype=int)] = 2.0
     else:
         TT = tis.make(kw)
     return TT
@@ -115,6 +121,10 @@ for i in np.where(kind == ts.OUTE)[0]:
     for m in B['members'][int(i)]:
         if m < N: near[m] = True
 near &= ~isfb
+Pp = np.asarray(B['P']); near_b = np.zeros(N, bool)
+for i in np.where(kind == ts.OUTE)[0]:
+    near_b[((Pp - Pp[i]) ** 2).sum(1) <= ts.R2] = True
+near_b &= ~isfb; near_c = near & ~near_b
 WL = 4096
 STARTS = sorted(int(x) for x in kw['windows'].split(',')) if 'windows' in kw else [NB - WL]
 P0 = NB - WL - 512; Q3 = (3 * NB) // 4
@@ -161,6 +171,16 @@ def analyse(rec, lo, hi):
     c0 = {str(k): v['S'] for k, v in r['c0'].items()}; clt = {str(k): v['S'] for k, v in r['c_lt'].items()}
     dn = np.where(near, 1, 0).astype(np.int16)
     na, _ = table(xa, dn, (1,)); nb, _ = table(xb, dn, (1,))
+    grp = {}
+    for gname, g in (('near_b', near_b), ('near_c', near_c)):
+        if g.any():
+            ga_, _ = table(xa, np.where(g, 1, 0).astype(np.int16), (1,)); gm = rec[:, g].max(axis=0)
+            gv = {str(L): ga_['1'][str(L)] for L in LAGS}
+            grp[gname] = dict(cells=int(g.sum()), tool=gv, max_output=float(gm.max()), share_above_half=float((gm > 0.5).mean()))
+        else:
+            grp[gname] = dict(cells=0, tool=None)
+    drv = np.where(kind == ts.OUTE)[0]
+    grp['driver_connections'] = int(sum(int(A['deg'][i]) for i in drv)); grp['driver_connections_from_long'] = int(sum(int(s) in longs for i in drv for s in A['c_src'][i, :A['deg'][i]]))
     levA = {str(L): (c0[str(L)] + 0.02 if L else 0.1103) for L in LAGS}; levB = {str(L): (clt[str(L)] + 0.02 if L else 0.1103) for L in LAGS}
     nine = {f'{d},{L}': ta.get(str(d), {}).get(str(L)) for d in (1, 2, 4) for L in (0, 1, 2)}
     def below(vals, lev):
@@ -172,7 +192,10 @@ def analyse(rec, lo, hi):
              near_distances={str(k): int(((dist == k) & near).sum()) for k in DS}, near_max_output=float(nmax.max()), near_share_above_half=float((nmax > 0.5).mean()),
              nine=nine, nine_below_A=below(nine, levA), nine_below_B=below(nine, levB),
              near_below_A=[L for L, v in nearv.items() if v is None or v <= levA[L]], near_below_B=[L for L, v in nearv.items() if v is None or v <= levB[L]])
-    w.update(conn_state())
+    w.update(conn_state()); w.update(grp)
+    if grp['near_b'].get('tool'):
+        w['near_b_below_A'] = [L for L, v in grp['near_b']['tool'].items() if v is None or v <= levA[L]]
+        w['near_b_below_B'] = [L for L, v in grp['near_b']['tool'].items() if v is None or v <= levB[L]]
     return w
 
 
