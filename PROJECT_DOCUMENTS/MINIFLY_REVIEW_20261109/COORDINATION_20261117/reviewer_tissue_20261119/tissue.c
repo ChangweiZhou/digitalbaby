@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double inh_learn;               /* inh_learn 1: under TIMING a connection from an inhibitory sender grows with the joint activity of its two ends (dw = eta_s F_j x_i); with norm=1 the inhibitory total is conserved, so a cell's inhibition moves to the senders active when it is */
     double rate_norm; double *M;     /* rate_norm 1: under TIMING the change is divided by the sender's own slow mean activity M (rate 1/16384), so that a sender active rarely is not at a disadvantage */
     double a_make;                  /* a cell makes a connection only while its mean activity is below a_make (0: the definition's a*) */
     double start_w, make_period;   /* strength of a new connection; least number of steps between two makings by one cell */
@@ -104,7 +105,9 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                    was active after it: dw = eta_s ( F_j x_i(k) - F_i x_j(k-1) ), F the fast trace of a cell's output before the step */
                 const double Fi = t->F[i];
                 if (xi != 0.0 || Fi != 0.0)
-                    for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; if ((s >= NCELL && t->lines_learn == 0.0) || t->sig[s] < 0.0) continue;
+                    for (int d = 0; d < dg; d++) { int s = t->c_src[b + d];
+                        if (t->sig[s] < 0.0) { if (t->inh_learn != 0.0 && xi != 0.0) { double w = t->c_w[b + d] + t->eta_s * t->F[s] * xi; t->c_w[b + d] = w > 1.0 ? 1.0 : w; } continue; }
+                        if (s >= NCELL && t->lines_learn == 0.0) continue;
                         double dw = t->eta_s * (t->F[s] * xi - Fi * z[s]); if (t->rate_norm != 0.0) dw /= (t->M[s] + 1.0 / 1024);
                         double w = t->c_w[b + d] + dw;
                         t->c_w[b + d] = w < 0.0 ? 0.0 : (w > 1.0 ? 1.0 : w); }
