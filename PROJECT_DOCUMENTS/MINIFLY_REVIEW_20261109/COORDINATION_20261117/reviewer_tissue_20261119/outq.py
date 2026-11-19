@@ -4,6 +4,7 @@
 # NEXT byte from the cells' outputs at the present byte. One unit a byte value.
 # Two sets of inputs:   pool : every unit sees all cells near the output lines (the drivers and the members of their neighbourhoods);
 #                       own  : unit v sees only the members of the neighbourhood of the v-th output-line cell (what one driver reaches).
+#                       all  : (sets=all) every unit sees every cell of the tissue: what reach without limit would give these rules.
 # Inputs: a cell's output minus its running mean, over its running deviation (both at rate 1/1024, updated after use), clipped to
 # [-8, 8]; a constant 1 appended; n = |U|^2. Rules (as yq.py): D told the right byte, every unit W[v] += eta (target - a_v) U / n;
 # B the old yes-or-no rule, W[e] += (ok - rbar_e) (1/4) U / n; Q: the emitter W[e] += eta (ok - a_e) U / n, and with z1, on yes,
@@ -14,7 +15,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import tis
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'yesno', 'deps')); import score_emissions as SE
 ts = tis.ts
 label = sys.argv[1]; kw = dict(a.split('=') for a in sys.argv[2:]); t0 = time.time()
-T = tis.make(kw); t, L, b, N, NB = T['t'], T['L'], T['b'], T['N'], T['NB']
+kwt = {k: v for k, v in kw.items() if k != 'sets'}
+T = tis.make(kwt); t, L, b, N, NB = T['t'], T['L'], T['b'], T['N'], T['NB']
 rec = np.zeros((NB, N), np.float32)
 L.tis_run(ctypes.byref(t), ctypes.c_void_p(b.ctypes.data), ctypes.c_int64(0), ctypes.c_int64(NB), ctypes.c_int64(0), ctypes.c_int64(NB), ctypes.c_void_p(rec.ctypes.data))
 print(f"== {label}: life of {NB} bytes done in {time.time() - t0:.0f} s", flush=True)
@@ -36,21 +38,23 @@ out = dict(label=label, args=kw, bytes=NB, sets={})
 refs = SE.references(b[:NB]); q0 = 3 * NB // 4
 out['last_quarter_refs'] = {k: float((refs[k] == bb)[q0:].mean()) for k in ('ref_1', 'ref_2', 'ref_3')}
 print("   refs last quarter " + ' '.join(f"{k} {100 * v:.2f}" for k, v in out['last_quarter_refs'].items()), flush=True)
-for sname in ('pool', 'own'):
+allc = np.where(~isfb)[0]
+for sname in kw.get('sets', 'pool,own').split(','):
+    if sname == 'all': pool = allc                                    # 'all': every unit sees every cell of the tissue except the feedback cells
     C = len(RULES); rng = np.random.default_rng(T['SEED']); seen = np.zeros(V, bool); right = np.zeros((C, NB), bool); rbar = np.zeros(V)
     mean = np.zeros(N); var = np.ones(N) * 1e-4
-    if sname == 'pool': W = np.zeros((C, V, len(pool) + 1))
+    if sname != 'own': W = np.zeros((C, V, len(pool) + 1))
     else: W = np.zeros((C, V, M + 1))
     for tt in range(NB - 1):
         r = rec[tt].astype(np.float64); x = np.clip((r - mean) / np.sqrt(var + 1e-12), -8, 8); x[var < 1e-9] = 0.0
         mean += (r - mean) / 1024; var += ((r - mean) ** 2 - var) / 1024
         seen[bb[tt]] = True; yy = bb[tt + 1]; sv = np.flatnonzero(seen)
-        if sname == 'pool':
+        if sname != 'own':
             U = np.append(x[pool], 1.0); n = float(U @ U)
         else:
             U = np.hstack([x[idx] * msk, np.ones((V, 1))]); n = (U * U).sum(1)
         for c, (rule, eta, z) in enumerate(RULES):
-            a = W[c] @ U if sname == 'pool' else (W[c] * U).sum(1)
+            a = W[c] @ U if sname != 'own' else (W[c] * U).sum(1)
             e = int(a.argmax())
             if rule != 'D' and rng.random() < 1 / 16: e = int(sv[rng.integers(0, len(sv))])
             ok = e == yy; right[c, tt + 1] = ok
@@ -61,12 +65,12 @@ for sname in ('pool', 'own'):
             else:
                 d = np.zeros(V); d[e] = eta * (float(ok) - a[e])
                 if ok and z: d = -eta * a; d[e] = eta * (1.0 - a[e])
-            if sname == 'pool':
+            if sname != 'own':
                 nz = np.flatnonzero(d)
                 if len(nz): W[c][nz] += np.outer(d[nz] / n, U)
             else: W[c] += (d / n)[:, None] * U
     res = {nm: dict(last_quarter=float(right[c, q0:].mean()), quarters=[float(right[c, i * NB // 4:(i + 1) * NB // 4].mean()) for i in range(4)], max_abs_weight=float(np.abs(W[c]).max())) for c, nm in enumerate(names)}
-    out['sets'][sname] = dict(inputs=(len(pool) if sname == 'pool' else [int(msk.sum(1).min()), int(msk.sum(1).max())]), rules=res)
+    out['sets'][sname] = dict(inputs=(len(pool) if sname != 'own' else [int(msk.sum(1).min()), int(msk.sum(1).max())]), rules=res)
     print(f"   inputs '{sname}' ({out['sets'][sname]['inputs']} cells; {time.time() - t0:.0f} s)")
     for k, v in res.items(): print(f"      {k:12s} last quarter {100 * v['last_quarter']:5.2f}   quarters " + ' '.join(f"{100 * q:5.2f}" for q in v['quarters']) + f"   largest weight {v['max_abs_weight']:.2f}")
     sys.stdout.flush()
