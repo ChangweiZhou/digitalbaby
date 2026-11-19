@@ -7,7 +7,8 @@ import json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 pre = sys.argv[1]; SEEDS = (73129, 93683, 116089); LAGS = "01234"
 R = {s: json.load(open(os.path.join(HERE, 'where_tau', f'{pre}_{s}.json'))) for s in SEEDS}
-CLT = json.load(open(os.path.join(HERE, 'where', 'CLT.json')))
+NBY = int(R[SEEDS[0]]['args'].get('nbytes', 16384))
+CLT = json.load(open(os.path.join(HERE, 'where', 'CLT.json' if NBY == 16384 else f'CLT_{NBY}.json')))
 clt = lambda s, L: R[s]['c0'][L] if L in ('0', '1') else CLT[str(s)][L]
 names = []
 for s in SEEDS:
@@ -29,7 +30,7 @@ def cell(g, n, L):
         r = row(s, n); v = None if r is None else r[g][L]
         out.append('—' if v is None else f"{v['S']:.3f}{mark(s, L, v['S'])}")
     return ' / '.join(out)
-md = [f"## {pre}: {R[SEEDS[0]]['args']}", "", "Window A2 (bytes 12,288 to 16,383) of 16,384 bytes. Each entry: seeds 73129 / 93683 / 116089. (a): the readings tool (floor 0.01). "
+md = [f"## {pre}: {R[SEEDS[0]]['args']}", "", (f"Window: the last 4,096 bytes of {NBY:,}." if NBY != 16384 else "Window A2 (bytes 12,288 to 16,383) of 16,384 bytes.") + " Each entry: seeds 73129 / 93683 / 116089. (a): the readings tool (floor 0.01). "
       "(b): no floor, each cell divided by its own standard deviation. `*`: above C0(lag) + 0.02; `+`: above C<L(lag) + 0.02 (for lag 1 the two are one level). "
       "pool: 128 sampled from every cell that is not a feedback cell.", "",
       "Time constants of the cells (count by value), seed 73129: " + ", ".join(f"{k}: {v}" for k, v in R[SEEDS[0]]['tau_counts'].items()), "",
