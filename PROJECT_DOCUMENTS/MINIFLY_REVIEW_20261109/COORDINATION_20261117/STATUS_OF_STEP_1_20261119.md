@@ -33,9 +33,26 @@ connections, and the learning of the output end from yes or no.
 | 9 | What is lost in tissue 7 with distance is the variety of bytes: each far cell is well explained by the byte (0.90 or more of its variance), but the cells together tell few bytes apart (S at d = 8 to 11 with no floor: 0.17 to 0.28 at rate 1, 0.12 to 0.18 at rate 8, 0.23 to 0.53 at rate 1/8). The slower the rate, the more variety and the less amplitude. | main worker; reviewer | 3 | — |
 | 10 | Memory by delay: on the bases that do not depend on their past, only a delay near one byte (32 steps) on a quarter of the connections carries the previous byte (S(d,1) = 0.145 / 0.651 / 0.148 at d = 1 / 2 / 4); delays of 8 or 16 steps do not. | E57's worker (cb554a546 and later, claude/e63-tissue-event-017dSE) | 1 | — |
 | 11 | Memory by a spread of time constants of the potential (each cell its own, from 2 to 64 steps): in the unchanging tissue with bounded gain the byte one back is carried at d = 1 to 4 and the byte two back at d = 2 to 4, at the cost of the present byte beyond d = 4; divergence 0. In tissue 7 the tool as it is reads the present byte at d = 1, 2, 4 (0.93 to 0.96 / 0.63 to 0.67 / 0.31 to 0.43), the byte one back at d = 1 to 6 (0.18 to 0.41) and the byte two back at d = 2 to 6 (0.14 to 0.23), each above what the nearer bytes give plus 0.02. | helper (8c02831b and later) | 3 | — |
-| 12 | Making connections by the definition's rule (a cell below the target activity makes one every 128 steps) raises the number to 20 to 43 a cell in tissue 7 and loses the byte (S(1,0) 0.23 to 0.56), also when making is slowed or new connections start weak. | reviewer | 1 | E52's worker is on it |
+| 12 | Making connections by the definition's rule (a cell below the target activity makes one every 128 steps) raises the number to 20 to 43 a cell in tissue 7 and loses the byte (S(1,0) 0.23 to 0.56), also when making is slowed or new connections start weak; about 3 million are made and withdrawn in 16,384 bytes and the tissue then depends on its past. The cause is the mean the condition uses (four bytes long). With the cell's own mean over about 500 bytes in its place and the level 1/4096: 3.1 to 5.5 connections a cell, S(d,0) at d = 1, 2, 4 at or above the tissue with no making, and above 0.1103 at d = 1, 2, 4, 8, 10 in 6 of 8 settings. | reviewer; main worker (2157849d); E52's worker (942bfabd, claude/round2-runner-sdga8c) | 1 (three seeds and a life are running) | the fault yes; the remedy not yet |
 | 13 | A linear reader (a measuring device, told the right byte) on the 495 to 519 cells near the output lines predicts the next byte at 12.2 to 14.7% in the unchanging tissue with no control and 11.7 to 15.3% with the bounded gain: above the present byte alone (10.1 to 11.3%), about what two bytes give, far from three (27 to 29%). | E55's worker (5ddfbaad, claude/e55-output-reach-017dSEpW) | 3 | — |
-| 14 | The output end told only yes or no, with a step up after yes and down after no at the emitting cell, stays at 0.2 to 1.0% right over 65,536 bytes. | E55's worker (in progress) | 1 | — |
+| 14 | The output end told only yes or no. With equal steps up after yes and down after no it stays at 0.3 to 1.0% right. With a smaller step after no, or the cell's own share of yes as baseline, it learns from clean inputs (three bytes given: 17.7 to 20.4% at 262,144 bytes and rising, above the two-byte level 12.9 to 13.5%) but not from the cells near the drivers (4 to 6.5%), although a fitted reader finds the present byte in each driver's own neighbourhood (8.3 to 12.3%); a one-pass rule told the right byte does not extract it either. | E55's worker (7a129fd7) | 3 | — |
+| 15 | Tissue 7 with the excitatory total at 1 and the inhibitory at 1/4, rate 1: S(d,0) = 0.92 to 0.95 / 0.60 to 0.66 / 0.32 to 0.39 at d = 1 / 2 / 4; largest output 0.52 to 0.57 at d = 8 and 0.35 to 0.50 at d = 11; cells with a largest output above 1/2: 47 to 60% at d = 4, 2 to 10% at d = 8, none at d = 11; no divergence. Tissue 7 (totals 3/4 and 1/4, rate 8) over a life of 262,144 bytes: settles, S moves by at most 0.04, no cell differs between two copies. | reviewer; main worker (2157849d and later, claude/e63-norm-timing) | 3 | yes |
+| 16 | Why the far cells tell few bytes apart (variety.py): in tissue 7 every cell comes to answer to one byte, and the bytes preferred at a distance fall from 40 of 46 at d = 1 to 18 at d = 4 and 6 at d = 8. With conserved totals of at most 1 a cell can keep its amplitude only by passing on a single source, so the lines of single bytes die out with distance. Learned inhibition, a lower target of activity, a change divided by the sender's own mean activity, and a cap on one connection's share with a gain do not help. | reviewer | 1 | — |
+| 17 | Inhibitory total equal to the excitatory total (1/2 and 1/2), unchanging tissue: the present byte is told apart to the far end (score with no floor and each cell divided by its deviation: 0.84 / 0.81 / 0.78 at d = 9 / 10 / 11, against 0.74 / 0.49 / 0.28 with 3/4 and 1/4); amplitude falls tenfold a connection. A gain on a tissue with loops destroys this at any bound from 4 to 32. | reviewer | 1 | E55's worker and the helper are on it |
+| 18 | Withdrawal by order in time with strengths left shared (a connection is withdrawn when its sender is active after the receiver more than before; no strength is changed by the rule), then a gain that matches peaks, bound 8: the largest mean output is 0.39 to 0.92 at every distance to d = 13; score with no floor 0.98 / 0.82 / 0.72 / 0.63 / 0.51 / 0.42 / 0.36 / 0.30 / 0.28 / 0.20 / 0.13 at d = 1 to 11 with totals 3/4 and 1/4 (0.98 / 0.84 / 0.67 / 0.58 / 0.35 / 0.31 / 0.28 and 0.10 to 0.15 beyond with 1/2 and 1/2); divergence 0 at every checkpoint. Its fault: the cells that answer grow few with distance (70 of 141 at d = 8, 7 of 172 at d = 10), having lost their sources. | reviewer | 1 | the helper is on it |
+| 19 | Delays in tissue 7 (a delay of its own on every connection between cells): the bytes one, two and three back are above their levels somewhere in the tissue (best 0.4 to 0.6 / 0.3 to 0.4 / 0.25 to 0.35) with the present byte read by the tool at d = 1, 2 and, for delays 0 to 16 or 32 on a quarter, at d = 4; among the cells near the output lines the bytes one and two back reach their levels in some settings and seeds only; divergence 0 in every row. | E57's worker (claude/e63-tissue-event-017dSE, TISSUE_DELAY) | 2 so far | — |
+| 20 | Tissue 7 with the bounded gain (4) added: the mean output stays 0.014 to 0.032 out to d = 12 and the tool reads the present byte at the far cells on all seeds (0.13 to 0.23 at d = 8, 0.09 to 0.17 at d = 10 to 11), with no divergence. With the spread of time constants as well: present byte 0.93 to 0.97 / 0.68 to 0.75 / 0.29 to 0.43 at d = 1 / 2 / 4 and 0.10 to 0.15 at d = 8; the byte one back by the tool at d = 2 to 8 and two back at d = 4; one seed weak at d = 10 to 11 (0.040). | helper (4897e426) | 3 | — |
+
+## 2a. What the table comes to (07:25 UTC)
+
+The parts of a tissue that would meet step 1 have now each been measured, by different lines, and are being put into one program by
+the main worker: (i) conserved total incoming strength with strength change by order in time (rows 7, 15: carries the present byte,
+settles, never diverges); (ii) making of connections on the cell's long mean (row 12: 3 to 5 connections a cell, the byte kept);
+(iii) memory by a spread of time constants (rows 11, 20) or by delays of the connections (rows 10, 19): two to three bytes back;
+(iv) a bounded gain, safe once the tissue is directed (rows 18, 20). What no setting yet gives on three seeds is the present byte
+told apart by the cells near the output lines at an output above 1/2: tissue 7 keeps the amplitude and loses the variety of bytes
+(row 16), the balanced tissue keeps the variety and loses the amplitude (row 17), and row 18 is the first to keep both to about
+nine connections, on one seed. And the output end does not yet learn from yes or no on what the tissue gives it (row 14).
 
 ## 3. Against step 1 as the roadmap states it
 
@@ -59,23 +76,26 @@ trials and are marked so in the workers' tables.
 5. The readings of step 1: the floor at 0.01 and the fixed distances 1, 2, 4 hid what the tissue carried. I propose to read every
    distance, with and without the floor, and to ask the bytes back of the tissue as a whole and of the cells near the output lines.
 
-## 5. Lines at work at the time of writing
+## 5. Lines at work at the time of writing (07:25 UTC)
 
 | Line | Task |
 |---|---|
-| main worker | tissue 7: totals 1 and 1/4 on three seeds; lives to 262,144 bytes; connections made |
-| helper | tissue 7 with the spread of time constants: other spreads, the base with totals 1 and 1/4, 65,536 bytes |
-| E57's worker | delays as a property of each connection, on the bases that do not depend on their past |
-| E52's worker | a rule of making and withdrawing connections under which tissue 7 keeps the byte |
-| E55's worker | the output end learning from yes or no on recorded outputs |
-| E62's worker | E62 (the earlier programme), about two and a half hours left |
-| reviewer | keeping the variety of bytes at a distance (target of activity near one byte's frequency; a change divided by the sender's own mean activity) |
+| main worker | one program with the four parts (base with totals 1 and 1/4; making on the long mean; time constants; delays); each checked against its author's figures; lives of 65,536 bytes on three seeds |
+| helper | row 18 on three seeds: ratios of withdrawal, bounds of the gain, totals, then with its time constants |
+| E57's worker | delays in tissue 7: the third seed, then 65,536 bytes for the best |
+| E52's worker | the chosen rule of making on two more seeds and over a life of 65,536 bytes |
+| E55's worker | the reader and the yes/no rules on the balanced tissue and on the tissue with totals 1 and 1/4; a driver that first removes what its inputs share |
+| E62's worker | E62 (the earlier programme), about two hours left |
+| reviewer | milder withdrawal of backward connections; whether making restores the far cells' sources |
 
 ## 6. Corrections of my own statements of tonight
 
 - I told Mr. Xu that in tissue 7 "the present byte explains 0.92 or more of the variance at every distance" as if the byte were
   carried whole to the far cells. The figure is right for single cells; the cells together carry few bytes (row 9). The main
   worker's replication showed it.
+- I told Mr. Xu at 06:20 that the variety was lost because frequent bytes win at every connection. The measurement (row 16)
+  shows that with totals 1 and 1/4 the preferred bytes are not the frequent ones before ten connections; the loss is that every
+  cell passes on one source.
 - The readings of every earlier report of step 1 ("silent or constant beyond two connections", "S(4,0) at chance") were products
   of the floor of the reading and of the fall of amplitude, not of a loss of what the cells carry (row 2).
 
@@ -85,4 +105,4 @@ trials and are marked so in the workers' tables.
 - Log of every task sent and report taken: `COORDINATION_20261117/LOG.md`.
 - Workers' branches and commits: in the table of section 2.
 
-Last change: 06:40 UTC, 19 November 2026.
+Last change: 07:25 UTC, 19 November 2026.
