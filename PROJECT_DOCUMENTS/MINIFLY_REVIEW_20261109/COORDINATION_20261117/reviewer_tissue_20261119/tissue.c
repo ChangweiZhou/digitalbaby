@@ -37,6 +37,7 @@ typedef struct {
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
     double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double *tauv;                   /* time constant of the potential of each cell, in steps (2 in the definition); set by the driver (option tau=..) */
     double mk_long;                 /* mk_long 1: the condition of making uses the cell's long mean M (rate 1/16384 a step) in place of abar (after E52's worker's mk_mean) */
     double prune_only, prune_ratio;  /* prune_only 1: under TIMING no strength changes by the rule; every connection from an excitatory cell keeps two slow sums, of the times its sender was active before the receiver (c_cu) and after it (c_e0), and is withdrawn when the second exceeds prune_ratio times the first; the strengths stay shared by norm=1 */
     double wcap; double *pk;        /* wcap h: with norm=1 no excitatory connection holds more than h of the excitatory total (the excess goes to the cell's other excitatory connections); pk: slow peak of the cell's own output, for the control two_sided == 3 */
@@ -97,7 +98,7 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; A += t->sig[s] * t->c_w[b + d] * z[s]; zs += z[s]; if (t->sig[s] > 0.0 && z[s] > zmx) zmx = z[s]; }
         A *= t->gain[i];
         const double m = A - t->p[i];
-        const double v = 0.5 * t->v[i] + 0.5 * A;                    /* TAU_V = 2 */
+        const double v = t->v[i] + (A - t->v[i]) / t->tauv[i];       /* TAU_V = 2 in the definition: v/2 + A/2 */
         double xi = v - t->th[i]; if (xi < 0.0) xi = 0.0; if (xi > 1.0) xi = 1.0; if (xi < t->floor_x) xi = 0.0;
         const double xp = t->xp[i];
         /* strength changes, from the traces before the step and x(k-1) */

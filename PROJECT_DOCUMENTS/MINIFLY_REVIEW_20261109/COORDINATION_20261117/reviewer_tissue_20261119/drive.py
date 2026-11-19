@@ -19,7 +19,7 @@ maxd = max(len(m) for m in B['members'].values()) + 2
 P = ctypes.c_void_p
 class Tis(ctypes.Structure):
     _fields_ = [('maxd', ctypes.c_int), ('rule', ctypes.c_int), ('floor_x', ctypes.c_double), ('astar', ctypes.c_double), ('by_use', ctypes.c_int),
-                ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double), ('norm', ctypes.c_double), ('we', ctypes.c_double), ('wi', ctypes.c_double), ('mk_long', ctypes.c_double), ('prune_only', ctypes.c_double), ('prune_ratio', ctypes.c_double), ('wcap', ctypes.c_double), ('pk', P), ('inh_learn', ctypes.c_double), ('rate_norm', ctypes.c_double), ('M', P), ('a_make', ctypes.c_double), ('start_w', ctypes.c_double), ('make_period', ctypes.c_double), ('no_make', ctypes.c_double), ('lines_learn', ctypes.c_double),
+                ('two_sided', ctypes.c_int), ('eta_g', ctypes.c_double), ('gain', P), ('rho', ctypes.c_double), ('ibar', P), ('gmax', ctypes.c_double), ('F', P), ('tau_f', ctypes.c_double), ('eta_s', ctypes.c_double), ('norm', ctypes.c_double), ('we', ctypes.c_double), ('wi', ctypes.c_double), ('tauv', P), ('mk_long', ctypes.c_double), ('prune_only', ctypes.c_double), ('prune_ratio', ctypes.c_double), ('wcap', ctypes.c_double), ('pk', P), ('inh_learn', ctypes.c_double), ('rate_norm', ctypes.c_double), ('M', P), ('a_make', ctypes.c_double), ('start_w', ctypes.c_double), ('make_period', ctypes.c_double), ('no_make', ctypes.c_double), ('lines_learn', ctypes.c_double),
                 ('kind', P), ('sig', P), ('nmem', P), ('mem', P),
                 ('deg', P), ('c_src', P), ('c_mi', P), ('c_w', P), ('c_e0', P), ('c_t0', P), ('c_k0', P), ('c_cu', P), ('c_nb', P), ('issrc', P),
                 ('v', P), ('xp', P), ('p', P), ('th', P), ('abar', P), ('vt', P), ('E', P), ('klast', P), ('z', P),
@@ -29,7 +29,16 @@ A = dict(kind=np.ascontiguousarray(B['kind'], np.int8), sig=np.ascontiguousarray
          deg=np.zeros(N, np.int32), c_src=np.zeros((N, maxd), np.int16), c_mi=np.zeros((N, maxd), np.int16), c_w=np.zeros((N, maxd)), c_e0=np.zeros((N, maxd)),
          c_t0=np.zeros((N, maxd), np.int32), c_k0=np.zeros((N, maxd), np.int32), c_cu=np.zeros((N, maxd)), c_nb=np.zeros((N, maxd), np.int32), issrc=np.zeros((N, maxd), np.uint8),
          v=np.zeros(N), xp=np.zeros(N), p=np.zeros(N), th=np.zeros(N), abar=np.zeros(N), vt=np.full(N, astar), E=np.zeros(N), klast=np.zeros(N, np.int32), z=np.zeros(ts.NZ),
-         gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(ts.NZ), M=np.full(ts.NZ, 1 / 64), pk=np.zeros(N))
+         gain=np.ones(N), ibar=np.zeros(N), F=np.zeros(ts.NZ), M=np.full(ts.NZ, 1 / 64), pk=np.zeros(N), tauv=np.full(N, 2.0))
+tau_opt = kw.get('tau', '')
+if tau_opt:
+    rt = np.random.default_rng(SEED + 20261119)
+    if tau_opt.startswith('u2-'):
+        top = int(tau_opt[3:].rstrip('e')); choices = [2.0 ** k for k in range(1, int(np.log2(top)) + 1)]
+        A['tauv'][:] = rt.choice(choices, size=N)
+        if tau_opt.endswith('e'): A['tauv'][np.asarray(B['kind']) == ts.ENC] = 2.0      # cells that can receive from an input line keep 2
+    elif tau_opt == 'q16':
+        A['tauv'][rt.random(N) < 0.25] = 16.0
 for i in range(N):
     mem = B['members'][i]; A['nmem'][i] = len(mem); A['mem'][i, :len(mem)] = mem
     pos = {m: q for q, m in enumerate(mem)}

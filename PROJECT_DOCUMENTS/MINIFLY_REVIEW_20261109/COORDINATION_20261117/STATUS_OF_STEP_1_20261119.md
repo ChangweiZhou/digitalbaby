@@ -43,13 +43,21 @@ connections, and the learning of the output end from yes or no.
 | 19 | Delays in tissue 7 (a delay of its own on every connection between cells): the bytes one, two and three back are above their levels somewhere in the tissue (best 0.4 to 0.6 / 0.3 to 0.4 / 0.25 to 0.35) with the present byte read by the tool at d = 1, 2 and, for delays 0 to 16 or 32 on a quarter, at d = 4; among the cells near the output lines the bytes one and two back reach their levels in some settings and seeds only; divergence 0 in every row. | E57's worker (claude/e63-tissue-event-017dSE, TISSUE_DELAY) | 2 so far | — |
 | 20 | Tissue 7 with the bounded gain (4) added: the mean output stays 0.014 to 0.032 out to d = 12 and the tool reads the present byte at the far cells on all seeds (0.13 to 0.23 at d = 8, 0.09 to 0.17 at d = 10 to 11), with no divergence. With the spread of time constants as well: present byte 0.93 to 0.97 / 0.68 to 0.75 / 0.29 to 0.43 at d = 1 / 2 / 4 and 0.10 to 0.15 at d = 8; the byte one back by the tool at d = 2 to 8 and two back at d = 4; one seed weak at d = 10 to 11 (0.040). | helper (4897e426) | 3 | — |
 
-## 2a. What the table comes to (07:25 UTC)
+| 21 | Row 18 with making on the cell's long mean (level 1/4096, at most one making in 1,024 steps), totals 3/4 and 1/4, gain bound 8, withdrawal ratio 1. By the tool as it is: S(d,0) = 0.98 to 1.00 / 0.79 to 0.86 / 0.56 to 0.61 at d = 1 / 2 / 4 on three seeds, and 0.25 to 0.38 / 0.18 to 0.32 at d = 8 / 10 on the two seeds read so far (without making 0.23 to 0.27 / 0.07 to 0.19). Every cell at d = 8 and d = 10 answers (without making 41 to 70 of 141 to 177, and 7 to 21 of 172 to 193). Seed 73129: the largest output is 1.000 and 95 to 100% of the cells exceed 1/2 at every distance to d = 12; 17 to 23 different bytes are preferred at d = 8 to 11; a tenth of the cells at d = 9 to 12 are explained to 0.52 to 0.64 by the previous byte. 3.2 to 3.6 connections a cell; about 1,300 made and 10,400 withdrawn in 16,384 bytes; two copies do not diverge (0 at every checkpoint). Over 65,536 bytes (seed 73129): 0.975 / 0.812 / 0.642 at d = 1, 2, 4. Withdrawal ratios 2 and 4 leave loops and diverge (three seeds). | reviewer; E52's worker (claude/round2-runner-sdga8c, PREP/tissue6); helper (ratios) | 3 (d = 1, 2, 4); 2 (far cells) | yes: E52's worker reproduces the reviewer's figures on two seeds; third running |
+| 22 | The merged program (the four parts as options, each checked step for step against its author's program: largest difference 0.0). Tissue 15 with making on the long mean over 65,536 bytes, three seeds: S(d,0) = 0.91 to 0.96 / 0.58 to 0.68 / 0.29 to 0.42 in every window, 3.1 to 3.5 connections a cell, 250 to 800 made and about 9,800 withdrawn, no cell differing between two copies; no byte before the present one. | main worker (b8e62c94, claude/e63-merged-tissue) | 3 | — |
+| 23 | Making on the long mean in tissue 7, final rule (level 1/16384): S(d,0) above 0.1103 at d = 1, 2, 4, 8, 10 on three seeds; 3.8 to 4.3 connections a cell; over 65,536 bytes 3.7 to 3.8 with 250 made after the first quarter. | E52's worker (80401826) | 3 | — |
+| 24 | Delays in tissue 7, all 30 runs, three seeds, divergence 0: with a delay of 0 to 32 steps on every connection the tool reads the present byte at d = 1, 2, 4 and the bytes one to three back are above their levels somewhere in the tissue on every seed; among the cells near the output lines the byte three back is above its level in no setting. | E57's worker (DELAY_TABLES.md, being committed) | 3 | — |
+
+## 2a. What the table comes to (07:55 UTC)
 
 The parts of a tissue that would meet step 1 have now each been measured, by different lines, and are being put into one program by
 the main worker: (i) conserved total incoming strength with strength change by order in time (rows 7, 15: carries the present byte,
 settles, never diverges); (ii) making of connections on the cell's long mean (row 12: 3 to 5 connections a cell, the byte kept);
 (iii) memory by a spread of time constants (rows 11, 20) or by delays of the connections (rows 10, 19): two to three bytes back;
-(iv) a bounded gain, safe once the tissue is directed (rows 18, 20). What no setting yet gives on three seeds is the present byte
+(iv) a bounded gain, safe once the tissue is directed (rows 18, 20). Since 07:30 row 21 gives, on the seeds read so far, the present byte by the tool as it is at 1, 2, 4, 8 and 10 connections,
+with every far cell answering at an output above 1/2, the cells making and withdrawing their own three to four connections, and no
+dependence on the past; it has no memory yet (time constants and delays are being put into it by three lines). What was missing
+until then, on three seeds, was the present byte
 told apart by the cells near the output lines at an output above 1/2: tissue 7 keeps the amplitude and loses the variety of bytes
 (row 16), the balanced tissue keeps the variety and loses the amplitude (row 17), and row 18 is the first to keep both to about
 nine connections, on one seed. And the output end does not yet learn from yes or no on what the tissue gives it (row 14).
@@ -105,4 +113,4 @@ trials and are marked so in the workers' tables.
 - Log of every task sent and report taken: `COORDINATION_20261117/LOG.md`.
 - Workers' branches and commits: in the table of section 2.
 
-Last change: 07:25 UTC, 19 November 2026.
+Last change: 07:55 UTC, 19 November 2026.
