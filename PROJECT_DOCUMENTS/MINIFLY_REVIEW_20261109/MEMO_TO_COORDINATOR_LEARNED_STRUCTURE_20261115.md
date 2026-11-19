@@ -2469,3 +2469,19 @@ The main worker reports stage A finished: `TISSUE_STEP1/STAGE_A_REPORT.md` at **
 As reported: outcome 3. Neither form keeps cells at two and four connections informative. Under the first form those cells are constant or silent; under the coincidence form they are active and carry almost nothing of the byte (0.0375 and 0.0264 for the present byte against chance 0.0217 and a level of 0.1103). No tissue reaches the reference at lags 1 or 2. The tissue with the giving-up rule as first written lost all but 61 of its 15,872 starting connections at step 128, as derived on paper. The first form reads its whole neighbourhood (91.8 connections a cell), your point (a) of decision 51.
 
 The reviewer's view, to be held until you have verified: step 1 is not reached by either first form, as the brief's writer registered beforehand; stage B is not asked for on this program at any length (its forecast is 185.6 CPU-hours); the next runs are made on the program E57's worker is writing, where a tissue of this length takes seconds, and they open one choice at a time as the roadmap's rule says. E57's worker has also been told that a step must not depend on the order in which cells are worked on (message 24; point 3 at the head of the task).
+
+### 33.45 For the coordinator: what is in hand, with branches and commits (05:10 UTC, 19 November)
+
+On Mr. Xu's instruction to keep every line at work, tasks were handed out directly and their texts logged afterwards (messages 26 to 28 and three later ones). Nothing here asks a decision of you now; the commits are given so that you can verify and merge when you choose.
+
+| What | Line | Branch and commit | State |
+|---|---|---|---|
+| The tissue's program in the event-driven design (part of E63) | E57's worker | `claude/e63-tissue-event-017dSE`, 1d9cfb64d and later | Part (a) accepted by the reviewer: the worked example, the unchanging tissue (2,048 bytes) and the tissue with formula 11 as first written (512 bytes; 251,968 made, 265,850 given up) are identical; the coincidence tissue differs from step 1,594, and the worker's test shows that E63's own program diverges at the same rate after a change of one unit in the last place. Part (b): first-form tissue, switches on, 0.00273 CPU-s a byte with records (0.474 in stage A). Full report to come |
+| The stream of one life | E52's worker | `claude/life-stream-sdga8c`, f4d8f847 | Delivered |
+| The reserve of never-taught pairs, divided and with countermodels | E55's worker | `claude/e55-prep-reserve-017dSEpW`, 526bc318 | Delivered. Finding: with a symmetric operation, about half of the reserve has its reverse among the taught pairs and is answered by a table; only the rest, and all of subtraction, can carry evidence of generalisation |
+| The readings as a tool | the helper | `claude/prep-readings-tool`, cf0b6ad6 | Delivered; reproduces the 56 figures of stage A's coincidence tables |
+| The runner of step 1's second round | E52's worker | to come | Running what the program can already run; started on Mr. Xu's instruction before its brief was released, as you noted |
+| The scorer of what a tissue gives out | the main worker | to come | In hand |
+| The comparator on the stream of one life | E55's worker | to come | Program and a timing on 8,192 bytes only; its full run is yours to release |
+
+The brief of the second round (`TASK_E63_STEP_1_SECOND_ROUND_20261119.md`) is on the reviewer's branch for your reading when the program's report is in.
