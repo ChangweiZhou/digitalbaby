@@ -56,14 +56,19 @@ connections, and the learning of the output end from yes or no.
 | 29 | Delays in the base of row 21 (a delay of its own for every pair of cell and neighbour, drawn at birth; first rows, seed 73129, no divergence): with delays of 0 to 16 steps the cells near the output lines carry the bytes one, two AND three back above their levels (0.101 / 0.183 / 0.212 against 0.090 / 0.076 / 0.182) at a largest output of 1.0, the first tissue to do so; the present byte is then 0.993 / 0.795 / 0.394 at d = 1, 2, 4 and just below its level at d = 8 and 10 (0.098, 0.064). With 0 to 32 steps nothing is kept far out. Delays of 0 to 8 and 0 to 12 steps are being run on three seeds. | E57's worker (TISSUE_DELAY2, not yet committed) | 1 | — |
 | 30 | Why a one-pass rule at the output end stays below a fitted reader on the same inputs (three tissues): the inputs of a driver move together (first principal component 0.60 to 0.89 of the variance; largest to median eigenvalue 1e5 to 1e7). With the inputs decorrelated (a diagnostic, not something a cell has) one pass reaches the fitted reader on U and on the balanced tissue. Not the running standardisation and not the single pass. | E55's worker (4664eb8d) | 1 to 3 | — |
 
-## 2a. What the table comes to (08:45 UTC)
+| 31 | Fifteen seeds, one program and driver (the three old seeds and twelve not used before), 16,384 bytes, the tool as it is, each seed's own levels. N256: all nine entries of step 1 above their levels on 15 of 15 (smallest S(4,0) 0.211, smallest S(1,2) 0.159). N64: on 14 of 15 (seed 73129 misses S(1,2), 0.065). N0: none (no memory), and the present byte above its level at d = 8 on 15 of 15 (0.119 / 0.289 / 0.472), at d = 10 on 12 of 15 (0.060 / 0.229 / 0.376), near the output lines on 11 of 15 (0.050 / 0.213 / 0.367); with time constants at d = 10 and near the output lines on 0 of 15. Divergence after 512 bytes: 0 on 43 of 45 tissues, 9e-10 on one, and 0.29 on one (N0, seed 20261211: 0 to 16 bytes, 3e-27 at 64, 9e-10 at 256). The three seeds with weak far cells do not differ in their birth; two of them made two to three times as many connections as the others. | E52's worker (76b00600, PREP/tissue7/SEEDS15.md) | 15 | this is the replication of row 25 |
+| 32 | Delays in the base of row 21, three seeds (corrected figures, from the receipts): in every delayed setting the present byte at d = 10 is below its level; the bytes one to three back among the cells near the output lines are above their levels with delays of 0 to 16 on one seed of three; a spread of time constants on top makes every row worse. | E57's worker (TISSUE_DELAY2) | 3 | — |
+| 33 | The output end on the base of row 21 (seed 73129, 65,536 bytes; each driver sees its own neighbourhood, one pass): told the right byte 9.5% (the fitted reader on the same inputs 9.7%; on the unchanging tissue the rule reached 4.5%); told only yes or no 8.3%, above the end mark's share (6.2%) from 8,192 bytes on, below the present byte's level (10.6%); inputs taken as they are do as well as standardised ones. With the time constants of row 25 the whole tissue gives a fitted reader 23.1 to 23.4% (three bytes give 25 to 27%), the cells near the output lines 9 to 13%, and the online rules do not learn there. In the base the largest-to-median eigenvalue of a driver's inputs is 1e3 against 1e7 in the unchanging tissue (reviewer, cond.py). | E55's worker (output_reach3, in progress); reviewer | 1 | — |
+| 34 | The four parts in one program on the older base (tissue 15), three seeds, 65,536 bytes: with time constants and delays together the bytes one and two back are above their levels on three seeds (best 0.40 to 0.54) and a fitted reader near the output lines gives 12.1 / 16.9 / 15.1% (present byte alone 10.5%); the whole tissue 22 to 24%; no divergence in any window. | main worker (1b5d1460; a778d7b0 for the new base, T5 to T8 running) | 3 | — |
+
+## 2a. What the table comes to (09:10 UTC)
 
 The parts of a tissue that would meet step 1 have now each been measured, by different lines, and are being put into one program by
 the main worker: (i) conserved total incoming strength with strength change by order in time (rows 7, 15: carries the present byte,
 settles, never diverges); (ii) making of connections on the cell's long mean (row 12: 3 to 5 connections a cell, the byte kept);
 (iii) memory by a spread of time constants (rows 11, 20) or by delays of the connections (rows 10, 19): two to three bytes back;
 (iv) a bounded gain, safe once the tissue is directed (rows 18, 20). Since 08:05 row 25 meets the nine entries that step 1 names, with no dependence on the past: in the reviewer's program on three
-seeds at two lengths of life, and since 08:38 in E52's worker's runs on 13 seeds not used before. Row 26 shows what it lacks: the memory is near the input lines and is paid for at the far cells. The open question has
+seeds at two lengths of life, and in E52's worker's runs on 15 seeds (row 31: 15 of 15 for N256). Row 26 shows what it lacks: the memory is near the input lines and is paid for at the far cells. The open question has
 therefore moved from "can the tissue read the stream" to "can the cells near the output lines have the present byte and the bytes
 before it together"; delays (which shift a signal without smoothing it) and a small share of slow cells are being tried on row 21.
 
@@ -87,6 +92,17 @@ been repeated: the base without time constants by E52's worker on three seeds (r
 by the helper, E57's worker and the main worker in other bases (rows 11, 19, 20, 22).
 
 What step 1's wording does not ask and the next step needs (row 26): the same bytes among the cells near the output lines.
+
+## 3a. Where the difficulty now is
+
+The whole tissue with time constants holds about what three bytes give for the next byte (rows 33, 34: 22 to 24% by a fitted
+reader). The cells near the output lines, eleven connections from the input lines, hold one to two bytes' worth, and every way of
+bringing more there (slow cells, delays) has cost the present byte at that distance (rows 26, 28, 32). The output end learns online,
+from yes or no alone, on the one tissue whose far cells are clean (row 33), and not where the memory is. Two ways are open and both
+are Mr. Xu's to choose between or to set aside: to go on looking for a rule that carries the bytes before to the far cells, or to
+change the geometry I chose in the definition (input lines on one edge, output lines on the opposite edge, eleven connections
+apart), which no ruling of his fixes; the cells four to six connections from the input lines carry all of lags 0 to 4 (row 26).
+The rule as run is written out in THE_TISSUE_AS_RUN_20261119.md.
 
 ## 4. What I propose to change in the definition (for Mr. Xu to decide)
 
@@ -131,4 +147,4 @@ trials and are marked so in the workers' tables.
 - Log of every task sent and report taken: `COORDINATION_20261117/LOG.md`.
 - Workers' branches and commits: in the table of section 2.
 
-Last change: 08:45 UTC, 19 November 2026.
+Last change: 09:10 UTC, 19 November 2026.
