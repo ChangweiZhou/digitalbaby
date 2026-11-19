@@ -1,0 +1,260 @@
+
+===== 1. Completeness and settings of the nine runs =====
+1.1 runner exp57_scale.py at 85417d06: SHA-256 5409562fe51c3cb5
+    the runner at c55aaa1b: SHA-256 3b2f58cfd425605e
+    the runner at 66e20486: SHA-256 5409562fe51c3cb5
+    the runner at 27e743ae: SHA-256 5409562fe51c3cb5
+    the runner at fb07cb0f: SHA-256 5409562fe51c3cb5
+    the runner at 85417d06: SHA-256 5409562fe51c3cb5
+    lines that differ between the runner at c55aaa1b (checks 2 and 3) and at 85417d06 (the runs): 3; all of them inside the function check8 (lines 577 to 615): True
+      -    env = dict(os.environ, OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
+      +    env = {k: v for k, v in os.environ.items() if not k.startswith(("E11_", "E16_", "EXP45_"))}    # as from a shell: the harness sets these on impor
+      +    env.update(OMP_NUM_THREADS="1", MKL_NUM_THREADS="1")
+    exp49_interface.py: at 85417d06 True, at E49's a36de661 True
+    e49_interface.py: at 85417d06 True, at E49's a36de661 True
+    sources_sha256 of the receipts against the files at 85417d06: all equal True (15 files)
+1.2 the nine receipts
+    run                | net  scale    rule dose   code_decay rows  steps  complete resumes | runner = committed | commit    | no-decay group
+    F10 row S          | F10  row      S     24576 0.25         97  24576 True     0       | True               | 7b995b92 | ['book.weight']
+    F10 rowcol S       | F10  rowcol   S     24576 0.25         97  24576 True     0       | True               | 65046e7d | ['book.weight']
+    G row S            | G    row      S     24576 0.25         97  24576 True     0       | True               | 65046e7d | ['book.weight']
+    in16 matrix S cd0  | in16 matrix   S     49152 0           193  49152 True     0       | True               | bda5dc87 | ['book.weight', 'l1.bias', 'l1.weight']
+    in16 matrix S      | in16 matrix   S     49152 0.25        193  49152 True     0       | True               | beb77330 | ['book.weight']
+    in16 none B        | in16 none     B     24576 0.25         97  24576 True     0       | True               | bda5dc87 | ['book.weight']
+    in16 row S         | in16 row      S     49152 0.25        193  49152 True     0       | True               | beb77330 | ['book.weight']
+    in16 rowcells S    | in16 rowcells S     49152 0.25        193  49152 True     0       | True               | beb77330 | ['book.weight']
+    in16 rowcol S      | in16 rowcol   S     49152 0.25        193  49152 True     0       | True               | bda5dc87 | ['book.weight']
+    every setting of every run as the brief requires (network, scale, scale_at, rule, seed, updates, code decay, optimizer groups, rate and betas, read back, finite losses, masks and E42's limit at every row, rows every 256 updates, readings every 2,048, no resumption, runner, threads): True
+    start_tensors_sha256: F10 row S dede71d76cb8a9e6; F10 rowcol S dede71d76cb8a9e6; G row S b5ca7d4f232a07bd; in16 matrix S cd0 657e185828eb7a4c; in16 matrix S 657e185828eb7a4c; in16 none B 657e185828eb7a4c; in16 row S 657e185828eb7a4c; in16 rowcells S 657e185828eb7a4c; in16 rowcol S 657e185828eb7a4c
+    E49's in16 start 657e185828eb7a4c; the brief's F10 start dede71d76cb8a9e6; the start of check 1's dry run of G b5ca7d4f232a07bd (whose end equals E42's DRY2048 hash): G row S starts there True
+    the logs: one start line in each run's log: F10 row S 1, F10 rowcol S 1, G row S 1, in16 matrix S cd0 1, in16 matrix S 1, in16 none B 1, in16 row S 1, in16 rowcells S 1, in16 rowcol S 1
+    queue.log: 9 runs ended with exit 0 of 9; first line 2026-11-18T15:09:01Z, last 2026-11-18T21:23:43Z
+1.3 the data digests (the stream)
+    the digest of the first 4,096 batches computed here bbd71ab7ca27b72e; equal to every run's row of update 4,096: True
+    F10 row S          E42 F10 S: 97 of 97 rows equal; E42 F10 B: 97 of 97 rows equal
+    F10 rowcol S       E42 F10 S: 97 of 97 rows equal; E42 F10 B: 97 of 97 rows equal
+    G row S            E42 G S: 97 of 97 rows equal; E42 G B: 97 of 97 rows equal
+    in16 matrix S cd0  E49 in16 S: 97 of 97 rows equal; E49 in16 B: 97 of 97 rows equal
+    in16 matrix S      E49 in16 S: 97 of 97 rows equal; E49 in16 B: 97 of 97 rows equal
+    in16 none B        E49 in16 S: 97 of 97 rows equal; E49 in16 B: 97 of 97 rows equal
+    in16 row S         E49 in16 S: 97 of 97 rows equal; E49 in16 B: 97 of 97 rows equal
+    in16 rowcells S    E49 in16 S: 97 of 97 rows equal; E49 in16 B: 97 of 97 rows equal
+    in16 rowcol S      E49 in16 S: 97 of 97 rows equal; E49 in16 B: 97 of 97 rows equal
+    the five runs of 49,152 updates have the same digest at all 193 scored rows: True; final digest 6bd4882681a2e149
+1.4 the check receipts
+    check 1: (a) all equal True (8 comparisons, worst relative difference 0.0); (b) True: G 79618ab2 rows equal True; F10 dede71d7/837dadc1; in16 256 657e1858/88cad76a; in16 2,048 rows equal True; rule (c) False; pass True; commit 66e20486
+      the five hashes of the brief equal those recorded in check 1's receipt True and those of the dry runs' own receipts True
+    check 2: pass True; largest difference from the brief's figures 0.00049; exact: 13 tensors, least cosine 0.999999999999969; commit c55aaa1b
+    check 3: c0eb6548 equal to c0eb6548 True; rows 2 equal True; pass True; commit c55aaa1b
+    check 4: pass True; F10 row S 97, F10 rowcol S 97, G row S 97, in16 matrix S cd0 193, in16 matrix S 193, in16 none B 97, in16 row S 193, in16 rowcells S 193, in16 rowcol S 193
+    check 5: forecast 18.34 CPU-hours (limit 21); CPU-seconds an update 0.1524 to 0.1571; a row 8.32; a set of cosines 12.04; pass True
+    check 7: (a) eleven equal True, l1.weight largest deviation 2.511e-08, l1.bias 2.082e-08; (b) no-decay group ['book.weight', 'l1.bias', 'l1.weight'], start True, row 0 True, digest 256 True, tensors differ True; (c) l1 mean |w|: start 0.1773, end without decay 0.1764, with decay 0.1655; pass True
+    check 8: before resuming exit 9, last row 6144, readings 4; tensors equal True (00cddfc869c516e0); rows equal True; readings [5, 5] equal True; steps [[8192], [8192]]; CPU ratio 2.01; resumes [0, 1]; pass True
+      from the two dry runs' receipts: tensors True, rows differing outside cpu and wall [], readings equal True
+    check 8's first attempt: its subprocess stopped on the harness's environment gate ('AssertionError' in its log: True); the parent stopped with FileNotFoundError: True
+1.5 check 6 recomputed from the receipts
+    in16 matrix S against E49's run under the sweep, rows to 24,576: 97 and 97; fields compared ['A', 'A_counts', 'R', 'R_counts', 'data_digest', 'finite_losses', 'kept_mean_magnitude', 'len12', 'len40', 'length_counts', 'limit', 'loss', 'masks', 'multiply_adds', 'step', 'taught', 'taught_counts']; differences 0 []
+    in16 none B against E49's run under back-propagation: 97 and 97 rows; differences 0 []; tensors_sha256 707c85693a98b6b1 = E49's 707c85693a98b6b1 (= 707c8569 of the brief): True
+    in16 matrix S: reading of 24,576 against the brief's figures of check 2, largest difference 0.00049 (within 0.002: True); equal bit for bit to check 2's values True
+    in16 none B: reading of 24,576 against the brief's figures of check 2, largest difference 0.00047 (within 0.002: True); equal bit for bit to check 2's values True
+1.6 CPU time
+    the nine runs: 17.19 CPU-hours (updates, scoring and readings), of which the readings 0.56
+    the check receipts' own 'cpu' entries: 0.42 CPU-hours; check 8's two dry runs (subprocesses, not in check 8's entry): 0.89; the killed process's updates after its saved state of 4,096 (to its last row 6912): at least 0.15; together at least 1.45
+    the whole job (runs and checks): at least 18.64 CPU-hours, against the report's 17.19 + 0.42; the brief's estimate 13.1 + 1.5
+    wall time of the queue: 2026-11-18T15:09:01Z to 2026-11-18T21:23:43Z
+   [section 1: 13 s]
+
+===== 2. Every figure recomputed from the receipts =====
+2.1 the nine runs and the six references, recomputed (updates to 80 by the brief's definition; levels: mean of the last three rows;
+    rise: level of R minus the mean of the three rows ending 2,048 updates earlier)
+    run                               | upd    | A80    | R80    | T80    | lvA    lvR    lvT    len40  | rise  | word
+    F10 row S                         | 24,576 | 11,520 | 13,824 | 10,496 |  92.94  92.30  98.72  91.89 | +2.92 | learns the family
+    F10 rowcol S                      | 24,576 | 12,800 | 15,616 |  9,984 |  92.44  91.43  97.50  92.67 | +1.85 | learns the family
+    G row S                           | 24,576 |  6,144 |  6,144 |  4,864 |  98.89  98.83  99.67  97.78 | +3.25 | learns the family
+    in16 matrix S cd0                 | 49,152 | not reached | not reached | not reached |  51.06  46.05  71.00  13.00 | -3.90 | partly
+    in16 matrix S cd0 (first 24,576)  | 24,576 | not reached | not reached | not reached |  37.78  30.38  51.83  11.67 | +1.70 | partly
+    in16 matrix S                     | 49,152 | not reached | not reached | not reached |   1.22   1.18   1.89   1.11 | +0.05 | not learned
+    in16 matrix S (first 24,576)      | 24,576 | not reached | not reached | not reached |   1.89   1.37   2.50   1.22 | -0.35 | not learned
+    in16 none B                       | 24,576 | 16,640 | 20,480 | 15,104 |  85.22  82.53  93.61  66.11 | +0.65 | learns the family
+    in16 row S                        | 49,152 | 36,096 | 44,800 | 26,368 |  86.06  83.78  96.06  48.11 | +1.25 | learns the family
+    in16 row S (first 24,576)         | 24,576 | not reached | not reached | not reached |  53.50  44.92  72.67  18.67 | +2.90 | partly
+    in16 rowcells S                   | 49,152 | not reached | not reached | not reached |  53.67  40.23  68.33   4.22 | +0.10 | partly
+    in16 rowcells S (first 24,576)    | 24,576 | not reached | not reached | not reached |  31.33  24.78  43.00   2.67 | +2.32 | not learned
+    in16 rowcol S                     | 49,152 | not reached | not reached | 36,608 |  69.83  58.72  85.89  34.11 | +0.55 | partly
+    in16 rowcol S (first 24,576)      | 24,576 | not reached | not reached | not reached |  42.83  27.27  58.83   5.67 | +3.77 | partly
+    E42 G S (reference)               | 24,576 |  5,632 |  6,656 |  4,864 |  97.78  96.30  99.33  96.44 | +3.42 | learns the family
+    E42 G B (reference)               | 24,576 |  5,120 |  6,400 |  5,120 |  95.89  95.13  97.06  94.56 | +1.12 | learns the family
+    E42 F10 S (reference)             | 24,576 | 13,312 | 15,104 |  9,728 |  91.22  89.27  97.78  89.11 | +0.68 | learns the family
+    E42 F10 B (reference)             | 24,576 |  8,704 |  9,472 |  6,912 |  93.22  94.08  98.39  92.56 | +2.07 | learns the family
+    E49 in16 S (reference)            | 24,576 | not reached | not reached | not reached |   1.89   1.37   2.50   1.22 | -0.35 | not learned
+    E49 in16 B (reference)            | 24,576 | 16,640 | 20,480 | 15,104 |  85.22  82.53  93.61  66.11 | +0.65 | learns the family
+    tables of readings parsed: 9 in the tables file, 9 in the report
+2.7 the comparisons
+    tables      : 5197 compared (5118 figures, 79 words or outcomes); differing 0
+    summary     : 293 compared (230 figures, 63 words or outcomes); differing 0
+    report      : 5235 compared (5128 figures, 107 words or outcomes); differing 0
+    report text : 60 compared (60 figures, 0 words or outcomes); differing 0
+    message     : 63 compared (35 figures, 28 words or outcomes); differing 0
+    all sources: 10848 compared, 10571 of them figures; differing 0
+   [section 2: 14 s]
+
+===== 3. The saved weights =====
+3.1 hashes, masks, the final counts by a forward pass in numpy (here / the receipt's last row)
+    F10 row S          file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file) (True, True); kept entries {'ih': 393216, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [281, 284, 295, 295] / [281, 284, 295, 295] True | R [926, 917] / [926, 917] True | T [297, 296, 300, 295] / [297, 296, 300, 295] True | length 12, 40 [281, 279] / [281, 279] True
+    F10 rowcol S       file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file) (True, True); kept entries {'ih': 393216, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [284, 279, 298, 292] / [284, 279, 298, 292] True | R [918, 903] / [918, 903] True | T [297, 289, 299, 298] / [297, 289, 299, 298] True | length 12, 40 [284, 284] / [284, 284] True
+    G row S            file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file) (True, True); kept entries {'ih': 393216, 'hh': 196608, 'lm': 131072}; largest weight outside a mask 0.0
+        A [298, 297, 298, 300] / [298, 297, 298, 300] True | R [994, 985] / [994, 985] True | T [300, 300, 300, 299] / [300, 300, 300, 299] True | length 12, 40 [298, 296] / [298, 296] True
+    in16 matrix S cd0  file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file, masks = E49) (True, True, True); kept entries {'ih': 12288, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [159, 153, 285, 282] / [159, 153, 285, 282] True | R [516, 415] / [516, 415] True | T [222, 202, 291, 288] / [222, 202, 291, 288] True | length 12, 40 [159, 38] / [159, 38] True
+    in16 matrix S      file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file, masks = E49) (True, True, True); kept entries {'ih': 12288, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [5, 2, 118, 117] / [5, 2, 118, 117] True | R [15, 7] / [15, 7] True | T [8, 7, 117, 111] / [8, 7, 117, 111] True | length 12, 40 [5, 2] / [5, 2] True
+    in16 none B        file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file, masks = E49) (True, True, True); kept entries {'ih': 12288, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0; tensors equal to E49's file under back-propagation bit for bit: True
+        A [261, 265, 291, 296] / [261, 265, 291, 296] True | R [885, 779] / [885, 779] True | T [282, 278, 295, 298] / [282, 278, 295, 298] True | length 12, 40 [261, 207] / [261, 207] True
+    in16 row S         file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file, masks = E49) (True, True, True); kept entries {'ih': 12288, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [248, 258, 294, 288] / [248, 258, 294, 288] True | R [838, 835] / [838, 835] True | T [281, 289, 296, 299] / [281, 289, 296, 299] True | length 12, 40 [248, 126] / [248, 126] True
+    in16 rowcells S    file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file, masks = E49) (True, True, True); kept entries {'ih': 12288, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [162, 157, 288, 285] / [162, 157, 288, 285] True | R [476, 278] / [476, 278] True | T [199, 193, 294, 290] / [199, 193, 294, 290] True | length 12, 40 [162, 7] / [162, 7] True
+    in16 rowcol S      file SHA-256 = receipt True; tensors_sha256 = receipt True; start file (tensors, file, masks = E49) (True, True, True); kept entries {'ih': 12288, 'hh': 8448, 'lm': 131072}; largest weight outside a mask 0.0
+        A [196, 208, 288, 285] / [196, 208, 288, 285] True | R [615, 519] / [615, 519] True | T [250, 238, 294, 294] / [250, 238, 294, 294] True | length 12, 40 [196, 91] / [196, 91] True
+3.2 the cosines of the last reading on the saved weights (16 batches: the 2nd to the 17th of the stream; float64 numpy, sweep_scale_variants.py)
+    run                update | largest |here - receipt| over 24 cosines | l1 mean abs here / receipt | code mean abs here / receipt
+    F10 row S           24576 | 1.77e-07 | 0.039758 / 0.039758 | 0.175863 / 0.175863
+    F10 rowcol S        24576 | 1.77e-07 | 0.041595 / 0.041595 | 0.173651 / 0.173651
+    G row S             24576 | 1.14e-07 | 0.035013 / 0.035013 | 0.116736 / 0.116736
+    in16 matrix S cd0   49152 | 3.63e-07 | 0.167376 / 0.167376 | 0.158986 / 0.158986
+    in16 matrix S       49152 | 5.12e-07 | 0.034266 / 0.034266 | 0.033095 / 0.033095
+    in16 none B         24576 | 1.99e-07 | 0.078496 / 0.078496 | 0.346686 / 0.346686
+    in16 row S          49152 | 3.92e-07 | 0.040801 / 0.040801 | 0.154883 / 0.154883
+    in16 rowcells S     49152 | 4.22e-07 | 0.040900 / 0.040900 | 0.114210 / 0.114210
+    in16 rowcol S       49152 | 8.49e-07 | 0.050294 / 0.050294 | 0.154236 / 0.154236
+    in16 matrix S at 49,152, each scale: byte table, l1, input map, recurrent map, lm, l2 (here; receipt)
+      matrix   0.285, 0.291, 0.722, 0.630, 0.656, 0.530 ; 0.285, 0.291, 0.722, 0.630, 0.656, 0.530
+      row      0.698, 0.585, 0.807, 0.769, 0.745, 0.812 ; 0.698, 0.585, 0.807, 0.769, 0.745, 0.812
+      rowcells 0.383, 0.494, 0.781, 0.687, 0.656, 0.530 ; 0.383, 0.494, 0.781, 0.687, 0.656, 0.530
+      rowcol   0.468, 0.416, 0.732, 0.693, 0.656, 0.530 ; 0.468, 0.416, 0.732, 0.693, 0.656, 0.530
+    in16 row S at 49,152, each scale: byte table, l1, input map, recurrent map, lm, l2 (here; receipt)
+      matrix   0.220, 0.195, 0.383, 0.389, 0.592, 0.629 ; 0.220, 0.195, 0.383, 0.389, 0.592, 0.629
+      row      0.456, 0.417, 0.571, 0.646, 0.592, 0.629 ; 0.456, 0.417, 0.571, 0.646, 0.592, 0.629
+      rowcells 0.217, 0.282, 0.400, 0.396, 0.592, 0.629 ; 0.217, 0.282, 0.400, 0.396, 0.592, 0.629
+      rowcol   0.234, 0.331, 0.412, 0.408, 0.592, 0.629 ; 0.234, 0.331, 0.412, 0.408, 0.592, 0.629
+   [section 3: 71 s]
+
+===== 4. The fixed wording, the margins, the predictions =====
+4.1 each run's word and the margins on which it rests (level minus threshold; the three rows of the level)
+    F10 row S                         learns the family  | A +12.94, R +12.30, T +48.72 (against 80, 80, 50) | rows of T [98.33, 99.0, 98.83], of R [93.1, 91.65, 92.15]
+    F10 rowcol S                      learns the family  | A +12.44, R +11.43, T +47.50 (against 80, 80, 50) | rows of T [97.0, 97.83, 97.67], of R [91.5, 91.75, 91.05]
+    G row S                           learns the family  | A +18.89, R +18.83, T +49.67 (against 80, 80, 50) | rows of T [99.33, 99.67, 100.0], of R [98.35, 99.2, 98.95]
+    in16 matrix S cd0                 partly             | A -28.94, R -33.95, T +21.00 (against 80, 80, 50) | rows of T [71.5, 70.83, 70.67], of R [45.8, 45.8, 46.55]
+    in16 matrix S cd0 (first 24,576)  partly             | A -42.22, R -49.62, T  +1.83 (against 80, 80, 50) | rows of T [50.17, 52.67, 52.67], of R [27.3, 34.15, 29.7]
+    in16 matrix S                     not learned        | A -78.78, R -78.82, T -48.11 (against 80, 80, 50) | rows of T [2.17, 1.0, 2.5], of R [1.2, 1.25, 1.1]
+    in16 matrix S (first 24,576)      not learned        | A -78.11, R -78.63, T -47.50 (against 80, 80, 50) | rows of T [2.5, 1.5, 3.5], of R [1.55, 1.25, 1.3]
+    in16 none B                       learns the family  | A  +5.22, R  +2.53, T +43.61 (against 80, 80, 50) | rows of T [94.83, 92.67, 93.33], of R [83.25, 81.15, 83.2]
+    in16 row S                        learns the family  | A  +6.06, R  +3.78, T +46.06 (against 80, 80, 50) | rows of T [97.17, 96.0, 95.0], of R [84.5, 83.2, 83.65]
+    in16 row S (first 24,576)         partly             | A -26.50, R -35.08, T +22.67 (against 80, 80, 50) | rows of T [71.67, 74.17, 72.17], of R [43.15, 46.9, 44.7]
+    in16 rowcells S                   partly             | A -26.33, R -39.77, T +18.33 (against 80, 80, 50) | rows of T [75.17, 64.5, 65.33], of R [39.8, 43.2, 37.7]
+    in16 rowcells S (first 24,576)    not learned        | A -48.67, R -55.22, T  -7.00 (against 80, 80, 50) | rows of T [42.67, 45.33, 41.0], of R [24.45, 26.9, 23.0]
+    in16 rowcol S                     partly             | A -10.17, R -21.28, T +35.89 (against 80, 80, 50) | rows of T [87.83, 88.5, 81.33], of R [59.75, 59.7, 56.7]
+    in16 rowcol S (first 24,576)      partly             | A -37.17, R -52.73, T  +8.83 (against 80, 80, 50) | rows of T [54.17, 58.17, 64.17], of R [27.1, 29.2, 25.5]
+    in16 row S, R from 44,032: [(44032, 80.8), (44288, 78.55), (44544, 79.65), (44800, 80.95), (45056, 81.45), (45312, 81.5), (45568, 83.1), (45824, 79.55), (46080, 82.6), (46336, 83.3), (46592, 82.1), (46848, 80.85), (47104, 84.65), (47360, 83.4), (47616, 83.25), (47872, 79.0), (48128, 84.2), (48384, 82.9), (48640, 84.5), (48896, 83.2), (49152, 83.65)]
+    in16 row S, A around its 80: [(35328, 78.83), (35584, 77.5), (35840, 78.67), (36096, 80.0), (36352, 81.5), (36608, 81.33), (36864, 81.0), (37120, 81.17), (37376, 81.0)]; windows of three rows at or above 80 on R in the whole run: 10; rows at or above 80 on R: 21 of 193, after 44,800: 16 of 18
+    in16 row S: updates from R's 80 (three rows) to the end of the run: 4,352; from A's 80: 13,056
+    in16 row S, first single row at or above 80 on R: 41,216; on A: 36,096
+4.2 the words of describe and the number of scored rows by which the candidate's updates to 80 would have to move to change them
+    F10 row S     vs E42 F10 S  A80: 11,520/13,312 = 0.865 about the same  changes after 11 rows earlier
+    F10 row S     vs E42 F10 S  R80: 13,824/15,104 = 0.915 about the same  changes after 15 rows earlier
+    F10 row S     vs E42 F10 B  A80: 11,520/8,704 = 1.324 about the same  changes after 7 rows later
+    F10 row S     vs E42 F10 B  R80: 13,824/9,472 = 1.459 about the same  changes after 2 rows later
+    F10 rowcol S  vs E42 F10 S  A80: 12,800/13,312 = 0.962 about the same  changes after 16 rows earlier
+    F10 rowcol S  vs E42 F10 S  R80: 15,616/15,104 = 1.034 about the same  changes after 22 rows earlier
+    F10 rowcol S  vs E42 F10 B  A80: 12,800/8,704 = 1.471 about the same  changes after 2 rows later
+    F10 rowcol S  vs E42 F10 B  R80: 15,616/9,472 = 1.649 more            changes after 6 rows earlier
+    G row S       vs E42 G S    A80: 6,144/5,632 = 1.091 about the same  changes after 10 rows later
+    G row S       vs E42 G S    R80: 6,144/6,656 = 0.923 about the same  changes after 7 rows earlier
+    G row S       vs E42 G B    A80: 6,144/5,120 = 1.200 about the same  changes after 7 rows later
+    G row S       vs E42 G B    R80: 6,144/6,400 = 0.960 about the same  changes after 8 rows earlier
+    in16 none B   vs E49 in16 B A80: 16,640/16,640 = 1.000 about the same  changes after 22 rows earlier
+    in16 none B   vs E49 in16 B R80: 20,480/20,480 = 1.000 about the same  changes after 27 rows earlier
+    in16 row S                        A80 against E49 B (16,640):      36,096 -> more (x2.17)
+    in16 row S (first 24,576)         A80 against E49 B (16,640): not reached -> not decided (recordable 24,064 = x1.45)
+    in16 row S                        R80 against E49 B (20,480):      44,800 -> more (x2.19)
+    in16 row S (first 24,576)         R80 against E49 B (20,480): not reached -> not decided (recordable 24,064 = x1.18)
+    in16 rowcells S                   A80 against E49 B (16,640): not reached -> more (recordable 48,640 = x2.92)
+    in16 rowcells S (first 24,576)    A80 against E49 B (16,640): not reached -> not decided (recordable 24,064 = x1.45)
+    in16 rowcells S                   R80 against E49 B (20,480): not reached -> more (recordable 48,640 = x2.38)
+    in16 rowcells S (first 24,576)    R80 against E49 B (20,480): not reached -> not decided (recordable 24,064 = x1.18)
+    in16 rowcol S                     A80 against E49 B (16,640): not reached -> more (recordable 48,640 = x2.92)
+    in16 rowcol S (first 24,576)      A80 against E49 B (16,640): not reached -> not decided (recordable 24,064 = x1.45)
+    in16 rowcol S                     R80 against E49 B (20,480): not reached -> more (recordable 48,640 = x2.38)
+    in16 rowcol S (first 24,576)      R80 against E49 B (20,480): not reached -> not decided (recordable 24,064 = x1.18)
+    in16 matrix S                     A80 against E49 B (16,640): not reached -> more (recordable 48,640 = x2.92)
+    in16 matrix S (first 24,576)      A80 against E49 B (16,640): not reached -> not decided (recordable 24,064 = x1.45)
+    in16 matrix S                     R80 against E49 B (20,480): not reached -> more (recordable 48,640 = x2.38)
+    in16 matrix S (first 24,576)      R80 against E49 B (20,480): not reached -> not decided (recordable 24,064 = x1.18)
+    in16 matrix S cd0                 A80 against E49 B (16,640): not reached -> more (recordable 48,640 = x2.92)
+    in16 matrix S cd0 (first 24,576)  A80 against E49 B (16,640): not reached -> not decided (recordable 24,064 = x1.45)
+    in16 matrix S cd0                 R80 against E49 B (20,480): not reached -> more (recordable 48,640 = x2.38)
+    in16 matrix S cd0 (first 24,576)  R80 against E49 B (20,480): not reached -> not decided (recordable 24,064 = x1.18)
+    the first reading at which the cosine of l1 under matrix is below 0.5, and the mean training loss of that scored row: in16 matrix S 4,096 (1.040); in16 none B 4,096 (0.842); in16 matrix S cd0 4,096 (0.970); in16 row S 2,048 (1.104); in16 rowcells S 4,096 (0.970); in16 rowcol S 4,096 (0.939)
+    F10 row S minus E42 F10 S in updates to 80: A -1,792, R -1,280 (the range of E42's three seeds under the sweep, by the brief: 768)
+    F10 rowcol S minus E42 F10 S in updates to 80: A -512, R +512 (the range of E42's three seeds under the sweep, by the brief: 768)
+    G row S minus E42 G S in updates to 80: A +512, R -512 (the range of E42's three seeds under the sweep, by the brief: 768)
+4.3 the predictions
+    P57.1: false (check 8 passed at its second attempt; checks 1 and 3 without rule (c))
+    P57.2: false (partly)
+    P57.3: false (partly)
+    P57.4: true (72.67)
+    P57.5: true (x = 11520, ratio 0.865)
+    P57.6: true (x = 6144, ratio 1.091)
+    P57.7: true (2048: 0.531, 4096: 0.420, 6144: 0.369)
+    P57.8: true (learns the family)
+    P57.9: false (partly)
+    P57.10: true (not learned)
+    P57.11: true (0: 0.716, 2048: 0.537, 4096: 0.450, 6144: 0.413, 8192: 0.371, 10240: 0.341, 12288: 0.320)
+    P57.12: true (71.00)
+    P57.13: false (partly)
+    true: ['P57.4', 'P57.5', 'P57.6', 'P57.7', 'P57.8', 'P57.10', 'P57.11', 'P57.12']; false: ['P57.1', 'P57.2', 'P57.3', 'P57.9', 'P57.13']
+4.4 the brief's table of explanations (words over 49,152 updates, the four runs with a decayed code)
+    words {'matrix': 'not learned', 'row': 'learns the family', 'rowcells': 'partly', 'rowcol': 'partly'}; row 3 of the table: Part 1 alone is not supported; a scale for each receiving unit at every map was sufficient
+    condition of the table (the matrix run repeats E49's rows to 24,576; B ends on E49's hash): see 1.5
+4.5 the code not decayed: the run with a decayed code is 'not learned', so the three sentences apply; the run without decay is 'partly' (A 51.06, R 46.05, T 71.00)
+   [section 4: 71 s]
+
+===== 5. The figures of the reading =====
+5.1 in16 under row against in16 under back-propagation: A 36,096/16,640 = 2.17; R 44,800/20,480 = 2.19; E42's F10 sweep/back-propagation on three seeds: A 1.53, 1.89, 1.36; R 1.59, 1.81, 1.47 (the brief)
+    F10 under row against E42's F10 under back-propagation: A 1.32, R 1.46; G under row against E42's G under back-propagation: A 1.20, R 0.96
+5.2 in16 row S                 levels A 86.06, R 83.78, T 96.06, 12 letters 86.56, 40 letters 48.11 (after 49,152 updates)
+5.2 in16 row S (first 24,576)  levels A 53.50, R 44.92, T 72.67, 12 letters 51.22, 40 letters 18.67 (after 24,576 updates)
+5.2 in16 none B                levels A 85.22, R 82.53, T 93.61, 12 letters 85.33, 40 letters 66.11 (after 24,576 updates)
+5.2 F10 row S                  levels A 92.94, R 92.30, T 98.72, 12 letters 92.78, 40 letters 91.89 (after 24,576 updates)
+5.2 F10 rowcol S               levels A 92.44, R 91.43, T 97.50, 12 letters 93.11, 40 letters 92.67 (after 24,576 updates)
+5.2 E42 F10 S                  levels A 91.22, R 89.27, T 97.78, 12 letters 90.11, 40 letters 89.11 (after 24,576 updates)
+5.2 E42 F10 B                  levels A 93.22, R 94.08, T 98.39, 12 letters 92.89, 40 letters 92.56 (after 24,576 updates)
+5.2 G row S                    levels A 98.89, R 98.83, T 99.67, 12 letters 99.22, 40 letters 97.78 (after 24,576 updates)
+5.2 E42 G S                    levels A 97.78, R 96.30, T 99.33, 12 letters 98.44, 40 letters 96.44 (after 24,576 updates)
+    in16 row S at 24,576 updates (the length of the run under back-propagation): A 53.50, R 44.92 against 85.22, 82.53
+5.3 the row scale: coefficient of variation of the row means of |W| over kept entries at the end (map: l1, input map, recurrent map, l2, lm, l3)
+    kept entries a row in in16 (entries a receiving unit receives): {'l1': 8, 'ih': 16, 'hh': 11, 'l2': 512, 'lm': 256, 'l3': 512}
+    in16 matrix S      l1 1.017, ih 1.050, hh 0.515, l2 0.646, lm 0.700, l3 0.198
+    in16 row S         l1 0.680, ih 0.762, hh 0.298, l2 0.368, lm 0.413, l3 0.171
+    in16 rowcells S    l1 0.698, ih 0.876, hh 0.314, l2 0.515, lm 0.439, l3 0.107
+    in16 none B        l1 0.404, ih 0.632, hh 0.330, l2 0.439, lm 0.118, l3 0.105
+    F10 row S          l1 0.669, ih 0.609, hh 0.354, l2 0.270, lm 0.136, l3 0.235
+    G row S            l1 0.482, ih 0.410, hh 0.157, l2 0.294, lm 0.160, l3 0.177
+5.4 each run of in16 under the sweep, the cosine under its own scale at selected readings (byte table, l1, input map, recurrent map)
+    in16 matrix S      (matrix  ) 2,048: 0.639, 0.531, 0.695, 0.726 | 8,192: 0.356, 0.334, 0.626, 0.660 | 24,576: 0.367, 0.298, 0.603, 0.651 | 49,152: 0.285, 0.291, 0.722, 0.630
+    in16 row S         (row     ) 2,048: 0.698, 0.603, 0.724, 0.783 | 8,192: 0.543, 0.448, 0.642, 0.701 | 24,576: 0.473, 0.387, 0.642, 0.677 | 49,152: 0.456, 0.417, 0.571, 0.646
+    in16 rowcells S    (rowcells) 2,048: 0.601, 0.600, 0.742, 0.765 | 8,192: 0.362, 0.405, 0.611, 0.642 | 24,576: 0.303, 0.325, 0.527, 0.532 | 49,152: 0.191, 0.342, 0.501, 0.465
+    in16 rowcol S      (rowcol  ) 2,048: 0.717, 0.684, 0.812, 0.842 | 8,192: 0.320, 0.397, 0.539, 0.598 | 24,576: 0.315, 0.435, 0.702, 0.641 | 49,152: 0.368, 0.372, 0.638, 0.582
+    in16 matrix S cd0  (matrix  ) 2,048: 0.669, 0.560, 0.729, 0.769 | 8,192: 0.417, 0.335, 0.646, 0.617 | 24,576: 0.258, 0.246, 0.552, 0.564 | 49,152: 0.450, 0.230, 0.465, 0.467
+   [section 5: 71 s]
+
+===== 6. The committed text files: unfilled marks and names of language models (counts only) =====
+6.1 text files searched: 37 (exp45/e57 without weight files, and the runner); unfilled marks 0; names of language models outside branch names 0
+    files with a hit (marks, names): {}
+    beyond the task's scope, the 39 text files of exp45/e57_qual, e57_tables.py and E49_COPIES_FOR_E57.txt: unfilled marks 0, names 0
+6.2 E57's committed files at 85417d06: 110 (the report lists 109 and itself)
+    paths in the report's list: 110; listed but not committed []; committed but not listed []
+6.3 E57_SUMMARY_draft.json: runs in it 7; equal to the final summary False
+   [section 6: 82 s]
