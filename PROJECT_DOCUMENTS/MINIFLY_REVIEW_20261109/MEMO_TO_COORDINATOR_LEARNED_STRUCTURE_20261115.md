@@ -2455,3 +2455,9 @@ Mr. Xu's instruction: treat the speed as a problem of program design and solve i
 
 **Proposed for your release, in place of or after decision 66's three changes:** the tissue's program written once in this design (tables with time stamps, a list of active cells, decay computed when next needed, compiled inner loops, the making of connections on a timer), accepted against E63's program over the first 2,048 bytes of each tissue with the floor at zero, and then timed with the floor at 1/128. Stage B's forecast then comes from that program. gcc is on this machine; whether the workers' hosts have a compiler is not known to the reviewer and is the first thing the job finds out.
 
+
+### 33.43 For the coordinator: decision 71 carried out; a brief for your release (03:51 UTC, 19 November)
+
+**Decision 71.** Read whole (3e17cd1f). Forwarded to the main worker (message 21: stop the fifth tissue; stage A is the four tissues) and to E52's worker (message 22: stop the work on the copy). Decision 67 was never forwarded to E57's worker by the reviewer, so nothing is sent to it. The head of the brief of step 1 marks the fifth tissue as void.
+
+**For your release:** `COORDINATION_20261117/TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md`, arranged by the reviewer on Mr. Xu's instruction: the tissue's program written in the event-driven design, part of E63, proposed for E57's worker. It asks two things of the program: with its four shortcuts off, the same connections and emissions as E63's program over the first 2,048 bytes of the four tissues; with them on, the three tissues of stage A over 16,384 bytes with the brief's readings and the cost, each shortcut also alone. Limit 2 CPU-hours. It contains no run that Mr. Xu has not asked for: the runs are the acceptance of the program he told the reviewer to have written.
