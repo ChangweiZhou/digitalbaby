@@ -95,6 +95,32 @@ neighbourhoods of 1/8). The figures for the group by the neighbourhoods of 1/8 a
 The numbers 8 and 1/2 are first values; one cell in 4 also serves, one in 32 does not, and a reach of 1/4 does not (STATUS rows
 54, 62). It is a proposal to Mr. Xu, not part of the definition.
 
+## 3b. On trial since 13:00 UTC: the output end's rule when it is told only yes or no (rule Q)
+
+This is outside the tissue's step: the tissue lives as in sections 2 to 3a, and the output end reads it without acting back.
+One unit for each byte value. Unit v has a weight for each of its inputs and for a constant 1; its inputs are the outputs of the
+cells its driver reaches (the members of the neighbourhood of the v-th output-line cell), each minus its running mean and over
+its running deviation (rate 1/1024, updated after use), clipped to [-8, 8]. U is that vector with the constant; n = |U|^2.
+
+1. Output: a_v = W[v] U, for every unit, before any change at this byte. It is read as the unit's own estimate of the chance
+   that its byte value is the next byte.
+2. Emission: the unit with the largest a_v (a tie to the lower byte value); with chance 1/16 instead a byte value seen so far,
+   drawn at random.
+3. The world answers yes (the emitted value is the next byte) or no. Write ok = 1 or 0.
+4. The unit that emitted: W[e] += eta (ok - a_e) U / n.
+5. On yes, every other unit: W[v] += eta (0 - a_v) U / n. On no, the other units do not change.
+6. eta = 1/16. All weights start at 0.
+
+What a unit needs: its own inputs and output, whether it emitted, and the yes or no, which is one signal common to all units.
+There is no baseline, no count, and no knowledge of another unit's output. Line 4 is, for the emitter, the same change the rule
+told the right byte makes (target 1 or 0); line 5 is the same for the others when the answer was yes; only on "no" do the others
+lack their target, and there they wait. Line 5 can be left out at eta 1/16 and 1/64 with no loss (status row 124).
+Whether a living cell can do it: lines 1, 2 and 4 need an output that grades with the input, a noisy choice of the most active
+unit, and a change at the active connections of the unit that fired, signed by a signal that arrives after the firing and tells
+better or worse than the unit's own output promised. Line 5 needs the units that did not fire to weaken their active
+connections when the common signal says the answer was right.
+Measured: status rows 119, 123, 124. Programs: `reviewer_tissue_20261119/yesno/yq.py` (exact inputs), `outq.py` (a real tissue).
+
 ## 4. Numbers, and where each comes from
 
 | Number | Value | Basis |
