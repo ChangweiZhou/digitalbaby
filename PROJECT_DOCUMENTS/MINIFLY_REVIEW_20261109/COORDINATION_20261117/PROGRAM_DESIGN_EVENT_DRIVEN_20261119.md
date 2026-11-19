@@ -95,3 +95,23 @@ Mr. Xu asked whether several cores or a graphics processor can make it faster st
 **Measured** (this machine, 4 cores, no graphics processor; `par.py`): independent tissues run side by side, one process each, scale with the number of cores: one tissue of 8,192 bytes takes 3.7 s of wall time including the start of Python, and four at once take 3.7 s, four times the bytes a second. An experiment of the roadmap is several independent tissues (seeds and arms), so this gain is available at once: the nine tissues of a full run of step 1 fit in three rounds of about 1.2 minutes on four cores. With `-O3 -march=native` in place of `-O2` the kernel costs 0.241 ms a byte against 0.284, 15 in 100 less.
 
 **Not measured, reasoned.** Inside one tissue of this size there is little for further cores to do: a step is about 8 microseconds of work (0.27 ms a byte over 32 steps), which is of the order of what it costs to hand work to another thread. For the same reason a graphics processor does not help one small tissue: starting one of its operations costs tens of microseconds, more than the whole step. Both would pay in two cases that the roadmap reaches later: a tissue of hundreds of thousands of cells, where one step is large; and very many tissues at once (hundreds of seeds or settings of a number), computed as one batch. No machine of this project has a graphics processor that the reviewer knows of, so no figure is given.
+
+## 7. Data structures, studied on their own (04:23 UTC)
+
+Mr. Xu asked for a clear answer on whether data structures can make the program faster still. A third kernel (`ev3.c`, `ev3_time.py`) keeps the algorithm of the second and changes only how the data are laid out. Same connections, the same drive for every row, 8,192 bytes, best of three runs, `-O3 -march=native`, one thread.
+
+| Layout | Cell updates a byte | Connection visits a byte | Cost a byte | Cost for one update or visit |
+|---|---|---|---|---|
+| Second kernel: connections sorted by receiving cell, reached from the sending cell through an index; one array for each quantity of a cell | 9,396 | 43,484 | 0.326 ms | 6.2 ns |
+| Connections stored in the order of the sending cell as (target, strength); one record of 64 bytes for a cell | 9,461 | 45,797 | 0.296 ms | 5.4 ns |
+| The same, each cell's targets in ascending order | 9,625 | 42,815 | 0.288 ms | 5.5 ns |
+| The same, cells numbered breadth-first from the input end | 8,132 | 37,036 | 0.245 ms | 5.4 ns |
+| Breadth-first numbering and targets in order | 7,219 | 29,506 | 0.188 ms | 5.1 ns |
+
+**The answer.** Layout alone gives about 10 to 20 in 100: the cost of one update or visit falls from 6.2 to about 5.1 to 5.5 nanoseconds. It is small because a tissue of 2,048 cells already fits in the processor's cache: all quantities of all cells take about 130 kilobytes and all connections about one megabyte. There is no large gain left in data structures at this size.
+
+**A caution about the last two rows.** They are 1.3 to 1.7 times faster than the first, but most of that is not layout: the counts of updates and visits themselves fell. In these kernels a cell that is worked on later in a step already sees what cells worked on earlier in the same step have sent, so the order in which cells are numbered changes what the tissue does. That is a fault of the kernels and must not be in the program: a step has to give the same result whatever the order of the cells (arrivals of a step collected first, applied afterwards). The task for the program is to be read so.
+
+**Where the remaining cost is.** It is the number of events, about 9,000 cell updates and 43,000 connection visits a byte, each already at about 5 nanoseconds. That number is set by the tissue and not by the program: by the number of connections of a cell (16 in place of 86: a third of the cost, section 5), by the tolerance below which a change is not passed on (1/128 in place of 1/1024: about a fifth less), and by how many cells of the input end a byte drives.
+
+**Data structures that would matter for a larger tissue, and why they do not here.** Numbering cells along a curve that keeps neighbours in space near in memory; strengths in 8 or 16 bits; one work list for each region, so that regions can be given to different cores; a wheel of timers for the periods of making and withdrawing; a hash table from a cell's identifier to its record where cells are created and removed during a life. With cells numbered 0 to N − 1 and fixed in number, an array addressed by the number is already the fastest table, and a hash table would be slower.
