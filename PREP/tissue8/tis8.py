@@ -1,4 +1,5 @@
 # tis8.py: the reviewer's tis.py at 1ece60fc (tis.py beside this file, unchanged) set up for tissue_t8.c, with its options test_age and
+# Build: -ffp-contract=off (every multiplication and addition rounded separately), as the reviewer's tis.py at cbdd0561; runs before this change are in out_contract_on/.
 # zero_test (see tissue_t8.c). Below: the reviewer's text.
 # Set-up of the reviewer's tissue.c as a module (make(kw) gives one tissue). From drive.py: one tissue, seed 73129, 16,384 bytes, the two windows of stage A, the readings of the helper's tool.
 # usage: drive.py <label> rule=first|coincidence|fixed [floor=..] [astar=..] [by_use=1] [gain=1] [eta_g=..] [nbytes=..]
@@ -15,7 +16,7 @@ def make(kw):
     so = os.path.join(HERE, 'tissue_t8.so')
     if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(os.path.join(HERE, 'tissue_t8.c')):
         tmp = so + f'.{os.getpid()}'
-        subprocess.run(['gcc', '-O3', '-march=native', '-shared', '-fPIC', os.path.join(HERE, 'tissue_t8.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
+        subprocess.run(['gcc', '-O3', '-march=native', '-ffp-contract=off', '-shared', '-fPIC', os.path.join(HERE, 'tissue_t8.c'), '-o', tmp, '-lm'], check=True); os.replace(tmp, so)
     L = ctypes.CDLL(so)
     N = ts.N; B = ts.birth(SEED)
     maxd = max(len(m) for m in B['members'].values()) + 2
