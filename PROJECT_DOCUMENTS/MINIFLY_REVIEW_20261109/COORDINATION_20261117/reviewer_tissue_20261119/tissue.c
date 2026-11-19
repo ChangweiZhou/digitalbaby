@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <xmmintrin.h>
+#include <pmmintrin.h>
 
 #define NCELL 2048
 #define NIN 256
@@ -34,7 +36,8 @@ typedef struct {
     int rule; double floor_x, astar; int by_use;
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
     double rho; double *ibar; double gmax;
-    double *F; double tau_f, eta_s; double no_make, lines_learn;   /* no_make 1: no connection is made; lines_learn 1: under TIMING the connections from input lines change too (F has NZ entries) */                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
+    double *F; double tau_f, eta_s; double norm, we, wi;        /* norm 1: after its strengths change, a cell rescales them so that those from excitatory senders sum to we and those from inhibitory senders to wi */
+    double no_make, lines_learn;   /* no_make 1: no connection is made; lines_learn 1: under TIMING the connections from input lines change too (F has NZ entries) */                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
          /* the largest gain a cell can take */
     /* birth (given) */
     const int8_t *kind; const double *sig;          /* sig has NZ entries */
@@ -116,6 +119,12 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
                     double w = t->c_w[b + d] + (sg > 0.0 ? fe : fi) * conn_trace(t, b + d, s, k);
                     t->c_w[b + d] = w < 0.0 ? 0.0 : (w > 1.0 ? 1.0 : w); }
             }
+            if (t->norm != 0.0) {
+                double se = 0.0, si = 0.0;
+                for (int d = 0; d < dg; d++) { if (t->sig[t->c_src[b + d]] > 0.0) se += t->c_w[b + d]; else si += t->c_w[b + d]; }
+                const double fe = se > 0.0 ? t->we / se : 1.0, fi = si > 0.0 ? t->wi / si : 1.0;
+                for (int d = 0; d < dg; d++) { double w = t->c_w[b + d] * (t->sig[t->c_src[b + d]] > 0.0 ? fe : fi); t->c_w[b + d] = w > 1.0 ? 1.0 : w; }
+            }
             /* withdrawal by use: only when the cell was active */
             if (t->by_use && xp != 0.0) {
                 double mx = 0.0;
@@ -178,6 +187,8 @@ void tis_init(Tis *t) { for (int d = 0; d <= 4096; d++) t->qpow[d] = pow(1.0 - 1
 /* Reads bytes[b0..b1); records the outputs at the reading step of the bytes in [r0, r1) into rec (float32, (r1-r0) x NCELL). */
 void tis_run(Tis *t, const uint8_t *bytes, int64_t b0, int64_t b1, int64_t r0, int64_t r1, float *rec) {
     double x[NCELL];
+    /* numbers below the smallest normal number are taken as zero: they cost about a hundred times a normal operation and carry nothing */
+    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON); _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
     for (int64_t b = b0; b < b1; b++) {
         for (int ph = 0; ph < S; ph++) step(t, bytes[b], x);
         if (b >= r0 && b < r1) { float *o = rec + (b - r0) * NCELL; for (int i = 0; i < NCELL; i++) o[i] = (float)x[i]; }
