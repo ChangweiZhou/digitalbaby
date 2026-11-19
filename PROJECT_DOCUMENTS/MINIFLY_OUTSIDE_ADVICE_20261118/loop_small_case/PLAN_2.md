@@ -53,4 +53,8 @@ A run of 400,000 lines is 3.6 million bytes, about two minutes of one core. The 
 
 ## 7. The setting chosen on the development seed
 
-(Entered after the development runs and before the reported seeds.)
+Entered on 19 November after the development runs and before any reported seed was run on this text.
+
+Development seed 1, arm `relay-learned`, 256 cells, 400,000 lines, the grid of section 4 (12 runs): the best setting is **eta1 = 1/4, eta2 = 1/16, lambda = 1e-5**, with the whole answer right on 88.1% of sums shown and 84.8% of sums never shown (mean of the last three readings; the eight readings on sums never shown: 71, 80, 81, 82, 83, 86, 82, 86; by place: hundreds 99, tens 87, units 100). On development seed 2 the same setting gives 82.5% and 84.2%. The readings no longer swing, so no remedy is added. This setting is used for every arm.
+
+**One arm is added before the reported seeds, in fairness to the comparator.** At the relay's setting the comparator gives 72.5% (seed 1) and 56.1% (seed 2) on sums never shown, which may only mean that the setting was chosen for the relay. The same grid was therefore run for the comparator on seed 1 (12 runs); its own best setting is eta1 = 1, eta2 = 1/16, lambda = 0 (79.3% shown, 77.9% never shown). The report gives the comparator at both settings, and Q1 and the rule of section 5 are read against the better of the two.

@@ -218,6 +218,8 @@ def run(kw):
                never_shown_by_place=places, text=TEXT,
                strengths=(0 if arm == "none" else sys_.W1.size + sys_.b1.size + (sys_.R.size if arm in ("relay-fixed", "relay-learned") else 0)) + sys_.W2.size + sys_.b2.size,
                cpu_seconds=round(time.process_time() - t0, 1))
+    if len(curve) >= 3:                                              # the reading of PLAN_2.md: the mean of the last three readings
+        out["last3_shown"] = float(np.mean([c["shown"] for c in curve[-3:]])); out["last3_never_shown"] = float(np.mean([c["never_shown"] for c in curve[-3:]]))
     if arm != "none" and TEXT == "d1":
         out["order_of_digits"] = order_of_digits(sys_.W1)
     if arm != "none":
@@ -257,7 +259,8 @@ def table(rows, title):
     print(title)
     print("   arm, rule                      | whole answer right, sums shown: each seed; median | sums never shown: each seed; median | never shown, with the end mark, median | cells ordered (first; second answer byte), each seed")
     for (arm, rule), rs in rows.items():
-        sh = [100 * r["shown"] for r in rs]; nv = [100 * r["never_shown"] for r in rs]; ne = [100 * r["never_shown_with_end"] for r in rs]
+        d2 = rs[0].get("text") == "d2"                               # text d2: each figure is the mean of the run's last three readings
+        sh = [100 * r["last3_shown" if d2 else "shown"] for r in rs]; nv = [100 * r["last3_never_shown" if d2 else "never_shown"] for r in rs]; ne = [100 * r["never_shown_with_end"] for r in rs]
         od = "; ".join("/".join(str(v["cells_ordered_at_both"]) for v in r["order_of_digits"].values()) for r in rs) if "order_of_digits" in rs[0] else "-"
         if rs[0].get("never_shown_by_place"):
             od = "by place, median: " + " ".join(f"{100 * np.median([r['never_shown_by_place'][k] for r in rs]):.0f}" for k in range(4))
@@ -291,6 +294,8 @@ def main():
                     text=kw.get("text", "d1"), every=kw.get("every", "5000"))
         tag = kw.get("tag", "rep")
         arms = [(a, "D") for a in ARMS] + [("relay-learned", "Q")]
+        if "only" in kw:
+            arms = [(a, r) for a, r in arms if a == kw["only"] and r == kw.get("rule", "D")]
         jobs = [dict(base, label=f"{tag}_{a}_{r}_{s}", arm=a, rule=r, seed=str(s)) for a, r in arms for s in SEEDS]
         with get_context("fork").Pool(4) as pool:
             res = pool.map(run, jobs)
