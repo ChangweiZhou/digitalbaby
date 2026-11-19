@@ -312,3 +312,49 @@ Every one of the nine entries and lags 0, 1, 2 near the output lines is above le
 level (b) fails only for the present byte near the output lines in the 1/8 group, in some lives of seeds 73129 and 93683. Compared with
 L8-256 (section 8), the present byte near the output lines on 93683 rises from 0.106-0.148 to 0.128-0.190 (1/8 group) and from
 0.110-0.147 to 0.156-0.196 (enlarged), and no life falls below 0.1103.
+
+## 10. LF-256: the long-axon cells with time constant 2 (task of 11:10 UTC)
+
+`my_tissue.prepare(..., long=True, longfast=True)`: τ drawn as in N256, then set to 2 for the long-axon cells; nothing else changes
+(starting connections 1/8, made 1/64, `a_make` 1/16384).
+
+**Part 1, seed 73129.** Outputs equal to the reviewer's program (`tis.py` with `longfast=1`, branch head of 11:10 UTC) to the last float32
+bit at every cell over bytes 12,288 to 16,383; 7,302 connections in both (916 made, 9,486 withdrawn). Near the output lines (enlarged)
+0.201, 0.166, 0.124, 0.087, 0.072 at lags 0 to 4, the figures of `far/LF_256_s73129.json`; with the 1/8 lists 0.227, 0.163, 0.105.
+
+**Part 2: six lives a seed** (`LFagg.py`, `out/LF_part2.json`, `out/LF_part2.txt`; reference life and five with one cell's potential
+changed by 1e-12 before step 0). Smallest to largest S; the number of lives below a level is given where it is not zero.
+
+| Seed | d = 1: lags 0, 1, 2 | d = 2 | d = 4 | Near, enlarged: lags 0, 1, 2 | Near, 1/8 lists: lags 0, 1, 2 |
+|---|---|---|---|---|---|
+| 73129 | 0.935-0.948, 0.284-0.311, 0.140-0.153 | 0.440-0.513, 0.201-0.232, 0.136-0.149 | 0.184-0.217, 0.139-0.182, 0.115-0.135 | 0.139-0.209, 0.121-0.173, 0.098-0.124 | 0.136-0.227, 0.111-0.163, 0.087-0.119 (below a 0, below b 1) |
+| 93683 | 0.820-0.838, 0.256-0.295, 0.128-0.148 | 0.373-0.456, 0.230-0.300, 0.151-0.200 | 0.204-0.234, 0.170-0.215, 0.136-0.165 | 0.175-0.236, 0.151-0.205, 0.121-0.167 | 0.181-0.228, 0.154-0.202, 0.118-0.162 |
+| 116089 | 0.938-0.956, 0.301-0.319, 0.159-0.168 | 0.519-0.617, 0.237-0.298, 0.139-0.162 | 0.234-0.298, 0.153-0.191, 0.099-0.120 | 0.223-0.283, 0.149-0.185, 0.089-0.109 | 0.203-0.234, 0.144-0.170, 0.084-0.107 (below a 0, below b 2) |
+| 146821 | 0.890-0.913, 0.290-0.310, 0.143-0.155 | 0.395-0.518, 0.222-0.271, 0.118-0.162 | 0.153-0.183, 0.100-0.145 (below a 0, below b 1), 0.086-0.101 (below a 0, below b 1) | 0.111-0.157 (below a 0, below b 3), 0.093-0.112 (below a 0, below b 2), 0.079-0.093 (below a 0, below b 5) | 0.129-0.155 (below a 0, below b 3), 0.103-0.118 (below a 0, below b 2), 0.079-0.088 (below a 0, below b 6) |
+| 112290 | 0.911-0.930, 0.360-0.379, 0.185-0.211 | 0.436-0.491, 0.271-0.307, 0.145-0.185 | 0.160-0.191, 0.140-0.164, 0.096-0.133 | 0.134-0.162 (below a 0, below b 2), 0.120-0.160, 0.113-0.138 | 0.135-0.165 (below a 0, below b 1), 0.126-0.161, 0.111-0.147 |
+| 224268 | 0.872-0.935, 0.256-0.283, 0.112-0.131 | 0.432-0.502, 0.213-0.261, 0.118-0.145 | 0.159-0.196, 0.135-0.142, 0.093-0.100 | 0.126-0.161 (below a 0, below b 2), 0.102-0.127 (below a 0, below b 3), 0.074-0.094 (below a 0, below b 4) | 0.110-0.168 (below a 2, below b 2), 0.101-0.133 (below a 0, below b 2), 0.072-0.090 (below a 2, below b 5) |
+
+No entry is below level (a) in any life on any of the six seeds, except near the output lines with the 1/8 lists on seed 224268: the
+present byte in 2 lives of 6 (smallest 0.110) and the byte two back in 2 of 6. With the enlarged group every entry is above (a) in every
+life on all six seeds. Level (b) fails in several lives near the output lines on 146821 and 224268, and in single lives elsewhere.
+Against L8-256 (sections 8 and 9), the present byte near the output lines on the weak seeds rises: 112290 from 0.071 (one life, 16,384
+bytes) to 0.134-0.162 over six lives, 93683 from 0.110-0.147 to 0.175-0.236.
+
+**Part 3: seed 112290, L8-256 against LF-256** (`diag3.py`, `out/diag3_L8_112290.json`, `out/diag3_LF_112290.json`; the reference
+life, window ending at 16,384).
+
+| | L8-256 | LF-256 |
+|---|---|---|
+| Near cells (enlarged, 553) by distance from the input lines (0 = not reached) | 0: 12, 2: 2, 3: 16, 4: 71, 5: 155, 6: 156, 7: 94, 8: 36, 9: 10, 10: 1 | 2: 3, 3: 27, 4: 125, 5: 210, 6: 137, 7: 44, 8: 7 |
+| ... within 4 connections | 89 | 155 |
+| Long-axon cells (147) by distance | 0: 1, 1: 6, 2: 25, 3: 33, 4: 31, 5: 33, 6: 13, 7: 3, 8: 1, 9: 1 | 1: 6, 2: 23, 3: 40, 4: 41, 5: 28, 6: 6, 7: 2, 8: 1 |
+| Share of the drivers' connections from long-axon cells | 32.1% | 41.0% |
+| Share of all near cells' connections from long-axon cells | 25.3% | 32.8% |
+| S at lags 0 / 1 from the long cells near the output lines (79) | 0.120 / 0.171 | 0.151 / 0.096 |
+| ... from the other near cells (474) | 0.089 / 0.115 | 0.139 / 0.140 |
+| ... from all long cells (147) | 0.296 / 0.238 | 0.212 / 0.094 |
+| ... from all other cells (the tool's sample of 128 of 1,837) | 0.325 / 0.267 | 0.306 / 0.196 |
+
+With the long-axon cells fast, the cells near the output lines lie about one connection closer to the input lines, a larger share of
+their connections comes from long-axon cells, and the present byte rises among both the long cells and the other cells near the output
+lines; the long cells themselves carry the byte one back much less (0.238 to 0.094 over all long cells).
