@@ -42,4 +42,17 @@ previous byte explain (raw outputs), and the divergence of two copies of one tis
    at 3/4; 0.978 / 0.825 / 0.209 at 7/8; 0.982 / 0.811 / 0.243 at rho = 1 (level 0.1103). Lag 1 at rho = 1: 0.071 / 0.063 / 0.048
    against the present byte's own 0.070; the level 0.090 is not reached.
 
-Results are in `out/`; the batches run are `batch1.txt` to `batch5.txt`.
+4. Ratio control with no bound on the gain is itself unstable: at rho = 1 two copies differ by 1.0 after 512 bytes, and the mean output
+   rises again beyond 5 connections (cells that cannot reach the ratio take the largest gain). rho = 5/4 and 3/2: every gain at the
+   bound 4096, S(1,0) 0.25 to 0.36. With the gain bounded (`gmax=4` or `gmax=2`) the divergence is 0 from 4 bytes on, the present byte
+   explains 0.93 of the variance at 4 connections and 0.63 at 6, and the PREVIOUS byte explains 0.07 at 4, 0.30 at 6, 0.47 to 0.49 at
+   7 and 8 connections (`diag/fixed_ratio_r100_m4.json`): activity takes several steps a connection, so cells far from the input lines
+   still carry the byte before. The mean output there is small (0.0015 at 4 connections, 0.00007 at 8).
+5. The two rules of strength change of stage A under the ratio control (rho = 1, no bound): S(1,0) 0.22 and 0.21, S(2,0) at chance,
+   29 and 35 connections a cell. They destroy what the unchanging tissue carries.
+
+Further options: `gmax=..` (bound of the gain); `rule=timing eta_s=.. tau_f=..`: a connection from an excitatory cell grows when the
+sender was active before the receiver and falls when it was active after it, dw = eta_s (F_j x_i(k) − F_i x_j(k−1)), F a trace of a
+cell's output with time constant tau_f steps (both ends of the connection, nothing else).
+
+Results are in `out/`; the batches run are `batch1.txt` to `batch8.txt`.

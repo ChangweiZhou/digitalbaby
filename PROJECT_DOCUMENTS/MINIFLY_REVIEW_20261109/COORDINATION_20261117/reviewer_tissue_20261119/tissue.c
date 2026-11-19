@@ -27,13 +27,15 @@
 #define GIVE_UP (1.0 / 128.0)
 #define START_W 0.125
 enum { ENC = 0, INNER = 1, OUTE = 2, FBK = 3 };
-enum { FIRST = 0, COINC = 1, FIXED = 2 };
+enum { FIRST = 0, COINC = 1, FIXED = 2, TIMING = 3 };
 
 typedef struct {
     int maxd;                       /* capacity of a cell's list of connections */
     int rule; double floor_x, astar; int by_use;
     int two_sided; double eta_g; double *gain;      /* 1: a gain on the cell's arrival that follows its activity toward a*; 2: toward rho x the mean activity of its sources */
-    double rho; double *ibar;
+    double rho; double *ibar; double gmax;
+    double *F; double tau_f, eta_s;                 /* rule TIMING: a fast trace of every cell's output, its time constant, the rate */
+         /* the largest gain a cell can take */
     /* birth (given) */
     const int8_t *kind; const double *sig;          /* sig has NZ entries */
     const int32_t *nmem; const int16_t *mem;        /* members of each cell's neighbourhood: NCELL x maxd */
@@ -91,7 +93,15 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         /* strength changes, from the traces before the step and x(k-1) */
         if (t->rule != FIXED) {
             const int inner_coinc = (t->rule == COINC && t->kind[i] == INNER);
-            if (!inner_coinc) {
+            if (t->rule == TIMING) {
+                /* a connection from an excitatory cell grows when the sender was active before the receiver and falls when it
+                   was active after it: dw = eta_s ( F_j x_i(k) - F_i x_j(k-1) ), F the fast trace of a cell's output before the step */
+                const double Fi = t->F[i];
+                if (xi != 0.0 || Fi != 0.0)
+                    for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; if (s >= NCELL || t->sig[s] < 0.0) continue;
+                        double w = t->c_w[b + d] + t->eta_s * (t->F[s] * xi - Fi * z[s]);
+                        t->c_w[b + d] = w < 0.0 ? 0.0 : (w > 1.0 ? 1.0 : w); }
+            } else if (!inner_coinc) {
                 if (xp != 0.0) {
                     const double f = ETA * m * xp;
                     for (int d = 0; d < dg; d++) { int s = t->c_src[b + d]; if (s >= NCELL) continue;
@@ -125,18 +135,19 @@ static int step(Tis *t, int byte, double *x /* NCELL, out */) {
         if (t->two_sided == 2) {
             t->ibar[i] = (1.0 - 1.0 / PS) * t->ibar[i] + (1.0 / PS) * (dg ? zs / dg : 0.0);
             const double tg = t->rho * t->ibar[i], ab = t->abar[i];
-            double g = t->gain[i] * (1.0 + t->eta_g * (tg - ab) / (tg + ab + 1e-30)); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > 4096.0 ? 4096.0 : g);
-        } else if (t->two_sided) { double g = t->gain[i] * (1.0 + t->eta_g * (a - xi) / a); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > 4096.0 ? 4096.0 : g); }
+            double g = t->gain[i] * (1.0 + t->eta_g * (tg - ab) / (tg + ab + 1e-30)); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > t->gmax ? t->gmax : g);
+        } else if (t->two_sided) { double g = t->gain[i] * (1.0 + t->eta_g * (a - xi) / a); t->gain[i] = g < 1.0 / 64 ? 1.0 / 64 : (g > t->gmax ? t->gmax : g); }
         t->v[i] = v; x[i] = xi; if (xi != 0.0) nact++;
     }
     /* traces of the sending cells: z of this step is x(k-1) */
     for (int j = 0; j < NCELL; j++) t->E[j] = (1.0 - 1.0 / TAU) * t->E[j] + (1.0 / TAU) * z[j];
+    if (t->rule == TIMING) for (int j = 0; j < NCELL; j++) t->F[j] += (z[j] - t->F[j]) / t->tau_f;
     /* giving up, then making */
     if (t->rule != FIXED) {
         for (int i = 0; i < NCELL; i++) {
             if (t->kind[i] == FBK) continue;
             const int64_t b = (int64_t)i * md;
-            if (t->xp[i] != 0.0 || (k % PS) == 0) {                /* a strength can only have fallen at an active cell; ages are looked at once a period */
+            if (t->xp[i] != 0.0 || (k % PS) == 0 || t->rule == TIMING) {                /* a strength can only have fallen at an active cell; ages are looked at once a period */
                 for (int d = t->deg[i] - 1; d >= 0; d--) { int s = t->c_src[b + d]; if (s >= NCELL) continue;
                     if (k - t->c_k0[b + d] < PS) continue;
                     if (t->c_w[b + d] < GIVE_UP) { remove_conn(t, i, d); t->given++; }
