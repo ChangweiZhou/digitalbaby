@@ -38,3 +38,21 @@ Cell: the last window of 4,096 bytes for the best setting of the family (the set
 | reference | ref_2 | 11.9 | 12.5 | 12.0 |
 | reference | ref_3 | 25.6 | 25.7 | 26.0 |
 
+## 262,144 bytes
+
+| input | rule | seed 73129 | seed 93683 | seed 116089 |
+|---|---|---|---|---|
+| present byte (one-hot) | A | 8.5 (eps=0 kappa=1/8); f 40960, r1 - | 9.1 (eps=0 kappa=1/8); f 28672, r1 - | 9.2 (eps=0 kappa=1/8); f 69632, r1 - |
+| present byte (one-hot) | B | 8.3 (eps=0.0625); f 16384, r1 - | 8.7 (eps=0.0625); f 4096, r1 32768 | 8.9 (eps=0.0625); f 8192, r1 32768 |
+| last three bytes | A | 12.4 (eps=0 kappa=1/8); f 8192, r1 8192 | 13.5 (eps=0.0625 kappa=1/8); f 8192, r1 8192 | 11.8 (eps=0.0625 kappa=1/8); f 4096, r1 8192 |
+| last three bytes | B | 17.7 (eps=0.0625); f 8192, r1 12288 | 18.5 (eps=0.0625); f 4096, r1 16384 | 20.4 (eps=0.0625); f 8192, r1 28672 |
+| U cells near own driver | A | 5.5 (eps=0 kappa=1/46); f -, r1 - | 5.5 (eps=0 kappa=1/46); f -, r1 - | 6.5 (eps=0 kappa=1/46); f 8192, r1 - |
+| U cells near own driver | B | 2.2 (eps=0.0625); f -, r1 - | 2.1 (eps=0.0625); f -, r1 - | 4.1 (eps=0.0625); f -, r1 - |
+| M cells near own driver | A | 5.1 (eps=0 kappa=1/46); f -, r1 - | 5.9 (eps=0 kappa=1/46); f 32768, r1 - | 4.4 (eps=0 kappa=1/46); f -, r1 - |
+| M cells near own driver | B | 3.1 (eps=0.0625); f -, r1 - | 3.8 (eps=0.0625); f -, r1 - | 4.4 (eps=0.0625); f -, r1 - |
+| reference | most frequent byte of the window | 6.2 | 6.2 | 6.2 |
+| reference | end mark (byte 10) | 6.2 | 6.2 | 6.2 |
+| reference | ref_1 | 10.5 | 10.7 | 10.9 |
+| reference | ref_2 | 13.5 | 12.9 | 13.3 |
+| reference | ref_3 | 27.4 | 27.0 | 28.2 |
+

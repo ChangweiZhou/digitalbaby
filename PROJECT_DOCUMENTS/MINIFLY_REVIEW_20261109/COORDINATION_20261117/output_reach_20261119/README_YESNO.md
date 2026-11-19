@@ -49,4 +49,47 @@ The output end is simulated alone, online, in one pass through the stream in ord
 - "f" and "r1" in the table are the end of the first window whose share reached the end mark's share and ref_1 of that window.
 
 ## Results
-See `TABLE_YESNO.md` and the section added below after the 262,144-byte runs.
+
+Share right in the last window of 4,096 bytes, %, range over the three seeds, for the best setting of each rule family on each seed. Every window, setting and seed is in `TABLE_YESNO.md` and `yesno/*.json`.
+
+| Input | R1, R2, R3 (65,536) | A (65,536) | B, eps 1/16 (65,536) | D, supervised (65,536) | A (262,144) | B, eps 1/16 (262,144) |
+|---|---|---|---|---|---|---|
+| One-hot present byte | 0.5–0.7 | 7.1–7.3 | 8.9–9.2 | 8.4–10.1 | 8.5–9.2 | 8.3–8.9 |
+| Two one-hots | 0.4–1.0 | 8.0–8.7 | 6.7–10.9 | 11.6–12.6 | not run | not run |
+| Three one-hots | not run | 12.1–13.7 | 13.8–16.2 | not run | 11.8–13.5 | 17.7–20.4 |
+| U cells near own driver | 0.3–0.9 | 5.2–6.5 | 1.6–4.0 | 4.5–6.6 | 5.5–6.5 | 2.1–4.1 |
+| M cells near own driver | 0.3–0.9 | 4.3–5.8 | 2.8–5.6 | 4.9–5.2 | 4.4–5.9 | 3.1–4.4 |
+| End mark's share (the most frequent byte) | 6.3 | | | | 6.2 | |
+| ref_1 / ref_2 / ref_3 | 10.0–10.8 / 11.9–12.5 / 25.6–26.0 | | | | 10.5–10.9 / 12.9–13.5 / 27.0–28.2 | |
+
+**Offline check of the inputs** (`reach_nbhd.py`, 65,536 bytes, fitted on the first three quarters, scored on the last quarter).
+
+| Tissue | Own neighbourhood (8.3–12.3 overall) | All of set (a) (12.3–15.3 overall) |
+|---|---|---|
+| U | 8.8–10.3 | 12.8–14.7 |
+| M | 8.3–12.3 | 12.3–15.3 |
+
+The reference on the same positions: ref_1 10.6, ref_2 12.1–12.3, end mark 6.2–6.3. The all-of-set-(a) figures agree with `reach.py`'s 65,536-byte runs.
+
+**What the runs measured.**
+1. **R1, R2 and R3 as specified** (+eta after yes, −eta after no) stay at 0.3–1.0% for every input, eta, eps and seed through 65,536 bytes. That is below the end mark's share. They were not extended, because nothing rose.
+   - With equal steps, an emitter's expected change in a context is eta(2p − 1), where p is the share of that context after which its byte comes. It gains only where p > 1/2.
+2. **With a smaller step after no (A, kappa 1/8) or an own baseline (B)**, yes/no alone takes the one-hot present byte to 7–9%. That is above the end mark's share (passed after 4,096 to 69,632 bytes) and below ref_1 in the last window.
+   - Some windows of B reach ref_1, after 32,768 bytes on two seeds.
+   - On three one-hots, B reaches 17.7–20.4% by 262,144 bytes and is still rising. That is above ref_2 (passed after 12,288 to 28,672 bytes) and below ref_3.
+3. **On the cells near each driver, no rule from yes/no reaches the present-byte level** (ref_1) at 65,536 or 262,144 bytes. Only one last window reaches the end mark's share: A, kappa 1/46, U, seed 116089, 6.5 against 6.2. The supervised delta rule reaches only 4.5–6.6.
+   - Yet a ridge reader fitted offline on the same per-driver inputs reaches 8.3–12.3%, around ref_1.
+   - So the information is in each driver's neighbourhood. The one-pass rules on these inputs do not extract it in this many bytes; that includes the supervised one, with running standardisation.
+4. **Settings that never learn.**
+   - B with eps 0 never changes: the baseline starts at 0, so a no gives a step of 0.
+   - A with kappa 1/46 gives the same windows on oh1, oh2 and oh3 of a seed. That is consistent with the emitter settling on one byte early; I have not checked it.
+
+**Not measured.**
+- Rules with exploration other than a fixed eps.
+- Standardisation with other rates.
+- Inputs beyond the driver's own neighbourhood for the online rules.
+- Feedback reaching the drivers through feedback cells, as the definition has it. Here the yes/no reaches the emitting unit directly.
+
+**Process notes.**
+- The first `yesno.py` batch was stopped once to change the step of D (see above); no result of the stopped runs is kept.
+- One wait command was moved to the background past two minutes and was stopped; it only waited.
