@@ -9,6 +9,8 @@ R = [json.load(open(p)) for p in glob.glob(os.path.join(HERE, 'stand', PRE + '_*
 w = lambda o: list(o['windows'].values())[0]
 for draw in ('rev', 'own'):
     rs = [o for o in R if (o['args'].get('draw') == 'own') == (draw == 'own')]
+    if not rs:
+        continue
     print(f"== {'reviewer' if draw == 'rev' else 'own'} draw, {len(rs)} seeds, 16,384 bytes, window 12288-16383 (level A: lag 0 > 0.1103, lag L > c0(L)+0.02; B: lag L > C<L(L)+0.02)")
     items = [(f'S({d},{L})', lambda o, d=d, L=L: w(o)['nine'][f'{d},{L}'], str(L)) for L in (0, 1, 2) for d in (1, 2, 4)] + \
             [(f'near lag {L}', lambda o, L=L: w(o)['near_tool'][str(L)], str(L)) for L in (0, 1, 2)] + \
