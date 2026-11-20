@@ -119,3 +119,15 @@ Stream loss on the last tenth, nats (named right, %). Tables, Kneser-Ney, k = 0.
 M1 to M6 and R1 are scored on the whole-stream runs, as addition 1 said; on the runs with the development part as first planned, M1 would hold (1.959) and M2, M3, M4 and R1 would fail (1.926, 1.942, not falling, 1.763). Of the 25 predictions scored here 21 held and 4 failed. Where I was wrong: I gave the small GPT too little for 8,000 further steps; I assumed a full window is always worth more than half of one, which is false for a network after 2,000 steps; and I expected a small constant rate to protect the first text, which it did not. The plan's own fault (the development part) is described in addition 1 and in the report's section 5.
 
 **Departures from the plan.** `small10k` was stopped and started again once, to add the look at each place of a block. One layer on 32 bytes was run with 1,024 cells and the whole stream only; 4,096 cells and the GRU of 512 were not run. The large GPT took far longer than the hour I gave it (1.4 s a step alone, 4 to 5 s when other runs shared the cores), and the report was written before it ended.
+
+## Outcome, second entry (20 November, 17:30 UTC): the large GPT
+
+`large` ended its 4,000 steps at 17:17 UTC (`res/gpt_large.json`). nanoGPT's estimate at the last step, 200 batches: 1.471 on the last tenth, 1.184 on the stream. Stream loss, exact on every eighth byte of the last tenth (13,943 bytes): 1.454 nats, 56.8% right; with windows moved on by half a block, on every byte: 1.456, 57.1%. The best table on the same every eighth byte: 1.516 (1.517 on all). CPU for learning 24,918 s, wall 9,208 s, against the hour I planned.
+
+| | Outcome | |
+|---|---|---|
+| G4 | nanoGPT's estimate 1.471, below my range of 1.50 to 1.62 | **failed** |
+| G4b | 1.471 is below 1.50 | held (I gave it 0.20) |
+| G5 | 1.454 against the best table's 1.517 | held (by 0.062) |
+
+With these the first plan's 20 predictions stand at 16 held and 4 failed, and all 28 (the plan and its two additions) at 23 held and 5 failed. Where I was wrong: I took a quarter of nanoGPT's batch to cost about 0.05 to 0.15 nats against its full run; on this one seed it cost nothing that the estimate can show. I was also wrong about the cost: the run took two and a half times the wall time I gave it, because I let other runs share its cores. The earlier outcome entry stands as written.
