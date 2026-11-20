@@ -44,6 +44,7 @@ Never-shown additions (`cells2.py`'s text and split), the system writing its own
 | a kind's trust counts its children's (C, `PLAN_6.md`) | 90.9, 92.9, 91.5, 87.4, 91.5 | 91.5 | 90.8 | 98.0, 90.8, 100 | 1,236,252 | 64 |
 | with cells keyed on two classes (C2, `PLAN_6.md`) | 92.8, 96.7, 95.1, 89.7, 93.1 | **93.1** | 92.8 | 98.2, 92.8, 100 | 1,238,148 | 67 |
 | **with kinds made while reading (M, `PLAN_10.md`)** | 98.5, 98.0, 96.8, 97.9, 98.5 | **98.0** | 98.2 | 98.2, 99.4, 100 | 1,440,880 | 99 |
+| control: M with its made kinds drawn by chance | 92.5, 98.1, 95.7, 90.3, 93.9 | 93.9 | 94.0 | 98.2, 94.2, 100 | 1,440,021 | 96 |
 | as other lines report: look-ahead; relay | | 91.4; 66 | | | 3.3 million; 256 cells in between | |
 
 *A repeat on seeds 2001 to 2005* (`PLAN_9.md`; used by no line for choosing; the same session and program): no classes 78.1; the frozen setting 88.4, 90.4, 93.6, 93.5, 85.2, median **90.4**; C2 93.7, 91.1, 96.5, 94.5, 92.9, median **93.7**; M 98.4, 97.3, 98.0, 99.1, 97.2, median **98.0**.
@@ -85,6 +86,7 @@ The life of `nano/table/life.py`, scored as `nano/aheadprose` does: the test tex
 | no classes | 1.4411 | 1.3996 | 1.2700 | 691,801 | 8 |
 | **classes, the frozen setting** | **1.4263** | **1.3856** | **1.2594** | 3,208,291 | 219 |
 | with cells keyed on two classes (C2) | 1.4242 | 1.3663 | 1.2446 | 3,280,465 | 258 |
+| with kinds made while reading (M) | 1.4253 | 1.3673 | 1.2459 | 2,994,942 | 245 |
 
 The frozen setting is below the base by 0.0103, 0.0157, 0.0149 on the first three books and by 0.0148, 0.0140, 0.0107 on the second three; classes by chance by 0.0020, 0.0025, 0.0028. It is about a third of what the word cells gain, with nothing about words laid down. On the test text's own last tenth at the end of the life it is 0.0042 below the base.
 
@@ -123,6 +125,8 @@ Results are in the tables above (rows C and C2). Two-digit sums: 93.1 at the med
 *What it made.* On two-digit sums: delays (2, 3, 4, 6, 7), (3, 4, 6, 7, 8), (1, 3, 4, 6, 7) on four or five seeds of five. Where the tens digit is named these are the whole pair with, in turn, the '=' sign, the end of the line before, and the hundreds digit: a byte that says where in the line the cell is. On prose: runs with a gap, such as delays (1, 3) and (1, 2, 4).
 
 *What it did* (rows M in the tables of sections 3 to 5). Two-digit never-shown sums 98.0% at the median of five seeds at 40,000 lines (lowest 96.8), 95.8% at 10,000 lines, 98.0% on five further seeds, and 99.3 and 98.7% at 400,000 lines. With only the class kinds speaking, the tens digit of never-shown sums is named on 100, 100, 100, 100 and 99.8%. The route is not the one I predicted (a pure carry class in a made kind: that pair is not among the kept ones). It is: the classes of the two tens digits by their sum modulo ten, found in a made kind, with the place and the two units digits as the rest of the key. Three-digit sums: 95.9 (the tens digit 100%; the hundreds digit 96.0, still short for the reason of section 5). Prose: the development material and the three books within 0.002 of C2 or better; **the test text at the end of the life 1.5685, worse than C2 (1.5550), the frozen setting (1.5264) and no classes (1.5306).**
+
+*The control.* With the same number of made kinds drawn by chance from the same candidates, the median is 93.9 (C2, with no made kinds: 93.1); the one seed that reaches 98 by chance is the one whose draw included the whole pair with the '=' sign. The worth measured on the system's own recent bytes is what finds the kinds that matter.
 
 *Its hypothesis* (`PLAN_10.md`): at least 96% on two-digit sums held; "units-digits classes pure in a made kind" failed; "no book more than 0.002 above C2" failed by 0.0002 nats on one book. Refuted as written, on that margin; what stands is said above.
 
