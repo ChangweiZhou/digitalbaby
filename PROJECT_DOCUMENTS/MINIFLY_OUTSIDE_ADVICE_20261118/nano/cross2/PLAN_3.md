@@ -18,3 +18,18 @@
 | C4 | this folder's cross=1 rerun is within 5 points of the sixth plan's 5.0% | 0.80 |
 
 **Cost.** About 10 CPU-minutes with cross=1 and about 15 with cross=2. **Not run.** The reported seeds (not asked for in this experiment); one delay line with two crossings; longer runs; the instrument.
+
+## Outcome (entered 20 November after the two runs)
+
+Development seed 1, 2,400,000 lines, mean of the last three readings (`res/hold_e3_c1_1.json`, `res/hold_e3_c2_1.json`; every reading in `report_e23.txt`):
+
+| | never-shown sums % | sums shown % | by place at the last reading (hundreds, tens, units) | bytes named right % | CPU s |
+|---|---|---|---|---|---|
+| cross=1 | 2.3 | 2.7 | 89, 30, 9 | 52.6 | 746 |
+| cross=2 | 8.0 | 8.7 | 97, 68, 16 | 57.0 | 999 |
+
+**The hypothesis is refuted as registered**: with two crossings 8.0% of never-shown sums, where 15% or less refutes.
+
+**Scores.** C1 failed (8.0, not 20). C2 held (5.7 points above cross=1). C3 held (tens digit 68% at the last reading; 55 to 73% over the run, against 28 to 42% with one crossing). C4 held (the rerun gives 2.3% where the sixth plan had 5.0%).
+
+**What it shows and does not** (my reading). Without a delay line the second crossing does something that one crossing does not: the tens digit of the answer goes from about a third to about two thirds, and the bytes named right from 52.6 to 57.0%, rising through the run (the cross=1 arm does not rise after 400,000 lines). The units digit stays near a guess (16% against 9%), and the whole answer stays low because it needs every digit. That the tens digit improves fits the reading of section 12.3 of `loop_small_case/REPORT.md` in part: something that needs a cell taught through another cell is now learned; the exact units digit, which a cell must take in as the second byte of a number, is not. One seed, one length; no reported seeds were asked for or run, and nothing is claimed beyond this seed. Not run: one delay line with two crossings; longer runs; the instrument on this text.

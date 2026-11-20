@@ -26,3 +26,11 @@ The numbers that learn are the same with 0, 1 or 2 crossings: for 256 cells, K =
 ## Plans and results
 
 Each experiment has `PLAN_<n>.md`, committed before its runs, with the outcome appended. Result files are in `res/`.
+
+| Experiment | Text | Result (development level) |
+|---|---|---|
+| E1, `PLAN_1.md` | m1, gap 8, 960,000 lines, five reported seeds | final: cross=1 94.4% at the median (lowest 83.2), cross=2 100.0% (lowest 95.7); lines to 90%: 420,000 against 300,000 at the median; hypothesis not refuted; A1 to A3 held, A4 and A5 failed |
+| E2, `PLAN_2.md` | g2, gap 8, two delay lines, 2,400,000 lines, development seed | never-shown sums at the gap of 8 letters: cross=1 7.5%, cross=2 9.5%; hypothesis refuted; the reported seeds not run (condition of 30% not met) |
+| E3, `PLAN_3.md` | d2, no delay line, 2,400,000 lines, development seed | never-shown sums: cross=1 2.3%, cross=2 8.0% (tens digit 30% against 68%); hypothesis refuted |
+
+Commands: `sh run.sh jobs_e1_all.txt`, `sh run.sh jobs_e23_dev.txt`, `python3 report.py e1`, `python3 report.py rows <label> ...`. Total cost of the experiments: about 2.5 CPU-hours.

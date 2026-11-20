@@ -22,3 +22,18 @@
 **Cost.** About 17 CPU-minutes with cross=1 and about 25 with cross=2; if the condition is met, ten more runs, about 3.5 CPU-hours, under one hour of wall time on four cores.
 
 **Not run.** More lines or more cells with two crossings (the twelfth plan of `loop_small_case` takes those with one crossing); other steps; gaps beyond 8; the first family's task byte and modulus.
+
+## Outcome (entered 20 November after the two runs)
+
+Development seed 1, 2,400,000 lines, mean of the last three readings (`res/hold_e2_c1_1.json`, `res/hold_e2_c2_1.json`; every reading in `report_e23.txt`):
+
+| | never-shown sums %, gap 0 / 4 / 8 | sums shown %, gap 0 / 4 / 8 | by place at the last reading (hundreds, tens, units) | bytes named right % | CPU s |
+|---|---|---|---|---|---|
+| cross=1 | 7.8 / 7.9 / 7.5 | 9.3 / 8.9 / 8.7 | 97, 76, 16 | 47.1 | 1,548 |
+| cross=2 | 9.8 / 10.3 / 9.5 | 12.3 / 12.3 / 11.9 | 97, 78, 18 | 47.7 | 2,024 |
+
+**The hypothesis is refuted as registered**: with two crossings 9.5% of never-shown sums at the gap of 8 letters, where 15% or less refutes. The condition for the reported seeds (30%) is not met, so **the five reported seeds were not run**.
+
+**Scores.** B1 failed (9.5, not 30). B2 failed (2.0 points above cross=1, not 3). B3 failed (units digit 18%, not 30). B4 held: the cross=1 rerun gives 7.5% at the gap of 8 letters, and its last reading (by place 97, 76, 16; 9.1% of never-shown sums) is the same as the eleventh plan's last reading in `loop_small_case`.
+
+**What it shows and does not** (my reading). The second crossing changes little on this text: about two points more at every gap, the tens digit at 78 against 76 and the units digit at 18 against 16, on one seed, where single readings of either arm move by two to four points from one reading to the next. So the coordinator's reading that credit over two connections is what this text was missing is not borne out in the form built here (both crossings at the last two bytes before the mismatch, 256 cells, this length). It is not excluded for crossings at earlier bytes: the units digit of the first number has to be taken in up to eleven bytes before the answer, and a path with a crossing at that distance is not among those `cross=2` follows; the instrument's X=2 and X=inf modes, which do follow them, were not run on this text. Not run: the reported seeds; more lines or cells with two crossings; other steps.
