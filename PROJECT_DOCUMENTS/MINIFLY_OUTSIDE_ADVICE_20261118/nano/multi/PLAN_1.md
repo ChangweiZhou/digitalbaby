@@ -121,3 +121,9 @@ Three of six failed, and the two that carried the hypothesis (P2, P4) failed by 
 - Development level; repeated by no one; no checker gate, seal or review is claimed.
 
 **Not run:** the numpy program at full length (300 lines on each arm against the kernel, and 60,000 lines of the edge arm against `cells2.py`); cell counts other than 256; neighbouring delays on the reported seeds; subtraction; pairs beside every line.
+
+## A note added later on 20 November: the cause of the development figure I could not reproduce
+
+The coordinating session has told this session the cause, and says it is entered as an erratum in `loop_small_case/PLAN_4.md` on `claude/friendly-darwin-8mmhfm`: after `PLAN_4.md`'s development runs the option `ans2` was added to `cells2.py`, and the second answering cell's birth values are drawn from the random stream that the rewiring uses, so every later run with rewiring tries another sequence of lines. My guess above (the rounding of the numpy program) was wrong. Checked here: a scratch copy of `multi.py` without that one draw gives 76.5 on seed 1 for 64 lines with rewiring, `PLAN_4.md`'s development figure; with it, 68.5. The reported seeds of the report were run after that edit, and `multi.py` keeps the draw, so the edge arm here is the report's.
+
+What it implies for this plan, and I agree with the coordinating session's remark on it: on one seed the edge arm moves by 8 points when nothing changes but the sequence of lines tried at rewiring. Differences of that size between single runs carry little. The pair arms are 12 to 32 points below at the median of five seeds and below on every seed, which is outside it; the differences between the two ways of drawing pairs (2 to 15 points) are partly inside it.
