@@ -9,7 +9,7 @@ for pre in sys.argv[1:]:
     for i, r0 in enumerate(O[0]["rows"]):
         rr = [o["rows"][i] for o in O]
         print(f"  {r0['phase']}:{r0['name']} {r0['lines']:>7}  add own {[round(r['add'], 1) for r in rr]} median {med([r['add'] for r in rr])}; h,t,u median {np.median([r['add_place'] for r in rr], 0).round(1).tolist()}; forced median {med([r['add_forced'] for r in rr])}"
-              f" | sub own median {med([r['sub'] for r in rr])}; h,t,u {np.median([r['sub_place'] for r in rr], 0).round(1).tolist()}")
+              f" | sub own median {med([r['sub'] for r in rr])}; h,t,u {np.median([r['sub_place'] for r in rr], 0).round(1).tolist()}" + (f"; sub, lines no shown pair writes ({[o['sub_clean_pairs'] for o in O]} pairs): {[round(r['sub_clean'], 1) for r in rr]} median {med([r['sub_clean'] for r in rr])}" if "sub_clean" in r0 else ""))
     for ph in sorted({r["phase"] for r in O[0]["rows"]}):
         v = [o[f"last3_add_phase{ph}"] for o in O]; w = [o[f"last3_sub_phase{ph}"] for o in O]; print(f"  phase {ph}: mean of the last three readings, add {[round(x, 1) for x in v]} median {med(v)}; sub {[round(x, 1) for x in w]} median {med(w)}")
     if len({r["phase"] for r in O[0]["rows"]}) > 1:
