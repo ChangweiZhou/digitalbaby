@@ -6,7 +6,7 @@ system has not read are lessons. At each byte of a lesson the relay system gives
 answering cells change their trusts and parts towards that answer and nothing else (no cell counts; the relay system is silent as a sender).
 A lesson byte is taken with a chance equal to the teacher's edge at its level of sureness: twice the share of stream bytes at that level on which the
 relay system's answer was the byte that came (its own record, kept from birth, each answer formed before the byte was learned), less one; nothing if below.
-    python3 dream2.py seed=1 teacher=relay|self|half|agree|none [composer=counting|relay] [composer_half=0|1] [edge=1] [lines=400000] [chunk=2000] [tag=...]
+    python3 dream2.py seed=1 teacher=relay|self|half|agree|none [composer=counting|relay] [sure=0|1] [composer_half=0|1] [edge=1] [lines=400000] [chunk=2000] [tag=...]
 composer_half=1 (addition 3): the composing answer hears only the speakers that have counted at least the middle count among the speakers (casc.py, half).
 composer=relay, teacher=agree: addition 3 (see the functions).  teacher=half (not run): the target is the answer of that better-counted half; a byte is taken with a chance of twice its largest share less one.
 teacher=self (the control): the target is the counting system's own answer (second cell's largest share) with the same chances.  edge=0: every lesson byte is taken."""
@@ -25,14 +25,17 @@ def counting_dream(cs, pasts, rng, maxlen=16, half=0):
         if done.all(): break
     cs.half = 0; return seq[:, 10:], L, done
 
-def mixed_dream(cs, r, pasts, rng, maxlen=16):
+def mixed_dream(cs, r, pasts, rng, maxlen=16, sure=0):
     """Addition 3: the relay system composes (each byte drawn in proportion to its branches cut off below at nothing); the first byte of the line, which
     the relay system is never taught, is drawn from the counting system's second cell."""
     n = len(pasts); seq = np.concatenate([np.asarray(pasts, np.int64), np.full((n, maxlen), C.END, np.int64)], 1); done = np.zeros(n, bool); L = np.zeros(n, np.int64); cs.give(None, None); cs.cell = 2
     for t in range(maxlen):
         if t == 0: p = cs.say(seq[:, 10 - 1 - np.arange(cs.D)])
+        elif sure: p = np.exp(B.message(B.branches(r, seq[:, 10 + t - 1 - np.arange(C.D)]), 0.01)[0].astype(np.float64))      # addition 4: the message's shares; a byte it is sure of (largest share above one half) is written as its answer
         else: p = np.maximum(B.branches(r, seq[:, 10 + t - 1 - np.arange(C.D)]), 0.0); z = p.sum(1); p = np.where(z[:, None] > 0, p / np.maximum(z, 1e-300)[:, None], 1.0 / p.shape[1])
-        v = np.minimum((np.cumsum(p, 1) < rng.random(n)[:, None]).sum(1), p.shape[1] - 1); seq[:, 10 + t] = np.where(done, C.END, v); new = (~done) & (v == C.END); L[new] = t + 1; done |= new
+        v = np.minimum((np.cumsum(p, 1) < rng.random(n)[:, None]).sum(1), p.shape[1] - 1)
+        if sure and t > 0: v = np.where(p.max(1) > 0.5, p.argmax(1), v)
+        v = v; seq[:, 10 + t] = np.where(done, C.END, v); new = (~done) & (v == C.END); L[new] = t + 1; done |= new
         if done.all(): break
     return seq[:, 10:], L, done
 
@@ -49,7 +52,7 @@ def run(kw):
         M, xl, tail10 = B.relay_read(r, X, tail10, block, floor); x = np.concatenate([tail9, X.ravel()]); cs.give(M, xl); cs.learn(G.ctx_of(x, 9, len(x), 9), x[9:]); cs.give(None, None); tail9 = x[-9:]
         sp = xl >= 0; np.add.at(uses, xl[sp], 1); np.add.at(hits, xl[sp], (M[sp].argmax(1) == X.ravel()[sp]).astype(float)); read.update(map(bytes, X.astype(np.uint8)))
         if teacher != "none":
-            dr, L, ended = mixed_dream(cs, r, X, drng) if kw.get("composer") == "relay" else counting_dream(cs, X, drng, 16, comp_half); new = ended & ~np.array([bytes(dr[i, :L[i]].astype(np.uint8)) in read for i in range(k)]); kinds = [RP.kind(dr[i, :L[i]].tolist()) for i in np.flatnonzero(new)]
+            dr, L, ended = mixed_dream(cs, r, X, drng, 16, int(kw.get("sure", 0))) if kw.get("composer") == "relay" else counting_dream(cs, X, drng, 16, comp_half); new = ended & ~np.array([bytes(dr[i, :L[i]].astype(np.uint8)) in read for i in range(k)]); kinds = [RP.kind(dr[i, :L[i]].tolist()) for i in np.flatnonzero(new)]
             upd = dict(composed=k, with_line_end=int(ended.sum()), new=int(new.sum()), new_well_formed=sum(q[0] for q in kinds), new_right=sum(q[1] for q in kinds))
             if new.any():
                 ctx, y = lesson_arrays(X, dr, L, new); seq = np.concatenate([X, dr], 1); i, tt = np.nonzero(new[:, None] & (np.arange(dr.shape[1])[None, :] < L[:, None])); H = seq[i[:, None], (10 + tt)[:, None] - 1 - np.arange(C.D)[None, :]]
