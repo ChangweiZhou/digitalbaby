@@ -31,3 +31,27 @@ My chance for the hypothesis: 0.5. I have one argument each way. For: a cell's s
 ## 4. Not run
 
 The other arm (counts frozen, trusts taught on): it needs a change to the compiled loop and is left for a later plan. Any remedy.
+
+## 5. Outcome (20 November; `res/f_s400_none_seed*.json`, `res/f_s400_C_seed*.json`, `report_6a.txt`, `report_6b.txt`)
+
+Every trust and part frozen after the reading at 40,000 lines; the cells count on to 400,000 lines. Up to 40,000 lines each run is identical to its run with nothing frozen. Never-shown additions after a read line; the reading at 40,000 lines, then the mean of the last three readings at 400,000 lines with the trusts frozen, and in brackets the same with nothing frozen (`PLAN_2.md`). CPU 329 to 332 s without classes, 451 to 466 s with setting C.
+
+| Setting | Seed | First cell | Second cell | Control |
+|---|---|---|---|---|
+| without classes | 116089 | 80.1; **74.4** (62.3) | 86.3; **64.2** (68.1) | 83.8; 76.5 (66.7) |
+| | 406364 | 78.6; **67.5** (61.8) | 84.6; **58.9** (69.0) | 80.0; 71.2 (65.5) |
+| | 545353 | 77.8; **67.8** (62.4) | 85.6; **58.4** (69.1) | 82.5; 62.0 (63.5) |
+| setting C | 116089 | 92.0; **89.8** (82.8) | 96.2; **94.0** (93.0) | 91.9; 80.8 (86.6) |
+| | 406364 | 89.0; **80.2** (78.3) | 97.0; **86.1** (90.0) | 88.8; 81.5 (82.7) |
+| | 545353 | 91.8; **76.9** (83.4) | 96.6; **94.3** (95.1) | 92.5; 64.0 (84.9) |
+
+Without classes, the first cell with frozen trusts, along the reading (seed 116089; 50,000 to 400,000 lines): 79.4, 74.2, 75.6, 76.0, 76.4, 74.8, 74.2, 74.2; the second cell: 84.8, 72.8, 66.7, 64.8, 66.0, 64.4, 64.0, 64.2. All of the loss is again at the tens digit.
+
+**What it shows (mine).**
+
+1. *Both.* Without classes, with the trusts standing still, the first cell loses 5.7, 11.1 and 10.0 points; taught on, it loses 17.8, 16.8 and 15.4. So about a third to two thirds of its even loss is in what the cells say as their counts grow, with no trust moving, and the rest is added by going on teaching the trusts on lines met before. Neither account alone is right; by the lines I drew the hypothesis holds, narrowly (under 70 on two seeds of three: 67.5 and 67.8; the third at 74.4), and is not refuted.
+2. *Going on teaching harms the first cell and helps the second.* Frozen, the first cell ends 12.1, 5.7 and 5.4 points *above* itself taught on; the second cell ends 3.9, 10.1 and 10.7 points *below* itself taught on, and below the frozen first cell. Parts fitted to what the cells said at 40,000 lines go stale as the cells' speech sharpens (the second cell loses 22 to 27 points with its parts frozen), and the second cell's own teaching wins part of that back; the first cell's teaching makes things worse. A cell that knows the bytes at the delays can use the later lines; a cell with one trust for a kind and level cannot.
+3. *With setting C the picture is mixed and I draw nothing firm from it*: the second cell is within 1 point of its taught self on two seeds and 3.9 below on the third; the first cell is 7.0 and 1.9 above and 6.5 below. Class kinds found anew after the freeze are born with nothing and stay there, which muddies this arm.
+4. *The loss with the trusts frozen levels off* (seed 116089: reached by 100,000 lines and flat after), which is not what a speech against unmet followers growing as the logarithm of the count would give by itself; I do not know why, and it is the next thing to look at: which kinds' cells change what they say between 40,000 and 100,000 lines (the kinds whose delays reach into the line before go on meeting new combinations long after the 8,000 shown lines have all been met).
+
+**Predictions.** M1 held, narrowly (67.5 and 67.8 under 70; 74.4). M2 held (+12.1, +5.7, +5.4). M3 failed, the other way (-3.9, -10.1, -10.7). M4 failed (86.1 on one seed). M5 failed (one seed of three). Two of five.
