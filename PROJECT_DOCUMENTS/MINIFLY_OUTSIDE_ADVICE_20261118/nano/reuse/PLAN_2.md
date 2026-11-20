@@ -59,3 +59,17 @@ Per run: 255 kinds and up to 32 readings; 5.08 million possible cells (about 310
 ## 6. Not run
 
 Readings of stores keyed on classes (the merge line's class kinds), which step 1 showed to be the cleanest alike kinds; readings of part of a store; a store withdrawn from its own places when they no longer foretell; prose; more than two tasks in a life; look-ahead.
+
+## 7. Addition 1 (20 November; written before any scored run of the mechanism; two changes, one of cost and one of the judgment)
+
+*What happened.* The four development runs of section 2 were started and stopped unread after 17 CPU-minutes each without finishing: judging a block cost about 19 seconds, not 3. Nothing of them is kept. Two probes were then made on seed 1 that scored nothing: the judgment of one block after 3,000 and after 20,000 two-digit lines.
+
+*Change of cost.* The judging loop runs over bytes outside and places inside (one table in use at a time), and a block is judged on its first 5,000 bytes. 1.3 seconds a block. `reuse.py check` again against numpy (`check_output.txt`).
+
+*Change of the judgment.* The first probe showed 6,454 readings above the chance level of section 2, the largest being readings that say again what the plain kind of the same places already says (bytes of the layout). Judged against chance alone, the 32 kept would be readings that add nothing. So a reading is now judged on **what its store foretells of the block's bytes, read through its places, less what the plain kind of those places foretells of the same bytes with its own cells** (a cell that has not counted is taken to say 1/14 on both sides), and it is kept only above the largest such figure of the same store shuffled. In the words of the hypothesis: the pooled store must foretell the member kind's new cells better than the member's own store does. This is stricter than "alike": two kinds that say the same and have each read as much gain nothing from each other and are not merged.
+
+*What this costs, seen in the second probe before any scored run.* After 20,000 two-digit lines one reading stands above chance and the exchange of the two numbers is not among the candidates: every line of the stream has been shown before, the kind's own cell has counted it, and the exchanged reading adds nothing *on the stream*. Its use would be on lines never shown, of which the stream holds none. So I now expect R8 to fail (my chance for it falls from 0.40 to 0.10) and say so before the runs. The transfer between tasks is what this judgment is made for: there the kind of the new places has no cells of its own.
+
+*One more prediction, new.* R11: with readings that count into the store they read, the never-shown two-digit sums stand higher at the end of 40,000 lines of `add3` than at its start (median of five seeds; the three-digit lines fill, through the reading, the cells of the two-digit store that the two-digit task never showed): chance 0.45.
+
+Everything else in sections 2 to 6 stands. The development choice (the trust a reading starts with; whether it counts) is made as stated, with the changed judgment.

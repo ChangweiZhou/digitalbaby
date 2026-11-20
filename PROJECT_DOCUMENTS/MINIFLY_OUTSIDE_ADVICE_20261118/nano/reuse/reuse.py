@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """PLAN_2.md: cells that count, read with a learned trust (the plain system of nano/merge/merge.py, mode none), and READINGS:
 a store that has trust is read through other ordered sets of places. Each candidate reading is judged on what the store, read through
-those places, foretells of the next block of the stream before that block is counted, against the same store with its cells shuffled.
+those places, foretells of the next block of the stream before that block is counted, less what the plain kind of those places foretells of it
+with its own cells, and against the same store with its cells shuffled (PLAN_2.md, addition 1).
 Kept readings speak as senders (their trust starts as the store's own kind's) and count into the one store.
     python3 reuse.py check
-    python3 reuse.py run seed=1 phases=add2:40000,add3:20000 [mode=reuse|none|chance] [D=9] [P=32] [M=32] [block=10000] [inherit=1] [count=1] tag=...
+    python3 reuse.py run seed=1 phases=add2:40000,add3:20000 [mode=reuse|none|chance] [D=9] [P=32] [M=32] [block=10000] [jbytes=5000] [inherit=1] [count=1] tag=...
 Tasks: add2 `ab+cd=efg`, add3, add4 (needs D=11), add2w `ab++cd==efg` (the same sums, another layout), sub2 `ab-cd=efg` (larger first).
 The answering loop and its numpy reference are those of merge.py (source: claude/nano-merge-8mmhfm at e0bc883) with one argument added."""
 import ctypes, itertools, json, os, subprocess, sys, time
@@ -49,13 +50,20 @@ void mix_steps(int64_t n, int K1, int Kc, int S, const int32_t *ids, const int32
         }
     }
 }
-/* What a store foretells of a block when read through each of np ordered sets of m places. g: for each cell of the store and each byte, what the cell
-   says less the mean of what the store's cells say of that byte (0 for a cell that has not counted). ctx: n x D byte values at delays 1..D. */
-void judge(int64_t n, int D, int S, int m, const int32_t *ctx, const int32_t *y, const float *g, int np, const int32_t *pl, double *out) {
-    int64_t w[8]; w[0] = 1; for (int i = 1; i < m; i++) w[i] = w[i - 1] * S;
-    for (int p = 0; p < np; p++) { const int32_t *q = pl + (int64_t)p * m; double a = 0;
-        for (int64_t t = 0; t < n; t++) { const int32_t *c = ctx + t * D; int64_t key = 0; for (int i = 0; i < m; i++) key += c[q[i]] * w[i]; a += g[key * S + y[t]]; }
-        out[p] = a; }
+/* What a store foretells of a block when read through every ordered set of m of the D places, in the order of itertools.permutations(range(D), m).
+   gT[v * ncell + cell]: what the cell says of byte v less the mean of what the store's cells say of v (0 for a cell that has not counted).
+   ctx: n x D byte values at delays 1..D. The loop runs over bytes outside and places inside, so that one table of ncell floats is in use at a time. */
+void judge(int64_t n, int D, int S, int m, const int32_t *ctx, const int32_t *y, const float *gT, double *out) {
+    int64_t nc = 1, np = 1; for (int i = 0; i < m; i++) { nc *= S; np *= D - i; }
+    for (int64_t p = 0; p < np; p++) out[p] = 0;
+    for (int64_t t = 0; t < n; t++) { const float *gy = gT + y[t] * nc; const int32_t *c = ctx + t * D; int64_t c1[16], c2[16], c3[16]; int p = 0;
+        for (int d = 0; d < D; d++) { c1[d] = (int64_t)c[d] * S; c2[d] = c1[d] * S; c3[d] = c2[d] * S; }
+        for (int q0 = 0; q0 < D; q0++) for (int q1 = 0; q1 < D; q1++) { if (q1 == q0) continue; const int64_t b1 = c[q0] + c1[q1];
+            if (m == 2) { out[p++] += gy[b1]; continue; }
+            for (int q2 = 0; q2 < D; q2++) { if (q2 == q0 || q2 == q1) continue; const int64_t b2 = b1 + c2[q2];
+                if (m == 3) { out[p++] += gy[b2]; continue; }
+                for (int q3 = 0; q3 < D; q3++) { if (q3 == q0 || q3 == q1 || q3 == q2) continue; out[p++] += gy[b2 + c3[q3]]; } } }
+    }
 }
 '''
 def kern():
@@ -64,7 +72,7 @@ def kern():
         open(src, "w").write(SRC); tmp = so + f".{os.getpid()}"; subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", tmp, src, "-lm"]); os.replace(tmp, so)
     L = ctypes.CDLL(so); ci, cd = ctypes.c_int, ctypes.c_double
     L.mix_steps.argtypes = [ctypes.c_int64, ci, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD]; L.mix_steps.restype = None
-    L.judge.argtypes = [ctypes.c_int64, ci, ci, ci, PI, PI, PF, ci, PI, PD]; L.judge.restype = None; return L
+    L.judge.argtypes = [ctypes.c_int64, ci, ci, ci, PI, PI, PF, PD]; L.judge.restype = None; return L
 p32 = lambda a: a.ctypes.data_as(PI); pf = lambda a: a.ctypes.data_as(PF); pd = lambda a: a.ctypes.data_as(PD)
 
 # ---------------------------------------------------------------- references in numpy
@@ -96,9 +104,9 @@ def judge_np(ctx, y, g, pl):
     return out
 
 def gains_table(C, N, e):
-    """For a store: what each counted cell says of each byte, less the mean over the store's counted cells of what they say of that byte."""
-    cnt = N >= 1; lp = np.log(C.astype(np.float64) + e) - np.log(N.astype(np.float64) + S * e)[:, None]; mbar = lp[cnt].mean(0)
-    return np.where(cnt[:, None], lp - mbar, 0.0).astype(np.float32), cnt
+    """For a store: what each counted cell says of each byte, less what a cell that has not counted is taken to say (1/S); 0 for a cell that has not counted."""
+    cnt = N >= 1; lp = np.log(C.astype(np.float64) + e) - np.log(N.astype(np.float64) + S * e)[:, None] + np.log(S)
+    return np.where(cnt[:, None], lp, 0.0).astype(np.float32), cnt
 
 # ---------------------------------------------------------------- the system
 def code(ctx, ds):
@@ -108,13 +116,14 @@ def code(ctx, ds):
 def ctx_of(x, lo, hi, D): return x[np.arange(lo, hi)[:, None] - np.arange(1, D + 1)[None, :]]
 
 class Sys:
-    def __init__(s, D=9, P=32, M=32, block=10000, mode="reuse", seed=0, eta=0.1, e=2.0, born=0.02, inherit=1, count=1):
-        s.D, s.P, s.M, s.block, s.mode, s.eta, s.e, s.inherit, s.count = D, (0 if mode == "none" else P), M, block, mode, eta, e, int(inherit), int(count)
+    def __init__(s, D=9, P=32, M=32, block=10000, mode="reuse", seed=0, eta=0.1, e=2.0, born=0.02, inherit=1, count=1, jbytes=5000):
+        s.jbytes = int(jbytes); s.D, s.P, s.M, s.block, s.mode, s.eta, s.e, s.inherit, s.count = D, (0 if mode == "none" else P), M, block, mode, eta, e, int(inherit), int(count)
         s.kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]; s.KB = len(s.kinds); s.K1 = s.KB + s.P; assert s.K1 <= 640
         s.off = np.concatenate([[0], np.cumsum([S ** len(k) for k in s.kinds])]).astype(np.int64); s.nbase = int(s.off[-1]); s.L = kern()
         s.C = np.zeros((s.nbase, S), np.float32); s.N = np.zeros(s.nbase, np.float32); s.U = np.zeros(s.nbase, np.float32)
         s.T = np.full((s.K1, NL), float(born)); s.T[s.KB:] = 0.0; s.Tu = np.zeros((s.K1, NL)); s.slots = [None] * s.P; s.saved = {}
         s.pl = {m: np.ascontiguousarray(np.array(list(itertools.permutations(range(D), m)), np.int32)) for m in (2, 3, 4)}
+        kix = {k: i for i, k in enumerate(s.kinds)}; s.kidx = {m: np.array([kix[tuple(sorted(int(d) + 1 for d in q))] for q in s.pl[m]]) for m in (2, 3, 4)}     # the plain kind that has a reading's places
         s.read = 0; s.next_find = 0; s.finds = []; s.rng = np.random.default_rng([seed, 20261120, 7]); s.tfind = 0.0
     def ids(s, ctx):
         out = np.full((len(ctx), s.K1), -1, np.int32)
@@ -145,13 +154,14 @@ class Sys:
         u = s.Tu[:s.KB].sum(1); return np.where(u > 0, (s.T[:s.KB] * s.Tu[:s.KB]).sum(1) / np.maximum(u, 1), -np.inf)
     def judge_block(s, ctx, y):
         t0 = time.process_time(); mt = s.trust_of_kinds(); top = [int(k) for k in np.argsort(-mt, kind="stable")[:s.M] if len(s.kinds[k]) >= 2 and np.isfinite(mt[k])]
-        c32 = np.ascontiguousarray(ctx.astype(np.int32)); y32 = np.ascontiguousarray(y.astype(np.int32)); cands = []; homes = []; nabove = 0
+        cj = ctx[:s.jbytes]; yj = y[:s.jbytes]; c32 = np.ascontiguousarray(cj.astype(np.int32)); y32 = np.ascontiguousarray(yj.astype(np.int32)); cands = []; homes = []; nabove = 0
+        idb = s.ids(cj)[:, :s.KB]; Nb = s.N[idb].astype(np.float64); own = np.where(Nb >= 1, np.log(s.C[idb, yj[:, None]].astype(np.float64) + s.e) - np.log(Nb + S * s.e) + np.log(S), 0.0).sum(0)    # what each plain kind's own cells foretell of these bytes
         for k in top:
             m = len(s.kinds[k]); g, cnt = gains_table(s.C[s.off[k]:s.off[k + 1]], s.N[s.off[k]:s.off[k + 1]], s.e)
             if cnt.sum() < 2: continue
-            g = np.ascontiguousarray(g); pl = s.pl[m]; out = np.zeros(len(pl)); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(g), len(pl), p32(pl), pd(out))
-            idx = np.flatnonzero(cnt); gs = g.copy(); gs[idx] = g[idx[s.rng.permutation(len(idx))]]; outs = np.zeros(len(pl)); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(gs), len(pl), p32(pl), pd(outs))
-            chance = max(float(outs.max()), 0.0); home = tuple(d - 1 for d in s.kinds[k]); hi = int(np.flatnonzero((pl == np.array(home)).all(1))[0]); homes.append((k, float(out[hi]), chance)); out[hi] = -np.inf
+            pl = s.pl[m]; out = np.zeros(len(pl)); gT = np.ascontiguousarray(g.T); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(gT), pd(out)); out -= own[s.kidx[m]]
+            idx = np.flatnonzero(cnt); gs = g.copy(); gs[idx] = g[idx[s.rng.permutation(len(idx))]]; outs = np.zeros(len(pl)); gT = np.ascontiguousarray(gs.T); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(gT), pd(outs)); outs -= own[s.kidx[m]]
+            chance = max(float(outs.max()), 0.0); home = tuple(d - 1 for d in s.kinds[k]); hi = int(np.flatnonzero((pl == np.array(home)).all(1))[0]); homes.append((k, float(own[k]), chance)); out[hi] = -np.inf
             for p in np.flatnonzero(out > chance): cands.append((float(out[p]), k, tuple(int(d) + 1 for d in pl[p]), chance)); nabove += 1
         cands.sort(key=lambda c: -c[0]); kept = cands[:s.P]
         if s.mode == "chance":                                     # the control: the same stores and the same number of readings, the places drawn by chance
@@ -216,7 +226,7 @@ def marks_for(lines):
 def run(kw):
     seed = int(kw.get("seed", 1)); mode = kw.get("mode", "reuse"); D = int(kw.get("D", 9)); t0 = time.process_time()
     phases = [(p.split(":")[0], int(p.split(":")[1])) for p in kw.get("phases", "add2:40000").split(",")]; tasks = [Task(n, seed, i) for i, (n, _) in enumerate(phases)]
-    sy = Sys(D=D, P=int(kw.get("P", 32)), M=int(kw.get("M", 32)), block=int(kw.get("block", 10000)), mode=mode, seed=seed, inherit=int(kw.get("inherit", 1)), count=int(kw.get("count", 1)))
+    sy = Sys(D=D, P=int(kw.get("P", 32)), M=int(kw.get("M", 32)), block=int(kw.get("block", 10000)), mode=mode, seed=seed, inherit=int(kw.get("inherit", 1)), count=int(kw.get("count", 1)), jbytes=int(kw.get("jbytes", 5000)))
     tail = np.full(D, END, np.int64); rows = []
     for i, (name, lines) in enumerate(phases):
         tk = tasks[i]; done = 0
@@ -245,7 +255,7 @@ def check():
     for m, D in ((2, 9), (3, 9), (4, 11)):
         n = 700; ctx = np.ascontiguousarray(rng.integers(0, S, (n, D)).astype(np.int32)); y = np.ascontiguousarray(rng.integers(0, S, n).astype(np.int32))
         C = (rng.integers(0, 4, (S ** m, S)) * (rng.random((S ** m, S)) < 0.3)).astype(np.float32); g, cnt = gains_table(C, C.sum(1), 2.0); g = np.ascontiguousarray(g)
-        pl = np.ascontiguousarray(np.array(list(itertools.permutations(range(D), m)), np.int32)[::max(1, 7 * m)]); out = np.zeros(len(pl)); L.judge(n, D, S, m, p32(ctx), p32(y), pf(g), len(pl), p32(pl), pd(out)); ref = judge_np(ctx, y, g, pl)
+        pl = np.array(list(itertools.permutations(range(D), m)), np.int32); out = np.zeros(len(pl)); gT = np.ascontiguousarray(g.T); L.judge(n, D, S, m, p32(ctx), p32(y), pf(gT), pd(out)); ref = judge_np(ctx, y, g, pl)
         d = float(np.abs(out - ref).max()); ok &= d < 1e-6; print(f"judgment of {len(pl)} readings of a store of {m} places over {n} bytes ({D} delays): compiled against numpy, largest difference {d:.1e}", "PASSED" if d < 1e-6 else "FAILED")
     # a reading addresses the store's cell for the values at its places
     sy = Sys(mode="reuse", P=4); k = sy.kinds.index((3, 4, 6, 7)); sy.slots[0] = dict(k=k, pl=(8, 9, 4, 5)); ctx = rng.integers(0, S, (200, 9)); a = sy.ids(ctx)[:, sy.KB]
