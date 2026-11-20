@@ -47,3 +47,7 @@ Readings (mine).
 2. **It also settles what M's and C2's gain on the books was**: recency. With the past in their cells the same kinds are worth nothing on prose beyond the frozen setting (six books within 0.003 of it). On prose the classes of the frozen setting are, so far, all that this line's mechanisms gain: 0.010 to 0.016 nats.
 3. **F is one setting that does the first two parts of the line's hypothesis together, with the larger figure**: 97.9% of never-shown two-digit sums with no look-ahead, and each of six books 0.010 to 0.015 nats below the system with no classes, the old text kept. It was reached on the development seed after the reported seeds and the books had been seen under earlier settings; its figures on the reported seeds and the books are each a first and only run of that setting there. 400,000 lines, three-digit sums and the fresh seeds are NOT RUN for F (they were for M: 99.3 and 98.7; 95.9; 98.0); on sums F differs from M only in the birth of the kinds keyed on two classes.
 4. The store is still larger than the base's on both tasks.
+
+## 6. Addition 1 (20 November; written after section 5 and before its runs): the runs that M had and F had not
+
+Setting F, nothing changed or chosen: (a) two-digit sums on seeds 2001 to 2005, 40,000 lines; (b) 400,000 lines on seeds 73129 and 93683; (c) three-digit sums, 80,000 lines, the five reported seeds. *Predictions (mine):* (a) median at least 96.5 (0.75); (b) at least 95 on both seeds (0.60); (c) median within 1 point of M's 95.9 (0.70).
