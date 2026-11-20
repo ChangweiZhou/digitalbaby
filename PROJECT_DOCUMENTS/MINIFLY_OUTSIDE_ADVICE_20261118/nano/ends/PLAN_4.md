@@ -30,3 +30,17 @@ As `PLAN_3.md`, section 1. In addition (`PLAN_2.md`, outcome, point 3): in the s
 ## 4. Size, cost, what is not run
 
 As arm U. About 29 readings, 3 CPU-minutes. Not run: the two changes of `PLAN_3.md` and this plan together; a peak judged with the byte after (a start announced one byte late).
+
+## 5. Outcome (entered 20 November after the run; `res/ends_armP.json`)
+
+| Arm | Loss on the last tenth | Gain over arm 0 | Share of G's gain | Loss on the last twentieth of the stream | Segments in the last tenth | Found starts that are word starts | Word starts found |
+|---|---|---|---|---|---|---|---|
+| U (threshold alone, 2.5) | 1.5115 | 0.0111 | 0.48 | 1.5478 | 24,327 | 0.78 | 0.92 |
+| **P (threshold 2.0 and a rise of more than 0.5)** | **1.5133** | 0.0093 | 0.40 | 1.5448 | 25,890 | 0.75 | 0.93 |
+| U-k of `PLAN_3.md` | 1.5087 | 0.0139 | 0.60 | 1.5412 | 22,020 | 0.92 | 0.97 |
+
+Chosen: margin 0.5, theta 2.0, e 0.02, eta 0.00005 (the table of 16 is in the result file; a margin of 0 at theta 2.5 is arm U, 1.5476 there). 147 CPU-seconds; scored once on the last tenth.
+
+**The hypothesis is refuted**: P gains 0.0093 nats, 40% of G's gain. Predictions: X1 failed; X2 failed (P is 0.0018 worse than U on the last tenth, though 0.0030 better on the last twentieth of the stream); X3 failed (0.75 against 0.78); X4 failed.
+
+Reading (mine): asking for a rise did not remove wrong starts; the choice moved to a lower threshold and made more starts, and what looked like a gain of 0.003 where the settings were chosen did not carry to the last tenth. Differences of 0.003 between ways of cutting are within what the choice of settings on one twentieth can produce here; I do not read the order of U and P as settled, only that neither reaches half.
