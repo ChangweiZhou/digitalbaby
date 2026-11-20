@@ -28,3 +28,11 @@ Runs (development seed 1, `g2`): (a) the criterion alone, theta 0.05, 0.1, 0.2, 
 | V4 | the hypothesis is refuted on the development seed (under 50% at some gap), the hundreds and tens places being the ones that fail | 0.85 |
 
 **Cost.** About 5 CPU-minutes. **Not run.** The share by place within the gap (the table gives the letters as one kind; added only if the letters are the part that fails); a mended criterion; reported seeds unless the hypothesis holds.
+
+## Outcome of (a), and addition 1 (20 November 2026; the addition written before its runs)
+
+The criterion alone, share of bytes passed over (`res/p7_crit_g2_s1.json`), after 10,000 / 100,000 / 400,000 lines: theta 0.05: letters 0.00 / 0.21 / 0.73, nothing else; theta 0.1: letters 0.11 / 0.94 / 1.00, the answer's hundreds 0.01, nothing else; theta 0.2: letters 0.70 / 1.00 / 1.00, the answer's tens 0.07 / 0.11 / 0.13, nothing else of note.
+
+**V1 held** (1.00). **V3 held** (0.00). **V2 failed: the first digit of the first number is never passed over (0.00), and my reasoning in section 2 was wrong for the texts as this line reads them.** The reason: in these texts (as in `cells2.py` and `hold.py`) nothing is named after the end mark, the first byte of the next line not being a byte the system is asked for. The table therefore has no count of what follows an end mark, the two cells cannot be compared at the first digit, and a byte with no comparison enters. The digit is saved by a convention of the stream, not by the criterion.
+
+*Addition 1.* To separate the two, the same runs with the table counting across the end mark as well (`across=1`; the relay system unchanged, it still does not name that byte): (a') the criterion alone; (b') the system, theta 0.1, 1,200,000 lines, beside (b). Prediction V5 (mine): with `across=1` at least 90% of the first digits are passed over at theta 0.1 after 400,000 lines (chance 0.8); V6: (b') is under 50% at every gap where (b) is over 50% (chance 0.7). V4 I now expect to fail for (b) (the hypothesis to hold on the development seed).
