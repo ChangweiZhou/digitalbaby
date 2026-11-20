@@ -59,3 +59,28 @@ Why H1 is low (mine): the kind that settles the tens digit holds four lines of t
 *The change, general and mine: the system keeps the last B bytes it read (with its guesses as they were made), and a kind that is born counts over them at once.* Its trust is still born at nothing and is earned only on bytes that arrive afterwards, so nothing is judged on what it was counted on. Reason: a kind born empty needs as much reading as its cells are many before it can earn anything, so the reading, and not computation, bounds how many kinds can be judged; with the bytes kept, a kind can be judged within a period or two and the number tried becomes a matter of computation. Cost in generality: none that looks at a task; a memory of B bytes is a number of mine (B = 131,072 to begin with) and is state to be reported beside the store. On the life with subtraction it means kinds born early in subtraction count over the last lines of addition still kept; that is said beside the figure.
 
 *The grid now run* (development material only): step form (2) x eta (0.03, 0.1, 0.3) x e (0.02, 0.1, 0.5, 2) x `ncap` (16, none), at K = 128, R = 8192, `prot` = 2, `nrep` = 16, B = 131,072. Sums: seed 1, 40,000 lines. Prose, to keep the grid inside ten minutes: the first 300,000 bytes of the stream read, the next 50,000 scored (inside the stream; development only). The choice is by the sum of the two ranks. Then, around the chosen setting, `prot`, `nrep`, B and `ncap` 64 as budget allows, and the control without search.
+
+## 6. Outcome of the first step (entered 20 November; development material only; files `res/g1_*`, `res/g2_*`, `res/g3_*`, raw lines `out_g1s.txt`, `out_g1p.txt`, `out_g2.txt`, `out_g3.txt`)
+
+`check_output.txt`: five cases, compiled against plain Python, largest difference 2e-15, stores, counts, written bytes and kinds equal. The search itself (which kinds are withdrawn and born) is one piece of Python used by both, so the check covers the cells, the trusts, the guesses, the store and the counting over kept bytes, not the choice of kinds.
+
+Grid (K = 128, R = 8192, `prot` = 2, `nrep` = 16, B = 131,072; sums seed 1, 40,000 lines, mean of the last three readings; prose 300,000 bytes read and the next 50,000 scored). A second small grid (eta 0.003 and 0.01) was added when eta = 0.03, the smallest of the first, came out best on prose. The settings at the top by the sum of the two ranks, and the best of each text alone:
+
+| step | eta | e | `ncap` | sums seed 1, % | prose, nats | note |
+|---|---|---|---|---|---|---|
+| shrinking | 0.03 | 2 | none | **88.2** | **1.698** | rank 1 on sums, 5 on prose: **chosen** |
+| shrinking | 0.03 | 0.5 | none | 83.9 | 1.705 | |
+| shrinking | 0.1 | 0.1 | 16 | 87.0 | 1.918 | |
+| shrinking | 0.003 | 0.1 | none | 64.1 | 1.634 | best on prose |
+| shrinking | 0.01 | 0.1 | none | 69.9 | 1.648 | |
+| summed squares | best of 24 | | | 60.7 | 1.767 | the step of mine is worse on both; dropped |
+
+Beside them, in this program: six hand-given kinds (runs of 1 to 6 bytes), no search, on the same prose material: 1.704 at the chosen setting, 1.623 at eta 0.01, e 0.1. The same 128 random kinds never changed (chosen setting): sums 0.0, 26.1, 1.6 on seeds 1, 2, 3; prose 2.087. The chosen setting on two more development seeds of sums: 81.7 (seed 2), 64.0 (seed 3). `nrep` 8 and 32 at the chosen setting, sums seed 1: 53.5 and 54.9 (16: 88.2); prose: 1.739 and 1.699 (16: 1.698).
+
+Predictions. D1 (some single setting has sums seed 1 at least 70% and the development twentieth under 1.60): **not scored as stated**, since the prose material was shortened to keep the grid short; on the shortened material the chosen setting has 88.2% and 1.698, and no setting is under 1.60 there (the six hand-given runs are not either). D2 (best e for sums alone and for prose alone differ by a factor of four or more): **held** (2 against 0.1).
+
+Readings (mine).
+1. **The kinds are found.** On sums the kinds that earn most at the end are, on seed 1, [d4 d5 d7 g1.2] and [d3 d4 d5 d7 g1.2]: at the tens digit these are the two tens digits of the sum's numbers, a units digit, and the system's own guess of the byte two ahead, which there is the units digit of the answer. That is the kind the line `nano/sparse` laid down by hand as "a set of delays together with the guess". On prose the kinds that earn most are runs of the last two, three and four bytes.
+2. **Counting over kept bytes is what made the search work in 40,000 lines** (44.9% without, at a guessed setting, against 54 to 88 with).
+3. **The result of one run depends on what the search happens to find**: 88, 82, 64 on three development seeds, and 54 to 88 on one seed as `nrep` changes. One development seed was a thin basis for the grid; the choice of setting is partly a choice of a lucky run.
+4. **One setting for both texts costs each text something**: prose wants a smaller step and a smaller e than sums.
