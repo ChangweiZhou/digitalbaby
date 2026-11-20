@@ -27,3 +27,13 @@
 ## 4. Size, cost, what is not run
 
 Size as m = 4 in `PLAN_1.md`. About 15 CPU-minutes for (a) and 2 for (b). Not run: the shrinking step for m = 3 (its readings do not swing); a grid over eta with the shrinking step; removing the cells of the whole pair (the next test if this is refuted).
+
+## 5. Addition 1 (20 November, written before its runs): two more single changes on the same question, at the coordinating session's suggestion
+
+The coordinating session, having read the first report, proposed parting the two candidates for m = 4's fall by three single changes: the shrinking step (this plan as written), the trust of every kind born at nothing, and the cells of the sets that hold all four digits left out. It also reported from `nano/table` (its `PLAN_8.md`, which I have not read) that with many kinds given at once the birth value of the trust decided the result there. In `PLAN_1.md` the trust was born at 0.02 or 0.25 and 0.02 was chosen; nothing was tried.
+
+Two arms are added, each one change from m = 4 of `PLAN_1.md` (eta 0.1, e 2, constant step), `plan=add:400000`, read at the same marks, **development seed 1 first**; the five reported seeds only for an arm that does not fall on seed 1 (400,000 within 5 points of 40,000):
+- (c) `T0=0`: every trust born at nothing.
+- (d) `drop=3467/2356/4578`: no cells for the three sets of delays that hold all four digits where the tens, the hundreds and the units digit are named (252 kinds). These sets are named by me from knowing the line; the arm is a diagnostic of what takes over, not a system proposed.
+
+Predictions (mine): (c) does not stop the fall (chance 0.65 that 400,000 is more than 5 below 40,000); (d) stops it (0.45). Cost: about 3 CPU-minutes each on seed 1.

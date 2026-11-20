@@ -189,7 +189,8 @@ def score(s, op, pairs, rev=0, want_acc=False):
 
 def make(kw, cls=None):
     cls = cls or (Ref if int(kw.get("ref", 0)) else Sys)
-    return cls(D=int(kw.get("D", 9)), m=int(kw.get("m", 3)), eta=float(kw.get("eta", 0.002)), e=float(kw.get("e", 0.02)), T0=float(kw.get("T0", 0.25)), nplace=int(kw.get("place", 0)), shrink=int(kw.get("shrink", 0)))
+    drop = {tuple(int(c) for c in d) for d in kw["drop"].split("/")} if kw.get("drop") else set()      # drop=3467/2356/4578: these sets of delays have no cells (PLAN_5, addition 1)
+    return cls(kinds=[k for k in kinds_of(int(kw.get("D", 9)), int(kw.get("m", 3))) if k not in drop], D=int(kw.get("D", 9)), m=int(kw.get("m", 3)), eta=float(kw.get("eta", 0.002)), e=float(kw.get("e", 0.02)), T0=float(kw.get("T0", 0.25)), nplace=int(kw.get("place", 0)), shrink=int(kw.get("shrink", 0)))
 
 def run(kw, s=None):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng, held, shown = split(seed); rev = int(kw.get("rev", 0)); every = int(kw.get("every", 5000)); s = s or make(kw)
