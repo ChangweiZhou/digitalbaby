@@ -77,6 +77,11 @@ class Sys6(merge.Sys):
             if (sl["np"], sl["nq"], Zr) in old: jo = old[(sl["np"], sl["nq"], Zr)]; s.T[s.KB + s.P + j] = T0[s.KB + s.P + jo]; s.Tu[s.KB + s.P + j] = Tu0[s.KB + s.P + jo]
             rec.append(dict(p=dict(R=list(s.kinds[sp["k"]]), X=list(sp["X"])), q=dict(R=list(s.kinds[sq["k"]]), X=list(sq["X"])), rest=list(Zr), worth=round(w, 1), bytes=nok))
         dt = time.process_time() - t0; s.tfind += dt; s.finds2.append(dict(bytes_read=int(s.read), buffer=int(len(y)), candidates=tried, of_positive_worth=sum(v[0] > 0 for v in cand.values()), kept=rec, cpu=round(dt, 1)))
+    def child_trust(s):
+        out = super().child_trust(); a = s.KB + s.P; u = s.Tu[a:].sum(1); m = np.where(u > 0, (s.T[a:] * s.Tu[a:]).sum(1) / np.maximum(u, 1), 0.0)
+        for j, sl in enumerate(s.slots2):                           # a kind keyed on two classes is a child of both kinds its classes were found in
+            if sl is not None: out += [(sl["np"][0], max(0.0, float(m[j]))), (sl["nq"][0], max(0.0, float(m[j])))]
+        return out
     def sizes(s):
         z = super().sizes(); z["two_class_kinds"] = sum(sl is not None for sl in s.slots2); z["two_class_cells"] = int(sum((s.N[sl["cids"]] > 0).sum() for sl in s.slots2 if sl is not None)); return z
     def trust_summary(s):
