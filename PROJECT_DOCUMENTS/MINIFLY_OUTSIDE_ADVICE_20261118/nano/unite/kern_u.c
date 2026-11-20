@@ -7,7 +7,7 @@
 #define MAXS 18
 #define MAXL 4
 #define MAXF 10
-typedef struct { int32_t S, D, nP, nG, L; double eta, e; int32_t *P; int32_t *F[MAXL + 1]; double *T, *U;
+typedef struct { int32_t S, D, nP, nG, L; double eta, e, ncap; int32_t *P; int32_t *F[MAXL + 1]; double *T, *U;
                  const int32_t *pd, *pn, *gd, *gn; const int64_t *pbase, *gbase; int32_t fam[MAXL + 1][MAXL]; } St;
 typedef struct { int64_t pid[MAXK], fid[MAXL + 1][MAXK]; int lev[MAXF][MAXK]; double s[MAXF][MAXK][MAXS]; double p[MAXL][MAXS]; int g[MAXL + 1], ans; } Rec;
 static Rec ring[MAXL], scratch; static int hist[16]; static int64_t tt; static int pend = 1;
@@ -19,7 +19,13 @@ static inline void say(const St *st, const int32_t *c, int f, int k, Rec *r, dou
     for (int v = 0; v < S; v++) { n += c[v]; u += c[v] > 0; }
     if (n < 1) { r->lev[f][k] = -1; return; }
     const int lv = level(n, u); r->lev[f][k] = lv;
-    const double tk = st->T[((int64_t)f * MAXK + k) * NL + lv], den = n < 65536 ? ln_[n] : log(n + S * st->e); double *s = r->s[f][k];
+    const double tk = st->T[((int64_t)f * MAXK + k) * NL + lv]; double *s = r->s[f][k];
+    if (st->ncap > 0 && n > st->ncap) {            /* a cell that has counted more than ncap speaks as if it had counted ncap, in the same proportions (nano/sparse, PLAN_5, addition 2) */
+        const double sc = st->ncap / n, den = log(st->ncap + S * st->e);
+        for (int v = 0; v < S; v++) { const double sv = log(c[v] * sc + st->e) - den; s[v] = sv; a[v] += tk * sv; }
+        return;
+    }
+    const double den = n < 65536 ? ln_[n] : log(n + S * st->e);
     for (int v = 0; v < S; v++) { const double sv = (c[v] < 8192 ? lt[c[v]] : log(c[v] + st->e)) - den; s[v] = sv; a[v] += tk * sv; }
 }
 static inline int share(int S, const double *a, double *p) {

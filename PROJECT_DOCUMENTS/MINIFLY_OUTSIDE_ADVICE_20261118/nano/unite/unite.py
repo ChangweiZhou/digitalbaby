@@ -13,7 +13,7 @@ The look-ahead is in real bytes: a cell counts the bytes that arrive 1, 2, ... L
 
     python3 unite.py check
     python3 unite.py run <label> seed=1 [text=g2|t3] [clock=none|oracle|trial] [look=3] [plan=add:200000] [every=10000] [gap=8]
-            [alpha=2 p0=0.2 P=256 win=3000 eps=0.01 beta=0.02] [nosub=1] [m=4 mg=3 D=9]
+            [alpha=2 p0=0.2 P=256 win=3000 eps=0.01 beta=0.02] [freeze=N] [ncap=N] [nosub=1] [m=4 mg=3 D=9]
         clock=trial: every P bytes each byte value's entry is closed by chance c = logistic(u) or open; u = logit(p0) + alpha * t, t the difference of
         the entry's two means of z (closed less open) in units of its uncertainty; z is the period's mean of the one number the answering cell sends
         out (the sum of its squared mismatches), against its running mean, in units of its running deviation (skip.py, form=evid).
@@ -82,14 +82,14 @@ def sg(u): return 1 / (1 + np.exp(-u))
 
 # ------------------------------------------------------------------ the reference: plain Python, cells in dictionaries
 class Ref:
-    def __init__(s, D=9, m=4, mg=3, look=3, eta=0.1, e=2.0, tp=0.02, tg=0.0):
-        s.D, s.L, s.eta, s.e = D, look, eta, e; s.pk = kinds(D, m); s.gk = kinds(D, mg, True); s.fam, _ = fams(look); s.T = birth(look, tp, tg); s.U = np.zeros_like(s.T)
+    def __init__(s, D=9, m=4, mg=3, look=3, eta=0.1, e=2.0, tp=0.02, tg=0.0, ncap=0.0):
+        s.D, s.L, s.eta, s.e = D, look, eta, e; s.ncap = ncap; s.pk = kinds(D, m); s.gk = kinds(D, mg, True); s.fam, _ = fams(look); s.T = birth(look, tp, tg); s.U = np.zeros_like(s.T)
         s.cells = {}; s.h = [END] * (D + 1); s.past = []; s.pend = True; s.esum = 0.0
     def cell(s, fam, k, key, sets): return s.cells.setdefault((fam, k, key), np.zeros((sets, S)))
     def say(s, c, f, k, a, used):
         n = c.sum()
         if n < 1: return
-        lv = level(n, (c > 0).sum()); sv = np.log(c + s.e) - np.log(n + S * s.e); a += s.T[f, k, lv] * sv; used.append((f, k, lv, sv))
+        lv = level(n, (c > 0).sum()); sv = (np.log(c * (s.ncap / n) + s.e) - np.log(s.ncap + S * s.e)) if s.ncap > 0 and n > s.ncap else (np.log(c + s.e) - np.log(n + S * s.e)); a += s.T[f, k, lv] * sv; used.append((f, k, lv, sv))
     @staticmethod
     def share(a):
         p = np.exp(a - a.max()); return p / p.sum()
@@ -133,7 +133,7 @@ SRC = r'''
 #define MAXS 18
 #define MAXL 4
 #define MAXF 10
-typedef struct { int32_t S, D, nP, nG, L; double eta, e; int32_t *P; int32_t *F[MAXL + 1]; double *T, *U;
+typedef struct { int32_t S, D, nP, nG, L; double eta, e, ncap; int32_t *P; int32_t *F[MAXL + 1]; double *T, *U;
                  const int32_t *pd, *pn, *gd, *gn; const int64_t *pbase, *gbase; int32_t fam[MAXL + 1][MAXL]; } St;
 typedef struct { int64_t pid[MAXK], fid[MAXL + 1][MAXK]; int lev[MAXF][MAXK]; double s[MAXF][MAXK][MAXS]; double p[MAXL][MAXS]; int g[MAXL + 1], ans; } Rec;
 static Rec ring[MAXL], scratch; static int hist[16]; static int64_t tt; static int pend = 1;
@@ -145,7 +145,13 @@ static inline void say(const St *st, const int32_t *c, int f, int k, Rec *r, dou
     for (int v = 0; v < S; v++) { n += c[v]; u += c[v] > 0; }
     if (n < 1) { r->lev[f][k] = -1; return; }
     const int lv = level(n, u); r->lev[f][k] = lv;
-    const double tk = st->T[((int64_t)f * MAXK + k) * NL + lv], den = n < 65536 ? ln_[n] : log(n + S * st->e); double *s = r->s[f][k];
+    const double tk = st->T[((int64_t)f * MAXK + k) * NL + lv]; double *s = r->s[f][k];
+    if (st->ncap > 0 && n > st->ncap) {            /* a cell that has counted more than ncap speaks as if it had counted ncap, in the same proportions (nano/sparse, PLAN_5, addition 2) */
+        const double sc = st->ncap / n, den = log(st->ncap + S * st->e);
+        for (int v = 0; v < S; v++) { const double sv = log(c[v] * sc + st->e) - den; s[v] = sv; a[v] += tk * sv; }
+        return;
+    }
+    const double den = n < 65536 ? ln_[n] : log(n + S * st->e);
     for (int v = 0; v < S; v++) { const double sv = (c[v] < 8192 ? lt[c[v]] : log(c[v] + st->e)) - den; s[v] = sv; a[v] += tk * sv; }
 }
 static inline int share(int S, const double *a, double *p) {
@@ -228,7 +234,7 @@ void census(const St *st, const uint8_t *dead, int64_t *out) {
 '''
 PI32 = ctypes.POINTER(ctypes.c_int32); PI64 = ctypes.POINTER(ctypes.c_int64); PD = ctypes.POINTER(ctypes.c_double); PU8 = ctypes.POINTER(ctypes.c_uint8)
 class St(ctypes.Structure):
-    _fields_ = [(n, ctypes.c_int32) for n in ("S", "D", "nP", "nG", "L")] + [("eta", ctypes.c_double), ("e", ctypes.c_double), ("P", PI32), ("F", PI32 * (MAXL + 1))] + [(n, PD) for n in ("T", "U")] + \
+    _fields_ = [(n, ctypes.c_int32) for n in ("S", "D", "nP", "nG", "L")] + [("eta", ctypes.c_double), ("e", ctypes.c_double), ("ncap", ctypes.c_double), ("P", PI32), ("F", PI32 * (MAXL + 1))] + [(n, PD) for n in ("T", "U")] + \
                [(n, PI32) for n in ("pd", "pn", "gd", "gn")] + [(n, PI64) for n in ("pbase", "gbase")] + [("fam", (ctypes.c_int32 * MAXL) * (MAXL + 1))]
 
 def kern():
@@ -242,7 +248,7 @@ def kern():
     return L
 
 class Fast:
-    def __init__(s, D=9, m=4, mg=3, look=3, eta=0.1, e=2.0, tp=0.02, tg=0.0):
+    def __init__(s, D=9, m=4, mg=3, look=3, eta=0.1, e=2.0, tp=0.02, tg=0.0, ncap=0.0):
         assert S <= MAXS and look <= MAXL
         s.D = D; s.L = look; s.pk = kinds(D, m); s.gk = kinds(D, mg, True); s.K = kern(); assert len(s.pk) <= MAXK and len(s.gk) <= MAXK
         def lay(ks):
@@ -252,7 +258,7 @@ class Fast:
         s.pd, s.pn, s.pbase, s.nPc = lay(s.pk); s.gd, s.gn, s.gbase, nk = lay(s.gk); s.gbase *= S; s.nGc = nk * S; L1 = max(look, 1)
         s.P = np.zeros(s.nPc * L1 * S, np.int32); s.F = {j: np.zeros(s.nGc * (j - 1) * S, np.int32) for j in range(2, look + 1)}
         s.T = birth(look, tp, tg); s.U = np.zeros_like(s.T); p = lambda a, t: a.ctypes.data_as(t); fam, s.nfam = fams(look)
-        s.st = St(); st = s.st; st.S, st.D, st.nP, st.nG, st.L, st.eta, st.e = S, D, len(s.pk), len(s.gk), look, eta, e; st.P = p(s.P, PI32); st.T = p(s.T, PD); st.U = p(s.U, PD)
+        s.st = St(); st = s.st; st.S, st.D, st.nP, st.nG, st.L, st.eta, st.e, st.ncap = S, D, len(s.pk), len(s.gk), look, eta, e, ncap; st.P = p(s.P, PI32); st.T = p(s.T, PD); st.U = p(s.U, PD)
         for j, a in s.F.items(): st.F[j] = p(a, PI32)
         st.pd, st.pn, st.gd, st.gn, st.pbase, st.gbase = p(s.pd, PI32), p(s.pn, PI32), p(s.gd, PI32), p(s.gn, PI32), p(s.pbase, PI64), p(s.gbase, PI64)
         for (j, w), f in fam.items(): st.fam[j][w] = f
@@ -296,11 +302,11 @@ def score(sys_, tx, op, pairs, gap, admit, D=9):
 def run(kw):
     t0 = time.process_time(); tx = kw.get("text", "g2"); seed = int(kw.get("seed", 1)); every = int(kw.get("every", 10000)); G = int(kw.get("gap", 8)); gaps = sorted({0, G // 2, G})
     plan = kw.get("plan", "add:200000"); setup(sub=("sub" in plan) and not int(kw.get("nosub", 0))); rng, held, shown = split(tx, seed)
-    s = Fast(D=int(kw.get("D", 9)), m=int(kw.get("m", 4)), mg=int(kw.get("mg", 3)), look=int(kw.get("look", 3)))
+    s = Fast(D=int(kw.get("D", 9)), m=int(kw.get("m", 4)), mg=int(kw.get("mg", 3)), look=int(kw.get("look", 3)), ncap=float(kw.get("ncap", 0)))
     ck = kw.get("clock", "none"); crng = np.random.default_rng([seed, 20261124]); closed_now = np.zeros(S, bool)
     if ck == "oracle": closed_now[LETS] = True
     P = int(kw.get("P", 256)); alpha = float(kw.get("alpha", 2)); eps = float(kw.get("eps", 0.01)); beta = float(kw.get("beta", 0.02)); p0 = float(kw.get("p0", 0.2)); gam = 1 - 1 / float(kw.get("win", 3000))
-    u = np.full(S, np.log(p0 / (1 - p0))); ev = np.zeros((4, S)); tr = dict(b=None, w=None, n=0, zc=[], zo=[])
+    freeze = int(kw.get("freeze", 0)); u = np.full(S, np.log(p0 / (1 - p0))); ev = np.zeros((4, S)); tr = dict(b=None, w=None, n=0, zc=[], zo=[])
     def trial_block(xs):
         nonlocal u, ev
         for i in range(0, len(xs), P):
@@ -312,8 +318,8 @@ def run(kw):
             ev *= gam; ev[0] += z * closed; ev[1] += closed; ev[2] += z * ~closed; ev[3] += ~closed
             u = np.log(p0 / (1 - p0)) + alpha * (ev[0] / (ev[1] + 1) - ev[2] / (ev[3] + 1)) / np.sqrt(1 / (ev[1] + 1) + 1 / (ev[3] + 1))
             tr["w"] += beta * (abs(r - tr["b"]) - tr["w"]); tr["b"] += beta * (r - tr["b"])
-    lines_shown = {tuple(text(tx, "-", a, b)) for a, b in shown["-"]} if "-" in shown else set()
-    clean = [p for p in held.get("-", []) if tuple(text(tx, "-", *p)) not in lines_shown]                 # held-out subtractions whose line no shown pair writes (ERRATA_20261120.md)
+    hassub = "-" in shown and ord("-") in SI; lines_shown = {tuple(text(tx, "-", a, b)) for a, b in shown["-"]} if hassub else set()
+    clean = [p for p in (held["-"] if hassub else []) if tuple(text(tx, "-", *p)) not in lines_shown]                 # held-out subtractions whose line no shown pair writes (ERRATA_20261120.md)
     out = dict(label=kw.get("label"), args=kw, rows=[], syms=[chr(c) for c in SYMS], clean_pairs=len(clean), kinds=[len(s.pk), len(s.gk)], cells_addressable=int(s.nPc + s.nGc * max(s.L - 1, 0)))
     def reading(pi, name, lines, full_sub):
         if ck == "trial": closed_now[:] = u > 0
@@ -326,11 +332,13 @@ def run(kw):
         if ck == "trial": row["u"] = [round(float(x), 3) for x in u]; row["periods"] = tr["n"]; row["mismatch_mean"] = tr["b"]; row["ev_counts"] = [[round(float(x), 1) for x in ev[1]], [round(float(x), 1) for x in ev[3]]]
         c = s.census(closed_now); row["cells"], row["counts_above_zero"], row["cells_on_closed"], row["counts_on_closed"] = c; row["trusts_used"] = int((s.U > 0).sum()); row["cpu"] = round(time.process_time() - t0, 1)
         out["rows"].append(row)
+        print(name, lines, "never", "/".join(f"{v:.1f}" for v in row["add"].values()), "closed", row["closed"], "cells", row["cells"], "on closed", row["cells_on_closed"], "cpu", row["cpu"], file=sys.stderr, flush=True)
     for pi, ph in enumerate(plan.split(",")):
         name, n = ph.split(":"); op = {"add": "+", "sub": "-"}[name]; n = int(n); assert n % every == 0
         for b in range(n // every):
             xs = stream(tx, op, shown[op], G, every, rng)
-            if ck == "trial": trial_block(xs)
+            if ck == "trial" and freeze and (b * every >= freeze or pi > 0): closed_now[:] = u > 0; s.run(xs, ~closed_now[xs])      # freeze=N: after N lines no entry is tried any more
+            elif ck == "trial": trial_block(xs)
             else: s.run(xs, ~closed_now[xs])
             reading(pi, name, (b + 1) * every, "-" in held and (pi > 0 or b == n // every - 1) and "sub" in plan)
     r0 = [r for r in out["rows"] if r["phase"] == 0]; out["last3_by_gap"] = {g: float(np.mean([r["add"][g] for r in r0[-3:]])) for g in gaps}; out["last_by_gap"] = dict(r0[-1]["add"])
@@ -342,7 +350,7 @@ def check():
     ok_all = True
     for kw, nb, tx, cl in ((dict(D=5, m=2, mg=1, look=3), 1500, "g2", 1), (dict(D=6, m=3, mg=2, look=3), 1500, "g2", 1), (dict(D=6, m=2, mg=2, look=3), 1500, "g2", 0), (dict(D=5, m=2, mg=1, look=0), 1500, "g2", 1),
                            (dict(D=5, m=2, mg=1, look=1), 1000, "g2", 1), (dict(D=6, m=2, mg=1, look=2, tg=0.05, eta=0.03, e=0.5), 1500, "g2", 1), (dict(D=6, m=2, mg=1, look=4), 1500, "t3", 1),
-                           (dict(D=9, m=4, mg=3, look=3), 400, "g2", 1), (dict(D=7, m=3, mg=2, look=4), 500, "t3", 1)):
+                           (dict(D=9, m=4, mg=3, look=3), 400, "g2", 1), (dict(D=7, m=3, mg=2, look=4), 500, "t3", 1), (dict(D=6, m=3, mg=2, look=3, ncap=4.0), 2500, "g2", 1)):
         setup(); rng, held, shown = split(tx, 7); x = np.concatenate([stream(tx, "+-"[i % 3 == 1 and tx == "g2"], shown["+"], 8, 20, rng) for i in range(nb // 200 + 2)])[:nb]
         fl = (rng.random(nb) < 0.7).astype(np.uint8) if cl else None                    # the chain steps at 70% of the bytes, by chance
         f = Fast(**kw); h = nb // 2; e1, P, G = f.run(x[:h], None if fl is None else fl[:h], True); e2, P2, G2 = f.run(x[h:], None if fl is None else fl[h:], True); P = np.concatenate([P, P2]); G = np.concatenate([G, G2])

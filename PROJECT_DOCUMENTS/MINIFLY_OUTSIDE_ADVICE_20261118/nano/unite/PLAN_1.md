@@ -59,3 +59,40 @@ If it fails, the result is where: (a) the letters are not closed; (b) they are c
 ## 7. Cost, and what is not run
 
 About 3 gigabytes and (estimated from `ahead2`) 8 to 15 CPU-minutes a run; 18 runs and the development runs: about 4 CPU-hours on 4 cores. **Not run in this step:** subtraction and keeping (step 2, only if this step holds at 60% or more); three-digit numbers (step 3); 26 letters; letters inside the numbers; the relay system again; any gate.
+
+## Outcome of A, the three arms at `skip.py`'s numbers (entered 20 November 2026; development seed 1; `res/dev_*_1.json`)
+
+Never-shown sums, the system's own answer bytes, whole answer right, %, at gaps 0 / 4 / 8.
+
+| Arm | 10,000 lines | 20,000 | 40,000 | 60,000 | 100,000 | 200,000 | last three | cells that have counted; counts above zero (at 200,000) |
+|---|---|---|---|---|---|---|---|---|
+| `clock=oracle` | 86 | 93 | 94 | 88 | 85 | 76 | 76.8 | 3,203,799; 41.9 million |
+| `clock=none` | 51 / 0 / 0 | 57 / 0 / 0 | 71 / 0 / 0 | 78 / 0 / 0 | 85 / 0 / 0 | 88 / 0 / 0 | 86.7 / 0.0 / 0.0 | 7,183,179; 97.7 million |
+| `clock=trial` (the united system) | 50 / 49 / 24 | 77 | 89 | 94 | 74 | 59 | 58.1 | 10,262,104; 109.3 million |
+
+(one figure where the three gaps are equal.) The trial clock has w x y closed at 10,000 lines and exactly w x y z from 20,000 lines to the end; no other entry is closed at any reading. **U4 held.**
+
+What this shows already (reading, mine; one seed):
+1. **The clock is found, and early**: within 20,000 lines, where the relay system's clock needed 100,000 to 200,000. The counting cells' mismatch is a good judge.
+2. **The two pieces compose**: at 40,000 to 60,000 lines the united system answers 89 to 94% of never-shown sums at every gap, level with the oracle arm.
+3. **Then the score falls with further reading, in the oracle arm too** (94 at 40,000, 76 at 200,000) and further in the united system (59). The place that falls is the tens digit (75.6 and 58.8 at the end; hundreds 96 and 95; units 100). `nano/sparse` reports this fall for its cells of four delays on plain sums (80 at 40,000 lines, 59 to 68 at 400,000; its `REPORT.md`, section 6) and locates it in the growing weight of a cell's counts; there a cell speaking at the weight of at most 16 counts held its level. That line did not run its look-ahead with the cap, and says so.
+4. So on this seed H1, read at 200,000 lines as this plan fixed it, is not met (58.1), and is not refuted (above 50); and the reason is not the composition but the known fall of piece (2), made worse by something in the united system that the oracle arm does not have.
+5. `clock=none` does better at the gap of 0 than I expected at the end (88) and nothing at 4 and 8, as expected. It holds 7.2 million cells.
+6. The united system holds 3.2 times the oracle arm's cells; 3,542,373 of them are keyed on a letter at a chain line and can never be reached again.
+
+## Addition 1 (20 November 2026, written before its runs): where the fall comes from
+
+B goes on as planned for `clock=trial` and `clock=oracle` (200,000 lines). **Changed for cost, said beforehand:** `clock=none` on the reported seeds is run for 60,000 lines only (its gaps of 4 and 8 read 0.0 at every one of the twenty readings on the development seed); my time allows about ten more long runs.
+
+Two diagnostic arms, development seed 1 first, each one change to the united system:
+- `freeze=30000`: after 30,000 lines no entry is tried any more (each stays in its likelier state). If the united system then follows the oracle arm, its further fall comes from the trials that go on (each of the 13 open entries is still closed in one period in a hundred, so in about one period in eight some digit or sign is out of the chain, the lines are misaligned, the answering cell is confidently wrong and the trusts are taught on it). If not, it comes from what was counted in the first 30,000 lines.
+- `ncap=16` (`nano/sparse`'s number, not chosen here; my reading of its prose and its line of code: a cell that has counted more than 16 times speaks as if it had counted 16 times, in the same proportions; its level of experience is still taken from its true count), on the oracle arm and on the united system. The check has a case with the cap (`check_output.txt`, ten cases PASSED).
+
+If on the development seed the cap holds the united system's level, a fourth arm on the five reported seeds: the united system with `ncap=16`, and H1 is read for it as a separate statement (**H1c**: at least 80% at every gap at 200,000 lines with the cap; refuted under 50% at the gap of 8). The uncapped system's H1 is scored as written whatever the capped one does.
+
+| | Prediction | Chance |
+|---|---|---|
+| V1 | `freeze=30000`, development seed: last three within 8 points of the oracle arm (76.8) | 0.50 |
+| V2 | `ncap=16` on the oracle arm: reading at 200,000 lines within 5 points of its reading at 40,000 | 0.50 |
+| V3 | `ncap=16` on the united system: last three at least 80 at every gap | 0.40 |
+| V4 | the cap lowers the peak (the reading at 40,000 lines) by at least 3 points in the oracle arm | 0.50 |
