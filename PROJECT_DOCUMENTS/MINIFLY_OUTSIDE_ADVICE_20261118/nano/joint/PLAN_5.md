@@ -45,3 +45,39 @@ Never-shown sums (mean of the last three readings). The cost of the sign without
 Not run: other shares of inhibitory cells; withdrawal by one end only under the sign; other T and theta; the sign in the product or smaller-part forms; signs for the lines.
 
 ---
+
+## 7. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report4.txt` (made by `report4.py` from `res/g_*.json`); the check: `check_joint4_output.txt` (passed: compiled against numpy 1e-14 to 4e-13 in the four arms with the same sets of living connections and every sign kept; the sign against `cells2.py` with `dale=1` 2e-15; without the sign against `joint2.py` exactly). The comparison of the full-length numpy run with the compiled one is entered in section 8.
+
+Never-shown sums, whole answer right, %, mean of the last three readings; connections living at the end, of 3,584.
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median | living (median) |
+|---|---|---|---|---|---|---|---|
+| N, neither (the plain system) | 84.2 | 82.7 | 86.4 | 81.8 | 86.7 | **84.2** | 3584 |
+| G, one sign for each cell | 70.7 | 73.9 | 64.0 | 62.1 | 72.3 | **70.7** | 3584 |
+| E, either end may withdraw | 83.8 | 81.2 | 87.7 | 82.6 | 86.5 | **83.8** | 1823 |
+| GE, both | 70.3 | 74.3 | 68.3 | 63.5 | 66.1 | **68.3** | 771 (743 to 793) |
+
+| paired, same seed | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| cost of the sign without withdrawal, N less G | 13.5 | 8.8 | 22.4 | 19.7 | 14.3 | **14.3** |
+| cost of the sign with withdrawal, E less GE | 13.5 | 6.9 | 19.3 | 19.1 | 20.4 | **19.1** |
+| the second less the first | -0.1 | -1.9 | -3.1 | -0.6 | +6.1 | **-0.6** |
+| GE less G | -0.4 | +0.4 | +4.3 | +1.4 | -6.2 | **+0.4** |
+
+**The hypothesis.** H stands: the cost of the sign with withdrawal less the cost without is -0.6 at the median (four seeds between -3.1 and -0.1, one at +6.1). The right to withdraw neither eases nor adds to the cost of one sign for each cell; the sign costs 14 to 19 points either way. (The two medians of the cost, 14.3 and 19.1, differ by 4.8, but the paired difference, which is what was registered, is -0.6: the medians fall on different seeds.)
+
+**What else the runs show.**
+
+1. *Under the sign, either end withdrawing leaves about a fifth of the connections at the score of the sign alone*: 771 of 3,584 (21.5%) at 68.3 against 70.7 (paired GE less G: +0.4 at the median, no common sign). Without the sign the same rule leaves 1,823 (51%). About 225 of the 771 come from the 68 inhibitory cells, which is their share of the cells. One to six cells lose every connection.
+2. *Why so few remain is not what I wrote in section 2.* I expected many connections to sit at exactly zero under the sign and to be made permanent zeros by withdrawal. They do not sit at zero: with the sign alone 7.7% of the answering cell's strengths are at exactly zero at the end, of which 7.1 points are the branch that names nothing (`PLAN_2.md`, section 10), and just before the first moment of GE 261 to 327 living connections are at zero, 256 of them that branch. What the sign does is make the strengths unequal: 44% of them are below one hundredth of the largest at the end (4% in the plain system apart from the dead branch), and the largest is 0.23 against 0.09. So under the sign most connections are small beside the largest of their branch or cell, the rule withdraws them (about 2,550 at the first moment against 1,350 without the sign), and the score does not notice.
+3. The sign alone reproduces the earlier figures to the digit with a different kernel (66.6 on seed 1; 70.7, 73.9, 64.0, 62.1, 72.3).
+
+**Predictions.** T1 held. T2 held (-0.6). T3 failed. T4 held (five of five; 743 to 793 against 1,763 to 1,889). T5 held (771). T6 held (+0.4).
+
+**Not run:** as section 6.
+
+## 8. The numpy run (entered 20 November)
+
+The numpy program at full length (GE, seed 1) gives the compiled program's readings to the digit: 61.0 (4, 30, 48, 58, 48, 60, 61, 60), 761 connections living.

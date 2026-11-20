@@ -84,12 +84,32 @@ The one-sided edge kept; one rule of change replaced at a time; the return stren
 2. **A change of fixed size answers nothing**, in either place, at any step tried. For the rule as asked this is by construction (a logistic output is never negative, so every strength of a branch receives the same change); for the other two it is a finding I have not explained.
 3. **A change in proportion to the strength's own size loses 18 points in the answering cell** and leaves 86% of the connections near zero: the same picture as the product edge of C1 with weight at the sending end. Two rules in which a strong connection changes faster than a weak one lose alike. In the cells in between the mildest form of the same rule is level with the present one.
 
-## What the two steps say together (my reading)
+## Step C4: the sign, with and without the right to withdraw
 
-For the connections into the answering cell on this testbed, the score does not tell a one-sided edge from an edge that both ends decide: where the joint forms differ from the one-sided edge they are level with it (the smaller part; the right to withdraw) or below it (the product with weight at the sending end). What both ends deciding changes is which connections exist: fewer of them, and none to a branch that names nothing. If the number of connections is to count, that is a reason for the joint form; the score alone gives none.
+Plan, outcome and scored predictions: `PLAN_5.md`. Programs: `joint4.py` (numpy, the reference), `kerns.c` with `fasts.py`, `check_joint4.py` (`check_joint4_output.txt`: passed). Tables: `report4.txt`. Result files: `res/g_*.json`.
 
-Limits: one testbed, one size, one length; one development seed for every choice and five reported seeds; a share-of-the-largest rule and one T on the reported seeds; the joint forms tried are two rules of many; nothing here has been repeated by another line.
+One sign for each cell in between (the `dale=1` of `cells2.py`, a quarter of the cells inhibitory), and the right of either end to withdraw (arm E of C2, same setting); each present or absent. Medians of five seeds.
+
+| | never-shown sums | connections living, of 3,584 |
+|---|---|---|
+| neither (plain) | 84.2 | 3584 |
+| the sign | 70.7 | 3584 |
+| withdrawal by either end | 83.8 | 1823 |
+| both | 68.3 | 771 |
+
+1. **The right to withdraw does not change the cost of the sign**: the cost with withdrawal less the cost without, seed by seed, is -0.6 at the median (-0.1, -1.9, -3.1, -0.6, +6.1). The sign costs 14 to 19 points either way.
+2. **Under the sign, withdrawal leaves about a fifth of the connections (771) at the score of the sign alone** (+0.4 paired at the median). The sign makes the strengths unequal (44% below one hundredth of the largest against 4% in the plain system apart from the dead branch), and those are withdrawn at no cost.
+3. The sign alone reproduces the earlier 70.7, 73.9, 64.0, 62.1, 72.3 to the digit with a different kernel.
+
+## What the steps say together (my reading)
+
+1. **The score does not tell a one-sided edge from an edge that both ends decide**, for the connections into the answering cell on this testbed. Where the joint forms differ from the one-sided edge they are level with it (the smaller of two parts; the right to withdraw held by either end, with or without one sign for each cell) or below it (the product with weight at the sending end).
+2. **What both ends deciding changes is which connections exist.** Withdrawal by the ends' own strengths removes half of the connections at no cost, and four fifths under the sign, and is 6 points better than removing as many by chance. For whole cells the like does not hold: a cell dropping out by its own total return strength does no better than a cell dropped by chance, and a little worse than a system born at the smaller size.
+3. **Rules in which a strong connection changes faster than a weak one lose in the answering cell**: the product with weight at the sending end (-19) and the change in proportion to own size (-18), both ending with most connections near zero and a few large ones. The division in the present rule is not needed for the score; the size of the mismatch is (a change of fixed size answers nothing).
+4. **The plain system is not short of cells at 256**: 128 cells score as well.
+
+Limits: one testbed, one size, one length; one development seed for every choice (it misled in size three times, each recorded) and five reported seeds, whose spread is about 5 points for the plain system and much more for small or constrained systems; one T on the reported seeds; share-of-the-largest and fixed-threshold rules only; the joint forms and rules tried are a few of many; nothing here has been repeated by another line. Two corrections of my own readings are recorded where they arose (`PLAN_2.md`, section 10; `PLAN_1.md`, section 12).
 
 ## Commands and cost
 
-`python3 check_joint.py`, `python3 check_joint2.py` (about a minute each); `xargs -P 4 -L 1 sh -c 'python3 joint.py "$0" "$@"' < rep1.txt` and likewise `dev1.txt` (see `PLAN_1.md`, section 9, on its labels), `dev2.txt`, `rep1b.txt`, `num1.txt` with `joint.py`; `dev3.txt`, `rep2.txt`, then `rep2x.txt`, `num2.txt` with `joint2.py`; `python3 report1.py > report1.txt`, `python3 report2.py > report2.txt`. A compiled run takes 17 to 26 seconds of one core, a numpy run 3.5 to 6 minutes. In all 57 compiled and 3 numpy runs for C1, 83 compiled and 1 numpy run for C2: about 50 minutes of CPU, half an hour of wall time on four cores. No checkpoints are kept.
+`python3 check_joint.py`, `check_joint2.py`, `check_joint3.py`, `check_joint5.py`, `check_joint4.py` (about a minute each). Runs: `xargs -P 4 -L 1 sh -c 'python3 <program> "$0" "$@"' < <list>` with `joint.py` for `dev1.txt` (see `PLAN_1.md`, section 9, on its labels), `dev2.txt`, `rep1.txt`, `rep1b.txt`, `num1.txt`, `rep3b.txt`; `joint2.py` for `dev3.txt`, `rep2.txt`, then `rep2x.txt`, `num2.txt`; `joint3.py` for `dev4.txt`, `rep3.txt`, then `rep3x.txt`; `joint5.py` for `dev5.txt`, `rep5.txt`; `joint4.py` for `rep4.txt`. The lists `rep3x.txt` and `rep3b.txt` are made from the results of `rep3.txt` (the numbers of cells left). Tables: `python3 report1.py > report1.txt` and likewise `report2`, `report3`, `report5`, `report4`. A compiled run takes 17 to 37 seconds of one core, a numpy run 3.5 to 6 minutes. Compiled runs: 57 (C1), 83 (C2), 71 (C2b), 62 (C5), 24 (C4); numpy runs at full length: 3, 1, 1, 1, 1. About two hours of CPU, a little over an hour of wall time on four cores. No checkpoints are kept; compiled `.so` files are not committed.
