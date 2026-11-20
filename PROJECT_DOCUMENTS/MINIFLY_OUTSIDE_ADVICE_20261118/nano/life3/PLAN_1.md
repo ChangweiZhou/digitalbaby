@@ -96,3 +96,73 @@ Per life of 800,000 real lines, on one core: P about 40 seconds; O and R about 2
 Not run in this plan: other orders of the three tasks; a fourth task; the third task written in the first task's byte values (the harsh case for route 2); other ratios of replay; route 1 with a larger pool; route 3 with three delays or without the shrinking step; further seeds. Each of the first three is a later plan with one change, if the budget allows.
 
 *Decision that this serves.* Whether K1 of the roadmap (keeping) can be said of more than a pair of tasks for any of its three routes, and which route to carry to a longer life.
+
+---
+
+## 7. Outcome (20 November 2026; development level; readings are mine)
+
+Runs: step 0 (three lives of 200,000 lines, seed 1), seed 1 for the five arms, the five reported seeds for the five arms (25 lives of 800,000 real lines); about 55 CPU-minutes. Files: `res/c0_*`, `res/d1_*`, `res/a1_*`; `table1.txt` (reported seeds, every seed listed), `table1_dev.txt` (seed 1); `check_life3_output.txt` (seven cases, compiled against numpy: largest difference 1.8e-12, every reading the same).
+
+**Step 0.** `max` passes on seed 1: the plain system alone has 88.4% of never-shown pairs at 200,000 lines (mean of the last three readings 84.7). It is the third task. The two others, on file only: `sat` 15.4, `srv` 52.8 (neither passes; I have not looked into why `srv`, which is addition with two delays exchanged, is learned so much more slowly than addition on this seed).
+
+**The checks against the other lines' files** (end of the second phase, seed 73129): P 2.0 and 82.0 (clean 81.3); R 77.2 and 82.2 (clean 79.8); O 88.4 and 75.4 (clean 70.2); K 89.6 and 86.8 (clean 86.2). All equal those lines' files to the digit. The first two phases of this life are the lives those lines lived.
+
+**Life A, at the end of each phase.** Never-shown pairs, whole answer, %; median of the five reported seeds at the last reading; in brackets the median of the mean of the last three readings of the phase. Subtraction on the clean score (405 or 406 pairs a seed).
+
+| Arm | after addition: add | after subtraction: add / sub | at the end of the life: add / sub / max |
+|---|---|---|---|
+| P plain | 84.8 [84.2] | 1.8 / 86.0 [1.9 / 82.5] | 2.8 / 1.6 / 70.4 [3.1 / 1.6 / 63.5] |
+| O the program's old lines (upper reference) | 86.6 [86.1] | 84.4 / 71.9 [84.5 / 68.4] | 78.2 / 63.2 / 64.2 [77.7 / 63.8 / 59.5] |
+| K route 1, cells that join | 83.2 [84.5] | 85.8 / 86.2 [85.8 / 87.2] | **85.8 / 86.2 / 90.8** [85.8 / 86.2 / 90.3] |
+| R route 2, replay | 86.8 [86.3] | 77.2 / 78.9 [80.6 / 72.4] | **73.4 / 52.4 / 64.2** [75.4 / 54.7 / 60.6] |
+| S route 3, cells that count | 55.8 [59.1] | 69.2 / 66.4 [71.9 / 66.6] | **65.2 / 65.0 / 97.4** [66.7 / 63.7 / 97.6] |
+
+At the end of the life, each seed (73129, 93683, 116089, 406364, 545353): K addition 89.6, 78.8, 78.6, 85.8, 87.0; subtraction 86.2, 78.4, 83.0, 91.3, 92.0; max 88.2, 90.8, 90.4, 91.6, 92.2. R addition 74.0, 76.0, 72.2, 72.4, 73.4; subtraction 53.2, 52.5, 44.8, 52.4, 50.4; max 64.4, 60.2, 59.2, 73.2, 64.2. S addition 65.6, 69.2, 65.2, 64.4, 64.4; subtraction 65.0, 66.2, 63.4, 63.1, 65.9; max 97.4, 98.4, 97.6, 97.4, 97.0.
+
+**The hypothesis: holds for routes 1 and 3; fails for route 2 on its second clause; no route is refuted.**
+
+- *Route 1* keeps both earlier tasks where they stood and learns the third to 90.8. On every seed 128 cells join in each phase, the last of them 13,342 or 13,464 learned bytes into the phase, and none at any other time; at the end no cell waits; 128 cells may speak on each task's never-shown lines and no cell on two tasks' lines. The pool of 383 is exactly spent by three tasks.
+- *Route 2* keeps addition (73.4) and learns the third task (64.2), and **loses a third of subtraction**: 52.4 at the end against 78.9 after its own phase, under 60 on five seeds of five (44.8 to 53.2), under 60 also as the mean of the last three readings (54.7). Not under 30, so not refuted.
+- *Route 3* has all three at 60 or more (65.2, 65.0, 97.4), on every seed, on the last reading and on the mean of three. With its own bytes written before each next one the figures are the same.
+
+**Predictions scored.**
+
+| | Statement | Chance given | Outcome |
+|---|---|---|---|
+| T1 | `max` passes step 0 | 0.70 | held (88.4) |
+| P1 | plain: addition and subtraction under 10 at the end | 0.90 | held (2.8, 1.6) |
+| P2 | plain: third task 70 or more at the end | 0.70 | held by its letter (70.4; three seeds of five at 70 or more; mean of three readings 63.5) |
+| O1 | upper reference: both earlier tasks 60 or more | 0.75 | held (78.2, 63.2; subtraction under 60 on one seed, 55.2) |
+| O2 | upper reference: third task 60 or more | 0.60 | held (64.2; mean of three readings 59.5) |
+| K1 | route 1: addition 60 or more and within 2 points of its level after the first phase on four seeds | 0.80 | held (85.8; differences -0.2, -0.4, -0.4, +2.6, +0.2) |
+| K2 | route 1: subtraction 60 or more | 0.80 | held (86.2) |
+| K3 | route 1: third task 60 or more | 0.60 | held (90.8) |
+| K4 | route 1: the whole hypothesis | 0.50 | held |
+| K5 | route 1: refuted | 0.10 | did not happen |
+| K6 | route 1: 127 or 128 cells join at the second change, none at other times | 0.70 | held (128 on every seed) |
+| R1 | route 2: addition 60 or more | 0.60 | held (73.4) |
+| R2 | route 2: subtraction 60 or more | 0.40 | **failed** (52.4) |
+| R3 | route 2: third task 60 or more | 0.55 | held (64.2; one seed at 59.2) |
+| R4 | route 2: the whole hypothesis | 0.20 | did not hold |
+| R5 | route 2: refuted | 0.20 | did not happen |
+| R6 | route 2: subtraction's share of the replayed lines in the third phase 20 to 35% | 0.85 | held (29% on every seed) |
+| S1 | route 3: addition 60 or more | 0.65 | held (65.2) |
+| S2 | route 3: subtraction 60 or more | 0.55 | held (65.0) |
+| S3 | route 3: third task 60 or more | 0.40 | held (97.4); I was wrong to doubt it |
+| S4 | route 3: the whole hypothesis | 0.20 | **held, against my chance** |
+| S5 | route 3: refuted | 0.10 | did not happen |
+| A1 | at least one route fails | 0.85 | held |
+| A2 | the route that fails most plainly is route 2 | 0.45 | held (the only one that fails) |
+
+**Readings (mine).**
+
+1. **Route 2's failure is the one two tasks could not show: replay is shared out by what was counted, and the middle task gets the least.** In the third phase 58% of the replayed lines are additions, 29% subtractions and 14% lines of the third task itself (every seed; every replayed line is a line that was shown). Subtraction has 0.29 of a replayed line for each real line and falls from 78.9 to 52.4; addition has 0.58 and falls from 77.2 to 73.4. The upper reference, which gives each old task half a line, ends with subtraction at 63.2 and addition at 78.2. So about half of route 2's loss of subtraction against the reference goes with its smaller share, and the rest of the fall is one that the reference has too (71.9 to 63.2): three tasks in one set of 256 cells. A life with more tasks, or with tasks of unequal length, makes this worse by the same arithmetic: the share of a task in replay is its share of all the lines ever read. This is a property of the replay rule and not of the store, which holds every line.
+2. **Route 1 keeps three tasks as it kept two, by the same separation, and its pool is now empty.** Nothing in life A shows what a fourth task meets. The third task is learned by 128 fresh cells to 90.8, where the plain system, carrying two earlier tasks in the cells that must learn it, reaches 70.4 (and alone, on seed 1, 88.4). Read with the limit the keeping line states: every change here is announced by a byte never met, at every learned byte.
+3. **Route 1's old cells are not exactly untouched at a change.** Addition after the first phase and after the second differ by up to 2.6 points on one seed (83.2 and 85.8 on seed 406364), and subtraction moves by up to 1 point at the second change, although the rule says silent and unchanged. A look inside (`look_k.py`, `look_k_406364.txt`): from the end of addition to 50,000 lines of subtraction the largest change of any strength of the first 128 cells is 0.0027 (strengths from lines; their largest size 11) and 0.0014 for the answering cell's strengths from them (largest size 0.146); the constants do not move. Addition reads 83.2 at the end of its phase, 84.4 after 1,000 lines of subtraction (while cells of the second set are still young and may speak on any line) and 85.8 from then on. Reading: the old cells learn at the first two bytes of the first line of the new task, where the new operator is not yet on the delay lines, and nowhere else; two steps of the usual size move the answer on some dozen borderline pairs. It is a small effect and it went the good way on this seed; it means the score of a kept task can move by a point or two at a change with no forgetting behind it.
+4. **Route 3 holds, with thin margins on the two old tasks and an odd history on the first.** Addition falls while addition alone is read (about 76 at 50,000 lines, 55.8 at 400,000, on every seed, with the shrinking step), rises to 69 to 73 within 50,000 lines of subtraction, and wears by about 4 points during the third task (69.2 to 65.2). Subtraction on the clean score wears from about 71 at 50,000 lines of its own phase to 66.4 at its end and 65.0 after the third task, while on the old score (mostly shown lines) it reads 87 and then 75: these cells hold shown lines exactly, and the old score flatters them, as the errata warned. The third task is nearly perfect (97.4) within 50,000 lines. So the route keeps, but its level on addition and subtraction is 20 points under route 1's and within 5 points of the 60 asked; a harder criterion would have failed it, and I do not read 65 as safe.
+5. **The upper reference is not an upper bound.** Route 1 is above it on all three tasks and route 3 above it on the third. It bounds only routes that hold three tasks in the plain system's one set of cells.
+6. **An earlier life costs the plain system the third task**: 70.4 after two tasks against 88.4 alone (seed 1 for the second figure; not run on the reported seeds).
+
+**What this does not show.** One order of the tasks; one third task, and an easy one (a comparison and a copy; a third task with a carry was not learnable alone within 200,000 lines by the candidates tried); phases of fixed length; five seeds; settings all taken from the other lines, none tuned for three tasks; the score with the line's own bytes before each answer byte. Route 1's keeping rests on the new operator byte, as the keeping line says of two tasks. For route 3 the claim is on margins of about 5 points. Nothing here is a claim that any of these systems learns continually in general.
+
+**Next (each one change from life A, each with its own plan committed before its runs):** `PLAN_2.md`, a fourth task (where route 1's pool is spent and route 2's shares thin further); `PLAN_3.md`, the harsh case for route 2 (the third task written in the first task's byte values); `PLAN_4.md`, the other orders of the three tasks for route 1, which did best.
