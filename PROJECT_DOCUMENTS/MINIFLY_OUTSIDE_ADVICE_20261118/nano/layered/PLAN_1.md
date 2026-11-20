@@ -82,3 +82,26 @@ Other things seen. (i) With cells A that never change both texts stay at 10%: ev
 | L5 | `m1`, last reading, gap of 8 within 10 points of gap of none at the median (0.60) | **failed** (54 against 40); on the two seeds that learned it the gaps are level (100/100/98, 100/100/100) |
 
 My reading: the doubt I stated beforehand (a gate that reads only the present byte cannot tell the first digit from the second) did not stop `g1`, nor `m1` on three seeds of six; what remains is that on `m1` the outcome depends on the birth. **Not run:** more lines for the seeds that did not learn; steps beyond the edge of the grid; `hold.py` (quoted).
+
+## Addition of 20 November, after a note from the coordinating session: the sums never shown, from the files already there (no new run)
+
+Not a registered measure of this plan. The runner (as `hold.py`'s) holds 20 of the 100 pairs back and scores them at every reading **with no letters between the numbers only**; the figure below is the mean of the last three readings, with the count of right answers out of 60 (20 pairs at three readings, the same 20 pairs each time: a small sample, and the three readings are not independent). Layered: `res/lay_r1_*.json`. `hold.py`: its own result files `loop_small_case/res/hold_r7_*.json` as they stand at 0ba9f241 (last changed at 62e7d5e), read and not rerun. In each cell: never shown, % (count of 60) / shown, %.
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 |
+|---|---|---|---|---|---|
+| `m1` layered, no crossing | 31.7 (19) / 51.4 | 85.0 (51) / 98.3 | 3.3 (2) / 9.3 | 18.3 (11) / 39.7 | 76.7 (46) / 99.6 |
+| `m1` layered, cells A never change | 6.7 (4) / 10.8 | 6.7 (4) / 10.1 | 11.7 (7) / 10.7 | 3.3 (2) / 9.7 | 11.7 (7) / 9.6 |
+| `m1` `hold.py`, one crossing (`exact`) | 1.7 (1) / 91.2 | 0.0 (0) / 81.9 | 0.0 (0) / 100.0 | 3.3 (2) / 78.1 | 11.7 (7) / 100.0 |
+| `m1` `hold.py`, one crossing (`grown`) | 5.0 (3) / 92.4 | 1.7 (1) / 42.2 | 6.7 (4) / 100.0 | 0.0 (0) / 31.8 | 11.7 (7) / 93.5 |
+| `m1` `hold.py`, no crossing | 1.7 (1) / 27.6 | 0.0 (0) / 21.2 | 0.0 (0) / 28.2 | 3.3 (2) / 40.1 | 0.0 (0) / 18.3 |
+| `g1` layered, no crossing | 50.0 (30) / 92.6 | 63.3 (38) / 96.2 | 38.3 (23) / 99.0 | 56.7 (34) / 98.6 | 43.3 (26) / 96.8 |
+| `g1` layered, cells A never change | 5.0 (3) / 10.3 | 5.0 (3) / 8.1 | 0.0 (0) / 12.5 | 3.3 (2) / 7.9 | 0.0 (0) / 11.5 |
+| `g1` `hold.py`, one crossing (`exact`) | 5.0 (3) / 99.9 | 0.0 (0) / 94.2 | 1.7 (1) / 99.0 | 0.0 (0) / 98.6 | 0.0 (0) / 97.4 |
+| `g1` `hold.py`, one crossing (`grown`) | 0.0 (0) / 95.6 | 1.7 (1) / 98.5 | 0.0 (0) / 99.0 | 5.0 (3) / 88.9 | 0.0 (0) / 96.4 |
+| `g1` `hold.py`, no crossing | 0.0 (0) / 39.2 | 5.0 (3) / 45.0 | 0.0 (0) / 45.7 | 1.7 (1) / 44.4 | 0.0 (0) / 33.1 |
+
+Medians of never-shown sums: `m1` layered 31.7, `hold.py` with the crossing 1.7; `g1` layered 50.0, `hold.py` with the crossing 0.0.
+
+What the files say: `hold.py` with the crossing answers the 80 sums shown 78 to 100% of the time and the 20 never shown 0 to 12% (0 to 7 of 60), on both texts and in both forms of the crossing. The layered system answers never-shown sums 38 to 63% on `g1` on every seed (shown: 93 to 99%), and on `m1` 77 and 85% on the two seeds that learned the text, in step with sums shown on the others. A guess among ten digits would give about 10% on `m1`.
+
+A reading of mine, not tested: a cell A here is a function of the bytes alone, and after the second number its state is a weighted sum of one function of the first digit and one of the second, so what a cell B reads is additive in the two digits; such a code carries from 80 pairs to the other 20. In `hold.py` nothing makes the code additive. Whether this is the cause was not examined (no look inside the cells was made). To be carried with it: 20 pairs; one gap (none) for the never-shown score; five seeds; on `g1` the never-shown figure is far below the shown one (50 against 97), so the sum is not fully learned as a rule there either.
