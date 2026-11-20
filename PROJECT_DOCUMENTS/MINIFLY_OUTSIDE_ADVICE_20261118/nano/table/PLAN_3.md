@@ -48,3 +48,28 @@ For every arm the choice of eta fell on the smallest value the plan allowed (0.0
 ## 6. Addition 2 (20 November; written after addition 1 was read and before the runs it describes): the control that the trust is learned at all
 
 In addition 1 the choice again fell on the smallest eta allowed, and the loss on the last twentieth of the stream falls steadily as eta falls. The control that this calls for: eta = 0, every trust left at 0.25, for arms 0 and 2 (e = 0.02). If that is as good as the learned trust, the readings of this plan about trust are wrong and what works is the cells' counts read at equal weight. Prediction (mine): with eta = 0 arm 0 is worse than 1.5226 by more than 0.02 (chance 0.7).
+
+## 7. Outcome (entered 20 November after the runs; `res/trust_arm*.json`)
+
+Loss on the last tenth, nats a byte, with nothing changing during it. "Plan" is the choice within the plan's range of eta; "addition 1" with the smaller values added. Beside them: the reference's smoothed table of six bytes 1.5165; the fixed discount on the table's cells 1.5225 (`PLAN_1.md`); the summing form 1.5317, and 1.5237 with the word cells (`PLAN_2.md`); nanoGPT's full setting as it is described, about 1.47.
+
+| Arm | Loss, plan | Loss, addition 1 | Named right | Cells that have counted | Trust not learned (eta = 0) |
+|---|---|---|---|---|---|
+| 0, the table's cells, K = 6 | 1.5264 | 1.5226 | 54.6% | 459,129 | 1.6491 |
+| 1, one trust for each kind | 1.5443 | not run | 54.4% | 459,129 | as arm 0 |
+| 2, with the cells that step once a word | **1.4983** | **1.4973** | 55.4% | 1,826,213 (2,428,284 counts above zero) | 1.8028 |
+| 3, with the clock blind to the words | 1.5239 | 1.5240 | 54.7% | 2,104,052 | not run |
+| 4, the table's cells, K = 8 | 1.5139 | not run | 55.1% | 1,432,252 | not run |
+
+Chosen in every arm: e = 0.02 and the smallest eta allowed (0.0005 in the plan, 0.00005 in addition 1). A run with its choice of settings took 47 to 88 CPU-seconds; one run alone 4 to 8. The compiled loop equals numpy to 4e-15 on a prefix (`trust.py check`).
+
+**The hypothesis holds**: with trust, the cells that step once a word lower the loss by 0.028 nats (0.025 with addition 1), and 0.02 was asked. Y1 failed (1.5264 in the plan's range; 1.5226 with addition 1, against 1.5225). Y2 failed narrowly (0.018, and 0.02 was predicted). Y3 held. Y4 held (the blind clock gains 0.0025 in the plan's range and nothing with addition 1). Y5 failed (1.4973 is above 1.47). Y6 held (K = 8 is 0.0125 below K = 6). Both additions' predictions held.
+
+Readings (mine).
+1. **Cells that count, read with a learned trust, are at the level of the fixed discount** on the table's cells (1.5226 against 1.5225) **and need no chain**: a cell of any kind can be added, and the answering cell finds out how far to trust it.
+2. **In this form the cells that step once a word are worth having** (0.025 to 0.028 nats), and the same cells on a clock that is blind to the words are worth nothing. In the summing form the first gained 0.008 and the second lost 0.023.
+3. **Longer runs become usable**: eight bytes are better than six by 0.0125. In both earlier forms eight were worse than six.
+4. **The trust has to be learned.** Left at its starting value the system is 0.13 nats worse with the table's cells and 0.31 worse with the word cells added. What the answering cell learns (the tables are in the result files): little trust in a cell of a long run that has counted once or twice (0.07 to 0.15 against 0.25 at the start), little in a cell whose followers have varied, more in a short cell that has always been followed by the same byte (up to 0.40).
+5. **The step of the trust is not yet right.** The smallest value allowed was chosen twice, and the loss on the last twentieth of the stream still falls as eta falls: with a constant step a trust that is used a hundred thousand times does not settle. A step that shrinks with use is the next change (one change; `PLAN_4.md`).
+6. A second figure, **a different measure**: if counts and trust go on changing through the last tenth (each byte named before it is counted), arm 0 gives 1.4136 and arm 2 gives 1.3863. No reference taught by back-propagation has been measured in that way here, so these two figures stand beside nothing yet.
+7. Not shown by this plan: that the cells can find the ends of words themselves (the ends were given); that cells taught by the relay add to these.
