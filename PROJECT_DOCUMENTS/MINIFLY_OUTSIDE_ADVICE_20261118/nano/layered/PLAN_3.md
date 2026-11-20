@@ -39,3 +39,34 @@ Never-shown sums throughout; shown sums are reported beside them.
 ## 5. Cost, and what is not run
 
 About 12 CPU-minutes a run: development 5 runs, about 60 CPU-minutes; reported 5 to 10 runs, 60 to 120 CPU-minutes; in all 30 to 50 minutes of wall time. **Not run:** `hold.py` (quoted); longer runs; more cells; gaps beyond 8 in teaching or scoring; the task byte and the modulus of the first family; a comparator by back-propagation through time.
+
+## Outcome (entered 20 November after the development runs; nothing above was changed)
+
+Development seed 1, 2,400,000 lines, %, mean of the last three readings (`res/lay_d3_*.json`); by place: first/second/third answer byte right on never-shown sums at the gap of 8 letters at the last reading.
+
+| etaA, nB (etaB = 1) | never shown at gaps 0 / 4 / 8 | shown at gaps 0 / 4 / 8 | by place at 8 letters |
+|---|---|---|---|
+| 1, 32 | 9.4 / 10.5 / **8.3** | 12.5 / 11.7 / 10.1 | 97 / 70 / 15 |
+| 1, 128 | 4.0 / 4.4 / 4.2 | 4.4 / 4.4 / 3.3 | 96 / 46 / 2 |
+| 1/4, 128 | 4.3 / 2.3 / 0.5 | 3.7 / 1.9 / 0.2 | 93 / 36 / 0 |
+| 4, 32 | 5.1 / 5.3 / 5.2 | 4.4 / 5.0 / 4.6 | 98 / 51 / 7 |
+| cells A never change (0, 32) | 0.7 / 0.7 / 0.6 | 1.2 / 1.2 / 1.3 | 67 / 14 / 11 |
+| `hold.py`, one crossing (quoted, PLAN_11 at 0ba9f241) | 10 / 10 / 8 | not quoted | 97 / 76 / 16 |
+
+Chosen by the rule: etaA = 1, nB = 32, with 8.3% at the gap of 8 letters, rising slowly (never-shown mean over gaps 5% at the first reading, 10% at the last). About 13 CPU-minutes a run.
+
+**The hypothesis is refuted as registered** (8.3% at the gap of 8 letters, where 15% or less refutes). **The reported seeds were not run**, as the plan lays down (the line was 30%).
+
+The layered system without a crossing stands where `hold.py` with one crossing stood on this text, to the point: 8 against 8 at the gap of 8 letters, and the same picture by place (hundreds 97, tens 70 to 76, units 15 to 16). The units digit is hardly above a guess, and it is so at the gap of none as well (9.4% whole answers there), although lines with no letters are a ninth of the text and are the lines of the second plan's text, where this system reached 86%. So the exact units digit of the first number is not held once letters can follow it, by either design, in this time.
+
+| | Prediction | Outcome |
+|---|---|---|
+| G1 | at least 30% at the gap of 8 letters (0.55) | **failed** (8.3) |
+| G2 | at least 50% (0.40) | **failed** |
+| G3 | the gap of 8 within 15 points of the gap of none (0.50) | held only in the empty sense that every gap is equally low |
+| G4 | units digit right on at least 50% at the gap of 8 letters (0.55) | **failed** (15) |
+| G5 | never-shown within 10 points of shown (0.80) | held (9.4 against 11.4), of little weight at this level |
+| G6 | cells A never changing at most 5% (0.85) | held (0.6) |
+| G7 | reported seeds | **not run** |
+
+I was wrong about this text by a wide margin: the second plan's success had made me expect that a gate which can see which digit is before it would be enough. A reading of mine, not tested: a cell that is to hold the first number's units digit must keep its gate shut on every one of the pairs and triples of bytes that the letters can form (with two delay lines a gate's drive is a sum over three positions, so the letters present many more combinations than the nine of the first plan's texts), and until it does, its trace of that digit has faded by the time the answer is named; in the second plan the same digit had to last six bytes of fixed kinds. Whether longer runs, a higher birth threshold of the gates, or a gate on what a cell gives out (the fourth plan) changes this is not known from these runs. **Not run:** the reported seeds; longer runs; more cells; `hold.py` (quoted); a look inside the cells.
