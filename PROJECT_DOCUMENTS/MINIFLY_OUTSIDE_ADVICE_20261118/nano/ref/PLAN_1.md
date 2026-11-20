@@ -82,3 +82,40 @@ nanoGPT's full setting as published (batch 64, 5,000 steps): five and a half hou
 | L5 | B's held-out parts after A alone are at least 0.3 nats above those after A and B | 0.85 |
 
 **Correction to addition 2 (entered at once, before any figure of it was seen).** I miscounted B's stream above. Its three stream parts are 219,510, 74,692 and 129,955 bytes: 424,157 together, not 430,155. The program takes the number of steps on B from the lengths themselves: round(10,000 x 424,157 / 1,003,854) = 4,225 steps (3.24 million bytes seen), not 4,285. The text above stands as written; these are the figures that hold.
+
+## Outcome (entered 20 November, 16:20 UTC; the account is in `REPORT.md`; the large GPT was still learning and its predictions are scored in a later entry)
+
+Stream loss on the last tenth, nats (named right, %). Tables, Kneser-Ney, k = 0..8: 3.347, 2.484, 2.038, 1.719, 1.561, 1.523, **1.517** (54.8), 1.519, 1.522; unsmoothed, best 53.9% at k = 6; Witten-Bell best 1.669 at k = 4. Small GPT: 2,000 steps 1.906 (43.7), nanoGPT's estimate 1.895; 10,000 steps 1.536 (54.2), estimate 1.577. One layer on ten bytes, whole stream, 256 / 1,024 / 4,096 cells: 1.818 (47.2) / 1.731 (49.9) / 1.695 (51.6); with the development part of the plan as first written: 1.959 / 1.926 / 1.942. One layer on 32 bytes, 1,024 cells: 1.879. GRU of 256: 1.574 (54.9) whole stream; 1.763 with the development part. Tables counted without the stream's last 50,000 bytes, k = 6: 1.677. The life of two texts: A 1.537, after B 2.302 (recipe's rate) and 2.030 (constant 1e-4); B's held-out parts 2.005 after A, 1.403 and 1.414 after A and B, 1.584 for B only.
+
+| | Outcome | |
+|---|---|---|
+| T1 | lowest Kneser-Ney loss 1.5165 | held |
+| T2 | reached at k = 6 | held |
+| T3 | k = 8: 1.5220, 0.006 above the lowest | held |
+| T4 | Witten-Bell above Kneser-Ney at every k from 3 to 8 (by 0.05 to 0.45) | held |
+| T5 | best unsmoothed table 53.9% | held |
+| G1 | `small2k`: nanoGPT's estimate 1.895 | held |
+| G2 | `small10k`: nanoGPT's estimate 1.577, below my range of 1.60 to 1.75 | **failed** |
+| G3 | `small10k`: stream loss 0.040 below the estimate; `small2k`: 0.011 above it | **failed** |
+| G4, G4b, G5 | the large GPT has not ended | not yet scored |
+| G6 | `small10k` 1.536 against the best table 1.517 | held (by 0.020) |
+| H | the best table (1.517) is below `small2k` (1.906): the hypothesis is not refuted | held |
+| M1 | 256 cells, whole stream: 1.8175, 0.003 below my range of 1.82 to 1.98 | **failed** |
+| M2 | 1,024 cells: 1.731 | held |
+| M3 | 4,096 cells: 1.695 | held |
+| M4 | the loss falls from 256 to 1,024 to 4,096 | held |
+| M5 | best one layer on ten bytes 1.695 against the best table 1.517 | held |
+| M6 | best one layer on ten bytes names 51.6% | held |
+| R1 | GRU of 256, whole stream: 1.574 | held |
+| A1 | one layer, 1,024 cells, whole stream: 1.731 | held |
+| A2 | GRU of 256, whole stream: 1.574 | held |
+| A3 | Kneser-Ney, k = 6, without the last 50,000 bytes: 1.677, 0.160 above 1.517 | held |
+| L1 | the recipe's rate on B: A rises by 0.765 | held |
+| L2 | constant 1e-4: A rises by 0.493, far outside my 0.03 to 0.15 | **failed** |
+| L3 | B after A and B 1.403 against B only 1.584: 0.181 below | held |
+| L4 | 1.403 is below 1.4152 | held (by 0.012) |
+| L5 | B after A alone 2.005, 0.602 above | held |
+
+M1 to M6 and R1 are scored on the whole-stream runs, as addition 1 said; on the runs with the development part as first planned, M1 would hold (1.959) and M2, M3, M4 and R1 would fail (1.926, 1.942, not falling, 1.763). Of the 25 predictions scored here 21 held and 4 failed. Where I was wrong: I gave the small GPT too little for 8,000 further steps; I assumed a full window is always worth more than half of one, which is false for a network after 2,000 steps; and I expected a small constant rate to protect the first text, which it did not. The plan's own fault (the development part) is described in addition 1 and in the report's section 5.
+
+**Departures from the plan.** `small10k` was stopped and started again once, to add the look at each place of a block. One layer on 32 bytes was run with 1,024 cells and the whole stream only; 4,096 cells and the GRU of 512 were not run. The large GPT took far longer than the hour I gave it (1.4 s a step alone, 4 to 5 s when other runs shared the cores), and the report was written before it ended.
