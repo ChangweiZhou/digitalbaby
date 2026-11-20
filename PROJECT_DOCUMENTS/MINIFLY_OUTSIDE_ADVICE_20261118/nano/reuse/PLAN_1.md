@@ -39,3 +39,25 @@ Where I expect it to mislead if read carelessly: agreement on layout bytes (ever
 ## 4. Size, cost, what is not run
 
 One run of `merge.py` (50 CPU-seconds, 1.23 million cells, 300 MB) and the comparison in numpy (my estimate: under two CPU-minutes). `step1.py check`: the agreement of the fast comparison against a plain-Python count on small tables. Not run in this step: any merging of kinds; any second task; five seeds (one development seed; the question is whether the thing exists at all). Step 2 (a second plan, written after this is read): the mechanism and the transfer experiments.
+
+## 5. Outcome (entered 20 November after the measurement; `out_step1_seed1.txt`, `res/step1_seed1.json`, check in `check1_output.txt`)
+
+One development seed, 40,000 lines, 1.23 million cells, 59 CPU-seconds for the run and the comparison together. The run scores 90.8% (last three readings), as the merge line reports for this seed. The check passes.
+
+| What is compared (cells with at least two counts; best matching of places; at least 50 common values) | pairs | more than 20 points above chance | at least 90% with chance under 50% |
+|---|---|---|---|
+| a plain kind of largest trust against another plain kind, all followers | 1,209 | 280 (23.2%) | 8 |
+| the same, digit followers only | 963 | 53 (5.5%) | 0 |
+| a plain kind against itself with places exchanged, digit followers | 9 | 7 | 0 (best 80.7%) |
+| a slice of a class kind against a plain kind, digit followers | 1,557 | 57 (3.7%) | 10 |
+| a slice against a slice of another class kind, digit followers | 2,874 | 44 (1.5%) | 6 |
+
+The named cases, digit followers: the class kind (X = (3, 6), Z = (4, 7)) at its class of 53 pairs that do not carry against the plain kind (4, 7): **98.1%** of 103 common values (chance 10.0%); at its class of 47 pairs of which 45 carry: **1.9%**. The plain kind (4, 7) against itself exchanged: 100% of 101. The plain kind (3, 4, 6, 7) against itself with the two numbers exchanged: 61.3% of 9,655 (chance 10.2%); it is 17th by trust, just outside the 16.
+
+Predictions. S1 held (98.1%). S2 held (1.9%). S3 failed (no kind among the 16 reaches 90% against itself exchanged; best 80.7%). S4 failed (61.3%). S5 failed (5.5%, not under 2%). S6, the hypothesis of the step as stated, held on the count of all followers and of slices (pairs of at least 90% with chance under 50% exist: 8 of 1,209 plain pairs, 10 of 1,557 slice pairs, each under 2%); with digit followers no pair of plain kinds reaches 90%. The step is not refuted: 5.5% of plain pairs and 3.7% of slice pairs stand more than 20 points above chance.
+
+Readings (mine; one seed).
+1. **Alike kinds exist, and the clean ones are slices.** A class kind held at one class is a table that agrees wholly with a plain kind (ten cases at 100% or near it), and two class kinds found inside different plain kinds agree wholly with each other at matching classes (six cases). The coordinating session's expected case is there at 98%, and its complement at 2%, which is the same rule moved by one.
+2. **Plain kinds agree only in part (50 to 87%), and I had not seen why before the measurement**: a plain cell keyed on digits alone is met at several places of a line and counts what follows at all of them, so its most-counted follower is the rule's digit only where the rule's place outweighs the others. For (3, 4, 6, 7) one count in three is the rule's. The kinds of largest trust are mostly those that hold a byte of the layout among their places, which ties them to one place of the line. So "the most-counted follower is the same" understates what a store read through other places would foretell, and a judgment for step 2 should be on what the store foretells of the stream (all its counts), not on its most-counted follower.
+3. **The exchange of the two numbers is there but blurred** for the same reason (61% for the whole pair, 81% for the best kind among the 16, 100% for the two digits summed).
+4. What this does not show: whether a system can find and use these. No second task was read.
