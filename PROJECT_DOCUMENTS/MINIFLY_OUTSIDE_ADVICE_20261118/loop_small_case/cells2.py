@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+"""PLAN_4.md: the system of keep.py (two-digit sums, cells in between that learn from a relayed mismatch) with options. numpy only.
+    python3 cells2.py <label> seed=1 [plan=add:400000[,sub:200000[,add:40000]]] [every=50000] [fine=1] [reh=N] [swap=1]
+                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0]
+"""
+import json, os, sys, time
+import numpy as np
+HERE = os.path.dirname(os.path.abspath(__file__))
+SYMS = list(b"0123456789+=\n-"); S = len(SYMS); SI = {c: i for i, c in enumerate(SYMS)}; END = SI[10]; D = 10; NL = D * S; OFF = np.arange(D) * S
+
+def text(op, a, b):
+    if op == "-" and a < b: a, b = b, a
+    return [SI[c] for c in f"{a:02d}{op}{b:02d}={(a + b if op == '+' else a - b):03d}\n".encode()]
+
+def sg(u): return 1 / (1 + np.exp(-u))
+
+class Sys:
+    def __init__(s, seed, H=256, eta1=.25, eta2=1 / 16, lam=1e-5, fan=0, rewire=0, dale=0, H2=0):
+        wr = np.random.default_rng([seed, 20261119]); s.g2 = g2 = np.random.default_rng([seed, 20261121])
+        s.H, s.eta1, s.eta2, s.lam, s.rewire, s.dale, s.H2 = H, eta1, eta2, lam, rewire, dale, H2; top = H2 or H
+        s.W1 = wr.uniform(-.5, .5, (H, NL)); s.b1 = np.zeros(H); s.R = wr.uniform(-1, 1, (top, S)); s.W2 = np.zeros((S, top)); s.b2 = np.zeros(S)
+        if H2: s.WB = g2.uniform(-1, 1, (H2, H)) / np.sqrt(H / 3); s.bB = np.zeros(H2); s.RB = g2.uniform(-1, 1, (H, H2))
+        s.M = None; s.made = 0
+        if fan:
+            s.M = np.zeros((H, NL), bool)
+            for j in range(H): s.M[j, g2.choice(NL, fan, replace=False)] = True
+            s.W1 *= s.M; s.age = np.zeros((H, NL), np.int32); s.nbytes = 0
+        if dale:
+            assert not H2
+            s.W1 = np.abs(s.W1); s.b1 = np.full(H, -D * .25 * (fan / NL if fan else 1.0))      # lines excite; the threshold starts at the mean drive
+            s.sign = np.where(g2.random(H) < .25, -1.0, 1.0)
+        s.hist = [END] * D
+    def fwd(s, hist):
+        act = OFF + np.asarray(hist); hA = sg(s.W1[:, act].sum(1) + s.b1)
+        if s.H2:
+            hB = sg(s.WB @ hA + s.bB); return act, hA, hB, s.W2 @ hB + s.b2
+        return act, hA, hA, s.W2 @ hA + s.b2
+    def learn(s, y):
+        act, hA, h, a = s.fwd(s.hist); m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
+        sig = (s.R @ m) * h * (1 - h)                 # what a cell read by the answering cell receives, times its own sensitivity
+        d2 = np.outer(g * m, h)
+        if s.H2:                                      # cells B change, and pass on what they received to cells A over their own return connections
+            sA = (s.RB @ sig) * hA * (1 - hA); dB = np.outer(s.eta1 * D / (hA @ hA + 1) * sig, hA)
+            s.WB += dB; s.bB += s.eta1 * sig; s.RB += dB.T; s.WB *= 1 - s.lam; s.RB *= 1 - s.lam; d = s.eta1 * sA
+        else: d = s.eta1 * sig
+        s.R += d2.T; d1 = np.repeat(d[:, None], D, 1)
+        if s.M is not None: d1 = d1 * s.M[:, act]
+        s.W1[:, act] += d1; s.b1 += d; s.W2 += d2; s.b2 += g * m; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
+        if s.dale:
+            s.W1[:, act] = np.maximum(s.W1[:, act], 0); s.W2 = np.where(s.W2 * s.sign > 0, s.W2, 0.0); s.R = np.where(s.R * s.sign[:, None] > 0, s.R, 0.0)
+        if s.rewire:
+            s.nbytes += 1
+            if s.nbytes % s.rewire == 0: s.turnover()
+    def turnover(s):
+        """Each cell withdraws the weakest of its connections that are at least four periods old and makes one to a line it does not read."""
+        s.age[s.M] += 1; aw = np.where(s.M & (s.age >= 4), np.abs(s.W1), np.inf); j = np.arange(s.H); weak = aw.argmin(1); ok = np.isfinite(aw[j, weak])
+        free = s.g2.random((s.H, NL)); free[s.M] = -1.0; new = free.argmax(1); jj = j[ok]
+        s.M[jj, weak[ok]] = False; s.W1[jj, weak[ok]] = 0.0; s.age[jj, weak[ok]] = 0; s.M[jj, new[ok]] = True; s.made += len(jj)
+    def line(s, L):
+        for t in range(len(L) - 1):
+            s.hist.insert(0, L[t]); s.hist.pop(); s.learn(L[t + 1])
+        s.hist.insert(0, L[-1]); s.hist.pop()
+    def score(s, op, pairs, place=False):
+        n = 0; pl = np.zeros(3)
+        for a, b in pairs:
+            L = text(op, a, b); hist = [END] * D; ok = True
+            for t in range(len(L) - 1):
+                hist.insert(0, L[t]); hist.pop()
+                if t >= 5 and L[t + 1] != END:
+                    r = int(s.fwd(hist)[3].argmax()) == L[t + 1]; ok = ok and r; pl[t - 5] += r
+            n += ok
+        return [round(100 * x / len(pairs)) for x in pl] if place else 100 * n / len(pairs)
+
+def run(kw):
+    t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng = np.random.default_rng([seed, 99]); held, shown = {}, {}
+    for op in "+-":
+        o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held[op] = P[:500]; shown[op] = P[2000:]
+    s = Sys(seed, H=int(kw.get("H", 256)), fan=int(kw.get("fan", 0)), rewire=int(kw.get("rewire", 0)), dale=int(kw.get("dale", 0)), H2=int(kw.get("H2", 0)))
+    reh = int(kw.get("reh", 0)); every = int(kw.get("every", 50000)); fine = int(kw.get("fine", 0)); out = dict(label=kw.get("label"), args=kw, rows=[]); snaps = {}
+    for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
+        name, n = ph.split(":"); op0 = {"add": "+", "sub": "-", "mix": None}[name]
+        for it in range(int(n)):
+            if op0 is None: op = "+-"[rng.integers(2)]
+            elif reh and pi > 0 and rng.integers(reh) == 0: op = "+" if op0 == "-" else "-"
+            else: op = op0
+            a, b = shown[op][rng.integers(8000)]; s.line(text(op, a, b))
+            if (it + 1) % every == 0 or (fine and it + 1 <= 20000 and (it + 1) % 2000 == 0) or (fine and it + 1 <= 100000 and (it + 1) % 10000 == 0):
+                out["rows"].append(dict(phase=pi, name=name, lines=it + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"])))
+        snaps[pi] = {k: getattr(s, k).copy() for k in ("W1", "b1", "W2", "b2")}
+        if pi == 1 and kw.get("swap"):
+            cur = snaps[1]; old = snaps[0]; put = lambda d: [setattr(s, k, v.copy()) for k, v in d.items()]
+            put(dict(cur, W2=old["W2"], b2=old["b2"])); a1 = s.score("+", held["+"])
+            put(dict(cur, W1=old["W1"], b1=old["b1"])); a2 = s.score("+", held["+"]); put(cur)
+            rel = lambda k: float(np.linalg.norm(cur[k] - old[k]) / np.linalg.norm(old[k]))
+            out["where"] = dict(addition_with_the_answering_cell_put_back=a1, addition_with_the_cells_in_between_put_back=a2, change_of_W1_over_its_size=rel("W1"), change_of_W2_over_its_size=rel("W2"))
+    out["by_place_add"] = s.score("+", held["+"], place=True); out["made"] = s.made; out["cpu"] = round(time.process_time() - t0)
+    r0 = [r for r in out["rows"] if r["phase"] == 0 and r["lines"] % every == 0]; out["last3_add_phase0"] = float(np.mean([r["add"] for r in r0[-3:]])) if r0 else None
+    os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"c2_{kw['label']}.json"), "w")); return out
+
+if __name__ == "__main__":
+    kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw)
+    print(o["label"], "last3", o["last3_add_phase0"], "| " + " ".join(f"{r['phase']}:{r['lines']//1000}k {r['add']:.0f}/{r['sub']:.0f}" for r in o["rows"]), "| place", o["by_place_add"], "| made", o["made"], o.get("where", ""), o["cpu"], "s")
