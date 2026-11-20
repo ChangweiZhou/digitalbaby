@@ -94,3 +94,25 @@ So what is wrong is not that some trusts are untaught; it is that **all trusts a
 | D5 | in arm N, silencing the cells that counted fewer than 512 times at the score changes the answer at 400,000 lines by less than 3 points (the lessons have done what the silencing did) | 0.40 |
 
 *What is run next, decided here:* if D1 holds, arm N and the unchanged arms are run on the five reported seeds and the coordinator's hypothesis of `PLAN_1.md` is judged on them as a second design. *Cost:* about 12 CPU-minutes an arm on seed 1. *Not run here:* the other half (the counting system's composed lines taught to the relay system: `PLAN_4.md`), lessons without the novelty test, other ways of composing.
+
+## 7. Addition 2 (20 November; written while arm N of addition 1 was still running, after its readings to 50,000 lines were seen, and before the program `dream2.py` was run beyond its check)
+
+*What arm N shows so far.* It fails from the start: 5.7, 13.4, 17.0, 23.5 and 51.3 at 5,000 to 50,000 lines, where the unchanged joined system has 92.9 to 96.7. The printed counts say why: of the 20,000 lines the relay system composed between 20,000 and 40,000 lines, 15,535 were new, 8,623 were well formed and **274 were right sums**. Two faults of the design, both mine: (i) `cells2.py` never teaches the relay system the first byte of a line, so its composed lines start with a byte of no meaning and half are not well formed; (ii) drawing the answer bytes by chance from branches that are only half sure gives wrong answers, and the lessons then teach the trusts wrong answers on exactly the lines where the counting system was right 97 times in 100. The control arm R is NOT RUN: it was to show that novelty is what matters in a lesson that works, and the lesson does not work. Section 8 will score D1 to D5 when the run ends.
+
+*The changed form (one design, two parts changed, both forced by the faults above).*
+1. **The counting system composes, the relay system answers.** After a chunk of 2,000 real lines the counting system writes one line after each of them, each byte drawn from its second answering cell's shares given what stands before (it composes well-formed lines: 99 of 100 in the check). The composed lines the system has not read are the lessons. At each byte of a lesson the relay system gives its answer (its largest branch) for what stands before, and the answering cells change their trusts and parts towards that answer; no cell counts; the relay system is silent as a sender there, and gives no answer at a line's first byte.
+2. **A lesson byte is taken with a chance equal to the teacher's edge at its level of sureness**: twice the share of stream bytes at that level on which the relay system's answer was the byte that came, less one; nothing if below. The record is the relay system's own, kept from birth, each answer formed before the byte was learned. So a young or unsure teacher teaches nothing, with no number chosen.
+
+*Arms on seed 1, 400,000 lines* (`dream2.py`): teacher=relay; teacher=self (the control: the target is the counting system's own answer, taken with the same chances; it shows whether the relay system is needed or any sharpening on new lines would do).
+
+*Hypothesis.* With these lessons the joined system does not fall with reading. *Refuted if* the relay-taught arm at 400,000 lines is under 93, or at 40,000 lines more than 3 points under the unchanged joined system (96.6).
+
+| | Statement (seed 1, joined second cell) | Chance |
+|---|---|---|
+| E1 | relay-taught arm at 40,000 lines within 3 points of the unchanged joined system | 0.55 |
+| E2 | relay-taught arm at 400,000 lines at least 95 | 0.30 |
+| E3 | relay-taught arm at least 10 points above the unchanged joined system at each of 150,000, 200,000 and 250,000 lines (78.9, 78.3, 77.9) | 0.40 |
+| E4 | the self-taught control is within 3 points of the relay-taught arm at 400,000 lines (the relay system is not needed for it) | 0.40 |
+| E5 | the relay system's answers on the lesson bytes that are answer digits of right composed sums are the composed bytes at least 90 times in 100 over the life | 0.50 |
+
+*What is run next, decided here:* if E2 holds, the relay-taught arm is run on the five reported seeds beside the unchanged arms of `PLAN_1.md`, and the coordinator's hypothesis is judged on them as a second design. *Cost:* composing costs sixteen answers of the counting system for each chunk; I expect 15 to 20 CPU-minutes an arm. *Not run:* other chances than the edge; lessons from both teachers at once; the relay system taught in return (`PLAN_4.md`).
