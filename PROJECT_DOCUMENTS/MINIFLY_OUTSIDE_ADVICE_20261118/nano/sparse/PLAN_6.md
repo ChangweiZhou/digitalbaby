@@ -36,3 +36,32 @@ Why I expect B to fail: the trust for the relay system is by its confidence only
 ## 4. Size, cost, what is not run
 
 Numbers that learn: m = 3's (115,000 cells, 775,000 counts, 5,160 trusts), the relay system's (about 40,000 strengths), ten trusts for the relay system. Cost: my estimate is three to five CPU-minutes for the life. Not run here: the relay system beside m = 4; a trust for the relay system that also depends on the operator or the place; anything of the counting cells reaching the relay system; the short life.
+
+## 5. Outcome (entered 20 November after the runs; `res/s_rl_dev.json` seed 1, `res/s_rl_seed*.json`; table in `report_e6.txt`; check in `check3_output.txt`)
+
+Never-shown additions, whole answer, %, seeds 73129, 93683, 116089, 406364, 545353, last reading of each phase. "The whole": own bytes (the forced score is equal). "Relay system alone": the relay system in the same run, forced score; at the end of addition its mean of the last three readings is 84.2, 82.7, 86.4, 81.8, 86.7, which are the figures of `cells2.py` for these seeds. "Counting cells alone": m = 3 through the same life (`PLAN_2.md`).
+
+| | add 40,000 | add 200,000 | add 400,000 | then sub 5,000 | sub 40,000 | sub 200,000 |
+|---|---|---|---|---|---|---|
+| the whole, each seed | | | 77.6, 75.4, 76.4, 78.4, 78.0 | | | 12.4, 11.8, 14.6, 12.0, 13.2 |
+| the whole, median | 58.0 | 72.0 | **77.6** | 16.0 | 23.6 | **12.4** |
+| relay system alone, median | 66.2 | 82.8 | 84.8 | 2.8 | 1.8 | 1.8 |
+| counting cells alone (m = 3), median | 57.0 | 58.2 | 58.4 | | | 32.4 |
+
+By place at 400,000 lines (median): the whole 98.6, 77.6, 100; the relay system alone 95.0, 89.8, 100. After subtraction the whole has 51.4, 43.6, 54.2: the units digit itself, which the counting cells alone keep at 98, is lost. Subtraction at the end on lines no shown pair writes: the whole 68.3, the relay system alone 83.7. The relay system's trust by its ten levels of confidence (seed 73129), end of addition: 0, 0, 0, 0, 4.8, 8.1, 7.8, 5.5, 3.8, 2.4; end of subtraction: 0, 0, 0, 0, 1.0, 4.7, 4.9, 4.4, 3.8, 3.3. Cost: about 15 CPU-minutes for the life.
+
+**Hypothesis A does not hold** (the whole is 7.2 points under the relay system alone at the last reading and 7.6 by the mean of the last three; within 3 was asked; more than 10 under would refute). **Hypothesis B is refuted, as I expected**: after subtraction the whole has 12.4, under half of the counting cells alone (32.4).
+
+| | Statement | Outcome |
+|---|---|---|
+| G1 | the whole, before: at least 80 | failed (77.6) |
+| G2 | the whole, before: at least the relay system alone | failed on every seed |
+| G3 | the whole, before: at least 90 | failed |
+| G4 | after: at least 80% of m = 3 alone | failed (12.4 against 32.4) |
+| G5 | after: at least 20 points above the relay system alone | failed (10.6 above) |
+| G6 | the relay system's trust at its highest confidence keeps at least half its value through subtraction | held (2.4 to 3.3 on the seed looked at) |
+
+Readings (mine).
+1. **Before the second task the relay system lifts the whole's tens digit from 58 to 78 and no further**; the relay system alone has 90. The counting cells that guess "no carry" are heard beside a sender that knows it. The whole is better than the counting cells alone by 19 points and worse than the relay system alone by 7.
+2. **After the second task the whole is worse than the counting cells alone**, in every digit. The relay system is right on the subtraction lines being read, so it stays trusted; on an addition line it is then confident and wrong, and it outweighs cells whose counts of addition are untouched. No trust that is learned from the lines being read can see this, whatever it is keyed on, because during subtraction no addition line is read: the whole can keep addition only if the relay system keeps it (`PLAN_8.md`), or if the relay system's own confidence fell on what it has lost, which it does not.
+3. Joined in this way the two kinds of cell do not add their strengths: the pair generalises less than the relay system and keeps less than the counting cells.
