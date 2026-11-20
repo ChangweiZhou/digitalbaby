@@ -96,3 +96,9 @@ The mean evidence of the entries in the `h2`, `key=pair` run, in units of its ow
 | Z1 | at least 50% of never-shown pairs with 0, 2 and 4 fillers (development seed) | 0.45 |
 | Z2 | at the end at least 35 of the 40 entries of a filler digit after a letter that was passed over are closed | 0.50 |
 | Z3 | at the end no entry of a digit after a digit is closed in either state | 0.50 |
+
+## Outcome of addition 2 on the development seed, and the reported seeds as run (20 November 2026; the second written before its runs)
+
+Development seed 1, `h2`, `key=pair`, `listen=16`, `bit=1`, 2,400,000 lines (`res/p9_h2_pair_listen_bit_s1.json`): **95.2%** of never-shown pairs with 0, 2 and 4 fillers alike (readings every 200,000 lines: 4, 17, 35 / 48 / 16, 87, 90, 94, ...). Closed at the end: all 40 entries of a filler digit after a letter that was passed over (22 of them at the first reading, all 40 from the third); all 40 entries of a letter after a filler digit that was passed over, and the 4 of a letter after `+`; no entry of a filler digit after a letter that entered the chain; no other entry in either state. **Z1, Z2, Z3 held.**
+
+*The reported seeds, as registered in addition 2, with one arm more:* `h2`, 2,400,000 lines, seeds 73129, 93683, 116089, 406364, 545353: (1) `key=pair`, `listen=16`, `bit=1`; (2) the same without the bit (what it changed from); (3) `clock=none`; (4) `clock=oracle`, 800,000 lines. Hypothesis: arm (1) has at least 50% with 0, 2 and 4 fillers at the median; refuted if under 50%. Prediction Z4 (mine): arm (1) at least 85% on at least four of five seeds (chance 0.6); Z5: arm (2) under 5% with 4 fillers on every seed (chance 0.85).
