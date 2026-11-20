@@ -61,3 +61,18 @@ Stage 1: 96 runs x 0.5 min = 48 core-minutes. Stage 2: at most 12 runs x 2 min =
 ## Not run in this step
 
 Other fading rates; other births of the strengths from lines; steps that change over time; a least-squares arm scored through a fitted soft maximum; more than one step of relay; cells that hold; 4,096 cells and more, more readings and other D (step L2); the reported seeds 406364 and 545353 unless the cost allows.
+
+## Entered after the choice of settings and before the claim runs (20 November, 14:50 UTC)
+
+**Settings chosen on development seed 1** (`res/s1_*.json`, `res/s2_*.json`, `res/s3_*.json`; `python3 summ.py s2 all`):
+- Stage 1 (2 readings, 256 cells, 96 runs). Both arms had their best eta2 on the lower edge of its grid (LS 1/64, P 1/4), and LS its best eta1 on the upper edge (4); as the plan provides, one value beyond each edge was run (LS eta2 = 1/256 and eta1 = 16; P eta2 = 1/16; 28 runs). None was better. Best three of each arm: P (eta1, eta2, rscale) = (1, 1/4, 0) 1.8430, (1, 1/4, 0.03) 1.8455, (4, 1/4, 0) 1.8585; LS (4, 1/64, 0) 2.0903, (16, 1/64, 0) 2.0981, (1, 1/64, 0) 2.1385.
+- Stage 2 (8 readings, 256 cells): P 1.7885, 1.7914, 1.8012 nats (48.15, 48.13, 47.91% right); LS 2.0506, 2.0671, 2.0777 (47.64, 47.86, 46.59%).
+- Stage 3 (4 readings, 1,024 cells): P eta2 = 1/4: 1.8031; 1: 1.8272; 1/16: 2.0704. LS eta2 = 1/64: 2.0198; 1/16: 2.0678; 1/256: 2.2463. No neighbour is better by more than 0.01 nats, so the settings of 256 cells stand.
+- **Arm P: eta1 = 1, eta2 = 1/4, return strengths born at nothing. Arm LS: eta1 = 4, eta2 = 1/64, return strengths born at nothing.** For both arms the chosen arm is itself the arm "born at nothing". By the share named right alone LS would have chosen eta2 = 1/16 (51.0% against 47.5% at 1,024 cells and 4 readings, at a worse crude loss); the plan chooses by loss and that stands; the other is noted.
+- Two runs beyond the plan, made on idle cores during stage 2 (256 cells, 8 readings, seed 1): each arm's setting with return strengths born at the earlier size (rscale = 1): P 1.8284 nats, 47.33%; LS 2.2130 nats, 42.43%.
+
+**Additions to the claim runs, decided now, before any of them:**
+1. The cost allows the five reported seeds (73129, 93683, 116089, 406364, 545353); all five are run for the two arms at both sizes.
+2. Since both chosen arms are born at nothing, the comparison the task asks for beside every figure (the arm against "born at nothing") is empty as planned. So that the birth of the return strengths is still shown on the claim seeds, each arm is also run with return strengths **born at the earlier size** (rscale = 1; same eta1 and eta2, not tuned for that birth): five seeds at 256 cells, the first three seeds at 1,024 cells. With return strengths born at nothing the rule equals back-propagation through this one-layer network (`loop_small_case/REPORT.md`, section 14); with rscale = 1 it does not.
+
+Cost of the claim runs as now set: 20 runs x 2 min + 16 runs x 8 min = 168 core-minutes, about 45 minutes of wall time.
