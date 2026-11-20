@@ -95,3 +95,5 @@ Readings (mine; development level).
 3. **The same setting gains on prose**, 0.010 to 0.016 nats on three books; a fifth of that with classes by chance. It is about a third of what the word cells gain (0.02 to 0.05), with nothing about words laid down.
 4. **The store is not smaller.** The class cells are added; what they stand for cannot be withdrawn on prose.
 5. **Classes found on one part of the stream serve on another** (both controls). On the books they serve better than classes found anew at every doubling; I did not expect that (`PLAN_4.md`).
+
+*Erratum (20 November, after `PLAN_8.md`).* Above, the pairs that lie against their class are said to do so by a limit of the search (by reference to `PLAN_4.md`'s note). `PLAN_8.md`, section 5, shows that the measure J itself prefers the grouping found; the cause is the cells it reads, which mix several places of the line. The figures stand.
