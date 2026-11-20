@@ -130,3 +130,7 @@ Beside them. Every line read (650 strengths a cell, my setting, seed 1): 1.8373 
 - Development level; repeated by no one; no checker gate, seal or review is claimed.
 
 **Not run:** as listed in the plan; and any arm on more than three seeds.
+
+## Outcome of the addition (entered 20 November; `res/t2_x_*.json`, last lines of `report2.txt`)
+
+Seed 1, 8 readings, at `nano/loop`'s setting for every line read (eta1 = 1, eta2 = 1/4, return strengths born at nothing): E64 1.9499 nats (43.69%), M64 1.9759 (43.05%), P64 2.3674 (35.02%). At my setting the same seed gave 1.8857, 1.9314 and 2.2770. The order of the three arms is the same at both settings (single lines, then half and half, then pairs alone); the cells that read 64 lines do better at the setting chosen on them than at the one chosen for cells that read every line. One seed; no prediction was registered.

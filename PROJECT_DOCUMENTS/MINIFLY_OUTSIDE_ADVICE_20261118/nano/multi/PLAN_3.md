@@ -79,3 +79,53 @@ My reading (to be tested by this addition): the rule as I stated it fails at K =
 - Prediction R7 (0.6): PJs is within 5 points of P at both sizes (medians).
 - If R7 fails at K = 8 with PJs below 40, my reading is wrong and the collapse is not a matter of rate.
 The number 8 is not tuned; no other value is run.
+
+## The reported seeds, with the addition (entered 20 November; table in `report3.txt`, made by `report3.py` from `res/p3_r_*.json`)
+
+Never-shown sums, whole answer right, %, mean of the last three readings; 128 cells A, 128 cells B; five reported seeds and their median.
+
+| Arm | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| reference: an edge from every cell A (128 strengths a cell B) | 82.5 | 85.9 | 85.0 | 82.6 | 84.4 | **84.4** |
+| E16: 16 edges | 69.3 | 87.6 | 84.1 | 78.0 | 83.6 | **83.6** |
+| M16: 8 edges + 8 pairs | 66.5 | 85.9 | 78.4 | 69.1 | 79.5 | **78.4** |
+| P16: 16 pairs | 68.4 | 79.5 | 85.7 | 79.1 | 82.6 | **79.5** |
+| PJ16: 16 pairs, every cell can withdraw | 63.0 | 71.1 | 67.7 | 77.5 | 83.7 | **71.1** |
+| P2 at 16: cell B withdraws twice as often | 69.6 | 84.1 | 68.1 | 76.3 | 60.9 | **69.6** |
+| PJs16 (addition): sending cells withdraw at every 8th turnover | 67.3 | 78.6 | 71.7 | 84.2 | 81.5 | **78.6** |
+| E8: 8 edges | 76.7 | 73.5 | 64.8 | 64.1 | 58.0 | **64.8** |
+| M8: 4 edges + 4 pairs | 70.1 | 58.5 | 76.8 | 67.7 | 69.3 | **69.3** |
+| P8: 8 pairs | 72.3 | 69.1 | 70.7 | 81.9 | 78.6 | **72.3** |
+| PJ8: 8 pairs, every cell can withdraw | 12.1 | 17.4 | 16.5 | 28.6 | 16.5 | **16.5** |
+| P2 at 8: cell B withdraws twice as often | 76.7 | 78.2 | 83.9 | 70.8 | 73.3 | **76.7** |
+| PJs8 (addition): sending cells withdraw at every 8th turnover | 62.7 | 44.8 | 66.3 | 57.3 | 52.1 | **57.3** |
+
+**Outcome, question 1 (pairs of sending cells against edges).** With sending ends that are cells, pair-connections do not lose as they did from lines. At 16 strengths a cell B, pairs alone are 4 points below edges at the median (higher on 2 seeds of 5) and half and half is 5 points below (lower on all 5). At 8 strengths, pairs alone are 7.5 points above edges and half and half 4.5 above, each on 3 seeds of 5. The seeds scatter by 15 to 20 points within an arm. **H3a is not refuted.** I claim no difference between pairs and edges in either direction at these sizes; what I do claim is that the large loss of steps 1 and 2 (12 to 32 points; 0.4 nats) is not there.
+
+**Outcome, question 2 (every cell of the connection can set it to zero).** Under the rule as I stated it, at 8 strengths a cell B the system all but stops answering: 16.5 against 76.7 for the control of equal turnover, lower on all five seeds. At 16 strengths it is level with that control (71.1 against 69.6) and 8 points below P. **H3b is refuted** at K = 8.
+The addition (sending cells withdraw an eighth as often): 57.3 at K = 8, which is 15 points below P and below it on all five seeds; 78.6 at K = 16, level with P's 79.5 at the median (below it on four seeds of five, by 1 to 14 points). So most of the collapse at K = 8 was the rate of withdrawal, as I had read it, and a part was not: even at an eighth of the rate, withdrawal by the sending cells under this criterion costs 15 points at 8 strengths, and I see no cost I would claim at 16.
+
+**Predictions scored.**
+- R1 held: the reference gives the report's figures on every seed to the digit printed.
+- R2 held: P is 4.1 points below E at K = 16.
+- R3 held by its wording (M is 4.5 above E at K = 8, at the median) and I do not claim it: 3 seeds of 5, and at K = 16 M is below E on all five.
+- R4 failed: PJ is 60 points below P2 at K = 8.
+- R5 failed: PJ is below P at both sizes.
+- R6 failed: P2 is 9.9 below P at K = 16 and 4.4 above at K = 8.
+- R7 (the addition) failed: PJs is 14.9 below P at K = 8. Its second clause (below 40, my reading wrong) is not met: 57.3.
+Three held, four failed.
+
+**What I read from it (my readings; not tested beyond what is said).**
+1. A product of two cells' outputs is present at every byte, as an edge's signal is; a pair of input lines is present at one byte in some hundreds. That the pair-connections lose from lines and not from cells fits the reading of step 1 that their loss there was a matter of how seldom they are active. It does not prove it: the two testbeds differ in more than that.
+2. A cell B that holds 16 connections of either kind and rewires answers as often as one that reads all 128 cells A (83.6 and 79.5 against 84.4), with 4,352 numbers in cells B and their return strengths where the reference has 32,896.
+3. The right to withdraw is not free. Each withdrawal ends what a connection had learned; a rule that makes every cell use the right once a period leaves only a quarter of the connections older than four periods at K = 8. A cell that withdraws seldom costs less. Which criterion and which rate a sending cell should use is open; the one tried (the least received back, at a fixed rate) is one of many.
+4. The connections withdrawn by sending cells are weak ones (mean size 0.19 against 0.85 for all pairs old enough at K = 8), so the two ends mostly agree about which connections are worth little; the receiving cell's own withdrawals are weaker still (0.09).
+
+**Limits.**
+- The rule is mine and one of many; its numbers (one withdrawal a period; the rate 1/1,024 of the running mean; every 8th turnover in the addition) were fixed and not tuned. Another criterion for the sending cell (a threshold in place of a fixed rate; what it sends in place of what it receives) was not run.
+- "Set to zero" is here a withdrawal after which the receiving cell tries another pair. A connection that stays, at strength zero, or a strength made as the product of parts held by the three cells, was not run.
+- K was chosen on the development seed by a rule that expected reading few cells A to cost; it did not, so the sizes are the two smallest of the four, and the edge arm at K = 8 is 64.8 on the reported seeds where it was 71.1 on the development seed.
+- Five seeds with a scatter of 15 to 20 points within an arm: differences under about 10 points are not resolved.
+- One task, 128 + 128 cells, 400,000 lines. Cells A read every line. Development level; repeated by no one; no checker gate, seal or review is claimed.
+
+**Not run:** edges from which the sending cell can withdraw (line C2's subject); the mixed arm with sending cells withdrawing; K = 32 and 64 on the reported seeds; the text of `nano/data`; the numpy program at full length (300 lines a case against the kernel, 12 cases, and the reference against `cells2.py`).
