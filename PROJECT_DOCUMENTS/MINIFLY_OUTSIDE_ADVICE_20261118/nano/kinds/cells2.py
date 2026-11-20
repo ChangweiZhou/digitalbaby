@@ -12,7 +12,7 @@
     fast=3: the dense kernel with the fading done as one scale factor (the plain system only: no fan, rewire, dale, H2, reserve, clip).
     nano/kinds (a copy of loop_small_case/cells2.py at 260c5d73, with two options; with both off the arithmetic is the original's; plain system only):
     clock=B: each cell in between changes its own strengths at its own rate, eta1 times B to the power u, u uniform from -1 to 1 at birth (its own
-      stream), shifted so that the mean of u is nought (the geometric mean of the rates is eta1).
+      stream), shifted so that the mean of u is nought (the geometric mean of the rates is eta1). clockam=1 (a control): every cell has the arithmetic mean of those rates.
     sig=beta [sigp=1 sigk=1]: the answering cell keeps a running mean a of the size of its mismatch (rate beta a byte) and the mean A of it over the run
       so far and sends a/A to every cell in between, which multiplies its step by sigk times (a/A) to the power sigp (the value sent before the byte).
     Not in this copy: fast=1, fast=2 for cells2 (kern2.c was not copied; kern.c's loop_steps is unchanged and does not have the two options).
@@ -131,6 +131,7 @@ def run(kw):
     if "rscale" in kw: s.R *= float(kw["rscale"])              # the size of the return strengths at birth (0: they start at nothing and equal the forward strengths from then on)
     nres = int(kw.get("reserve", 0))
     if float(kw.get("clock", 0)): u = np.random.default_rng([seed, 20261124]).uniform(-1, 1, s.H); s.rate = float(kw["clock"]) ** (u - u.mean())
+    if s.rate is not None and int(kw.get("clockam", 0)): s.rate = np.full(s.H, s.rate.mean())      # a control: all cells alike at the arithmetic mean of those rates
     s.sig = float(eval(kw.get("sig", "0"))); s.sigp = float(kw.get("sigp", 1)); s.sigk = float(kw.get("sigk", 1))
     assert not ((s.rate is not None or s.sig) and (s.H2 or nres or "fan" in kw or "dale" in kw or "clip" in kw)), "clock and sig are written for the plain system"
     if nres: s.live = np.arange(s.H) < s.H - nres; s.free = s.live.astype(float)

@@ -15,7 +15,7 @@ def cmp(run, kw, names, fast):
 
 if __name__ == "__main__":
     bad = 0; C = ("W1", "b1", "W2", "b2", "R"); Hn = ("Ac", "Az", "Bc", "Bz", "cc", "cz", "W2", "b2", "R", "h", "Ecx", "Ezx", "Ecr", "Ezr", "Ecb", "Ezb"); cases = []
-    opts = [dict(), dict(zalike="1"), dict(zspread="-1,5"), dict(zspread="-2,4"), dict(clock="4"), dict(clock="16"), dict(sig="1/16"), dict(sig="1/256", sigp="4", sigk="0.8"), dict(clock="4", sig="1/16", sigp="2")]
+    opts = [dict(), dict(zalike="1"), dict(zspread="-1,5"), dict(zspread="-2,4"), dict(clock="4"), dict(clock="16"), dict(clock="4", clockam="1"), dict(sig="1/16"), dict(sig="1/256", sigp="4", sigk="0.8"), dict(clock="4", sig="1/16", sigp="2")]
     for base in (dict(cross="1", ret="exact"), dict()):
         for o in opts:
             n = "30" if o.get("clock") == "16" else "300"      # at clock=16 the cells with the fastest clocks make the run sensitive to rounding: the two programs agree to

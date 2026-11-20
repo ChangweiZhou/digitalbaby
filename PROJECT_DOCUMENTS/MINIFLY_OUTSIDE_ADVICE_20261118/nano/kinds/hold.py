@@ -20,6 +20,7 @@ nano/kinds (a copy of loop_small_case/hold.py at 260c5d73, with three options; w
       and every threshold starts at v (so every other number at birth is the same in all arms).
     clock=B: each cell changes its own strengths at its own rate, eta1 times B to the power u, u drawn uniformly from -1 to 1 at birth (its own stream of
       random numbers) and shifted so that the mean of u over the cells is nought: the geometric mean of the rates is eta1.
+      clockam=1 (with clock=B; a control): the same draw, and every cell has the arithmetic mean of those rates.
     sig=beta [sigp=1 sigk=1]: the answering cell keeps a running mean a of the size of its mismatch (rate beta a byte) and the mean A of that size over
       the whole run so far, and sends a/A to every cell; every cell multiplies its step by sigk times (a/A) to the power sigp. The value used at a byte
       is the one sent before that byte's mismatch was formed. The mean multiplier over the run is written out (sig_mean).
@@ -46,7 +47,7 @@ def text(tx, a, b, f=""):
 def sg(u): return 1 / (1 + np.exp(-u))
 
 class Hold:
-    def __init__(s, seed, H, K, eta1, eta2=1 / 16, lam=1e-5, cross=0, ret="exact", lamB=None, chain=0, zspread=(-1, 3), zalike=None, clock=0.0, sig=0.0, sigp=1.0, sigk=1.0):
+    def __init__(s, seed, H, K, eta1, eta2=1 / 16, lam=1e-5, cross=0, ret="exact", lamB=None, chain=0, zspread=(-1, 3), zalike=None, clock=0.0, clockam=0, sig=0.0, sigp=1.0, sigk=1.0):
         g = np.random.default_rng([seed, 20261122]); s.H, s.eta1, s.eta2, s.lam = H, eta1, eta2, lam
         s.idx = np.stack([g.choice(np.delete(np.arange(H), j), K, replace=False) for j in range(H)])      # the K other cells that each cell reads
         s.C = chain; NI = S * (1 + chain); s.prev = [END] * chain                                         # chain: the bytes just before the present one are on lines too
@@ -58,6 +59,7 @@ class Hold:
         if zalike is not None: s.cz = np.full(H, float(zalike))                                          # all cells alike: the draw above is made and thrown away
         s.rate = None
         if clock: u = np.random.default_rng([seed, 20261124]).uniform(-1, 1, H); s.rate = float(clock) ** (u - u.mean())      # each cell's own rate, over eta1
+        if clock and clockam: s.rate = np.full(H, s.rate.mean())                                         # a control: all cells alike at the arithmetic mean of those rates
         s.sig, s.sigp, s.sigk = float(sig), float(sigp), float(sigk); s.sa = 0.0; s.sS = 0.0; s.sn = 0; s.sM = 0.0   # the common signal: running mean, sum, count, sum of multipliers
         assert not ((clock or sig) and cross and ret != "exact"), "clock and sig are written for cross=0 and for ret=exact"
         s.ret = ret; s.qs = 1 / np.sqrt(3 * K)                                                            # ret=sign: the size of every return strength (the birth strengths' root mean square)
@@ -133,7 +135,7 @@ def run(kw, cls=None):
     s = (cls or Hold)(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1/4"))), cross=int(kw.get("cross", 0)), ret=kw.get("ret", "exact"), chain=int(kw.get("chain", 0)),
                       lamB=float(kw["lamB"]) if "lamB" in kw else None,
                       zspread=tuple(float(v) for v in kw.get("zspread", "-1,3").split(",")), zalike=float(kw["zalike"]) if "zalike" in kw else None,
-                      clock=float(kw.get("clock", 0)), sig=float(eval(kw.get("sig", "0"))), sigp=float(kw.get("sigp", 1)), sigk=float(kw.get("sigk", 1)))
+                      clock=float(kw.get("clock", 0)), clockam=int(kw.get("clockam", 0)), sig=float(eval(kw.get("sig", "0"))), sigp=float(kw.get("sigp", 1)), sigk=float(kw.get("sigk", 1)))
     s.X = kw.get("X"); s.fast = int(kw.get("fast", 0)); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
     for it in range(lines):
         a, b = shown[rng.integers(len(shown))]
