@@ -233,6 +233,19 @@ def arms(name, S, D, K1, classes=False):
         nl = dict(level=0); g = [("pair", ("pair", 1, 2)), ("own", ("own",)), ("sure", ("sure", 0))] + ([("class", ("cls",))] if classes else []); gn = [(n + "-nl", f + (nl,)) if n != "own" else (n, f) for n, f in g]
         return ([cell("second", dl(allD)), cell("second-nl", dl(allD, level=0)), cell("nl-delays1-3", dl([1, 2, 3], level=0))] + [cell(n, [f]) for n, f in g] + [cell(n, [f]) for n, f in gn if n != "own"] +
                 [cell("second+" + n, dl(allD) + [f]) for n, f in g] + [cell("nl+" + n, dl(allD, level=0) + [f]) for n, f in gn] + [cell("nl+all", dl(allD, level=0) + [f for _, f in gn]), cell("second+nl", dl(allD) + dl(allD, level=0))])
+    if name == "step3":                                              # cells on cells, against one wide cell and against cells side by side under a reading cell
+        nl = dict(level=0); B = dl(allD, level=0); pr = ("pair", 1, 2, nl); ow = ("own",); su = lambda c: ("sure", c, nl)
+        return [cell("second-nl", B),                                                        # 0
+                cell("flat:nl+pair+own+sure", B + [pr, ow, su(0)]),                          # 1
+                cell("flat:nl+fine+pair+own+sure", B + dl(allD) + [pr, ow, su(0)]),          # 2
+                cell("deep:nl>pair", [pr], 0), cell("deep:nl>own", [ow], 0), cell("deep:nl>sure-of-second", [su(1)], 0), cell("deep:nl>sure-of-first", [su(0)], 0),      # 3 4 5 6
+                cell("deep:nl>nl", B, 0), cell("deep:nl>fine", dl(allD), 0),                 # 7 8
+                cell("deep:nl>pair+own+sure", [pr, ow, su(1)], 0),                           # 9
+                cell("deep:nl>pair>own", [ow], 3), cell("deep:nl>pair>own>sure", [su(11)], 10),      # 10 11
+                cell("side:pair", [pr]), cell("side:own", [ow]), cell("side:sure", [su(0)]), cell("side:nl", B),      # 12 13 14 15
+                dict(name="wide:read(pair,own,sure,nl)", mix=(12, 4)),                       # 16
+                cell("deep:read>nl", B, 16),                                                 # 17: a cell on the reading cell
+                cell("deep:flat>flat", B + [pr, ow, su(2)], 1)]                              # 18: the wide cell twice in depth
     raise KeyError(name)
 
 # ---------------------------------------------------------------- sums: nano/merge's system
