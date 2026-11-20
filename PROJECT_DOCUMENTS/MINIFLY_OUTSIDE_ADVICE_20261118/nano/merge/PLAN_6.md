@@ -66,7 +66,7 @@ First, development material (sums seed 1 at 40,000 lines; prose's last twentieth
 | Setting | two-digit sums, seed 1, last three (last) | prose, last twentieth | three-digit, seed 1 |
 |---|---|---|---|
 | no classes | 76.8 | 1.5566 | (89.7, as `nano/ahead2` reports) |
-| frozen setting | 90.8 (90.6) | 1.5488 | running |
+| frozen setting | 90.8 (90.6) | 1.5488 | stopped for the cores before it ended, NOT RUN (the five reported seeds are in `PLAN_5.md`) |
 | two-class kinds, candidates as frozen | 82.7 (95 to 96 up to 30,000 lines, then 76) | 1.5482 | not run |
 | K (candidates kept for good) | 81.9 (82.2) | 1.5488 | stopped, NOT RUN |
 | K2 | 94.9 (95.2) | 1.5482 | 92.3 (93.4) |

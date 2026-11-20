@@ -25,3 +25,22 @@ My expectation, from how the mechanism is built, is a small gain and a named lim
 ## 3. Size and cost
 
 About 1.9 million cells at 10,000 lines without classes (the other line: 2.0 million at 80,000); my estimate is one CPU-minute without classes and three with. Ten runs. Not run: a kind keyed on two classes; look-ahead with classes.
+
+## 4. Outcome (entered 20 November after the ten runs; `res/s3_*.json`, `out_s3_*.txt`, `report_s3.txt`)
+
+Never-shown three-digit additions, own answer bytes, whole answer, %, 80,000 lines; seeds 73129, 93683, 116089, 406364, 545353; mean of the last three readings.
+
+| | each seed | median | median, last | thousands, hundreds, tens, units (last, median) | cells | CPU s |
+|---|---|---|---|---|---|---|
+| no classes | 92.5, 89.9, 92.7, 90.8, 92.3 | 92.3 | 94.2 | 99.6, 95.2, 98.0, 100 | 1,994,138 | 50 |
+| the frozen setting | 94.9, 93.0, 94.0, 94.1, 95.0 | **94.1** | 94.6 | 99.6, 95.6, 99.4, 100 | 2,029,513 (35,402 class cells) | 145 (85 in the search) |
+| as `nano/ahead2` reports: no look-ahead; look-ahead | | 92.3; 99.7 | | 99.6, 95.2, 98.0, 100; all 100 | | |
+
+The base equals the other line's figure for each seed (92.6, 89.9, 92.7, 90.8, 92.3 there). With only the class kinds speaking: 80.2, 79.2, 92.2, 88.8, 86.2 (median 86.2); with only the plain kinds: 86.6 (median).
+
+**The hypothesis holds**: with nothing chosen on this task the frozen setting is 1.8 points above no classes at the median (at least 1 asked), and above on every seed (2.4, 3.1, 1.3, 3.3, 2.7). T1 held. T2 did not happen. T3 held as a prediction of a limit (94.1, under 97). T4 held (the hundreds digit is the lowest place, 95.6). T5 held (class kinds alone 86.2, below all kinds together on every seed): here, where nearly every line read is new, the class cells do not beat the whole, the opposite of two-digit sums.
+
+Readings (mine).
+1. **The setting transfers to a third task** with a gain of two points, and it gains early: 87.2 at 5,000 lines against 62.6, and 89.2 at 10,000 against 74.8 (medians). Later the plain cells catch up, since on this text any four digits recur.
+2. **The gain is in the tens digit** (98.0 to 99.4). **The hundreds digit does not move** (95.2 to 95.6), as expected: it needs two classes at once. That is what `PLAN_6.md` builds.
+3. Look-ahead does far better here (99.7). On this task the two devices are not level, as they were on two digits.

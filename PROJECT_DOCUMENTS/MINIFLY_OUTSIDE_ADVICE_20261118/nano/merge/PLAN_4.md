@@ -111,3 +111,21 @@ Reading (mine). On sums the class cells are a store of one and a half hundredths
 Runs: both lives with (a) classes found once at 500,000 bytes and cells starting *pooled* (`mode=half pool=1`), (b) classes found at every doubling and cells starting *empty* (`empty=1`). Beside the frozen setting (every doubling, pooled) and "once, empty" this is the two-by-two table on six books.
 
 *Predictions (mine).* My reading of section 6 is that an empty cell does not carry the old text's counts into the new one. If so: U1, on at least five books of six "once, pooled" is nearer to the frozen setting than to "once, empty" (0.55); U2, on at least four of six "every doubling, empty" is below the frozen setting (0.55).
+
+## 10. Outcome of addition 2 (entered 20 November; `res/life_Op.json`, `res/life_E.json`, `res/life2_Op.json`, `res/life2_E.json`; `report_life.txt`, `report_life2.txt`)
+
+Loss on each book less the loss with no classes, nats a byte (negative is better):
+
+| Classes found | cells start | bryant-stories | burgess-busterbrown | carroll-alice | chesterton-thursday | chesterton-brown | austen-persuasion |
+|---|---|---|---|---|---|---|---|
+| at every doubling | pooled (the frozen setting) | -0.0103 | -0.0157 | -0.0149 | -0.0148 | -0.0140 | -0.0107 |
+| once, at 500,000 bytes | pooled | -0.0092 | -0.0152 | -0.0134 | -0.0141 | -0.0119 | -0.0100 |
+| once, at 500,000 bytes | empty | -0.0158 | -0.0308 | -0.0212 | -0.0238 | -0.0189 | -0.0171 |
+| at every doubling | empty | -0.0224 | -0.0477 | -0.0855 | **+0.0153** | -0.0458 | -0.0393 |
+
+U1 held (found once with pooled cells is nearer to the frozen setting than to "once, empty" on six books of six). U2 held (empty cells at every doubling are below the frozen setting on five books of six).
+
+Readings (mine).
+1. **How often the classes are made does not matter on these books; whether their cells start empty does.** Once or at every doubling, pooled cells give the same 0.010 to 0.015.
+2. **What an empty start adds is recency, not better classes.** A class cell that starts empty holds only what has been read since the last finding. In the first life the last finding falls at 1,280,000 bytes, inside the second book, so where the third book is scored the class cells hold little but that book and the end of the one before: 0.086 nats. In the second life the same finding falls just before the first book's last tenth, the class cells are nearly empty there, and the loss is 0.015 nats *above* the system with no classes. A gain that depends on where a finding happens to fall is not a result about classes. The line `nano/table` has cells whose counts fade for this purpose; the comparison that would settle it, plain cells that start empty at the same moments, is NOT RUN.
+3. For the hypothesis of this line the figure that stands is the frozen setting's: 0.010 to 0.016 nats on six books, the cells pooled. The larger figures above are reported and are not claimed for classes.
