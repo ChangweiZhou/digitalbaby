@@ -10,6 +10,8 @@
            fewer than 128 (theta=20); a strength opens if its line was active on at least meet=30 of the cell's first young=4500 learned bytes;
            a cell with a closed strength on an active line is silent, unchanged and not fading; the answering cell's constants become still
            (exp(-n/1e4)).
+    arm=N (PLAN_6.md): as R, but after each real line cand=4 lines are drawn from the counting cells and the relay system learns from the one
+           on which its own mismatch is largest. No compiled code is added: the choice is made in numpy.
     arm=S (route 3, nano/sparse): cells that count, keyed on at most m=4 of the delays 1..9, read with a learned trust whose step shrinks with
            use (eta 0.1, e 2, trusts born at 0.02, shrink=1). The program of that line (sparse.py) is used unchanged, with one more byte value.
     fast=1: the compiled kernels (kernr.c for P, O, R; kage.c for K; kern_s.c for S). fast=0: the numpy references (check_life3.py compares).
@@ -138,8 +140,8 @@ class Counting:
 
 class Mixed(Relay):
     """Arms O and R: the plain system with one further line after each real line (old lines drawn by the program, or replayed lines)."""
-    def __init__(s, seed, w, who, tabs, order, r=1.0, K=8, flat=0, **k):
-        super().__init__(seed, w, **k); s.who = who; s.r = r; s.cells = Counting(K, w, flat); s.rnd = random.Random(seed * 1000 + 7); s.tabs = tabs; s.order = order; s.t_extra = 0.0
+    def __init__(s, seed, w, who, tabs, order, r=1.0, K=8, flat=0, cand=4, blk=500, **k):
+        super().__init__(seed, w, **k); s.who = who; s.r = r; s.cand = cand; s.blk = blk; s.cells = Counting(K, w, flat); s.rnd = random.Random(seed * 1000 + 7); s.tabs = tabs; s.order = order; s.t_extra = 0.0
         s.lineset = {n: set(map(tuple, tabs[n])) for n in order}; s.ops = {w.SI[ord(TASKS[n][0])]: n for n in order if n not in FMT}; s.st = None; s.newst()
     def newst(s): s.st = dict(extra=0, well_formed=0, of_a_shown_line=0, **{"x_" + n: 0 for n in s.order})
     def kind(s, E):
@@ -150,7 +152,29 @@ class Mixed(Relay):
                 if tuple(E) in s.lineset[n]: return len(E) == 10, n, True
             return False, None, False
         n = s.ops[E[2]]; return True, n, tuple(E) in s.lineset[n]
+    def mismatch(s, C):
+        """The relay system's squared mismatch summed over the nine named bytes of each line, the line standing alone (line ends before it)."""
+        n = len(C); tot = np.zeros(n); ar = np.arange(n)
+        for t in range(9):
+            hist = np.full((n, D), s.w.END); hist[:, :t + 1] = C[:, t::-1]; m = -(s.cells_out(hist) @ s.W2.T + s.b2); m[ar, C[:, t + 1]] += 1; tot += (m * m).sum(1)
+        return tot
+    def feed_need(s, X):
+        """PLAN_6.md: after each real line, `cand` lines are drawn from the counting cells as in route 2, and the relay system learns from the one on
+        which its own mismatch is largest (measured with its strengths as they stood at the start of the present block of `blk` real lines)."""
+        for i in range(0, len(X), s.blk):
+            t1 = time.process_time(); Xb = X[i:i + s.blk].tolist(); cands = []
+            for L in Xb:
+                s.cells.count(L)
+                for _ in range(s.cand):
+                    E = s.cells.replay(s.rnd); assert len(E) == 10; cands.append(E)
+            C = np.array(cands, np.int32); pick = s.mismatch(C).reshape(len(Xb), s.cand).argmax(1); lines = []
+            for j, L in enumerate(Xb):
+                E = cands[j * s.cand + int(pick[j])]; wf, n, ok = s.kind(E); s.st["extra"] += 1; s.st["well_formed"] += wf; s.st["of_a_shown_line"] += ok
+                if n: s.st["x_" + n] += 1
+                lines.append(L); lines.append(E)
+            s.t_extra += time.process_time() - t1; s.steps(np.array(lines, np.int32))
     def feed(s, X, pi):
+        if s.who == "N": return s.feed_need(X)
         t1 = time.process_time(); lines = []; earlier = s.order[:pi] or s.order[:1]
         for L in X.tolist():
             lines.append(L)
@@ -187,7 +211,7 @@ def run(kw):
         HELD[n] = np.array([w.text(n, *q) for q in h], np.int32); CLEAN[n] = np.array([w.text(n, *q) for q in c], np.int32)
     Hk = dict(H=int(kw["H"])) if "H" in kw else {}
     if arm == "P": s = Relay(seed, w, **Hk)
-    elif arm in "OR": s = Mixed(seed, w, arm, TL, order, r=float(eval(kw.get("r", "1"))), K=int(kw.get("K", 8)), flat=int(kw.get("flat", 0)), **Hk)
+    elif arm in "ORN": s = Mixed(seed, w, arm, TL, order, r=float(eval(kw.get("r", "1"))), K=int(kw.get("K", 8)), flat=int(kw.get("flat", 0)), cand=int(kw.get("cand", 4)), blk=int(kw.get("blk", 500)), **Hk)
     elif arm == "K": s = Keep(seed, w, **Hk, **{k: float(kw[k]) for k in ("theta", "btau") if k in kw}, **{k: int(kw[k]) for k in ("H0", "K", "young", "meet") if k in kw})
     elif arm == "S": s = Sparse(seed, w, ref=1 - fast, **{k: float(kw[k]) for k in ("eta", "e", "T0") if k in kw}, **{k: int(kw[k]) for k in ("m", "shrink") if k in kw})
     else: raise SystemExit("arm?")
@@ -211,7 +235,7 @@ def run(kw):
             for k in (t, t + "_clean") + ((t + "_own", t + "_clean_own") if arm == "S" else ()): e[k] = rr[-1][k]; e[k + "_last3"] = float(np.mean([r[k] for r in rr[-3:]]))
         ends.append(e)
     out["ends"] = ends; out["cpu"] = round(time.process_time() - t0, 1); run.last = s
-    if arm in "OR": out["cpu_further_lines_python"] = round(s.t_extra, 1)
+    if arm in "ORN": out["cpu_further_lines_python"] = round(s.t_extra, 1)
     if not kw.get("nowrite"):
         os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"{kw['label']}.json"), "w"))
     return out
