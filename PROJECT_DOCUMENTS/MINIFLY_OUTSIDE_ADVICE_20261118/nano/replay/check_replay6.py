@@ -28,4 +28,12 @@ if __name__ == "__main__":
     rng = np.random.default_rng(2); Ls = [replay.text("+-"[int(rng.integers(2))], int(rng.integers(100)), int(rng.integers(100))) for _ in range(2000)] + [replay3.swp(int(rng.integers(100)), int(rng.integers(100))) for _ in range(1000)]
     a1 = replay6.mismatch(s, Ls); a2 = fastm.judge(s, Ls, END); w = float(np.abs(a1 - a2).max() / np.abs(a1).max()); bad += not w < 1e-9; print(f"the compiled judging against the numpy function on 3,000 lines: largest difference over largest value {w:.1e}; the same line would be chosen among every four: {bool((a1.reshape(-1, 4).argmax(1) == a2.reshape(-1, 4).argmax(1)).all())}")
     o = replay6.run(dict(seed="3", plan="add:600,sub:300", every="100", chunk="50", who="M", fast="1", label="chk", nowrite="1")); json.dumps(o); print("a result of arm M can be written as JSON")
+    sx = replay6.run.last; held = [replay.text("+", int(a_), int(b_)) for a_, b_ in rng.integers(100, size=(200, 2))]; e1 = replay3.score(sx, held); e2 = replay6.score_after(sx, held, np.full((7, 10), END), np.random.default_rng(0)); bad += abs(e1 - e2) > 1e-9
+    print(f"the score after a line made of line ends only is the empty-past score: {e2:.2f} and {e1:.2f}")
+    prev = replay.text("+", 12, 34); L = held[0]; hist = [END] * D
+    for x in prev: hist.insert(0, x); hist.pop()
+    for x in L[:8]: hist.insert(0, x); hist.pop()
+    P = np.array([prev]); Lr = np.array([L]); h2 = [Lr[0, 7 - d] if 7 - d >= 0 else P[0, 10 + 7 - d] for d in range(D)]; bad += [int(v) for v in h2] != hist; print(f"the delays at the last answer byte of a line read after another line are those of the stream: {[int(v) for v in h2] == hist}")
+    o = replay6.run(dict(seed="3", plan="add:600,sub:300", every="100", chunk="50", who="P", fast="0", label="chk", nowrite="1")); a = replay6.run.last; replay.run(dict(seed="3", plan="add:600,sub:300", every="100", who="P", label="chk", nowrite="1", fast="0")); w = diff(a, replay.run.last); bad += not w < 1e-6
+    print(f"who=P against replay.py's plain arm (numpy, the same life): {w:.1e}")
     print("CHECK", "FAILED" if bad else "PASSED")
