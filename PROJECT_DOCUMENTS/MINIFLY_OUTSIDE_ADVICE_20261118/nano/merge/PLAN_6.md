@@ -60,3 +60,23 @@ First, development material (sums seed 1 at 40,000 lines; prose's last twentieth
 *Choice between K2 and C2*, on development material only: the higher on two-digit sums (seed 1, last three readings) among those not above the frozen setting on prose's last twentieth by more than 0.002 nats; within half a point, C2 (its rule for candidates is the one that does not harm the first mechanism, if W5 holds). The chosen one is run on the reported seeds and books as section 4 and addition 1 say; the other is reported as development only.
 
 *Predictions (mine).* W4: C2 on the development seed at least 94 (0.6). W5: C alone within 1.5 points of the frozen setting (0.7). W6: C2 on prose's last twentieth not above the frozen setting's 1.5488 by more than 0.002 (0.8).
+
+## 7. Outcome on development material, and the choice (entered 20 November, before any run of this plan on a reported seed or a book; `res/dev6_*.json`, `out_dev6_*.txt`)
+
+| Setting | two-digit sums, seed 1, last three (last) | prose, last twentieth | three-digit, seed 1 |
+|---|---|---|---|
+| no classes | 76.8 | 1.5566 | (89.7, as `nano/ahead2` reports) |
+| frozen setting | 90.8 (90.6) | 1.5488 | running |
+| two-class kinds, candidates as frozen | 82.7 (95 to 96 up to 30,000 lines, then 76) | 1.5482 | not run |
+| K (candidates kept for good) | 81.9 (82.2) | 1.5488 | stopped, NOT RUN |
+| K2 | 94.9 (95.2) | 1.5482 | 92.3 (93.4) |
+| C (a kind's trust counts its children's) | 90.5 (89.6) | not run | not run |
+| **C2** | **95.5 (95.8)** | **1.5482** | not run |
+
+(The prose run of K alone had finished before I stopped the K runs; its figure, 1.5488, is entered. On prose K, K2 and C2 do not differ from their parents: the seven kinds are always all candidates.)
+
+W4 held (95.5), W5 held (90.5 against 90.8), W6 held (1.5482). **Chosen by the rule of addition 2: C2.** On the development seed its 21 kinds keyed on two classes hold 3,647 cells and alone name the tens digit of never-shown sums on 98.8%.
+
+A caution before the reported seeds (mine): on three-digit sums K2 on the development seed has the hundreds digit at 94.6%, no better than the plain cells; the kind I said was needed (the class of the tens digits, the class of the units digits, the two hundreds digits) may not have been made. V1 and V2 look doubtful.
+
+Runs now made with C2: five reported seeds on two-digit sums (C beside it); five on three-digit sums; the first life; 400,000 lines on two seeds for C and C2.
