@@ -21,6 +21,10 @@ class Sys10(merge6.Sys6):
         s.T = np.vstack([s.T, np.zeros((s.G, merge.NL))]); s.Tu = np.vstack([s.Tu, np.zeros((s.G, merge.NL))]); s.base_set = set(s.kinds); s.nbase0 = s.nbase
         s.kinds = list(s.kinds) + [()] * (s.K1 - s.KB)             # a kind's number is its column; the columns of class kinds hold no delays
         s.grown = [None] * s.G; s.finds_g = []
+    def _run(s, ctx, y, learn, want_p):
+        r = super()._run(ctx, y, learn, want_p)
+        if learn and s.G and not s.P2: s.buf_ctx = np.concatenate([s.buf_ctx, ctx])[-s.W:]; s.buf_y = np.concatenate([s.buf_y, np.asarray(y, np.int64)])[-s.W:]      # the last W bytes are kept also where no kinds keyed on two classes are made
+        return r
     # ---- addresses
     def base_ids(s, ctx):
         out = np.empty((len(ctx), s.KB), np.int32)
