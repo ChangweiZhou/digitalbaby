@@ -61,7 +61,21 @@ class Sys10(merge6.Sys6):
         if s.keep == 2 and s.P:
             for k, v in s.child_trust(): mt[k] = max(mt[k], 0.0) + v if np.isfinite(mt[k]) else v
         return mt
-    GC = 0; GR = 0
+    GC = 0; GR = 0; FULL = 0
+    # ---- PLAN_11.md: a kind that is made is born with the counts of the past where the system holds them
+    def refining(s, need):
+        """The kind with the fewest delays, among those that have cells, that holds every delay in `need` (None if there is none)."""
+        best = None
+        for k in list(range(s.KB)) + [s.GOFF + g for g, sl in enumerate(s.grown) if sl is not None and len(sl["keys"])]:
+            if set(need) <= set(s.kinds[k]) and (best is None or len(s.kinds[k]) < len(s.kinds[best])): best = k
+        return best
+    def sub_code(s, k, cod, sub):
+        ds = s.kinds[k]; out = np.zeros(len(cod), np.int64)
+        for j, d in enumerate(sub): out += (cod // (s.S ** ds.index(d)) % s.S) * (s.S ** j)
+        return out
+    def pooled(s, ids_, key):
+        uk, inv = np.unique(key, return_inverse=True); o = np.argsort(inv, kind="stable"); start = np.zeros(len(uk), np.int64); start[1:] = np.cumsum(np.bincount(inv, minlength=len(uk)))[:-1]
+        C_ = np.add.reduceat(s.C[ids_][o], start, axis=0); return uk, C_, C_.sum(1), (C_ > 0).sum(1).astype(np.float32)
     def more_candidates(s, top):                                   # PLAN_10.md, addition 1: the made kinds are candidates for the search for classes beside the 16 by trust
         return top + [s.GOFF + g for g, sl in enumerate(s.grown) if sl is not None and s.GOFF + g not in top and len(sl["keys"])] if s.GC else top
     # ---- the finding: first the kinds to make, then the classes (in plain and made kinds alike), then the kinds keyed on two classes
@@ -89,15 +103,31 @@ class Sys10(merge6.Sys6):
                 for j, sl in enumerate(s.slots2):
                     if sl is not None and kcol in (sl["np"][0], sl["nq"][0]): s.slots2[j] = None; s.T[s.KB + s.P + j] = 0.0; s.Tu[s.KB + s.P + j] = 0.0
             for Rp in best:
-                if Rp not in old: g = free.pop(0); s.grown[g] = dict(ds=Rp, keys=np.zeros(0, np.int64), cids=np.zeros(0, np.int32), born=int(s.read)); s.kinds[s.GOFF + g] = Rp
-            data = [(sl, s.C[sl["cids"]].copy(), s.N[sl["cids"]].copy(), s.U[sl["cids"]].copy()) for sl in s.grown if sl is not None]; pos = s.nbase0      # the cells of the made kinds are moved below the class cells, which are made anew
+                if Rp not in old:
+                    g = free.pop(0); sl = dict(ds=Rp, keys=np.zeros(0, np.int64), cids=np.zeros(0, np.int32), born=int(s.read), full_from=None); kr = s.refining(Rp) if s.FULL else None
+                    if kr is not None:
+                        ids_, cod = s.r_cells(kr)
+                        if len(cod): sl["keys"], C_, N_, U_ = s.pooled(ids_, s.sub_code(kr, cod, Rp)); sl["init"] = (C_, N_, U_); sl["full_from"] = list(s.kinds[kr]); sl["born"] = 0
+                    s.grown[g] = sl; s.kinds[s.GOFF + g] = Rp
+            data = [((sl,) + sl.pop("init")) if "init" in sl else (sl, s.C[sl["cids"]].copy(), s.N[sl["cids"]].copy(), s.U[sl["cids"]].copy()) for sl in s.grown if sl is not None]; pos = s.nbase0      # the cells of the made kinds are moved below the class cells, which are made anew
             s.ensure(sum(len(d[2]) for d in data) + 16)
             for sl, C_, N_, U_ in data:
                 n = len(N_); s.C[pos:pos + n] = C_; s.N[pos:pos + n] = N_; s.U[pos:pos + n] = U_; sl["cids"] = np.arange(pos, pos + n, dtype=np.int32); pos += n
             s.nbase = pos
-            rec = [dict(delays=list(sl["ds"]), worth=round(cand.get(sl["ds"], 0.0), 1), born_at=sl["born"], cells=int((s.N[sl["cids"]] > 0).sum())) for sl in s.grown if sl is not None]
+            rec = [dict(delays=list(sl["ds"]), worth=round(cand.get(sl["ds"], 0.0), 1), born_at=sl["born"], pooled_from=sl.get("full_from"), cells=int((s.N[sl["cids"]] > 0).sum())) for sl in s.grown if sl is not None]
             s.finds_g.append(dict(bytes_read=int(s.read), candidates=len(cand), of_positive_worth=sum(w > 0 for w in cand.values()), made=rec, cpu=round(time.process_time() - t0, 1))); s.tfind += time.process_time() - t0
         super().find()
+        if s.FULL and s.P2:                                         # the kinds keyed on two classes likewise: pooled from a kind that holds all their delays, if there is one
+            nfull = 0
+            for sl in s.slots2:
+                if sl is None: continue
+                kr = s.refining(set(sl["Xp"]) | set(sl["Xq"]) | set(sl["Zr"]))
+                if kr is None: continue
+                ids_, cod = s.r_cells(kr); cp = sl["mp"][s.sub_code(kr, cod, sl["Xp"])]; cq = sl["mq"][s.sub_code(kr, cod, sl["Xq"])]; ok = (cp >= 0) & (cq >= 0)
+                if not ok.any(): continue
+                uk, C_, N_, U_ = s.pooled(ids_[ok], (cp[ok].astype(np.int64) * merge6.NC + cq[ok]) * sl["ZS"] + s.sub_code(kr, cod[ok], sl["Zr"]))
+                n = len(uk); s.ensure(n); cid = np.arange(s.top, s.top + n, dtype=np.int32); s.C[cid] = C_; s.N[cid] = N_; s.U[cid] = U_; s.top += n; sl["keys"], sl["cids"] = uk, cid; sl["full_from"] = list(s.kinds[kr]); nfull += 1
+            if s.finds2: s.finds2[-1]["born_with_the_past"] = nfull
     def sizes(s):
         z = super().sizes(); z["made_kinds"] = sum(sl is not None for sl in s.grown); z["made_cells"] = int(sum((s.N[sl["cids"]] > 0).sum() for sl in s.grown if sl is not None)); return z
     def trust_summary(s):
@@ -128,12 +158,22 @@ def check():
         for r in range(len(ctx)):
             key = sum(int(ctx[r, d - 1]) * 14 ** i for i, d in enumerate(sl["ds"])); pos = np.flatnonzero(sl["keys"] == key); bad += int(idd[r, s.GOFF + g]) != (int(sl["cids"][pos[0]]) if len(pos) else -1)
     ok &= bad == 0; print(f"addresses of those cells on 500 contexts: {bad} differ from the address worked out by hand", "PASSED" if bad == 0 else "FAILED")
+    Sys10.FULL = 1; s = Sys10(14, D, kinds, 0.1, 2.0, 0.02, True, P=32, eJ=0.02, mode="classes", seed=seed, keep=2); s.learn(merge.ctx_of(x, D, len(x), D), x[D:]); Sys10.FULL = 0; nf = bad = tot = nlate = 0
+    for sl in s.slots2:                                            # a kind keyed on two classes that was born with the past: its cells against a count of the whole stream by hand
+        if sl is None or not sl.get("full_from"): continue
+        nf += 1; ref = {}; born = max([g["born"] for g in s.grown if g is not None and list(g["ds"]) == sl["full_from"]] + [0]); nlate += born > 0      # pooled from a made kind: that kind holds the stream from its own birth
+        for t in range(D + born, len(x)):
+            cp = sl["mp"][sum(int(x[t - d]) * 14 ** i for i, d in enumerate(sl["Xp"]))]; cq = sl["mq"][sum(int(x[t - d]) * 14 ** i for i, d in enumerate(sl["Xq"]))]
+            if cp < 0 or cq < 0: continue
+            key = (int(cp) * merge6.NC + int(cq)) * sl["ZS"] + sum(int(x[t - d]) * 14 ** i for i, d in enumerate(sl["Zr"])); ref.setdefault(key, {}); ref[key][int(x[t])] = ref[key].get(int(x[t]), 0) + 1
+        have = {int(k): {int(v): int(c) for v, c in enumerate(s.C[i]) if c > 0} for k, i in zip(sl["keys"], sl["cids"]) if s.N[i] > 0}; tot += len(ref); bad += have != ref
+    good = nf > 0 and bad == 0; ok &= good; print(f"kinds keyed on two classes born with the past (pooled from a kind that holds all their delays): {nf} kinds ({nlate} of them pooled from a made kind, counted from that kind's birth), {tot} cells counted again by hand over the stream; kinds that differ: {bad}", "PASSED" if good else "FAILED")
     made_in = sum(sl is not None and sl["k"] >= s.GOFF for sl in s.slots); print(f"(of the {sum(sl is not None for sl in s.slots)} kept pairs, {made_in} are inside a made kind; made kinds: {[sl['ds'] for sl in s.grown if sl is not None]})")
     return ok
 
 if __name__ == "__main__":
     if sys.argv[1] == "check": sys.exit(0 if check() else 1)
-    merge.Sys = Sys10; kw = dict(a.split("=") for a in sys.argv[2:]); kw.setdefault("keep", "2"); Sys10.G = int(kw.get("G", 16)); Sys10.GC = int(kw.get("gc", 0)); Sys10.GR = int(kw.get("gchance", 0)); merge6.Sys6.P2 = int(kw.get("P2", 32)); merge6.Sys6.W = int(kw.get("W", 50000))
+    merge.Sys = Sys10; kw = dict(a.split("=") for a in sys.argv[2:]); kw.setdefault("keep", "2"); Sys10.G = int(kw.get("G", 16)); Sys10.GC = int(kw.get("gc", 0)); Sys10.GR = int(kw.get("gchance", 0)); Sys10.FULL = int(kw.get("full", 0)); merge6.Sys6.P2 = int(kw.get("P2", 32)); merge6.Sys6.W = int(kw.get("W", 50000))
     out, s = dict(sums=merge.run_sums, dev=merge.run_dev, life=merge.run_life)[sys.argv[1]](kw); out["finds_two"] = s.finds2; out["finds_made"] = s.finds_g; tag = kw["tag"]
     if sys.argv[1] == "sums":
         nd = int(kw.get("nd", 2)); seed = int(kw.get("seed", 1)); n10 = 10 ** nd; o = np.random.default_rng([seed, 99]).permutation(n10 * n10); held = [(int(q) // n10, int(q) % n10) for q in o[:500]]; out["two_class_kinds_alone"], out["two_class_cells_alone"] = merge6.two_alone(s, held, nd)
