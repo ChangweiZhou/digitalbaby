@@ -58,3 +58,29 @@ Stages A to C: 14 runs of 2 readings, about 2.6 minutes each: about 37 core-minu
 ## What is not run
 
 Other cell counts, other numbers of delays, more than 8 readings; the least-squares answering cell on the arms; pair-specific steps or turnover; the numpy program at length (3,000 bytes a case against the kernel); the references of `nano/ref` (another line's; quoted if present when this is reported).
+
+## Entered on 20 November after stages A to C (seed 1, 2 readings), before any claim run of a pair arm was started
+
+Loss on the last tenth after 2 readings, nats (`res/t2_dA_*.json`, `t2_dB_*.json`, `t2_dC_*.json`).
+
+Stage A, the edge arm E64 (rows eta1, columns eta2):
+
+| eta1 \ eta2 | 1/4 | 1 | 4 |
+|---|---|---|---|
+| 1/16 | | 2.0615 | |
+| 1/4 | 2.1915 | **1.9899** | 3.3001 |
+| 1 | 2.1455 | 2.0000 | 2.8703 |
+| 4 | 2.1443 | 2.0109 | 3.2510 |
+
+The best, eta1 = 1/4, lay on the edge of the grid in eta1, so eta1 = 1/16 was run as the plan says: worse. Stage B: return strengths born at 0.1 of the earlier size: 2.0069, worse. **Setting of every arm: eta1 = 1/4, eta2 = 1, return strengths born at the earlier size.**
+
+Stage C, M64 at that setting:
+
+| pairs tried at a turnover | any two delays | neighbouring delays |
+|---|---|---|
+| drawn uniformly | 2.0886 | 2.0897 |
+| among the pairs of lines active at that byte | 2.0499 | **2.0332** |
+
+**Setting of every pair arm: tried among the active pairs, neighbouring delays** (0.055 nats below the default). So on the text every pair-connection names two bytes that follow one another, at some distance back; Q4 has no object and is scored as not tested.
+
+After 2 readings on this seed the edge arm is at 1.9899 and the best mixed arm at 2.0332. The claim runs (8 readings; seeds 1, 2, 3) were queued after these lines: `jobs_r2.txt`; the reference (every line read) and E64 on seed 1 had been started when stage A and B were done, since they do not depend on stage C.
