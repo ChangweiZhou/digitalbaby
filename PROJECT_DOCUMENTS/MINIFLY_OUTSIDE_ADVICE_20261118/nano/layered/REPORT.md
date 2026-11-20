@@ -16,7 +16,7 @@ By the agent session of this line. Development level; five reported seeds where 
 
 **Seen besides.** (i) Sums never shown on the single-digit texts (20 pairs, no letters; small sample): the layered system answers about half of them where it learned the text (`g1` 38 to 63%; `m1` 32 to 62% on six further seeds, 77 and 85% on two of the first five), `hold.py` with the crossing 0 to 12% in its own result files. (ii) The output gate (crosswalk item 5) was the largest single effect of the line: 3.7 to 64.7 at equal numbers and length; a one-gate control at the gate arm's split stays at 3.9. The one-gate arm does rise later (51% at 9,600,000 lines on seed 1), so what is shown is a rise brought forward by a factor of about five and a higher level at 2,400,000 lines, not that one gate cannot.
 
-**Predictions:** 34 registered; failed: L1, L5, G1, G2, G4, O4, S1, S4, S5; G3 held only in an empty sense; G7 not run. Three that held had chances of 0.15 to 0.30 from me (O1 to O3).
+**Predictions:** 35 registered; failed: L1, L5, G1, G2, G4, O4, S1, S4, S5; G3 held only in an empty sense; G7 not run. Three that held had chances of 0.15 to 0.30 from me (O1 to O3).
 
 **Not run:** `hold.py` (quoted throughout); a comparator by back-propagation through time; K cells A drawn at birth for each cell B (all are read); the output gate on `m1`, `g1`, `d2`, in `hold.py`'s own cell, beyond 2,400,000 lines, or born open on the reported seeds; the one-gate long run on the reported seeds; more lines for the `m1` seeds that did not learn; never-shown sums at gaps of 4 and 8 on the single-digit texts; any look inside the cells; keeping; language. Cost of the line: about 9 CPU-hours.
 
