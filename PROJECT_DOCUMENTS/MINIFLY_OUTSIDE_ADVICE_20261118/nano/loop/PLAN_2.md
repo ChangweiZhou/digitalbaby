@@ -55,3 +55,7 @@ The queue is now run by `q.sh` (`jobs_3.txt`: these four runs, then the rest of 
 **Runs stopped, to pay for them:** the fixed-setting run at 16,384 cells after its first reading (2.2201 nats, 36.3%; 20.7 minutes); the fixed-setting run at 4,096 cells after its eighth reading (its readings 9 to 16, which the third plan had asked for, are replaced there by those of the run with eta1 = 16). So the fixed-setting series is: 256 and 1,024 cells on three seeds, 4,096 cells on one seed, 8 readings; 16,384 cells on one seed after one reading only.
 
 **Scoring stays as registered:** the hypothesis and B1 to B4 are scored on the fixed-setting series. B4 (16,384 against 4,096 cells after 2 readings) can no longer be scored on that series as written; it is scored after 1 reading, and also on the series with eta1 in proportion, and both are said.
+
+## Entered 16:01 UTC (nothing above is changed)
+
+**The pre-check at 1,024 cells** (development seed 1, 4 readings): eta1 = 1: 1.8031 nats, 47.6%; eta1 = 4: 1.7761, 48.5%; eta1 = 16: 1.7951, 48.0%. B5 held (eta1 = 4 is better by 0.027 nats). The best of the three is again eta1 = H / 256. As the plan provides, 1,024 cells with eta1 = 4 are run for 8 readings on seed 73129 (`a4_H1024_s73129`), and on seeds 93683 and 116089 at the end of the queue if the time allows.
