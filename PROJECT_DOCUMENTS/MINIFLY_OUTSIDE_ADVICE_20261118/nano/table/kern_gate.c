@@ -15,7 +15,7 @@ static int cmpf(const void *a, const void *b) { const float x = *(const float *)
    parts) times the sender's message.  Parts: Gt[part][kind][level][gate value]; gate 0: part j reads the byte at delay j + 1; gate 1: every part reads 0;
    gate 2: one part, reading the number (0..3) of speaking senders that have counted fewer times than this one and at least twice. */
 void mix_steps2(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double *Tu,
-                double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, int gate, double *P2, double birth) {
+                double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, int gate, double *P2, double birth, int rule) {
     static double lt[4096], s[KMAX][SMAX]; double a[SMAX], p[SMAX], a2[SMAX], p2[SMAX]; static int lev[KMAX]; static int64_t gix[KMAX][DMAX]; static float srt[KMAX];
     const int NG = gate == 2 ? 4 : S, np = gate == 2 ? 1 : D;
     for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
@@ -53,8 +53,11 @@ void mix_steps2(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, 
         if (learn) {
             for (int k = 0; k < K1; k++) if (lev[k] >= 0) {
                 double g = s[k][y[t]], g2 = s[k][y[t]]; for (int v = 0; v < S; v++) { g -= p[v] * s[k][v]; g2 -= p2[v] * s[k][v]; }
+                if (rule) { const int q = k * NL + lev[k]; Tu[q] += g * g; if (Tu[q] > 0) T[q] += eta * g / sqrt(Tu[q]);      /* PLAN_22.md: one rule for every text */
+                    for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gu[i] += g2 * g2; if (Gu[i] > 0) Gt[i] += eta * g2 / sqrt(Gu[i]); } }
+                else {
                 T[k * NL + lev[k]] += (shrink ? eta / sqrt(1.0 + Tu[k * NL + lev[k]]) : eta) * g; Tu[k * NL + lev[k]] += 1.0;
-                for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gt[i] += (shrink ? eta / sqrt(1.0 + Gu[i]) : eta) * g2; Gu[i] += 1.0; }
+                for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gt[i] += (shrink ? eta / sqrt(1.0 + Gu[i]) : eta) * g2; Gu[i] += 1.0; } }
             }
             for (int k = 0; k < K1; k++) { const int64_t i = id[k] < -1 ? -2 - (int64_t)id[k] : id[k];
                 if (i >= 0) { if (birth > 0 && N[i] == 0 && p[y[t]] >= birth) continue;      /* PLAN_19.md: a cell is not born at a byte to which the first cell gave at least this probability */
