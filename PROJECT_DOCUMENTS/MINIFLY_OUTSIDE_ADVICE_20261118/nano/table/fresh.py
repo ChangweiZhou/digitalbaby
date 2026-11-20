@@ -126,6 +126,16 @@ def moments(name, use):
         if k != "A": s2.go(segs[k][0], segs[k][1], True); r["B_only"][k] = sc(s2, k)
     return r
 
+def life2(name, use):
+    """PLAN_12.md, addition 1: the first half of A, the first halves of the books, the second half of A, the second halves of the books."""
+    x, segs, _ = life.load_all(); K = 6; keys = words.word_keys(x) if name == "T2" else []; sy = SysF(x, keys, K, use); sc = lambda k: score.score(sy.go(segs[k][1], segs[k][2], False, True), x[segs[k][1]:segs[k][2]])["nats"]
+    mid = {k: (segs[k][0] + segs[k][1]) // 2 for k in segs}; bk = [k for k in segs if k != "A"]; r = dict(system=name, use_fresh=use)
+    sy.go(K, mid["A"], True)
+    for k in bk: sy.go(segs[k][0], mid[k], True)
+    sy.go(mid["A"], segs["A"][1], True); r["A_after_its_second_half"] = sc("A")
+    for k in bk: sy.go(mid[k], segs[k][1], True)
+    r["A_at_end"] = sc("A"); r["books_at_end"] = {k: sc(k) for k in bk}; return r
+
 def check():
     x, cut, _ = score.load(); K = 4; n = 4000; x = x[:n]; keys = [k[:n] for k in words.word_keys(x)[:1]]
     for use in (0, 1):
@@ -137,5 +147,8 @@ def check():
 if __name__ == "__main__":
     if sys.argv[1] == "check": check()
     else:
-        name, use = sys.argv[1], int(sys.argv[2]); r = moments(name, use); json.dump(r, open(os.path.join(HERE, "res", f"fresh_{name}_{use}.json"), "w"))
+        name, use = sys.argv[1], int(sys.argv[2])
+        if len(sys.argv) > 3 and sys.argv[3] == "return":
+            r = life2(name, use); json.dump(r, open(os.path.join(HERE, "res", f"fresh_{name}_{use}_return.json"), "w")); print(name, "use_fresh", use, "| A after its second half:", round(r["A_after_its_second_half"], 4), "| A at the end:", round(r["A_at_end"], 4), "rise", round(r["A_at_end"] - r["A_after_its_second_half"], 4), "| books at the end:", {k[:6]: round(v, 4) for k, v in r["books_at_end"].items()}, flush=True); sys.exit()
+        r = moments(name, use); json.dump(r, open(os.path.join(HERE, "res", f"fresh_{name}_{use}.json"), "w"))
         print(name, "use_fresh", use, "| A, B in order:", {k[:6]: round(v, 4) for k, v in r["A_B"].items()}, "| B only:", {k[:6]: round(v, 4) for k, v in r["B_only"].items()}, "| A at the end:", round(r["A_at_end"], 4), "rise", round(r["A_at_end"] - r["A_B"]["A"], 4), flush=True)
