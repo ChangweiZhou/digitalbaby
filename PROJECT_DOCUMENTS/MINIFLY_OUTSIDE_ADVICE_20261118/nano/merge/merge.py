@@ -220,9 +220,9 @@ def ctx_of(x, lo, hi, D):
     return x[np.arange(lo, hi)[:, None] - np.arange(1, D + 1)[None, :]]
 
 class Sys:
-    def __init__(s, S, D, kinds, eta, e, born, shrink, text=None, P=0, eJ=0.02, M=16, B0=10000, sweeps=2, mode="classes", seed=0, half_at=0, rep=0, dissolve=0, pool=None, practice=0.0, empty=0):
+    def __init__(s, S, D, kinds, eta, e, born, shrink, text=None, P=0, eJ=0.02, M=16, B0=10000, sweeps=2, mode="classes", seed=0, half_at=0, rep=0, dissolve=0, pool=None, practice=0.0, empty=0, keep=0):
         s.S, s.D, s.kinds, s.eta, s.e, s.shrink, s.P, s.eJ, s.M, s.sweeps, s.mode = S, D, [tuple(k) for k in kinds], eta, e, int(shrink), P, eJ, M, sweeps, mode
-        s.rep = int(rep); s.dissolve = int(dissolve); s.practice = float(practice); s.pool = (mode != "half" and not int(empty)) if pool is None else bool(int(pool))
+        s.keep = int(keep); s.rep = int(rep); s.dissolve = int(dissolve); s.practice = float(practice); s.pool = (mode != "half" and not int(empty)) if pool is None else bool(int(pool))
         if mode == "none": s.P = 0
         s.L = kern(); s.KB = len(kinds); s.K1 = s.KB + s.P; assert s.K1 <= 400 and S <= 65
         s.uniq = []; s.off = []; off = 0; full = ctx_of(text, D, len(text), D) if text is not None else None
@@ -319,6 +319,7 @@ class Sys:
         u = s.Tu[:s.KB].sum(1); return np.where(u > 0, (s.T[:s.KB] * s.Tu[:s.KB]).sum(1) / np.maximum(u, 1), -np.inf)
     def find(s):
         t0 = time.process_time(); mt = s.trust_of_kinds(); top = [int(k) for k in np.argsort(-mt, kind="stable")[:s.M] if len(s.kinds[k]) >= 2 and np.isfinite(mt[k])]; found = []
+        if s.keep: top += sorted({sl["k"] for sl in s.slots if sl is not None} - set(top))          # PLAN_6.md, addition 1: a kind whose classes are in use is searched again
         for k in top:
             pre = s.r_cells(k)
             for nxd in (1, 2):
@@ -396,7 +397,7 @@ def run_sums(kw):
         def draw(k):
             q = pool_[rng.integers(len(pool_), size=k)]; return np.array([text(int(v) // n10, int(v) % n10, nd) for v in q], np.int64)
     kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
-    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=int(kw.get("half_at", lines * (2 * nd + 3) * 5 // 10)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)))
+    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=int(kw.get("half_at", lines * (2 * nd + 3) * 5 // 10)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)), keep=int(kw.get("keep", 0)))
     every = (5000 if lines <= 40000 else 50000) if nd == 2 else 10000; marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []))); tail = np.full(D, END, np.int64); rows = []; done = 0
     for mk in marks:
         X = draw(mk - done).ravel(); x = np.concatenate([tail, X]); s.learn(ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
@@ -423,7 +424,7 @@ def load_all(books=BT):
 
 def prose_sys(x, kw):
     K = 6; return Sys(65, K, [tuple(range(1, k + 1)) for k in range(K + 1)], 0.00005, 0.02, 0.25, False, text=x, P=int(kw.get("P", 32)), eJ=float(kw.get("eJ", 0.02)), mode=kw.get("mode", "classes"),
-                      half_at=int(kw.get("half_at", 500000)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)))
+                      half_at=int(kw.get("half_at", 500000)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)), keep=int(kw.get("keep", 0)))
 
 def prose_scores(s, x, lo, hi):
     import score
