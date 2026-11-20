@@ -47,6 +47,23 @@ With the threshold at one twentieth and at one fifth (same T, five seeds): recei
 4. **Withdrawing by the ends' own strengths is not the same as having fewer connections**: the same numbers withdrawn by chance cost 6 points on the median, below on five seeds of five.
 5. With either end withdrawing at the threshold of one fifth, 4 to 12 of the 256 cells lose every connection: cells that have dropped out, in the sense of Mr. Xu's sentence "if one cell wants to drop out, then the connection strength to it should be zero no matter how willing other cells are", though here by the sum of single withdrawals and not by a rule for a whole cell.
 
+## Step C2b: a whole cell dropping out
+
+Plan, look, outcome and scored predictions: `PLAN_3.md`. Programs: `joint3.py` (numpy, the reference), `kernd.c` with `fastd.py`, `check_joint3.py` (`check_joint3_output.txt`: passed). Tables: `report3.txt`. Result files: `res/c_*.json`, `res/j_cr_B_*.json`.
+
+The plain system, in which every 720,000 bytes a cell in between drops out for good (it sends nothing; all its connections, in and out, are zero from then on) if the sum of the sizes of the return strengths it holds is below c. Beside it: as many cells dropped by chance at the same moments, and the plain system born with the number of cells that are left. Medians of five seeds; nobody dropping out: 84.2.
+
+| c | cells left | drop out by own rule | as many by chance | born at that size | own rule less born (paired; seeds below) |
+|---|---|---|---|---|---|
+| 0.09 | 217 | 83.4 | 83.4 | 85.7 | -2.3; 4 of 5 |
+| 0.13 | 187 | 83.5 | 81.4 | 85.9 | -1.9; 4 of 5 |
+| 0.20 | 128 | 82.9 | 83.2 | 85.6 | -4.8; 4 of 5 |
+| 0.30 | 70 | 69.6 | 69.6 | 69.3 | +0.7; 1 of 5 |
+
+1. **The plain system is not short of cells at 256**: born with 128 to 217 cells it scores 85.6 to 85.9; with 70 cells 69.3.
+2. **Cells dropping out by this rule reach a smaller system that is a little worse than one born at that size** (2 to 5 points, four seeds of five, down to half the cells; the plan's hypothesis that the two are level is refuted narrowly, 4.8 against 4 points) **and no better than dropping as many by chance.** Unlike single connections (C2), a cell's own total return strength does not pick out what the system can spare.
+3. The cost against nobody dropping out is small (0.5 to 1.3 points) while half the cells remain. The spread over seeds in the small systems is large (single runs at 53 and 73 where the others are near 85), so differences of 2 points are not fixed by five seeds.
+
 ## What the two steps say together (my reading)
 
 For the connections into the answering cell on this testbed, the score does not tell a one-sided edge from an edge that both ends decide: where the joint forms differ from the one-sided edge they are level with it (the smaller part; the right to withdraw) or below it (the product with weight at the sending end). What both ends deciding changes is which connections exist: fewer of them, and none to a branch that names nothing. If the number of connections is to count, that is a reason for the joint form; the score alone gives none.

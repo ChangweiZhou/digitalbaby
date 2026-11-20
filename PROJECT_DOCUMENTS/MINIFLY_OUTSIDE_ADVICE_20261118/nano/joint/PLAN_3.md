@@ -59,3 +59,35 @@ The check (`check_joint3_output.txt`): passed; compiled against numpy 1e-14 to 4
 Development seed 1, never-shown sums (mean of the last three readings) and cells left: N 81.5, 256. D at c = 0.09: 81.1, 219. c = 0.13: 81.3, 188. c = 0.20: 77.1, 129. c = 0.30: 72.3, 62. Nearly all the dropping out is at the first moment (25, 61, 126, 193 cells; 12, 7, 1, 1 later).
 
 **Headline by the rule of section 4: c = 0.13.** All four values go to the reported seeds as planned.
+
+## 9. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report3.txt` (made by `report3.py` from `res/c_*.json` and `res/j_cr_B_*.json`). The numpy program at full length (D, c = 0.13, seed 1) gives the compiled program's readings to the digit (81.3; 188 cells).
+
+Never-shown sums, mean of the last three readings; medians of the five reported seeds, with the five figures beneath. N (256 cells): **84.2** (84.2, 82.7, 86.4, 81.8, 86.7).
+
+| c | cells left (median; range) | D, own rule | X, as many by chance | B, born at that size | D less B (paired median; seeds below) | D less X |
+|---|---|---|---|---|---|---|
+| 0.09 | 217; 211 to 222 | **83.4** | **83.4** | **85.7** | -2.3; 4 | +0.5 |
+| | | 83.4, 80.7, 86.8, 81.3, 86.3 | 84.3, 85.5, 83.4, 80.8, 81.9 | 85.7, 82.8, 85.2, 87.9, 91.1 | | |
+| 0.13 (headline) | 187; 178 to 193 | **83.5** | **81.4** | **85.9** | -1.9; 4 | +0.9 |
+| | | 83.5, 82.2, 86.9, 79.7, 83.9 | 88.7, 79.1, 85.9, 81.4, 79.4 | 85.5, 88.1, 90.1, 72.6, 85.9 | | |
+| 0.20 | 128; 125 to 132 | **82.9** | **83.2** | **85.6** | -4.8; 4 | -1.4 |
+| | | 82.9, 82.9, 82.1, 86.0, 80.0 | 84.9, 83.2, 86.8, 82.8, 81.4 | 87.7, 87.9, 85.5, 77.3, 85.6 | | |
+| 0.30 | 70; 64 to 75 | **69.6** | **69.6** | **69.3** | +0.7; 1 | -0.7 |
+| | | 79.7, 74.5, 65.3, 69.6, 68.4 | 53.5, 75.1, 69.6, 79.1, 65.6 | 79.7, 69.3, 64.6, 60.3, 71.7 | | |
+
+**The hypothesis.** At c = 0.20, where it was to be judged, D less B is -4.8, -5.0, -3.4, +8.7, -5.6: median -4.8, below on four seeds of five. By the rule of section 5 **H is refuted, downward, and narrowly** (4.8 against the 4 points; one seed is 8.7 the other way; a system born at 125 cells gave 77.3 on that seed and 85 to 88 on the others). The same sign shows at c = 0.09 and 0.13 (-2.3 and -1.9, four seeds below each); at c = 0.30, with 70 cells, the three arms are level (69.6, 69.6, 69.3).
+
+**What I read from it.**
+
+1. *The plain system is not short of cells at 256.* Born with 187 or 128 cells it scores 85.9 and 85.6 at the median, against 84.2 with 256 (paired against N: +1.3 and -0.9); with 70 cells 69.3. I had not known this; it bears on every comparison "at equal numbers of cells" in this line.
+2. *Dropping out by this rule reaches a smaller system that is a little worse than a system born at that size* (2 to 5 points at the median for 217 to 128 cells, four seeds of five each time), *and no better than dropping the same numbers of cells by chance* (D less X: +0.5, +0.9, -1.4, -0.7). A cell's own total return strength does not single out cells the system can spare better than chance does. This is unlike the single connections of `PLAN_2.md`, where the ends' own rule was 6 points better than chance.
+3. *The cost against N is small while half the cells remain* (-0.5, -0.7, -1.3 at the median), so cells can drop out by their own rule at little cost here; but a system born small does as well or better, so nothing is gained by starting large and letting cells drop out, at this length of run.
+4. The spread over seeds is large in the small systems (B at 178 cells: 72.6; X at 75 cells: 53.5), and five seeds do not fix differences of 2 points.
+
+A reason for 2 that I have not tested: a cell's return strengths sum what the answering cell reads from it over all 14 branches, most of which name bytes that carry no sum (the operands' digits, the signs); a cell read weakly in total may still carry a digit of the answer. A rule on what the cell receives at the answer's bytes only would test that; it needs the cell to know which bytes those are, which it does not.
+
+**Predictions.** R1 held. R2 held (-0.7). R3 failed (D above B on one seed of five). R4 failed (X below D on one seed of five). R5 failed (H refuted). R6 failed (128 at the median, and nearly all dropping out is at the first moment). R7 held (+1.3).
+
+**Not run:** as section 7; X and B on the development seed; more seeds.
