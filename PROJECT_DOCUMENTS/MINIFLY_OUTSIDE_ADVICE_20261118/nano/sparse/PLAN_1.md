@@ -50,3 +50,49 @@ Not run here: keeping (E2, `PLAN_2.md` after this); any means of supplying the c
 ## 5. Addition 1 (20 November, written before its runs): the m = 4 grid ended at its edge
 
 Development seed 1. m = 3: the 32 settings lie between 50.3 and 56.9 (`dev_m3.txt`); the best by the rule is eta 0.008, e 0.1, trust born at 0.02 (56.9), and it is taken. m = 4: 80.5 at eta 0.03, e 0.5, trust born at 0.02, which is the largest eta and the largest e of the grid (`dev_m4.txt`). Before the reported seeds, m = 4 is run on seed 1 at eta in {0.03, 0.1} and e in {0.5, 2}, trust born at 0.02 (three new settings); the best of all 35 by the same rule is taken. The m = 3 grid did not end at an edge in eta; its best e is inside the grid.
+
+## 6. Outcome (entered 20 November after the runs; `res/s_rep3_*`, `s_rep4_*`, `s_long3_*`, `s_long4_*`; tables in `report_e1.txt`; check in `check_output.txt`)
+
+The extension of addition 1 gave 82.1 at eta 0.1, e 2 (again the largest of both); it was taken by the rule and the grid was not extended again, the gain of the extension being 1.6 points. m = 4's numbers are therefore at the edge of what was tried, and this is a limit on the m = 4 figures.
+
+Never-shown additions, the system writing its own answer bytes, whole answer right, %. Five reported seeds in the order 73129, 93683, 116089, 406364, 545353. "Last three": the mean of a run's last three readings. Beside them the relay system of `loop_small_case`: 84.2 at 400,000 lines (forced score), and 0 for a table of whole lines.
+
+| Arm | lines | each seed (last three) | median, last three | median, last reading | by place at the last reading (median): hundreds, tens, units |
+|---|---|---|---|---|---|
+| m = 3 (129 kinds) | 5,000 | | | 55.2 | 95.8, 55.2, 100 |
+| | 10,000 | | | 56.2 | 96.2, 56.2, 100 |
+| | 20,000 | | | 56.2 | 97.6, 56.2, 100 |
+| | 40,000 | 56.8, 56.8, 54.1, 59.7, 55.7 | **56.8** | 57.0 | 97.6, 57.0, 100 |
+| | 400,000 | 59.4, 58.2, 55.5, 61.2, 57.6 | 58.2 | 58.4 | 99.6, 58.4, 100 |
+| m = 4 (255 kinds) | 5,000 | | | 74.6 | 96.4, 74.6, 100 |
+| | 10,000 | | | 78.0 | 96.0, 78.0, 100 |
+| | 20,000 | | | 82.4 | 98.4, 82.4, 100 |
+| | 40,000 | 81.4, 84.4, 80.7, 79.9, 80.9 | **80.9** | 80.0 | 98.2, 80.0, 100 |
+| | 100,000 | | | 76.4 | 98.2, 76.4, 100 |
+| | 200,000 | | | 63.6 | 98.8, 63.6, 100 |
+| | 400,000 | 68.4, 68.3, 62.5, 71.9, 65.9 | 68.3 | 66.8 | 98.8, 66.8, 100 |
+
+The forced score (the scoring of `cells2.py`) equals the own score in every run and at every reading.
+
+Size and cost (medians): m = 3: 114,949 cells that have counted, 775,425 counts above zero, 3,699 of the 5,160 trusts used, 5 CPU-seconds for 40,000 lines (52 for 400,000). m = 4: 1,213,002 cells, 5,056,570 counts above zero, 7,169 trusts used, 20 CPU-seconds (182 for 400,000). The relay system has 256 cells in between and about 40,000 strengths. So m = 3 has about 20 times and m = 4 about 130 times as many numbers that learn as the relay system; nearly all are counts.
+
+Kinds with the most trust where each answer byte is named (seed 73129, 40,000 lines; delays counted back from the byte to be named; at the tens digit delay 7 is the first number's tens digit, 6 its units digit, 5 the operator, 4 and 3 the second number's digits, 2 the '=', 1 the hundreds digit just written). m = 3, tens digit: (2, 8), (2, 4, 7), (4, 5, 7), (7), (4, 7, 8): the two tens digits with one fixed sign. m = 4, tens digit: (1, 4, 8), (2, 8), (2, 3, 4, 7), (3, 4, 5, 7), (4, 5, 6, 7), (3, 4, 7, 8): the two tens digits, one units digit and one fixed sign. m = 4, units digit: (3, 4, 5, 7), (4, 6, 7, 8), (4, 5, 6, 7). The full lists are in the result files (`top_trust_add`).
+
+**The hypothesis holds**: m = 3 has 56.8% of never-shown sums whole and 100% of their units digits within 40,000 lines; at least 40% and 95% were asked.
+
+| | Statement | Outcome |
+|---|---|---|
+| P1 | m = 3 at least 40% | held (56.8) |
+| P2 | m = 3 units at least 95% | held (100) |
+| P3 | m = 3 at least 70% | failed |
+| P4 | tens the weakest place on all five seeds | held |
+| P5 | 5,000 lines within 5 points of 40,000 | held (55.2 against 57.0; each seed within 3.4) |
+| P6 | m = 4 at least 2 points below m = 3 | failed at 40,000 lines: m = 4 is 24 points above |
+| P7 | own and forced within 2 points | held (identical) |
+| P8 | m = 3 below the relay's 84.2 | held |
+
+Readings (mine).
+1. **Cells keyed on a few delays answer sums never shown, which cells keyed on a whole run do not; they do it within 5,000 lines, where the relay system needs some hundred thousand.** The units and hundreds digits are right nearly always; the tens digit is the gap.
+2. **m = 3 guesses the carry.** Its tens digit is right about as often as there is no carry (55%). A look inside on the development seed (my scratch program, not kept): the cells that hold both tens digits and one units digit have counts mixed with those of other places in the line where the same three delays also hold digits; alone and added they would choose the right one of the two candidates on 80%.
+3. **m = 4 reaches 80.9% at 40,000 lines, within 3.3 points of the relay's figure, and then falls with further reading to 68.3% at 400,000.** I predicted m = 4 below m = 3 (P6) and was wrong at 40,000 lines: the fourth end lets a cell hold the two tens digits, one units digit and a fixed sign, which fixes the place and keeps its counts clean. The fall afterwards I have not explained. Two candidates, neither tested: the cells of the whole pair gain experience, are always right on shown pairs and absent on never-shown ones, and the trust of the kinds that generalise drifts once they are no longer needed on the lines read (the mechanism I gave for P6, arriving later than I thought); or the constant step of 0.1, chosen at 40,000 lines, is too large for a long run (the readings swing by 10 points and more between one reading and the next).
+4. The number of cells is large. 115,000 and 1.2 million cells for a text of 8,000 different lines is not small beside the relay's 256 cells; most of these cells are keyed on bytes of the line before, which carry nothing. Which cells could withdraw was not tried.
