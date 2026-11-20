@@ -128,6 +128,18 @@ def run(name, H, ret=False):
     r["B_only"] = life.scores(s2, x, segs); del s2
     s3 = Sys2(x, keys, K, H); s3.go(K, c, True); on = score.score(s3.go(c, b, True, True), x[c:b]); r["A_last_tenth_going_on"] = dict(nats=on["nats"], right=on["right"]); r["cpu"] = round(time.process_time() - t0, 1); return r
 
+def moments(name, H):
+    """PLAN_6.md, addition 3: each text's held-out tenth scored right after its own stream; at the end, A again, and A with the companions silenced."""
+    x, segs, _ = life.load_all(); K = 6; keys = words.word_keys(x) if name == "T2" else []; r = dict(system=name, H=H); sc = lambda sy, k: score.score(sy.go(segs[k][1], segs[k][2], False, True), x[segs[k][1]:segs[k][2]])["nats"]
+    sy = Sys2(x, keys, K, H); r["A_B"] = {}
+    for k in segs: sy.go(max(segs[k][0], K), segs[k][1], True); r["A_B"][k] = sc(sy, k)
+    r["A_at_end"] = sc(sy, "A"); ncomp = int((sy.half > 0).sum())
+    if ncomp: T = sy.T.copy(); sy.T[sy.half > 0] = 0.0; r["A_at_end_companions_silenced"] = sc(sy, "A"); sy.T = T
+    s2 = Sys2(x, keys, K, H); r["B_only"] = {}
+    for k in segs:
+        if k != "A": s2.go(segs[k][0], segs[k][1], True); r["B_only"][k] = sc(s2, k)
+    return r
+
 def check():
     x, cut, _ = score.load(); K = 4; n = 4000; x = x[:n]; keys = [k[:n] for k in words.word_keys(x)[:1]]
     for H in (0, 300):
@@ -142,6 +154,8 @@ if __name__ == "__main__":
     if sys.argv[1] == "check": check()
     else:
         name = sys.argv[1]; H = tuple(int(h) for h in sys.argv[2].split(",")); H = H[0] if len(H) == 1 else H; tagH = sys.argv[2].replace(",", "+")
+        if len(sys.argv) > 3 and sys.argv[3] == "moments":
+            r = moments(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}_moments.json"), "w")); print(name, "H", tagH, "| A, B in order:", {k[:6]: round(v, 4) for k, v in r["A_B"].items()}, "| B only:", {k[:6]: round(v, 4) for k, v in r["B_only"].items()}, "| A at the end:", round(r["A_at_end"], 4), "silenced:", round(r.get("A_at_end_companions_silenced", float("nan")), 4), flush=True); sys.exit()
         if len(sys.argv) > 3 and sys.argv[3] == "return":
             r = run(name, H, True); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}_return.json"), "w")); print(name, "H", H, "A after A and B, nothing changing:", round(r["after_A_and_B"]["A"]["nats"], 4), "| the return to A, going on:", round(r["A_last_tenth_going_on_after_B"]["nats"], 4), flush=True); sys.exit()
         r = run(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}.json"), "w"))
