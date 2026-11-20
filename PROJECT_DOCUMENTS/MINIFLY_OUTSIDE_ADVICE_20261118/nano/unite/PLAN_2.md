@@ -49,3 +49,28 @@ The united system on seeds 73129 and 93683 (`res/keep_trial_*.json`), never-show
 |---|---|---|
 | K9 | with `freeze=30000` the ratio kept is at least 85% on at least two of the three seeds | 0.55 |
 | K10 | the oracle arm keeps at least 85% (as K3) and the frozen system is within 8 points of it (median) | 0.45 |
+
+## Outcome (entered 20 November 2026; five reported seeds in the order 73129, 93683, 116089, 406364, 545353; `res/keep_*.json`)
+
+The condition: the united system of `PLAN_1.md` is at 93.8% at 40,000 lines (median of the reported seeds), so the runs stand.
+
+Never-shown additions, own answer bytes, whole answer right, %; last reading of each phase; one figure where the three gaps are equal. Subtraction at the end: the clean score (80 to 104 held-out pairs whose line no shown pair writes) and, beside it, all 500.
+
+| Arm | before subtraction: each seed; median | after: each seed; median | kept, %: each seed; **median** | clean subtraction at the end; all 500 (medians) | cells that have counted; counts above zero, at the end (median) |
+|---|---|---|---|---|---|
+| the united system (`clock=trial`) | 84.2, 89.2, 93.6, 90.4, 89.6; 89.6 | 20.6, 63.8, 81.0, 66.2, 72.4; 66.2 | 24.5, 71.5, 86.5, 73.2, 80.8; **73.2** | 87.5; 94.6 | 10.05 million; 93.2 million |
+| letters passed over by the program (`clock=oracle`) | 87.8, 94.4, 91.4, 92.8, 89.2; 91.4 | 83.2, 90.6, 83.8, 89.6, 85.6; 85.6 | 94.8, 96.0, 91.7, 96.6, 96.0; **96.0** | 86.7; 93.2 | 3.49 million; 39.5 million |
+| the united system, no entry tried after 30,000 lines (seeds 73129, 93683, 116089) | 86.0; 87.0 / 81.0 / 41.6; 93.6 | 80.4; 76.4 / 64.0 / 38.6; 82.8 | 93.5; 87.8 / 79.0 / 92.8; 88.5 | 94.1; 78.1 / 74.0 / 35.4; 86.2 | 8.94 million; 86.0 million |
+| `nano/ahead2`, plain sums with look-ahead (its report) | 91.2 | 86.8 | 94.7 | 89.4; 93.6 | 3.27 million; 34.6 million |
+
+The entries. In the united system w x y z are closed at the end of both phases on every seed. On seed 73129 the `+` is closed from the first reading to the last. The `-` entry is open at the end on every seed (on seed 406364 it stood closed at some readings during addition, where its byte does not occur). In the frozen arm seed 93683 was frozen with x still open (in this text of 18 byte values its letters were all closed only at 35,000 lines), so its lines with an x stay misaligned: that seed tests the freezing badly, and I chose 30,000 from another run.
+
+**H2 is refuted for the united system**: it keeps 73.2% of its level (median; 24.5 to 86.5), under the 85 asked. The loss is in the first 5,000 lines of subtraction (seed by seed, the gap of 8: 84.2 to 50.6; 89.2 to 69.2; 93.6 to 78.6; 90.4 to 50.8; 89.6 to 73.6). **The oracle arm keeps 96.0%** (91.7 to 96.6), as the same cells do on plain sums.
+
+**Where the loss comes from (addition 1).** With no entry tried after 30,000 lines the united system keeps 93.5% and 88.5% on the two seeds where the letters were closed by then; on seed 73129 that is 93.5% against 24.5%, with the `+` closed in both runs. So a closed `+` is not itself the loss, and the larger system is not: it is the trials that go on while the second task is read, above all the new `-` entry's (closed one period in five until it has evidence). My reading of the mechanism (it fits these runs and I have not opened the cells to see it): with the operator out of the chain a subtraction line's digits stand one line nearer, and cells of two and three lines that addition uses are given subtraction's counts on the wrong digits; counts are kept for good, so a few hundred misaligned lines stay in the cells.
+
+**Predictions.** K1 held (89.6). K2 failed (73.2). K3 held (96.0). K4 failed (23 points under the oracle arm). K5 held. K6 held (the `+` on one seed is neither a digit nor the `=`). K7 held (five of five). K8 held (87.5). K9 held (93.5, 92.8 at the gap of 8, 88.5; with the caution about seed 93683 above). K10 held (oracle 96.0; frozen 92.8 at the gap of 8 at the median).
+
+**Reading (mine).** The cells that count keep; the clock as it stands, never ceasing to try, spends that property. What the composition needs is a clock that stops trying an entry once its evidence is firm, and tries a new byte value gently; the floor of 0.01 and the starting chance of 0.2 were set for the relay system, which forgets what a bad period teaches it. I have not tested any such rule: freezing by the program at a line count is a diagnostic, not a rule a cell could follow, and on one seed of three it froze too early.
+
+**Not run:** the capped united system (arm (c)); a third task from `nano/life3`; the frozen arm on seeds 406364 and 545353.
