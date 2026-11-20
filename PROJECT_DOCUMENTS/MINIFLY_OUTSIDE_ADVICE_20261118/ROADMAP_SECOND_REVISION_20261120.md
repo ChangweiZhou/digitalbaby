@@ -557,3 +557,15 @@ One life of 6.3 million bytes of English prose (the test text and ten books), re
 
 The store grows as about the square root of the bytes read (a power of 0.49 to 0.62 on the last three doublings): 0.43 counts for each byte after six million. The stretches mix more reading with other authors (single books run from 1.23 to 1.54), so what more reading is worth shows cleanly only within an author: three books of one author read fourth, fifth and seventh have 1.4311, 1.3843, 1.3484; two of another, sixth and ninth, 1.2648 and 1.2262: about 0.04 nats better for each further book. The second answering cell's gain stays at 0.03 to 0.04 from 200,000 bytes to six million. No law of growth is drawn from one order of one set of books.
 
+## 23. The closing report of `nano/gate2` (late on 20 November; as reported; taken in at 10951eb; sums only)
+
+That line was the independent repeat of the second answering cell and its test in three further places. Its own summary, with 38 of its 60 written predictions held:
+
+1. *The repeat is exact* (97.4 against 92.9 on the five reported seeds; 96.2 against 90.8 on five new ones; every reading of twenty of my result files identical).
+2. *Three-digit sums, nothing chosen there:* 96.9 against 94.1; with `nano/merge`'s own repair of its search 96.7 against 94.3; five seeds of five above. It transfers.
+3. *Long reading in the closed stream:* not held in the frozen setting (median 76.5 at 400,000 lines), and the cause is not the second cell: the falls are steps where the search for classes lets go of its best kind. With that line's repair the second cell ends at 91.0, 94.5, 93.0, 90.0, 95.1 (median 93.0), 10 to 12 points above the first cell; a slow loss of 2 to 7 points remains, which `nano/table/PLAN_18.md` reads as the closed stream.
+4. *A second task:* in the short life the second cell keeps 88.8% of its addition with classes and 95.8% without; after a long first task it is the worse keeper of the two cells (65% and 81% kept on two seeds with the repair, where the first cell keeps 91% and 87%), though it learns the second task better everywhere (6 to 15 points on never-shown subtractions).
+5. Its one mechanism of its own (a second cell that hears each sender with chance one half while it learns) is refuted.
+
+It names its limits: no prose in the line; the repeat shares the base, the text, the split and the draws with my program; the long life is two seeds a setting. For the general work the one thing it leaves is point 4: a reading that knows the place learns a new task faster and keeps the old one worse after a long life, on sums; whether that holds on streams of other kinds is not known.
+

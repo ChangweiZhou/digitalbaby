@@ -27,3 +27,43 @@
 ## 4. Not run
 
 Setting C without the second cell (that line has it); `keep=1`; anything on prose; the cell of `PLAN_5.md`.
+
+## 5. Outcome (20 November; `res/s400_C_seed*.json`, `res/lifelong_C_seed*.json`, `res/life_C_seed*.json`, `res/s3_C_seed*.json`; `report_2C.txt`, `report_7long.txt`, `report_7life.txt`, `report_7s3.txt`)
+
+`gate2.py` on `merge.py`'s setting C (`keep=2`), nothing else changed. CPU: 464 s for 400,000 lines; about 700 s for the long life; about 130 s for the short life; 218 to 241 s for three-digit sums.
+
+*(a) Long reading, now five seeds* (never-shown additions after a read line; the reading at 40,000 lines, then the mean of the last three readings at 400,000 lines):
+
+| Seed | First cell | Second cell |
+|---|---|---|
+| 73129 | 91.2, 80.2 | 96.9, **91.0** |
+| 93683 | 94.3, 83.1 | 98.2, **94.5** |
+| 116089 | 92.0, 82.8 | 96.2, **93.0** |
+| 406364 | 89.0, 78.3 | 97.0, **90.0** |
+| 545353 | 91.8, 83.4 | 96.6, **95.1** |
+| median | 91.8, 82.8 | 96.9, **93.0** |
+
+On five seeds of five the second cell ends at 90 or more, 9.9 to 11.7 points above the first cell and 1.5 to 7.0 under its own level at 40,000 lines (frozen setting: 76.5, 91.9, 75.4, 74.7, 92.5).
+
+*(b) The long life* (addition 400,000 lines, then subtraction 200,000; seeds 73129 and 93683). Addition before, at the end, kept; clean subtractions at the end:
+
+| Seed | First cell | Second cell | Control |
+|---|---|---|---|
+| 73129 | 80.2, 72.7, 90.7%; 69.2 | 91.0, 59.5, **65.4%**; 78.2 | 84.0, 78.6, 93.5%; 64.4 |
+| 93683 | 83.1, 72.5, 87.2%; 60.2 | 94.5, 76.4, **80.9%**; 75.3 | 86.0, 78.9, 91.8%; 59.0 |
+
+Seed 73129, never-shown additions through the second task (after a subtraction line; 1,000, 5,000, 20,000, 40,000, 100,000, 200,000 lines): first cell 4.5, 10.2, 20.2, 77.3, 74.7, 70.3; second cell 23.2, 34.6, 46.6, 70.5, 56.7, 56.3. So with setting C the second cell does come back (to 70 at 40,000 lines, where in the frozen setting it stayed at 12 to 24 to the end), and then slips again while the first cell stays near 72 to 77.
+
+*(c) The short life* (40,000 and 20,000 lines, five seeds, medians and the five values): the first cell keeps 83.3% (85.6, 85.2, 71.2, 83.3, 81.7), the second cell 88.8% (74.6, 92.1, 88.8, 91.5, 87.1), the control 71.2%; lowest reading after the change 42.0, 61.2, 15.8; clean subtractions at the end 81.7, 87.1, 83.5. (Frozen setting: 81.1, 88.8, 65.8; 50.2, 63.2, 18.6; 80.4, 89.4, 83.1.)
+
+*(d) Three-digit sums* (80,000 lines, five seeds, mean of the last three): first cell 94.3 (94.9, 93.3, 94.3, 93.9, 94.9), second cell 96.7 (96.7, 96.7, 95.6, 96.1, 97.5), control 94.3; the second cell above the first on five seeds of five (+1.8, +3.5, +1.3, +2.1, +2.5). (Frozen setting: 94.1, 96.9, 93.5.)
+
+**What I take from it (mine).**
+
+1. *Over a long reading, on setting C, the second cell holds 90 to 95 on five seeds of five* (median 93.0 against 82.8 for the first cell). This is the answer to step 2 that I would carry forward: the second cell does not hold in the frozen setting because of the base's search fault; with that line's own repair it loses 2 to 7 points in 360,000 lines where the first cell loses 9 to 12.
+2. *The hypothesis of this plan holds*: the lasting loss on seed 73129 was a product of the fallen state (65.4% kept with setting C against 18.2%). But *the second cell does not keep addition well through a long second task either way*: 65.4% and 80.9%, where the first cell keeps 90.7% and 87.2%; at the end of the long life it is below the first cell on one seed (59.5 against 72.7) and little above on the other (76.4 against 72.5), having been 11 points above before the change. The coordinating session's hypothesis (at least 90% kept; refuted under 75%) is refuted on one seed of two in the long life in both settings.
+3. *Over the short life setting C changes nothing for the second cell* (88.8% in both) and little for the first (83.3% against 81.1%).
+4. *On three-digit sums the gain stands on setting C* (+2.4 at the median).
+5. Throughout, the second cell learns the second task better than the first (clean subtractions 78.2 and 75.3 against 69.2 and 60.2 after the long life; 87.1 against 81.7 after the short one).
+
+**Predictions.** S1 held (91.0, 94.5). S2 held (93.0). S3 held (65.4%). S4 failed (65.4% on seed 73129). S5 held (88.8). S6 held, barely (83.3 against 81.1). S7 held (+2.4). Six of seven.
