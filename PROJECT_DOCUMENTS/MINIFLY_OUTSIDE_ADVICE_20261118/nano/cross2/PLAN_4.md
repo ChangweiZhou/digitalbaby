@@ -64,3 +64,31 @@ Never-shown sums at the gap of 8 letters at each 200,000 lines (to lay beside ot
 - **The level stretch is there with the gradient too, at eta1 = 1**: 8 to 15% for 1,600,000 lines, then 48% at 1,800,000 and 79% at 2,400,000. The coordinating session reports that its one-crossing run of this seed, continued to 9,600,000 lines, was level for about five million lines and then rose to 46% (its figures, `loop_small_case/PLAN_12.md` at 59f2f4342, which I have not read). Laid side by side at this step, the gradient through the line leaves the level stretch after about 1.6 million lines where one crossing needs about five to six million: sooner by a factor of three to four. At eta1 = 4 the gradient shows no level stretch (17% at 400,000, 65% at 1,000,000), so the stretch is not a property of the network and text alone; it depends on the rule and the step together. Whether one crossing at eta1 = 4 would also shorten its stretch was not run.
 - On g2 the units digit is what the gradient adds (96 to 98% against 16 to 18%); the tens digit stays at 70 to 83%, and that is what holds the whole answer at 65 to 79%.
 - In CPU time the pass backward is cheaper here than the forward rules: about 770 s a run on g2 against 1,548 and 2,024, because the forward program updates a trace for every strength at every byte. It needs the line's states stored, which a cell does not have.
+
+## Outcome on the five reported seeds (entered 20 November)
+
+g2, gradient through the line, eta1 = 1, 2,400,000 lines (`res/hold_e4_g2_e1_<seed>.json`; every reading in `report_e4_rep.txt`). Mean of the last three readings; by place at the last reading.
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| never-shown sums %, gap 0 | 13.7 | 82.1 | 76.3 | 70.1 | 72.7 | **72.7** |
+| never-shown sums %, gap 4 | 13.3 | 83.4 | 78.3 | 73.7 | 76.0 | **76.0** |
+| never-shown sums %, gap 8 | 13.3 | 83.3 | 78.1 | 73.8 | 75.3 | **75.3** |
+| sums shown %, gap 8 | 17.9 | 88.1 | 82.8 | 78.1 | 78.1 | 78.1 |
+| by place (hundreds, tens, units) | 99, 82, 23 | 99, 84, 98 | 98, 83, 98 | 98, 77, 99 | 98, 87, 89 | |
+| bytes right % | 48.6 | 54.5 | 54.0 | 53.8 | 53.9 | |
+| CPU s | 722 | 743 | 725 | 729 | 708 | |
+
+Never-shown sums at the gap of 8 letters at each 200,000 lines:
+
+| seed | 200 | 400 | 600 | 800 | 1000 | 1200 | 1400 | 1600 | 1800 | 2000 | 2200 | 2400 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 73129 | 8 | 9 | 7 | 12 | 11 | 10 | 11 | 8 | 12 | 10 | 15 | 14 |
+| 93683 | 7 | 9 | 8 | 14 | 16 | 25 | 37 | 38 | 77 | 84 | 83 | 83 |
+| 116089 | 10 | 12 | 11 | 12 | 17 | 29 | 58 | 67 | 75 | 82 | 73 | 79 |
+| 406364 | 6 | 17 | 21 | 20 | 19 | 25 | 39 | 49 | 62 | 68 | 77 | 77 |
+| 545353 | 8 | 8 | 12 | 11 | 15 | 14 | 20 | 37 | 69 | 71 | 75 | 79 |
+
+**The hypothesis holds on four of the five reported seeds and at the median** (at least 50% of never-shown sums at every gap: 70 to 83% on four seeds, medians 72.7 / 76.0 / 75.3), and fails on one: seed 73129 is at 13% at every gap at the end, with the units digit at 23%, still in the level stretch. The refutation condition (under 20% in both arms) is not met. So with the gradient through the line, at this step, the level stretch lasts between about one and 1.6 million lines on four seeds (and on the development seed) and more than 2.4 million on one; it was not run longer.
+
+**My reading.** At the median the network learns this text within E2's length when taught by the gradient through the line (75% at the gap of 8 letters, against 7.5 and 9.5% for the forward arms on the development seed at the same step; the forward arms were not run on the reported seeds). The answer is as good after eight letters as after none on every seed. One seed in five does not leave the level stretch in this time, so the stretch's length varies from seed to seed by more than a factor of two with this learner as well. The tens digit stays at 77 to 87% on all seeds.
