@@ -23,6 +23,6 @@ def table(prefix, seeds, merge_tag=None):
     for key in ("after_add", "empty"):
         for w in ("last", "last3"):
             f = np.array(cols[("first", key, w)])
-            for c in ("second", "control"):
+            for c in ("second", "control", "second_half", "control_half"):
                 if (c, key, w) in cols: g = np.array(cols[(c, key, w)]) - f; print(f"  {c} less first, {key}, {w}: " + ", ".join(f"{x:+.1f}" for x in g) + f"; median {np.median(g):+.1f}; difference of medians {np.median(cols[(c, key, w)]) - np.median(f):+.1f}")
 if __name__ == "__main__": table(sys.argv[1], sys.argv[2].split(","), sys.argv[3] if len(sys.argv) > 3 else None)
