@@ -429,3 +429,17 @@ Mr. Xu, in Chinese: "鉴于bitter lesson，执着于加法这个任务可能并�
 | `nano/gate2` (0d952c2) | with `nano/merge`'s own repair of where it searches for classes, the second answering cell ends a closed-stream reading of 400,000 lines at 93.0, 90.0, 95.1 on three seeds (75.4, 74.7, 92.5 without the repair), 10 to 12 points above the first cell; its step falls were the search letting go of its best kind. That line now tries a second cell that hears each sender with chance one half while it learns, and has been asked to try it on prose first | the second cell's reading leans on what the search keeps: a general dependence, shown on sums only |
 | `nano/merge`, fifth report (f48c5f0) | *a made kind is born as the pooled counts of a kind that holds all its delays:* with that one rule and no new number, one setting gives 97.9% of never-shown sums at 40,000 lines (five seeds; old score) **and** 0.010 to 0.015 nats on six books with the old text kept (1.5272 at the end of the life against 1.5306 without classes; 1.5685 without the rule). The same number of made kinds drawn by chance: 93.9 against 98.0. Reached on development material after the reported seeds and books had been seen under earlier settings; the store is larger | "anything the system makes must be born with the past, or it becomes a store of recent text and the old text pays": a general rule, shown on two kinds of text |
 
+## 16. Where the system stands with nothing given by hand (late on 20 November; `nano/table/PLAN_20.md`, `PLAN_21.md`)
+
+The last tenth of the test text, nothing changing, nats a byte; on all bytes and, in brackets, on every eighth byte, where the reference line's network run has 1.4541 (1.4562 on all bytes from shorter windows; section 14).
+
+| System | First answering cell | With the second answering cell (parts by kind and byte) |
+|---|---|---|
+| **bare:** runs of 0 to 6 bytes, cells that time each byte value, a pool keyed on two or three of the last eight bytes; nothing about English given, no convention about time | 1.5010 (1.4994) | **1.4671** (1.4714) |
+| bare with a cell that recalls the last place where the present eight bytes stood (`PLAN_21.md`) | 1.4970 | 1.4631 |
+| bare with the relay system as one more sender | 1.4920 (1.4912) | 1.4583 (1.4638) |
+| bare with the cells that step once a word, whose ends are given by hand | 1.4802 (1.4809) | 1.4518 (1.4556) |
+| all kinds of `PLAN_10.md`, with the companions scored while the time stands still | 1.4707 (1.4733) | 1.4395 (1.4451) |
+
+So, to Mr. Xu's steer: **with nothing given by hand the system of cells is at 1.467, about 0.01 to 0.02 above that network run and not at its level.** What carries it under that run is knowledge of English laid down by me (0.015) and a convention (0.004). The second answering cell is worth 0.03 on every system in the table and is of no kind of text; in its simpler form (parts by kind and byte: 60,000 numbers) it is the better one everywhere, as `nano/layers` found. The cell that recalls is general and is worth 0.004 here (0.007 when the system goes on changing), on a text with few long repeats; its test on streams with more of them is with `nano/suite`.
+
