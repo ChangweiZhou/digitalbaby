@@ -29,3 +29,18 @@ By the outside session, at Mr. Xu's question whether the roadmap (`ROADMAP_TO_EN
 | R6 | A life of several families; then cost beside the comparator | as the roadmap's steps 7 and 8 | not started |
 
 R2 to R4 do not depend on R5 and can run beside it.
+
+## 3. States on 20 November
+
+Entered after the work of 20 November (`loop_small_case/REPORT.md`, sections 10 to 16). The proposal above is unchanged; these are the states of its steps. Development level throughout.
+
+| | Step | State |
+|---|---|---|
+| R1 | The loop at the smallest size | reached at development level on two-digit sums; to be repeated by another line, which now takes minutes |
+| R2 | The same as a cell has it, one item at a time | against 84% with every line read: sparse reading with rewiring 81% with 64 lines and 43% with 32; one sign for each cell 71%; the relay over two steps 84%; cells that are silent most of the time about 70%. Yes or no alone: 9%, not reached. Several answering cells and feedback through dedicated cells: not started |
+| R3 | Cells that hold bytes themselves | reached in two of three parts. One digit across a gap of varying length: 91% and 99% with one crossing between cells (five seeds), and as good at gaps never taught. Two-digit sums: 66% of never-shown sums with two delay lines in place of nine and the crossing (five seeds); not learned with none. The two together (two-digit numbers with letters between them): 8% on the development seed, not reached |
+| R4 | The first family | not started. Beyond R3 it needs two-digit numbers with letters between them, the task byte, and the reduction by the modulus. Two-digit numbers with letters between them were tried once (development seed): 8% of never-shown sums, not reached |
+| R5 | Keeping, in parts | (a) what is lost and how fast it returns, (b) how little rehearsal: measured on five seeds; (c) rehearsal the system makes itself: two forms failed; (d) writing the new task elsewhere: works when the program chooses where, with one old line in 32 (67% kept against 16%); a way for the cells to choose is open |
+| R6 | A life; cost | a run costs a fifth to a twelfth of what it did; cost beside the comparator is not measured |
+
+Two things I would add to the proposal in the light of the day. First, the item "cells that are silent most of the time" belongs in R2 and is in the table. Second, R3 was written as one step reached "on a stream with varying distances"; it turned out to have three parts that were reached separately and in a different order than I expected: holding where nothing has to be bridged (a cell's own path is enough); holding across a gap of varying length (needs a signal passed back over one connection between cells); and two-digit numbers (need, besides, the byte or two just past on a cell's lines).

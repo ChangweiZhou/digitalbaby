@@ -44,3 +44,9 @@
 ## Cost, and what is not run
 
 A's runs take seconds to a minute each; B's about three to five minutes. Not run: other books; word-level scores; a second language task read after the first (keeping); the same tasks on reported seeds unless a result is worth it.
+
+## Outcomes (entered 20 November; the account is in `REPORT.md`, section 14)
+
+**A.** Next byte right on text never read, Bryant (Alice): most frequent byte 19.0 (18.2); no cells 35.5 (37.0); 1,024 cells that never change 32.7; relay 45.8 with 256 cells and 46.2 with 1,024 (51.5); comparator 48.9 and 50.2 (55.5); tables of the last 2, 3, 4, 5 bytes 41.3, 49.5, 53.5, 54.8 (44.0, 54.4, 58.3, 59.6). eta1 = 1 was the best of 1/16, 1/4, 1, 4. L1 failed (4.0 points), L2 and L3 failed, L4 and L5 held. Added after: the size of the return strengths at birth (at 0.03 of the earlier size the relay is level with the comparator, 49.2); Alice; two more seeds with 256 cells.
+
+**B.** `ag0`: 100% on never-shown pairs at 0, 2 and 4 words in between with and without the crossing; cells that never change 48 to 50. `ag1`: with a phrase of the other number in between, own path 48, 46 and 51 on seeds 1, 2, 3; one crossing with the reader's own strengths 100 on the seeds run. G1 and G2 held; G3 and G4 failed. Added after: seeds 2 and 3; the arm with cells that never change; `ret=local2` (100).

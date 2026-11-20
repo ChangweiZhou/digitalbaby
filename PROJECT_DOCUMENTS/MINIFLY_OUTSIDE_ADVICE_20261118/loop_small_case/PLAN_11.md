@@ -17,3 +17,11 @@
 | T3 | arm without the crossing: at most 20% at the gap of 8 letters | 0.65 |
 
 **Cost.** About fifteen CPU-minutes a run. Not run: the reported seeds; gaps beyond 8; the task byte and the modulus of the first family.
+
+## Outcome (entered 20 November after the two runs)
+
+Development seed, 2,400,000 lines, never-shown sums, mean of the last three readings (`res/hold_d11_*.json`): without the crossing 3.1% (3, 3, 3 at gaps of 0, 4, 8 letters; by place 97, 42, 11); with one crossing 7.7% (10, 10, 8; by place 97, 76, 16), rising slowly over the run (4% at the first reading, 9% at the last).
+
+**The hypothesis is refuted as registered** (8% at the gap of 8 letters, where 15% or less refutes). T1 failed. T2 held only in the empty sense that every gap is equally low. T3 held.
+
+What the places say (my reading): with the crossing the tens digit is right three times in four and the units digit hardly above a guess. The carry out of the units needs only a rough hold of the first number's units digit, and it is there; the exact digit is not. One digit was held exactly across the same gaps in the seventh plan, and two digits were held for five bytes in the ninth; two digits held exactly, and kept apart, across the letters is what this system has not learned in 2,400,000 lines. Whether it would with more lines, more cells, or two crossings was not run.

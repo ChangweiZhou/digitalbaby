@@ -38,3 +38,9 @@ Development seed, never-shown addition, mean of the last three readings (`res/c2
 - `reserve=128`, alone and with one addition line in 32 or in 128: 128 further cells in between, silent and unchanged in the first phase; in the second phase they alone change, and everything the first phase wrote is left as it is. A control in which the program decides where the second task is written. Run on the five reported seeds alone and with one line in 32.
 
 *An error of mine, found before any of its runs was read.* In the first form of `reserve` the answering cell's strengths from the first phase's cells went on fading through the second phase, at a rate that leaves nothing of them after 200,000 lines whatever is learned. The runs were stopped and discarded and the option corrected (those strengths, and the answering cell's constants, are now left untouched in the second phase).
+
+## The reported seeds (entered 20 November; tables in `report4.txt`, account in `REPORT.md`, sections 10 and 11)
+
+Run with the compiled kernel (`PLAN_8.md`, section 1), which gave the same scores as the numpy program on the twelve runs made with both. Medians of five seeds, never-shown addition: every line read 84.2; 32 lines fixed 7.5; 32 lines with rewiring 42.7; 64 lines with rewiring 80.8; one sign 70.7; two steps of 128 + 128: 84.4. Keeping: addition after subtraction 1.8 (18.2 after 2,000 lines); with the answering cell put back 44.6 (53% of the loss undone), with the cells put back 2.6; 70% again after 4,000 to 6,000 lines against 60,000 to 70,000 at first; one line in 32 keeps 15.6; 128 new cells keep 4.4 alone and 67.0 with one line in 32.
+
+A1 failed. A2 and A4 failed on the development seed and were not run further. A3 held. B1 held. B2: three seeds of five higher by two to four points, two lower; no difference I would claim. C1 held as a share of the loss and failed as a score, my wording having been loose. C2 failed. C3 held.

@@ -48,3 +48,9 @@ Never-shown sums, mean of the last three readings of 400,000 lines; cells active
 Reading (mine). Silent cells learn and answer never-shown sums, but the score follows the number of cells that are active, not the number of cells: about 25 active give 56%, 53 give 61 to 66%, 140 give 82%, where 256 logistic cells give 82%. At equal score the active-cell kernel is about 1.6 times faster than the dense compiled kernel; at a score of about 60% it is 4 to 5 times faster. The hypothesis fails as registered (61% and not 70% with 256 cells); S3 holds (about 5 times at the target 1/8).
 
 **Reported seeds** (73129, 93683, 116089, 406364, 545353), beside the logistic cell (`r_plain`): cut off at 0 and 1, target 1/4, eta1 = 1/64, kap = 1e-5, with 256 cells and with 512 cells.
+
+## 6. The reported seeds, and a reading withdrawn (entered 20 November)
+
+Cut off at 0 and 1, target 1/4, eta1 = 1/64, kap = 1e-5, 400,000 lines (`report4.txt`): 256 silent cells 72.2, 71.9, 54.1, 42.0, 71.3 (median **71.3**; about 50 cells active at a byte; 9.6 CPU-seconds a run); 512 silent cells 62.8, 70.0, 69.5, 74.2, 83.2 (median **70.0**; about 140 active; 22.9 s); 256 logistic cells 84.2 (33 s with `fast=1`).
+
+The reading of section 5, that the score follows the number of active cells and that 512 silent cells equal 256 logistic ones, came from the development seed and is **withdrawn**: on the reported seeds the two sizes are level at about 70%, 14 points below the logistic cells, with a wide scatter over seeds. What stands: silent cells learn and answer never-shown sums; the kernel that works on the active cells alone is 3.4 times faster than the first dense kernel and 1.6 times faster than the dense kernel with lazy fading (`fast=3`, added after this plan was written: 15 s), at that cost in score.

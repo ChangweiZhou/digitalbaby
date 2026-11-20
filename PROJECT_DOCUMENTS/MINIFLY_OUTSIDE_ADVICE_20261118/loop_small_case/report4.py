@@ -39,11 +39,17 @@ for title, pat in (("cells learn", "hold_r1_learn_%d"), ("cells never change", "
 print("\n\nSEVENTH PLAN (hold.py, a gap of 0 to 8 letters). Sums shown, whole answer right, %, mean of the last three readings of 960,000 lines (mean over gaps 0, 4, 8)")
 for tx, name in (("m1", "c = (a + b) mod 10"), ("g1", "c = a + b")):
     print(f"  text {tx}: {name}")
-    for title, arm in (("no crossing", "c0"), ("one crossing, the reader's own strengths", "exact"), ("one crossing, return strengths grown from nothing", "grown")):
+    for title, arm in (("no crossing, eta1 = 1", "c0"), ("no crossing, eta1 = 4", "c0e4"), ("one crossing, the reader's own strengths", "exact"), ("one crossing, return strengths grown from nothing", "grown")):
         ds = [load(f"hold_r7_{tx}_{arm}_{s}") for s in SEEDS]; row("    " + title, [d and d["last3_shown"] for d in ds])
         if all(ds):
             for g in ("0", "4", "8"): row(f"       at the end, gap of {g} letters", [d["rows"][-1]["shown_by_gap"][g] for d in ds])
-            row("       lines to 90% (mean over gaps)", [next((r["lines"] for r in d["rows"] if r["shown"] >= 90), None) for d in ds])
+
+print("\n\nNINTH PLAN (hold.py with a short chain of delay lines). Two-digit sums never shown, %, mean of the last three readings of 1,600,000 lines")
+for title, pat in (("the present byte and the two before it, no crossing", "hold_r9_ch2_c0_%d"), ("the present byte and the two before it, one crossing", "hold_r9_ch2_exact_%d")):
+    ds = [load(pat % s) for s in SEEDS]; row(title, [d and d["last3_never"] for d in ds])
+    if all(ds):
+        row("   sums shown", [d["last3_shown"] for d in ds]); row("   never shown, at the last reading", [d["rows"][-1]["never"] for d in ds])
+        print(f"{'':58s}" + "".join("%11s" % "/".join(str(x) for x in d["rows"][-1]["place"]) for d in ds) + "   by place at the end (hundreds/tens/units)")
 
 print("\n\nEIGHTH PLAN (cells2.py clip=1/4, the active-cell kernel). Never-shown addition, mean of the last three readings of 400,000 lines")
 for title, pat in (("logistic cells, 256 (dense compiled kernel)", "c2_r_plain_%d"), ("silent cells, 256", "c2_r8_H256_%d"), ("silent cells, 512", "c2_r8_H512_%d")):

@@ -4,7 +4,7 @@
 
 Everything below is from `cells_loop.py` and `look_inside.py` in this folder (numpy only), from the plans `PLAN.md` and `PLAN_2.md`, which were committed before the runs they govern, and from the result files in `res/`. Commands are in section 7.
 
-**Sections 10 to 16 were added on 20 November,** after Mr. Xu's words of that day to this session ("Keep working, see how much you can push along the road map. Feel free to revise anything you like.") and his three messages during the work, which are quoted in sections 13 and 14. The plans `PLAN_4.md` to `PLAN_10.md` were each committed before the runs they govern, with the development outcomes entered before any reported seed was read. The programs are `cells2.py`, `hold.py`, `hold_x.py`, `prose.py`, `agree.py` and the compiled kernels `kern.c` to `kern4.c`; the tables of the reported seeds are in `report4.txt`. The status is the one stated above: development level, five reported seeds where a table says so and one development seed elsewhere, nothing repeated or verified by anyone else.
+**Sections 10 to 16 were added on 20 November,** after Mr. Xu's words of that day to this session ("Keep working, see how much you can push along the road map. Feel free to revise anything you like.") and his three messages during the work, which are quoted in sections 13 and 14. The plans `PLAN_4.md` to `PLAN_11.md` were each committed before the runs they govern, with the development outcomes entered before any reported seed was read. The programs are `cells2.py`, `hold.py`, `hold_x.py`, `prose.py`, `agree.py` and the compiled kernels `kern.c` to `kern4.c`; the tables of the reported seeds are in `report4.txt`. The status is the one stated above: development level, five reported seeds where a table says so and one development seed elsewhere, nothing repeated or verified by anyone else.
 
 ## 1. In brief
 
@@ -16,12 +16,12 @@ Everything below is from `cells_loop.py` and `look_inside.py` in this folder (nu
 
 ### Added on 20 November
 
-6. **The runs are fast now.** My programs were the slow kind: numpy with a Python loop over every byte. Their inner loops are compiled, checked against the numpy programs on every option, and give the same scores; 400,000 lines take 15 to 33 seconds where they took five minutes, and the runs without the delay chain take minutes where they took half an hour. Of the sparsity there is, the input's was used from the start and the fading is now done exactly as one scale factor; cells that are silent most of the time give about 70% where logistic cells give 84% (section 13).
+6. **The runs are fast now.** My programs were the slow kind: numpy with a Python loop over every byte. Their inner loops are compiled, checked against the numpy programs on every option, and give the same scores; 400,000 lines take 16 to 34 seconds where they took about three minutes, and the runs without the delay chain take minutes where they took half an hour and more. Of the sparsity there is, the input's was used from the start and the fading is now done exactly as one scale factor; cells that are silent most of the time give about 70% where logistic cells give 84% (section 13).
 7. **Closer to what a cell has, one item at a time** (five seeds; every line read: 84.2%). A cell that reads 64 of the 140 lines and rewires by its own strengths: 80.8%; 32 lines: 42.7% with rewiring, 7.5% without. One sign for each cell: 70.7% (section 10).
 8. **The relay works over two steps**: 128 + 128 cells reach what 256 reach in one step, 84.4% (section 10).
 9. **Keeping, in parts** (five seeds). The loss of the first task is total within a few thousand lines and is not the fading; a little over half of it is written in the answering cell; what was learned returns ten to seventeen times faster than it was learned. When the second task is written into new cells, one old line in 32 keeps 67% of the first task, where it keeps 16% otherwise (section 11).
-10. **Cells that hold bytes themselves, without the chain of delay cells** (section 12). Single-digit sums: 98.3% (five seeds). One digit held across 0 to 8 letters: 98 to 100% with one crossing between cells and 23 to 47% without, at every length of gap alike (development seed; five seeds running). Two-digit sums: not learned with the present byte alone (5%); with the two bytes before it on lines as well, where the earlier system had nine, 72% of never-shown sums (development seed; five seeds running).
-11. **Two small language tasks** (section 14, development seed). The next byte of prose never read: 46% and 52% on two books, level with a table of the last two to three bytes and below a table of four. A verb agreeing with its subject across words in between: 100% on pairs of noun and verb never shown together; with a noun of the other number in between, 100% with the crossing and 48% without.
+10. **Cells that hold bytes themselves, without the chain of delay cells** (section 12). Single-digit sums: 98.3% (five seeds). One digit held across 0 to 8 letters (five seeds): 91% and 99% on the two texts with one crossing between cells, 28% and 45% without, the same at every length of gap, and as good at 10 to 16 letters, which were never taught. Two-digit sums: not learned with the present byte alone (5%); with the two bytes before it on lines as well, where the earlier system had nine, 66% of never-shown sums with the crossing and 23% without (five seeds). With letters between the two numbers: not learned yet (8%, development seed).
+11. **Two small language tasks** (section 14, development seed). The next byte of prose never read: 46% and 52% on two books, level with a table of the last two to three bytes and below a table of four. A verb agreeing with its subject across words in between: 100% on pairs of noun and verb never shown together; with a noun of the other number in between, 100% with the crossing on two seeds of three (55% on the third) and chance without it on all three.
 12. **Corrections of my own earlier statements** are in section 12 (a reading that did not survive its test), section 13 (a reading from the development seed that the reported seeds did not bear out) and section 14 (what the comparator of sections 2 to 6 is).
 
 ## 2. The system, in the words of the plan
@@ -217,18 +217,27 @@ Sums shown, whole answer right, %, 240,000 lines, five reported seeds: cells tha
 
 Lines `a+<letters>b=c`: between the operator and the second number, 0 to 8 letters (four letter values, drawn afresh for every line), where the first family has its letters. Text `g1`: c = a + b. Text `m1`: c = (a + b) mod 10, so that the first number is of use only together with the second. Whole answer right on the 80 sums shown, at gaps of 0, 4 and 8 letters; 960,000 lines.
 
-*(The five reported seeds of this part were still running when this version was committed; the figures given are from the development seed, and the tables will be in `report4.txt`.)*
+| Sums shown, % (mean over the three gaps, last three readings) | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| `m1` (c = (a + b) mod 10): no crossing, eta1 = 1 | 27.6 | 21.2 | 28.2 | 40.1 | 18.3 | **27.6** |
+| `m1` (c = (a + b) mod 10): no crossing, eta1 = 4 | 25.7 | 40.0 | 31.2 | 16.4 | 24.9 | **25.7** |
+| `m1` (c = (a + b) mod 10): **one crossing, the reader's own strengths** | 91.2 | 81.9 | 100.0 | 78.1 | 100.0 | **91.2** |
+| `m1` (c = (a + b) mod 10): one crossing, return strengths grown from nothing | 92.4 | 42.2 | 100.0 | 31.8 | 93.5 | **92.4** |
+| `g1` (c = a + b): no crossing, eta1 = 1 | 39.2 | 45.0 | 45.7 | 44.4 | 33.1 | **44.4** |
+| `g1` (c = a + b): no crossing, eta1 = 4 | 45.0 | 43.3 | 69.2 | 33.5 | 59.9 | **45.0** |
+| `g1` (c = a + b): **one crossing, the reader's own strengths** | 99.9 | 94.2 | 99.0 | 98.6 | 97.4 | **98.6** |
+| `g1` (c = a + b): one crossing, return strengths grown from nothing | 95.6 | 98.5 | 99.0 | 88.9 | 96.4 | **96.4** |
 
-Development seed, eta1 = 1, mean of the last three readings (at the end by gap 0, 4, 8): `m1`: no crossing 22.6 (21, 28, 32); one crossing with the reader's own strengths 98.1 (100, 100, 100); with return strengths grown from nothing 99.6 (99, 100, 100). `g1`: 29.2 (35, 36, 36); 95.3 (98, 99, 99); 99.9 (100, 100, 100).
+At the last reading, by gap (0, 4, 8 letters), median of the five seeds: `m1` with the crossing 98, 98, 96; `m1` without (eta1 = 1) 22, 24, 25; `g1` with the crossing 99, 100, 100; `g1` without (eta1 = 1) 45, 46, 42.
 
-- **With one crossing the cells learn to hold a digit across the letters, and the answer is as good after eight letters as after none.** On the development seed both texts end at 98 to 100% at each of the three gaps.
-- **Without the crossing little is learned, and what there is depends on the step.** On the development seed at 960,000 lines: `m1` 14.6, 22.6 and 47.4 with eta1 = 1/4, 1 and 4; `g1` 16.4, 29.2 and 27.2. (At 240,000 lines, the plan's first length, it was at 11 to 18% on both, where a table of nothing gives about 10.)
-- **What has formed** (`look_hold.py`, `look_hold_output.txt`). *(To be entered from the reported seeds' saved networks.)* At birth the first number can already be read off the cells' states by a fitted readout after eight letters nine times in ten (`res/hold_r7_m1_birth_73129.npz`), so the digit is not lost at birth; what learning has to make is cells that the answering cell can use.
-- **Which return strength is needed** (development seed, `m1`, 960,000 lines unless said): the reader's own strength (`exact`) 98.1; a separate strength that starts at nothing and receives the forward strength's changes (`grown`) 99.6; the form that needs only a common signal (`local2`, section 12.4) *(running)*; a return strength built from the reader's signal at the moment of the mismatch alone (`local`) 10.6 on `m1` and 53.6 on `g1`: a reader that has taken in the second number holds it for one byte before the answer is named, and at that moment its sensitivity is near zero; the sign of the strength alone (`sign`) 11.7 at 240,000 lines; a return strength made to agree with the forward one by fading both (`learned`, the construction of section 2) 12.1, because the fading of the strengths between cells by itself stops the learning (12.4 with exact return strengths and the same fading).
-- **Beside a pass backward over the line** (the instrument `hold_x.py`, which is not something a cell has; development seed, `m1`, 240,000 lines, the same step): one crossing 36 to 37% (the forward program: 49%), two crossings 87%, unlimited 79%. More crossings learn faster; one is enough to finish (98 to 100% by 960,000 lines). At the three smaller steps I tried first the instrument learned nothing in that time, which I had misread as a failure of back-propagation.
-- Predictions of the seventh plan: M1 held, M2 held, M3 failed (below), M4 failed at the steps named and is met at the forward program's step, M5 failed, M6 failed.
+- **With one crossing the cells learn to hold a digit across the letters, and the answer is as good after eight letters as after none.** Five reported seeds, the reader's own strengths: `m1` 91.2% at the median (78 to 100 over the seeds), `g1` 98.6% (94 to 100); at the end of the runs the three gaps differ by one or two points at the median. Return strengths grown from nothing do as well on `g1` (96.4) and are unreliable on `m1` (92, 42, 100, 32, 93).
+- **Without the crossing a part is learned and no more, at either step.** `m1`: 27.6% with eta1 = 1 and 25.7% with eta1 = 4; `g1`: 44.4% and 45.0% (medians of five seeds). At the better step of each, the crossing adds 64 points on `m1` and 54 on `g1`. On the development seed the arm without the crossing had 11 to 18% at 240,000 lines, the plan's first length, which I first took for nothing learned; with four times the lines it learns a part, at either step.
+- **What has formed** (`look_hold.py`, `look_hold_output.txt`). At birth no cell's state before the second number is mostly accounted for by the first number, and nine cells of 256 keep their gate above 0.95 on letters; yet a readout fitted to the cells' states names the first number after eight letters 79% (`m1`) and 86% (`g1`) of the time, so the digit is not lost at birth: it is in no form the answering cell can use. After learning with the crossing about 150 cells keep their gate shut on letters, 17 to 22 cells carry the first number, and the readout is right 97 to 100% of the time (medians of the five seeds). **The holding carries to gaps never taught**: taught 0 to 8 letters, these networks answer at 10, 12 and 16 letters 96, 95 and 94% of the time on `m1` and 100% on `g1` (at 0, 4 and 8 letters: 98, 98, 96 and 99, 100, 100). Without the crossing as many gates shut (about 155) and the readout still finds the first number 90% of the time, but the answers are at 22 to 25% and 42 to 46%: the number is there to be read and is not in a form from which the cells compute the answer (the last clause is my reading).
+- **Which return strength is needed** (development seed, `m1`, 960,000 lines unless said): the reader's own strength (`exact`) 98.1; a separate strength that starts at nothing and receives the forward strength's changes (`grown`) 99.6; the form that needs only a common signal (`local2`, section 12.4) 51.4 on `m1` and 77.8 on `g1`; a return strength built from the reader's signal at the moment of the mismatch alone (`local`) 10.6 on `m1` and 53.6 on `g1`: a reader that has taken in the second number holds it for one byte before the answer is named, and at that moment its sensitivity is near zero; the sign of the strength alone (`sign`) 11.7 at 240,000 lines; a return strength made to agree with the forward one by fading both (`learned`, the construction of section 2) 12.1, because the fading of the strengths between cells by itself stops the learning (12.4 with exact return strengths and the same fading).
+- **Beside a pass backward over the line** (the instrument `hold_x.py`, which is not something a cell has; development seed, `m1`, 240,000 lines, the same step): one crossing 36 to 37% (the forward program: 49%), two crossings 87%, unlimited 79%. More crossings learn faster; with one, that seed went on to 98 to 100% by 960,000 lines. At the three smaller steps I tried first the instrument learned nothing in that time, which I had misread as a failure of back-propagation.
+- Predictions of the seventh plan: M1 held, M2 held, M3 failed narrowly (below), M4 failed at the steps named and is met at the forward program's step, M5 failed, M6 failed.
 
-**A reading of mine that did not survive.** After the fifth plan I wrote that a cell's own path teaches holding where the byte held is useful to the answering cell by itself, and that the crossing is needed only where it is useful together with another byte. On these two texts the first half failed: without the crossing the plain sum is learned no better than the sum mod 10. The agreement task of section 14 shows the case I had in mind (there the cell's own path is enough), so the reading is not wrong everywhere, but I can no longer state when it holds.
+**A reading of mine, half borne out.** After the fifth plan I wrote that a cell's own path teaches holding where the byte held is useful to the answering cell by itself, and that the crossing is needed only where it is useful together with another byte. On the development seed, at the plan's first length, that failed outright: without the crossing both texts were at 12 to 18%. On the reported seeds, at four times the length, the plain sum is at 44% without the crossing and the sum mod 10 at 28%: 17 points apart at the gap of 8 letters, where I had said at least 20 (M3). So where the byte held is useful by itself a cell's own path teaches some holding, and far from enough; the agreement task of section 14 is a case where it is enough. I cannot yet say beforehand which case a text will be.
 
 ### 12.3 Two-digit sums without the chain of nine (sixth and ninth plans)
 
@@ -237,16 +246,25 @@ Never-shown sums, development seed, 2,400,000 lines unless said:
 | Lines a cell reads | no crossing | one crossing |
 |---|---|---|
 | the present byte only | 1.1 (by place 79, 20, 9) | 5.0 (93, 38, 10) |
-| the present byte and the one before | not run | 63.6, still rising (99, 78, 93) |
-| the present byte and the two before | 35.0 (94, 46, 94) | **72.4** (98, 75, 100); `grown` 64.8; `local2` *(running)* |
+| the present byte and the one before | not run | 63.6, still rising: 71 at the last reading (99, 78, 93) |
+| the present byte and the two before | 35.0 (94, 46, 94) | **72.4** (98, 75, 100); `grown` 64.8; `local2` 51.2 |
 | the full chain of nine, no cells that hold (sections 4 and 10) | | 84.2 at 400,000 lines (five seeds) |
 
-*(The five reported seeds of this part were still running when this version was committed; the figures given are from the development seed, and the tables will be in `report4.txt`.)*
+Five reported seeds, the present byte and the two before it on lines, 1,600,000 lines (`report4.txt`):
+
+| Never-shown sums, % | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| no crossing | 16.2 | 17.3 | 27.4 | 23.4 | 29.2 | **23.4** |
+| **one crossing, the reader's own strengths** | 65.8 | 66.6 | 67.3 | 60.1 | 62.1 | **65.8** |
+| ... the same arm on sums shown | 66.4 | 66.8 | 68.0 | 65.2 | 69.9 | **66.8** |
+
+By place at the end (hundreds/tens/units), the five seeds: without the crossing 96/46/47, 95/34/60, 97/46/71, 97/36/80, 96/31/96; with it 99/66/100, 99/74/98, 98/73/99, 99/72/91, 98/68/98.
 
 - **With the present byte alone the two-digit text is not learned**, with or without the crossing, in 2,400,000 lines; the instrument with unlimited crossings had 22% at 600,000 lines and was rising. The sixth plan's hypothesis (one crossing is enough) was refuted as registered.
-- **My reading of why, and the test of it.** For the units digit of the first number a cell must take in the second byte after the end mark, and nothing on its lines says "second"; a cell that tells the second byte from the first would have to be taught by the holding cell that needs it, which is itself taught by a reader: two crossings. If the two bytes before the present one are on lines as well, both digits of a number are before the cell when the byte after it arrives, and one crossing reaches everything. That is the ninth plan, and it held: 72% of never-shown sums, as often as sums shown (74%), with three of the four digits held by cells for up to five bytes. One delay line gives nearly as much.
-- So the chain of nine is not needed. What is needed is very little of it: the byte or two just past, which a cell could have from the delay of its own connections, and cells that hold for the rest.
-- Predictions: sixth plan K1, K2, K3 and K5 failed; K4 and K6 were **not run** (the instrument is numpy only and was not lengthened). Ninth plan: N1 held; N2 failed (two delay lines without the crossing already give 35%, and the units digit at 94); N3 held; N4 failed (one delay line is 9 points below, not 20); N5 held.
+- **My reading of why, and the test of it.** For the units digit of the first number a cell must take in the second byte after the end mark, and nothing on its lines says "second"; a cell that tells the second byte from the first would have to be taught by the holding cell that needs it, which is itself taught by a reader: two crossings. If the two bytes before the present one are on lines as well, both digits of a number are before the cell when the byte after it arrives, and one crossing reaches everything. That is the ninth plan, and it held: 72% of never-shown sums on the development seed and 66% at the median of the five reported seeds, against 23% without the crossing, and as often as sums shown (67%); three of the four digits are held by cells for up to five bytes. One delay line gave nearly as much on the development seed.
+- **With letters between the two numbers the system does not yet learn** (eleventh plan: lines `aa+<0 to 8 letters>bb=ccc`, two delay lines, development seed, 2,400,000 lines): 3.1% of never-shown sums without the crossing and 7.7% with it, alike at every gap; by place 97, 76, 16. Its hypothesis was refuted as registered. The tens digit is right three times in four and the units digit hardly above a guess: the carry, which needs only a rough hold of the first number's units digit, is carried across the letters, and the exact digit is not. One digit was held exactly across the same gaps in 12.2, and two digits for five bytes above; two digits held exactly and kept apart across a gap is what has not been learned in this time. This is where the way to the first family stands.
+- So most of the chain of nine can go, at a cost: 66% where the full chain gives 84%. What is kept of it is very little, the byte or two just past, which a cell could have from the delay of its own connections; cells that hold do the rest.
+- Predictions: eleventh plan T1 failed, T3 held, T2 held only in the empty sense that every gap is equally low. Sixth plan K1, K2, K3 and K5 failed; K4 and K6 were **not run** (the instrument is numpy only and was not lengthened). Ninth plan: N1 held; N2 failed (two delay lines without the crossing already give 35% on the development seed, and 23% at the median of the reported seeds, where I had said at most 20); N3 held; N4 failed (one delay line is 9 points below, not 20); N5 held.
 
 ### 12.4 What the crossing assumes
 
@@ -254,7 +272,7 @@ In sections 2 to 11 the answering cell's mismatch reaches every cell alike, and 
 
 The record bears on this in two ways, and it is not mine to settle between them. `WHAT_A_NEURON_HAS_20261118.md`, section 7, item 2, in the reviewer's wording of the page after Mr. Xu's correction: "What does not exist is an instruction computed separately for each cell and delivered to it, and the use by one cell of another cell's weights; a signal that is the same for many cells is not excluded." Section 16 of the same page, Mr. Xu, in the reviewer's translation: "The strength of a connection between cells is determined jointly by the two ends of the connection; it is a local quantity."
 
-So a third form was built, **`local2`**, in which nothing differs from one cell read to another: every reader sends, the same to all the cells it reads, what it received, its gate and its two sensitivities; a cell that is read keeps return strengths and a trace for each reader, built from those numbers and its own earlier outputs, and weighs the reader's signal with its own return strengths. *(Its runs were in progress when this version was committed.)*
+So a third form was built, **`local2`**, in which nothing differs from one cell read to another: every reader sends, the same to all the cells it reads, what it received, its gate and its two sensitivities, at every byte; a cell that is read keeps return strengths and a trace for each of its readers, built from those numbers and its own earlier outputs, and weighs the reader's signal with its own return strengths. On the development seed it learns on every text it was tried on and is the weakest of the forms that learn: the agreement task with a phrase in between 100% (as the reader's own strengths); the plain gap text 77.8% (95.3 with the reader's own strengths, 29.2 with no crossing); the gap text mod 10 51.4% (98.1; 22.6); two-digit sums with two delay lines 51.2% (72.4; 35.0). My prediction for it (at least 90% on the mod-10 text) failed. It was not run on the reported seeds. So holding across a gap does not depend on a value that differs from connection to connection; at this size it is learned faster and further with one.
 
 ## 13. Eighth plan: speed
 
@@ -264,23 +282,21 @@ Mr. Xu, 20 November, during the work: "Are you using the slow version or the fas
 
 | Cause | Remedy | Gain |
 |---|---|---|
-| A Python loop over every byte, some twenty array operations each | the inner loops in C, called through ctypes: `kern.c` and `fastk.py` (`fast=1`; every option of both programs), `kern4.c` (the gated cells with a short chain) | 6 to 10 times |
+| A Python loop over every byte, some twenty array operations each | the inner loops in C, called through ctypes: `kern.c` and `fastk.py` (`fast=1`; every option of both programs), `kern4.c` (the gated cells with a short chain) | 5.5 times (the plain system); 8 to 10 times (the gated cells) |
 | Every strength of the answering cell and every return strength faded at every byte; strengths laid out by cell, so that the ten active lines are scattered | one scale factor in place of the fading, exactly; strengths laid out by line: `kern3.c` (`fast=3`; the plain system) | 2.2 times more |
-| Lines drawn and pairs scored one at a time in Python | the lines up to the next reading drawn at once (the same stream, checked); all pairs scored at once | a few per cent to a third, by the number of readings |
+| Lines drawn and pairs scored one at a time in Python | the lines up to the next reading drawn at once (the same stream, checked); all pairs scored at once | small for the runs here; not measured apart |
 | Every cell active at every byte, so that every sum and every change runs over all cells | not removable by rewriting: the cell itself has to be silent most of the time (below) | see below |
 
-**What a run costs now** (CPU seconds for 400,000 lines of two-digit sums, 3.6 million bytes, on this machine):
+**What a run costs now** (CPU seconds on this machine when it runs nothing else; `speed_output.txt`):
 
 | | numpy | compiled |
 |---|---|---|
-| the plain system (256 logistic cells, every line read) | 300 to 390 | 33 (`fast=1`); 15 (`fast=3`) |
-| the same with sparse reading, rewiring or one sign | 300 to 380 | 48 to 74 (`fast=1`) |
-| the relay over two steps, 128 + 128 cells | 380 to 530 | 234 to 239 (`fast=1`) |
-| silent cells, 256; 512 | not run at length | 9.6; 22.9 (`fast=2`) |
-| gated cells, a gap text, 240,000 lines (2.5 million bytes), with the crossing | 480 to 550 | 53 to 68 |
-| gated cells, two-digit sums, 600,000 lines (6 million bytes), with the crossing | 1,030 to 1,350 | about 115 |
-
-All of these were measured while the machine was running four or more jobs at once, the compiled ones often eight to ten, so they are upper figures.
+| the plain system (256 logistic cells, every line read), 400,000 lines of two-digit sums (3.6 million bytes) | 188 | 34 (`fast=1`); 16 (`fast=3`) |
+| the same with 64 lines a cell and rewiring | 317 to 341 (machine busy) | 76 (`fast=1`) |
+| the relay over two steps, 128 + 128 cells | 380 to 534 (machine busy) | 239 (`fast=1`) |
+| silent cells, 256; 512 | not run at length | 11; 24 (`fast=2`) |
+| gated cells, a gap text, 240,000 lines (2.5 million bytes), with the crossing | 528 | 52 |
+| gated cells, two-digit sums, 200,000 lines (2 million bytes), with the crossing | 360 | about 45; 50 with two delay lines |
 
 **The compiled programs compute what the numpy programs compute.** `check_fast.py` runs both on the same seed and lines for every option in use (35 cases) and compares every strength: the largest difference over the largest strength is between 1e-15 and 2e-11 (`check_fast_output.txt`); a wrong term would show as a difference of order one. Twelve full-length runs made with both give the same score to the digit printed (`report4.txt`, last block: for instance 82.5 and 82.5, 7.3 and 7.3). At the larger steps used with the gated cells the two drift apart after some thousands of lines, as two orders of summation will in a system this sensitive, and single readings then differ; I have compared levels there and not readings. The numpy programs remain the reference.
 
@@ -290,7 +306,7 @@ Development seed, 400,000 lines, never-shown sums (`PLAN_8.md`, section 5):
 
 | Cells | active at a byte | never-shown sums | CPU s |
 |---|---|---|---|
-| 256 logistic | 256 | 81.5 | 33 (`fast=1`), 15 (`fast=3`) |
+| 256 logistic | 256 | 81.5 | 34 (`fast=1`), 16 (`fast=3`) |
 | 256 silent, target 1/8, no upper cut-off | 25 | 56.4 | 6.7 |
 | 256 silent, target 1/4 | 53 | 61.0 | 9.5 |
 | 512 silent, target 1/16 | 53 | 66.3 | 12.5 |
@@ -299,12 +315,12 @@ Development seed, 400,000 lines, never-shown sums (`PLAN_8.md`, section 5):
 
 On the five reported seeds (cut off at 0 and 1, target 1/4, thresholds moving at 1e-5 a byte; `report4.txt`): 256 silent cells **71.3** (72.2, 71.9, 54.1, 42.0, 71.3; about 50 active at a byte; 9.6 s); 512 silent cells **70.0** (62.8, 70.0, 69.5, 74.2, 83.2; about 140 active; 22.9 s); 256 logistic cells 84.2 (33 s with `fast=1`).
 
-- **Silent cells learn and answer never-shown sums, at about 70% where logistic cells give 84%**, with a fifth to a quarter of the cells active and a wider scatter over the seeds (42 to 83). The active-cell kernel runs 256 of them in 9.6 s, where 256 logistic cells take 33 s with the first dense kernel and 15 s with the lazy one: 3.4 and 1.6 times faster, at 13 points less.
+- **Silent cells learn and answer never-shown sums, at about 70% where logistic cells give 84%**, with a fifth to a quarter of the cells active and a wider scatter over the seeds (42 to 83). The active-cell kernel runs 256 of them in 10 to 11 s, where 256 logistic cells take 34 s with the first dense kernel and 16 s with the lazy one: about 3.3 and 1.5 times faster, at 13 points less.
 - **A reading of mine from the development seed did not survive the reported seeds.** There the score had seemed to follow the number of active cells (56% with 25 active, 61 to 66% with about 50, 82% with 140), and I wrote in `PLAN_8.md` that 512 silent cells equal 256 logistic ones. On the five reported seeds 256 silent cells with 50 active give 71.3% and 512 with 140 active give 70.0%. I withdraw it.
 - The first grid failed for a reason worth recording: with the thresholds moving at 1e-3 a byte, the score rose and then fell away in most settings (for instance 44, 39, 36, 28, 13, 13, 8, 6). The thresholds were moving as fast as the strengths were learning; at 1e-5 the fall is gone.
 - Predictions (all on the development seed, as registered): S1 and S2 failed (61.0 at best with 256 cells, where I had said 70; 56.4 at the target 1/8, where I had said 60); S3 held (five times faster than the first dense kernel at the target 1/8); S4 failed (66.3 at its target of 1/16).
 
-**What the feedback loop is now.** A table of five seeds and seven arms that took three quarters of an hour of four cores takes about three minutes; the gap texts and the two-digit text without the chain, which could not be run to the end before, take three to ten minutes a run. After any change to a numpy program or a kernel, `python3 check_fast.py` says within a minute whether the two still agree.
+**What the feedback loop is now.** A run of the plain system takes 16 to 34 seconds where it took about three minutes, so that five seeds of an arm are back in a minute on four cores; the gap texts and the two-digit text without the full chain, which I could not afford to run to the end before, take three to ten minutes a run. After any change to a numpy program or a kernel, `python3 check_fast.py` says within a minute whether the two still agree.
 
 **What would make it faster still, not done.** The gated cells' kernel still moves every trace at every byte; the traces of the strengths from lines can be kept lazily in the same way as the fading (my estimate: 1.5 times). Two return matrices are kept where one and a constant would do. Single precision would double the throughput of every kernel and change the rounding. Cells that are silent and read few lines would let the drives be computed from the active lines alone; both cost score at this size (this section and section 10).
 
@@ -330,11 +346,11 @@ The system of the second plan, unchanged (one line a byte value at each of ten d
 On Bryant with 256 cells and three seeds: 45.8, 45.9, 46.2 against 48.9, 48.8, 48.7.
 
 - **The loop learns real prose.** Cells taught by the relayed mismatch name 46% (Bryant) and 52% (Alice) of the next bytes of text they never read, against 33 to 37% for cells that never change or for no cells, and 19% for the commonest byte.
-- **It does not beat a table.** With ten bytes on its lines the system is level with the table of the last two to three bytes and below the tables of four and five. I had predicted it level with or above the table of three; that failed (L2, L3). A one-layer system of this size trained once through is known to be weak beside counting on a text this small, and the answering cell here fits its branches by least squares, which is a poor way to estimate rare bytes; I have not pursued either.
+- **It does not beat a table.** With ten bytes on its lines the system is level with the table of the last two to three bytes and below the tables of four and five. I had predicted it level with or above the table of three; that failed (L2, L3). My reading, not tested: on a text this small, counting is hard to beat with one layer of 256 to 1,024 cells, and the answering cell here fits its branches by least squares, which estimates rare bytes poorly.
 - **The relay is three to four points below its comparator here, and the cause is the birth of the return strengths.** With return strengths born at 0.3, 0.1, 0.03 and 0.01 of their earlier size the relay gives 47.0, 47.9, 49.2 and 48.8 (256 cells), the last two level with the comparator's 48.9. On two-digit sums it is the other way round: born at nothing 51.1, at 0.03 59.5, at 0.1 75.3, at 0.3 75.9, at the earlier size 81.5 (development seed; `res/c2_d_rs*.json`). The size of the return strengths at birth is a number fixed by us that matters, in opposite directions on the two texts; about 0.1 to 0.3 loses a little on each.
 - Predictions: L1 failed (4.0 points below, where I had said within 3); L2 and L3 failed; L4 and L5 held. The hypothesis is refuted in its second half (the table of three) and stands at the edge in its first.
 
-**A correction this forces on sections 2 and 6.** I wrote there that the comparator's signal is "back-propagation through this network, which a cell does not have". In a network with one step of relay that is wrong. If the return strengths start at nothing, as the answering cell's own strengths do, and receive the same local product, the two are equal at every byte with nothing copied. The comparator is therefore the local rule itself with one particular birth of the return strengths, and what sections 3 and 4 compare is two births of the same rule. The sentence stands only for the comparator whose answering cell is born at random (section 4, 70.3%), and for networks with more than one step.
+**A correction this forces on sections 2 and 6.** I wrote there that the comparator's signal is "back-propagation through this network, which a cell does not have". In a network with one step of relay that is wrong. If the return strengths start at nothing, as the answering cell's own strengths do, and receive the same local product, the two are equal at every byte with nothing copied. The comparator is therefore the local rule itself with one particular birth of the return strengths, and what sections 3 and 4 compare is two births of the same rule. The sentence stands only for the comparator whose answering cell is born at random (section 4, 70.3%), where the return strengths would have to be born equal to forward strengths that are not zero, and for networks with more than one step.
 
 ### B. A verb agrees with its subject across words in between
 
@@ -350,12 +366,12 @@ Sentences in bytes, `the <noun>[s] <words in between> <verb>[s].`: ten nouns and
 | `ag1`: one crossing, `exact` | 100, 100, 100 | 100 | **100** |
 | `ag1`: one crossing, `grown` | 100, 100, 100 | 100 | 81 |
 
-*(Two more seeds of the `ag1` comparison were running when this version was committed.)*
+Sentences whose phrase carries the other number, three seeds (1, 2, 3): own path only 48, 46, 51; one crossing with the reader's own strengths 100, 100, 55; with return strengths grown from nothing 81, 100, 80; with the common-signal form of section 12.4, 100 (seed 1 only). On the third seed the arm with the reader's own strengths wavers between 50 and 82 over its readings and ends at 55.
 
-- **The rule is learned and carried to pairs never shown**, across four words in between as well as across none, from the first reading (50,000 sentences) on.
+- **The rule is learned and carried to pairs never shown**, across four words in between as well as across none; on `ag0` from the first reading (50,000 sentences) on.
 - **Where nothing has to be protected, the cell's own path is enough.** On `ag0` the arm without the crossing is perfect. The number that is held decides between two branches of the answering cell by itself, so the cell that holds it is paid directly. This is the case I had expected on the plain gap text of section 12 and did not find there; here it shows.
-- **Where a later noun of the other number has to be ignored, the crossing is what does it.** Taught by its own path alone the system answers by the nearer noun half the time (48%); with one crossing it answers by the subject (100% with the reader's own strengths, 81% with return strengths grown from nothing). I had expected the crossing arm to make this error too (G4), reasoning that telling the subject from a later noun needs a cell taught over two crossings; that was wrong.
-- Predictions: G1 and G2 held (100); G3 failed (the arm without the crossing is at 100, where I had said at most 70); G4 failed. The hypothesis is refuted as written (without the crossing the cells do hold the number), and what the crossing adds is narrower and sharper than I wrote: holding against interference.
+- **Where a later noun of the other number has to be ignored, only the arms with the crossing do it, and not on every seed.** Taught by its own path alone the system is at chance on such sentences on all three seeds (48, 46, 51), at every reading. With one crossing and the reader's own strengths it answers by the subject on two seeds of three (100, 100) and wavers on the third (55). I had expected the crossing arm to make this error throughout (G4), reasoning that telling the subject from a later noun needs a cell taught over two crossings; that was wrong.
+- Predictions: G1 and G2 held (100); G3 failed (the arm without the crossing is at 100, where I had said at most 70); G4 failed. The hypothesis is refuted as written (without the crossing the cells do hold the number). What the crossing adds, where it adds anything, is narrower than I wrote: holding against a later noun, on two seeds of three.
 - A slip of mine in `agree.py`, with no effect on the scores: the count of bytes named right in the stream, which the program printed, lost what the kernel had added between readings. It is corrected and the printed counts of these runs are not used.
 
 ## 15. Where the revised roadmap stands, and what I would do next
@@ -366,16 +382,16 @@ The table of `ROADMAP_REVISION_PROPOSED_20261119.md`, section 2, with its states
 |---|---|---|
 | R1 | The loop at the smallest size | reached at development level on two-digit sums (sections 4 and 10); to be repeated by another line, which now takes minutes |
 | R2 | The same as a cell has it, one item at a time | sparse reading with rewiring: 81% with 64 lines, 43% with 32; one sign: 71%; the relay over two steps: 84%; silent cells: about 70%; all against 84%. Yes or no alone: 9% (section 6), not reached. Several answering cells and feedback through dedicated cells: not started |
-| R3 | Cells that hold bytes themselves | reached for one digit across a gap of varying length, with one crossing; on two-digit sums reached with two delay lines in place of nine (72% on the development seed); not reached with none |
-| R4 | The first family | not started. Beyond R3 it needs two-digit numbers with letters between them (not run), the task byte, and the reduction by the modulus |
+| R3 | Cells that hold bytes themselves | reached in two of three parts. One digit across a gap of varying length: 91% and 99% with one crossing between cells (five seeds), and as good at gaps never taught. Two-digit sums: 66% of never-shown sums with two delay lines in place of nine and the crossing (five seeds); not learned with none. The two together (two-digit numbers with letters between them): 8% on the development seed, not reached |
+| R4 | The first family | not started. Beyond R3 it needs two-digit numbers with letters between them (tried once, development seed: 8%, not reached; section 12.3), the task byte, and the reduction by the modulus |
 | R5 | Keeping, in parts | (a) what is lost and how fast it returns, (b) how little rehearsal: measured on five seeds; (c) rehearsal the system makes itself: two forms failed (section 9); (d) writing the new task elsewhere: works when the program chooses where, with one old line in 32; a way for the cells to choose is open |
-| R6 | A life; cost | a run costs a tenth to a twentieth of what it did; cost beside the comparator is not measured |
+| R6 | A life; cost | a run costs a fifth to a twelfth of what it did; cost beside the comparator is not measured |
 
 What I would do next, in this order.
 
 1. Have another line repeat sections 4, 12.2 and 12.3 from the programs here. With the kernels that is an hour.
-2. Put to Mr. Xu and Mr. Zhou which form of the crossing is allowed (section 12.4). The form that needs only a common signal is built and is being run.
-3. From R3 towards R4: two-digit numbers with letters between them, with one or two delay lines and the crossing; then the first family's own items beside the record's reference.
+2. Put to Mr. Xu and Mr. Zhou which form of the crossing is allowed (section 12.4). A form that needs only a signal common to all the cells a cell reads is built (`local2`); it learns on every text it was tried on and is weaker. If only that form is allowed, it is the one to improve.
+3. From R3 towards R4: two-digit numbers with letters between them are the next obstacle (8% in 2,400,000 lines; the carry is held and the exact digit is not). I would try, in this order and one at a time: longer runs, since a single digit took 400,000 to 900,000 lines to be held; the reader's signal passed over two crossings; more cells. Only after that the first family's own items beside the record's reference.
 4. R5 (d): let the cells settle where a new task is written. Two candidates I would test first, neither of them run: cells that stiffen with age while new cells keep joining; cells that stay silent on lines they were not taught.
 5. On prose: an answering cell that estimates rare bytes better than a least-squares fit does; and more than one step between the lines and the answer, which section 10 shows the relay can carry.
 
@@ -390,6 +406,7 @@ What I would do next, in this order.
     python3 hold.py <label> text=d1 seed=<seed> eta1=1 lines=240000 every=40000 fast=1                  # section 12.1
     python3 hold.py <label> text=m1|g1 gap=8 seed=<seed> eta1=1 [cross=1 ret=exact|grown|local2] lines=960000 every=80000 fast=1 save=1
     python3 hold.py <label> text=d2 seed=<seed> eta1=1 chain=2|1 [cross=1 ret=exact] lines=1600000 every=200000 fast=1
+    python3 hold.py <label> text=g2 gap=8 seed=1 eta1=1 chain=2 [cross=1 ret=exact] lines=2400000 every=200000 fast=1   # eleventh plan
     python3 hold_x.py <label> text=m1 gap=8 seed=1 eta1=1 X=0|1L|1|2|inf lines=240000 every=40000       # the instrument (numpy)
     python3 look_hold.py m1|g1 res/hold_<label>.npz ...
     python3 prose.py tables; python3 prose.py <label> eta1=1 H=1024 [arm=comparator|fixed|none] [rscale=0.03]
@@ -400,6 +417,6 @@ What I would do next, in this order.
 
 **Sizes.** The delay-chain system as in section 7, with 140 lines here (a fourteenth byte value). The gated cells: 256 cells, 16 other cells read by each; strengths that learn: 7,168 from the lines of the present byte (21,504 with two delay lines), 8,192 between cells, 512 thresholds, about 3,600 at the answering cell; one trace for each of a cell's strengths, and one earlier value of it with the crossing.
 
-**Cost.** Everything of 20 November took about 30 CPU-hours on four cores, about two thirds of it before the kernels existed.
+**Cost.** Everything of 20 November took about 20 CPU-hours on four cores: 76 recorded runs in numpy (8.7 CPU-hours) and 241 recorded runs compiled (9.2 CPU-hours), and about two hours of runs that were stopped or made as checks.
 
-**NOT_RUN.** The instrument at X = 0 and X = 1 on two-digit sums (the sixth plan's K4 and K6). 16 lines a cell, one sign with 32 lines, and two steps of 256 + 256 on the reported seeds. Two-digit numbers with letters between them. The first family. Subtraction or keeping with the gated cells. Silent cells together with sparse reading, rewiring, one sign or two steps. The language tasks on the reported seeds, on other books, or at the level of words. A comparator for the agreement task. Cost beside the comparator. Repetition by anyone else.
+**NOT_RUN.** The instrument at X = 0 and X = 1 on two-digit sums (the sixth plan's K4 and K6). 16 lines a cell, one sign with 32 lines, and two steps of 256 + 256 on the reported seeds. One delay line (`chain=1`), the common-signal crossing (`local2`) and two-digit numbers with letters between them on the reported seeds; the last of these with more lines, more cells or two crossings. The first family. Subtraction or keeping with the gated cells. Silent cells together with sparse reading, rewiring, one sign or two steps. The language tasks on the reported seeds, on other books, or at the level of words. A comparator for the agreement task. Cost beside the comparator. Repetition by anyone else.

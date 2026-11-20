@@ -110,3 +110,20 @@ On re-reading the record before citing it I found a sentence that bears on the c
 So one more form, **`ret=local2`**, in which nothing differs from one cell read to another: every reader sends, the same to all the cells it reads, what it received, its gate and its two sensitivities, at every byte. A cell that is read keeps, for each of its readers, return strengths and a trace built from those numbers and its own earlier outputs (the trace equals the reader's own trace of that connection); its return strengths change by what the reader received times that trace; and what it takes as returned is the reader's signal weighed by its own return strengths. It is `ret=grown` held at the other end, less the part of the reader's change that the reader itself received over a crossing. `ret=local`, which failed, lacked the trace.
 
 Prediction (mine): `ret=local2` reaches at least 90% on `m1` at 960,000 lines on the development seed (chance 0.6).
+
+## 11. Outcome of `ret=local2` (entered 20 November)
+
+Development seed (`res/hold_p7g_*.json`, `res/agree_ag1_local2.json`, `res/hold_d9_ch2_local2.json`): `m1` 51.4% at 960,000 lines (59, 59, 58 by gap at the end; it rises from 320,000 lines and is level near 50 to 58 from 480,000 on); `g1` 77.8% (76, 80, 80). **My prediction failed** (at least 90% on `m1`). The form learns, the same at every gap, and is weaker than the reader's own strengths (98.1 and 95.3) and stronger than no crossing (22.6 and 29.2). On the agreement task with a phrase in between it does all that the exact form does (100% with the other number in between), and on two-digit sums with two delay lines it gives 51.2% (exact 72.4, none 35.0).
+
+## 12. The reported seeds (entered 20 November; tables in `report4.txt`)
+
+Sums shown, mean over the gaps of 0, 4 and 8 letters, last three readings of 960,000 lines; seeds 73129, 93683, 116089, 406364, 545353 and the median.
+
+| | `m1` | `g1` |
+|---|---|---|
+| `cross=0`, eta1 = 1 | 27.6, 21.2, 28.2, 40.1, 18.3; **27.6** | 39.2, 45.0, 45.7, 44.4, 33.1; **44.4** |
+| `cross=0`, eta1 = 4 | 25.7, 40.0, 31.2, 16.4, 24.9; **25.7** | 45.0, 43.3, 69.2, 33.5, 59.9; **45.0** |
+| `cross=1 ret=exact` | 91.2, 81.9, 100.0, 78.1, 100.0; **91.2** | 99.9, 94.2, 99.0, 98.6, 97.4; **98.6** |
+| `cross=1 ret=grown` | 92.4, 42.2, 100.0, 31.8, 93.5; **92.4** | 95.6, 98.5, 99.0, 88.9, 96.4; **96.4** |
+
+The hypothesis of section 4, read on the reported seeds: its second half holds (on `m1` at the gap of 8 letters the crossing is 71 points above the arm without it at the median: 96.2 against 25.0); its first half fails as it did on the development seed, in the sense that the arm without the crossing learns no holding to speak of on either text, though `g1` is 17 points above `m1` there. `ret=grown` is as good as `ret=exact` on `g1` and fails on two seeds of five on `m1`. The saved networks answer as well at gaps of 10, 12 and 16 letters, which were never taught (`look_hold_output.txt`).

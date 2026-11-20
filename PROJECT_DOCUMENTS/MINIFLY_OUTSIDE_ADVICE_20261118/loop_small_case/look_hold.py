@@ -37,8 +37,15 @@ def look(tx, path):
           f"\n   share accounted for, over cells: median {np.median(share):.3f}, upper tenth {np.quantile(share, .9):.3f}; cells with a gate above 0.95 on letters: {(zlet > .95).sum()}"
           f"\n   the first number read off the cells' states (lines not used for the fit), by gap 0, 2, 4, 6, 8: " + ", ".join(f"{100 * right[~half & (G == g)].mean():.0f}%" for g in (0, 2, 4, 6, 8)))
     seed = int(json.load(open(path[:-4] + ".json"))["args"].get("seed", 1)); P = [(a, b) for a in range(10) for b in range(10)]; np.random.default_rng(seed).shuffle(P); s.h = d["h"]
-    print("   whole answer right on the sums shown, by gap 0, 4, 8 | 10, 12, 16 (never taught): " + ", ".join(f"{s.score(tx, P[20:], g)[0]:.0f}%" for g in (0, 4, 8)) + " | " + ", ".join(f"{s.score(tx, P[20:], g)[0]:.0f}%" for g in (10, 12, 16)))
+    ans = {g: s.score(tx, P[20:], g)[0] for g in (0, 4, 8, 10, 12, 16)}
+    print("   whole answer right on the sums shown, by gap 0, 4, 8 | 10, 12, 16 (never taught): " + ", ".join(f"{ans[g]:.0f}%" for g in (0, 4, 8)) + " | " + ", ".join(f"{ans[g]:.0f}%" for g in (10, 12, 16)))
+    return dict(holders=int(hold_.sum()), closed=int((zlet > .95).sum()), read8=float(100 * right[~half & (G == 8)].mean()), **{f"ans{g}": ans[g] for g in ans})
 
 if __name__ == "__main__":
     hold.setup(sys.argv[1])
-    for p in sys.argv[2:]: look(sys.argv[1], p)
+    import collections, statistics; by = collections.defaultdict(list)
+    for p in sys.argv[2:]: by[p.split("_")[-2]].append(look(sys.argv[1], p))                 # the arm is the word before the seed in the file's name
+    print("\nMedians over the networks of each arm (cells that hold the first number; cells with a gate above 0.95 on letters; first number read off after 8 letters, %; whole answer at gaps 0, 4, 8 | 10, 12, 16, %)")
+    for arm, rs in by.items():
+        m = lambda k: statistics.median(r[k] for r in rs)
+        print(f"   {arm:8s} ({len(rs)} networks): {m('holders'):.0f}; {m('closed'):.0f}; {m('read8'):.0f}; " + ", ".join(f"{m('ans' + str(g)):.0f}" for g in (0, 4, 8)) + " | " + ", ".join(f"{m('ans' + str(g)):.0f}" for g in (10, 12, 16)))

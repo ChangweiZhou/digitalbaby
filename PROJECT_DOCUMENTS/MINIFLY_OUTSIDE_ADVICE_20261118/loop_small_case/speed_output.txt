@@ -1,0 +1,15 @@
+Timings on an idle machine (CPU seconds printed by each program; 4 cores, one run at a time). 2026-11-20
+--- cells2.py, the plain system, two-digit sums
+numpy, 20,000 lines: 9.4 s
+fast=1, 400,000 lines: 34.2 s; score 81.53333333333335
+fast=3, 400,000 lines: 15.7 s; score 81.53333333333335
+silent cells (256), fast=2, 400,000 lines: 11.0 s; score 61.0
+silent cells (512), fast=2, 400,000 lines: 23.7 s; score 81.60000000000001
+64 lines with rewiring, fast=1, 400,000 lines: 76.3 s
+two steps 128+128, fast=1, 100,000 lines: 59.8 s
+--- hold.py, the gated cells
+numpy, gap text with the crossing, 20,000 lines: 44 s
+compiled, gap text with the crossing, 240,000 lines: 52 s
+compiled, gap text without the crossing, 240,000 lines: 43 s
+compiled, two-digit sums, chain of two, crossing, 200,000 lines: 50 s
+numpy, two-digit sums with the crossing, 20,000 lines: 36 s

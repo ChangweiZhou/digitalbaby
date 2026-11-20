@@ -49,3 +49,13 @@ Never-shown sums, mean of the last three readings of 2,400,000 lines; sums shown
 N1 holds. N2 fails: with two delay lines the cells learn the units digit by their own path alone (94), and the tens digit is what the crossing adds (46 to 75). N4 fails: one delay line gives nearly as much (9 points less, and still rising). N5 holds. `ret=grown` is entered in the report.
 
 **Reported seeds** (73129, 93683, 116089, 406364, 545353): `chain=2 cross=0`, `chain=2 cross=1 ret=exact`, `chain=1 cross=1 ret=exact`; eta1 = 1; **1,600,000 lines** (the development run with two delay lines was level from about 1,000,000 lines on; shortened here, before those runs, for cost), readings every 200,000.
+
+## 6. Two further arms on the development seed (entered 20 November)
+
+`chain=2 cross=1 ret=grown`: 64.8% of never-shown sums (70 at the last reading; by place 98, 75, 95). N3 holds. `chain=2 cross=1 ret=local2` (the form of the crossing that needs only a common signal; `PLAN_7.md`, section 10): 51.2% (level from 1,400,000 lines on; by place 97, 53, 99), between the arm without the crossing (35.0) and the reader's own strengths (72.4).
+
+**Changed before the reported seeds were started, for cost:** `chain=1 cross=1 ret=exact` is **not run** on the reported seeds. On the development seed it was still far from level at 1,600,000 lines (38% there, 71% at 2,400,000), so the shortened runs would not have given its level. The reported seeds are run for `chain=2` without and with the crossing.
+
+## 7. The reported seeds (entered 20 November; `report4.txt`)
+
+Two-digit sums never shown, the present byte and the two before it on lines, 1,600,000 lines, seeds 73129, 93683, 116089, 406364, 545353: without the crossing 16.2, 17.3, 27.4, 23.4, 29.2 (median **23.4**); with one crossing and the reader's own strengths 65.8, 66.6, 67.3, 60.1, 62.1 (median **65.8**; sums shown 66.8). The hypothesis holds on the reported seeds (at least 50% on every one). N2 fails there as on the development seed, narrowly (23.4, where I had said at most 20); N5 holds.
