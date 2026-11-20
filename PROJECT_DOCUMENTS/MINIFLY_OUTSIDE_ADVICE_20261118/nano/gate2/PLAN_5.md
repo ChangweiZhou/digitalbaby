@@ -50,3 +50,26 @@ Nothing in the rule names a kind, a byte, a place or a text. The one number is o
 ## 5. Not run
 
 Prose (the mechanism's transfer to the other kind of text is owed and is not claimed); any probability other than one half; silencing while answering; silencing in the first cell or in the counting of cells; `nano/merge`'s setting C together with this cell (unless time remains after the runs above: then seeds 116089, 406364, 545353 over 400,000 lines, as a reading).
+
+## 6. Outcome (20 November; `res/h_*.json`, `out/h_*.txt`, `report_5a.txt` to `report_5e.txt`)
+
+All runs of section 4 were made. In every one of them the first cell, the second cell and the control are equal at every reading to the earlier runs of `gate2.py` (78 comparisons of 78), so the new cells are set beside figures already reported. "Half" is the cell of this plan; "control, half" the control with half the senders heard. Never-shown additions after a read line. CPU about a quarter to a half more than `gate2.py` (100 s for 40,000 lines with classes; 480 to 620 s for 400,000 lines).
+
+| Runs | First | Second | **Half** | Control | Control, half |
+|---|---|---|---|---|---|
+| 40,000 lines, with classes, five seeds: median of the last reading (of the mean of the last three) | 92.9 (92.9) | 97.4 (97.1) | **95.0** (95.3) | 92.8 (92.5) | 85.2 (86.6) |
+| 40,000 lines, without classes, five seeds | 80.1 (79.4) | 85.6 (85.7) | **77.9** (80.2) | 83.4 (83.6) | 76.3 (77.0) |
+| 400,000 lines, without classes, seeds 116089, 406364, 545353: mean of the last three | 62.3, 61.8, 62.4 | 68.1, 69.0, 69.1 | **42.9, 44.3, 41.8** | 66.7, 65.5, 63.5 | 50.3, 54.8, 49.4 |
+| 400,000 lines, with classes (frozen setting), the same seeds | 77.9, 75.5, 83.4 | 75.4, 74.7, 92.5 | **58.7, 55.7, 85.0** | 84.9, 81.7, 84.4 | 66.0, 67.3, 66.7 |
+| three-digit sums, 80,000 lines, five seeds: median of the mean of the last three | 94.1 | 96.9 | **96.1** | 93.5 | 92.4 |
+| two tasks (40,000 and 20,000 lines), with classes, five seeds, medians: addition before; at the end; kept %; lowest reading after the change; clean subtractions at the end | 92.9; 75.4; 81.1; 50.2; 80.4 | 97.1; 86.2; 88.8; 63.2; 89.4 | **95.3; 89.5; 93.2; 82.4; 85.8** | 92.5; 61.3; 65.8; 18.6; 83.1 | 86.6; 64.0; 73.6; 39.3; 79.1 |
+
+**The hypothesis is refuted on both of its parts.** (i) Over 400,000 lines without classes the cell that hears half its senders ends 25 points *below* the second cell on all three seeds, and below the first cell. (ii) At 40,000 lines with classes it is 2.4 points below the second cell (95.0 against 97.4; more than 2 was the line), and without classes 7.7 below.
+
+**One thing it does better** (mine): through a change of task it is sturdier. In the life of two tasks it keeps 93.2% of never-shown addition against 88.8% (five seeds of five keep more: 93.9, 92.1, 96.3, 93.2, 93.1 against 81.7, 89.4, 91.0, 87.2, 88.8), its lowest reading after the change is 82.4 where the second cell's is 63.2, and it ends the life above the second cell on addition (89.5 against 86.2) though it started below; it learns the second task less well (85.8 against 89.4). On three-digit sums it is 0.8 under the second cell.
+
+**Why it harms, as I now see it (mine; not tested).** My premise was that a trust fitted with the exact cell speaking is fitted for the wrong situation. But on a line met before, when the exact cell is silent for this cell, the line must be got right from the rest, and the senders that do that best on *met* lines are the ones that hold three of its four digits: they are tied to the shown lines and are the ones that speak wrongly on a never-shown line. Hearing the exact cell had been sparing them that pressure: it explains the met line, the mismatch is nearly nothing, and the inexact senders are left alone. Silencing it makes every met line teach the cell to lean on inexact senders, a little at 40,000 lines and without end over 400,000. The same leaning on many senders is what makes it sturdy when the task changes. So the first cell's loss with long reading is not explained by "fitted in the wrong company", and `PLAN_6.md` measures instead where that loss is.
+
+**Predictions.** H1 failed (42.9, 44.3, 41.8 against 68.1, 69.0, 69.1). H2 failed (below on three of three). H3 failed (2.4 below). H4 failed. H5 failed (77.9 against 85.6). H6 failed (below on three of three). H7 held (96.1 against 96.9). H8 held (93.2% against 88.8%). H9 held (82.4 against 63.2). H10 failed (the control with half heard is 7.6 below the control). Three of ten.
+
+**Entered as:** not transferring, and harmful as a way to the level; one property (sturdiness through a change of task) that may be worth having by other means. Prose was not run.
