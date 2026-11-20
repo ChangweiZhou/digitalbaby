@@ -62,3 +62,37 @@ Runs (development seed 1): `g2`, `key=value`, 1,200,000 lines (the check that th
 | Y3 | `h2`, `key=pair`, listening: at least 50% with 0, 2 and 4 fillers | 0.35 |
 | Y4 | `h2`, `key=pair`, listening: at least 20 of the 40 (letter, digit) entries closed at the end | 0.45 |
 | Y5 | `h2`, `key=pair`, listening: some entry of a digit after a digit, `+` or `=` is closed at the end (a wrong closing) | 0.40 |
+
+## Outcome of addition 1 (entered 20 November 2026; development seed 1; `res/p9_crit_h2_s1.json`, `res/p9_*_listen_s1.json`)
+
+**(a) The expectation rule proposes nothing on `h2`.** Share passed over after 400,000 lines: filler letters 0.00 and filler digits 0.00 at theta 0.2 and at 0.3 (0.13 and 0.18 at 0.5, with the answer's first digit at 0.08); every other kind 0.00. **Y1 held**, for the reason given. One thing the measurement shows that I had not asked: the fillers' total variation is lower than every other kind's (medians 0.75 for the letters and 0.53 for the digits, against 0.88 to 1.00), so the rule would rank the fillers first if it were used to order what to try and not to decide. The combined arm as asked (the rule proposes, the mismatch judges) has nothing proposed here and was not built.
+
+**(b) The listening form.** Never-shown pairs, last three readings:
+
+| Run | Never-shown pairs | Closed at the end |
+|---|---|---|
+| `g2`, `key=value`, `listen=16`, 1,200,000 lines | 93.7 at every gap (the period form: 95.1) | exactly the letters, from the first reading |
+| `h2`, `key=pair`, `listen=16`, 2,400,000 lines | 57.7 / 1.0 / 0.6 | nothing (one other entry at the first reading) |
+| `h2`, `key=value`, `listen=16`, 2,400,000 lines | 61.3 / 19.3 / 0.3 | `+`, from the first reading; nothing else |
+
+The mean evidence of the entries in the `h2`, `key=pair` run, in units of its own uncertainty, at four readings across the run: filler digits -2.5, -3.3, -3.4, -3.1; letters -3.6, -4.2, -3.9, -3.4; other entries -4.3 to -4.7.
+
+**Y2 held** (the listening form does on `g2` what the period form did). **Y3, Y4 failed**: on `h2` it closes no filler entry. **Y5 failed** (no wrong closing either).
+
+**Where it fails, now located (Reading, mine).** The listening form removes the dilution (cause (ii) above) and the entries still do not close; and their evidence is not near nothing, it is steadily against closing, at three to four times its uncertainty. So it is cause (i), and stronger than I put it: closing one half of a filler does not merely earn nothing, it is punished. A filler digit closed while its letter is in the chain, or a letter closed while its digit is in the chain, makes the line worse to name than leaving both. Each entry tries alone, each finds that closing does harm, and the pair that would pay together is never held long enough to be seen. The trial rule finds a byte whose passing over pays by itself. It does not find two bytes that pay only together.
+
+(`key=value` closing `+` and reaching 19.3% with two fillers, that is one filler pair, is a thing I did not foresee and have not examined.)
+
+## Addition 2 (20 November 2026, written before its runs): an entry knows whether the byte before it was passed over
+
+*One change.* With `key=pair` and the listening form, each entry has two tendencies with their own evidence: one used when the byte before its own entered the chain, one used when that byte was passed over (`bit=1`). What it reads beyond before is one thing, and it is local: whether the chain stepped at the last byte. 472 tendencies where there were 236.
+
+*Why this and not something else (Reading, mine).* The failure is that two closings pay only together. If the digit of a filler can lean one way when its letter went into the chain and the other way when its letter was passed over, then "closed after a letter that was passed over" is a trial that completes a filler whenever chance has closed the letter, and it should be rewarded by itself; once that tendency is up, closing a letter is closing a whole filler and should pay as closing a letter paid on `g2`. The second number's first digit, which follows a filler digit that was passed over, must then learn to stay open after a byte passed over; whether it does is part of the test.
+
+*Run (development seed 1).* `h2`, `key=pair`, `listen=16`, `bit=1`, 2,400,000 lines. If it reaches 50% with 0, 2 and 4 fillers, the five reported seeds with `clock=none` and `clock=oracle` beside it follow at once, as registered here.
+
+| | Prediction (mine, before the run) | Chance |
+|---|---|---|
+| Z1 | at least 50% of never-shown pairs with 0, 2 and 4 fillers (development seed) | 0.45 |
+| Z2 | at the end at least 35 of the 40 entries of a filler digit after a letter that was passed over are closed | 0.50 |
+| Z3 | at the end no entry of a digit after a digit is closed in either state | 0.50 |

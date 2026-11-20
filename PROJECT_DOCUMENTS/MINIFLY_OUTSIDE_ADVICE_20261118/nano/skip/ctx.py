@@ -12,6 +12,8 @@ clock=trial    the trial clock of PLAN_2.md, second form, with one difference fr
 listen=T       (addition 1 to PLAN_9.md) an entry draws its state anew at each of its bytes, and listens to the number sent out by the answering cell
                only over the T bytes that follow that byte: the mean over those bytes is what it enters into its closed or its open mean. The
                tendencies are brought up to date every 2,048 bytes; a byte less than T/2 named bytes from the end of such a stretch is not counted.
+bit=1          (addition 2 to PLAN_9.md; with key=pair and listen) an entry has two tendencies and two sets of evidence: one for when the byte
+               before its own entered the chain, one for when that byte was passed over.
 text=g2        the text of skip.py (letters only), for a check of the listening form where the plain form is known to work.
 """
 import json, os, sys, time
@@ -36,7 +38,9 @@ def run(kw):
     P = int(kw.get("P", 256)); alpha = float(kw.get("alpha", 2)); eps = float(kw.get("eps", 0.01)); beta = 0.02; p0 = float(kw.get("p0", 0.2)); gam = 1 - 1 / float(kw.get("win", 3000)); u0 = np.log(p0 / (1 - p0))
     closedM = np.zeros((S, S), bool)                                       # closedM[p, v]: the byte v after the byte p is passed over (the clock as it stands; used for scoring)
     if ck == "oracle": closedM[:, skip.LETS] = True; closedM[skip.LETS, :10] = True
-    shape = (S, S) if key == "pair" else (S,); u = np.full(shape, u0); ev = np.zeros((4,) + shape); tr = dict(b=None, w=None); seen = np.zeros((S, S))
+    bit = int(kw.get("bit", 0)); assert not bit or (key == "pair" and T)
+    closedB = np.zeros((2, S, S), bool); prevclosed = False               # with bit=1: closedB[1 if the byte before was passed over else 0, p, v]
+    shape = (2, S, S) if bit else (S, S) if key == "pair" else (S,); u = np.full(shape, u0); ev = np.zeros((4,) + shape); tr = dict(b=None, w=None); seen = np.zeros((S, S))
     def full(c): return c if key == "pair" else np.broadcast_to(c[None, :], (S, S))
     def score(gapk):
         hists = []; want = []; own = []
@@ -46,7 +50,7 @@ def run(kw):
                 p = hist[0]
                 if pend: hist = [L[t], p] + hist[1:-1]
                 else: hist[0] = L[t]
-                pend = not closedM[p, L[t]]
+                pend = not (closedB[0 if pend else 1, p, L[t]] if bit else closedM[p, L[t]])
                 if t >= eq and L[t + 1] != skip.END: hists.append(list(hist)); want.append(L[t + 1]); own.append((k, t - eq))
         hists = np.array(hists); out = sg(s.W1.T[skip.OFF + hists].sum(1) + s.b1) @ s.W2.T + s.b2; r = out.argmax(1) == np.array(want); ok = np.ones(len(held), bool); pl = np.zeros(3)
         for (k, j), rr in zip(own, r): ok[k] &= bool(rr); pl[j] += rr
@@ -57,7 +61,14 @@ def run(kw):
         if ck == "trial" and T:
             CH = 2048; gc = gam ** (CH / P)
             for i in range(0, len(xs), CH):
-                c = np.clip(sg(u), eps, 1 - eps); x = xs[i:i + CH]; xp = np.concatenate([[s.hist[0]], x[:-1]]); kidx = (xp, x) if key == "pair" else (x,); closed = crng.random(len(x)) < c[kidx]
+                c = np.clip(sg(u), eps, 1 - eps); x = xs[i:i + CH]; xp = np.concatenate([[s.hist[0]], x[:-1]]); kidx = (xp, x) if key == "pair" else (x,)
+                if bit:                                   # each byte's state depends on whether the byte before it was passed over: a chain of two-state steps, worked out for the whole stretch at once
+                    rr = crng.random(len(x)); c0 = rr < c[0][kidx]; c1 = rr < c[1][kidx]; const = c0 == c1; j0 = np.arange(len(x))
+                    last = np.maximum.accumulate(np.where(const, j0, -1)); base = np.where(last >= 0, c0[np.maximum(last, 0)], prevclosed)
+                    # between resets the state is copied (c1 and not c0) or flipped (c0 and not c1) from the byte before
+                    flip = (~const & c0).astype(np.int64); cf = np.cumsum(flip); par = (cf - np.where(last >= 0, cf[np.maximum(last, 0)], 0)) % 2
+                    closed = base ^ (par == 1); pb = np.concatenate([[prevclosed], closed[:-1]]).astype(np.int64); prevclosed = bool(closed[-1]); kidx = (pb, xp, x)
+                else: closed = crng.random(len(x)) < c[kidx]
                 s.eout = []; s.run(x, ys[i:i + CH], ~closed); e = np.array(s.eout); s.eout = None; named = (ys[i:i + CH] >= 0).astype(float); np.add.at(seen, (xp, x), 1)
                 ce = np.concatenate([[0.0], np.cumsum(e)]); cn = np.concatenate([[0.0], np.cumsum(named)]); j = np.arange(len(x)); hi = np.minimum(j + 1 + T, len(x)); cnt = cn[hi] - cn[j + 1]; ok = cnt >= T / 2
                 if not ok.any(): continue
@@ -67,7 +78,8 @@ def run(kw):
                 ev *= np.where(occ, gc, 1.0); np.add.at(ev[0], kk, zz * cl); np.add.at(ev[1], kk, cl * 1.0); np.add.at(ev[2], kk, zz * ~cl); np.add.at(ev[3], kk, ~cl * 1.0)
                 u = u0 + alpha * (ev[0] / (ev[1] + 1) - ev[2] / (ev[3] + 1)) / np.sqrt(1 / (ev[1] + 1) + 1 / (ev[3] + 1))
                 tr["w"] += beta * (float(np.abs(W[ok] - tr["b"]).mean()) - tr["w"]); tr["b"] += beta * (float(W[ok].mean()) - tr["b"])
-            closedM = np.array(full(u > 0))
+            if bit: closedB = u > 0; closedM = closedB[0]
+            else: closedM = np.array(full(u > 0))
         elif ck == "trial":
             for i in range(0, len(xs), P):
                 c = np.clip(sg(u), eps, 1 - eps); closed = crng.random(shape) < c; x = xs[i:i + P]; xp = np.concatenate([[s.hist[0]], x[:-1]]); s.esum = 0.0; s.ecnt = 0
@@ -88,7 +100,9 @@ def run(kw):
         row["filler_digits_closed"] = [int((closedM & fd).sum()), int(fd.sum())]; row["letters_closed"] = [int((closedM & mk).sum()), int(mk.sum())]
         row["others_closed"] = [nm(p) + nm(v) for p, v in zip(*np.nonzero(closedM & ot))] if key == "pair" or ck == "oracle" else sorted({nm(v) for p, v in zip(*np.nonzero(closedM & ot))}); row["others_that_occur"] = int(ot.sum())
         if ck == "trial":                                                  # the evidence (u less its start, over alpha), mean over the entries of each kind that occur
-            tt = np.array(full((u - u0) / max(alpha, 1e-12))); row["evidence_mean"] = dict(filler_digits=float(tt[fd].mean()) if fd.any() else None, letters=float(tt[mk].mean()), others=float(tt[ot].mean()), others_max=float(tt[ot].max()))
+            tt = np.array(full(((u[0] if bit else u) - u0) / max(alpha, 1e-12))); row["evidence_mean"] = dict(filler_digits=float(tt[fd].mean()) if fd.any() else None, letters=float(tt[mk].mean()), others=float(tt[ot].mean()), others_max=float(tt[ot].max()))
+        if bit:
+            row["after_a_byte_passed_over"] = dict(filler_digits_closed=int((closedB[1] & fd).sum()), letters_closed=int((closedB[1] & mk).sum()), others_closed=[nm(p) + nm(v) for p, v in zip(*np.nonzero(closedB[1] & ot))])
         out["rows"].append(row)
     out["last3_by_fillers"] = {g: float(np.mean([r["never_by_fillers"][g] for r in out["rows"][-3:]])) for g in (0, 2, 4)}; out["cpu"] = round(time.process_time() - t0, 1); run.last = s
     if not kw.get("nowrite"): json.dump(out, open(os.path.join(skip.HERE, "res", f"{kw['label']}.json"), "w"))
@@ -121,4 +135,4 @@ if __name__ == "__main__":
     if sys.argv[1] == "crit": crit(); sys.exit()
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw); r = o["rows"][-1]
     print(o["label"], "| last3 by fillers", {g: round(v, 1) for g, v in o["last3_by_fillers"].items()}, "|", " ".join(f"{q['lines']//1000}k " + "/".join(f"{v:.0f}" for v in q["never_by_fillers"].values()) for q in o["rows"]),
-          "| place", r["place"], "| closed (filler digits, letters; of those that occur):", [(q["filler_digits_closed"][0], q["letters_closed"][0], len(q["others_closed"])) for q in o["rows"]], "of", r["filler_digits_closed"][1], r["letters_closed"][1], r["others_that_occur"], "| others closed at the end", r["others_closed"][:30], "|", o["cpu"], "s")
+          "| place", r["place"], "| closed (filler digits, letters; of those that occur):", [(q["filler_digits_closed"][0], q["letters_closed"][0], len(q["others_closed"])) for q in o["rows"]], "of", r["filler_digits_closed"][1], r["letters_closed"][1], r["others_that_occur"], "| others closed at the end", r["others_closed"][:30], ("| after a byte passed over: " + str([(q["after_a_byte_passed_over"]["filler_digits_closed"], q["after_a_byte_passed_over"]["letters_closed"], len(q["after_a_byte_passed_over"]["others_closed"])) for q in o["rows"]]) + " " + str(r["after_a_byte_passed_over"]["others_closed"][:30])) if "after_a_byte_passed_over" in r else "", "|", o["cpu"], "s")
