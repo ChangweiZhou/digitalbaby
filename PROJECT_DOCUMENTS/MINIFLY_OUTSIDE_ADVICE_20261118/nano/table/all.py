@@ -48,16 +48,17 @@ def run(without):
     x, cut, _ = score.load(); t0 = time.process_time(); s = SysAll(x, without); s.go(6, cut, True); r = dict(score.score(s.go(cut, len(x), False, True))); on = score.score(s.go(cut, len(x), True, True))
     r.update(without=list(without), kinds=int(s.K1), cells=int((s.N > 0).sum()), going_on_nats=on["nats"], going_on_right=on["right"], cpu=round(time.process_time() - t0, 1)); return r
 
-def books(without):
+def books(without, after_a=False):
     """PLAN_10.md, addition 1: a fresh system reads the three other books (nine tenths of each, in turn); each book's last tenth is scored right after its stream."""
     import life
     x, segs, _ = life.load_all(); s = SysAll(x, without); out = {}
+    if after_a: s.go(6, segs["A"][1], True)                      # addition 2: the stream of the test text is read first
     for k in segs:
         if k != "A": lo, c, b = segs[k]; s.go(lo, c, True); out[k] = score.score(s.go(c, b, False, True), x[c:b])["nats"]
-    return dict(without=list(without), books=out, cells=int((s.N > 0).sum()))
+    return dict(without=list(without), after_a=bool(after_a), books=out, cells=int((s.N > 0).sum()))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "books":
-        w = tuple(v for v in dict(a.split("=") for a in sys.argv[2:]).get("without", "").split(",") if v); r = books(w); json.dump(r, open(os.path.join(HERE, "res", "all_books_without_" + "_".join(w) + ".json"), "w")); print("books", r, flush=True); sys.exit()
+        w = tuple(v for v in dict(a.split("=") for a in [q for q in sys.argv[2:] if '=' in q]).get("without", "").split(",") if v); aa = "after_a" in sys.argv; r = books(w, aa); json.dump(r, open(os.path.join(HERE, "res", "all_books_" + ("after_a_" if aa else "") + "without_" + "_".join(w) + ".json"), "w")); print("books", r, flush=True); sys.exit()
     kw = dict(a.split("=") for a in sys.argv[1:]); w = tuple(v for v in kw.get("without", "").split(",") if v); r = run(w); tag = "all" + ("_without_" + "_".join(w) if w else "")
     json.dump(r, open(os.path.join(HERE, "res", tag + ".json"), "w")); print(tag, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items() if k != "n"}, flush=True)

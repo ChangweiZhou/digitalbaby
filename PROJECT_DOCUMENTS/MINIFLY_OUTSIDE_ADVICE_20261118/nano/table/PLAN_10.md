@@ -59,3 +59,27 @@ Readings (mine).
 The three other books (`PLAN_5.md`: Bryant, Burgess, Carroll) have been used today only to measure keeping; no kind, setting or threshold was chosen on them. A fresh system reads the first nine tenths of each in turn (the life "B only" of `PLAN_5.md`) and each book's last tenth is scored right after its stream, nothing changing. Arms: T2 (already run: 1.5598, 1.2769, 1.3836; `res/two_T2_H0_moments.json`) and all the additions but the relay system, whose program reads only the test text. On the test text that arm gains 0.0233 over T2 (1.4740 against 1.4973).
 
 *Prediction (mine):* on each of the three books the gain over T2 is at least half of that, 0.0117 (chance 0.5 for all three; 0.8 for at least two). *If the gain is under 0.005 on two books or more*, the gains of sections 5 were fitted to the last tenth of one text and are withdrawn as general statements.
+
+## 7. Outcome of addition 1 (entered 20 November; `res/all_books_without_relay.json`)
+
+A fresh system, the three other books in turn, each book's last tenth scored right after its stream, nothing changing; nats a byte.
+
+| | Bryant (read first, 225,000 bytes) | Burgess | Carroll |
+|---|---|---|---|
+| T2 | 1.5598 | 1.2769 | 1.3836 |
+| T2 with the fading companions only (`PLAN_6.md`, addition 3) | 1.5962 | 1.2805 | 1.3808 |
+| All the additions but the relay system | 1.5951 | 1.2744 | 1.3635 |
+| Gain of the last over T2 | **-0.0353** | 0.0025 | 0.0201 |
+
+**The prediction failed** (a gain of 0.0117 on one book of three), **and by the rule I set, the gains of section 5 are withdrawn as general statements**: on a text where nothing was chosen, read from nothing, the system with all the additions is worse than T2 on the first book, level on the second and better only on the third.
+
+Readings (mine).
+1. What stands from section 5 is a figure on one text after a million bytes of it (1.4707), not a statement that these kinds of cells improve a system of this sort wherever it is put.
+2. The table shows where the loss on the first book comes from: the fading companions alone account for it (1.5962 against 1.5598), as `PLAN_6.md`, addition 3, had already shown for a system that has read little; the cells that time a byte value and the pool, born with no trust, do no harm at any point and gain as the life goes on (0.001, then 0.006, then 0.017 beside the companions). So the additions differ: kinds born with no trust are safe and slow; companions born with the trust of an old kind do harm in a young system.
+3. Whether the gains appear on a fresh text once the system has read enough is a different question from the one I registered, and is asked next (addition 2), with its own prediction.
+
+## 8. Addition 2 (20 November; written after section 7 and before the run it describes): the same books at the end of a long life
+
+The life A, B of `PLAN_5.md`: the system reads the stream of the test text (a million bytes), then the three books in turn; each book's last tenth is scored right after its stream, nothing changing. T2 on that life (`res/two_T2_H0_moments.json`): 1.4802, 1.3162, 1.4109; T2 with the companions only: 1.4720, 1.2558, 1.3630. Arm: all the additions but the relay system.
+
+*Prediction (mine):* it is below T2 by at least 0.0117 on each of the three books (chance 0.75, since the companions alone already are on two); and below T2 with the companions only by at least 0.005 on each (chance 0.5): the second is what says whether the kinds born with no trust carry to a text where nothing was chosen.
