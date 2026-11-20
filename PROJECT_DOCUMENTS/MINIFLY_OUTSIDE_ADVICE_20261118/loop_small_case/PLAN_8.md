@@ -34,3 +34,17 @@ Grid on development seed 1, for both forms: eta1 in 1/64, 1/16, 1/4; target p in
 ## 4. Cost, and what is not run
 
 A run of 400,000 lines should take under a minute. Not run in this plan: silent cells together with sparse reading, rewiring, one sign for each cell, or two steps of relay; silent cells in the system without the delay chain (`hold.py`), where the state of a cell that holds would have to stop changing for sparsity to pay.
+
+## 5. Entered on 20 November after the development runs (seed 1), before any reported seed
+
+Never-shown sums, mean of the last three readings of 400,000 lines; cells active at a byte; CPU seconds of the run (`res/c2_d8*.json`, machine busy).
+
+*The registered grid (kap = 1e-3), 256 cells.* Best: cut off at 0 and 1, target 1/4, eta1 = 1/64: 54.7. At the target 1/8: 39.1 at best. In 14 of the 18 settings the score rises early and then falls (for instance 44, 39, 36, 28, 13, 13, 8, 6). **S1 and S2 fail on the registered grid.**
+
+*Root cause of the fall, tested with a second grid added after the first* (eta1 in 1/256, 1/64; kap in 1e-4, 1e-5): the thresholds were moving as fast as the strengths were learning. With kap = 1e-5 the fall is gone. Best with 256 cells: cut off at 0 and 1, target 1/4, eta1 = 1/64, kap = 1e-5: **61.0** (53 cells active a byte, 9.5 s; over 800,000 lines 61.1). Cut off at 0 only, target 1/8: 56.4 (25 cells active, 6.7 s). The logistic cell: 81.5 (all 256 active; about 35 s with the dense compiled kernel, about 300 s in numpy).
+
+*More cells, added after that* (eta1 = 1/64, kap = 1e-5): 512 cells, cut off at 0 and 1: target 1/16: 66.3 (53 active, 12.5 s); target 1/8: 60.9 (68 active); target 1/4: **81.6** (140 active, 22 s; by place 94, 86, 100). 1,024 cells: target 1/8: 78.1 (183 active, 33 s); target 1/16: 64.0 (112 active). **S4 fails at its target (1/16)**; at the target 1/4, 512 silent cells equal the 256 logistic cells.
+
+Reading (mine). Silent cells learn and answer never-shown sums, but the score follows the number of cells that are active, not the number of cells: about 25 active give 56%, 53 give 61 to 66%, 140 give 82%, where 256 logistic cells give 82%. At equal score the active-cell kernel is about 1.6 times faster than the dense compiled kernel; at a score of about 60% it is 4 to 5 times faster. The hypothesis fails as registered (61% and not 70% with 256 cells); S3 holds (about 5 times at the target 1/8).
+
+**Reported seeds** (73129, 93683, 116089, 406364, 545353), beside the logistic cell (`r_plain`): cut off at 0 and 1, target 1/4, eta1 = 1/64, kap = 1e-5, with 256 cells and with 512 cells.

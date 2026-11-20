@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PLAN_4.md: the system of keep.py (two-digit sums, cells in between that learn from a relayed mismatch) with options. numpy only.
     python3 cells2.py <label> seed=1 [plan=add:400000[,sub:200000[,add:40000]]] [every=50000] [fine=1] [reh=N] [swap=1]
-                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x] [fast=1|2] [clip=p] [kap=1e-3] [cap=1] [eta1=1/4] [eta2=1/16] [lam=1e-5]
+                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x] [fast=1|2|3] [clip=p] [kap=1e-3] [cap=1] [eta1=1/4] [eta2=1/16] [lam=1e-5]
     ans2=1: two answering cells; which one answers and learns is given by the line's operator (a control, laid down by the program).
     reserve=N: N further cells in between are silent and unchanged in the first phase; from the second phase on they alone change, with the answering
       cell's strengths from them, and everything the first phase wrote is left as it is (a control: the program decides where the new task is written).
@@ -9,6 +9,7 @@
     fast=1: the inner loop runs compiled (kern.c through fastk.py; the same arithmetic, to rounding; not with ans2 or stiff1).
     clip=p (PLAN_8.md): a cell in between is silent below its threshold: output = drive cut off at 0 and 1; after every byte its threshold moves by
       kap times (its output less p). cap=0: no cut-off at 1. fast=2: the compiled kernel that works only on the active cells (clip only; none of the other options).
+    fast=3: the dense kernel with the fading done as one scale factor (the plain system only: no fan, rewire, dale, H2, reserve, clip).
     freeze=1: after the first phase the cells in between do not change. stiff1=k: each strength of a cell in between divides its step by 1 + (total size of its past changes)/k.
 """
 import json, os, sys, time
@@ -77,8 +78,10 @@ class Sys:
         free = s.g2.random((s.H, NL)); free[s.M] = -1.0; new = free.argmax(1); jj = j[ok]
         s.M[jj, weak[ok]] = False; s.W1[jj, weak[ok]] = 0.0; s.age[jj, weak[ok]] = 0; s.M[jj, new[ok]] = True; s.made += len(jj)
     def flush(s):
-        if s.bx and s.fast == 2: import fastk2; fastk2.run(s)
-        elif s.bx: import fastk; fastk.loop_run(s)
+        if not len(s.bx): return
+        if s.fast == 2: import fastk2; fastk2.run(s)
+        elif s.fast == 3: import fastk3; fastk3.run(s)
+        else: import fastk; fastk.loop_run(s)
     def line(s, L):
         if s.fast:
             s.bx += L; s.by += L[1:]; s.by.append(-1)
@@ -87,9 +90,19 @@ class Sys:
         for t in range(len(L) - 1):
             s.hist.insert(0, L[t]); s.hist.pop(); s.learn(L[t + 1])
         s.hist.insert(0, L[-1]); s.hist.pop()
+    def out(s, u):
+        """The answering cell's branches for many lines at once (u: lines by cells); the same arithmetic as fwd."""
+        hA = np.clip(u, 0.0, s.cap) if s.clip else sg(u)
+        if s.live is not None: hA = hA * s.live
+        return (sg(hA @ s.WB.T + s.bB) if s.H2 else hA) @ s.W2.T + s.b2
     def score(s, op, pairs, place=False):
         n = 0; pl = np.zeros(3); s.flush()
         if s.two: s.use(0 if op == '+' else 1)
+        if s.fast:                                    # all pairs at once
+            Ls = np.array([text(op, a, b) for a, b in pairs]); ok = np.ones(len(pairs), bool); W1T = s.W1.T
+            for t in (5, 6, 7):
+                hist = np.full((len(pairs), D), END); hist[:, :t + 1] = Ls[:, t::-1]; r = s.out(W1T[OFF + hist].sum(1) + s.b1).argmax(1) == Ls[:, t + 1]; ok &= r; pl[t - 5] = r.sum()
+            return [int(round(100 * x / len(pairs))) for x in pl] if place else float(100 * ok.sum() / len(pairs))
         for a, b in pairs:
             L = text(op, a, b); hist = [END] * D; ok = True
             for t in range(len(L) - 1):
@@ -111,19 +124,26 @@ def run(kw):
     if s.clip: assert not s.H2; s.b1 -= 1.0                     # thresholds start where about one cell in seven is active
     s.two = int(kw.get("ans2", 0)); s.stiff1 = float(kw.get("stiff1", 0)); freeze = int(kw.get("freeze", 0)); s.fast = int(kw.get("fast", 0))
     reh = int(kw.get("reh", 0)); every = int(kw.get("every", 50000)); fine = int(kw.get("fine", 0)); out = dict(label=kw.get("label"), args=kw, rows=[]); snaps = {}
+    TAB = {op: np.array([text(op, a, b) for a, b in shown[op]], np.int32) for op in "+-"}; TL = {op: TAB[op].tolist() for op in "+-"}
+    def reading(it): return (it + 1) % every == 0 or (fine and it + 1 <= 20000 and (it + 1) % 2000 == 0) or (fine and it + 1 <= 100000 and (it + 1) % 10000 == 0)
     for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
         name, n = ph.split(":"); op0 = {"add": "+", "sub": "-", "mix": None}[name]; s.flush()
         if freeze and pi > 0: s.eta1 = 0.0
         if nres and pi > 0: s.free = (~(np.arange(s.H) < s.H - nres)).astype(float); s.live = np.ones(s.H, bool); s.late = True
         if "lam2" in kw and pi > 0: s.lam = float(kw["lam2"])
-        for it in range(int(n)):
+        block = s.fast and op0 is not None and not (reh and pi > 0) and not s.two; it = 0      # one task, no rehearsal: the lines up to the next reading are drawn at once (the same stream)
+        while block and it < int(n):
+            nxt = next(j for j in range(it, int(n)) if reading(j) or j == int(n) - 1); X = TAB[op0][rng.integers(8000, size=nxt - it + 1)]
+            s.bx = X.ravel(); s.by = np.concatenate([X[:, 1:], np.full((len(X), 1), -1, np.int32)], 1).ravel(); s.flush(); it = nxt + 1
+            if reading(nxt): out["rows"].append(dict(phase=pi, name=name, lines=nxt + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"])))
+        for it in range(0 if not block else int(n), int(n)):
             if op0 is None: op = "+-"[rng.integers(2)]
             elif reh and pi > 0 and rng.integers(reh) == 0: op = "+" if op0 == "-" else "-"
             else: op = op0
-            a, b = shown[op][rng.integers(8000)]
+            L = TL[op][rng.integers(8000)]
             if s.two: s.use(0 if op == '+' else 1)
-            s.line(text(op, a, b))
-            if (it + 1) % every == 0 or (fine and it + 1 <= 20000 and (it + 1) % 2000 == 0) or (fine and it + 1 <= 100000 and (it + 1) % 10000 == 0):
+            s.line(L)
+            if reading(it):
                 out["rows"].append(dict(phase=pi, name=name, lines=it + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"])))
         s.flush(); snaps[pi] = {k: getattr(s, k).copy() for k in ("W1", "b1", "W2", "b2")}
         if pi == 1 and kw.get("swap"):

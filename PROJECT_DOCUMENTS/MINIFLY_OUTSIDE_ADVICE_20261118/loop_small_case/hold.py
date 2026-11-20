@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """PLAN_5.md: cells that hold bytes themselves; no delay chain; a trace at each connection, running forward. numpy only.
     python3 hold.py <label> text=d1|d2 seed=1 [H=256 K=16 eta1=1/4 lines=60000 every=10000]      eta1=0: the cells never change; save=1: the strengths are saved
+    chain=C (PLAN_9.md): the C bytes before the present one are on lines as well (a chain of C delay cells; the earlier plans' full chain had nine).
     fast=1: the inner loop runs compiled (kern.c through fastk.py; the same arithmetic, to rounding).
 PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received, times its own sensitivity, over a return strength; the cell read
     changes by what its readers send times each trace as it stood one byte earlier. [ret=exact|learned] the return strength is the connection's
@@ -31,31 +32,38 @@ def text(tx, a, b, f=""):
 def sg(u): return 1 / (1 + np.exp(-u))
 
 class Hold:
-    def __init__(s, seed, H, K, eta1, eta2=1 / 16, lam=1e-5, cross=0, ret="exact", lamB=None):
+    def __init__(s, seed, H, K, eta1, eta2=1 / 16, lam=1e-5, cross=0, ret="exact", lamB=None, chain=0):
         g = np.random.default_rng([seed, 20261122]); s.H, s.eta1, s.eta2, s.lam = H, eta1, eta2, lam
         s.idx = np.stack([g.choice(np.delete(np.arange(H), j), K, replace=False) for j in range(H)])      # the K other cells that each cell reads
-        s.Ac = g.uniform(-1, 1, (H, S)); s.Az = g.uniform(-1, 1, (H, S)); s.Bc = g.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Bz = g.uniform(-1, 1, (H, K)) / np.sqrt(K)
+        s.C = chain; NI = S * (1 + chain); s.prev = [END] * chain                                         # chain: the bytes just before the present one are on lines too
+        s.Ac = g.uniform(-1, 1, (H, NI)); s.Az = g.uniform(-1, 1, (H, NI)); s.Bc = g.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Bz = g.uniform(-1, 1, (H, K)) / np.sqrt(K)
         s.cc = np.zeros(H); s.cz = g.uniform(-1, 3, H)                                                    # gates' thresholds spread: cells hold for different times
         s.R = g.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.h = np.zeros(H)
-        s.Ecx = np.zeros((H, S)); s.Ezx = np.zeros((H, S)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
+        s.Ecx = np.zeros((H, NI)); s.Ezx = np.zeros((H, NI)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
         s.fast = 0; s.bx = []; s.by = []; s.right_acc = 0
         s.ret = ret; s.qs = 1 / np.sqrt(3 * K)                                                            # ret=sign: the size of every return strength (the birth strengths' root mean square)
         s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown", "local"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
         if s.learned: g3 = np.random.default_rng([seed, 20261123]); s.Qc = g3.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Qz = g3.uniform(-1, 1, (H, K)) / np.sqrt(K)
         if s.learned and ret in ("grown", "local"): s.Qc = np.zeros((H, K)); s.Qz = np.zeros((H, K))      # a return strength starts at nothing and receives the forward strength's changes
+    def cols(s, x, prev): return [x] + [S * (d + 1) + prev[d] for d in range(s.C)] if s.C else x
     def step(s, h, x):
-        pre = h[s.idx]; z = sg(s.Az[:, x] + (s.Bz * pre).sum(1) + s.cz); c = sg(s.Ac[:, x] + (s.Bc * pre).sum(1) + s.cc)
+        """x: the line of the present byte, or with a chain the list of the active lines."""
+        pre = h[s.idx]
+        if s.C: z = sg(s.Az[:, x].sum(1) + (s.Bz * pre).sum(1) + s.cz); c = sg(s.Ac[:, x].sum(1) + (s.Bc * pre).sum(1) + s.cc)
+        else: z = sg(s.Az[:, x] + (s.Bz * pre).sum(1) + s.cz); c = sg(s.Ac[:, x] + (s.Bc * pre).sum(1) + s.cc)
         return pre, z, c, z * h + (1 - z) * c
     def read(s, x, y=None):
         """The byte x is read and every trace moves on; if a next byte y is given, the system names it first, y arrives, and the cells change."""
+        if s.C: x0 = x; x = s.cols(x, s.prev); s.prev = [x0] + s.prev[:-1]
         hp = s.h; pre, z, c, h = s.step(hp, x); s.h = h
         kc = (1 - z) * c * (1 - c); kz = (hp - c) * z * (1 - z); zc = z[:, None]; X = None
+        ka, kb = (kc[:, None], kz[:, None]) if s.C else (kc, kz)
         if y is not None and s.eta1 and s.cross:          # the crossing: every reader sends back what it received times its sensitivity to that connection
             r = s.eta1 * (s.R @ (np.eye(S)[y] - s.W2 @ h - s.b2)); Qc, Qz = (s.Qc, s.Qz) if s.learned else (np.sign(s.Bc) * s.qs, np.sign(s.Bz) * s.qs) if s.ret == "sign" else (s.Bc, s.Bz)
             rho = np.bincount(s.idx.ravel(), weights=(r[:, None] * (kc[:, None] * Qc + kz[:, None] * Qz)).ravel(), minlength=s.H); pc = rho[:, None]
             X = (pc * s.Ecx, pc * s.Ecr, rho * s.Ecb, pc * s.Ezx, pc * s.Ezr, rho * s.Ezb)                 # with the traces as they stood one byte earlier
-        s.Ecx *= zc; s.Ecx[:, x] += kc; s.Ecr = zc * s.Ecr + kc[:, None] * pre; s.Ecb = z * s.Ecb + kc
-        s.Ezx *= zc; s.Ezx[:, x] += kz; s.Ezr = zc * s.Ezr + kz[:, None] * pre; s.Ezb = z * s.Ezb + kz
+        s.Ecx *= zc; s.Ecx[:, x] += ka; s.Ecr = zc * s.Ecr + kc[:, None] * pre; s.Ecb = z * s.Ecb + kc
+        s.Ezx *= zc; s.Ezx[:, x] += kb; s.Ezr = zc * s.Ezr + kz[:, None] * pre; s.Ezb = z * s.Ezb + kz
         if y is None: return None
         a = s.W2 @ h + s.b2; ok = int(a.argmax()) == y; m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
         if s.eta1:
@@ -69,7 +77,9 @@ class Hold:
         d2 = np.outer(g * m, h); s.W2 += d2; s.b2 += g * m; s.R += d2.T; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
         return ok
     def flush(s):
-        if s.bx: import fastk; fastk.hold_run(s)
+        if not len(s.bx): return
+        if s.C: import fastk4; fastk4.hold_run(s)
+        else: import fastk; fastk.hold_run(s)
     def line(s, L):
         if s.fast:
             s.bx += L; s.by += L[1:]; s.by.append(-1)
@@ -79,9 +89,10 @@ class Hold:
     def score(s, tx, pairs, gap=0):
         n = 0; pl = np.zeros(3); s.flush()
         for a, b in pairs:
-            L = text(tx, a, b, fill(a, b, gap)); eq = L.index(EQ); h = s.h; ok = True                                      # from the state left by the last line read
+            L = text(tx, a, b, fill(a, b, gap)); eq = L.index(EQ); h = s.h; ok = True; prev = list(s.prev)                 # from the state left by the last line read
             for t in range(len(L) - 1):
-                h = s.step(h, L[t])[3]
+                h = s.step(h, s.cols(L[t], prev))[3]
+                if s.C: prev = [L[t]] + prev[:-1]
                 if t >= eq and L[t + 1] != END:
                     r = int((s.W2 @ h + s.b2).argmax()) == L[t + 1]; ok = ok and r; pl[t - eq] += r
             n += ok
@@ -94,7 +105,7 @@ def run(kw, cls=None):
         rng = np.random.default_rng(seed); P = [(a, b) for a in range(10) for b in range(10)]; rng.shuffle(P); held, shown = P[:20], P[20:]; shown_s = shown
     else:
         rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held, shown = P[:500], P[2000:]; shown_s = shown[:500]
-    s = (cls or Hold)(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1/4"))), cross=int(kw.get("cross", 0)), ret=kw.get("ret", "exact"),
+    s = (cls or Hold)(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1/4"))), cross=int(kw.get("cross", 0)), ret=kw.get("ret", "exact"), chain=int(kw.get("chain", 0)),
                       lamB=float(kw["lamB"]) if "lamB" in kw else None)
     s.X = kw.get("X"); s.fast = int(kw.get("fast", 0)); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
     for it in range(lines):

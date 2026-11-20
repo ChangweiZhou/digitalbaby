@@ -13,7 +13,7 @@ from hold import Hold, text, S
 
 class HX(Hold):
     def line(s, L, apply=True):
-        X = s.X; T = len(L); hps, pres, zs, cs, rs = [], [], [], [], []; right = 0
+        assert not s.C, "the instrument has no chain"; X = s.X; T = len(L); hps, pres, zs, cs, rs = [], [], [], [], []; right = 0
         for t in range(T):
             hp = s.h; pre, z, c, h = s.step(hp, L[t]); s.h = h; hps.append(hp); pres.append(pre); zs.append(z); cs.append(c)
             if t < T - 1:
