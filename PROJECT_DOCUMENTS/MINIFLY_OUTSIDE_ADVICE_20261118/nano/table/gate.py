@@ -89,6 +89,13 @@ def kern():
     L.mix_steps2.argtypes = [ctypes.c_int64, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD, ci, PI, PD, PD, ci, PD]; L.mix_steps2.restype = None; return L
 p32 = lambda a: a.ctypes.data_as(PI); pf = lambda a: a.ctypes.data_as(PF); pd = lambda a: a.ctypes.data_as(PD)
 
+def scramble(a):
+    """A fixed scramble of cell addresses (the finishing steps of a common 64-bit mixing function); it knows nothing of kinds, bytes or texts."""
+    z = a.astype(np.uint64) + np.uint64(0x9E3779B97F4A7C15)
+    with np.errstate(over="ignore"):
+        z = (z ^ (z >> np.uint64(30))) * np.uint64(0xBF58476D1CE4E5B9); z = (z ^ (z >> np.uint64(27))) * np.uint64(0x94D049BB133111EB)
+    return z ^ (z >> np.uint64(31))
+
 class Sys2(G.Sys):
     """nano/merge's system with the second answering cell. s.cell says whose answer say() gives (1: the first cell, the plain system; 2: the second)."""
     GATE = 0; BLIND = 0
@@ -107,7 +114,7 @@ class Sys2(G.Sys):
     def ids(s, ctx, create=False):
         """PLAN_17.md: with BLIND = B > 0, a cell whose address falls in one class of B by a fixed scramble never comes to be (it neither counts nor speaks)."""
         out = super().ids(ctx, create)
-        if Sys2.BLIND: out[(out >= 0) & ((((out.astype(np.int64) + 1) * 2654435761) >> 13) % Sys2.BLIND == 0)] = -1
+        if Sys2.BLIND: out[(out >= 0) & (scramble(out) % np.uint64(Sys2.BLIND) == 0)] = -1
         return out
     def find(s):
         """Classes are found anew by nano/merge's find; the second cell's parts for a class kind follow the first cell's trust: kept where the pair is kept, nothing where it is new."""

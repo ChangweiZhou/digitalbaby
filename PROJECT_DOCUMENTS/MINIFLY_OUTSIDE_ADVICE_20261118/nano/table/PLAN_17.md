@@ -10,7 +10,7 @@
 
 ## 2. The one change
 
-**A fixed share of all possible cells never come to be.** A cell whose address falls in one class of B by a fixed scramble of the address (a multiplication and a shift; no knowledge of the kind, the bytes or the text) never counts and never speaks, for every kind alike. B = 8. For those contexts the system has to answer from its other cells for as long as it lives, with the true byte arriving each time: an examination that does not run out, set by chance and not by the program's knowledge of the task. Nothing else changes: the answering cells, their step rules and the classes are as in `PLAN_15.md`; no cap; no gate that knows which cells are blind.
+**A fixed share of all possible cells never come to be.** A cell whose address falls in one class of B by a fixed scramble of the address (the finishing steps of a common 64-bit mixing function; no knowledge of the kind, the bytes or the text; my first scramble, a single multiplication and shift, left blind addresses in near pairs and was replaced before any run) never counts and never speaks, for every kind alike. B = 8. For those contexts the system has to answer from its other cells for as long as it lives, with the true byte arriving each time: an examination that does not run out, set by chance and not by the program's knowledge of the task. Nothing else changes: the answering cells, their step rules and the classes are as in `PLAN_15.md`; no cap; no gate that knows which cells are blind.
 
 It costs something by construction: the lines whose own cell is blind are answered as never-shown lines are.
 
