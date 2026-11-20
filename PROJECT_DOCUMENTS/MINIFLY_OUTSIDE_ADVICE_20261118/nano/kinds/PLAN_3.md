@@ -43,3 +43,20 @@ Reported on the five seeds, on each testbed: the baseline (T1: the runs `q1_spre
 ## 5. Cost, what is not run
 
 T2: 12 to 18 development runs and 10 runs on the reported seeds, 16 to 20 seconds each. T1: 12 to 18 development runs and 10 runs on the reported seeds, about 3.7 CPU-minutes each: about 100 CPU-minutes, about 26 minutes on four cores. Not run: a signal with a sign (better or worse than expected); a signal that each cell weighs by a strength of its own; a signal sent by any cell but the answering one; a mean A over a fixed span in place of the whole run; a control at each seed's own mean multiplier; more than five seeds.
+
+## 6. Entered on 20 November after the development runs (seed 1), before any run on the reported seeds (nothing above is changed)
+
+`calib_t2.txt`, `calib_t1.txt`, `res/*q3d_*`. Score on the development seed at the constant k finally used; the baseline on that seed: T2 81.5, T1 98.1.
+
+| Testbed | p | beta 1/16 | beta 1/256 | beta 1/4096 |
+|---|---|---|---|---|
+| T2 | 1 | 84.0 (k 1.0720) | 79.3 (k 1.0714) | 81.7 (k 1.0698) |
+| T2 | 4 | 85.2 (k 1.3018) | 79.1 (k 1.3255) | 80.4 (k 1.3064) |
+| T1 | 1 | 93.3 (k 1) | 99.9 (k 1.0275) | 97.5 (k 1.0329) |
+| T1 | 4 | 99.6 (k 1.0828) | 99.6 (k 1.0992) | 100.0 (k 1.1171) |
+
+With k = 1 the mean multiplier was 0.93 (T2, p = 1), 0.75 to 0.77 (T2, p = 4), 0.97 to 0.98 (T1, p = 1) and 0.90 to 0.92 (T1, p = 4): the mismatch falls over the run, so a/A is mostly below 1. With k set, the mean multiplier of the second run was between 0.990 and 1.015 in every setting; T1 at beta = 1/16 and p = 1 was within 0.02 at k = 1 and was not repeated. The ratio a/A at the end of the run is 0.83 to 0.94 on T2 and 0.96 to 0.98 on T1: the signal moves the step by a few parts in a hundred at p = 1, as expected from the bytes that cannot be foretold. **C1 holds** (0.936 on T2 and 0.970 on T1 at beta = 1/256, p = 1).
+
+**Settings for the reported seeds**, by the rule of section 3 (the highest score on the development seed for each p): T2 `s1`: beta 1/16, k 1.0719875614320444; T2 `s4`: beta 1/16, k 1.3018480343526433; T1 `s1`: beta 1/256, k 1.0275211246368463; T1 `s4`: beta 1/4096, k 1.1171099423560744. On T1 five of the six settings are within 3 points of each other and of the baseline on this seed, at the ceiling, so the choice there is close to arbitrary.
+
+**Added after the plan, on the coordinating session's rule of 20 November for every line** (single runs on the gap text differ by about ten points between programs that agree to rounding): where two arms are within about ten points on T1 or five on T2, the ten further seeds 1001 to 1010 are run and the fifteen reported together, with the five reported seeds as the first table. Both arms are run on the further seeds on both testbeds without waiting to see whether they are close. The never-shown sums are given beside the shown ones on T1 (not a registered measure of this plan).
