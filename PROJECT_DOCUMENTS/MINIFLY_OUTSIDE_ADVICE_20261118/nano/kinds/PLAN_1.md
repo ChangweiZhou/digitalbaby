@@ -88,3 +88,23 @@ Two of seven hold. I expected the spread to help and the wider spread to help mo
 2. **The last reading alone** (960,000 lines), beside the mean of three readings of section 5: `spread` 97.1, 81.7, 100.0, 88.8, 100.0, median 97.1; `alike` 97.5, 82.1, 97.9, 98.3, 100.0, median 97.9; `wide` 98.3, 45.0, 98.8, 40.0, 91.7, median 91.7; `wide_c` 100.0, 96.7, 100.0, 57.5, 100.0, median 100.0. On this measure `wide` is 5 points below the baseline at the median, not 12; its two low seeds are the same.
 3. **The 20 sums never shown** (scored without letters; a measure that was not registered in this plan; one answer digit, so a system that answers at random has 10%). Mean of the same three readings: `spread` 1.7, 0.0, 0.0, 3.3, 11.7, median 1.7; `alike` 0.0, 3.3, 5.0, 3.3, 6.7, median 3.3; `wide` 16.7, 1.7, 21.7, 1.7, 5.0, median 5.0; `wide_c` 11.7, 3.3, 5.0, 0.0, 0.0, median 3.3. The highest single reading in any run is 30 (`wide`, seed 116089, one reading of 48). No arm answers the sums it was not shown: on this text these cells hold a digit and answer the pairs they have read, and do not add. From the second plan on the never-shown sums are in every table of T1.
 4. **Scatter.** The coordinating session reports that another line's rerun of the baseline's five seeds, in a program that agrees with this one to rounding, gave 83.2, 94.4, 99.7, 89.9, 100.0 where this program gives 91.2, 81.9, 100.0, 78.1, 100.0. I have not seen those files. If so, a single run on this text differs by about ten points from rounding alone, and the readings of section 5 that rest on two seeds (the assignment of the fall in `wide` to the higher mean) are weaker than I wrote; the refutation of the hypothesis stands, since it claims no difference.
+
+## 7. Added on 20 November: the baseline and `alike` on the ten further seeds (not in the plan; the coordinating session's rule for arms within about ten points; nothing above is changed)
+
+Seeds 1001 to 1010 after the five reported ones; `table_q1_15.txt`.
+
+| Arm | Seeds 1001 to 1010 | Fifteen seeds: median | Mean | Seeds below 90% | Lines to 90%, thousands: median | Seeds that do not reach 90% |
+|---|---|---|---|---|---|---|
+| `spread` (baseline) | 83.8, 96.9, 96.9, 89.2, 66.5, 99.2, 100.0, 99.9, 71.9, 88.3 | 91.2 | 89.6 | 7 of 15 | 560 | 5 |
+| `alike` | 99.3, 96.4, 98.8, 92.4, 81.0, 99.9, 99.2, 100.0, 89.7, 98.8 | 98.2 | 94.7 | 3 of 15 | 520 | 1 |
+
+By seed `alike` is above the baseline on 10 seeds, below on 4 and equal on 1 (median of the differences +1.8); 10 of 14 one way arises by chance about once in five or six. Never-shown sums: medians 1.7 and 3.3; no reading above 25 in `alike`.
+
+On fifteen seeds the refutation of section 5 stands, and more firmly: cells alike at birth do no worse than cells that differ, on either measure. `alike` has fewer low runs than the baseline (3 against 7), as has every other arm run on the fifteen seeds in this folder (the second and third plans); I do not read that as a gain from making the cells alike, for the reason given in `PLAN_3.md`, section 7 (the note on the baseline of T1). `wide` and `wide_c` were not run on the further seeds.
+
+## 8. The three questions of line C6 together (20 November; my reading; development level, repeated by no one)
+
+1. **Different memory** (this plan). A spread of holding times at birth is not needed where the thresholds learn; gates that start more closed (a mean threshold of 2) went with lower scores on three seeds of five.
+2. **Different clocks** (`PLAN_2.md`). A spread of rates over the cells does not help on either testbed. On two-digit sums a sixteen-fold spread or more costs 4 to 8 points, and the cost is the spread's. On the gap text the rate arms gain only what a larger common rate gains.
+3. **A signal that reaches every cell alike** (`PLAN_3.md`). A running mean of the size of the mismatch, sent to all cells as a multiplier of the step at an unchanged mean step, makes no difference on two-digit sums at the first power and may cost a little at the fourth; on the gap text it is not separable from the other small changes of the step.
+4. **Across the three.** No kind of cell tried here makes these cells answer the one-digit sums they were not shown (medians 0 to 7% in every arm, where an answer at random has 10%). The one thing that the fifteen seeds carry on the gap text is about the baseline and not about a kind of cell: with eta1 = 1 it leaves 7 runs of 15 below 90%, and a common rate of 1.35 leaves none.
