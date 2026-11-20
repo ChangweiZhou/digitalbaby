@@ -85,11 +85,12 @@ The earlier steps map as follows: R1 is done at development level; R2 continues 
 
 ## 6. Lines started on 20 November
 
-| Line | Folder | Who | Task |
-|---|---|---|---|
-| L0 | `nano/ref` | a separate agent session | the references of section 4, L0 |
-| L1, then L2 | `nano/loop` | a separate agent session | the loop on the test text |
-| C1, then C2 | `nano/joint` | a separate agent session | edges decided by both ends |
-| M1 | `loop_small_case` | this session | two long runs of the eleventh plan's text |
+| Line | Folder | Who | Branch | Task |
+|---|---|---|---|---|
+| L0 | `nano/ref` | a separate agent session (`session_017dSEpXxn4bCLF4VwJ7tiNZ`) | `claude/nano-ref-8mmhfm` | the references of section 4, L0 |
+| L1, then L2 | `nano/loop` | a separate agent session (`session_017dSEpWpbA9ALrDd5BncYTk`) | `claude/nano-loop-8mmhfm` | the loop on the test text |
+| C1, then C2 | `nano/joint` | a separate agent session (`session_017dSEpU7vrz76xk4M2iSTnY`) | `claude/nano-joint-8mmhfm` | edges decided by both ends |
+| M1 | `loop_small_case` | this session | `claude/friendly-darwin-8mmhfm` | two long runs of the eleventh plan's text (`PLAN_12.md`) |
 
+Each agent session was started from this branch at fe397ca6 with a written brief: one line, one folder, a plan committed before each step's runs, settings chosen on the development seed, a numpy reference for every compiled program, and a short report to this session after each step. 
 Their results are merged into this branch and entered in the ledger as they come.
