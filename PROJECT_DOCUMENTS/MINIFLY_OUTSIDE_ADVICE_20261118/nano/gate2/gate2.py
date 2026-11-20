@@ -191,7 +191,7 @@ def run(kw):
     out = dict(task="sums", args=kw, seed=seed, plan=plan, nd=nd, mode=mode, rows=[], clean_subtractions=len(clean) if LsS is not None else None); tail = np.full(D, END, np.int64); total = 0
     for pi, (name, lines) in enumerate(plan):
         op = "+" if name == "add" else "-"; every = (5000 if lines <= 40000 else 50000) if nd == 2 else 10000
-        marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []))); done = 0
+        marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []) + ([1000, 2000] if pi > 0 else []))); done = 0      # a later task is also read soon after it starts
         for mk in marks:
             X = drawer[op](mk - done).ravel(); x = np.concatenate([tail, X]); s.learn(G.ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
             row = dict(phase=pi, name=name, lines=mk, lines_in_life=total + mk, on_every=mk % every == 0, add=reading(s, LsA, prevs, nd))
