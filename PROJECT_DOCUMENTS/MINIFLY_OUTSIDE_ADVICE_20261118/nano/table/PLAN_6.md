@@ -54,3 +54,48 @@ Addition 2 is in (both companions together are not the better of the two on thre
 2. A's loss after B was scored with every trust as B left it. *A look inside, not a new system:* the same scoring with the companions silenced (their trusts set to nothing for the scoring), to see whether what the cells that never fade hold of A is intact.
 
 Systems: T2 and T0, without companions, with each half-life, with both. *Predictions (mine):* (a) scored right after its own stream, each of the three books of B is better for the system with companions of H = 10,000 than for the system without, in the life A, B (chance 0.7); (b) with the companions silenced, A's loss after B is within 0.03 of the system that never had companions (1.5067 for T2), at both half-lives (chance 0.6). If (b) fails, the companions have damaged what is kept and not only what is listened to.
+
+## 8. Outcome (entered 20 November after all runs; `res/two_*.json`, `res/life_*.json`)
+
+Loss in nats a byte. "+10k", "+100k", "+both": companions with a half-life of 10,000 bytes, of 100,000, and both kinds together. The compiled loop equals numpy to 3e-15 on a prefix that learns, is scored, and learns again; with no companions the program gives the figures of `PLAN_5.md` to the digit.
+
+*Scored at the end of the life, nothing changing (the measure of `PLAN_5.md`):*
+
+| System | A after A | A after A and B | rise | B after A and B | B, system that read B only |
+|---|---|---|---|---|---|
+| T2 (no companions) | 1.4973 | 1.5067 | 0.009 | 1.4152 | 1.4300 |
+| T2 +10k | 1.4892 | 1.6093 | 0.120 | 1.4341 | 1.4700 |
+| T2 +100k | 1.4974 | 1.5936 | 0.096 | 1.3926 | 1.4470 |
+| T2 +both | 1.4977 | 1.6409 | 0.143 | 1.4249 | 1.4862 |
+| T0 (no companions) | 1.5226 | 1.5306 | 0.008 | 1.4454 | 1.4525 |
+| T0 +10k; +100k; +both | 1.5139; 1.5215; 1.5220 | 1.6443; 1.6369; 1.6843 | 0.130; 0.115; 0.162 | 1.4674; 1.4166; 1.4515 | 1.5008; 1.4667; 1.5116 |
+
+*Each book of B scored right after its own stream, nothing changing (addition 3); the life A, B, and after the slash the life of B only:*
+
+| System | Bryant | Burgess | Carroll |
+|---|---|---|---|
+| T2 (no companions) | 1.4802 / 1.5598 | 1.3162 / 1.2769 | 1.4109 / 1.3836 |
+| T2 +10k | 1.4720 / 1.5962 | 1.2558 / 1.2805 | 1.3630 / 1.3808 |
+| T2 +100k | 1.4537 / 1.5960 | 1.2497 / 1.2894 | 1.3476 / 1.3808 |
+| T2 +both | 1.4691 / 1.6374 | 1.2455 / 1.3043 | 1.3486 / 1.3916 |
+
+*The last tenth of A read with everything going on (a different measure; additions 1 and 2):*
+
+| System | after A | on the return, after A and B |
+|---|---|---|
+| T2 (no companions) | 1.3863 | 1.3910 |
+| T2 +10k | **1.3636** | **1.3706** |
+| T2 +100k | 1.3771 | 1.4048 |
+| T2 +both | 1.3683 | 1.3838 |
+| T0; +10k; +100k; +both | 1.4136; 1.3881; 1.4011; 1.3923 | 1.4190; 1.3979; 1.4388; 1.4151 |
+
+A at the end with the companions silenced (addition 3), T2: 1.80 (+10k), 2.31 (+100k), 2.05 (+both). Cells that have counted after A and B: 2,998,982 with one kind of companions, 3,578,237 with both. A life took 24 to 48 CPU-seconds.
+
+**The hypothesis is refuted as written.** Its second half holds (with companions, having read A no longer costs anything on the later books), its first half fails: scored with nothing changing after B, the loss on A rises by 0.10 to 0.16 with companions, where it rose by 0.009 without. U1 failed. U2 held. U3 failed at H = 10,000 (the loss on A after A is 0.008 lower) and held at H = 100,000. U4 held (0.023). U5 held (0.023). Addition 1: both predictions held. Addition 2: failed (one measure of four). Addition 3: (a) held; (b) failed.
+
+Readings (mine).
+1. **What the companions are good for.** Right after a book has been read its held-out part is answered better with them (Burgess 1.256 against 1.316, Carroll 1.363 against 1.411 at H = 10,000), and the price that the system without companions paid on the later books for having read A (0.039 and 0.027 by this measure) is gone: with companions the system that read A first is the better one on all three books. A system that goes on changing is better with them on the last tenth of A (1.364 against 1.386) and on the return to A after B (1.371 against 1.391).
+2. **What they cost.** If the system is stopped after B and then asked about A, it is 0.10 to 0.16 nats worse than at the end of A. The cells that never fade hold exactly the counts they hold in the system without companions (a cell's counting does not depend on any trust), so nothing that was kept is lost: **the whole rise is in the answering cell's trusts**, which at the end of B are set for a system whose companions speak for B. My look inside with the companions silenced did not show this and could not: the other trusts were learned with the companions present and do not stand without them (1.8 to 2.3). The statement rests on the construction, and prediction (b) failed because the look was badly designed, which I record.
+3. **It is the same place as on sums.** `loop_small_case/PLAN_13.md`: after subtraction the cells in between still carried most of addition, and the loss was in the answering cell's reading. Here the cells carry all of the first text and the loss is in the answering cell's trusts. Twice, on two systems and two kinds of text, what is lost is the reading and not what is read.
+4. **No one half-life is best everywhere, and both together are not the better of the two** by the measures taken at the end of the life; right after a book, both together are best on two books of three.
+5. *Not attempted:* an answering cell whose trusts do not lose an earlier text (for instance trusts that depend on whether the long cells now active have live companions, which says whether the present text is the recent one). The measure that such a step should be judged by is the return with everything going on, since a system of this kind is not meant to stop.
