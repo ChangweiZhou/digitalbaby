@@ -40,3 +40,7 @@ One reading of the stream, counts and trust together. Then the last tenth is sco
 Cells as in the earlier plans (a cell holds 65 counts, most of them zero; the numbers of cells and of counts above zero are reported). The answering cell holds 40 trusts for each kind of cell: 280 for arm 0, 400 for arm 2. A run with its choice of settings takes a few CPU-minutes. Not run here: a trust held by each cell for itself; ends of words found by the cells; cells taught by the relay beside these.
 
 A point for the reviewers, stated here and not hidden: the answering cell's trust depends on the sending cell's experience, so a cell's message carries two things, what its counts say and how much it has counted. Whether that is within what a cell has is theirs to rule.
+
+## 5. Addition 1 (20 November; written after arms 0 to 3 were read and before the runs it describes)
+
+For every arm the choice of eta fell on the smallest value the plan allowed (0.0005), so the plan's range was too narrow at that end. Arms 0, 2 and 3 are run again with eta 0.00005, 0.0001 and 0.0002 added to the choice (e as before), chosen on the last twentieth of the stream as before; the first runs stay in the table. Prediction (mine): each arm improves by under 0.01 nats, and the difference between arms 2 and 0 stays above 0.02 (chance 0.8).
