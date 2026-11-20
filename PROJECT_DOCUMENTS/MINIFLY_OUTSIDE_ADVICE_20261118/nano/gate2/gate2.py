@@ -169,7 +169,7 @@ def reading(s, Ls, prevs, nd=2):
 
 def run(kw):
     seed = int(kw.get("seed", 1)); mode = kw.get("mode", "classes"); nd = int(kw.get("nd", 2)); plan = [(p.split(":")[0], int(p.split(":")[1])) for p in kw.get("plan", "add:40000").split(",")]
-    nG = int(kw.get("nG", 2)); t0 = time.process_time(); D = 9; W = 2 * nd + 4; rng = np.random.default_rng([seed, 99]); held, TAB, drawer = {}, {}, {}
+    nG = int(kw.get("nG", 2)); t0 = time.process_time(); D = 9; rng = np.random.default_rng([seed, 99]); held, TAB, drawer = {}, {}, {}
     if nd == 2:                                               # merge.run_sums' split for addition, which is cells2.py's; the second permutation is cells2.py's split for subtraction
         for op in "+-":
             o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held[op] = pairs[:500]; TAB[op] = np.array([text(op, a, b) for a, b in pairs[2000:]], np.int64)
