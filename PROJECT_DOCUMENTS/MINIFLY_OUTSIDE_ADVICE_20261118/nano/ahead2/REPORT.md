@@ -88,3 +88,7 @@ R1 held (91.4). R2 held (14.1). R3 held (94.7). R4 held (repeats on both sets). 
     python3 report.py base la ctl c1 c2
 
 The job lists are `jobs_main.txt` and `jobs_2.txt`; the raw lines of every run are `out_main.txt` and `out_2.txt`.
+
+## 8. Added later on 20 November: three-digit sums and the depth of the look-ahead (`PLAN_2.md`)
+
+Asked by the coordinating session after the report above; plan committed before its program (802496c); program `ahead3.py` (the depth a number H; checked against its own reference and, at H = 3 on two digits, against `ahead.py` to the digit). Text `aaa+bbb=cccc`, a fifth of the million pairs never shown, 80,000 lines (95% of the lines read are first readings), five reported seeds, mean of the last three readings, median: **no look-ahead 92.3; depth three 99.7; depth four 99.7.** The hypothesis put to me (depth three under 40% with the hundreds digit as the gap; depth four at least 20 points above) is **refuted on both conditions**. The carry is passed one place at a time by the guess of the next digit, so a depth of two or three is enough; and three-digit sums are the easier text for this system, since any four digits are shared with other lines. Full table, predictions and readings: `PLAN_2.md`, section 7; `report_3.txt`.

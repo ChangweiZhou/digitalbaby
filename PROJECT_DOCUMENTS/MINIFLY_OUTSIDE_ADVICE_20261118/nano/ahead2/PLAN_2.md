@@ -54,3 +54,41 @@ My reading beforehand differs from the hypothesis in one respect. On this text t
 ## 6. Size, cost, what is not run
 
 Kinds: 255 plain with H sets of counts; 130 keyed on each of H-1 guesses. Trusts: up to 10 families at H = 4. Cost by estimate: three to six CPU-minutes for a run at H = 4, about 2.3 GB addressed. Eighteen runs, about twenty minutes on four cores. Not run: a depth the system sets itself; kinds keyed on a guess with four delays, or on two guesses; subtraction; more than 80,000 lines.
+
+## 7. Outcome (entered 20 November after the runs; `res/d3h*_*.json`, table `report_3.txt`, check `check3_output.txt`)
+
+*The check.* `ahead3.py` agrees with its reference at H = 1, 2, 3, 4 (to 8e-15) and at H = 3 on the two-digit text gives `ahead.py`'s eight readings of seed 73129 to the digit. One thing found on the way and stated: early in a stream two bytes can be exactly tied, and the compiled kernel's fused multiply-add broke such a tie differently from the reference; `ahead3.py` is compiled without it so that both do the same arithmetic (a tie goes to the lower byte value). No rule was changed.
+
+Never-shown three-digit additions, own bytes, whole answer, %, mean of the last three readings at 80,000 lines; seeds 73129, 93683, 116089, 406364, 545353; median. Seed 1 (run first; nothing was chosen on it) beside.
+
+| Depth | each seed; median | seed 1 | 500 pairs read in the stream (median) | by place, last reading (median): thousands, hundreds, tens, units | cells; counts above zero; CPU-s |
+|---|---|---|---|---|---|
+| 1 (no look-ahead) | 92.6, 89.9, 92.7, 90.8, 92.3; **92.3** | 89.7 | 94.0 | 99.6, 95.2, 98.0, 100 | 1.99 million; 14.4 million; 38 |
+| 3 | 99.7, 99.5, 99.8, 99.7, 99.9; **99.7** | 99.9 | 99.8 | 100, 100, 100, 100 | 4.53 million; 69.8 million; 205 |
+| 4 | 99.7, 99.7, 99.7, 99.7, 99.8; **99.7** | 99.9 | 99.8 | 100, 100, 100, 100 | 5.80 million; 111.2 million; 336 |
+
+Guesses right on the never-shown sums (median, last reading). Depth 3, where the thousands digit is asked: two ahead (the hundreds digit) 99.8, three ahead (the tens digit) 97.8; where the hundreds digit is asked: 100 and 100. Depth 4, where the thousands digit is asked: two, three and four ahead (hundreds, tens, units) 100, 100, 100.
+
+Of the lines read, 95.1% were first readings of their pair; about 125 pairs of some 76,000 were read three times or more.
+
+**The hypothesis is refuted on both of its conditions**: depth three answers 99.7% (60% or more refutes; under 40% was expected), and depth four gains 0.0 points (under 10 refutes). A look-ahead of three bytes does not fail on three-digit numbers, and there is no gap at the hundreds digit.
+
+| | Statement | Outcome |
+|---|---|---|
+| D1 | H = 3 under 40% | failed (99.7); chance given 0.25 |
+| D2 | H = 3 at 60% or more | held |
+| D3 | H = 4 at least 20 points above H = 3 | failed (0.0) |
+| D4 | H = 4 gains under 10 | held |
+| D5 | the hypothesis holds as stated | did not; chance given 0.08 |
+| D6 | H = 3 at least 5 above H = 1 | held (7.4) |
+| D7 | the hundreds digit the weakest place in every arm | held at depth 1 (95.2); at depths 3 and 4 no place is weak |
+| D8 | H = 4: the guess four ahead right on at least 99% | held (100) |
+| D9 | H = 4: the guess three ahead right on at least 90% | held (100) |
+| D10 | pairs read in the stream within 5 points of the never-shown | held (1.7 at depth 1; 0.1 at depths 3 and 4) |
+
+Readings (mine).
+1. **The depth of the look-ahead is not what limits this system on three-digit numbers.** I expected depth three not to fail (D2) but did not expect it to be nearly perfect, and I expected the limit of three delays beside a guess to bind; it did not either.
+2. **Why, as far as these runs show.** No digit of the answer needs the units digit stated to it from four places away. Each digit needs its own two digits and one carry, and the carry is supplied by a guess of the digit one place lower, which is one byte further on. That guess in turn is formed from plain cells of four delays (two digits of each number), and on this text every combination of four digits recurs in line after line. So the chain of guesses passes the carry along one place at a time, and two or three bytes of depth are enough. Where the thousands digit is asked the tens guess is right on 97.8% at depth three and on 100% at depth four, which is the only trace of the fourth step, and it does not reach the answers.
+3. **Three-digit sums are the easier text for this system, not the harder.** With no look-ahead it has 92.3% here against 77 to 78% on two digits. On two digits the four digits that fix the tens digit are the whole pair, so a never-shown pair is a never-seen combination; on three digits any four digits are a part that other lines share. For the same reason "never-shown" means little here: pairs read in the stream score the same as pairs never shown (99.8 and 99.7), since 95% of the lines read were themselves first readings.
+4. **What this test does not show.** That depth never matters: on numbers long enough that the digits a place needs lie more than nine bytes back, the nine delays will fail first, and I did not run that. That the other line's rule with a fixed look-ahead was wrong to fail on three digits: its rule is not this system. A text on which a far digit must be known early (an answer written with a check digit first, say) would be the test of depth; not run.
+5. The sentence asked for if the hypothesis held (what would make the depth the system's own) is not owed, since it did not hold; nothing of that kind was run.
