@@ -23,6 +23,10 @@ One line for each byte value and a chain of nine delays, as in `cells2.py`. A ki
 
 Numbers chosen on development seed 1 over 32 settings each: m = 3: step 0.008, e 0.1, trusts born at 0.02 (all 32 settings lie between 50 and 57); m = 4: step 0.1, e 2, born at 0.02, which is at the edge of the grid even after one extension (a limit on the m = 4 figures).
 
+*What a cell reads, and what else it is given.* A plain cell reads the byte values on the delay lines of its own kind (one to four of the nine) and the byte that arrives next; it holds 14 counts, their total and how many are above zero. The answering cell reads what the active cells say and holds the trusts; the mismatch (the byte that arrived, less its own probabilities) reaches each trust that was used, and nothing else passes back. Laid down by the program: the nine delay lines; the list of kinds (every set of delays up to m, without choice); the levels of experience; in the fourth and seventh plans the count of bytes since the line end; in the fifth plan's addition 2 the cap of 16; in the tenth plan the order three ahead, two ahead, next, and that a cell also counts the two bytes after the next. Nothing about digits, operators, places or carrying, except where a plan says so.
+
+*Cost beside the figures.* m = 3: 115,000 cells, 775,000 counts above zero, 5 CPU-seconds for 40,000 lines. m = 4: 1.21 million cells, 5.06 million counts, 20 CPU-seconds. Second layer: a further 8.5 million cells, 246 CPU-seconds. Look-ahead (m = 4): 3.27 million cells, 34.6 million counts, about 130 CPU-seconds for 40,000 lines. Relay system: 256 cells in between, about 40,000 strengths, 400,000 lines in 16 to 34 seconds (its report).
+
 ## 3. First plan: never-shown sums (`PLAN_1.md`)
 
 | Arm | lines | each seed (last three) | median, last three | median, last | hundreds, tens, units (last, median) |
@@ -33,7 +37,8 @@ Numbers chosen on development seed 1 over 32 settings each: m = 3: step 0.008, e
 | m = 4 | 5,000 | | | 74.6 | 96.4, 74.6, 100 |
 | | 40,000 | 81.4, 84.4, 80.7, 79.9, 80.9 | **80.9** | 80.0 | 98.2, 80.0, 100 |
 | | 400,000 | 68.4, 68.3, 62.5, 71.9, 65.9 | 68.3 | 66.8 | 98.8, 66.8, 100 |
-| relay system (`loop_small_case`) | 400,000 | | 84.2 | | 98, 92, 100 (its report, section 4, the earlier 88.0 run) |
+| relay system, this line's runs of it (section 7) | 40,000 | | | 66.2 | 97.0, 74.0, 96.2 |
+| | 400,000 | 84.2, 82.7, 86.4, 81.8, 86.7 | 84.2 | 84.8 | 95.0, 89.8, 100 |
 
 The hypothesis (m = 3 at least 40% whole and 95% units within 40,000 lines) held. Of eight predictions six held; "m = 3 at least 70" failed, and "m = 4 below m = 3" failed (m = 4 is 24 points above).
 
@@ -121,7 +126,7 @@ LA_LONG_ROW
 
 The hypothesis (at least 85% whole and 88% tens within 40,000 lines; at least 90% of its level kept) held in all parts. Where the hundreds digit is named, the guess three ahead (the units digit) is right on every never-shown pair and the guess two ahead (the tens digit) on 85.8%; the guess-keyed kinds with the most trust are the two tens digits with one more digit, together with the guessed units digit. Subtraction never written, at the end of the keeping life: 89.4. Cost: 3.3 million cells, 35 million counts above zero, 200 CPU-seconds for 60,000 lines.
 
-Reading (mine). The carry is supplied by the counting cells themselves in the usual order of writing: the system states the units digit to itself before it writes the hundreds digit, and the two orders of writing come level. This is 7 points above the relay system's figure within a tenth of its lines, and it is kept through a second task. What remains wrong is the tens digit where two cells' chances balance, and the size is large. LA_LONG_TEXT
+Reading (mine). The carry is supplied by the counting cells themselves in the usual order of writing: the system states the units digit to itself before it writes the hundreds digit, and the two orders of writing come level. Beside it, from this line's own runs of the relay system (section 7, the same five seeds): the relay system alone has 66.2% at 40,000 lines and 84.8% at 400,000. So at 40,000 lines the look-ahead system is 25 points above the relay system, and its 40,000-line figure is 7 above the relay system's at 400,000; the two figures of that last comparison are at different numbers of lines. It is kept through a second task, where the relay system keeps 1.8. What remains wrong is the tens digit where two cells' chances balance, and the size is large. LA_LONG_TEXT
 
 ## 9. What is shown, what is not
 
