@@ -36,3 +36,16 @@ What I do not know: whether the trials of the clock during subtraction (a new op
 ## 5. Cost, and what is not run
 
 A run is 60,000 lines, about 3 to 4 CPU-minutes; two at a time for memory; 10 to 15 runs. **Not run:** a third task from `nano/life3`; replay; the life of 400,000 lines; subtraction first.
+
+## First two runs, and addition 1 (20 November 2026; the addition written before its runs)
+
+The united system on seeds 73129 and 93683 (`res/keep_trial_*.json`), never-shown additions: before subtraction 84.2 and 89.2 (every gap); after 20,000 lines of subtraction **20.6 and 63.8**; kept 24.5% and 71.5%. `nano/ahead2` on plain sums kept 94.7%. On seed 73129 the `+` entry was closed from the first reading and stayed closed; on 93683 only the letters.
+
+*Where I think this comes from (reading, mine, to be tested).* During subtraction the clock goes on trying. The `-` entry is new and is closed in one period in five until it has evidence; every other open entry in one period in a hundred. In a period with `-` out of the chain a subtraction line's digits stand one line nearer than an addition line's digits, so cells of two and three lines that addition uses (for example the cell of the two units digits) are given counts of a subtraction made on the wrong digits. Where the `+` is closed as well (seed 73129) a subtraction line with `-` closed is, to the chain, exactly an addition line, and subtraction's answers are counted into addition's own cells. Without a clock neither happens: the operator is always on its line.
+
+*One change, to test it:* `freeze=30000`, the united system with no entry tried after 30,000 lines of addition (each stays in its likelier state; the `-` entry, never tried, stays open). Seeds 73129, 93683, 116089. If keeping returns to the oracle arm's level, the loss is the trials during the second task. If not, it lies elsewhere (the larger system, the counts of the first 30,000 lines), and I do not know where.
+
+| | Prediction | Chance |
+|---|---|---|
+| K9 | with `freeze=30000` the ratio kept is at least 85% on at least two of the three seeds | 0.55 |
+| K10 | the oracle arm keeps at least 85% (as K3) and the frozen system is within 8 points of it (median) | 0.45 |
