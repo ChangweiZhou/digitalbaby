@@ -106,3 +106,22 @@ Of 60 predictions written before their runs, 26 held, 31 failed, 2 were not run 
 ## 10. Limits and what is not run
 
 One text and two tasks; nothing on prose, where lessons of this kind would be the next test of whether the idea carries. The second design was reached on one development seed through five forms, four of them refuted; the reported seeds were used for no choice. The self-taught control is one seed. In the lives the scored pairs were not kept out of the lessons (on sums keeping them out changed the median by 0.1 at 400,000 lines and 1.8 at 40,000). Task knowledge that remains: `cells2.py` does not teach the relay system a line's first byte, so the relay system is silent there; the program keeps the set of lines read; in step 4 the program draws unmet pairs. "One half" in the composing rule was not varied. Not run: a repair of the fall at 40,000 lines; the life with the scored pairs kept out; replay drawn from the joined system's own cells instead of a third store; three-digit sums; more seeds.
+
+## 11. Added after a late steer: the same question on prose, and what of this line is shown on anything but sums
+
+The coordinator relayed further words of Mr. Xu at 21:42 (Chinese, exactly): "鉴于bitter lesson，执着于加法这个任务可能并非最聪明的做法，继续努力尝试通用的想法。" (the coordinator's translation: "Given the bitter lesson, holding on to the task of addition may not be the cleverest thing to do; go on trying general ideas."), and asked that step 4 not be started. **I read that message only at 23:25, after the sections above were written**: step 4 and `PLAN_5.md` had been run by then, against the steer. That is a fault of order of mine (I did not read my notifications while runs were going).
+
+`PLAN_6.md` then put the line's one general question to prose (one run, `nano/table/relay.py`'s system unchanged: T2's cells that count, one answering cell, the relay system of `nano/loop` as a given sender; relay seed 1; 69 CPU-seconds). On the test text's last tenth the loss is 1.4858 as learned; with the relay system's trust in its surest bin (0.165 as learned) set to one it is 1.4957, and every other raising tried is worse still; with its voice silent 1.5237. In the surest bin the whole answer is right 96.6 times in 100 and the relay system 96.4. **So on prose, too, the trust is smallest where the relay system is surest, and there it is what the loss asks for. The fault found on sums belongs to the closed stream of 8,000 repeated lines, not to the rule by which a trust is taught.**
+
+| Result of this line | Shown on anything but sums? |
+|---|---|
+| the relay system as one more sender does not give the better of the two at a long reading | no; on prose it adds 0.0115 nats (the other line's figure, repeated here to the digit as 1.4858) |
+| the fall with reading is in trusts taught on counted lines and used on uncounted ones | sums only; on prose the stream is open and `PLAN_6.md` finds the taught trust of the one sender examined to be the one the unread text asks for (one run) |
+| a trust moves only by the whole answer's mismatch, so a sender that agrees with a right answer is not credited | **measured on prose** (`PLAN_6.md`, one text, one seed, one answering cell): true there as well, and not a fault there |
+| lessons by agreement on self-composed new lines: above both parts from 100,000 lines on, 98.8 at 400,000 | sums only |
+| the same lessons keep addition through a second task (94.7%) | sums only |
+| the self-taught control collapses; the second kind's agreement is needed | sums only, one seed |
+| the second answering cell alone loses the first task through a long second one | sums only, two seeds (on prose the other line reports that its gain on an old text is lost after other books) |
+| composed lines for the relay system mostly repeat more reading | sums only |
+
+What I take from the steer for this line's results (mine): the lessons were built to repair a fault that an open stream does not have. Whether they are worth anything beyond sums turns on one test that is NOT RUN: a system that must keep what it learned on one text while it reads another (where the trusts follow the recent text, as the other line found on its books), with the relay system composing lines of the old text.
