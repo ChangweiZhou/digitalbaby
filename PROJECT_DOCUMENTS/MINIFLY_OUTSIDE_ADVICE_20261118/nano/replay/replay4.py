@@ -81,7 +81,7 @@ def run(kw):
         else: s.steps(xs, ys)
     def store(pairs, op):
         """Of these pairs: how many have an answer in the store, and how many of those are right; and how many the relay system has right."""
-        Ls = [text(op, a, b) for a, b in pairs]; A = [cells.answer(L[:6]) for L in Ls]; has = sum(a is not None for a in A); right = sum(a is not None and a == L[6:] for a, L in zip(A, Ls))
+        Ls = [text(op, a, b) for a, b in pairs]; A = [cells.answer(L[:6]) for L in Ls]; has = sum(a is not None for a in A); right = sum(a is not None and a[6:] == L[6:] for a, L in zip(A, Ls))
         return dict(n=len(pairs), in_store=has, store_right=right, relay=s.score(op, pairs))
     for pi, ph in enumerate(kw.get("plan", "add:400000,sub:200000").split(",")):
         name, n = ph.split(":"); n = int(n); op0 = {"add": "+", "sub": "-"}[name]; it = 0

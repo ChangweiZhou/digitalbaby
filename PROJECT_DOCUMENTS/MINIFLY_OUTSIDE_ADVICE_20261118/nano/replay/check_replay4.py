@@ -20,4 +20,6 @@ if __name__ == "__main__":
     replay4.run(dict(seed="3", plan="add:30000", every="30000", chunk="500", q="0", label="chk", nowrite="1", fast="1")); a = replay4.run.last
     rng = np.random.default_rng(1); pairs = [(int(a), int(b)) for a, b in rng.integers(100, size=(300, 2))]; Ls = np.array([replay.text("+", a, b) for a, b in pairs]); Wr = replay4.write(a, Ls[:, :6])
     agree = float(100 * (Wr[:, 6:9] == Ls[:, 6:9]).all(1).mean()); sc = a.score("+", pairs); bad += abs(agree - sc) > 1e-9; print(f"after 30,000 lines, whole answers the relay system writes right against whole answers scored right, 300 pairs: {agree:.1f} and {sc:.1f}")
+    c = replay4.Cells(8); L1, L2 = replay.text("+", 12, 34), replay.text("+", 56, 7); c.count(L1); c.count(L1[:8] + [9, replay.END], 0.5); r1 = c.answer(L1[:6]); r2 = c.answer(L2[:6]); bad += not (r1 is not None and r1[6:] == L1[6:] and r2 is None)
+    print(f"the store's own answer: to a counted line (with a lighter wrong line beside it) {'right' if r1 and r1[6:] == L1[6:] else 'WRONG'}; to a line not counted: {r2}")
     print("CHECK", "FAILED" if bad else "PASSED")

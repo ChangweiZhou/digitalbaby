@@ -57,3 +57,26 @@ A run takes about 70 to 90 seconds of one core. Development: 7 runs (q = 0, four
 Not run: a rule by which the relay system writes only what it is sure of; counts that fade; dreams answered by a vote of several moments; dreams in `PLAN_3.md`'s harsh change; other chunk sizes.
 
 ---
+
+## 8. Entered 20 November after the check and the development runs, before any run on the reported seeds
+
+**The check** (`check_replay4_output.txt`): passed. Compiled against numpy with dreams made, counted and replayed, over two phases: 5e-14 to 1e-13, the same dreams kept. With q = 0 the program gives arm R of `replay.py` exactly (difference 0.0). The relay system's written answers agree with its scored answers (72.3 and 72.3 after 30,000 lines).
+
+**An error of mine in a measure, found on the first development runs and corrected before anything was entered.** The store's own answer was compared with the true answer over the wrong bytes, so "right" read 0 everywhere. Corrected (a case added to the check), and the seven development runs made again; every other figure came out the same.
+
+**Development seed 1** (`res/d_v_*.json`). q = 0: never-shown addition at the end 79.0 (arm R's figure on this seed), clean subtraction 84.0.
+
+| q, w | addition at the end (relay) | clean subtraction | held pairs in the store at the end, of 500 | of them the store has right | of all 2,000 never shown: in the store, right | kept addition dreams right, first reading to last, % | wrong sums among replays, first to last, % |
+|---|---|---|---|---|---|---|---|
+| 0.1, 1 | **81.2** | 79.8 | 499 | 432 (86.6%) | 1,996; 1,702 (85.3%) | 64 to 89, then 83 | 2.6 to 1.5, then 1.6 |
+| 0.3, 1 | 80.2 | 88.1 | 500 | 422 | 2,000; 1,715 | 63 to 86, then 83 | 7.1 to 4.5, then 4.2 |
+| 0.1, 1/4 | 80.6 | 81.7 | 498 | 425 | 1,995; 1,705 | 67 to 89, then 83 | 0.6 to 0.4 |
+| 0.3, 1/4 | 77.6 | 86.7 | 500 | 418 | 2,000; 1,680 | 65 to 84, then 81 | 2.0 to 1.4 |
+| 0.1, 1, from 300,000 lines | 80.0 | 86.2 | 452 | 383 (84.7%) | 1,841; 1,563 | 91, 90, then 82 | 0.1 rising to 0.7 |
+| 0.3, 1, from 300,000 lines | 77.6 | 84.7 | 500 | 431 | 1,998; 1,713 | 90, 90, then 79 | 0.2 rising to 2.2 |
+
+**Choice by the rule of section 3:** the dreams arm is **q = 0.1, w = 1** (81.2; the two within one point of it have the smaller w or the larger q). The late arm is q = 0.1. The chance control is at q = 0.1, w = 1.
+
+Seen on this seed, to be tested on the reported ones: the store alone has 86.6% of the held additions right at the end, which is above the relay system's own 81.2 at that moment and near its 89 to 90 at the end of the addition phase; the share of wrong sums among replays falls through the addition phase and does not grow in the subtraction phase at q = 0.1.
+
+**Runs on the reported seeds, queued together before any is read:** q = 0, dreams, late, chance on the five reported seeds; and, because seed 1 puts dreams 2.2 points above q = 0, which is inside what five seeds carry, dreams also on 1001 to 1010. For q = 0 on those ten seeds I use `PLAN_1.md`'s arm R runs (`res/p_e_R1_*.json`), which the check shows to be the same life to the last digit.
