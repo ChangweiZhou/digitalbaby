@@ -57,6 +57,9 @@ class Sys10(merge6.Sys6):
         if s.keep == 2 and s.P:
             for k, v in s.child_trust(): mt[k] = max(mt[k], 0.0) + v if np.isfinite(mt[k]) else v
         return mt
+    GC = 0
+    def more_candidates(s, top):                                   # PLAN_10.md, addition 1: the made kinds are candidates for the search for classes beside the 16 by trust
+        return top + [s.GOFF + g for g, sl in enumerate(s.grown) if sl is not None and s.GOFF + g not in top and len(sl["keys"])] if s.GC else top
     # ---- the finding: first the kinds to make, then the classes (in plain and made kinds alike), then the kinds keyed on two classes
     def find(s):
         t0 = time.process_time(); rec = []
@@ -124,7 +127,7 @@ def check():
 
 if __name__ == "__main__":
     if sys.argv[1] == "check": sys.exit(0 if check() else 1)
-    merge.Sys = Sys10; kw = dict(a.split("=") for a in sys.argv[2:]); kw.setdefault("keep", "2"); Sys10.G = int(kw.get("G", 16)); merge6.Sys6.P2 = int(kw.get("P2", 32)); merge6.Sys6.W = int(kw.get("W", 50000))
+    merge.Sys = Sys10; kw = dict(a.split("=") for a in sys.argv[2:]); kw.setdefault("keep", "2"); Sys10.G = int(kw.get("G", 16)); Sys10.GC = int(kw.get("gc", 0)); merge6.Sys6.P2 = int(kw.get("P2", 32)); merge6.Sys6.W = int(kw.get("W", 50000))
     out, s = dict(sums=merge.run_sums, dev=merge.run_dev, life=merge.run_life)[sys.argv[1]](kw); out["finds_two"] = s.finds2; out["finds_made"] = s.finds_g; tag = kw["tag"]
     if sys.argv[1] == "sums":
         nd = int(kw.get("nd", 2)); seed = int(kw.get("seed", 1)); n10 = 10 ** nd; o = np.random.default_rng([seed, 99]).permutation(n10 * n10); held = [(int(q) // n10, int(q) % n10) for q in o[:500]]; out["two_class_kinds_alone"], out["two_class_cells_alone"] = merge6.two_alone(s, held, nd)
