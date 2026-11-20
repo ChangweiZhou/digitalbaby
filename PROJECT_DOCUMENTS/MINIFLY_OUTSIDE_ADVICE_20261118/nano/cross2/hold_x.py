@@ -14,7 +14,13 @@ import hold
 from hold import Hold, text, S
 
 class HX(Hold):
+    def flush(s):
+        if len(s.bx): import fastk6; fastk6.hx_run(s)
     def line(s, L, apply=True):
+        if s.fast and apply:                               # fast=1 (X=inf only): the same pass compiled (kern6.c); adam=<step> gives the line's change to Adam there
+            assert s.X == "inf"; s.bx += L; s.by += L[1:]; s.by.append(-1)
+            if len(s.bx) >= 500000: s.flush()
+            return 0
         X = s.X; T = len(L); hps, pres, zs, cs, rs, xs = [], [], [], [], [], []; right = 0
         for t in range(T):
             x = L[t]
@@ -61,6 +67,9 @@ def check():
 if __name__ == "__main__":
     if sys.argv[1] == "check": check()
     else:
-        kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = hold.run(kw, cls=HX)
+        kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]
+        class HXA(HX): adam = "adam" in kw; alpha = float(eval(kw.get("adam", "0")))
+        o = hold.run(kw, cls=HXA)
         print(o["label"], f"last3 shown {o['last3_shown']:.1f} never {o['last3_never']:.1f} |", " ".join(f"{r['lines']//1000}k {r['shown']:.0f}/{r['never']:.0f}" for r in o["rows"]), "| place", o["rows"][-1]["place"], "| bytes", round(o["rows"][-1]["bytes_right"]),
-              "| by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["shown_by_gap"].items()) if "shown_by_gap" in o["rows"][-1] else "", o["cpu"], "s")
+              "| by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["shown_by_gap"].items()) if "shown_by_gap" in o["rows"][-1] else "",
+              "| never shown by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["never_by_gap"].items()) if "never_by_gap" in o["rows"][-1] else "", o["cpu"], "s")
