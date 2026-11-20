@@ -87,8 +87,24 @@ Asked by the coordinating session. No new mechanism: section 4's dreams arm, sco
 2. **The whole is not the better of its parts on each task.** On addition 99.6% of answers come from the store and the whole gains 4.8 points over the relay system alone (fifteen seeds of fifteen). On subtraction two answers in five come from the store, whose subtraction lines were dreamed while subtraction was still being learned, and the whole loses 2.5 points against the relay system alone (fifteen of fifteen). Where the two differ, the store is right 668 times to 298 on addition and 100 to 275 on subtraction.
 3. **The price**: about 85,000 counting cells holding a line for nearly every one of the 10,000 sums, one sixth of the dreamed ones wrong, beside a relay system of 256 cells. And the store answers a never-shown sum because the relay system once wrote that line into it: the generalising is done once, when the line is dreamed, and looked up afterwards.
 
-## 6. Limits, commands, cost
+## 6. The replayed line chosen by the relay system's own mismatch (`PLAN_6.md`, `report6.txt`)
+
+A repeat, with this line's own program, of a rule tried by the line `nano/life3`, asked by the coordinating session. After each real line four lines are drawn from the counting cells as section 1 draws one, and the relay system learns only from the one on which its own squared mismatch is largest. Nothing names a task. Medians; the second task on the clean score.
+
+| | one line drawn (five; fifteen seeds) | largest mismatch of four (five; fifteen) | paired difference on fifteen seeds (above / below) |
+|---|---|---|---|
+| addition then subtraction: addition kept | 77.2; 79.4 | 82.6; 81.6 | +1.8 (10 / 5) |
+| the same: subtraction | 78.9; 77.5 | 83.3; 82.7 | +5.8 (13 / 2) |
+| the harsh change of section 3: addition kept | 65.6; 67.8 | 73.6; 73.6 | +4.8 (10 / 5) |
+| the same: the second task | 68.0; 68.6 | 74.3; 74.5 | +1.3 (11 / 4) |
+
+1. **On two tasks the rule costs nothing and gains**: neither task is lower at the median in either life, on five seeds or fifteen.
+2. **The chosen lines move towards the task being taught, not back to the old one** (of the lines learned from, 52 to 60% are of the old task at the end where 70% of the lines drawn are), and the old task is still kept as well or better. The rule also helps before there is a second task (addition after its own phase 90.8 against 86.3). It spends each learned line where the relay system is most wrong.
+3. **Cost**: four lines drawn and judged for one learned; 128 seconds a run against 65. The mismatch is taken with strengths up to 500 real lines old, on the line read alone.
+4. Three tasks in one life, where the other line reports the rule's main effect, are not run here.
+
+## 7. Limits, commands, cost
 
 One testbed; one length; a store that is complete; replay mixed into the stream at a fixed ratio; ratios chosen on one seed. Not run: counting cells that fade or are limited in number; K between 6 and 8; replay in blocks; ratios below 1/2 on the reported seeds (seed 1: 67.6 at 1/4, 46.0 at 1/8); the ten further seeds for section 2.
 
-`python3 check_replay.py`, `python3 check_replay2.py`; `xargs -P 4 -L 1 sh -c 'python3 replay.py "$0" "$@"' < dev1.txt` and likewise `rep1.txt`, `num1.txt`, `add1.txt`; `rep2.txt` with `replay2.py`; `python3 report1.py > report1.txt`, `python3 report2.py > report2.txt`. A run at one replayed line for each real line takes about 60 seconds of one core (27 for the plain system), of which 13 are counting and replay in Python. 81 compiled runs and one numpy run at reduced length for section 1 (and 70 reruns with the clean subtraction score: `rerun.txt`, `python3 report_clean.py > report_clean.txt`), 30 compiled runs for section 2, 16 for section 5 (`rep5.txt`, `add5.txt` with `replay4.py`; `python3 report5.py > report5.txt`), 44 for section 4 (`dev4.txt`, `rep4.txt` with `replay4.py`; `python3 check_replay4.py`; `python3 report4.py > report4.txt`), 44 for section 3 (`rep3.txt`, `add3.txt` with `replay3.py`; `python3 check_replay3.py`; `python3 report3.py > report3.txt`): about an hour and a half of CPU. Compiled `.so` files are not committed.
+`python3 check_replay.py`, `python3 check_replay2.py`; `xargs -P 4 -L 1 sh -c 'python3 replay.py "$0" "$@"' < dev1.txt` and likewise `rep1.txt`, `num1.txt`, `add1.txt`; `rep2.txt` with `replay2.py`; `python3 report1.py > report1.txt`, `python3 report2.py > report2.txt`. A run at one replayed line for each real line takes about 60 seconds of one core (27 for the plain system), of which 13 are counting and replay in Python. 81 compiled runs and one numpy run at reduced length for section 1 (and 70 reruns with the clean subtraction score: `rerun.txt`, `python3 report_clean.py > report_clean.txt`), 30 compiled runs for section 2, 44 for section 6 (`rep6.txt`, `add6.txt` with `replay6.py`; `python3 check_replay6.py`; `python3 report6.py > report6.txt`), 16 for section 5 (`rep5.txt`, `add5.txt` with `replay4.py`; `python3 report5.py > report5.txt`), 44 for section 4 (`dev4.txt`, `rep4.txt` with `replay4.py`; `python3 check_replay4.py`; `python3 report4.py > report4.txt`), 44 for section 3 (`rep3.txt`, `add3.txt` with `replay3.py`; `python3 check_replay3.py`; `python3 report3.py > report3.txt`): about an hour and a half of CPU. Compiled `.so` files are not committed.

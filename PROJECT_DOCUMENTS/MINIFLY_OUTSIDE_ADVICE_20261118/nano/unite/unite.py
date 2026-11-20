@@ -13,7 +13,7 @@ The look-ahead is in real bytes: a cell counts the bytes that arrive 1, 2, ... L
 
     python3 unite.py check
     python3 unite.py run <label> seed=1 [text=g2|t3] [clock=none|oracle|trial] [look=3] [plan=add:200000] [every=10000] [gap=8]
-            [alpha=2 p0=0.2 P=256 win=3000 eps=0.01 beta=0.02] [freeze=N] [ncap=N] [nosub=1] [m=4 mg=3 D=9]
+            [alpha=2 p0=0.2 P=256 win=3000 eps=0.01 beta=0.02] [freeze=N] [ncap=N] [past=5] [nosub=1] [m=4 mg=3 D=9]
         clock=trial: every P bytes each byte value's entry is closed by chance c = logistic(u) or open; u = logit(p0) + alpha * t, t the difference of
         the entry's two means of z (closed less open) in units of its uncertainty; z is the period's mean of the one number the answering cell sends
         out (the sum of its squared mismatches), against its running mean, in units of its running deviation (skip.py, form=evid).
@@ -277,17 +277,17 @@ class Fast:
     def sizes(s): c = s.census(); return c[0], c[1], int((s.U > 0).sum())
 
 # ------------------------------------------------------------------ the score: the system writes its own answer bytes; nothing changes
-def score(sys_, tx, op, pairs, gap, admit, D=9):
+def score(sys_, tx, op, pairs, gap, admit, D=9, past=None):
     """Before the line stand line ends only. The line is read up to the '='; the system then writes the answer's digits and the end mark from its own bytes.
     admit[v]: whether the byte value v enters the chain. Returns whole % (the digits), whole % with the end mark, by place %, and how often the guesses made at the
     '=' are right (the byte j ahead, j = 2..L)."""
     nd = 3 if tx == "g2" else 4; whole = wend = 0; place = np.zeros(nd); L = sys_.L; gr = np.zeros(MAXL + 1)
     for a, b in pairs:
-        ln = text(tx, op, a, b, fill(a, b, gap)); eq = ln.index(EQ); h = [0] + [END] * D; pend = True
+        ln = text(tx, op, a, b, fill(a, b, gap)); eq = ln.index(EQ); h = [0] + [END] * D; pend = True; pre = past() if past else []      # past: a line read before the held-out line (PLAN_4.md); none: line ends only ("empty past")
         def push(c):
             nonlocal h, pend
             h = ([0, c] + h[1:D]) if pend else ([0, c] + h[2:]); pend = bool(admit[c])
-        for c in ln[:eq + 1]: push(c)
+        for c in pre + ln[:eq + 1]: push(c)
         ok = True
         for i in range(nd + 1):
             r = sys_.answer(h)
@@ -325,6 +325,12 @@ def run(kw):
         if ck == "trial": closed_now[:] = u > 0
         adm = ~closed_now; row = dict(phase=pi, name=name, lines=lines, add={}, add_end={}, add_place={}, add_guess={})
         for g in gaps: row["add"][g], row["add_end"][g], row["add_place"][g], row["add_guess"][g] = score(s, tx, "+", held["+"], g, adm, s.D)
+        if npast:                                          # the same score after a read line: mean of npast draws; the line before each held-out line is drawn by chance from the lines of the phase being read
+            def past():
+                a, b = lastshown[prng.integers(len(lastshown))]; return text(tx, lastop, int(a), int(b), "".join(chr(LET[i]) for i in prng.integers(4, size=prng.integers(G + 1))))
+            row["add_past"] = {}; row["add_past_place"] = {}
+            for g in gaps:
+                q = [score(s, tx, "+", held["+"], g, adm, s.D, past) for _ in range(npast)]; row["add_past"][g] = float(np.mean([x[0] for x in q])); row["add_past_place"][g] = np.mean([x[2] for x in q], 0).round(1).tolist()
         if full_sub:
             row["sub_all"] = {g: score(s, tx, "-", held["-"], g, adm, s.D)[0] for g in gaps}; row["sub_clean"] = {}; row["sub_clean_place"] = {}
             for g in gaps: row["sub_clean"][g], _, row["sub_clean_place"][g], _ = score(s, tx, "-", clean, g, adm, s.D)
@@ -332,9 +338,11 @@ def run(kw):
         if ck == "trial": row["u"] = [round(float(x), 3) for x in u]; row["periods"] = tr["n"]; row["mismatch_mean"] = tr["b"]; row["ev_counts"] = [[round(float(x), 1) for x in ev[1]], [round(float(x), 1) for x in ev[3]]]
         c = s.census(closed_now); row["cells"], row["counts_above_zero"], row["cells_on_closed"], row["counts_on_closed"] = c; row["trusts_used"] = int((s.U > 0).sum()); row["cpu"] = round(time.process_time() - t0, 1)
         out["rows"].append(row)
-        print(name, lines, "never", "/".join(f"{v:.1f}" for v in row["add"].values()), "closed", row["closed"], "cells", row["cells"], "on closed", row["cells_on_closed"], "cpu", row["cpu"], file=sys.stderr, flush=True)
+        print(name, lines, "never", "/".join(f"{v:.1f}" for v in row["add"].values()), "closed", row["closed"], "after a read line", "/".join(f"{v:.1f}" for v in row.get("add_past", {}).values()), "cells", row["cells"], "on closed", row["cells_on_closed"], "cpu", row["cpu"], file=sys.stderr, flush=True)
+    npast = int(kw.get("past", 0)); prng = np.random.default_rng([seed, 777]); lastshown = None; lastop = "+"
     for pi, ph in enumerate(plan.split(",")):
-        name, n = ph.split(":"); op = {"add": "+", "sub": "-"}[name]; n = int(n); assert n % every == 0
+        name, n = ph.split(":"); op = {"add": "+", "sub": "-"}[name]; n = int(n); assert n % every == 0; lastop = op
+        lastshown = [(int(q) // 1000, int(q) % 1000) for q in shown[op]] if tx == "t3" else shown[op]
         for b in range(n // every):
             xs = stream(tx, op, shown[op], G, every, rng)
             if ck == "trial" and freeze and (b * every >= freeze or pi > 0): closed_now[:] = u > 0; s.run(xs, ~closed_now[xs])      # freeze=N: after N lines no entry is tried any more

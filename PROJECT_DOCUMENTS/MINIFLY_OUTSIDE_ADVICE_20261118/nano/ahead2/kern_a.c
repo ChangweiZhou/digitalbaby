@@ -6,7 +6,7 @@
 #define NL 40
 #define MAXK 256
 typedef struct { int32_t D, nP, nG, look, levown, lag; double eta, e; int32_t *P, *A, *B; double *T, *U;
-                 const int32_t *pd, *pn, *gd, *gn; const int64_t *pbase, *gbase; } St;
+                 const int32_t *pd, *pn, *gd, *gn; const int64_t *pbase, *gbase; double ncap; } St;
 typedef struct { int64_t pid[MAXK], aid[MAXK], bid[MAXK]; int lev[6][MAXK]; double s[6][MAXK][S]; double p[3][S]; int g3, g2, ans; } Rec;
 static Rec ring[3], scratch; static int hist[16]; static int64_t tt; static int gq3[64], gq2[64];
 static double lt[8192], ln_[65536], cur_e = -1;
@@ -20,6 +20,10 @@ static inline void say(const St *st, const int32_t *c, const int32_t *cl, int f,
     if (cl) { nl = 0; ul = 0; for (int v = 0; v < S; v++) { nl += cl[v]; ul += cl[v] > 0; } }
     const int lv = level(nl, ul); r->lev[f][k] = lv;
     const double tk = st->T[((int64_t)f * MAXK + k) * NL + lv], den = n < 65536 ? ln_[n] : log(n + S * st->e); double *s = r->s[f][k];
+    if (st->ncap > 0 && n > st->ncap) {      /* PLAN_3.md: the proportions at the weight of ncap counts */
+        const double den2 = log(st->ncap + S * st->e), zero = log(st->e) - den2;
+        for (int v = 0; v < S; v++) { const double sv = c[v] ? log(c[v] * st->ncap / n + st->e) - den2 : zero; s[v] = sv; a[v] += tk * sv; }
+        return; }
     for (int v = 0; v < S; v++) { const double sv = (c[v] < 8192 ? lt[c[v]] : log(c[v] + st->e)) - den; s[v] = sv; a[v] += tk * sv; }
 }
 static inline int share(const double *a, double *p) {

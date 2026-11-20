@@ -7,6 +7,7 @@ The text, the split and the form of the score are those of loop_small_case/cells
     python3 ahead.py run label seed=1 [look=1] [plan=add:40000,sub:20000] [every=5000] [lag=0] [levown=1] [t23=0.02] [mg=3]
         look=0: plain cells, first counts only.  lag=10: cells keyed on a guess are keyed on the guess made ten bytes earlier (control).
         levown=0: the level of a cell's second and third counts is that of its first counts (other choice C1).
+        ncap=N (PLAN_3.md): a set of counts with total above N says its proportions at the weight of N counts.
         t23=0: the trusts of the plain cells' second and third counts are born at nothing (other choice C2).
         mg: the largest number of delays in a kind keyed on a guess (3: the plan's prose; 4: other choice C3).
 """
@@ -42,8 +43,8 @@ def birth(tp, t23, tg):
 # ------------------------------------------------------------------ the reference: plain Python, cells in dictionaries
 class Ref:
     """Families: 0 plain first counts, 1 plain second, 2 plain third, 3 A first, 4 A second, 5 B."""
-    def __init__(s, D=9, m=4, mg=3, look=1, levown=1, lag=0, eta=0.1, e=2.0, tp=0.02, t23=0.02, tg=0.0):
-        s.D, s.look, s.levown, s.lag, s.eta, s.e = D, look, levown, lag, eta, e
+    def __init__(s, D=9, m=4, mg=3, look=1, levown=1, lag=0, eta=0.1, e=2.0, tp=0.02, t23=0.02, tg=0.0, ncap=0):
+        s.D, s.look, s.levown, s.lag, s.eta, s.e = D, look, levown, lag, eta, e; s.ncap = ncap
         s.pk = kinds(D, m); s.gk = kinds(D, mg, True); s.T = birth(tp, t23, tg); s.U = np.zeros_like(s.T)
         s.cells = {}; s.h = [END] * (D + 1); s.past = []; s.gs = []
     def cell(s, fam, k, key, sets):
@@ -52,7 +53,10 @@ class Ref:
         n = c.sum()
         if n < 1: return
         if cl is None: cl = c
-        lv = level(cl.sum(), (cl > 0).sum()); sv = np.log(c + s.e) - np.log(n + S * s.e); a += s.T[f, k, lv] * sv; used.append((f, k, lv, sv))
+        lv = level(cl.sum(), (cl > 0).sum())
+        if s.ncap and n > s.ncap: sv = np.log(c * s.ncap / n + s.e) - np.log(s.ncap + S * s.e)      # PLAN_3.md: the proportions at the weight of ncap counts
+        else: sv = np.log(c + s.e) - np.log(n + S * s.e)
+        a += s.T[f, k, lv] * sv; used.append((f, k, lv, sv))
     @staticmethod
     def share(a):
         p = np.exp(a - a.max()); return p / p.sum()
@@ -105,7 +109,7 @@ SRC = r'''
 #define NL 40
 #define MAXK 256
 typedef struct { int32_t D, nP, nG, look, levown, lag; double eta, e; int32_t *P, *A, *B; double *T, *U;
-                 const int32_t *pd, *pn, *gd, *gn; const int64_t *pbase, *gbase; } St;
+                 const int32_t *pd, *pn, *gd, *gn; const int64_t *pbase, *gbase; double ncap; } St;
 typedef struct { int64_t pid[MAXK], aid[MAXK], bid[MAXK]; int lev[6][MAXK]; double s[6][MAXK][S]; double p[3][S]; int g3, g2, ans; } Rec;
 static Rec ring[3], scratch; static int hist[16]; static int64_t tt; static int gq3[64], gq2[64];
 static double lt[8192], ln_[65536], cur_e = -1;
@@ -119,6 +123,10 @@ static inline void say(const St *st, const int32_t *c, const int32_t *cl, int f,
     if (cl) { nl = 0; ul = 0; for (int v = 0; v < S; v++) { nl += cl[v]; ul += cl[v] > 0; } }
     const int lv = level(nl, ul); r->lev[f][k] = lv;
     const double tk = st->T[((int64_t)f * MAXK + k) * NL + lv], den = n < 65536 ? ln_[n] : log(n + S * st->e); double *s = r->s[f][k];
+    if (st->ncap > 0 && n > st->ncap) {      /* PLAN_3.md: the proportions at the weight of ncap counts */
+        const double den2 = log(st->ncap + S * st->e), zero = log(st->e) - den2;
+        for (int v = 0; v < S; v++) { const double sv = c[v] ? log(c[v] * st->ncap / n + st->e) - den2 : zero; s[v] = sv; a[v] += tk * sv; }
+        return; }
     for (int v = 0; v < S; v++) { const double sv = (c[v] < 8192 ? lt[c[v]] : log(c[v] + st->e)) - den; s[v] = sv; a[v] += tk * sv; }
 }
 static inline int share(const double *a, double *p) {
@@ -199,7 +207,7 @@ void sizes(const St *st, int64_t nP, int64_t nA, int64_t *out) {
 PI32 = ctypes.POINTER(ctypes.c_int32); PI64 = ctypes.POINTER(ctypes.c_int64); PD = ctypes.POINTER(ctypes.c_double)
 class St(ctypes.Structure):
     _fields_ = [(n, ctypes.c_int32) for n in ("D", "nP", "nG", "look", "levown", "lag")] + [("eta", ctypes.c_double), ("e", ctypes.c_double)] + \
-               [(n, PI32) for n in ("P", "A", "B")] + [(n, PD) for n in ("T", "U")] + [(n, PI32) for n in ("pd", "pn", "gd", "gn")] + [(n, PI64) for n in ("pbase", "gbase")]
+               [(n, PI32) for n in ("P", "A", "B")] + [(n, PD) for n in ("T", "U")] + [(n, PI32) for n in ("pd", "pn", "gd", "gn")] + [(n, PI64) for n in ("pbase", "gbase")] + [("ncap", ctypes.c_double)]
 
 def kern():
     so = os.path.join(HERE, "kern_a.so"); src = os.path.join(HERE, "kern_a.c")
@@ -212,7 +220,7 @@ def kern():
     return L
 
 class Fast:
-    def __init__(s, D=9, m=4, mg=3, look=1, levown=1, lag=0, eta=0.1, e=2.0, tp=0.02, t23=0.02, tg=0.0):
+    def __init__(s, D=9, m=4, mg=3, look=1, levown=1, lag=0, eta=0.1, e=2.0, tp=0.02, t23=0.02, tg=0.0, ncap=0):
         s.D = D; s.pk = kinds(D, m); s.gk = kinds(D, mg, True); s.L = kern(); s.look = look; assert len(s.pk) <= MAXK and len(s.gk) <= MAXK
         def lay(ks):
             d = np.zeros((len(ks), 4), np.int32); n = np.zeros(len(ks), np.int32); base = np.zeros(len(ks), np.int64); tot = 0
@@ -222,7 +230,7 @@ class Fast:
         s.P = np.zeros(s.nPc * 42, np.int32); s.A = np.zeros(s.nGc * 28 if look else 1, np.int32); s.B = np.zeros(s.nGc * 14 if look else 1, np.int32)
         s.T = birth(tp, t23, tg); s.U = np.zeros_like(s.T); p = lambda a, t: a.ctypes.data_as(t)
         s.st = St(D, len(s.pk), len(s.gk), look, levown, lag, eta, e, p(s.P, PI32), p(s.A, PI32), p(s.B, PI32), p(s.T, PD), p(s.U, PD),
-                  p(s.pd, PI32), p(s.pn, PI32), p(s.gd, PI32), p(s.gn, PI32), p(s.pbase, PI64), p(s.gbase, PI64)); s.L.reset(END)
+                  p(s.pd, PI32), p(s.pn, PI32), p(s.gd, PI32), p(s.gn, PI32), p(s.pbase, PI64), p(s.gbase, PI64), float(ncap)); s.L.reset(END)
     def run(s, x, want=False):
         x = np.ascontiguousarray(x, np.int32); P = np.zeros((len(x), 3, S)) if want else None; G = np.zeros((len(x), 3), np.int32) if want else None
         s.L.run(ctypes.byref(s.st), x.ctypes.data_as(PI32), len(x), P.ctypes.data_as(PD) if want else None, G.ctypes.data_as(PI32) if want else None); return P, G
@@ -251,7 +259,7 @@ def score(sys_, op, pairs, D=9, other=False):
 
 def run(kw):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng, held, shown = split(seed); look = int(kw.get("look", 1)); lag = int(kw.get("lag", 0)); every = int(kw.get("every", 5000))
-    s = Fast(mg=int(kw.get("mg", 3)), look=look, levown=int(kw.get("levown", 1)), lag=lag, t23=float(kw.get("t23", 0.02)))
+    s = Fast(mg=int(kw.get("mg", 3)), look=look, levown=int(kw.get("levown", 1)), lag=lag, t23=float(kw.get("t23", 0.02)), ncap=int(kw.get("ncap", 0)))
     TAB = {op: np.array([text(op, a, b) for a, b in shown[op]], np.int32) for op in "+-"}
     lines_shown = {tuple(L) for L in TAB["-"].tolist()}; clean = [p for p in held["-"] if tuple(text("-", *p)) not in lines_shown]      # held-out subtractions whose line no shown pair writes
     assert not {tuple(text("+", *p)) for p in held["+"]} & {tuple(L) for L in TAB["+"].tolist()}
@@ -275,7 +283,7 @@ def run(kw):
 def check():
     ok_all = True
     for kw, nb in ((dict(D=5, m=2, mg=1), 1500), (dict(D=6, m=3, mg=2, levown=0), 1500), (dict(D=6, m=2, mg=2, lag=10), 1500), (dict(D=5, m=2, mg=1, look=0), 1500),
-                   (dict(D=6, m=2, mg=1, t23=0.0, tg=0.05, eta=0.03, e=0.5), 1500), (dict(D=9, m=4, mg=3), 400), (dict(D=9, m=4, mg=3, lag=10, levown=0), 300)):
+                   (dict(D=6, m=2, mg=1, t23=0.0, tg=0.05, eta=0.03, e=0.5), 1500), (dict(D=5, m=2, mg=1, ncap=4), 3000), (dict(D=6, m=3, mg=2, ncap=16), 3000), (dict(D=9, m=4, mg=3), 400), (dict(D=9, m=4, mg=3, lag=10, levown=0), 300)):
         rng, held, shown = split(7); x = np.concatenate([text("+-"[i % 7 == 3], *shown["+"][int(j)]) for i, j in enumerate(rng.integers(8000, size=nb // 10))]).astype(np.int32)
         f = Fast(**kw); P, G = f.run(x[:nb // 2], True); P2, G2 = f.run(x[nb // 2:], True); P = np.concatenate([P, P2]); G = np.concatenate([G, G2])      # two calls: the stream carries on
         r = Ref(**kw); dp = 0.0; same = True; look = kw.get("look", 1)

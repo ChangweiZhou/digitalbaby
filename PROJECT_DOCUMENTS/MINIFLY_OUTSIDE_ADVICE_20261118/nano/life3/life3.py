@@ -14,6 +14,9 @@
            on which its own mismatch is largest. No compiled code is added: the choice is made in numpy.
     arm=S (route 3, nano/sparse): cells that count, keyed on at most m=4 of the delays 1..9, read with a learned trust whose step shrinks with
            use (eta 0.1, e 2, trusts born at 0.02, shrink=1). The program of that line (sparse.py) is used unchanged, with one more byte value.
+           PLAN_7.md: ncap=16 (a cell that has counted more than 16 times speaks as if it had counted 16 times, in the same proportions) and
+           la=1 (route 3b: that line's look-ahead system, sparse4.py: every cell also counts what arrives two and three bytes after it, and
+           cells may be keyed on the answering cell's guesses of those bytes).
     fast=1: the compiled kernels (kernr.c for P, O, R; kage.c for K; kern_s.c for S). fast=0: the numpy references (check_life3.py compares).
 Tasks: add aa+bb=ccc; sub aa-bb=ccc (larger number first, as cells2.py); max aa^bb=ccc (the larger of the two); sat aa&bb=ccc (the sum plus
 the first number's tens digit); srv aa#bb=ccc (the first number plus the second with its digits exchanged). The symbol set is that of
@@ -75,11 +78,16 @@ class Relay:
             if y >= 0: s.learn(y)
     def go_fast(s, xs, ys): import fastr; fastr.run(s, xs, ys)
     def cells_out(s, hist): return sg(s.W1.T[s.w.OFF + hist].sum(1) + s.b1)
-    def answers(s, Ls):
-        """The three answer bytes of each line, each named with the line's own bytes before it (the scoring of cells2.py)."""
+    def answers(s, Ls, Prev=None):
+        """The three answer bytes of each line, each named with the line's own bytes before it (the scoring of cells2.py: line ends in the delays
+        that reach before the line, the "empty past"). With Prev (PLAN_7.md, addition; the coordinating session's correction): those delays hold
+        the bytes of the line Prev read before it, delay d at answer byte t taking byte 10 + t - d of that line."""
         out = []
         for t in (5, 6, 7):
-            hist = np.full((len(Ls), D), s.w.END); hist[:, :t + 1] = Ls[:, t::-1]; out.append((s.cells_out(hist) @ s.W2.T + s.b2).argmax(1))
+            hist = np.full((len(Ls), D), s.w.END)
+            if Prev is not None:
+                for d in range(t + 1, D): hist[:, d] = Prev[:, 10 + t - d]
+            hist[:, :t + 1] = Ls[:, t::-1]; out.append((s.cells_out(hist) @ s.W2.T + s.b2).argmax(1))
         return np.stack(out, 1)
     def feed(s, X, pi): s.steps(X)
     def census(s): return {}
@@ -192,11 +200,16 @@ class Mixed(Relay):
 
 class Sparse:
     """Route 3: nano/sparse/sparse.py's system (compiled) or its numpy reference, with the byte values of this life."""
-    def __init__(s, seed, w, m=4, eta=0.1, e=2.0, T0=0.02, shrink=1, ref=0):
-        import sparse; assert sparse.END == w.END
-        s.s = (sparse.Ref if ref else sparse.Sys)(kinds=sparse.kinds_of(9, m), eta=eta, e=e, T0=T0, nsym=w.S, shrink=shrink); s.w = w
+    def __init__(s, seed, w, m=4, eta=0.1, e=2.0, T0=0.02, shrink=1, ref=0, ncap=0, la=0):
+        import sparse; assert sparse.END == w.END; s.w = w
+        if la:                                        # PLAN_7.md: nano/sparse's look-ahead system (sparse4.py, unchanged; its number of byte values is a module constant, set here)
+            import sparse4; sparse4.S = w.S; assert w.S <= 16; s.s = (sparse4.Ref4 if ref else sparse4.Sys4)(m=m, eta=eta, e=e, T0=T0, Tg0=0.0, shrink=shrink, ncap=ncap)
+        elif ref: assert not ncap; s.s = sparse.Ref(kinds=sparse.kinds_of(9, m), eta=eta, e=e, T0=T0, nsym=w.S, shrink=shrink)
+        else: s.s = sparse.Sys(kinds=sparse.kinds_of(9, m), eta=eta, e=e, T0=T0, nsym=w.S, shrink=shrink, ncap=ncap)
     def feed(s, X, pi): s.s.read(np.asarray(X, np.int32))
-    def answers(s, Ls, own=0): return s.s.answers(np.ascontiguousarray(Ls, np.int32), own, 6, 3)
+    def answers(s, Ls, own=0, Prev=None):
+        if Prev is None: return s.s.answers(np.ascontiguousarray(Ls, np.int32), own, 6, 3)
+        return s.s.answers(np.ascontiguousarray(np.concatenate([Prev, Ls], 1), np.int32), own, 16, 3)      # the line before stands before the line; the delays reach nine bytes back
     def census(s): return s.s.size()
 
 def run(kw):
@@ -213,10 +226,17 @@ def run(kw):
     if arm == "P": s = Relay(seed, w, **Hk)
     elif arm in "ORN": s = Mixed(seed, w, arm, TL, order, r=float(eval(kw.get("r", "1"))), K=int(kw.get("K", 8)), flat=int(kw.get("flat", 0)), cand=int(kw.get("cand", 4)), blk=int(kw.get("blk", 500)), **Hk)
     elif arm == "K": s = Keep(seed, w, **Hk, **{k: float(kw[k]) for k in ("theta", "btau") if k in kw}, **{k: int(kw[k]) for k in ("H0", "K", "young", "meet") if k in kw})
-    elif arm == "S": s = Sparse(seed, w, ref=1 - fast, **{k: float(kw[k]) for k in ("eta", "e", "T0") if k in kw}, **{k: int(kw[k]) for k in ("m", "shrink") if k in kw})
+    elif arm == "S": s = Sparse(seed, w, ref=1 - fast, **{k: float(kw[k]) for k in ("eta", "e", "T0") if k in kw}, **{k: int(kw[k]) for k in ("m", "shrink", "la") if k in kw}, **{k: float(kw[k]) for k in ("ncap",) if k in kw})
     else: raise SystemExit("arm?")
     if arm != "S": s.fast = fast
     whole = lambda Ls, own=None: float(100 * ((s.answers(Ls) if own is None else s.answers(Ls, own)) == Ls[:, 6:9]).all(1).mean()) if len(Ls) else None
+    pr = np.random.default_rng([seed, 77]); npast = int(kw.get("past", 5))
+    def after(Ls, name):
+        """The score after a read line: before each line stands a line drawn by chance from the shown lines of the task being read; the mean of `past` draws."""
+        v = []
+        for _ in range(npast):
+            Prev = TAB[name][pr.integers(8000, size=len(Ls))]; v.append(float(100 * ((s.answers(Ls, Prev=Prev) if arm != "S" else s.answers(Ls, 0, Prev=Prev)) == Ls[:, 6:9]).all(1).mean()))
+        return float(np.mean(v))
     out = dict(label=kw.get("label"), args=kw, arm=arm, plan=plan, syms=bytes(w.syms).decode(), n_held={n: len(HELD[n]) for n in score_on}, n_clean={n: len(CLEAN[n]) for n in score_on}, rows=[])
     for pi, (name, n) in enumerate(plan):
         it = 0
@@ -225,6 +245,7 @@ def run(kw):
             row = dict(phase=pi, name=name, lines=it)
             for t in score_on:
                 row[t] = whole(HELD[t]); row[t + "_clean"] = whole(CLEAN[t])
+                if npast: row[t + "_past"] = after(HELD[t], name); row[t + "_clean_past"] = after(CLEAN[t], name)
                 if arm == "S": row[t + "_own"] = whole(HELD[t], 1); row[t + "_clean_own"] = whole(CLEAN[t], 1)
                 if arm == "K": sp = s.speaking(HELD[t]); row[t + "_cells_may_speak"] = float(sp.sum()); row[t + "_cells_speak_mostly"] = int((sp > .5).sum())
             row.update(s.census()); out["rows"].append(row)
@@ -232,7 +253,7 @@ def run(kw):
     for pi, (name, n) in enumerate(plan):
         rr = [r for r in out["rows"] if r["phase"] == pi]; e = dict(phase=pi, name=name)
         for t in score_on:
-            for k in (t, t + "_clean") + ((t + "_own", t + "_clean_own") if arm == "S" else ()): e[k] = rr[-1][k]; e[k + "_last3"] = float(np.mean([r[k] for r in rr[-3:]]))
+            for k in (t, t + "_clean") + ((t + "_past", t + "_clean_past") if npast else ()) + ((t + "_own", t + "_clean_own") if arm == "S" else ()): e[k] = rr[-1][k]; e[k + "_last3"] = float(np.mean([r[k] for r in rr[-3:]]))
         ends.append(e)
     out["ends"] = ends; out["cpu"] = round(time.process_time() - t0, 1); run.last = s
     if arm in "ORN": out["cpu_further_lines_python"] = round(s.t_extra, 1)
