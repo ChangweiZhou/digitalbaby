@@ -184,3 +184,28 @@ Step b's first half was done by the clock line within the hour (row M1): the tri
 The size of that fault, as the lines have since measured it: for the relay system the old subtraction score is 0.4 to 0.5 points above a clean one at the median of fifteen seeds (`nano/replay`, all 70 runs redone, every reading standing on the clean score), and for the keeping line's final candidate 86.8 against 85.1 on its first file. So for the relay system and for that candidate the subtraction figures of this ledger can be read as they stand; for cells that count the clean score is still owed.
 
 Later still, after Mr. Xu's words (in Chinese; my translation) "You can go on trying boldly; we keep to the facts; besides the ideas I have mentioned, try others as well" and "Good, keep trying": three ideas of mine were given to lines and two came back the same day (look-ahead guesses as lines on sums: held and repeated; dreams: my hypothesis refuted, the store's own answer holding), one of mine was run here and refuted (`nano/table/PLAN_12.md`), a life of three tasks was run (`nano/life3`), and two further lines were started: whether the pieces compose into one system (`nano/unite`) and whether look-ahead does anything on prose (`nano/aheadprose`). The line `nano/ahead2` was asked for the limit of look-ahead on three-digit numbers.
+
+## 8. Mr. Xu's steer on the bitter lesson, and what of today's work stands against it
+
+Mr. Xu, 20 November, in his words: "我们接受bitter lesson, 因此你可以尝试，但避免spot fix, ad hoc tricks等等在其他的任务上无法迁移的手段。多尝试新想法。" My translation: "We accept the bitter lesson, so you may try things, but avoid spot fixes, ad hoc tricks and the like: means that do not transfer to other tasks. Try more new ideas."
+
+What I take from it (my reading): a mechanism is worth keeping if the same mechanism, with the same numbers, works on tasks it was not made for; and where a choice was made by the designer for one text, it should be replaced by search and learning or be set aside. Measured against that, today's mechanisms sort as follows. "Transfers" means it was run on more than one kind of task and held; nothing here is beyond development level.
+
+| Mechanism | Where it held | Where else it was tried | Against the steer |
+|---|---|---|---|
+| Cells that count, read with a learned trust | prose (the level of the test); sums (57 to 80% of never-shown sums); keeping on both | | **transfers** |
+| A new kind of sender is born with no trust | prose, three times on three kinds | sums (kinds keyed on a guess); controls on books | **transfers** |
+| Kinds keyed on a few of the last bytes | sums (the core of that system) | prose (0.009 nats) | transfers, small on prose; the sets were listed by hand for each text |
+| A clock for the delay chain found by trial and judged by the mismatch | sums with letters: 15 seeds, 26 letter values, letters anywhere, three-digit numbers; fillers by context on three seeds of five | prose: not tried | a general rule (search judged by the mismatch) within one family of texts; **untested outside it** |
+| Replay of lines from the system's own store | addition and subtraction; a harsh change | three and four tasks: wears, by the rule that shares replay out | a general means; its sharing rule is not yet right |
+| Look-ahead guesses used as lines (depth three) | sums: 77 to 91%, repeated by another line | prose: 0.003 nats; long reading: falls without a cap | **does not transfer as built**; the depth was laid down |
+| Cells that step once a word, ends given | prose | | laid down by hand; ends found by the system only where a byte marks them |
+| Cells that time how long ago a byte value last came | prose (0.010) | | untested elsewhere |
+| Companions whose counts fade | prose, for a system that goes on | | untested elsewhere |
+| Cells that join for lines never met | two, three and four tasks with a new operator each | a change with no new byte: fails; announced at some bytes only: worse than plain | **bound to a condition of the task** |
+| A second gate on what a holding cell gives out | the two-digit text with letters | | untested elsewhere |
+| A cap on the weight of a long-counted cell; a step of the trust that shrinks with use | sums (both needed there) | prose: the shrinking step changed nothing; the cap not tried | numbers set per text |
+| The relay system as one more sender | prose (0.011) | sums: three joinings refuted | does not transfer |
+
+Two things follow for how the work goes on. (1) **A step is entered in the ledger as reached only with its transfer beside it**: the same program and the same numbers on at least two different kinds of task, the numbers chosen once. (2) **Search and learning in place of the designer**: the line `nano/search` (started at this point; `claude/nano-search-8mmhfm`, session `session_017dSEpWVVTNmDQ3tzHYQ8Lq`) draws kinds of cells at random from byte lines and from the system's own guesses, born with no trust, withdraws those that earn none and tries others, with one setting on sums, on keeping, on prose and on three-digit sums, beside the hand-built kinds for each and beside random kinds that are never changed; and asks whether more search keeps making it better.
+
