@@ -20,3 +20,21 @@
 | U4 | no digit is closed at the end of any reported-seed run | 0.75 |
 
 **Cost.** About 22 CPU-minutes. **Not run.** Letters inside the answer; more letter values on this text; `m1` with letters anywhere.
+
+## Outcome (entered 20 November 2026; `res/p6_g3_*.json`; table by `python3 table.py p6_g3 evid,none,oracle <seeds>`)
+
+`g3` (0 to 8 letters anywhere before the `=`), 1,200,000 lines, never-shown pairs with 0 / 4 / 8 letters, mean of the last three readings. Reported seeds in the order 73129, 93683, 116089, 406364, 545353.
+
+| Arm | 0 letters: each seed; median | 4 letters | 8 letters | Seed 1 |
+|---|---|---|---|---|
+| the trial clock | 96.8, 95.6, 95.9, 95.3, 96.8; **95.9** | the same | the same; **95.9** | 95.7 |
+| `clock=none` | 52.8, 52.3, 44.8, 47.7, 50.4; **50.4** | 10.3, 11.7, 10.3, 10.8, 10.3; **10.3** | 1.9, 2.2, 1.9, 1.7, 2.5; **1.9** | 48.3 / 10.9 / 2.1 |
+| `clock=oracle`, 400,000 lines | | | | 93.7 |
+
+On all six runs of the rule exactly w x y z are closed at every reading from the first (100,000 lines) to the last; no digit or sign at any reading.
+
+**H6 holds** (95.9% at the median, least seed 95.3, where under 50% would refute). **U1, U2, U3, U4 held.**
+
+Reading (mine). The help that `g2` gave (all letters in one place; the second number at a fixed delay from the answer) is not what the rule lives on. With the letters inside the numbers the letters are found sooner, if anything (by the first reading on every seed, against the first or second on `g2`). I have no tested account of why sooner; one difference is that here a letter can fall between any digit and the answer, so more of each line's answer depends on each closing.
+
+**Cost.** About 20 CPU-minutes.
