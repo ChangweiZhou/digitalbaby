@@ -8,11 +8,13 @@ the part of it that is the same for every value cancels in the answer and in the
 The number of values S is a parameter (at most 128). Kinds of sender:
     a run or set of delays (type 0): keyed on the bytes at those delays (delay 1 = the byte just read);
     since (type 1), one kind for each value v: keyed on (bytes since v last came, capped at 63; the byte just read) (nano/table/place.py);
+    last (type 3), for each run: the byte that run's cell counted last, said as a cell that has counted once; trust by the level of that cell (PLAN_5.md);
     recall (type 2), rank r: the (r+1)-th last place where the last M bytes stood before; it says the byte that followed there, as a cell that has counted once;
         its trust is indexed by how long the two runs agree (PLAN_3.md).
 gate=1: a second answering cell with, for each of the last J delays, a part of the trust indexed by (kind, byte at that delay) (nolevel);  gate=2: by (kind, level, byte).
 birth=b>0: a cell is not born at a byte to which the first cell gave at least probability b (nano/table/PLAN_19.md).
-rule: the step of a trust. 0: eta;  1: eta / sqrt(1 + times used);  2: eta / sqrt(sum of its own squared changes' drivers) (PLAN_4.md)."""
+age=1: the trusts of the senders of recency (last, recall) are indexed by the age of what they say (PLAN_7.md).
+rule: the step of a trust. 0: eta;  1: eta / sqrt(1 + times used);  2: eta / sqrt(sum of its own squared drivers) (PLAN_4.md); no change while that sum is zero (a driver so small that its square is zero in the machine's numbers moved a trust to infinity before this was written: PLAN_4.md, outcome)."""
 import ctypes, hashlib, itertools, json, os, subprocess, sys, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); NL = 40; LMAX = 2048
@@ -29,13 +31,13 @@ SRC = r'''
 #define JMAX 8
 #define LMAX 2048
 typedef struct {
-    int S, K, gate, J, M, rule; double eta, e, birth;
+    int S, K, gate, J, M, rule, age; double eta, e, birth;
     int ktype[KMAX], knd[KMAX], kdel[KMAX][8];
     double *T, *Tu, *Ta;            /* K x NL: the first cell's trusts, times used, sum of squared drivers */
     double *G, *Gu, *Ga; int64_t gsize; int GL;   /* the second cell's parts: J x K x GL x S (GL = 1 without the level, NL with it) */
     /* cells */
     uint64_t *hkey; uint16_t *hkind; int32_t *hcell; int64_t hcap, ncell;
-    uint32_t *cN; uint16_t *cU, *ccap; int64_t *cptr; int64_t ccells;
+    uint32_t *cN; uint16_t *cU, *ccap; int64_t *cptr; uint8_t *cL; uint32_t *cT; int64_t ccells;
     uint8_t *pv; uint32_t *pc; int64_t ptop, pcap;
     /* recall */
     int32_t *head, *prev; int64_t nmax; int hbits;
@@ -45,6 +47,10 @@ typedef struct {
 } Sy;
 static inline int level(uint32_t n, int u) { int bn = 0; int64_t m = n; while (m > 1 && bn < 9) { m >>= 1; bn++; } return bn * 4 + (u <= 1 ? 0 : u <= 2 ? 1 : u <= 4 ? 2 : 3); }
 static inline int reclevel(int L, int M) { int d = L - M; if (d < 16) return d; int b = 16; int64_t m = (d - 16) / 8; while (m > 0 && b < NL - 1) { m >>= 1; b++; } return b; }
+/* PLAN_7.md: levels by the age of what a sender of recency says. last: (different bytes the cell has met: 1, 2, 3-4, more) x (bytes since the cell last counted: 1-3, 4-15, ..., four-fold, ten steps);
+   recall: (bytes of agreement beyond M: 0, 1, 2-3, ..., 64 and more; eight steps) x (bytes back to the place: under 64, 1,024, 16,384, 262,144, more) */
+static inline int agelevel_last(int u, int64_t d) { int b = 0; while (d >= 4 && b < 9) { d >>= 2; b++; } return (u <= 1 ? 0 : u <= 2 ? 1 : u <= 4 ? 2 : 3) * 10 + b; }
+static inline int agelevel_recall(int L, int M, int64_t d) { int n = L - M, b = 0, c = 0; while (n >= 1 && b < 7) { n >>= 1; b++; } d >>= 6; while (d > 0 && c < 4) { d >>= 4; c++; } return b * 5 + c; }
 static inline uint64_t mix(uint64_t z) { z += 0x9E3779B97F4A7C15ULL; z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL; z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL; return z ^ (z >> 31); }
 static inline int64_t slot_of(const Sy *s, uint64_t key, int kind) {
     int64_t i = mix(key ^ ((uint64_t)kind * 0xD6E8FEB86659FD93ULL)) & (s->hcap - 1);
@@ -58,11 +64,11 @@ static void grow(Sy *s) {
     free(ok); free(oki); free(oce);
 }
 static int32_t new_cell(Sy *s) {
-    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); }
+    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); s->cL = realloc(s->cL, s->ccells); s->cT = realloc(s->cT, s->ccells * 4); }
     int32_t c = (int32_t)s->ncell++; s->cN[c] = 0; s->cU[c] = 0; s->ccap[c] = 0; s->cptr[c] = 0; return c;
 }
-static void count(Sy *s, int32_t c, int y) {
-    uint8_t *pv = s->pv + s->cptr[c]; uint32_t *pc = s->pc + s->cptr[c]; int u = s->cU[c];
+static void count(Sy *s, int32_t c, int y, int64_t t) {
+    uint8_t *pv = s->pv + s->cptr[c]; uint32_t *pc = s->pc + s->cptr[c]; int u = s->cU[c]; s->cL[c] = (uint8_t)y; s->cT[c] = (uint32_t)t;
     for (int i = 0; i < u; i++) if (pv[i] == y) { pc[i]++; s->cN[c]++; return; }
     if (u == s->ccap[c]) {
         int nc = u ? u * 2 : 1; if (nc > SMAX) nc = SMAX;
@@ -71,22 +77,22 @@ static void count(Sy *s, int32_t c, int y) {
     }
     s->pv[s->cptr[c] + u] = y; s->pc[s->cptr[c] + u] = 1; s->cU[c] = u + 1; s->cN[c]++;
 }
-Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax) {
-    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax;
+Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age) {
+    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age;
     for (int k = 0; k < K; k++) { s->ktype[k] = ktype[k]; s->knd[k] = knd[k]; for (int i = 0; i < 8; i++) s->kdel[k][i] = kdel[k * 8 + i]; }
     s->T = malloc(sizeof(double) * K * NL); s->Tu = calloc(K * NL, sizeof(double)); s->Ta = calloc(K * NL, sizeof(double));
     for (int k = 0; k < K; k++) for (int l = 0; l < NL; l++) s->T[k * NL + l] = kborn[k];
     s->GL = gate == 2 ? NL : 1; s->gsize = gate ? (int64_t)J * K * s->GL * S : 0;
     if (gate) { s->G = calloc(s->gsize, sizeof(double)); s->Gu = calloc(s->gsize, sizeof(double)); s->Ga = calloc(s->gsize, sizeof(double)); }
     s->hcap = 1 << 16; s->hkey = malloc(s->hcap * 8); s->hkind = malloc(s->hcap * 2); s->hcell = malloc(s->hcap * 4); memset(s->hcell, 0xff, s->hcap * 4);
-    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8);
+    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8); s->cL = malloc(s->ccells); s->cT = malloc(s->ccells * 4);
     s->pcap = 1 << 16; s->pv = malloc(s->pcap); s->pc = malloc(s->pcap * 4);
     s->hbits = 22; s->head = malloc(sizeof(int32_t) << s->hbits); memset(s->head, 0xff, sizeof(int32_t) << s->hbits); s->prev = malloc(sizeof(int32_t) * (nmax + 1));
     for (int v = 0; v < SMAX; v++) s->last[v] = -1; s->synced = 0;
     for (int c = 0; c < 4096; c++) s->lt[c] = log(c + e) - log(e);
     return s;
 }
-void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
+void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->cL); free(s->cT); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
 int64_t sy_cells(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] > 0; return n; }
 int64_t sy_counts(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cU[c]; return n; }
 int64_t sy_cells_of(const Sy *s, int kind) { int64_t n = 0; for (int64_t i = 0; i < s->hcap; i++) if (s->hcell[i] >= 0 && s->hkind[i] == kind && s->cN[s->hcell[i]] > 0) n++; return n; }
@@ -111,7 +117,11 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
                     while (q >= 0 && nrq < 8) { int ok = 1; for (int i = 1; i <= M; i++) if (x[q - i] != x[t - i]) { ok = 0; break; } if (ok) rq[nrq++] = q; q = s->prev[q]; } } }
                 const int r = s->knd[k]; if (r >= nrq) continue;
                 const int64_t q = rq[r]; int L = M; while (L < LMAX && q - L - 1 >= 0 && x[q - L - 1] == x[t - L - 1]) L++;
-                lev[k] = reclevel(L, M); rb[k] = (uint8_t)x[q]; nv[k] = 1; vv[k] = &rb[k]; dv[k][0] = done; a[rb[k]] += s->T[k * NL + lev[k]] * done; continue;
+                lev[k] = s->age ? agelevel_recall(L, M, t - q) : reclevel(L, M); rb[k] = (uint8_t)x[q]; nv[k] = 1; vv[k] = &rb[k]; dv[k][0] = done; a[rb[k]] += s->T[k * NL + lev[k]] * done; continue;
+            }
+            if (s->ktype[k] == 3) {                                   /* last: the byte the cell of kind knd[k] counted last, said as a cell that has counted once; trust by that cell's level */
+                const int32_t c = s->hcell[sl[s->knd[k]]]; if (c < 0 || s->cN[c] < 1) continue;
+                lev[k] = s->age ? agelevel_last(s->cU[c], t - (int64_t)s->cT[c]) : level(s->cN[c], s->cU[c]); rb[k] = s->cL[c]; nv[k] = 1; vv[k] = &rb[k]; dv[k][0] = done; a[rb[k]] += s->T[k * NL + lev[k]] * done; continue;
             }
             uint64_t key = 0;
             if (s->ktype[k] == 0) { for (int i = 0; i < s->knd[k]; i++) { const int64_t q = t - s->kdel[k][i]; key |= (uint64_t)(q >= 0 ? x[q] : 0) << (7 * i); } }
@@ -144,19 +154,19 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
             for (int k = 0; k < K; k++) if (lev[k] >= 0) {
                 double g = 0, g2 = 0;
                 for (int i = 0; i < nv[k]; i++) { const int v = vv[k][i]; const double d = dv[k][i]; g += ((v == y) - p[v]) * d; if (s->gate) g2 += ((v == y) - p2[v]) * d; }
-                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (g != 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i]) * g; s->Tu[i] += 1.0;
-                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (g2 != 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2]) * g2; s->Gu[i2] += 1.0; }
+                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (s->Ta[i] > 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i]) * g; s->Tu[i] += 1.0;
+                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (s->Ga[i2] > 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2]) * g2; s->Gu[i2] += 1.0; }
             }
-            for (int k = 0; k < K; k++) if (s->ktype[k] != 2) {
+            for (int k = 0; k < K; k++) if (s->ktype[k] < 2) {
                 int32_t c = s->hcell[sl[k]];
                 if (c < 0) {
                     if (s->birth > 0 && p[y] >= s->birth) continue;
-                    if ((s->ncell + 1) * 10 > s->hcap * 6) { grow(s); for (int j = 0; j < K; j++) if (s->ktype[j] != 2) sl[j] = slot_of(s, keys[j], j); }
+                    if ((s->ncell + 1) * 10 > s->hcap * 6) { grow(s); for (int j = 0; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j); }
                     c = new_cell(s); s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c;
-                    for (int j = k + 1; j < K; j++) if (s->ktype[j] != 2) sl[j] = slot_of(s, keys[j], j);      /* a slot found empty may now be taken */
+                    for (int j = k + 1; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);      /* a slot found empty may now be taken */
                 }
                 else if (s->birth > 0 && s->cN[c] == 0 && p[y] >= s->birth) continue;
-                count(s, c, y);
+                count(s, c, y, t);
             }
             if (M > 0 && t >= M && t <= s->nmax) { const uint32_t h = rhash(x, t, M, s->hbits); s->prev[t] = s->head[h]; s->head[h] = (int32_t)t; }      /* the place t: the run that ended before it, and the byte x[t] just read */
         }
@@ -170,7 +180,7 @@ def kern():
     if not os.path.exists(so):
         open(src, "w").write(SRC); tmp = so + f".{os.getpid()}"; subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", tmp, src, "-lm"]); os.replace(tmp, so)
     L = ctypes.CDLL(so); ci, cd, cl, vp = ctypes.c_int, ctypes.c_double, ctypes.c_int64, ctypes.c_void_p
-    L.sy_new.argtypes = [ci, ci, PI, PI, PI, PD, cd, cd, ci, ci, ci, cd, ci, cl]; L.sy_new.restype = vp; L.sy_free.argtypes = [vp]; L.sy_free.restype = None
+    L.sy_new.argtypes = [ci, ci, PI, PI, PI, PD, cd, cd, ci, ci, ci, cd, ci, cl, ci]; L.sy_new.restype = vp; L.sy_free.argtypes = [vp]; L.sy_free.restype = None
     L.sy_run.argtypes = [vp, PI, cl, cl, ci, PD, PD, PD, PD]; L.sy_run.restype = None
     for f in ("sy_cells", "sy_counts", "sy_once", "sy_gsize"): getattr(L, f).argtypes = [vp]; getattr(L, f).restype = cl
     L.sy_cells_of.argtypes = [vp, ci]; L.sy_cells_of.restype = cl
@@ -190,15 +200,16 @@ def kinds_of(spec, S, recall=0, born=0.25):
             for c in itertools.combinations(range(8), m):
                 if c in ((0, 1), (0, 1, 2)): continue
                 ks.append((0, m, tuple(d + 1 for d in c), 0.0, "pool" + "".join(map(str, c))))
+    if "last" in parts: ks += [(3, i, (), 0.0, "last_" + k[4]) for i, k in enumerate(list(ks)) if k[0] == 0 and k[4].startswith("run")]      # PLAN_5.md: for each run, the byte its cell counted last
     ks += [(2, r, (), 0.0, f"recall{r}") for r in range(recall)]
     return ks
 
 class Sys:
-    def __init__(s, S, kinds, x, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8):
+    def __init__(s, S, kinds, x, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0):
         s.S, s.kinds, s.K, s.gate, s.J, s.M = S, kinds, len(kinds), gate, J, M; assert S <= 128 and s.K <= 600 and J <= 8; s.L = kern(); s.x = np.ascontiguousarray(x.astype(np.int32)); assert s.x.max() < S
         kt = np.array([k[0] for k in kinds], np.int32); kn = np.array([k[1] for k in kinds], np.int32); kd = np.zeros((s.K, 8), np.int32); kb = np.array([k[3] for k in kinds], np.float64)
         for i, k in enumerate(kinds): kd[i, :len(k[2])] = k[2]
-        s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x))
+        s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x), age)
     def run(s, lo, hi, learn, want_p=False):
         n = hi - lo; nl1 = np.zeros(n); nl2 = np.zeros(n) if s.gate else None; P1 = np.zeros((n, s.S)) if want_p else None; P2 = np.zeros((n, s.S)) if want_p and s.gate else None
         s.L.sy_run(s.h, p32(s.x), lo, hi, int(learn), pd(nl1), pd(nl2), pd(P1), pd(P2)); return (nl1, nl2, P1, P2) if want_p else (nl1, nl2)
@@ -224,9 +235,20 @@ def reclevel_np(L, M):
     while m > 0 and b < NL - 1: m >>= 1; b += 1
     return b
 
-def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8):
+def agelevel_last_np(u, d):
+    b = 0
+    while d >= 4 and b < 9: d >>= 2; b += 1
+    return (0 if u <= 1 else 1 if u <= 2 else 2 if u <= 4 else 3) * 10 + b
+def agelevel_recall_np(L, M, d):
+    n = L - M; b = 0; c = 0
+    while n >= 1 and b < 7: n >>= 1; b += 1
+    d >>= 6
+    while d > 0 and c < 4: d >>= 4; c += 1
+    return b * 5 + c
+
+def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0):
     K = len(kinds); GL = NL if gate == 2 else 1
-    if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={})
+    if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={}, lasts={}, times={})
     cells, T, Tu, Ta, G, Gu, Ga, places = (state[k] for k in ("cells", "T", "Tu", "Ta", "G", "Gu", "Ga", "places")); P1 = np.zeros((hi - lo, S)); P2 = np.zeros((hi - lo, S)); xb = lambda q: int(x[q]) if q >= 0 else 0
     step = lambda used, acc: eta if rule == 0 else eta / np.sqrt(1.0 + used) if rule == 1 else eta / np.sqrt(acc)
     for t in range(lo, hi):
@@ -237,7 +259,12 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, ru
                 if nd < len(rq):
                     q = rq[-1 - nd]; L = M
                     while L < LMAX and q - L - 1 >= 0 and x[q - L - 1] == x[t - L - 1]: L += 1
-                    c = np.zeros(S); c[int(x[q])] = 1; sv = np.log(c + e) - np.log(1 + S * e); l = reclevel_np(L, M); act.append((k, l, sv)); a += T[k, l] * sv
+                    c = np.zeros(S); c[int(x[q])] = 1; sv = np.log(c + e) - np.log(1 + S * e); l = agelevel_recall_np(L, M, t - q) if age else reclevel_np(L, M); act.append((k, l, sv)); a += T[k, l] * sv
+                continue
+            if typ == 3:
+                keys.append(None); c = cells.get(keys[nd])
+                if c is not None and c.sum() >= 1:
+                    c1 = np.zeros(S); c1[state["lasts"][keys[nd]]] = 1; sv = np.log(c1 + e) - np.log(1 + S * e); l = agelevel_last_np(int((c > 0).sum()), t - state["times"][keys[nd]]) if age else level_np(c.sum(), int((c > 0).sum())); act.append((k, l, sv)); a += T[k, l] * sv
                 continue
             if typ == 0: key = (k,) + tuple(xb(t - d) for d in ds)
             else:
@@ -255,20 +282,20 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, ru
         if learn:
             for k, l, sv in act:
                 g = sv[y] - p @ sv; Ta[k, l] += g * g
-                if g != 0 or rule != 2: T[k, l] += step(Tu[k, l], Ta[k, l]) * g
+                if Ta[k, l] > 0 or rule != 2: T[k, l] += step(Tu[k, l], Ta[k, l]) * g
                 Tu[k, l] += 1
                 if gate:
                     g2 = sv[y] - p2 @ sv
                     for j in range(J):
                         i = (j, k, l if GL > 1 else 0, xb(t - 1 - j)); Ga[i] += g2 * g2
-                        if g2 != 0 or rule != 2: G[i] += step(Gu[i], Ga[i]) * g2
+                        if Ga[i] > 0 or rule != 2: G[i] += step(Gu[i], Ga[i]) * g2
                         Gu[i] += 1
             for k, key in enumerate(keys):
                 if key is None: continue
                 if key not in cells:
                     if birth > 0 and p[y] >= birth: continue
                     cells[key] = np.zeros(S)
-                cells[key][y] += 1
+                cells[key][y] += 1; state["lasts"][key] = y; state["times"][key] = t
             if any(k[0] == 2 for k in kinds) and t >= M: places.setdefault(tuple(int(v) for v in x[t - M:t]), []).append(t)
     return P1, P2, state
 
@@ -276,7 +303,7 @@ def check():
     import make_streams as MS
     ok = True; rng = np.random.default_rng(3)
     cases = [("shakespeare", "runs", dict()), ("py", "runs", dict(gate=1)), ("xml", "runs", dict(gate=2, birth=0.5)), ("c", "runs+since+pool", dict(gate=1)), ("table", "runs", dict(gate=1, recall=1)), ("py", "runs", dict(gate=1, recall=3, M=4)),
-             ("book", "runs", dict(rule=2, eta=0.05, gate=1)), ("book", "runs", dict(rule=1, eta=0.1, e=2.0, gate=2)), ("random", "sums", dict(rule=1, eta=0.1, e=2.0, gate=1, J=8, lo=9)), ("repeats", "runs", dict(gate=1, recall=3, M=8))]
+             ("book", "runs", dict(rule=2, eta=0.05, gate=1)), ("book", "runs", dict(rule=1, eta=0.1, e=2.0, gate=2)), ("random", "sums", dict(rule=1, eta=0.1, e=2.0, gate=1, J=8, lo=9)), ("repeats", "runs", dict(gate=1, recall=3, M=8)), ("c", "runs+last", dict(gate=1, recall=1, rule=2, eta=0.03)), ("shakespeare", "runs+last", dict(gate=2, birth=0.5)), ("table", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1)), ("repeats", "runs+last", dict(gate=1, recall=3, age=1))]
     for name, spec, kw in cases:
         kw = dict(kw); n = kw.pop("n", 2500); lo = kw.pop("lo", 6); recall = kw.pop("recall", 0)
         if name == "random": x = rng.integers(0, 14, n).astype(np.int32); S = 14
@@ -291,7 +318,8 @@ def check():
         used = int((st["Tu"][[i for i, k in enumerate(kinds) if k[0] == 2]] > 0).sum()) if recall else -1
         x2 = x.copy(); n0 = cutn - 300; x2[n0:] = (x2[n0:] + 1 + rng.integers(0, S - 1, n - n0)) % S; sa = Sys(S, kinds, x, **kw); sb = Sys(S, kinds, x2, **kw); _, _, U1, U2 = sa.run(lo, n0 + 1, True, True); _, _, V1, V2 = sb.run(lo, n0 + 1, True, True)
         blind = bool(np.array_equal(U1, V1) and (U2 is None or np.array_equal(U2, V2)))      # every byte from n0 on is replaced by another: the answers up to and including the one for byte n0 must not move
-        good = blind and d < 1e-9 and dn < 1e-12 and sz["cells"] == cells_ref and sz["counts_above_zero"] == counts_ref and (not recall or used > 0); ok &= good
+        tol = 1e-6 if kw.get("rule") == 2 else 1e-9          # under rule 2 a first change is eta x g / |g|: where g is itself a difference of nearly equal numbers, the two programs' rounding is carried into the trust
+        good = blind and d < tol and dn < 1e-12 and sz["cells"] == cells_ref and sz["counts_above_zero"] == counts_ref and (not recall or used > 0); ok &= good
         print(f"{name} ({n} bytes, S = {S}), kinds {spec} ({len(kinds)}), options {kw}, recall {recall}: compiled against the reference, largest difference {d:.1e} (answers while reading, with nothing changing, going on; trusts; parts); cells {sz['cells']} = {cells_ref}, counts {sz['counts_above_zero']} = {counts_ref}" + (f"; recall levels used {used}" if recall else "") + f"; no answer moves when its own byte and all later ones are replaced: {blind}", "PASSED" if good else "FAILED", flush=True)
     return ok
 
@@ -310,7 +338,7 @@ def check_gate():
 def run_stream(kw):
     import make_streams as MS
     name = kw["stream"]; x, cut, S = MS.load(name); t0 = time.process_time(); recall = int(kw.get("recall", 0)); kinds = kinds_of(kw.get("kinds", "runs"), S, recall, float(kw.get("born", 0.25)))
-    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.00005)), e=float(kw.get("e", 0.02)), rule=int(kw.get("rule", 0)), gate=int(kw.get("gate", 0)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)))
+    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.00005)), e=float(kw.get("e", 0.02)), rule=int(kw.get("rule", 0)), gate=int(kw.get("gate", 0)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)), age=int(kw.get("age", 0)))
     lo = 6; a1, a2 = s.run(lo, cut, True); t1 = time.process_time(); f1, f2 = s.run(cut, len(x), False); sz = s.sizes(); g1, g2 = s.run(cut, len(x), True); m = lambda v: None if v is None else float(v.mean())
     half = (cut - lo) // 2; out = dict(stream=name, args=kw, S=S, length=len(x), cut=cut, kinds=len(kinds), frozen=dict(cell1=m(f1), cell2=m(f2)), going_on=dict(cell1=m(g1), cell2=m(g2)), while_reading=dict(cell1=m(a1), cell2=m(a2)),
                while_reading_second_half=dict(cell1=m(a1[half:]), cell2=m(a2[half:]) if a2 is not None else None), sizes_at_the_frozen_scoring=sz, sizes_at_the_end=s.sizes(), cpu=round(time.process_time() - t0, 1), cpu_reading=round(t1 - t0, 1))

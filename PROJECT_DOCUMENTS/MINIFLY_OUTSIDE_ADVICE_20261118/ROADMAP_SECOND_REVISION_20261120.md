@@ -502,3 +502,41 @@ It gains on all six streams when the system goes on changing (0.009 and 0.010 on
 
 **Other reports received with it** (as reported). `nano/life3`, final (8b5786a70): the three-task life by both scores; after a read line the cells that join keep three tasks at 94 to 96, replay 92, 77, 78, replay chosen by mismatch 87, 85, 82; the counting cells with a cap fall to 59 when a kept task is asked after a line of another task. `nano/gate2` (645f803f9): its one new mechanism (a second cell that hears each sender with chance one half while it learns) is refuted, 25 points under the second cell over a long reading; a measurement with every trust frozen at 40,000 lines shows that a third to two thirds of the even loss with long reading is in what the cells say as their counts grow, and that going on teaching harms the first cell and helps the second. `nano/ref2`, interim (97e2853db): four seeds of the reference network are teaching; my figures for the cell systems repeat to seven digits in that line's hands, and their losses byte by byte are kept. `nano/merge`, a late note (e2e764f26): its best setting scores 98.6 after a read line (98.0 with an empty past).
 
+## 20. One system, one setting, six kinds of stream (late on 20 November; `nano/suite`, as reported; not repeated by me)
+
+All figures: nats a byte on each stream's last tenth with the system going on changing (the measure that every kind of stream shares), second answering cell, the same setting on every stream. Streams: tiny Shakespeare, a book, Python source, C headers, a table of numbers, markup.
+
+**Which ideas are general.** That line's rule: kept if at least three of the five kinds of stream gain by 0.001 or more and none is harmed by more than 0.005.
+
+| Idea | Gain going on, by stream | By the rule | With nothing changing |
+|---|---|---|---|
+| the second answering cell, parts by kind and byte | 0.026, 0.029, 0.028, 0.083, 0.120, 0.017 | kept; no cells | harms the table (0.081) |
+| cells that time each byte value | 0.011, 0.016, 0.016, 0.135, 0.216, 0.054 | kept; 1.3 to 3 times the cells | harms the table (0.195) |
+| the pool keyed on two or three of the last eight bytes | 0.012, 0.013, 0.047, 0.190, 0.263, 0.050 | kept; 3 to 10 times the cells | harms C (0.050) |
+| classes found by search (`nano/merge`'s frozen setting) | 0.013, 0.014, 0.018, 0.090, 0.177, 0.009 | kept; 4 to 7 times the cells | harms C and the table (0.03) |
+| a cell that recalls (one place) | 0.009, 0.010, 0.088, 0.102, 0.124, 0.069 | kept; no cells | harms C (0.116) |
+| one rule for the step of every trust | 0.008, 0.008, 0.014, 0.050, 0.045, 0.016 | kept | harms the table (0.172) |
+| **a cell also says the byte it counted last** (that line's own idea) | 0.028, 0.005, 0.055, 0.078, 0.177, 0.059 | kept, the largest; no cells | harms every stream (0.02 to 0.08) |
+| a cell born only where the system was surprised | 18 to 32% fewer cells for 0.000 to 0.012 | (for the store) | up to 0.052 worse |
+| **trusts of the senders of recency indexed by the age of what they say** (that line's own, after asking why the frozen measure was harmed) | no harm; four streams gain | kept | **kept: the only idea kept on both measures**; with it the first cell is below the base on all six with nothing changing |
+
+Every idea that had been chosen on English or on sums is general when the system goes on changing, and none is general when it is stopped: on streams joined from files or sorted by key, whatever learns more from the first nine tenths loses on a last tenth unlike them.
+
+**The system that costs no cells beyond the base** (runs of 0 to 6 bytes; the second answering cell; three recalling senders; the last-byte senders; the one rule of the step at 0.03; 0.3 to 0.56 million cells and 5 to 7 CPU-seconds a stream):
+
+| | tiny Shakespeare | book | Python | C | table | markup |
+|---|---|---|---|---|---|---|
+| the base of section 19 | 1.4136 | 1.4476 | 1.1503 | 1.0301 | 0.8141 | 0.4570 |
+| **that system** | **1.3389** | **1.3910** | **0.9496** | **0.7068** | **0.3415** | **0.2844** |
+| xz | 1.7496 | 1.7876 | 1.1265 | 0.7244 | 0.3814 | 0.4333 |
+
+Below xz on all six. That line's own caution, which belongs beside the table: xz is the strongest compressor on the machine and not of its trade; "below xz" means past the dictionary coders, not the state of the art (no context-mixing compressor is installed and nothing was downloaded).
+
+**The step's rule on sums, as one stream among others** (five reported seeds, first cell and second cell): the per-text setting 79.4 and 88.0; only the step replaced by the rule 81.3 and 91.1; one setting for everything, with prose's smoothing, 75.0 and 77.7. So that line finds what `PLAN_22.md` and `PLAN_23.md` found: the rule replaces both schedules of the step, and the smoothing is the number per text that remains unless the cells measure it.
+
+**What I take from it** (mine).
+1. Mr. Xu's steer was right in a way I had not foreseen: the ideas were not the problem, the yardstick was. The same ideas that looked like small gains on English are worth three to ten times as much on streams with form, and the two that gained most there (the recalling cell, and that line's sender of the last byte counted) are about *hearing the present*, which a test on a frozen last tenth of one text cannot reward.
+2. What a system of this kind needs first is not more kinds of cell that count; it is senders that say what just happened, an answering cell that knows the place and the age, and a step that no text has to be consulted about. All of these cost no cells.
+3. The measure of the programme should from now on be the loss while going on, over streams of unlike kinds, with general-purpose compressors beside it; the frozen tenth of tiny Shakespeare stays as one figure among others.
+4. Asked of that line next: the price of a bound on the store (a store of fixed size pruned by disuse; a lasting cell born only at a second meeting), since its system shows that the large gains do not come from the cells.
+

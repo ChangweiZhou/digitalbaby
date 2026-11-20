@@ -31,3 +31,7 @@ xz, bzip2 and gzip are the general compressors this machine has; nothing may be 
 ## 4. Cost, not run
 
 Z: about 8 CPU-seconds a stream. ZP: 2 to 5 CPU-minutes and 1 to 2 GB. Not run: Z on sums (its recalling and last-byte senders are laid down for the kinds of runs; sums are in `PLAN_4.md` on their own kinds); any change of a number.
+
+## 5. Addition before the runs of ZP (entered 20 November, when the last runs of `PLAN_2.md` (ii) were in and before any run of ZP)
+
+Both the pool and the since-cells are kept by the rule on the going-on measure (`PLAN_2.md`, outcome: each lowers all five kinds and harms none), so **ZP is Z with both** (`kinds=runs+last+since+pool`; the last-byte senders stay on the seven runs only). Since this plan was written, `PLAN_7.md` found the trusts by age kept on both measures; by the rule of section 1 they go in. I therefore run both forms and report both: ZP as laid down here, and **ZPA, ZP with `age=1`** (and ZA = Z with age is already in `res/*__Zage.json`). Prediction F7: going on, ZPA is below ZP on at least four streams (chance 0.55). One run each, three at a time.
