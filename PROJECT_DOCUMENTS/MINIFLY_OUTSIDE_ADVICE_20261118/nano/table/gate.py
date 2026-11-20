@@ -91,7 +91,7 @@ p32 = lambda a: a.ctypes.data_as(PI); pf = lambda a: a.ctypes.data_as(PF); pd = 
 
 class Sys2(G.Sys):
     """nano/merge's system with the second answering cell. s.cell says whose answer say() gives (1: the first cell, the plain system; 2: the second)."""
-    GATE = 0
+    GATE = 0; BLIND = 0
     def __init__(s, *a, **kw):
         super().__init__(*a, **kw); s.gate = Sys2.GATE; s.L2 = kern(); s.NG = 4 if s.gate == 2 else s.S; s.nparts = 1 if s.gate == 2 else s.D; assert s.D <= 16
         s.Gt = np.zeros((s.nparts, s.K1, NL, s.NG)); s.Gu = np.zeros_like(s.Gt); s.cell = 2
@@ -104,6 +104,11 @@ class Sys2(G.Sys):
                             s.D, p32(cb), pd(s.Gt), pd(s.Gu), s.gate, pd(P2) if want_p else None)
             if want_p: P[a:a + 50000] = P2 if s.cell == 2 else P1
         return P
+    def ids(s, ctx, create=False):
+        """PLAN_17.md: with BLIND = B > 0, a cell whose address falls in one class of B by a fixed scramble never comes to be (it neither counts nor speaks)."""
+        out = super().ids(ctx, create)
+        if Sys2.BLIND: out[(out >= 0) & ((((out.astype(np.int64) + 1) * 2654435761) >> 13) % Sys2.BLIND == 0)] = -1
+        return out
     def find(s):
         """Classes are found anew by nano/merge's find; the second cell's parts for a class kind follow the first cell's trust: kept where the pair is kept, nothing where it is new."""
         old = {(sl["k"], sl["X"]): p for p, sl in enumerate(s.slots) if sl is not None}; G0, U0 = s.Gt.copy(), s.Gu.copy(); super().find(); s.Gt[:, s.KB:] = 0; s.Gu[:, s.KB:] = 0
@@ -153,7 +158,7 @@ def check():
 
 # ---------------------------------------------------------------- sums
 def run_sums(kw):
-    seed = int(kw.get("seed", 1)); D = 9; Sys2.GATE = int(kw.get("gate", 0)); G.Sys = Sys2; t0 = time.process_time()
+    seed = int(kw.get("seed", 1)); D = 9; Sys2.GATE = int(kw.get("gate", 0)); Sys2.BLIND = int(kw.get("blind", 0)); G.Sys = Sys2; t0 = time.process_time()
     rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]
     TAB = np.array([G.text(a, b) for a, b in shown], np.int64); Ls = np.array([G.text(a, b) for a, b in held]); g = np.random.default_rng([seed, 7]); prevs = [TAB[g.integers(8000, size=500)] for _ in range(5)]
     def one(s, prev):
@@ -196,7 +201,7 @@ def load(books):
     return x, segs, replaced
 
 def run_life(kw):
-    books = kw.get("books", "new"); Sys2.GATE = int(kw.get("gate", 0)); G.Sys = Sys2; t0 = time.process_time(); x, segs, replaced = load(books); s = G.prose_sys(x, dict(mode=kw.get("mode", "none")))
+    books = kw.get("books", "new"); Sys2.GATE = int(kw.get("gate", 0)); Sys2.BLIND = int(kw.get("blind", 0)); G.Sys = Sys2; t0 = time.process_time(); x, segs, replaced = load(books); s = G.prose_sys(x, dict(mode=kw.get("mode", "none")))
     out = dict(task="prose_life", args=kw, segments={k: list(map(int, v)) for k, v in segs.items()}, replaced_percent=replaced, scores={})
     def sc(lo, hi):
         r = {}
