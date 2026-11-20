@@ -113,3 +113,21 @@ Two more things in the table (mine). (1) The plain kinds alone fall from 79 to b
 | E5 | the first cell ends under 85 on all three seeds (the even loss is untouched) | 0.75 |
 
 *Not run.* `keep=1`; that line's kinds keyed on two classes (`merge6.py`); any change of my own to the search.
+
+## 9. Outcome of addition 2 (`res/s400_C_seed*.json`, `report_2C.txt`; `res/s40_C_seed*.json`, `report_1C.txt`)
+
+`merge.py`'s setting C (`keep=2`), nothing else changed; never-shown additions after a read line. CPU 456 to 482 s a long run, about 85 s a short one; 1.24 million cells that count.
+
+| Seed | First cell: 40,000 lines; 400,000 lines (last; mean of the last three) | Second cell | Control |
+|---|---|---|---|
+| 116089 | 92.0; 81.1; 82.8 | 96.2; 92.6; **93.0** | 91.9; 86.5; 86.6 |
+| 406364 | 89.0; 75.2; 78.3 | 97.0; 88.7; **90.0** | 88.8; 80.4; 82.7 |
+| 545353 | 91.8; 80.4; 83.4 | 96.6; 94.6; **95.1** | 92.5; 82.6; 84.9 |
+
+Second cell along the reading (50,000, 100,000, ... 400,000 lines): seed 116089: 96.8, 95.3, 96.2, 94.8, 94.9, 93.6, 92.9, 92.6; seed 406364: 94.9, 91.7, 92.2, 89.0, 89.4, 91.2, 90.2, 88.7; seed 545353: 95.4, 93.5, 96.6, 96.2, 96.6, 95.8, 95.0, 94.6. On all three seeds the kind (3, 4, 6, 7) has six pairs kept at every finding from 32,000 lines on, and the last finding brings in one new pair where the frozen setting brought in eight to twelve. At 40,000 lines, five reported seeds, setting C: first cell 91.8, second cell 96.9 (96.9, 98.2, 96.2, 97.0, 96.6), control 91.9 at the median (frozen setting: 92.9, 97.4, 92.8).
+
+**With the base line's own repair of where it searches, the second cell has no step falls and ends at 90 to 95 after 400,000 lines** (mine): 3.2, 7.0 and 1.5 points under its level at 40,000 lines, and 10.2, 11.7 and 11.7 points above the first cell, which still loses 9 to 11 points (the even loss). That line found that setting C does nothing for its own answering cell over the long reading (80.1 and 81.3 against 78.9 and 81.3); it does a great deal for the second cell, because the second cell's reading leans on the class kinds of the exact kind and the first cell's reading by then is pulled down by the plain kinds whatever the classes are. Three seeds, one setting that is not the frozen one, development level; the two seeds on which the frozen setting did not let go of the kind (93683, 545353) already showed the same level (91.9, 92.5).
+
+**Predictions.** E1 held (93.0, 90.0, 95.1; 88 asked on two of three). E2 held (three of three). E3 held (+10.2, +11.7, +11.7). E4 held (96.9 against 97.4). E5 held (82.8, 78.3, 83.4). Five of five.
+
+**The answer to this plan's question, as it now stands** (mine). Does the second cell hold its level over a long reading? In the frozen setting, no (median 76.5 on five seeds). The cause of the large falls is not in the second cell: it is the base's search letting go of the kind its best classes come from, and with that repaired (by that line's own option) the second cell ends at 90 to 95, where every other counting system of the programme is reported at 79 to 83 and the relay system at 95.5. A slow loss of 2 to 7 points remains, and the even loss of the first cell is untouched.
