@@ -50,3 +50,34 @@ The last reading and the mean of the last three beside it; five seeds and the me
 ## 6. Declared before the runs
 
 To test the program, the joined arm was run once on the development seed 1 for 40,000 lines before this plan was committed (105 CPU-seconds): the relay system alone 3.2, 12.4, 71.8, 75.3 at 5,000, 10,000, 20,000 and 40,000 lines; joined second cell 92.9, 95.9, 97.0, 96.6; the same with the relay system silent at the score 92.8, 95.7, 96.9, 96.6. Prediction B1 was written knowing this.
+
+## 7. Outcome (entered 20 November after all ten runs; `res/s1_*.json`, the whole table with every seed and reading in `report_s1.txt`, made by `report.py`)
+
+Never-shown two-digit additions, whole answer, own bytes, after a read line, %. Five reported seeds, median (range). One thread; a run of 400,000 lines takes 351 to 384 CPU-seconds for the counting system alone and 412 to 445 joined. Sizes at 400,000 lines: 1.24 million cells that have counted, 6.3 million counts above zero; 11,530 trusts; 1,452,780 parts in the second cell, 778,587 used; the relay system 43,278 numbers.
+
+| Lines | Relay alone | Counting alone, first cell | Counting alone, second cell | **Joined, second cell** | Joined, first cell | Joined second cell, relay silent at the score |
+|---|---|---|---|---|---|---|
+| 5,000 | 3.9 | 90.5 | 94.0 | 94.2 | 90.5 | 94.2 |
+| 10,000 | 19.6 | 91.4 | 95.1 | 95.3 | 91.6 | 95.1 |
+| 20,000 | 66.0 | 92.6 | 96.0 | 96.6 | 93.0 | 96.6 |
+| 40,000 | 82.9 (81.2 to 86.5) | 92.9 | **97.4** (96.4 to 98.2) | **97.1** (96.4 to 98.1) | 93.4 | 96.9 |
+| 100,000 | 91.9 | 86.5 | 87.0 | 86.5 | 86.1 | 86.0 |
+| 200,000 | 94.4 | 82.9 | 89.9 | 89.9 | 84.6 | 88.4 |
+| 300,000 | 95.0 | 80.0 | 77.8 | 81.8 | 82.5 | 78.7 |
+| 400,000 | **95.5** (95.0 to 97.0) | 77.2 | 75.5 (73.1 to 91.6) | **79.0** (75.1 to 92.2) | 80.5 | 75.0 |
+| mean of the last three | 95.4 | 78.8 | 76.5 | 80.4 | 81.7 | 76.8 |
+
+(The counting system's columns at 5,000 to 300,000 lines are medians of five seeds read from `report_s1.txt`; the fifth seed came in after the first table was printed.)
+
+*Checks.* `both.py check` passed (compiled against numpy to 1e-15; with no given sender the first cell equals `nano/merge`'s kernel exactly; the relay system read in blocks equals `cells2.py`'s numpy loop to 1e-14). Each part alone gives its own line's figures to the digit: the relay system against `loop_small_case/res/past_seed*_{40000,400000}.json` on all five seeds at both lengths (82.92, 82.32, 81.16, 86.48, 83.16 and 95.00, 95.00, 97.00, 95.48, 96.08), the counting system against `nano/table/res/gate_sums_gate0_modeclasses_seed*.json` on all five seeds at 40,000 lines and on the two seeds that line ran at 400,000 (both cells).
+
+**The hypothesis is refuted at 400,000 lines and holds at 40,000.** At 40,000 lines the joined system has 97.1, level with the counting system alone (97.4; not more than 3 under). At 400,000 lines it has 79.0, 16.5 points under the relay system alone (95.5); at least 95 was asked and not more than 3 under allowed. The joined system is the counting system with a small addition: it falls with reading as the counting system does, and is 1 to 4 points above it from 300,000 lines on.
+
+**Why, from the trusts** (the table's last parts in `report_s1.txt`). The relay system's trust in the first cell at 400,000 lines, by level of sureness (its largest share in ten bins; the tenth bin is never reached, since the floor of 0.01 keeps the largest share under 0.89): 0.26, 1.08, 0.69, 0.19, 0.11 and 0.03 at levels 3 to 8. It is used most at level 7 and 8 (1.06 million and 471 thousand bytes), which is where it is sure and right, and there its trust is 0.11 and 0.03: next to nothing beside 288 other senders. The trust grows where the relay system is half sure (levels 4 and 5) and those are few bytes. Silencing the relay system at the score takes 4 points from the joined answer at 400,000 lines and 0.2 at 40,000. So the relay system is given trust where the others leave a mismatch, and on lines read many times they leave none where it is sure.
+
+Predictions. B1 held (97.1). B2 failed (79.0; I gave it 0.20). B3 failed (16.5 under; I gave it 0.25). B4 held, narrowly (79.0 against 75.5: 3.5 above). B5 held (0.03 at the top level reached). B6 held (75.0 with the relay system silent against 75.5 for the counting system alone).
+
+Readings (mine).
+1. **Joining the relay system as one more sender, with trusts taught by the mismatch, does not give the better of the two.** It gives the counting system with its fall. The coordinator's hypothesis fails in the form stated; my expectation in section 3 held, and for the reason given there as far as the trusts show.
+2. The counting system's own fall is still whole in the joined answer (B6).
+3. What this does not show: that the two kinds of cell cannot be joined. `PLAN_2.md` locates the fall (a look on the development seed: with the cells that counted fewer than 512 times silent at the score, the same system answers 97.7% at 400,000 lines, above the relay system) and tries two changes to how the trusts are taught.
