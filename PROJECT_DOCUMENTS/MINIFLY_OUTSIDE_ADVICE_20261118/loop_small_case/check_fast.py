@@ -29,7 +29,7 @@ if __name__ == "__main__":
             if tx != "m1" and extra.get("ret") in ("grown", "learned", "sign"): continue
             cases.append((hold.run, Hn, f"hold {tx} " + " ".join(f"{k}={v}" for k, v in extra.items()), dict(dict(text=tx, seed="3", H="64", eta1="1", lines="300", every="150", gap="8"), **extra)))
     for c in ("1/8", "1/4"):
-        for cap in ("1", "0"): cases.append((cells2.run, C, f"cells2 clip={c} cap={cap}, active-cell kernel", dict(seed="3", plan="add:300,sub:100", every="100", clip=c, cap=cap, eta1x="1", fast="2")))
+        for cap in ("1", "0"): cases.append((cells2.run, C, f"cells2 clip={c} cap={cap}, active-cell kernel", dict(seed="3", plan="add:300,sub:100", every="100", clip=c, cap=cap, fast="2")))
     for run, names, title, kw in cases:
         w, ta, tb = cmp(run, {k: v for k, v in kw.items() if k != "fast"}, names, kw.get("fast", "1")); bad += w > 1e-6; print(f"{title:42s} largest difference over largest strength {w:.1e}   numpy {ta:5.1f} s, compiled {tb:5.1f} s")
     print("CHECK", "FAILED" if bad else "PASSED")

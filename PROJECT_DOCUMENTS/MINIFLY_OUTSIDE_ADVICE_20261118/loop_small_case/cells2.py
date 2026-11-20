@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PLAN_4.md: the system of keep.py (two-digit sums, cells in between that learn from a relayed mismatch) with options. numpy only.
     python3 cells2.py <label> seed=1 [plan=add:400000[,sub:200000[,add:40000]]] [every=50000] [fine=1] [reh=N] [swap=1]
-                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x] [fast=1|2] [clip=p] [kap=1e-3] [cap=1]
+                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x] [fast=1|2] [clip=p] [kap=1e-3] [cap=1] [eta1=1/4] [eta2=1/16] [lam=1e-5]
     ans2=1: two answering cells; which one answers and learns is given by the line's operator (a control, laid down by the program).
     reserve=N: N further cells in between are silent and unchanged in the first phase; from the second phase on they alone change, with the answering
       cell's strengths from them, and everything the first phase wrote is left as it is (a control: the program decides where the new task is written).
@@ -103,7 +103,8 @@ def run(kw):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng = np.random.default_rng([seed, 99]); held, shown = {}, {}
     for op in "+-":
         o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held[op] = P[:500]; shown[op] = P[2000:]
-    s = Sys(seed, H=int(kw.get("H", 256)) + int(kw.get("reserve", 0)), fan=int(kw.get("fan", 0)), rewire=int(kw.get("rewire", 0)), dale=int(kw.get("dale", 0)), H2=int(kw.get("H2", 0)))
+    s = Sys(seed, H=int(kw.get("H", 256)) + int(kw.get("reserve", 0)), fan=int(kw.get("fan", 0)), rewire=int(kw.get("rewire", 0)), dale=int(kw.get("dale", 0)), H2=int(kw.get("H2", 0)),
+            eta1=float(eval(kw.get("eta1", "1/4"))), eta2=float(eval(kw.get("eta2", "1/16"))), lam=float(kw.get("lam", 1e-5)))
     nres = int(kw.get("reserve", 0))
     if nres: s.live = np.arange(s.H) < s.H - nres; s.free = s.live.astype(float)
     s.clip = float(eval(kw.get("clip", "0"))); s.kap = float(kw.get("kap", 1e-3)); s.cap = 1.0 if int(kw.get("cap", 1)) else np.inf

@@ -75,3 +75,26 @@ In the sixth plan I called `ret=learned` the candidate and `ret=exact` its refer
 - The form that corresponds to the answering cell's return connections is this, added now as **`ret=local`**: every reader sends the same two numbers to all the cells it reads (what it received times each of its two sensitivities); the return strengths are kept by the cell that is read, start at nothing, and change by those two numbers times that cell's own output one byte earlier. Nothing of the reader's strengths or traces is used, and no value differs from connection to connection.
 
 Development seed, eta1 = 1, 240,000 lines, the follow-up runs so far: `ret=grown` 70.4 on `m1` (88, 86, 81 by gap at the end) and 49.3 on `g1` (36, 49, 48); `ret=sign` 11.7 and 17.6 (nothing learned); `ret=learned` on `g1` 44.9. The five reported seeds are run for `cross=0`, `cross=1 ret=exact` and, if it learns on the development seed, `cross=1 ret=local`; if it does not, `ret=grown` in its place.
+
+## 8. Entered on 20 November after the follow-up runs (development seed 1), before any reported seed
+
+From here on the runs use the compiled kernel (`fast=1`; `PLAN_8.md`, section 1). `res/hold_p7b_*`, `p7c_*`, `p7d_*`, `p7e_*`.
+
+| `m1`, eta1 = 1 | 240,000 lines | 960,000 lines (last three readings; at the end by gap 0, 4, 8) |
+|---|---|---|
+| `cross=0` | 10.7 | 22.6 (21, 28, 32) |
+| `cross=1 ret=exact` | 49.3 | **98.1** (100, 100, 100) |
+| `cross=1 ret=grown` | 70.4 | **99.6** (99, 100, 100) |
+| `cross=1 ret=local` | 11.8 | 10.6 (12, 8, 8) |
+| `cross=1 ret=sign` | 11.7 | not run |
+| `cross=1 ret=exact`, the strengths between cells fading at 1e-5 a byte | 12.4 | not run |
+| `cross=1 ret=learned`, fading 1e-6 | 33.1 | not run |
+| `cross=1 ret=exact`, eta1 = 4 | 59.6 | not run |
+| instrument, eta1 = 1: X = 1L / 1 / 2 / inf | 35.7 / 36.7 / 86.9 / 79.3 | not run |
+| instrument X = inf, eta1 = 1/64, 1/16, 1/4 | 9.4, 12.1, 12.1 | not run |
+
+`g1`, eta1 = 1: `cross=1 ret=exact` 78.2 at 240,000 lines and 95.3 at 960,000 (98, 99, 99); `ret=local` 18.3 at 240,000; the other long runs are entered in the report.
+
+Readings (mine). (1) The crossing teaches holding across the gap, and the answer is as good after 8 letters as after none. (2) `ret=learned` failed because the fading it applies to the strengths between cells stops learning even with exact return strengths. (3) `ret=local` does not learn: a reader that takes in the second number holds it for one byte before the answer is named, so at the moment of the mismatch its sensitivity is near zero, and a return strength built from the product at that moment alone gets nothing; `ret=grown`, which uses the reader's trace, works. (4) With the same step the backward-pass instrument learns this text too, faster with two or more crossings (87% and 79% at 240,000 lines against 36% with one); my earlier instrument runs had steps too small for the length of run. M4 is therefore met at eta1 = 1 (79 to 87) and was not at the steps the plan named.
+
+**Setting for the five reported seeds** (73129, 93683, 116089, 406364, 545353): both texts; `cross=0`, `cross=1 ret=exact`, `cross=1 ret=grown`; eta1 = 1; **960,000 lines** (the plan's 240,000 was too short for any arm to finish learning; amended here before those runs); the strengths saved for `look_hold.py`.
