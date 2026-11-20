@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PLAN_1.md of nano/ends: where a segment starts, found by the system from its own surprise.
     python3 ends.py check                       the compiled loop against numpy on a prefix
-    python3 ends.py arm=0|G|R|S|H|U|P [theta=...] [ks=1]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
+    python3 ends.py arm=0|G|R|S|H|U|P [theta=...] [ks=1] [text=ns]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
 Arms: 0 the table's cells (runs of the last 0..6 bytes), read with trust; G with segment cells, starts given (first letter after a byte that is not a letter);
 R starts every fifth byte; S starts where the table-only system's surprise at the byte that arrived exceeds theta;
 U (PLAN_2) starts where the table-only system's answer was unsure beyond theta before the byte arrived;
@@ -97,7 +97,7 @@ class Sys:
 def surprise(x, taught_to, hi):
     """sur[t] for every byte t < hi: minus the log of the probability the table-only system gave to byte t when it arrived. The system reads x[K:taught_to] once,
     counts and trust changing after each byte is named (so sur[t] there uses only bytes before t); from taught_to on nothing changes. Bytes before K: no surprise (0)."""
-    f = os.path.join(HERE, f"sur_{taught_to}_{hi}.npy")
+    f = os.path.join(HERE, f"{TAG}sur_{taught_to}_{hi}.npy")
     if os.path.exists(f): return np.load(f)
     s = Sys(x, []); sur = np.zeros(len(x)); sur[K:taught_to] = -np.log(s.go(K, taught_to, ETA0, E0, True, want_q=True))
     if hi > taught_to: sur[taught_to:hi] = -np.log(s.go(taught_to, hi, ETA0, E0, False, want_q=True))
@@ -105,7 +105,7 @@ def surprise(x, taught_to, hi):
 
 def unsure(x, taught_to, hi, k=K):
     """uns[t] for every byte t < hi: how unsure the table-only system's answer for byte t was before byte t arrived (minus the sum of p log p). The system as in surprise()."""
-    f = os.path.join(HERE, f"uns_{taught_to}_{hi}.npy" if k == K else f"uns{k}_{taught_to}_{hi}.npy")
+    f = os.path.join(HERE, f"{TAG}uns_{taught_to}_{hi}.npy" if k == K else f"{TAG}uns{k}_{taught_to}_{hi}.npy")
     if os.path.exists(f): return np.load(f)
     s = Sys(x, [])
     if k < K: s.ids = np.ascontiguousarray(s.ids[:, :k + 1]); s.K1 = k + 1; s.T = np.full((k + 1, NL), 0.25)        # PLAN_3: the signal from the cells of runs 0..k alone, read with their own trust
@@ -113,7 +113,17 @@ def unsure(x, taught_to, hi, k=K):
     if hi > taught_to: u[taught_to:hi] = s.go(taught_to, hi, ETA0, E0, False, want_h=True)
     np.save(f, u); return u
 
+WS = None; TAG = ""
+def load_text(kw):
+    """The text of the test; with text=ns (PLAN_5) the same text with every space and line end taken out, the cut carried over, and the starts of words remembered from the original."""
+    global WS, TAG
+    x, cut, _ = score.load()
+    if kw.get("text") == "ns":
+        keep = x > 1; assert bytes(score.byte_values()[:2]) == b"\n "; WS = word_starts(x)[keep]; TAG = "ns_"; cut = int(keep[:cut].sum()); x = np.ascontiguousarray(x[keep])
+    return x, cut
+
 def word_starts(x):
+    if WS is not None: return WS
     isl = x >= 13; st = isl.copy(); st[1:] &= ~isl[:-1]; return st
 
 def pair_starts(x, share, lo, hi, seed=0):
@@ -154,7 +164,7 @@ def one(x, keys, taught_to, lo, hi, eta, e, both=False):
              trusts=int(s.T.size), trust=np.round(s.T, 3).tolist()); return r
 
 def run(kw):
-    x, cut, _ = score.load(); arm = kw.get("arm", "0"); dev = cut - cut // 20; t0 = time.process_time(); grid = {}; tgrid = {}; theta = share = None; extra = {}
+    x, cut = load_text(kw); arm = kw.get("arm", "0"); dev = cut - cut // 20; t0 = time.process_time(); grid = {}; tgrid = {}; theta = share = None; extra = {}
     if arm == "H":
         rs = json.load(open(os.path.join(HERE, "res", "ends_armS.json"))); share = rs["agreement_stream"]["starts"] / (cut - K); extra["share_matched_to"] = share
     a = None
