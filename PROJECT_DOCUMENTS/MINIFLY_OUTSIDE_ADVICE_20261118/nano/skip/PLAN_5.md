@@ -25,3 +25,22 @@
 | T5 | no digit is closed at the end of any of the fifteen reported-seed runs | 0.65 |
 
 **Cost.** About 2.5 CPU-minutes a run at 26 letters; about 50 CPU-minutes in all. **Not run.** A retuned rule for more values (a longer memory of the evidence, a different starting chance): that would be the next plan if H5 fails; more cells; letters placed elsewhere in the line.
+
+## Outcome (entered 20 November 2026; `res/p5_*.json`)
+
+`g2` with more letter values, 1,200,000 lines, the trial clock (second form, nothing retuned), never-shown pairs, mean of the last three readings (one figure for the three gaps once the letters are closed). Seeds in the order 73129, 93683, 116089, 406364, 545353; the development seed 1 beside them.
+
+| Letter values (byte values; numbers that learn) | Each seed; median | Seed 1 | The reading from which every letter is closed, each seed (thousands of lines) | Anything else closed at any reading |
+|---|---|---|---|---|
+| 4 (18; 55,570) (`PLAN_2.md`, C) | 96.7, 95.1, 96.9, 94.1, 97.4; **96.7** | 95.1 | 200, 200, 200, 200, 100 | no |
+| 8 (22; 67,862) | 96.3, 95.4, 97.4, 93.7, 95.7; **95.7** | 94.5 | 300, 200, 200, 200, 200 | no |
+| 16 (30; 92,446) | 96.3, 96.0, 96.4, 94.2, 96.6; **96.3** | 94.7 | 300, 400, 300, 400, 400 | no |
+| 26 (40; 123,176) | 95.1, 94.8, 95.4, 93.9, 92.6; **94.8** | 91.1 | 500, 500, 500, 400, 500 | no |
+
+`clock=none` with 26 letters, gaps 0 / 4 / 8: 40.9, 45.6, 48.6, 44.9, 51.1 (median 45.6) / 1.7, 1.6, 2.0, 1.3, 1.3 / 0.9, 1.0, 1.1, 0.8, 0.6; seed 1: 36.2 / 0.8 / 0.4. `clock=oracle` with 26 letters, seed 1, 400,000 lines: 94.1.
+
+**H5 holds**: with 26 letter values the rule has 94.8% at every gap at the median (least seed 92.6), where under 50% would refute. **T1, T2, T3 held. T5 held** (in the eighteen runs nothing but letters is closed at any reading, `-` apart). **T4 failed by its letter**: from 4 to 8 letters the median reading is the same (200,000); from 8 to 16 to 26 it is later each time (200,000, 400,000, 500,000).
+
+**Reading (mine).** My expectation before the runs was too dark, and wrong in its form. Six and a half times as many byte values to find cost about two and a half times as many lines, not six and a half, and the rule arrives with room to spare. I had reasoned that each entry's evidence thins in proportion to the number of values. What I left out is that the entries do not have to be found one after another: every letter's closing is rewarded as soon as lines are answered that happen to be aligned, the letters close in parallel (the counts closed at successive readings are, for example, 3, 12, 19, 26), and each one closed makes more lines aligned for the rest. The readings are 100,000 lines apart, so the growth is known only that coarsely. What is still untested is the regime that would matter for real text: hundreds of byte values of which only some are to be passed over, and bytes that are worth keeping in some places and not in others.
+
+**Cost.** 117 to 211 CPU-seconds a run with the rule; about 55 CPU-minutes in all.
