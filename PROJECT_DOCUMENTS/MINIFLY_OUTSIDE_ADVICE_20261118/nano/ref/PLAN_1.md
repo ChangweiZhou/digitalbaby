@@ -80,3 +80,5 @@ nanoGPT's full setting as published (batch 64, 5,000 steps): five and a half hou
 | L3 | B's held-out parts after A and B (`fresh_schedule`) are at least 0.05 nats below the network that saw B only | 0.80 |
 | L4 | B's held-out parts after A and B (`fresh_schedule`) are below 1.4152 nats (the counting cells with a learned trust, `nano/table`) | 0.50 |
 | L5 | B's held-out parts after A alone are at least 0.3 nats above those after A and B | 0.85 |
+
+**Correction to addition 2 (entered at once, before any figure of it was seen).** I miscounted B's stream above. Its three stream parts are 219,510, 74,692 and 129,955 bytes: 424,157 together, not 430,155. The program takes the number of steps on B from the lengths themselves: round(10,000 x 424,157 / 1,003,854) = 4,225 steps (3.24 million bytes seen), not 4,285. The text above stands as written; these are the figures that hold.
