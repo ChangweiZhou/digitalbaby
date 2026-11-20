@@ -1,0 +1,52 @@
+{
+ "stream": "shakespeare",
+ "S": 65,
+ "length": 1115394,
+ "cut": 1003854,
+ "compressors": {
+  "xz": {
+   "whole_bytes": 365452,
+   "first_nine_tenths_bytes": 330260,
+   "nats_a_byte_of_the_last_tenth": 1.7495596613423414,
+   "nats_a_byte_of_the_whole": 1.8168433642640582,
+   "reach": "the whole stream (dictionary of 64 MB at -9)"
+  },
+  "bzip2": {
+   "whole_bytes": 328469,
+   "first_nine_tenths_bytes": 295036,
+   "nats_a_byte_of_the_last_tenth": 1.6621115070941832,
+   "nats_a_byte_of_the_whole": 1.6329825066395887,
+   "reach": "blocks of 900,000 bytes sorted apart: the tenth shares a block only with the bytes after the last block boundary before it"
+  },
+  "gzip": {
+   "whole_bytes": 433581,
+   "first_nine_tenths_bytes": 390409,
+   "nats_a_byte_of_the_last_tenth": 2.146282953497146,
+   "nats_a_byte_of_the_whole": 2.15554645403767,
+   "reach": "the last 32,768 bytes only"
+  }
+ },
+ "tables": {
+  "3": {
+   "kneser_ney_nats": 1.719062562651398,
+   "witten_bell_nats": 1.77378450656226,
+   "runs_seen": 48539
+  },
+  "4": {
+   "kneser_ney_nats": 1.5611697411703314,
+   "witten_bell_nats": 1.6688033092164367,
+   "runs_seen": 133293
+  },
+  "5": {
+   "kneser_ney_nats": 1.522635715828937,
+   "witten_bell_nats": 1.6980543944043034,
+   "runs_seen": 264623
+  },
+  "6": {
+   "kneser_ney_nats": 1.5165034782740385,
+   "witten_bell_nats": 1.7791947175575307,
+   "runs_seen": 413620
+  }
+ },
+ "cpu_python": 11.8
+}
