@@ -5,7 +5,7 @@ those places, foretells of the next block of the stream before that block is cou
 with its own cells, and against the same store with its cells shuffled (PLAN_2.md, addition 1).
 Kept readings speak as senders (their trust starts as the store's own kind's) and count into the one store.
     python3 reuse.py check
-    python3 reuse.py run seed=1 phases=add2:40000,add3:20000 [mode=reuse|none|chance] [D=9] [P=32] [M=32] [block=10000] [jbytes=5000] [inherit=1] [count=1] tag=...
+    python3 reuse.py run seed=1 phases=add2:40000,add3:20000 [mode=reuse|none|chance] [D=9] [P=64] [M=32] [one=1] [block=10000] [jbytes=5000] [inherit=1] [count=1] tag=...
 Tasks: add2 `ab+cd=efg`, add3, add4 (needs D=11), add2w `ab++cd==efg` (the same sums, another layout), sub2 `ab-cd=efg` (larger first).
 The answering loop and its numpy reference are those of merge.py (source: claude/nano-merge-8mmhfm at e0bc883) with one argument added."""
 import ctypes, itertools, json, os, subprocess, sys, time
@@ -116,8 +116,8 @@ def code(ctx, ds):
 def ctx_of(x, lo, hi, D): return x[np.arange(lo, hi)[:, None] - np.arange(1, D + 1)[None, :]]
 
 class Sys:
-    def __init__(s, D=9, P=32, M=32, block=10000, mode="reuse", seed=0, eta=0.1, e=2.0, born=0.02, inherit=1, count=1, jbytes=5000):
-        s.jbytes = int(jbytes); s.D, s.P, s.M, s.block, s.mode, s.eta, s.e, s.inherit, s.count = D, (0 if mode == "none" else P), M, block, mode, eta, e, int(inherit), int(count)
+    def __init__(s, D=9, P=32, M=32, block=10000, mode="reuse", seed=0, eta=0.1, e=2.0, born=0.02, inherit=1, count=1, jbytes=5000, one=1):
+        s.one = int(one); s.jbytes = int(jbytes); s.D, s.P, s.M, s.block, s.mode, s.eta, s.e, s.inherit, s.count = D, (0 if mode == "none" else P), M, block, mode, eta, e, int(inherit), int(count)
         s.kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]; s.KB = len(s.kinds); s.K1 = s.KB + s.P; assert s.K1 <= 640
         s.off = np.concatenate([[0], np.cumsum([S ** len(k) for k in s.kinds])]).astype(np.int64); s.nbase = int(s.off[-1]); s.L = kern()
         s.C = np.zeros((s.nbase, S), np.float32); s.N = np.zeros(s.nbase, np.float32); s.U = np.zeros(s.nbase, np.float32)
@@ -163,7 +163,11 @@ class Sys:
             idx = np.flatnonzero(cnt); gs = g.copy(); gs[idx] = g[idx[s.rng.permutation(len(idx))]]; outs = np.zeros(len(pl)); gT = np.ascontiguousarray(gs.T); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(gT), pd(outs)); outs -= own[s.kidx[m]]
             chance = max(float(outs.max()), 0.0); home = tuple(d - 1 for d in s.kinds[k]); hi = int(np.flatnonzero((pl == np.array(home)).all(1))[0]); homes.append((k, float(own[k]), chance)); out[hi] = -np.inf
             for p in np.flatnonzero(out > chance): cands.append((float(out[p]), k, tuple(int(d) + 1 for d in pl[p]), chance)); nabove += 1
-        cands.sort(key=lambda c: -c[0]); kept = cands[:s.P]
+        cands.sort(key=lambda c: -c[0]); kept = []; seen = set()
+        for c in cands:                                            # a set of places joins one store only: the one that foretells its new cells best (PLAN_2.md, addition 2)
+            if s.one and tuple(sorted(c[2])) in seen: continue
+            seen.add(tuple(sorted(c[2]))); kept.append(c)
+            if len(kept) == s.P: break
         if s.mode == "chance":                                     # the control: the same stores and the same number of readings, the places drawn by chance
             kept = [(gn, k, tuple(int(d) + 1 for d in s.pl[len(P_)][s.rng.integers(len(s.pl[len(P_)]))]), ch) for gn, k, P_, ch in kept]
             kept = [c for c in kept if c[2] != s.kinds[c[1]]]
@@ -226,7 +230,7 @@ def marks_for(lines):
 def run(kw):
     seed = int(kw.get("seed", 1)); mode = kw.get("mode", "reuse"); D = int(kw.get("D", 9)); t0 = time.process_time()
     phases = [(p.split(":")[0], int(p.split(":")[1])) for p in kw.get("phases", "add2:40000").split(",")]; tasks = [Task(n, seed, i) for i, (n, _) in enumerate(phases)]
-    sy = Sys(D=D, P=int(kw.get("P", 32)), M=int(kw.get("M", 32)), block=int(kw.get("block", 10000)), mode=mode, seed=seed, inherit=int(kw.get("inherit", 1)), count=int(kw.get("count", 1)), jbytes=int(kw.get("jbytes", 5000)))
+    sy = Sys(D=D, P=int(kw.get("P", 64)), M=int(kw.get("M", 32)), block=int(kw.get("block", 10000)), mode=mode, seed=seed, inherit=int(kw.get("inherit", 1)), count=int(kw.get("count", 1)), jbytes=int(kw.get("jbytes", 5000)), one=int(kw.get("one", 1)))
     tail = np.full(D, END, np.int64); rows = []
     for i, (name, lines) in enumerate(phases):
         tk = tasks[i]; done = 0
