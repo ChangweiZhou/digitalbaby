@@ -53,3 +53,26 @@ The program is new (a cell stores only the counts it has; cells are born when fi
 ## 5. Not run in this step
 
 No idea is tried. No number is tuned (the setting is given). The systems with word cells (their ends are given by hand). Sums. Seeds: there are none; the system and the streams are deterministic.
+
+## 6. Outcome (entered 20 November, after the runs; `res/*__base.json`, `res/ref__*.json`, `report_1.txt`)
+
+Nats a byte on the last tenth. The base is 7 kinds, 280 trusts; one setting (e = 0.02, step 0.00005, born 0.25). The Kneser-Ney table changes nothing during the tenth and stands beside "nothing changing"; the compressors go on learning and stand beside "going on".
+
+| stream | values | base, nothing changing | best Kneser-Ney table (k) | base, going on | xz -9e | bzip2 -9 | gzip -9 | cells | counts above zero | CPU s |
+|---|---|---|---|---|---|---|---|---|---|---|
+| shakespeare | 65 | 1.5226 | 1.5165 (6) | 1.4136 | 1.7496 | 1.6621 | 2.1463 | 459,129 | 872,748 | 2.4 |
+| book | 81 | 1.4676 | 1.4570 (6) | 1.4476 | 1.7876 | 1.7035 | 2.2479 | 531,809 | 990,711 | 3.0 |
+| py | 96 | 1.4568 | 1.3974 (6) | 1.1503 | 1.1265 | 1.2079 | 1.3972 | 475,303 | 768,177 | 3.5 |
+| c | 105 | 2.1222 | 2.0578 (6) | 1.0301 | 0.7244 | 0.9426 | 1.0363 | 420,192 | 658,473 | 3.4 |
+| table | 77 | 1.7567 | 1.8000 (4) | 0.8141 | 0.3814 | 0.5976 | 0.8122 | 556,055 | 913,601 | 3.3 |
+| xml | 128 | 0.8077 | 0.7893 (6) | 0.4570 | 0.4333 | 0.3845 | 0.6184 | 296,978 | 453,416 | 6.1 |
+
+Half of all cells have been met once (43 to 65% by stream). A repair made during the runs, to the reference only: on the collation table the published discounts of the Kneser-Ney form fall outside (0, r) in two orders and give negative "probabilities"; `refs.py` now keeps each discount inside (0.05, r - 0.05). This also moved one discount on tiny Shakespeare (its four figures are unchanged to the fourth decimal) and none on the other four streams.
+
+**Predictions scored.** A1 held (prose: the base going on is 0.34 below xz on both). A2 held, and more than I gave it: xz is below the base on all four other streams (by 0.02, 0.31, 0.43, 0.02). A3 held (0.006 and 0.011 above the best table). **A4 failed**: with nothing changing the base is below the best Kneser-Ney table on one of the four other streams (the collation table), not three; it is 0.06, 0.06 and 0.02 above on py, c and xml. A5 held (the gain from going on: 0.11 on tiny Shakespeare; 0.31, 1.09, 0.94, 0.35 on the four). A6 held (2.2 times).
+
+**My readings.**
+1. *The prose numbers were hiding a kind of stream the system is poor at.* On prose the base is well below every compressor; on source code, rows of numbers and markup the strongest compressor is below it everywhere, by up to 0.43 nats. What a compressor has and the base has not is the use of a long repeat and fast adaptation to what was just read.
+2. *On streams joined from files or sorted by key, the measure with nothing changing is mostly a measure of how unlike the end is to the rest.* On c and table every frozen method stands near 2 nats where going on gives 1.0 and 0.8 and xz 0.7 and 0.4. For such streams the going-on measure is the informative one; I report both everywhere.
+3. *With nothing changing the base is not ahead of a well-smoothed table of the same contexts* on any stream but one. Its advantage over the table is that it goes on.
+4. The test-bed is not broken by the criterion of section 4: on every stream every method is far below its order-0 cost.

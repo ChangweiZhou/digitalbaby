@@ -4,7 +4,7 @@
 Compressors (xz -9e, bzip2 -9, gzip -9, on the mapped stream, one byte a value): the cost of the last tenth given the stream is the size of the whole
 compressed less the size of the first nine tenths compressed, in nats a byte of the last tenth. A compressor goes on learning through the tenth.
 Tables of the last k bytes (k = 3..6) with interpolated Kneser-Ney smoothing, counted on the first nine tenths only (nano/ref/tables.py, copied to ext/
-unchanged; the number of values is set from outside): these change nothing during the tenth."""
+unchanged; the number of values is set from outside, and a discount outside (0.05, r - 0.05) is moved to that bound): these change nothing during the tenth."""
 import bz2, json, lzma, os, subprocess, sys, time, zlib
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, "ext"))
@@ -20,8 +20,11 @@ def one(name):
     out["compressors"]["xz"]["reach"] = "the whole stream (dictionary of 64 MB at -9)"; out["compressors"]["bzip2"]["reach"] = "blocks of 900,000 bytes sorted apart: the tenth shares a block only with the bytes after the last block boundary before it"
     out["compressors"]["gzip"]["reach"] = "the last 32,768 bytes only"
     import score as SC, tables as TB
-    SC.S = S; TB.SC.S = S; r, _ = TB.all_tables(x[:cut].astype(np.int64), x.astype(np.int64), cut, len(x), kmax=6)
-    out["tables"] = {str(k): dict(kneser_ney_nats=r[k]["kn"]["nats"], witten_bell_nats=r[k]["wb"]["nats"], runs_seen=r[k]["runs_seen"]) for k in (3, 4, 5, 6)}; out["cpu_python"] = round(time.process_time() - t0, 1); return out
+    SC.S = S; TB.SC.S = S; orig = TB.__dict__.setdefault("_discounts0", TB.discounts); clipped = []
+    def disc(counts):                                             # the three discounts kept inside (0.05, r - 0.05): on rows of numbers the counts of counts can put one outside (0, r), which gives negative "probabilities"
+        D, n = orig(counts); D2 = np.concatenate([[0.0], np.clip(D[1:], 0.05, np.array([1, 2, 3]) - 0.05)]); clipped.append(bool(np.any(D2 != D))); return D2, n
+    TB.discounts = disc; r, _ = TB.all_tables(x[:cut].astype(np.int64), x.astype(np.int64), cut, len(x), kmax=6)
+    out["tables"] = {str(k): dict(kneser_ney_nats=r[k]["kn"]["nats"], witten_bell_nats=r[k]["wb"]["nats"], runs_seen=r[k]["runs_seen"]) for k in (3, 4, 5, 6)}; out["discounts_clipped_in_orders"] = int(sum(clipped)); out["cpu_python"] = round(time.process_time() - t0, 1); return out
 
 if __name__ == "__main__":
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True)
