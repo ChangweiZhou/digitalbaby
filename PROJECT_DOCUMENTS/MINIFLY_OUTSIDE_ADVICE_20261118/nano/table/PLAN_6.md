@@ -31,3 +31,11 @@ H is one number. Two values are stated here and both are reported, none chosen: 
 ## 4. Size, cost, what is not run
 
 The table's cells are doubled (a companion for each: 579,255 more cells after A and B) and the answering cell holds 280 more trusts. A life takes under a minute of CPU. Not run here: companions for the cells that step once a word; fading by the number of the cell's own activations in place of time; more than two values of H; the same life for a reference taught by back-propagation and for the relay system (asked of the lines `nano/ref` and `nano/loop`).
+
+## 5. Addition 1 (20 November; written after the four lives were read and before the runs it describes): the return to A with everything going on
+
+The four lives are in (section 6 will give them): with companions the cost on the later books is gone, but the loss on A after B, scored with nothing changing, rises by 0.10 to 0.13 where it rose by 0.009 without them. Reading (mine, to be tested by this addition): at the end of B the companions hold what B said lately and the answering cell has learned to trust them; scored on A with nothing allowed to change, they speak for the wrong text. If that is the reason, a system that is allowed to go on changing when it returns to A should recover within the last tenth of A, and be better there with companions than without. `PLAN_5.md` listed this measure as not run.
+
+*Measured:* after A and B, the last tenth of A read with everything going on (each byte named before it is counted), for T2 and T0 without companions and with companions at both H; beside the same measure after A alone (section 2).
+
+*Prediction (mine):* on the return to A with everything going on, T2 with companions is better than T2 without, at one H at least (chance 0.7); and T2 with companions is within 0.02 of its own figure before B (chance 0.5). *If the first fails*, the companions' cost on A is not a matter of being frozen and the reading above is withdrawn.
