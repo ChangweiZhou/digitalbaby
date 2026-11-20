@@ -43,3 +43,25 @@ If the hypothesis holds on the development seed, the forward arms are run on the
 ## 5. Cost, and what is not run
 
 A run is about six CPU-minutes; development 14 runs, about an hour and a half of CPU; five seeds, three arms, two texts: 30 runs, about three CPU-hours. Not run: two-digit numbers with a gap; gaps beyond 8; never-shown sums as a score (no learner here answers them on single digits); more than one crossing in the forward program.
+
+## 6. Entered on 20 November after the development runs of section 3 (seed 1), before the runs named here
+
+Sums shown, mean of the last three readings over the three gaps; at the end by gap (0, 4, 8 letters); `res/hold_p7_*.json`.
+
+| | `m1`, eta1 1/4 | `m1`, eta1 1 | `g1`, eta1 1/4 | `g1`, eta1 1 |
+|---|---|---|---|---|
+| `cross=0` | 13.2 (14, 19, 15) | 10.7 (12, 15, 5) | 12.5 (12, 14, 12) | 18.2 (15, 16, 16) |
+| `cross=1 ret=exact` | 36.2 (40, 42, 39) | 49.3 (51, 52, 52) | 52.1 (59, 55, 55) | 78.2 (79, 81, 81) |
+| `cross=1 ret=learned` | 12.6 (12, 11, 12) | 12.1 (11, 12, 10) | 26.0 (25, 25, 24) | running |
+| instrument, X = inf, eta1 1/4 | 12.1 (11, 15, 14), with an overflow | | running | |
+
+On this seed: M1 holds (15 at most). M2 holds (52 against 15 at the gap of 8). **M3 fails, and with it the first half of my reading:** without the crossing `g1` is learned no better than `m1`; own-path credit did not teach holding across letters even where the byte held is useful by itself. What the crossing gives is the same at every length of gap. M4 fails as run (the instrument overflowed at this step). M5 fails (12 against 52). M6 fails (12 to 15 at gap 0).
+
+**Added now, each on the development seed, eta1 = 1, 240,000 lines unless said** (none foreseen in sections 3 and 4; no registered prediction):
+
+- the instrument at X = inf with smaller steps (1/16 and 1/64), since at 1/4 it overflowed and is no reference;
+- `cross=1 ret=exact` with eta1 = 4, and with 480,000 lines, since eta1 = 1 was the better of two and still rising;
+- why `ret=learned` fails: `ret=exact` with the same fading of the strengths between cells (1e-5 a byte), to see whether the fading by itself is the cause; `ret=learned` with a tenth of the fading;
+- two further forms of return strength that a cell could have: `ret=grown` (a separate return strength that starts at nothing and receives the changes of the forward strength; no fading) and `ret=sign` (the sign of the forward strength and one fixed size, as in the record's sweep).
+
+The five reported seeds are run for `cross=0`, `cross=1 ret=exact` and the best of the other forms of return strength, on both texts, at eta1 = 1 (or the value entered here if these runs give a better one).

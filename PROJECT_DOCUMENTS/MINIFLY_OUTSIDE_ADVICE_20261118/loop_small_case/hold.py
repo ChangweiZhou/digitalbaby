@@ -4,6 +4,8 @@
 PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received, times its own sensitivity, over a return strength; the cell read
     changes by what its readers send times each trace as it stood one byte earlier. [ret=exact|learned] the return strength is the connection's
     forward strength, or a separate strength that receives the same changes and fades with it ([lamB=1e-5], the fading of both, a byte).
+    ret=grown: a separate return strength that starts at nothing and receives the forward strength's changes; no fading unless lamB is given.
+    ret=sign: the return strength has the sign of the forward strength and one fixed size (the sign-symmetric form of the record's sweep).
 PLAN_7.md: text=g1|m1 [gap=4]: single-digit lines a+<0 to gap letters>b=c; g1: c = a + b; m1: c = (a + b) mod 10. Scored on the sums shown at each length of gap.
 """
 import json, os, sys, time
@@ -32,8 +34,10 @@ class Hold:
         s.cc = np.zeros(H); s.cz = g.uniform(-1, 3, H)                                                    # gates' thresholds spread: cells hold for different times
         s.R = g.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.h = np.zeros(H)
         s.Ecx = np.zeros((H, S)); s.Ezx = np.zeros((H, S)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
-        s.cross, s.learned = cross, bool(cross) and ret == "learned"; s.lamB = (1e-5 if s.learned else 0.0) if lamB is None else lamB
+        s.ret = ret; s.qs = 1 / np.sqrt(3 * K)                                                            # ret=sign: the size of every return strength (the birth strengths' root mean square)
+        s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
         if s.learned: g3 = np.random.default_rng([seed, 20261123]); s.Qc = g3.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Qz = g3.uniform(-1, 1, (H, K)) / np.sqrt(K)
+        if s.learned and ret == "grown": s.Qc = np.zeros((H, K)); s.Qz = np.zeros((H, K))      # a return strength starts at nothing and receives the forward strength's changes
     def step(s, h, x):
         pre = h[s.idx]; z = sg(s.Az[:, x] + (s.Bz * pre).sum(1) + s.cz); c = sg(s.Ac[:, x] + (s.Bc * pre).sum(1) + s.cc)
         return pre, z, c, z * h + (1 - z) * c
@@ -42,7 +46,7 @@ class Hold:
         hp = s.h; pre, z, c, h = s.step(hp, x); s.h = h
         kc = (1 - z) * c * (1 - c); kz = (hp - c) * z * (1 - z); zc = z[:, None]; X = None
         if y is not None and s.eta1 and s.cross:          # the crossing: every reader sends back what it received times its sensitivity to that connection
-            r = s.eta1 * (s.R @ (np.eye(S)[y] - s.W2 @ h - s.b2)); Qc, Qz = (s.Qc, s.Qz) if s.learned else (s.Bc, s.Bz)
+            r = s.eta1 * (s.R @ (np.eye(S)[y] - s.W2 @ h - s.b2)); Qc, Qz = (s.Qc, s.Qz) if s.learned else (np.sign(s.Bc) * s.qs, np.sign(s.Bz) * s.qs) if s.ret == "sign" else (s.Bc, s.Bz)
             rho = np.bincount(s.idx.ravel(), weights=(r[:, None] * (kc[:, None] * Qc + kz[:, None] * Qz)).ravel(), minlength=s.H); pc = rho[:, None]
             X = (pc * s.Ecx, pc * s.Ecr, rho * s.Ecb, pc * s.Ezx, pc * s.Ezr, rho * s.Ezb)                 # with the traces as they stood one byte earlier
         s.Ecx *= zc; s.Ecx[:, x] += kc; s.Ecr = zc * s.Ecr + kc[:, None] * pre; s.Ecb = z * s.Ecb + kc
