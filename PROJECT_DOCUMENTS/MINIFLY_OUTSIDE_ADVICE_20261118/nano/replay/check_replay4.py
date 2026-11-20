@@ -22,4 +22,12 @@ if __name__ == "__main__":
     agree = float(100 * (Wr[:, 6:9] == Ls[:, 6:9]).all(1).mean()); sc = a.score("+", pairs); bad += abs(agree - sc) > 1e-9; print(f"after 30,000 lines, whole answers the relay system writes right against whole answers scored right, 300 pairs: {agree:.1f} and {sc:.1f}")
     c = replay4.Cells(8); L1, L2 = replay.text("+", 12, 34), replay.text("+", 56, 7); c.count(L1); c.count(L1[:8] + [9, replay.END], 0.5); r1 = c.answer(L1[:6]); r2 = c.answer(L2[:6]); bad += not (r1 is not None and r1[6:] == L1[6:] and r2 is None)
     print(f"the store's own answer: to a counted line (with a lighter wrong line beside it) {'right' if r1 and r1[6:] == L1[6:] else 'WRONG'}; to a line not counted: {r2}")
+    o = replay4.run(dict(seed="3", plan="add:20000,sub:5000", every="5000", chunk="500", q="0.3", label="chk", nowrite="1", fast="1")); ok = True
+    for ph in (0, 1):
+        for k, v in o[f"whole_after_phase_{ph}"].items():
+            ok &= v["from_store"] + v["from_relay"] + v["mixed"] == v["n"] and v["disagree_store_right"] + v["disagree_relay_right"] + v["disagree_neither"] == v["disagree"]
+        h = o[f"whole_after_phase_{ph}"]["add"]; g = o[f"store_after_phase_{ph}"]["held_add"]; ok &= abs(h["relay_alone"] - g["relay"]) < 1e-9 and abs(h["store_alone"] - 100 * g["store_right"] / 500) < 1e-9
+        print(f"the whole answer after phase {ph}, 500 held additions: whole {h['whole']:.1f}, relay alone {h['relay_alone']:.1f}, store alone {h['store_alone']:.1f}; from the store {h['from_store']}, from the relay system {h['from_relay']}, mixed {h['mixed']}; relay alone and store alone agree with the earlier measures: {ok}")
+    q0 = replay4.run(dict(seed="3", plan="add:20000", every="20000", chunk="500", q="0", label="chk", nowrite="1", fast="1"))["whole_after_phase_0"]["add"]; ok &= q0["from_store"] == 0 and q0["whole"] == q0["relay_alone"]; bad += not ok
+    print(f"with no dreams the whole answer on never-shown additions is the relay system's: {q0['whole']:.1f} and {q0['relay_alone']:.1f}, from the store {q0['from_store']}")
     print("CHECK", "FAILED" if bad else "PASSED")

@@ -83,6 +83,23 @@ def run(kw):
         """Of these pairs: how many have an answer in the store, and how many of those are right; and how many the relay system has right."""
         Ls = [text(op, a, b) for a, b in pairs]; A = [cells.answer(L[:6]) for L in Ls]; has = sum(a is not None for a in A); right = sum(a is not None and a[6:] == L[6:] for a, L in zip(A, Ls))
         return dict(n=len(pairs), in_store=has, store_right=right, relay=s.score(op, pairs))
+    def whole(pairs, op):
+        """PLAN_5.md: the whole system's own answer. At each of the three answer bytes it answers from the store if the longest cell of what has
+        been read so far (its own earlier bytes included) has counted, and from the relay system if not. Beside it the relay system alone and the
+        store alone on the same pairs, and where those two both answer and differ, which is right."""
+        T = np.array([text(op, a, b) for a, b in pairs]); n = len(T); L = T.copy(); L[:, 6:9] = -1; src = np.zeros((n, 3), int); W1T = s.W1.T
+        for t in (6, 7, 8):
+            hist = np.full((n, D), END); hist[:, :t] = L[:, t - 1::-1]; rl = (sg(W1T[OFF + hist].sum(1) + s.b1) @ s.W2.T + s.b2).argmax(1)
+            for i in range(n):
+                c = cells.cells.get(bytes(([END] + L[i, :t].tolist())[-cells.K:]))
+                if c is not None and sum(c) > 0: L[i, t] = int(np.argmax(c)); src[i, t - 6] = 1
+                else: L[i, t] = rl[i]
+        ok = (L[:, 6:9] == T[:, 6:9]).all(1); st_all = src.all(1); rl_all = ~src.any(1); R = write(s, T[:, :6]); r_ok = (R[:, 6:9] == T[:, 6:9]).all(1)
+        A = [cells.answer(x[:6]) for x in T.tolist()]; s_has = np.array([a is not None for a in A]); s_ok = np.array([a is not None and a[6:9] == x[6:9] for a, x in zip(A, T.tolist())])
+        dis = s_has & np.array([a is not None and a[6:9] != r[6:9] for a, r in zip(A, R.tolist())])
+        return dict(n=n, whole=float(100 * ok.mean()), relay_alone=float(100 * r_ok.mean()), store_alone=float(100 * s_ok.mean()), from_store=int(st_all.sum()), from_relay=int(rl_all.sum()), mixed=int(n - st_all.sum() - rl_all.sum()),
+                    from_store_right=int(ok[st_all].sum()), from_relay_right=int(ok[rl_all].sum()), both_answer=int(s_has.sum()), disagree=int(dis.sum()), disagree_store_right=int((dis & s_ok).sum()), disagree_relay_right=int((dis & r_ok).sum()),
+                    disagree_neither=int((dis & ~s_ok & ~r_ok).sum()))
     for pi, ph in enumerate(kw.get("plan", "add:400000,sub:200000").split(",")):
         name, n = ph.split(":"); n = int(n); op0 = {"add": "+", "sub": "-"}[name]; it = 0
         while it < n:
@@ -114,6 +131,7 @@ def run(kw):
                         if wf: lines.append(E)
                 nreal += len(part); t_rep += time.process_time() - t1; go(lines)
             out["rows"].append(dict(phase=pi, name=name, lines=nxt + 1, add=s.score("+", heldA), sub=s.score("-", mixedS), sub_clean_wide=s.score("-", cleanS), **st))
+        out[f"whole_after_phase_{pi}"] = dict(add=whole(heldA, "+"), add_wide=whole(wideA, "+"), sub_clean_wide=whole(cleanS, "-"), sub_mixed=whole(mixedS, "-"))
         out[f"store_after_phase_{pi}"] = dict(held_add=store(heldA, "+"), never_shown_add_wide=store(wideA, "+"), clean_sub_wide=store(cleanS, "-"))
     ph = lambda i: [x for x in out["rows"] if x["phase"] == i]; nc, nz = cells.size(); e = ph(1)[-1] if ph(1) else {}
     out.update(add_after_first=float(np.mean([x["add"] for x in ph(0)[-3:]])), add_after_second=e.get("add"), sub_after_second=e.get("sub"), sub_clean_wide_after_second=e.get("sub_clean_wide"), cells=nc, counts_above_zero=nz,

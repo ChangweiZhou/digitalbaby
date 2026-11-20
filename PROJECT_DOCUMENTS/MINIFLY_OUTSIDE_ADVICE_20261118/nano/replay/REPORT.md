@@ -74,8 +74,21 @@ Asked by the coordinating session. One change from section 1's replay arm: one e
 4. **The price**: the store grows to hold nearly the whole domain (a line for 99.6% of the never-shown sums beside all shown ones; 84,909 cells against 66,272).
 5. Unexpected: dreams answered by chance do not harm the relay system (9% of its replays are then wrong sums, and its score is unchanged), so its score says little about what is in the store; and dreams that begin late do worse than dreams from the start.
 
-## 5. Limits, commands, cost
+## 5. The whole system's own answer (`PLAN_5.md`, `report5.txt`)
+
+Asked by the coordinating session. No new mechanism: section 4's dreams arm, scored as a whole. For each byte of an answer the system answers from the store if the longest cell of what has been read so far has counted, and from the relay system if not. Never-shown pairs, at the end of the life; medians of the five reported seeds and of fifteen.
+
+| | the whole system (five; fifteen) | the relay system alone | the store alone |
+|---|---|---|---|
+| never-shown addition | **85.0; 82.6** | 77.0; 76.6 | 84.8; 82.6 |
+| never-shown subtraction, clean | **77.2; 77.0** | 80.1; 80.2 | 28.7; 28.8 |
+
+1. **The hypothesis holds** (at least 80 and 75 required; no run of fifteen under 70): the system answers sums it was never shown, keeps them through a second task, and learns the second task, with no old line shown by the program.
+2. **The whole is not the better of its parts on each task.** On addition 99.6% of answers come from the store and the whole gains 4.8 points over the relay system alone (fifteen seeds of fifteen). On subtraction two answers in five come from the store, whose subtraction lines were dreamed while subtraction was still being learned, and the whole loses 2.5 points against the relay system alone (fifteen of fifteen). Where the two differ, the store is right 668 times to 298 on addition and 100 to 275 on subtraction.
+3. **The price**: about 85,000 counting cells holding a line for nearly every one of the 10,000 sums, one sixth of the dreamed ones wrong, beside a relay system of 256 cells. And the store answers a never-shown sum because the relay system once wrote that line into it: the generalising is done once, when the line is dreamed, and looked up afterwards.
+
+## 6. Limits, commands, cost
 
 One testbed; one length; a store that is complete; replay mixed into the stream at a fixed ratio; ratios chosen on one seed. Not run: counting cells that fade or are limited in number; K between 6 and 8; replay in blocks; ratios below 1/2 on the reported seeds (seed 1: 67.6 at 1/4, 46.0 at 1/8); the ten further seeds for section 2.
 
-`python3 check_replay.py`, `python3 check_replay2.py`; `xargs -P 4 -L 1 sh -c 'python3 replay.py "$0" "$@"' < dev1.txt` and likewise `rep1.txt`, `num1.txt`, `add1.txt`; `rep2.txt` with `replay2.py`; `python3 report1.py > report1.txt`, `python3 report2.py > report2.txt`. A run at one replayed line for each real line takes about 60 seconds of one core (27 for the plain system), of which 13 are counting and replay in Python. 81 compiled runs and one numpy run at reduced length for section 1 (and 70 reruns with the clean subtraction score: `rerun.txt`, `python3 report_clean.py > report_clean.txt`), 30 compiled runs for section 2, 44 for section 4 (`dev4.txt`, `rep4.txt` with `replay4.py`; `python3 check_replay4.py`; `python3 report4.py > report4.txt`), 44 for section 3 (`rep3.txt`, `add3.txt` with `replay3.py`; `python3 check_replay3.py`; `python3 report3.py > report3.txt`): about an hour and a half of CPU. Compiled `.so` files are not committed.
+`python3 check_replay.py`, `python3 check_replay2.py`; `xargs -P 4 -L 1 sh -c 'python3 replay.py "$0" "$@"' < dev1.txt` and likewise `rep1.txt`, `num1.txt`, `add1.txt`; `rep2.txt` with `replay2.py`; `python3 report1.py > report1.txt`, `python3 report2.py > report2.txt`. A run at one replayed line for each real line takes about 60 seconds of one core (27 for the plain system), of which 13 are counting and replay in Python. 81 compiled runs and one numpy run at reduced length for section 1 (and 70 reruns with the clean subtraction score: `rerun.txt`, `python3 report_clean.py > report_clean.txt`), 30 compiled runs for section 2, 16 for section 5 (`rep5.txt`, `add5.txt` with `replay4.py`; `python3 report5.py > report5.txt`), 44 for section 4 (`dev4.txt`, `rep4.txt` with `replay4.py`; `python3 check_replay4.py`; `python3 report4.py > report4.txt`), 44 for section 3 (`rep3.txt`, `add3.txt` with `replay3.py`; `python3 check_replay3.py`; `python3 report3.py > report3.txt`): about an hour and a half of CPU. Compiled `.so` files are not committed.
