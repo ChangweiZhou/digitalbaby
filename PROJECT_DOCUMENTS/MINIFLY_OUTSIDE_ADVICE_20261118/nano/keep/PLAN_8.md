@@ -67,3 +67,5 @@ As expected the late cells open to addition lines (all 128 may speak on both kin
 **Predictions.** H1 (0.75) held: subtraction 93.6 against 93.8, addition 79.0. H2 (0.65) held: 94.2 and 83.4. H3 (0.60) failed by a hair: 76.8, 4.8 points below 81.6 where I had said 5 or more. H4 (0.55) held at the median (76.8 against 71.2), on three seeds of five. H5 (0.85) held: no cell joins; 0.4. H6 (0.70) held: 0.4 against 1.4; 13.4 against 16.6.
 
 **Not run**, as planned: a rule that closes by pairs of lines; a third task; other pool sizes.
+
+*A correction, added after the outcome.* In test 1 above I gave the plain system's subtraction after its own phase as "86.0" with a muddled remark. That figure is from another plan (200,000 lines of subtraction after addition). In this test's runs the plain system's subtraction after its own 400,000 lines is 94.4, 93.4, 95.2, 94.4, 87.4; median 94.4 (the candidate: 93.8).
