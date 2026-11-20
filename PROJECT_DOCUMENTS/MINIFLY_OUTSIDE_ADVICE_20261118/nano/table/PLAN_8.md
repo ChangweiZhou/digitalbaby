@@ -36,3 +36,24 @@ At most 64 x 65 cells for a byte value (fewer occur); arm B adds 65 kinds and 2,
 The four arms are in (section 6 will give them): the cells that time the line end gain 0.007; the same cells for all 65 byte values make the system 0.045 **worse**. Every trust is born at 0.25 (`PLAN_3.md`), so 65 kinds that mostly have nothing to say begin with thirteen times the weight of one, and the trust's small step does not take it away within one reading. In the relay system the return strengths that were born at nothing and grew did as well as or better than those born at a size (`loop_small_case`, `nano/loop`). The one change here: **the trust in each added kind of cell is born at nothing**, and grows only if the mismatch says so. Arms A, B and C again with that change, each at the trust's step of the plan (0.00005) and at ten times it (0.0005), both reported, none chosen.
 
 *Predictions (mine):* with trust born at nothing arm B is not worse than arm 0 by more than 0.003, at both steps (chance 0.7); arm B gains at least 0.005 at one step (chance 0.35); among the 65 kinds of arm B the kind that times the line end ends with the largest trust (chance 0.6).
+
+## 6. Outcome (entered 20 November after all runs; `res/place_*.json`)
+
+Loss on the last tenth, nats a byte, nothing changing; arm 0 (T2) is 1.4973. Settings were fixed beforehand; each arm was scored once.
+
+| Arm | trust born at 0.25, step 0.00005 (the plan) | born at nothing, step 0.00005 | born at nothing, step 0.0005 |
+|---|---|---|---|
+| A, cells that time the line end | 1.4903 | 1.4927 | 1.4910 |
+| A2, with a second kind | 1.4924 | not run | not run |
+| B, cells that time every one of the 65 byte values | 1.5422 | **1.4873** | 1.5068 |
+| C, a clock blind to the text | 1.4966 | 1.4959 | 1.4964 |
+
+At a line end after a letter the loss falls from 4.01 nats (T2) to 3.77 in arm A and 3.52 in arm B born at nothing. Trust at the end of arm B born at nothing (mean over the levels used): the line end 0.058, the space 0.017, every other byte value 0.005 or less. A run took 6 to 32 CPU-seconds.
+
+**The hypothesis is refuted as written**: with every trust born at 0.25 arm B is 0.045 nats worse than arm 0. With the trust of the added kinds born at nothing (addition 1) arm B is 0.00995 better, a hair under the 0.01 asked. S1 failed (0.0070). S2 failed. S3 failed as written, and holds with trust born at nothing (B is then 0.003 to 0.005 better than A). S4 held. S5 failed (A2 is worse than A). S6 failed (the best is 1.4873). Addition 1: its first prediction failed (at ten times the step arm B is 0.0095 worse than arm 0); its second and third held.
+
+Readings (mine).
+1. **Knowing the place in the line is worth 0.007 to 0.010 nats here**, less than half of what my look sized (0.022). A cell that knows the place raises the line end's share only a little, because the answering cell multiplies its senders' opinions and the other cells still say that a line end after a letter is nearly impossible.
+2. **A new kind of sender should be born with no trust.** This is the result of the plan that reaches beyond this text. Given 65 kinds at once, each born with the trust of an old kind, the system got much worse; given the same 65 kinds born with no trust, it got better than with the one kind I had picked by hand, and its answering cell ended with by far its largest trust in the one kind that matters. Mr. Xu, 20 November: "But we need to make sure not testing everything at once and leave a mess." For the experimenter that stands. For the system it now has a counterpart: kinds of cells can be offered together if each has to earn its trust.
+3. **Here the trust's step matters** (in `PLAN_4.md` it did not): at ten times the step the 65 kinds do harm again, each of the useless ones having earned a little trust by chance.
+4. The clock that is blind to the text gains nothing under any setting.
