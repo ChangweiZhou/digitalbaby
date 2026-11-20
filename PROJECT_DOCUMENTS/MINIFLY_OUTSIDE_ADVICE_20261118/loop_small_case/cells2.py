@@ -130,6 +130,7 @@ def run(kw):
     for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
         name, n = ph.split(":"); op0 = {"add": "+", "sub": "-", "mix": None}[name]; s.flush()
         if freeze and pi > 0: s.eta1 = 0.0
+        if "freezeat" in kw and pi >= int(kw["freezeat"]): s.eta1 = 0.0          # from that phase on the cells in between do not change (PLAN_13.md)
         if nres and pi > 0: s.free = (~(np.arange(s.H) < s.H - nres)).astype(float); s.live = np.ones(s.H, bool); s.late = True
         if "lam2" in kw and pi > 0: s.lam = float(kw["lam2"])
         block = s.fast and op0 is not None and not (reh and pi > 0) and not s.two; it = 0      # one task, no rehearsal: the lines up to the next reading are drawn at once (the same stream)
