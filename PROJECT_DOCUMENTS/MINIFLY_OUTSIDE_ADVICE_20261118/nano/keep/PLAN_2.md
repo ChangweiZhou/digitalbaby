@@ -27,3 +27,48 @@ Numbers that learn: 64,910 (53,760 strengths from lines, 384 thresholds, 5,376 a
 **Cost.** A run is 5.4 million bytes with up to 384 cells: 80 to 120 CPU seconds expected. Development 19 runs, reported 20 runs: about an hour of CPU, a quarter of that on the clock.
 
 **Not run.** Other laws; a rate that differs between a cell's own steps and the answering cell's; more or fewer cells; a second change of task; silent cells with age; the relay over two steps.
+
+## Outcome (entered 20 November, after all runs; `table2_dev.txt`, `table2.txt`, `res/c2_d2_*`, `res/c2_r2_*`)
+
+`kage.py` with all 256 cells present and no law gives the plain system's readings on seed 1 (71, 74, 72, 77, 75, 79, 82, 83; 81.5 over the last three), compiled.
+
+**Development, seed 1, one old line in 32** (addition after its own phase | addition / subtraction at the end):
+
+| | 128 cells at birth | 1 cell at birth |
+|---|---|---|
+| joining, no law | 88.6 \| 14.0 / 84.4 | 78.4 \| 12.8 / 87.6 |
+| exp, tau 30,000 | 0.0 \| 0.0 / 0.0 | 0.0 \| 0.0 / 0.0 |
+| exp, tau 100,000 | 36.0 \| 11.4 / 4.2 | 0.0 \| 0.0 / 0.0 |
+| exp, tau 300,000 | 72.6 \| **35.4 / 50.0** | 66.6 \| 18.6 / 38.8 |
+| exp, tau 1,000,000 | 81.2 \| 21.4 / 59.4 | 80.4 \| 22.4 / 75.2 |
+| hyp, tau 30,000 | 68.2 \| 25.2 / 47.0 | 49.0 \| 6.6 / 24.4 |
+| hyp, tau 100,000 | 77.4 \| 18.6 / 61.8 | 77.4 \| 11.6 / 62.0 |
+| hyp, tau 300,000 | 81.4 \| 5.8 / 62.2 | 81.4 \| 6.4 / 70.0 |
+| hyp, tau 1,000,000 | 82.8 \| 4.8 / 63.6 | 82.4 \| 6.6 / 83.6 |
+
+Chosen by the plan's rule: 128 cells at birth, exp, tau 300,000 (smaller score 35.4). On seed 1 with no old line it gives 7.6 / 43.2; joining with no law gives 1.4 / 88.0.
+
+**Five reported seeds** (73129, 93683, 116089, 406364, 545353; median). Reference arms from `PLAN_1.md`.
+
+| Arm | Addition after its own phase | Addition at the end | Subtraction at the end |
+|---|---|---|---|
+| plain, no old line | 84.8 | 2.0, 1.6, 1.8, 1.4, 2.0; **1.8** | 86.0 |
+| plain, one old line in 32 | 84.8 | 20.8, 12.2, 15.6, 17.2, 9.8; **15.6** | 85.8 |
+| the program's choice, no old line | 85.4 | 5.0, 3.0, 3.2, 4.8, 4.4; **4.4** | 74.0 |
+| the program's choice, one in 32 | 85.4 | 75.2, 62.8, 67.0, 64.4, 67.8; **67.0** | 75.4 |
+| joining, no law, no old line | 78.4, 81.4, 85.2, 82.2, 86.6; 82.2 | 2.0, 1.8, 1.6, 1.6, 2.0; **1.8** | 85.2, 86.2, 91.4, 88.0, 87.4; 87.4 |
+| joining, no law, one in 32 | the same | 13.0, 19.2, 12.6, 16.0, 14.2; **14.2** | 86.4, 84.4, 87.2, 86.0, 88.8; 86.4 |
+| age (exp, 300,000), no old line | 73.4, 71.4, 68.0, 75.0, 73.8; 73.4 | 7.6, 4.0, 6.2, 5.2, 8.6; **6.2** | 57.4, 50.6, 53.2, 50.6, 54.6; 53.2 |
+| age (exp, 300,000), one in 32 | the same | 37.8, 27.8, 19.2, 33.6, 40.2; **33.6** | 58.2, 51.6, 61.8, 51.0, 56.0; 56.0 |
+
+1. **Age keeps twice what the plain system keeps and half of what the program's choice keeps**, with one old line in 32: 33.6% of never-shown addition against 15.6 and 67.0. The level to reach is not reached.
+2. **It pays for this three times**: addition is learned less well in its own phase (73.4 against 84.8), subtraction is learned less well (56.0 against 85.8; the program's choice 75.4), and the table of development shows the trade to be general: every law that kept more than 20% of addition held subtraction below 62%, and every law that let subtraction pass 62% kept less than 23% (the laws with tau 30,000 to 100,000 under exp stop learning altogether).
+3. **Joining alone does nothing for keeping** (14.2 against the plain system's 15.6) and costs nothing in learning (82.2 and 86.4).
+4. **With no old line nothing is kept** under any arm: 6.2 under age.
+5. By the plan's own criterion the hypothesis is **not refuted** (addition 33.6, at or above 30; subtraction 56.0, at or above 50), on two of five seeds addition is below 30. I would not rest anything on that margin.
+
+My reading: one clock for each cell protects the old cells only by making every cell stiff soon after it joins; the cells that are young at any moment are then too few to learn a task quickly (one joins every 21,000 bytes), and those that were young at the end of addition are overwritten. The program's choice differs in two things that age does not supply: all 128 new cells are there at the change, and the old ones are exactly still from that moment and not before.
+
+**Predictions.** A1 (0.60) held: 73.4, 11 points below. A2 (0.85) held: 6.2. A3 (0.45) failed: 33.6. A4 (0.20) failed. A5 (0.50) held: 14.2.
+
+**Not run**, as planned: other laws; a rate that differs between a cell's own steps and the answering cell's; other numbers of cells; a second change of task.
