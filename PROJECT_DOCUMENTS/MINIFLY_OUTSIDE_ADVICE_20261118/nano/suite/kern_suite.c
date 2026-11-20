@@ -9,13 +9,13 @@
 #define JMAX 8
 #define LMAX 2048
 typedef struct {
-    int S, K, gate, J, M, rule; double eta, e, birth;
+    int S, K, gate, J, M, rule, age; double eta, e, birth;
     int ktype[KMAX], knd[KMAX], kdel[KMAX][8];
     double *T, *Tu, *Ta;            /* K x NL: the first cell's trusts, times used, sum of squared drivers */
     double *G, *Gu, *Ga; int64_t gsize; int GL;   /* the second cell's parts: J x K x GL x S (GL = 1 without the level, NL with it) */
     /* cells */
     uint64_t *hkey; uint16_t *hkind; int32_t *hcell; int64_t hcap, ncell;
-    uint32_t *cN; uint16_t *cU, *ccap; int64_t *cptr; int64_t ccells;
+    uint32_t *cN; uint16_t *cU, *ccap; int64_t *cptr; uint8_t *cL; uint32_t *cT; int64_t ccells;
     uint8_t *pv; uint32_t *pc; int64_t ptop, pcap;
     /* recall */
     int32_t *head, *prev; int64_t nmax; int hbits;
@@ -25,6 +25,10 @@ typedef struct {
 } Sy;
 static inline int level(uint32_t n, int u) { int bn = 0; int64_t m = n; while (m > 1 && bn < 9) { m >>= 1; bn++; } return bn * 4 + (u <= 1 ? 0 : u <= 2 ? 1 : u <= 4 ? 2 : 3); }
 static inline int reclevel(int L, int M) { int d = L - M; if (d < 16) return d; int b = 16; int64_t m = (d - 16) / 8; while (m > 0 && b < NL - 1) { m >>= 1; b++; } return b; }
+/* PLAN_7.md: levels by the age of what a sender of recency says. last: (different bytes the cell has met: 1, 2, 3-4, more) x (bytes since the cell last counted: 1-3, 4-15, ..., four-fold, ten steps);
+   recall: (bytes of agreement beyond M: 0, 1, 2-3, ..., 64 and more; eight steps) x (bytes back to the place: under 64, 1,024, 16,384, 262,144, more) */
+static inline int agelevel_last(int u, int64_t d) { int b = 0; while (d >= 4 && b < 9) { d >>= 2; b++; } return (u <= 1 ? 0 : u <= 2 ? 1 : u <= 4 ? 2 : 3) * 10 + b; }
+static inline int agelevel_recall(int L, int M, int64_t d) { int n = L - M, b = 0, c = 0; while (n >= 1 && b < 7) { n >>= 1; b++; } d >>= 6; while (d > 0 && c < 4) { d >>= 4; c++; } return b * 5 + c; }
 static inline uint64_t mix(uint64_t z) { z += 0x9E3779B97F4A7C15ULL; z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL; z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL; return z ^ (z >> 31); }
 static inline int64_t slot_of(const Sy *s, uint64_t key, int kind) {
     int64_t i = mix(key ^ ((uint64_t)kind * 0xD6E8FEB86659FD93ULL)) & (s->hcap - 1);
@@ -38,11 +42,11 @@ static void grow(Sy *s) {
     free(ok); free(oki); free(oce);
 }
 static int32_t new_cell(Sy *s) {
-    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); }
+    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); s->cL = realloc(s->cL, s->ccells); s->cT = realloc(s->cT, s->ccells * 4); }
     int32_t c = (int32_t)s->ncell++; s->cN[c] = 0; s->cU[c] = 0; s->ccap[c] = 0; s->cptr[c] = 0; return c;
 }
-static void count(Sy *s, int32_t c, int y) {
-    uint8_t *pv = s->pv + s->cptr[c]; uint32_t *pc = s->pc + s->cptr[c]; int u = s->cU[c];
+static void count(Sy *s, int32_t c, int y, int64_t t) {
+    uint8_t *pv = s->pv + s->cptr[c]; uint32_t *pc = s->pc + s->cptr[c]; int u = s->cU[c]; s->cL[c] = (uint8_t)y; s->cT[c] = (uint32_t)t;
     for (int i = 0; i < u; i++) if (pv[i] == y) { pc[i]++; s->cN[c]++; return; }
     if (u == s->ccap[c]) {
         int nc = u ? u * 2 : 1; if (nc > SMAX) nc = SMAX;
@@ -51,22 +55,22 @@ static void count(Sy *s, int32_t c, int y) {
     }
     s->pv[s->cptr[c] + u] = y; s->pc[s->cptr[c] + u] = 1; s->cU[c] = u + 1; s->cN[c]++;
 }
-Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax) {
-    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax;
+Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age) {
+    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age;
     for (int k = 0; k < K; k++) { s->ktype[k] = ktype[k]; s->knd[k] = knd[k]; for (int i = 0; i < 8; i++) s->kdel[k][i] = kdel[k * 8 + i]; }
     s->T = malloc(sizeof(double) * K * NL); s->Tu = calloc(K * NL, sizeof(double)); s->Ta = calloc(K * NL, sizeof(double));
     for (int k = 0; k < K; k++) for (int l = 0; l < NL; l++) s->T[k * NL + l] = kborn[k];
     s->GL = gate == 2 ? NL : 1; s->gsize = gate ? (int64_t)J * K * s->GL * S : 0;
     if (gate) { s->G = calloc(s->gsize, sizeof(double)); s->Gu = calloc(s->gsize, sizeof(double)); s->Ga = calloc(s->gsize, sizeof(double)); }
     s->hcap = 1 << 16; s->hkey = malloc(s->hcap * 8); s->hkind = malloc(s->hcap * 2); s->hcell = malloc(s->hcap * 4); memset(s->hcell, 0xff, s->hcap * 4);
-    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8);
+    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8); s->cL = malloc(s->ccells); s->cT = malloc(s->ccells * 4);
     s->pcap = 1 << 16; s->pv = malloc(s->pcap); s->pc = malloc(s->pcap * 4);
     s->hbits = 22; s->head = malloc(sizeof(int32_t) << s->hbits); memset(s->head, 0xff, sizeof(int32_t) << s->hbits); s->prev = malloc(sizeof(int32_t) * (nmax + 1));
     for (int v = 0; v < SMAX; v++) s->last[v] = -1; s->synced = 0;
     for (int c = 0; c < 4096; c++) s->lt[c] = log(c + e) - log(e);
     return s;
 }
-void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
+void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->cL); free(s->cT); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
 int64_t sy_cells(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] > 0; return n; }
 int64_t sy_counts(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cU[c]; return n; }
 int64_t sy_cells_of(const Sy *s, int kind) { int64_t n = 0; for (int64_t i = 0; i < s->hcap; i++) if (s->hcell[i] >= 0 && s->hkind[i] == kind && s->cN[s->hcell[i]] > 0) n++; return n; }
@@ -91,7 +95,11 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
                     while (q >= 0 && nrq < 8) { int ok = 1; for (int i = 1; i <= M; i++) if (x[q - i] != x[t - i]) { ok = 0; break; } if (ok) rq[nrq++] = q; q = s->prev[q]; } } }
                 const int r = s->knd[k]; if (r >= nrq) continue;
                 const int64_t q = rq[r]; int L = M; while (L < LMAX && q - L - 1 >= 0 && x[q - L - 1] == x[t - L - 1]) L++;
-                lev[k] = reclevel(L, M); rb[k] = (uint8_t)x[q]; nv[k] = 1; vv[k] = &rb[k]; dv[k][0] = done; a[rb[k]] += s->T[k * NL + lev[k]] * done; continue;
+                lev[k] = s->age ? agelevel_recall(L, M, t - q) : reclevel(L, M); rb[k] = (uint8_t)x[q]; nv[k] = 1; vv[k] = &rb[k]; dv[k][0] = done; a[rb[k]] += s->T[k * NL + lev[k]] * done; continue;
+            }
+            if (s->ktype[k] == 3) {                                   /* last: the byte the cell of kind knd[k] counted last, said as a cell that has counted once; trust by that cell's level */
+                const int32_t c = s->hcell[sl[s->knd[k]]]; if (c < 0 || s->cN[c] < 1) continue;
+                lev[k] = s->age ? agelevel_last(s->cU[c], t - (int64_t)s->cT[c]) : level(s->cN[c], s->cU[c]); rb[k] = s->cL[c]; nv[k] = 1; vv[k] = &rb[k]; dv[k][0] = done; a[rb[k]] += s->T[k * NL + lev[k]] * done; continue;
             }
             uint64_t key = 0;
             if (s->ktype[k] == 0) { for (int i = 0; i < s->knd[k]; i++) { const int64_t q = t - s->kdel[k][i]; key |= (uint64_t)(q >= 0 ? x[q] : 0) << (7 * i); } }
@@ -124,19 +132,19 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
             for (int k = 0; k < K; k++) if (lev[k] >= 0) {
                 double g = 0, g2 = 0;
                 for (int i = 0; i < nv[k]; i++) { const int v = vv[k][i]; const double d = dv[k][i]; g += ((v == y) - p[v]) * d; if (s->gate) g2 += ((v == y) - p2[v]) * d; }
-                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (g != 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i]) * g; s->Tu[i] += 1.0;
-                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (g2 != 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2]) * g2; s->Gu[i2] += 1.0; }
+                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (s->Ta[i] > 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i]) * g; s->Tu[i] += 1.0;
+                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (s->Ga[i2] > 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2]) * g2; s->Gu[i2] += 1.0; }
             }
-            for (int k = 0; k < K; k++) if (s->ktype[k] != 2) {
+            for (int k = 0; k < K; k++) if (s->ktype[k] < 2) {
                 int32_t c = s->hcell[sl[k]];
                 if (c < 0) {
                     if (s->birth > 0 && p[y] >= s->birth) continue;
-                    if ((s->ncell + 1) * 10 > s->hcap * 6) { grow(s); for (int j = 0; j < K; j++) if (s->ktype[j] != 2) sl[j] = slot_of(s, keys[j], j); }
+                    if ((s->ncell + 1) * 10 > s->hcap * 6) { grow(s); for (int j = 0; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j); }
                     c = new_cell(s); s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c;
-                    for (int j = k + 1; j < K; j++) if (s->ktype[j] != 2) sl[j] = slot_of(s, keys[j], j);      /* a slot found empty may now be taken */
+                    for (int j = k + 1; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);      /* a slot found empty may now be taken */
                 }
                 else if (s->birth > 0 && s->cN[c] == 0 && p[y] >= s->birth) continue;
-                count(s, c, y);
+                count(s, c, y, t);
             }
             if (M > 0 && t >= M && t <= s->nmax) { const uint32_t h = rhash(x, t, M, s->hbits); s->prev[t] = s->head[h]; s->head[h] = (int32_t)t; }      /* the place t: the run that ended before it, and the byte x[t] just read */
         }

@@ -31,3 +31,19 @@ Cost: one value more for each cell (0.3 to 0.56 million); 7 kinds, 280 trusts, 7
 ## 4. Runs, what is not run
 
 The two prose streams first (nothing can be chosen: there is no number), then the four others once. Not run: the last two or three bytes of a cell; counts that fade (the companions of `nano/table/two.py`: a rate of forgetting is a number, and it was chosen on English); the senders on the pool's kinds.
+
+## 5. Outcome (entered 20 November, after the runs; `res/*__last.json`, `report_5.txt`)
+
+Second cell; the system of `PLAN_4.md` at eta = 0.03 without and with the seven senders; the difference in brackets. Cells unchanged (one value more for each); numbers stored 1.00 to 1.01 times; about 5 to 7 CPU-seconds a stream.
+
+| | measure | shakespeare | book | py | c | table | xml | kinds lowered | largest harm | by the rule |
+|---|---|---|---|---|---|---|---|---|---|---|
+| last | going on | 1.3427 (-0.0278) | 1.3953 (-0.0053) | 0.9657 (-0.0553) | 0.7172 (-0.0781) | 0.3483 (-0.1769) | 0.2953 (-0.0594) | 5 of 5 | -0.0053 | KEPT |
+| last | nothing changing | 1.5502 (+0.0621) | 1.4625 (+0.0381) | 1.4681 (+0.0398) | 2.3036 (+0.0196) | 2.0622 (+0.0409) | 0.8696 (+0.0788) | 0 of 5 | +0.0788 | not kept |
+
+
+**The hypothesis held on the going-on measure, and by more than I expected:** all five kinds are lowered (0.028 and 0.005 on prose; 0.055, 0.078, 0.177, 0.059 on py, c, table, xml) and the gain on c and table is the largest. With this one addition the system is below xz on c (0.717 against 0.724) and on table (0.348 against 0.381) for the first time. **With nothing changing it harms every stream** (0.020 to 0.079). So it is general by the rule going on and the opposite of kept with nothing changing: it is a sender of the present.
+
+**Predictions scored.** E1 held. E2 held (0.078 and 0.177). **E3 failed**: the gain on tiny Shakespeare is 0.028, not under 0.005 (the book: 0.0053, also just over). E4 held (all six harmed). **E5 failed**: for the run of two bytes the mean trust at the levels where the cell has met more than four different bytes is above that at the levels with one byte met on c and xml only (shakespeare 0.10 against 0.14; book 0.07 against 0.23; py 0.15 against 0.21; c 0.21 against 0.19; table 0.17 against 0.19; xml 0.22 against 0.20). I had written that where a cell has met one byte the sender only repeats the cell and would get no trust; it gets the most. My reading now: a cell that has met one byte a few times says it with a message that the smoothing keeps mild, and the sender adds weight to it; the answering cell uses the sender to sharpen what is nearly certain as much as to say what is current.
+
+**My readings.** (1) Together with the recalling sender this is the second idea of the day that is general going on and costs no cells; both say what was just read. (2) The harm with nothing changing is the same in kind as in `PLAN_3.md` and larger; `PLAN_7.md` tests my explanation of it. (3) The gain on tiny Shakespeare is a caution for the programme's older figures: part of what separates "nothing changing" from "going on" on that text (0.11 nats for the base) is of this kind, and no figure with nothing changing can show it.
