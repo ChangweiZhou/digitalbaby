@@ -4,13 +4,24 @@
 PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received, times its own sensitivity, over a return strength; the cell read
     changes by what its readers send times each trace as it stood one byte earlier. [ret=exact|learned] the return strength is the connection's
     forward strength, or a separate strength that receives the same changes and fades with it ([lamB=1e-5], the fading of both, a byte).
+PLAN_7.md: text=g1|m1 [gap=4]: single-digit lines a+<0 to gap letters>b=c; g1: c = a + b; m1: c = (a + b) mod 10. Scored on the sums shown at each length of gap.
 """
 import json, os, sys, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 SYMS = list(b"0123456789+=\n-"); S = len(SYMS); SI = {c: i for i, c in enumerate(SYMS)}; END = SI[10]; EQ = SI[ord("=")]
 
-def text(tx, a, b): return [SI[c] for c in (f"{a}+{b}={a + b}\n" if tx == "d1" else f"{a:02d}+{b:02d}={a + b:03d}\n").encode()]
+LET = b"wxyz"
+def setup(tx):
+    """The texts with a gap have four more byte values, the letters."""
+    global SYMS, S, SI
+    if tx in ("g1", "m1") and len(SYMS) == 14: SYMS = SYMS + list(LET); S = len(SYMS); SI = {c: i for i, c in enumerate(SYMS)}
+def fill(a, b, n): return bytes(LET[(7 * a + 3 * b + 5 * i * i + i) % 4] for i in range(n)).decode()          # the letters used when scoring: fixed by the pair
+def text(tx, a, b, f=""):
+    if tx == "d1": t = f"{a}+{b}={a + b}\n"
+    elif tx == "d2": t = f"{a:02d}+{b:02d}={a + b:03d}\n"
+    else: t = f"{a}+{f}{b}={(a + b) % 10 if tx == 'm1' else a + b}\n"
+    return [SI[c] for c in t.encode()]
 def sg(u): return 1 / (1 + np.exp(-u))
 
 class Hold:
@@ -48,10 +59,10 @@ class Hold:
         return ok
     def line(s, L):
         right = sum(s.read(L[t], L[t + 1]) for t in range(len(L) - 1)); s.read(L[-1]); return right
-    def score(s, tx, pairs):
+    def score(s, tx, pairs, gap=0):
         n = 0; pl = np.zeros(3)
         for a, b in pairs:
-            L = text(tx, a, b); eq = L.index(EQ); h = s.h; ok = True                                      # from the state left by the last line read
+            L = text(tx, a, b, fill(a, b, gap)); eq = L.index(EQ); h = s.h; ok = True                                      # from the state left by the last line read
             for t in range(len(L) - 1):
                 h = s.step(h, L[t])[3]
                 if t >= eq and L[t + 1] != END:
@@ -61,7 +72,8 @@ class Hold:
 
 def run(kw, cls=None):
     t0 = time.process_time(); tx = kw.get("text", "d1"); seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 60000)); every = int(kw.get("every", 10000))
-    if tx == "d1":
+    setup(tx); G = int(kw.get("gap", 4)) if tx in ("g1", "m1") else 0; gaps = sorted({0, G // 2, G})
+    if tx in ("d1", "g1", "m1"):
         rng = np.random.default_rng(seed); P = [(a, b) for a in range(10) for b in range(10)]; rng.shuffle(P); held, shown = P[:20], P[20:]; shown_s = shown
     else:
         rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held, shown = P[:500], P[2000:]; shown_s = shown[:500]
@@ -69,14 +81,17 @@ def run(kw, cls=None):
                       lamB=float(kw["lamB"]) if "lamB" in kw else None)
     s.X = kw.get("X"); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
     for it in range(lines):
-        a, b = shown[rng.integers(len(shown))]; L = text(tx, a, b)
+        a, b = shown[rng.integers(len(shown))]
+        L = text(tx, a, b, bytes(LET[i] for i in rng.integers(4, size=rng.integers(G + 1))).decode()) if G else text(tx, a, b)
         right += s.line(L); n += len(L) - 1
         if (it + 1) % every == 0:
             sh, _ = s.score(tx, shown_s); nv, pl = s.score(tx, held)
             out["rows"].append(dict(lines=it + 1, shown=sh, never=nv, place=pl, bytes_right=100 * right / n, gate_mean=float(sg(s.cz).mean()))); right = n = 0
+            if G: out["rows"][-1]["shown_by_gap"] = {g: s.score(tx, shown_s, g)[0] for g in gaps}; out["rows"][-1]["shown"] = float(np.mean(list(out["rows"][-1]["shown_by_gap"].values())))
     out["cpu"] = round(time.process_time() - t0); out["last3_shown"] = float(np.mean([r["shown"] for r in out["rows"][-3:]])); out["last3_never"] = float(np.mean([r["never"] for r in out["rows"][-3:]]))
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"hold_{kw['label']}.json"), "w")); return out
 
 if __name__ == "__main__":
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw)
-    print(o["label"], f"last3 shown {o['last3_shown']:.1f} never {o['last3_never']:.1f} |", " ".join(f"{r['lines']//1000}k {r['shown']:.0f}/{r['never']:.0f}" for r in o["rows"]), "| place", o["rows"][-1]["place"], "| bytes", round(o["rows"][-1]["bytes_right"]), o["cpu"], "s")
+    print(o["label"], f"last3 shown {o['last3_shown']:.1f} never {o['last3_never']:.1f} |", " ".join(f"{r['lines']//1000}k {r['shown']:.0f}/{r['never']:.0f}" for r in o["rows"]), "| place", o["rows"][-1]["place"], "| bytes", round(o["rows"][-1]["bytes_right"]),
+          "| by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["shown_by_gap"].items()) if "shown_by_gap" in o["rows"][-1] else "", o["cpu"], "s")
