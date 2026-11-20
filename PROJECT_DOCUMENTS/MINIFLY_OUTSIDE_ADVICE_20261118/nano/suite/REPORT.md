@@ -92,7 +92,7 @@ What this comparison can say: xz is the strongest general compressor on this mac
 | half the store, a cell leaves by chance | +0.0619 | +0.0733 | +0.0228 | -0.0142 | +0.0097 | +0.0033 |
 | a cell is born only at a second meeting (46 to 66% fewer cells) | +0.0113 | +0.0097 | +0.0142 | +0.0162 | +0.0081 | +0.0035 |
 
-Half the store costs under 0.007 nats on every stream; with an eighth of it ZA is still below xz on all six. Who leaves matters four to nine-fold on prose; on C headers leaving by chance is better than the rule and better than no bound. Leaving costs a third to a half of never being born.
+Half the store costs under 0.007 nats on every stream; with an eighth of it ZA is still below xz on all six. Who leaves matters four to nine-fold on prose; on C headers leaving by chance is better than the rule and better than no bound. At about the same number of cells, leaving costs a fifth to three quarters of never being born.
 
 ## 6. My readings
 
