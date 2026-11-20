@@ -86,3 +86,40 @@ Readings (mine).
 3. **What remains wrong is the tens digit at a tie.** Two cells of three digits each decide the carry except where their chances balance; the remaining 8 to 9 points are there, as with units first.
 4. **The cost is the size**: 3.3 million cells and 35 million counts for a text of 16,000 different lines. Nearly all of them are keyed on bytes that carry nothing. This system shows that the route exists; it is not small.
 5. The guess is a single byte, the largest branch. A wrong guess is used as confidently as a right one; a guess passed on as a spread over bytes was not tried.
+
+## 6. Addition 1 (20 November, written before its runs; part (c) reduced, two arms added, at the coordinating session's request and within what the session's budget allows)
+
+Part (c) as planned (five seeds, 400,000 lines of addition, no cap) had been started; one such run costs about 20 CPU-minutes and the budget does not hold five seeds of two arms. It is cut to **two seeds** (73129 and 93683, the first two of the list; the other three were stopped before any reading of theirs was looked at), and beside it:
+- (d) the same with the cap of `PLAN_5.md`, addition 2 (`ncap=16`), on the same two seeds. *Prediction (mine):* without the cap the score at 400,000 lines is more than 5 points under its reading at 40,000 (chance 0.75); with the cap it is within 5 (0.60).
+- (e) look-ahead over plain cells of at most three delays (`m=3`, 129 plain kinds, 130 keyed on each guess; the numbers of m = 4, nothing chosen), five reported seeds, `plan=add:40000,sub:20000`. *Prediction (mine):* at least 85% whole (0.45); cells under 1.2 million (0.7).
+
+Two seeds are not what this line's rules ask for a claim; (c) and (d) are reported as two-seed readings and nothing more. The long life with subtraction after it (400,000 then 200,000) is NOT RUN in this session, with or without the cap, and neither is `PLAN_9.md`.
+
+## 7. Outcome of addition 1 (entered 20 November; `res/s_lalong_seed*.json`, `res/s_lacap_seed*.json` (two seeds each), `res/s_la3_seed*.json`; `report_e10c.txt`)
+
+**(c) and (d), two seeds only (73129, 93683), look-ahead over 400,000 lines of addition.** Never-shown additions, whole, %, at each reading:
+
+| | 5,000 | 10,000 | 20,000 | 40,000 | 100,000 | 200,000 | 300,000 | 400,000 | last three |
+|---|---|---|---|---|---|---|---|---|---|
+| no cap, seed 73129 | 74.6 | 82.8 | 89.2 | 88.0 | 79.4 | 71.2 | 64.4 | 63.4 | 64.5 |
+| no cap, seed 93683 | 73.0 | 84.8 | 89.6 | 91.2 | 80.6 | 71.6 | 63.6 | 62.2 | 62.7 |
+| cap of 16 counts, seed 73129 | 73.8 | 81.2 | 88.2 | 86.8 | 82.2 | 80.4 | 80.8 | 82.2 | 81.4 |
+| cap of 16 counts, seed 93683 | 72.8 | 83.2 | 88.4 | 88.0 | 84.4 | 83.2 | 79.8 | 81.4 | 81.1 |
+
+At the end the tens guess where the hundreds digit is named is right on 68.2 and 63.8% without the cap and on 86.0 and 85.0% with it; the units guess on 100% in all four runs. Cost: about 20 CPU-minutes a run; 3.0 million cells, 37 million counts above zero.
+
+X7 failed, as I expected (chance given 0.25): without the cap the look-ahead system falls with reading as m = 4 does, from about 90 to about 63. The prediction of this addition for the uncapped arm held (more than 5 under); for the capped arm it held on one seed and failed on the other (4.6 and 6.6 points under the 40,000 reading). **Two seeds; a reading, not a claim:** with the cap the look-ahead system stands at about 81% at 400,000 lines where it stands at about 63% without. The cap does not hold the whole of the 40,000-line level here as it did for m = 4 (77.0 to 75.2); the capped runs dip and recover between 250,000 and 400,000 lines. The long life with subtraction after it was NOT RUN.
+
+**(e) Plain cells of at most three delays with look-ahead, five seeds, `add:40000,sub:20000`.**
+
+| | before: each seed (last three); median | last reading before | after subtraction (last): each seed; median | clean subtraction at the end |
+|---|---|---|---|---|
+| m = 3 with look-ahead | 69.8, 72.8, 70.0, 75.5, 69.1; **70.0** | 67.6 | 69.8, 75.6, 80.4, 73.2, 73.8; **73.8** | 82.7 |
+| m = 3 alone (`PLAN_1.md`, `PLAN_2.md`) | 56.8 | 57.0 | 52.4 | 62.5 |
+| m = 4 with look-ahead | 91.4 | 91.2 | 86.8 | 89.4 |
+
+Size: 2.02 million cells, 15.7 million counts above zero, 130 CPU-seconds for 60,000 lines. Both predictions failed (at least 85%: 70.0; under 1.2 million cells: 2.02 million). After subtraction the addition score is higher than before it on every seed (tens digit 82.6 against 67.6), with no addition line read in between.
+
+Readings (mine).
+1. With three delays the look-ahead is worth 13 points and not 34: the cells that use a guess need the two tens digits, a sign that fixes the place and the guess, which is four ends; at m = 3 the guess-keyed cells have three delays and the guess, but the plain cells that speak beside them are the place-mixed ones of `PLAN_1.md`. The saving in cells is a third, not two thirds, because the cells keyed on a guess are as many as before.
+2. Addition rising during subtraction, with nothing of addition read, is unexplained. A candidate, untested: the trusts of the guess-keyed kinds are born at nothing and are still growing at 40,000 lines; subtraction lines go on teaching the answering cell to trust cells keyed on a guessed units digit, and that trust serves addition as well.

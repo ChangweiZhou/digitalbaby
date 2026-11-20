@@ -12,7 +12,7 @@ All figures: two-digit additions that were never shown (500 of the 2,000 held-ou
 2. **They keep addition through subtraction with nothing rehearsed.** After subtraction, addition stands at 100% of its level with four delays (short and long life) and at 92% (short life) and 55% (long life) with three. The relay system: 1.8.
 3. **No cell short of the whole pair holds the carry, and that bounds this family on the usual text.** With the answer written units first, two cells together nearly decide it: 91.0 within 40,000 lines with four delays and a shrinking step for the trust (89.7 to 93.4 over the seeds), above the relay's figure.
 4. **With four delays the score falls with further reading** (80 at 40,000 lines, 59 to 68 at 400,000). It is not the trust's step, its birth value, or the cells of the whole pair. It is the growing weight of a cell's counts: with a cell speaking at the weight of at most 16 counts the level holds (77.0 at 40,000 lines, 75.2 at 400,000, five seeds; section 6).
-5. **With look-ahead guesses that cells can be keyed on, the usual order of writing reaches 91.4 within 40,000 lines** (88.0 to 92.7; units first 93.7), and 86.8 is left after subtraction with nothing shown again (94.7% of its level; section 8). This is the line's best system and the idea is the coordinating session's.
+5. **With look-ahead guesses that cells can be keyed on, the usual order of writing reaches 91.4 within 40,000 lines** (88.0 to 92.7; units first 93.7), and 86.8 is left after subtraction with nothing shown again (94.7% of its level; section 8). Over 400,000 lines it falls like m = 4 unless the cap is used (two seeds: 63 without, 81 with). This is the line's best system and the idea is the coordinating session's.
 6. **Three other routes to the tens digit**, each one change from the three-delay system (56.8): a trust that also depends on the place in the line 77.8 (the place counter is laid down); a second layer of cells that count which of a first cell's followers arrived 69.3 (67.9 to 92.3; seventy times the cells); the relay system read as one more sender (section 7).
 7. **Joined to the relay system by a trust that reads its confidence, the whole generalises less than the relay system and keeps less than the counting cells** (section 7), because during the second task nothing can tell the answering cell that the relay system has lost the first.
 8. **Size.** 115,000 cells and 775,000 counts above zero with three delays, 1.2 million cells and 5 million counts with four, 3.3 million cells and 35 million counts with look-ahead, against the relay system's 256 cells and about 40,000 strengths. Which cells could withdraw was not tried.
@@ -22,6 +22,10 @@ All figures: two-digit additions that were never shown (500 of the 2,000 held-ou
 One line for each byte value and a chain of nine delays, as in `cells2.py`. A kind of cell is a set of at most m of the delays 1 to 9; all such sets are there (no choice among them). A cell of a kind is made when its combination of byte values first occurs at those delays; it counts the bytes that follow it. Before each byte, every cell whose combination is present and that has counted says log((c(v) + e) / (n + 14 e)) for each byte value v. The answering cell's 14 branches compete on the sum of trust times what each cell says; the trust is one number for each kind and each of 40 levels of experience of the cell (the rule and the levels are those of `nano/table/trust.py`). When the byte arrives each trust that was used moves by its step times the mismatch, and the cells count. One stream, one byte at a time, nothing reset, no pass backward. Programs: `sparse.py` (the numpy reference `Ref` and the compiled kernel; `check_output.txt`), `sparse2.py` (second layer; `check2_output.txt`), `sparse3.py` (with the relay system; `check3_output.txt`). Copied files are named at the head of each program.
 
 Numbers chosen on development seed 1 over 32 settings each: m = 3: step 0.008, e 0.1, trusts born at 0.02 (all 32 settings lie between 50 and 57); m = 4: step 0.1, e 2, born at 0.02, which is at the edge of the grid even after one extension (a limit on the m = 4 figures).
+
+*What a cell reads, and what else it is given.* A plain cell reads the byte values on the delay lines of its own kind (one to four of the nine) and the byte that arrives next; it holds 14 counts, their total and how many are above zero. The answering cell reads what the active cells say and holds the trusts; the mismatch (the byte that arrived, less its own probabilities) reaches each trust that was used, and nothing else passes back. Laid down by the program: the nine delay lines; the list of kinds (every set of delays up to m, without choice); the levels of experience; in the fourth and seventh plans the count of bytes since the line end; in the fifth plan's addition 2 the cap of 16; in the tenth plan the order three ahead, two ahead, next, and that a cell also counts the two bytes after the next. Nothing about digits, operators, places or carrying, except where a plan says so.
+
+*Cost beside the figures.* m = 3: 115,000 cells, 775,000 counts above zero, 5 CPU-seconds for 40,000 lines. m = 4: 1.21 million cells, 5.06 million counts, 20 CPU-seconds. Second layer: a further 8.5 million cells, 246 CPU-seconds. Look-ahead (m = 4): 3.27 million cells, 34.6 million counts, about 130 CPU-seconds for 40,000 lines. Relay system: 256 cells in between, about 40,000 strengths, 400,000 lines in 16 to 34 seconds (its report).
 
 ## 3. First plan: never-shown sums (`PLAN_1.md`)
 
@@ -33,7 +37,8 @@ Numbers chosen on development seed 1 over 32 settings each: m = 3: step 0.008, e
 | m = 4 | 5,000 | | | 74.6 | 96.4, 74.6, 100 |
 | | 40,000 | 81.4, 84.4, 80.7, 79.9, 80.9 | **80.9** | 80.0 | 98.2, 80.0, 100 |
 | | 400,000 | 68.4, 68.3, 62.5, 71.9, 65.9 | 68.3 | 66.8 | 98.8, 66.8, 100 |
-| relay system (`loop_small_case`) | 400,000 | | 84.2 | | 98, 92, 100 (its report, section 4, the earlier 88.0 run) |
+| relay system, this line's runs of it (section 7) | 40,000 | | | 66.2 | 97.0, 74.0, 96.2 |
+| | 400,000 | 84.2, 82.7, 86.4, 81.8, 86.7 | 84.2 | 84.8 | 95.0, 89.8, 100 |
 
 The hypothesis (m = 3 at least 40% whole and 95% units within 40,000 lines) held. Of eight predictions six held; "m = 3 at least 70" failed, and "m = 4 below m = 3" failed (m = 4 is 24 points above).
 
@@ -99,13 +104,14 @@ Never-shown additions, last reading of each phase, median of five seeds:
 | relay system alone | 84.8 | 1.8 | 83.7 |
 | the whole, trust by the relay system's confidence (`PLAN_6.md`) | **77.6** | **12.4** | 68.3 |
 | the whole, that trust also by place, no second task (`PLAN_7.md`) | 74.0 | | |
-J2_ROWS
+| relay system kept by replay, alone (`PLAN_8.md`, in the same runs) | 87.0 | 82.6 | 76.9 |
+| the whole with the relay system kept by replay (`PLAN_8.md`) | **83.2** | **45.8** | 62.5 |
 
 *Before the second task* the relay system lifts the whole's tens digit from 58 to 78; the relay system alone has 90. A trust by place does not close this (73.1 by the mean of the last three readings, against 76.6 without it and 84.2 for the relay system alone): refuted on every seed, though the answering cell does find the place (its trust for the relay system is large where the tens digit is named and nothing where the units digit is named).
 
 *After the second task* the whole is worse than the counting cells alone, in every digit, the units digit included (54 against 98). Reading (mine): the relay system is right on the subtraction lines being read, so it stays trusted; on an addition line it is then confident and wrong. No trust learned from the lines being read can see this, because during subtraction no addition line is read. Joined in this way the pair generalises less than the relay system and keeps less than the counting cells.
 
-J2_TEXT
+*With the relay system kept by replay* (`nano/replay`'s run cells and replayed lines, copied; the replayed lines reach the relay system only): the relay system alone keeps 82.6 of 87.0, as that line reported. The whole has 83.2 before and 45.8 after: below the relay system with replay at every point of the life. The hypothesis put for this track (at least 84 before, at least 80% of it kept) is refuted in its second half (55% kept). Reading (mine): with the relay system kept, what pulls the whole down is the three-delay counting cells themselves, whose hundreds and tens cells hold both tasks in one count. On this evidence the two kinds joined by a learned trust do not add up; the counting cells' use to the relay system is as the store its replayed lines are drawn from. The counting cells worth joining would be those of section 8, and that was not run.
 
 ## 8. Tenth plan: look-ahead guesses that cells can be keyed on (`PLAN_10.md`; the coordinating session's idea)
 
@@ -117,11 +123,13 @@ One change from m = 4 with the shrinking step. Every plain cell holds three sets
 | with look-ahead, usual order of writing | 40,000 | 88.0, 91.3, 91.9, 92.7, 91.4 | **91.4** | 91.2 |
 | with look-ahead, units first | 40,000 | 91.7, 92.7, 93.9, 94.6, 93.7 | **93.7** | 94.8 |
 | with look-ahead, usual order, after 20,000 lines of subtraction (last reading; before: 91.2) | | 82.6, 89.0, 86.8, 89.0, 86.2 | **86.8** | 88.2 |
-LA_LONG_ROW
+| with look-ahead, usual order, 400,000 lines, **two seeds only** (73129, 93683) | 400,000 | 64.5, 62.7 | 63.6 | |
+| the same with a cell speaking at the weight of at most 16 counts, **two seeds only** | 400,000 | 81.4, 81.1 | 81.3 | |
+| look-ahead over plain cells of at most three delays (m = 3 alone: 56.8) | 40,000 | 69.8, 72.8, 70.0, 75.5, 69.1 | **70.0** | 67.6 |
 
 The hypothesis (at least 85% whole and 88% tens within 40,000 lines; at least 90% of its level kept) held in all parts. Where the hundreds digit is named, the guess three ahead (the units digit) is right on every never-shown pair and the guess two ahead (the tens digit) on 85.8%; the guess-keyed kinds with the most trust are the two tens digits with one more digit, together with the guessed units digit. Subtraction never written, at the end of the keeping life: 89.4. Cost: 3.3 million cells, 35 million counts above zero, 200 CPU-seconds for 60,000 lines.
 
-Reading (mine). The carry is supplied by the counting cells themselves in the usual order of writing: the system states the units digit to itself before it writes the hundreds digit, and the two orders of writing come level. This is 7 points above the relay system's figure within a tenth of its lines, and it is kept through a second task. What remains wrong is the tens digit where two cells' chances balance, and the size is large. LA_LONG_TEXT
+Reading (mine). The carry is supplied by the counting cells themselves in the usual order of writing: the system states the units digit to itself before it writes the hundreds digit, and the two orders of writing come level. Beside it, from this line's own runs of the relay system (section 7, the same five seeds): the relay system alone has 66.2% at 40,000 lines and 84.8% at 400,000. So at 40,000 lines the look-ahead system is 25 points above the relay system, and its 40,000-line figure is 7 above the relay system's at 400,000; the two figures of that last comparison are at different numbers of lines. It is kept through a second task, where the relay system keeps 1.8. What remains wrong is the tens digit where two cells' chances balance, and the size is large. Over long reading it falls as m = 4 does (two seeds: about 90 at 40,000 lines, 63 at 400,000) unless a cell's counts are capped (two seeds: 81 at 400,000); two seeds are a reading and not a claim, and the long life with subtraction after it was not run. With plain cells of at most three delays the look-ahead is worth 13 points and not 34, at 2.0 million cells.
 
 ## 9. What is shown, what is not
 
@@ -133,7 +141,9 @@ Not shown, not run, or open:
 - m = 3 with the answer units first is below guessing; not explained.
 - The second layer's unevenness has a stated cause that was not tested.
 - The long keeping lives were not run again with the clean subtraction score.
-- Look-ahead with the cap, with m = 3 plain cells, or with a guess passed on as a spread over bytes: not run.
+- Look-ahead over the long life with subtraction after it, with or without the cap: NOT RUN. Look-ahead over 400,000 lines of addition: two seeds only. A guess passed on as a spread over bytes: not run. The look-ahead cells beside the relay system: not run.
+- `PLAN_9.md` (units first over long reading): NOT RUN.
+- With look-ahead over three delays, addition rises during subtraction with no addition line read; not explained.
 - Cells that withdraw, a smaller D, prose, more than two tasks: not run.
 - The place counter of the fourth plan is laid down by the program.
 
