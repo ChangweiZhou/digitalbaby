@@ -104,3 +104,30 @@ Reading (mine). On this text the rule finds the letters within the first 100,000
 ## C, as run (20 November 2026, written before its runs)
 
 `g2`, 1,200,000 lines, the five reported seeds, five arms at equal size and length: (1) the rule, second form, alpha 2, p0 0.2, fading 1/3,000 (chosen on `m1`, not tuned on `g2`); (2) the rule, first form, alpha 0.05 (18 numbers at the entries; added because it did as well in B); (3) `clock=none`; (4) the closing by chance, tendencies never changing, p0 0.2; (5) `clock=values:4`, four byte values closed by chance from the start. Arms (1) and (2) will be within ten points of each other if B is a guide, so both are also run on the seeds 1001 to 1010 and all fifteen reported.
+
+## Outcome of C (entered 20 November 2026; `res/p2C_*.json`; the table is printed by `python3 table.py p2C <arms> <seeds>`)
+
+`g2`, 1,200,000 lines, 256 cells, never-shown pairs, whole answer right, %, mean of the last three readings. Seeds in the order 73129, 93683, 116089, 406364, 545353.
+
+| Arm | Gap of 0 letters: each seed; median | Gap of 4 | Gap of 8 | Closed at the end |
+|---|---|---|---|---|
+| the rule, second form (chosen on `m1`) | 96.7, 95.1, 96.9, 94.1, 97.4; **96.7** | the same | the same; **96.7** | w x y z on every seed |
+| the rule, first form (alpha 0.05) | 95.7, 96.2, 97.1, 93.7, 95.9; **95.9** | the same | the same; **95.9** | w x y z on every seed |
+| `clock=none` | 45.9, 54.7, 46.9, 54.5, 52.2; **52.2** | 1.3, 1.5, 1.5, 1.1, 0.8; **1.3** | 0.7, 1.0, 0.9, 0.5, 0.5; **0.7** | nothing |
+| closing by chance, tendencies never changing | 4.9, 6.5, 5.9, 5.2, 4.7; **5.2** | 0.6, 0.9, 1.1, 0.6, 0.8; **0.8** | 0.7, 0.9, 0.8, 0.7, 0.5; **0.7** | nothing settled |
+| four byte values closed by chance | 1.1, 3.3, 24.9, 0.3, 22.3; **3.3** | 0.7, 2.2, 15.7, 0.4, 14.2; **2.2** | 0.4, 1.0, 1.3, 0.2, 6.9; **1.0** | by the draw: 1 3 8 end; 0 2 7 z; 4 9 w x; 1 4 5 end; 8 + end w |
+
+With the letters closed the three gaps are the same lines to the chain, so the rule's three figures are equal by construction. The two forms of the rule are within ten points of each other, so both were also run on the seeds 1001 to 1010. All fifteen seeds: second form 93.4 to 97.4, median 95.4 (the ten added: 95.2, 95.6, 94.4, 95.3, 94.9, 95.4, 97.1, 96.4, 93.4, 96.8); first form 93.7 to 97.1, median 95.9 (the ten added: 95.0, 96.1, 95.7, 95.8, 95.3, 96.0, 96.2, 97.1, 95.2, 97.0). The two forms cannot be told apart on this text. The rule is more than 40 points above every control at every gap on every seed, so no further seeds were added for those comparisons.
+
+When the letters are found: exactly w x y z closed at every reading from 100,000 or 200,000 lines on in 28 of the 30 runs; from 400,000 in one (first form, 73129); and in one (second form, seed 1008) `=` is closed as well at the last reading, with 96.4% all the same. No digit is closed at the end of any of the thirty runs.
+
+**H2 holds**: 96.7% at every gap at the median of the five reported seeds (least seed 94.1), where under 50% would refute; beside 52.2 / 1.3 / 0.7 with no clock. **Q4 held, Q5 held** (0.5 to 0.9 at the gap of 8), **Q6 held** (0.2 to 6.9), **Q7 held**.
+
+**Reading (mine).**
+1. A rule that names no byte, is told nothing about letters and reads no strength finds which byte values to keep out of the chain, on every one of fifteen seeds, within the first 100,000 to 200,000 lines, and the system then answers never-shown two-digit sums across 0 to 8 letters as it answers them with no letters (92.9% on `d2`, development seed). The holding cells of `loop_small_case` stood at 8 to 10% on this text after twice the lines.
+2. What it costs in locality: one number sent out by the answering cell to all entries alike, and a common period of 256 bytes. Each entry's rule is otherwise its own state and its own two means.
+3. The controls say the gain is the choice of bytes and not the passing over: the same closing by chance without learning leaves 5.2 / 0.8 / 0.7, below no clock at all, and four values closed by chance leave 3.3 / 2.2 / 1.0.
+4. `=` closed on one seed is what I expected of a byte whose place in the chain does not matter to the answer (it is still on its delay-0 line when present): its evidence is near nothing and it can wander. It is a weakness to watch on texts where such a byte matters only sometimes.
+5. What this does not show: that the rule serves where one closing alone earns nothing (`m1`: three letters of four at 200,000 lines), with many byte values (`PLAN_5.md`), or where the bytes to pass over are not a set of byte values at all (a clock for each byte value cannot pass over a digit in one place and keep it in another). Development level: one program, one text, fifteen seeds, nobody else's repetition.
+
+**Cost.** 45 runs, 76 to 114 CPU-seconds each, about 75 CPU-minutes.
