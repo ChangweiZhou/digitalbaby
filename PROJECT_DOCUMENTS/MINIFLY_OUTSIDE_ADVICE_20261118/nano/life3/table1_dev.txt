@@ -1,0 +1,26 @@
+== P: plain; plan add:400000,sub:200000,max:200000; 1 seeds [1]; cpu median 40 s
+  end of phase 1 (add): add  83.2 [83.2] last3  81.5 | sub   1.5 [1.5] last3   1.5 | max   2.0 [2.0] last3   2.0
+  end of phase 2 (sub): add   1.4 [1.4] last3   1.9 | sub  86.2 [86.2] last3  83.0 | max   1.2 [1.2] last3   1.3
+  end of phase 3 (max): add   4.4 [4.4] last3   4.5 | sub   1.5 [1.5] last3   1.5 | max  70.4 [70.4] last3  63.9
+== O: upper reference: the program's old lines; plan add:400000,sub:200000,max:200000; 1 seeds [1]; cpu median 72 s
+  end of phase 1 (add): add  88.2 [88.2] last3  88.1 | sub   1.5 [1.5] last3   1.5 | max   1.8 [1.8] last3   1.7
+  end of phase 2 (sub): add  86.0 [86.0] last3  84.1 | sub  79.0 [79.0] last3  75.9 | max   1.4 [1.4] last3   1.4
+  end of phase 3 (max): add  77.8 [77.8] last3  78.9 | sub  78.3 [78.3] last3  78.9 | max  61.0 [61.0] last3  58.1
+== K: route 1: cells that join; plan add:400000,sub:200000,max:200000; 1 seeds [1]; cpu median 86 s
+  end of phase 1 (add): add  84.6 [84.6] last3  85.7 | sub   0.0 [0.0] last3   0.0 | max   0.0 [0.0] last3   0.0
+  end of phase 2 (sub): add  85.0 [85.0] last3  85.0 | sub  91.1 [91.1] last3  89.8 | max   0.0 [0.0] last3   0.0
+  end of phase 3 (max): add  85.0 [85.0] last3  85.0 | sub  91.6 [91.6] last3  91.6 | max  88.2 [88.2] last3  85.7
+    seed 1: cells joined in each phase [128, 128, 128] (the last of them so many learned bytes into its phase: [13342, 13464, 13464]); waiting at the end 0; cells that may speak mostly on each task's never-shown lines at the end: add 128, sub 128, max 128
+== R: route 2: replay; plan add:400000,sub:200000,max:200000; 1 seeds [1]; cpu median 83 s
+  end of phase 1 (add): add  90.2 [90.2] last3  89.9 | sub   1.5 [1.5] last3   1.5 | max   1.8 [1.8] last3   1.8
+  end of phase 2 (sub): add  79.0 [79.0] last3  81.0 | sub  84.0 [84.0] last3  79.6 | max   1.6 [1.6] last3   1.7
+  end of phase 3 (max): add  77.6 [77.6] last3  74.3 | sub  65.4 [65.4] last3  65.5 | max  61.8 [61.8] last3  57.1
+    seed 1: replayed lines by task (add/sub/max), % in each phase: 100/0/0 (lines that were shown: 100.0%); 81/19/0 (lines that were shown: 100.0%); 58/29/14 (lines that were shown: 100.0%); counting cells 104045, counts above zero 124882
+== S: route 3: cells that count, four delays; plan add:400000,sub:200000,max:200000; 1 seeds [1]; cpu median 312 s
+  end of phase 1 (add): add  56.4 [56.4] last3  58.6 | sub   1.5 [1.5] last3   1.5 | max   1.8 [1.8] last3   1.8
+  end of phase 2 (sub): add  71.2 [71.2] last3  72.1 | sub  69.1 [69.1] last3  70.9 | max   2.0 [2.0] last3   2.0
+  end of phase 3 (max): add  69.6 [69.6] last3  69.4 | sub  62.2 [62.2] last3  62.7 | max  97.8 [97.8] last3  97.8
+    own bytes, end of phase 1: add  56.4 | sub   1.5 | max   1.8
+    own bytes, end of phase 2: add  71.2 | sub  69.1 | max   2.0
+    own bytes, end of phase 3: add  69.6 | sub  62.2 | max  97.8
+    cells that have counted at the end: [1523058] trusts used: [8442]
