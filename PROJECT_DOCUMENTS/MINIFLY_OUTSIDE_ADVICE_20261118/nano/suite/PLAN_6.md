@@ -35,3 +35,24 @@ Z: about 8 CPU-seconds a stream. ZP: 2 to 5 CPU-minutes and 1 to 2 GB. Not run: 
 ## 5. Addition before the runs of ZP (entered 20 November, when the last runs of `PLAN_2.md` (ii) were in and before any run of ZP)
 
 Both the pool and the since-cells are kept by the rule on the going-on measure (`PLAN_2.md`, outcome: each lowers all five kinds and harms none), so **ZP is Z with both** (`kinds=runs+last+since+pool`; the last-byte senders stay on the seven runs only). Since this plan was written, `PLAN_7.md` found the trusts by age kept on both measures; by the rule of section 1 they go in. I therefore run both forms and report both: ZP as laid down here, and **ZPA, ZP with `age=1`** (and ZA = Z with age is already in `res/*__Zage.json`). Prediction F7: going on, ZPA is below ZP on at least four streams (chance 0.55). One run each, three at a time.
+
+## 6. Outcome (entered 20 November, after the runs; `res/*__Z.json`, `*__ZP.json`, `*__ZPA.json`, `*__Zage.json`; `report_final.txt` has every system on every stream, both measures, sizes and cost)
+
+Going on, second cell, nats a byte on the last tenth:
+
+| system | shakespeare | book | py | c | table | xml | cells (millions) | CPU s |
+|---|---|---|---|---|---|---|---|---|
+| base (first cell) | 1.4136 | 1.4476 | 1.1503 | 1.0301 | 0.8141 | 0.4570 | 0.30 to 0.56 | 2 to 6 |
+| Z | 1.3389 | 1.3910 | 0.9496 | 0.7068 | 0.3415 | 0.2844 | the same | 4 to 7 |
+| ZA (Z with trusts by age, `PLAN_7.md`) | 1.3344 | 1.3894 | 0.9358 | 0.6908 | 0.3431 | 0.2846 | the same | 5 to 7 |
+| ZP (Z with since and pool cells) | 1.3497 | 1.3972 | 0.9677 | 0.5970 | 0.2494 | 0.2790 | 1.8 to 4.0 | 111 to 181 |
+| ZPA (ZP with trusts by age) | 1.3459 | 1.3959 | 0.9582 | 0.5921 | 0.2479 | 0.2777 | the same | 112 to 191 |
+| xz -9e | 1.7496 | 1.7876 | 1.1265 | 0.7244 | 0.3814 | 0.4333 | | |
+
+With nothing changing (second cell): Z 1.5470, 1.4580, 1.4661, 2.2396, 2.0140, 0.8431; ZP 1.5526, 1.4728, 1.5594, 2.5663, 2.6307, 0.9723; the base 1.5226, 1.4676, 1.4568, 2.1222, 1.7567, 0.8077. The first cell of ZPA with nothing changing: 1.4868, 1.4322, 1.3852, 2.1363, 1.7228, 0.7410, below the base on five streams and 0.014 above on c.
+
+**Predictions scored.** F1 held: Z is below xz on all six streams (by 0.41, 0.40, 0.18, 0.02, 0.04, 0.15). F2 held. F3 held (0.32 and 0.47 on c and table; 0.075 and 0.057 on prose). **F4 failed, and was badly put**: the ideas were measured each on top of the one before, so their gains add up to Z's by construction except for the two further recalling senders, which give less inside Z than in their own step on three streams and slightly more on three. F5 held (Z is above the base with nothing changing on five streams). **F6 failed**: the since and pool cells lower Z by 0.110 and 0.092 on c and table and by 0.005 on xml, and **raise it on the two prose streams and py (+0.011, +0.006, +0.018)**, though each of them lowered the base on every stream. F7 held: age lowers ZP on all six (0.001 to 0.010).
+
+**There is no one best system.** With no more cells than the base, ZA is the best on prose and py and is below xz everywhere. With five to nine times the cells, ZPA is far better on c and table (0.59 and 0.25 against xz's 0.72 and 0.38) and slightly worse than ZA on prose and py.
+
+**My reading of F6, not tested.** The since and pool cells were kept as additions to the first cell at the constant step. In ZP they stand under the rule of `PLAN_4.md`, whose number was chosen on a system of eleven senders; with 170 to 230 senders each moving its trust by the same rule, the second cell hardly improves on the first (py: 0.9677 against 0.9754) where in Z it gains 0.05. The same shape appeared on sums with 256 kinds and the prose smoothing. If that is the cause, the rule's one number is not free of the number of senders, and the claim of `PLAN_4.md` must carry that limit. Not run: the rule with its number divided by the root of the senders that speak; ZP at the constant step.

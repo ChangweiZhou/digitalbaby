@@ -49,3 +49,44 @@ Not used: the cells that step once a word; anything that names a byte value, a p
 ## 6. Cost, what is not run
 
 (i), (v): about 10 CPU-seconds a stream. (ii): 1 to 4 CPU-minutes a stream and up to 1 GB (89 to 217 kinds). (iii): 3 to 10 CPU-minutes a stream, 1 to 2 GB (the copied program holds every count of every cell); (iv): 10 to 20. At most two large jobs at a time. Not run: combinations other than since with pool (the best general system is put together in a later step from what is kept); other numbers for any idea; the second cell with the level (it is not the form asked; it is in the kernel and its check).
+
+## 7. Outcome (entered 20 November, after the runs; `res/*__gate1.json`, `*__since.json`, `*__pool.json`, `*__since_pool.json`, `*__birth.json`, `*__merge_*.json`; `report_2.txt`)
+
+Nats a byte on the last tenth; the difference from the base of the same program in brackets (first answering cell against first answering cell, except (i), which is the second cell against the first in the same run). `nano/merge`'s program without classes gives this line's base to the fourth decimal on all six streams, with the same cells. The third row of each idea: cells as a multiple of the base's; numbers stored as a multiple; CPU seconds of the run.
+
+| idea | measure | shakespeare | book | py | c | table | xml | kinds lowered | largest harm | by the rule |
+|---|---|---|---|---|---|---|---|---|---|---|
+| (i) second cell, parts by kind and byte | going on | 1.3876 (-0.0260) | 1.4184 (-0.0292) | 1.1228 (-0.0275) | 0.9470 (-0.0831) | 0.6944 (-0.1196) | 0.4398 (-0.0172) | 5 of 5 | -0.0172 | KEPT |
+| (i) second cell, parts by kind and byte | nothing changing | 1.4978 (-0.0248) | 1.4388 (-0.0289) | 1.4349 (-0.0220) | 2.1137 (-0.0085) | 1.8376 (+0.0809) | 0.7915 (-0.0161) | 4 of 5 | +0.0809 | not kept |
+| (i) second cell, parts by kind and byte | cells x; numbers stored x; CPU s | 1.00; 1.00; 4 | 1.00; 1.00; 4 | 1.00; 1.00; 5 | 1.00; 1.00; 6 | 1.00; 1.00; 5 | 1.00; 1.00; 5 | | | |
+| (ii-a) since | going on | 1.4022 (-0.0114) | 1.4316 (-0.0160) | 1.1346 (-0.0157) | 0.8947 (-0.1353) | 0.5981 (-0.2160) | 0.4033 (-0.0537) | 5 of 5 | -0.0114 | KEPT |
+| (ii-a) since | nothing changing | 1.5110 (-0.0116) | 1.4518 (-0.0159) | 1.4451 (-0.0117) | 2.1619 (+0.0397) | 1.9521 (+0.1954) | 0.7783 (-0.0293) | 3 of 5 | +0.1954 | not kept |
+| (ii-a) since | cells x; numbers stored x; CPU s | 1.46; 3.40; 32 | 1.44; 2.94; 44 | 1.84; 5.38; 78 | 2.02; 7.20; 80 | 1.25; 2.67; 53 | 3.05; 8.39; 86 | | | |
+| (ii-b) pool | going on | 1.4015 (-0.0120) | 1.4345 (-0.0131) | 1.1036 (-0.0467) | 0.8402 (-0.1898) | 0.5512 (-0.2629) | 0.4075 (-0.0495) | 5 of 5 | -0.0120 | KEPT |
+| (ii-b) pool | nothing changing | 1.5112 (-0.0114) | 1.4557 (-0.0119) | 1.4139 (-0.0429) | 2.1724 (+0.0502) | 1.8016 (+0.0448) | 0.7550 (-0.0527) | 3 of 5 | +0.0502 | not kept |
+| (ii-b) pool | cells x; numbers stored x; CPU s | 4.78; 12.91; 62 | 4.51; 11.56; 74 | 7.23; 15.51; 80 | 8.51; 17.87; 64 | 2.97; 6.80; 62 | 10.35; 18.30; 53 | | | |
+| (ii) since and pool together | going on | 1.3906 (-0.0230) | 1.4182 (-0.0294) | 1.0936 (-0.0567) | 0.7950 (-0.2350) | 0.5003 (-0.3138) | 0.3817 (-0.0753) | 5 of 5 | -0.0230 | KEPT |
+| (ii) since and pool together | nothing changing | 1.5010 (-0.0216) | 1.4403 (-0.0273) | 1.4098 (-0.0470) | 2.1688 (+0.0465) | 1.9737 (+0.2170) | 0.7473 (-0.0603) | 3 of 5 | +0.2170 | not kept |
+| (ii) since and pool together | cells x; numbers stored x; CPU s | 5.24; 15.31; 108 | 4.95; 13.49; 137 | 8.07; 19.89; 175 | 9.52; 24.07; 168 | 3.21; 8.47; 131 | 12.40; 25.68; 160 | | | |
+| (iii) classes, frozen setting | going on | 1.4003 (-0.0132) | 1.4332 (-0.0143) | 1.1324 (-0.0179) | 0.9397 (-0.0904) | 0.6373 (-0.1768) | 0.4484 (-0.0086) | 5 of 5 | -0.0086 | KEPT |
+| (iii) classes, frozen setting | nothing changing | 1.5116 (-0.0110) | 1.4536 (-0.0141) | 1.4300 (-0.0269) | 2.1532 (+0.0310) | 1.7906 (+0.0339) | 0.8019 (-0.0057) | 3 of 5 | +0.0339 | not kept |
+| (iii) classes, frozen setting | cells x; numbers stored x; CPU s | 5.13; 6.00; 106 | 5.25; 6.30; 130 | 6.85; 7.29; 179 | 7.14; 7.52; 144 | 3.89; 4.42; 134 | 5.90; 6.39; 99 | | | |
+| (iv) made kinds, F | going on | 1.3993 (-0.0143) | 1.4328 (-0.0148) | 1.1250 (-0.0253) | 0.8942 (-0.1359) | 0.6210 (-0.1931) | 0.4494 (-0.0076) | 5 of 5 | -0.0076 | KEPT |
+| (iv) made kinds, F | nothing changing | 1.5099 (-0.0127) | 1.4530 (-0.0146) | 1.4307 (-0.0262) | 2.1454 (+0.0232) | 1.7406 (-0.0162) | 0.8056 (-0.0021) | 4 of 5 | +0.0232 | not kept |
+| (iv) made kinds, F | cells x; numbers stored x; CPU s | 5.33; 6.61; 124 | 4.70; 6.20; 165 | 6.97; 8.89; 782 | 6.45; 9.07; 746 | 2.30; 3.37; 311 | 4.23; 7.29; 437 | | | |
+| (iv) F against (iii) | going on | 1.3993 (-0.0010) | 1.4328 (-0.0005) | 1.1250 (-0.0074) | 0.8942 (-0.0455) | 0.6210 (-0.0163) | 0.4494 (+0.0010) | 3 of 5 | +0.0010 | KEPT |
+| (iv) F against (iii) | nothing changing | 1.5099 (-0.0017) | 1.4530 (-0.0005) | 1.4307 (+0.0007) | 2.1454 (-0.0078) | 1.7406 (-0.0500) | 0.8056 (+0.0037) | 2 of 5 | +0.0037 | not kept |
+| (iv) F against (iii) | cells x; numbers stored x; CPU s | 1.04; 1.10; 124 | 0.90; 0.98; 165 | 1.02; 1.22; 782 | 0.90; 1.21; 746 | 0.59; 0.76; 311 | 0.72; 1.14; 437 | | | |
+| (v) birth under one half | going on | 1.4172 (+0.0036) | 1.4518 (+0.0042) | 1.1623 (+0.0120) | 1.0422 (+0.0121) | 0.8141 (+0.0000) | 0.4587 (+0.0017) | 0 of 5 | +0.0121 | not kept |
+| (v) birth under one half | nothing changing | 1.5272 (+0.0046) | 1.4719 (+0.0042) | 1.4651 (+0.0083) | 2.1740 (+0.0518) | 1.7650 (+0.0082) | 0.8091 (+0.0015) | 0 of 5 | +0.0518 | not kept |
+| (v) birth under one half | cells x; numbers stored x; CPU s | 0.78; 0.88; 3 | 0.82; 0.90; 4 | 0.75; 0.84; 5 | 0.75; 0.84; 5 | 0.68; 0.80; 6 | 0.75; 0.83; 5 | | | |
+
+**By the rule, on the going-on measure, every idea of the list is kept**: the second cell with parts by kind and byte, the since-cells, the pool, classes found by search, kinds made while reading. Each lowers all five kinds of stream and harms none; each gains several times more on c and table than on prose. **On the measure with nothing changing none is kept**: each harms c or table (or both) by 0.02 to 0.20. Birth only where surprised is, as laid down, a matter of the store: 18 to 32% fewer cells for 0.000 to 0.012 nats going on (0.002 to 0.052 with nothing changing).
+
+**My hypothesis is refuted.** I had written that the ideas whose worth came from the make of English or of sums (since; classes; made kinds) would not be kept, and that I would be refuted if both classes and the since-cells were. Both are, on every kind of stream. What I took for a property of English (line lengths for the since-cells, classes of letters for the search) is on these streams a general means: a cell keyed on how long ago a value came is a cell for position in a row, a line or a tag; classes of contexts exist in source code and in rows of numbers as they do in prose.
+
+**Predictions scored** (going on unless said). B1 held. B2 held (I gave it 0.30). B3 held. B4 held (0.30). B5 held (0.15). **B6 failed**: with nothing changing on tiny Shakespeare the made kinds have 1.5099 against the classes' 1.5116. B7 held (18 to 32% of cells saved). B8 held (0.012 on py and on c). **B9 failed**: the pool closes 62% and 61% of the base's distance to xz on c and table, the since-cells 44% and 50%. B10 held, for all four. Five of my ten predictions were given under one chance in two; three of those five came true. My sense of what is specific to English was wrong.
+
+**Cost.** The second cell is free (at most 5,376 parts). The since-cells cost 1.3 to 3 times the cells and 3 to 8 times the numbers; the pool 3 to 10 times the cells and 7 to 18 times the numbers; classes 4 to 7 times the cells and 100 to 180 CPU-seconds; made kinds the same store and 120 to 780 CPU-seconds (the base: 2 to 6). Per nat gained the since-cells are the cheapest of the four; made kinds add 0.000 to 0.046 to classes going on (0.046 on c, 0.016 on table, under 0.008 elsewhere, 0.001 worse on xml) for up to five times the CPU.
+
+**My readings.** (1) The rule as I fixed it separates nothing among these ideas: all pass going on, all fail with nothing changing. What it does show is the split between the two measures, which is a property of the streams (c and table end unlike they begin), not of the ideas: with nothing changing, whatever learns more from the nine tenths is more wrong about a tenth that is unlike them. On the four streams whose end is like their beginning (the two prose streams, py, xml) every idea but birth is lower on both measures. (2) Ideas chosen on one English text did transfer. That is evidence against the fear that the programme's prose line was fitting English; it is not evidence about sums, where the per-text numbers differ (`PLAN_4.md`).
