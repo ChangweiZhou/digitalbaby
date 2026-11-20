@@ -37,6 +37,39 @@ What could make it fail (mine): the order of a first cell's two followers is by 
 
 Numbers that learn: as m = 3, and 16,641 x 40 trusts for pairs (those used are reported) and five counts for each second-layer cell (reported). Cost: not known before the first run; my estimate is one to three CPU-minutes for 40,000 lines and several hundred MB of memory. Not run here: the second layer over m = 4; keeping with the second layer (next, if this holds); 400,000 lines unless cheap; a second layer whose cells are active for decided first cells.
 
+## 5. E3, outcome (entered 20 November after the runs; `res/s_l2dev_base.json`, `res/s_l2_seed*.json`; table in `report_e3.txt`; check in `check2_output.txt`)
+
+One run cost 240 CPU-seconds, above the three minutes the plan set for a grid, so no grid was run: development seed 1 at m = 3's numbers (78.5, mean of the last three readings; 56.9 without the second layer), then the five reported seeds at the same numbers.
+
+Never-shown additions, own bytes, whole answer, %, 40,000 lines, seeds 73129, 93683, 116089, 406364, 545353.
+
+| Arm | each seed, last three | median, last three | median, last reading | hundreds, tens, units (last, median) |
+|---|---|---|---|---|
+| m = 3 (`PLAN_1.md`) | 56.8, 56.8, 54.1, 59.7, 55.7 | 56.8 | 57.0 | 97.6, 57.0, 100 |
+| m = 3 with the second layer | 92.3, 83.1, 69.3, 68.1, 67.9 | **69.3** | 68.8 | 99.2, 68.8, 100 |
+| m = 4 (`PLAN_1.md`) | 81.4, 84.4, 80.7, 79.9, 80.9 | 80.9 | 80.0 | 98.2, 80.0, 100 |
+| relay system, 400,000 lines (forced score) | | 84.2 | | |
+
+Along the way (median of the last reading): 64.8 at 5,000 lines, 64.0 at 10,000, 70.8 at 20,000, 69.2 at 30,000, 68.8 at 40,000. Seed 73129 rises throughout (68.8, 68.6, 80.6, 90.4, 95.2).
+
+Size and cost (medians): the first layer as m = 3; 8.5 million second-layer cells that have counted, 18.6 million counts above zero, 361,697 of the 665,640 trusts for pairs used; 246 CPU-seconds for 40,000 lines and about 430 MB. That is seventy times the cells of m = 3 and seven times those of m = 4.
+
+**The hypothesis does not hold and is not refuted by its own rule**: the gain is 12.5 points at the median, where at least 20 was asked and under 10 would refute. On every seed the second layer is above m = 3 alone (by 8.4 to 35.5 points).
+
+| | Statement | Outcome |
+|---|---|---|
+| Q1 | whole at least 76.8 | failed (69.3) |
+| Q2 | above m = 4's 80.9 | failed at the median (two seeds of five above) |
+| Q3 | forced score above the relay's 84.2 | failed at the median (one seed of five above; the forced score equals the own score) |
+| Q4 | tens at least 90 | failed (68.8; seed 73129 has 95.2) |
+| Q5 | among the eight pairs with the most trust at the tens digit, one whose first cell holds both tens digits and whose second holds both units digits | held on the seed looked at (73129): (2, 4, 7) with (3, 6, 7) is second of all pairs, trust 0.35 |
+| Q6 | hundreds at least 99 | held (99.2) |
+
+Readings (mine).
+1. **The second layer does supply part of the carry, with nothing laid down about which cells belong together**, and the pairs the answering cell comes to trust most at the tens digit are the ones that an account of addition would name: a first cell of the two tens digits, undecided between two bytes, and a second cell that holds the two units digits (or the tens digits with one units digit) and says which of the two.
+2. **It is uneven across seeds (68 to 92) and costly.** A cause I can state from the construction and have not tested: a first cell orders its two followers by its own counts, and "the more counted" is not the same thing in every first cell. A cell of two tens digits has been followed by the sum without a carry and by the sum with one in proportions near 55 to 45, counted over the 80 or so shown pairs it has seen; for roughly one such cell in five or six the order is the other way round, and it stays so however long the reading. A second-layer cell, which is shared by all the first cells of a kind, then learns a rule that is right for most of them and wrong for the rest. An order of followers that is the same in every first cell is what this layer lacks; rank by count does not give it.
+3. With seventy times the cells for 12.5 points, this form is not one to carry further as it stands. What I would keep from it is the kind of cell: one that counts a relation to what another cell says instead of the byte itself.
+
 # Fourth plan (E4), in the same file because it is small: two cheap single changes to `PLAN_1.md`'s system, each beside what it changed from
 
 Written at the same time as the third plan and before any of its runs. Same authorisation and source. `sparse.py` unchanged (both options were in the program and its check from the start).
