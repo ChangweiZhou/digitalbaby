@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PLAN_14.md: the trust of a kind and level is held separately for the number (0, 1, 2, 3 or more) of active senders that have counted fewer times
 than this one and at least twice.
-    python3 rank.py 0|1          0: the change switched off (must give T2's figures); 1: on. The lives A, B and B only; the test text's last tenth once.
+    python3 rank.py 0|1          0: the change switched off (must give T2's figures); 1: on; 2: on, with the situation's part born at nothing beside the kind's own trust (addition 1). The lives A, B and B only; the test text's last tenth once.
     python3 rank.py check"""
 import ctypes, json, os, subprocess, sys
 import numpy as np
@@ -20,7 +20,7 @@ static inline int level(float n, float u) {
 }
 /* trust.py's loop (constant step) with one change: the trust used for sender k is T[k][NL * r + level], r = min(3, number of active senders j with
    2 <= N[j] < N[k]); with use = 0, r is always 0 and the loop is trust.py's. */
-void rank_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double eta, double e, int learn, double *P, int use) {
+void rank_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double eta, double e, int learn, double *P, int use, double *Tb) {
     static double lt[4096]; double a[S], p[S], s[32][S]; int lev[32]; int64_t ix[32]; double nk[32];
     for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
     for (int64_t t = 0; t < n; t++) {
@@ -33,7 +33,7 @@ void rank_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, flo
         for (int v = 0; v < S; v++) a[v] = 0;
         for (int64_t k = 0; k < K1; k++) if (lev[k] >= 0) {
             int r = 0; if (use) { for (int64_t j = 0; j < K1; j++) if (lev[j] >= 0 && nk[j] >= 2 && nk[j] < nk[k]) r++; if (r > NR - 1) r = NR - 1; }
-            ix[k] = k * NL * NR + NL * r + lev[k]; const double tk = T[ix[k]];
+            ix[k] = k * NL * NR + NL * r + lev[k]; const double tk = T[ix[k]] + (Tb ? Tb[k * NL + lev[k]] : 0.0);          /* Tb: the kind's and level's own trust; T is then the situation's part */
             for (int v = 0; v < S; v++) a[v] += tk * s[k][v];
         }
         for (int v = 0; v < S; v++) if (a[v] > mx) mx = a[v];
@@ -41,7 +41,7 @@ void rank_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, flo
         for (int v = 0; v < S; v++) p[v] /= z;
         if (P) for (int v = 0; v < S; v++) P[t * S + v] = p[v];
         if (learn) {
-            for (int64_t k = 0; k < K1; k++) if (lev[k] >= 0) { double g = s[k][y[t]]; for (int v = 0; v < S; v++) g -= p[v] * s[k][v]; T[ix[k]] += eta * g; }
+            for (int64_t k = 0; k < K1; k++) if (lev[k] >= 0) { double g = s[k][y[t]]; for (int v = 0; v < S; v++) g -= p[v] * s[k][v]; T[ix[k]] += eta * g; if (Tb) Tb[k * NL + lev[k]] += eta * g; }
             for (int64_t k = 0; k < K1; k++) if (id[k] >= 0) { float *c = C + id[k] * S; if (c[y[t]] == 0) U[id[k]] += 1; c[y[t]] += 1; N[id[k]] += 1; }
         }
     }
@@ -51,15 +51,16 @@ def kern():
     so = os.path.join(HERE, "kern_k.so"); src = os.path.join(HERE, "kern_k.c")
     if not os.path.exists(src) or open(src).read() != SRC: open(src, "w").write(SRC)
     if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(src): subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", so, src, "-lm"])
-    L = ctypes.CDLL(so); L.rank_steps.argtypes = [ctypes.c_int64, ctypes.c_int64, PI, PY, PF, PF, PF, PD, ctypes.c_double, ctypes.c_double, ctypes.c_int, PD, ctypes.c_int]; L.rank_steps.restype = None; return L
+    L = ctypes.CDLL(so); L.rank_steps.argtypes = [ctypes.c_int64, ctypes.c_int64, PI, PY, PF, PF, PF, PD, ctypes.c_double, ctypes.c_double, ctypes.c_int, PD, ctypes.c_int, PD]; L.rank_steps.restype = None; return L
 
 class SysR:
     def __init__(s, x, keys, K, use):
         s.x, s.K, s.use = x, K, int(use); s.ids, s.ncell, _, _ = words.make_ids(x, keys, K, len(x), len(x), K, 1); s.K1 = s.ids.shape[1]; s.L = kern()
-        s.C = np.zeros((s.ncell, S), np.float32); s.N = np.zeros(s.ncell, np.float32); s.U = np.zeros(s.ncell, np.float32); s.T = np.full((s.K1, NL * NR), 0.25)
+        s.C = np.zeros((s.ncell, S), np.float32); s.N = np.zeros(s.ncell, np.float32); s.U = np.zeros(s.ncell, np.float32); s.T = np.full((s.K1, NL * NR), 0.25); s.Tb = None
+        if s.use == 2: s.T[:] = 0.0; s.Tb = np.full((s.K1, NL), 0.25)                 # PLAN_14.md, addition 1: the situation's part born at nothing
     def go(s, lo, hi, learn, want_p=False):
         ids = np.ascontiguousarray(s.ids[lo - s.K:hi - s.K]); y = np.ascontiguousarray(s.x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None
-        s.L.rank_steps(hi - lo, s.K1, ids.ctypes.data_as(PI), y.ctypes.data_as(PY), s.C.ctypes.data_as(PF), s.N.ctypes.data_as(PF), s.U.ctypes.data_as(PF), s.T.ctypes.data_as(PD), ETA, E, int(learn), P.ctypes.data_as(PD) if want_p else None, s.use); return P
+        s.L.rank_steps(hi - lo, s.K1, ids.ctypes.data_as(PI), y.ctypes.data_as(PY), s.C.ctypes.data_as(PF), s.N.ctypes.data_as(PF), s.U.ctypes.data_as(PF), s.T.ctypes.data_as(PD), ETA, E, int(learn), P.ctypes.data_as(PD) if want_p else None, s.use, s.Tb.ctypes.data_as(PD) if s.Tb is not None else None); return P
 
 def steps_np(sy, lo, hi):
     """The reference (learning on), on a SysR's state."""
@@ -82,7 +83,7 @@ def lives(use):
     for k in segs:
         sy.go(max(segs[k][0], K), segs[k][1], True)
         if k != "A": r["A_B"][k] = sc(sy, k)
-    T = sy.T.reshape(sy.K1, NR, NL); r["mean_trust_by_kind_and_number_of_more_specific_senders"] = [[round(float(T[k, q][T[k, q] != 0.25].mean()) if (T[k, q] != 0.25).any() else 0.25, 3) for q in range(NR)] for k in range(sy.K1)]
+    T = sy.T.reshape(sy.K1, NR, NL); b0 = 0.0 if sy.Tb is not None else 0.25; r["mean_trust_by_kind_and_number_of_more_specific_senders"] = [[round(float(T[k, q][T[k, q] != b0].mean()) if (T[k, q] != b0).any() else b0, 3) for q in range(NR)] for k in range(sy.K1)]
     s2 = SysR(x, keys, K, use)
     for k in segs:
         if k != "A": s2.go(segs[k][0], segs[k][1], True); r["B_only"][k] = sc(s2, k)
