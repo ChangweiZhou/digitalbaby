@@ -20,3 +20,6 @@ for a, title in ARMS:
     if "line_delays" in o[0]: print("      single lines held at the end by delay 0..9, all seeds: " + " ".join(str(int(k)) for k in np.array([x["line_delays"] for x in o]).sum(0)))
 x = get("all", 1)
 if x: print(f"reference, every line read (650 strengths a cell), seed 1: {x['rows'][-1]['nats']:.4f} nats, {x['rows'][-1]['bits']:.3f} bits, {x['rows'][-1]['right']:.2f}% named right")
+for a in ("E64", "M64", "P64"):
+    p = os.path.join(HERE, "res", f"t2_x_{a}_1.json")
+    if os.path.exists(p): x = json.load(open(p)); print(f"addition, {a} at nano/loop's setting (eta1 1, eta2 1/4, return strengths born at nothing), seed 1: {x['rows'][-1]['nats']:.4f} nats, {x['rows'][-1]['right']:.2f}% named right")

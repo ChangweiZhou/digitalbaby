@@ -21,10 +21,11 @@ if __name__ == "__main__":
              ("32 pairs, rewiring", dict(ke="0", kp="32", rewire="64")), ("32 pairs, every cell can withdraw", dict(ke="0", kp="32", rewire="64", joint="1")),
              ("32 pairs, rewiring every 32", dict(ke="0", kp="32", rewire="32")), ("16 edges, rewiring", dict(ke="16", rewire="64")), ("8 + 8, rewiring", dict(ke="8", kp="8", rewire="64")),
              ("16 pairs, every cell can withdraw", dict(ke="0", kp="16", rewire="64", joint="1")), ("32 pairs, no rewiring", dict(ke="0", kp="32")),
-             ("16 + 16, every cell can withdraw", dict(ke="16", kp="16", rewire="64", joint="1"))]
+             ("16 + 16, every cell can withdraw", dict(ke="16", kp="16", rewire="64", joint="1")),
+             ("8 pairs, sending cells withdraw every 8th turnover", dict(ke="0", kp="8", rewire="64", joint="1", jevery="8"))]
     for title, kw in cases:
         w, same, ta, tb, made = cmp(dict(base, **kw)); bad += (w > 1e-6) or not same
-        print(f"{title:36s} largest difference over largest strength {w:.1e}  scores, bytes named right and turnover equal: {same}  made {made}  numpy {ta:5.1f} s, compiled {tb:5.1f} s")
+        print(f"{title:50s} largest difference over largest strength {w:.1e}  scores, bytes named right and turnover equal: {same}  made {made}  numpy {ta:5.1f} s, compiled {tb:5.1f} s")
     sys.path.insert(0, os.path.join(prod.HERE, "..", "..", "loop_small_case")); sys.dont_write_bytecode = True; import cells2
     cells2.run(dict(label="chk", nowrite="1", seed="3", plan="add:300", every="150", H="128", H2="128")); a = cells2.run.last
     for fast in ("0", "1"):
