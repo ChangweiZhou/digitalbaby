@@ -86,3 +86,10 @@ Counting cells held at the end in R: 66,050, with 78,887 counts above zero (16,0
 **Choice by the rule of section 5:** the grid's best is r = 1 (79.0); the smallest r within 5 points of it is **r = 1/2** (76.0). To the five reported seeds: P; R at r = 1 (the hypothesis) and at r = 1/2; O, Z and R6 at r = 1.
 
 A7 failed on this seed (46.0 at r = 1/8, under 50). Two things I note before the reported seeds, so that they are not made afterwards: with replay the score of addition after its own phase is 6 to 8 points above P's on this seed at r = 1/4 to 1 (the first phase has more lines), and R6's is 14 points below it (replayed wrong sums harm the first task while it is being learned).
+
+## 10. A dated addition, entered 20 November after the five reported seeds were read and before its runs
+
+On the five reported seeds (scored in section 11) R at r = 1 is 7.6 points below O on addition at the median of the paired differences, with single differences from -11.2 to +7.4, and R at r = 1/2 is 4.2 below R at r = 1. Both differences matter for the reading (what replay from the system's own cells costs against old lines chosen by the program; whether half the ratio is enough) and five seeds do not carry them. By the coordinating session's rule the ten further seeds 1001 to 1010 are run for P, R at r = 1, R at r = 1/2 and O, and the fifteen are reported together.
+- B1 (0.6): on fifteen seeds R at r = 1 is below O on addition by 2 to 10 points at the median of the paired differences.
+- B2 (0.6): R at r = 1/2 is below R at r = 1 on addition on at least nine seeds of fifteen.
+- B3 (0.7): R at r = 1 is below P on subtraction on at least eleven seeds of fifteen (keeping addition costs some subtraction).
