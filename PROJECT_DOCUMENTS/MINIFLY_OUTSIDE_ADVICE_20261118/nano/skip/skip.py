@@ -141,7 +141,7 @@ def run(kw):
     trial = ck == "trial"; given = ck != "none" and not s.rule and not trial
     def trial_block(xs, ys):
         """The stream in periods of P bytes; in each, the entries draw their states, the bytes are read, and the tendencies move."""
-        nonlocal u
+        nonlocal u, ev
         for i in range(0, len(xs), P):
             c = np.clip(sg(u), eps, 1 - eps); closed = crng.random(S) < c; x = xs[i:i + P]; s.esum = 0.0; s.ecnt = 0; s.run(x, ys[i:i + P], ~closed[x])
             if s.ecnt < P // 4: continue                                   # a short remainder at the end of a block of lines: no change
