@@ -3,13 +3,13 @@
 for each kind and level of experience of cell. The text, the split and the symbols are those of loop_small_case/cells2.py (text() and the
 split in run() are copied from it); the level of experience and the trust rule are those of nano/table/trust.py (copied, with the number
 of byte values made a parameter).
-    python3 sparse.py <label> seed=1 [plan=add:40000[,sub:20000]] [D=9] [m=3] [eta=0.002] [e=0.02] [T0=0.25] [every=5000] [place=0] [rev=0] [ref=1]
+    python3 sparse.py <label> seed=1 [plan=add:40000[,sub:20000]] [D=9] [m=3] [eta=0.002] [e=0.02] [T0=0.25] [every=5000] [place=0] [rev=0] [shrink=0] [ref=1]
     python3 sparse.py check
 A kind of cell is a set of at most m delays among 1..D (delay d: the byte d places before the byte to be named). A cell of a kind exists for
 each combination of byte values that has occurred at those delays; it counts the bytes that follow. Before each byte, every cell whose
 combination is present and which has counted says s(v) = log((c(v) + e) / (n + S e)); the answering cell's branches compete on the sum of
 trust times s; when the byte arrives the trust that was used changes by eta times (s(arrived) - sum p s), and the cells count.
-place=P (PLAN_3): the trust also depends on how many bytes have passed since the last line end (0..P-1). rev=1: the answer is written units first.
+place=P (PLAN_3): the trust also depends on how many bytes have passed since the last line end (0..P-1). rev=1: the answer is written units first. shrink=1 (PLAN_5): a trust's step is eta over the square root of one plus its uses.
 ref=1: the numpy reference in place of the compiled kernel (slow)."""
 import ctypes, itertools, json, os, subprocess, sys, time
 import numpy as np
@@ -105,15 +105,15 @@ def level_np(n, u):
 
 class Sys:
     """Compiled. The table from context to cell is `map` (one entry for each possible combination of a kind; -1 where no cell has been made)."""
-    def __init__(s, D=9, m=3, eta=0.002, e=0.02, T0=0.25, nplace=1, kinds=None, nsym=S, cap=1 << 16):
-        s.kinds = kinds if kinds is not None else kinds_of(D, m); s.K = K = len(s.kinds); s.S = nsym; s.nplace = max(1, nplace); s.eta, s.e = eta, e
+    def __init__(s, D=9, m=3, eta=0.002, e=0.02, T0=0.25, nplace=1, kinds=None, nsym=S, cap=1 << 16, shrink=0):
+        s.shrink = int(shrink); s.kinds = kinds if kinds is not None else kinds_of(D, m); s.K = K = len(s.kinds); s.S = nsym; s.nplace = max(1, nplace); s.eta, s.e = eta, e
         s.nd = np.array([len(k) for k in s.kinds], np.int32); s.dl = np.zeros((K, 4), np.int32)
         for i, k in enumerate(s.kinds): s.dl[i, :len(k)] = k
         sz = np.array([nsym ** len(k) for k in s.kinds], np.int64); s.off = np.concatenate([[0], np.cumsum(sz)[:-1]]).astype(np.int64); s.map = np.full(int(sz.sum()), -1, np.int32)
         s.cap = cap; s.C = np.zeros((cap, nsym), np.float32); s.N = np.zeros(cap, np.float32); s.U = np.zeros(cap, np.float32); s.T = np.full((K * s.nplace, NL), float(T0)); s.Tu = np.zeros_like(s.T)
         s.ncell = 0; s.tail = np.full(HP, END, np.int32); s.L = kern()
     def cs(s):
-        q = CSys(s.S, s.K, s.nplace, END, s.ncell, s.cap, s.nd.ctypes.data, s.dl.ctypes.data, s.off.ctypes.data, s.map.ctypes.data, s.C.ctypes.data, s.N.ctypes.data, s.U.ctypes.data, s.T.ctypes.data, s.Tu.ctypes.data, s.eta, s.e, 0, 0); return q
+        q = CSys(s.S, s.K, s.nplace, END, s.ncell, s.cap, s.nd.ctypes.data, s.dl.ctypes.data, s.off.ctypes.data, s.map.ctypes.data, s.C.ctypes.data, s.N.ctypes.data, s.U.ctypes.data, s.T.ctypes.data, s.Tu.ctypes.data, s.eta, s.e, 0, s.shrink); return q
     def grow(s):
         s.cap *= 2; C = np.zeros((s.cap, s.S), np.float32); C[:len(s.C)] = s.C; s.C = C
         for nm in "NU": a = np.zeros(s.cap, np.float32); a[:len(getattr(s, nm))] = getattr(s, nm); setattr(s, nm, a)
@@ -133,8 +133,8 @@ class Sys:
 
 class Ref:
     """numpy reference: the same arithmetic, a dictionary from (kind, values) to cell, one byte at a time."""
-    def __init__(s, D=9, m=3, eta=0.002, e=0.02, T0=0.25, nplace=1, kinds=None, nsym=S):
-        s.kinds = kinds if kinds is not None else kinds_of(D, m); s.K = len(s.kinds); s.S = nsym; s.nplace = max(1, nplace); s.eta, s.e = eta, e; s.cell = {}; s.C = []; s.N = []; s.U = []
+    def __init__(s, D=9, m=3, eta=0.002, e=0.02, T0=0.25, nplace=1, kinds=None, nsym=S, shrink=0):
+        s.shrink = int(shrink); s.kinds = kinds if kinds is not None else kinds_of(D, m); s.K = len(s.kinds); s.S = nsym; s.nplace = max(1, nplace); s.eta, s.e = eta, e; s.cell = {}; s.C = []; s.N = []; s.U = []
         s.T = np.full((s.K * s.nplace, NL), float(T0)); s.Tu = np.zeros_like(s.T); s.hist = [END] * HP
     def look(s, hist, make):
         """hist[-d] is the byte d back. Returns p and the active cells as (kind, cell, trust index, s)."""
@@ -154,7 +154,7 @@ class Ref:
         for y in np.asarray(x).ravel().tolist():
             p, act, ids = s.look(hist, learn); P.append(p)
             if learn:
-                for k, ti, sv in act: s.T[ti] += s.eta * (sv[y] - p @ sv); s.Tu[ti] += 1.0
+                for k, ti, sv in act: s.T[ti] += (s.eta / np.sqrt(1.0 + s.Tu[ti]) if s.shrink else s.eta) * (sv[y] - p @ sv); s.Tu[ti] += 1.0
                 for i in ids:
                     if s.C[i][y] == 0: s.U[i] += 1
                     s.C[i][y] += 1; s.N[i] += 1
@@ -189,7 +189,7 @@ def score(s, op, pairs, rev=0, want_acc=False):
 
 def make(kw, cls=None):
     cls = cls or (Ref if int(kw.get("ref", 0)) else Sys)
-    return cls(D=int(kw.get("D", 9)), m=int(kw.get("m", 3)), eta=float(kw.get("eta", 0.002)), e=float(kw.get("e", 0.02)), T0=float(kw.get("T0", 0.25)), nplace=int(kw.get("place", 0)))
+    return cls(D=int(kw.get("D", 9)), m=int(kw.get("m", 3)), eta=float(kw.get("eta", 0.002)), e=float(kw.get("e", 0.02)), T0=float(kw.get("T0", 0.25)), nplace=int(kw.get("place", 0)), shrink=int(kw.get("shrink", 0)))
 
 def run(kw, s=None):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng, held, shown = split(seed); rev = int(kw.get("rev", 0)); every = int(kw.get("every", 5000)); s = s or make(kw)
@@ -220,7 +220,7 @@ def show(o):
 
 def check():
     """The compiled kernel against the numpy reference: probabilities, trust, counts, cells, and the answers written."""
-    for kw in (dict(m=3), dict(m=4, D=6), dict(m=3, place=10), dict(m=2, rev=1)):
+    for kw in (dict(m=3), dict(m=4, D=6), dict(m=3, place=10), dict(m=2, rev=1), dict(m=3, D=6, shrink=1, eta=0.1)):
         rng, held, shown = split(1); rev = kw.get("rev", 0); X = np.array([text("+-"[i % 2], *shown["+-"[i % 2]][i], rev) for i in range(120)], np.int32)
         a = make(kw, Sys); b = make(kw, Ref); Pa = a.read(X, True, True); Pb = b.read(X, True, True); n = b.size()["cells"]
         Ls = np.array([text("+", *p, rev) for p in held["+"][:40]] + [text("-", *p, rev) for p in shown["-"][:40]], np.int32); same = all((a.answers(Ls, own) == b.answers(Ls, own)).all() for own in (0, 1))
