@@ -39,3 +39,30 @@ The system of `PLAN_1.md` unchanged, the same program and numbers (`gate2.py`; f
 ## 4. Not run
 
 Replay, a cap, or any means of keeping; a third task; subtraction first; the two tasks mixed. The long life without classes.
+
+## 5. Outcome of the short life (20 November; `res/life_cls_seed*.json`, `res/life_none_seed*.json`, `out/life_*.txt`, `report_3.txt`)
+
+Addition 40,000 lines, then subtraction 20,000 lines; five reported seeds; first cell, second cell and control from one run. Size at the end: 1.38 million cells that count with classes; second cell 1,451,520 parts, about 803,000 used. CPU: 123 to 131 s a run with classes, about 80 s without. 91 to 101 clean subtractions a seed. "Before": never-shown additions after a read addition line, mean of the last three readings of the first task. "End": never-shown additions after a read subtraction line, mean of the last three readings of the second task. Kept = end over before. Medians of five seeds, with the five values.
+
+| Setting | Cell | Addition before | Addition at the end | Kept, % | Lowest reading in the second task (median; when) | Subtraction at the end, clean score, after a subtraction line |
+|---|---|---|---|---|---|---|
+| with classes | first | 92.9 | 75.4 (81.4, 78.5, 73.0, 70.6, 75.4) | **81.1** (87.7, 83.5, 79.3, 78.9, 81.1) | 50.2; 1,000 lines after the change on four seeds | 80.4 (83.0, 73.5, 85.3, 80.4, 78.9) |
+| | second | 97.1 | 86.2 (79.5, 87.6, 87.9, 83.9, 86.2) | **88.8** (81.7, 89.4, 91.0, 87.2, 88.8) | 63.2; 1,000 lines after on all five | 89.4 (91.4, 87.0, 91.5, 85.8, 89.4) |
+| | control | 92.5 | 61.3 (65.6, 67.2, 44.9, 51.1, 61.3) | 65.8 (70.9, 72.3, 48.6, 57.8, 65.8) | 18.6 | 83.1 |
+| without classes | first | 79.4 | 76.3 | **96.1** (96.1, 100.1, 95.6, 95.7, 97.1) | 74.3; at the end | 80.4 |
+| | second | 85.7 | 82.6 | **95.8** (94.6, 94.8, 95.8, 97.7, 96.2) | 73.3; 1,000 to 5,000 lines after | 87.2 (86.5, 87.1, 87.2, 87.8, 88.4) |
+| | control | 83.6 | 71.6 | 83.4 | 66.8 | 83.1 |
+
+The same share with an addition line before the held-out line at both ends: 81.1, 88.8, 65.1 with classes; 96.7, 95.5, 83.3 without. With an empty past at both ends: 87.6, 92.7, 78.9 with classes; 100.9, 96.0, 95.1 without. So what stands before the line matters little for the first and the second cell (as section 2 expected: the operator of the line before is out of reach), and the empty past, which silences the kinds that reach before the line, flatters all three.
+
+The course of never-shown additions through the second task (after a subtraction line; median of five seeds; at 1,000, 2,000, 5,000, 10,000, 15,000, 20,000 lines of subtraction). With classes: first cell 50.2, 60.6, 67.6, 72.6, 80.1, 78.4; second cell 63.2, 74.8, 76.1, 83.7, 87.6, 88.1; control 23.8, 27.2, 36.9, 38.0, 68.2, 70.6. Without classes: first 80.4, 81.1, 79.8, 78.0, 77.0, 74.3; second 74.4, 75.7, 74.7, 79.7, 83.6, 83.6. By place at the end, with classes (hundreds, tens, units): first 96.8, 80.1, 100; second 97.4, 88.5, 100; control 83.3, 80.0, 100.
+
+**What I take from it (mine).**
+
+1. *The coordinating session's hypothesis is neither held nor refuted.* With classes the second cell keeps 88.8% at the median (one seed of five at 90 or more, none under 75): between the two lines drawn. Without classes it keeps 95.8%.
+2. *The second cell keeps more than the first, not less, where classes are present* (88.8% against 81.1%; it ends 10.8 points above the first cell where it started 4.2 above), and it learns the second task better (89.4 against 80.4 on the clean subtractions, 87.2 against 80.4 without classes). My expectation that it would lose more was wrong.
+3. *The loss is sudden and then mends, while only subtraction is read.* Addition is lowest 1,000 lines after the change (first cell 50, second 63, control 24, with classes) and climbs back for the rest of the second task, with no addition line shown. That is the shape of a reading that was upset and re-fits itself, and not of a store that is overwritten: the cells that hold addition are still there, the trusts and parts that weigh them are shared with the new task and move at once. In the control, whose nine equal parts make its step nine times the first cell's, the fall is to 19 to 24%: a larger step on a shared trust is what loses most.
+4. *With classes the first cell keeps far less (81%) than without (96%)*, and less than other lines found for cells that count (92 to 100%). No finding of classes falls inside the second task here (the last is at 32,000 lines, the next would be at 64,000), so this is the class cells and their trusts under the new task, and not a new search. Not looked into further here.
+5. *The hundreds digit is touched as well as the tens* (96.8 to 97.4 right at the end against 98.5 before; 83% in the control), which never happened in the one-task runs.
+
+**Predictions.** K1 failed, narrowly (88.8, 90 asked). K2 held (88.8; no seed under 75). K3 failed (the first cell keeps 81.1). K4 failed (the second cell keeps the larger share). K5 held (86.2 against 75.4; four seeds of five, seed 73129 has 79.5 against 81.4). K6 held (89.4 against 80.4). K7 failed (the control keeps 65.8 against 81.1). K8 held (95.8). K9 held (five seeds of five). Five of nine.
