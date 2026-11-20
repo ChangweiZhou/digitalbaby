@@ -2,6 +2,18 @@
 
 By a separate agent session (the one that ran line C in `nano/joint`); the line, its question and its controls were given by the coordinating session, whose idea it is. Development level; repeated by no one; no checker gate, seal or review is claimed. Readings are mine. Source and what was copied: `PLAN_1.md`.
 
+**Read this first (added last, 20 November; `PLAN_6.md`, sections 9 and 10; `report_past.txt`).** Every score in sections 1 to 6 below is an "empty past" score: a never-shown line is scored alone, with line ends in the delays that reach before it, a past the system meets only on the first line of its life. The coordinating session found this fault of the measure late in the day. Re-scored as the system reads (the held-out line after a read line; five reported seeds; only the arms named here):
+
+| | addition kept, empty past | addition kept, after a read line | second task, empty past | second task, after a read line |
+|---|---|---|---|---|
+| addition then subtraction, no replay | 1.8 | 1.8 | 86.0 | 92.7 |
+| the same, replay (section 1) | 77.2 | **93.8** | 78.9 | **88.0** |
+| the same, largest mismatch of four (section 6) | 82.6 | 91.6 | 83.3 | 90.7 |
+| the harsh change (section 3), replay | 65.6 | **93.4** | 68.0 | **88.0** |
+| the same, largest mismatch of four | 73.6 | 91.4 | 74.3 | 90.2 |
+
+Three readings below change: replay keeps about 94% of never-shown addition, not 77; **the harsh change is not dearer than the change with a new operator** (section 3, item 2, is withdrawn); and **the mismatch rule does not gain on both tasks** (section 6, item 1): it gives up about two points of the old task for one to two and a half of the new. That replay keeps and no replay does not stands on both scores. Not re-scored, for want of budget: the controls, the ratio, the dreams, the whole system's answer (sections 1, 2, 4, 5), and the fifteen seeds. Differences between arms in those sections are empty-past differences and may not carry over.
+
 **The system.** Two kinds of cells on the sums text. The relay system of `loop_small_case` (256 cells in between, one answering cell), unchanged. And cells that count: a cell for a run of up to 8 bytes that has occurred in the real lines, counting what follows it. After each real line the system replays r lines: it begins at a line start and draws each next byte, in proportion to its counts, from the longest active counting cell, until the newline; the relay system learns from a replayed line as from a real one; nothing is counted during replay. The program shows no old line and does not tell the system when the task changes.
 
 ## 1. Addition, then subtraction (`PLAN_1.md`, `report1.txt`)
