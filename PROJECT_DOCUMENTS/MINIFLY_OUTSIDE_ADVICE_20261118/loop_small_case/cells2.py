@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """PLAN_4.md: the system of keep.py (two-digit sums, cells in between that learn from a relayed mismatch) with options. numpy only.
     python3 cells2.py <label> seed=1 [plan=add:400000[,sub:200000[,add:40000]]] [every=50000] [fine=1] [reh=N] [swap=1]
-                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0]
+                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x]
+    ans2=1: two answering cells; which one answers and learns is given by the line's operator (a control, laid down by the program).
+    reserve=N: N further cells in between are silent and unchanged in the first phase; from the second phase on they alone change, with the answering
+      cell's strengths from them, and everything the first phase wrote is left as it is (a control: the program decides where the new task is written).
+    lam2=x: the fading of the answering cell's strengths and of the return connections is x from the second phase on (a control).
+    freeze=1: after the first phase the cells in between do not change. stiff1=k: each strength of a cell in between divides its step by 1 + (total size of its past changes)/k.
 """
 import json, os, sys, time
 import numpy as np
@@ -20,7 +25,7 @@ class Sys:
         s.H, s.eta1, s.eta2, s.lam, s.rewire, s.dale, s.H2 = H, eta1, eta2, lam, rewire, dale, H2; top = H2 or H
         s.W1 = wr.uniform(-.5, .5, (H, NL)); s.b1 = np.zeros(H); s.R = wr.uniform(-1, 1, (top, S)); s.W2 = np.zeros((S, top)); s.b2 = np.zeros(S)
         if H2: s.WB = g2.uniform(-1, 1, (H2, H)) / np.sqrt(H / 3); s.bB = np.zeros(H2); s.RB = g2.uniform(-1, 1, (H, H2))
-        s.M = None; s.made = 0
+        s.M = None; s.made = 0; s.two = 0; s.live = None; s.late = False
         if fan:
             s.M = np.zeros((H, NL), bool)
             for j in range(H): s.M[j, g2.choice(NL, fan, replace=False)] = True
@@ -29,9 +34,12 @@ class Sys:
             assert not H2
             s.W1 = np.abs(s.W1); s.b1 = np.full(H, -D * .25 * (fan / NL if fan else 1.0))      # lines excite; the threshold starts at the mean drive
             s.sign = np.where(g2.random(H) < .25, -1.0, 1.0)
+        s.A = [(s.W2, s.b2, s.R), (np.zeros((S, top)), np.zeros(S), g2.uniform(-1, 1, (top, S)))]; s.stiff1 = 0.0; s.I1 = np.zeros((H, NL))
         s.hist = [END] * D
+    def use(s, k): s.W2, s.b2, s.R = s.A[k]
     def fwd(s, hist):
         act = OFF + np.asarray(hist); hA = sg(s.W1[:, act].sum(1) + s.b1)
+        if s.live is not None: hA = hA * s.live
         if s.H2:
             hB = sg(s.WB @ hA + s.bB); return act, hA, hB, s.W2 @ hB + s.b2
         return act, hA, hA, s.W2 @ hA + s.b2
@@ -39,13 +47,19 @@ class Sys:
         act, hA, h, a = s.fwd(s.hist); m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
         sig = (s.R @ m) * h * (1 - h)                 # what a cell read by the answering cell receives, times its own sensitivity
         d2 = np.outer(g * m, h)
+        if s.live is not None: sig = sig * s.free; d2 = d2 * s.free
         if s.H2:                                      # cells B change, and pass on what they received to cells A over their own return connections
             sA = (s.RB @ sig) * hA * (1 - hA); dB = np.outer(s.eta1 * D / (hA @ hA + 1) * sig, hA)
             s.WB += dB; s.bB += s.eta1 * sig; s.RB += dB.T; s.WB *= 1 - s.lam; s.RB *= 1 - s.lam; d = s.eta1 * sA
         else: d = s.eta1 * sig
         s.R += d2.T; d1 = np.repeat(d[:, None], D, 1)
         if s.M is not None: d1 = d1 * s.M[:, act]
-        s.W1[:, act] += d1; s.b1 += d; s.W2 += d2; s.b2 += g * m; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
+        if s.stiff1: d1 = d1 / (1 + s.I1[:, act] / s.stiff1); s.I1[:, act] += np.abs(d1)
+        s.W1[:, act] += d1; s.b1 += d; s.W2 += d2
+        if s.live is None: s.b2 += g * m; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
+        else:                                         # reserve: only the cells that may change fade; the constants are the first phase's
+            if not s.late: s.b2 += g * m
+            s.W2 *= 1 - s.lam * s.free; s.R *= 1 - s.lam * s.free[:, None]
         if s.dale:
             s.W1[:, act] = np.maximum(s.W1[:, act], 0); s.W2 = np.where(s.W2 * s.sign > 0, s.W2, 0.0); s.R = np.where(s.R * s.sign[:, None] > 0, s.R, 0.0)
         if s.rewire:
@@ -62,6 +76,7 @@ class Sys:
         s.hist.insert(0, L[-1]); s.hist.pop()
     def score(s, op, pairs, place=False):
         n = 0; pl = np.zeros(3)
+        if s.two: s.use(0 if op == '+' else 1)
         for a, b in pairs:
             L = text(op, a, b); hist = [END] * D; ok = True
             for t in range(len(L) - 1):
@@ -75,15 +90,23 @@ def run(kw):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng = np.random.default_rng([seed, 99]); held, shown = {}, {}
     for op in "+-":
         o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held[op] = P[:500]; shown[op] = P[2000:]
-    s = Sys(seed, H=int(kw.get("H", 256)), fan=int(kw.get("fan", 0)), rewire=int(kw.get("rewire", 0)), dale=int(kw.get("dale", 0)), H2=int(kw.get("H2", 0)))
+    s = Sys(seed, H=int(kw.get("H", 256)) + int(kw.get("reserve", 0)), fan=int(kw.get("fan", 0)), rewire=int(kw.get("rewire", 0)), dale=int(kw.get("dale", 0)), H2=int(kw.get("H2", 0)))
+    nres = int(kw.get("reserve", 0))
+    if nres: s.live = np.arange(s.H) < s.H - nres; s.free = s.live.astype(float)
+    s.two = int(kw.get("ans2", 0)); s.stiff1 = float(kw.get("stiff1", 0)); freeze = int(kw.get("freeze", 0))
     reh = int(kw.get("reh", 0)); every = int(kw.get("every", 50000)); fine = int(kw.get("fine", 0)); out = dict(label=kw.get("label"), args=kw, rows=[]); snaps = {}
     for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
         name, n = ph.split(":"); op0 = {"add": "+", "sub": "-", "mix": None}[name]
+        if freeze and pi > 0: s.eta1 = 0.0
+        if nres and pi > 0: s.free = (~(np.arange(s.H) < s.H - nres)).astype(float); s.live = np.ones(s.H, bool); s.late = True
+        if "lam2" in kw and pi > 0: s.lam = float(kw["lam2"])
         for it in range(int(n)):
             if op0 is None: op = "+-"[rng.integers(2)]
             elif reh and pi > 0 and rng.integers(reh) == 0: op = "+" if op0 == "-" else "-"
             else: op = op0
-            a, b = shown[op][rng.integers(8000)]; s.line(text(op, a, b))
+            a, b = shown[op][rng.integers(8000)]
+            if s.two: s.use(0 if op == '+' else 1)
+            s.line(text(op, a, b))
             if (it + 1) % every == 0 or (fine and it + 1 <= 20000 and (it + 1) % 2000 == 0) or (fine and it + 1 <= 100000 and (it + 1) % 10000 == 0):
                 out["rows"].append(dict(phase=pi, name=name, lines=it + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"])))
         snaps[pi] = {k: getattr(s, k).copy() for k in ("W1", "b1", "W2", "b2")}

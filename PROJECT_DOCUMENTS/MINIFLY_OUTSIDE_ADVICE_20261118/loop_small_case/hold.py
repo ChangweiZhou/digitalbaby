@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """PLAN_5.md: cells that hold bytes themselves; no delay chain; a trace at each connection, running forward. numpy only.
     python3 hold.py <label> text=d1|d2 seed=1 [H=256 K=16 eta1=1/4 lines=60000 every=10000]      eta1=0: the cells never change
+PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received, times its own sensitivity, over a return strength; the cell read
+    changes by what its readers send times each trace as it stood one byte earlier. [ret=exact|learned] the return strength is the connection's
+    forward strength, or a separate strength that receives the same changes and fades with it ([lamB=1e-5], the fading of both, a byte).
 """
 import json, os, sys, time
 import numpy as np
@@ -11,29 +14,40 @@ def text(tx, a, b): return [SI[c] for c in (f"{a}+{b}={a + b}\n" if tx == "d1" e
 def sg(u): return 1 / (1 + np.exp(-u))
 
 class Hold:
-    def __init__(s, seed, H, K, eta1, eta2=1 / 16, lam=1e-5):
+    def __init__(s, seed, H, K, eta1, eta2=1 / 16, lam=1e-5, cross=0, ret="exact", lamB=None):
         g = np.random.default_rng([seed, 20261122]); s.H, s.eta1, s.eta2, s.lam = H, eta1, eta2, lam
         s.idx = np.stack([g.choice(np.delete(np.arange(H), j), K, replace=False) for j in range(H)])      # the K other cells that each cell reads
         s.Ac = g.uniform(-1, 1, (H, S)); s.Az = g.uniform(-1, 1, (H, S)); s.Bc = g.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Bz = g.uniform(-1, 1, (H, K)) / np.sqrt(K)
         s.cc = np.zeros(H); s.cz = g.uniform(-1, 3, H)                                                    # gates' thresholds spread: cells hold for different times
         s.R = g.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.h = np.zeros(H)
         s.Ecx = np.zeros((H, S)); s.Ezx = np.zeros((H, S)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
+        s.cross, s.learned = cross, bool(cross) and ret == "learned"; s.lamB = (1e-5 if s.learned else 0.0) if lamB is None else lamB
+        if s.learned: g3 = np.random.default_rng([seed, 20261123]); s.Qc = g3.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Qz = g3.uniform(-1, 1, (H, K)) / np.sqrt(K)
     def step(s, h, x):
         pre = h[s.idx]; z = sg(s.Az[:, x] + (s.Bz * pre).sum(1) + s.cz); c = sg(s.Ac[:, x] + (s.Bc * pre).sum(1) + s.cc)
         return pre, z, c, z * h + (1 - z) * c
     def read(s, x, y=None):
         """The byte x is read and every trace moves on; if a next byte y is given, the system names it first, y arrives, and the cells change."""
         hp = s.h; pre, z, c, h = s.step(hp, x); s.h = h
-        kc = (1 - z) * c * (1 - c); kz = (hp - c) * z * (1 - z); zc = z[:, None]
+        kc = (1 - z) * c * (1 - c); kz = (hp - c) * z * (1 - z); zc = z[:, None]; X = None
+        if y is not None and s.eta1 and s.cross:          # the crossing: every reader sends back what it received times its sensitivity to that connection
+            r = s.eta1 * (s.R @ (np.eye(S)[y] - s.W2 @ h - s.b2)); Qc, Qz = (s.Qc, s.Qz) if s.learned else (s.Bc, s.Bz)
+            rho = np.bincount(s.idx.ravel(), weights=(r[:, None] * (kc[:, None] * Qc + kz[:, None] * Qz)).ravel(), minlength=s.H); pc = rho[:, None]
+            X = (pc * s.Ecx, pc * s.Ecr, rho * s.Ecb, pc * s.Ezx, pc * s.Ezr, rho * s.Ezb)                 # with the traces as they stood one byte earlier
         s.Ecx *= zc; s.Ecx[:, x] += kc; s.Ecr = zc * s.Ecr + kc[:, None] * pre; s.Ecb = z * s.Ecb + kc
         s.Ezx *= zc; s.Ezx[:, x] += kz; s.Ezr = zc * s.Ezr + kz[:, None] * pre; s.Ezb = z * s.Ezb + kz
         if y is None: return None
         a = s.W2 @ h + s.b2; ok = int(a.argmax()) == y; m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
         if s.eta1:
-            r = s.eta1 * (s.R @ m); rc = r[:, None]
-            s.Ac += rc * s.Ecx; s.Bc += rc * s.Ecr; s.cc += r * s.Ecb; s.Az += rc * s.Ezx; s.Bz += rc * s.Ezr; s.cz += r * s.Ezb
+            r = s.eta1 * (s.R @ m); rc = r[:, None]; Dl = [rc * s.Ecx, rc * s.Ecr, r * s.Ecb, rc * s.Ezx, rc * s.Ezr, r * s.Ezb]
+            if X is not None: Dl = [d + e for d, e in zip(Dl, X)]
+            s.Ac += Dl[0]; s.Bc += Dl[1]; s.cc += Dl[2]; s.Az += Dl[3]; s.Bz += Dl[4]; s.cz += Dl[5]
+            if s.learned: s.Qc += Dl[1]; s.Qz += Dl[4]; s.Qc *= 1 - s.lamB; s.Qz *= 1 - s.lamB
+            if s.lamB: s.Bc *= 1 - s.lamB; s.Bz *= 1 - s.lamB
         d2 = np.outer(g * m, h); s.W2 += d2; s.b2 += g * m; s.R += d2.T; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
         return ok
+    def line(s, L):
+        right = sum(s.read(L[t], L[t + 1]) for t in range(len(L) - 1)); s.read(L[-1]); return right
     def score(s, tx, pairs):
         n = 0; pl = np.zeros(3)
         for a, b in pairs:
@@ -45,17 +59,18 @@ class Hold:
             n += ok
         return 100 * n / len(pairs), [round(100 * x / len(pairs)) for x in pl]
 
-def run(kw):
+def run(kw, cls=None):
     t0 = time.process_time(); tx = kw.get("text", "d1"); seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 60000)); every = int(kw.get("every", 10000))
     if tx == "d1":
         rng = np.random.default_rng(seed); P = [(a, b) for a in range(10) for b in range(10)]; rng.shuffle(P); held, shown = P[:20], P[20:]; shown_s = shown
     else:
         rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held, shown = P[:500], P[2000:]; shown_s = shown[:500]
-    s = Hold(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1/4")))); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
+    s = (cls or Hold)(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1/4"))), cross=int(kw.get("cross", 0)), ret=kw.get("ret", "exact"),
+                      lamB=float(kw["lamB"]) if "lamB" in kw else None)
+    s.X = kw.get("X"); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
     for it in range(lines):
         a, b = shown[rng.integers(len(shown))]; L = text(tx, a, b)
-        for t in range(len(L) - 1): right += s.read(L[t], L[t + 1]); n += 1
-        s.read(L[-1])
+        right += s.line(L); n += len(L) - 1
         if (it + 1) % every == 0:
             sh, _ = s.score(tx, shown_s); nv, pl = s.score(tx, held)
             out["rows"].append(dict(lines=it + 1, shown=sh, never=nv, place=pl, bytes_right=100 * right / n, gate_mean=float(sg(s.cz).mean()))); right = n = 0
