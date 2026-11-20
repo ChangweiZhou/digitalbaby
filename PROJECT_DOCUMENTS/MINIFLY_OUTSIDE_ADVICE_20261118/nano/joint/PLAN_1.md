@@ -81,3 +81,16 @@ Connections of more than two cells (C3); the sign of a sender (C4); other rules 
 - What I expect of F3 where the sender's part is the smaller (my reading of the rule, before the runs): such a connection changes as in F1 while the mismatch pushes its strength away from zero, but it cannot cross zero: B stops at zero, A keeps its sign and only fades, and the connection stays at zero until the mismatch pushes it back towards the sign it had. The sending end's part acts as a bound on the sign of that connection.
 - Predictions for the additions: P8 (0.5) F2b is within 4 points of F1 at the median of the paired differences. P9 (0.6) F2b has a higher share of connections below one hundredth of the largest than F1 on at least four of five seeds. P10 (0.4) F3b is more than 4 points below F1 at the median of the paired differences. P11 (0.7) the cosine of R with w is below 0.9 in F2b at the median.
 - Reported seeds, then: F1, F2 (etaB = 1), F2b, F3, F3b: 25 runs, about 3 minutes on four cores. Numpy full-length runs on seed 1: F1, F2b and F3b (the forms in which B moves), in place of the three of section 6.
+
+## 10. Entered 20 November after the second development grid and the 25 runs on the reported seeds, before the two further sets of runs named here
+
+**Second development grid, seed 1** (`res/j_d_*.json`). F2 with etaB = 16, 64, 256, 1024: 77.7, 78.8, 80.1, 75.5, all finite; share of connections below one hundredth of the largest 20, 30, 48, 55% (F1: 11%); cosine of R with w 0.85, 0.64, 0.42, 0.30. By the rule of section 9, F2b is etaB = 256. F3 with b0 = 1/16, 1/32, 1/64, 1/128: 81.5, 79.5, 80.2, 82.1; the sender's part is the smaller at the end at 0.03, 0.3, 1.1 and 1.5% of connections (it grows where it is the smaller). By the rule of section 6, F3 is b0 = 1/16 (within one point of the highest, the largest b0); F3b is b0 = 1/64 as entered.
+
+**Reported seeds** (full tables in `report1.txt`; scored in section 11). Never-shown sums, medians: F1 84.2; F2 84.0; F2b 67.3; F3 84.2; F3b 85.3. F2b is below F1 on every seed, by 6 to 27 points, where the development seed had it 1.4 below: the development seed misled the choice of etaB = 256 and I say so.
+
+**Two additions, entered before their runs**, to say what the loss of F2b is, since section 2 named two routes and the 25 runs cannot tell them apart:
+
+- *D1: F2b with the return strength following the forward strength* (`form=4`). As form 2 with etaB = 256, except that R[j, v] changes by g m_v h_j (B^2 + etaB A^2), which is the change of w to first order, in place of g m_v h_j; the cell reads both parts at the connection as before. This is a change of R's rule and is run as a diagnostic only, not as an arm of the question: if the score returns to F1's level, the loss of F2b was the disagreement of R with w; if it stays low, the loss lies in how the product changes the forward strengths. Five reported seeds.
+- *D2: the size of the loss against etaB.* F2 with etaB = 16 and 64 on the five reported seeds (seed 1 gave 77.7 and 78.8).
+- Predictions: P12 (0.5) D1 is still more than 4 points below F1 at the median of the paired differences. P13 (0.7) the medians fall in the order etaB = 1, 16, 64, 256.
+- Cost: 15 compiled runs, about 2 minutes; the check is extended to form 4 and to runs of 3,000 lines in which B moves.
