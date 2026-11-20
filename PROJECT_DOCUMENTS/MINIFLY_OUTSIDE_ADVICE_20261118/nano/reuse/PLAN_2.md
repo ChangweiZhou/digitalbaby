@@ -95,3 +95,22 @@ Two-digit sums at 40,000 lines are 76.2 to 76.4 in every arm: during the first t
 *The one change.* **A set of places joins one store only**: among the readings through the same set of places (whatever the store and the order), only the one of largest judgment is kept. This is the rule by which a cell joins one class in `nano/merge` (the class that raises J most), which I had not carried over. And the number of readings kept is 64, not 32 (there are 246 sets of two to four places; more slots is more computation, not more knowledge). Nothing else changes. The development choice (2 x 2) is run again with this and decided by the rule of section 2.
 
 *Predictions (mine).* A2-1: with the change the score of `add3` after `add2` at 2,000 and 3,000 lines stays at least 65 on seed 1 in at least one of the four arms (0.55). A2-2: counting arms are again below the arms that do not count at 5,000 lines (0.60).
+
+## 9. Outcome of the development choice, and the frozen setting (20 November; before any reported seed)
+
+Seed 1 with addition 2 (`res/dev_i?c?.json`; never-shown three-digit sums after 40,000 two-digit lines, %, single readings; 112 to 115 CPU-seconds a run, 2.3 million cells):
+
+| `add3` lines | 1,000 | 2,000 | 3,000 | 5,000 | 10,000 | 20,000 |
+|---|---|---|---|---|---|---|
+| trust the store's, counting | 67.8 | 76.4 | 68.2 | 76.8 | 78.2 | 83.4 |
+| **trust the store's, not counting** | 71.4 | 77.4 | 80.6 | **80.6** | 84.2 | 85.2 |
+| born at nothing, counting | 70.4 | 78.0 | 69.0 | 78.0 | 79.8 | 85.2 |
+| born at nothing, not counting | 69.0 | 76.4 | 71.4 | 80.4 | 83.8 | 85.4 |
+| (plain system after `add2`, from the table above) | 25.4 | 33.8 | 40.4 | 51.4 | 68.6 | 79.8 |
+| (from nothing, plain system) | 34.0 | 40.8 | 48.8 | 60.4 | 77.0 | 85.4 |
+
+Two-digit sums at 40,000 lines: 76.9 (mean of the last three readings) in every arm. **By the rule of section 2 the frozen setting is: a reading starts with the trust of its store's kind and does not count into the store** (80.6 + 76.9; the margin over "born at nothing, not counting" is 0.2 points and decides nothing; counting is 2.4 to 3.8 points lower). A2-1 held (three arms of four stay at or above 65 at 2,000 and 3,000 lines). A2-2 held.
+
+*What the choice costs the hypothesis, said before the reported seeds.* The hypothesis speaks of one pooled store. The setting chosen by the rule reads the store at the new places and does not pool: the store is used, not added to. R11 can then not happen (the two-digit store gains nothing from three-digit lines) and is scored as not tested. And on this seed no arm is at 90% within 20,000 lines, from nothing or after `add2`; the plain system from nothing is reported by its line at 92% after 80,000. I expect the reading at 90% to be undecided and the stated fallback (80%) to carry the result; I say so now.
+
+*Runs* (`jobs_main.txt`): the experiments of section 3 on the five reported seeds; (b) on one seed (73129) with eleven delays and 20,000 lines of `add4`, a reading and not a claim.
