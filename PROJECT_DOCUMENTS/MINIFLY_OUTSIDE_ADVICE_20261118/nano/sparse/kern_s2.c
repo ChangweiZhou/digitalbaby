@@ -7,7 +7,7 @@
 #define MAXP 70000
 #define HP 16
 #define R 4
-typedef struct { int64_t S, K, nplace, END, ncell, cap; const int32_t *nd, *del; const int64_t *off; int32_t *map; float *C, *N, *U; double *T, *Tu; double eta, e; int64_t flat, shrink;
+typedef struct { int64_t S, K, nplace, END, ncell, cap; const int32_t *nd, *del; const int64_t *off; int32_t *map; float *C, *N, *U; double *T, *Tu; double eta, e; int64_t flat, shrink; double ncap;
                  int64_t KZ, ZTOT, ncell2, cap2; int32_t *map2; float *C2, *N2, *U2; double *T2, *Tu2; } sys_t;
 static int64_t ids[MAXK], keyv[MAXK]; static int tix[MAXK]; static double sv[MAXK][MAXS]; static double lt[4096]; static double lte = -1;
 static int8_t rk[MAXK][MAXS]; static int n2, m2; static struct { int kx, t; double sr[R + 1]; } act2[MAXP]; static struct { int kx; int64_t id; } all2[MAXP];

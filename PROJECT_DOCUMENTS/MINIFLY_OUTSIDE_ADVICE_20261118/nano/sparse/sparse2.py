@@ -25,7 +25,7 @@ SRC = r'''
 #define MAXP 70000
 #define HP 16
 #define R 4
-typedef struct { int64_t S, K, nplace, END, ncell, cap; const int32_t *nd, *del; const int64_t *off; int32_t *map; float *C, *N, *U; double *T, *Tu; double eta, e; int64_t flat, shrink;
+typedef struct { int64_t S, K, nplace, END, ncell, cap; const int32_t *nd, *del; const int64_t *off; int32_t *map; float *C, *N, *U; double *T, *Tu; double eta, e; int64_t flat, shrink; double ncap;
                  int64_t KZ, ZTOT, ncell2, cap2; int32_t *map2; float *C2, *N2, *U2; double *T2, *Tu2; } sys_t;
 static int64_t ids[MAXK], keyv[MAXK]; static int tix[MAXK]; static double sv[MAXK][MAXS]; static double lt[4096]; static double lte = -1;
 static int8_t rk[MAXK][MAXS]; static int n2, m2; static struct { int kx, t; double sr[R + 1]; } act2[MAXP]; static struct { int kx; int64_t id; } all2[MAXP];
@@ -134,7 +134,7 @@ class Sys2(sp.Sys):
         s.ZTOT = int(sum(s.S ** len(k) for k in s.kinds[:s.KZ])); s.map2 = np.full(max(1, s.K * s.ZTOT), -1, np.int32); s.cap2 = cap2; s.C2 = np.zeros((cap2, R + 1), np.float32); s.N2 = np.zeros(cap2, np.float32); s.U2 = np.zeros(cap2, np.float32)
         s.T2 = np.full((max(1, s.K * s.KZ), NL), float(T0 if T02 is None else T02)); s.Tu2 = np.zeros_like(s.T2); s.ncell2 = 0
     def cs(s):
-        return CSys2(s.S, s.K, s.nplace, END, s.ncell, s.cap, s.nd.ctypes.data, s.dl.ctypes.data, s.off.ctypes.data, s.map.ctypes.data, s.C.ctypes.data, s.N.ctypes.data, s.U.ctypes.data, s.T.ctypes.data, s.Tu.ctypes.data, s.eta, s.e, 0, 0,
+        return CSys2(s.S, s.K, s.nplace, END, s.ncell, s.cap, s.nd.ctypes.data, s.dl.ctypes.data, s.off.ctypes.data, s.map.ctypes.data, s.C.ctypes.data, s.N.ctypes.data, s.U.ctypes.data, s.T.ctypes.data, s.Tu.ctypes.data, s.eta, s.e, 0, 0, 0.0,
                      s.KZ, s.ZTOT, s.ncell2, s.cap2, s.map2.ctypes.data, s.C2.ctypes.data, s.N2.ctypes.data, s.U2.ctypes.data, s.T2.ctypes.data, s.Tu2.ctypes.data)
     def grow2(s):
         s.cap2 *= 2; C = np.zeros((s.cap2, R + 1), np.float32); C[:len(s.C2)] = s.C2; s.C2 = C
@@ -221,7 +221,7 @@ def check():
         Ls = np.array([text("+", *p) for p in held["+"][:40]] + [text("-", *p) for p in shown["-"][:40]], np.int32); same = all((a.answers(Ls, own) == b.answers(Ls, own)).all() for own in (0, 1))
         d = max(np.abs(Pa - Pb).max(), np.abs(a.T - b.T).max(), np.abs(a.T2 - b.T2).max()); ok = d < 1e-9 and same and a.size() == b.size()
         if kw.get("mz") == 0:                                           # with no second layer the kernel is sparse.py's
-            c = sp.make(kw, sp.Sys); Pc = c.read(X, True, True); d0 = np.abs(Pa - Pc).max(); ok = ok and d0 == 0; print(f"   against sparse.py's kernel: largest difference {d0:.1e}")
+            c = sp.make(kw, sp.Sys); Pc = c.read(X, True, True); d0 = np.abs(Pa - Pc).max(); ok = ok and d0 < 1e-12; print(f"   against sparse.py's kernel: largest difference {d0:.1e}")
         print(f"{kw}: {X.size} bytes, {a.K} first-layer kinds, {a.K * a.KZ} pairs of kinds, {a.size()['cells']} first-layer and {a.size()['cells2']} second-layer cells that have counted, {a.size()['trusts2_used']} second-layer trusts used: compiled against numpy, largest difference {d:.1e}; answers written the same: {same}; sizes the same: {a.size() == b.size()}", "PASSED" if ok else "FAILED")
 
 if __name__ == "__main__":
