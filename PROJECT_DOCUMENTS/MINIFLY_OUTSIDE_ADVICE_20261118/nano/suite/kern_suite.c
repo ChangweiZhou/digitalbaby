@@ -138,7 +138,7 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
                 else if (s->birth > 0 && s->cN[c] == 0 && p[y] >= s->birth) continue;
                 count(s, c, y);
             }
-            if (M > 0 && t + 1 >= M && t + 1 <= s->nmax) { const uint32_t h = rhash(x, t + 1, M, s->hbits); s->prev[t + 1] = s->head[h]; s->head[h] = (int32_t)(t + 1); }
+            if (M > 0 && t >= M && t <= s->nmax) { const uint32_t h = rhash(x, t, M, s->hbits); s->prev[t] = s->head[h]; s->head[h] = (int32_t)t; }      /* the place t: the run that ended before it, and the byte x[t] just read */
         }
         s->last[y] = t; s->synced = t + 1;
     }

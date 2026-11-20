@@ -158,7 +158,7 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
                 else if (s->birth > 0 && s->cN[c] == 0 && p[y] >= s->birth) continue;
                 count(s, c, y);
             }
-            if (M > 0 && t + 1 >= M && t + 1 <= s->nmax) { const uint32_t h = rhash(x, t + 1, M, s->hbits); s->prev[t + 1] = s->head[h]; s->head[h] = (int32_t)(t + 1); }
+            if (M > 0 && t >= M && t <= s->nmax) { const uint32_t h = rhash(x, t, M, s->hbits); s->prev[t] = s->head[h]; s->head[h] = (int32_t)t; }      /* the place t: the run that ended before it, and the byte x[t] just read */
         }
         s->last[y] = t; s->synced = t + 1;
     }
@@ -269,7 +269,7 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, ru
                     if birth > 0 and p[y] >= birth: continue
                     cells[key] = np.zeros(S)
                 cells[key][y] += 1
-            if any(k[0] == 2 for k in kinds) and t + 1 >= M: places.setdefault(tuple(int(v) for v in x[t + 1 - M:t + 1]), []).append(t + 1)
+            if any(k[0] == 2 for k in kinds) and t >= M: places.setdefault(tuple(int(v) for v in x[t - M:t]), []).append(t)
     return P1, P2, state
 
 def check():
@@ -289,8 +289,10 @@ def check():
         if kw.get("gate"): d = max(d, np.abs(A2 - R2).max(), np.abs(F2 - Q2).max(), np.abs(G2 - W2).max(), np.abs(s.G() - st["G"].ravel()).max())
         dn = np.abs(a1 + np.log(A1[np.arange(len(a1)), x[lo:cutn]])).max(); cells_ref = sum(1 for c in st["cells"].values() if c.sum() > 0); counts_ref = sum(int((c > 0).sum()) for c in st["cells"].values()); sz = s.sizes()
         used = int((st["Tu"][[i for i, k in enumerate(kinds) if k[0] == 2]] > 0).sum()) if recall else -1
-        good = d < 1e-9 and dn < 1e-12 and sz["cells"] == cells_ref and sz["counts_above_zero"] == counts_ref and (not recall or used > 0); ok &= good
-        print(f"{name} ({n} bytes, S = {S}), kinds {spec} ({len(kinds)}), options {kw}, recall {recall}: compiled against the reference, largest difference {d:.1e} (answers while reading, with nothing changing, going on; trusts; parts); cells {sz['cells']} = {cells_ref}, counts {sz['counts_above_zero']} = {counts_ref}" + (f"; recall levels used {used}" if recall else ""), "PASSED" if good else "FAILED", flush=True)
+        x2 = x.copy(); n0 = cutn - 300; x2[n0:] = (x2[n0:] + 1 + rng.integers(0, S - 1, n - n0)) % S; sa = Sys(S, kinds, x, **kw); sb = Sys(S, kinds, x2, **kw); _, _, U1, U2 = sa.run(lo, n0 + 1, True, True); _, _, V1, V2 = sb.run(lo, n0 + 1, True, True)
+        blind = bool(np.array_equal(U1, V1) and (U2 is None or np.array_equal(U2, V2)))      # every byte from n0 on is replaced by another: the answers up to and including the one for byte n0 must not move
+        good = blind and d < 1e-9 and dn < 1e-12 and sz["cells"] == cells_ref and sz["counts_above_zero"] == counts_ref and (not recall or used > 0); ok &= good
+        print(f"{name} ({n} bytes, S = {S}), kinds {spec} ({len(kinds)}), options {kw}, recall {recall}: compiled against the reference, largest difference {d:.1e} (answers while reading, with nothing changing, going on; trusts; parts); cells {sz['cells']} = {cells_ref}, counts {sz['counts_above_zero']} = {counts_ref}" + (f"; recall levels used {used}" if recall else "") + f"; no answer moves when its own byte and all later ones are replaced: {blind}", "PASSED" if good else "FAILED", flush=True)
     return ok
 
 def check_gate():
