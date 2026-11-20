@@ -101,7 +101,28 @@ void find_classes(int m, int nx, int nz, int S, const int32_t *xc, const int32_t
     for (int x = 0; x < nx; x++) cls[x] = -1;
     for (int o = 0; o < nx; o++) { const int x = xord[o]; delta_all(&w, x, cls); int c = best(&w); if (c < 0) LOWEST(c) cls[x] = c; size[c]++; }
     for (int sw = 0; sw < sweeps; sw++) SWEEP
-    if (dissolve) {       /* each class of two or more is dissolved once and its members seated again one by one; kept only if J rises; then one more sweep */
+    if (dissolve == 2) {  /* PLAN_8.md: a class is split around its worst-foretold member: that member founds a class, every other member chooses between the two; kept only if J rises; up to four times a class; then one more sweep */
+        int32_t *save = malloc(nx * sizeof(int32_t)), *ssize = malloc(nx * sizeof(int32_t)), *mem = malloc(nx * sizeof(int32_t)), *labs = malloc(nx * sizeof(int32_t)); int nl = 0;
+        double *xn = calloc(nx, sizeof(double)); for (int i = 0; i < m; i++) xn[xc[i]] += n[i];
+        for (int c = 0; c < nx; c++) if (size[c] >= 3) labs[nl++] = c;
+        for (int u = 0; u < nl; u++) { const int c0 = labs[u];
+            for (int round = 0; round < 4 && size[c0] >= 3; round++) {
+                const double Jb = j_total(m, nx, nz, S, xc, zptr, zcell, cptr, sym, cnt, n, e, cls); int nm = 0, wm = -1; double worst = 1e300;
+                memcpy(save, cls, nx * sizeof(int32_t)); memcpy(ssize, size, nx * sizeof(int32_t));
+                for (int o = 0; o < nx; o++) if (cls[xord[o]] == c0) mem[nm++] = xord[o];
+                for (int i = 0; i < nm; i++) { const int x = mem[i]; cls[x] = -1; delta_all(&w, x, cls); double d = 0; for (int q = 0; q < w.ntd; q++) { if (w.td[q] == c0) d = w.dl[c0]; w.ind[w.td[q]] = 0; }
+                    cls[x] = c0; d /= xn[x]; if (d < worst - 1e-9) { worst = d; wm = x; } }
+                int L; size[c0]--; LOWEST(L) cls[wm] = L; size[L] = 1;
+                for (int i = 0; i < nm; i++) { const int x = mem[i]; if (x == wm) continue; size[c0]--; cls[x] = -1; delta_all(&w, x, cls); double d0 = 0, dL = 0;
+                    for (int q = 0; q < w.ntd; q++) { if (w.td[q] == c0) d0 = w.dl[c0]; if (w.td[q] == L) dL = w.dl[L]; w.ind[w.td[q]] = 0; }
+                    const int c = dL > d0 + 1e-9 ? L : c0; cls[x] = c; size[c]++; }
+                if (j_total(m, nx, nz, S, xc, zptr, zcell, cptr, sym, cnt, n, e, cls) < Jb + 1e-9) { memcpy(cls, save, nx * sizeof(int32_t)); memcpy(size, ssize, nx * sizeof(int32_t)); break; }
+            }
+        }
+        SWEEP
+        free(save); free(ssize); free(mem); free(labs); free(xn);
+    }
+    if (dissolve == 1) {  /* each class of two or more is dissolved once and its members seated again one by one; kept only if J rises; then one more sweep */
         int32_t *save = malloc(nx * sizeof(int32_t)), *ssize = malloc(nx * sizeof(int32_t)), *mem = malloc(nx * sizeof(int32_t)), *labs = malloc(nx * sizeof(int32_t)); int nl = 0;
         for (int c = 0; c < nx; c++) if (size[c] >= 2) labs[nl++] = c;
         for (int u = 0; u < nl; u++) { const int c0 = labs[u]; if (size[c0] < 2) continue;
