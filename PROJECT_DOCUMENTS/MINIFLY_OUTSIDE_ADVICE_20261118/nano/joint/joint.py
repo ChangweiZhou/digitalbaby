@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """PLAN_1.md (line C, step C1): the plain system of loop_small_case/cells2.py (two-digit sums, 256 logistic cells in between, every line read, one
 step of relay with learned return strengths) with the connection from a cell in between to a branch of the answering cell in one of three forms.
-    python3 joint.py <label> seed=1 [form=1|2|3] [etaB=1] [b0=1] [lines=400000] [every=50000] [fast=1] [H=256]
+    python3 joint.py <label> seed=1 [form=1|2|3|4] [etaB=1] [b0=1] [lines=400000] [every=50000] [fast=1] [H=256]
     form=1: one-sided; the strength w = A is held and changed by the answering cell alone (cells2.py's plain system, which this must reproduce).
     form=2: w = A B; A held by the answering cell (born 0, fades), B by the sending cell (born 1, never below 0, does not fade);
             A += g m h B;  B += etaB g m h A   (both from the values before the change).
     form=3: w = sign(A) min(|A|, B); B born b0; only the end whose part is the smaller changes: A += g m h where |A| < B, else B += g m h sign(A).
+    form=4: (PLAN_1.md, section 10, a diagnostic) form 2, with the return strength changed by g m h (B^2 + etaB A^2), the change of w to first order.
     fast=1: the inner loop runs compiled (kernj.c through fastj.py); the numpy loop here is the reference (check_joint.py).
 Copied from loop_small_case/cells2.py at commit fe397ca: the text, the split, the streams of random numbers, class Sys for the plain system, the
 drawing of lines in blocks up to the next reading, and the scoring of all pairs at once."""
@@ -29,14 +30,14 @@ class Sys:
     def W(s):
         """The strengths of the connections, as both ends' parts give them."""
         if s.form == 1: return s.A
-        if s.form == 2: return s.A * s.B
+        if s.form in (2, 4): return s.A * s.B
         return np.sign(s.A) * np.minimum(np.abs(s.A), s.B)
     def learn(s, y):
         act = OFF + np.asarray(s.hist); h = sg(s.W1[:, act].sum(1) + s.b1); a = s.W() @ h + s.b2; m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
         sig = (s.R @ m) * h * (1 - h); d2 = np.outer(g * m, h); d = s.eta1 * sig
-        s.R += d2.T; s.W1[:, act] += np.repeat(d[:, None], D, 1); s.b1 += d
+        s.R += (d2 * (s.B ** 2 + s.etaB * s.A ** 2)).T if s.form == 4 else d2.T; s.W1[:, act] += np.repeat(d[:, None], D, 1); s.b1 += d
         if s.form == 1: s.A += d2
-        elif s.form == 2:
+        elif s.form in (2, 4):
             dA = d2 * s.B; s.B = np.maximum(s.B + s.etaB * d2 * s.A, 0.0); s.A += dA
         else:
             low = np.abs(s.A) < s.B; s.B = np.maximum(s.B + np.where(low, 0.0, d2 * np.sign(s.A)), 0.0); s.A += np.where(low, d2, 0.0)

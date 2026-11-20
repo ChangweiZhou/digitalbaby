@@ -94,3 +94,46 @@ Connections of more than two cells (C3); the sign of a sender (C4); other rules 
 - *D2: the size of the loss against etaB.* F2 with etaB = 16 and 64 on the five reported seeds (seed 1 gave 77.7 and 78.8).
 - Predictions: P12 (0.5) D1 is still more than 4 points below F1 at the median of the paired differences. P13 (0.7) the medians fall in the order etaB = 1, 16, 64, 256.
 - Cost: 15 compiled runs, about 2 minutes; the check is extended to form 4 and to runs of 3,000 lines in which B moves.
+
+## 11. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report1.txt` (made by `report1.py` from `res/j_*.json`); the check: `check_joint_output.txt` (passed, 1e-14 to 3e-13, form 4 and runs of 3,000 lines included). The numpy program at full length on seed 1 gives the compiled program's readings to the digit for F1 (81.5), F2b (80.1) and F3b (80.2).
+
+Never-shown sums, whole answer right, %, mean of the last three readings; the five reported seeds and the median; the last column is the median of the paired differences from F1 and the number of seeds below F1.
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median | against F1 |
+|---|---|---|---|---|---|---|---|
+| F1, one-sided (the plain system) | 84.2 | 82.7 | 86.4 | 81.8 | 86.7 | **84.2** | |
+| F2, product, etaB = 1 (as proposed) | 84.0 | 81.8 | 86.5 | 80.6 | 86.2 | **84.0** | -0.5; 4 below |
+| product, etaB = 16 (addition D2) | 83.9 | 78.4 | 83.5 | 75.7 | 84.9 | **83.5** | -2.9; 5 below |
+| product, etaB = 64 (addition D2) | 82.1 | 79.7 | 73.3 | 73.1 | 77.9 | **77.9** | -8.7; 5 below |
+| F2b, product, etaB = 256 | 77.9 | 75.9 | 59.4 | 62.6 | 67.3 | **67.3** | -19.2; 5 below |
+| etaB = 256 with R following w (diagnostic D1) | 76.4 | 77.6 | 60.4 | 67.1 | 29.9 | **67.1** | -14.7; 5 below |
+| F3, smaller part, b0 = 1/16 | 84.2 | 82.5 | 86.9 | 82.1 | 86.6 | **84.2** | 0.0; 2 below |
+| F3b, smaller part, b0 = 1/64 | 86.5 | 83.3 | 88.8 | 85.3 | 83.7 | **85.3** | +2.3; 1 below |
+
+What is left of the connections at the end (medians of five seeds):
+
+| | below one hundredth of the largest, % | score at the end | with those removed | weakest half removed | cosine of R with w | B, smallest to largest |
+|---|---|---|---|---|---|---|
+| F1 | 11.2 | 84.8 | 85.0 | 84.8 | 1.000 | 1 |
+| F2, etaB = 1 | 12.6 | 83.0 | 83.2 | 84.6 | 0.995 | 0.97 to 1.29 |
+| etaB = 16 | 24.9 | | | | 0.835 | |
+| etaB = 64 | 51.0 | | | | 0.593 | |
+| F2b, etaB = 256 | 57.5 | 65.8 | 64.4 | 64.8 | 0.379 | 0.000 to 9.0 |
+| F3, b0 = 1/16 | 11.2 | 84.4 | 84.6 | 84.4 | 1.000 | 0.058 to 0.108 |
+| F3b, b0 = 1/64 | 10.5 | 84.8 | 84.6 | 83.6 | 1.000 | 0.001 to 0.109 |
+
+**The hypothesis.** H stands for F2 as proposed: the paired differences are -0.2, -0.9, +0.1, -1.2, -0.5 (median -0.5), inside the 4 points. But I do not read that as support for the one-sided edge being a harmless simplification of this joint form, because the arm hardly tests it: with B born at 1 and strengths of size 0.02 to 0.1, the sending end's part stays between 0.97 and 1.3, and F2 is F1 to within that. Where the sending end's part is given weight, the score falls with that weight on every seed: -2.9, -8.7 and -19.2 points at etaB = 16, 64 and 256. So, on this testbed and for this rule (a product, each part changed by the mismatch times the sender's output times the other part), the answer to the question of section 1 is, in my reading: the one-sided edge is not a simplification that loses something; the edge decided by both ends is the worse of the two wherever it differs from the one-sided edge, and equal to it where it does not.
+
+**Which of the two routes of section 2.** The diagnostic D1 brings the cosine of R with w back to 0.998 and the score stays at 67.1 (five seeds below F1, one of them at 29.9). The loss is therefore not the disagreement between return and forward strengths; it lies in how the product changes the forward strengths. What in that I have not tested. What I see: the largest strength is 0.73 at the median in F2b against 0.09 in F1, and 58% of the connections end below one hundredth of the largest against 11%; a strength changes in proportion to B^2 + etaB A^2, so strong connections change fast and weak ones slowly, and the answering cell's step g, which is set from the outputs alone, no longer bounds the change of a branch. Whether the loss is the concentration on few connections or steps that are too large is open.
+
+**F3.** At the birth value chosen by the registered rule (1/16) the sender's part is the smaller at 0.03% of connections at the end, and the arm is F1 for practical purposes; it says nothing. At 1/64 the sender's part is the smaller at 1.2% of connections at the end (it grows where it is the smaller, so it does not stay the smaller), and the score is +2.3 at the median, above F1 on four seeds of five (+2.3, +0.6, +2.4, +3.5, -2.9). That is inside the spread of the seeds and of the readings and I claim no difference; it is the one place where a joint form was not below the one-sided one, and five more seeds would say whether it is anything.
+
+**What is left of the connections.** In the plain system 11% of the connections are below one hundredth of the largest and removing them changes nothing; removing the weakest half at the end costs nothing either (84.8 and 84.8 at the median), the weakest three quarters cost about 7 points, the weakest nine tenths nearly everything (20.8). The product form leaves far more connections near zero (58% at etaB = 256) but at a lower score, so it is not a cheaper network of equal worth.
+
+**Predictions.** P1 held (81.5 on seed 1; the five figures to the digit). P2 held (-0.5). P3 failed (F2's median is 0.2 below F1's). P4 held on five seeds of five, by 0.6 to 1.5 percentage points, which is small. P5 held (median change 0.0 in F1, F2 and F3; -0.2 in F2b, where two seeds lose 2.2 and 2.8). P6 held, emptily, the arm being F1. P7 failed (F2 loses fewer points than F1 on three seeds, the same on one, more on one). P8 failed (-19.2). P9 held (53 to 69% against 11 to 13%). P10 failed, with the sign against me (+2.3). P11 held (0.38). P12 held (-14.7). P13 held (84.0, 83.5, 77.9, 67.3).
+
+**Errors and departures of mine.** (1) The development seed misled the choice of etaB = 256 (1.4 below F1 on seed 1, 19.2 below at the median of the reported seeds); D2 was added to see the whole course. (2) The first eight development runs were started without their label (section 9). (3) F3's registered rule picked a setting that is F1; I had foreseen the case in section 2 but not that the rule of section 6 would select it. (4) The grids of sections 9 and 10 are additions after the first runs; each was entered and committed before its runs. (5) My first commit on this branch carries a co-author line naming a model, against the rule given to me; later commits do not, and I have not rewritten the branch.
+
+**Not run:** what in the product's change causes the loss (a step for the two parts that keeps the change of a branch bounded; parts born at equal size); F3b on more seeds; fading of B; everything listed in section 8.

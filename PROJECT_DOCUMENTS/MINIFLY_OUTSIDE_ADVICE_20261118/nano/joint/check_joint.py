@@ -14,6 +14,8 @@ if __name__ == "__main__":
     bad = 0; base = dict(seed="3", lines="300", every="300")
     cases = [("form 1", dict()), ("form 2 etaB=1", dict(form="2")), ("form 2 etaB=1/4", dict(form="2", etaB="1/4")), ("form 2 etaB=1/16", dict(form="2", etaB="1/16")), ("form 2 etaB=4", dict(form="2", etaB="4"))]
     cases += [(f"form 3 b0={b}", dict(form="3", b0=b)) for b in ("1", "1/2", "1/4", "1/8", "1/64", "1/512")]
+    cases += [("form 2 etaB=256", dict(form="2", etaB="256")), ("form 4 etaB=256", dict(form="4", etaB="256")), ("form 2 etaB=256, 3,000 lines", dict(form="2", etaB="256", lines="3000", every="3000")),
+              ("form 4 etaB=256, 3,000 lines", dict(form="4", etaB="256", lines="3000", every="3000")), ("form 3 b0=1/64, 3,000 lines", dict(form="3", b0="1/64", lines="3000", every="3000"))]
     for title, kw in cases:
         (a, ta), (b, tb) = one(dict(base, **kw), "0"), one(dict(base, **kw), "1"); w = diff(a, b); bad += not w < 1e-6
         extra = f"   B from {a.B.min():.3f} to {a.B.max():.3f}; sender's part the smaller at {100 * (np.abs(a.A) >= a.B).mean():.1f}% of connections" if kw.get("form") else ""
