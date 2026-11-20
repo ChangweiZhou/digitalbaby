@@ -37,3 +37,9 @@ At the end of each phase, on the 500 held addition pairs (and all 2,000 never-sh
 Six runs of about 70 seconds (seed 1 as a development pass, nothing chosen on it; the five reported seeds). Not run: a rule that weighs the store against the relay system by the counts; the whole answer in arm L or with other q and w; on the harsh change of `PLAN_3.md`; further seeds unless a bound of the hypothesis is within five points.
 
 ---
+
+## 7. A dated addition, entered 20 November after the five reported seeds were read and before its runs
+
+On the five reported seeds (scored in section 8) the whole system has 77.2% of clean never-shown subtraction at the median (71.9, 73.8, 82.0, 77.9, 77.2), which is within five points of the hypothesis's 75 and of its bound of refutation at 70. The ten further seeds 1001 to 1010 are run and the fifteen reported together.
+- W6 (0.6): on fifteen seeds the whole system has at least 75% of clean never-shown subtraction at the median.
+- W7 (0.85): on fifteen seeds it has at least 80% of never-shown addition at the median.
