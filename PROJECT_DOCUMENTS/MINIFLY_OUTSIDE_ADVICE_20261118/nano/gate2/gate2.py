@@ -186,7 +186,7 @@ def run(kw):
         g7 = np.random.default_rng([seed, 7]); prevs = {"add": [tx(pool_[g7.integers(len(pool_), size=500)]) for _ in range(5)]}
     LsA = np.array([text("+", a, b, nd) for a, b in held["+"]]); LsS = np.array([text("-", a, b) for a, b in clean]) if nd == 2 and "sub" in prevs else None
     kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
-    s = Sys2(14, D, kinds, 0.1, 2.0, 0.02, True, P=int(kw.get("P", 32)), eJ=float(kw.get("eJ", 0.02)), mode=mode, seed=seed, half_at=0, gconst=(0, 1)[:nG])
+    s = Sys2(14, D, kinds, 0.1, 2.0, 0.02, True, P=int(kw.get("P", 32)), eJ=float(kw.get("eJ", 0.02)), mode=mode, seed=seed, half_at=0, keep=int(kw.get("keep", 0)), gconst=(0, 1)[:nG])      # keep=2: nano/merge's setting C (PLAN_2.md, addition 2)
     tag = kw.get("tag") or "run_" + "_".join(f"{k}{v}" for k, v in sorted(kw.items())); os.makedirs(os.path.join(HERE, "res"), exist_ok=True); path = os.path.join(HERE, "res", tag + ".json")
     out = dict(task="sums", args=kw, seed=seed, plan=plan, nd=nd, mode=mode, rows=[], clean_subtractions=len(clean) if LsS is not None else None); tail = np.full(D, END, np.int64); total = 0
     for pi, (name, lines) in enumerate(plan):
