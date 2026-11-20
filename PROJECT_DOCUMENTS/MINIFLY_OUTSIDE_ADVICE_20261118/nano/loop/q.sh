@@ -5,7 +5,7 @@ cd "$(dirname "$0")"; mkdir -p log res; export OMP_NUM_THREADS=1 OPENBLAS_NUM_TH
 while true; do
   n=$(grep -cv '^#' "$1")
   if [ $i -ge $n ]; then [ -f log/q_stop ] && break; sleep 10; continue; fi
-  while [ "$(pgrep -fc 'loop.py run')" -ge "$max" ]; do sleep 5; done
+  while [ "$(pgrep -fc '^python3 loop.py run')" -ge "$max" ]; do sleep 5; done
   i=$((i+1)); line=$(grep -v '^#' "$1" | sed -n "${i}p")
   ( IFS=";" read -ra parts <<< "$line"; for p in "${parts[@]}"; do set -- $p; grep -q '"return_and_forward_cosine"' res/$1.json 2>/dev/null || python3 loop.py run "$@" >> log/out.txt 2>> log/err.txt; done ) &
   sleep 4

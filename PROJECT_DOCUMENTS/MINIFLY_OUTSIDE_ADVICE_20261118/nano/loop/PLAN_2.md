@@ -42,3 +42,16 @@
 **My expectation, before these runs:** at least one of the four is better than the fixed setting by more than 0.01 nats after 2 readings: chance 0.75 (B6). The run of 8 readings at the chosen setting ends below 1,024 cells' 1.768: chance 0.40 (B7).
 
 The queue is now run by `q.sh` (`jobs_3.txt`: these four runs, then the rest of `jobs_2.txt` unchanged).
+
+## Entered 15:58 UTC, as the runs it adds were being started (nothing above is changed)
+
+**The settings check at 4,096 cells** (development seed 1, 2 readings; `res/t_H4096_*.json`): (eta1, eta2) = (16, 1/4) 1.8017 nats, 47.8%; (1, 1) 1.8137, 48.8%; (4, 1/4) 1.8444, 46.6%; (4, 1) 1.8540, 47.2%; the fixed setting (1, 1/4) on seed 73129: 1.9490, 43.3%. B6 held: every one of the four is better than the fixed setting by 0.09 to 0.15 nats. The best, eta1 = 16, is on the edge of what was tried; a larger eta1 was not tried at this size. 4,096 / 256 = 16: the best eta1 found is in proportion to the number of cells, which fits the reason given in the pre-check (the sum a cell receives over its return strengths shrinks as cells are added, because the answering cell's strengths do). This is one point and my reading, not a result.
+
+**Runs added, under their own names ("eta1 in proportion to the cells": eta1 = H / 256, eta2 = 1/4):**
+- 4,096 cells, eta1 = 16, seed 73129, 8 readings, and carried on to 16 readings for the third plan (`a16_H4096_s73129`).
+- 16,384 cells, eta1 = 64, seed 73129, 2 readings (`a64_H16384_s73129`). **This setting is an extrapolation of the rule above and was checked on no seed at this size.**
+- 1,024 cells, eta1 = 4, if the pre-check finds it better than eta1 = 1 by more than 0.01 nats (as the plan above provides).
+
+**Runs stopped, to pay for them:** the fixed-setting run at 16,384 cells after its first reading (2.2201 nats, 36.3%; 20.7 minutes); the fixed-setting run at 4,096 cells after its eighth reading (its readings 9 to 16, which the third plan had asked for, are replaced there by those of the run with eta1 = 16). So the fixed-setting series is: 256 and 1,024 cells on three seeds, 4,096 cells on one seed, 8 readings; 16,384 cells on one seed after one reading only.
+
+**Scoring stays as registered:** the hypothesis and B1 to B4 are scored on the fixed-setting series. B4 (16,384 against 4,096 cells after 2 readings) can no longer be scored on that series as written; it is scored after 1 reading, and also on the series with eta1 in proportion, and both are said.
