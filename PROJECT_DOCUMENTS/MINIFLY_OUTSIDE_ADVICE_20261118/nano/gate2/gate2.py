@@ -194,6 +194,7 @@ def run(kw):
         marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []) + ([1000, 2000] if pi > 0 else []) + ([int(q) for q in kw["marks_extra"].split("+")] if pi == 0 and "marks_extra" in kw else []))); done = 0      # a later task is also read soon after it starts
         for mk in marks:
             X = drawer[op](mk - done).ravel(); x = np.concatenate([tail, X]); s.learn(G.ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
+            if "freeze_at" in kw and total + mk >= int(kw["freeze_at"]): s.eta = 0.0      # PLAN_6.md: from here on no trust and no part changes; the cells go on counting
             row = dict(phase=pi, name=name, lines=mk, lines_in_life=total + mk, on_every=mk % every == 0, add=reading(s, LsA, prevs, nd))
             if LsS is not None: row["sub_clean"] = reading(s, LsS, prevs_clean)
             if int(kw.get("detail", 0)) and s.P:                  # PLAN_2.md, addition 1: the same reading with only the class kinds speaking, and with only the plain kinds
