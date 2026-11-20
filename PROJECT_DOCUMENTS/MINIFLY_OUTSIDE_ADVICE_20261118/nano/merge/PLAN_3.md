@@ -27,3 +27,18 @@ A cell met once foretells nothing of itself, so it is silent wherever any class 
 ## 4. Size and cost
 
 As step 2; the judgment adds a pass over the member cells at each finding (seconds). The cells that speak are counted beside all cells. Not run: a trust that learns from a cell's own record; anything else of `PLAN_2.md`'s list.
+
+## 5. Outcome (entered 20 November after the two development runs; `res/dev3_sums.json`, `res/dev3_prose.json`, `out_dev3_*.txt`, check in `check3_output.txt`)
+
+| | sums, seed 1, last three readings | prose, last twentieth | cells (speaking) | CPU s |
+|---|---|---|---|---|
+| no classes | 76.8 | 1.5566 | | |
+| frozen setting (classes beside the cells) | 90.8 | 1.5488 | | |
+| replacement of every member's cell | 93.8 | 1.5612 | | |
+| **replacement cell by cell (this plan)** | **89.7** | **1.5551** | sums 1,236,269 (1,171,706); prose 2,292,678 (1,900,794) | 55; 107 |
+
+At the last finding 64,197 of 74,273 judged cells were silent on sums and 300,579 of 353,761 on prose.
+
+**The hypothesis is refuted in both parts**: below the frozen setting on sums (89.7 against 90.8) and 0.0063 nats above it on prose. Q1 failed (89.7; 92.5 predicted), Q2 failed (1.5551; at most 1.5508 predicted), Q3 failed, Q4 held (85% of the judged cells silent on prose), Q5 failed. It is not run on the reported seeds or on the books. One seed on sums; the difference from 90.8 is within what seeds differ by, so of sums I say only that it did not gain.
+
+Reading (mine). On prose the cells that the class foretells better than they foretell themselves are mostly cells met once or twice, and silencing them still costs 0.006 nats: a cell met once, read at the small trust the answering cell has learned for such cells, adds something that its class cell, read at another trust, does not replace. "Met once holds no regularity" is true of the cell and not of what the answering cell makes of many such cells together. Withdrawal by this test is therefore not the route to a smaller store on prose.

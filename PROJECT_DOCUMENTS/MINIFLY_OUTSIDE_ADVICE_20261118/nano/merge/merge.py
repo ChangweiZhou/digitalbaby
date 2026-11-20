@@ -104,21 +104,32 @@ double j_total(int m, int nx, int nz, int S, const int32_t *xc, const int32_t *z
     free(Cz); free(Nz); return J;
 }
 void find_classes(int m, int nx, int nz, int S, const int32_t *xc, const int32_t *zc, const int32_t *zptr, const int32_t *zcell, const int32_t *xptr, const int32_t *xcell,
-                  const int32_t *cptr, const int32_t *sym, const float *cnt, const float *n, double e, const int32_t *xord, int sweeps, int32_t *cls) {
+                  const int32_t *cptr, const int32_t *sym, const float *cnt, const float *n, double e, const int32_t *xord, int sweeps, int dissolve, int32_t *cls) {
     W w = { m, nx, S, xc, zc, zptr, zcell, xptr, xcell, cptr, sym, cnt, n, e }; (void)nz;
     w.Cz = calloc((size_t)nx * S, sizeof(double)); w.Nz = calloc(nx, sizeof(double)); w.bef = calloc(nx, sizeof(double)); w.aft = calloc(nx, sizeof(double));
     w.dl = calloc(nx, sizeof(double)); w.ci = calloc(S, sizeof(double)); w.tz = calloc(nx, sizeof(int32_t)); w.td = calloc(nx, sizeof(int32_t)); w.seen = calloc(nx, 1); w.ind = calloc(nx, 1);
-    int32_t *size = calloc(nx, sizeof(int32_t)), *fre = calloc(nx, sizeof(int32_t)); int nf = 0;
-    for (int c = nx - 1; c >= 0; c--) fre[nf++] = c;                      /* free labels; the lowest is taken first */
+    int32_t *size = calloc(nx, sizeof(int32_t));                         /* a class that is founded takes the lowest label that has no member */
+#define LOWEST(c) { c = 0; while (size[c]) c++; }
+#define SWEEP for (int o = 0; o < nx; o++) { const int x = xord[o], old = cls[x]; size[old]--; cls[x] = -1; delta_all(&w, x, cls); int c = best(&w); \
+        if (c < 0) { if (size[old] == 0) c = old; else LOWEST(c) } cls[x] = c; size[c]++; }
     for (int x = 0; x < nx; x++) cls[x] = -1;
-    for (int o = 0; o < nx; o++) { const int x = xord[o]; delta_all(&w, x, cls); int c = best(&w); if (c < 0) c = fre[--nf]; cls[x] = c; size[c]++; }
-    for (int sw = 0; sw < sweeps; sw++) for (int o = 0; o < nx; o++) {
-        const int x = xord[o], old = cls[x]; size[old]--; cls[x] = -1; delta_all(&w, x, cls); int c = best(&w);
-        if (c < 0) c = size[old] == 0 ? old : fre[--nf];
-        if (c != old && size[old] == 0) fre[nf++] = old;
-        cls[x] = c; size[c]++;
+    for (int o = 0; o < nx; o++) { const int x = xord[o]; delta_all(&w, x, cls); int c = best(&w); if (c < 0) LOWEST(c) cls[x] = c; size[c]++; }
+    for (int sw = 0; sw < sweeps; sw++) SWEEP
+    if (dissolve) {       /* each class of two or more is dissolved once and its members seated again one by one; kept only if J rises; then one more sweep */
+        int32_t *save = malloc(nx * sizeof(int32_t)), *ssize = malloc(nx * sizeof(int32_t)), *mem = malloc(nx * sizeof(int32_t)), *labs = malloc(nx * sizeof(int32_t)); int nl = 0;
+        for (int c = 0; c < nx; c++) if (size[c] >= 2) labs[nl++] = c;
+        for (int u = 0; u < nl; u++) { const int c0 = labs[u]; if (size[c0] < 2) continue;
+            const double Jb = j_total(m, nx, nz, S, xc, zptr, zcell, cptr, sym, cnt, n, e, cls); int nm = 0;
+            memcpy(save, cls, nx * sizeof(int32_t)); memcpy(ssize, size, nx * sizeof(int32_t));
+            for (int o = 0; o < nx; o++) if (cls[xord[o]] == c0) { mem[nm++] = xord[o]; cls[xord[o]] = -1; }
+            size[c0] = 0;
+            for (int i = 0; i < nm; i++) { const int x = mem[i]; delta_all(&w, x, cls); int c = best(&w); if (c < 0) LOWEST(c) cls[x] = c; size[c]++; }
+            if (j_total(m, nx, nz, S, xc, zptr, zcell, cptr, sym, cnt, n, e, cls) < Jb + 1e-9) { memcpy(cls, save, nx * sizeof(int32_t)); memcpy(size, ssize, nx * sizeof(int32_t)); }
+        }
+        SWEEP
+        free(save); free(ssize); free(mem); free(labs);
     }
-    free(w.Cz); free(w.Nz); free(w.bef); free(w.aft); free(w.dl); free(w.ci); free(w.tz); free(w.td); free(w.seen); free(w.ind); free(size); free(fre);
+    free(w.Cz); free(w.Nz); free(w.bef); free(w.aft); free(w.dl); free(w.ci); free(w.tz); free(w.td); free(w.seen); free(w.ind); free(size);
 }
 '''
 def kern():
@@ -128,7 +139,7 @@ def kern():
     L = ctypes.CDLL(so); ci, cd = ctypes.c_int, ctypes.c_double
     L.mix_steps.argtypes = [ctypes.c_int64, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD]; L.mix_steps.restype = None
     L.j_total.argtypes = [ci, ci, ci, ci, PI, PI, PI, PI, PI, PF, PF, cd, PI]; L.j_total.restype = cd
-    L.find_classes.argtypes = [ci, ci, ci, ci, PI, PI, PI, PI, PI, PI, PI, PI, PF, PF, cd, PI, ci, PI]; L.find_classes.restype = None; return L
+    L.find_classes.argtypes = [ci, ci, ci, ci, PI, PI, PI, PI, PI, PI, PI, PI, PF, PF, cd, PI, ci, ci, PI]; L.find_classes.restype = None; return L
 p32 = lambda a: a.ctypes.data_as(PI); pf = lambda a: a.ctypes.data_as(PF); pd = lambda a: a.ctypes.data_as(PD)
 
 # ---------------------------------------------------------------- references in numpy and plain Python
@@ -166,25 +177,37 @@ def j_py(cells, cls, S, e):
         for v, k in c.items(): J += k * (math.log(d[v] - k + e) - math.log(N - n + S * e))
     return J
 
-def find_py(cells, nx, xord, S, e, sweeps):
-    """The search of find_classes by brute force: every move is judged by J computed whole."""
-    cls = list(range(nx, 2 * nx)); placed = []; free = list(range(nx)); size = [0] * (2 * nx)      # labels nx.. stand for 'not yet placed, alone'
-    def choose(x, cand):
+def find_py(cells, nx, xord, S, e, sweeps, dissolve=0):
+    """The search of find_classes by brute force: every move is judged by J computed whole. Labels nx.. stand for 'taken out, alone'."""
+    cls = list(range(nx, 2 * nx)); size = [0] * nx; lowest = lambda: next(c for c in range(nx) if size[c] == 0)
+    def choose(x):
         base = j_py(cells, cls, S, e); bc, bd = -1, 1e-9
-        for c in sorted(cand):
+        for c in sorted({cls[q] for q in range(nx) if q != x and cls[q] < nx}):
             old = cls[x]; cls[x] = c; d = j_py(cells, cls, S, e) - base; cls[x] = old
             if d > bd + 1e-9: bd, bc = d, c
         return bc
-    for x in xord:
-        c = choose(x, {cls[q] for q in placed})
-        if c < 0: c = free.pop(0)
-        cls[x] = c; size[c] += 1; placed.append(x)
-    for _ in range(sweeps):
+    def sweep():
         for x in xord:
-            old = cls[x]; size[old] -= 1; cls[x] = nx + x; c = choose(x, {cls[q] for q in placed if q != x})
-            if c < 0: c = old if size[old] == 0 else free.pop(0)
-            if c != old and size[old] == 0: free.append(old); free.sort()
+            old = cls[x]; size[old] -= 1; cls[x] = nx + x; c = choose(x)
+            if c < 0: c = old if size[old] == 0 else lowest()
             cls[x] = c; size[c] += 1
+    for x in xord:
+        c = choose(x)
+        if c < 0: c = lowest()
+        cls[x] = c; size[c] += 1
+    for _ in range(sweeps): sweep()
+    if dissolve:
+        for c0 in [c for c in range(nx) if size[c] >= 2]:
+            if size[c0] < 2: continue
+            Jb = j_py(cells, cls, S, e); save, ssize = cls[:], size[:]; mem = [x for x in xord if cls[x] == c0]
+            for x in mem: cls[x] = nx + x
+            size[c0] = 0
+            for x in mem:
+                c = choose(x)
+                if c < 0: c = lowest()
+                cls[x] = c; size[c] += 1
+            if j_py(cells, cls, S, e) < Jb + 1e-9: cls[:] = save; size[:] = ssize
+        sweep()
     return cls
 
 # ---------------------------------------------------------------- the system
@@ -197,9 +220,9 @@ def ctx_of(x, lo, hi, D):
     return x[np.arange(lo, hi)[:, None] - np.arange(1, D + 1)[None, :]]
 
 class Sys:
-    def __init__(s, S, D, kinds, eta, e, born, shrink, text=None, P=0, eJ=0.02, M=16, B0=10000, sweeps=2, mode="classes", seed=0, half_at=0, rep=0):
+    def __init__(s, S, D, kinds, eta, e, born, shrink, text=None, P=0, eJ=0.02, M=16, B0=10000, sweeps=2, mode="classes", seed=0, half_at=0, rep=0, dissolve=0, pool=None, practice=0.0, empty=0):
         s.S, s.D, s.kinds, s.eta, s.e, s.shrink, s.P, s.eJ, s.M, s.sweeps, s.mode = S, D, [tuple(k) for k in kinds], eta, e, int(shrink), P, eJ, M, sweeps, mode
-        s.rep = int(rep)
+        s.rep = int(rep); s.dissolve = int(dissolve); s.practice = float(practice); s.pool = (mode != "half" and not int(empty)) if pool is None else bool(int(pool))
         if mode == "none": s.P = 0
         s.L = kern(); s.KB = len(kinds); s.K1 = s.KB + s.P; assert s.K1 <= 400 and S <= 65
         s.uniq = []; s.off = []; off = 0; full = ctx_of(text, D, len(text), D) if text is not None else None
@@ -243,9 +266,11 @@ class Sys:
         b = s.base_ids(ctx)
         if not s.P: return np.ascontiguousarray(b)
         cl = s.class_ids(ctx, create)
-        if s.rep:                                                   # replacement: where a class cell stands, the member's own R-cell counts and is silent
+        if s.rep or (create and s.practice > 0):                    # replacement: where a class cell stands, the member's own R-cell counts and is silent
+            prac = s.rng.random(len(ctx)) < s.practice if not s.rep else None      # practice (PLAN_4.md): only while reading, and only at a share of the bytes
             for p, sl in enumerate(s.slots):
-                if sl is not None: r = np.flatnonzero(cl[:, p] >= 0); v = b[r, sl["k"]]; b[r, sl["k"]] = np.where(v >= 0, -2 - v, v)
+                if sl is not None:
+                    r = np.flatnonzero((cl[:, p] >= 0) & prac) if prac is not None else np.flatnonzero(cl[:, p] >= 0); v = b[r, sl["k"]]; b[r, sl["k"]] = np.where(v >= 0, -2 - v, v)
         return np.ascontiguousarray(np.hstack([b, cl]))
     # ---- reading and answering
     def _run(s, ctx, y, learn, want_p):
@@ -286,7 +311,7 @@ class Sys:
         zcell = np.argsort(zc, kind="stable").astype(np.int32); zptr = np.zeros(nz + 1, np.int32); zptr[1:] = np.cumsum(np.bincount(zc, minlength=nz))
         xcell = np.argsort(xc, kind="stable").astype(np.int32); xptr = np.zeros(nx + 1, np.int32); xptr[1:] = np.cumsum(np.bincount(xc, minlength=nx))
         xn = np.bincount(xc, weights=n, minlength=nx); xord = np.argsort(-xn, kind="stable").astype(np.int32); cls = np.zeros(nx, np.int32)
-        s.L.find_classes(m, nx, nz, s.S, p32(xc), p32(zc), p32(zptr), p32(zcell), p32(xptr), p32(xcell), p32(cptr), p32(sym), pf(cnt), pf(n), s.eJ, p32(xord), s.sweeps, p32(cls))
+        s.L.find_classes(m, nx, nz, s.S, p32(xc), p32(zc), p32(zptr), p32(zcell), p32(xptr), p32(xcell), p32(cptr), p32(sym), pf(cnt), pf(n), s.eJ, p32(xord), s.sweeps, s.dissolve, p32(cls))
         jt = lambda c: s.L.j_total(m, nx, nz, s.S, p32(xc), p32(zptr), p32(zcell), p32(cptr), p32(sym), pf(cnt), pf(n), s.eJ, p32(np.ascontiguousarray(c, dtype=np.int32)))
         J = jt(cls); J1 = jt(np.zeros(nx, np.int32)); size = np.bincount(cls, minlength=nx); merged = size[cls] >= 2
         return dict(k=k, X=X, ux=ux, cls=cls, merged=merged, J=J, J1=J1, J0=-float(n.sum()) * np.log(s.S), worth=J - J1, nx=nx, classes=int((size >= 2).sum()), members=int(merged.sum()), tokens=float(n.sum()))
@@ -309,7 +334,7 @@ class Sys:
             if (k, X) in old: s.T[s.KB + p] = T0[s.KB + old[(k, X)]]; s.Tu[s.KB + p] = Tu0[s.KB + old[(k, X)]]
             clsmap = np.full(s.S ** len(X), -1, np.int32); clsmap[r["ux"][merged]] = cls[merged]; ZS = s.S ** len(Z)
             sl = dict(k=k, X=X, Z=Z, clsmap=clsmap, ZS=ZS, keys=np.zeros(0, np.int64), cids=np.zeros(0, np.int32)); s.slots[p] = sl
-            if s.mode != "half":                                    # the class cells start from the pooled counts of their members' R-cells
+            if s.pool:                                              # the class cells start from the pooled counts of their members' R-cells
                 ids_, cod = s.r_cells(k); xk, zk = s.split(k, X, cod); c = clsmap[xk]; ok = c >= 0
                 key = c[ok].astype(np.int64) * ZS + zk[ok]; uk, inv = np.unique(key, return_inverse=True); s.ensure(len(uk)); o = np.argsort(inv, kind="stable")
                 start = np.zeros(len(uk), np.int64); start[1:] = np.cumsum(np.bincount(inv, minlength=len(uk)))[:-1]; pooled = np.add.reduceat(s.C[ids_[ok]][o], start, axis=0)
@@ -364,7 +389,7 @@ def run_sums(kw):
     seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 40000)); P = int(kw.get("P", 32)); eJ = float(kw.get("eJ", 0.02)); mode = kw.get("mode", "classes"); t0 = time.process_time(); D = 9
     rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]; rng.permutation(10000)   # the second draw is cells2.py's split for subtraction
     TAB = np.array([text(a, b) for a, b in shown], np.int64); kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
-    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=lines * 5, M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)))
+    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=int(kw.get("half_at", lines * 5)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)))
     every = 5000 if lines <= 40000 else 50000; marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []))); tail = np.full(D, END, np.int64); rows = []; done = 0
     for mk in marks:
         X = TAB[rng.integers(8000, size=mk - done)].ravel(); x = np.concatenate([tail, X]); s.learn(ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
@@ -389,7 +414,7 @@ def load_all():
 
 def prose_sys(x, kw):
     K = 6; return Sys(65, K, [tuple(range(1, k + 1)) for k in range(K + 1)], 0.00005, 0.02, 0.25, False, text=x, P=int(kw.get("P", 32)), eJ=float(kw.get("eJ", 0.02)), mode=kw.get("mode", "classes"),
-                      half_at=int(kw.get("half_at", 500000)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)))
+                      half_at=int(kw.get("half_at", 500000)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)))
 
 def prose_scores(s, x, lo, hi):
     import score
@@ -427,13 +452,15 @@ def check():
         d = max(np.abs(P - P2).max(), np.abs(T - T2).max(), np.abs(C - C2).max()); ok &= d < 1e-9; print(f"answering loop, S = {S}, shrinking step = {shrink}, {n} bytes: (a tenth of the cells silent and counting) compiled against numpy, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
     # 2. the search for classes against brute force in plain Python, on the counts of a small sums system
     kw = dict(seed="1", lines="300", P="4", mode="none"); _, s = run_sums_small(kw); s.eJ = 0.02; s.sweeps = 2
-    for k, X in ((s.kinds.index((3, 4, 6, 7)), (3, 6)), (s.kinds.index((1, 2, 3)), (2,)), (s.kinds.index((2, 4, 5)), (2, 5))):
-        r = s.search(k, X); ids_, cod = s.r_cells(k); xk, zk = s.split(k, X, cod); ux, xc = np.unique(xk, return_inverse=True)
+    def canon(c):
+        first = {}; return [first.setdefault(v, i) for i, v in enumerate(c)]
+    for k, X, dis in ((s.kinds.index((3, 4, 6, 7)), (3, 6), 0), (s.kinds.index((1, 2, 3)), (2,), 0), (s.kinds.index((2, 4, 5)), (2, 5), 0), (s.kinds.index((3, 4, 6, 7)), (3, 6), 1), (s.kinds.index((2, 4, 5)), (2, 5), 1), (s.kinds.index((1, 2, 3)), (1, 3), 1)):
+        s.dissolve = dis; r = s.search(k, X); ids_, cod = s.r_cells(k); xk, zk = s.split(k, X, cod); ux, xc = np.unique(xk, return_inverse=True)
         cells = [(int(xc[i]), int(zk[i]), {int(v): float(s.C[ids_[i], v]) for v in np.flatnonzero(s.C[ids_[i]])}) for i in range(len(cod))]
         xn = np.bincount(xc, weights=s.N[ids_], minlength=len(ux)); xord = [int(q) for q in np.argsort(-xn, kind="stable")]
-        ref = find_py(cells, len(ux), xord, s.S, s.eJ, s.sweeps); Jr = j_py(cells, ref, s.S, s.eJ); same = list(r["cls"]) == ref; dj = abs(Jr - r["J"])
+        ref = find_py(cells, len(ux), xord, s.S, s.eJ, s.sweeps, dis); Jr = j_py(cells, ref, s.S, s.eJ); same = canon(list(r["cls"])) == canon(ref); dj = abs(Jr - r["J"])
         good = same and dj < 1e-6 * max(1, abs(Jr)); ok &= good
-        print(f"search for classes, kind {s.kinds[k]}, X = {X}: {len(ux)} X-cells, {len(cod)} R-cells, {r['classes']} classes of two or more; compiled against plain Python: the same grouping {same}, J differs by {dj:.1e}", "PASSED" if good else "FAILED")
+        print(f"search for classes{', with dissolving' if dis else ''}, kind {s.kinds[k]}, X = {X}: {len(ux)} X-cells, {len(cod)} R-cells, {r['classes']} classes of two or more; compiled against plain Python: the same grouping {same}, J differs by {dj:.1e}", "PASSED" if good else "FAILED")
     # 3. a class cell holds the sum of its members' R-cells, after a finding and after further reading
     out, s = run_sums_small(dict(seed="1", lines="3000", P="8", rep="1")); worst = 0.0; nchk = 0
     for sl in s.slots:
