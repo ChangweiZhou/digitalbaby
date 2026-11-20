@@ -57,17 +57,17 @@ Never-shown two-digit additions, whole answer, own bytes, after a read line, %. 
 
 | Lines | Relay alone | Counting alone, first cell | Counting alone, second cell | **Joined, second cell** | Joined, first cell | Joined second cell, relay silent at the score |
 |---|---|---|---|---|---|---|
-| 5,000 | 3.9 | 90.5 | 94.0 | 94.2 | 90.5 | 94.2 |
-| 10,000 | 19.6 | 91.4 | 95.1 | 95.3 | 91.6 | 95.1 |
+| 5,000 | 3.9 | 90.4 | 94.0 | 94.2 | 90.5 | 94.2 |
+| 10,000 | 19.6 | 91.4 | 95.0 | 95.3 | 91.6 | 95.1 |
 | 20,000 | 66.0 | 92.6 | 96.0 | 96.6 | 93.0 | 96.6 |
 | 40,000 | 82.9 (81.2 to 86.5) | 92.9 | **97.4** (96.4 to 98.2) | **97.1** (96.4 to 98.1) | 93.4 | 96.9 |
-| 100,000 | 91.9 | 86.5 | 87.0 | 86.5 | 86.1 | 86.0 |
-| 200,000 | 94.4 | 82.9 | 89.9 | 89.9 | 84.6 | 88.4 |
+| 100,000 | 91.9 | 85.4 | 87.0 | 86.5 | 86.1 | 86.0 |
+| 200,000 | 94.4 | 82.9 | 90.4 | 89.9 | 84.6 | 88.4 |
 | 300,000 | 95.0 | 80.0 | 77.8 | 81.8 | 82.5 | 78.7 |
 | 400,000 | **95.5** (95.0 to 97.0) | 77.2 | 75.5 (73.1 to 91.6) | **79.0** (75.1 to 92.2) | 80.5 | 75.0 |
 | mean of the last three | 95.4 | 78.8 | 76.5 | 80.4 | 81.7 | 76.8 |
 
-(The counting system's columns at 5,000 to 300,000 lines are medians of five seeds read from `report_s1.txt`; the fifth seed came in after the first table was printed.)
+(Every figure is the median of the five seeds, as `report_s1.txt` gives it.)
 
 *Checks.* `both.py check` passed (compiled against numpy to 1e-15; with no given sender the first cell equals `nano/merge`'s kernel exactly; the relay system read in blocks equals `cells2.py`'s numpy loop to 1e-14). Each part alone gives its own line's figures to the digit: the relay system against `loop_small_case/res/past_seed*_{40000,400000}.json` on all five seeds at both lengths (82.92, 82.32, 81.16, 86.48, 83.16 and 95.00, 95.00, 97.00, 95.48, 96.08), the counting system against `nano/table/res/gate_sums_gate0_modeclasses_seed*.json` on all five seeds at 40,000 lines and on the two seeds that line ran at 400,000 (both cells).
 
