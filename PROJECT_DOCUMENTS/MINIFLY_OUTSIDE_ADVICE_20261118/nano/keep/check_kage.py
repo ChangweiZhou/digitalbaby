@@ -21,11 +21,13 @@ if __name__ == "__main__":
              ("join=sig, use=sig", dict(base, H0="4", use="sig", tau="2", join="sig", theta="8", rhoE="0.02", rhoS="0.001")), ("join=sig, exp, young", dict(base, H0="4", law="exp", tau="400", young="150", join="sig", theta="8", rhoE="0.02", rhoS="0.001")),
              ("young, constants exp", dict(base, H0="4", young="150", blaw="exp", btau="500")), ("young, constants hyp, join=sig", dict(base, H0="1", young="150", blaw="hyp", btau="300", join="sig", theta="6", rhoE="0.02", rhoS="0.001", delta="0.1")),
              ("join=hear, young, constants", dict(base, H0="1", young="150", blaw="exp", btau="500", join="hear", K="12", theta="20")), ("join=hear, young, meet=3", dict(base, H0="1", young="300", meet="3", join="hear", K="12", theta="20")),
-             ("clock, young, meet=2, no rehearsal", dict(base, H0="4", young="200", meet="2", reh="0"))]
+             ("clock, young, meet=2, no rehearsal", dict(base, H0="4", young="200", meet="2", reh="0")),
+             ("join=hear, young, meet=3, openall", dict(base, H0="1", young="300", meet="3", join="hear", K="12", theta="20", openall="1")),
+             ("the same, subtraction in addition's bytes", dict(base, H0="1", young="300", meet="3", join="hear", K="12", theta="20", openall="1", subtext="swap"))]
     for title, kw in cases:
         kw = {k: v for k, v in kw.items() if not (k == "reh" and v == "0")}
         a = one(kw, 0); b = one(kw, 1); w = diff(a, b); bad += w > 1e-6 or a.nl != b.nl; print(f"{title:40s} largest difference over largest strength {w:.1e}   joined {a.nl} / {b.nl}")
     kw = dict(seed="3", plan="add:200,sub:150", every="50", reh="8", H="48", label="chk", nowrite="1")
-    a = one(dict(kw, H0="48"), 0); cells2.Sys = PLAIN; cells2.run(dict(kw)); p = cells2.run.last; w = diff(a, p, ("W1", "b1", "W2", "b2", "R")); bad += w > 1e-9
+    a = one(dict(kw, H0="48"), 0); cells2.Sys = PLAIN; cells2.text = kage.TEXT0; cells2.run(dict(kw)); p = cells2.run.last; w = diff(a, p, ("W1", "b1", "W2", "b2", "R")); bad += w > 1e-9
     print(f"{'kage.py, all cells, no law, against cells2.py (both numpy)':40s} {w:.1e}")
     print("CHECK", "FAILED" if bad else "PASSED")

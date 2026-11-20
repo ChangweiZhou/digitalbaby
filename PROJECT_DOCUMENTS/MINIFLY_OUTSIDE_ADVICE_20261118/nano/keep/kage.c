@@ -12,7 +12,7 @@
 #include <stdint.h>
 
 typedef struct {
-    int64_t H, NL, S, D, n, law, young, usemode, sigjoin, nl, blaw, meet;
+    int64_t H, NL, S, D, n, law, young, usemode, sigjoin, nl, blaw, meet, openall;
     double eta1, eta2, lam, tau, E, rhoE, C, G, rhoS, delta, btau, A, rhoA, K;
     double *W1, *b1, *W2, *b2, *R, *U, *thr;
     int64_t *born, *hist;
@@ -29,7 +29,13 @@ void age_steps(ANet *q, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
         for (int64_t d = D - 1; d > 0; d--) q->hist[d] = q->hist[d - 1];
         q->hist[0] = xs[i];
         const int64_t y = ys[i];
-        if (y < 0) continue;
+        if (y < 0) {                                    /* nothing is named after this byte and nothing learned from it */
+            if (q->openall && q->young) for (int64_t j = 0; j < q->nl; j++) if (q->n - q->born[j] < q->young) {
+                uint8_t *sn = q->seen + j * NL;
+                for (int64_t d = 0; d < D; d++) { const int64_t a = d * S + q->hist[d]; if (sn[a] < 255) sn[a]++; }
+            }
+            continue;
+        }
         const int64_t n = q->n;
         int64_t nl = q->nl;
         if (q->sigjoin) { while (nl < H && q->thr[nl] <= q->C) { q->born[nl] = n; nl++; } }        /* joined by the common signal: born is set at joining */

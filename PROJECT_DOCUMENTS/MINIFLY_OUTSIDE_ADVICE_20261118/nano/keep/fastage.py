@@ -5,7 +5,7 @@ import numpy as np
 from fastk import FLAGS, I64, F64, PD, PI, PU, P32, pd
 HERE = os.path.dirname(os.path.abspath(__file__)); SO = os.path.join(HERE, "kagek.so"); SRC = os.path.join(HERE, "kage.c")
 class ANet(ctypes.Structure):
-    _fields_ = [(k, I64) for k in "H NL S D n law young usemode sigjoin nl blaw meet".split()] + [(k, F64) for k in "eta1 eta2 lam tau E rhoE C G rhoS delta btau A rhoA K".split()] + \
+    _fields_ = [(k, I64) for k in "H NL S D n law young usemode sigjoin nl blaw meet openall".split()] + [(k, F64) for k in "eta1 eta2 lam tau E rhoE C G rhoS delta btau A rhoA K".split()] + \
                [(k, PD) for k in "W1 b1 W2 b2 R U thr".split()] + [("born", PI), ("hist", PI), ("seen", PU)] + [(k, PD) for k in "h rate m".split()]
 _lib = None
 def lib():
@@ -19,7 +19,7 @@ def run(s):
     xs = np.asarray(s.bx, np.int32); ys = np.asarray(s.by, np.int32); s.bx = []; s.by = []
     if not len(xs): return
     q = ANet(); NL = s.W1.shape[1]; S = s.W2.shape[0]; hist = np.asarray(s.hist, np.int64); H = s.H
-    q.H, q.NL, q.S, q.D, q.n, q.law, q.young, q.usemode, q.sigjoin, q.nl, q.blaw, q.meet = H, NL, S, NL // S, s.n, s.law, s.young, s.usemode, s.sigjoin, s.nl, s.blaw, s.meet
+    q.H, q.NL, q.S, q.D, q.n, q.law, q.young, q.usemode, q.sigjoin, q.nl, q.blaw, q.meet, q.openall = H, NL, S, NL // S, s.n, s.law, s.young, s.usemode, s.sigjoin, s.nl, s.blaw, s.meet, s.openall
     q.eta1, q.eta2, q.lam, q.tau, q.E, q.rhoE, q.C, q.G, q.rhoS, q.delta, q.btau, q.A, q.rhoA, q.K = s.eta1, s.eta2, s.lam, s.tau, s.E, s.rhoE, s.C, s.G, s.rhoS, s.delta, s.btau, s.A, s.rhoA, s.K
     assert s.born.dtype == np.int64 and s.seen.dtype == np.uint8 and s.seen.shape == (H, NL) and s.seen.flags.c_contiguous
     q.W1, q.b1, q.W2, q.b2, q.R, q.U, q.thr = pd(s.W1), pd(s.b1), pd(s.W2), pd(s.b2), pd(s.R), pd(s.U), pd(s.thr)
