@@ -29,3 +29,22 @@
 ## 4. Size, cost, what is not run
 
 A kind of two places has at most 4,225 cells and a kind of three places as many as occur (reported); 3,280 more trusts. A run takes one to three CPU-minutes and about two gigabytes of memory. Not run here: sets of four places; places beyond eight back; the pool on sums (the line `nano/sparse`).
+
+## 5. Outcome (entered 20 November after the runs; `res/place_armP*.json`)
+
+Loss on the last tenth, nats a byte, nothing changing; arm 0 (T2) is 1.4973; settings fixed beforehand, each arm scored once.
+
+| Arm | Loss | Gain over arm 0 | Kinds | Cells that have counted |
+|---|---|---|---|---|
+| P, the pool of 82 kinds | 1.4886 | 0.0087 | 92 | 3,563,095 |
+| P2, the 27 kinds of two places | 1.4902 | 0.0071 | 37 | 1,896,657 |
+| Pc, the pool eight bytes further back | 1.4977 | -0.0004 | 92 | 3,563,222 |
+
+The kinds of arm P that ended with most trust (places counted back from the present byte, 0): (0, 2) 0.013; (2, 3) and (0, 3) 0.008; (1, 2) 0.006; then kinds of three places at 0.005, among them (1, 3, 6), (2, 4, 6), (5, 6, 7). A run took 17 to 54 CPU-seconds.
+
+**The hypothesis is refuted, narrowly**: the pool gains 0.0087 nats and 0.01 was asked. W1 failed. W2 held. W3 held (the kinds of two places alone give 82% of the gain). W4 held (further back the pool gives nothing). W5 failed: of the ten kinds most trusted only two include the present byte.
+
+Readings (mine).
+1. **Cells keyed on a few bytes with gaps add a little on prose** (0.009), most of it from pairs of bytes, and nothing from bytes more than eight back. The answering cell trusts most the kinds that the table's cells do not already cover: pairs that leave out the present byte or the one before it.
+2. With trust born at nothing, 82 kinds could be offered at once without harm; each ended with a small trust (0.013 at most), and the control pool ended with almost none (0.003 at most) and changed nothing. The rule of `PLAN_8.md` holds a second time.
+3. On prose this is a small matter. Where it could be a large one is on sums, where a cell keyed on the two units digits knows what no cell of a whole run does; that is the line `nano/sparse`.
