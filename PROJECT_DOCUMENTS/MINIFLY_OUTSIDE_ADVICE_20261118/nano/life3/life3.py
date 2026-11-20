@@ -14,6 +14,9 @@
            on which its own mismatch is largest. No compiled code is added: the choice is made in numpy.
     arm=S (route 3, nano/sparse): cells that count, keyed on at most m=4 of the delays 1..9, read with a learned trust whose step shrinks with
            use (eta 0.1, e 2, trusts born at 0.02, shrink=1). The program of that line (sparse.py) is used unchanged, with one more byte value.
+           PLAN_7.md: ncap=16 (a cell that has counted more than 16 times speaks as if it had counted 16 times, in the same proportions) and
+           la=1 (route 3b: that line's look-ahead system, sparse4.py: every cell also counts what arrives two and three bytes after it, and
+           cells may be keyed on the answering cell's guesses of those bytes).
     fast=1: the compiled kernels (kernr.c for P, O, R; kage.c for K; kern_s.c for S). fast=0: the numpy references (check_life3.py compares).
 Tasks: add aa+bb=ccc; sub aa-bb=ccc (larger number first, as cells2.py); max aa^bb=ccc (the larger of the two); sat aa&bb=ccc (the sum plus
 the first number's tens digit); srv aa#bb=ccc (the first number plus the second with its digits exchanged). The symbol set is that of
@@ -192,9 +195,12 @@ class Mixed(Relay):
 
 class Sparse:
     """Route 3: nano/sparse/sparse.py's system (compiled) or its numpy reference, with the byte values of this life."""
-    def __init__(s, seed, w, m=4, eta=0.1, e=2.0, T0=0.02, shrink=1, ref=0):
-        import sparse; assert sparse.END == w.END
-        s.s = (sparse.Ref if ref else sparse.Sys)(kinds=sparse.kinds_of(9, m), eta=eta, e=e, T0=T0, nsym=w.S, shrink=shrink); s.w = w
+    def __init__(s, seed, w, m=4, eta=0.1, e=2.0, T0=0.02, shrink=1, ref=0, ncap=0, la=0):
+        import sparse; assert sparse.END == w.END; s.w = w
+        if la:                                        # PLAN_7.md: nano/sparse's look-ahead system (sparse4.py, unchanged; its number of byte values is a module constant, set here)
+            import sparse4; sparse4.S = w.S; assert w.S <= 16; s.s = (sparse4.Ref4 if ref else sparse4.Sys4)(m=m, eta=eta, e=e, T0=T0, Tg0=0.0, shrink=shrink, ncap=ncap)
+        elif ref: assert not ncap; s.s = sparse.Ref(kinds=sparse.kinds_of(9, m), eta=eta, e=e, T0=T0, nsym=w.S, shrink=shrink)
+        else: s.s = sparse.Sys(kinds=sparse.kinds_of(9, m), eta=eta, e=e, T0=T0, nsym=w.S, shrink=shrink, ncap=ncap)
     def feed(s, X, pi): s.s.read(np.asarray(X, np.int32))
     def answers(s, Ls, own=0): return s.s.answers(np.ascontiguousarray(Ls, np.int32), own, 6, 3)
     def census(s): return s.s.size()
@@ -213,7 +219,7 @@ def run(kw):
     if arm == "P": s = Relay(seed, w, **Hk)
     elif arm in "ORN": s = Mixed(seed, w, arm, TL, order, r=float(eval(kw.get("r", "1"))), K=int(kw.get("K", 8)), flat=int(kw.get("flat", 0)), cand=int(kw.get("cand", 4)), blk=int(kw.get("blk", 500)), **Hk)
     elif arm == "K": s = Keep(seed, w, **Hk, **{k: float(kw[k]) for k in ("theta", "btau") if k in kw}, **{k: int(kw[k]) for k in ("H0", "K", "young", "meet") if k in kw})
-    elif arm == "S": s = Sparse(seed, w, ref=1 - fast, **{k: float(kw[k]) for k in ("eta", "e", "T0") if k in kw}, **{k: int(kw[k]) for k in ("m", "shrink") if k in kw})
+    elif arm == "S": s = Sparse(seed, w, ref=1 - fast, **{k: float(kw[k]) for k in ("eta", "e", "T0") if k in kw}, **{k: int(kw[k]) for k in ("m", "shrink", "la") if k in kw}, **{k: float(kw[k]) for k in ("ncap",) if k in kw})
     else: raise SystemExit("arm?")
     if arm != "S": s.fast = fast
     whole = lambda Ls, own=None: float(100 * ((s.answers(Ls) if own is None else s.answers(Ls, own)) == Ls[:, 6:9]).all(1).mean()) if len(Ls) else None

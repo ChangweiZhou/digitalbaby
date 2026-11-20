@@ -5,7 +5,7 @@
 #define MAXS 64
 #define MAXK 2048
 #define HP 16
-typedef struct { int64_t S, K, nplace, END, ncell, cap; const int32_t *nd, *del; const int64_t *off; int32_t *map; float *C, *N, *U; double *T, *Tu; double eta, e; int64_t flat, shrink; } sys_t;
+typedef struct { int64_t S, K, nplace, END, ncell, cap; const int32_t *nd, *del; const int64_t *off; int32_t *map; float *C, *N, *U; double *T, *Tu; double eta, e; int64_t flat, shrink; double ncap; } sys_t;
 static int64_t ids[MAXK]; static int tix[MAXK]; static double sv[MAXK][MAXS]; static double lt[4096]; static double lte = -1;
 static inline int level(float n, float u, int flat) {
     if (flat) return 0;
@@ -24,8 +24,14 @@ static void look(sys_t *q, const int32_t *h, int make, double *p) {
         if (id < 0 && make) { id = q->ncell++; q->map[q->off[k] + key] = (int32_t)id; }
         ids[k] = id; tix[k] = -1; if (id < 0 || q->N[id] < 1) continue;
         const float *c = q->C + id * S; tix[k] = (int)((k * q->nplace + pl) * NL + level(q->N[id], q->U[id], (int)q->flat));
-        const double tk = q->T[tix[k]], den = log(q->N[id] + S * q->e);
-        for (int v = 0; v < S; v++) { const double s = (c[v] < 4096 ? lt[(int)c[v]] : log(c[v] + q->e)) - den; sv[k][v] = s; a[v] += tk * s; }
+        const double tk = q->T[tix[k]];
+        if (q->ncap > 0 && q->N[id] > q->ncap) {            /* a cell that has counted more than ncap speaks as if it had counted ncap, in the same proportions */
+            const double sc = q->ncap / q->N[id], den = log(q->ncap + S * q->e);
+            for (int v = 0; v < S; v++) { const double s = log(c[v] * sc + q->e) - den; sv[k][v] = s; a[v] += tk * s; }
+        } else {
+            const double den = log(q->N[id] + S * q->e);
+            for (int v = 0; v < S; v++) { const double s = (c[v] < 4096 ? lt[(int)c[v]] : log(c[v] + q->e)) - den; sv[k][v] = s; a[v] += tk * s; }
+        }
     }
     for (int v = 0; v < S; v++) if (a[v] > mx) mx = a[v];
     for (int v = 0; v < S; v++) { p[v] = exp(a[v] - mx); z += p[v]; }
