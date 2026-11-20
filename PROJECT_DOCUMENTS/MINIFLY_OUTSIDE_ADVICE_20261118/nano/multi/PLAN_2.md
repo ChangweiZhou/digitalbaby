@@ -84,3 +84,7 @@ Stage C, M64 at that setting:
 **Setting of every pair arm: tried among the active pairs, neighbouring delays** (0.055 nats below the default). So on the text every pair-connection names two bytes that follow one another, at some distance back; Q4 has no object and is scored as not tested.
 
 After 2 readings on this seed the edge arm is at 1.9899 and the best mixed arm at 2.0332. The claim runs (8 readings; seeds 1, 2, 3) were queued after these lines: `jobs_r2.txt`; the reference (every line read) and E64 on seed 1 had been started when stage A and B were done, since they do not depend on stage C.
+
+## An addition, entered at 15:10 UTC on 20 November, when only the reference and E64 on seed 1 had finished and no pair arm's claim run had been read
+
+`nano/loop` has since pushed its chosen settings for arm P with every line read (commit 1f7b4bf: eta1 = 1, eta2 = 1/4, return strengths born at nothing; chosen there on 256 cells). My stages A and B did not include return strengths born at nothing, and chose eta1 = 1/4, eta2 = 1, born at the earlier size, on the edge arm after 2 readings. So that it can be seen whether the comparison of the arms depends on this, three further runs on seed 1 at `nano/loop`'s setting (`rscale=0`), 8 readings: E64, M64, P64 (`jobs_r2x.txt`). No prediction is registered for them; they are reported as an addition and change no claim run. The reference "every line read" of this plan is at my setting and is therefore not `nano/loop`'s best figure for that system; theirs is quoted beside it when it exists.
