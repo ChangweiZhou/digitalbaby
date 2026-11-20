@@ -15,14 +15,14 @@ BOOKS = dict(worn=[("minifly_v148_pretrain_probe_dev_20261025", b) for b in ("br
              new=[("minifly_v155_keys_dev_v1_20261026", b) for b in ("chesterton-ball", "austen-emma", "melville-moby_dick")])
 BOOKS.update({b: [("minifly_v155_keys_dev_v1_20261026", b)] for b in ("chesterton-ball", "austen-emma", "melville-moby_dick")})      # PLAN_16.md, addition 1: the test text and one book
 
-SRC = A.SRC.replace("void all_steps(", "void gate_steps(").replace("const float *X, const int32_t *xlev) {", "const float *X, const int32_t *xlev, const int32_t *cb, int D, double *Gt, int gate, double *P2) {")
+SRC = A.SRC.replace("void all_steps(", "void gate_steps(").replace("const float *X, const int32_t *xlev) {", "const float *X, const int32_t *xlev, const int32_t *cb, int D, double *Gt, int gate, double *P2, int nolevel) {")
 SRC = SRC.replace("double a[S], p[S], s[192][S]; int lev[192];", "double a[S], p[S], a2[S], p2[S], s[192][S]; int lev[192]; int64_t gix[193][16];")
 # the second cell: after the first cell's answer is formed, before anything is learned
 SRC = SRC.replace("        if (learn) {\n", """        for (int v = 0; v < S; v++) a2[v] = a[v];
         for (int64_t k = 0; k <= K1; k++) {
             const int lk = k < K1 ? lev[k] : (X ? xlev[t] : -1); if (lk < 0) continue;
             const double *sk = k < K1 ? s[k] : 0; const float *sx = X ? X + t * S : 0; double tk = 0;
-            for (int j = 0; j < D; j++) { gix[k][j] = (((int64_t)j * (K1 + 1) + k) * NL + lk) * S + (gate ? 0 : cb[t * D + j]); tk += Gt[gix[k][j]]; }
+            for (int j = 0; j < D; j++) { gix[k][j] = (((int64_t)j * (K1 + 1) + k) * NL + (nolevel ? 0 : lk)) * S + (gate ? 0 : cb[t * D + j]); tk += Gt[gix[k][j]]; }
             if (tk != 0) { if (sk) for (int v = 0; v < S; v++) a2[v] += tk * sk[v]; else for (int v = 0; v < S; v++) a2[v] += tk * sx[v]; }
         }
         { double m2 = -1e300, z2 = 0; for (int v = 0; v < S; v++) if (a2[v] > m2) m2 = a2[v];
@@ -45,30 +45,36 @@ def kern():
     if not os.path.exists(src) or open(src).read() != SRC: open(src, "w").write(SRC)
     if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(src): subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", so, src, "-lm"])
     L = ctypes.CDLL(so); cd, ci = ctypes.c_double, ctypes.c_int
-    L.gate_steps.argtypes = [ctypes.c_int64, ctypes.c_int64, PI, PY, PF, PF, PF, PD, cd, cd, ci, PD, PD, PD, cd, PF, PY, PY, ci, PD, ci, PD]; L.gate_steps.restype = None; return L
+    L.gate_steps.argtypes = [ctypes.c_int64, ctypes.c_int64, PI, PY, PF, PF, PF, PD, cd, cd, ci, PD, PD, PD, cd, PF, PY, PY, ci, PD, ci, PD, ci]; L.gate_steps.restype = None; return L
 
 class SysGate(A.SysAll):
     """all.py's system with the second answering cell. go() returns (first cell's probabilities, second cell's) when asked."""
-    def __init__(s, x, without=(), gate=0):
-        super().__init__(x, without); s.L2 = kern(); s.gate = gate; s.Gt = np.zeros((D, s.K1 + 1, NL, S))
+    def __init__(s, x, without=(), gate=0, nolevel=0):
+        nowords = "words" in without; orig = words.word_keys                      # PLAN_20.md: without the cells that step once a word (their ends are given by hand)
+        if nowords: words.word_keys = lambda x_, *a, **k: []
+        try: super().__init__(x, tuple(w for w in without if w != "words"))
+        finally: words.word_keys = orig
+        if nowords: nkeys = s.K1 - 7 - (7 if "companions" not in without else 0); s.T[:] = 0.25; s.T[7:7 + nkeys] = 0.0      # the kinds born with no trust now start after the seven kinds of runs
+        s.L2 = kern(); s.gate = gate; s.nolevel = int(nolevel); s.Gt = np.zeros((D, s.K1 + 1, NL, S))
         s.cb = np.ascontiguousarray(np.stack([np.concatenate([np.zeros(d, x.dtype), x[:-d]]) for d in range(1, D + 1)], 1).astype(np.int32))      # the bytes at delays 1..6
     def go(s, lo, hi, learn, want_p=False):
         ids = np.ascontiguousarray(s.ids[lo - s.K:hi - s.K]); y = np.ascontiguousarray(s.x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None; P2 = np.zeros((hi - lo, S)) if want_p else None
         X = np.ascontiguousarray(s.X[lo:hi]) if s.X is not None else None; xl = np.ascontiguousarray(s.xlev[lo:hi]) if s.X is not None else None; cb = np.ascontiguousarray(s.cb[lo:hi])
         s.L2.gate_steps(hi - lo, s.K1, ids.ctypes.data_as(PI), y.ctypes.data_as(PY), s.C.ctypes.data_as(PF), s.N.ctypes.data_as(PF), s.U.ctypes.data_as(PF), s.T.ctypes.data_as(PD), ETA, E0, int(learn),
                         P.ctypes.data_as(PD) if want_p else None, s.half.ctypes.data_as(PD), s.last.ctypes.data_as(PD), s.clock, X.ctypes.data_as(PF) if X is not None else None, xl.ctypes.data_as(PY) if X is not None else None,
-                        cb.ctypes.data_as(PY), D, s.Gt.ctypes.data_as(PD), s.gate, P2.ctypes.data_as(PD) if want_p else None)
+                        cb.ctypes.data_as(PY), D, s.Gt.ctypes.data_as(PD), s.gate, P2.ctypes.data_as(PD) if want_p else None, s.nolevel)
         if learn: s.clock += hi - lo
         return (P, P2) if want_p else None
     def state(s): return [a.copy() for a in (s.C, s.N, s.U, s.last, s.T, s.Gt)] + [s.clock]
     def put(s, st): s.C[:], s.N[:], s.U[:], s.last[:], s.T[:], s.Gt[:] = st[:6]; s.clock = st[6]
 
 def both(s, lo, hi, learn=False, y=None):
-    P1, P2 = s.go(lo, hi, learn, True); a = score.score(P1, s.x[lo:hi]); b = score.score(P2, s.x[lo:hi]); return dict(cell1=dict(nats=a["nats"], right=a["right"]), cell2=dict(nats=b["nats"], right=b["right"]))
+    P1, P2 = s.go(lo, hi, learn, True); a = score.score(P1, s.x[lo:hi]); b = score.score(P2, s.x[lo:hi]); yy = s.x[lo:hi]; e = lambda P: float(-np.log(P[np.arange(0, hi - lo, 8), yy[::8]]).mean())
+    return dict(cell1=dict(nats=a["nats"], right=a["right"], nats_every_eighth=e(P1)), cell2=dict(nats=b["nats"], right=b["right"], nats_every_eighth=e(P2)))
 
 def run_text(kw):
-    x, cut, _ = score.load(); t0 = time.process_time(); w = tuple(v for v in kw.get("without", "").split(",") if v); s = SysGate(x, w, int(kw.get("gate", 0))); s.go(6, cut, True)
-    r = dict(task="text", args=kw, kinds=int(s.K1), frozen=both(s, cut, len(x))); r["going_on"] = both(s, cut, len(x), True); r.update(cells=int((s.N > 0).sum()), parts=int(s.Gt.size), parts_used=int((s.Gt != 0).sum()), largest_part=float(np.abs(s.Gt).max()), cpu=round(time.process_time() - t0, 1)); return r
+    x, cut, _ = score.load(); t0 = time.process_time(); w = tuple(v for v in kw.get("without", "").split(",") if v); s = SysGate(x, w, int(kw.get("gate", 0)), int(kw.get("nolevel", 0))); s.go(6, cut, True)
+    r = dict(task="text", args=kw, kinds=int(s.K1), cells_at_the_frozen_scoring=int((s.N > 0).sum()), counts_above_zero_at_the_frozen_scoring=int((s.C > 0).sum()), parts_used_at_the_frozen_scoring=int((s.Gt != 0).sum()), frozen=both(s, cut, len(x))); r["going_on"] = both(s, cut, len(x), True); r.update(cells=int((s.N > 0).sum()), parts=int(s.Gt.size), parts_used=int((s.Gt != 0).sum()), largest_part=float(np.abs(s.Gt).max()), cpu=round(time.process_time() - t0, 1)); return r
 
 def load(books):
     xa, cut, _ = score.load(); vals = score.byte_values(); tab = np.full(256, 1, np.int64); tab[vals] = np.arange(S); parts = [("A", xa)]
@@ -132,5 +138,5 @@ if __name__ == "__main__":
     if sys.argv[1] == "check": sys.exit(0 if check() else 1)
     kw = dict(a.split("=") for a in sys.argv[2:]); out = dict(text=run_text, life=run_life)[sys.argv[1]](kw); tag = "gateall_" + sys.argv[1] + "_" + "_".join(f"{k}{v.replace(',', '+')}" for k, v in sorted(kw.items()))
     json.dump(out, open(os.path.join(HERE, "res", tag + ".json"), "w")); f = lambda d: (round(d["cell1"]["nats"], 4), round(d["cell2"]["nats"], 4), round(d["cell1"]["nats"] - d["cell2"]["nats"], 4))
-    if sys.argv[1] == "text": print(tag, "| kinds", out["kinds"], "| last tenth, nothing changing (first cell, second, gain):", f(out["frozen"]), "| going on:", f(out["going_on"]), "| parts used", out["parts_used"], "of", out["parts"], "| cells", out["cells"], "| cpu", out["cpu"], flush=True)
+    if sys.argv[1] == "text": print(tag, "| kinds", out["kinds"], "| last tenth, nothing changing (first cell, second, gain):", f(out["frozen"]), "| on every eighth byte:", (round(out["frozen"]["cell1"]["nats_every_eighth"], 4), round(out["frozen"]["cell2"]["nats_every_eighth"], 4)), "| at the frozen scoring: cells", out["cells_at_the_frozen_scoring"], "counts above zero", out["counts_above_zero_at_the_frozen_scoring"], "parts used", out["parts_used_at_the_frozen_scoring"], "| going on:", f(out["going_on"]), "| parts used", out["parts_used"], "of", out["parts"], "| cells", out["cells"], "| cpu", out["cpu"], flush=True)
     else: print(tag, "| kinds", out["kinds"], "|", {k: f(v) for k, v in out["scores"].items()}, "| parts used", out["parts_used"], "of", out["parts"], "| cells", out["cells"], "| cpu", out["cpu"], flush=True)

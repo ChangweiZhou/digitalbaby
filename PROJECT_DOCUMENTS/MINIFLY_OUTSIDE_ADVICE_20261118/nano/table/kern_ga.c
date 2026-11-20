@@ -11,7 +11,7 @@ static inline int level(double n, int u) {
    2^(-(time since it was last active)/half[k]); it is silent when its faded total is under one; its level of u is the number of counts of 1/2 or more.
    With learn = 0 nothing changes and the time stands at clock0. */
 void gate_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double eta, double e,
-               int learn, double *P, const double *half, double *last, double clock0, const float *X, const int32_t *xlev, const int32_t *cb, int D, double *Gt, int gate, double *P2) {
+               int learn, double *P, const double *half, double *last, double clock0, const float *X, const int32_t *xlev, const int32_t *cb, int D, double *Gt, int gate, double *P2, int nolevel) {
     static double lt[4096]; double a[S], p[S], a2[S], p2[S], s[192][S]; int lev[192]; int64_t gix[193][16];
     for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
     for (int64_t t = 0; t < n; t++) {
@@ -44,7 +44,7 @@ void gate_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, flo
         for (int64_t k = 0; k <= K1; k++) {
             const int lk = k < K1 ? lev[k] : (X ? xlev[t] : -1); if (lk < 0) continue;
             const double *sk = k < K1 ? s[k] : 0; const float *sx = X ? X + t * S : 0; double tk = 0;
-            for (int j = 0; j < D; j++) { gix[k][j] = (((int64_t)j * (K1 + 1) + k) * NL + lk) * S + (gate ? 0 : cb[t * D + j]); tk += Gt[gix[k][j]]; }
+            for (int j = 0; j < D; j++) { gix[k][j] = (((int64_t)j * (K1 + 1) + k) * NL + (nolevel ? 0 : lk)) * S + (gate ? 0 : cb[t * D + j]); tk += Gt[gix[k][j]]; }
             if (tk != 0) { if (sk) for (int v = 0; v < S; v++) a2[v] += tk * sk[v]; else for (int v = 0; v < S; v++) a2[v] += tk * sx[v]; }
         }
         { double m2 = -1e300, z2 = 0; for (int v = 0; v < S; v++) if (a2[v] > m2) m2 = a2[v];
