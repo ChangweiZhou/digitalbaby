@@ -61,3 +61,23 @@ A compiled run: about 16 to 30 seconds of one core. Development 8 runs, reported
 Connections of more than two cells (C3); the sign of a sender (C4); other rules for A in F1; fading of B; any change to R's rule; other sizes, lengths or texts; the comparator by back-propagation; the withdrawal of a connection for good (C2, the next plan). F3 is run only if F2 is done.
 
 ---
+
+## 9. Entered 20 November after the check and the eight development runs, before any further run
+
+**The check** (`check_joint_output.txt`): the compiled kernel agrees with the numpy program to 1e-14 on every form and setting; form 2 with etaB = 0 and form 3 with b0 = 1e9 are form 1; form 1 agrees with `cells2.py`'s plain system to 3e-15 on 300 lines.
+
+**Development seed 1, 400,000 lines, never-shown sums (mean of the last three readings).** F1: 81.5 (the value to match). F2: etaB = 1: 80.5; 1/4: 81.4; 1/16: 81.5. F3 with b0 = 1, 1/2, 1/4, 1/8: 81.5 each, and identical to F1 in every figure.
+
+**What I had not known when I wrote sections 2 and 6: the strengths of the answering cell are small.** At the end of the plain run the largest |A| is 0.111 and the mean |A| is 0.0156. Two consequences. (i) In F2 the sending end's part, born at 1, hardly moves: its change is proportional to A, and B ends between 0.97 and 1.34 at etaB = 1 (mean 1.01). The proposed F2 is therefore close to F1 by its births, whatever the merit of the form. (ii) In F3 no |A| reaches any of the four values of b0, so none is eligible by the rule of section 6 and the arm as planned is F1 under another name, which is the case section 2 (b) foresaw without knowing the scale.
+
+**Choice for F2 by the rule of section 6:** the three scores lie within one point, so etaB = 1, the coordinator's proposal. It goes to the five seeds as planned.
+
+**An error in my runs, without effect on the figures:** the eight runs were started with the label missing from the command, so that `seed=1` was read as the label, the seed fell back to its default (which is 1) and the eight result files overwrote each other. The printed lines are kept in `log/`; the file was removed and F1 rerun with its label (`res/j_d_f1.json`, 81.5).
+
+**Extension, entered here before its runs** (additions; the registered predictions P1 to P7 are untouched and are scored on the arms they were made for).
+
+- *F2 with a sending end that moves* (arm F2b). Without the bound and the fading, etaB A^2 - B^2 keeps its value at a connection, so the two parts are of comparable weight when etaB is near 1 / A^2, some hundreds to some thousands here. Grid on seed 1: etaB in {16, 64, 256, 1024}. Choice: the highest score among the settings that stay finite; within one point, the largest etaB (the one in which the sending end decides most). If none stays finite or all fall below 40, that is reported and the arm goes to the five seeds at the best of them all the same, so that its size is known.
+- *F3 at births where the smaller part can be the sender's.* Grid on seed 1: b0 in {1/16, 1/32, 1/64, 1/128}. The rule of section 6 is applied as written (highest score; within one point the largest b0; a value at which the sender's part is the smaller at no connection is not eligible): this is arm F3. Because that rule may pick a value at which the sender's part is the smaller at few connections, a second arm F3b at b0 = 1/64, the mean |A| of the plain run, goes to the five seeds as well, whatever its score.
+- What I expect of F3 where the sender's part is the smaller (my reading of the rule, before the runs): such a connection changes as in F1 while the mismatch pushes its strength away from zero, but it cannot cross zero: B stops at zero, A keeps its sign and only fades, and the connection stays at zero until the mismatch pushes it back towards the sign it had. The sending end's part acts as a bound on the sign of that connection.
+- Predictions for the additions: P8 (0.5) F2b is within 4 points of F1 at the median of the paired differences. P9 (0.6) F2b has a higher share of connections below one hundredth of the largest than F1 on at least four of five seeds. P10 (0.4) F3b is more than 4 points below F1 at the median of the paired differences. P11 (0.7) the cosine of R with w is below 0.9 in F2b at the median.
+- Reported seeds, then: F1, F2 (etaB = 1), F2b, F3, F3b: 25 runs, about 3 minutes on four cores. Numpy full-length runs on seed 1: F1, F2b and F3b (the forms in which B moves), in place of the three of section 6.
