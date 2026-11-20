@@ -66,7 +66,7 @@ The full 256 bytes before every byte (see above). A whole run of 4 threads. More
 
 (appended below as the runs end)
 
-**Entry 1 (22:53 UTC, 20 November): the exact check.** `check1337` (seed 1337, 4 threads, the large setting, alone on the machine) to step 500, broken once at step 250 and gone on from its checkpoint: 1,920 s of CPU, 682 s of wall time (1.36 s a step). Its estimates (50 batches, `res/check1337_step500.json`):
+**Entry 1 (21:54 UTC, 20 November; a first writing of this entry gave the hour wrongly as 22:53): the exact check.** `check1337` (seed 1337, 4 threads, the large setting, alone on the machine) to step 500, broken once at step 250 and gone on from its checkpoint: 1,920 s of CPU, 682 s of wall time (1.36 s a step). Its estimates (50 batches, `res/check1337_step500.json`):
 
 | step | this copy, stream / last tenth | `nano/ref/res/gpt_large.json` |
 |---|---|---|
@@ -75,4 +75,4 @@ The full 256 bytes before every byte (see above). A whole run of 4 threads. More
 
 Equal in every digit. **R1 held.** So on this machine the copy with its checkpoints teaches exactly as `nano/ref`'s program did through 500 steps, and a run of 4 threads continued to step 4,000 would be expected to repeat 1.4541 to the digit (about 80 more minutes of the whole machine; not run now, the checkpoint is kept). A slip of mine in the command: the run left before the estimate at step 500, so that estimate was taken afterwards from the checkpoint by the program's own `estimate()` with the same blocks.
 
-The four seeds were started at 22:54 UTC (`jobs1.sh`).
+The four seeds were started at 21:55 UTC (`jobs1.sh`).
