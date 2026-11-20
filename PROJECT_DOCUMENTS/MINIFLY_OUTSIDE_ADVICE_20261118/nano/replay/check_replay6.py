@@ -24,4 +24,8 @@ if __name__ == "__main__":
     for t in range(9):
         hist.insert(0, L[t]); hist.pop(); act = OFF + np.asarray(hist); h = sg(s.W1[:, act].sum(1) + s.b1); m = -(s.W2 @ h + s.b2); m[L[t + 1]] += 1; tot += float(m @ m)
     got = float(replay6.mismatch(s, [L])[0]); bad += abs(got - tot) > 1e-9 * max(1, tot); print(f"the mismatch used for choosing against the learning loop's own on one line read after a newline: {got:.6f} and {tot:.6f}")
+    import fastm, json
+    rng = np.random.default_rng(2); Ls = [replay.text("+-"[int(rng.integers(2))], int(rng.integers(100)), int(rng.integers(100))) for _ in range(2000)] + [replay3.swp(int(rng.integers(100)), int(rng.integers(100))) for _ in range(1000)]
+    a1 = replay6.mismatch(s, Ls); a2 = fastm.judge(s, Ls, END); w = float(np.abs(a1 - a2).max() / np.abs(a1).max()); bad += not w < 1e-9; print(f"the compiled judging against the numpy function on 3,000 lines: largest difference over largest value {w:.1e}; the same line would be chosen among every four: {bool((a1.reshape(-1, 4).argmax(1) == a2.reshape(-1, 4).argmax(1)).all())}")
+    o = replay6.run(dict(seed="3", plan="add:600,sub:300", every="100", chunk="50", who="M", fast="1", label="chk", nowrite="1")); json.dumps(o); print("a result of arm M can be written as JSON")
     print("CHECK", "FAILED" if bad else "PASSED")

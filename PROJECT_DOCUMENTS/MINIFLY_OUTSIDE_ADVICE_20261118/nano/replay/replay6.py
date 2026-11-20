@@ -6,7 +6,7 @@ tried by the line nano/life3 (its prose read on claude/nano-life3-8mmhfm at b96c
     who=M: after each real line n lines are drawn from the counting cells exactly as R draws one; the relay system learns only from the one on
            which its own squared mismatch, summed over the fourteen branches and the nine bytes of the line it would learn from, is largest.
            Nothing names a task. The mismatch is taken with the line read alone after a newline, and with the relay system's strengths as they
-           were at the start of the chunk of `chunk` real lines (at most `chunk` real lines old).
+           were at the start of the chunk of `chunk` real lines (at most `chunk` real lines old).  With fast=1 the judging runs compiled too (kernm.c through fastm.py); the numpy function mismatch() here is its reference.
 Texts: add `aa+bb=ccc`; sub `aa-bb=ccc` (cells2.py's); swp `aa=bb+ccc` for aa - bb = ccc (replay3.py's). The relay system, the counting cells and
 the replay are replay.py's, imported unchanged."""
 import json, os, random, sys, time
@@ -30,11 +30,13 @@ def run(kw):
     held1 = [WR[first](a, b) for a, b in SPL[first][:500]]; mixed2 = [WR[second](a, b) for a, b in SPL[second][:500]]; clean2 = [WR[second](a, b) for a, b in SPL[second][:2000] if tuple(WR[second](a, b)) not in shown2]
     s = Sys(seed); who = kw.get("who", "R"); n_c = int(kw.get("n", 4)); cells = Counting(int(kw.get("K", 8))); rnd = random.Random(seed * 1000 + 7)
     every = int(kw.get("every", 50000)); chunk = int(kw.get("chunk", 500)); fast = int(kw.get("fast", 0)); out = dict(label=kw.get("label"), args=kw, rows=[], n_clean=len(clean2)); t_rep = t_judge = 0.0; opi = 2
+    def judge(s_, flat):
+        import fastm; return fastm.judge(s_, flat, END)
     def go(lines):
         lines = np.array(lines, np.int32); xs = lines.ravel(); ys = np.concatenate([lines[:, 1:], np.full((len(lines), 1), -1, np.int32)], 1).ravel()
         if fast: import fastr; fastr.run(s, xs, ys)
         else: s.steps(xs, ys)
-    isfirst = (lambda L: L[2] == TAB[first][0][2])                 # the third byte of a line tells the two texts apart; used for the report only
+    isfirst = (lambda L: bool(L[2] == int(TAB[first][0][2])))                 # the third byte of a line tells the two texts apart; used for the report only
     for pi, (name, n) in enumerate(plan):
         it = 0
         while it < n:
@@ -46,11 +48,11 @@ def run(kw):
                     cand.append([cells.replay(rnd) for _ in range(n_c if who == "M" else 1)])
                 t_rep += time.process_time() - t1; lines = []
                 if who == "M":
-                    t1 = time.process_time(); flat = [E for cs in cand for E in cs]; mm = mismatch(s, flat).reshape(len(part), n_c); pick = mm.argmax(1); t_judge += time.process_time() - t1
+                    t1 = time.process_time(); flat = [E for cs in cand for E in cs]; mm = (judge(s, flat) if fast else mismatch(s, flat)).reshape(len(part), n_c); pick = mm.argmax(1); t_judge += time.process_time() - t1
                     st["mm_chosen"] += float(mm[np.arange(len(part)), pick].sum()); st["mm_drawn"] += float(mm.sum())
                 else: pick = np.zeros(len(part), int)
                 for Lr, cs, k in zip(part, cand, pick):
-                    lines.append(Lr); lines.append(cs[k]); st["learned"] += 1; st["learned_first"] += isfirst(cs[k]); st["drawn"] += len(cs); st["drawn_first"] += sum(isfirst(E) for E in cs)
+                    lines.append(Lr); lines.append(cs[k]); st["learned"] += 1; st["learned_first"] += int(isfirst(cs[k])); st["drawn"] += len(cs); st["drawn_first"] += int(sum(isfirst(E) for E in cs))
                 go(lines)
             out["rows"].append(dict(phase=pi, name=name, lines=nxt + 1, first=replay3.score(s, held1), second_mixed=replay3.score(s, mixed2), second_clean=replay3.score(s, clean2), **st))
     ph = lambda i: [x for x in out["rows"] if x["phase"] == i]; nc, nz = cells.size(); e = ph(1)[-1]
