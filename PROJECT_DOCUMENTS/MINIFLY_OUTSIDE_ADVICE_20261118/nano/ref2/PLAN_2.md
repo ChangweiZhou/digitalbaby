@@ -44,3 +44,13 @@ The system "parts by kind and byte" of `nano/layers` (also reported at 1.4421): 
 ## 6. Outcome
 
 (appended below)
+
+**Entry 1 (22:25 UTC): the systems of cells run here** (`cells.py`, beside the four teaching runs; `res/cells_*.json`, per-byte files `res/cells_<name>_cell{1,2}.f32`). Nothing in `nano/table` is changed.
+
+| system | first cell, all bytes | second cell, all bytes | second cell, every eighth byte | named right (second cell), % | CPU | peak memory |
+|---|---|---|---|---|---|---|
+| `T2` (10 kinds) | 1.4972798 | 1.4820230 | 1.4835 | 55.39 | 6.5 s | 0.8 GB |
+| `big` (without relay, 164 kinds) | 1.4740423 | 1.4444048 | 1.4475 | 57.06 | 84 s | 5.2 GB |
+| `all` (164 kinds and the relay system) | 1.4707107 | 1.4420605 | 1.4463 | 57.06 | 402 s | 5.2 GB |
+
+**C1 and C1b held**: the figures are the reported ones to the digits given (`PLAN_16.md` section 7 gives 1.4972798 and 1.4820230 for T2 and 1.4707107 and 1.4420605 for all kinds; 1.4463 on the every-eighth set). The float32 files' means agree with the float64 means to 1e-9. So the coordinating session's figures repeat on this machine, by its own program; this is a repeat run, not an independent implementation.
