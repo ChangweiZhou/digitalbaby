@@ -29,3 +29,34 @@ On the development seed (1) two sparser targets are also run (1/8, 1/16), with a
 **Cost.** Reference arms: 20 runs of 50 to 75 CPU seconds. Silent cells: 20 runs of 15 to 40 CPU seconds; development 12 runs. Under 30 CPU minutes in all, four cores.
 
 **Not run.** Silent cells together with `reserve`; other thresholds' speeds or step sizes; more than 512 cells; the relay over two steps; anything on language.
+
+## Outcome (entered 20 November, after all 52 runs; `table1.txt`, `res/c2_d1_*`, `res/c2_r1_*`, `res/c2_r_plain_*`, `res/c2_r_res128_*`, `res/ov_*`)
+
+Two faults of my job launcher were found and corrected before any result was read (the label was not passed to the program; a trailing blank joined two job lines); the runs made under them wrote nothing usable and were discarded.
+
+Never-shown pairs, %, the five reported seeds in the order 73129, 93683, 116089, 406364, 545353, and the median.
+
+| Arm | Addition after its own phase | Addition at the end | Subtraction at the end |
+|---|---|---|---|
+| plain, no old line | 81.8, 81.8, 86.4, 84.8, 87.6; 84.8 | 2.0, 1.6, 1.8, 1.4, 2.0; **1.8** | 82.0, 89.8, 91.4, 86.0, 86.0; 86.0 |
+| plain, one old line in 32 | the same | 20.8, 12.2, 15.6, 17.2, 9.8; **15.6** | 85.6, 85.8, 90.4, 84.2, 85.8; 85.8 |
+| the program's choice (`reserve=128`), no old line | 83.6, 81.6, 88.0, 90.6, 85.4; 85.4 | 5.0, 3.0, 3.2, 4.8, 4.4; **4.4** | 74.0, 77.2, 78.6, 72.8, 71.6; 74.0 |
+| the program's choice, one old line in 32 | the same | 75.2, 62.8, 67.0, 64.4, 67.8; **67.0** | 78.6, 72.8, 75.4, 73.4, 77.6; 75.4 |
+| 256 silent cells, no old line | 71.4, 78.8, 56.6, 47.6, 72.4; 71.4 | 0.4, 2.8, 1.2, 0.4, 0.8; **0.8** | 74.6, 65.4, 40.2, 49.0, 32.6; 49.0 |
+| 256 silent cells, one old line in 32 | the same | 7.0, 5.4, 6.4, 5.0, 5.4; **5.4** | 71.4, 45.2, 50.6, 44.2, 64.2; 50.6 |
+| 512 silent cells, no old line | 62.4, 74.2, 66.4, 74.6, 84.6; 74.2 | 0.8, 1.0, 0.8, 1.2, 1.0; **1.0** | 67.8, 52.8, 78.0, 76.6, 72.4; 72.4 |
+| 512 silent cells, one old line in 32 | the same | 8.0, 7.0, 8.6, 8.8, 6.4; **8.0** | 68.4, 62.0, 76.6, 71.4, 80.8; 71.4 |
+
+The four reference arms repeat the end figures of `loop_small_case/REPORT.md`, section 11, to the digit. (The column "after its own phase" is here the single reading at 400,000 lines.)
+
+Development seed, one old line in 32, addition / subtraction at the end: 256 cells: target 1/4: 10.6 / 66.6; 1/8: 7.0 / 32.6; 1/16: 9.8 / 60.6. 512 cells: 6.0 / 71.8; 4.8 / 57.8; 4.6 / 65.8. No sparser target exceeded the target 1/4 by the plan's rule, so none went to the reported seeds.
+
+Cells active on never-shown addition lines / on subtraction lines / on both, at the end (mean output above 0.05 at the answer positions; one old line in 32; five seeds): 256 cells: 165/173/159, 155/157/142, 160/160/150, 162/164/152, 157/167/149. 512 cells: 396/386/360, 393/376/360, 370/363/332, 365/341/319, 369/366/340. About nine in ten of the cells active on addition lines are also active on subtraction lines; on the development seed the share is 0.82 to 0.86 at the targets 1/8 and 1/16.
+
+**The hypothesis is refuted.** With one old line in 32 silent cells keep 5.4% (256) and 8.0% (512) of never-shown addition; as shares of what they had learned, 0.08 and 0.11, below the plain system's 0.18 (15.6 / 84.8). They keep less than logistic cells, not more.
+
+My reading: a cell being silent at most bytes does not make the two tasks use different cells. Which cells are active is decided by the digits on the lines, and addition and subtraction lines carry the same digits in the same places; the one line that differs (the operator) does not sort the cells. So nearly every cell that answers addition is active and changed on subtraction lines.
+
+**Predictions.** B1 (0.85) held: 0.8 and 1.0. B2 (0.30) failed: 5.4. B3 (0.10) failed: 5.4 and 8.0. B4 (0.60) held: about 0.9. B5 (0.75) held: refuted as defined.
+
+**Not run**, as planned: silent cells together with `reserve`; other step sizes or threshold speeds; more than 512 cells.
