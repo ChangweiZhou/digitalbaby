@@ -70,3 +70,19 @@ The layered system without a crossing stands where `hold.py` with one crossing s
 | G7 | reported seeds | **not run** |
 
 I was wrong about this text by a wide margin: the second plan's success had made me expect that a gate which can see which digit is before it would be enough. A reading of mine, not tested: a cell that is to hold the first number's units digit must keep its gate shut on every one of the pairs and triples of bytes that the letters can form (with two delay lines a gate's drive is a sum over three positions, so the letters present many more combinations than the nine of the first plan's texts), and until it does, its trace of that digit has faded by the time the answer is named; in the second plan the same digit had to last six bytes of fixed kinds. Whether longer runs, a higher birth threshold of the gates, or a gate on what a cell gives out (the fourth plan) changes this is not known from these runs. **Not run:** the reported seeds; longer runs; more cells; `hold.py` (quoted); a look inside the cells.
+
+## Addition of 20 November, written before its run: the chosen setting four times as long (asked for by the coordinating session)
+
+After the outcome above the coordinating session sent three facts from other lines on this same text and seed (its words are not quoted; I have not read those lines' files): `hold.py` with one crossing, at 8% after 2,400,000 lines, rose to 46% of never-shown sums by 9,600,000 lines and was still rising (`loop_small_case/PLAN_12.md`); the same network taught by the exact gradient through the line reaches 69% within 2,400,000 lines after a level stretch, and has no level stretch at a larger step; a delay chain whose clock passes over the letters answers 94 to 97%. So 8% at 2,400,000 lines may be a level stretch before a rise and not an end, and my sentence above ("not held ... by either design, in this time") must be read with the last three words.
+
+**Run.** The third plan's chosen setting unchanged (cells A 160, cells B 118, etaA = 1, etaB = 1, nB = 32, 40,864 numbers that learn), seed 1, 9,600,000 lines, readings every 800,000. It is one run on the development seed; nothing is chosen on it. In my grid the steps etaA = 4 and etaA = 1/4 both did worse than etaA = 1 at 2,400,000 lines (5.2 and 0.5 against 8.3 at the gap of 8 letters), so for this design the step was not the lever that the coordinating session reports it to be for the exact gradient; no further step is tried here.
+
+*Hypothesis.* The layered system without a crossing is on the same stretch: at least 30% of never-shown sums at the gap of 8 letters at the last reading. *Refuted if* 15% or less at the last reading.
+
+| | Prediction (mine, before the run) | Chance |
+|---|---|---|
+| X1 | at least 30% at the gap of 8 letters at the last reading | 0.40 |
+| X2 | at least 46% (where `hold.py` with one crossing is reported to stand at this length, mean over gaps) in the mean over gaps at the last reading | 0.25 |
+| X3 | the last reading is above the reading at 2,400,000 lines by at least 5 points (mean over gaps) | 0.65 |
+
+**Cost.** About 55 CPU-minutes on one core (it runs beside the fourth plan's four runs on four cores, so about 70 minutes of wall time). **Not run:** other seeds; other steps; lengths beyond 9,600,000 lines.
