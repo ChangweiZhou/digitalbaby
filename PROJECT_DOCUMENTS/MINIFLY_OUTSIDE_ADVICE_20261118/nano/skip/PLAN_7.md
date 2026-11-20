@@ -36,3 +36,15 @@ The criterion alone, share of bytes passed over (`res/p7_crit_g2_s1.json`), afte
 **V1 held** (1.00). **V3 held** (0.00). **V2 failed: the first digit of the first number is never passed over (0.00), and my reasoning in section 2 was wrong for the texts as this line reads them.** The reason: in these texts (as in `cells2.py` and `hold.py`) nothing is named after the end mark, the first byte of the next line not being a byte the system is asked for. The table therefore has no count of what follows an end mark, the two cells cannot be compared at the first digit, and a byte with no comparison enters. The digit is saved by a convention of the stream, not by the criterion.
 
 *Addition 1.* To separate the two, the same runs with the table counting across the end mark as well (`across=1`; the relay system unchanged, it still does not name that byte): (a') the criterion alone; (b') the system, theta 0.1, 1,200,000 lines, beside (b). Prediction V5 (mine): with `across=1` at least 90% of the first digits are passed over at theta 0.1 after 400,000 lines (chance 0.8); V6: (b') is under 50% at every gap where (b) is over 50% (chance 0.7). V4 I now expect to fail for (b) (the hypothesis to hold on the development seed).
+
+## Addition 2 (20 November 2026, written before its runs): the coordinator's amendment, the next two bytes
+
+Received from the coordinating session after addition 1 was written: its own look (final counts after 40,000 lines, no relay system; "a look, not a claim") found, as addition 1 expects, that with counts across the line end the first digit of a line passes the test of the next byte about half the time, and that a comparison over the next TWO bytes separates: each cell also counts the byte two after its run, and the larger of the two total variations is taken; thresholds 0.2 to 0.3. It asked that this line write its own program from the description and check the shares.
+
+*Runs (development seed 1, `g2`, the table counting across the end mark, at least 20 counts in each of the four cells compared).* (a'') the criterion alone at theta 0.1, 0.2, 0.3 after 10,000, 100,000 and 400,000 lines; (b'') the system, 1,200,000 lines, at theta 0.2 and at 0.3 (both reported, as asked).
+
+| | Prediction (mine, before the runs) | Chance |
+|---|---|---|
+| V7 | (a''), theta 0.2, 400,000 lines: at least 90% of the letters and under 5% of every other kind of byte are passed over | 0.70 |
+| V8 | (b'') at theta 0.2 or 0.3: at least 50% of never-shown pairs at every gap, last three readings (the coordinator's hypothesis, development seed) | 0.60 |
+| V9 | (b''): the letters are passed over at 90% or more only after 100,000 lines (later than the trial clock, which had them by 100,000) | 0.50 |
