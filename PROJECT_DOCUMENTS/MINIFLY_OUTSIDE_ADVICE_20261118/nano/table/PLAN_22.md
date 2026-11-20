@@ -97,3 +97,40 @@ Readings (mine).
 *Runs:* the development grid of section 2 again (α in 0.01, 0.03, 0.1, 0.3; the same rule of choice), then the claims of section 2 with the chosen α: sums on the five reported seeds without classes, the two lives on prose.
 
 *Predictions (mine).* W1: the second cell on prose no longer breaks with a larger α: at α = 0.1 it is within 0.010 nats of its figure at α = 0.01 on the development measure (chance 0.60). W2: the chosen α is larger than 0.01 (0.65). W3: with the chosen α the first cell is within 1.5 points of 80.1 on sums and within 0.005 nats on each of six books, as in section 5 (0.65). W4: the second cell is at least as good as the per-text setting on at least five of six books (0.50).
+
+## 7. Outcome of addition 1 (entered 20 November; `res/gate_*rule2*.json`, the printed lines in `out22/`)
+
+**Development**, the rule whose sum starts at one (sums seed 1, first cell and second cell, last reading and mean of the last three; the test text's last tenth after its stream):
+
+| α | sums, first cell | sums, second cell | prose, first cell | prose, second cell |
+|---|---|---|---|---|
+| the settings per text | 79.4, 79.3 | 84.7, 85.4 | 1.5226 | 1.5058 |
+| 0.01 | 78.9, 77.9 | 83.4, 84.5 | 1.5235 | **1.4981** |
+| 0.03 | 81.3, 81.3 | 85.8, 86.9 | 1.5256 | **1.4983** |
+| 0.1 | 82.4, 83.6 | 86.9, 87.7 | 1.5261 | 1.5230 |
+| 0.3 | 82.2, 83.8 | 86.2, 87.4 | 1.5266 | 1.6186 |
+
+By the rule of choice (the first cell's two measures) α = **0.1**. Having seen the second cell on this table I also ran **0.03**, and give it as a second reading that was chosen with that in sight.
+
+**Claims.** Sums without classes, never-shown additions after a read line, last reading, the five reported seeds; prose, each book's last tenth right after its stream.
+
+| | per-text settings | the rule, α = 0.1 (chosen) | the rule, α = 0.03 (second reading) |
+|---|---|---|---|
+| sums, first cell | 82.0, 80.9, 80.1, 78.6, 77.8 (median 80.1) | 84.7, 83.6, 84.8, 81.6, 84.1 (**84.1**) | 83.2, 82.6, 82.2, 80.0, 81.0 (82.2) |
+| sums, second cell | 88.1, 84.8, 86.3, 84.6, 85.6 (85.6) | 88.2, 86.3, 87.0, 83.8, 87.6 (87.0) | 88.6, 85.6, 86.2, 83.8, 87.2 (86.2) |
+| prose, first cell: bryant, burgess, carroll; chesterton-ball, austen-emma, melville | 1.5023, 1.3645, 1.4456; 1.6316, 1.2416, 1.4687 | 1.5030, 1.3614, 1.4441; 1.6362, 1.2402, 1.4684 | 1.5023, 1.3617, 1.4447; 1.6330, 1.2402, 1.4683 |
+| prose, second cell | 1.4812, 1.3408, 1.4157; 1.6116, 1.2203, 1.4453 | 1.4865, 1.3279, 1.4076; **1.6360**, 1.2113, 1.4395 | **1.4726, 1.3191, 1.3979; 1.6106, 1.2082, 1.4351** |
+| the test text's last tenth at the end of the two lives, second cell | 1.5301, 1.5351 | 1.5903, 1.5533 | 1.5434, 1.5379 |
+
+| | Statement | Outcome |
+|---|---|---|
+| W1 | the second cell on prose within 0.010 of its figure at α = 0.01 when α = 0.1 | failed (0.025 above); it holds to α = 0.03 and breaks later than before |
+| W2 | the chosen α is larger than 0.01 | held (0.1) |
+| W3 | first cell within 1.5 points on sums and 0.005 nats on six books, at the chosen α | held: **4.0 points better** on sums; within 0.005 on every book |
+| W4 | the second cell at least as good as the per-text setting on five of six books, at the chosen α | failed (four of six, and one book 0.024 worse); at α = 0.03 it is better on six of six, by 0.001 to 0.022 |
+
+Readings (mine).
+1. **The rule in its well-conditioned form is better than both hand-set schedules for the first cell**: 84.1 against 80.1 on never-shown sums at the median of five seeds, and the same loss on six books to 0.005. One rule, one number, every trust born at nothing.
+2. **The second cell wants a smaller number than the first.** At the number the rule of choice picked (it reads the first cell only) the second cell is worse on two books and keeps the old text badly; at 0.03, which I ran after seeing that, it is better than the per-text setting on all six books by up to 0.022 nats and on sums by 0.6. So "one number" holds for the first cell over a thirtyfold range and for the two cells together only near 0.03. The honest statement: one rule replaces the two schedules; the number is one for all texts, and it is not yet one that needs no care.
+3. The keeping of the old text by the second cell is 0.003 to 0.013 worse at 0.03 and much worse at 0.1: faster parts follow the recent text more.
+4. For the line `nano/suite`: the rule with the sum starting at one, and its own choice of the number on its own development material, reading both cells.
