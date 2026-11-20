@@ -39,3 +39,9 @@ Measures at the last reading of the second phase: never-shown addition (the 500 
 24 compiled runs of 30 to 65 seconds: about 7 minutes on four cores. The numpy loop is the one checked in `PLAN_1.md` and, over two phases of this text, in `check_replay3.py`; no full-length numpy run. The ten further seeds where two arms are within five points and it matters. Not run: the text with the two lines made known to the system beforehand (`nano/keep`'s `openall`, which is a rule of that line's candidate and has no counterpart here); r = 1/2; K = 6; the other order of the tasks.
 
 ---
+
+## 7. A dated addition, entered 20 November after the five reported seeds were read and before its runs
+
+On the five reported seeds (scored in section 8) R keeps 65.6% of addition and O 80.8; paired, R less O is -19.2, -2.2, -7.4, -20.6, -4.4 (median -7.4, five of five below), while on the second task (clean, wide) R is 7.8 above O at the median. In `PLAN_1.md` a like difference on five seeds (-7.6) vanished on fifteen. Whether replay keeps less than the program's old lines on this harsher change matters for the reading, so R and O are run on 1001 to 1010 and the fifteen are reported together.
+- G1 (0.5): on fifteen seeds R is more than 3 points below O on addition at the median of the paired differences.
+- G2 (0.6): on fifteen seeds the sum of the two scores (addition, and the second task clean, wide) is lower for R than for O at the median of the paired differences.
