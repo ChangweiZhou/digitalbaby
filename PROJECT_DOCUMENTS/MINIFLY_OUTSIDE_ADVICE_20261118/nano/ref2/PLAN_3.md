@@ -37,3 +37,13 @@ The longer schedule (the first brief's step 3). Any search over the rate, the wi
 ## 5. Outcome
 
 (appended below)
+
+**Entry 1 (22:50 UTC): the cells going on, run here** (`cells.py`; per-byte files `res/cells_<name>_cell{1,2}_going_on.f32`; the frozen files came out bit-identical to plan 2's).
+
+| system | first cell going on | second cell going on | second cell, every eighth byte | CPU (frozen and going on) |
+|---|---|---|---|---|
+| `T2` | 1.3863421 | 1.3717006 | 1.3734 | 7 s |
+| `big` (without relay) | 1.3462186 | 1.3191779 | 1.3215 | 94 s |
+| `all` | 1.3470264 | 1.3204424 | 1.3237 | 402 s |
+
+**D5 held** (reported: 1.3863 / 1.3717, 1.3462 / 1.3192, 1.3470 / 1.3204).
