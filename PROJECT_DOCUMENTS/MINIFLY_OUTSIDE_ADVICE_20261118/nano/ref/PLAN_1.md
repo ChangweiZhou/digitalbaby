@@ -66,3 +66,17 @@ nanoGPT's full setting as published (batch 64, 5,000 steps): five and a half hou
 | A2 | GRU of 256, whole stream: stream loss at or below 1.66 | 0.60 |
 | A3 | Kneser-Ney, k = 6, counted without the last 50,000 bytes: at least 0.05 nats above 1.517 on the last tenth | 0.70 |
 | A4 | M1 to M6 above are scored on the whole-stream runs; I keep their chances as written, though M1 to M3 now look too low a range for 256 and 1,024 cells (the first runs gave 1.959 and 1.926) | - |
+
+## Addition 2 (entered 20 November while the large GPT was still learning; before the runs it adds)
+
+**Asked for by the coordinating session** (two messages, 15:20 and 15:26 UTC): (i) a reference by back-propagation that goes on learning through the last tenth, each block named before it is used for a step; (ii) the small GPT through the life of two texts of `nano/table/PLAN_5.md`, with the note that if only one can be done it should be (ii). I do (ii) now, on one thread beside the large run; (i) is **not run** unless time is left after the report, and is then a further addition.
+
+**The life** (`life_gpt.py`; `load_all()` copied from `nano/table/life.py` on `claude/friendly-darwin-8mmhfm` at fcc174a, so the bytes and parts are the same). A: the stream of the test. B: the first nine tenths of Bryant's stories, Burgess's Buster Bear and Carroll's Alice (430,155 bytes; held-out tenths 47,131 bytes together), a byte not among A's 65 values made a space, carriage returns removed. The small GPT (4 layers, 4 heads, width 128, 64 bytes back, batch 12, seed 1337) is taught on A as `small10k` was (10,000 steps, 7.68 million bytes seen, 7.65 readings of A). It is then taught on B for 4,285 steps of the same size (12 blocks of 64 bytes a step: 3.29 million bytes seen, the same 7.65 readings of B), on random blocks of B's three stream parts joined; **no byte of A is shown again**; the optimiser's state is carried over. Two arms for the rate on B, since the recipe does not say what a second text's rate should be: `fresh_schedule` (the recipe again: 100 steps of warm-up to 1e-3, cosine fall to 1e-4) and `constant_1e-4` (the rate at which A ended). A third network sees B only (the recipe from a new start, 4,285 steps). Scored with nothing changing, each byte from the 64 bytes before it in its own text: the last tenth of A and the three held-out tenths of B, after A, after A and B (both arms), and for B only. One seed; a first figure only. Unlike the counting systems of `nano/table`, which read each text once in order, this learner reads random blocks, each text about 7.65 times; that difference is part of the comparison and is not removed.
+
+| | Prediction (mine, before these runs) | Chance |
+|---|---|---|
+| L1 | `fresh_schedule`: the loss on A's last tenth rises by at least 0.15 nats after B | 0.75 |
+| L2 | `constant_1e-4`: it rises by between 0.03 and 0.15 nats | 0.50 |
+| L3 | B's held-out parts after A and B (`fresh_schedule`) are at least 0.05 nats below the network that saw B only | 0.80 |
+| L4 | B's held-out parts after A and B (`fresh_schedule`) are below 1.4152 nats (the counting cells with a learned trust, `nano/table`) | 0.50 |
+| L5 | B's held-out parts after A alone are at least 0.3 nats above those after A and B | 0.85 |
