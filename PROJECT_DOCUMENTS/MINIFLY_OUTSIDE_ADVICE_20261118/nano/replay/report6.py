@@ -3,11 +3,17 @@
 import json, os
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); FIVE = (73129, 93683, 116089, 406364, 545353)
-def ld(l): return json.load(open(os.path.join(HERE, "res", f"m_{l}.json")))
+def ld(l):
+    """A result of replay6.py; for arm R on 1001 to 1010, the earlier runs of the same life (PLAN_6.md, section 7), read into the same names."""
+    p = os.path.join(HERE, "res", f"m_{l}.json")
+    if os.path.exists(p): return json.load(open(p))
+    _, life, w, seed = l.split("_"); assert w == "R"
+    if life == "sub": o = json.load(open(os.path.join(HERE, "res", f"p_e_R1_{seed}.json"))); return dict(first_after_first=o["add_after_first"], first_at_end=o["add_after_second"], second_clean_at_end=o["sub_clean_wide_after_second"], second_mixed_at_end=o["sub_after_second"], cpu=o["cpu"], cpu_counting_and_replay=o["cpu_counting_and_replay"], cpu_judging=0.0)
+    o = json.load(open(os.path.join(HERE, "res", f"h_u_R_{seed}.json"))); return dict(first_after_first=o["add_after_first"], first_at_end=o["add_after_second"], second_clean_at_end=o["swp_clean_wide_after_second"], second_mixed_at_end=o["swp_after_second"], cpu=o["cpu"], cpu_counting_and_replay=o["cpu_counting_and_replay"], cpu_judging=0.0)
 def row(name, vals, f="{:6.1f}"): print(f"{name:52s} " + " ".join(f.format(v) for v in vals) + "   median " + f.format(float(np.median(vals))))
 if __name__ == "__main__":
     for life, title in (("sub", "(a) addition, then subtraction (aa-bb=ccc): the life of PLAN_1.md"), ("swp", "(b) addition, then subtraction written aa=bb+ccc: the harsh change of PLAN_3.md")):
-        seeds = FIVE + tuple(x for x in range(1001, 1011) if os.path.exists(os.path.join(HERE, "res", f"m_y_{life}_M_{x}.json")) and os.path.exists(os.path.join(HERE, "res", f"m_y_{life}_R_{x}.json")))
+        seeds = FIVE + tuple(x for x in range(1001, 1011) if os.path.exists(os.path.join(HERE, "res", f"m_y_{life}_M_{x}.json")) )
         R = {w: [ld(f"y_{life}_{w}_{x}") for x in seeds] for w in "RM"}; print(f"\n================ {title}\nSeeds:", *seeds); A = lambda w, k: np.array([o[k] for o in R[w]], float)
         for t, k in (("Never-shown addition after its own phase (mean of the last three readings), %", "first_after_first"), ("Never-shown addition at the end, %", "first_at_end"), ("Second task at the end, clean, %", "second_clean_at_end"), ("Second task at the end, mixed, %", "second_mixed_at_end"),
                      ("CPU seconds", "cpu"), ("  of which drawing from the cells", "cpu_counting_and_replay"), ("  of which judging", "cpu_judging")):
