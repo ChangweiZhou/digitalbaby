@@ -1,0 +1,74 @@
+
+**Everything going on (each byte of the last tenth answered before it is read; nats a byte)**
+
+| system | shakespeare | book | py | c | table | xml |
+|---|---|---|---|---|---|---|
+| base: runs of 0 to 6 bytes, first cell | 1.4136 | 1.4476 | 1.1503 | 1.0301 | 0.8141 | 0.4570 |
+| + second cell (parts by kind and byte) | 1.3876 | 1.4184 | 1.1228 | 0.9470 | 0.6944 | 0.4398 |
+| + one recalling sender | 1.3783 | 1.4084 | 1.0351 | 0.8448 | 0.5700 | 0.3707 |
+| + the rule for the step | 1.3705 | 1.4006 | 1.0210 | 0.7952 | 0.5253 | 0.3547 |
+| + last-byte senders | 1.3427 | 1.3953 | 0.9657 | 0.7172 | 0.3483 | 0.2953 |
+| Z: with three recalling senders | 1.3389 | 1.3910 | 0.9496 | 0.7068 | 0.3415 | 0.2844 |
+| ZA: Z with trusts by age | 1.3344 | 1.3894 | 0.9358 | 0.6908 | 0.3431 | 0.2846 |
+| ZA, first cell | 1.3799 | 1.4280 | 0.9800 | 0.8029 | 0.4586 | 0.3412 |
+| ZP: Z with since and pool cells | 1.3497 | 1.3972 | 0.9677 | 0.5970 | 0.2494 | 0.2790 |
+| ZPA: ZP with trusts by age | 1.3459 | 1.3959 | 0.9582 | 0.5921 | 0.2479 | 0.2777 |
+| ZPA, first cell | 1.3552 | 1.4000 | 0.9570 | 0.6349 | 0.2933 | 0.2950 |
+| ZA scaled (the rule's number by the senders that speak) | 1.3346 | 1.3896 | 0.9368 | 0.6918 | 0.3446 | 0.2857 |
+| ZPA scaled | 1.3184 | 1.3660 | 0.9210 | 0.5590 | 0.2529 | 0.2483 |
+| ZPA scaled, first cell | 1.3597 | 1.4029 | 0.9694 | 0.6791 | 0.3126 | 0.3084 |
+| base with classes (nano/merge's program) | 1.4003 | 1.4332 | 1.1324 | 0.9397 | 0.6373 | 0.4484 |
+| base with made kinds F (nano/merge's program) | 1.3993 | 1.4328 | 1.1250 | 0.8942 | 0.6210 | 0.4494 |
+| xz at its strongest setting | 1.7496 | 1.7876 | 1.1265 | 0.7244 | 0.3814 | 0.4333 |
+| bzip2 at its strongest setting | 1.6621 | 1.7035 | 1.2079 | 0.9426 | 0.5976 | 0.3845 |
+| gzip at its strongest setting | 2.1463 | 2.2479 | 1.3972 | 1.0363 | 0.8122 | 0.6184 |
+
+**Nothing changing (nats a byte)**
+
+| system | shakespeare | book | py | c | table | xml |
+|---|---|---|---|---|---|---|
+| base: runs of 0 to 6 bytes, first cell | 1.5226 | 1.4676 | 1.4568 | 2.1222 | 1.7567 | 0.8077 |
+| + second cell (parts by kind and byte) | 1.4978 | 1.4388 | 1.4349 | 2.1137 | 1.8376 | 0.7915 |
+| + one recalling sender | 1.4928 | 1.4312 | 1.4342 | 2.2299 | 1.8497 | 0.7773 |
+| + the rule for the step | 1.4882 | 1.4245 | 1.4283 | 2.2840 | 2.0213 | 0.7908 |
+| + last-byte senders | 1.5502 | 1.4625 | 1.4681 | 2.3036 | 2.0622 | 0.8696 |
+| Z: with three recalling senders | 1.5470 | 1.4580 | 1.4661 | 2.2396 | 2.0140 | 0.8431 |
+| ZA: Z with trusts by age | 1.5454 | 1.4591 | 1.4333 | 2.1829 | 1.7527 | 0.8179 |
+| ZA, first cell | 1.5123 | 1.4586 | 1.4211 | 2.0939 | 1.6558 | 0.7723 |
+| ZP: Z with since and pool cells | 1.5526 | 1.4728 | 1.5594 | 2.5663 | 2.6307 | 0.9723 |
+| ZPA: ZP with trusts by age | 1.5471 | 1.4716 | 1.5171 | 2.5265 | 2.3660 | 0.9326 |
+| ZPA, first cell | 1.4868 | 1.4322 | 1.3852 | 2.1363 | 1.7228 | 0.7410 |
+| ZA scaled (the rule's number by the senders that speak) | 1.5708 | 1.4688 | 1.4472 | 2.1861 | 1.7434 | 0.8207 |
+| ZPA scaled | 1.4795 | 1.4170 | 1.3868 | 2.1027 | 1.8530 | 0.7356 |
+| ZPA scaled, first cell | 1.4890 | 1.4316 | 1.3896 | 2.0636 | 1.6552 | 0.7327 |
+| base with classes (nano/merge's program) | 1.5116 | 1.4536 | 1.4300 | 2.1532 | 1.7906 | 0.8019 |
+| base with made kinds F (nano/merge's program) | 1.5099 | 1.4530 | 1.4307 | 2.1454 | 1.7406 | 0.8056 |
+| best Kneser-Ney table of the last k bytes (k) | 1.5165 (6) | 1.4570 (6) | 1.3974 (6) | 2.0578 (6) | 1.8000 (4) | 0.7893 (6) |
+
+**Size and cost** (at the scoring with nothing changing: cells that have counted; numbers stored = counts above zero and parts used; CPU seconds for the whole run)
+
+| system | shakespeare | book | py | c | table | xml |
+|---|---|---|---|---|---|---|
+| base: runs of 0 to 6 bytes, first cell | 459,129; 872,748; 2 | 531,809; 990,711; 3 | 475,303; 768,177; 4 | 420,192; 658,473; 3 | 556,055; 913,601; 3 | 296,978; 453,416; 6 |
+| + second cell (parts by kind and byte) | 459,129; 875,457; 4 | 531,809; 994,032; 4 | 475,303; 772,209; 5 | 420,192; 662,820; 6 | 556,055; 916,618; 5 | 296,978; 458,792; 5 |
+| + one recalling sender | 459,129; 875,841; 4 | 531,809; 994,480; 5 | 475,303; 772,785; 6 | 420,192; 663,438; 6 | 556,055; 917,014; 6 | 296,978; 459,560; 6 |
+| + the rule for the step | 459,129; 875,841; 4 | 531,809; 994,480; 5 | 475,303; 772,785; 6 | 420,192; 663,438; 6 | 556,055; 917,014; 6 | 296,978; 459,560; 6 |
+| + last-byte senders | 459,129; 878,550; 4 | 531,809; 997,801; 5 | 475,303; 776,817; 6 | 420,192; 667,785; 6 | 556,055; 920,031; 6 | 296,978; 464,936; 6 |
+| Z: with three recalling senders | 459,129; 879,300; 4 | 531,809; 998,637; 5 | 475,303; 777,937; 7 | 420,192; 668,978; 7 | 556,055; 920,802; 7 | 296,978; 466,472; 6 |
+| ZA: Z with trusts by age | 459,129; 879,300; 5 | 531,809; 998,637; 6 | 475,303; 777,937; 7 | 420,192; 668,978; 7 | 556,055; 920,802; 7 | 296,978; 466,472; 6 |
+| ZP: Z with since and pool cells | 2,407,878; 13,410,980; 111 | 2,629,955; 13,417,440; 135 | 3,837,653; 15,368,462; 179 | 4,001,405; 15,960,560; 181 | 1,787,355; 7,767,863; 144 | 3,681,563; 11,790,934; 168 |
+| ZPA: ZP with trusts by age | 2,407,878; 13,410,980; 112 | 2,629,955; 13,417,440; 136 | 3,837,653; 15,368,462; 191 | 4,001,405; 15,960,560; 179 | 1,787,355; 7,767,863; 138 | 3,681,563; 11,790,934; 175 |
+| ZA scaled (the rule's number by the senders that speak) | 459,129; 879,300; 5 | 531,809; 998,637; 6 | 475,303; 777,937; 7 | 420,192; 668,978; 8 | 556,055; 920,802; 7 | 296,978; 466,472; 7 |
+| ZPA scaled | 2,407,878; 13,410,980; 114 | 2,629,955; 13,417,440; 139 | 3,837,653; 15,368,462; 181 | 4,001,405; 15,960,560; 176 | 1,787,355; 7,767,863; 139 | 3,681,563; 11,790,934; 167 |
+| base with classes (nano/merge's program) | 2,357,627; 5,235,336; 106 | 2,790,741; 6,239,946; 130 | 3,257,831; 5,602,325; 179 | 2,998,484; 4,952,432; 144 | 2,161,412; 4,035,016; 134 | 1,751,183; 2,898,851; 99 |
+| base with made kinds F (nano/merge's program) | 2,446,780; 5,767,767; 124 | 2,500,945; 6,146,005; 165 | 3,310,635; 6,828,634; 782 | 2,711,590; 5,974,004; 746 | 1,280,449; 3,075,816; 311 | 1,255,912; 3,307,434; 437 |
+
+**The best general system against the strongest compressor here, going on** (ZA: no more cells than the base; ZPA: three to twelve times the cells)
+
+| | shakespeare | book | py | c | table | xml |
+|---|---|---|---|---|---|---|
+| ZA less xz | -0.4152 | -0.3982 | -0.1907 | -0.0336 | -0.0383 | -0.1486 |
+| ZPA less xz | -0.4037 | -0.3917 | -0.1683 | -0.1323 | -0.1335 | -0.1555 |
+| ZPA scaled less xz | -0.4312 | -0.4216 | -0.2055 | -0.1655 | -0.1285 | -0.1849 |
+| ZPA scaled, as a share of xz | 75% | 76% | 82% | 77% | 66% | 57% |
+| the better of ZA and ZPA, as a share of xz | 76% | 78% | 83% | 82% | 65% | 64% |

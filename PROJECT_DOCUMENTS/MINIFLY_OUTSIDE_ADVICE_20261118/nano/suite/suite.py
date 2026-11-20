@@ -14,6 +14,7 @@ The number of values S is a parameter (at most 128). Kinds of sender:
 gate=1: a second answering cell with, for each of the last J delays, a part of the trust indexed by (kind, byte at that delay) (nolevel);  gate=2: by (kind, level, byte).
 birth=b>0: a cell is not born at a byte to which the first cell gave at least probability b (nano/table/PLAN_19.md).
 age=1: the trusts of the senders of recency (last, recall) are indexed by the age of what they say (PLAN_7.md).
+spow=p>0 (with rule 2): the rule's number is multiplied by (12 / the senders that speak at the byte) to the power p (PLAN_8.md).
 rule: the step of a trust. 0: eta;  1: eta / sqrt(1 + times used);  2: eta / sqrt(sum of its own squared drivers) (PLAN_4.md); no change while that sum is zero (a driver so small that its square is zero in the machine's numbers moved a trust to infinity before this was written: PLAN_4.md, outcome)."""
 import ctypes, hashlib, itertools, json, os, subprocess, sys, time
 import numpy as np
@@ -31,7 +32,7 @@ SRC = r'''
 #define JMAX 8
 #define LMAX 2048
 typedef struct {
-    int S, K, gate, J, M, rule, age; double eta, e, birth;
+    int S, K, gate, J, M, rule, age; double eta, e, birth, spow;
     int ktype[KMAX], knd[KMAX], kdel[KMAX][8];
     double *T, *Tu, *Ta;            /* K x NL: the first cell's trusts, times used, sum of squared drivers */
     double *G, *Gu, *Ga; int64_t gsize; int GL;   /* the second cell's parts: J x K x GL x S (GL = 1 without the level, NL with it) */
@@ -77,8 +78,8 @@ static void count(Sy *s, int32_t c, int y, int64_t t) {
     }
     s->pv[s->cptr[c] + u] = y; s->pc[s->cptr[c] + u] = 1; s->cU[c] = u + 1; s->cN[c]++;
 }
-Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age) {
-    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age;
+Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age, double spow) {
+    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age; s->spow = spow;
     for (int k = 0; k < K; k++) { s->ktype[k] = ktype[k]; s->knd[k] = knd[k]; for (int i = 0; i < 8; i++) s->kdel[k][i] = kdel[k * 8 + i]; }
     s->T = malloc(sizeof(double) * K * NL); s->Tu = calloc(K * NL, sizeof(double)); s->Ta = calloc(K * NL, sizeof(double));
     for (int k = 0; k < K; k++) for (int l = 0; l < NL; l++) s->T[k * NL + l] = kborn[k];
@@ -99,7 +100,7 @@ int64_t sy_cells_of(const Sy *s, int kind) { int64_t n = 0; for (int64_t i = 0; 
 int64_t sy_once(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] == 1; return n; }
 double *sy_T(Sy *s) { return s->T; }  double *sy_Tu(Sy *s) { return s->Tu; }  double *sy_G(Sy *s) { return s->G; }  double *sy_Gu(Sy *s) { return s->Gu; }  int64_t sy_gsize(Sy *s) { return s->gsize; }
 static inline uint32_t rhash(const int32_t *x, int64_t end, int M, int hbits) { uint64_t h = 0; for (int i = 1; i <= M; i++) h = h * 0x100000001B3ULL + (uint64_t)(x[end - i] + 1); return (uint32_t)(mix(h) >> (64 - hbits)); }
-static inline double step_of(const Sy *s, double used, double acc) { return s->rule == 0 ? s->eta : s->rule == 1 ? s->eta / sqrt(1.0 + used) : s->eta / sqrt(acc); }
+static inline double step_of(const Sy *s, double used, double acc, double sc) { return s->rule == 0 ? s->eta : s->rule == 1 ? s->eta / sqrt(1.0 + used) : s->eta * sc / sqrt(acc); }
 /* reads or answers the bytes x[lo..hi-1] of the stream x (the same array at every call). nl1, nl2: minus the log of the probability each answering cell gave
    to the byte that came; P1, P2 (may be null): all probabilities.  learn = 0: nothing changes (the since clocks, which are context, still move). */
 void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *nl1, double *nl2, double *P1, double *P2) {
@@ -151,11 +152,13 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
             if (P2) for (int v = 0; v < S; v++) P2[(t - lo) * S + v] = p2[v];
         }
         if (learn) {
+            int nact = 0; for (int k = 0; k < K; k++) nact += lev[k] >= 0;
+            const double sc = s->spow > 0 && nact > 0 ? pow(12.0 / nact, s->spow) : 1.0;      /* PLAN_8.md: the rule's number divided by a power of the senders that speak, 12 as the unit */
             for (int k = 0; k < K; k++) if (lev[k] >= 0) {
                 double g = 0, g2 = 0;
                 for (int i = 0; i < nv[k]; i++) { const int v = vv[k][i]; const double d = dv[k][i]; g += ((v == y) - p[v]) * d; if (s->gate) g2 += ((v == y) - p2[v]) * d; }
-                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (s->Ta[i] > 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i]) * g; s->Tu[i] += 1.0;
-                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (s->Ga[i2] > 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2]) * g2; s->Gu[i2] += 1.0; }
+                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (s->Ta[i] > 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i], sc) * g; s->Tu[i] += 1.0;
+                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (s->Ga[i2] > 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2], sc) * g2; s->Gu[i2] += 1.0; }
             }
             for (int k = 0; k < K; k++) if (s->ktype[k] < 2) {
                 int32_t c = s->hcell[sl[k]];
@@ -180,7 +183,7 @@ def kern():
     if not os.path.exists(so):
         open(src, "w").write(SRC); tmp = so + f".{os.getpid()}"; subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", tmp, src, "-lm"]); os.replace(tmp, so)
     L = ctypes.CDLL(so); ci, cd, cl, vp = ctypes.c_int, ctypes.c_double, ctypes.c_int64, ctypes.c_void_p
-    L.sy_new.argtypes = [ci, ci, PI, PI, PI, PD, cd, cd, ci, ci, ci, cd, ci, cl, ci]; L.sy_new.restype = vp; L.sy_free.argtypes = [vp]; L.sy_free.restype = None
+    L.sy_new.argtypes = [ci, ci, PI, PI, PI, PD, cd, cd, ci, ci, ci, cd, ci, cl, ci, cd]; L.sy_new.restype = vp; L.sy_free.argtypes = [vp]; L.sy_free.restype = None
     L.sy_run.argtypes = [vp, PI, cl, cl, ci, PD, PD, PD, PD]; L.sy_run.restype = None
     for f in ("sy_cells", "sy_counts", "sy_once", "sy_gsize"): getattr(L, f).argtypes = [vp]; getattr(L, f).restype = cl
     L.sy_cells_of.argtypes = [vp, ci]; L.sy_cells_of.restype = cl
@@ -205,11 +208,11 @@ def kinds_of(spec, S, recall=0, born=0.25):
     return ks
 
 class Sys:
-    def __init__(s, S, kinds, x, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0):
+    def __init__(s, S, kinds, x, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0):
         s.S, s.kinds, s.K, s.gate, s.J, s.M = S, kinds, len(kinds), gate, J, M; assert S <= 128 and s.K <= 600 and J <= 8; s.L = kern(); s.x = np.ascontiguousarray(x.astype(np.int32)); assert s.x.max() < S
         kt = np.array([k[0] for k in kinds], np.int32); kn = np.array([k[1] for k in kinds], np.int32); kd = np.zeros((s.K, 8), np.int32); kb = np.array([k[3] for k in kinds], np.float64)
         for i, k in enumerate(kinds): kd[i, :len(k[2])] = k[2]
-        s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x), age)
+        s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x), age, spow)
     def run(s, lo, hi, learn, want_p=False):
         n = hi - lo; nl1 = np.zeros(n); nl2 = np.zeros(n) if s.gate else None; P1 = np.zeros((n, s.S)) if want_p else None; P2 = np.zeros((n, s.S)) if want_p and s.gate else None
         s.L.sy_run(s.h, p32(s.x), lo, hi, int(learn), pd(nl1), pd(nl2), pd(P1), pd(P2)); return (nl1, nl2, P1, P2) if want_p else (nl1, nl2)
@@ -246,11 +249,11 @@ def agelevel_recall_np(L, M, d):
     while d > 0 and c < 4: d >>= 4; c += 1
     return b * 5 + c
 
-def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0):
+def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0):
     K = len(kinds); GL = NL if gate == 2 else 1
     if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={}, lasts={}, times={})
     cells, T, Tu, Ta, G, Gu, Ga, places = (state[k] for k in ("cells", "T", "Tu", "Ta", "G", "Gu", "Ga", "places")); P1 = np.zeros((hi - lo, S)); P2 = np.zeros((hi - lo, S)); xb = lambda q: int(x[q]) if q >= 0 else 0
-    step = lambda used, acc: eta if rule == 0 else eta / np.sqrt(1.0 + used) if rule == 1 else eta / np.sqrt(acc)
+    step = lambda used, acc: eta if rule == 0 else eta / np.sqrt(1.0 + used) if rule == 1 else eta * sc[0] / np.sqrt(acc); sc = [1.0]
     for t in range(lo, hi):
         y = int(x[t]); a = np.zeros(S); act = []; keys = []; rq = places.get(tuple(int(v) for v in x[t - M:t]), []) if t >= M else []
         for k, (typ, nd, ds, _, _) in enumerate(kinds):
@@ -280,6 +283,7 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, ru
             for k, l, sv in act: a2 += sum(G[j, k, l if GL > 1 else 0, xb(t - 1 - j)] for j in range(J)) * sv
             p2 = np.exp(a2 - a2.max()); p2 /= p2.sum(); P2[t - lo] = p2
         if learn:
+            sc[0] = (12.0 / len(act)) ** spow if spow > 0 and act else 1.0
             for k, l, sv in act:
                 g = sv[y] - p @ sv; Ta[k, l] += g * g
                 if Ta[k, l] > 0 or rule != 2: T[k, l] += step(Tu[k, l], Ta[k, l]) * g
@@ -303,7 +307,7 @@ def check():
     import make_streams as MS
     ok = True; rng = np.random.default_rng(3)
     cases = [("shakespeare", "runs", dict()), ("py", "runs", dict(gate=1)), ("xml", "runs", dict(gate=2, birth=0.5)), ("c", "runs+since+pool", dict(gate=1)), ("table", "runs", dict(gate=1, recall=1)), ("py", "runs", dict(gate=1, recall=3, M=4)),
-             ("book", "runs", dict(rule=2, eta=0.05, gate=1)), ("book", "runs", dict(rule=1, eta=0.1, e=2.0, gate=2)), ("random", "sums", dict(rule=1, eta=0.1, e=2.0, gate=1, J=8, lo=9)), ("repeats", "runs", dict(gate=1, recall=3, M=8)), ("c", "runs+last", dict(gate=1, recall=1, rule=2, eta=0.03)), ("shakespeare", "runs+last", dict(gate=2, birth=0.5)), ("table", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1)), ("repeats", "runs+last", dict(gate=1, recall=3, age=1))]
+             ("book", "runs", dict(rule=2, eta=0.05, gate=1)), ("book", "runs", dict(rule=1, eta=0.1, e=2.0, gate=2)), ("random", "sums", dict(rule=1, eta=0.1, e=2.0, gate=1, J=8, lo=9)), ("repeats", "runs", dict(gate=1, recall=3, M=8)), ("c", "runs+last", dict(gate=1, recall=1, rule=2, eta=0.03)), ("shakespeare", "runs+last", dict(gate=2, birth=0.5)), ("table", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1)), ("repeats", "runs+last", dict(gate=1, recall=3, age=1)), ("py", "runs+last+since", dict(gate=1, recall=1, rule=2, eta=0.03, age=1, spow=1.0)), ("random", "sums", dict(rule=2, eta=0.03, gate=1, lo=9, spow=0.5))]
     for name, spec, kw in cases:
         kw = dict(kw); n = kw.pop("n", 2500); lo = kw.pop("lo", 6); recall = kw.pop("recall", 0)
         if name == "random": x = rng.integers(0, 14, n).astype(np.int32); S = 14
@@ -338,7 +342,7 @@ def check_gate():
 def run_stream(kw):
     import make_streams as MS
     name = kw["stream"]; x, cut, S = MS.load(name); t0 = time.process_time(); recall = int(kw.get("recall", 0)); kinds = kinds_of(kw.get("kinds", "runs"), S, recall, float(kw.get("born", 0.25)))
-    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.00005)), e=float(kw.get("e", 0.02)), rule=int(kw.get("rule", 0)), gate=int(kw.get("gate", 0)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)), age=int(kw.get("age", 0)))
+    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.00005)), e=float(kw.get("e", 0.02)), rule=int(kw.get("rule", 0)), gate=int(kw.get("gate", 0)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)), age=int(kw.get("age", 0)), spow=float(kw.get("spow", 0)))
     lo = 6; a1, a2 = s.run(lo, cut, True); t1 = time.process_time(); f1, f2 = s.run(cut, len(x), False); sz = s.sizes(); g1, g2 = s.run(cut, len(x), True); m = lambda v: None if v is None else float(v.mean())
     half = (cut - lo) // 2; out = dict(stream=name, args=kw, S=S, length=len(x), cut=cut, kinds=len(kinds), frozen=dict(cell1=m(f1), cell2=m(f2)), going_on=dict(cell1=m(g1), cell2=m(g2)), while_reading=dict(cell1=m(a1), cell2=m(a2)),
                while_reading_second_half=dict(cell1=m(a1[half:]), cell2=m(a2[half:]) if a2 is not None else None), sizes_at_the_frozen_scoring=sz, sizes_at_the_end=s.sizes(), cpu=round(time.process_time() - t0, 1), cpu_reading=round(t1 - t0, 1))
@@ -359,7 +363,7 @@ def run_sums(kw):
     Ls = np.array([text(a, b) for a, b in held]); g = np.random.default_rng([seed, 7]); prevs = [TAB[g.integers(8000, size=500)] for _ in range(5)]
     ev = np.concatenate([np.hstack([pv, Ls]).ravel() for pv in prevs]); base = D + len(train); x = np.concatenate([np.full(D, END), train, ev]).astype(np.int32)
     kinds = kinds_of(kw.get("kinds", "sums"), S, int(kw.get("recall", 0)), float(kw.get("born", 0.02)))
-    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.1)), e=float(kw.get("e", 2.0)), rule=int(kw.get("rule", 1)), gate=int(kw.get("gate", 1)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)))
+    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.1)), e=float(kw.get("e", 2.0)), rule=int(kw.get("rule", 1)), gate=int(kw.get("gate", 1)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)), spow=float(kw.get("spow", 0)))
     truth = x[base:].copy().reshape(5, 500, 20)
     def score():
         r = {}

@@ -571,3 +571,30 @@ It names its limits: no prose in the line; the repeat shares the base, the text,
 
 *Added after that line's last note (d2b844f).* My messages had reached it late; on the last of them it ran prose after all, with its plan and one prediction written first. In its own program, on the life of `PLAN_15.md` with three books: the second answering cell repeats on prose (0.0200, 0.0213, 0.0234 nats; the control nothing; the scores of the first cell, the second and the control equal mine to the sixth decimal place). Its own mechanism (half the senders heard while learning) does not transfer: worse than the plain second cell on all three books and worse at keeping the old text; it is entered as refuted on both kinds of text. It also says, for each of its results, whether it has been shown on anything but sums: the second cell's gain yes (prose, and sums of two and three digits); everything about long reading, the even loss and keeping through a second task, sums only. So the sentence above, "no prose in the line", no longer holds for the repeat itself.
 
+## 24. The final table of the general test-bed (late on 20 November; `nano/suite`, final report, taken in at 96f797e; as reported; an executed check of it by a helper inside this session is under way and not yet in)
+
+One setting on all six streams; the last tenth; nats a byte; the system going on (each byte answered before it is read). Streams: tiny Shakespeare, a book, Python source, C headers, a table of numbers, markup.
+
+| System | Shakespeare | book | Python | C | table | markup |
+|---|---|---|---|---|---|---|
+| base: runs of 0 to 6 bytes, one answering cell | 1.4136 | 1.4476 | 1.1503 | 1.0301 | 0.8141 | 0.4570 |
+| with the second answering cell | 1.3876 | 1.4184 | 1.1228 | 0.9470 | 0.6944 | 0.4398 |
+| with one recalling sender | 1.3783 | 1.4084 | 1.0351 | 0.8448 | 0.5700 | 0.3707 |
+| with the rule of the step | 1.3705 | 1.4006 | 1.0210 | 0.7952 | 0.5253 | 0.3547 |
+| with senders of the byte a cell counted last | 1.3427 | 1.3953 | 0.9657 | 0.7172 | 0.3483 | 0.2953 |
+| three recalls and trusts by age (**no more cells than the base**) | 1.3344 | 1.3894 | 0.9358 | 0.6908 | 0.3431 | 0.2846 |
+| with the timing cells and the pool | 1.3459 | 1.3959 | 0.9582 | 0.5921 | 0.2479 | 0.2777 |
+| **the same with the step's number scaled by how many senders speak** | **1.3184** | **1.3660** | **0.9210** | **0.5590** | 0.2529 | **0.2483** |
+| base with classes (`nano/merge`'s program) | 1.4003 | 1.4332 | 1.1324 | 0.9397 | 0.6373 | 0.4484 |
+| base with kinds made while reading (`nano/merge`'s program) | 1.3993 | 1.4328 | 1.1250 | 0.8942 | 0.6210 | 0.4494 |
+| xz | 1.7496 | 1.7876 | 1.1265 | 0.7244 | 0.3814 | 0.4333 |
+| bzip2 | 1.6621 | 1.7035 | 1.2079 | 0.9426 | 0.5976 | 0.3845 |
+
+The best general system is below xz by 0.43, 0.42, 0.21, 0.17, 0.13 and 0.18 nats (75, 76, 82, 77, 66 and 57% of xz's cost, where the base stood at 81, 81, 102, 142, 213 and 105%). With no more cells than the base (0.3 to 0.56 million cells, 2 to 7 CPU-seconds a stream) it is below xz on all six. With the pool and timing cells: 1.8 to 4 million cells and 2 to 3 CPU-minutes.
+
+*By that line's rule, general when the system goes on:* every idea of the day (the second answering cell; timing cells; the pool; classes; made kinds; the recalling sender; the rule of the step; the last byte a cell counted; trusts by age; the step scaled by the senders that speak). *General also with nothing changing:* only trusts by age and the scale. *Not carrying to sums:* the scale (2 to 4 points lower), and the smoothing of prose. That line predicted that the timing cells, classes and made kinds would not transfer, and was wrong three times: nothing of the day's work was found to be fitted to English.
+
+*Its limits, as it states them:* one run a system a stream (the programs are deterministic); the four streams that are not prose were each scored nineteen times by it with nothing chosen on them, but its later ideas were thought of after seeing where the system lost; streams of at most two megabytes; classes and made kinds live in another program and are not in the combined system; xz is a dictionary coder and compressors of the family this system resembles are not installed. 53 predictions, 36 held.
+
+*Not run by it* (it stopped at its budget before my later requests reached it): a bound on the store; a cell born at a second meeting; a rule for the smoothing (`nano/table/PLAN_23.md` has one); counts that fade; a life over several streams (keeping). These go to a new line.
+

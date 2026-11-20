@@ -9,7 +9,7 @@
 #define JMAX 8
 #define LMAX 2048
 typedef struct {
-    int S, K, gate, J, M, rule, age; double eta, e, birth;
+    int S, K, gate, J, M, rule, age; double eta, e, birth, spow;
     int ktype[KMAX], knd[KMAX], kdel[KMAX][8];
     double *T, *Tu, *Ta;            /* K x NL: the first cell's trusts, times used, sum of squared drivers */
     double *G, *Gu, *Ga; int64_t gsize; int GL;   /* the second cell's parts: J x K x GL x S (GL = 1 without the level, NL with it) */
@@ -55,8 +55,8 @@ static void count(Sy *s, int32_t c, int y, int64_t t) {
     }
     s->pv[s->cptr[c] + u] = y; s->pc[s->cptr[c] + u] = 1; s->cU[c] = u + 1; s->cN[c]++;
 }
-Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age) {
-    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age;
+Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age, double spow) {
+    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age; s->spow = spow;
     for (int k = 0; k < K; k++) { s->ktype[k] = ktype[k]; s->knd[k] = knd[k]; for (int i = 0; i < 8; i++) s->kdel[k][i] = kdel[k * 8 + i]; }
     s->T = malloc(sizeof(double) * K * NL); s->Tu = calloc(K * NL, sizeof(double)); s->Ta = calloc(K * NL, sizeof(double));
     for (int k = 0; k < K; k++) for (int l = 0; l < NL; l++) s->T[k * NL + l] = kborn[k];
@@ -77,7 +77,7 @@ int64_t sy_cells_of(const Sy *s, int kind) { int64_t n = 0; for (int64_t i = 0; 
 int64_t sy_once(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] == 1; return n; }
 double *sy_T(Sy *s) { return s->T; }  double *sy_Tu(Sy *s) { return s->Tu; }  double *sy_G(Sy *s) { return s->G; }  double *sy_Gu(Sy *s) { return s->Gu; }  int64_t sy_gsize(Sy *s) { return s->gsize; }
 static inline uint32_t rhash(const int32_t *x, int64_t end, int M, int hbits) { uint64_t h = 0; for (int i = 1; i <= M; i++) h = h * 0x100000001B3ULL + (uint64_t)(x[end - i] + 1); return (uint32_t)(mix(h) >> (64 - hbits)); }
-static inline double step_of(const Sy *s, double used, double acc) { return s->rule == 0 ? s->eta : s->rule == 1 ? s->eta / sqrt(1.0 + used) : s->eta / sqrt(acc); }
+static inline double step_of(const Sy *s, double used, double acc, double sc) { return s->rule == 0 ? s->eta : s->rule == 1 ? s->eta / sqrt(1.0 + used) : s->eta * sc / sqrt(acc); }
 /* reads or answers the bytes x[lo..hi-1] of the stream x (the same array at every call). nl1, nl2: minus the log of the probability each answering cell gave
    to the byte that came; P1, P2 (may be null): all probabilities.  learn = 0: nothing changes (the since clocks, which are context, still move). */
 void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *nl1, double *nl2, double *P1, double *P2) {
@@ -129,11 +129,13 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
             if (P2) for (int v = 0; v < S; v++) P2[(t - lo) * S + v] = p2[v];
         }
         if (learn) {
+            int nact = 0; for (int k = 0; k < K; k++) nact += lev[k] >= 0;
+            const double sc = s->spow > 0 && nact > 0 ? pow(12.0 / nact, s->spow) : 1.0;      /* PLAN_8.md: the rule's number divided by a power of the senders that speak, 12 as the unit */
             for (int k = 0; k < K; k++) if (lev[k] >= 0) {
                 double g = 0, g2 = 0;
                 for (int i = 0; i < nv[k]; i++) { const int v = vv[k][i]; const double d = dv[k][i]; g += ((v == y) - p[v]) * d; if (s->gate) g2 += ((v == y) - p2[v]) * d; }
-                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (s->Ta[i] > 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i]) * g; s->Tu[i] += 1.0;
-                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (s->Ga[i2] > 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2]) * g2; s->Gu[i2] += 1.0; }
+                const int64_t i = k * NL + lev[k]; s->Ta[i] += g * g; if (s->Ta[i] > 0 || s->rule != 2) s->T[i] += step_of(s, s->Tu[i], s->Ta[i], sc) * g; s->Tu[i] += 1.0;
+                if (s->gate) for (int j = 0; j < s->J; j++) { const int64_t i2 = gix[k][j]; s->Ga[i2] += g2 * g2; if (s->Ga[i2] > 0 || s->rule != 2) s->G[i2] += step_of(s, s->Gu[i2], s->Ga[i2], sc) * g2; s->Gu[i2] += 1.0; }
             }
             for (int k = 0; k < K; k++) if (s->ktype[k] < 2) {
                 int32_t c = s->hcell[sl[k]];
