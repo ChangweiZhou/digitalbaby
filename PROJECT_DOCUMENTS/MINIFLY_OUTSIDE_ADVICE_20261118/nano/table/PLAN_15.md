@@ -47,3 +47,13 @@ Nothing in the rule names a kind, a byte, a place or a text. No number is chosen
 *Not run.* Gates other than the byte at a delay (the levels of other senders; a class as a gate; gates drawn by search); more than one further cell, or cells in layers; the word cells of this line's T2; sums over 400,000 lines; the lives of two tasks on sums; three-digit sums.
 
 *What this would mean if it holds* (mine). An answering cell with one more part for each delay is the first step of a layer of answering cells, each of which names the next byte and learns from its own mismatch with no signal passed back: the form studied elsewhere as mixing networks with gates. If it fails on either kind of text it is entered as not transferring.
+
+## 5. Addition 1 (20 November; written after the development runs and the first claims of section 4 had been read, and before the runs it describes): long reading
+
+*The evidence.* Every counting system on sums loses with long reading: the line `nano/merge` reports 78.9 and 81.3 at 400,000 lines for its frozen setting on the seeds 73129 and 93683 (92 and 94 at 40,000 lines; old score), and `nano/sparse` repaired its own fall with a cap on what a long-counted cell may say, which again is the reading and not what is held. The relay system gains with reading (95.5% after a read line at 400,000 lines).
+
+*The question.* Does the second answering cell hold its level over 400,000 lines, with nothing added and no cap? *Runs:* the system with classes and the second cell (`gate=0`), seeds 73129 and 93683, 400,000 lines, readings at that line's marks, both scores, first and second cell from the same run.
+
+*Predictions (mine).* A1: on both seeds the second cell's mean of the last three readings, after a read line, is at least 90 (chance 0.40). A2: on both seeds the second cell is at least 10 points above the first at the end (0.60). A3: the second cell at 400,000 lines is below its own level at 40,000 lines by more than 3 points on at least one seed (0.65). If A1 fails the fall with reading is not only a matter of place, and the cap or something like it is still owed.
+
+*Cost.* About fifteen CPU-minutes a run. Not run: the other three seeds; the system without classes.
