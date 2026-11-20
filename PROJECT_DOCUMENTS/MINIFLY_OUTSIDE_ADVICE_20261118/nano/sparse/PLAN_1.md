@@ -46,3 +46,7 @@ Why partial (reading, mine): the units digit is fixed by two bytes and the place
 Numbers that learn: the trusts, 129 x 40 = 5,160 for m = 3 (those used are reported), 10,200 for m = 4; and the counts, 14 for each cell (cells and counts above zero are reported; the test run made 114,958 cells). A run of 40,000 lines took 5 CPU-seconds at m = 3. The grids: about 3 CPU-minutes for m = 3, perhaps 10 for m = 4.
 
 Not run here: keeping (E2, `PLAN_2.md` after this); any means of supplying the carry; trust by place; the relay's answer as one more kind; any reference taught by back-propagation; prose.
+
+## 5. Addition 1 (20 November, written before its runs): the m = 4 grid ended at its edge
+
+Development seed 1. m = 3: the 32 settings lie between 50.3 and 56.9 (`dev_m3.txt`); the best by the rule is eta 0.008, e 0.1, trust born at 0.02 (56.9), and it is taken. m = 4: 80.5 at eta 0.03, e 0.5, trust born at 0.02, which is the largest eta and the largest e of the grid (`dev_m4.txt`). Before the reported seeds, m = 4 is run on seed 1 at eta in {0.03, 0.1} and e in {0.5, 2}, trust born at 0.02 (three new settings); the best of all 35 by the same rule is taken. The m = 3 grid did not end at an edge in eta; its best e is inside the grid.
