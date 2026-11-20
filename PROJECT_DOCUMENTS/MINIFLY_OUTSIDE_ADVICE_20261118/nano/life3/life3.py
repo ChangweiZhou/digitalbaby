@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """nano/life3, PLAN_1.md: a life of three (or more) tasks on lines of ten bytes, with the plain system and three routes of keeping side by side.
-    python3 life3.py <label> seed=1 arm=P|O|R|K|S [plan=add:400000,sub:200000,max:200000] [every=50000] [fast=1] [H=..] [r=1] [K=8] [syms=..]
+    python3 life3.py <label> seed=1 arm=P|O|R|K|S [plan=add:400000,sub:200000,max:200000] [every=50000] [fast=1] [H=..] [r=1] [K=8] [syms=..] [flat=1]
     arm=P: the plain system (the relay system of loop_small_case/cells2.py: 256 logistic cells in between, one answering cell).
     arm=O (the upper reference): the plain system; after each real line the program shows one shown line of an earlier task (an earlier task
            chosen with equal chance; in the first phase, where there is none, a line of the first task, as the control of nano/replay did).
@@ -114,7 +114,7 @@ class Keep(Relay):
 class Counting:
     """Cells that count (nano/replay/replay.py): a cell is a run of 1 to K bytes that has occurred within a line (the newline before it included);
     it holds, for each byte value, how often that byte followed the run."""
-    def __init__(s, K, w): s.K = K; s.cells = {}; s.w = w
+    def __init__(s, K, w, flat=0): s.K = K; s.cells = {}; s.w = w; s.flat = flat
     def count(s, line):
         seq = [s.w.END] + line
         for p in range(len(line)):
@@ -126,8 +126,11 @@ class Counting:
         while len(seq) < 16:
             c = s.cells.get(bytes(seq[-s.K:]))
             if c is None: break
-            u = rnd.random() * sum(c); v = 0
-            while u >= c[v]: u -= c[v]; v += 1
+            if s.flat:                                # PLAN_5.md: every byte that has followed the run is equally likely, however often it followed
+                f = [v for v in range(s.w.S) if c[v]]; v = f[int(rnd.random() * len(f))]
+            else:
+                u = rnd.random() * sum(c); v = 0
+                while u >= c[v]: u -= c[v]; v += 1
             seq.append(v)
             if v == s.w.END: break
         return seq[1:]
@@ -135,8 +138,8 @@ class Counting:
 
 class Mixed(Relay):
     """Arms O and R: the plain system with one further line after each real line (old lines drawn by the program, or replayed lines)."""
-    def __init__(s, seed, w, who, tabs, order, r=1.0, K=8, **k):
-        super().__init__(seed, w, **k); s.who = who; s.r = r; s.cells = Counting(K, w); s.rnd = random.Random(seed * 1000 + 7); s.tabs = tabs; s.order = order; s.t_extra = 0.0
+    def __init__(s, seed, w, who, tabs, order, r=1.0, K=8, flat=0, **k):
+        super().__init__(seed, w, **k); s.who = who; s.r = r; s.cells = Counting(K, w, flat); s.rnd = random.Random(seed * 1000 + 7); s.tabs = tabs; s.order = order; s.t_extra = 0.0
         s.lineset = {n: set(map(tuple, tabs[n])) for n in order}; s.ops = {w.SI[ord(TASKS[n][0])]: n for n in order if n not in FMT}; s.st = None; s.newst()
     def newst(s): s.st = dict(extra=0, well_formed=0, of_a_shown_line=0, **{"x_" + n: 0 for n in s.order})
     def kind(s, E):
@@ -184,7 +187,7 @@ def run(kw):
         HELD[n] = np.array([w.text(n, *q) for q in h], np.int32); CLEAN[n] = np.array([w.text(n, *q) for q in c], np.int32)
     Hk = dict(H=int(kw["H"])) if "H" in kw else {}
     if arm == "P": s = Relay(seed, w, **Hk)
-    elif arm in "OR": s = Mixed(seed, w, arm, TL, order, r=float(eval(kw.get("r", "1"))), K=int(kw.get("K", 8)), **Hk)
+    elif arm in "OR": s = Mixed(seed, w, arm, TL, order, r=float(eval(kw.get("r", "1"))), K=int(kw.get("K", 8)), flat=int(kw.get("flat", 0)), **Hk)
     elif arm == "K": s = Keep(seed, w, **Hk, **{k: float(kw[k]) for k in ("theta", "btau") if k in kw}, **{k: int(kw[k]) for k in ("H0", "K", "young", "meet") if k in kw})
     elif arm == "S": s = Sparse(seed, w, ref=1 - fast, **{k: float(kw[k]) for k in ("eta", "e", "T0") if k in kw}, **{k: int(kw[k]) for k in ("m", "shrink") if k in kw})
     else: raise SystemExit("arm?")
