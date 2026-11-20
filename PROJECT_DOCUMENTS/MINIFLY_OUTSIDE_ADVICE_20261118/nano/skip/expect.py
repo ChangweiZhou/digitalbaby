@@ -36,40 +36,37 @@ class Table:
             y2 = np.concatenate([xs[2:], [-1, -1]]); m2 = y2 >= 0
             for L in range(1, K + 1): np.add.at(s.C2[L], (s.code(xs, pre, L)[m2], y2[m2]), 1.0)
 
-KINDS = ["a tens", "a units", "+", "letter", "b tens", "b units", "=", "c hundreds", "c tens", "c units", "end mark"]
-def kind_of(xs):
-    """The kind of each byte itself (g2)."""
-    out = np.zeros(len(xs), np.int64); st = 0
+def kinds_for(tx): n = 3 if tx == "t3" else 2; return [f"a digit {i + 1}" for i in range(n)] + ["+", "letter"] + [f"b digit {i + 1}" for i in range(n)] + ["="] + [f"c digit {i + 1}" for i in range(n + 1)] + ["end mark"]
+def kind_of(xs, tx="g2"):
+    """The kind of each byte itself: the digits of the two numbers and of the answer by place, the signs, the letters."""
+    n = 3 if tx == "t3" else 2; out = np.zeros(len(xs), np.int64); st = 0; last = 3 * n + 4
     for i, x in enumerate(xs):
-        if x == skip.END: out[i] = 10; st = 0; continue
-        if st == 0: out[i] = 0; st = 1
-        elif st == 1: out[i] = 1; st = 2
-        elif st == 2: out[i] = 2; st = 3
-        elif st == 3 and x in skip.LETS: out[i] = 3
-        elif st == 3: out[i] = 4; st = 4
-        elif st == 4: out[i] = 5; st = 5
-        elif st == 5: out[i] = 6; st = 6
-        else: out[i] = st + 1; st += 1
+        if x == skip.END: out[i] = last; st = 0
+        elif x in skip.LETS: out[i] = n + 1
+        elif st < n: out[i] = st; st += 1                       # the first number
+        elif st == n: out[i] = n; st += 1                       # +
+        else: out[i] = st + 1; st += 1                          # the second number, =, the answer
     return out
 
-def pairs(seed):
+def pairs(seed, tx="g2"):
+    if tx == "t3": rng = np.random.default_rng([seed, 99]); o = rng.choice(1000000, 500, replace=False); return rng, [(int(q) // 1000, int(q) % 1000) for q in o], np.sort(o)
     rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; return rng, P[:500], P[2000:]
 
 def crit(seed, tx="g2", across=0, two=0):
     out = {}
     for theta in ((0.1, 0.2, 0.3) if two else (0.05, 0.1, 0.2)):
-        rng, held, shown = pairs(seed); T = Table(theta=theta, across=across); T.two = two; pre = np.full(K, skip.END); done = 0; res = {}
+        KINDS = kinds_for(tx); rng, held, shown = pairs(seed, tx); T = Table(theta=theta, across=across); T.two = two; pre = np.full(K, skip.END); done = 0; res = {}
         for target in (10000, 100000, 400000):
             while done < target:
                 xs, ys = skip.stream(tx, shown, 8, 2000, rng); T.count(xs, ys, pre); pre = xs[-K:]; done += 2000
-            xs, ys = skip.stream(tx, shown, 8, 3000, np.random.default_rng([seed, 556])); ent, tv = T.enters(xs, np.full(K, skip.END)); kd = kind_of(xs)
+            xs, ys = skip.stream(tx, shown, 8, 3000, np.random.default_rng([seed, 556])); ent, tv = T.enters(xs, np.full(K, skip.END)); kd = kind_of(xs, tx)
             sh = [float((~ent)[kd == k].mean()) for k in range(len(KINDS))]; res[target] = sh
             print(f"theta {theta:4.2f} after {target:6d} lines, share passed over: " + "  ".join(f"{k}: {v:.2f}" for k, v in zip(KINDS, sh)))
         out[str(theta)] = res
-    json.dump(dict(kinds=KINDS, share_passed_over=out), open(os.path.join(skip.HERE, "res", f"p7_crit_{tx}_s{seed}{'_across' if across else ''}{'_two' if two else ''}.json"), "w"))
+    json.dump(dict(kinds=kinds_for(tx), share_passed_over=out), open(os.path.join(skip.HERE, "res", f"p7_crit_{tx}_s{seed}{'_across' if across else ''}{'_two' if two else ''}.json"), "w"))
 
 def run(kw):
-    t0 = time.process_time(); seed = int(kw.get("seed", 1)); tx = kw.get("text", "g2"); lines = int(kw.get("lines", 1200000)); every = int(kw.get("every", 100000)); rng, held, shown = pairs(seed)
+    t0 = time.process_time(); seed = int(kw.get("seed", 1)); tx = kw.get("text", "g2"); lines = int(kw.get("lines", 1200000)); every = int(kw.get("every", 100000)); rng, held, shown = pairs(seed, tx); KINDS = kinds_for(tx)
     s = skip.Sk(seed); s.fast = 1; T = Table(nmin=int(kw.get("nmin", 20)), theta=float(kw.get("theta", 0.1)), across=int(kw.get("across", 0))); T.two = int(kw.get("two", 0)); pre = np.full(K, skip.END); done = 0; out = dict(label=kw["label"], args=kw, rows=[]); tot = np.zeros(len(KINDS)); psd = np.zeros(len(KINDS))
     def score(pp, gap):
         hists = []; want = []; own = []
@@ -81,11 +78,11 @@ def run(kw):
                 else: hist[0] = L[t]
                 pend = bool(ent[t])
                 if t >= eq and L[t + 1] != skip.END: hists.append(list(hist)); want.append(L[t + 1]); own.append((k, t - eq))
-        hists = np.array(hists); o = skip.sg(s.W1.T[skip.OFF + hists].sum(1) + s.b1) @ s.W2.T + s.b2; r = o.argmax(1) == np.array(want); ok = np.ones(len(pp), bool); pl = np.zeros(3)
+        hists = np.array(hists); o = skip.sg(s.W1.T[skip.OFF + hists].sum(1) + s.b1) @ s.W2.T + s.b2; r = o.argmax(1) == np.array(want); ok = np.ones(len(pp), bool); pl = np.zeros(max(o_[1] for o_ in own) + 1)
         for (k, j), rr in zip(own, r): ok[k] &= bool(rr); pl[j] += rr
         return float(100 * ok.mean()), [int(round(100 * x / len(pp))) for x in pl]
     while done < lines:
-        xs, ys = skip.stream(tx, shown, 8, 2000, rng); ent, _ = T.enters(xs, pre); s.run(xs, ys, ent); T.count(xs, ys, pre); kd = kind_of(xs); tot += np.bincount(kd, minlength=len(KINDS)); psd += np.bincount(kd, weights=~ent, minlength=len(KINDS)); pre = xs[-K:]; done += 2000
+        xs, ys = skip.stream(tx, shown, 8, 2000, rng); ent, _ = T.enters(xs, pre); s.run(xs, ys, ent); T.count(xs, ys, pre); kd = kind_of(xs, tx); tot += np.bincount(kd, minlength=len(KINDS)); psd += np.bincount(kd, weights=~ent, minlength=len(KINDS)); pre = xs[-K:]; done += 2000
         if done % every == 0:
             row = dict(lines=done, never_by_gap={}, place={}, share_passed_over=dict(zip(KINDS, (psd / np.maximum(tot, 1)).round(3).tolist()))); tot[:] = 0; psd[:] = 0
             for g in (0, 4, 8): row["never_by_gap"][g], row["place"][g] = score(held, g)

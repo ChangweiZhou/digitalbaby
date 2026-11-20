@@ -6,7 +6,7 @@ the same arithmetic compiled (kern_s.c; check_skip.py compares the two).
 Copied from loop_small_case and said so: the system and its constants from cells2.py (Sys.fwd, Sys.learn, the plain options only); the texts g2,
 g1, m1, the letters used when scoring (fill) and the split into pairs shown and never shown from hold.py; the lazy fading from kern3.c.
 
-    python3 skip.py <label> text=g2|g3|m1|g1|d2 seed=1 lines=400000 every=50000 [gap=8] [H=256] [fast=1] [nlet=4] [clock=...] [lam1=0] [theta=0.5] [ref=birth|mean]
+    python3 skip.py <label> text=g2|g3|t3|m1|g1|d2 seed=1 lines=400000 every=50000 [gap=8] [H=256] [fast=1] [nlet=4] [clock=...] [lam1=0] [theta=0.5] [ref=birth|mean]
 
 The lines. Line 0 of each byte value carries the present byte. The chain is lines 1 to 9: the last nine bytes that ENTERED the chain. When a new byte
 arrives, the byte that was present either enters the chain (which moves on by one) or is passed over and is on no line any more.
@@ -43,6 +43,7 @@ setup()
 def fill(a, b, n): return bytes(LET[(7 * a + 3 * b + 5 * i * i + i) % len(LET)] for i in range(n)).decode()          # the letters used when scoring: fixed by the pair (hold.py)
 def text(tx, a, b, f=""):
     if tx in ("d2", "g2"): t = f"{a:02d}+{f}{b:02d}={a + b:03d}\n"
+    elif tx == "t3": t = f"{a:03d}+{f}{b:03d}={a + b:04d}\n"          # PLAN_8.md: three-digit numbers
     elif tx == "g3":                                   # PLAN_6.md: the letters anywhere before the '=': six places (before, inside and after each number), fixed by the pair when scoring
         sl = [""] * 6
         for i, c in enumerate(f): sl[(a + 2 * b + i * (i + 1) // 2 + i) % 6] += c
@@ -120,10 +121,16 @@ class Sk:
 
 def stream(tx, shown, G, n, rng):
     """n lines drawn from the pairs shown, with 0 to G letters drawn afresh for every line; the bytes, and for each byte the next one (-1 at a line's end)."""
-    P = np.asarray(shown)[rng.integers(len(shown), size=n)]; a, b = P[:, 0], P[:, 1]; k = rng.integers(G + 1, size=n) if G else np.zeros(n, np.int64)
+    if tx == "t3":                                     # every pair of numbers under 1,000 except the pairs kept back (shown: their codes 1000 a + b)
+        a = rng.integers(1000, size=n); b = rng.integers(1000, size=n); bad = np.isin(1000 * a + b, shown)
+        while bad.any(): a = np.where(bad, (a + 1) % 1000, a); bad = np.isin(1000 * a + b, shown)
+    else: P = np.asarray(shown)[rng.integers(len(shown), size=n)]; a, b = P[:, 0], P[:, 1]
+    k = rng.integers(G + 1, size=n) if G else np.zeros(n, np.int64)
     let = np.asarray(LETS)[rng.integers(len(LETS), size=(n, max(G, 1)))]; let = np.where(np.arange(max(G, 1))[None, :] < k[:, None], let, -1)
     col = lambda v: np.asarray(v)[:, None]; const = lambda c: np.full((n, 1), SI[ord(c)] if isinstance(c, str) else c)
-    if tx == "g3":
+    if tx == "t3":
+        c = a + b; M = [col(a // 100), col(a // 10 % 10), col(a % 10), const("+"), let, col(b // 100), col(b // 10 % 10), col(b % 10), const("="), col(c // 1000), col(c // 100 % 10), col(c // 10 % 10), col(c % 10), const(END)]
+    elif tx == "g3":
         c = a + b; sl = rng.integers(6, size=(n, G)); L = [np.where(sl == q, let, -1) for q in range(6)]
         M = [L[0], col(a // 10), L[1], col(a % 10), L[2], const("+"), L[3], col(b // 10), L[4], col(b % 10), L[5], const("="), col(c // 100), col(c // 10 % 10), col(c % 10), const(END)]
     elif tx in ("d2", "g2"): c = a + b; M = [col(a // 10), col(a % 10), const("+"), let, col(b // 10), col(b % 10), const("="), col(c // 100), col(c // 10 % 10), col(c % 10), const(END)]
@@ -136,8 +143,10 @@ def stream(tx, shown, G, n, rng):
 def run(kw):
     setup(int(kw.get("nlet", 4)))
     t0 = time.process_time(); tx = kw.get("text", "g2"); seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 400000)); every = int(kw.get("every", 50000))
-    G = int(kw.get("gap", 8)) if tx in ("g1", "m1", "g2", "g3") else 0; gaps = sorted({0, G // 2, G})
-    if tx in ("g1", "m1"):
+    G = int(kw.get("gap", 8)) if tx in ("g1", "m1", "g2", "g3", "t3") else 0; gaps = sorted({0, G // 2, G})
+    if tx == "t3":
+        rng = np.random.default_rng([seed, 99]); o = rng.choice(1000000, 500, replace=False); held = [(int(q) // 1000, int(q) % 1000) for q in o]; shown = np.sort(o); shown_s = held
+    elif tx in ("g1", "m1"):
         rng = np.random.default_rng(seed); P = [(a, b) for a in range(10) for b in range(10)]; rng.shuffle(P); held, shown = P[:20], P[20:]; shown_s = shown
     else:
         rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held, shown = P[:500], P[2000:]; shown_s = shown[:500]
@@ -180,7 +189,7 @@ def run(kw):
         done += n; nb += len(xs); adm = admit_now()
         row = dict(lines=done, bytes=nb, never_by_gap={}, shown_by_gap={}, place={})
         for g in gaps:
-            row["shown_by_gap"][g], pl = s.score(tx, shown_s, g, adm)
+            row["shown_by_gap"][g], pl = (None, None) if tx == "t3" else s.score(tx, shown_s, g, adm)
             if tx not in ("g1", "m1"): row["never_by_gap"][g], pl = s.score(tx, held, g, adm)
             row["place"][g] = pl
         row["Q"] = [round(float(x), 2) for x in s.Q()]; row["Qmat"] = [[round(float(x), 1) for x in r] for r in s.Qmat()]; row["nskip"] = [int(x) for x in s.nskip]

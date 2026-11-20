@@ -23,7 +23,7 @@ if __name__ == "__main__":
              ("g1 clock=oracle", dict(text="g1", clock="oracle")), ("g2 clock=trial alpha=0.5", dict(text="g2", clock="trial", alpha="0.5", P="64")),
              ("g2 clock=trial form=evid alpha=2 p0=0.5", dict(text="g2", clock="trial", form="evid", alpha="2", P="64", p0="0.5")),
              ("m1 clock=trial alpha=0.5 p0=0.5", dict(text="m1", clock="trial", alpha="0.5", P="32", p0="0.5")), ("d2 clock=none", dict(text="d2")), ("g2 nlet=12 clock=trial form=evid alpha=2 p0=0.5", dict(text="g2", nlet="12", clock="trial", form="evid", alpha="2", P="64", p0="0.5")),
-             ("g2 nlet=26 clock=oracle", dict(text="g2", nlet="26", clock="oracle")), ("g3 clock=none", dict(text="g3")), ("g3 clock=oracle", dict(text="g3", clock="oracle")),
+             ("g2 nlet=26 clock=oracle", dict(text="g2", nlet="26", clock="oracle")), ("g3 clock=none", dict(text="g3")), ("t3 clock=oracle", dict(text="t3", clock="oracle")), ("t3 clock=trial form=evid", dict(text="t3", clock="trial", form="evid", alpha="2", P="64", p0="0.5")), ("g3 clock=oracle", dict(text="g3", clock="oracle")),
              ("g3 clock=trial form=evid alpha=2 p0=0.5", dict(text="g3", clock="trial", form="evid", alpha="2", P="64", p0="0.5"))]
     for title, kw in cases:
         w, same, nsk, ta, tb = cmp(dict(base, **kw)); bad += (w > 1e-6) or not same
