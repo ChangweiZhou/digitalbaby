@@ -1,6 +1,6 @@
 # nano/skip: a clock for the delay chain (20 November 2026)
 
-**By** the session that holds this line of the outside work. **Authorisation.** Mr. Xu, 20 November 2026, as quoted to this line by the coordinating session: "Keep experimenting with the agents." and "Respect evidence and keep trying new ideas." **Status.** Development level throughout: one program, small texts, one development seed for choosing numbers and the five reported seeds (73129, 93683, 116089, 406364, 545353) where a table says so, fifteen seeds in one place. Nobody else has repeated any of it. No checker gate, seal or outside review is claimed. Every plan (`PLAN_1.md` to `PLAN_9.md`) was committed before its runs and carries its outcome and the score of every prediction, failures included. Files were changed only in this folder; what was copied from `loop_small_case` is named at the head of `skip.py`.
+**By** the session that holds this line of the outside work. **Authorisation.** Mr. Xu, 20 November 2026, as quoted to this line by the coordinating session: "Keep experimenting with the agents." and "Respect evidence and keep trying new ideas." **Status.** Development level throughout: one program, small texts, one development seed for choosing numbers and the five reported seeds (73129, 93683, 116089, 406364, 545353) where a table says so, fifteen seeds in one place. Nobody else has repeated any of it. No checker gate, seal or outside review is claimed. Every plan (`PLAN_1.md` to `PLAN_10.md`) was committed before its runs and carries its outcome and the score of every prediction, failures included. Files were changed only in this folder; what was copied from `loop_small_case` is named at the head of `skip.py`.
 
 ## 1. The question
 
@@ -35,7 +35,7 @@ Controls on `g2`: the same closing by chance with nothing learned 5.2 / 0.8 / 0.
 
 ## 4. What is not shown, and the loose ends
 
-- **Entries closed early stay closed.** An entry closed by chance before the cells have come to use its byte costs nothing to leave closed, and is not reopened (`m1` with entries born half closed; the answer's first digit on two seeds of `h2`). With hundreds of entries this is the rule's weakest point as it stands.
+- **Entries closed early stay closed.** An entry closed by chance before the cells have come to use its byte costs nothing to leave closed, and is not reopened (`m1` with entries born half closed; the answer's first digit on two seeds of `h2`). With hundreds of entries this is the rule's weakest point as it stands. A higher bar for closing makes it rarer and does not remove it (`PLAN_10.md`, seeds 1001 to 1005 and the reported five): closing at 0.7 of an entry's uncertainty, three or four seeds of ten end with a wrong entry or a lasting loss; at 1.4, one of ten, and the five fresh seeds are at 94.8 to 96.7%; at 2.8, none, but the fillers are found twice as late and the median is 80%. So alpha is a number that had to be moved when the entries went from 18 to 472.
 - The listening time of plan 9 (16 bytes) is fitted to these lines. Where the consequence of a byte comes later than an entry listens, the rule sees nothing.
 
 - A clock for each byte value cannot pass over a byte in one place and keep the same byte in another; plan 9 takes the smallest such text, where one byte of context tells the two apart. Longer contexts, and fillers that cannot be told from the byte before, are untested.
@@ -55,7 +55,7 @@ Controls on `g2`: the same closing by chance with nothing learned 5.2 / 0.8 / 0.
 
 ## 6. Predictions
 
-Of 63 predictions written before their runs, 42 held and 21 failed: plan 1: 4 of 6; plan 2: 5 of 9; plan 3: 2 of 3; plan 4: 3 of 5; plan 5: 4 of 5; plan 6: 4 of 4; plan 7: 6 of 9; plan 8: 6 of 6 (after the rule's behaviour was known from plan 7); plan 9: 8 of 16; and the line's own hypothesis, which I had put at 0.30, held.
+Of 67 predictions written before their runs, 45 held and 22 failed: plan 1: 4 of 6; plan 2: 5 of 9; plan 3: 2 of 3; plan 4: 3 of 5; plan 5: 4 of 5; plan 6: 4 of 4; plan 7: 6 of 9; plan 8: 6 of 6 (after the rule's behaviour was known from plan 7); plan 9: 8 of 16; plan 10: 3 of 4; and the line's own hypothesis, which I had put at 0.30, held.
 
 ## 7. Commands and cost
 
@@ -68,4 +68,4 @@ Of 63 predictions written before their runs, 42 held and 21 failed: plan 1: 4 of
     python3 table.py p2C evid,grad,none,chance,values4 73129,93683,116089,406364,545353    # tables from res/
     bash runC.sh ... runG.sh                                                               # the queues as run
 
-A run of 1,200,000 lines takes 80 to 210 CPU-seconds; everything here together about six CPU-hours.
+A run of 1,200,000 lines takes 80 to 210 CPU-seconds; everything here together about seven and a half CPU-hours.
