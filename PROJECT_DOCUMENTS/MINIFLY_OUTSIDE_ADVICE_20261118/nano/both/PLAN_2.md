@@ -234,3 +234,13 @@ Readings (mine; one seed, development level).
 5. Not shown: more than one seed (next); the self-taught control (lessons towards the answering cell's own answer on the same lines, which would say whether the relay system's agreement is needed or its composing alone); what happens at 100,000 lines.
 
 By the rule of section 12 arm A' goes to the five reported seeds: `PLAN_5.md`.
+
+## 14. Addition 5 (20 November; written before its run): the control that section 13 names as owed
+
+*Is the relay system's agreement needed, or would lessons on the same new lines towards the answering cell's own answer do?* One run on seed 1, 400,000 lines: the composer of addition 4 (the relay system, writing what it is sure of), every lesson byte after a line's first taken, the target the second answering cell's own answer (`dream2.py teacher=self composer=relay sure=1 edge=0`). Nothing else differs from arm A'. If this control does as well as arm A', the relay system's part in the design is to compose lines that stay new, and its answer is not needed; if it does worse, the agreement of the second kind of cell is what teaches.
+
+| | Statement (seed 1, joined second cell) | Chance |
+|---|---|---|
+| S1 | the control at 400,000 lines at least 95 | 0.35 |
+| S2 | the control at 40,000 lines within 3 points of the unchanged system (96.6) | 0.60 |
+| S3 | the control at 400,000 lines at least 3 points under arm A' (98.1) | 0.55 |
