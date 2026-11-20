@@ -23,3 +23,16 @@
 **Cost.** About 4 CPU-minutes a run with cross=1 and about 6 with cross=2 (from the 40,000-line timings); 12 runs, about one CPU-hour, a quarter of that in wall time on four cores.
 
 **Not run.** The instrument as a learner at X=2L; other steps than eta1 = 1; return strengths other than the reader's own; the text g1; gaps beyond 8 letters; a look inside the networks.
+
+## Outcome on the development seed (entered 20 November, before any reported seed was read)
+
+**An error of mine in the launch, stated.** The first launch of the twelve runs used a launcher that dropped the first argument after the label, so `text=m1` was lost and the runs read the default text `d1`. I saw it on the first two finished files (their label was `text=m1`), stopped all runs, deleted their output without using it, corrected `run.sh` (the commit "launcher corrected") and started the twelve runs again. Nothing below comes from the first launch.
+
+Development seed 1, 960,000 lines (`res/hold_e1_c1_1.json`, `res/hold_e1_c2_1.json`):
+
+| | final % | lines to 90% | every later reading at least 90% from | at 240,000 lines | at the end by gap 0, 4, 8 | CPU s |
+|---|---|---|---|---|---|---|
+| cross=1 | 97.1 | 500,000 | 860,000 | 18.3 | 98, 100, 99 | 262 |
+| cross=2 | 100.0 | 320,000 | 320,000 | 79.6 | 100, 100, 100 | 404 |
+
+On this seed the second crossing reaches 90% in about two thirds of the lines, and from 360,000 lines on every reading is 100%, where the one-crossing arm still dips to 89% at 820,000 and 840,000 lines. **A5 failed** (320,000 is more than half of 500,000). The one-crossing arm here had 18.3% at 240,000 lines where the coordinator's run of the same seed and settings had 49%: the two programs sum in different orders, and at that point of the run the score is rising steeply, so I read this as the same curve shifted by some tens of thousands of lines, not as a different result; I have not tested that reading. One seed; nothing is claimed from it.
