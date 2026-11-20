@@ -90,3 +90,28 @@ Not run: three-digit sums at 400,000 lines (started and stopped for time); the c
     python3 report.py > report_2.txt
 
 Job lists: `jobs_g1s.txt`, `jobs_g1p.txt`, `jobs_g2.txt`, `jobs_g3.txt` (development), `jobs_c.txt`, `jobs_c3.txt` (claims). Raw lines: `out_*.txt`. The three books are read from the repository at commit 5d00eae (`minifly_v148_pretrain_probe_dev_20261025/data/`) into `data_local/`, which is not committed.
+
+## 8. Addition of 20 November: the score after a read line (`PLAN_4.md`; a fault of the common score, reported to the lines by the coordinating session)
+
+Every sums figure above scores a held-out line with line ends before it (the "empty past"), a past the system never meets after its first line. The figures above are left as they were written and no prediction is re-scored; this section adds, beside them, the score with the bytes of lines drawn by chance from the lines being read before each held-out line (mean of five draws).
+
+| Task (five reported seeds; last-three mean, each seed; median) | Empty past (as before) | After a read line |
+|---|---|---|
+| Two-digit, 40,000 lines, searched, 128 alive | 68.3, 47.4, 59.5, 43.9, 67.9; **59.5** | 84.5, 82.4, 72.9, 81.1, 75.8; **81.1** |
+| Two-digit, 40,000 lines, searched, 256 alive | 78.7, 73.8, 85.4, 87.9, 57.3; **78.7** | 88.4, 87.0, 84.4, 92.5, 85.9; **87.0** |
+| Two-digit, 40,000 lines, control (128 random kinds never changed) | 0.5, 45.7, 0.5, 18.9, 1.4; **1.4** | 59.6, 49.6, 1.1, 45.9, 78.5; **49.6** |
+| Two-digit, 400,000 lines, searched | 73.5, 28.3, 40.5, 56.7, 50.7; **50.7** | 73.6, 74.2, 52.5, 57.2, 50.2; **57.2** (median by lines: 67.4 at 10,000; 82.3 at 40,000; 79.1 at 100,000; 71.2 at 200,000; 59.0 at 300,000; 60.2 at 400,000) |
+| Three-digit, 40,000 lines, searched | 40.3, 65.6, 40.7, 72.3, 71.7; **65.6** | 88.7, 85.7, 90.8, 86.1, 77.8; **86.1** |
+| Three-digit, 40,000 lines, control | 0.3, 59.6, 29.5, 0.9, 0.0; **0.9** | 0.4, 53.2, 74.2, 1.6, 0.4; **1.6** |
+| Life: addition before subtraction | 64.6 (median, last reading) | 88.6, 83.1, 75.9, 81.8, 75.0; **81.8** |
+| Life: addition after 20,000 lines of subtraction (the line before is then a subtraction line) | 43.4; 60.4% of its level | 23.4, 56.7, 43.4, 8.7, 14.2; **23.4**; 26.4% of its level |
+| Life: subtraction, clean score | 78.2 | 89.9, 78.1, 81.3, 77.7, 72.1; **78.1** |
+
+Every rerun reproduces its earlier empty-past figure to the digit (30 runs). Sizes and CPU are those of the earlier runs. The other lines' figures after a read line, as the coordinating session reports them: counting cells of at most four delays 80.1 (77.6 at the empty past); the relay system 82.9 at 40,000 lines and 95.5 at 400,000; "with classes" 92.9. Three-digit sums at 400,000 lines, the control at 400,000, `nrep` 8 and 32: NOT RUN with this score.
+
+Readings (mine), and what they change in the sections above.
+1. **The empty past misstated this line more than the hand-built lines, as the coordinating session expected**: 21.6 points at 128 alive (2.5 for hand-given cells of four delays), because the search draws kinds that reach into the line before. After a read line the searched system at 128 alive has 81.1% of two-digit sums at 40,000 lines, level with the hand-built cells of at most four delays (80.1) and the relay system (82.9); at 256 alive 87.0 (every seed 84 or more); on three-digit sums 86.1. The level of 85 that the hypothesis asked is thus reached at 256 alive and on three-digit sums by this score and not at 128 alive; the hypothesis was stated and scored on the empty past and its scoring in section 3 stands as written.
+2. **The control is not near nothing by this score on two-digit sums**: 49.6 at the median (1.1 to 78.5), so reading 1 of section 5 ("far above the same number of random kinds") holds for the median and on four seeds of five, and fails on one (545353: control 78.5, searched 75.8). On three-digit sums the control stays at 1.6. On prose nothing changes.
+3. **The fall with long reading stands** (82.3 at 40,000 lines, 60.2 at 400,000 at the median), and so does reading 3 of section 5 on that point. Its statement that more kinds alive helps sums stands too (81.1 to 87.0), with a smaller margin.
+4. **The loss of addition through subtraction is worse by this score** (26% of its level against 60%): there the line before a held-out addition is a subtraction line, which the kinds that reach before the line had not met before addition was last read. Reading 4 of section 5 stands, more strongly.
+5. **Readings that rest on a comparison with another line's figure at the empty past**: the table of section 2 (column "hand-built") and reading 2 of section 5 for sums ("59.5 against 77 to 81 and 91"). After a read line the comparison is 81.1 (128 alive) and 87.0 (256 alive) against 80.1 for four delays; the look-ahead system's figure after a read line is not known to me. No reading of this report compares with the relay system at the old score.
