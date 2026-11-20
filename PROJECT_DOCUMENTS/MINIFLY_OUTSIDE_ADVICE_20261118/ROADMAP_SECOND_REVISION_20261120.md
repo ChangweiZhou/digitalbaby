@@ -369,9 +369,9 @@ What follows (mine). (1) The entry "counting systems lose with long reading" is 
 
 | System | 40,000 lines | 400,000 lines, closed stream | Addition after a second task |
 |---|---|---|---|
-| the relay system | 82.9 | 95.5 | 1.8 |
+| the relay system | 82.9 | 95.5; in an open stream 95.6 (`PLAN_18.md`, addition 1) | 1.8 |
 | the relay system with replay from the counting cells | | 97.2 | 93.8 |
-| cells that count, at most four delays | 80.1 | 65 | kept over a short life |
+| cells that count, at most four delays | 80.1 | 65; with the second answering cell 72, and in an open stream 88 | kept over a short life |
 | the same with look-ahead | 94.7 | 63 (old score); 82 to 83 with a cap | 88% of its level after a short second task |
 | the same with classes | 92.9 | 79 to 83 | 81% of its level after a short second task |
 | with classes and the second answering cell | 97.4 | 75 to 92 on five seeds; in an open stream 89 and 96 | 89% of its level after a short second task |

@@ -97,3 +97,16 @@ Section 5, reading 4, says that the comparison at 400,000 lines between the rela
 *Predictions (mine).* R1: in the open stream the relay system's median at 400,000 lines is within 2 points of its closed-stream figure (chance 0.70). R2: it is at least 1 point higher (0.30). R3: the relay system shows no fall with reading in either stream (its reading at 400,000 lines is at or above its reading at 200,000 on at least four seeds of five in each) (0.75). If R1 fails downward the relay system too is believing its stream, more slowly.
 
 *Cost.* Twenty CPU-seconds a run; ten runs.
+
+## 7. Outcome of addition 1 (entered 20 November; `loop_small_case/res/past_open_seed*_q*.json`, the printed lines in `loop_small_case/out_open/`)
+
+The relay system, never-shown additions after a read line, seeds 73129, 93683, 116089, 406364, 545353; the closed runs give `past.py`'s figures again.
+
+| Stream | at 200,000 lines | at 400,000 lines | mean of the last three readings |
+|---|---|---|---|
+| closed | 95.5, 94.4, 95.6, 93.1, 94.4; median 94.4 | 95.0, 95.0, 97.0, 95.5, 96.1; median **95.5** | median 95.4 |
+| open, one line in a hundred new (about 3,600 lines) | 95.5, 94.3, 95.6, 93.2, 94.5; median 94.5 | 95.0, 95.3, 97.0, 95.6, 96.1; median **95.6** | median 95.3 |
+
+R1 held (the two streams differ by 0.1 at the median). R2 failed (no gain). R3 held (the reading at 400,000 lines is at or above that at 200,000 on four seeds of five in each stream).
+
+Reading (mine). The relay system is the same in both streams: it does not believe the gaps of the closed stream, and it gains nothing from 3,600 lines that are new. So in the stream where the comparison is fair to both, at 400,000 lines: the relay system 95.6 (five seeds); the counting cells with the second answering cell 88.2 without classes (two seeds), and 89.3 and 96.4 with classes (two seeds, with the steps at the findings of classes). The counting systems learn the rule in a tenth of the lines; over a long reading the relay system is still the steadier.
