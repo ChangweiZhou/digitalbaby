@@ -44,3 +44,27 @@ Arm 0: 280 trusts and the table's cells (459,129 had counted in `PLAN_3.md`). Th
 Not run here: a peak of surprise in place of a threshold; other signals for a start; a second, slower clock; a theta that follows the system's own level of surprise as it learns; everything going on learning through the last tenth; a second text.
 
 Reported besides the loss: for S, G, R and H, the number of segments, the share of found starts that are starts of words and the share of starts of words that are found, on the stream and on the last tenth.
+
+## 5. Outcome (entered 20 November after the runs; `res/ends_arm*.json`)
+
+Loss on the last tenth, nats a byte, nothing changing during it; each arm scored there once. Beside them: `PLAN_3.md` of `nano/table` had 1.5226 for the table's cells and 1.4973 for its own word cells (the bytes between words kept apart).
+
+| Arm | Loss | Gain over arm 0 | Named right | Loss on the last twentieth of the stream (where settings were chosen) | Cells that have counted | Counts above zero | Segments in the last tenth | Found starts that are word starts | Word starts found |
+|---|---|---|---|---|---|---|---|---|---|
+| 0, the table's cells | 1.5226 | | 54.41% | 1.5566 | 459,129 | 872,748 | | | |
+| G, starts given | **1.4995** | 0.0231 | 55.20% | 1.5336 | 2,035,419 | 2,633,419 | 20,724 | 1 | 1 |
+| R, every fifth byte | 1.5234 | -0.0008 | 54.58% | 1.5569 | 2,242,705 | 2,854,254 | 22,308 | 0.19 | 0.20 |
+| S, starts by surprise (theta 2.5) | **1.5144** | 0.0082 | 54.80% | 1.5487 | 2,091,358 | 2,709,841 | 27,666 | 0.46 | 0.62 |
+| H, starts by a fixed function of the last two bytes, as frequent as S's | 1.5223 | 0.0003 | 54.56% | 1.5555 | 1,999,656 | 2,600,722 | 25,151 | 0.19 | 0.23 |
+
+Chosen in every arm: e = 0.02, eta = 0.00005 (again the smallest allowed). For S the loss on the last twentieth of the stream by theta: 1.0: 1.5525; 1.5: 1.5493; 2.0: 1.5493; 2.5: 1.5487; 3.0: 1.5492; 3.5: 1.5502; 4.0: 1.5538; 5.0: 1.5570 (arm 0 there: 1.5566). On the stream S made 237,205 starts (one in 4.23 bytes; 0.49 of them word starts; 0.61 of the 187,778 word starts found). An arm with its choice of settings took 34 to 105 CPU-seconds. The compiled loop equals numpy to 3e-15 on a prefix, the surprise included (`check_output.txt`).
+
+**The hypothesis is refuted.** S gains 0.0082 nats over arm 0, which is 35% of what G gains (0.0231); half was asked.
+
+Predictions: Z1 held (0.0231). Z2 failed (35%). Z3 held (0.0082). Z4 held (R is 0.0008 worse). Z5 held (H gains 0.0003, a twenty-seventh of S's gain). Z6 failed narrowly (0.46). Z7 held (0.62). Z8 held (2.5).
+
+Readings (mine).
+1. **A threshold on the system's own surprise finds starts that are worth something, and it is the surprise that does it**: starts as frequent, fixed by an arbitrary function of the last two bytes, gain nothing (0.0003), and neither does the blind clock. But the gain is a third of that of given starts, not a half.
+2. **The fair reference is G, 1.4995**; the structure of contexts with the bytes between words kept apart (`PLAN_3.md`, 1.4973) is 0.002 better still and is not what S is compared with.
+3. **Where the surprise fails, as far as these figures show.** It misses 38% of the word starts and more than half of its starts are not word starts. A threshold on surprise depends on which byte arrived: after a space a common first letter does not surprise and no start is made, while a rare letter inside a word makes one. So the same word is cut at one place on one occasion and not on another, and a cell whose context is cut differently does not meet its context again. This is a reading and is not tested here; the next plan tests it by taking the signal before the byte arrives (how unsure the answer was), which is the same whatever byte then comes.
+4. The loss by theta is flat from 1.5 to 3.0 (within 0.0006 on the last twentieth), so the threshold itself is not the weak point.
