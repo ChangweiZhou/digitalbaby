@@ -145,6 +145,7 @@ The earlier steps map as follows: R1 is done at development level; R2 continues 
 | K2 | `nano/table` | this session | `claude/friendly-darwin-8mmhfm` | keeping and reuse on prose; cells of two memories (`PLAN_5.md`, `PLAN_6.md`) |
 | K1, an independent repeat | `nano/keep2` | a separate agent session (`session_017dSEpWJ6N2H77V1ocLYPmk`) | `claude/nano-keep2-8mmhfm` | the keeping line's final candidate written again from its description and not from its code; reported seeds and seeds no line has used; the clean score of subtraction; the limit |
 | K, three tasks | `nano/life3` | a separate agent session (`session_017dSEpUYkNBe7j2JXgpfzmd`) | `claude/nano-life3-8mmhfm` | a life of three tasks with the keeping routes side by side (the plain system, cells that join, replay, cells that count) |
+| C3 and K, an independent repeat | `nano/ahead2` | a separate agent session (`session_017dSEpX5qgaR7xYDHDZjMwv`) | `claude/nano-ahead2-8mmhfm` | the look-ahead result on sums written again from its description and not from its code; reported seeds and seeds no line has used; a control of its own |
 
 The first three agent sessions were started from this branch at fe397ca6 and the last four at 260c5d73, after Mr. Xu's word to keep experimenting, each with a written brief: one line, one folder, a plan committed before each step's runs, settings chosen on the development seed, a numpy reference for every compiled program, and a short report to this session after each step. 
 Their results are merged into this branch and entered in the ledger as they come.
