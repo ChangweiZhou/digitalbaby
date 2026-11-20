@@ -67,3 +67,5 @@ Readings of addition during the second phase, no old line, every 50,000 lines: 8
 **Predictions.** D1 (0.65) held: 85.4. D2 (0.45) held: lowest seed 81.2. D3 (0.55) held: 85.4 against 84.2. D4 (0.60) held: 80.0. D5 (0.35) failed: 56.8. D6 (0.70) held: 84.2 against 82.2.
 
 **Not run**, as planned: other laws for the constants; a second change of task; the return of addition; a change of task that brings no new line.
+
+*Added after the outcome.* The full life of this plan's candidate, no old line, seed 73129, was also run with the numpy program (`res/c2_np4_const_reh0_73129.json`, 723 CPU seconds against 73 compiled): the twelve readings of both tasks are the same to the digit printed (addition 73.6, 77.8, 78.8, 83.4, 86.8, 82.6, 86.4, 82.0, then 83.4 four times; subtraction 25.0, 74.8, 84.0, 85.2).
