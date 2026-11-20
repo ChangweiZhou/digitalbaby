@@ -63,3 +63,22 @@ A run of 400,000 lines: about one to two minutes of one core (from the 300-line 
 ## What is not run
 
 Subtraction and keeping; cell counts other than 256; connections of more than three ends; pairs added to cells that read every line (not an equal number of strengths); the numpy program at full length (it is run for 300 lines against the kernel, on every arm); sending ends that are cells (step 3, a separate plan); the text of `nano/data` (step 2, a separate plan). No checker gate, seal or review is claimed.
+
+## Entered on 20 November after the development runs (seed 1), before any run on the reported seeds
+
+Never-shown sums, mean of the last three readings (`res/m1_d_*.json`, `log/d_*.txt`); every line read gives 81.5 in this program on this seed, as in `cells2.py`.
+
+| Arm | pairs drawn uniformly (the default) | pairs tried among those active at the byte | neighbouring delays | both |
+|---|---|---|---|---|
+| E64 (64 lines) | 68.5 | | | |
+| M64 (32 + 32) | 42.0 | 56.8 | 47.8 | 54.5 |
+| P64 (64 pairs) | 49.2 | 48.8 | | |
+| E32 (32 lines) | 44.9 | | | |
+| M32 (16 + 16) | 16.9 | 24.1 | | |
+| P32 (32 pairs) | 31.9 | 30.2 | | |
+
+- **Setting chosen** by the rule above, on M64: a pair tried at a turnover is drawn among the pairs of lines active at that byte (56.8 against 42.0); any two delays (with the first setting taken, neighbouring delays give 54.5, which is not higher). Pairs at birth are drawn uniformly in every case. The pair arms of the reported seeds use this setting. The same arms with pairs tried uniformly are run on the reported seeds as well, as an addition, so that the cost of my choice can be seen.
+- **On this seed the pair arms are below the edge arm at both sizes**, with either draw: at 64 strengths 56.8 and 48.8 against 68.5; at 32 strengths 24.1 and 30.2 against 44.9.
+- The pair of delays held most often at the end is (3, 6) in every pair arm; when the units digit of the answer is named, these are the lines of the two units digits. It is held 1.4 to 2.0 times as often as the mean pair of delays.
+- **A figure of the report that I do not reproduce on the development seed.** `PLAN_4.md` gives 76.5 (64 lines with rewiring) and 43.4 (32 lines) for seed 1. `cells2.py` of commit 260c5d7, copied to a scratch folder and run with its own compiled kernel, gives 68.5 for seed 1 with 64 lines, and 68.1 for seed 73129, which is the report's figure for that seed. `multi.py` gives the same readings as `cells2.py` at every 50,000 lines on both seeds, and its numpy program the same as `cells2.py`'s numpy program over 60,000 lines. So the edge arm here is the program of the report; why the plan's development figure differs I do not know (my guess: it was made by the numpy program, whose rounding differs from the kernel's, and rewiring turns a difference of rounding into another run; not tested).
+- Speed: a run takes 18 to 39 CPU seconds with `kernm.c` (the edge arm 18 s, where `kern.c` takes 84 s).
