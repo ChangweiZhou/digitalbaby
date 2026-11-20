@@ -41,3 +41,28 @@ A further cell holds M slots. Each slot is a family of parts indexed by (kind of
 ## 4. Size, cost, what is not run
 
 A one-byte slot holds K1 times S parts (4,032 on sums, 650 on prose), a pair K1 times S times S (56,448 and 42,250), a level slot K1 times 41. Numbers used are reported. About four CPU-minutes on sums, one on prose. *Not run:* other seeds of the draws (one more on prose if time allows, entered as an addition); other review schedules or shares withdrawn; gates drawn from a cell's sureness or from classes; drawn gates in cells on cells.
+
+## 5. Outcome (entered 20 November after the runs; `res/sums_armsstep4_seed1.json`, `res/life_armsstep4_booksworn.json`, `report_4.txt` with the gates held at the end and the history of the reviews)
+
+*A fault of the plan, repaired before the sums run was read:* the arm "drawn:bytes, 2D" asked for eighteen distinct one-byte gates on sums, where there are sixteen delays; the first start of the sums run drew without end and was stopped after 14 CPU-minutes with nothing read. The arm has min(2D, 16) slots (sixteen on sums: every delay, so there it is the hand-given arm with all sixteen delays under another name plus reviews that redraw what they withdraw).
+
+Sums: seed 1, with classes, 40,000 lines, 1,231,004 cells, % after a read line, mean of the last three readings (the empty past beside it); 215 CPU-seconds. Prose: T2, 2,419,727 cells, mean gain over the first cell on three worn books; 23 CPU-seconds. First cell: 92.7 (90.8 with the empty past) and 0.
+
+| Arm | Sums, % (empty past) | parts used | Prose, gain | parts used | Gates held at the end on prose |
+|---|---|---|---|---|---|
+| second-nl (hand-given, delays 1 to D) | 97.4 (96.5) | 33,547 | 0.0292 | 3,857 | bytes at 1 to 6 |
+| drawn:bytes, D slots | 97.1 (40.2) | 33,520 | 0.0202 | 3,776 | bytes at 12, 11, 4, 1, 7, 8 |
+| drawn:bytes, 2D slots (16 on sums) | 96.9 (95.7) | 59,647 | 0.0288 | 7,534 | bytes at 16, 1, 10, 3, 4, 2, 13, 5, 8, 14, 7, 6 |
+| drawn:all, D slots | 96.6 (96.3) | 155,183 | 0.0125 | 46,256 | levels of kinds 0, 1, 2; pairs (8, 13), (1, 10); byte at 9 |
+| drawn:all, 2D slots | 96.4 (87.4) | 207,268 | **0.0323** | 4,716 | levels of kinds 4, 8, 1, 7, 2, 9, 5, 0; bytes at 7, 2, 15, 9 |
+| nl + drawn:all, D slots | 97.0 (95.3) | 181,716 | **0.0372** | 6,424 | bytes at 1 to 6 by hand; levels of kinds 9, 5, 0; bytes at 12, 10, 6 |
+| drawn:bytes, never withdrawn | 97.4 (15.1) | 33,560 | 0.0233 | 3,865 | bytes at 7, 15, 5, 1, 4, 8 |
+| second-nl with all 16 delays by hand | 97.5 (44.5) | 59,653 | 0.0309 | 10,321 | |
+
+*Predictions.* R1 held (97.1 against 97.4). R2 held (0.69 of the hand-given gain). R3 failed, in the wrong direction: the drawn gates with reviews are 0.003 nats **worse** than the first draws left alone. R4 held (0.0323 against 0.0292). R5 held (drawn gates beside the hand-given add 0.0080 nats on prose; on sums 0.4 points less, within the noise). R6 failed (delay 1 is held, delay 2 was drawn at 40,000 bytes and withdrawn at 80,000). R7 failed narrowly (sixteen delays by hand add 0.0017). R8, **the hypothesis: not shown.** At an equal number of parts the drawn gates reach 0.92 of the hand-given gain on sums and 0.69 on prose: above the half that would refute, under the three quarters asked.
+
+Readings (mine).
+1. **The review as I wrote it does not search.** Earnings were measured as the size a slot's parts have reached, and a slot drawn late is compared with slots that have learned since the start: the three slots that survived the first review (the bytes at delays 4, 1 and 7 on prose) were never withdrawn again, and every later draw, the byte at delay 2 among them, was withdrawn at the next review with half the earnings of the old ones. The withdrawing took teaching away and gave nothing: the first draws left alone did better. A fair review compares gates of one age, or the rate at which the parts grow; that is owed and not run here.
+2. **What the drawing did find is a sort of gate that I had not given by hand: the level of counts of the sender of one kind.** Where all three sorts are drawn, the levels survive the first review far more often than their share of the draws (eight of twelve slots at the end on prose) and the arm with twelve such slots passes the hand-given bytes (0.0323 against 0.0292); beside the hand-given bytes six drawn slots add 0.0080. On prose the level of a kind says whether a run of that length has been met and how often: which senders are present is a fact of the moment that the bytes do not tell. It is `nano/table/PLAN_14.md`'s gate in a richer form, found here by the draw.
+3. **On sums gates that reach beyond the line fail with the empty past** (40.2, 15.1, 44.5 against 96.5): a byte at a delay of ten or more is the line before, and the empty past puts line ends where the system never met them. This is the instrument's fault of `loop_small_case/ERRATA_20261120.md`, section 3, made larger by gates that read far back; after a read line all arms are within a point of one another.
+4. Pairs of far bytes drawn at random cost parts and earn little (the arm with six slots of all sorts held two pairs and gave 0.0125).
