@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """PLAN_6.md: the relay system's answer read as one more sender, with its own trust, beside the counting cells of sparse.py.
-    python3 sparse3.py <label> seed=1 [plan=add:400000[,sub:200000]] [m=3] [eta=...] [e=...] [T0=...] [Tx0=0] [block=50] [every=50000] [relay=1] [xplace=0]
+    python3 sparse3.py <label> seed=1 [plan=add:400000[,sub:200000]] [m=3] [eta=...] [e=...] [T0=...] [Tx0=0] [block=50] [every=50000] [relay=1] [xplace=0] [replay=0]
     python3 sparse3.py check
 The relay system is loop_small_case/cells2.py's plain system (256 cells in between, its settings unchanged), run by its own compiled kernel; the files
 cells2.py, fastk.py, fastk3.py, kern.c and kern3.c are copied unchanged into relay_copy/. It reads the same stream at the same time. Its answers for a
@@ -8,7 +8,8 @@ block of lines are computed from its strengths at the start of the block; then i
 Its message at a byte: the logs of its branches' outputs, cut off below at 0.01 and scaled to sum to one. The answering cell of the whole holds a
 trust for it by ten levels of its confidence (its largest output, cut to 0..1), born at Tx0 and changed by the mismatch as every other trust.
 Nothing of the counting cells reaches the relay system. The first byte of a line, which the relay system is never taught, gets an even message.
-relay=0: no sender (must reproduce sparse.py). xplace=1 (PLAN_7): the relay system's trust is by its confidence and by the number of bytes since the line end
+relay=0: no sender (must reproduce sparse.py). replay=1 (PLAN_8): the relay system is kept by replay as in nano/replay (one replayed line after each real line, from cells of whole runs of up to eight bytes;
+the replayed lines reach the relay system only). xplace=1 (PLAN_7): the relay system's trust is by its confidence and by the number of bytes since the line end
 (the counter is laid down by the program: here the place in the line, which is the same number)."""
 import ctypes, json, os, subprocess, sys, time
 import numpy as np
@@ -76,11 +77,38 @@ def ref_read(r, x, X, xlev):
         hist.append(y); hist = hist[-HP:]
     r.hist = hist; return np.array(P)
 
+class Counting:
+    """Copied unchanged from nano/replay/replay.py (claude/nano-joint-8mmhfm at fab007c): cells that count, one for each run of 1 to K bytes of a line
+    that has occurred (the newline before the line included); a replayed line is drawn byte by byte from the longest active cell, in proportion to its counts."""
+    def __init__(s, K): s.K = K; s.cells = {}
+    def count(s, line):
+        seq = [END] + line
+        for p in range(len(line)):
+            key = bytes(seq[max(0, p + 1 - s.K):p + 1]); c = s.cells.get(key)
+            if c is None: c = s.cells[key] = [0] * S
+            c[line[p]] += 1
+    def replay(s, rnd):
+        seq = [END]
+        while len(seq) < 16:
+            c = s.cells.get(bytes(seq[-s.K:]))
+            if c is None: break
+            u = rnd.random() * sum(c); v = 0
+            while u >= c[v]: u -= c[v]; v += 1
+            seq.append(v)
+            if v == END: break
+        return seq[1:]
+    def size(s): return len(s.cells), sum(1 for c in s.cells.values() for x in c if x)
+
+def well_formed(line):
+    """As kind() of nano/replay/replay.py: a replayed line that is not of a line's form is left out."""
+    return len(line) == 10 and line[9] == END and line[5] == sp.SI[ord("=")] and line[2] in (sp.SI[ord("+")], sp.SI[ord("-")]) and all(0 <= line[i] <= 9 for i in (0, 1, 3, 4, 6, 7, 8))
+
 class Relay:
     """cells2.py's plain system on its compiled kernel, with its answers taken for bytes it has not yet learned."""
     D = 10
-    def __init__(s, seed):
-        import cells2; s.c2 = cells2; assert cells2.SYMS == sp.SYMS; s.s = cells2.Sys(seed); s.s.fast = 3; s.tail = np.full(s.D, END, np.int64)
+    def __init__(s, seed, replay=0, K=8):
+        import cells2, random; s.c2 = cells2; assert cells2.SYMS == sp.SYMS; s.s = cells2.Sys(seed); s.s.fast = 3; s.tail = np.full(s.D, END, np.int64)
+        s.replay = int(replay); s.runs = Counting(K); s.rnd = random.Random(seed * 1000 + 7); s.extra = [0, 0, 0]                # replayed lines: all, of addition, of subtraction
     def message(s, ctx):
         """ctx: (n, 10) the ten bytes before each byte, the latest first. Returns the message, the level of confidence and the outputs."""
         s.s.flush(); a = s.s.out(s.s.W1.T[s.c2.OFF + ctx].sum(1) + s.s.b1); q = np.maximum(a, 0.01); X = np.log(q / q.sum(1, keepdims=True)).astype(np.float32)
@@ -89,7 +117,16 @@ class Relay:
         """The messages for every byte of a block of lines (from the strengths before the block), then the block is learned."""
         x = Xl.ravel().astype(np.int64); full = np.concatenate([s.tail, x]); n = len(x); idx = np.arange(n)[:, None] + s.D - 1 - np.arange(s.D)[None, :]; M, lev, _ = s.message(full[idx])
         first = np.arange(n) % Xl.shape[1] == 0; M[first] = -np.log(S); lev[first] = 0
-        s.s.bx = Xl.ravel().astype(np.int32); s.s.by = np.concatenate([Xl[:, 1:], np.full((len(Xl), 1), -1)], 1).ravel().astype(np.int32); s.s.flush(); s.tail = full[-s.D:]; return M, lev
+        if s.replay:                                   # nano/replay's who=R: after each real line the run cells count it, and r lines made from the run cells follow; the relay system learns them as real lines
+            lines = []
+            for L in Xl.tolist():
+                lines.append(L); s.runs.count(L)
+                for _ in range(s.replay):
+                    E = s.runs.replay(s.rnd)
+                    if well_formed(E): lines.append(E); s.extra[0] += 1; s.extra[1 if E[2] == sp.SI[ord("+")] else 2] += 1
+            Xr = np.array(lines, np.int32)
+        else: Xr = Xl
+        s.s.bx = Xr.ravel().astype(np.int32); s.s.by = np.concatenate([Xr[:, 1:], np.full((len(Xr), 1), -1)], 1).ravel().astype(np.int32); s.s.flush(); s.tail = full[-s.D:]; return M, lev
     def at(s, lines, pos):
         """For scoring: before the line stand line ends only, as in cells2.py."""
         buf = np.concatenate([np.full((len(lines), s.D), END, np.int64), lines], 1); ctx = buf[:, s.D + pos - 1 - np.arange(s.D)]; return s.message(ctx)
@@ -114,7 +151,7 @@ def score(s, rl, op, pairs, xplace=0):
 def run(kw):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng, held, shown = sp.split(seed); every = int(kw.get("every", 50000)); block = int(kw.get("block", 50)); use = int(kw.get("relay", 1))
     xp = int(kw.get("xplace", 0)); s = Sys3(Tx0=float(kw.get("Tx0", 0)), xrows=3 if xp else 1, D=int(kw.get("D", 9)), m=int(kw.get("m", 3)), eta=float(kw.get("eta", 0.008)), e=float(kw.get("e", 0.1)), T0=float(kw.get("T0", 0.02)), shrink=int(kw.get("shrink", 0)))
-    rl = Relay(seed) if use else None; TAB = {op: np.array([text(op, a, b) for a, b in shown[op]], np.int32) for op in "+-"}; out = dict(label=kw.get("label"), args=kw, kinds=len(s.kinds), rows=[]); first = {5000, 10000, 20000, 40000}
+    rl = Relay(seed, int(kw.get("replay", 0))) if use else None; TAB = {op: np.array([text(op, a, b) for a, b in shown[op]], np.int32) for op in "+-"}; out = dict(label=kw.get("label"), args=kw, kinds=len(s.kinds), rows=[]); first = {5000, 10000, 20000, 40000}
     wr = {tuple(l) for l in TAB["-"].tolist()}; clean = [p for p in held["-"] if tuple(text("-", *p)) not in wr]; out["sub_clean_pairs"] = len(clean)
     for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
         name, n = ph.split(":"); n = int(n); op0 = {"add": "+", "sub": "-"}[name]; it = 0
@@ -125,8 +162,11 @@ def run(kw):
                 if rl is not None: M, lev = rl.block(B); s.read(B, M, lev + 10 * xp * (np.arange(B.size, dtype=np.int32) % B.shape[1]))
                 else: s.read(B)
             it = nxt; a = score(s, rl, "+", held["+"], xp); d = score(s, rl, "-", held["-"], xp); row = dict(phase=pi, name=name, lines=it, add=a["whole"], sub=d["whole"], add_place=a["place"], sub_place=d["place"], add_forced=a["forced"], sub_forced=d["forced"], sub_clean=score(s, rl, "-", clean, xp)["whole"])
+            if rl is not None and rl.replay: row.update(replayed=list(rl.extra)); rl.extra = [0, 0, 0]
+            if rl is not None: row.update(relay_sub_clean=score(s, rl, "-", clean, xp)["relay_alone"])
             if rl is not None: row.update(relay_add=a["relay_alone"], relay_sub=d["relay_alone"], relay_add_place=a["relay_alone_place"], relay_trust=np.round(s.T[-1, :10], 3).tolist() if not xp else {f"place{pl}": np.round(s.T[-3:].ravel()[10 * pl:10 * pl + 10], 3).tolist() for pl in (6, 7, 8)})
             out["rows"].append(row)
+    if rl is not None and rl.replay: out["run_cells"], out["run_counts_above_zero"] = rl.runs.size()
     out.update(s.size()); out["cpu"] = round(time.process_time() - t0, 1); out["top_trust_add"] = {}
     for ph in sorted({r["phase"] for r in out["rows"]}):
         rr = [r for r in out["rows"] if r["phase"] == ph]; out[f"last3_add_phase{ph}"] = float(np.mean([r["add"] for r in rr[-3:]])); out[f"last3_sub_phase{ph}"] = float(np.mean([r["sub"] for r in rr[-3:]]))
