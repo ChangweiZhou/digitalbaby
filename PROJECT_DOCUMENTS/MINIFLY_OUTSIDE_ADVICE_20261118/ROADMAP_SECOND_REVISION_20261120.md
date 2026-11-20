@@ -544,3 +544,16 @@ Below xz on all six. That line's own caution, which belongs beside the table: xz
 
 Answering cells put on answering cells added nothing (section 14). A second level of another form was tried: three kinds of cell keyed on the byte the first answering cell holds likeliest (with how sure it is; with the last byte; with the last two bytes), counting what actually comes, heard by the second answering cell with a trust born at nothing. On prose the second cell is 0.003 to 0.010 nats lower on five books of six and 0.001 higher on one (0.005 on average; a control of the same shape keyed on a byte that knows nothing of the answer: 0.0005); on sums nothing (+0.4 points). My predictions of 0.005 on every book and of a point on sums failed. Entered as a small gain on prose only, at almost no cost (8,600 cells); not shown general; offered to `nano/suite` for one run on its streams.
 
+## 22. The loss and the store as the system reads on (late on 20 November; `nano/table/PLAN_25.md`; mine; a measurement)
+
+One life of 6.3 million bytes of English prose (the test text and ten books), read once by the system with nothing given by hand and no number set for a text (runs of 0 to 6 bytes, two answering cells, the rule of the step, the learned room for the unmet); the loss while going on.
+
+| Bytes read | second cell, nats a byte | cells | counts above zero |
+|---|---|---|---|
+| 400,000 to 800,000 | 1.4506 | 403,173 | 752,612 |
+| 800,000 to 1,600,000 | 1.4712 | 619,763 | 1,205,863 |
+| 1,600,000 to 3,200,000 | 1.3429 | 871,323 | 1,793,298 |
+| 3,200,000 to 6,261,576 | 1.3442 | 1,241,332 | 2,670,558 |
+
+The store grows as about the square root of the bytes read (a power of 0.49 to 0.62 on the last three doublings): 0.43 counts for each byte after six million. The stretches mix more reading with other authors (single books run from 1.23 to 1.54), so what more reading is worth shows cleanly only within an author: three books of one author read fourth, fifth and seventh have 1.4311, 1.3843, 1.3484; two of another, sixth and ninth, 1.2648 and 1.2262: about 0.04 nats better for each further book. The second answering cell's gain stays at 0.03 to 0.04 from 200,000 bytes to six million. No law of growth is drawn from one order of one set of books.
+
