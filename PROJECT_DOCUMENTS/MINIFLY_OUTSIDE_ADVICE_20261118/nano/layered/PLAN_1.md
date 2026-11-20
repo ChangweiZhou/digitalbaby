@@ -41,3 +41,44 @@ My reason for doubt, stated beforehand: a gate that reads only the present byte 
 ## 6. Cost, and what is not run
 
 About 2 CPU-minutes a run: development 22 runs, about 45 CPU-minutes; reported 20 runs, about 40 CPU-minutes; on four cores about 25 minutes of wall time. **Not run:** `hold.py` itself (quoted); K cells A drawn at birth for each cell B; other sizes; gaps beyond 8; a comparator by back-propagation through time; the reported seeds for any setting but the chosen one and its control.
+
+## Outcome (entered 20 November after the runs; nothing above was changed)
+
+**Development (seed 1), sums shown, %, `res/lay_d1_*.json`** (`m1` / `g1`):
+
+| etaA \ etaB (nB = 8) | 1/16 | 1/4 | 1 |
+|---|---|---|---|
+| 1/4 | 4.0 / 9.4 | 6.5 / 43.8 | 80.7 / 96.9 |
+| 1 | 8.9 / 14.9 | 47.1 / 51.9 | 18.2 / 97.4 |
+| 4 | 14.9 / 18.8 | 20.4 / 62.9 | 37.5 / 97.5 |
+
+At etaA = 1/4, etaB = 1: nB = 2 gave 7.5 / 52.1 and nB = 32 gave 99.9 / 97.1. **Chosen by the rule: etaA = 1/4, etaB = 1, nB = 32.** The choice lies at the edge of what was tried in etaB and nB; nothing beyond it was run. (A warning of overflow in the logistic function appeared in three development runs at etaA = 4 while scoring; a gate drive beyond 700; the value returned is 0 or 1 as it should be.)
+
+**Five reported seeds** (`report.txt`, `res/lay_r1_*.json`), sums shown, whole answer right, %, mean over gaps 0, 4, 8 and the last three readings of 960,000 lines; `hold.py`'s rows quoted from REPORT section 12.2 at 0ba9f241:
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| `m1`: layered, no crossing | 51.4 | 98.3 | 9.3 | 39.7 | 99.6 | **51.4** |
+| `m1`: layered, cells A never change | 10.8 | 10.1 | 10.7 | 9.7 | 9.6 | **10.1** |
+| `m1`: `hold.py`, one crossing (quoted) | 91.2 | 81.9 | 100.0 | 78.1 | 100.0 | **91.2** |
+| `m1`: `hold.py`, no crossing (quoted) | 27.6 | 21.2 | 28.2 | 40.1 | 18.3 | **27.6** |
+| `g1`: layered, no crossing | 92.6 | 96.2 | 99.0 | 98.6 | 96.8 | **96.8** |
+| `g1`: layered, cells A never change | 10.3 | 8.1 | 12.5 | 7.9 | 11.5 | **10.3** |
+| `g1`: `hold.py`, one crossing (quoted) | 99.9 | 94.2 | 99.0 | 98.6 | 97.4 | **98.6** |
+| `g1`: `hold.py`, no crossing (quoted) | 39.2 | 45.0 | 45.7 | 44.4 | 33.1 | **44.4** |
+
+Last reading by gap (0, 4, 8 letters), median of five seeds: `m1` layered 54, 51, 40; `g1` layered 98, 98, 95. About 2.3 CPU-minutes a run.
+
+**The hypothesis is not borne out and not refuted, as registered.** `g1`: 96.8% at the median, every seed above 92, level with `hold.py`'s crossing (98.6) and 52 points above `hold.py` without it. `m1`: 51.4% at the median, one point above the line of refutation, and the seeds fall apart: two learn it fully (98.3, 99.6), one half (51.4, flat from 480,000 lines), one was at 30 to 47% and uneven, one learned nothing (9.3). On the development seed `m1` was at 99.9. So on the plain sum the crossing is not needed; on the sum mod 10 the layered system without a crossing is above `hold.py` without a crossing on four seeds of five and well below `hold.py` with it at the median (51 against 91), and unreliable.
+
+Other things seen. (i) With cells A that never change both texts stay at 10%: everything above that is holding that the cells A learned from the relayed mismatch and their own traces. (ii) On the two seeds that learned `m1`, and on the development seed, the 20 sums never shown were answered 77 to 85% of the time at the last readings (20 pairs; a small sample; this text was not scored on never-shown sums in the plan, the runner prints it). (iii) The seeds that learn `m1` do so abruptly after 160,000 to 640,000 lines at 5 to 10%; whether seeds 116089 and 406364 would follow with more lines was not run.
+
+| | Prediction | Outcome |
+|---|---|---|
+| L1 | `m1` median at least 80% (0.45) | **failed** (51.4) |
+| L2 | `g1` median at least 90% (0.50) | held (96.8) |
+| L3 | `m1` median at least 50% (0.75) | held, by 1.4 points (51.4) |
+| L4 | `m1`, cells A never changing at least 20 points below (0.60) | held (10.1 against 51.4) |
+| L5 | `m1`, last reading, gap of 8 within 10 points of gap of none at the median (0.60) | **failed** (54 against 40); on the two seeds that learned it the gaps are level (100/100/98, 100/100/100) |
+
+My reading: the doubt I stated beforehand (a gate that reads only the present byte cannot tell the first digit from the second) did not stop `g1`, nor `m1` on three seeds of six; what remains is that on `m1` the outcome depends on the birth. **Not run:** more lines for the seeds that did not learn; steps beyond the edge of the grid; `hold.py` (quoted).
