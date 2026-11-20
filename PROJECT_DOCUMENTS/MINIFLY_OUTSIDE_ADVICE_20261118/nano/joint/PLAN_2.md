@@ -85,3 +85,47 @@ Not run: withdrawal in F2 or F3; withdrawal of connections from the input lines;
 Q8 failed on this grid: S at T = 36,000 and theta = 0.2 gives 77.1 against 78.1 at T = 720,000, one point and not four. On this seed it is the receiving end that loses by withdrawing early and often (50.5 at T = 36,000, theta = 0.2), not the sending end, against what I expected from the birth values of R.
 
 Runs on the reported seeds, as planned: N, R, S, E, X at the chosen pair; R, S, E at theta = 0.05 and 0.2 with the same T.
+
+## 9. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report2.txt` (made by `report2.py` from `res/w_*.json`). The numpy program at full length (E, chosen setting, seed 1) gives the compiled program's readings to the digit (80.3; 1,854 living).
+
+**At the chosen setting (T = 720,000 bytes, theta = 0.1).** Never-shown sums, whole answer right, %, mean of the last three readings; connections living at the end, of 3,584.
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median | paired against N | living (median; range) |
+|---|---|---|---|---|---|---|---|---|
+| N, nobody withdraws | 84.2 | 82.7 | 86.4 | 81.8 | 86.7 | **84.2** | | 3584 |
+| R, the receiving end only | 83.5 | 81.2 | 87.9 | 82.8 | 86.2 | **83.5** | -0.5 | 2212; 2170 to 2259 |
+| S, the sending end only | 84.0 | 81.4 | 87.3 | 81.7 | 86.5 | **84.0** | -0.1 | 2308; 2245 to 2378 |
+| E, either end | 83.8 | 81.2 | 87.7 | 82.6 | 86.5 | **83.8** | -0.1 | 1823; 1763 to 1889 |
+| X, by chance, E's numbers (control) | 75.9 | 77.1 | 81.5 | 81.6 | 75.7 | **77.1** | -5.5 | as E |
+
+Paired, E less R: +0.3, 0.0, -0.2, -0.2, +0.3 (median 0.0). E less S: median 0.0. X less E: -7.9, -4.1, -6.1, -1.0, -10.8 (median -6.1; below on five seeds).
+
+**The other two values of theta at the same T (the declared addition).** Median score, median paired difference from N, median living:
+
+| theta | R | S | E |
+|---|---|---|---|
+| 0.05 | 83.3, -0.5, 2558 | 83.2, +0.4, 2681 | 83.3, -0.3, 2259 |
+| 0.1 | 83.5, -0.5, 2212 | 84.0, -0.1, 2308 | 83.8, -0.1, 1823 |
+| 0.2 | 83.9, -1.3, 1669 | 83.3, +0.2, 1770 | 84.1, -1.3, 1182 |
+
+At theta = 0.2, E less S is +0.7, -2.1, -2.8, -2.2, -1.5 (median -2.1, below on four seeds) and R less S is +0.5, -1.9, -2.3, -2.7, -1.5 (median -1.9, below on four seeds); E less R is 0.0.
+
+**The hypothesis.** H stands at all three values of theta: the receiving end alone scores as either end does (median of E less R: +0.1, 0.0, 0.0). In score, the right to withdraw held by one end is a simplification that costs nothing here, and so is nobody withdrawing: no arm with the ends' own rule is more than 1.3 points from N at the median.
+
+**Where the arms differ is in which connections remain, and how many.**
+
+1. *Either end leaves fewer connections than one end at the same score*: 1,823 against 2,212 (R) and 2,308 (S) at theta = 0.1, about half of the 3,584, at 0.1 points from N; at theta = 0.2, a third (1,182) at 1.3 points from N. Of E's withdrawals at theta = 0.1 (median) 828 were the receiving end's alone, 422 the sending end's alone and 494 both ends' at the same moment: each end withdraws from connections the other would keep.
+2. *The two ends withdraw from different connections, because each compares a connection with different neighbours.* The sending end's rule empties one branch entirely on every seed and at every theta: on seed 73129 (looked at after the runs) it is the branch for the minus sign, a byte value that never occurs in this text; every cell withdraws from it, having stronger connections elsewhere. The receiving end's rule keeps all 256 connections of that branch, because inside the branch none is small beside the others. After the sending end's rule 0.9% of the living connections are below one hundredth of the largest; after the receiving end's 11.6%, as many as with nobody withdrawing (11.2%); after either 0.1%.
+3. *Cells that lose every connection.* None in R or S. In E: 1 at the median at theta = 0.1 and 8 at theta = 0.2 (4 to 12): such a cell has dropped out of the answer, though neither end's rule withdraws from everything by itself.
+4. *The ends' own rule matters, not only the number.* Withdrawing E's numbers of connections by chance at the same moments costs 6.1 points against E (below on five seeds).
+5. At theta = 0.2 the sending end's rule is ahead of the receiving end's by about 2 points on four seeds of five with about 100 more connections; that is inside the 4 points and I claim no difference of score from it.
+
+My reading, for the roadmap's question: on this testbed a right to withdraw costs nothing in score whoever holds it, and withdrawing by an end's own strengths is far better than withdrawing by chance; a right held by both ends removes about a fifth more connections than a right held by one at the same score; and only the sending end's right removes the connections to a branch that names nothing. Whether fewer connections at an equal score is worth having is not a question this step answers; the score does not tell the forms apart.
+
+**Predictions.** Q1 held (81.5; the five figures to the digit). Q2 held (-0.5). Q3 failed (S is 0.1 below N). Q4 held (0.0). Q5 held on five seeds of five, by 48 to 161 connections. Q6 held on five seeds of five. Q7 failed (1,823 of 3,584 is 51%). Q8 failed (section 8).
+
+**Limits and departures of mine.** One T on the reported seeds; the development grid (seed 1 only) says that withdrawing often and early costs the receiving end much (50.5 at T = 36,000, theta = 0.2) and the sending end little (77.1), which the reported seeds do not test. The withdrawal rule uses a share of the end's own largest strength; other own-quantity rules are not run. Which branch is emptied was looked at on one seed only. The check of the two programs was run before this plan's commit (it is not a run of the step). The run is 4,000,000 bytes, of which 3,600,000 are learning steps; the figure of 3.6 million bytes in the earlier report counts the latter.
+
+**Not run:** as section 7; X at the other two values of theta; R, S and E at other T on the reported seeds; more seeds for the difference at theta = 0.2.
