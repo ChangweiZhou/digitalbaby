@@ -30,3 +30,40 @@
 Prose: `gate.py life books=worn|new mode=none birth=0.5|0.9|0.1` (runs of 0 to 6 bytes; the baseline is `PLAN_15.md`'s runs). Sums: `gate.py sums mode=classes birth=0.5`, the five reported seeds, 40,000 lines, both cells, both scores; and without classes on two seeds. Under twenty CPU-seconds a life; eighty a sums run. The compiled loop with the birth rule equals numpy to 4e-16 and 3e-15 on two cases.
 
 Not run: the rule on this line's system with word cells and all kinds (another kernel); cells given back after they are born; the same rule with the second cell's surprise; long reading; the count of cells along a life (the power of growth).
+
+## 5. Outcome (entered 20 November after all runs; `res/gate_life_birth*.json`, `res/gate_sums_birth0.5_*.json`, the printed lines in `out19/`)
+
+**Prose** (runs of 0 to 6 bytes; nats a byte on each book's last tenth right after its stream; first cell, and in brackets the second cell; cells that have counted at the end of the life).
+
+| Threshold | Worn books: bryant, burgess, carroll | cells | The books of `PLAN_15.md`: chesterton-ball, austen-emma, melville | cells |
+|---|---|---|---|---|
+| none (the baseline) | 1.5023, 1.3645, 1.4456 (1.4812, 1.3408, 1.4157) | 579,255 | 1.6316, 1.2416, 1.4687 (1.6116, 1.2203, 1.4453) | 928,030 |
+| nine tenths | 1.5017, 1.3635, 1.4449 (1.4810, 1.3405, 1.4152) | 552,849 (95%) | 1.6313, 1.2415, 1.4680 (1.6116, 1.2203, 1.4451) | 885,504 (95%) |
+| **one half** | 1.5070, 1.3633, 1.4533 (1.4853, 1.3404, 1.4211) | 455,661 (**79%**) | 1.6382, 1.2489, 1.4715 (1.6180, 1.2260, 1.4489) | 734,613 (**79%**) |
+| one tenth | 1.5813, 1.4539, 1.5319 (1.5537, 1.4198, 1.4836) | 237,893 (41%) | 1.7262, 1.3372, 1.5359 (1.6981, 1.2984, 1.5072) | 395,122 (43%) |
+
+With the threshold at one half the first cell is 0.0047, -0.0012, 0.0077 worse on the worn books and 0.0066, 0.0073, 0.0028 worse on the others; the second cell 0.0041, -0.0004, 0.0054 and 0.0064, 0.0057, 0.0036.
+
+**Sums** (never-shown two-digit additions, 40,000 lines, after a read line; the baseline of `PLAN_15.md`, then the threshold at one half).
+
+| System | Seeds | First cell, last reading | Second cell, mean of the last three readings | Cells |
+|---|---|---|---|---|
+| without classes | 73129, 93683 | 82.0, 80.9 then 82.1, 80.6 | 87.9, 85.7 then 87.7, 84.9 | 1.21 million then 0.56 million (**46%**) |
+| with classes | the five reported | 93.2, 95.2, 92.4, 89.6, 92.9 then 84.7, 93.5, 85.3, 89.5, 91.8 | 97.4, 98.0, 96.6, 96.2, 97.1 (median 97.1) then **91.8**, 96.8, **90.0**, 96.9, 98.1 (median 96.8) | 1.23 million then 0.56 million (46%) |
+
+**The hypothesis is not shown and not refuted on prose.** The store is 79% of the baseline's in both lives, where two thirds was asked and four fifths would have refuted; no book is more than 0.008 nats worse (0.010 allowed).
+
+| | Statement | Outcome |
+|---|---|---|
+| S1 | prose: at most two thirds of the baseline's cells | failed (79% in both lives) |
+| S2 | no book more than 0.010 worse, first cell | held (at most 0.0077) |
+| S3 | the second cell likewise | held (at most 0.0064) |
+| S4 | sums with classes: the second cell's median within 2 points of 97.4 | held at the median (97.1 at the last reading; 96.8 over the last three), **but two seeds of five lose 6 and 7 points** |
+| S5 | sums: at least a fifth fewer cells | held (54% fewer; I had given it 0.35) |
+| S6 | one tenth on prose: under half the cells and a book more than 0.020 worse | held (41 to 43% of the cells; 0.067 to 0.096 worse) |
+
+Readings (mine).
+1. **On prose the store is not mostly waste by this measure.** A fifth of the cells are born at bytes that the system already gave better than even odds, and leaving them unborn costs 0.003 to 0.008 nats; nearly all the rest are born where the system was in doubt, and leaving those unborn is paid for in full (0.07 to 0.10 nats for the next 36%). The trade is real and it is not cheap. Almost free: the 5% of cells born at bytes that had nine chances in ten.
+2. **On sums half the store is born at bytes that the layout makes certain** (the signs, the line end, and the answer once it is known), and without classes it can be left unborn at no price: 46% of the cells, the same score. I had not expected that; I had thought of the store on sums as the pairs.
+3. **With classes the rule is not safe.** On two seeds of five the system loses 6 to 10 points. *Not looked into*; my guess is that the search for classes reads refinements of cells, and a cell that is unborn where its parent foretold the byte is exactly a refinement that agrees with its class.
+4. The rule uses a signal that the answering cell forms anyway and sends to all cells alike, which is the form of signal Mr. Xu named. As a means of making the store grow more slowly it is a partial answer on one kind of text; the power of growth with the bytes read was not measured (NOT RUN).
