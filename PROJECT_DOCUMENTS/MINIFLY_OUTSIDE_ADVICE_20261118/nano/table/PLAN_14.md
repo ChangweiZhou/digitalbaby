@@ -70,3 +70,5 @@ Readings (mine).
 ## 8. The control that was owed (written before its run): the step doubled, no situations
 
 Reading 3 of section 7: in the form of addition 1 a trust moves by two steps where it moved by one. The control: T2 with no situations and the trust's step doubled (0.0001), the same lives. *Prediction (mine):* it is within 0.003 of T2 on every book, so the doubled step is not the gain (chance 0.75).
+
+*Outcome of the control* (`res/rank_0_step2.json`). With the step doubled and no situations: in the life A, B 1.4796, 1.3150, 1.4106 (0.0006, 0.0012 and 0.0003 below T2); in the life of B only 1.5485, 1.2718, 1.3791 (0.0113, 0.0051 and 0.0045 below T2); the test text 1.4967. The prediction held for the long life and failed for the young one. So at the end of a long life the doubled step is not the gain (0.001 of 0.009 to 0.016), and the situations are. In a young system a larger step is itself worth 0.005 to 0.011, and of addition 1's gain there (0.010 to 0.017) the situations account for 0.005 to 0.012. Reading 1 of section 7 stands with that division; the figure to carry for the situations alone is about 0.01 nats in either life.
