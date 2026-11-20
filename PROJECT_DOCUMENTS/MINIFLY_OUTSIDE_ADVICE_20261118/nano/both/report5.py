@@ -16,6 +16,14 @@ for name, R, k in cols:
         if w: print(f"  {mk:>7,} lines: " + " ".join("  -  " if x is None else f"{x:5.1f}" for x in v) + f" | median {np.median(w):5.1f}")
     l3 = [np.mean([r[k]["after"] for r in R[s]["rows"][-3:]]) for s in S if R[s]]
     if l3: print("  mean of the last three readings: " + " ".join(f"{x:5.1f}" for x in l3) + f" | median {np.median(l3):5.1f}")
+X = {s: L(f"s5x_sums_seed{s}.json") for s in S}
+if any(X.values()):
+    print("\nTHE SAME WITH THE SCORED PAIRS KEPT OUT OF THE LESSONS (PLAN_5.md addition 1), second cell")
+    for mk in marks:
+        v = [next((r["cell2"]["after"] for r in X[s]["rows"] if r["lines"] == mk), None) if X[s] else None for s in S]; w = [x for x in v if x is not None]
+        if w: print(f"  {mk:>7,} lines: " + " ".join("  -  " if x is None else f"{x:5.1f}" for x in v) + f" | median {np.median(w):5.1f}")
+    l3 = [np.mean([r["cell2"]["after"] for r in X[s]["rows"][-3:]]) for s in S if X[s]]; print("  mean of the last three readings: " + " ".join(f"{x:5.1f}" for x in l3) + f" | median {np.median(l3):5.1f}")
+    print("  new composed lines dropped because they begin as a scored line does, of the new lines kept:", [(X[s]["totals"].get("new_lines_of_scored_pairs_dropped"), X[s]["totals"]["new"]) for s in S if X[s]], "| CPU-seconds:", [X[s]["cpu"] for s in S if X[s]])
 w = [N[s] for s in S if N[s]]
 if w:
     print("\nlooks (two of the five pasts), joined with lessons, at 40,000 / 100,000 / 400,000 lines, by seed: only counts of 512 and more; class kinds alone")

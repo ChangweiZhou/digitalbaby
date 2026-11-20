@@ -85,6 +85,22 @@ joined with lessons, relay silent at the score
   400,000 lines:  99.4  99.2  95.2  98.6  98.6 | median  98.6
   mean of the last three readings:  99.1  99.2  94.0  98.5  98.5 | median  98.5
 
+THE SAME WITH THE SCORED PAIRS KEPT OUT OF THE LESSONS (PLAN_5.md addition 1), second cell
+    5,000 lines:  89.3  96.2  88.6  95.6  93.4 | median  93.4
+   10,000 lines:  94.3  97.8  96.1  93.6  94.4 | median  94.4
+   20,000 lines:  96.8  98.2  96.2  94.6  96.7 | median  96.7
+   40,000 lines:  90.5  88.9  90.8  97.5  92.4 | median  90.8
+   50,000 lines:  89.8  88.2  90.1  96.0  91.0 | median  90.1
+  100,000 lines:  95.2  97.5  95.5  96.3  96.5 | median  96.3
+  150,000 lines:  97.4  96.8  96.0  98.4  97.7 | median  97.4
+  200,000 lines:  98.6  97.8  97.4  98.3  97.9 | median  97.9
+  250,000 lines:  98.7  98.4  97.3  97.9  97.6 | median  97.9
+  300,000 lines:  99.0  99.2  93.4  98.3  98.1 | median  98.3
+  350,000 lines:  98.9  99.1  95.0  98.2  98.7 | median  98.7
+  400,000 lines:  99.2  99.2  95.8  98.4  98.8 | median  98.8
+  mean of the last three readings:  99.0  99.1  94.8  98.3  98.5 | median  98.5
+  new composed lines dropped because they begin as a scored line does, of the new lines kept: [(16781, 214731), (16720, 219313), (16556, 215927), (16846, 209015), (16617, 215955)] | CPU-seconds: [852.4, 844.7, 900.2, 903.3, 944.5]
+
 looks (two of the five pasts), joined with lessons, at 40,000 / 100,000 / 400,000 lines, by seed: only counts of 512 and more; class kinds alone
   seed 73129: 40,000: 12.7, 75.7; 100,000: 96.4, 94.8; 400,000: 99.6, 92.5
   seed 93683: 40,000: 12.6, 78.2; 100,000: 98.9, 92.1; 400,000: 99.5, 97.3
@@ -93,3 +109,73 @@ looks (two of the five pasts), joined with lessons, at 40,000 / 100,000 / 400,00
   seed 545353: 40,000: 17.1, 71.5; 100,000: 95.7, 95.3; 400,000: 99.1, 92.3
 composed lines over the life, by seed (composed, new, new and well formed, new and right sums, lesson bytes taken of offered): [(400000, 231768, 166026, 39509, 1314446, 2212674), (400000, 235557, 169672, 38585, 1335778, 2251991), (400000, 232381, 167312, 38806, 1319044, 2219813), (400000, 225031, 160535, 40667, 1276661, 2144550), (400000, 232431, 166105, 39476, 1319797, 2216103)]
 CPU-seconds a run: [864.6, 869.6, 875.9, 862.6, 933.6] | cells: 1241777 counts above zero: 6292169
+
+TWO TASKS, addition 400,000 lines, then subtraction 200,000; never-shown lines, whole answer, own bytes, after a read line of the kind named, %
+addition at the end of the first phase, after an addition line
+  relay alone with replay (PLAN_3.md's runs)        97.9  97.5  97.5  96.6  97.0 | median  97.5
+  relay alone with replay (these runs)              97.9  97.5  97.5  96.6  97.0 | median  97.5
+  joined unchanged, second cell (PLAN_3.md)         85.8  92.5  80.4  77.7  80.2 | median  80.4
+  JOINED WITH LESSONS, second cell                  99.4  99.1  98.7  98.6  98.9 | median  98.9
+  joined with lessons, first cell                   96.1  96.8  95.3  96.0  97.2 | median  96.1
+  joined with lessons, relay silent at the score    99.3  99.0  98.7  98.4  99.1 | median  99.0
+addition at the end of the second phase, after a subtraction line
+  relay alone with replay (PLAN_3.md's runs)        95.0  93.8  94.4  91.8  92.4 | median  93.8
+  relay alone with replay (these runs)              95.0  93.8  94.4  91.8  92.4 | median  93.8
+  joined unchanged, second cell (PLAN_3.md)         38.9  70.0  58.4  61.1  43.6 | median  58.4
+  JOINED WITH LESSONS, second cell                  94.7  93.9  92.0  93.4  91.8 | median  93.4
+  joined with lessons, first cell                   87.6  86.8  84.9  86.0  85.0 | median  86.0
+  joined with lessons, relay silent at the score    93.6  93.7  91.8  93.1  91.4 | median  93.1
+addition at the end of the second phase, after an addition line
+  relay alone with replay (PLAN_3.md's runs)        95.0  93.9  94.3  91.9  91.8 | median  93.9
+  relay alone with replay (these runs)              95.0  93.9  94.3  91.9  91.8 | median  93.9
+  joined unchanged, second cell (PLAN_3.md)         39.1  71.5  58.4  61.3  43.3 | median  58.4
+  JOINED WITH LESSONS, second cell                  94.4  93.8  92.0  93.5  92.0 | median  93.5
+  joined with lessons, first cell                   87.8  86.6  85.2  86.3  85.0 | median  86.3
+  joined with lessons, relay silent at the score    93.7  93.5  91.5  93.0  91.4 | median  93.0
+subtraction (clean) at the end of the second phase, after a subtraction line
+  relay alone with replay (PLAN_3.md's runs)        88.1  87.6  92.3  90.8  87.0 | median  88.1
+  relay alone with replay (these runs)              88.1  87.6  92.3  90.8  87.0 | median  88.1
+  joined unchanged, second cell (PLAN_3.md)         72.4  75.6  79.4  74.1  80.5 | median  75.6
+  JOINED WITH LESSONS, second cell                  78.9  81.3  83.6  80.6  82.4 | median  81.3
+  joined with lessons, first cell                   77.9  73.0  82.5  76.7  76.2 | median  76.7
+  joined with lessons, relay silent at the score    78.7  81.3  83.0  80.5  82.4 | median  81.3
+share of the addition level kept, %
+  relay alone with replay                           97.1  96.3  96.8  95.0  95.3 | median  96.3
+  joined unchanged (PLAN_3.md)                      45.3  75.7  72.6  78.7  54.4 | median  72.6
+  JOINED WITH LESSONS, second cell                  95.3  94.8  93.2  94.7  92.8 | median  94.7
+lessons over the life, by seed: [{'composed': 600000, 'new': 311154, 'new_right': 64294, 'new_additions': 186664, 'lesson_bytes_taken': 1667569, 'lesson_bytes_offered': 2952487}, {'composed': 600000, 'new': 328160, 'new_right': 60504, 'new_additions': 201679, 'lesson_bytes_taken': 1761058, 'lesson_bytes_offered': 3116975}] | CPU-seconds: [1129.1, 1156.3, 1135.5, 1316.8, 1263.1]
+
+TWO TASKS, addition 40,000 lines, then subtraction 20,000; never-shown lines, whole answer, own bytes, after a read line of the kind named, %
+addition at the end of the first phase, after an addition line
+  relay alone with replay (PLAN_3.md's runs)        91.9  88.4  90.0  89.5  89.9 | median  89.9
+  relay alone with replay (these runs)              91.9  88.4  90.0  89.5  89.9 | median  89.9
+  joined unchanged, second cell (PLAN_3.md)         96.9  98.5  96.5  97.2  97.4 | median  97.2
+  JOINED WITH LESSONS, second cell                  92.9  89.7  93.8  97.4  95.0 | median  93.8
+  joined with lessons, first cell                   91.3  90.0  91.9  93.6  92.6 | median  91.9
+  joined with lessons, relay silent at the score    92.2  89.2  93.8  97.4  94.5 | median  93.8
+addition at the end of the second phase, after a subtraction line
+  relay alone with replay (PLAN_3.md's runs)        89.3  83.7  86.5  81.1  80.0 | median  83.7
+  relay alone with replay (these runs)              89.3  83.7  86.5  81.1  80.0 | median  83.7
+  joined unchanged, second cell (PLAN_3.md)         80.1  90.2  88.6  88.8  86.1 | median  88.6
+  JOINED WITH LESSONS, second cell                  85.4  84.3  86.4  93.2  89.1 | median  86.4
+  joined with lessons, first cell                   80.0  82.4  84.8  82.8  82.4 | median  82.4
+  joined with lessons, relay silent at the score    84.8  83.8  86.3  93.0  88.8 | median  86.3
+addition at the end of the second phase, after an addition line
+  relay alone with replay (PLAN_3.md's runs)        89.1  83.6  86.1  79.4  79.5 | median  83.6
+  relay alone with replay (these runs)              89.1  83.6  86.1  79.4  79.5 | median  83.6
+  joined unchanged, second cell (PLAN_3.md)         80.2  89.9  89.2  88.4  85.8 | median  88.4
+  JOINED WITH LESSONS, second cell                  85.3  83.6  86.4  93.1  89.1 | median  86.4
+  joined with lessons, first cell                   80.2  82.4  84.6  82.8  82.6 | median  82.6
+  joined with lessons, relay silent at the score    85.0  83.2  86.3  93.0  88.9 | median  86.3
+subtraction (clean) at the end of the second phase, after a subtraction line
+  relay alone with replay (PLAN_3.md's runs)        65.1  68.4  60.7  64.0  64.0 | median  64.0
+  relay alone with replay (these runs)              65.1  68.4  60.7  64.0  64.0 | median  64.0
+  joined unchanged, second cell (PLAN_3.md)         87.3  87.6  90.1  88.9  90.1 | median  88.9
+  JOINED WITH LESSONS, second cell                  88.4  87.1  88.2  87.7  90.7 | median  88.2
+  joined with lessons, first cell                   80.4  79.0  83.6  79.5  83.2 | median  80.4
+  joined with lessons, relay silent at the score    88.3  87.2  88.5  87.3  90.6 | median  88.3
+share of the addition level kept, %
+  relay alone with replay                           97.2  94.6  96.0  90.6  89.1 | median  94.6
+  joined unchanged (PLAN_3.md)                      82.7  91.6  91.8  91.3  88.3 | median  91.3
+  JOINED WITH LESSONS, second cell                  91.9  93.9  92.1  95.6  93.9 | median  93.9
+lessons over the life, by seed: [{'composed': 60000, 'new': 50468, 'new_right': 2668, 'new_additions': 33327, 'lesson_bytes_taken': 267175, 'lesson_bytes_offered': 487098}, {'composed': 60000, 'new': 51848, 'new_right': 2225, 'new_additions': 34875, 'lesson_bytes_taken': 274941, 'lesson_bytes_offered': 501126}] | CPU-seconds: [184.2, 181.7, 185.0, 191.7, 171.9]
