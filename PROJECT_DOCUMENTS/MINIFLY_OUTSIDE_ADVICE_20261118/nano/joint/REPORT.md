@@ -62,7 +62,7 @@ The plain system, in which every 720,000 bytes a cell in between drops out for g
 
 1. **The plain system is not short of cells at 256**: born with 128 to 217 cells it scores 85.6 to 85.9; with 70 cells 69.3.
 2. **Cells dropping out by this rule reach a smaller system that is a little worse than one born at that size** (2 to 5 points, four seeds of five, down to half the cells; the plan's hypothesis that the two are level is refuted narrowly, 4.8 against 4 points) **and no better than dropping as many by chance.** Unlike single connections (C2), a cell's own total return strength does not pick out what the system can spare.
-3. The cost against nobody dropping out is small (0.5 to 1.3 points) while half the cells remain. The spread over seeds in the small systems is large (single runs at 53 and 73 where the others are near 85), so differences of 2 points are not fixed by five seeds.
+3. The cost against nobody dropping out is small (0.5 to 1.3 points) while half the cells remain. The spread over seeds in the small systems is large (single runs at 53 and 73 where the others are near 85) [erratum, 20 November, pointed out by the coordinating session's check: only the run at 72.6 (born with 178 cells) has peers near 85 (85.5 to 90.1); the run at 53.5 (75 cells dropped to by chance, c = 0.30) has peers at 65.6 to 79.1], so differences of 2 points are not fixed by five seeds.
 
 ## Step C5: how a strength is fixed
 

@@ -78,6 +78,8 @@ def run(kw):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng = np.random.default_rng([seed, 99]); held, shown = {}, {}
     for op in "+-":
         o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held[op] = P[:500]; shown[op] = P[2000:]
+        if op == "-":                                 # PLAN_1.md section 12: a subtraction line is written with the larger number first, so a never-shown pair (a, b) writes the line of (b, a), which may be shown
+            wr = set(tuple(text("-", a, b)) for a, b in shown["-"]); clean = [q for q in P[:500] if tuple(text("-", *q)) not in wr]; clean_wide = [q for q in P[:2000] if tuple(text("-", *q)) not in wr]
     s = Sys(seed, H=int(kw.get("H", 256))); who = kw.get("who", "P"); r = float(eval(kw.get("r", "1"))); K = int(kw.get("K", 8)); cells = Counting(K); rnd = random.Random(seed * 1000 + 7)
     every = int(kw.get("every", 50000)); fast = int(kw.get("fast", 0)); out = dict(label=kw.get("label"), args=kw, rows=[])
     TAB = {op: np.array([text(op, a, b) for a, b in shown[op]], np.int32) for op in "+-"}; OLD = TAB["+"].tolist(); t_rep = 0.0
@@ -102,10 +104,11 @@ def run(kw):
                         if wf: lines.append(E)        # a line that is not well formed has no fixed length; none arises while K covers what was counted, and one that did would be left out
                 lines = np.array(lines, np.int32); t_rep += time.process_time() - t1
             xs = lines.ravel(); ys = np.concatenate([lines[:, 1:], np.full((len(lines), 1), -1, np.int32)], 1).ravel(); go(xs, ys)
-            if (nxt + 1) % every == 0 or nxt + 1 == n: out["rows"].append(dict(phase=pi, name=name, lines=nxt + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"]), **st))
+            if (nxt + 1) % every == 0 or nxt + 1 == n: out["rows"].append(dict(phase=pi, name=name, lines=nxt + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"]), sub_clean=s.score("-", clean), sub_clean_wide=s.score("-", clean_wide), **st))
     ph = lambda i: [x for x in out["rows"] if x["phase"] == i]; nc, nz = cells.size()
     out.update(add_after_first=float(np.mean([x["add"] for x in ph(0)[-3:]])), cells=nc, counts_above_zero=nz, cpu=round(time.process_time() - t0, 1), cpu_counting_and_replay=round(t_rep, 1))
-    if len(ph(1)): out.update(add_after_second=ph(1)[-1]["add"], sub_after_second=ph(1)[-1]["sub"], add_last3_second=float(np.mean([x["add"] for x in ph(1)[-3:]])), sub_last3_second=float(np.mean([x["sub"] for x in ph(1)[-3:]])))
+    out.update(n_clean=len(clean), n_clean_wide=len(clean_wide))
+    if len(ph(1)): out.update(sub_clean_after_second=ph(1)[-1]["sub_clean"], sub_clean_wide_after_second=ph(1)[-1]["sub_clean_wide"], add_after_second=ph(1)[-1]["add"], sub_after_second=ph(1)[-1]["sub"], add_last3_second=float(np.mean([x["add"] for x in ph(1)[-3:]])), sub_last3_second=float(np.mean([x["sub"] for x in ph(1)[-3:]])))
     run.last = s; run.cells = cells
     if not kw.get("nowrite"):
         os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"p_{kw['label']}.json"), "w"))
