@@ -22,3 +22,7 @@ Text `t3` as `nano/skip/PLAN_8.md` (500 pairs never shown; nearly every line a p
 ## 3. Not run
 
 None of the above was run: the three and a half hours given to this line went to steps 1 and 2 and to locating the fall found in step 1, and a run here needs 12 to 20 minutes and 5.8 gigabytes of the 16 this machine has. The reasoning of section 1 is therefore untested, and I would not build on it before the three runs are made.
+
+## Correction (20 November 2026, after this line's runs had ended)
+
+The coordinating session tells me that the line `nano/ahead2` ran this very question today on plain three-digit sums (its `PLAN_2.md` on `claude/nano-ahead2-8mmhfm`): a look-ahead of three answers 99.7% and a look-ahead of four gains nothing, the carry being passed along a place at a time. I have not read that file or repeated the run; I enter it as that line reports it. If it stands, **the argument of section 1 is wrong** where it says the guess of the tens digit made at the `=` can only come from cells of four digits and that everything above leans on it, and H3 as written here would be refuted. Section 1 is left as I wrote it, as a record of reasoning that was not tested and was contradicted by a measurement. Anyone running step 3 should run the look-ahead of three first. The look-ahead's depth is in any case laid down by hand in this system, not found by it.

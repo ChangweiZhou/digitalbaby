@@ -51,7 +51,7 @@ Life: 40,000 lines of addition, then 20,000 of subtraction, both with letters; n
 
 ## 5. Step 3: three-digit numbers (`PLAN_3.md`): argued, not run
 
-On `aaa+<letters>bbb=cccc` the units digit is four bytes after the `=`. With a look-ahead of three the guess of the tens digit can only come from cells of four digits, which is where the tens digit of two-digit sums stood without look-ahead; the hundreds and thousands lean on it. The smallest change is a look-ahead of four in the same form; `unite.py` supports it (`look=4`) and the check covers it. **No run was made**, so this is reasoning and nothing more.
+On `aaa+<letters>bbb=cccc` the units digit is four bytes after the `=`. With a look-ahead of three the guess of the tens digit can only come from cells of four digits, which is where the tens digit of two-digit sums stood without look-ahead; the hundreds and thousands lean on it. The smallest change is a look-ahead of four in the same form; `unite.py` supports it (`look=4`) and the check covers it. **No run was made**, so this is reasoning and nothing more. **And it is contradicted**: after my runs ended the coordinating session told me that `nano/ahead2` ran plain three-digit sums today with a look-ahead of three (99.7%) and of four (no gain). I have not verified that; as that line reports it, my argument does not hold (`PLAN_3.md`, correction).
 
 ## 6. Reading (mine)
 
@@ -59,6 +59,13 @@ On `aaa+<letters>bbb=cccc` the units digit is four bytes after the `=`. With a l
 2. Both failures have one root, and it is in the joint, not in either piece: **a clock that never stops trying, feeding cells that never forget.** In the relay system the trials were free. Here each misaligned period leaves counts for good, in the first task (the fall) and across tasks (the keeping).
 3. What I would test next, in this order, and have not: a clock whose entries stop trying when their evidence is firm and try a newly met byte value gently (a rule an entry can follow from its own two means; the freezing by line count used here is the program's, and failed on one seed of three); the cap together with it; cells that give back counts they are not reached by any more (a third of the cells are dead weight).
 4. The relay system with the clock is small, slow and goes on rising; the united system is fast, large and falls. For the aim of one system, as the coordinator put it to this line, I take that as a plainer statement of where the pieces stand than either of today's separate results.
+
+## 6a. Added after the runs ended (20 November 2026)
+
+Two things from the coordinating session, entered as notes; nothing was run for them.
+
+- Mr. Xu's words as that session passed them to this line (Chinese with English terms; the coordinator's translation): "We accept the bitter lesson, so you may try things, but avoid spot fixes, ad hoc tricks and the like: means that do not transfer to other tasks. Try more new ideas." Against that: no number of either piece was retuned for this text (the clock runs with `nano/skip`'s numbers, the cells with `nano/ahead2`'s). The stopping of trials at 30,000 lines is a line count laid down by the program; it is used here only to locate a cause and is not offered as a remedy. The look-ahead's depth of three is also laid down by hand, not found by the system. The same numbers were not run again on plain sums by this line; the oracle arm is the nearest thing to it (the chain then holds plain sums).
+- The second cause, stated generally: **a store that keeps every count for good has to be protected from what the system is merely trying.** A general remedy the coordinator names: counts made while an entry is under trial are held apart and added to the cells only if the trial is not kept; no entry and no task is named. **NOT RUN.** For the first cause, also **NOT RUN** in this system: a trust that knows whether a more specific sender is present (`nano/table/PLAN_14.md`). The cap was run on the development seed only.
 
 ## 7. Predictions
 
