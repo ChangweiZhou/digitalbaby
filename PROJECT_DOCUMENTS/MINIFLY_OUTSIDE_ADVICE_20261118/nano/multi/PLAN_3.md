@@ -66,3 +66,16 @@ Never-shown sums, mean of the last three readings (`res/p3_d_*.json`): the refer
 At no K is the edge arm 5 points or more below the reference on this seed (it is above it at three of the four), so by the plan's rule the two sizes are **the two smallest, K = 16 and K = 8**. A cell B that reads 8 of the 128 cells A and rewires answers as often as one that reads all of them, on this seed; I had expected reading few to cost, as it does from lines (step 1), and it does not here.
 
 A run costs 46 to 150 CPU seconds (the machine was shared with step 2's runs), more than the plan's estimate of under a minute. No arm other than E was run on the development seed; the reported seeds follow (`jobs_r3.txt`).
+
+## An addition, entered on 20 November after the reported seeds of the five arms were read and before any run of it
+
+Read so far (`report3.txt`): PJ, the arm in which every cell of a pair-connection can withdraw, is at 16.5 at K = 8 where P2 is at 76.7 and P at 72.3; at K = 16 it is at 71.1 beside 69.6 and 79.5. Two things looked at on the development seed after that (`res/p3_g_PJ*_1.json`; the diagnostic counters added to `prod.py` change no arithmetic, and `check_prod.py` was run again):
+- A guess of mine, that the sending cells withdraw the strong connections, is wrong: the connections withdrawn by sending cells have a mean size of strength of 0.19 (K = 8) and 0.08 (K = 16), against 0.85 and 0.56 for all pairs old enough, and 0.09 and 0.05 for those withdrawn by cells B.
+- At K = 8 only 27% of the pair-connections are at least four periods old at a turnover (62% at K = 16). A cell A sends into 16 pair-connections on average at K = 8, of which about four are old enough, and my rule makes it withdraw from one of them every period.
+
+My reading (to be tested by this addition): the rule as I stated it fails at K = 8 by its rate, not by the fact that sending cells may withdraw: together the cells withdraw from connections faster than a connection can be taught.
+
+**The addition, one thing changed in PJ:** the sending cells withdraw at every 8th turnover only (`jevery=8`: each cell A at most once in 32,768 bytes); cells B as before. Arm **PJs**, at K = 8 and K = 16, five reported seeds (`jobs_r3x.txt`). Its turnover is that of P plus about an eighth, so it is compared with P.
+- Prediction R7 (0.6): PJs is within 5 points of P at both sizes (medians).
+- If R7 fails at K = 8 with PJs below 40, my reading is wrong and the collapse is not a matter of rate.
+The number 8 is not tuned; no other value is run.

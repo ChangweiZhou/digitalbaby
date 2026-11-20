@@ -2,19 +2,20 @@
 """nano/multi, PLAN_3.md: the system with two steps of relay of loop_small_case/cells2.py (`H2=`: lines, cells A, cells B, the answering cell) on
 two-digit sums, in which a cell B holds a fixed number of connections: edges, each from one cell A, and pair-connections, each from two cells A and
 active in proportion to the product of their two outputs. numpy is the reference; fast=1 runs kernq.c.
-    python3 prod.py <label> seed=1 [H=128] [H2=128] [ke=all|K] [kp=0] [rewire=4096] [joint=0] [lines=400000] [every=50000] [fast=1] [rho=1/1024]
+    python3 prod.py <label> seed=1 [H=128] [H2=128] [ke=all|K] [kp=0] [rewire=4096] [joint=0] [lines=400000] [every=50000] [fast=1] [rho=1/1024] [jevery=1]
     ke=all, kp=0, rewire=0: cells2.py with H=128 H2=128, the same draws and arithmetic.
     rewire=T: every T bytes each cell B withdraws the weakest (size of strength) of all its connections at least four periods old and tries another of the same kind at strength 0.
     joint=1: every cell of a pair-connection can set it to zero. Each sending cell keeps, for each pair-connection it sends into, a running mean of the
       size of what it receives back over that connection; at a turnover each cell A withdraws from the one, at least four periods old, over which it
-      has received least. The connection is then at zero whatever its strength was, and its cell B tries another pair."""
+      has received least. The connection is then at zero whatever its strength was, and its cell B tries another pair.
+    jevery=n (an addition to PLAN_3.md): the sending cells withdraw only at every n-th turnover."""
 import json, os, sys, time
 import numpy as np
 from multi import SYMS, SI, END, text, sg
 HERE = os.path.dirname(os.path.abspath(__file__)); S = 14; D = 10; NL = D * S; OFF = np.arange(D) * S
 
 class Sys3:
-    def __init__(s, seed, H=128, H2=128, ke=None, kp=0, rewire=0, joint=0, eta1=.25, eta2=1 / 16, lam=1e-5, rho=1 / 1024):
+    def __init__(s, seed, H=128, H2=128, ke=None, kp=0, rewire=0, joint=0, eta1=.25, eta2=1 / 16, lam=1e-5, rho=1 / 1024, jevery=1):
         wr = np.random.default_rng([seed, 20261119]); g2 = np.random.default_rng([seed, 20261121]); s.g3 = g3 = np.random.default_rng([seed, 20261123])
         s.H, s.H2, s.eta1, s.eta2, s.lam, s.rewire, s.joint, s.rho = H, H2, eta1, eta2, lam, rewire, joint, rho
         s.W1 = wr.uniform(-.5, .5, (H, NL)); s.b1 = np.zeros(H); s.R = wr.uniform(-1, 1, (H2, S)); s.W2 = np.zeros((S, H2)); s.b2 = np.zeros(S); s.bB = np.zeros(H2)
@@ -34,7 +35,7 @@ class Sys3:
             s.PA[k], s.PB[k] = a, b
         s.PW = g3.uniform(-1, 1, (H2, kp)) / np.sqrt(K / 3); s.PR = g3.uniform(-1, 1, (H2, kp)); s.QA = np.zeros((H2, kp)); s.QB = np.zeros((H2, kp))
         s.Eage = np.zeros((H2, s.KE), np.int32); s.Page = np.zeros((H2, kp), np.int32); s.nbytes = 0; s.made = [0, 0, 0]      # connections made after a withdrawal: edges by B, pairs by B, pairs after a sending cell withdrew
-        s.hist = [END] * D; s.fast = 0; s.right = 0
+        s.hist = [END] * D; s.fast = 0; s.right = 0; s.diag = [0.0, 0, 0.0, 0, 0.0, 0]; s.jevery = jevery; s.nturn = 0
     def draw(s, n):
         """n pairs of two different cells A, the lower index first."""
         a = s.g3.integers(s.H, size=n); b = (a + 1 + s.g3.integers(s.H - 1, size=n)) % s.H; return np.minimum(a, b), np.maximum(a, b)
@@ -68,12 +69,16 @@ class Sys3:
         if s.KP: ap = np.where(s.Page >= 4, np.abs(s.PW), np.inf); pweak = ap.argmin(1); wp = ap[j, pweak]
         dol = np.isfinite(wl) & (wl <= wp); dop = np.isfinite(wp) & (wp < wl)
         if dol.any(): jj = j[dol]; q = weak[dol]; s.EA[jj, q] = new[dol]; s.EW[jj, q] = 0.0; s.ER[jj, q] = 0.0; s.Eage[jj, q] = 0; s.made[0] += len(jj)
+        if dop.any(): s.diag[0] += float(np.abs(s.PW[j[dop], pweak[dop]]).sum()); s.diag[1] += int(dop.sum())      # diagnostic only: sizes of the strengths withdrawn by cells B
         for k in j[dop]: s.put(k, pweak[k]); s.made[1] += 1
-        if s.joint and s.KP:                           # each cell A withdraws from the pair-connection over which it has received least
+        s.nturn += 1
+        if s.joint and s.KP and s.nturn % s.jevery == 0:      # each cell A withdraws from the pair-connection over which it has received least
             n = H2 * s.KP; snd = np.concatenate([s.PA.ravel(), s.PB.ravel()]); tr = np.concatenate([s.QA.ravel(), s.QB.ravel()]); ok = np.nonzero(np.concatenate([s.Page.ravel() >= 4] * 2))[0]
             if len(ok):
                 o = ok[np.lexsort((ok, tr[ok], snd[ok]))]; _, first = np.unique(snd[o], return_index=True)
-                for e in np.unique(o[first] % n): s.put(e // s.KP, e % s.KP); s.made[2] += 1
+                es = np.unique(o[first] % n); old = s.Page.ravel() >= 4
+                s.diag[2] += float(np.abs(s.PW.ravel()[es]).sum()); s.diag[3] += len(es); s.diag[4] += float(np.abs(s.PW.ravel()[old]).sum()); s.diag[5] += int(old.sum())   # diagnostic only: withdrawn by sending cells; all old enough
+                for e in es: s.put(e // s.KP, e % s.KP); s.made[2] += 1
     def put(s, k, q):
         s.PA[k, q], s.PB[k, q] = s.newpair(k); s.PW[k, q] = 0.0; s.PR[k, q] = 0.0; s.QA[k, q] = 0.0; s.QB[k, q] = 0.0; s.Page[k, q] = 0
     def feed(s, xs, ys):
@@ -97,7 +102,7 @@ def run(kw):
     for op in "+-": o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held[op] = P[:500]; shown[op] = P[2000:]
     ke = kw.get("ke", "all")
     s = Sys3(seed, H=int(kw.get("H", 128)), H2=int(kw.get("H2", 128)), ke=None if ke == "all" else int(ke), kp=int(kw.get("kp", 0)), rewire=int(kw.get("rewire", 0)), joint=int(kw.get("joint", 0)),
-             eta1=float(eval(kw.get("eta1", "1/4"))), eta2=float(eval(kw.get("eta2", "1/16"))), lam=float(kw.get("lam", 1e-5)), rho=float(eval(kw.get("rho", "1/1024"))))
+             eta1=float(eval(kw.get("eta1", "1/4"))), eta2=float(eval(kw.get("eta2", "1/16"))), lam=float(kw.get("lam", 1e-5)), rho=float(eval(kw.get("rho", "1/1024"))), jevery=int(kw.get("jevery", 1)))
     s.fast = int(kw.get("fast", 0)); n = int(kw.get("lines", 400000)); every = int(kw.get("every", 50000)); TAB = np.array([text("+", a, b) for a, b in shown["+"]], np.int32)
     out = dict(label=kw.get("label"), args=kw, counts=s.counts(), rows=[]); it = 0
     while it < n:
@@ -106,6 +111,7 @@ def run(kw):
         if it % every == 0: a, pl = score(s, held["+"]); out["rows"].append(dict(lines=it, add=a, place=pl))
     out["made_edges_pairs_bysender"] = s.made; out["cpu"] = round(time.process_time() - t0, 1); out["last3"] = float(np.mean([r["add"] for r in out["rows"][-3:]])) if out["rows"] else None; run.last = s
     if s.KP: out["pair_abs_mean"] = float(np.abs(s.PW).mean()); out["ends_a_cell_A_min_max"] = [int(v) for v in (lambda c: (c.min(), c.max()))(np.bincount(np.concatenate([s.PA.ravel(), s.PB.ravel()]), minlength=s.H))]
+    if s.joint and s.diag[3]: out["size_of_strength_when_withdrawn"] = dict(by_cell_B=s.diag[0] / max(s.diag[1], 1), by_a_sending_cell=s.diag[2] / s.diag[3], all_pairs_old_enough=s.diag[4] / s.diag[5]); out["share_of_pairs_old_enough_at_a_sending_turnover"] = s.diag[5] / (s.nturn // s.jevery * s.H2 * s.KP)
     if s.KE: out["edge_abs_mean"] = float(np.abs(s.EW).mean())
     if kw.get("nowrite"): return out
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"p3_{kw['label']}.json"), "w")); return out
