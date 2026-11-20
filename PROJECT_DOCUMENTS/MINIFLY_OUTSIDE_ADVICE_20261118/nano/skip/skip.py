@@ -17,6 +17,13 @@ clock=bytes:<q>    each byte is passed over with chance q, whatever it is (a con
 clock=rule    the rule, which names no byte: a byte value v enters the chain only while Q(v) >= theta * Q0(v), where Q(v) is the sum, over the nine
               chain lines of v and over the cells in between, of the sizes of the strengths that the cells hold from those lines, and Q0(v) is the same
               sum at birth (ref=birth) or the mean of Q over the byte values at this moment (ref=mean).
+clock=trial   (PLAN_2.md) each byte value has an entry to the chain that holds one number u, its tendency to be closed. Every P bytes of the stream
+              ([P=256]) each entry is closed with chance c = logistic(u), kept between eps and 1 - eps ([eps=0.01]), and open otherwise; while it is
+              closed its byte value is passed over. The answering cell sends out one number at every byte, the same to all entries: the sum of its
+              squared mismatches. At the end of a period, with r that number's mean over the period, b the running mean of r and w the running mean of
+              |r - b| ([beta=0.02]): every u moves by alpha * z * ((1 if it was closed, else 0) - c), with z = (b - r) / w kept within -3 and 3
+              ([alpha=0.05]); u starts at logit(p0) ([p0=0.2]). alpha=0: the tendencies never change (the closing by chance, a control).
+              The scores are taken with every entry in its likelier state (closed where u > 0) and no drawing.
 lam1          a cell's strengths from the lines that are active fade by this fraction at every byte at which they are used (0: as in cells2.py).
 """
 import ctypes, json, os, subprocess, sys, time
@@ -35,7 +42,7 @@ def sg(u): return 1 / (1 + np.exp(-u))
 # ---------------------------------------------------------------- the compiled kernel
 I64, F64, PD, PI, P32, PU = ctypes.c_int64, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int64), ctypes.POINTER(ctypes.c_int32), ctypes.POINTER(ctypes.c_uint8)
 class KNet(ctypes.Structure):
-    _fields_ = [(k, I64) for k in "H NL S D mode pend".split()] + [(k, F64) for k in "eta1 eta2 lam lam1 theta".split()] + [(k, PD) for k in "W1 b1 W2 b2 R L0".split()] + [("hist", PI), ("nskip", PI)]
+    _fields_ = [(k, I64) for k in "H NL S D mode pend".split()] + [(k, F64) for k in "eta1 eta2 lam lam1 theta".split()] + [(k, PD) for k in "W1 b1 W2 b2 R L0".split()] + [("hist", PI), ("nskip", PI), ("esum", F64), ("ecnt", I64)]
 _lib = None
 def lib():
     global _lib
@@ -53,7 +60,7 @@ class Sk:
     def __init__(s, seed, H=256, eta1=.25, eta2=1 / 16, lam=1e-5, lam1=0.0):
         wr = np.random.default_rng([seed, 20261119]); s.H, s.eta1, s.eta2, s.lam, s.lam1 = H, eta1, eta2, lam, lam1
         s.W1 = wr.uniform(-.5, .5, (H, NL)); s.b1 = np.zeros(H); s.R = wr.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S)
-        s.hist = [END] * D; s.pend = 1; s.rule = False; s.theta = 0.5; s.ref = "birth"; s.Q0 = s.Q(); s.nskip = np.zeros(S, np.int64); s.fast = 0
+        s.hist = [END] * D; s.pend = 1; s.rule = False; s.theta = 0.5; s.ref = "birth"; s.Q0 = s.Q(); s.nskip = np.zeros(S, np.int64); s.fast = 0; s.esum = 0.0; s.ecnt = 0
     def Qmat(s): return np.abs(s.W1).sum(0).reshape(D, S)                 # for each line: the sum of the sizes of the strengths that the cells hold from it
     def Q(s): return s.Qmat()[1:].sum(0)                                  # for each byte value: that sum over its nine chain lines
     def refQ(s): return s.Q0 if s.ref == "birth" else np.full(S, s.Q().mean())
@@ -68,7 +75,7 @@ class Sk:
         else: s.hist[0] = x; s.nskip[p] += 1
         if fl is not None: s.pend = int(fl)
         if y < 0: return
-        act = OFF + np.asarray(s.hist); h, a = s.fwd(s.hist); m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
+        act = OFF + np.asarray(s.hist); h, a = s.fwd(s.hist); m = -a; m[y] += 1; s.esum += float(m @ m); s.ecnt += 1; g = s.eta2 / (h @ h + 1)
         d = s.eta1 * (s.R @ m) * h * (1 - h); d2 = np.outer(g * m, h)
         s.R += d2.T; s.W1[:, act] = (s.W1[:, act] + d[:, None]) * (1 - s.lam1); s.b1 += d; s.W2 += d2; s.b2 += g * m; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
     def run(s, xs, ys, fl=None):
@@ -77,11 +84,11 @@ class Sk:
             return
         n = KNet(); hist = np.asarray(s.hist, np.int64); L0 = np.ascontiguousarray(s.refQ(), np.float64)
         assert s.ref == "birth" or not s.rule, "the compiled kernel has the rule with ref=birth only"
-        n.H, n.NL, n.S, n.D, n.mode, n.pend = s.H, NL, S, D, 2 if s.rule else 0, s.pend; n.eta1, n.eta2, n.lam, n.lam1, n.theta = s.eta1, s.eta2, s.lam, s.lam1, s.theta
+        n.H, n.NL, n.S, n.D, n.mode, n.pend = s.H, NL, S, D, 2 if s.rule else 0, s.pend; n.esum = 0.0; n.ecnt = 0; n.eta1, n.eta2, n.lam, n.lam1, n.theta = s.eta1, s.eta2, s.lam, s.lam1, s.theta
         n.W1, n.b1, n.W2, n.b2, n.R, n.L0 = pd(s.W1), pd(s.b1), pd(s.W2), pd(s.b2), pd(s.R), pd(L0); n.hist = hist.ctypes.data_as(PI); n.nskip = s.nskip.ctypes.data_as(PI)
         xs = np.ascontiguousarray(xs, np.int32); ys = np.ascontiguousarray(ys, np.int32); f = None if fl is None else np.ascontiguousarray(fl, np.uint8)
         lib().skip_steps(ctypes.byref(n), len(xs), xs.ctypes.data_as(P32), ys.ctypes.data_as(P32), None if f is None else f.ctypes.data_as(PU))
-        s.hist = [int(v) for v in hist]; s.pend = int(n.pend)
+        s.hist = [int(v) for v in hist]; s.pend = int(n.pend); s.esum += float(n.esum); s.ecnt += int(n.ecnt)
     def score(s, tx, pairs, gap, admit):
         """Whole answer right, %, and by place. Every line is read from the state left by the last line of the stream; nothing changes.
         admit(byte value) says whether a byte enters the chain (the clock as it stands now)."""
@@ -124,17 +131,33 @@ def run(kw):
     elif ck.startswith("values:"): used = [v for v in range(S) if v != SI[ord("-")]]; passed[crng.choice(used, int(ck[7:]), replace=False)] = True      # among the 17 byte values that occur
     elif ck.startswith("bytes:"): q = float(ck[6:])
     elif ck == "rule": s.rule = True
+    elif ck == "trial":
+        P = int(kw.get("P", 256)); alpha = float(kw.get("alpha", 0.05)); eps = float(kw.get("eps", 0.01)); beta = float(kw.get("beta", 0.02)); p0 = float(kw.get("p0", 0.2))
+        u = np.full(S, np.log(p0 / (1 - p0))); tr = dict(b=None, w=None, n=0)
     else: assert ck == "none", ck
-    given = ck != "none" and not s.rule
+    trial = ck == "trial"; given = ck != "none" and not s.rule and not trial
+    def trial_block(xs, ys):
+        """The stream in periods of P bytes; in each, the entries draw their states, the bytes are read, and the tendencies move."""
+        nonlocal u
+        for i in range(0, len(xs), P):
+            c = np.clip(sg(u), eps, 1 - eps); closed = crng.random(S) < c; x = xs[i:i + P]; s.esum = 0.0; s.ecnt = 0; s.run(x, ys[i:i + P], ~closed[x])
+            if s.ecnt < P // 4: continue                                   # a short remainder at the end of a block of lines: no change
+            r = s.esum / s.ecnt; tr["n"] += 1
+            if tr["b"] is None: tr["b"] = r; tr["w"] = 0.05 * r; continue
+            z = float(np.clip((tr["b"] - r) / max(tr["w"], 1e-12), -3, 3)); u = np.clip(u + alpha * z * (closed - c), -9, 9)
+            tr["w"] += beta * (abs(r - tr["b"]) - tr["w"]); tr["b"] += beta * (r - tr["b"])
     def admit_now():
         if s.rule: e = [s.enters(v) for v in range(S)]; return lambda v: e[v]
+        if trial: e = u <= 0; return lambda v: bool(e[v])
         if q: return lambda v: bool(crng.random() >= q)
         return lambda v: not passed[v]
     out = dict(label=kw["label"], args=kw, rows=[], passed_by_program=[chr(SYMS[v]) for v in np.flatnonzero(passed)]); done = 0; nb = 0
     while done < lines:
         n = min(every, lines - done); xs, ys = stream(tx, shown, G, n, rng)
         fl = None if not given else (crng.random(len(xs)) >= q) if q else ~passed[xs]
-        s.run(xs, ys, fl); done += n; nb += len(xs); adm = admit_now()
+        if trial: trial_block(xs, ys)
+        else: s.run(xs, ys, fl)
+        done += n; nb += len(xs); adm = admit_now()
         row = dict(lines=done, bytes=nb, never_by_gap={}, shown_by_gap={}, place={})
         for g in gaps:
             row["shown_by_gap"][g], pl = s.score(tx, shown_s, g, adm)
@@ -142,6 +165,7 @@ def run(kw):
             row["place"][g] = pl
         row["Q"] = [round(float(x), 2) for x in s.Q()]; row["Qmat"] = [[round(float(x), 1) for x in r] for r in s.Qmat()]; row["nskip"] = [int(x) for x in s.nskip]
         if s.rule: row["passed_over_now"] = [chr(SYMS[v]) for v in range(S) if not s.enters(v)]
+        if trial: row["passed_over_now"] = [chr(SYMS[v]) for v in range(S) if u[v] > 0]; row["u"] = [round(float(x), 3) for x in u]; row["mismatch_mean"] = tr["b"]; row["periods"] = tr["n"]
         out["rows"].append(row)
     out["Q0"] = [round(float(x), 2) for x in s.Q0]; out["syms"] = [chr(c) for c in SYMS]; out["cpu"] = round(time.process_time() - t0, 1)
     key = "shown_by_gap" if tx in ("g1", "m1") else "never_by_gap"; out["scored"] = key
@@ -153,4 +177,5 @@ def run(kw):
 if __name__ == "__main__":
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw); r = o["rows"][-1]
     print(o["label"], "| last3 by gap", " ".join(f"{g}:{v:.1f}" for g, v in o["last3_by_gap"].items()), "|", " ".join(f"{r_['lines']//1000}k " + "/".join(f"{v:.0f}" for v in r_[o['scored']].values()) for r_ in o["rows"]),
-          "| place", r["place"], "| passed over", r.get("passed_over_now", o["passed_by_program"]), "| Q/Q0", " ".join(f"{chr(c) if c != 10 else 'nl'}:{a / b:.2f}" for c, a, b in zip(SYMS, r["Q"], o["Q0"])), "|", o["cpu"], "s")
+          "| place", r["place"], "| passed over", [(r_["lines"] // 1000, "".join(r_["passed_over_now"]).replace("\n", "N")) for r_ in o["rows"]] if "u" in r else r.get("passed_over_now", o["passed_by_program"]),
+          ("| u " + " ".join(f"{chr(c) if c != 10 else 'nl'}:{x:.1f}" for c, x in zip(SYMS, r["u"]))) if "u" in r else "", "| Q/Q0", " ".join(f"{chr(c) if c != 10 else 'nl'}:{a / b:.2f}" for c, a, b in zip(SYMS, r["Q"], o["Q0"])), "|", o["cpu"], "s")

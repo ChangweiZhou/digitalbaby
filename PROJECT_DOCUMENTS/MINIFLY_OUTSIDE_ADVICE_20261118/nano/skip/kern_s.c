@@ -11,6 +11,7 @@ typedef struct {
     double eta1, eta2, lam, lam1, theta;
     double *W1, *b1, *W2, *b2, *R, *L0;                 /* L0: for each byte value, the reference that its sum is compared with (S numbers) */
     int64_t *hist, *nskip;                              /* hist[0]: the present byte; hist[1..D-1]: the chain. nskip: bytes passed over, by byte value */
+    double esum; int64_t ecnt;                          /* out: the sum over the bytes named of the answering cell's squared mismatches (summed over its branches), and their number */
 } KNet;
 
 /* Each step: the byte xs[i] arrives. The byte that was present enters the chain (which moves on by one) or is passed over; then, if ys[i] >= 0, the
@@ -40,6 +41,7 @@ int64_t skip_steps(KNet *n, int64_t nsteps, const int32_t *xs, const int32_t *ys
         const double g = n->eta2 / (hh + 1.0);
         for (int64_t v = 0; v < S; v++) { const double *restrict w = W2 + v * H; double a = 0; for (int64_t j = 0; j < H; j++) a += w[j] * h[j]; m[v] = -(sc * a + n->b2[v]); }
         m[y] += 1.0;
+        { double e = 0; for (int64_t v = 0; v < S; v++) e += m[v] * m[v]; n->esum += e; n->ecnt++; }
         for (int64_t j = 0; j < H; j++) r[j] = 0.0;
         for (int64_t v = 0; v < S; v++) { const double mv = m[v]; const double *restrict w = Rt + v * H; for (int64_t j = 0; j < H; j++) r[j] += mv * w[j]; }
         for (int64_t j = 0; j < H; j++) dv[j] = n->eta1 * sc * r[j] * h[j] * (1.0 - h[j]);
