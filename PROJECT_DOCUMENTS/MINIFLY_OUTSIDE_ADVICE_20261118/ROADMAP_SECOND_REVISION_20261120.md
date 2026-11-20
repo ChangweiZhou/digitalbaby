@@ -95,6 +95,10 @@ The earlier steps map as follows: R1 is done at development level; R2 continues 
 | K1 | `nano/keep` | a separate agent session (`session_017dSEpXu5KdKMbirXHJwCXF`) | `claude/nano-keep-8mmhfm` | candidates by which the cells settle where the second task is written |
 | C3 | `nano/multi` | a separate agent session (`session_017dSEpW3ZFJMFsWvpL1fwEs`) | `claude/nano-multi-8mmhfm` | connections of three ends against edges at equal numbers of strengths |
 | C6 | `nano/kinds` | a separate agent session (`session_017dSEpWr5ht93HPhGeTZChy`) | `claude/nano-kinds-8mmhfm` | memory, clocks, a common signal: one at a time |
+| M1, holding cells that read only lines | `nano/layered` | a separate agent session (`session_017dSEpXmJFSSep8BaKzCffH`) | `claude/nano-layered-8mmhfm` | two kinds of cells and the relay over two steps, so that no crossing is needed; from the crosswalk of the old lists, item 1 |
+| K, a diagnostic | `loop_small_case` | this session | `claude/friendly-darwin-8mmhfm` | how much of the first task is still in the cells in between (`PLAN_13.md`); from the crosswalk, item 3 |
 
 The first three agent sessions were started from this branch at fe397ca6 and the last four at 260c5d73, after Mr. Xu's word to keep experimenting, each with a written brief: one line, one folder, a plan committed before each step's runs, settings chosen on the development seed, a numpy reference for every compiled program, and a short report to this session after each step. 
 Their results are merged into this branch and entered in the ledger as they come.
+
+Added the same day: the agent of `nano/joint` finished C1 and C2 within the first hour and was given three further steps (a whole cell dropping out; rules for fixing a strength; the sign with the right to withdraw). The old lists of mechanisms on the default branch were set against the loop at Mr. Xu's request (`OLD_LISTS_AGAINST_THE_LOOP_20261120.md`); two of its items became the last two lines of the table above.
