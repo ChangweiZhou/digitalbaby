@@ -318,8 +318,47 @@ def run_stream(kw):
         Tu = s.Tu(); T = s.T(); out["recall_trust_by_level"] = [[round(float(T[i, l]), 3) if Tu[i, l] > 0 else None for l in range(NL)] for i, k in enumerate(kinds) if k[0] == 2]; out["recall_uses_by_level"] = [[int(Tu[i, l]) for l in range(NL)] for i, k in enumerate(kinds) if k[0] == 2]
     return out
 
+# ---------------------------------------------------------------- two-digit sums as one stream among others (the text, split and scoring of nano/merge/merge.py and nano/table/gate.py)
+SYMS = list(b"0123456789+=\n-"); SI = {c: i for i, c in enumerate(SYMS)}; END = SI[10]
+def text(a, b): return [SI[c] for c in f"{a:02d}+{b:02d}={a + b:03d}\n".encode()]
+
+def run_sums(kw):
+    """The stream: lines 'ab+cd=efg' drawn from 8,000 shown pairs; 500 pairs never shown are answered digit by digit from the system's own digits, each after a read line
+    (five draws of the line before, as gate.py), with nothing changing. Kinds: every set of at most four of the last nine delays (256), as the programme's sums system has."""
+    seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 40000)); t0 = time.process_time(); D = 9; S = 14
+    rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]; rng.permutation(10000)
+    TAB = np.array([text(a, b) for a, b in shown], np.int64); marks = list(range(5000, lines + 1, 5000)); train = np.concatenate([TAB[rng.integers(8000, size=5000)] for _ in marks]).ravel()
+    Ls = np.array([text(a, b) for a, b in held]); g = np.random.default_rng([seed, 7]); prevs = [TAB[g.integers(8000, size=500)] for _ in range(5)]
+    ev = np.concatenate([np.hstack([pv, Ls]).ravel() for pv in prevs]); base = D + len(train); x = np.concatenate([np.full(D, END), train, ev]).astype(np.int32)
+    kinds = kinds_of(kw.get("kinds", "sums"), S, int(kw.get("recall", 0)), float(kw.get("born", 0.02)))
+    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.1)), e=float(kw.get("e", 2.0)), rule=int(kw.get("rule", 1)), gate=int(kw.get("gate", 1)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)))
+    truth = x[base:].copy().reshape(5, 500, 20)
+    def score():
+        r = {}
+        for cell in (1, 2) if s.gate else (1,):
+            s.x[base:] = truth.ravel(); right = np.zeros((5, 500, 3), bool)
+            for d in range(5):
+                for i in range(500):
+                    p0 = base + (d * 500 + i) * 20 + 10
+                    for j in (6, 7, 8):
+                        out = s.run(p0 + j, p0 + j + 1, False, True); v = int(out[1 + cell][0].argmax()); right[d, i, j - 6] = v == truth[d, i, 10 + j]; s.x[p0 + j] = v      # the system's own digit is what it reads next
+            r[f"cell{cell}"] = dict(whole=float(100 * right.all(2).mean()), place=(100 * right.mean((0, 1))).tolist())
+        s.x[base:] = truth.ravel(); return r
+    rows = []; done = D; nl = [[], []]
+    for mk in marks:
+        hi = D + mk * 10; a1, a2 = s.run(done, hi, True); nl[0].append(a1); nl[1].append(a2 if a2 is not None else a1); done = hi
+        if mk >= lines - 10000 or mk in (5000, 10000, 20000): rows.append(dict(lines=mk, **score()))
+    cells = ("cell1", "cell2") if s.gate else ("cell1",); last5 = 50000
+    out = dict(task="sums", args=kw, seed=seed, rows=rows, sizes=s.sizes(), nats_a_byte_over_the_last_5000_lines_read={c: float(np.concatenate(nl[i])[-last5:].mean()) for i, c in enumerate(cells)}, cpu=round(time.process_time() - t0, 1))
+    for c in cells: out[c] = dict(last=rows[-1][c]["whole"], last3=float(np.mean([r[c]["whole"] for r in rows[-3:]])), place=rows[-1][c]["place"])
+    return out
+
 if __name__ == "__main__":
     if sys.argv[1] == "check": sys.exit(0 if check() else 1)
+    if sys.argv[1] == "sums":
+        kw = dict(a.split("=") for a in sys.argv[2:]); tag = kw.pop("tag"); out = run_sums(kw); os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"sums__{tag}_seed{out['seed']}.json"), "w"))
+        print("sums", tag, "seed", out["seed"], "| never-shown sums right, after a read line, last and mean of the last three readings:", {c: (round(out[c]["last"], 1), round(out[c]["last3"], 1)) for c in ("cell1", "cell2") if c in out}, "| by lines:", [(r["lines"], round(r["cell1"]["whole"], 1)) for r in out["rows"]],
+              "| nats a byte while reading the last 5,000 lines:", {c: round(v, 4) for c, v in out["nats_a_byte_over_the_last_5000_lines_read"].items()}, "| cells", out["sizes"]["cells"], "| cpu", out["cpu"], flush=True); sys.exit(0)
     if sys.argv[1] == "check_gate": sys.exit(0 if check_gate() else 1)
     kw = dict(a.split("=") for a in sys.argv[2:]); out = run_stream(kw); tag = kw.pop("tag", None) or "_".join(f"{k}{v}" for k, v in sorted(kw.items()) if k != "stream"); os.makedirs(os.path.join(HERE, "res"), exist_ok=True)
     json.dump(out, open(os.path.join(HERE, "res", f"{out['stream']}__{tag or 'base'}.json"), "w")); r = lambda v: None if v is None else round(v, 4)
