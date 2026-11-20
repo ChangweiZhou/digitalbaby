@@ -204,3 +204,33 @@ Arms on seed 1, 400,000 lines: A' (lessons by agreement) and B' (the relay syste
 | G5 | arm B' at 40,000 lines within 3 points of the unchanged system | 0.30 |
 
 *What is run next, decided here:* arm A' is run on the five reported seeds beside the arms of `PLAN_1.md` if it holds G2, whether or not it holds G1 (the late readings are what the coordinator's second mark asks; the first mark is then reported as it falls); arm B' as well only if it is above arm A' at both 40,000 and 400,000 lines.
+
+## 13. Outcome of addition 4 (entered 20 November; `res/s2_d4_agree_seed1.json`, `res/s2_d4_relay_seed1.json`; 864 and 703 CPU-seconds)
+
+Seed 1, joined second cell, never-shown additions after a read line:
+
+| Lines | Relay alone | Unchanged joined | **Arm A': lessons by agreement, the composer writes what it is sure of** | Arm B' |
+|---|---|---|---|---|
+| 5,000 | 3.2 | 92.9 | 93.3 | 92.7 |
+| 10,000 | 12.4 | 95.9 | 95.7 | 92.7 |
+| 20,000 | 71.8 | 97.0 | 96.7 | 90.8 |
+| 40,000 | 75.3 | 96.6 | **97.1** | 82.8 |
+| 50,000 | 83.6 | 96.7 | 97.0 | 89.4 |
+| 100,000 | 90.5 | 96.6 | 90.5 | 88.4 |
+| 150,000 | 92.2 | 78.9 | **95.3** | 93.0 |
+| 200,000 | 93.2 | 78.3 | **97.6** | 94.7 |
+| 250,000 | 91.0 | 77.9 | **97.9** | 93.1 |
+| 300,000 | 94.1 | 87.2 | **98.0** | 96.2 |
+| 350,000 | 94.6 | 87.5 | **98.2** | 95.5 |
+| 400,000 | 96.7 | 87.2 | **98.1** | 96.7 |
+
+Arm A' is not refuted by either mark (97.1 at 40,000 lines, 98.1 at 400,000). G1 held. G2 held. G3 failed: at 100,000 lines it has 90.5, where the unchanged system still has 96.6 (the class kinds alone answer 77.5% at that reading and 94% at every other from 40,000 on; the classes are found anew at 64,000 and 128,000 lines; not examined further). G4 failed: 38,513 of 171,140 well-formed new lines are right sums (23%; 39% in the last 50,000 lines). G5 failed (arm B' 82.8 at 40,000 lines).
+
+Readings (mine; one seed, development level).
+1. **On this seed the joined system with lessons by agreement is above both of its parts at ten of the twelve readings, level with the counting system at 10,000 and 20,000 lines (within 0.3) and under it once (100,000 lines).** At 400,000 lines it has 98.1 where the relay system alone has 96.7 and the unchanged joined system 87.2.
+2. It answers as well as the same system does with its little-counted cells silenced at the score (98.2 and 98.7 at 400,000 lines with only counts of 64 and of 512 and more): the lessons have taught the trusts what the look of section 5 did by hand.
+3. The teacher need not be good. The relay system answers 75% of never-shown sums at 40,000 lines and writes right sums in under a tenth of its new lines there; the lessons cost nothing at that age, because a byte is taught only where the pupil already answers it the same way. What the agreement adds to the pupil is not the answer; it is which cells may not weaken it on a line that is new.
+4. The relay system is not heard as a voice (the answer with it silent is the same to 0.2 points). It is the second kind of cell that makes the lesson possible: the composer of lines that stay new, and the independent answer.
+5. Not shown: more than one seed (next); the self-taught control (lessons towards the answering cell's own answer on the same lines, which would say whether the relay system's agreement is needed or its composing alone); what happens at 100,000 lines.
+
+By the rule of section 12 arm A' goes to the five reported seeds: `PLAN_5.md`.
