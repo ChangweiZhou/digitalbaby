@@ -84,3 +84,7 @@ Beside them: unsmoothed tables of the last 3, 4, 5 bytes 1.796, 1.755, 1.927 nat
 **Departures from the plan, in one place:** two of three seeds at 4,096 cells stopped; the fixed-setting run at 16,384 cells stopped after one reading; a settings check at 4,096 cells and a second series added, both entered above before or as they started.
 
 **Cost.** 4,096 cells: 4.7 to 4.9 minutes a reading; 16,384 cells: 20 minutes a reading (one core each, four busy). **Not run:** 16,384 cells beyond 2 readings; eta1 above H / 256 at 4,096 and 16,384 cells; eta2 and the birth chosen anew at each size; more than one seed for the series with eta1 in proportion (two more seeds at 1,024 cells are at the end of the queue).
+
+## Entered after the last runs (about 17:20 UTC; nothing above is changed)
+
+The two further seeds of 1,024 cells with eta1 = 4 were run: 8 readings, seeds 73129, 93683, 116089: 1.7505, 1.7528, 1.7517; mean **1.7517 nats (2.5271 bits; 49.16% right)**. The series with eta1 in proportion is therefore 1.794, 1.752, 1.738 at 256, 1,024, 4,096 cells (0.043, then 0.014 for each factor of four); nothing in the outcome above changes.
