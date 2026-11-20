@@ -75,3 +75,31 @@ To the reported seeds, by the rule of section 3: (i); (ii) at 8e-4; (iii) at 1e-
 S6 failed on this grid: the score of (iv) does not fall with the floor (66.1, 56.5, 71.4).
 
 A remark before the reported seeds, so that it is not made afterwards: the changes of fixed size answer nothing at any step tried, in the answering cell and in the cells in between, and I did not expect that of (iii-b) or of Part B (iii) (S4 at 0.4, S7 at 0.5). Under a change of fixed size with a fading of 1e-5 a byte no strength can exceed p / 1e-5, and a strength pushed one way for long sits at that bound whatever the size of the mismatch; I have not tested whether that, or the loss of the mismatch's size as such, is the cause. No further grid is run for them in this plan.
+
+## 8. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report5.txt` (made by `report5.py` from `res/s_*.json`). The numpy program at full length ((ii) at 8e-4, seed 1) gives the compiled program's readings to the digit (81.0).
+
+Never-shown sums, whole answer right, %, mean of the last three readings; five reported seeds, median, and the median of the paired differences from (i).
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median | against (i) |
+|---|---|---|---|---|---|---|---|
+| (i) the present rules | 84.2 | 82.7 | 86.4 | 81.8 | 86.7 | **84.2** | |
+| A (ii) no division, fixed step 8e-4 | 86.3 | 82.9 | 81.8 | 80.1 | 79.7 | **81.8** | -1.7; 3 below, 2 above |
+| A (iii) fixed size 1e-5, sign of m h | 0.0 | 0.0 | 0.0 | 0.0 | 0.0 | **0.0** | -84.2 |
+| A (iii-b) fixed size 1e-4, sign of m (h - 1/2) | 4.7 | 0.1 | 0.7 | 2.6 | 1.3 | **1.3** | -82.5 |
+| A (iv) in proportion to own size, floor 1/1024 | 67.9 | 71.7 | 43.8 | 64.1 | 60.8 | **64.1** | -17.7; 5 below |
+| B (iii) cells: fixed size 1e-2 | 0.9 | 0.8 | 1.2 | 0.7 | 0.4 | **0.8** | -83.3 |
+| B (iv) cells: in proportion to own size, floor 1/4 | 89.3 | 80.9 | 78.5 | 87.4 | 85.5 | **85.5** | -1.1; 3 below, 2 above |
+
+**The hypothesis.** H stands: without the division, at the best fixed step, the answering cell scores -1.7 at the median of the paired differences (+2.1, +0.3, -4.6, -1.7, -6.9), inside the 4 points and without a common sign. The division is not what makes the system work. Two things beside that: the fixed step had to be found (65.2 at an eighth of the best step, 74.3 at twice it, on seed 1), where the division needs no such search; and the two largest losses (-4.6, -6.9) are larger than any gain, so a cost of a few points is not excluded by five seeds.
+
+**What I read from the other rules.**
+
+1. *A change of fixed size answers nothing, in the answering cell and in the cells in between* (0.0, 1.3, 0.8). For (iii) as asked that is by construction (section 2). For (iii-b) and for the cells it is a finding at the steps tried: the size of the mismatch is needed by this system, or the bound p / 1e-5 that the fading puts on a strength under such a rule spoils it; I have not separated the two.
+2. *A change in proportion to the strength's own size loses 18 points in the answering cell* (five seeds below) and leaves 86% of the connections below one hundredth of the largest, with the largest strength near 0.8 against 0.09. This is the same picture as the product form of `PLAN_1.md` with weight at the sending end (-19.2 points, 58% near zero, largest 0.73): in both, a strong connection changes faster than a weak one. Two different rules with that property lose alike; I take it as support, not proof, that the property is the cause there.
+3. *The same proportional rule in the cells in between costs nothing measurable* (85.5; -1.1 at the median, no common sign), with the floor at the birth size of the strengths (1/4); at smaller floors seed 1 gave 62.1 and 69.3 against 72.8, so it is the mildest form that is level, and on seed 1 even that was 8.7 below (i) while the reported seeds are not: the development seed misleads again in size.
+
+**Predictions.** S1 held. S2 held (-1.7). S3 held (0.0). S4 failed (1.3). S5 held (-17.7). S6 failed (66.1, 56.5, 71.4 on seed 1). S7 failed (0.8). S8 held (-1.1).
+
+**Not run:** as section 6; a fixed-size rule without fading or with a dead zone about zero mismatch; (ii) at neighbouring steps on the reported seeds; (iv) at other floors on the reported seeds.

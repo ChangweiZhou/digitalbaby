@@ -64,6 +64,26 @@ The plain system, in which every 720,000 bytes a cell in between drops out for g
 2. **Cells dropping out by this rule reach a smaller system that is a little worse than one born at that size** (2 to 5 points, four seeds of five, down to half the cells; the plan's hypothesis that the two are level is refuted narrowly, 4.8 against 4 points) **and no better than dropping as many by chance.** Unlike single connections (C2), a cell's own total return strength does not pick out what the system can spare.
 3. The cost against nobody dropping out is small (0.5 to 1.3 points) while half the cells remain. The spread over seeds in the small systems is large (single runs at 53 and 73 where the others are near 85), so differences of 2 points are not fixed by five seeds.
 
+## Step C5: how a strength is fixed
+
+Plan, grids, outcome and scored predictions: `PLAN_4.md`. Programs: `joint5.py` (numpy, the reference), `kern5.c` with `fast5.py`, `check_joint5.py` (`check_joint5_output.txt`: passed). Tables: `report5.txt`. Result files: `res/s_*.json`.
+
+The one-sided edge kept; one rule of change replaced at a time; the return strength receives the forward strength's change in every arm. Medians of five seeds; settings chosen on seed 1.
+
+| Rule | median | against the present rules (paired) |
+|---|---|---|
+| the present rules | 84.2 | |
+| answering cell: no division by the squared size of what it reads; best fixed step | 81.8 | -1.7 (no common sign) |
+| answering cell: a change of fixed size, sign of mismatch times output | 0.0 | -84.2 |
+| answering cell: the same with the output taken about the middle of its range (addition) | 1.3 | -82.5 |
+| answering cell: in proportion to the strength's own size | 64.1 | -17.7 (5 of 5 below) |
+| cells in between: a change of fixed size | 0.8 | -83.3 |
+| cells in between: in proportion to the strength's own size | 85.5 | -1.1 (no common sign) |
+
+1. **The division is not needed for the score** (-1.7, inside the spread), but the fixed step that replaces it has to be found, and is narrow (an eighth of it: 65; twice it: 74, on seed 1).
+2. **A change of fixed size answers nothing**, in either place, at any step tried. For the rule as asked this is by construction (a logistic output is never negative, so every strength of a branch receives the same change); for the other two it is a finding I have not explained.
+3. **A change in proportion to the strength's own size loses 18 points in the answering cell** and leaves 86% of the connections near zero: the same picture as the product edge of C1 with weight at the sending end. Two rules in which a strong connection changes faster than a weak one lose alike. In the cells in between the mildest form of the same rule is level with the present one.
+
 ## What the two steps say together (my reading)
 
 For the connections into the answering cell on this testbed, the score does not tell a one-sided edge from an edge that both ends decide: where the joint forms differ from the one-sided edge they are level with it (the smaller part; the right to withdraw) or below it (the product with weight at the sending end). What both ends deciding changes is which connections exist: fewer of them, and none to a branch that names nothing. If the number of connections is to count, that is a reason for the joint form; the score alone gives none.
