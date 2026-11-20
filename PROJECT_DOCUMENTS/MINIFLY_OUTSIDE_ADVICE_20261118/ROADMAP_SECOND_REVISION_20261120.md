@@ -46,6 +46,8 @@ Where our system stands against that. On prose it is level with a table of the l
 
 So the first three can be tried now, and I expect them to bring the loop to the neighbourhood of the small setting, which would be a result worth having; the fourth decides whether the full setting can be approached, and it depends on the memory line.
 
+**Corrected the same day by the evidence.** The reference line measured the test (`claude/nano-ref-8mmhfm`): on the last tenth of the text a smoothed table of the last six bytes has a loss of 1.5165 nats a byte, and the small GPT after 2,000 steps has 1.906 (its own estimate 1.895, which agrees with the 1.88 I recalled). So on a text of this size the level of nanoGPT is the level of a good table of six bytes, give or take 0.05 nats, and my fourth point above was wrong for this text: what decides is estimating well from the last six or so bytes, not what lies further back. Following that, a table made of cells was built (`nano/table`: a cell for every run of bytes that occurs, at most seven active at a byte): 1.5225 nats when its strengths count, 1.5317 when they are changed by the mismatch alone, in five CPU-seconds. So a system of cells that learns one byte at a time from its own mismatch is at the level of this test today, as a table. What that does not show is the thing the loop was built for: a table answers nothing it has not met. The step that now decides, on this text, is whether cells taught by the relay add anything to the table's cells (L-TR below); and a text on which a table falls well short of the references is needed before the test says anything about memory or about new combinations.
+
 ## 4. The order I propose
 
 Four tracks. Each step changes one thing and is scored beside what it changed from, and beside a comparator by back-propagation where one exists.
@@ -55,14 +57,16 @@ Four tracks. Each step changes one thing and is scored beside what it changed fr
 | **L** | *Language at the level of nanoGPT* (`nano/`) | | |
 | L0 | The test and its references: the text and split of nanoGPT; loss in nats and bits and the byte named right, on the last tenth read as one stream; tables of the last k bytes, properly smoothed; a small and a larger GPT taught by back-propagation here; the network of the loop taught by back-propagation | the figures exist and are reproducible | started 20 November (`nano/ref`) |
 | L1 | An answering cell whose branches compete, against the least-squares one | lower loss at equal size | started 20 November (`nano/loop`) |
+| L-T | *Added from the evidence:* a table made of cells (a cell for each run of bytes that occurs; strengths that count, or that are changed by the mismatch) | within 0.05 nats of the smoothed table | **reached at development level** (`nano/table`): 1.5225 counting, 1.5317 by the mismatch, against 1.5165 |
+| L-TR | *Added from the evidence:* the table's cells and the relay's cells read by one answering cell | at least 0.02 nats below the table's cells alone | given to `nano/loop` as its next step |
 | L2 | Scale: cells, readings, delay lines, each alone | the loss stops falling, or meets a table of five bytes | after L1 (`nano/loop`) |
 | L3 | Depth: the relay over two and three steps | lower loss than one step at equal numbers of strengths | after L2 |
 | L4 | Cells that hold, on language | lower loss than the delay lines alone | after M |
 | L5 | Cost beside the references | stated | last |
 | **C** | *Connections and cells* (`nano/joint`), on the small texts first, where a run takes seconds | | |
-| C1 | An edge decided by both ends (each end holds its own part of the strength and can set the connection to zero) against the one-sided edge | the same score, or a difference stated with its size | started 20 November |
-| C2 | The right to withdraw: either end, the receiving end only, the sending end only | stated | after C1 |
-| C3 | A connection of more than two cells (two sending cells jointly) against edges, at equal numbers of strengths | stated | started 20 November (`nano/multi`) |
+| C1 | An edge decided by both ends (each end holds its own part of the strength and can set the connection to zero) against the one-sided edge | the same score, or a difference stated with its size | **done at development level** (`claude/nano-joint-8mmhfm`): a product of two parts 84.0 and the smaller of two parts 84.2 against 84.2 one-sided; a product in which the sending end's part moves fast is worse (67 to 83) |
+| C2 | The right to withdraw: either end, the receiving end only, the sending end only | stated | **done at development level**: no cost in score whoever holds it (83.5 to 84.0 against 84.2); with either end half of the connections go; by an end's own strengths 6 points better than the same number by chance |
+| C3 | A connection of more than two cells (two sending cells jointly) against edges, at equal numbers of strengths | stated | started 20 November (`nano/multi`); first step on sums: worse than edges at equal numbers of strengths (48 against 81 at 64 strengths a cell). On the text of the test the table's cells are such connections and reach the test's level (L-T) |
 | C4 | The sign: one-sided edges with excitatory and inhibitory senders (measured once: 70.7 against 84.2) together with C1 | stated | after C1 |
 | C5 | Rules for fixing a strength, one against another | stated | open |
 | C6 | Kinds of cells: clocks, memory, signals that reach many cells | stated | started 20 November (`nano/kinds`) |
@@ -70,7 +74,7 @@ Four tracks. Each step changes one thing and is scored beside what it changed fr
 | M1 | Two-digit numbers with letters between them: longer runs, then more cells, then a signal passed over two connections, one at a time | never-shown sums at every gap | two long runs started 20 November (`loop_small_case/PLAN_12.md`); the signal over two connections started 20 November (`nano/cross2`) |
 | M2 | The first family's own items beside the record's reference | as R4 | after M1 |
 | **K** | *Keeping* (the earlier R5) | | |
-| K1 | Where a new task is written, settled by the cells and not by the program | the first task kept at the level the program's choice gives (67%) | started 20 November (`nano/keep`) |
+| K1 | Where a new task is written, settled by the cells and not by the program | the first task kept at the level the program's choice gives (67%) | started 20 November (`nano/keep`): cells silent most of the time keep less (5 to 8% against 16%); cells that stiffen with age keep 34% at a cost to both tasks; a third candidate is running. A diagnostic (`loop_small_case/PLAN_13.md`): after the second task the cells in between still carry most of the first (67% with the answering cell alone taught again); the loss is in the answering cell's reading of cells that both tasks share |
 
 The earlier steps map as follows: R1 is done at development level; R2 continues as C; R3 and R4 as M; R5 as K; R6 as L5.
 
