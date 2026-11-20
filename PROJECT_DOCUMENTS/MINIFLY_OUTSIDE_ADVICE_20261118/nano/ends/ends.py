@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """PLAN_1.md of nano/ends: where a segment starts, found by the system from its own surprise.
     python3 ends.py check                       the compiled loop against numpy on a prefix
-    python3 ends.py arm=0|G|R|S|H|U [theta=...]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
+    python3 ends.py arm=0|G|R|S|H|U|P [theta=...] [ks=1]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
 Arms: 0 the table's cells (runs of the last 0..6 bytes), read with trust; G with segment cells, starts given (first letter after a byte that is not a letter);
 R starts every fifth byte; S starts where the table-only system's surprise at the byte that arrived exceeds theta;
 U (PLAN_2) starts where the table-only system's answer was unsure beyond theta before the byte arrived;
+U with ks=1 (PLAN_3): the same signal from the cells of runs 0..k alone, k chosen among 1, 2, 3; P (PLAN_4): unsure beyond theta and more unsure than at the byte before by more than a margin;
 H starts fixed by an arbitrary function of the last two bytes, as frequent as S's (reads res/ends_armS.json).
 score.py, table.py, words.py are copied unchanged from nano/table; the kernel is trust.py's with one more output (the probability given to the byte that arrived)."""
 import ctypes, json, os, subprocess, sys, time
@@ -102,11 +103,13 @@ def surprise(x, taught_to, hi):
     if hi > taught_to: sur[taught_to:hi] = -np.log(s.go(taught_to, hi, ETA0, E0, False, want_q=True))
     np.save(f, sur); return sur
 
-def unsure(x, taught_to, hi):
+def unsure(x, taught_to, hi, k=K):
     """uns[t] for every byte t < hi: how unsure the table-only system's answer for byte t was before byte t arrived (minus the sum of p log p). The system as in surprise()."""
-    f = os.path.join(HERE, f"uns_{taught_to}_{hi}.npy")
+    f = os.path.join(HERE, f"uns_{taught_to}_{hi}.npy" if k == K else f"uns{k}_{taught_to}_{hi}.npy")
     if os.path.exists(f): return np.load(f)
-    s = Sys(x, []); u = np.zeros(len(x)); u[K:taught_to] = s.go(K, taught_to, ETA0, E0, True, want_h=True)
+    s = Sys(x, [])
+    if k < K: s.ids = np.ascontiguousarray(s.ids[:, :k + 1]); s.K1 = k + 1; s.T = np.full((k + 1, NL), 0.25)        # PLAN_3: the signal from the cells of runs 0..k alone, read with their own trust
+    u = np.zeros(len(x)); u[K:taught_to] = s.go(K, taught_to, ETA0, E0, True, want_h=True)
     if hi > taught_to: u[taught_to:hi] = s.go(taught_to, hi, ETA0, E0, False, want_h=True)
     np.save(f, u); return u
 
@@ -133,7 +136,10 @@ def agreement(start, x, lo, hi):
     return dict(starts=int(f.sum()), word_starts=int(w.sum()), share_of_found_that_are_word_starts=round(both / max(1, int(f.sum())), 4), share_of_word_starts_found=round(both / int(w.sum()), 4),
                 mean_bytes_a_segment=round((hi - lo) / max(1, int(f.sum())), 2))
 
-def starts_for(arm, x, taught_to, hi, theta=None, share=None):
+def starts_for(arm, x, taught_to, hi, theta=None, share=None, a=None):
+    if arm == "U" and a is not None: return unsure(x, taught_to, hi, int(a)) > theta                              # PLAN_3: a = k
+    if arm == "P":                                                                                              # PLAN_4: unsure beyond theta and more unsure than at the byte before by more than a
+        u = unsure(x, taught_to, hi); d = np.zeros(len(x)); d[1:] = u[1:] - u[:-1]; return (u > theta) & (d > a)
     if arm == "G": return word_starts(x)
     if arm == "R": return np.arange(len(x)) % 5 == 0
     if arm == "S": return surprise(x, taught_to, hi) > theta
@@ -151,16 +157,21 @@ def run(kw):
     x, cut, _ = score.load(); arm = kw.get("arm", "0"); dev = cut - cut // 20; t0 = time.process_time(); grid = {}; tgrid = {}; theta = share = None; extra = {}
     if arm == "H":
         rs = json.load(open(os.path.join(HERE, "res", "ends_armS.json"))); share = rs["agreement_stream"]["starts"] / (cut - K); extra["share_matched_to"] = share
-    if arm in ("S", "U"):
+    a = None
+    if arm in ("S", "U") and "ks" not in kw:
         if "theta" in kw: theta = float(kw["theta"])
         else:
             for th in (THETAS if arm == "S" else THETAS_U): tgrid[str(th)] = one(x, seg_keys(x, starts_for(arm, x, dev, cut, th)), dev, dev, cut, ETA0, E0)
             theta = float(min(tgrid, key=tgrid.get))
-    kd = [] if arm == "0" else seg_keys(x, starts_for(arm, x, dev, cut, theta, share))
+    if arm == "P" or "ks" in kw:                                                                               # a second setting chosen with theta: k (PLAN_3) or the rise asked (PLAN_4)
+        for aa in ((1, 2, 3) if arm == "U" else (0.0, 0.5, 1.0, 1.5)):
+            for th in ((1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25) if arm == "U" else (1.5, 2.0, 2.25, 2.5)): tgrid[f"{aa}/{th}"] = one(x, seg_keys(x, starts_for(arm, x, dev, cut, th, a=aa)), dev, dev, cut, ETA0, E0)
+        a, theta = (float(v) for v in min(tgrid, key=tgrid.get).split("/")); extra["second_setting"] = a
+    kd = [] if arm == "0" else seg_keys(x, starts_for(arm, x, dev, cut, theta, share, a))
     for e in ES:
         for eta in ETAS: grid[f"{eta}/{e}"] = one(x, kd, dev, dev, cut, eta, e)
     eta, e = (float(v) for v in min(grid, key=grid.get).split("/"))
-    st = None if arm == "0" else starts_for(arm, x, cut, len(x), theta, share); kf = [] if arm == "0" else seg_keys(x, st)
+    st = None if arm == "0" else starts_for(arm, x, cut, len(x), theta, share, a); kf = [] if arm == "0" else seg_keys(x, st)
     r = one(x, kf, cut, cut, len(x), eta, e, both=True)                                         # the one scoring of the last tenth for this arm
     if st is not None: extra.update(agreement_stream=agreement(st, x, K, cut), agreement_last_tenth=agreement(st, x, cut, len(x)))
     r.update(arm=arm, K=K, eta=eta, e=e, theta=theta, theta_grid=tgrid, grid=grid, cpu=round(time.process_time() - t0, 1), **extra); return r
@@ -182,6 +193,10 @@ def check():
     Pa = steps_np(s0.ids[:3000 - K], x[K:3000], C, N, U, T, ETA0, E0); Pb = steps_np(s0.ids[3000 - K:], x[3000:n], C, N, U, T, ETA0, E0, learn=False); qn = np.concatenate([Pa, Pb])[np.arange(n - K), x[K:n]]
     s3 = Sys(x, []); h0 = np.concatenate([s3.go(K, 3000, ETA0, E0, True, want_h=True), s3.go(3000, n, ETA0, E0, False, want_h=True)]); Pn = np.concatenate([Pa, Pb]); hn = -(Pn * np.log(Pn)).sum(1)
     dh = np.abs(hn - h0).max(); print(f"how unsure the answer was (same system): compiled against numpy, largest difference {dh:.1e}", "PASSED" if dh < 1e-9 else "FAILED")
+    s4 = Sys(x, []); s4.ids = np.ascontiguousarray(s4.ids[:, :3]); s4.K1 = 3; s4.T = np.full((3, NL), 0.25); h2 = np.concatenate([s4.go(K, 3000, ETA0, E0, True, want_h=True), s4.go(3000, n, ETA0, E0, False, want_h=True)])
+    C2 = np.zeros((s0.ncell, S), np.float32); N2 = np.zeros(s0.ncell, np.float32); U2 = np.zeros(s0.ncell, np.float32); T2 = np.full((3, NL), 0.25)
+    Pc = np.concatenate([steps_np(s0.ids[:3000 - K, :3], x[K:3000], C2, N2, U2, T2, ETA0, E0), steps_np(s0.ids[3000 - K:, :3], x[3000:n], C2, N2, U2, T2, ETA0, E0, learn=False)])
+    dh = np.abs(-(Pc * np.log(Pc)).sum(1) - h2).max(); print(f"how unsure the answer of the cells of runs 0..2 alone was: compiled against numpy, largest difference {dh:.1e}", "PASSED" if dh < 1e-9 else "FAILED")
     d = np.abs(qn - q0).max(); print(f"the surprise itself (table-only system, taught on bytes {K}..2999, nothing changing after): compiled against numpy, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
     # the keys by eye, and by a slow direct construction
     vals = score.byte_values(); seg = []; cur = b""
