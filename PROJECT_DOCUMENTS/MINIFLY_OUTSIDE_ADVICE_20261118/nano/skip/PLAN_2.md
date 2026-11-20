@@ -83,3 +83,24 @@ Reading (mine). The second form finds more letters than the first (three against
 ## B, as run (20 November 2026, written before its runs)
 
 `g2`, development seed 1, 1,200,000 lines: `form=evid` (alpha 2, p0 0.2) as chosen on `m1`; the first form at alpha 0.05 beside it; and the two further settings the plan allows, both of the second form and both to be counted as tuned on this text if used: (alpha 4, p0 0.2), and (alpha 2, p0 0.2) with the evidence fading by 1/10,000 a period instead of 1/3,000.
+
+## Outcome of B (entered 20 November 2026; development seed 1; `res/p2_g2_*.json`)
+
+`g2`, 1,200,000 lines, never-shown pairs at gaps 0 / 4 / 8, mean of the last three readings; and the readings at 100,000 and 200,000 lines:
+
+| Clock | Never-shown pairs | at 100,000 | at 200,000 | Closed (every reading from 100,000 lines) |
+|---|---|---|---|---|
+| second form, alpha 2, p0 0.2 (chosen on `m1`) | 95.1 / 95.1 / 95.1 | 32 | 87 | w x y z (and at two readings `-`, which never occurs) |
+| first form, alpha 0.05 | 94.7 / 94.7 / 94.7 | 4 | 82 | w x y z |
+| second form, alpha 4 (tuned on this text) | 94.3 / 94.3 / 94.3 | 66 | 85 | w x y z (once `-`) |
+| second form, fading 1/10,000 (tuned on this text) | 95.1 / 95.1 / 95.1 | 25 | 89 | w x y z (once `-`) |
+| `clock=none` (first plan) | 52.3 / 1.3 / 0.7 | | | nothing |
+| `clock=oracle`, 400,000 lines (first plan) | 93.7 / 93.7 / 93.7 | | | w x y z, by the program |
+
+**Q3 held** (the four letters are closed at the end, in all four runs, and no other byte value that occurs). The setting chosen on `m1` is kept for C; the two tuned on this text are not used further. With the letters closed the three gaps are the same lines to the chain, so the three figures are equal by construction.
+
+Reading (mine). On this text the rule finds the letters within the first 100,000 lines, far sooner than I expected and far sooner than on `m1`. My account before the runs (the evidence must wait until the cells answer aligned lines) was therefore wrong for `g2`: the letters are closed before the sums are learned. I have not established what the early evidence is; what I can say is that the mismatch the entries read is over all the bytes of the line, not only the answer's, so a chain without the letters must already make the line's other bytes easier to name. This is to be looked at before anything is built on it.
+
+## C, as run (20 November 2026, written before its runs)
+
+`g2`, 1,200,000 lines, the five reported seeds, five arms at equal size and length: (1) the rule, second form, alpha 2, p0 0.2, fading 1/3,000 (chosen on `m1`, not tuned on `g2`); (2) the rule, first form, alpha 0.05 (18 numbers at the entries; added because it did as well in B); (3) `clock=none`; (4) the closing by chance, tendencies never changing, p0 0.2; (5) `clock=values:4`, four byte values closed by chance from the start. Arms (1) and (2) will be within ten points of each other if B is a guide, so both are also run on the seeds 1001 to 1010 and all fifteen reported.
