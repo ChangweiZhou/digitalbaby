@@ -1,0 +1,61 @@
+
+## ZA: {'kinds': 'runs+last', 'recall': 3, 'gate': 1, 'rule': 2, 'eta': 0.03, 'age': 1}
+
+Singles (a system for each stream), second cell, nothing changing / going on: shakespeare 1.5682 / 1.3434 | book 1.4747 / 1.3987 | py 1.4387 / 0.9418 | c 2.1794 / 0.6952 | table 1.7618 / 0.3460 | xml 0.8358 / 0.2889. Mean going on 0.8357. Cells: 459,129, 531,809, 475,303, 420,192, 556,055, 311,332 (sum 2,753,820).
+
+| order of the life | shakespeare | book | py | c | table | xml | mean at the end | the life costs | cells at the end |
+|---|---|---|---|---|---|---|---|---|---|
+| dev: shakespeare, book, py, c, table, xml | 1.343, 1.343, 1.503 | 1.399, 1.402, 1.559 | 0.942, 0.963, 1.060 | 0.695, 0.731, 0.714 | 0.346, 0.358, 0.360 | 0.289, 0.313, 0.313 | 0.9184 | +0.0828 | 2,295,013 |
+| seed73129: table, c, xml, py, shakespeare, book | 1.343, 1.406, 1.401 | 1.399, 1.444, 1.444 | 0.942, 0.971, 1.011 | 0.695, 0.648, 0.715 | 0.346, 0.346, 0.372 | 0.289, 0.301, 0.344 | 0.8814 | +0.0457 | 2,295,009 |
+| seed93683: table, c, xml, py, book, shakespeare | 1.343, 1.378, 1.378 | 1.399, 1.463, 1.463 | 0.942, 0.971, 1.015 | 0.695, 0.648, 0.716 | 0.346, 0.346, 0.372 | 0.289, 0.301, 0.343 | 0.8814 | +0.0457 | 2,295,018 |
+| seed116089: shakespeare, xml, py, book, c, table | 1.343, 1.343, 1.510 | 1.399, 1.434, 1.562 | 0.942, 0.968, 1.064 | 0.695, 0.740, 0.723 | 0.346, 0.358, 0.358 | 0.289, 0.294, 0.357 | 0.9291 | +0.0934 | 2,295,020 |
+| seed406364: table, shakespeare, py, c, xml, book | 1.343, 1.354, 1.409 | 1.399, 1.447, 1.447 | 0.942, 0.966, 1.027 | 0.695, 0.676, 0.711 | 0.346, 0.346, 0.373 | 0.289, 0.308, 0.332 | 0.8834 | +0.0477 | 2,295,007 |
+| seed545353: table, book, shakespeare, xml, c, py | 1.343, 1.344, 1.432 | 1.399, 1.406, 1.500 | 0.942, 0.977, 0.977 | 0.695, 0.668, 0.700 | 0.346, 0.346, 0.368 | 0.289, 0.305, 0.339 | 0.8861 | +0.0504 | 2,295,012 |
+
+(each cell: going on, second answering cell: the single, the life at the stream's own stage, the life at its end)
+
+Reported orders, 25 cases (a stream not read last, an order):
+* going on, end less own stage: above 0.02 in 22 cases, largest +0.167, median +0.042; streams above 0.02 by order: seed73129: table, c, xml, py; seed93683: table, c, xml, py; seed116089: shakespeare, xml, py, book; seed406364: table, shakespeare, py, c, xml; seed545353: table, book, shakespeare, xml, c
+* nothing changing, end less own stage: above 0.05 in 16 cases, median +0.073, largest +0.448; the first cell's excess is the smaller in 14 cases
+* D1 (the end's counts, the own stage's trusts, nothing changing) removes, at the median over the 20 cases with an excess above 0.02: 0.57 of the excess
+* D3 (going on from the end): (a) trusts, parts and sums of the own stage put back removes 0.74 of the going-on excess at the median over the 22 cases above 0.02; (b) only the sums: 0.16
+* the excess over the first 4,000 bytes of the test is 2.74 times the excess over the whole test (median over the 22 cases above 0.005)
+* the stream's own stage less its single, going on, by order: seed73129: table +0.000, c -0.047, xml +0.012, py +0.029, shakespeare +0.063, book +0.046; seed93683: table +0.000, c -0.047, xml +0.012, py +0.029, book +0.064, shakespeare +0.035; seed116089: shakespeare +0.000, xml +0.005, py +0.026, book +0.035, c +0.045, table +0.012; seed406364: table +0.000, shakespeare +0.011, py +0.024, c -0.019, xml +0.019, book +0.049; seed545353: table +0.000, book +0.007, shakespeare +0.000, xml +0.016, c -0.027, py +0.036
+* while its body was read, the life less the single (whole body; last tenth of the body): seed73129: c +0.036 (+0.010), xml +0.023 (+0.013), py +0.047 (+0.029), shakespeare +0.107 (+0.068), book +0.021 (+0.036); seed93683: c +0.036 (+0.010), xml +0.023 (+0.013), py +0.047 (+0.029), book +0.095 (+0.064), shakespeare +0.029 (+0.037); seed116089: xml +0.013 (+0.008), py +0.043 (+0.025), book +0.014 (+0.028), c +0.030 (+0.022), table +0.037 (+0.017); seed406364: shakespeare +0.040 (+0.010), py +0.036 (+0.020), c +0.024 (+0.018), xml +0.033 (+0.021), book +0.038 (+0.041); seed545353: book +0.037 (+0.007), shakespeare -0.016 (-0.000), xml +0.027 (+0.017), c +0.050 (+0.026), py +0.040 (+0.033)
+
+## ZA0: {'kinds': 'runs+last', 'recall': 3, 'gate': 1, 'rule': 0, 'eta': 5e-05, 'age': 1}
+
+Singles (a system for each stream), second cell, nothing changing / going on: shakespeare 1.4893 / 1.3509 | book 1.4393 / 1.4057 | py 1.4093 / 0.9589 | c 2.0802 / 0.7404 | table 1.6267 / 0.3872 | xml 0.7904 / 0.3041. Mean going on 0.8579. Cells: 459,129, 531,809, 475,303, 420,192, 556,055, 311,332 (sum 2,753,820).
+
+| order of the life | shakespeare | book | py | c | table | xml | mean at the end | the life costs | cells at the end |
+|---|---|---|---|---|---|---|---|---|---|
+| dev: shakespeare, book, py, c, table, xml | 1.351, 1.351, 1.496 | 1.406, 1.408, 1.551 | 0.959, 0.978, 1.053 | 0.740, 0.762, 0.743 | 0.387, 0.387, 0.390 | 0.304, 0.321, 0.321 | 0.9256 | +0.0677 | 2,295,013 |
+| seed73129: table, c, xml, py, shakespeare, book | 1.351, 1.412, 1.403 | 1.406, 1.448, 1.448 | 0.959, 0.978, 1.013 | 0.740, 0.683, 0.738 | 0.387, 0.387, 0.409 | 0.304, 0.313, 0.353 | 0.8942 | +0.0363 | 2,295,009 |
+| seed93683: table, c, xml, py, book, shakespeare | 1.351, 1.383, 1.383 | 1.406, 1.467, 1.466 | 0.959, 0.978, 1.018 | 0.740, 0.683, 0.741 | 0.387, 0.387, 0.410 | 0.304, 0.313, 0.352 | 0.8949 | +0.0370 | 2,295,018 |
+| seed116089: shakespeare, xml, py, book, c, table | 1.351, 1.351, 1.506 | 1.406, 1.438, 1.558 | 0.959, 0.980, 1.062 | 0.740, 0.768, 0.746 | 0.387, 0.387, 0.387 | 0.304, 0.308, 0.369 | 0.9379 | +0.0801 | 2,295,020 |
+| seed406364: table, shakespeare, py, c, xml, book | 1.351, 1.359, 1.412 | 1.406, 1.452, 1.452 | 0.959, 0.978, 1.023 | 0.740, 0.702, 0.733 | 0.387, 0.387, 0.408 | 0.304, 0.317, 0.342 | 0.8948 | +0.0369 | 2,295,007 |
+| seed545353: table, book, shakespeare, xml, c, py | 1.351, 1.349, 1.432 | 1.406, 1.412, 1.499 | 0.959, 0.983, 0.983 | 0.740, 0.696, 0.726 | 0.387, 0.387, 0.406 | 0.304, 0.316, 0.348 | 0.8989 | +0.0411 | 2,295,012 |
+
+(each cell: going on, second answering cell: the single, the life at the stream's own stage, the life at its end)
+
+Reported orders, 25 cases (a stream not read last, an order):
+* going on, end less own stage: above 0.02 in 21 cases, largest +0.155, median +0.039; streams above 0.02 by order: seed73129: table, c, xml, py; seed93683: table, c, xml, py; seed116089: shakespeare, xml, py, book; seed406364: table, shakespeare, py, c, xml; seed545353: book, shakespeare, xml, c
+* nothing changing, end less own stage: above 0.05 in 16 cases, median +0.079, largest +0.488; the first cell's excess is the smaller in 19 cases
+* D1 (the end's counts, the own stage's trusts, nothing changing) removes, at the median over the 20 cases with an excess above 0.02: 0.56 of the excess
+* D3 (going on from the end): (a) trusts, parts and sums of the own stage put back removes 0.60 of the going-on excess at the median over the 21 cases above 0.02; (b) only the sums: 0.00
+* the excess over the first 4,000 bytes of the test is 2.77 times the excess over the whole test (median over the 22 cases above 0.005)
+* the stream's own stage less its single, going on, by order: seed73129: table +0.000, c -0.057, xml +0.009, py +0.019, shakespeare +0.061, book +0.043; seed93683: table +0.000, c -0.057, xml +0.009, py +0.019, book +0.062, shakespeare +0.032; seed116089: shakespeare +0.000, xml +0.004, py +0.021, book +0.033, c +0.027, table +0.000; seed406364: table +0.000, shakespeare +0.008, py +0.019, c -0.039, xml +0.012, book +0.046; seed545353: table +0.000, book +0.006, shakespeare -0.002, xml +0.012, c -0.044, py +0.024
+* while its body was read, the life less the single (whole body; last tenth of the body): seed73129: c +0.028 (+0.008), xml +0.016 (+0.010), py +0.030 (+0.017), shakespeare +0.105 (+0.066), book +0.016 (+0.033); seed93683: c +0.028 (+0.008), xml +0.016 (+0.010), py +0.030 (+0.017), book +0.091 (+0.062), shakespeare +0.025 (+0.034); seed116089: xml +0.011 (+0.007), py +0.034 (+0.020), book +0.011 (+0.026), c +0.019 (+0.018), table +0.022 (+0.007); seed406364: shakespeare +0.035 (+0.008), py +0.029 (+0.017), c +0.012 (+0.014), xml +0.022 (+0.016), book +0.032 (+0.037); seed545353: book +0.033 (+0.005), shakespeare -0.018 (-0.003), xml +0.022 (+0.014), c +0.039 (+0.022), py +0.022 (+0.020)
+
+## The constant step against the rule (reported orders, 25 cases)
+
+* the constant step's going-on excess is the smaller in 24 cases; its loss at the end of the life is the lower in 6 cases
+
+## What the guard changes (nano/suite's mapped streams, a system for each; second cell, nothing changing / going on)
+
+* ZA shakespeare: guard at zero 1.5454 / 1.3344; with the guard 1.5454 / 1.3344
+* ZA book: guard at zero 1.4591 / 1.3894; with the guard 1.4591 / 1.3894
+* ZA py: guard at zero 1.4333 / 0.9358; with the guard 1.4333 / 0.9358
+* ZA c: guard at zero 2.1829 / 0.6908; with the guard 2.1827 / 0.6908
+* ZA table: guard at zero 1.7527 / 0.3431; with the guard 1.7530 / 0.3431
+* ZA xml: guard at zero 0.8179 / 0.2846; with the guard 0.8179 / 0.2846

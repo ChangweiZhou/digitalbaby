@@ -1,4 +1,4 @@
-# Situation cells: the system learns where it is, and each place keeps its own cells and trusts (21 November 2026)
+# Situation cells: the system learns where it is, and each place keeps its own cells and trusts (20 November 2026)
 
 **Authorisation and steer.** As `PLAN_1.md` (Mr. Xu's words quoted there). The choice of this step is mine. **Source.** Branch `claude/friendly-darwin-8mmhfm` at the commit that holds this file. Written after the development life of `PLAN_1.md` (the order of `nano/suite`'s table) and its singles, while that plan's reported orders were still running and before any of them was looked at for this plan; before any run of the program of this plan. Development level; no checker gate, seal or review is claimed.
 
@@ -43,6 +43,19 @@ My reading: one set of trusts and one set of short contexts cannot serve streams
 
 Development: the development order at W = 1,024 and 4,096, and the six singles at the chosen W. Reported: the five orders of `PLAN_1.md` at the chosen W. Size: the sum of the systems of the situations (expected close to the plain life: 2.3 million cells). Cost: as a plain life of ZA (about 3 CPU-minutes) plus the situation cells (a few CPU-seconds). **Not run:** the large system (ZPA scaled) with situation cells (until `PLAN_1.md` has its lives); situations that share long contexts; a bound on the number of situations or on the store; a return of the same stream several times; any other form of the opinion (contexts of one or more bytes in the situation cells).
 
-## 5. Outcome
+## 5. Outcome (entered 20 November, 23:59 UTC; `out/S_dev_W1024.txt`, `out/S_dev_W4096.txt`, `res/society__S_dev_W*.json`)
 
-(to be entered after the runs)
+**The mechanism failed in development and was not run on the reported orders.** Development order, small system, going on, second answering cell:
+
+| | situations after each stream | mean over the six tests at the end | Shakespeare: own stage, end | book | Python | C | table | markup |
+|---|---|---|---|---|---|---|---|---|
+| plain life (`PLAN_1.md`) | one system | 0.9184 | 1.343, 1.503 | 1.402, 1.559 | 0.963, 1.060 | 0.731, 0.714 | 0.358, 0.360 | 0.313 |
+| situation cells, W = 1,024 | 1, 3, 21, 64, 64, 64 | 0.9447 | 1.343, 1.508 | 1.403, 1.434 | 1.232, 1.204 | 0.834, 0.805 | 0.348, 0.348 | 0.370 |
+| situation cells, W = 4,096 | 1, 3, 23, 64, 64, 64 | 0.9217 | 1.343, 1.506 | 1.563, 1.432 | 1.198, 1.190 | 0.775, 0.758 | 0.347, 0.348 | 0.296 |
+| six singles | six systems | 0.8357 | 1.343 | 1.399 | 0.942 | 0.695 | 0.346 | 0.289 |
+
+Neither part of the hypothesis holds at either W: the end is worse than the plain life at W = 1,024 and level with it at 4,096, and tiny Shakespeare loses as much as before. Predictions S1 to S8 are **not scored on the reported orders (not run)**; in development S5 fails (64 situations, the bound of the program, reached while C headers were read) and S6 holds in the sense written (the two prose streams share a situation).
+
+**Why (my reading, from the counts of bytes each situation read).** (1) *The birth rule splits what is one kind.* Source code holds many blocks whose bytes are unlike the average of the code before (a table of constants, a comment in another script): for such a block a cell that knows nothing is cheaper than every cell that averages, a situation is born, and its system starts from nothing. Python became 18 to 20 situations, C headers more than 40. While they were read the loss rose from 0.879 to 1.038 (Python) and from 0.643 to 0.83 (C). (2) *It does not split where the life needed it.* The situation of tiny Shakespeare went on reading nearly all of the book and, by the counts, parts of later streams, so English was not protected. (3) *The measure by which a birth is judged is the wrong one.* A birth is judged by what it saves on the block just read; its worth to the system is what it saves later, when an old kind returns, and nothing in the block says that.
+
+**What stands from this plan:** the fact that the plain system gives no sign of a change of kind (section 1), and reading (3). **What follows** (`PLAN_3.md`): the larger part of the loss is in the trusts, which are few numbers and cheap to keep in many copies; a remedy for them needs no decision about where a stream begins or ends.

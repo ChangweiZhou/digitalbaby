@@ -79,6 +79,29 @@ The development life (`out/ZA_dev.txt`, `res/life__ZA_dev.json`) already speaks 
 
 Added predictions (mine): **A1** D3(a) removes at least half of the going-on excess at the median over the cases with an excess above 0.02 (0.60). **A2** D3(b) removes at least a third of it at the median (0.50). **A3** ZA0 keeps better than ZA: its going-on excess at the end is smaller in at least two thirds of the cases (a stream not read last, a reported order) (0.60). **A4** but ZA0 is not below ZA at the end of the life going on in more than a third of those cases (the rule's better level outweighs what it loses) (0.50).
 
-## 6. Outcome
+## 6. Outcome, first part: the small system and the arm with the constant step (entered 20 November, 23:59 UTC; `report_1.txt`, `res/life__ZA*.json`, `res/life__ZA0*.json`, `out/`). The lives of the large system are running and are entered below when they are in.
 
-(to be entered after the runs)
+**The hypothesis is refuted for ZA.** Going on, at the end of the life against the stream's own stage (25 cases: a stream not read last, a reported order): above 0.02 in 22 cases, median +0.042, largest +0.167 (tiny Shakespeare read first, seed 116089). Four streams are above 0.02 in three or more of the five orders. Mean over the six tests at the end of the life against the mean of the six singles (0.8357):
+
+| order | mean at the end | the life costs |
+|---|---|---|
+| development: Shakespeare, book, Python, C, table, markup | 0.9184 | +0.083 |
+| 73129: table, C, markup, Python, Shakespeare, book | 0.8814 | +0.046 |
+| 93683: table, C, markup, Python, book, Shakespeare | 0.8814 | +0.046 |
+| 116089: Shakespeare, markup, Python, book, C, table | 0.9291 | +0.093 |
+| 406364: table, Shakespeare, Python, C, markup, book | 0.8834 | +0.048 |
+| 545353: table, book, Shakespeare, markup, C, Python | 0.8861 | +0.050 |
+
+So a life costs this system 5 to 11% of what six separate systems pay, and most where English text is read first and the other kinds after it.
+
+**Where the loss sits** (reported orders). Going on from the end with the trusts, parts and sums of the stream's own stage put back (D3a) removes 0.74 of the excess at the median; putting back only the sums, so that the steps are as large as they were then (D3b), removes 0.16. With nothing changing the excess is above 0.05 in 16 of 25 cases (median +0.073, largest +0.448) and the own stage's trusts (D1) remove 0.57 of it at the median. So the larger part is in the trusts and parts, which follow the stream being read, and the rest in the counts; the smallness of the steps late in a life is not what keeps the system from coming back. The excess over the first 4,000 bytes of a test is 2.7 times that over the whole test: the system does come back, but over tens of thousands of bytes, not thousands.
+
+**Two things the plan did not ask about.** (1) *A stream read late is learned worse than by a system of its own*: at its own stage, going on, +0.02 to +0.06 above its single in 13 of the 25 later positions, and still +0.01 to +0.07 above it over the last tenth of its body. The loss of a life is therefore of two kinds: what was read is not kept, and what is read next is not learned as well. (2) *C headers gain from what was read before* (0.019 to 0.047 below the single in four orders, after the table or Python): there is transfer too, and a remedy that separates everything would lose it.
+
+**The constant step** (ZA0) changes none of this: its going-on excess is above 0.02 in 21 of 25 cases (largest +0.155), the life costs it +0.036 to +0.080. Its excess is the smaller in 24 of 25 cases, but its level is worse, so at the end of a life it is below the rule in 6 cases of 25.
+
+**The guard** changes no figure of `nano/suite`'s small system beyond the fourth decimal (its six mapped streams, going on: 1.3344, 1.3894, 0.9358, 0.6908, 0.3431, 0.2846 with the guard at zero and with it; `out/mapped_ZA.txt`). On raw bytes with 256 values the same system costs 0.004 to 0.009 more (the singles above).
+
+**Predictions scored** (those that concern ZA or both systems; the others wait for the large system). K1 **failed** (22 of 25 above 0.02). K9 **failed** for ZA (cells at the end are 83.3% of the singles' sum in every order: the streams share more contexts than I expected). A1 held (0.74). A2 **failed** (0.16). A3 held (24 of 25). A4 held (6 of 25). The second sentence of the hypothesis is not refuted for ZA (D1 removes 0.57, more than half).
+
+**The large system so far**: singles on raw bytes, second cell, nothing changing / going on: 1.4962 / 1.3252, 1.4333 / 1.3739, 1.4118 / 0.9365, 2.2133 / 0.5676, 1.8613 / 0.2553, 0.7887 / 0.2579 (1.8 to 4.3 million cells; 2.2 to 3.9 minutes each).
