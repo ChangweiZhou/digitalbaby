@@ -4,7 +4,7 @@ import json, os, statistics as st
 HERE = os.path.dirname(os.path.abspath(__file__)); SEEDS = [73129, 93683, 116089, 406364, 545353]
 def load(name):
     p = os.path.join(HERE, "res", name + ".json"); return json.load(open(p)) if os.path.exists(p) else None
-def fmt(v): return "  NOT_RUN" if v is None else f"{v:9.1f}"
+def fmt(v): return "    NOT_RUN" if v is None else f"{v:11.1f}"
 def row(title, vals):
     have = [v for v in vals if v is not None]; print(f"{title:58s}" + "".join(fmt(v) for v in vals) + (f"   median {st.median(have):5.1f}" if len(have) == len(vals) else "   (incomplete)"))
 def ph(d, phase): return [r for r in d["rows"] if r["phase"] == phase]
@@ -15,7 +15,7 @@ print("\nA and B. Never-shown addition, mean of the last three readings of 400,0
 for title, pat in (("every cell reads all 140 lines (one step)", "c2_r_plain_%d"), ("32 lines a cell, fixed", "c2_r_fan32_%d"), ("32 lines a cell, rewiring", "c2_r_fan32rw_%d"),
                    ("64 lines a cell, rewiring", "c2_r_fan64rw_%d"), ("one sign for each cell", "c2_r_dale_%d"), ("two steps, 128 + 128", "c2_r_two128_%d"), ("two steps, 256 + 256", "c2_r_two256_%d")):
     ds = [load(pat % s) for s in SEEDS]; row(title, [d and d["last3_add_phase0"] for d in ds])
-    if any(ds): print(f"{'':58s}" + "".join(("  NOT_RUN" if d is None else "%9s" % "/".join(str(x) for x in d["by_place_add"])) for d in ds) + "   by place at the end (hundreds/tens/units)")
+    if any(ds): print(f"{'':58s}" + "".join(("    NOT_RUN" if d is None else "%11s" % "/".join(str(x) for x in d["by_place_add"])) for d in ds) + "   by place at the end (hundreds/tens/units)")
 print("\nC. Addition (400,000 lines), then subtraction (200,000 lines), then addition again (40,000 lines)")
 K = [load("c2_r_keep_%d" % s) for s in SEEDS]
 if all(K):
