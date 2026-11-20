@@ -30,3 +30,15 @@
 **Cost.** 4,096 cells: 3 x 36 = 108 core-minutes; 16,384 cells: 44; pre-check 8; the second series, if it is run, 8 + 36. About 2.7 to 3.4 core-hours.
 
 **Not run.** 16,384 cells beyond 2 (or 4) readings; settings chosen anew at each size; the earlier birth of the return strengths at 4,096 cells and more; other fading; more than three seeds.
+
+## Entered during the runs, 15:40 UTC, before any of the runs it adds (nothing above is changed)
+
+**Seen.** After one reading, 4,096 cells at the fixed settings stand at 2.0367 and 2.0375 nats (seeds 73129, 93683), where 1,024 cells stood at 1.916 and 256 cells at 1.889 after one reading (development seed). At the fixed settings the larger system learns more slowly. The spread over seeds has been 0.001 to 0.003 nats in every run of this line.
+
+**Changes, with their reasons.**
+1. The 4,096-cell runs of seeds 93683 and 116089 are stopped (the first after its first reading, the second before it). The fixed-setting figure at 4,096 cells is therefore on **one seed**, 73129. The cores go to item 2. This is a departure from the plan above and is counted as such.
+2. A second stated check on development seed 1, wider than the pre-check above because eta2 may matter as well: 4,096 cells, 2 readings, (eta1, eta2) = (1, 1), (4, 1/4), (16, 1/4), (4, 1); beside them the fixed setting (1, 1/4) after 2 readings on seed 73129 (not seed 1: stated). If the best is lower than the fixed setting by more than 0.01 nats, one run of 8 readings at that setting is made at 4,096 cells on seed 73129 and reported as "4,096 cells, settings chosen at that size", beside and not in place of the fixed-setting series. The hypothesis of this plan is still scored on the fixed-setting series.
+
+**My expectation, before these runs:** at least one of the four is better than the fixed setting by more than 0.01 nats after 2 readings: chance 0.75 (B6). The run of 8 readings at the chosen setting ends below 1,024 cells' 1.768: chance 0.40 (B7).
+
+The queue is now run by `q.sh` (`jobs_3.txt`: these four runs, then the rest of `jobs_2.txt` unchanged).

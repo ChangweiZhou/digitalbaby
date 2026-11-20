@@ -1,0 +1,25 @@
+t_H4096_e1_f1 arm=P rscale=0 tied=1 H=4096 seed=1 passes=2 eta1=1 eta2=1
+t_H4096_e4_f1o4 arm=P rscale=0 tied=1 H=4096 seed=1 passes=2 eta1=4 eta2=1/4
+t_H4096_e16_f1o4 arm=P rscale=0 tied=1 H=4096 seed=1 passes=2 eta1=16 eta2=1/4
+t_H4096_e4_f1 arm=P rscale=0 tied=1 H=4096 seed=1 passes=2 eta1=4 eta2=1
+pre_H1024_e4 arm=P eta1=4 eta2=1/4 rscale=0 tied=1 H=1024 seed=1 passes=4
+pre_H1024_e16 arm=P eta1=16 eta2=1/4 rscale=0 tied=1 H=1024 seed=1 passes=4
+b_H1024_s73129 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 seed=73129 passes=32 resume=1 stop=16 ; b_H1024_s73129 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 seed=73129 passes=32 resume=1 stop=32
+b_H1024_s93683 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 seed=93683 passes=32 resume=1 stop=16 ; b_H1024_s93683 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 seed=93683 passes=32 resume=1 stop=32
+b_H1024_s116089 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 seed=116089 passes=32 resume=1 stop=16 ; b_H1024_s116089 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 seed=116089 passes=32 resume=1 stop=32
+d_D4_s73129 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=4 seed=73129 passes=8
+d_D4_s93683 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=4 seed=93683 passes=8
+d_D4_s116089 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=4 seed=116089 passes=8
+d_D16_s73129 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=16 seed=73129 passes=8
+d_D16_s93683 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=16 seed=93683 passes=8
+d_D16_s116089 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=16 seed=116089 passes=8
+d_D32_s73129 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=32 seed=73129 passes=8
+d_D32_s93683 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=32 seed=93683 passes=8
+d_D32_s116089 arm=P eta1=1 eta2=1/4 rscale=0 tied=1 H=1024 D=32 seed=116089 passes=8
+# beyond the plans (PLAN_1.md, outcome): each arm at the eta2 that named most bytes right on the development seed
+x_LS_f1o16_s73129 arm=LS eta1=4 eta2=1/16 rscale=0 tied=1 H=1024 seed=73129 passes=8
+x_P_f1_s73129 arm=P eta1=1 eta2=1 rscale=0 tied=1 H=1024 seed=73129 passes=8
+x_LS_f1o16_s93683 arm=LS eta1=4 eta2=1/16 rscale=0 tied=1 H=1024 seed=93683 passes=8
+x_P_f1_s93683 arm=P eta1=1 eta2=1 rscale=0 tied=1 H=1024 seed=93683 passes=8
+x_LS_f1o16_s116089 arm=LS eta1=4 eta2=1/16 rscale=0 tied=1 H=1024 seed=116089 passes=8
+x_P_f1_s116089 arm=P eta1=1 eta2=1 rscale=0 tied=1 H=1024 seed=116089 passes=8
