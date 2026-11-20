@@ -1,0 +1,75 @@
+## Tables
+
+| unsmoothed table of the last k bytes | loss, nats (crude) | loss, bits (crude) | named right, % | contexts seen in the stream |
+|---|---|---|---|---|
+| k = 1 | 2.5099 | 3.6210 | 26.98 | 65 |
+| k = 2 | 2.0704 | 2.9869 | 38.09 | 1,380 |
+| k = 3 | 1.7956 | 2.5906 | 47.15 | 11,228 |
+| k = 4 | 1.7546 | 2.5313 | 52.52 | 48,539 |
+| k = 5 | 1.9273 | 2.7805 | 53.65 | 133,293 |
+| k = 6 | 2.1549 | 3.1089 | 53.89 | 264,623 |
+
+Always the most frequent byte: 14.90% right. The byte frequencies of the stream alone: 3.3473 nats (4.8292 bits). All 65 byte values alike: 4.1744 nats (6.0224 bits).
+
+## L1 (PLAN_1.md): the two answering cells, 8 readings, D = 10, reported seeds
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| 256 cells, least squares (loss crude), return strengths born at nothing | 2.0593 | 2.9710 | 47.56 | 1.9006 | 5: 2.0608, 2.0596, 2.0599, 2.0581, 2.0582 (47.4, 47.9, 47.5, 47.4, 47.6) |
+| 256 cells, least squares (loss crude), return strengths born at the earlier size | 2.2111 | 3.1899 | 42.84 | 2.1103 | 5: 2.2077, 2.2130, 2.2141, 2.2084, 2.2121 (42.9, 42.9, 42.8, 42.9, 42.7) |
+| 256 cells, branches compete, return strengths born at nothing | 1.7917 | 2.5848 | 48.07 | 1.6204 | 5: 1.7944, 1.7930, 1.7952, 1.7906, 1.7850 (47.9, 48.0, 48.0, 48.2, 48.3) |
+| 256 cells, branches compete, return strengths born at the earlier size | 1.8275 | 2.6365 | 47.45 | 1.6693 | 5: 1.8211, 1.8281, 1.8297, 1.8275, 1.8309 (47.7, 47.5, 47.3, 47.5, 47.2) |
+| 1024 cells, least squares (loss crude), return strengths born at nothing | 1.9846 | 2.8632 | 48.47 | 1.8153 | 5: 1.9845, 1.9845, 1.9878, 1.9838, 1.9824 (48.5, 48.4, 48.5, 48.6, 48.5) |
+| 1024 cells, least squares (loss crude), return strengths born at the earlier size | 2.2133 | 3.1931 | 41.22 | 2.1090 | 3: 2.2155, 2.2134, 2.2110 (41.2, 41.3, 41.2) |
+| 1024 cells, branches compete, return strengths born at nothing | 1.7682 | 2.5510 | 48.63 | 1.5936 | 5: 1.7689, 1.7687, 1.7686, 1.7653, 1.7695 (48.6, 48.7, 48.6, 48.7, 48.6) |
+| 1024 cells, branches compete, return strengths born at the earlier size | 1.8416 | 2.6569 | 47.10 | 1.6879 | 3: 1.8394, 1.8415, 1.8441 (47.2, 47.1, 47.0) |
+
+## L2 a (PLAN_2.md): cells; arm P born at nothing, D = 10, seeds 73129, 93683, 116089
+
+After 8 readings:
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| 256 cells | 1.7942 | 2.5885 | 47.96 | 1.6210 | 3: 1.7944, 1.7930, 1.7952 (47.9, 48.0, 48.0) |
+| 1024 cells | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
+| 4096 cells | not run | | | | |
+| 16384 cells | not run | | | | |
+
+After 2 readings:
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| 256 cells | 1.8481 | 2.6663 | 46.34 | 1.7215 | 3: 1.8451, 1.8513, 1.8480 (46.4, 46.4, 46.2) |
+| 1024 cells | 1.8528 | 2.6730 | 46.28 | 1.7385 | 3: 1.8519, 1.8536, 1.8528 (46.4, 46.2, 46.2) |
+| 4096 cells | not run | | | | |
+| 16384 cells | not run | | | | |
+
+Pre-check on development seed 1 (1,024 cells, 4 readings): eta1 = 1: 1.8031 nats, 47.63%
+
+## L2 b (PLAN_3.md): readings; arm P born at nothing, D = 10
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| 1024 cells, 1 readings | not run | | | | |
+| 1024 cells, 2 readings | not run | | | | |
+| 1024 cells, 4 readings | not run | | | | |
+| 1024 cells, 8 readings | not run | | | | |
+| 1024 cells, 16 readings | not run | | | | |
+| 1024 cells, 32 readings | not run | | | | |
+| 4096 cells, 1 readings | not run | | | | |
+| 4096 cells, 2 readings | not run | | | | |
+| 4096 cells, 4 readings | not run | | | | |
+| 4096 cells, 8 readings | not run | | | | |
+| 4096 cells, 16 readings | not run | | | | |
+| 4096 cells, 32 readings | not run | | | | |
+
+Reading 8 by the two kernels (kernp.c in the first plan's runs; kernt.c here), nats: 
+
+## L2 c (PLAN_4.md): delay lines; arm P born at nothing, 1,024 cells, 8 readings
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| D = 4 | not run | | | | |
+| D = 10 | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
+| D = 16 | not run | | | | |
+| D = 32 | not run | | | | |
