@@ -44,3 +44,10 @@ Twenty-four compiled runs (seed 1 and the five seeds, two lives, two arms). Arm 
 ## 6. Entered 20 November: a false start, before any result of this plan was read
 
 The 24 runs were started and stopped after ten minutes, for two faults of mine, neither touching the rule. (1) The judging of the candidates in numpy took more than twelve minutes of one core for a run of arm M, where section 5 expected 90 to 150 seconds in all; it is now compiled (`kernm.c` through `fastm.py`: the same arithmetic as the relay system's forward pass, no strength changed), and the check compares it with the numpy function on 3,000 lines (largest difference 1e-15; the same line chosen among every four). (2) Four runs of arm R had finished and failed while writing their result files (a count kept as a numpy value, which the file format refuses); corrected, and the check now writes a result of arm M. No figure of any run had been read; the partial files were deleted and all 24 runs are made again. The plan's sections 1 to 5 stand unchanged.
+
+## 7. A dated addition, entered 20 November after the five reported seeds were read and before its runs
+
+On the five reported seeds (scored in section 8) arm M is above arm R on both tasks in both lives: in (a) by +5.4 on addition and +3.4 on subtraction, in (b) by +8.0 on addition and +0.7 on the second task, with one seed of five the other way on addition in each life. These sit within five points of the margins that matter (3 points in (a), 5 in (b)), so arm M is run on 1001 to 1010 in both lives and the fifteen reported together. For arm R on those seeds I use the earlier runs of the same lives (`res/p_e_R1_*.json` for (a), `res/h_u_R_*.json` for (b)), which the checks show to be the same life as this program's arm R to the last digit, with the same clean score.
+- M7 (0.7): on fifteen seeds M is above R on never-shown addition at the median of the paired differences in both lives.
+- M8 (0.5): on fifteen seeds, in (a), M is more than 3 points above R on addition.
+- M9 (0.5): on fifteen seeds, in (b), M is at least 5 points above R on addition (the lower task).
