@@ -41,10 +41,13 @@ def sums(prefixes):
             for sd, o in runs: print(f"  seed {sd}: kept pairs at the last finding {len(o['finds'][-1]['kept'])}; inside R = (3, 4, 6, 7): " + "; ".join(f"X = {k}: {v['digit_members']} pairs of digits, lying with the majority of their class by the carry {v['purity']}%, classes (size, of them carrying) {v['classes']}" for k, v in units_pair(o).items()) + f" | share of all trust held by class kinds {o['trust'].get('share_of_trust_in_class_kinds')}")
 
 def life(tags):
-    print("run | bryant-stories | burgess-busterbrown | carroll-alice | test text at the end | cells at the end, without the silent | CPU s (search)")
+    keys = [k for k in R(tags[0])["scores"]]; print("nats a byte; in brackets: scored with the R-cells of merged classes silent, without having learned so")
+    print("run | " + " | ".join(keys) + " | cells at the end, without the silent | CPU s (search)")
     for t in tags:
         o = R(t); sc = o["scores"]; f = lambda k: (f"{sc[k]['nats']:.4f}" + (f" ({sc[k]['nats_with_merged_withdrawn']:.4f})" if "nats_with_merged_withdrawn" in sc[k] else "")) if k in sc else "not scored"
-        print(" | ".join([t, f("bryant-stories"), f("burgess-busterbrown"), f("carroll-alice"), f("A_at_the_end"), f"{o['sizes']['cells']:,}, {o['sizes']['cells_with_merged_withdrawn']:,}", f"{o['cpu']:.0f} ({o['cpu_finding']:.0f})"]))
+        print(" | ".join([t] + [f(k) for k in keys] + [f"{o['sizes']['cells']:,}, {o['sizes']['cells_with_merged_withdrawn']:,}", f"{o['cpu']:.0f} ({o['cpu_finding']:.0f})"]))
+    base = R(tags[0])["scores"]
+    for t in tags[1:]: print(f"{t} less {tags[0]}: " + ", ".join(f"{k} {R(t)['scores'][k]['nats'] - base[k]['nats']:+.4f}" for k in keys if k in R(t)["scores"]))
     for t in tags:
         o = R(t); g = o["growth"]; b = np.array([q["bytes_read"] for q in g], float); sel = (b >= 125000) & (b <= 1000000)
         ex = lambda key: float(np.polyfit(np.log(b[sel]), np.log(np.array([q[key] for q in g], float)[sel]), 1)[0])

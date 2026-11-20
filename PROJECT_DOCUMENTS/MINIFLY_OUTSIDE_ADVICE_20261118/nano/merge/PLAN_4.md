@@ -78,3 +78,36 @@ Readings (mine; one seed and one piece of prose).
 No second setting was adopted, so section 4's condition is not met. The second life is run all the same, because two of its questions do not need a second setting: (a) does part (ii) of the hypothesis repeat on books this line has not opened, with the frozen setting; (b) does "found once, cells empty" beat the frozen setting again on new books, as it did on the first three and did not on development material. Runs: the second life (`chesterton-thursday`, `chesterton-brown`, `austen-persuasion`, in that order after the test text's stream) with no classes, with the frozen setting, and with classes found once at 500,000 bytes with empty cells. Also, as a measurement on the frozen setting (no new mechanism): `alone.py` on the five reported seeds (the score with only the class kinds speaking and the number of cells that takes).
 
 *Predictions (mine).* S1: on each new book the frozen setting is at least 0.005 nats below the base (0.75, as written in section 4). S2: found once with empty cells is below the frozen setting on at least two of the three new books (0.60). S3: class kinds alone, median of five seeds, at least 90% whole (0.60), with under 25,000 cells (0.85).
+
+## 8. Outcome of addition 1 (entered 20 November; `res/life2_*.json`, `report_life2.txt`; `res/alone_seed*.json`, `out_alone_seed*.txt`)
+
+*The second life* (the test text's stream, then three books this line had not opened; each last tenth scored right after its stream; nats a byte):
+
+| | chesterton-thursday | chesterton-brown | austen-persuasion | cells at the end | CPU s |
+|---|---|---|---|---|---|
+| no classes | 1.4411 | 1.3996 | 1.2700 | 691,801 | 8 |
+| frozen setting | 1.4263 | 1.3856 | 1.2594 | 3,208,291 | 219 |
+| classes found once at 500,000 bytes, cells empty | 1.4173 | 1.3807 | 1.2529 | 3,045,848 | 95 |
+
+The frozen setting is below the base by 0.0148, 0.0140, 0.0107: **S1 held; part (ii) of the hypothesis repeats on three unopened books.** Found once with empty cells is below the frozen setting on all three (by 0.009, 0.005, 0.007): **S2 held**; with the first life that is six books of six, against the opposite on the test text's own last twentieth.
+
+*Class kinds alone, five reported seeds, 40,000 lines* (whole answer, last reading; all kinds; class kinds alone with the number of class cells; plain kinds alone):
+
+| seed | all kinds | class kinds alone | class cells | plain kinds alone | plain cells |
+|---|---|---|---|---|---|
+| 73129 | 92.2 | 94.2 | 18,715 | 76.0 | 1,212,927 |
+| 93683 | 94.2 | 96.8 | 18,596 | 76.0 | 1,212,579 |
+| 116089 | 93.6 | 94.6 | 17,855 | 77.4 | 1,213,218 |
+| 406364 | 87.6 | 93.4 | 21,182 | 72.8 | 1,213,070 |
+| 545353 | 92.2 | 95.8 | 16,288 | 74.6 | 1,213,003 |
+| median | 92.2 | **94.6** | 18,596 | 76.0 | 1,213,003 |
+
+**S3 held** (94.6, at least 90 predicted; under 25,000 cells). With only class kinds speaking the tens digit is named on 98.2 to 99.8% and the hundreds digit on 95 to 97%; the eight class kinds of largest trust, 6,700 to 8,400 cells, give 93.8 to 96.0. On every seed the class kinds alone are above all kinds together.
+
+Reading (mine). On sums the class cells are a store of one and a half hundredths of the size that answers never-shown sums better than the whole. That is part (iii) of the hypothesis in the sense "the regularity is held in few cells"; it is not part (iii) as the system runs, because the plain cells are still there, still needed to find the classes, and still outvote the class cells.
+
+## 9. Addition 2 (20 November; written after section 8 and before its runs): which half of "found once, cells empty" helps on a new text
+
+Runs: both lives with (a) classes found once at 500,000 bytes and cells starting *pooled* (`mode=half pool=1`), (b) classes found at every doubling and cells starting *empty* (`empty=1`). Beside the frozen setting (every doubling, pooled) and "once, empty" this is the two-by-two table on six books.
+
+*Predictions (mine).* My reading of section 6 is that an empty cell does not carry the old text's counts into the new one. If so: U1, on at least five books of six "once, pooled" is nearer to the frozen setting than to "once, empty" (0.55); U2, on at least four of six "every doubling, empty" is below the frozen setting (0.55).
