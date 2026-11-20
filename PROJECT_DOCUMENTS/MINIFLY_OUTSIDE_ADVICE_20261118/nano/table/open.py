@@ -14,7 +14,7 @@ HERE = os.path.dirname(os.path.abspath(__file__)); D = 9
 
 def run(kw):
     seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 400000)); mode = kw.get("mode", "none"); q = float(kw.get("q", 0)); start = int(kw.get("start", 40000)); t0 = time.process_time()
-    Sys2.GATE = 0; Sys2.BLIND = 0; G.Sys = Sys2
+    Sys2.GATE = 0; Sys2.BLIND = 0; Sys2.RULE = int(kw.get("rule", 0)); Sys2.ALPHA = float(kw.get("alpha", 0)); Sys2.ROOM = int(kw.get("room", 0)); G.Sys = Sys2
     rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(v) // 100, int(v) % 100) for v in o]; held = pairs[:500]; rest = pairs[500:2000]; shown = pairs[2000:]; rng.permutation(10000)
     TAB = np.array([G.text(a, b) for a, b in shown], np.int64); NEW = np.array([G.text(a, b) for a, b in rest], np.int64); Ls = np.array([G.text(a, b) for a, b in held])
     g = np.random.default_rng([seed, 7]); prevs = [TAB[g.integers(8000, size=500)] for _ in range(5)]; rt = np.random.default_rng([seed, 31])

@@ -34,16 +34,20 @@ static int cmpf(const void *a, const void *b) { const float x = *(const float *)
    parts) times the sender's message.  Parts: Gt[part][kind][level][gate value]; gate 0: part j reads the byte at delay j + 1; gate 1: every part reads 0;
    gate 2: one part, reading the number (0..3) of speaking senders that have counted fewer times than this one and at least twice. */
 void mix_steps2(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double *Tu,
-                double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, int gate, double *P2, double birth, int rule) {
-    static double lt[4096], s[KMAX][SMAX]; double a[SMAX], p[SMAX], a2[SMAX], p2[SMAX]; static int lev[KMAX]; static int64_t gix[KMAX][DMAX]; static float srt[KMAX];
+                double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, int gate, double *P2, double birth, int rule, double *Rn) {
+    static double lt[4096], l0[4096], s[KMAX][SMAX]; double a[SMAX], p[SMAX], a2[SMAX], p2[SMAX]; static int lev[KMAX]; static int64_t gix[KMAX][DMAX]; static float srt[KMAX];
     const int NG = gate == 2 ? 4 : S, np = gate == 2 ? 1 : D;
-    for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
+    for (int c = 0; c < 4096; c++) { lt[c] = log(c + e); l0[c] = c ? log((double)c) : 0.0; }
     for (int64_t t = 0; t < n; t++) {
         const int32_t *id = ids + t * K1; double mx = -1e300, z = 0; int m = 0;
         for (int v = 0; v < S; v++) a[v] = 0;
         for (int k = 0; k < K1; k++) {
             lev[k] = -1; if (id[k] < 0 || N[id[k]] < 1) continue;
             const float *c = C + (int64_t)id[k] * S; lev[k] = level(N[id[k]], U[id[k]]); const double tk = T[k * NL + lev[k]], den = log(N[id[k]] + S * e);
+            if (Rn) {      /* PLAN_23.md: the cell leaves for the followers it has not met the share at which cells of its kind and level have met a new one */
+                const int q = k * NL + lev[k]; const double u = U[id[k]], mm = u >= S ? 0.0 : (Rn[2 * q + 1] + 1.0) / (Rn[2 * q] + 2.0), lm = log(1.0 - mm) - log((double)N[id[k]]), ln = u >= S ? 0.0 : log(mm) - log(S - u);
+                for (int v = 0; v < S; v++) { const double sv = c[v] > 0 ? (c[v] < 4096 ? l0[(int)c[v]] : log((double)c[v])) + lm : ln; s[k][v] = sv; a[v] += tk * sv; }
+            } else
             for (int v = 0; v < S; v++) { const double sv = (c[v] < 4096 ? lt[(int)c[v]] : log(c[v] + e)) - den; s[k][v] = sv; a[v] += tk * sv; }
             if (gate == 2 && N[id[k]] >= 2) srt[m++] = N[id[k]];
         }
@@ -72,12 +76,14 @@ void mix_steps2(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, 
         if (learn) {
             for (int k = 0; k < K1; k++) if (lev[k] >= 0) {
                 double g = s[k][y[t]], g2 = s[k][y[t]]; for (int v = 0; v < S; v++) { g -= p[v] * s[k][v]; g2 -= p2[v] * s[k][v]; }
-                if (rule) { const int q = k * NL + lev[k]; Tu[q] += g * g; if (Tu[q] > 0) T[q] += eta * g / sqrt(Tu[q]);      /* PLAN_22.md: one rule for every text */
-                    for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gu[i] += g2 * g2; if (Gu[i] > 0) Gt[i] += eta * g2 / sqrt(Gu[i]); } }
+                if (rule) { const int q = k * NL + lev[k]; const double g0 = rule == 2 ? 1.0 : 1e-12;      /* rule 1 (PLAN_22.md as run, with 1e-12 so that a mismatch of the size of rounding makes no whole step); rule 2 (its addition 1): the sum starts at one */
+                    Tu[q] += g * g; T[q] += eta * g / sqrt(Tu[q] + g0);      /* PLAN_22.md: one rule for every text */
+                    for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gu[i] += g2 * g2; Gt[i] += eta * g2 / sqrt(Gu[i] + g0); } }
                 else {
                 T[k * NL + lev[k]] += (shrink ? eta / sqrt(1.0 + Tu[k * NL + lev[k]]) : eta) * g; Tu[k * NL + lev[k]] += 1.0;
                 for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gt[i] += (shrink ? eta / sqrt(1.0 + Gu[i]) : eta) * g2; Gu[i] += 1.0; } }
             }
+            if (Rn) for (int k = 0; k < K1; k++) if (lev[k] >= 0) { const int q = k * NL + lev[k]; Rn[2 * q] += 1.0; if (C[(int64_t)id[k] * S + y[t]] == 0) Rn[2 * q + 1] += 1.0; }
             for (int k = 0; k < K1; k++) { const int64_t i = id[k] < -1 ? -2 - (int64_t)id[k] : id[k];
                 if (i >= 0) { if (birth > 0 && N[i] == 0 && p[y[t]] >= birth) continue;      /* PLAN_19.md: a cell is not born at a byte to which the first cell gave at least this probability */
                     float *c = C + i * S; if (c[y[t]] == 0) U[i] += 1; c[y[t]] += 1; N[i] += 1; } }
@@ -90,7 +96,7 @@ def kern():
     if not os.path.exists(so):
         open(src, "w").write(SRC); tmp = so + f".{os.getpid()}"; subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", tmp, src, "-lm"]); os.replace(tmp, so)
     L = ctypes.CDLL(so); ci, cd = ctypes.c_int, ctypes.c_double
-    L.mix_steps2.argtypes = [ctypes.c_int64, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD, ci, PI, PD, PD, ci, PD, cd, ci]; L.mix_steps2.restype = None; return L
+    L.mix_steps2.argtypes = [ctypes.c_int64, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD, ci, PI, PD, PD, ci, PD, cd, ci, PD]; L.mix_steps2.restype = None; return L
 p32 = lambda a: a.ctypes.data_as(PI); pf = lambda a: a.ctypes.data_as(PF); pd = lambda a: a.ctypes.data_as(PD)
 
 def scramble(a):
@@ -102,20 +108,20 @@ def scramble(a):
 
 class Sys2(G.Sys):
     """nano/merge's system with the second answering cell. s.cell says whose answer say() gives (1: the first cell, the plain system; 2: the second)."""
-    GATE = 0; BLIND = 0; BIRTH = 0.0; RULE = 0; ALPHA = 0.0; NOLEVEL = 0; E = 0.0
+    GATE = 0; BLIND = 0; BIRTH = 0.0; RULE = 0; ALPHA = 0.0; NOLEVEL = 0; E = 0.0; ROOM = 0
     def __init__(s, *a, **kw):
         super().__init__(*a, **kw); s.gate = Sys2.GATE; s.L2 = kern()
         if Sys2.E: s.e = float(Sys2.E)                                       # a side arm of PLAN_22.md: one smoothing for every text
         if Sys2.RULE: s.eta = float(Sys2.ALPHA); s.T[:] = 0.0                # PLAN_22.md: every trust is born at nothing and the step needs no number chosen for a text
         if True: s.NG = 4 if s.gate == 2 else s.S; s.nparts = 1 if s.gate == 2 else s.D; assert s.D <= 16
-        s.Gt = np.zeros((s.nparts, s.K1, NL, s.NG)); s.Gu = np.zeros_like(s.Gt); s.cell = 2
+        s.Gt = np.zeros((s.nparts, s.K1, NL, s.NG)); s.Gu = np.zeros_like(s.Gt); s.cell = 2; s.Rn = np.zeros((s.K1, NL, 2))
     def _run(s, ctx, y, learn, want_p):
         P = np.zeros((len(ctx), s.S)) if want_p else None
         for a in range(0, len(ctx), 50000):
             idd = s.ids(ctx[a:a + 50000], create=learn); yy = np.ascontiguousarray(y[a:a + 50000].astype(np.int32)) if y is not None else np.zeros(len(idd), np.int32)
             cb = np.ascontiguousarray(ctx[a:a + 50000, :s.D].astype(np.int32)); P1 = np.zeros((len(idd), s.S)) if want_p else None; P2 = np.zeros((len(idd), s.S)) if want_p else None
             s.L2.mix_steps2(len(idd), s.K1, s.S, p32(idd), p32(yy), pf(s.C), pf(s.N), pf(s.U), pd(s.T), pd(s.Tu), s.eta, s.e, int(learn), s.shrink, pd(P1) if want_p else None,
-                            s.D, p32(cb), pd(s.Gt), pd(s.Gu), s.gate, pd(P2) if want_p else None, float(Sys2.BIRTH), int(Sys2.RULE))
+                            s.D, p32(cb), pd(s.Gt), pd(s.Gu), s.gate, pd(P2) if want_p else None, float(Sys2.BIRTH), int(Sys2.RULE), pd(s.Rn) if Sys2.ROOM else None)
             if want_p: P[a:a + 50000] = P2 if s.cell == 2 else P1
         return P
     def ids(s, ctx, create=False):
@@ -125,18 +131,21 @@ class Sys2(G.Sys):
         return out
     def find(s):
         """Classes are found anew by nano/merge's find; the second cell's parts for a class kind follow the first cell's trust: kept where the pair is kept, nothing where it is new."""
-        old = {(sl["k"], sl["X"]): p for p, sl in enumerate(s.slots) if sl is not None}; G0, U0 = s.Gt.copy(), s.Gu.copy(); super().find(); s.Gt[:, s.KB:] = 0; s.Gu[:, s.KB:] = 0
+        old = {(sl["k"], sl["X"]): p for p, sl in enumerate(s.slots) if sl is not None}; G0, U0, R0 = s.Gt.copy(), s.Gu.copy(), s.Rn.copy(); super().find(); s.Gt[:, s.KB:] = 0; s.Gu[:, s.KB:] = 0; s.Rn[s.KB:] = 0
         for p, sl in enumerate(s.slots):
-            if sl is not None and (sl["k"], sl["X"]) in old: q = old[(sl["k"], sl["X"])]; s.Gt[:, s.KB + p] = G0[:, s.KB + q]; s.Gu[:, s.KB + p] = U0[:, s.KB + q]
+            if sl is not None and (sl["k"], sl["X"]) in old: q = old[(sl["k"], sl["X"])]; s.Gt[:, s.KB + p] = G0[:, s.KB + q]; s.Gu[:, s.KB + p] = U0[:, s.KB + q]; s.Rn[s.KB + p] = R0[s.KB + q]
 
 # ---------------------------------------------------------------- the reference in numpy
-def steps2_np(ids, y, cb, C, N, U, T, Tu, Gt, Gu, eta, e, gate, learn=True, shrink=False, birth=0.0, rule=0):
+def steps2_np(ids, y, cb, C, N, U, T, Tu, Gt, Gu, eta, e, gate, learn=True, shrink=False, birth=0.0, rule=0, Rn=None):
     S = C.shape[1]; n = len(y); P1 = np.zeros((n, S)); P2 = np.zeros((n, S)); nparts = Gt.shape[0]
     for t in range(n):
         a = np.zeros(S); ss = []
         for k, i in enumerate(ids[t]):
             if i >= 0 and N[i] >= 1:
-                l = G.level_np(N[i], U[i]); sv = np.log(C[i].astype(np.float64) + e) - np.log(N[i] + S * e); ss.append((k, l, sv, float(N[i]))); a += T[k, l] * sv
+                l = G.level_np(N[i], U[i]); sv = np.log(C[i].astype(np.float64) + e) - np.log(N[i] + S * e)
+                if Rn is not None:
+                    c = C[i].astype(np.float64); mm = 0.0 if U[i] >= S else (Rn[k, l, 1] + 1.0) / (Rn[k, l, 0] + 2.0); sv = np.where(c > 0, np.log(np.maximum(c, 1e-300)) + np.log(1.0 - mm) - np.log(float(N[i])), np.log(mm) - np.log(float(S) - float(U[i])) if U[i] < S else 0.0)
+                ss.append((k, l, sv, float(N[i]))); a += T[k, l] * sv
         p = np.exp(a - a.max()); p /= p.sum(); P1[t] = p; a2 = a.copy(); used = []
         for k, l, sv, nk in ss:
             if gate == 0: gv = [int(cb[t, j]) for j in range(nparts)]
@@ -149,13 +158,17 @@ def steps2_np(ids, y, cb, C, N, U, T, Tu, Gt, Gu, eta, e, gate, learn=True, shri
                 g = sv[y[t]] - p @ sv; g2 = sv[y[t]] - p2 @ sv
                 if rule:
                     Tu[k, l] += g * g
-                    if Tu[k, l] > 0: T[k, l] += eta * g / np.sqrt(Tu[k, l])
+                    g0 = 1.0 if rule == 2 else 1e-12; T[k, l] += eta * g / np.sqrt(Tu[k, l] + g0)
                     for j in range(nparts):
                         Gu[j, k, l, gv[j]] += g2 * g2
-                        if Gu[j, k, l, gv[j]] > 0: Gt[j, k, l, gv[j]] += eta * g2 / np.sqrt(Gu[j, k, l, gv[j]])
+                        Gt[j, k, l, gv[j]] += eta * g2 / np.sqrt(Gu[j, k, l, gv[j]] + g0)
                     continue
                 T[k, l] += (eta / np.sqrt(1.0 + Tu[k, l]) if shrink else eta) * g; Tu[k, l] += 1.0
                 for j in range(nparts): Gt[j, k, l, gv[j]] += (eta / np.sqrt(1.0 + Gu[j, k, l, gv[j]]) if shrink else eta) * g2; Gu[j, k, l, gv[j]] += 1.0
+            if Rn is not None:
+                for k, l, sv, nk in ss:
+                    Rn[k, l, 0] += 1.0
+                    if C[ids[t][k], y[t]] == 0: Rn[k, l, 1] += 1.0
             for i in ids[t]:
                 if i < -1: i = -2 - i
                 if i >= 0:
@@ -166,22 +179,23 @@ def steps2_np(ids, y, cb, C, N, U, T, Tu, Gt, Gu, eta, e, gate, learn=True, shri
 
 def check():
     ok = True; rng = np.random.default_rng(5); L = kern(); L1 = G.kern()
-    for S, shrink, gate, D, birth, rule in ((14, True, 0, 9, 0.0, 0), (65, False, 0, 6, 0.0, 0), (14, True, 1, 9, 0.0, 0), (14, True, 2, 9, 0.0, 0), (65, False, 2, 6, 0.0, 0), (14, True, 0, 9, 0.1, 0), (65, False, 0, 6, 0.02, 0), (14, False, 0, 9, 0.0, 1), (65, False, 0, 6, 0.0, 1)):
+    for S, shrink, gate, D, birth, rule in ((14, True, 0, 9, 0.0, 0), (65, False, 0, 6, 0.0, 0), (14, True, 1, 9, 0.0, 0), (14, True, 2, 9, 0.0, 0), (65, False, 2, 6, 0.0, 0), (14, True, 0, 9, 0.1, 0), (65, False, 0, 6, 0.02, 0), (14, False, 0, 9, 0.0, 1), (65, False, 0, 6, 0.0, 1), (14, False, 0, 9, 0.0, 2), (65, False, 0, 6, 0.0, 2), (14, False, 0, 9, 0.0, 12), (65, False, 0, 6, 0.0, 12)):
         K1, n, nc = 9, 3000, 400; ids = rng.integers(-1, nc, (n, K1)).astype(np.int32); sil = rng.random((n, K1)) < 0.1; ids[sil & (ids >= 0)] = -2 - ids[sil & (ids >= 0)]; y = rng.integers(0, S, n).astype(np.int32)
         cb = rng.integers(0, S, (n, D)).astype(np.int32); NG = 4 if gate == 2 else S; npart = 1 if gate == 2 else D
+        room = rule >= 10; rule = rule % 10
         def fresh(): return np.zeros((nc, S), np.float32), np.zeros(nc, np.float32), np.zeros(nc, np.float32), np.full((K1, NL), 0.1), np.zeros((K1, NL)), np.zeros((npart, K1, NL, NG)), np.zeros((npart, K1, NL, NG))
-        C, N, U, T, Tu, Gt, Gu = fresh(); P1 = np.zeros((n, S)); P2 = np.zeros((n, S))
-        L.mix_steps2(n, K1, S, p32(ids), p32(y), pf(C), pf(N), pf(U), pd(T), pd(Tu), 0.05, 0.3, 1, int(shrink), pd(P1), D, p32(cb), pd(Gt), pd(Gu), gate, pd(P2), birth, rule)
-        Cb, Nb, Ub, Tb, Tub, Gtb, Gub = fresh(); R1, R2 = steps2_np(ids, y, cb, Cb, Nb, Ub, Tb, Tub, Gtb, Gub, 0.05, 0.3, gate, True, shrink, birth, rule)
-        d = max(np.abs(P1 - R1).max(), np.abs(P2 - R2).max(), np.abs(T - Tb).max(), np.abs(Gt - Gtb).max(), np.abs(C - Cb).max(), np.abs(Gu - Gub).max())
+        C, N, U, T, Tu, Gt, Gu = fresh(); P1 = np.zeros((n, S)); P2 = np.zeros((n, S)); Rn = np.zeros((K1, NL, 2)); Rnb = np.zeros((K1, NL, 2))
+        L.mix_steps2(n, K1, S, p32(ids), p32(y), pf(C), pf(N), pf(U), pd(T), pd(Tu), 0.05, 0.3, 1, int(shrink), pd(P1), D, p32(cb), pd(Gt), pd(Gu), gate, pd(P2), birth, rule, pd(Rn) if room else None)
+        Cb, Nb, Ub, Tb, Tub, Gtb, Gub = fresh(); R1, R2 = steps2_np(ids, y, cb, Cb, Nb, Ub, Tb, Tub, Gtb, Gub, 0.05, 0.3, gate, True, shrink, birth, rule, Rnb if room else None)
+        d = max(np.abs(P1 - R1).max(), np.abs(P2 - R2).max(), np.abs(T - Tb).max(), np.abs(Gt - Gtb).max(), np.abs(C - Cb).max(), np.abs(Gu - Gub).max(), np.abs(Rn - Rnb).max())
         Cc, Nc, Uc, Tc, Tuc, _, _ = fresh(); Pm = np.zeros((n, S)); L1.mix_steps(n, K1, S, p32(ids), p32(y), pf(Cc), pf(Nc), pf(Uc), pd(Tc), pd(Tuc), 0.05, 0.3, 1, int(shrink), pd(Pm))      # the first cell against nano/merge's own kernel
-        d1 = max(np.abs(P1 - Pm).max(), np.abs(T - Tc).max(), np.abs(C - Cc).max()) if birth == 0 and rule == 0 else 0.0; fewer = float(Nc.sum() - N.sum()); good = d < 1e-9 and d1 == 0 and np.abs(P2 - P1).max() > 1e-3 and (birth == 0 or fewer > 0); ok &= good
-        print(f"two answering cells, S = {S}, shrinking step = {shrink}, gate = {gate}, birth = {birth} ({fewer:.0f} counts fewer than with none), rule = {rule}, {n} bytes: compiled against numpy, largest difference {d:.1e}; the first cell against nano/merge's kernel {d1:.1e}; the cells differ by up to {np.abs(P2 - P1).max():.2f}", "PASSED" if good else "FAILED")
+        d1 = max(np.abs(P1 - Pm).max(), np.abs(T - Tc).max(), np.abs(C - Cc).max()) if birth == 0 and rule == 0 and not room else 0.0; fewer = float(Nc.sum() - N.sum()); good = d < 1e-9 and d1 == 0 and np.abs(P2 - P1).max() > 1e-3 and (birth == 0 or fewer > 0); ok &= good
+        print(f"two answering cells, S = {S}, shrinking step = {shrink}, gate = {gate}, birth = {birth} ({fewer:.0f} counts fewer than with none), rule = {rule}, room for the unmet learned = {room}, {n} bytes: compiled against numpy, largest difference {d:.1e}; the first cell against nano/merge's kernel {d1:.1e}; the cells differ by up to {np.abs(P2 - P1).max():.2f}", "PASSED" if good else "FAILED")
     return ok
 
 # ---------------------------------------------------------------- sums
 def run_sums(kw):
-    seed = int(kw.get("seed", 1)); D = 9; Sys2.GATE = int(kw.get("gate", 0)); Sys2.BLIND = int(kw.get("blind", 0)); Sys2.BIRTH = float(kw.get("birth", 0)); Sys2.RULE = int(kw.get("rule", 0)); Sys2.ALPHA = float(kw.get("alpha", 0)); Sys2.E = float(kw.get("e", 0)); G.Sys = Sys2; t0 = time.process_time()
+    seed = int(kw.get("seed", 1)); D = 9; Sys2.GATE = int(kw.get("gate", 0)); Sys2.BLIND = int(kw.get("blind", 0)); Sys2.BIRTH = float(kw.get("birth", 0)); Sys2.RULE = int(kw.get("rule", 0)); Sys2.ALPHA = float(kw.get("alpha", 0)); Sys2.E = float(kw.get("e", 0)); Sys2.ROOM = int(kw.get("room", 0)); G.Sys = Sys2; t0 = time.process_time()
     rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]
     TAB = np.array([G.text(a, b) for a, b in shown], np.int64); Ls = np.array([G.text(a, b) for a, b in held]); g = np.random.default_rng([seed, 7]); prevs = [TAB[g.integers(8000, size=500)] for _ in range(5)]
     def one(s, prev):
@@ -224,7 +238,7 @@ def load(books):
     return x, segs, replaced
 
 def run_life(kw):
-    books = kw.get("books", "new"); Sys2.GATE = int(kw.get("gate", 0)); Sys2.BLIND = int(kw.get("blind", 0)); Sys2.BIRTH = float(kw.get("birth", 0)); Sys2.RULE = int(kw.get("rule", 0)); Sys2.ALPHA = float(kw.get("alpha", 0)); Sys2.E = float(kw.get("e", 0)); G.Sys = Sys2; t0 = time.process_time(); x, segs, replaced = load(books); s = G.prose_sys(x, dict(mode=kw.get("mode", "none")))
+    books = kw.get("books", "new"); Sys2.GATE = int(kw.get("gate", 0)); Sys2.BLIND = int(kw.get("blind", 0)); Sys2.BIRTH = float(kw.get("birth", 0)); Sys2.RULE = int(kw.get("rule", 0)); Sys2.ALPHA = float(kw.get("alpha", 0)); Sys2.E = float(kw.get("e", 0)); Sys2.ROOM = int(kw.get("room", 0)); G.Sys = Sys2; t0 = time.process_time(); x, segs, replaced = load(books); s = G.prose_sys(x, dict(mode=kw.get("mode", "none")))
     out = dict(task="prose_life", args=kw, segments={k: list(map(int, v)) for k, v in segs.items()}, replaced_percent=replaced, scores={})
     def sc(lo, hi):
         r = {}

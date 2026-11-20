@@ -87,3 +87,13 @@ Readings (mine).
 4. **One number per text is left: the smoothing of a cell's counts** (2 on sums, 0.02 on prose). With prose's value sums lose 8 points. That is the next debt of this kind.
 5. What is kept of an old text is a little worse with the rule for the second cell (0.007 to 0.009), which is the price of parts that move faster.
 6. Given to the line `nano/suite` for its last step, where the rule meets streams of other kinds.
+
+## 6. Addition 1 (20 November; written after section 5 and before the runs it describes): the rule made well-conditioned
+
+*What I found while checking the next plan's program.* The rule as run divides a mismatch by the root of the sum of squared mismatches, a sum that starts at nothing. Where a trust's first mismatch is of the size of rounding (a sender whose message is flat), that quotient is plus or minus one, and the trust takes a whole step of size α in a direction that rounding decides. Two implementations of the same arithmetic then drift apart (the compiled loop and numpy agree to 5e-14 on the cases of `check22_output.txt`, and no longer on a harder case), and, which matters more, a part that has been met a few times moves at full size: the sensitivity of the second cell to α that section 5 reports. The figures of section 5 stand as what that program gave; they are not exactly reproducible by another implementation.
+
+*The change:* **the sum starts at one** (one squared nat, the unit of a message), so the step is α over the root of one plus the sum. A first mismatch then moves a trust by α times the mismatch, not by α. Nothing else changes. `gate.py rule=2`; checked against numpy with and without the next plan's option (`check23_output.txt`, thirteen cases).
+
+*Runs:* the development grid of section 2 again (α in 0.01, 0.03, 0.1, 0.3; the same rule of choice), then the claims of section 2 with the chosen α: sums on the five reported seeds without classes, the two lives on prose.
+
+*Predictions (mine).* W1: the second cell on prose no longer breaks with a larger α: at α = 0.1 it is within 0.010 nats of its figure at α = 0.01 on the development measure (chance 0.60). W2: the chosen α is larger than 0.01 (0.65). W3: with the chosen α the first cell is within 1.5 points of 80.1 on sums and within 0.005 nats on each of six books, as in section 5 (0.65). W4: the second cell is at least as good as the per-text setting on at least five of six books (0.50).

@@ -15,16 +15,20 @@ static int cmpf(const void *a, const void *b) { const float x = *(const float *)
    parts) times the sender's message.  Parts: Gt[part][kind][level][gate value]; gate 0: part j reads the byte at delay j + 1; gate 1: every part reads 0;
    gate 2: one part, reading the number (0..3) of speaking senders that have counted fewer times than this one and at least twice. */
 void mix_steps2(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double *Tu,
-                double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, int gate, double *P2, double birth, int rule) {
-    static double lt[4096], s[KMAX][SMAX]; double a[SMAX], p[SMAX], a2[SMAX], p2[SMAX]; static int lev[KMAX]; static int64_t gix[KMAX][DMAX]; static float srt[KMAX];
+                double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, int gate, double *P2, double birth, int rule, double *Rn) {
+    static double lt[4096], l0[4096], s[KMAX][SMAX]; double a[SMAX], p[SMAX], a2[SMAX], p2[SMAX]; static int lev[KMAX]; static int64_t gix[KMAX][DMAX]; static float srt[KMAX];
     const int NG = gate == 2 ? 4 : S, np = gate == 2 ? 1 : D;
-    for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
+    for (int c = 0; c < 4096; c++) { lt[c] = log(c + e); l0[c] = c ? log((double)c) : 0.0; }
     for (int64_t t = 0; t < n; t++) {
         const int32_t *id = ids + t * K1; double mx = -1e300, z = 0; int m = 0;
         for (int v = 0; v < S; v++) a[v] = 0;
         for (int k = 0; k < K1; k++) {
             lev[k] = -1; if (id[k] < 0 || N[id[k]] < 1) continue;
             const float *c = C + (int64_t)id[k] * S; lev[k] = level(N[id[k]], U[id[k]]); const double tk = T[k * NL + lev[k]], den = log(N[id[k]] + S * e);
+            if (Rn) {      /* PLAN_23.md: the cell leaves for the followers it has not met the share at which cells of its kind and level have met a new one */
+                const int q = k * NL + lev[k]; const double u = U[id[k]], mm = u >= S ? 0.0 : (Rn[2 * q + 1] + 1.0) / (Rn[2 * q] + 2.0), lm = log(1.0 - mm) - log((double)N[id[k]]), ln = u >= S ? 0.0 : log(mm) - log(S - u);
+                for (int v = 0; v < S; v++) { const double sv = c[v] > 0 ? (c[v] < 4096 ? l0[(int)c[v]] : log((double)c[v])) + lm : ln; s[k][v] = sv; a[v] += tk * sv; }
+            } else
             for (int v = 0; v < S; v++) { const double sv = (c[v] < 4096 ? lt[(int)c[v]] : log(c[v] + e)) - den; s[k][v] = sv; a[v] += tk * sv; }
             if (gate == 2 && N[id[k]] >= 2) srt[m++] = N[id[k]];
         }
@@ -53,12 +57,14 @@ void mix_steps2(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, 
         if (learn) {
             for (int k = 0; k < K1; k++) if (lev[k] >= 0) {
                 double g = s[k][y[t]], g2 = s[k][y[t]]; for (int v = 0; v < S; v++) { g -= p[v] * s[k][v]; g2 -= p2[v] * s[k][v]; }
-                if (rule) { const int q = k * NL + lev[k]; Tu[q] += g * g; if (Tu[q] > 0) T[q] += eta * g / sqrt(Tu[q]);      /* PLAN_22.md: one rule for every text */
-                    for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gu[i] += g2 * g2; if (Gu[i] > 0) Gt[i] += eta * g2 / sqrt(Gu[i]); } }
+                if (rule) { const int q = k * NL + lev[k]; const double g0 = rule == 2 ? 1.0 : 1e-12;      /* rule 1 (PLAN_22.md as run, with 1e-12 so that a mismatch of the size of rounding makes no whole step); rule 2 (its addition 1): the sum starts at one */
+                    Tu[q] += g * g; T[q] += eta * g / sqrt(Tu[q] + g0);      /* PLAN_22.md: one rule for every text */
+                    for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gu[i] += g2 * g2; Gt[i] += eta * g2 / sqrt(Gu[i] + g0); } }
                 else {
                 T[k * NL + lev[k]] += (shrink ? eta / sqrt(1.0 + Tu[k * NL + lev[k]]) : eta) * g; Tu[k * NL + lev[k]] += 1.0;
                 for (int j = 0; j < np; j++) { const int64_t i = gix[k][j]; Gt[i] += (shrink ? eta / sqrt(1.0 + Gu[i]) : eta) * g2; Gu[i] += 1.0; } }
             }
+            if (Rn) for (int k = 0; k < K1; k++) if (lev[k] >= 0) { const int q = k * NL + lev[k]; Rn[2 * q] += 1.0; if (C[(int64_t)id[k] * S + y[t]] == 0) Rn[2 * q + 1] += 1.0; }
             for (int k = 0; k < K1; k++) { const int64_t i = id[k] < -1 ? -2 - (int64_t)id[k] : id[k];
                 if (i >= 0) { if (birth > 0 && N[i] == 0 && p[y[t]] >= birth) continue;      /* PLAN_19.md: a cell is not born at a byte to which the first cell gave at least this probability */
                     float *c = C + i * S; if (c[y[t]] == 0) U[i] += 1; c[y[t]] += 1; N[i] += 1; } }
