@@ -104,13 +104,14 @@ Never-shown additions, last reading of each phase, median of five seeds:
 | relay system alone | 84.8 | 1.8 | 83.7 |
 | the whole, trust by the relay system's confidence (`PLAN_6.md`) | **77.6** | **12.4** | 68.3 |
 | the whole, that trust also by place, no second task (`PLAN_7.md`) | 74.0 | | |
-J2_ROWS
+| relay system kept by replay, alone (`PLAN_8.md`, in the same runs) | 87.0 | 82.6 | 76.9 |
+| the whole with the relay system kept by replay (`PLAN_8.md`) | **83.2** | **45.8** | 62.5 |
 
 *Before the second task* the relay system lifts the whole's tens digit from 58 to 78; the relay system alone has 90. A trust by place does not close this (73.1 by the mean of the last three readings, against 76.6 without it and 84.2 for the relay system alone): refuted on every seed, though the answering cell does find the place (its trust for the relay system is large where the tens digit is named and nothing where the units digit is named).
 
 *After the second task* the whole is worse than the counting cells alone, in every digit, the units digit included (54 against 98). Reading (mine): the relay system is right on the subtraction lines being read, so it stays trusted; on an addition line it is then confident and wrong. No trust learned from the lines being read can see this, because during subtraction no addition line is read. Joined in this way the pair generalises less than the relay system and keeps less than the counting cells.
 
-J2_TEXT
+*With the relay system kept by replay* (`nano/replay`'s run cells and replayed lines, copied; the replayed lines reach the relay system only): the relay system alone keeps 82.6 of 87.0, as that line reported. The whole has 83.2 before and 45.8 after: below the relay system with replay at every point of the life. The hypothesis put for this track (at least 84 before, at least 80% of it kept) is refuted in its second half (55% kept). Reading (mine): with the relay system kept, what pulls the whole down is the three-delay counting cells themselves, whose hundreds and tens cells hold both tasks in one count. On this evidence the two kinds joined by a learned trust do not add up; the counting cells' use to the relay system is as the store its replayed lines are drawn from. The counting cells worth joining would be those of section 8, and that was not run.
 
 ## 8. Tenth plan: look-ahead guesses that cells can be keyed on (`PLAN_10.md`; the coordinating session's idea)
 
