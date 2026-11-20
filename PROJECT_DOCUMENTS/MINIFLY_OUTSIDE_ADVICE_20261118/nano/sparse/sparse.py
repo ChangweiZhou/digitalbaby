@@ -195,6 +195,7 @@ def make(kw, cls=None):
 def run(kw, s=None):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng, held, shown = split(seed); rev = int(kw.get("rev", 0)); every = int(kw.get("every", 5000)); s = s or make(kw)
     TAB = {op: np.array([text(op, a, b, rev) for a, b in shown[op]], np.int32) for op in "+-"}; out = dict(label=kw.get("label"), args=kw, kinds=len(s.kinds), rows=[]); first = {5000, 10000, 20000, 40000} if every > 5000 else set()
+    wr = {tuple(l) for l in TAB["-"].tolist()}; clean = [p for p in held["-"] if tuple(text("-", *p, rev)) not in wr]; out["sub_clean_pairs"] = len(clean)      # never-shown subtractions whose written line no shown pair writes (loop_small_case/ERRATA_20261120.md)
     for pi, ph in enumerate(kw.get("plan", "add:40000").split(",")):
         name, n = ph.split(":"); n = int(n); op0 = {"add": "+", "sub": "-", "mix": None}[name]; it = 0
         while it < n:
@@ -202,7 +203,7 @@ def run(kw, s=None):
             if op0 is None: ops = rng.integers(2, size=nxt - it); idx = rng.integers(8000, size=nxt - it); X = np.where(ops[:, None] == 0, TAB["+"][idx], TAB["-"][idx])
             else: X = TAB[op0][rng.integers(8000, size=nxt - it)]
             s.read(X); it = nxt; a = score(s, "+", held["+"], rev); b = score(s, "-", held["-"], rev)
-            out["rows"].append(dict(phase=pi, name=name, lines=it, add=a["whole"], sub=b["whole"], add_place=a["place"], sub_place=b["place"], add_forced=a["forced"], sub_forced=b["forced"], cells=s.size()["cells"]))
+            out["rows"].append(dict(phase=pi, name=name, lines=it, add=a["whole"], sub=b["whole"], add_place=a["place"], sub_place=b["place"], add_forced=a["forced"], sub_forced=b["forced"], cells=s.size()["cells"], sub_clean=score(s, "-", clean, rev)["whole"]))
     a, acc = score(s, "+", held["+"], rev, True); top = []
     for c in range(3):
         mean = np.where(acc[c, :, 1] > 0, acc[c, :, 0] / np.maximum(acc[c, :, 1], 1), -np.inf); o = np.argsort(-mean)[:8]

@@ -114,6 +114,7 @@ def run(kw):
     t0 = time.process_time(); seed = int(kw.get("seed", 1)); rng, held, shown = sp.split(seed); every = int(kw.get("every", 50000)); block = int(kw.get("block", 50)); use = int(kw.get("relay", 1))
     s = Sys3(Tx0=float(kw.get("Tx0", 0)), D=int(kw.get("D", 9)), m=int(kw.get("m", 3)), eta=float(kw.get("eta", 0.008)), e=float(kw.get("e", 0.1)), T0=float(kw.get("T0", 0.02)), shrink=int(kw.get("shrink", 0)))
     rl = Relay(seed) if use else None; TAB = {op: np.array([text(op, a, b) for a, b in shown[op]], np.int32) for op in "+-"}; out = dict(label=kw.get("label"), args=kw, kinds=len(s.kinds), rows=[]); first = {5000, 10000, 20000, 40000}
+    wr = {tuple(l) for l in TAB["-"].tolist()}; clean = [p for p in held["-"] if tuple(text("-", *p)) not in wr]; out["sub_clean_pairs"] = len(clean)
     for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
         name, n = ph.split(":"); n = int(n); op0 = {"add": "+", "sub": "-"}[name]; it = 0
         while it < n:
@@ -122,7 +123,7 @@ def run(kw):
                 B = Xl[b:b + block]
                 if rl is not None: M, lev = rl.block(B); s.read(B, M, lev)
                 else: s.read(B)
-            it = nxt; a = score(s, rl, "+", held["+"]); d = score(s, rl, "-", held["-"]); row = dict(phase=pi, name=name, lines=it, add=a["whole"], sub=d["whole"], add_place=a["place"], sub_place=d["place"], add_forced=a["forced"], sub_forced=d["forced"])
+            it = nxt; a = score(s, rl, "+", held["+"]); d = score(s, rl, "-", held["-"]); row = dict(phase=pi, name=name, lines=it, add=a["whole"], sub=d["whole"], add_place=a["place"], sub_place=d["place"], add_forced=a["forced"], sub_forced=d["forced"], sub_clean=score(s, rl, "-", clean)["whole"])
             if rl is not None: row.update(relay_add=a["relay_alone"], relay_sub=d["relay_alone"], relay_add_place=a["relay_alone_place"], relay_trust=np.round(s.T[-1, :10], 3).tolist())
             out["rows"].append(row)
     out.update(s.size()); out["cpu"] = round(time.process_time() - t0, 1); out["top_trust_add"] = {}
