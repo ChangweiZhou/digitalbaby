@@ -86,3 +86,5 @@ After the outcome above the coordinating session sent three facts from other lin
 | X3 | the last reading is above the reading at 2,400,000 lines by at least 5 points (mean over gaps) | 0.65 |
 
 **Cost.** About 55 CPU-minutes on one core (it runs beside the fourth plan's four runs on four cores, so about 70 minutes of wall time). **Not run:** other seeds; other steps; lengths beyond 9,600,000 lines.
+
+*Note of 20 November on the long run:* its first start was stopped at about 24 minutes by the time limit of the job that launched it, before its first result file was written (the program writes its file at the end); nothing of it was read. It was started again unchanged, beside the fourth plan's reported seeds.

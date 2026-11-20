@@ -37,3 +37,23 @@ My expectation, stated beforehand: the third plan's reading was that the first n
 ## 4. Cost, and what is not run
 
 Four runs of about 13 CPU-minutes, one batch, about 15 minutes of wall time. **Not run:** the reported seeds unless the line of 30% is reached; a one-gate arm at 120 + 134; the gate on the other texts; the gate in `hold.py` (the crosswalk's own smallest experiment names the cell of REPORT section 12; this plan puts the gate in the layered cell, which is what this line owns).
+
+## Development outcome (entered 20 November after the four development runs and before any reported seed was read; nothing above was changed)
+
+Development seed 1, `g2`, 2,400,000 lines, %, mean of the last three readings (`res/lay_d4_og_*.json`); by place: never-shown sums at the gap of 8 letters, last reading.
+
+| arm | never shown at gaps 0 / 4 / 8 | shown at gaps 0 / 4 / 8 | by place at 8 letters |
+|---|---|---|---|
+| one gate, 160 + 118 (third plan's run) | 9.4 / 10.5 / 8.3 | 12.5 / 11.7 / 10.1 | 97 / 70 / 15 |
+| output gate born mostly open (threshold 1), etaA = 1 | 73.5 / 73.3 / 70.5 | 74.2 / 73.7 / 72.0 | 98 / 77 / 100 |
+| output gate born mostly open, etaA = 1/4 | 76.9 / 76.7 / 75.3 | 81.1 / 80.1 / 78.9 | 99 / 84 / 95 |
+| output gate born mostly shut (threshold -1), etaA = 1 | 45.7 / 45.9 / 41.8 | 48.4 / 46.3 / 41.5 | 98 / 82 / 57 |
+| output gate born mostly shut, etaA = 1/4 | 85.6 / 85.9 / **84.8** | 87.4 / 87.1 / 86.0 | 97 / 90 / 99 |
+
+**Chosen by the rule: the output gate born mostly shut, etaA = 1/4** (84.8% of never-shown sums at the gap of 8 letters). All four arms with the gate are far above the one-gate arm; each sat at 3 to 17% for 200,000 to 1,600,000 lines and then rose. The line of 30% is passed, so the reported seeds are run, both arms.
+
+Development predictions: O1 (at least 30%; I had given 0.15) **held**, against my expectation; O2 held; O3 held (units digit 99); O4 (born open at least as good as born shut, best over the two steps) **failed** (75.3 against 84.8); O5 held (85.4 against 86.8).
+
+**Run with the reported seeds, as the plan said was owed if the gate arm was clearly better:** one gate at the gate arm's split, 120 + 134 cells (37,256 numbers that learn; fewer than 40,856, because it lacks the third set of strengths), seed 1, etaA = 1, etaB = 1, nB = 32, 2,400,000 lines. It says whether the split, and not the gate, made the difference. *My prediction before it is read:* it stays at or below 15% at the gap of 8 letters, chance 0.80.
+
+**Reported seeds** 73129, 93683, 116089, 406364, 545353, 2,400,000 lines: the chosen gate arm (120 + 134, threshold -1, etaA = 1/4); the one-gate arm at equal numbers (160 + 118, etaA = 1: the third plan's chosen setting). *Predictions before they are read:* O6: gate arm, median of never-shown sums at the gap of 8 letters at least 30%, chance 0.75; O7: at least 60%, chance 0.50; O8: the one-gate arm's median at or below 15%, chance 0.80; O9: gate arm, never-shown (mean over gaps) within 10 points of shown on every seed, chance 0.80. Cost: 11 runs of about 13 CPU-minutes.
