@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """PLAN_1.md of nano/ends: where a segment starts, found by the system from its own surprise.
     python3 ends.py check                       the compiled loop against numpy on a prefix
-    python3 ends.py arm=0|G|R|S|H [theta=...]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
+    python3 ends.py arm=0|G|R|S|H|U [theta=...]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
 Arms: 0 the table's cells (runs of the last 0..6 bytes), read with trust; G with segment cells, starts given (first letter after a byte that is not a letter);
 R starts every fifth byte; S starts where the table-only system's surprise at the byte that arrived exceeds theta;
+U (PLAN_2) starts where the table-only system's answer was unsure beyond theta before the byte arrived;
 H starts fixed by an arbitrary function of the last two bytes, as frequent as S's (reads res/ends_armS.json).
 score.py, table.py, words.py are copied unchanged from nano/table; the kernel is trust.py's with one more output (the probability given to the byte that arrived)."""
 import ctypes, json, os, subprocess, sys, time
@@ -11,7 +12,7 @@ import numpy as np
 import score, words
 HERE = os.path.dirname(os.path.abspath(__file__)); S = 65; NL = 40; K = 6; MASK = (1 << 62) - 1; ETA0, E0 = 0.00005, 0.02
 PD = ctypes.POINTER(ctypes.c_double); PF = ctypes.POINTER(ctypes.c_float); PI = ctypes.POINTER(ctypes.c_int64); PY = ctypes.POINTER(ctypes.c_int32)
-THETAS = (1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0); ETAS = (0.00005, 0.0001, 0.0002, 0.0005); ES = (0.005, 0.02, 0.1)
+THETAS = (1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 5.0); THETAS_U = (1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25); ETAS = (0.00005, 0.0001, 0.0002, 0.0005); ES = (0.005, 0.02, 0.1)
 
 SRC = r'''
 #include <math.h>
@@ -23,11 +24,11 @@ static inline int level(float n, float u, int flat) {
     int bn = 0; int64_t m = (int64_t)n; while (m > 1 && bn < 9) { m >>= 1; bn++; }
     return bn * 4 + (u <= 1 ? 0 : u <= 2 ? 1 : u <= 4 ? 2 : 3);
 }
-/* trust.py's loop (nano/table) with one more output: Q[t], the probability given to the byte that arrived, formed before anything changes.
+/* trust.py's loop (nano/table) with two more outputs, formed before anything changes: Q[t], the probability given to the byte that arrived (PLAN_1), and H[t], how unsure the answer was (minus the sum of p log p; PLAN_2).
    at each byte: every active cell that has counted says s(v) = log((c(v)+e)/(n+65e)); the answering cell's branches compete on the sum of trust times s;
    then the trust that was used changes by eta times (mismatch . s), and the cells count */
 void mix_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double eta, double e,
-               int learn_c, int learn_t, int flat, double *P, double *Q) {
+               int learn_c, int learn_t, int flat, double *P, double *Q, double *H) {
     static double lt[4096]; double a[S], p[S], s[32][S]; int lev[32];
     for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
     for (int64_t t = 0; t < n; t++) {
@@ -43,6 +44,7 @@ void mix_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, floa
         for (int v = 0; v < S; v++) p[v] /= z;
         if (P) for (int v = 0; v < S; v++) P[t * S + v] = p[v];
         if (Q) Q[t] = p[y[t]];
+        if (H) { double h = 0; for (int v = 0; v < S; v++) if (p[v] > 0) h -= p[v] * log(p[v]); H[t] = h; }
         if (learn_t) for (int64_t k = 0; k < K1; k++) if (lev[k] >= 0) {
             double g = s[k][y[t]]; for (int v = 0; v < S; v++) g -= p[v] * s[k][v];
             T[k * NL + lev[k]] += eta * g;
@@ -57,7 +59,7 @@ def kern():
     so = os.path.join(HERE, "kern_e.so"); src = os.path.join(HERE, "kern_e.c")
     if not os.path.exists(src) or open(src).read() != SRC: open(src, "w").write(SRC)
     if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(src): subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", so, src, "-lm"])
-    L = ctypes.CDLL(so); L.mix_steps.argtypes = [ctypes.c_int64, ctypes.c_int64, PI, PY, PF, PF, PF, PD, ctypes.c_double, ctypes.c_double, ctypes.c_int, ctypes.c_int, ctypes.c_int, PD, PD]; L.mix_steps.restype = None; return L
+    L = ctypes.CDLL(so); L.mix_steps.argtypes = [ctypes.c_int64, ctypes.c_int64, PI, PY, PF, PF, PF, PD, ctypes.c_double, ctypes.c_double, ctypes.c_int, ctypes.c_int, ctypes.c_int, PD, PD, PD]; L.mix_steps.restype = None; return L
 
 def level_np(n, u):
     bn = 0; m = int(n)
@@ -85,11 +87,11 @@ class Sys:
     def __init__(s, x, keys):
         s.x = x; s.ids, s.ncell, s.kinds, _ = words.make_ids(x, keys, K, len(x), len(x), K, 1); s.K1 = s.ids.shape[1]; s.L = kern()
         s.C = np.zeros((s.ncell, S), np.float32); s.N = np.zeros(s.ncell, np.float32); s.U = np.zeros(s.ncell, np.float32); s.T = np.full((s.K1, NL), 0.25)
-    def go(s, lo, hi, eta, e, learn, want_p=False, want_q=False):
-        ids = np.ascontiguousarray(s.ids[lo - K:hi - K]); y = np.ascontiguousarray(s.x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None; Q = np.zeros(hi - lo) if want_q else None
+    def go(s, lo, hi, eta, e, learn, want_p=False, want_q=False, want_h=False):
+        ids = np.ascontiguousarray(s.ids[lo - K:hi - K]); y = np.ascontiguousarray(s.x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None; Q = np.zeros(hi - lo) if want_q else None; H = np.zeros(hi - lo) if want_h else None
         s.L.mix_steps(hi - lo, s.K1, ids.ctypes.data_as(PI), y.ctypes.data_as(PY), s.C.ctypes.data_as(PF), s.N.ctypes.data_as(PF), s.U.ctypes.data_as(PF), s.T.ctypes.data_as(PD), eta, e, int(learn), int(learn), 0,
-                      P.ctypes.data_as(PD) if want_p else None, Q.ctypes.data_as(PD) if want_q else None)
-        return Q if want_q else P
+                      P.ctypes.data_as(PD) if want_p else None, Q.ctypes.data_as(PD) if want_q else None, H.ctypes.data_as(PD) if want_h else None)
+        return Q if want_q else H if want_h else P
 
 def surprise(x, taught_to, hi):
     """sur[t] for every byte t < hi: minus the log of the probability the table-only system gave to byte t when it arrived. The system reads x[K:taught_to] once,
@@ -99,6 +101,14 @@ def surprise(x, taught_to, hi):
     s = Sys(x, []); sur = np.zeros(len(x)); sur[K:taught_to] = -np.log(s.go(K, taught_to, ETA0, E0, True, want_q=True))
     if hi > taught_to: sur[taught_to:hi] = -np.log(s.go(taught_to, hi, ETA0, E0, False, want_q=True))
     np.save(f, sur); return sur
+
+def unsure(x, taught_to, hi):
+    """uns[t] for every byte t < hi: how unsure the table-only system's answer for byte t was before byte t arrived (minus the sum of p log p). The system as in surprise()."""
+    f = os.path.join(HERE, f"uns_{taught_to}_{hi}.npy")
+    if os.path.exists(f): return np.load(f)
+    s = Sys(x, []); u = np.zeros(len(x)); u[K:taught_to] = s.go(K, taught_to, ETA0, E0, True, want_h=True)
+    if hi > taught_to: u[taught_to:hi] = s.go(taught_to, hi, ETA0, E0, False, want_h=True)
+    np.save(f, u); return u
 
 def word_starts(x):
     isl = x >= 13; st = isl.copy(); st[1:] &= ~isl[:-1]; return st
@@ -127,6 +137,7 @@ def starts_for(arm, x, taught_to, hi, theta=None, share=None):
     if arm == "G": return word_starts(x)
     if arm == "R": return np.arange(len(x)) % 5 == 0
     if arm == "S": return surprise(x, taught_to, hi) > theta
+    if arm == "U": return unsure(x, taught_to, hi) > theta
     if arm == "H": return pair_starts(x, share, K, taught_to)
     raise ValueError(arm)
 
@@ -140,10 +151,10 @@ def run(kw):
     x, cut, _ = score.load(); arm = kw.get("arm", "0"); dev = cut - cut // 20; t0 = time.process_time(); grid = {}; tgrid = {}; theta = share = None; extra = {}
     if arm == "H":
         rs = json.load(open(os.path.join(HERE, "res", "ends_armS.json"))); share = rs["agreement_stream"]["starts"] / (cut - K); extra["share_matched_to"] = share
-    if arm == "S":
+    if arm in ("S", "U"):
         if "theta" in kw: theta = float(kw["theta"])
         else:
-            for th in THETAS: tgrid[str(th)] = one(x, seg_keys(x, starts_for("S", x, dev, cut, th)), dev, dev, cut, ETA0, E0)
+            for th in (THETAS if arm == "S" else THETAS_U): tgrid[str(th)] = one(x, seg_keys(x, starts_for(arm, x, dev, cut, th)), dev, dev, cut, ETA0, E0)
             theta = float(min(tgrid, key=tgrid.get))
     kd = [] if arm == "0" else seg_keys(x, starts_for(arm, x, dev, cut, theta, share))
     for e in ES:
@@ -163,6 +174,8 @@ def check():
     print(f"segments by surprise (theta 2.0, {int(st.sum())} starts), {n - K} bytes, three added kinds: compiled against numpy (whole answer, trust, counts, and the probability of the byte that arrived), largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
     C = np.zeros((s0.ncell, S), np.float32); N = np.zeros(s0.ncell, np.float32); U = np.zeros(s0.ncell, np.float32); T = np.full((s0.K1, NL), 0.25)
     Pa = steps_np(s0.ids[:3000 - K], x[K:3000], C, N, U, T, ETA0, E0); Pb = steps_np(s0.ids[3000 - K:], x[3000:n], C, N, U, T, ETA0, E0, learn=False); qn = np.concatenate([Pa, Pb])[np.arange(n - K), x[K:n]]
+    s3 = Sys(x, []); h0 = np.concatenate([s3.go(K, 3000, ETA0, E0, True, want_h=True), s3.go(3000, n, ETA0, E0, False, want_h=True)]); Pn = np.concatenate([Pa, Pb]); hn = -(Pn * np.log(Pn)).sum(1)
+    dh = np.abs(hn - h0).max(); print(f"how unsure the answer was (same system): compiled against numpy, largest difference {dh:.1e}", "PASSED" if dh < 1e-9 else "FAILED")
     d = np.abs(qn - q0).max(); print(f"the surprise itself (table-only system, taught on bytes {K}..2999, nothing changing after): compiled against numpy, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
     # the keys by eye, and by a slow direct construction
     vals = score.byte_values(); seg = []; cur = b""
