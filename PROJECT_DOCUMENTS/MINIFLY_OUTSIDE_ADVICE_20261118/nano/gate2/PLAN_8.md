@@ -21,3 +21,21 @@ Everything this line has shown is on sums. Two things can be asked of prose with
 ## 4. Not run
 
 Prose with classes; the worn books; other seeds of the random stream; anything further on sums (by the coordinating session's request: the open stream, the diagnostic at the score, and an arm with classes found once, which its messages asked of this line and which reached it after the runs they concerned, are NOT RUN).
+
+## 5. Outcome (20 November; `res/prose_life_new_seed1.json`, `out/prose_life_new_seed1.txt`)
+
+One run; 928,030 cells that count at the end; each second cell 109,200 parts, about 63,000 used (the controls 1,370); 26.5 CPU-seconds. Nats a byte on each last tenth, scored right after its stream (lower is better):
+
+| Text | First | Second | Control | Cell of the fifth plan (half heard) | Its control |
+|---|---|---|---|---|---|
+| the test text, after its stream | 1.5226 | **1.5058** | 1.5267 | 1.5217 | 1.5347 |
+| `chesterton-ball` | 1.6316 | **1.6116** | 1.6368 | 1.6160 | 1.6262 |
+| `austen-emma` | 1.2416 | **1.2203** | 1.2407 | 1.2430 | 1.2557 |
+| `melville-moby_dick` | 1.4687 | **1.4453** | 1.4690 | 1.4670 | 1.4783 |
+| the test text, at the end of the life | 1.5370 | 1.5351 | 1.5371 | 1.5458 | 1.5487 |
+
+**(a) The second cell repeats on prose, exactly.** In my program it is 0.0200, 0.0213 and 0.0234 nats below the first cell on the three books and 0.0168 on the test text; the control gives nothing (+0.005, -0.001, +0.000). After this run I read the coordinating session's two result files for the same life from its branch at bfba02b (`gate_life_booksnew_gate0_modenone.json` and `..._gate1_...`): all five scores of the first cell, the second cell and the control are the same to the sixth decimal place. On the old text at the end of the life the second cell's gain is 0.002: nearly all of it is gone, as the coordinating session said.
+
+**(b) The cell that hears half its senders while it learns does not transfer to prose.** Its loss is above the plain second cell's on all three books (by 0.004, 0.023, 0.022) and on the test text; against the first cell it is 0.016 lower on one book, 0.002 lower on another and 0.001 higher on the third. It keeps the old text worse, not better (1.5458 against 1.5351 for the second cell and 1.5370 for the first). So the one thing it did better on sums, standing through a change of task, does not show on prose in this life. The hypothesis of this plan holds; the mechanism of the fifth plan is entered as refuted on both kinds of text. One seed of its random stream.
+
+**Predictions.** The prediction held (above the second cell's on three books of three). (i) held (0.0200, 0.0213, 0.0234). (ii) failed (it keeps the old text worse). (iii), as I wrote it, asked that its loss be above the first cell's on at least two books: failed (one book).
