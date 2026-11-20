@@ -77,3 +77,16 @@ Readings (mine).
 One change from m = 4 with the shrinking step (arm (a)): `ncap=N`. A cell that has counted more than N times says log((c N/n + e) / (N + 14 e)): its proportions, at the weight of N counts. Its counts and its level of experience are unchanged. In the program, the numpy reference and the check (`check_output.txt`). Development seed 1, `plan=add:400000`, N in {16, 64}; the better by the mean of the last three readings goes to the five reported seeds.
 
 *Hypothesis.* With the cap, m = 4 at 400,000 lines is within 5 points of its reading at 40,000 (seed 1, then five seeds). *Refuted if* it is more than 10 under. Chances (mine): within 5 points 0.45; the 40,000 reading itself at least 75: 0.60; 400,000 above the relay's 84.2: 0.10.
+
+## 8. Outcome of addition 2 (entered 20 November; `res/s_cap4_*` seed 1, `res/s_cap4r_*` five seeds; `report_e5b.txt`)
+
+Seed 1: N = 16: 75.6 at 40,000 lines, 72.6 at 400,000 (mean of the last three 72.6); N = 64: 76.0 and 66.4 (68.1). N = 16 was taken to the five reported seeds.
+
+| Arm (m = 4, shrinking step), median of five | 40,000 | 100,000 | 200,000 | 400,000 | last three at the end: each seed; median |
+|---|---|---|---|---|---|
+| no cap | 77.4 | 72.4 | 63.8 | 55.8 | 62.1, 59.2, 57.8, 59.9, 57.7; 59.2 |
+| a cell speaks with the weight of at most 16 counts | 77.0 | 76.6 | 76.0 | 75.4 | 77.1, 75.5, 74.0, 74.2, 75.2; **75.2** |
+
+**The hypothesis holds**: with the cap, m = 4 at 400,000 lines is 1.8 points under its reading at 40,000 (within 5 asked), on five seeds, where without it the fall is 18 points. Predictions: within 5 points held (chance given 0.45); the 40,000 reading at least 75 held (77.0); above the relay's 84.2 failed.
+
+Reading (mine). The fall with reading was the growing weight of a cell's counts, and in particular of its zeros: the smaller cap holds the level better (16 against 64 on seed 1), and with it the score is flat from 40,000 to 400,000 lines. What a counting cell says should not sharpen without limit as it counts, when what is asked of it is a statement about combinations it has not seen. The cap is one number chosen between two values on one seed; a form in which the answering cell learns this limit, as it learns the trust, would be the cleaner thing and was not tried. The level itself (75 to 77) is not raised by the cap: the tens digit is still guessed in part.

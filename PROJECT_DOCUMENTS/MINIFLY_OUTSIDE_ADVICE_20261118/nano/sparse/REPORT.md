@@ -11,7 +11,7 @@ All figures: two-digit additions that were never shown (500 of the 2,000 held-ou
 1. **Cells keyed on a few delays answer sums never shown, within a few thousand lines.** Kinds of at most three delays among the last nine (129 kinds): 56.8 at 40,000 lines (55.2 already at 5,000). At most four (255 kinds): 80.9 at 40,000 lines. Units digit 100 and hundreds digit 97 to 99 in both; the tens digit is the whole gap.
 2. **They keep addition through subtraction with nothing rehearsed.** After subtraction, addition stands at 100% of its level with four delays (short and long life) and at 92% (short life) and 55% (long life) with three. The relay system: 1.8.
 3. **No cell short of the whole pair holds the carry, and that bounds this family on the usual text.** With the answer written units first, two cells together nearly decide it: 91.0 within 40,000 lines with four delays and a shrinking step for the trust (89.7 to 93.4 over the seeds), above the relay's figure.
-4. **With four delays the score falls with further reading** (80 at 40,000 lines, 59 to 68 at 400,000). It is not the trust's step, its birth value, or the cells of the whole pair. Limiting the weight a cell's counts can reach holds it on the development seed (section 6); the five seeds are in section 6.
+4. **With four delays the score falls with further reading** (80 at 40,000 lines, 59 to 68 at 400,000). It is not the trust's step, its birth value, or the cells of the whole pair. It is the growing weight of a cell's counts: with a cell speaking at the weight of at most 16 counts the level holds (77.0 at 40,000 lines, 75.2 at 400,000, five seeds; section 6).
 5. **Three other routes to the tens digit**, each one change from the three-delay system (56.8): a trust that also depends on the place in the line 77.8 (the place counter is laid down); a second layer of cells that count which of a first cell's followers arrived 69.3 (67.9 to 92.3; seventy times the cells); the relay system read as one more sender (section 7).
 6. **Joined to the relay system by a trust that reads its confidence, the whole generalises less than the relay system and keeps less than the counting cells** (section 7), because during the second task nothing can tell the answering cell that the relay system has lost the first.
 7. **Size.** 115,000 cells and 775,000 counts above zero with three delays, 1.2 million cells and 5 million counts with four, against the relay system's 256 cells and about 40,000 strengths. Which cells could withdraw was not tried.
@@ -82,9 +82,9 @@ Each arm is one change from `PLAN_1.md`'s system; 40,000 lines.
 | seed 1, no cells of the whole pair | 80.2 | 76.4 | 64.8 | 55.8 | 62.1 |
 | seed 1, shrinking step, a cell speaks with the weight of at most 64 counts | 76.0 | 71.8 | 70.8 | 66.4 | 68.1 |
 | seed 1, shrinking step, at most 16 counts | 75.6 | 74.6 | 74.4 | 72.6 | 72.6 |
-CAP_FIVE_SEEDS_ROW
+| five seeds, shrinking step, at most 16 counts | 77.0 | 76.6 | 76.0 | 75.4 | **75.2** (74.0 to 77.1) |
 
-The hypothesis that the fall is the constant step is refuted: with the shrinking step the swings go and the fall stays (18 points, the same on every seed). The trust's birth value and the cells of the whole pair change nothing. CAP_READING
+The hypothesis that the fall is the constant step is refuted: with the shrinking step the swings go and the fall stays (18 points, the same on every seed). The trust's birth value and the cells of the whole pair change nothing. A third candidate was then tested (addition 2): a cell says log((c + e) / (n + 14 e)), so what it says of a byte that never followed it goes on falling as it counts; for a never-shown pair the cells that hold part of it have, by construction, not seen that pair. With a cell speaking at the weight of at most 16 counts, in the same proportions, the score at 400,000 lines is 1.8 points under the reading at 40,000 on five seeds, where without the cap it is 18 under. Reading (mine): the fall was the growing weight of the counts, their zeros above all. The cap is one number chosen between two values on one seed; it holds the level and does not raise it.
 
 ## 7. Sixth to eighth plans: the relay system beside the counting cells (`PLAN_6.md`, `PLAN_7.md`, `PLAN_8.md`)
 
@@ -96,7 +96,7 @@ Shown at development level: items 1 to 6 of section 1, on one text and five seed
 
 Not shown, not run, or open:
 - No reference taught by back-propagation was run on this line; the comparisons are with the relay system's reported figures and, in section 7, with the relay system run beside.
-- The fall of m = 4 with reading has a candidate cause and one test of it (section 6); it is not established.
+- The cap that stops m = 4's fall is one number chosen between two values on one seed; a learned limit was not tried, and keeping was not run again with the cap.
 - m = 3 with the answer units first is below guessing; not explained.
 - The second layer's unevenness has a stated cause that was not tested.
 - The long keeping lives were not run again with the clean subtraction score.
