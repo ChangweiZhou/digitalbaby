@@ -62,3 +62,24 @@ C. `g2`, the five reported seeds (73129, 93683, 116089, 406364, 545353), 1,200,0
 |---|---|---|
 | Q8 | `m1`: with some of the four settings the four letters are closed at the end and no digit is | 0.55 |
 | Q9 | `m1`: with that setting at least 90% of the sums shown at every gap | 0.40 |
+
+## Outcome of addition 1 (entered 20 November 2026; development seed 1; `res/p2_m1_evid_*.json`)
+
+`m1`, 200,000 lines, sums shown at gaps 0 / 4 / 8, last three readings, and what is closed at the end:
+
+| alpha, p0 | Sums shown | The last reading | Closed at the end |
+|---|---|---|---|
+| 2, 0.2 | 52.9 / 45.0 / 41.7 | 78 / 64 / 56 | x y z (and `-`, which never occurs); w open |
+| 2, 0.5 | 46.7 / 41.7 / 40.8 | 74 / 74 / 74 | w x y z, and the digits 0 and 2 |
+| 4, 0.2 | 40.4 / 45.4 / 35.0 | 54 / 68 / 48 | y z |
+| 4, 0.5 | 35.8 / 27.9 / 25.0 | 34 / 34 / 34 | w x y z, and the digits 0, 1, 2, 7 |
+
+beside the first form at alpha 0.05 (37.5 / 40.0 / 22.5; z closed), `clock=none` (20.4 / 22.9 / 10.0) and `clock=oracle` (100).
+
+**Q8 failed** by its letter: no setting ends with exactly the four letters closed (three letters and no digit at (2, 0.2); four letters and two or four digits where the starting chance is one half). **Q9 failed** (no setting at 90%; all are still rising at the end).
+
+Reading (mine). The second form finds more letters than the first (three against one at the same length) and holds the digits open when entries start mostly open. Starting at one half is a trap: a digit that is closed half the time from birth is one the cells never come to use, and then closing it costs nothing and it stays closed. That is a failure of the rule to report, and it sets p0 = 0.2 for what follows. (2, 0.2) goes to B.
+
+## B, as run (20 November 2026, written before its runs)
+
+`g2`, development seed 1, 1,200,000 lines: `form=evid` (alpha 2, p0 0.2) as chosen on `m1`; the first form at alpha 0.05 beside it; and the two further settings the plan allows, both of the second form and both to be counted as tuned on this text if used: (alpha 4, p0 0.2), and (alpha 2, p0 0.2) with the evidence fading by 1/10,000 a period instead of 1/3,000.
