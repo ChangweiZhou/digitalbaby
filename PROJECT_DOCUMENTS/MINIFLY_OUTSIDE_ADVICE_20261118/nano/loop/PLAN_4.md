@@ -46,3 +46,14 @@ Beside them: the unsmoothed table of the last 4 bytes, which sees what D = 4 see
 **Predictions scored.** D1 held (0.028). D2 held. D3 held. D4 failed (1.796 against 1.755). D5 held. Four of five.
 
 **Cost.** Nine runs, 5 to 10 minutes each. **Not run:** as listed in the plan; and the same at the eta1 that the second plan later found better at 1,024 cells (eta1 = 4), which may move every row.
+
+## Correction of the outcome above (entered 17:07 UTC; the text above is left as it was committed)
+
+Four figures in the outcome's table were typed by me before `tab.py` had printed them and are wrong; the result files and `tab_output.txt` are right. The rows should read:
+
+| D | last tenth: nats; bits; named right | the stream as it is read (reading 8), nats |
+|---|---|---|
+| 16 | 1.7829; 2.5721; **48.17%** (not 48.18) | **1.5838** (not 1.5831) |
+| 32 | 1.8261; 2.6346; **47.04%** (not 46.89) | **1.5547** (not 1.5999) |
+
+The losses on the last tenth, the refutation and the scores of D1 to D5 are unaffected. **One sentence of my reading is wrong and is withdrawn:** "with D = 32 both are worse". With D = 32 the stream as it is read is fitted *better* than with D = 10 (1.555 against 1.594) and the text never read worse (1.826 against 1.769). So the stream as it is read is fitted better at each step in D (1.650, 1.594, 1.584, 1.555) while the text never read is best at D = 10: lines further back are used, and used to take in particulars of the stream. That strengthens reading (1) and does not remove caveat (2).
