@@ -23,3 +23,25 @@ Line K1 (`nano/keep`); authorisation and level as in `PLAN_1.md`. Written before
 **Cost.** 20 runs of about 80 CPU seconds.
 
 **Not run.** Other rules for the store (every k-th line, a random place replaced); the store with this line's own candidate, which keeps more with no old line than with some; a store that goes on being filled after the change.
+
+## Outcome (entered 20 November, after all 20 runs; `table12.txt`, `res/c2_r12_*`)
+
+Seeds 73129, 93683, 116089, 406364, 545353; median. Never-shown addition at the end: last reading | mean of the last three readings.
+
+| Old line drawn from | Store, bytes | Never-shown addition | Addition on the stored sums | Addition on 500 shown sums | Subtraction: all 500 / clean |
+|---|---|---|---|---|---|
+| no old line (`PLAN_1.md`) | 0 | 4.4 \| 4.4 | | | 74.0 / 68.8 |
+| the last 32 lines | 320 | 68.8, 49.4, 58.6, 58.8, 56.6; **58.6** \| 52.9 | 93.8, 71.9, 87.1, 87.5, 67.7; 87.1 | 60.0 | 75.0 / 75.9 |
+| the last 256 lines | 2,560 | 71.6, 65.4, 69.4, 56.8, 64.6; **65.4** \| 58.1 | 69.2 | 66.6 | 77.4 / 77.1 |
+| the last 2,048 lines | 20,480 | 72.4, 67.8, 70.4, 67.8, 64.4; **67.8** \| 60.7 | 67.4 | 68.4 | 76.8 / 77.2 |
+| fresh lines from the 8,000 shown sums | (80,000) | 75.2, 62.8, 67.0, 64.4, 67.8; **67.0** \| 61.8 | | 64.8 | 75.4 / 74.7 |
+
+With fresh lines `store.py` gives `cells2.py`'s figures to the digit.
+
+1. **A store of 2,048 lines, and one of 256, do what fresh lines do** (67.8 and 65.4 against 67.0; means of three 60.7, 58.1, 61.8).
+2. **A store of 32 lines, 320 bytes, keeps most of it: 58.6% of never-shown addition** (52.9 as the mean of three), where no old line keeps 4.4. It answers its own 32 sums better (87.1) than sums it does not hold, so it does hold them specially; but it keeps the rule far beyond them (58.6 on never-shown sums, 60.0 on 500 shown sums not in the store). **The hypothesis is refuted in its second half**: I had expected a small store to keep its own sums and not the rule.
+3. My reading: in this control nothing addition wrote is touched; what the old lines have to do is teach the 128 new cells not to speak on addition lines. That is one thing to learn, not eight thousand, and 32 lines that carry the plus sign teach most of it. It is the same fact the third plan used from the other side: what marks an addition line is the operator, and a cell that is silent where the operator is not its own does no harm.
+
+**Predictions.** L1 (0.65) held: 67.8 against 67.0. L2 (0.65) failed: 58.6, not below 30 (the stored sums are at 87.1, as predicted). L3 (0.50) held: 65.4. L4 (0.90) held.
+
+**Not run**, as planned: other rules for the store; a store that goes on filling after the change; the store with this line's own candidate.
