@@ -131,3 +131,5 @@ When the letters are found: exactly w x y z closed at every reading from 100,000
 5. What this does not show: that the rule serves where one closing alone earns nothing (`m1`: three letters of four at 200,000 lines), with many byte values (`PLAN_5.md`), or where the bytes to pass over are not a set of byte values at all (a clock for each byte value cannot pass over a digit in one place and keep it in another). Development level: one program, one text, fifteen seeds, nobody else's repetition.
 
 **Cost.** 45 runs, 76 to 114 CPU-seconds each, about 75 CPU-minutes.
+
+*Correction (20 November 2026, after looking at the readings for the report):* in the run of the second form on seed 1008 the `=` is closed at every reading from the first (100,000 lines) to the last, not only at the last as written above. The run's score is 96.4%, above its arm's median of 95.4%.
