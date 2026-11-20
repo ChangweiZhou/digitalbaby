@@ -240,19 +240,20 @@ class Fast:
         out = np.zeros(2, np.int64); s.L.sizes(ctypes.byref(s.st), s.nPc, s.nGc, out.ctypes.data_as(PI64)); return int(out[0]), int(out[1]), int((s.U > 0).sum())
 
 # ------------------------------------------------------------------ the score: the system writes its own answer bytes; nothing changes
-def score(sys_, op, pairs, D=9, other=False):
+def score(sys_, op, pairs, D=9, other=False, prev=None):
     """Before the line stand line ends only. Returns whole %, by place %, and how often the guesses are right.
     other=True (the control): the cells keyed on a guess are keyed on the guess made at the same place of the preceding scored pair."""
     Ls = [text(op, a, b) for a, b in pairs]; whole = 0; place = np.zeros(3); gr = np.zeros(3)      # gr: g3 = units and g2 = tens at the first answer byte; g2 = units at the second
-    def one(L, keys):
+    def one(L, keys, before=None):
         h = [0] + [END] * D; res = []
+        for c in (before or []): h = [0, c] + h[1:D]              # prev: the bytes of a line read stand before the line (the coordinating session's errata, section 3)
         for c in L[:6]: h = [0, c] + h[1:D]
         for i in range(3):
             ans, g2, g3 = sys_.answer(h, *(keys[i] if keys else (-1, -1))); res.append((ans, g2, g3)); h = [0, ans] + h[1:D]
         return res
-    prev = one(Ls[-1], None) if other else None
-    for L in Ls:
-        res = one(L, [(r[2], r[1]) for r in prev] if other else None); ok = [res[i][0] == L[6 + i] for i in range(3)]; whole += all(ok); place += ok
+    prev_lines = prev; prev = one(Ls[-1], None) if other else None
+    for i_, L in enumerate(Ls):
+        res = one(L, [(r[2], r[1]) for r in prev] if other else None, prev_lines[i_] if prev_lines is not None else None); ok = [res[i][0] == L[6 + i] for i in range(3)]; whole += all(ok); place += ok
         gr += [res[0][2] == L[8], res[0][1] == L[7], res[1][1] == L[8]]
         if other: prev = res
     n = len(pairs); return 100 * whole / n, (100 * place / n).round(1).tolist(), (100 * gr / n).round(1).tolist()
@@ -271,6 +272,11 @@ def run(kw):
             a, ap, ag = score(s, "+", held["+"], other=bool(lag)); row = dict(phase=pi, name=name, lines=(b + 1) * every, add=a, add_place=ap, add_guess=ag)
             if pi > 0 or b == n // every - 1:
                 row["sub_all"], row["sub_all_place"], _ = score(s, "-", held["-"], other=bool(lag)); row["sub_clean"], row["sub_clean_place"], row["sub_guess"] = score(s, "-", clean, other=bool(lag))
+            if int(kw.get("past", 0)):          # the same scores with a line read standing before each held-out line; mean of five draws of that line
+                pr = np.random.default_rng([seed, 4242, pi, b])
+                def after(op_s, pairs, op_b): return float(np.mean([score(s, op_s, pairs, prev=TAB[op_b][pr.integers(8000, size=len(pairs))].tolist())[0] for _ in range(5)]))
+                row["add_after_add"] = after("+", held["+"], "+")
+                if pi > 0: row["add_after_sub"] = after("+", held["+"], "-"); row["sub_clean_after_sub"] = after("-", clean, "-"); row["sub_clean_after_add"] = after("-", clean, "+")
             out["rows"].append(row)
         c, ab, tu = s.sizes(); out.setdefault("sizes", []).append(dict(phase=pi, cells=c, counts_above_zero=ab, trusts_used=tu, cpu=round(time.process_time() - t0, 1)))
     r0 = [r["add"] for r in out["rows"] if r["phase"] == 0]; out["last3_add_phase0"] = float(np.mean(r0[-3:])); out["last_add_phase0"] = r0[-1]
