@@ -8,6 +8,7 @@ import ctypes, json, os, subprocess, sys, time
 import numpy as np
 import score, table, words, trust, life
 HERE = os.path.dirname(os.path.abspath(__file__)); S = 65; NL = 40; ETA, E = 0.00005, 0.02
+BIRTH = float(os.environ.get("COMPANION_BIRTH", 0.25))                                   # the trust at which a kind of companions is born (0.25 in PLAN_6.md; 0 in PLAN_11.md)
 PD = ctypes.POINTER(ctypes.c_double); PF = ctypes.POINTER(ctypes.c_float); PI = ctypes.POINTER(ctypes.c_int64); PY = ctypes.POINTER(ctypes.c_int32)
 
 SRC = r'''
@@ -105,7 +106,7 @@ class Sys2:
         tot = ncell + len(Hs) * ntab
         s.x, s.K, s.ids, s.K1, s.L = x, K, np.ascontiguousarray(ids), ids.shape[1], kern(); s.half = np.zeros(s.K1)
         for j, h in enumerate(Hs): s.half[s.K1 - (len(Hs) - j) * (K + 1):s.K1 - (len(Hs) - j - 1) * (K + 1)] = h
-        s.C = np.zeros((tot, S), np.float32); s.N = np.zeros(tot, np.float32); s.U = np.zeros(tot, np.float32); s.last = np.zeros(tot); s.T = np.full((s.K1, NL), 0.25); s.clock = 0.0
+        s.C = np.zeros((tot, S), np.float32); s.N = np.zeros(tot, np.float32); s.U = np.zeros(tot, np.float32); s.last = np.zeros(tot); s.T = np.full((s.K1, NL), 0.25); s.T[s.half > 0] = BIRTH; s.clock = 0.0          # PLAN_11.md: the trust in companions may be born at nothing
     def go(s, lo, hi, learn, want_p=False):
         ids = np.ascontiguousarray(s.ids[lo - s.K:hi - s.K]); y = np.ascontiguousarray(s.x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None
         s.L.two_steps(hi - lo, s.K1, ids.ctypes.data_as(PI), y.ctypes.data_as(PY), s.C.ctypes.data_as(PF), s.N.ctypes.data_as(PF), s.U.ctypes.data_as(PF), s.T.ctypes.data_as(PD), ETA, E, int(learn),
@@ -155,7 +156,7 @@ if __name__ == "__main__":
     else:
         name = sys.argv[1]; H = tuple(int(h) for h in sys.argv[2].split(",")); H = H[0] if len(H) == 1 else H; tagH = sys.argv[2].replace(",", "+")
         if len(sys.argv) > 3 and sys.argv[3] == "moments":
-            r = moments(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}_moments.json"), "w")); print(name, "H", tagH, "| A, B in order:", {k[:6]: round(v, 4) for k, v in r["A_B"].items()}, "| B only:", {k[:6]: round(v, 4) for k, v in r["B_only"].items()}, "| A at the end:", round(r["A_at_end"], 4), "silenced:", round(r.get("A_at_end_companions_silenced", float("nan")), 4), flush=True); sys.exit()
+            r = moments(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}_moments" + ("" if BIRTH == 0.25 else f"_birth{BIRTH:g}") + ".json"), "w")); print(name, "H", tagH, "| A, B in order:", {k[:6]: round(v, 4) for k, v in r["A_B"].items()}, "| B only:", {k[:6]: round(v, 4) for k, v in r["B_only"].items()}, "| A at the end:", round(r["A_at_end"], 4), "silenced:", round(r.get("A_at_end_companions_silenced", float("nan")), 4), flush=True); sys.exit()
         if len(sys.argv) > 3 and sys.argv[3] == "return":
             r = run(name, H, True); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}_return.json"), "w")); print(name, "H", H, "A after A and B, nothing changing:", round(r["after_A_and_B"]["A"]["nats"], 4), "| the return to A, going on:", round(r["A_last_tenth_going_on_after_B"]["nats"], 4), flush=True); sys.exit()
         r = run(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}.json"), "w"))
