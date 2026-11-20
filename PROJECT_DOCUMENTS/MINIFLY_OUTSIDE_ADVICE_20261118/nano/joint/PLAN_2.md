@@ -61,3 +61,27 @@ Then the five reported seeds 73129, 93683, 116089, 406364, 545353 for N, R, S, E
 Not run: withdrawal in F2 or F3; withdrawal of connections from the input lines; a withdrawn connection made again (rewiring); rules that use a running mean of what passed over a connection; other T or theta; a whole cell dropping out by its own rule; C3 to C6.
 
 ---
+
+## 8. Entered 20 November after the check and the development grid, before any run on the reported seeds
+
+**The check** (`check_joint2_output.txt`, run before this plan was committed; it trains nothing at length): compiled against numpy with withdrawals taking place, 300 and 3,000 lines, every arm, two values of theta: strengths agree to 1e-14 to 4e-13, the sets of living connections are identical, withdrawn connections are at zero in both directions; nobody withdrawing is form 1 of `joint.py`.
+
+**Development seed 1** (`res/w_wd_*.json`), never-shown sums (mean of the last three readings) and connections living at the end of 3,584. N: 81.5 (the value to match).
+
+| T (bytes) | theta | R | S | E |
+|---|---|---|---|---|
+| 36,000 | 0.05 | 73.6, 1767 | 79.9, 1913 | 73.6, 1354 |
+| 36,000 | 0.1 | 75.1, 1469 | 78.1, 1659 | 74.9, 976 |
+| 36,000 | 0.2 | 50.5, 1106 | 77.1, 1265 | 53.2, 581 |
+| 180,000 | 0.05 | 77.2, 2258 | 77.5, 2265 | 76.0, 1852 |
+| 180,000 | 0.1 | 76.4, 1930 | 77.1, 1887 | 76.4, 1420 |
+| 180,000 | 0.2 | 74.7, 1432 | 76.9, 1427 | 75.5, 855 |
+| 720,000 | 0.05 | 79.8, 2612 | 81.1, 2738 | 79.5, 2306 |
+| 720,000 | 0.1 | 80.1, 2240 | 79.1, 2362 | 80.3, 1854 |
+| 720,000 | 0.2 | 77.9, 1638 | 78.1, 1834 | 76.7, 1130 |
+
+**Choice by the rule of section 4:** E is within 2 points of N at (720,000; 0.05) and (720,000; 0.1); the second leaves fewer connections. **T = 720,000 bytes, theta = 0.1** for every arm: five moments of withdrawal, after 72,000, 144,000, 216,000, 288,000 and 360,000 lines.
+
+Q8 failed on this grid: S at T = 36,000 and theta = 0.2 gives 77.1 against 78.1 at T = 720,000, one point and not four. On this seed it is the receiving end that loses by withdrawing early and often (50.5 at T = 36,000, theta = 0.2), not the sending end, against what I expected from the birth values of R.
+
+Runs on the reported seeds, as planned: N, R, S, E, X at the chosen pair; R, S, E at theta = 0.05 and 0.2 with the same T.
