@@ -81,6 +81,11 @@ def probs(k):
 
 if __name__ == "__main__":
     t0 = time.process_time(); x, cut, _ = SC.load()
+    if len(sys.argv) > 1 and sys.argv[1] == "without":      # PLAN_1.md, addition 1: counted without the stream's last 50,000 bytes, scored on the last tenth
+        res, _ = all_tables(x[:cut - 50000], x, cut, len(x))
+        json.dump(dict(counted_on=cut - 50000, tables=res), open(os.path.join(SC.HERE, "res", "tables_without_last50000.json"), "w"), indent=1)
+        for k in range(KMAX + 1): print(f" {k} | {res[k]['unsmoothed_right']:6.2f} | {res[k]['kn']['nats']:.4f} {res[k]['kn']['right']:6.2f}")
+        sys.exit()
     res, _ = all_tables(x[:cut], x, cut, len(x))
     dev = 50000                                             # the same tables counted without the stream's last 50,000 bytes, scored on them
     resdev, _ = all_tables(x[:cut - dev], x, cut - dev, cut)
