@@ -22,7 +22,8 @@ if __name__ == "__main__":
              ("m1 clock=oracle lam1=1e-3", dict(text="m1", clock="oracle", lam1="1e-3")), ("m1 clock=rule lam1=2e-2 theta=0.9", dict(text="m1", clock="rule", lam1="2e-2", theta="0.9")),
              ("g1 clock=oracle", dict(text="g1", clock="oracle")), ("g2 clock=trial alpha=0.5", dict(text="g2", clock="trial", alpha="0.5", P="64")),
              ("g2 clock=trial form=evid alpha=2 p0=0.5", dict(text="g2", clock="trial", form="evid", alpha="2", P="64", p0="0.5")),
-             ("m1 clock=trial alpha=0.5 p0=0.5", dict(text="m1", clock="trial", alpha="0.5", P="32", p0="0.5")), ("d2 clock=none", dict(text="d2"))]
+             ("m1 clock=trial alpha=0.5 p0=0.5", dict(text="m1", clock="trial", alpha="0.5", P="32", p0="0.5")), ("d2 clock=none", dict(text="d2")), ("g2 nlet=12 clock=trial form=evid alpha=2 p0=0.5", dict(text="g2", nlet="12", clock="trial", form="evid", alpha="2", P="64", p0="0.5")),
+             ("g2 nlet=26 clock=oracle", dict(text="g2", nlet="26", clock="oracle"))]
     for title, kw in cases:
         w, same, nsk, ta, tb = cmp(dict(base, **kw)); bad += (w > 1e-6) or not same
         print(f"{title:38s} largest difference over largest strength {w:.1e}   lines' contents and bytes passed over the same: {same} ({nsk} passed over)   numpy {ta:5.1f} s, compiled {tb:5.1f} s")
