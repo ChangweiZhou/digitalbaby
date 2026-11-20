@@ -119,8 +119,26 @@ def kern_a():
 TYPES = dict(byte=0, pair=0, const=0, cls=0, bytes=0, sure=1, own=2, slev=3)
 def norm(f):
     """A family as (tuple, options)."""
+    f = tuple(q for q in f if q != "drawn")
     if isinstance(f[-1], dict): return tuple(f[:-1]), dict(f[-1])
     return tuple(f), {}
+
+def draw_gate(rng, types, K1, live):
+    """A gate drawn at random from the system's own lines: the byte at a delay up to 16 back, a pair of them, or the level of counts of the sender of one kind."""
+    while True:
+        ty = types[int(rng.integers(len(types)))]
+        if ty == "byte": tup = ("bytes", (int(rng.integers(1, DG + 1)),))
+        elif ty == "pair": a, b = sorted(int(v) for v in rng.choice(np.arange(1, DG + 1), 2, replace=False)); tup = ("bytes", (a, b))
+        else: tup = ("slev", int(rng.integers(K1)))
+        if tup not in live: return tup + (dict(level=0),)
+
+def prep(cells, K1, rng):
+    """Cells that draw their gates get their first draws."""
+    for ce in cells:
+        if "draw" in ce:
+            live = []
+            for _ in range(ce["slots"]): f = draw_gate(rng, ce["draw"], K1, live); live.append(norm(f)[0]); ce["fams"] = ce.get("fams", []) + [f + ("drawn",)]
+    return cells
 
 class Stack:
     """cells: a list of dicts. dict(inp=-1 or the index of a cell below, fams=[...]) or dict(mix=(first, number)); each may carry name=..."""
@@ -132,18 +150,37 @@ class Stack:
                 f0, nf = ce["mix"]; assert f0 + nf <= c; s.W.append(np.full(nf, 1.0 / nf)); s.Wu.append(np.zeros(nf)); s.cspec.append((1, -1, f0, nf, len(s.W) - 1)); continue
             assert -1 <= ce["inp"] < c and len(ce["fams"]) <= 40; f0 = len(s.fams)
             for f in ce["fams"]:
-                tup, opt = norm(f); ty = TYPES[tup[0]]; uk, ul = int(opt.get("kind", 1)), int(opt.get("level", 1)); col = 0
-                if ty == 0:
-                    if tup not in s.cols: s.cols.append(tup)
-                    col = s.cols.index(tup); nv = dict(byte=S, pair=S * S, const=1, cls=S * S + 1, bytes=0)[tup[0]]
-                    if tup[0] == "bytes": nv = S ** len(tup[1])
-                elif ty == 1: col = tup[1]; nv = 10; assert col <= c
-                elif ty == 3: col = tup[1]; nv = NL + 1
-                else: nv = 1
-                size = max(ncells, 1024) if ty == 2 else (K1 if uk else 1) * (NL if ul else 1) * nv
-                s.fams.append(dict(tup=tup, type=ty, col=col, nv=nv, uk=uk, ul=ul, cell=c)); s.G.append(np.zeros(size)); s.Gu.append(np.zeros(size))
+                d, size = s.make(f, c, ncells); s.fams.append(d)
+                if "drawn" in f: d["drawn"] = 1
+                s.G.append(np.zeros(size)); s.Gu.append(np.zeros(size))
             s.cspec.append((0, ce["inp"], f0, len(s.fams) - f0, -1))
-        s.nc = len(cells); s.F = max(1, len(s.cols)); s.bind()
+        s.nc = len(cells); s.recol(); s.history = []
+    def make(s, f, c, ncells):
+        tup, opt = norm(f); ty = TYPES[tup[0]]; uk, ul = int(opt.get("kind", 1)), int(opt.get("level", 1)); S = s.S; col = 0
+        if ty == 0: nv = S ** len(tup[1]) if tup[0] == "bytes" else dict(byte=S, pair=S * S, const=1, cls=S * S + 1)[tup[0]]
+        elif ty == 1: col = tup[1]; nv = 10; assert col <= c
+        elif ty == 3: col = tup[1]; nv = NL + 1
+        else: nv = 1
+        return dict(tup=tup, type=ty, col=col, nv=nv, uk=uk, ul=ul, cell=c), (max(ncells, 1024) if ty == 2 else (s.K1 if uk else 1) * (NL if ul else 1) * nv)
+    def recol(s):
+        """One column of gate values for each distinct family that the text alone gives."""
+        s.cols = []
+        for f in s.fams:
+            if f["type"] == 0:
+                if f["tup"] not in s.cols: s.cols.append(f["tup"])
+                f["col"] = s.cols.index(f["tup"])
+        s.F = max(1, len(s.cols)); s.bind()
+    def review(s, rng, nbytes):
+        """PLAN_4.md: in every cell that draws its gates, the half of the gates whose parts are smallest (mean size of a part, weighted by its uses) is withdrawn and as many are drawn anew, born at nothing."""
+        for c, ce in enumerate(s.cells):
+            if "draw" not in ce or "never-withdrawn" in ce.get("name", ""): continue
+            ii = [i for i, f in enumerate(s.fams) if f["cell"] == c and f.get("drawn")]; earn = [float((np.abs(s.G[i]) * s.Gu[i]).sum() / max(s.Gu[i].sum(), 1.0)) for i in ii]
+            order = np.argsort(earn, kind="stable"); out = [ii[j] for j in order[:len(ii) // 2]]; live = [s.fams[i]["tup"] for i in ii if i not in out]
+            for i in out:
+                f = draw_gate(rng, ce["draw"], s.K1, live); live.append(norm(f)[0]); d, size = s.make(f, c, 0); d["drawn"] = 1
+                s.history.append(dict(bytes=int(nbytes), cell=c, withdrawn=repr(s.fams[i]["tup"]), earned=earn[ii.index(i)], drawn=repr(d["tup"]))); s.fams[i] = d; s.G[i] = np.zeros(size); s.Gu[i] = np.zeros(size)
+            s.history.append(dict(bytes=int(nbytes), cell=c, kept=[(repr(s.fams[i]["tup"]), earn[ii.index(i)]) for i in ii if i not in out]))
+        s.recol()
     def bind(s):
         s.cf = (CFam * max(1, len(s.fams)))(); s.cc = (CCell * s.nc)()
         for i, f in enumerate(s.fams): s.cf[i] = CFam(f["type"], f["col"], f["nv"], f["uk"], f["ul"], 0, s.G[i].ctypes.data_as(PD), s.Gu[i].ctypes.data_as(PD))
@@ -246,6 +283,10 @@ def arms(name, S, D, K1, classes=False):
                 dict(name="wide:read(pair,own,sure,nl)", mix=(12, 4)),                       # 16
                 cell("deep:read>nl", B, 16),                                                 # 17: a cell on the reading cell
                 cell("deep:flat>flat", B + [pr, ow, su(2)], 1)]                              # 18: the wide cell twice in depth
+    if name == "step4":                                              # gates drawn at random and kept by what they earn, against the hand-given delays' parts
+        B = dl(allD, level=0); dr = lambda nm, m, types, fams=(): dict(name=nm, inp=-1, fams=list(fams), draw=types, slots=m)
+        return [cell("second-nl", B), dr("drawn:bytes", D, ("byte",)), dr("drawn:bytes,2D", 2 * D, ("byte",)), dr("drawn:all", D, ("byte", "pair", "slev")), dr("drawn:all,2D", 2 * D, ("byte", "pair", "slev")),
+                dr("nl+drawn:all", D, ("byte", "pair", "slev"), B), dr("drawn:bytes,never-withdrawn", D, ("byte",)), cell("second-nl,16 delays", [("bytes", (d,), dict(level=0)) for d in range(1, DG + 1)])]
     raise KeyError(name)
 
 # ---------------------------------------------------------------- sums: nano/merge's system
@@ -253,17 +294,25 @@ def sum_sys():
     import merge as G
     class SumSys(G.Sys):
         def start(s, cells_of):
-            s.L2 = kern_m(); s.cells = cells_of(s.S, s.D, s.K1); s.stack = Stack(s.K1, s.S, s.cells, s.eta, s.shrink, len(s.N)); s.clsslot = -1
+            s.L2 = kern_m(); s.grng = np.random.default_rng([int(getattr(s, "gseed", 0)), 4]); s.cells = prep(cells_of(s.S, s.D, s.K1), s.K1, s.grng); s.stack = Stack(s.K1, s.S, s.cells, s.eta, s.shrink, len(s.N)); s.clsslot = -1
+            s.seen = 0; s.next_review = 10000 if any("draw" in c for c in s.cells) else None
         def cls_value(s, g):
             if s.clsslot < 0 or s.slots[s.clsslot] is None: return np.zeros(len(g), np.int32)
             sl = s.slots[s.clsslot]; return sl["clsmap"][G.code(g, sl["X"], s.S)] + 1
         def _run(s, ctx, y, learn, want_p):
             n = len(ctx); LP = np.zeros((n, s.stack.nc + 1)) if want_p else None; AR = np.zeros((n, s.stack.nc + 1), np.int32) if want_p else None
-            for a in range(0, n, 50000):
-                idd = s.ids(ctx[a:a + 50000], create=learn); yy = np.ascontiguousarray(y[a:a + 50000].astype(np.int32)) if y is not None else np.zeros(len(idd), np.int32)
-                s.stack.grow(len(s.N)); tv = s.stack.tv(ctx[a:a + 50000], s); lp, ar = s.stack.set(s.L2, tv, len(idd), want_p)
+            a = 0
+            while a < n:
+                b = min(n, a + 50000)
+                if learn and s.next_review is not None: b = min(b, a + max(1, s.next_review - s.seen))
+                idd = s.ids(ctx[a:b], create=learn); yy = np.ascontiguousarray(y[a:b].astype(np.int32)) if y is not None else np.zeros(len(idd), np.int32)
+                s.stack.grow(len(s.N)); tv = s.stack.tv(ctx[a:b], s); lp, ar = s.stack.set(s.L2, tv, len(idd), want_p)
                 s.L2.lay_steps(len(idd), s.K1, s.S, G.p32(idd), G.p32(yy), G.pf(s.C), G.pf(s.N), G.pf(s.U), G.pd(s.T), G.pd(s.Tu), s.eta, s.e, int(learn), s.shrink, None)
-                if want_p: LP[a:a + 50000] = lp; AR[a:a + 50000] = ar
+                if want_p: LP[a:b] = lp; AR[a:b] = ar
+                if learn:
+                    s.seen += b - a
+                    if s.next_review is not None and s.seen >= s.next_review: s.stack.review(s.grng, s.seen); s.next_review *= 2      # a review whenever the bytes read have doubled (as nano/merge finds its classes)
+                a = b
             return (LP, AR) if want_p else None
         def find(s):
             """Classes are found anew by nano/merge's find. A further cell's parts for a class kind follow the first cell's trust for it: kept where the pair is kept, nothing where
@@ -287,7 +336,7 @@ def run_sums(kw, cells_of=None):
     TAB = np.array([G.text(a, b) for a, b in shown], np.int64); draw = lambda k: TAB[rng.integers(8000, size=k)]
     Ls = np.array([G.text(a, b) for a, b in held]); g = np.random.default_rng([seed, 7]); prevs = [TAB[g.integers(8000, size=500)] for _ in range(5)]
     kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
-    s = SumSys(14, D, kinds, 0.1, 2.0, 0.02, True, P=32, eJ=0.02, mode=mode, seed=seed); s.start(cells_of); nc = s.stack.nc + 1
+    s = SumSys(14, D, kinds, 0.1, 2.0, 0.02, True, P=32, eJ=0.02, mode=mode, seed=seed); s.gseed = int(kw.get("gseed", 0)); s.start(cells_of); nc = s.stack.nc + 1
     def one(prev):
         """Whole answers right, %, for every cell at once; each cell goes on from its own answer bytes."""
         own = np.repeat(Ls[None], nc, 0).copy()                    # (cell, line, byte)
@@ -308,7 +357,7 @@ def run_sums(kw, cells_of=None):
     for i, nm in enumerate(names):
         res["cells"][nm] = dict(last_after=readings[-1]["after"][i], last3_after=float(np.mean([r["after"][i] for r in readings])), last_empty=readings[-1]["empty"][i], last3_empty=float(np.mean([r["empty"][i] for r in readings])),
                                 place_after=readings[-1]["after_place"][i], parts=pr[i - 1][0] if i else int(s.T.size), parts_used=pr[i - 1][1] if i else int((s.Tu > 0).sum()))
-    res["cpu"] = round(time.process_time() - t0, 1); return res, s
+    res["history"] = s.stack.history; res["gates"] = [[repr(f["tup"]) for f in s.stack.fams if f["cell"] == c] for c in range(s.stack.nc)]; res["cpu"] = round(time.process_time() - t0, 1); return res, s
 
 # ---------------------------------------------------------------- prose: nano/table/all.py's system (T2 by default)
 T2 = ("companions", "relay", "since", "pool")
@@ -316,16 +365,23 @@ def prose_sys():
     import all as A
     class ProseSys(A.SysAll):
         def start(s, cells_of):
-            assert s.X is None, "the relay system's opinions are not used in this line"; s.L2 = kern_a(); s.S = 65; s.D = s.K; s.cells = cells_of(65, s.K, s.K1); s.stack = Stack(s.K1, 65, s.cells, A.ETA, 0, len(s.N))
+            assert s.X is None, "the relay system's opinions are not used in this line"; s.L2 = kern_a(); s.S = 65; s.D = s.K; s.grng = np.random.default_rng([int(getattr(s, "gseed", 0)), 4]); s.cells = prep(cells_of(65, s.K, s.K1), s.K1, s.grng); s.stack = Stack(s.K1, 65, s.cells, A.ETA, 0, len(s.N))
+            s.seen = 0; s.next_review = 10000 if any("draw" in c for c in s.cells) else None
             x = s.x; s.g = np.ascontiguousarray(np.stack([np.concatenate([np.zeros(d, x.dtype), x[:-d]]) for d in range(1, DG + 1)], 1).astype(np.int32))
         def go(s, lo, hi, learn, want=False):
             LP = np.zeros((hi - lo, s.stack.nc + 1)) if want else None; AR = np.zeros((hi - lo, s.stack.nc + 1), np.int32) if want else None
-            for a in range(lo, hi, 100000):
-                b = min(hi, a + 100000); ids = np.ascontiguousarray(s.ids[a - s.K:b - s.K]); y = np.ascontiguousarray(s.x[a:b].astype(np.int32)); tv = s.stack.tv(s.g[a:b], s); lp, ar = s.stack.set(s.L2, tv, b - a, want)
+            a = lo
+            while a < hi:
+                b = min(hi, a + 100000)
+                if learn and s.next_review is not None: b = min(b, a + max(1, s.next_review - s.seen))
+                ids = np.ascontiguousarray(s.ids[a - s.K:b - s.K]); y = np.ascontiguousarray(s.x[a:b].astype(np.int32)); tv = s.stack.tv(s.g[a:b], s); lp, ar = s.stack.set(s.L2, tv, b - a, want)
                 s.L2.lay_steps(b - a, s.K1, ids.ctypes.data_as(PL), y.ctypes.data_as(PI), s.C.ctypes.data_as(PF), s.N.ctypes.data_as(PF), s.U.ctypes.data_as(PF), s.T.ctypes.data_as(PD), A.ETA, A.E0, int(learn),
                                  None, s.half.ctypes.data_as(PD), s.last.ctypes.data_as(PD), s.clock, None, None)
-                if learn: s.clock += b - a
                 if want: LP[a - lo:b - lo] = lp; AR[a - lo:b - lo] = ar
+                if learn:
+                    s.clock += b - a; s.seen += b - a
+                    if s.next_review is not None and s.seen >= s.next_review: s.stack.review(s.grng, s.seen); s.next_review *= 2
+                a = b
             return (LP, AR) if want else None
         def sc(s, lo, hi, learn=False):
             LP, AR = s.go(lo, hi, learn, True); return dict(nats=(-LP.mean(0)).tolist(), right=(100 * (AR == s.x[lo:hi, None]).mean(0)).tolist())
@@ -344,10 +400,10 @@ def load(books):
 def run_life(kw, cells_of=None):
     """The stream of the test text, then the books in turn; each last tenth right after its stream, nothing changing; then the test text's last tenth again (what is kept)."""
     A, ProseSys = prose_sys(); x, segs = load(kw.get("books", "worn")); t0 = time.process_time(); w = tuple(v for v in kw.get("without", ",".join(T2)).split(",") if v)
-    cells_of = cells_of or (lambda S, D, K1: arms(kw.get("arms", "second"), S, D, K1)); s = ProseSys(x, w); s.start(cells_of); out = dict(task="life", args=kw, kinds=int(s.K1), scores={})
+    cells_of = cells_of or (lambda S, D, K1: arms(kw.get("arms", "second"), S, D, K1)); s = ProseSys(x, w); s.gseed = int(kw.get("gseed", 0)); s.start(cells_of); out = dict(task="life", args=kw, kinds=int(s.K1), scores={})
     for name, (a, c, b) in segs.items(): s.go(max(a, 6), c, True); out["scores"][name] = s.sc(c, b)
     a, c, b = segs["A"]; out["scores"]["A_at_the_end"] = s.sc(c, b); pr = s.stack.parts()
-    out.update(names=["first"] + [c_.get("name", f"cell{i}") for i, c_ in enumerate(s.cells)], parts=[int(s.T.size)] + [p[0] for p in pr], parts_used=[int((s.T != 0.25).sum())] + [p[1] for p in pr], cells=int((s.N > 0).sum()), cpu=round(time.process_time() - t0, 1)); return out, s
+    out.update(names=["first"] + [c_.get("name", f"cell{i}") for i, c_ in enumerate(s.cells)], parts=[int(s.T.size)] + [p[0] for p in pr], parts_used=[int((s.T != 0.25).sum())] + [p[1] for p in pr], cells=int((s.N > 0).sum()), history=s.stack.history, gates=[[repr(f["tup"]) for f in s.stack.fams if f["cell"] == c] for c in range(s.stack.nc)], cpu=round(time.process_time() - t0, 1)); return out, s
 
 # ---------------------------------------------------------------- checks
 def check():
