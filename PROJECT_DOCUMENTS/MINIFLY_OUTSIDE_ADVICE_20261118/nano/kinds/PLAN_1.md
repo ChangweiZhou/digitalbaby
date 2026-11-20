@@ -46,3 +46,38 @@ One change against the baseline in each arm: the draw of the thresholds. Every o
 ## 4. Order, cost, what is not run
 
 Development seed 1, all four arms (nothing is chosen on it for this question; it is a check that the arms run); then the five reported seeds 73129, 93683, 116089, 406364, 545353 for all four arms. A run is about 3.5 CPU-minutes; 24 runs, about 85 CPU-minutes, about 22 minutes on four cores. Not run: other gaps or texts (`g1`, two digits); thresholds that do not learn; a spread in the other gate strengths; more than five seeds; the system without the crossing.
+
+## 5. Outcome, entered on 20 November after the runs (nothing above is changed)
+
+`res/hold_q1d_*` (development seed), `res/hold_q1_*` (reported seeds), logs in `logs/`; the table is `python3 agg.py hold q1 spread alike wide wide_c`. Sums shown, mean of the readings at 800,000, 880,000 and 960,000 lines; seeds in the order 73129, 93683, 116089, 406364, 545353.
+
+| Arm | Thresholds at birth | Score, five seeds | Median | Mean | Lines to 90%, thousands | Median | Development seed: score, lines to 90% |
+|---|---|---|---|---|---|---|---|
+| `spread` (baseline) | -1 to 3 | 91.2, 81.9, 100.0, 78.1, 100.0 | **91.2** | 90.2 | 640, none, 260, none, 360 | 640 | 98.1, 620 |
+| `alike` | all 1 | 95.3, 77.1, 98.2, 94.6, 100.0 | **95.3** | 93.0 | 560, none, 360, 760, 320 | 560 | 100.0, 320 |
+| `wide` | -1 to 5 | 99.0, 43.2, 97.1, 46.0, 79.3 | **79.3** | 72.9 | 360, none, 640, none, 900 | 900 | 96.9, 500 |
+| `wide_c` | -2 to 4 | 99.9, 97.9, 100.0, 52.8, 98.8 | **98.8** | 89.9 | 280, 280, 320, none, 380 | 320 | 99.9, 300 |
+
+The score at the end is the same at the three gaps in every run (for instance `wide`, seed 93683: 48, 46, 41 at 0, 4 and 8 letters; `spread`, seed 406364: 89, 89, 89): what a run lacks, it lacks at every length of gap. The mean gate at birth with nothing arriving is 0.68 (`spread`), 0.73 (`alike`), 0.78 (`wide`), 0.65 (`wide_c`); at the end the mean of the logistic of the thresholds is 0.77 to 0.79 in `spread`, 0.74 to 0.80 in `alike`, 0.82 to 0.88 in `wide`, 0.71 to 0.79 in `wide_c`.
+
+**The baseline rerun** gave the five reported figures, and every one of its readings at a multiple of 80,000 lines equals the reading in `loop_small_case/res/hold_r7_m1_exact_<seed>.json`.
+
+**The hypothesis is refuted by its own criterion.** With every threshold at 1, the median score is 4 points above the baseline's (within 5), the median of lines to 90% is 560 thousand against 640 (within a factor of 1.5), and one seed stays below 90% where the baseline has two. By seed, `alike` is above the baseline on two seeds (by 4 and 17 points), below on two (by 5 and 2) and level on one. I read this as: on this text, with thresholds that learn, a spread of holding times at birth is not needed, and these five seeds carry no difference in either direction between `spread` and `alike`.
+
+**What the two wider arms show, and what they do not.** `wide` (the mean of the thresholds moved from 1 to 2) is lower than the baseline on three seeds by 39, 32 and 21 points, and within 8 points on the other two; it is at or below `wide_c` on all five seeds (by 1, 55, 3, 7 and 20 points). `wide_c` (the same width about the baseline's mean) is above the baseline on two seeds (by 9 and 16 points), within 2 points on two and 25 points below on one (406364, the seed on which the baseline is also lowest). My reading: the fall in `wide` goes with the higher mean (gates that are more closed at birth), not with the width; a width of 6 about the same mean did no harm on four seeds of five. Two seeds of five carry most of each difference, and I do not claim more than the direction. No arm was run that moves the mean alone (all thresholds at 2), so the assignment to the mean rests on `wide` against `wide_c` only.
+
+**Predictions scored.**
+
+| | Statement | Chance | Outcome |
+|---|---|---|---|
+| A1 | the baseline rerun gives the reported figures | 0.95 | **holds** |
+| A2 | `alike`: median at least 5 points below the baseline's | 0.40 | **fails** (4.1 above) |
+| A3 | `alike`: median lines to 90% at least 1.5 times the baseline's | 0.45 | **fails** (560 against 640) |
+| A4 | `wide`: median at least as high as the baseline's | 0.55 | **fails** (79.3 against 91.2) |
+| A5 | `wide`: median lines to 90% fewer than the baseline's | 0.50 | **fails** (900 against 640) |
+| A6 | `wide_c` and `wide`: medians within 5 points | 0.60 | **fails** (98.8 against 79.3) |
+| A7 | every arm has a seed at or above 99 and a seed below 90 | 0.50 | **holds** |
+
+Two of seven hold. I expected the spread to help and the wider spread to help more; neither is carried.
+
+**Cost.** 24 runs, 219 to 240 CPU-seconds each; 23 minutes on four cores. **Not run:** as listed in section 4; also an arm with all thresholds at 2, and thresholds that do not learn (where a spread at birth could matter more).
