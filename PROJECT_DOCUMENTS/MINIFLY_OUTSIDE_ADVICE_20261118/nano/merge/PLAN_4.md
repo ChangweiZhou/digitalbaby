@@ -47,3 +47,34 @@ It is run (a) on the five reported seeds at 40,000 lines; (b) on the life with t
 ## 5. Size, cost, what is not run
 
 As step 2: a development run about one CPU-minute on sums and one and a half on prose; fourteen runs. The second life about seven CPU-minutes a run. Not run: a trust that depends on which other cells speak; classes kept from one finding to the next and only refined; X of more than two delays; classes of classes; subtraction and keeping.
+
+## 6. Outcome of the arms (entered 20 November after the fourteen development runs; `res/dev4_*.json`, `out_dev4_*.txt`)
+
+| Arm | sums, seed 1, last three readings | prose, last twentieth | prose cells | CPU s, sums; prose |
+|---|---|---|---|---|
+| no classes | 76.8 | 1.5566 | 445,161 | 18; 3 |
+| F, the frozen setting run again | 90.8 | 1.5488 | 2,292,678 | 50; 95 |
+| D, dissolving | 91.3 | 1.5489 | 2,281,008 | 69; 178 |
+| Oe, found once at half, cells empty | 86.7 | 1.5550 | 1,681,591 | 34; 35 |
+| Op, found once at half, cells pooled | 89.5 | 1.5507 | 2,138,631 | 31; 40 |
+| E, every doubling, cells empty | 87.2 | 1.5555 | 1,518,731 | 55; 78 |
+| Pr, practice at half the bytes | 88.1 | 1.5746 | 2,292,678 | 55; 95 |
+| P64, 64 pairs | 90.6 | 1.5489 | 3,955,149 | 62; 123 |
+
+**No change is good by the rule of section 2; there is no second setting.** The frozen setting is the best of the eight on both tasks, within half a point and a ten-thousandth of a nat.
+
+Predictions. R1: see the note below. R2 failed (91.3; 92.3 predicted). R3 failed: found once with empty cells is 0.006 nats *worse* than the frozen setting on development prose. R4 held (86.7). R5 failed (pooled cells are better than empty ones, 1.5507 against 1.5550). R6 failed (0.0067 worse). R7 failed (88.1). R8 failed (0.026 worse). R9 failed (64 pairs equal 32 on both). R10 failed.
+
+Readings (mine; one seed and one piece of prose).
+1. **What I took from the books was not there on development material.** On the three books, classes found once with empty cells beat the frozen setting by 0.006 to 0.015 nats; on the last twentieth of the test text's own stream they are 0.006 worse, and each of its two parts (once; empty) is worse taken alone. The difference between the two measurements: the books are new text read after the classes were made. My reading is that a class cell pooled from the old text carries the old text's counts into the new, where a cell that starts empty does not; that is a statement about change of text, and it is tested in addition 1.
+2. **Practice harms both tasks.** A trust taught half the time without the member cells and used with them is right for neither.
+3. **More pairs than 32 add nothing**, on either task: on prose the kept pairs beyond 32 are nearly all there are (49 of 54 have positive worth), on sums the further pairs are poor ones.
+4. **Dissolving** costs twice the search on prose and changes nothing there; on sums see the note.
+
+*Note on R1* (from `res/dev4_sums_D.json` against `res/dev4_sums_F.json`, and the members of the classes in `res/s40_cls_seed*.json`). **R1 failed.** With and without dissolving the pairs of units digits fall into the same two classes on the development seed: 53 that do not carry, and 47 of which 45 carry and two do not, (6, 3) and (1, 8). On the reported seeds the members that lie against their class are in every case pairs that sum to nine (all ten of them on seed 73129, two on seed 93683), which is what my account in section 1 said; but dissolving does not cure it. Seated again one by one, the first pair that sums to nine still joins the carrying class, where it is foretold a little, rather than found a class where it is foretold by nobody yet; a class of the pairs that sum to nine can only be founded by two of them at once. The search would need a move of two cells together. Not built.
+
+## 7. Addition 1 (20 November; written after section 6 and before the runs it describes)
+
+No second setting was adopted, so section 4's condition is not met. The second life is run all the same, because two of its questions do not need a second setting: (a) does part (ii) of the hypothesis repeat on books this line has not opened, with the frozen setting; (b) does "found once, cells empty" beat the frozen setting again on new books, as it did on the first three and did not on development material. Runs: the second life (`chesterton-thursday`, `chesterton-brown`, `austen-persuasion`, in that order after the test text's stream) with no classes, with the frozen setting, and with classes found once at 500,000 bytes with empty cells. Also, as a measurement on the frozen setting (no new mechanism): `alone.py` on the five reported seeds (the score with only the class kinds speaking and the number of cells that takes).
+
+*Predictions (mine).* S1: on each new book the frozen setting is at least 0.005 nats below the base (0.75, as written in section 4). S2: found once with empty cells is below the frozen setting on at least two of the three new books (0.60). S3: class kinds alone, median of five seeds, at least 90% whole (0.60), with under 25,000 cells (0.85).

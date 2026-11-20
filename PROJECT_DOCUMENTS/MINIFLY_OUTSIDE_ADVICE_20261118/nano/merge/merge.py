@@ -402,10 +402,10 @@ def run_sums(kw):
 
 # ---------------------------------------------------------------- prose (the life of nano/table/life.py, scored as nano/aheadprose/ahead.py does)
 BT = ("bryant-stories.txt", "burgess-busterbrown.txt", "carroll-alice.txt")
-def load_all():
+def load_all(books=BT):
     import score
     xa, cut, _ = score.load(); vals = score.byte_values(); tab = np.full(256, 1, np.int64); tab[vals] = np.arange(65); parts = [("A", xa)]
-    for f in BT:
+    for f in books:
         raw = np.frombuffer(open(os.path.join(HERE, "data", f), "rb").read(), np.uint8); raw = raw[raw != 13]; parts.append((f.split(".")[0], tab[raw]))
     x = np.concatenate([p[1] for p in parts]); segs = {}; off = 0
     for name, p in parts:
@@ -431,7 +431,7 @@ def run_dev(kw):
     out = dict(task="prose_dev", args=kw); out.update(prose_scores(s, x, d, cut)); out.update(trust=s.trust_summary(), finds=strip(s.finds), cpu=round(time.process_time() - t0, 1), cpu_finding=round(s.tfind, 1)); return out, s
 
 def run_life(kw):
-    x, segs = load_all(); t0 = time.process_time(); s = prose_sys(x, kw); out = dict(task="prose_life", args=kw, segments={k: list(map(int, v)) for k, v in segs.items()}, scores={}, growth=[])
+    x, segs = load_all(tuple(b + ".txt" for b in kw["books"].split(",")) if "books" in kw else BT); t0 = time.process_time(); s = prose_sys(x, kw); out = dict(task="prose_life", args=kw, segments={k: list(map(int, v)) for k, v in segs.items()}, scores={}, growth=[])
     for name, (a, c, b) in segs.items():
         lo = max(a, s.D)
         for m in range(lo, c, 125000):
