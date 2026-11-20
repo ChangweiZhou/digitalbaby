@@ -45,7 +45,7 @@ The system "parts by kind and byte" of `nano/layers` (also reported at 1.4421): 
 
 (appended below)
 
-**Entry 1 (22:25 UTC): the systems of cells run here** (`cells.py`, beside the four teaching runs; `res/cells_*.json`, per-byte files `res/cells_<name>_cell{1,2}.f32`). Nothing in `nano/table` is changed.
+**Entry 1 (22:03 UTC): the systems of cells run here** (`cells.py`, beside the four teaching runs; `res/cells_*.json`, per-byte files `res/cells_<name>_cell{1,2}.f32`). Nothing in `nano/table` is changed.
 
 | system | first cell, all bytes | second cell, all bytes | second cell, every eighth byte | named right (second cell), % | CPU | peak memory |
 |---|---|---|---|---|---|---|
