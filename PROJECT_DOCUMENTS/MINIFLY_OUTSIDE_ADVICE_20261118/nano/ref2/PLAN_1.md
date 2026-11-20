@@ -76,3 +76,5 @@ The full 256 bytes before every byte (see above). A whole run of 4 threads. More
 Equal in every digit. **R1 held.** So on this machine the copy with its checkpoints teaches exactly as `nano/ref`'s program did through 500 steps, and a run of 4 threads continued to step 4,000 would be expected to repeat 1.4541 to the digit (about 80 more minutes of the whole machine; not run now, the checkpoint is kept). A slip of mine in the command: the run left before the estimate at step 500, so that estimate was taken afterwards from the checkpoint by the program's own `estimate()` with the same blocks.
 
 The four seeds were started at 21:55 UTC (`jobs1.sh`).
+
+**Entry 2 (23:48 UTC).** The four runs left at step 2,000 after 105 minutes, as written, and were started again from their checkpoints at 23:47 UTC. At step 1,000 nanoGPT's estimate on the last tenth (50 batches) was 1.787, 1.801, 1.778 and 1.772 for seeds 1337 to 1340 (`nano/ref`'s run: 1.793). The pace was 3.1 CPU-s a step; the cells' runs of plans 2 and 3 took a core for about 18 minutes in all during this stretch.
