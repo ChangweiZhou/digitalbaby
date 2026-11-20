@@ -47,9 +47,8 @@ void mix_steps(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, f
                 double g = s[k][y[t]]; for (int v = 0; v < S; v++) g -= p[v] * s[k][v];
                 T[k * NL + lev[k]] += (shrink ? eta / sqrt(1.0 + Tu[k * NL + lev[k]]) : eta) * g; Tu[k * NL + lev[k]] += 1.0;
             }
-            for (int k = 0; k < K1; k++) if (id[k] >= 0) {
-                float *c = C + (int64_t)id[k] * S; if (c[y[t]] == 0) U[id[k]] += 1; c[y[t]] += 1; N[id[k]] += 1;
-            }
+            for (int k = 0; k < K1; k++) { const int64_t i = id[k] < -1 ? -2 - (int64_t)id[k] : id[k];      /* an address below -1: the cell -2-address counts and is silent */
+                if (i >= 0) { float *c = C + i * S; if (c[y[t]] == 0) U[i] += 1; c[y[t]] += 1; N[i] += 1; } }
         }
     }
 }
@@ -149,6 +148,7 @@ def steps_np(ids, y, C, N, U, T, Tu, eta, e, learn=True, shrink=False):
         if learn:
             for k, l, sv in ss: T[k, l] += (eta / np.sqrt(1.0 + Tu[k, l]) if shrink else eta) * (sv[y[t]] - p @ sv); Tu[k, l] += 1.0
             for i in ids[t]:
+                if i < -1: i = -2 - i
                 if i >= 0:
                     if C[i, y[t]] == 0: U[i] += 1
                     C[i, y[t]] += 1; N[i] += 1
@@ -197,8 +197,9 @@ def ctx_of(x, lo, hi, D):
     return x[np.arange(lo, hi)[:, None] - np.arange(1, D + 1)[None, :]]
 
 class Sys:
-    def __init__(s, S, D, kinds, eta, e, born, shrink, text=None, P=0, eJ=0.02, M=16, B0=10000, sweeps=2, mode="classes", seed=0, half_at=0):
+    def __init__(s, S, D, kinds, eta, e, born, shrink, text=None, P=0, eJ=0.02, M=16, B0=10000, sweeps=2, mode="classes", seed=0, half_at=0, rep=0):
         s.S, s.D, s.kinds, s.eta, s.e, s.shrink, s.P, s.eJ, s.M, s.sweeps, s.mode = S, D, [tuple(k) for k in kinds], eta, e, int(shrink), P, eJ, M, sweeps, mode
+        s.rep = int(rep)
         if mode == "none": s.P = 0
         s.L = kern(); s.KB = len(kinds); s.K1 = s.KB + s.P; assert s.K1 <= 400 and S <= 65
         s.uniq = []; s.off = []; off = 0; full = ctx_of(text, D, len(text), D) if text is not None else None
@@ -239,7 +240,13 @@ class Sys:
                 j = np.searchsorted(sl["keys"], key); j[j == len(sl["keys"])] = 0; out[ok, p] = np.where(sl["keys"][j] == key, sl["cids"][j], -1)
         return out
     def ids(s, ctx, create=False):
-        b = s.base_ids(ctx); return np.ascontiguousarray(np.hstack([b, s.class_ids(ctx, create)])) if s.P else np.ascontiguousarray(b)
+        b = s.base_ids(ctx)
+        if not s.P: return np.ascontiguousarray(b)
+        cl = s.class_ids(ctx, create)
+        if s.rep:                                                   # replacement: where a class cell stands, the member's own R-cell counts and is silent
+            for p, sl in enumerate(s.slots):
+                if sl is not None: r = np.flatnonzero(cl[:, p] >= 0); v = b[r, sl["k"]]; b[r, sl["k"]] = np.where(v >= 0, -2 - v, v)
+        return np.ascontiguousarray(np.hstack([b, cl]))
     # ---- reading and answering
     def _run(s, ctx, y, learn, want_p):
         P = np.zeros((len(ctx), s.S)) if want_p else None
@@ -357,7 +364,7 @@ def run_sums(kw):
     seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 40000)); P = int(kw.get("P", 32)); eJ = float(kw.get("eJ", 0.02)); mode = kw.get("mode", "classes"); t0 = time.process_time(); D = 9
     rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]; rng.permutation(10000)   # the second draw is cells2.py's split for subtraction
     TAB = np.array([text(a, b) for a, b in shown], np.int64); kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
-    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=lines * 5, M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)))
+    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=lines * 5, M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)))
     every = 5000 if lines <= 40000 else 50000; marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []))); tail = np.full(D, END, np.int64); rows = []; done = 0
     for mk in marks:
         X = TAB[rng.integers(8000, size=mk - done)].ravel(); x = np.concatenate([tail, X]); s.learn(ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
@@ -382,7 +389,7 @@ def load_all():
 
 def prose_sys(x, kw):
     K = 6; return Sys(65, K, [tuple(range(1, k + 1)) for k in range(K + 1)], 0.00005, 0.02, 0.25, False, text=x, P=int(kw.get("P", 32)), eJ=float(kw.get("eJ", 0.02)), mode=kw.get("mode", "classes"),
-                      half_at=int(kw.get("half_at", 500000)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)))
+                      half_at=int(kw.get("half_at", 500000)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)))
 
 def prose_scores(s, x, lo, hi):
     import score
@@ -413,11 +420,11 @@ def check():
     ok = True; rng = np.random.default_rng(5); L = kern()
     # 1. the compiled answering loop against numpy, on addresses of a small system with classes
     for S, shrink in ((14, True), (65, False)):
-        K1, n, nc = 9, 3000, 400; ids = rng.integers(-1, nc, (n, K1)).astype(np.int32); y = rng.integers(0, S, n).astype(np.int32)
+        K1, n, nc = 9, 3000, 400; ids = rng.integers(-1, nc, (n, K1)).astype(np.int32); sil = rng.random((n, K1)) < 0.1; ids[sil & (ids >= 0)] = -2 - ids[sil & (ids >= 0)]; y = rng.integers(0, S, n).astype(np.int32)
         C = np.zeros((nc, S), np.float32); N = np.zeros(nc, np.float32); U = np.zeros(nc, np.float32); T = np.full((K1, NL), 0.1); Tu = np.zeros((K1, NL)); P = np.zeros((n, S))
         L.mix_steps(n, K1, S, p32(ids), p32(y), pf(C), pf(N), pf(U), pd(T), pd(Tu), 0.05, 0.3, 1, int(shrink), pd(P))
         C2 = np.zeros((nc, S), np.float32); N2 = np.zeros(nc, np.float32); U2 = np.zeros(nc, np.float32); T2 = np.full((K1, NL), 0.1); Tu2 = np.zeros((K1, NL)); P2 = steps_np(ids, y, C2, N2, U2, T2, Tu2, 0.05, 0.3, True, shrink)
-        d = max(np.abs(P - P2).max(), np.abs(T - T2).max(), np.abs(C - C2).max()); ok &= d < 1e-9; print(f"answering loop, S = {S}, shrinking step = {shrink}, {n} bytes: compiled against numpy, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
+        d = max(np.abs(P - P2).max(), np.abs(T - T2).max(), np.abs(C - C2).max()); ok &= d < 1e-9; print(f"answering loop, S = {S}, shrinking step = {shrink}, {n} bytes: (a tenth of the cells silent and counting) compiled against numpy, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
     # 2. the search for classes against brute force in plain Python, on the counts of a small sums system
     kw = dict(seed="1", lines="300", P="4", mode="none"); _, s = run_sums_small(kw); s.eJ = 0.02; s.sweeps = 2
     for k, X in ((s.kinds.index((3, 4, 6, 7)), (3, 6)), (s.kinds.index((1, 2, 3)), (2,)), (s.kinds.index((2, 4, 5)), (2, 5))):
@@ -428,12 +435,12 @@ def check():
         good = same and dj < 1e-6 * max(1, abs(Jr)); ok &= good
         print(f"search for classes, kind {s.kinds[k]}, X = {X}: {len(ux)} X-cells, {len(cod)} R-cells, {r['classes']} classes of two or more; compiled against plain Python: the same grouping {same}, J differs by {dj:.1e}", "PASSED" if good else "FAILED")
     # 3. a class cell holds the sum of its members' R-cells, after a finding and after further reading
-    out, s = run_sums_small(dict(seed="1", lines="3000", P="8")); worst = 0.0; nchk = 0
+    out, s = run_sums_small(dict(seed="1", lines="3000", P="8", rep="1")); worst = 0.0; nchk = 0
     for sl in s.slots:
         if sl is None: continue
         ids_, cod = s.r_cells(sl["k"]); xk, zk = s.split(sl["k"], sl["X"], cod); c = sl["clsmap"][xk]; okc = c >= 0; key = c[okc].astype(np.int64) * sl["ZS"] + zk[okc]
         j = np.searchsorted(sl["keys"], key); assert (sl["keys"][j] == key).all(); pooled = np.zeros((len(sl["keys"]), s.S)); np.add.at(pooled, j, s.C[ids_[okc]]); worst = max(worst, float(np.abs(pooled - s.C[sl["cids"]]).max())); nchk += len(sl["keys"])
-    ok &= worst == 0 and nchk > 0; print(f"class cells against the sum of their members' cells, {nchk} class cells of {sum(sl is not None for sl in s.slots)} kinds after 3,000 lines: largest difference {worst}", "PASSED" if worst == 0 and nchk > 0 else "FAILED")
+    ok &= worst == 0 and nchk > 0; print(f"class cells against the sum of their members' cells, {nchk} class cells of {sum(sl is not None for sl in s.slots)} kinds after 3,000 lines with replacement: largest difference {worst}", "PASSED" if worst == 0 and nchk > 0 else "FAILED")
     return ok
 
 def run_sums_small(kw):

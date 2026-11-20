@@ -67,3 +67,30 @@ Not run: X of more than two delays; classes of classes; pairs across two kinds w
 *Predictions (mine).* A1: sums, development seed, replacement: at least 96 (chance 0.50); under 90.8, that is worse than classes beside the cells (0.15). A2: prose, last twentieth of the stream: replacement is more than 0.002 nats worse than the base's 1.5566 (0.55), because a run of six bytes is then answered by a class cell that pools other runs. A3: prose with classes beside the cells is within 0.002 of the base (0.6).
 
 *The choice of numbers* is widened by this one switch: rep in (0, 1) beside e_J in (0.02, 0.5) and P in (8, 32), by the rule of section 2.
+
+## 6. Outcome of step 1 (entered 20 November after the runs; `res/dev_*.json`, table in `report_dev.txt`, check in `check_output.txt`)
+
+Development seed 1 on sums (never-shown additions, own answer bytes, whole answer, %, mean of the last three readings of 40,000 lines); prose on the last twentieth of the stream (nats a byte). Cells: those that have counted; "without" leaves out the R-cells whose X-cell is in a class of a kept pair.
+
+| Setting | sums | cells (without) | CPU s | prose | cells (without) | CPU s |
+|---|---|---|---|---|---|---|
+| no classes | 76.8 | 1,213,119 | 18 | 1.5566 | 445,161 | 3 |
+| beside, P = 8, e_J = 0.02 | 82.2 | 1,220,018 (1,167,763) | 58 | 1.5542 | 666,152 (478,254) | 69 |
+| **beside, P = 32, e_J = 0.02** | **90.8** | 1,231,004 (1,188,731) | 50 | **1.5488** | 2,292,678 (1,847,612) | 94 |
+| beside, P = 8, e_J = 0.5 | 78.5 | 1,217,831 (1,159,825) | 56 | 1.5539 | 498,228 (310,772) | 62 |
+| beside, P = 32, e_J = 0.5 | 89.6 | 1,228,296 (1,175,694) | 48 | 1.5512 | 1,807,364 (1,362,269) | 83 |
+| replacement, P = 8, e_J = 0.02 | 81.1 | 1,217,832 (1,174,198) | 57 | 1.5637 | 666,152 (478,254) | 68 |
+| replacement, P = 32, e_J = 0.02 | 93.8 | 1,230,459 (1,160,902) | 55 | 1.5612 | 2,292,678 (1,847,612) | 91 |
+| replacement, P = 8, e_J = 0.5 | 77.2 | 1,216,791 (1,162,605) | 55 | 1.5950 | 498,228 (310,772) | 60 |
+| replacement, P = 32, e_J = 0.5 | 84.7 | 1,227,416 (1,136,785) | 55 | 1.6051 | 1,807,364 (1,362,269) | 83 |
+
+**Chosen by the rule of section 2 and frozen: classes beside the cells (rep = 0), P = 32, e_J = 0.02.** Every setting with replacement raises the prose loss by more than 0.002 and is excluded by the rule; among the rest this one is highest on sums and also lowest on prose.
+
+Addition 1's predictions: A1 failed (replacement 93.8 where at least 96 was predicted; it is above 90.8, so the second part held). A2 held (replacement is 0.0046 worse than the base on prose). A3 failed in the direction I did not expect: classes beside the cells are 0.0078 nats *better* than the base on prose, not within 0.002.
+
+Readings (mine; one seed, development level).
+1. **The classes come out as the carry, and as something more.** Inside the kind of the whole pair the system finds the two units digits grouped by whether they sum to ten or more (98 of 100 pairs with their class on this seed), and the two tens digits grouped by their sum modulo ten (ten classes of ten). Either gives the tens digit of a never-shown pair; the cells keyed on classes alone name it on 98.6% (99.8% with replacement). Nothing about sums was laid down.
+2. **The answering cell does not yet use them fully**: 92.8% (95.6% with replacement) of tens digits with all kinds voting. With replacement the shown lines too are answered through the class and the trust learns more, which helps sums and harms prose.
+3. **On prose, replacement harms and classes beside the cells help.** A run of six bytes says something its class does not.
+4. **More pairs are better on both tasks** (P = 8 to 32: 82 to 91 on sums, 0.002 to 0.008 nats on prose); the grid stopped at 32.
+5. **The store is not smaller.** On prose the class cells are four times the base's cells; leaving out the R-cells that a class stands for still leaves four times the base (1.85 million against 0.45 million), and scoring with those cells silent, without having learned so, gives 2.58 nats. Part (iii) of the hypothesis will be scored in step 2 but on this evidence it fails on prose.
