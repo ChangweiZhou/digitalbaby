@@ -47,3 +47,69 @@ The system without classes over the long reading; a cap on long-counted cells or
 | D6 | without classes, no reading-to-reading fall of the second cell after 50,000 lines is larger than 5 points, on all three seeds | 0.55 |
 
 *Not run.* Any repair (parts born anew at each finding, a step that does not shrink, a cap): each would be a new mechanism and needs its own plan.
+
+## 6. Outcome of the five long runs (section 2; `res/s400_cls_seed*.json`, `report_2.txt`)
+
+With classes; 400,000 lines; never-shown additions after a read line; 1.24 million cells that count; second cell 1,451,520 parts, about 776,000 used; CPU 410 to 441 s a run.
+
+| Seed | First cell: at 40,000 lines; at the end (last; mean of the last three) | Second cell | Control |
+|---|---|---|---|
+| 73129 | 93.2; 77.2; 78.8 | 97.4; 75.5; **76.5** | 92.2; 82.6; 83.6 |
+| 93683 | 95.2; 81.2; 82.9 | 98.2; 90.4; **91.9** | 93.8; 84.4; 85.4 |
+| 116089 | 92.4; 76.0; 77.9 | 96.4; 74.8; **75.4** | 92.8; 84.7; 84.9 |
+| 406364 | 89.6; 73.5; 75.5 | 96.8; 73.1; **74.7** | 88.5; 79.9; 81.7 |
+| 545353 | 92.9; 80.3; 83.4 | 97.4; 91.6; **92.5** | 93.6; 82.4; 84.4 |
+| median | 92.9; 77.2; 78.8 | 97.4; 75.5; 76.5 | 92.8; 82.6; 84.4 |
+
+With an empty past the figures are within two points of these. By place at the end: hundreds 98.3 to 99.5, units 100 in every cell; all of the loss is at the tens digit. On seeds 73129 and 93683 every reading equals the coordinating session's two files (read from its branch at 681f168).
+
+**The second cell does not hold its level** (mine): on three seeds of five it ends at the first cell's level, twenty points under its own at 40,000 lines; on two it ends near 92, five to six points under. The control ends above the first cell on every seed (by 4.8, 2.5, 7.0, 6.2, 1.0).
+
+**Predictions.** L1 refuted (the second cell's mean of the last three less its reading at 40,000 lines: -20.9, -6.3, -21.0, -22.1, -4.9; median -20.9; within 3 asked, refuted beyond 6). L2 failed (one of the first three seeds at 90 or more; two of all five). L3 failed (-2.3, +9.0, -2.5, -0.8, +9.1). L4 held (first cell 75.5 to 83.4). L5 failed (the control is 1.0 to 7.0 above the first cell). L6 held.
+
+## 7. Outcome of addition 1 (`res/s400d_cls_seed*.json`, `report_2d.txt`; `res/s400_none_seed*.json`, `report_2none.txt`)
+
+*(a) Readings on either side of the findings* (seeds 116089 and 406364; CPU 509 and 514 s; the further readings changed nothing: the readings shared with the first runs are the same). Never-shown additions after a read line:
+
+| Seed | Lines | All kinds: first, second | Only the class kinds speaking: first, second | Only the plain kinds: first, second |
+|---|---|---|---|---|
+| 116089 | 63,000 | 90.8, 96.9 | 91.2, 90.2 | 74.3, 76.6 |
+| | 65,000 | 84.6, 87.0 | 33.8, 61.2 | 73.7, 76.8 |
+| | 255,000 | 82.8, 89.9 | 87.4, 85.4 | 26.2, 46.0 |
+| | 257,000 | 79.0, 77.8 | 71.6, 67.6 | 27.9, 46.7 |
+| | 400,000 | 76.0, 74.8 | 73.0, 72.8 | 7.3, 24.2 |
+| 406364 | 63,000 | 86.6, 96.4 | 91.6, 92.0 | 72.2, 73.4 |
+| | 65,000 | 84.7, 94.9 | 92.4, 93.1 | 72.2, 75.0 |
+| | 255,000 | 82.9, 91.2 | 91.3, 94.5 | 30.4, 50.6 |
+| | 257,000 | 78.8, 80.2 | 73.2, 75.6 | 30.7, 49.1 |
+| | 400,000 | 73.5, 73.1 | 74.0, 75.5 | 20.6, 24.9 |
+
+The fall is at the finding itself: across the finding at 256,000 lines the second cell loses 12.1 and 11.0 points within 2,000 lines, and nothing is regained in the 143,000 lines after. But **it is not the second cell's parts that fail to follow, as I supposed**: with only the class kinds speaking, the *first* cell falls as far (87.4 to 71.6; 91.3 to 73.2). The list of kept pairs shows what happens (`report_2d.txt`): at that finding, on both seeds, every one of the seven pairs of the kind of delays (3, 4, 6, 7) is dropped. That kind holds the two digits of both operands when the tens digit is named; the classes found in it are the carry and the sum modulo ten. On seed 116089 the same kind is dropped at 64,000 lines (class kinds alone: 91 to 34 for the first cell), is kept again at 128,000 lines, born with nothing, and is dropped again at 256,000. `merge.py` searches for classes only in the sixteen kinds of largest trust, and that line's report already names the fault ("a kind is forgotten when its classes succeed") and carries two repairs as options, neither in its frozen setting. So the step falls of the second cell are a fault of the base system's choice of where to search, which the second cell inherits; while the exact kind is kept, the second cell stays 6 to 10 points above the first (89.9 against 82.8, 91.2 against 82.9 at 255,000 lines).
+
+Two more things in the table (mine). (1) The plain kinds alone fall from 79 to between 7 and 21 for the first cell over the long reading, with no finding involved: the trusts of the plain kinds drift to where the plain kinds alone answer almost nothing, and the first cell's answer comes to rest on the class kinds. The second cell's reading of the plain kinds falls less (46 to 51 at 255,000 lines). (2) With all kinds speaking the first cell is *below* the class kinds alone from 200,000 lines on (82.9 against 86.6 and 90.8): the plain kinds by then take away more than they give.
+
+*(b) Without classes* (seeds 116089, 406364, 545353; CPU 344 to 376 s; 1.22 million cells): first cell 80.1, 78.6, 77.8 at 40,000 lines and 62.3, 61.8, 62.4 at the end (mean of the last three); second cell 86.3, 84.6, 85.6 and 68.1, 69.0, 69.1; control 83.8, 80.0, 82.5 and 66.7, 65.5, 63.5. With nothing found anew the second cell falls evenly with the first and keeps its margin over it (+5.8, +7.2, +6.7 at the end; +6.2, +6.0, +7.8 at 40,000 lines).
+
+**So there are two losses with long reading, and the second cell cures neither** (mine): an even one, in which the first and the second cell fall together by 17 to 18 points without classes, and which is the base system's; and step falls where the base system's search lets go of the kind its best classes were found in. What the second cell adds (4 to 9 points) stands through the first and is lost at the second.
+
+**Predictions.** The hypothesis of addition 1 is half right: the falls are at the findings (not refuted: 12.1 and 11.0 points across the finding), but the cause I gave (the second cell's parts cannot follow re-made cells) is wrong, since the first cell's reading of the class kinds falls as far. D1 held (-12.1). D2 held (-11.0). D3 held (-17.8 and -18.9). D4 held (+5.8, +7.2, +6.7). D5 failed, as I thought likely (-18, -16, -17 points from the level at 40,000 lines). D6 failed (seed 545353 has one fall of 5.8 points between readings; the other two seeds none over 4.1).
+
+## 8. Addition 2 (20 November; written after section 7, before the runs it describes): the base line's own repair of where to search
+
+*The evidence.* Section 7: the step falls happen when the kind (3, 4, 6, 7) is dropped from the sixteen kinds searched. `../merge/PLAN_6.md` (addition 2) gives a repair as an option of `merge.py`, `keep=2`, that line's **setting C**: the trust of a kind counts the trust of the kinds made from it, so a kind whose classes succeed keeps its place. That line ran setting C over 400,000 lines for its own answering cell on two seeds and found nothing gained (80.1 and 81.3 against 78.9 and 81.3 at the old score). It is not this line's mechanism and not the frozen setting; it is used here as that program has it, unchanged, as a test of the cause.
+
+*Question.* With setting C, does the second cell escape the step falls?
+
+*Hypothesis (mine).* It does: with `keep=2` the second cell's mean of the last three readings at 400,000 lines, after a read line, is at least 88 on at least two of three seeds (its level between 100,000 and 250,000 lines in the runs above was 87 to 94). *Refuted if* it ends under 82 on two seeds or more.
+
+*Runs.* `gate2.py` with `keep=2`, everything else as before: seeds 116089, 406364, 545353 over 400,000 lines with the list of kept pairs at every finding; and the five reported seeds at 40,000 lines, to see what setting C does to the level of step 1. Cost: about seven CPU-minutes a long run, 80 s a short one.
+
+| | Statement | Chance |
+|---|---|---|
+| E1 | the hypothesis: the second cell at least 88 at the end on at least two seeds of three | 0.45 |
+| E2 | on at least two seeds of three, no finding after 32,000 lines drops every pair of the kind (3, 4, 6, 7) | 0.60 |
+| E3 | the second cell ends at least 5 points above the first on all three seeds | 0.50 |
+| E4 | at 40,000 lines with setting C the second cell's median over the five seeds is within 1 point of the frozen setting's 97.4 | 0.60 |
+| E5 | the first cell ends under 85 on all three seeds (the even loss is untouched) | 0.75 |
+
+*Not run.* `keep=1`; that line's kinds keyed on two classes (`merge6.py`); any change of my own to the search.

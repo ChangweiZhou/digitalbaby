@@ -11,9 +11,9 @@ for sd in seeds:
         assert rows[-1]["add"][c]["empty"] == rows[-1]["add"][c]["after_add"]
     if len(sys.argv) > 3:
         m = json.load(open(os.path.join(HERE, "..", "merge", "res", f"{sys.argv[3]}_seed{sd}.json"))); line += f" every reading of my first cell equal to nano/merge's stored file: {[x['add'] for x in m['rows']] == [x['add']['first']['empty'] for x in rows]}"
-    print(line); print("    by lines: " + " ".join(f"{r['lines'] // 1000}k:{r['add']['first']['empty']:.1f}/{r['add']['second']['empty']:.1f}/{r['add']['control']['empty']:.1f}" for r in rows))
+    print(line); print("    by lines: " + " ".join(f"{r['lines'] // 1000}k:" + "/".join(f"{r['add'][c]['empty']:.1f}" for c in cells) for r in rows))
 for (c, k), v in agg.items():
     if k == "place": print(f"  {c:8s} places at the end, median: " + " ".join(f"{x:.1f}" for x in np.median(np.array(v), 0)))
     else: print(f"  {c:8s} {k:6s}: " + ", ".join(f"{x:.1f}" for x in v) + f"; median {np.median(v):.1f}")
 for k in ("last", "last3"):
-    for c in ("second", "control"): g = np.array(agg[(c, k)]) - np.array(agg[("first", k)]); print(f"  {c} less first, {k}: " + ", ".join(f"{x:+.1f}" for x in g) + f"; median {np.median(g):+.1f}; difference of medians {np.median(agg[(c, k)]) - np.median(agg[('first', k)]):+.1f}")
+    for c in [x for x in ("second", "control", "second_half", "control_half") if (x, k) in agg]: g = np.array(agg[(c, k)]) - np.array(agg[("first", k)]); print(f"  {c} less first, {k}: " + ", ".join(f"{x:+.1f}" for x in g) + f"; median {np.median(g):+.1f}; difference of medians {np.median(agg[(c, k)]) - np.median(agg[('first', k)]):+.1f}")
