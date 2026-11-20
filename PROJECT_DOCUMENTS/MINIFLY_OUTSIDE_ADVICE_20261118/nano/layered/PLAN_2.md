@@ -72,3 +72,5 @@ By place at the end (hundreds/tens/units), never-shown sums: 99/87/100, 99/90/10
 | D5 | never-shown within 10 points of shown on every seed (0.80) | held (largest difference 4.4 points, seed 545353) |
 
 My reading: on this text, where a gate can see from its lines which digit is before it, exact traces in cells that read only lines, taught over two steps of return strengths, do more than the crossing did in `hold.py`, and no value differs from one cell read to the next. **Not run:** `hold.py` (quoted); steps beyond the grid; one delay line or none; other sizes; a comparator by back-propagation through time; repetition by anyone else.
+
+*Erratum to the outcome above (same day):* `hold.py` has 3,584 return strengths on this text (256 cells by 14 byte values), not 3,598.
