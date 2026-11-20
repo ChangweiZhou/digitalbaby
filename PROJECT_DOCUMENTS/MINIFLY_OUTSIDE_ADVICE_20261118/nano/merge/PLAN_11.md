@@ -51,3 +51,17 @@ Readings (mine).
 ## 6. Addition 1 (20 November; written after section 5 and before its runs): the runs that M had and F had not
 
 Setting F, nothing changed or chosen: (a) two-digit sums on seeds 2001 to 2005, 40,000 lines; (b) 400,000 lines on seeds 73129 and 93683; (c) three-digit sums, 80,000 lines, the five reported seeds. *Predictions (mine):* (a) median at least 96.5 (0.75); (b) at least 95 on both seeds (0.60); (c) median within 1 point of M's 95.9 (0.70).
+
+## 7. Outcome of addition 1 (entered 20 November; `res/s40r_F_seed200*.json`, `res/s400_F_seed*.json`, `res/s3_F_seed*.json`)
+
+Setting F; never-shown additions, own answer bytes, whole answer, %, mean of the last three readings.
+
+| | F | M | no classes |
+|---|---|---|---|
+| (a) two-digit, 40,000 lines, seeds 2001 to 2005 | 98.1, 97.1, 98.1, 99.0, 96.1; median **98.1** | 98.4, 97.3, 98.0, 99.1, 97.2; median 98.0 | 77.0, 78.1, 78.3, 80.9, 77.1; median 78.1 |
+| (b) two-digit, 400,000 lines, seeds 73129, 93683 | **99.3, 98.4** (lowest reading after 20,000 lines: 97.0, 98.0) | 99.3, 98.7 | 62.1, 59.1 |
+| (c) three-digit, 80,000 lines, five reported seeds | 96.2, 95.8, 95.6, 95.5, 96.1; median **95.8** (thousands, hundreds, tens, units at the last: 99.6, 95.8, 100, 100) | median 95.9 | median 92.3 |
+
+All three predictions held. About 510 CPU-seconds and 1.57 million cells for a run of 400,000 lines; 415 CPU-seconds and 2.87 million cells on three-digit sums.
+
+Reading (mine). On sums F and M are the same to within a few tenths on every measure taken, as expected: there the rule of this plan touches only the kinds keyed on two classes. **F therefore has, on sums, 97.9 and 98.1 on two sets of five seeds at 40,000 lines, 99.3 and 98.4 at 400,000 lines with no fall, 95.8 on three-digit sums; and on prose the frozen setting's gain on six books with the old text kept.** Each figure is one run of the setting on that material by the session that built it.
