@@ -28,7 +28,7 @@ Addition after its own phase: candidate 83.2 (reported seeds) and 85.6 (new seed
 
 **By the measure of `PLAN_1.md`:** reported seeds, no old line: 85.8 against 85.8; one in 32: 81.6 against 81.6 and above 67.0. Seeds 2001 to 2005 against the line's figures for its own new seeds (84.8 and 81.2): 85.6 and 83.8, above the program's choice (68.2, mine). Repeats, in both conditions, on both sets of seeds, on both ways of reading the end.
 
-Two things the table shows that were not asked. (i) For the plain system with one old line in 32 the last reading (15.6) is above the mean of the last three (11.7 and 11.6): a single last reading flatters the plain system there by about four points; the candidate's two figures agree. (ii) The clean score of subtraction is within 3 points of the usual one at the median in every row (seed by seed it differs by up to 13 points, on about a hundred lines). The scoring fault of the errata does not bear on the comparison.
+Two things the table shows that were not asked. (i) For the plain system with one old line in 32 the last reading (15.6) is above the mean of the last three (11.7 and 11.6): a single last reading flatters the plain system there by about four points; the candidate's two figures agree. (ii) The clean score of subtraction is within 3.5 points of the usual one at the median in every row (seed by seed it differs by up to 13 points, on about a hundred lines). The scoring fault of the errata does not bear on the comparison.
 
 ## 3. What the agreement to the digit is, and is not
 
