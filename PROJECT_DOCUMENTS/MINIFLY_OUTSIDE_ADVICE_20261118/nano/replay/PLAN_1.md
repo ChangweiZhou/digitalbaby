@@ -93,3 +93,40 @@ On the five reported seeds (scored in section 11) R at r = 1 is 7.6 points below
 - B1 (0.6): on fifteen seeds R at r = 1 is below O on addition by 2 to 10 points at the median of the paired differences.
 - B2 (0.6): R at r = 1/2 is below R at r = 1 on addition on at least nine seeds of fifteen.
 - B3 (0.7): R at r = 1 is below P on subtraction on at least eleven seeds of fifteen (keeping addition costs some subtraction).
+
+## 11. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report1.txt` (made by `report1.py` from `res/p_*.json`): first the five reported seeds, then the fifteen. The numpy loop beside the compiled one (R, r = 1, seed 1, `add:40000,sub:20000`): the same six readings to the digit.
+
+**The five reported seeds** (73129, 93683, 116089, 406364, 545353; median). Never-shown sums, whole answer right, %, at the last reading after 200,000 lines of subtraction.
+
+| | addition after its own phase | addition after subtraction | subtraction |
+|---|---|---|---|
+| P, no replay | 84.2 | 2.0, 1.6, 1.8, 1.4, 2.0; **1.8** | 82.0, 89.8, 91.4, 86.0, 86.0; **86.0** |
+| R, one replayed line for each real line | 86.3 | 77.2, 85.0, 77.2, 75.6, 79.4; **77.2** | 82.2, 82.6, 74.4, 76.8, 79.6; **79.6** |
+| R, one for two real lines | 84.9 | 80.6, 77.4, 73.0, 71.2, 72.0; **73.0** | 75.2, 88.6, 82.8, 81.6, 82.6; **82.6** |
+| O, the program's old lines, one for each (control) | 86.1 | 88.4, 77.6, 75.0, 84.4, 87.0; **84.4** | 75.4, 69.0, 76.8, 75.8, 76.0; **75.8** |
+| Z, replay, cells emptied at the change (control) | 86.3 | 2.4, 1.4, 1.8, 1.6, 2.4; **1.8** | 86.6, 91.2, 88.0, 89.0, 88.2; **88.2** |
+| R6, replay from cells of six bytes | 65.7 | 2.6, 3.2, 2.0, 4.2, 3.6; **3.2** | 79.2, 66.6, 75.4, 81.8, 63.2; **75.4** |
+
+**The hypothesis holds.** With one replayed line for each real line, never-shown addition after 200,000 lines of subtraction is 77.2% (75.6 to 85.0 on the five seeds) and never-shown subtraction 79.6%, where the plain system keeps 1.8% of addition, and the program's one old line in 32 kept 15.6 in the earlier runs. The program shows no old line and is not told when the task changes.
+
+**Fifteen seeds** (the five, then 1001 to 1010), medians: P 1.8 and 86.0; R at r = 1: **79.4 and 78.4**; R at r = 1/2: 74.2 and 81.6; O: 80.8 and 75.4. Paired:
+
+- R at r = 1 less O: addition -0.2 (seven seeds above, eight below), subtraction +1.0 (nine above, six below). **Replay from the system's own counting cells keeps as much as old lines chosen by the program.** The 7.6 points between them on the five reported seeds do not survive the fifteen.
+- R at r = 1/2 less R at r = 1: addition -4.4 (below on twelve of fifteen), subtraction +4.0 (above on thirteen). Half the replay keeps a little less of the old task and a little more of the new; the sum of the two scores is the same at the median (156.4 and 155.8; O 156.0). The ratio moves the system along a trade between the two tasks; it does not buy both.
+- R at r = 1 less P on subtraction: -9.2 (below on twelve of fifteen); O less P: -10.0 (below on fifteen). Keeping addition costs about 9 points of subtraction at this length, with replay or with the program's old lines alike.
+
+**What else the runs show (my readings).**
+
+1. *It is the old lines that keep.* With the cells emptied at the change (Z), the same number of replayed lines, all of the new task, leaves addition at 1.8%, as with no replay.
+2. *Replay from cells that do not cover a line destroys rather than keeps.* With cells of six bytes 3.9% of the replayed lines are right sums (all are well formed); addition after subtraction is 3.2%, and addition after its own phase is 65.7% where the plain system has 84.2: wrong replayed sums harm the first task while it is being learned. A store that is smaller than the lines, made this way, is worse than no store.
+3. *The store is complete, and that is what the result rests on.* 66,050 counting cells with 78,887 counts above zero hold the 16,000 lines shown; every replayed line in R is a line that was shown (100.00% correct on every seed). Section 3 said this beforehand: the experiment shows that rehearsal from a store the system fills by counting keeps the first task as well as rehearsal by the program, at one replayed line for each real one; it does not show keeping from anything smaller than the lines themselves. The counting cells are 66,050 against the relay system's 256, and their counts are 1.8 times the relay system's 43,278 numbers.
+4. *Cost.* A run at r = 1 takes 60 seconds of one core against 27 for the plain system: 13 seconds of counting and replay in Python, the rest the doubled number of lines.
+5. The share of replayed lines that are addition falls through the second phase from 94% to 69% (seed 73129), as the counts of subtraction grow; nothing sets it but the counts.
+
+**Predictions.** A1 held (the ten figures to the digit). A2 held. A3 held (1.8). A4 failed on the five seeds (-7.6), and the fifteen say the two are level (-0.2). A5 held. A6 held (-75.2). A7 failed (46.0 on seed 1). A8 held (-0.4 on five seeds; +1.3 on fifteen). B1 failed (-0.2, not 2 to 10 below). B2 held (twelve of fifteen). B3 held (twelve of fifteen).
+
+**Errors and departures of mine.** Section 10 gives the difference between the two ratios as 4.2; it is 4.4. Z and R6 were not run on the ten further seeds (their differences are 75 points and more). The first phase of R, O, Z and R6 has more lines than P's; on fifteen seeds that is worth +1.3 points of addition after its own phase.
+
+**Not run:** as section 8; r below 1/2 on the reported seeds (seed 1: 67.6 at 1/4, 46.0 at 1/8).
