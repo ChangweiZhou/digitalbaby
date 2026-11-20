@@ -44,3 +44,7 @@ A point for the reviewers, stated here and not hidden: the answering cell's trus
 ## 5. Addition 1 (20 November; written after arms 0 to 3 were read and before the runs it describes)
 
 For every arm the choice of eta fell on the smallest value the plan allowed (0.0005), so the plan's range was too narrow at that end. Arms 0, 2 and 3 are run again with eta 0.00005, 0.0001 and 0.0002 added to the choice (e as before), chosen on the last twentieth of the stream as before; the first runs stay in the table. Prediction (mine): each arm improves by under 0.01 nats, and the difference between arms 2 and 0 stays above 0.02 (chance 0.8).
+
+## 6. Addition 2 (20 November; written after addition 1 was read and before the runs it describes): the control that the trust is learned at all
+
+In addition 1 the choice again fell on the smallest eta allowed, and the loss on the last twentieth of the stream falls steadily as eta falls. The control that this calls for: eta = 0, every trust left at 0.25, for arms 0 and 2 (e = 0.02). If that is as good as the learned trust, the readings of this plan about trust are wrong and what works is the cells' counts read at equal weight. Prediction (mine): with eta = 0 arm 0 is worse than 1.5226 by more than 0.02 (chance 0.7).
