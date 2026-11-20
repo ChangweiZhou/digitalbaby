@@ -20,3 +20,6 @@ m = 4, eta 0.1, e 2, trusts born 0.02, `shrink=1 rev=1 plan=add:400000`, five re
 | V4 | (B) at 40,000 within 3 points of (A) at 40,000 | 0.60 |
 
 Cost: about 3 CPU-minutes a run. Not run: keeping with the answer units first; the cap chosen again for this text.
+
+
+## NOT RUN (20 November): this plan was queued last and the session's budget went to the tenth plan's long runs instead. No run of it was started.

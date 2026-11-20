@@ -86,3 +86,11 @@ Readings (mine).
 3. **What remains wrong is the tens digit at a tie.** Two cells of three digits each decide the carry except where their chances balance; the remaining 8 to 9 points are there, as with units first.
 4. **The cost is the size**: 3.3 million cells and 35 million counts for a text of 16,000 different lines. Nearly all of them are keyed on bytes that carry nothing. This system shows that the route exists; it is not small.
 5. The guess is a single byte, the largest branch. A wrong guess is used as confidently as a right one; a guess passed on as a spread over bytes was not tried.
+
+## 6. Addition 1 (20 November, written before its runs; part (c) reduced, two arms added, at the coordinating session's request and within what the session's budget allows)
+
+Part (c) as planned (five seeds, 400,000 lines of addition, no cap) had been started; one such run costs about 20 CPU-minutes and the budget does not hold five seeds of two arms. It is cut to **two seeds** (73129 and 93683, the first two of the list; the other three were stopped before any reading of theirs was looked at), and beside it:
+- (d) the same with the cap of `PLAN_5.md`, addition 2 (`ncap=16`), on the same two seeds. *Prediction (mine):* without the cap the score at 400,000 lines is more than 5 points under its reading at 40,000 (chance 0.75); with the cap it is within 5 (0.60).
+- (e) look-ahead over plain cells of at most three delays (`m=3`, 129 plain kinds, 130 keyed on each guess; the numbers of m = 4, nothing chosen), five reported seeds, `plan=add:40000,sub:20000`. *Prediction (mine):* at least 85% whole (0.45); cells under 1.2 million (0.7).
+
+Two seeds are not what this line's rules ask for a claim; (c) and (d) are reported as two-seed readings and nothing more. The long life with subtraction after it (400,000 then 200,000) is NOT RUN in this session, with or without the cap, and neither is `PLAN_9.md`.
