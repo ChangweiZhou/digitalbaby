@@ -468,3 +468,37 @@ What remains chosen by me in the answering path is one number (0.03), the same f
 
 *Unplanned and worth more than the plan* (two seeds, sums, an open stream of 400,000 lines): with the new rule of the step the **second** answering cell rises with reading, to 92 and 94 with the fixed smoothing and 91 and 94 with the learned room, where the first cell alone falls to 74 and to 58. Over a long reading the second answering cell is what makes the system stand. This is a statement about sums; its general form (a reading that knows the place can discount cells whose silence misleads) is for the line `nano/suite` to meet or miss on other streams.
 
+## 19. The first results on streams of different kinds (late on 20 November; `nano/suite`, as reported; taken in at 312d783fc; not repeated by me)
+
+**The test-bed.** Six real byte streams, none made by a program of ours and nothing downloaded: tiny Shakespeare; a book (Moby Dick); Python source of the machine's standard library; C headers; a table of rows of hexadecimal numbers (the Unicode collation table shipped with perl); markup with short texts in some fifty languages (the shared MIME database). One to two million bytes each, up to 128 byte values, the first nine tenths read once and the last tenth scored. A new program in which a cell stores only the counts it has; it gives this line's figure on tiny Shakespeare (1.5226).
+
+**The base system (runs of 0 to 6 bytes, one answering cell, one setting) beside general-purpose compressors.** Nats a byte on the last tenth.
+
+| Stream | base, nothing changing | best table of the last bytes, properly smoothed | base, going on | xz | bzip2 | gzip |
+|---|---|---|---|---|---|---|
+| tiny Shakespeare | 1.5226 | 1.5165 | 1.4136 | 1.7496 | 1.6621 | 2.1463 |
+| book | 1.4676 | 1.4570 | 1.4476 | 1.7876 | 1.7035 | 2.2479 |
+| Python source | 1.4568 | 1.3974 | 1.1503 | **1.1265** | 1.2079 | 1.3972 |
+| C headers | 2.1222 | 2.0578 | 1.0301 | **0.7244** | 0.9426 | 1.0363 |
+| table of numbers | 1.7567 | 1.8000 | 0.8141 | **0.3814** | 0.5976 | 0.8122 |
+| markup | 0.8077 | 0.7893 | 0.4570 | 0.4333 | **0.3845** | 0.6184 |
+
+That line's reading, which I share: **the prose numbers hid a kind of stream the system is poor at.** On prose it is a third of a nat below the strongest compressor; on source code, rows of numbers and markup the compressor is below it everywhere. And with nothing changing, on streams joined from files, every method stands near 2 nats where going on gives 1: there the frozen measure mostly measures how unlike the end is to the rest.
+
+**A cell that recalls** (the idea of section 15; `PLAN_21.md` for its first run on prose). Second answering cell, going on; without it, with one place recalled, with three:
+
+| | tiny Shakespeare | book | Python | C | table | markup |
+|---|---|---|---|---|---|---|
+| without | 1.3876 | 1.4184 | 1.1228 | 0.9470 | 0.6944 | 0.4398 |
+| one place | 1.3783 | 1.4084 | 1.0351 | 0.8448 | 0.5700 | 0.3707 |
+| three places | 1.3745 | 1.4043 | **1.0209** | 0.8270 | 0.5464 | **0.3570** |
+| xz | 1.7496 | 1.7876 | 1.1265 | **0.7244** | **0.3814** | 0.4333 |
+
+It gains on all six streams when the system goes on changing (0.009 and 0.010 on prose; 0.069 to 0.124 on the four others) and closes two fifths of the distance to xz on C and on the table; with three places the system is below xz on prose, Python and markup. With nothing changing it harms two streams (C by 0.116): a trust earned on recent repeats is too high for places in unlike files. So by that line's rule it is general for a system that goes on changing, and not for one that is stopped. A fault of the first program (the sender saw its own byte) was found by that line on its development streams and repaired before any claim; its check now requires that no answer before a changed byte moves.
+
+*From its second step so far:* the second answering cell lowers the going-on loss on all six streams (0.017 to 0.120) and harms the table with nothing changing; a cell born only where the system was surprised saves 22 to 32% of the cells for 0.001 to 0.013 nats. The pool, the timing cells, classes and made kinds are running on the other streams; the rule of the step (section 18) is its next step.
+
+**What this changes** (mine). (1) The measure. For a system meant to go on learning, "going on" is the measure that every kind of stream shares, and the frozen last tenth is a special case that happened to suit prose. (2) The distance. On three kinds of stream of four that are not prose the system with every general idea of today is still above a compressor of 2009 by 0.1 to 0.17 nats; the cells' short contexts and slow trusts are what is missing there, not anything about English. (3) The recalling cell is the first idea of the programme that was proposed without a text in mind and gained on every stream.
+
+**Other reports received with it** (as reported). `nano/life3`, final (8b5786a70): the three-task life by both scores; after a read line the cells that join keep three tasks at 94 to 96, replay 92, 77, 78, replay chosen by mismatch 87, 85, 82; the counting cells with a cap fall to 59 when a kept task is asked after a line of another task. `nano/gate2` (645f803f9): its one new mechanism (a second cell that hears each sender with chance one half while it learns) is refuted, 25 points under the second cell over a long reading; a measurement with every trust frozen at 40,000 lines shows that a third to two thirds of the even loss with long reading is in what the cells say as their counts grow, and that going on teaching harms the first cell and helps the second. `nano/ref2`, interim (97e2853db): four seeds of the reference network are teaching; my figures for the cell systems repeat to seven digits in that line's hands, and their losses byte by byte are kept. `nano/merge`, a late note (e2e764f26): its best setting scores 98.6 after a read line (98.0 with an empty past).
+

@@ -1,6 +1,25 @@
 # `nano/life3`: lives of three and four tasks, the three routes of keeping side by side. Report of 20 November 2026
 
-By a separate agent session started by the coordinating session (`session_017dSEpVed7SthEH3ngGAdNc`); folder `nano/life3/`, branch `claude/nano-life3-8mmhfm`. Under Mr. Xu's words of 20 November as given to this session (in Chinese; the coordinator's translation): "You can go on trying boldly; we keep to the facts; besides the ideas I have mentioned, try others as well."; and earlier, in English: "Keep experimenting with the agents." **Development level throughout.** Nothing here has been repeated by another session; no checker gate, seal or review is claimed. Six plans, each committed before its runs, each with its outcome and every prediction scored (`PLAN_1.md` to `PLAN_6.md`); this report adds nothing that is not in them. Readings are mine.
+By a separate agent session started by the coordinating session (`session_017dSEpVed7SthEH3ngGAdNc`); folder `nano/life3/`, branch `claude/nano-life3-8mmhfm`. Under Mr. Xu's words of 20 November as given to this session (in Chinese; the coordinator's translation): "You can go on trying boldly; we keep to the facts; besides the ideas I have mentioned, try others as well."; and earlier, in English: "Keep experimenting with the agents." **Development level throughout.** Nothing here has been repeated by another session; no checker gate, seal or review is claimed. Seven plans, each committed before its runs, each with its outcome and every prediction scored (`PLAN_1.md` to `PLAN_7.md`); this report adds nothing that is not in them. Readings are mine.
+
+## 0. Read this first: a fault of the score, found after sections 1 to 9 were written
+
+The coordinating session found, late on 20 November, that the score every line used (a held-out line alone, with line ends in the delays that reach before it: the **empty past**) is a situation no system meets after the first line of its life, and that the relay system reads 10 or more points higher scored **after a read line**. `PLAN_7.md`, sections 6 and 8, made life A again by both scores (`table7b.txt`; the empty-past figures of the lives made again equal the earlier files to the digit). **Sections 1 to 9 below are left as written and every figure in them is an empty-past figure.** What the second score changes, at the end of life A (add / sub / max, empty past -> after a read line):
+
+| System | add | sub | max |
+|---|---|---|---|
+| plain | 2.8 -> 2.8 | 1.6 -> 1.6 | 70.4 -> 84.6 |
+| the program's old lines | 78.2 -> 91.4 | 63.2 -> 83.3 | 64.2 -> 72.2 |
+| route 1 | 85.8 -> 96.0 | 86.2 -> 95.4 | 90.8 -> 94.7 |
+| route 2 | 73.4 -> 91.8 | 52.4 -> 77.2 | 64.2 -> 78.0 |
+| route 2, line chosen by mismatch | 67.8 -> 87.2 | 66.9 -> 84.5 | 63.4 -> 82.0 |
+| route 3 with the cap of 16 counts (`PLAN_7.md`) | 68.4 -> 58.8 | 66.9 -> 66.6 | 97.6 -> 97.6 |
+| route 3b, look-ahead with the cap (`PLAN_7.md`; three seeds only for the second score) | 71.0 -> 59.0 | 75.2 -> 74.1 | 97.2 -> 97.2 |
+
+- **Route 2 does not fail the first plan's bar by the score after a read line** (every task above 60). Its middle task is still its weakest, 14.6 points under its addition. Sections 3, 4 (item 2) and 5 overstate its failure.
+- **The order of the routes turns over**: after a read line the relay-based routes are above the counting cells, whose addition, met after a line of the third task, reads about 59.
+- **Not made again by the second score** (so open): four tasks, the harsh text, the orders, `PLAN_5.md`, route 3 without the cap, 3b on two seeds (the background job reached its time limit).
+- Route 3b (the sums line's look-ahead system with its cap; asked by the coordinating session) holds its level through 400,000 lines and through subtraction by either score (82.6 then 83.2 empty past; 89.1 then 79.8 after a read line on three seeds); the third task costs it about 12 points of each earlier task by the empty-past score.
 
 ## 1. The question
 
@@ -54,7 +73,7 @@ One third task and one fourth, both without a carry (a third task with a carry c
 
 - Source: `claude/friendly-darwin-8mmhfm` at 7016262. Copied unchanged from it: `nano/replay/kernr.c`, `fastr.py`; `nano/keep/kage.c`; `nano/sparse/sparse.py` and its `kern_s.c`. `nano/keep/fastage.py` with one import line changed. Written again in `life3.py` from the sources: the relay system, the counting cells and replay, the rules of route 1's final candidate, the text and split.
 - Systems and sizes: plain system 256 cells, 46,351 numbers that learn with fifteen byte values; route 1 384 cells (69,519), or 512; route 2 the plain system and about 104,000 counting cells after three tasks (142,000 after four); route 3 10,200 trusts and about 1.52 million cells that have counted after three tasks (1.67 million after four).
-- What ran: 134 lives of 200,000 to 1,000,000 real lines on the reported seeds and seed 1, a look inside route 1, the kernel check twice; about 6.8 CPU-hours; no checkpoints kept; every reading is in `res/*.json`.
+- What ran: 134 lives of 200,000 to 1,000,000 real lines on the reported seeds and seed 1, a look inside route 1, the kernel check twice; about 6.8 CPU-hours; then, for `PLAN_7.md`, 42 more lives and about 9 CPU-hours (two lives stopped unfinished by a time limit); no checkpoints kept; every reading is in `res/*.json`.
 - Result: section 3. Lesson: sections 4 and 5.
 - Disposition (mine, for the coordinating session to weigh): K1 of the roadmap may be said of three tasks for routes 1 and 3 and of four for route 1 with a pool to match and for route 3, at development level, each with its limit beside it; not for route 2 beyond two tasks as `nano/replay` built it; with the replayed line chosen by mismatch it holds three, once, in this line only.
 - Next actions I would propose: for route 2, the choice by mismatch on the life of four tasks and on the harsh text, and repeated by another session before anything is entered; for route 1, some way for cells to be given back or shared, since its range is its pool; for route 3, why addition falls while it alone is read.

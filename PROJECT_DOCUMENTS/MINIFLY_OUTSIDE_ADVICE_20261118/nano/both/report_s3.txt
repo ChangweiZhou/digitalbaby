@@ -1,0 +1,90 @@
+
+=== addition 400,000 lines, then subtraction 200,000; never-shown lines, whole answer, own bytes, after a read line of the kind named, %; seeds (73129, 93683, 116089, 406364, 545353); median of those present ===
+addition at the end of the first phase, after an addition line
+  relay alone (with replay)                         97.9  97.5  97.5  96.6  97.0 | median  97.5
+  joined, second cell                               85.8  92.5  80.4  77.7  80.2 | median  80.4
+  joined, first cell                                83.0  84.3  82.6  79.1  82.1 | median  82.6
+  joined second cell, relay silent at the score     82.7  90.6  73.9  71.8  74.7 | median  74.7
+  counting alone, second cell                       75.5  90.4   -     -     -   | median  82.9
+  counting alone, first cell                        77.2  81.2   -     -     -   | median  79.2
+addition at the end of the second phase, after an addition line
+  relay alone (with replay)                         95.0  93.9  94.3  91.9  91.8 | median  93.9
+  joined, second cell                               39.1  71.5  58.4  61.3  43.3 | median  58.4
+  joined, first cell                                74.9  72.9  73.3  69.6  72.2 | median  72.9
+  joined second cell, relay silent at the score     24.1  63.0  46.8  48.0  28.8 | median  46.8
+  counting alone, second cell                       11.9  64.7   -     -     -   | median  38.3
+  counting alone, first cell                        70.6  67.4   -     -     -   | median  69.0
+addition at the end of the second phase, after a subtraction line
+  relay alone (with replay)                         95.0  93.8  94.4  91.8  92.4 | median  93.8
+  joined, second cell                               38.9  70.0  58.4  61.1  43.6 | median  58.4
+  joined, first cell                                74.8  72.9  73.4  68.7  72.3 | median  72.9
+  joined second cell, relay silent at the score     25.4  61.5  46.4  47.7  28.9 | median  46.4
+  counting alone, second cell                       12.3  64.0   -     -     -   | median  38.2
+  counting alone, first cell                        70.8  67.0   -     -     -   | median  68.9
+subtraction (clean) at the end of the second phase, after a subtraction line
+  relay alone (with replay)                         88.1  87.6  92.3  90.8  87.0 | median  88.1
+  joined, second cell                               72.4  75.6  79.4  74.1  80.5 | median  75.6
+  joined, first cell                                69.5  65.2  73.7  71.8  72.3 | median  71.8
+  joined second cell, relay silent at the score     71.4  74.3  78.1  73.3  79.8 | median  74.3
+  counting alone, second cell                       73.8  74.5   -     -     -   | median  74.2
+  counting alone, first cell                        64.7  64.2   -     -     -   | median  64.4
+subtraction (clean) at the end of the second phase, after an addition line
+  relay alone (with replay)                         88.2  87.9  92.5  90.1  87.5 | median  88.2
+  joined, second cell                               73.5  75.5  79.1  74.3  80.7 | median  75.5
+  joined, first cell                                69.1  65.3  73.8  71.9  72.2 | median  71.9
+  joined second cell, relay silent at the score     72.2  74.6  77.9  73.4  80.0 | median  74.6
+  counting alone, second cell                       74.5  74.2   -     -     -   | median  74.3
+  counting alone, first cell                        64.8  64.3   -     -     -   | median  64.5
+share of the addition level kept (end of second phase after a subtraction line over end of first phase after an addition line), %
+  relay alone (with replay)                         97.1  96.3  96.8  95.0  95.3 | median  96.3
+  joined, second cell                               45.3  75.7  72.6  78.7  54.4 | median  72.6
+  counting alone, second cell                       16.3  70.9   -     -     -   | median  43.6
+clean subtractions scored: [406, 408, 377, 412, 399] | replayed lines, of them additions, wrong: [(600000, 561873, 0), (600000, 562204, 0)] | CPU-seconds joined: [685.3, 696.4, 686.4, 683.5, 666.9] alone: [569.0, 569.7] | cells: 1400231 store cells: 66043
+check: the relay system scored with replay6.py's own draws against nano/replay/res/m_z_sub_R_<seed>.json (mine / theirs)
+  seed 73129: phase_0 first_after_first 98.04 / 98.04; phase_0 first_after_second 97.76 / 97.76; phase_0 second_clean_after_second 1.43 / 1.43; phase_1 first_after_first 94.96 / 94.96; phase_1 first_after_second 95.28 / 95.28; phase_1 second_clean_after_second 87.64 / 87.64
+  seed 93683: phase_0 first_after_first 97.20 / 97.20; phase_0 first_after_second 97.60 / 97.60; phase_0 second_clean_after_second 0.49 / 0.49; phase_1 first_after_first 93.76 / 93.76; phase_1 first_after_second 93.92 / 93.92; phase_1 second_clean_after_second 87.99 / 87.99
+  seed 116089: phase_0 first_after_first 97.44 / 97.44; phase_0 first_after_second 97.40 / 97.40; phase_0 second_clean_after_second 1.59 / 1.59; phase_1 first_after_first 94.44 / 94.44; phase_1 first_after_second 94.56 / 94.56; phase_1 second_clean_after_second 92.41 / 92.41
+  seed 406364: phase_0 first_after_first 96.44 / 96.44; phase_0 first_after_second 96.52 / 96.52; phase_0 second_clean_after_second 1.94 / 1.94; phase_1 first_after_first 91.72 / 91.72; phase_1 first_after_second 91.76 / 91.76; phase_1 second_clean_after_second 90.63 / 90.63
+  seed 545353: phase_0 first_after_first 96.68 / 96.68; phase_0 first_after_second 96.92 / 96.92; phase_0 second_clean_after_second 2.56 / 2.56; phase_1 first_after_first 92.56 / 92.56; phase_1 first_after_second 92.32 / 92.32; phase_1 second_clean_after_second 87.27 / 87.27
+
+=== addition 40,000 lines, then subtraction 20,000; never-shown lines, whole answer, own bytes, after a read line of the kind named, %; seeds (73129, 93683, 116089, 406364, 545353); median of those present ===
+addition at the end of the first phase, after an addition line
+  relay alone (with replay)                         91.9  88.4  90.0  89.5  89.9 | median  89.9
+  joined, second cell                               96.9  98.5  96.5  97.2  97.4 | median  97.2
+  joined, first cell                                93.8  95.7  93.1  90.5  93.8 | median  93.8
+  joined second cell, relay silent at the score     96.7  98.4  96.3  96.9  97.0 | median  96.9
+  counting alone, second cell                       97.4  98.2   -     -     -   | median  97.8
+  counting alone, first cell                        93.2  95.2   -     -     -   | median  94.2
+addition at the end of the second phase, after an addition line
+  relay alone (with replay)                         89.1  83.6  86.1  79.4  79.5 | median  83.6
+  joined, second cell                               80.2  89.9  89.2  88.4  85.8 | median  88.4
+  joined, first cell                                82.1  80.8  80.4  76.8  77.6 | median  80.4
+  joined second cell, relay silent at the score     75.2  88.8  86.6  86.0  84.6 | median  86.0
+  counting alone, second cell                       86.7  89.6   -     -     -   | median  88.2
+  counting alone, first cell                        82.9  79.3   -     -     -   | median  81.1
+addition at the end of the second phase, after a subtraction line
+  relay alone (with replay)                         89.3  83.7  86.5  81.1  80.0 | median  83.7
+  joined, second cell                               80.1  90.2  88.6  88.8  86.1 | median  88.6
+  joined, first cell                                81.6  80.6  80.2  76.7  78.0 | median  80.2
+  joined second cell, relay silent at the score     75.3  89.0  86.0  86.5  84.9 | median  86.0
+  counting alone, second cell                       86.2  89.2   -     -     -   | median  87.7
+  counting alone, first cell                        82.6  79.4   -     -     -   | median  81.0
+subtraction (clean) at the end of the second phase, after a subtraction line
+  relay alone (with replay)                         65.1  68.4  60.7  64.0  64.0 | median  64.0
+  joined, second cell                               87.3  87.6  90.1  88.9  90.1 | median  88.9
+  joined, first cell                                83.4  76.0  83.8  82.1  82.1 | median  82.1
+  joined second cell, relay silent at the score     87.4  87.6  90.1  88.9  90.2 | median  88.9
+  counting alone, second cell                       89.3  87.5   -     -     -   | median  88.4
+  counting alone, first cell                        82.5  75.7   -     -     -   | median  79.1
+subtraction (clean) at the end of the second phase, after an addition line
+  relay alone (with replay)                         64.8  68.5  60.4  65.0  63.5 | median  64.8
+  joined, second cell                               86.7  87.9  90.6  88.9  89.9 | median  88.9
+  joined, first cell                                82.7  76.3  83.7  81.9  82.5 | median  82.5
+  joined second cell, relay silent at the score     86.7  87.7  90.5  88.8  90.1 | median  88.8
+  counting alone, second cell                       88.7  88.2   -     -     -   | median  88.4
+  counting alone, first cell                        82.8  76.0   -     -     -   | median  79.4
+share of the addition level kept (end of second phase after a subtraction line over end of first phase after an addition line), %
+  relay alone (with replay)                         97.2  94.6  96.0  90.6  89.1 | median  94.6
+  joined, second cell                               82.7  91.6  91.8  91.3  88.3 | median  91.3
+  counting alone, second cell                       88.5  90.8   -     -     -   | median  89.7
+clean subtractions scored: [406, 408, 377, 412, 399] | replayed lines, of them additions, wrong: [(60000, 56240, 0), (60000, 56336, 0)] | CPU-seconds joined: [97.7, 101.2, 112.0, 115.6, 99.8] alone: [84.1, 88.5] | cells: 1385775 store cells: 65117

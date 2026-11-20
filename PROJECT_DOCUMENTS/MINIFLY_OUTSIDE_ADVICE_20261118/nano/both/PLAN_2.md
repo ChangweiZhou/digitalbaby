@@ -116,3 +116,131 @@ So what is wrong is not that some trusts are untaught; it is that **all trusts a
 | E5 | the relay system's answers on the lesson bytes that are answer digits of right composed sums are the composed bytes at least 90 times in 100 over the life | 0.50 |
 
 *What is run next, decided here:* if E2 holds, the relay-taught arm is run on the five reported seeds beside the unchanged arms of `PLAN_1.md`, and the coordinator's hypothesis is judged on them as a second design. *Cost:* composing costs sixteen answers of the counting system for each chunk; I expect 15 to 20 CPU-minutes an arm. *Not run:* other chances than the edge; lessons from both teachers at once; the relay system taught in return (`PLAN_4.md`).
+
+## 8. Outcome of addition 1 (entered 20 November; `res/s2_dream_new_seed1.json`; 757 CPU-seconds)
+
+Seed 1, joined second cell (first cell), never-shown additions after a read line: 5.7 (24.7), 13.4, 17.0, 23.5 (82.4) at 5,000 to 40,000 lines; 51.3, 89.6, 90.6, 93.0, 92.9, 94.8, 93.6 at 50,000 to 350,000; **93.4 (96.8) at 400,000**. Of 400,000 composed lines 287,478 were new, 155,594 of those well formed, 12,153 right sums.
+
+**Refuted**: far more than 3 points under the unchanged system until 100,000 lines. D1 failed (93.4). D2 failed (23.5 against 96.6). D3 held in the letter (90.6, 93.0, 92.9 against 78.9, 78.3, 77.9) for a reason that is not the hypothesis's: the lessons of a teacher that is wrong wrecked the counting cells' trusts, the real lines then gave the relay system trust as a sender (1.0 to 3.2 at its levels 3 to 8, against 0.03 to 1.0 unchanged), and from 100,000 lines on the joined answer is the relay system's, within three points (with the relay system silent at the score it is 40 to 60). D4 NOT RUN (the control; see section 7). D5 failed (93.4 with all cells, 89.8 with the little-counted silent).
+
+Reading (mine): one thing here is worth keeping. When the counting cells do not answer new lines well, the mismatch rule does give the relay system its trust and the joined answer follows it. The joined system of `PLAN_1.md` fails to follow the relay system because the counting cells leave no mismatch on the lines the trusts are taught on, not because the rule cannot weigh the relay system.
+
+## 9. Outcome of addition 2 (entered 20 November; `res/s2_dream2_relay_seed1.json`; 679 CPU-seconds)
+
+Seed 1, joined second cell, never-shown additions after a read line, beside the unchanged joined system and the relay system alone:
+
+| Lines | Relay alone | Unchanged | With lessons (relay-taught) | New composed lines since the last reading, of them right sums |
+|---|---|---|---|---|
+| 5,000 | 3.2 | 92.9 | 92.8 | 3,519, 2,864 |
+| 20,000 | 71.8 | 97.0 | 95.0 | 2,388, 2,009 |
+| 40,000 | 75.3 | 96.6 | **90.2** | 2,185, 1,781 |
+| 100,000 | 90.5 | 96.6 | 92.9 | 2,333, 1,851 |
+| 150,000 | 92.2 | 78.9 | 81.4 | 1,551, 911 |
+| 200,000 | 93.2 | 78.3 | 89.0 | 994, 528 |
+| 250,000 | 91.0 | 77.9 | 86.6 | 722, 409 |
+| 300,000 | 94.1 | 87.2 | 93.0 | 440, 300 |
+| 400,000 | 96.7 | 87.2 | **93.6** | 326, 244 |
+
+**Refuted by its own mark at 40,000 lines** (6.4 under the unchanged system; 3 allowed), though it ends at 93.6, above the mark of 93 and 6.4 above the unchanged system. E1 failed. E2 failed (93.6). E3 failed (2.5, 10.7 and 8.7 above; at least 10 at each was asked). E4 NOT RUN (the self-taught control: not run, because E2 failed and the machine was given to the next form). E5 cannot be scored as written: the program counted the taken answer bytes of all new lines (33,241) and not those of right sums; on 24,173 of them (73%) the relay system's answer was the composed byte of a right sum. The counter is corrected for later runs.
+
+Readings (mine). (1) The lessons do part of what was hoped late in the life and cost six points at 40,000 lines, where the teacher (75% on never-shown sums) is worse than the pupil (97%): the teacher's record on the stream gives an edge of 1.0 at its sure levels, because on lines it has read it is right when sure, and that record flatters it on new lines. (2) Late in the life there are almost no lessons: the counting system composes what it remembers (326 new lines among 50,000 composed at the end, against 3,519 among the first 5,000). (3) A look made beside it (`res/s2_look_half_seed1.json`): hearing only the speakers that have counted at least the middle count among the speakers is far worse than hearing all (47 to 84%); the cut that works in section 5's look lies lower and moves with the reading, and I have no rule for it that names no number. That route is closed here.
+
+## 10. Addition 3 (20 November; written after sections 8 and 9, before the runs it describes; `dream2.py` with `composer=relay`): the relay system composes, and a lesson is taken where the two kinds of cell agree
+
+Two changes to addition 2, each answering one of its two faults.
+1. **The relay system composes** (each byte drawn in proportion to its branches cut off below at nothing; the first byte of the line, which it is never taught, is drawn from the counting system's second cell). Its operand digits are near chance at every age, so about a fifth of its lines stay new however long the reading. Its composed answer digits are often wrong while it is young; they are only the past of the bytes after them, and no lesson's target is a composed byte.
+2. **Arm A (agreement): a lesson byte is taken where the relay system's answer is the answering cell's own answer** (second cell, all counting cells, the relay system silent), and that byte is the target. A teacher that is wrong where the pupil is right then teaches nothing; what is taught is: on a new line, do not let the cells that vote against the answer on which both kinds agree weaken it. No number is chosen and no record is needed. What it gives up: the bytes where the pupil is wrong and the teacher right.
+   **Arm B: the target is the relay system's answer whether or not they agree, taken with the chance of addition 2** (the teacher's edge by its stream record). It keeps those bytes and the harm of a young teacher.
+
+*Hypothesis.* With lessons by agreement the joined system keeps its level at 40,000 lines and does not fall with reading. *Refuted if* arm A at 40,000 lines is more than 3 points under the unchanged system (96.6), or at 400,000 lines under 93.
+
+| | Statement (seed 1, joined second cell) | Chance |
+|---|---|---|
+| F1 | arm A at 40,000 lines within 3 points of the unchanged system | 0.70 |
+| F2 | arm A at 400,000 lines at least 95 | 0.25 |
+| F3 | arm A at least 10 points above the unchanged system at each of 150,000, 200,000 and 250,000 lines | 0.30 |
+| F4 | arm B at 400,000 lines at least as high as arm A | 0.50 |
+| F5 | arm B at 40,000 lines more than 3 points under the unchanged system | 0.70 |
+
+*What is run next, decided here:* the arm that is refuted by neither mark of the hypothesis and is higher at 400,000 lines is run on the five reported seeds beside the arms of `PLAN_1.md` (a second design, judged on the coordinator's marks); if both are refuted, none is, and step 2 ends with what the looks have located. *Cost:* about 12 to 15 CPU-minutes an arm.
+
+## 11. Outcome of addition 3 (entered 20 November; `res/s2_d3_agree_seed1.json`, `res/s2_d3_relay_seed1.json`; 982 and 761 CPU-seconds)
+
+Seed 1, joined second cell, never-shown additions after a read line:
+
+| Lines | Relay alone | Unchanged joined | **Arm A, lessons by agreement** | Arm B, the relay system's answer with its edge | Arm A, class kinds alone (unchanged) |
+|---|---|---|---|---|---|
+| 5,000 | 3.2 | 92.9 | 93.6 | 92.4 | 93.3 (92.4) |
+| 20,000 | 71.8 | 97.0 | 97.0 | 91.8 | 93.6 (95.2) |
+| 40,000 | 75.3 | 96.6 | **89.4** | 90.3 | 76.8 (96.5) |
+| 50,000 | 83.6 | 96.7 | 88.9 | 89.0 | 81.5 (95.1) |
+| 100,000 | 90.5 | 96.6 | 94.8 | 90.3 | 80.5 (95.8) |
+| 150,000 | 92.2 | 78.9 | **96.1** | 92.7 | 84.0 (61.0) |
+| 200,000 | 93.2 | 78.3 | **97.4** | 93.1 | 92.1 (62.6) |
+| 250,000 | 91.0 | 77.9 | **97.1** | 93.5 | 92.9 (64.8) |
+| 300,000 | 94.1 | 87.2 | 96.0 | 96.2 | 70.5 (94.3) |
+| 400,000 | 96.7 | 87.2 | **95.8** | **97.0** | 37.8 (94.9) |
+
+**By the marks set before the runs both arms are refuted**: at 40,000 lines arm A is 7.2 points and arm B 6.3 points under the unchanged system (3 allowed). F1 failed. F2 held (95.8). F3 held (17, 19 and 19 points above). F4 held (97.0 against 95.8). F5 held.
+
+**What the runs show all the same** (seed 1 only; mine). From 100,000 lines on arm A does not fall with reading: 94.8 to 97.4, above the relay system alone at every reading from 100,000 to 350,000 lines and 0.9 under it at 400,000; 8 to 19 points above the unchanged joined system from 150,000 lines on. Arm B ends at 97.0, above the relay system (96.7). These are the first joined systems of this line that stand through the long reading, and the first in which the two kinds of cell do together what neither does alone at 150,000 to 250,000 lines. With the relay system silent at the score the answers are the same to a tenth: **the relay system does its work here as the teacher of the trusts, not as a voice.**
+
+**The fault, from the printed counts.** Of 186,209 well-formed new lines the relay system composed in arm A, 14,143 were right sums (8%; still 10% in the last 50,000 lines, when it answers 97% of never-shown sums). Drawing each byte by chance in proportion to branches that are 0.8 for the right byte and a little above nothing for several others gives a wrong digit about every second time, and a third of the lines are not well formed. So the lessons are read on lines whose earlier answer digits are wrong: pasts no real line has. At 40,000 lines the class kinds alone answer 76.8% in arm A (96.5% unchanged): the lessons have moved trust away from them. My account (not tested): on a line whose hundreds digit is wrong the cells keyed on that digit are silent or misleading, and the agreed answer is reached by other cells, which the lessons then favour.
+
+## 12. Addition 4 (20 November; written after section 11, before its runs). Beyond the rule of section 10, and said here before the runs: by that rule step 2 would end; I go on with one more form because the fault that refuted both arms is located in the composing, and the late readings are the first of their kind.
+
+*The one change: the composer writes what it is sure of.* At each byte the relay system's shares are its message's (branches cut off below at nothing, 0.01 added, made to sum to one). **If its largest share is above one half the byte written is its answer; otherwise the byte is drawn by chance from its shares.** (The first byte of a line is drawn from the counting system's second cell as before.) So operand digits, of which it is never sure, are drawn by chance and the lines stay new; signs, line ends and the answer digits it knows are written as it answers them. One half is "more likely than not"; no other value is tried.
+
+Arms on seed 1, 400,000 lines: A' (lessons by agreement) and B' (the relay system's answer with its edge), each with this composer (`dream2.py`, `composer=relay sure=1`).
+
+*Hypothesis and marks as section 10*: refuted if arm A' at 40,000 lines is more than 3 points under the unchanged system (96.6) or under 93 at 400,000 lines.
+
+| | Statement (seed 1, joined second cell) | Chance |
+|---|---|---|
+| G1 | arm A' at 40,000 lines within 3 points of the unchanged system | 0.50 |
+| G2 | arm A' at 400,000 lines at least 95 | 0.60 |
+| G3 | arm A' not more than 3 points under the better of the relay system alone and the unchanged system at every reading | 0.30 |
+| G4 | of the well-formed new lines composed over the life at least half are right sums | 0.60 |
+| G5 | arm B' at 40,000 lines within 3 points of the unchanged system | 0.30 |
+
+*What is run next, decided here:* arm A' is run on the five reported seeds beside the arms of `PLAN_1.md` if it holds G2, whether or not it holds G1 (the late readings are what the coordinator's second mark asks; the first mark is then reported as it falls); arm B' as well only if it is above arm A' at both 40,000 and 400,000 lines.
+
+## 13. Outcome of addition 4 (entered 20 November; `res/s2_d4_agree_seed1.json`, `res/s2_d4_relay_seed1.json`; 864 and 703 CPU-seconds)
+
+Seed 1, joined second cell, never-shown additions after a read line:
+
+| Lines | Relay alone | Unchanged joined | **Arm A': lessons by agreement, the composer writes what it is sure of** | Arm B' |
+|---|---|---|---|---|
+| 5,000 | 3.2 | 92.9 | 93.3 | 92.7 |
+| 10,000 | 12.4 | 95.9 | 95.7 | 92.7 |
+| 20,000 | 71.8 | 97.0 | 96.7 | 90.8 |
+| 40,000 | 75.3 | 96.6 | **97.1** | 82.8 |
+| 50,000 | 83.6 | 96.7 | 97.0 | 89.4 |
+| 100,000 | 90.5 | 96.6 | 90.5 | 88.4 |
+| 150,000 | 92.2 | 78.9 | **95.3** | 93.0 |
+| 200,000 | 93.2 | 78.3 | **97.6** | 94.7 |
+| 250,000 | 91.0 | 77.9 | **97.9** | 93.1 |
+| 300,000 | 94.1 | 87.2 | **98.0** | 96.2 |
+| 350,000 | 94.6 | 87.5 | **98.2** | 95.5 |
+| 400,000 | 96.7 | 87.2 | **98.1** | 96.7 |
+
+Arm A' is not refuted by either mark (97.1 at 40,000 lines, 98.1 at 400,000). G1 held. G2 held. G3 failed: at 100,000 lines it has 90.5, where the unchanged system still has 96.6 (the class kinds alone answer 77.5% at that reading and 94% at every other from 40,000 on; the classes are found anew at 64,000 and 128,000 lines; not examined further). G4 failed: 38,513 of 171,140 well-formed new lines are right sums (23%; 39% in the last 50,000 lines). G5 failed (arm B' 82.8 at 40,000 lines).
+
+Readings (mine; one seed, development level).
+1. **On this seed the joined system with lessons by agreement is above both of its parts at ten of the twelve readings, level with the counting system at 10,000 and 20,000 lines (within 0.3) and under it once (100,000 lines).** At 400,000 lines it has 98.1 where the relay system alone has 96.7 and the unchanged joined system 87.2.
+2. It answers as well as the same system does with its little-counted cells silenced at the score (98.2 and 98.7 at 400,000 lines with only counts of 64 and of 512 and more): the lessons have taught the trusts what the look of section 5 did by hand.
+3. The teacher need not be good. The relay system answers 75% of never-shown sums at 40,000 lines and writes right sums in under a tenth of its new lines there; the lessons cost nothing at that age, because a byte is taught only where the pupil already answers it the same way. What the agreement adds to the pupil is not the answer; it is which cells may not weaken it on a line that is new.
+4. The relay system is not heard as a voice (the answer with it silent is the same to 0.2 points). It is the second kind of cell that makes the lesson possible: the composer of lines that stay new, and the independent answer.
+5. Not shown: more than one seed (next); the self-taught control (lessons towards the answering cell's own answer on the same lines, which would say whether the relay system's agreement is needed or its composing alone); what happens at 100,000 lines.
+
+By the rule of section 12 arm A' goes to the five reported seeds: `PLAN_5.md`.
+
+## 14. Addition 5 (20 November; written before its run): the control that section 13 names as owed
+
+*Is the relay system's agreement needed, or would lessons on the same new lines towards the answering cell's own answer do?* One run on seed 1, 400,000 lines: the composer of addition 4 (the relay system, writing what it is sure of), every lesson byte after a line's first taken, the target the second answering cell's own answer (`dream2.py teacher=self composer=relay sure=1 edge=0`). Nothing else differs from arm A'. If this control does as well as arm A', the relay system's part in the design is to compose lines that stay new, and its answer is not needed; if it does worse, the agreement of the second kind of cell is what teaches.
+
+| | Statement (seed 1, joined second cell) | Chance |
+|---|---|---|
+| S1 | the control at 400,000 lines at least 95 | 0.35 |
+| S2 | the control at 40,000 lines within 3 points of the unchanged system (96.6) | 0.60 |
+| S3 | the control at 400,000 lines at least 3 points under arm A' (98.1) | 0.55 |

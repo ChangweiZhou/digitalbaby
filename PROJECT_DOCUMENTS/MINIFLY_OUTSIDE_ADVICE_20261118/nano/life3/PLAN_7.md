@@ -55,3 +55,58 @@ Disclosure: before this plan, the compiled look-ahead kernel was checked against
 **No new hypothesis.** The earlier predictions stand as scored. Predictions (mine) for the new figures, at the end of life A: (Q1) the relay-based arms that keep a task read it at least 8 points higher after a read line than with the empty past, for addition, in each of O, K, R, N: chance 0.70; (Q2) the counting cells (3c, 3b) move by under 5 points on every task: 0.70; (Q3) route 2's middle task is still under 60 after a read line, and under the same arm's addition by 15 points or more: 0.55; (Q4) the order of the arms by their lowest task at the end of life A is the same by both scores (route 1, then 3b, then N and the reference, then route 3 capped, then route 2, with ties within 3 points not counted): 0.45; (Q5) the plain system still has both earlier tasks under 10: 0.90.
 
 Cost: about 5.5 CPU-hours (the choice by mismatch 25 CPU-minutes a life, 3b 32), about an hour and a half on four cores, in the background.
+
+---
+
+## 7. Outcome of the plan as written (empty-past score; 20 November 2026; development level; readings are mine)
+
+Runs: ten lives of 800,000 real lines; 3b about 32 CPU-minutes and 3.6 million cells a life, 3c about 8. Files: `res/a7_*`, `table7.txt`.
+
+Never-shown pairs, whole answer, %, **empty past** (the score of all earlier plans); median of five seeds, last reading [mean of the last three]; subtraction on the clean pairs.
+
+| Arm | after addition: add | after subtraction: add / sub | end of the life: add / sub / max |
+|---|---|---|---|
+| route 3 (no cap; `PLAN_1.md`) | 55.8 [59.1] | 69.2 / 66.4 | 65.2 / 65.0 / 97.4 |
+| 3c, route 3 with the cap of 16 | 75.4 [75.2] | 73.4 / 70.7 [72.9 / 70.5] | 68.4 / 66.9 / 97.6 [70.5 / 67.1 / 97.1] |
+| 3b, look-ahead with the cap of 16 | 82.6 [81.5] | 83.2 / 87.6 [80.3 / 85.0] | 71.0 / 75.2 / 97.2 [73.2 / 76.5 / 97.1] |
+
+**The coordinating session's hypothesis holds by this score**: 3b has addition at 82.6 at the end of its phase (81.4 to 86.4 over the seeds) and 83.2 after subtraction, which is all of it. Scored: L1 held (82.6); L2 held; L3 held (subtraction 87.6); L4 held (71.0 / 75.2 / 97.2); L5 did not happen, as expected (71.0 against route 1's 85.8); L6 held (75.4); L7 held by its letter (75.4; I gave 0.30); L8 held (68.4 / 66.9 / 97.6); L9 failed (3b is 2.6 points above 3c on addition at the end, not 10).
+
+Readings (mine), by this score: the cap stops route 3's fall while addition alone is read (75.4 at 400,000 lines against 55.8 without it). Look-ahead adds 7 points of addition and 17 of subtraction over the same cells without it, through two tasks. **The third task then costs the look-ahead system about 12 points of each earlier task** (83.2 to 71.0, 87.6 to 75.2), where the plain capped cells lose 5 and 4; after three tasks the two are within 3 points on addition.
+
+## 8. Outcome of addition 1: life A by both scores
+
+Runs: 32 lives made again with both scores (`res/b1_*`, `res/b6_N_*`, `res/b7_*`; `table7b.txt`, `tab2.py`). **The background job reached its time limit and was stopped with two lives unfinished: 3b on seeds 116089 and 406364 has no score after a read line (NOT RUN; about 32 CPU-minutes each).** 3b is therefore on three seeds below (73129, 93683, 545353), which is not what this line's rules ask for a claim. The check: in every life made again the empty-past figures equal the earlier files to the digit.
+
+Median of the seeds, last reading; **empty past -> after a read line**; subtraction on the clean pairs.
+
+| Arm | after subtraction (the two-task life): add | sub | end of life A: add | sub | max |
+|---|---|---|---|---|---|
+| plain | 1.8 -> 1.8 | 86.0 -> 92.7 | 2.8 -> 2.8 | 1.6 -> 1.6 | 70.4 -> 84.6 |
+| reference, the program's old lines | 84.4 -> 94.6 | 71.9 -> 87.4 | 78.2 -> 91.4 | 63.2 -> 83.3 | 64.2 -> 72.2 |
+| route 1, cells that join | 85.8 -> 95.6 | 86.2 -> 95.6 | 85.8 -> **96.0** | 86.2 -> **95.4** | 90.8 -> **94.7** |
+| route 2, replay | 77.2 -> 93.9 | 78.9 -> 87.8 | 73.4 -> **91.8** | 52.4 -> **77.2** | 64.2 -> **78.0** |
+| route 2, line chosen by mismatch | 82.0 -> 91.4 | 80.1 -> 91.5 | 67.8 -> **87.2** | 66.9 -> **84.5** | 63.4 -> **82.0** |
+| 3c, counting cells with the cap | 73.4 -> 71.9 | 70.7 -> 71.0 | 68.4 -> **58.8** | 66.9 -> **66.6** | 97.6 -> **97.6** |
+| 3b, look-ahead with the cap (three seeds) | 83.2 -> 79.8 | 87.7 -> 91.4 | 71.0 -> **59.0** | 75.2 -> **74.1** | 97.2 -> **97.2** |
+
+After its own phase addition reads, after a read line: plain 95.2, route 1 95.7, route 2 97.3, 3c 76.0, 3b 89.1 (three seeds).
+
+**What changes, said plainly.**
+
+1. **Every relay-based system was under-scored by 10 to 25 points wherever it holds a task, and the first plan's verdict on route 2 does not stand by the score after a read line.** Route 2 ends life A at 91.8 / 77.2 / 78.0: every task above 60, the hypothesis of `PLAN_1.md` holds for it. The middle task is still its weakest, 14.6 points under its addition, on every seed; the reading that replay in proportion to counts starves the middle task stands as a difference, not as a failure of the bar.
+2. **Route 1 keeps three tasks at 94 to 96.** What it keeps it keeps whole by either score.
+3. **The choice by mismatch is still the better replay, by less**: its lowest task is 82.0 against route 2's 77.2 and the reference's 72.2; subtraction +7.3 over route 2 (it was +14.5), addition -4.6. It is now above the program's own old lines on its lowest task by 10 points; I said in `PLAN_6.md` that it reached the reference and no further, which was a statement of the old score.
+4. **The counting cells move the other way at the end of the life.** Addition, scored after a line of the third task, is 58.8 for the capped cells and 59.0 for look-ahead (three seeds), about 10 and 12 points under the empty-past figure; subtraction hardly moves. In the phase of the task itself the look-ahead system gains (addition 82.4 to 89.1 after its own phase). These cells are keyed on delays, some of which reach into the line before; a line of another task there is a context they counted little or never. Note what this score asks: an addition after a line of `max`, which the life never contains; it measures the old task met in the new task's surroundings. The empty past is not the life's situation either. I do not know which is the fairer question for a kept task, and I give both.
+5. **The order of the routes turns over.** By the lowest task at the end of life A, empty past: route 1 85.8, 3b 71.0, 3c 66.9, mismatch 63.4, reference 63.2, route 2 52.4. After a read line: route 1 94.7, mismatch 82.0, route 2 77.2, reference 72.2, 3b 59.0 (three seeds), 3c 58.8.
+6. **The coordinating session's hypothesis for 3b, by the score after a read line, on three seeds**: addition 89.1 at the end of its phase and 79.8 after subtraction, 90% of it: holds.
+
+| | Statement | Chance | Outcome |
+|---|---|---|---|
+| Q1 | the relay-based arms read addition at least 8 points higher after a read line (O, K, R, N) | 0.70 | held (+13.2, +10.2, +18.4, +19.4) |
+| Q2 | the counting cells move by under 5 points on every task | 0.70 | **failed** (addition at the end -9.6 and -12.0) |
+| Q3 | route 2's middle task still under 60, and 15 or more under its addition | 0.55 | **failed** (77.2; 14.6 under) |
+| Q4 | the order of the arms by lowest task is the same by both scores | 0.45 | **failed** (it turns over) |
+| Q5 | the plain system still has both earlier tasks under 10 | 0.90 | held (2.8, 1.6) |
+
+**What is open.** By the score after a read line nothing is known of: the lives of four tasks, the harsh third text, the orders for route 1, `PLAN_5.md`'s two arms, route 3 without the cap, and 3b on two seeds. Every figure of `PLAN_2.md` to `PLAN_6.md` for a relay-based system is an empty-past figure and should be read as some 10 to 25 points under what that system does after a read line, with the differences between arms not known to carry over; the one case tested (route 2's failure on three tasks) did not carry over as a failure.
