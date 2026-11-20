@@ -130,3 +130,15 @@ Tables: `report1.txt` (made by `report1.py` from `res/p_*.json`): first the five
 **Errors and departures of mine.** Section 10 gives the difference between the two ratios as 4.2; it is 4.4. Z and R6 were not run on the ten further seeds (their differences are 75 points and more). The first phase of R, O, Z and R6 has more lines than P's; on fifteen seeds that is worth +1.3 points of addition after its own phase.
 
 **Not run:** as section 8; r below 1/2 on the reported seeds (seed 1: 67.6 at 1/4, 46.0 at 1/8).
+
+## 12. A dated addition after an erratum of the coordinating session, entered 20 November before its runs
+
+**The erratum** (the coordinating session's message; its file `loop_small_case/ERRATA_20261120.md` on `claude/friendly-darwin-8mmhfm`, which I have not read; the fault itself I checked here). `cells2.py`'s `text()`, which `replay.py` copies, writes a subtraction line with the larger number first, so a never-shown pair (a, b) writes the same line as the pair (b, a), which may be shown. On seeds 1, 73129 and 1001, 407, 399 and 393 of the 500 never-shown subtraction pairs write a line that a shown pair also writes; of the 500 never-shown addition pairs, none. **Every subtraction figure in sections 9 and 11 is therefore mostly a score on lines that were shown; the addition figures, and with them the hypothesis's first clause, are not touched.** The hypothesis's second clause (subtraction at least 60%) was scored in section 11 on the mixed set and has to be scored again.
+
+**The addition.** `replay.py` now scores, beside the present subtraction score (kept under its name, "subtraction, mixed"), the never-shown subtraction pairs whose written line no shown pair writes: those among the 500 ("clean", about 100), and those among all 2,000 never-shown pairs ("clean, wide", about 400, the steadier figure). Nothing else in the program changes; the runs are deterministic, so the reruns must give every earlier figure again, and `report1.py` checks that they do. Rerun: P, R at r = 1 and 1/2, O, Z, R6 on the five reported seeds, and P, R at both ratios and O on 1001 to 1010 (70 runs, about 20 minutes on four cores).
+
+For replay the clean score bears on one thing more, as the coordinating session says: every replayed line is a shown line, so only the clean score says whether the relay system, taught half on replay, answers subtraction it was not shown.
+
+- E1 (0.5): P's clean subtraction (wide) is at least 60% at the median of the five reported seeds.
+- E2 (0.6): the second clause of the hypothesis holds on the clean score too: R at r = 1 has at least 60% (clean, wide; median of five).
+- E3 (0.6): R at r = 1 is below P on clean subtraction (wide) on at least eleven seeds of fifteen.
