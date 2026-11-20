@@ -44,3 +44,22 @@ Candidates, each one further cell that hears the first cell (C6: two), run toget
 ## 4. Size, cost, what is not run
 
 Parts held and used are reported for each cell. Part A: about eight CPU-minutes on sums, two on prose. Part B: about three CPU-minutes for each seed of sums (three at a time), one for each life. *Also reported if time allows, as a reading and not a claim:* the frozen cell on `all.py`'s system with all kinds of cells but the relay system (the coordinator's 1.4707 system is that with the relay system; over 4 GB), the test text's last tenth with nothing changing. *Not run:* sums over 400,000 lines; sums without classes; the life of two tasks; other seeds of the draws; the control with the step doubled (owed from step 3).
+
+## 5. Addition 1 (20 November; written after the development runs of part A and before any claim run): the choice
+
+`res/sums_armsstep5_seed1.json` (468 CPU-seconds), `res/life_armsstep5_booksworn.json` (40 CPU-seconds), `report_5a.txt`. Sums seed 1, % after a read line, mean of the last three readings; prose, mean gain over the first cell on the three worn books (and the test text's last tenth right after its stream; kept at the end of the life):
+
+| | Sums | Prose gain | Test text; kept | Parts used, sums / prose |
+|---|---|---|---|---|
+| first cell | 92.7 | 0 | 1.4973; 1.5067 | 7,707 / 323 |
+| the single second cell | 96.7 | 0.0239 | 1.4820; 1.5062 | 702,110 / 83,709 |
+| nl | 97.4 | 0.0292 | 1.4761; 1.5061 | 33,547 / 3,857 |
+| C1 nl + pair + own + sure | 97.8 | 0.0390 | 1.4693; 1.5019 | 1,287,361 / 582,188 |
+| C2 C1 + fine | 97.2 | 0.0444 | 1.4654; 1.5019 | 1,989,471 / 665,897 |
+| C3 C2 + D drawn | 97.5 | 0.0497 | 1.4603; 1.5005 | 2,120,752 / 684,859 |
+| **C4 C2 + 2D drawn** | 97.1 | **0.0522** | 1.4541; 1.4965 | 2,192,818 / 739,051 |
+| C5 C1 + D drawn | 97.2 | 0.0453 | 1.4610; 1.4957 | 1,463,967 / 585,033 |
+| C6 C2 on C2 | 97.1 | 0.0481 | 1.4631; 1.5124 | 1,989,455 / 665,897 |
+| C7 C2 + fine pair + fine sure | 96.8 | 0.0458 | 1.4647; 1.5019 | 2,594,419 / 774,301 |
+
+*The rule:* the best candidate on sums is C1 (97.8); every candidate is within 1 point of it (C7 at exactly 1.0); the largest gain on prose is C4's, and no other is within 0.001 nats of it. **The frozen setting is C4**: one further cell that hears the first cell's branches, with these families of parts, every part born at nothing and taught by the cell's own mismatch with the system's own step: the byte at each of the system's delay lines, indexed by (kind, byte) and by (kind, level, byte); the two bytes at delays 1 and 2, by (kind, pair); one part owned by each sending cell; the first cell's largest probability in ten bins, by (kind, bin); and 2D slots (D the number of the system's delay lines) whose gates are drawn at random from the three sorts of `PLAN_4.md` and reviewed as there, by (kind, gate value). `FROZEN` in `layers.py` is set to it and nothing else is changed. The draws use one seed of the generator on every run. My note before the claims: the review is known not to search (`PLAN_4.md`, reading 1); the frozen cell carries it as it is, because the rule chose it so; on sums C4 is 0.7 points under C1 on seed 1, which one seed cannot tell from nothing.

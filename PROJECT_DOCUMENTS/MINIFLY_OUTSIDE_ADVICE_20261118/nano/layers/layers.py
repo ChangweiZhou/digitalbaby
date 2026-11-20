@@ -295,7 +295,7 @@ def arms(name, S, D, K1, classes=False):
                 cell("C6:C2>C2", C1[:-1] + [su(4)] + dl(allD), 3), cell("C7:C2+fine pair+fine sure", C2 + [("pair", 1, 2), ("sure", 0)])]
     raise KeyError(name)
 
-FROZEN = None        # set by PLAN_5.md, addition 1, after the development run and before any claim run
+FROZEN = lambda cell, dr, C1, C2, D: dr("frozen", 2 * D, C2)        # PLAN_5.md, addition 1: candidate C4, chosen by the rule on development material, before any claim run
 
 # ---------------------------------------------------------------- sums: nano/merge's system
 def sum_sys():
