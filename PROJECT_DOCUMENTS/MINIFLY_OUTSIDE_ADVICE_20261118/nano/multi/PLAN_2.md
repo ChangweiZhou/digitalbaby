@@ -88,3 +88,45 @@ After 2 readings on this seed the edge arm is at 1.9899 and the best mixed arm a
 ## An addition, entered at 15:10 UTC on 20 November, when only the reference and E64 on seed 1 had finished and no pair arm's claim run had been read
 
 `nano/loop` has since pushed its chosen settings for arm P with every line read (commit 1f7b4bf: eta1 = 1, eta2 = 1/4, return strengths born at nothing; chosen there on 256 cells). My stages A and B did not include return strengths born at nothing, and chose eta1 = 1/4, eta2 = 1, born at the earlier size, on the edge arm after 2 readings. So that it can be seen whether the comparison of the arms depends on this, three further runs on seed 1 at `nano/loop`'s setting (`rscale=0`), 8 readings: E64, M64, P64 (`jobs_r2x.txt`). No prediction is registered for them; they are reported as an addition and change no claim run. The reference "every line read" of this plan is at my setting and is therefore not `nano/loop`'s best figure for that system; theirs is quoted beside it when it exists.
+
+## The claim runs (entered 20 November; table in `report2.txt`, made by `report2.py` from `res/t2_r_*.json`)
+
+*A correction first:* the heading of the addition above gives 15:10 UTC; the machine's clock read 15:05 when it was committed. The rest of that entry stands.
+
+The last tenth of the text, never read, after 8 readings of the stream; 1,024 cells; seeds 1, 2, 3 and their mean.
+
+| Arm | nats: 1, 2, 3 | mean nats | bits | named right %: 1, 2, 3 | mean % |
+|---|---|---|---|---|---|
+| E64: 64 single lines | 1.8857, 1.9066, 1.8969 | **1.8964** | 2.736 | 46.65, 46.16, 46.66 | 46.49 |
+| M64: 32 lines + 32 pairs | 1.9314, 1.9365, 1.9447 | **1.9375** | 2.795 | 45.53, 45.19, 45.22 | 45.31 |
+| P64: 64 pairs | 2.2770, 2.2916, 2.2882 | **2.2856** | 3.297 | 37.09, 36.63, 37.44 | 37.05 |
+| E32: 32 single lines | 1.9682, 1.9682, 1.9545 | **1.9637** | 2.833 | 44.84, 44.52, 45.14 | 44.83 |
+| M32: 16 lines + 16 pairs | 2.0040, 1.9981, 2.0156 | **2.0059** | 2.894 | 43.78, 43.81, 43.54 | 43.71 |
+| P32: 32 pairs | 2.3715, 2.4125, 2.4185 | **2.4008** | 3.464 | 35.37, 34.34, 34.14 | 34.61 |
+
+Beside them. Every line read (650 strengths a cell, my setting, seed 1): 1.8373 nats, 48.23%. Smoothed tables of the last k bytes from `nano/ref` (branch `claude/nano-ref-8mmhfm`, commit 9378f61, `res/tables.json`, their Kneser-Ney figures): k = 2: 2.0381 nats, 38.08%; k = 3: 1.7191 nats, 47.22%; k = 6 (their best): 1.5165 nats, 54.80%.
+
+**Outcome.** At an equal number of strengths a cell, no pair arm reaches a lower loss than its edge arm, on any seed. The mixed arms are 0.041 nats (64 strengths) and 0.042 nats (32 strengths) above their edge arms; the arms with pairs only are 0.39 and 0.44 nats above. **H2 is not refuted.**
+
+**Predictions scored.**
+- Q1 held: M64 is 0.041 above E64.
+- Q2 held: P64 is 0.389 above E64.
+- Q3 held: M32 is 0.042 above E32.
+- Q4 not tested (stage C chose neighbouring delays, so every pair is at neighbouring delays).
+- Q5 failed: E64 is 0.048 nats above every line read on seed 1, where I had said 0.10 or more. A cell that reads 64 of the 650 lines and rewires loses little here.
+- Q6 held: E64 names 46.49% right, between the tables of the last 2 bytes (38.1%) and of the last 3 (47.2%).
+
+**What I read from it (my readings; not tested here).**
+1. The order of the arms is the same as on the sums: single lines, then half and half, then pairs alone, at both sizes. On the text the mixed arm loses little (0.04 nats, about 1.2 points of bytes named right) and the pairs alone lose much.
+2. As on the sums, a pair-connection is active far less often than a line. In the mixed arm a little more than half of the withdrawals fall on pairs.
+3. In every arm the cells end with more connections at the near delays than at the far ones (about twice as many at the present byte as nine bytes back), by rewiring alone.
+4. The edge arm with 64 of 650 lines a cell (199,745 numbers) is within 0.05 nats of every line read (798,785 numbers) at the same setting.
+
+**Limits.**
+- The sending ends are input lines; only the receiving cell decides.
+- The steps were chosen on the edge arm after 2 readings, on seed 1, which is also a reported seed, by the loss on the same last tenth; no step, period or withdrawal rule was chosen for the pair arms. The result says that pairs lose under the edge arm's settings.
+- The setting is not `nano/loop`'s chosen one; see the addition above and its outcome below.
+- Three seeds; the differences between seeds (about 0.02 nats within an arm) are smaller than the differences claimed between arms.
+- Development level; repeated by no one; no checker gate, seal or review is claimed.
+
+**Not run:** as listed in the plan; and any arm on more than three seeds.
