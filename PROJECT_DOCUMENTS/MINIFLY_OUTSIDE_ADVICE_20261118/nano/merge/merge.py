@@ -364,16 +364,16 @@ class Sys:
 
 # ---------------------------------------------------------------- two-digit sums (text and split of loop_small_case/cells2.py)
 SYMS = list(b"0123456789+=\n-"); SI = {c: i for i, c in enumerate(SYMS)}; END = SI[10]
-def text(a, b): return [SI[c] for c in f"{a:02d}+{b:02d}={a + b:03d}\n".encode()]
+def text(a, b, nd=2): return [SI[c] for c in f"{a:0{nd}d}+{b:0{nd}d}={a + b:0{nd + 1}d}\n".encode()]
 
-def sums_score(s, held, D=9):
-    Ls = np.array([text(a, b) for a, b in held]); own = Ls.copy(); n = len(Ls)
-    for t in (6, 7, 8):
+def sums_score(s, held, D=9, nd=2):
+    Ls = np.array([text(a, b, nd) for a, b in held]); own = Ls.copy(); n = len(Ls); a0 = 2 * nd + 2
+    for t in range(a0, a0 + nd + 1):
         ctx = np.full((n, D), END, np.int64)
         for d in range(1, D + 1):
             if t - d >= 0: ctx[:, d - 1] = own[:, t - d]
         own[:, t] = s.say(ctx).argmax(1)
-    ok = own[:, 6:9] == Ls[:, 6:9]; return float(100 * ok.all(1).mean()), [float(100 * ok[:, i].mean()) for i in range(3)]
+    ok = own[:, a0:a0 + nd + 1] == Ls[:, a0:a0 + nd + 1]; return float(100 * ok.all(1).mean()), [float(100 * ok[:, i].mean()) for i in range(nd + 1)]
 
 def carry_purity(rec):
     """For a kept pair whose X is two delays: over the members that are two digits, the share that lies with the majority of its class by 'the digits sum to ten or more'."""
@@ -387,25 +387,34 @@ def carry_purity(rec):
 
 def run_sums(kw):
     seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 40000)); P = int(kw.get("P", 32)); eJ = float(kw.get("eJ", 0.02)); mode = kw.get("mode", "classes"); t0 = time.process_time(); D = 9
-    rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]; rng.permutation(10000)   # the second draw is cells2.py's split for subtraction
-    TAB = np.array([text(a, b) for a, b in shown], np.int64); kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
-    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=int(kw.get("half_at", lines * 5)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)))
-    every = 5000 if lines <= 40000 else 50000; marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []))); tail = np.full(D, END, np.int64); rows = []; done = 0
+    nd = int(kw.get("nd", 2))
+    if nd == 2:
+        rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); pairs = [(int(q) // 100, int(q) % 100) for q in o]; held = pairs[:500]; shown = pairs[2000:]; rng.permutation(10000)   # the second draw is cells2.py's split for subtraction
+        TAB = np.array([text(a, b) for a, b in shown], np.int64); draw = lambda k: TAB[rng.integers(8000, size=k)]
+    else:                                                           # nano/ahead2/ahead3.py's split: the first fifth of a permutation of all pairs never shown, the first 500 scored
+        n10 = 10 ** nd; rng = np.random.default_rng([seed, 99]); o = rng.permutation(n10 * n10); nh = n10 * n10 // 5; held = [(int(q) // n10, int(q) % n10) for q in o[:500]]; pool_ = o[nh:]
+        def draw(k):
+            q = pool_[rng.integers(len(pool_), size=k)]; return np.array([text(int(v) // n10, int(v) % n10, nd) for v in q], np.int64)
+    kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]
+    s = Sys(14, D, kinds, 0.1, 2.0, 0.02, True, P=P, eJ=eJ, mode=mode, seed=seed, half_at=int(kw.get("half_at", lines * (2 * nd + 3) * 5 // 10)), M=int(kw.get("M", 16)), sweeps=int(kw.get("sweeps", 2)), rep=int(kw.get("rep", 0)), dissolve=int(kw.get("dissolve", 0)), pool=kw.get("pool"), practice=float(kw.get("practice", 0)), empty=int(kw.get("empty", 0)))
+    every = (5000 if lines <= 40000 else 50000) if nd == 2 else 10000; marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []))); tail = np.full(D, END, np.int64); rows = []; done = 0
     for mk in marks:
-        X = TAB[rng.integers(8000, size=mk - done)].ravel(); x = np.concatenate([tail, X]); s.learn(ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
-        whole, place = sums_score(s, held); row = dict(lines=mk, add=whole, place=place); row.update(s.sizes()); rows.append(row)
+        X = draw(mk - done).ravel(); x = np.concatenate([tail, X]); s.learn(ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
+        whole, place = sums_score(s, held, D, nd); row = dict(lines=mk, add=whole, place=place); row.update(s.sizes()); rows.append(row)
     out = dict(task="sums", args=kw, seed=seed, rows=rows, last=rows[-1]["add"], last3=float(np.mean([r["add"] for r in rows if r["lines"] % every == 0 or len(rows) < 3][-3:])), place_last=rows[-1]["place"], sizes=s.sizes(), trust=s.trust_summary())
     if s.P:
-        ids_ = s.withdrawn(); keep = s.N[ids_].copy(); s.N[ids_] = 0; w, pl = sums_score(s, held); s.N[ids_] = keep; out["with_merged_withdrawn"] = dict(add=w, place=pl)
+        ids_ = s.withdrawn(); keep = s.N[ids_].copy(); s.N[ids_] = 0; w, pl = sums_score(s, held, D, nd); s.N[ids_] = keep; out["with_merged_withdrawn"] = dict(add=w, place=pl)
         out["finds"] = [dict(f, kept=[dict(r, members_by_class=None, carry=carry_purity(r)) for r in f["kept"]]) for f in s.finds[:-1]] + [dict(f, kept=[dict(r, carry=carry_purity(r)) for r in f["kept"]]) for f in s.finds[-1:]]
+    if s.P:                                                         # the same with only the class kinds speaking, and with only the plain kinds
+        keep = s.N.copy(); s.N[:s.nbase] = 0; out["class_kinds_alone"] = sums_score(s, held, D, nd); s.N[:] = keep; s.N[s.nbase:] = 0; out["plain_kinds_alone"] = sums_score(s, held, D, nd); s.N[:] = keep
     out["cpu"] = round(time.process_time() - t0, 1); out["cpu_finding"] = round(s.tfind, 1); return out, s
 
 # ---------------------------------------------------------------- prose (the life of nano/table/life.py, scored as nano/aheadprose/ahead.py does)
 BT = ("bryant-stories.txt", "burgess-busterbrown.txt", "carroll-alice.txt")
-def load_all():
+def load_all(books=BT):
     import score
     xa, cut, _ = score.load(); vals = score.byte_values(); tab = np.full(256, 1, np.int64); tab[vals] = np.arange(65); parts = [("A", xa)]
-    for f in BT:
+    for f in books:
         raw = np.frombuffer(open(os.path.join(HERE, "data", f), "rb").read(), np.uint8); raw = raw[raw != 13]; parts.append((f.split(".")[0], tab[raw]))
     x = np.concatenate([p[1] for p in parts]); segs = {}; off = 0
     for name, p in parts:
@@ -431,7 +440,7 @@ def run_dev(kw):
     out = dict(task="prose_dev", args=kw); out.update(prose_scores(s, x, d, cut)); out.update(trust=s.trust_summary(), finds=strip(s.finds), cpu=round(time.process_time() - t0, 1), cpu_finding=round(s.tfind, 1)); return out, s
 
 def run_life(kw):
-    x, segs = load_all(); t0 = time.process_time(); s = prose_sys(x, kw); out = dict(task="prose_life", args=kw, segments={k: list(map(int, v)) for k, v in segs.items()}, scores={}, growth=[])
+    x, segs = load_all(tuple(b + ".txt" for b in kw["books"].split(",")) if "books" in kw else BT); t0 = time.process_time(); s = prose_sys(x, kw); out = dict(task="prose_life", args=kw, segments={k: list(map(int, v)) for k, v in segs.items()}, scores={}, growth=[])
     for name, (a, c, b) in segs.items():
         lo = max(a, s.D)
         for m in range(lo, c, 125000):
