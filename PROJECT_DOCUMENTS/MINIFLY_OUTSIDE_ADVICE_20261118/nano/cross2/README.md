@@ -32,5 +32,9 @@ Each experiment has `PLAN_<n>.md`, committed before its runs, with the outcome a
 | E1, `PLAN_1.md` | m1, gap 8, 960,000 lines, five reported seeds | final: cross=1 94.4% at the median (lowest 83.2), cross=2 100.0% (lowest 95.7); lines to 90%: 420,000 against 300,000 at the median; hypothesis not refuted; A1 to A3 held, A4 and A5 failed |
 | E2, `PLAN_2.md` | g2, gap 8, two delay lines, 2,400,000 lines, development seed | never-shown sums at the gap of 8 letters: cross=1 7.5%, cross=2 9.5%; hypothesis refuted; the reported seeds not run (condition of 30% not met) |
 | E3, `PLAN_3.md` | d2, no delay line, 2,400,000 lines, development seed | never-shown sums: cross=1 2.3%, cross=2 8.0% (tens digit 30% against 68%); hypothesis refuted |
+| E4, `PLAN_4.md` | g2 and d2 as E2 and E3, cells taught by the gradient through the whole line (the instrument at X=inf, compiled in `kern6.c`; a comparator, not something a cell has) | development seed: g2 68.6% of never-shown sums at the gap of 8 letters at eta1 = 1 (64.1 at 4, 18.6 at 1/4, 13.4 at 1/16); d2 69.0% at eta1 = 1/4; five reported seeds, g2 at eta1 = 1: 13.3, 83.3, 78.1, 73.8, 75.3, median 75.3; the coordinating session's hypothesis holds on four seeds of five; Adam not run |
+| E5, `PLAN_5.md` | g2, forward rules at eta1 = 4, development seed | cross=1 6.0%, cross=2 7.7% at the gap of 8 letters, level through the run; hypothesis refuted |
 
-Commands: `sh run.sh jobs_e1_all.txt`, `sh run.sh jobs_e23_dev.txt`, `python3 report.py e1`, `python3 report.py rows <label> ...`. Total cost of the experiments: about 2.5 CPU-hours.
+`check_bp.py` (`check_bp_output.txt`): the instrument at X=inf against central differences (3e-9; control X=2 differs), and the compiled pass against the numpy instrument (to rounding over 300 lines at eta1 = 1/4 and on short prefixes at larger steps, where the learner then amplifies rounding).
+
+Commands: `sh run.sh jobs_e1_all.txt`, `sh run.sh jobs_e23_dev.txt`, `PROG=hold_x.py sh run.sh jobs_e4_dev.txt` (and `jobs_e4_rep.txt`), `sh run.sh jobs_e5_dev.txt`, `python3 report.py e1`, `python3 report.py rows <label> ...`. Total cost of the experiments: about 6 CPU-hours.
