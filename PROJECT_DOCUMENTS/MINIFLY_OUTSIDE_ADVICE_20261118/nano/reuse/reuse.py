@@ -116,8 +116,8 @@ def code(ctx, ds):
 def ctx_of(x, lo, hi, D): return x[np.arange(lo, hi)[:, None] - np.arange(1, D + 1)[None, :]]
 
 class Sys:
-    def __init__(s, D=9, P=32, M=32, block=10000, mode="reuse", seed=0, eta=0.1, e=2.0, born=0.02, inherit=1, count=1, jbytes=5000, one=1):
-        s.one = int(one); s.jbytes = int(jbytes); s.D, s.P, s.M, s.block, s.mode, s.eta, s.e, s.inherit, s.count = D, (0 if mode == "none" else P), M, block, mode, eta, e, int(inherit), int(count)
+    def __init__(s, D=9, P=32, M=32, block=10000, mode="reuse", seed=0, eta=0.1, e=2.0, born=0.02, inherit=1, count=1, jbytes=5000, one=1, chance_by_set=0):
+        s.chance_by_set = int(chance_by_set); s.one = int(one); s.jbytes = int(jbytes); s.D, s.P, s.M, s.block, s.mode, s.eta, s.e, s.inherit, s.count = D, (0 if mode == "none" else P), M, block, mode, eta, e, int(inherit), int(count)
         s.kinds = [c for m in range(5) for c in itertools.combinations(range(1, D + 1), m)]; s.KB = len(s.kinds); s.K1 = s.KB + s.P; assert s.K1 <= 640
         s.off = np.concatenate([[0], np.cumsum([S ** len(k) for k in s.kinds])]).astype(np.int64); s.nbase = int(s.off[-1]); s.L = kern()
         s.C = np.zeros((s.nbase, S), np.float32); s.N = np.zeros(s.nbase, np.float32); s.U = np.zeros(s.nbase, np.float32)
@@ -161,6 +161,10 @@ class Sys:
             if cnt.sum() < 2: continue
             pl = s.pl[m]; out = np.zeros(len(pl)); gT = np.ascontiguousarray(g.T); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(gT), pd(out)); out -= own[s.kidx[m]]
             idx = np.flatnonzero(cnt); gs = g.copy(); gs[idx] = g[idx[s.rng.permutation(len(idx))]]; outs = np.zeros(len(pl)); gT = np.ascontiguousarray(gs.T); s.L.judge(len(y32), s.D, S, m, p32(c32), p32(y32), pf(gT), pd(outs)); outs -= own[s.kidx[m]]
+            if s.chance_by_set:                                    # PLAN_2.md, addition 3: the chance level of a reading is the shuffled store's largest figure through the same set of places
+                cs = np.zeros(s.KB); np.maximum.at(cs, s.kidx[m], outs); chv = np.maximum(cs[s.kidx[m]], 0.0); home = tuple(d - 1 for d in s.kinds[k]); hi = int(np.flatnonzero((pl == np.array(home)).all(1))[0]); homes.append((k, float(own[k]), float(chv.max()))); out[hi] = -np.inf
+                for p in np.flatnonzero(out > chv): cands.append((float(out[p]), k, tuple(int(d) + 1 for d in pl[p]), float(chv[p]))); nabove += 1
+                continue
             chance = max(float(outs.max()), 0.0); home = tuple(d - 1 for d in s.kinds[k]); hi = int(np.flatnonzero((pl == np.array(home)).all(1))[0]); homes.append((k, float(own[k]), chance)); out[hi] = -np.inf
             for p in np.flatnonzero(out > chance): cands.append((float(out[p]), k, tuple(int(d) + 1 for d in pl[p]), chance)); nabove += 1
         cands.sort(key=lambda c: -c[0]); kept = []; seen = set()
@@ -230,7 +234,7 @@ def marks_for(lines):
 def run(kw):
     seed = int(kw.get("seed", 1)); mode = kw.get("mode", "reuse"); D = int(kw.get("D", 9)); t0 = time.process_time()
     phases = [(p.split(":")[0], int(p.split(":")[1])) for p in kw.get("phases", "add2:40000").split(",")]; tasks = [Task(n, seed, i) for i, (n, _) in enumerate(phases)]
-    sy = Sys(D=D, P=int(kw.get("P", 64)), M=int(kw.get("M", 32)), block=int(kw.get("block", 10000)), mode=mode, seed=seed, inherit=int(kw.get("inherit", 1)), count=int(kw.get("count", 1)), jbytes=int(kw.get("jbytes", 5000)), one=int(kw.get("one", 1)))
+    sy = Sys(D=D, P=int(kw.get("P", 64)), M=int(kw.get("M", 32)), block=int(kw.get("block", 10000)), mode=mode, seed=seed, inherit=int(kw.get("inherit", 1)), count=int(kw.get("count", 1)), jbytes=int(kw.get("jbytes", 5000)), one=int(kw.get("one", 1)), chance_by_set=int(kw.get("cset", 0)))
     tail = np.full(D, END, np.int64); rows = []
     for i, (name, lines) in enumerate(phases):
         tk = tasks[i]; done = 0

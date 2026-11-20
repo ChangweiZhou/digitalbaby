@@ -191,11 +191,14 @@ def run(kw):
     out = dict(task="sums", args=kw, seed=seed, plan=plan, nd=nd, mode=mode, rows=[], clean_subtractions=len(clean) if LsS is not None else None); tail = np.full(D, END, np.int64); total = 0
     for pi, (name, lines) in enumerate(plan):
         op = "+" if name == "add" else "-"; every = (5000 if lines <= 40000 else 50000) if nd == 2 else 10000
-        marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []) + ([1000, 2000] if pi > 0 else []))); done = 0      # a later task is also read soon after it starts
+        marks = sorted(set(list(range(every, lines + 1, every)) + [lines] + ([5000, 10000, 20000, 40000] if lines > 40000 else []) + ([1000, 2000] if pi > 0 else []) + ([int(q) for q in kw["marks_extra"].split("+")] if pi == 0 and "marks_extra" in kw else []))); done = 0      # a later task is also read soon after it starts
         for mk in marks:
             X = drawer[op](mk - done).ravel(); x = np.concatenate([tail, X]); s.learn(G.ctx_of(x, D, len(x), D), x[D:]); tail = x[-D:]; done = mk
             row = dict(phase=pi, name=name, lines=mk, lines_in_life=total + mk, on_every=mk % every == 0, add=reading(s, LsA, prevs, nd))
             if LsS is not None: row["sub_clean"] = reading(s, LsS, prevs_clean)
+            if int(kw.get("detail", 0)) and s.P:                  # PLAN_2.md, addition 1: the same reading with only the class kinds speaking, and with only the plain kinds
+                keep = s.N.copy(); s.N[:s.nbase] = 0; row["add_class_kinds_alone"] = reading(s, LsA, prevs, nd); s.N[:] = keep; s.N[s.nbase:] = 0; row["add_plain_kinds_alone"] = reading(s, LsA, prevs, nd); s.N[:] = keep
+            out["findings"] = [dict(bytes_read=f["bytes_read"], kept=[dict(R=r["R"], X=r["X"], classes=r["classes"], members=r["members"], worth=r["worth"]) for r in f["kept"]]) for f in s.finds]
             row.update(s.sizes()); row["second_parts_used"] = [int((s.Gu[g] > 0).sum()) for g in range(s.nG)]; row["cpu"] = round(time.process_time() - t0, 1); out["rows"].append(row)
             out["cpu"] = row["cpu"]; out["cpu_finding"] = round(s.tfind, 1); json.dump(out, open(path + ".tmp", "w")); os.replace(path + ".tmp", path)
             print(tag, f"{name} {mk}", " | ".join(f"{c}: after {v['after_add']:.1f} empty {v['empty']:.1f}" for c, v in row["add"].items()),

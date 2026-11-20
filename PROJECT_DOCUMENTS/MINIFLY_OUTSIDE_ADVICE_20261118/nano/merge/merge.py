@@ -354,6 +354,7 @@ class Sys:
         jt = lambda c: s.L.j_total(m, nx, nz, s.S, p32(xc), p32(zptr), p32(zcell), p32(cptr), p32(sym), pf(cnt), pf(n), s.eJ, p32(np.ascontiguousarray(c, dtype=np.int32)))
         J = jt(cls); J1 = jt(np.zeros(nx, np.int32)); size = np.bincount(cls, minlength=nx); merged = size[cls] >= 2
         return dict(k=k, X=X, ux=ux, cls=cls, merged=merged, J=J, J1=J1, J0=-float(n.sum()) * np.log(s.S), worth=J - J1, nx=nx, classes=int((size >= 2).sum()), members=int(merged.sum()), tokens=float(n.sum()))
+    def more_candidates(s, top): return top
     def trust_of_kinds(s):
         u = s.Tu[:s.KB].sum(1); mt = np.where(u > 0, (s.T[:s.KB] * s.Tu[:s.KB]).sum(1) / np.maximum(u, 1), -np.inf)
         if s.keep == 2 and s.P:                                     # PLAN_6.md, addition 2: the trust of a kind counts the trust of the kinds made from it
@@ -364,6 +365,7 @@ class Sys:
         return [(sl["k"], max(0.0, float(mc[p]))) for p, sl in enumerate(s.slots) if sl is not None]
     def find(s):
         t0 = time.process_time(); mt = s.trust_of_kinds(); top = [int(k) for k in np.argsort(-mt, kind="stable")[:s.M] if len(s.kinds[k]) >= 2 and np.isfinite(mt[k])]; found = []
+        top = s.more_candidates(top)
         if s.keep == 1: top += sorted({sl["k"] for sl in s.slots if sl is not None} - set(top))          # PLAN_6.md, addition 1: a kind whose classes are in use is searched again
         for k in top:
             pre = s.r_cells(k)
