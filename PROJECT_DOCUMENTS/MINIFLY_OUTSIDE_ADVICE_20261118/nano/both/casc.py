@@ -14,12 +14,14 @@ HERE = B.HERE
 SRC = r'''
 #include <math.h>
 #include <stdint.h>
+#include <stdlib.h>
 #define NL 40
 #define XL 10
 #define KMAX 400
 #define SMAX 65
 #define DMAX 16
 #define GB 40
+static int cmpf(const void *a, const void *b) { const float x = *(const float *)a, y = *(const float *)b; return (x > y) - (x < y); }
 static inline int level(float n, float u) {
     int bn = 0; int64_t m = (int64_t)n; while (m > 1 && bn < 9) { m >>= 1; bn++; }
     return bn * 4 + (u <= 1 ? 0 : u <= 2 ? 1 : u <= 4 ? 2 : 3);
@@ -34,17 +36,19 @@ static inline void compete(const double *a, const double *b, int S, double *p) {
 /* both.py's mix_steps3 with the groups. cascade 0: one group (both.py's arithmetic, to rounding). xg: the group of the given sender. */
 void mix_steps4(int64_t n, int K1, int S, const int32_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double *Tu,
                 double eta, double e, int learn, int shrink, double *P, int D, const int32_t *cb, double *Gt, double *Gu, double *P2,
-                const float *X, const int32_t *xlev, double *Tx, double *Txu, double *Gx, double *Gxu, int cascade, int xg) {
-    static double lt[4096], s[KMAX][SMAX], ga[GB][SMAX], gb2[GB][SMAX], pg[GB][SMAX], pg2[GB][SMAX]; static int lev[KMAX], gk[KMAX]; static int64_t gix[KMAX][DMAX];
+                const float *X, const int32_t *xlev, double *Tx, double *Txu, double *Gx, double *Gxu, int cascade, int xg, int half) {
+    static float cnt[KMAX]; static double lt[4096], s[KMAX][SMAX], ga[GB][SMAX], gb2[GB][SMAX], pg[GB][SMAX], pg2[GB][SMAX]; static int lev[KMAX], gk[KMAX]; static int64_t gix[KMAX][DMAX];
     int64_t xix[DMAX]; int has[GB]; double r1[SMAX], r2[SMAX], uni[SMAX];
     for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
     for (int v = 0; v < S; v++) uni[v] = 1.0 / S;
     for (int64_t t = 0; t < n; t++) {
         const int32_t *id = ids + t * K1; const int xl = (X && xlev[t] >= 0) ? xlev[t] : -1; const float *sx = X ? X + t * S : 0; const int xgk = cascade ? xg : 0;
         for (int b = 0; b < GB; b++) has[b] = 0;
+        float thr = 0;                                     /* half: only the speakers that have counted at least the middle count among the speakers are heard */
+        if (half) { int m = 0; for (int k = 0; k < K1; k++) if (id[k] >= 0 && N[id[k]] >= 1) cnt[m++] = N[id[k]]; if (m) { qsort(cnt, m, sizeof(float), cmpf); thr = cnt[m / 2]; } }
 #define OPEN(b) if (!has[b]) { has[b] = 1; for (int v = 0; v < S; v++) { ga[b][v] = 0; gb2[b][v] = 0; } }
         for (int k = 0; k < K1; k++) {
-            lev[k] = -1; if (id[k] < 0 || N[id[k]] < 1) continue;
+            lev[k] = -1; if (id[k] < 0 || N[id[k]] < 1 || N[id[k]] < thr) continue;
             const float *c = C + (int64_t)id[k] * S; lev[k] = level(N[id[k]], U[id[k]]); const int g = cascade ? grp(N[id[k]]) : 0; gk[k] = g; OPEN(g)
             const double tk = T[k * NL + lev[k]], den = log(N[id[k]] + S * e); double tk2 = 0;
             for (int j = 0; j < D; j++) { gix[k][j] = (((int64_t)j * K1 + k) * NL + lev[k]) * S + cb[t * D + j]; tk2 += Gt[gix[k][j]]; }
@@ -80,7 +84,7 @@ def kern():
     if not os.path.exists(so):
         open(src, "w").write(SRC); tmp = so + f".{os.getpid()}"; subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", tmp, src, "-lm"]); os.replace(tmp, so)
     L = ctypes.CDLL(so); ci, cd = ctypes.c_int, ctypes.c_double
-    L.mix_steps4.argtypes = [ctypes.c_int64, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD, ci, PI, PD, PD, PD, PF, PI, PD, PD, PD, PD, ci, ci]; L.mix_steps4.restype = None; return L
+    L.mix_steps4.argtypes = [ctypes.c_int64, ci, ci, PI, PI, PF, PF, PF, PD, PD, cd, cd, ci, ci, PD, ci, PI, PD, PD, PD, PF, PI, PD, PD, PD, PD, ci, ci, ci]; L.mix_steps4.restype = None; return L
 
 def grp_np(n):
     b = 0; m = int(n)
@@ -89,7 +93,7 @@ def grp_np(n):
 
 class SysC(B.Sys3):
     CASCADE = 1
-    def __init__(s, *a, **kw): super().__init__(*a, **kw); s.L4 = kern(); s.cascade = SysC.CASCADE; s.xtaught = 0
+    def __init__(s, *a, **kw): super().__init__(*a, **kw); s.L4 = kern(); s.cascade = SysC.CASCADE; s.xtaught = 0; s.half = 0
     def _run(s, ctx, y, learn, want_p):
         P = np.zeros((len(ctx), s.S)) if want_p else None
         for a in range(0, len(ctx), 50000):
@@ -99,19 +103,20 @@ class SysC(B.Sys3):
             if s.xq is not None: X = s.xq[0][s.xpos + a:s.xpos + a + len(idd)]; xl = s.xq[1][s.xpos + a:s.xpos + a + len(idd)]; assert len(X) == len(idd)
             s.L4.mix_steps4(len(idd), s.K1, s.S, p32(idd), p32(yy), pf(s.C), pf(s.N), pf(s.U), pd(s.T), pd(s.Tu), s.eta, s.e, (2 if s.only_trust else 1) if learn else 0, s.shrink, pd(P1) if want_p else None,
                             s.D, p32(cb), pd(s.Gt), pd(s.Gu), pd(P2) if want_p else None, pf(X) if X is not None else None, p32(xl) if X is not None else None, pd(s.Tx), pd(s.Txu), pd(s.Gx), pd(s.Gxu),
-                            s.cascade, grp_np(max(1, s.xtaught)))                      # the relay system's count: the bytes it had been taught when this piece of at most 50,000 bytes began
+                            s.cascade, grp_np(max(1, s.xtaught)), 0 if learn else int(s.half))                      # the relay system's count: the bytes it had been taught when this piece of at most 50,000 bytes began
             if learn and xl is not None: s.xtaught += int((xl >= 0).sum())
             if want_p: P[a:a + 50000] = P2 if s.cell == 2 else P1
         s.xpos += len(ctx); return P
 
-def steps4_np(ids, y, cb, C, N, U, T, Tu, Gt, Gu, eta, e, X, xlev, Tx, Txu, Gx, Gxu, cascade, xg, learn=1, shrink=False):
+def steps4_np(ids, y, cb, C, N, U, T, Tu, Gt, Gu, eta, e, X, xlev, Tx, Txu, Gx, Gxu, cascade, xg, learn=1, shrink=False, half=0):
     """The reference: every group's answer is computed from its definition."""
     S = C.shape[1]; n = len(y); P1 = np.zeros((n, S)); P2 = np.zeros((n, S)); D = Gt.shape[0]; st = lambda u: eta / np.sqrt(1.0 + u) if shrink else eta
     sm = lambda a: np.exp(a - a.max()) / np.exp(a - a.max()).sum()
     for t in range(n):
         gv = [int(cb[t, j]) for j in range(D)]; snd = []                                # (group, trust, sum of parts, message, what to change)
+        sp = sorted(float(N[i]) for i in ids[t] if i >= 0 and N[i] >= 1); thr = sp[len(sp) // 2] if (half and sp) else 0.0
         for k, i in enumerate(ids[t]):
-            if i >= 0 and N[i] >= 1:
+            if i >= 0 and N[i] >= 1 and N[i] >= thr:
                 l = G.level_np(N[i], U[i]); sv = np.log(C[i].astype(np.float64) + e) - np.log(N[i] + S * e); snd.append((grp_np(N[i]) if cascade else 0, T[k, l], sum(Gt[j, k, l, gv[j]] for j in range(D)), sv, ("k", k, l)))
         if X is not None and xlev[t] >= 0: xl = int(xlev[t]); snd.append((xg if cascade else 0, Tx[xl], sum(Gx[j, xl, gv[j]] for j in range(D)), X[t].astype(np.float64), ("x", xl)))
         def ans(b): a1 = sum((q[1] * q[3] for q in snd if q[0] >= b), np.zeros(S)); a2 = a1 + sum((q[2] * q[3] for q in snd if q[0] >= b), np.zeros(S)); return sm(a1), sm(a2)
@@ -140,12 +145,20 @@ def check():
         cb = rng.integers(0, S, (n, D)).astype(np.int32); X = rng.normal(0, 1, (n, S)); X = (X - np.log(np.exp(X).sum(1, keepdims=True))).astype(np.float32); xlev = rng.integers(-1, 10, n).astype(np.int32)
         fresh = lambda: [np.zeros((nc, S), np.float32), np.zeros(nc, np.float32), np.zeros(nc, np.float32), np.full((K1, NL), 0.1), np.zeros((K1, NL)), np.zeros((D, K1, NL, S)), np.zeros((D, K1, NL, S)), np.zeros(XL), np.zeros(XL), np.zeros((D, XL, S)), np.zeros((D, XL, S))]
         A = fresh(); Bq = fresh(); Cm = fresh(); P1 = np.zeros((n, S)); P2 = np.zeros((n, S)); xa = (pf(X), p32(xlev)) if withx else (None, None)
-        L.mix_steps4(n, K1, S, p32(ids), p32(y), pf(A[0]), pf(A[1]), pf(A[2]), pd(A[3]), pd(A[4]), 0.05, 0.3, 1, int(shrink), pd(P1), D, p32(cb), pd(A[5]), pd(A[6]), pd(P2), *xa, pd(A[7]), pd(A[8]), pd(A[9]), pd(A[10]), cascade, xg)
+        L.mix_steps4(n, K1, S, p32(ids), p32(y), pf(A[0]), pf(A[1]), pf(A[2]), pd(A[3]), pd(A[4]), 0.05, 0.3, 1, int(shrink), pd(P1), D, p32(cb), pd(A[5]), pd(A[6]), pd(P2), *xa, pd(A[7]), pd(A[8]), pd(A[9]), pd(A[10]), cascade, xg, 0)
         R1, R2 = steps4_np(ids, y, cb, Bq[0], Bq[1], Bq[2], Bq[3], Bq[4], Bq[5], Bq[6], 0.05, 0.3, X if withx else None, xlev, Bq[7], Bq[8], Bq[9], Bq[10], cascade, xg, 1, shrink)
         d = max([np.abs(P1 - R1).max(), np.abs(P2 - R2).max()] + [np.abs(u - v).max() for u, v in zip(A, Bq)]); ngr = len({grp_np(v) for v in A[1] if v >= 1})
         Q1 = np.zeros((n, S)); Q2 = np.zeros((n, S)); L3.mix_steps3(n, K1, S, p32(ids), p32(y), pf(Cm[0]), pf(Cm[1]), pf(Cm[2]), pd(Cm[3]), pd(Cm[4]), 0.05, 0.3, 1, int(shrink), pd(Q1), D, p32(cb), pd(Cm[5]), pd(Cm[6]), pd(Q2), *xa, pd(Cm[7]), pd(Cm[8]), pd(Cm[9]), pd(Cm[10]))
         d3 = max(np.abs(P2 - Q2).max(), np.abs(A[3] - Cm[3]).max(), np.abs(A[5] - Cm[5]).max()); good = d < 1e-9 and ((d3 < 1e-9) if not cascade else (d3 > 1e-3 and ngr >= 3)); ok &= bool(good)
         print(f"groups by count (cascade = {cascade}), given sender {'given' if withx else 'absent'}, S = {S}, shrinking step = {shrink}, {n} bytes, cells in {ngr} groups at the end: compiled against numpy, largest difference {d:.1e}; against both.py's kernel {d3:.1e} ({'must agree' if not cascade else 'must differ'})", "PASSED" if good else "FAILED")
+    # the better-counted half: answers only (nothing learns), against numpy, on a system that has counted
+    S, D, K1, n, nc = 14, 9, 9, 2000, 150; ids = rng.integers(-1, nc, (n, K1)).astype(np.int32); ids[:, :3] = np.minimum(ids[:, :3], 5); y = rng.integers(0, S, n).astype(np.int32); cb = rng.integers(0, S, (n, D)).astype(np.int32)
+    A = [np.zeros((nc, S), np.float32), np.zeros(nc, np.float32), np.zeros(nc, np.float32), np.full((K1, NL), 0.1), np.zeros((K1, NL)), np.zeros((D, K1, NL, S)), np.zeros((D, K1, NL, S)), np.zeros(XL), np.zeros(XL), np.zeros((D, XL, S)), np.zeros((D, XL, S))]
+    call = lambda learn, half, P1, P2: L.mix_steps4(n, K1, S, p32(ids), p32(y), pf(A[0]), pf(A[1]), pf(A[2]), pd(A[3]), pd(A[4]), 0.05, 0.3, learn, 1, pd(P1), D, p32(cb), pd(A[5]), pd(A[6]), pd(P2), None, None, pd(A[7]), pd(A[8]), pd(A[9]), pd(A[10]), 0, 0, half)
+    P1 = np.zeros((n, S)); P2 = np.zeros((n, S)); call(1, 0, P1, P2); H1 = np.zeros((n, S)); H2 = np.zeros((n, S)); call(0, 1, H1, H2); F2 = np.zeros((n, S)); call(0, 0, P1, F2)
+    Bq = [q.copy() for q in A]; R1, R2 = steps4_np(ids, y, cb, Bq[0], Bq[1], Bq[2], Bq[3], Bq[4], Bq[5], Bq[6], 0.05, 0.3, None, None, Bq[7], Bq[8], Bq[9], Bq[10], 0, 0, 0, True, 1)
+    d = max(np.abs(H1 - R1).max(), np.abs(H2 - R2).max()); good = d < 1e-9 and np.abs(H2 - F2).max() > 1e-3; ok &= bool(good)
+    print(f"the better-counted half of the speakers (answers only), {n} bytes: compiled against numpy, largest difference {d:.1e}; differs from the answer of all by up to {np.abs(H2 - F2).max():.2f}", "PASSED" if good else "FAILED")
     return ok
 
 def install(cascade):
@@ -160,6 +173,7 @@ def install(cascade):
                 out[f"look_cell2_only_counts_from_{th}"] = float(np.mean([B.answer(cs, r, Ls, pv, floor, 2, False)[0] for pv in prevs[:2]]))
                 if r is not None: out[f"look_cell2_only_counts_from_{th}_relay_silent"] = float(np.mean([B.answer(cs, r, Ls, pv, floor, 2, True)[0] for pv in prevs[:2]]))
                 cs.N[:] = keep
+            cs.half = 1; out["look_cell2_better_counted_half"] = float(np.mean([B.answer(cs, r, Ls, pv, floor, 2, True)[0] for pv in prevs[:2]])); out["look_cell1_better_counted_half"] = float(np.mean([B.answer(cs, r, Ls, pv, floor, 1, True)[0] for pv in prevs[:2]])); cs.half = 0
             keep = cs.N.copy(); cs.N[:cs.nbase] = 0; out["look_cell2_class_kinds_alone"] = float(np.mean([B.answer(cs, r, Ls, pv, floor, 2, True)[0] for pv in prevs[:2]])); cs.N[:] = keep
         return out
     B.reading = reading
