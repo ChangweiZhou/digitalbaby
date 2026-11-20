@@ -143,6 +143,7 @@ The earlier steps map as follows: R1 is done at development level; R2 continues 
 | C3 and K, counting cells keyed on a few bytes | `nano/sparse` | a separate agent session (`session_017dSEpTT1YxsS3aJBRYNdRD`) | `claude/nano-sparse-8mmhfm` | on sums: cells that count, keyed on the bytes at a few chosen delays, read with trust; never-shown sums and keeping |
 | K, replay | `nano/replay` | the agent session of `nano/joint` | `claude/nano-joint-8mmhfm` | keeping by replay of lines made from the system's own counting cells |
 | K2 | `nano/table` | this session | `claude/friendly-darwin-8mmhfm` | keeping and reuse on prose; cells of two memories (`PLAN_5.md`, `PLAN_6.md`) |
+| K1, an independent repeat | `nano/keep2` | a separate agent session (`session_017dSEpWJ6N2H77V1ocLYPmk`) | `claude/nano-keep2-8mmhfm` | the keeping line's final candidate written again from its description and not from its code; reported seeds and seeds no line has used; the clean score of subtraction; the limit |
 
 The first three agent sessions were started from this branch at fe397ca6 and the last four at 260c5d73, after Mr. Xu's word to keep experimenting, each with a written brief: one line, one folder, a plan committed before each step's runs, settings chosen on the development seed, a numpy reference for every compiled program, and a short report to this session after each step. 
 Their results are merged into this branch and entered in the ledger as they come.
