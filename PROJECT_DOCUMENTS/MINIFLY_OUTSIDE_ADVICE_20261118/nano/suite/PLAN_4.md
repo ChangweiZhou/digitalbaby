@@ -44,3 +44,39 @@ It has one number, eta. **eta is chosen on the two prose streams only** (tiny Sh
 ## 4. Runs, cost, what is not run
 
 Development: 5 values of eta on 2 streams, 5 CPU-seconds each. Claim: the four other streams once at the chosen eta; sums 4 arms x 5 seeds, about 50 CPU-seconds each (1.2 million cells). Not run: other rules for the step; a rule for e; eta chosen on sums or on any stream but the two prose ones; sums with classes; 400,000 lines.
+
+## 5. Outcome (entered 20 November, after the runs; `out_4_dev.txt`, `res/*__rule2_eta*.json`, `res/sums__*.json`, `report_4.txt`, `report_4_sums.txt`)
+
+**The choice on the two prose streams.** Sum over tiny Shakespeare and the book of the second cell's losses with nothing changing and going on: constant step 5.7107; the rule at eta 0.001, 0.003, 0.01, 0.03, 0.1: 5.7549, 5.7222, 5.6946, **5.6838**, 5.6987. eta = 0.03 was taken and frozen. From 0.01 to 0.1 the sum moves by 0.015: the rule is not sensitive to its number on these streams.
+
+**A fault found on a reported seed of sums and repaired.** The first run of the arm "the one setting" (seed 73129) fell to 0.0% after 20,000 lines with infinite loss. Cause, found on the development seed: a driver so small that its square is zero in the machine's numbers was divided by the root of that zero and moved a trust to minus infinity. Both the kernel and the reference had it. Now a trust does not move while its sum of squares is zero; the check passes; the arm was run again on all five seeds and the faulty outputs are not kept as results. The runs on streams had no infinite value and are unaffected (the system Z of `PLAN_6.md` was run after the repair).
+
+**Streams** (the system of section 2 at the constant step and under the rule; the difference in brackets; cells and numbers stored unchanged):
+
+| | measure | shakespeare | book | py | c | table | xml | kinds lowered | largest harm | by the rule of PLAN_2 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| the rule | going on | 1.3705 (-0.0078) | 1.4006 (-0.0078) | 1.0210 (-0.0141) | 0.7952 (-0.0495) | 0.5253 (-0.0448) | 0.3547 (-0.0160) | 5 of 5 | -0.0078 | KEPT |
+| the rule | nothing changing | 1.4882 (-0.0046) | 1.4245 (-0.0068) | 1.4283 (-0.0059) | 2.2840 (+0.0541) | 2.0213 (+0.1716) | 0.7908 (+0.0135) | 2 of 5 | +0.1716 | not kept |
+| the rule, first cell | going on | 1.4035 (-0.0020) | 1.4361 (-0.0031) | 1.0531 (-0.0145) | 0.9321 (-0.0195) | 0.6339 (-0.0258) | 0.4030 (-0.0119) | 5 of 5 | -0.0020 | KEPT |
+| the rule, first cell | nothing changing | 1.5208 (+0.0029) | 1.4593 (-0.0021) | 1.4424 (+0.0000) | 2.1577 (+0.0316) | 1.7627 (+0.0569) | 0.7831 (+0.0015) | 0 of 5 | +0.0569 | not kept |
+
+**Two-digit sums, 40,000 lines, five seeds; never-shown sums named whole, %, after a read line** (256 kinds, 1.21 million cells, about 50 CPU-seconds a run; the second cell here has six parts by kind and byte):
+
+| arm | cell | each seed (mean of the last three readings) | median | last reading, median | nats a byte while reading the last 5,000 lines (median) | cells | CPU s |
+|---|---|---|---|---|---|---|---|
+| per-text (e 2, born 0.02, step 0.1/sqrt(1+uses)) | first | 82.6, 80.0, 79.4, 78.5, 78.5 | **79.4** | 80.1 | 0.9353 | 1,213,003 | 50 |
+| per-text (e 2, born 0.02, step 0.1/sqrt(1+uses)) | second | 89.4, 87.8, 88.0, 87.8, 88.7 | **88.0** | 88.2 | 0.9230 | 1,213,003 | 50 |
+| the one setting (e 0.02, born 0.25, the rule at eta 0.03) | first | 77.5, 76.0, 75.0, 71.7, 74.0 | **75.0** | 72.9 | 0.9263 | 1,213,003 | 49 |
+| the one setting (e 0.02, born 0.25, the rule at eta 0.03) | second | 78.6, 79.2, 76.4, 74.7, 77.7 | **77.7** | 74.6 | 0.9218 | 1,213,003 | 49 |
+| only the step replaced (e 2, born 0.02, the rule at eta 0.03) | first | 83.9, 81.3, 81.9, 80.0, 81.3 | **81.3** | 82.0 | 0.9304 | 1,213,003 | 50 |
+| only the step replaced (e 2, born 0.02, the rule at eta 0.03) | second | 91.7, 91.1, 89.7, 89.7, 91.3 | **91.1** | 91.4 | 0.9236 | 1,213,003 | 50 |
+| the prose setting as it was (e 0.02, born 0.25, step 0.00005) | first | 65.8, 63.9, 62.0, 61.5, 62.4 | **62.4** | 65.3 | 1.2298 | 1,213,003 | 49 |
+| the prose setting as it was (e 0.02, born 0.25, step 0.00005) | second | 70.3, 69.7, 66.7, 67.9, 68.7 | **68.7** | 67.9 | 0.9678 | 1,213,003 | 49 |
+
+By lines read (first cell, median of five seeds; 5,000, 10,000, 20,000, 30,000, 35,000, 40,000): per-text 70.0, 78.4, 80.2, 78.8, 79.5, 80.1; the one setting 72.9, 79.0, 81.2, 77.1, 74.6, 72.9; only the step replaced 71.9, 80.0, 81.6, 81.1, 81.5, 82.0; the prose setting 47.3, 58.4, 64.3, 60.8, 62.2, 65.3.
+
+**The hypothesis is refuted in its second part and holds in its first.** (a) Going on, the rule lowers all five kinds of stream (0.008 to 0.050) and harms none. (b) On sums the one setting is 4.4 points under the per-text setting at the median (75.0 against 79.4; second cell 77.7 against 88.0), outside the 2 points. As I laid down beforehand for this case: **the rule for the step is general, and the smoothing with the trust at birth is the per-text number that remains.** With e = 2 and born 0.02 kept, the rule alone is above the programme's shrinking step on every seed (81.3 against 79.4 at the median; second cell 91.1 against 88.0), so one rule with one number does replace both settings of the *step*: it beats the constant 0.00005 on all six streams going on and the shrinking 0.1 on sums. The one setting is level with the per-text setting up to 20,000 lines and then falls (81.2 to 72.9), the fall with reading that `nano/sparse` described for cells with heavy counts; the per-text smoothing does not fall.
+
+**Predictions scored.** D1 held (0.0078 on both prose streams). D2 held (0.050 and 0.045). D3 held. D4 held: with nothing changing the rule harms c by 0.054, table by 0.172 and xml by 0.014 (a faster trust fits the stretch just read). **D5 failed**, as I thought more likely than not. D6 held. D7 held (17 points under). D8 held: under the rule the recalling sender's trust is higher over lengths of 32 and more than over lengths 8 to 15 on five streams (all but table), where under the constant step it was on two. **D9 failed**: 0.795 against xz 0.724 on c, 0.525 against 0.381 on table.
+
+**My readings.** (1) Of the two per-text numbers the programme has carried longest, the step can go: one local rule with one number, chosen on prose, is better than either setting on its own ground going on. (2) The smoothing cannot yet: e = 0.02 on sums costs 4 to 13 points whatever the step. A rule for e (or for the trust at birth) that needs no number for a text is the next thing of this kind to look for; not run here. (3) With nothing changing the faster step harms on the joined streams, like every means of hearing the present (`PLAN_7.md`).
