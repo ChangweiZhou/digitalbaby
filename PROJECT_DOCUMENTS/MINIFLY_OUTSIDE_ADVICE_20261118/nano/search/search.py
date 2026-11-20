@@ -215,7 +215,7 @@ def text(op, a, b, nd=2):
 
 class Sums:
     def __init__(s, seed, nd=2):
-        s.nd = nd; s.rng = np.random.default_rng([seed, 99]); s.held, s.shown, s.TAB = {}, {}, {}; N = 10 ** nd
+        s.nd = nd; s.seed = seed; s.rng = np.random.default_rng([seed, 99]); s.held, s.shown, s.TAB = {}, {}, {}; N = 10 ** nd
         for op in "+-":
             if nd == 2: o = s.rng.permutation(N * N); P = [(int(q) // N, int(q) % N) for q in o]; s.held[op] = P[:500]; s.shown[op] = P[2000:]; s.TAB[op] = np.array([text(op, a, b) for a, b in s.shown[op]], np.int32)
             else: q = s.rng.choice(N * N, 2000, replace=False); s.held[op] = [(int(v) // N, int(v) % N) for v in q[:500]]; s.heldset = set(int(v) for v in q)       # every other pair may be shown
@@ -226,9 +226,16 @@ class Sums:
         N = 10 ** s.nd; out = []
         while len(out) < n: out += [int(v) for v in s.rng.integers(N * N, size=n) if int(v) not in s.heldset]
         return np.array([text(op, v // N, v % N, s.nd) for v in out[:n]], np.int32).ravel()
-    def score(s, sy, op, pairs):
+    def score(s, sy, op, pairs, past=None):
+        """past=None: the empty past of cells2.py (line ends before the line). past=op2 (PLAN_4.md): before each held-out line stand two lines drawn by chance from the lines of op2 that may be read; mean of five draws."""
         Ls = np.array([text(op, a, b, s.nd) for a, b in pairs]); pre = 2 * s.nd + 2; ctx = np.full((len(pairs), D), END, np.int32); ctx[:, D - pre:] = Ls[:, :pre]
-        out = sy.write(ctx, s.nd + 1); ok = out == Ls[:, pre:pre + s.nd + 1]; return dict(whole=round(100 * float(ok.all(1).mean()), 2), place=[round(100 * float(v), 1) for v in ok.mean(0)])
+        if past is None: out = sy.write(ctx, s.nd + 1); ok = out == Ls[:, pre:pre + s.nd + 1]; return dict(whole=round(100 * float(ok.all(1).mean()), 2), place=[round(100 * float(v), 1) for v in ok.mean(0)])
+        if not hasattr(s, "prng"): s.prng = np.random.default_rng([s.seed, 77]); s.keep = s.rng; N = 10 ** s.nd
+        w = []
+        for _ in range(5):
+            s.rng = s.prng; prev = s.block(past, 2 * len(pairs)).reshape(len(pairs), -1); s.rng = s.keep          # the stream's own generator is not touched
+            ctx[:, :D - pre] = prev[:, -(D - pre):]; out = sy.write(ctx, s.nd + 1); w.append(100 * float((out == Ls[:, pre:pre + s.nd + 1]).all(1).mean()))
+        return round(float(np.mean(w)), 2)
 
 SETTINGS = ("K", "R", "prot", "nrep", "logslots", "step", "NLAY", "B"); FSET = ("eta", "e", "ncap", "pmut", "wg")
 def make(S, kw, kinds=None):
@@ -241,10 +248,14 @@ def run_sums(kw):
         for it in range(0, int(n), every):
             sy.feed(sm.block(op, every)); r = dict(phase=pi, name=name, lines=it + every, add=sm.score(sy, "+", sm.held["+"]))
             if nd == 2 and "sub" in kw.get("plan", ""): r["sub_all"] = sm.score(sy, "-", sm.held["-"])["whole"]; r["sub_clean"] = sm.score(sy, "-", sm.clean)["whole"]; r["n_clean"] = len(sm.clean)
+            if int(kw.get("past", 0)):
+                r["add_past"] = sm.score(sy, "+", sm.held["+"], past=op)
+                if "sub_clean" in r: r["sub_clean_past"] = sm.score(sy, "-", sm.clean, past=op)
             r["tried"] = sy.tried; rows.append(r)
             if int(kw.get("verbose", 0)): print(r, flush=True)
     a = [r["add"]["whole"] for r in rows if r["phase"] == 0]
-    return dict(task="sums", args=kw, rows=rows, add_last=a[-1], add_last3=round(float(np.mean(a[-3:])), 2), size=sy.size(), kinds=sy.kinds_report(), cpu=round(time.process_time() - t0, 1))
+    ap = [r["add_past"] for r in rows if r["phase"] == 0 and "add_past" in r]
+    return dict(task="sums", args=kw, rows=rows, add_last=a[-1], add_last3=round(float(np.mean(a[-3:])), 2), past_last=ap[-1] if ap else None, past_last3=round(float(np.mean(ap[-3:])), 2) if ap else None, size=sy.size(), kinds=sy.kinds_report(), cpu=round(time.process_time() - t0, 1))
 
 # ---------------------------------------------------------------- prose (text, split and life of nano/table/score.py and life.py)
 TEXT = os.path.join(HERE, "..", "data", "tinyshakespeare.txt"); BT = ("bryant-stories", "burgess-busterbrown", "carroll-alice")
@@ -300,6 +311,6 @@ def check():
 if __name__ == "__main__":
     if sys.argv[1] == "check": sys.exit(0 if check() else 1)
     kw = dict(a.split("=") for a in sys.argv[2:]); tag = kw.pop("tag"); r = (run_sums if sys.argv[1] == "sums" else run_prose)(kw); json.dump(r, open(os.path.join(HERE, "res", tag + ".json"), "w"), indent=0)
-    if r["task"] == "sums": print(tag, "add last", r["add_last"], "last3", r["add_last3"], "place", r["rows"][-1]["add"]["place"], {k: r["size"][k] for k in ("cells", "counts_above_zero", "displaced", "kinds_tried")}, "cpu", r["cpu"], flush=True)
+    if r["task"] == "sums": print(tag, "add last", r["add_last"], "last3", r["add_last3"], "after a read line: last", r["past_last"], "last3", r["past_last3"], "place", r["rows"][-1]["add"]["place"], {k: r["size"][k] for k in ("cells", "counts_above_zero", "displaced", "kinds_tried")}, "cpu", r["cpu"], flush=True)
     else: print(tag, r.get("dev_nats"), {k: v["nats"] for k, v in r.get("books", {}).items()}, r.get("A_last_tenth_at_end"), {k: r["size"][k] for k in ("cells", "counts_above_zero", "displaced", "kinds_tried")}, "cpu", r["cpu"], flush=True)
     print("   top kinds:", "; ".join(f"[{k['lines']}] {k['earned_answer']}" for k in r["kinds"][:12]), flush=True)
