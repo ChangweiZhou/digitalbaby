@@ -33,3 +33,33 @@ Why (reading, mine): after a space or a line end the table's cells are unsure wh
 ## 4. Size, cost, what is not run
 
 As arm S: 400 trusts; at most ten cells active at a byte; cells and counts reported. One arm with its choice of settings: 23 readings, about 2 CPU-minutes. Not run: a peak in place of a threshold; the signal of one short cell alone; a slower second clock; learning through the last tenth; a second text.
+
+## 5. Outcome (entered 20 November after the run; `res/ends_armU.json`)
+
+Loss on the last tenth, nats a byte, nothing changing; U scored there once. The other rows are from `PLAN_1.md`.
+
+| Arm | Loss | Gain over arm 0 | Share of G's gain | Named right | Loss on the last twentieth of the stream | Cells that have counted | Segments in the last tenth | Found starts that are word starts | Word starts found |
+|---|---|---|---|---|---|---|---|---|---|
+| 0, the table's cells | 1.5226 | | | 54.41% | 1.5566 | 459,129 | | | |
+| G, starts given | 1.4995 | 0.0231 | 1 | 55.20% | 1.5336 | 2,035,419 | 20,724 | 1 | 1 |
+| S, by surprise (theta 2.5) | 1.5144 | 0.0082 | 0.35 | 54.80% | 1.5487 | 2,091,358 | 27,666 | 0.46 | 0.62 |
+| **U, where the answer was unsure (theta 2.5)** | **1.5115** | 0.0111 | 0.48 | 54.97% | 1.5478 | 2,136,050 (2,737,532 counts above zero) | 24,327 | 0.78 | 0.92 |
+
+Chosen: theta 2.5, e 0.02, eta 0.00005. Loss on the last twentieth of the stream by theta: 1.0: 1.5604; 1.25: 1.5580; 1.5: 1.5539; 1.75: 1.5507; 2.0: 1.5487; 2.25: 1.5480; 2.5: 1.5478; 2.75: 1.5515; 3.0: 1.5585; 3.25: 1.5570. On the stream U made 209,931 starts (0.77 of them word starts; 0.86 of the word starts found). 123 CPU-seconds. Check: 8e-15 against numpy for the new output.
+
+**The hypothesis is refuted, narrowly**: U gains 0.0111 nats, 48% of G's gain; 0.0116 was asked.
+
+Predictions: V1 failed (0.0111 against 0.0116). V2 held (1.5115 below 1.5144). V3 held (0.78). V4 held (0.92). V5 failed.
+
+Readings (mine).
+1. **The signal taken before the byte arrives finds the starts of words far better than the surprise** (0.78 and 0.92 against 0.46 and 0.62), which agrees with the reading of `PLAN_1.md` that the surprise failed by depending on the byte that came.
+2. **But the loss follows only part of the way** (48% of G's gain against 35%). So agreement with the starts of words on the last tenth is not what limits the gain, or not alone.
+3. Looked at afterwards, on the stream only (no score): in the first tenth of the stream 0.46 of U's starts are word starts and 0.59 of the word starts are found; in the second half 0.85 and 0.91. While the table's cells have counted little, nearly every answer is unsure, and the cuts made then are not the cuts made later. The cells that counted under the early cuts are keyed to contexts that seldom come again. In the second half the starts that are not word starts lie spread over the later letters of words (none are doubled first letters), and the missed word starts follow a space (3,839), an apostrophe (2,371) or a line end (2,362) out of 94,395.
+
+## 6. Addition 1 (20 November; written after the outcome above and before the runs it describes): is it the early cuts?
+
+A diagnostic, scored **only on the last twentieth of the stream** (cells taught on the rest); the last tenth is not read. Settings fixed at those chosen (theta 2.5, e 0.02, eta 0.00005). Two mixed systems that no one proposes as systems:
+* **M1**: starts given (as G) in the first three tenths of the stream, starts by U after that.
+* **M2**: starts by U in the first three tenths of the stream, given after that.
+
+Beside them on the same twentieth: arm 0 1.5566, G 1.5336, U 1.5478. In M1 the scored twentieth is cut by U and in M2 as G, so each is read against the arm that cuts the scored part the same way: **M1 against U** changes only the early cuts (the scored part is cut by U in both): the difference is what the early cuts cost. **M2 against G** changes only the early cuts likewise (the scored part cut as G in both). Prediction (mine): M1 is below U by at least 0.004 (chance 0.5); M2 is above G by at least 0.004 (chance 0.5).

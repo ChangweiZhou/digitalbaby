@@ -165,6 +165,12 @@ def run(kw):
     if st is not None: extra.update(agreement_stream=agreement(st, x, K, cut), agreement_last_tenth=agreement(st, x, cut, len(x)))
     r.update(arm=arm, K=K, eta=eta, e=e, theta=theta, theta_grid=tgrid, grid=grid, cpu=round(time.process_time() - t0, 1), **extra); return r
 
+def diag(kw):
+    """PLAN_2.md, addition 1: mixed starts, scored on the last twentieth of the stream only. which=M1: given starts in the first `frac` of the stream, then arm U's; M2: the reverse."""
+    x, cut, _ = score.load(); dev = cut - cut // 20; frac = float(kw.get("frac", 0.3)); theta = float(kw.get("theta", 2.5)); g = word_starts(x); u = starts_for(kw.get("signal", "U"), x, dev, cut, theta); early = np.arange(len(x)) < frac * cut
+    st = np.where(early, g, u) if kw["diag"] == "M1" else np.where(early, u, g)
+    return dict(diag=kw["diag"], frac=frac, theta=theta, nats_last_twentieth=one(x, seg_keys(x, st), dev, dev, cut, ETA0, E0), agreement_scored_part=agreement(st, x, dev, cut))
+
 def check():
     x, cut, _ = score.load(); n = 4000; e, eta = 0.05, 0.01; x = x[:n]
     s0 = Sys(x, []); q0 = np.concatenate([s0.go(K, 3000, ETA0, E0, True, want_q=True), s0.go(3000, n, ETA0, E0, False, want_q=True)]); st = np.zeros(n, bool); st[K:] = -np.log(q0) > 2.0
@@ -190,6 +196,9 @@ def check():
 if __name__ == "__main__":
     if sys.argv[1] == "check": check()
     else:
-        kw = dict(a.split("=") for a in sys.argv[1:]); r = run(kw); tag = "ends_" + "_".join(f"{k}{v}" for k, v in sorted(kw.items()))
+        kw = dict(a.split("=") for a in sys.argv[1:])
+        if "diag" in kw:
+            r = diag(kw); json.dump(r, open(os.path.join(HERE, "res", "diag_" + "_".join(f"{k}{v}" for k, v in sorted(kw.items())) + ".json"), "w")); print(r); sys.exit()
+        r = run(kw); tag = "ends_" + "_".join(f"{k}{v}" for k, v in sorted(kw.items()))
         json.dump(r, open(os.path.join(HERE, "res", tag + ".json"), "w"))
         print(tag, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items() if k not in ("n", "grid", "trust", "theta_grid")}, "theta:", {k: round(v, 4) for k, v in r["theta_grid"].items()}, "best of grid:", sorted((round(v, 4), k) for k, v in r["grid"].items())[:4], flush=True)
