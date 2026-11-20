@@ -55,7 +55,7 @@ def sg(u): return 1 / (1 + np.exp(-u))
 # ---------------------------------------------------------------- the compiled kernel
 I64, F64, PD, PI, P32, PU = ctypes.c_int64, ctypes.c_double, ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_int64), ctypes.POINTER(ctypes.c_int32), ctypes.POINTER(ctypes.c_uint8)
 class KNet(ctypes.Structure):
-    _fields_ = [(k, I64) for k in "H NL S D mode pend".split()] + [(k, F64) for k in "eta1 eta2 lam lam1 theta".split()] + [(k, PD) for k in "W1 b1 W2 b2 R L0".split()] + [("hist", PI), ("nskip", PI), ("esum", F64), ("ecnt", I64)]
+    _fields_ = [(k, I64) for k in "H NL S D mode pend".split()] + [(k, F64) for k in "eta1 eta2 lam lam1 theta".split()] + [(k, PD) for k in "W1 b1 W2 b2 R L0".split()] + [("hist", PI), ("nskip", PI), ("eout", PD), ("esum", F64), ("ecnt", I64)]
 _lib = None
 def lib():
     global _lib
@@ -73,7 +73,7 @@ class Sk:
     def __init__(s, seed, H=256, eta1=.25, eta2=1 / 16, lam=1e-5, lam1=0.0):
         wr = np.random.default_rng([seed, 20261119]); s.H, s.eta1, s.eta2, s.lam, s.lam1 = H, eta1, eta2, lam, lam1
         s.W1 = wr.uniform(-.5, .5, (H, NL)); s.b1 = np.zeros(H); s.R = wr.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S)
-        s.hist = [END] * D; s.pend = 1; s.rule = False; s.theta = 0.5; s.ref = "birth"; s.Q0 = s.Q(); s.nskip = np.zeros(S, np.int64); s.fast = 0; s.esum = 0.0; s.ecnt = 0
+        s.hist = [END] * D; s.pend = 1; s.rule = False; s.theta = 0.5; s.ref = "birth"; s.Q0 = s.Q(); s.nskip = np.zeros(S, np.int64); s.fast = 0; s.esum = 0.0; s.ecnt = 0; s.eout = None      # eout: if a list, the squared mismatch at every byte read is appended (0 where nothing is named)
     def Qmat(s): return np.abs(s.W1).sum(0).reshape(D, S)                 # for each line: the sum of the sizes of the strengths that the cells hold from it
     def Q(s): return s.Qmat()[1:].sum(0)                                  # for each byte value: that sum over its nine chain lines
     def refQ(s): return s.Q0 if s.ref == "birth" else np.full(S, s.Q().mean())
@@ -87,8 +87,11 @@ class Sk:
         if adm: s.hist = [x, p] + s.hist[1:-1]
         else: s.hist[0] = x; s.nskip[p] += 1
         if fl is not None: s.pend = int(fl)
-        if y < 0: return
+        if y < 0:
+            if s.eout is not None: s.eout.append(0.0)
+            return
         act = OFF + np.asarray(s.hist); h, a = s.fwd(s.hist); m = -a; m[y] += 1; s.esum += float(m @ m); s.ecnt += 1; g = s.eta2 / (h @ h + 1)
+        if s.eout is not None: s.eout.append(float(m @ m))
         d = s.eta1 * (s.R @ m) * h * (1 - h); d2 = np.outer(g * m, h)
         s.R += d2.T; s.W1[:, act] = (s.W1[:, act] + d[:, None]) * (1 - s.lam1); s.b1 += d; s.W2 += d2; s.b2 += g * m; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
     def run(s, xs, ys, fl=None):
@@ -98,10 +101,13 @@ class Sk:
         n = KNet(); hist = np.asarray(s.hist, np.int64); L0 = np.ascontiguousarray(s.refQ(), np.float64)
         assert s.ref == "birth" or not s.rule, "the compiled kernel has the rule with ref=birth only"
         n.H, n.NL, n.S, n.D, n.mode, n.pend = s.H, NL, S, D, 2 if s.rule else 0, s.pend; n.esum = 0.0; n.ecnt = 0; n.eta1, n.eta2, n.lam, n.lam1, n.theta = s.eta1, s.eta2, s.lam, s.lam1, s.theta
+        eo = np.zeros(len(xs)) if s.eout is not None else None
+        if eo is not None: n.eout = pd(eo)
         n.W1, n.b1, n.W2, n.b2, n.R, n.L0 = pd(s.W1), pd(s.b1), pd(s.W2), pd(s.b2), pd(s.R), pd(L0); n.hist = hist.ctypes.data_as(PI); n.nskip = s.nskip.ctypes.data_as(PI)
         xs = np.ascontiguousarray(xs, np.int32); ys = np.ascontiguousarray(ys, np.int32); f = None if fl is None else np.ascontiguousarray(fl, np.uint8)
         lib().skip_steps(ctypes.byref(n), len(xs), xs.ctypes.data_as(P32), ys.ctypes.data_as(P32), None if f is None else f.ctypes.data_as(PU))
         s.hist = [int(v) for v in hist]; s.pend = int(n.pend); s.esum += float(n.esum); s.ecnt += int(n.ecnt)
+        if eo is not None: s.eout.extend(eo.tolist())
     def score(s, tx, pairs, gap, admit):
         """Whole answer right, %, and by place. Every line is read from the state left by the last line of the stream; nothing changes.
         admit(byte value) says whether a byte enters the chain (the clock as it stands now)."""

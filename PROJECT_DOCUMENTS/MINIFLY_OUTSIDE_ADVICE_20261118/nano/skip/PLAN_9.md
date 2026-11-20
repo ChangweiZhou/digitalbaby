@@ -28,3 +28,37 @@
 | X6 | `clock=oracle`: at least 85% | 0.90 |
 
 **Cost.** About 4 CPU-minutes a run of 2,400,000 lines; about 15 CPU-minutes. **Not run.** Contexts longer than one byte; fillers whose kind cannot be told from the byte before; the expectation rule on this text.
+
+## Outcome of the runs above (entered 20 November 2026; development seed 1; `res/p9_h2_*_s1.json`)
+
+`h2`, never-shown pairs with 0 / 2 / 4 fillers, mean of the last three readings:
+
+| Clock | Never-shown pairs | Closed at the end, of the entries that occur |
+|---|---|---|
+| trial, `key=pair` (2,400,000 lines) | 55.0 / 1.4 / 0.5 | 0 of the 40 (letter, digit); 0 of the 44 letters after `+` or a digit; 0 of the 152 others (one other entry closed at two readings and reopened) |
+| trial, `key=value` (2,400,000) | 62.3 / 1.7 / 0.8 | nothing |
+| `clock=none` (2,400,000) | 60.9 / 1.9 / 0.5 | |
+| `clock=oracle` (800,000) | 95.7 / 95.7 / 95.7 | the 40 and the 44, by the program |
+
+**How many entries come to exist** (the coordinator's question): of the 324 possible pairs 236 occur on this text (40 filler digits after a letter, 44 letters, 152 others), 4 numbers each.
+
+**H9 is refuted**: 1.4 and 0.5% with fillers, where 50% was asked; the rule closes nothing at all in 2,400,000 lines and the system stays where it is without a clock. **X1, X3, X4 failed. X2, X5 (emptily), X6 held.**
+
+**Where it fails (Reading, mine).** Not in the chain's recovery (the oracle arm is at 95.7%) and not by closing wrong entries (none is closed). The entries never gather evidence. I see two causes and the runs above do not part them. (i) Half a filler closed earns nothing: letters closed alone leave stray digits in the chain, and filler digits closed alone leave the letters, which is the text `g2` again; `key=value`, which can only do the first, indeed closes nothing. Only the two entries of one filler closed in the same period align a line. (ii) Each entry reads a number averaged over a period of 256 bytes, about 18 lines, while its own byte comes in about one of them: the 26 letters of `PLAN_5.md` each came about three times a period, these entries less than once. In `PLAN_5.md` I wrote that entries close in parallel; here they dilute each other's periods as well.
+
+## Addition 1 (20 November 2026, written before its runs): an entry listens only after its own byte; and what the expectation rule would propose here
+
+Received from the coordinating session while the runs above were going: it asks for the number of entries (given above) and for one further arm, the expectation rule as proposer of what to try closing and the mismatch as judge.
+
+**(a) A measurement first: what would the expectation rule propose on `h2`?** The table of `PLAN_7.md` (runs of up to 4 bytes, the next two bytes, counting across the end mark) after 400,000 lines; the share of bytes it would pass over by kind, at theta 0.2, 0.3, 0.5. *My reasoning before the run:* a filler has an inside. After its letter a digit is certain where before it a letter or the number was expected, and after its digit a letter or the number is expected where a digit was; so both bytes of a filler change the expectation and the rule should propose neither. The filler as a whole leaves the expectation where it was, but the rule looks at single bytes. Prediction Y1: at theta 0.2 under 10% of the filler letters and under 10% of the filler digits are passed over (chance 0.75). If so, the combined arm has nothing to combine on this text and is not run; I say so rather than build it.
+
+**(b) One change to the trial rule: when an entry draws and what it listens to.** `listen=16`: an entry draws its state anew each time its byte comes, and enters into its closed or open mean the answering cell's number averaged over only the 16 bytes that follow (in this text the answer is over within 16 bytes of any filler). Everything else as before (alpha 2, p0 0.2, floor 0.01; the tendencies brought up to date every 2,048 bytes; the fading the same in bytes). The number sent out is the same one, to all entries alike; what is new is that an entry attends to it only for a while after it has acted, which is local to the entry. This answers cause (ii) and not cause (i). T = 16 is a number set by hand for these texts and is to be reported as such. The z of two entries in one line share bytes, so the evidence is more confident than it has a right to be; alpha is left alone all the same.
+
+Runs (development seed 1): `g2`, `key=value`, 1,200,000 lines (the check that the listening form still does what the period form did: 95.1%); `h2`, `key=pair`, 2,400,000 lines; `h2`, `key=value`, 2,400,000 lines.
+
+| | Prediction (mine, before the runs) | Chance |
+|---|---|---|
+| Y2 | `g2`, `key=value`, listening: at least 85%, exactly the letters closed at the end | 0.65 |
+| Y3 | `h2`, `key=pair`, listening: at least 50% with 0, 2 and 4 fillers | 0.35 |
+| Y4 | `h2`, `key=pair`, listening: at least 20 of the 40 (letter, digit) entries closed at the end | 0.45 |
+| Y5 | `h2`, `key=pair`, listening: some entry of a digit after a digit, `+` or `=` is closed at the end (a wrong closing) | 0.40 |

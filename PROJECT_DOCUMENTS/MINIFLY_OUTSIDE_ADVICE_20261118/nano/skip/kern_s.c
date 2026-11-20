@@ -11,6 +11,7 @@ typedef struct {
     double eta1, eta2, lam, lam1, theta;
     double *W1, *b1, *W2, *b2, *R, *L0;                 /* L0: for each byte value, the reference that its sum is compared with (S numbers) */
     int64_t *hist, *nskip;                              /* hist[0]: the present byte; hist[1..D-1]: the chain. nskip: bytes passed over, by byte value */
+    double *eout;                                       /* may be null; else eout[i] = the squared mismatch at step i (0 where nothing is named) */
     double esum; int64_t ecnt;                          /* out: the sum over the bytes named of the answering cell's squared mismatches (summed over its branches), and their number */
 } KNet;
 
@@ -33,6 +34,7 @@ int64_t skip_steps(KNet *n, int64_t nsteps, const int32_t *xs, const int32_t *ys
         n->hist[0] = xs[i];
         if (fl) n->pend = fl[i];
         const int64_t y = ys[i];
+        if (n->eout) n->eout[i] = 0.0;
         if (y < 0) continue;
         for (int64_t j = 0; j < H; j++) u[j] = b1[j];
         for (int64_t d = 0; d < D; d++) { const double *restrict w = W1t + (d * S + n->hist[d]) * H; for (int64_t j = 0; j < H; j++) u[j] += w[j]; }
@@ -41,7 +43,7 @@ int64_t skip_steps(KNet *n, int64_t nsteps, const int32_t *xs, const int32_t *ys
         const double g = n->eta2 / (hh + 1.0);
         for (int64_t v = 0; v < S; v++) { const double *restrict w = W2 + v * H; double a = 0; for (int64_t j = 0; j < H; j++) a += w[j] * h[j]; m[v] = -(sc * a + n->b2[v]); }
         m[y] += 1.0;
-        { double e = 0; for (int64_t v = 0; v < S; v++) e += m[v] * m[v]; n->esum += e; n->ecnt++; }
+        { double e = 0; for (int64_t v = 0; v < S; v++) e += m[v] * m[v]; n->esum += e; n->ecnt++; if (n->eout) n->eout[i] = e; }
         for (int64_t j = 0; j < H; j++) r[j] = 0.0;
         for (int64_t v = 0; v < S; v++) { const double mv = m[v]; const double *restrict w = Rt + v * H; for (int64_t j = 0; j < H; j++) r[j] += mv * w[j]; }
         for (int64_t j = 0; j < H; j++) dv[j] = n->eta1 * sc * r[j] * h[j] * (1.0 - h[j]);
