@@ -8,7 +8,7 @@ His words to this session, in full:
 
 > The connection strength (ideally can involve many cells) should be jointly decided by the cells together. For example if one cell wants to drop out, then the connection strength to it should be zero no matter how willing other cells are. Obviously we can simplify the edge to only involve two cells, and perhaps refine even further to one sided edges, with inhibitory / excite signals respectively. But whether this is justified has to be answered by experiment. Similarly how the strength is fixed even in this case can be experimented, and you can try different rules. Also the network could have many different types of cells that adjusts around different time clocks, having different memory ability, ability to output signals (chemicals) etc. But we need to make sure not testing everything at once and leave a mess. My question is 1) where are we now? Are we ready for some nanogpt level experiment? 2) If not, can you revise the road map and keep doing some experiments? Spin off some agents to speed up the experiment process.
 
-and, a moment later: "Note you can scale the network or do whatever you like."
+and, a moment later: "Note you can scale the network or do whatever you like." After this revision was sent to him: "Keep experimenting, we are not going to break anything."
 
 What I take from it (these readings are mine):
 
@@ -62,15 +62,15 @@ Four tracks. Each step changes one thing and is scored beside what it changed fr
 | **C** | *Connections and cells* (`nano/joint`), on the small texts first, where a run takes seconds | | |
 | C1 | An edge decided by both ends (each end holds its own part of the strength and can set the connection to zero) against the one-sided edge | the same score, or a difference stated with its size | started 20 November |
 | C2 | The right to withdraw: either end, the receiving end only, the sending end only | stated | after C1 |
-| C3 | A connection of more than two cells (two sending cells jointly) against edges, at equal numbers of strengths | stated | after C2 |
+| C3 | A connection of more than two cells (two sending cells jointly) against edges, at equal numbers of strengths | stated | started 20 November (`nano/multi`) |
 | C4 | The sign: one-sided edges with excitatory and inhibitory senders (measured once: 70.7 against 84.2) together with C1 | stated | after C1 |
 | C5 | Rules for fixing a strength, one against another | stated | open |
-| C6 | Kinds of cells: clocks, memory, signals that reach many cells | stated | open |
+| C6 | Kinds of cells: clocks, memory, signals that reach many cells | stated | started 20 November (`nano/kinds`) |
 | **M** | *Memory* (the earlier R3 and R4) | | |
-| M1 | Two-digit numbers with letters between them: longer runs, then more cells, then a signal passed over two connections, one at a time | never-shown sums at every gap | two long runs started 20 November (`loop_small_case/PLAN_12.md`) |
+| M1 | Two-digit numbers with letters between them: longer runs, then more cells, then a signal passed over two connections, one at a time | never-shown sums at every gap | two long runs started 20 November (`loop_small_case/PLAN_12.md`); the signal over two connections started 20 November (`nano/cross2`) |
 | M2 | The first family's own items beside the record's reference | as R4 | after M1 |
 | **K** | *Keeping* (the earlier R5) | | |
-| K1 | Where a new task is written, settled by the cells and not by the program | the first task kept at the level the program's choice gives (67%) | open |
+| K1 | Where a new task is written, settled by the cells and not by the program | the first task kept at the level the program's choice gives (67%) | started 20 November (`nano/keep`) |
 
 The earlier steps map as follows: R1 is done at development level; R2 continues as C; R3 and R4 as M; R5 as K; R6 as L5.
 
@@ -91,6 +91,10 @@ The earlier steps map as follows: R1 is done at development level; R2 continues 
 | L1, then L2 | `nano/loop` | a separate agent session (`session_017dSEpWpbA9ALrDd5BncYTk`) | `claude/nano-loop-8mmhfm` | the loop on the test text |
 | C1, then C2 | `nano/joint` | a separate agent session (`session_017dSEpU7vrz76xk4M2iSTnY`) | `claude/nano-joint-8mmhfm` | edges decided by both ends |
 | M1 | `loop_small_case` | this session | `claude/friendly-darwin-8mmhfm` | two long runs of the eleventh plan's text (`PLAN_12.md`) |
+| M1, the signal over two connections | `nano/cross2` | a separate agent session (`session_017dSEpWDotjRLQF7DQRsnSU`) | `claude/nano-cross2-8mmhfm` | the forward program for two crossings, checked against the instrument; then three texts |
+| K1 | `nano/keep` | a separate agent session (`session_017dSEpXu5KdKMbirXHJwCXF`) | `claude/nano-keep-8mmhfm` | candidates by which the cells settle where the second task is written |
+| C3 | `nano/multi` | a separate agent session (`session_017dSEpW3ZFJMFsWvpL1fwEs`) | `claude/nano-multi-8mmhfm` | connections of three ends against edges at equal numbers of strengths |
+| C6 | `nano/kinds` | a separate agent session (`session_017dSEpWr5ht93HPhGeTZChy`) | `claude/nano-kinds-8mmhfm` | memory, clocks, a common signal: one at a time |
 
-Each agent session was started from this branch at fe397ca6 with a written brief: one line, one folder, a plan committed before each step's runs, settings chosen on the development seed, a numpy reference for every compiled program, and a short report to this session after each step. 
+The first three agent sessions were started from this branch at fe397ca6 and the last four at 260c5d73, after Mr. Xu's word to keep experimenting, each with a written brief: one line, one folder, a plan committed before each step's runs, settings chosen on the development seed, a numpy reference for every compiled program, and a short report to this session after each step. 
 Their results are merged into this branch and entered in the ledger as they come.
