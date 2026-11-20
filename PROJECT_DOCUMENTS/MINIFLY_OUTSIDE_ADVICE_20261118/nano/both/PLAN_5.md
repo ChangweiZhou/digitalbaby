@@ -36,3 +36,17 @@ What is task knowledge in it, stated: none in the lesson rule. The relay system'
 ## 4. Cost, what is not run
 
 Five runs of sums at about 15 CPU-minutes, five long lives at about 25, five short ones at about 3; four at a time, about an hour. Not run: the self-taught control; the counting system with lessons and no relay sender on real lines; other chunk sizes; any second look at the design.
+
+## 5. Addition 1 (20 November; written when four of the five sums runs of section 2 were in and before the runs it describes): the scored pairs kept out of the lessons
+
+*A doubt about my own score, which the readings so far make pressing* (four seeds at 400,000 lines: 99.4, 99.2, 95.5, 98.6). The relay system composes lines with operands drawn by chance, so about one new line in twenty begins as one of the 500 scored lines does. The system is never given the true answer of such a line: a lesson's target is the byte on which its own two kinds of cell agree, and no cell counts a lesson. But the trusts and the parts of the second cell are changed on those lines, so the scored lines are not, strictly, lines the system has met in no form. `PLAN_4.md` kept the scored pairs out of composing for the same reason.
+
+*The run.* The sums runs of section 2 again on the five reported seeds with one difference: a composed line that begins as a scored line does (its six bytes up to the equals sign) is not a lesson (`dream2.py ... excl=1`; this uses the program's knowledge of which lines are scored, for the score's sake only). **The figures of this arm are the ones to be read as never-shown in the strict sense; where the two arms differ, this one stands.**
+
+| | Statement (median of five seeds, joined second cell) | Chance |
+|---|---|---|
+| X1 | with the scored pairs kept out: at least 95 at 400,000 lines | 0.80 |
+| X2 | within 1.5 points of the arm of section 2 at 400,000 lines | 0.70 |
+| X3 | within 2 points of it at 40,000 lines | 0.70 |
+
+Cost: five runs of about 15 CPU-minutes beside the lives. The lives of section 2 are not run again in this form (stated as a limit of their figures).
