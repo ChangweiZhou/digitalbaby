@@ -76,3 +76,30 @@ Other fading rates; other births of the strengths from lines; steps that change 
 2. Since both chosen arms are born at nothing, the comparison the task asks for beside every figure (the arm against "born at nothing") is empty as planned. So that the birth of the return strengths is still shown on the claim seeds, each arm is also run with return strengths **born at the earlier size** (rscale = 1; same eta1 and eta2, not tuned for that birth): five seeds at 256 cells, the first three seeds at 1,024 cells. With return strengths born at nothing the rule equals back-propagation through this one-layer network (`loop_small_case/REPORT.md`, section 14); with rscale = 1 it does not.
 
 Cost of the claim runs as now set: 20 runs x 2 min + 16 runs x 8 min = 168 core-minutes, about 45 minutes of wall time.
+
+## Outcome (entered 20 November, 15:30 UTC, after the claim runs; nothing above is changed)
+
+Five reported seeds, 8 readings, D = 10; loss on the last tenth with learning off (`res/c_*.json`, `python3 tab.py`). Mean of the seeds; the range over seeds is at most 0.011 nats and 0.5 points in every row.
+
+| | 256 cells: nats; bits; named right | 1,024 cells: nats; bits; named right |
+|---|---|---|
+| arm LS, born at nothing (its chosen setting); loss crude | 2.0593; 2.9710; 47.56% | 1.9846; 2.8632; 48.47% |
+| arm P, born at nothing (its chosen setting) | **1.7917; 2.5848; 48.07%** | **1.7682; 2.5510; 48.63%** |
+| arm LS, born at the earlier size (not tuned for it) | 2.2111; 3.1899; 42.84% | 2.2133; 3.1931; 41.22% (3 seeds) |
+| arm P, born at the earlier size (not tuned for it) | 1.8275; 2.6365; 47.45% | 1.8416; 2.6569; 47.10% (3 seeds) |
+| unsmoothed tables of the last 2, 3, 4, 5 bytes (loss crude) | 2.070, 1.796, 1.755, 1.927 nats; 38.1, 47.2, 52.5, 53.7% | the same |
+
+**The hypothesis is not refuted.** Arm P's loss is below arm LS's crude loss by 0.268 nats with 256 cells and by 0.216 nats with 1,024, on every seed; it names 0.5 and 0.2 points more bytes right.
+
+**What this does and does not show (my reading).**
+- The gain is in the loss and hardly in the naming. Arm LS's loss is made from outputs that were never taught to be probabilities, so part of the 0.22 to 0.27 nats is the crudeness of that conversion and not a worse knowledge of the text; the share named right, which needs no conversion, differs by 0.2 to 0.5 points, of the order of the spread over seeds at 256 cells.
+- Both settings were chosen by loss. On the development seed (1,024 cells, 4 readings) arm LS with eta2 = 1/16 named 51.0% right at a worse crude loss (2.068), and arm P with eta2 = 1 named 48.9% at a worse loss (1.827). So by the share named right, each arm tuned for that, **least squares may name more bytes right than the competing branches**; this was not run on the claim seeds in this plan and is added to the queue of the next plans as a run beyond the plan (LS eta2 = 1/16 and P eta2 = 1, 1,024 cells, three seeds).
+- Arm P at 1,024 cells (1.768 nats) is below the unsmoothed table of the last 3 bytes (1.796) and above that of the last 4 (1.755); it names 48.6% right, between the tables of 3 (47.2%) and of 4 (52.5%).
+- Return strengths born at nothing are better than born at the earlier size in both arms (P: by 0.036 and 0.073 nats; LS: by 0.15 and 0.23), as on the prose of the tenth plan of `loop_small_case` and opposite to its two-digit sums. With that birth the rule is back-propagation through this one-layer network, so on this text the chosen arm contains nothing that back-propagation does not.
+- Four times the cells bought 0.024 nats (P) at these settings.
+
+**Predictions scored.** A1 held (every seed, all five). A2 held, by 0.16 points, which is within what I would call noise. A3 held (1.768). A4 failed (1.768 against 1.755). A5 held (born at nothing). A6 held emptily (the chosen arm is the arm born at nothing). A7 failed (0.024 nats, where I had said at least 0.05). A8 failed (eta1 = 4). Five of eight held, one of them emptily.
+
+**Corrections of my own text above.** The counts of numbers that learn in "The exact learner" are wrong by a slip of addition: they are 200,001 with 256 cells and 799,809 with 1,024 (return strengths counted apart), and 183,361 and 733,249 when return strengths born at nothing are not counted twice. The result files carry the right counts.
+
+**Cost.** Stages 1 to 3: 130 runs, about 100 core-minutes. Claim runs: 36 runs, about 170 core-minutes (14:48 to 15:30 on four cores). **Not run:** as listed in the plan; and the arm born at the earlier size on seeds 406364 and 545353 at 1,024 cells.

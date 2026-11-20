@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """nano/loop (roadmap steps L1 and L2): the loop of loop_small_case on the test text of nano/data, with the answering cell in two forms.
-    python3 loop.py run <label> [arm=P|LS] [H=256] [D=10] [eta1=1] [eta2=1/16] [rscale=1] [passes=8] [seed=1] [lam=1e-5] [numpy=1]
+    python3 loop.py run <label> [arm=P|LS] [H=256] [D=10] [eta1=1] [eta2=1/16] [rscale=1] [passes=8] [seed=1] [lam=1e-5] [numpy=1] [tied=1] [resume=1 [stop=n]]
     python3 loop.py tables
 The system is cells2.Sys of loop_small_case (plain: logistic cells, every line read, one step of relay), written again here with the number of byte
 values and of delay lines as arguments, and with the strengths held by line. step() is the numpy reference; kernp.c is the compiled inner loop and
@@ -8,6 +8,8 @@ check.py compares the two.
   arm=LS: mismatch = (1 for the byte that arrived, 0 for the others) - a, a = the branch outputs.
   arm=P : the branches compete: p = exp(a) / sum(exp(a)); mismatch = the same indicator - p. Everything else is identical.
   rscale: the size of the return strengths at birth, as a multiple of the earlier size (uniform in -1..1); 0 is 'born at nothing'.
+  tied=1 (rscale=0 only): kernt.c, which keeps the forward and return strengths as one copy; the same numbers, less work.
+  resume=1: the state is saved after each reading (log/, not committed) and a later call with the same label goes on from it; stop=n ends this part after reading n.
 The first nine tenths of the text are the stream, read `passes` times one byte at a time; the last tenth is never read by the learner. After each
 reading, with learning off, every byte of the last tenth is scored from the D bytes before it: loss in nats and bits, share named right."""
 import ctypes, json, os, subprocess, sys, time
@@ -24,6 +26,18 @@ def sg(u): return 1 / (1 + np.exp(-u))
 
 class PNet(ctypes.Structure):
     _fields_ = [(k, I64) for k in "H NL S D soft right".split()] + [(k, F64) for k in "eta1 eta2 lam loss".split()] + [(k, PD) for k in "W1t b1 W2 b2 Rt".split()] + [("hist", PI)]
+class TNet(ctypes.Structure):
+    _fields_ = [(k, I64) for k in "H NL S D soft right".split()] + [(k, F64) for k in "eta1 eta2 lam loss".split()] + [(k, PD) for k in "W1t b1 W2 b2".split()] + [("hist", PI)]
+_tlib = None
+def tlib():
+    """kernt.c: the kernel for return strengths born at nothing, which keeps one copy of the answering cell's strengths and the return strengths."""
+    global _tlib
+    if _tlib is None:
+        so = os.path.join(HERE, "kernt.so"); src = os.path.join(HERE, "kernt.c")
+        if not os.path.exists(so) or os.path.getmtime(so) < os.path.getmtime(src):
+            tmp = f"{so}.{os.getpid()}.tmp"; subprocess.check_call(["gcc", *FLAGS, "-o", tmp, src, "-lm"]); os.replace(tmp, so)
+        _tlib = ctypes.CDLL(so); _tlib.t_steps.restype = I64; _tlib.t_steps.argtypes = [ctypes.POINTER(TNet), I64, P32, P32]
+    return _tlib
 _lib = None
 def lib():
     global _lib
@@ -38,6 +52,7 @@ class Sys:
         wr = np.random.default_rng([seed, 20261119]); s.H, s.D, s.S, s.NL = H, D, S, D * S; s.eta1, s.eta2, s.lam, s.soft = eta1, eta2, lam, soft
         s.W1t = np.ascontiguousarray(wr.uniform(-.5, .5, (H, s.NL)).T); s.b1 = np.zeros(H)          # births as in cells2.Sys: strengths from lines uniform in -1/2..1/2
         s.Rt = np.ascontiguousarray(wr.uniform(-1, 1, (H, S)).T) * rscale                              # return strengths uniform in -1..1, times rscale
+        s.tied = 0                                        # 1: return strengths born at nothing, held as one copy with the forward ones (kernt.c)
         s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.OFF = np.arange(D) * S; s.hist = np.full(D, pad, np.int64); s.loss = 0.0; s.right = 0
     def branches(s, hist):
         """hist: positions by D (newest first) -> the answering cell's branch outputs a, for many positions at once."""
@@ -56,10 +71,15 @@ class Sys:
         if not fast:
             for x, y in zip(xs.tolist(), ys.tolist()): s.step(x, y)
             return
+        xs = np.ascontiguousarray(xs, np.int32); ys = np.ascontiguousarray(ys, np.int32)
+        if s.tied:
+            assert (s.Rt == s.W2).all(); n = TNet(); n.H, n.NL, n.S, n.D, n.soft, n.right = s.H, s.NL, s.S, s.D, s.soft, 0; n.eta1, n.eta2, n.lam, n.loss = s.eta1, s.eta2, s.lam, 0.0
+            for k in ("W1t", "b1", "W2", "b2"): setattr(n, k, getattr(s, k).ctypes.data_as(PD))
+            n.hist = s.hist.ctypes.data_as(PI); tlib().t_steps(ctypes.byref(n), len(xs), xs.ctypes.data_as(P32), ys.ctypes.data_as(P32)); s.Rt[:] = s.W2; s.loss += n.loss; s.right += n.right; return
         n = PNet(); n.H, n.NL, n.S, n.D, n.soft, n.right = s.H, s.NL, s.S, s.D, s.soft, 0; n.eta1, n.eta2, n.lam, n.loss = s.eta1, s.eta2, s.lam, 0.0
         for k in ("W1t", "b1", "W2", "b2", "Rt"):
             a = getattr(s, k); assert a.dtype == np.float64 and a.flags.c_contiguous; setattr(n, k, a.ctypes.data_as(PD))
-        n.hist = s.hist.ctypes.data_as(PI); xs = np.ascontiguousarray(xs, np.int32); ys = np.ascontiguousarray(ys, np.int32)
+        n.hist = s.hist.ctypes.data_as(PI)
         lib().p_steps(ctypes.byref(n), len(xs), xs.ctypes.data_as(P32), ys.ctypes.data_as(P32)); s.loss += n.loss; s.right += n.right
 
 def contexts(x, lo, hi, D):
@@ -101,14 +121,22 @@ def run(kw):
     t0 = time.process_time(); x, cut, S, pad = load(); D = int(kw.get("D", 10)); H = int(kw.get("H", 256)); soft = int(kw.get("arm", "P") == "P"); passes = int(kw.get("passes", 8))
     s = Sys(int(kw.get("seed", 1)), H, D, S, pad, eta1=float(eval(kw.get("eta1", "1"))), eta2=float(eval(kw.get("eta2", "1/16"))), lam=float(kw.get("lam", 1e-5)), rscale=float(kw.get("rscale", 1)), soft=soft)
     out = dict(label=kw["label"], args=kw, S=S, stream=cut, never_read=len(x) - cut, numbers_that_learn=dict(strengths_from_lines=H * D * S, thresholds=H, answering_cell=S * H + S, return_strengths=S * H), rows=[])
-    xs = x[:cut - 1]; ys = x[1:cut]; fast = not int(kw.get("numpy", 0))
-    for p in range(passes):
+    xs = x[:cut - 1]; ys = x[1:cut]; fast = not int(kw.get("numpy", 0)); s.tied = int(kw.get("tied", 0)); assert not s.tied or float(kw.get("rscale", 1)) == 0
+    ck = os.path.join(HERE, "log", f"ckpt_{kw['label']}.npz"); rf = os.path.join(HERE, "res", f"{kw['label']}.json"); cpu0 = 0.0
+    if int(kw.get("resume", 0)) and os.path.exists(ck) and os.path.exists(rf):     # a long run made in parts: the state after the last complete reading is taken up again
+        z = np.load(ck); old = json.load(open(rf))
+        if len(old["rows"]) == int(z["done"]):
+            for k in ("W1t", "b1", "W2", "b2", "Rt", "hist"): getattr(s, k)[:] = z[k]
+            out["rows"] = old["rows"]; cpu0 = old["rows"][-1]["cpu"]; out["parts"] = old.get("parts", 1) + 1
+    for p in range(len(out["rows"]), passes):
         s.loss = 0.0; s.right = 0; s.read(xs, ys, fast); r = score(s, x, cut, soft)
         if not np.isfinite(s.W2).all() or not np.isfinite(s.W1t).all(): r = dict(nats=float("inf"), bits=float("inf"), right=0.0)
-        r.update(passes=p + 1, stream_nats=s.loss / len(xs), stream_right=100 * s.right / len(xs), cpu=round(time.process_time() - t0, 1)); out["rows"].append(r)
-        json.dump(out, open(os.path.join(HERE, "res", f"{kw['label']}.json"), "w"))
+        r.update(passes=p + 1, stream_nats=s.loss / len(xs), stream_right=100 * s.right / len(xs), cpu=round(cpu0 + time.process_time() - t0, 1)); out["rows"].append(r)
+        if int(kw.get("resume", 0)): os.makedirs(os.path.dirname(ck), exist_ok=True); np.savez(ck + ".tmp.npz", done=p + 1, **{k: getattr(s, k) for k in ("W1t", "b1", "W2", "b2", "Rt", "hist")}); os.replace(ck + ".tmp.npz", ck)
+        json.dump(out, open(rf, "w"))
+        if "stop" in kw and p + 1 >= int(kw["stop"]) and p + 1 < passes: return out          # this part ends here; the next call with resume=1 goes on
         if not np.isfinite(r["nats"]): break
-    out["return_and_forward_cosine"] = float((s.Rt * s.W2).sum() / (np.linalg.norm(s.Rt) * np.linalg.norm(s.W2) + 1e-300)); out["cpu"] = round(time.process_time() - t0, 1)
+    out["return_and_forward_cosine"] = float((s.Rt * s.W2).sum() / (np.linalg.norm(s.Rt) * np.linalg.norm(s.W2) + 1e-300)); out["cpu"] = round(cpu0 + time.process_time() - t0, 1)
     json.dump(out, open(os.path.join(HERE, "res", f"{kw['label']}.json"), "w")); return out
 
 if __name__ == "__main__":
@@ -120,4 +148,4 @@ if __name__ == "__main__":
         json.dump(dict(tables=t, **base), open(os.path.join(HERE, "res", "tables.json"), "w"))
     else:
         kw = dict(a.split("=") for a in sys.argv[3:]); kw["label"] = sys.argv[2]; o = run(kw)
-        print(o["label"], "| " + " ".join(f"{r['passes']}: {r['nats']:.4f}n {r['right']:.2f}%" for r in o["rows"]), f"| cosine {o['return_and_forward_cosine']:.3f}", o["cpu"], "s", flush=True)
+        print(o["label"], "| " + " ".join(f"{r['passes']}: {r['nats']:.4f}n {r['right']:.2f}%" for r in o["rows"]), f"| cosine {o.get('return_and_forward_cosine', float('nan')):.3f}", o.get("cpu"), "s", flush=True)
