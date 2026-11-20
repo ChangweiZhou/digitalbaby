@@ -540,3 +540,7 @@ Below xz on all six. That line's own caution, which belongs beside the table: xz
 3. The measure of the programme should from now on be the loss while going on, over streams of unlike kinds, with general-purpose compressors beside it; the frozen tenth of tiny Shakespeare stays as one figure among others.
 4. Asked of that line next: the price of a bound on the store (a store of fixed size pruned by disuse; a lasting cell born only at a second meeting), since its system shows that the large gains do not come from the cells.
 
+## 21. A second level that counts (late on 20 November; `nano/table/PLAN_24.md`; mine)
+
+Answering cells put on answering cells added nothing (section 14). A second level of another form was tried: three kinds of cell keyed on the byte the first answering cell holds likeliest (with how sure it is; with the last byte; with the last two bytes), counting what actually comes, heard by the second answering cell with a trust born at nothing. On prose the second cell is 0.003 to 0.010 nats lower on five books of six and 0.001 higher on one (0.005 on average; a control of the same shape keyed on a byte that knows nothing of the answer: 0.0005); on sums nothing (+0.4 points). My predictions of 0.005 on every book and of a point on sums failed. Entered as a small gain on prose only, at almost no cost (8,600 cells); not shown general; offered to `nano/suite` for one run on its streams.
+
