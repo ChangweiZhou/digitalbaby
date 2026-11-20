@@ -16,6 +16,10 @@ quantities. numpy is the reference; fast=1 runs the same arithmetic compiled (ka
     join=sig theta=T [delta=.25 rhoE=1e-3 rhoS=1e-5] (PLAN_5.md): the answering cell keeps two running means of its squared mismatch, a fast one E (rate rhoE)
        and a slow one G (rate rhoS); the common signal is the excess X = max(0, E - (1+delta) G), which reaches every cell alike; cell H0+i joins when
        the running sum C of X passes (i+1)*T. No clock and no length of life is given.
+    join=hear K=k theta=T [rhoA=1e-2] (PLAN_6.md): the answering cell keeps a running mean A (rate rhoA) of the number of cells it hears (joined and not
+       silenced at the byte); the common signal is the shortfall X = max(0, 1 - A/k); cell H0+i joins when the running sum of X passes (i+1)*T.
+    meet=c (PLAN_7.md; with young): a strength is open after youth if its line was active on at least c of the cell's young bytes (c=1: PLAN_3.md's rule;
+       the count stops at 255). During its youth a cell is not silenced.
 With H0=H, law=0 and nothing else the arithmetic is that of the plain system of cells2.py."""
 import sys
 import numpy as np
@@ -26,7 +30,8 @@ class AgeSys(cells2.Sys):
     def __init__(s, seed, **k):
         super().__init__(seed, **k); o = OPT; H = s.H; H0 = int(o.get("H0", H)); life = int(o.get("life", 5400000))
         s.law = {"0": 0, "exp": 1, "hyp": 2}[o.get("law", "0")]; s.tau = float(o.get("tau", 1e5)); s.young = int(float(o.get("young", 0)))
-        s.usemode = {"0": 0, "sig": 1, "out": 2}[o.get("use", "0")]; s.sigjoin = int(o.get("join", "0") == "sig"); s.rhoE = float(o.get("rhoE", 1e-3)); s.rhoS = float(o.get("rhoS", 1e-5)); s.delta = float(o.get("delta", .25))
+        s.usemode = {"0": 0, "sig": 1, "out": 2}[o.get("use", "0")]; s.sigjoin = {"0": 0, "sig": 1, "hear": 2}[o.get("join", "0")]; s.K = float(o.get("K", 128)); s.rhoA = float(o.get("rhoA", 1e-2)); s.A = 0.0; s.meet = int(o.get("meet", 1))
+        assert 1 <= s.meet <= 255; s.rhoE = float(o.get("rhoE", 1e-3)); s.rhoS = float(o.get("rhoS", 1e-5)); s.delta = float(o.get("delta", .25))
         s.blaw = {"0": 0, "exp": 1, "hyp": 2}[o.get("blaw", "0")]; s.btau = float(o.get("btau", 1e5)); s.G = 0.0
         s.born = np.zeros(H, np.int64); i = np.arange(1, H - H0 + 1)
         s.thr = np.zeros(H)
@@ -45,7 +50,10 @@ class AgeSys(cells2.Sys):
     def learn(s, y):
         s.join(); rate = s.rate(); live = (np.arange(s.H) < s.nl); act = OFF + np.asarray(s.hist); h = sg(s.W1[:, act].sum(1) + s.b1) * live
         if s.young:
-            yg = np.nonzero(live & (s.n - s.born < s.young))[0]; s.seen[np.ix_(yg, act)] = 1; op = s.seen[:, act].all(1); h = h * op; rate = rate * op      # silent at this byte: unchanged, the fading included
+            ygm = live & (s.n - s.born < s.young); yg = np.nonzero(ygm)[0]; blk = s.seen[np.ix_(yg, act)]; s.seen[np.ix_(yg, act)] = np.where(blk < 255, blk + 1, 255)
+            op = ygm | (s.seen[:, act] >= s.meet).all(1); h = h * op; rate = rate * op      # silent at this byte: unchanged, the fading included
+            heard = int((live & op).sum())
+        else: heard = int(live.sum())
         m = -(s.W2 @ h + s.b2); m[y] += 1; g = s.eta2 / (h @ h + 1)
         raw = (s.R @ m) * h * (1 - h); sig = raw * rate; d2 = np.outer(g * m, h * rate)
         s.W1[:, act] += s.eta1 * sig[:, None]; s.b1 += s.eta1 * sig
@@ -53,7 +61,8 @@ class AgeSys(cells2.Sys):
         s.b2 += g * m * (np.exp(-s.n / s.btau) if s.blaw == 1 else 1 / (1 + s.n / s.btau) if s.blaw == 2 else 1.0)
         if s.usemode == 1: s.U += np.abs(raw)
         elif s.usemode == 2: s.U += h
-        s.E += s.rhoE * (m @ m - s.E); s.G += s.rhoS * (m @ m - s.G); s.C += max(0.0, s.E - (1 + s.delta) * s.G); s.n += 1
+        s.E += s.rhoE * (m @ m - s.E); s.G += s.rhoS * (m @ m - s.G); s.A += s.rhoA * (heard - s.A)
+        s.C += max(0.0, 1 - s.A / s.K) if s.sigjoin == 2 else max(0.0, s.E - (1 + s.delta) * s.G); s.n += 1
     def flush(s):
         if len(s.bx): import fastage; fastage.run(s)
     def out(s, u):
@@ -63,17 +72,17 @@ class AgeSys(cells2.Sys):
         s.flush(); Ls = np.array([cells2.text(op, a, b) for a, b in pairs]); ok = np.ones(len(pairs), bool); W1T = s.W1.T; pl = np.zeros(3); live = np.arange(s.H) < s.nl
         for t in (5, 6, 7):
             hist = np.full((len(pairs), D), cells2.END); hist[:, :t + 1] = Ls[:, t::-1]; h = sg(W1T[OFF + hist].sum(1) + s.b1) * live
-            if s.young: h = h * s.seen.T[OFF + hist].all(1)
+            if s.young: h = h * ((s.seen.T[OFF + hist] >= s.meet).all(1) | (live & (s.n - s.born < s.young)))
             r = (h @ s.W2.T + s.b2).argmax(1) == Ls[:, t + 1]; ok &= r; pl[t - 5] = r.sum()
         return [int(round(100 * x / len(pairs))) for x in pl] if place else float(100 * ok.sum() / len(pairs))
     def census(s, held=None):
-        c = dict(joined=int(s.nl), n=int(s.n), E=float(s.E), G=float(s.G), C=float(s.C), born=[int(x) for x in s.born[:s.nl]])
+        c = dict(joined=int(s.nl), n=int(s.n), E=float(s.E), G=float(s.G), C=float(s.C), A=float(s.A), born=[int(x) for x in s.born[:s.nl]])
         if s.young and held:                          # a measure, not used by the system: joined cells that are not silenced on never-shown lines at the answer positions
             live = np.arange(s.H) < s.nl; o = {}
             for op in "+-":
                 Ls = np.array([cells2.text(op, a, b) for a, b in held[op]]); m = []
                 for t in (5, 6, 7):
-                    hist = np.full((len(Ls), D), cells2.END); hist[:, :t + 1] = Ls[:, t::-1]; m.append(s.seen.T[OFF + hist].all(1) & live)
+                    hist = np.full((len(Ls), D), cells2.END); hist[:, :t + 1] = Ls[:, t::-1]; m.append((s.seen.T[OFF + hist] >= s.meet).all(1) & live)
                 o[op] = np.concatenate(m).mean(0)      # for each cell, the share of such lines on which it may speak
             c.update(cells_speaking_on_addition=float(o["+"].sum()), cells_speaking_on_subtraction=float(o["-"].sum()), cells_speaking_on_both=int(((o["+"] > .5) & (o["-"] > .5)).sum()),
                      cells_mostly_on_addition_only=int(((o["+"] > .5) & (o["-"] <= .5)).sum()), cells_mostly_on_subtraction_only=int(((o["+"] <= .5) & (o["-"] > .5)).sum()))

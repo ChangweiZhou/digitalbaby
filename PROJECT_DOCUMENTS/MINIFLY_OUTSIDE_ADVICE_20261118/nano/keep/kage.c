@@ -4,14 +4,16 @@
    young > 0: a strength from a line is open once that line was active while the cell was younger than `young` bytes; a cell with a closed
    strength on an active line is silent at that byte and unchanged by it (rate nothing: no fading either).
    blaw (PLAN_4.md): the answering cell's steps on its constants shrink with its age n. sigjoin (PLAN_5.md): cells join on the common signal.
+   sigjoin 2 (PLAN_6.md): the signal is the shortfall of the number of cells the answering cell hears. meet (PLAN_7.md): a strength is open after youth
+   if its line was active on at least `meet` young bytes.
    usemode > 0: the rate is 1/(1+U[j]/tau) with U[j] the cell's own accumulated use.
    Built by fastage.py:  gcc -O3 -march=native -ffast-math -shared -fPIC -o kagek.so kage.c -lm                                               */
 #include <math.h>
 #include <stdint.h>
 
 typedef struct {
-    int64_t H, NL, S, D, n, law, young, usemode, sigjoin, nl, blaw;
-    double eta1, eta2, lam, tau, E, rhoE, C, G, rhoS, delta, btau;
+    int64_t H, NL, S, D, n, law, young, usemode, sigjoin, nl, blaw, meet;
+    double eta1, eta2, lam, tau, E, rhoE, C, G, rhoS, delta, btau, A, rhoA, K;
     double *W1, *b1, *W2, *b2, *R, *U, *thr;
     int64_t *born, *hist;
     uint8_t *seen;
@@ -40,10 +42,11 @@ void age_steps(ANet *q, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
         else if (q->law == 1) for (int64_t j = 0; j < nl; j++) rate[j] = exp(-(double)(n - q->born[j]) / tau);
         else if (q->law == 2) for (int64_t j = 0; j < nl; j++) rate[j] = 1.0 / (1.0 + (double)(n - q->born[j]) / tau);
         else for (int64_t j = 0; j < nl; j++) rate[j] = 1.0;
+        int64_t heard = nl;
         if (q->young) for (int64_t j = 0; j < nl; j++) {
             uint8_t *sn = q->seen + j * NL;
-            if (n - q->born[j] < q->young) for (int64_t d = 0; d < D; d++) sn[act[d]] = 1;
-            else { int ok = 1; for (int64_t d = 0; d < D; d++) ok &= sn[act[d]]; if (!ok) { h[j] = 0.0; rate[j] = 0.0; } }
+            if (n - q->born[j] < q->young) { for (int64_t d = 0; d < D; d++) if (sn[act[d]] < 255) sn[act[d]]++; }      /* in its youth a cell counts the bytes at which each line is active */
+            else { int ok = 1; for (int64_t d = 0; d < D; d++) ok &= (sn[act[d]] >= q->meet); if (!ok) { h[j] = 0.0; rate[j] = 0.0; heard--; } }
         }
         double hh = 0; for (int64_t j = 0; j < nl; j++) hh += h[j] * h[j];
         const double g = q->eta2 / (hh + 1.0);
@@ -63,7 +66,8 @@ void age_steps(ANet *q, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
         const double gb = g * (q->blaw == 1 ? exp(-(double)n / q->btau) : q->blaw == 2 ? 1.0 / (1.0 + (double)n / q->btau) : 1.0);
         for (int64_t v = 0; v < S; v++) q->b2[v] += gb * m[v];
         q->E += q->rhoE * (mm - q->E); q->G += q->rhoS * (mm - q->G);
-        { const double x = q->E - (1.0 + q->delta) * q->G; if (x > 0.0) q->C += x; }      /* the common signal: the mismatch above its usual size */
+        q->A += q->rhoA * ((double)heard - q->A);
+        { const double x = q->sigjoin == 2 ? 1.0 - q->A / q->K : q->E - (1.0 + q->delta) * q->G; if (x > 0.0) q->C += x; }      /* the common signal: the mismatch above its usual size */
         q->n = n + 1;
     }
 }
