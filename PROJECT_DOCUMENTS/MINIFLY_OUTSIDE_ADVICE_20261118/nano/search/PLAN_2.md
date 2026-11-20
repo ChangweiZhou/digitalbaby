@@ -34,3 +34,25 @@ The hypothesis as in `PLAN_1.md`, section 4. It is **refuted** if either text is
 | H | the whole hypothesis | 0.02 |
 
 **Size and cost.** Store 2^22 cells and 131,072 kept bytes with eight guesses each, for every run; about 150 CPU-minutes in all. **Not run:** a fifth task; more seeds; another setting; a larger store.
+
+## 4. Outcome (entered 20 November; `res/c_*`, raw lines `out_c.txt`, `out_c_ctl400.txt`; table `report_2.txt`; the whole in `REPORT.md`)
+
+Two-digit sums at 40,000 lines, median of five of the last-three mean: searched 59.5 (68.3, 47.4, 59.5, 43.9, 67.9); control 1.4; `nrep` 8: 62.9; `nrep` 32: 72.5. At 400,000 lines: searched 50.7 (73.5, 28.3, 40.5, 56.7, 50.7); control 1.1. The life: addition 64.6 before, 43.4 after (60.4% of its level at the median); subtraction clean score 78.2. Three-digit sums at 40,000 lines: searched 65.6, control 0.9. Prose (bryant, burgess, carroll): searched 1.5699, 1.3419, 1.5519; control 1.9225, 1.7992, 1.8822; `nrep` 8: 1.5703, 1.3368, 1.4882; `nrep` 32: 1.6299, 1.3524, 1.4674; six hand-given runs in this program 1.5671, 1.4370, 1.5188; T0 1.5023, 1.3645, 1.4456.
+
+**The hypothesis does not hold as a whole and is not refuted by its own criterion**: search is far above unsearched random kinds on both texts with one setting; the levels asked (85%; T0 less 0.01 on each book) are not reached, and doubling the number tried gives no order.
+
+| | Statement | Outcome |
+|---|---|---|
+| P1 | sums at least 85% at 40,000 lines | failed (59.5) |
+| P2 | search above control on every seed | held |
+| P3 | below T0 by 0.01 on each book | failed (one book of three) |
+| P4 | search below control on each book | held |
+| P5 | `nrep` 32 better than 16 on sums and all books | failed |
+| P6 | `nrep` 16 better than 8 on sums and all books | failed |
+| P7 | 400,000 lines at least 85% | failed (50.7) |
+| P8 | three-digit: at least 50% at 40,000; at least 70% at 400,000 | held (65.6); not run |
+| P9 | addition kept at 85% of its level; subtraction clean at least 60 | failed (60.4); held (78.2) |
+| P10 | a kind of digits with a guess among the five top earners on at least three seeds | held (five of five) |
+| H | the whole | failed |
+
+**Departures from the plan, for time.** Three-digit sums at 400,000 lines were started and stopped (no figure). The control at 400,000 lines was run after the queue was cut and restarted (same commands, `jobs_c_ctl400.txt`). The queue was run with more processes than cores for a few minutes; CPU figures are process times and are not affected.

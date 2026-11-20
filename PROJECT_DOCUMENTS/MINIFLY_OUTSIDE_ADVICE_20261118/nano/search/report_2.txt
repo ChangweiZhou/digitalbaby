@@ -1,0 +1,69 @@
+== Two-digit sums, never-shown pairs, own bytes, whole answer right, % (seeds 73129, 93683, 116089, 406364, 545353)
+40,000 lines, search (nrep 16) (5 seeds): last three [68.3, 47.4, 59.5, 43.9, 67.9]; median 59.5 | last reading [71.8, 47.2, 64.6, 42.6, 67.6]; median 64.6 | by place, last reading, median [96.8, 65.6, 100.0]
+      cells 1690475, counts above zero 16717586, displaced 530460, tried 1264, CPU-s 60 (medians)
+40,000 lines, control (same 128 random kinds, never changed) (5 seeds): last three [0.5, 45.7, 0.5, 18.9, 1.4]; median 1.4 | last reading [1.0, 46.0, 0.0, 19.0, 1.4]; median 1.4 | by place, last reading, median [79.0, 12.0, 9.4]
+      cells 385536, counts above zero 4909393, displaced 251, tried 128, CPU-s 21 (medians)
+40,000 lines, nrep 8 (5 seeds): last three [78.5, 43.9, 65.9, 56.0, 62.9]; median 62.9 | last reading [79.6, 46.8, 65.4, 58.4, 61.8]; median 61.8 | by place, last reading, median [97.2, 62.0, 100.0]
+      cells 1378206, counts above zero 13698421, displaced 73307, tried 496, CPU-s 31 (medians)
+40,000 lines, nrep 32 (5 seeds): last three [75.7, 69.9, 51.4, 73.4, 72.5]; median 72.5 | last reading [78.2, 70.2, 51.4, 73.6, 73.0]; median 73.0 | by place, last reading, median [97.8, 73.2, 100.0]
+      cells 1281022, counts above zero 12197906, displaced 198178, tried 1600, CPU-s 50 (medians)
+400,000 lines, search (nrep 16) (5 seeds): last three [73.5, 28.3, 40.5, 56.7, 50.7]; median 50.7 | last reading [73.2, 28.4, 46.2, 60.0, 49.8]; median 49.8 | by place, last reading, median [97.8, 51.6, 100.0]
+      cells 1704818, counts above zero 21069748, displaced 10977304, tried 7904, CPU-s 435 (medians)
+400,000 lines, control (5 seeds): last three [0.0, 15.5, 0.3, 20.7, 1.1]; median 1.1 | last reading [0.0, 13.2, 0.2, 21.0, 1.4]; median 1.4 | by place, last reading, median [75.4, 10.2, 10.4]
+      cells 432526, counts above zero 7604952, displaced 4186, tried 128, CPU-s 202 (medians)
+    c_s2_400k_n16_%d median by lines: {10000: 54.4, 20000: 57.6, 40000: 64.6, 100000: 72.4, 200000: 61.6, 300000: 32.8, 400000: 49.8}
+    c_s2_400k_n0_%d median by lines: {10000: 1.0, 20000: 0.8, 40000: 1.4, 100000: 0.8, 200000: 1.2, 300000: 1.0, 400000: 1.4}
+
+== The life add:40000, sub:20000 (search, nrep 16)
+addition before [71.8, 47.2, 64.6, 42.6, 67.6]; median 64.6 | after [43.4, 50.8, 68.2, 9.2, 36.0]; median 43.4 | after as % of before [60.4, 107.6, 105.6, 21.6, 53.3]; median 60.4
+subtraction at the end: clean score [78.22, 70.83, 78.75, 69.23, 79.52]; median 78.2 (pairs: [101, 96, 80, 104, 83]) | all 500 held-out pairs [84.6, 89.6, 93.2, 79.0, 93.4]; median 89.6
+      cells 1690475, counts above zero 16717586, displaced 530460, tried 1264, CPU-s 60 (medians)
+
+== Three-digit sums (aaa+bbb=cccc), never-shown pairs, own bytes, whole answer, %
+40,000 lines, search (5 seeds): last three [40.3, 65.6, 40.7, 72.3, 71.7]; median 65.6 | last reading [48.2, 78.0, 34.6, 71.6, 75.2]; median 71.6 | by place, last reading, median [98.2, 81.6, 80.2, 100.0]
+      cells 2527557, counts above zero 27066953, displaced 1760137, tried 1104, CPU-s 59 (medians)
+40,000 lines, control (5 seeds): last three [0.3, 59.6, 29.5, 0.9, 0.0]; median 0.9 | last reading [0.4, 58.0, 31.4, 1.2, 0.0]; median 1.2 | by place, last reading, median [91.8, 18.6, 20.0, 26.4]
+      cells 564601, counts above zero 8798273, displaced 1897, tried 128, CPU-s 32 (medians)
+400,000 lines, search: NOT RUN
+
+== Prose: tiny Shakespeare's stream, then three books; each book's last tenth right after its stream, nats per byte (other lines: T0 1.5023, 1.3645, 1.4456; T2 1.4802, 1.3162, 1.4109)
+search (nrep 16): bryant 1.5699 (55.6% right; before reading it 1.8193), burgess 1.3419 (62.6% right; before reading it 1.6911), carroll 1.5519 (59.1% right; before reading it 1.8313) | last tenth of tiny Shakespeare at the end 2.0998
+      cells 3800049, counts above zero 35763051, displaced 55549795, tried 2880, CPU-s 315.3
+control (128 random kinds never changed): bryant 1.9225 (43.6% right; before reading it 2.1126), burgess 1.7992 (47.5% right; before reading it 2.0288), carroll 1.8822 (46.7% right; before reading it 2.1280) | last tenth of tiny Shakespeare at the end 1.9983
+      cells 4040704, counts above zero 63135632, displaced 4846055, tried 128, CPU-s 256.6
+nrep 8: bryant 1.5703 (55.4% right; before reading it 1.8389), burgess 1.3368 (62.1% right; before reading it 1.6915), carroll 1.4882 (60.2% right; before reading it 1.8180) | last tenth of tiny Shakespeare at the end 1.9843
+      cells 3885267, counts above zero 36603445, displaced 48258505, tried 1504, CPU-s 253.9
+nrep 32: bryant 1.6299 (55.4% right; before reading it 1.8202), burgess 1.3524 (62.3% right; before reading it 1.7533), carroll 1.4674 (60.4% right; before reading it 1.8437) | last tenth of tiny Shakespeare at the end 1.8979
+      cells 3714428, counts above zero 29981317, displaced 52786430, tried 5632, CPU-s 404.8
+six hand-given runs of 1..6 bytes, this program, no search (orientation): bryant 1.5671 (54.8% right; before reading it 1.7793), burgess 1.4370 (58.1% right; before reading it 1.7042), carroll 1.5188 (57.8% right; before reading it 1.7683) | last tenth of tiny Shakespeare at the end 1.6003
+      cells 578940, counts above zero 6179241, displaced 378, tried 6, CPU-s 18.5
+
+== The kinds that earned most on the answer at the end (lines: dN = the byte N places back; gR.H = the guess of layer R of the byte H ahead; earnings in nats summed over the kind's life)
+two-digit sums 40,000+20,000 lines, seed 73129: [d4 d6 d7 d15] 468 (age 58); [d4 d5 d6 d7] 454 (age 58); [d2 d4 d7 d12 g0.2] 445 (age 41); [d1 d3 d4 d12] 394 (age 65); [d4 d7 d16] 275 (age 40); [d3 d4 d5 d7] 251 (age 37); [d9 d13 g0.1 g0.2] 206 (age 36); [g1.1 g1.2 g1.3] 181 (age 14); [d1 d3 d4 d14] 175 (age 20); [d10 d12 g0.1 g0.2] 160 (age 26)
+two-digit sums 40,000+20,000 lines, seed 93683: [g0.3 g1.1 g1.2] 847 (age 73); [d4 d6 d7 d12] 504 (age 66); [d1 d2 d4 d7] 455 (age 26); [d3 d4 d7 g0.3] 308 (age 52); [d3 d11] 303 (age 22); [d4 d5 d6 d7 d12] 294 (age 56); [d1 d3 d4 g0.2 g0.3] 240 (age 67); [d2 d3 d4 d7] 239 (age 19); [d3 d5 d6 d11 g0.1] 175 (age 48); [d1 d4 g0.1 g0.2 g0.3] 133 (age 47)
+two-digit sums 40,000+20,000 lines, seed 116089: [g1.1 g1.2 g1.3] 790 (age 73); [d3 d4 d6 d7] 674 (age 62); [d3 d4 d6 d7 g0.2] 668 (age 59); [d1 g0.1 g0.2] 593 (age 61); [d1 d4 d7 d8 d15] 420 (age 53); [d4 d7 d11 d15] 392 (age 24); [d3 d4 d5 d6 d7] 304 (age 50); [d3 d11] 273 (age 23); [d1 d3 d4 d12] 211 (age 56); [d3 d4 d6 d7 d16] 202 (age 58)
+two-digit sums 40,000+20,000 lines, seed 406364: [d2 d3 d5 g0.1 g0.2] 490 (age 68); [d1 d4 d5 d7 g0.3] 434 (age 62); [d3 g0.1 g0.2 g0.3] 274 (age 57); [d1 d3 d4] 274 (age 59); [d1 d2 d4 d5 d7] 266 (age 53); [d8 g0.1 g1.1] 262 (age 18); [d2 d3 g0.1 g0.2] 229 (age 28); [d4 d7 d16] 214 (age 26); [d1 d2 d4 d5 d7 d12] 188 (age 51); [d2 d3 d4 d5 g0.1 g0.2] 180 (age 49)
+two-digit sums 40,000+20,000 lines, seed 545353: [d3 d6 d15 g0.1] 503 (age 73); [d4 d5 d7 g0.3] 358 (age 58); [d4 d7 d16] 310 (age 69); [d1 d3 d4 d6 d7] 278 (age 50); [d1 d3 d4 g0.3] 268 (age 31); [d4 d6 d7 d12 d16] 247 (age 69); [d3 d4 d6 d7 d15] 243 (age 45); [d2 d7 g0.1 g0.2] 205 (age 40); [d1 d3 d4 d6 d7 d15] 182 (age 48); [d10 d12 g0.1 g0.2] 119 (age 37)
+two-digit sums 400,000 lines, seed 73129: [d1 d3 d4 d12] 5517 (age 480); [d1 d2 d3 d4 d5] 1860 (age 397); [d4 d5 d6 d7] 594 (age 473); [d4 d6 d7 d15] 569 (age 473); [d1 d2 d3 d4 d5 d6] 508 (age 426); [d2 d3 d5 d6 g0.1] 426 (age 450); [d11 d12 g1.1] 416 (age 299); [d1 d12] 398 (age 472); [d10 d11] 386 (age 473); [d2 d3 d5 d6 g0.1 g0.3] 301 (age 439)
+two-digit sums 400,000 lines, seed 93683: [d1 d2 d3 d4] 2128 (age 366); [d1 d3 d4 g0.2] 1923 (age 398); [d1 d2 d3 d4 d5] 1693 (age 376); [d4 d7 d12 g0.2 g1.2] 1122 (age 468); [d1 d2 d12 g0.1 g0.2] 926 (age 449); [d4 d6 d7 d12] 828 (age 481); [d4 d7 d15] 776 (age 478); [d1 d5 g0.1 g0.2] 731 (age 447); [d2 d12 g0.1 g0.2] 722 (age 424); [d1 d4 g0.1 g0.2 g0.3] 517 (age 462)
+two-digit sums 400,000 lines, seed 116089: [d1 d3 d4 d9] 6031 (age 461); [d2 g0.3 g1.1] 1016 (age 436); [d1 d2 d3 d4 g0.4] 788 (age 191); [d2 d12 g0.1 g0.2] 699 (age 427); [d3 d4 d6 d7 d16] 588 (age 473); [d3 d4 d6 d7 d12] 443 (age 469); [d2 d5 d7 g0.1] 397 (age 434); [d3 d4 d5 d6 d7] 301 (age 465); [d13 g0.1 g0.3 g0.4] 241 (age 427); [d1 g0.2 g1.1] 235 (age 288)
+two-digit sums 400,000 lines, seed 406364: [d1 d2 d3 d4] 4531 (age 426); [d1 d3 d4 d12] 3377 (age 435); [d6 d12 g1.1] 1271 (age 427); [d8 d9] 638 (age 488); [d6 g1.1 g1.3] 481 (age 394); [d1 d2 d4 d5 d7 g0.1] 434 (age 442); [d9 d11] 423 (age 477); [d1 d12 g1.1] 395 (age 320); [d4 d7 g0.2] 340 (age 452); [d1 d3 g0.1 g0.2 g0.3] 275 (age 422)
+two-digit sums 400,000 lines, seed 545353: [d1 d3 d4 g0.2 g0.3] 3907 (age 408); [d1 d3 d4 d9] 3532 (age 417); [d12 g1.1 g1.2] 1078 (age 460); [d2 d7 g0.1 g0.2] 494 (age 455); [d1 d2 d5 g0.1] 430 (age 366); [d1 d2 d5 g0.1 g0.2] 387 (age 419); [d1 d2 g0.1] 353 (age 320); [d2 g0.1 g0.2] 323 (age 413); [d7 d16] 322 (age 473); [d4 d5 d7 d8] 320 (age 465)
+prose, end of the life: [d1 d2 d3 d4] 2892 (age 118); [d1 d2 d3 d5 d6] 919 (age 133); [d2 d3 d4 d5] 610 (age 80); [d1 d2 d4 d5 d6 d7] 592 (age 79); [d1 d2 d3 d4 g0.1] 564 (age 65); [d1 d2 d3 d4 d5] 508 (age 42); [d1 d2 d3 d4 d6] 440 (age 88); [d1 d2 g1.1] 416 (age 21); [d1 d3 d4 d5 d6] 377 (age 70); [d1 d2 d3 d4 d7] 377 (age 121)
+prose, after tiny Shakespeare's stream: [d1 d2 d3 d4 d5] 3282; [d1 d2 d3 g0.1] 3114; [d1 d2 d3 d5] 1653; [d1 d2 d3 d4 d5 d6] 1531; [d1 d2 d4] 1364; [d1 d2 d3 d4 g0.4] 1313; [d1 d2 d3 g1.1] 1210; [d1 d2 d4 d5] 1181; [d1 d2 d3 d4] 921; [d1 d2 d3 d4 d5 d7] 879; [d1 d2 d4 g0.2] 806; [d1 d2 d3 d4 d7 d8] 620
+   prose: of 128 kinds alive at the end 38 are keyed on a guess; of the 20 that earned most: 3 keyed on a guess, mean number of lines 4.7, furthest place back used 10
+   sums seed 73129: of 128 kinds alive at the end 48 are keyed on a guess; of the 20 that earned most: 10 keyed on a guess, mean number of lines 4.1, furthest place back used 16
+   sums seed 93683: of 128 kinds alive at the end 52 are keyed on a guess; of the 20 that earned most: 9 keyed on a guess, mean number of lines 4.4, furthest place back used 15
+   sums seed 116089: of 128 kinds alive at the end 52 are keyed on a guess; of the 20 that earned most: 6 keyed on a guess, mean number of lines 4.0, furthest place back used 16
+   sums seed 406364: of 128 kinds alive at the end 55 are keyed on a guess; of the 20 that earned most: 12 keyed on a guess, mean number of lines 4.0, furthest place back used 16
+   sums seed 545353: of 128 kinds alive at the end 51 are keyed on a guess; of the 20 that earned most: 8 keyed on a guess, mean number of lines 3.8, furthest place back used 16
+
+== PLAN_3.md: 256 kinds alive, nrep 32
+two-digit sums, 40,000 lines: last three [78.73, 73.8, 85.4, 87.93, 57.33]; median 78.7 | last reading [75.0, 73.2, 85.8, 89.0, 59.2]; median 75.0 | medians: cells 2810657, counts above zero 27908873, displaced 3032034, tried 1728, CPU-s 97
+prose: bryant 1.6174, burgess 1.3546, carroll 1.6038 | last tenth of tiny Shakespeare at the end 2.2031 | cells 4103455, counts above zero 37388190, displaced 198043403, tried 5760, CPU-s 626.4
+top kinds, sums seed 73129: [d4 d7 d12 g1.2]; [d4 d6 d7 g0.2]; [d4 d6 d7]; [d2 d3 g0.1 g0.2]; [d4 d7 g0.2 g0.3]; [d4 d6 d7 g0.2 g1.3]; [g1.1 g1.2 g1.3]; [d1 d3 d6 d12 g0.1]
+top kinds, sums seed 93683: [d2 d6 g0.1 g1.2]; [d2 d4 d5 d7]; [d4 d5 d7]; [d1 d4 d7 d12 g0.2]; [d4 d5 d7 d15 g1.2]; [d1 d3 d4 g0.2 g0.3]; [d4 d5 d6 d7]; [d3 d6 d11 g0.1]
+top kinds, sums seed 116089: [d3 d4 d7 d12]; [d3 d4 d6 d7 d12]; [d1 d4 d7 g0.2]; [d4 d7 d8 g0.2]; [d2 d4 d7]; [d2 d4 d6 d7 d12]; [d1 d3 d4 d12]; [d2 d4 d6 d7 d12 g1.2]
+top kinds, sums seed 406364: [d1 d3 d4 d5]; [d2 d3 d4 d7]; [d2 d4 d7 g0.2]; [d2 d4 d7 g0.2 g0.3]; [d2 d4 d5 d7 g0.2]; [d2 d4 d7 d15 g0.2]; [d3 d13 g0.2 g1.1]; [d1 d3 d4 d5 d9]
+top kinds, sums seed 545353: [d4 d7 d12 d15]; [d4 d7 d15 g1.2]; [d6 g0.1 g1.2 g1.3]; [d3 d5 d6 g0.1]; [d4 d6 d7]; [d15 g1.1 g1.2 g1.3]; [d3 d5 d6 g0.3 g1.1]; [d2 d3 d4 g0.4]
+top kinds, prose: [d1 d2 d3 g1.2]; [d1 d2 d3 g1.3]; [d1 d2 d3 d4 g0.4]; [d1 d2 d3 d5]; [d1 d2 d3 d4]; [d1 d2 d3 d4 g0.1]; [d1 d2 d3 d4 g1.2]; [d1 d2 d3 d4 g0.3]; [d1 d2 d3 d4 d6]; [d1 d2 d4 d5]

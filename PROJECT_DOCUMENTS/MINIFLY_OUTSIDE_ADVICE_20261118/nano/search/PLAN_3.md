@@ -17,3 +17,11 @@
 | Q5 | all three books below T0 by 0.01 | 0.05 |
 
 **Not run:** K = 512; a larger store beside the larger K (the store is already churned on prose: 55 million cells displaced at K = 128, and K = 256 will churn it more; that is part of what this run measures); 400,000 lines at K = 256.
+
+## Outcome (entered 20 November; `res/c3_*`, `out_c3.txt`, last section of `report_2.txt`)
+
+Two-digit sums, 40,000 lines, K = 256, `nrep` = 32: 78.7, 73.8, 85.4, 87.9, 57.3; median **78.7** (K = 128: 59.5); 2.81 M cells, 27.9 M counts above zero, 3.0 M displaced, 1,728 kinds tried, 97 CPU-seconds (medians). Prose: bryant 1.6174, burgess 1.3546, carroll 1.6038 (K = 128: 1.5699, 1.3419, 1.5519); the last tenth of tiny Shakespeare at the end 2.2031; the store full (4.10 M cells), 198 M cells displaced, 5,760 tried, 626 CPU-seconds.
+
+**The hypothesis is refuted**: sums are above, but all three books are above K = 128's figures. Q1 held; Q2, Q3, Q4, Q5 failed.
+
+Reading (mine): on sums twice the kinds is worth 19 points at the median and brings the searched system to the level of the hand-built kinds without look-ahead; on prose the fixed store is exhausted (47 times its size displaced in one life), so the doubling was not a clean test of more search there. A store that grows with K was named as not run.
