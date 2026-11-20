@@ -29,3 +29,5 @@ What I do not know and the runs will show: how much the answering cell's constan
 **Cost.** 6 development and 10 reported runs of about 60 CPU seconds.
 
 **Not run.** The rule together with an age law; the rule without joining (then nothing could learn subtraction); a strength that opens later than youth; a second change of task; the return of addition when taught again.
+
+*Added at once, before the development runs.* The command that committed this plan also made a second trial, of 30,000 lines (20,000 of addition, 10,000 of subtraction, y = 4,500, no old line), to see that the new measure ran. Its figures, which I saw after the text above was written: addition 51% after its phase and 6% after subtraction, subtraction 8%; 295 cells speaking on addition lines only, 85 on subtraction lines only, 4 on both. So in a short life addition was not kept although the cells were sorted. The predictions above stand as written; this trial lowers my own expectation for C1.
