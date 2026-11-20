@@ -71,3 +71,13 @@ Reading (mine). On sums F and M are the same to within a few tenths on every mea
 Three messages of the coordinating session, sent between 19:13 and 19:57, reached this session only after its closing note. Two are overtaken by plans 6 to 11 (its candidate for the answering cell, a trust by how many more specific senders speak, is NOT RUN here; its second fact, that the exact senders are not tied to the place and that kinds keyed on classes and raw delays are the next step, is what `PLAN_6.md`, `PLAN_7.md`, `PLAN_8.md` and `PLAN_10.md` found and built independently). The third is a fault of the measuring instrument that touches every figure of this line on sums: the held-out line is scored with line ends in the delays that reach before it, a past no system meets. As that session reports it, scored after a read line the plain cells have 80.1 (77.6 with the empty past) and my frozen setting 92.9 (92.2).
 
 Runs: `past.py`, five reported seeds, two-digit sums at 40,000 lines, last reading, for no classes, the frozen setting and F: the score with the empty past and the score after a read line (mean of five draws of the line before). Every figure of sums elsewhere in this line is with the empty past; three-digit sums, 400,000 lines and the other settings after a read line are NOT RUN. *Prediction (mine):* F after a read line is within 1 point of F with the empty past at the median (0.6): its exact senders hold the place, and the delays that reach before the line matter less to them.
+
+*Outcome of addition 2* (`res/past_*_seed*.json`, `out_past_*.txt`). Never-shown two-digit sums, own answer bytes, whole answer, %, last reading at 40,000 lines; seeds 73129, 93683, 116089, 406364, 545353.
+
+| | empty past: each seed; median | after a read line: each seed; median |
+|---|---|---|
+| no classes | 79.2, 79.0, 77.6, 76.0, 77.2; 77.6 | 82.5, 80.4, 80.3, 78.2, 77.6; **80.3** |
+| the frozen setting | 92.2, 94.2, 93.6, 87.6, 92.2; 92.2 | 92.4, 95.4, 92.6, 89.3, 93.1; **92.6** |
+| F | 98.0, 98.0, 96.8, 97.0, 98.4; 98.0 | 98.7, 98.6, 96.7, 98.2, 98.9; **98.6** |
+
+The prediction held (F: 0.6 above). The plain cells and the frozen setting agree with the coordinating session's own re-scoring (80.1 and 92.9 there, with other draws). The empty past flatters nothing here: every arm is a little higher after a read line, the plain cells most (2.7 points), so the gap between F and the plain cells is 18.3 points after a read line where it is 20.4 with the empty past. After a read line F names the hundreds, tens and units digits on 98.6, 99.7, 100% (median).
