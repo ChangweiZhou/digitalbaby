@@ -172,10 +172,11 @@ def run_sums(kw):
         s.cell = 2; return r
     readings = []; orig = G.sums_score; state = dict(n=0)
     def wrapped(s, held_, D_=9, nd=2):
-        state["n"] += 1
-        if state["n"] <= 8: readings.append(both(s))                       # the eight readings of the 40,000 lines; later calls are nano/merge's looks at the end
+        state["n"] += 1; readings.append(both(s))                          # one at every reading; nano/merge's looks at the end of the run are dropped below
         return orig(s, held_, D_, nd)
     G.sums_score = wrapped; out, s = G.run_sums(dict(seed=str(seed), lines=kw.get("lines", "40000"), mode=kw.get("mode", "classes"))); G.sums_score = orig
+    readings = readings[:len(out["rows"])]; assert len(readings) == len(out["rows"])
+    for r, row in zip(readings, out["rows"]): r["lines"] = row["lines"]
     res = dict(task="sums", args=kw, seed=seed, readings=readings, merge_rows=[(r["lines"], r["add"]) for r in out["rows"]], sizes=out["sizes"], parts=int(s.Gt.size), parts_used=int((s.Gu > 0).sum()), largest_part=float(np.abs(s.Gt).max()))
     for cell in ("cell1", "cell2"):
         res[cell] = dict(last_empty=readings[-1][cell]["empty"], last_after=readings[-1][cell]["after"], last3_empty=float(np.mean([r[cell]["empty"] for r in readings[-3:]])), last3_after=float(np.mean([r[cell]["after"] for r in readings[-3:]])),
