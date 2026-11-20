@@ -82,3 +82,42 @@ Never-shown sums, mean of the last three readings (`res/m1_d_*.json`, `log/d_*.t
 - The pair of delays held most often at the end is (3, 6) in every pair arm; when the units digit of the answer is named, these are the lines of the two units digits. It is held 1.4 to 2.0 times as often as the mean pair of delays.
 - **A figure of the report that I do not reproduce on the development seed.** `PLAN_4.md` gives 76.5 (64 lines with rewiring) and 43.4 (32 lines) for seed 1. `cells2.py` of commit 260c5d7, copied to a scratch folder and run with its own compiled kernel, gives 68.5 for seed 1 with 64 lines, and 68.1 for seed 73129, which is the report's figure for that seed. `multi.py` gives the same readings as `cells2.py` at every 50,000 lines on both seeds, and its numpy program the same as `cells2.py`'s numpy program over 60,000 lines. So the edge arm here is the program of the report; why the plan's development figure differs I do not know (my guess: it was made by the numpy program, whose rounding differs from the kernel's, and rewiring turns a difference of rounding into another run; not tested).
 - Speed: a run takes 18 to 39 CPU seconds with `kernm.c` (the edge arm 18 s, where `kern.c` takes 84 s).
+
+## The reported seeds (entered 20 November; table in `report1.txt`, made by `report1.py` from `res/m1_r_*.json`)
+
+Never-shown sums, whole answer right, %, mean of the last three readings; 256 cells; five reported seeds and their median. By place: hundreds, tens, units of the answer at the end of the run (median).
+
+| Arm | 73129 | 93683 | 116089 | 406364 | 545353 | median | by place |
+|---|---|---|---|---|---|---|---|
+| E64: 64 single lines | 68.1 | 83.0 | 84.3 | 80.8 | 73.0 | **80.8** | 95, 87, 100 |
+| M64: 32 lines + 32 pairs | 36.1 | 54.8 | 48.8 | 52.2 | 40.7 | **48.8** | 96, 59, 98 |
+| P64: 64 pairs | 48.3 | 49.8 | 48.7 | 47.7 | 46.7 | **48.3** | 96, 55, 96 |
+| E32: 32 single lines | 44.4 | 40.9 | 42.7 | 45.1 | 31.6 | **42.7** | 95, 54, 92 |
+| M32: 16 lines + 16 pairs | 15.7 | 22.3 | 15.3 | 19.5 | 29.3 | **19.5** | 95, 36, 75 |
+| P32: 32 pairs | 38.9 | 24.8 | 30.7 | 34.7 | 27.5 | **30.7** | 94, 50, 78 |
+
+Addition (no prediction registered): the same pair arms with pairs tried uniformly at a turnover: M64 34.3, P64 46.1, M32 12.7, P32 28.5 (medians). The draw I chose on the development seed is higher in each, by 2 to 15 points; it does not change the order of the arms.
+
+**Outcome.** At an equal number of strengths a cell, the cells that hold pair-connections answer fewer never-shown sums than the cells that hold single lines only: by 32 points at 64 strengths (both pair arms) and by 12 to 23 points at 32 strengths, on every one of the five seeds in each of the four comparisons. **H is refuted** by its own criterion (the M arm's median is 3 points or more below at both sizes).
+
+**Predictions scored.**
+- P1 held: E64 and E32 give the report's figures on every seed to the digit printed.
+- P2 failed: M64 48.8, where I had said at or above 80.8.
+- P3 held: P64 is 32.5 points below E64.
+- P4 failed: M32 is 23 points below E32, where I had said 5 or more above.
+- P5 held: P32 30.7 is below 42.7.
+- P6 failed: the pair of delays held most, (3, 6), is held 1.6 to 2.0 times as often as the mean, where I had said three times.
+Three of six failed, and the two that carried the hypothesis (P2, P4) failed by wide margins.
+
+**What I read from it (my readings; none of them tested here).**
+1. The loss is in the tens digit: 59 and 55 against 87 at 64 strengths. The units digit, which one pair of digits decides and for which I expected pairs to help, is as good with single lines (100) as with pairs (96 to 98). The cells with lines already combine the two units digits by adding their strengths; a pair-connection gives them nothing they lack there.
+2. A pair-connection is active about fourteen times less often than a line (one byte value in fourteen at each of two delays), so at the same step it is taught that much less often, and at any byte a cell with 64 pairs has well under one active connection on average where a cell with 64 lines has four to five. The pair arms are equal to the edge arm in the number of strengths; they are not equal in how much of the input a cell reads at a byte.
+3. The mixed arm is not better than the pairs alone and at 32 strengths it is worse. In the mixed arm about two thirds of the withdrawals fall on pairs (145,985 pairs against 76,935 lines made at 64 strengths), though the two kinds are equal in number: with one rule of withdrawal for both kinds, the kind that is taught less often is withdrawn more often.
+
+**Limits.**
+- The sending ends are input lines; only the receiving cell decides. Nothing here tests a strength decided jointly by several cells.
+- One step size, one period of rewiring and one rule of withdrawal for both kinds, as the plan fixed them. A pair arm with a larger step for pairs, a faster turnover of pairs, or a withdrawal rule that allows for how seldom a pair is active was not run. The result says that pairs lose under the edge arm's own settings, not that no setting exists under which they gain.
+- 256 cells, 400,000 lines, one task. A pair-connection needs two addresses; addresses were not counted.
+- Development level; repeated by no one; no checker gate, seal or review is claimed.
+
+**Not run:** the numpy program at full length (300 lines on each arm against the kernel, and 60,000 lines of the edge arm against `cells2.py`); cell counts other than 256; neighbouring delays on the reported seeds; subtraction; pairs beside every line.
