@@ -6,7 +6,7 @@ the same arithmetic compiled (kern_s.c; check_skip.py compares the two).
 Copied from loop_small_case and said so: the system and its constants from cells2.py (Sys.fwd, Sys.learn, the plain options only); the texts g2,
 g1, m1, the letters used when scoring (fill) and the split into pairs shown and never shown from hold.py; the lazy fading from kern3.c.
 
-    python3 skip.py <label> text=g2|m1|g1|d2 seed=1 lines=400000 every=50000 [gap=8] [H=256] [fast=1] [nlet=4] [clock=...] [lam1=0] [theta=0.5] [ref=birth|mean]
+    python3 skip.py <label> text=g2|g3|m1|g1|d2 seed=1 lines=400000 every=50000 [gap=8] [H=256] [fast=1] [nlet=4] [clock=...] [lam1=0] [theta=0.5] [ref=birth|mean]
 
 The lines. Line 0 of each byte value carries the present byte. The chain is lines 1 to 9: the last nine bytes that ENTERED the chain. When a new byte
 arrives, the byte that was present either enters the chain (which moves on by one) or is passed over and is on no line any more.
@@ -43,6 +43,10 @@ setup()
 def fill(a, b, n): return bytes(LET[(7 * a + 3 * b + 5 * i * i + i) % len(LET)] for i in range(n)).decode()          # the letters used when scoring: fixed by the pair (hold.py)
 def text(tx, a, b, f=""):
     if tx in ("d2", "g2"): t = f"{a:02d}+{f}{b:02d}={a + b:03d}\n"
+    elif tx == "g3":                                   # PLAN_6.md: the letters anywhere before the '=': six places (before, inside and after each number), fixed by the pair when scoring
+        sl = [""] * 6
+        for i, c in enumerate(f): sl[(a + 2 * b + i * (i + 1) // 2 + i) % 6] += c
+        t = f"{sl[0]}{a // 10}{sl[1]}{a % 10}{sl[2]}+{sl[3]}{b // 10}{sl[4]}{b % 10}{sl[5]}={a + b:03d}\n"
     else: t = f"{a}+{f}{b}={(a + b) % 10 if tx == 'm1' else a + b}\n"
     return [SI[c] for c in t.encode()]
 def sg(u): return 1 / (1 + np.exp(-u))
@@ -119,7 +123,10 @@ def stream(tx, shown, G, n, rng):
     P = np.asarray(shown)[rng.integers(len(shown), size=n)]; a, b = P[:, 0], P[:, 1]; k = rng.integers(G + 1, size=n) if G else np.zeros(n, np.int64)
     let = np.asarray(LETS)[rng.integers(len(LETS), size=(n, max(G, 1)))]; let = np.where(np.arange(max(G, 1))[None, :] < k[:, None], let, -1)
     col = lambda v: np.asarray(v)[:, None]; const = lambda c: np.full((n, 1), SI[ord(c)] if isinstance(c, str) else c)
-    if tx in ("d2", "g2"): c = a + b; M = [col(a // 10), col(a % 10), const("+"), let, col(b // 10), col(b % 10), const("="), col(c // 100), col(c // 10 % 10), col(c % 10), const(END)]
+    if tx == "g3":
+        c = a + b; sl = rng.integers(6, size=(n, G)); L = [np.where(sl == q, let, -1) for q in range(6)]
+        M = [L[0], col(a // 10), L[1], col(a % 10), L[2], const("+"), L[3], col(b // 10), L[4], col(b % 10), L[5], const("="), col(c // 100), col(c // 10 % 10), col(c % 10), const(END)]
+    elif tx in ("d2", "g2"): c = a + b; M = [col(a // 10), col(a % 10), const("+"), let, col(b // 10), col(b % 10), const("="), col(c // 100), col(c // 10 % 10), col(c % 10), const(END)]
     elif tx == "m1": M = [col(a), const("+"), let, col(b), const("="), col((a + b) % 10), const(END)]
     else:
         c = a + b; M = [col(a), const("+"), let, col(b), const("="), np.where(col(c) >= 10, 1, -1), col(c % 10), const(END)]
@@ -129,7 +136,7 @@ def stream(tx, shown, G, n, rng):
 def run(kw):
     setup(int(kw.get("nlet", 4)))
     t0 = time.process_time(); tx = kw.get("text", "g2"); seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 400000)); every = int(kw.get("every", 50000))
-    G = int(kw.get("gap", 8)) if tx in ("g1", "m1", "g2") else 0; gaps = sorted({0, G // 2, G})
+    G = int(kw.get("gap", 8)) if tx in ("g1", "m1", "g2", "g3") else 0; gaps = sorted({0, G // 2, G})
     if tx in ("g1", "m1"):
         rng = np.random.default_rng(seed); P = [(a, b) for a in range(10) for b in range(10)]; rng.shuffle(P); held, shown = P[:20], P[20:]; shown_s = shown
     else:
