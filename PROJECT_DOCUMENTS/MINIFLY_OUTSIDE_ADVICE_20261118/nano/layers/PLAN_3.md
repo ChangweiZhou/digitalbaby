@@ -34,3 +34,31 @@ Nineteen further cells in one run on each text; systems, material and measures a
 ## 4. Size, cost, what is not run
 
 Parts as in step 2 for each family; the reading cell has four trusts. About eight CPU-minutes on sums, one on prose. *Not run:* a reading cell with gated trusts; readers over more than four cells; depth beyond four further cells; the reported seeds; the unopened book.
+
+## 5. Outcome (entered 20 November after the runs; `res/sums_armsstep3_seed1.json`, `res/life_armsstep3_booksworn.json`, `report_3.txt`)
+
+Sums: seed 1, 40,000 lines, with classes, 1,231,004 cells, % after a read line, mean of the last three readings; 313 CPU-seconds for nineteen further cells. Prose: T2, 2,419,727 cells, mean gain over the first cell on the three worn books, nats; 45 CPU-seconds. First cell 92.7 and 0; the coordinator's single second cell in the runs of steps 1 and 2: 96.7 and 0.0239.
+
+| Arrangement | Sums, % | Prose, gain over first | Prose: test text kept (after its stream; after three books) |
+|---|---|---|---|
+| nl (one cell) | 97.4 | 0.0292 | 1.4761; 1.5061 |
+| **flat**: one cell, nl + pair + own + sure | 97.8 | **0.0390** | 1.4693; 1.5019 |
+| **flat with the fine parts of the delays** | 97.2 | **0.0444** | 1.4654; 1.5019 |
+| deep: nl > pair | 97.5 | 0.0320 (flat nl + pair: 0.0329) | |
+| deep: nl > own | 97.5 | 0.0316 (flat: 0.0321) | |
+| deep: nl > sure of the second cell / of the first | 97.5 / 97.4 | 0.0323 / 0.0323 (flat: 0.0329) | |
+| deep: nl > nl (the same family twice) | 97.5 | 0.0319 | 1.4746; 1.5163 |
+| deep: nl > fine | 97.1 | 0.0357 (flat second + nl: 0.0364) | |
+| deep: nl > one cell with pair + own + sure | 97.8 | 0.0382 | |
+| deep: chain nl > pair > own > sure | 98.0 | 0.0366 | 1.4700; 1.5044 |
+| side by side under a reading cell (pair, own, sure, nl) | 97.4 | 0.0295 | |
+| a cell (nl) on the reading cell | 97.6 | 0.0323 | |
+| deep: the flat cell twice | 97.6 | 0.0433 | 1.4660; 1.5119 |
+
+*Predictions.* D1 held (a third cell with one family is 0.0005 to 0.0009 nats behind the flat cell with the same families). D2 failed (the chain is 0.0024 behind the flat cell, not within 0.002). D3 held (the same family twice adds 0.0027). D4 failed (the second cell's sureness and the first cell's give the same, 0.0323). D5 held (the reading cell is 0.0095 behind the flat cell). D6 held (the flat cell twice adds 0.0043). D7 held (every arm with nl is at 97.1 to 98.0 on sums). D8 failed (the reading cell equals nl on sums, 97.4). **The hypothesis is refuted**: with the same families depth does not add beyond width; the chain of four further cells is 0.0024 nats worse than one wide cell on prose, and on sums the two are 0.2 points apart on one seed.
+
+Readings (mine).
+1. **In this form a cell on a cell is a wide cell taught less well.** A further cell adds its parts to the same sum of trust times message; put in depth, each family is taught by the mismatch of a cell that does not yet hear the families above it, and the result is a little worse than one cell that holds all of them (0.0005 to 0.0024 nats). Depth would need something this form does not have: senders of a new kind made from the cells below.
+2. **The same parts twice add (0.0027 for nl > nl, 0.0043 for the flat cell twice), and what they add is paid for in keeping**: after three other books the doubled cells are 0.010 worse on the old text than the single ones. My reading is that a second copy is a larger step (the step 0.00005 was chosen for the first cell's trusts, which are taught at every byte), and a larger step follows the recent text more. I did not run the control with the step doubled; it is owed.
+3. **A reading cell with one trust for each cell below returns its best input and no more** (0.0295 against 0.0292 for nl alone; 97.4 on sums). Cells side by side each repair the same first cell; their repairs do not add under one trust each. They add when they share one sum (the flat cell).
+4. On sums nothing in this step is readable beyond "every arm that knows the place is at 97.1 to 98.0".

@@ -285,9 +285,17 @@ def arms(name, S, D, K1, classes=False):
                 cell("deep:flat>flat", B + [pr, ow, su(2)], 1)]                              # 18: the wide cell twice in depth
     if name == "step4":                                              # gates drawn at random and kept by what they earn, against the hand-given delays' parts
         B = dl(allD, level=0); dr = lambda nm, m, types, fams=(): dict(name=nm, inp=-1, fams=list(fams), draw=types, slots=m)
-        return [cell("second-nl", B), dr("drawn:bytes", D, ("byte",)), dr("drawn:bytes,2D", 2 * D, ("byte",)), dr("drawn:all", D, ("byte", "pair", "slev")), dr("drawn:all,2D", 2 * D, ("byte", "pair", "slev")),
+        return [cell("second-nl", B), dr("drawn:bytes", D, ("byte",)), dr("drawn:bytes,2D", min(2 * D, DG), ("byte",)), dr("drawn:all", D, ("byte", "pair", "slev")), dr("drawn:all,2D", 2 * D, ("byte", "pair", "slev")),
                 dr("nl+drawn:all", D, ("byte", "pair", "slev"), B), dr("drawn:bytes,never-withdrawn", D, ("byte",)), cell("second-nl,16 delays", [("bytes", (d,), dict(level=0)) for d in range(1, DG + 1)])]
+    if name in ("step5", "claim"):                                   # PLAN_5.md: the candidates for the one frozen setting; "claim": the single second cell, the no-level cell and the frozen cell
+        nl = dict(level=0); B = dl(allD, level=0); pr = ("pair", 1, 2, nl); ow = ("own",); su = lambda c: ("sure", c, nl); sorts = ("byte", "pair", "slev"); C1 = B + [pr, ow, su(0)]; C2 = C1 + dl(allD)
+        dr = lambda nm, m, fams, inp=-1: dict(name=nm, inp=inp, fams=list(fams), draw=sorts, slots=m)
+        if name == "claim": return [cell("second", dl(allD)), cell("second-nl", B), FROZEN(cell, dr, C1, C2, D)]
+        return [cell("second", dl(allD)), cell("second-nl", B), cell("C1:nl+pair+own+sure", C1), cell("C2:C1+fine", C2), dr("C3:C2+D drawn", D, C2), dr("C4:C2+2D drawn", 2 * D, C2), dr("C5:C1+D drawn", D, C1),
+                cell("C6:C2>C2", C1[:-1] + [su(4)] + dl(allD), 3), cell("C7:C2+fine pair+fine sure", C2 + [("pair", 1, 2), ("sure", 0)])]
     raise KeyError(name)
+
+FROZEN = None        # set by PLAN_5.md, addition 1, after the development run and before any claim run
 
 # ---------------------------------------------------------------- sums: nano/merge's system
 def sum_sys():
