@@ -6,17 +6,20 @@ import cells2, kage
 PLAIN = cells2.Sys
 def one(kw, fast):
     kage.run(dict(kw, label="chk", nowrite="1", **({"fast": "1"} if fast else {}))); return cells2.run.last
-def diff(a, b, names=("W1", "b1", "W2", "b2", "R", "U", "seen", "born")):
+def diff(a, b, names=("W1", "b1", "W2", "b2", "R", "U", "seen", "born", "C", "E", "G")):
     w = 0.0
     for k in names:
-        x, y = np.asarray(getattr(a, k), float), np.asarray(getattr(b, k), float); w = max(w, np.abs(x - y).max() / (np.abs(x).max() + 1e-300))
+        x, y = np.asarray(getattr(a, k), float), np.asarray(getattr(b, k), float)
+        if k == "born": x, y = np.minimum(x, 1e9), np.minimum(y, 1e9)                     # cells that never joined
+        w = max(w, np.abs(x - y).max() / (np.abs(x).max() + 1e-300))
     return w
 if __name__ == "__main__":
     bad = 0; base = dict(seed="3", plan="add:200,sub:150", every="50", reh="8", H="48", life=str(350 * 9))
     cases = [("all cells from the start, no law", dict(base, H0="48")), ("joining, no law", dict(base, H0="1")), ("joining, exp", dict(base, H0="1", law="exp", tau="400")),
              ("joining, hyp", dict(base, H0="8", law="hyp", tau="300")), ("joining, exp, young", dict(base, H0="1", law="exp", tau="400", young="150")),
              ("joining, young, no law, no rehearsal", dict(base, H0="4", young="90", reh="0")), ("use=sig", dict(base, H0="4", use="sig", tau="2")), ("use=out", dict(base, H0="4", use="out", tau="50")),
-             ("join=sig, use=sig", dict(base, H0="4", use="sig", tau="2", join="sig", theta="40")), ("join=sig, exp, young", dict(base, H0="4", law="exp", tau="400", young="150", join="sig", theta="40"))]
+             ("join=sig, use=sig", dict(base, H0="4", use="sig", tau="2", join="sig", theta="8", rhoE="0.02", rhoS="0.001")), ("join=sig, exp, young", dict(base, H0="4", law="exp", tau="400", young="150", join="sig", theta="8", rhoE="0.02", rhoS="0.001")),
+             ("young, constants exp", dict(base, H0="4", young="150", blaw="exp", btau="500")), ("young, constants hyp, join=sig", dict(base, H0="1", young="150", blaw="hyp", btau="300", join="sig", theta="6", rhoE="0.02", rhoS="0.001", delta="0.1"))]
     for title, kw in cases:
         kw = {k: v for k, v in kw.items() if not (k == "reh" and v == "0")}
         a = one(kw, 0); b = one(kw, 1); w = diff(a, b); bad += w > 1e-6 or a.nl != b.nl; print(f"{title:40s} largest difference over largest strength {w:.1e}   joined {a.nl} / {b.nl}")

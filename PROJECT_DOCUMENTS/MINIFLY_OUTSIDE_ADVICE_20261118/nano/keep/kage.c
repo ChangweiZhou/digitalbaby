@@ -3,14 +3,15 @@
    return strength's steps and the fading of both are multiplied by the cell's rate, a function of its age (law 0: 1; 1: exp(-age/tau); 2: 1/(1+age/tau)).
    young > 0: a strength from a line is open once that line was active while the cell was younger than `young` bytes; a cell with a closed
    strength on an active line is silent at that byte and unchanged by it (rate nothing: no fading either).
-   usemode > 0 (PLAN_4.md): the rate is 1/(1+U[j]/tau) with U[j] the cell's own accumulated use.
+   blaw (PLAN_4.md): the answering cell's steps on its constants shrink with its age n. sigjoin (PLAN_5.md): cells join on the common signal.
+   usemode > 0: the rate is 1/(1+U[j]/tau) with U[j] the cell's own accumulated use.
    Built by fastage.py:  gcc -O3 -march=native -ffast-math -shared -fPIC -o kagek.so kage.c -lm                                               */
 #include <math.h>
 #include <stdint.h>
 
 typedef struct {
-    int64_t H, NL, S, D, n, law, young, usemode, sigjoin, nl;
-    double eta1, eta2, lam, tau, E, rhoE, C;
+    int64_t H, NL, S, D, n, law, young, usemode, sigjoin, nl, blaw;
+    double eta1, eta2, lam, tau, E, rhoE, C, G, rhoS, delta, btau;
     double *W1, *b1, *W2, *b2, *R, *U, *thr;
     int64_t *born, *hist;
     uint8_t *seen;
@@ -59,8 +60,10 @@ void age_steps(ANet *q, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
             if (q->usemode == 1) q->U[j] += fabs(s * h[j] * (1.0 - h[j]));
             else if (q->usemode == 2) q->U[j] += h[j];
         }
-        for (int64_t v = 0; v < S; v++) q->b2[v] += g * m[v];
-        q->E += q->rhoE * (mm - q->E); q->C += q->E;
+        const double gb = g * (q->blaw == 1 ? exp(-(double)n / q->btau) : q->blaw == 2 ? 1.0 / (1.0 + (double)n / q->btau) : 1.0);
+        for (int64_t v = 0; v < S; v++) q->b2[v] += gb * m[v];
+        q->E += q->rhoE * (mm - q->E); q->G += q->rhoS * (mm - q->G);
+        { const double x = q->E - (1.0 + q->delta) * q->G; if (x > 0.0) q->C += x; }      /* the common signal: the mismatch above its usual size */
         q->n = n + 1;
     }
 }

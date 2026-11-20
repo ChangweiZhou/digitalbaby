@@ -12,8 +12,10 @@ quantities. numpy is the reference; fast=1 runs the same arithmetic compiled (ka
        later, a cell with a closed strength on an active line is silent at that byte and unchanged by it (its rate is nothing at that byte, so that
        the strengths to and from it do not fade either, as for a cell that has not joined).
     use=sig|out, tau=k (PLAN_4.md): the rate is 1/(1+U/k), U the cell's own accumulated use (sig: sizes of the signal it acted on, before the rate; out: its outputs).
-    join=sig theta=T (PLAN_4.md): cell H0+i joins when the common signal C passes (i+1)*T; C is the running sum of E, and E the answering cell's running mean
-       (rate rhoE, default 1e-3) of its squared mismatch, a signal that reaches every cell alike.
+    blaw=exp|hyp btau=t (PLAN_4.md): the answering cell's steps on its constants are multiplied by exp(-n/t) or 1/(1+n/t), n its age in learned bytes.
+    join=sig theta=T [delta=.25 rhoE=1e-3 rhoS=1e-5] (PLAN_5.md): the answering cell keeps two running means of its squared mismatch, a fast one E (rate rhoE)
+       and a slow one G (rate rhoS); the common signal is the excess X = max(0, E - (1+delta) G), which reaches every cell alike; cell H0+i joins when
+       the running sum C of X passes (i+1)*T. No clock and no length of life is given.
 With H0=H, law=0 and nothing else the arithmetic is that of the plain system of cells2.py."""
 import sys
 import numpy as np
@@ -24,7 +26,8 @@ class AgeSys(cells2.Sys):
     def __init__(s, seed, **k):
         super().__init__(seed, **k); o = OPT; H = s.H; H0 = int(o.get("H0", H)); life = int(o.get("life", 5400000))
         s.law = {"0": 0, "exp": 1, "hyp": 2}[o.get("law", "0")]; s.tau = float(o.get("tau", 1e5)); s.young = int(float(o.get("young", 0)))
-        s.usemode = {"0": 0, "sig": 1, "out": 2}[o.get("use", "0")]; s.sigjoin = int(o.get("join", "0") == "sig"); s.rhoE = float(o.get("rhoE", 1e-3))
+        s.usemode = {"0": 0, "sig": 1, "out": 2}[o.get("use", "0")]; s.sigjoin = int(o.get("join", "0") == "sig"); s.rhoE = float(o.get("rhoE", 1e-3)); s.rhoS = float(o.get("rhoS", 1e-5)); s.delta = float(o.get("delta", .25))
+        s.blaw = {"0": 0, "exp": 1, "hyp": 2}[o.get("blaw", "0")]; s.btau = float(o.get("btau", 1e5)); s.G = 0.0
         s.born = np.zeros(H, np.int64); i = np.arange(1, H - H0 + 1)
         s.thr = np.zeros(H)
         if s.sigjoin: s.born[H0:] = np.iinfo(np.int64).max; s.thr[H0:] = i * float(o["theta"])
@@ -46,10 +49,11 @@ class AgeSys(cells2.Sys):
         m = -(s.W2 @ h + s.b2); m[y] += 1; g = s.eta2 / (h @ h + 1)
         raw = (s.R @ m) * h * (1 - h); sig = raw * rate; d2 = np.outer(g * m, h * rate)
         s.W1[:, act] += s.eta1 * sig[:, None]; s.b1 += s.eta1 * sig
-        s.W2 += d2; s.W2 *= 1 - s.lam * rate; s.R += d2.T; s.R *= 1 - s.lam * rate[:, None]; s.b2 += g * m
+        s.W2 += d2; s.W2 *= 1 - s.lam * rate; s.R += d2.T; s.R *= 1 - s.lam * rate[:, None]
+        s.b2 += g * m * (np.exp(-s.n / s.btau) if s.blaw == 1 else 1 / (1 + s.n / s.btau) if s.blaw == 2 else 1.0)
         if s.usemode == 1: s.U += np.abs(raw)
         elif s.usemode == 2: s.U += h
-        s.E += s.rhoE * (m @ m - s.E); s.C += s.E; s.n += 1
+        s.E += s.rhoE * (m @ m - s.E); s.G += s.rhoS * (m @ m - s.G); s.C += max(0.0, s.E - (1 + s.delta) * s.G); s.n += 1
     def flush(s):
         if len(s.bx): import fastage; fastage.run(s)
     def out(s, u):
@@ -63,7 +67,7 @@ class AgeSys(cells2.Sys):
             r = (h @ s.W2.T + s.b2).argmax(1) == Ls[:, t + 1]; ok &= r; pl[t - 5] = r.sum()
         return [int(round(100 * x / len(pairs))) for x in pl] if place else float(100 * ok.sum() / len(pairs))
     def census(s, held=None):
-        c = dict(joined=int(s.nl), n=int(s.n), E=float(s.E), C=float(s.C))
+        c = dict(joined=int(s.nl), n=int(s.n), E=float(s.E), G=float(s.G), C=float(s.C), born=[int(x) for x in s.born[:s.nl]])
         if s.young and held:                          # a measure, not used by the system: joined cells that are not silenced on never-shown lines at the answer positions
             live = np.arange(s.H) < s.nl; o = {}
             for op in "+-":
