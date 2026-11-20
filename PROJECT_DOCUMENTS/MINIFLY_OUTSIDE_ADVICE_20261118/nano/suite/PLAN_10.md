@@ -26,3 +26,18 @@ A context met for the first time gets no cell. It leaves **one bit** (in a table
 ## 4. Cost, not run
 
 7 CPU-seconds a run. Not run: the first follower recovered from the stream at the second meeting; the option on ZPA; a third meeting.
+
+## 5. Outcome (entered 20 November, after the runs; `res/*__second.json`, `report_9.txt`)
+
+| | shakespeare | book | py | c | table | xml |
+|---|---|---|---|---|---|---|
+| cells at the end of the stream, ZA | 488,071 | 561,754 | 519,713 | 493,662 | 611,748 | 315,987 |
+| the same, a cell only at a second meeting | 246,870 | 275,419 | 279,408 | 264,002 | 209,640 | 162,247 |
+| fewer by | 49% | 51% | 46% | 47% | 66% | 49% |
+| going on, cost against ZA | +0.0113 | +0.0097 | +0.0142 | +0.0162 | +0.0081 | +0.0035 |
+| nothing changing, cost against ZA | +0.0183 | +0.0106 | +0.0159 | +0.0217 | -0.0259 | +0.0005 |
+| for comparison, the bound at half with the rule of `PLAN_9.md`, going on | +0.0068 | +0.0070 | +0.0046 | +0.0035 | +0.0026 | +0.0016 |
+
+**The hypothesis held:** 46 to 66% fewer cells on every stream for 0.004 to 0.016 nats going on, under 0.02 everywhere. **Predictions scored.** J1 held. J2 held. **J3 failed**: the cost is under 0.010 on three streams (book, table, xml), not four. J4 held on all six: with about the same number of cells (on table with a quarter fewer than this option leaves), a store from which the least counted and oldest cell leaves costs a third to a half of what it costs never to make a cell at a first meeting.
+
+**My readings.** (1) It is a cheap large cut, as the coordinating session expected, and it needs no drawing of places and no choice of who leaves; but it is not the best cut: a cell met once is worth having until another context needs its place. (2) The two can be had together (first meetings leave a bit; the store is bounded as well); the check covers that form, it was not run on the streams. (3) The cost is not carried by the recalling senders as the proposal pictured: a first meeting of a short run leaves nothing a sender can use (the last-byte senders live in the cells), and that is where the 0.01 goes.

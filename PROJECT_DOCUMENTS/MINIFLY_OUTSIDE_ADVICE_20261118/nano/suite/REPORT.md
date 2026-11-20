@@ -1,6 +1,6 @@
 # Line `nano/suite`: one system, one setting, six byte streams of different kinds (20 November 2026)
 
-Branch `claude/nano-suite-8mmhfm`, folder `nano/suite`; source `claude/friendly-darwin-8mmhfm` at 32b631d91. Development level. No checker gate, seal or review is claimed; the checks named are executed checks by the author of the programs. Readings are marked as mine. Mr. Xu's words that set the line are quoted in `PLAN_1.md`; the tasks were set by the coordinating session of the outside-advice work. Eight plans, each committed before its runs, each with its outcome and every prediction scored (`PLAN_1.md` to `PLAN_8.md`).
+Branch `claude/nano-suite-8mmhfm`, folder `nano/suite`; source `claude/friendly-darwin-8mmhfm` at 32b631d91. Development level. No checker gate, seal or review is claimed; the checks named are executed checks by the author of the programs. Readings are marked as mine. Mr. Xu's words that set the line are quoted in `PLAN_1.md`; the tasks were set by the coordinating session of the outside-advice work. Ten plans, each committed before its runs, each with its outcome and every prediction scored (`PLAN_1.md` to `PLAN_10.md`).
 
 ## 1. What was asked and what was built
 
@@ -81,6 +81,19 @@ Before the scale of `PLAN_8.md` there was no single best: the since and pool cel
 
 What this comparison can say: xz is the strongest general compressor on this machine, and nothing was downloaded; it is a dictionary coder. Compressors that mix the opinions of many contexts, the family this system resembles, are not installed and are known to be clearly better than xz on text. "Below xz" means past the dictionary coders, not at the state of the art. The system also holds far more memory per byte read than a compressor and is slower.
 
+## 5a. What the cells are worth (`PLAN_9.md`, `PLAN_10.md`; asked by the coordinating session after the table; system ZA, going on)
+
+| | shakespeare | book | py | c | table | xml |
+|---|---|---|---|---|---|---|
+| ZA, no bound (0.32 to 0.61 million cells at the end) | 1.3344 | 1.3894 | 0.9358 | 0.6908 | 0.3431 | 0.2846 |
+| half the store, the least counted and oldest cell leaves | +0.0068 | +0.0070 | +0.0046 | +0.0035 | +0.0026 | +0.0016 |
+| a quarter | +0.0231 | +0.0248 | +0.0125 | +0.0093 | +0.0063 | +0.0058 |
+| an eighth (12%) | +0.0503 | +0.0570 | +0.0260 | +0.0165 | +0.0177 | +0.0113 |
+| half the store, a cell leaves by chance | +0.0619 | +0.0733 | +0.0228 | -0.0142 | +0.0097 | +0.0033 |
+| a cell is born only at a second meeting (46 to 66% fewer cells) | +0.0113 | +0.0097 | +0.0142 | +0.0162 | +0.0081 | +0.0035 |
+
+Half the store costs under 0.007 nats on every stream; with an eighth of it ZA is still below xz on all six. Who leaves matters four to nine-fold on prose; on C headers leaving by chance is better than the rule and better than no bound. Leaving costs a third to a half of never being born.
+
 ## 6. My readings
 
 1. **The programme's one text hid a weakness and its remedy.** On prose the base was already 0.34 nats below xz; on source code, rows of numbers and markup xz was below it everywhere, by up to 0.43. What those streams asked for was hearing the present: going on at all (0.31 to 1.09 nats on the four), the recalling sender, the last byte of each cell, a faster trust. Each is general going on and costs no cells.
@@ -94,8 +107,9 @@ What this comparison can say: xz is the strongest general compressor on this mac
 * The recalling sender first saw its own byte (the table of places written one byte early; 0.0002 nats on the development streams). The reference had the same fault, so the check had passed. Repaired before any claim; the check now has a test for it.
 * Under the rule, a driver whose square is zero in the machine's numbers moved a trust to infinity on a reported seed of sums. Repaired; the arm was rerun on all five seeds.
 * The Kneser-Ney reference's published discounts fall outside their range on the collation table; they are now bounded.
-* Limits. One run of each system on each stream (the system is deterministic; there are no seeds but on sums). The four streams other than prose were each scored nineteen times by this line (once for each system of the table and of the steps); nothing was chosen on them, but the order of the work was mine and later steps were shaped by earlier results (the last-byte senders and the index by age were thought of after seeing where the system lost). Tiny Shakespeare's tenth is worn by the whole programme. The compressors are not the strongest of their trade. Five kinds of stream are not all kinds: no binary data, no audio or images, nothing longer than two million bytes. Classes and made kinds could not be put into the combined system (another program).
+* The coordinating session found, on its own program, that the rule for the step in the form used here (the sum of squares starting at nothing) is ill-conditioned, and prefers the sum starting at one with every trust born at nothing; it also has a smoothing learned by the system in place of e. Its messages reached this line after the runs. This line saw the same ill-conditioning twice (the trust sent to infinity; a tolerance of 1e-6 in the check under the rule) and repaired only the first. Every figure here under "the rule" is with the sum starting at nothing, the runs' trusts born at 0.25 and e = 0.02; the better-conditioned form and the learned smoothing were not run on the streams.
+* Limits. One run of each system on each stream (the system is deterministic; there are no seeds but on sums). The four streams other than prose were each scored twenty-six times by this line (once for each system of the table and of the steps); nothing was chosen on them, but the order of the work was mine and later steps were shaped by earlier results (the last-byte senders and the index by age were thought of after seeing where the system lost). Tiny Shakespeare's tenth is worn by the whole programme. The compressors are not the strongest of their trade. Five kinds of stream are not all kinds: no binary data, no audio or images, nothing longer than two million bytes. Classes and made kinds could not be put into the combined system (another program).
 
 ## 8. Not run
 
-A rule for the smoothing; a form of the step's rule in which neither the unit 12 nor the power 1/2 appears; parts of the second cell indexed by age; classes and made kinds in this kernel, with the second cell and the senders of recency; counts that fade; longer streams, and a life over several streams in turn (keeping); the systems with word cells (their ends are given by hand).
+The coordinating session's third request (a trust in two memories, one of which halves over H bytes): not run; the trusts by age of `PLAN_7.md` do not do what it would, since they index the senders of recency and it is aimed at the second cell's parts, which this line located as the remaining harm and left untested. The step's rule with its sum starting at one, and the smoothing learned by the system, on the streams. Counts that fade or cells that leave by age (what C headers ask for, `PLAN_9.md`). The bound and the second meeting together, and either on ZPA. A rule for the smoothing; a form of the step's rule in which neither the unit 12 nor the power 1/2 appears; parts of the second cell indexed by age; classes and made kinds in this kernel, with the second cell and the senders of recency; counts that fade; longer streams, and a life over several streams in turn (keeping); the systems with word cells (their ends are given by hand).

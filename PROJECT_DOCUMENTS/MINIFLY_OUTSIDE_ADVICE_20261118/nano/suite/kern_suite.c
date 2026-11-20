@@ -9,7 +9,7 @@
 #define JMAX 8
 #define LMAX 2048
 typedef struct {
-    int S, K, gate, J, M, rule, age; double eta, e, birth, spow;
+    int S, K, gate, J, M, rule, age, evict, second; double eta, e, birth, spow; int64_t cap, evicted; uint64_t rng; uint64_t *cKey; uint16_t *cKind; uint8_t *seen;
     int ktype[KMAX], knd[KMAX], kdel[KMAX][8];
     double *T, *Tu, *Ta;            /* K x NL: the first cell's trusts, times used, sum of squared drivers */
     double *G, *Gu, *Ga; int64_t gsize; int GL;   /* the second cell's parts: J x K x GL x S (GL = 1 without the level, NL with it) */
@@ -35,6 +35,14 @@ static inline int64_t slot_of(const Sy *s, uint64_t key, int kind) {
     while (s->hcell[i] >= 0 && !(s->hkey[i] == key && s->hkind[i] == kind)) i = (i + 1) & (s->hcap - 1);
     return i;
 }
+static inline int64_t home_of(const Sy *s, uint64_t key, int kind) { return mix(key ^ ((uint64_t)kind * 0xD6E8FEB86659FD93ULL)) & (s->hcap - 1); }
+/* PLAN_9.md: the cell c leaves the store (its place in the table of addresses is closed by moving later entries back) */
+static void forget(Sy *s, int32_t c) {
+    const int64_t mask = s->hcap - 1; int64_t i = slot_of(s, s->cKey[c], s->cKind[c]), j = i;
+    for (;;) { j = (j + 1) & mask; if (s->hcell[j] < 0) break; const int64_t h = home_of(s, s->hkey[j], s->hkind[j]);
+        if (i <= j ? (h <= i || h > j) : (h <= i && h > j)) { s->hkey[i] = s->hkey[j]; s->hkind[i] = s->hkind[j]; s->hcell[i] = s->hcell[j]; i = j; } }
+    s->hcell[i] = -1; s->cN[c] = 0; s->cU[c] = 0; s->evicted++;
+}
 static void grow(Sy *s) {
     int64_t oc = s->hcap; uint64_t *ok = s->hkey; uint16_t *oki = s->hkind; int32_t *oce = s->hcell;
     s->hcap = oc * 2; s->hkey = malloc(s->hcap * 8); s->hkind = malloc(s->hcap * 2); s->hcell = malloc(s->hcap * 4); memset(s->hcell, 0xff, s->hcap * 4);
@@ -42,7 +50,7 @@ static void grow(Sy *s) {
     free(ok); free(oki); free(oce);
 }
 static int32_t new_cell(Sy *s) {
-    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); s->cL = realloc(s->cL, s->ccells); s->cT = realloc(s->cT, s->ccells * 4); }
+    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); s->cL = realloc(s->cL, s->ccells); s->cT = realloc(s->cT, s->ccells * 4); s->cKey = realloc(s->cKey, s->ccells * 8); s->cKind = realloc(s->cKind, s->ccells * 2); }
     int32_t c = (int32_t)s->ncell++; s->cN[c] = 0; s->cU[c] = 0; s->ccap[c] = 0; s->cptr[c] = 0; return c;
 }
 static void count(Sy *s, int32_t c, int y, int64_t t) {
@@ -55,25 +63,26 @@ static void count(Sy *s, int32_t c, int y, int64_t t) {
     }
     s->pv[s->cptr[c] + u] = y; s->pc[s->cptr[c] + u] = 1; s->cU[c] = u + 1; s->cN[c]++;
 }
-Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age, double spow) {
-    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age; s->spow = spow;
+Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age, double spow, int64_t cap, int evict, int second) {
+    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age; s->spow = spow; s->cap = cap; s->evict = evict; s->second = second; s->rng = 0x2545F4914F6CDD1DULL; if (second) s->seen = calloc(1 << 24, 1);
     for (int k = 0; k < K; k++) { s->ktype[k] = ktype[k]; s->knd[k] = knd[k]; for (int i = 0; i < 8; i++) s->kdel[k][i] = kdel[k * 8 + i]; }
     s->T = malloc(sizeof(double) * K * NL); s->Tu = calloc(K * NL, sizeof(double)); s->Ta = calloc(K * NL, sizeof(double));
     for (int k = 0; k < K; k++) for (int l = 0; l < NL; l++) s->T[k * NL + l] = kborn[k];
     s->GL = gate == 2 ? NL : 1; s->gsize = gate ? (int64_t)J * K * s->GL * S : 0;
     if (gate) { s->G = calloc(s->gsize, sizeof(double)); s->Gu = calloc(s->gsize, sizeof(double)); s->Ga = calloc(s->gsize, sizeof(double)); }
     s->hcap = 1 << 16; s->hkey = malloc(s->hcap * 8); s->hkind = malloc(s->hcap * 2); s->hcell = malloc(s->hcap * 4); memset(s->hcell, 0xff, s->hcap * 4);
-    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8); s->cL = malloc(s->ccells); s->cT = malloc(s->ccells * 4);
+    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8); s->cL = malloc(s->ccells); s->cT = malloc(s->ccells * 4); s->cKey = malloc(s->ccells * 8); s->cKind = malloc(s->ccells * 2);
     s->pcap = 1 << 16; s->pv = malloc(s->pcap); s->pc = malloc(s->pcap * 4);
     s->hbits = 22; s->head = malloc(sizeof(int32_t) << s->hbits); memset(s->head, 0xff, sizeof(int32_t) << s->hbits); s->prev = malloc(sizeof(int32_t) * (nmax + 1));
     for (int v = 0; v < SMAX; v++) s->last[v] = -1; s->synced = 0;
     for (int c = 0; c < 4096; c++) s->lt[c] = log(c + e) - log(e);
     return s;
 }
-void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->cL); free(s->cT); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
+void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->cL); free(s->cT); free(s->cKey); free(s->cKind); free(s->seen); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
 int64_t sy_cells(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] > 0; return n; }
 int64_t sy_counts(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cU[c]; return n; }
 int64_t sy_cells_of(const Sy *s, int kind) { int64_t n = 0; for (int64_t i = 0; i < s->hcap; i++) if (s->hcell[i] >= 0 && s->hkind[i] == kind && s->cN[s->hcell[i]] > 0) n++; return n; }
+int64_t sy_evicted(const Sy *s) { return s->evicted; }
 int64_t sy_once(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] == 1; return n; }
 double *sy_T(Sy *s) { return s->T; }  double *sy_Tu(Sy *s) { return s->Tu; }  double *sy_G(Sy *s) { return s->G; }  double *sy_Gu(Sy *s) { return s->Gu; }  int64_t sy_gsize(Sy *s) { return s->gsize; }
 static inline uint32_t rhash(const int32_t *x, int64_t end, int M, int hbits) { uint64_t h = 0; for (int i = 1; i <= M; i++) h = h * 0x100000001B3ULL + (uint64_t)(x[end - i] + 1); return (uint32_t)(mix(h) >> (64 - hbits)); }
@@ -141,8 +150,23 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
                 int32_t c = s->hcell[sl[k]];
                 if (c < 0) {
                     if (s->birth > 0 && p[y] >= s->birth) continue;
+                    if (s->second) {                                  /* PLAN_10.md: a first meeting leaves one bit; the cell is made at the second */
+                        const uint64_t b = mix(keys[k] ^ ((uint64_t)k * 0xD6E8FEB86659FD93ULL) ^ 0xA5A5A5A5A5A5A5A5ULL) >> 37; if (!(s->seen[b >> 3] & (1 << (b & 7)))) { s->seen[b >> 3] |= (uint8_t)(1 << (b & 7)); continue; }
+                    }
+                    if (s->cap > 0 && s->ncell >= s->cap) {           /* PLAN_9.md: the store is full: of eight places drawn by chance, the cell that has counted least and, among those, counted longest ago leaves (evict 1: the first drawn) */
+                        int32_t best = -1;
+                        for (int r = 0; r < 8; r++) { s->rng ^= s->rng << 13; s->rng ^= s->rng >> 7; s->rng ^= s->rng << 17; const int32_t cand = (int32_t)(s->rng % (uint64_t)s->ncell); int cur = 0;
+                            for (int j = 0; j < K; j++) if (s->ktype[j] < 2 && s->hcell[sl[j]] == cand) { cur = 1; break; }
+                            if (cur) continue;
+                            if (best < 0 || (s->evict == 0 && (s->cN[cand] < s->cN[best] || (s->cN[cand] == s->cN[best] && s->cT[cand] < s->cT[best])))) best = cand; }
+                        if (best < 0) continue;
+                        forget(s, best); for (int j = 0; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);
+                        c = best; s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c; s->cKey[c] = keys[k]; s->cKind[c] = (uint16_t)k;
+                        for (int j = k + 1; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);
+                        count(s, c, y, t); continue;
+                    }
                     if ((s->ncell + 1) * 10 > s->hcap * 6) { grow(s); for (int j = 0; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j); }
-                    c = new_cell(s); s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c;
+                    c = new_cell(s); s->cKey[c] = keys[k]; s->cKind[c] = (uint16_t)k; s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c;
                     for (int j = k + 1; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);      /* a slot found empty may now be taken */
                 }
                 else if (s->birth > 0 && s->cN[c] == 0 && p[y] >= s->birth) continue;
