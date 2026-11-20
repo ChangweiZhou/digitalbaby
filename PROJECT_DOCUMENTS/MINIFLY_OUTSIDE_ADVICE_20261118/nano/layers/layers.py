@@ -229,6 +229,10 @@ def arms(name, S, D, K1, classes=False):
     if name == "step1":
         return ([cell("second", dl(allD))] + [cell(f"delay{j}", dl([j])) for j in allD] + [cell("delays1-2", dl([1, 2])), cell("delays1-3", dl([1, 2, 3]))] +
                 [cell("no-level", dl(allD, level=0)), cell("no-kind", dl(allD, kind=0)), cell("byte-only", dl(allD, kind=0, level=0)), cell("control", [("const",)] * D)])
+    if name == "step2":                                              # other gates, alone and beside the delays' parts
+        g = [("pair", ("pair", 1, 2)), ("own", ("own",)), ("sure", ("sure", 0))] + ([("class", ("cls",))] if classes else [])
+        return ([cell("second", dl(allD))] + [cell(n, [f]) for n, f in g] + [cell("second+" + n, dl(allD) + [f]) for n, f in g] + [cell("second+all", dl(allD) + [f for _, f in g])] +
+                [cell("second+pair+sure", dl(allD) + [g[0][1], g[2][1]]), cell("second+pair+own", dl(allD) + [g[0][1], g[1][1]]), cell("second+own+sure", dl(allD) + [g[1][1], g[2][1]])])
     raise KeyError(name)
 
 # ---------------------------------------------------------------- sums: nano/merge's system

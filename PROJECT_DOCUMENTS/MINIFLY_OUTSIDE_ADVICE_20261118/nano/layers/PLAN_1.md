@@ -49,3 +49,35 @@ My reading of what the gate does on sums, which the predictions follow: the byte
 ## 5. Size, cost, what is not run
 
 Sums: 1,231,004 cells that have counted at seed 1; the first cell has 11,520 trusts; the second cell 1,451,520 parts (702,110 used); the other arms between 14 and 1.45 million. Prose: 2.42 million cells; 440 trusts; 156,000 parts (83,709 used). The numbers used are reported with each figure. One run on each text: about ten CPU-minutes on sums (sixteen further cells), two on prose. *Not run in this step:* the reported seeds; the unopened book; the new books; other gates; cells on cells; search; sums without classes; long reading.
+
+## 6. Outcome (entered 20 November after the runs; `res/sums_armsstep1_seed1.json`, `res/life_armsstep1_booksworn.json`, `report_1.txt`)
+
+Sums: seed 1, 40,000 lines, with classes, 1,231,004 cells, never-shown sums, whole answer, %, mean of the last three readings after a read line (the last reading and the empty past are in `report_1.txt`); 193 CPU-seconds for the sixteen further cells in one run. Prose: T2, 2,419,727 cells, the life with the three worn books, nats a byte on each book's last tenth right after its stream; 30 CPU-seconds. In both runs the first cell is the base system's (92.7 on sums; 1.4802, 1.3162, 1.4109 on the books) and the arm "second" is the coordinator's second cell (96.7; 1.4621, 1.2932, 1.3802).
+
+| Arm | Sums: % (gain over the first cell; share of the second cell's gain) | parts used | Prose: mean gain over the first cell on three books, nats (share of the second cell's) | parts used |
+|---|---|---|---|---|
+| first cell | 92.7 | 7,707 trusts | 0 | 323 trusts |
+| second (every delay; kind, level, byte) | 96.7 (+4.1; 1.00) | 702,110 | 0.0239 (1.00) | 83,709 |
+| delay 1 only | 95.5 (+2.8; 0.70) | 74,276 | 0.0099 (0.41) | 12,261 |
+| delay 2 only | 96.9 (+4.3; 1.05) | 82,488 | 0.0064 (0.27) | 12,689 |
+| delay 3 only | 93.6 (+0.9; 0.23) | 73,903 | 0.0058 (0.24) | 13,500 |
+| delay 4 only | 93.4 (+0.7; 0.18) | 72,685 | 0.0040 (0.17) | 14,302 |
+| delay 5 only | 96.9 (+4.3; 1.06) | 82,899 | 0.0034 (0.14) | 15,103 |
+| delay 6 only | 93.8 (+1.2; 0.29) | 80,857 | 0.0022 (0.09) | 15,854 |
+| delay 7, 8, 9 only (sums) | 92.3, 96.6, 94.3 (-0.3, +4.0, +1.7) | 69,181 to 83,258 | | |
+| delays 1-2 | 96.7 (+4.1; 1.01) | 156,764 | 0.0150 (0.63) | 24,950 |
+| delays 1-3 | 96.6 (+3.9; 0.97) | 230,667 | 0.0183 (0.77) | 38,450 |
+| **no-level** (every delay; kind, byte) | **97.4 (+4.8; 1.17)** | 33,547 | **0.0292 (1.22)** | 3,857 |
+| no-kind (every delay; level, byte) | 86.2 (-6.5) | 4,128 | 0.0164 (0.69) | 12,378 |
+| byte-only (every delay; byte) | 71.2 (-21.4; 0.0 with the empty past) | 117 | -0.0013 (-0.05) | 390 |
+| control (parts that read a constant) | 90.8 (-1.9) | 69,363 | -0.0002 (-0.01) | 1,938 |
+
+What is kept (prose; the test text's last tenth right after its own stream, and again at the end of the life after the three books): first cell 1.4973 and 1.5067; second 1.4820 and 1.5062; no-level 1.4761 and 1.5061. The further cells' gain on the old text is lost after other books (0.015 and 0.021 of gain become 0.0005), as the coordinator found; the first cell loses 0.009.
+
+*Predictions.* S1 failed (delay 1 alone gives 0.41 of the gain on prose, not half). S2 failed (delays 1-3 give 0.77, not 0.9). S3 held (the best single delay gives the whole gain on sums). S4 held (delays 2, 5 and 8, each within 0.3 points of the others and of the whole cell; delay 1 gives 0.70). S5 failed (delay 1 gives 0.70, not under half). S6 held (no-level gives 1.17 and 1.22 of the gain). S7 failed on prose (no-kind gives 0.69 there; on sums it loses 6.5 points). S8 held. S9 held (the control gives nothing on prose and loses 1.9 points on sums). *The hypothesis*: on sums it holds directly (one delay of the three that tell the place holds the whole gain). On prose the arms with at most three delays hold 0.77 of the gain with the level in the index; the arm without the level at three delays was not in this run and is in step 2.
+
+Readings (mine).
+1. **The level of counts in the index of the parts costs more than it gives.** Parts indexed by the kind of sender and the byte at each delay, for all levels together, gain more than the coordinator's second cell on both texts (97.4 against 96.7 on one seed of sums, which is within the noise of 500 sums; 0.0292 against 0.0239 nats on prose, on each of three books) with 2.5% to 5% of the parts (36,288 held on sums, 3,900 on prose). Each part is then taught forty times as often. The second cell's parts are short of teaching, not of detail.
+2. **The kind of sender is what the gate must know on sums; on prose a gate shared by all kinds still gives two thirds.** On sums parts shared by all kinds lose, and parts shared by all kinds and levels destroy the answer (with the empty past it falls to nothing): with the step of sums (0.1 over the root of the uses) a part that every sender uses moves 288 times a byte.
+3. **On sums the gain is the place in the line and nothing else that this run can see**: the byte at delay 2, 5 or 8 alone holds all of it (at the tens digit those are the equals sign, the plus sign and the line end), delays 3, 4, 6, 7 hold a quarter or less. No arm was given the place: the parts found it. **On prose the gain is spread over all six delays** and adds nearly as a sum (the six single delays sum to 0.0317; together 0.0239 with the level, 0.0292 without).
+4. What this changes for the next steps: further gates are tried in both forms, with and without the level in the index, and beside both forms of the second cell.
