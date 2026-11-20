@@ -1,0 +1,5 @@
+# Line `nano/merge`, ninth plan: a repeat of the frozen setting and of C2 on five seeds no line has used for choosing (20 November 2026)
+
+**Authorisation.** Mr. Xu, 20 November 2026, as quoted to this session by the coordinating session: "我们接受bitter lesson, 因此你可以尝试，但避免spot fix, ad hoc tricks等等在其他的任务上无法迁移的手段。多尝试新想法。" and then "继续大胆假设，基于事实努力尝试。" (the coordinating session's translation is in `PLAN_1.md`). **Source.** `claude/nano-merge-8mmhfm` at the commit that holds this file. Written before its runs. Development level; a repeat by the same session with the same program, so not an independent one.
+
+Two-digit sums, 40,000 lines, seeds 2001 to 2005 (used by `nano/ahead2` for its repeat; never read by this line): no classes; the frozen setting; C2 (`PLAN_6.md`). Nothing is chosen. *Predictions (mine):* the frozen setting's median is at least 90 (0.75) and within 2 points of 91.8 (0.6); C2's median is at least the frozen setting's (0.7) and within 2 points of 93.1 (0.5). Fifteen runs, about one CPU-minute each.
