@@ -30,3 +30,7 @@ One simplification in the program, stated: the relay system's answers are comput
 ## 4. Size, cost, what is not run
 
 The relay system: 1,024 cells, 733,249 numbers that learn (the loop line's count). The counting cells as `PLAN_3.md`, arm 2. Ten more trusts. One reading of the relay system with its answers kept takes a few CPU-minutes; the rest seconds. Not run here: a relay system that has read the stream several times before the life (its answers on the stream would then be for bytes it has seen, and the trust learned from them would not hold on unread text); more cells; the summing form (the loop line's plan).
+
+## 5. Addition 1 (20 November; written after the two arms on the development seed were read and before the runs it describes)
+
+On the development seed arm 1 gains 0.0115 and arm 2 gains 0.0078 (section 6 will give them). By the plan's rule arm 1 is run on the five reported seeds (73129, 93683, 116089, 406364, 545353; the seed is that of the relay system's birth; the cells that count have none). Beyond the rule, and said here before the runs: arm 2 is run on the same five seeds as well, because it is the arm with the relay proper (return strengths born at a size, growing with the forward ones) and the comparison of the two forms on one seed carries nothing. Prediction (mine): the median gain of arm 1 over five seeds is between 0.008 and 0.015 (chance 0.7), and arm 1 is better than arm 2 on at least four seeds of five (chance 0.6).
