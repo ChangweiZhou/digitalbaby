@@ -49,3 +49,19 @@ Readings (mine).
 The life is cut in four: the first half of A's stream, the first halves of the three books, the second half of A's stream, the second halves of the books. The system thus returns once to A (and once to the books) before the end, and ends on the books as before. Scored with nothing changing: A's last tenth right after the second half of A, and again at the end; the rise is the difference. Arms: the trust by kind and level, and the trust also by the number of long companions alive.
 
 *Prediction (mine):* with the return in its life the system with the change has a rise under 0.04 (chance 0.40) and at least 0.02 less rise than the system without the change in the same life (chance 0.55). *If neither holds*, a reading of this kind does not learn from one return what a return calls for, and I leave it there.
+
+## 7. Outcome of addition 1 (entered 20 November; `res/fresh_T2_*_return.json`)
+
+The life with one return; A's last tenth, nothing changing, nats a byte.
+
+| | A right after its second half | A at the end (after the books' second halves) | rise | Bryant, Burgess, Carroll at the end |
+|---|---|---|---|---|
+| trust by kind and level | 1.4811 | 1.5628 | 0.082 | 1.4797, 1.3134, 1.3683 |
+| also by the number of long companions alive | 1.4791 | 1.5464 | 0.067 | 1.4631, 1.3024, 1.3610 |
+
+**Both predictions failed**: the rise with the change is 0.067 (under 0.04 was predicted) and it is 0.014 less than without the change (0.02 was predicted). As said beforehand, I leave it there.
+
+Readings (mine).
+1. A return in the life does not teach this reading what a return calls for: the cost on the earlier text is 0.067 with it, against 0.075 without a return in the life.
+2. What the change does give is the same small gain as before, on every measure (0.002 on the test text, 0.007 to 0.017 on the books).
+3. **So the cost of a recent memory on an earlier text, when the system is stopped and asked, stays at about 0.07 nats, and this plan did not remove it.** What does remove it is already measured: letting the system go on (`PLAN_6.md`: on the return with everything going on the system with companions is the better one). For a system that is not meant to stop, that is the measure that counts; for a system that must answer about an old text without reading any of it again, the companions' trust would have to be told by something that this plan's signal does not carry. Not attempted: a signal taken from the long cells that never fade (whether the present runs are known at all), which is the other half of "is this the recent text".
