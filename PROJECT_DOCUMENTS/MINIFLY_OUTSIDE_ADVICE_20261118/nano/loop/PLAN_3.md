@@ -23,3 +23,7 @@
 **Cost.** 3 x 32 + 36 = 132 core-minutes.
 
 **Not run.** More than 32 readings; 4,096 cells beyond 16 readings; a step or a fading that changes with the reading; 256 cells.
+
+## Entered 15:58 UTC, before the run concerned reached its ninth reading (nothing above is changed)
+
+The 4,096-cell run of this plan is changed, for the reason entered in `PLAN_2.md` at 15:58: at the fixed setting 4,096 cells learn slowly (1.949 nats after 2 readings against 1.80 with eta1 = 16), so a fall from 8 to 16 readings at that setting would mostly show a slow learner catching up. The run of 16 readings is made with eta1 = 16 (`a16_H4096_s73129`) and R4 is scored on it; this is a departure from the plan as written. The 1,024-cell runs are unchanged.
