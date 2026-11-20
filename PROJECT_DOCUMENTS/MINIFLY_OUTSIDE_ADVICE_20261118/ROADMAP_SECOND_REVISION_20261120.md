@@ -292,6 +292,7 @@ After Mr. Xu's word, in Chinese, "继续大胆尝试。" (my translation: "Go on
 | the same, five seeds no line had used (`nano/gate2`) | with classes | 90.8 | 96.2 | 91.2 |
 | prose: three books no line had opened, read after the test text, each last tenth right after its stream (nats a byte) | runs of 0 to 6 bytes | 1.6316, 1.2416, 1.4687 | 1.6116, 1.2203, 1.4453 (**0.020, 0.021, 0.023 lower**) | 0.005 higher to 0.001 lower |
 | the same books, then opened once | with the cells that step once a word (T2) | 1.6093, 1.2056, 1.4387 | 1.5900, 1.1861, 1.4177 (0.019, 0.020, 0.021 lower) | 0.001 to 0.002 higher |
+| the test text's stream and then one of those books (three lives; the life with all three in turn was killed for memory and is not run) | all kinds of `PLAN_10.md` but the relay system | 1.5950, 1.1881, 1.4215 | 1.5741, 1.1628, 1.3974 (0.021, 0.025, 0.024 lower) | |
 | the last tenth of the test text, nothing changing (worn: scored for some fifty arms of this line) | T2 | 1.4973 | 1.4820 | |
 | the same | all kinds of `PLAN_10.md` | 1.4707 | **1.4421** | |
 | the same, everything going on changing | all kinds | 1.3470 | 1.3204 | |
