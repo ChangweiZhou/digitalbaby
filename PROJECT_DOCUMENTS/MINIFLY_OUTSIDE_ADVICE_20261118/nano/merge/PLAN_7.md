@@ -31,3 +31,15 @@ The second row is the system's answer to "what would I say here had I not met th
 ## 4. Runs, size, cost
 
 Development material first (two-digit seed 1; prose's last twentieth). If on development material it is not below the frozen setting by more than 1 point on sums nor above it by more than 0.002 nats on prose: the five reported seeds on two-digit sums, the first life, five seeds on three-digit sums, and 400,000 lines on two seeds. Otherwise it stops there and that is the result. The second rows add 32 x 40 trusts. Cost by estimate: as the frozen setting plus a few percent. Not run: the same for the kinds keyed on two classes; a second row for plain kinds.
+
+## 5. Addition 1 (20 November; written after the two development runs were read, before the runs it describes)
+
+*What was run* (`res/dev7_sums.json`, `res/dev7_prose.json`): two-digit sums, development seed, **90.8** (the frozen setting: 90.8; every reading within a point of it); prose's last twentieth **1.5467** (the frozen setting 1.5488). Y1 failed; Y4 held; Y5 held narrowly (0.0021 below).
+
+*What the result file shows.* The second rows are used (5.3 million uses in all) and end only a little above the first rows (0.31 to 0.32 against 0.24 to 0.25 for the two class kinds that fix the tens digit). My reading: on sums the base's step for a trust is 0.1 over the square root of one plus its *uses*, and a class kind is used, and practised, at every byte of every line, nearly always with no mismatch; after 40,000 lines its step is a few ten-thousandths, and the one byte in a hundred where the practice answer is wrong can no longer move it. The rule that shrinks the step was chosen in `nano/sparse` for kinds that are all born together; it starves a row that is used often and wrong seldom.
+
+*One change, to test that reading*: `step=2`: the step of a trust is 0.1 over the square root of one plus **the sum of the squares of the mismatch that trust has met**, in place of its uses. A trust that has seldom been wrong keeps its step for when it is. Applied to every trust of the sums base (prose has a constant step and is not touched). The 0.1 is the base's and is not chosen again. Because it changes the base, the base is run with it too.
+
+Arms, development seed 1, two-digit sums, 40,000 lines: (a) no classes, `step=2`; (b) the frozen setting's classes with one row, `step=2`; (c) two rows and practice, `step=2`.
+
+*Predictions (mine).* Z1: (a) within 3 points of the base's 76.8 (0.55). Z2: (c) at least 95 (0.40). Z3: (c) at least 2 points above (b) (0.50). *If Z2 or Z3 holds* and (a) is not more than 3 points below 76.8, arm (c) and its base (a) are run on the five reported seeds, with the first life unchanged from the run of section 4 (the step on prose is not touched); otherwise it stops here.
