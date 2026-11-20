@@ -14,6 +14,7 @@ PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received,
     ret=local2: as local, and every reader also sends its gate and its two sensitivities at every byte, the same to all the cells it reads; the cell
       read keeps from them, and from its own earlier outputs, a trace for each reader (it equals the reader's own trace of that connection), and its
       return strengths change by what the reader received times that trace. No value differs from one cell read to another.
+PLAN_11.md: text=g2 [gap=8]: two-digit lines aa+<0 to gap letters>bb=ccc; never-shown pairs scored at each length of gap.
 PLAN_7.md: text=g1|m1 [gap=4]: single-digit lines a+<0 to gap letters>b=c; g1: c = a + b; m1: c = (a + b) mod 10. Scored on the sums shown at each length of gap.
 """
 import json, os, sys, time
@@ -25,11 +26,12 @@ LET = b"wxyz"
 def setup(tx):
     """The texts with a gap have four more byte values, the letters."""
     global SYMS, S, SI
-    if tx in ("g1", "m1") and len(SYMS) == 14: SYMS = SYMS + list(LET); S = len(SYMS); SI = {c: i for i, c in enumerate(SYMS)}
+    if tx in ("g1", "m1", "g2") and len(SYMS) == 14: SYMS = SYMS + list(LET); S = len(SYMS); SI = {c: i for i, c in enumerate(SYMS)}
 def fill(a, b, n): return bytes(LET[(7 * a + 3 * b + 5 * i * i + i) % 4] for i in range(n)).decode()          # the letters used when scoring: fixed by the pair
 def text(tx, a, b, f=""):
     if tx == "d1": t = f"{a}+{b}={a + b}\n"
     elif tx == "d2": t = f"{a:02d}+{b:02d}={a + b:03d}\n"
+    elif tx == "g2": t = f"{a:02d}+{f}{b:02d}={a + b:03d}\n"
     else: t = f"{a}+{f}{b}={(a + b) % 10 if tx == 'm1' else a + b}\n"
     return [SI[c] for c in t.encode()]
 def sg(u): return 1 / (1 + np.exp(-u))
@@ -105,7 +107,7 @@ class Hold:
 
 def run(kw, cls=None):
     t0 = time.process_time(); tx = kw.get("text", "d1"); seed = int(kw.get("seed", 1)); lines = int(kw.get("lines", 60000)); every = int(kw.get("every", 10000))
-    setup(tx); G = int(kw.get("gap", 4)) if tx in ("g1", "m1") else 0; gaps = sorted({0, G // 2, G})
+    setup(tx); G = int(kw.get("gap", 4)) if tx in ("g1", "m1", "g2") else 0; gaps = sorted({0, G // 2, G})
     if tx in ("d1", "g1", "m1"):
         rng = np.random.default_rng(seed); P = [(a, b) for a in range(10) for b in range(10)]; rng.shuffle(P); held, shown = P[:20], P[20:]; shown_s = shown
     else:
@@ -121,6 +123,7 @@ def run(kw, cls=None):
             s.flush(); right += s.right_acc; s.right_acc = 0; sh, _ = s.score(tx, shown_s); nv, pl = s.score(tx, held)
             out["rows"].append(dict(lines=it + 1, shown=sh, never=nv, place=pl, bytes_right=100 * right / n, gate_mean=float(sg(s.cz).mean()))); right = n = 0
             if G: out["rows"][-1]["shown_by_gap"] = {g: s.score(tx, shown_s, g)[0] for g in gaps}; out["rows"][-1]["shown"] = float(np.mean(list(out["rows"][-1]["shown_by_gap"].values())))
+            if G and tx == "g2": out["rows"][-1]["never_by_gap"] = {g: s.score(tx, held, g)[0] for g in gaps}; out["rows"][-1]["never"] = float(np.mean(list(out["rows"][-1]["never_by_gap"].values())))
     out["cpu"] = round(time.process_time() - t0); out["last3_shown"] = float(np.mean([r["shown"] for r in out["rows"][-3:]])); out["last3_never"] = float(np.mean([r["never"] for r in out["rows"][-3:]]))
     s.flush(); run.last = s
     if kw.get("nowrite"): return out
@@ -131,4 +134,5 @@ def run(kw, cls=None):
 if __name__ == "__main__":
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw)
     print(o["label"], f"last3 shown {o['last3_shown']:.1f} never {o['last3_never']:.1f} |", " ".join(f"{r['lines']//1000}k {r['shown']:.0f}/{r['never']:.0f}" for r in o["rows"]), "| place", o["rows"][-1]["place"], "| bytes", round(o["rows"][-1]["bytes_right"]),
-          "| by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["shown_by_gap"].items()) if "shown_by_gap" in o["rows"][-1] else "", o["cpu"], "s")
+          "| by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["shown_by_gap"].items()) if "shown_by_gap" in o["rows"][-1] else "",
+          "| never shown by gap " + " ".join(f"{g}:{v:.0f}" for g, v in o["rows"][-1]["never_by_gap"].items()) if "never_by_gap" in o["rows"][-1] else "", o["cpu"], "s")
