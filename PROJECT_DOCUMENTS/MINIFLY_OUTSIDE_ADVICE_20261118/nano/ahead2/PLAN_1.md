@@ -80,3 +80,7 @@ Secondary, reported and not part of the criterion: tens digit; the two guesses a
 ## 7. Size, cost, what is not run
 
 Numbers that learn: trusts, 6 families of up to 255 kinds by 40 levels (those used are reported); counts, 14 for each set of each cell (cells that have counted and counts above zero are reported). My estimate from the line's figures: two to four CPU-minutes for a life of 60,000 lines with look-ahead; about 60 runs in all, under one hour on four cores. Not run: the life of 400,000 lines; the answer written units first; the cap on a cell's weight; any reference taught by back-propagation; anything on prose.
+
+## 8. Outcome (entered 20 November after the runs)
+
+It repeats on both sets of seeds by all three parts of section 5; the control falls to within 1.2 to 2.2 points of the arm without look-ahead; C1 and C2 under the other choice give 91.3 against 91.4. Tables, predictions and readings are in `REPORT.md`.
