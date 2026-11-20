@@ -59,3 +59,28 @@ The queue is now run by `q.sh` (`jobs_3.txt`: these four runs, then the rest of 
 ## Entered 16:01 UTC (nothing above is changed)
 
 **The pre-check at 1,024 cells** (development seed 1, 4 readings): eta1 = 1: 1.8031 nats, 47.6%; eta1 = 4: 1.7761, 48.5%; eta1 = 16: 1.7951, 48.0%. B5 held (eta1 = 4 is better by 0.027 nats). The best of the three is again eta1 = H / 256. As the plan provides, 1,024 cells with eta1 = 4 are run for 8 readings on seed 73129 (`a4_H1024_s73129`), and on seeds 93683 and 116089 at the end of the queue if the time allows.
+
+## Outcome (entered 16:45 UTC; nothing above is changed)
+
+Arm P, born at nothing, D = 10, eta2 = 1/4; loss on the last tenth in nats (bits; named right). `tab_output.txt`, section L2 a.
+
+| cells | numbers that learn | fixed setting (eta1 = 1), 8 readings | eta1 = H / 256, 8 readings | fixed, 1 reading | eta1 = H / 256, 2 readings |
+|---|---|---|---|---|---|
+| 256 | 183,361 | 1.7942 (2.5885; 47.96%), 3 seeds | the same runs | 1.8934 | 1.8481 |
+| 1,024 | 733,249 | 1.7687 (2.5517; 48.61%), 3 seeds | 1.7505 (2.5254; 49.08%), seed 73129 | 1.9174 | 1.8105 |
+| 4,096 | 2,932,801 | 1.8236 (2.6309; 47.17%), seed 73129 | **1.7379 (2.5072; 49.73%)**, seed 73129 | 2.0375 (3 seeds) | 1.7999 |
+| 16,384 | 11,731,009 | not run | not run | 2.2201, seed 73129 | 1.7984 (2.5945; 47.88%), seed 73129 |
+
+Beside them: unsmoothed tables of the last 3, 4, 5 bytes 1.796, 1.755, 1.927 nats (crude) and 47.2, 52.5, 53.7% right. The earlier birth of the return strengths was run at 256 and 1,024 cells only (first plan: 1.8275 and 1.8416).
+
+**The hypothesis as registered (fixed settings) is refuted.** From 256 to 1,024 cells the loss falls by 0.026 nats; from 1,024 to 4,096 it rises by 0.055 (one seed; the spread over seeds is 0.001 to 0.003), and after one reading it rises at every step in size, to 2.22 nats with 16,384 cells.
+
+**Why, as far as these runs show (my reading).** With eta1 fixed, each cell's own change shrinks as cells are added, and the larger system is a slower learner, not a worse one. With eta1 raised in proportion to the number of cells (found best of three values at 1,024 cells and best of the values tried at 4,096, on the development seed; extrapolated without a check to 16,384) the loss falls at every step: 1.794, 1.751, 1.738 after 8 readings, and 1.848, 1.811, 1.800, 1.798 after 2. **The fall is small and is ending**: 0.044 nats for the first factor of four, 0.013 for the second, 0.0015 for the third (after 2 readings). Sixteen times the cells buy 0.056 nats. The series with eta1 in proportion is on one seed at 1,024 cells and more, and its settings at 256 cells were chosen with eta2 and the birth free, at the larger sizes with only eta1 (and at 4,096 cells four pairs) looked at.
+
+**Reached on the roadmap's terms for L2** ("the loss stops falling, or meets a table of five bytes"): with cells alone, at D = 10 and 8 readings, the loss all but stops falling near 1.74 nats, between the smoothed tables of 3 and 4 bytes of `nano/ref` (1.719 and 1.561) and 0.22 nats above its best table (1.517).
+
+**Predictions scored** (B1 to B4 on the fixed-setting series, as registered). B1 failed (4,096 cells are above 1,024, not 0.02 below). B2 failed (1.824; with eta1 in proportion 1.738, which is below 1.755). B3 failed (47.96, 48.61, 47.17; with eta1 in proportion it holds: 47.96, 49.08, 49.73). B4 held in both forms left to it: after 1 reading at the fixed setting 16,384 cells are far above 4,096; after 2 readings with eta1 in proportion they are 0.0015 below. B5 held (0.027 nats). B6 held. B7 held (1.738 against 1.768). Four of seven held; the three that failed are the three about the registered series.
+
+**Departures from the plan, in one place:** two of three seeds at 4,096 cells stopped; the fixed-setting run at 16,384 cells stopped after one reading; a settings check at 4,096 cells and a second series added, both entered above before or as they started.
+
+**Cost.** 4,096 cells: 4.7 to 4.9 minutes a reading; 16,384 cells: 20 minutes a reading (one core each, four busy). **Not run:** 16,384 cells beyond 2 readings; eta1 above H / 256 at 4,096 and 16,384 cells; eta2 and the birth chosen anew at each size; more than one seed for the series with eta1 in proportion (two more seeds at 1,024 cells are at the end of the queue).

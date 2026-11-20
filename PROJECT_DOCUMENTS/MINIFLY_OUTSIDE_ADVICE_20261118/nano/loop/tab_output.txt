@@ -24,52 +24,90 @@ Always the most frequent byte: 14.90% right. The byte frequencies of the stream 
 | 1024 cells, branches compete, return strengths born at nothing | 1.7682 | 2.5510 | 48.63 | 1.5936 | 5: 1.7689, 1.7687, 1.7686, 1.7653, 1.7695 (48.6, 48.7, 48.6, 48.7, 48.6) |
 | 1024 cells, branches compete, return strengths born at the earlier size | 1.8416 | 2.6569 | 47.10 | 1.6879 | 3: 1.8394, 1.8415, 1.8441 (47.2, 47.1, 47.0) |
 
-## L2 a (PLAN_2.md): cells; arm P born at nothing, D = 10, seeds 73129, 93683, 116089
+## L2 a (PLAN_2.md): cells; arm P born at nothing, D = 10
 
 After 8 readings:
 
 | | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
 |---|---|---|---|---|---|
-| 256 cells | 1.7942 | 2.5885 | 47.96 | 1.6210 | 3: 1.7944, 1.7930, 1.7952 (47.9, 48.0, 48.0) |
-| 1024 cells | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
-| 4096 cells | not run | | | | |
-| 16384 cells | not run | | | | |
+| 256 cells, fixed setting (eta1 = 1) | 1.7942 | 2.5885 | 47.96 | 1.6210 | 3: 1.7944, 1.7930, 1.7952 (47.9, 48.0, 48.0) |
+| 1024 cells, fixed setting (eta1 = 1) | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
+| 4096 cells, fixed setting (eta1 = 1) | 1.8236 | 2.6309 | 47.17 | 1.6656 | 1: 1.8236 (47.2) |
+| 16384 cells, fixed setting (eta1 = 1) | not run | | | | |
+| 256 cells, eta1 = 1 (in proportion to the cells) | 1.7942 | 2.5885 | 47.96 | 1.6210 | 3: 1.7944, 1.7930, 1.7952 (47.9, 48.0, 48.0) |
+| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.7505 | 2.5254 | 49.08 | 1.5695 | 1: 1.7505 (49.1) |
+| 4096 cells, eta1 = 16 (in proportion to the cells) | 1.7379 | 2.5072 | 49.73 | 1.5542 | 1: 1.7379 (49.7) |
+| 16384 cells, eta1 = 64 (in proportion to the cells) | not run | | | | |
 
 After 2 readings:
 
 | | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
 |---|---|---|---|---|---|
-| 256 cells | 1.8481 | 2.6663 | 46.34 | 1.7215 | 3: 1.8451, 1.8513, 1.8480 (46.4, 46.4, 46.2) |
-| 1024 cells | 1.8528 | 2.6730 | 46.28 | 1.7385 | 3: 1.8519, 1.8536, 1.8528 (46.4, 46.2, 46.2) |
-| 4096 cells | not run | | | | |
-| 16384 cells | not run | | | | |
+| 256 cells, fixed setting (eta1 = 1) | 1.8481 | 2.6663 | 46.34 | 1.7215 | 3: 1.8451, 1.8513, 1.8480 (46.4, 46.4, 46.2) |
+| 1024 cells, fixed setting (eta1 = 1) | 1.8528 | 2.6730 | 46.28 | 1.7385 | 3: 1.8519, 1.8536, 1.8528 (46.4, 46.2, 46.2) |
+| 4096 cells, fixed setting (eta1 = 1) | 1.9490 | 2.8119 | 43.31 | 1.8655 | 1: 1.9490 (43.3) |
+| 16384 cells, fixed setting (eta1 = 1) | not run | | | | |
+| 256 cells, eta1 = 1 (in proportion to the cells) | 1.8481 | 2.6663 | 46.34 | 1.7215 | 3: 1.8451, 1.8513, 1.8480 (46.4, 46.4, 46.2) |
+| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.8105 | 2.6120 | 47.49 | 1.6846 | 1: 1.8105 (47.5) |
+| 4096 cells, eta1 = 16 (in proportion to the cells) | 1.7999 | 2.5967 | 47.91 | 1.6743 | 1: 1.7999 (47.9) |
+| 16384 cells, eta1 = 64 (in proportion to the cells) | 1.7984 | 2.5945 | 47.88 | 1.6714 | 1: 1.7984 (47.9) |
 
-Pre-check on development seed 1 (1,024 cells, 4 readings): eta1 = 1: 1.8031 nats, 47.63%
+After 1 reading:
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| 256 cells, fixed setting (eta1 = 1) | 1.8934 | 2.7316 | 45.09 | 1.8797 | 3: 1.8929, 1.8963, 1.8911 (45.0, 45.2, 45.1) |
+| 1024 cells, fixed setting (eta1 = 1) | 1.9174 | 2.7662 | 44.26 | 1.9489 | 3: 1.9161, 1.9182, 1.9179 (44.3, 44.2, 44.3) |
+| 4096 cells, fixed setting (eta1 = 1) | 2.0375 | 2.9395 | 40.85 | 2.1126 | 3: 2.0367, 2.0375, 2.0384 (40.9, 40.9, 40.8) |
+| 16384 cells, fixed setting (eta1 = 1) | 2.2201 | 3.2029 | 36.28 | 2.2964 | 1: 2.2201 (36.3) |
+| 256 cells, eta1 = 1 (in proportion to the cells) | 1.8934 | 2.7316 | 45.09 | 1.8797 | 3: 1.8929, 1.8963, 1.8911 (45.0, 45.2, 45.1) |
+| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.8593 | 2.6824 | 46.10 | 1.8528 | 1: 1.8593 (46.1) |
+| 4096 cells, eta1 = 16 (in proportion to the cells) | 1.8509 | 2.6703 | 46.38 | 1.8455 | 1: 1.8509 (46.4) |
+| 16384 cells, eta1 = 64 (in proportion to the cells) | 1.8494 | 2.6681 | 46.34 | 1.8436 | 1: 1.8494 (46.3) |
+
+Pre-check on development seed 1 (1,024 cells, 4 readings): eta1 = 1: 1.8031 nats, 47.63%; eta1 = 4: 1.7761 nats, 48.48%; eta1 = 16: 1.7951 nats, 47.96%
+
+Settings check on development seed 1 (4,096 cells, 2 readings): (eta1, eta2) = (16, 1/4): 1.8017 nats, 47.82%; (eta1, eta2) = (1, 1): 1.8137 nats, 48.84%; (eta1, eta2) = (4, 1/4): 1.8444 nats, 46.57%; (eta1, eta2) = (4, 1): 1.8540 nats, 47.24%; the fixed setting (1, 1/4) on seed 73129: 1.9490 nats, 43.31%
 
 ## L2 b (PLAN_3.md): readings; arm P born at nothing, D = 10
 
 | | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
 |---|---|---|---|---|---|
-| 1024 cells, 1 readings | not run | | | | |
-| 1024 cells, 2 readings | not run | | | | |
-| 1024 cells, 4 readings | not run | | | | |
-| 1024 cells, 8 readings | not run | | | | |
-| 1024 cells, 16 readings | not run | | | | |
-| 1024 cells, 32 readings | not run | | | | |
-| 4096 cells, 1 readings | not run | | | | |
-| 4096 cells, 2 readings | not run | | | | |
-| 4096 cells, 4 readings | not run | | | | |
-| 4096 cells, 8 readings | not run | | | | |
-| 4096 cells, 16 readings | not run | | | | |
-| 4096 cells, 32 readings | not run | | | | |
+| 1,024 cells (eta1 = 1), 1 reading | 1.9174 | 2.7662 | 44.26 | 1.9489 | 3: 1.9161, 1.9182, 1.9179 (44.3, 44.2, 44.3) |
+| 1,024 cells (eta1 = 1), 2 readings | 1.8528 | 2.6730 | 46.28 | 1.7385 | 3: 1.8519, 1.8536, 1.8528 (46.4, 46.2, 46.2) |
+| 1,024 cells (eta1 = 1), 4 readings | 1.8043 | 2.6031 | 47.63 | 1.6525 | 3: 1.8042, 1.8047, 1.8040 (47.7, 47.6, 47.6) |
+| 1,024 cells (eta1 = 1), 8 readings | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
+| 1,024 cells (eta1 = 1), 12 readings | 1.7526 | 2.5284 | 49.06 | 1.5666 | 3: 1.7534, 1.7519, 1.7524 (49.1, 49.1, 49.1) |
+| 1,024 cells (eta1 = 1), 16 readings | 1.7429 | 2.5144 | 49.37 | 1.5492 | 3: 1.7441, 1.7420, 1.7425 (49.4, 49.4, 49.4) |
+| 1,024 cells (eta1 = 1), 24 readings | 1.7311 | 2.4975 | 49.69 | 1.5266 | 2: 1.7322, 1.7300 (49.7, 49.7) |
+| 1,024 cells (eta1 = 1), 32 readings | 1.7237 | 2.4868 | 49.97 | 1.5120 | 2: 1.7249, 1.7225 (49.9, 50.1) |
+| 4,096 cells, eta1 = 16, 1 reading | 1.8509 | 2.6703 | 46.38 | 1.8455 | 1: 1.8509 (46.4) |
+| 4,096 cells, eta1 = 16, 2 readings | 1.7999 | 2.5967 | 47.91 | 1.6743 | 1: 1.7999 (47.9) |
+| 4,096 cells, eta1 = 16, 4 readings | 1.7632 | 2.5438 | 48.93 | 1.6036 | 1: 1.7632 (48.9) |
+| 4,096 cells, eta1 = 16, 8 readings | 1.7379 | 2.5072 | 49.73 | 1.5542 | 1: 1.7379 (49.7) |
+| 4,096 cells, eta1 = 16, 12 readings | not run | | | | |
+| 4,096 cells, eta1 = 16, 16 readings | not run | | | | |
+| 4,096 cells, fixed setting (eta1 = 1), 1 reading | 2.0367 | 2.9384 | 40.86 | 2.1123 | 1: 2.0367 (40.9) |
+| 4,096 cells, fixed setting (eta1 = 1), 2 readings | 1.9490 | 2.8119 | 43.31 | 1.8655 | 1: 1.9490 (43.3) |
+| 4,096 cells, fixed setting (eta1 = 1), 4 readings | 1.8790 | 2.7109 | 45.40 | 1.7481 | 1: 1.8790 (45.4) |
+| 4,096 cells, fixed setting (eta1 = 1), 8 readings | 1.8236 | 2.6309 | 47.17 | 1.6656 | 1: 1.8236 (47.2) |
 
-Reading 8 by the two kernels (kernp.c in the first plan's runs; kernt.c here), nats: 
+Reading 8 by the two kernels (kernp.c in the first plan's runs; kernt.c here), nats: seed 73129: 1.7689 and 1.7689; seed 93683: 1.7687 and 1.7687; seed 116089: 1.7686 and 1.7686
 
-## L2 c (PLAN_4.md): delay lines; arm P born at nothing, 1,024 cells, 8 readings
+## L2 c (PLAN_4.md): delay lines; arm P born at nothing, 1,024 cells (eta1 = 1), 8 readings
 
 | | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
 |---|---|---|---|---|---|
-| D = 4 | not run | | | | |
+| D = 4 | 1.7953 | 2.5901 | 47.85 | 1.6480 | 1: 1.7953 (47.8) |
 | D = 10 | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
 | D = 16 | not run | | | | |
 | D = 32 | not run | | | | |
+
+## Beyond the plans: each arm at the eta2 that named most bytes right on the development seed; 1,024 cells, 8 readings, born at nothing
+
+| | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
+|---|---|---|---|---|---|
+| least squares, eta2 = 1/64 (chosen by loss; loss crude) | 1.9856 | 2.8647 | 48.44 | 1.8169 | 3: 1.9845, 1.9845, 1.9878 (48.5, 48.4, 48.5) |
+| least squares, eta2 = 1/16 (loss crude) | not run | | | | |
+| branches compete, eta2 = 1/4 (chosen by loss) | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
+| branches compete, eta2 = 1 | not run | | | | |
