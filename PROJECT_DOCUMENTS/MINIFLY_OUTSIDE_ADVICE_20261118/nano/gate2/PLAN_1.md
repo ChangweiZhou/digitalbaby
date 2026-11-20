@@ -57,3 +57,39 @@ Prose (the description's other half; the coordinating session reports it, and it
 ## 6. Seen before this plan was committed
 
 The check (`check_output.txt`) includes one short run of the whole runner on development seed 1 (4,000 lines, 8 pairs of classes; needed to compare my first cell with `merge.run_sums`), and its one reading was printed: first cell 71.2 after a read line and 68.4 with an empty past, second cell 66.4 and 70.6, control 61.6 and 61.6. Nothing was chosen on it and the predictions above were written before it.
+
+## 7. Outcome (20 November; the runs of section 3; `res/s40_*.json`, `out/s40_*.txt`, `report_1.txt`)
+
+Never-shown two-digit additions, whole answer right, %, each cell continuing its own answer bytes; 40,000 lines; first cell, second cell and control from one run. Size: 1.23 million cells that count with classes (1.21 million without); second cell 1,451,520 parts with classes, of which about 708,000 were ever used (control: 70,000); 1,290,240 without, 664,000 used. CPU: 77 to 89 s a run with classes, 41 to 46 s without (one core).
+
+| Setting, seeds | Cell | After a read line: last reading by seed; median | The same, mean of the last three; median | Empty past, last; median |
+|---|---|---|---|---|
+| with classes; 73129, 93683, 116089, 406364, 545353 | first | 93.2, 95.2, 92.4, 89.6, 92.9; **92.9** | 92.9, 94.0, 92.1, 89.5, 93.0; 92.9 | 92.2, 94.2, 93.6, 87.6, 92.2; 92.2 |
+| | second | 97.4, 98.2, 96.4, 96.8, 97.4; **97.4** | 97.4, 98.0, 96.6, 96.2, 97.1; 97.1 | 97.0, 98.6, 96.8, 96.8, 96.6; 96.8 |
+| | control | 92.2, 93.8, 92.8, 88.5, 93.6; **92.8** | 92.5, 93.0, 92.4, 88.3, 93.2; 92.5 | 89.4, 92.0, 91.6, 87.2, 93.2; 91.6 |
+| without classes; the same seeds | first | 82.0, 80.9, 80.1, 78.6, 77.8; **80.1** | 82.6, 80.0, 79.4, 78.5, 78.5; 79.4 | 79.2, 79.0, 77.6, 76.0, 77.2; 77.6 |
+| | second | 88.1, 84.8, 86.3, 84.6, 85.6; **85.6** | 87.9, 85.7, 86.9, 84.5, 85.3; 85.7 | 87.8, 85.6, 86.0, 82.4, 86.6; 86.0 |
+| | control | 83.9, 83.4, 83.8, 80.0, 82.5; **83.4** | 85.8, 84.1, 83.5, 81.2, 83.6; 83.6 | 81.8, 81.2, 82.2, 79.0, 82.0; 81.8 |
+| with classes; 3001 to 3005 (new) | first | 89.7, 92.5, 90.1, 90.8, 90.9; **90.8** | 90.0, 92.4, 89.7, 90.3, 90.9; 90.3 | 87.4, 91.8, 88.4, 90.6, 89.4; 89.4 |
+| | second | 94.6, 97.3, 96.2, 95.8, 97.4; **96.2** | 95.2, 97.1, 96.0, 95.9, 96.8; 96.0 | 93.2, 96.6, 96.4, 96.8, 97.0; 96.6 |
+| | control | 89.0, 93.1, 91.2, 90.6, 91.3; **91.2** | 89.8, 92.7, 90.0, 90.1, 90.7; 90.1 | 87.6, 92.6, 90.2, 88.8, 90.0; 90.0 |
+
+Second cell less first cell, seed by seed, after a read line, mean of the last three: with classes +4.5, +4.0, +4.5, +6.7, +4.1 (reported seeds) and +5.2, +4.7, +6.3, +5.6, +5.9 (new seeds); without classes +5.4, +5.7, +7.5, +6.1, +6.7. The control less the first cell: with classes -0.4, -1.0, +0.3, -1.1, +0.2 and -0.2, +0.3, +0.3, -0.2, -0.2; without classes +3.2, +4.1, +4.1, +2.7, +5.1.
+
+By place of the answer (after a read line, last reading, median of the five reported seeds): the whole of the difference is at the tens digit. With classes: first cell 98.6, 93.0, 100 (hundreds, tens, units); second cell 98.5, 97.6, 100; control 98.6, 93.1, 100. Without classes: 98.6, 80.1, 100; 98.7, 85.6, 100; 98.7, 83.4, 100.
+
+**It repeats** (my reading). Written from the description alone, the second cell stands 4.4 points above the first at the median of the five reported seeds with classes (97.4 against 92.9; ten seeds of ten above, by 4.0 to 6.7 at the mean of the last three readings), and 5.4 points above on five seeds no line had used (96.2 against 90.8). The control gives nothing with classes (92.8 and 91.2). Without classes the second cell gains 5.6 points and the control 3.3: more than half of that gain is not from the bytes, as the coordinating session said. About one error in three at the tens digit remains with classes (97.6% of tens digits right).
+
+**The check of my first cell.** On all five reported seeds, with classes and without, every reading of my first cell at the old score equals the corresponding reading in `../merge/res/s40_cls_seed*.json` and `s40_none_seed*.json` (ten files, eight readings each; `report_1.txt`).
+
+**Predictions.** R1 held (+4.4). R2 held (97.4). R3 held (97.4 and 96.8: the same to the digit). R4 held (control 92.8 against 92.9). R5 held (+5.6). R6 held (the control gives 3.3 of 5.6 at the last reading, 4.3 of 6.3 at the mean of the last three). R7 held (+5.4). R8 held (all ten). R9 held (ten of ten). Nine of nine: but I had been given the first figures before I wrote them, so they test the description and the program, and not my foresight.
+
+## 8. When I opened the coordinating session's files, and what differed
+
+Opened at 20:25 UTC on 20 November, after the fifteen runs above had ended, their table had been written (`report_1.txt`) and both had been committed and pushed (d4ce887): `../table/gate.py` (the kernel's text is inside it; there is no `kern_gate.c` in this checkout) and `../table/check15_output.txt`. The result files of that plan are not in this checkout; I read them from `claude/friendly-darwin-8mmhfm` at 681f168 by fetching the branch. In doing so I also saw that commit's title and the two result files of 400,000 lines (second cell 75.5 and 90.4 after a read line at the end, on seeds 73129 and 93683), after `PLAN_2.md` had been committed and its runs started.
+
+*Figures.* 20 of that line's result files have a counterpart here (seeds 73129, 93683, 116089, 406364, 545353; with classes and without; the second cell and the control). In all 20, every one of the eight readings is the same to the last digit for both cells and both scores.
+
+*Programs.* The arithmetic is the same. Differences, none of which changes a figure: (1) that program runs the control as a separate run in place of the second cell; mine runs the second cell and the control side by side from one first cell; (2) it stores the parts as [delay][kind][level][byte], mine as [kind][level][delay][byte]; (3) it changes the first cell's trust and the second cell's parts sender by sender in one loop, mine in two loops (the same values: both use probabilities computed before any change); (4) it skips a sender whose parts sum to exactly nothing; (5) it wraps `merge.run_sums` and scores at that program's readings, mine re-writes the loop of readings (checked against `merge.run_sums`); (6) it has a third arm (the side arm of PLAN_15.md) that I did not write. Every choice I listed in section 2 as left open by the description (a count of uses for each entry; the first cell's level; a silent sender changes nothing; each cell continues its own bytes; parts and counts both follow the trust across a finding) turned out to be the choice that program made. So the description in PLAN_15.md, sections 2 and 4, with `past_cells.py` for the form of the score, was enough to rebuild the result exactly.
+
+*A limit of this repeat.* It is a repeat of the program from its description on the same base system, the same text, the same split and (for five seeds) the same random draws; it shows that the result is not an accident of that program and holds on five further seeds. It does not show that it holds on another base system or another text: that is what steps 2 to 4 ask.
