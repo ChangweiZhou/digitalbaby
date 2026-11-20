@@ -66,3 +66,27 @@ The course of never-shown additions through the second task (after a subtraction
 5. *The hundreds digit is touched as well as the tens* (96.8 to 97.4 right at the end against 98.5 before; 83% in the control), which never happened in the one-task runs.
 
 **Predictions.** K1 failed, narrowly (88.8, 90 asked). K2 held (88.8; no seed under 75). K3 failed (the first cell keeps 81.1). K4 failed (the second cell keeps the larger share). K5 held (86.2 against 75.4; four seeds of five, seed 73129 has 79.5 against 81.4). K6 held (89.4 against 80.4). K7 failed (the control keeps 65.8 against 81.1). K8 held (95.8). K9 held (five seeds of five). Five of nine.
+
+## 6. Outcome of the long life (20 November; `res/lifelong_cls_seed*.json`, `out/lifelong_cls_seed*.txt`, `report_3long.txt`)
+
+Addition 400,000 lines, then subtraction 200,000 lines; with classes; seeds 73129 and 93683 (two seeds: a reading, not a claim). 1.40 million cells that count at the end. CPU 672 and 702 s a run. "Kept" as section 2 defines it (mean of the last three readings of each task: 300,000 to 400,000 lines of addition; 100,000 to 200,000 lines of subtraction).
+
+| Seed | Cell | Addition before | Addition at the end | Kept, % | Addition through the second task, after a subtraction line, at 1,000, 5,000, 20,000, 40,000, 100,000, 200,000 lines | Subtraction, clean score: best reading; at the end (mean of the last three) |
+|---|---|---|---|---|---|---|
+| 73129 | first | 78.8 | 73.9 | 93.8 | 7.5, 20.7, 29.6, 79.7, 78.0, 70.8 | 82.4; 68.9 |
+| | second | 76.5 | 13.9 | **18.2** | 16.7, 13.2, 11.5, 23.7, 14.7, 11.6 | 89.5; 78.5 |
+| | control | 83.6 | 79.5 | 95.1 | 0.7, 4.6, 4.2, 83.4, 85.0, 73.4 | 83.6; 64.5 |
+| 93683 | first | 82.9 | 72.1 | 87.0 | 69.3, 79.6, 82.3, 83.4, 80.4, 67.4 | 74.2; 60.5 |
+| | second | 91.9 | 71.4 | **77.7** | 56.5, 69.6, 75.2, 83.8, 84.4, 64.1 | 93.8; 77.2 |
+| | control | 85.4 | 66.3 | 77.7 | 34.4, 60.2, 60.3, 87.0, 76.6, 59.7 | 83.1; 59.2 |
+
+By place of the addition answer (hundreds, tens, units), seed 73129, second cell: 99.6, 21.6, 79.1 at 1,000 lines of subtraction and 96.2, 13.2, 97.8 at the end; first cell 99.5, 7.5, 100 at 1,000 lines and 95.4, 71.3, 100 at the end.
+
+**What I take from it (mine; two seeds).**
+
+1. *After a long first task the second cell can lose addition and not recover it.* On seed 73129 it stands at 12 to 24% for the whole of the second task, while the first cell and the control, which fall as low at first (7.5 and 0.7 at 1,000 lines), are back at 80 and 83 by 40,000 lines. On seed 93683 the second cell keeps 77.7%. So over the long life the coordinating session's hypothesis is refuted on one seed of two (18.2%, under its line of 75) and not held on the other. The short life's "keeps 88.8%" does not carry to the long one.
+2. *The sudden loss is far deeper after a long first task* (7.5% and 69% for the first cell 1,000 lines after the change, against 50% at the median after the short one), and mending takes 20,000 to 40,000 lines in place of 5,000 to 15,000: the trusts' steps have shrunk with 400,000 lines of use.
+3. *The second cell learns the second task better at every reading on both seeds* (clean subtractions 78.5 and 77.2 at the end against 68.9 and 60.5 for the first cell), and every cell's subtraction falls with reading after its best (89.5 to 78.5; 82.4 to 68.9), as addition did in step 2.
+4. This was on seeds 73129 and 93683 only, with classes only, and the second cell on seed 73129 had already fallen to the first cell's level before the change (step 2). I do not know from these runs whether the lasting loss on that seed comes from the state the long reading left the parts in, or from the change of task alone.
+
+**Predictions.** None were written for the long life apart from the hypothesis itself; it is scored in point 1.
