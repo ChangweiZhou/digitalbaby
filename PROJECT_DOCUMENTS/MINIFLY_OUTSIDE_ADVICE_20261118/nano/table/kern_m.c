@@ -11,7 +11,7 @@ static inline int level(float n, float u, int flat) {
 /* at each byte: every active cell that has counted says s(v) = log((c(v)+e)/(n+65e)); the answering cell's branches compete on the sum of trust times s;
    then the trust that was used changes by eta times (mismatch . s), and the cells count */
 void mix_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, float *C, float *N, float *U, double *T, double eta, double e,
-               int learn_c, int learn_t, int flat, double *P) {
+               int learn_c, int learn_t, int flat, double *P, double *Tu, int shrink) {
     static double lt[4096]; double a[S], p[S], s[32][S]; int lev[32];
     for (int c = 0; c < 4096; c++) lt[c] = log(c + e);
     for (int64_t t = 0; t < n; t++) {
@@ -28,7 +28,7 @@ void mix_steps(int64_t n, int64_t K1, const int64_t *ids, const int32_t *y, floa
         if (P) for (int v = 0; v < S; v++) P[t * S + v] = p[v];
         if (learn_t) for (int64_t k = 0; k < K1; k++) if (lev[k] >= 0) {
             double g = s[k][y[t]]; for (int v = 0; v < S; v++) g -= p[v] * s[k][v];
-            T[k * NL + lev[k]] += eta * g;
+            T[k * NL + lev[k]] += (shrink ? eta / sqrt(1.0 + Tu[k * NL + lev[k]]) : eta) * g; Tu[k * NL + lev[k]] += 1.0;
         }
         if (learn_c) for (int64_t k = 0; k < K1; k++) if (id[k] >= 0) {
             float *c = C + id[k] * S; if (c[y[t]] == 0) U[id[k]] += 1; c[y[t]] += 1; N[id[k]] += 1;
