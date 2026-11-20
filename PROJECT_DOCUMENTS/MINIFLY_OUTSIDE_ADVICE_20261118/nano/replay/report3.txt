@@ -1,0 +1,136 @@
+First task: addition, aa+bb=ccc, 400,000 real lines. Second task: aa=bb+ccc for aa - bb = ccc, 200,000 real lines. Never-shown pairs, whole answer right, %.
+
+================ The five reported seeds: 73129 93683 116089 406364 545353
+
+Addition after its own phase (mean of the last three readings)
+P plain, no replay                         84.2   82.7   86.4   81.8   86.7   median   84.2
+R replay, one line for each real line      87.9   90.5   85.9   81.1   86.3   median   86.3
+O the program's old lines, one for each    84.6   86.1   82.5   87.6   89.1   median   86.1
+Z replay, cells emptied at the change      87.9   90.5   85.9   81.1   86.3   median   86.3
+
+Second task before it is taught (clean, wide)
+P plain, no replay                          0.0    0.0    0.0    0.0    0.0   median    0.0
+R replay, one line for each real line       0.0    0.0    0.0    0.0    0.0   median    0.0
+O the program's old lines, one for each     0.0    0.0    0.0    0.0    0.0   median    0.0
+Z replay, cells emptied at the change       0.0    0.0    0.0    0.0    0.0   median    0.0
+
+Addition at the end
+P plain, no replay                          2.2    0.2    0.6    2.0    1.4   median    1.4
+R replay, one line for each real line      62.0   74.2   65.4   65.6   76.4   median   65.6
+O the program's old lines, one for each    81.2   76.4   72.8   86.2   80.8   median   80.8
+Z replay, cells emptied at the change       1.8    0.8    0.6    0.2    2.2   median    0.8
+
+Second task at the end: clean, wide (never-shown pairs, of all 2,000, whose line no shown pair writes)
+P plain, no replay                         82.3   80.9   86.2   85.9   82.5   median   82.5
+R replay, one line for each real line      68.0   66.7   59.2   73.5   78.7   median   68.0
+O the program's old lines, one for each    69.7   57.1   66.0   65.8   62.4   median   65.8
+Z replay, cells emptied at the change      84.2   80.9   88.9   90.3   90.0   median   88.9
+
+Second task at the end: clean (the same among the 500)
+P plain, no replay                         83.2   86.5   86.2   85.6   78.3   median   85.6
+R replay, one line for each real line      69.3   74.0   57.5   72.1   73.5   median   72.1
+O the program's old lines, one for each    70.3   50.0   66.2   58.7   57.8   median   58.7
+Z replay, cells emptied at the change      86.1   76.0   90.0   89.4   84.3   median   86.1
+
+Second task at the end: mixed (the 500 as cells2.py scores them; about four in five are shown lines)
+P plain, no replay                         83.0   82.6   84.6   84.4   83.8   median   83.8
+R replay, one line for each real line      69.8   72.2   62.2   75.2   78.4   median   72.2
+O the program's old lines, one for each    69.8   59.4   67.4   65.8   65.0   median   65.8
+Z replay, cells emptied at the change      84.6   83.6   89.0   91.0   92.8   median   89.0
+
+How many pairs in clean, wide
+P plain, no replay                          406    408    377    412    399   median    406
+R replay, one line for each real line       406    408    377    412    399   median    406
+O the program's old lines, one for each     406    408    377    412    399   median    406
+Z replay, cells emptied at the change       406    408    377    412    399   median    406
+
+Counting cells held at the end
+P plain, no replay                            0      0      0      0      0   median      0
+R replay, one line for each real line     66043  66050  66120  66020  66063   median  66050
+O the program's old lines, one for each       0      0      0      0      0   median      0
+Z replay, cells emptied at the change     24942  24950  25020  24920  24963   median  24950
+
+CPU seconds
+P plain, no replay                           30     29     26     27     28   median     28
+R replay, one line for each real line        62     62     63     61     58   median     62
+O the program's old lines, one for each      51     53     53     55     54   median     53
+Z replay, cells emptied at the change        60     62     61     60     58   median     60
+
+Extra lines over both phases, share correct, %
+R replay, one line for each real line     100.0  100.0  100.0  100.0  100.0   median  100.0
+O the program's old lines, one for each   100.0  100.0  100.0  100.0  100.0   median  100.0
+Z replay, cells emptied at the change     100.0  100.0  100.0  100.0  100.0   median  100.0
+R, seed 73129, second phase by reading: replayed lines that are addition / second task: 47097/2903 42069/7931 38203/11797 34504/15496
+
+Paired, same seed, points
+addition, R less O                        -19.2   -2.2   -7.4  -20.6   -4.4   median   -7.4
+                                         above zero on 0 of 5, below on 5
+second task (clean, wide), R less O        -1.7   +9.6   -6.9   +7.8  +16.3   median   +7.8
+                                         above zero on 3 of 5, below on 2
+second task (clean, wide), R less P       -14.3  -14.2  -27.1  -12.4   -3.8   median  -14.2
+                                         above zero on 0 of 5, below on 5
+second task (clean, wide), O less P       -12.6  -23.8  -20.2  -20.1  -20.1   median  -20.1
+                                         above zero on 0 of 5, below on 5
+sum of the two scores, R less O           -20.9   +7.4  -14.3  -12.8  +11.9   median  -12.8
+                                         above zero on 2 of 5, below on 3
+sum of the two scores, R                  130.0  140.9  124.6  139.1  155.1   median  139.1
+sum of the two scores, O                  150.9  133.5  138.8  152.0  143.2   median  143.2
+
+================ Fifteen seeds (the five, then 1001 to 1010): 73129 93683 116089 406364 545353 1001 1002 1003 1004 1005 1006 1007 1008 1009 1010
+
+Addition after its own phase (mean of the last three readings)
+R replay, one line for each real line      87.9   90.5   85.9   81.1   86.3   86.2   80.5   89.1   79.5   83.9   86.1   84.9   90.3   88.9   82.7   median   86.1
+O the program's old lines, one for each    84.6   86.1   82.5   87.6   89.1   83.5   85.5   88.1   89.0   89.6   86.1   86.3   86.9   84.5   86.4   median   86.3
+
+Second task before it is taught (clean, wide)
+R replay, one line for each real line       0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0   median    0.0
+O the program's old lines, one for each     0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0    0.0   median    0.0
+
+Addition at the end
+R replay, one line for each real line      62.0   74.2   65.4   65.6   76.4   67.8   68.2   76.6   67.4   66.4   77.2   71.2   67.4   76.0   65.0   median   67.8
+O the program's old lines, one for each    81.2   76.4   72.8   86.2   80.8   70.8   72.6   79.8   78.8   78.6   74.4   74.4   77.8   80.6   85.4   median   78.6
+
+Second task at the end: clean, wide (never-shown pairs, of all 2,000, whose line no shown pair writes)
+R replay, one line for each real line      68.0   66.7   59.2   73.5   78.7   76.4   59.8   73.5   68.6   57.4   75.0   67.0   62.9   80.3   72.3   median   68.6
+O the program's old lines, one for each    69.7   57.1   66.0   65.8   62.4   65.4   60.6   60.6   61.9   64.1   66.7   58.9   60.4   65.6   78.8   median   64.1
+
+Second task at the end: clean (the same among the 500)
+R replay, one line for each real line      69.3   74.0   57.5   72.1   73.5   74.8   57.8   67.6   68.9   59.2   71.7   62.5   64.9   75.3   73.2   median   69.3
+O the program's old lines, one for each    70.3   50.0   66.2   58.7   57.8   66.4   50.0   52.0   65.0   66.0   67.0   59.8   60.8   58.8   79.4   median   60.8
+
+Second task at the end: mixed (the 500 as cells2.py scores them; about four in five are shown lines)
+R replay, one line for each real line      69.8   72.2   62.2   75.2   78.4   73.0   60.8   72.8   67.6   57.8   77.2   66.4   60.6   76.8   69.8   median   69.8
+O the program's old lines, one for each    69.8   59.4   67.4   65.8   65.0   67.0   61.8   62.6   60.2   63.0   67.2   61.0   62.8   66.8   72.8   median   65.0
+
+How many pairs in clean, wide
+R replay, one line for each real line       406    408    377    412    399    437    376    393    404    437    424    409    412    416    382   median    408
+O the program's old lines, one for each     406    408    377    412    399    437    376    393    404    437    424    409    412    416    382   median    408
+
+Counting cells held at the end
+R replay, one line for each real line     66043  66050  66120  66020  66063  65963  66122  66075  66044  65954  65997  66060  66018  66020  66109   median  66044
+O the program's old lines, one for each       0      0      0      0      0      0      0      0      0      0      0      0      0      0      0   median      0
+
+CPU seconds
+R replay, one line for each real line        62     62     63     61     58     60     58     61     60     60     58     63     66     64     61   median     61
+O the program's old lines, one for each      51     53     53     55     54     50     52     51     48     48     49     55     54     55     53   median     53
+
+Extra lines over both phases, share correct, %
+R replay, one line for each real line     100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0   median  100.0
+O the program's old lines, one for each   100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0  100.0   median  100.0
+R, seed 73129, second phase by reading: replayed lines that are addition / second task: 47097/2903 42069/7931 38203/11797 34504/15496
+
+Paired, same seed, points
+addition, R less O                        -19.2   -2.2   -7.4  -20.6   -4.4   -3.0   -4.4   -3.2  -11.4  -12.2   +2.8   -3.2  -10.4   -4.6  -20.4   median   -4.6
+                                         above zero on 1 of 15, below on 14
+second task (clean, wide), R less O        -1.7   +9.6   -6.9   +7.8  +16.3  +11.0   -0.8  +13.0   +6.7   -6.6   +8.3   +8.1   +2.4  +14.7   -6.5   median   +7.8
+                                         above zero on 10 of 15, below on 5
+sum of the two scores, R less O           -20.9   +7.4  -14.3  -12.8  +11.9   +8.0   -5.2   +9.8   -4.7  -18.8  +11.1   +4.9   -8.0  +10.1  -26.9   median   -4.7
+                                         above zero on 7 of 15, below on 8
+sum of the two scores, R                  130.0  140.9  124.6  139.1  155.1  144.2  128.0  150.1  136.0  123.8  152.2  138.2  130.3  156.3  137.3   median  138.2
+sum of the two scores, O                  150.9  133.5  138.8  152.0  143.2  136.2  133.2  140.4  140.7  142.7  141.1  133.3  138.2  146.2  164.2   median  140.7
+
+Seed 1 (development pass; nothing chosen on it): addition after its phase, addition at the end, second task clean wide at the end
+  P plain, no replay                        81.5   0.2  85.7
+  R replay, one line for each real line     89.9  75.0  83.0
+  O the program's old lines, one for each   88.1  75.6  70.4
+  Z replay, cells emptied at the change     89.9   0.0  90.6

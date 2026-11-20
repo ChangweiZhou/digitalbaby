@@ -45,3 +45,34 @@ Measures at the last reading of the second phase: never-shown addition (the 500 
 On the five reported seeds (scored in section 8) R keeps 65.6% of addition and O 80.8; paired, R less O is -19.2, -2.2, -7.4, -20.6, -4.4 (median -7.4, five of five below), while on the second task (clean, wide) R is 7.8 above O at the median. In `PLAN_1.md` a like difference on five seeds (-7.6) vanished on fifteen. Whether replay keeps less than the program's old lines on this harsher change matters for the reading, so R and O are run on 1001 to 1010 and the fifteen are reported together.
 - G1 (0.5): on fifteen seeds R is more than 3 points below O on addition at the median of the paired differences.
 - G2 (0.6): on fifteen seeds the sum of the two scores (addition, and the second task clean, wide) is lower for R than for O at the median of the paired differences.
+
+## 8. Outcome (entered 20 November, after all runs of this plan)
+
+Tables: `report3.txt` (made by `report3.py` from `res/h_*.json`); the check: `check_replay3_output.txt` (passed).
+
+**The five reported seeds** (73129, 93683, 116089, 406364, 545353; median). Never-shown pairs, whole answer right, %, at the last reading of the second phase. The second task is given clean, wide (377 to 412 never-shown pairs whose line no shown pair writes), with clean (of the 500) and mixed beside it.
+
+| | addition after its own phase | addition at the end | second task, clean, wide | clean | mixed |
+|---|---|---|---|---|---|
+| P, no replay | 84.2 | 2.2, 0.2, 0.6, 2.0, 1.4; **1.4** | 82.3, 80.9, 86.2, 85.9, 82.5; **82.5** | 85.6 | 83.8 |
+| R, one replayed line for each real line | 86.3 | 62.0, 74.2, 65.4, 65.6, 76.4; **65.6** | 68.0, 66.7, 59.2, 73.5, 78.7; **68.0** | 72.1 | 72.2 |
+| O, the program's old lines (control) | 86.1 | 81.2, 76.4, 72.8, 86.2, 80.8; **80.8** | 69.7, 57.1, 66.0, 65.8, 62.4; **65.8** | 58.7 | 65.8 |
+| Z, replay, cells emptied at the change (control) | 86.3 | 1.8, 0.8, 0.6, 0.2, 2.2; **0.8** | 84.2, 80.9, 88.9, 90.3, 90.0; **88.9** | 86.1 | 89.0 |
+
+Before it is taught, the second task is at 0.0% in every arm and seed. Every replayed line is well formed and correct on every seed (100.0%); in the second phase the replayed lines that are addition fall from 94% to 69% by reading (seed 73129: 47,097, 42,069, 38,203, 34,504 of 50,000). Counting cells at the end in R: 66,043; CPU 62 seconds.
+
+**The hypothesis holds.** With one replayed line for each real line, never-shown addition after 200,000 lines of the second text is 65.6% at the median (62.0 to 76.4; every seed above 50), where the plain system keeps 1.4%, the figure `nano/keep` reports for it on this text. Replay keeps addition through a change of task that brings no new byte value, as the coordinating session expected and for the reason it gave: the replayed lines are drawn from the counts and do not depend on what the second task looks like.
+
+**Fifteen seeds for R against O** (the five, then 1001 to 1010). Addition at the end: R 67.8, O 78.6; paired R less O -4.6 at the median, below on fourteen seeds of fifteen (-20.6 to +2.8). The second task (clean, wide): R 68.6, O 64.1; paired +7.8, above on ten of fifteen. The sum of the two scores: R 138.2, O 140.7; paired -4.7, seven seeds above and eight below.
+
+**What I read from it.**
+
+1. *Replay keeps, but this change is dearer than the one of `PLAN_1.md`, for replay and for the program's old lines alike.* There the two scores summed to about 156 under either; here to about 138 to 141, against a plain system that has 82.5 on the second task alone. Both tasks are held at 65 to 68 where the plain system holds one at 82 to 86. The risk the coordinating session named is what shows: the two texts use the same byte values at the same places but for two (the operators' places), and the relay system has to hold apart more than it did with a new operator.
+2. *On this change replay keeps somewhat less of the old task than the program's old lines do, and gives somewhat more of the new* (-4.6 and +7.8 on fifteen seeds), unlike `PLAN_1.md`, where the two were level. The cause lies in what is replayed: the program's old lines are all addition, while a replay draws from everything counted, so by the end three replayed lines in ten are of the second task. The sum does not tell the two apart (seven seeds against eight). So replay from the cells' counts stands where the program's rehearsal stands, at another point of the same trade between the tasks; a replay that drew less from recent counts would move it along that trade, which is not run.
+3. *It is again the old lines that keep*: with the cells emptied at the change, 0.8%.
+4. *The reservation of section 2 stands beside the figures*: at the bytes from which the system learns, this text activates two lines that addition never trained (`=` four bytes back, `+` seven bytes back); and the reservation of `PLAN_1.md` stands too: the counting cells are a complete store of the lines shown.
+5. For the coordinating session's summary sentence: on these runs replay needs no new byte; it does need a store that holds every shown line whole (the cells of eight bytes), and with a store that does not (six bytes, `PLAN_1.md`) it keeps nothing. It answers never-shown lines of the old task because the relay system does, not because the store holds them.
+
+**Predictions.** F1 held (1.4). F2 held (65.6). F3 held (paired against `PLAN_1.md`'s R on the same seeds: -15.2, -10.8, -11.8, -10.0, -3.0; median -10.8). F4 held (0.8). F5 held (68.0). F6 held. F7 held on five seeds, narrowly (-7.4). G1 held (-4.6). G2 held by its letter (-4.7 at the median) with seven seeds above and eight below, which I do not count as a difference.
+
+**Not run:** as section 6; P and Z on the ten further seeds; a replay that draws from older counts more than from recent ones.
