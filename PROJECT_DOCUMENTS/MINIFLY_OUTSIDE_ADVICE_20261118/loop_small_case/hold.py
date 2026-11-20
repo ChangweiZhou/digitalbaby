@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """PLAN_5.md: cells that hold bytes themselves; no delay chain; a trace at each connection, running forward. numpy only.
     python3 hold.py <label> text=d1|d2 seed=1 [H=256 K=16 eta1=1/4 lines=60000 every=10000]      eta1=0: the cells never change; save=1: the strengths are saved
+    fast=1: the inner loop runs compiled (kern.c through fastk.py; the same arithmetic, to rounding).
 PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received, times its own sensitivity, over a return strength; the cell read
     changes by what its readers send times each trace as it stood one byte earlier. [ret=exact|learned] the return strength is the connection's
     forward strength, or a separate strength that receives the same changes and fades with it ([lamB=1e-5], the fading of both, a byte).
@@ -37,6 +38,7 @@ class Hold:
         s.cc = np.zeros(H); s.cz = g.uniform(-1, 3, H)                                                    # gates' thresholds spread: cells hold for different times
         s.R = g.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.h = np.zeros(H)
         s.Ecx = np.zeros((H, S)); s.Ezx = np.zeros((H, S)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
+        s.fast = 0; s.bx = []; s.by = []; s.right_acc = 0
         s.ret = ret; s.qs = 1 / np.sqrt(3 * K)                                                            # ret=sign: the size of every return strength (the birth strengths' root mean square)
         s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown", "local"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
         if s.learned: g3 = np.random.default_rng([seed, 20261123]); s.Qc = g3.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Qz = g3.uniform(-1, 1, (H, K)) / np.sqrt(K)
@@ -66,10 +68,16 @@ class Hold:
             if s.lamB: s.Bc *= 1 - s.lamB; s.Bz *= 1 - s.lamB
         d2 = np.outer(g * m, h); s.W2 += d2; s.b2 += g * m; s.R += d2.T; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
         return ok
+    def flush(s):
+        if s.bx: import fastk; fastk.hold_run(s)
     def line(s, L):
+        if s.fast:
+            s.bx += L; s.by += L[1:]; s.by.append(-1)
+            if len(s.bx) >= 500000: s.flush()
+            return 0
         right = sum(s.read(L[t], L[t + 1]) for t in range(len(L) - 1)); s.read(L[-1]); return right
     def score(s, tx, pairs, gap=0):
-        n = 0; pl = np.zeros(3)
+        n = 0; pl = np.zeros(3); s.flush()
         for a, b in pairs:
             L = text(tx, a, b, fill(a, b, gap)); eq = L.index(EQ); h = s.h; ok = True                                      # from the state left by the last line read
             for t in range(len(L) - 1):
@@ -88,16 +96,18 @@ def run(kw, cls=None):
         rng = np.random.default_rng([seed, 99]); o = rng.permutation(10000); P = [(int(q) // 100, int(q) % 100) for q in o]; held, shown = P[:500], P[2000:]; shown_s = shown[:500]
     s = (cls or Hold)(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1/4"))), cross=int(kw.get("cross", 0)), ret=kw.get("ret", "exact"),
                       lamB=float(kw["lamB"]) if "lamB" in kw else None)
-    s.X = kw.get("X"); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
+    s.X = kw.get("X"); s.fast = int(kw.get("fast", 0)); out = dict(label=kw["label"], args=kw, rows=[]); right = n = 0
     for it in range(lines):
         a, b = shown[rng.integers(len(shown))]
         L = text(tx, a, b, bytes(LET[i] for i in rng.integers(4, size=rng.integers(G + 1))).decode()) if G else text(tx, a, b)
         right += s.line(L); n += len(L) - 1
         if (it + 1) % every == 0:
-            sh, _ = s.score(tx, shown_s); nv, pl = s.score(tx, held)
+            s.flush(); right += s.right_acc; s.right_acc = 0; sh, _ = s.score(tx, shown_s); nv, pl = s.score(tx, held)
             out["rows"].append(dict(lines=it + 1, shown=sh, never=nv, place=pl, bytes_right=100 * right / n, gate_mean=float(sg(s.cz).mean()))); right = n = 0
             if G: out["rows"][-1]["shown_by_gap"] = {g: s.score(tx, shown_s, g)[0] for g in gaps}; out["rows"][-1]["shown"] = float(np.mean(list(out["rows"][-1]["shown_by_gap"].values())))
     out["cpu"] = round(time.process_time() - t0); out["last3_shown"] = float(np.mean([r["shown"] for r in out["rows"][-3:]])); out["last3_never"] = float(np.mean([r["never"] for r in out["rows"][-3:]]))
+    s.flush(); run.last = s
+    if kw.get("nowrite"): return out
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"hold_{kw['label']}.json"), "w"))
     if kw.get("save"): np.savez_compressed(os.path.join(HERE, "res", f"hold_{kw['label']}.npz"), **{k: getattr(s, k) for k in ("idx", "Ac", "Az", "Bc", "Bz", "cc", "cz", "W2", "b2", "R", "h")})
     return out

@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """PLAN_4.md: the system of keep.py (two-digit sums, cells in between that learn from a relayed mismatch) with options. numpy only.
     python3 cells2.py <label> seed=1 [plan=add:400000[,sub:200000[,add:40000]]] [every=50000] [fine=1] [reh=N] [swap=1]
-                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x]
+                               [fan=K] [rewire=T] [dale=1] [H=256] [H2=0] [ans2=1] [freeze=1] [stiff1=k] [reserve=N] [lam2=x] [fast=1|2] [clip=p] [kap=1e-3] [cap=1]
     ans2=1: two answering cells; which one answers and learns is given by the line's operator (a control, laid down by the program).
     reserve=N: N further cells in between are silent and unchanged in the first phase; from the second phase on they alone change, with the answering
       cell's strengths from them, and everything the first phase wrote is left as it is (a control: the program decides where the new task is written).
     lam2=x: the fading of the answering cell's strengths and of the return connections is x from the second phase on (a control).
+    fast=1: the inner loop runs compiled (kern.c through fastk.py; the same arithmetic, to rounding; not with ans2 or stiff1).
+    clip=p (PLAN_8.md): a cell in between is silent below its threshold: output = drive cut off at 0 and 1; after every byte its threshold moves by
+      kap times (its output less p). cap=0: no cut-off at 1. fast=2: the compiled kernel that works only on the active cells (clip only; none of the other options).
     freeze=1: after the first phase the cells in between do not change. stiff1=k: each strength of a cell in between divides its step by 1 + (total size of its past changes)/k.
 """
 import json, os, sys, time
@@ -35,17 +38,19 @@ class Sys:
             s.W1 = np.abs(s.W1); s.b1 = np.full(H, -D * .25 * (fan / NL if fan else 1.0))      # lines excite; the threshold starts at the mean drive
             s.sign = np.where(g2.random(H) < .25, -1.0, 1.0)
         s.A = [(s.W2, s.b2, s.R), (np.zeros((S, top)), np.zeros(S), g2.uniform(-1, 1, (top, S)))]; s.stiff1 = 0.0; s.I1 = np.zeros((H, NL))
-        s.hist = [END] * D
+        s.hist = [END] * D; s.fast = 0; s.bx = []; s.by = []; s.clip = 0.0; s.kap = 0.0; s.cap = 1.0; s.stat = [0, 0, 0]
     def use(s, k): s.W2, s.b2, s.R = s.A[k]
     def fwd(s, hist):
-        act = OFF + np.asarray(hist); hA = sg(s.W1[:, act].sum(1) + s.b1)
+        act = OFF + np.asarray(hist); u = s.W1[:, act].sum(1) + s.b1
+        if s.clip: hA = np.clip(u, 0.0, s.cap); s.sens = ((u > 0) & (u < s.cap)).astype(float)
+        else: hA = sg(u)
         if s.live is not None: hA = hA * s.live
         if s.H2:
             hB = sg(s.WB @ hA + s.bB); return act, hA, hB, s.W2 @ hB + s.b2
         return act, hA, hA, s.W2 @ hA + s.b2
     def learn(s, y):
         act, hA, h, a = s.fwd(s.hist); m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
-        sig = (s.R @ m) * h * (1 - h)                 # what a cell read by the answering cell receives, times its own sensitivity
+        sig = (s.R @ m) * (s.sens if s.clip else h * (1 - h))      # what a cell read by the answering cell receives, times its own sensitivity
         d2 = np.outer(g * m, h)
         if s.live is not None: sig = sig * s.free; d2 = d2 * s.free
         if s.H2:                                      # cells B change, and pass on what they received to cells A over their own return connections
@@ -60,6 +65,7 @@ class Sys:
         else:                                         # reserve: only the cells that may change fade; the constants are the first phase's
             if not s.late: s.b2 += g * m
             s.W2 *= 1 - s.lam * s.free; s.R *= 1 - s.lam * s.free[:, None]
+        if s.clip: s.b1 -= s.kap * (hA - s.clip); s.stat[0] += 1; s.stat[1] += int((hA > 0).sum()); s.stat[2] += int(s.sens.sum())
         if s.dale:
             s.W1[:, act] = np.maximum(s.W1[:, act], 0); s.W2 = np.where(s.W2 * s.sign > 0, s.W2, 0.0); s.R = np.where(s.R * s.sign[:, None] > 0, s.R, 0.0)
         if s.rewire:
@@ -70,12 +76,19 @@ class Sys:
         s.age[s.M] += 1; aw = np.where(s.M & (s.age >= 4), np.abs(s.W1), np.inf); j = np.arange(s.H); weak = aw.argmin(1); ok = np.isfinite(aw[j, weak])
         free = s.g2.random((s.H, NL)); free[s.M] = -1.0; new = free.argmax(1); jj = j[ok]
         s.M[jj, weak[ok]] = False; s.W1[jj, weak[ok]] = 0.0; s.age[jj, weak[ok]] = 0; s.M[jj, new[ok]] = True; s.made += len(jj)
+    def flush(s):
+        if s.bx and s.fast == 2: import fastk2; fastk2.run(s)
+        elif s.bx: import fastk; fastk.loop_run(s)
     def line(s, L):
+        if s.fast:
+            s.bx += L; s.by += L[1:]; s.by.append(-1)
+            if len(s.bx) >= 500000: s.flush()
+            return
         for t in range(len(L) - 1):
             s.hist.insert(0, L[t]); s.hist.pop(); s.learn(L[t + 1])
         s.hist.insert(0, L[-1]); s.hist.pop()
     def score(s, op, pairs, place=False):
-        n = 0; pl = np.zeros(3)
+        n = 0; pl = np.zeros(3); s.flush()
         if s.two: s.use(0 if op == '+' else 1)
         for a, b in pairs:
             L = text(op, a, b); hist = [END] * D; ok = True
@@ -93,10 +106,12 @@ def run(kw):
     s = Sys(seed, H=int(kw.get("H", 256)) + int(kw.get("reserve", 0)), fan=int(kw.get("fan", 0)), rewire=int(kw.get("rewire", 0)), dale=int(kw.get("dale", 0)), H2=int(kw.get("H2", 0)))
     nres = int(kw.get("reserve", 0))
     if nres: s.live = np.arange(s.H) < s.H - nres; s.free = s.live.astype(float)
-    s.two = int(kw.get("ans2", 0)); s.stiff1 = float(kw.get("stiff1", 0)); freeze = int(kw.get("freeze", 0))
+    s.clip = float(eval(kw.get("clip", "0"))); s.kap = float(kw.get("kap", 1e-3)); s.cap = 1.0 if int(kw.get("cap", 1)) else np.inf
+    if s.clip: assert not s.H2; s.b1 -= 1.0                     # thresholds start where about one cell in seven is active
+    s.two = int(kw.get("ans2", 0)); s.stiff1 = float(kw.get("stiff1", 0)); freeze = int(kw.get("freeze", 0)); s.fast = int(kw.get("fast", 0))
     reh = int(kw.get("reh", 0)); every = int(kw.get("every", 50000)); fine = int(kw.get("fine", 0)); out = dict(label=kw.get("label"), args=kw, rows=[]); snaps = {}
     for pi, ph in enumerate(kw.get("plan", "add:400000").split(",")):
-        name, n = ph.split(":"); op0 = {"add": "+", "sub": "-", "mix": None}[name]
+        name, n = ph.split(":"); op0 = {"add": "+", "sub": "-", "mix": None}[name]; s.flush()
         if freeze and pi > 0: s.eta1 = 0.0
         if nres and pi > 0: s.free = (~(np.arange(s.H) < s.H - nres)).astype(float); s.live = np.ones(s.H, bool); s.late = True
         if "lam2" in kw and pi > 0: s.lam = float(kw["lam2"])
@@ -109,17 +124,20 @@ def run(kw):
             s.line(text(op, a, b))
             if (it + 1) % every == 0 or (fine and it + 1 <= 20000 and (it + 1) % 2000 == 0) or (fine and it + 1 <= 100000 and (it + 1) % 10000 == 0):
                 out["rows"].append(dict(phase=pi, name=name, lines=it + 1, add=s.score("+", held["+"]), sub=s.score("-", held["-"])))
-        snaps[pi] = {k: getattr(s, k).copy() for k in ("W1", "b1", "W2", "b2")}
+        s.flush(); snaps[pi] = {k: getattr(s, k).copy() for k in ("W1", "b1", "W2", "b2")}
         if pi == 1 and kw.get("swap"):
             cur = snaps[1]; old = snaps[0]; put = lambda d: [setattr(s, k, v.copy()) for k, v in d.items()]
             put(dict(cur, W2=old["W2"], b2=old["b2"])); a1 = s.score("+", held["+"])
             put(dict(cur, W1=old["W1"], b1=old["b1"])); a2 = s.score("+", held["+"]); put(cur)
             rel = lambda k: float(np.linalg.norm(cur[k] - old[k]) / np.linalg.norm(old[k]))
             out["where"] = dict(addition_with_the_answering_cell_put_back=a1, addition_with_the_cells_in_between_put_back=a2, change_of_W1_over_its_size=rel("W1"), change_of_W2_over_its_size=rel("W2"))
-    out["by_place_add"] = s.score("+", held["+"], place=True); out["made"] = s.made; out["cpu"] = round(time.process_time() - t0)
+    out["by_place_add"] = s.score("+", held["+"], place=True); out["made"] = s.made; out["cpu"] = round(time.process_time() - t0, 1)
+    if s.clip and s.stat[0]: out["active_cells_a_byte"] = s.stat[1] / s.stat[0]; out["changing_cells_a_byte"] = s.stat[2] / s.stat[0]
     r0 = [r for r in out["rows"] if r["phase"] == 0 and r["lines"] % every == 0]; out["last3_add_phase0"] = float(np.mean([r["add"] for r in r0[-3:]])) if r0 else None
+    run.last = s
+    if kw.get("nowrite"): return out
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"c2_{kw['label']}.json"), "w")); return out
 
 if __name__ == "__main__":
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw)
-    print(o["label"], "last3", o["last3_add_phase0"], "| " + " ".join(f"{r['phase']}:{r['lines']//1000}k {r['add']:.0f}/{r['sub']:.0f}" for r in o["rows"]), "| place", o["by_place_add"], "| made", o["made"], o.get("where", ""), o["cpu"], "s")
+    print(o["label"], "last3", o["last3_add_phase0"], "| " + " ".join(f"{r['phase']}:{r['lines']//1000}k {r['add']:.0f}/{r['sub']:.0f}" for r in o["rows"]), "| place", o["by_place_add"], "| made", o["made"], o.get("where", ""), (f"| active {o['active_cells_a_byte']:.1f} changing {o['changing_cells_a_byte']:.1f}" if "active_cells_a_byte" in o else ""), o["cpu"], "s")
