@@ -57,3 +57,42 @@ Development predictions: O1 (at least 30%; I had given 0.15) **held**, against m
 **Run with the reported seeds, as the plan said was owed if the gate arm was clearly better:** one gate at the gate arm's split, 120 + 134 cells (37,256 numbers that learn; fewer than 40,856, because it lacks the third set of strengths), seed 1, etaA = 1, etaB = 1, nB = 32, 2,400,000 lines. It says whether the split, and not the gate, made the difference. *My prediction before it is read:* it stays at or below 15% at the gap of 8 letters, chance 0.80.
 
 **Reported seeds** 73129, 93683, 116089, 406364, 545353, 2,400,000 lines: the chosen gate arm (120 + 134, threshold -1, etaA = 1/4); the one-gate arm at equal numbers (160 + 118, etaA = 1: the third plan's chosen setting). *Predictions before they are read:* O6: gate arm, median of never-shown sums at the gap of 8 letters at least 30%, chance 0.75; O7: at least 60%, chance 0.50; O8: the one-gate arm's median at or below 15%, chance 0.80; O9: gate arm, never-shown (mean over gaps) within 10 points of shown on every seed, chance 0.80. Cost: 11 runs of about 13 CPU-minutes.
+
+## Outcome on the reported seeds (entered 20 November after the runs; nothing above was changed)
+
+*Erratum to the development outcome above:* one gate at 120 + 134 cells has 34,256 numbers that learn, not 37,256 (the program's count).
+
+`report.txt`, `res/lay_r4_*.json`, `res/lay_d4_one_120_134.json`. Text `g2`, two delay lines, 0 to 8 letters, 2,400,000 lines, no crossing; %, mean of the last three readings.
+
+| | 73129 | 93683 | 116089 | 406364 | 545353 | median |
+|---|---|---|---|---|---|---|
+| **output gate** (120 + 134, 40,856 numbers): never-shown sums at the gap of 8 letters | 41.7 | 64.7 | 74.5 | 60.3 | 79.5 | **64.7** |
+| ... never-shown sums, mean over gaps 0, 4, 8 | 48.0 | 69.7 | 78.0 | 63.8 | 80.2 | **69.7** |
+| ... sums shown, mean over gaps | 47.9 | 71.9 | 80.0 | 65.6 | 82.3 | **71.9** |
+| ... by place at 8 letters, last reading (hundreds/tens/units) | 98/60/86 | 99/72/99 | 98/71/95 | 98/62/97 | 99/86/97 | |
+| **one gate** (160 + 118, 40,864 numbers): never-shown sums at the gap of 8 letters | 4.3 | 2.1 | 4.7 | 3.0 | 3.7 | **3.7** |
+| ... never-shown sums, mean over gaps | 5.1 | 3.7 | 5.0 | 4.6 | 5.0 | **5.0** |
+| ... by place at 8 letters, last reading | 99/51/6 | 98/54/5 | 97/63/6 | 97/56/6 | 98/55/8 | |
+
+Last reading by gap (0 / 4 / 8), median of five seeds: with the gate 75 / 76 / 66; one gate 6 / 4 / 3. About 11.6 CPU-minutes a run with the gate, 12.8 without.
+
+**The control for the split** (one gate at the gate arm's 120 + 134 cells, 34,256 numbers, seed 1): never-shown sums 4.7 / 3.7 / 3.9 at gaps 0 / 4 / 8, flat over the whole run (by place at the end 96 / 56 / 6). So the split between cells A and B is not what made the difference on the development seed; the gate arm at that seed had 84.8. (The control has 6,600 fewer numbers than the gate arm; the equal-numbers one-gate arm is the 160 + 118 row.)
+
+**The hypothesis held as registered, on the development seed and on the reported seeds.** With a gate on what a holding cell gives out, the layered system without a crossing answers 64.7% of never-shown sums at the gap of 8 letters at the median of five seeds (41.7 to 79.5), against 3.7% for one gate at equal numbers (2.1 to 4.7): every seed of the one above every seed of the other. Never-shown sums are answered as often as sums shown (69.7 against 71.9). The gate arm's seeds each sat at 3 to 10% for 600,000 to 1,000,000 lines and then rose within one or two readings; seed 73129 was still rising at the end. What is still missed with the gate is the tens digit (60 to 86% by place); the units digit, which the one-gate arm does not hold (5 to 8%), is right 86 to 99% of the time.
+
+| | Prediction | Outcome |
+|---|---|---|
+| O1 | best gate arm at least 30% at 8 letters, development seed (0.15) | held (84.8); I had expected little |
+| O2 | above the one-gate arm by at least 5 points (0.30) | held |
+| O3 | units digit at least 30% (0.25) | held (99) |
+| O4 | born mostly open at least as good as born mostly shut (0.60) | **failed** (75.3 against 84.8, development seed) |
+| O5 | never-shown within 10 points of shown (0.85) | held |
+| control | one gate at 120 + 134 at or below 15% (0.80) | held (3.9) |
+| O6 | reported seeds, gate arm: median at 8 letters at least 30% (0.75) | held (64.7) |
+| O7 | at least 60% (0.50) | held (64.7) |
+| O8 | one-gate arm's median at or below 15% (0.80) | held (3.7) |
+| O9 | gate arm: never-shown within 10 points of shown on every seed (0.80) | held (largest difference 2.2) |
+
+Three of my chances were badly placed: O1 to O3 at 0.15 to 0.30 for what happened on all four development arms and all five seeds.
+
+**What this does and does not say** (my reading). It says that at 2,400,000 lines the layered cell with a gate on its output learns this text where the same cell without it, and `hold.py` with one crossing (quoted: 8%), do not. It does not say the one-gate cell cannot: the third plan's addition has it at 50% after 9,600,000 lines. So on this evidence the gate brings the rise forward (to 600,000 to 1,000,000 lines from about 5,000,000 on the development seed) and may raise the level; the level at equal, longer length was not run. Why the gate does this was not examined. One thought, untested: without the gate every cell B reads every cell A's state at every byte, the letters included, so while a cell A is still learning what to hold, its changing state disturbs all answers; with the gate a cell A can be silent except at the bytes where its content is of use. **Not run:** the gate arm beyond 2,400,000 lines; the one-gate arm at 9,600,000 lines on the reported seeds; the gate born open on the reported seeds; the gate on `m1`, `g1`, `d2`; the gate in `hold.py`'s own cell (the crosswalk's item 5 as written); a look inside the cells; a comparator by back-propagation through time; repetition by anyone else.

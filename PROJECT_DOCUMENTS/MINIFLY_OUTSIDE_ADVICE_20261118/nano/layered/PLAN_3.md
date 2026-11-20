@@ -88,3 +88,11 @@ After the outcome above the coordinating session sent three facts from other lin
 **Cost.** About 55 CPU-minutes on one core (it runs beside the fourth plan's four runs on four cores, so about 70 minutes of wall time). **Not run:** other seeds; other steps; lengths beyond 9,600,000 lines.
 
 *Note of 20 November on the long run:* its first start was stopped at about 24 minutes by the time limit of the job that launched it, before its first result file was written (the program writes its file at the end); nothing of it was read. It was started again unchanged, beside the fourth plan's reported seeds.
+
+## Outcome of the addition (entered 20 November after the run)
+
+`res/lay_x3_long.json`; one gate, 160 + 118 cells, etaA = 1, seed 1, 9,600,000 lines, 52 CPU-minutes. Never-shown sums, % (mean over gaps 0, 4, 8), at each 800,000 lines: 4, 4, 10, 13, 13, 17, 45, 53, 47, 46, 53, 52; sums shown: 5, 6, 15, 15, 14, 21, 52, 59, 58, 49, 59, 60. At the last reading never-shown sums at gaps 0 / 4 / 8: 53 / 51 / 51; by place at 8 letters 99 / 65 / 77. Mean of the last three readings at the gap of 8 letters: 49.9. (The reading at 2,400,000 lines, 9.9, differs slightly from the third plan's run, 9.4 at its last reading, because readings fall at other bytes and the kernel is called in other blocks; the same lines are read.)
+
+**The addition's hypothesis held**: 51% at the gap of 8 letters at the last reading. The rise came between 4,800,000 and 5,600,000 lines (17 to 45), after which the run moved between 45 and 53 without a further rise. X1 held (51), X2 held (51.8 mean over gaps, where 46 was the mark), X3 held (51.8 against 9.9).
+
+So the refutation above stands as registered for 2,400,000 lines, and what it meant is corrected: the layered system without a crossing was on a level stretch, as `hold.py` with one crossing is reported to have been; at four times the length it answers half of the never-shown sums at every gap. One seed; the level on other seeds, and whether it rises beyond 53, were not run. The fourth plan's gate reaches 65% at the median of five seeds in a quarter of these lines.
