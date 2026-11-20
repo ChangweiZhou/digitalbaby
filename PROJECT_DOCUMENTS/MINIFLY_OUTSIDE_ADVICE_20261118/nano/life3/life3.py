@@ -15,7 +15,8 @@
     fast=1: the compiled kernels (kernr.c for P, O, R; kage.c for K; kern_s.c for S). fast=0: the numpy references (check_life3.py compares).
 Tasks: add aa+bb=ccc; sub aa-bb=ccc (larger number first, as cells2.py); max aa^bb=ccc (the larger of the two); sat aa&bb=ccc (the sum plus
 the first number's tens digit); srv aa#bb=ccc (the first number plus the second with its digits exchanged). The symbol set is that of
-cells2.py with one further byte for each further operator in the plan (or in syms=).
+cells2.py with one further byte for each further operator in the plan (or in syms=). Added for PLAN_2.md: min aa_bb=ccc (the smaller of the two).
+Added for PLAN_3.md: xam aa=bb+ccc (the larger of the two, written in the byte values of addition; no further byte).
 The first fourteen byte values, the split of additions and subtractions, the stream that draws the lines and the birth values of the relay
 system on the first fourteen byte values are those of cells2.py, so that the first two phases are the lives the other lines lived.
 Copied (see PLAN_1.md for the commit): the relay system and the counting cells from nano/replay/replay.py; the rules of route 1 from
@@ -25,9 +26,10 @@ import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__))
 BASE = list(b"0123456789+=\n-"); D = 10
 TASKS = {"add": ("+", lambda a, b: (a, b, a + b)), "sub": ("-", lambda a, b: (max(a, b), min(a, b), abs(a - b))), "max": ("^", lambda a, b: (a, b, max(a, b))),
-         "sat": ("&", lambda a, b: (a, b, a + b + a // 10)), "srv": ("#", lambda a, b: (a, b, a + 10 * (b % 10) + b // 10))}
-TID = {"add": 0, "sub": 1, "max": 2, "sat": 3, "srv": 4, "xam": 5}
-FMT = {}                                                # a task written otherwise than aa?bb=ccc (PLAN_4.md): name -> function (a, b, c) -> line
+         "sat": ("&", lambda a, b: (a, b, a + b + a // 10)), "srv": ("#", lambda a, b: (a, b, a + 10 * (b % 10) + b // 10)),
+         "min": ("_", lambda a, b: (a, b, min(a, b))), "xam": ("+", lambda a, b: (a, b, max(a, b)))}
+TID = {"add": 0, "sub": 1, "max": 2, "sat": 3, "srv": 4, "xam": 5, "min": 6}
+FMT = {"xam": lambda a, b, c: f"{a:02d}={b:02d}+{c:03d}\n"}      # a task written otherwise than aa?bb=ccc (PLAN_3.md): `max` in the byte values of addition, aa=bb+ccc
 
 def sg(u): return 1 / (1 + np.exp(-u))
 
@@ -53,9 +55,11 @@ def split(seed, names):
 class Relay:
     """The plain system of cells2.py (as in nano/replay/replay.py), with the number of byte values a parameter."""
     def __init__(s, seed, w, H=256, eta1=.25, eta2=1 / 16, lam=1e-5):
-        wr = np.random.default_rng([seed, 20261119]); xr = np.random.default_rng([seed, 20261120, 3]); S = w.S; s.w = w; s.H, s.eta1, s.eta2, s.lam = H, eta1, eta2, lam
-        W = wr.uniform(-.5, .5, (H, D, 14)); R = wr.uniform(-1, 1, (H, 14))           # the draws of cells2.py, in its order
-        s.W1 = np.ascontiguousarray(np.concatenate([W, xr.uniform(-.5, .5, (H, D, S - 14))], 2).reshape(H, D * S)); s.R = np.ascontiguousarray(np.concatenate([R, xr.uniform(-1, 1, (H, S - 14))], 1))
+        wr = np.random.default_rng([seed, 20261119]); S = w.S; s.w = w; s.H, s.eta1, s.eta2, s.lam = H, eta1, eta2, lam
+        W = [wr.uniform(-.5, .5, (H, D, 14))]; R = [wr.uniform(-1, 1, (H, 14))]       # the draws of cells2.py, in its order
+        for k in range(S - 14):                       # each further byte value has a generator of its own, so that a life with more byte values begins as a life with fewer
+            xr = np.random.default_rng([seed, 20261120, 3] + ([k] if k else [])); W.append(xr.uniform(-.5, .5, (H, D, 1))); R.append(xr.uniform(-1, 1, (H, 1)))
+        s.W1 = np.ascontiguousarray(np.concatenate(W, 2).reshape(H, D * S)); s.R = np.ascontiguousarray(np.concatenate(R, 1))
         s.b1 = np.zeros(H); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.hist = [w.END] * D; s.fast = 0
     def learn(s, y):
         act = s.w.OFF + np.asarray(s.hist); h = sg(s.W1[:, act].sum(1) + s.b1); a = s.W2 @ h + s.b2; m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
@@ -133,12 +137,12 @@ class Mixed(Relay):
     """Arms O and R: the plain system with one further line after each real line (old lines drawn by the program, or replayed lines)."""
     def __init__(s, seed, w, who, tabs, order, r=1.0, K=8, **k):
         super().__init__(seed, w, **k); s.who = who; s.r = r; s.cells = Counting(K, w); s.rnd = random.Random(seed * 1000 + 7); s.tabs = tabs; s.order = order; s.t_extra = 0.0
-        s.lineset = {n: set(map(tuple, tabs[n])) for n in order}; s.ops = {w.SI[ord(TASKS[n][0])]: n for n in order}; s.st = None; s.newst()
+        s.lineset = {n: set(map(tuple, tabs[n])) for n in order}; s.ops = {w.SI[ord(TASKS[n][0])]: n for n in order if n not in FMT}; s.st = None; s.newst()
     def newst(s): s.st = dict(extra=0, well_formed=0, of_a_shown_line=0, **{"x_" + n: 0 for n in s.order})
     def kind(s, E):
         """Of a further line: is it well formed, which task's operator it carries, and is it one of the lines shown (of any task of the life)."""
         w = s.w; wf = len(E) == 10 and E[9] == w.END and E[5] == w.EQ and E[2] in s.ops and all(0 <= E[i] <= 9 for i in (0, 1, 3, 4, 6, 7, 8))
-        if not wf:                                    # a task written otherwise (PLAN_4.md) is recognised by being one of its shown lines
+        if not wf:                                    # a task written otherwise (PLAN_3.md) is recognised by being one of its shown lines
             for n in s.order:
                 if tuple(E) in s.lineset[n]: return len(E) == 10, n, True
             return False, None, False
