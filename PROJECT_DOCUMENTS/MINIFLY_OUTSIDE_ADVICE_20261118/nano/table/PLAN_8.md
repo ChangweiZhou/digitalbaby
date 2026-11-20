@@ -30,3 +30,9 @@ A look inside the system T2 on the last tenth (`where.py`, `res/where_T2.json`; 
 ## 4. Size, cost, what is not run
 
 At most 64 x 65 cells for a byte value (fewer occur); arm B adds 65 kinds and 2,600 trusts. A run takes one to three CPU-minutes. Not run here: these cells with the companions of `PLAN_6.md` or with runs of eight bytes; delays beyond 63; the count kept in a coarser form.
+
+## 5. Addition 1 (20 November; written after the four arms were read and before the runs it describes): a new kind of sender is born with no trust
+
+The four arms are in (section 6 will give them): the cells that time the line end gain 0.007; the same cells for all 65 byte values make the system 0.045 **worse**. Every trust is born at 0.25 (`PLAN_3.md`), so 65 kinds that mostly have nothing to say begin with thirteen times the weight of one, and the trust's small step does not take it away within one reading. In the relay system the return strengths that were born at nothing and grew did as well as or better than those born at a size (`loop_small_case`, `nano/loop`). The one change here: **the trust in each added kind of cell is born at nothing**, and grows only if the mismatch says so. Arms A, B and C again with that change, each at the trust's step of the plan (0.00005) and at ten times it (0.0005), both reported, none chosen.
+
+*Predictions (mine):* with trust born at nothing arm B is not worse than arm 0 by more than 0.003, at both steps (chance 0.7); arm B gains at least 0.005 at one step (chance 0.35); among the 65 kinds of arm B the kind that times the line end ends with the largest trust (chance 0.6).

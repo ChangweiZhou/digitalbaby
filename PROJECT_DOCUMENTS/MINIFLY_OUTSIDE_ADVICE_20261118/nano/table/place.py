@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """PLAN_8.md: cells that hear how long ago a byte value last came, beside T2 (trust form).
-    python3 place.py arm=0|A|A2|B|C
+    python3 place.py arm=0|A|A2|B|C [birth=0] [eta=0.0005]      birth: the trust at which an added kind is born (PLAN_8.md, addition 1)
 For a byte value v the cells are keyed on (bytes since v last came, capped at 63; the present byte)."""
 import ctypes, json, os, subprocess, sys, time
 import numpy as np
@@ -27,17 +27,17 @@ def arm_keys(x, arm):
     if arm == "C": keys.append(((np.arange(len(x)) % 45) * S + x).astype(np.int64))
     return keys
 
-def run(arm):
+def run(arm, birth=0.25, eta=ETA):
     x, cut, _ = score.load(); t0 = time.process_time(); K = 6; keys = arm_keys(x, arm); L = kern(); ids, ncell, kinds, _ = words.make_ids(x, keys, K, len(x), len(x), K, 1); K1 = ids.shape[1]; assert K1 <= 96
-    C = np.zeros((ncell, S), np.float32); N = np.zeros(ncell, np.float32); U = np.zeros(ncell, np.float32); T = np.full((K1, NL), 0.25); Tu = np.zeros((K1, NL))
+    C = np.zeros((ncell, S), np.float32); N = np.zeros(ncell, np.float32); U = np.zeros(ncell, np.float32); T = np.full((K1, NL), 0.25); Tu = np.zeros((K1, NL)); T[10:] = birth          # PLAN_8.md, addition 1: the trust in the added kinds may be born at nothing
     def go(lo, hi, learn, want_p=False):
         i = np.ascontiguousarray(ids[lo - K:hi - K]); y = np.ascontiguousarray(x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None
-        L.mix_steps_w(hi - lo, K1, i.ctypes.data_as(PI), y.ctypes.data_as(PY), C.ctypes.data_as(PF), N.ctypes.data_as(PF), U.ctypes.data_as(PF), T.ctypes.data_as(PD), ETA, E0, int(learn), int(learn), 0, P.ctypes.data_as(PD) if want_p else None, Tu.ctypes.data_as(PD), 0); return P
+        L.mix_steps_w(hi - lo, K1, i.ctypes.data_as(PI), y.ctypes.data_as(PY), C.ctypes.data_as(PF), N.ctypes.data_as(PF), U.ctypes.data_as(PF), T.ctypes.data_as(PD), eta, E0, int(learn), int(learn), 0, P.ctypes.data_as(PD) if want_p else None, Tu.ctypes.data_as(PD), 0); return P
     go(K, cut, True); P = go(cut, len(x), False, True); r = dict(score.score(P)); y = x[cut:]; prev = x[cut - 1:-1]; m = (prev >= 13) & (y == 0)
-    r.update(arm=arm, kinds=K1, cells=int((N > 0).sum()), cells_added=kinds[3:], nats_at_a_line_end_after_a_letter=float(-np.log(P[m, 0]).mean()), cpu=round(time.process_time() - t0, 1))
+    r.update(arm=arm, birth=birth, eta=eta, kinds=K1, cells=int((N > 0).sum()), cells_added=kinds[3:], nats_at_a_line_end_after_a_letter=float(-np.log(P[m, 0]).mean()), cpu=round(time.process_time() - t0, 1))
     if arm == "B":                                        # which byte values the answering cell came to trust: the mean trust over the levels that were used
         vals = score.byte_values(); used = Tu[10:] > 0; mt = np.where(used.any(1), (T[10:] * used).sum(1) / np.maximum(used.sum(1), 1), 0.0); o = np.argsort(-mt)[:8]; r["most_trusted_values"] = [(repr(chr(vals[i])), round(float(mt[i]), 3)) for i in o]; r["trust_by_value"] = np.round(mt, 3).tolist()
     return r
 
 if __name__ == "__main__":
-    arm = dict(a.split("=") for a in sys.argv[1:])["arm"]; r = run(arm); json.dump(r, open(os.path.join(HERE, "res", f"place_arm{arm}.json"), "w")); print("arm", arm, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items() if k not in ("n", "trust_by_value")}, flush=True)
+    kw = dict(a.split("=") for a in sys.argv[1:]); arm = kw["arm"]; r = run(arm, float(kw.get("birth", 0.25)), float(kw.get("eta", ETA))); tag = "_".join(f"{k}{v}" for k, v in sorted(kw.items())); json.dump(r, open(os.path.join(HERE, "res", f"place_{tag}.json"), "w")); print("arm", arm, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in r.items() if k not in ("n", "trust_by_value")}, flush=True)
