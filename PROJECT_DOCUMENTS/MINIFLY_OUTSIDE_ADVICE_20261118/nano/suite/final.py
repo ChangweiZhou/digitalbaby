@@ -18,7 +18,7 @@ print("\n**Size and cost** (at the scoring with nothing changing: cells that hav
 for name, tag, cell in ROWS:
     if "first cell" in name and tag != "base": continue
     print(f"| {name} | " + " | ".join((lambda d: f"{d['sizes_at_the_frozen_scoring']['cells']:,}; {d['sizes_at_the_frozen_scoring']['counts_above_zero'] + d['sizes_at_the_frozen_scoring'].get('parts_used', 0):,}; {d['cpu']:.0f}")(L(f"{s}__{tag}")) for s in ST) + " |")
-print("\n**The best general system against the strongest compressor here, going on** (ZA: no more cells than the base; ZPA: five to nine times the cells)\n\n| | " + " | ".join(ST) + " |\n|---|" + "---|" * 6)
+print("\n**The best general system against the strongest compressor here, going on** (ZA: no more cells than the base; ZPA: four to twelve times the cells)\n\n| | " + " | ".join(ST) + " |\n|---|" + "---|" * 6)
 xz = {s: L(f"ref__{s}")["compressors"]["xz"]["nats_a_byte_of_the_last_tenth"] for s in ST}
 for name, tag in (("ZA less xz", "Zage"), ("ZPA less xz", "ZPA")): print(f"| {name} | " + " | ".join(f"{L(f'{s}__{tag}')['going_on']['cell2'] - xz[s]:+.4f}" for s in ST) + " |")
 print("| the better of ZA and ZPA, as a share of xz | " + " | ".join(f"{100 * min(L(f'{s}__Zage')['going_on']['cell2'], L(f'{s}__ZPA')['going_on']['cell2']) / xz[s]:.0f}%" for s in ST) + " |")
