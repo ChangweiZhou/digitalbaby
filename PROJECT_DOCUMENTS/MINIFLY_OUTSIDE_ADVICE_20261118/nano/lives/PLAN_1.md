@@ -70,6 +70,15 @@ For a stream j in a life, with "own stage" the stage at which its body has just 
 * **Cost.** ZA: about 10 CPU-seconds a stream, a life with its 72 scorings under 5 CPU-minutes; seven lives and six singles under an hour. ZPA scaled: about 2 to 4 CPU-minutes a megabyte; a life with its scorings about one CPU-hour, run one at a time because of memory; six lives and six singles about 7 CPU-hours. If the development life shows that this is beyond the machine, the ZPA lives are cut to the first three reported orders and that is entered here as it is.
 * **Not run.** Any remedy (a set of trusts for each kind of stream, chosen by how well it has foretold lately, is the first candidate if the loss is in the trusts; it is not built here). A bound on the store. Lives in which a stream returns more than once, or longer than six streams. Streams that are not text (the next plan). The systems with classes or made kinds (another program).
 
+## 5a. Addition 1 (written after the development life of ZA and the six singles, before any reported order was run)
+
+The development life (`out/ZA_dev.txt`, `res/life__ZA_dev.json`) already speaks against the hypothesis for ZA: going on, tiny Shakespeare's test costs 1.3434 at its own stage and 1.5035 at the end of the life; the book 1.4022 and 1.5591; Python 0.9626 and 1.0603; and the excess does not go within thousands of bytes (tiny Shakespeare, first 1,000 bytes of the test: 1.225 and 1.612; first 64,000: 1.324 and 1.519). Each later stream is also read worse than by a system of its own (the last tenth of the markup's body: 0.3531 against 0.3260). The reported orders are run as planned and the predictions are scored on them. Two things are added, so that the reported runs also say where the loss sits:
+
+* **D3, going on from the end of the life** (in forked copies, for every stream but the last read): (a) with the trusts, the parts and their sums (uses, squared drivers) of the stream's own stage put back; (b) with the trusts and parts of the end, and only the sums of the own stage put back. (a) says how much of the going-on loss is in the trusts and how much in the counts; (b) says whether the rule of the step, whose steps only become smaller as the sums grow, is what keeps the system from coming back.
+* **An arm with the constant step**: ZA0 = ZA with the step 0.00005 of the prose setting in place of the rule (`rule=0 eta=0.00005`), the same orders and singles. `nano/suite` found the rule lower on all six streams read alone; the question is whether that order holds in a life.
+
+Added predictions (mine): **A1** D3(a) removes at least half of the going-on excess at the median over the cases with an excess above 0.02 (0.60). **A2** D3(b) removes at least a third of it at the median (0.50). **A3** ZA0 keeps better than ZA: its going-on excess at the end is smaller in at least two thirds of the cases (a stream not read last, a reported order) (0.60). **A4** but ZA0 is not below ZA at the end of the life going on in more than a third of those cases (the rule's better level outweighs what it loses) (0.50).
+
 ## 6. Outcome
 
 (to be entered after the runs)

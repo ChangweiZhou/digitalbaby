@@ -147,7 +147,8 @@ def layout(order, tests=None):
     return np.concatenate(parts), body, test
 
 SYSTEMS = dict(ZA=dict(kinds="runs+last", recall=3, gate=1, rule=2, eta=0.03, age=1), ZPA=dict(kinds="runs+last+since+pool", recall=3, gate=1, rule=2, eta=0.03, age=1, spow=0.5),
-               base=dict(kinds="runs", recall=0), Z=dict(kinds="runs+last", recall=3, gate=1, rule=2, eta=0.03))
+               base=dict(kinds="runs", recall=0), Z=dict(kinds="runs+last", recall=3, gate=1, rule=2, eta=0.03),
+               ZA0=dict(kinds="runs+last", recall=3, gate=1, rule=0, eta=0.00005, age=1))          # ZA with the constant step of the prose setting in place of the rule (PLAN_1.md, addition 1)
 def make(name, x, S=256, guard=1e-20):
     a = dict(SYSTEMS[name]); kinds = SU.kinds_of(a.pop("kinds"), S, a.pop("recall")); return Sys(kinds, x, S=S, guard=guard, **a)
 
@@ -185,21 +186,26 @@ def run_life(kw):
     for i, n in enumerate(order):
         lo, hi = body[n]; lo += 6 if i == 0 else 0; c0 = time.process_time(); n1, n2 = s.run(lo, hi, True); k = (hi - lo) // 10
         stages.append(dict(stream=n, reading=dict(cell1=m(n1), cell2=m(n2), first_tenth=[m(n1[:k]), m(n2[:k])], last_tenth=[m(n1[-k:]), m(n2[-k:])]), sizes=s.sizes(), cpu_reading=round(time.process_time() - c0, 1)))
-        saved[n] = (s.T(), s.G())
+        saved[n] = {a: s.arr(a).copy() for a in ("T", "G", "Tu", "Gu", "Ta", "Ga")}
         if child is not None: wait(child)                                  # at most one set of measurements beside the life
         child = forked(stage_scores(i), os.path.join(tmp, f"s{i}_done.json"))
         if int(kw.get("seq", 0)): wait(child); child = None                 # seq=1: the life waits for its measurements (less memory: no second copy of what the life changes meanwhile)
         print(tag, "read", n, {k_: round(v, 4) for k_, v in stages[-1]["reading"].items() if k_.startswith("cell")}, "cells", stages[-1]["sizes"]["cells"], "cpu", stages[-1]["cpu_reading"], flush=True)
     if child is not None: wait(child)
-    np.savez(os.path.join(tmp, "trusts_end.npz"), T=s.T(), G=s.G(), **{f"T_{n}": saved[n][0] for n in order})
+    np.savez(os.path.join(tmp, "trusts_end.npz"), T=s.T(), G=s.G(), **{f"T_{n}": saved[n]["T"] for n in order})
     for i, st in enumerate(stages): st["tests"] = {n: dict(nothing_changing=json.load(open(os.path.join(tmp, f"s{i}_{n}_0.json"))), going_on=json.load(open(os.path.join(tmp, f"s{i}_{n}_1.json")))) for n in tests}
-    d1 = {}
-    if len(order) > 1:                                                     # D1: the system of the end with the trusts and parts of a stream's own stage put back
+    d1 = {}; d3 = {}
+    if len(order) > 1:
         for n in order[:-1]:
-            def fn(n=n):
-                s.arr("T")[:] = saved[n][0]; s.arr("G")[:] = saved[n][1]; return score(s, test[n][0], test[n][1], False)
-            wait(forked(fn, os.path.join(tmp, f"d1_{n}.json"))); d1[n] = json.load(open(os.path.join(tmp, f"d1_{n}.json")))
-    out = dict(task="life", tag=tag, sys=name, args=SYSTEMS[name], order=order, stages=stages, d1=d1, length=int(len(x)), wall=round(time.time() - t0, 1)); json.dump(out, open(os.path.join(HERE, "res", f"life__{tag}.json"), "w")); return out
+            def put(names, n=n):
+                for a in names: s.arr(a)[:] = saved[n][a]
+            # D1: the system of the end with the trusts and parts of a stream's own stage put back; its test with nothing changing
+            wait(forked(lambda: (put(("T", "G")), score(s, test[n][0], test[n][1], False))[1], os.path.join(tmp, f"d1_{n}.json"))); d1[n] = json.load(open(os.path.join(tmp, f"d1_{n}.json")))
+            # D3 (addition 1): going on from the end of the life, (a) with the trusts, parts and their sums of the own stage put back; (b) with the end's trusts and parts but the sums (uses, squared drivers) of the own stage
+            wait(forked(lambda: (put(("T", "G", "Tu", "Gu", "Ta", "Ga")), score(s, test[n][0], test[n][1], True))[1], os.path.join(tmp, f"d3a_{n}.json")))
+            wait(forked(lambda: (put(("Tu", "Gu", "Ta", "Ga")), score(s, test[n][0], test[n][1], True))[1], os.path.join(tmp, f"d3b_{n}.json")))
+            d3[n] = dict(trusts_and_sums_of_the_own_stage=json.load(open(os.path.join(tmp, f"d3a_{n}.json"))), sums_of_the_own_stage_only=json.load(open(os.path.join(tmp, f"d3b_{n}.json"))))
+    out = dict(task="life", tag=tag, sys=name, args=SYSTEMS[name], order=order, stages=stages, d1=d1, d3=d3, length=int(len(x)), wall=round(time.time() - t0, 1)); json.dump(out, open(os.path.join(HERE, "res", f"life__{tag}.json"), "w")); return out
 
 def run_d2(kw):
     """D2: for every stream of a life but the last read, a system that reads that stream's body alone, then is given the trusts and parts of the life's end; its test with nothing changing."""
@@ -211,6 +217,13 @@ def run_d2(kw):
             s.arr("T")[:] = z["T"]; s.arr("G")[:] = z["G"]; return score(s, test[n][0], test[n][1], False)
         wait(forked(fn2, p)); out[n] = dict(own_trusts=own, trusts_of_the_lifes_end=json.load(open(p))); print(kw["life"], "D2", n, "own trusts", round(own["cell1"], 4), round(own["cell2"], 4), "| the life's last trusts", round(out[n]["trusts_of_the_lifes_end"]["cell1"], 4), round(out[n]["trusts_of_the_lifes_end"]["cell2"], 4), flush=True)
     json.dump(out, open(os.path.join(HERE, "res", f"d2__{kw['life']}.json"), "w")); return out
+
+def run_mapped(kw):
+    """One of nano/suite's mapped streams (its own table of values), read by a system of its own with the guard given: what the guard changes in that line's figures."""
+    name = kw["stream"]; x, cut, S = MS.load(name); g = float(kw.get("guard", 1e-20)); s = make(kw.get("sys", "ZA"), x, S=S, guard=g); t0 = time.process_time(); s.run(6, cut, True); p = os.path.join(HERE, "tmp", f"mapped_{name}_{kw.get('sys', 'ZA')}_{g}")
+    wait(forked(lambda: score(s, cut, len(x), False), p + "_0.json")); wait(forked(lambda: score(s, cut, len(x), True), p + "_1.json")); f = json.load(open(p + "_0.json")); o = json.load(open(p + "_1.json"))
+    out = dict(task="mapped", stream=name, sys=kw.get("sys", "ZA"), guard=g, S=S, nothing_changing=f, going_on=o, sizes=s.sizes(), cpu=round(time.process_time() - t0, 1)); json.dump(out, open(os.path.join(HERE, "res", f"mapped__{name}_{kw.get('sys', 'ZA')}_guard{g}.json"), "w"))
+    print("mapped", name, kw.get("sys", "ZA"), "guard", g, "| nothing changing: first cell", round(f["cell1"], 4), "second", round(f["cell2"], 4), "| going on:", round(o["cell1"], 4), round(o["cell2"], 4), "| cells", out["sizes"]["cells"], flush=True); return out
 
 # ---------------------------------------------------------------- the check
 def check():
@@ -268,7 +281,9 @@ if __name__ == "__main__":
     if sys.argv[1] == "check": sys.exit(0 if check() else 1)
     kw = dict(a.split("=", 1) for a in sys.argv[2:])
     if sys.argv[1] == "d2": run_d2(kw); sys.exit(0)
+    if sys.argv[1] == "mapped": run_mapped(kw); sys.exit(0)
     out = run_life(kw); r = lambda v: None if v is None else round(v, 4)
     for i, st in enumerate(out["stages"]):
         print(out["tag"], f"after {st['stream']}:", " | ".join(f"{n} {r(t['nothing_changing']['cell2'])} / {r(t['going_on']['cell2'])}" for n, t in st["tests"].items()), "(second cell: nothing changing / going on)", flush=True)
     if out["d1"]: print(out["tag"], "D1 (the end's counts with the trusts of the own stage), second cell, nothing changing:", {n: r(v["cell2"]) for n, v in out["d1"].items()}, "| wall", out["wall"], flush=True)
+    if out["d3"]: print(out["tag"], "D3, going on from the end, second cell: (a) trusts and sums of the own stage put back; (b) only the sums:", {n: (r(v["trusts_and_sums_of_the_own_stage"]["cell2"]), r(v["sums_of_the_own_stage_only"]["cell2"])) for n, v in out["d3"].items()}, flush=True)
