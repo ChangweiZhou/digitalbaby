@@ -68,9 +68,11 @@ def steps_np(sy, lo, hi):
     for t in range(hi - lo):
         ids = sy.ids[lo - sy.K + t]; y = sy.x[lo + t]; act = [(k, i) for k, i in enumerate(ids) if i >= 0 and N[i] >= 1]; a = np.zeros(S); ss = []
         for k, i in act:
-            r = min(NR - 1, sum(1 for _, j in act if 2 <= N[j] < N[i])) if sy.use else 0; sv = np.log(C[i].astype(np.float64) + E) - np.log(float(N[i]) + S * E); j = NL * r + trust.level_np(N[i], U[i]); ss.append((k, j, sv)); a += T[k, j] * sv
+            r = min(NR - 1, sum(1 for _, j in act if 2 <= N[j] < N[i])) if sy.use else 0; sv = np.log(C[i].astype(np.float64) + E) - np.log(float(N[i]) + S * E); l = trust.level_np(N[i], U[i]); j = NL * r + l; ss.append((k, j, sv, l)); a += (T[k, j] + (sy.Tb[k, l] if sy.Tb is not None else 0.0)) * sv
         p = np.exp(a - a.max()); p /= p.sum(); P[t] = p
-        for k, j, sv in ss: T[k, j] += ETA * (sv[y] - p @ sv)
+        for k, j, sv, l in ss:
+            g = ETA * (sv[y] - p @ sv); T[k, j] += g
+            if sy.Tb is not None: sy.Tb[k, l] += g
         for i in ids:
             if i >= 0:
                 if C[i, y] == 0: U[i] += 1
@@ -91,8 +93,8 @@ def lives(use):
 
 def check():
     x, cut, _ = score.load(); K = 4; n = 3000; x = x[:n]; keys = [k[:n] for k in words.word_keys(x)[:1]]
-    for use in (0, 1):
-        a = SysR(x, keys, K, use); b = SysR(x, keys, K, use); P2 = a.go(K, n, True, True); P1 = steps_np(b, K, n); d = max(np.abs(P1 - P2).max(), np.abs(a.T - b.T).max()); print(f"use = {use}: compiled against numpy, {n - K} bytes, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
+    for use in (0, 1, 2):
+        a = SysR(x, keys, K, use); b = SysR(x, keys, K, use); P2 = a.go(K, n, True, True); P1 = steps_np(b, K, n); d = max(np.abs(P1 - P2).max(), np.abs(a.T - b.T).max(), np.abs(a.Tb - b.Tb).max() if a.Tb is not None else 0.0); print(f"use = {use}: compiled against numpy, {n - K} bytes, largest difference {d:.1e}", "PASSED" if d < 1e-9 else "FAILED")
     a = SysR(x, keys, K, 0); t = trust.Sys(x, keys, K); d = np.abs(a.go(K, n, True, True) - t.go(K, n, ETA, E, True, True)).max(); print(f"change switched off against trust.py's loop: largest difference {d:.1e}", "PASSED" if d < 1e-12 else "FAILED")
 
 if __name__ == "__main__":
