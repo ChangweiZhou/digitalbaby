@@ -14,6 +14,8 @@ The number of values S is a parameter (at most 128). Kinds of sender:
 gate=1: a second answering cell with, for each of the last J delays, a part of the trust indexed by (kind, byte at that delay) (nolevel);  gate=2: by (kind, level, byte).
 birth=b>0: a cell is not born at a byte to which the first cell gave at least probability b (nano/table/PLAN_19.md).
 age=1: the trusts of the senders of recency (last, recall) are indexed by the age of what they say (PLAN_7.md).
+cap=n: the store holds at most n cells; a new context then takes the place of a cell chosen among eight drawn by chance (evict=0: the one that has counted least and, among those, longest ago; evict=1: the first drawn) (PLAN_9.md).
+second=1: a cell is made only when its context is met a second time; the first meeting leaves one bit (PLAN_10.md).
 spow=p>0 (with rule 2): the rule's number is multiplied by (12 / the senders that speak at the byte) to the power p (PLAN_8.md).
 rule: the step of a trust. 0: eta;  1: eta / sqrt(1 + times used);  2: eta / sqrt(sum of its own squared drivers) (PLAN_4.md); no change while that sum is zero (a driver so small that its square is zero in the machine's numbers moved a trust to infinity before this was written: PLAN_4.md, outcome)."""
 import ctypes, hashlib, itertools, json, os, subprocess, sys, time
@@ -32,7 +34,7 @@ SRC = r'''
 #define JMAX 8
 #define LMAX 2048
 typedef struct {
-    int S, K, gate, J, M, rule, age; double eta, e, birth, spow;
+    int S, K, gate, J, M, rule, age, evict, second; double eta, e, birth, spow; int64_t cap, evicted; uint64_t rng; uint64_t *cKey; uint16_t *cKind; uint8_t *seen;
     int ktype[KMAX], knd[KMAX], kdel[KMAX][8];
     double *T, *Tu, *Ta;            /* K x NL: the first cell's trusts, times used, sum of squared drivers */
     double *G, *Gu, *Ga; int64_t gsize; int GL;   /* the second cell's parts: J x K x GL x S (GL = 1 without the level, NL with it) */
@@ -58,6 +60,14 @@ static inline int64_t slot_of(const Sy *s, uint64_t key, int kind) {
     while (s->hcell[i] >= 0 && !(s->hkey[i] == key && s->hkind[i] == kind)) i = (i + 1) & (s->hcap - 1);
     return i;
 }
+static inline int64_t home_of(const Sy *s, uint64_t key, int kind) { return mix(key ^ ((uint64_t)kind * 0xD6E8FEB86659FD93ULL)) & (s->hcap - 1); }
+/* PLAN_9.md: the cell c leaves the store (its place in the table of addresses is closed by moving later entries back) */
+static void forget(Sy *s, int32_t c) {
+    const int64_t mask = s->hcap - 1; int64_t i = slot_of(s, s->cKey[c], s->cKind[c]), j = i;
+    for (;;) { j = (j + 1) & mask; if (s->hcell[j] < 0) break; const int64_t h = home_of(s, s->hkey[j], s->hkind[j]);
+        if (i <= j ? (h <= i || h > j) : (h <= i && h > j)) { s->hkey[i] = s->hkey[j]; s->hkind[i] = s->hkind[j]; s->hcell[i] = s->hcell[j]; i = j; } }
+    s->hcell[i] = -1; s->cN[c] = 0; s->cU[c] = 0; s->evicted++;
+}
 static void grow(Sy *s) {
     int64_t oc = s->hcap; uint64_t *ok = s->hkey; uint16_t *oki = s->hkind; int32_t *oce = s->hcell;
     s->hcap = oc * 2; s->hkey = malloc(s->hcap * 8); s->hkind = malloc(s->hcap * 2); s->hcell = malloc(s->hcap * 4); memset(s->hcell, 0xff, s->hcap * 4);
@@ -65,7 +75,7 @@ static void grow(Sy *s) {
     free(ok); free(oki); free(oce);
 }
 static int32_t new_cell(Sy *s) {
-    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); s->cL = realloc(s->cL, s->ccells); s->cT = realloc(s->cT, s->ccells * 4); }
+    if (s->ncell == s->ccells) { s->ccells *= 2; s->cN = realloc(s->cN, s->ccells * 4); s->cU = realloc(s->cU, s->ccells * 2); s->ccap = realloc(s->ccap, s->ccells * 2); s->cptr = realloc(s->cptr, s->ccells * 8); s->cL = realloc(s->cL, s->ccells); s->cT = realloc(s->cT, s->ccells * 4); s->cKey = realloc(s->cKey, s->ccells * 8); s->cKind = realloc(s->cKind, s->ccells * 2); }
     int32_t c = (int32_t)s->ncell++; s->cN[c] = 0; s->cU[c] = 0; s->ccap[c] = 0; s->cptr[c] = 0; return c;
 }
 static void count(Sy *s, int32_t c, int y, int64_t t) {
@@ -78,25 +88,26 @@ static void count(Sy *s, int32_t c, int y, int64_t t) {
     }
     s->pv[s->cptr[c] + u] = y; s->pc[s->cptr[c] + u] = 1; s->cU[c] = u + 1; s->cN[c]++;
 }
-Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age, double spow) {
-    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age; s->spow = spow;
+Sy *sy_new(int S, int K, const int32_t *ktype, const int32_t *knd, const int32_t *kdel, const double *kborn, double eta, double e, int rule, int gate, int J, double birth, int M, int64_t nmax, int age, double spow, int64_t cap, int evict, int second) {
+    Sy *s = calloc(1, sizeof(Sy)); s->S = S; s->K = K; s->gate = gate; s->J = J; s->M = M; s->rule = rule; s->eta = eta; s->e = e; s->birth = birth; s->nmax = nmax; s->age = age; s->spow = spow; s->cap = cap; s->evict = evict; s->second = second; s->rng = 0x2545F4914F6CDD1DULL; if (second) s->seen = calloc(1 << 24, 1);
     for (int k = 0; k < K; k++) { s->ktype[k] = ktype[k]; s->knd[k] = knd[k]; for (int i = 0; i < 8; i++) s->kdel[k][i] = kdel[k * 8 + i]; }
     s->T = malloc(sizeof(double) * K * NL); s->Tu = calloc(K * NL, sizeof(double)); s->Ta = calloc(K * NL, sizeof(double));
     for (int k = 0; k < K; k++) for (int l = 0; l < NL; l++) s->T[k * NL + l] = kborn[k];
     s->GL = gate == 2 ? NL : 1; s->gsize = gate ? (int64_t)J * K * s->GL * S : 0;
     if (gate) { s->G = calloc(s->gsize, sizeof(double)); s->Gu = calloc(s->gsize, sizeof(double)); s->Ga = calloc(s->gsize, sizeof(double)); }
     s->hcap = 1 << 16; s->hkey = malloc(s->hcap * 8); s->hkind = malloc(s->hcap * 2); s->hcell = malloc(s->hcap * 4); memset(s->hcell, 0xff, s->hcap * 4);
-    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8); s->cL = malloc(s->ccells); s->cT = malloc(s->ccells * 4);
+    s->ccells = 1 << 16; s->cN = malloc(s->ccells * 4); s->cU = malloc(s->ccells * 2); s->ccap = malloc(s->ccells * 2); s->cptr = malloc(s->ccells * 8); s->cL = malloc(s->ccells); s->cT = malloc(s->ccells * 4); s->cKey = malloc(s->ccells * 8); s->cKind = malloc(s->ccells * 2);
     s->pcap = 1 << 16; s->pv = malloc(s->pcap); s->pc = malloc(s->pcap * 4);
     s->hbits = 22; s->head = malloc(sizeof(int32_t) << s->hbits); memset(s->head, 0xff, sizeof(int32_t) << s->hbits); s->prev = malloc(sizeof(int32_t) * (nmax + 1));
     for (int v = 0; v < SMAX; v++) s->last[v] = -1; s->synced = 0;
     for (int c = 0; c < 4096; c++) s->lt[c] = log(c + e) - log(e);
     return s;
 }
-void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->cL); free(s->cT); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
+void sy_free(Sy *s) { free(s->T); free(s->Tu); free(s->Ta); free(s->G); free(s->Gu); free(s->Ga); free(s->hkey); free(s->hkind); free(s->hcell); free(s->cN); free(s->cU); free(s->ccap); free(s->cptr); free(s->cL); free(s->cT); free(s->cKey); free(s->cKind); free(s->seen); free(s->pv); free(s->pc); free(s->head); free(s->prev); free(s); }
 int64_t sy_cells(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] > 0; return n; }
 int64_t sy_counts(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cU[c]; return n; }
 int64_t sy_cells_of(const Sy *s, int kind) { int64_t n = 0; for (int64_t i = 0; i < s->hcap; i++) if (s->hcell[i] >= 0 && s->hkind[i] == kind && s->cN[s->hcell[i]] > 0) n++; return n; }
+int64_t sy_evicted(const Sy *s) { return s->evicted; }
 int64_t sy_once(const Sy *s) { int64_t n = 0; for (int64_t c = 0; c < s->ncell; c++) n += s->cN[c] == 1; return n; }
 double *sy_T(Sy *s) { return s->T; }  double *sy_Tu(Sy *s) { return s->Tu; }  double *sy_G(Sy *s) { return s->G; }  double *sy_Gu(Sy *s) { return s->Gu; }  int64_t sy_gsize(Sy *s) { return s->gsize; }
 static inline uint32_t rhash(const int32_t *x, int64_t end, int M, int hbits) { uint64_t h = 0; for (int i = 1; i <= M; i++) h = h * 0x100000001B3ULL + (uint64_t)(x[end - i] + 1); return (uint32_t)(mix(h) >> (64 - hbits)); }
@@ -164,8 +175,23 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
                 int32_t c = s->hcell[sl[k]];
                 if (c < 0) {
                     if (s->birth > 0 && p[y] >= s->birth) continue;
+                    if (s->second) {                                  /* PLAN_10.md: a first meeting leaves one bit; the cell is made at the second */
+                        const uint64_t b = mix(keys[k] ^ ((uint64_t)k * 0xD6E8FEB86659FD93ULL) ^ 0xA5A5A5A5A5A5A5A5ULL) >> 37; if (!(s->seen[b >> 3] & (1 << (b & 7)))) { s->seen[b >> 3] |= (uint8_t)(1 << (b & 7)); continue; }
+                    }
+                    if (s->cap > 0 && s->ncell >= s->cap) {           /* PLAN_9.md: the store is full: of eight places drawn by chance, the cell that has counted least and, among those, counted longest ago leaves (evict 1: the first drawn) */
+                        int32_t best = -1;
+                        for (int r = 0; r < 8; r++) { s->rng ^= s->rng << 13; s->rng ^= s->rng >> 7; s->rng ^= s->rng << 17; const int32_t cand = (int32_t)(s->rng % (uint64_t)s->ncell); int cur = 0;
+                            for (int j = 0; j < K; j++) if (s->ktype[j] < 2 && s->hcell[sl[j]] == cand) { cur = 1; break; }
+                            if (cur) continue;
+                            if (best < 0 || (s->evict == 0 && (s->cN[cand] < s->cN[best] || (s->cN[cand] == s->cN[best] && s->cT[cand] < s->cT[best])))) best = cand; }
+                        if (best < 0) continue;
+                        forget(s, best); for (int j = 0; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);
+                        c = best; s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c; s->cKey[c] = keys[k]; s->cKind[c] = (uint16_t)k;
+                        for (int j = k + 1; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);
+                        count(s, c, y, t); continue;
+                    }
                     if ((s->ncell + 1) * 10 > s->hcap * 6) { grow(s); for (int j = 0; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j); }
-                    c = new_cell(s); s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c;
+                    c = new_cell(s); s->cKey[c] = keys[k]; s->cKind[c] = (uint16_t)k; s->hkey[sl[k]] = keys[k]; s->hkind[sl[k]] = (uint16_t)k; s->hcell[sl[k]] = c;
                     for (int j = k + 1; j < K; j++) if (s->ktype[j] < 2) sl[j] = slot_of(s, keys[j], j);      /* a slot found empty may now be taken */
                 }
                 else if (s->birth > 0 && s->cN[c] == 0 && p[y] >= s->birth) continue;
@@ -183,9 +209,9 @@ def kern():
     if not os.path.exists(so):
         open(src, "w").write(SRC); tmp = so + f".{os.getpid()}"; subprocess.check_call(["gcc", "-O3", "-march=native", "-shared", "-fPIC", "-o", tmp, src, "-lm"]); os.replace(tmp, so)
     L = ctypes.CDLL(so); ci, cd, cl, vp = ctypes.c_int, ctypes.c_double, ctypes.c_int64, ctypes.c_void_p
-    L.sy_new.argtypes = [ci, ci, PI, PI, PI, PD, cd, cd, ci, ci, ci, cd, ci, cl, ci, cd]; L.sy_new.restype = vp; L.sy_free.argtypes = [vp]; L.sy_free.restype = None
+    L.sy_new.argtypes = [ci, ci, PI, PI, PI, PD, cd, cd, ci, ci, ci, cd, ci, cl, ci, cd, cl, ci, ci]; L.sy_new.restype = vp; L.sy_free.argtypes = [vp]; L.sy_free.restype = None
     L.sy_run.argtypes = [vp, PI, cl, cl, ci, PD, PD, PD, PD]; L.sy_run.restype = None
-    for f in ("sy_cells", "sy_counts", "sy_once", "sy_gsize"): getattr(L, f).argtypes = [vp]; getattr(L, f).restype = cl
+    for f in ("sy_cells", "sy_counts", "sy_once", "sy_gsize", "sy_evicted"): getattr(L, f).argtypes = [vp]; getattr(L, f).restype = cl
     L.sy_cells_of.argtypes = [vp, ci]; L.sy_cells_of.restype = cl
     for f in ("sy_T", "sy_Tu", "sy_G", "sy_Gu"): getattr(L, f).argtypes = [vp]; getattr(L, f).restype = PD
     return L
@@ -208,11 +234,11 @@ def kinds_of(spec, S, recall=0, born=0.25):
     return ks
 
 class Sys:
-    def __init__(s, S, kinds, x, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0):
+    def __init__(s, S, kinds, x, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0, cap=0, evict=0, second=0):
         s.S, s.kinds, s.K, s.gate, s.J, s.M = S, kinds, len(kinds), gate, J, M; assert S <= 128 and s.K <= 600 and J <= 8; s.L = kern(); s.x = np.ascontiguousarray(x.astype(np.int32)); assert s.x.max() < S
         kt = np.array([k[0] for k in kinds], np.int32); kn = np.array([k[1] for k in kinds], np.int32); kd = np.zeros((s.K, 8), np.int32); kb = np.array([k[3] for k in kinds], np.float64)
         for i, k in enumerate(kinds): kd[i, :len(k[2])] = k[2]
-        s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x), age, spow)
+        s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x), age, spow, int(cap), evict, second)
     def run(s, lo, hi, learn, want_p=False):
         n = hi - lo; nl1 = np.zeros(n); nl2 = np.zeros(n) if s.gate else None; P1 = np.zeros((n, s.S)) if want_p else None; P2 = np.zeros((n, s.S)) if want_p and s.gate else None
         s.L.sy_run(s.h, p32(s.x), lo, hi, int(learn), pd(nl1), pd(nl2), pd(P1), pd(P2)); return (nl1, nl2, P1, P2) if want_p else (nl1, nl2)
@@ -221,7 +247,7 @@ class Sys:
     def G(s): n = s.L.sy_gsize(s.h); return np.ctypeslib.as_array(s.L.sy_G(s.h), (n,)).copy() if n else np.zeros(0)
     def Gu(s): n = s.L.sy_gsize(s.h); return np.ctypeslib.as_array(s.L.sy_Gu(s.h), (n,)).copy() if n else np.zeros(0)
     def sizes(s):
-        return dict(cells=int(s.L.sy_cells(s.h)), counts_above_zero=int(s.L.sy_counts(s.h)), cells_met_once=int(s.L.sy_once(s.h)), kinds=s.K, trusts_used=int((s.Tu() > 0).sum()), parts_used=int((s.Gu() > 0).sum()), parts=int(s.L.sy_gsize(s.h)))
+        return dict(cells=int(s.L.sy_cells(s.h)), cells_that_left=int(s.L.sy_evicted(s.h)), counts_above_zero=int(s.L.sy_counts(s.h)), cells_met_once=int(s.L.sy_once(s.h)), kinds=s.K, trusts_used=int((s.Tu() > 0).sum()), parts_used=int((s.Gu() > 0).sum()), parts=int(s.L.sy_gsize(s.h)))
     def __del__(s):
         try: s.L.sy_free(s.h)
         except Exception: pass
@@ -238,6 +264,12 @@ def reclevel_np(L, M):
     while m > 0 and b < NL - 1: m >>= 1; b += 1
     return b
 
+M64 = (1 << 64) - 1
+def mix_py(z):
+    z = (z + 0x9E3779B97F4A7C15) & M64; z = ((z ^ (z >> 30)) * 0xBF58476D1CE4E5B9) & M64; z = ((z ^ (z >> 27)) * 0x94D049BB133111EB) & M64; return z ^ (z >> 31)
+def key_py(kind, key):                                           # the kernel's packed address of a cell from the reference's key (kind number first)
+    if kind[0] == 0: return sum(v << (7 * i) for i, v in enumerate(key[1:]))
+    return key[1] * 128 + key[2]
 def agelevel_last_np(u, d):
     b = 0
     while d >= 4 and b < 9: d >>= 2; b += 1
@@ -249,9 +281,9 @@ def agelevel_recall_np(L, M, d):
     while d > 0 and c < 4: d >>= 4; c += 1
     return b * 5 + c
 
-def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0):
+def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0, cap=0, evict=0, second=0):
     K = len(kinds); GL = NL if gate == 2 else 1
-    if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={}, lasts={}, times={})
+    if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={}, lasts={}, times={}, order=[], seen=set(), rng=[0x2545F4914F6CDD1D])
     cells, T, Tu, Ta, G, Gu, Ga, places = (state[k] for k in ("cells", "T", "Tu", "Ta", "G", "Gu", "Ga", "places")); P1 = np.zeros((hi - lo, S)); P2 = np.zeros((hi - lo, S)); xb = lambda q: int(x[q]) if q >= 0 else 0
     step = lambda used, acc: eta if rule == 0 else eta / np.sqrt(1.0 + used) if rule == 1 else eta * sc[0] / np.sqrt(acc); sc = [1.0]
     for t in range(lo, hi):
@@ -298,6 +330,19 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, eta=0.00005, e=0.02, ru
                 if key is None: continue
                 if key not in cells:
                     if birth > 0 and p[y] >= birth: continue
+                    if second:
+                        b = mix_py(key_py(kinds[k], key) ^ ((k * 0xD6E8FEB86659FD93) & M64) ^ 0xA5A5A5A5A5A5A5A5) >> 37
+                        if b not in state["seen"]: state["seen"].add(b); continue
+                    order = state["order"]
+                    if cap > 0 and len(order) >= cap:
+                        best = -1; cur = set(q for q in keys if q is not None and q in cells); r = state["rng"]
+                        for _ in range(8):
+                            r[0] ^= (r[0] << 13) & M64; r[0] ^= r[0] >> 7; r[0] ^= (r[0] << 17) & M64; cand = r[0] % len(order)
+                            if order[cand] in cur: continue
+                            if best < 0 or (evict == 0 and ((cells[order[cand]].sum(), state["times"][order[cand]]) < (cells[order[best]].sum(), state["times"][order[best]]))): best = cand
+                        if best < 0: continue
+                        del cells[order[best]]; order[best] = key
+                    else: order.append(key)
                     cells[key] = np.zeros(S)
                 cells[key][y] += 1; state["lasts"][key] = y; state["times"][key] = t
             if any(k[0] == 2 for k in kinds) and t >= M: places.setdefault(tuple(int(v) for v in x[t - M:t]), []).append(t)
@@ -307,7 +352,8 @@ def check():
     import make_streams as MS
     ok = True; rng = np.random.default_rng(3)
     cases = [("shakespeare", "runs", dict()), ("py", "runs", dict(gate=1)), ("xml", "runs", dict(gate=2, birth=0.5)), ("c", "runs+since+pool", dict(gate=1)), ("table", "runs", dict(gate=1, recall=1)), ("py", "runs", dict(gate=1, recall=3, M=4)),
-             ("book", "runs", dict(rule=2, eta=0.05, gate=1)), ("book", "runs", dict(rule=1, eta=0.1, e=2.0, gate=2)), ("random", "sums", dict(rule=1, eta=0.1, e=2.0, gate=1, J=8, lo=9)), ("repeats", "runs", dict(gate=1, recall=3, M=8)), ("c", "runs+last", dict(gate=1, recall=1, rule=2, eta=0.03)), ("shakespeare", "runs+last", dict(gate=2, birth=0.5)), ("table", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1)), ("repeats", "runs+last", dict(gate=1, recall=3, age=1)), ("py", "runs+last+since", dict(gate=1, recall=1, rule=2, eta=0.03, age=1, spow=1.0)), ("random", "sums", dict(rule=2, eta=0.03, gate=1, lo=9, spow=0.5))]
+             ("book", "runs", dict(rule=2, eta=0.05, gate=1)), ("book", "runs", dict(rule=1, eta=0.1, e=2.0, gate=2)), ("random", "sums", dict(rule=1, eta=0.1, e=2.0, gate=1, J=8, lo=9)), ("repeats", "runs", dict(gate=1, recall=3, M=8)), ("c", "runs+last", dict(gate=1, recall=1, rule=2, eta=0.03)), ("shakespeare", "runs+last", dict(gate=2, birth=0.5)), ("table", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1)), ("repeats", "runs+last", dict(gate=1, recall=3, age=1)), ("py", "runs+last+since", dict(gate=1, recall=1, rule=2, eta=0.03, age=1, spow=1.0)), ("random", "sums", dict(rule=2, eta=0.03, gate=1, lo=9, spow=0.5)), ("py", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1, cap=1500)), ("xml", "runs+last+since", dict(gate=1, recall=1, age=1, cap=3000, evict=1)),
+             ("c", "runs+last", dict(gate=1, recall=3, rule=2, eta=0.03, age=1, second=1)), ("shakespeare", "runs+last", dict(gate=1, recall=1, age=1, second=1, cap=1200))]
     for name, spec, kw in cases:
         kw = dict(kw); n = kw.pop("n", 2500); lo = kw.pop("lo", 6); recall = kw.pop("recall", 0)
         if name == "random": x = rng.integers(0, 14, n).astype(np.int32); S = 14
@@ -342,7 +388,7 @@ def check_gate():
 def run_stream(kw):
     import make_streams as MS
     name = kw["stream"]; x, cut, S = MS.load(name); t0 = time.process_time(); recall = int(kw.get("recall", 0)); kinds = kinds_of(kw.get("kinds", "runs"), S, recall, float(kw.get("born", 0.25)))
-    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.00005)), e=float(kw.get("e", 0.02)), rule=int(kw.get("rule", 0)), gate=int(kw.get("gate", 0)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)), age=int(kw.get("age", 0)), spow=float(kw.get("spow", 0)))
+    s = Sys(S, kinds, x, eta=float(kw.get("eta", 0.00005)), e=float(kw.get("e", 0.02)), rule=int(kw.get("rule", 0)), gate=int(kw.get("gate", 0)), J=int(kw.get("J", 6)), birth=float(kw.get("birth", 0)), M=int(kw.get("M", 8)), age=int(kw.get("age", 0)), spow=float(kw.get("spow", 0)), cap=int(float(kw.get("cap", 0))), evict=int(kw.get("evict", 0)), second=int(kw.get("second", 0)))
     lo = 6; a1, a2 = s.run(lo, cut, True); t1 = time.process_time(); f1, f2 = s.run(cut, len(x), False); sz = s.sizes(); g1, g2 = s.run(cut, len(x), True); m = lambda v: None if v is None else float(v.mean())
     half = (cut - lo) // 2; out = dict(stream=name, args=kw, S=S, length=len(x), cut=cut, kinds=len(kinds), frozen=dict(cell1=m(f1), cell2=m(f2)), going_on=dict(cell1=m(g1), cell2=m(g2)), while_reading=dict(cell1=m(a1), cell2=m(a2)),
                while_reading_second_half=dict(cell1=m(a1[half:]), cell2=m(a2[half:]) if a2 is not None else None), sizes_at_the_frozen_scoring=sz, sizes_at_the_end=s.sizes(), cpu=round(time.process_time() - t0, 1), cpu_reading=round(t1 - t0, 1))

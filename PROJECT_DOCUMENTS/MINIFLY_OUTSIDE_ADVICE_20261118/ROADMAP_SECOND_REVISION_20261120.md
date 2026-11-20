@@ -598,3 +598,30 @@ The best general system is below xz by 0.43, 0.42, 0.21, 0.17, 0.13 and 0.18 nat
 
 *Not run by it* (it stopped at its budget before my later requests reached it): a bound on the store; a cell born at a second meeting; a rule for the smoothing (`nano/table/PLAN_23.md` has one); counts that fade; a life over several streams (keeping). These go to a new line.
 
+## 25. Two late reports (night of 20 November; as reported; not repeated by me)
+
+**`nano/suite`, after its final table (taken in at 2f243df; its `PLAN_9.md` and `PLAN_10.md`).** Two of my three late requests were run, on the small system with no more cells than the base (ZA of section 24). Going on, difference from that system with no bound on its store:
+
+| | Shakespeare | book | Python | C | table | markup |
+|---|---|---|---|---|---|---|
+| a store of half the size (the least counted and oldest cell leaves) | +0.0068 | +0.0070 | +0.0046 | +0.0035 | +0.0026 | +0.0016 |
+| a quarter | +0.0231 | +0.0248 | +0.0125 | +0.0093 | +0.0063 | +0.0058 |
+| an eighth | +0.0503 | +0.0570 | +0.0260 | +0.0165 | +0.0177 | +0.0113 |
+| half, a cell leaving by chance | +0.0619 | +0.0733 | +0.0228 | -0.0142 | +0.0097 | +0.0033 |
+| a cell born only at a second meeting: cost | +0.0113 | +0.0097 | +0.0142 | +0.0162 | +0.0081 | +0.0035 |
+| the same: cells fewer by | 49% | 51% | 46% | 47% | 66% | 49% |
+
+As that line reads it: most of the store is worth little (half of it costs at most 0.007 nats; with an eighth the system is still below xz on all six streams); who leaves matters four to nine-fold on prose; on C headers leaving by chance is better than the rule and better than no bound, because a much-counted cell from an earlier file says what is no longer true. A cell born at a second meeting is a large cut that needs no choice of who leaves, but costs more than a bound at the same size. **Not run:** a trust in two memories. Its last count: 66 predictions, 49 held, 17 failed. It also notes that all of its figures under the rule of the step are with the sum of squared drivers starting at nothing, the form in which a first driver of any size moves a trust by the rule's full number (see `nano/lives`, section 26).
+
+**`nano/both`, closing report (taken in at bbb3f97).** Sums, except one run on prose. Never-shown sums, whole answer, median of the five reported seeds, the scored pairs kept out of the lessons:
+
+| lines read | relay system alone | counting system alone | the two joined, unchanged | joined, with lessons by agreement |
+|---|---|---|---|---|
+| 40,000 | 82.9 | 97.4 | 97.1 | 90.8 (88.9 to 97.5) |
+| 100,000 | 91.9 | 87.0 | 86.5 | 96.3 |
+| 400,000 | 95.5 | 75.5 | 79.0 | **98.8** (95.8 to 99.2) |
+
+*Lessons by agreement:* after each 2,000 real lines the relay system composes lines; those not read before are lessons; at each byte where the relay system's answer is the answering cell's own, the answering cells move their trusts and parts towards it. Nothing is counted and nothing in a lesson comes from the program. *Two tasks* (addition for 400,000 lines, then subtraction for 200,000): share of addition kept 96.3% for the relay system with replay, 72.6% for the joined system unchanged, **94.7%** with lessons; the second task itself 88.1, 75.6, 81.3. My design of the joined system (the relay system as one more voice) is refuted at the long reading (79.0). *On prose, one run:* the relay system's trust is smallest where it is surest and that is no fault there (hearing it at trust one costs 0.010 nats); that line concludes, in agreement with section 13, that the fault found on sums belongs to the closed stream and not to the rule of the trust.
+
+That line's own reading of what may carry beyond sums: a learner whose stream has stopped showing anything new can make its own new cases, and two kinds of cell that generalise differently can teach each other on them with no answer from outside. Untested beyond sums. 60 predictions: 26 held, 31 failed, 2 not run, 1 not scorable. It reports a fault of order of its own: it read my message with Mr. Xu's steer away from sums only after two further steps on sums had run.
+

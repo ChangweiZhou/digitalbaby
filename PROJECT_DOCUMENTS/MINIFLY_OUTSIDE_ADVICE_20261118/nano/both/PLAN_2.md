@@ -244,3 +244,11 @@ By the rule of section 12 arm A' goes to the five reported seeds: `PLAN_5.md`.
 | S1 | the control at 400,000 lines at least 95 | 0.35 |
 | S2 | the control at 40,000 lines within 3 points of the unchanged system (96.6) | 0.60 |
 | S3 | the control at 400,000 lines at least 3 points under arm A' (98.1) | 0.55 |
+
+## 15. Outcome of addition 5 (entered 20 November; `res/s2_d5_self_seed1.json`; 872 CPU-seconds)
+
+Seed 1, joined second cell, lessons towards the answering cell's own answer on the same composed lines: 92.5, 95.9, 96.5 at 5,000 to 20,000 lines; 87.3 and 87.8 at 40,000 and 50,000; 94.8, 95.9, 97.4, 97.6 at 100,000 to 250,000; then **79.2, 78.2, 77.4** at 300,000 to 400,000 (arm A': 98.0, 98.2, 98.1). The class kinds alone answer 87% at 20,000 lines, 49% at 150,000, 10% at 250,000 and 5% at 400,000 in the control (94% throughout in arm A').
+
+S1 failed (77.4). S2 failed (87.3 at 40,000 lines; 9.3 under). S3 held (20.7 under arm A').
+
+Reading (mine; one seed). **The agreement of the second kind of cell is needed.** Lessons towards the answering cell's own answer hold up for a while and then destroy what generalises: with no second opinion the lesson strengthens whatever the cell answers, right or wrong, and the trust drains from the class kinds until, at the next finding of classes, the answer on new lines falls by 18 points. With the relay system's agreement as the condition the same lessons on the same lines keep the class kinds at 94% and the answer at 98%. So in the design of `PLAN_5.md` the relay system does two things, and this control separates them: it composes the new lines (both arms), and it says which of the pupil's answers may be taught (arm A' only).
