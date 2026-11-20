@@ -62,3 +62,27 @@ A run at r = 1 reads 1,200,000 lines: about 40 seconds of the kernel and, by the
 Not run in this plan: a change of task that brings no new line (the coordinating session's later step); counting cells that fade or are limited in number; replay in blocks with the real lines paused; replay together with new cells; K between 6 and 8.
 
 ---
+
+## 9. Entered 20 November after the check and the development runs, before any run on the reported seeds
+
+**The check** (`check_replay_output.txt`): passed. The relay system's compiled loop against its numpy loop in every arm over two phases: 1e-14 to 3e-14, the same extra lines. The plain arm against `cells2.py` over two phases (numpy against numpy): 2e-15. The counting cells: with K = 8 (and 10) all of 30,000 replayed lines are lines that were counted, each in proportion to how often it was counted; with K = 6, 9,283 of 30,000 (after 3,000 counted lines).
+
+**Development seed 1** (`res/p_d_*.json`). Never-shown addition after its own phase (mean of the last three readings); then never-shown addition and subtraction after 200,000 lines of subtraction (last reading; in brackets the mean of the last three).
+
+| arm | addition after its phase | addition after subtraction | subtraction | CPU s (of which counting and replay) |
+|---|---|---|---|---|
+| P | 81.5 | 1.4 (1.9) | 82.2 (78.7) | 32 |
+| R, r = 1/8 | 80.0 | 46.0 (48.6) | 85.8 (81.7) | 37 (7) |
+| R, r = 1/4 | 89.6 | 67.6 (67.1) | 82.8 (79.6) | 44 (8) |
+| R, r = 1/2 | 88.3 | 76.0 (79.0) | 81.0 (77.9) | 48 (10) |
+| R, r = 1 | 89.9 | 79.0 (81.0) | 82.2 (76.8) | 61 (14) |
+| R, r = 2 | 85.1 | 78.4 (78.9) | 75.2 (69.8) | 106 (25) |
+| O, r = 1 | 88.1 | 86.0 (84.1) | 76.4 (73.3) | 54 (4) |
+| Z, r = 1 | 89.9 | 1.4 (1.7) | 90.4 (89.3) | 65 (15) |
+| R6, r = 1 | 67.7 | 3.4 (2.3) | 68.2 (65.3) | 68 (16) |
+
+Counting cells held at the end in R: 66,050, with 78,887 counts above zero (16,000 different lines were shown). In R every replayed line is correct at every ratio; in R6 23,492 of 600,000 are (3.9%: with all 16,000 lines counted, a cell that does not see the first operand's tens digit has met nearly every continuation, so the share of right sums falls far below the check's third).
+
+**Choice by the rule of section 5:** the grid's best is r = 1 (79.0); the smallest r within 5 points of it is **r = 1/2** (76.0). To the five reported seeds: P; R at r = 1 (the hypothesis) and at r = 1/2; O, Z and R6 at r = 1.
+
+A7 failed on this seed (46.0 at r = 1/8, under 50). Two things I note before the reported seeds, so that they are not made afterwards: with replay the score of addition after its own phase is 6 to 8 points above P's on this seed at r = 1/4 to 1 (the first phase has more lines), and R6's is 14 points below it (replayed wrong sums harm the first task while it is being learned).
