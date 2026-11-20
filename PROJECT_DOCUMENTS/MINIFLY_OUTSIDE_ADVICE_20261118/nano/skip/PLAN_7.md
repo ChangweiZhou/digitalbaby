@@ -48,3 +48,30 @@ Received from the coordinating session after addition 1 was written: its own loo
 | V7 | (a''), theta 0.2, 400,000 lines: at least 90% of the letters and under 5% of every other kind of byte are passed over | 0.70 |
 | V8 | (b'') at theta 0.2 or 0.3: at least 50% of never-shown pairs at every gap, last three readings (the coordinator's hypothesis, development seed) | 0.60 |
 | V9 | (b''): the letters are passed over at 90% or more only after 100,000 lines (later than the trial clock, which had them by 100,000) | 0.50 |
+
+## Outcome of (b), addition 1 and addition 2 (entered 20 November 2026; development seed 1; `res/p7_*.json`)
+
+`g2`, 1,200,000 lines, never-shown pairs, mean of the last three readings (the three gaps give one figure once the letters are passed over); the share passed over is over the bytes of the last 100,000 lines unless a reading is named.
+
+| Clock | Never-shown pairs | at 100,000 / 200,000 lines | Letters passed over in the first / second 100,000 lines | First digit of the line passed over | Other kinds |
+|---|---|---|---|---|---|
+| (b) next byte, theta 0.1, nothing counted after the end mark | **96.6** | 5 / 88 | 0.60 / 0.98 | 0.00 | answer's hundreds 0.008 |
+| (b') the same, the table counting across the end mark | **8.1** (by place 73, 18, 99) | 4 / 25 | 0.60 / 0.98 | 0.12, 0.46, 0.81, 0.94 over the first four readings, then 1.00 | answer's hundreds 0.008 |
+| (b'') next two bytes, across, theta 0.2 | **95.5** | 57 / 89 | 0.87 / 1.00 | 0.00 | answer's hundreds 0.006 |
+| (b'') next two bytes, across, theta 0.3 | **94.2** | 73 / 90 | 0.96 / 1.00 | 0.00 | answer's hundreds 0.021 |
+| trial clock, second form (`PLAN_2.md`, B) | 95.1 | 32 / 87 | | | |
+| `clock=oracle`, 400,000 lines / `clock=none` | 93.7 / 52.3, 1.3, 0.7 | | | | |
+
+The criterion alone with the next two bytes (`res/p7_crit_g2_s1_across_two.json`), share passed over after 10,000 / 100,000 / 400,000 lines: theta 0.2: letters 0.45 / 1.00 / 1.00, answer's hundreds 0.01, every other kind 0.00; theta 0.3: letters 0.91 / 1.00 / 1.00, answer's hundreds 0.01 to 0.03, every other kind 0.00. With the next byte only and counts across the end mark: the first digit of the line 0.27 / 0.19 / 0.97 at theta 0.1. These agree with the shares of the coordinator's own look.
+
+**The coordinator's hypothesis holds on the development seed** for the rule as amended (next two bytes): 95.5 and 94.2% at every gap, where under 50% would refute. The chain recovers once aligned, and the letters are separated early enough (the system is at 57 and 73% after 100,000 lines, ahead of the trial clock's 32).
+
+**Predictions.** V1 held. V2 failed (see the outcome of (a)). V3 held. V4 failed as first written, for (b), and that is by the stream's convention; the failure I reasoned to is what (b') shows: with the table counting what follows the end mark the first digit is passed over and the system stays at 8.1% (hundreds 73, tens 18, units 99: exactly the places that need that digit). V5 held (0.97). V6 held. V7 held. V8 held. V9 failed (the letters are at 0.87 and 0.96 within the first 100,000 lines).
+
+**Reading (mine).**
+1. A rule that reads no mismatch and uses no chance finds the letters on this text, as early as the trial clock or earlier, and costs a table of a few thousand counting cells.
+2. What it tests is not whether a byte matters to the answer. It tests whether a byte changes what is expected of the next one or two bytes. On `g2` the two coincide for a reason of the text: a number has two digits, so after its first digit the next two bytes are "digit, sign" and before it they were "digit, digit". The one-byte form shows what happens when they do not coincide: the first digit of the first number looks to it exactly as a letter does (a byte that was not foreseen, after which the same is expected as before), and it is passed over.
+3. From this I expect the two-byte form to fail in the same way on numbers of three digits (before the first digit: "digit, digit"; after it: "digit, digit"), and any fixed look-ahead to fail on numbers longer than it. The trial clock reads the answer's mismatch and should not fail there. This is a prediction, not a finding; the next plan tests it.
+4. The two rules fail in different places: the expectation rule where a byte that matters later is locally unremarkable; the trial rule where there are many byte values to try (`PLAN_5.md`, running) or where one closing alone earns nothing (`m1`, `PLAN_4.md`, running).
+
+**Cost.** About 8 CPU-minutes. Not run: the reported seeds for this rule (the next plan runs them beside the trial clock on the text that should part the two).
