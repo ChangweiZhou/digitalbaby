@@ -55,3 +55,23 @@ Check: a minute. Part A: 20 development runs and 25 on the reported seeds; Part 
 Not run: rules with a running mean held by a cell; rules for the constants or the thresholds alone; rules for R different from those for A; the fading; two changed rules together.
 
 ---
+
+## 7. Entered 20 November after the check and the development runs, before any run on the reported seeds
+
+The check (`check_joint5_output.txt`): passed, 1e-14 to 1e-11 on every rule at 300 and 3,000 lines; the present rules are form 1 of `joint.py`.
+
+Development seed 1, never-shown sums, mean of the last three readings (`res/s_sd_*.json`):
+
+- (i): 81.5.
+- (ii), p = 1, 2, 4, 8, 16, 32 x 1e-4: 65.2, 77.5, 79.7, **81.0**, 74.3, 77.6.
+- (iii), p = 1e-6 to 1e-4: 0.0 at every value (as expected: the share of connections below one hundredth of the largest is 7.1% at every step, which is one branch of fourteen; inside a branch all strengths are equal).
+- (iii-b), the same steps: 0.0, 0.0, 0.0, 1.9, **3.7**.
+- (iv), p = 1/64, 1/256, 1/1024: 66.1, 56.5, **71.4**. The largest strength is 0.9 to 1.0 against 0.11 under (i), and 72 to 87% of the connections end below one hundredth of the largest.
+- Part B (iii), q = 1e-5 to 1e-2: 0.1, 0.0, 0.4, **0.8** (at the two largest steps the strengths from the lines grow to a mean size of 17 and 37 and the cells saturate).
+- Part B (iv), q = 1/4, 1/16, 1/64: **72.8**, 62.1, 69.3.
+
+To the reported seeds, by the rule of section 3: (i); (ii) at 8e-4; (iii) at 1e-5 (every value gives 0.0; I take the middle one); (iii-b) at 1e-4; (iv) at 1/1024; Part B (iii) at 1e-2 and (iv) at 1/4.
+
+S6 failed on this grid: the score of (iv) does not fall with the floor (66.1, 56.5, 71.4).
+
+A remark before the reported seeds, so that it is not made afterwards: the changes of fixed size answer nothing at any step tried, in the answering cell and in the cells in between, and I did not expect that of (iii-b) or of Part B (iii) (S4 at 0.4, S7 at 0.5). Under a change of fixed size with a fading of 1e-5 a byte no strength can exceed p / 1e-5, and a strength pushed one way for long sits at that bound whatever the size of the mismatch; I have not tested whether that, or the loss of the mismatch's size as such, is the cause. No further grid is run for them in this plan.
