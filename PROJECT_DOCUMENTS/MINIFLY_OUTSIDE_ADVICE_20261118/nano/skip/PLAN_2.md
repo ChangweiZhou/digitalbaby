@@ -45,3 +45,20 @@ B. `g2`, development seed 1, 1,200,000 lines: the alpha chosen in A; if it fails
 C. `g2`, the five reported seeds (73129, 93683, 116089, 406364, 545353), 1,200,000 lines, four arms at equal size and length: the rule; `clock=none`; alpha = 0; `clock=values:n` with n the number of byte values the rule most often ends with closed. Where the rule and a control are within ten points, the seeds 1001 to 1010 are added and all fifteen reported.
 
 **Cost.** About 2 CPU-minutes for a run of 1,200,000 lines; about 50 CPU-minutes in all. **Not run.** Other periods, floors and starting chances than those above unless B fails; more cells; the first plan's quantity again; receiving cells that withdraw.
+
+## Outcome of A (entered 20 November 2026; development seed 1; `res/p2_m1_trial_a*.json`)
+
+`m1`, 200,000 lines, sums shown at gaps 0 / 4 / 8, last three readings: alpha 0.02: 27.1 / 27.9 / 11.2, nothing closed; alpha 0.05: 37.5 / 40.0 / 22.5, the letter z closed from 40,000 lines; alpha 0.1: 37.5 / 39.6 / 23.3, z closed from 40,000 lines; alpha 0 (closing by chance): 16.7 / 17.5 / 13.3. Beside `clock=none` 20.4 / 22.9 / 10.0 and `clock=oracle` 100.
+
+**Q1 failed** (no alpha reaches 90%). **Q2 failed** (one letter closed, not four; no digit closed). What the tendencies did (Reading, mine): every digit, `+`, `=` and the end mark moved firmly to open (u from -1.4 to between -3 and -9), so closing them is punished early and clearly, as expected. One letter closed and the scores then began to rise (50 / 48 / 32 at the last reading with alpha 0.05, still rising). The other three letters moved to open as well, and so did `-`, a byte value that never occurs and for which the mismatch says nothing: -1.6, -3.4, -4.4 at the three alphas. So a tendency that receives no consistent evidence does not stay where it is; it wanders by the noise in the period's mismatch, and once near the floor it is tried only one period in a hundred and stays there. The letters' evidence is weak until some lines are aligned, and by then three of them had wandered to the floor.
+
+## Addition 1 (20 November 2026, written before its runs): the same trial, the evidence kept as two means
+
+*One change, to the form of what an entry keeps; what it reads is unchanged* (its own state in each period and the one number sent out by the answering cell). An entry keeps four numbers: the sum and the count of z over the periods in which it was closed, and over those in which it was open, all four fading by 1/3000 a period. Its tendency is u = logit(p0) + alpha * t, where t is the difference of the two means of z (closed less open) divided by the root of (1/(count closed + 1) + 1/(count open + 1)): the difference in units of its own uncertainty. An entry with little evidence therefore stays near p0 and keeps trying, and one that has not been closed for long loses its evidence and tries again. 72 numbers at the entries where there were 18.
+
+*Runs (development seed 1).* `m1`, 200,000 lines, `form=evid`: (alpha, p0) = (2, 0.2), (2, 0.5), (4, 0.2), (4, 0.5). The best of these goes to B and C in place of the first form; the first form at alpha 0.05 is run in B beside it.
+
+| | Prediction (mine, before the runs) | Chance |
+|---|---|---|
+| Q8 | `m1`: with some of the four settings the four letters are closed at the end and no digit is | 0.55 |
+| Q9 | `m1`: with that setting at least 90% of the sums shown at every gap | 0.40 |

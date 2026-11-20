@@ -23,6 +23,9 @@ clock=trial   (PLAN_2.md) each byte value has an entry to the chain that holds o
               squared mismatches. At the end of a period, with r that number's mean over the period, b the running mean of r and w the running mean of
               |r - b| ([beta=0.02]): every u moves by alpha * z * ((1 if it was closed, else 0) - c), with z = (b - r) / w kept within -3 and 3
               ([alpha=0.05]); u starts at logit(p0) ([p0=0.2]). alpha=0: the tendencies never change (the closing by chance, a control).
+              form=evid (addition 1 to PLAN_2.md): an entry keeps instead four numbers, the sum and the count of z over the periods in which it was closed
+              and over those in which it was open, all four fading by 1/win a period ([win=3000]); u = logit(p0) + alpha * t, with t the difference of
+              the two means of z (closed less open) over the root of (1/(count closed + 1) + 1/(count open + 1)). alpha=0: closing by chance at p0.
               The scores are taken with every entry in its likelier state (closed where u > 0) and no drawing.
 lam1          a cell's strengths from the lines that are active fade by this fraction at every byte at which they are used (0: as in cells2.py).
 """
@@ -133,7 +136,7 @@ def run(kw):
     elif ck == "rule": s.rule = True
     elif ck == "trial":
         P = int(kw.get("P", 256)); alpha = float(kw.get("alpha", 0.05)); eps = float(kw.get("eps", 0.01)); beta = float(kw.get("beta", 0.02)); p0 = float(kw.get("p0", 0.2))
-        u = np.full(S, np.log(p0 / (1 - p0))); tr = dict(b=None, w=None, n=0)
+        u = np.full(S, np.log(p0 / (1 - p0))); tr = dict(b=None, w=None, n=0); form = kw.get("form", "grad"); gam = 1 - 1 / float(kw.get("win", 3000)); ev = np.zeros((4, S))
     else: assert ck == "none", ck
     trial = ck == "trial"; given = ck != "none" and not s.rule and not trial
     def trial_block(xs, ys):
@@ -144,7 +147,11 @@ def run(kw):
             if s.ecnt < P // 4: continue                                   # a short remainder at the end of a block of lines: no change
             r = s.esum / s.ecnt; tr["n"] += 1
             if tr["b"] is None: tr["b"] = r; tr["w"] = 0.05 * r; continue
-            z = float(np.clip((tr["b"] - r) / max(tr["w"], 1e-12), -3, 3)); u = np.clip(u + alpha * z * (closed - c), -9, 9)
+            z = float(np.clip((tr["b"] - r) / max(tr["w"], 1e-12), -3, 3))
+            if form == "grad": u = np.clip(u + alpha * z * (closed - c), -9, 9)
+            else:                                                          # form=evid (PLAN_2.md, addition 1): ev = sums and counts of z over the closed and the open periods, fading
+                ev *= gam; ev[0] += z * closed; ev[1] += closed; ev[2] += z * ~closed; ev[3] += ~closed
+                u = np.log(p0 / (1 - p0)) + alpha * (ev[0] / (ev[1] + 1) - ev[2] / (ev[3] + 1)) / np.sqrt(1 / (ev[1] + 1) + 1 / (ev[3] + 1))
             tr["w"] += beta * (abs(r - tr["b"]) - tr["w"]); tr["b"] += beta * (r - tr["b"])
     def admit_now():
         if s.rule: e = [s.enters(v) for v in range(S)]; return lambda v: e[v]
