@@ -142,3 +142,28 @@ For replay the clean score bears on one thing more, as the coordinating session 
 - E1 (0.5): P's clean subtraction (wide) is at least 60% at the median of the five reported seeds.
 - E2 (0.6): the second clause of the hypothesis holds on the clean score too: R at r = 1 has at least 60% (clean, wide; median of five).
 - E3 (0.6): R at r = 1 is below P on clean subtraction (wide) on at least eleven seeds of fifteen.
+
+## 13. Outcome of the addition of section 12 (entered 20 November)
+
+Tables: `report_clean.txt` (made by `report_clean.py` from `res/p_e_*.json`). All 70 reruns give every earlier reading again (addition, subtraction, extra lines, cells). Clean pairs: about 100 of the 500 (80 to 112), about 400 of the 2,000 (376 to 437).
+
+Never-shown subtraction after 200,000 lines of subtraction, %, medians. "Mixed" is the earlier score (about four of its five lines are lines that training also writes); "clean, wide" is the score on never-shown pairs, among all 2,000, whose line no shown pair writes; "clean" the same among the 500.
+
+| | mixed (five seeds) | clean, wide (five) | clean (five) | mixed (fifteen) | clean, wide (fifteen) | clean (fifteen) |
+|---|---|---|---|---|---|---|
+| P, no replay | 86.0 | 86.0 | 83.7 | 86.0 | 85.8 | 85.4 |
+| R, one replayed line for each real line | 79.6 | 78.9 | 75.0 | 78.4 | 77.5 | 75.3 |
+| R, one for two real lines | 82.6 | 81.6 | 78.3 | 81.6 | 81.6 | 78.3 |
+| O, the program's old lines | 75.8 | 71.9 | 72.3 | 75.4 | 73.3 | 71.8 |
+| Z, cells emptied at the change | 88.2 | 86.5 | 87.5 | | | |
+| R6, cells of six bytes | 75.4 | 74.0 | 77.5 | | | |
+
+Clean, wide, five reported seeds: P 81.3, 85.8, 87.8, 86.9, 86.0; R at r = 1: 79.8, 78.9, 70.8, 80.8, 76.4.
+
+1. **The relay system answers subtraction lines it was not shown about as often as the mixed score said**: within a run the mixed score less the clean, wide score is 0.4 points at the median for P and 0.5 for R at r = 1 on fifteen seeds (single runs from -4.0 to +6.0). The mixed score overstated nothing I can measure, in any arm; the erratum is real and its effect on these figures is small.
+2. **The hypothesis's second clause holds on the clean score**: with one replayed line for each real line, 78.9% of clean never-shown subtraction (five seeds; 77.5 on fifteen), above the 60 required. So the relay system, taught half on replayed lines that are all shown lines, still answers subtraction it was not shown.
+3. **The readings of section 11 on subtraction stand on the clean score.** Paired on fifteen seeds (clean, wide): R at r = 1 less P -6.9 (below on fourteen of fifteen; -9.2 on the mixed score); O less P -11.1 (below on fifteen); R at r = 1/2 less R at r = 1: +4.2 (above on eleven); R at r = 1 less O: +4.2 (above on ten, below on five), where the mixed score gave +1.0. On the clean score replay costs the new task somewhat less than the program's old lines do; I do not claim it from ten seeds of fifteen.
+
+**Predictions.** E1 held (86.0). E2 held (78.9). E3 held (fourteen of fifteen).
+
+`PLAN_2.md` has no subtraction and is not touched by the erratum. In `nano/joint` every score is addition and is not touched either.
