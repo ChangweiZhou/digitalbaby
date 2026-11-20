@@ -15,3 +15,23 @@
 | R3 | passing over w alone already lowers a line's squared mismatch at 30,000 lines | 0.70 |
 
 **Cost.** Under 2 CPU-minutes. **Not run.** Other seeds; `m1`.
+
+## Outcome (entered 20 November 2026; development seed 1; `res/p3_look_early_s1.json`, printed in full by `look_early.py`)
+
+A line's squared mismatch at the answering cell, summed over the bytes of the line, on 3,000 fresh lines with nothing changing:
+
+| Lines read | no clock | w passed over | four letters passed over | the difference (none less four letters), of which in the answer's three digits |
+|---|---|---|---|---|
+| 10,000 | 8.413 | 8.389 | 7.973 | 0.440, of which 0.491 |
+| 30,000 | 8.521 | 8.475 | 7.631 | 0.890, of which 0.902 |
+| 100,000 | 8.244 | 8.211 | 6.907 | 1.337, of which 1.374 |
+
+By kind of byte at 30,000 lines (no clock / four letters passed over): answer's hundreds 0.329 / 0.108, tens 0.890 / 0.609, units 0.928 / 0.528; the byte after a letter 3.548 / 3.579; every other kind differs by 0.015 or less.
+
+**The hypothesis is refuted.** The whole of the difference is in the answer's three digits (the other bytes are, if anything, a little worse named without the letters in the chain: the sum over them is 0.012 to 0.051 higher). R1 held (0.890). **R2 failed** (none of the difference is outside the answer). R3 held in sign at each of the three lengths (0.024, 0.046, 0.033 lower with w alone passed over; single runs, and small beside the 8.4 total), mostly in the hundreds digit (0.329 to 0.300).
+
+**Correction of my reading in `PLAN_2.md`, outcome of B.** I wrote there that a chain without the letters "must already make the line's other bytes easier to name". It does not. The evidence is in the answer, and it is early because the aligned chain begins to learn the answer at once: after 10,000 lines the units digit's squared mismatch is already 0.767 against 0.924, and the hundreds 0.118 against 0.335. My estimate before `PLAN_2.md` (that nothing rewards closing a letter until the cells answer aligned lines, and that this comes late) was wrong in its second half: in the periods in which several letters happen to be closed together many lines are aligned, the cells learn from those within a few thousand lines, and from then on closing a letter pays.
+
+Reading (mine) of what this says about `m1`, where the same rule is slower: there the answer is one digit modulo 10, which has no part that a roughly placed first number helps with (no hundreds digit), so one letter closed alone earns nothing until the others are. Not tested here.
+
+**Cost.** About 1 CPU-minute.
