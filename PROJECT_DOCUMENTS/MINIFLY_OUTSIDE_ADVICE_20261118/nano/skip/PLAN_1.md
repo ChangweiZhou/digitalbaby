@@ -43,3 +43,50 @@
 **Cost.** Estimated from `kern3.c` (16 to 34 s for 400,000 lines of ten bytes): about 1 CPU-minute for 400,000 lines of `g2`; about 15 CPU-minutes in all.
 
 **Not run.** The rule itself; the reported seeds; any other quantity than Q; more or fewer than nine chain lines; more cells.
+
+## Outcome (entered 20 November 2026 after the runs; development seed 1; result files `res/p1_*.json`)
+
+Never-shown pairs, whole answer right, %, mean of the last three readings, at gaps of 0 / 4 / 8 letters (on `m1`: the sums shown). Every figure of `clock=oracle` is beside `clock=none` at the same size and length.
+
+| Text, lines | `lam1` | `clock=none` | `clock=oracle` |
+|---|---|---|---|
+| `d2` (no letters), 400,000 | 0 | 92.9 | (the same text) |
+| `g2`, 400,000 | 0 | 19.7 / 1.5 / 0.9 | 93.7 / 93.7 / 93.7 |
+| `g2`, 400,000 | 1e-4 | 1.0 / 0.7 / 0.5 | 58.5 / 58.5 / 58.5 |
+| `g2`, 400,000 | 1e-3 | 0.7 / 1.1 / 0.7 | 1.9 / 1.9 / 1.9 |
+| `g2`, 400,000 | 1e-2 | 0.9 / 0.7 / 0.9 | 0.9 / 0.9 / 0.9 |
+| `g2`, 1,200,000 | 0 | 52.3 / 1.3 / 0.7 | not run |
+| `m1`, 200,000 | 0 | 20.4 / 22.9 / 10.0 | 100 / 100 / 100 |
+| `m1`, 200,000 | 1e-3 | 5.0 / 9.2 / 11.2 | 42.5 / 42.5 / 42.5 |
+| `m1`, 200,000 | 1e-2 | 1.7 / 9.2 / 10.4 | 12.1 / 12.1 / 12.1 |
+
+Q(v)/Q0(v) at the end of the `g2` runs with `clock=none` (range over the byte values of each kind):
+
+| `lam1` | ten digits | `+` | `=` | end mark | four letters |
+|---|---|---|---|---|---|
+| 0, 400,000 lines | 2.36 to 2.99 | 2.06 | 3.83 | 2.75 | 2.72 to 2.80 |
+| 0, 1,200,000 lines | 2.72 to 3.45 | 2.38 | 4.40 | 3.18 | 2.87 to 2.97 |
+| 1e-4 | 0.06 to 0.10 | 0.04 | 0.19 | 0.06 | 0.07 |
+| 1e-3 | 0.02 to 0.03 | 0.02 | 0.15 | 0.02 | 0.03 |
+| 1e-2 | 0.00 to 0.01 | 0.00 | 0.13 | 0.01 | 0.01 |
+
+The same sum line by line, over birth, `g2`, `clock=none`, `lam1=0`, 400,000 lines, mean over the byte values of a kind, at delays 0 to 9:
+
+| | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| digits | 2.82 | 2.82 | 3.32 | 3.40 | 1.99 | 2.21 | 2.91 | 2.52 | 2.21 | 2.28 |
+| letters | 4.67 | 5.68 | 3.93 | 2.64 | 2.25 | 2.29 | 2.04 | 1.91 | 2.13 | 1.98 |
+
+and with `clock=oracle` (the chain aligned): digits 2.32, 1.41, 3.84, 8.86, 1.11, 3.66, 8.81, 1.25, 1.17, 1.78; letters 6.12 at delay 0 and 0.96 to 1.03 (never active) elsewhere.
+
+**The program is the system of (a).** With the oracle clock the three gaps give the same figure by construction, 93.7% on this seed, beside 92.9% for the same program on the text without letters. (The report's 84% is a median of five other seeds with `cells2.py`'s scoring, which fills the chain with end marks; here each scored line is read from the state the stream left.)
+
+**H1 is refuted.** At no `lam1` are the letters' sums below the other bytes' by the margin asked, or at all: without fading the letters lie inside the digits' range; with fading every sum falls together (to 2 to 10% of birth) and the system stops learning even with the oracle clock (58.5% at 1e-4, 1.9% at 1e-3).
+
+**Where it fails (Reading, mine).** The quantity does not separate the bytes, and for a reason that no threshold would mend. (i) In the chain without a clock the letters on the first chain lines are the most listened to of all (5.68 and 3.93 times birth at delays 1 and 2, against 2.82 and 3.32 for the digits): a letter one or two bytes back tells the cells that the two digits now arriving are the second number and that `=` comes next. The cells listen to the letters for where the line is, though no letter says anything about the answer. A sum of sizes cannot tell the first use from the second. (ii) At the longer delays, where neither kind is of use, both kinds stand at about twice birth: a strength that is pushed by the relayed mismatch without consistency still wanders away from its birth value. (iii) A fading strong enough to pull such a strength back removes the learning first.
+
+The measure that does tell the two apart is what happens to the mismatch when a byte is left out of the chain, and that cannot be read from the strengths held while the byte is in the chain. The next plan lets each byte value try it.
+
+**Predictions.** P1 held (93.7 at every gap). P2 held (0.7 at the gap of 8). P3 held (no separation without fading). P4 failed (H1 refuted). P5 failed (1.9 against 93.7: the fading costs nearly everything at 1e-3). P6 held (100).
+
+**Cost.** 82.7 CPU-seconds for the longest run, about 6 CPU-minutes in all.
