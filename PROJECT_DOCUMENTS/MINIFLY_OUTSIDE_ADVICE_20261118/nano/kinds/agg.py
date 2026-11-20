@@ -12,7 +12,7 @@ def one(kind, label):
     if kind == "hold":
         rows = {r["lines"]: r for r in o["rows"]}; last = max(rows); sc = float(np.mean([rows[last - k * 80000]["shown"] for k in range(3)]))
         t90 = next((r["lines"] for r in o["rows"] if r["shown"] >= 90), None); bg = rows[last]["shown_by_gap"]
-        return dict(score=sc, t90=t90, by_gap=[bg[k] for k in sorted(bg, key=int)], sig=o.get("sig_mean"), cpu=o["cpu"], max=max(r["shown"] for r in o["rows"]))
+        return dict(score=sc, t90=t90, never=float(np.mean([rows[last - k * 80000]["never"] for k in range(3)])), never_max=max(r["never"] for r in o["rows"]), by_gap=[bg[k] for k in sorted(bg, key=int)], sig=o.get("sig_mean"), cpu=o["cpu"], max=max(r["shown"] for r in o["rows"]))
     return dict(score=o["last3_add_phase0"], t90=next((r["lines"] for r in o["rows"] if r["add"] >= 80), None), sig=o.get("sig_mean"), cpu=o["cpu"], max=max(r["add"] for r in o["rows"]))
 if __name__ == "__main__":
     kind, pre, arms = sys.argv[1], sys.argv[2], sys.argv[3:]; seeds = [int(s) for s in os.environ.get("SEEDS", "").split(",") if s] or SEEDS
@@ -26,5 +26,6 @@ if __name__ == "__main__":
                " | median " + ("none" if not np.isfinite(np.median(t)) else f"{np.median(t) / 1000:.0f}") + " | highest reading " + ", ".join(f"{r['max']:.0f}" for r in R)
         if ref is None: ref = sc                                                              # the first arm named is the one the others are paired with, seed by seed
         else: line += f" | against {arms[0]}, by seed: above {sum(x > y for x, y in zip(sc, ref))}, below {sum(x < y for x, y in zip(sc, ref))}, equal {sum(x == y for x, y in zip(sc, ref))}, median difference {np.median(np.array(sc) - np.array(ref)):+.1f}"
+        if kind == "hold": line += " | never-shown sums (20 pairs, gap 0), same three readings: " + ", ".join(f"{r['never']:.1f}" for r in R) + f" | median {np.median([r['never'] for r in R]):.1f} | highest reading " + ", ".join(f"{r['never_max']:.0f}" for r in R)
         if R[0]["sig"] is not None: line += " | mean multiplier " + ", ".join(f"{r['sig']:.3f}" for r in R)
         print(line)
