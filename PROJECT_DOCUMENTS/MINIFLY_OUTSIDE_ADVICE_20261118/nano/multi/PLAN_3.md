@@ -58,3 +58,11 @@ A run: under one minute of one core (estimated from the checks; the dense refere
 ## What is not run
 
 Edges from which the sending cell can withdraw (that is line C2's subject, `nano/joint`); the mixed arm with sending cells withdrawing; a withdrawal rule other than the one stated; connections of more than two sending cells; the text of `nano/data`; other cell counts; the numpy program at full length.
+
+## Entered on 20 November after the development runs (seed 1), before any run on the reported seeds
+
+Never-shown sums, mean of the last three readings (`res/p3_d_*.json`): the reference (an edge from every cell A) 68.9, which is the figure `PLAN_4.md` of `loop_small_case` gives for 128 + 128 on this seed. The edge arm E with rewiring: K = 64: 65.0; K = 32: 75.5; K = 16: 71.6; K = 8: 71.1.
+
+At no K is the edge arm 5 points or more below the reference on this seed (it is above it at three of the four), so by the plan's rule the two sizes are **the two smallest, K = 16 and K = 8**. A cell B that reads 8 of the 128 cells A and rewires answers as often as one that reads all of them, on this seed; I had expected reading few to cost, as it does from lines (step 1), and it does not here.
+
+A run costs 46 to 150 CPU seconds (the machine was shared with step 2's runs), more than the plan's estimate of under a minute. No arm other than E was run on the development seed; the reported seeds follow (`jobs_r3.txt`).
