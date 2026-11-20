@@ -57,3 +57,63 @@ Nothing in the rule names a kind, a byte, a place or a text. No number is chosen
 *Predictions (mine).* A1: on both seeds the second cell's mean of the last three readings, after a read line, is at least 90 (chance 0.40). A2: on both seeds the second cell is at least 10 points above the first at the end (0.60). A3: the second cell at 400,000 lines is below its own level at 40,000 lines by more than 3 points on at least one seed (0.65). If A1 fails the fall with reading is not only a matter of place, and the cap or something like it is still owed.
 
 *Cost.* About fifteen CPU-minutes a run. Not run: the other three seeds; the system without classes.
+
+## 6. Outcome (entered 20 November after all runs of sections 4 and 5; `res/gate_*.json`, the printed lines in `out15/`, the tables in `report15.txt` made by `report15.py`)
+
+The compiled loop equals numpy to 4e-15 on five cases, and its first cell equals `nano/merge`'s own kernel exactly (`check15_output.txt`). In every run the first cell gives that line's figures (development seed: 90.6 at the last reading and 90.8 over the last three, empty past; prose without classes 1.5023, 1.3645, 1.4456 on the worn books).
+
+**Sums.** Never-shown two-digit additions, whole answer, %, the system's own answer bytes, 40,000 lines, seeds 73129, 93683, 116089, 406364, 545353. Scored after a read line; last reading (the mean of the last three readings and the old score are in `report15.txt` and say the same).
+
+| System | Arm | First cell, each seed; median | Second cell, each seed; median | Gain, each seed; median |
+|---|---|---|---|---|
+| with classes | **the second cell** | 93.2, 95.2, 92.4, 89.6, 92.9; 92.9 | 97.4, 98.2, 96.4, 96.8, 97.4; **97.4** | +4.1, +3.0, +4.0, +7.2, +4.5; **+4.1** |
+| with classes | the control (parts read a constant) | the same | 92.2, 93.8, 92.8, 88.5, 93.6; 92.8 | -1.0, -1.4, +0.4, -1.1, +0.6; -1.0 |
+| with classes | the side arm (the part of `PLAN_14.md` alone) | the same | 92.8, 95.2, 92.8, 89.7, 92.6; 92.8 | -0.5, 0.0, +0.4, +0.1, -0.3; 0.0 |
+| without classes | **the second cell** | 82.0, 80.9, 80.1, 78.6, 77.8; 80.1 | 88.1, 84.8, 86.3, 84.6, 85.6; **85.6** | +6.1, +3.9, +6.2, +6.1, +7.8; **+6.1** |
+| without classes | the control | the same | 83.9, 83.4, 83.8, 80.0, 82.5; 83.4 | +2.0, +2.5, +3.7, +1.5, +4.6; +2.5 (+4.1 by the mean of the last three readings) |
+
+Development seed 1 (nothing was chosen on it): with classes 92.2 and 96.5; without 79.4 and 84.7. By place, with classes, medians: the tens digit 93.0 for the first cell and 97.6 for the second; hundreds 98.6 and 98.5; units 100. With only class kinds speaking: 94.6 at the median with the first cell's trusts, 93.0 with the second cell's, which no longer stands above all kinds together. Parts used: 708,574 of 1,451,520 with classes (1.23 million cells; 78 CPU-seconds a run against 52 for that line's own run).
+
+**Prose** (runs of 0 to 6 bytes, no classes; nats a byte; each book's last tenth right after its stream, nothing changing; first cell, second cell, gain):
+
+| | the test text's last tenth, after its stream | chesterton-ball | austen-emma | melville-moby_dick | the test text's last tenth at the end of the life |
+|---|---|---|---|---|---|
+| the second cell, three books no line had opened | 1.5226, 1.5058, **0.0168** | 1.6316, 1.6116, **0.0200** | 1.2416, 1.2203, **0.0213** | 1.4687, 1.4453, **0.0233** | 1.5370, 1.5351, 0.0019 |
+| the control, the same life | 1.5226, 1.5267, -0.0041 | -0.0052 | +0.0009 | -0.0004 | -0.0001 |
+
+On the worn books (bryant, burgess, carroll): 0.0210, 0.0236, 0.0299 for the second cell and -0.0014, +0.0015, +0.0001 for the control. With classes at that line's frozen setting, worn books, one life, a reading and not a claim: first cell 1.4920, 1.3487, 1.4307 (that line's figures), second cell 1.4653, 1.3168, 1.3925 (0.0267, 0.0319, 0.0382 lower); 201 CPU-seconds. Parts used: 63,092 of 109,200 without classes.
+
+**The hypothesis holds on both kinds of text.** (i) Sums with classes: the second cell is 4.1 points above the first at the median (2 asked; under 1 would refute), above on every seed. (ii) Prose: 0.020 to 0.023 nats lower on each of three unopened books (0.005 asked).
+
+| | Statement | Outcome |
+|---|---|---|
+| W1 | sums with classes: at least 2 points above the first cell | held (+4.1; 97.4 against 92.9) |
+| W2 | at or above the class kinds alone (94.6) | held (97.4) |
+| W3 | sums without classes: at least 2 points above | held (+6.1) |
+| W4 | prose: at least 0.005 lower on each unopened book | held (0.0200, 0.0213, 0.0233) |
+| W5 | prose: at least 0.002 lower on each | held |
+| W6 | the control gives less than half of the gain, on sums and on prose | held on prose (nothing) and on sums with classes (-1.0); **failed on sums without classes by the steadier measure** (+4.1 of +6.1 over the last three readings; +2.5 of +6.1 at the last) |
+| W7 | the test text's last tenth: at least 0.005 lower | held (0.0168) |
+| W8 | the side arm under 1 point | held (0.0): **the part of `PLAN_14.md` does not transfer to sums as it was written** |
+
+**Addition 1, long reading** (seeds 73129 and 93683, with classes, 400,000 lines; after a read line; the full readings are in `report15.txt`):
+
+| Lines | seed 73129: first cell, second cell | seed 93683: first cell, second cell |
+|---|---|---|
+| 40,000 | 93.2, 97.4 | 95.2, 98.2 |
+| 100,000 | 87.2, 93.0 | 85.4, 86.3 |
+| 200,000 | 79.8, 90.4 | 83.6, 87.7 |
+| 250,000 | 79.3, 90.5 | 83.7, 87.7 |
+| 300,000 | 80.0, 77.8 | 84.4, 92.3 |
+| 400,000 | 77.2, 75.5 | 81.2, 90.4 |
+| mean of the last three | 78.8, **76.5** | 82.9, **91.9** |
+
+A1 failed (76.5 on one seed, where 90 on both was predicted). A2 failed (2.3 below the first cell on one seed, 9.0 above on the other). A3 held (both seeds are more than 3 points under their level at 40,000 lines). 397 and 404 CPU-seconds.
+
+Readings (mine).
+1. **One more answering cell, whose trust also knows the byte at each delay, repairs a part of the reading on both kinds of text, with one form and no number chosen for either.** On sums with classes it lifts the tens digit from 93 to 98 and the whole answer from 92.9 to 97.4 on five seeds, above the relay system at ten times the reading (95.5 at 400,000 lines) and above every other system this programme has measured at 40,000 lines. On prose it is worth 0.02 nats on books it had not seen, as much as the cells that step once a word were worth, and it is laid down by nobody: the same six delay lines that the cells read.
+2. **The control says what the gain is.** Where the system has classes, and on prose, a second cell with the same parts and steps that knows nothing about the moment gives nothing or harms. So there the gain is the bytes. Where the system has no classes, about half of the gain comes with any second cell: a further set of trusts with their own steps. I had given that 0.40 and it is so; the first cell's step rule on sums is not right for that system, which was already written against it in the roadmap's table (numbers set per text).
+3. **The trust of `PLAN_14.md` (how many less-counted senders speak) gives nothing on sums.** With 288 kinds nearly every sender has three or more such senders and the count is the same at every byte. That step is entered as holding on prose only; what it wanted to tell (whether the cell of the whole pair is speaking) is told on sums by nothing in this plan either, and is still owed.
+4. **Long reading is not repaired.** The second cell stands 6 to 11 points above the first until 250,000 lines on one seed and falls under it after; on the other it falls at 100,000 lines and recovers. Both falls come at a reading just after the classes were found anew (at 64,000 and at 256,000 lines the bytes read have doubled once more): the parts for a class kind that is new start again from nothing, and late in a life few lines are new enough to teach them. *Not tested*; given to the line `nano/gate2`, which runs the other seeds, as the first thing to look at. Under it the slow fall of the first cell goes on (93 to 77) while the class kinds alone still name the tens digit at 95 to 97%: the plain kinds outvote them more as they count on, and at the end of one run the class kinds that named the hundreds digit hold no trust at all (1.2% alone).
+5. **What the second cell keeps** (prose): its gain on the test text is gone after the other books (0.0019 and 0.0005 left); it is never worse than the first cell by more than 0.001. Like the companions of `PLAN_6.md` and the classes with empty cells of `nano/merge`, its parts follow the recent text. The cells keep; this reading follows.
+6. *Limits.* Development level. One program and one author; an independent repeat from the description is under way (`nano/gate2`). The three books are now opened. Sums on one length of number and one length of life; two tasks, three-digit numbers and the other three seeds of the long reading are with that line.

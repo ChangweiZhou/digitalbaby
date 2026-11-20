@@ -1,0 +1,80 @@
+Never-shown two-digit additions, whole answer, %, 40,000 lines; the system's own answer bytes. 'after': scored after a read line (mean of five draws); 'empty': the old score.
+
+== nano/merge's system, with classes (frozen setting)
+-- the second cell (a part for each delay, indexed by the byte there); seeds [73129, 93683, 116089, 406364, 545353]
+   after, last reading        first cell 93.2 95.2 92.4 89.6 92.9 | median 92.9   second cell 97.4 98.2 96.4 96.8 97.4 | median 97.4   gain by seed +4.1 +3.0 +4.0 +7.2 +4.5 | median +4.1
+   after, mean of last three  first cell 92.9 94.0 92.1 89.5 93.0 | median 92.9   second cell 97.4 98.0 96.6 96.2 97.1 | median 97.1   gain by seed +4.5 +4.0 +4.5 +6.7 +4.1 | median +4.5
+   empty, last reading        first cell 92.2 94.2 93.6 87.6 92.2 | median 92.2   second cell 97.0 98.6 96.8 96.8 96.6 | median 96.8   gain by seed +4.8 +4.4 +3.2 +9.2 +4.4 | median +4.4
+   empty, mean of last three  first cell 91.8 93.3 91.7 88.0 92.1 | median 91.8   second cell 97.1 98.1 96.8 95.9 96.7 | median 96.8   gain by seed +5.3 +4.8 +5.1 +7.9 +4.6 | median +5.1
+   by place (hundreds, tens, units), after, median: first [98.6, 93.0, 100.0] second [98.5, 97.6, 100.0]
+   class kinds alone, after: first cell's trusts 94.6 95.6 94.0 93.5 95.4 | second cell's 94.7 97.2 93.0 91.5 92.7
+   parts used 708574 of 1451520; cells 1231175; CPU s 78
+-- the control (the same parts, each reads a constant); seeds [73129, 93683, 116089, 406364, 545353]
+   after, last reading        first cell 93.2 95.2 92.4 89.6 92.9 | median 92.9   second cell 92.2 93.8 92.8 88.5 93.6 | median 92.8   gain by seed -1.0 -1.4 +0.4 -1.1 +0.6 | median -1.0
+   after, mean of last three  first cell 92.9 94.0 92.1 89.5 93.0 | median 92.9   second cell 92.5 93.0 92.4 88.3 93.2 | median 92.5   gain by seed -0.4 -1.0 +0.3 -1.1 +0.2 | median -0.4
+   empty, last reading        first cell 92.2 94.2 93.6 87.6 92.2 | median 92.2   second cell 89.4 92.0 91.6 87.2 93.2 | median 91.6   gain by seed -2.8 -2.2 -2.0 -0.4 +1.0 | median -2.0
+   empty, mean of last three  first cell 91.8 93.3 91.7 88.0 92.1 | median 91.8   second cell 89.6 91.8 91.0 87.1 93.3 | median 91.0   gain by seed -2.2 -1.5 -0.7 -0.9 +1.2 | median -0.9
+   by place (hundreds, tens, units), after, median: first [98.6, 93.0, 100.0] second [98.6, 93.1, 100.0]
+   class kinds alone, after: first cell's trusts 94.6 95.6 94.0 93.5 95.4 | second cell's 91.3 91.0 91.0 92.6 94.0
+   parts used 70011 of 1451520; cells 1231175; CPU s 77
+-- the side arm (one part, indexed by the number of less-counted speaking senders); seeds [73129, 93683, 116089, 406364, 545353]
+   after, last reading        first cell 93.2 95.2 92.4 89.6 92.9 | median 92.9   second cell 92.8 95.2 92.8 89.7 92.6 | median 92.8   gain by seed -0.5 +0.0 +0.4 +0.1 -0.3 | median +0.0
+   after, mean of last three  first cell 92.9 94.0 92.1 89.5 93.0 | median 92.9   second cell 92.7 93.7 92.0 89.6 92.3 | median 92.3   gain by seed -0.1 -0.3 -0.1 +0.1 -0.6 | median -0.1
+   empty, last reading        first cell 92.2 94.2 93.6 87.6 92.2 | median 92.2   second cell 91.6 93.6 93.2 87.8 92.2 | median 92.2   gain by seed -0.6 -0.6 -0.4 +0.2 +0.0 | median -0.4
+   empty, mean of last three  first cell 91.8 93.3 91.7 88.0 92.1 | median 91.8   second cell 90.9 92.6 91.7 87.9 91.9 | median 91.7   gain by seed -0.9 -0.7 +0.1 -0.1 -0.2 | median -0.2
+   by place (hundreds, tens, units), after, median: first [98.6, 93.0, 100.0] second [98.6, 92.8, 100.0]
+   class kinds alone, after: first cell's trusts 94.6 95.6 94.0 93.5 95.4 | second cell's 93.1 95.5 92.7 94.5 94.5
+   parts used 13797 of 46080; cells 1231175; CPU s 95
+
+== nano/merge's system, without classes
+-- the second cell (a part for each delay, indexed by the byte there); seeds [73129, 93683, 116089, 406364, 545353]
+   after, last reading        first cell 82.0 80.9 80.1 78.6 77.8 | median 80.1   second cell 88.1 84.8 86.3 84.6 85.6 | median 85.6   gain by seed +6.1 +3.9 +6.2 +6.1 +7.8 | median +6.1
+   after, mean of last three  first cell 82.6 80.0 79.4 78.5 78.5 | median 79.4   second cell 87.9 85.7 86.9 84.5 85.3 | median 85.7   gain by seed +5.4 +5.7 +7.5 +6.1 +6.7 | median +6.1
+   empty, last reading        first cell 79.2 79.0 77.6 76.0 77.2 | median 77.6   second cell 87.8 85.6 86.0 82.4 86.6 | median 86.0   gain by seed +8.6 +6.6 +8.4 +6.4 +9.4 | median +8.4
+   empty, mean of last three  first cell 79.0 77.9 77.5 76.1 77.2 | median 77.5   second cell 87.7 85.9 86.6 83.4 85.4 | median 85.9   gain by seed +8.7 +8.0 +9.1 +7.3 +8.2 | median +8.2
+   by place (hundreds, tens, units), after, median: first [98.6, 80.1, 100.0] second [98.7, 85.6, 100.0]
+   parts used 664578 of 1290240; cells 1213003; CPU s 31
+-- the control (the same parts, each reads a constant); seeds [73129, 93683, 116089, 406364, 545353]
+   after, last reading        first cell 82.0 80.9 80.1 78.6 77.8 | median 80.1   second cell 83.9 83.4 83.8 80.0 82.5 | median 83.4   gain by seed +2.0 +2.5 +3.7 +1.5 +4.6 | median +2.5
+   after, mean of last three  first cell 82.6 80.0 79.4 78.5 78.5 | median 79.4   second cell 85.8 84.1 83.5 81.2 83.6 | median 83.6   gain by seed +3.2 +4.1 +4.1 +2.7 +5.1 | median +4.1
+   empty, last reading        first cell 79.2 79.0 77.6 76.0 77.2 | median 77.6   second cell 81.8 81.2 82.2 79.0 82.0 | median 81.8   gain by seed +2.6 +2.2 +4.6 +3.0 +4.8 | median +3.0
+   empty, mean of last three  first cell 79.0 77.9 77.5 76.1 77.2 | median 77.5   second cell 82.8 81.9 81.5 80.4 82.2 | median 81.9   gain by seed +3.8 +3.9 +4.1 +4.3 +5.0 | median +4.1
+   by place (hundreds, tens, units), after, median: first [98.6, 80.1, 100.0] second [98.7, 83.4, 100.0]
+   parts used 64629 of 1290240; cells 1213003; CPU s 32
+
+== long reading, with classes, seed 73129: lines, first cell after / empty, second cell after / empty
+      5000  86.3 / 84.8   89.3 / 90.4   tens digit after: 86.5 89.9
+     10000  90.1 / 89.4   94.2 / 95.2   tens digit after: 90.2 94.8
+     20000  92.1 / 90.0   97.6 / 95.8   tens digit after: 92.1 97.8
+     40000  93.2 / 92.2   97.4 / 97.0   tens digit after: 93.3 98.0
+     50000  92.0 / 89.4   96.5 / 96.4   tens digit after: 92.0 96.6
+    100000  87.2 / 86.0   93.0 / 92.6   tens digit after: 87.2 93.0
+    150000  84.1 / 83.4   92.6 / 93.4   tens digit after: 84.1 92.8
+    200000  79.8 / 80.6   90.4 / 89.6   tens digit after: 79.8 90.6
+    250000  79.3 / 79.8   90.5 / 90.0   tens digit after: 79.3 90.5
+    300000  80.0 / 81.0   77.8 / 77.8   tens digit after: 80.0 77.8
+    350000  79.2 / 78.6   76.4 / 74.2   tens digit after: 79.2 76.4
+    400000  77.2 / 77.2   75.5 / 73.0   tens digit after: 77.2 75.5
+   mean of the last three, after: first 78.8 second 76.5; cells 1244189; CPU s 396.6
+
+== long reading, with classes, seed 93683: lines, first cell after / empty, second cell after / empty
+      5000  91.4 / 89.8   96.2 / 96.2   tens digit after: 91.8 97.1
+     10000  93.8 / 90.0   98.4 / 97.8   tens digit after: 93.9 98.7
+     20000  94.4 / 93.2   97.9 / 98.2   tens digit after: 94.4 98.0
+     40000  95.2 / 94.2   98.2 / 98.6   tens digit after: 95.2 98.8
+     50000  92.4 / 89.6   97.7 / 97.2   tens digit after: 92.4 98.9
+    100000  85.4 / 82.4   86.3 / 84.6   tens digit after: 85.4 86.4
+    150000  85.3 / 84.4   87.6 / 88.0   tens digit after: 85.3 87.6
+    200000  83.6 / 82.6   87.7 / 86.8   tens digit after: 83.6 87.7
+    250000  83.7 / 81.8   87.7 / 86.2   tens digit after: 83.7 87.7
+    300000  84.4 / 83.2   92.3 / 92.2   tens digit after: 84.4 92.3
+    350000  83.0 / 81.0   93.0 / 92.4   tens digit after: 83.0 93.0
+    400000  81.2 / 79.8   90.4 / 90.4   tens digit after: 81.2 90.4
+   mean of the last three, after: first 82.9 second 91.9; cells 1238203; CPU s 404.1
+
+Prose, nats a byte (first cell, second cell, gain); each book's last tenth right after its stream, nothing changing
+   booksnew_gate0_modenone      {'A': (1.5226, 1.5058, 0.0168), 'chesterton-ball': (1.6316, 1.6116, 0.02), 'austen-emma': (1.2416, 1.2203, 0.0213), 'melville-moby_dick': (1.4687, 1.4453, 0.0233), 'A_at_the_end': (1.537, 1.5351, 0.0019)} parts used 63092 cells 928030 CPU s 17.3
+   booksnew_gate1_modenone      {'A': (1.5226, 1.5267, -0.0041), 'chesterton-ball': (1.6316, 1.6368, -0.0052), 'austen-emma': (1.2416, 1.2407, 0.0009), 'melville-moby_dick': (1.4687, 1.469, -0.0004), 'A_at_the_end': (1.537, 1.5371, -0.0001)} parts used 1368 cells 928030 CPU s 16.2
+   booksworn_gate0_modenone     {'A': (1.5226, 1.5058, 0.0168), 'bryant-stories': (1.5023, 1.4812, 0.021), 'burgess-busterbrown': (1.3645, 1.3408, 0.0236), 'carroll-alice': (1.4456, 1.4157, 0.0299), 'A_at_the_end': (1.5306, 1.5301, 0.0005)} parts used 58523 cells 579255 CPU s 7.4
+   booksworn_gate1_modenone     {'A': (1.5226, 1.5267, -0.0041), 'bryant-stories': (1.5023, 1.5037, -0.0014), 'burgess-busterbrown': (1.3645, 1.363, 0.0015), 'carroll-alice': (1.4456, 1.4455, 0.0001), 'A_at_the_end': (1.5306, 1.5401, -0.0096)} parts used 1350 cells 579255 CPU s 7.6
+   booksworn_gate0_modeclasses  {'A': (1.5116, 1.4867, 0.0249), 'bryant-stories': (1.492, 1.4653, 0.0267), 'burgess-busterbrown': (1.3487, 1.3168, 0.0319), 'carroll-alice': (1.4307, 1.3925, 0.0382), 'A_at_the_end': (1.5264, 1.5248, 0.0017)} parts used 376123 cells 2961536 CPU s 200.7
