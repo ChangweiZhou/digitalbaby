@@ -19,3 +19,5 @@ The base equals `nano/ahead2`'s figures for these seeds (76.9, 78.1, 78.3, 81.0,
 ## Addition (20 November; written before its runs, after the five reported seeds of `PLAN_10.md`'s setting M were read: 98.5, 98.0, 96.8, 97.9, 98.5)
 
 The same repeat for setting M (`merge10.py sums gc=1`), seeds 2001 to 2005, 40,000 lines; nothing chosen. *Prediction (mine):* median at least 96 (0.8); every seed at least 95 (0.6).
+
+*Outcome of the addition* (`res/s40r_M_seed200*.json`): setting M on seeds 2001 to 2005: 98.4, 97.3, 98.0, 99.1, 97.2; median **98.0** (last readings 98.4, 97.4, 98.2, 99.2, 97.4; hundreds, tens, units at the last reading, median: 98.2, 99.2, 100); 102 CPU-seconds a run. Both predictions held. On ten seeds in all M has 96.8 to 99.1.

@@ -45,3 +45,54 @@ Development material first (two-digit seed 1; prose's last twentieth), for the c
 Two-digit sums, development seed, with the made kinds as candidates: **96.9** (last reading 97.4; hundreds, tens, units 97.6, 97.6, 100; C2 95.5); 97 CPU-seconds (69 in the search); 1,433,483 cells. Prose's last twentieth without that change: 1.5470 (C2 1.5482; two made kinds with 5,427 cells); with it: run with the others below. H2 held. H1 failed as written: pairs inside made kinds are kept (inside delays 2, 3, 4, 6, 7: the two tens digits, with the classes by sum modulo ten; inside delays 1, 3, 4, 6, 7 another), but the pair of the two units digits inside a made kind is not among the 32 kept; the units-digits classes in use are still those of the plain kind (53 and 47, two strays). So the gain on this seed does not come by the route I set out in the hypothesis, part (a); see the readings after the seeds.
 
 By the rule of section 4 the reported seeds, the long runs, three-digit sums and the first life are now run with this form, named **M** (C2 with made kinds, the made kinds candidates for the search).
+
+## 7. Outcome on the reported seeds and the first life (entered 20 November; `res/s40_M_seed*.json`, `res/s400_M_seed*.json`, `res/s3_M_seed*.json`, `res/life_M.json`, `res/dev10_prose_gc.json`; `report_s40.txt`, `report_s400.txt`, `report_s3.txt`, `report_life.txt`)
+
+Setting M = C2 with kinds made while reading, the made kinds candidates for the search for classes. Never-shown additions, own answer bytes, whole answer, %, mean of the last three readings; seeds 73129, 93683, 116089, 406364, 545353.
+
+| | no classes | frozen setting | C2 | **M** |
+|---|---|---|---|---|
+| two-digit, 40,000 lines, each seed | 79.0, 77.9, 77.5, 76.1, 77.2 | 91.8, 93.3, 91.7, 88.0, 92.1 | 92.8, 96.7, 95.1, 89.7, 93.1 | **98.5, 98.0, 96.8, 97.9, 98.5** |
+| median (last reading) | 77.5 (77.6) | 91.8 (92.2) | 93.1 (92.8) | **98.0** (98.2) |
+| hundreds, tens, units (last, median) | 98.4, 77.6, 100 | 98.0, 92.4, 100 | 98.2, 92.8, 100 | 98.2, 99.4, 100 |
+| median at 5,000; 10,000; 20,000 lines | 64.8; 72.4; 77.8 | 86.8; 88.4; 90.0 | 92.6; 94.0; 91.2 | 92.6; 95.8; 97.2 |
+| two-digit, 400,000 lines, seeds 73129, 93683 | 62.1, 59.1 | 78.9, 81.3 | 81.3, 98.7 | **99.3, 98.7** |
+| three-digit, 80,000 lines, each seed | 92.5, 89.9, 92.7, 90.8, 92.3 | 94.9, 93.0, 94.0, 94.1, 95.0 | 93.9, 92.9, 94.1, 93.2, 95.1 | 96.3, 95.3, 95.7, 95.9, 96.3 |
+| median (thousands, hundreds, tens, units at the last) | 92.3 (99.6, 95.2, 98.0, 100) | 94.1 (99.6, 95.6, 99.4, 100) | 93.9 | **95.9** (99.6, 96.0, 100, 100) |
+| cells, two-digit at 40,000 lines (median); CPU s | 1,213,003; 19 | 1,231,175; 52 | 1,238,148; 67 | 1,440,880 (176,657 in five made kinds); 99 |
+
+At 400,000 lines M does not fall: seed 73129 reads 98.8, 98.8, 99.6, 99.4 at 40,000, 100,000, 200,000 and 400,000 lines, seed 93683 reads 98.2, 98.8, 99.4, 98.8; no reading after 20,000 lines is under 98. 1.58 million cells, about 510 CPU-seconds a run. Two seeds: a reading.
+
+With only the class kinds and the kinds keyed on two classes speaking (40,000 lines, last reading): the tens digit is named on 100, 100, 100, 100, 99.8% of never-shown sums (whole answer 93.4, 76.2, 94.0, 97.0, 94.4; they do not always hold the hundreds digit).
+
+The kinds the system made on two-digit sums (end of the 40,000-line runs): on four seeds of five delays (2, 3, 4, 6, 7), on all five (3, 4, 6, 7, 8) and (1, 3, 4, 6, 7); beside them (1, 3, 4, 7, 9), (3, 4, 7, 8, 9), (1, 3, 4, 5, 7). Where the tens digit is named, delay 2 holds '=', delay 8 holds the end of the line before, delay 1 holds the hundreds digit: each of the first three is the whole pair together with a byte that says where in the line it is. On three-digit sums: (4, 5, 7, 8, 9), (3, 4, 5, 8, 9), (1, 4, 5, 8, 9) and others of five delays. On prose: delays (1, 3), (1, 4), (1, 5), (1, 6), (1, 3, 4), (1, 2, 4): runs with a gap, 31,606 cells in all.
+
+Prose, nats a byte (the first life; the last twentieth of the stream on development material):
+
+| | development | bryant-stories | burgess-busterbrown | carroll-alice | test text, at the end | cells | CPU s |
+|---|---|---|---|---|---|---|---|
+| no classes | 1.5566 | 1.5023 | 1.3645 | 1.4456 | 1.5306 | 579,255 | 6 |
+| frozen setting | 1.5488 | 1.4920 | 1.3487 | 1.4307 | 1.5264 | 2,961,530 | 200 |
+| C2 | 1.5482 | 1.4885 | 1.3349 | 1.4019 | 1.5550 | 3,032,556 | 215 |
+| M | 1.5470 | 1.4883 | 1.3371 | 1.3921 | **1.5685** | 2,779,094 | 235 |
+
+**The hypothesis as written: part (b) holds (98.0, at least 96 asked; 94 would have refuted); part (a) fails; part (c) fails narrowly** (the second book is 0.0022 above C2, where 0.002 was allowed; the other two are below it). By its own terms the hypothesis is refuted, by 0.0002 nats on one book; I report it so and report what stands.
+
+| | Statement | Outcome |
+|---|---|---|
+| G1 | a pair of the two units digits inside a made kind is kept (development seed) | failed |
+| G2 | development seed at least 96 | failed for the first form (95.7); held with addition 1 (96.9) |
+| G3 | five seeds, median at least 96 | held (98.0; lowest seed 96.8) |
+| G4 | five seeds, median under 94 | did not happen |
+| G5 | part (a): units-digits classes pure in a made kind on four seeds | failed: the units-digits classes in use are still the plain kind's (90, 98, 98, 90, 90 of 100 with their class) |
+| G6 | 400,000 lines at least 95 on both seeds | held (99.3, 98.7) |
+| G7 | three-digit sums at least 96 | failed narrowly (95.9) |
+| G8 | prose development: not more than 0.002 above C2 | held (0.0012 below) |
+| G9 | prose development: at least 0.005 below C2 | failed |
+
+Readings (mine).
+1. **With kinds the system makes for itself, never-shown two-digit sums are answered at 98% within 40,000 lines and at 99% at 400,000, with no look-ahead and nothing about sums laid down**; 95.8% at 10,000 lines. The plain cells have 77.5 and fall to 60; the hand-laid look-ahead has 91.4 and falls to 63 without a cap (`nano/sparse`). This is the first system of this line that does not fall with reading, on the two seeds run.
+2. **The route is not the one I wrote down, and it is the one the evidence of `PLAN_7.md` and `PLAN_8.md` pointed to.** I expected the carry to come out pure in a kind with the place in it. What the system did: it made kinds that hold the whole pair and a byte that fixes the place; in those it found the classes of the two tens digits by their sum modulo ten; and a cell keyed on that class, the place and the two units digits holds the tens digit exactly. The class kinds alone name the tens digit on 100% of never-shown sums on four seeds and 99.8% on the fifth. The cells that mixed places are no longer what the answer rests on.
+3. **Three-digit sums gain 1.8 points over the frozen setting** (95.9; the tens digit is now 100%), and the hundreds digit moves only from 95.6 to 96.0: it still needs two classes of which one is of no use alone, and nothing here seeks that.
+4. **On prose M changes little where it was chosen and it harms the old text.** Development material 1.5470; the three books within 0.002 of C2 or below it by more; but the test text's last tenth at the end of the life rises to 1.5685, which is 0.038 above the system with no classes. As with C2, the kinds whose cells start empty at a finding hold recent text, the answering cell comes to lean on them, and what was read first is answered worse. **For keeping on prose, M as built is worse than the frozen setting and worse than no classes.** The cure is known in outline (cells that are kept from one finding to the next, as the made kinds already are, for the kinds keyed on two classes too) and is NOT BUILT.
+5. Cost: 99 CPU-seconds for 40,000 lines of two-digit sums (plain cells 19), 1.44 million cells (plain 1.21 million); on three-digit sums 397 CPU-seconds and 2.9 million cells (plain 50 and 2.0 million). The made kinds are large (a kind of five delays has up to 180,000 cells on two digits and 780,000 in all on three), and that is the opposite of a smaller store.
