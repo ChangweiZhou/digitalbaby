@@ -66,3 +66,7 @@ Readings (mine).
 2. The form matters as much as the idea: the same situations with every trust born alike helped the old system and hurt the young one; with the situation's part born at nothing both gain. It is the rule of `PLAN_8.md` again, now inside the answering cell: what is added is born with nothing and earns its part.
 3. Part of the gain may be that a trust now moves by two steps where it moved by one (the kind's part and the situation's part are both taught). I did not run the control that separates this (the first form with every trust born alike moved by one step and already gained at the end of a long life, which says the situations themselves carry something); it is owed.
 4. What this is for, beyond prose: on sums the line `nano/merge` found that classes which name the tens digit of never-shown sums at 98.6% alone give 92.8% when read beside the other cells. Whether this change lets them be heard is that line's next run, with one setting on both tasks.
+
+## 8. The control that was owed (written before its run): the step doubled, no situations
+
+Reading 3 of section 7: in the form of addition 1 a trust moves by two steps where it moved by one. The control: T2 with no situations and the trust's step doubled (0.0001), the same lives. *Prediction (mine):* it is within 0.003 of T2 on every book, so the doubled step is not the gain (chance 0.75).

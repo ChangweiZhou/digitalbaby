@@ -6,7 +6,7 @@ than this one and at least twice.
 import ctypes, json, os, subprocess, sys
 import numpy as np
 import score, table, words, trust, life
-HERE = os.path.dirname(os.path.abspath(__file__)); S = 65; NL = 40; NR = 4; ETA, E = 0.00005, 0.02
+HERE = os.path.dirname(os.path.abspath(__file__)); S = 65; NL = 40; NR = 4; ETA, E = 0.00005 * float(os.environ.get("STEP_TIMES", 1)), 0.02          # STEP_TIMES=2: the control of PLAN_14.md, section 8
 PD = ctypes.POINTER(ctypes.c_double); PF = ctypes.POINTER(ctypes.c_float); PI = ctypes.POINTER(ctypes.c_int64); PY = ctypes.POINTER(ctypes.c_int32)
 SRC = r'''
 #include <math.h>
@@ -100,6 +100,6 @@ def check():
 if __name__ == "__main__":
     if sys.argv[1] == "check": check()
     else:
-        use = int(sys.argv[1]); r = lives(use); json.dump(r, open(os.path.join(HERE, "res", f"rank_{use}.json"), "w"))
+        use = int(sys.argv[1]); r = lives(use); json.dump(r, open(os.path.join(HERE, "res", f"rank_{use}" + (f"_step{os.environ['STEP_TIMES']}" if "STEP_TIMES" in os.environ else "") + ".json"), "w"))
         print("use", use, "| life A, B:", {k[:6]: round(v, 4) for k, v in r["A_B"].items()}, "| B only:", {k[:6]: round(v, 4) for k, v in r["B_only"].items()}, "| test text:", round(r["test_text_last_tenth"], 4), flush=True)
         if use: print("mean trust by kind (rows) and number of more specific senders 0,1,2,3+:", r["mean_trust_by_kind_and_number_of_more_specific_senders"])
