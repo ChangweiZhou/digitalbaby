@@ -13,6 +13,7 @@ PD = ctypes.POINTER(ctypes.c_double); PF = ctypes.POINTER(ctypes.c_float); PI = 
 ROOT = os.path.join(HERE, "..", "..", "..", "..")
 BOOKS = dict(worn=[("minifly_v148_pretrain_probe_dev_20261025", b) for b in ("bryant-stories", "burgess-busterbrown", "carroll-alice")],
              new=[("minifly_v155_keys_dev_v1_20261026", b) for b in ("chesterton-ball", "austen-emma", "melville-moby_dick")])
+BOOKS.update({b: [("minifly_v155_keys_dev_v1_20261026", b)] for b in ("chesterton-ball", "austen-emma", "melville-moby_dick")})      # PLAN_16.md, addition 1: the test text and one book
 
 SRC = A.SRC.replace("void all_steps(", "void gate_steps(").replace("const float *X, const int32_t *xlev) {", "const float *X, const int32_t *xlev, const int32_t *cb, int D, double *Gt, int gate, double *P2) {")
 SRC = SRC.replace("double a[S], p[S], s[192][S]; int lev[192];", "double a[S], p[S], a2[S], p2[S], s[192][S]; int lev[192]; int64_t gix[193][16];")

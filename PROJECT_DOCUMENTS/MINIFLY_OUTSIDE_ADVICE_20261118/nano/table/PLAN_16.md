@@ -35,3 +35,9 @@ If X4 holds it will be stated with its limits: one text, a last tenth scored for
 ## 4. Size, cost, what is not run
 
 The second cell holds 6 times (kinds + 1) times 40 times 65 parts: 171,600 for T2, about 1.7 million for all kinds; the number used is reported. T2 runs take under a minute; all kinds about five to ten minutes, and the relay system's opinions about ten minutes more, once. Not run: gates other than the bytes at the last six delays; a third cell; the second cell on the life of B only; the same on sums over long lives (an addition to `PLAN_15.md` if its claims hold).
+
+## 5. Addition 1 (20 November; written after the runs of section 2 except one, and before the runs it describes): the life of (b) for all kinds, one book at a time
+
+The life of (b) for all kinds but the relay system (the test text's stream and the three books in turn, 3.6 million bytes, 164 kinds) was killed twice for lack of memory on this machine, once beside other runs and once alone. It is NOT RUN as planned. In its place, to be read as a different measure: three lives, each the test text's stream and then **one** of the three books (`chesterton-ball`, `austen-emma`, `melville-moby_dick`), its last tenth scored right after its stream; all kinds but the relay system; the second cell. The largest of the three may also fail for memory and will then be entered as not run.
+
+*Prediction (mine), in place of X2:* the second cell is at least 0.010 nats below the first on each book that runs (chance 0.55; on the worn books in turn it gave 0.020, 0.006, 0.025, so one book of three under 0.010 would not surprise me).
