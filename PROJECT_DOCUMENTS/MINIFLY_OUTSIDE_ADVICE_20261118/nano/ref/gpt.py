@@ -72,6 +72,15 @@ def stream_half(model, batch=64):
             t = np.arange(a0 + B - s + 1, a0 + B + 1) - cut; ok = (t >= 0) & (t < N - cut); P[t[ok]] = pr[r][ok]; done[t[ok]] = True
     assert done.all(); model.train(); return SC.score(P, x[cut:])
 
+@torch.no_grad()
+def by_position(model, step, batch=256):
+    """Added after the first run: the mean loss at each place of a block, over blocks of the last tenth that start every `step` bytes."""
+    model.eval(); x, cut, _ = SC.load(); B = model.block; st = np.arange(cut, len(x) - 1 - B, step); xt = torch.from_numpy(x); tot = torch.zeros(B, dtype=torch.float64)
+    for i in range(0, len(st), batch):
+        idx = torch.from_numpy(st[i:i + batch, None] + np.arange(B)[None, :])
+        tot += F.cross_entropy(model(xt[idx]).view(-1, SC.S), xt[idx + 1].view(-1), reduction="none").view(-1, B).double().sum(0)
+    model.train(); return dict(step=int(step), blocks=int(len(st)), nats=(tot / len(st)).tolist())
+
 def run(kw):
     g = lambda k, d: type(d)(kw.get(k, d))
     layers, heads, width, block, batch, steps = g("layers", 4), g("heads", 4), g("width", 128), g("block", 64), g("batch", 12), g("steps", 2000)
@@ -118,6 +127,7 @@ def run(kw):
     out["stream_half"] = stream_half(model)
     ex = int(kw.get("exact", 1))
     if ex: out["stream_exact"] = dict(every=ex, **stream_exact(model, every=ex))
+    if int(kw.get("bypos", 0)): out["loss_by_position"] = by_position(model, int(kw["bypos"]))
     out["cpu_scoring"] = round(time.process_time() - c, 1)
     ck = kw.get("save")
     if ck: torch.save(model.state_dict(), ck)

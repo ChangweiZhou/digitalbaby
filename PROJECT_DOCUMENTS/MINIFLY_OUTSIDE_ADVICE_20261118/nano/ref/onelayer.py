@@ -2,6 +2,7 @@
 """The loop's network taught by back-propagation (PLAN_1.md, item 4), and a GRU (optional item).
     python3 onelayer.py <label> [H=256] [D=10] [passes=12] [batch=256] [lr=1e-3] [threads=2] [seed=1337]
     python3 onelayer.py <label> gru=1 [H=256] [passes=20] [lanes=32] [bptt=64] [lr=2e-3] [threads=1] [seed=1337]
+    whole=1 (added after the first runs, PLAN_1.md): the whole stream is learned from, no development part, the last pass is scored.
 One layer: the last D bytes one-hot (65 D lines), H logistic cells, a softmax answering layer; minibatches, Adam, a cosine fall of the
 rate to a tenth. This is a ceiling for the shape by back-propagation, not a twin of the loop's rule.
 The stream's last 50,000 bytes are a development part that is not learned from: after every pass the loss on it is taken, and the
@@ -41,7 +42,8 @@ def run(kw):
     H, D, seed = g("H", 256), g("D", 10), g("seed", 1337); passes = g("passes", 20 if gru else 12); lr = g("lr", 2e-3 if gru else 1e-3)
     batch, lanes, bptt, threads = g("batch", 256), g("lanes", 32), g("bptt", 64), g("threads", 1 if gru else 2)
     torch.set_num_threads(threads); torch.manual_seed(seed); gen = torch.Generator().manual_seed(seed)
-    x, cut, _ = SC.load(); xt = torch.from_numpy(x); N = len(x); end = cut - DEV            # learning part: bytes 0..end-1
+    x, cut, _ = SC.load(); xt = torch.from_numpy(x); N = len(x); whole = int(kw.get("whole", 0))
+    end = cut if whole else cut - DEV                                                        # learning part: bytes 0..end-1
     model = GRU(H) if gru else OneLayer(H, D); n_all = sum(p.numel() for p in model.parameters())
     opt = torch.optim.Adam(model.parameters(), lr=lr)
     if gru:
@@ -49,7 +51,7 @@ def run(kw):
     else:
         per = (end - D) // batch
     total = passes * per; out = dict(label=kw["label"], args=kw, kind="gru" if gru else "one layer", H=H, D=None if gru else D, seed=seed, threads=threads,
-                                     numbers_that_learn=n_all, passes=passes, learning_part=end, development_part=DEV, rows=[])
+                                     numbers_that_learn=n_all, passes=passes, learning_part=end, development_part=0 if whole else DEV, rows=[])
     cpu0 = time.process_time(); cpu_eval = 0.0; best = None; it = 0
     for p in range(passes):
         if gru: h = None
@@ -65,6 +67,7 @@ def run(kw):
             opt.zero_grad(set_to_none=True); loss.backward()
             if gru: torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             opt.step(); it += 1
+        if whole: print(kw["label"], "pass", p + 1, flush=True); continue                # the whole stream is learned from: nothing is chosen
         c = time.process_time()
         dev = probs_gru(model, x, end, cut) if gru else probs_window(model, end, cut)
         row = dict(passes=p + 1, development=dev, cpu_learning=round(c - cpu0 - cpu_eval, 1)); out["rows"].append(row)
@@ -74,7 +77,7 @@ def run(kw):
     out["bytes_seen"] = passes * per * (lanes * bptt if gru else batch)
     sc = (lambda: probs_gru(model, x, cut, N)) if gru else (lambda: probs_window(model, cut, N))
     out["last_pass"] = dict(passes=passes, stream=sc())
-    model.load_state_dict(best[2]); out["chosen"] = dict(passes=best[0], bytes_seen=out["bytes_seen"] * best[0] // passes, development=best[1], stream=sc())
+    if not whole: model.load_state_dict(best[2]); out["chosen"] = dict(passes=best[0], bytes_seen=out["bytes_seen"] * best[0] // passes, development=best[1], stream=sc())
     json.dump(out, open(os.path.join(SC.HERE, "res", f"{'gru' if gru else 'onelayer'}_{kw['label']}.json"), "w"), indent=1)
     print(kw["label"], {k: v for k, v in out.items() if k not in ("rows", "args")}, flush=True); return out
 
