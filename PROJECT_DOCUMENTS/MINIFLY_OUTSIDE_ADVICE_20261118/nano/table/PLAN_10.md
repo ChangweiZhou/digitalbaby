@@ -83,3 +83,23 @@ Readings (mine).
 The life A, B of `PLAN_5.md`: the system reads the stream of the test text (a million bytes), then the three books in turn; each book's last tenth is scored right after its stream, nothing changing. T2 on that life (`res/two_T2_H0_moments.json`): 1.4802, 1.3162, 1.4109; T2 with the companions only: 1.4720, 1.2558, 1.3630. Arm: all the additions but the relay system.
 
 *Prediction (mine):* it is below T2 by at least 0.0117 on each of the three books (chance 0.75, since the companions alone already are on two); and below T2 with the companions only by at least 0.005 on each (chance 0.5): the second is what says whether the kinds born with no trust carry to a text where nothing was chosen.
+
+## 9. Outcome of addition 2 (entered 20 November; `res/all_books_after_a_without_relay.json`)
+
+The life A, B: the stream of the test text, then the three books in turn; each book's last tenth scored right after its stream, nothing changing; nats a byte.
+
+| | Bryant | Burgess | Carroll |
+|---|---|---|---|
+| T2 | 1.4802 | 1.3162 | 1.4109 |
+| T2 with the fading companions only | 1.4720 | 1.2558 | 1.3630 |
+| All the additions but the relay system | **1.4546** | **1.2413** | **1.3418** |
+| Gain over T2 | 0.0256 | 0.0749 | 0.0691 |
+| Gain over T2 with the companions only | 0.0174 | 0.0145 | 0.0212 |
+
+Both predictions held: below T2 by more than 0.0117 on each book, and below T2 with the companions only by more than 0.005 on each.
+
+Readings (mine), which replace reading 1 of section 5 and stand beside section 7.
+1. **For a system that has already read a million bytes, the additions carry to texts on which nothing was chosen.** The kinds born with no trust (the cells that time a byte value and the pool) add 0.015 to 0.021 nats on the three books beside the companions; on the test text they added 0.015 (1.4740 against 1.4892). The whole set gains 0.026 to 0.075 over T2 there.
+2. **For a system that has read little they do not** (section 7): the kinds born with no trust add nothing yet, and companions born with the trust of an old kind do harm.
+3. So the statement that survives its test is narrower than the one I first wrote: these kinds of cells are worth having in a system with a long life behind it, and what a kind is worth depends on how long the system has lived. The figure of 1.4707 is the figure of such a system on the text it had been reading.
+4. Not run: the relay system through these lives; companions born with no trust (the change that reading 2 calls for); the lives in another order.
