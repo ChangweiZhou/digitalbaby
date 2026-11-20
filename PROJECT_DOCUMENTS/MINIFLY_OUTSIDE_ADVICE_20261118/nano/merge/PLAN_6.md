@@ -80,3 +80,49 @@ W4 held (95.5), W5 held (90.5 against 90.8), W6 held (1.5482). **Chosen by the r
 A caution before the reported seeds (mine): on three-digit sums K2 on the development seed has the hundreds digit at 94.6%, no better than the plain cells; the kind I said was needed (the class of the tens digits, the class of the units digits, the two hundreds digits) may not have been made. V1 and V2 look doubtful.
 
 Runs now made with C2: five reported seeds on two-digit sums (C beside it); five on three-digit sums; the first life; 400,000 lines on two seeds for C and C2.
+
+## 8. Outcome on the reported seeds and the books (entered 20 November; `res/s40_C*_seed*.json`, `res/s3_C2_seed*.json`, `res/life_C2.json`, `res/life2_C2.json`, `res/s400_C*_seed*.json`; tables `report_s40.txt`, `report_s3.txt`, `report_life.txt`, `report_life2.txt`, `report_s400.txt`)
+
+Sums: never-shown additions, own answer bytes, whole answer, %, mean of the last three readings; seeds 73129, 93683, 116089, 406364, 545353.
+
+| | frozen setting | C | C2 |
+|---|---|---|---|
+| two-digit, 40,000 lines, each seed | 91.8, 93.3, 91.7, 88.0, 92.1 | 90.9, 92.9, 91.5, 87.4, 91.5 | 92.8, 96.7, 95.1, 89.7, 93.1 |
+| median (last reading; tens digit) | 91.8 (92.2; 92.4) | 91.5 (90.8; 90.8) | **93.1** (92.8; 92.8) |
+| median at 5,000; 10,000; 15,000 lines | 86.8; 88.4; 91.6 | 88.6; 89.2; 92.0 | 92.6; 94.0; 95.0 |
+| three-digit, 80,000 lines, each seed | 94.9, 93.0, 94.0, 94.1, 95.0 | not run | 93.9, 92.9, 94.1, 93.2, 95.1 |
+| median (hundreds digit, last) | 94.1 (95.6) | | **93.9** (96.4) |
+| two-digit, 400,000 lines, seeds 73129 and 93683 | 78.9, 81.3 | 80.1, 81.3 | 81.3, **98.7** |
+
+With C2 on two-digit sums the kinds keyed on two classes number 24 to 30 and hold 3,494 to 5,093 cells; alone they name the tens digit of never-shown sums on 98.2, 90.6, 89.4, 90.6, 97.6% (they do not cover the hundreds digit: 23 to 51% whole). 67 CPU-seconds a run at 40,000 lines (52 for the frozen setting), 167 on three digits (145).
+
+Prose, nats a byte (the first life with the test text's last tenth at the end; then the second life):
+
+| | bryant-stories | burgess-busterbrown | carroll-alice | test text, at the end | chesterton-thursday | chesterton-brown | austen-persuasion |
+|---|---|---|---|---|---|---|---|
+| no classes | 1.5023 | 1.3645 | 1.4456 | 1.5306 | 1.4411 | 1.3996 | 1.2700 |
+| frozen setting | 1.4920 | 1.3487 | 1.4307 | 1.5264 | 1.4263 | 1.3856 | 1.2594 |
+| C2 | 1.4885 | 1.3349 | 1.4019 | **1.5550** | 1.4242 | 1.3663 | 1.2446 |
+
+(On prose C2 made 5 and 8 kinds keyed on two classes at the last finding, with 71,020 and 72,174 cells; where the second book of the first life is scored they hold 20,300 cells, having been made anew at 1,280,000 bytes.)
+
+**The hypothesis is refuted** by its first part: on three-digit sums C2 gains nothing over the frozen setting (93.9 against 94.1; under 1 point refutes). Parts (b) and (c) hold as written (two-digit 93.1, not lower; no book above the frozen setting), but (c) holds for a reason that is not a merit: see reading 3.
+
+| | Statement | Outcome |
+|---|---|---|
+| V1 | three-digit: at least 2 points above the frozen setting | failed (0.2 below) |
+| V2 | three-digit: the hundreds digit at least 98 | failed (96.4) |
+| V3 | two-digit: at least 91.8 | held (93.1) |
+| V4 | two-digit: at least 94 | failed (93.1; three seeds of five are under 94) |
+| V5 | the kinds keyed on two classes alone: at least 85% whole with under 3,000 cells | failed (23 to 51% whole; 3,500 to 5,100 cells; they hold the tens digit and not the hundreds) |
+| V6 | no book of the first life more than 0.002 above the frozen setting | held |
+| V7 | below the frozen setting by at least 0.002 on at least two books | held (0.004, 0.014, 0.029) |
+| V8 | the whole hypothesis | failed |
+| W3 | at 400,000 lines C above the frozen setting on both seeds; C2 at least 85 on both | failed, both halves (C: 80.1 and 81.3 against 78.9 and 81.3; C2: 81.3 and 98.7) |
+
+Readings (mine).
+1. **On two-digit sums a class used as a line helps, and helps early.** 92.6% at 5,000 lines and 94 to 95% at 10,000 to 15,000, where the frozen setting has 87 to 92 and the plain cells 65 to 76. The kind made is the one hoped for: the class of the two tens digits with the class of the two units digits, a few dozen cells for the tens digit. The median at 40,000 lines (93.1) is held down by the kinds starting empty at each finding (the dip at 20,000 and 25,000 lines is there on the median) and by the answering cell, as before.
+2. **On three-digit sums it gains nothing**, and the reason is the search, not the idea: the kind that would fix the hundreds digit needs the class of the two units digits as seen from where the hundreds digit is named, and no pair with that X is kept, because such a class is of use only together with another and the worth of a pair is measured alone.
+3. **On prose the gain on the books is recency and the old text pays for it.** The cells keyed on two classes start empty at every finding, so they hold only the text since then; the three books of the first life gain 0.004 to 0.029 and the test text at the end of the life loses 0.029, ending above the system with no classes (1.5550 against 1.5306). For keeping, C2 as built is worse than the frozen setting. The second life agrees on its books (0.002, 0.019, 0.015).
+4. **One long run is worth looking at and proves nothing yet**: on seed 93683 C2 stands at 98.6 to 98.8% from 300,000 to 400,000 lines, where every other long run of this line ends near 80. On seed 73129 it does not.
+5. **The repair C** (a kind's trust counts the trust of the kinds made from it) does not change the first mechanism at 40,000 lines (91.5 against 91.8) and keeps the kind of the whole pair in the search to the end of both long runs, where the frozen setting loses it once on each seed; it does not stop the fall with reading.
