@@ -15,3 +15,7 @@ Never-shown two-digit additions, own answer bytes, whole answer, %, 40,000 lines
 | C2 | 93.7, 91.1, 96.5, 94.5, 92.9 | **93.7** | 92.6 | 70 |
 
 The base equals `nano/ahead2`'s figures for these seeds (76.9, 78.1, 78.3, 81.0, 77.1 there). All four predictions held: the frozen setting's median is at least 90 and within 2 points of 91.8; C2's is above it and within 2 points of 93.1. The frozen setting is above the base on every seed by 8 to 15 points; its lowest seed (2005, 85.2) is one where the pair of units digits against tens digits is not among the kept pairs at the last finding. With the frozen setting the units-digits classes have 90, 90, 98, 90 of 100 pairs with their class on the four seeds where the pair is kept. A repeat by the same session with the same program: it shows the figures are not peculiar to five seeds, and nothing more.
+
+## Addition (20 November; written before its runs, after the five reported seeds of `PLAN_10.md`'s setting M were read: 98.5, 98.0, 96.8, 97.9, 98.5)
+
+The same repeat for setting M (`merge10.py sums gc=1`), seeds 2001 to 2005, 40,000 lines; nothing chosen. *Prediction (mine):* median at least 96 (0.8); every seed at least 95 (0.6).
