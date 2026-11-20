@@ -87,3 +87,14 @@ The numpy program at full length (GE, seed 1) gives the compiled program's readi
 Ten further seeds (1001 to 1010; the rule is quoted in `PLAN_1.md`, section 13) for G, E and GE; N on the ten seeds is the F1 run of `joint.py`. Reported: the fifteen together, for the registered difference (E less GE) less (N less G) and for GE less G.
 - V1 (0.7): the registered difference is within 4 points at the median of fifteen seeds.
 - V2 (0.6): GE less G is within 3 points at the median of fifteen seeds.
+
+## 10. Outcome of the addition of section 9 (entered 20 November)
+
+Tables: `report_add.txt`. Fifteen seeds (the five reported, then 1001 to 1010). Medians of the scores: N 83.7, G 68.0, E 83.7, GE 66.8.
+
+- The registered difference, (E less GE) less (N less G): -0.1, -1.9, -3.1, -0.6, +6.1 | -4.4, +0.9, +1.9, -2.0, -0.4, -1.4, +5.6, -1.6, -9.5, +3.7. Median of fifteen -0.6; below zero on ten seeds, above on five. H stands on fifteen seeds as on five.
+- The cost of the sign: 17.2 at the median without withdrawal and 19.1 with it; positive on fifteen seeds of fifteen in both.
+- GE less G: median +0.4; above on eight, below on seven. Connections living in GE: median 762 (716 to 796).
+- Beside the question: E less N, withdrawal alone against the plain system, is -0.6 at the median and below zero on twelve seeds of fifteen (largest -1.5). So the right to withdraw is not quite free: it costs about half a point, consistently. `PLAN_2.md`, section 9, said "costs nothing" from five seeds; "about half a point" is the better statement.
+
+**Predictions.** V1 held (-0.6). V2 held (+0.4).

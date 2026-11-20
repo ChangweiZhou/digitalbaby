@@ -96,3 +96,14 @@ A reason for 2 that I have not tested: a cell's return strengths sum what the an
 
 Ten further seeds (1001 to 1010; the rule is quoted in `PLAN_1.md`, section 13) for the comparison it would settle: D against X at c = 0.13. Reported: the fifteen together.
 - W1 (0.6): D less X is within 2 points at the median of fifteen seeds.
+
+## 11. Outcome of the addition of section 10 (entered 20 November)
+
+Tables: `report_add.txt`. c = 0.13, fifteen seeds (the five reported, then 1001 to 1010); cells left: median 186 (176 to 194).
+
+- D less X: -5.2, +3.1, +0.9, -1.7, +4.5 | -3.5, +11.0, +1.5, +5.3, +0.4, +1.6, +3.1, 0.0, -0.6, +2.6. Median of fifteen +1.5; above zero on ten seeds, below on four, equal on one. Medians of the scores: D 83.9, X 81.4.
+- Against nobody dropping out: D -0.5 at the median (nine below, six above); X -1.7 (ten below, five above).
+
+So section 9, item 2, was too flat: at c = 0.13 on fifteen seeds, dropping out by the cell's own rule is a little better than dropping as many by chance, by about a point and a half, on ten seeds of fifteen. It is a small advantage and nothing like the 6 points by which the ends' own rule beat chance for single connections. Not rerun on the further seeds: the systems born at that size, and the other values of c.
+
+**Prediction.** W1 held (+1.5).

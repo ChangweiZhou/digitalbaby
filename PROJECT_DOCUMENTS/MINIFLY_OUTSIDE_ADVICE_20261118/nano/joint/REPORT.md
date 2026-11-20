@@ -101,10 +101,29 @@ One sign for each cell in between (the `dale=1` of `cells2.py`, a quarter of the
 2. **Under the sign, withdrawal leaves about a fifth of the connections (771) at the score of the sign alone** (+0.4 paired at the median). The sign makes the strengths unequal (44% below one hundredth of the largest against 4% in the plain system apart from the dead branch), and those are withdrawn at no cost.
 3. The sign alone reproduces the earlier 70.7, 73.9, 64.0, 62.1, 72.3 to the digit with a different kernel.
 
+## Additions of 20 November: the product with a bounded step, and fifteen seeds for the close comparisons
+
+Asked by the coordinating session; entered in the plans before their runs (`PLAN_1.md` sections 13 and 14, `PLAN_3.md` 10 and 11, `PLAN_4.md` 9 and 10, `PLAN_5.md` 9 and 10). Tables: `report_add.txt`. The ten further seeds are 1001 to 1010; the five reported seeds stay the first table everywhere above. Plain system on fifteen seeds: median 83.7.
+
+| Comparison (paired, same seed) | five seeds, median | fifteen seeds, median | seeds of fifteen above / below |
+|---|---|---|---|
+| product with weight at the sender and a bounded step, less one-sided | -24.5 | -15.0 | 1 / 14 |
+| smaller part (sender's part born 1/64), less one-sided | +2.3 | +0.9 | 12 / 3 |
+| answering cell without the division, less present rule | -1.7 | 0.0 | 7 / 7 |
+| cells in between in proportion to own size, less present rule | -1.1 | -1.1 | 7 / 8 |
+| cost of the sign with withdrawal less cost without | -0.6 | -0.6 | 5 / 10 |
+| the sign with withdrawal, less the sign alone | +0.4 | +0.4 | 8 / 7 |
+| withdrawal by either end, less plain | -0.1 | -0.6 | 3 / 12 |
+| cells dropping out by own rule, less as many by chance (c = 0.13) | +0.9 | +1.5 | 10 / 4 |
+
+1. **Bounding the step does not rescue the product edge** (-24.5 on five seeds, lower than with the plain step). Its loss is not steps that are too large; what remains is which connections it lets grow. (Reservation in `PLAN_1.md`, section 14.)
+2. **Three statements above are sharpened by the fifteen seeds.** The smaller-part edge is about one point above the one-sided edge, on twelve seeds of fifteen: small, but it is the one joint form that is not level or below. The right to withdraw costs about half a point (twelve of fifteen below), not nothing. A cell dropping out by its own rule is about a point and a half better than one dropped by chance (ten of fifteen), not level with it.
+3. **The others stand as they were**: the division is not needed; the cells' proportional rule is level; withdrawal does not change the cost of the sign (17 to 19 points, on fifteen seeds of fifteen).
+
 ## What the steps say together (my reading)
 
-1. **The score does not tell a one-sided edge from an edge that both ends decide**, for the connections into the answering cell on this testbed. Where the joint forms differ from the one-sided edge they are level with it (the smaller of two parts; the right to withdraw held by either end, with or without one sign for each cell) or below it (the product with weight at the sending end).
-2. **What both ends deciding changes is which connections exist.** Withdrawal by the ends' own strengths removes half of the connections at no cost, and four fifths under the sign, and is 6 points better than removing as many by chance. For whole cells the like does not hold: a cell dropping out by its own total return strength does no better than a cell dropped by chance, and a little worse than a system born at the smaller size.
+1. **The score hardly tells a one-sided edge from an edge that both ends decide** (the largest difference in favour of a joint form is one point, for the smaller of two parts, on fifteen seeds), for the connections into the answering cell on this testbed. Where the joint forms differ from the one-sided edge they are level with it (the smaller of two parts; the right to withdraw held by either end, with or without one sign for each cell) or below it (the product with weight at the sending end).
+2. **What both ends deciding changes is which connections exist.** Withdrawal by the ends' own strengths removes half of the connections at no cost, and four fifths under the sign, and is 6 points better than removing as many by chance. For whole cells the like holds only faintly: a cell dropping out by its own total return strength does about a point and a half better than a cell dropped by chance (fifteen seeds), and a little worse than a system born at the smaller size (five seeds).
 3. **Rules in which a strong connection changes faster than a weak one lose in the answering cell**: the product with weight at the sending end (-19) and the change in proportion to own size (-18), both ending with most connections near zero and a few large ones. The division in the present rule is not needed for the score; the size of the mismatch is (a change of fixed size answers nothing).
 4. **The plain system is not short of cells at 256**: 128 cells score as well.
 
@@ -112,4 +131,4 @@ Limits: one testbed, one size, one length; one development seed for every choice
 
 ## Commands and cost
 
-`python3 check_joint.py`, `check_joint2.py`, `check_joint3.py`, `check_joint5.py`, `check_joint4.py` (about a minute each). Runs: `xargs -P 4 -L 1 sh -c 'python3 <program> "$0" "$@"' < <list>` with `joint.py` for `dev1.txt` (see `PLAN_1.md`, section 9, on its labels), `dev2.txt`, `rep1.txt`, `rep1b.txt`, `num1.txt`, `rep3b.txt`; `joint2.py` for `dev3.txt`, `rep2.txt`, then `rep2x.txt`, `num2.txt`; `joint3.py` for `dev4.txt`, `rep3.txt`, then `rep3x.txt`; `joint5.py` for `dev5.txt`, `rep5.txt`; `joint4.py` for `rep4.txt`. The lists `rep3x.txt` and `rep3b.txt` are made from the results of `rep3.txt` (the numbers of cells left). Tables: `python3 report1.py > report1.txt` and likewise `report2`, `report3`, `report5`, `report4`. A compiled run takes 17 to 37 seconds of one core, a numpy run 3.5 to 6 minutes. Compiled runs: 57 (C1), 83 (C2), 71 (C2b), 62 (C5), 24 (C4); numpy runs at full length: 3, 1, 1, 1, 1. About two hours of CPU, a little over an hour of wall time on four cores. No checkpoints are kept; compiled `.so` files are not committed.
+`python3 check_joint.py`, `check_joint2.py`, `check_joint3.py`, `check_joint5.py`, `check_joint4.py` (about a minute each). Runs: `xargs -P 4 -L 1 sh -c 'python3 <program> "$0" "$@"' < <list>` with `joint.py` for `dev1.txt` (see `PLAN_1.md`, section 9, on its labels), `dev2.txt`, `rep1.txt`, `rep1b.txt`, `num1.txt`, `rep3b.txt`; `joint2.py` for `dev3.txt`, `rep2.txt`, then `rep2x.txt`, `num2.txt`; `joint3.py` for `dev4.txt`, `rep3.txt`, then `rep3x.txt`; `joint5.py` for `dev5.txt`, `rep5.txt`; `joint4.py` for `rep4.txt`. The lists `rep3x.txt` and `rep3b.txt` are made from the results of `rep3.txt` (the numbers of cells left). Tables: `python3 report1.py > report1.txt` and likewise `report2`, `report3`, `report5`, `report4`. A compiled run takes 17 to 37 seconds of one core, a numpy run 3.5 to 6 minutes. Compiled runs: 57 (C1), 83 (C2), 71 (C2b), 62 (C5), 24 (C4), 105 (the additions: `add_j.txt` with `joint.py`, `add_5.txt` with `joint5.py`, `add_4.txt` with `joint4.py`, `add_3.txt` then `add_3x.txt` with `joint3.py`; `python3 report_add.py > report_add.txt`); numpy runs at full length: 3, 1, 1, 1, 1. About three hours of CPU, an hour and a half of wall time on four cores. No checkpoints are kept; compiled `.so` files are not committed.

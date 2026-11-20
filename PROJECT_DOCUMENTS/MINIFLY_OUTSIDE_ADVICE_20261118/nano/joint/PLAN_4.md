@@ -109,3 +109,14 @@ Never-shown sums, whole answer right, %, mean of the last three readings; five r
 Ten further seeds (1001 to 1010; the rule is quoted in `PLAN_1.md`, section 13) for the two arms within five points of (i) whose difference matters for the reading: A (ii), no division, at 8e-4; and B (iv), the cells' proportional rule, at 1/4. The plain system on the ten seeds is the F1 run of `joint.py`. Reported: the fifteen together.
 - U1 (0.6): A (ii) is below (i) on at least nine seeds of fifteen.
 - U2 (0.55): B (iv) is within 2 points of (i) at the median of the fifteen paired differences.
+
+## 10. Outcome of the addition of section 9 (entered 20 November)
+
+Tables: `report_add.txt`. Paired differences from (i), the five reported seeds and then 1001 to 1010.
+
+- A (ii), no division: +2.1, +0.3, -4.6, -1.7, -6.9 | -2.9, -3.9, +1.0, 0.0, -1.7, +1.0, -2.3, +0.9, +1.9, +1.1. Median of fifteen 0.0; above on seven, below on seven, equal on one. Medians of the scores: 81.8 against 83.7.
+- B (iv), the cells' proportional rule: +5.1, -1.7, -7.9, +5.6, -1.1 | -2.2, +0.1, -4.5, -5.0, +0.5, +2.5, +4.8, -2.5, +6.5, -1.1. Median of fifteen -1.1; above on seven, below on eight.
+
+On fifteen seeds neither rule differs from the present one: the reading of section 8 stands and the reservation there about (ii) ("a cost of a few points is not excluded by five seeds") is answered: no cost shows. The single differences of B (iv) run from -7.9 to +6.5, so the rule changes which seeds do well without changing the level.
+
+**Predictions.** U1 failed (seven of fifteen). U2 held (-1.1).
