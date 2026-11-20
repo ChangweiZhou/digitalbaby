@@ -65,3 +65,13 @@ On this seed: M1 holds (15 at most). M2 holds (52 against 15 at the gap of 8). *
 - two further forms of return strength that a cell could have: `ret=grown` (a separate return strength that starts at nothing and receives the changes of the forward strength; no fading) and `ret=sign` (the sign of the forward strength and one fixed size, as in the record's sweep).
 
 The five reported seeds are run for `cross=0`, `cross=1 ret=exact` and the best of the other forms of return strength, on both texts, at eta1 = 1 (or the value entered here if these runs give a better one).
+
+## 7. A correction of mine about the return strengths, and one more form (entered on 20 November before the runs of `ret=local` were read)
+
+In the sixth plan I called `ret=learned` the candidate and `ret=exact` its reference, on the model of the answering cell's return connections. On working through who holds what, that was wrong as built:
+
+- In `ret=exact` the cell that reads forms the returned value from its own quantities only: what it received, its two sensitivities, and its own strengths from the cell it reads. No strength of another cell is used. What is assumed is something else: that a cell can send back, to each cell it reads, a value that differs from connection to connection.
+- `ret=learned` and `ret=grown`, as built, keep the separate return strength at the reading cell and feed it that cell's own changes. They assume the same and remove nothing; they only show how exact the return strength has to be.
+- The form that corresponds to the answering cell's return connections is this, added now as **`ret=local`**: every reader sends the same two numbers to all the cells it reads (what it received times each of its two sensitivities); the return strengths are kept by the cell that is read, start at nothing, and change by those two numbers times that cell's own output one byte earlier. Nothing of the reader's strengths or traces is used, and no value differs from connection to connection.
+
+Development seed, eta1 = 1, 240,000 lines, the follow-up runs so far: `ret=grown` 70.4 on `m1` (88, 86, 81 by gap at the end) and 49.3 on `g1` (36, 49, 48); `ret=sign` 11.7 and 17.6 (nothing learned); `ret=learned` on `g1` 44.9. The five reported seeds are run for `cross=0`, `cross=1 ret=exact` and, if it learns on the development seed, `cross=1 ret=local`; if it does not, `ret=grown` in its place.

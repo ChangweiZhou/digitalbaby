@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """PLAN_5.md: cells that hold bytes themselves; no delay chain; a trace at each connection, running forward. numpy only.
-    python3 hold.py <label> text=d1|d2 seed=1 [H=256 K=16 eta1=1/4 lines=60000 every=10000]      eta1=0: the cells never change
+    python3 hold.py <label> text=d1|d2 seed=1 [H=256 K=16 eta1=1/4 lines=60000 every=10000]      eta1=0: the cells never change; save=1: the strengths are saved
 PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received, times its own sensitivity, over a return strength; the cell read
     changes by what its readers send times each trace as it stood one byte earlier. [ret=exact|learned] the return strength is the connection's
     forward strength, or a separate strength that receives the same changes and fades with it ([lamB=1e-5], the fading of both, a byte).
     ret=grown: a separate return strength that starts at nothing and receives the forward strength's changes; no fading unless lamB is given.
     ret=sign: the return strength has the sign of the forward strength and one fixed size (the sign-symmetric form of the record's sweep).
+    ret=local: the return strength is kept by the cell that is read. Every reader sends the same two numbers to all the cells it reads (what it received
+      times each of its two sensitivities); the cell read weighs them by its return strengths, which start at nothing and change by those numbers
+      times its own output one byte earlier. Nothing of the reader's strengths or traces is used.
 PLAN_7.md: text=g1|m1 [gap=4]: single-digit lines a+<0 to gap letters>b=c; g1: c = a + b; m1: c = (a + b) mod 10. Scored on the sums shown at each length of gap.
 """
 import json, os, sys, time
@@ -35,9 +38,9 @@ class Hold:
         s.R = g.uniform(-1, 1, (H, S)); s.W2 = np.zeros((S, H)); s.b2 = np.zeros(S); s.h = np.zeros(H)
         s.Ecx = np.zeros((H, S)); s.Ezx = np.zeros((H, S)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
         s.ret = ret; s.qs = 1 / np.sqrt(3 * K)                                                            # ret=sign: the size of every return strength (the birth strengths' root mean square)
-        s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
+        s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown", "local"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
         if s.learned: g3 = np.random.default_rng([seed, 20261123]); s.Qc = g3.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Qz = g3.uniform(-1, 1, (H, K)) / np.sqrt(K)
-        if s.learned and ret == "grown": s.Qc = np.zeros((H, K)); s.Qz = np.zeros((H, K))      # a return strength starts at nothing and receives the forward strength's changes
+        if s.learned and ret in ("grown", "local"): s.Qc = np.zeros((H, K)); s.Qz = np.zeros((H, K))      # a return strength starts at nothing and receives the forward strength's changes
     def step(s, h, x):
         pre = h[s.idx]; z = sg(s.Az[:, x] + (s.Bz * pre).sum(1) + s.cz); c = sg(s.Ac[:, x] + (s.Bc * pre).sum(1) + s.cc)
         return pre, z, c, z * h + (1 - z) * c
@@ -57,7 +60,9 @@ class Hold:
             r = s.eta1 * (s.R @ m); rc = r[:, None]; Dl = [rc * s.Ecx, rc * s.Ecr, r * s.Ecb, rc * s.Ezx, rc * s.Ezr, r * s.Ezb]
             if X is not None: Dl = [d + e for d, e in zip(Dl, X)]
             s.Ac += Dl[0]; s.Bc += Dl[1]; s.cc += Dl[2]; s.Az += Dl[3]; s.Bz += Dl[4]; s.cz += Dl[5]
-            if s.learned: s.Qc += Dl[1]; s.Qz += Dl[4]; s.Qc *= 1 - s.lamB; s.Qz *= 1 - s.lamB
+            if s.ret == "local": s.Qc += (r * kc)[:, None] * pre; s.Qz += (r * kz)[:, None] * pre         # at the cell read: what the reader sent out times that cell's own earlier output
+            elif s.learned: s.Qc += Dl[1]; s.Qz += Dl[4]
+            if s.learned: s.Qc *= 1 - s.lamB; s.Qz *= 1 - s.lamB
             if s.lamB: s.Bc *= 1 - s.lamB; s.Bz *= 1 - s.lamB
         d2 = np.outer(g * m, h); s.W2 += d2; s.b2 += g * m; s.R += d2.T; s.W2 *= 1 - s.lam; s.R *= 1 - s.lam
         return ok
@@ -93,7 +98,9 @@ def run(kw, cls=None):
             out["rows"].append(dict(lines=it + 1, shown=sh, never=nv, place=pl, bytes_right=100 * right / n, gate_mean=float(sg(s.cz).mean()))); right = n = 0
             if G: out["rows"][-1]["shown_by_gap"] = {g: s.score(tx, shown_s, g)[0] for g in gaps}; out["rows"][-1]["shown"] = float(np.mean(list(out["rows"][-1]["shown_by_gap"].values())))
     out["cpu"] = round(time.process_time() - t0); out["last3_shown"] = float(np.mean([r["shown"] for r in out["rows"][-3:]])); out["last3_never"] = float(np.mean([r["never"] for r in out["rows"][-3:]]))
-    os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"hold_{kw['label']}.json"), "w")); return out
+    os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"hold_{kw['label']}.json"), "w"))
+    if kw.get("save"): np.savez_compressed(os.path.join(HERE, "res", f"hold_{kw['label']}.npz"), **{k: getattr(s, k) for k in ("idx", "Ac", "Az", "Bc", "Bz", "cc", "cz", "W2", "b2", "R", "h")})
+    return out
 
 if __name__ == "__main__":
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw)
