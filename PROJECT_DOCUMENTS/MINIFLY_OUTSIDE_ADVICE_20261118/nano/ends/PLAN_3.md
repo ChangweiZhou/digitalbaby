@@ -58,3 +58,11 @@ Readings (mine).
 3. **The threshold sits in a narrow place.** Mean unsureness after a space is 3.15, after a line end 3.03, after "R" 2.79, "O" 2.73, "r" and "o" 2.69; with theta 2.5 the system is worse than the table's cells alone (1.5674 against 1.5566 on the last twentieth). The three values of k do equally well at their best theta.
 4. **Why 60% and not more, when 0.92 and 0.97 agree?** Not settled. In the first tenth of the stream the cuts are poor (in the first fiftieth a start after nearly every byte; from a tenth on, 0.91 of starts are word starts). The system also differs from G in ways that are not errors of principle: it starts at the second of two line ends (965 of its 1,850 other starts in the last tenth) and does not start after an apostrophe.
 5. Not shown: that this carries to a text without such bytes. `PLAN_5.md` tests that on this text with its spaces and line ends taken out.
+
+## 6. Addition 1 (20 November; written after the outcome above and before the runs it describes): what separates U-k from G
+
+A diagnostic, scored **only on the last twentieth of the stream**; the last tenth is not read. e = 0.02, eta = 0.00005. Two systems that no one proposes:
+* **D1**: starts by the rule "after a space or a line end", given from the first byte on. This is what U-k came to, without its early cuts and without its starts after "R", "q", "Z" and the hyphen.
+* **D2**: U-k's own starts (k = 1, theta 2.75), but the rule of D1 in the first tenth of the stream.
+
+Beside them on the same twentieth: arm 0 1.5566, G 1.5336, U-k 1.5412. D1 against G shows what the difference of definition costs (the second of two line ends; the apostrophe; other bytes between words); D2 against U-k what the early cuts cost; D1 against D2 what the starts after "R", "q", "Z" and the hyphen cost. Predictions (mine): D1 is within 0.002 of G (chance 0.5); D2 is below U-k by at least 0.003 (chance 0.5).

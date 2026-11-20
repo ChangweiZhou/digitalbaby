@@ -190,6 +190,8 @@ def diag(kw):
     """PLAN_2.md, addition 1: mixed starts, scored on the last twentieth of the stream only. which=M1: given starts in the first `frac` of the stream, then arm U's; M2: the reverse."""
     x, cut, _ = score.load(); dev = cut - cut // 20; frac = float(kw.get("frac", 0.3)); theta = float(kw.get("theta", 2.5)); g = word_starts(x); u = starts_for(kw.get("signal", "U"), x, dev, cut, theta); early = np.arange(len(x)) < frac * cut
     st = np.where(early, g, u) if kw["diag"] == "M1" else np.where(early, u, g)
+    if kw["diag"] in ("D1", "D2"):                                    # PLAN_3.md, addition 1: the rule "after a space or a line end" (D1); arm U-k's own starts with that rule in the first `frac` of the stream (D2)
+        rule = np.zeros(len(x), bool); rule[1:] = x[:-1] <= 1; st = rule if kw["diag"] == "D1" else np.where(early, rule, starts_for("U", x, dev, cut, 2.75, a=1))
     return dict(diag=kw["diag"], frac=frac, theta=theta, nats_last_twentieth=one(x, seg_keys(x, st), dev, dev, cut, ETA0, E0), agreement_scored_part=agreement(st, x, dev, cut))
 
 def check():
