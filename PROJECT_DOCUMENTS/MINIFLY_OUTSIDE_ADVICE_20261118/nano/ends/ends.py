@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """PLAN_1.md of nano/ends: where a segment starts, found by the system from its own surprise.
     python3 ends.py check                       the compiled loop against numpy on a prefix
-    python3 ends.py arm=0|G|R|S|H|U|P [theta=...] [ks=1] [text=ns]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
+    python3 ends.py arm=0|G|R|S|H|U|P|E [theta=...] [ks=1] [text=ns]   settings chosen on the last twentieth of the stream; then one scoring of the last tenth
 Arms: 0 the table's cells (runs of the last 0..6 bytes), read with trust; G with segment cells, starts given (first letter after a byte that is not a letter);
 R starts every fifth byte; S starts where the table-only system's surprise at the byte that arrived exceeds theta;
 U (PLAN_2) starts where the table-only system's answer was unsure beyond theta before the byte arrived;
 U with ks=1 (PLAN_3): the same signal from the cells of runs 0..k alone, k chosen among 1, 2, 3; P (PLAN_4): unsure beyond theta and more unsure than at the byte before by more than a margin;
+E (PLAN_6): as U with ks=1, and the answer no longer unsure once the byte has arrived;
 H starts fixed by an arbitrary function of the last two bytes, as frequent as S's (reads res/ends_armS.json).
 score.py, table.py, words.py are copied unchanged from nano/table; the kernel is trust.py's with one more output (the probability given to the byte that arrived)."""
 import ctypes, json, os, subprocess, sys, time
@@ -148,6 +149,8 @@ def agreement(start, x, lo, hi):
 
 def starts_for(arm, x, taught_to, hi, theta=None, share=None, a=None):
     if arm == "U" and a is not None: return unsure(x, taught_to, hi, int(a)) > theta                              # PLAN_3: a = k
+    if arm == "E":                                                                                              # PLAN_6: unsure beyond theta before byte t, and not beyond theta once byte t has arrived (a = k)
+        u = unsure(x, taught_to, hi, int(a)); nxt = np.zeros(len(x)); nxt[:-1] = u[1:]; return (u > theta) & (nxt <= theta)
     if arm == "P":                                                                                              # PLAN_4: unsure beyond theta and more unsure than at the byte before by more than a
         u = unsure(x, taught_to, hi); d = np.zeros(len(x)); d[1:] = u[1:] - u[:-1]; return (u > theta) & (d > a)
     if arm == "G": return word_starts(x)
@@ -173,9 +176,9 @@ def run(kw):
         else:
             for th in (THETAS if arm == "S" else THETAS_U): tgrid[str(th)] = one(x, seg_keys(x, starts_for(arm, x, dev, cut, th)), dev, dev, cut, ETA0, E0)
             theta = float(min(tgrid, key=tgrid.get))
-    if arm == "P" or "ks" in kw:                                                                               # a second setting chosen with theta: k (PLAN_3) or the rise asked (PLAN_4)
-        for aa in ((1, 2, 3) if arm == "U" else (0.0, 0.5, 1.0, 1.5)):
-            for th in ((1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25) if arm == "U" else (1.5, 2.0, 2.25, 2.5)): tgrid[f"{aa}/{th}"] = one(x, seg_keys(x, starts_for(arm, x, dev, cut, th, a=aa)), dev, dev, cut, ETA0, E0)
+    if arm in ("P", "E") or "ks" in kw:                                                                               # a second setting chosen with theta: k (PLAN_3) or the rise asked (PLAN_4)
+        for aa in ((1, 2, 3) if arm in ("U", "E") else (0.0, 0.5, 1.0, 1.5)):
+            for th in ((1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25) if arm in ("U", "E") else (1.5, 2.0, 2.25, 2.5)): tgrid[f"{aa}/{th}"] = one(x, seg_keys(x, starts_for(arm, x, dev, cut, th, a=aa)), dev, dev, cut, ETA0, E0)
         a, theta = (float(v) for v in min(tgrid, key=tgrid.get).split("/")); extra["second_setting"] = a
     kd = [] if arm == "0" else seg_keys(x, starts_for(arm, x, dev, cut, theta, share, a))
     for e in ES:
