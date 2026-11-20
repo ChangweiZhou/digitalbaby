@@ -17,8 +17,8 @@ The kernel is nano/suite/suite.py's, changed by the replacements below and by no
 A measurement never changes the life: it is made in a forked copy of the process, which is thrown away."""
 import ctypes, hashlib, json, os, subprocess, sys, time
 import numpy as np
-HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, "..", "suite"))
-import suite as SU, make_streams as MS
+HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, os.path.join(HERE, "..", "suite")); sys.path.insert(0, os.path.join(HERE, "ext"))
+import suite as SU, make_streams as MS          # ext/suite.py: nano/suite's program as it stood at that line's commit 96f797e (the kernel this file changes); make_streams.py and the manifests are read from nano/suite
 NL = SU.NL; LMAX = SU.LMAX; PD = SU.PD; PI = SU.PI; LEAD = 4096; NAMES = MS.NAMES
 
 def rep(t, a, b):
