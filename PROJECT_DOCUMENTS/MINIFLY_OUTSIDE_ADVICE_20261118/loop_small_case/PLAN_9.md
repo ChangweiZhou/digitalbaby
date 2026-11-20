@@ -33,3 +33,19 @@ If N1 or N3 holds, the arms are run on the five reported seeds.
 ## 4. Cost, and what is not run
 
 About nine CPU-minutes a run with the kernel. Not run here: letters between the numbers on this text (the next step if this holds); the backward-pass instrument with a chain; more than one crossing forward.
+
+## 5. Entered on 20 November after the development runs (seed 1), before any reported seed
+
+Never-shown sums, mean of the last three readings of 2,400,000 lines; sums shown; by place at the end (`res/hold_d9_*.json`):
+
+| | never shown | shown | hundreds, tens, units |
+|---|---|---|---|
+| no chain, no crossing (sixth plan, lengthened) | 1.1 | 1.7 | 79, 20, 9 |
+| no chain, one crossing | 5.0 | 5.1 | 93, 38, 10 |
+| `chain=2`, no crossing | 35.0 | 41.7 | 94, 46, 94 |
+| `chain=2`, one crossing, `ret=exact` | **72.4** | 74.4 | 98, 75, 100 |
+| `chain=1`, one crossing, `ret=exact` | 63.6 (71 at the last reading, rising) | 68.5 | 99, 78, 93 |
+
+N1 holds. N2 fails: with two delay lines the cells learn the units digit by their own path alone (94), and the tens digit is what the crossing adds (46 to 75). N4 fails: one delay line gives nearly as much (9 points less, and still rising). N5 holds. `ret=grown` is entered in the report.
+
+**Reported seeds** (73129, 93683, 116089, 406364, 545353): `chain=2 cross=0`, `chain=2 cross=1 ret=exact`, `chain=1 cross=1 ret=exact`; eta1 = 1; **1,600,000 lines** (the development run with two delay lines was level from about 1,000,000 lines on; shortened here, before those runs, for cost), readings every 200,000.

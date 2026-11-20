@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """PLAN_10.md, task A: the next byte of real prose, by the system of cells2.py (compiled kernel) beside tables of the last k bytes.
-    python3 prose.py <label> [file=<path>] [arm=relay|comparator|fixed|none] [H=256] [D=10] [eta1=1/4] [passes=8] [seed=1]
+    python3 prose.py <label> [file=<path>] [arm=relay|comparator|fixed|none] [H=256] [D=10] [eta1=1/4] [passes=8] [seed=1] [rscale=1]
     python3 prose.py tables [file=<path>]
 The first nine tenths of the text are the stream, read `passes` times; the last tenth is never read and is what the score is taken on."""
 import json, os, re, sys, time
@@ -60,6 +60,7 @@ def run(kw):
     else:
         s = cells2.Sys(int(kw.get("seed", 1)), H=H, eta1=0.0 if arm == "fixed" else eta1, eta2=eta2, lam=lam); s.fast = int(kw.get("fast", 3)); s.hist = [pad] * D
         if arm == "comparator": s.R[:] = 0.0             # return strengths that start at nothing equal the forward strengths from then on
+        s.R *= float(kw.get("rscale", 1))               # the size of the return strengths at birth (1: as in the earlier plans)
         xs = train[:-1]; ys = train[1:]
         for p in range(passes):
             s.bx = xs; s.by = ys; s.flush()

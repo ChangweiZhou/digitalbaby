@@ -32,6 +32,8 @@ if __name__ == "__main__":
         for cap in ("1", "0"): cases.append((cells2.run, C, f"cells2 clip={c} cap={cap}, active-cell kernel", dict(seed="3", plan="add:300,sub:100", every="100", clip=c, cap=cap, fast="2")))
     for extra in (dict(), dict(cross="1", ret="exact"), dict(cross="1", ret="grown")):
         cases.append((hold.run, Hn, "hold d2 chain=2 " + " ".join(f"{k}={v}" for k, v in extra.items()), dict(dict(text="d2", seed="3", H="64", eta1="1", lines="300", every="150", chain="2"), **extra)))
+    cases.append((hold.run, Hn, "hold m1 cross=1 ret=local2 (no chain)", dict(text="m1", seed="3", H="64", eta1="1", lines="300", every="150", gap="8", cross="1", ret="local2")))
+    cases.append((hold.run, Hn, "hold d2 chain=2 cross=1 ret=local2", dict(text="d2", seed="3", H="64", eta1="1", lines="300", every="150", chain="2", cross="1", ret="local2")))
     cases.append((hold.run, Hn, "hold m1 chain=1 cross=1", dict(text="m1", seed="3", H="64", eta1="1", lines="300", every="150", gap="8", chain="1", cross="1")))
     cases.append((cells2.run, C, "cells2 plain, lazy fading (fast=3)", dict(seed="3", plan="add:300", every="300", fast="3")))
     cases.append((cells2.run, C, "cells2 add, sub, add (fast=3)", dict(seed="3", plan="add:200,sub:150,add:50", every="50", reh="8", lam2="0", fast="3")))

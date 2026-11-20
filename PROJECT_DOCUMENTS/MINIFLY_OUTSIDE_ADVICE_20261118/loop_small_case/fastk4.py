@@ -20,7 +20,7 @@ def hold_run(s):
     if not len(xs): return
     n = HNet4(); H, K = s.Bc.shape; S = s.W2.shape[0]; n.H, n.S, n.K, n.cross, n.right, n.C, n.NI = H, S, K, int(bool(s.cross)), 0, s.C, s.Ac.shape[1]
     assert s.Ac.shape == (H, S * (1 + s.C)) and s.C <= 15
-    n.retmode = {"exact": 0, "sign": 1, "learned": 2, "grown": 2, "local": 3}[s.ret] if s.cross else 0
+    n.retmode = {"exact": 0, "sign": 1, "learned": 2, "grown": 2, "local": 3, "local2": 4}[s.ret] if s.cross else 0
     n.eta1, n.eta2, n.lam, n.lamB, n.qs = s.eta1, s.eta2, s.lam, s.lamB, s.qs
     assert s.idx.dtype == np.int64 and s.idx.flags.c_contiguous; n.idx = s.idx.ctypes.data_as(PI); prev = np.asarray(s.prev if s.C else [0], np.int64); n.prev = prev.ctypes.data_as(PI)
     for k in "Ac Az Bc Bz cc cz R W2 b2 h Ecx Ezx Ecr Ezr Ecb Ezb".split(): setattr(n, k, pd(getattr(s, k)))

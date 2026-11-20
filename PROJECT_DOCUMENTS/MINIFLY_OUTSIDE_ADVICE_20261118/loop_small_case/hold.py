@@ -11,6 +11,9 @@ PLAN_6.md: [cross=1] a cell that reads another passes on to it what it received,
     ret=local: the return strength is kept by the cell that is read. Every reader sends the same two numbers to all the cells it reads (what it received
       times each of its two sensitivities); the cell read weighs them by its return strengths, which start at nothing and change by those numbers
       times its own output one byte earlier. Nothing of the reader's strengths or traces is used.
+    ret=local2: as local, and every reader also sends its gate and its two sensitivities at every byte, the same to all the cells it reads; the cell
+      read keeps from them, and from its own earlier outputs, a trace for each reader (it equals the reader's own trace of that connection), and its
+      return strengths change by what the reader received times that trace. No value differs from one cell read to another.
 PLAN_7.md: text=g1|m1 [gap=4]: single-digit lines a+<0 to gap letters>b=c; g1: c = a + b; m1: c = (a + b) mod 10. Scored on the sums shown at each length of gap.
 """
 import json, os, sys, time
@@ -42,9 +45,9 @@ class Hold:
         s.Ecx = np.zeros((H, NI)); s.Ezx = np.zeros((H, NI)); s.Ecr = np.zeros((H, K)); s.Ezr = np.zeros((H, K)); s.Ecb = np.zeros(H); s.Ezb = np.zeros(H)
         s.fast = 0; s.bx = []; s.by = []; s.right_acc = 0
         s.ret = ret; s.qs = 1 / np.sqrt(3 * K)                                                            # ret=sign: the size of every return strength (the birth strengths' root mean square)
-        s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown", "local"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
+        s.cross, s.learned = cross, bool(cross) and ret in ("learned", "grown", "local", "local2"); s.lamB = (1e-5 if ret == "learned" and cross else 0.0) if lamB is None else lamB
         if s.learned: g3 = np.random.default_rng([seed, 20261123]); s.Qc = g3.uniform(-1, 1, (H, K)) / np.sqrt(K); s.Qz = g3.uniform(-1, 1, (H, K)) / np.sqrt(K)
-        if s.learned and ret in ("grown", "local"): s.Qc = np.zeros((H, K)); s.Qz = np.zeros((H, K))      # a return strength starts at nothing and receives the forward strength's changes
+        if s.learned and ret in ("grown", "local", "local2"): s.Qc = np.zeros((H, K)); s.Qz = np.zeros((H, K))      # a return strength starts at nothing and receives the forward strength's changes
     def cols(s, x, prev): return [x] + [S * (d + 1) + prev[d] for d in range(s.C)] if s.C else x
     def step(s, h, x):
         """x: the line of the present byte, or with a chain the list of the active lines."""
@@ -68,9 +71,11 @@ class Hold:
         a = s.W2 @ h + s.b2; ok = int(a.argmax()) == y; m = -a; m[y] += 1; g = s.eta2 / (h @ h + 1)
         if s.eta1:
             r = s.eta1 * (s.R @ m); rc = r[:, None]; Dl = [rc * s.Ecx, rc * s.Ecr, r * s.Ecb, rc * s.Ezx, rc * s.Ezr, r * s.Ezb]
+            D1, D4 = Dl[1], Dl[4]
             if X is not None: Dl = [d + e for d, e in zip(Dl, X)]
             s.Ac += Dl[0]; s.Bc += Dl[1]; s.cc += Dl[2]; s.Az += Dl[3]; s.Bz += Dl[4]; s.cz += Dl[5]
             if s.ret == "local": s.Qc += (r * kc)[:, None] * pre; s.Qz += (r * kz)[:, None] * pre         # at the cell read: what the reader sent out times that cell's own earlier output
+            elif s.ret == "local2": s.Qc += D1; s.Qz += D4                                              # at the cell read: what the reader received times a trace kept there (see the heading)
             elif s.learned: s.Qc += Dl[1]; s.Qz += Dl[4]
             if s.learned: s.Qc *= 1 - s.lamB; s.Qz *= 1 - s.lamB
             if s.lamB: s.Bc *= 1 - s.lamB; s.Bz *= 1 - s.lamB
@@ -78,7 +83,7 @@ class Hold:
         return ok
     def flush(s):
         if not len(s.bx): return
-        if s.C: import fastk4; fastk4.hold_run(s)
+        if s.C or s.ret == "local2": import fastk4; fastk4.hold_run(s)
         else: import fastk; fastk.hold_run(s)
     def line(s, L):
         if s.fast:

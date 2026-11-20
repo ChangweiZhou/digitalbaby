@@ -45,7 +45,7 @@ def run(kw):
     s = hold.Hold(seed, int(kw.get("H", 256)), int(kw.get("K", 16)), float(eval(kw.get("eta1", "1"))), cross=int(kw.get("cross", 0)), ret=kw.get("ret", "exact"), chain=int(kw.get("chain", 2)))
     s.fast = int(kw.get("fast", 1)); out = dict(label=kw["label"], args=kw, rows=[]); n = 0
     for it in range(lines):
-        a, b = shown[rng.integers(len(shown))]; L, _ = sentence(a, b, int(rng.integers(2)), between(rng, tx, int(rng.integers(5)))); s.right_acc += s.line(L); n += len(L) - 1
+        a, b = shown[rng.integers(len(shown))]; L, _ = sentence(a, b, int(rng.integers(2)), between(rng, tx, int(rng.integers(5)))); r = s.line(L); s.right_acc += r; n += len(L) - 1
         if (it + 1) % every == 0:
             s.flush(); out["rows"].append(dict(lines=it + 1, bytes_right=100 * s.right_acc / n, **{k: score(s, v) for k, v in tests.items()})); s.right_acc = 0; n = 0
     out["cpu"] = round(time.process_time() - t0, 1); os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"agree_{kw['label']}.json"), "w")); return out

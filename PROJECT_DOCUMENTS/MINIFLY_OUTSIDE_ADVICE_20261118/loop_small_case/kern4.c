@@ -5,7 +5,7 @@
 #include <string.h>
 
 typedef struct {
-    int64_t H, S, K, cross, retmode, right, C, NI;      /* C: delay lines before the present byte; NI = S (1 + C). retmode: 0 exact, 1 sign, 2 learned or grown (kept at the reader), 3 local (kept at the cell read) */
+    int64_t H, S, K, cross, retmode, right, C, NI;      /* C: delay lines before the present byte; NI = S (1 + C). retmode: 0 exact, 1 sign, 2 learned or grown (kept at the reader), 3 local, 4 local2 (kept at the cell read) */
     double eta1, eta2, lam, lamB, qs;
     int64_t *idx, *prev;
     double *Ac, *Az, *Bc, *Bz, *cc, *cz, *R, *W2, *b2, *h, *Ecx, *Ezx, *Ecr, *Ezr, *Ecb, *Ezb, *Qc, *Qz;
@@ -71,9 +71,9 @@ void hold4_steps(HNet4 *n, int64_t nsteps, const int32_t *xs, const int32_t *ys)
                     double *qc = n->Qc + j * K, *qz = n->Qz + j * K;
                     for (int64_t s = 0; s < K; s++) {
                         const double eo = fc[s], en = zj * eo + kcj * p[s], dl = rj * en + oj * eo; fc[s] = en; bc[s] += dl;
-                        qc[s] = (qc[s] + (rm == 3 ? rj * kcj * p[s] : dl)) * (1.0 - lamB);
+                        qc[s] = (qc[s] + (rm == 3 ? rj * kcj * p[s] : rm == 4 ? rj * en : dl)) * (1.0 - lamB);
                         const double eo2 = fz[s], en2 = zj * eo2 + kzj * p[s], dl2 = rj * en2 + oj * eo2; fz[s] = en2; bz[s] += dl2;
-                        qz[s] = (qz[s] + (rm == 3 ? rj * kzj * p[s] : dl2)) * (1.0 - lamB);
+                        qz[s] = (qz[s] + (rm == 3 ? rj * kzj * p[s] : rm == 4 ? rj * en2 : dl2)) * (1.0 - lamB);
                     }
                 } else for (int64_t s = 0; s < K; s++) {
                     const double eo = fc[s], en = zj * eo + kcj * p[s]; fc[s] = en; bc[s] += rj * en + oj * eo;
