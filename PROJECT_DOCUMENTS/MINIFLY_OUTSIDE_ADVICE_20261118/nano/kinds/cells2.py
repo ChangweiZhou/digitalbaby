@@ -171,7 +171,7 @@ def run(kw):
     if s.clip and s.stat[0]: out["active_cells_a_byte"] = s.stat[1] / s.stat[0]; out["changing_cells_a_byte"] = s.stat[2] / s.stat[0]
     r0 = [r for r in out["rows"] if r["phase"] == 0 and r["lines"] % every == 0]; out["last3_add_phase0"] = float(np.mean([r["add"] for r in r0[-3:]])) if r0 else None
     run.last = s
-    if s.sig: out["sig_mean"] = s.sM / max(s.sn, 1)
+    if s.sig: out["sig_mean"] = s.sM / max(s.sn, 1); out["sig_ratio_end"] = s.sa / (s.sS / max(s.sn, 1)); out["sig_size_mean"] = s.sS / max(s.sn, 1)
     if kw.get("nowrite"): return out
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"c2_{kw['label']}.json"), "w")); return out
 

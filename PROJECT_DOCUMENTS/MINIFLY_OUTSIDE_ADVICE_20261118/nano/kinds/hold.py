@@ -148,7 +148,7 @@ def run(kw, cls=None):
             if G and tx == "g2": out["rows"][-1]["never_by_gap"] = {g: s.score(tx, held, g)[0] for g in gaps}; out["rows"][-1]["never"] = float(np.mean(list(out["rows"][-1]["never_by_gap"].values())))
     out["cpu"] = round(time.process_time() - t0); out["last3_shown"] = float(np.mean([r["shown"] for r in out["rows"][-3:]])); out["last3_never"] = float(np.mean([r["never"] for r in out["rows"][-3:]]))
     s.flush(); run.last = s
-    if s.sig: out["sig_mean"] = s.sM / max(s.sn, 1)
+    if s.sig: out["sig_mean"] = s.sM / max(s.sn, 1); out["sig_ratio_end"] = s.sa / (s.sS / max(s.sn, 1)); out["sig_size_mean"] = s.sS / max(s.sn, 1)
     if kw.get("nowrite"): return out
     os.makedirs(os.path.join(HERE, "res"), exist_ok=True); json.dump(out, open(os.path.join(HERE, "res", f"hold_{kw['label']}.json"), "w"))
     if kw.get("save"): np.savez_compressed(os.path.join(HERE, "res", f"hold_{kw['label']}.npz"), **{k: getattr(s, k) for k in ("idx", "Ac", "Az", "Bc", "Bz", "cc", "cz", "W2", "b2", "R", "h")})
