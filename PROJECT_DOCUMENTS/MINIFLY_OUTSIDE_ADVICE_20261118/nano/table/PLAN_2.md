@@ -38,3 +38,23 @@ The answering cell sums the strengths of all active cells (the table's seven and
 ## 4. Size, cost, what is not run
 
 The number of cells of each kind is reported; each has 65 strengths. A run of one arm with its choice of settings takes a few CPU-minutes. Not run here: ends of words found by the cells; cells taught by the relay beside these (with the loop line); the counting form (the added kinds do not form one chain from shorter to longer, which its discount needs).
+
+## 5. Outcome (entered 20 November after the runs; `res/words_arm*.json`)
+
+Loss on the last tenth, nats a byte; share of next bytes named right; settings as chosen on the last twentieth of the stream.
+
+| Arm | Loss | Named right | Cells added (A; B; C) | eta; readings; cell made at occurrence |
+|---|---|---|---|---|
+| 0, the table's cells | 1.5317 | 55.20% | none (459,129 cells) | 0.5; 3; first |
+| 1, with A | 1.5234 | 55.38% | 58,545 | 0.5; 2; first |
+| 2, with A and B | 1.5274 | 55.67% | 58,545; 454,444 | 0.25; 4; first |
+| 3, with A, B and C | **1.5237** | 55.67% | 28,111; 93,932; 62,314 | 0.25; 4; second |
+| 4, the clock without the words | 1.5547 | 54.90% | 50,458; 118,990; 29,789 | 0.25; 4; second |
+
+**The hypothesis is refuted as written**: arm 3 is 0.008 nats below arm 0, and 0.02 was asked. X1 failed. X2 failed. X3 held (arm 4 gains nothing; it loses 0.023). X4 failed. A run with its choice of settings took 31 to 72 CPU-seconds.
+
+Readings (mine).
+1. **Cells that step once a word help little in this form**: 0.008 nats and half a point of bytes named right. Most of that comes from the word so far alone (arm 1).
+2. **The same cells on a clock that is blind to the words make the system worse** (0.023 nats). So the words matter (arm 3 is 0.031 below arm 4), and added cells that have seldom been active do harm: the answering cell sums the strengths of all active cells, and a cell that has been active twice speaks as loudly as one that has been active a thousand times.
+3. For arms 2 to 4 the choice fell on the edge of what the plan allowed (four readings, the loss still falling by 0.008 a reading). I leave the plan as written and do not extend the readings: the second reading says the form is the limit, and the next plan changes the form.
+4. **What follows.** In `PLAN_1.md` cells that count and a fixed discount did better than cells taught by the mismatch (1.5225 against 1.5317), but the discount needs the cells to form one chain from shorter to longer. The next plan keeps the counting inside each cell and lets the answering cell learn, from the mismatch, how far to trust a cell by its kind and by how much it has seen (`PLAN_3.md`).
