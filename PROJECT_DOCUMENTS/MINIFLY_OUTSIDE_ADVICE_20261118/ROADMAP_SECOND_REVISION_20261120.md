@@ -66,12 +66,16 @@ Loss on the last tenth of the text, nats a byte, with nothing changing during it
 | The same with runs of eight bytes | 1.4940 | `PLAN_4.md` |
 | Word cells and companions whose counts fade over 10,000 bytes | 1.4892 | `PLAN_6.md` |
 | Starts of segments found by the system itself (no ends given) | 1.5019 | `nano/ends` |
+| T2 with the relay system as one more sender (five seeds) | 1.4859 | `PLAN_7.md` |
+| T2 with cells that time how long ago each byte value last came, born with no trust | 1.4873 | `PLAN_8.md` |
+| T2 with a pool of cells keyed on two or three of the last eight bytes | 1.4886 | `PLAN_9.md` |
+| **All of these kinds together** (word ends given; one reading) | **1.4707** | `PLAN_10.md` |
 
 Sizes and cost, so that the figures are not read alone: the small GPT has about 0.8 million numbers (my count from its shape: four layers, 128 wide) and its 10,000 steps read the stream 7.65 times; nanoGPT's full network has about 10.7 million. The counting system with the word cells has 1.8 million cells holding 2.4 million counts above zero, and 400 trusts; it reads the stream once, in about 8 CPU-seconds.
 
-By a different measure, the system going on changing through the last tenth (each byte named before it is counted): 1.386 with the word cells, 1.364 with the fading companions as well. No reference taught by back-propagation has yet been measured that way; it was asked of the reference line.
+By a different measure, the system going on changing through the last tenth (each byte named before it is counted): 1.386 with the word cells, 1.364 with the fading companions as well, 1.347 with all the kinds together. No reference taught by back-propagation has yet been measured that way; it was asked of the reference line.
 
-Readings (mine). (1) On this test a system of cells that count, with an answering cell that learns whom to trust, is at 1.49 to 1.50, below the small GPT after 10,000 steps and the GRU measured here, and 0.02 to 0.03 above the level at which nanoGPT's full network is described. (2) The cells taught by the relay are at 1.77 and are not what carries this result; whether they add anything to the cells that count is the open step L-TR. (3) The reference line found that the last tenth is mostly one play that begins shortly before the cut; much of what separates systems on this test is how well they take in the most recent text, which is also what the fading companions and the going-on measure show. (4) What cells that count cannot do is answer what they were not shown: on sums that is the whole task. The lines `nano/sparse` and `nano/replay` are there to join the two.
+Readings (mine). (1) On this test a system of cells that count, with an answering cell that learns whom to trust, is at 1.49 to 1.50 with one added kind and at 1.471 with all of them, below the small GPT after 10,000 steps and the GRU measured here, and at the level at which nanoGPT's full network is described (the reference line's own run of that network is not yet in). (2) The cells taught by the relay are at 1.77 and are not what carries this result; whether they add anything to the cells that count is the open step L-TR. (3) The reference line found that the last tenth is mostly one play that begins shortly before the cut; much of what separates systems on this test is how well they take in the most recent text, which is also what the fading companions and the going-on measure show. (4) What cells that count cannot do is answer what they were not shown: on sums that is the whole task. The lines `nano/sparse` and `nano/replay` are there to join the two.
 
 ## 4. The order I propose
 
