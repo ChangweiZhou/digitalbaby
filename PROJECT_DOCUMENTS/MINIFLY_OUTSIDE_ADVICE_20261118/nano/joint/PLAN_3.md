@@ -51,3 +51,11 @@ Check: about a minute. 5 development and 65 reported compiled runs of at most 20
 Not run: other own quantities (the running size of the relayed sum; the cell's own change); other T; a cell that returns; dropping out together with the withdrawal of single connections; cells born later.
 
 ---
+
+## 8. Entered 20 November after the check and the development runs, before any run on the reported seeds
+
+The check (`check_joint3_output.txt`): passed; compiled against numpy 1e-14 to 4e-13 with cells dropping out, the same sets of living cells, dropped cells at zero; nobody dropping out is form 1 of `joint.py` at 256 and at 100 cells.
+
+Development seed 1, never-shown sums (mean of the last three readings) and cells left: N 81.5, 256. D at c = 0.09: 81.1, 219. c = 0.13: 81.3, 188. c = 0.20: 77.1, 129. c = 0.30: 72.3, 62. Nearly all the dropping out is at the first moment (25, 61, 126, 193 cells; 12, 7, 1, 1 later).
+
+**Headline by the rule of section 4: c = 0.13.** All four values go to the reported seeds as planned.
