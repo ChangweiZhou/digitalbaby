@@ -102,3 +102,31 @@ My reading: on two tasks the rule is a better use of the replayed line than draw
 - N2 (0.85): in (a), with no replay under 5% is kept by the new score as by the old.
 - N3 (0.6): in (a), M less R on addition has the same sign by the new score as by the old (above).
 - N4 (0.6): addition at the end is lower scored after a line of the second task than after an addition line, in both lives under arm R.
+
+## 10. Outcome of the addition of section 9 (entered 20 November)
+
+Tables: `report_past.txt` (made by `report_past.py` from `res/m_z_*.json`). The 20 runs of arms R and M give their earlier end figures again; the lives are unchanged. Five reported seeds; medians. "Empty past" is the score used in every earlier section and plan; "after a read line" is the new one.
+
+| at the end of the life | addition, empty past | addition, after a read addition line | after a line of the second task | second task (clean), empty past | second task, after a read line of it |
+|---|---|---|---|---|---|
+| (a) P, no replay | 1.8 | 1.8 | 1.8 | 86.0 | 92.7 |
+| (a) R | 77.2 | **93.8** (95.0, 93.8, 94.4, 91.7, 92.6) | 93.9 | 78.9 | **88.0** |
+| (a) M | 82.6 | 91.6 | 91.0 | 83.3 | 90.7 |
+| (b) R | 65.6 | **93.4** (95.8, 94.3, 93.4, 91.6, 91.5) | 93.5 | 68.0 | **88.0** |
+| (b) M | 73.6 | 91.4 | 91.2 | 74.3 | 90.2 |
+
+At the end of the addition phase, addition after a read addition line: P 95.3 (the coordinating session reports 95.5), R 97.2, M 96.6; empty past 84.8, 86.8, 90.4.
+
+**What the new score changes, in my own earlier readings. I state each plainly; the finished predictions stay scored as written.**
+
+1. *The level replay keeps.* Scored as the system reads, replay keeps **93.8% of never-shown addition** through 200,000 lines of subtraction (97.2 after the addition phase), not 77.2; with no replay 1.8 by either score. The loss through the second task is 3.4 points, not 9.6.
+2. *The harsh change is not dearer* (`PLAN_3.md`, section 8, item 1, and `REPORT.md` section 3, item 2). After a read line replay keeps 93.4% through the change to `aa=bb+ccc` and the second task stands at 88.0: the same as in life (a) (93.8 and 88.0). The 12 points by which the harsh change looked worse (65.6 against 77.2) belong to the empty-past score: under it a held-out line begins with line ends in the delays, a past the system met only on the first line of its life, and after the second text that never-met past is answered worse. I withdraw the reading that the relay system "has to hold apart more" on the harsh change.
+3. *The rule of this plan does not gain on both tasks* (section 8). After a read line, M less R on addition is -2.1 in (a) (-5.3, -2.2, -2.0, +1.6, -2.1; four of five below) and -2.0 in (b) (four of five below); on the second task +2.5 (five of five above) and +0.9. So on two tasks the rule trades about two points of the old task for one to two and a half of the new: it moves the system along the same trade as the ratio does, in the direction its choice of lines shows (towards the task being taught). The gain "on both tasks" of section 8 holds only for a line read with an empty past, where M is much better (90.4 against 86.8 already after the addition phase). **Section 8's sentence "the rule costs nothing and gains" is true of the empty-past score and not of the score as the system reads; the coordinating session's prediction (a), "within 3 points on both", holds on the new score** (-2.1 and +2.5), and its (b), a gain of 5 on the lower task, does not (the lower task is the second, +0.9).
+4. *Keeping costs the second task about 5 points* (92.7 with no replay, 88.0 with), where the empty-past score said about 7.
+5. *Addition is answered equally after an addition line and after a line of the second task* (93.8 and 93.9; 93.4 and 93.5): what the line before is does not matter, only that there is one.
+
+**Predictions.** N1 held (93.8). N2 held (1.8). N3 failed (the sign turns: -2.1). N4 failed (no difference).
+
+**A weakness of the check, mine:** the case "after a line of line ends the new score is the old" was made on a system 900 lines old and compares 0.00 with 0.00; the other case (the delays are those of the stream) is the one that carries. The figure for P after the addition phase, 95.3, beside the coordinating session's 95.5 from its own program, is the working check.
+
+**NOT RUN** (budget spent, as section 9 says): the fifteen seeds; the controls O and Z, the ratio 1/2, the dreams and the whole system's answer on the new score; `nano/joint` on the new score. Until they are, every figure of `PLAN_1.md` to `PLAN_5.md` and of `nano/joint` is an empty-past figure, and items 2 and 3 above show that differences between arms can change sign or vanish on the new score.

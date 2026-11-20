@@ -115,7 +115,28 @@ void find_classes(int m, int nx, int nz, int S, const int32_t *xc, const int32_t
     for (int x = 0; x < nx; x++) cls[x] = -1;
     for (int o = 0; o < nx; o++) { const int x = xord[o]; delta_all(&w, x, cls); int c = best(&w); if (c < 0) LOWEST(c) cls[x] = c; size[c]++; }
     for (int sw = 0; sw < sweeps; sw++) SWEEP
-    if (dissolve) {       /* each class of two or more is dissolved once and its members seated again one by one; kept only if J rises; then one more sweep */
+    if (dissolve == 2) {  /* PLAN_8.md: a class is split around its worst-foretold member: that member founds a class, every other member chooses between the two; kept only if J rises; up to four times a class; then one more sweep */
+        int32_t *save = malloc(nx * sizeof(int32_t)), *ssize = malloc(nx * sizeof(int32_t)), *mem = malloc(nx * sizeof(int32_t)), *labs = malloc(nx * sizeof(int32_t)); int nl = 0;
+        double *xn = calloc(nx, sizeof(double)); for (int i = 0; i < m; i++) xn[xc[i]] += n[i];
+        for (int c = 0; c < nx; c++) if (size[c] >= 3) labs[nl++] = c;
+        for (int u = 0; u < nl; u++) { const int c0 = labs[u];
+            for (int round = 0; round < 4 && size[c0] >= 3; round++) {
+                const double Jb = j_total(m, nx, nz, S, xc, zptr, zcell, cptr, sym, cnt, n, e, cls); int nm = 0, wm = -1; double worst = 1e300;
+                memcpy(save, cls, nx * sizeof(int32_t)); memcpy(ssize, size, nx * sizeof(int32_t));
+                for (int o = 0; o < nx; o++) if (cls[xord[o]] == c0) mem[nm++] = xord[o];
+                for (int i = 0; i < nm; i++) { const int x = mem[i]; cls[x] = -1; delta_all(&w, x, cls); double d = 0; for (int q = 0; q < w.ntd; q++) { if (w.td[q] == c0) d = w.dl[c0]; w.ind[w.td[q]] = 0; }
+                    cls[x] = c0; d /= xn[x]; if (d < worst - 1e-9) { worst = d; wm = x; } }
+                int L; size[c0]--; LOWEST(L) cls[wm] = L; size[L] = 1;
+                for (int i = 0; i < nm; i++) { const int x = mem[i]; if (x == wm) continue; size[c0]--; cls[x] = -1; delta_all(&w, x, cls); double d0 = 0, dL = 0;
+                    for (int q = 0; q < w.ntd; q++) { if (w.td[q] == c0) d0 = w.dl[c0]; if (w.td[q] == L) dL = w.dl[L]; w.ind[w.td[q]] = 0; }
+                    const int c = dL > d0 + 1e-9 ? L : c0; cls[x] = c; size[c]++; }
+                if (j_total(m, nx, nz, S, xc, zptr, zcell, cptr, sym, cnt, n, e, cls) < Jb + 1e-9) { memcpy(cls, save, nx * sizeof(int32_t)); memcpy(size, ssize, nx * sizeof(int32_t)); break; }
+            }
+        }
+        SWEEP
+        free(save); free(ssize); free(mem); free(labs); free(xn);
+    }
+    if (dissolve == 1) {  /* each class of two or more is dissolved once and its members seated again one by one; kept only if J rises; then one more sweep */
         int32_t *save = malloc(nx * sizeof(int32_t)), *ssize = malloc(nx * sizeof(int32_t)), *mem = malloc(nx * sizeof(int32_t)), *labs = malloc(nx * sizeof(int32_t)); int nl = 0;
         for (int c = 0; c < nx; c++) if (size[c] >= 2) labs[nl++] = c;
         for (int u = 0; u < nl; u++) { const int c0 = labs[u]; if (size[c0] < 2) continue;
@@ -196,7 +217,25 @@ def find_py(cells, nx, xord, S, e, sweeps, dissolve=0):
         if c < 0: c = lowest()
         cls[x] = c; size[c] += 1
     for _ in range(sweeps): sweep()
-    if dissolve:
+    if dissolve == 2:
+        xn = [0.0] * nx
+        for x, z, c in cells: xn[x] += sum(c.values())
+        def gain(x, c):                                   # J with x in class c less J with x alone
+            old = cls[x]; cls[x] = nx + x; base = j_py(cells, cls, S, e); cls[x] = c; d = j_py(cells, cls, S, e) - base; cls[x] = old; return d
+        for c0 in [c for c in range(nx) if size[c] >= 3]:
+            for _ in range(4):
+                if size[c0] < 3: break
+                Jb = j_py(cells, cls, S, e); save, ssize = cls[:], size[:]; mem = [x for x in xord if cls[x] == c0]; w, worst = -1, 1e300
+                for x in mem:
+                    d = gain(x, c0) / xn[x]
+                    if d < worst - 1e-9: worst, w = d, x
+                size[c0] -= 1; L = lowest(); cls[w] = L; size[L] = 1
+                for x in mem:
+                    if x == w: continue
+                    size[c0] -= 1; d0 = gain(x, c0) if size[c0] > 0 else 0.0; dL = gain(x, L); c = L if dL > d0 + 1e-9 else c0; cls[x] = c; size[c] += 1
+                if j_py(cells, cls, S, e) < Jb + 1e-9: cls[:] = save; size[:] = ssize; break
+        sweep()
+    if dissolve == 1:
         for c0 in [c for c in range(nx) if size[c] >= 2]:
             if size[c0] < 2: continue
             Jb = j_py(cells, cls, S, e); save, ssize = cls[:], size[:]; mem = [x for x in xord if cls[x] == c0]
@@ -470,13 +509,13 @@ def check():
     kw = dict(seed="1", lines="300", P="4", mode="none"); _, s = run_sums_small(kw); s.eJ = 0.02; s.sweeps = 2
     def canon(c):
         first = {}; return [first.setdefault(v, i) for i, v in enumerate(c)]
-    for k, X, dis in ((s.kinds.index((3, 4, 6, 7)), (3, 6), 0), (s.kinds.index((1, 2, 3)), (2,), 0), (s.kinds.index((2, 4, 5)), (2, 5), 0), (s.kinds.index((3, 4, 6, 7)), (3, 6), 1), (s.kinds.index((2, 4, 5)), (2, 5), 1), (s.kinds.index((1, 2, 3)), (1, 3), 1)):
+    for k, X, dis in ((s.kinds.index((3, 4, 6, 7)), (3, 6), 0), (s.kinds.index((1, 2, 3)), (2,), 0), (s.kinds.index((2, 4, 5)), (2, 5), 0), (s.kinds.index((3, 4, 6, 7)), (3, 6), 1), (s.kinds.index((2, 4, 5)), (2, 5), 1), (s.kinds.index((1, 2, 3)), (1, 3), 1), (s.kinds.index((3, 4, 6, 7)), (3, 6), 2), (s.kinds.index((2, 4, 5)), (2, 5), 2), (s.kinds.index((1, 2, 3)), (1, 3), 2)):
         s.dissolve = dis; r = s.search(k, X); ids_, cod = s.r_cells(k); xk, zk = s.split(k, X, cod); ux, xc = np.unique(xk, return_inverse=True)
         cells = [(int(xc[i]), int(zk[i]), {int(v): float(s.C[ids_[i], v]) for v in np.flatnonzero(s.C[ids_[i]])}) for i in range(len(cod))]
         xn = np.bincount(xc, weights=s.N[ids_], minlength=len(ux)); xord = [int(q) for q in np.argsort(-xn, kind="stable")]
         ref = find_py(cells, len(ux), xord, s.S, s.eJ, s.sweeps, dis); Jr = j_py(cells, ref, s.S, s.eJ); same = canon(list(r["cls"])) == canon(ref); dj = abs(Jr - r["J"])
         good = same and dj < 1e-6 * max(1, abs(Jr)); ok &= good
-        print(f"search for classes{', with dissolving' if dis else ''}, kind {s.kinds[k]}, X = {X}: {len(ux)} X-cells, {len(cod)} R-cells, {r['classes']} classes of two or more; compiled against plain Python: the same grouping {same}, J differs by {dj:.1e}", "PASSED" if good else "FAILED")
+        print(f"search for classes{('', ', with dissolving', ', with splitting')[dis]}, kind {s.kinds[k]}, X = {X}: {len(ux)} X-cells, {len(cod)} R-cells, {r['classes']} classes of two or more; compiled against plain Python: the same grouping {same}, J differs by {dj:.1e}", "PASSED" if good else "FAILED")
     # 3. a class cell holds the sum of its members' R-cells, after a finding and after further reading
     out, s = run_sums_small(dict(seed="1", lines="3000", P="8", rep="1")); worst = 0.0; nchk = 0
     for sl in s.slots:

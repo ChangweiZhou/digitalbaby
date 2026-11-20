@@ -86,3 +86,48 @@ Readings (mine).
 2. **The level is 82 to 83, not 91.** What stands at the end of the long life is 8 to 9 points under the short life's figure. The tens digit carries all of it (82.6 to 84.4; the other places 98 to 100), and the tens guess is right less often (86.0, then 81.6) than in the short life (88.6).
 3. **Subtraction is learned beside it**: 87.5 on lines never written, about the short life's 89.4.
 4. These are the first figures for the cap on five seeds; the other line's cap figures as reported to me (82 and 81 at 400,000 on two seeds) are close to mine (82.6), which I note and do not call a repeat. N = 16 was given, not chosen; no other N was run.
+
+## 7. Outcome of arm 2, without the cap: four seeds of five (entered 20 November; `res/long_cap0_*.json`)
+
+The runs of this arm were started twice. The first start was stopped by this environment's limit of 30 minutes on a background job, with nothing saved. During the second, I started the runs of section 8 beside it, the memory ran out, and the system killed the run of seed 545353: **seed 545353 of this arm is NOT RUN**; that is my fault and not a property of the system. Four seeds (73129, 93683, 116089, 406364) follow; a median of four is not the plan's median of five.
+
+| | 50k | 100k | 150k | 200k | 250k | 300k | 350k | 400k | sub 50k | sub 100k | sub 150k | sub 200k | subtraction, clean, end |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| median of four | 88.9 | 82.1 | 75.0 | 71.4 | 63.6 | 64.9 | 65.6 | **62.8** | 87.8 | 84.9 | 84.1 | **80.7** | 73.4 |
+| 73129 | 87.6 | 79.4 | 74.2 | 71.2 | 63.0 | 64.4 | 65.6 | 63.4 | 87.6 | 84.6 | 84.4 | 82.8 | 83.2 |
+| 93683 | 89.0 | 80.6 | 74.6 | 71.6 | 60.8 | 63.6 | 62.4 | 62.2 | 86.8 | 85.2 | 84.6 | 80.4 | 71.9 |
+| 116089 | 90.0 | 83.6 | 75.4 | 70.0 | 64.2 | 65.4 | 65.6 | 64.4 | 89.6 | 85.6 | 83.0 | 79.6 | 68.8 |
+| 406364 | 88.8 | 86.0 | 78.2 | 74.4 | 65.4 | 67.0 | 67.4 | 61.6 | 88.0 | 84.6 | 83.8 | 81.0 | 75.0 |
+
+At 400,000 lines the tens digit is right on 61.6 to 64.4% and the tens guess at the first answer byte on 63 to 68%; the other places stay at 97 to 100. Size at the end: 3.31 million cells, 42.4 million counts above zero, 940 CPU-seconds.
+
+L8 (under 70 at 400,000) held on four seeds of four. L9 (the cap at least 10 points above) held: 82.6 against 62.8.
+
+Readings (mine).
+1. **Without the cap the look-ahead system falls with reading as the other line reported** (62 to 64 at 400,000 lines on four seeds; 63 and 62 were reported to me on two), and the cap holds it at 82 to 83.
+2. **Something I did not predict: without the cap, reading subtraction brings addition back.** Addition stands at 62.8 at the end of its own phase and at 87.8 after the first 50,000 lines of subtraction, with no line of addition shown, on all four seeds (from 61.6 to 64.4 up to 86.8 to 89.6); it then wears to 80.7. No count of addition changed in those 50,000 lines beyond cells the two tasks share, so the fall with long reading is not in what the cells have counted of addition: it is in how the answering cell weighs them, and the second task moves those shared trusts. I state this as a finding of four runs and not as an explanation; it was not tested further. It also means that "kept through the second task" has no plain meaning for this arm (128% of its level).
+3. Subtraction on the clean score is lower without the cap (73.4 against 87.5).
+
+## 8. Addition, at the coordinating session's request (20:09 UTC, after arm 1 had run): the score after a read line
+
+The coordinating session reported a fault of the common score (its errata, section 3, on its branch; not read by me, taken from its message): a held-out line is scored with line ends before it, a past the system meets only at the first line of its life. Asked: the same score with a line read standing before the held-out line. `ahead.py` gained `past=1`: before each held-out line stand the ten bytes of a line drawn by chance from the shown pairs of the named operator (at these line counts nearly all of them have been read); mean of five draws; the guesses are formed in the same situation. The predictions of this plan and of `PLAN_1.md` stay scored as written, on the empty past.
+
+**The long lives of this plan were not re-scored: NOT RUN.** Their states were not saved, a re-run is 25 minutes an arm, and the budget did not hold it. What was run is the short life of `PLAN_1.md` again with `past=1` (`res/past_*.json` with look-ahead, `res/pastbase_*.json` without), five reported seeds; the empty-past figures of these runs equal those of `PLAN_1.md` to the digit.
+
+Never-shown additions, own bytes, whole answer, %, each seed; median.
+
+| | empty past | after an addition line | after a subtraction line |
+|---|---|---|---|
+| with look-ahead, 40,000 lines, mean of the last three | 88.0, 91.3, 91.9, 92.7, 91.4; **91.4** | 92.9, 94.7, 95.4, 96.2, 94.7; **94.7** | |
+| with look-ahead, 40,000 lines, last reading | 91.2 | 95.9 | |
+| with look-ahead, after 20,000 lines of subtraction | 82.6, 89.0, 86.8, 89.0, 86.2; **86.8** | 84.0, 92.0, 79.1, 89.1, 83.7; **84.0** | 83.6, 91.8, 78.4, 89.4, 84.1; **84.1** |
+| without, 40,000 lines, mean of the last three | 77.3 | 82.6, 79.9, 79.4, 78.4, 78.6; **79.4** | |
+| without, after 20,000 lines of subtraction | 78.2 | 73.7 | 73.0 |
+
+Subtraction on the clean score at the end of the short life: with look-ahead 89.4 on the empty past, 94.2 after a subtraction line, 94.7 after an addition line; without look-ahead 81.0 after a subtraction line (77.5 empty).
+
+Readings (mine). (1) **Scored in the situation the system lives in, the look-ahead figure at 40,000 lines is 94.7, not 91.4**, and the gain over the same cells without look-ahead is 15 points and not 14. (2) **Keeping looks worse on this score, not better**: after subtraction, addition is 84.0 after a read line against 95.9 before (88% of its level, where the empty past gave 95%); without look-ahead 73.7 against about 79 (93%, where the empty past gave 99%). The empty past flattered keeping, because cells that reach before the line are silent there, and those are among the cells the second task disturbs. Whether a line of addition or of subtraction stands before makes no difference (84.0 and 84.1). (3) The spread over seeds after subtraction is wider on the new score (78 to 92).
+
+## 9. What was not reached
+
+NOT RUN: seed 545353 without the cap; the long lives on the score after a read line (either arm); other values of N; seeds 2001 to 2005; anything on why addition returns during subtraction without the cap.
