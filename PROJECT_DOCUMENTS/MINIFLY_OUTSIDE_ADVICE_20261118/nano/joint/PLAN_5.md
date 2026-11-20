@@ -81,3 +81,9 @@ Never-shown sums, whole answer right, %, mean of the last three readings; connec
 ## 8. The numpy run (entered 20 November)
 
 The numpy program at full length (GE, seed 1) gives the compiled program's readings to the digit: 61.0 (4, 30, 48, 58, 48, 60, 61, 60), 761 connections living.
+
+## 9. A dated addition, asked by the coordinating session, entered 20 November before its runs
+
+Ten further seeds (1001 to 1010; the rule is quoted in `PLAN_1.md`, section 13) for G, E and GE; N on the ten seeds is the F1 run of `joint.py`. Reported: the fifteen together, for the registered difference (E less GE) less (N less G) and for GE less G.
+- V1 (0.7): the registered difference is within 4 points at the median of fifteen seeds.
+- V2 (0.6): GE less G is within 3 points at the median of fifteen seeds.

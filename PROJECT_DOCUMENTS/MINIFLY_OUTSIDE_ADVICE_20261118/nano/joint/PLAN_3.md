@@ -91,3 +91,8 @@ A reason for 2 that I have not tested: a cell's return strengths sum what the an
 **Predictions.** R1 held. R2 held (-0.7). R3 failed (D above B on one seed of five). R4 failed (X below D on one seed of five). R5 failed (H refuted). R6 failed (128 at the median, and nearly all dropping out is at the first moment). R7 held (+1.3).
 
 **Not run:** as section 7; X and B on the development seed; more seeds.
+
+## 10. A dated addition, asked by the coordinating session, entered 20 November before its runs
+
+Ten further seeds (1001 to 1010; the rule is quoted in `PLAN_1.md`, section 13) for the comparison it would settle: D against X at c = 0.13. Reported: the fifteen together.
+- W1 (0.6): D less X is within 2 points at the median of fifteen seeds.

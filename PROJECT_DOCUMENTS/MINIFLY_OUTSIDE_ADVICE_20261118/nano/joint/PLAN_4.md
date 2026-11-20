@@ -103,3 +103,9 @@ Never-shown sums, whole answer right, %, mean of the last three readings; five r
 **Predictions.** S1 held. S2 held (-1.7). S3 held (0.0). S4 failed (1.3). S5 held (-17.7). S6 failed (66.1, 56.5, 71.4 on seed 1). S7 failed (0.8). S8 held (-1.1).
 
 **Not run:** as section 6; a fixed-size rule without fading or with a dead zone about zero mismatch; (ii) at neighbouring steps on the reported seeds; (iv) at other floors on the reported seeds.
+
+## 9. A dated addition, asked by the coordinating session, entered 20 November before its runs
+
+Ten further seeds (1001 to 1010; the rule is quoted in `PLAN_1.md`, section 13) for the two arms within five points of (i) whose difference matters for the reading: A (ii), no division, at 8e-4; and B (iv), the cells' proportional rule, at 1/4. The plain system on the ten seeds is the F1 run of `joint.py`. Reported: the fifteen together.
+- U1 (0.6): A (ii) is below (i) on at least nine seeds of fifteen.
+- U2 (0.55): B (iv) is within 2 points of (i) at the median of the fifteen paired differences.

@@ -1,6 +1,6 @@
 /* PLAN_1.md (line C, step C1): the inner loop of joint.py. A copy of loop_small_case/kern3.c at commit fe397ca (the plain system, with the fading
    of the answering cell's parts A and of the return strengths done exactly as one scale factor, and the strengths laid out by line), with the
-   connection from a cell in between to a branch in three forms:  1: w = A;  2: w = A B;  3: w = sign(A) min(|A|, B);  4: form 2 with the return strength following w (a diagnostic).  B is the sending cell's part,
+   connection from a cell in between to a branch in three forms:  1: w = A;  2: w = A B;  3: w = sign(A) min(|A|, B);  4: form 2 with the return strength following w (a diagnostic);  5: form 2 with the step of a branch set from the product's own change (a diagnostic).  B is the sending cell's part,
    kept at its true value (it does not fade).  Same arithmetic as the numpy program.  Built by fastj.py.                                          */
 #include <math.h>
 #include <stdint.h>
@@ -11,7 +11,7 @@ typedef struct { int64_t H, NL, S, D, form; double eta1, eta2, lam, etaB; double
 int64_t joint_steps(JNet *n, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
     const int64_t H = n->H, NL = n->NL, S = n->S, D = n->D, form = n->form;
     double *restrict W1t = malloc(NL * H * sizeof(double)), *restrict Rt = malloc(S * H * sizeof(double)), *restrict u = malloc(H * sizeof(double));
-    double *restrict h = malloc(H * sizeof(double)), *restrict r = malloc(H * sizeof(double)), *restrict dv = malloc(H * sizeof(double)), m[64];
+    double *restrict h = malloc(H * sizeof(double)), *restrict r = malloc(H * sizeof(double)), *restrict dv = malloc(H * sizeof(double)), m[64], nz[64];
     double *restrict A = n->A, *restrict B = n->B, *restrict b1 = n->b1;
     for (int64_t j = 0; j < H; j++) for (int64_t l = 0; l < NL; l++) W1t[l * H + j] = n->W1[j * NL + l];
     for (int64_t j = 0; j < H; j++) for (int64_t v = 0; v < S; v++) Rt[v * H + j] = n->R[j * S + v];
@@ -30,6 +30,7 @@ int64_t joint_steps(JNet *n, int64_t nsteps, const int32_t *xs, const int32_t *y
             const double *restrict a = A + v * H, *restrict b = B + v * H; double z = 0;
             if (form == 1) { for (int64_t j = 0; j < H; j++) z += a[j] * h[j]; z *= sc; }
             else if (form == 2 || form == 4) { for (int64_t j = 0; j < H; j++) z += a[j] * b[j] * h[j]; z *= sc; }
+            else if (form == 5) { double q2 = 0; const double e2 = n->etaB * sc * sc; for (int64_t j = 0; j < H; j++) { z += a[j] * b[j] * h[j]; q2 += h[j] * h[j] * (b[j] * b[j] + e2 * a[j] * a[j]); } z *= sc; nz[v] = q2; }
             else for (int64_t j = 0; j < H; j++) { const double at = sc * a[j], aa = fabs(at); z += (aa < b[j] ? at : (at > 0 ? b[j] : (at < 0 ? -b[j] : 0.0))) * h[j]; }
             m[v] = -(z + n->b2[v]);
         }
@@ -42,6 +43,8 @@ int64_t joint_steps(JNet *n, int64_t nsteps, const int32_t *xs, const int32_t *y
             if (form == 1) for (int64_t j = 0; j < H; j++) { const double q = f * h[j]; a[j] += q; t[j] += q; }
             else if (form == 2) { const double e = n->etaB * gm * sc;
                 for (int64_t j = 0; j < H; j++) { const double q = f * h[j], a0 = a[j], b0 = b[j], nb = b0 + e * h[j] * a0; a[j] = a0 + q * b0; b[j] = nb > 0 ? nb : 0.0; t[j] += q; } }
+            else if (form == 5) { const double g5 = n->eta2 / (nz[v] + 1.0) * m[v], f5 = g5 / sc, e = n->etaB * g5 * sc;      /* form 2, the step set from the product's own change */
+                for (int64_t j = 0; j < H; j++) { const double a0 = a[j], b0 = b[j], nb = b0 + e * h[j] * a0; a[j] = a0 + f5 * h[j] * b0; b[j] = nb > 0 ? nb : 0.0; t[j] += f * h[j]; } }
             else if (form == 4) { const double e = n->etaB * gm * sc, e2 = n->etaB * sc * sc;      /* form 2, the return strength following w */
                 for (int64_t j = 0; j < H; j++) { const double q = f * h[j], a0 = a[j], b0 = b[j], nb = b0 + e * h[j] * a0; a[j] = a0 + q * b0; b[j] = nb > 0 ? nb : 0.0; t[j] += q * (b0 * b0 + e2 * a0 * a0); } }
             else for (int64_t j = 0; j < H; j++) {
