@@ -103,3 +103,16 @@ Five reported seeds, 8 readings, D = 10; loss on the last tenth with learning of
 **Corrections of my own text above.** The counts of numbers that learn in "The exact learner" are wrong by a slip of addition: they are 200,001 with 256 cells and 799,809 with 1,024 (return strengths counted apart), and 183,361 and 733,249 when return strengths born at nothing are not counted twice. The result files carry the right counts.
 
 **Cost.** Stages 1 to 3: 130 runs, about 100 core-minutes. Claim runs: 36 runs, about 170 core-minutes (14:48 to 15:30 on four cores). **Not run:** as listed in the plan; and the arm born at the earlier size on seeds 406364 and 545353 at 1,024 cells.
+
+## The runs beyond the plan that the outcome announced (entered about 17:15 UTC; nothing above is changed)
+
+1,024 cells, 8 readings, born at nothing, seeds 73129, 93683, 116089, kernel `kernt.c`; each arm at the eta2 that named most bytes right on the development seed (`res/x_*.json`; `tab_output.txt`, last section):
+
+| | nats; bits | named right | the stream as it is read, nats |
+|---|---|---|---|
+| arm LS, eta2 = 1/64 (chosen by loss), loss crude | 1.9856; 2.8647 | 48.44% | 1.8169 |
+| arm LS, eta2 = 1/16, loss crude | 2.0255; 2.9222 | **51.90%** (51.9, 51.8, 52.0) | 1.7394 |
+| arm P, eta2 = 1/4 (chosen by loss) | **1.7687; 2.5517** | 48.61% | 1.5940 |
+| arm P, eta2 = 1 | 1.8216; 2.6280 | 49.26% (49.1, 49.2, 49.4) | 1.4543 |
+
+**This bounds the first plan's result.** Arm P gives the lower loss at every setting compared. But the share named right depends on the step more than on the arm, and at the steps that favour it **least squares names 2.6 points more bytes right than the competing branches** (51.9 against 49.3), close to the unsmoothed table of the last 4 bytes (52.5). The two measures do not choose the same answering cell. No setting of either arm was searched for the share named right beyond these two values of eta2, so neither 51.9 nor 49.3 is that arm's best. Arm P with eta2 = 1 fits the stream as it is read far better (1.454) and the text never read worse (1.822): a larger step of the answering cell takes in particulars.

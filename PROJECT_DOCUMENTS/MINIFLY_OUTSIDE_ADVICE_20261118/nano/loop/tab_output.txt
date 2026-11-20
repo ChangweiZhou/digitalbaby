@@ -48,7 +48,7 @@ After 2 readings:
 | 4096 cells, fixed setting (eta1 = 1) | 1.9490 | 2.8119 | 43.31 | 1.8655 | 1: 1.9490 (43.3) |
 | 16384 cells, fixed setting (eta1 = 1) | not run | | | | |
 | 256 cells, eta1 = 1 (in proportion to the cells) | 1.8481 | 2.6663 | 46.34 | 1.7215 | 3: 1.8451, 1.8513, 1.8480 (46.4, 46.4, 46.2) |
-| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.8105 | 2.6120 | 47.49 | 1.6846 | 1: 1.8105 (47.5) |
+| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.8116 | 2.6136 | 47.50 | 1.6850 | 3: 1.8105, 1.8133, 1.8111 (47.5, 47.4, 47.6) |
 | 4096 cells, eta1 = 16 (in proportion to the cells) | 1.7999 | 2.5967 | 47.91 | 1.6743 | 1: 1.7999 (47.9) |
 | 16384 cells, eta1 = 64 (in proportion to the cells) | 1.7984 | 2.5945 | 47.88 | 1.6714 | 1: 1.7984 (47.9) |
 
@@ -61,7 +61,7 @@ After 1 reading:
 | 4096 cells, fixed setting (eta1 = 1) | 2.0375 | 2.9395 | 40.85 | 2.1126 | 3: 2.0367, 2.0375, 2.0384 (40.9, 40.9, 40.8) |
 | 16384 cells, fixed setting (eta1 = 1) | 2.2201 | 3.2029 | 36.28 | 2.2964 | 1: 2.2201 (36.3) |
 | 256 cells, eta1 = 1 (in proportion to the cells) | 1.8934 | 2.7316 | 45.09 | 1.8797 | 3: 1.8929, 1.8963, 1.8911 (45.0, 45.2, 45.1) |
-| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.8593 | 2.6824 | 46.10 | 1.8528 | 1: 1.8593 (46.1) |
+| 1024 cells, eta1 = 4 (in proportion to the cells) | 1.8607 | 2.6844 | 46.07 | 1.8532 | 3: 1.8593, 1.8623, 1.8605 (46.1, 46.0, 46.1) |
 | 4096 cells, eta1 = 16 (in proportion to the cells) | 1.8509 | 2.6703 | 46.38 | 1.8455 | 1: 1.8509 (46.4) |
 | 16384 cells, eta1 = 64 (in proportion to the cells) | 1.8494 | 2.6681 | 46.34 | 1.8436 | 1: 1.8494 (46.3) |
 
@@ -86,7 +86,7 @@ Settings check on development seed 1 (4,096 cells, 2 readings): (eta1, eta2) = (
 | 4,096 cells, eta1 = 16, 4 readings | 1.7632 | 2.5438 | 48.93 | 1.6036 | 1: 1.7632 (48.9) |
 | 4,096 cells, eta1 = 16, 8 readings | 1.7379 | 2.5072 | 49.73 | 1.5542 | 1: 1.7379 (49.7) |
 | 4,096 cells, eta1 = 16, 12 readings | 1.7257 | 2.4897 | 50.16 | 1.5305 | 1: 1.7257 (50.2) |
-| 4,096 cells, eta1 = 16, 16 readings | not run | | | | |
+| 4,096 cells, eta1 = 16, 16 readings | 1.7189 | 2.4798 | 50.36 | 1.5153 | 1: 1.7189 (50.4) |
 | 4,096 cells, fixed setting (eta1 = 1), 1 reading | 2.0367 | 2.9384 | 40.86 | 2.1123 | 1: 2.0367 (40.9) |
 | 4,096 cells, fixed setting (eta1 = 1), 2 readings | 1.9490 | 2.8119 | 43.31 | 1.8655 | 1: 1.9490 (43.3) |
 | 4,096 cells, fixed setting (eta1 = 1), 4 readings | 1.8790 | 2.7109 | 45.40 | 1.7481 | 1: 1.8790 (45.4) |
@@ -108,6 +108,6 @@ Reading 8 by the two kernels (kernp.c in the first plan's runs; kernt.c here), n
 | | loss, nats | loss, bits | named right, % | the stream as read, nats | seeds: loss of each (named right of each) |
 |---|---|---|---|---|---|
 | least squares, eta2 = 1/64 (chosen by loss; loss crude) | 1.9856 | 2.8647 | 48.44 | 1.8169 | 3: 1.9845, 1.9845, 1.9878 (48.5, 48.4, 48.5) |
-| least squares, eta2 = 1/16 (loss crude) | not run | | | | |
+| least squares, eta2 = 1/16 (loss crude) | 2.0255 | 2.9222 | 51.90 | 1.7394 | 3: 2.0172, 2.0166, 2.0428 (51.9, 51.8, 52.0) |
 | branches compete, eta2 = 1/4 (chosen by loss) | 1.7687 | 2.5517 | 48.61 | 1.5940 | 3: 1.7689, 1.7687, 1.7686 (48.6, 48.7, 48.6) |
-| branches compete, eta2 = 1 | not run | | | | |
+| branches compete, eta2 = 1 | 1.8216 | 2.6280 | 49.26 | 1.4543 | 3: 1.8336, 1.8200, 1.8111 (49.1, 49.2, 49.4) |
