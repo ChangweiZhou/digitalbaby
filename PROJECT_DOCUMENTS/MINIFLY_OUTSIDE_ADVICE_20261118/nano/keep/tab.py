@@ -3,7 +3,7 @@
    a label of a single run (development) prints its one line."""
 import json, os, sys
 import numpy as np
-HERE = os.path.dirname(os.path.abspath(__file__)); SEEDS = (73129, 93683, 116089, 406364, 545353)
+HERE = os.path.dirname(os.path.abspath(__file__)); SEEDS = tuple(int(x) for x in os.environ.get("SEEDS", "73129,93683,116089,406364,545353").split(","))
 def one(lbl):
     f = os.path.join(HERE, "res", f"c2_{lbl}.json")
     if not os.path.exists(f): return None
