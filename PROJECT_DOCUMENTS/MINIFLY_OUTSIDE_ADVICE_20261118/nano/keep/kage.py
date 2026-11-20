@@ -9,7 +9,8 @@ quantities. numpy is the reference; fast=1 runs the same arithmetic compiled (ka
        cell's own steps (strengths from lines, threshold), the answering cell's step on the strength from that cell, the return strength's step, and the
        fading of those two strengths. The answering cell's constants change as in the plain system.
     young=y (PLAN_3.md): a strength from a line is closed at birth and opens when its line is active while the cell is younger than y learned bytes;
-       later, a cell with a closed strength on an active line is silent at that byte (and so does not change).
+       later, a cell with a closed strength on an active line is silent at that byte and unchanged by it (its rate is nothing at that byte, so that
+       the strengths to and from it do not fade either, as for a cell that has not joined).
     use=sig|out, tau=k (PLAN_4.md): the rate is 1/(1+U/k), U the cell's own accumulated use (sig: sizes of the signal it acted on, before the rate; out: its outputs).
     join=sig theta=T (PLAN_4.md): cell H0+i joins when the common signal C passes (i+1)*T; C is the running sum of E, and E the answering cell's running mean
        (rate rhoE, default 1e-3) of its squared mismatch, a signal that reaches every cell alike.
@@ -41,7 +42,7 @@ class AgeSys(cells2.Sys):
     def learn(s, y):
         s.join(); rate = s.rate(); live = (np.arange(s.H) < s.nl); act = OFF + np.asarray(s.hist); h = sg(s.W1[:, act].sum(1) + s.b1) * live
         if s.young:
-            yg = np.nonzero(live & (s.n - s.born < s.young))[0]; s.seen[np.ix_(yg, act)] = 1; h = h * s.seen[:, act].all(1)
+            yg = np.nonzero(live & (s.n - s.born < s.young))[0]; s.seen[np.ix_(yg, act)] = 1; op = s.seen[:, act].all(1); h = h * op; rate = rate * op      # silent at this byte: unchanged, the fading included
         m = -(s.W2 @ h + s.b2); m[y] += 1; g = s.eta2 / (h @ h + 1)
         raw = (s.R @ m) * h * (1 - h); sig = raw * rate; d2 = np.outer(g * m, h * rate)
         s.W1[:, act] += s.eta1 * sig[:, None]; s.b1 += s.eta1 * sig
@@ -61,12 +62,24 @@ class AgeSys(cells2.Sys):
             if s.young: h = h * s.seen.T[OFF + hist].all(1)
             r = (h @ s.W2.T + s.b2).argmax(1) == Ls[:, t + 1]; ok &= r; pl[t - 5] = r.sum()
         return [int(round(100 * x / len(pairs))) for x in pl] if place else float(100 * ok.sum() / len(pairs))
-    def census(s):
-        return dict(joined=int(s.nl), n=int(s.n), E=float(s.E), C=float(s.C))
+    def census(s, held=None):
+        c = dict(joined=int(s.nl), n=int(s.n), E=float(s.E), C=float(s.C))
+        if s.young and held:                          # a measure, not used by the system: joined cells that are not silenced on never-shown lines at the answer positions
+            live = np.arange(s.H) < s.nl; o = {}
+            for op in "+-":
+                Ls = np.array([cells2.text(op, a, b) for a, b in held[op]]); m = []
+                for t in (5, 6, 7):
+                    hist = np.full((len(Ls), D), cells2.END); hist[:, :t + 1] = Ls[:, t::-1]; m.append(s.seen.T[OFF + hist].all(1) & live)
+                o[op] = np.concatenate(m).mean(0)      # for each cell, the share of such lines on which it may speak
+            c.update(cells_speaking_on_addition=float(o["+"].sum()), cells_speaking_on_subtraction=float(o["-"].sum()), cells_speaking_on_both=int(((o["+"] > .5) & (o["-"] > .5)).sum()),
+                     cells_mostly_on_addition_only=int(((o["+"] > .5) & (o["-"] <= .5)).sum()), cells_mostly_on_subtraction_only=int(((o["+"] <= .5) & (o["-"] > .5)).sum()))
+        return c
 
 def run(kw):
     global OPT
-    OPT = kw; cells2.Sys = AgeSys; o = cells2.run(kw); s = cells2.run.last; o["census"] = s.census(); return o
+    OPT = kw; cells2.Sys = AgeSys; o = cells2.run(kw); s = cells2.run.last; rng = np.random.default_rng([int(kw.get("seed", 1)), 99]); held = {}
+    for op in "+-": q = rng.permutation(10000); held[op] = [(int(x) // 100, int(x) % 100) for x in q[:500]]      # the never-shown pairs, drawn as cells2.run draws them
+    o["census"] = s.census(held); return o
 
 if __name__ == "__main__":
     kw = dict(a.split("=") for a in sys.argv[2:]); kw["label"] = sys.argv[1]; o = run(kw); r0 = [r for r in o["rows"] if r["phase"] == 0]

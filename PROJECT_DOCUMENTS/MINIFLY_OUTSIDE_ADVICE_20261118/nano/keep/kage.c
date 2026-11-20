@@ -2,7 +2,7 @@
    Cells in between join at their own byte count (born[j], ascending in j); a cell's steps, the answering cell's steps on the strength from it, the
    return strength's steps and the fading of both are multiplied by the cell's rate, a function of its age (law 0: 1; 1: exp(-age/tau); 2: 1/(1+age/tau)).
    young > 0: a strength from a line is open once that line was active while the cell was younger than `young` bytes; a cell with a closed
-   strength on an active line is silent at that byte.
+   strength on an active line is silent at that byte and unchanged by it (rate nothing: no fading either).
    usemode > 0 (PLAN_4.md): the rate is 1/(1+U[j]/tau) with U[j] the cell's own accumulated use.
    Built by fastage.py:  gcc -O3 -march=native -ffast-math -shared -fPIC -o kagek.so kage.c -lm                                               */
 #include <math.h>
@@ -42,7 +42,7 @@ void age_steps(ANet *q, int64_t nsteps, const int32_t *xs, const int32_t *ys) {
         if (q->young) for (int64_t j = 0; j < nl; j++) {
             uint8_t *sn = q->seen + j * NL;
             if (n - q->born[j] < q->young) for (int64_t d = 0; d < D; d++) sn[act[d]] = 1;
-            else { int ok = 1; for (int64_t d = 0; d < D; d++) ok &= sn[act[d]]; if (!ok) h[j] = 0.0; }
+            else { int ok = 1; for (int64_t d = 0; d < D; d++) ok &= sn[act[d]]; if (!ok) { h[j] = 0.0; rate[j] = 0.0; } }
         }
         double hh = 0; for (int64_t j = 0; j < nl; j++) hh += h[j] * h[j];
         const double g = q->eta2 / (hh + 1.0);
