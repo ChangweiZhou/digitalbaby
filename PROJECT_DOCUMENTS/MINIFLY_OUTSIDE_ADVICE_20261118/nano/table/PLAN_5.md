@@ -32,3 +32,22 @@
 ## 4. Size, cost, what is not run
 
 Cells as in the earlier plans, more of them (cells are made for B's contexts as they occur); reported. A life takes under a minute of CPU. Not run here: references taught by back-propagation through the same life (to be asked of the reference line once this stands); the relay system through the same life (the loop line); a return to A after B with learning on; more than two texts.
+
+## 5. Outcome (entered 20 November after the runs; `res/life_*.json`)
+
+Loss in nats a byte on parts never read, nothing changing during the scoring. "B" is the three held-out parts together, weighted by their length (47,699 bytes). Of B's bytes 0.2 to 0.8% were not among A's 65 values and were replaced by a space.
+
+| System | A after A | A after A and B | rise | B after A | B after A and B | B, system that read B only |
+|---|---|---|---|---|---|---|
+| T2, counting cells with trust, with the word cells | 1.4973 | 1.5067 | **0.009** | 1.8128 | 1.4152 | 1.4300 |
+| T0, the same without the word cells | 1.5226 | 1.5306 | 0.008 | 1.8133 | 1.4454 | 1.4525 |
+| M0, the summing form (no counting) | 1.5616 | 1.6190 | 0.057 | 1.8189 | 1.4530 | 1.5106 |
+
+B by text, T2, after A and B against B only: Bryant (read first) 1.4579 against 1.5170; Burgess 1.2971 against 1.2553; Carroll 1.4109 against 1.3836. Cells that have counted, T2: 1,826,213 after A, 2,419,727 after A and B. A life took 5 to 15 CPU-seconds.
+
+**The hypothesis holds**: T2's loss on the last tenth of A rises by 0.009 nats after B has been read, and under 0.02 was asked. V1 held. V2 held (the summing form's rise is 0.049 more than T0's). V3 failed: having read A first is worth 0.015 on B, and 0.02 was predicted. V4 held (0.40).
+
+Readings (mine).
+1. **On prose this system keeps what it has read.** After 430,000 bytes of three other books its loss on the first text is 0.6% higher. The same cells with strengths changed by the mismatch and summed lose seven times as much (0.057). No reference taught by back-propagation and no system of relay cells has yet been taken through this life; until one has, "seven times" is a statement about two forms of the same cells and nothing more.
+2. **What it keeps costs it something on the new text, and the cost shows only after a while.** Against a system that read only B, having read A is worth 0.059 nats on the first new book and costs 0.042 and 0.027 on the second and third. Reading (mine): the cells of short runs are shared between the texts; a million bytes of A stay in their counts and outweigh what B says. A system that only ever adds to its counts cannot tell that the text has changed.
+3. This is the old question of the roadmap's track K in a new place: on sums the system forgot; here it keeps and is slow to take the new. Mr. Xu, 20 November: cells "having different memory ability". The next plan gives each cell of the table a companion whose counts fade, and lets the answering cell's trust settle how the two are used (`PLAN_6.md`).
