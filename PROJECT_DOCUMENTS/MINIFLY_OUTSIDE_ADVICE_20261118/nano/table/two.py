@@ -100,9 +100,11 @@ def steps_np(ids, y, C, N, U, T, half, last, clock0, eta, e, learn=True):
 class Sys2:
     def __init__(s, x, keys, K, H):
         ids, ncell, kinds, _ = words.make_ids(x, keys, K, len(x), len(x), K, 1); ntab = ncell - sum(kinds); tot = ncell
-        if H: ids = np.hstack([ids, np.where(ids[:, :K + 1] >= 0, ids[:, :K + 1] + ncell, -1)]); tot = ncell + ntab
+        Hs = [h for h in (H if isinstance(H, (tuple, list)) else (H,)) if h]; tabs = ids[:, :K + 1]            # one kind of companions for each half-life given (PLAN_6.md, addition 2)
+        for j, h in enumerate(Hs): ids = np.hstack([ids, np.where(tabs >= 0, tabs + ncell + j * ntab, -1)])
+        tot = ncell + len(Hs) * ntab
         s.x, s.K, s.ids, s.K1, s.L = x, K, np.ascontiguousarray(ids), ids.shape[1], kern(); s.half = np.zeros(s.K1)
-        if H: s.half[-(K + 1):] = H
+        for j, h in enumerate(Hs): s.half[s.K1 - (len(Hs) - j) * (K + 1):s.K1 - (len(Hs) - j - 1) * (K + 1)] = h
         s.C = np.zeros((tot, S), np.float32); s.N = np.zeros(tot, np.float32); s.U = np.zeros(tot, np.float32); s.last = np.zeros(tot); s.T = np.full((s.K1, NL), 0.25); s.clock = 0.0
     def go(s, lo, hi, learn, want_p=False):
         ids = np.ascontiguousarray(s.ids[lo - s.K:hi - s.K]); y = np.ascontiguousarray(s.x[lo:hi].astype(np.int32)); P = np.zeros((hi - lo, S)) if want_p else None
@@ -139,9 +141,9 @@ def check():
 if __name__ == "__main__":
     if sys.argv[1] == "check": check()
     else:
-        name, H = sys.argv[1], int(sys.argv[2])
+        name = sys.argv[1]; H = tuple(int(h) for h in sys.argv[2].split(",")); H = H[0] if len(H) == 1 else H; tagH = sys.argv[2].replace(",", "+")
         if len(sys.argv) > 3 and sys.argv[3] == "return":
-            r = run(name, H, True); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{H}_return.json"), "w")); print(name, "H", H, "A after A and B, nothing changing:", round(r["after_A_and_B"]["A"]["nats"], 4), "| the return to A, going on:", round(r["A_last_tenth_going_on_after_B"]["nats"], 4), flush=True); sys.exit()
-        r = run(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{H}.json"), "w"))
+            r = run(name, H, True); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}_return.json"), "w")); print(name, "H", H, "A after A and B, nothing changing:", round(r["after_A_and_B"]["A"]["nats"], 4), "| the return to A, going on:", round(r["A_last_tenth_going_on_after_B"]["nats"], 4), flush=True); sys.exit()
+        r = run(name, H); json.dump(r, open(os.path.join(HERE, "res", f"two_{name}_H{tagH}.json"), "w"))
         f = lambda d: " ".join(f"{k[:6]} {d[k]['nats']:.4f}" for k in d)
         print(name, "H", H, "| after A:", f(r["after_A"]), "| after A and B:", f(r["after_A_and_B"]), "| B only:", f(r["B_only"]), "| A going on:", round(r["A_last_tenth_going_on"]["nats"], 4), "| cells", r["cells_after_A"], r["cells_after_A_and_B"], "| cpu", r["cpu"], flush=True)

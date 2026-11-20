@@ -39,3 +39,9 @@ The four lives are in (section 6 will give them): with companions the cost on th
 *Measured:* after A and B, the last tenth of A read with everything going on (each byte named before it is counted), for T2 and T0 without companions and with companions at both H; beside the same measure after A alone (section 2).
 
 *Prediction (mine):* on the return to A with everything going on, T2 with companions is better than T2 without, at one H at least (chance 0.7); and T2 with companions is within 0.02 of its own figure before B (chance 0.5). *If the first fails*, the companions' cost on A is not a matter of being frozen and the reading above is withdrawn.
+
+## 6. Addition 2 (20 November; written after addition 1 was read and before the runs it describes): companions of both half-lives together
+
+Addition 1 is in: with H = 10,000 the system returns to A better than the system without companions; with H = 100,000 it returns worse. The four lives gave the opposite order for the later books of B (no cost at H = 100,000; a cost on the second book at H = 10,000). So each half-life is good at one thing. The one change here: each cell of the table gets both companions (three memories for each context: one that never fades, one of 100,000 bytes, one of 10,000), each kind with its own trust. Systems: T2 and T0 with both; the same measures, the return to A included.
+
+*Prediction (mine):* on each of four measures (A after A with nothing changing; B after A and B; the cost on the second and third books; the return to A with everything going on) T2 with both companions is within 0.005 of the better of the two single half-lives, or better (chance 0.45 for all four together; 0.8 for at least three).
