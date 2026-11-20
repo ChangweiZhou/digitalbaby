@@ -24,7 +24,7 @@ Never-shown pairs, whole answer right, %; median of the five reported seeds (731
 | step 3: joining when the answering cell hears too few cells | 128 + 128 | 85.8 / 86.8 | 71.6 / 90.8 | 6 |
 | step 4: and a strength opens only if met on 30 young bytes | 128 + 128 | **85.8 / 86.8** [84.8 / 86.2] | **81.6 / 85.8** [81.2 / 87.6] | 7, 10 |
 
-Addition after its own phase is 83 to 85 at the median in every row but (a) (73.4), (b) (71.4, 74.2) and the fifth plan (89.2).
+Addition after its own phase is 82 to 85 at the median in every row but (a) (73.4), (b) (71.4, 74.2) and the fifth plan (89.2).
 
 ## 3. What was found
 
@@ -69,6 +69,6 @@ Addition after its own phase is 83 to 85 at the median in every row but (a) (73.
 ## 7. Files, commands, cost
 
 - Copied from `loop_small_case/` at 260c5d7, unchanged: `cells2.py`, `kern.c`, `kern2.c`, `kern3.c`, `fastk.py`, `fastk2.py`, `fastk3.py`, `.gitignore`.
-- New: `kage.py` (numpy, the reference; a subclass of the plain system; its header states every option), `kage.c` with `fastage.py` (compiled), `check_kage.py` and `check_kage_output.txt` (eighteen cases, every strength, count and signal compared: agreement to 2e-15; with all cells present and no rule `kage.py` equals `cells2.py` to 3e-15 and gives 81.5 on seed 1), `overlap.py`, `diag3.py`, `tab.py`, `runjobs.sh`, the job lists `jobs*.txt`, the tables `table*.txt`, every result in `res/`, the looks inside in `log/diag*.txt`. One full life was also run with the numpy program: the same twelve readings as compiled (`PLAN_4.md`).
+- New: `kage.py` (numpy, the reference; a subclass of the plain system; its header states every option), `kage.c` with `fastage.py` (compiled), `check_kage.py` and `check_kage_output.txt` (seventeen cases of the compiled kernel against the numpy program, every strength, count and signal compared: agreement to 2e-15; with all cells present and no rule `kage.py` equals `cells2.py` to 3e-15 and gives 81.5 on seed 1), `overlap.py`, `diag3.py`, `tab.py`, `runjobs.sh`, the job lists `jobs*.txt`, the tables `table*.txt`, every result in `res/`, the looks inside in `log/diag*.txt`. One full life was also run with the numpy program: the same twelve readings as compiled (`PLAN_4.md`).
 - The final candidate: `python3 kage.py <label> seed=<s> plan=add:400000,sub:200000 H=384 H0=1 join=hear K=128 theta=20 young=4500 meet=30 blaw=exp btau=1e4 fast=1 [reh=32]`; about 40 to 50 CPU seconds.
 - A table: `python3 tab.py r7_meet_reh32 r7_meet_reh0`; for the new seeds `SEEDS=1001,1002,1003,1004,1005 python3 tab.py r10_cand_reh32`.
