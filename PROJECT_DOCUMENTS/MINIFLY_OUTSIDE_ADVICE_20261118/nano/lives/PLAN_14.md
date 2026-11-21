@@ -63,6 +63,30 @@ Never-shown sums, whole answer, per cent.
 
 **What the development seed already says (mine; one seed; not a result).** The reasoning of section 1 was wrong in its main point. Stiffening does not keep the digit branches from sinking through the first English: the right digit's branch ends at about nought at every kappa, as it does without s. The English asks the digit branches to be silent in every state of the English, and it goes on asking for 400,000 bytes; a smaller step only makes that take longer, and it also makes the return slower (43% after 100 lines of the first return against 88%). What stiffening does do is the second thing section 1 expected: from return to return the branches of the English grow quieter in the states of the sums (0.90, 0.27, 0.11), and at the third return two thirds of the whole answers are there straight away (67.2 against 43.3). The stronger the stiffening, the worse the sums are learned in the first place. The reported seeds are run at kappa 1,000 as the plan binds me to.
 
-## 5. Outcome
+## 5. Outcome (entered 21 November; five reported seeds at kappa 1,000; the form without s is `PLAN_13.md`'s; `report_13.txt`, `res/relay14__r_*.json`, `out/relay14_*.txt`)
 
-(to be entered after the runs)
+Never-shown sums, whole answer, per cent; median of five seeds (smallest to largest).
+
+| | Without s (`PLAN_13.md`) | With s, kappa 1,000 |
+|---|---|---|
+| End of the sums | 98.8 (97.6 to 99.5) | 98.9 (97.6 to 99.2) |
+| Kept straight after English 1, 2, 3 (share of the level just before) | 0.00, 0.31, 0.64 | 0.00, 0.31 (0.25 to 0.44), 0.71 (0.61 to 0.80) |
+| After 100 lines of return 1, 2, 3 | 84.8, 94.0, 96.9 | 35.0, 89.8, 92.4 |
+| Right digit's branch after English 1, 2, 3 | 0.08, 0.45, 0.55 | -0.15, 0.36, 0.54 |
+| Share of the states of the sums in which another branch is the loudest | 0.84, 0.32, 0.14 | 0.97, 0.31, 0.10 |
+| Held-out English at the end of English 1, 2, 3 | 46.6, 44.7, 44.1 | 47.2, 46.5, 45.3 |
+| Held-out English lost while the sums return, points | 3.9, 2.0, 0.9 | 1.8, 0.4, 0.1 |
+| Bytes named right while English 2 and 3 are read | 48.6, 49.7 | 48.9, 50.0 |
+
+| | Outcome |
+|---|---|
+| The hypothesis | **Not supported.** At the second return 0.31 of the whole answers are kept, as without stiffening (three quarters were claimed). By its own words it is not refuted (a quarter is passed), and the conditions on learning hold |
+| U1 | Held: the sums and the English are learned as without s (98.9 against 98.8; 47.2 against 46.6) |
+| U2, U3 | **Failed**: nothing is kept at the first return (0.00 on every seed) |
+| U4 | **Failed**: 0.31 at the second return |
+| U5 | Failed: 0.71 at the third return (0.61 to 0.80); higher than without s on four of the five seeds, by 0.07 at the median |
+| U6 | **Failed**: the right digit's branch stands at -0.15 after the first English; stiffening does not keep it from sinking |
+| U7 | Failed: another branch is the loudest in 0.31 and 0.10 of the states after the second and third English |
+| U8 | Held: the later English is learned no worse (48.9 and 50.0 against 48.6 and 49.7) |
+
+**Reading (mine; development level).** The main expectation of section 1 was wrong, as the development seed already showed: a smaller step for much-used strengths does not protect the digits' reading from a long piece of English, because the English goes on asking for silence until it has it. What stiffening at this weak setting does: it makes the English a little safer when the sums return (it loses 1.8, 0.4 and 0.1 points against 3.9, 2.0 and 0.9), it lifts what is kept at the third return a little (0.71 against 0.64), and it makes the first return much slower (35% after 100 lines against 85%). Stronger settings learn the sums worse (development seed: 96.8, 93.7 and 89.4% at kappa 100, 10 and 1). **It is not the remedy for the first return, and I do not carry it forward.** The price for revising, named in section 3, was not measured and need not be now.
