@@ -38,3 +38,21 @@ Confirmed on three seeds: **the byte is carried 47 connections deep**, relayed o
 ## Not yet shown
 
 That learned recurrence carries anything useful on a predictable stream; the output end; feedback; memory and keeping. Strengths of forward connections are random and fixed in test 1.
+
+## Minicolumns (`net3.py`), and the output end (`t4_output.py`), 21 November 2026, later
+
+Forward input chooses the winning columns of a region; context (connections from cells of the same region at the previous byte,
+learned by the cell that fires, silent below `w_on`) chooses only which cell of a winning column fires. With `sweep=1` a byte
+crosses every region before the next arrives; context comes from the previous byte. One seed (1), development level.
+
+| Test | Result |
+|---|---|
+| Depth, 24 regions, random bytes and a 7-byte cycle | byte decodable at every region, 1.000, from columns and from cells, on both streams; context predicts the cell in 69% of winning columns on the cycle and 0% on random bytes (nothing to predict) |
+| Output end, 12 regions, sweep, teach, 7-byte cycle | 0.89 right (chance 0.143) |
+| Output end, yes/no only, 7-byte cycle, no sweep | 0.46 right: learns from yes or no alone |
+| Context stream (A B C D / E B C F in random order), teach, output reading all 256 cells of the last region | 0.72 right overall (ceiling 0.875), 0.71 at the byte after C (0.5 without context) |
+| The same, yes/no only | 0.53 overall, 0.51 after C: the context is not yet used |
+| Is "two back was A" decodable from the last region's cells at C? | 0.98 |
+| Random bytes (control) | at chance throughout |
+
+Open: the output end does not yet use all the context the last region holds; yes/no learning of context; speed (25 to 40 s for 6,000 bytes of 24 regions, numpy).
