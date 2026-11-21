@@ -1,4 +1,4 @@
-# Counts in two memories: which counts spoil a life, and cells that hold what followed lately (21 November 2026, 01:05 UTC)
+# Counts in two memories: which counts spoil a life, and cells that hold what followed lately (21 November 2026; committed 00:24 UTC)
 
 **Authorisation and steer.** As `PLAN_1.md` (Mr. Xu's words quoted there). The choice of this step is mine. **Source.** Branch `claude/friendly-darwin-8mmhfm` at the commit that holds this file. Written after the first part of the outcome of `PLAN_1.md`, after four of the six lives of its addition 2 had been read, and after the first development life of `PLAN_3.md`; before any run of the program of this plan. (There is no `PLAN_4.md`: the number was kept for a step on the trusts that has not been written.) Development level; no checker gate, seal or review is claimed.
 

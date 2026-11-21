@@ -1,4 +1,4 @@
-# Remembered trusts: the answering cell keeps copies of its trusts as they were and can return to them (21 November 2026, 00:10 UTC)
+# Remembered trusts: the answering cell keeps copies of its trusts as they were and can return to them (21 November 2026; committed 00:06 UTC)
 
 **Authorisation and steer.** As `PLAN_1.md` (Mr. Xu's words quoted there). The choice of this step is mine. **Source.** Branch `claude/friendly-darwin-8mmhfm` at the commit that holds this file. Written after the outcomes of `PLAN_1.md` (small system, five reported orders) and `PLAN_2.md` (development only), before any run of the program of this plan. Development level; no checker gate, seal or review is claimed.
 
