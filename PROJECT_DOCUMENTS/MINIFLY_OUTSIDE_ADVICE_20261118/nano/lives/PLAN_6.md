@@ -45,6 +45,22 @@ The small system of `PLAN_1.md` (ZA) and the same with the bounded kinds chosen 
 
 Fourteen singles (two systems, seven streams), about 10 to 30 CPU-seconds each on a free machine; the references about 10 CPU-minutes in all. **Not run:** the large system; a life over these streams or over these and the text streams together; any kind made for a kind of data (a row above for pictures, a filter for machine code).
 
-## 6. Outcome
+## 6. Outcome (entered 21 November, 01:05 UTC; `report_6.txt`, `res/kinds6_ref__*.json`, `res/mem__K6_*.json`, `manifests6/`)
 
-(to be entered after the runs)
+Last tenth, going on, second answering cell, nats a byte; one run each (the systems are deterministic):
+
+| stream | the small system | with bounded kinds | xz -9e | xz, best of 27 literal settings | bzip2 -9 | xz with its filter for machine code |
+|---|---|---|---|---|---|---|
+| machine code from C | 1.7055 | **1.6193** | 1.8206 | 1.8077 | 2.1527 | 1.6925 |
+| machine code from Go | 1.4368 | **1.3790** | 1.5951 | 1.5839 | 1.7759 | 1.3898 |
+| fonts | 1.1967 | **1.1567** | 1.2291 | 1.2235 | 1.6042 | |
+| compiled Python | 1.5420 | **1.5015** | 1.7994 | 1.7918 | 1.8067 | |
+| a compiled table of records | 0.1644 | 0.1632 | **0.1400** | 0.1397 | 0.1508 | |
+| a picture as raw pixels | 0.2531 | 0.2397 | **0.2305** | 0.2288 | 0.2929 | |
+| bytes drawn by chance (control) | 5.5593 | 5.5666 | 5.5453 | | 5.5643 | |
+
+**The hypothesis held.** With the bounded kinds the system is below xz -9e on four of the six kinds (by 0.07 to 0.30 nats, 6 to 17%), and the bounded kinds lower the loss on all six (by 0.001 to 0.086) and harm none. The two it loses are the two I would have named beforehand: the compiled table, which is long repeats of what was read (the kind of text on which the executed check of section 26 of the roadmap found the dictionary coder ahead), and the picture, where what foretells a pixel is the pixel above it and the system has no kind that looks there. With nothing changing the small system is above xz on all six, as on text whose end is unlike its beginning.
+
+**Predictions scored.** N1 held (4 of 6). N2 held (4). N3 held (4 against the best literal setting). N4 held (6 of 6 lower, none harmed). N5 held (the picture). **N6 failed, in the system's favour**: on machine code from C the system with bounded kinds is below xz even with xz's own filter for such code (1.619 against 1.693), and on the code from Go as well (1.379 against 1.390). **N7 failed by a hair**: on bytes drawn by chance the small system pays 0.014 above the 5.545 of knowing nothing, the system with bounded kinds 0.021 (more senders, each with a little to unlearn). N8 held (6 of 6).
+
+**What it does and does not show (mine).** The same program with the same numbers, made on English and sums and never shown a byte that was not text, is a sensible learner of machine code, fonts and bytecode; that is evidence that what was built is a learner of byte streams and not of text. It is one run on one stream of each kind, the streams were cut from this machine's files by recipes fixed before any figure, and xz, with or without its filter, is again the only reference: no compressor that mixes contexts is installed.
