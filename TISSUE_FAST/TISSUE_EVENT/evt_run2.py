@@ -229,6 +229,12 @@ def main():
     ap.add_argument("--gmax", type=float, default=8.0)
     ap.add_argument("--long-frac", type=float, default=0.0, help="plan 5: share of excitatory cells with long axons (given at birth)")
     ap.add_argument("--long-r", type=float, default=0.5, help="their reach (E63's neighbourhood radius: 1/8)")
+    ap.add_argument("--spike", action="store_true", help="plan 7: all-or-none output (1 when potential less threshold is at least --fire)")
+    ap.add_argument("--fire", type=float, default=0.125)
+    ap.add_argument("--inh-adapt", action="store_true", help="plan 7: each cell's inhibitory total moved once a byte toward an activity target")
+    ap.add_argument("--eta-i", type=float, default=0.01)
+    ap.add_argument("--a-i", type=float, default=1 / 32)
+    ap.add_argument("--ci-max", type=float, default=4.0)
     ap.add_argument("--count-every", type=int, default=128, help="bytes between counts of connections (E63: 128)")
     ap.add_argument("--slow-records", action="store_true", help="the recording loop as E63 wrote it (a call into the core every step)")
     a = ap.parse_args()
@@ -242,6 +248,8 @@ def main():
     evt.L.evt_set_turnover(int(a.turnover), a.make_period, a.trial, a.trial_theta)
     evt.L.evt_set_norm(int(a.norm), a.c_e, a.c_i)
     evt.L.evt_set_gain(int(a.gain), a.eta_g, a.rho, a.gmax)
+    evt.L.evt_set_spike(int(a.spike), a.fire)
+    evt.L.evt_set_inh_adapt(int(a.inh_adapt), a.eta_i, a.a_i, a.ci_max)
     sw = dict(floor=a.floor, tol=a.tol, trace_sender=a.trace_sender, strength_byte=a.strength_byte, astar=a.astar, long_frac=a.long_frac, long_r=a.long_r,
               withdraw_by_use=a.withdraw_by_use, use_exempt_feedback=a.use_exempt_feedback)
     out = HERE / "runs" / a.name
@@ -268,7 +276,7 @@ def main():
     steps = cnt["steps"]
     tc = np.zeros(2, np.int64); evt.L.evt_trial_counts(tc)
     sw = dict(sw, steps=a.steps, cap=a.cap, turnover=a.turnover, make_period=a.make_period, trial=a.trial, trial_theta=a.trial_theta,
-              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), norm=a.norm, c_e=a.c_e, c_i=a.c_i, gain=a.gain, eta_g=a.eta_g, rho=a.rho, gmax=a.gmax, norm_calls=int(evt.L.evt_norm_calls()), records="slow" if a.slow_records else "fast")
+              trial_withdrawn=int(tc[0]), trial_kept=int(tc[1]), norm=a.norm, c_e=a.c_e, c_i=a.c_i, gain=a.gain, eta_g=a.eta_g, rho=a.rho, gmax=a.gmax, spike=a.spike, fire=a.fire, inh_adapt=a.inh_adapt, eta_i=a.eta_i, a_i=a.a_i, ci_max=a.ci_max, norm_calls=int(evt.L.evt_norm_calls()), records="slow" if a.slow_records else "fast")
     rec = dict(experiment="E63, the tissue's program (event-driven)", task="TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md",
                command=" ".join(["python3", "evt_run.py"] + sys.argv[1:]), switches=sw,
                core_sha256=hashlib.sha256(evt.SRC.read_bytes()).hexdigest(),

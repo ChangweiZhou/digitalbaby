@@ -131,6 +131,16 @@ static int GAIN = 0; static double ETA_G = 1.0 / 128, RHO = 0.875, GMAX = 8.0, G
 static double *gain, *Zs, *ib; static int64_t *ibst;
 void evt_set_gain(int on, double eta, double rho, double gmax) { GAIN = on; ETA_G = eta; RHO = rho; GMAX = gmax; }
 void evt_gains(double *o) { memcpy(o, gain, 8 * (size_t)NC); }
+/* Plan 7 (all-or-none output): SPIKE 1 makes a cell's output 1 when its potential less its threshold is at least FIRE, else 0, in
+   place of the graded output (clipped to [0, 1], below the floor 0). The potential, the threshold's control and every rule are
+   unchanged; only what a cell sends is either nothing or the full amount. */
+/* Plan 7 (inhibition that follows activity): INHA 1 gives each cell its own inhibitory total cI, used in place of C_I by the scaling,
+   moved once a byte: cI <- clip(cI + ETA_I (abar - A_I), 0, CI_MAX), abar the cell's running mean output. */
+static int INHA = 0; static double ETA_I = 0.01, A_I = 1.0 / 32, CI_MAX = 4.0; static double *cI;
+void evt_set_inh_adapt(int on, double eta, double target, double cimax) { INHA = on; ETA_I = eta; A_I = target; CI_MAX = cimax; }
+void evt_inh_totals(double *o) { if (cI) memcpy(o, cI, 8 * (size_t)NC); }
+static int SPIKE = 0; static double FIRE = 0.125;
+void evt_set_spike(int on, double fire) { SPIKE = on; FIRE = fire; }
 static int CAPIN = 1 << 30; void evt_set_cap(int c) { CAPIN = c; }
 static int64_t *slk; static int NSLEEP; static double SLEEP_EMUL, SLEEP_WAKES;   /* step from which a cell sleeps (-1: awake) */                /* the arrival and mismatch of the last step a cell was computed (for checks) */
 /* connections */
@@ -242,7 +252,7 @@ static void free_all(void) {
     FREE(sig); FREE(z); FREE(zsent); FREE(learnable); FREE(exempt); FREE(E); FREE(Est);
     FREE(A); FREE(v); FREE(x); FREE(p); FREE(th); FREE(abar); FREE(vt); FREE(dA); FREE(sm); FREE(sexc); FREE(sinh_);
     FREE(pst); FREE(ast); FREE(vst); FREE(klast); FREE(ncomp); FREE(rule); FREE(theta_on); FREE(inwl); FREE(due); FREE(full);
-    FREE(touched); FREE(inlearn); FREE(ischg); FREE(ninh); FREE(driver); FREE(Astep); FREE(mstep); FREE(slk); FREE(gain); FREE(Zs); FREE(ib); FREE(ibst); FREE(duebits); FREE(sortbits);
+    FREE(touched); FREE(inlearn); FREE(ischg); FREE(ninh); FREE(driver); FREE(Astep); FREE(mstep); FREE(slk); FREE(gain); FREE(cI); FREE(Zs); FREE(ib); FREE(ibst); FREE(duebits); FREE(sortbits);
     FREE(c_snd); FREE(c_rcv); FREE(c_w); FREE(c_e); FREE(c_ub); FREE(c_use); FREE(c_cnt); FREE(usefb); FREE(c_est); FREE(c_k0); FREE(c_seq); FREE(c_alive); FREE(c_mark); FREE(c_trial); FREE(c_tsum); FREE(c_tn); FREE(trq_t); FREE(trq_seq); FREE(trq_c); trq_n = trq_h = trq_cap = 0; TRIAL_GONE = TRIAL_KEPT = 0;
     FREE(freeslots.a); freeslots.n = freeslots.cap = 0;
     ivec *ls[] = {&wl, &wl2, &chg, &chg2, &gone, &learnl, &dal};
@@ -268,6 +278,7 @@ void evt_init(int nc, int nz, double floor_, double tol, int trace_sender, int s
     touched = calloc(nc, 1); inlearn = calloc(nc, 1); ischg = calloc(nc, 1); ninh = calloc(nc, 4);
     in = calloc(nc, sizeof(ivec)); members = calloc(nc, sizeof(ivec)); Astep = calloc(nc, 8); mstep = calloc(nc, 8);
     NW = (nc + 63) / 64; duebits = calloc(NW, 8); sortbits = calloc((nz + 63) / 64, 8);
+    cI = malloc(8 * nc); for (int i = 0; i < nc; i++) cI[i] = C_I;
     gain = malloc(8 * nc); for (int i = 0; i < nc; i++) gain[i] = 1.0; Zs = calloc(nc, 8); ib = calloc(nc, 8); ibst = calloc(nc, 8);
     slk = malloc(8 * nc); for (int i = 0; i < nc; i++) slk[i] = -1; NSLEEP = 0; SLEEP_EMUL = SLEEP_WAKES = 0;
     driver = NULL; NDRV = 0;
@@ -354,7 +365,8 @@ static inline void strength_change(int c, double w_new, int i) {   /* w of conne
 static void normalise(int i) {
     ivec *ip = &in[i]; double se = 0.0, si = 0.0;
     for (int q = 0; q < ip->n; q++) { int c = ip->a[q], j = c_snd[c]; if (!learnable[j]) continue; if (sig[j] > 0) se += c_w[c]; else si += c_w[c]; }
-    double fe = se > 0.0 ? C_E / se : 1.0, fi = si > 0.0 ? C_I / si : 1.0;
+    double ci = (INHA && cI) ? cI[i] : C_I;
+    double fe = se > 0.0 ? C_E / se : 1.0, fi = si > 0.0 ? ci / si : 1.0;
     if (fe == 1.0 && fi == 1.0) return;
     NORM_CALLS++; CNT[3] += 2 * ip->n;
     for (int q = 0; q < ip->n; q++) { int c = ip->a[q], j = c_snd[c]; if (!learnable[j]) continue; strength_change(c, bound(c_w[c] * (sig[j] > 0 ? fe : fi)), i); }
@@ -516,6 +528,7 @@ int evt_step(int byte) {
         double vn = TAU_V_A * v[i] + TAU_V_A * Ai;
         double xn = vn - th[i]; xn = xn > 1.0 ? 1.0 : (xn < 0.0 ? 0.0 : xn);
         if (xn < FLOOR) xn = 0.0;
+        if (SPIKE) xn = (vn - th[i] >= FIRE) ? 1.0 : 0.0;
         double xp = x[i];
         Astep[i] = Ai; mstep[i] = m;
         /* 5. strengths */
@@ -570,6 +583,15 @@ int evt_step(int byte) {
             double g = gain[i] * (1.0 + ETA_G * (tg - ab) / (tg + ab + 1e-30));
             g = g < GMIN ? GMIN : (g > GMAX ? GMAX : g);
             if (g != gain[i]) { gain[i] = g; if (!inwl[i]) { touch(i, K + 1); wl_add(&wl2, i); } }
+        }
+    }
+    if (INHA && NORM && last) {
+        for (int i = 0; i < NC; i++) {
+            if (slk[i] >= 0) { if (wake(i, K + 1)) wl_add(&wl2, i); }
+            bring_a(i, K + 1);
+            double c2 = cI[i] + ETA_I * (abar[i] - A_I);
+            c2 = c2 < 0.0 ? 0.0 : (c2 > CI_MAX ? CI_MAX : c2);
+            if (c2 != cI[i]) { cI[i] = c2; normalise(i); }
         }
     }
     /* the strength changes of this step reach the arrivals of the next */
