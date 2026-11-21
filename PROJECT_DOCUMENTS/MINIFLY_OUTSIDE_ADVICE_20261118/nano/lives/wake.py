@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""nano/lives, PLAN_4.md: return. PLAN_3.md's bookmarks and shares, and: when before a byte a bookmark's share is above one half, then after the byte has been
-learned the living set is kept as a new bookmark and takes that bookmark's trusts and parts.
+"""nano/lives, PLAN_4.md with its addition 1: return. PLAN_3.md's bookmarks and shares, and: when before a byte a bookmark's share is above one half, then after the
+byte has been learned the living set takes that bookmark's trusts and parts, and its share (the living set is not kept: the bookmarks taken at the pace hold its states).
     python3 wake.py check
     python3 wake.py life order=.. sys=ZA|ZAM32|.. N=65536 [wake=1] tag=..
 The kernel is nano/lives/mem.py's (remembered trusts and bounded kinds) with the additions below; with wake off it is that kernel."""
@@ -15,11 +15,11 @@ SRC = rep(SRC, "int nb, bcap; int64_t bper, lnow;", "int nb, bcap, wake, jtop; i
 SRC = rep(SRC, "int sy_nb(Sy *s) { return s->nb; }", "int sy_nb(Sy *s) { return s->nb; }\nvoid sy_wake(Sy *s, int w) { s->wake = w; }\nint64_t sy_returns(Sy *s) { return s->returns; }")
 SRC = rep(SRC, "            if (s->to2) s->to2[t - lo] = top;\n", "            if (s->to2) s->to2[t - lo] = top;\n            s->jtop = (learn && s->wake && top > 0 && topv > 0.5) ? top : 0;      /* PLAN_4: a bookmark holds more than half of the belief */\n")
 SRC = rep(SRC, "/* PLAN_3: a bookmark */\n", "/* PLAN_3: a bookmark */\n"
-          "            if (s->bcap > 0 && s->jtop > 0 && s->nb < s->bcap) {      /* PLAN_4: the living set is kept as a bookmark and takes the trusts and parts of the bookmark jtop - 1 */\n"
-          "                const int b = s->jtop - 1, nw = s->nb, bc = s->bcap;\n"
-          "                for (int64_t i = 0; i < (int64_t)K * NL; i++) { s->BT[i * bc + nw] = s->T[i]; s->T[i] = s->BT[i * bc + b]; }\n"
-          "                for (int64_t i = 0; i < s->gsize; i++) { s->BG[i * bc + nw] = s->G[i]; s->G[i] = s->BG[i * bc + b]; }\n"
-          "                s->w2[nw + 1] = s->w2[0]; s->w2[0] = s->w2[b + 1]; s->w2[b + 1] = 0; s->nb++; s->returns++;\n"
+          "            if (s->bcap > 0 && s->jtop > 0) {      /* PLAN_4, addition 1: the living set takes the trusts and parts of the bookmark jtop - 1, and its share; the living set is not kept (the bookmarks of the pace hold its states) */\n"
+          "                const int b = s->jtop - 1, bc = s->bcap;\n"
+          "                for (int64_t i = 0; i < (int64_t)K * NL; i++) s->T[i] = s->BT[i * bc + b];\n"
+          "                for (int64_t i = 0; i < s->gsize; i++) s->G[i] = s->BG[i * bc + b];\n"
+          "                s->w2[0] += s->w2[b + 1]; s->w2[b + 1] = 0; s->returns++;\n"
           "            }\n"
           "            s->jtop = 0;\n")
 
@@ -42,7 +42,7 @@ class SysW(MM.SysM):
         kt = np.array([k[0] for k in kinds], np.int32); kn = np.array([k[1] for k in kinds], np.int32); kd = np.zeros((s.K, 8), np.int32); kb = np.array([k[3] for k in kinds], np.float64)
         for i, k in enumerate(kinds): kd[i, :len(k[2])] = k[2]
         s.h = s.L.sy_new(S, s.K, p32(kt), p32(kn), p32(np.ascontiguousarray(kd)), pd(kb), eta, e, rule, gate, J, birth, M if any(k[0] == 2 for k in kinds) else 0, len(s.x), age, spow); s.L.sy_gmin(s.h, guard); s.L.sy_caps(s.h, p32(np.array(caps, np.int32)))
-        if N > 0: s.L.sy_books(s.h, N, cap or (len(s.x) // N + 2 + (1024 if wake else 0)), 1.0 / N); s.L.sy_wake(s.h, int(wake))
+        if N > 0: s.L.sy_books(s.h, N, cap or (len(s.x) // N + 2), 1.0 / N); s.L.sy_wake(s.h, int(wake))
     def sizes(s): z = MM.SysM.sizes(s); z["returns"] = int(s.L.sy_returns(s.h)); return z
 
 def make(name, x, N=0, wake=0): kinds, caps, a = MM.kinds_caps(name); return SysW(kinds, caps, x, N=N, wake=wake, **a)

@@ -194,11 +194,11 @@ void sy_run(Sy *s, const int32_t *x, int64_t lo, int64_t hi, int learn, double *
             }
             if (M > 0 && t >= M && t <= s->nmax) { const uint32_t h = rhash(x, t, M, s->hbits); s->prev[t] = s->head[h]; s->head[h] = (int32_t)t; s->ptime[t] = (uint32_t)tau; }      /* the place t: the run that ended before it, and the byte x[t] just read */
             if (s->bcap > 0) { s->lnow++; if (s->lnow % s->bper == 0 && s->nb < s->bcap) { const int b = s->nb, bc = s->bcap; for (int64_t i = 0; i < (int64_t)K * NL; i++) s->BT[i * bc + b] = s->T[i]; for (int64_t i = 0; i < s->gsize; i++) s->BG[i * bc + b] = s->G[i]; s->w2[b + 1] = 0; s->nb++; } }      /* PLAN_3: a bookmark */
-            if (s->bcap > 0 && s->jtop > 0 && s->nb < s->bcap) {      /* PLAN_4: the living set is kept as a bookmark and takes the trusts and parts of the bookmark jtop - 1 */
-                const int b = s->jtop - 1, nw = s->nb, bc = s->bcap;
-                for (int64_t i = 0; i < (int64_t)K * NL; i++) { s->BT[i * bc + nw] = s->T[i]; s->T[i] = s->BT[i * bc + b]; }
-                for (int64_t i = 0; i < s->gsize; i++) { s->BG[i * bc + nw] = s->G[i]; s->G[i] = s->BG[i * bc + b]; }
-                s->w2[nw + 1] = s->w2[0]; s->w2[0] = s->w2[b + 1]; s->w2[b + 1] = 0; s->nb++; s->returns++;
+            if (s->bcap > 0 && s->jtop > 0) {      /* PLAN_4, addition 1: the living set takes the trusts and parts of the bookmark jtop - 1, and its share; the living set is not kept (the bookmarks of the pace hold its states) */
+                const int b = s->jtop - 1, bc = s->bcap;
+                for (int64_t i = 0; i < (int64_t)K * NL; i++) s->T[i] = s->BT[i * bc + b];
+                for (int64_t i = 0; i < s->gsize; i++) s->G[i] = s->BG[i * bc + b];
+                s->w2[0] += s->w2[b + 1]; s->w2[b + 1] = 0; s->returns++;
             }
             s->jtop = 0;
         }

@@ -152,8 +152,8 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, N=0, eta=0.00005, e=0.0
             if N > 0:
                 state["lnow"] += 1
                 if state["lnow"] % N == 0: state["books"].append((T.copy(), G.copy())); state["w2"].append(0.0)
-                if jump:                                                     # PLAN_4: the living set is kept as a bookmark and goes back to the bookmark that held more than half of the belief
-                    BT, BG = state["books"][jump - 1]; state["books"].append((T.copy(), G.copy())); T[:] = BT; G[:] = BG; state["w2"].append(state["w2"][0]); state["w2"][0] = state["w2"][jump]; state["w2"][jump] = 0.0; state["returns"] += 1
+                if jump:                                                     # PLAN_4, addition 1: the living set goes back to the bookmark that held more than half of the belief, and takes its share
+                    BT, BG = state["books"][jump - 1]; T[:] = BT; G[:] = BG; state["w2"][0] += state["w2"][jump]; state["w2"][jump] = 0.0; state["returns"] += 1
         state["last"][y] = tau
     state["now"] += hi - lo; return P2, MIX, state
 

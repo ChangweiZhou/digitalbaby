@@ -14,6 +14,10 @@ Since the living set is then no longer the plain system, the comparison is with 
 
 **Check before any run** (`python3 wake.py check`): the compiled kernel against the reference written out in full, with returns occurring in the cases; with the addition switched off the losses are those of `PLAN_3.md`'s kernel; no answer moves when its own byte and all later ones are replaced.
 
+## 2a. Addition 1 (21 November, written after the first development life was stopped, before any other run)
+
+The development life with the rule as written above was stopped while it read its first stream (`out/W_dev_first_rule_stopped.txt`): in the first megabyte of tiny Shakespeare alone the living set returned 201 times and 216 bookmarks stood where `PLAN_3.md` has 15. The cause is plain once seen: a bookmark just taken is a twin of the living set, the two foretell alike, the belief passes between twins by small differences, and each passing was a return that added one more twin. **The rule is changed in one point before any run is scored: at a return the living set is not kept as a new bookmark.** It takes the bookmark's trusts and parts and adds the bookmark's share to its own; the bookmark's share is set to nothing. What the living set held is lost only as far back as the last bookmark of the pace (at most 65,536 bytes of learning). Returns to twins then add nothing to the store and change almost nothing in the trusts. Predictions W1, W2, W4 and W5 stand as written for the changed rule; W3 was written for the first rule and is scored as it stands.
+
 ## 3. Hypothesis, what refutes it, predictions (mine)
 
 **Hypothesis.** With return, at the end of a life, going on, the mixture's excess over the stream's own stage is smaller than without it by 0.01 or more in at least half of the cases (of the five reported orders) in which `PLAN_3.md`'s mixture still has an excess above 0.02; and on no test at any stage is the mixture with return worse than without by more than 0.005.
