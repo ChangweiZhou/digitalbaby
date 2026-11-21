@@ -75,24 +75,23 @@ Each fenced block is one run. Paste it whole. Every block carries the same setti
 *Informs:* The design of the stored copy that goes on learning, and the rule that replaces "more than half of the belief" as evidence. *Follows* round-one prompt 1. *Properties:* (a), (b).
 
 ```text
-Topic. A pool of stored predictors whose members go on learning: who should learn at each step, and what to do about members that are near-copies of one another.
+Topic. A pool of stored predictors whose members go on learning: who should learn at each step, and what to do about near-copies.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search established that fixed share, mixing past posteriors and specialists guarantee returns only for a linear mixture of frozen members; nothing was found measured on bytes. Here one system reading six kinds of stream (1 to 2 MB each) in turn ends 5 to 11% worse than six separate systems (five orders); three quarters of the loss on returning streams is in the mixer weights. Frozen stored copies remove 38 to 66% of it (one order). Overwriting the living weights with a copy holding over half of the belief failed (173 to 201 such returns inside one stream of one kind): copies from one regime are near-twins, and belief wanders among them by chance. Planned, not run: the copy with the largest share learns on beside the living weights.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search established that fixed share, mixing past posteriors and specialists guarantee returns only for a linear mixture of frozen members; nothing was found measured on bytes. Here one system reading six kinds of stream in turn ends 5 to 11% worse than six separate systems (five orders); three quarters of the loss on returning streams is in the mixer weights. Frozen stored copies remove 38 to 66% of it (one order). Overwriting the living weights with a copy holding over half of the belief failed (173 to 201 such returns inside one stream of one kind): copies from one regime are near-twins, and belief wanders among them by chance. Planned, not run: the leading copy learns on beside the living weights.
 
 Questions.
-1. Pools whose members learn: who learns at each step (all; in proportion to posterior weight; the leader only; those "awake")? Which guarantees of expert-advice theory survive when a member's future depends on its own weight?
-2. Near-identical members: posterior weight wandering among them (reported: "dilution" in Bayesian model averaging); remedies (hysteresis, tempered posteriors, sequential tests on loss differences before acting).
+1. Pools whose members learn: who learns at each step (all; in proportion to posterior weight; the leader only)? Which guarantees of expert-advice theory survive when a member's future depends on its own weight?
+2. Near-identical members: posterior weight wandering among them (reported: "dilution" in Bayesian model averaging); remedies (hysteresis, sequential tests on loss differences).
 3. Winner-take-all collapse in mixtures of experts and multiple choice learning (reported: Jacobs and colleagues 1991; Guzman-Rivera and colleagues 2012): remedies; one-pass forms with no backward pass between units.
-4. Online ensembles for drifting streams that weight and train their members (reported: dynamic weighted majority, Kolter and Maloof 2007; Learn++.NSE; follow-the-leading-history): which freeze old members; results on recurring concepts.
-5. Task-free continual learning with growing mixtures (reported: Aljundi and colleagues 2019; Lee and colleagues 2020): birth and update rules, what needs backpropagation, results.
-6. Published cases where a stored member, woken on the wrong regime, lost what made it worth storing; safeguards.
-7. For each: what has been shown for persistent learning specifically (keeping, return), not accuracy on a stationary benchmark?
+4. Online ensembles for drifting streams that weight and train their members (reported: Kolter and Maloof 2007; Learn++.NSE; follow-the-leading-history): which freeze old members; results on recurring concepts.
+5. Task-free continual learning with growing mixtures (reported: Lee and colleagues 2020): birth and update rules, what needs backpropagation, results.
+6. For each: what has been shown for persistent learning specifically (keeping, return)?
 
 For every question: the exact rule or algorithm; what was measured (data, metric, number, year); what is established, what is only argued, what you could not verify.
 
@@ -106,23 +105,23 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 *Informs:* The planned test of revision and the rule that separates "keep both" from "overwrite". *Follows* round-one prompt 5 (question 6) and prompt 9 (question 3). *Property:* (c), and its conflict with (b).
 
 ```text
-Topic. How an online count-based predictor should revise what has become false, and how it can tell a changed fact from a returning regime.
+Topic. How an online count-based predictor should revise what has become false, and tell a changed fact from a returning regime.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search found tests of changing facts only for neural language models on time-ordered text, and no forgetting rate learned per context. Here aims (b) and (c) pull against each other: stored copies exist to bring old weights back when a regime returns; counts that halve at 32 or 512 let recent evidence outvote old; lifetime counts never fade. When old predictions begin to fail, nothing yet tells "another regime: keep both" from "the world changed: overwrite". No revision has been measured. Planned, not run: a frequent word replaced by another through the rest of a stream, then tested in contexts where the new word was never shown.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search found tests of changing facts only for neural language models on time-ordered text, and no forgetting rate learned per context. Here (b) and (c) pull against each other: stored copies bring old weights back when a regime returns; bounded counts let recent evidence outvote old; lifetime counts never fade. When old predictions begin to fail, nothing yet tells "another regime: keep both" from "the world changed: overwrite". Planned, not run: a frequent word replaced by another through the rest of a stream, then tested in contexts where the new word was never shown.
 
 Questions.
-1. The formal distinction between a change of regime and a change of fact: real against virtual concept drift (reported: Gama and colleagues 2014); latent-cause accounts of extinction, where small errors update an old memory and large ones create a new one (reported: Gershman and colleagues 2010, 2017). Rules; tests on real streams.
+1. Change of regime against change of fact, formally: real against virtual concept drift (reported: Gama and colleagues 2014); latent-cause accounts of extinction, where small errors update an old memory and large ones create a new one (reported: Gershman and colleagues 2010, 2017). Tests on real streams.
 2. Interference paradigms, A-B then A-C (reported: Barnes and Underwood 1959; McCloskey and Cohen 1989): measures; which learners keep A-B while answering A-C.
-3. Change detection inside one context of a count model: run-length posteriors (reported: Adams and MacKay 2007), discounting triggered by surprise, what PPM-family models do when a deterministic context breaks. Rules, cost, measurements.
+3. Change detection inside one context of a count model: run-length posteriors (reported: Adams and MacKay 2007); what PPM-family models do when a deterministic context breaks.
 4. How fast a belief with n confirmations should yield to k contradictions: the Bayes-optimal answer under a hazard rate; human data.
-5. Measures from knowledge-editing work, as measurement designs only (reported: efficacy, locality, generalisation; "ripple effects", Cohen and colleagues 2023): any use on non-neural predictors.
-6. In pools of stored models (mixing past posteriors, forget-me-not): how an obsolete member is kept from resurging; published failures.
+5. Measures from knowledge-editing work, as designs only (reported: efficacy, locality, "ripple effects", Cohen and colleagues 2023): any use on non-neural predictors.
+6. In pools of stored models: how an obsolete member is kept from resurging; published failures.
 7. What has been shown for a learner that must both keep and revise over one long life?
 
 For every question: the exact rule or algorithm; what was measured (data, metric, number, year); what is established, what is only argued, what you could not verify.
@@ -139,22 +138,22 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 ```text
 Topic. What "persistent" (continual, lifelong) learning requires by its published definitions, which trivial baselines already meet them, and what makes the problem hard.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search found one formal objective (average reward, or negative log loss, under a compute budget per step; reported: Kumar and colleagues 2023); the "big world" paper and the Alberta Plan were not read. Here one system reading six kinds of stream in turn ends 5 to 11% worse than six separate systems (five orders); stored weight copies and bounded counts each remove part of that. A whole life so far is under 12 MB, so keeping the raw stream would be cheap; the project has not decided whether that is admissible.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search found one formal objective (average reward, or negative log loss, under a compute budget per step; reported: Kumar and colleagues 2023); the "big world" paper and the Alberta Plan were not read. Here one system reading six kinds of stream in turn ends 5 to 11% worse than six separate systems (five orders); stored weight copies and bounded counts each remove part of that. A whole life so far is under 12 MB, so keeping the raw stream would be cheap; the project has not decided whether that is admissible.
 
 Questions.
-1. Definitions (reported: Ring 1997; Thrun and Mitchell 1995; Hadsell and colleagues 2020; Abel and colleagues 2023; Kumar and colleagues 2023; Javed and Sutton 2024; the Alberta Plan): which of (a) to (e) does each require? Does any argue that forgetting what does not recur is optimal under bounded resources?
-2. Trivial baselines: store everything and retrain or look up (reported: "GDumb", Prabhu and colleagues 2020; nearest neighbours over the stored stream, Prabhu and colleagues 2023); one model per segment given by an oracle. Their benchmark scores, and the constraint under which each stops being admissible.
+1. Definitions (reported: Ring 1997; Abel and colleagues 2023; Javed and Sutton 2024; the Alberta Plan): which of (a) to (e) does each require? Does any argue that forgetting what does not recur is optimal under bounded resources?
+2. Trivial baselines: store everything and retrain (reported: "GDumb", Prabhu and colleagues 2020; nearest neighbours over the stored stream, Prabhu and colleagues 2023); one model per segment given by an oracle. Their benchmark scores, and the constraint under which each stops being admissible.
 3. Is it established that memory-based (non-parametric) learners do not forget? What do they fail at instead (generalisation, revision, cost)?
 4. Critiques of continual-learning evaluation (reported: Farquhar and Gal 2018; Hammoud and colleagues 2023).
-5. Proven tensions among the properties: stability against plasticity; hardness of optimal continual learning (reported: Knoblauch and colleagues 2020).
-6. Online Bayesian learning is said not to forget in principle: where does it fail in practice (misspecification, shared parameters, growing confidence)?
-7. What would a careful reviewer require before "learns persistently" may be written of a system tested on six to twelve streams of megabytes?
+5. Proven tensions among the properties (reported: Knoblauch and colleagues 2020, on the hardness of optimal continual learning).
+6. Online Bayesian learning is said not to forget in principle: where does it fail in practice?
+7. What would a careful reviewer require before "learns persistently" may be written of a system tested on six to twelve streams?
 
 For every question: the exact rule or algorithm; what was measured (data, metric, number, year); what is established, what is only argued, what you could not verify.
 
@@ -170,17 +169,17 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 ```text
 Topic. How regimes recur in natural streams, what continual learning with repetition has shown, and how to build a life of byte streams with returns.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search found no standard stream with designed switches and returns across text, code and tables, and warned that a protocol in which each stream returns once may overstate the worth of a memory over time. Here six kinds of stream of 1 to 2 MB are read in turn (five orders), and each returns once, for its last tenth. A life costs 5 to 11% against separate systems. At a return the excess loss over the first 4,000 bytes is 2.7 times that over the whole return: recovery takes tens of thousands of bytes. Planned, not run: twelve kinds; the six kinds woven in blocks of 65,536 bytes.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search found no standard stream with designed switches and returns, and warned that a protocol in which each stream returns once may overstate the worth of a memory over time. Here six kinds of stream of 1 to 2 MB are read in turn (five orders), and each returns once, for its last tenth. At a return the excess loss over the first 4,000 bytes is 2.7 times that over the whole return: recovery takes tens of thousands of bytes. Planned, not run: twelve kinds; the six kinds woven in blocks of 65,536 bytes.
 
 Questions.
 1. Measured statistics of recurrence: return times of topics, words, files or tasks (reported: Church and Gale 1995; Altmann and colleagues 2009; need as a power function of recency and frequency, Anderson and Schooler 1991). What schedule of returns do they imply?
-2. Continual learning with repetition (reported: Stojanov and colleagues 2019; Cossu and colleagues 2022; Hemati and colleagues 2023): does natural repetition shrink forgetting until a plain learner suffices? Numbers.
+2. Continual learning with repetition (reported: Stojanov and colleagues 2019; Cossu and colleagues 2022; Hemati and colleagues 2023): does natural repetition shrink forgetting until a plain learner suffices?
 3. Blocked against interleaved schedules in humans and in machines (reported: Flesch and colleagues 2018; the spacing effect): what each predicts for retention.
 4. Generators and real data sets with recurring concepts in data-stream mining: how recurrence is injected; known critiques.
 5. Any multi-domain character or byte stream with returns used for sequence prediction since 2020.
@@ -199,25 +198,25 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 *Informs:* The pool's size rule and the content of a stored state. *Follows* round-one prompts 1 (questions 3 and 4) and 10. *Properties:* (a), (b), over a long life.
 
 ```text
-Topic. Keeping a pool of stored predictor states within fixed memory over a long life: which to keep, merge and drop, and what a stored state should contain.
+Topic. Keeping a pool of stored predictor states within fixed memory over a long life: which to keep, merge and drop, and what a state should contain.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search established: the forget-me-not process caps its pool by thresholds on reservoir subsamples (about 30 members); with a few dozen members a switch costs little, so which copies are kept matters more than the combining rule (an inference); storing short-context counts with each copy was proposed, not measured. Here a copy of the mixer weights is stored every 65,536 bytes, so the pool grows linearly with the bytes read; copies from one regime are near-twins; about a quarter of the loss on a returning stream is in counts, not weights (five orders).
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search established: the forget-me-not process caps its pool by thresholds on reservoir subsamples (about 30 members); with a few dozen members a switch costs little, so which copies are kept matters more than the combining rule (an inference); storing short-context counts with each copy was proposed, not measured. Here a copy of the mixer weights is stored every 65,536 bytes, so the pool grows linearly with the bytes read; copies from one regime are near-twins; about a quarter of the loss on a returning stream is in counts, not weights (five orders).
 
 Questions.
 1. Fixed-budget forms of mixing past posteriors, specialists and follow-the-leading-history: pruning rules, and the regret lost.
-2. Merging near-duplicate members: criteria (divergence between predictions on a reservoir; correlation of losses), what to keep after a merge (reported: mixture reduction, Runnalls 2007), measured effects.
+2. Merging near-duplicate members: criteria (divergence between predictions on a reservoir; correlation of losses), what to keep after a merge (reported: mixture reduction, Runnalls 2007).
 3. Which members to keep when returns cannot be foreseen: recency and frequency rules from cache replacement (reported: ARC, LRFU) and from the rational analysis of memory (reported: Anderson and Schooler 1991); any use for pools of models.
 4. Pools for recurring concepts in data-stream mining: caps, eviction rules, pool sizes reached on long streams.
 5. Stored state larger than weights: versioned count tables (copy-on-write, deltas, persistent data structures); cost per snapshot; published uses in online learners.
-6. Consolidation: reducing many stored members to few, offline between streams and without backpropagation (moment matching; refitting on samples from the learner's own store). Results, and damage done.
+6. Consolidation: reducing many stored members to few, offline between streams and without backpropagation (moment matching; refitting on samples from the learner's own store). Results; damage.
 7. Evidence beyond a few dozen regimes or returns.
-8. For each: what has been shown for persistent learning specifically (what is still there at a late return)?
+8. For each: what has been shown for persistent learning specifically?
 
 For every question: the exact rule or algorithm; what was measured (data, metric, number, year); what is established, what is only argued, what you could not verify.
 
@@ -231,23 +230,23 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 *Informs:* What to build after bounded counts for streams read late. *Follows* round-one prompts 9 (question 4) and 15 (question 7). *Property:* (e).
 
 ```text
-Topic. Why what a count-based learner already holds makes it learn the next thing worse, and how statistics can be shared between regimes without labels so that they help and do not hurt.
+Topic. Why what a count-based learner already holds makes it learn the next thing worse, and how regimes can share statistics without labels to their gain.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search established that bounded and discounted counts are known art, and found hierarchical sharing across domains only in batch form with labels. Here a stream read late in a life is learned 0.02 to 0.06 nats per byte worse than by a fresh system; emptying the counts of contexts of 0 to 3 bytes before that stream removes 0.88 of the loss at the median (three orders), resetting the mixer weights 0.14. Counts that halve at a bound, kept beside the lifetime counts, cut it by two thirds (five orders). Yet one stream (C headers) is learned 0.02 to 0.05 better after other kinds than alone: there is transfer worth keeping.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search established that bounded and discounted counts are known art, and found hierarchical sharing across domains only in batch form with labels. Here a stream read late in a life is learned 0.02 to 0.06 nats per byte worse than by a fresh system; emptying the counts of contexts of 0 to 3 bytes before that stream removes 0.88 of the loss at the median (three orders), resetting the mixer weights 0.14. Counts that halve at a bound, kept beside the lifetime counts, cut it by two thirds (five orders). Yet one stream is learned 0.02 to 0.05 better after other kinds than alone: there is transfer worth keeping.
 
 Questions.
 1. Negative forward transfer (proactive interference) in online learners: theory by overlap of features or parameters (reported: Riemer and colleagues 2019; Evron and colleagues 2022); the cost of unlearning a prior of n wrong counts.
-2. Shared-plus-private estimators, task identity unknown: online multitask learning (reported: Cavallanti and colleagues 2010); n-gram models conditioned on a latent topic inferred online (reported: Gildea and Hofmann 1999; Bellegarda 2004). One-pass forms; results when domains alternate.
-3. The past as a prior whose strength is learned: empirical-Bayes concentration (reported: MacKay and Peto 1995), power or discounted priors, stabilised forgetting (reported: Kulhavý and Zarrop 1993).
+2. Shared-plus-private estimators, task identity unknown: online multitask learning (reported: Cavallanti and colleagues 2010); n-gram models conditioned on a latent topic inferred online (reported: Gildea and Hofmann 1999; Bellegarda 2004). Results when domains alternate.
+3. The past as a prior whose strength is learned: empirical-Bayes concentration (reported: MacKay and Peto 1995), stabilised forgetting (reported: Kulhavý and Zarrop 1993).
 4. Overconfidence of count learners late in life, as an analogue of loss of plasticity: evidence, remedies.
-5. Learners shown to learn each new stream faster as a life goes on, with no gradient taken through the learning process.
-6. What fast-fading short memories lose (the positive transfer above): measured trade-offs.
+5. Learners shown to learn each new stream faster as a life goes on, without a gradient through the learning process.
+6. What fast-fading short memories lose (the positive transfer above).
 7. For each: what has been shown for persistent learning specifically?
 
 For every question: the exact rule or algorithm; what was measured (data, metric, number, year); what is established, what is only argued, what you could not verify.
@@ -264,13 +263,13 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 ```text
 Topic. Keeping what was learned by selecting weights and counts with a slowly varying summary of the input, in place of or beside copies stored over time.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search established: compressors of this family handle mixed data by weight sets selected by observable context, not by a memory over time; gated linear networks resist forgetting only when side information separates the tasks; the sharpness of an online, label-free signal of the kind of data at 1 to 4 KB is unmeasured. Here a detector of regimes built on byte histograms split source code into dozens of regimes (its cap of 64 was reached) and did worse than no remedy; stored weight copies removed 38 to 66% of the loss on returning streams (one order).
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search established: compressors of this family handle mixed data by weight sets selected by observable context, not by a memory over time; gated linear networks resist forgetting only when side information separates the tasks; the sharpness of an online, label-free signal of the kind of data at 1 to 4 KB is unmeasured. Here a detector of regimes built on byte histograms split source code into dozens of regimes (its cap of 64 was reached) and did worse than no remedy; stored weight copies removed 38 to 66% of the loss on returning streams (one order).
 
 Questions.
 1. Context-dependent gating against forgetting (reported: Masse and colleagues 2018, with task labels): label-free forms in which the gate is computed from the input alone (reported: dendritic gated networks, Sezener and colleagues 2021; active dendrites, Iyer and colleagues 2022). Which use no backward pass between units? Results.
@@ -279,7 +278,7 @@ Questions.
 4. Granularity: finer partitions keep more and starve each cell. Theory; soft selection that lets neighbouring cells share.
 5. Direct comparisons of selection by input with pools over time, on recurring tasks.
 6. Regimes that differ in rule but not in surface statistics: what selection by input cannot do; published failures.
-7. For each: what has been shown for persistent learning specifically (keeping, return, no harm to the next thing learned)?
+7. For each: what has been shown for persistent learning specifically?
 
 For every question: the exact rule or algorithm; what was measured (data, metric, number, year); what is established, what is only argued, what you could not verify.
 
@@ -295,13 +294,13 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 ```text
 Topic. Measures of forward and backward transfer and of savings, and their reference systems, for a one-pass stream learner scored by log loss.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search gave prequential evaluation, error bars for dependent sequences, and its authors' own restatement of forgetting, backward transfer and the stability gap for log loss, with no published source for that restatement. Here retention is the loss on a stream's last tenth at the end of a life less the same right after the stream was read; "learning the next thing worse" is the loss at a stream's own stage less that of a fresh system; the reference is six separate systems; five orders of six streams; the systems are deterministic.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search gave prequential evaluation, error bars for dependent sequences, and its authors' own restatement of forgetting, backward transfer and the stability gap for log loss, with no published source for that restatement. Here retention is the loss on a stream's last tenth at the end of a life less the same right after the stream was read; "learning the next thing worse" is the loss at a stream's own stage less that of a fresh system; the reference is six separate systems; five orders of six streams; the systems are deterministic.
 
 Questions.
 1. Original definitions (reported: Lopez-Paz and Ranzato 2017; Chaudhry and colleagues 2018, forgetting and intransigence; Díaz-Rodríguez and colleagues 2018), and any published restatement for prequential log loss or code length (reported: Bornschein and colleagues 2022).
@@ -327,13 +326,13 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 ```text
 Topic. Tests of whether a stream learner uses what it learned on cases never shown, and whether that ability survives later learning.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search established: no benchmark of rule learning inside a stream exists for predictors that are not neural networks; at 10 million words n-gram models score within three points of recurrent networks on minimal pairs, with known artefacts; held-out lexical items are needed. Here the only evidence on never-shown cases is two-digit sums, from an earlier system; on general streams nothing has been measured, and nothing on whether such ability is kept through later streams.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search established: no benchmark of rule learning inside a stream exists for predictors that are not neural networks; at 10 million words n-gram models score within three points of recurrent networks on minimal pairs, with known artefacts; held-out lexical items are needed. Here the only evidence on never-shown cases is two-digit sums, from an earlier system; on general streams nothing has been measured, and nothing on whether such ability is kept through later streams.
 
 Questions.
 1. Artificial-language paradigms that can be scored by probabilities (reported: Saffran and colleagues 1996; Marcus and colleagues 1999; Gómez 2002; Reber's artificial grammars; the "wug" test, Berko 1958): which do n-gram, chunking and count models pass, and under what controls?
@@ -358,13 +357,13 @@ Return. (a) A direct answer to each question. (b) A table of key sources: author
 ```text
 Topic. What persistent learning means for an agent built on counts, and the smallest settings in which it can be tested.
 
-Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts and, beside them, counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
+Setting. A small research project builds a learner that reads a byte stream once and goes on learning all its life. It is online context mixing: count tables keyed by contexts of orders 0 to 6 (lifetime counts, and counts that halve at a bound); match models; a log-linear mixer over the 256 byte values, its weights selected by context type and a confidence bin and learned online from the log loss. Copies of the mixer weights are stored every 65,536 bytes; all copies answer, combined by fixed share.
 
 Aim. Persistent learning: (a) keep what was learned of A through learning B; (b) have it when A returns; (c) revise what has become false; (d) use it on cases never shown; (e) learn the next thing no worse for what is already held; ultimately, act as an agent. Nats per byte are a yardstick only: a better compressor is not the aim.
 
 Constraints. No global backward pass: no gradient passes from unit to unit, through layers or through time (a backward pass inside one unit is allowed). One pass; each byte is predicted before it is learned from (test-then-train). No task or regime labels. One setting for all data.
 
-Facts (development level: one team's programs and checks, mostly one run per order of the streams). An earlier search established: agents built on context-tree predictors reach optimal play on small domains and stall beyond them; a count model good at estimating values was no better than random as a simulator for planning; no lifelong byte-stream agent was found; exploration, and the way reward enters a stream, were not asked about; a count learner grows sure that what it has not seen does not occur. Here the system only predicts the next byte; nothing about acting has been run.
+Facts (development level: one team's programs, mostly one run per order of the streams). An earlier search established: agents built on context-tree predictors reach optimal play on small domains and stall beyond them; a count model good at estimating values was no better than random as a simulator for planning; no lifelong byte-stream agent was found; exploration, and the way reward enters a stream, were not asked about; a count learner grows sure that what it has not seen does not occur. Here the system only predicts the next byte; nothing about acting has been run.
 
 Questions.
 1. Reward and action inside one byte stream: action-conditional prediction; prediction conditioned on return (reported: "upside-down" reinforcement learning, Schmidhuber 2019); value from density models. Forms with no backward pass between units; results.
