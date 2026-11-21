@@ -96,7 +96,7 @@ own (the previous byte predicts, the hold chooses the cell); a learning cell mak
 of each part, a random sample. The cell that would be chosen learns even on surprise (otherwise only one of two random starts gets a
 predicted cell and its lucky predictions keep a stale hold). No window of past bytes: the hold is the activity of a few cells.
 
-Fixes found by tracing one region (`scratch trace`: per byte, surprise and the cells chosen): thresholds relative to the number of
+Fixes found by tracing one region (`trace_region.py`: per byte, surprise and the cells chosen): thresholds relative to the number of
 active sources (an empty hold deadlocked fixed thresholds); per-part matching (a hold constant across the middle predicted every
 middle byte and caused false surprises); learning on surprise. Larger codes (C=256, k=16) were not needed once these were in.
 
@@ -114,3 +114,7 @@ failed at G=16 because that region never settled while 7 others carried the bran
 
 Cost: about 155 s for 12,000 bytes at G=32 (numpy, one core). Open: speed; yes/no at long gaps; real text; keeping what was learned
 when the stream changes; why the last region does not settle at G=16.
+
+**Speed (same numbers).** One flat gather with a stored index, sums over slots in uint8, learning updates only on the rows that
+change, no sampling when the sample would take every candidate: 10.7 → 3.8 ms a byte (12 regions), checked identical over 2,000
+bytes against the committed version (`check_same.py REF`: cells, strengths, sources, reliabilities and holds compared with ==).

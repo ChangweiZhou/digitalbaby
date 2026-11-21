@@ -32,6 +32,7 @@ class Tissue:
         self.fw = rng.random((L, C, fan_in))
         self.lsrc = rng.integers(0, n_values, (C, lines_in)); self.lw = rng.random((C, lines_in))
         self.rsrc = np.zeros((L, C, M, S), np.int64); self.rw = np.zeros((L, C, M, S))
+        self.goff = (np.arange(L) * 2 * C * M)[:, None, None, None]; self.gsrc = self.rsrc + self.goff   # index into the flat context of all regions
         self.use = np.zeros((L, C, M)); self.use[:, :, 0] = np.inf                       # cell 0 is never a context cell
         self.cells = np.zeros((L, C, M)); self.cols = np.zeros((L, C)); self.hold = np.zeros((L, C, M))
         self.predicted = 0.0; self.surprise = np.zeros(L, bool)
@@ -51,14 +52,16 @@ class Tissue:
         L, C, M, S = self.L, self.C, self.M, self.S
         cols = self.forward(byte)
         ctx = np.concatenate([self.cells.reshape(L, -1), self.hold.reshape(L, -1)], 1)  # [L, 2*C*M]
-        act = (np.take_along_axis(ctx[:, None, None, :], self.rsrc.reshape(L, 1, 1, -1), 3).reshape(self.rsrc.shape) > 0) & (self.rw > 0)
+        act = (ctx > 0).ravel()[self.gsrc] & (self.rw > 0)
         strong = act & (self.rw >= self.w_on); isH = self.rsrc >= C * M                  # slot from a hold cell
-        n_on = strong.sum(3); n_act = act.sum(3)
+        u8 = lambda x: x.view(np.uint8).sum(3, dtype=np.uint8)
+        n_on = u8(strong); n_act = u8(act)
+        sH, aH = u8(strong & isH), u8(act & isH)
         pred = np.ones((L, C, M), bool); match = np.ones((L, C, M), bool)
-        for part, na in ((~isH, self.cells.reshape(L, -1).sum(1)), (isH, self.hold.reshape(L, -1).sum(1))):
+        for (son, sact), na in (((n_on - sH, n_act - aH), self.cells.reshape(L, -1).sum(1)), ((sH, aH), self.hold.reshape(L, -1).sum(1))):
             na = (np.minimum(na, self.n_grow) if self.n_grow else na)[:, None, None]      # each part (previous byte, hold) must match on its own
-            pred &= (strong & part).sum(3) >= self.th_on * na
-            match &= (act & part).sum(3) >= self.th_match * na
+            pred &= son >= self.th_on * na
+            match &= sact >= self.th_match * na
         anyp = (self.cells.reshape(L, -1).sum(1) > 0)[:, None, None]                     # the previous byte must be there
         pred &= anyp & (n_on > 0); match &= anyp & (n_act > 0)
         pcol = pred.any(2)                                                                # [L, C]
@@ -71,11 +74,12 @@ class Tissue:
         pick = np.where(surprise[:, None], 0, choice)
         cells = np.zeros((L, C, M)); np.put_along_axis(cells, pick[:, :, None], 1.0, 2); cells *= cols[:, :, None]
         if learn:
-            self.rel += np.where(pred, self.lam * (((choice[:, :, None] == np.arange(M)) & (cols > 0)[:, :, None]) - self.rel), 0.0)
+            ip = np.nonzero(pred); came = (choice[ip[0], ip[1]] == ip[2]) & (cols[ip[0], ip[1]] > 0)
+            self.rel[ip] += self.lam * (came - self.rel[ip])
             f = np.zeros((L, C, M), bool); np.put_along_axis(f, choice[:, :, None], True, 2)   # the chosen cell learns even on surprise
             f &= (cols > 0)[:, :, None]; f[:, :, 0] = False                                       # (it does not fire then: the default cell does)
-            self.rw += np.where(f[..., None] & act, self.eta * (1 - self.rw), 0.0)
-            self.rw -= np.where((pred & ~f)[..., None] & act, self.eta_minus * self.rw, 0.0)
+            i1 = np.nonzero(f); r = self.rw[i1]; self.rw[i1] = np.where(act[i1], r + self.eta * (1 - r), r)          # only the rows that change
+            i2 = np.nonzero(pred & ~f); r = self.rw[i2]; self.rw[i2] = np.where(act[i2], r - self.eta_minus * r, r)
             self.grow(f, act, ctx)
             self.use += np.where(f, 1.0, 0.0)
         self.hold = np.where(surprise[:, None, None], cells, self.hold)
@@ -98,6 +102,7 @@ class Tissue:
                 CM = self.C * self.M; pH = prev >= CM; sH = src >= CM
                 for pm, nact in ((~pH, (a & ~sH).sum(1)), (pH, (a & sH).sum(1))):
                     need = np.maximum(self.n_grow - nact, 0)
+                    if ((~have & pm[None, :]).sum(1) <= need).all(): continue                     # the sample would take them all
                     pr = np.where(have | ~pm[None, :], np.inf, self.grng.random(have.shape))
                     rk = np.argsort(np.argsort(pr, 1), 1)
                     have = have | (pm[None, :] & (rk >= need[:, None]))
@@ -107,3 +112,4 @@ class Tissue:
             rows, js, r = rows[ok], js[ok], r[ok]; slot = order[rows, r]
             ok = ~np.isinf(key[rows, slot]); rows, js, slot = rows[ok], js[ok], slot[ok]
             self.rsrc[d, c[rows], m[rows], slot] = prev[js]; self.rw[d, c[rows], m[rows], slot] = self.w_new
+            self.gsrc[d, c[rows], m[rows], slot] = prev[js] + self.goff[d, 0, 0, 0]
