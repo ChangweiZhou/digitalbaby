@@ -47,6 +47,26 @@ Diagnostic: 18 lives of the small system (about 3 CPU-minutes each on a free mac
 
 Development order, mean over the six tests of the going-on loss at the end of the life (the plain answer of the second cell): the plain system 0.9184; (i) a bound of 32 on runs of 0 to 3 bytes 0.8861; (ii) bounds of 32 and 512 on runs of 0 to 3 bytes **0.8656**; (iii) a bound of 32 on runs of 0 to 6 bytes 0.8847, with twice the cells. **Form (ii) is taken and frozen** (`ZAM32x512`: eight kinds more; 174,068 cells more at the end of the development life, 7.6%).
 
-## 6. Outcome
+## 6. Outcome (entered 21 November, 01:18 UTC; `report_5.txt`, `res/mem__*.json`, `out/`). The lives with remembered trusts as well (M5) and half of the diagnostic lives are still running and are entered below when they are in.
 
-(to be entered after the runs)
+**The diagnostic, so far** (development order and reported orders 73129 and 116089; six later positions in which the plain life is 0.02 or more above its single): emptying the cells of runs of 0 to 3 bytes before a new stream removes 0.88 of the loss on streams read late at the median and brings five of the six positions within 0.01 of the single; emptying the cells of runs of 4 to 6 bytes removes 0.45; emptying the places of the recalling senders 0.01; setting the trusts back (`PLAN_1.md`, addition 2) 0.14. **G1 held, G2 failed** (the long runs matter too, about half as much as the short), **G3 held.** So what spoils a stream read late is mostly what other kinds of text left in the short contexts.
+
+**Bounded kinds, read alone** (six singles, going on; the plain single in brackets): tiny Shakespeare 1.3266 (1.3434), the book 1.3931 (1.3987), Python 0.9213 (0.9418), C headers 0.6319 (0.6952), the table 0.2977 (0.3460), markup 0.2603 (0.2889). Lower on all six, by 0.006 to 0.063 (0.4 to 14%); mean 0.8052 against 0.8357. With nothing changing they are lower on the two prose streams (0.010, 0.005) and higher on the other four (0.017, 0.071, 0.180, 0.056), as every sender of recency has been.
+
+**Bounded kinds in a life** (five reported orders):
+
+| order | own stage less own single, later positions: bounded kinds | the plain system, the same | cost of the life: bounded kinds | plain |
+|---|---|---|---|---|
+| 73129: table, C, markup, Python, Shakespeare, book | -0.049 +0.006 +0.007 +0.027 +0.014 | -0.047 +0.012 +0.029 +0.063 +0.046 | +0.028 | +0.046 |
+| 93683: table, C, markup, Python, book, Shakespeare | -0.049 +0.006 +0.007 +0.028 +0.005 | -0.047 +0.012 +0.029 +0.064 +0.035 | +0.029 | +0.046 |
+| 116089: Shakespeare, markup, Python, book, C, table | +0.003 +0.012 +0.014 +0.010 +0.008 | +0.005 +0.026 +0.035 +0.045 +0.012 | +0.073 | +0.093 |
+| 406364: table, Shakespeare, Python, C, markup, book | +0.005 +0.010 -0.044 +0.009 +0.018 | +0.011 +0.024 -0.019 +0.019 +0.049 | +0.028 | +0.048 |
+| 545353: table, book, Shakespeare, markup, C, Python | +0.004 -0.010 +0.010 -0.040 +0.009 | +0.007 +0.000 +0.016 -0.027 +0.036 | +0.035 | +0.050 |
+
+(the cost of a life is the mean over the six tests at the end less the mean of the same system's six singles)
+
+**The hypothesis held in both parts.** (a) The loss on streams read late is cut by 0.66 at the median over the twelve positions in which the plain system's is 0.02 or more. (b) Read alone no stream is harmed and all six gain. At the end of a life the system with bounded kinds is below the plain system on all six tests in all five orders.
+
+**Predictions scored.** M1 held (0.66). M2 held (six of six gain; none harmed). **M3 failed**: the cost of the life is lower by 40%, 38%, 22%, 41% and 31%: a third or more in three orders, where four were asked. What remains is the loss on the streams read earlier, which sits in the trusts and which this plan does not touch. M4 held (six of six tests in every order). **M6 failed in part**: in a life the bounded kinds add 7.6 to 7.7% to the cells, but read alone they add 14 to 20% on Python, C headers and markup. M5 is not yet in.
+
+**My reading.** Two things were found at once and should be kept apart. (1) *A general gain that has nothing to do with a life:* a context that also holds what followed it lately is a better sender on every stream, by up to 14% on source code, with nothing given for any kind of text; `PLAN_6.md` found the same on bytes that are not text (six of six streams). (2) *Most of the loss on what is read late in a life goes with it* (two thirds), because that loss was the short contexts speaking of other kinds of text, and a memory of what followed lately speaks of the present kind after a few events.
