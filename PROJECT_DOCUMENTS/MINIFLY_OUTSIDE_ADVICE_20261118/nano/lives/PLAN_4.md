@@ -36,6 +36,18 @@ The development life with the rule as written above was stopped while it read it
 
 Development: the development order once (to see that returns happen and how many; nothing is chosen). Reported: the five orders and the six singles. Size and cost as `PLAN_3.md`, with one bookmark more for each return. **Not run:** bookmarks that keep their own sums; a set that is young (reborn at the pace); the large system.
 
-## 5. Outcome
+## 5. Outcome (entered 21 November; `out/W_dev_first_rule_stopped.txt`, `out/W_dev_second_rule_stopped.txt`)
 
-(to be entered after the runs)
+**Return, in both forms, failed in development and was stopped; nothing was run on the reported orders, and no prediction is scored on them.**
+
+| while tiny Shakespeare's body was read (first stream of the development order), nats a byte | the living set | the mixture | bookmarks | returns |
+|---|---|---|---|---|
+| `PLAN_3.md` (no return) | 1.4110 | 1.4110 | 15 | none |
+| return as first written (the living set kept at each return) | 1.4118 | 1.4115 | 216 | 201 |
+| return as in addition 1 (the living set not kept) | 1.4214 | 1.4212 | 15 | 173 |
+
+With the second form the system is 0.010 nats a byte worse while reading one stream alone, more than twice the 0.005 the hypothesis allows (W2 fails in development; W3, fewer than 300 returns in a life, would fail on the first stream or the second).
+
+**Why (my reading).** A bookmark of the same kind of text is a twin of the living set. Between twins the shares say nothing: their losses differ by chance at each byte, the differences add up along the stream faster than the small share for switching pulls them back, and one twin or another holds more than half of the belief by turns. "More than half of the belief" is therefore no evidence that the living set should give way, and each time it gave way to an older twin it lost up to 65,536 bytes of its own learning. The rule would need evidence of a lasting difference between the two sets, which the share is not.
+
+**What stands:** the gap this plan was aimed at is real (section 1). **What I would build instead, not built here:** the set that holds the largest share goes on learning beside the living set, each from its own mismatch, so that nothing is ever overwritten: an old kind's bookmark wakes when its text returns and learns on from where it stood, and a twin that wakes does no harm. It needs each bookmark to keep its own sums.
