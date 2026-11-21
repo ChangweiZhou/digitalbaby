@@ -76,6 +76,42 @@ The relay network at 40,000 lines: 83.5 (the look of section 4a holds).
 
 Not changed: the hypotheses, X1 to X8, the forms, the seeds, the scoring. `python3 aba.py check` was run again after the change to the program (`check11_output.txt`; 7 passed; the kernel is the same text).
 
-## 5. Outcome
+## 5. Outcome (entered 21 November; five reported seeds, every form; `report_11.txt`, `res/aba__r_*.json`, `res/relay_aba__r_*.json`, `out/`)
 
-(to be entered after the runs)
+Never-shown sums, whole answer, per cent: median over the five seeds (smallest to largest).
+
+| Learner | End of the sums | End of the English, nothing changing | Lost, points | The same with the shared numbers of the end of the sums put back | Return, 5,000 lines | English, nats a byte, last tenth |
+|---|---|---|---|---|---|---|
+| S1: cells that count, shared trusts | 82.4 (80.5 to 83.0) | 76.0 (75.1 to 79.6) | 5.4 (3.4 to 7.4) | 82.4 (80.5 to 83.0) | 79.8 | 1.509 |
+| S2: the same with the second answering cell | 91.3 (89.5 to 92.4) | 79.0 (75.1 to 87.5) | 10.7 (4.9 to 15.1) | 91.3 (89.5 to 92.4) | 90.4 | 1.504 |
+| P: a trust for each cell, step 0.3 (the plan's) | 77.8 (75.2 to 78.5) | 76.4 (74.0 to 77.8) | 1.1 (0.1 to 1.7) | | 77.3 | 2.774 |
+| P, step 0.1 (addition) | 75.6 (73.2 to 78.2) | 74.6 (73.2 to 76.9) | 1.1 (0.0 to 1.3) | | 75.6 | 1.741 |
+| P, step 0.03 (addition) | 70.8 (68.8 to 74.8) | 70.7 (68.2 to 73.8) | 0.5 (0.0 to 1.0) | | 70.5 | 1.559 |
+| F: no trust learned | 30.0 (27.8 to 32.9) | 30.0 (27.8 to 32.9) | 0.0 on every seed | | 29.8 | 2.355 |
+| R: the relay network | 96.6 (96.0 to 98.1) | 0.0 on every seed | all | see below | 96.4 | |
+| R0: its fading off from the English on | 96.6 (96.0 to 98.1) | 0.0 on every seed | all | see below | 96.9 | |
+
+**The relay network after the English, with parts of the end of the sums put back** (R; R0 within two points of it): nothing 0.0; the cells in between 0.0; the answering strengths 86.3 (84.5 to 89.0); the answering strengths and the cells' thresholds **95.7 (94.6 to 97.5)**, against 96.6 before. **Its return:** 63.5% after 500 lines, 91.4% after 1,000, 93.2% after 2,000, 96.4% after 5,000; with the cells in between held still (R0) 57.8, 87.8, 93.0, 95.8. **The yardstick:** a network at birth names 9.8% after 5,000 lines and 88.8% after 40,000; with its cells held as born, 0.5% after 5,000. **Its cells:** before the English is read, 84 of the 256 cells are above one half in a state of the English and 111 in a state of the sums; through the English the digit branches' answering strengths changed by 0.998 of their size (0.80 with the fading off).
+
+| | Outcome |
+|---|---|
+| X1 | **Failed.** S1 keeps 0.93 of its level and S2 0.88. **H1 is refuted by its own words** (more than three quarters kept) |
+| X2 | Held (after 5,000 lines S1 is 2.0 points under its level, S2 0.8). It says little: see the limits |
+| X3 | **Held.** P loses 1.1 points at the median, 1.7 at most. **H2 holds** |
+| X4 | Held: P ends the sums 4.6 points under S1 |
+| X5 | Held: F stands 48 points under P and loses nothing |
+| X6 | Held: R keeps none |
+| X7 | **Held.** R0 keeps none. **H3 holds**: for this learner, as built, having the rule was not enough |
+| X8 | Held: with the cells in between held still the return is 1.6 points behind at the median (2.6 at most) after 5,000 lines |
+
+**What was found (my reading; development level).**
+
+1. **Where nothing is shared, nothing is lost.** The counts lose nothing on any seed (F). A trust that is the cell's own loses a point. The relay network's strengths from the lines keep the whole rule through the English (95.7 of 96.6 when the two things English did change are put back). This is Mr. Xu's first principle, and it holds: what the two texts do not share, the second does not harm.
+2. **What is lost is lost in what the texts share by construction.** In the counting learner that is the trusts shared by kind and level, which I brought in: 5 points of 82 in the first cell and 11 of 91 in the second, and every point of it is back when those trusts are put back. In the relay network it is the answering cell's strengths and the cells' thresholds, and there it is everything.
+3. **My H1 was wrong in size.** Shared trusts cost a tenth of the level here, not more than half. They are where the loss sits; they are not a collapse.
+4. **The network that has the rule does not forget the rule. It loses the reading of it.** After the English it relearns in 1,000 lines what first took 40,000, and nearly as fast with its cells in between held still. So the second half of Mr. Xu's question has this answer for this learner: the rule that was learned is kept; what lets it answer is overwritten, because the answering strengths are taught and faded at every byte through cells that are active for any text.
+5. **Strict locality has a price in the counting learner that is not yet paid off.** With its own trust a cell must learn from its own events alone how far it is to be believed. At the step that suits the sums it is 4.6 points under the shared trusts and reads English badly (2.77 nats a byte against 1.51); at the step that suits English (1.56) it is 11.6 points under on the sums. One number does not serve both. A trust of the cell's own that is born at what its kind has earned is the next form to try (it is also the first proposal of the helper's reading of the second literature report).
+
+**Limits.** One second text, of one length, with one return. The score is the whole answer named; the loss in nats on the answer bytes was not recorded, so these losses cannot be set beside `PLAN_1.md`'s shares of nats. For the counting learners the return proves nothing by itself: a fresh system of form S1 names 74.1% after 5,000 lines (`check11_output.txt`, seed 1), so X2 is nearly met by a learner that kept nothing; their keeping rests on the mark at the end of the English, with nothing changing. The shown sums were not scored beside the never-shown ones (`PLAN_12.md` adds this for the network). P's step was best at the edge of its set. The diagnostics of section 4b were tried on the development seed before they were written down, as said there. Subtraction after addition, where the bytes are the same, is not this case and was not run.
+
+**Next:** `PLAN_12.md` (the relay network with strengths that change only while their own cell is active).
