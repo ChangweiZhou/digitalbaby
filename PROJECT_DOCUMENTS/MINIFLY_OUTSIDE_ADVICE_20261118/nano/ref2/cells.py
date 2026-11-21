@@ -5,7 +5,7 @@
     python3 cells.py big     # without relay                            (reported: 1.4740 and 1.4444); 4 to 7 GB
     python3 cells.py all     # every kind, the relay system as well      (reported: 1.4707 and 1.4421)
 Writes res/cells_<name>_cell1.f32, res/cells_<name>_cell2.f32 (float32, 111,540 numbers: minus the log of the probability of the true byte)
-and res/cells_<name>.json. Nothing in nano/table is changed (its compiled kernels are built there if missing; they are not tracked)."""
+and res/cells_<name>.json; and the same with everything going on through the tenth (..._going_on.f32). Nothing in nano/table is changed (its compiled kernels are built there if missing; they are not tracked)."""
 import json, os, resource, sys, time
 import numpy as np
 HERE = os.path.dirname(os.path.abspath(__file__)); TABLE = os.path.join(HERE, "..", "table"); sys.path.insert(0, TABLE); os.chdir(TABLE)
@@ -17,5 +17,9 @@ for tag, P in (("cell1", P1), ("cell2", P2)):
     with np.errstate(divide="ignore"): nll = -np.log(P[np.arange(len(y)), y])
     nll.astype(np.float32).tofile(os.path.join(HERE, "res", f"cells_{name}_{tag}.f32")); sc = score.score(P, y); e = score.score(P[::8], y[::8])
     out[tag] = dict(all=sc, every_eighth=e, mean_of_kept_file=float(nll.astype(np.float32).astype(np.float64).mean()))
+Q1, Q2 = s.go(cut, len(x), True, True)                 # PLAN_3.md: the same tenth again with everything going on (each byte answered, then learned from); the frozen pass changed no state
+for tag, P in (("cell1", Q1), ("cell2", Q2)):
+    nll = -np.log(P[np.arange(len(y)), y]); nll.astype(np.float32).tofile(os.path.join(HERE, "res", f"cells_{name}_{tag}_going_on.f32"))
+    out[tag + "_going_on"] = dict(all=score.score(P, y), every_eighth=score.score(P[::8], y[::8]))
 out["cpu"] = round(time.process_time() - t0, 1); out["peak_memory_GB"] = round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1e6, 2)
 json.dump(out, open(os.path.join(HERE, "res", f"cells_{name}.json"), "w"), indent=1); print(json.dumps(out))

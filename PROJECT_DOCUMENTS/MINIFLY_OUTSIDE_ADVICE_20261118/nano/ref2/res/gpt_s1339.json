@@ -1,0 +1,132 @@
+{
+ "label": "s1339",
+ "args": {
+  "layers": "6",
+  "heads": "6",
+  "width": "384",
+  "block": "256",
+  "dropout": "0.2",
+  "batch": "16",
+  "steps": "4000",
+  "every": "1000",
+  "evalbatches": "50",
+  "finalbatches": "200",
+  "exact": "64",
+  "perbyte": "8",
+  "threads": "1",
+  "seed": "1339",
+  "ckpt": "ckpt/s1339.pt",
+  "ckevery": "250",
+  "stop": "100000",
+  "label": "s1339"
+ },
+ "layers": 6,
+ "heads": 6,
+ "width": 384,
+ "block": 256,
+ "dropout": 0.2,
+ "batch": 16,
+ "steps": 4000,
+ "seed": 1339,
+ "threads": 1,
+ "numbers_that_learn": 10745088,
+ "numbers_without_positions": 10646784,
+ "curve": [
+  {
+   "step": 0,
+   "train": 4.2056594085693355,
+   "val": 4.198640394210815,
+   "cpu_learning": 0.0,
+   "wall": 88.1
+  },
+  {
+   "step": 1000,
+   "train": 1.613468565940857,
+   "val": 1.7784261727333068,
+   "cpu_learning": 3097.0,
+   "wall": 3544.2
+  },
+  {
+   "step": 2000,
+   "train": 1.363353066444397,
+   "val": 1.580402820110321,
+   "cpu_learning": 6174.9,
+   "wall": 6733.8
+  },
+  {
+   "step": 3000,
+   "train": 1.2433562445640565,
+   "val": 1.5093427610397339,
+   "cpu_learning": 9168.3,
+   "wall": 9817.5
+  },
+  {
+   "step": 4000,
+   "train": 1.189055128097534,
+   "val": 1.4778991484642028,
+   "cpu_learning": 12159.1,
+   "wall": 12896.1
+  }
+ ],
+ "resumed_at": [
+  2000,
+  4000
+ ],
+ "cpu_learning": 12159.1,
+ "wall_learning_and_estimates": 12896.1,
+ "bytes_seen": 16384000,
+ "nanogpt_estimate_final": {
+  "batches": 200,
+  "train": 1.1873155760765075,
+  "val": 1.4780009174346924
+ },
+ "cpu_final_estimate": 336.4,
+ "nanogpt_estimate_lowest_val": {
+  "step": 4000,
+  "train": 1.189055128097534,
+  "val": 1.4778991484642028,
+  "cpu_learning": 12159.1,
+  "wall": 12896.1
+ },
+ "stream_half": {
+  "n": 111540,
+  "nats": 1.4611031602377833,
+  "bits": 2.1079262835022425,
+  "right": 57.06473014165322
+ },
+ "stream_exact": {
+  "every": 64,
+  "n": 1743,
+  "nats": 1.508862484270021,
+  "bits": 2.1768284234397606,
+  "right": 56.28227194492255
+ },
+ "stream_stride": {
+  "stride": 8,
+  "bytes_before_each": [
+   249,
+   256
+  ],
+  "all": {
+   "n": 111540,
+   "nats": 1.4579958258972385,
+   "bits": 2.1034433476587546,
+   "right": 56.97507620584543
+  },
+  "every_eighth": {
+   "n": 13943,
+   "nats": 1.4608125770370943,
+   "bits": 2.107507060559643,
+   "right": 56.74532023237467
+  },
+  "exact_context": {
+   "n": 13946,
+   "nats": 1.4606990462296177,
+   "bits": 2.1073432702267083,
+   "right": 56.74745446723075
+  },
+  "cpu": 825.8,
+  "file": "res/nll_s1339.f32"
+ },
+ "cpu_scoring": 975.8
+}

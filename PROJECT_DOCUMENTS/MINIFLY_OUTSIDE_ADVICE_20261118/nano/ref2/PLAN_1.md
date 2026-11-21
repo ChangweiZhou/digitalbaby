@@ -76,3 +76,26 @@ The full 256 bytes before every byte (see above). A whole run of 4 threads. More
 Equal in every digit. **R1 held.** So on this machine the copy with its checkpoints teaches exactly as `nano/ref`'s program did through 500 steps, and a run of 4 threads continued to step 4,000 would be expected to repeat 1.4541 to the digit (about 80 more minutes of the whole machine; not run now, the checkpoint is kept). A slip of mine in the command: the run left before the estimate at step 500, so that estimate was taken afterwards from the checkpoint by the program's own `estimate()` with the same blocks.
 
 The four seeds were started at 21:55 UTC (`jobs1.sh`).
+
+**Entry 2 (23:48 UTC).** The four runs left at step 2,000 after 105 minutes, as written, and were started again from their checkpoints at 23:47 UTC. At step 1,000 nanoGPT's estimate on the last tenth (50 batches) was 1.787, 1.801, 1.778 and 1.772 for seeds 1337 to 1340 (`nano/ref`'s run: 1.793). The pace was 3.1 CPU-s a step; the cells' runs of plans 2 and 3 took a core for about 18 minutes in all during this stretch.
+
+**Entry 3 (02:10 UTC, 21 November): the four seeds scored.** All four ran their 4,000 steps on one thread each (broken at step 2,000 as written; the job was cut off once more during the scoring and started again from the step-4,000 checkpoint, which repeats nothing of the teaching). CPU a seed: 12,160 s of teaching, 338 s for the final estimate, 978 s for the scores (827 s of it the per-byte score). Files: `res/gpt_s<seed>.json`, `res/nll_s<seed>.f32`.
+
+| seed (threads) | all 111,540 bytes, 249 to 256 bytes before each: nats | named right, % | `nano/ref`'s every-eighth set, 13,943 bytes, exactly 256 before each: nats | right, % | half-window reading, all bytes (129 to 256 before) | nanoGPT's estimate, 200 batches (stream part) | CPU, teaching |
+|---|---|---|---|---|---|---|---|
+| `nano/ref`, 1337 (4) | not taken | | 1.4541 | 56.80 | 1.4562 | 1.4711 (1.1838) | 24,918 s, cores shared |
+| 1337 (1) | 1.4587 | 57.07 | 1.4567 | 56.97 | 1.4584 | 1.4737 (1.1827) | 12,158 s |
+| 1338 (1) | 1.4588 | 56.95 | 1.4712 | 56.36 | 1.4571 | 1.4725 (1.1905) | 12,153 s |
+| 1339 (1) | 1.4580 | 56.98 | 1.4608 | 56.75 | 1.4611 | 1.4780 (1.1873) | 12,159 s |
+| 1340 (1) | 1.4607 | 57.12 | 1.4726 | 56.54 | 1.4622 | 1.4773 (1.1865) | 12,168 s |
+| **mean of the four; sd; lowest to highest** | **1.4590; 0.0011; 1.4580 to 1.4607** | 57.03 | **1.4653; 0.0078; 1.4567 to 1.4726** | 56.65 | 1.4597; 0.0024 | 1.4754; 0.0027 | |
+
+**What I read (mine).**
+1. **On all bytes the setting is steady**: four seeds within 0.003 nats, 1.459. The earlier run's only all-byte figure (1.4562, half windows) is below all four seeds' same reading (1.4571 to 1.4622) by 0.001 to 0.006: a slightly fortunate draw, not a different level.
+2. **The every-eighth set is a poor measure of this network, and 1.454 was its fortunate end**: over seeds it runs from 1.457 to 1.473 (sd 0.008, seven times the sd on all bytes), and 1.4541 is below all four. The reason is the place, not the bytes: those bytes are answered at the block's last place. By place of the window (byte index mod 8; `res/nll_*.f32`), seeds 1338 and 1340 have 1.471 and 1.473 at the last place against 1.457 and 1.459 at the other seven; seeds 1337 and 1339 have 1.457 and 1.461 against 1.459 and 1.458. The cells show no such thing on the same bytes (1.4463 against 1.4415 on the other seven eighths). `nano/ref`'s report had seen this at 2,000 steps of the small network ("the last place is the one no later place attends to") and found it gone at 10,000 steps; at this schedule's end it is still there on two seeds of four.
+3. **It follows that "the full 256 bytes before every byte" would not be the network's best reading but about its worst**: every byte would then be answered at the last place, and the figure would be near each seed's every-eighth figure (mean 1.465). My all-byte figure answers seven bytes of eight at the seven places before the last, with 249 to 255 bytes before them. I did not run the full-256 score; I say what I expect from these files.
+4. Seed 1337 on one thread (same start, same batches as `nano/ref`; rounding differs) gives 1.4567 where four threads gave 1.4541, and its estimate is 1.4737 against 1.4711: rounding alone moves the result by about as much as a new seed does on all-byte measures.
+
+**Predictions.** R1 held (entry 1). R2 held (1.4567, within 0.006 of 1.4541). R3 held. R4 held (0.0027). **R5 failed**: for seed 1337 the all-byte loss is above its every-eighth loss; my reason for R5 (that eighth is harder) was beside the point, the place decides. R6 held (1.4590 above 1.4421). R7 held (`stream_exact(every=64)` and the same bytes of the kept file agree to the sixth digit on all four seeds). The falsifier of "1.454 is a fair single draw" is not met by its own wording (1.4541 lies 0.0026 below the seeds' range, the range is 0.016), but on that set it is the lowest of five runs.
+
+**Not run, as said:** the full 256 bytes for every byte; a whole run of 4 threads. The checkpoints are kept until plan 3's passes end, then deleted.
