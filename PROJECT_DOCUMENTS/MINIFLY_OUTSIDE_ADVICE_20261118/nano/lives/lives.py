@@ -183,7 +183,10 @@ def run_life(kw):
                 for learn in (0, 1): wait(forked(lambda: score(s, test[n][0], test[n][1], bool(learn)), os.path.join(tmp, f"s{i}_{n}_{learn}.json")))
             return dict(done=True)
         return fn
+    born = {a: s.arr(a).copy() for a in ("T", "G", "Tu", "Gu", "Ta", "Ga")}
     for i, n in enumerate(order):
+        if i > 0 and int(kw.get("reset", 0)):                              # PLAN_1.md, addition 2 (a diagnostic, the boundary is given): every trust, part and sum as at birth before a new body; the counts stay
+            for a in born: s.arr(a)[:] = born[a]
         lo, hi = body[n]; lo += 6 if i == 0 else 0; c0 = time.process_time(); n1, n2 = s.run(lo, hi, True); k = (hi - lo) // 10
         stages.append(dict(stream=n, reading=dict(cell1=m(n1), cell2=m(n2), first_tenth=[m(n1[:k]), m(n2[:k])], last_tenth=[m(n1[-k:]), m(n2[-k:])]), sizes=s.sizes(), cpu_reading=round(time.process_time() - c0, 1)))
         saved[n] = {a: s.arr(a).copy() for a in ("T", "G", "Tu", "Gu", "Ta", "Ga")}
