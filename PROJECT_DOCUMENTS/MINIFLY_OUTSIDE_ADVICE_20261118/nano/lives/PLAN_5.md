@@ -43,6 +43,10 @@ The small system's lives (development order and the five reported orders) are ru
 
 Diagnostic: 18 lives of the small system (about 3 CPU-minutes each on a free machine). Development: three lives. Claim: six singles and five lives with the chosen form, and five lives with remembered trusts as well. Size: the plain system's 2.3 million cells at the end of a life and the bounded kinds' cells (expected under 0.2 million for runs of 0 to 3 bytes). **Not run:** the large system; other bounds; a bound that the system sets itself; fading by a span of bytes instead of by the cell's own events; any cell keyed on the situation.
 
+## 5a. The choice of the form (entered 21 November, 00:50 UTC, before any single or reported life of a form was run; `res/mem__ZAM32*_dev.json`)
+
+Development order, mean over the six tests of the going-on loss at the end of the life (the plain answer of the second cell): the plain system 0.9184; (i) a bound of 32 on runs of 0 to 3 bytes 0.8861; (ii) bounds of 32 and 512 on runs of 0 to 3 bytes **0.8656**; (iii) a bound of 32 on runs of 0 to 6 bytes 0.8847, with twice the cells. **Form (ii) is taken and frozen** (`ZAM32x512`: eight kinds more; 174,068 cells more at the end of the development life, 7.6%).
+
 ## 6. Outcome
 
 (to be entered after the runs)
