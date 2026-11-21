@@ -56,3 +56,21 @@ crosses every region before the next arrives; context comes from the previous by
 | Random bytes (control) | at chance throughout |
 
 Open: the output end does not yet use all the context the last region holds; yes/no learning of context; speed (25 to 40 s for 6,000 bytes of 24 regions, numpy).
+
+### Context codes made stable (21 November 2026, later; confirmed on seeds 1, 2, 3)
+
+The codes of a context never repeated: when no cell of a winning column was predicted, the least-used cell fired, so the cell
+chosen rotated and context weights never settled (55% of winning columns predicted). Fix in `net3.py`: when no cell is above
+`w_on`, the cell with the largest sub-threshold context sum fires; only with no context at all does the least-used cell fire.
+Context codes now repeat (3 distinct codes per context), and 89% of winning columns are predicted.
+
+`t4_output.py T=6000 L=12 sweep=1 fan_out=256`, last quarter:
+
+| Stream, rule | seed 1 | seed 2 | seed 3 |
+|---|---|---|---|
+| context, teach: overall (ceiling 0.875) / at the byte after C (0.5 without context) | 0.868 / 1.000 | 0.873 / 1.000 | 0.878 / 1.000 |
+| context, yes/no only: overall / after C | 0.70 / 0.907 | 0.689 / 0.907 | 0.678 / 0.909 |
+| random bytes, yes/no (control, chance 0.031) | – | 0.027 | 0.033 |
+| 7-byte cycle, teach / yes/no (seed 1) | 1.000 / 0.905 | | |
+
+The output end now uses the context the last region holds, with the correct byte and with yes/no alone.

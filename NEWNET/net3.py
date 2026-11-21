@@ -41,7 +41,10 @@ class Tissue:
         pc = prev_cells.reshape(self.L, -1)                                               # [L, C*M]
         wc = np.where(self.rw >= self.w_on, self.rw, 0.0)
         R = (wc * np.take_along_axis(pc[:, None, None, :].repeat(1, 1), self.rsrc.reshape(self.L, 1, 1, -1), 3).reshape(self.rsrc.shape)).sum(3)  # [L, C, M]
-        score = np.where(R > 0, R + 1e6, -self.use)                                       # predicted cells first; else the least used
+        Rraw = (self.rw * np.take_along_axis(pc[:, None, None, :], self.rsrc.reshape(self.L, 1, 1, -1), 3).reshape(self.rsrc.shape)).sum(3)
+        # predicted cells first; else the cell whose context input below threshold is largest (so the same context keeps the same
+        # cell and its connections can grow); only when no cell has any, the cell used least
+        score = np.where(R > 0, R + 1e6, np.where(Rraw > 0, Rraw + 1e3, -self.use))
         pick = np.argmax(score, axis=2)                                                   # [L, C]
         cells = np.zeros((self.L, self.C, self.M))
         np.put_along_axis(cells, pick[:, :, None], 1.0, axis=2)
