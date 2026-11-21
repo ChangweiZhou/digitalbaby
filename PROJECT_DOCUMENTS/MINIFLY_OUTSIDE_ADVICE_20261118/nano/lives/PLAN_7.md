@@ -45,7 +45,7 @@ One of C and MC is chosen on the development order by the mean over the six test
 
 Development: two lives (C, MC). Claim: six singles and five lives of the chosen system. Size: as M (2.47 million cells at the end of the development life) and three shares for a cell. Cost: as M, about a quarter more. **Not run:** shares for runs of 4 to 6 bytes; more than three memories; with remembered trusts; the large system.
 
-## 4a. The choice (entered 21 November, 01:07 UTC, before any single or reported life of C or MC; `res/cellmix__C_dev.json`, `res/cellmix__MC_dev.json`)
+## 4a. The choice (entered 21 November, 01:06 UTC, before any single or reported life of C or MC; `res/cellmix__C_dev.json`, `res/cellmix__MC_dev.json`)
 
 Development order, mean over the six tests of the going-on loss at the end of the life: the plain system 0.9184; M 0.8656; C (the bounded memories silent, the cell's mixture speaking) 0.8671; **MC (all speak) 0.8549. MC is taken and frozen.** C6 is scored here, since it is a statement about the development order: **failed** (0.8671 against M's 0.8656; C is lower than M on the two prose streams and Python and higher on C headers, the table and markup).
 
