@@ -109,3 +109,32 @@ So a life costs this system 5 to 11% of what six separate systems pay, and most 
 **Predictions scored** (those that concern ZA or both systems; the others wait for the large system). K1 **failed** (22 of 25 above 0.02). K9 **failed** for ZA (cells at the end are 83.3% of the singles' sum in every order: the streams share more contexts than I expected). A1 held (0.74). A2 **failed** (0.16). A3 held (24 of 25). A4 held (6 of 25). The second sentence of the hypothesis is not refuted for ZA (D1 removes 0.57, more than half).
 
 **The large system so far**: singles on raw bytes, second cell, nothing changing / going on: 1.4962 / 1.3252, 1.4333 / 1.3739, 1.4118 / 0.9365, 2.2133 / 0.5676, 1.8613 / 0.2553, 0.7887 / 0.2579 (1.8 to 4.3 million cells; 2.2 to 3.9 minutes each).
+
+## 7. Outcome, second part: the large system on two orders, and addition 2 (entered 21 November; `report_1.txt`, `res/life__ZPA_*.json`, `res/life__ZAr_*.json`, `out/`)
+
+**What was run and what was not.** The large system (ZPA scaled, 355 kinds on raw bytes) lived through two of the five reported orders, 73129 and 93683 (65 and 77 minutes each). The other three lives were stopped by me while they ran, after Mr. Xu asked why so much was being rerun: **NOT RUN**. The two orders that were run begin with the same four streams (table, C, XML, Python), so their ten cases are far from ten independent ones. The diagnostic D2 was never run for either system: **K5 is NOT RUN.**
+
+**The large system, two orders.** Singles' mean going on 0.7861 (18.9 million cells in the six singles together).
+
+| Order | Mean over six tests at the end | The life costs | Cells at the end |
+|---|---|---|---|
+| 73129: table, C, XML, Python, Shakespeare, book | 0.8343 | +0.0482 (6.1%) | 11.9 million |
+| 93683: table, C, XML, Python, book, Shakespeare | 0.8332 | +0.0471 (6.0%) | 11.9 million |
+
+Going on, the excess at the end over the own stage is above 0.02 in 8 of 10 cases (median +0.046, largest +0.076); with nothing changing it is above 0.05 in 9 of 10 (median +0.161). D1 removes 0.82 of the excess with nothing changing; D3a (the trusts, parts and sums of the own stage put back, going on) removes 0.35 of the going-on excess and D3b (the sums alone) 0.10. A stream read late is learned worse than by a system of its own here too: Python +0.020, Shakespeare +0.058 and +0.031, the book +0.044 and +0.061; C is learned better (-0.041).
+
+| | Outcome (on the two orders run, unless said) |
+|---|---|
+| K2 | **Failed.** 8 of 10 cases above 0.02 |
+| K3 | Held on the orders run (9 of 10 above 0.05) |
+| K4 | Held on the orders run (0.82) |
+| K5 | **NOT RUN** |
+| K6 | For the small system on five orders: **failed** (2.74 times; three times were asked). For the large system on two orders: 3.48 times |
+| K7 | **Failed.** The later of the two prose streams is above its single in both orders run (+0.044, +0.031), so four of five cannot be reached |
+| K8 | **Failed.** Streams are above their singles by more than 0.01 at their own stage in both orders |
+| K9 | **Failed** for the large system too: cells at the end are 63% of the sum of the singles' cells |
+| K10 | Failed on the orders run (the first cell's excess is the smaller in 4 of 10 cases) |
+
+**Reading (mine).** The large system loses over a life what the small one loses (6% against 5 to 11%), and in the same two ways. One difference: putting back the trusts of the own stage removes a third of its going-on loss, against three quarters for the small system; more of the large system's loss sits outside the trusts and parts.
+
+**Addition 2 (the trusts set back to birth before each new body; small system, five reported orders).** A5 **failed**: with the trusts set back, a stream's own stage is within 0.01 of its single in 8 of the 25 later positions (20 were asked). Of the loss on a stream read late, setting the trusts back removes 0.15 at the median (0.05 to 0.35, over the 12 positions where that loss is above 0.02); the median loss falls from 0.019 to 0.011. So most of what a late stream loses is not in trusts that are slow to leave the stream before; `PLAN_5.md` finds it in the counts of short contexts. Mean over the six tests at the end of the life, as it is and with the trusts set back: 0.8814 and 0.8686; 0.8814 and 0.8718; 0.9291 and 0.9285; 0.8834 and 0.8686; 0.8861 and 0.8779.

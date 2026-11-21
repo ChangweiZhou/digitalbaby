@@ -47,6 +47,26 @@ Reported orders, 25 cases (a stream not read last, an order):
 * the stream's own stage less its single, going on, by order: seed73129: table +0.000, c -0.057, xml +0.009, py +0.019, shakespeare +0.061, book +0.043; seed93683: table +0.000, c -0.057, xml +0.009, py +0.019, book +0.062, shakespeare +0.032; seed116089: shakespeare +0.000, xml +0.004, py +0.021, book +0.033, c +0.027, table +0.000; seed406364: table +0.000, shakespeare +0.008, py +0.019, c -0.039, xml +0.012, book +0.046; seed545353: table +0.000, book +0.006, shakespeare -0.002, xml +0.012, c -0.044, py +0.024
 * while its body was read, the life less the single (whole body; last tenth of the body): seed73129: c +0.028 (+0.008), xml +0.016 (+0.010), py +0.030 (+0.017), shakespeare +0.105 (+0.066), book +0.016 (+0.033); seed93683: c +0.028 (+0.008), xml +0.016 (+0.010), py +0.030 (+0.017), book +0.091 (+0.062), shakespeare +0.025 (+0.034); seed116089: xml +0.011 (+0.007), py +0.034 (+0.020), book +0.011 (+0.026), c +0.019 (+0.018), table +0.022 (+0.007); seed406364: shakespeare +0.035 (+0.008), py +0.029 (+0.017), c +0.012 (+0.014), xml +0.022 (+0.016), book +0.032 (+0.037); seed545353: book +0.033 (+0.005), shakespeare -0.018 (-0.003), xml +0.022 (+0.014), c +0.039 (+0.022), py +0.022 (+0.020)
 
+## ZPA: {'kinds': 'runs+last+since+pool', 'recall': 3, 'gate': 1, 'rule': 2, 'eta': 0.03, 'age': 1, 'spow': 0.5}
+
+Singles (a system for each stream), second cell, nothing changing / going on: shakespeare 1.4962 / 1.3252 | book 1.4333 / 1.3739 | py 1.4118 / 0.9365 | c 2.2133 / 0.5676 | table 1.8613 / 0.2553 | xml 0.7887 / 0.2579. Mean going on 0.7861. Cells: 2,407,945, 2,629,937, 3,837,705, 4,001,325, 1,786,594, 4,260,014 (sum 18,923,520).
+
+| order of the life | shakespeare | book | py | c | table | xml | mean at the end | the life costs | cells at the end |
+|---|---|---|---|---|---|---|---|---|---|
+| seed73129: table, c, xml, py, shakespeare, book | 1.325, 1.383, 1.380 | 1.374, 1.418, 1.418 | 0.936, 0.956, 1.013 | 0.568, 0.527, 0.603 | 0.255, 0.255, 0.278 | 0.258, 0.267, 0.314 | 0.8343 | +0.0482 | 11,932,262 |
+| seed93683: table, c, xml, py, book, shakespeare | 1.325, 1.356, 1.356 | 1.374, 1.435, 1.440 | 0.936, 0.956, 1.012 | 0.568, 0.527, 0.603 | 0.255, 0.255, 0.276 | 0.258, 0.267, 0.312 | 0.8332 | +0.0471 | 11,932,292 |
+
+(each cell: going on, second answering cell: the single, the life at the stream's own stage, the life at its end)
+
+Reported orders, 10 cases (a stream not read last, an order):
+* going on, end less own stage: above 0.02 in 8 cases, largest +0.076, median +0.046; streams above 0.02 by order: seed73129: table, c, xml, py; seed93683: table, c, xml, py
+* nothing changing, end less own stage: above 0.05 in 9 cases, median +0.161, largest +0.274; the first cell's excess is the smaller in 4 cases
+* D1 (the end's counts, the own stage's trusts, nothing changing) removes, at the median over the 10 cases with an excess above 0.02: 0.82 of the excess
+* D3 (going on from the end): (a) trusts, parts and sums of the own stage put back removes 0.35 of the going-on excess at the median over the 8 cases above 0.02; (b) only the sums: 0.10
+* the excess over the first 4,000 bytes of the test is 3.48 times the excess over the whole test (median over the 9 cases above 0.005)
+* the stream's own stage less its single, going on, by order: seed73129: table +0.000, c -0.041, xml +0.009, py +0.020, shakespeare +0.058, book +0.044; seed93683: table +0.000, c -0.041, xml +0.009, py +0.020, book +0.061, shakespeare +0.031
+* while its body was read, the life less the single (whole body; last tenth of the body): seed73129: c +0.012 (+0.009), xml -0.001 (+0.011), py +0.010 (+0.018), shakespeare +0.068 (+0.065), book -0.015 (+0.035); seed93683: c +0.012 (+0.009), xml -0.001 (+0.011), py +0.010 (+0.018), book +0.054 (+0.061), shakespeare -0.008 (+0.035)
+
 ## The constant step against the rule (reported orders, 25 cases)
 
 * the constant step's going-on excess is the smaller in 24 cases; its loss at the end of the life is the lower in 6 cases

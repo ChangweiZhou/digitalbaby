@@ -41,6 +41,34 @@ Not touched: the counts. The quarter of the loss that sits in the counts of cont
 
 Development: the development order at N = 65,536 and 262,144; the six singles at the chosen N. Reported: the five orders at the chosen N. Size: the plain system's cells (2.3 million at the end of a life) and, for each bookmark, 26,792 numbers (17 x 40 trusts and 6 x 17 x 256 parts): 0.8 to 3.2 million numbers more in a life. Cost: each bookmark answers each byte; expected 5 to 20 CPU-minutes a life. **Not run:** the large system with bookmarks (its parts are twenty times as many; after the small one is scored); a rule for letting bookmarks go; returning the living set to a bookmark; bookmarks for the first cell; anything for the counts.
 
-## 5. Outcome
+## 5. Outcome (entered 21 November, after the five reported orders; `report_3.txt`, `res/books__B_*.json`, `out/B_*.txt`, `check3_output.txt`)
 
-(to be entered after the runs)
+**Development.** The pace 262,144 gave a mean of the mixture at the end of the development life of 0.8837, the pace 65,536 gave 0.8811; **65,536 was taken and frozen** (120 bookmarks in a life; 3.2 million numbers).
+
+**Reported orders** (five; 25 cases of a stream not read last; the mixture against the plain answer of the same run; singles' mean of the plain system 0.8357).
+
+| Order | Mean over six tests at the end: plain, mixture | The life costs: plain, mixture |
+|---|---|---|
+| 73129 | 0.8814, 0.8714 | +0.0457, +0.0357 (22% less) |
+| 93683 | 0.8814, 0.8710 | +0.0457, +0.0354 (23% less) |
+| 116089 | 0.9291, 0.8787 | +0.0934, +0.0430 (54% less) |
+| 406364 | 0.8834, 0.8736 | +0.0477, +0.0379 (20% less) |
+| 545353 | 0.8861, 0.8761 | +0.0504, +0.0404 (20% less) |
+
+| | Outcome |
+|---|---|
+| B1 | **Held.** The largest (mixture less plain) over every test, stage, measure and order, the development order included: +0.00008 |
+| B2 | **Failed.** Going on, the share of the excess removed at the median over the 22 cases with a plain excess above 0.02 is 0.32 (smallest 0.00, largest 0.84); 14 of 25 cases are still above 0.02 with the mixture |
+| B3 | **Failed.** The cost of the life is cut by 40% or more in one of five orders |
+| B4 | **Held, by little.** Nothing changing: 0.503 at the median over the 20 cases with a plain excess above 0.02 (smallest 0.15, largest 1.03) |
+| B5 | **Held.** At its own stage the mixture is within 0.01 of the plain answer in 25 of 25 later positions (largest difference 0.0010): bookmarks of other kinds of text do not help a new kind |
+| B6 | **Failed.** Read alone and going on, the mixture is below the plain answer by 0.0000 to 0.0005, on no stream by 0.001. With nothing changing it is lower by 0.009 (py), 0.070 (c), 0.076 (table), 0.027 (xml) and by nothing on the two prose streams |
+| B7 | **Failed.** The largest share was on a bookmark of the stream's own stage for more than half of the test's bytes in 14 of 25 cases (0.56; two thirds were asked) |
+
+**The hypothesis is not supported**: the excess falls by a third at the median, not by half. By its own words it is not refuted either (the removal is above a quarter and the mixture is nowhere worse by more than 0.005).
+
+**Reading (mine; development level).** Remembered trusts cost nothing anywhere and remove about a third of what a stream has lost when it returns (a half when nothing changes); in the one order where the plain system lost most (116089) they halve the cost of the life. They do nothing for a stream read alone that goes on learning, and nothing for what is read later. Two thirds of the return loss going on are still there.
+
+**Two corrections to this plan's words.** (1) Section 1 says the method "is known as mixing past posteriors". The literature report that Mr. Xu supplied on 21 November places it differently, as I read the helper's summary of it: what is built here is a fixed-share mixture over stored copies of the trusts; mixing past posteriors is a related method that keeps past weights of the mixture itself. I have not read the papers. (2) By the same reading, the fixed-share rule carries a bound that makes B1 close to a property of the rule and not a finding; I have not verified the bound.
+
+**Not run:** as section 4 lists (the large system with bookmarks, letting bookmarks go, bookmarks of the first cell, anything for the counts). `PLAN_8.md` takes up the bookmark that goes on learning.

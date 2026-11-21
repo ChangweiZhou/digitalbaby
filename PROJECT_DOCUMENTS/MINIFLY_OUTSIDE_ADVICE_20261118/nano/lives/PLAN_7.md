@@ -49,6 +49,30 @@ Development: two lives (C, MC). Claim: six singles and five lives of the chosen 
 
 Development order, mean over the six tests of the going-on loss at the end of the life: the plain system 0.9184; M 0.8656; C (the bounded memories silent, the cell's mixture speaking) 0.8671; **MC (all speak) 0.8549. MC is taken and frozen.** C6 is scored here, since it is a statement about the development order: **failed** (0.8671 against M's 0.8656; C is lower than M on the two prose streams and Python and higher on C headers, the table and markup).
 
-## 5. Outcome
+## 5. Outcome (entered 21 November, after the five reported orders; `report_7.txt`, `res/cellmix__MC_*.json`, `out/`, `check7_output.txt`)
 
-(to be entered after the runs)
+**Read alone, going on** (second answering cell, nats a byte; Shakespeare, book, Python, C, table, XML): M 1.3266, 1.3931, 0.9213, 0.6319, 0.2977, 0.2603 (mean 0.8052); **MC 1.3234, 1.3904, 0.9171, 0.6244, 0.2911, 0.2567 (mean 0.8005)**; MC less M: -0.0033, -0.0027, -0.0043, -0.0075, -0.0066, -0.0037. With nothing changing, MC less M: -0.0014, -0.0029, -0.0043, +0.0303, +0.0190, +0.0056.
+
+**Lives** (five reported orders; cost = mean over six tests at the end less the mean of the system's own singles).
+
+| Order | Mean at the end: plain, M, MC | Cost of the life: plain, M, MC | Tests on which MC is below M |
+|---|---|---|---|
+| 73129 | 0.8814, 0.8327, 0.8264 | +0.0457, +0.0275, +0.0259 | 6 of 6 |
+| 93683 | 0.8814, 0.8337, 0.8273 | +0.0457, +0.0285, +0.0268 | 6 of 6 |
+| 116089 | 0.9291, 0.8781, 0.8669 | +0.0934, +0.0730, +0.0664 | 6 of 6 |
+| 406364 | 0.8834, 0.8335, 0.8265 | +0.0477, +0.0283, +0.0261 | 6 of 6 |
+| 545353 | 0.8861, 0.8401, 0.8332 | +0.0504, +0.0349, +0.0327 | 6 of 6 |
+
+| | Outcome |
+|---|---|
+| C1 | **Held.** MC ends lower than M on six of six tests in five of five orders |
+| C2 | **Held, and small.** MC's excess at the end over the stream's own stage is smaller than M's in 25 of 25 cases; of M's excess it removes 6% at the median (2.5% to 9.5% over the 21 cases in which M's excess is above 0.02) |
+| C3 | **Held.** Read alone, MC is below M by 0.001 or more on six of six streams |
+| C4 | **Held.** Read alone and going on, it harms no stream |
+| C5 | **Held.** The cost of a life is lower than M's in five of five orders (by 6, 6, 9, 8 and 6%) |
+| C6 | **Failed** (section 4a: C alone 0.8671 against M's 0.8656 on the development order) |
+| C7 | **Failed.** With nothing changing MC is lower than M on three of six singles, and worse by 0.030 on C and 0.019 on the table |
+
+**By its own criterion the hypothesis is supported** ((a) and (b) hold). **What that is worth (my reading):** a cell that weighs its own memories is a gain on every stream and in every life measured (0.2 to 1.2% of the nats on a single stream, 6 to 9% of the cost of a life), and it is paid for with nothing changing on the two most regular streams. It does not do what section 1 hoped for: nine tenths and more of what a stream loses over a life are still lost with it. The weighing that is forgotten stays in the trusts.
+
+**Not run:** as section 4 lists.

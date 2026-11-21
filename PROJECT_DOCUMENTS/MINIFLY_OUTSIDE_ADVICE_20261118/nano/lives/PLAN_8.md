@@ -33,6 +33,17 @@ Two systems: (i) the small system of `PLAN_1.md` with bookmarks at the pace 65,5
 
 Development: the development order once for each system (to see that it runs; nothing is chosen). Reported: the five orders for each. Size: as `PLAN_3.md` and `PLAN_7.md`, and for each bookmark its sums (three times the numbers of a bookmark without them). Cost: as `PLAN_3.md` plus one more learner at the bytes where a bookmark holds the largest share. **Not run:** a rule for letting bookmarks go; bookmarks of the first cell alone; the large system.
 
-## 5. Outcome
+## 5. Outcome, as far as it goes (entered 21 November; `res/awake__A_ZA_dev.json`, `res/awake__A_MC_dev.json`, `out/`, `check8_output.txt`)
 
-(to be entered after the runs)
+**Only the development order has been run, once for each system. The five reported orders are NOT RUN at the time of this entry, so none of A1 to A6 is scored.**
+
+Development order (Shakespeare, book, Python, C, table, XML), mean over the six tests at the end of the life, going on:
+
+| System | Plain answer | Mixture, bookmarks frozen (`PLAN_3.md`) | Mixture, the bookmark with the largest share also learns | Cost of the life against the system's own singles |
+|---|---|---|---|---|
+| (i) small system | 0.9184 | 0.8811 | **0.8613** | +0.0828, +0.0454, **+0.0256** |
+| (ii) MC | 0.8549 | not run | **0.8183** | +0.0544, not run, **+0.0178** |
+
+For system (i), by stream at the end: 1.3962, 1.4562, 0.9832, 0.6762, 0.3443, 0.3114 against 1.3433, 1.4022, 0.9619, 0.7277, 0.3440, 0.3114 at the stream's own stage. With nothing changing the mean is 1.4499 (plain 1.7533). A bookmark learned at 2.42 million of the 7.9 million bytes in system (i) and at 1.58 million in system (ii). For system (ii) the mean at the end, 0.8183, is below the mean of the six plain singles (0.8357) and above the mean of its own six singles (0.8005).
+
+**Reading (mine; one order; not a result).** On this order a bookmark that goes on learning removes about two thirds of the cost of a life in both systems. The systems rest on trusts shared by kind and level, which `PLAN_11.md` examines.
