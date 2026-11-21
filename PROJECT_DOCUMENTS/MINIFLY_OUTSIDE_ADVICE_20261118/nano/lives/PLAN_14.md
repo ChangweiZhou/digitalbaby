@@ -47,6 +47,22 @@ This is the rule the counting systems of this programme already use for their tr
 
 Development seed 1: Rgtqr once (must repeat `PLAN_13.md`'s development figures); Rgtqrs at kappa 1, 10, 100, 1,000. Reported: the seeds 73129, 93683, 116089, 406364, 545353, Rgtqrs at the chosen kappa. Size: 256 cells; about 230,000 strengths and 19,275 sums of squared drivers. Cost: about 3 CPU-minutes a run; ten runs. **Not run:** stiffening of the cells' strengths from the lines (they are not where the loss is); the step taken wholly from the record, with no kappa; subtraction after addition; any test of revising; a life with more kinds of text.
 
+## 4a. The development runs and the choice of kappa (development seed 1; before any reported run; `out/relay14_dev_*.txt`)
+
+Never-shown sums, whole answer, per cent.
+
+| Form | End of the sums | Straight after English 1, 2, 3 | The same with only the digit branches answering | After 100 lines of return 1, 2, 3 | Held-out English at the end of English 1 | Right digit's branch after English 1, 2, 3 | Loudest other branch |
+|---|---|---|---|---|---|---|---|
+| without s (`PLAN_13.md`'s run, repeated here exactly) | 98.9 | 0.7, 40.2, 43.3 | 88.0, 95.0, 96.4 | 88.1, 93.4, 96.3 | 46.3 | 0.07, 0.43, 0.56 | 0.43, 0.24, 0.27 |
+| s, kappa 1 | 89.4 | 0.0, 0.2, 0.7 | 80.7, 86.0, 86.6 | 0.0, 3.2, 6.8 | 43.3 | 0.11, 0.16, 0.16 | 0.30, 0.21, 0.19 |
+| s, kappa 10 | 93.7 | 0.0, 14.4, 23.3 | 90.3, 91.4, 92.0 | 2.4, 39.4, 48.2 | 47.0 | 0.06, 0.28, 0.33 | 0.42, 0.24, 0.23 |
+| s, kappa 100 | 96.8 | 0.0, 15.7, 61.1 | 90.6, 92.8, 94.6 | 3.8, 57.8, 86.4 | 47.4 | -0.07, 0.38, 0.51 | 1.07, 0.38, 0.18 |
+| s, kappa 1,000 | 98.7 | 0.0, 27.2, 67.2 | 94.2, 94.5, 95.5 | 43.4, 87.4, 93.8 | 47.2 | -0.12, 0.36, 0.51 | 0.90, 0.27, 0.11 |
+
+**The choice.** Condition (a), the sums within 1 point of the form without s, is met by kappa 1,000 alone; condition (b) by 10, 100 and 1,000. By the rule of section 2, **kappa = 1,000**, the weakest stiffening of the set and at its edge.
+
+**What the development seed already says (mine; one seed; not a result).** The reasoning of section 1 was wrong in its main point. Stiffening does not keep the digit branches from sinking through the first English: the right digit's branch ends at about nought at every kappa, as it does without s. The English asks the digit branches to be silent in every state of the English, and it goes on asking for 400,000 bytes; a smaller step only makes that take longer, and it also makes the return slower (43% after 100 lines of the first return against 88%). What stiffening does do is the second thing section 1 expected: from return to return the branches of the English grow quieter in the states of the sums (0.90, 0.27, 0.11), and at the third return two thirds of the whole answers are there straight away (67.2 against 43.3). The stronger the stiffening, the worse the sums are learned in the first place. The reported seeds are run at kappa 1,000 as the plan binds me to.
+
 ## 5. Outcome
 
 (to be entered after the runs)
