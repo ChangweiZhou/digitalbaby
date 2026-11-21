@@ -1,0 +1,2741 @@
+{
+ "experiment": "E63, the tissue's program (event-driven)",
+ "task": "TASK_E63_THE_TISSUE_PROGRAM_EVENT_DRIVEN_20261119.md",
+ "command": "python3 evt_run.py first P6_first_F32 --floor 0.0078125 --tol 0.0009765625 --trace-sender --strength-byte --count-every 1024 --norm --c-e 0.75 --c-i 0.25 --withdraw-by-use --turnover --make-period 32768 --trial 2048 --trial-theta 1",
+ "switches": {
+  "floor": 0.0078125,
+  "tol": 0.0009765625,
+  "trace_sender": true,
+  "strength_byte": true,
+  "astar": 0.125,
+  "long_frac": 0.0,
+  "long_r": 0.5,
+  "withdraw_by_use": true,
+  "use_exempt_feedback": false,
+  "steps": 32,
+  "cap": 0,
+  "turnover": true,
+  "make_period": 32768,
+  "trial": 2048,
+  "trial_theta": 1.0,
+  "trial_withdrawn": 25687,
+  "trial_kept": 1284,
+  "norm": true,
+  "c_e": 0.75,
+  "c_i": 0.25,
+  "gain": false,
+  "eta_g": 0.0078125,
+  "rho": 0.875,
+  "gmax": 8.0,
+  "norm_calls": 5672640,
+  "records": "fast"
+ },
+ "core_sha256": "2f45fbd8cb3d23ec857026557766b7f76e925362c4944b4167d3f1329e3f170c",
+ "wrapper_sha256": "28d80909ac19b9de0f215deeecb37699b03fc6b419d1d7a39bbf194f5777f649",
+ "runner_sha256": "6b8166d91052c83565240bd3cd2f43283a67b7cfce24f3576722e618d50c3c34",
+ "reference_program_sha256": "49316c2345a359020be7e0a409c36d05f2f1e0b05410a405a885e375272a1fc1",
+ "versions": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "machine": "x86_64",
+  "cores": 4
+ },
+ "stage": "A",
+ "tissue": "first",
+ "seed": 73129,
+ "stream": {
+  "sha256": "9fed26e778582bf09aee73b64337689b5dfef97c67748fc9f7e7936ca4a4daa5",
+  "length": 16384,
+  "used_values": 46
+ },
+ "birth": {
+  "coordinates": "adb76cb771d012de",
+  "sources": "c0638c096619aecb",
+  "fb_drivers_kinds": "66952e5b022b0422"
+ },
+ "counts": [
+  {
+   "step": 127,
+   "connections": 15872,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 143,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 611,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 867,
+     "mean_w": 0.20092886678555483
+    },
+    "encoder <- inhibitory cell": {
+     "n": 271,
+     "mean_w": 0.15367466174661745
+    },
+    "encoder <- feedback cell": {
+     "n": 28,
+     "mean_w": 0.1660299701282361
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 9059,
+     "mean_w": 0.12093813571349724
+    },
+    "inner <- inhibitory cell": {
+     "n": 2518,
+     "mean_w": 0.12044612128020829
+    },
+    "inner <- feedback cell": {
+     "n": 327,
+     "mean_w": 0.12121741647664866
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 15872,
+   "given_up_total": 0,
+   "made_total": 0,
+   "withdrawn_by_use_total": 0,
+   "per_cell_mean": 7.75,
+   "per_cell_max": 8,
+   "per_cell_min_nonfb": 8,
+   "exhausted": 0,
+   "line_values": 243,
+   "line_values_in_use": 44,
+   "from_feedback_cells": {
+    "n": 423,
+    "w_min": 0.041666666666666664,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.12093813571349724,
+   "at": "after operation 7 of step 127"
+  },
+  {
+   "step": 129,
+   "connections": 15872,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 143,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 611,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 867,
+     "mean_w": 0.20092886678555483
+    },
+    "encoder <- inhibitory cell": {
+     "n": 271,
+     "mean_w": 0.15367466174661745
+    },
+    "encoder <- feedback cell": {
+     "n": 28,
+     "mean_w": 0.1660299701282361
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 9059,
+     "mean_w": 0.12093813571349724
+    },
+    "inner <- inhibitory cell": {
+     "n": 2518,
+     "mean_w": 0.12044612128020829
+    },
+    "inner <- feedback cell": {
+     "n": 327,
+     "mean_w": 0.12121741647664866
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 15872,
+   "given_up_total": 0,
+   "made_total": 0,
+   "withdrawn_by_use_total": 0,
+   "per_cell_mean": 7.75,
+   "per_cell_max": 8,
+   "per_cell_min_nonfb": 8,
+   "exhausted": 0,
+   "line_values": 243,
+   "line_values_in_use": 44,
+   "from_feedback_cells": {
+    "n": 423,
+    "w_min": 0.041666666666666664,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.12093813571349724,
+   "at": "after operation 7 of step 129"
+  },
+  {
+   "step": 1024,
+   "connections": 15798,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 143,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 611,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 841,
+     "mean_w": 0.20743781681796467
+    },
+    "encoder <- inhibitory cell": {
+     "n": 250,
+     "mean_w": 0.15908369487240684
+    },
+    "encoder <- feedback cell": {
+     "n": 26,
+     "mean_w": 0.16437970530730767
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 9042,
+     "mean_w": 0.12116551207207704
+    },
+    "inner <- inhibitory cell": {
+     "n": 2511,
+     "mean_w": 0.12053299395286914
+    },
+    "inner <- feedback cell": {
+     "n": 326,
+     "mean_w": 0.12120580376878798
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 15798,
+   "given_up_total": 74,
+   "made_total": 0,
+   "withdrawn_by_use_total": 74,
+   "per_cell_mean": 7.7138671875,
+   "per_cell_max": 8,
+   "per_cell_min_nonfb": 2,
+   "exhausted": 0,
+   "line_values": 243,
+   "line_values_in_use": 44,
+   "from_feedback_cells": {
+    "n": 420,
+    "w_min": 0.041666666666666664,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.12116551207207704,
+   "at": "after operation 7 of step 1024"
+  },
+  {
+   "step": 32767,
+   "connections": 14078,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 143,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 611,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 601,
+     "mean_w": 0.29217969192501303
+    },
+    "encoder <- inhibitory cell": {
+     "n": 157,
+     "mean_w": 0.18789808917197454
+    },
+    "encoder <- feedback cell": {
+     "n": 3,
+     "mean_w": 0.21666838435572244
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 8107,
+     "mean_w": 0.13544753995631953
+    },
+    "inner <- inhibitory cell": {
+     "n": 2136,
+     "mean_w": 0.12607287798064454
+    },
+    "inner <- feedback cell": {
+     "n": 272,
+     "mean_w": 0.12090119929213543
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 14078,
+   "given_up_total": 1794,
+   "made_total": 0,
+   "withdrawn_by_use_total": 1794,
+   "per_cell_mean": 6.8740234375,
+   "per_cell_max": 8,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 243,
+   "line_values_in_use": 44,
+   "from_feedback_cells": {
+    "n": 343,
+    "w_min": 0.041666666666666664,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13544753995631953,
+   "at": "after operation 7 of step 32767"
+  },
+  {
+   "step": 65535,
+   "connections": 13984,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 161,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 677,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 611,
+     "mean_w": 0.28846153846153844
+    },
+    "encoder <- inhibitory cell": {
+     "n": 148,
+     "mean_w": 0.1875
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7989,
+     "mean_w": 0.13749675791925473
+    },
+    "inner <- inhibitory cell": {
+     "n": 2088,
+     "mean_w": 0.12737468071519795
+    },
+    "inner <- feedback cell": {
+     "n": 262,
+     "mean_w": 0.1214888078234381
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13825,
+   "given_up_total": 3872,
+   "made_total": 1984,
+   "withdrawn_by_use_total": 3871,
+   "per_cell_mean": 6.828125,
+   "per_cell_max": 9,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 246,
+   "line_values_in_use": 44,
+   "from_feedback_cells": {
+    "n": 330,
+    "w_min": 0.041666666666666664,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13749675791925473,
+   "at": "after operation 7 of step 65535"
+  },
+  {
+   "step": 98303,
+   "connections": 13994,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 180,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 753,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 622,
+     "mean_w": 0.2857717041800643
+    },
+    "encoder <- inhibitory cell": {
+     "n": 151,
+     "mean_w": 0.1837748344370861
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7934,
+     "mean_w": 0.13856514908711154
+    },
+    "inner <- inhibitory cell": {
+     "n": 2052,
+     "mean_w": 0.1274772579597141
+    },
+    "inner <- feedback cell": {
+     "n": 254,
+     "mean_w": 0.1212235189351331
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13668,
+   "given_up_total": 5846,
+   "made_total": 3968,
+   "withdrawn_by_use_total": 5842,
+   "per_cell_mean": 6.8330078125,
+   "per_cell_max": 10,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 247,
+   "line_values_in_use": 44,
+   "from_feedback_cells": {
+    "n": 322,
+    "w_min": 0.041666666666666664,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13856514908711154,
+   "at": "after operation 7 of step 98303"
+  },
+  {
+   "step": 131071,
+   "connections": 14050,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 197,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 839,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 632,
+     "mean_w": 0.28125
+    },
+    "encoder <- inhibitory cell": {
+     "n": 155,
+     "mean_w": 0.17903225806451614
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7905,
+     "mean_w": 0.13914633595373632
+    },
+    "inner <- inhibitory cell": {
+     "n": 2025,
+     "mean_w": 0.12806584362139917
+    },
+    "inner <- feedback cell": {
+     "n": 249,
+     "mean_w": 0.12134490342321667
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13558,
+   "given_up_total": 7774,
+   "made_total": 5952,
+   "withdrawn_by_use_total": 7763,
+   "per_cell_mean": 6.8603515625,
+   "per_cell_max": 11,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 250,
+   "line_values_in_use": 45,
+   "from_feedback_cells": {
+    "n": 317,
+    "w_min": 0.04166666666666666,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13914633595373632,
+   "at": "after operation 7 of step 131071"
+  },
+  {
+   "step": 163839,
+   "connections": 14154,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 209,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 926,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 644,
+     "mean_w": 0.2760093167701863
+    },
+    "encoder <- inhibitory cell": {
+     "n": 156,
+     "mean_w": 0.1778846153846154
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7909,
+     "mean_w": 0.13908950917815469
+    },
+    "inner <- inhibitory cell": {
+     "n": 2015,
+     "mean_w": 0.12795698924731186
+    },
+    "inner <- feedback cell": {
+     "n": 247,
+     "mean_w": 0.12088153269895274
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13500,
+   "given_up_total": 9654,
+   "made_total": 7936,
+   "withdrawn_by_use_total": 9632,
+   "per_cell_mean": 6.9111328125,
+   "per_cell_max": 12,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 252,
+   "line_values_in_use": 45,
+   "from_feedback_cells": {
+    "n": 315,
+    "w_min": 0.04166666666666666,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13908950917815469,
+   "at": "after operation 7 of step 163839"
+  },
+  {
+   "step": 196607,
+   "connections": 14284,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 225,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1011,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 662,
+     "mean_w": 0.2707703927492447
+    },
+    "encoder <- inhibitory cell": {
+     "n": 156,
+     "mean_w": 0.1778846153846154
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7922,
+     "mean_w": 0.1388612632019619
+    },
+    "inner <- inhibitory cell": {
+     "n": 2013,
+     "mean_w": 0.12771154164596787
+    },
+    "inner <- feedback cell": {
+     "n": 247,
+     "mean_w": 0.12088153676406564
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13448,
+   "given_up_total": 11508,
+   "made_total": 9920,
+   "withdrawn_by_use_total": 11479,
+   "per_cell_mean": 6.974609375,
+   "per_cell_max": 13,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 252,
+   "line_values_in_use": 45,
+   "from_feedback_cells": {
+    "n": 315,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.1388612632019619,
+   "at": "after operation 7 of step 196607"
+  },
+  {
+   "step": 229375,
+   "connections": 14402,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 241,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1085,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 671,
+     "mean_w": 0.26825633383010433
+    },
+    "encoder <- inhibitory cell": {
+     "n": 163,
+     "mean_w": 0.17638036809815952
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7940,
+     "mean_w": 0.13856535602325631
+    },
+    "inner <- inhibitory cell": {
+     "n": 2009,
+     "mean_w": 0.12721918035506885
+    },
+    "inner <- feedback cell": {
+     "n": 245,
+     "mean_w": 0.12023567282453562
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13391,
+   "given_up_total": 13374,
+   "made_total": 11904,
+   "withdrawn_by_use_total": 13330,
+   "per_cell_mean": 7.0322265625,
+   "per_cell_max": 14,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 253,
+   "line_values_in_use": 45,
+   "from_feedback_cells": {
+    "n": 313,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13856535602325631,
+   "at": "after operation 7 of step 229375"
+  },
+  {
+   "step": 262143,
+   "connections": 14511,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 252,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1172,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 674,
+     "mean_w": 0.26706231454005935
+    },
+    "encoder <- inhibitory cell": {
+     "n": 171,
+     "mean_w": 0.17251461988304093
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7954,
+     "mean_w": 0.13834896637810265
+    },
+    "inner <- inhibitory cell": {
+     "n": 1998,
+     "mean_w": 0.12735652318985652
+    },
+    "inner <- feedback cell": {
+     "n": 242,
+     "mean_w": 0.12030573593073592
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13332,
+   "given_up_total": 15249,
+   "made_total": 13888,
+   "withdrawn_by_use_total": 15184,
+   "per_cell_mean": 7.08544921875,
+   "per_cell_max": 14,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 254,
+   "line_values_in_use": 45,
+   "from_feedback_cells": {
+    "n": 310,
+    "w_min": 0.04166666666666666,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13834896637810265,
+   "at": "after operation 7 of step 262143"
+  },
+  {
+   "step": 294911,
+   "connections": 14620,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 263,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1246,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 681,
+     "mean_w": 0.2643171806167401
+    },
+    "encoder <- inhibitory cell": {
+     "n": 173,
+     "mean_w": 0.17196531791907516
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7970,
+     "mean_w": 0.13807122692238755
+    },
+    "inner <- inhibitory cell": {
+     "n": 1998,
+     "mean_w": 0.12735652318985652
+    },
+    "inner <- feedback cell": {
+     "n": 241,
+     "mean_w": 0.11976758545741949
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13298,
+   "given_up_total": 17124,
+   "made_total": 15872,
+   "withdrawn_by_use_total": 17038,
+   "per_cell_mean": 7.138671875,
+   "per_cell_max": 15,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 255,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 309,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13807122692238755,
+   "at": "after operation 7 of step 294911"
+  },
+  {
+   "step": 327679,
+   "connections": 14664,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 284,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1322,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 674,
+     "mean_w": 0.26706231454005935
+    },
+    "encoder <- inhibitory cell": {
+     "n": 177,
+     "mean_w": 0.17231638418079095
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7938,
+     "mean_w": 0.13865853212644424
+    },
+    "inner <- inhibitory cell": {
+     "n": 1985,
+     "mean_w": 0.12795969773299748
+    },
+    "inner <- feedback cell": {
+     "n": 236,
+     "mean_w": 0.11897699991646433
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13189,
+   "given_up_total": 19064,
+   "made_total": 17856,
+   "withdrawn_by_use_total": 18954,
+   "per_cell_mean": 7.16015625,
+   "per_cell_max": 16,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 255,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 304,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13865853212644424,
+   "at": "after operation 7 of step 327679"
+  },
+  {
+   "step": 360447,
+   "connections": 14746,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 296,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1395,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 681,
+     "mean_w": 0.2643171806167401
+    },
+    "encoder <- inhibitory cell": {
+     "n": 183,
+     "mean_w": 0.16939890710382513
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7955,
+     "mean_w": 0.1384301203196552
+    },
+    "inner <- inhibitory cell": {
+     "n": 1960,
+     "mean_w": 0.1289328231292517
+    },
+    "inner <- feedback cell": {
+     "n": 228,
+     "mean_w": 0.11877219089390142
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13090,
+   "given_up_total": 20966,
+   "made_total": 19840,
+   "withdrawn_by_use_total": 20826,
+   "per_cell_mean": 7.2001953125,
+   "per_cell_max": 17,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 255,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 296,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.1384301203196552,
+   "at": "after operation 7 of step 360447"
+  },
+  {
+   "step": 393215,
+   "connections": 14856,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 307,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1469,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 691,
+     "mean_w": 0.26049204052098407
+    },
+    "encoder <- inhibitory cell": {
+     "n": 186,
+     "mean_w": 0.16801075268817203
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7974,
+     "mean_w": 0.1381002767503153
+    },
+    "inner <- inhibitory cell": {
+     "n": 1953,
+     "mean_w": 0.12913893155828637
+    },
+    "inner <- feedback cell": {
+     "n": 228,
+     "mean_w": 0.11877219236689637
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13046,
+   "given_up_total": 22840,
+   "made_total": 21824,
+   "withdrawn_by_use_total": 22678,
+   "per_cell_mean": 7.25390625,
+   "per_cell_max": 17,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 256,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 296,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.1381002767503153,
+   "at": "after operation 7 of step 393215"
+  },
+  {
+   "step": 425983,
+   "connections": 14975,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 328,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1533,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 700,
+     "mean_w": 0.2571428571428571
+    },
+    "encoder <- inhibitory cell": {
+     "n": 190,
+     "mean_w": 0.1657894736842105
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 7996,
+     "mean_w": 0.13773371060530265
+    },
+    "inner <- inhibitory cell": {
+     "n": 1954,
+     "mean_w": 0.1290728420334357
+    },
+    "inner <- feedback cell": {
+     "n": 226,
+     "mean_w": 0.11824299410029497
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 13019,
+   "given_up_total": 24705,
+   "made_total": 23808,
+   "withdrawn_by_use_total": 24510,
+   "per_cell_mean": 7.31201171875,
+   "per_cell_max": 18,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 256,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 294,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13773371060530265,
+   "at": "after operation 7 of step 425983"
+  },
+  {
+   "step": 458751,
+   "connections": 15093,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 349,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1600,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 684,
+     "mean_w": 0.2631578947368421
+    },
+    "encoder <- inhibitory cell": {
+     "n": 191,
+     "mean_w": 0.1649214659685864
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 8042,
+     "mean_w": 0.13694587789107185
+    },
+    "inner <- inhibitory cell": {
+     "n": 1954,
+     "mean_w": 0.12888092801091777
+    },
+    "inner <- feedback cell": {
+     "n": 225,
+     "mean_w": 0.11821296296296296
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 12992,
+   "given_up_total": 26571,
+   "made_total": 25792,
+   "withdrawn_by_use_total": 26326,
+   "per_cell_mean": 7.36962890625,
+   "per_cell_max": 19,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 256,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 293,
+    "w_min": 0.04166666666666666,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13694587789107185,
+   "at": "after operation 7 of step 458751"
+  },
+  {
+   "step": 491519,
+   "connections": 15181,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 372,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1669,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 664,
+     "mean_w": 0.2710843373493976
+    },
+    "encoder <- inhibitory cell": {
+     "n": 194,
+     "mean_w": 0.163659793814433
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 8059,
+     "mean_w": 0.13665699838689666
+    },
+    "inner <- inhibitory cell": {
+     "n": 1950,
+     "mean_w": 0.12863247863247862
+    },
+    "inner <- feedback cell": {
+     "n": 225,
+     "mean_w": 0.11821296296296296
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 12948,
+   "given_up_total": 28467,
+   "made_total": 27776,
+   "withdrawn_by_use_total": 28171,
+   "per_cell_mean": 7.41259765625,
+   "per_cell_max": 20,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 256,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 293,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.13665699838689666,
+   "at": "after operation 7 of step 491519"
+  },
+  {
+   "step": 524287,
+   "connections": 15276,
+   "by_kind": {
+    "encoder <- input line of a byte value in use": {
+     "n": 387,
+     "mean_w": 0.125
+    },
+    "encoder <- input line of a value not in use": {
+     "n": 1745,
+     "mean_w": 0.125
+    },
+    "encoder <- excitatory cell": {
+     "n": 661,
+     "mean_w": 0.2723146747352496
+    },
+    "encoder <- inhibitory cell": {
+     "n": 202,
+     "mean_w": 0.1646039603960396
+    },
+    "encoder <- feedback cell": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "inner <- excitatory cell": {
+     "n": 8070,
+     "mean_w": 0.1364707249070632
+    },
+    "inner <- inhibitory cell": {
+     "n": 1939,
+     "mean_w": 0.1288464844421523
+    },
+    "inner <- feedback cell": {
+     "n": 224,
+     "mean_w": 0.11762462797619047
+    },
+    "output-end <- input line of a byte value in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- input line of a value not in use": {
+     "n": 0,
+     "mean_w": null
+    },
+    "output-end <- excitatory cell": {
+     "n": 1889,
+     "mean_w": 0.10066267110338048
+    },
+    "output-end <- inhibitory cell": {
+     "n": 91,
+     "mean_w": 0.19093406593406592
+    },
+    "output-end <- feedback cell": {
+     "n": 68,
+     "mean_w": 0.16872373949579833
+    }
+   },
+   "starting_remaining": 12889,
+   "given_up_total": 30356,
+   "made_total": 29760,
+   "withdrawn_by_use_total": 30020,
+   "per_cell_mean": 7.458984375,
+   "per_cell_max": 21,
+   "per_cell_min_nonfb": 1,
+   "exhausted": 0,
+   "line_values": 256,
+   "line_values_in_use": 46,
+   "from_feedback_cells": {
+    "n": 292,
+    "w_min": 0.04166666666666667,
+    "w_max": 0.25
+   },
+   "output_end_taking_yes": 47,
+   "output_end_taking_no": 16,
+   "exc_into_inner_mean_w": 0.1364707249070632,
+   "at": "after operation 7 of step 524287"
+  }
+ ],
+ "stretches": [
+  {
+   "bytes": [
+    0,
+    1023
+   ],
+   "d": {
+    "1": {
+     "n": 102,
+     "informative": 102,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.006491907744431028,
+     "sd_output": 0.02506675631306775
+    },
+    "2": {
+     "n": 211,
+     "informative": 61,
+     "silent": 8,
+     "constant": 142,
+     "informative_share": 0.2891,
+     "mean_output": 0.0022933661090254217,
+     "sd_output": 0.009611612318530997
+    },
+    "4": {
+     "n": 220,
+     "informative": 4,
+     "silent": 179,
+     "constant": 37,
+     "informative_share": 0.0182,
+     "mean_output": 0.00013493617827242072,
+     "sd_output": 0.0020998435874263624
+    }
+   }
+  },
+  {
+   "bytes": [
+    1024,
+    2047
+   ],
+   "d": {
+    "1": {
+     "n": 109,
+     "informative": 109,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.0071154649651378665,
+     "sd_output": 0.025732303855923337
+    },
+    "2": {
+     "n": 213,
+     "informative": 82,
+     "silent": 4,
+     "constant": 127,
+     "informative_share": 0.385,
+     "mean_output": 0.0028550948405489675,
+     "sd_output": 0.010742220252645502
+    },
+    "4": {
+     "n": 220,
+     "informative": 7,
+     "silent": 155,
+     "constant": 58,
+     "informative_share": 0.0318,
+     "mean_output": 0.00034945194016803395,
+     "sd_output": 0.003201947420437288
+    }
+   }
+  },
+  {
+   "bytes": [
+    2048,
+    3071
+   ],
+   "d": {
+    "1": {
+     "n": 119,
+     "informative": 119,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.007585145658304712,
+     "sd_output": 0.02655146528912036
+    },
+    "2": {
+     "n": 223,
+     "informative": 90,
+     "silent": 4,
+     "constant": 129,
+     "informative_share": 0.4036,
+     "mean_output": 0.0032043118581108984,
+     "sd_output": 0.01123092489816757
+    },
+    "4": {
+     "n": 214,
+     "informative": 7,
+     "silent": 139,
+     "constant": 68,
+     "informative_share": 0.0327,
+     "mean_output": 0.0005818857837503202,
+     "sd_output": 0.003997927185356791
+    }
+   }
+  },
+  {
+   "bytes": [
+    3072,
+    4095
+   ],
+   "d": {
+    "1": {
+     "n": 128,
+     "informative": 128,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.00776472786674276,
+     "sd_output": 0.026703264662199286
+    },
+    "2": {
+     "n": 224,
+     "informative": 100,
+     "silent": 2,
+     "constant": 122,
+     "informative_share": 0.4464,
+     "mean_output": 0.0034367209300398827,
+     "sd_output": 0.011426452929600485
+    },
+    "4": {
+     "n": 210,
+     "informative": 8,
+     "silent": 133,
+     "constant": 69,
+     "informative_share": 0.0381,
+     "mean_output": 0.0005387015285946074,
+     "sd_output": 0.003916709004295254
+    }
+   }
+  },
+  {
+   "bytes": [
+    4096,
+    5119
+   ],
+   "d": {
+    "1": {
+     "n": 131,
+     "informative": 131,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008099934868230164,
+     "sd_output": 0.02723234990537013
+    },
+    "2": {
+     "n": 226,
+     "informative": 98,
+     "silent": 1,
+     "constant": 127,
+     "informative_share": 0.4336,
+     "mean_output": 0.003551569528284326,
+     "sd_output": 0.011628159502894824
+    },
+    "4": {
+     "n": 209,
+     "informative": 8,
+     "silent": 130,
+     "constant": 71,
+     "informative_share": 0.0383,
+     "mean_output": 0.000704969052207527,
+     "sd_output": 0.004374022319377885
+    }
+   }
+  },
+  {
+   "bytes": [
+    5120,
+    6143
+   ],
+   "d": {
+    "1": {
+     "n": 138,
+     "informative": 138,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008270086477632109,
+     "sd_output": 0.027450703273935482
+    },
+    "2": {
+     "n": 230,
+     "informative": 99,
+     "silent": 1,
+     "constant": 130,
+     "informative_share": 0.4304,
+     "mean_output": 0.0034685076254865397,
+     "sd_output": 0.011267952307158815
+    },
+    "4": {
+     "n": 203,
+     "informative": 8,
+     "silent": 127,
+     "constant": 68,
+     "informative_share": 0.0394,
+     "mean_output": 0.0006134494625288865,
+     "sd_output": 0.004079877888038962
+    }
+   }
+  },
+  {
+   "bytes": [
+    6144,
+    7167
+   ],
+   "d": {
+    "1": {
+     "n": 146,
+     "informative": 146,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008559625034462916,
+     "sd_output": 0.02783423003511246
+    },
+    "2": {
+     "n": 231,
+     "informative": 97,
+     "silent": 1,
+     "constant": 133,
+     "informative_share": 0.4199,
+     "mean_output": 0.003599376937785706,
+     "sd_output": 0.011493787048642613
+    },
+    "4": {
+     "n": 207,
+     "informative": 8,
+     "silent": 127,
+     "constant": 72,
+     "informative_share": 0.0386,
+     "mean_output": 0.0006823330253794574,
+     "sd_output": 0.004352252610195723
+    }
+   }
+  },
+  {
+   "bytes": [
+    7168,
+    8191
+   ],
+   "d": {
+    "1": {
+     "n": 153,
+     "informative": 153,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008548562579295215,
+     "sd_output": 0.027662252746234073
+    },
+    "2": {
+     "n": 232,
+     "informative": 85,
+     "silent": 1,
+     "constant": 146,
+     "informative_share": 0.3664,
+     "mean_output": 0.0035419285875456087,
+     "sd_output": 0.011297157187058303
+    },
+    "4": {
+     "n": 201,
+     "informative": 9,
+     "silent": 118,
+     "constant": 74,
+     "informative_share": 0.0448,
+     "mean_output": 0.0006032246188144778,
+     "sd_output": 0.004074195609745908
+    }
+   }
+  },
+  {
+   "bytes": [
+    8192,
+    9215
+   ],
+   "d": {
+    "1": {
+     "n": 156,
+     "informative": 156,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008387181716851698,
+     "sd_output": 0.02754219865418944
+    },
+    "2": {
+     "n": 234,
+     "informative": 81,
+     "silent": 1,
+     "constant": 152,
+     "informative_share": 0.3462,
+     "mean_output": 0.0033334986203246647,
+     "sd_output": 0.010901854463564967
+    },
+    "4": {
+     "n": 199,
+     "informative": 9,
+     "silent": 115,
+     "constant": 75,
+     "informative_share": 0.0452,
+     "mean_output": 0.0006181188489324484,
+     "sd_output": 0.0041085001688901685
+    }
+   }
+  },
+  {
+   "bytes": [
+    9216,
+    10239
+   ],
+   "d": {
+    "1": {
+     "n": 165,
+     "informative": 165,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008508436833367203,
+     "sd_output": 0.027796694493257206
+    },
+    "2": {
+     "n": 232,
+     "informative": 96,
+     "silent": 1,
+     "constant": 135,
+     "informative_share": 0.4138,
+     "mean_output": 0.0036748081509923114,
+     "sd_output": 0.011590304089975141
+    },
+    "4": {
+     "n": 197,
+     "informative": 6,
+     "silent": 103,
+     "constant": 88,
+     "informative_share": 0.0305,
+     "mean_output": 0.0007084932575371059,
+     "sd_output": 0.004370155778957395
+    }
+   }
+  },
+  {
+   "bytes": [
+    10240,
+    11263
+   ],
+   "d": {
+    "1": {
+     "n": 167,
+     "informative": 167,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008718886418256931,
+     "sd_output": 0.02811737246179186
+    },
+    "2": {
+     "n": 233,
+     "informative": 97,
+     "silent": 1,
+     "constant": 135,
+     "informative_share": 0.4163,
+     "mean_output": 0.0036897571365720723,
+     "sd_output": 0.011417967024104952
+    },
+    "4": {
+     "n": 200,
+     "informative": 5,
+     "silent": 91,
+     "constant": 104,
+     "informative_share": 0.025,
+     "mean_output": 0.0007210336253046989,
+     "sd_output": 0.00428560647219408
+    }
+   }
+  },
+  {
+   "bytes": [
+    11264,
+    12287
+   ],
+   "d": {
+    "1": {
+     "n": 171,
+     "informative": 171,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.008792164032919365,
+     "sd_output": 0.028304574713390287
+    },
+    "2": {
+     "n": 234,
+     "informative": 83,
+     "silent": 1,
+     "constant": 150,
+     "informative_share": 0.3547,
+     "mean_output": 0.0036121889248362975,
+     "sd_output": 0.011180123502514459
+    },
+    "4": {
+     "n": 202,
+     "informative": 9,
+     "silent": 90,
+     "constant": 103,
+     "informative_share": 0.0446,
+     "mean_output": 0.0008313526759053221,
+     "sd_output": 0.0046585974572800615
+    }
+   }
+  },
+  {
+   "bytes": [
+    12288,
+    13311
+   ],
+   "d": {
+    "1": {
+     "n": 174,
+     "informative": 174,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.009290468204638054,
+     "sd_output": 0.029177714600702873
+    },
+    "2": {
+     "n": 237,
+     "informative": 94,
+     "silent": 1,
+     "constant": 142,
+     "informative_share": 0.3966,
+     "mean_output": 0.003916474963039285,
+     "sd_output": 0.011644809932216699
+    },
+    "4": {
+     "n": 201,
+     "informative": 10,
+     "silent": 89,
+     "constant": 102,
+     "informative_share": 0.0498,
+     "mean_output": 0.0008668871364783292,
+     "sd_output": 0.004673496960498409
+    }
+   }
+  },
+  {
+   "bytes": [
+    13312,
+    14335
+   ],
+   "d": {
+    "1": {
+     "n": 181,
+     "informative": 181,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.010031923651695251,
+     "sd_output": 0.03003544701744561
+    },
+    "2": {
+     "n": 233,
+     "informative": 106,
+     "silent": 1,
+     "constant": 126,
+     "informative_share": 0.4549,
+     "mean_output": 0.0042246178176270025,
+     "sd_output": 0.011998313092214661
+    },
+    "4": {
+     "n": 197,
+     "informative": 12,
+     "silent": 87,
+     "constant": 98,
+     "informative_share": 0.0609,
+     "mean_output": 0.0010526251369321407,
+     "sd_output": 0.005230340609671051
+    }
+   }
+  },
+  {
+   "bytes": [
+    14336,
+    15359
+   ],
+   "d": {
+    "1": {
+     "n": 190,
+     "informative": 190,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.010188405019672293,
+     "sd_output": 0.03029702456458051
+    },
+    "2": {
+     "n": 228,
+     "informative": 97,
+     "silent": 1,
+     "constant": 130,
+     "informative_share": 0.4254,
+     "mean_output": 0.004441604704449051,
+     "sd_output": 0.012297195697865502
+    },
+    "4": {
+     "n": 198,
+     "informative": 14,
+     "silent": 88,
+     "constant": 96,
+     "informative_share": 0.0707,
+     "mean_output": 0.001157661203784172,
+     "sd_output": 0.005428462884275875
+    }
+   }
+  },
+  {
+   "bytes": [
+    15360,
+    16383
+   ],
+   "d": {
+    "1": {
+     "n": 192,
+     "informative": 192,
+     "silent": 0,
+     "constant": 0,
+     "informative_share": 1.0,
+     "mean_output": 0.01013504589597384,
+     "sd_output": 0.03026877969246638
+    },
+    "2": {
+     "n": 229,
+     "informative": 87,
+     "silent": 1,
+     "constant": 141,
+     "informative_share": 0.3799,
+     "mean_output": 0.004174432021821951,
+     "sd_output": 0.01163216034093699
+    },
+    "4": {
+     "n": 198,
+     "informative": 13,
+     "silent": 85,
+     "constant": 100,
+     "informative_share": 0.0657,
+     "mean_output": 0.0011784494525254375,
+     "sd_output": 0.0054802647037787795
+    }
+   }
+  }
+ ],
+ "cpu_by_stretch": [
+  {
+   "bytes": [
+    0,
+    1023
+   ],
+   "cpu_s": 0.33980619600000006,
+   "per_byte": 0.00033184198828125006,
+   "mean_connections": 6.8740234375,
+   "emitted_share": 0.0,
+   "active_end": 7
+  },
+  {
+   "bytes": [
+    1024,
+    2047
+   ],
+   "cpu_s": 0.474387715,
+   "per_byte": 0.0004632692529296875,
+   "mean_connections": 6.828125,
+   "emitted_share": 0.0,
+   "active_end": 97
+  },
+  {
+   "bytes": [
+    2048,
+    3071
+   ],
+   "cpu_s": 0.549273261,
+   "per_byte": 0.0005363996689453125,
+   "mean_connections": 6.8330078125,
+   "emitted_share": 0.0,
+   "active_end": 42
+  },
+  {
+   "bytes": [
+    3072,
+    4095
+   ],
+   "cpu_s": 0.5955023489999998,
+   "per_byte": 0.0005815452626953123,
+   "mean_connections": 6.8603515625,
+   "emitted_share": 0.0,
+   "active_end": 139
+  },
+  {
+   "bytes": [
+    4096,
+    5119
+   ],
+   "cpu_s": 0.6305195370000001,
+   "per_byte": 0.0006157417353515626,
+   "mean_connections": 6.9111328125,
+   "emitted_share": 0.0,
+   "active_end": 2
+  },
+  {
+   "bytes": [
+    5120,
+    6143
+   ],
+   "cpu_s": 0.6255131880000002,
+   "per_byte": 0.0006108527226562502,
+   "mean_connections": 6.974609375,
+   "emitted_share": 0.0,
+   "active_end": 71
+  },
+  {
+   "bytes": [
+    6144,
+    7167
+   ],
+   "cpu_s": 0.9075312530000001,
+   "per_byte": 0.0008862609892578126,
+   "mean_connections": 7.0322265625,
+   "emitted_share": 0.0,
+   "active_end": 76
+  },
+  {
+   "bytes": [
+    7168,
+    8191
+   ],
+   "cpu_s": 0.7426878429999997,
+   "per_byte": 0.0007252810966796872,
+   "mean_connections": 7.08544921875,
+   "emitted_share": 0.0,
+   "active_end": 21
+  },
+  {
+   "bytes": [
+    8192,
+    9215
+   ],
+   "cpu_s": 0.7176990349999999,
+   "per_byte": 0.0007008779638671874,
+   "mean_connections": 7.138671875,
+   "emitted_share": 0.0,
+   "active_end": 137
+  },
+  {
+   "bytes": [
+    9216,
+    10239
+   ],
+   "cpu_s": 0.7053445090000006,
+   "per_byte": 0.000688812997070313,
+   "mean_connections": 7.16015625,
+   "emitted_share": 0.0,
+   "active_end": 147
+  },
+  {
+   "bytes": [
+    10240,
+    11263
+   ],
+   "cpu_s": 0.7492535249999994,
+   "per_byte": 0.0007316928955078119,
+   "mean_connections": 7.2001953125,
+   "emitted_share": 0.0,
+   "active_end": 190
+  },
+  {
+   "bytes": [
+    11264,
+    12287
+   ],
+   "cpu_s": 0.7142009070000004,
+   "per_byte": 0.0006974618232421879,
+   "mean_connections": 7.25390625,
+   "emitted_share": 0.0,
+   "active_end": 36
+  },
+  {
+   "bytes": [
+    12288,
+    13311
+   ],
+   "cpu_s": 0.7548363580000004,
+   "per_byte": 0.0007371448808593754,
+   "mean_connections": 7.31201171875,
+   "emitted_share": 0.0,
+   "active_end": 38
+  },
+  {
+   "bytes": [
+    13312,
+    14335
+   ],
+   "cpu_s": 0.8185737489999987,
+   "per_byte": 0.0007993884267578112,
+   "mean_connections": 7.36962890625,
+   "emitted_share": 0.0,
+   "active_end": 51
+  },
+  {
+   "bytes": [
+    14336,
+    15359
+   ],
+   "cpu_s": 0.9437763200000013,
+   "per_byte": 0.0009216565625000013,
+   "mean_connections": 7.41259765625,
+   "emitted_share": 0.0,
+   "active_end": 71
+  },
+  {
+   "bytes": [
+    15360,
+    16383
+   ],
+   "cpu_s": 1.1123933949999998,
+   "per_byte": 0.0010863216748046873,
+   "mean_connections": 7.458984375,
+   "emitted_share": 0.0,
+   "active_end": 134
+  }
+ ],
+ "cpu_total_s": 12.791864689,
+ "cpu_per_byte_with_records": 0.0007807534600219727,
+ "wall_s": 22.980656385421753,
+ "cpu_core_only_s": 9.854179207,
+ "cpu_per_byte_core_only": 0.0006014513676147461,
+ "core_only_emissions_identical": true,
+ "counters": {
+  "cell_updates": 107981509.0,
+  "senders_passing_on": 15869659.0,
+  "visits_passing_on": 91014732.0,
+  "visits_strengths": 702203288.0,
+  "visits_life": 3585410.0,
+  "steps": 524288.0,
+  "unused": 0.0,
+  "lazy_updates": 1093015.0
+ },
+ "counters_per_byte": {
+  "cell_updates": 6590.668273925781,
+  "senders_passing_on": 968.6071166992188,
+  "visits_passing_on": 5555.098388671875,
+  "visits_strengths": 42859.08740234375,
+  "visits_life": 218.8360595703125,
+  "steps": 32.0,
+  "unused": 0.0,
+  "lazy_updates": 66.71234130859375
+ },
+ "mean_cells_sending_a_step": 30.268972396850586,
+ "connection_visits_a_byte": 48633.02185058594,
+ "cell_updates_a_byte": 6590.668273925781,
+ "connections_a_cell_end": 7.458984375,
+ "made_total": 29760,
+ "given_up_total": 30356,
+ "withdrawn_by_use_total": 30020,
+ "emissions": {
+  "share": 0.0,
+  "commonest": []
+ },
+ "windows": [
+  "A1",
+  "A2"
+ ],
+ "measures": {
+  "A1": {
+   "window": [
+    2048,
+    6143
+   ],
+   "shares": {
+    "1": {
+     "n": 128,
+     "informative": 128,
+     "silent": 0,
+     "constant": 0,
+     "share": 1.0
+    },
+    "2": {
+     "n": 222,
+     "informative": 101,
+     "silent": 1,
+     "constant": 120,
+     "share": 0.45495495495495497
+    },
+    "4": {
+     "n": 209,
+     "informative": 8,
+     "silent": 129,
+     "constant": 72,
+     "share": 0.03827751196172249
+    }
+   },
+   "scores": {
+    "1": {
+     "cells_at_d": 128,
+     "sampled": 128,
+     "by_lag": {
+      "0": {
+       "S": 0.9852402745995424,
+       "se": 0.016304347826086946,
+       "classes": 46
+      },
+      "1": {
+       "S": 0.0697100313175234,
+       "se": 0.006346382853522231,
+       "classes": 46
+      },
+      "2": {
+       "S": 0.04389089073045933,
+       "se": 0.0010155403296233758,
+       "classes": 46
+      },
+      "4": {
+       "S": 0.05609601258626206,
+       "se": 0.002122630895560459,
+       "classes": 46
+      },
+      "8": {
+       "S": 0.03265415480882774,
+       "se": 0.0022193423916291558,
+       "classes": 46
+      }
+     }
+    },
+    "2": {
+     "cells_at_d": 222,
+     "sampled": 128,
+     "by_lag": {
+      "0": {
+       "S": 0.8957273940507666,
+       "se": 0.018184128965267478,
+       "classes": 46
+      },
+      "1": {
+       "S": 0.06484631004681615,
+       "se": 0.005545205742490501,
+       "classes": 46
+      },
+      "2": {
+       "S": 0.03926875686181903,
+       "se": 0.001915482789843639,
+       "classes": 46
+      },
+      "4": {
+       "S": 0.054953271353135796,
+       "se": 0.0019592774944360005,
+       "classes": 46
+      },
+      "8": {
+       "S": 0.028517620196162302,
+       "se": 0.0025658179030462573,
+       "classes": 46
+      }
+     }
+    },
+    "4": {
+     "cells_at_d": 209,
+     "sampled": 128,
+     "by_lag": {
+      "0": {
+       "S": 0.3346740521943135,
+       "se": 0.0182903429360769,
+       "classes": 46
+      },
+      "1": {
+       "S": 0.03814732373558669,
+       "se": 0.0016747926541879835,
+       "classes": 46
+      },
+      "2": {
+       "S": 0.03184150910669833,
+       "se": 0.0021048676342940134,
+       "classes": 46
+      },
+      "4": {
+       "S": 0.032394122800279875,
+       "se": 0.0031836763589923036,
+       "classes": 46
+      },
+      "8": {
+       "S": 0.028766164678483426,
+       "se": 0.0012543252225274634,
+       "classes": 46
+      }
+     }
+    }
+   },
+   "C0": {
+    "0": 1.0,
+    "1": 0.08583702374357817,
+    "2": 0.04970228793061302,
+    "4": 0.06950991157916973,
+    "8": 0.03346988149977859
+   },
+   "C_lt": {
+    "1": 0.08583702374357817,
+    "2": 0.08850998582186109,
+    "4": 0.18305427582969744,
+    "8": 0.17792580598133118
+   },
+   "distance_share_mean": {
+    "1": 0.977783203125,
+    "2": 0.9773367117117117,
+    "4": 0.9711423444976076
+   }
+  },
+  "A2": {
+   "window": [
+    12288,
+    16383
+   ],
+   "shares": {
+    "1": {
+     "n": 181,
+     "informative": 181,
+     "silent": 0,
+     "constant": 0,
+     "share": 1.0
+    },
+    "2": {
+     "n": 233,
+     "informative": 105,
+     "silent": 1,
+     "constant": 127,
+     "share": 0.45064377682403434
+    },
+    "4": {
+     "n": 198,
+     "informative": 12,
+     "silent": 85,
+     "constant": 101,
+     "share": 0.06060606060606061
+    }
+   },
+   "scores": {
+    "1": {
+     "cells_at_d": 181,
+     "sampled": 128,
+     "by_lag": {
+      "0": {
+       "S": 1.0,
+       "se": 0.0,
+       "classes": 46
+      },
+      "1": {
+       "S": 0.06311572977594823,
+       "se": 0.0003096127862027079,
+       "classes": 46
+      },
+      "2": {
+       "S": 0.05027950263221154,
+       "se": 0.00383487234013654,
+       "classes": 46
+      },
+      "4": {
+       "S": 0.05670658844665226,
+       "se": 0.0028865114236792714,
+       "classes": 46
+      },
+      "8": {
+       "S": 0.03347538133215953,
+       "se": 0.0018217860733186805,
+       "classes": 46
+      }
+     }
+    },
+    "2": {
+     "cells_at_d": 233,
+     "sampled": 128,
+     "by_lag": {
+      "0": {
+       "S": 0.9714210176847619,
+       "se": 0.023105003426715957,
+       "classes": 46
+      },
+      "1": {
+       "S": 0.05183875806294767,
+       "se": 0.0016386362474959263,
+       "classes": 46
+      },
+      "2": {
+       "S": 0.039843819948922124,
+       "se": 0.004210032330603191,
+       "classes": 46
+      },
+      "4": {
+       "S": 0.057043880285447456,
+       "se": 0.0021304110803174654,
+       "classes": 46
+      },
+      "8": {
+       "S": 0.03374900716370933,
+       "se": 0.004269412554484417,
+       "classes": 46
+      }
+     }
+    },
+    "4": {
+     "cells_at_d": 198,
+     "sampled": 128,
+     "by_lag": {
+      "0": {
+       "S": 0.49861490692144966,
+       "se": 0.029664142232188575,
+       "classes": 46
+      },
+      "1": {
+       "S": 0.033751066502702994,
+       "se": 0.0023023917941416483,
+       "classes": 46
+      },
+      "2": {
+       "S": 0.026426232027232485,
+       "se": 0.0014337351297032375,
+       "classes": 46
+      },
+      "4": {
+       "S": 0.03909460436399423,
+       "se": 0.0006198183413000523,
+       "classes": 46
+      },
+      "8": {
+       "S": 0.03302738072838262,
+       "se": 0.0021085842597151887,
+       "classes": 46
+      }
+     }
+    }
+   },
+   "C0": {
+    "0": 1.0,
+    "1": 0.07025182260055748,
+    "2": 0.05610254886678713,
+    "4": 0.07287771980103547,
+    "8": 0.03535267059424794
+   },
+   "C_lt": {
+    "1": 0.07025182260055748,
+    "2": 0.0869918158574134,
+    "4": 0.17545521454362592,
+    "8": 0.17262700614504273
+   },
+   "distance_share_mean": {
+    "1": 0.9886049723756906,
+    "2": 0.973175965665236,
+    "4": 0.9856376262626263
+   }
+  }
+ },
+ "read_sha256": "c8ac0b84172e056aa9d19315ffdedfd3c17b63caf9fe50223ea520b98edfa6d5"
+}
