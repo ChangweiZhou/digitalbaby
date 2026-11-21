@@ -74,3 +74,43 @@ Context codes now repeat (3 distinct codes per context), and 89% of winning colu
 | 7-byte cycle, teach / yes/no (seed 1) | 1.000 / 0.905 | | |
 
 The output end now uses the context the last region holds, with the correct byte and with yes/no alone.
+
+## Memory across a gap: surprise-gated hold (`net5.py`), 21 November 2026, later
+
+**Task.** Stream of sequences `start_b m1 ... mG end_b`, branch b drawn at random; the end byte is known only from the start, G bytes
+back; everything in between is the same for every branch. `t4_output.py stream=context G=.. NB=..`; decisive measure: right share
+at the byte after mG, last quarter (1/NB without the start).
+
+**What failed, measured (`t5_context.py`: branch decodable per region and position; `t6_codes.py`: new codes over a life).**
+
+| Design | What happened |
+|---|---|
+| net3 (fixed random context sources, every connection of the firing cell decays) | G=2 right on one draw of byte values, 0.47 on another; a context gets 6-7 codes; at G=8 the branches merge within 3-4 bytes |
+| net4: a cell makes its own context connections to the cells that fired, keeps those of other contexts | branch no longer fades, but codes split by the whole past (start after branch 0 differs from start after branch 1, and so on back); cells of a column fill up and branches merge again. Stricter matching or more cells did not help |
+
+**net5.** Cell 0 of a column carries no context. A region signals surprise (a regional signal) when its prediction was broader than
+what happened (precision of predicted columns below 3/4) or made by cells whose predictions often fail (each cell keeps a running
+share of its predictions that came true). On surprise the winning columns fire their default cells and the region's hold cells take
+this code; otherwise the hold persists. A cell's context has two parts, the previous byte's cells and the hold, each matched on its
+own (the previous byte predicts, the hold chooses the cell); a learning cell makes connections to at most `n_grow` = 8 active sources
+of each part, a random sample. The cell that would be chosen learns even on surprise (otherwise only one of two random starts gets a
+predicted cell and its lucky predictions keep a stale hold). No window of past bytes: the hold is the activity of a few cells.
+
+Fixes found by tracing one region (`scratch trace`: per byte, surprise and the cells chosen): thresholds relative to the number of
+active sources (an empty hold deadlocked fixed thresholds); per-part matching (a hold constant across the middle predicted every
+middle byte and caused false surprises); learning on surprise. Larger codes (C=256, k=16) were not needed once these were in.
+
+**Results**, `net=5 n_grow=8 fan_out=0 out_all=1` (the output end reads the cells of all 12 regions; reading only the last region
+failed at G=16 because that region never settled while 7 others carried the branch perfectly), teach, last quarter:
+
+| Case | seed 1 | seed 2 | seed 3 | overall right share (ceiling) |
+|---|---|---|---|---|
+| G=8, NB=2, T=6000 (output reads last region) | 1.000 | 0.987 | 1.000 | 0.95 (0.95) |
+| G=16, NB=2, T=8000 | 1.000 | 1.000 | 1.000 | 0.97-0.98 (0.972) |
+| G=32, NB=2, 64 byte values, T=12000 | 1.000 | 1.000 | 1.000 | 0.98-0.99 (0.985) |
+| G=8, NB=4, T=8000 | 1.000 | 0.980 | 1.000 | 0.87-0.89 (0.925) |
+| random bytes (control, chance 0.031) | 0.030 | | | |
+| yes/no only, G=8 / G=16 (seed 1; with 10% exploration the ceiling is about 0.90) | 0.890 / 0.829 | | | |
+
+Cost: about 155 s for 12,000 bytes at G=32 (numpy, one core). Open: speed; yes/no at long gaps; real text; keeping what was learned
+when the stream changes; why the last region does not settle at G=16.
