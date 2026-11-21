@@ -235,6 +235,7 @@ def main():
     ap.add_argument("--eta-i", type=float, default=0.01)
     ap.add_argument("--a-i", type=float, default=1 / 32)
     ap.add_argument("--ci-max", type=float, default=4.0)
+    ap.add_argument("--window", type=int, default=0, help="read one window A2 of this many bytes at the end of the run, in place of E63's A1 and A2 (0: E63's)")
     ap.add_argument("--verify-core", action="store_true", help="run the tissue a second time by the core alone and compare the emissions (doubles the time)")
     ap.add_argument("--count-every", type=int, default=128, help="bytes between counts of connections (E63: 128)")
     ap.add_argument("--slow-records", action="store_true", help="the recording loop as E63 wrote it (a call into the core every step)")
@@ -258,6 +259,8 @@ def main():
     c0, w0 = time.process_time(), time.time()
     R = (EvRun if a.slow_records else FastRun)(a.rule, a.seed, a.bytes, out, sw)
     R.count_every = a.count_every
+    if a.window:
+        R.cfg = dict(R.cfg, windows={"A2": a.bytes - a.window}, wlen=a.window)
     R.run(0, None, False, log=True)
     cpu_recorded = time.process_time() - c0
     T = R.T
