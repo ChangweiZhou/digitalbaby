@@ -235,6 +235,7 @@ def main():
     ap.add_argument("--eta-i", type=float, default=0.01)
     ap.add_argument("--a-i", type=float, default=1 / 32)
     ap.add_argument("--ci-max", type=float, default=4.0)
+    ap.add_argument("--verify-core", action="store_true", help="run the tissue a second time by the core alone and compare the emissions (doubles the time)")
     ap.add_argument("--count-every", type=int, default=128, help="bytes between counts of connections (E63: 128)")
     ap.add_argument("--slow-records", action="store_true", help="the recording loop as E63 wrote it (a call into the core every step)")
     a = ap.parse_args()
@@ -268,10 +269,13 @@ def main():
     if sm:
         np.savez(out / "summary.npz", **{f"{wn}_{k}": v for wn, d in sm.items() for k, v in d.items()})
     # the same tissue by the core alone
-    c1 = time.process_time()
-    T2 = evt.EvTissue(a.seed, a.rule, **sw)
-    em2 = T2.run_bytes(R.st)
-    cpu_core = time.process_time() - c1
+    if a.verify_core:
+        c1 = time.process_time()
+        T2 = evt.EvTissue(a.seed, a.rule, **sw)
+        em2 = T2.run_bytes(R.st)
+        cpu_core = time.process_time() - c1
+    else:
+        em2, cpu_core = None, cpu_recorded
     nb = a.bytes
     steps = cnt["steps"]
     tc = np.zeros(2, np.int64); evt.L.evt_trial_counts(tc)
@@ -288,7 +292,7 @@ def main():
                birth=T.B["digests"], counts=R.counts, stretches=R.stretch, cpu_by_stretch=R.cpu,
                cpu_total_s=cpu_recorded, cpu_per_byte_with_records=cpu_recorded / nb, wall_s=time.time() - w0,
                cpu_core_only_s=cpu_core, cpu_per_byte_core_only=cpu_core / nb,
-               core_only_emissions_identical=bool(np.array_equal(em2, R.emis)),
+               core_only_emissions_identical=(bool(np.array_equal(em2, R.emis)) if em2 is not None else None),
                counters=cnt, counters_per_byte={k: v / nb for k, v in cnt.items()},
                mean_cells_sending_a_step=cnt["senders_passing_on"] / steps,
                connection_visits_a_byte=(cnt["visits_passing_on"] + cnt["visits_strengths"] + cnt["visits_life"]) / nb,
