@@ -41,6 +41,40 @@ The life of `PLAN_12.md` with three returns: 400,000 lines of sums; English 1 (t
 
 Development seed 1, both forms: to see that the marks up to the end of return 1 repeat `PLAN_12.md`'s development figures. Nothing is chosen. Reported: the seeds 73129, 93683, 116089, 406364, 545353, both forms. Size: 256 cells, about 230,000 strengths. Cost: about 2.5 CPU-minutes a run, twelve runs. **Not run:** the other fourteen forms; any mechanism against shared cells; a second text with no byte in common with the sums at all (English shares the line feed with them); more than three returns.
 
-## 5. Outcome
+## 5. Outcome (entered 21 November; five reported seeds, both forms; `report_13.txt`, `res/relay13__r_*.json`, `out/relay13_*.txt`)
 
-(to be entered after the runs)
+**The development seed** repeated `PLAN_12.md`'s development figures up to the end of the first return to within 0.1 point for the form with the four changes and exactly for the network as it is (the first phase is read in one call here and in three there, which changes the rounding of the folded fading). One run (R, seed 406364) was started twice by my job scripts; the duplicate was stopped, the result file is the surviving run's, and its log may hold lines of both.
+
+Never-shown sums, whole answer, per cent; median of five seeds (smallest to largest).
+
+| | Return 1 | Return 2 | Return 3 |
+|---|---|---|---|
+| **The four changes (Rgtqr).** Straight after the English | 0.2 (0.0 to 0.6) | 30.3 (14.0 to 44.9) | 62.4 (51.0 to 81.8) |
+| kept, as a share of the level just before | 0.00 (0.00 to 0.01) | 0.31 (0.14 to 0.45) | **0.64 (0.51 to 0.83)** |
+| with only the digit branches answering | 92.9 | 96.6 | 98.6 |
+| after 100 lines of the return | 84.8 | 94.0 | 96.9 |
+| after 5,000 lines | 99.2 | 99.0 | 98.6 |
+| held-out English lost while the sums return, points | 3.9 | 2.0 | 0.9 |
+| right digit's branch; loudest other branch (states of the sums, after the English) | 0.08; 0.74 | 0.45; 0.33 | 0.55; 0.14 |
+| **The network as it is (R).** Straight after the English | 0.0 | 0.0 | 0.0 |
+| with only the digit branches answering, as a share of the level | 0.03 | 0.35 | 0.35 |
+| after 100 lines of the return | 0.0 | 0.0 | 0.0 |
+| held-out English lost while the sums return, points | 21.9 | 11.9 | 5.0 |
+
+Level at the end of the first phase: 98.8 (Rgtqr) and 96.5 (R). The cells: the sums use 253 of 256; the English 108, falling to 95 by the third piece; every cell of the English is a cell of the sums (0.99 of the English's activity sits on cells of the sums, and 0.44 of the sums' activity on cells of the English).
+
+| | Outcome |
+|---|---|
+| The hypothesis | **Not supported, and not refuted by its own words.** I said the outvoting would come back in full at every return (under a quarter kept at the second and third). It kept 0.31 at the second and 0.64 at the third: more than I said, less than the three quarters that would have refuted me. The cost of a return falls steeply from return to return; it is neither paid once nor paid in full each time |
+| W1 | Failed (0.31 at the second return) |
+| W2 | Failed (0.64 at the third; 0.83 on the best seed, 0.51 on the worst) |
+| W3 | **Held**: the reading among the digits is kept at 0.98 and 0.99 of its level at the second and third return (0.97 at the least) |
+| W4 | Failed, by a tenth of a point: after 100 lines the network is 5.1 points under its level at the second return and 2.4 at the third |
+| W5 | Held: 96.9 after 100 lines of the third return against 84.8 after 100 lines of the first |
+| W6 | Failed in its second part: R's whole answers are nought at every return, but from the second return on a third of its reading among the digits is still there (0.35 of the level) |
+| W7 | Failed for R's third return: R's English falls by 21.9, 11.9 and 5.0 points; Rgtqr's by 3.9, 2.0 and 0.9 |
+| W8 | **Held**: 0.99 |
+
+**Reading (mine; development level).** (1) A life in which the two texts keep alternating is itself a teacher: with the four changes, each return leaves the branches of the English quieter in the states of the sums (0.74, 0.33, 0.14) and the digits stronger after the next English (0.08, 0.45, 0.55), and each piece of sums costs the English less (3.9, 2.0, 0.9 points). After three alternations the network has two thirds of its whole answers the moment the sums return, where at the first return it had none. (2) The network as it is gains from alternation as well, in its English and a little in its digits, but its whole answers are nought at every return and stay nought for the first hundred lines. (3) The two texts share nearly every cell they use, so the balance between their branches can only be learned by meeting both; nothing in the first phase could have taught it. (4) One return, as in `PLAN_11.md` and `PLAN_12.md`, shows this learner at its worst; the helper's reading of the second literature report had warned of exactly that.
+
+**Limits.** Three returns, one pair of texts, each English a new piece of one book; whether the kept share goes on rising at a fourth and fifth return was not run. The short trial named at the head of this file misled me toward reading (ii).
