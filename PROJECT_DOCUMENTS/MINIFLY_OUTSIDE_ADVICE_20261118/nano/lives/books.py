@@ -93,9 +93,9 @@ def make(name, x, N=0, S=256, cap=0):
     a = dict(LV.SYSTEMS[name]); kinds = SU.kinds_of(a.pop("kinds"), S, a.pop("recall")); return SysB(kinds, x, S=S, N=N, cap=cap, **a)
 
 # ---------------------------------------------------------------- the reference in plain Python: lives.py's, with the bookmarks and the shares written out
-def ref_run(S, kinds, x, lo, hi, state=None, learn=True, N=0, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0, guard=1e-20, caps=None):
+def ref_run(S, kinds, x, lo, hi, state=None, learn=True, N=0, eta=0.00005, e=0.02, rule=0, gate=0, J=6, birth=0.0, M=8, age=0, spow=0.0, guard=1e-20, caps=None, wake=False):
     K = len(kinds); GL = NL if gate == 2 else 1
-    if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={}, ptime={}, lasts={}, times={}, last={}, now=0, books=[], w2=[1.0], lnow=0)
+    if state is None: state = dict(cells={}, T=np.array([[k[3]] * NL for k in kinds], np.float64), Tu=np.zeros((K, NL)), Ta=np.zeros((K, NL)), G=np.zeros((J, K, GL, S)), Gu=np.zeros((J, K, GL, S)), Ga=np.zeros((J, K, GL, S)), places={}, ptime={}, lasts={}, times={}, last={}, now=0, books=[], w2=[1.0], lnow=0, returns=0)
     cells, T, Tu, Ta, G, Gu, Ga, places = (state[k] for k in ("cells", "T", "Tu", "Ta", "G", "Gu", "Ga", "places")); P2 = np.zeros((hi - lo, S)); MIX = np.zeros(hi - lo); xb = lambda q: int(x[q]) if q >= 0 else 0
     step = lambda used, acc: eta if rule == 0 else eta / np.sqrt(1.0 + used) if rule == 1 else eta * sc[0] / np.sqrt(acc); sc = [1.0]
     for t in range(lo, hi):
@@ -130,6 +130,7 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, N=0, eta=0.00005, e=0.0
                 for k, l, sv, dv in act: ab += (BT[k, l] + sum(BG[j, k, l if GL > 1 else 0, xb(t - 1 - j)] for j in range(J))) * dv
                 q = np.exp(ab - ab.max()); pb.append(q[y] / q.sum())
             B1 = len(pb); v = [(1.0 - 1.0 / N) * w + (1.0 / N) / B1 for w in state["w2"]]; mixp = sum(vi * pi for vi, pi in zip(v, pb)); MIX[t - lo] = mixp; state["w2"] = [vi * pi / mixp for vi, pi in zip(v, pb)]
+            top = max(range(B1), key=lambda b: (v[b], -b)); jump = top if (learn and wake and top > 0 and v[top] > 0.5) else 0
         if learn:
             sc[0] = (12.0 / len(act)) ** spow if spow > 0 and act else 1.0
             for k, l, sv, dv in act:
@@ -151,6 +152,8 @@ def ref_run(S, kinds, x, lo, hi, state=None, learn=True, N=0, eta=0.00005, e=0.0
             if N > 0:
                 state["lnow"] += 1
                 if state["lnow"] % N == 0: state["books"].append((T.copy(), G.copy())); state["w2"].append(0.0)
+                if jump:                                                     # PLAN_4: the living set is kept as a bookmark and goes back to the bookmark that held more than half of the belief
+                    BT, BG = state["books"][jump - 1]; state["books"].append((T.copy(), G.copy())); T[:] = BT; G[:] = BG; state["w2"].append(state["w2"][0]); state["w2"][0] = state["w2"][jump]; state["w2"][jump] = 0.0; state["returns"] += 1
         state["last"][y] = tau
     state["now"] += hi - lo; return P2, MIX, state
 
