@@ -1,0 +1,17 @@
+kinds 164 (10 table and word, 65 since, 82 pool, 7 companions) half>0: 7 | ids (129994, 164) | cells addressed 1505312 | relay alone on the scored part: {'nats': 2.2334513664245605, 'right': 36.346666666666664, 'stream_nats_as_read': 2.4564812183380127}
+frozen scoring changes no state (companions and given sender present): True {'C': 'dbcc9d6adb034317', 'N': 'f82091ea2fd5f509', 'U': '7f069b643676a0a4', 'last': 'a2029068cd3af8cb', 'T': '3bfba28da4fe202a', 'Gt': '893d19d781c3cde7', 'half': '210567497ee4e32c', 'ids': '51b1915b96856d79', 'cb': '6fadb35fbf5b0320', 'x': 'dd5e92186d8b541b', 'X': '1ec2c158e8ae37ed', 'xlev': 'd78010bd15435dd2', 'clock': 99994.0}
+second frozen scoring: same bits True | state same True
+short text: first cell 1.6737 second cell 1.6127 | row sums 1.887379141862766e-15 1.9984014443252818e-15 | companions speaking in the scored part: trust rows used 165 | parts used 1005014 | cpu 21.0 RSS MB 893
+   liveness: silencing since (65 kinds) changes 30000 of 30000 rows of the first cell and 30000 of the second; loss without it 1.7448, 1.6890
+   liveness: silencing pool (82 kinds) changes 30000 of 30000 rows of the first cell and 30000 of the second; loss without it 1.8108, 1.6931
+   liveness: silencing companions (7 kinds) changes 30000 of 30000 rows of the first cell and 30000 of the second; loss without it 1.8805, 1.7881
+   liveness: silencing relay (given sender) changes 30000 of 30000 rows of the first cell and 30000 of the second; loss without it 1.6903, 1.6253
+p = cut+0 (rand, 29535 bytes changed): bit-identical for positions <= p: {'cell1': True, 'cell2': True, 'trusts': True, 'parts': True, 'relay_opinions': True, 'relay_levels': True} (1 scored rows) | rows after p that differ (cell 1, cell 2, relay opinions, of): (29999, 29999, 29999, 29999) | cpu 44.0 RSS MB 1547
+p = cut+12345 (shift, 16639 bytes changed): bit-identical for positions <= p: {'cell1': True, 'cell2': True, 'trusts': True, 'parts': True, 'relay_opinions': True, 'relay_levels': True} (12346 scored rows) | rows after p that differ (cell 1, cell 2, relay opinions, of): (17654, 17654, 17654, 17654) | cpu 62.0 RSS MB 1547
+p = cut+20000 (single, 1 bytes changed): bit-identical for positions <= p: {'cell1': True, 'cell2': True, 'trusts': True, 'parts': True, 'relay_opinions': True, 'relay_levels': True} (20001 scored rows) | rows after p that differ (cell 1, cell 2, relay opinions, of): (27, 27, 10, 9999) | cpu 78.2 RSS MB 1547
+p = cut+29000 (rand, 982 bytes changed): bit-identical for positions <= p: {'cell1': True, 'cell2': True, 'trusts': True, 'parts': True, 'relay_opinions': True, 'relay_levels': True} (29001 scored rows) | rows after p that differ (cell 1, cell 2, relay opinions, of): (999, 999, 999, 999) | cpu 95.1 RSS MB 1547
+ALL TRIALS PASSED (all kinds, short text): True
+full text, tail from 1059409 replaced: word keys A, B, C identical at every position < p: [True, True, True] | differ at p: [True, True, True]
+   timing keys (65 kinds) identical at every position < p: True
+   pool keys (82 kinds, on the 65,000 bytes around p) identical at every position < p: True | kinds 82 | kinds whose key at p itself differs (the key at p serves byte p+1; expected: the 26 kinds that read place 0): 26 of which read place 0: 26 | places used [0, 1, 2, 3, 4, 5, 6, 7]
+cpu 99.1 peak RSS MB 1547

@@ -1,0 +1,117 @@
+FOURTH PLAN (cells2.py). Whole answer right on 500 never-shown pairs, %. Columns: seeds 73129 93683 116089 406364 545353
+
+A and B. Never-shown addition, mean of the last three readings of 400,000 lines
+every cell reads all 140 lines (one step)                        84.2       82.7       86.4       81.8       86.7   median  84.2
+                                                            91/91/100  95/87/100  97/90/100  95/90/100  97/91/100   by place at the end (hundreds/tens/units)
+32 lines a cell, fixed                                           14.5        7.3        7.5       15.9        7.3   median   7.5
+                                                             88/32/53   93/39/26   96/31/39   93/43/71   94/38/33   by place at the end (hundreds/tens/units)
+32 lines a cell, rewiring                                        44.4       40.9       42.7       45.1       31.6   median  42.7
+                                                             89/58/93   97/51/87   97/54/92   95/53/99   91/54/88   by place at the end (hundreds/tens/units)
+64 lines a cell, rewiring                                        68.1       83.0       84.3       80.8       73.0   median  80.8
+                                                            85/86/100  96/90/100  95/91/100  94/87/100  96/78/100   by place at the end (hundreds/tens/units)
+one sign for each cell                                           70.7       73.9       64.0       62.1       72.3   median  70.7
+                                                            96/79/100  97/82/100  81/81/100  77/78/100  96/76/100   by place at the end (hundreds/tens/units)
+two steps, 128 + 128                                             82.5       85.9       85.0       82.6       84.4   median  84.4
+                                                            93/89/100  93/91/100  97/92/100   97/89/98  90/93/100   by place at the end (hundreds/tens/units)
+two steps, 256 + 256                                          NOT_RUN    NOT_RUN    NOT_RUN    NOT_RUN    NOT_RUN   (incomplete)
+
+C. Addition (400,000 lines), then subtraction (200,000 lines), then addition again (40,000 lines)
+addition after its own phase (last three readings)               84.2       82.7       86.4       81.8       86.7   median  84.2
+addition after subtraction                                        2.0        1.6        1.8        1.4        2.0   median   1.8
+subtraction after its phase                                      82.0       89.8       91.4       86.0       86.0   median  86.0
+addition 2,000 lines into subtraction                            18.2       18.4        8.6       12.4       20.4   median  18.2
+addition, the answering cell put back                            44.6       56.8       36.4       51.4       40.8   median  44.6
+addition, the cells in between put back                          13.2        3.8        2.6        2.6        2.6   median   2.6
+share of the loss undone by the answering cell put back, %       53.4       68.8       40.9       60.0       45.3   median  53.4
+change of the cells' strengths over their size                    0.4        0.4        0.4        0.4        0.4   median   0.4
+change of the answering cell's strengths over their size          1.1        1.1        1.1        1.2        1.2   median   1.1
+lines to 70% at first                                         60000.0    60000.0    60000.0    70000.0    70000.0   median 60000.0
+lines to 70% when taught again                                 4000.0     4000.0     6000.0     4000.0     6000.0   median 4000.0
+ratio                                                             0.1        0.1        0.1        0.1        0.1   median   0.1
+addition 2,000 lines into teaching again                         55.0       60.0       44.2       58.4       42.0   median  55.0
+subtraction after addition is taught again                        2.8        3.0        1.6        2.6        3.0   median   2.8
+one addition line in 32: addition at the end                     20.8       12.2       15.6       17.2        9.8   median  15.6
+   subtraction at the end                                        85.6       85.8       90.4       84.2       85.8   median  85.8
+new cells (128) and one line in 32: addition at the end          75.2       62.8       67.0       64.4       67.8   median  67.0
+   subtraction at the end                                        78.6       72.8       75.4       73.4       77.6   median  75.4
+new cells (128), no rehearsal: addition at the end                5.0        3.0        3.2        4.8        4.4   median   4.4
+   subtraction at the end                                        74.0       77.2       78.6       72.8       71.6   median  74.0
+
+
+FIFTH PLAN (hold.py, no delay chain, no crossing). Single-digit sums shown, 240,000 lines, mean of the last three readings
+cells learn                                                      97.9       98.3       98.8       97.9       99.2   median  98.3
+cells never change                                                1.2        1.2        3.8        2.5        2.1   median   2.1
+
+
+SEVENTH PLAN (hold.py, a gap of 0 to 8 letters). Sums shown, whole answer right, %, mean of the last three readings of 960,000 lines (mean over gaps 0, 4, 8)
+  text m1: c = (a + b) mod 10
+    no crossing, eta1 = 1                                        27.6       21.2       28.2       40.1       18.3   median  27.6
+       at the end, gap of 0 letters                              22.5       22.5       33.8       41.2       21.2   median  22.5
+       at the end, gap of 4 letters                              23.8       21.2       32.5       45.0       22.5   median  23.8
+       at the end, gap of 8 letters                              25.0       20.0       28.8       45.0       25.0   median  25.0
+    no crossing, eta1 = 4                                        25.7       40.0       31.2       16.4       24.9   median  25.7
+       at the end, gap of 0 letters                              32.5       47.5       35.0       15.0       37.5   median  35.0
+       at the end, gap of 4 letters                              31.2       45.0       33.8       17.5       32.5   median  32.5
+       at the end, gap of 8 letters                              27.5       45.0       27.5        8.8       37.5   median  27.5
+    one crossing, the reader's own strengths                     91.2       81.9      100.0       78.1      100.0   median  91.2
+       at the end, gap of 0 letters                              97.5       82.5      100.0       88.8      100.0   median  97.5
+       at the end, gap of 4 letters                              97.5       81.2      100.0       88.8      100.0   median  97.5
+       at the end, gap of 8 letters                              96.2       81.2      100.0       88.8      100.0   median  96.2
+    one crossing, return strengths grown from nothing            92.4       42.2      100.0       31.8       93.5   median  92.4
+       at the end, gap of 0 letters                              93.8       32.5      100.0       47.5       96.2   median  93.8
+       at the end, gap of 4 letters                              96.2       36.2      100.0       48.8       95.0   median  95.0
+       at the end, gap of 8 letters                              93.8       36.2      100.0       46.2       93.8   median  93.8
+  text g1: c = a + b
+    no crossing, eta1 = 1                                        39.2       45.0       45.7       44.4       33.1   median  44.4
+       at the end, gap of 0 letters                              43.8       46.2       45.0       47.5       27.5   median  45.0
+       at the end, gap of 4 letters                              38.8       46.2       46.2       55.0       27.5   median  46.2
+       at the end, gap of 8 letters                              41.2       43.8       42.5       51.2       30.0   median  42.5
+    no crossing, eta1 = 4                                        45.0       43.3       69.2       33.5       59.9   median  45.0
+       at the end, gap of 0 letters                              52.5       38.8       72.5       31.2       67.5   median  52.5
+       at the end, gap of 4 letters                              51.2       47.5       71.2       36.2       71.2   median  51.2
+       at the end, gap of 8 letters                              45.0       42.5       70.0       35.0       66.2   median  45.0
+    one crossing, the reader's own strengths                     99.9       94.2       99.0       98.6       97.4   median  98.6
+       at the end, gap of 0 letters                              98.8       96.2      100.0      100.0       93.8   median  98.8
+       at the end, gap of 4 letters                             100.0       95.0      100.0      100.0      100.0   median 100.0
+       at the end, gap of 8 letters                             100.0       95.0      100.0      100.0      100.0   median 100.0
+    one crossing, return strengths grown from nothing            95.6       98.5       99.0       88.9       96.4   median  96.4
+       at the end, gap of 0 letters                              96.2      100.0       97.5       88.8       97.5   median  97.5
+       at the end, gap of 4 letters                              96.2       98.8      100.0       91.2       97.5   median  97.5
+       at the end, gap of 8 letters                              96.2       98.8      100.0       90.0       97.5   median  97.5
+
+
+NINTH PLAN (hold.py with a short chain of delay lines). Two-digit sums never shown, %, mean of the last three readings of 1,600,000 lines
+the present byte and the two before it, no crossing              16.2       17.3       27.4       23.4       29.2   median  23.4
+   sums shown                                                    17.8       18.9       30.8       24.9       29.9   median  24.9
+   never shown, at the last reading                              20.0       19.2       29.0       27.8       26.6   median  26.6
+                                                             96/46/47   95/34/60   97/46/71   97/36/80   96/31/96   by place at the end (hundreds/tens/units)
+the present byte and the two before it, one crossing             65.8       66.6       67.3       60.1       62.1   median  65.8
+   sums shown                                                    66.4       66.8       68.0       65.2       69.9   median  66.8
+   never shown, at the last reading                              65.6       71.2       70.6       64.2       64.2   median  65.6
+                                                            99/66/100   99/74/98   98/73/99   99/72/91   98/68/98   by place at the end (hundreds/tens/units)
+
+
+EIGHTH PLAN (cells2.py clip=1/4, the active-cell kernel). Never-shown addition, mean of the last three readings of 400,000 lines
+logistic cells, 256 (dense compiled kernel)                      84.2       82.7       86.4       81.8       86.7   median  84.2
+   CPU seconds of the run                                        33.1       32.9       33.3       33.5       33.4   median  33.3
+silent cells, 256                                                72.2       71.9       54.1       42.0       71.3   median  71.3
+   CPU seconds of the run                                         9.6        8.7        9.6        9.2        9.6   median   9.6
+   cells active at a byte                                        50.4       41.3       51.6       44.0       50.7   median  50.4
+silent cells, 512                                                62.8       70.0       69.5       74.2       83.2   median  70.0
+   CPU seconds of the run                                        22.0       22.1       23.2       22.9       23.2   median  22.9
+   cells active at a byte                                       132.6      138.3      145.1      141.3      140.4   median 140.4
+
+
+THE COMPILED KERNEL BESIDE THE NUMPY PROGRAM, same seed and options, full runs (never-shown addition, last three readings; numpy / compiled)
+   dale_73129               70.7 /   70.7   CPU 377 s / 54.3 s
+   dale_93683               73.9 /   73.9   CPU 343 s / 53.3 s
+   fan32_73129              14.5 /   14.5   CPU 302 s / 54.1 s
+   fan32_93683               7.3 /    7.3   CPU 328 s / 54.8 s
+   fan32rw_73129            44.4 /   44.4   CPU 319 s / 54.6 s
+   fan32rw_93683            40.9 /   40.9   CPU 300 s / 54.8 s
+   fan64rw_73129            68.1 /   68.1   CPU 341 s / 74.3 s
+   fan64rw_93683            83.0 /   83.0   CPU 317 s / 73.8 s
+   keep_73129               84.2 /   84.2   CPU 388 s / 54.6 s
+   reh32_73129              84.2 /   84.2   CPU 362 s / 48.3 s
+   two128_73129             82.5 /   82.5   CPU 534 s / 239.0 s
+   two128_93683             85.9 /   85.9   CPU 380 s / 234.0 s

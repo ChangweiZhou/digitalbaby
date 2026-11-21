@@ -1,0 +1,6 @@
+J0. delay bytes: cb[t, j] == x[t-1-j] for every t >= 6 and j = 0..5: True | ids rows 1115388 == n - 6: True
+    reading the stream, byte 500000 changed: answers for positions 499700..500000 bit-identical: True, True | rows after p that differ: 299, 299 of 299 | cpu 9.4
+J1. all kinds WITHOUT companions (157 kinds, no clock anywhere), relay included: first cell 1.4714814124976243 (the author's all_without_companions.json: 1.4714814124976243; equal True), SECOND CELL 1.4479 | every 8th byte: 1.4730, 1.4512 | state unchanged by scoring: True | row sums 2.0e-15 | cells 3774962 | cpu 89.3 RSS MB 2298
+J2. all kinds, whole last tenth replaced (109845 bytes differ), stream read again: equal to the original run's: {'T': True, 'Gt': True, 'N_sum': True, 'cells': True, 'U_sum': True, 'C_sum': True, 'last_sum': True, 'P1_row0': True, 'P2_row0': True} | cells addressed 9957309 (original 4489825) | cpu 93.6 RSS MB 3988
+J3. all kinds but relay, text replaced from position cut+55555 on (55133 bytes differ): equal to the original run's: {'T': True, 'Gt': True, 'N_sum': True, 'cells': True, 'U_sum': True, 'C_sum': True, 'last_sum': True, 'P1_first_55556_rows': True, 'P2_first_55556_rows': True, 'P1_row0': True, 'P2_row0': True} | loss on the 55,556 untouched positions 1.3712, on the random rest 4.704 | cpu 85.6 RSS MB 3988
+total cpu 278.0 peak RSS MB 3988

@@ -1,0 +1,45 @@
+Columns: seeds 73129 93683 116089 406364 545353 
+
+FIRST PLAN (E1). Sums shown, whole answer right, %, mean over gaps 0, 4, 8 and the last three readings of 960,000 lines
+m1: layered, chosen setting                                              51.4       98.3        9.3       39.7       99.6   median  51.4
+   last reading by gap 0/4/8                                         54/51/40 100/100/98    10/11/2    46/42/0100/100/100
+                                                                     median by gap at the last reading: 0: 54, 4: 51, 8: 40
+   numbers that learn (forward) / CPU seconds                       22042/133  22042/136  22042/135  22042/134  22042/133
+m1: layered, cells A never change (etaA=0)                               10.8       10.1       10.7        9.7        9.6   median  10.1
+   last reading by gap 0/4/8                                         11/11/11   11/11/11   10/10/10    0/10/10   11/11/11
+                                                                     median by gap at the last reading: 0: 11, 4: 11, 8: 11
+   numbers that learn (forward) / CPU seconds                       22042/106  22042/109  22042/106  22042/106  22042/107
+g1: layered, chosen setting                                              92.6       96.2       99.0       98.6       96.8   median  96.8
+   last reading by gap 0/4/8                                         95/95/89   98/98/94100/100/100 100/100/96   98/98/95
+                                                                     median by gap at the last reading: 0: 98, 4: 98, 8: 95
+   numbers that learn (forward) / CPU seconds                       22042/141  22042/144  22042/140  22042/141  22042/142
+g1: layered, cells A never change (etaA=0)                               10.3        8.1       12.5        7.9       11.5   median  10.3
+   last reading by gap 0/4/8                                         11/11/11      5/4/5   12/12/12   10/10/10   10/11/11
+                                                                     median by gap at the last reading: 0: 10, 4: 11, 8: 11
+   numbers that learn (forward) / CPU seconds                       22042/112  22042/115  22042/112  22042/112  22042/113
+
+SECOND PLAN (E2). Two-digit sums, two delay lines, 1,600,000 lines, mean of the last three readings
+d2: layered, chosen setting, never-shown sums                            86.3       88.3       92.1       75.9       74.5   median  86.3
+   by place at the end (first/second/third answer byte)             99/87/100  99/90/100  98/94/100 100/78/100 100/74/100
+   numbers that learn (forward) / CPU seconds                       33808/300  33808/298  33808/329  33808/325  33808/332
+d2: the same runs, sums shown                                            84.9       89.3       92.4       76.5       78.9   median  84.9
+   numbers that learn (forward) / CPU seconds                       33808/300  33808/298  33808/329  33808/325  33808/332
+d2: layered, cells A never change, never-shown sums                       0.8        0.9        0.7        0.6        0.9   median   0.8
+   by place at the end (first/second/third answer byte)               80/17/8   65/16/10   79/19/10   71/17/10   75/14/13
+   numbers that learn (forward) / CPU seconds                       33808/219  33808/221  33808/234  33808/241  33808/229
+
+THIRD PLAN (E3). Two-digit numbers with 0 to 8 letters between them, two delay lines, 2,400,000 lines, never-shown sums, last three readings
+
+FOURTH PLAN (E4). A second gate on what a cell A gives out, at equal numbers of strengths
+with the output gate                                                     48.0       69.7       78.0       63.8       80.2   median  69.7
+   last reading by gap 0/4/8                                         53/53/50   75/76/70   78/76/66   68/68/59   83/83/83
+                                                                     median by gap at the last reading: 0: 75, 4: 76, 8: 66
+   by place at the end (first/second/third answer byte)              98/60/86   99/72/99   98/71/95   98/62/97   99/86/97
+   numbers that learn (forward) / CPU seconds                       40856/720  40856/698  40856/692  40856/682  40856/685
+   with the output gate: at the gap of 8 letters                         41.7       64.7       74.5       60.3       79.5   median  64.7
+one gate, the same numbers                                                5.1        3.7        5.0        4.6        5.0   median   5.0
+   last reading by gap 0/4/8                                            6/4/2      5/5/3      4/3/5      7/3/3      6/6/4
+                                                                     median by gap at the last reading: 0: 6, 4: 4, 8: 3
+   by place at the end (first/second/third answer byte)               99/51/6    98/54/5    97/63/6    97/56/6    98/55/8
+   numbers that learn (forward) / CPU seconds                       40864/789  40864/770  40864/757  40864/760  40864/758
+   one gate, the same numbers: at the gap of 8 letters                    4.3        2.1        4.7        3.0        3.7   median   3.7

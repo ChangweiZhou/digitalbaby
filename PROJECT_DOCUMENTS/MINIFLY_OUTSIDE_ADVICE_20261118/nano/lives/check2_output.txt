@@ -1,0 +1,8 @@
+situation cells, W = 256, 20000 bytes of eight pieces from five streams (read counting, then 5,000 bytes with nothing changing, then counting): compiled against plain Python: awake cell at every byte, counts, belief, births the same: True; situations 2, born at [3328]; the awake cell at a byte does not move when that byte and all later ones are replaced: True PASSED
+situation cells, W = 512, 20000 bytes of eight pieces from five streams (read counting, then 5,000 bytes with nothing changing, then counting): compiled against plain Python: awake cell at every byte, counts, belief, births the same: True; situations 4, born at [3584, 5632, 8192]; the awake cell at a byte does not move when that byte and all later ones are replaced: True PASSED
+ZA with a block longer than the stream: one situation, and every loss (reading, nothing changing, going on) equal to the plain system's bit for bit: True PASSED
+a stream read in one piece or in three gives the same losses and awake cells (4 situations, 315 changes of the awake cell): True PASSED
+
+real	0m1.741s
+user	0m1.270s
+sys	0m0.163s

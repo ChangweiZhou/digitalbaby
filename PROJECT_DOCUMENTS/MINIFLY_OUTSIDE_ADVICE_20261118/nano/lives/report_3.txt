@@ -1,0 +1,22 @@
+Pace of bookmarks 65,536 (chosen on the development order: mean of the mixture at the end 0.8811, against 0.8837 at 262,144). Plain singles' mean going on 0.8357.
+
+| order | shakespeare | book | py | c | table | xml | mean at the end: plain, mixture | the life costs: plain, mixture | bookmarks |
+|---|---|---|---|---|---|---|---|---|---|
+| dev_N65536: sh, bo, py, c, ta, xm | 1.343; 1.503, 1.443 | 1.402; 1.559, 1.477 | 0.962; 1.060, 0.996 | 0.731; 0.714, 0.700 | 0.356; 0.360, 0.358 | 0.312; 0.313, 0.312 | 0.9184, 0.8811 | +0.0828, +0.0454 | 120 |
+| seed73129: ta, c, xm, py, sh, bo | 1.406; 1.401, 1.398 | 1.444; 1.444, 1.444 | 0.971; 1.011, 0.998 | 0.648; 0.715, 0.706 | 0.346; 0.372, 0.364 | 0.301; 0.344, 0.318 | 0.8814, 0.8714 | +0.0457, +0.0357 | 120 |
+| seed93683: ta, c, xm, py, bo, sh | 1.378; 1.378, 1.378 | 1.463; 1.463, 1.460 | 0.971; 1.015, 0.999 | 0.648; 0.716, 0.706 | 0.346; 0.372, 0.365 | 0.301; 0.343, 0.318 | 0.8814, 0.8710 | +0.0457, +0.0354 | 120 |
+| seed116089: sh, xm, py, bo, c, ta | 1.343; 1.510, 1.432 | 1.434; 1.562, 1.455 | 0.968; 1.064, 0.998 | 0.740; 0.723, 0.705 | 0.357; 0.358, 0.357 | 0.294; 0.357, 0.325 | 0.9291, 0.8787 | +0.0934, +0.0430 | 120 |
+| seed406364: ta, sh, py, c, xm, bo | 1.354; 1.409, 1.409 | 1.447; 1.447, 1.447 | 0.966; 1.027, 1.001 | 0.676; 0.711, 0.700 | 0.346; 0.373, 0.365 | 0.307; 0.332, 0.318 | 0.8834, 0.8736 | +0.0477, +0.0379 | 120 |
+| seed545353: ta, bo, sh, xm, c, py | 1.344; 1.432, 1.413 | 1.406; 1.500, 1.486 | 0.977; 0.977, 0.977 | 0.668; 0.700, 0.697 | 0.346; 0.368, 0.363 | 0.305; 0.339, 0.321 | 0.8861, 0.8761 | +0.0504, +0.0404 | 120 |
+
+(each cell, going on: the mixture at the stream's own stage; at the end of the life the plain answer, the mixture)
+
+Reported orders, 25 cases (a stream not read last, an order):
+* B1: the largest (mixture less plain) over every test, stage, measure and order (development included): +0.00008
+* B2: going on, the share of the excess (end less own stage) removed, at the median over the 22 cases with a plain excess above 0.02: 0.32 (smallest 0.00, largest 0.84); cases still above 0.02 with the mixture: 14 of 25
+* B3: the cost of the life, plain and with the mixture, by order: +0.0457 -> +0.0357 (22% less); +0.0457 -> +0.0354 (23% less); +0.0934 -> +0.0430 (54% less); +0.0477 -> +0.0379 (20% less); +0.0504 -> +0.0404 (20% less)
+* B4: nothing changing, the share of the excess removed at the median over the 20 cases with a plain excess above 0.02: 0.50
+* B5: at its own stage, going on, the mixture is within 0.01 of the plain answer in 25 of the 25 later positions (largest difference 0.0010)
+* B7: at the end, on the test of a stream read earlier, the largest share was on a bookmark taken while that stream was read for more than half of the test's bytes in 14 of 25 cases (median share of the bytes 0.57)
+
+Read alone (B6), mixture less plain: going on shakespeare -0.0000 | book -0.0001 | py -0.0002 | c -0.0003 | table -0.0005 | xml -0.0004; nothing changing shakespeare -0.0000 | book -0.0002 | py -0.0087 | c -0.0704 | table -0.0758 | xml -0.0273

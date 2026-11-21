@@ -1,0 +1,111 @@
+====================================================================================================
+PART 1. The wiring at birth (E63's birth(seed); 2,048 cells, 256 input lines on x = 0, 256 output lines on x = 1)
+1.1 seed 73129: byte values in use 46 of 256; other cells in a cell's neighbourhood, median 93; cells with an input line in reach 240, each with a median of 53 lines of which 8 are ever used
+    connections from input lines at birth: 143 from lines in use, 611 from lines that are never used (81%); cells that receive a line in use: 102 of 2048
+    receiving cells of a byte value in use: fewest 0, median 3, most 7; values with none: 2 (Bv)
+    the 256 cells that drive the output lines lie 9 to 11 connections from the input lines (median 10)
+1.1 seed 93683: byte values in use 46 of 256; other cells in a cell's neighbourhood, median 94; cells with an input line in reach 244, each with a median of 49 lines of which 8 are ever used
+    connections from input lines at birth: 137 from lines in use, 696 from lines that are never used (84%); cells that receive a line in use: 109 of 2048
+    receiving cells of a byte value in use: fewest 0, median 3, most 8; values with none: 1 (A)
+    the 256 cells that drive the output lines lie 8 to 11 connections from the input lines (median 10)
+1.1 seed 116089: byte values in use 46 of 256; other cells in a cell's neighbourhood, median 95; cells with an input line in reach 262, each with a median of 51 lines of which 9 are ever used
+    connections from input lines at birth: 154 from lines in use, 637 from lines that are never used (81%); cells that receive a line in use: 115 of 2048
+    receiving cells of a byte value in use: fewest 1, median 3, most 6; values with none: 0 (none)
+    the 256 cells that drive the output lines lie 9 to 11 connections from the input lines (median 10)
+1.2 how often a byte value is present (seed 73129): the most frequent, '=' and the end mark, 6.24% of bytes each; a digit 3.74% on average; a letter 1.45%. The definition's target of a cell's mean output is 1/8 = 12.50%
+====================================================================================================
+PART 2. The stream of step 1 (the first family's items one after another) and what a score on it can show
+2.1 seed 73129: share of all next bytes right for a guesser that knows the form of an item and no arithmetic 25.90%; that also does the arithmetic 36.64%
+    the project's yardsticks (tables of the last 1 / 2 / 3 bytes, filled as the stream goes; last quarter of 262144 bytes): 10.44 / 12.42 / 27.44%
+    whole items in a life of 16,384 / 65,536 / 262,144 bytes: 1029 / 4098 / 16361; taught pairs of the four tasks 15840; so these lives show 0.065 / 0.259 / 1.033 of one pass over them
+    by kind of byte, seed 73129 (share of the stream; right by form alone; right with the arithmetic):
+       the task byte          6.2%    25.06    25.06
+       first number          12.5%    11.77    11.77
+       the operation byte     6.2%   100.00   100.00
+       letters               37.6%     4.09     4.09
+       second number         12.5%     6.95     6.95
+       the equals sign        6.2%   100.00   100.00
+       the answer            12.5%    13.95   100.00
+       the end mark           6.2%   100.00   100.00
+2.1 seed 93683: share of all next bytes right for a guesser that knows the form of an item and no arithmetic 25.90%; that also does the arithmetic 36.63%
+    the project's yardsticks (tables of the last 1 / 2 / 3 bytes, filled as the stream goes; last quarter of 262144 bytes): 10.51 / 12.15 / 27.30%
+    whole items in a life of 16,384 / 65,536 / 262,144 bytes: 1030 / 4100 / 16354; taught pairs of the four tasks 15840; so these lives show 0.065 / 0.259 / 1.032 of one pass over them
+2.1 seed 116089: share of all next bytes right for a guesser that knows the form of an item and no arithmetic 25.92%; that also does the arithmetic 36.67%
+    the project's yardsticks (tables of the last 1 / 2 / 3 bytes, filled as the stream goes; last quarter of 262144 bytes): 10.54 / 12.26 / 27.42%
+    whole items in a life of 16,384 / 65,536 / 262,144 bytes: 1038 / 4099 / 16378; taught pairs of the four tasks 15840; so these lives show 0.066 / 0.259 / 1.034 of one pass over them
+2.2 for comparison, from the record (receipt e42_G_B_73129.json, part 6 of audit_e61_relay.py): the dense network under back-propagation reached 80 on
+    never-taught pairs after 6,400 updates of 64 items, which is 409,600 items, or 25.9 passes over the 15,840 taught pairs
+====================================================================================================
+PART 3. Tissues run with the reviewer's program (seed 73129; a life of 16,384 bytes, then a probe: every pair of digits
+        24 times as the bytes '+', d1, d2, the output read at d2)
+3. the wiring of the definition, strengths never changing
+   at byte 16,384: connections a cell 7.75; made 0, withdrawn 0; cells whose threshold is above zero 1 of 2048; gain, median 1.00, cells at the bound 0
+   output in the last 4,096 bytes, by connections from the input lines (largest: of the median cell): 1: 102 cells, mean 0.00460, largest 0.1256, never above 0.01 0; 2: 215 cells, mean 0.00088, largest 0.0164, never above 0.01 34; 3: 240 cells, mean 0.00022, largest 0.0025, never above 0.01 240; 4: 220 cells, mean 0.00005, largest 0.0004, never above 0.01 220; 8: 173 cells, mean 0.00000, largest 0.0000, never above 0.01 173; 11: 58 cells, mean 0.00000, largest 0.0000, never above 0.01 58
+   the cells that drive the output lines: largest output of any of them 3.63e-07; the definition emits a byte when one exceeds 1/2
+   share of the output variance explained on bytes not used for the fit, effects added: the present byte 1.000; the present and the previous byte 1.000; the last eight bytes 1.000
+   probe, all cells (1953 that vary): of the variance of the output at the second digit, the present digit 1.000; the digit before it 0.000; the two jointly, beyond their sum 0.0000; the rest (earlier bytes and the tissue's own state) 0.000. The joint share cell by cell: median 0.0000, 99th cell in 100 0.469, largest 0.818
+      cells with a joint share above 0.25: 48; the largest output of such a cell in the probe: median 1.6e-09, largest 5.3e-07; joint share among the 113 cells whose output reaches 0.01: median 0.0000, largest 0.000
+   probe, the cells near the output lines (495 that vary): of the variance of the output at the second digit, the present digit 0.882; the digit before it 0.117; the two jointly, beyond their sum 0.0004; the rest (earlier bytes and the tissue's own state) 0.000. The joint share cell by cell: median 0.0007, 99th cell in 100 0.487, largest 0.651
+3. N0 as run (THE_TISSUE_AS_RUN, sections 2 and 3)
+   at byte 16,384: connections a cell 3.24; made 1240, withdrawn 10474; cells whose threshold is above zero 1331 of 2048; gain, median 3.54, cells at the bound 218
+   output in the last 4,096 bytes, by connections from the input lines (largest: of the median cell): 1: 109 cells, mean 0.03982, largest 1.0000, never above 0.01 0; 2: 180 cells, mean 0.04426, largest 1.0000, never above 0.01 0; 3: 214 cells, mean 0.05514, largest 1.0000, never above 0.01 0; 4: 189 cells, mean 0.05922, largest 1.0000, never above 0.01 0; 8: 139 cells, mean 0.07833, largest 1.0000, never above 0.01 0; 16: 4 cells, mean 0.11048, largest 1.0000, never above 0.01 0
+   the cells that drive the output lines: largest output of any of them 1.00e+00; the definition emits a byte when one exceeds 1/2
+   share of the output variance explained on bytes not used for the fit, effects added: the present byte 0.584; the present and the previous byte 0.720; the last eight bytes 0.709
+   probe, all cells (1864 that vary): of the variance of the output at the second digit, the present digit 0.617; the digit before it 0.041; the two jointly, beyond their sum 0.0237; the rest (earlier bytes and the tissue's own state) 0.305. The joint share cell by cell: median 0.0127, 99th cell in 100 0.091, largest 0.275
+      cells with a joint share above 0.25: 1; the largest output of such a cell in the probe: median 5.7e-01, largest 5.7e-01; joint share among the 1817 cells whose output reaches 0.01: median 0.0134, largest 0.275
+   probe, the cells near the output lines (489 that vary): of the variance of the output at the second digit, the present digit 0.268; the digit before it 0.135; the two jointly, beyond their sum 0.0197; the rest (earlier bytes and the tissue's own state) 0.554. The joint share cell by cell: median 0.0021, 99th cell in 100 0.075, largest 0.093
+3. N256 as run (time constants up to 256 steps)
+   at byte 16,384: connections a cell 3.76; made 8630, withdrawn 16803; cells whose threshold is above zero 791 of 2048; gain, median 6.22, cells at the bound 627
+   output in the last 4,096 bytes, by connections from the input lines (largest: of the median cell): 1: 112 cells, mean 0.04414, largest 0.9013, never above 0.01 0; 2: 188 cells, mean 0.06009, largest 1.0000, never above 0.01 0; 3: 181 cells, mean 0.07055, largest 1.0000, never above 0.01 0; 4: 183 cells, mean 0.07450, largest 1.0000, never above 0.01 0; 8: 157 cells, mean 0.07702, largest 1.0000, never above 0.01 0; 15: 3 cells, mean 0.04273, largest 1.0000, never above 0.01 0
+   the cells that drive the output lines: largest output of any of them 1.00e+00; the definition emits a byte when one exceeds 1/2
+   share of the output variance explained on bytes not used for the fit, effects added: the present byte 0.204; the present and the previous byte 0.330; the last eight bytes 0.456
+   probe, all cells (1979 that vary): of the variance of the output at the second digit, the present digit 0.204; the digit before it 0.150; the two jointly, beyond their sum 0.0095; the rest (earlier bytes and the tissue's own state) 0.610. The joint share cell by cell: median 0.0000, 99th cell in 100 0.099, largest 0.177
+      cells with a joint share above 0.25: 0; joint share among the 1974 cells whose output reaches 0.01: median 0.0000, largest 0.177
+   probe, the cells near the output lines (495 that vary): of the variance of the output at the second digit, the present digit 0.011; the digit before it 0.018; the two jointly, beyond their sum 0.0000; the rest (earlier bytes and the tissue's own state) 0.933. The joint share cell by cell: median 0.0000, 99th cell in 100 0.009, largest 0.052
+3. L8-256 as run (long axons as well)
+   at byte 16,384: connections a cell 2.49; made 644, withdrawn 11413; cells whose threshold is above zero 1642 of 2048; gain, median 5.20, cells at the bound 523
+   output in the last 4,096 bytes, by connections from the input lines (largest: of the median cell): 1: 78 cells, mean 0.06764, largest 1.0000, never above 0.01 0; 2: 233 cells, mean 0.08857, largest 1.0000, never above 0.01 0; 3: 430 cells, mean 0.09745, largest 1.0000, never above 0.01 0; 4: 579 cells, mean 0.09417, largest 1.0000, never above 0.01 0; 8: 7 cells, mean 0.11637, largest 1.0000, never above 0.01 0; 9: 1 cells, mean 0.11597, largest 1.0000, never above 0.01 0
+   the cells that drive the output lines: largest output of any of them 1.00e+00; the definition emits a byte when one exceeds 1/2
+   share of the output variance explained on bytes not used for the fit, effects added: the present byte 0.555; the present and the previous byte 0.712; the last eight bytes 0.761
+   probe, all cells (1983 that vary): of the variance of the output at the second digit, the present digit 0.443; the digit before it 0.226; the two jointly, beyond their sum 0.0282; the rest (earlier bytes and the tissue's own state) 0.291. The joint share cell by cell: median 0.0050, 99th cell in 100 0.090, largest 0.094
+      cells with a joint share above 0.25: 0; joint share among the 1983 cells whose output reaches 0.01: median 0.0050, largest 0.094
+   probe, the cells near the output lines (577 that vary): of the variance of the output at the second digit, the present digit 0.410; the digit before it 0.212; the two jointly, beyond their sum 0.0305; the rest (earlier bytes and the tissue's own state) 0.333. The joint share cell by cell: median 0.0048, 99th cell in 100 0.089, largest 0.092
+3. the first form of the definition (formula 7)
+   at byte 16,384: connections a cell 91.71; made 1100440, withdrawn 928484; cells whose threshold is above zero 42 of 2048; gain, median 1.00, cells at the bound 0
+   output in the last 4,096 bytes, by connections from the input lines (largest: of the median cell): 1: 237 cells, mean 0.00524, largest 0.0891, never above 0.01 0; 2: 264 cells, mean 0.00084, largest 0.0362, never above 0.01 0; 3: 242 cells, mean 0.00028, largest 0.0199, never above 0.01 58; 4: 236 cells, mean 0.00015, largest 0.0083, never above 0.01 135; 8: 247 cells, mean 0.02625, largest 0.4283, never above 0.01 0; 9: 99 cells, mean 0.05307, largest 0.5315, never above 0.01 0
+   the cells that drive the output lines: largest output of any of them 8.74e-01; the definition emits a byte when one exceeds 1/2
+   share of the output variance explained on bytes not used for the fit, effects added: the present byte 0.027; the present and the previous byte 0.004; the last eight bytes -0.142
+   probe, all cells (1984 that vary): of the variance of the output at the second digit, the present digit 0.028; the digit before it 0.002; the two jointly, beyond their sum 0.0000; the rest (earlier bytes and the tissue's own state) 0.936. The joint share cell by cell: median 0.0021, 99th cell in 100 0.228, largest 0.364
+      cells with a joint share above 0.25: 14; the largest output of such a cell in the probe: median 2.9e-02, largest 1.4e-01; joint share among the 1232 cells whose output reaches 0.01: median 0.0000, largest 0.364
+   probe, the cells near the output lines (495 that vary): of the variance of the output at the second digit, the present digit 0.000; the digit before it 0.002; the two jointly, beyond their sum 0.0000; the rest (earlier bytes and the tissue's own state) 0.966. The joint share cell by cell: median 0.0000, 99th cell in 100 0.013, largest 0.018
+3. the coincidence form of the definition
+   at byte 16,384: connections a cell 25.57; made 1909247, withdrawn 1872745; cells whose threshold is above zero 1462 of 2048; gain, median 1.00, cells at the bound 0
+   output in the last 4,096 bytes, by connections from the input lines (largest: of the median cell): 1: 237 cells, mean 0.01600, largest 0.5651, never above 0.01 0; 2: 253 cells, mean 0.10748, largest 1.0000, never above 0.01 0; 3: 176 cells, mean 0.11153, largest 1.0000, never above 0.01 0; 4: 189 cells, mean 0.11230, largest 1.0000, never above 0.01 0; 8: 147 cells, mean 0.11470, largest 1.0000, never above 0.01 0; 12: 1 cells, mean 0.11773, largest 1.0000, never above 0.01 0
+   the cells that drive the output lines: largest output of any of them 1.00e+00; the definition emits a byte when one exceeds 1/2
+   share of the output variance explained on bytes not used for the fit, effects added: the present byte -0.021; the present and the previous byte -0.046; the last eight bytes -0.177
+   probe, all cells (1984 that vary): of the variance of the output at the second digit, the present digit 0.002; the digit before it 0.000; the two jointly, beyond their sum 0.0022; the rest (earlier bytes and the tissue's own state) 0.954. The joint share cell by cell: median 0.0011, 99th cell in 100 0.014, largest 0.022
+      cells with a joint share above 0.25: 0; joint share among the 1984 cells whose output reaches 0.01: median 0.0011, largest 0.022
+   probe, the cells near the output lines (495 that vary): of the variance of the output at the second digit, the present digit 0.000; the digit before it 0.000; the two jointly, beyond their sum 0.0019; the rest (earlier bytes and the tissue's own state) 0.958. The joint share cell by cell: median 0.0003, 99th cell in 100 0.013, largest 0.015
+====================================================================================================
+PART 4. The lines of the programs on which the audit's statements rest (file as named in this script's SOURCES; line; text)
+4. deps/TISSUE_STEP1/tissue_step1.py = PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/reviewer_tissue_20261119/deps/TISSUE_STEP1/tissue_step1.py at 21246a44e
+      line 331: z[YES_LINE] = 0.0; z[NO_LINE] = 0.0
+      line 438: return b if xo[b] > EMIT else -1
+      line 59: EMIT = 1 / 2                  # emission level (sentence 75)
+      line 64: REC_FLOOR = 0.01              # recorded outputs below this are stored as 0 (section 1)
+4. tissue.c = PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/reviewer_tissue_20261119/tissue.c at 21246a44e
+      line 98: if (t->kind[i] == FBK) { x[i] = 0.0; continue; }
+      line 119: if (t->prune_only != 0.0) { t->c_cu[b + d] = t->c_cu[b + d] * (1.0 - 1.0 / 16384.0) + t->F[s] * xi; t->c_e0[b + d] = t->c_e0[b + d] * (1.0 - 1.0 / 16384.0) + Fi * z[s]; continue; }
+      line 168: double th = t->th[i] + ETA_T * (xi - a); t->th[i] = th < 0.0 ? 0.0 : th;
+4. outq.py = PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/reviewer_tissue_20261119/outq.py at 21246a44e
+      line 2: # yesno/yq.py holds outside exact inputs. The tissue lives its whole life once (no output end inside it; the output end reads and
+      line 24: rec = np.zeros((NB, N), np.float32)
+4. add_e57.py = ADDITION/addsys.py at 43f6487c3
+      line 82: m = int(np.floor(w1 * hist[d1] + w2 * hist[d2]))   # wjit=0: unit strengths, m the plain sum
+      line 84: act.append(col(('m', d1, d2, G, m) + tuple(hist[:G])))   # cell T, inhibited by threshold cell T + 1)
+4. add_e55.py = PROJECT_DOCUMENTS/MINIFLY_REVIEW_20261109/COORDINATION_20261117/output_reach4_20261119/addcheck.py at b33cc7128
+      line 40: m1 = val[hist[-2]] + val[hist[-4]]; m2 = val[hist[-3]] + val[hist[-5]]
+      line 44: f1 = m1 * NA + AI[p]; f2 = NT * NA + (m2 * NA + AI[p]) * NA + AI[p1]; base = NT * NA + NT * NA * NA
+4. add_e62.py = TISSUE_CHECK_20261119/addsys.py at 033d9b52e
+      line 82: tot = s.A + s.B; cnt = (tot >= np.arange(19)).astype(float)
+====================================================================================================
