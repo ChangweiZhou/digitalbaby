@@ -47,6 +47,35 @@ Development seed 1 (the choice of P's number; a look that the relay network in t
 
 Never-shown sums after 40,000 lines, whole answer after a read line: with the step 1/4 that section 2 names, 64.8% in the alphabet of the sums alone and 59.0% in the alphabet of both texts; with the step 1, 85.0% and 83.5%. The recorded level of `cells2.py`'s plain system is 82.9% (median of five seeds; `loop_small_case/ERRATA_20261120.md`). So the number in section 2 was my mistake about which value the recorded runs used: **the step is 1** (the value in `nano/loop/loop.py`), and with it the network in the wider alphabet is the learner that was recorded. Nothing else is changed. The wider alphabet costs it 1.5 points.
 
+## 4b. The development runs, the choice of P's step, and additions made before the reported runs
+
+Development seed 1; not a result. Never-shown sums, whole answer, per cent (`out/aba_dev_*.txt`, `out/relay_dev_*.txt`):
+
+| Form | end of the sums | end of the English | return: 500 lines | 1,000 | 2,000 | 5,000 | English, nats a byte, last tenth |
+|---|---|---|---|---|---|---|---|
+| S1 (shared trusts, first cell) | 81.2 | 77.3 | 78.1 | 78.4 | 79.1 | 78.9 | 1.509 |
+| S2, second cell (its first cell is S1) | 89.4 | 88.0 | 90.0 | 90.0 | 91.0 | 91.3 | 1.504 |
+| P, step 0.03 | 73.0 | 73.2 | 74.1 | 73.6 | 73.8 | 73.0 | 1.559 |
+| P, step 0.1 | 78.4 | 77.8 | 78.0 | 78.0 | 78.3 | 77.3 | 1.741 |
+| P, step 0.3 | 79.5 | 78.7 | 79.4 | 79.6 | 79.4 | 78.6 | 2.774 |
+| F (no trust learned) | 34.7 | 34.7 | 33.9 | 34.4 | 34.3 | 32.7 | 2.355 |
+| R (relay network) | 96.0 | 0.0 | 45.9 | 82.9 | 94.2 | 94.2 | |
+| R0 (fading off from the English on) | 96.0 | 0.0 | 39.4 | 78.8 | 92.0 | 94.3 | |
+| R0, return with the cells in between held still | | | 26.5 | 68.5 | 91.0 | 93.3 | |
+
+The relay network at 40,000 lines: 83.5 (the look of section 4a holds).
+
+**The choice of P's step.** By the rule of section 2 it is **0.3** (79.5 against 78.4 and 73.0). The best is at the edge of the set of three; no larger step was tried. The rule did not look at the English, and there the same learner with 0.3 reads far worse: 2.774 nats a byte in the last tenth, which is worse than in its own first tenth (2.629), against 1.741 with 0.1, 1.559 with 0.03, and 1.509 for the shared trusts. So, on this seed, no one number serves both texts when each cell learns its trust from its own events alone. **Addition 0:** the reported runs carry P at all three steps. The plan's P is the one at 0.3; the other two are set beside it for this reason and are additions.
+
+**Additions.** They were written after the development runs in the table. One slip of mine: I tried their programs once on the development seed before writing this section, so what I expected of them was formed with seed 1 in view; I state no chances for them and count none as a prediction. The figures of seed 1 are given so that the reader has what I had.
+
+1. **S1, S2: the trusts put back.** At the end of the English, in a forked copy, the trusts (and the second cell's parts) of the end of the sums are put back; the counts stay as the English left them. It says how much of the loss is in the shared numbers. (Seed 1, S1: 81.2, which is the level before the English.)
+2. **R, R0: parts put back.** At the end of the English, in copies: (a) the answering strengths of the end of the sums put back; (b) the cells in between of the end of the sums put back (their strengths from the lines and their thresholds), the answering strengths as the English left them; (c) the answering strengths and the cells' thresholds put back, so that only the cells' strengths from the lines are as the English left them. (Seed 1: 80.2, 0.0, 95.7.)
+3. **R, R0: a yardstick for the return.** Marks after 500, 1,000, 2,000 and 5,000 lines of the first reading; and the same lines read by a copy whose cells in between stay as they were born, with only the answering cell learning. (Seed 1, after 5,000 lines: 5.4 and 0.6; the return after English reaches 94.3, and 93.3 with the cells in between held still.)
+4. **R, R0: how many cells are active.** In the 7,500 states in which the never-shown answers are named and in 5,000 states of the English: the mean activity, the number of cells above one half, the cells whose mean activity through the English is under 0.05 and the share of the sums' activity that sits on them, each before and after the English; and by how much the answering strengths of the ten digit branches changed. (Seed 1: 108 of 256 cells above one half in a state of the sums and 90 in a state of the English before the English is read; the digit branches' strengths changed by 0.88 of their size.)
+
+Not changed: the hypotheses, X1 to X8, the forms, the seeds, the scoring. `python3 aba.py check` was run again after the change to the program (`check11_output.txt`; 7 passed; the kernel is the same text).
+
 ## 5. Outcome
 
 (to be entered after the runs)

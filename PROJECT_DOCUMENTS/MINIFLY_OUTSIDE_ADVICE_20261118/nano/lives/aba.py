@@ -95,10 +95,13 @@ def never_shown(s, base, cells=(1,)):
 def run_life(kw):
     seed = int(kw.get("seed", 1)); form = kw["form"]; lines = int(kw.get("lines", 40000)); alpha = float(kw.get("alpha", 0.03)); tag = kw["tag"]; x, sp = build(seed, lines); s = make(form, x, alpha); cells = (1, 2) if s.gate else (1,)
     tmp = os.path.join(HERE, "tmp", tag); os.makedirs(tmp, exist_ok=True); t0 = time.time(); rows = []; eng = LV.raw("shakespeare"); probe = None
-    def mark(label):
-        p = os.path.join(tmp, label.replace(" ", "_") + ".json"); LV.wait(LV.forked(lambda: dict(never_shown(s, sp["ev"], cells), sizes=s.sizes()), p)); r = json.load(open(p)); r["at"] = label; rows.append(r); print(tag, label, {c: round(r[c]["whole"], 1) for c in r if c.startswith("cell")}, "cells", r["sizes"]["cells"], flush=True)
-    a = s.run(sp["A"][0], sp["A"][1], True); mark("end of the sums"); nA = m(a[1] if s.gate else a[0][-50000:])
+    def mark(label, pre=None):
+        p = os.path.join(tmp, label.replace(" ", "_").replace(",", "") + ".json"); LV.wait(LV.forked(lambda: (pre() if pre else None, dict(never_shown(s, sp["ev"], cells), sizes=s.sizes()))[1], p)); r = json.load(open(p)); r["at"] = label; rows.append(r); print(tag, label, {c: round(r[c]["whole"], 1) for c in r if c.startswith("cell")}, "cells", r["sizes"]["cells"], flush=True)
+    a = s.run(sp["A"][0], sp["A"][1], True); mark("end of the sums"); nA = m(a[1] if s.gate else a[0][-50000:]); kept = {q: s.arr(q).copy() for q in ("T", "G")}
+    def put():
+        for q in ("T", "G"): s.arr(q)[:] = kept[q]
     b = s.run(sp["B"][0], sp["B"][1], True); mark("end of the English"); k = (sp["B"][1] - sp["B"][0]) // 10; nB = [m((b[1] if s.gate else b[0])[:k]), m((b[1] if s.gate else b[0])[-k:])]
+    if form in ("S1", "S2"): mark("end of the English, the trusts of the end of the sums put back", put)       # PLAN_11.md, section 4b, addition 1: in a forked copy; the counts are as the English left them
     done = sp["A2"][0]
     for n in (500, 1000, 2000, 5000): hi = sp["A2"][0] + n * 10; s.run(done, hi, True); done = hi; mark(f"return {n} lines")
     out = dict(task="aba", tag=tag, seed=seed, form=form, alpha=alpha, lines=lines, rows=rows, nats_a_byte_english_first_and_last_tenth=nB, wall=round(time.time() - t0, 1)); json.dump(out, open(os.path.join(HERE, "res", f"aba__{tag}.json"), "w")); return out
