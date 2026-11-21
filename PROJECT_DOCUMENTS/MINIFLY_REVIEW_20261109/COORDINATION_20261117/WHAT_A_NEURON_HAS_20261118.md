@@ -174,3 +174,21 @@ The reviewer had reported a reader's calculation that under the definition every
 Translation (the reviewer's). But all we said is that each cell decides its connections by itself (they may be taken as one-directional); that is, it can make a connection and it can withdraw one. If it keeps receiving noise over a connection, it can obviously cut that connection. Although in terms of probability all nearby cells will be tried, why do you say the number keeps increasing?
 
 What follows. The growth without end is not a consequence of his principle; it is a fault of how the definition wrote the two rules. Revision 5 makes a connection whenever a cell's activity is below a target, and after erratum E10 it withdraws one only when its strength has fallen below 1/128, which almost never happens; an earlier form withdrew by the sender's activity and cut nearly everything. Neither form withdraws a connection because what arrives over it is noise to the receiving cell. Corrected: connections are one-directional; a cell tries the cells near it and withdraws a connection over which it keeps receiving what is of no use to it; the number of a cell's connections is the balance of the two.
+
+## 20. Mr. Xu's ruling of 21 November 2026: no long window of past bytes; a small store of episodes for rehearsal is allowed
+
+Asked in a review session whether "a cell cannot read the bytes that have passed" (section 8) forbids the learner any store of the stream, Mr. Xu was given three cases: (a) a cell, or any part of the learner, reading a long window of past bytes; (b) a small store of episodes used for rehearsal, like hippocampal replay; (c) the whole history of the stream kept for retrieval. His answer:
+
+> （b)是可以的，(a)确实不可以，也不是持续学习而成为信息压缩了。
+
+Translation (the session's). (b) is allowed. (a) is indeed not allowed; that would no longer be persistent learning but information compression.
+
+What follows.
+
+1. No cell and no part of the learner holds a long window of past bytes. A cell reads only its own stored state and what arrives through other cells; cells of the byte-level encoder may each read a different collection of short pieces of the input with gaps between them (section 8).
+2. A small store of episodes, read again for rehearsal, is allowed. This settles the standing remark "some rehearsal is acceptable" (requirement A) for a store of this kind.
+3. Case (c) is a stronger form of (a) and is taken as excluded with it. That is the session's reading, not his words.
+4. The reason he gives is the criterion for later cases: a mechanism that turns the system into a compressor of the stream is not persistent learning. Systems that keep the whole history, such as context-mixing compressors or a full-history match model, are not candidates for the learner. Whether they may still be measured beside it as a yardstick is not settled by this ruling.
+5. An earlier correction of the same session, recorded here so that it is not repeated: section 8 says "未必能够读到已有的字节" ("not necessarily able to read the bytes already read"). The translation above renders it "cannot in general", and later documents strengthened it to "cannot"; the ruling of this section, not those translations, is what stands.
+
+Open, and not decided by this ruling: whether one number shared by all cells of a kind counts as local (the "shared trusts" of the outside session's systems, about which Mr. Xu said on 21 November "我们反复强调是local learning"); how a strength is fixed when a connection runs through several cells (section 17); and whether rule parameters may be set by an offline search such as evolution or meta-learning.
