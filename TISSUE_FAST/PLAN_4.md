@@ -17,6 +17,26 @@ Written before any run of this plan. Development level; one seed; no gate, seal 
 
 **Arms.** Seed 73129; 16,384 bytes; N75T of each form with a* = 1/32 and 1/128: 4 tissues. Reference: plan 3's N75T (a* = 1/8). **Readings added:** the share of cells with a threshold above 0 at the end, and its mean (from the final state). **Cost** about 2 to 4 ms a byte: under 10 minutes. **Not run:** a biphasic guard on structural change (no sign yet that the tissue falls silent; it is the next change if it does); the cell's own gain; other seeds.
 
-## Outcome
+## Outcome (entered 21 November 2026; four runs, exit 0; `p3b_p4_tables.py`)
 
-(to be entered after the runs)
+
+| Form | a* | Connections at the end | Last 4,096 bytes | Cells sending a step | Cells with mean threshold above 0 in A2 | Mean threshold in A2 | S(1,0), S(2,0), S(4,0) | ms a byte |
+|---|---|---|---|---|---|---|---|---|
+| first | 1/8 (plan 3) | 17.5 | +1.2% | 31.6 | 0.116 | 0.0001 | 0.992, 0.577, 0.022 | 1.68 |
+| first | 1/32 | 17.8 | +1.9% | 33.8 | 0.213 | 0.0018 | 0.987, 0.522, 0.022 | 1.49 |
+| first | 1/128 | 18.2 | +2.4% | 19.5 | 0.276 | 0.0087 | 0.855, 0.344, 0.022 | 1.12 |
+| coincidence | 1/8 (plan 3) | 18.8 | +4.1% | 52.3 | 0.115 | 0.0001 | 0.982, 0.758, 0.057 | 3.19 |
+| coincidence | 1/32 | 17.9 | +2.7% | 45.4 | 0.225 | 0.0020 | 0.972, 0.608, 0.040 | 2.89 |
+| coincidence | 1/128 | 17.0 | +2.5% | 21.0 | 0.291 | 0.0086 | 0.911, 0.346, 0.022 | 2.19 |
+
+The thresholds are read as their mean over window A2 (`theta_mean` of `A2.npz`), not from the final state as the plan says: the runner does not save the final state. Plan 3's N75T at a* = 1/8 also has some cells with a mean threshold above 0 (12%): the threshold rises in a cell above 1/8 for a while before falling back.
+
+| | Outcome |
+|---|---|
+| H4 | **Refuted in both forms.** Lowering a* makes more cells hold a threshold above 0 (21 to 29% against 12%) and fewer cells send (first form 19.5 against 31.6 a step at 1/128), but S(2,0) falls: 0.577 to 0.522 and 0.344 in the first form, 0.758 to 0.608 and 0.346 in the coincidence form |
+| E1 | Failed |
+| E2 | Failed |
+| E3 | Failed: S(4,0) at most 0.040 |
+| E4 | Held |
+
+**Reading.** In this system a reachable target makes the tissue sparser and the cells two connections out less informative. The rise of S(1,0) at a* = 1/128 in plan 1 came, at least in part, through making (which a* drove there), not through the threshold. a* = 1/8 stays the setting of the system.
